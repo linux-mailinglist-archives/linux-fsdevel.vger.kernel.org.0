@@ -2,224 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FBFE32762C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 03:49:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04197327647
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 04:02:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230214AbhCACtG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Feb 2021 21:49:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58686 "EHLO
+        id S231891AbhCADCm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Feb 2021 22:02:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230412AbhCACtC (ORCPT
+        with ESMTP id S231375AbhCADCk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Feb 2021 21:49:02 -0500
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B5CCC061786
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Feb 2021 18:48:22 -0800 (PST)
-Received: by mail-pf1-x433.google.com with SMTP id w18so10499789pfu.9
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Feb 2021 18:48:22 -0800 (PST)
+        Sun, 28 Feb 2021 22:02:40 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCCDBC06174A
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Feb 2021 19:01:59 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id jx13so6638166pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Feb 2021 19:01:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=sdgzUIE11pldyAg1VjJepNZ8mbZ+IeKDZWhB9JOwN+g=;
-        b=F4O+G0K8h3RcObdvgNunIQn7Oj3rs66YxZ6WW4Jyx9OGFJRzSMHoUBSMER0tWUauhh
-         i7mN1JXXa8/k2RM/MeYyAkHa/shdyg3CQbYiGrZmmDlrEuGYKov3kjHrmNlpG3nFSDVE
-         wZiUV3LIkZKv9hAqLSiMx2PV8H+JKclbCaltrjkTYMf/vX5+IG1aLTRBHAAhRnbalCQe
-         v/Mfh+o1SnzPQMEZmlaNmDixV8qrZxQKuQCu8mSqWBuyV/nHLEImHfv83LFmZIH4jdEs
-         gq/eMNuky1uD6cN6o9qtmXFED+uMo1prKbJY+4NawFfB0GtOgMKxZrafIEbtaTChlc/N
-         7nrw==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GSiKByfZ5sqEV0qlOVhjWGxYdaWwaDIUdK2lORLzOS0=;
+        b=ScCVJ0YypEy9MWpAu9R+ZNlfSdfwEpgJAxQFP/l3D0VDMmjBCQ3vzrVPFWhT25prCj
+         QXpGyxHcSbNpVLiMISI/iCjxFsHc4dDIkA4EuVtGQmdynb1UUw3QA3C6177M7HJJpVdQ
+         2oHKGLvEm/skQ9iXU55IE9jzrKshZDXrVsz50f78kRmzg/lL+MFtIFxR1Ep2Tyick7TF
+         WFSl4S2UJPWN9MUz74NFEXEqpZNcJ8zRf4RchXpZ+64i22hXDYsJWA2BmFOuszbLCYWY
+         r/jwOV0+WCDa7Onk+WEWPlrFNUFBH60Ids0G9DKUKvkOOAbTk4gN2Ri1da1QBerJFzlI
+         dewg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sdgzUIE11pldyAg1VjJepNZ8mbZ+IeKDZWhB9JOwN+g=;
-        b=J8/DR7ap5o8zYcK5cEGO2CPHiu5ew9T4pun9/omoTfjT1TbyyCOzcA2CrzQsMswrdd
-         jlV1Bqnl68GApvXVLPCSZmryO0xRuhWmeIZqvoj086f6CgXCaWjKfd0ZxafFF9hoiJyP
-         ecHB1AOtBS5+Exmu8txz8PVXiBxEJqS8B24N75kjHyNG3yMqYp9532/CFJoyWiQAVVeQ
-         tHOsQSwDfw01dKHzUuiFGV5DSf93j3IUyf0r08cWAa8KMD8qvgeUJI/R1VKhxD7SDZ4d
-         4vfL8gDTeADlmdpvQ3udmE28SIQD3il9aEunyFRHy/WtDdBU1XwG9zxlksfXhw9czTXE
-         Oa4g==
-X-Gm-Message-State: AOAM532j81YLUWX7WiR/dKGzoPOAF8+pMrBphXjnLABpLqhhc5eigjRW
-        OcqP7z6nJ4I87E0cYphS8ScFYA==
-X-Google-Smtp-Source: ABdhPJx8AKjQ0GL3k7Jzo9eC7CYUBfD4gO4jiqADsb6yGiZj4fEYDAz6uEJy2vMbKdToZeYOU3VtAg==
-X-Received: by 2002:a63:cd08:: with SMTP id i8mr11861442pgg.49.1614566901747;
-        Sun, 28 Feb 2021 18:48:21 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id n184sm5645949pfd.205.2021.02.28.18.48.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Feb 2021 18:48:21 -0800 (PST)
-Subject: =?UTF-8?B?UmU6IOWbnuWkjTogcG9zc2libGUgZGVhZGxvY2sgaW4gaW9fcG9sbF9k?=
- =?UTF-8?Q?ouble=5fwake_=282=29?=
-To:     "Zhang, Qiang" <Qiang.Zhang@windriver.com>,
-        syzbot <syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com>,
-        "asml.silence@gmail.com" <asml.silence@gmail.com>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GSiKByfZ5sqEV0qlOVhjWGxYdaWwaDIUdK2lORLzOS0=;
+        b=MOu8M7vlNWvSJQ8FDzHHNxRWfycKsPAfPVFxFTw06sPJkuixKXM81DjOIRdLFNC0jk
+         c4d5kMcBQpqmnxUiOeeETSobvZNJ698GvWMJ0RUx9s64Q8amVeds0tBVxNrhTrfuMJi3
+         XqkV42q2o8NdmULIVCqwxNrPqS3wEV6zNOQE5ZBP9iWG7vnReo9tYjvi1xCW1xVtyJAR
+         5IZcwWDLtjjQnIBIJIRuYnDqTHfUjzWdV1O66Ix+Zhdvc9FWzhW1pf0fMXkwGVt58GVQ
+         eyp/3NO7VzByXxoV86vOLA1B3f576yD0adwqx7mAX4w1AoS8zxT33pWLRTlge2J9uu0R
+         /2+A==
+X-Gm-Message-State: AOAM532gHAXBr4hk9vuTKM4dqnMuNV/l19a2t/3U7K/4+6mboU35sO/X
+        8vxjDXP4ckpOEByjPV2nWTVybaaLWIHjjGcrtWfMfQ==
+X-Google-Smtp-Source: ABdhPJwEVjHQ1fPeJFLixQCWUSnlzdl/87wWdv9p8yk+ouhkV58sQu0KSI0Fa2jLhHCKNFak15hUdD0cupv16k+ZTO4=
+X-Received: by 2002:a17:902:e54e:b029:e3:9f84:db8e with SMTP id
+ n14-20020a170902e54eb02900e39f84db8emr13640880plf.24.1614567719209; Sun, 28
+ Feb 2021 19:01:59 -0800 (PST)
+MIME-Version: 1.0
+References: <FE7425D7-3006-4F31-AE41-07E4EB6D030F@contoso.com>
+In-Reply-To: <FE7425D7-3006-4F31-AE41-07E4EB6D030F@contoso.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Mon, 1 Mar 2021 11:01:23 +0800
+Message-ID: <CAMZfGtUY6z3g1_=mj8_LAWcxc_OKVfwPQq9vrdhdkjs=hyW5rQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v17 1/9] mm: memory_hotplug: factor out
+ bootmem core functions to bootmem_info.c
+To:     "Bodeddula, Balasubramaniam" <bodeddub@amazon.com>
+Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "almasrymina@google.com" <almasrymina@google.com>,
+        "anshuman.khandual@arm.com" <anshuman.khandual@arm.com>,
+        "bp@alien8.de" <bp@alien8.de>, "corbet@lwn.net" <corbet@lwn.net>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "duanxiongchun@bytedance.com" <duanxiongchun@bytedance.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
+        "jroedel@suse.de" <jroedel@suse.de>,
+        "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-References: <000000000000e61a7605bc5ac540@google.com>
- <900e27f3-6503-ed03-4c58-ccc946df7a6a@kernel.dk>
- <BYAPR11MB26323CD476CC8CE34E31AC6DFF9A9@BYAPR11MB2632.namprd11.prod.outlook.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6a210838-9ffa-5053-29f7-486c8c65f792@kernel.dk>
-Date:   Sun, 28 Feb 2021 19:48:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <BYAPR11MB26323CD476CC8CE34E31AC6DFF9A9@BYAPR11MB2632.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=gbk
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "mchehab+huawei@kernel.org" <mchehab+huawei@kernel.org>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
+        "oneukum@suse.com" <oneukum@suse.com>,
+        "osalvador@suse.de" <osalvador@suse.de>,
+        "paulmck@kernel.org" <paulmck@kernel.org>,
+        "pawan.kumar.gupta@linux.intel.com" 
+        <pawan.kumar.gupta@linux.intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "rientjes@google.com" <rientjes@google.com>,
+        "song.bao.hua@hisilicon.com" <song.bao.hua@hisilicon.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/28/21 7:08 PM, Zhang, Qiang wrote:
-> 
-> 
-> ________________________________________
-> 发件人: Jens Axboe <axboe@kernel.dk>
-> 发送时间: 2021年3月1日 7:08
-> 收件人: syzbot; asml.silence@gmail.com; io-uring@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; syzkaller-bugs@googlegroups.com; viro@zeniv.linux.org.uk
-> 主题: Re: possible deadlock in io_poll_double_wake (2)
-> 
-> [Please note: This e-mail is from an EXTERNAL e-mail address]
-> 
-> On 2/27/21 5:42 PM, syzbot wrote:
->> syzbot has found a reproducer for the following issue on:
->>
->> HEAD commit:    5695e516 Merge tag 'io_uring-worker.v3-2021-02-25' of git:..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=114e3866d00000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=8c76dad0946df1f3
->> dashboard link: https://syzkaller.appspot.com/bug?extid=28abd693db9e92c160d8
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122ed9b6d00000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d5a292d00000
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com
->>
->> ============================================
->> WARNING: possible recursive locking detected
->> 5.11.0-syzkaller #0 Not tainted
->> --------------------------------------------
->> swapper/1/0 is trying to acquire lock:
->> ffff88801b2b1130 (&runtime->sleep){..-.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
->> ffff88801b2b1130 (&runtime->sleep){..-.}-{2:2}, at: io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4960
->>
->> but task is already holding lock:
->> ffff88801b2b3130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
->>
->> other info that might help us debug this:
->>  Possible unsafe locking scenario:
->>
->>        CPU0
->>        ----
->>   lock(&runtime->sleep);
->>   lock(&runtime->sleep);
->>
->>  *** DEADLOCK ***
->>
->>  May be due to missing lock nesting notation
->>
->> 2 locks held by swapper/1/0:
->>  #0: ffff888147474908 (&group->lock){..-.}-{2:2}, at: _snd_pcm_stream_lock_irqsave+0x9f/0xd0 sound/core/pcm_native.c:170
->>  #1: ffff88801b2b3130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
->>
->> stack backtrace:
->> CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.11.0-syzkaller #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> Call Trace:
->>  <IRQ>
->>  __dump_stack lib/dump_stack.c:79 [inline]
->>  dump_stack+0xfa/0x151 lib/dump_stack.c:120
->>  print_deadlock_bug kernel/locking/lockdep.c:2829 [inline]
->>  check_deadlock kernel/locking/lockdep.c:2872 [inline]
->>  validate_chain kernel/locking/lockdep.c:3661 [inline]
->>  __lock_acquire.cold+0x14c/0x3b4 kernel/locking/lockdep.c:4900
->>  lock_acquire kernel/locking/lockdep.c:5510 [inline]
->>  lock_acquire+0x1ab/0x730 kernel/locking/lockdep.c:5475
->>  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
->>  _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
->>  spin_lock include/linux/spinlock.h:354 [inline]
->>  io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4960
->>  __wake_up_common+0x147/0x650 kernel/sched/wait.c:108
->>  __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:138
->>  snd_pcm_update_state+0x46a/0x540 sound/core/pcm_lib.c:203
->>  snd_pcm_update_hw_ptr0+0xa75/0x1a50 sound/core/pcm_lib.c:464
->>  snd_pcm_period_elapsed+0x160/0x250 sound/core/pcm_lib.c:1805
->>  dummy_hrtimer_callback+0x94/0x1b0 sound/drivers/dummy.c:378
->>  __run_hrtimer kernel/time/hrtimer.c:1519 [inline]
->>  __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1583
->>  hrtimer_run_softirq+0x17b/0x360 kernel/time/hrtimer.c:1600
->>  __do_softirq+0x29b/0x9f6 kernel/softirq.c:345
->>  invoke_softirq kernel/softirq.c:221 [inline]
->>  __irq_exit_rcu kernel/softirq.c:422 [inline]
->>  irq_exit_rcu+0x134/0x200 kernel/softirq.c:434
->>  sysvec_apic_timer_interrupt+0x93/0xc0 arch/x86/kernel/apic/apic.c:1100
->>  </IRQ>
->>  asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:632
->> RIP: 0010:native_save_fl arch/x86/include/asm/irqflags.h:29 [inline]
->> RIP: 0010:arch_local_save_flags arch/x86/include/asm/irqflags.h:70 [inline]
->> RIP: 0010:arch_irqs_disabled arch/x86/include/asm/irqflags.h:137 [inline]
->> RIP: 0010:acpi_safe_halt drivers/acpi/processor_idle.c:111 [inline]
->> RIP: 0010:acpi_idle_do_entry+0x1c9/0x250 drivers/acpi/processor_idle.c:516
->> Code: dd 38 6e f8 84 db 75 ac e8 54 32 6e f8 e8 0f 1c 74 f8 e9 0c 00 00 00 e8 45 32 6e f8 0f 00 2d 4e 4a c5 00 e8 39 32 6e f8 fb f4 <9c> 5b 81 e3 00 02 00 00 fa 31 ff 48 89 de e8 14 3a 6e f8 48 85 db
->> RSP: 0018:ffffc90000d47d18 EFLAGS: 00000293
->> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
->> RDX: ffff8880115c3780 RSI: ffffffff89052537 RDI: 0000000000000000
->> RBP: ffff888141127064 R08: 0000000000000001 R09: 0000000000000001
->> R10: ffffffff81794168 R11: 0000000000000000 R12: 0000000000000001
->> R13: ffff888141127000 R14: ffff888141127064 R15: ffff888143331804
->>  acpi_idle_enter+0x361/0x500 drivers/acpi/processor_idle.c:647
->>  cpuidle_enter_state+0x1b1/0xc80 drivers/cpuidle/cpuidle.c:237
->>  cpuidle_enter+0x4a/0xa0 drivers/cpuidle/cpuidle.c:351
->>  call_cpuidle kernel/sched/idle.c:158 [inline]
->>  cpuidle_idle_call kernel/sched/idle.c:239 [inline]
->>  do_idle+0x3e1/0x590 kernel/sched/idle.c:300
->>  cpu_startup_entry+0x14/0x20 kernel/sched/idle.c:397
->>  start_secondary+0x274/0x350 arch/x86/kernel/smpboot.c:272
->>  secondary_startup_64_no_verify+0xb0/0xbb
-> 
->> This looks very odd, only thing I can think of is someone >doing
->> poll_wait() twice with different entries but for the same
->> waitqueue head.
->>
-> 
-> Hello  Jens Axboe
-> 
-> here poll_wait() twice in waitqueue head 'runtime->sleep'
-> in sound/core/oss/pcm_oss.c
-> 
-> static __poll_t snd_pcm_oss_poll(struct file *file, poll_table * wait) {
-> ...........
->         if (psubstream != NULL) {
->                 struct snd_pcm_runtime *runtime = psubstream->runtime;
->                 poll_wait(file, &runtime->sleep, wait);
->                 snd_pcm_stream_lock_irq(psubstream);
->                 if (runtime->status->state != SNDRV_PCM_STATE_DRAINING &&
->                     (runtime->status->state != SNDRV_PCM_STATE_RUNNING ||
->                      snd_pcm_oss_playback_ready(psubstream)))
->                         mask |= EPOLLOUT | EPOLLWRNORM;
->                 snd_pcm_stream_unlock_irq(psubstream);
->         }
->         if (csubstream != NULL) {
->                 struct snd_pcm_runtime *runtime = csubstream->runtime;
->                 snd_pcm_state_t ostate;
->                 poll_wait(file, &runtime->sleep, wait);
->                 snd_pcm_stream_lock_irq(csubstream);
-> ..........
-> }
-> 
->  I don't know if there are any other drivers that use the same way ,   can add some judgment in io_poll_double_wake()?
+On Sat, Feb 27, 2021 at 2:06 AM Bodeddula, Balasubramaniam
+<bodeddub@amazon.com> wrote:
+>
+> Tested-by: bodeddub@amazon.com
 
-Right, that's what my post-email investigation led to as well, hence I queued
-this one up:
+Very thanks for your test.
 
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-worker.v4&id=4a0a6fd611f5109bcfab4a95db836bb27131e3be
+>
+>
+>
+> We are interested in this patch and have tested an earlier version of thi=
+s patch on 5.11-rc4 kernel version. I did a functional validation of the ch=
+anges and saw that the total memory listed by free command increasing and m=
+ore memory was made available when memory was allocated in hugepages. 1G hu=
+gepages gave higher improvements compared to 2M, as expected. Is there a fo=
+rmal way to publish the results? I can do the same as required (I am new to=
+ Linux Kernel patching process).
 
--- 
-Jens Axboe
+I don=E2=80=99t know if there is a formal way. But maybe you can share
+the test result directly through this thread. If someone knows
+this, please let me know. Thanks.
 
+>
+>
+>
+> I have a few follow-up questions on this patch:
+>
+> 1. What is the overall status of this patch? What is the ballpark timelin=
+e we are looking for this patch to be accepted.
+
+There is only one patch of this patchset that has no reviewed-by tag.
+I think it might be 5.13 in the best case But I don't have the right to
+decide.
+
+>
+> 2. Why is this patch not working when memory is allocated as hugepages by=
+ THP (transparent hugepages). THP uses AnonHugePages, doesn=E2=80=99t this =
+patch generalize for all =E2=80=98type=E2=80=99 of hugepages?
+
+Now it only supports HugeTLB pages. THP is a little different
+and complex compared to HugeTLB. I need to investigate THP
+in depth to determine the possible problems.
+
+>
+>
+>
+> Please let me know if there are any additional tasks that I can help. Hap=
+py to help.
+>
+>
+>
+> Thanks.
