@@ -2,146 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B455B32865D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 18:10:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26AD3328A03
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 19:12:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236663AbhCARI6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Mar 2021 12:08:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44610 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236966AbhCARFp (ORCPT
+        id S239139AbhCASJ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Mar 2021 13:09:58 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:26650 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239176AbhCASHc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Mar 2021 12:05:45 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 556B9C061793
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Mar 2021 09:05:04 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id n4so16956579wrx.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Mar 2021 09:05:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=orIG0dppKanIHyAZXoB55cY6CKEZZ+MbLfH22/CXSHU=;
-        b=cf+gsyY4JTyd31fGJoFGPbr9T5jgYIWbz8/77ayAdUmCiKalB9XypN454gjIJ9Fr4x
-         TBJXlmbLrYYnwoOlUVtycLO+gos+ZbljpmMHxNp99KyK3V7bu6JK/ZCVdZcGUWWsSPjN
-         s4s3HXPUqPdFDDbz7AX0s322kz1Q2SyteUmJjDgnh4SFPha13UFyR1zoHZeUu3cZ75TN
-         n5yKh4E0iUS/puowWh+94sHbhXH24CCp0SkZYSZkbX4KB1Odm7UpxhellqKVyYIXmbdn
-         x6AIJ28uzPQ+CuYqO+ALOha7G0K/MW38yzk++r5nZljDL1Mr+KC85OwAHECkXr7XoTtz
-         QVlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=orIG0dppKanIHyAZXoB55cY6CKEZZ+MbLfH22/CXSHU=;
-        b=fZ8KfP3zzppvi85c3KRSjjFLguwO3i+YYQBgzNpif06MGntjf/p+6i27tX6jZ50E6p
-         ycqzo5KbK87IeMYBi8co2NiS1UW8WJPSKlZImJsOHSZzBGo1W2KwNsHgh6j1MAQgouTR
-         +FGpzA/L0XtKVngJEwf/U5K+wfd3rmEOUKxxMU2TDRbFmd0O5jYCrHwmYVI28zNkjetq
-         OQqPOQ9YYk38vdtkufsMITvfl5DhDg2bTNQjUSkBcxdIUXwSugU6yiF5a/fKrnQPngHq
-         /UlENTL6Mwkv9KkDA910glaIwOdJFWr0WIM3pdK+9Xzzm2vjCGEVaUT4lH/QA3Oq/KHm
-         vnWg==
-X-Gm-Message-State: AOAM530y7E2P5GfvW+8DoF/OLFK5LOLVsLxUV++QaJlkRfX7QDY9vlMU
-        2+oU+y2kOCzZgL7pB2hLlM+zLw==
-X-Google-Smtp-Source: ABdhPJwF7UW0zVTASsYJTNGrMR860fn/Ro6EyeNwPQxLp05WqHxwny2WCR3Md4kqXQoG3lAkOWfTXg==
-X-Received: by 2002:a5d:45cd:: with SMTP id b13mr18168719wrs.296.1614618303138;
-        Mon, 01 Mar 2021 09:05:03 -0800 (PST)
-Received: from google.com ([2a00:79e0:d:210:f1e7:963:2248:d2dc])
-        by smtp.gmail.com with ESMTPSA id a5sm26680908wrs.35.2021.03.01.09.05.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Mar 2021 09:05:02 -0800 (PST)
-Date:   Mon, 1 Mar 2021 17:05:01 +0000
-From:   Alessio Balsini <balsini@android.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Peng Tao <bergwolf@gmail.com>,
-        Alessio Balsini <balsini@android.com>,
-        Akilesh Kailash <akailash@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Antonio SJ Musumeci <trapexit@spawn.link>,
-        David Anderson <dvander@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Stefano Duo <duostefano93@gmail.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        kernel-team <kernel-team@android.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND V12 3/8] fuse: Definitions and ioctl for
- passthrough
-Message-ID: <YD0evc676pdANlHQ@google.com>
-References: <20210125153057.3623715-1-balsini@android.com>
- <20210125153057.3623715-4-balsini@android.com>
- <CAJfpegs4=NYn9k4F4HvZK3mqLehhxCFKgVxctNGf1f2ed0gfqg@mail.gmail.com>
- <CA+a=Yy5=4SJJoDLOPCYDh-Egk8gTv0JgCU-w-AT+Hxhua3_B2w@mail.gmail.com>
- <CAJfpegtmXegm0FFxs-rs6UhJq4raktiyuzO483wRatj5HKZvYA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegtmXegm0FFxs-rs6UhJq4raktiyuzO483wRatj5HKZvYA@mail.gmail.com>
+        Mon, 1 Mar 2021 13:07:32 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 121I5EXG066483;
+        Mon, 1 Mar 2021 13:06:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=QRfwyov4tdGnAwz8cU/ex+kzIeddUMeBq24T0KutDYA=;
+ b=SKs8M5bDVZqVGMpp+Adqq1gShCr3DlMbLablmetxMymKLcKYF6k66j0fQr3yCRzHHe8/
+ aU8wDhR8A7OtTxHhsuLbUxiikOG9p+CIpPiw+SLfY8pOubqrRNk7BattW4uDLxr38ij6
+ pIsI9+1EjiK7Wf3ohnPEUHFPkRxk+WlY+gRQZvJMEubvJMyLMVtNLn0wGvBNhbuC8SRZ
+ Qb70Dmmg/qXsZGbTwvHMQLEsFlMqEtWGWT5IqVedJwSgX6aibTxJeE2n68fuGZV9wdIh
+ Bg+p+YQYJuIgRsefj3xVO0dSMJr1TPaWPu2dzRN9XT+cPCYmeMDlDrTlLklTs9ppbP+3 Nw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3713w7tvch-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 01 Mar 2021 13:06:39 -0500
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 121I6caG077482;
+        Mon, 1 Mar 2021 13:06:38 -0500
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3713w7tvbj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 01 Mar 2021 13:06:38 -0500
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 121I36lI015679;
+        Mon, 1 Mar 2021 18:06:36 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma01fra.de.ibm.com with ESMTP id 370atn0m4h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 01 Mar 2021 18:06:36 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 121I6X2L38797700
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 1 Mar 2021 18:06:33 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C7461AE057;
+        Mon,  1 Mar 2021 18:06:33 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 363B0AE04D;
+        Mon,  1 Mar 2021 18:06:32 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.103.165])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  1 Mar 2021 18:06:32 +0000 (GMT)
+Message-ID: <58c23338f15ea13278f275832ac35eeff875daad.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 02/11] evm: Load EVM key in ima_load_x509() to avoid
+ appraisal
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        silviu.vlasceanu@huawei.com
+Date:   Mon, 01 Mar 2021 13:06:31 -0500
+In-Reply-To: <20201111092302.1589-3-roberto.sassu@huawei.com>
+References: <20201111092302.1589-1-roberto.sassu@huawei.com>
+         <20201111092302.1589-3-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-01_12:2021-03-01,2021-03-01 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ spamscore=0 clxscore=1011 priorityscore=1501 impostorscore=0
+ suspectscore=0 mlxscore=0 adultscore=0 bulkscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2103010146
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 19, 2021 at 09:40:21AM +0100, Miklos Szeredi wrote:
-> On Fri, Feb 19, 2021 at 8:05 AM Peng Tao <bergwolf@gmail.com> wrote:
-> >
-> > On Wed, Feb 17, 2021 at 9:41 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+Hi Roberto,
+
+On Wed, 2020-11-11 at 10:22 +0100, Roberto Sassu wrote:
+> Public keys do not need to be appraised by IMA as the restriction on the
+> IMA/EVM keyrings ensures that a key can be loaded only if it is signed with
+> a key in the primary or secondary keyring.
 > 
-> > > What I think would be useful is to have an explicit
-> > > FUSE_DEV_IOC_PASSTHROUGH_CLOSE ioctl, that would need to be called
-> > > once the fuse server no longer needs this ID.   If this turns out to
-> > > be a performance problem, we could still add the auto-close behavior
-> > > with an explicit FOPEN_PASSTHROUGH_AUTOCLOSE flag later.
-> > Hi Miklos,
-> >
-> > W/o auto closing, what happens if user space daemon forgets to call
-> > FUSE_DEV_IOC_PASSTHROUGH_CLOSE? Do we keep the ID alive somewhere?
+> However, when evm_load_x509() is called, appraisal is already enabled and
+> a valid IMA signature must be added to the EVM key to pass verification.
 > 
-> Kernel would keep the ID open until explicit close or fuse connection
-> is released.
+> Since the restriction is applied on both IMA and EVM keyrings, it is safe
+> to disable appraisal also when the EVM key is loaded. This patch calls
+> evm_load_x509() inside ima_load_x509() if CONFIG_IMA_LOAD_X509 is defined.
 > 
-> There should be some limit on the max open files referenced through
-> ID's, though.   E.g. inherit RLIMIT_NOFILE from mounting task.
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  security/integrity/iint.c         | 2 ++
+>  security/integrity/ima/ima_init.c | 4 ++++
+>  2 files changed, 6 insertions(+)
 > 
-> Thanks,
-> Miklos
+> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+> index 1d20003243c3..7d08c31c612f 100644
+> --- a/security/integrity/iint.c
+> +++ b/security/integrity/iint.c
+> @@ -200,7 +200,9 @@ int integrity_kernel_read(struct file *file, loff_t offset,
+>  void __init integrity_load_keys(void)
+>  {
+>  	ima_load_x509();
+> +#ifndef CONFIG_IMA_LOAD_X509
+>  	evm_load_x509();
+> +#endif
 
-I like the idea of FUSE_DEV_IOC_PASSTHROUGH_CLOSE to revoke the
-passthrough access, that is something I was already working on. What I
-had in mind was simply to break that 1:1 connection between fuse_file
-and lower filp setting a specific fuse_file::passthrough::filp to NULL,
-but this is slightly different from what you mentioned.
+Please replace the ifdef with the IS_ENABLED() equivalent.
 
-AFAIU you are suggesting to allocate one ID for each lower fs file
-opened with passthrough within a connection, and maybe using idr_find at
-every read/write/mmap operation to check if passthrough is enabled on
-that file. Something similar to fuse2_map_get().
-This way the fuse server can pass the same ID to one or more
-fuse_file(s).
-FUSE_DEV_IOC_PASSTHROUGH_CLOSE would idr_remove the ID, so idr_find
-would fail, preventing the use of passthrough on that ID. CMIIW.
+thanks,
 
-After FUSE_DEV_IOC_PASSTHROUGH_CLOSE(ID) it may happen that if some
-fuse_file(s) storing that ID are still open and the same ID is reclaimed
-in a new idr_alloc, this would lead to mismatching lower fs filp being
-used by our fuse_file(s).  So also the ID stored in the fuse_file(s)
-must be invalidated to prevent future uses of deallocated IDs.
+Mimi
 
-Would it make sense to have a list of fuse_files using the same ID, that
-must be traversed at FUSE_DEV_IOC_PASSTHROUGH_CLOSE time?
-Negative values (maybe -ENOENT) might be used to mark IDs as invalid,
-and tested before idr_find at read/write/mmap to avoid the idr_find
-complexity in case passthrough is disabled for that file.
-
-What do you think?
-
-
-I agree with all the above comments to this patch, i.e., add
-FOPEN_PASSTHROUGH, drop fuse_passthrough_out, header version+changelog,
-that will be fixed in V13.
-
-
-Thanks,
-Alessio
