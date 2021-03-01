@@ -2,1259 +2,273 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 17DF33282E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 16:58:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECADE3282F2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 17:05:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237465AbhCAP6I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Mar 2021 10:58:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58340 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237445AbhCAP6B (ORCPT
+        id S235360AbhCAQDx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Mar 2021 11:03:53 -0500
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:56354 "EHLO
+        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235353AbhCAQDv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Mar 2021 10:58:01 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74BD5C061788;
-        Mon,  1 Mar 2021 07:57:20 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id w11so16674586wrr.10;
-        Mon, 01 Mar 2021 07:57:20 -0800 (PST)
+        Mon, 1 Mar 2021 11:03:51 -0500
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id B6E3B1D10;
+        Mon,  1 Mar 2021 19:03:07 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/zEn1LhTpd+nMG2qtdgf3itX1Ywrf9iuKZoH5+t6CDE=;
-        b=dLTZn2Rbri2N+Ep9Fudh6R6xODf2ba3Yja65Fv6CosVbm/KTIGpHYz2Y4X4S3sUH3P
-         PniZkF2bsIecQSTfFjnMCh4Rmtd4C74T+0X1+Wwis57NXHfPiydNUuZmtgpQSMUzToLk
-         Wgl+0LOPFeSArEg2pHP9lVf1cbywce7+yQkrvH/7+Y3VU4qYn2bZL6ByVcTZuVAnnQsR
-         aszVzqnRxmNriKEwJwQa8MeAXTvTX3jFYg3C0TpRM6gr59DZXO9xvs3nBbE51Be7Wtjn
-         FCbaLS86KsOC1Qesv6glaOj89R2sszazTFC3s00o7/SwkYLR7/CEaxwpsPS8KjB4iQlM
-         hJww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/zEn1LhTpd+nMG2qtdgf3itX1Ywrf9iuKZoH5+t6CDE=;
-        b=f1iu/9XOzn/VxSLoqG/tfvHWV1K+ZoES/YBigpLVpQtcN++X/GjAaz4kA9gVRR45KY
-         88hW8SA13cDigFMxx8Qt1dFIwq1kA73wzHSI94KAgY3WJfZg2FMo0HS2jZ6YBmCTW8qR
-         p54F/OBBNKQ14VjwYiCqHuiDAGfLX+CYHqzM2rUM2GVO5OhUSOG9Bo9LFPAN+zaiiDti
-         3rd+kshaIH2/oG5pyxFIGDpOgqHiAfGI2oMECzRjeqqSE/hFKjvGcT3Y6VgoYBSM0JSG
-         wOQL0UyzRxaGMEiHQI4sV8ygV1IRlaBc6JxI9mb3lfh+Z4yGH4wBi60e/w+Zdz4X8eI3
-         6tIg==
-X-Gm-Message-State: AOAM532SLf9DJGzExrMajRnZG6JGJW3RQueD3OblqE3LpalPiOXXg0Yp
-        QlVjcsD4RZBrcoqQm52wUeE=
-X-Google-Smtp-Source: ABdhPJz5758s6QZ/vIdSLlxG5WRWQN9JdKvzUGl/PMJ8551FCZdufrb6I0BbUa3CXZkMOwTZIldP7w==
-X-Received: by 2002:a5d:404f:: with SMTP id w15mr12393691wrp.106.1614614238839;
-        Mon, 01 Mar 2021 07:57:18 -0800 (PST)
-Received: from [192.168.1.143] ([170.253.51.130])
-        by smtp.gmail.com with ESMTPSA id p9sm26065843wma.14.2021.03.01.07.57.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Mar 2021 07:57:18 -0800 (PST)
-Subject: Re: [PATCH] mount_setattr.2: New manual page documenting the
- mount_setattr() system call
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>
-References: <20210301093459.1876707-1-christian.brauner@ubuntu.com>
-From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-Message-ID: <d5fbe417-6a9a-d5d3-d966-e97bce58ccc8@gmail.com>
-Date:   Mon, 1 Mar 2021 16:57:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        d=paragon-software.com; s=mail; t=1614614587;
+        bh=4VX8Zq6qFiRNQZHg8prfWisV8KXolkXs5r2RI7Vjp6A=;
+        h=From:To:CC:Subject:Date;
+        b=AHdiXQBXmkI81L6eoPC1SALwHJagnMzM3zBqvUaEeHQK2q0p+RDSpTLcm6RUVJkEM
+         ynznVd5AaPxJNRFhBa3X9H+tIzU4fM7Bm+aU0iEcLO06SbpxFmkknNNlAJYywrJiUX
+         70JJO48xE7WDG1gbnRX/UCAySmI+zpLdiKfkT360=
+Received: from fsd-lkpg.ufsd.paragon-software.com (172.30.114.105) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Mon, 1 Mar 2021 19:03:07 +0300
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To:     <linux-fsdevel@vger.kernel.org>
+CC:     <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
+        <pali@kernel.org>, <dsterba@suse.cz>, <aaptel@suse.com>,
+        <willy@infradead.org>, <rdunlap@infradead.org>, <joe@perches.com>,
+        <mark@harmstone.com>, <nborisov@suse.com>,
+        <linux-ntfs-dev@lists.sourceforge.net>, <anton@tuxera.com>,
+        <dan.carpenter@oracle.com>, <hch@lst.de>, <ebiggers@kernel.org>,
+        <andy.lavr@gmail.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH v22 00/10] NTFS read-write driver GPL implementation by Paragon Software
+Date:   Mon, 1 Mar 2021 19:00:52 +0300
+Message-ID: <20210301160102.2884774-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-In-Reply-To: <20210301093459.1876707-1-christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.30.114.105]
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/1/21 10:34 AM, Christian Brauner wrote:
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+This patch adds NTFS Read-Write driver to fs/ntfs3.
 
-Hi Christian,
+Having decades of expertise in commercial file systems development and huge
+test coverage, we at Paragon Software GmbH want to make our contribution to
+the Open Source Community by providing implementation of NTFS Read-Write
+driver for the Linux Kernel.
 
-I commented about some formatting issues.  I'm sorry I don't have time 
-right now to review the contents of the page.
+This is fully functional NTFS Read-Write driver. Current version works with
+NTFS(including v3.1) and normal/compressed/sparse files and supports journal replaying.
 
-Thanks,
+We plan to support this version after the codebase once merged, and add new
+features and fix bugs. For example, full journaling support over JBD will be
+added in later updates.
 
-Alex
+v2:
+ - patch splitted to chunks (file-wise)
+ - build issues fixed
+ - sparse and checkpatch.pl errors fixed
+ - NULL pointer dereference on mkfs.ntfs-formatted volume mount fixed
+ - cosmetics + code cleanup
 
-> ---
->   man2/mount_setattr.2 | 1071 ++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 1071 insertions(+)
->   create mode 100644 man2/mount_setattr.2
-> 
-> diff --git a/man2/mount_setattr.2 b/man2/mount_setattr.2
-> new file mode 100644
-> index 000000000..23d1a1036
-> --- /dev/null
-> +++ b/man2/mount_setattr.2
-> @@ -0,0 +1,1071 @@
-> +.\" Copyright (c) 2021 by Christian Brauner <christian.brauner@ubuntu.com>
-> +.\"
-> +.\" %%%LICENSE_START(VERBATIM)
-> +.\" Permission is granted to make and distribute verbatim copies of this
-> +.\" manual provided the copyright notice and this permission notice are
-> +.\" preserved on all copies.
-> +.\"
-> +.\" Permission is granted to copy and distribute modified versions of this
-> +.\" manual under the conditions for verbatim copying, provided that the
-> +.\" entire resulting derived work is distributed under the terms of a
-> +.\" permission notice identical to this one.
-> +.\"
-> +.\" Since the Linux kernel and libraries are constantly changing, this
-> +.\" manual page may be incorrect or out-of-date.  The author(s) assume no
-> +.\" responsibility for errors or omissions, or for damages resulting from
-> +.\" the use of the information contained herein.  The author(s) may not
-> +.\" have taken the same level of care in the production of this manual,
-> +.\" which is licensed free of charge, as they might when working
-> +.\" professionally.
-> +.\"
-> +.\" Formatted or processed versions of this manual, if unaccompanied by
-> +.\" the source, must acknowledge the copyright and authors of this work.
-> +.\" %%%LICENSE_END
-> +.\"
-> +.TH MOUNT_SETATTR 2 2020-07-14 "Linux" "Linux Programmer's Manual"
-> +.SH NAME
-> +mount_setattr \- change mount options of a mount or mount tree
-> +.SH SYNOPSIS
-> +.nf
-> +.BI "int mount_setattr(int " dfd ", const char *" path ", unsigned int " flags ,
-> +.BI "                  struct mount_attr *" attr ", size_t " size );
-> +.fi
-> +.PP
-> +.IR Note :
-> +There is no glibc wrapper for this system call; see NOTES.
-> +.SH DESCRIPTION
-> +The
-> +.BR mount_setattr (2)
-> +system call changes the mount properties of a mount or whole mount tree.
-> +If
-> +.I path
-> +is a relative pathname, then it is interpreted relative to the directory
-> +referred to by the file descriptor
-> +.I dirfd
-> +(or the current working directory of the calling process, if
-> +.I dirfd
-> +is the special value
-> +.BR AT_FDCWD ).
-> +If
-> +.BR AT_EMPTY_PATH
-> +is specified in
-> +.I flags
-> +then the mount properties of the mount identified by
-> +.I dirfd
-> +are changed.
-> +.PP
-> +The
-> +.BR mount_setattr (2)
-> +syscall uses an extensible structure (\fIstruct mount_attr\fP) to allow for
-> +future extensions. Any future extensions to
-> +.BR mount_setattr (2)
-> +will be implemented as new fields appended to the above structure,
-> +with a zero value in a new field resulting in the kernel behaving
-> +as though that extension field was not present.
-> +Therefore, the caller
-> +.I must
-> +zero-fill this structure on
-> +initialization.
-> +(See the "Extensibility" section of the
-> +.B NOTES
-> +for more detail on why this is necessary.)
-> +.PP
-> +The
-> +.I size
-> +argument should usually be specified as
-> +.IR "sizeof(struct mount_attr)" .
-> +However, if the caller does not intend to make use of features that got
-> +introduced after the initial version of \fIstruct mount_attr\fP they are free
+v3:
+ - added acl, noatime, no_acs_rules, prealloc mount options
+ - added fiemap support
+ - fixed encodings support
+ - removed typedefs
+ - adapted Kernel-way logging mechanisms
+ - fixed typos and corner-case issues
 
-Please, avoid \fI...\fP as much as possible.
+v4:
+ - atomic_open() refactored
+ - code style updated
+ - bugfixes
 
-[
-introduced after the initial version of
-.RI ( "struct mount_attr" )
-to allow for future extensions.
-]
+v5:
+- nls/nls_alt mount options added
+- Unicode conversion fixes
+- Improved very fragmented files operations
+- logging cosmetics
 
-Also, please use "semantic newlines":
+v6:
+- Security Descriptors processing changed
+  added system.ntfs_security xattr to set
+  SD
+- atomic_open() optimized
+- cosmetics
 
-man 7 man-pages 2>/dev/null | sed -n '/Use semantic newlines/,/^$/p'
-    Use semantic newlines
-        In the source of a manual page,  new  sentences  should  be
-        started  on new lines, and long sentences should split into
-        lines at clause breaks (commas, semicolons, colons, and  so
-        on).   This  convention,  sometimes known as "semantic new-
-        lines", makes it easier to see the effect of patches, which
-        often  operate at the level of individual sentences or sen-
-        tence clauses.
+v7:
+- Security Descriptors validity checks added (by Mark Harmstone)
+- atomic_open() fixed for the compressed file creation with directio
+  case
+- remount support
+- temporarily removed readahead usage
+- cosmetics
 
+v8:
+- Compressed files operations fixed
 
-> +to pass the size of the initial struct together with the larger struct. This
-> +allows the kernel to not copy later parts of the struct that aren't used
-> +anyway. With each extension that changes the size of \fIstruct mount_attr\fP
-> +the kernel will expose a define of the form
-> +.B MOUNT_ATTR_SIZE_VER<number> .
-> +For example the macro for the size of the initial version of \fIstruct
-> +mount_attr\fP is
+v9:
+- Further cosmetics applied as suggested
+by Joe Perches
 
-[
-For example, the macro for the size of the initial version of
-.I struct mount_attr
-is
-]
+v10:
+- operations with compressed/sparse files on very fragmented volumes improved
+- reduced memory consumption for above cases
 
-> +.BR MOUNT_ATTR_SIZE_VER0
-> +.\"
-> +.PP
-> +The
-> +.I flags
-> +argument can be used to alter the path resolution behavior. The supported
-> +values are:
-> +.TP
-> +.in +4n
+v11:
+- further compressed files optimizations: reads/writes are now skipping bufferization
+- journal wipe to the initial state optimized (bufferization is also skipped)
+- optimized run storage (re-packing cluster metainformation)
+- fixes based on Matthew Wilcox feedback to the v10
+- compressed/sparse/normal could be set for empty files with 'system.ntfs_attrib' xattr
 
-Normally, pages do not indent the tags for each paragraph (see open(2), 
-membarrier(2), ...)
+v12:
+- nls_alt mount option removed after discussion with Pali Rohar
+- fixed ni_repack()
+- fixed resident files transition to non-resident when size increasing
 
-> +.B AT_EMPTY_PATH
-> +.in +4n
+v13:
+- nested_lock fix (lockdep)
+- out-of-bounds read fix (KASAN warning)
+- resident->nonresident transition fixed for compressed files
+- load_nls() missed fix applied
+- some sparse utility warnings fixes
 
-TP (tagged paragraph) does automatically indent the paragraph after the 
-tag (the tag is the first line after .TP).
+v14:
+- support for additional compression types (we've adapted WIMLIB's
+  implementation, authored by Eric Biggers, into ntfs3)
 
-So it's much simpler:
+v15:
+- kernel test robot warnings fixed
+- lzx/xpress compression license headers updated
 
-[
-.TP
-.B AT_EMPTY_PATH
-The mount properties of the mount identified by
-.I dfd
-are changed.
-.TP
-.B AT_RECURSIVE
-Change the mount properties of the whole mount tree.
-.TP
-.B AT_SYMLINK_NOFOLLOW
-Don't follow trailing symlinks.
-.TP
-.B AT_NO_AUTOMOUNT
-Don't trigger automounts.
-]
+v16:
+- lzx/xpress moved to initial ntfs-3g plugin code
+- mutexes instead of a global spinlock for compresions
+- FALLOC_FL_PUNCH_HOLE and FALLOC_FL_COLLAPSE_RANGE implemented
+- CONFIG_NTFS3_FS_POSIX_ACL added
 
-> +The mount properties of the mount identified by
-> +.I dfd
-> +are changed.
-> +.TP
-> +.in +4n
-> +.B AT_RECURSIVE
-> +.in +4n
-> +Change the mount properties of the whole mount tree.
-> +.TP
-> +.in +4n
-> +.B AT_SYMLINK_NOFOLLOW
-> +.in +4n
-> +Don't follow trailing symlinks.
-> +.TP
-> +.in +4n
-> +.B AT_NO_AUTOMOUNT
-> +.in +4n
-> +Don't trigger automounts.
-> +.PP
-> +The
-> +.I attr
-> +argument of
-> +.BR mount_setattr (2)
-> +is a structure of the following form:
-> +.PP
-> +.in +4n
-> +.EX
-> +struct mount_attr {
-> +    u64 attr_set;    /* Mount properties to set. */
-> +    u64 attr_clr;    /* Mount properties to clear. */
-> +    u64 propagation; /* Mount propagation type. */
-> +    u64 userns_fd;   /* User namespace file descriptor. */
-> +};
-> +.EE
-> +.in
-> +.PP
-> +The
-> +.I attr_set
-> +and
-> +.I attr_clr
-> +members are used to specify the mount options that are supposed to be set or
-> +cleared for a given mount or mount tree.
-> +.PP
-> +When changing mount properties the kernel will first lower the flags specified
-> +in the
-> +.I attr_clr
-> +field and then raise the flags specified in the
-> +.I attr_set
-> +field:
-> +.PP
-> +.in +4n
-> +.EX
-> +	struct mount_attr attr = {
-> +	    .attr_clr |= MOUNT_ATTR_NOEXEC | MOUNT_ATTR_NODEV,
-> +	    .attr_set |= MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID,
-> +	};
+v17:
+- FALLOC_FL_COLLAPSE_RANGE fixed
+- fixes for Mattew Wilcox's and Andy Lavr's concerns
 
-You are declaring it.  Why |= and not = ?
+v18:
+- ntfs_alloc macro splitted into two ntfs_malloc + ntfs_zalloc
+- attrlist.c: always use ntfs_cmp_names instead of memcmp; compare entry names
+  only for entry with vcn == 0
+- dir.c: remove unconditional ni_lock in ntfs_readdir
+- fslog.c: corrected error case behavior
+- index.c: refactored due to modification of ntfs_cmp_names; use rw_semaphore
+  for read/write access to alloc_run and bitmap_run while ntfs_readdir
+- run.c: separated big/little endian code in functions
+- upcase.c: improved ntfs_cmp_names, thanks to Kari Argillander for idea
+  and 'bothcase' implementation
 
-> +	unsigned int current_mnt_flags = mnt->mnt_flags;
-> +
-> +	/*
-> +	 * Clear all flags raised in .attr_clr, i.e
-> +	 * clear MOUNT_ATTR_NOEXEC and MOUNT_ATTR_NODEV.
-> +	 */
-> +	current_mnt_flags &= ~attr->attr_clr;
-> +
-> +	/*
-> +	 * Now raise all flags raised in .attr_set, i.e.
-> +	 * set MOUNT_ATTR_RDONLY and MOUNT_ATTR_NOSUID.
-> +	 */
-> +	current_mnt_flags |= attr->attr_set;
-> +
-> +	mnt->mnt_flags = current_mnt_flags;
-> +.EE
-> +.in
-> +.PP
-> +The effect of this change will be a mount or mount tree that is read-only,
-> +blocks the execution of setuid binaries but does allow interactions with
-> +executables and devices nodes. Multiple changes with the same set of flags
-> +requested in
-> +.I attr_clr
-> +and
-> +.I attr_set
-> +are guaranteed to be idempotent after the changes have been applied.
-> +.PP
-> +The following mount attributes can be specified in the
-> +.I attr_set
-> +or
-> +.I attr_clr
-> +fields:
-> +.TP
-> +.in +4n
-> +.B MOUNT_ATTR_RDONLY
-> +.in +4n
-> +If set in
-> +.I attr_set
-> +makes the mount read only and if set in
-> +.I attr_clr
-> +removes the read only setting if set on the mount.
-> +.TP
-> +.in +4n
-> +.B MOUNT_ATTR_NOSUID
-> +.in +4n
-> +If set in
-> +.I attr_set
-> +makes the mount not honor setuid, setgid binaries, and file capabilities when
-> +executing programs. If set in
-> +.I attr_clr
-> +clears the setuid, setgid, and file capability restriction if set on this
-> +mount.
-> +.TP
-> +.in +4n
-> +.B MOUNT_ATTR_NODEV
-> +.in +4n
-> +If set in
-> +.I attr_set
-> +prevents access to devices on this mount
-> +and if set in
-> +.I attr_clr
-> +removes the device access restriction if set on this mount.
-> +.TP
-> +.in +4n
-> +.B MOUNT_ATTR_NOEXEC
-> +.in +4n
-> +If set in
-> +.I attr_set
-> +prevents executing programs on this mount
-> +and if set in
-> +.I attr_clr
-> +removes the restriction to execute programs on this mount.
-> +.TP
-> +.in +4n
-> +.B MOUNT_ATTR_NODIRATIME
-> +.in +4n
-> +If set in
-> +.I attr_set
-> +prevents updating access time for directories on this mount
-> +and if set in
-> +.I attr_clr
-> +removes access time restriction for directories. Note that
-> +.BR MOUNT_ATTR_NODIRATIME
-> +can be combined with other access time settings and is implied
-> +by the noatime setting. All other access time settings are mutually
-> +exclusive.
-> +.TP
-> +.in +4n
-> +.B MOUNT_ATTR__ATIME - Changing access time settings
-> +.in +4n
-> +In the new mount api the access time values are an enum starting from 0.
-> +Even though they are an enum in contrast to the other mount flags such as
-> +.BR MOUNT_ATTR_NOEXEC
-> +they are nonetheless passed in
-> +.I attr_set
-> +and
-> +.I attr_clr
-> +to keep the uapi consistent since
-> +.BR fsmount (2)
-> +has the same behavior.
-> +.IP
-> +.in +4n
-> +Note, since access times are an enum, not a bitmap, users wanting to transition
-> +to a different access time setting cannot simply specify the access time in
-> +.I attr_set
-> +but must also set
-> +.BR MOUNT_ATTR__ATIME
-> +in the
-> +.I attr_clr
-> +field. The kernel will verify that
-> +.BR MOUNT_ATTR__ATIME
-> +isn't partially set in
-> +.I attr_clr
-> +and that
-> +.I attr_set
-> +doesn't have any access time bits set if
-> +.BR MOUNT_ATTR__ATIME
-> +isn't set in
-> +.I attr_clr.
+v19:
+- fixed directory bitmap for 2MB cluster size
+- fixed rw_semaphore init for directories
+
+v20:
+- fixed issue with incorrect hidden/system attribute setting on
+  root subdirectories
+- use kvmalloc instead of kmalloc for runs array
+- fixed index behavior on volumes with cluster size more than 4k
+- current build info is added into module info instead of printing on insmod
+
+v21:
+- fixes for clang CFI checks
+- fixed sb->s_maxbytes for 32bit clusters
+- user.DOSATTRIB is no more intercepted by ntfs3
+- corrected xattr limits;  is used
+- corrected CONFIG_NTFS3_64BIT_CLUSTER usage
+- info about current build is added into module info and printing
+on insmod (by Andy Lavr's request)
+note: v21 is applicable for 'linux-next' not older than 2021.01.28
+
+v22:
+- ntfs_cmp_names() fixed
+- raise warning if 'nls->uni2char' fails
+- hot fix free clusters code optimized
+- use clang-format 11.0 instead of 10.0 to format code
+
+Konstantin Komarov (10):
+  fs/ntfs3: Add headers and misc files
+  fs/ntfs3: Add initialization of super block
+  fs/ntfs3: Add bitmap
+  fs/ntfs3: Add file operations and implementation
+  fs/ntfs3: Add attrib operations
+  fs/ntfs3: Add compression
+  fs/ntfs3: Add NTFS journal
+  fs/ntfs3: Add Kconfig, Makefile and doc
+  fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
+  fs/ntfs3: Add MAINTAINERS
+
+ Documentation/filesystems/ntfs3.rst |  107 +
+ MAINTAINERS                         |    7 +
+ fs/Kconfig                          |    1 +
+ fs/Makefile                         |    1 +
+ fs/ntfs3/Kconfig                    |   46 +
+ fs/ntfs3/Makefile                   |   31 +
+ fs/ntfs3/attrib.c                   | 2085 +++++++++++
+ fs/ntfs3/attrlist.c                 |  457 +++
+ fs/ntfs3/bitfunc.c                  |  135 +
+ fs/ntfs3/bitmap.c                   | 1495 ++++++++
+ fs/ntfs3/debug.h                    |   64 +
+ fs/ntfs3/dir.c                      |  594 +++
+ fs/ntfs3/file.c                     | 1130 ++++++
+ fs/ntfs3/frecord.c                  | 3083 ++++++++++++++++
+ fs/ntfs3/fslog.c                    | 5202 +++++++++++++++++++++++++++
+ fs/ntfs3/fsntfs.c                   | 2540 +++++++++++++
+ fs/ntfs3/index.c                    | 2645 ++++++++++++++
+ fs/ntfs3/inode.c                    | 2056 +++++++++++
+ fs/ntfs3/lib/decompress_common.c    |  332 ++
+ fs/ntfs3/lib/decompress_common.h    |  352 ++
+ fs/ntfs3/lib/lib.h                  |   26 +
+ fs/ntfs3/lib/lzx_decompress.c       |  683 ++++
+ fs/ntfs3/lib/xpress_decompress.c    |  155 +
+ fs/ntfs3/lznt.c                     |  452 +++
+ fs/ntfs3/namei.c                    |  592 +++
+ fs/ntfs3/ntfs.h                     | 1237 +++++++
+ fs/ntfs3/ntfs_fs.h                  | 1073 ++++++
+ fs/ntfs3/record.c                   |  609 ++++
+ fs/ntfs3/run.c                      | 1110 ++++++
+ fs/ntfs3/super.c                    | 1502 ++++++++
+ fs/ntfs3/upcase.c                   |   96 +
+ fs/ntfs3/xattr.c                    | 1050 ++++++
+ 32 files changed, 30948 insertions(+)
+ create mode 100644 Documentation/filesystems/ntfs3.rst
+ create mode 100644 fs/ntfs3/Kconfig
+ create mode 100644 fs/ntfs3/Makefile
+ create mode 100644 fs/ntfs3/attrib.c
+ create mode 100644 fs/ntfs3/attrlist.c
+ create mode 100644 fs/ntfs3/bitfunc.c
+ create mode 100644 fs/ntfs3/bitmap.c
+ create mode 100644 fs/ntfs3/debug.h
+ create mode 100644 fs/ntfs3/dir.c
+ create mode 100644 fs/ntfs3/file.c
+ create mode 100644 fs/ntfs3/frecord.c
+ create mode 100644 fs/ntfs3/fslog.c
+ create mode 100644 fs/ntfs3/fsntfs.c
+ create mode 100644 fs/ntfs3/index.c
+ create mode 100644 fs/ntfs3/inode.c
+ create mode 100644 fs/ntfs3/lib/decompress_common.c
+ create mode 100644 fs/ntfs3/lib/decompress_common.h
+ create mode 100644 fs/ntfs3/lib/lib.h
+ create mode 100644 fs/ntfs3/lib/lzx_decompress.c
+ create mode 100644 fs/ntfs3/lib/xpress_decompress.c
+ create mode 100644 fs/ntfs3/lznt.c
+ create mode 100644 fs/ntfs3/namei.c
+ create mode 100644 fs/ntfs3/ntfs.h
+ create mode 100644 fs/ntfs3/ntfs_fs.h
+ create mode 100644 fs/ntfs3/record.c
+ create mode 100644 fs/ntfs3/run.c
+ create mode 100644 fs/ntfs3/super.c
+ create mode 100644 fs/ntfs3/upcase.c
+ create mode 100644 fs/ntfs3/xattr.c
 
 
-A .RS/.RE pair enclosing the further indented text should be enough.
-
-Here would go
-
-[
-.RS
-]
-
-> +.TP
-> +.in +8n
-> +.B MOUNT_ATTR_RELATIME
-> +.in +8n
-> +When a file is accessed via this mount, update the file's last access time
-> +(atime) only if the current value of atime is less than or equal to the file's
-> +last modification time (mtime) or last status change time (ctime).
-> +.IP
-> +.in +8n
-> +To enable this access time setting on a mount or mount tree
-> +.BR MOUNT_ATTR_RELATIME
-> +must be set in
-> +.I attr_set
-> +and
-> +.BR MOUNT_ATTR__ATIME
-> +must be set in the
-> +.I attr_clr
-> +field.
-> +.TP
-> +.in +8n
-> +.BR MOUNT_ATTR_NOATIME
-> +.in +8n
-> +Do not update access times for (all types of) files on this mount.
-> +.IP
-> +.in +8n
-> +To enable this access time setting on a mount or mount tree
-> +.BR MOUNT_ATTR_NOATIME
-> +must be set in
-> +.I attr_set
-> +and
-> +.BR MOUNT_ATTR__ATIME
-> +must be set in the
-> +.I attr_clr
-> +field.
-> +.TP
-> +.in +8n
-> +.BR MOUNT_ATTR_STRICTATIME
-> +.in +8n
-> +Always update the last access time (atime) when files are
-> +accessed on this mount.
-> +.IP
-> +.in +8n
-> +To enable this access time setting on a mount or mount tree
-> +.BR MOUNT_ATTR_STRICTATIME
-> +must be set in
-> +.I attr_set
-> +and
-> +.BR MOUNT_ATTR__ATIME
-> +must be set in the
-> +.I attr_clr
-> +field.
-
-Here goes
-
-[
-.RE
-]
-
-> +.TP
-> +.in +4n
-> +.BR MOUNT_ATTR_IDMAP
-> +.in +4n
-> +If set in
-> +.I attr_set
-> +creates an idmapped mount. The idmapping is taken from the user namespace
-> +specified in
-> +.I userns_fd
-> +and attached to the mount. It is currently not supported to change the
-> +idmapping of a mount after it has been idmapped. Therefore, it is invalid to
-> +specify
-> +.BR MOUNT_ATTR_IDMAP
-> +in
-> +.I attr_clr.
-> +More details can be found in subsequent paragraphs.
-> +.IP
-> +.in +4n
-> +Creating an idmapped mount allows to change the ownership of all files located
-> +under a given mount. Other mounts that expose the same files will not be
-> +affected, i.e. the ownership will not be changed. Consequently, a caller
-> +accessing files through an idmapped mount will see files under an idmapped
-> +mount owned by the uid and gid as specified in the idmapping attached to the
-> +mount.
-> +.IP
-> +.in +4n
-> +The idmapping is also applied to the following
-> +.BR xattr (7)
-> +namespaces:
-> +.RS
-> +.RS
-> +.IP \(bu 2
-> +The
-> +.I security.
-> +namespace when interacting with filesystem capabilities through the
-> +.I security.capability
-> +key whenever filesystem
-> +.BR capabilities (7)
-> +are stored or returned in the
-> +.I VFS_CAP_REVISION_3
-> +format which stores a rootid alongside the capabilities.
-> +.IP \(bu 2
-> +The
-> +.I system.posix_acl_access
-> +and
-> +.I system.posix_acl_default
-> +keys whenever uids or gids are stored in
-> +.BR ACL_USER
-> +and
-> +.BR ACL_GROUP
-> +entries.
-> +.RE
-> +.RE
-> +.IP
-> +.in +4n
-> +The following conditions must be met in order to create an idmapped mount:
-> +.RS
-> +.RS
-> +.IP \(bu 2
-> +The caller must currently have the
-> +.I CAP_SYS_ADMIN
-> +capability in the user namespace the underlying filesystem has been mounted in.
-> +.IP \(bu
-> +The underlying filesystem must support idmapped mounts. Currently
-> +.BR xfs (5),
-> +.BR ext4 (5)
-> +and
-> +.BR fat
-> +filesystems support idmapped mounts with more filesystems being actively worked
-> +on.
-> +.IP \(bu
-> +The mount must not already be idmapped. This also implies that the idmapping of
-> +a mount cannot be altered.
-> +.IP \(bu
-> +The mount must be a detached/anonymous mount, i.e. it must have been created by
-> +calling
-> +.BR open_tree (2)
-> +with the
-> +.I OPEN_TREE_CLONE
-> +flag and it must not already have been visible in the filesystem.
-> +.RE
-> +.IP
-> +.RE
-> +.IP
-> +.in +4n
-> +In the common case the user namespace passed in
-> +.I userns_fd
-> +together with
-> +.BR MOUNT_ATTR_IDMAP
-> +in
-> +.I attr_set
-> +to create an idmapped mount will be the user namespace of a container. In other
-> +scenarios it will be a dedicated user namespace associated with a given user's
-> +login session as is the case for portable home directories in
-> +.BR systemd-homed.service (8)).
-> +Details on how to create user namespaces and how to setup idmappings can be
-> +gathered from
-> +.BR user_namespaces (7).
-> +.IP
-> +.in +4n
-> +In essence, an idmapping associated with a user namespace is a 1-to-1 mapping
-> +between source and target ids for a given range. Specifically, an idmapping
-> +always has the abstract form
-> +.I [type of id] [source id] [target id] [range].
-> +For example, uid 1000 1001 1 would mean that uid 1000 is mapped to uid 1001,
-> +gid 1000 1001 2 would mean that gid 1000 will be mapped to gid 1001 and gid
-> +1001 to gid 1002. If we were to attach the idmapping of uid 1000 1001 1 to a
-> +mount it would cause all files owned by uid 1000 to be owned by uid 1001. It is
-> +possible to specify up to 340 of such idmappings providing for a great deal of
-> +flexibility. If any source ids are not mapped to a target id all files owned by
-> +that unmapped source id will appear as being owned by the overflow uid or
-> +overflow gid respectively (see
-> +.BR user_namespaces (7)
-> +and
-> +.BR proc (5)).
-> +.IP
-> +.in +4n
-> +Idmapped mounts can be useful in the following and a variety of other
-> +scenarios:
-> +.RS
-> +.RS
-> +.IP \(bu 2
-> +Idmapped mounts make it possible to easily share files between multiple users
-> +or multiple machines especially in complex scenarios. For example, idmapped
-> +mounts are used to implement portable home directories in
-> +.BR systemd-homed.service (8)
-> +whre they allow users to move their home directory to an external storage
-> +device and use it on multiple computers where they are assigned different uids
-> +and gids. This effectively makes it possible to assign random uids and gids at
-> +login time.
-> +.IP \(bu
-> +It is possible to share files from the host with unprivileged containers
-> +without having to change ownership permanently through
-> +.BR chown (2).
-> +.IP \(bu
-> +It is possible to idmap a container's rootfs without having to mangle every
-> +file.
-> +.IP \(bu
-> +It is possible to share files between containers with non-overlapping
-> +idmappings
-> +.IP \(bu
-> +Filesystem that lack a proper concept of ownership such as fat can use idmapped
-> +mounts to implement discretionary access (DAC) permission checking.
-> +.IP \(bu
-> +They allow users to
-> +efficiently change ownership on a per-mount basis without having to
-> +(recursively)
-> +.BR chown (2)
-> +all files. In contrast to
-> +.BR chown (2)
-> +changing ownership of large sets of files is instantenous with idmapped mounts.
-> +This is especially useful when ownership of a whole root filesystem of a
-> +virtual machine or container is to be changed.  With idmapped mounts a single
-> +.BR mount_setattr (2)
-> +syscall will be sufficient to change the ownership of all files.
-> +.IP \(bu
-> +Idmapped mounts always take the current ownership into account as
-> +idmappings specify what a given uid or gid is supposed to be mapped to. This
-> +contrasts with the
-> +.BR chown (2)
-> +syscall which cannot by itself take the current ownership of the files it
-> +changes into account. It simply changes the ownership to the specified uid and
-> +gid.
-> +.IP \(bu
-> +Idmapped mounts allow to change ownership locally, restricting it
-> +to specific mounts, and temporarily as the ownership changes only apply as long
-> +as the mount exists. In contrast, changing ownership via the
-> +.BR chown (2)
-> +syscall changes the ownership globally and permanently.
-> +.RE
-> +.RE
-> +.IP
-> +.in +4n
-> +.PP
-> +The
-> +.I propagation
-> +field is used to specify the propagation type of the mount or mount tree. Only
-> +one propagation type can be specified, i.e. the propagation values behave like
-> +an enum. The supported mount propagation settings are:
-> +.TP
-> +.in +4n
-> +.B MS_PRIVATE
-> +.in +4n
-> +Turn all mounts into private mounts. Mount and umount events do not propagate
-> +into or out of this mount point.
-> +.TP
-> +.in +4n
-> +.B MS_SHARED
-> +.in +4n
-> +Turn all mounts into shared mounts. Mount points share events with members of a
-> +peer group. Mount and unmount events immediately under this mount point
-> +will propagate to the other mount points that are members of the peer group.
-> +Propagation here means that the same mount or unmount will automatically occur
-> +under all of the other mount points in the peer group. Conversely, mount and
-> +unmount events that take place under peer mount points will propagate to this
-> +mount point.
-> +.TP
-> +.in +4n
-> +.B MS_SLAVE
-> +.in +4n
-> +Turn all mounts into dependent mounts. Mount and unmount events propagate into
-> +this mount point from a shared  peer group. Mount and unmount events under this
-> +mount point do not propagate to any peer.
-> +.TP
-> +.in +4n
-> +.B MS_UNBINDABLE
-> +.in +4n
-> +This is like a private mount, and in addition this mount can't be bind mounted.
-> +Attempts to bind mount this mount will fail.
-> +When a recursive bind mount is performed on a directory subtree, any bind
-> +mounts within the subtree are automatically pruned (i.e., not replicated) when
-> +replicating that subtree to produce the target subtree.
-> +.PP
-> +.SH RETURN VALUE
-> +On success,
-> +.BR mount_setattr (2)
-> +zero is returned. On error, \-1 is returned and
-> +.I errno
-> +is set to indicate the cause of the error.
-> +.SH ERRORS
-> +.TP
-> +.B EBADF
-> +.I dfd
-> +is not a valid file descriptor.
-> +.TP
-> +.B EBADF
-> +An invalid file descriptor value was specified in
-> +.I userns_fd.
-> +.TP
-> +.B EBUSY
-> +The caller tried to change the mount to
-> +.BR MOUNT_ATTR_RDONLY
-> +but the mount had writers.
-> +.TP
-> +.B EINVAL
-> +The path specified via the
-> +.I dfd
-> +and
-> +.I path
-> +arguments to
-> +.BR mount_setattr (2)
-> +isn't a mountpoint.
-> +.TP
-> +.B EINVAL
-> +Unsupported value in
-> +.I flags
-> +.TP
-> +.B EINVAL
-> +Unsupported value was specified in the
-> +.I attr_set
-> +field of
-> +.IR mount_attr.
-> +.TP
-> +.B EINVAL
-> +Unsupported value was specified in the
-> +.I attr_clr
-> +field of
-> +.IR mount_attr.
-> +.TP
-> +.B EINVAL
-> +Unsupported value was specified in the
-> +.I propagation
-> +field of
-> +.IR mount_attr.
-> +.TP
-> +.B EINVAL
-> +More than one of
-> +.BR MS_SHARED,
-> +.BR MS_SLAVE,
-> +.BR MS_PRIVATE,
-> +and
-> +.BR MS_UNBINDABLE
-> +was set in
-> +.I propagation
-> +field of
-> +.IR mount_attr.
-> +.TP
-> +.B EINVAL
-> +An access time setting was specified in the
-> +.I attr_set
-> +field without
-> +.BR MOUNT_ATTR__ATIME
-> +being set in the
-> +.I attr_clr
-> +field.
-> +.TP
-> +.B EINVAL
-> +.BR MOUNT_ATTR_IDMAP
-> +was specified in
-> +.I attr_clr.
-> +.TP
-> +.B EINVAL
-> +A file descriptor value was specified in
-> +.I userns_fd
-> +which exceeds
-> +.BR INT_MAX.
-> +.TP
-> +.B EINVAL
-> +A valid file descriptor value was specified in
-> +.I userns_fd
-> +but the file descriptor wasn't a namespace file descriptor or did not refer to
-> +a user namespace.
-> +.TP
-> +.B EINVAL
-> +The underlying filesystem does not support idmapped mounts.
-> +.TP
-> +.B EINVAL
-> +The mount to idmap is not a detached/anonymous mount, i.e. the mount is already
-> +visible in the filesystem.
-> +.TP
-> +.B EINVAL
-> +A partial access time setting was specified in
-> +.I attr_clr
-> +instead of
-> +.BR MOUNT_ATTR__ATIME
-> +being set.
-> +.TP
-> +.B EINVAL
-> +Caller tried to change the mount properties of a mount or mount tree
-> +in another mount namespace.
-> +.TP
-> +.B ENOENT
-> +A pathname was empty or had a nonexistent component.
-> +.TP
-> +.B ENOMEM
-> +When changing mount propagation to
-> +.BR MS_SHARED
-> +a new peer group id needs to be allocated for all mounts without a peer group
-> +id set which are
-> +.BR MS_SHARED.
-> +Allocation of this peer group id has failed.
-> +.TP
-> +.B ENOSPC
-> +When changing mount propagation to
-> +.BR MS_SHARED
-> +a new peer group id needs to be allocated for all mounts without a peer group
-> +id set which are
-> +.BR MS_SHARED. Allocation of this peer group id can fail. Note that technically
-> +further error codes are possible that are specific to the id allocation
-> +implementation used.
-> +.TP
-> +.B EPERM
-> +One of the mounts had at least one of
-> +.BR MOUNT_ATTR_RDONLY,
-> +.BR MOUNT_ATTR_NODEV,
-> +.BR MOUNT_ATTR_NOSUID,
-> +.BR MOUNT_ATTR_NOEXEC,
-> +.BR MOUNT_ATTR_NOATIME,
-> +or
-> +.BR MOUNT_ATTR_NODIRATIME
-> +set and the flag is locked. Mount attributes become locked on a mount if:
-> +.RS
-> +.IP \(bu 2
-> +a new mount or mount tree is created causing mount propagation across user
-> +namespaces. The kernel will lock the aforementioned flags to protect these
-> +sensitive properties from being altered.
-> +.IP \(bu
-> +a new mount and user namespace pair is created. This happens for example when
-> +specifying
-> +.BR CLONE_NEWUSER | CLONE_NEWNS
-> +in
-> +.BR unshare (2),
-> +.BR clone (2),
-> +or
-> +.BR clone3 (2).
-> +The aformentioned flags become locked to protect user namespaces from altering
-> +sensitive mount properties.
-> +.RE
-> +.TP
-> +.B EPERM
-> +A valid file descriptor value was specified in
-> +.I userns_fd
-> +but the file descriptor refers to the initial user namespace.
-> +.TP
-> +.B EPERM
-> +An already idmapped mount was supposed to be idmapped.
-> +.TP
-> +.B EPERM
-> +The caller does not have
-> +.I CAP_SYS_ADMIN
-> +in the user namespace the underlying filesystem is mounted in.
-> +.SH VERSIONS
-> +.BR mount_setattr (2)
-> +first appeared in Linux 5.12.
-> +.\" commit 7d6beb71da3cc033649d641e1e608713b8220290
-> +.\" commit 2a1867219c7b27f928e2545782b86daaf9ad50bd
-> +.\" commit 9caccd41541a6f7d6279928d9f971f6642c361af
-> +.SH CONFORMING TO
-> +.BR mount_setattr (2)
-> +is Linux specific.
-> +.SH NOTES
-> +Currently, there is no glibc wrapper for this system call; call it using
-> +.BR syscall (2).
-> +.\"
-> +.SS Extensibility
-> +In order to allow for future extensibility,
-> +.BR mount_setattr (2)
-> +equivalent to
-> +.BR openat2 (2)
-> +and
-> +.BR clone3 (2)
-> +requires the user-space application to specify the size of the
-> +.I mount_attr
-> +structure that it is passing.
-> +By providing this information, it is possible for
-> +.BR mount_setattr (2)
-> +to provide both forwards- and backwards-compatibility, with
-> +.I size
-> +acting as an implicit version number.
-> +(Because new extension fields will always
-> +be appended, the structure size will always increase.)
-> +This extensibility design is very similar to other system calls such as
-> +.BR perf_setattr (2),
-> +.BR perf_event_open (2),
-> +.BR clone3 (2)
-> +and
-> +.BR openat2 (2)
-> +.PP
-> +If we let
-> +.I usize
-> +be the size of the structure as specified by the user-space application, and
-> +.I ksize
-> +be the size of the structure which the kernel supports, then there are
-> +three cases to consider:
-> +.IP \(bu 2
-> +If
-> +.IR ksize
-> +equals
-> +.IR usize ,
-> +then there is no version mismatch and
-> +.I how
-> +can be used verbatim.
-> +.IP \(bu
-> +If
-> +.IR ksize
-> +is larger than
-> +.IR usize ,
-> +then there are some extension fields that the kernel supports
-> +which the user-space application
-> +is unaware of.
-> +Because a zero value in any added extension field signifies a no-op,
-> +the kernel
-> +treats all of the extension fields not provided by the user-space application
-> +as having zero values.
-> +This provides backwards-compatibility.
-> +.IP \(bu
-> +If
-> +.IR ksize
-> +is smaller than
-> +.IR usize ,
-> +then there are some extension fields which the user-space application
-> +is aware of but which the kernel does not support.
-> +Because any extension field must have its zero values signify a no-op,
-> +the kernel can
-> +safely ignore the unsupported extension fields if they are all-zero.
-> +If any unsupported extension fields are non-zero, then \-1 is returned and
-> +.I errno
-> +is set to
-> +.BR E2BIG .
-> +This provides forwards-compatibility.
-> +.PP
-> +Because the definition of
-> +.I struct mount_attr
-> +may change in the future (with new fields being added when system headers are
-> +updated), user-space applications should zero-fill
-> +.I struct mount_attr
-> +to ensure that recompiling the program with new headers will not result in
-> +spurious errors at runtime.
-> +The simplest way is to use a designated
-> +initializer:
-> +.PP
-> +.in +4n
-> +.EX
-> +struct mount_attr attr = {
-> +    .attr_set = MOUNT_ATTR_RDONLY,
-> +    .attr_clr = MOUNT_ATTR_NODEV
-> +};
-> +.EE
-> +.in
-> +.PP
-> +or explicitly using
-> +.BR memset (3)
-> +or similar:
-> +.PP
-> +.in +4n
-> +.EX
-> +struct mount_attr attr;
-> +memset(&attr, 0, sizeof(attr));
-> +attr.attr_set = MOUNT_ATTR_RDONLY;
-> +attr.attr_clr = MOUNT_ATTR_NODEV;
-> +.EE
-> +.in
-> +.PP
-> +A user-space application that wishes to determine which extensions
-> +the running kernel supports can do so by conducting a binary search on
-> +.IR size
-> +with a structure which has every byte nonzero (to find the largest value
-> +which doesn't produce an error of
-> +.BR E2BIG ).
-> +.SH EXAMPLES
-> +The following program allows the caller to create a new detached mount and set
-> +various properties on it.
-> +.\"
-> +.SS Program source
-> +\&
-> +.nf
-
-Please, use .EX/.EE for EXAMPLE programs, so that it uses a monospace 
-font even in PDF.
-
-To check how it looks in pdf, source the file 'scripts/bash_aliases', 
-and run `pdfman man2/mount_setattr.2` (you might need to install 'ps2pdf').
-
-> +#define _GNU_SOURCE
-> +#include <errno.h>
-> +#include <fcntl.h>
-> +#include <getopt.h>
-> +#include <linux/mount.h>
-> +#include <linux/types.h>
-> +#include <stdbool.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <sys/syscall.h>
-> +#include <unistd.h>
-> +
-> +/* mount_setattr() */
-> +#ifndef MOUNT_ATTR_RDONLY
-> +#define MOUNT_ATTR_RDONLY 0x00000001
-> +#endif
-> +
-> +#ifndef MOUNT_ATTR_NOSUID
-> +#define MOUNT_ATTR_NOSUID 0x00000002
-> +#endif
-> +
-> +#ifndef MOUNT_ATTR_NOEXEC
-> +#define MOUNT_ATTR_NOEXEC 0x00000008
-> +#endif
-> +
-> +#ifndef MOUNT_ATTR__ATIME
-> +#define MOUNT_ATTR__ATIME 0x00000070
-> +#endif
-> +
-> +#ifndef MOUNT_ATTR_NOATIME
-> +#define MOUNT_ATTR_NOATIME 0x00000010
-> +#endif
-> +
-> +#ifndef MOUNT_ATTR_IDMAP
-> +#define MOUNT_ATTR_IDMAP 0x00100000
-> +#endif
-> +
-> +#ifndef AT_RECURSIVE
-> +#define AT_RECURSIVE 0x8000
-> +#endif
-> +
-> +#ifndef __NR_mount_setattr
-> +    #if defined __alpha__
-> +        #define __NR_mount_setattr 552
-> +    #elif defined _MIPS_SIM
-> +        #if _MIPS_SIM == _MIPS_SIM_ABI32    /* o32 */
-> +            #define __NR_mount_setattr (442 + 4000)
-> +        #endif
-> +        #if _MIPS_SIM == _MIPS_SIM_NABI32   /* n32 */
-> +            #define __NR_mount_setattr (442 + 6000)
-> +        #endif
-> +        #if _MIPS_SIM == _MIPS_SIM_ABI64    /* n64 */
-> +            #define __NR_mount_setattr (442 + 5000)
-> +        #endif
-> +    #elif defined __ia64__
-> +        #define __NR_mount_setattr (442 + 1024)
-> +    #else
-> +        #define __NR_mount_setattr 442
-> +    #endif
-> +struct mount_attr {
-> +    __u64 attr_set;
-> +    __u64 attr_clr;
-> +    __u64 propagation;
-> +    __u64 userns_fd;
-> +};
-> +#endif
-> +
-> +/* open_tree() */
-> +#ifndef OPEN_TREE_CLONE
-> +#define OPEN_TREE_CLONE 1
-> +#endif
-> +
-> +#ifndef OPEN_TREE_CLOEXEC
-> +#define OPEN_TREE_CLOEXEC O_CLOEXEC
-> +#endif
-> +
-> +#ifndef __NR_open_tree
-> +    #if defined __alpha__
-> +        #define __NR_open_tree 538
-> +    #elif defined _MIPS_SIM
-> +        #if _MIPS_SIM == _MIPS_SIM_ABI32    /* o32 */
-> +            #define __NR_open_tree 4428
-> +        #endif
-> +        #if _MIPS_SIM == _MIPS_SIM_NABI32   /* n32 */
-> +            #define __NR_open_tree 6428
-> +        #endif
-> +        #if _MIPS_SIM == _MIPS_SIM_ABI64    /* n64 */
-> +            #define __NR_open_tree 5428
-> +        #endif
-> +    #elif defined __ia64__
-> +        #define __NR_open_tree (428 + 1024)
-> +    #else
-> +        #define __NR_open_tree 428
-> +    #endif
-> +#endif
-> +
-> +/* move_mount() */
-> +#ifndef MOVE_MOUNT_F_EMPTY_PATH
-> +#define MOVE_MOUNT_F_EMPTY_PATH 0x00000004
-> +#endif
-> +
-> +#ifndef __NR_move_mount
-> +    #if defined __alpha__
-> +        #define __NR_move_mount 539
-> +    #elif defined _MIPS_SIM
-> +        #if _MIPS_SIM == _MIPS_SIM_ABI32    /* o32 */
-> +            #define __NR_move_mount 4429
-> +        #endif
-> +        #if _MIPS_SIM == _MIPS_SIM_NABI32   /* n32 */
-> +            #define __NR_move_mount 6429
-> +        #endif
-> +        #if _MIPS_SIM == _MIPS_SIM_ABI64    /* n64 */
-> +            #define __NR_move_mount 5429
-> +        #endif
-> +    #elif defined __ia64__
-> +        #define __NR_move_mount (428 + 1024)
-> +    #else
-> +        #define __NR_move_mount 429
-> +    #endif
-> +#endif
-> +
-> +static inline int mount_setattr(int dfd, const char *path, unsigned int flags,
-> +                                struct mount_attr *attr, size_t size)
-> +{
-> +    return syscall(__NR_mount_setattr, dfd, path, flags, attr, size);
-> +}
-> +
-> +static inline int open_tree(int dfd, const char *filename, unsigned int flags)
-> +{
-> +    return syscall(__NR_open_tree, dfd, filename, flags);
-> +}
-> +
-> +static inline int move_mount(int from_dfd, const char *from_pathname, int to_dfd,
-> +                 const char *to_pathname, unsigned int flags)
-> +{
-> +    return syscall(__NR_move_mount, from_dfd, from_pathname, to_dfd,
-> +                   to_pathname, flags);
-> +}
-> +
-> +static const struct option longopts[] = {
-> +    {"map-mount",       required_argument,  0,  'a'},
-> +    {"recursive",       no_argument,        0,  'b'},
-> +    {"read-only",       no_argument,        0,  'c'},
-> +    {"block-setid",     no_argument,        0,  'd'},
-> +    {"block-devices",   no_argument,        0,  'e'},
-> +    {"block-exec",      no_argument,        0,  'f'},
-> +    {"no-access-time",  no_argument,        0,  'g'},
-> +    { NULL,             0,                  0,   0 },
-> +};
-> +
-> +#define exit_log(format, ...)                   \\
-> +    ({                                          \\
-> +        fprintf(stderr, format, ##__VA_ARGS__); \\
-> +        exit(EXIT_FAILURE);                     \\
-> +    })
-> +
-> +int main(int argc, char *argv[])
-> +{
-> +    int fd_userns = -EBADF, index = 0;
-> +    bool recursive = false;
-> +    struct mount_attr *attr = &(struct mount_attr){};
-> +    const char *source, *target;
-> +    int fd_tree, new_argc, ret;
-> +    char *const *new_argv;
-> +
-> +    while ((ret = getopt_long_only(argc, argv, "", longopts, &index)) != -1) {
-> +        switch (ret) {
-> +        case 'a':
-> +            fd_userns = open(optarg, O_RDONLY | O_CLOEXEC);
-> +            if (fd_userns < 0)
-> +                exit_log("%m - Failed top open user namespace path %s\n", optarg);
-> +            break;
-> +        case 'b':
-> +            recursive = true;
-> +            break;
-> +        case 'c':
-> +            attr->attr_set |= MOUNT_ATTR_RDONLY;
-> +            break;
-> +        case 'd':
-> +            attr->attr_set |= MOUNT_ATTR_NOSUID;
-> +            break;
-> +        case 'e':
-> +            attr->attr_set |= MOUNT_ATTR_NODEV;
-> +            break;
-> +        case 'f':
-> +            attr->attr_set |= MOUNT_ATTR_NOEXEC;
-> +            break;
-> +        case 'g':
-> +            attr->attr_set |= MOUNT_ATTR_NOATIME;
-> +            attr->attr_clr |= MOUNT_ATTR__ATIME;
-> +            break;
-> +        default:
-> +            exit_log("Invalid argument specified");
-> +        }
-> +    }
-> +
-> +    new_argv = &argv[optind];
-> +    new_argc = argc - optind;
-> +    if (new_argc < 2)
-> +        exit_log("Missing source or target mountpoint\n");
-> +    source = new_argv[0];
-> +    target = new_argv[1];
-> +
-> +    fd_tree = open_tree(-EBADF, source,
-> +                        OPEN_TREE_CLONE | OPEN_TREE_CLOEXEC | AT_EMPTY_PATH |
-> +                        (recursive ? AT_RECURSIVE : 0));
-> +    if (fd_tree < 0)
-> +        exit_log("%m - Failed to open %s\n", source);
-> +
-> +    if (fd_userns >= 0) {
-> +        attr->attr_set  |= MOUNT_ATTR_IDMAP;
-> +        attr->userns_fd = fd_userns;
-> +    }
-> +    ret = mount_setattr(fd_tree, "",
-> +                        AT_EMPTY_PATH | (recursive ? AT_RECURSIVE : 0),
-> +                        attr, sizeof(struct mount_attr));
-> +    if (ret < 0)
-> +        exit_log("%m - Failed to change mount attributes\n");
-> +    close(fd_userns);
-> +
-> +    ret = move_mount(fd_tree, "", -EBADF, target, MOVE_MOUNT_F_EMPTY_PATH);
-> +    if (ret < 0)
-> +        exit_log("%m - Failed to attach mount to %s\n", target);
-> +    close(fd_tree);
-> +
-> +    exit(EXIT_SUCCESS);
-> +}
-> +.fi
-
-.EE
-
-> +.SH SEE ALSO
-> +.BR capabilities (7),
-> +.BR clone (2),
-> +.BR clone3 (2),
-> +.BR ext4 (5),
-> +.BR mount (2),
-> +.BR mount_namespaces (7),
-> +.BR newuidmap (1),
-> +.BR newgidmap (1),
-> +.BR proc (5),
-> +.BR unshare (2),
-> +.BR user_namespaces (7),
-> +.BR xattr (7),
-> +.BR xfs (5)
-> 
-> base-commit: 64b8654d8bcac58cae635690f624e2b332736425
-> 
-
+base-commit: fe07bfda2fb9cdef8a4d4008a409bb02f35f1bd8
 -- 
-Alejandro Colomar
-Linux man-pages comaintainer; https://www.kernel.org/doc/man-pages/
-http://www.alejandro-colomar.es/
+2.25.4
+
