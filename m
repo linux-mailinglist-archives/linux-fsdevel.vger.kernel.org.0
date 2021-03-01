@@ -2,180 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4830A329311
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 22:01:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9E0032932F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 22:10:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238145AbhCAU67 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Mar 2021 15:58:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37742 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242899AbhCAU4r (ORCPT
+        id S240906AbhCAVGh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Mar 2021 16:06:37 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:11380 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237023AbhCAVEt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Mar 2021 15:56:47 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A71FDC06178C
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Mar 2021 12:56:03 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id g3so22543377edb.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Mar 2021 12:56:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Uf7JqQFHPCXtVt6OE3ndJLn8tz0ITkjzN5ljfjxdIhk=;
-        b=LsUxVPo7UlbfyojprFB1jf/rKDEY5l1bLqSBqTvGf9XMx0WBQVwMKTlkmnc8L2SxOQ
-         CQVHrea9eSOecxf54/iF/vdL/K8FbOVPW9KBl4US9kraCLKPGcb8Zy87mpx2ALTioUUi
-         I3u0SK3g+sKzDaob/ol6gZFxAQylheAV+/IIn35GbikR2zQgDwQWXktUXD9ULoL+PzQx
-         pr97W32SC56CXIMupsYveBfr4YnEHV3ekVFIoIK0dIk72+g1vb0gS6NvBqVEpVagMIPu
-         0o2DeAiSUb4YzXlIswECNdeyiZKT86n3F+CjMKrQnKtykVj6ngmicpeLHNZKdX23vnF5
-         orlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Uf7JqQFHPCXtVt6OE3ndJLn8tz0ITkjzN5ljfjxdIhk=;
-        b=XSojJb+5oFNjtfnjl01hxR0k/vAvOOknNzQjslHYzDlRRW7FRrdGcCulQKPcDMTuWF
-         LjvyA5v6FrVJ9T6GQvtrTpUIZ+JijFWct3EQQ3QxtHiRuCP7/1lAZu3BkSQZchUnrN9s
-         Y5qHQj2Bbv/0kew51SD+6Po/p8oEV5turOQlQPOQjY+fghy2d5qVzynDUt9RX0An05+A
-         Uw0sG5MRyQmNACNuHDMj4OVP0ZJp58ehxCUynq4J4r4GsUsaiWkH7kDKy8V3rmsJPGyc
-         Mk8CMBAYeCevO/CB7uOqiHBhDPFHZBRCY7Cc0iXEXCAzlJG0YPvcb1hU1hY1ghsvLNGE
-         ZF3g==
-X-Gm-Message-State: AOAM531CnYcHyj5bBFZ3KpxFq3HdUtd6yhTTLs1bZ2QhO2OLLXcoAlhh
-        EgRjhe4n0AoUwdvvPUyKQHkln9BNstoCsUhcDtLYLQ==
-X-Google-Smtp-Source: ABdhPJxBwKnueL85Spjb8OhqRdQvSAhEOhjHLo+ym/acf8R+C2DQPXIFH/M6CoSbCOsavo9bD3fi05mLAmEjhXAU4gc=
-X-Received: by 2002:a05:6402:3585:: with SMTP id y5mr17766218edc.97.1614632162323;
- Mon, 01 Mar 2021 12:56:02 -0800 (PST)
+        Mon, 1 Mar 2021 16:04:49 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B603d56aa0000>; Mon, 01 Mar 2021 13:03:38 -0800
+Received: from HKMAIL102.nvidia.com (10.18.16.11) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 1 Mar
+ 2021 21:03:36 +0000
+Received: from HKMAIL104.nvidia.com (10.18.16.13) by HKMAIL102.nvidia.com
+ (10.18.16.11) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 1 Mar
+ 2021 21:03:35 +0000
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.45) by
+ HKMAIL104.nvidia.com (10.18.16.13) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2 via Frontend Transport; Mon, 1 Mar 2021 21:03:35 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WYofCel73ULFc0mMxiaS46xzr+F19orrYzQyX+eKziPQb42OQS+iTWt0oEbVTjNh3tABILc0JD9skETml1O0vgfTRP/78qzaiG0bz8VQw0XVlLlq1eUO/5LvsH+q11BzzivoCYuZrbrYpZCEE7HVzw39A6NGGrL8MB4I2eKpktSSVx9fjs9JFPfq2/y75aYm1dNde+ufkD2HcD2VmV8ZYTF5glHbgta+jUEc/8LYa8/T8tBKD8eMRx59t/WWGA47HNell5ekBK1JQn4g08OC426+e0I7yIC+IWbMjQAp4gGhfW48boYTU+5L+SvF8e18gZ2Mk6VUnLssUbTjHqTqig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XnHquyRjh+jV13ysPWeUdLrL9hUMUFMZtng1986xSXY=;
+ b=U3g0JFVh2jgxTm9b9Qzc9Ef/vc5v5cZGKs9kzepDMYoVghLGuNJOOTvhfz1kvPHhQjfm7eHQGSq+SvhVSjIdQlmxnL7iBSb1UxCOIlKNcWqwGU3/pf9uiQFfLUCWbCkiBKAMmlzpQa+rHhs+4Ro0o13L7p2MP8ss7cSSfwuJg6OzVYu4s04YPJuFRL7YkbN5Q0SjbOuwlm9yL1gIaiFoDotEpnOZQsMovdVa+4CXBgZ1HTXKuyIwWWOuRPNdhpv1zUsXD1RYa9Dl7OC6t5vsoIri4h73hXdHIl2rhzNX4taA88DYRo7gKZ3uH5yf8BuLH5MSNIoccnGioXB4s5E2xQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+Authentication-Results: infradead.org; dkim=none (message not signed)
+ header.d=none;infradead.org; dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3823.namprd12.prod.outlook.com (2603:10b6:208:168::26)
+ by MN2PR12MB4517.namprd12.prod.outlook.com (2603:10b6:208:267::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.25; Mon, 1 Mar
+ 2021 21:03:33 +0000
+Received: from MN2PR12MB3823.namprd12.prod.outlook.com
+ ([fe80::a1b1:5d8:47d7:4b60]) by MN2PR12MB3823.namprd12.prod.outlook.com
+ ([fe80::a1b1:5d8:47d7:4b60%7]) with mapi id 15.20.3890.028; Mon, 1 Mar 2021
+ 21:03:33 +0000
+From:   Zi Yan <ziy@nvidia.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: Re: [PATCH v3 01/25] mm: Introduce struct folio
+Date:   Mon, 1 Mar 2021 16:03:28 -0500
+X-Mailer: MailMate (1.14r5757)
+Message-ID: <520C0A42-3C42-4E60-A305-6F45B4C57A62@nvidia.com>
+In-Reply-To: <20210301205306.GU2723601@casper.infradead.org>
+References: <20210128070404.1922318-1-willy@infradead.org>
+ <20210128070404.1922318-2-willy@infradead.org>
+ <68723D50-AFD1-4F25-8F10-81EC11045BE5@nvidia.com>
+ <20210301205306.GU2723601@casper.infradead.org>
+Content-Type: multipart/signed;
+        boundary="=_MailMate_99DF7D6C-AF24-48A8-8D60-A170315F56C3_=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+X-Originating-IP: [216.228.112.22]
+X-ClientProxiedBy: BL1PR13CA0150.namprd13.prod.outlook.com
+ (2603:10b6:208:2bb::35) To MN2PR12MB3823.namprd12.prod.outlook.com
+ (2603:10b6:208:168::26)
 MIME-Version: 1.0
-References: <20210226002030.653855-1-ruansy.fnst@fujitsu.com>
- <OSBPR01MB2920899F1D71E7B054A04E39F49D9@OSBPR01MB2920.jpnprd01.prod.outlook.com>
- <20210226190454.GD7272@magnolia> <CAPcyv4iJiYsM5FQdpMvCi24aCi7RqUnnxC6sM0umFqiN+Q59cg@mail.gmail.com>
- <20210226205126.GX4662@dread.disaster.area> <CAPcyv4iDefA3Y0wUW=p080SYAsM_2TPJba-V-sxdK_BeJMkmsw@mail.gmail.com>
- <20210226212748.GY4662@dread.disaster.area> <CAPcyv4jryJ32R5vOwwEdoU3V8C0B7zu_pCt=7f6A3Gk-9h6Dfg@mail.gmail.com>
- <20210227223611.GZ4662@dread.disaster.area> <CAPcyv4h7XA3Jorcy_J+t9scw0A4KdT2WEwAhE-Nbjc=C2qmkMw@mail.gmail.com>
- <20210228223846.GA4662@dread.disaster.area>
-In-Reply-To: <20210228223846.GA4662@dread.disaster.area>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 1 Mar 2021 12:55:53 -0800
-Message-ID: <CAPcyv4jzV2RUij2BEvDJLLiK_67Nf1v3M6-jRLKf32x4iOzqng@mail.gmail.com>
-Subject: Re: Question about the "EXPERIMENTAL" tag for dax in XFS
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "hch@lst.de" <hch@lst.de>, "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
-        "y-goto@fujitsu.com" <y-goto@fujitsu.com>,
-        "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
-        "fnstml-iaas@cn.fujitsu.com" <fnstml-iaas@cn.fujitsu.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [10.2.62.13] (216.228.112.22) by BL1PR13CA0150.namprd13.prod.outlook.com (2603:10b6:208:2bb::35) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.9 via Frontend Transport; Mon, 1 Mar 2021 21:03:31 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ebda2b25-6e0d-48d4-4f88-08d8dcf5790c
+X-MS-TrafficTypeDiagnostic: MN2PR12MB4517:
+X-MS-Exchange-MinimumUrlDomainAge: kernel.org#8760
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MN2PR12MB4517C52A0BFAC70A7A2CAC97C29A9@MN2PR12MB4517.namprd12.prod.outlook.com>
+X-Header: ProcessedBy-CMR-outbound
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ezWwGdMWU0IJQ61bb7I6J7Q/ZNozECEudLD4o01dXWSKiHQzfEBjNI0YmoTmZY0TZh6CvCEoB2YQvT1wJ8HCyyMbd/r17XoOYkXMaPk+mHx8GEXlCvyDOPmBN07XA5F6emQ+YhIIfrOhhz6EWOTEk4UHbgHUBtkT37F4b1mepZJHoy1DWlo/8julAu3wj3c0y4dbvcoPXcWuuNtbRAo+BY3zuEpdLFu/HuKjGjiACLkI1udnaEvkODD/WU3conKdPPs2+HyiC5xFA6kaRNr4C2U948kibzal2CXHdCEYOu05HMegiJXheTpxFOGjriuyFf7UNXc18LfXux9NKNjtqeb2/6OkrHNXaHGBPfE8KzTmWu5bBL4i2h1KEiB6sUqSyedHk2gbIEqoGGGEwG0iz5WTHSo/XKkHU1f/+mJe3DRDZ50qacABS6PfQu5LNOvt/tJo5NoelakFkc4t5wQY8UPEVY6beehSEZLIUs9ehN5JYwn2rBV55HURaei6SFglQmCXgw+il61o6TNXlqlEoVZY3NjmIuyXXUV7TTbew5lc8kG7tNHhge0TMy6vvj2/P8gusd7RzEnK0+JNoGIFIzs/pdoOEve61fsWM9QuVuQ8ZTi85N79NYeRq6WvUkLvmnvjiPC16hA+mHmlWwkWJR8XscsG9hURneXyMlfydTcDdbw73XZkbdyTuA896h2K
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3823.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(376002)(39860400002)(346002)(136003)(366004)(6486002)(86362001)(956004)(33964004)(2616005)(16576012)(186003)(26005)(36756003)(316002)(2906002)(53546011)(16526019)(235185007)(8936002)(5660300002)(8676002)(83380400001)(4326008)(66946007)(66556008)(33656002)(6666004)(478600001)(966005)(66476007)(6916009)(72826003)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?UUdFNGVDaGs4V2M0YVovd1JDZGRDQTE1Z1lDQkd4QmUycGF6OUlPSndNN3Nq?=
+ =?utf-8?B?WVZpTlB6WUQwZmhxV2NGTjZVeHF4WjJud0lTRUQwTGtENUIzSzhiS05ZZGZC?=
+ =?utf-8?B?bWNhM0lBMlNyT0IwaHhPTG44S3NRMzcyRXRPdGJqS2ErZDFYM08rUmIvVUl4?=
+ =?utf-8?B?ZEhTbE8yKzE2YzZTRjVxemcxeThXYnZzdi9iZVlaTkJKVFRRb0wzL2o5VXlJ?=
+ =?utf-8?B?MlJjNk1iQjIweVN5ZnkvVjdCeWE5YXlRMUZwQnZ4YW40V3pNVFZWczczVFZM?=
+ =?utf-8?B?WmF3d2JqSm0yQmNuQVhaWUx4OFFpMkxMNnlqVENvOXVncDFzaGh2b25xb20z?=
+ =?utf-8?B?blQwS1JFRDdDVCtidjhyMEUwQmdyWHRLeVBIQmNMR3hncUpsMlI2WHRBTURW?=
+ =?utf-8?B?YjVNSm0wazJ3aDhtVTFJNlcwaG9nREhsZ2xtTE1HaUU5ZEVSTzZkaFVwV2Yr?=
+ =?utf-8?B?RWxZR2UyeUMweXQzYys5c2hOK2wzcjIrSkFvbW5zN2o2am1zQkVxOFRwTnRL?=
+ =?utf-8?B?cElxc3BlNmtySlFmdWx2Z0laVEFhNVNBbUtreEthMFVtNWd3VEM2aDV6TC8y?=
+ =?utf-8?B?VVJrK3lTejBBQnVVR0xjdDRUdzB1QXNVNjAxenFBcEtQU1FQQU5EZFRYZGxO?=
+ =?utf-8?B?VkpVbkc4TUxrSm9UM29ZM1V2Z1U3MU1KK1RKbUVGQ0dCZ2gzUnl5V3J0bHRM?=
+ =?utf-8?B?S3pTVXhjOXZEcUtIV1pYN0NVaHdhajVoUWxEWEhydnhjSkkxU0JIaTE5WGlM?=
+ =?utf-8?B?aGcraWx1SnB5REtJSHJwM0xBbmZkTmhZeHZTWHpWemZYelo2eUdTbEd2a281?=
+ =?utf-8?B?dmZFaDA4Mjd2L0J2NUVsNDNTZlMrVFFJZmQvR05WN3Jwa05xSlFjWlhKdlMy?=
+ =?utf-8?B?bTJ2ODJ5VEs2ZmpFblN3NFBzWFM1dnk4U2svczFHVG9QOWRPMnJNRW01bE9o?=
+ =?utf-8?B?a2FkVUpUUGp0Qnpsc1pBYTlYRXZhcGRsRkE1bWkvUEd2RkdpTjZsV1ZzK3lN?=
+ =?utf-8?B?RG5Ua21SMXZIbURQWWZUeGxJQ1JjK1VHNkkxYitkVDd3MGd1MG9WU05QdWE0?=
+ =?utf-8?B?VzV5ZXZMM0Rub093L0JCc3hZeWt5Z2pNOGt6MEZBUmdQK1ZlMnR4MXJpN1lQ?=
+ =?utf-8?B?ZjdlR295Ym81SzlHZU8wejltbTU5OElEYzUzeGZwbmd5cnpzVjJIcE5BeG01?=
+ =?utf-8?B?TVhLbXY5emt5NldUOTNyYkdUUEFXZHdUL2taM0JlNkJNWVJnVWlmYnJPeDFO?=
+ =?utf-8?B?TEN1MTVzUng3Yzl3cTVMZUdyT3BmYW1PeHc0bWR2VmtCalVCblpFalZIMVNX?=
+ =?utf-8?B?NWV1N1pFdmhOWXpKcnBHWDFuNUM5WGE4YXJydkUvdVA3TW16a3hiUE9BUlUv?=
+ =?utf-8?B?MHFUbGlPTE1uMTljVnJIcWZtTm0yVUcxaTRJc1RWb3dUMnZsSi8vR2QwRG0r?=
+ =?utf-8?B?UWlWcEN4QXkySnpJVDVKMGwvVXZtbEVJY0Nnb0hNMlRqYmV2WUhjMkk4NjFF?=
+ =?utf-8?B?djM2RmlHcVgvZkdBVWZsT2xTMFRiR1JpL0hwc2hpa0g2OWQ4UnF0U0gzQWxM?=
+ =?utf-8?B?bmsxYXpXYUtFR1VabUNuZCtEU3hrTFJDV3JTS0pBclpucHR3a2ltRVZobjQ2?=
+ =?utf-8?B?Y29HUjhvOGxsWDJvWU0zM0dwQmVjNll0Nkx3WDB1RFVGR29sL0JaOFR0ZFVw?=
+ =?utf-8?B?QU5RVHZoZGgrZFRnb3YyZHFmVlpHZkdMam54K2krMVBKdEZNTklMYWtjSHVP?=
+ =?utf-8?Q?IAWwtge8WGmYgQyNHQ6B3Lxl19gqr9ZSz1AkFeK?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebda2b25-6e0d-48d4-4f88-08d8dcf5790c
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3823.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Mar 2021 21:03:33.0812
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uqlNLFVWI2LcgrQ/Pe17d0XlxOhfeKowgh2PxbamRVvh+Pit+guP5w89SsH/D0M4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4517
+X-OriginatorOrg: Nvidia.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1614632618; bh=5iGl+KNYWDxJaM/XTSEqOpzfbuHpoYP2/s8JsClEFU0=;
+        h=ARC-Seal:ARC-Message-Signature:ARC-Authentication-Results:
+         Authentication-Results:From:To:CC:Subject:Date:X-Mailer:Message-ID:
+         In-Reply-To:References:Content-Type:X-Originating-IP:
+         X-ClientProxiedBy:MIME-Version:
+         X-MS-Exchange-MessageSentRepresentingType:X-MS-PublicTrafficType:
+         X-MS-Office365-Filtering-Correlation-Id:X-MS-TrafficTypeDiagnostic:
+         X-MS-Exchange-MinimumUrlDomainAge:X-MS-Exchange-Transport-Forked:
+         X-Microsoft-Antispam-PRVS:X-Header:X-MS-Oob-TLC-OOBClassifiers:
+         X-MS-Exchange-SenderADCheck:X-Microsoft-Antispam:
+         X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+         X-MS-Exchange-AntiSpam-MessageData:
+         X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-AuthSource:
+         X-MS-Exchange-CrossTenant-AuthAs:
+         X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+         X-MS-Exchange-CrossTenant-FromEntityHeader:
+         X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+         X-MS-Exchange-CrossTenant-UserPrincipalName:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg;
+        b=csv6SJBBPPzo5PSDtqshVI3i80e02eyrQd/cMS9JzgKAbZZ0qRV6kBeDfpCY7RQXG
+         C4UwpuZqDzk40iDWFYYckXhAt/MZzNSx8VhMyBvWrzYaNkBQq8ZPr5egDB1OT8TkrF
+         KP0M1V1UkwnJXQXz+Vukp5jWaGUzv5klfbRW3WZJ9644c/RcEP7BO26neAoNyVrOAV
+         0coNPCvV68/Zcv5gX4aU00F3sJi1syUNDSuA/kbWyFM/37NyMV8pn4IIk5Rh4w/AUu
+         tYfMZPG5VkdrfCD3a6cvTInt4WxzhhODvpOCBx9ccpQLTOgDmam/955Uv6MmTZ+wvu
+         LocXpbvXpvshQ==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 28, 2021 at 2:39 PM Dave Chinner <david@fromorbit.com> wrote:
+--=_MailMate_99DF7D6C-AF24-48A8-8D60-A170315F56C3_=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On 1 Mar 2021, at 15:53, Matthew Wilcox wrote:
+
+> On Mon, Mar 01, 2021 at 03:26:11PM -0500, Zi Yan wrote:
+>>> +static inline struct folio *next_folio(struct folio *folio)
+>>> +{
+>>> +	return folio + folio_nr_pages(folio);
+>>
+>> Are you planning to make hugetlb use folio too?
 >
-> On Sat, Feb 27, 2021 at 03:40:24PM -0800, Dan Williams wrote:
-> > On Sat, Feb 27, 2021 at 2:36 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > On Fri, Feb 26, 2021 at 02:41:34PM -0800, Dan Williams wrote:
-> > > > On Fri, Feb 26, 2021 at 1:28 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > > > On Fri, Feb 26, 2021 at 12:59:53PM -0800, Dan Williams wrote:
-> > > it points to, check if it points to the PMEM that is being removed,
-> > > grab the page it points to, map that to the relevant struct page,
-> > > run collect_procs() on that page, then kill the user processes that
-> > > map that page.
-> > >
-> > > So why can't we walk the ptescheck the physical pages that they
-> > > map to and if they map to a pmem page we go poison that
-> > > page and that kills any user process that maps it.
-> > >
-> > > i.e. I can't see how unexpected pmem device unplug is any different
-> > > to an MCE delivering a hwpoison event to a DAX mapped page.
-> >
-> > I guess the tradeoff is walking a long list of inodes vs walking a
-> > large array of pages.
+> Eventually, probably.  It's not my focus.
 >
-> Not really. You're assuming all a filesystem has to do is invalidate
-> everything if a device goes away, and that's not true. Finding if an
-> inode has a mapping that spans a specific device in a multi-device
-> filesystem can be a lot more complex than that. Just walking inodes
-> is easy - determining whihc inodes need invalidation is the hard
-> part.
-
-That inode-to-device level of specificity is not needed for the same
-reason that drop_caches does not need to be specific. If the wrong
-page is unmapped a re-fault will bring it back, and re-fault will fail
-for the pages that are successfully removed.
-
-> That's where ->corrupt_range() comes in - the filesystem is already
-> set up to do reverse mapping from physical range to inode(s)
-> offsets...
-
-Sure, but what is the need to get to that level of specificity with
-the filesystem for something that should rarely happen in the course
-of normal operation outside of a mistake?
-
+>> If yes, this might not work if we have CONFIG_SPARSEMEM && !CONFIG_SPA=
+RSEMEM_VMEMMAP
+>> with a hugetlb folio > MAX_ORDER, because struct page might not be vir=
+tually contiguous.
+>> See the experiment I did in [1].
+>>
+>> [1] https://lore.kernel.org/linux-mm/16F7C58B-4D79-41C5-9B64-A1A1628F4=
+AF2@nvidia.com/
 >
-> > There's likely always more pages than inodes, but perhaps it's more
-> > efficient to walk the 'struct page' array than sb->s_inodes?
+> I thought we were going to forbid that configuration?  ie no pages
+> larger than MAX_ORDER with (SPARSEMEM && !SPARSEMEM_VMEMMAP)
 >
-> I really don't see you seem to be telling us that invalidation is an
-> either/or choice. There's more ways to convert physical block
-> address -> inode file offset and mapping index than brute force
-> inode cache walks....
-
-Yes, but I was trying to map it to an existing mechanism and the
-internals of drop_pagecache_sb() are, in coarse terms, close to what
-needs to happen here.
-
+> https://lore.kernel.org/linux-mm/312AECBD-CA6D-4E93-A6C1-1DF87BABD92D@n=
+vidia.com/
 >
-> .....
->
-> > > IOWs, what needs to happen at this point is very filesystem
-> > > specific. Assuming that "device unplug == filesystem dead" is not
-> > > correct, nor is specifying a generic action that assumes the
-> > > filesystem is dead because a device it is using went away.
-> >
-> > Ok, I think I set this discussion in the wrong direction implying any
-> > mapping of this action to a "filesystem dead" event. It's just a "zap
-> > all ptes" event and upper layers recover from there.
->
-> Yes, that's exactly what ->corrupt_range() is intended for. It
-> allows the filesystem to lock out access to the bad range
-> and then recover the data. Or metadata, if that's where the bad
-> range lands. If that recovery fails, it can then report a data
-> loss/filesystem shutdown event to userspace and kill user procs that
-> span the bad range...
->
-> FWIW, is this notification going to occur before or after the device
-> has been physically unplugged?
+> is somewhere else we were discussing this.
 
-Before. This will be operations that happen in the pmem driver
-->remove() callback.
+That is my plan for 1GB THP, making it depend on SPARSEMEM_VMEMMAP,
+otherwise the THP code will be too complicated to read. My concern
+is just about using folio in hugetlb, since
 
-> i.e. what do we do about the
-> time-of-unplug-to-time-of-invalidation window where userspace can
-> still attempt to access the missing pmem though the
-> not-yet-invalidated ptes? It may not be likely that people just yank
-> pmem nvdimms out of machines, but with NVMe persistent memory
-> spaces, there's every chance that someone pulls the wrong device...
+If hugetlb is not using folio soon, the patch looks good to me.
 
-The physical removal aspect is only theoretical today. While the pmem
-driver has a ->remove() path that's purely a software unbind
-operation. That said the vulnerability window today is if a process
-acquires a dax mapping, the pmem device hosting that filesystem goes
-through an unbind / bind cycle, and then a new filesystem is created /
-mounted. That old pte may be able to access data that is outside its
-intended protection domain.
+Reviewed-by: Zi Yan <ziy@nvidia.com>
 
-Going forward, for buses like CXL, there will be a managed physical
-remove operation via PCIE native hotplug. The flow there is that the
-PCIE hotplug driver will notify the OS of a pending removal, trigger
-->remove() on the pmem driver, and then notify the technician (slot
-status LED) that the card is safe to pull.
+
+=E2=80=94
+Best Regards,
+Yan Zi
+
+--=_MailMate_99DF7D6C-AF24-48A8-8D60-A170315F56C3_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAmA9VqAPHHppeUBudmlk
+aWEuY29tAAoJEJ2yUfNrYfqKvxEQAIlKHEV3H0khZrrm6TL1x8xXtVWd9ozIqkew
+1cknsMfRP3a+FxDDJ9afRjsBm50YY2xLmNIvLlRO++XC3/xziFiBSgHGLrDjIKU1
+nU4sg2WXK/rg72+ODq3y88MCo8uRCX+ph40YNpWbKCgUGjEQCTc7Y+YMPRrlwzV4
+lxE0FfrB1cY40ifB82fia3Ml4VnoXncZ8BQuUFnkoexz1iSr6wrjiEOFg7Q6CHJ+
+CyTwkUJ8mPVJJoL3Q3DwTZ4ucZ8TKU6QhkIW9ByRrhqggho1zi4lpdBcb1H1KOva
+TdP1EY3d2OCMfPf2T5/G1uHp/CgKUTTAj42YVEHSSSdLWjzrAH7XGya3j3cT5rsU
+iz4jsXg9BRrnmQxqzwdd2EQsZpH7lajtxzuwWZXzZ5s/NriPxZhte6sv8MsCYqux
+sNvPAwO4TvESzwrZqya4q+8obzWcG7jKqJA7Dy+3K/enUDpZBb9sXJSRKRr9vzVM
+rG+8tNdMOLQ3WvLX4/qJeiBoJAjClvPz9/Nq201/0VVzKTlZ6G6Q6KrKtdZVARpL
+KqNARoP8C+YM67s+GWr55Lj2N7pFIEFfB8gn2ZYEi9KfzRdzcWIv3KX3xBx7ITxH
+xwYuab0Tdp/9REVAi5SY+8vxmQ0TPsOImynt02WwCTmRflJAXBiZ7DD21Zfp5PNy
+cuxB+bC2
+=/26m
+-----END PGP SIGNATURE-----
+
+--=_MailMate_99DF7D6C-AF24-48A8-8D60-A170315F56C3_=--
