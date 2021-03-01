@@ -2,105 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CE9F328ABA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 19:24:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 424D7328C1E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 19:46:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239680AbhCASWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Mar 2021 13:22:18 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50960 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239623AbhCASUH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Mar 2021 13:20:07 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id BC6DAAFAF;
-        Mon,  1 Mar 2021 18:19:21 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 1f142bb4;
-        Mon, 1 Mar 2021 18:20:31 +0000 (UTC)
-Date:   Mon, 1 Mar 2021 18:20:30 +0000
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        virtio-fs@redhat.com, linux-kernel@vger.kernel.org,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [RFC PATCH] fuse: Clear SGID bit when setting mode in setacl
-Message-ID: <YD0wbmulcBVZ7VZy@suse.de>
-References: <20210226183357.28467-1-lhenriques@suse.de>
- <20210301163324.GC186178@redhat.com>
+        id S239679AbhCASpz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Mar 2021 13:45:55 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:60565 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240491AbhCASnW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Mar 2021 13:43:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1614624109;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=/bw7Em3MQTLSbWrJzku5elf34tlVsF/GuX6xjSbODzg=;
+        b=egf0yHfkY2CLAxMwXIuozJl541Z/dkXU1jNmLqzWehJdXyLT+v8dR37uNPJp1synkjtHou
+        leO9cPiLJ5iKf4yeU39tEuHSFMfQvU5H1dTmvk2TzNoBD3vTuiPFWCEQM/4Fsolaemk6yz
+        SaJLTz+cM0FoKHiF3wok1yJ0FD+AyOo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-384-34rguDLlOFeZi_rGWNNdbA-1; Mon, 01 Mar 2021 13:41:47 -0500
+X-MC-Unique: 34rguDLlOFeZi_rGWNNdbA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 56881107ACE3;
+        Mon,  1 Mar 2021 18:41:46 +0000 (UTC)
+Received: from x1.localdomain.com (ovpn-112-84.ams2.redhat.com [10.36.112.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 40A9119744;
+        Mon,  1 Mar 2021 18:41:45 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH resend 0/4] vboxsf: Add support for the atomic_open directory-inode op
+Date:   Mon,  1 Mar 2021 19:41:39 +0100
+Message-Id: <20210301184143.29878-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210301163324.GC186178@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 01, 2021 at 11:33:24AM -0500, Vivek Goyal wrote:
-> On Fri, Feb 26, 2021 at 06:33:57PM +0000, Luis Henriques wrote:
-> > Setting file permissions with POSIX ACLs (setxattr) isn't clearing the
-> > setgid bit.  This seems to be CVE-2016-7097, detected by running fstest
-> > generic/375 in virtiofs.  Unfortunately, when the fix for this CVE landed
-> > in the kernel with commit 073931017b49 ("posix_acl: Clear SGID bit when
-> > setting file permissions"), FUSE didn't had ACLs support yet.
-> 
-> Hi Luis,
-> 
-> Interesting. I did not know that "chmod" can lead to clearing of SGID
-> as well. Recently we implemented FUSE_HANDLE_KILLPRIV_V2 flag which
-> means that file server is responsible for clearing of SUID/SGID/caps
-> as per following rules.
-> 
->     - caps are always cleared on chown/write/truncate
->     - suid is always cleared on chown, while for truncate/write it is cleared
->       only if caller does not have CAP_FSETID.
->     - sgid is always cleared on chown, while for truncate/write it is cleared
->       only if caller does not have CAP_FSETID as well as file has group execute
->       permission.
-> 
-> And we don't have anything about "chmod" in this list. Well, I will test
-> this and come back to this little later.
-> 
-> I see following comment in fuse_set_acl().
-> 
->                 /*
->                  * Fuse userspace is responsible for updating access
->                  * permissions in the inode, if needed. fuse_setxattr
->                  * invalidates the inode attributes, which will force
->                  * them to be refreshed the next time they are used,
->                  * and it also updates i_ctime.
->                  */
-> 
-> So looks like that original code has been written with intent that
-> file server is responsible for updating inode permissions. I am
-> assuming this will include clearing of S_ISGID if needed.
-> 
-> But question is, does file server has enough information to be able
-> to handle proper clearing of S_ISGID info. IIUC, file server will need
-> two pieces of information atleast.
-> 
-> - gid of the caller.
-> - Whether caller has CAP_FSETID or not.
-> 
-> I think we have first piece of information but not the second one. May
-> be we need to send this in fuse_setxattr_in->flags. And file server
-> can drop CAP_FSETID while doing setxattr().
-> 
-> What about "gid" info. We don't change to caller's uid/gid while doing
-> setxattr(). So host might not clear S_ISGID or clear it when it should
-> not. I am wondering that can we switch to caller's uid/gid in setxattr(),
-> atleast while setting acls.
+Hi Al,
 
-Thank for looking into this.  To be honest, initially I thought that the
-fix should be done in the server too, but when I looked into the code I
-couldn't find an easy way to get that done (without modifying the data
-being passed from the kernel in setxattr).
+Here is a resend of my patch series to add support for the atomic_open
+directory-inode op to vboxsf, since this series seems to have fallen
+through the cracks.
 
-So, what I've done was to look at what other filesystems were doing in the
-ACL code, and that's where I found out about this CVE.  The CVE fix for
-the other filesystems looked easy enough to be included in FUSE too.
+Note this is not just an enhancement this also fixes an actual issue
+which users are hitting, see the commit message of patch 4/4.
 
-Cheers,
---
-Luís
+Regards,
+
+Hans
+
+
+
+Hans de Goede (4):
+  vboxsf: Honor excl flag to the dir-inode create op
+  vboxsf: Make vboxsf_dir_create() return the handle for the created
+    file
+  vboxsf: Add vboxsf_[create|release]_sf_handle() helpers
+  vboxsf: Add support for the atomic_open directory-inode op
+
+ fs/vboxsf/dir.c    | 76 +++++++++++++++++++++++++++++++++++++++-------
+ fs/vboxsf/file.c   | 71 +++++++++++++++++++++++++++----------------
+ fs/vboxsf/vfsmod.h |  7 +++++
+ 3 files changed, 116 insertions(+), 38 deletions(-)
+
+-- 
+2.30.1
+
