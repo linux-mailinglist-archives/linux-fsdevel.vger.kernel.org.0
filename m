@@ -2,124 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26AD3328A03
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 19:12:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59CB7328A4D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 19:16:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239139AbhCASJ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Mar 2021 13:09:58 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:26650 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239176AbhCASHc (ORCPT
+        id S231990AbhCASPS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Mar 2021 13:15:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59036 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239021AbhCASMl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Mar 2021 13:07:32 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 121I5EXG066483;
-        Mon, 1 Mar 2021 13:06:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=QRfwyov4tdGnAwz8cU/ex+kzIeddUMeBq24T0KutDYA=;
- b=SKs8M5bDVZqVGMpp+Adqq1gShCr3DlMbLablmetxMymKLcKYF6k66j0fQr3yCRzHHe8/
- aU8wDhR8A7OtTxHhsuLbUxiikOG9p+CIpPiw+SLfY8pOubqrRNk7BattW4uDLxr38ij6
- pIsI9+1EjiK7Wf3ohnPEUHFPkRxk+WlY+gRQZvJMEubvJMyLMVtNLn0wGvBNhbuC8SRZ
- Qb70Dmmg/qXsZGbTwvHMQLEsFlMqEtWGWT5IqVedJwSgX6aibTxJeE2n68fuGZV9wdIh
- Bg+p+YQYJuIgRsefj3xVO0dSMJr1TPaWPu2dzRN9XT+cPCYmeMDlDrTlLklTs9ppbP+3 Nw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3713w7tvch-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 01 Mar 2021 13:06:39 -0500
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 121I6caG077482;
-        Mon, 1 Mar 2021 13:06:38 -0500
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3713w7tvbj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 01 Mar 2021 13:06:38 -0500
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 121I36lI015679;
-        Mon, 1 Mar 2021 18:06:36 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma01fra.de.ibm.com with ESMTP id 370atn0m4h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 01 Mar 2021 18:06:36 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 121I6X2L38797700
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 1 Mar 2021 18:06:33 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C7461AE057;
-        Mon,  1 Mar 2021 18:06:33 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 363B0AE04D;
-        Mon,  1 Mar 2021 18:06:32 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.103.165])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  1 Mar 2021 18:06:32 +0000 (GMT)
-Message-ID: <58c23338f15ea13278f275832ac35eeff875daad.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 02/11] evm: Load EVM key in ima_load_x509() to avoid
- appraisal
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        silviu.vlasceanu@huawei.com
-Date:   Mon, 01 Mar 2021 13:06:31 -0500
-In-Reply-To: <20201111092302.1589-3-roberto.sassu@huawei.com>
-References: <20201111092302.1589-1-roberto.sassu@huawei.com>
-         <20201111092302.1589-3-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-01_12:2021-03-01,2021-03-01 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- spamscore=0 clxscore=1011 priorityscore=1501 impostorscore=0
- suspectscore=0 mlxscore=0 adultscore=0 bulkscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103010146
+        Mon, 1 Mar 2021 13:12:41 -0500
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A182C06178B
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Mar 2021 10:11:59 -0800 (PST)
+Received: by mail-lj1-x229.google.com with SMTP id q23so20575545lji.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Mar 2021 10:11:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BGU0eUrGcHK/RDV2rfGKNSJvLH9RO1hVgeZSC29kjwo=;
+        b=ht1sFzXFGRfS8LWY4p2VzOH9ey6K1YEdVoK6ois+19WsBeTJoAIp0tgzWGYsYZupDU
+         qJFKb8PFVL3nJiTyit/TnKA8aEKQDxwwg71VD/oSYIQZaacqGy9Zwb2Fq8Pbi+ExaAsQ
+         VL6amJZRvFp93GD92cT48zqHKb0jTeHHHfyb5JEJEiyWdxMJa/5UUKgZZmbMNPXLu1L+
+         d7BSvB3G1hdvVn0qWuUDLAj/ndRvD7LVDuiJLAM1+CPfKY5NqqlhAQW6YxI5bLXG/pkJ
+         l/f7aZVczU7/iYKir9kKh5hnoT+daU64GUZ0uEi3m6Kvqzx8q9w4NEkVdDFmjzlboJ+r
+         yNCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BGU0eUrGcHK/RDV2rfGKNSJvLH9RO1hVgeZSC29kjwo=;
+        b=VvFMSa4FG7DFTiQVuIuifuG5Z4CpXgwSBV/IvxR2FueZH4I0lnglV8tqofrGn91EWG
+         BUwuPOL/UDnlw9ivGrB86GhTJx3UZrANBfTnsFRjo2GVAvm+XN+OeC+L7XVxXrSspewh
+         cyb620RuUOeWvS/jHBqXkjv1U9oYeTtb8nFzYZuHuivvKx490tBVuCEI95tALCShxWlS
+         KP5vMUM0VytvaFmbCR8Tpn2IkV0Q6gLuyegCov6RimO3EIvkXx2plZgVkT0iyctyvaP9
+         bSnXmEGkRy2H+oq9ZaS356YFqyJL6mRfBydg4lTzj29NQnUh50EiFRIWdb4gdS0d2yke
+         nEKg==
+X-Gm-Message-State: AOAM533Y6WhIA8hJL3DwH3N1zaLu+7rbMVeGFIhblVIOuh3dVSHsGQq0
+        DO7CNXoBiINXKgiSp5LnoOlDYsW/WvY8FHjOrc5eVA==
+X-Google-Smtp-Source: ABdhPJyyN10CMbekqIe2EaCLHXVwEmhEw2eA0ojmVgi3XY81XzPa0cvQd4lzpVVcj9/BVccaJ8HjfF/Ze2+dV2hAXeM=
+X-Received: by 2002:a2e:9cc4:: with SMTP id g4mr981268ljj.34.1614622317485;
+ Mon, 01 Mar 2021 10:11:57 -0800 (PST)
+MIME-Version: 1.0
+References: <20210301062227.59292-1-songmuchun@bytedance.com> <20210301062227.59292-3-songmuchun@bytedance.com>
+In-Reply-To: <20210301062227.59292-3-songmuchun@bytedance.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Mon, 1 Mar 2021 10:11:45 -0800
+Message-ID: <CALvZod7sysj0+wrzLTXnwn7s_Gf-V2eFPJ6cLcoRmR0LdAFk0Q@mail.gmail.com>
+Subject: Re: [PATCH 2/5] mm: memcontrol: make page_memcg{_rcu} only applicable
+ for non-kmem page
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        john.fastabend@gmail.com, kpsingh@kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        dietmar.eggemann@arm.com, Steven Rostedt <rostedt@goodmis.org>,
+        Benjamin Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, bristot@redhat.com,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        alexander.h.duyck@linux.intel.com,
+        Chris Down <chris@chrisdown.name>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Oskolkov <posk@google.com>, Jann Horn <jannh@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, daniel.vetter@ffwll.ch,
+        Waiman Long <longman@redhat.com>,
+        Michel Lespinasse <walken@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>, krisman@collabora.com,
+        esyr@redhat.com, Suren Baghdasaryan <surenb@google.com>,
+        Marco Elver <elver@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        duanxiongchun@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Roberto,
+On Sun, Feb 28, 2021 at 10:25 PM Muchun Song <songmuchun@bytedance.com> wrote:
+>
+> We want to reuse the obj_cgroup APIs to reparent the kmem pages when
+> the memcg offlined. If we do this, we should store an object cgroup
+> pointer to page->memcg_data for the kmem pages.
+>
+> Finally, page->memcg_data can have 3 different meanings.
+>
+>   1) For the slab pages, page->memcg_data points to an object cgroups
+>      vector.
+>
+>   2) For the kmem pages (exclude the slab pages), page->memcg_data
+>      points to an object cgroup.
+>
+>   3) For the user pages (e.g. the LRU pages), page->memcg_data points
+>      to a memory cgroup.
+>
+> Currently we always get the memcg associated with a page via page_memcg
+> or page_memcg_rcu. page_memcg_check is special, it has to be used in
+> cases when it's not known if a page has an associated memory cgroup
+> pointer or an object cgroups vector. Because the page->memcg_data of
+> the kmem page is not pointing to a memory cgroup in the later patch,
+> the page_memcg and page_memcg_rcu cannot be applicable for the kmem
+> pages. In this patch, we introduce page_memcg_kmem to get the memcg
+> associated with the kmem pages. And make page_memcg and page_memcg_rcu
+> no longer apply to the kmem pages.
+>
+> In the end, there are 4 helpers to get the memcg associated with a
+> page. The usage is as follows.
+>
+>   1) Get the memory cgroup associated with a non-kmem page (e.g. the LRU
+>      pages).
+>
+>      - page_memcg()
+>      - page_memcg_rcu()
 
-On Wed, 2020-11-11 at 10:22 +0100, Roberto Sassu wrote:
-> Public keys do not need to be appraised by IMA as the restriction on the
-> IMA/EVM keyrings ensures that a key can be loaded only if it is signed with
-> a key in the primary or secondary keyring.
-> 
-> However, when evm_load_x509() is called, appraisal is already enabled and
-> a valid IMA signature must be added to the EVM key to pass verification.
-> 
-> Since the restriction is applied on both IMA and EVM keyrings, it is safe
-> to disable appraisal also when the EVM key is loaded. This patch calls
-> evm_load_x509() inside ima_load_x509() if CONFIG_IMA_LOAD_X509 is defined.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Can you rename these to page_memcg_lru[_rcu] to make them explicitly
+for LRU pages?
+
+>
+>   2) Get the memory cgroup associated with a kmem page (exclude the slab
+>      pages).
+>
+>      - page_memcg_kmem()
+>
+>   3) Get the memory cgroup associated with a page. It has to be used in
+>      cases when it's not known if a page has an associated memory cgroup
+>      pointer or an object cgroups vector. Returns NULL for slab pages or
+>      uncharged pages, otherwise, returns memory cgroup for charged pages
+>      (e.g. kmem pages, LRU pages).
+>
+>      - page_memcg_check()
+>
+> In some place, we use page_memcg to check whether the page is charged.
+> Now we introduce page_memcg_charged helper to do this.
+>
+> This is a preparation for reparenting the kmem pages. To support reparent
+> kmem pages, we just need to adjust page_memcg_kmem and page_memcg_check in
+> the later patch.
+>
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 > ---
->  security/integrity/iint.c         | 2 ++
->  security/integrity/ima/ima_init.c | 4 ++++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> index 1d20003243c3..7d08c31c612f 100644
-> --- a/security/integrity/iint.c
-> +++ b/security/integrity/iint.c
-> @@ -200,7 +200,9 @@ int integrity_kernel_read(struct file *file, loff_t offset,
->  void __init integrity_load_keys(void)
+[snip]
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -855,10 +855,11 @@ void __mod_lruvec_page_state(struct page *page, enum node_stat_item idx,
+>                              int val)
 >  {
->  	ima_load_x509();
-> +#ifndef CONFIG_IMA_LOAD_X509
->  	evm_load_x509();
-> +#endif
+>         struct page *head = compound_head(page); /* rmap on tail pages */
+> -       struct mem_cgroup *memcg = page_memcg(head);
+> +       struct mem_cgroup *memcg;
+>         pg_data_t *pgdat = page_pgdat(page);
+>         struct lruvec *lruvec;
+>
+> +       memcg = PageMemcgKmem(head) ? page_memcg_kmem(head) : page_memcg(head);
 
-Please replace the ifdef with the IS_ENABLED() equivalent.
+Should page_memcg_check() be used here?
 
-thanks,
+>         /* Untracked pages have no memcg, no lruvec. Update only the node */
+>         if (!memcg) {
+>                 __mod_node_page_state(pgdat, idx, val);
+> @@ -3170,12 +3171,13 @@ int __memcg_kmem_charge_page(struct page *page, gfp_t gfp, int order)
+>   */
+>  void __memcg_kmem_uncharge_page(struct page *page, int order)
+>  {
+> -       struct mem_cgroup *memcg = page_memcg(page);
+> +       struct mem_cgroup *memcg;
+>         unsigned int nr_pages = 1 << order;
+>
+> -       if (!memcg)
+> +       if (!page_memcg_charged(page))
+>                 return;
+>
+> +       memcg = page_memcg_kmem(page);
+>         VM_BUG_ON_PAGE(mem_cgroup_is_root(memcg), page);
+>         __memcg_kmem_uncharge(memcg, nr_pages);
+>         page->memcg_data = 0;
+> @@ -6831,24 +6833,25 @@ static void uncharge_batch(const struct uncharge_gather *ug)
+>  static void uncharge_page(struct page *page, struct uncharge_gather *ug)
+>  {
+>         unsigned long nr_pages;
+> +       struct mem_cgroup *memcg;
+>
+>         VM_BUG_ON_PAGE(PageLRU(page), page);
+>
+> -       if (!page_memcg(page))
+> +       if (!page_memcg_charged(page))
+>                 return;
+>
+>         /*
+>          * Nobody should be changing or seriously looking at
+> -        * page_memcg(page) at this point, we have fully
+> -        * exclusive access to the page.
+> +        * page memcg at this point, we have fully exclusive
+> +        * access to the page.
+>          */
+> -
+> -       if (ug->memcg != page_memcg(page)) {
+> +       memcg = PageMemcgKmem(page) ? page_memcg_kmem(page) : page_memcg(page);
 
-Mimi
-
+Same, should page_memcg_check() be used here?
