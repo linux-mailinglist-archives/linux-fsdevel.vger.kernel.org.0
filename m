@@ -2,175 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D68B232751B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 00:11:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 322CE3275EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 02:50:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231358AbhB1XJH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Feb 2021 18:09:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40236 "EHLO
+        id S231438AbhCABuq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Feb 2021 20:50:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231199AbhB1XJA (ORCPT
+        with ESMTP id S231329AbhCABuq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Feb 2021 18:09:00 -0500
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54BDFC061788
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Feb 2021 15:08:19 -0800 (PST)
-Received: by mail-pf1-x430.google.com with SMTP id d12so7707930pfo.7
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Feb 2021 15:08:19 -0800 (PST)
+        Sun, 28 Feb 2021 20:50:46 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FF1EC06174A;
+        Sun, 28 Feb 2021 17:50:05 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id v5so22849466lft.13;
+        Sun, 28 Feb 2021 17:50:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=SmQMsrGoUKJ4zXu9YtAmV2nQB1dfM6MYK666mtQb/K8=;
-        b=g31OoGZGFUnX4krXGaFWn4eV6UTBvSMWM0CrGCtI49f6Ex4gcUMZ8xq0CDBbHm1uFI
-         AOkvFmL6mRZWcAkGsFqkkeH+aJUZiZE7zCcn1OW7C4KxqLd9PYFYKctKTJPFsZqLBV8z
-         o6gtVbS4+ZKAegoYu1c5YP+NeAl8frowCxDCF8jPc8ZM2cR4OOizrVpqhZ6C5US4THVn
-         nL4nNpu1Vo7F6glp1NrK1QzwX9r1fQ2ejROUwN60Hxf99iggFGQSGVPbx+3lW57tTNiC
-         iKmUjgk1rkXR6sywWZNX2WZbgdP2JfwXOx/O5W6hPe/SXdbQS1IlhUS5dZNdFg5xZzO7
-         YQfQ==
+        d=2realms.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RMgNTJPOAg+qQMXwj/r3vYLwLDCB8oAbkinZW7qbAWo=;
+        b=RNajYS1RBlyo70JbifMa8d+4/2KHLfnKnvomLVhV29cGqMRhLAcTWLMKfyxnbSmGBt
+         6vvyCOZvGLfbTY6qwa5UED254ZyGkeJpFtVJHOZSbsFTBniSHib7arzhkbDOwMauxj4x
+         iB2jSCZZo9wCLLRYwHAWyV+B2wfCqXIr6n4D8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SmQMsrGoUKJ4zXu9YtAmV2nQB1dfM6MYK666mtQb/K8=;
-        b=RzA7QR6UDqVHcDzm7+OsZ7mK5x3jUWpnsiPig0FJex5/F94Ri8eObjHA8RYTLbzcL5
-         /4iaGK11uXxT8RDH63r4oC14UNEKFiB+jlbLBd91TW1n/avScSwAyg5RAlVMAuF0Q4QC
-         zBLTzx/IbbG9qx7PEYZWMJfL7PWzt1UVXOETE8Xq48Z8mASQxOAD6iFXr+czlTAVz5t5
-         pExJHBc8dqamzv1ZX0tRgL3iQ8eLjoKTkOSoYgx6+U6T2f4r2qgIBStOgyzg9BK6skKH
-         8UjHYFk6Nhvhxchlojf4Vup358EMywEajdpOKtKxrsiKPgeRmxVqHzRpFfc6vCOy5e1P
-         KUpQ==
-X-Gm-Message-State: AOAM531qTBAX+h1Po3slaZq4cgD3csIr+HFnnmOKBvDdTYmOdJ0DKFfg
-        k1lYTjqpr+tv28x0qL1n7+uksA==
-X-Google-Smtp-Source: ABdhPJxJtumVB71k4TqXBUAdw3zeznGsRyBEmpMItWv0L4FRLCHdd9/yi9a0nPVuJVUBmbgyz4PwXw==
-X-Received: by 2002:aa7:90c5:0:b029:1e3:5e84:4a7c with SMTP id k5-20020aa790c50000b02901e35e844a7cmr12133417pfk.71.1614553698815;
-        Sun, 28 Feb 2021 15:08:18 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id t2sm14656086pfg.152.2021.02.28.15.08.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Feb 2021 15:08:18 -0800 (PST)
-Subject: Re: possible deadlock in io_poll_double_wake (2)
-To:     syzbot <syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <000000000000e61a7605bc5ac540@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <900e27f3-6503-ed03-4c58-ccc946df7a6a@kernel.dk>
-Date:   Sun, 28 Feb 2021 16:08:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RMgNTJPOAg+qQMXwj/r3vYLwLDCB8oAbkinZW7qbAWo=;
+        b=jKTEx/ui+Jb9ENyHDNQKJR5l3i3IHzk4Y2nQAOM1ZlhlO4GYuqvonEEQSNE8d0pJ4O
+         TK7qXRRn8uMAFeheEXOJmJ4HhWeH8fGTsuRzk3JysU0vFgy6Mro4XJLQvUoYKTVyAKZY
+         jESgwpNoRX5ldyHrGNjjWuhTKB2p16qaFmuLk1JaEH2ebi0Uoph8GzOOitFCZNghtx9Z
+         X5RMJCPvkHD703qLEvKeyjgHwcclZMsXvO+l7Ia24BZd2iltNSP/xoWbALozR+BQu991
+         lcENEmiQc94YXM8hrLP/U7SfMe4/lqBKD7Oz7S9EryT+Ih5PGh4MeuxuerYvSjaJmaL/
+         RIuQ==
+X-Gm-Message-State: AOAM533dC+4cSbnzok44e51HtsHsBt3B1XevUBQUX9TJINDzWf8uJZgv
+        ZSQ5ZbpE7j9Pn/fSdgFTnHnfXD0Typ44fLvRMDt3L1nRcY8=
+X-Google-Smtp-Source: ABdhPJwK5Nvh9BNvLEkZovgQTEJPl6MR/K6ohmOrnYQm11sjAukYEI/8aL6gHduiL4N+JlRo7tBzd8gwyIAokqOLh2Q=
+X-Received: by 2002:a19:c14c:: with SMTP id r73mr8341900lff.581.1614563402083;
+ Sun, 28 Feb 2021 17:50:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <000000000000e61a7605bc5ac540@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1783f16d-7a28-80e6-4c32-fdf19b705ed0@gmx.com> <20210218121503.GQ2858050@casper.infradead.org>
+ <927c018f-c951-c44c-698b-cb76d15d67bb@rkjnsn.net> <20210219142201.GU2858050@casper.infradead.org>
+ <20210222014844.GB4626@dread.disaster.area>
+In-Reply-To: <20210222014844.GB4626@dread.disaster.area>
+From:   GWB <gwb@2realms.com>
+Date:   Sun, 28 Feb 2021 19:49:25 -0600
+Message-ID: <CAP8EXU0JMsL=G=tSfuOVCdnx8W5_N3J-q4WmCy3+PSVdJmHhXg@mail.gmail.com>
+Subject: Re: page->index limitation on 32bit system?
+To:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Erik Jensen <erikjensen@rkjnsn.net>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Qu Wenruo <quwenruo.btrfs@gmx.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/27/21 5:42 PM, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    5695e516 Merge tag 'io_uring-worker.v3-2021-02-25' of git:..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=114e3866d00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8c76dad0946df1f3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=28abd693db9e92c160d8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122ed9b6d00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d5a292d00000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com
-> 
-> ============================================
-> WARNING: possible recursive locking detected
-> 5.11.0-syzkaller #0 Not tainted
-> --------------------------------------------
-> swapper/1/0 is trying to acquire lock:
-> ffff88801b2b1130 (&runtime->sleep){..-.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
-> ffff88801b2b1130 (&runtime->sleep){..-.}-{2:2}, at: io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4960
-> 
-> but task is already holding lock:
-> ffff88801b2b3130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
-> 
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
-> 
->        CPU0
->        ----
->   lock(&runtime->sleep);
->   lock(&runtime->sleep);
-> 
->  *** DEADLOCK ***
-> 
->  May be due to missing lock nesting notation
-> 
-> 2 locks held by swapper/1/0:
->  #0: ffff888147474908 (&group->lock){..-.}-{2:2}, at: _snd_pcm_stream_lock_irqsave+0x9f/0xd0 sound/core/pcm_native.c:170
->  #1: ffff88801b2b3130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
-> 
-> stack backtrace:
-> CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.11.0-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:79 [inline]
->  dump_stack+0xfa/0x151 lib/dump_stack.c:120
->  print_deadlock_bug kernel/locking/lockdep.c:2829 [inline]
->  check_deadlock kernel/locking/lockdep.c:2872 [inline]
->  validate_chain kernel/locking/lockdep.c:3661 [inline]
->  __lock_acquire.cold+0x14c/0x3b4 kernel/locking/lockdep.c:4900
->  lock_acquire kernel/locking/lockdep.c:5510 [inline]
->  lock_acquire+0x1ab/0x730 kernel/locking/lockdep.c:5475
->  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
->  _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
->  spin_lock include/linux/spinlock.h:354 [inline]
->  io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4960
->  __wake_up_common+0x147/0x650 kernel/sched/wait.c:108
->  __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:138
->  snd_pcm_update_state+0x46a/0x540 sound/core/pcm_lib.c:203
->  snd_pcm_update_hw_ptr0+0xa75/0x1a50 sound/core/pcm_lib.c:464
->  snd_pcm_period_elapsed+0x160/0x250 sound/core/pcm_lib.c:1805
->  dummy_hrtimer_callback+0x94/0x1b0 sound/drivers/dummy.c:378
->  __run_hrtimer kernel/time/hrtimer.c:1519 [inline]
->  __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1583
->  hrtimer_run_softirq+0x17b/0x360 kernel/time/hrtimer.c:1600
->  __do_softirq+0x29b/0x9f6 kernel/softirq.c:345
->  invoke_softirq kernel/softirq.c:221 [inline]
->  __irq_exit_rcu kernel/softirq.c:422 [inline]
->  irq_exit_rcu+0x134/0x200 kernel/softirq.c:434
->  sysvec_apic_timer_interrupt+0x93/0xc0 arch/x86/kernel/apic/apic.c:1100
->  </IRQ>
->  asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:632
-> RIP: 0010:native_save_fl arch/x86/include/asm/irqflags.h:29 [inline]
-> RIP: 0010:arch_local_save_flags arch/x86/include/asm/irqflags.h:70 [inline]
-> RIP: 0010:arch_irqs_disabled arch/x86/include/asm/irqflags.h:137 [inline]
-> RIP: 0010:acpi_safe_halt drivers/acpi/processor_idle.c:111 [inline]
-> RIP: 0010:acpi_idle_do_entry+0x1c9/0x250 drivers/acpi/processor_idle.c:516
-> Code: dd 38 6e f8 84 db 75 ac e8 54 32 6e f8 e8 0f 1c 74 f8 e9 0c 00 00 00 e8 45 32 6e f8 0f 00 2d 4e 4a c5 00 e8 39 32 6e f8 fb f4 <9c> 5b 81 e3 00 02 00 00 fa 31 ff 48 89 de e8 14 3a 6e f8 48 85 db
-> RSP: 0018:ffffc90000d47d18 EFLAGS: 00000293
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-> RDX: ffff8880115c3780 RSI: ffffffff89052537 RDI: 0000000000000000
-> RBP: ffff888141127064 R08: 0000000000000001 R09: 0000000000000001
-> R10: ffffffff81794168 R11: 0000000000000000 R12: 0000000000000001
-> R13: ffff888141127000 R14: ffff888141127064 R15: ffff888143331804
->  acpi_idle_enter+0x361/0x500 drivers/acpi/processor_idle.c:647
->  cpuidle_enter_state+0x1b1/0xc80 drivers/cpuidle/cpuidle.c:237
->  cpuidle_enter+0x4a/0xa0 drivers/cpuidle/cpuidle.c:351
->  call_cpuidle kernel/sched/idle.c:158 [inline]
->  cpuidle_idle_call kernel/sched/idle.c:239 [inline]
->  do_idle+0x3e1/0x590 kernel/sched/idle.c:300
->  cpu_startup_entry+0x14/0x20 kernel/sched/idle.c:397
->  start_secondary+0x274/0x350 arch/x86/kernel/smpboot.c:272
->  secondary_startup_64_no_verify+0xb0/0xbb
+Getting btrfs patched for 32 bit arm would be of interest, but I'm not
+suggesting the devs can do much more with that.  In practical usage,
+we ran into similar difficulties a while back on embedded and
+dedicated devices which would boot btrfs, but eventually it was easier
+to put storage on nilfs2.  Nilfs2 is nice, but not nearly as developed
+as btrfs (it snapshots, but did not allow sending and incremental
+backups, and it is comparatively slow).  No idea, however, if it would
+even compile on arm 32.
 
-This looks very odd, only thing I can think of is someone doing
-poll_wait() twice with different entries but for the same
-waitqueue head.
+I'm delighted, Erik, that you were able to get btrfs to function to
+the extent that it did, and that you're willing to put time and effort
+in btrfs on arm 32 bit.  But before you do, consider nilfs2 for
+storage.  You can even get zfs to work on some 32 bit systems but RAM
+is an issue.  Also take a look at the Raspberry Pi 4's.  They have an
+8gig 64 bit embedded version called Compute Module 4, which seems to
+handle btrfs, and are not too pricey.  ZFS can work, but its too
+memory intensive for 8 gigs.
 
-#syz test: git://git.kernel.dk/linux-block syzbot-test
+Gordon
 
--- 
-Jens Axboe
-
+On Sun, Feb 21, 2021 at 7:52 PM Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Fri, Feb 19, 2021 at 02:22:01PM +0000, Matthew Wilcox wrote:
+> > On Thu, Feb 18, 2021 at 01:27:09PM -0800, Erik Jensen wrote:
+> > > On 2/18/21 4:15 AM, Matthew Wilcox wrote:
+> > >
+> > > > On Thu, Feb 18, 2021 at 04:54:46PM +0800, Qu Wenruo wrote:
+> > > > > Recently we got a strange bug report that, one 32bit systems like armv6
+> > > > > or non-64bit x86, certain large btrfs can't be mounted.
+> > > > >
+> > > > > It turns out that, since page->index is just unsigned long, and on 32bit
+> > > > > systemts, that can just be 32bit.
+> > > > >
+> > > > > And when filesystems is utilizing any page offset over 4T, page->index
+> > > > > get truncated, causing various problems.
+> > > > 4TB?  I think you mean 16TB (4kB * 4GB)
+> > > >
+> > > > Yes, this is a known limitation.  Some vendors have gone to the trouble
+> > > > of introducing a new page_index_t.  I'm not convinced this is a problem
+> > > > worth solving.  There are very few 32-bit systems with this much storage
+> > > > on a single partition (everything should work fine if you take a 20TB
+> > > > drive and partition it into two 10TB partitions).
+> > > For what it's worth, I'm the reporter of the original bug. My use case is a
+> > > custom NAS system. It runs on a 32-bit ARM processor, and has 5 8TB drives,
+> > > which I'd like to use as a single, unified storage array. I chose btrfs for
+> > > this project due to the filesystem-integrated snapshots and checksums.
+> > > Currently, I'm working around this issue by exporting the raw drives using
+> > > nbd and mounting them on a 64-bit system to access the filesystem, but this
+> > > is very inconvenient, only allows one machine to access the filesystem at a
+> > > time, and prevents running any tools that need access to the filesystem
+> > > (such as backup and file sync utilities) on the NAS itself.
+> > >
+> > > It sounds like this limitation would also prevent me from trying to use a
+> > > different filesystem on top of software RAID, since in that case the logical
+> > > filesystem would still be over 16TB.
+> > >
+> > > > As usual, the best solution is for people to stop buying 32-bit systems.
+> > > I purchased this device in 2018, so it's not exactly ancient. At the time,
+> > > it was the only SBC I could find that was low power, used ECC RAM, had a
+> > > crypto accelerator, and had multiple sata ports with port-multiplier
+> > > support.
+> >
+> > I'm sorry you bought unsupported hardware.
+> >
+> > This limitation has been known since at least 2009:
+> > https://lore.kernel.org/lkml/19041.4714.686158.130252@notabene.brown/
+>
+> 2004:
+>
+> commit 839099eb5ea07aef093ae2c5674f5a16a268f8b6
+> Author: Eric Sandeen <sandeen@sgi.com>
+> Date:   Wed Jul 14 20:02:01 2004 +0000
+>
+>     Add filesystem size limit even when XFS_BIG_BLKNOS is
+>     in effect; limited by page cache index size (16T on ia32)
+>
+> This all popped up on XFS around 2003 when the the disk address
+> space was expanded from 32 bits to 64 bits on 32 bit systems
+> (CONFIG_LBD) and so XFS could define XFS_BIG_FILESYSTEMS on 32 bit
+> systems for the first time.
+>
+> FWIW, from an early 1994 commit into xfs_types.h:
+>
+> +/*
+> + * Some types are conditional based on the selected configuration.
+> + * Set XFS_BIG_FILES=1 or 0 and XFS_BIG_FILESYSTEMS=1 or 0 depending
+> + * on the desired configuration.
+> + * XFS_BIG_FILES needs pgno_t to be 64 bits.
+> + * XFS_BIG_FILESYSTEMS needs daddr_t to be 64 bits.
+> + *
+> + * Expect these to be set from klocaldefs, or from the machine-type
+> + * defs files for the normal case.
+> + */
+>
+> So limiting file and filesystem sizes on 32 bit systems is
+> something XFS has done right from the start...
+>
+> > In the last decade, nobody's tried to fix it in mainline that I know of.
+> > As I said, some vendors have tried to fix it in their NAS products,
+> > but I don't know where to find that patch any more.
+>
+> It's not suportable from a disaster recovery perspective. I recently
+> saw a 14TB filesystem with billions of hardlinks in it require 240GB
+> of RAM to run xfs_repair. We just can't support large filesystems
+> on 32 bit systems, and it has nothing to do with simple stuff like
+> page cache index sizes...
+>
+> Cheers,
+>
+> Dave.
+> --
+> Dave Chinner
+> david@fromorbit.com
