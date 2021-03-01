@@ -2,177 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42AC2329408
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 22:45:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 524BA329406
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 22:45:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241594AbhCAVpI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Mar 2021 16:45:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47092 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238203AbhCAVmn (ORCPT
+        id S240562AbhCAVoz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Mar 2021 16:44:55 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:19828 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238000AbhCAVmN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Mar 2021 16:42:43 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83B21C061A32
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Mar 2021 13:35:02 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id bd6so9468952edb.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Mar 2021 13:35:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S5eQqZgOuAzrBI1ZGPeaiXwFuA8MI7ck2ex1o4+Zhi4=;
-        b=GsgUGnSh6XCM33kX1YqttSd0KUcHsr80+hSKtWCibszAfGFuVyoxIXC+cudRfZnEyL
-         jFH0+RPqUvsQwAvjT5XJwBt5pQuHcaGCA/Feko97ZuD1PMjrJ8hMLEHi1SchA998kROw
-         UxPATs7C/17JV7vMmPWCU0/Cq8DeK9RmormTicDEINXX6EXW8+Qep3kfC331ztEFSzZ8
-         bw9+S7FYGY4+AkXPXKG2NEE4JfhXF3kMVFhfWhSrSe352obZ3SIJ8AsGdgXReUr/NbEz
-         WxFs1esX13EoIG/CvJs1unIoGIX7b4I9BK7Xd42Qj0vnCaDuJwD4PX0OJKgCRqq4oI6R
-         hnoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S5eQqZgOuAzrBI1ZGPeaiXwFuA8MI7ck2ex1o4+Zhi4=;
-        b=FPQh9afg/874W4nGRbXsB2slP8/cuUcJodS6lVvkJ90r0TfcSQ6llkjIwulWYQHn+c
-         YaqpftimhCjASUA6gqqYlIQXBZ0u8k9eUoc5b5fiJrMD9OS2/ZiINh3DO4n1A1PFqlNl
-         Wz2QsgRBXQNxXlGxBhlDPlEUX44E6RgBFInFRt9469n+9GJdtAzv8OxAwg71V/1JjWMb
-         WH24iEL9+Nly+lLJpaH7LLNzXUyoI3fI7TnKvnGzcKkEGWKTYdcy6TcOuZYIkmlAiECd
-         WLc+io7WN74nKhGuMZACS8udju2UTjW4QdJsUpTrICcuzEO011TxsJiwvX4P8GmUkqKg
-         F2Jw==
-X-Gm-Message-State: AOAM53018mD5dVg2za7ag/2o8MfTLSM6RhoBxr6Cg0ZN6G5nufsrMzI9
-        pf1t2sd1hxeNVcWPT5MoBHA2hevHF8ps4vJgMbUbRA==
-X-Google-Smtp-Source: ABdhPJwE9duJauuJj63Z2mtoHxQXFJwkwdtiBTnboqNDobSDSZ5Ru3/ng679otfZJBNziIAzFv6Zba+Xj6ySXe7YUC0=
-X-Received: by 2002:a05:6402:10ce:: with SMTP id p14mr18013748edu.348.1614634501187;
- Mon, 01 Mar 2021 13:35:01 -0800 (PST)
+        Mon, 1 Mar 2021 16:42:13 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B603d5f880000>; Mon, 01 Mar 2021 13:41:28 -0800
+Received: from HKMAIL104.nvidia.com (10.18.16.13) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 1 Mar
+ 2021 21:41:26 +0000
+Received: from HKMAIL104.nvidia.com (10.18.16.13) by HKMAIL104.nvidia.com
+ (10.18.16.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 1 Mar
+ 2021 21:41:25 +0000
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.176)
+ by HKMAIL104.nvidia.com (10.18.16.13) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2 via Frontend Transport; Mon, 1 Mar 2021 21:41:25 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NMUs9fYISKyh38KzkRgFTV/Ej4la9RxC/cXIgcsCMUr8TZx7pt8WGJ15S3yWs+t4mbz4PZNEExNsmbf2SnSD5PeBJgmLX5ISASQsWC8FK++dwXcvSuQo+UiqF2hOkMNd3t6puzebU6W4J2qqbF6UEUc/miv0AL+JNlE+h7IdRReTY5LySv9RniEN2ny7tjSsKFIRsBHwvSTHWlI8zaaNDd2oz0ov06Lt9IaHz5tkksX31tItFFPQ+bAp7vn2sp9dmjypmoG3iOz68bgg0GR39VzkabLe0Ac03dfmUFfczn5lneuNCnMu0t9kGAFsxtnHI8xzFa3Uy5feFXt63OXl1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UsIMf3k5isMJXt/9c23GMaIW59O9sp5G3ubs2/6hekA=;
+ b=DAn04TCeyrvHhZBKzlRQJOPnMZ1A+RR2MvBaTTR9D0NKEg4OIU19qN8S53tcZk1V5X1Zgqk3wIRxjjS7SMMGrA766ux9IHRpqMViWxcx5Wz/nKb3Gv7IXTKgtb46GTi9tJR71tRVlaMYBlDlP9mAJ6/4DtioelATJff6o44tBfnf2o6yHZcF6V9ygJ4AsQlFPwrJCwWgxdlEBvSGIT1f+hZ9kcoFPyijNUmkThKE21efAJyRdZ2qU7o1S2eyO3MQtDJc0CpviiZirKmKCDiUtLNcVQnvcXht4YbbHY+tl3b6AMt7NS6yEe8yI6ZXgiHWNEmp/jH+9Atw/kZQTrui4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+Authentication-Results: infradead.org; dkim=none (message not signed)
+ header.d=none;infradead.org; dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3823.namprd12.prod.outlook.com (2603:10b6:208:168::26)
+ by MN2PR12MB3712.namprd12.prod.outlook.com (2603:10b6:208:164::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.20; Mon, 1 Mar
+ 2021 21:41:21 +0000
+Received: from MN2PR12MB3823.namprd12.prod.outlook.com
+ ([fe80::a1b1:5d8:47d7:4b60]) by MN2PR12MB3823.namprd12.prod.outlook.com
+ ([fe80::a1b1:5d8:47d7:4b60%7]) with mapi id 15.20.3890.028; Mon, 1 Mar 2021
+ 21:41:21 +0000
+From:   Zi Yan <ziy@nvidia.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 05/25] mm: Add put_folio
+Date:   Mon, 1 Mar 2021 16:41:16 -0500
+X-Mailer: MailMate (1.14r5757)
+Message-ID: <61E16B01-4D4B-4ACA-A7C4-307CDABB3453@nvidia.com>
+In-Reply-To: <20210128070404.1922318-6-willy@infradead.org>
+References: <20210128070404.1922318-1-willy@infradead.org>
+ <20210128070404.1922318-6-willy@infradead.org>
+Content-Type: multipart/signed;
+        boundary="=_MailMate_7A5814D3-557A-4A76-9775-61CA1D015059_=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+X-Originating-IP: [216.228.112.22]
+X-ClientProxiedBy: MN2PR20CA0066.namprd20.prod.outlook.com
+ (2603:10b6:208:235::35) To MN2PR12MB3823.namprd12.prod.outlook.com
+ (2603:10b6:208:168::26)
 MIME-Version: 1.0
-References: <20210226002030.653855-1-ruansy.fnst@fujitsu.com>
- <OSBPR01MB2920899F1D71E7B054A04E39F49D9@OSBPR01MB2920.jpnprd01.prod.outlook.com>
- <20210226190454.GD7272@magnolia> <CAPcyv4iJiYsM5FQdpMvCi24aCi7RqUnnxC6sM0umFqiN+Q59cg@mail.gmail.com>
- <556921a1-456c-c24d-6d47-e8b15c1d9972@fujitsu.com>
-In-Reply-To: <556921a1-456c-c24d-6d47-e8b15c1d9972@fujitsu.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 1 Mar 2021 13:34:52 -0800
-Message-ID: <CAPcyv4g3ZwbdLFx8bqMcNvXyrob8y6sBXXu=xPTmTY0VSk5HCw@mail.gmail.com>
-Subject: Re: Question about the "EXPERIMENTAL" tag for dax in XFS
-To:     Yasunori Goto <y-goto@fujitsu.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "hch@lst.de" <hch@lst.de>, "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
-        "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
-        "fnstml-iaas@cn.fujitsu.com" <fnstml-iaas@cn.fujitsu.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [10.2.62.13] (216.228.112.22) by MN2PR20CA0066.namprd20.prod.outlook.com (2603:10b6:208:235::35) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.19 via Frontend Transport; Mon, 1 Mar 2021 21:41:19 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0633c2b7-ea24-4542-e312-08d8dcfac0e1
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3712:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MN2PR12MB37126F37FA0DE0BCD2008C0CC29A9@MN2PR12MB3712.namprd12.prod.outlook.com>
+X-Header: ProcessedBy-CMR-outbound
+X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: BsvR+AVWTa0VE8w8HoX3l37IyytW9KzjvIcva33TehIKC7tIjwa+eKyVB9wamtFrQa1zhLLkQvYAXrRSnKVGMerE0abVpnKBIjb3APi4VkkzwKOtkpPd1yCrg0BACKaF6NYoexCAqeEVTdIjbv5KgKlU+63dMjOSaxTPDG7K1CHfTHHvoE0993Q1oragX7K/V4rmZcWBG9hrfX6U5uKocv+L2WDez6zEYPS54I96q4HlUWwGcUmii57gRFZeG3AIxkwlvf6ivSWAzkJ6VbIewcIjGrTD2MiZQpSgfQ9NkzsWlP6dTNHjmsRLs+6aqSCk3stLRlvNc83o6VbWkGnCtZ4JQmZIfhlmBTIF+sKnneE4Soe4x1ggAaZRees3V5+EwyDLNxEoSi0h8LcQvSOa1lk/lQAxjXKTalVDJFzwsqx0u3OJIpE3MP+J+98qX6qTATBWInhoL2UnM6C+JdzGuV2xuGwBTqpR8u4at3dgb7726KMTTMGW2caPFFT5Uds0Jsiyh+pX6U9OcWQhh9uhCrK062PyazTnm3+yyknwlP8igfZEq2wgKruq+J8T73+UptGCjum96gKdxb1DYV01yEfbEuhu2Gu1iCvExEQSL3c=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3823.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(39860400002)(396003)(376002)(346002)(136003)(33964004)(2616005)(235185007)(956004)(26005)(4326008)(66556008)(53546011)(33656002)(8936002)(86362001)(66476007)(16526019)(6666004)(186003)(66946007)(478600001)(8676002)(5660300002)(2906002)(316002)(6486002)(6916009)(36756003)(16576012)(83380400001)(72826003)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?SDBGT0NCTmNhSzhHcHhPa3JKZWRFRi9JMW56Y0JGYktsMmVVb3pPb0RFUng2?=
+ =?utf-8?B?V3FjS29xREk3ZDc3Uytkbms1YTRVYkxEblAzRVEwTGFQVWE4UTlRQ3VuZW5U?=
+ =?utf-8?B?ZE1qdjRpMWdOUzBIZlg5aHhxeVlPeHdpZGdmOWJHQTlUb3U4RlZER1VYbTh0?=
+ =?utf-8?B?S2p2blBzRUo2MDJZdW9MTEsxNGhrVmxMaTBkMythS2NHdkhjWlZNYjA1SENW?=
+ =?utf-8?B?TU04cE9ScjUyWDg5NHBVRHJnMTFyNTl6L0E5THVOL0Y1aS9Ha2g3NmZkUFJv?=
+ =?utf-8?B?OWxLVHZZRnF2QVBWWktMU09YZitGZEE2Z1VNMmtUb3IyYitsUkJsN2FQbk0v?=
+ =?utf-8?B?dlpSNmNPK3ZwOVJZVzRGM2dBV2tBQWxld0MxWUpFdTQ3WVJtZkRoU0NUVk40?=
+ =?utf-8?B?aVp1VFlHZHB2Qmk0RFM1SjdVaWsxTkJYTWpqTm85RGNpbTJMMmlVRGxpWWZm?=
+ =?utf-8?B?NEV1eHkwU3U4c0IrTGgvT0Ntdm9pTjBtblBjUE14eG5jTjUyNFkxcWVXK3Vj?=
+ =?utf-8?B?MVJQRng4Ny9DRmE2UDhNOGROZnZTSVlFNjZLdGZqTUJPb0NDUHA0c2d0Qmpx?=
+ =?utf-8?B?VVF1OTBFTFMxWEtZL3Z5Q0hpdDRhNnNEWnI1c0RVR2QremRMSmF3SDhxRnRG?=
+ =?utf-8?B?UzV6ZXBiY3RwemV3U2ZId2lIelFBYkt2VVh3d2JleDFXbUZNazNqVDQ3a1Fs?=
+ =?utf-8?B?YnlteFdSRTdydkFYbHZyQWRBWThyOHU0VmxzN0MwZXpjVzdVNlJYUEgrdGJn?=
+ =?utf-8?B?QnJRdnpoR1pXdytZNWRod20yaXdjOEhWNnRERHFQeEFoZTM3ZnNxWjZBeW85?=
+ =?utf-8?B?MGFuTkU5S2RJeHpOdUxRdjRYdTNjWmI1Mm5kZFdnV0RJRlBjVHA2WldzT3JT?=
+ =?utf-8?B?VDJ6Uk1wbmhtRnEvdmJsZEdyU0hjeDVlSWlxc0R1MTNWK2dBRHQ4UzN3eVhL?=
+ =?utf-8?B?MDJ6WXZXcDFCSm9tQzRvSGhYQXUyNWRwQzJwNU5JUUNkL2pMKzZMVG45dEp2?=
+ =?utf-8?B?YlMwN1lXUHVrUk55ZWxrZHdTdlphNFFWOFl6R1RDSmc5aTEyYUIxcWJ6MzIv?=
+ =?utf-8?B?TTczSEF4dWNOWnozSHgxa2JueGRNQi9wRCtSbVo1V3hDMkpKMGt0bHQ1ZUJu?=
+ =?utf-8?B?WmRZOW10OTlyc2NsUWJ1dEdvUlQ4KzBvNTFzYUk1eHpqUDdocm5tdUVmZkdx?=
+ =?utf-8?B?Q3A5L2dxYllBeGlISzJPRFFaNDRFQmN5ZHhQbFZVeThBc01VUDZUREh0NW1B?=
+ =?utf-8?B?dzgrQ082Ry9hWnczNVpNSVNVOGQwNzdQT3dhNFdmOFdvN1duOHp4OTZoMjFN?=
+ =?utf-8?B?UGFTVlg1dGh4NExOall2NlBxZStKNGZEdUxvSkptd05OQm56bEFXVmtCUUJX?=
+ =?utf-8?B?VWZtc2F1aTNIYjl5d3ByVlZiMlJML09OczhzOEVIRTJCN3oyMUJvR2VBOE0v?=
+ =?utf-8?B?V2xNaHpOMS9zOHAvWk5PN043dmhQdzJTcDhyaFBlRjJUcmRMRVM3OTAvaHV5?=
+ =?utf-8?B?N2pnNjg4UDF6ZFVsSElJODNxSDJCekQwRzNMRjE3WjZyTXBCdElsS3JDZEtQ?=
+ =?utf-8?B?VFBsOEljeGY5c2VIakR3ZzJhSUlyTitORjhsdlp3bVI0MytSWjBZSytoRlVP?=
+ =?utf-8?B?VEtoQ1FsZCtnMXZHVnlWNVBMMzVRQkphOG45NFJTTmkrRTVYL1RXaGtZSE0x?=
+ =?utf-8?B?ODYyOVF6TGFlWkZXMy9hNC91YUhaNm1wS2p0clE4dHZDcUdOY2x5Nk9lT0pw?=
+ =?utf-8?Q?qhUATkez1fssCiPLX82N1NgdEPqTZBprJ9ElhFY?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0633c2b7-ea24-4542-e312-08d8dcfac0e1
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3823.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Mar 2021 21:41:21.1887
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WmTwhAs/XamTodn08FJDqVdQbBcnHnt5anG8Gd48syR9n7S0KYaUA9jCkTt9wfEx
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3712
+X-OriginatorOrg: Nvidia.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1614634888; bh=UbdWyA6UByi4SaBS+icpBCVYnFxPmP3U+vBv6D8FPks=;
+        h=ARC-Seal:ARC-Message-Signature:ARC-Authentication-Results:
+         Authentication-Results:From:To:CC:Subject:Date:X-Mailer:Message-ID:
+         In-Reply-To:References:Content-Type:X-Originating-IP:
+         X-ClientProxiedBy:MIME-Version:
+         X-MS-Exchange-MessageSentRepresentingType:X-MS-PublicTrafficType:
+         X-MS-Office365-Filtering-Correlation-Id:X-MS-TrafficTypeDiagnostic:
+         X-MS-Exchange-Transport-Forked:X-Microsoft-Antispam-PRVS:X-Header:
+         X-MS-Oob-TLC-OOBClassifiers:X-MS-Exchange-SenderADCheck:
+         X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+         X-Forefront-Antispam-Report:X-MS-Exchange-AntiSpam-MessageData:
+         X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-AuthSource:
+         X-MS-Exchange-CrossTenant-AuthAs:
+         X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+         X-MS-Exchange-CrossTenant-FromEntityHeader:
+         X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+         X-MS-Exchange-CrossTenant-UserPrincipalName:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg;
+        b=WFmFjNxBtSlLyswqbWAyKgW4hRbINIP18BsGr0NtVLurscnjJNm8rcxqNsE7K9nMX
+         LnA8UWpUHysf4xWNCxPWDswQsqkYAXvyAKhqjzYqMQxYd46c1M8XvAk4DXzT2UJYLw
+         AWvhFlUcvQj0KGbkohJQ2RzhjWipCxBiMO+CN3c1b5KBZikqLhtvdzlAdcWuZmBnnv
+         n87lt7YTXYk8bCz9ZQ2Vc3/d6eDVWWaowsGmB/E2fOG0bCu5KLAi2t/LP1IckiD1t+
+         HHxl/JDzYKEOfpyobVsnmj3v6J5y/R30Qrmb68XWUxly/PvfK11CqymnRji/pOMkA+
+         lnWXHkLxJUw2A==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 28, 2021 at 11:27 PM Yasunori Goto <y-goto@fujitsu.com> wrote:
+--=_MailMate_7A5814D3-557A-4A76-9775-61CA1D015059_=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On 28 Jan 2021, at 2:03, Matthew Wilcox (Oracle) wrote:
+
+> If we know we have a folio, we can call put_folio() instead of put_page=
+()
+> and save the overhead of calling compound_head().  Also skips the
+> devmap checks.
 >
-> Hello, Dan-san,
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  include/linux/mm.h | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
 >
-> On 2021/02/27 4:24, Dan Williams wrote:
-> > On Fri, Feb 26, 2021 at 11:05 AM Darrick J. Wong <djwong@kernel.org> wrote:
-> >>
-> >> On Fri, Feb 26, 2021 at 09:45:45AM +0000, ruansy.fnst@fujitsu.com wrote:
-> >>> Hi, guys
-> >>>
-> >>> Beside this patchset, I'd like to confirm something about the
-> >>> "EXPERIMENTAL" tag for dax in XFS.
-> >>>
-> >>> In XFS, the "EXPERIMENTAL" tag, which is reported in waring message
-> >>> when we mount a pmem device with dax option, has been existed for a
-> >>> while.  It's a bit annoying when using fsdax feature.  So, my initial
-> >>> intention was to remove this tag.  And I started to find out and solve
-> >>> the problems which prevent it from being removed.
-> >>>
-> >>> As is talked before, there are 3 main problems.  The first one is "dax
-> >>> semantics", which has been resolved.  The rest two are "RMAP for
-> >>> fsdax" and "support dax reflink for filesystem", which I have been
-> >>> working on.
-> >>
-> >> <nod>
-> >>
-> >>> So, what I want to confirm is: does it means that we can remove the
-> >>> "EXPERIMENTAL" tag when the rest two problem are solved?
-> >>
-> >> Yes.  I'd keep the experimental tag for a cycle or two to make sure that
-> >> nothing new pops up, but otherwise the two patchsets you've sent close
-> >> those two big remaining gaps.  Thank you for working on this!
-> >>
-> >>> Or maybe there are other important problems need to be fixed before
-> >>> removing it?  If there are, could you please show me that?
-> >>
-> >> That remains to be seen through QA/validation, but I think that's it.
-> >>
-> >> Granted, I still have to read through the two patchsets...
-> >
-> > I've been meaning to circle back here as well.
-> >
-> > My immediate concern is the issue Jason recently highlighted [1] with
-> > respect to invalidating all dax mappings when / if the device is
-> > ripped out from underneath the fs. I don't think that will collide
-> > with Ruan's implementation, but it does need new communication from
-> > driver to fs about removal events.
-> >
-> > [1]: http://lore.kernel.org/r/CAPcyv4i+PZhYZiePf2PaH0dT5jDfkmkDX-3usQy1fAhf6LPyfw@mail.gmail.com
-> >
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 7d787229dd40..873d649107ba 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1220,9 +1220,15 @@ static inline __must_check bool try_get_page(str=
+uct page *page)
+>  	return true;
+>  }
 >
-> I'm not sure why there is a race condition between unbinding operation
-> and accessing mmaped file on filesystem dax yet.
+> +static inline void put_folio(struct folio *folio)
+> +{
+> +	if (put_page_testzero(&folio->page))
+> +		__put_page(&folio->page);
+> +}
+> +
+>  static inline void put_page(struct page *page)
+>  {
+> -	page =3D compound_head(page);
+> +	struct folio *folio =3D page_folio(page);
 >
-> May be silly question, but could you tell me why the "unbinding"
-> operation of the namespace which is mounted by filesystem dax must be
-> allowed?
+>  	/*
+>  	 * For devmap managed pages we need to catch refcount transition from=
 
-The unbind operation is used to switch the mode of a namespace between
-fsdax and devdax. There is no way to fail unbind. At most it can be
-delayed for a short while to perform cleanup, but it can't be blocked
-indefinitely. There is the option to specify 'suppress_bind_attrs' to
-the driver to preclude software triggered device removal, but that
-would disable mode changes for the device.
-
-> If "unbinding" is rejected when the filesystem is mounted with dax
-> enabled, what is inconvenience?
-
-It would be interesting (read difficult) to introduce the concept of
-dynamic 'suppress_bind_attrs'. Today the decision is static at driver
-registration time, not in response to how the device is being used.
-
-I think global invalidation of all inodes that might be affected by a
-dax-capable device being ripped away from the filesystem is sufficient
-and avoids per-fs enabling, but I'm willing to be convinced that
-->corrupted_range() is the proper vehicle for this.
-
+> @@ -1230,13 +1236,12 @@ static inline void put_page(struct page *page)
+>  	 * need to inform the device driver through callback. See
+>  	 * include/linux/memremap.h and HMM for details.
+>  	 */
+> -	if (page_is_devmap_managed(page)) {
+> -		put_devmap_managed_page(page);
+> +	if (page_is_devmap_managed(&folio->page)) {
+> +		put_devmap_managed_page(&folio->page);
+>  		return;
+>  	}
 >
-> I can imagine if a device like usb memory stick is removed surprisingly,
-> kernel/filesystem need to reject writeback at the time, and discard page
-> cache. Then, I can understand that unbinding operation is essential for
-> such case.
+> -	if (put_page_testzero(page))
+> -		__put_page(page);
+> +	put_folio(folio);
+>  }
+>
+>  /*
+> -- =
 
-For usb the system is protected by the fact that all future block-i/o
-submissions to the old block-device will fail, and a new usb-device
-being plugged in will get a new block-device. I.e. the old security
-model is invalidated / all holes are closed by blk_cleanup_queue().
+> 2.29.2
 
-> But I don't know why PMEM device/namespace allows unbinding operation
-> like surprising removal event.
+LGTM.
 
-DAX hands direct mappings to physical pages, if the security model
-fronting those physical pages changes the mappings attained via the
-old security model need to be invalidated. blk_cleanup_queue() does
-not invalidate DAX mappings.
+Reviewed-by: Zi Yan <ziy@nvidia.com>
 
-The practical value of fixing that hole is small given that physical
-unplug is not implemented for NVDIMMs today, but the get_user_pages()
-path can be optimized if this invalidation is implemented, and future
-hotplug-capable NVDIMM buses like CXL will need this.
+
+=E2=80=94
+Best Regards,
+Yan Zi
+
+--=_MailMate_7A5814D3-557A-4A76-9775-61CA1D015059_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAmA9X3wPHHppeUBudmlk
+aWEuY29tAAoJEJ2yUfNrYfqKBFkP+wddu5JVCCc9KDwDX34N31JeSuIqRSLaPy3c
+pQZhTOoMaZPlaFR7V93yzEFB95RqZcQxwSjDmsyHzWnqtwiThMowBhd135JzStPD
+sjFoj1DvW7/KFUi5n3i8N/vv/3H12zgBGfudQ3cqgl92wDzScs9U9Q191OSJ1os5
+FNkE4EDI0aHjn8TzWcUdOGsHTx2pZXNhponc4D9BSeUYCI/Vhac+peeH9dE3BOG+
+xIGj1p/WTIv/jRC5BTSmd/t+ygatycI8EIW1iL9q1CGO502seIyyzE9dTjXUZGs9
+tJmAdbqmvjJ1T04KJpA/SKCZJa2nOUZKc07aCLqld5JekFpXQYCW7XOULfdSqcjZ
+7YjuJcVrbXVBpuKqb2BSWLsJCh0q0fm33wrzkoPc5eEcjLVB5FuWeffo1UXO0RtK
+IQmLLzpMunP82qSdEc/udJ6GlcRQcTN+3PAt5gMisRPPqUA26O0Rrtz5M2LCW3A2
+4LuW72Uq7ff+1go6Y2xfzm8YyTFNv7CmHt5ix8bqcX28JEGxy6f+hciKU0db5/kl
+pUa8F81rIxu0m4IcZ2C5UOdX5QsBLk5xm/W+ecOkPd7TU72pFPR21Awq70OL6nB8
+Q3QdpCmMm+L0lVNQ0soTZC+ZKtuuomqSRoLzG7HQttybG22kYVgZW1QrhKk1g3VP
+VhC6/NM9
+=8BzP
+-----END PGP SIGNATURE-----
+
+--=_MailMate_7A5814D3-557A-4A76-9775-61CA1D015059_=--
