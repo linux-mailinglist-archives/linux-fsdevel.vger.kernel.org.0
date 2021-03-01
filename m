@@ -2,175 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 322CE3275EF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 02:50:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E710F327601
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 03:09:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231438AbhCABuq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Feb 2021 20:50:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46342 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231329AbhCABuq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Feb 2021 20:50:46 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FF1EC06174A;
-        Sun, 28 Feb 2021 17:50:05 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id v5so22849466lft.13;
-        Sun, 28 Feb 2021 17:50:05 -0800 (PST)
+        id S231687AbhCACJP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Feb 2021 21:09:15 -0500
+Received: from mail-eopbgr760051.outbound.protection.outlook.com ([40.107.76.51]:34561
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231670AbhCACJN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 28 Feb 2021 21:09:13 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gyTqqIQQxIoo8kWWHvlsRaIOFvqzXQ4bLZIyIq0fhz7wPwDKeFQJFYyONMFa2K3aPorT4ZgCMVpB8aMQT7+QX04BXKtndtKVyPpVmWMfULp1pRNwphRcBzrTqqaX3A9cOXZySS+1Zqh1uX84s+cmaFNNlwUE/czaF+b/5D/P0oHyK42e+YpEpgp9tBxYu0b6qJkOMOL9LdyqlRwYqqXrPjO6qOD2LxVHPTVMXSs19HoOYd+Dphnq9USrDKT1W+U2hpW05V+TZG5lIuaVWMFZVTVTUDL9BSB+xQicSuMsDh8QI/fFRs6yiGlxBIdaInFBCuOqoaS5dHkxuJW5x7yq6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/+Hy3LYNqF6RtUDEl/jHlznbKUMMNdzOBWRxbEwwYp8=;
+ b=HUngNDkAVfqSbAzUC5PH1wlhdn9Zt6uFEZrNuyULGNBmaW77N8zPqTLOL/TNn7MJE+dgqERKf9E/SZVzbgQ3inHzxQJbtzlM/f9/qdE8yfwdVZOIOKceZQ3+zYAOakBuGBTx2K+xK7Tkkh5szIj+kC/+HU/JqWadPIvf4t/7RNw/zNd9+kKjWhi3VNZrw3EnLIe/K9H/hBFYcN15TpjqUmHNTlKTDO2QzXa2oyzuHs7zdJBTHvTm+iU8cnAu+bCpRStA/U8Db8XbTQX93Izz1Po3wSDUxed3nnRwEK7f3pUcIdFwAszT6cIVmbr4IrbLdg12tmcL0T0KaPIVn3Nggw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=2realms.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RMgNTJPOAg+qQMXwj/r3vYLwLDCB8oAbkinZW7qbAWo=;
-        b=RNajYS1RBlyo70JbifMa8d+4/2KHLfnKnvomLVhV29cGqMRhLAcTWLMKfyxnbSmGBt
-         6vvyCOZvGLfbTY6qwa5UED254ZyGkeJpFtVJHOZSbsFTBniSHib7arzhkbDOwMauxj4x
-         iB2jSCZZo9wCLLRYwHAWyV+B2wfCqXIr6n4D8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RMgNTJPOAg+qQMXwj/r3vYLwLDCB8oAbkinZW7qbAWo=;
-        b=jKTEx/ui+Jb9ENyHDNQKJR5l3i3IHzk4Y2nQAOM1ZlhlO4GYuqvonEEQSNE8d0pJ4O
-         TK7qXRRn8uMAFeheEXOJmJ4HhWeH8fGTsuRzk3JysU0vFgy6Mro4XJLQvUoYKTVyAKZY
-         jESgwpNoRX5ldyHrGNjjWuhTKB2p16qaFmuLk1JaEH2ebi0Uoph8GzOOitFCZNghtx9Z
-         X5RMJCPvkHD703qLEvKeyjgHwcclZMsXvO+l7Ia24BZd2iltNSP/xoWbALozR+BQu991
-         lcENEmiQc94YXM8hrLP/U7SfMe4/lqBKD7Oz7S9EryT+Ih5PGh4MeuxuerYvSjaJmaL/
-         RIuQ==
-X-Gm-Message-State: AOAM533dC+4cSbnzok44e51HtsHsBt3B1XevUBQUX9TJINDzWf8uJZgv
-        ZSQ5ZbpE7j9Pn/fSdgFTnHnfXD0Typ44fLvRMDt3L1nRcY8=
-X-Google-Smtp-Source: ABdhPJwK5Nvh9BNvLEkZovgQTEJPl6MR/K6ohmOrnYQm11sjAukYEI/8aL6gHduiL4N+JlRo7tBzd8gwyIAokqOLh2Q=
-X-Received: by 2002:a19:c14c:: with SMTP id r73mr8341900lff.581.1614563402083;
- Sun, 28 Feb 2021 17:50:02 -0800 (PST)
+ d=windriversystems.onmicrosoft.com;
+ s=selector2-windriversystems-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/+Hy3LYNqF6RtUDEl/jHlznbKUMMNdzOBWRxbEwwYp8=;
+ b=CFMRsxDlJNspvgvBm87A/RoWLTJKibOno1gOTzM7KlMXQ4Vi6DkcK7QysZ+q0vPtPQ+1L3m56SZ6Zb4FFLcYYlZrzQqU5ZQ23tfTF0TyMQuIP+Ww11uk/Cr+pyK+avAk3kEqrnNJtO8j8/FFzFUfUVoDcDh7KBelJjXyFbVrrp4=
+Received: from BYAPR11MB2632.namprd11.prod.outlook.com (2603:10b6:a02:c4::17)
+ by BYAPR11MB2725.namprd11.prod.outlook.com (2603:10b6:a02:c5::25) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.28; Mon, 1 Mar
+ 2021 02:08:04 +0000
+Received: from BYAPR11MB2632.namprd11.prod.outlook.com
+ ([fe80::89a3:42c3:6509:4acd]) by BYAPR11MB2632.namprd11.prod.outlook.com
+ ([fe80::89a3:42c3:6509:4acd%4]) with mapi id 15.20.3890.028; Mon, 1 Mar 2021
+ 02:08:04 +0000
+From:   "Zhang, Qiang" <Qiang.Zhang@windriver.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        syzbot <syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com>,
+        "asml.silence@gmail.com" <asml.silence@gmail.com>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Subject: =?gb2312?B?u9i4tDogcG9zc2libGUgZGVhZGxvY2sgaW4gaW9fcG9sbF9kb3VibGVfd2Fr?=
+ =?gb2312?Q?e_(2)?=
+Thread-Topic: possible deadlock in io_poll_double_wake (2)
+Thread-Index: AQHXDWs6oOGJBWdteka1D+n0kQcjUqpuMluAgAAsRJ4=
+Date:   Mon, 1 Mar 2021 02:08:04 +0000
+Message-ID: <BYAPR11MB26323CD476CC8CE34E31AC6DFF9A9@BYAPR11MB2632.namprd11.prod.outlook.com>
+References: <000000000000e61a7605bc5ac540@google.com>,<900e27f3-6503-ed03-4c58-ccc946df7a6a@kernel.dk>
+In-Reply-To: <900e27f3-6503-ed03-4c58-ccc946df7a6a@kernel.dk>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.dk; dkim=none (message not signed)
+ header.d=none;kernel.dk; dmarc=none action=none header.from=windriver.com;
+x-originating-ip: [106.39.148.172]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 07e1d0d3-a2fc-4d80-74a6-08d8dc56d932
+x-ms-traffictypediagnostic: BYAPR11MB2725:
+x-ms-exchange-minimumurldomainage: syzkaller.appspot.com#0
+x-microsoft-antispam-prvs: <BYAPR11MB272547E0AA19A9A7AE3DE7E9FF9A9@BYAPR11MB2725.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Atjr/QRcXRWTBMD7DlBaPVM9xuwI3xgJyVWbL4QzYDu6kZW9OT7wFU7iwq0BiMyRG82MnkhDAQqEQNPP++UvI8jHESASa7C6XNNK6LuaudbYjJ952+IejxMOXHhC+VcJquSAb+5r6PM6Vlk+JfDWLO2tUT7By2Gel8lrCXhNIs0LyQcxMwzzaA4z3odl/uMA+zpHsOmkpmpLX9O1EUGYC1zKr9jRBeL4eDdc3Svgoe5jNhL0lQDcZv4U/zln/wtnzSGPyFEydT00m8vVxSEKAmXorVABUDa7suBNsp5FKhNyFEQ5x/mU47EBqDkFxRY4Ovu9itY94mcnA+Cd4T8KPlMX9t2HTVPKldg1e4NH7ri1fe5kKEMAY3xfOzvv8tngIz2u810pD+Zp2NaW8Mj/GJYqL0vXXW3G4EY4gq9qo+4skQpR4lb91MILWfPPI5lRlEItvbqbakjqZ1HAFvtc77SlvV4leou3CAL1Z1TH5QcF5iBxaJggVkXMoVP9nfeJMp1+lkgCZxLACJsJb0/UQ+e8XWIOw0Fa/1e/4icGFxZkwVKJ9eS4O7cLDv3/1Npxlxbl96hLswD1b++9PH4/tzWxwBQqob0jxYJe+FWnEkuB5AqWnm5QAnM46DIEYKjPXy19g/j7UNrLowJrnztcBA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB2632.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(39840400004)(366004)(376002)(346002)(396003)(26005)(66946007)(224303003)(966005)(5660300002)(91956017)(186003)(76116006)(83380400001)(110136005)(86362001)(66476007)(52536014)(8936002)(2906002)(66446008)(64756008)(316002)(66556008)(33656002)(7696005)(6506007)(53546011)(55016002)(478600001)(9686003)(71200400001)(99710200001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: =?gb2312?B?T21sZnF2Vi90emZob3VZYXlVc0xMWVliMnVOM1g2S2RER1R0Z0tVaFdTbmxm?=
+ =?gb2312?B?TnZjdE1VcjN4OC9kaDYyUnRoUXF2Z1AvcnNrWlVSZ3ZVN0Jnb1hheTY5ZExh?=
+ =?gb2312?B?Q0hHL2xYTFhCZW85ZlUrZzJNRk5kWSswQWlFM1UvQ0d4aDdPVFQzMTZmdEc3?=
+ =?gb2312?B?aEF3czcxcFVRcmJuc2gzMWNmVHM0eXlySGJqY2Y5Q1dueXRnZmNvZ2Y1K3Fw?=
+ =?gb2312?B?K1ZMS3VKanV6VkJvc2g3M2VhaXI1RlUzLzNOK0JJTlVSZHl3SE0rTmhYbmN3?=
+ =?gb2312?B?Q094U1cwZ1VoSUoxSnZzL2FQWnZpUnoxb2M5L0grRkIyRDNCVExOTUNESHE2?=
+ =?gb2312?B?T0R6ZDBCMlQ2QmE3UWJudVRzYWozR0tYMlppZHpwd0pFVngwanVCRzdqcHht?=
+ =?gb2312?B?cnF0OXJPUXowaGJWMG9wNVBYN3RwZEhwY1pMS0tNTlJNem5xSDhpT2Frbndj?=
+ =?gb2312?B?bGszR0Q4WlYybzBTdEYwWEdId2srSW95TXQ0UGdMWHBFL1R0QzhQSDZLeUwx?=
+ =?gb2312?B?WVlLelo5OFpkVGRtVGhxYkxHNW0wbkQwLzZxYng5bXVuZnM5T2xiUlNDcnQv?=
+ =?gb2312?B?Z2g1ZFFXQTVLM0hETklubnFMekR4c1cvRk02RWVUR0xVZjRSamNtSVovcStO?=
+ =?gb2312?B?TzV3MnJGQnNWMEx0bkVFOW92ejBaMUxwU3hxb1lUNGdtRSs2MDFDREFwSyt1?=
+ =?gb2312?B?ci9GTThlbGVzU0lSQ3ptZ3dvS01QUDFJcnRIK2xJd0oyWVA2aEFEWDhtVTJS?=
+ =?gb2312?B?NGNXQ3lXNE4vZzdEVnVuZUhoQXJOSzl4VVQwTXh1WmVGR3k0ZUV2MWVxTmpF?=
+ =?gb2312?B?bVN4RFdySmQ5M1MyS2tqWTB6MWZDU0lLWkxLZHM1WWV3RzVhelFieis5Wmcv?=
+ =?gb2312?B?Uk5FTkNOdXNMY0xLWFRQbkYvV2NrZVhKUjd0VlY2N09SSG1PT3NxMzhLU2pV?=
+ =?gb2312?B?TTUyTUFHYUo2eW03WmtkRVlDWnQydFhFTEp5d2tPTHBRbkR5b0NmZ2lVWjFL?=
+ =?gb2312?B?Z1R6N2lZSzlvNWhZWWtlUExDM0s2YzQvWXA5dXVNS0dYSTMwQmJsNkY1ajNI?=
+ =?gb2312?B?S3F1Z2oyTjdDUmVwRDBzOC90amRsRlM2T0hPVmVycUhVQk5IQWNWQmZXL0xU?=
+ =?gb2312?B?a0hBTElTcUdOQWl4Q2FOU2QycmVRZDd0WWVlbXRjTjJ3d1NFQUpKalFLa2hi?=
+ =?gb2312?B?SlJNUUwweEVmYTRJOXUwTk5MOHg0V3hQT2E3bUNMbnMvSHMvNlVndWRlSm5N?=
+ =?gb2312?B?VzZHblFJM3lTQzZ3M2g5b2M1blhrUC9mZUN3N2p6ajUwalMvbnUwdVh2eHdC?=
+ =?gb2312?B?WnRTd3MvNGhkbGJ4UndqOUNXWmFFWlV6b2J6RGppeVhUc2xUMzlkWGVrd0VY?=
+ =?gb2312?B?L2haekJ4WHF2NlMyektpdFBRSDNQYWNyRkN3Qk5wTU85WjcwaTBMQVo2Q0M5?=
+ =?gb2312?B?RWZ4M3lwQUVySzQ5Vng1bTlodU1IVGp4b3Nsci8wL1RaZHdHdjZlSXpMczVP?=
+ =?gb2312?B?WGFTbWdXTVAvMi9kcDhJL0VZWm1EYmxSVmNoOWFDbmlHT2d5MXFCdHFtV29Q?=
+ =?gb2312?B?UmcrV3FpYVUxejJhZG5UZzYvNnA2UXFzamxQWHVLVTEzSEpGbEZLWWpac1gy?=
+ =?gb2312?B?bEtLZm5TZVZUV3BhVFJjL2JjSWliVVUyS0pONVdoV09nMUQyTStsNkp0dUhJ?=
+ =?gb2312?B?UUxZcEdUbFIya0w0azluMHJ3bUVaU3VqNlBOTFFZY0VPK3VFdjYzZ0RrWkQ5?=
+ =?gb2312?Q?5ERcCdAvyvwQM7Nhr4=3D?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1783f16d-7a28-80e6-4c32-fdf19b705ed0@gmx.com> <20210218121503.GQ2858050@casper.infradead.org>
- <927c018f-c951-c44c-698b-cb76d15d67bb@rkjnsn.net> <20210219142201.GU2858050@casper.infradead.org>
- <20210222014844.GB4626@dread.disaster.area>
-In-Reply-To: <20210222014844.GB4626@dread.disaster.area>
-From:   GWB <gwb@2realms.com>
-Date:   Sun, 28 Feb 2021 19:49:25 -0600
-Message-ID: <CAP8EXU0JMsL=G=tSfuOVCdnx8W5_N3J-q4WmCy3+PSVdJmHhXg@mail.gmail.com>
-Subject: Re: page->index limitation on 32bit system?
-To:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Erik Jensen <erikjensen@rkjnsn.net>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Qu Wenruo <quwenruo.btrfs@gmx.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB2632.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07e1d0d3-a2fc-4d80-74a6-08d8dc56d932
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Mar 2021 02:08:04.0267
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6Mhdnd1SXNjZUzRWbNHDm3gr5wUakt39iYLGEqTLevCCqG2/HXG5Yf4cKIofCsMCJfMjJTBIgyvYZ+CuZTM/6s2g9VekwH3KmnVPGnshzLM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB2725
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Getting btrfs patched for 32 bit arm would be of interest, but I'm not
-suggesting the devs can do much more with that.  In practical usage,
-we ran into similar difficulties a while back on embedded and
-dedicated devices which would boot btrfs, but eventually it was easier
-to put storage on nilfs2.  Nilfs2 is nice, but not nearly as developed
-as btrfs (it snapshots, but did not allow sending and incremental
-backups, and it is comparatively slow).  No idea, however, if it would
-even compile on arm 32.
-
-I'm delighted, Erik, that you were able to get btrfs to function to
-the extent that it did, and that you're willing to put time and effort
-in btrfs on arm 32 bit.  But before you do, consider nilfs2 for
-storage.  You can even get zfs to work on some 32 bit systems but RAM
-is an issue.  Also take a look at the Raspberry Pi 4's.  They have an
-8gig 64 bit embedded version called Compute Module 4, which seems to
-handle btrfs, and are not too pricey.  ZFS can work, but its too
-memory intensive for 8 gigs.
-
-Gordon
-
-On Sun, Feb 21, 2021 at 7:52 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Fri, Feb 19, 2021 at 02:22:01PM +0000, Matthew Wilcox wrote:
-> > On Thu, Feb 18, 2021 at 01:27:09PM -0800, Erik Jensen wrote:
-> > > On 2/18/21 4:15 AM, Matthew Wilcox wrote:
-> > >
-> > > > On Thu, Feb 18, 2021 at 04:54:46PM +0800, Qu Wenruo wrote:
-> > > > > Recently we got a strange bug report that, one 32bit systems like armv6
-> > > > > or non-64bit x86, certain large btrfs can't be mounted.
-> > > > >
-> > > > > It turns out that, since page->index is just unsigned long, and on 32bit
-> > > > > systemts, that can just be 32bit.
-> > > > >
-> > > > > And when filesystems is utilizing any page offset over 4T, page->index
-> > > > > get truncated, causing various problems.
-> > > > 4TB?  I think you mean 16TB (4kB * 4GB)
-> > > >
-> > > > Yes, this is a known limitation.  Some vendors have gone to the trouble
-> > > > of introducing a new page_index_t.  I'm not convinced this is a problem
-> > > > worth solving.  There are very few 32-bit systems with this much storage
-> > > > on a single partition (everything should work fine if you take a 20TB
-> > > > drive and partition it into two 10TB partitions).
-> > > For what it's worth, I'm the reporter of the original bug. My use case is a
-> > > custom NAS system. It runs on a 32-bit ARM processor, and has 5 8TB drives,
-> > > which I'd like to use as a single, unified storage array. I chose btrfs for
-> > > this project due to the filesystem-integrated snapshots and checksums.
-> > > Currently, I'm working around this issue by exporting the raw drives using
-> > > nbd and mounting them on a 64-bit system to access the filesystem, but this
-> > > is very inconvenient, only allows one machine to access the filesystem at a
-> > > time, and prevents running any tools that need access to the filesystem
-> > > (such as backup and file sync utilities) on the NAS itself.
-> > >
-> > > It sounds like this limitation would also prevent me from trying to use a
-> > > different filesystem on top of software RAID, since in that case the logical
-> > > filesystem would still be over 16TB.
-> > >
-> > > > As usual, the best solution is for people to stop buying 32-bit systems.
-> > > I purchased this device in 2018, so it's not exactly ancient. At the time,
-> > > it was the only SBC I could find that was low power, used ECC RAM, had a
-> > > crypto accelerator, and had multiple sata ports with port-multiplier
-> > > support.
-> >
-> > I'm sorry you bought unsupported hardware.
-> >
-> > This limitation has been known since at least 2009:
-> > https://lore.kernel.org/lkml/19041.4714.686158.130252@notabene.brown/
->
-> 2004:
->
-> commit 839099eb5ea07aef093ae2c5674f5a16a268f8b6
-> Author: Eric Sandeen <sandeen@sgi.com>
-> Date:   Wed Jul 14 20:02:01 2004 +0000
->
->     Add filesystem size limit even when XFS_BIG_BLKNOS is
->     in effect; limited by page cache index size (16T on ia32)
->
-> This all popped up on XFS around 2003 when the the disk address
-> space was expanded from 32 bits to 64 bits on 32 bit systems
-> (CONFIG_LBD) and so XFS could define XFS_BIG_FILESYSTEMS on 32 bit
-> systems for the first time.
->
-> FWIW, from an early 1994 commit into xfs_types.h:
->
-> +/*
-> + * Some types are conditional based on the selected configuration.
-> + * Set XFS_BIG_FILES=1 or 0 and XFS_BIG_FILESYSTEMS=1 or 0 depending
-> + * on the desired configuration.
-> + * XFS_BIG_FILES needs pgno_t to be 64 bits.
-> + * XFS_BIG_FILESYSTEMS needs daddr_t to be 64 bits.
-> + *
-> + * Expect these to be set from klocaldefs, or from the machine-type
-> + * defs files for the normal case.
-> + */
->
-> So limiting file and filesystem sizes on 32 bit systems is
-> something XFS has done right from the start...
->
-> > In the last decade, nobody's tried to fix it in mainline that I know of.
-> > As I said, some vendors have tried to fix it in their NAS products,
-> > but I don't know where to find that patch any more.
->
-> It's not suportable from a disaster recovery perspective. I recently
-> saw a 14TB filesystem with billions of hardlinks in it require 240GB
-> of RAM to run xfs_repair. We just can't support large filesystems
-> on 32 bit systems, and it has nothing to do with simple stuff like
-> page cache index sizes...
->
-> Cheers,
->
-> Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCreivP7IyzogSmVucyBB
+eGJvZSA8YXhib2VAa2VybmVsLmRrPgq3osvNyrG85DogMjAyMcTqM9TCMcjVIDc6MDgKytW8/sjL
+OiBzeXpib3Q7IGFzbWwuc2lsZW5jZUBnbWFpbC5jb207IGlvLXVyaW5nQHZnZXIua2VybmVsLm9y
+ZzsgbGludXgtZnNkZXZlbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmc7IHN5emthbGxlci1idWdzQGdvb2dsZWdyb3Vwcy5jb207IHZpcm9AemVuaXYubGludXgu
+b3JnLnVrCtb3zOI6IFJlOiBwb3NzaWJsZSBkZWFkbG9jayBpbiBpb19wb2xsX2RvdWJsZV93YWtl
+ICgyKQoKW1BsZWFzZSBub3RlOiBUaGlzIGUtbWFpbCBpcyBmcm9tIGFuIEVYVEVSTkFMIGUtbWFp
+bCBhZGRyZXNzXQoKT24gMi8yNy8yMSA1OjQyIFBNLCBzeXpib3Qgd3JvdGU6Cj4gc3l6Ym90IGhh
+cyBmb3VuZCBhIHJlcHJvZHVjZXIgZm9yIHRoZSBmb2xsb3dpbmcgaXNzdWUgb246Cj4KPiBIRUFE
+IGNvbW1pdDogICAgNTY5NWU1MTYgTWVyZ2UgdGFnICdpb191cmluZy13b3JrZXIudjMtMjAyMS0w
+Mi0yNScgb2YgZ2l0Oi4uCj4gZ2l0IHRyZWU6ICAgICAgIHVwc3RyZWFtCj4gY29uc29sZSBvdXRw
+dXQ6IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvbG9nLnR4dD94PTExNGUzODY2ZDAw
+MDAwCj4ga2VybmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNv
+bmZpZz94PThjNzZkYWQwOTQ2ZGYxZjMKPiBkYXNoYm9hcmQgbGluazogaHR0cHM6Ly9zeXprYWxs
+ZXIuYXBwc3BvdC5jb20vYnVnP2V4dGlkPTI4YWJkNjkzZGI5ZTkyYzE2MGQ4Cj4gc3l6IHJlcHJv
+OiAgICAgIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvcmVwcm8uc3l6P3g9MTIyZWQ5
+YjZkMDAwMDAKPiBDIHJlcHJvZHVjZXI6ICAgaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20v
+eC9yZXByby5jP3g9MTRkNWEyOTJkMDAwMDAKPgo+IElNUE9SVEFOVDogaWYgeW91IGZpeCB0aGUg
+aXNzdWUsIHBsZWFzZSBhZGQgdGhlIGZvbGxvd2luZyB0YWcgdG8gdGhlIGNvbW1pdDoKPiBSZXBv
+cnRlZC1ieTogc3l6Ym90KzI4YWJkNjkzZGI5ZTkyYzE2MGQ4QHN5emthbGxlci5hcHBzcG90bWFp
+bC5jb20KPgo+ID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09Cj4g
+V0FSTklORzogcG9zc2libGUgcmVjdXJzaXZlIGxvY2tpbmcgZGV0ZWN0ZWQKPiA1LjExLjAtc3l6
+a2FsbGVyICMwIE5vdCB0YWludGVkCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0KPiBzd2FwcGVyLzEvMCBpcyB0cnlpbmcgdG8gYWNxdWlyZSBsb2NrOgo+IGZm
+ZmY4ODgwMWIyYjExMzAgKCZydW50aW1lLT5zbGVlcCl7Li4tLn0tezI6Mn0sIGF0OiBzcGluX2xv
+Y2sgaW5jbHVkZS9saW51eC9zcGlubG9jay5oOjM1NCBbaW5saW5lXQo+IGZmZmY4ODgwMWIyYjEx
+MzAgKCZydW50aW1lLT5zbGVlcCl7Li4tLn0tezI6Mn0sIGF0OiBpb19wb2xsX2RvdWJsZV93YWtl
+KzB4MjVmLzB4NmEwIGZzL2lvX3VyaW5nLmM6NDk2MAo+Cj4gYnV0IHRhc2sgaXMgYWxyZWFkeSBo
+b2xkaW5nIGxvY2s6Cj4gZmZmZjg4ODAxYjJiMzEzMCAoJnJ1bnRpbWUtPnNsZWVwKXsuLi0ufS17
+MjoyfSwgYXQ6IF9fd2FrZV91cF9jb21tb25fbG9jaysweGI0LzB4MTMwIGtlcm5lbC9zY2hlZC93
+YWl0LmM6MTM3Cj4KPiBvdGhlciBpbmZvIHRoYXQgbWlnaHQgaGVscCB1cyBkZWJ1ZyB0aGlzOgo+
+ICBQb3NzaWJsZSB1bnNhZmUgbG9ja2luZyBzY2VuYXJpbzoKPgo+ICAgICAgICBDUFUwCj4gICAg
+ICAgIC0tLS0KPiAgIGxvY2soJnJ1bnRpbWUtPnNsZWVwKTsKPiAgIGxvY2soJnJ1bnRpbWUtPnNs
+ZWVwKTsKPgo+ICAqKiogREVBRExPQ0sgKioqCj4KPiAgTWF5IGJlIGR1ZSB0byBtaXNzaW5nIGxv
+Y2sgbmVzdGluZyBub3RhdGlvbgo+Cj4gMiBsb2NrcyBoZWxkIGJ5IHN3YXBwZXIvMS8wOgo+ICAj
+MDogZmZmZjg4ODE0NzQ3NDkwOCAoJmdyb3VwLT5sb2NrKXsuLi0ufS17MjoyfSwgYXQ6IF9zbmRf
+cGNtX3N0cmVhbV9sb2NrX2lycXNhdmUrMHg5Zi8weGQwIHNvdW5kL2NvcmUvcGNtX25hdGl2ZS5j
+OjE3MAo+ICAjMTogZmZmZjg4ODAxYjJiMzEzMCAoJnJ1bnRpbWUtPnNsZWVwKXsuLi0ufS17Mjoy
+fSwgYXQ6IF9fd2FrZV91cF9jb21tb25fbG9jaysweGI0LzB4MTMwIGtlcm5lbC9zY2hlZC93YWl0
+LmM6MTM3Cj4KPiBzdGFjayBiYWNrdHJhY2U6Cj4gQ1BVOiAxIFBJRDogMCBDb21tOiBzd2FwcGVy
+LzEgTm90IHRhaW50ZWQgNS4xMS4wLXN5emthbGxlciAjMAo+IEhhcmR3YXJlIG5hbWU6IEdvb2ds
+ZSBHb29nbGUgQ29tcHV0ZSBFbmdpbmUvR29vZ2xlIENvbXB1dGUgRW5naW5lLCBCSU9TIEdvb2ds
+ZSAwMS8wMS8yMDExCj4gQ2FsbCBUcmFjZToKPiAgPElSUT4KPiAgX19kdW1wX3N0YWNrIGxpYi9k
+dW1wX3N0YWNrLmM6NzkgW2lubGluZV0KPiAgZHVtcF9zdGFjaysweGZhLzB4MTUxIGxpYi9kdW1w
+X3N0YWNrLmM6MTIwCj4gIHByaW50X2RlYWRsb2NrX2J1ZyBrZXJuZWwvbG9ja2luZy9sb2NrZGVw
+LmM6MjgyOSBbaW5saW5lXQo+ICBjaGVja19kZWFkbG9jayBrZXJuZWwvbG9ja2luZy9sb2NrZGVw
+LmM6Mjg3MiBbaW5saW5lXQo+ICB2YWxpZGF0ZV9jaGFpbiBrZXJuZWwvbG9ja2luZy9sb2NrZGVw
+LmM6MzY2MSBbaW5saW5lXQo+ICBfX2xvY2tfYWNxdWlyZS5jb2xkKzB4MTRjLzB4M2I0IGtlcm5l
+bC9sb2NraW5nL2xvY2tkZXAuYzo0OTAwCj4gIGxvY2tfYWNxdWlyZSBrZXJuZWwvbG9ja2luZy9s
+b2NrZGVwLmM6NTUxMCBbaW5saW5lXQo+ICBsb2NrX2FjcXVpcmUrMHgxYWIvMHg3MzAga2VybmVs
+L2xvY2tpbmcvbG9ja2RlcC5jOjU0NzUKPiAgX19yYXdfc3Bpbl9sb2NrIGluY2x1ZGUvbGludXgv
+c3BpbmxvY2tfYXBpX3NtcC5oOjE0MiBbaW5saW5lXQo+ICBfcmF3X3NwaW5fbG9jaysweDJhLzB4
+NDAga2VybmVsL2xvY2tpbmcvc3BpbmxvY2suYzoxNTEKPiAgc3Bpbl9sb2NrIGluY2x1ZGUvbGlu
+dXgvc3BpbmxvY2suaDozNTQgW2lubGluZV0KPiAgaW9fcG9sbF9kb3VibGVfd2FrZSsweDI1Zi8w
+eDZhMCBmcy9pb191cmluZy5jOjQ5NjAKPiAgX193YWtlX3VwX2NvbW1vbisweDE0Ny8weDY1MCBr
+ZXJuZWwvc2NoZWQvd2FpdC5jOjEwOAo+ICBfX3dha2VfdXBfY29tbW9uX2xvY2srMHhkMC8weDEz
+MCBrZXJuZWwvc2NoZWQvd2FpdC5jOjEzOAo+ICBzbmRfcGNtX3VwZGF0ZV9zdGF0ZSsweDQ2YS8w
+eDU0MCBzb3VuZC9jb3JlL3BjbV9saWIuYzoyMDMKPiAgc25kX3BjbV91cGRhdGVfaHdfcHRyMCsw
+eGE3NS8weDFhNTAgc291bmQvY29yZS9wY21fbGliLmM6NDY0Cj4gIHNuZF9wY21fcGVyaW9kX2Vs
+YXBzZWQrMHgxNjAvMHgyNTAgc291bmQvY29yZS9wY21fbGliLmM6MTgwNQo+ICBkdW1teV9ocnRp
+bWVyX2NhbGxiYWNrKzB4OTQvMHgxYjAgc291bmQvZHJpdmVycy9kdW1teS5jOjM3OAo+ICBfX3J1
+bl9ocnRpbWVyIGtlcm5lbC90aW1lL2hydGltZXIuYzoxNTE5IFtpbmxpbmVdCj4gIF9faHJ0aW1l
+cl9ydW5fcXVldWVzKzB4NjA5LzB4ZTQwIGtlcm5lbC90aW1lL2hydGltZXIuYzoxNTgzCj4gIGhy
+dGltZXJfcnVuX3NvZnRpcnErMHgxN2IvMHgzNjAga2VybmVsL3RpbWUvaHJ0aW1lci5jOjE2MDAK
+PiAgX19kb19zb2Z0aXJxKzB4MjliLzB4OWY2IGtlcm5lbC9zb2Z0aXJxLmM6MzQ1Cj4gIGludm9r
+ZV9zb2Z0aXJxIGtlcm5lbC9zb2Z0aXJxLmM6MjIxIFtpbmxpbmVdCj4gIF9faXJxX2V4aXRfcmN1
+IGtlcm5lbC9zb2Z0aXJxLmM6NDIyIFtpbmxpbmVdCj4gIGlycV9leGl0X3JjdSsweDEzNC8weDIw
+MCBrZXJuZWwvc29mdGlycS5jOjQzNAo+ICBzeXN2ZWNfYXBpY190aW1lcl9pbnRlcnJ1cHQrMHg5
+My8weGMwIGFyY2gveDg2L2tlcm5lbC9hcGljL2FwaWMuYzoxMTAwCj4gIDwvSVJRPgo+ICBhc21f
+c3lzdmVjX2FwaWNfdGltZXJfaW50ZXJydXB0KzB4MTIvMHgyMCBhcmNoL3g4Ni9pbmNsdWRlL2Fz
+bS9pZHRlbnRyeS5oOjYzMgo+IFJJUDogMDAxMDpuYXRpdmVfc2F2ZV9mbCBhcmNoL3g4Ni9pbmNs
+dWRlL2FzbS9pcnFmbGFncy5oOjI5IFtpbmxpbmVdCj4gUklQOiAwMDEwOmFyY2hfbG9jYWxfc2F2
+ZV9mbGFncyBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9pcnFmbGFncy5oOjcwIFtpbmxpbmVdCj4gUklQ
+OiAwMDEwOmFyY2hfaXJxc19kaXNhYmxlZCBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9pcnFmbGFncy5o
+OjEzNyBbaW5saW5lXQo+IFJJUDogMDAxMDphY3BpX3NhZmVfaGFsdCBkcml2ZXJzL2FjcGkvcHJv
+Y2Vzc29yX2lkbGUuYzoxMTEgW2lubGluZV0KPiBSSVA6IDAwMTA6YWNwaV9pZGxlX2RvX2VudHJ5
+KzB4MWM5LzB4MjUwIGRyaXZlcnMvYWNwaS9wcm9jZXNzb3JfaWRsZS5jOjUxNgo+IENvZGU6IGRk
+IDM4IDZlIGY4IDg0IGRiIDc1IGFjIGU4IDU0IDMyIDZlIGY4IGU4IDBmIDFjIDc0IGY4IGU5IDBj
+IDAwIDAwIDAwIGU4IDQ1IDMyIDZlIGY4IDBmIDAwIDJkIDRlIDRhIGM1IDAwIGU4IDM5IDMyIDZl
+IGY4IGZiIGY0IDw5Yz4gNWIgODEgZTMgMDAgMDIgMDAgMDAgZmEgMzEgZmYgNDggODkgZGUgZTgg
+MTQgM2EgNmUgZjggNDggODUgZGIKPiBSU1A6IDAwMTg6ZmZmZmM5MDAwMGQ0N2QxOCBFRkxBR1M6
+IDAwMDAwMjkzCj4gUkFYOiAwMDAwMDAwMDAwMDAwMDAwIFJCWDogMDAwMDAwMDAwMDAwMDAwMCBS
+Q1g6IDAwMDAwMDAwMDAwMDAwMDAKPiBSRFg6IGZmZmY4ODgwMTE1YzM3ODAgUlNJOiBmZmZmZmZm
+Zjg5MDUyNTM3IFJESTogMDAwMDAwMDAwMDAwMDAwMAo+IFJCUDogZmZmZjg4ODE0MTEyNzA2NCBS
+MDg6IDAwMDAwMDAwMDAwMDAwMDEgUjA5OiAwMDAwMDAwMDAwMDAwMDAxCj4gUjEwOiBmZmZmZmZm
+ZjgxNzk0MTY4IFIxMTogMDAwMDAwMDAwMDAwMDAwMCBSMTI6IDAwMDAwMDAwMDAwMDAwMDEKPiBS
+MTM6IGZmZmY4ODgxNDExMjcwMDAgUjE0OiBmZmZmODg4MTQxMTI3MDY0IFIxNTogZmZmZjg4ODE0
+MzMzMTgwNAo+ICBhY3BpX2lkbGVfZW50ZXIrMHgzNjEvMHg1MDAgZHJpdmVycy9hY3BpL3Byb2Nl
+c3Nvcl9pZGxlLmM6NjQ3Cj4gIGNwdWlkbGVfZW50ZXJfc3RhdGUrMHgxYjEvMHhjODAgZHJpdmVy
+cy9jcHVpZGxlL2NwdWlkbGUuYzoyMzcKPiAgY3B1aWRsZV9lbnRlcisweDRhLzB4YTAgZHJpdmVy
+cy9jcHVpZGxlL2NwdWlkbGUuYzozNTEKPiAgY2FsbF9jcHVpZGxlIGtlcm5lbC9zY2hlZC9pZGxl
+LmM6MTU4IFtpbmxpbmVdCj4gIGNwdWlkbGVfaWRsZV9jYWxsIGtlcm5lbC9zY2hlZC9pZGxlLmM6
+MjM5IFtpbmxpbmVdCj4gIGRvX2lkbGUrMHgzZTEvMHg1OTAga2VybmVsL3NjaGVkL2lkbGUuYzoz
+MDAKPiAgY3B1X3N0YXJ0dXBfZW50cnkrMHgxNC8weDIwIGtlcm5lbC9zY2hlZC9pZGxlLmM6Mzk3
+Cj4gIHN0YXJ0X3NlY29uZGFyeSsweDI3NC8weDM1MCBhcmNoL3g4Ni9rZXJuZWwvc21wYm9vdC5j
+OjI3Mgo+ICBzZWNvbmRhcnlfc3RhcnR1cF82NF9ub192ZXJpZnkrMHhiMC8weGJiCgo+VGhpcyBs
+b29rcyB2ZXJ5IG9kZCwgb25seSB0aGluZyBJIGNhbiB0aGluayBvZiBpcyBzb21lb25lID5kb2lu
+Zwo+cG9sbF93YWl0KCkgdHdpY2Ugd2l0aCBkaWZmZXJlbnQgZW50cmllcyBidXQgZm9yIHRoZSBz
+YW1lCj53YWl0cXVldWUgaGVhZC4KPgoKSGVsbG8gIEplbnMgQXhib2UKCmhlcmUgcG9sbF93YWl0
+KCkgdHdpY2UgaW4gd2FpdHF1ZXVlIGhlYWQgJ3J1bnRpbWUtPnNsZWVwJwppbiBzb3VuZC9jb3Jl
+L29zcy9wY21fb3NzLmMKCnN0YXRpYyBfX3BvbGxfdCBzbmRfcGNtX29zc19wb2xsKHN0cnVjdCBm
+aWxlICpmaWxlLCBwb2xsX3RhYmxlICogd2FpdCkgewouLi4uLi4uLi4uLgogICAgICAgIGlmIChw
+c3Vic3RyZWFtICE9IE5VTEwpIHsKICAgICAgICAgICAgICAgIHN0cnVjdCBzbmRfcGNtX3J1bnRp
+bWUgKnJ1bnRpbWUgPSBwc3Vic3RyZWFtLT5ydW50aW1lOwogICAgICAgICAgICAgICAgcG9sbF93
+YWl0KGZpbGUsICZydW50aW1lLT5zbGVlcCwgd2FpdCk7CiAgICAgICAgICAgICAgICBzbmRfcGNt
+X3N0cmVhbV9sb2NrX2lycShwc3Vic3RyZWFtKTsKICAgICAgICAgICAgICAgIGlmIChydW50aW1l
+LT5zdGF0dXMtPnN0YXRlICE9IFNORFJWX1BDTV9TVEFURV9EUkFJTklORyAmJgogICAgICAgICAg
+ICAgICAgICAgIChydW50aW1lLT5zdGF0dXMtPnN0YXRlICE9IFNORFJWX1BDTV9TVEFURV9SVU5O
+SU5HIHx8CiAgICAgICAgICAgICAgICAgICAgIHNuZF9wY21fb3NzX3BsYXliYWNrX3JlYWR5KHBz
+dWJzdHJlYW0pKSkKICAgICAgICAgICAgICAgICAgICAgICAgbWFzayB8PSBFUE9MTE9VVCB8IEVQ
+T0xMV1JOT1JNOwogICAgICAgICAgICAgICAgc25kX3BjbV9zdHJlYW1fdW5sb2NrX2lycShwc3Vi
+c3RyZWFtKTsKICAgICAgICB9CiAgICAgICAgaWYgKGNzdWJzdHJlYW0gIT0gTlVMTCkgewogICAg
+ICAgICAgICAgICAgc3RydWN0IHNuZF9wY21fcnVudGltZSAqcnVudGltZSA9IGNzdWJzdHJlYW0t
+PnJ1bnRpbWU7CiAgICAgICAgICAgICAgICBzbmRfcGNtX3N0YXRlX3Qgb3N0YXRlOwogICAgICAg
+ICAgICAgICAgcG9sbF93YWl0KGZpbGUsICZydW50aW1lLT5zbGVlcCwgd2FpdCk7CiAgICAgICAg
+ICAgICAgICBzbmRfcGNtX3N0cmVhbV9sb2NrX2lycShjc3Vic3RyZWFtKTsKLi4uLi4uLi4uLgp9
+CgogSSBkb24ndCBrbm93IGlmIHRoZXJlIGFyZSBhbnkgb3RoZXIgZHJpdmVycyB0aGF0IHVzZSB0
+aGUgc2FtZSB3YXkgLCAgIGNhbiBhZGQgc29tZSBqdWRnbWVudCBpbiBpb19wb2xsX2RvdWJsZV93
+YWtlKCk/Cgo+I3N5eiB0ZXN0OiBnaXQ6Ly9naXQua2VybmVsLmRrL2xpbnV4LWJsb2NrIHN5emJv
+dC10ZXN0Cj4KPi0tCj5KZW5zIEF4Ym9lCgo=
