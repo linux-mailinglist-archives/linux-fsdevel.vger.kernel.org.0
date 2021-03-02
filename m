@@ -2,141 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF9F532B4B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:38:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4EBD32B4B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:38:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354153AbhCCF0R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 00:26:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58810 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1839219AbhCBQGJ (ORCPT
+        id S1354144AbhCCFZ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 00:25:58 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22719 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1448977AbhCBQDT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Mar 2021 11:06:09 -0500
-Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54F76C06178B
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Mar 2021 07:56:08 -0800 (PST)
-Received: by mail-qt1-x82e.google.com with SMTP id v3so15096862qtw.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Mar 2021 07:56:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=tNdOP429TQBqbFjtRfcboNnC/yDVMr5sai/pD5T/IRg=;
-        b=IlpWwYdHCRDOk3kWpi+d9K5sL2BkH9JZ1CEz1ZKimdPVIRwTuGRq3u8IVkuopTydJj
-         arkp2Jdxkb6AEwpjHEzEBCdWsa3q3RVDDAD6bSnR4o1EyuK4taQfQjgDPmaAJ9E1rc7M
-         d4jHzAyynuq2BzJCokhaQdMM8AN7WuMyNhHQlCWn80oKplc03XM+gFnGwD3Z51x4lbml
-         2TCJwmgtS2OfBFJdEHlD5w8ufPSSU3VTgvHICNQAxeKAsegXHKO2hfv/m04PEbTEcSNF
-         E3mw5ycnDw+JDvecUfy1I1YGGLn5VeegekbNe2l96F37r1kFSVfRi5rflI3VL2KtZugd
-         9xdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tNdOP429TQBqbFjtRfcboNnC/yDVMr5sai/pD5T/IRg=;
-        b=enAg8Qbbvr22vnQv3ltU261HHFQImmli1nF8RP0rfvHy33+/78+r4pKThc27Ijxq18
-         Y8QZxMQW5rEXBm9ST7OE6Iz6zbs5DnbQSqNUMjYbekzIZN8tKMod4ipKbCw/WiqHcMDY
-         WL85mxSAbcLjCirskDQsIh845/gm2XO1CkKSZ9aD3EtH51fCTu52Ki1GNhl/lvqdx0Bl
-         UCzpVCQQc9V4K04AxKrOQdaeBxXDtL0TiKw0seUjJoHaAchWg9IM0TJUFEnWoN76PCG1
-         5FzZypmIol/nqeP5mJfBapA5lL+2lDf1w9edB566b1evnESDTPwRAQbF4Mo1p1gXCZ+K
-         jCdA==
-X-Gm-Message-State: AOAM533WulIFFPA2ogOm+g+miZtyof/f3yC/nSB7gJM/i1sEIjA9DZ6q
-        oEtMIYO72cZMMt9HkvACD1KBAw==
-X-Google-Smtp-Source: ABdhPJyOfWYuIhZl4tG2VoD6q45/j1mxf/N5hHiy8YupUY6yiNz/e3N1wA6PcoAeeK96MehQQtO/QA==
-X-Received: by 2002:ac8:7392:: with SMTP id t18mr17887295qtp.104.1614700567462;
-        Tue, 02 Mar 2021 07:56:07 -0800 (PST)
-Received: from localhost (70.44.39.90.res-cmts.bus.ptd.net. [70.44.39.90])
-        by smtp.gmail.com with ESMTPSA id o7sm1251394qkb.104.2021.03.02.07.56.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Mar 2021 07:56:06 -0800 (PST)
-Date:   Tue, 2 Mar 2021 10:56:05 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     pintu@codeaurora.org
-Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, jaewon31.kim@samsung.com,
-        yuzhao@google.com, shakeelb@google.com, guro@fb.com,
-        mchehab+huawei@kernel.org, xi.fengfei@h3c.com,
-        lokeshgidra@google.com, nigupta@nvidia.com, famzheng@amazon.com,
-        andrew.a.klychkov@gmail.com, bigeasy@linutronix.de,
-        ping.ping@gmail.com, vbabka@suse.cz, yzaikin@google.com,
-        keescook@chromium.org, mcgrof@kernel.org, corbet@lwn.net,
-        pintu.ping@gmail.com
-Subject: Re: [PATCH] mm: introduce clear all vm events counters
-Message-ID: <YD5gFYalXJh0dMLn@cmpxchg.org>
-References: <1614595766-7640-1-git-send-email-pintu@codeaurora.org>
- <YD0EOyW3pZXDnuuJ@cmpxchg.org>
- <419bb403c33b7e48291972df938d0cae@codeaurora.org>
+        Tue, 2 Mar 2021 11:03:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1614700856;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sT+3MBs93ZkS6Kl/MHPW0L5wZEKnpVkvAcVrn9n7a8o=;
+        b=g2UbuiIbetPzDwg018SZSbqGIcdZJt2wgJ5sq5/9tLMv6YBksttAIyYo+0NC9so0B1a5PD
+        b6HZtkRNOCJJ8ehSPajOQ/vTTbQI58ZMHkLUJ2GGDXQ3LKFrqxToJKyT1I4Vr8DXuR7Tms
+        DjQaNOt8InSj4gnKsfhSwQah4EjQAYw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-143-fR8QzrH2MFOitEjz-uD3ag-1; Tue, 02 Mar 2021 11:00:41 -0500
+X-MC-Unique: fR8QzrH2MFOitEjz-uD3ag-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B71DE801A87;
+        Tue,  2 Mar 2021 16:00:39 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-140.rdu2.redhat.com [10.10.114.140])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A7DA5FC3A;
+        Tue,  2 Mar 2021 16:00:34 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 975FB22054F; Tue,  2 Mar 2021 11:00:33 -0500 (EST)
+Date:   Tue, 2 Mar 2021 11:00:33 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+        virtio-fs@redhat.com, linux-kernel@vger.kernel.org,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [RFC PATCH] fuse: Clear SGID bit when setting mode in setacl
+Message-ID: <20210302160033.GD220334@redhat.com>
+References: <20210226183357.28467-1-lhenriques@suse.de>
+ <20210301163324.GC186178@redhat.com>
+ <YD0wbmulcBVZ7VZy@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <419bb403c33b7e48291972df938d0cae@codeaurora.org>
+In-Reply-To: <YD0wbmulcBVZ7VZy@suse.de>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 02, 2021 at 04:00:34PM +0530, pintu@codeaurora.org wrote:
-> On 2021-03-01 20:41, Johannes Weiner wrote:
-> > On Mon, Mar 01, 2021 at 04:19:26PM +0530, Pintu Kumar wrote:
-> > > At times there is a need to regularly monitor vm counters while we
-> > > reproduce some issue, or it could be as simple as gathering some
-> > > system
-> > > statistics when we run some scenario and every time we like to start
-> > > from
-> > > beginning.
-> > > The current steps are:
-> > > Dump /proc/vmstat
-> > > Run some scenario
-> > > Dump /proc/vmstat again
-> > > Generate some data or graph
-> > > reboot and repeat again
+On Mon, Mar 01, 2021 at 06:20:30PM +0000, Luis Henriques wrote:
+> On Mon, Mar 01, 2021 at 11:33:24AM -0500, Vivek Goyal wrote:
+> > On Fri, Feb 26, 2021 at 06:33:57PM +0000, Luis Henriques wrote:
+> > > Setting file permissions with POSIX ACLs (setxattr) isn't clearing the
+> > > setgid bit.  This seems to be CVE-2016-7097, detected by running fstest
+> > > generic/375 in virtiofs.  Unfortunately, when the fix for this CVE landed
+> > > in the kernel with commit 073931017b49 ("posix_acl: Clear SGID bit when
+> > > setting file permissions"), FUSE didn't had ACLs support yet.
 > > 
-> > You can subtract the first vmstat dump from the second to get the
-> > event delta for the scenario run. That's what I do, and I'd assume
-> > most people are doing. Am I missing something?
+> > Hi Luis,
+> > 
+> > Interesting. I did not know that "chmod" can lead to clearing of SGID
+> > as well. Recently we implemented FUSE_HANDLE_KILLPRIV_V2 flag which
+> > means that file server is responsible for clearing of SUID/SGID/caps
+> > as per following rules.
+> > 
+> >     - caps are always cleared on chown/write/truncate
+> >     - suid is always cleared on chown, while for truncate/write it is cleared
+> >       only if caller does not have CAP_FSETID.
+> >     - sgid is always cleared on chown, while for truncate/write it is cleared
+> >       only if caller does not have CAP_FSETID as well as file has group execute
+> >       permission.
+> > 
+> > And we don't have anything about "chmod" in this list. Well, I will test
+> > this and come back to this little later.
+> > 
+> > I see following comment in fuse_set_acl().
+> > 
+> >                 /*
+> >                  * Fuse userspace is responsible for updating access
+> >                  * permissions in the inode, if needed. fuse_setxattr
+> >                  * invalidates the inode attributes, which will force
+> >                  * them to be refreshed the next time they are used,
+> >                  * and it also updates i_ctime.
+> >                  */
+> > 
+> > So looks like that original code has been written with intent that
+> > file server is responsible for updating inode permissions. I am
+> > assuming this will include clearing of S_ISGID if needed.
+> > 
+> > But question is, does file server has enough information to be able
+> > to handle proper clearing of S_ISGID info. IIUC, file server will need
+> > two pieces of information atleast.
+> > 
+> > - gid of the caller.
+> > - Whether caller has CAP_FSETID or not.
+> > 
+> > I think we have first piece of information but not the second one. May
+> > be we need to send this in fuse_setxattr_in->flags. And file server
+> > can drop CAP_FSETID while doing setxattr().
+> > 
+> > What about "gid" info. We don't change to caller's uid/gid while doing
+> > setxattr(). So host might not clear S_ISGID or clear it when it should
+> > not. I am wondering that can we switch to caller's uid/gid in setxattr(),
+> > atleast while setting acls.
 > 
-> Thanks so much for your comments.
-> Yes in most cases it works.
+> Thank for looking into this.  To be honest, initially I thought that the
+> fix should be done in the server too, but when I looked into the code I
+> couldn't find an easy way to get that done (without modifying the data
+> being passed from the kernel in setxattr).
 > 
-> But I guess there are sometimes where we need to compare with fresh data
-> (just like reboot) at least for some of the counters.
-> Suppose we wanted to monitor pgalloc_normal and pgfree.
+> So, what I've done was to look at what other filesystems were doing in the
+> ACL code, and that's where I found out about this CVE.  The CVE fix for
+> the other filesystems looked easy enough to be included in FUSE too.
 
-Hopefully these would already be balanced out pretty well before you
-run a test, or there is a risk that whatever outstanding allocations
-there are can cause a large number of frees during your test that
-don't match up to your recorded allocation events. Resetting to zero
-doesn't eliminate the risk of such background noise.
+Hi Luis,
 
-> Or, suppose we want to monitor until the field becomes non-zero..
-> Or, how certain values are changing compared to fresh reboot.
-> Or, suppose we want to reset all counters after boot and start capturing
-> fresh stats.
+I still feel that it should probably be fixed in virtiofsd, given fuse client
+is expecting file server to take care of any change of mode (file
+permission bits).
 
-Again, there simply is no mathematical difference between
+I wrote a proof of concept patch and this should fix this. But it
+drop CAP_FSETID always. So I will need to modify kernel to pass
+this information to file server and that should properly fix
+generic/375. 
 
-	reset events to 0
-	run test
-	look at events - 0
+Please have a look. This applies on top of fuse acl support V4 patches
+I had posted. I have pushed all the patches on a temporary git branch
+as well.
 
-and
+https://github.com/rhvgoyal/qemu/commits/acl-sgid
 
-	read events baseline
-	run test
-	look at events - baseline
+Vivek
 
-> Some of the counters could be growing too large and too fast. Will there be
-> chances of overflow ?
-> Then resetting using this could help without rebooting.
 
-Overflows are just a fact of life on 32 bit systems. However, they can
-also be trivially handled - you can always subtract a ulong start
-state from a ulong end state and get a reliable delta of up to 2^32
-events, whether the end state has overflowed or not.
+Subject: virtiofsd: Switch creds, drop FSETID for system.posix_acl_access xattr
 
-The bottom line is that the benefit of this patch adds a minor
-convenience for something that can already be done in userspace. But
-the downside is that there would be one more possible source of noise
-for kernel developers to consider when looking at a bug report. Plus
-the extra code and user interface that need to be maintained.
+When posix access acls are set on a file, it can lead to adjusting file
+permissions (mode) as well. If caller does not have CAP_FSETID and it
+also does not have membership of owner group, this will lead to clearing
+SGID bit in mode.
 
-I don't think we should merge this patch.
+Current fuse code is written in such a way that it expects file server
+to take care of chaning file mode (permission), if there is a need.
+Right now, host kernel does not clear SGID bit because virtiofsd is
+running as root and has CAP_FSETID. For host kernel to clear SGID,
+virtiofsd need to switch to gid of caller in guest and also drop
+CAP_FSETID (if caller did not have it to begin with).
+
+This is a proof of concept patch which switches to caller's uid/gid
+and alwasys drops CAP_FSETID in lo_setxattr(system.posix_acl_access).
+This should fix the xfstest generic/375 test case.
+
+This patch is not complete yet. Kernel should pass information when
+to drop CAP_FSETID and when not to. I will look into modifying
+kernel to pass this information to file server.
+
+Reported-by: Luis Henriques <lhenriques@suse.de>
+Yet-to-be-signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+---
+ tools/virtiofsd/passthrough_ll.c |   28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
+
+Index: rhvgoyal-qemu/tools/virtiofsd/passthrough_ll.c
+===================================================================
+--- rhvgoyal-qemu.orig/tools/virtiofsd/passthrough_ll.c	2021-03-02 08:06:20.539820330 -0500
++++ rhvgoyal-qemu/tools/virtiofsd/passthrough_ll.c	2021-03-02 10:46:40.901334665 -0500
+@@ -172,7 +172,7 @@ struct lo_data {
+     int user_killpriv_v2, killpriv_v2;
+     /* If set, virtiofsd is responsible for setting umask during creation */
+     bool change_umask;
+-    int user_posix_acl;
++    int user_posix_acl, posix_acl;
+ };
+ 
+ static const struct fuse_opt lo_opts[] = {
+@@ -677,6 +677,7 @@ static void lo_init(void *userdata, stru
+         fuse_log(FUSE_LOG_DEBUG, "lo_init: enabling posix acl\n");
+         conn->want |= FUSE_CAP_POSIX_ACL | FUSE_CAP_DONT_MASK;
+         lo->change_umask = true;
++        lo->posix_acl = true;
+     } else {
+         /* User either did not specify anything or wants it disabled */
+         fuse_log(FUSE_LOG_DEBUG, "lo_init: disabling posix_acl\n");
+@@ -2981,12 +2982,37 @@ static void lo_setxattr(fuse_req_t req,
+ 
+     sprintf(procname, "%i", inode->fd);
+     if (S_ISREG(inode->filetype) || S_ISDIR(inode->filetype)) {
++        bool switched_creds = false;
++        struct lo_cred old = {};
++
+         fd = openat(lo->proc_self_fd, procname, O_RDONLY);
+         if (fd < 0) {
+             saverr = errno;
+             goto out;
+         }
++
++        if (lo->posix_acl && !strcmp(name, "system.posix_acl_access")) {
++            ret = lo_change_cred(req, &old, false);
++            if (ret) {
++                saverr = ret;
++                goto out;
++            }
++            ret = drop_effective_cap("FSETID", NULL);
++            if (ret != 0) {
++                lo_restore_cred(&old, false);
++                saverr = ret;
++                goto out;
++            }
++            switched_creds = true;
++        }
++
+         ret = fsetxattr(fd, name, value, size, flags);
++
++        if (switched_creds) {
++            if (gain_effective_cap("FSETID"))
++                fuse_log(FUSE_LOG_ERR, "Failed to gain CAP_FSETID\n");
++            lo_restore_cred(&old, false);
++        }
+     } else {
+         /* fchdir should not fail here */
+         assert(fchdir(lo->proc_self_fd) == 0);
+
