@@ -2,220 +2,286 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11BA632B4C2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:38:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 178A332B4C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:38:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354196AbhCCF2K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 00:28:10 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12195 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351738AbhCBRti (ORCPT
+        id S1354201AbhCCF2Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 00:28:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53248 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1351879AbhCBRuW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Mar 2021 12:49:38 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B603e7a4d0002>; Tue, 02 Mar 2021 09:47:57 -0800
-Received: from HKMAIL101.nvidia.com (10.18.16.10) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 2 Mar
- 2021 17:47:56 +0000
-Received: from HKMAIL101.nvidia.com (10.18.16.10) by HKMAIL101.nvidia.com
- (10.18.16.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 2 Mar
- 2021 17:47:27 +0000
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.36.53) by
- HKMAIL101.nvidia.com (10.18.16.10) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2 via Frontend Transport; Tue, 2 Mar 2021 17:47:27 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=coixYDaC1yGBCeCC61W/5QxcDjXwUaL6nRJOAs/rNvrIyqnVdo7Ygee+5+SHVmlSVjlUL+UTsJv3yQA+8d6wbRRRSiK6gDuFVvqJw2xJuA5DuuaHyKcHlnQFv8BLEn+Tcy35ach+BmCEKQmrIvsWqmV+5jt7O41jtZz3v2f44rCW8OEafME2aIjf5YLpsLVgTViorG5EQo85aVldnhkwN5o5YEBN/sjSNNyzemtJ3phK7gmENVAlkrfuLzvzG8+LL5J+9HvT/CfpsYnE/wJHr0j2LuPHatefnnatntkPUHU6W5ElEBQIVGw1jKhc3HjjAb4tzZhZ6pQEkg/FJfEJ7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6MX9Lz33D+v3gHgjyq2frdDH1IJLjx2IxBYwOSHJkR4=;
- b=QgBv8Z8HGj+bm7jdKP1Ct1e244sGNwIhHa24AZuAASogCJyaxN2A0LvCW/2Xqsi9eSf5O9QYa4A8KtVlpLgf3hJ7A/4exj+ziWSsiMzhb1CCLiiZZL+1TGjFpRr4iqkhbO386UZ3fptoYw/j6yQMXje64KEj+U4XfwisgrNk/nYYyY85udY6XTl5MBwH/jQgGUVRcUXLYHTrrm8LAdlDSC7v1mViWrU1OF57i0yiAmR5fhuYl3nzzzp2BIRSWF7gtFE4Jf+JqJ6sNkIXAezhu2U1yfIszyZ57WtDAxSws6XetE5AhWziWhZM8MFmsf9TIstUMr2Xm0CGFFgm7GscIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-Authentication-Results: infradead.org; dkim=none (message not signed)
- header.d=none;infradead.org; dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3823.namprd12.prod.outlook.com (2603:10b6:208:168::26)
- by MN2PR12MB4583.namprd12.prod.outlook.com (2603:10b6:208:26e::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.24; Tue, 2 Mar
- 2021 17:47:25 +0000
-Received: from MN2PR12MB3823.namprd12.prod.outlook.com
- ([fe80::a1b1:5d8:47d7:4b60]) by MN2PR12MB3823.namprd12.prod.outlook.com
- ([fe80::a1b1:5d8:47d7:4b60%7]) with mapi id 15.20.3890.028; Tue, 2 Mar 2021
- 17:47:25 +0000
-From:   Zi Yan <ziy@nvidia.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH v3 01/25] mm: Introduce struct folio
-Date:   Tue, 2 Mar 2021 12:47:20 -0500
-X-Mailer: MailMate (1.14r5757)
-Message-ID: <261604C5-E25E-4216-A9D4-BD5490E5E89A@nvidia.com>
-In-Reply-To: <20210302132249.GX2723601@casper.infradead.org>
-References: <20210128070404.1922318-1-willy@infradead.org>
- <20210128070404.1922318-2-willy@infradead.org>
- <68723D50-AFD1-4F25-8F10-81EC11045BE5@nvidia.com>
- <20210302132249.GX2723601@casper.infradead.org>
-Content-Type: multipart/signed;
-        boundary="=_MailMate_075B6C17-6BA9-4434-B07A-489391131A4F_=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-X-Originating-IP: [216.228.112.22]
-X-ClientProxiedBy: MN2PR01CA0044.prod.exchangelabs.com (2603:10b6:208:23f::13)
- To MN2PR12MB3823.namprd12.prod.outlook.com (2603:10b6:208:168::26)
+        Tue, 2 Mar 2021 12:50:22 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1563DC061A2E
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Mar 2021 09:49:41 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id s8so26361698edd.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Mar 2021 09:49:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G1jNIbHrSTxAMgQLW8j2zNIaeCqH8C/pWqqPUiSjxU0=;
+        b=z61wMQoD4obDZYrGr5vzM7cXLqWh158yp1rO2r0bNbmecFgzWwYJLjBdFB+KZOzB/8
+         4l34RMuywLH3KvcaP8Y/94oUTRXpstJEB0MTvzKYApokwl6q+Scj/RH95PCwNcHlgfuO
+         4uMWFu2Az6g5yrcShaejYitRijoF64SIhA8j7cwSxFbm8qsSHEe6WYw3wB/Fvcy+NtiO
+         v89FFOds+2gWhrH698lt1JMZq0hbFy15fBUQLWBrTggXeb5CdojCkJBcEFU5QxJCSDV3
+         MwsSCQcRY8x14ZDzII/LSQ77Ge870b5ERbOKp3H0hJjXRS1rkW+tHCghwrP8tP0AvTHI
+         N7uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G1jNIbHrSTxAMgQLW8j2zNIaeCqH8C/pWqqPUiSjxU0=;
+        b=Ix7h3gyceCiTp2HRqeZqiAbVMPaB9EIioz5IJ5IcjtfNwOJIZ025eaqX/iR0h+fudF
+         4FnSozviq75vDIRWSY7pyerxecUBzcOCRAkQXPB3SvaJbXsSorrVvLQt2LYwm5EJndV7
+         l5bqRPPxHkasD5/x1zNJ063FFv4dPDspoH1+vFqg6vqslzCq8+aIZRMZI6zKVl4SCugf
+         1bxFFCy7E7Tm7UjvRY9ldEooqi1rC0PXI3/M4H6y8gJBN7VIKDhWki3oSttmMjv8/kK8
+         tH8ZFC7axyEeaXq6MWSQ7bLRd968zAUH+DWPY83wnjFSR6YAWaoqc3NioVIgr65Ua34s
+         jOwg==
+X-Gm-Message-State: AOAM532dPAKWVCPs5ZG89o6jBNb7gU2CnltURD58U1At7ENrSzlpRT1u
+        qqNJEwux9BkKxgH4TbJhpXIy2hEQGzcuJoy+W+mprw==
+X-Google-Smtp-Source: ABdhPJw52xU2AAVDUM7fXxo6dph71Kc7Vf7xblc+YtWfct1Obn+c8f0OfGJHsyuuxwfVWHPK34k5EGOt8jCZ2PZVdvs=
+X-Received: by 2002:a05:6402:b1c:: with SMTP id bm28mr22090543edb.354.1614707379707;
+ Tue, 02 Mar 2021 09:49:39 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [10.2.62.13] (216.228.112.22) by MN2PR01CA0044.prod.exchangelabs.com (2603:10b6:208:23f::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.19 via Frontend Transport; Tue, 2 Mar 2021 17:47:23 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7a646e00-b33a-4725-42b2-08d8dda33d1a
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4583:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR12MB4583C27C14F5E3B8BE96C9DCC2999@MN2PR12MB4583.namprd12.prod.outlook.com>
-X-Header: ProcessedBy-CMR-outbound
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: IndMuY3Wh7bTfz6zM2i0L9bzSFOor5qxdjcvJiLP8/qk2ytDMapy/OcxBUaqyyrTYmrr4d4Je54LwHE1E/GG+D1a8x/sgcbtOkAhTGDhhZCWsCmN7r5McIWnfQPjhjmzMaV3OXsfVdiS7vJyYNHybPwzs6tc9YfvYPrVQV/nSULyom8tlX6N/Jx/8RQKgEe9gGjels0ekVacWWrXhxN5CjRzcr2/yBnFPbDRSg0Xh0mtP7I5yZXlpKmCEJSGyP/gb5wgq7aD8lDBUHlp2n7VR2NwNp/7a2KmfT1RRo+A70JGSE6ar2A6ZONO1TyoSyyTaCFWKDl3BFilAqgvBhvqbYUdANf/qzCbttgjCTcDiSEe2pn2/Vc7T4Wb4e42r5bwIlX70eoLBAlP/MCQDKdG3VkKDt3HdWwRdt4hEJRQTjJPvLloTDElRrnCrMsBxldkDlYYxHTmFXrozpQ6xqe83n0cywE0J1Ap0GgA2e6zDmPu4cVQ7maMfpX1LbVXiSD0RD/RzuhrswBH8NK8gBqKjTBxGgUYk/ewce/M1K8vZsa/3S79oBNm+RDDnlX0xIU6
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3823.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(136003)(39860400002)(376002)(396003)(346002)(26005)(6916009)(956004)(16576012)(316002)(2906002)(186003)(8936002)(2616005)(8676002)(53546011)(16526019)(33964004)(4326008)(36756003)(83380400001)(6486002)(66556008)(33656002)(86362001)(66476007)(5660300002)(235185007)(478600001)(66946007)(72826003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?K3pveDU5Q3hrVnFDVndLK0Zub0xZVHR5MTJXWk9sNzNUVkVEWlVDYkI5ZDI5?=
- =?utf-8?B?enB1MEpVUUdmV3ZCTDdMeUt4MnNoSEpmMHFrUmlzOUM5S3IxS3ZDN0JSVndi?=
- =?utf-8?B?OG0xVW82OWE5VEhiRXRYaHBMT2cwNEFWQ0FadGZpdVptL0licmJOYjFyS0N0?=
- =?utf-8?B?WGtJRXRocDlCbHB1U0lQSmJFaTdDb1NRUnA5cmNqa2UxMG14aXdwY05UaGRE?=
- =?utf-8?B?U1NSRzUrVDcrN2ZIb1o1b0k4Qy9MV3BIZndnejc2dU5YdTZpZFRMNGZtaDFi?=
- =?utf-8?B?M3lHVXRPUGpwcCtZRnRuU0phVTl3VVA2aFZrQXozQ3MyR2RiNlJnaDY4L252?=
- =?utf-8?B?MkljNTdRYnJvOEpjWjE5UytsY3pHK0xnVVNjREZQV1JKMzFIdEdpWFFmc3Fv?=
- =?utf-8?B?cDgzT1loeHZPRXM0ZE4rL1J2ZUVYSTZRTVNsRzdKTzNiaXk1djZlZGtSenNK?=
- =?utf-8?B?MUxjTkQxdkJ3QUVHZFp3ZE9ZaGZ4VWJRbjZ3dkY3bHd0ZEFFWitEa2RxY1g2?=
- =?utf-8?B?cEgzaHhrT1d6TEZNeWt3WXBEQXdsRXBtYXQ3blQzYTYwTlYwTmRGUmNvWSsx?=
- =?utf-8?B?enZVdnZnUGFVYm9lQTdoRkJBQzd6MHZ3d0NXM3ZaRG9ZV3diME5RQjBWaTZR?=
- =?utf-8?B?SnUyL0RqSHJURGxCYUxzQjVJaXZqejRQSnhHTEdXTFZ6bnF6Q203cEFKTmtB?=
- =?utf-8?B?UGdHOHFLOUM3dk85T3JVTElJRkdZd0JScThxdUUvMzM4SDJ4emdoS1MxTTVP?=
- =?utf-8?B?K3VGckloTm53SExxWUJBQndJc0dwNmplcEUyR1laS0EweUg5dXRZSmMyTUJz?=
- =?utf-8?B?cDBnbHVhbi9BaytlN1RuUERISk41eGN0OHVJRWhDNWdqZHB0VUZtdWFCV2Yv?=
- =?utf-8?B?QzZRK2xBckRhVVZSN2M3RHYxSjJPVnRxdm8xRllHZlpBVkNXUURTeWhzYmhY?=
- =?utf-8?B?QjRITlo4Q2g0TUgvOFVRazljTFdYbm8yWlJvb0FGZDJsV2xDVFZzVTlGemtv?=
- =?utf-8?B?b2Z2M0xsMlBlRkwxQ3lTZFRzeVk1b2kvL1BTVytibXJ0ZmkyM2lMbktxaGZM?=
- =?utf-8?B?aUZxUlZnVDU1dGhPR1cwZDFsUlpIdklVMmFJeEFkLzg0VEt6d3N3Y0VSYWpP?=
- =?utf-8?B?VFUzd1Y5OEJ0VDJYeVZFZnBhQ2Joa21zcVRPMXZYOTFmdTYvR3JJczNUSTVV?=
- =?utf-8?B?QWJoenpVeHNPVER0NHNGYmNTa0JwWVN3bnh0eFplT2JuR1hMTEU3SFJ0RUVl?=
- =?utf-8?B?ZDJXbzBVa1psVDRvTDhpUVZkR1VnNlI4UUJSS1pxbzZKdHJBajI0UzdmTmFk?=
- =?utf-8?B?eGllVm1CUEhLOElyYjlWeENGS00yaCtkZXZ6Q3RTcEd0YkhiWXFIak1WTUZW?=
- =?utf-8?B?THpJZUhqMGhuV21VTUc2ZHIxYldyRUxBMWtQNDlGOERoN1hhdGx6T1NMMnRM?=
- =?utf-8?B?cHlHZHczcURHSmVoSHFPY0syc2s4US9rR1hBdnJFbEZBc0tMR2Q4REMrb1py?=
- =?utf-8?B?MFllUlhDKzVGV0NpcUpQTGVBUVFQTXFYRklWd0NzbmdIUEozcFZCdVh1cGdX?=
- =?utf-8?B?RWlSNUdYL1VOOWh2M0FPaFVCKzhUbUMyNUJ2azJTZ1RDbUt6Mjc2KzBDZ2Qz?=
- =?utf-8?B?ZElhc1J0Y2pHaTlGeU1ieGIwbWdzZmNKWkxuTEtkUEJXbmpDcGVQaU5PRFJs?=
- =?utf-8?B?dHhiMUFndzI1akpQaG5kZHRXYmREa1p2VUxUc0l4bi9xVDluQXNmOW9FdUVB?=
- =?utf-8?Q?Gqrt8X0bJOGL7sFrZinCMV/51oUHGjKi0Y1jXS6?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a646e00-b33a-4725-42b2-08d8dda33d1a
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3823.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2021 17:47:24.9742
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kdi6IMJteJGNfeDPKXZbMBsyQmmYnhvKSWyiNzMA8OJUxNK9en5/EUfbtasdBJJK
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4583
-X-OriginatorOrg: Nvidia.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1614707277; bh=FRwHBwaT15NEpPS7Itfi/1XGLi0mbWz5R19IKSZt5Oc=;
-        h=ARC-Seal:ARC-Message-Signature:ARC-Authentication-Results:
-         Authentication-Results:From:To:CC:Subject:Date:X-Mailer:Message-ID:
-         In-Reply-To:References:Content-Type:X-Originating-IP:
-         X-ClientProxiedBy:MIME-Version:
-         X-MS-Exchange-MessageSentRepresentingType:X-MS-PublicTrafficType:
-         X-MS-Office365-Filtering-Correlation-Id:X-MS-TrafficTypeDiagnostic:
-         X-MS-Exchange-Transport-Forked:X-Microsoft-Antispam-PRVS:X-Header:
-         X-MS-Oob-TLC-OOBClassifiers:X-MS-Exchange-SenderADCheck:
-         X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-         X-Forefront-Antispam-Report:X-MS-Exchange-AntiSpam-MessageData:
-         X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-AuthSource:
-         X-MS-Exchange-CrossTenant-AuthAs:
-         X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-         X-MS-Exchange-CrossTenant-FromEntityHeader:
-         X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-         X-MS-Exchange-CrossTenant-UserPrincipalName:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg;
-        b=sCQEsjQmusifSQwt21Un6WNW9VHZQPV/h10baNZRLFQJTRZ+oII2ER0ZzTHX5oIN1
-         Es+70zvyljFZX5QQOriRi+uviUvg3qgrKE6az+L4nmJdZXcgIWJr8GE56daiJM7FF5
-         5zUENTW5geA8GkRV8CLnYYXIcuJu5PDQhNY2+zOu3TP4hIqPVnsyhd8CL/hAKVlAdP
-         2RMuiZ5EnWo9gEvdxbncPNre/QECd5IfhssaxifGmzWlOw6/B9/lWNPSMqrSghgLCI
-         NTDyRCW/XMORaSDRK2jBxiZ51COdBvBZmgw49LeQZ5QM35rlpQYUMkYMCTeBsp0HJP
-         gXgVryaTQmeFg==
+References: <20210226205126.GX4662@dread.disaster.area> <CAPcyv4iDefA3Y0wUW=p080SYAsM_2TPJba-V-sxdK_BeJMkmsw@mail.gmail.com>
+ <20210226212748.GY4662@dread.disaster.area> <CAPcyv4jryJ32R5vOwwEdoU3V8C0B7zu_pCt=7f6A3Gk-9h6Dfg@mail.gmail.com>
+ <20210227223611.GZ4662@dread.disaster.area> <CAPcyv4h7XA3Jorcy_J+t9scw0A4KdT2WEwAhE-Nbjc=C2qmkMw@mail.gmail.com>
+ <20210228223846.GA4662@dread.disaster.area> <CAPcyv4jzV2RUij2BEvDJLLiK_67Nf1v3M6-jRLKf32x4iOzqng@mail.gmail.com>
+ <20210302032805.GM7272@magnolia> <CAPcyv4jXH0F+aii6ZtYQ3=Rx-mOWM7NFHC9wVxacW-b1o_s20g@mail.gmail.com>
+ <20210302075736.GJ4662@dread.disaster.area>
+In-Reply-To: <20210302075736.GJ4662@dread.disaster.area>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 2 Mar 2021 09:49:30 -0800
+Message-ID: <CAPcyv4iyTHVW51xocmLO7F6ATgq0rJtQ1nShB=rAmDfzx83EyA@mail.gmail.com>
+Subject: Re: Question about the "EXPERIMENTAL" tag for dax in XFS
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        "hch@lst.de" <hch@lst.de>, "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
+        "y-goto@fujitsu.com" <y-goto@fujitsu.com>,
+        "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
+        "fnstml-iaas@cn.fujitsu.com" <fnstml-iaas@cn.fujitsu.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=_MailMate_075B6C17-6BA9-4434-B07A-489391131A4F_=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On 2 Mar 2021, at 8:22, Matthew Wilcox wrote:
-
-> On Mon, Mar 01, 2021 at 03:26:11PM -0500, Zi Yan wrote:
->>> +static inline struct folio *next_folio(struct folio *folio)
->>> +{
->>> +	return folio + folio_nr_pages(folio);
->>
->> Are you planning to make hugetlb use folio too?
->>
->> If yes, this might not work if we have CONFIG_SPARSEMEM && !CONFIG_SPA=
-RSEMEM_VMEMMAP
->> with a hugetlb folio > MAX_ORDER, because struct page might not be vir=
-tually contiguous.
->> See the experiment I did in [1].
+On Mon, Mar 1, 2021 at 11:57 PM Dave Chinner <david@fromorbit.com> wrote:
 >
-> Actually, how about proofing this against a future change?
+> On Mon, Mar 01, 2021 at 09:41:02PM -0800, Dan Williams wrote:
+> > On Mon, Mar 1, 2021 at 7:28 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > > > I really don't see you seem to be telling us that invalidation is an
+> > > > > either/or choice. There's more ways to convert physical block
+> > > > > address -> inode file offset and mapping index than brute force
+> > > > > inode cache walks....
+> > > >
+> > > > Yes, but I was trying to map it to an existing mechanism and the
+> > > > internals of drop_pagecache_sb() are, in coarse terms, close to what
+> > > > needs to happen here.
+> > >
+> > > Yes.  XFS (with rmap enabled) can do all the iteration and walking in
+> > > that function except for the invalidate_mapping_* call itself.  The goal
+> > > of this series is first to wire up a callback within both the block and
+> > > pmem subsystems so that they can take notifications and reverse-map them
+> > > through the storage stack until they reach an fs superblock.
+> >
+> > I'm chuckling because this "reverse map all the way up the block
+> > layer" is the opposite of what Dave said at the first reaction to my
+> > proposal, "can't the mm map pfns to fs inode  address_spaces?".
 >
-> static inline struct folio *next_folio(struct folio *folio)
-> {
-> #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
-> 	pfn_t next_pfn =3D page_to_pfn(&folio->page) + folio_nr_pages(folio);
-> 	return (struct folio *)pfn_to_page(next_pfn);
-> #else
-> 	return folio + folio_nr_pages(folio);
-> #endif
-> }
+> Ah, no, I never said that the filesystem can't do reverse maps. I
+> was asking if the mm could directly (brute-force) invalidate PTEs
+> pointing at physical pmem ranges without needing walk the inode
+> mappings. That would be far more efficient if it could be done....
 >
-> (not compiled)
+> > Today whenever the pmem driver receives new corrupted range
+> > notification from the lower level nvdimm
+> > infrastructure(nd_pmem_notify) it updates the 'badblocks' instance
+> > associated with the pmem gendisk and then notifies userspace that
+> > there are new badblocks. This seems a perfect place to signal an upper
+> > level stacked block device that may also be watching disk->bb. Then
+> > each gendisk in a stacked topology is responsible for watching the
+> > badblock notifications of the next level and storing a remapped
+> > instance of those blocks until ultimately the filesystem mounted on
+> > the top-level block device is responsible for registering for those
+> > top-level disk->bb events.
+> >
+> > The device gone notification does not map cleanly onto 'struct badblocks'.
+>
+> Filesystems are not allowed to interact with the gendisk
+> infrastructure - that's for supporting the device side of a block
+> device. It's a layering violation, and many a filesytem developer
+> has been shouted at for trying to do this. At most we can peek
+> through it to query functionality support from the request queue,
+> but otherwise filesystems do not interact with anything under
+> bdev->bd_disk.
 
-Yes, it should work. A better version might be that in the top half
-you check folio order first and if the order >=3D MAX_ORDER, we use
-the complicated code, otherwise just folio+folio_nr_pages(folio).
+So lets add an api that allows the querying of badblocks by bdev and
+let the block core handle the bd_disk interaction. I see other block
+functionality like blk-integrity reaching through gendisk. The fs need
+not interact with the gendisk directly.
 
-This CONFIG_SPARSEMEM && !CONFIG_SPARSEMEM_VMEMMAP is really not friendly=
+>
+> As it is, badblocks are used by devices to manage internal state.
+> e.g. md for recording stripes that need recovery if the system
+> crashes while they are being written out.
 
-to >=3DMAX_ORDER pages. Most likely I am going to make 1GB THP
-rely on CONFIG_SPARSEMEM_VMEMMAP to avoid complicated code.
+I know, I was there when it was invented which is why it was
+top-of-mind when pmem had a need to communicate badblocks. Other block
+drivers have threatened to use it for badblocks tracking, but none of
+those have carried through on that initial interest.
 
-=E2=80=94
-Best Regards,
-Yan Zi
+>
+> > If an upper level agent really cared about knowing about ->remove()
+> > events before they happened it could maybe do something like:
+> >
+> > dev = disk_to_dev(bdev->bd_disk)->parent;
+> > bus_register_notifier(dev->bus. &disk_host_device_notifier_block)
+>
+> Yeah, that's exactly the sort of thing that filesystems have been
+> aggressively discouraged from doing for years.
 
---=_MailMate_075B6C17-6BA9-4434-B07A-489391131A4F_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
+Yup, it's a layering violation.
 
------BEGIN PGP SIGNATURE-----
+> Part of the reason for this is that gendisk based mechanisms are not
+> very good for stacked device error reporting. Part of the problem
+> here is that every layer of the stacked device has to hook the
+> notifier of the block devices underneath it, then translate the
+> event to match the upper block device map, then regenerate the
+> notification for the next layer up. This isn't an efficient way to
+> pass a notification through a series of stacked devices and it is
+> messy and cumbersome to maintain.
 
-iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAmA+eigPHHppeUBudmlk
-aWEuY29tAAoJEJ2yUfNrYfqKbuMP/366qwt/v/jgjUVAR1tr8e2dLB+bg/kNr48I
-CcpMMGRlFnaVpQh1sLZUo2Tj5OXW3yLhihNKF+JFjq7Nvlb4kGjGVp2fiEE/XCn2
-qvvcMruLtx6wM5xKbNMQr7LbNz2V8r1/QoE0y8EodnKY8hkVHldyWuhEmKvIkCXD
-sMViFWOMq66MMSH7ViZnUYyBa/HgaPHu+S7FyfoyoUZMvHHpXIAu7CRmfH0Q9BiK
-KhwlSAawJTDZTibX29gtlalleQUo7X9JWAT9BmIqkFFvpgxR6XU35ZfVlB/p9L7S
-f8OzxbggcT5lJiWmddqnUSi7BJcosWv4A77IZTA734JzhxXupSxFKkUy0BJ7ttSo
-tB/AJltqfTlbcGmI6siUePd1Hm8R5rqOi6i2/OwNb0fE+b5y6qT+LwSOI28GF8Rd
-pg7FgBtNpBimlLnVs8l/AE3KRL8GsDTKpGB6WPsfalf/tYvYhQ48Kz1ByNkEK//C
-PND7AvJb3Msz94PX7TlHQas6M6T8nwVOSAwJ2VvPFy1F3yribPfrQa2CJfkQucIj
-wHNDR+uigJWBOEIN5vhkjAjKjaxQz6PUmL2e5vwUcqQW50aO8itzTVz1Om9Q0CEG
-LPM81PDdM5UIsU3fH3EH/W3DWcDp/H1nQ6lj/P+Ag/ISAGTPyia1CuxdOcd5vlg/
-k81VOKot
-=mJQn
------END PGP SIGNATURE-----
+It's been messy and cumbersome to route new infrastructure through DM
+every time a new dax_operation arrives. The corrupted_range() routing
+has the same burden. The advantage of badblocks over corrupted_range()
+is that it solves the "what If I miss a notification" problem. Each
+layer of the stack maintains its sector translation of the next level
+errors.
+.
+> It can be effective for getting notifications to userspace about
+> something that happens to a specific block device.
 
---=_MailMate_075B6C17-6BA9-4434-B07A-489391131A4F_=--
+No, it's not block device specific, it's stuck at the disk level. The
+user notification aspect was added for pmem at the disk layer because
+IIRC it was NAKd to add it to the block_device itself.
+
+>
+> But The userspace
+> still ends up having to solve the "what does this error resolve to"
+> problem. i.e. Userspace still needs to map that notification to a
+> filesystem, and for data loss events map it to objects within the
+> filesystem, which can be extremely expensive to do from userspace.
+
+Expensive and vulnerable to TOCTOU, this has been the motivation for
+filesystem native awareness of these errors from the beginning.
+
+> This is exactly the sort of userspace error reporting mess that
+> various projects have asked us to try to fix. Plumbing errors
+> internally through the kernel up to the filesystem where the
+> filesytem can point directly to the user data that is affected is a
+> simple, effective solution to the problem. Especially if we then
+> have a generic error notification mechanism for filesystems to emit
+> errors to registered userspace watchers...
+
+Agree, that's the dream worth pursuing.
+
+>
+> > I still don't think that solves the need for a separate mechanism for
+> > global dax_device pte invalidation.
+>
+> It's just another type of media error because.....
+>
+> > I think that global dax_device invalidation needs new kernel
+> > infrastructure to allow internal users, like dm-writecache and future
+> > filesystems using dax for metadata, to take a fault when pmem is
+> > offlined.
+>
+> .... if userspace has directly mapped into the cache, and the cache
+> storage goes away, the userspace app has to be killed because we
+> have no idea if the device going away has caused data loss or not.
+> IOWs, if userspace writes direct to the cache device and it hasn't
+> been written back to other storage when it gets yanked, we have just
+> caused data corruption to occur.
+
+If userspace has it direct mapped dirty in the cache when the remove
+fires, there is no opportunity to flush the cache. Just as there is no
+opportunity today with non-DAX and the page cache. The block-queue
+will be invalidated and any dirty in page cache is stranded.
+
+> At minimum, we now have to tell the filesystem that the dirty data
+> in the cache is now bad, and direct map applications that map those
+> dirty ranges need to be killed because their backing store is no
+> longer valid nor does the backup copy contain the data they last
+> wrote. Nor is it acessible by direct access, which is going to be
+> interesting because dynamically changing dax to non-dax access can't
+> be done without forcibly kicking the inode out of the cache. That
+> requires all references to the inode to go away. And that means the
+> event really has to go up to the filesystem.
+>
+> But I think the biggest piece of the puzzle that you haven't grokked
+> here is that the dm cache device isn't a linear map - it's made up of
+> random ranges from the underlying devices. Hence the "remove" of a dm
+> cache device turns into a huge number of small, sparse corrupt
+> ranges, not a single linear device remove event.
+
+I am aware that DM is non-linear. The other non-linearity is sector-to-pfn.
+
+> IOWs, device unplug/remove events are not just simple "pass it on"
+> events in a stacked storage setup. There can be non-trivial mappings
+> through the layers, and device disappearance may in fact manifest to
+> the user as data corruption rather than causing data to be
+> inaccessible.
+
+Even MD does not rely on component device notifications for failure
+notifications, it waits for write-errors, and yes losing a component
+of a raid0 is more than a data offline event.
+
+> Hence "remove" notifications just don't work in the storage stack.
+> They need to be translated to block ranges going bad (i.e.  media
+> errors), and reported to higher layers as bad ranges, not as device
+> removal.
+
+Yes, the generic top-level remove event is pretty much useless for
+both the dax pte invalidation and lba range offline notification. I'm
+distinguishing that from knock on events that fire in response to
+->remove() triggering on the disk driver which seems to be where you
+are at as well with the idea to trigger ->corrupted_range(0, EOD) from
+->remove().
+
+There's 2 ways to view the "filesystems have wanted proactive
+notification of remove events from storage for a long time". There's
+either enough pent up demand to convince all parties to come to the
+table and get something done, or there's too much momentum with the
+status quo to overcome.
+
+I do not think it is fair to ask Ruan to solve a problem with brand
+new plumbing that the Linux storage community has not seen fit to
+address for a decade. Not when disk->bb is already plumbed without
+anyone complaining about it.
+
+> The same goes for DAX devices. The moment they can be placed in
+> storage stacks in non-trivial configurations and/or used as cache
+> devices that can be directly accessed over tranditional block
+> devices, we end up with error conditions that can only be mapped as
+> ranges of blocks that have gone bad.
+
+I see plumbing corrupted_range() and using it to communicate removal
+in addition to badblocks in addition to bad pfns as a revolutionary
+change. A reuse of disk->bb for communicating poison sector discovery
+events up the stack and a separate facility to invalidate dax devices
+as evolutionary. The evolutionary change does not preclude the
+eventual revolutionary change, but it has a better chance of making
+forward progress in the near term.
