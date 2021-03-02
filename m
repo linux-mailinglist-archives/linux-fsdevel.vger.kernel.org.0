@@ -2,116 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 056AE32B4C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:38:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42E1D32B4D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:39:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354213AbhCCF2j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 00:28:39 -0500
-Received: from m42-2.mailgun.net ([69.72.42.2]:56908 "EHLO m42-2.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243570AbhCBS1w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Mar 2021 13:27:52 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1614709548; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=sQlYOY3q+jwKIF/p4KAZwYdxXwoIWL9zgjlvvo6D0x0=; b=VFdtZEQTT+kmCAyCpT2fZUFpRFEcmQJi2kAqtKMAC5op7OtPwahkxuSXLyRn3AfnKewAqSGi
- dhuG3HEBVuY53AzFm25n2u9FSK/LW869OR7hFifn+gcsuLEOGYuZ0BuA4XUPrqduskLjrHGU
- 3opcdMnEMjGDOeuxk4Nh18LtBzQ=
-X-Mailgun-Sending-Ip: 69.72.42.2
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
- 603e7c4f2a53a9538a3e6f97 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 02 Mar 2021 17:56:31
- GMT
-Sender: pintu=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 777ABC43461; Tue,  2 Mar 2021 17:56:30 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,SPF_FAIL,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
-Received: from blr-ubuntu-498.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pintu)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E9F57C433C6;
-        Tue,  2 Mar 2021 17:56:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E9F57C433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=pintu@codeaurora.org
-From:   Pintu Kumar <pintu@codeaurora.org>
-To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        pintu@codeaurora.org, iamjoonsoo.kim@lge.com, sh_def@163.com,
-        mateusznosek0@gmail.com, bhe@redhat.com, nigupta@nvidia.com,
-        vbabka@suse.cz, yzaikin@google.com, keescook@chromium.org,
-        mcgrof@kernel.org, mgorman@techsingularity.net
-Cc:     pintu.ping@gmail.com
-Subject: [PATCH] mm/compaction: remove unused variable sysctl_compact_memory
-Date:   Tue,  2 Mar 2021 23:26:13 +0530
-Message-Id: <1614707773-10725-1-git-send-email-pintu@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S1446403AbhCCF3d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 00:29:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40420 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1581647AbhCBTBs (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Mar 2021 14:01:48 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B7AAC06121D
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Mar 2021 10:56:49 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id e7so33000110lft.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Mar 2021 10:56:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jPemdFCvcOw+M7rO60HZ8OEoGnA5eVH5NVd0v+mKulU=;
+        b=YyCfRc7bqIIPy2pLts3gZ1AaH7tiza3GiTHxYs9f+v7VuDwSeWXWF0YlC6p9Rf0qDh
+         9vUlz3m+dioWFfHbeNrOBT9vGHtggYOqXVZF8Tiu1IBGhTDUH7XnW4AZ6KaKEvQWbg7C
+         ydGAufrimWtv1w0FUqZs/jsQcMO+ezP7fyRnU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jPemdFCvcOw+M7rO60HZ8OEoGnA5eVH5NVd0v+mKulU=;
+        b=HwQc6Qzd+oTTyqKfKYdZ5zbch8fYD/Mtaaebo/Hw4CgaMPGQCi4Ly0fYfa9M7hZjh5
+         5nFThYTl7h8anTTTpwnP2MvG9Hi/PF0uOHH2kmX1M9838gHCmbqUJO32AAId4fbU1kih
+         mNyZDGhvXK873KtW6VD9ybv+TBjo0lfXervc0rHipRRh2O1ApGp2CIT2re0gaiVozKtg
+         C0TfddrEotuXHRSOpNOWK9B7QEMbmbbYoORle48z7LDsCf7veA/n073/sar/xxsQdJ/c
+         Ah8VZHdmUiFgYHNMjEKgCb2BWmWaQgZysbGO6WhZrtC0egcjvwBQYENHL7KJgOx3dUpz
+         VkUg==
+X-Gm-Message-State: AOAM533MOX2g6qY1Ri9yKlxGD2PfipuWf5/CKzkBKApEMqmT0ljGqVPb
+        MCrS7IlPA0a59u4AKoMdaKKxxkKh/+renA==
+X-Google-Smtp-Source: ABdhPJxRfBQm73YUHfy4ZbJF5nXDXAniB6q43FtJq+kVFfmGVV+mdP0fcI9JGjoq0UHP05kLCyhp3A==
+X-Received: by 2002:a19:7e4e:: with SMTP id z75mr10060336lfc.618.1614711407596;
+        Tue, 02 Mar 2021 10:56:47 -0800 (PST)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id p24sm1845161lfj.76.2021.03.02.10.56.46
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Mar 2021 10:56:46 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id u4so32985423lfs.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Mar 2021 10:56:46 -0800 (PST)
+X-Received: by 2002:ac2:58fc:: with SMTP id v28mr8117958lfo.201.1614711405966;
+ Tue, 02 Mar 2021 10:56:45 -0800 (PST)
+MIME-Version: 1.0
+References: <CALCv0x1NauG_13DmmzwYaRDaq3qjmvEdyi7=XzF04KR06Q=WHA@mail.gmail.com>
+ <m1wnuqhaew.fsf@fess.ebiederm.org> <CALCv0x1Wka10b-mgb1wRHW-W-qRaZOKvJ_-ptq85Hj849PFPSw@mail.gmail.com>
+In-Reply-To: <CALCv0x1Wka10b-mgb1wRHW-W-qRaZOKvJ_-ptq85Hj849PFPSw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 2 Mar 2021 10:56:30 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjVWMnH2LfFNnXcf6=WuU1RyLa_cgTEOqnViHiqDrqQjg@mail.gmail.com>
+Message-ID: <CAHk-=wjVWMnH2LfFNnXcf6=WuU1RyLa_cgTEOqnViHiqDrqQjg@mail.gmail.com>
+Subject: Re: exec error: BUG: Bad rss-counter
+To:     Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The sysctl_compact_memory is mostly unsed in mm/compaction.c
-It just acts as a place holder for sysctl.
+On Mon, Mar 1, 2021 at 11:59 PM Ilya Lipnitskiy
+<ilya.lipnitskiy@gmail.com> wrote:
+>
+> Good to know. Some more digging and I can say that we hit this error
+> when trying to unmap PFN 0 (is_zero_pfn(pfn) returns TRUE,
+> vm_normal_page returns NULL, zap_pte_range does not decrement
+> MM_ANONPAGES RSS counter). Is my understanding correct that PFN 0 is
+> usable, but special? Or am I totally off the mark here?
 
-Thus we can remove it from here and move the declaration directly
-in kernel/sysctl.c itself.
-This will also eliminate the extern declaration from header file.
-No functionality is broken or changed this way.
+PFN 0 should be usable - depending on architecture, of course - and
+shouldn't even be special in any way.
 
-Signed-off-by: Pintu Kumar <pintu@codeaurora.org>
-Signed-off-by: Pintu Agarwal <pintu.ping@gmail.com>
----
- include/linux/compaction.h | 1 -
- kernel/sysctl.c            | 1 +
- mm/compaction.c            | 3 ---
- 3 files changed, 1 insertion(+), 4 deletions(-)
+is_zero_pfn(pfn) is *not* meant to test for pfn being 0 - it's meant
+to test for the pfn pointing to the special zero-filled page. The two
+_could_ be the same thing, of course, but generally are not (h8300
+seems to say "we use pfn 0 as the zero page" if I read things right).
 
-diff --git a/include/linux/compaction.h b/include/linux/compaction.h
-index ed4070e..4221888 100644
---- a/include/linux/compaction.h
-+++ b/include/linux/compaction.h
-@@ -81,7 +81,6 @@ static inline unsigned long compact_gap(unsigned int order)
- }
- 
- #ifdef CONFIG_COMPACTION
--extern int sysctl_compact_memory;
- extern unsigned int sysctl_compaction_proactiveness;
- extern int sysctl_compaction_handler(struct ctl_table *table, int write,
- 			void *buffer, size_t *length, loff_t *ppos);
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index c9fbdd8..66aff21 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -198,6 +198,7 @@ static int max_sched_tunable_scaling = SCHED_TUNABLESCALING_END-1;
- #ifdef CONFIG_COMPACTION
- static int min_extfrag_threshold;
- static int max_extfrag_threshold = 1000;
-+static int sysctl_compact_memory;
- #endif
- 
- #endif /* CONFIG_SYSCTL */
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 190ccda..ede2886 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -2650,9 +2650,6 @@ static void compact_nodes(void)
- 		compact_node(nid);
- }
- 
--/* The written value is actually unused, all memory is compacted */
--int sysctl_compact_memory;
--
- /*
-  * Tunable for proactive compaction. It determines how
-  * aggressively the kernel should compact memory in the
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+In fact, there can be many zero-filled pages - architectures with
+virtually mapped caches that want cache coloring have multiple
+contiguous zero-filled pages and then map in the right one based on
+virtual address. I'm not sure why it would matter (the zero-page is
+always mapped read-only, so any physical aliases should be a
+non-issue), but whatever..
 
+> Here is the (optimized) stack trace when the counter does not get decremented:
+> [<8015b078>] vm_normal_page+0x114/0x1a8
+
+Yes, if "is_zero_pfn()" returns true, then it won't be considered a
+normal page, and is not refcounted.
+
+But that should only trigger for pfn == zero_pfn, and zero_pfn should
+be initialized to
+
+    zero_pfn = page_to_pfn(ZERO_PAGE(0));
+
+so it _sounds_ like you possibly have something odd going on with ZERO_PAGE.
+
+Yes, one architecture does actually make pfn 0 _be_ the zero page, but
+you said MIPS, and that does do the page coloring games, and has
+
+   #define ZERO_PAGE(vaddr) \
+        (virt_to_page((void *)(empty_zero_page + (((unsigned
+long)(vaddr)) & zero_page_mask))))
+
+where zero_page_mask is the page colorign mask, and empty_zero_page is
+allocated in setup_zero_pages() fairly early in mem_init() (again, it
+allocates multiple pages depending on the page ordering - see that
+horrible virtual cache thing with cpu_has_vce).
+
+So PFN 0 shouldn't be an issue at all.
+
+Of course, since you said this was an embedded MIPS platform, maybe
+it's one of the broken ones with virtual caches and cpu_has_vce is
+set. I'm not sure how much testing that has gotten lately. MOST of the
+later MIPS architectures walked away from the pure virtual cache
+setups.
+
+              Linus
