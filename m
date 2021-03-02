@@ -2,238 +2,542 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 346F632B4DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:39:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B23D832B4FB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:55:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1450126AbhCCFa1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 00:30:27 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:3116 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1582047AbhCBUSw (ORCPT
+        id S1450150AbhCCFap (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 00:30:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40832 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1383571AbhCBVQ2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Mar 2021 15:18:52 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B603e9d7b0000>; Tue, 02 Mar 2021 12:18:03 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 2 Mar
- 2021 20:18:02 +0000
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.173)
- by HQMAIL107.nvidia.com (172.20.187.13) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2 via Frontend Transport; Tue, 2 Mar 2021 20:18:02 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nIFHfF541a8TEc27HteV0X7SPQnMFVpVxxFwME+6rhB/QyotyRPMwV2qRWFKuQ8qnLjNkw647dvBfCrM4GtU2fPQQfQPhLbTBV+U5Pjr73LKFuL2pSq9x16gNf3eDDS7FX19qpGnXiS618B++mu+w/qxNv8b4ODgVH7pniDALciDKGuuwsOhYRXrwRd1bJ4iDCQcsZZ4IDZ86zFS49olhUPnwI5g/oBHQ+KKGbyudbEh7CB6VxhkSBlL03yUJ63dShM9Twqkdfu4Sbv5fOXdkLqR0f77Xfr+JGdyM5cWCLf+DItIKfFOKXzW+rpkuvhEkc+LqeoQuDmIXi8CtgFA7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fRKWLWO157z6pwj7FpiXPV7XIhe0xiseYJqYfaznWo8=;
- b=AHctGTc9AGfVZMXbtItLo2w92MMee2OANDZm8PYWVhfgTkX+NpZvH/k1jq8X2gUEUJxpG3rqbsdd1IJ4S5UoGLPA28w8hX2CGnF/tjTT7dtg4QEKvWS2RYU/WA8nAm4BzUiB6fVXZkUutI2n3oP68IgiQACo+YwjrwKkjmOGunTJr1eu5KRb/ZyONkOghcKN9tWYBj0Hok/0ayubQW7Cs0k8NjOAEbKUoGBNMF5v9db9OLqAGad1N86COitYHMvDDUk5k2MCa+ZsBRIOx113J6JxXYXqpfGs4xZCnG2lJZnrPpj++Kp5HQ1upV3kzCCMfDvfYSOZbByhItUOP4XIgQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-Received: from BYAPR12MB3416.namprd12.prod.outlook.com (2603:10b6:a03:ac::10)
- by BY5PR12MB4323.namprd12.prod.outlook.com (2603:10b6:a03:211::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17; Tue, 2 Mar
- 2021 20:18:02 +0000
-Received: from BYAPR12MB3416.namprd12.prod.outlook.com
- ([fe80::9428:ff6a:7f2:5976]) by BYAPR12MB3416.namprd12.prod.outlook.com
- ([fe80::9428:ff6a:7f2:5976%6]) with mapi id 15.20.3890.029; Tue, 2 Mar 2021
- 20:18:02 +0000
-From:   Nitin Gupta <nigupta@nvidia.com>
-To:     Pintu Kumar <pintu@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
-        "sh_def@163.com" <sh_def@163.com>,
-        "mateusznosek0@gmail.com" <mateusznosek0@gmail.com>,
-        "bhe@redhat.com" <bhe@redhat.com>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "yzaikin@google.com" <yzaikin@google.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>
-CC:     "pintu.ping@gmail.com" <pintu.ping@gmail.com>
-Subject: RE: [PATCH] mm/compaction: remove unused variable
- sysctl_compact_memory
-Thread-Topic: [PATCH] mm/compaction: remove unused variable
- sysctl_compact_memory
-Thread-Index: AQHXD411mHVMaaygcESwzSP7eEOUu6pxIlMg
-Date:   Tue, 2 Mar 2021 20:18:01 +0000
-Message-ID: <BYAPR12MB3416C9FD5D10AFB930E1C023D8999@BYAPR12MB3416.namprd12.prod.outlook.com>
-References: <1614707773-10725-1-git-send-email-pintu@codeaurora.org>
-In-Reply-To: <1614707773-10725-1-git-send-email-pintu@codeaurora.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: codeaurora.org; dkim=none (message not signed)
- header.d=none;codeaurora.org; dmarc=none action=none header.from=nvidia.com;
-x-originating-ip: [216.228.112.22]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2e8d5048-0c24-4ce8-f3da-08d8ddb847bb
-x-ms-traffictypediagnostic: BY5PR12MB4323:
-x-microsoft-antispam-prvs: <BY5PR12MB4323272E34FAA521D6DF69B8D8999@BY5PR12MB4323.namprd12.prod.outlook.com>
-x-header: ProcessedBy-CMR-outbound
-x-ms-oob-tlc-oobclassifiers: OLM:4303;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: enZrwk5n+DAPmlSVUCikF4POmkJhA5016JiqV+T6qHn/2z9ibUtrT7q0p8AFJShFm/JPZONGb5U0XTGecWjMJ9NznPr8z5bOFUHbo+JsQRDja6VIhiiC/cA2sijl83DAmGGBbmaFwB7eVz58DOnIFWgHfKLKX2oYTfUmcRncKwpWwcZfnc86f+Xf4l4XI76Dpudiuofc61dkjRcMIjdjMnUn+uNprVe5jO/5P/GzVXPEi7n7RSmXEYmeWGY+XMgLmLYyggT2GymFEXGq8MZlyKS7LtjmaVwumyUW81jSdFeDrY7U6zdgdGxkl2DWSmaKqQKVc2e1yYKX8FOpY1uDdrjEoc31nplApDn2hUpk2jQzcWzXD8NxVsIXDdfuJdCjx9pOaNhBudkPXkpsXvp9soQZh5aeS+S/tle+ShEM6pHWRPUnOz9KrsmIHQxDEO07SjmOUjOQTmPt58smhZFa0YOAs7VnqlhaE7xWWK1SP9Z4GnmCW2NKSdj+yRwu3p3DQEpS/Y9Ri49IX/x1dfmNtKf6lNdh1YORyb5EYpZBHE4cs3LjLZkqtpaH6jX0AVb+
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB3416.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(136003)(346002)(396003)(366004)(376002)(110136005)(6506007)(66556008)(66476007)(66446008)(83380400001)(8676002)(7696005)(26005)(64756008)(52536014)(4326008)(33656002)(71200400001)(66946007)(2906002)(8936002)(76116006)(86362001)(53546011)(186003)(921005)(55016002)(5660300002)(478600001)(316002)(7416002)(9686003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?lEMonPLdThL37J2ANxFHkf4enF62zqRyDHBErWDD/Z4y0R82C0VK7UvPnZ2q?=
- =?us-ascii?Q?NA7hcd1S1iOAqm8r8ktywqisSVRVYe/novwzlvWaBvzUUG+3dX0EqQsntBCc?=
- =?us-ascii?Q?m++BLAf0z4dOxbi2+wugdyYm3/BCrw/CSqJbZg12VTaz5bcsQQgOgqDIBmvt?=
- =?us-ascii?Q?dAfmXGu6XigKiR1oG3g2w9tWnFDRrFJW9138tKBIbXm7Wke4ydO3Obko29H0?=
- =?us-ascii?Q?ka8h862FEy5AEL155QLh2jYPzvBdG45Wz99zvJ4LNHlD8fe1B018WAXJAO65?=
- =?us-ascii?Q?FoRvqJ+FNengXOv3qINypE7onjKcJsvnMjQVDnfMVUOt8vY/D8JiaPCYg9z0?=
- =?us-ascii?Q?3l+mVFsPfBkDWEQm+h9SuvoryV/bDe0zRq4JK3PXcRj3+OgXFWdxSVc3p7Nl?=
- =?us-ascii?Q?xY2ge8yrnUY1n3CzsEvEOpcrn6n0Q1uSBzM66NQaR+cxwQ5fqTzLb8iYAOfI?=
- =?us-ascii?Q?+WXQdyY2aaMmu2+7N4eyodbrTRlDYm38guwt1dWA2GJfjsZA/rsA8Ts2EMXn?=
- =?us-ascii?Q?9lg0JrLELg9j/+zpzV4R3Fdn+i8vaq2j8jOo2oIXWjYxsZ0yXuP0BLSOjgyU?=
- =?us-ascii?Q?oOHTS8tLsvhVopuRVYOOixRyb7VQpbr8YNZAe6+94lvoHIbkvhDPFahNyR+0?=
- =?us-ascii?Q?NsrQbqc97X3sLqJIwRgVB0SnXwHugRpnZNXe0K3W/4L00+CnOQPqUkKRWyFf?=
- =?us-ascii?Q?kelvpCLb00Z4OOrPvKb9M1eiltmvY9jzxbNzqn+5owo5SOfzuSdKvaDPRwzJ?=
- =?us-ascii?Q?y7tjSneysW85mhIOMydQrrwH0An2qZdxfcJO8YL0QU4dkf2bUNcQbIg6Oucl?=
- =?us-ascii?Q?IjMtlM9+k8zY6WEnll1P215mpE9uQ8O0eISnSjRcTrzOCxXYv5quF2KGr5dL?=
- =?us-ascii?Q?x85VRHcp4WIG0MjUBgCF8ugvAiaWpy10SvBbQNtN6zQ6x1uut9U5R+PdQtBz?=
- =?us-ascii?Q?dcfAnMkjWFK+rT3JhR4IR0+qHob+sNPV3GOOmMpdl1beWY9obc7o8yJ9lsAY?=
- =?us-ascii?Q?kZBeNUFNmUIVY5HjMltLm418fbsW3GqGKJJgL2KnEdALMedOWOFpP7Bl4C2V?=
- =?us-ascii?Q?viw6Ync8QtWkZ5dO6Yv+qqnnJ+T06sg57LkINgw6apahOQTIbny6DtErqacp?=
- =?us-ascii?Q?WzacWjOz/HyQ7thK3alzHPPaWZ4YNPcpr/gSAP/lLmAh/OXqkR0J6VpJVO4i?=
- =?us-ascii?Q?rhWsesmkKWmT4GrLbi2I4DsrMAqkBKHYmRHrWfJcSDMlsUQQM1T4XomW6FZV?=
- =?us-ascii?Q?/fiudSiQ7eb5gedpVta2zYFEWnrSTAzUJqYq/Y2ZQvIJcpU+L9nbDKprPvP9?=
- =?us-ascii?Q?+OI=3D?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 2 Mar 2021 16:16:28 -0500
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38EB6C061788;
+        Tue,  2 Mar 2021 13:09:55 -0800 (PST)
+Received: by mail-pf1-x434.google.com with SMTP id l7so10422862pfd.3;
+        Tue, 02 Mar 2021 13:09:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JLttgNfMq3Kov3tU2taLK4BnRrz26Wpbqh7r9Pz+2zU=;
+        b=ZUR/GOeR+rzGWfJrXDJ9R713bPE1Gv+0qMwgH2DHrTXOjiaUpleSR+L5jDBb4MH8O9
+         2aqJZgBtXRsaXqa1eHwHhJKzzYu4bKnwyu4yDfFP/o0ZeVbfQuPzvbBF0hU+2i+xLzWs
+         gAgSOGdk76OpM0zP8Cq49cvh7Rw35W6ffYDZOngiT43r2V+GmSUv3d5jb1783ziIYG5q
+         atYGoU0dcHGlYydbwXFI/yoFKojuhj54+Y+PEqNWzvKjo4cpikd0AP9UpzHjIg1GUx99
+         pGKFU7QtutnjsrqgCkHqNl00PxuKzh+OslSm0WYp03iBV/kgA4ajgIRTvrq9WJrkbQ/j
+         OUGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=JLttgNfMq3Kov3tU2taLK4BnRrz26Wpbqh7r9Pz+2zU=;
+        b=fucB1pvrp21eeVBDc5gEblTHfkW5yPOovYGLVyRX00hcZ6foPiXi2YKCMRsfYpV263
+         4QcZxQb2ItMXMYB+0A0YrBLrp21GhyOLpKgOZH6yQF4rEn5nFysaHticoWicwRH+EXpU
+         pqcj1NRa1LTRVf4+95alEb3ih7tDJOj5u21v1eU1l+CbCK+1S3NfMyrEtm2uzJ4GnOc6
+         BqphVGqf8BM8YTAzbw1eRWEMTtEgAPliMI9IMSad8WgOvLws6fbTzui70QeNUgJrzrKi
+         3kcrqGopG4OkcgtroCyohV4GEeJZeTM4X6ClHo7A4sSmTG9nUyw01jeNiIZlrUWwy3VW
+         76Yg==
+X-Gm-Message-State: AOAM5331i7AQ8QrVuC1JBlGzPSVUAYx2AIYRlLKAa1Sgw21TiyxEBb4k
+        VQSLCRWz6CjBfguUQ4Rc4Rc=
+X-Google-Smtp-Source: ABdhPJzAIvods/GCYgMUuU2epYNi8LvhsVZq+3AIjibtUN4omfOt0B/q0+Yex7vBczbTbe3px3gFAg==
+X-Received: by 2002:a63:610:: with SMTP id 16mr18860021pgg.423.1614719394641;
+        Tue, 02 Mar 2021 13:09:54 -0800 (PST)
+Received: from bbox-1.mtv.corp.google.com ([2620:15c:211:201:c87:c34:99dc:ba23])
+        by smtp.gmail.com with ESMTPSA id w17sm18980572pgg.41.2021.03.02.13.09.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Mar 2021 13:09:53 -0800 (PST)
+Sender: Minchan Kim <minchan.kim@gmail.com>
+From:   Minchan Kim <minchan@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        joaodias@google.com, surenb@google.com, cgoldswo@codeaurora.org,
+        willy@infradead.org, mhocko@suse.com, david@redhat.com,
+        vbabka@suse.cz, linux-fsdevel@vger.kernel.org,
+        Minchan Kim <minchan@kernel.org>
+Subject: [PATCH 1/2] mm: disable LRU pagevec during the migration temporarily
+Date:   Tue,  2 Mar 2021 13:09:48 -0800
+Message-Id: <20210302210949.2440120-1-minchan@kernel.org>
+X-Mailer: git-send-email 2.30.1.766.gb4fecdf3b7-goog
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3416.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e8d5048-0c24-4ce8-f3da-08d8ddb847bb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2021 20:18:01.9306
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SMz9dUP0xP2lKWr44FUTraD4Ap+7yvjO+DlCw3E0x4Gjv2pLUWN/KYJRaZ8ppck3ZwuySSQ5F2THyNUeew5uRA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4323
-X-OriginatorOrg: Nvidia.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1614716283; bh=fRKWLWO157z6pwj7FpiXPV7XIhe0xiseYJqYfaznWo8=;
-        h=ARC-Seal:ARC-Message-Signature:ARC-Authentication-Results:From:To:
-         CC:Subject:Thread-Topic:Thread-Index:Date:Message-ID:References:
-         In-Reply-To:Accept-Language:Content-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
-         x-ms-publictraffictype:x-ms-office365-filtering-correlation-id:
-         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:x-header:
-         x-ms-oob-tlc-oobclassifiers:x-ms-exchange-senderadcheck:
-         x-microsoft-antispam:x-microsoft-antispam-message-info:
-         x-forefront-antispam-report:x-ms-exchange-antispam-messagedata:
-         x-ms-exchange-transport-forked:Content-Type:
-         Content-Transfer-Encoding:MIME-Version:
-         X-MS-Exchange-CrossTenant-AuthAs:
-         X-MS-Exchange-CrossTenant-AuthSource:
-         X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-         X-MS-Exchange-CrossTenant-userprincipalname:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg;
-        b=Nx7tfkfMZ9BAO0iRZfpUaha0UIbMqZQsjNocFpj5092aoMFP1EMg/TGlR74UryI05
-         DmIQLtWeCz8gS1Q/wmNoT/6XHt6Nk3he0Iip7kO5QIXiMJK1uC5LFt5Rgq+L3MJQYm
-         sfm01MWawlbsr4CWy/trE+8je5Dr9MR0V7IDk6DuNxW3pC3W0+sAfzC9rpm2eW3PX5
-         GlJlAy8PnXx8y7KOJi8kpzc7xiKZl9FBvs5L76gIWIB3Ain+JnAc/If1MggwkaElYA
-         /6ZHyXsPfk1XMp/1YFV6bJnF5dV+coI+KTSnoi95xN5F+IuB25qFg5923p/sDxrlAv
-         j4UlyeC5cAfhw==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+LRU pagevec holds refcount of pages until the pagevec are drained.
+It could prevent migration since the refcount of the page is greater
+than the expection in migration logic. To mitigate the issue,
+callers of migrate_pages drains LRU pagevec via migrate_prep or
+lru_add_drain_all before migrate_pages call.
 
+However, it's not enough because pages coming into pagevec after the
+draining call still could stay at the pagevec so it could keep
+preventing page migration. Since some callers of migrate_pages have
+retrial logic with LRU draining, the page would migrate at next trail
+but it is still fragile in that it doesn't close the fundamental race
+between upcoming LRU pages into pagvec and migration so the migration
+failure could cause contiguous memory allocation failure in the end.
 
-> -----Original Message-----
-> From: pintu=3Dcodeaurora.org@mg.codeaurora.org
-> <pintu=3Dcodeaurora.org@mg.codeaurora.org> On Behalf Of Pintu Kumar
-> Sent: Tuesday, March 2, 2021 9:56 AM
-> To: linux-kernel@vger.kernel.org; akpm@linux-foundation.org; linux-
-> mm@kvack.org; linux-fsdevel@vger.kernel.org; pintu@codeaurora.org;
-> iamjoonsoo.kim@lge.com; sh_def@163.com; mateusznosek0@gmail.com;
-> bhe@redhat.com; Nitin Gupta <nigupta@nvidia.com>; vbabka@suse.cz;
-> yzaikin@google.com; keescook@chromium.org; mcgrof@kernel.org;
-> mgorman@techsingularity.net
-> Cc: pintu.ping@gmail.com
-> Subject: [PATCH] mm/compaction: remove unused variable
-> sysctl_compact_memory
->=20
-> External email: Use caution opening links or attachments
->=20
->=20
-> The sysctl_compact_memory is mostly unsed in mm/compaction.c It just acts
-> as a place holder for sysctl.
->=20
-> Thus we can remove it from here and move the declaration directly in
-> kernel/sysctl.c itself.
-> This will also eliminate the extern declaration from header file.
+To close the race, this patch disables lru caches(i.e, pagevec)
+during ongoing migration until migrate is done.
 
+Since it's really hard to reproduce, I measured how many times
+migrate_pages retried with force mode below debug code.
 
-I prefer keeping the existing pattern of listing all compaction related tun=
-ables
-together in compaction.h:
+int migrate_pages(struct list_head *from, new_page_t get_new_page,
+			..
+			..
 
-	extern int sysctl_compact_memory;
-	extern unsigned int sysctl_compaction_proactiveness;
-	extern int sysctl_extfrag_threshold;
-	extern int sysctl_compact_unevictable_allowed;
+if (rc && reason == MR_CONTIG_RANGE && pass > 2) {
+       printk(KERN_ERR, "pfn 0x%lx reason %d\n", page_to_pfn(page), rc);
+       dump_page(page, "fail to migrate");
+}
 
+The test was repeating android apps launching with cma allocation
+in background every five seconds. Total cma allocation count was
+about 500 during the testing. With this patch, the dump_page count
+was reduced from 400 to 30.
 
-> No functionality is broken or changed this way.
->=20
-> Signed-off-by: Pintu Kumar <pintu@codeaurora.org>
-> Signed-off-by: Pintu Agarwal <pintu.ping@gmail.com>
-> ---
->  include/linux/compaction.h | 1 -
->  kernel/sysctl.c            | 1 +
->  mm/compaction.c            | 3 ---
->  3 files changed, 1 insertion(+), 4 deletions(-)
->=20
-> diff --git a/include/linux/compaction.h b/include/linux/compaction.h inde=
-x
-> ed4070e..4221888 100644
-> --- a/include/linux/compaction.h
-> +++ b/include/linux/compaction.h
-> @@ -81,7 +81,6 @@ static inline unsigned long compact_gap(unsigned int
-> order)  }
->=20
->  #ifdef CONFIG_COMPACTION
-> -extern int sysctl_compact_memory;
->  extern unsigned int sysctl_compaction_proactiveness;  extern int
-> sysctl_compaction_handler(struct ctl_table *table, int write,
->                         void *buffer, size_t *length, loff_t *ppos); diff=
- --git
-> a/kernel/sysctl.c b/kernel/sysctl.c index c9fbdd8..66aff21 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -198,6 +198,7 @@ static int max_sched_tunable_scaling =3D
-> SCHED_TUNABLESCALING_END-1;  #ifdef CONFIG_COMPACTION  static int
-> min_extfrag_threshold;  static int max_extfrag_threshold =3D 1000;
-> +static int sysctl_compact_memory;
->  #endif
->=20
->  #endif /* CONFIG_SYSCTL */
-> diff --git a/mm/compaction.c b/mm/compaction.c index 190ccda..ede2886
-> 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -2650,9 +2650,6 @@ static void compact_nodes(void)
->                 compact_node(nid);
->  }
->=20
-> -/* The written value is actually unused, all memory is compacted */ -int
-> sysctl_compact_memory;
-> -
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+---
+* from RFC - http://lore.kernel.org/linux-mm/20210216170348.1513483-1-minchan@kernel.org
+  * use atomic and lru_add_drain_all for strict ordering - mhocko
+  * lru_cache_disable/enable - mhocko
 
+ fs/block_dev.c          |  2 +-
+ include/linux/migrate.h |  6 +++--
+ include/linux/swap.h    |  4 ++-
+ mm/compaction.c         |  4 +--
+ mm/fadvise.c            |  2 +-
+ mm/gup.c                |  2 +-
+ mm/khugepaged.c         |  2 +-
+ mm/ksm.c                |  2 +-
+ mm/memcontrol.c         |  4 +--
+ mm/memfd.c              |  2 +-
+ mm/memory-failure.c     |  2 +-
+ mm/memory_hotplug.c     |  2 +-
+ mm/mempolicy.c          |  6 +++++
+ mm/migrate.c            | 15 ++++++-----
+ mm/page_alloc.c         |  5 +++-
+ mm/swap.c               | 55 +++++++++++++++++++++++++++++++++++------
+ 16 files changed, 85 insertions(+), 30 deletions(-)
 
-Please retain this comment for the tunable.
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 7a814a13f9a4..1fe75dbd0ce0 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -93,7 +93,7 @@ void invalidate_bdev(struct block_device *bdev)
+ 
+ 	if (mapping->nrpages) {
+ 		invalidate_bh_lrus();
+-		lru_add_drain_all();	/* make sure all lru add caches are flushed */
++		lru_add_drain_all(false);	/* make sure all lru add caches are flushed */
+ 		invalidate_mapping_pages(mapping, 0, -1);
+ 	}
+ 	/* 99% of the time, we don't need to flush the cleancache on the bdev.
+diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+index 3a389633b68f..6a23174ea081 100644
+--- a/include/linux/migrate.h
++++ b/include/linux/migrate.h
+@@ -47,6 +47,7 @@ extern void putback_movable_page(struct page *page);
+ 
+ extern void migrate_prep(void);
+ extern void migrate_prep_local(void);
++extern void migrate_finish(void);
+ extern void migrate_page_states(struct page *newpage, struct page *page);
+ extern void migrate_page_copy(struct page *newpage, struct page *page);
+ extern int migrate_huge_page_move_mapping(struct address_space *mapping,
+@@ -66,8 +67,9 @@ static inline struct page *alloc_migration_target(struct page *page,
+ static inline int isolate_movable_page(struct page *page, isolate_mode_t mode)
+ 	{ return -EBUSY; }
+ 
+-static inline int migrate_prep(void) { return -ENOSYS; }
+-static inline int migrate_prep_local(void) { return -ENOSYS; }
++static inline void migrate_prep(void) { return -ENOSYS; }
++static inline void migrate_prep_local(void) { return -ENOSYS; }
++static inline void migrate_done(void) {}
+ 
+ static inline void migrate_page_states(struct page *newpage, struct page *page)
+ {
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 71166bc10d17..8ab7ad7157f3 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -339,10 +339,12 @@ extern void lru_note_cost(struct lruvec *lruvec, bool file,
+ extern void lru_note_cost_page(struct page *);
+ extern void lru_cache_add(struct page *);
+ extern void mark_page_accessed(struct page *);
++extern void lru_cache_disable(void);
++extern void lru_cache_enable(void);
+ extern void lru_add_drain(void);
+ extern void lru_add_drain_cpu(int cpu);
+ extern void lru_add_drain_cpu_zone(struct zone *zone);
+-extern void lru_add_drain_all(void);
++extern void lru_add_drain_all(bool force_all_cpus);
+ extern void rotate_reclaimable_page(struct page *page);
+ extern void deactivate_file_page(struct page *page);
+ extern void deactivate_page(struct page *page);
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 50b31e2ec6cb..519f6c241e69 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -2648,7 +2648,7 @@ static void compact_nodes(void)
+ 	int nid;
+ 
+ 	/* Flush pending updates to the LRU lists */
+-	lru_add_drain_all();
++	lru_add_drain_all(false);
+ 
+ 	for_each_online_node(nid)
+ 		compact_node(nid);
+@@ -2686,7 +2686,7 @@ static ssize_t sysfs_compact_node(struct device *dev,
+ 
+ 	if (nid >= 0 && nid < nr_node_ids && node_online(nid)) {
+ 		/* Flush pending updates to the LRU lists */
+-		lru_add_drain_all();
++		lru_add_drain_all(false);
+ 
+ 		compact_node(nid);
+ 	}
+diff --git a/mm/fadvise.c b/mm/fadvise.c
+index d6baa4f451c5..6053cd878b18 100644
+--- a/mm/fadvise.c
++++ b/mm/fadvise.c
+@@ -165,7 +165,7 @@ int generic_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
+ 			 * pagevecs and try again.
+ 			 */
+ 			if (nr_pagevec) {
+-				lru_add_drain_all();
++				lru_add_drain_all(false);
+ 				invalidate_mapping_pages(mapping, start_index,
+ 						end_index);
+ 			}
+diff --git a/mm/gup.c b/mm/gup.c
+index 3e086b073624..2d51edd1601b 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -1586,7 +1586,7 @@ static long check_and_migrate_cma_pages(struct mm_struct *mm,
+ 				isolate_huge_page(head, &cma_page_list);
+ 			else {
+ 				if (!PageLRU(head) && drain_allow) {
+-					lru_add_drain_all();
++					lru_add_drain_all(false);
+ 					drain_allow = false;
+ 				}
+ 
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 8369d9620f6d..65d08a35be08 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -2211,7 +2211,7 @@ static void khugepaged_do_scan(void)
+ 
+ 	barrier(); /* write khugepaged_pages_to_scan to local stack */
+ 
+-	lru_add_drain_all();
++	lru_add_drain_all(false);
+ 
+ 	while (progress < pages) {
+ 		if (!khugepaged_prealloc_page(&hpage, &wait))
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 9694ee2c71de..3559e2c92ebf 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -2245,7 +2245,7 @@ static struct rmap_item *scan_get_next_rmap_item(struct page **page)
+ 		 * them here (here rather than on entry to ksm_do_scan(),
+ 		 * so we don't IPI too often when pages_to_scan is set low).
+ 		 */
+-		lru_add_drain_all();
++		lru_add_drain_all(false);
+ 
+ 		/*
+ 		 * Whereas stale stable_nodes on the stable_tree itself
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index ed5cc78a8dbf..12f70487915e 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -3520,7 +3520,7 @@ static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
+ 	int nr_retries = MAX_RECLAIM_RETRIES;
+ 
+ 	/* we call try-to-free pages for make this cgroup empty */
+-	lru_add_drain_all();
++	lru_add_drain_all(false);
+ 
+ 	drain_all_stock(memcg);
+ 
+@@ -6140,7 +6140,7 @@ static const struct mm_walk_ops charge_walk_ops = {
+ 
+ static void mem_cgroup_move_charge(void)
+ {
+-	lru_add_drain_all();
++	lru_add_drain_all(false);
+ 	/*
+ 	 * Signal lock_page_memcg() to take the memcg's move_lock
+ 	 * while we're moving its pages to another memcg. Then wait
+diff --git a/mm/memfd.c b/mm/memfd.c
+index 2647c898990c..79d6e004a89b 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -79,7 +79,7 @@ static int memfd_wait_for_pins(struct address_space *mapping)
+ 			break;
+ 
+ 		if (!scan)
+-			lru_add_drain_all();
++			lru_add_drain_all(false);
+ 		else if (schedule_timeout_killable((HZ << scan) / 200))
+ 			scan = LAST_SCAN;
+ 
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 4e3684d694c1..aba281dc58d7 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -272,7 +272,7 @@ void shake_page(struct page *p, int access)
+ 		return;
+ 
+ 	if (!PageSlab(p)) {
+-		lru_add_drain_all();
++		lru_add_drain_all(false);
+ 		if (PageLRU(p) || is_free_buddy_page(p))
+ 			return;
+ 	}
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index a969463bdda4..56d224e8e7f6 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1602,7 +1602,7 @@ int __ref offline_pages(unsigned long start_pfn, unsigned long nr_pages)
+ 			}
+ 
+ 			cond_resched();
+-			lru_add_drain_all();
++			lru_add_drain_all(false);
+ 
+ 			ret = scan_movable_pages(pfn, end_pfn, &pfn);
+ 			if (!ret) {
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 6961238c7ef5..46d9986c7bf0 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1208,6 +1208,8 @@ int do_migrate_pages(struct mm_struct *mm, const nodemask_t *from,
+ 			break;
+ 	}
+ 	mmap_read_unlock(mm);
++	migrate_finish();
++
+ 	if (err < 0)
+ 		return err;
+ 	return busy;
+@@ -1371,6 +1373,10 @@ static long do_mbind(unsigned long start, unsigned long len,
+ 	mmap_write_unlock(mm);
+ mpol_out:
+ 	mpol_put(new);
++
++	if (flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL))
++		migrate_finish();
++
+ 	return err;
+ }
+ 
+diff --git a/mm/migrate.c b/mm/migrate.c
+index a69da8aaeccd..bcf4637f6950 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -65,12 +65,9 @@
+ void migrate_prep(void)
+ {
+ 	/*
+-	 * Clear the LRU lists so pages can be isolated.
+-	 * Note that pages may be moved off the LRU after we have
+-	 * drained them. Those pages will fail to migrate like other
+-	 * pages that may be busy.
++	 * Clear the LRU pcp lists so pages can be isolated.
+ 	 */
+-	lru_add_drain_all();
++	lru_cache_disable();
+ }
+ 
+ /* Do the necessary work of migrate_prep but not if it involves other CPUs */
+@@ -79,6 +76,11 @@ void migrate_prep_local(void)
+ 	lru_add_drain();
+ }
+ 
++void migrate_finish(void)
++{
++	lru_cache_enable();
++}
++
+ int isolate_movable_page(struct page *page, isolate_mode_t mode)
+ {
+ 	struct address_space *mapping;
+@@ -1837,6 +1839,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+ 	if (err >= 0)
+ 		err = err1;
+ out:
++	migrate_finish();
+ 	return err;
+ }
+ 
+@@ -2673,7 +2676,7 @@ static void migrate_vma_prepare(struct migrate_vma *migrate)
+ 		if (!is_zone_device_page(page)) {
+ 			if (!PageLRU(page) && allow_drain) {
+ 				/* Drain CPU's pagevec */
+-				lru_add_drain_all();
++				lru_add_drain_all(false);
+ 				allow_drain = false;
+ 			}
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 6446778cbc6b..9214fdada691 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -8493,6 +8493,9 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
+ 		ret = migrate_pages(&cc->migratepages, alloc_migration_target,
+ 				NULL, (unsigned long)&mtc, cc->mode, MR_CONTIG_RANGE);
+ 	}
++
++	migrate_finish();
++
+ 	if (ret < 0) {
+ 		putback_movable_pages(&cc->migratepages);
+ 		return ret;
+@@ -8603,7 +8606,7 @@ int alloc_contig_range(unsigned long start, unsigned long end,
+ 	 * isolated thus they won't get removed from buddy.
+ 	 */
+ 
+-	lru_add_drain_all();
++	lru_add_drain_all(false);
+ 
+ 	order = 0;
+ 	outer_start = start;
+diff --git a/mm/swap.c b/mm/swap.c
+index 31b844d4ed94..c1fa6cac04c1 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -54,6 +54,32 @@ static DEFINE_PER_CPU(struct lru_rotate, lru_rotate) = {
+ 	.lock = INIT_LOCAL_LOCK(lock),
+ };
+ 
++static atomic_t lru_disable_count = ATOMIC_INIT(0);
++
++bool lru_cache_disabled(void)
++{
++	return atomic_read(&lru_disable_count);
++}
++
++void lru_cache_disable(void)
++{
++	/*
++	 * lru_add_drain_all's IPI will make sure no new pages are added
++	 * to the pcp lists and drain them all.
++	 */
++	atomic_inc(&lru_disable_count);
++
++	/*
++	 * Clear the LRU lists so pages can be isolated.
++	 */
++	lru_add_drain_all(true);
++}
++
++void lru_cache_enable(void)
++{
++	atomic_dec(&lru_disable_count);
++}
++
+ /*
+  * The following struct pagevec are grouped together because they are protected
+  * by disabling preemption (and interrupts remain enabled).
+@@ -235,6 +261,18 @@ static void pagevec_move_tail_fn(struct page *page, struct lruvec *lruvec)
+ 	}
+ }
+ 
++/* return true if pagevec needs to drain */
++static bool pagevec_add_and_need_flush(struct pagevec *pvec, struct page *page)
++{
++	bool ret = false;
++
++	if (!pagevec_add(pvec, page) || PageCompound(page) ||
++			lru_cache_disabled())
++		ret = true;
++
++	return ret;
++}
++
+ /*
+  * Writeback is about to end against a page which has been marked for immediate
+  * reclaim.  If it still appears to be reclaimable, move it to the tail of the
+@@ -252,7 +290,7 @@ void rotate_reclaimable_page(struct page *page)
+ 		get_page(page);
+ 		local_lock_irqsave(&lru_rotate.lock, flags);
+ 		pvec = this_cpu_ptr(&lru_rotate.pvec);
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (pagevec_add_and_need_flush(pvec, page))
+ 			pagevec_lru_move_fn(pvec, pagevec_move_tail_fn);
+ 		local_unlock_irqrestore(&lru_rotate.lock, flags);
+ 	}
+@@ -343,7 +381,7 @@ static void activate_page(struct page *page)
+ 		local_lock(&lru_pvecs.lock);
+ 		pvec = this_cpu_ptr(&lru_pvecs.activate_page);
+ 		get_page(page);
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (pagevec_add_and_need_flush(pvec, page))
+ 			pagevec_lru_move_fn(pvec, __activate_page);
+ 		local_unlock(&lru_pvecs.lock);
+ 	}
+@@ -458,7 +496,7 @@ void lru_cache_add(struct page *page)
+ 	get_page(page);
+ 	local_lock(&lru_pvecs.lock);
+ 	pvec = this_cpu_ptr(&lru_pvecs.lru_add);
+-	if (!pagevec_add(pvec, page) || PageCompound(page))
++	if (pagevec_add_and_need_flush(pvec, page))
+ 		__pagevec_lru_add(pvec);
+ 	local_unlock(&lru_pvecs.lock);
+ }
+@@ -654,7 +692,7 @@ void deactivate_file_page(struct page *page)
+ 		local_lock(&lru_pvecs.lock);
+ 		pvec = this_cpu_ptr(&lru_pvecs.lru_deactivate_file);
+ 
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (pagevec_add_and_need_flush(pvec, page))
+ 			pagevec_lru_move_fn(pvec, lru_deactivate_file_fn);
+ 		local_unlock(&lru_pvecs.lock);
+ 	}
+@@ -676,7 +714,7 @@ void deactivate_page(struct page *page)
+ 		local_lock(&lru_pvecs.lock);
+ 		pvec = this_cpu_ptr(&lru_pvecs.lru_deactivate);
+ 		get_page(page);
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (pagevec_add_and_need_flush(pvec, page))
+ 			pagevec_lru_move_fn(pvec, lru_deactivate_fn);
+ 		local_unlock(&lru_pvecs.lock);
+ 	}
+@@ -698,7 +736,7 @@ void mark_page_lazyfree(struct page *page)
+ 		local_lock(&lru_pvecs.lock);
+ 		pvec = this_cpu_ptr(&lru_pvecs.lru_lazyfree);
+ 		get_page(page);
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (pagevec_add_and_need_flush(pvec, page))
+ 			pagevec_lru_move_fn(pvec, lru_lazyfree_fn);
+ 		local_unlock(&lru_pvecs.lock);
+ 	}
+@@ -735,7 +773,7 @@ static void lru_add_drain_per_cpu(struct work_struct *dummy)
+  * Calling this function with cpu hotplug locks held can actually lead
+  * to obscure indirect dependencies via WQ context.
+  */
+-void lru_add_drain_all(void)
++void lru_add_drain_all(bool force_all_cpus)
+ {
+ 	/*
+ 	 * lru_drain_gen - Global pages generation number
+@@ -810,7 +848,8 @@ void lru_add_drain_all(void)
+ 	for_each_online_cpu(cpu) {
+ 		struct work_struct *work = &per_cpu(lru_add_drain_work, cpu);
+ 
+-		if (pagevec_count(&per_cpu(lru_pvecs.lru_add, cpu)) ||
++		if (force_all_cpus ||
++		    pagevec_count(&per_cpu(lru_pvecs.lru_add, cpu)) ||
+ 		    data_race(pagevec_count(&per_cpu(lru_rotate.pvec, cpu))) ||
+ 		    pagevec_count(&per_cpu(lru_pvecs.lru_deactivate_file, cpu)) ||
+ 		    pagevec_count(&per_cpu(lru_pvecs.lru_deactivate, cpu)) ||
+-- 
+2.30.1.766.gb4fecdf3b7-goog
 
--Nitin
