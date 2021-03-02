@@ -2,360 +2,613 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B3B6432B45E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:22:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 906F832B49E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:36:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234713AbhCCFMP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 00:12:15 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12664 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350740AbhCBMuh (ORCPT
+        id S238631AbhCCFWh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 00:22:37 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:23121 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1447155AbhCBMvC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Mar 2021 07:50:37 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Dqbtq6H1LzlRYm;
-        Tue,  2 Mar 2021 20:25:23 +0800 (CST)
-Received: from [10.174.177.134] (10.174.177.134) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.498.0; Tue, 2 Mar 2021 20:27:22 +0800
-Subject: Re: [PATCH v17 0/9] Free some vmemmap pages of HugeTLB page
-To:     Muchun Song <songmuchun@bytedance.com>, <corbet@lwn.net>,
-        <mike.kravetz@oracle.com>, <tglx@linutronix.de>,
-        <mingo@redhat.com>, <bp@alien8.de>, <x86@kernel.org>,
-        <hpa@zytor.com>, <dave.hansen@linux.intel.com>, <luto@kernel.org>,
-        <peterz@infradead.org>, <viro@zeniv.linux.org.uk>,
-        <akpm@linux-foundation.org>, <paulmck@kernel.org>,
-        <mchehab+huawei@kernel.org>, <pawan.kumar.gupta@linux.intel.com>,
-        <rdunlap@infradead.org>, <oneukum@suse.com>,
-        <anshuman.khandual@arm.com>, <jroedel@suse.de>,
-        <almasrymina@google.com>, <rientjes@google.com>,
-        <willy@infradead.org>, <osalvador@suse.de>, <mhocko@suse.com>,
-        <song.bao.hua@hisilicon.com>, <david@redhat.com>,
-        <naoya.horiguchi@nec.com>, <joao.m.martins@oracle.com>
-CC:     <duanxiongchun@bytedance.com>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20210225132130.26451-1-songmuchun@bytedance.com>
-From:   Chen Huang <chenhuang5@huawei.com>
-Message-ID: <0f07fbd1-62ac-9b24-e253-1470318cbb06@huawei.com>
-Date:   Tue, 2 Mar 2021 20:27:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Tue, 2 Mar 2021 07:51:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1614689372;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=0J++1FrPi5p/Y2H0gdopeGpXGNtLC/Pe6jxKbABqg/Y=;
+        b=I+lpYxMoB7qWaJ62T9d77Huz5wJ4QOFM9+0e5UmeTYZlhy6KsDsrPtZs+UizAl4tJkkhy5
+        I2b1DFe73wS+FXzu+3E/2CgcPt1p7FMuLW37KlY2zW99zMp43fJMvTa5wdI2+/+xss4FtK
+        PWlDlRQ3HlqQZV4h7pw1YvbxnR4uWgY=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-326-xcBvne-sNFG2KNJTZr-8Lw-1; Tue, 02 Mar 2021 07:49:30 -0500
+X-MC-Unique: xcBvne-sNFG2KNJTZr-8Lw-1
+Received: by mail-ed1-f71.google.com with SMTP id u2so10255149edj.20
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Mar 2021 04:49:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0J++1FrPi5p/Y2H0gdopeGpXGNtLC/Pe6jxKbABqg/Y=;
+        b=V7ef5ESA3JqLLF7cfS/8zk0+Zl62TIKedmN3Lf+uNzwQ2ZeKcK6SUGSxaF9z0af2nP
+         XMMreg8SACdLnu6Iz4PbojMd/jxvUiXZZe/NyTuyJ+grN5ePXlajUXGlifETkRuW/UB1
+         S4j1ITCjsScH6tTwa2waMHO0ThtH5d9MI00vvVrLSM56GGiVG2RDDYLQz9n7VoD1BVIN
+         ZarevyH0MP3Kr9+Aibr+D3OT30CdCN6ULoroE0dY3sduokZ6WJ7uXML3POgZ1sPbHr2Y
+         iK6XjyC6J/Vvqq3HgIQnBLqR62aFhloeOdPw8dkQkAxcTF3vEMfK3B/hRsTR3H7EciEq
+         729g==
+X-Gm-Message-State: AOAM531JkFsMCaE87DHX+fcEnQ9R7BaLPKqnGJIuDA10KDHjuB/roTq+
+        WLgKUAX/horFKTdbi5+VG4xahTJIZldQZjQrIRkqBsF2Gf6huKuPiGLDxTu2T7pSvFS0iivq6sA
+        IBUryWDHlNpVoipAfZE0KRj4IMw==
+X-Received: by 2002:a05:6402:38d:: with SMTP id o13mr19108399edv.337.1614689369460;
+        Tue, 02 Mar 2021 04:49:29 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJw4rpvNV6ze2Qtufrii86yArDDxwwZYq813y9//UM9xE/Ob9h1Q09WjVvUKkSmnB817HlRhpA==
+X-Received: by 2002:a05:6402:38d:: with SMTP id o13mr19108384edv.337.1614689369227;
+        Tue, 02 Mar 2021 04:49:29 -0800 (PST)
+Received: from miu.piliscsaba.redhat.com (catv-86-101-169-67.catv.broadband.hu. [86.101.169.67])
+        by smtp.gmail.com with ESMTPSA id i17sm20013356ejo.25.2021.03.02.04.49.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Mar 2021 04:49:28 -0800 (PST)
+From:   Miklos Szeredi <mszeredi@redhat.com>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2] vfs: add miscattr ops
+Date:   Tue,  2 Mar 2021 13:49:26 +0100
+Message-Id: <20210302124926.2637908-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <20210225132130.26451-1-songmuchun@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.177.134]
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Al,
 
+Would you mind taking a look?
 
-在 2021/2/25 21:21, Muchun Song 写道:
-> Hi all,
-> 
-> This patch series will free some vmemmap pages(struct page structures)
-> associated with each hugetlbpage when preallocated to save memory.
-> 
-> In order to reduce the difficulty of the first version of code review.
->>From this version, we disable PMD/huge page mapping of vmemmap if this
-> feature was enabled. This accutualy eliminate a bunch of the complex code
-> doing page table manipulation. When this patch series is solid, we cam add
-> the code of vmemmap page table manipulation in the future.
-> 
-> The struct page structures (page structs) are used to describe a physical
-> page frame. By default, there is a one-to-one mapping from a page frame to
-> it's corresponding page struct.
-> 
-> The HugeTLB pages consist of multiple base page size pages and is supported
-> by many architectures. See hugetlbpage.rst in the Documentation directory
-> for more details. On the x86 architecture, HugeTLB pages of size 2MB and 1GB
-> are currently supported. Since the base page size on x86 is 4KB, a 2MB
-> HugeTLB page consists of 512 base pages and a 1GB HugeTLB page consists of
-> 4096 base pages. For each base page, there is a corresponding page struct.
-> 
-> Within the HugeTLB subsystem, only the first 4 page structs are used to
-> contain unique information about a HugeTLB page. HUGETLB_CGROUP_MIN_ORDER
-> provides this upper limit. The only 'useful' information in the remaining
-> page structs is the compound_head field, and this field is the same for all
-> tail pages.
-> 
-> By removing redundant page structs for HugeTLB pages, memory can returned to
-> the buddy allocator for other uses.
-> 
-> When the system boot up, every 2M HugeTLB has 512 struct page structs which
-> size is 8 pages(sizeof(struct page) * 512 / PAGE_SIZE).
-> 
->     HugeTLB                  struct pages(8 pages)         page frame(8 pages)
->  +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
->  |           |                     |     0     | -------------> |     0     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     1     | -------------> |     1     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     2     | -------------> |     2     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     3     | -------------> |     3     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     4     | -------------> |     4     |
->  |    2MB    |                     +-----------+                +-----------+
->  |           |                     |     5     | -------------> |     5     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     6     | -------------> |     6     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     7     | -------------> |     7     |
->  |           |                     +-----------+                +-----------+
->  |           |
->  |           |
->  |           |
->  +-----------+
-> 
-> The value of page->compound_head is the same for all tail pages. The first
-> page of page structs (page 0) associated with the HugeTLB page contains the 4
-> page structs necessary to describe the HugeTLB. The only use of the remaining
-> pages of page structs (page 1 to page 7) is to point to page->compound_head.
-> Therefore, we can remap pages 2 to 7 to page 1. Only 2 pages of page structs
-> will be used for each HugeTLB page. This will allow us to free the remaining
-> 6 pages to the buddy allocator.
-> 
-> Here is how things look after remapping.
-> 
->     HugeTLB                  struct pages(8 pages)         page frame(8 pages)
->  +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
->  |           |                     |     0     | -------------> |     0     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     1     | -------------> |     1     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     2     | ----------------^ ^ ^ ^ ^ ^
->  |           |                     +-----------+                   | | | | |
->  |           |                     |     3     | ------------------+ | | | |
->  |           |                     +-----------+                     | | | |
->  |           |                     |     4     | --------------------+ | | |
->  |    2MB    |                     +-----------+                       | | |
->  |           |                     |     5     | ----------------------+ | |
->  |           |                     +-----------+                         | |
->  |           |                     |     6     | ------------------------+ |
->  |           |                     +-----------+                           |
->  |           |                     |     7     | --------------------------+
->  |           |                     +-----------+
->  |           |
->  |           |
->  |           |
->  +-----------+
-> 
-> When a HugeTLB is freed to the buddy system, we should allocate 6 pages for
-> vmemmap pages and restore the previous mapping relationship.
-> 
-> Apart from 2MB HugeTLB page, we also have 1GB HugeTLB page. It is similar
-> to the 2MB HugeTLB page. We also can use this approach to free the vmemmap
-> pages.
-> 
-> In this case, for the 1GB HugeTLB page, we can save 4094 pages. This is a
-> very substantial gain. On our server, run some SPDK/QEMU applications which
-> will use 1024GB hugetlbpage. With this feature enabled, we can save ~16GB
-> (1G hugepage)/~12GB (2MB hugepage) memory.
-> 
-> Because there are vmemmap page tables reconstruction on the freeing/allocating
-> path, it increases some overhead. Here are some overhead analysis.
-> 
-> 1) Allocating 10240 2MB hugetlb pages.
-> 
->    a) With this patch series applied:
->    # time echo 10240 > /proc/sys/vm/nr_hugepages
-> 
->    real     0m0.166s
->    user     0m0.000s
->    sys      0m0.166s
-> 
->    # bpftrace -e 'kprobe:alloc_fresh_huge_page { @start[tid] = nsecs; }
->      kretprobe:alloc_fresh_huge_page /@start[tid]/ { @latency = hist(nsecs -
->      @start[tid]); delete(@start[tid]); }'
->    Attaching 2 probes...
-> 
->    @latency:
->    [8K, 16K)           5476 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
->    [16K, 32K)          4760 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@       |
->    [32K, 64K)             4 |                                                    |
-> 
->    b) Without this patch series:
->    # time echo 10240 > /proc/sys/vm/nr_hugepages
-> 
->    real     0m0.067s
->    user     0m0.000s
->    sys      0m0.067s
-> 
->    # bpftrace -e 'kprobe:alloc_fresh_huge_page { @start[tid] = nsecs; }
->      kretprobe:alloc_fresh_huge_page /@start[tid]/ { @latency = hist(nsecs -
->      @start[tid]); delete(@start[tid]); }'
->    Attaching 2 probes...
-> 
->    @latency:
->    [4K, 8K)           10147 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
->    [8K, 16K)             93 |                                                    |
-> 
->    Summarize: this feature is about ~2x slower than before.
-> 
-> 2) Freeing 10240 2MB hugetlb pages.
-> 
->    a) With this patch series applied:
->    # time echo 0 > /proc/sys/vm/nr_hugepages
-> 
->    real     0m0.213s
->    user     0m0.000s
->    sys      0m0.213s
-> 
->    # bpftrace -e 'kprobe:free_pool_huge_page { @start[tid] = nsecs; }
->      kretprobe:free_pool_huge_page /@start[tid]/ { @latency = hist(nsecs -
->      @start[tid]); delete(@start[tid]); }'
->    Attaching 2 probes...
-> 
->    @latency:
->    [8K, 16K)              6 |                                                    |
->    [16K, 32K)         10227 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
->    [32K, 64K)             7 |                                                    |
-> 
->    b) Without this patch series:
->    # time echo 0 > /proc/sys/vm/nr_hugepages
-> 
->    real     0m0.081s
->    user     0m0.000s
->    sys      0m0.081s
-> 
->    # bpftrace -e 'kprobe:free_pool_huge_page { @start[tid] = nsecs; }
->      kretprobe:free_pool_huge_page /@start[tid]/ { @latency = hist(nsecs -
->      @start[tid]); delete(@start[tid]); }'
->    Attaching 2 probes...
-> 
->    @latency:
->    [4K, 8K)            6805 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
->    [8K, 16K)           3427 |@@@@@@@@@@@@@@@@@@@@@@@@@@                          |
->    [16K, 32K)             8 |                                                    |
-> 
->    Summarize: The overhead of __free_hugepage is about ~2-3x slower than before.
-> 
-> Although the overhead has increased, the overhead is not significant. Like Mike
-> said, "However, remember that the majority of use cases create hugetlb pages at
-> or shortly after boot time and add them to the pool. So, additional overhead is
-> at pool creation time. There is no change to 'normal run time' operations of
-> getting a page from or returning a page to the pool (think page fault/unmap)".
-> 
-> Despite the overhead and in addition to the memory gains from this series. The
-> following data is obtained by Joao Martins. Very thanks to his effort.
-> 
-> There's an additional benefit which is page (un)pinners will see an improvement
-> and Joao presumes because there are fewer memmap pages and thus the tail/head
-> pages are staying in cache more often.
-> 
-> Out of the box Joao saw (when comparing linux-next against linux-next + this series)
-> with gup_test and pinning a 16G hugetlb file (with 1G pages):
-> 
-> 	get_user_pages(): ~32k -> ~9k
-> 	unpin_user_pages(): ~75k -> ~70k
-> 
-> Usually any tight loop fetching compound_head(), or reading tail pages data (e.g.
-> compound_head) benefit a lot. There's some unpinning inefficiencies Joao was
-> fixing[0], but with that in added it shows even more:
-> 
-> 	unpin_user_pages(): ~27k -> ~3.8k
-> 
-> [0] https://lore.kernel.org/linux-mm/20210204202500.26474-1-joao.m.martins@oracle.com/
-> 
-> Todo:
->   - Free all of the tail vmemmap pages
->     Now for the 2MB HugrTLB page, we only free 6 vmemmap pages. we really can
->     free 7 vmemmap pages. In this case, we can see 8 of the 512 struct page
->     structures has beed set PG_head flag. If we can adjust compound_head()
->     slightly and make compound_head() return the real head struct page when
->     the parameter is the tail struct page but with PG_head flag set.
-> 
->     In order to make the code evolution route clearer. This feature can can be
->     a separate patch after this patchset is solid.
-> 
->   - Support for other architectures (e.g. aarch64).
->   - Enable PMD/huge page mapping of vmemmap even if this feature was enabled.
+Git tree for complete series rebased on v5.12-rc1 can be found at:
 
-Tested-by: Chen Huang <chenhuang5@huawei.com>
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git#miscattr_v2
 
-We are interested in this patch and have tested the patch for x86. Also we made a simple
-modification in arm64 and tested for the patch.
+Thanks,
+Miklos
 
-1. In x86, we set the total memory of 70G, and use 32G for hugepages then got the result:
-------------------------------------------------------------------------------------------------
-                    2M page                    |                    1G page                    |
-----------------------|------------------------|----------------------|------------------------|
-       enable         |        disable         |      enable          |        disable         |
-----------------------|------------------------|----------------------|------------------------|
-total  |  used | free | total  |  used | free  |total  |  used | free | total  |  used | free  |
-70855  | 33069 | 37786| 70473  | 33068 | 37405 |70983  | 33068 | 37914| 70473  | 33068 | 37405 |
-------------------------------------------------------------------------------------------------
-The result is that for 2M hugepage, we can save 382M memory which is correspoinding to the expected
-384M memory. For 1G hugepage, we can save 510M memory which is correspoinding to the expected 512M
-memory.
+---
+From: Miklos Szeredi <mszeredi@redhat.com>
+Date: Tue, 2 Mar 2021 13:38:22 +0100
+Subject: vfs: add miscattr ops
 
-2. In arm64, the hack modification is shown below[1]. We set the total memory of 40G, and use 10G
-for hugepages then got the result:
-------------------------------------------------------------------------------------------------
-                    2M page                    |                    1G page                    |
-----------------------|------------------------|----------------------|------------------------|
-       enable         |        disable         |      enable          |        disable         |
-----------------------|------------------------|----------------------|------------------------|
-total  |  used | free | total  |  used | free  |total  |  used | free | total  |  used | free  |
-39,739 | 10279 |29,460| 39579  | 10278 | 29,301‬|39,699 | 10279 |29,420| 39579  | 10278 | 29,301|
-------------------------------------------------------------------------------------------------
-The result is that for 2M hugepage, we can save 119M memory which is correspoinding to the expected
-120M memory. For 1G hugepage, we can save 159M memory which is correspoinding to the expected 160M
-memory.
+There's a substantial amount of boilerplate in filesystems handling
+FS_IOC_[GS]ETFLAGS/ FS_IOC_FS[GS]ETXATTR ioctls.
 
-3. Also we found that when we free and realloc the 1G hugepages, as the vmemmap need realloc pages before
-freeing the hugepages, it will decrese the chance to get hugepages. Because the freeed hugepages has
-returned to the buddy system and may be used for vmemmap pages.
-We think failing to alloc hugepages is normal so this is fine.
+Also due to userspace buffers being involved in the ioctl API this is
+difficult to stack, as shown by overlayfs issues related to these ioctls.
 
-[1]: support arm64
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index a0a41e6c1307..c150c6e6e20c 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -1091,7 +1091,7 @@ static void free_empty_tables(unsigned long addr, unsigned long end,
- #endif
+Introduce a new internal API named "miscattr" (fsxattr can be confused with
+xattr, xflags is inappropriate, since this is more than just flags).
 
- #ifdef CONFIG_SPARSEMEM_VMEMMAP
--#if !ARM64_SWAPPER_USES_SECTION_MAPS
-+#if !ARM64_SWAPPER_USES_SECTION_MAPS || defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
- int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
-                struct vmem_altmap *altmap)
- {
-diff --git a/fs/Kconfig b/fs/Kconfig
-index de87f234f1e9..fa46c9dfa256 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -239,9 +239,8 @@ config HUGETLB_PAGE
+There's significant overlap between flags and xflags and this API handles
+the conversions automatically, so filesystems may choose which one to use.
 
- config HUGETLB_PAGE_FREE_VMEMMAP
-        def_bool HUGETLB_PAGE
--       depends on X86_64
-+       depends on (X86_64 && HAVE_BOOTMEM_INFO_NODE) || ARM64
-        depends on SPARSEMEM_VMEMMAP
--       depends on HAVE_BOOTMEM_INFO_NODE
+In ->miscattr_get() a hint is provided to the filesystem whether flags or
+xattr are being requested by userspace, but in this series this hint is
+ignored by all filesystems, since generating all the attributes is cheap.
 
- config MEMFD_CREATE
-        def_bool TMPFS || HUGETLBFS
-diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-index 60fc6cd6cd23..b25d3b895eaa 100644
---- a/mm/sparse-vmemmap.c
-+++ b/mm/sparse-vmemmap.c
-@@ -165,7 +165,11 @@ static void vmemmap_remap_range(unsigned long start, unsigned long end,
- static inline void free_vmemmap_page(struct page *page)
- {
-        if (PageReserved(page))
-+#if defined(CONFIG_ARM64) && defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
-+               free_reserved_page(page);
-+#else
-                free_bootmem_page(page);
-+#endif
-        else
-                __free_page(page);
+If a filesystem doesn't implemement the miscattr API, just fall back to
+f_op->ioctl().  When all filesystems are converted, the fallback can be
+removed.
+
+32bit compat ioctls are now handled by the generic code as well.
+
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ Documentation/filesystems/locking.rst |   5 +
+ Documentation/filesystems/vfs.rst     |  15 ++
+ fs/ioctl.c                            | 329 ++++++++++++++++++++++++++
+ include/linux/fs.h                    |   4 +
+ include/linux/miscattr.h              |  53 +++++
+ 5 files changed, 406 insertions(+)
+ create mode 100644 include/linux/miscattr.h
+
+diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
+index b7dcc86c92a4..a5aa2046d48f 100644
+--- a/Documentation/filesystems/locking.rst
++++ b/Documentation/filesystems/locking.rst
+@@ -80,6 +80,9 @@ prototypes::
+ 				struct file *, unsigned open_flag,
+ 				umode_t create_mode);
+ 	int (*tmpfile) (struct inode *, struct dentry *, umode_t);
++	int (*miscattr_set)(struct user_namespace *mnt_userns,
++			    struct dentry *dentry, struct miscattr *ma);
++	int (*miscattr_get)(struct dentry *dentry, struct miscattr *ma);
+ 
+ locking rules:
+ 	all may block
+@@ -107,6 +110,8 @@ fiemap:		no
+ update_time:	no
+ atomic_open:	shared (exclusive if O_CREAT is set in open flags)
+ tmpfile:	no
++miscattr_get:	no or exclusive
++miscattr_set:	exclusive
+ ============	=============================================
+ 
+ 
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 2049bbf5e388..f125ce6c3b47 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -441,6 +441,9 @@ As of kernel 2.6.22, the following members are defined:
+ 				   unsigned open_flag, umode_t create_mode);
+ 		int (*tmpfile) (struct user_namespace *, struct inode *, struct dentry *, umode_t);
+ 	        int (*set_acl)(struct user_namespace *, struct inode *, struct posix_acl *, int);
++		int (*miscattr_set)(struct user_namespace *mnt_userns,
++				    struct dentry *dentry, struct miscattr *ma);
++		int (*miscattr_get)(struct dentry *dentry, struct miscattr *ma);
+ 	};
+ 
+ Again, all methods are called without any locks being held, unless
+@@ -588,6 +591,18 @@ otherwise noted.
+ 	atomically creating, opening and unlinking a file in given
+ 	directory.
+ 
++``miscattr_get``
++	called on ioctl(FS_IOC_GETFLAGS) and ioctl(FS_IOC_FSGETXATTR) to
++	retrieve miscellaneous filesystem flags and attributes.  Also
++	called before the relevant SET operation to check what is being
++	changed (in this case with i_rwsem locked exclusive).  If unset,
++	then fall back to f_op->ioctl().
++
++``miscattr_set``
++	called on ioctl(FS_IOC_SETFLAGS) and ioctl(FS_IOC_FSSETXATTR) to
++	change miscellaneous filesystem flags and attributes.  Callers hold
++	i_rwsem exclusive.  If unset, then fall back to f_op->ioctl().
++
+ 
+ The Address Space Object
+ ========================
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index 4e6cc0a7d69c..e5f3820809a4 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -19,6 +19,9 @@
+ #include <linux/falloc.h>
+ #include <linux/sched/signal.h>
+ #include <linux/fiemap.h>
++#include <linux/mount.h>
++#include <linux/fscrypt.h>
++#include <linux/miscattr.h>
+ 
+ #include "internal.h"
+ 
+@@ -657,6 +660,311 @@ static int ioctl_file_dedupe_range(struct file *file,
+ 	return ret;
  }
-
+ 
++/**
++ * miscattr_fill_xflags - initialize miscattr with xflags
++ * @ma:		miscattr pointer
++ * @xflags:	FS_XFLAG_* flags
++ *
++ * Set ->fsx_xflags, ->xattr_valid and ->flags (translated xflags).  All
++ * other fields are zeroed.
++ */
++void miscattr_fill_xflags(struct miscattr *ma, u32 xflags)
++{
++	memset(ma, 0, sizeof(*ma));
++	ma->xattr_valid = true;
++	ma->fsx_xflags = xflags;
++	if (ma->fsx_xflags & FS_XFLAG_IMMUTABLE)
++		ma->flags |= FS_IMMUTABLE_FL;
++	if (ma->fsx_xflags & FS_XFLAG_APPEND)
++		ma->flags |= FS_APPEND_FL;
++	if (ma->fsx_xflags & FS_XFLAG_SYNC)
++		ma->flags |= FS_SYNC_FL;
++	if (ma->fsx_xflags & FS_XFLAG_NOATIME)
++		ma->flags |= FS_NOATIME_FL;
++	if (ma->fsx_xflags & FS_XFLAG_NODUMP)
++		ma->flags |= FS_NODUMP_FL;
++	if (ma->fsx_xflags & FS_XFLAG_DAX)
++		ma->flags |= FS_DAX_FL;
++	if (ma->fsx_xflags & FS_XFLAG_PROJINHERIT)
++		ma->flags |= FS_PROJINHERIT_FL;
++}
++EXPORT_SYMBOL(miscattr_fill_xflags);
++
++/**
++ * miscattr_fill_flags - initialize miscattr with flags
++ * @ma:		miscattr pointer
++ * @flags:	FS_*_FL flags
++ *
++ * Set ->flags, ->flags_valid and ->fsx_xflags (translated flags).
++ * All other fields are zeroed.
++ */
++void miscattr_fill_flags(struct miscattr *ma, u32 flags)
++{
++	memset(ma, 0, sizeof(*ma));
++	ma->flags_valid = true;
++	ma->flags = flags;
++	if (ma->flags & FS_SYNC_FL)
++		ma->fsx_xflags |= FS_XFLAG_SYNC;
++	if (ma->flags & FS_IMMUTABLE_FL)
++		ma->fsx_xflags |= FS_XFLAG_IMMUTABLE;
++	if (ma->flags & FS_APPEND_FL)
++		ma->fsx_xflags |= FS_XFLAG_APPEND;
++	if (ma->flags & FS_NODUMP_FL)
++		ma->fsx_xflags |= FS_XFLAG_NODUMP;
++	if (ma->flags & FS_NOATIME_FL)
++		ma->fsx_xflags |= FS_XFLAG_NOATIME;
++	if (ma->flags & FS_DAX_FL)
++		ma->fsx_xflags |= FS_XFLAG_DAX;
++	if (ma->flags & FS_PROJINHERIT_FL)
++		ma->fsx_xflags |= FS_XFLAG_PROJINHERIT;
++}
++EXPORT_SYMBOL(miscattr_fill_flags);
++
++/**
++ * vfs_miscattr_get - retrieve miscellaneous inode attributes
++ * @dentry:	the object to retrieve from
++ * @ma:		miscattr pointer
++ *
++ * Call i_op->miscattr_get() callback, if exists.
++ *
++ * Returns 0 on success, or a negative error on failure.
++ */
++int vfs_miscattr_get(struct dentry *dentry, struct miscattr *ma)
++{
++	struct inode *inode = d_inode(dentry);
++
++	if (d_is_special(dentry))
++		return -ENOTTY;
++
++	if (!inode->i_op->miscattr_get)
++		return -ENOIOCTLCMD;
++
++	return inode->i_op->miscattr_get(dentry, ma);
++}
++EXPORT_SYMBOL(vfs_miscattr_get);
++
++/**
++ * fsxattr_copy_to_user - copy fsxattr to userspace.
++ * @ma:		miscattr pointer
++ * @ufa:	fsxattr user pointer
++ *
++ * Returns 0 on success, or -EFAULT on failure.
++ */
++int fsxattr_copy_to_user(const struct miscattr *ma, struct fsxattr __user *ufa)
++{
++	struct fsxattr fa = {
++		.fsx_xflags	= ma->fsx_xflags,
++		.fsx_extsize	= ma->fsx_extsize,
++		.fsx_nextents	= ma->fsx_nextents,
++		.fsx_projid	= ma->fsx_projid,
++		.fsx_cowextsize	= ma->fsx_cowextsize,
++	};
++
++	if (copy_to_user(ufa, &fa, sizeof(fa)))
++		return -EFAULT;
++
++	return 0;
++}
++EXPORT_SYMBOL(fsxattr_copy_to_user);
++
++static int fsxattr_copy_from_user(struct miscattr *ma,
++				  struct fsxattr __user *ufa)
++{
++	struct fsxattr fa;
++
++	if (copy_from_user(&fa, ufa, sizeof(fa)))
++		return -EFAULT;
++
++	miscattr_fill_xflags(ma, fa.fsx_xflags);
++	ma->fsx_extsize = fa.fsx_extsize;
++	ma->fsx_nextents = fa.fsx_nextents;
++	ma->fsx_projid = fa.fsx_projid;
++	ma->fsx_cowextsize = fa.fsx_cowextsize;
++
++	return 0;
++}
++
++/*
++ * Generic function to check FS_IOC_FSSETXATTR/FS_IOC_SETFLAGS values and reject
++ * any invalid configurations.
++ *
++ * Note: must be called with inode lock held.
++ */
++static int miscattr_set_prepare(struct inode *inode,
++			      const struct miscattr *old_ma,
++			      struct miscattr *ma)
++{
++	int err;
++
++	/*
++	 * The IMMUTABLE and APPEND_ONLY flags can only be changed by
++	 * the relevant capability.
++	 */
++	if ((ma->flags ^ old_ma->flags) & (FS_APPEND_FL | FS_IMMUTABLE_FL) &&
++	    !capable(CAP_LINUX_IMMUTABLE))
++		return -EPERM;
++
++	err = fscrypt_prepare_setflags(inode, old_ma->flags, ma->flags);
++	if (err)
++		return err;
++
++	/*
++	 * Project Quota ID state is only allowed to change from within the init
++	 * namespace. Enforce that restriction only if we are trying to change
++	 * the quota ID state. Everything else is allowed in user namespaces.
++	 */
++	if (current_user_ns() != &init_user_ns) {
++		if (old_ma->fsx_projid != ma->fsx_projid)
++			return -EINVAL;
++		if ((old_ma->fsx_xflags ^ ma->fsx_xflags) &
++				FS_XFLAG_PROJINHERIT)
++			return -EINVAL;
++	}
++
++	/* Check extent size hints. */
++	if ((ma->fsx_xflags & FS_XFLAG_EXTSIZE) && !S_ISREG(inode->i_mode))
++		return -EINVAL;
++
++	if ((ma->fsx_xflags & FS_XFLAG_EXTSZINHERIT) &&
++			!S_ISDIR(inode->i_mode))
++		return -EINVAL;
++
++	if ((ma->fsx_xflags & FS_XFLAG_COWEXTSIZE) &&
++	    !S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
++		return -EINVAL;
++
++	/*
++	 * It is only valid to set the DAX flag on regular files and
++	 * directories on filesystems.
++	 */
++	if ((ma->fsx_xflags & FS_XFLAG_DAX) &&
++	    !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
++		return -EINVAL;
++
++	/* Extent size hints of zero turn off the flags. */
++	if (ma->fsx_extsize == 0)
++		ma->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
++	if (ma->fsx_cowextsize == 0)
++		ma->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
++
++	return 0;
++}
++
++/**
++ * vfs_miscattr_set - change miscellaneous inode attributes
++ * @dentry:	the object to change
++ * @ma:		miscattr pointer
++ *
++ * After verifying permissions, call i_op->miscattr_set() callback, if
++ * exists.
++ *
++ * Verifying attributes involves retrieving current attributes with
++ * i_op->miscattr_get(), this also allows initilaizing attributes that have
++ * not been set by the caller to current values.  Inode lock is held
++ * thoughout to prevent racing with another instance.
++ *
++ * Returns 0 on success, or a negative error on failure.
++ */
++int vfs_miscattr_set(struct user_namespace *mnt_userns, struct dentry *dentry,
++		     struct miscattr *ma)
++{
++	struct inode *inode = d_inode(dentry);
++	struct miscattr old_ma = {};
++	int err;
++
++	if (d_is_special(dentry))
++		return -ENOTTY;
++
++	if (!inode->i_op->miscattr_set)
++		return -ENOIOCTLCMD;
++
++	if (!inode_owner_or_capable(mnt_userns, inode))
++		return -EPERM;
++
++	inode_lock(inode);
++	err = vfs_miscattr_get(dentry, &old_ma);
++	if (!err) {
++		/* initialize missing bits from old_ma */
++		if (ma->flags_valid) {
++			ma->fsx_xflags |= old_ma.fsx_xflags & ~FS_XFLAG_COMMON;
++			ma->fsx_extsize = old_ma.fsx_extsize;
++			ma->fsx_nextents = old_ma.fsx_nextents;
++			ma->fsx_projid = old_ma.fsx_projid;
++			ma->fsx_cowextsize = old_ma.fsx_cowextsize;
++		} else {
++			ma->flags |= old_ma.flags & ~FS_COMMON_FL;
++		}
++		err = miscattr_set_prepare(inode, &old_ma, ma);
++		if (!err)
++			err = inode->i_op->miscattr_set(mnt_userns, dentry, ma);
++	}
++	inode_unlock(inode);
++
++	return err;
++}
++EXPORT_SYMBOL(vfs_miscattr_set);
++
++static int ioctl_getflags(struct file *file, void __user *argp)
++{
++	struct miscattr ma = { .flags_valid = true }; /* hint only */
++	unsigned int flags;
++	int err;
++
++	err = vfs_miscattr_get(file_dentry(file), &ma);
++	if (!err) {
++		flags = ma.flags;
++		if (copy_to_user(argp, &flags, sizeof(flags)))
++			err = -EFAULT;
++	}
++	return err;
++}
++
++static int ioctl_setflags(struct file *file, void __user *argp)
++{
++	struct miscattr ma;
++	unsigned int flags;
++	int err;
++
++	if (copy_from_user(&flags, argp, sizeof(flags)))
++		return -EFAULT;
++
++	err = mnt_want_write_file(file);
++	if (!err) {
++		miscattr_fill_flags(&ma, flags);
++		err = vfs_miscattr_set(file_mnt_user_ns(file), file_dentry(file), &ma);
++		mnt_drop_write_file(file);
++	}
++	return err;
++}
++
++static int ioctl_fsgetxattr(struct file *file, void __user *argp)
++{
++	struct miscattr ma = { .xattr_valid = true }; /* hint only */
++	int err;
++
++	err = vfs_miscattr_get(file_dentry(file), &ma);
++	if (!err)
++		err = fsxattr_copy_to_user(&ma, argp);
++
++	return err;
++}
++
++static int ioctl_fssetxattr(struct file *file, void __user *argp)
++{
++	struct miscattr ma;
++	int err;
++
++	err = fsxattr_copy_from_user(&ma, argp);
++	if (!err) {
++		err = mnt_want_write_file(file);
++		if (!err) {
++			err = vfs_miscattr_set(file_mnt_user_ns(file), file_dentry(file), &ma);
++			mnt_drop_write_file(file);
++		}
++	}
++	return err;
++}
++
+ /*
+  * do_vfs_ioctl() is not for drivers and not intended to be EXPORT_SYMBOL()'d.
+  * It's just a simple helper for sys_ioctl and compat_sys_ioctl.
+@@ -727,6 +1035,18 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
+ 		return put_user(i_size_read(inode) - filp->f_pos,
+ 				(int __user *)argp);
+ 
++	case FS_IOC_GETFLAGS:
++		return ioctl_getflags(filp, argp);
++
++	case FS_IOC_SETFLAGS:
++		return ioctl_setflags(filp, argp);
++
++	case FS_IOC_FSGETXATTR:
++		return ioctl_fsgetxattr(filp, argp);
++
++	case FS_IOC_FSSETXATTR:
++		return ioctl_fssetxattr(filp, argp);
++
+ 	default:
+ 		if (S_ISREG(inode->i_mode))
+ 			return file_ioctl(filp, cmd, argp);
+@@ -827,6 +1147,15 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
+ 		break;
+ #endif
+ 
++	/*
++	 * These access 32-bit values anyway so no further handling is
++	 * necessary.
++	 */
++	case FS_IOC32_GETFLAGS:
++	case FS_IOC32_SETFLAGS:
++		cmd = (cmd == FS_IOC32_GETFLAGS) ?
++			FS_IOC_GETFLAGS : FS_IOC_SETFLAGS;
++		fallthrough;
+ 	/*
+ 	 * everything else in do_vfs_ioctl() takes either a compatible
+ 	 * pointer argument or no argument -- call it with a modified
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ec8f3ddf4a6a..9e7f6a592a70 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -70,6 +70,7 @@ struct fsverity_info;
+ struct fsverity_operations;
+ struct fs_context;
+ struct fs_parameter_spec;
++struct miscattr;
+ 
+ extern void __init inode_init(void);
+ extern void __init inode_init_early(void);
+@@ -1963,6 +1964,9 @@ struct inode_operations {
+ 			struct dentry *, umode_t);
+ 	int (*set_acl)(struct user_namespace *, struct inode *,
+ 		       struct posix_acl *, int);
++	int (*miscattr_set)(struct user_namespace *mnt_userns,
++			    struct dentry *dentry, struct miscattr *ma);
++	int (*miscattr_get)(struct dentry *dentry, struct miscattr *ma);
+ } ____cacheline_aligned;
+ 
+ static inline ssize_t call_read_iter(struct file *file, struct kiocb *kio,
+diff --git a/include/linux/miscattr.h b/include/linux/miscattr.h
+new file mode 100644
+index 000000000000..13683eb6ac78
+--- /dev/null
++++ b/include/linux/miscattr.h
+@@ -0,0 +1,53 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef _LINUX_MISCATTR_H
++#define _LINUX_MISCATTR_H
++
++/* Flags shared betwen flags/xflags */
++#define FS_COMMON_FL \
++	(FS_SYNC_FL | FS_IMMUTABLE_FL | FS_APPEND_FL | \
++	 FS_NODUMP_FL |	FS_NOATIME_FL | FS_DAX_FL | \
++	 FS_PROJINHERIT_FL)
++
++#define FS_XFLAG_COMMON \
++	(FS_XFLAG_SYNC | FS_XFLAG_IMMUTABLE | FS_XFLAG_APPEND | \
++	 FS_XFLAG_NODUMP | FS_XFLAG_NOATIME | FS_XFLAG_DAX | \
++	 FS_XFLAG_PROJINHERIT)
++
++struct miscattr {
++	u32	flags;		/* flags (FS_IOC_GETFLAGS/FS_IOC_SETFLAGS) */
++	/* struct fsxattr: */
++	u32	fsx_xflags;	/* xflags field value (get/set) */
++	u32	fsx_extsize;	/* extsize field value (get/set)*/
++	u32	fsx_nextents;	/* nextents field value (get)	*/
++	u32	fsx_projid;	/* project identifier (get/set) */
++	u32	fsx_cowextsize;	/* CoW extsize field value (get/set)*/
++	/* selectors: */
++	bool	flags_valid:1;
++	bool	xattr_valid:1;
++};
++
++int fsxattr_copy_to_user(const struct miscattr *ma, struct fsxattr __user *ufa);
++
++void miscattr_fill_xflags(struct miscattr *ma, u32 xflags);
++void miscattr_fill_flags(struct miscattr *ma, u32 flags);
++
++/**
++ * miscattr_has_xattr - check for extentended flags/attributes
++ * @ma:		miscattr pointer
++ *
++ * Returns true if any attributes are present that are not represented in
++ * ->flags.
++ */
++static inline bool miscattr_has_xattr(const struct miscattr *ma)
++{
++	return ma->xattr_valid &&
++		((ma->fsx_xflags & ~FS_XFLAG_COMMON) || ma->fsx_extsize != 0 ||
++		 ma->fsx_projid != 0 ||	ma->fsx_cowextsize != 0);
++}
++
++int vfs_miscattr_get(struct dentry *dentry, struct miscattr *ma);
++int vfs_miscattr_set(struct user_namespace *mnt_userns, struct dentry *dentry,
++		     struct miscattr *ma);
++
++#endif /* _LINUX_MISCATTR_H */
+-- 
+2.26.2
 
