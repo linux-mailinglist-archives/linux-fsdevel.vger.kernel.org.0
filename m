@@ -2,236 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0308832A500
+	by mail.lfdr.de (Postfix) with ESMTP id 74A1232A501
 	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Mar 2021 16:59:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380715AbhCBLpp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Mar 2021 06:45:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60318 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1446196AbhCBDEa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Mar 2021 22:04:30 -0500
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62877C061794
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Mar 2021 19:03:42 -0800 (PST)
-Received: by mail-pj1-x102f.google.com with SMTP id b15so953879pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Mar 2021 19:03:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1bhqnALZ2+KE5BNt1x/b9t2x1AkPvkj58NfI+kSCMY8=;
-        b=UYnhJBpLGeXBzTsG1LRoT9PKDmaTMwK9UVmBSKewIAouqErxx2ofVXdE+eXziIbdpd
-         sGoirzJpSJXD/iCzCesUzihCGoEtLPB5MgPV1zx3ZlDdMeVTHur4f+XAPZ+P/Xp2I050
-         4AGVuC3F0W9MqITV+2Vh0iABS/bLWKy/hxLNu+nn470erji9VMW/mDFTGDbRlB6fuWov
-         o6s4PQooVOtr4HNnNIgMxpRUI0p3tTaywvWy4beq4Hkl67xSc/YbhKve+rR984OE/GFL
-         5L3Ua6Vx4i/C3mJ4O858u4zkNv5IHuaNTi2e9FuHOaenQwl3BW2OE/EOaLWKb2sT/Pag
-         qDlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1bhqnALZ2+KE5BNt1x/b9t2x1AkPvkj58NfI+kSCMY8=;
-        b=qD/EghisZiJK19G7DsUjiYT96jBwXyFENE64U+rqOlmM3YboNCnuk6Ft3+1TqPKYUr
-         0DbK4kfvgooO/teBjs0mr7MumShCNZrZFVDJ+vAH+1QyKxArK8TX+J5YjsDfyTBNUdb2
-         E2ObXkGnrGczg+eUhljGMm1etTc1SboN0Zg+yuSIdDj3Bce/lZmGS+pRa/SSipabTS7k
-         gNljfBn8SOTpa/IMbCSfz8BOAujhhOFFsZBbrIJ8r/GaN3JB5DO2spXHEaneleadaVl6
-         Std/eTgwp5S41PDQR4e5gmkVFIZpKmiNFe+n/+mvoS/lGgGDF0ZRan5BbEwMlM5h5wF6
-         3lCw==
-X-Gm-Message-State: AOAM532Wpg0HPJZBfeomViEFOczsj3WCC4DtVLOtAMgy2jsAH9V54HYN
-        58lV9YiBH7MmZ9bz4ZxX8TLM1B61arcWVNjsVLsU6A==
-X-Google-Smtp-Source: ABdhPJzkDzVaKb6VAcUaPdmIqjsZ96Mht1x5iPUiMpXvga/HiZejji300KaqZif5tK9B32QsU9s1bkNMxlRSC7wGZyk=
-X-Received: by 2002:a17:902:9341:b029:e1:7b4e:57a8 with SMTP id
- g1-20020a1709029341b02900e17b4e57a8mr1633790plp.34.1614654221758; Mon, 01 Mar
- 2021 19:03:41 -0800 (PST)
+        id S1383555AbhCBLpt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Mar 2021 06:45:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37130 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1574056AbhCBD2w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Mar 2021 22:28:52 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0054864DA1;
+        Tue,  2 Mar 2021 03:28:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614655689;
+        bh=njnpqWgDUywctLU8re245zucCInirLZ0Faloa4U9qbI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GvL/x9Tpqz6m8FQXD5ws5fn/ZM69cUoM3sgNDVBxnwB+hYeHHhjRrh4qTIK5VB/0m
+         vmIKCf042K4H9/ZSOe4n49g9257ztZmVzEQRuMFbUuTDKVhmEGU+xy71qEzvsOeQZC
+         Wyuc1K6VafR9bO0pQoh2aC8dwS8fdgR+f6pmSWQVfc0sViPhMou67WMOSD9SWNu+Ti
+         E4+jqHitv53Zqra/Y6SgZzxoaXGhHMi5IS1S6Fy70iCBMFfCR5KObs0Wh7WCwf9OWx
+         IlkI5IaZ05Vi79Nb6iCae7TOrlCKATr3ZBpShdsPaoaY9gd8vc6hhziUVZjD3wKVOP
+         pOrQVXU52iREg==
+Date:   Mon, 1 Mar 2021 19:28:05 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        "hch@lst.de" <hch@lst.de>, "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
+        "y-goto@fujitsu.com" <y-goto@fujitsu.com>,
+        "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
+        "fnstml-iaas@cn.fujitsu.com" <fnstml-iaas@cn.fujitsu.com>
+Subject: Re: Question about the "EXPERIMENTAL" tag for dax in XFS
+Message-ID: <20210302032805.GM7272@magnolia>
+References: <20210226190454.GD7272@magnolia>
+ <CAPcyv4iJiYsM5FQdpMvCi24aCi7RqUnnxC6sM0umFqiN+Q59cg@mail.gmail.com>
+ <20210226205126.GX4662@dread.disaster.area>
+ <CAPcyv4iDefA3Y0wUW=p080SYAsM_2TPJba-V-sxdK_BeJMkmsw@mail.gmail.com>
+ <20210226212748.GY4662@dread.disaster.area>
+ <CAPcyv4jryJ32R5vOwwEdoU3V8C0B7zu_pCt=7f6A3Gk-9h6Dfg@mail.gmail.com>
+ <20210227223611.GZ4662@dread.disaster.area>
+ <CAPcyv4h7XA3Jorcy_J+t9scw0A4KdT2WEwAhE-Nbjc=C2qmkMw@mail.gmail.com>
+ <20210228223846.GA4662@dread.disaster.area>
+ <CAPcyv4jzV2RUij2BEvDJLLiK_67Nf1v3M6-jRLKf32x4iOzqng@mail.gmail.com>
 MIME-Version: 1.0
-References: <20210301062227.59292-1-songmuchun@bytedance.com>
- <20210301062227.59292-3-songmuchun@bytedance.com> <CALvZod7sysj0+wrzLTXnwn7s_Gf-V2eFPJ6cLcoRmR0LdAFk0Q@mail.gmail.com>
-In-Reply-To: <CALvZod7sysj0+wrzLTXnwn7s_Gf-V2eFPJ6cLcoRmR0LdAFk0Q@mail.gmail.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Tue, 2 Mar 2021 11:03:05 +0800
-Message-ID: <CAMZfGtVhgPzGXrLp12Z=r_FYuyqOoza9tOkPZ0N1=cHR+ataQA@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH 2/5] mm: memcontrol: make page_memcg{_rcu}
- only applicable for non-kmem page
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>, kpsingh@kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        dietmar.eggemann@arm.com, Steven Rostedt <rostedt@goodmis.org>,
-        Benjamin Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, bristot@redhat.com,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        Chris Down <chris@chrisdown.name>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Oskolkov <posk@google.com>, Jann Horn <jannh@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Waiman Long <longman@redhat.com>,
-        Michel Lespinasse <walken@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>, krisman@collabora.com,
-        esyr@redhat.com, Suren Baghdasaryan <surenb@google.com>,
-        Marco Elver <elver@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Xiongchun duan <duanxiongchun@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4jzV2RUij2BEvDJLLiK_67Nf1v3M6-jRLKf32x4iOzqng@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 2, 2021 at 2:11 AM Shakeel Butt <shakeelb@google.com> wrote:
->
-> On Sun, Feb 28, 2021 at 10:25 PM Muchun Song <songmuchun@bytedance.com> wrote:
+On Mon, Mar 01, 2021 at 12:55:53PM -0800, Dan Williams wrote:
+> On Sun, Feb 28, 2021 at 2:39 PM Dave Chinner <david@fromorbit.com> wrote:
 > >
-> > We want to reuse the obj_cgroup APIs to reparent the kmem pages when
-> > the memcg offlined. If we do this, we should store an object cgroup
-> > pointer to page->memcg_data for the kmem pages.
+> > On Sat, Feb 27, 2021 at 03:40:24PM -0800, Dan Williams wrote:
+> > > On Sat, Feb 27, 2021 at 2:36 PM Dave Chinner <david@fromorbit.com> wrote:
+> > > > On Fri, Feb 26, 2021 at 02:41:34PM -0800, Dan Williams wrote:
+> > > > > On Fri, Feb 26, 2021 at 1:28 PM Dave Chinner <david@fromorbit.com> wrote:
+> > > > > > On Fri, Feb 26, 2021 at 12:59:53PM -0800, Dan Williams wrote:
+> > > > it points to, check if it points to the PMEM that is being removed,
+> > > > grab the page it points to, map that to the relevant struct page,
+> > > > run collect_procs() on that page, then kill the user processes that
+> > > > map that page.
+> > > >
+> > > > So why can't we walk the ptescheck the physical pages that they
+> > > > map to and if they map to a pmem page we go poison that
+> > > > page and that kills any user process that maps it.
+> > > >
+> > > > i.e. I can't see how unexpected pmem device unplug is any different
+> > > > to an MCE delivering a hwpoison event to a DAX mapped page.
+> > >
+> > > I guess the tradeoff is walking a long list of inodes vs walking a
+> > > large array of pages.
 > >
-> > Finally, page->memcg_data can have 3 different meanings.
-> >
-> >   1) For the slab pages, page->memcg_data points to an object cgroups
-> >      vector.
-> >
-> >   2) For the kmem pages (exclude the slab pages), page->memcg_data
-> >      points to an object cgroup.
-> >
-> >   3) For the user pages (e.g. the LRU pages), page->memcg_data points
-> >      to a memory cgroup.
-> >
-> > Currently we always get the memcg associated with a page via page_memcg
-> > or page_memcg_rcu. page_memcg_check is special, it has to be used in
-> > cases when it's not known if a page has an associated memory cgroup
-> > pointer or an object cgroups vector. Because the page->memcg_data of
-> > the kmem page is not pointing to a memory cgroup in the later patch,
-> > the page_memcg and page_memcg_rcu cannot be applicable for the kmem
-> > pages. In this patch, we introduce page_memcg_kmem to get the memcg
-> > associated with the kmem pages. And make page_memcg and page_memcg_rcu
-> > no longer apply to the kmem pages.
-> >
-> > In the end, there are 4 helpers to get the memcg associated with a
-> > page. The usage is as follows.
-> >
-> >   1) Get the memory cgroup associated with a non-kmem page (e.g. the LRU
-> >      pages).
-> >
-> >      - page_memcg()
-> >      - page_memcg_rcu()
->
-> Can you rename these to page_memcg_lru[_rcu] to make them explicitly
-> for LRU pages?
+> > Not really. You're assuming all a filesystem has to do is invalidate
+> > everything if a device goes away, and that's not true. Finding if an
+> > inode has a mapping that spans a specific device in a multi-device
+> > filesystem can be a lot more complex than that. Just walking inodes
+> > is easy - determining whihc inodes need invalidation is the hard
+> > part.
+> 
+> That inode-to-device level of specificity is not needed for the same
+> reason that drop_caches does not need to be specific. If the wrong
+> page is unmapped a re-fault will bring it back, and re-fault will fail
+> for the pages that are successfully removed.
+> 
+> > That's where ->corrupt_range() comes in - the filesystem is already
+> > set up to do reverse mapping from physical range to inode(s)
+> > offsets...
+> 
+> Sure, but what is the need to get to that level of specificity with
+> the filesystem for something that should rarely happen in the course
+> of normal operation outside of a mistake?
 
-Yes. Will do. Thanks.
+I can't tell if we're conflating the "a bunch of your pmem went bad"
+case with the "all your dimms fell out of the machine" case.
 
->
-> >
-> >   2) Get the memory cgroup associated with a kmem page (exclude the slab
-> >      pages).
-> >
-> >      - page_memcg_kmem()
-> >
-> >   3) Get the memory cgroup associated with a page. It has to be used in
-> >      cases when it's not known if a page has an associated memory cgroup
-> >      pointer or an object cgroups vector. Returns NULL for slab pages or
-> >      uncharged pages, otherwise, returns memory cgroup for charged pages
-> >      (e.g. kmem pages, LRU pages).
-> >
-> >      - page_memcg_check()
-> >
-> > In some place, we use page_memcg to check whether the page is charged.
-> > Now we introduce page_memcg_charged helper to do this.
-> >
-> > This is a preparation for reparenting the kmem pages. To support reparent
-> > kmem pages, we just need to adjust page_memcg_kmem and page_memcg_check in
-> > the later patch.
-> >
-> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > ---
-> [snip]
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -855,10 +855,11 @@ void __mod_lruvec_page_state(struct page *page, enum node_stat_item idx,
-> >                              int val)
-> >  {
-> >         struct page *head = compound_head(page); /* rmap on tail pages */
-> > -       struct mem_cgroup *memcg = page_memcg(head);
-> > +       struct mem_cgroup *memcg;
-> >         pg_data_t *pgdat = page_pgdat(page);
-> >         struct lruvec *lruvec;
-> >
-> > +       memcg = PageMemcgKmem(head) ? page_memcg_kmem(head) : page_memcg(head);
->
-> Should page_memcg_check() be used here?
+If, say, a single cacheline's worth of pmem goes bad on a node with 2TB
+of pmem, I certainly want that level of specificity.  Just notify the
+users of the dead piece, don't flush the whole machine down the drain.
 
-Yeah. page_memcg_check() can be used here.
-But on the inside of the page_memcg_check(),
-there is a READ_ONCE(). Actually, we do not
-need READ_ONCE() here. So I use page_memcg
-or page_memcg_kmem directly. Thanks.
+> > > There's likely always more pages than inodes, but perhaps it's more
+> > > efficient to walk the 'struct page' array than sb->s_inodes?
+> >
+> > I really don't see you seem to be telling us that invalidation is an
+> > either/or choice. There's more ways to convert physical block
+> > address -> inode file offset and mapping index than brute force
+> > inode cache walks....
+> 
+> Yes, but I was trying to map it to an existing mechanism and the
+> internals of drop_pagecache_sb() are, in coarse terms, close to what
+> needs to happen here.
 
->
-> >         /* Untracked pages have no memcg, no lruvec. Update only the node */
-> >         if (!memcg) {
-> >                 __mod_node_page_state(pgdat, idx, val);
-> > @@ -3170,12 +3171,13 @@ int __memcg_kmem_charge_page(struct page *page, gfp_t gfp, int order)
-> >   */
-> >  void __memcg_kmem_uncharge_page(struct page *page, int order)
-> >  {
-> > -       struct mem_cgroup *memcg = page_memcg(page);
-> > +       struct mem_cgroup *memcg;
-> >         unsigned int nr_pages = 1 << order;
-> >
-> > -       if (!memcg)
-> > +       if (!page_memcg_charged(page))
-> >                 return;
-> >
-> > +       memcg = page_memcg_kmem(page);
-> >         VM_BUG_ON_PAGE(mem_cgroup_is_root(memcg), page);
-> >         __memcg_kmem_uncharge(memcg, nr_pages);
-> >         page->memcg_data = 0;
-> > @@ -6831,24 +6833,25 @@ static void uncharge_batch(const struct uncharge_gather *ug)
-> >  static void uncharge_page(struct page *page, struct uncharge_gather *ug)
-> >  {
-> >         unsigned long nr_pages;
-> > +       struct mem_cgroup *memcg;
-> >
-> >         VM_BUG_ON_PAGE(PageLRU(page), page);
-> >
-> > -       if (!page_memcg(page))
-> > +       if (!page_memcg_charged(page))
-> >                 return;
-> >
-> >         /*
-> >          * Nobody should be changing or seriously looking at
-> > -        * page_memcg(page) at this point, we have fully
-> > -        * exclusive access to the page.
-> > +        * page memcg at this point, we have fully exclusive
-> > +        * access to the page.
-> >          */
-> > -
-> > -       if (ug->memcg != page_memcg(page)) {
-> > +       memcg = PageMemcgKmem(page) ? page_memcg_kmem(page) : page_memcg(page);
->
-> Same, should page_memcg_check() be used here?
+Yes.  XFS (with rmap enabled) can do all the iteration and walking in
+that function except for the invalidate_mapping_* call itself.  The goal
+of this series is first to wire up a callback within both the block and
+pmem subsystems so that they can take notifications and reverse-map them
+through the storage stack until they reach an fs superblock.
 
-Same as above.
+Once the information has reached XFS, it can use its own reverse
+mappings to figure out which pages of which inodes are now targetted.
+The future of DAX hw error handling can be that you throw the spitwad at
+us, and it's our problem to distill that into mm invalidation calls.
+XFS' reverse mapping data is indexed by storage location and isn't
+sharded by address_space, so (except for the DIMMs falling out), we
+don't need to walk the entire inode list or scan the entire mapping.
+
+Between XFS and DAX and mm, the mm already has the invalidation calls,
+xfs already has the distiller, and so all we need is that first bit.
+The current mm code doesn't fully solve the problem, nor does it need
+to, since it handles DRAM errors acceptably* already.
+
+* Actually, the hwpoison code should _also_ be calling ->corrupted_range
+when DRAM goes bad so that we can detect metadata failures and either
+reload the buffer or (if it was dirty) shut down.
+
+> >
+> > .....
+> >
+> > > > IOWs, what needs to happen at this point is very filesystem
+> > > > specific. Assuming that "device unplug == filesystem dead" is not
+> > > > correct, nor is specifying a generic action that assumes the
+> > > > filesystem is dead because a device it is using went away.
+> > >
+> > > Ok, I think I set this discussion in the wrong direction implying any
+> > > mapping of this action to a "filesystem dead" event. It's just a "zap
+> > > all ptes" event and upper layers recover from there.
+> >
+> > Yes, that's exactly what ->corrupt_range() is intended for. It
+> > allows the filesystem to lock out access to the bad range
+> > and then recover the data. Or metadata, if that's where the bad
+> > range lands. If that recovery fails, it can then report a data
+> > loss/filesystem shutdown event to userspace and kill user procs that
+> > span the bad range...
+> >
+> > FWIW, is this notification going to occur before or after the device
+> > has been physically unplugged?
+> 
+> Before. This will be operations that happen in the pmem driver
+> ->remove() callback.
+> 
+> > i.e. what do we do about the
+> > time-of-unplug-to-time-of-invalidation window where userspace can
+> > still attempt to access the missing pmem though the
+> > not-yet-invalidated ptes? It may not be likely that people just yank
+> > pmem nvdimms out of machines, but with NVMe persistent memory
+> > spaces, there's every chance that someone pulls the wrong device...
+> 
+> The physical removal aspect is only theoretical today. While the pmem
+> driver has a ->remove() path that's purely a software unbind
+> operation. That said the vulnerability window today is if a process
+> acquires a dax mapping, the pmem device hosting that filesystem goes
+> through an unbind / bind cycle, and then a new filesystem is created /
+> mounted. That old pte may be able to access data that is outside its
+> intended protection domain.
+> 
+> Going forward, for buses like CXL, there will be a managed physical
+> remove operation via PCIE native hotplug. The flow there is that the
+> PCIE hotplug driver will notify the OS of a pending removal, trigger
+> ->remove() on the pmem driver, and then notify the technician (slot
+> status LED) that the card is safe to pull.
+
+Well, that's a relief.  Can we cancel longterm RDMA leases now too?
+<duck>
+
+--D
