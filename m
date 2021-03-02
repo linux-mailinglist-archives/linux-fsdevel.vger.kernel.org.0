@@ -2,171 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F1232B4CD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:38:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE9EC32B4CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:38:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354223AbhCCF2w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 00:28:52 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:37484 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1581609AbhCBS7r (ORCPT
+        id S1354233AbhCCF3H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 00:29:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39900 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1581636AbhCBTBQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Mar 2021 13:59:47 -0500
-Received: by mail-il1-f198.google.com with SMTP id g3so15462063ild.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Mar 2021 10:59:31 -0800 (PST)
+        Tue, 2 Mar 2021 14:01:16 -0500
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 275E3C0617AB
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Mar 2021 11:01:00 -0800 (PST)
+Received: by mail-qt1-x831.google.com with SMTP id s15so15604926qtq.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Mar 2021 11:01:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Tg+d/LRAGTG1IKdq5Ummz9Q9xop/B7Brr9jOYccccKA=;
+        b=n6pNUm287vSvGSyr7zvGBfEzlAVYTW2evomGesAJj9yVD9S3k26NRxpuGXe3mjAxm+
+         Im43Y3/DXYF29dAXQ6ELxWwOGH+xyMn8bHf3X8YqEI7v5XGuXSMWmYSw4VFnrpIKVC8F
+         4qmXKMYk1boECNWIMnj3tRDj2cxkeO243F4uD44uEyUEJfOvohmLAajyNRl86unJc4FU
+         8zXtwAcYPxbnfDw2kIT9cCWpSB0gWjQzUN1fAGyNjZQRpiS8ZcxPgF1Ep/5i2BR7Gpwm
+         IWE5aohKPuWVVTQ0z+LpmXVftNbaltd6Ym4thCJDsC28mc8H0uvrgZfq/54bI1J+RaEw
+         QCKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=aXStB7B09qi9E7YwxmPgSkz9nQg+89gIu3eYJDouYcI=;
-        b=FTgiRVLQ+c+K61NoLFLTCY304kyagnRdSdah38ZbX8qXIVfe4TQEMZIndkg2xH9sKR
-         +7BwxTBAus+JZVqFiBLEaLOiT0a41lcv3IRZbFTVbpOaG5GJW3wzqWZDKYt9KgzGLqVI
-         wmJxYo1HNAHQx4axgOp/rKnnhMUyx6H76i1VrqyF13f2YQvxAtzhh2yQbuL5LUrV4H2K
-         vWZe9G24smE43qYXwMt1GuB9kyy2EsSF8IoMJA20MDIwJY90FqCqdgoAkVrDILsSxb6e
-         gVM1itL1yQdkWZGiVA8QVRXpNel3C4JWyVVqgPsTYtL75sWatv5IJox4CeFn9spqfFHZ
-         5T+w==
-X-Gm-Message-State: AOAM532UuKc/bsev/mVH8l6DThbyA+Vwa2F6EY7LJJ8RQCzSitI6qnfb
-        M0NZ8tC7m0o12vZJI+NTavUY8Y5G1Ak3txNh+FL0P9z4iNfA
-X-Google-Smtp-Source: ABdhPJw5P0YOC1MnJxbOWefbMZcH/6MQQV6rrVC2OY+iwxu2F4lsCpEJSBmp5dCCuJMs4qe11rZjIRq4emK2sWH999jwxRtrrUMW
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Tg+d/LRAGTG1IKdq5Ummz9Q9xop/B7Brr9jOYccccKA=;
+        b=cfxHwP4IvlFj6xlwIX2MXnZJwsoScGZUOkLIQOHToOowlB1M2jkT7RcnYQCqPIoMcN
+         PrDHIfU/WE7IOrVVI0Cfz4N/x0R+9dMN+GYmml7/PtgJLpWgLXP1+nW+p79NwuFDoRTV
+         RY83mOMrIgdXfoNF7oEzd5OvJbSJ31DlWvE9dQKp5tHZPPQWIpbjC8MUjC72OKDGtPg/
+         hlMvdb08RNjKRhkn9VbiyrbeB1uFWJZDN2Z2w++khSHZcUguRcwaCk4qgrjM5yn89XC8
+         ngns1NzL+aGn+5FCFsLHmqdO8OJMRQUpnt9tspICKkGxCaEpBUW+Op2j7jIjzmKqwcaO
+         qkQg==
+X-Gm-Message-State: AOAM530Bk5M12kE5x+pNURZ35+bapo2u1qZOKtGi0p6yPy+/gE5IS6Oh
+        b+ZZjR7/JFOFM5lZtsxma9Iiug==
+X-Google-Smtp-Source: ABdhPJybx4b2Gt14q622BA8N8N+z50TDJQ9SNZUk6Te3jjSzIFqsB1fUftwzJfOfp17OcbLFbUWe2w==
+X-Received: by 2002:a05:622a:408:: with SMTP id n8mr19875757qtx.64.1614711659117;
+        Tue, 02 Mar 2021 11:00:59 -0800 (PST)
+Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id a14sm12150294qkc.47.2021.03.02.11.00.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Mar 2021 11:00:58 -0800 (PST)
+Subject: Re: [PATCH 1/2] fstests: add missing checks of fallocate feature
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Cc:     Naohiro Aota <naohiro.aota@wdc.com>
+References: <20210302091305.27828-1-johannes.thumshirn@wdc.com>
+ <20210302091305.27828-2-johannes.thumshirn@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <fe0829c9-b719-a155-2404-a43640d8df70@toxicpanda.com>
+Date:   Tue, 2 Mar 2021 14:00:57 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.1
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3314:: with SMTP id b20mr19581774ioz.78.1614711545606;
- Tue, 02 Mar 2021 10:59:05 -0800 (PST)
-Date:   Tue, 02 Mar 2021 10:59:05 -0800
-In-Reply-To: <586d357d-8c4c-8875-3a1c-0599a0a64da0@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000017349305bc9254f4@google.com>
-Subject: Re: possible deadlock in io_poll_double_wake (2)
-From:   syzbot <syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210302091305.27828-2-johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 3/2/21 4:13 AM, Johannes Thumshirn wrote:
+> From: Naohiro Aota <naohiro.aota@wdc.com>
+> 
+> Many test cases use xfs_io -c 'falloc' but forgot to add
+> _require_xfs_io_command "falloc". This will fail the test case if we run
+> the test case on a file system without fallcoate support e.g. F2FS ZZ
+> 
+> While we believe that normal fallocate(mode = 0) is always supported on
+> Linux, it is not true. Fallocate is disabled in several implementations of
+> zoned block support for file systems because the pre-allocated region will
+> break the sequential writing rule.
+> 
+> Currently, several test cases unconditionally call fallocate(). Let's add
+> _require_xfs_io_command "falloc" to properly check the feature is supported
+> by a testing file system.
+> 
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-possible deadlock in io_poll_double_wake
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-============================================
-WARNING: possible recursive locking detected
-5.12.0-rc1-syzkaller #0 Not tainted
---------------------------------------------
-syz-executor.4/10454 is trying to acquire lock:
-ffff8880343cc130 (&runtime->sleep){..-.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
-ffff8880343cc130 (&runtime->sleep){..-.}-{2:2}, at: io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4925
+Thanks,
 
-but task is already holding lock:
-ffff888034e3b130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&runtime->sleep);
-  lock(&runtime->sleep);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-4 locks held by syz-executor.4/10454:
- #0: ffff888018cc8128 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0x1146/0x2200 fs/io_uring.c:9113
- #1: ffff888021692440 (&runtime->oss.params_lock){+.+.}-{3:3}, at: snd_pcm_oss_change_params sound/core/oss/pcm_oss.c:1087 [inline]
- #1: ffff888021692440 (&runtime->oss.params_lock){+.+.}-{3:3}, at: snd_pcm_oss_make_ready+0xc7/0x1b0 sound/core/oss/pcm_oss.c:1149
- #2: ffff888020273908 (&group->lock){..-.}-{2:2}, at: _snd_pcm_stream_lock_irqsave+0x9f/0xd0 sound/core/pcm_native.c:170
- #3: ffff888034e3b130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
-
-stack backtrace:
-CPU: 0 PID: 10454 Comm: syz-executor.4 Not tainted 5.12.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0xfa/0x151 lib/dump_stack.c:120
- print_deadlock_bug kernel/locking/lockdep.c:2829 [inline]
- check_deadlock kernel/locking/lockdep.c:2872 [inline]
- validate_chain kernel/locking/lockdep.c:3661 [inline]
- __lock_acquire.cold+0x14c/0x3b4 kernel/locking/lockdep.c:4900
- lock_acquire kernel/locking/lockdep.c:5510 [inline]
- lock_acquire+0x1ab/0x730 kernel/locking/lockdep.c:5475
- __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
- _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
- spin_lock include/linux/spinlock.h:354 [inline]
- io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4925
- __wake_up_common+0x147/0x650 kernel/sched/wait.c:108
- __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:138
- snd_pcm_update_state+0x46a/0x540 sound/core/pcm_lib.c:203
- snd_pcm_update_hw_ptr0+0xa75/0x1a50 sound/core/pcm_lib.c:464
- snd_pcm_period_elapsed+0x160/0x250 sound/core/pcm_lib.c:1805
- dummy_hrtimer_callback+0x94/0x1b0 sound/drivers/dummy.c:378
- __run_hrtimer kernel/time/hrtimer.c:1519 [inline]
- __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1583
- hrtimer_run_softirq+0x17b/0x360 kernel/time/hrtimer.c:1600
- __do_softirq+0x29b/0x9f6 kernel/softirq.c:345
- invoke_softirq kernel/softirq.c:221 [inline]
- __irq_exit_rcu kernel/softirq.c:422 [inline]
- irq_exit_rcu+0x134/0x200 kernel/softirq.c:434
- sysvec_apic_timer_interrupt+0x93/0xc0 arch/x86/kernel/apic/apic.c:1100
- </IRQ>
- asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:632
-RIP: 0010:unwind_next_frame+0xde0/0x2000 arch/x86/kernel/unwind_orc.c:611
-Code: 48 b8 00 00 00 00 00 fc ff df 4c 89 fa 48 c1 ea 03 0f b6 04 02 84 c0 74 08 3c 03 0f 8e 83 0f 00 00 41 3b 2f 0f 84 c1 05 00 00 <bf> 01 00 00 00 e8 16 95 1b 00 b8 01 00 00 00 65 8b 15 ca a8 cf 7e
-RSP: 0018:ffffc9000b447168 EFLAGS: 00000287
-RAX: ffffc9000b448001 RBX: 1ffff92001688e35 RCX: 1ffff92001688e01
-RDX: ffffc9000b447ae8 RSI: ffffc9000b447ab0 RDI: ffffc9000b447250
-RBP: ffffc9000b447ae0 R08: ffffffff8dac0810 R09: 0000000000000001
-R10: 0000000000084087 R11: 0000000000000001 R12: ffffc9000b440000
-R13: ffffc9000b447275 R14: ffffc9000b447290 R15: ffffc9000b447240
- arch_stack_walk+0x7d/0xe0 arch/x86/kernel/stacktrace.c:25
- stack_trace_save+0x8c/0xc0 kernel/stacktrace.c:121
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
- kasan_set_track+0x1c/0x30 mm/kasan/common.c:46
- kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:357
- ____kasan_slab_free mm/kasan/common.c:360 [inline]
- ____kasan_slab_free mm/kasan/common.c:325 [inline]
- __kasan_slab_free+0xf5/0x130 mm/kasan/common.c:367
- kasan_slab_free include/linux/kasan.h:199 [inline]
- slab_free_hook mm/slub.c:1562 [inline]
- slab_free_freelist_hook+0x72/0x1b0 mm/slub.c:1600
- slab_free mm/slub.c:3161 [inline]
- kfree+0xe5/0x7b0 mm/slub.c:4213
- snd_pcm_hw_param_near.constprop.0+0x7b0/0x8f0 sound/core/oss/pcm_oss.c:438
- snd_pcm_oss_change_params_locked+0x18c6/0x39a0 sound/core/oss/pcm_oss.c:936
- snd_pcm_oss_change_params sound/core/oss/pcm_oss.c:1090 [inline]
- snd_pcm_oss_make_ready+0xe7/0x1b0 sound/core/oss/pcm_oss.c:1149
- snd_pcm_oss_set_trigger.isra.0+0x30f/0x6e0 sound/core/oss/pcm_oss.c:2057
- snd_pcm_oss_poll+0x661/0xb10 sound/core/oss/pcm_oss.c:2841
- vfs_poll include/linux/poll.h:90 [inline]
- __io_arm_poll_handler+0x354/0xa20 fs/io_uring.c:5073
- io_arm_poll_handler fs/io_uring.c:5142 [inline]
- __io_queue_sqe+0x6ef/0xc40 fs/io_uring.c:6213
- io_queue_sqe+0x60d/0xf60 fs/io_uring.c:6259
- io_submit_sqe fs/io_uring.c:6423 [inline]
- io_submit_sqes+0x519a/0x6320 fs/io_uring.c:6537
- __do_sys_io_uring_enter+0x1152/0x2200 fs/io_uring.c:9114
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x465ef9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f818e00e188 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
-RAX: ffffffffffffffda RBX: 000000000056c008 RCX: 0000000000465ef9
-RDX: 0000000000000000 RSI: 0000000000002039 RDI: 0000000000000004
-RBP: 00000000004bcd1c R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056c008
-R13: 0000000000a9fb1f R14: 00007f818e00e300 R15: 0000000000022000
-
-
-Tested on:
-
-commit:         c9387501 sound: name fiddling
-git tree:       git://git.kernel.dk/linux-block syzbot-test
-console output: https://syzkaller.appspot.com/x/log.txt?x=16a51856d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0e4e0c3e0cf6e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=28abd693db9e92c160d8
-compiler:       
-
+Josef
