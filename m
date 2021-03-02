@@ -2,205 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3894032A523
+	by mail.lfdr.de (Postfix) with ESMTP id AAF0232A524
 	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Mar 2021 17:00:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1443421AbhCBLrl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Mar 2021 06:47:41 -0500
-Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:33075 "EHLO
-        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1376815AbhCBIAl (ORCPT
+        id S1443427AbhCBLrn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Mar 2021 06:47:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41012 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1349316AbhCBIL6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Mar 2021 03:00:41 -0500
-Received: from dread.disaster.area (pa49-179-130-210.pa.nsw.optusnet.com.au [49.179.130.210])
-        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id 740D3105F88;
-        Tue,  2 Mar 2021 18:57:37 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1lGzuS-00B8zi-8j; Tue, 02 Mar 2021 18:57:36 +1100
-Date:   Tue, 2 Mar 2021 18:57:36 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "hch@lst.de" <hch@lst.de>, "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
-        "y-goto@fujitsu.com" <y-goto@fujitsu.com>,
-        "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
-        "fnstml-iaas@cn.fujitsu.com" <fnstml-iaas@cn.fujitsu.com>
-Subject: Re: Question about the "EXPERIMENTAL" tag for dax in XFS
-Message-ID: <20210302075736.GJ4662@dread.disaster.area>
-References: <20210226205126.GX4662@dread.disaster.area>
- <CAPcyv4iDefA3Y0wUW=p080SYAsM_2TPJba-V-sxdK_BeJMkmsw@mail.gmail.com>
- <20210226212748.GY4662@dread.disaster.area>
- <CAPcyv4jryJ32R5vOwwEdoU3V8C0B7zu_pCt=7f6A3Gk-9h6Dfg@mail.gmail.com>
- <20210227223611.GZ4662@dread.disaster.area>
- <CAPcyv4h7XA3Jorcy_J+t9scw0A4KdT2WEwAhE-Nbjc=C2qmkMw@mail.gmail.com>
- <20210228223846.GA4662@dread.disaster.area>
- <CAPcyv4jzV2RUij2BEvDJLLiK_67Nf1v3M6-jRLKf32x4iOzqng@mail.gmail.com>
- <20210302032805.GM7272@magnolia>
- <CAPcyv4jXH0F+aii6ZtYQ3=Rx-mOWM7NFHC9wVxacW-b1o_s20g@mail.gmail.com>
+        Tue, 2 Mar 2021 03:11:58 -0500
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94337C06178A;
+        Mon,  1 Mar 2021 23:59:48 -0800 (PST)
+Received: by mail-il1-x131.google.com with SMTP id f10so16663630ilq.5;
+        Mon, 01 Mar 2021 23:59:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=t2tx7RyZE5U4n4frsJrirMRlQkMFmE25RpWBjXABilA=;
+        b=f4Z8o8kButtcX91FYfruSaZ1qzOD/ognZCljaY0z11d2aeNIW5a3+jHJDQN9tTaYbW
+         kwMBN57Mrue7x8A5EU7rsg83OtPSMmEbUVgpmqPE7b8mOPvmECfJ1Nd8XbeCHJOhBQH2
+         uLrQnwImAPjeXF7ORbHYynXmhS94nzORYyA3R34JVQWJye4KOBycUPQaumtzL2uvFy+s
+         GtnTLs3wRbLFoDzcg4MVicrJspCznwxh2ZjEc3kHWCssI4qweICA38NBszEIPZv3x6ld
+         BtJ2rqptyl85vM5rZxnXccf3lAqjmp6KOpYINlg0GNDzoHO/L5LCd5zV1nmXT8zeYc+p
+         tJvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=t2tx7RyZE5U4n4frsJrirMRlQkMFmE25RpWBjXABilA=;
+        b=s68saG8leWBc5BXNS/FqiFfM7fi6F/+a//7reS7iJ0lcjmRN2blOl4ijfvZD508fh4
+         HWgNdRq4JwPG7m5x4hyDpvJ5SveezUaYOCp8XXKs46r342yr40fxlyh0ee3WyG0Y53OB
+         aodIzJUX/IYBgkGl3yCg+0593uJsoRy2Hi8tbgyNCkfpDOZ8f42OS2EEE3cDzAO97WVi
+         9EK7VLKmLM4YctbOH5KKCzuzHRyVMixz6fyUq+Dnlnk497lDTKxZd3yDcpRJIssrseKF
+         QXLSFuEh/b8CFMpFmIbP3vVcEYS83/7H+UfCteun6wo2jhcUU8vFkOevaBAbUZb5KVBW
+         W6Kw==
+X-Gm-Message-State: AOAM533OoXXY/zVig+SHgSUWWdnlQymcaOY0/WB0fC3q8DLEj7hJ49ka
+        DvUr9pX0DKoIFB+y5N1fM+bSY4mCmZTXGFYsi5o=
+X-Google-Smtp-Source: ABdhPJzfZCjooO0cvefVY+irZIfuf/8Z9ij10/kz6slZmYic+SA221pSDCDyOUXLUdRLPMo26FAQRZWGjZRLPnjZQKE=
+X-Received: by 2002:a05:6e02:ee1:: with SMTP id j1mr16425796ilk.179.1614671987911;
+ Mon, 01 Mar 2021 23:59:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jXH0F+aii6ZtYQ3=Rx-mOWM7NFHC9wVxacW-b1o_s20g@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
-        a=JD06eNgDs9tuHP7JIKoLzw==:117 a=JD06eNgDs9tuHP7JIKoLzw==:17
-        a=kj9zAlcOel0A:10 a=dESyimp9J3IA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
-        a=sNTs5Pk-nQt0djJhEW0A:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <CALCv0x1NauG_13DmmzwYaRDaq3qjmvEdyi7=XzF04KR06Q=WHA@mail.gmail.com>
+ <m1wnuqhaew.fsf@fess.ebiederm.org>
+In-Reply-To: <m1wnuqhaew.fsf@fess.ebiederm.org>
+From:   Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>
+Date:   Mon, 1 Mar 2021 23:59:36 -0800
+Message-ID: <CALCv0x1Wka10b-mgb1wRHW-W-qRaZOKvJ_-ptq85Hj849PFPSw@mail.gmail.com>
+Subject: Re: exec error: BUG: Bad rss-counter
+To:     "Eric W. Biederman" <ebiederm@xmission.com>, linux-mm@kvack.org
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 01, 2021 at 09:41:02PM -0800, Dan Williams wrote:
-> On Mon, Mar 1, 2021 at 7:28 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> > > > I really don't see you seem to be telling us that invalidation is an
-> > > > either/or choice. There's more ways to convert physical block
-> > > > address -> inode file offset and mapping index than brute force
-> > > > inode cache walks....
-> > >
-> > > Yes, but I was trying to map it to an existing mechanism and the
-> > > internals of drop_pagecache_sb() are, in coarse terms, close to what
-> > > needs to happen here.
+On Mon, Mar 1, 2021 at 12:43 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com> writes:
+>
+> > Eric, All,
 > >
-> > Yes.  XFS (with rmap enabled) can do all the iteration and walking in
-> > that function except for the invalidate_mapping_* call itself.  The goal
-> > of this series is first to wire up a callback within both the block and
-> > pmem subsystems so that they can take notifications and reverse-map them
-> > through the storage stack until they reach an fs superblock.
-> 
-> I'm chuckling because this "reverse map all the way up the block
-> layer" is the opposite of what Dave said at the first reaction to my
-> proposal, "can't the mm map pfns to fs inode  address_spaces?".
+> > The following error appears when running Linux 5.10.18 on an embedded
+> > MIPS mt7621 target:
+> > [    0.301219] BUG: Bad rss-counter state mm:(ptrval) type:MM_ANONPAGES val:1
+> >
+> > Being a very generic error, I started digging and added a stack dump
+> > before the BUG:
+> > Call Trace:
+> > [<80008094>] show_stack+0x30/0x100
+> > [<8033b238>] dump_stack+0xac/0xe8
+> > [<800285e8>] __mmdrop+0x98/0x1d0
+> > [<801a6de8>] free_bprm+0x44/0x118
+> > [<801a86a8>] kernel_execve+0x160/0x1d8
+> > [<800420f4>] call_usermodehelper_exec_async+0x114/0x194
+> > [<80003198>] ret_from_kernel_thread+0x14/0x1c
+> >
+> > So that's how I got to looking at fs/exec.c and noticed quite a few
+> > changes last year. Turns out this message only occurs once very early
+> > at boot during the very first call to kernel_execve. current->mm is
+> > NULL at this stage, so acct_arg_size() is effectively a no-op.
+>
+> If you believe this is a new error you could bisect the kernel
+> to see which change introduced the behavior you are seeing.
+>
+> > More digging, and I traced the RSS counter increment to:
+> > [<8015adb4>] add_mm_counter_fast+0xb4/0xc0
+> > [<80160d58>] handle_mm_fault+0x6e4/0xea0
+> > [<80158aa4>] __get_user_pages.part.78+0x190/0x37c
+> > [<8015992c>] __get_user_pages_remote+0x128/0x360
+> > [<801a6d9c>] get_arg_page+0x34/0xa0
+> > [<801a7394>] copy_string_kernel+0x194/0x2a4
+> > [<801a880c>] kernel_execve+0x11c/0x298
+> > [<800420f4>] call_usermodehelper_exec_async+0x114/0x194
+> > [<80003198>] ret_from_kernel_thread+0x14/0x1c
+> >
+> > In fact, I also checked vma_pages(bprm->vma) and lo and behold it is set to 1.
+> >
+> > How is fs/exec.c supposed to handle implied RSS increments that happen
+> > due to page faults when discarding the bprm structure? In this case,
+> > the bug-generating kernel_execve call never succeeded, it returned -2,
+> > but I didn't trace exactly what failed.
+>
+> Unless I am mistaken any left over pages should be purged by exit_mmap
+> which is called by mmput before mmput calls mmdrop.
+Good to know. Some more digging and I can say that we hit this error
+when trying to unmap PFN 0 (is_zero_pfn(pfn) returns TRUE,
+vm_normal_page returns NULL, zap_pte_range does not decrement
+MM_ANONPAGES RSS counter). Is my understanding correct that PFN 0 is
+usable, but special? Or am I totally off the mark here?
 
-Ah, no, I never said that the filesystem can't do reverse maps. I
-was asking if the mm could directly (brute-force) invalidate PTEs
-pointing at physical pmem ranges without needing walk the inode
-mappings. That would be far more efficient if it could be done....
+Here is the (optimized) stack trace when the counter does not get decremented:
+[<8015b078>] vm_normal_page+0x114/0x1a8
+[<8015dc98>] unmap_page_range+0x388/0xacc
+[<8015e5a0>] unmap_vmas+0x6c/0x98
+[<80166194>] exit_mmap+0xd8/0x1ac
+[<800290c0>] mmput+0x58/0xf8
+[<801a6f8c>] free_bprm+0x2c/0xc4
+[<801a8890>] kernel_execve+0x160/0x1d8
+[<800420e0>] call_usermodehelper_exec_async+0x114/0x194
+[<80003198>] ret_from_kernel_thread+0x14/0x1c
 
-> Today whenever the pmem driver receives new corrupted range
-> notification from the lower level nvdimm
-> infrastructure(nd_pmem_notify) it updates the 'badblocks' instance
-> associated with the pmem gendisk and then notifies userspace that
-> there are new badblocks. This seems a perfect place to signal an upper
-> level stacked block device that may also be watching disk->bb. Then
-> each gendisk in a stacked topology is responsible for watching the
-> badblock notifications of the next level and storing a remapped
-> instance of those blocks until ultimately the filesystem mounted on
-> the top-level block device is responsible for registering for those
-> top-level disk->bb events.
-> 
-> The device gone notification does not map cleanly onto 'struct badblocks'.
+>
+> AKA it looks very very fishy this happens and this does not look like
+> an execve error.
+I think you are right, I'm probably wrong to bother you. However,
+since the thread is already started, let me add linux-mm here :)
+>
+> On the other hand it would be good to know why kernel_execve is failing.
+> Then the error handling paths could be scrutinized, and we can check to
+> see if everything that should happen on an error path does.
+I can check on this, but likely it's the init system not doing things
+quite in the right order on my platform, or something similar. The
+error is ENOENT from do_open_execat().
+>
+> > Interestingly, this "BUG:" message is timing-dependent. If I wait a
+> > bit before calling free_bprm after bprm_execve the message seems to go
+> > away (there are 3 other cores running and calling into kernel_execve
+> > at the same time, so there is that). The error also only ever happens
+> > once (probably because no more page faults happen?).
+> >
+> > I don't know enough to propose a proper fix here. Is it decrementing
+> > the bprm->mm RSS counter to account for that page fault? Or is
+> > current->mm being NULL a bigger problem?
+>
+> This is call_usermode_helper calls kernel_execve from a kernel thread
+> forked by kthreadd.  Which means current->mm == NULL is expected, and
+> current->active_mm == &init_mm.
+>
+> Similarly I bprm->mm having an incremented RSS counter appears correct.
+>
+> The question is why doesn't that count get consistently cleaned up.
+>
+> > Apologies in advance, but I have looked hard and do not see a clear
+> > resolution for this even in the latest kernel code.
+>
+> I may be blind but I see two possibilities.
+>
+> 1) There is a memory stomp that happens early on and bad timing causes
+>    the memory stomp to result in an elevated rss count.
+>
+> 2) There is a buggy error handling path, and whatever failure you are
+>     running into that early in boot walks through that buggy failure
+>     path.
+>
+> I don't think this is a widespread issue or yours would not be the first
+> report like this I have seen.
+>
+> The two productive paths I can see for tracing down your problem are:
+> 1) git bisect (assuming you have a known good version)
+> 2) Figuring out what exec failed.
+>
+> I really think exec_mmap should have cleaned up anything in the mm.  So
+> the fact that it doesn't worries me.
+>
+> Eric
 
-Filesystems are not allowed to interact with the gendisk
-infrastructure - that's for supporting the device side of a block
-device. It's a layering violation, and many a filesytem developer
-has been shouted at for trying to do this. At most we can peek
-through it to query functionality support from the request queue,
-but otherwise filesystems do not interact with anything under
-bdev->bd_disk.
-
-As it is, badblocks are used by devices to manage internal state.
-e.g. md for recording stripes that need recovery if the system
-crashes while they are being written out.
-
-> If an upper level agent really cared about knowing about ->remove()
-> events before they happened it could maybe do something like:
-> 
-> dev = disk_to_dev(bdev->bd_disk)->parent;
-> bus_register_notifier(dev->bus. &disk_host_device_notifier_block)
-
-Yeah, that's exactly the sort of thing that filesystems have been
-aggressively discouraged from doing for years.
-
-Part of the reason for this is that gendisk based mechanisms are not
-very good for stacked device error reporting. Part of the problem
-here is that every layer of the stacked device has to hook the
-notifier of the block devices underneath it, then translate the
-event to match the upper block device map, then regenerate the
-notification for the next layer up. This isn't an efficient way to
-pass a notification through a series of stacked devices and it is
-messy and cumbersome to maintain.
-
-It can be effective for getting notifications to userspace about
-something that happens to a specific block device. But The userspace
-still ends up having to solve the "what does this error resolve to"
-problem. i.e. Userspace still needs to map that notification to a
-filesystem, and for data loss events map it to objects within the
-filesystem, which can be extremely expensive to do from userspace.
-
-This is exactly the sort of userspace error reporting mess that
-various projects have asked us to try to fix. Plumbing errors
-internally through the kernel up to the filesystem where the
-filesytem can point directly to the user data that is affected is a
-simple, effective solution to the problem. Especially if we then
-have a generic error notification mechanism for filesystems to emit
-errors to registered userspace watchers...
-
-> I still don't think that solves the need for a separate mechanism for
-> global dax_device pte invalidation.
-
-It's just another type of media error because.....
-
-> I think that global dax_device invalidation needs new kernel
-> infrastructure to allow internal users, like dm-writecache and future
-> filesystems using dax for metadata, to take a fault when pmem is
-> offlined.
-
-.... if userspace has directly mapped into the cache, and the cache
-storage goes away, the userspace app has to be killed because we
-have no idea if the device going away has caused data loss or not.
-IOWs, if userspace writes direct to the cache device and it hasn't
-been written back to other storage when it gets yanked, we have just
-caused data corruption to occur.
-
-At minimum, we now have to tell the filesystem that the dirty data
-in the cache is now bad, and direct map applications that map those
-dirty ranges need to be killed because their backing store is no
-longer valid nor does the backup copy contain the data they last
-wrote. Nor is it acessible by direct access, which is going to be
-interesting because dynamically changing dax to non-dax access can't
-be done without forcibly kicking the inode out of the cache. That
-requires all references to the inode to go away. And that means the
-event really has to go up to the filesystem.
-
-But I think the biggest piece of the puzzle that you haven't grokked
-here is that the dm cache device isn't a linear map - it's made up of
-random ranges from the underlying devices. Hence the "remove" of a dm
-cache device turns into a huge number of small, sparse corrupt
-ranges, not a single linear device remove event.
-
-IOWs, device unplug/remove events are not just simple "pass it on"
-events in a stacked storage setup. There can be non-trivial mappings
-through the layers, and device disappearance may in fact manifest to
-the user as data corruption rather than causing data to be
-inaccessible.
-
-Hence "remove" notifications just don't work in the storage stack.
-They need to be translated to block ranges going bad (i.e.  media
-errors), and reported to higher layers as bad ranges, not as device
-removal.
-
-The same goes for DAX devices. The moment they can be placed in
-storage stacks in non-trivial configurations and/or used as cache
-devices that can be directly accessed over tranditional block
-devices, we end up with error conditions that can only be mapped as
-ranges of blocks that have gone bad.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Ilya
