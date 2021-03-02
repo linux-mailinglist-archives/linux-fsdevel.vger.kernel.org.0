@@ -2,158 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF94832A50A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Mar 2021 16:59:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F6F432A50C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Mar 2021 16:59:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442282AbhCBLqm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Mar 2021 06:46:42 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:17900 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1575991AbhCBD7F (ORCPT
+        id S1442288AbhCBLqn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Mar 2021 06:46:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46870 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239244AbhCBENe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Mar 2021 22:59:05 -0500
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 1223sP17021771;
-        Mon, 1 Mar 2021 19:58:14 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=1anEYPlXeCA8QVDJWhWrL7Jesrjov7VMWN5N28YTCOg=;
- b=XAPWDmlLUoJX5jDl2d7KacxV6G/fAF8Fy3uQdSpPBsP295FNUAgCzup5l45sLRSQ7OY2
- aO4j6vrIH7NZfPB76jVWLEFcb4dvmbNcRYfGmq8oAqHqnEGA3rlhSq5FMJDDFyNRMi3G
- VpDeJPZeHYArFXt1zEIHelTX7DdcxG8ys3s= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 37074517c4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 01 Mar 2021 19:58:13 -0800
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.36.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Mon, 1 Mar 2021 19:58:12 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CcfKZ8FI1si46yqJDG8P0TBJvAkvQ5KDh5+6acAvR5ZXRirxExSMpdnC1RzIBjmrsG2qKjieeEW4bFSjxIi2dgpozm53poD/8xBcVTVu3d72GABXqjuc6gCNPzYzN/ycltBbB9ephHxdg4lPGk8TqKbtgK250FsVjgrEcy6uw08e9e9r3eQkYG4rMtEVVozfJnXvWXbQrkqXwLPUmgeerKF7VXbXuumAb0GhUKHbH3HfuDwmgwvHFlT+HkG6GoJbrIFn8PBdGk5ufM+KReBkJk6Knv+jBSI2myhu9cOlTqwBZLJhxPalNvtzb8Qpb1E3hivkcxwJkSqyVx3tWKf3cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1anEYPlXeCA8QVDJWhWrL7Jesrjov7VMWN5N28YTCOg=;
- b=eWJPta165k2ak6SrFl8Cm9MF74qOjUPast9wiNe/vyYXIeTughGlShGSg6V2r/l8WrVeGPGjQVp2A5N87bDOjxv9eApMmPuoPH95OGNd46ldflliB8p5GADWJ5LTVV5cXgpHVXbeYW/4IEyIcgcqZ3CCKdiT7FGcKr5b+k1jJaYUKQ3dTzrG3qC8628D89IejCw4TMvSRe3U9KFdslVJhzVryZD9mEoBF5kWksMSD7wN3xYdLCfEYHURJAuqHL5166Tsl4EHmLBTtazNdhxritOrQlkd4vtYV6fqrd3aQzLEg5NR+7WNgtxttwFh6fOyb0uKDiMcWe0ipRHOseAkRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Authentication-Results: google.com; dkim=none (message not signed)
- header.d=none;google.com; dmarc=none action=none header.from=fb.com;
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
- by SJ0PR15MB4359.namprd15.prod.outlook.com (2603:10b6:a03:358::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.19; Tue, 2 Mar
- 2021 03:58:11 +0000
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::53a:b2c3:8b03:12d1]) by BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::53a:b2c3:8b03:12d1%7]) with mapi id 15.20.3890.028; Tue, 2 Mar 2021
- 03:58:11 +0000
-Date:   Mon, 1 Mar 2021 19:58:06 -0800
-From:   Roman Gushchin <guro@fb.com>
-To:     Shakeel Butt <shakeelb@google.com>
-CC:     Dan Schatzberg <schatzberg.dan@gmail.com>,
-        Muchun Song <songmuchun@bytedance.com>,
+        Mon, 1 Mar 2021 23:13:34 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6171FC061793
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Mar 2021 20:12:53 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id i14so1039453pjz.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Mar 2021 20:12:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pJaPLF9X1F6hvOBAXTHBgh9HYMVdoLjPILjLEfD7bkc=;
+        b=YEZ1cocgpsBHNkw0q+n3c+WrJ0f5ZYMWZ5GgZymplzz/JjXP3J3GP3MQPyOD+t7hxj
+         AsK2COA53kOesfdd7nTgEuKuQJ7B+1JaLSiIWqINpSswz1f453uWWv5cf5Zy9QVnSZdd
+         X0vMaEoLsxLAVk5K6hSFHHKSylttTe535bfBlRj9YLzzI2p9d5SVShpMsGrjNw3iULbC
+         +mik6ICMk5ltsWjqpAmuGCd/qH7Pw0q8Y8kTUadbUjZeBEzXHeBTNP0c+D7LqoTso/Yu
+         kjJIpeToFr5LIiD+nTQahXyU61ghaF6X5hl9rGGDki1aC/DUcXPcY0IZd4brRdl8pXp+
+         iUug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pJaPLF9X1F6hvOBAXTHBgh9HYMVdoLjPILjLEfD7bkc=;
+        b=k44uyK0Hxw6x/GYURswPpwfAfMMhopwo2s50FYtMuo+0IKSqHkjPFlcM6RP5Crfi6w
+         RDKc3dhkAHt2aZbobkPp79iiy01gCQKa8jyVwevtxSSmS1aSi6cx7+Ai8Cn5uXdWiomQ
+         qpmdYGsZNI28WQ2EWgiE0KViUBIGi2brMA/HU2lePm+w9mi6BikEwIon69spfZBIr9G3
+         HPmrcliRVjkmZTnv1zZny6vvf9aCtc/yvAEBSLjhLgr6I7gDaBRE0TCHUDCyou4yzkw2
+         K2dcImmkH/3LicUYb83FJNjUIkdsjdGCK9msTmrhL7J2HvYheML830X40pHczQtWYbg6
+         PwKA==
+X-Gm-Message-State: AOAM533VyEHtm+FIUyd0XDo7gqnI6VeJyZ2ctMrcKT+/kcipCy8g/I7W
+        ePSF3f+KzBvfUa6b16EKHWd9pwnuShVBhtBM+/EwcA==
+X-Google-Smtp-Source: ABdhPJw4yPDMdM9rw5cTzxwrZpXy5wEJz7YfOZ5x9bGXhm1fMxZCHjNMKhVkXo1trQ0xr49A64GmU+RJmU/bXtSc/g0=
+X-Received: by 2002:a17:902:d4c2:b029:e3:cb77:e51 with SMTP id
+ o2-20020a170902d4c2b02900e3cb770e51mr18426342plg.20.1614658372860; Mon, 01
+ Mar 2021 20:12:52 -0800 (PST)
+MIME-Version: 1.0
+References: <20210301062227.59292-1-songmuchun@bytedance.com>
+ <20210301062227.59292-5-songmuchun@bytedance.com> <YD2RuPzikjPnI82h@carbon.dhcp.thefacebook.com>
+In-Reply-To: <YD2RuPzikjPnI82h@carbon.dhcp.thefacebook.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Tue, 2 Mar 2021 12:12:16 +0800
+Message-ID: <CAMZfGtXdPw41iFUjDbkkAwm+D3ut-U+GpZC3Zz9cvS2FTCCYzw@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH 4/5] mm: memcontrol: move remote memcg
+ charging APIs to CONFIG_MEMCG_KMEM
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>, kpsingh@kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        dietmar.eggemann@arm.com, Steven Rostedt <rostedt@goodmis.org>,
+        Benjamin Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, bristot@redhat.com,
         Johannes Weiner <hannes@cmpxchg.org>,
         Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, <esyr@redhat.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        alexander.h.duyck@linux.intel.com,
+        Chris Down <chris@chrisdown.name>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Oskolkov <posk@google.com>, Jann Horn <jannh@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Waiman Long <longman@redhat.com>,
+        Michel Lespinasse <walken@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>, krisman@collabora.com,
+        esyr@redhat.com, Suren Baghdasaryan <surenb@google.com>,
+        Marco Elver <elver@google.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>
-Subject: Re: [PATCH 4/5] mm: memcontrol: move remote memcg charging APIs to
- CONFIG_MEMCG_KMEM
-Message-ID: <YD23zlVg+1sKJYvy@carbon.DHCP.thefacebook.com>
-References: <20210301062227.59292-1-songmuchun@bytedance.com>
- <20210301062227.59292-5-songmuchun@bytedance.com>
- <YD2RuPzikjPnI82h@carbon.dhcp.thefacebook.com>
- <CALvZod4rWvMJdnbfMm4SGtj0WyqDzvH8RY9G32y=NLNCZqJ2Gg@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CALvZod4rWvMJdnbfMm4SGtj0WyqDzvH8RY9G32y=NLNCZqJ2Gg@mail.gmail.com>
-X-Originating-IP: [2620:10d:c090:400::5:1a5a]
-X-ClientProxiedBy: CO1PR15CA0076.namprd15.prod.outlook.com
- (2603:10b6:101:20::20) To BYAPR15MB4136.namprd15.prod.outlook.com
- (2603:10b6:a03:96::24)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:400::5:1a5a) by CO1PR15CA0076.namprd15.prod.outlook.com (2603:10b6:101:20::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.28 via Frontend Transport; Tue, 2 Mar 2021 03:58:10 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c6eea462-d530-405b-06da-08d8dd2f65a4
-X-MS-TrafficTypeDiagnostic: SJ0PR15MB4359:
-X-Microsoft-Antispam-PRVS: <SJ0PR15MB43599AE463C1A5B4DE56F9BDBE999@SJ0PR15MB4359.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: dGXWjp9yBhxgbcKotL5jhta+f4k5P6zeNeX6TNgprlqElFbQtOeWBzAGS+DfpJ7f6srx39gOkEdFBzMaaXKaoF/IshyR9ua3FhsEm1Lq9wS2UTK+F2h7KTbyDEGWVySVSGd6niXhcOKJJ+D+bDSOypsCjQDo2+RXufTvY5PrX0xc0cRd5lDHC1Z7SDkbocl1K/wGAl7irlFUqAA7sLfY06aoHn2Bf/Yn6Z5Z3VimC+cZQuLrcK8TqTEIwAxZiW/neaIh2EBamNUbME/qr7zDlV0/AYBVBILywSFalwPcVhB0iEb7IoUFLPWoIXENTb0yBauleDx8UJ4sC3YsUTnR1LJQ4o5Epi0CQ5+lEhcTxf6eU/d4hBL7qrBlcWhCo+rnPDV6dg03XbDm8P2Q4cKaMdpjBhRzXxFQuX0bIYbNAnivsAb4y1sFwGLHJ86TKKqRY9R9lfA6wjHRgz7t65sUGl9AD0eC1lya4gZJaLSHwML9j/J5skit5ymo8mE43QzXmCDEt91Y0JnWWXM2VnHua5Ntt23wbL/XOQMgQqlFuFAstw8l2wVd1xE1kC4Rkcg/
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(396003)(376002)(366004)(346002)(136003)(478600001)(4326008)(54906003)(186003)(16526019)(86362001)(8676002)(66946007)(8936002)(4744005)(9686003)(6666004)(53546011)(6916009)(6506007)(5660300002)(52116002)(55016002)(2906002)(66476007)(7696005)(66556008)(316002)(7416002)(67856001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?6HVgPOVR8BZY2wCuMqxRPQEQRkQ6PBIl4PpKAnBmnq+AvICZAlU2Xb5Snqyy?=
- =?us-ascii?Q?F8g+mq5LuZlGUuzoi3l/ept0hVG1iK46WvS/czmkbM9saky+JGD8D5VrBgvD?=
- =?us-ascii?Q?+mV9kL10RHN+eM9t/4Ef1rHh8YtCFKlS5PEGkgUTWDjbdZ2Pzde1kA8dajy7?=
- =?us-ascii?Q?kRfUJfjmtlMi/sVNeVI3A21XQIEN8Mn8brIrkAiO+RtXpTQu/ZtuotFHX9Gx?=
- =?us-ascii?Q?MzkF4oiESrKdPyoL7LTLY+VfQD+2/mn34tvZ641CB6TNsgNV/mQW/roP4fDu?=
- =?us-ascii?Q?oCfdltgiWYIlZOeE/WVbBjz2UIpv7gvQXFKy81uVCu9dZN5nZ59tY6ydtIll?=
- =?us-ascii?Q?XhTzb9PMuAu7h0vvhQ1Iht8eLXcBxL/fCkRPrVmwivyo3iWAzU1qKIovkexA?=
- =?us-ascii?Q?CpAEMpw4pevDEwDxgbkiOyiTFcTGaR3daIiaqEHZfcFplR7PoGQtpHd37rIl?=
- =?us-ascii?Q?RyhBOMVfH83Sw+6H3zc1ufWP4BPXYuu7ETz19zBcb8iWosPOgg3sVJVLD3Dd?=
- =?us-ascii?Q?4SLPwVViva5y6TL+hxp4Sl/HOSSBQFvskYuIr64A/Zj7zDQUZ4zY7qW+3bVp?=
- =?us-ascii?Q?qRneS/P1rWFgOKIRSe6ldwRNGxFajyPR/bFl+iAwD8zATleTrc7AM2yrz/Sn?=
- =?us-ascii?Q?XyuDROHnZIdfflG77S5cE0UkHWzGL2wqoCP7FTOuU8XNG2RzfrBXn8NZXw+9?=
- =?us-ascii?Q?p49Fx2T/5LjyKuTaDdIypGGE+62N+BmpLvlazF22jmea2/6QlRxd1eevOJtr?=
- =?us-ascii?Q?yQgHJ499mCsxpyFBo+7NAGBtxTZI1q9tTvFNYhhq68BWSE1W541qrj4N4CFZ?=
- =?us-ascii?Q?inCWruXtfiM1grB1kXraFsLCeR4tcBvv8jsDRHtUNRxNwVg5Xd/BADfs1Lor?=
- =?us-ascii?Q?mgneP9XpTVQ4BFj5OTN86VFbBCc69f/zy8mxNzqNCqmH4j1TzN6QsMG18sXL?=
- =?us-ascii?Q?mxq/z84TC8HKKR5O+pgqTQm5+3jex5aYzGoMckvoGYbq6YONHNl5bjDaA9Mc?=
- =?us-ascii?Q?+woNFBaJZSAsiWyNyYznmxjy/Qh0vslpPBLoRw0f7vwQDzTtQUQUC2mS96Uj?=
- =?us-ascii?Q?DyxPzNPkKpVzwhFEkIdACklaq+hqb9DwAX6vLZgjkCJvGYDEK2f9l5q/QykE?=
- =?us-ascii?Q?W4k06pUsD7JEk8yqkMKUoK9Q2TDgf+TMNIlv1lcq1ZwHgXNuTe3lIdGVxezX?=
- =?us-ascii?Q?h9VzqRADq4D5d3V2LAxh7KcPdFOrEoZOK5sQ36W4I+7LRaFolJHBcRh/J1bj?=
- =?us-ascii?Q?M59cBVVqi+O5/6S+LZmRd3a9Qb+ptLIrLXrMsFHUFQyFFNtPmt2WebL7E5FU?=
- =?us-ascii?Q?JNPJgd2FcD4CBH71Jh9+L6+8lMv5a1GC3MxX7oiw6IHjzg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6eea462-d530-405b-06da-08d8dd2f65a4
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4136.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2021 03:58:11.2774
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mSPTQruSAVYKAksNvLqdXsJtyPseaOGueo8uoktOSfkoFgs53KGVisGP0yjaww0l
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR15MB4359
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-01_15:2021-03-01,2021-03-01 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 clxscore=1011 mlxscore=0
- lowpriorityscore=0 impostorscore=0 malwarescore=0 spamscore=0
- mlxlogscore=999 bulkscore=0 priorityscore=1501 phishscore=0 adultscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103020028
-X-FB-Internal: deliver
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Cgroups <cgroups@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Xiongchun duan <duanxiongchun@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 01, 2021 at 07:43:27PM -0800, Shakeel Butt wrote:
-> On Mon, Mar 1, 2021 at 5:16 PM Roman Gushchin <guro@fb.com> wrote:
-> >
-> > On Mon, Mar 01, 2021 at 02:22:26PM +0800, Muchun Song wrote:
-> > > The remote memcg charing APIs is a mechanism to charge kernel memory
-> > > to a given memcg. So we can move the infrastructure to the scope of
-> > > the CONFIG_MEMCG_KMEM.
-> >
-> > This is not a good idea, because there is nothing kmem-specific
-> > in the idea of remote charging, and we definitely will see cases
-> > when user memory is charged to the process different from the current.
-> >
-> 
-> Indeed and which remind me: what happened to the "Charge loop device
-> i/o to issuing cgroup" series? That series was doing remote charging
-> for user pages.
+On Tue, Mar 2, 2021 at 9:15 AM Roman Gushchin <guro@fb.com> wrote:
+>
+> On Mon, Mar 01, 2021 at 02:22:26PM +0800, Muchun Song wrote:
+> > The remote memcg charing APIs is a mechanism to charge kernel memory
+> > to a given memcg. So we can move the infrastructure to the scope of
+> > the CONFIG_MEMCG_KMEM.
+>
+> This is not a good idea, because there is nothing kmem-specific
+> in the idea of remote charging, and we definitely will see cases
+> when user memory is charged to the process different from the current.
 
-Yeah, this is exactly what I minded. We're using it internally, and as I
-remember there were no obstacles to upstream it too.
-I'll ping Dan when after the merge window.
+Got it. Thanks for your reminder.
 
-Thanks!
+
+>
+> >
+> > As a bonus, on !CONFIG_MEMCG_KMEM build some functions and variables
+> > can be compiled out.
+> >
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > ---
+> >  include/linux/sched.h    | 2 ++
+> >  include/linux/sched/mm.h | 2 +-
+> >  kernel/fork.c            | 2 +-
+> >  mm/memcontrol.c          | 4 ++++
+> >  4 files changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index ee46f5cab95b..c2d488eddf85 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -1314,7 +1314,9 @@ struct task_struct {
+> >
+> >       /* Number of pages to reclaim on returning to userland: */
+> >       unsigned int                    memcg_nr_pages_over_high;
+> > +#endif
+> >
+> > +#ifdef CONFIG_MEMCG_KMEM
+> >       /* Used by memcontrol for targeted memcg charge: */
+> >       struct mem_cgroup               *active_memcg;
+> >  #endif
+> > diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+> > index 1ae08b8462a4..64a72975270e 100644
+> > --- a/include/linux/sched/mm.h
+> > +++ b/include/linux/sched/mm.h
+> > @@ -294,7 +294,7 @@ static inline void memalloc_nocma_restore(unsigned int flags)
+> >  }
+> >  #endif
+> >
+> > -#ifdef CONFIG_MEMCG
+> > +#ifdef CONFIG_MEMCG_KMEM
+> >  DECLARE_PER_CPU(struct mem_cgroup *, int_active_memcg);
+> >  /**
+> >   * set_active_memcg - Starts the remote memcg charging scope.
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index d66cd1014211..d66718bc82d5 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -942,7 +942,7 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
+> >       tsk->use_memdelay = 0;
+> >  #endif
+> >
+> > -#ifdef CONFIG_MEMCG
+> > +#ifdef CONFIG_MEMCG_KMEM
+> >       tsk->active_memcg = NULL;
+> >  #endif
+> >       return tsk;
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index 39cb8c5bf8b2..092dc4588b43 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -76,8 +76,10 @@ EXPORT_SYMBOL(memory_cgrp_subsys);
+> >
+> >  struct mem_cgroup *root_mem_cgroup __read_mostly;
+> >
+> > +#ifdef CONFIG_MEMCG_KMEM
+> >  /* Active memory cgroup to use from an interrupt context */
+> >  DEFINE_PER_CPU(struct mem_cgroup *, int_active_memcg);
+> > +#endif
+> >
+> >  /* Socket memory accounting disabled? */
+> >  static bool cgroup_memory_nosocket;
+> > @@ -1054,6 +1056,7 @@ struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm)
+> >  }
+> >  EXPORT_SYMBOL(get_mem_cgroup_from_mm);
+> >
+> > +#ifdef CONFIG_MEMCG_KMEM
+> >  static __always_inline struct mem_cgroup *active_memcg(void)
+> >  {
+> >       if (in_interrupt())
+> > @@ -1074,6 +1077,7 @@ static __always_inline bool memcg_kmem_bypass(void)
+> >
+> >       return false;
+> >  }
+> > +#endif
+> >
+> >  /**
+> >   * mem_cgroup_iter - iterate over memory cgroup hierarchy
+> > --
+> > 2.11.0
+> >
