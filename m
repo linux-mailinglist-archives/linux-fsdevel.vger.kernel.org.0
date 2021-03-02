@@ -2,135 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64E7732A521
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Mar 2021 17:00:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B721732A522
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Mar 2021 17:00:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1443409AbhCBLrg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Mar 2021 06:47:36 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:39565 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1441849AbhCBG7G (ORCPT
+        id S1443416AbhCBLri (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Mar 2021 06:47:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59670 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237683AbhCBH0S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Mar 2021 01:59:06 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210302065823epoutp02f3977d1fdb1cf1e78d6a78333037f145~odERmFz8e2152321523epoutp02B
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Mar 2021 06:58:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210302065823epoutp02f3977d1fdb1cf1e78d6a78333037f145~odERmFz8e2152321523epoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1614668303;
-        bh=ro5ltOW//usS2b3pAkuEm/Xj2HGAyfHiEMleWfYf0tI=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=vO3hh6vauhSvD+PmlK9q6mP15wQ4v+FRuNFP2x4ynU+5X+n5M46p70134oC7fCJCm
-         PEheJtZREq6CAuO0Q51M4P83WVvPvTbE6V96J2bPqZXL86DM4YrqV4eeyn9nJZaohq
-         9CxPmbXKl6R8wl6X8QnAxac6v/IsESXpIV+47jwI=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210302065823epcas1p2c1394e538bab0ae4ae5517a0f37103c6~odERTF_X80548305483epcas1p21;
-        Tue,  2 Mar 2021 06:58:23 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.162]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4DqSdV3mGPz4x9QK; Tue,  2 Mar
-        2021 06:58:22 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3D.55.10463.D02ED306; Tue,  2 Mar 2021 15:58:21 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210302065821epcas1p13e2a6d136316daa635e407f9216db505~odEPoOcnl0465604656epcas1p1B;
-        Tue,  2 Mar 2021 06:58:21 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210302065821epsmtrp16c6a59a649be4bdabc4e1f71fb12f95d~odEPmVOnb2336823368epsmtrp1d;
-        Tue,  2 Mar 2021 06:58:21 +0000 (GMT)
-X-AuditID: b6c32a38-efbff700000028df-e4-603de20dc499
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        EE.FE.08745.D02ED306; Tue,  2 Mar 2021 15:58:21 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210302065821epsmtip2b73dea60d54f4aceb132b34985e133a4~odEPavb9n1094410944epsmtip2Z;
-        Tue,  2 Mar 2021 06:58:21 +0000 (GMT)
-From:   "Sungjong Seo" <sj1557.seo@samsung.com>
-To:     "'Hyeongseok Kim'" <hyeongseok@gmail.com>,
-        <namjae.jeon@samsung.com>
-Cc:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        "'Chaitanya Kulkarni'" <chaitanya.kulkarni@wdc.com>,
-        <sj1557.seo@samsung.com>
-In-Reply-To: <20210302050521.6059-3-hyeongseok@gmail.com>
-Subject: RE: [PATCH v4 2/2] exfat: add support ioctl and FITRIM function
-Date:   Tue, 2 Mar 2021 15:58:20 +0900
-Message-ID: <04aa01d70f31$6de160a0$49a421e0$@samsung.com>
+        Tue, 2 Mar 2021 02:26:18 -0500
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF787C06178B;
+        Mon,  1 Mar 2021 23:13:39 -0800 (PST)
+Received: by mail-il1-x129.google.com with SMTP id p10so4983015ils.9;
+        Mon, 01 Mar 2021 23:13:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FuLAMcz1+lviLyTE92nA9aBXQm55vMuIO4Bg9pZZ2+Q=;
+        b=MZW199tfAJwlKH4nXcgOeOo+BuUF+n6iMcMOBfkGAEATvqbRb+FWErsbMvWJuRWSRd
+         tMyzgh7iZBwH4u5mEhOg4VsHMAg1pqv5SDNrOF2h0zU2eJuUVo3LB6UMGE9cutemOd0a
+         CTrqOsro+Kvi9KkB3t7EUucMqhBw+WuHDFJWsZ8lDSj8i7zgabhV6rvlBKpj+FDgy175
+         jwhjOOgMPuvFqogW1X15L9l9lJ3RHJMEadnu5rs3+8/fSYO3SjU5oUzo3oFcHCyOOhI4
+         8b8QOiMLll/BgqC0TfndC3ifag9ay3EbnsfAssldxJ5nJA0bhDnXvzEJ8gpX6JLxPhaK
+         7PyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FuLAMcz1+lviLyTE92nA9aBXQm55vMuIO4Bg9pZZ2+Q=;
+        b=rcQLe2i61FuK0VBEqn3qW+ZMx4ftoU0lxXJaOpyL0XLA+6V+m4l4y7+bghHO2Y0iZi
+         9kxkYqTsGZgGFmC9qk6D9dparG3VduVHdQI24hozU58ekEZphHCFOmGLsG6y79k9/gNd
+         Nq4ZfLGBNy/VJ9d8Eov5oKBnWyFrQcN4+nDx8vJDa+DFLUcdwWUUV2Cf5aElevB0sO/N
+         o9eKcLVfO+yFu6tVaQb0WJsp/h2LMR0nJ69F3vbKITfctTIsgwOQ7IvmuKvRklqsxgcp
+         mlCM4wFlJNoqEZ6v7nBjYEGhCk54gUFjihDfdoBTWVEO9hLsYF2U5SOXZskPV9p0fzmB
+         SkZQ==
+X-Gm-Message-State: AOAM532w7ZeuZuuCP9lkDIALSGvF3PFWNFfYjEpk84Lr5YfzdwWM93nL
+        iwJR66Xjl3hF0dm8dLJW7aIiP0BG1gEO89BgPDc=
+X-Google-Smtp-Source: ABdhPJzLc6m0BkMuRGfiWTndOApB/IZJ3pFhctHvoj/A/T8ur+VIsGl2hrfGsJYfdxisA/DjoFbY59qgXA4GyJF4jqg=
+X-Received: by 2002:a05:6e02:8ab:: with SMTP id a11mr15981590ilt.137.1614669219319;
+ Mon, 01 Mar 2021 23:13:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQGcWnf6BTkYMyzP2LJXG6KPoRfNLgF8rXkvAXOJ+PyqzitREA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjk+LIzCtJLcpLzFFi42LZdlhTX5f3kW2CwdVFhhazbr9msfg78ROT
-        xZ69J1ksLu+aw2bxY3q9xZZ/R1gd2Dx2zrrL7tG3ZRWjx+dNch7tB7qZAliicmwyUhNTUosU
-        UvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgHYrKZQl5pQChQISi4uV
-        9O1sivJLS1IVMvKLS2yVUgtScgoMDQr0ihNzi0vz0vWS83OtDA0MjEyBKhNyMrae/M9acJyt
-        ouXjSaYGxpWsXYycHBICJhLr799j6mLk4hAS2MEo8WTdS1YI5xOQ09oPViUk8JlRYvnaPJiO
-        Vz/fQxXtYpToPbmVHcJ5yShx8cVHFpAqNgFdiSc3fjKD2CICHhKPm46B7WAWmMYo8evcc7Cx
-        nAKWErd2HAazhYGKtq49ygRiswioSDzauhZsEC9QzaYDDxghbEGJkzOfgMWZBeQltr+dwwxx
-        koLE7k9HWSGWOUlcvnKSEaJGRGJ2ZxszyGIJgU4OicnLH7FANLhI/Ls7GapZWOLV8S3sELaU
-        xMv+Nii7XuL//LXsEM0tjBIPP20Duo4DyLGXeH/JAsRkFtCUWL9LH6JcUWLn77lQe/kk3n3t
-        YYWo5pXoaBOCKFGR+P5hJwvMpis/rjJNYFSaheSzWUg+m4Xkg1kIyxYwsqxiFEstKM5NTy02
-        LDBBju1NjOCEqWWxg3Hu2w96hxiZOBgPMUpwMCuJ8J78bJkgxJuSWFmVWpQfX1Sak1p8iNEU
-        GNYTmaVEk/OBKTuvJN7Q1MjY2NjCxMzczNRYSZw3yeBBvJBAemJJanZqakFqEUwfEwenVAPT
-        9O+2mQbGF2LPZcgYJu07y9tc+lBn9fG+JS++im7h7lz8ye3agT023b/Ox0lU/DSZFPjg2uzG
-        aw6a3xqVGFZdPDiFk7GwPyJS42T85Jt2CVyTl0d+b43dWiD5xzU/TOqLbuenXbtUw79F+p4V
-        Wvbe/+DUx4yz/2Xfseddfvb8zNUiLx9Y3jmvdnHT5Z9unxx7H3pOPl/yMYpb3evGh8ifvO0L
-        DsQuDpOUfXn+5T3Fw3LrpdSURLeW3Tr/cYO86IolHWff6xhWcT65vbtXxedTj7R6jEZNvUyX
-        55IDAWr/bz1/tzZh4w8WxxAhW+7qozKtmf1R677JCmvrzxS/+Xx5WH3FvLpGzqaJmfX7bbre
-        K7EUZyQaajEXFScCABqf4IEhBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGLMWRmVeSWpSXmKPExsWy7bCSvC7vI9sEg43XhCxm3X7NYvF34icm
-        iz17T7JYXN41h83ix/R6iy3/jrA6sHnsnHWX3aNvyypGj8+b5DzaD3QzBbBEcdmkpOZklqUW
-        6dslcGVsPfmfteA4W0XLx5NMDYwrWbsYOTkkBEwkXv18D2RzcQgJ7GCUON5ygL2LkQMoISVx
-        cJ8mhCkscfhwMUTJc0aJczc6GEF62QR0JZ7c+MkMYosIeEnsb3rNDlLELDCDUWLTgllQQ7cz
-        Svxsm8cGUsUpYClxa8dhsM3CAh4SW9ceZQKxWQRUJB5tXcsCYvMC1Ww68IARwhaUODnzCQvI
-        FcwCehJtG8HCzALyEtvfzmGGeEBBYveno6wQRzhJXL5yEqpGRGJ2ZxvzBEbhWUgmzUKYNAvJ
-        pFlIOhYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAiOGi2tHYx7Vn3QO8TIxMF4
-        iFGCg1lJhPfkZ8sEId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZ
-        ODilGpiYvkuGOzVEmfznmTbng3vtgTM9eg8vNp5YxTJl74M1GxhsPk1T07nqMGvrPdMi6aQ0
-        HaNLO15vyb9i9euC4ITNIvsO3fsjfj1RgreQ88nKqb27VH1NDp84cOvl/5W7Nkx31TzaoX9Q
-        k/uT4/dbXi1p4vvXVPjXP852Ot+e4LL70y4+95kcbM/fPufZfbHG/eX8I/+uu7jsXdXSPN32
-        RU/NolP9Ckwmsa80AzW3CDfUbTk4Z3lYX9nCjSJaiZK1Pru5pv5+cnW2Uil3K1//q0ilFzuP
-        yM0TPtv7a/k+R4OdDd+WfVebLaq3n/Xuepk4F4n+0G2Ht337+E/BNPzpyT1WM0zzHix/vU/m
-        sZbRh6aTGUosxRmJhlrMRcWJAJkda+gJAwAA
-X-CMS-MailID: 20210302065821epcas1p13e2a6d136316daa635e407f9216db505
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210302050556epcas1p2f830c64b70cbc1bbd6f48292d3556802
-References: <20210302050521.6059-1-hyeongseok@gmail.com>
-        <CGME20210302050556epcas1p2f830c64b70cbc1bbd6f48292d3556802@epcas1p2.samsung.com>
-        <20210302050521.6059-3-hyeongseok@gmail.com>
+References: <20210228002500.11483-1-sir@cmpwn.com> <20210228022440.GN2723601@casper.infradead.org>
+ <C9KT3SWXRPPA.257SY2N4MVBZD@taiga> <20210228040345.GO2723601@casper.infradead.org>
+ <C9L7SV0Z2GZR.K2C3O186WDJ7@taiga>
+In-Reply-To: <C9L7SV0Z2GZR.K2C3O186WDJ7@taiga>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 2 Mar 2021 09:13:28 +0200
+Message-ID: <CAOQ4uxgbt5fdx=5_QKJZm1y7hZn5-84NkBzcLWjHL3eAzdML0Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs: introduce mkdirat2 syscall for atomic mkdir
+To:     Drew DeVault <sir@cmpwn.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Steve French <smfrench@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Add FITRIM ioctl to enable discarding unused blocks while mounted.
-> As current exFAT doesn't have generic ioctl handler, add empty ioctl
-> function first, and add FITRIM handler.
-> 
-> Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-> Signed-off-by: Hyeongseok Kim <hyeongseok@gmail.com>
-> ---
->  fs/exfat/balloc.c   | 80 +++++++++++++++++++++++++++++++++++++++++++++
->  fs/exfat/dir.c      |  5 +++
->  fs/exfat/exfat_fs.h |  4 +++
->  fs/exfat/file.c     | 53 ++++++++++++++++++++++++++++++
->  4 files changed, 142 insertions(+)
-> 
+On Sun, Feb 28, 2021 at 4:02 PM Drew DeVault <sir@cmpwn.com> wrote:
+>
+> On Sat Feb 27, 2021 at 11:03 PM EST, Matthew Wilcox wrote:
+> > > 1. Program A creates a directory
+> > > 2. Program A is pre-empted
+> > > 3. Program B deletes the directory
+> > > 4. Program A creates a file in that directory
+> > > 5. RIP
+> >
+> > umm ... program B deletes the directory. program A opens it in order to
+> > use openat(). program A gets ENOENT and exits, confused. that's the
+> > race you're removing here -- and it seems fairly insignificant to me.
+>
+> Yes, that is the race being eliminated here. Instead of this, program A
+> has an fd which holds a reference to the directory, so it just works. A
+> race is a race. It's an oversight in the API.
 
-It looks better than v3.
-Thanks for your work!
+I think you mixed in confusion with "program B deletes the directory".
+That will result, as Matthew wrote in ENOENT because that dir is now
+IS_DEADDIR().
 
-Acked-by: Sungjong Seo <sj1557.seo@samsung.com>
+I think I understand what you mean with the oversight in the API, but
+the use case should involve mkdtemp(3) - make it more like tmpfile(3).
+Not that *I* can think of the races this can solve, but I am pretty sure
+that people with security background will be able to rationalize this.
 
-BTW, there is still a problem that the alloc/free cluster operation waits
-until the trimfs operation is finished.
-Any ideas for improvement in the future are welcome. :)
+You start your pitch by ruling out the option of openat2() with
+O_CREAT | O_DIRECTORY, because you have strong emotions
+against it (loathe).
+I personally do not share this feeling with you, because:
+1. The syscall is already used to open directories as well as files
+2. The whole idea of openat2() is that you can add new behaviors
+    with new open_how flags, so no existing app will be surprised from
+    behavior change of  O_CREAT | O_DIRECTORY combination.
 
+For your consideration.
+
+Thanks,
+Amir.
