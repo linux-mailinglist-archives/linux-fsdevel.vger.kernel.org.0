@@ -2,142 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA1C332B4ED
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:39:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26CFA32B4EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:39:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1450185AbhCCFbH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 00:31:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54190 "EHLO
+        id S1450192AbhCCFbK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 00:31:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233459AbhCCCks (ORCPT
+        with ESMTP id S244735AbhCCCqc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Mar 2021 21:40:48 -0500
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050::465:101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23F52C0617A7;
-        Tue,  2 Mar 2021 18:39:59 -0800 (PST)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Dqyrp44dBzQl8j;
-        Wed,  3 Mar 2021 03:39:54 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id fFKjKRbta97Q; Wed,  3 Mar 2021 03:39:50 +0100 (CET)
-Date:   Wed, 3 Mar 2021 13:39:41 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Drew DeVault <sir@cmpwn.com>, Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Steve French <smfrench@gmail.com>
-Subject: Re: [RFC PATCH] fs: introduce mkdirat2 syscall for atomic mkdir
-Message-ID: <20210303023941.j2x6crqoiris73xx@yavin.dot.cyphar.com>
-References: <20210228002500.11483-1-sir@cmpwn.com>
- <20210228022440.GN2723601@casper.infradead.org>
- <C9KT3SWXRPPA.257SY2N4MVBZD@taiga>
- <20210228040345.GO2723601@casper.infradead.org>
- <C9L7SV0Z2GZR.K2C3O186WDJ7@taiga>
- <CAOQ4uxgbt5fdx=5_QKJZm1y7hZn5-84NkBzcLWjHL3eAzdML0Q@mail.gmail.com>
+        Tue, 2 Mar 2021 21:46:32 -0500
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BFBC061788;
+        Tue,  2 Mar 2021 18:45:18 -0800 (PST)
+Received: by mail-pl1-x629.google.com with SMTP id s7so6019191plg.5;
+        Tue, 02 Mar 2021 18:45:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cBrDyODWb9o0wKTGlYEQJLE0F3iUV2itXWKb5sgDsGI=;
+        b=S32DEI3weYwTGnPZ8gv3lwj9JSyyd87UoScYSPpyk+56v3bzARJ7vegfvrF2nPoCfX
+         4JG5b1M4DIWdFv9pg/4biqSPRF07OXjCohzt+aVYyNM1poxiskVpkV5n6BzciRVZTXwZ
+         FraJjTzMYwywR5pzTMOGqGIKmHgz8UA3+DQH3CCwRwHkDhbs+vuBeZ4bm653zyBNLcQM
+         FYGah9blETvflovotwrZ7xPbEqmGvG7iFtPmkcFNaqUtZH+AO5/ppGzI7BNSh8qMuq09
+         Wj+yrIsLqAz9x5UiM/DO43tUdFHrbxNLCk3NL5on8iv+KIFocI/YMzpPuy2M8ye7rVSY
+         U36A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cBrDyODWb9o0wKTGlYEQJLE0F3iUV2itXWKb5sgDsGI=;
+        b=l6QnMWhxewAa43XtWtaK/xUAFoelphKhO2qL6kqOlTQVTRy/0BcRiDnXzlnwm3WqGy
+         lxQ2BQwrBG69wleF27+q+Tu1FIzc0VS9V9Zg3A4UydNYDVzdJ70YfNrh6mxOx7CBIG8c
+         1cTlGlqkuPw5WnvOiHaXNnQlZMYJayyzXUs5KbSES9tTu8b6Vuhz92TMgsx7OOuXPHXU
+         dlDee7Ax12HOlHk122hL0c7leilFdNyZ42y5fPuBrXQ4HvtGRhnUPCgtLltLN0QoL/XX
+         yd5iGvfmo1ZneUxCwWD0RVlmTr5FL/4H+JYEtHLd9DysR3V1hEe14rEJk3gSp806h7ER
+         SsoA==
+X-Gm-Message-State: AOAM531v9wqi59+cGVy/9L0EHSH8juvHCSvVQtgx8g/mFpyCGzYEeNVV
+        Aym0PtZ1FisdxqDHX6a9tGF2WIBVXCt+Qw==
+X-Google-Smtp-Source: ABdhPJz3Uicrb5pArHjvcxNRuVPXM7eJzoN2OA3/o6bPFEi4LuHy3GR0zsFUa6l5BKwnTzQroYVhVA==
+X-Received: by 2002:a17:902:7597:b029:e4:156c:ba97 with SMTP id j23-20020a1709027597b02900e4156cba97mr6223687pll.63.1614739517398;
+        Tue, 02 Mar 2021 18:45:17 -0800 (PST)
+Received: from f8ffc2228008.ant.amazon.com ([54.240.193.1])
+        by smtp.gmail.com with ESMTPSA id y15sm915385pgi.31.2021.03.02.18.45.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Mar 2021 18:45:14 -0800 (PST)
+Subject: Re: [PATCH v17 1/9] mm: memory_hotplug: factor out bootmem core
+ functions to bootmem_info.c
+To:     Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
+        mike.kravetz@oracle.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        osalvador@suse.de, mhocko@suse.com, song.bao.hua@hisilicon.com,
+        david@redhat.com, naoya.horiguchi@nec.com,
+        joao.m.martins@oracle.com
+Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Miaohe Lin <linmiaohe@huawei.com>
+References: <20210225132130.26451-1-songmuchun@bytedance.com>
+ <20210225132130.26451-2-songmuchun@bytedance.com>
+From:   "Singh, Balbir" <bsingharora@gmail.com>
+Message-ID: <baa8e9af-69f5-c301-6735-f8eedc1929c7@gmail.com>
+Date:   Wed, 3 Mar 2021 13:45:00 +1100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3lj6aomxgfnwchmd"
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgbt5fdx=5_QKJZm1y7hZn5-84NkBzcLWjHL3eAzdML0Q@mail.gmail.com>
-X-MBO-SPAM-Probability: 
-X-Rspamd-Score: -2.09 / 15.00 / 15.00
-X-Rspamd-Queue-Id: 27D31183D
-X-Rspamd-UID: 21333c
+In-Reply-To: <20210225132130.26451-2-songmuchun@bytedance.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 26/2/21 12:21 am, Muchun Song wrote:
+> Move bootmem info registration common API to individual bootmem_info.c.
+> And we will use {get,put}_page_bootmem() to initialize the page for the
+> vmemmap pages or free the vmemmap pages to buddy in the later patch.
+> So move them out of CONFIG_MEMORY_HOTPLUG_SPARSE. This is just code
+> movement without any functional change.
+> 
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+...
 
---3lj6aomxgfnwchmd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> diff --git a/mm/bootmem_info.c b/mm/bootmem_info.c
+> new file mode 100644
+> index 000000000000..fcab5a3f8cc0
+> --- /dev/null
+> +++ b/mm/bootmem_info.c
+> @@ -0,0 +1,124 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + *  linux/mm/bootmem_info.c
+> + *
+> + *  Copyright (C)
 
-On 2021-03-02, Amir Goldstein <amir73il@gmail.com> wrote:
-> On Sun, Feb 28, 2021 at 4:02 PM Drew DeVault <sir@cmpwn.com> wrote:
-> >
-> > On Sat Feb 27, 2021 at 11:03 PM EST, Matthew Wilcox wrote:
-> > > > 1. Program A creates a directory
-> > > > 2. Program A is pre-empted
-> > > > 3. Program B deletes the directory
-> > > > 4. Program A creates a file in that directory
-> > > > 5. RIP
-> > >
-> > > umm ... program B deletes the directory. program A opens it in order =
-to
-> > > use openat(). program A gets ENOENT and exits, confused. that's the
-> > > race you're removing here -- and it seems fairly insignificant to me.
-> >
-> > Yes, that is the race being eliminated here. Instead of this, program A
-> > has an fd which holds a reference to the directory, so it just works. A
-> > race is a race. It's an oversight in the API.
->=20
-> I think you mixed in confusion with "program B deletes the directory".
-> That will result, as Matthew wrote in ENOENT because that dir is now
-> IS_DEADDIR().
->=20
-> I think I understand what you mean with the oversight in the API, but
-> the use case should involve mkdtemp(3) - make it more like tmpfile(3).
-> Not that *I* can think of the races this can solve, but I am pretty sure
-> that people with security background will be able to rationalize this.
->=20
-> You start your pitch by ruling out the option of openat2() with
-> O_CREAT | O_DIRECTORY, because you have strong emotions
-> against it (loathe).
-> I personally do not share this feeling with you, because:
-> 1. The syscall is already used to open directories as well as files
+Looks like incomplete
 
-Al NACKed doing it as part of open[1]. My understanding is that the main
-two reasons for that were:
 
- 1. open() and mkdir() have different semantics for resolving paths. For
-	instance, open(O_CREAT) will create a file at the target of dangling
-	symlink but mkdir() will not allow that. I believe there's also some
-	funky trailing-"/" handling with mkdirat() as well.
+Balbir Singh
 
- 2. Adding more multiplexers is bad. openat2(2)
 
-I think (1) alone is a strong enough justification, since I don't think
-there's precedent for having two different path lookup semantics in the
-same VFS syscall.
-
-> 2. The whole idea of openat2() is that you can add new behaviors
->     with new open_how flags, so no existing app will be surprised from
->     behavior change of  O_CREAT | O_DIRECTORY combination.
-
-While it is true that you *could* do this with openat2(), the intention
-of openat2() was to allow us to add new arguments openat() if those
-arguments make sense within the context of an "open" operation.
-
-(An example would be the opath_mask stuff which I included in the
-original series, and am working on re-sending -- that is an additional
-argument for O_PATH, and is still clearly linked to opening something.)
-
-[1]: https://lore.kernel.org/linux-fsdevel/20200313182844.GO23230@ZenIV.lin=
-ux.org.uk/
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---3lj6aomxgfnwchmd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCYD726QAKCRCdlLljIbnQ
-EpcPAQDcjJcO8so/I9gE2av0gVFRECVeqWFkqgav7lCOhCHqGgD/XiCbuv/4+Cwc
-Q3kcUk6qnmb7l/bLr/QWxzR6VdCVJQg=
-=XW6T
------END PGP SIGNATURE-----
-
---3lj6aomxgfnwchmd--
