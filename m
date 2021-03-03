@@ -2,481 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5181632C561
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:59:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1699D32C563
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:59:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351380AbhCDAUT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 19:20:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50512 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1346460AbhCCQ0n (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Mar 2021 11:26:43 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8804664EFD;
-        Wed,  3 Mar 2021 16:24:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614788651;
-        bh=4leNaCIZ1xcR/mkizNz8otv7a82Efwmo44tjJNIZIk4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JX+/9tLtUvIiDi7SFCqpWGhmAdreFxjmliUzXlVRwklzZTk4DPUwOSPZK9pwvWYD5
-         Ca308y9JA8UPmjRGSejqUIC8kF5wNup7qArHASl6egrzZtmLdpGXV/IY8XCH1jd/Uv
-         nKJMwPe04B4fCU+0jwUhaZtSAnKLIBUhF77TydDo8AtOLgchSuMhe5GzsFY0dzL5oT
-         sM0rWnwCWoGXKirD+9vHn1jE2/h2x7ew8QbbdZYzKOxMMWUROMkU0CRyKBx3/v04kq
-         9vg4tuPv2qegjZoZr9epw0w3+AFpfG3YdN5BeLeS2z2/mb0T3AWHqyIMb27IZdbBfo
-         DFuxxEQOzpUyA==
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: [PATCH v18 9/9] secretmem: test: add basic selftest for memfd_secret(2)
-Date:   Wed,  3 Mar 2021 18:22:09 +0200
-Message-Id: <20210303162209.8609-10-rppt@kernel.org>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20210303162209.8609-1-rppt@kernel.org>
-References: <20210303162209.8609-1-rppt@kernel.org>
+        id S1359035AbhCDAUY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 19:20:24 -0500
+Received: from de-smtp-delivery-102.mimecast.com ([62.140.7.102]:57260 "EHLO
+        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1573367AbhCCQ33 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Mar 2021 11:29:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
+        t=1614788899;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4POyBygAAEdivD7vBDyHGO6sL3uA4fGnEJdAQOJcB2w=;
+        b=bZ9Q5VKbELjx2qHYPJ1c39RxZLT7HDdYpyfODLJxIj34MUpyWqBcYsn0N7xjU6HuyUIplt
+        xnGnpQEvP+bEd4rfva2Bvs/Nvz2irt/Mw3RQFq4loeLoE6H/FPJc/NJiqE9m4zSkBwsiD7
+        pnrYiNKTdEwRG3rJewvxzWofo1mIPp4=
+Received: from EUR03-DB5-obe.outbound.protection.outlook.com
+ (mail-db5eur03lp2057.outbound.protection.outlook.com [104.47.10.57]) (Using
+ TLS) by relay.mimecast.com with ESMTP id de-mta-4-5MJK2UTXNNimQhiCjnG1yA-1;
+ Wed, 03 Mar 2021 17:28:17 +0100
+X-MC-Unique: 5MJK2UTXNNimQhiCjnG1yA-1
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Bg37hD6U67N6r3l2I4cNntbN2TKkxoHp3c0FIcHnsEf6fa68T1yrGBx0/HGmVA2m2nD+B8IcFlzbn25QpJDGEoh0Jxeo4gl6fQV76PifT67Yw/RXqydGGdo6Ci5qML7PCPfV989Y1ywaIoci1971lsxkBCorqXiJiFDZUN3blh5fvFJ+4mOfnMVp7acmKnKlqV9KwGYUWStm+489D13qjfENcskwmLm/wA9Tn8Z6dOa6EPbq03QOCjoN0VfaiG1PW4qEU2Er4jDtGXDbW5eGUmUWYUJF1rp1xvqp8fU8reYnHz5V5Pjm6paaRMdIcWRHH0l35U+IjP+dUSgHbVx0SQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4POyBygAAEdivD7vBDyHGO6sL3uA4fGnEJdAQOJcB2w=;
+ b=aHlevAPfKRuPSUv/pNwiNPOJ4y1/4Ve9rlwsOpAfApwyLulxbjm71nKD3dIYujuVZxeeLUWfb3f9x5VHOS9OMv2tLHZhCjSvd+/ncnNsm0aei54rmGORv4vdVbNFKAJIUEqCQ+onUgrEaYmnpRyu7+Lk6hAOQwKlRxDrzleeUmSg2KGLFIIutkFy3p7lzspW3JzeK1WALTiwvPCWKHRNL6cmKbTfoXPDB7udgraEMHHya3sX6CR8EXcT66Naq7Wbw+ryGfFlbgc4WYZgT0o/QMVIKDSdZH5vlHUsRIO0NxGKyqm5d8BlatjSK8oyLKmszlBm6qMbnXHwOVby+KcSSw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Authentication-Results: talpey.com; dkim=none (message not signed)
+ header.d=none;talpey.com; dmarc=none action=none header.from=suse.com;
+Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com (2603:10a6:803:3::28)
+ by VE1PR04MB7456.eurprd04.prod.outlook.com (2603:10a6:800:1ac::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17; Wed, 3 Mar
+ 2021 16:28:16 +0000
+Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com
+ ([fe80::9c1d:89de:a08e:ccc9]) by VI1PR0402MB3359.eurprd04.prod.outlook.com
+ ([fe80::9c1d:89de:a08e:ccc9%4]) with mapi id 15.20.3890.028; Wed, 3 Mar 2021
+ 16:28:15 +0000
+From:   =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
+To:     Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org,
+        mtk.manpages@gmail.com
+Cc:     smfrench@gmail.com
+Subject: Re: [man-pages][PATCH v1] flock.2: add CIFS details
+In-Reply-To: <5ae02f1f-af45-25aa-71b1-4f8782286158@talpey.com>
+References: <20210302154831.17000-1-aaptel@suse.com>
+ <5ae02f1f-af45-25aa-71b1-4f8782286158@talpey.com>
+Date:   Wed, 03 Mar 2021 17:28:14 +0100
+Message-ID: <8735xcxkv5.fsf@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [2003:fa:70b:4a22:792c:d376:dd41:4ec2]
+X-ClientProxiedBy: ZR0P278CA0012.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:16::22) To VI1PR0402MB3359.eurprd04.prod.outlook.com
+ (2603:10a6:803:3::28)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost (2003:fa:70b:4a22:792c:d376:dd41:4ec2) by ZR0P278CA0012.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:16::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17 via Frontend Transport; Wed, 3 Mar 2021 16:28:15 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9aa4b853-01fe-43ea-d03c-08d8de6158d0
+X-MS-TrafficTypeDiagnostic: VE1PR04MB7456:
+X-Microsoft-Antispam-PRVS: <VE1PR04MB745680962769826ECB85E7ACA8989@VE1PR04MB7456.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0+DpNO2jV0kSBqmAbr02ejQajTdJgnIFAo4Yk6IMksbcVOmOWdxnjP9OTxfilSmGnrZWFOuhOsqWRodR702lRfTQIP7339qrGn9HHpRzrbGfXGTfyEwUZerwXIhbtO9NLOnz69OoaOfHCfiZKAxN0YQhWTQxCf4KGQsN9elwK17mb9zXjYrKmSJcLOE4eXFSdgkS004PiHexfnA5KmnjPSnEJ2PZdg9krmnb6CIYcf+NyIS6GSOCyHMraYRuqVJSqPQOiDaxtnfynYo5yT95NFxjNQegjJx0xe6+reof/rRcRXK2S4YJdi77AKsiJES5NlrjBGLJquT2TtkwZN5a+kvuqVy+Fhb4mXLjxN20y/NKoxU3nfxuJYusEzLxfNRWP8OObxPekurU3CAsnRPWCt5xmNmvX03MZdO+Dj9dk7WZF+JTaPyrwATvRMDUfbn6yXLTlLuygQ1iWUlH88o+eHpdoTKpGePPIw3jbYK3R2rHJVE/ZDZwsV2dQf46o7QE7pkfrKPHFu+LKEGDfQXxaA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0402MB3359.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(346002)(396003)(39840400004)(136003)(376002)(83380400001)(53546011)(2616005)(4326008)(16526019)(86362001)(66574015)(186003)(52116002)(6496006)(36756003)(8936002)(66556008)(66476007)(66946007)(8676002)(478600001)(5660300002)(316002)(2906002)(6486002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?NERzRmVSKzhwbDNYM05NVjladHc1RWFrM1hGdThmam5SWHBINGo0ME9DWjBV?=
+ =?utf-8?B?Y090RUlTMDAyRisvUkhlS1hkNWZlTjVOK3JDd1BkYjNmOTBUbWQ4RGo4dFZl?=
+ =?utf-8?B?WERLMkJRSHJHRWRhVHovSDNYUDRkUnNGWWhzT1JCTFhZa2dBQTlkQ0xVazdj?=
+ =?utf-8?B?VkJoang3YlJWQU1BdVIyYStOUHRWYU9weDlnL296WWplcGhPeEoxMEJTQWlT?=
+ =?utf-8?B?SEVvMWRsNEJXN1hwbEo5WWUvN0h0R0ZDSmpJb1JBQW5HMnUwaTIvWEo5QVBl?=
+ =?utf-8?B?R3QrYXU4K0p5a0xobTlZK0VOakZsUnhuNjdOOFByN1ArbkxkaTJIUDNCQlJI?=
+ =?utf-8?B?cHFyaVdqc0QyNmg0VUtZbUdFalRSWmU3bmlGRlRvSGNLcUYyQmRtbFo1MWlp?=
+ =?utf-8?B?Zm4rMlpReDNMSkczRGg5ejkySTNhVXgycmphUmtmNTV5YzZJZHhERFhyMm81?=
+ =?utf-8?B?bXVQU0xPL0RVbzlEcFRsQTFUN0ZVR3UvODNyTXpHMDRCUzY0Z0h2M1hBdXlt?=
+ =?utf-8?B?UnFKb1Jsd3JybUYyMUx3bkNiNlBvd1UzTnFIN0dtRDdoZXRrL1NhS0JxN2Yx?=
+ =?utf-8?B?bURqdDBHQXM4MEM0N0RlZndyNi9nYmJjNVA2ZEg4ZUphMElkSW5FaWF5WFRI?=
+ =?utf-8?B?NUlrZXhVdmQrOFJxeTRMRWIwU2RwZ0lJOUtSVjQ3RVB4djFsVTBmc2JuSE5l?=
+ =?utf-8?B?bS80RURqQ1RjdVVOQ1ZHcmtaZk1Cc2tVM2UvcUw4WDV4N3lJWE5ocG9nazVs?=
+ =?utf-8?B?ZDF1TEJvRjA4eFlvRVVxWjZwckdMQzNNSlJjQWdMNVltZW13L3kxVG5qTlRX?=
+ =?utf-8?B?Y09hazJJQXUvQ1ExVVdkNElDa2t5dUhTdjVQWlNNdXpUcHV0VjFkd3d1dG9s?=
+ =?utf-8?B?L1U5MWNWSHJwNWxXOU9QOWkzSkNWbGhIbXBkcm9Ockd1eDJ5b2ZOc3A3b05w?=
+ =?utf-8?B?VDBTekNYRm9rbHkvR3Q0cHBNWUxic0l1TGpkclk3aTRGbnBYNnVHVGxyNmE3?=
+ =?utf-8?B?dFYzWWViMTRyRHRiOXE3eHFwL2lIY2JnZFJ5SXNEZXVyNFNGeXFTN0tsc0FZ?=
+ =?utf-8?B?WE9BVEU2Y2lMalVmUXlBYm85L3U2bklpZlIxUFk0KzBQVHhCS3BHbWRNaEFv?=
+ =?utf-8?B?ZVlOR3hVNEpjS091Ujl2SUR0bk45NDhldGY5a01oMUJMazhudWhDR1FhMmJp?=
+ =?utf-8?B?ano4Q05aNXZrUW9pUXNWNUljQnlNanNnRnBSOGJFTlBCOEpXVUUrZGh3NTk4?=
+ =?utf-8?B?b21wQmdaR29IMGxqMVU0b24xQ29lMVF4My90U2J3Wk1VTk5ZMUJndzAvQzVL?=
+ =?utf-8?B?NnN2SU1HUVNiSnFDUVpXSXRlMTdaeFlPSzg2MFEwOS96dmNtVFNlUjUxMGdq?=
+ =?utf-8?B?em1jWDN4TEptU2h3N0tPUXZDS3JHUlQ0aXhLUy9Hd1hhb2t1YzRGaGk3UHdm?=
+ =?utf-8?B?aWRKVmQ5OFhkT3MzT3ZCZTdNMzlsUlM2N2JnTTV0YWk5dkhhQmhWTWNtbmU1?=
+ =?utf-8?B?WWhVQWs0ZmZJZklrWTZ5R3oxQmk0NFJjVmFuYnphK2xxU0g3aE1hTU0vK0ZU?=
+ =?utf-8?B?UmloTG56Uy9UQWd1N0NPV0FCRG5malMwZHh4bnpCOXdLSXZVdi8rUmRXSC82?=
+ =?utf-8?B?QUM4LzRwZlpCRllMS2w2UldOQzZnYlozZmVaQ1UxNkhUUVpDSTJkN1haSTVW?=
+ =?utf-8?B?ZVJFdWFQTkJEMk9RVU94OXUwb1YxeXZCbldtSCszYU8rT3h0cFRUQ21xb2lK?=
+ =?utf-8?B?cHFvdjFRNVpmd25Ja29ZbWExTWs0OTJmelRyNjY5ejZZZUFtTm1acTVpL1Ux?=
+ =?utf-8?B?bWZTNFdRYUJodFgxNkl4dDlmRWoxcDk3OEx6dmg1WnBJMDJybW4yRzhkdHVw?=
+ =?utf-8?Q?relb+ER4RBwxM?=
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9aa4b853-01fe-43ea-d03c-08d8de6158d0
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR0402MB3359.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2021 16:28:15.7418
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2QU/EMEKj7Zl6dz7J4GiYVzCTKoDTAnK4OGYWhaL/mcD0XMcIrbVEAWnFOt6iMIL
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7456
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mike Rapoport <rppt@linux.ibm.com>
+Hi Tom,
 
-The test verifies that file descriptor created with memfd_secret does not
-allow read/write operations, that secret memory mappings respect
-RLIMIT_MEMLOCK and that remote accesses with process_vm_read() and
-ptrace() to the secret memory fail.
+Thanks for taking a look.
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Christopher Lameter <cl@linux.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Elena Reshetova <elena.reshetova@intel.com>
-Cc: Hagen Paul Pfeifer <hagen@jauu.net>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: James Bottomley <jejb@linux.ibm.com>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Palmer Dabbelt <palmerdabbelt@google.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Shakeel Butt <shakeelb@google.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tycho Andersen <tycho@tycho.ws>
-Cc: Will Deacon <will@kernel.org>
----
- tools/testing/selftests/vm/.gitignore     |   1 +
- tools/testing/selftests/vm/Makefile       |   3 +-
- tools/testing/selftests/vm/memfd_secret.c | 296 ++++++++++++++++++++++
- tools/testing/selftests/vm/run_vmtests.sh |  17 ++
- 4 files changed, 316 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/vm/memfd_secret.c
+Tom Talpey <tom@talpey.com> writes:
+> On 3/2/2021 10:48 AM, Aur=C3=A9lien Aptel wrote:
+> I'd suggest removing this sentence. It doesn't really add anything to
+> the definition.
 
-diff --git a/tools/testing/selftests/vm/.gitignore b/tools/testing/selftests/vm/.gitignore
-index 9a35c3f6a557..c8deddc81e7a 100644
---- a/tools/testing/selftests/vm/.gitignore
-+++ b/tools/testing/selftests/vm/.gitignore
-@@ -21,4 +21,5 @@ va_128TBswitch
- map_fixed_noreplace
- write_to_hugetlbfs
- hmm-tests
-+memfd_secret
- local_config.*
-diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
-index d42115e4284d..0200fb61646c 100644
---- a/tools/testing/selftests/vm/Makefile
-+++ b/tools/testing/selftests/vm/Makefile
-@@ -34,6 +34,7 @@ TEST_GEN_FILES += khugepaged
- TEST_GEN_FILES += map_fixed_noreplace
- TEST_GEN_FILES += map_hugetlb
- TEST_GEN_FILES += map_populate
-+TEST_GEN_FILES += memfd_secret
- TEST_GEN_FILES += mlock-random-test
- TEST_GEN_FILES += mlock2-tests
- TEST_GEN_FILES += mremap_dontunmap
-@@ -133,7 +134,7 @@ warn_32bit_failure:
- endif
- endif
- 
--$(OUTPUT)/mlock-random-test: LDLIBS += -lcap
-+$(OUTPUT)/mlock-random-test $(OUTPUT)/memfd_secret: LDLIBS += -lcap
- 
- $(OUTPUT)/gup_test: ../../../../mm/gup_test.h
- 
-diff --git a/tools/testing/selftests/vm/memfd_secret.c b/tools/testing/selftests/vm/memfd_secret.c
-new file mode 100644
-index 000000000000..c878c2b841fc
---- /dev/null
-+++ b/tools/testing/selftests/vm/memfd_secret.c
-@@ -0,0 +1,296 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright IBM Corporation, 2020
-+ *
-+ * Author: Mike Rapoport <rppt@linux.ibm.com>
-+ */
-+
-+#define _GNU_SOURCE
-+#include <sys/uio.h>
-+#include <sys/mman.h>
-+#include <sys/wait.h>
-+#include <sys/types.h>
-+#include <sys/ptrace.h>
-+#include <sys/syscall.h>
-+#include <sys/resource.h>
-+#include <sys/capability.h>
-+
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <stdio.h>
-+
-+#include "../kselftest.h"
-+
-+#define fail(fmt, ...) ksft_test_result_fail(fmt, ##__VA_ARGS__)
-+#define pass(fmt, ...) ksft_test_result_pass(fmt, ##__VA_ARGS__)
-+#define skip(fmt, ...) ksft_test_result_skip(fmt, ##__VA_ARGS__)
-+
-+#ifdef __NR_memfd_secret
-+
-+#define PATTERN	0x55
-+
-+static const int prot = PROT_READ | PROT_WRITE;
-+static const int mode = MAP_SHARED;
-+
-+static unsigned long page_size;
-+static unsigned long mlock_limit_cur;
-+static unsigned long mlock_limit_max;
-+
-+static int memfd_secret(unsigned long flags)
-+{
-+	return syscall(__NR_memfd_secret, flags);
-+}
-+
-+static void test_file_apis(int fd)
-+{
-+	char buf[64];
-+
-+	if ((read(fd, buf, sizeof(buf)) >= 0) ||
-+	    (write(fd, buf, sizeof(buf)) >= 0) ||
-+	    (pread(fd, buf, sizeof(buf), 0) >= 0) ||
-+	    (pwrite(fd, buf, sizeof(buf), 0) >= 0))
-+		fail("unexpected file IO\n");
-+	else
-+		pass("file IO is blocked as expected\n");
-+}
-+
-+static void test_mlock_limit(int fd)
-+{
-+	size_t len;
-+	char *mem;
-+
-+	len = mlock_limit_cur;
-+	mem = mmap(NULL, len, prot, mode, fd, 0);
-+	if (mem == MAP_FAILED) {
-+		fail("unable to mmap secret memory\n");
-+		return;
-+	}
-+	munmap(mem, len);
-+
-+	len = mlock_limit_max * 2;
-+	mem = mmap(NULL, len, prot, mode, fd, 0);
-+	if (mem != MAP_FAILED) {
-+		fail("unexpected mlock limit violation\n");
-+		munmap(mem, len);
-+		return;
-+	}
-+
-+	pass("mlock limit is respected\n");
-+}
-+
-+static void try_process_vm_read(int fd, int pipefd[2])
-+{
-+	struct iovec liov, riov;
-+	char buf[64];
-+	char *mem;
-+
-+	if (read(pipefd[0], &mem, sizeof(mem)) < 0) {
-+		fail("pipe write: %s\n", strerror(errno));
-+		exit(KSFT_FAIL);
-+	}
-+
-+	liov.iov_len = riov.iov_len = sizeof(buf);
-+	liov.iov_base = buf;
-+	riov.iov_base = mem;
-+
-+	if (process_vm_readv(getppid(), &liov, 1, &riov, 1, 0) < 0) {
-+		if (errno == ENOSYS)
-+			exit(KSFT_SKIP);
-+		exit(KSFT_PASS);
-+	}
-+
-+	exit(KSFT_FAIL);
-+}
-+
-+static void try_ptrace(int fd, int pipefd[2])
-+{
-+	pid_t ppid = getppid();
-+	int status;
-+	char *mem;
-+	long ret;
-+
-+	if (read(pipefd[0], &mem, sizeof(mem)) < 0) {
-+		perror("pipe write");
-+		exit(KSFT_FAIL);
-+	}
-+
-+	ret = ptrace(PTRACE_ATTACH, ppid, 0, 0);
-+	if (ret) {
-+		perror("ptrace_attach");
-+		exit(KSFT_FAIL);
-+	}
-+
-+	ret = waitpid(ppid, &status, WUNTRACED);
-+	if ((ret != ppid) || !(WIFSTOPPED(status))) {
-+		fprintf(stderr, "weird waitppid result %ld stat %x\n",
-+			ret, status);
-+		exit(KSFT_FAIL);
-+	}
-+
-+	if (ptrace(PTRACE_PEEKDATA, ppid, mem, 0))
-+		exit(KSFT_PASS);
-+
-+	exit(KSFT_FAIL);
-+}
-+
-+static void check_child_status(pid_t pid, const char *name)
-+{
-+	int status;
-+
-+	waitpid(pid, &status, 0);
-+
-+	if (WIFEXITED(status) && WEXITSTATUS(status) == KSFT_SKIP) {
-+		skip("%s is not supported\n", name);
-+		return;
-+	}
-+
-+	if ((WIFEXITED(status) && WEXITSTATUS(status) == KSFT_PASS) ||
-+	    WIFSIGNALED(status)) {
-+		pass("%s is blocked as expected\n", name);
-+		return;
-+	}
-+
-+	fail("%s: unexpected memory access\n", name);
-+}
-+
-+static void test_remote_access(int fd, const char *name,
-+			       void (*func)(int fd, int pipefd[2]))
-+{
-+	int pipefd[2];
-+	pid_t pid;
-+	char *mem;
-+
-+	if (pipe(pipefd)) {
-+		fail("pipe failed: %s\n", strerror(errno));
-+		return;
-+	}
-+
-+	pid = fork();
-+	if (pid < 0) {
-+		fail("fork failed: %s\n", strerror(errno));
-+		return;
-+	}
-+
-+	if (pid == 0) {
-+		func(fd, pipefd);
-+		return;
-+	}
-+
-+	mem = mmap(NULL, page_size, prot, mode, fd, 0);
-+	if (mem == MAP_FAILED) {
-+		fail("Unable to mmap secret memory\n");
-+		return;
-+	}
-+
-+	ftruncate(fd, page_size);
-+	memset(mem, PATTERN, page_size);
-+
-+	if (write(pipefd[1], &mem, sizeof(mem)) < 0) {
-+		fail("pipe write: %s\n", strerror(errno));
-+		return;
-+	}
-+
-+	check_child_status(pid, name);
-+}
-+
-+static void test_process_vm_read(int fd)
-+{
-+	test_remote_access(fd, "process_vm_read", try_process_vm_read);
-+}
-+
-+static void test_ptrace(int fd)
-+{
-+	test_remote_access(fd, "ptrace", try_ptrace);
-+}
-+
-+static int set_cap_limits(rlim_t max)
-+{
-+	struct rlimit new;
-+	cap_t cap = cap_init();
-+
-+	new.rlim_cur = max;
-+	new.rlim_max = max;
-+	if (setrlimit(RLIMIT_MEMLOCK, &new)) {
-+		perror("setrlimit() returns error");
-+		return -1;
-+	}
-+
-+	/* drop capabilities including CAP_IPC_LOCK */
-+	if (cap_set_proc(cap)) {
-+		perror("cap_set_proc() returns error");
-+		return -2;
-+	}
-+
-+	return 0;
-+}
-+
-+static void prepare(void)
-+{
-+	struct rlimit rlim;
-+
-+	page_size = sysconf(_SC_PAGE_SIZE);
-+	if (!page_size)
-+		ksft_exit_fail_msg("Failed to get page size %s\n",
-+				   strerror(errno));
-+
-+	if (getrlimit(RLIMIT_MEMLOCK, &rlim))
-+		ksft_exit_fail_msg("Unable to detect mlock limit: %s\n",
-+				   strerror(errno));
-+
-+	mlock_limit_cur = rlim.rlim_cur;
-+	mlock_limit_max = rlim.rlim_max;
-+
-+	printf("page_size: %ld, mlock.soft: %ld, mlock.hard: %ld\n",
-+	       page_size, mlock_limit_cur, mlock_limit_max);
-+
-+	if (page_size > mlock_limit_cur)
-+		mlock_limit_cur = page_size;
-+	if (page_size > mlock_limit_max)
-+		mlock_limit_max = page_size;
-+
-+	if (set_cap_limits(mlock_limit_max))
-+		ksft_exit_fail_msg("Unable to set mlock limit: %s\n",
-+				   strerror(errno));
-+}
-+
-+#define NUM_TESTS 4
-+
-+int main(int argc, char *argv[])
-+{
-+	int fd;
-+
-+	prepare();
-+
-+	ksft_print_header();
-+	ksft_set_plan(NUM_TESTS);
-+
-+	fd = memfd_secret(0);
-+	if (fd < 0) {
-+		if (errno == ENOSYS)
-+			ksft_exit_skip("memfd_secret is not supported\n");
-+		else
-+			ksft_exit_fail_msg("memfd_secret failed: %s\n",
-+					   strerror(errno));
-+	}
-+
-+	test_mlock_limit(fd);
-+	test_file_apis(fd);
-+	test_process_vm_read(fd);
-+	test_ptrace(fd);
-+
-+	close(fd);
-+
-+	ksft_exit(!ksft_get_fail_cnt());
-+}
-+
-+#else /* __NR_memfd_secret */
-+
-+int main(int argc, char *argv[])
-+{
-+	printf("skip: skipping memfd_secret test (missing __NR_memfd_secret)\n");
-+	return KSFT_SKIP;
-+}
-+
-+#endif /* __NR_memfd_secret */
-diff --git a/tools/testing/selftests/vm/run_vmtests.sh b/tools/testing/selftests/vm/run_vmtests.sh
-index e953f3cd9664..95a67382f132 100755
---- a/tools/testing/selftests/vm/run_vmtests.sh
-+++ b/tools/testing/selftests/vm/run_vmtests.sh
-@@ -346,4 +346,21 @@ else
- 	exitcode=1
- fi
- 
-+echo "running memfd_secret test"
-+echo "------------------------------------"
-+./memfd_secret
-+ret_val=$?
-+
-+if [ $ret_val -eq 0 ]; then
-+	echo "[PASS]"
-+elif [ $ret_val -eq $ksft_skip ]; then
-+	echo "[SKIP]"
-+	exitcode=$ksft_skip
-+else
-+	echo "[FAIL]"
-+	exitcode=1
-+fi
-+
-+exit $exitcode
-+
- exit $exitcode
--- 
-2.28.0
+OK.
+
+> This is discussing the scenario where a process on the server performs
+> an flock(), right? That's perhaps confusingly special. How about
+
+This is about clients. Let's say the same app is running on 2 different
+Linux system that have the same Windows Server share mounted.
+
+The scenario is those 2 app instances use the same file on the share and
+are trying to synchronize access using flock().
+
+Pre-5.5, CIFS flock() is using the generic flock() implementation from
+the Linux VFS layer which only knows about syscall made by local apps
+and isn't aware that the file can be accessed under its feet from the
+network.
+
+In 5.5 and above, CIFS flock() is implemented using SMB locks, which
+have different semantics than what POSIX defines, i.e. you cannot ignore
+the locks and write, write() will fail with EPERM. So this version can
+be used for file sync with other clients but works slightly
+differently. It is a best-effort attempt.
+
+Does this clarification changes anything to your suggestions?
+
+> "In Linux kernels up to 5.4, flock() is not propagated over SMB. A file
+> with such locks will not appear locked for remote clients."
+
+
+> "protocol, which provides mandatory locking semantics."
+
+OK. As it turns out, there is actually a 'nobrl' mount option to get back
+pre-5.5 behavior. I'll mention it and use your suggestions in v2.
+
+Cheers,
+--=20
+Aur=C3=A9lien Aptel / SUSE Labs Samba Team
+GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
+SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, D=
+E
+GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=C3=BC=
+nchen)
 
