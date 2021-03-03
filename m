@@ -2,122 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E37632C571
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:59:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BE2432C572
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:59:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355162AbhCDAUq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 19:20:46 -0500
-Received: from p3plsmtpa11-01.prod.phx3.secureserver.net ([68.178.252.102]:42260
-        "EHLO p3plsmtpa11-01.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1388012AbhCCUYO (ORCPT
+        id S1355172AbhCDAUs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 19:20:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36248 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1388549AbhCCVLZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Mar 2021 15:24:14 -0500
-Received: from [192.168.0.116] ([71.184.94.153])
-        by :SMTPAUTH: with ESMTPSA
-        id HY1ml85cHSxgqHY1mle4LS; Wed, 03 Mar 2021 13:23:27 -0700
-X-CMAE-Analysis: v=2.4 cv=I6mg+Psg c=1 sm=1 tr=0 ts=603ff03f
- a=vbvdVb1zh1xTTaY8rfQfKQ==:117 a=vbvdVb1zh1xTTaY8rfQfKQ==:17
- a=IkcTkHD0fZMA:10 a=SEc3moZ4AAAA:8 a=iox4zFpeAAAA:8 a=Dn3fJbBJWZ8bWwpP0-sA:9
- a=QEXdDO2ut3YA:10 a=5oRCH6oROnRZc2VpWJZ3:22 a=WzC6qhA0u3u7Ye7llzcV:22
-X-SECURESERVER-ACCT: tom@talpey.com
-Subject: Re: [PATCH v3] flock.2: add CIFS details
-To:     =?UTF-8?Q?Aur=c3=a9lien_Aptel?= <aaptel@suse.com>,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-man@vger.kernel.org, mtk.manpages@gmail.com
-Cc:     smfrench@gmail.com
-References: <17fc432c-f485-0945-6d12-fa338ea0025f@talpey.com>
- <20210303190353.31605-1-aaptel@suse.com>
-From:   Tom Talpey <tom@talpey.com>
-Message-ID: <be8416d4-64f8-675e-3f46-f55dddf1e03b@talpey.com>
-Date:   Wed, 3 Mar 2021 15:23:27 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+        Wed, 3 Mar 2021 16:11:25 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE128C061765
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Mar 2021 12:57:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=6YnCoO0+G2JF2F+BhHRjoqQWT6hCxoMjV93OHsnj2Pg=; b=nh1cxFtXR32Q1Ey2dAz7CqL1N3
+        2CMb5CwfQLoCfYSwEp4o55HGkgT32RAwoFB51aHrjYX2f8b2wouPlavwKDNBimQOQhk8Zzruwmvws
+        k+wWjIe0v0RFc3Ghh+sbpaT09iPg4g20XZTCNyPelQC1RAcX9QmZzx9YkpT+/sGTh8FqPOG+02Uva
+        AchBiKSDQoJISjse1ynnHR1VCSGv/fthNzwJo9su/fXw/ZM0u2mF0oeqZZbq/ofO8R3pGCO2CzYoK
+        gyj0Jd+oBmG4ddh5jLgeqc7kDhgV5EDYbRr7rYt7itWS3M4jhful0lN2BjynzkhpeSvgdYsbB1OdY
+        BjbZaPpg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lHYYq-004Amt-2e; Wed, 03 Mar 2021 20:57:37 +0000
+Date:   Wed, 3 Mar 2021 20:57:36 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] mm/filemap: Use filemap_read_page in filemap_fault
+Message-ID: <20210303205736.GG2723601@casper.infradead.org>
+References: <20210226140011.2883498-1-willy@infradead.org>
+ <20210302173039.4625f403846abd20413f6dad@linux-foundation.org>
+ <20210303013313.GZ2723601@casper.infradead.org>
+ <20210302220735.1f150f28323f676d2955ab49@linux-foundation.org>
+ <20210303132640.GB2723601@casper.infradead.org>
+ <20210303121253.9f44d8129f148b1e2e78cc81@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20210303190353.31605-1-aaptel@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfAi6iph6xbnYCuduuU9qfMGGJWBIgyBcmX2RkF6vN2+w6He2BuhNBiKlSLggG+89PJmlmW2OkTfUZWnaHdsXs82nXF3EBGAUJnRG5luN8KQ1biBV6fMP
- S3HzkNICTNjCqoW7TB803VDlO+iwTnsV5X7dyf/NbWxPJezYAhQ3SQUg0Qg6CdUjeJfqfRLPYnrylKuVbzePowkKlqLpT5qITwJN+Za74xDY9Q5XNUCyYZLi
- 850x9J/FbRAf9Vz/ejbblWP0fI2+aG8/7KUSUKj8WWbYZ3zLGf/jwrdFz8oNHjL43dC7qEkNXOvc6FnrW/ZVggscqXD7ORgmKHM0MWvaexJ7/b6zrZyDGaNP
- 5PpRf2AQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210303121253.9f44d8129f148b1e2e78cc81@linux-foundation.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It looks great, and sorry to be a pest, but I just noticed - it's
-EACCES (not EACCESS).
+On Wed, Mar 03, 2021 at 12:12:53PM -0800, Andrew Morton wrote:
+> On Wed, 3 Mar 2021 13:26:40 +0000 Matthew Wilcox <willy@infradead.org> wrote:
+> 
+> > But here's the thing ... invalidate_mapping_pages() doesn't
+> > ClearPageUptodate.  The only places where we ClearPageUptodate is on an
+> > I/O error.
+> 
+> yup.
+> 
+> > So ... as far as I can tell, the only way to hit this is:
+> > 
+> >  - Get an I/O error during the wait
+> >  - Have another thread cause the page to be removed from the page cache
+> >    (eg do direct I/O to the file) before this thread is run.
+> > 
+> > and the consequence to this change is that we have another attempt to
+> > read the page instead of returning an error immediately.  I'm OK with
+> > that unintentional change, although I think the previous behaviour was
+> > also perfectly acceptable (after all, there was an I/O error while trying
+> > to read this page).
+> > 
+> > Delving into the linux-fullhistory tree, this code was introduced by ...
+> > 
+> > commit 56f0d5fe6851037214a041a5cb4fc66199256544
+> > Author: Andrew Morton <akpm@osdl.org>
+> > Date:   Fri Jan 7 22:03:01 2005 -0800
+> > 
+> >     [PATCH] readpage-vs-invalidate fix
+> > 
+> >     A while ago we merged a patch which tried to solve a problem wherein a
+> >     concurrent read() and invalidate_inode_pages() would cause the read() to
+> >     return -EIO because invalidate cleared PageUptodate() at the wrong time.
+> > 
+> > We no longer clear PageUptodate, so I think this is stale code?  Perhaps
+> > you could check with the original author ...
+> 
+> Which code do you think might be stale?  We need the !PageUptodate
+> check to catch IO errors and we need the !page->mapping check to catch
+> invalidates.  Am a bit confused.
 
-Reviewed-By: Tom Talpey <tom@talpey.com>
+I think the check of !page->mapping here:
 
-On 3/3/2021 2:03 PM, Aurélien Aptel wrote:
-> From: Aurelien Aptel <aaptel@suse.com>
-> 
-> Similarly to NFS, CIFS flock() locks behave differently than the
-> standard. Document those differences.
-> 
-> Here is the rendered text:
-> 
-> CIFS details
->    In  Linux kernels up to 5.4, flock() is not propagated over SMB. A file
->    with such locks will not appear locked for remote clients.
-> 
->    Since Linux 5.5, flock() locks are emulated with SMB  byte-range  locks
->    on  the  entire  file.  Similarly  to NFS, this means that fcntl(2) and
->    flock() locks interact with one another. Another important  side-effect
->    is  that  the  locks are not advisory anymore: a write on a locked file
->    will always fail with EACCESS.  This difference originates from the de-
->    sign of locks in the SMB protocol, which provides mandatory locking se-
->    mantics. The nobrl mount option (see mount.cifs(8)) turns off  fnctl(2)
->    and  flock() lock propagation to remote clients and makes flock() locks
->    advisory again.
-> 
-> Signed-off-by: Aurelien Aptel <aaptel@suse.com>
-> ---
->   man2/flock.2 | 29 +++++++++++++++++++++++++++++
->   1 file changed, 29 insertions(+)
-> 
-> diff --git a/man2/flock.2 b/man2/flock.2
-> index 61d4b5396..4b6e5cc24 100644
-> --- a/man2/flock.2
-> +++ b/man2/flock.2
-> @@ -239,6 +239,35 @@ see the discussion of the
->   .I "local_lock"
->   option in
->   .BR nfs (5).
-> +.SS CIFS details
-> +In Linux kernels up to 5.4,
-> +.BR flock ()
-> +is not propagated over SMB. A file with such locks will not appear
-> +locked for remote clients.
-> +.PP
-> +Since Linux 5.5,
-> +.BR flock ()
-> +locks are emulated with SMB byte-range locks on the entire
-> +file. Similarly to NFS, this means that
-> +.BR fcntl (2)
-> +and
-> +.BR flock ()
-> +locks interact with one another. Another important side-effect is that
-> +the locks are not advisory anymore: a write on a locked file will
-> +always fail with
-> +.BR EACCESS .
+        if (PageUptodate(page))
+                return 0;
+        if (!page->mapping)     /* page truncated */
+                return AOP_TRUNCATED_PAGE;
 
-EACCES
-
-> +This difference originates from the design of locks in the SMB
-> +protocol, which provides mandatory locking semantics. The
-> +.I nobrl
-> +mount option (see
-> +.BR mount.cifs (8))
-> +turns off
-> +.BR fnctl (2)
-> +and
-> +.BR flock ()
-> +lock propagation to remote clients and makes
-> +.BR flock ()
-> +locks advisory again.
->   .SH SEE ALSO
->   .BR flock (1),
->   .BR close (2),
-> 
+is no longer needed.  If we didn't see an error, the page will be Uptodate,
+regardless of whether it's been removed from the page cache.  If we did
+see an error, it's OK to return -EIO, even if the page has been removed
+from the page cache in the interim.
