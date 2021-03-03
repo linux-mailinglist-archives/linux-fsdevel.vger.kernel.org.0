@@ -2,176 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1699D32C563
+	by mail.lfdr.de (Postfix) with ESMTP id D638232C564
 	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:59:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359035AbhCDAUY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 19:20:24 -0500
-Received: from de-smtp-delivery-102.mimecast.com ([62.140.7.102]:57260 "EHLO
-        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1573367AbhCCQ33 (ORCPT
+        id S1353369AbhCDAU0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 19:20:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34102 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242792AbhCCQh4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Mar 2021 11:29:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
-        t=1614788899;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4POyBygAAEdivD7vBDyHGO6sL3uA4fGnEJdAQOJcB2w=;
-        b=bZ9Q5VKbELjx2qHYPJ1c39RxZLT7HDdYpyfODLJxIj34MUpyWqBcYsn0N7xjU6HuyUIplt
-        xnGnpQEvP+bEd4rfva2Bvs/Nvz2irt/Mw3RQFq4loeLoE6H/FPJc/NJiqE9m4zSkBwsiD7
-        pnrYiNKTdEwRG3rJewvxzWofo1mIPp4=
-Received: from EUR03-DB5-obe.outbound.protection.outlook.com
- (mail-db5eur03lp2057.outbound.protection.outlook.com [104.47.10.57]) (Using
- TLS) by relay.mimecast.com with ESMTP id de-mta-4-5MJK2UTXNNimQhiCjnG1yA-1;
- Wed, 03 Mar 2021 17:28:17 +0100
-X-MC-Unique: 5MJK2UTXNNimQhiCjnG1yA-1
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Bg37hD6U67N6r3l2I4cNntbN2TKkxoHp3c0FIcHnsEf6fa68T1yrGBx0/HGmVA2m2nD+B8IcFlzbn25QpJDGEoh0Jxeo4gl6fQV76PifT67Yw/RXqydGGdo6Ci5qML7PCPfV989Y1ywaIoci1971lsxkBCorqXiJiFDZUN3blh5fvFJ+4mOfnMVp7acmKnKlqV9KwGYUWStm+489D13qjfENcskwmLm/wA9Tn8Z6dOa6EPbq03QOCjoN0VfaiG1PW4qEU2Er4jDtGXDbW5eGUmUWYUJF1rp1xvqp8fU8reYnHz5V5Pjm6paaRMdIcWRHH0l35U+IjP+dUSgHbVx0SQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4POyBygAAEdivD7vBDyHGO6sL3uA4fGnEJdAQOJcB2w=;
- b=aHlevAPfKRuPSUv/pNwiNPOJ4y1/4Ve9rlwsOpAfApwyLulxbjm71nKD3dIYujuVZxeeLUWfb3f9x5VHOS9OMv2tLHZhCjSvd+/ncnNsm0aei54rmGORv4vdVbNFKAJIUEqCQ+onUgrEaYmnpRyu7+Lk6hAOQwKlRxDrzleeUmSg2KGLFIIutkFy3p7lzspW3JzeK1WALTiwvPCWKHRNL6cmKbTfoXPDB7udgraEMHHya3sX6CR8EXcT66Naq7Wbw+ryGfFlbgc4WYZgT0o/QMVIKDSdZH5vlHUsRIO0NxGKyqm5d8BlatjSK8oyLKmszlBm6qMbnXHwOVby+KcSSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
- dkim=pass header.d=suse.com; arc=none
-Authentication-Results: talpey.com; dkim=none (message not signed)
- header.d=none;talpey.com; dmarc=none action=none header.from=suse.com;
-Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com (2603:10a6:803:3::28)
- by VE1PR04MB7456.eurprd04.prod.outlook.com (2603:10a6:800:1ac::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17; Wed, 3 Mar
- 2021 16:28:16 +0000
-Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com
- ([fe80::9c1d:89de:a08e:ccc9]) by VI1PR0402MB3359.eurprd04.prod.outlook.com
- ([fe80::9c1d:89de:a08e:ccc9%4]) with mapi id 15.20.3890.028; Wed, 3 Mar 2021
- 16:28:15 +0000
-From:   =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
-To:     Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org,
-        mtk.manpages@gmail.com
-Cc:     smfrench@gmail.com
-Subject: Re: [man-pages][PATCH v1] flock.2: add CIFS details
-In-Reply-To: <5ae02f1f-af45-25aa-71b1-4f8782286158@talpey.com>
-References: <20210302154831.17000-1-aaptel@suse.com>
- <5ae02f1f-af45-25aa-71b1-4f8782286158@talpey.com>
-Date:   Wed, 03 Mar 2021 17:28:14 +0100
-Message-ID: <8735xcxkv5.fsf@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [2003:fa:70b:4a22:792c:d376:dd41:4ec2]
-X-ClientProxiedBy: ZR0P278CA0012.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:16::22) To VI1PR0402MB3359.eurprd04.prod.outlook.com
- (2603:10a6:803:3::28)
+        Wed, 3 Mar 2021 11:37:56 -0500
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 410F7C0613DC
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Mar 2021 08:37:05 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id hs11so43454403ejc.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Mar 2021 08:37:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloud.ionos.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vpdvJ23q1oid0H28mLrnVIimUayOznJ9U6AdMVzu7XQ=;
+        b=Pck6m/m37NKs1t408alxl2zct6EFCZ+SOWmMNjrdC4f1Ho+51EDiONONQhe/48fq2F
+         neO+W8oBo97MIVzjpzNg0P3B7SQ2FNVs51j/04W0RrCupaGJnUifTKgs+FnGAU+MAdQu
+         N1DmoEjN/QQqTdg5Pn8isQXk3q1MkQIiJDR7216YJ/qLJ2nanz61ynJavQMFJS0HGpf+
+         HIijVIYC68IjghLiLQ5h0wnXyr6Xg1gUIS+iEFCBo/EdG2FIwOUpsmHHANeSSfIq97cz
+         UekPZZNxpuGW914WoKLYyYU+oPgIClFzdLW6G3sisIqpt3vq6TEbLwIpUcPgeuWqWKDz
+         UDEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vpdvJ23q1oid0H28mLrnVIimUayOznJ9U6AdMVzu7XQ=;
+        b=R9B8xVc+pEFBDG0xDV9bCmey7wE//hEr6ZrYDcfBtAwApp72rvruNjkPHXODyC6hDh
+         hmjKb/dQTESYAb+0rE1T73hVIRN5wRQdN6G9jTKCxOBs4kZUie5KU/52qO4XL9aLw1T1
+         xeuLJqK+nKSiny6iIYeSVBFIjY+tqirYNgviLpp1+MV99zUXP+UAuelG04xCXl3PVT5T
+         SwjqHNSh/n3oggWkH1Q9iuiYOTH+fdDw3NWsptYHXzSwEf1mH+DAstqWFrrrdASzVP0J
+         df2WIPDxyuzTQ1CmGC9VRWgsf5shR+EZapwiHiu8bbPJeIFAE9tT4+oeHQuOAYZvkNhF
+         2H7w==
+X-Gm-Message-State: AOAM530TLGTSq3UASiAW1wDIeHe3HU63UJxdsQTdmzXG3gVY83dIFWi+
+        cd//A0PFmS8ZslK3Xdliaw1WVppwyp+M5k0GS2cCcg==
+X-Google-Smtp-Source: ABdhPJwF8MkpPwcSJx52llkHFBetQmF+xwrNFsW12qXmw2Cm0D8kEhFV+UtaVpaxcf1PT/1KKSg9dx4sc9VzvQ+1Kfo=
+X-Received: by 2002:a17:906:c102:: with SMTP id do2mr26650941ejc.305.1614789423964;
+ Wed, 03 Mar 2021 08:37:03 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost (2003:fa:70b:4a22:792c:d376:dd41:4ec2) by ZR0P278CA0012.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:16::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17 via Frontend Transport; Wed, 3 Mar 2021 16:28:15 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9aa4b853-01fe-43ea-d03c-08d8de6158d0
-X-MS-TrafficTypeDiagnostic: VE1PR04MB7456:
-X-Microsoft-Antispam-PRVS: <VE1PR04MB745680962769826ECB85E7ACA8989@VE1PR04MB7456.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 0+DpNO2jV0kSBqmAbr02ejQajTdJgnIFAo4Yk6IMksbcVOmOWdxnjP9OTxfilSmGnrZWFOuhOsqWRodR702lRfTQIP7339qrGn9HHpRzrbGfXGTfyEwUZerwXIhbtO9NLOnz69OoaOfHCfiZKAxN0YQhWTQxCf4KGQsN9elwK17mb9zXjYrKmSJcLOE4eXFSdgkS004PiHexfnA5KmnjPSnEJ2PZdg9krmnb6CIYcf+NyIS6GSOCyHMraYRuqVJSqPQOiDaxtnfynYo5yT95NFxjNQegjJx0xe6+reof/rRcRXK2S4YJdi77AKsiJES5NlrjBGLJquT2TtkwZN5a+kvuqVy+Fhb4mXLjxN20y/NKoxU3nfxuJYusEzLxfNRWP8OObxPekurU3CAsnRPWCt5xmNmvX03MZdO+Dj9dk7WZF+JTaPyrwATvRMDUfbn6yXLTlLuygQ1iWUlH88o+eHpdoTKpGePPIw3jbYK3R2rHJVE/ZDZwsV2dQf46o7QE7pkfrKPHFu+LKEGDfQXxaA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0402MB3359.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(346002)(396003)(39840400004)(136003)(376002)(83380400001)(53546011)(2616005)(4326008)(16526019)(86362001)(66574015)(186003)(52116002)(6496006)(36756003)(8936002)(66556008)(66476007)(66946007)(8676002)(478600001)(5660300002)(316002)(2906002)(6486002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?NERzRmVSKzhwbDNYM05NVjladHc1RWFrM1hGdThmam5SWHBINGo0ME9DWjBV?=
- =?utf-8?B?Y090RUlTMDAyRisvUkhlS1hkNWZlTjVOK3JDd1BkYjNmOTBUbWQ4RGo4dFZl?=
- =?utf-8?B?WERLMkJRSHJHRWRhVHovSDNYUDRkUnNGWWhzT1JCTFhZa2dBQTlkQ0xVazdj?=
- =?utf-8?B?VkJoang3YlJWQU1BdVIyYStOUHRWYU9weDlnL296WWplcGhPeEoxMEJTQWlT?=
- =?utf-8?B?SEVvMWRsNEJXN1hwbEo5WWUvN0h0R0ZDSmpJb1JBQW5HMnUwaTIvWEo5QVBl?=
- =?utf-8?B?R3QrYXU4K0p5a0xobTlZK0VOakZsUnhuNjdOOFByN1ArbkxkaTJIUDNCQlJI?=
- =?utf-8?B?cHFyaVdqc0QyNmg0VUtZbUdFalRSWmU3bmlGRlRvSGNLcUYyQmRtbFo1MWlp?=
- =?utf-8?B?Zm4rMlpReDNMSkczRGg5ejkySTNhVXgycmphUmtmNTV5YzZJZHhERFhyMm81?=
- =?utf-8?B?bXVQU0xPL0RVbzlEcFRsQTFUN0ZVR3UvODNyTXpHMDRCUzY0Z0h2M1hBdXlt?=
- =?utf-8?B?UnFKb1Jsd3JybUYyMUx3bkNiNlBvd1UzTnFIN0dtRDdoZXRrL1NhS0JxN2Yx?=
- =?utf-8?B?bURqdDBHQXM4MEM0N0RlZndyNi9nYmJjNVA2ZEg4ZUphMElkSW5FaWF5WFRI?=
- =?utf-8?B?NUlrZXhVdmQrOFJxeTRMRWIwU2RwZ0lJOUtSVjQ3RVB4djFsVTBmc2JuSE5l?=
- =?utf-8?B?bS80RURqQ1RjdVVOQ1ZHcmtaZk1Cc2tVM2UvcUw4WDV4N3lJWE5ocG9nazVs?=
- =?utf-8?B?ZDF1TEJvRjA4eFlvRVVxWjZwckdMQzNNSlJjQWdMNVltZW13L3kxVG5qTlRX?=
- =?utf-8?B?Y09hazJJQXUvQ1ExVVdkNElDa2t5dUhTdjVQWlNNdXpUcHV0VjFkd3d1dG9s?=
- =?utf-8?B?L1U5MWNWSHJwNWxXOU9QOWkzSkNWbGhIbXBkcm9Ockd1eDJ5b2ZOc3A3b05w?=
- =?utf-8?B?VDBTekNYRm9rbHkvR3Q0cHBNWUxic0l1TGpkclk3aTRGbnBYNnVHVGxyNmE3?=
- =?utf-8?B?dFYzWWViMTRyRHRiOXE3eHFwL2lIY2JnZFJ5SXNEZXVyNFNGeXFTN0tsc0FZ?=
- =?utf-8?B?WE9BVEU2Y2lMalVmUXlBYm85L3U2bklpZlIxUFk0KzBQVHhCS3BHbWRNaEFv?=
- =?utf-8?B?ZVlOR3hVNEpjS091Ujl2SUR0bk45NDhldGY5a01oMUJMazhudWhDR1FhMmJp?=
- =?utf-8?B?ano4Q05aNXZrUW9pUXNWNUljQnlNanNnRnBSOGJFTlBCOEpXVUUrZGh3NTk4?=
- =?utf-8?B?b21wQmdaR29IMGxqMVU0b24xQ29lMVF4My90U2J3Wk1VTk5ZMUJndzAvQzVL?=
- =?utf-8?B?NnN2SU1HUVNiSnFDUVpXSXRlMTdaeFlPSzg2MFEwOS96dmNtVFNlUjUxMGdq?=
- =?utf-8?B?em1jWDN4TEptU2h3N0tPUXZDS3JHUlQ0aXhLUy9Hd1hhb2t1YzRGaGk3UHdm?=
- =?utf-8?B?aWRKVmQ5OFhkT3MzT3ZCZTdNMzlsUlM2N2JnTTV0YWk5dkhhQmhWTWNtbmU1?=
- =?utf-8?B?WWhVQWs0ZmZJZklrWTZ5R3oxQmk0NFJjVmFuYnphK2xxU0g3aE1hTU0vK0ZU?=
- =?utf-8?B?UmloTG56Uy9UQWd1N0NPV0FCRG5malMwZHh4bnpCOXdLSXZVdi8rUmRXSC82?=
- =?utf-8?B?QUM4LzRwZlpCRllMS2w2UldOQzZnYlozZmVaQ1UxNkhUUVpDSTJkN1haSTVW?=
- =?utf-8?B?ZVJFdWFQTkJEMk9RVU94OXUwb1YxeXZCbldtSCszYU8rT3h0cFRUQ21xb2lK?=
- =?utf-8?B?cHFvdjFRNVpmd25Ja29ZbWExTWs0OTJmelRyNjY5ejZZZUFtTm1acTVpL1Ux?=
- =?utf-8?B?bWZTNFdRYUJodFgxNkl4dDlmRWoxcDk3OEx6dmg1WnBJMDJybW4yRzhkdHVw?=
- =?utf-8?Q?relb+ER4RBwxM?=
-X-OriginatorOrg: suse.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9aa4b853-01fe-43ea-d03c-08d8de6158d0
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR0402MB3359.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2021 16:28:15.7418
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2QU/EMEKj7Zl6dz7J4GiYVzCTKoDTAnK4OGYWhaL/mcD0XMcIrbVEAWnFOt6iMIL
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7456
+References: <1ad49a62-41dd-cdcc-2f8c-b7a2ad67c3b6@huawei.com> <a32dfe3c-8821-77c3-23dd-809b659d2e4f@huawei.com>
+In-Reply-To: <a32dfe3c-8821-77c3-23dd-809b659d2e4f@huawei.com>
+From:   Gioh Kim <gi-oh.kim@cloud.ionos.com>
+Date:   Wed, 3 Mar 2021 17:36:28 +0100
+Message-ID: <CAJX1YtboZLrmiNMtRBU8-U5rQNv9GqEPx+TiWyLt0mqqotmksQ@mail.gmail.com>
+Subject: Re: can the idle value of /proc/stat decrease?
+To:     "xuqiang (M)" <xuqiang36@huawei.com>
+Cc:     adobriyan@gmail.com, christian.brauner@ubuntu.com,
+        michael.weiss@aisec.fraunhofer.de, sfr@canb.auug.org.au,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        rui.xiang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Tom,
+Hi,
 
-Thanks for taking a look.
+We found the same problem on our production servers.
 
-Tom Talpey <tom@talpey.com> writes:
-> On 3/2/2021 10:48 AM, Aur=C3=A9lien Aptel wrote:
-> I'd suggest removing this sentence. It doesn't really add anything to
-> the definition.
+For example, prometheus-node-exporter reported below message:
+daemon.info: Feb  8 17:43:12 ps601b-202
+prometheus-node-exporter[2506]: level=3Dwarn ts=3D2021-02-08T17:43:12.052Z
+caller=3Dcpu_linux.go:247 collector=3Dcpu msg=3D"CPU Idle counter jumped
+backwards, possible hotplug event, resetting CPU stats" cpu=3D78
+old_value=3D1.04782328e+06 new_value=3D1.04782178e+06
 
-OK.
+The idle value was changed from 1.04782328e+06 to 1.04782178e+06.
 
-> This is discussing the scenario where a process on the server performs
-> an flock(), right? That's perhaps confusingly special. How about
+AND the server rebooted after some minutes.
+There is no other error in the log files.
+I currently suspect the CPU counter decreasing caused the system reboot.
 
-This is about clients. Let's say the same app is running on 2 different
-Linux system that have the same Windows Server share mounted.
-
-The scenario is those 2 app instances use the same file on the share and
-are trying to synchronize access using flock().
-
-Pre-5.5, CIFS flock() is using the generic flock() implementation from
-the Linux VFS layer which only knows about syscall made by local apps
-and isn't aware that the file can be accessed under its feet from the
-network.
-
-In 5.5 and above, CIFS flock() is implemented using SMB locks, which
-have different semantics than what POSIX defines, i.e. you cannot ignore
-the locks and write, write() will fail with EPERM. So this version can
-be used for file sync with other clients but works slightly
-differently. It is a best-effort attempt.
-
-Does this clarification changes anything to your suggestions?
-
-> "In Linux kernels up to 5.4, flock() is not propagated over SMB. A file
-> with such locks will not appear locked for remote clients."
+On Mon, Dec 28, 2020 at 8:57 AM xuqiang (M) <xuqiang36@huawei.com> wrote:
+>
+> Our recent test shows that the idle value of /proc/stat can decrease.
+> Is this an unreported bug? or it has been reported and the solution is
+> waiting to get merged.
+>
+> The results of the two readings from /proc/stat are shown as below, the
+> interval between the two readings is 150 ms:
+>
+> cat /proc/stat
+> cpu0 5536 10 14160 4118960 0 0 227128 0 0 0
+>
+> cat /proc/stat
+> cpu0 5536 10 14160 4118959 0 0 227143 0 0 0
 
 
-> "protocol, which provides mandatory locking semantics."
 
-OK. As it turns out, there is actually a 'nobrl' mount option to get back
-pre-5.5 behavior. I'll mention it and use your suggestions in v2.
-
-Cheers,
 --=20
-Aur=C3=A9lien Aptel / SUSE Labs Samba Team
-GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, D=
-E
-GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=C3=BC=
-nchen)
+Gioh Kim
 
+Cloud server kernel maintainer
+Quality Management (IONOS Cloud)
+
+1&1 IONOS SE | Greifswalder Str. 207 | 10405 Berlin | Germany
+Phone: +49 176 26978962
+E-mail: gi-oh.kim@cloud.ionos.com | Web: www.ionos.de
+
+Hauptsitz Montabaur, Amtsgericht Montabaur, HRB 24498
+
+Vorstand: Dr. Christian B=C3=B6ing, H=C3=BCseyin Dogan, Dr. Martin Endre=C3=
+=9F,
+Hans-Henning Kettler, Arthur Mai, Matthias Steinberg, Achim Wei=C3=9F
+Aufsichtsratsvorsitzender: Markus Kadelke
+
+Member of United Internet
+
+Diese E-Mail kann vertrauliche und/oder gesetzlich gesch=C3=BCtzte
+Informationen enthalten. Wenn Sie nicht der bestimmungsgem=C3=A4=C3=9Fe Adr=
+essat
+sind oder diese E-Mail irrt=C3=BCmlich erhalten haben, unterrichten Sie
+bitte den Absender und vernichten Sie diese E-Mail. Anderen als dem
+bestimmungsgem=C3=A4=C3=9Fen Adressaten ist untersagt, diese E-Mail zu
+speichern, weiterzuleiten oder ihren Inhalt auf welche Weise auch
+immer zu verwenden.
+
+This e-mail may contain confidential and/or privileged information. If
+you are not the intended recipient of this e-mail, you are hereby
+notified that saving, distribution or use of the content of this
+e-mail in any way is prohibited. If you have received this e-mail in
+error, please notify the sender and delete the e-mail.
