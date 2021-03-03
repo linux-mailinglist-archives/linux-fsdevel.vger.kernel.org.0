@@ -2,74 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 413A032C533
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:58:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74E3F32C531
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:58:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1446697AbhCDATm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 19:19:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358412AbhCCMGT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Mar 2021 07:06:19 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1B3C0617A9;
-        Wed,  3 Mar 2021 02:43:55 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id o16so5842965wmh.0;
-        Wed, 03 Mar 2021 02:43:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PgwT9droUAx+uKTWrWPCHSLR4SLfHYSyusjr/F/kZq4=;
-        b=q6RC5n3oKhbYY1sx6cKN0UGvK6qCSa5W+zBFufHpKisu8L3kmH0xDUY4oZPor/Z8kc
-         R2B7HxEY+0zg1DP/dBUvDgvOscTPCXUiXNH9EFSkwY78zu5oouCdszqFjjqU7OlL68IJ
-         Nlzq63WJTrnNL7R14c57Li4cD+fCjN6QpT18e7o/wGnLxC14YRwnzDywwlnR72urmlfv
-         DjkQ7YEP/c2EZRAlxWLrDQUI+iOC7ZAM9ImYVwZkyAmo8tDuazWsg6547K65JKoc/TP7
-         E/WK46SRW+RQdCSZngJ3BSXsEliG8m8jJLZybFgLYH2Rd980ff3SW3DCjsbvvVxiiA7+
-         pCqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PgwT9droUAx+uKTWrWPCHSLR4SLfHYSyusjr/F/kZq4=;
-        b=N21yyydXEl8kQhxQKSzMNh/0MOS72UXZgS+U6P/mOUU4Ku7yKZ61p0LwYAhT4myBQ2
-         rrBXR//B6FMsXtlFfzuAJZI4st/qGqm9EAyDQfxgi7fP5iGHn8/6fKlTDO0MfzgOtaHE
-         w/IRUexEuZgBdeHEkeiTrduFH0CEUHU4+kAQRnDCiGAg/UGqBVf9gaEGz/1fh0b3gpNx
-         4A5irRzV1O3bPDFt3UHTs7CNS+Tc1UCSo+UAlANJz79hXcG7AVmy1rtRjmzgnmr8Ak6e
-         flwlVPJPP6oaxCDMt+0Wnw1jUaV33t/XN9sp64qbVPhjvivHNILcMStLpR/9P2mh7syG
-         Aqfw==
-X-Gm-Message-State: AOAM530X10pvShLxT7QrpxZ9uaWTGYkOj4DcufdJhel72RvE4Bo2jVOo
-        LjMo60Hbt8rcjybmVbL/jzfjavXm7P1R0Dlh
-X-Google-Smtp-Source: ABdhPJxM9Lby412bEqIBX7NezdIFCNwizwket4RtkZB6yfemGIq2z2wzCqkaK9sOF4fyJV6qVNs/TA==
-X-Received: by 2002:a7b:c755:: with SMTP id w21mr8728296wmk.89.1614768234396;
-        Wed, 03 Mar 2021 02:43:54 -0800 (PST)
-Received: from localhost.localdomain (bzq-79-179-86-219.red.bezeqint.net. [79.179.86.219])
-        by smtp.googlemail.com with ESMTPSA id u137sm5504454wmu.20.2021.03.03.02.43.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Mar 2021 02:43:54 -0800 (PST)
-From:   Lior Ribak <liorribak@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     deller@gmx.de, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Lior Ribak <liorribak@gmail.com>
-Subject: Re: [PATCH v2] binfmt_misc: Fix possible deadlock in bm_register_write
-Date:   Wed,  3 Mar 2021 02:43:30 -0800
-Message-Id: <20210303104330.100557-1-liorribak@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210302164119.406098356cdea37b999b0b0a@linux-foundation.org>
-References: <20210302164119.406098356cdea37b999b0b0a@linux-foundation.org>
+        id S1445857AbhCDATl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 19:19:41 -0500
+Received: from verein.lst.de ([213.95.11.211]:36473 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1358241AbhCCL5l (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Mar 2021 06:57:41 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 5C59368B02; Wed,  3 Mar 2021 11:43:37 +0100 (CET)
+Date:   Wed, 3 Mar 2021 11:43:36 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "rgoldwyn@suse.de" <rgoldwyn@suse.de>
+Subject: Re: [PATCH v2 09/10] fs/xfs: Handle CoW for fsdax write() path
+Message-ID: <20210303104336.GA20371@lst.de>
+References: <20210226002030.653855-1-ruansy.fnst@fujitsu.com> <OSBPR01MB2920500BEA2DF0D47885A8FDF4989@OSBPR01MB2920.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OSBPR01MB2920500BEA2DF0D47885A8FDF4989@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Looks good to me.
+On Wed, Mar 03, 2021 at 09:57:48AM +0000, ruansy.fnst@fujitsu.com wrote:
+> > What is the advantage of the ioemap_end handler here?  It adds another
+> > indirect funtion call to the fast path, so if we can avoid it, I'd
+> > rather do that.
 > 
-> I assume this is an ancient bug and that a backport to -stable trees
-> (with a cc:stable) is warranted?
+> These code were in xfs_file_dax_write().  I moved them into the iomap_end
+> because the mmaped CoW need this.
+> 
+> I know this is not so good, but I could not find another better way. Do you
+> have any ideas? 
 
-Yep, it exists since the "persistent opened binary handler" commit 
-948b701a607f123df92ed29084413e5dd8cda2ed was introduced in version 4.8, and yes i think the patch
-can be backported to the stable trees
+mmaped copy is the copy_edge case?  Maybe just use different iomap_ops for
+that case vs plain write?
