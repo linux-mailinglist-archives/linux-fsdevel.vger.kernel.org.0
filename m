@@ -2,101 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 56F0E32C56A
+	by mail.lfdr.de (Postfix) with ESMTP id CA51932C56B
 	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:59:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378893AbhCDAUh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 19:20:37 -0500
-Received: from z11.mailgun.us ([104.130.96.11]:50843 "EHLO z11.mailgun.us"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1577515AbhCCRsr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Mar 2021 12:48:47 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1614793709; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=Fcd2CI16BjPfDlrMPeOLMsbcVTQCVnoyX8FWXapXUqY=;
- b=O1JoxqTOaN4V3FMn/0pWVqAUs0Cgx3FFloemVyU8uDwLDHRzF74BUqv0NWDaUrSQO2GBrrAV
- 0Jc737zAkaxYacY5L/Vs4ioPrusFWAaRo1iBn1JzmJOzn7BHmwVSaWS2Luv4vDVP7ocdgtiE
- ov6jl3Bn86WGSVmE4YalpcTTwfg=
-X-Mailgun-Sending-Ip: 104.130.96.11
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
- 603fcbc6c862e1b9fdb26fda (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 03 Mar 2021 17:47:50
- GMT
-Sender: pintu=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id C4B74C433CA; Wed,  3 Mar 2021 17:47:50 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: pintu)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 708BEC433ED;
-        Wed,  3 Mar 2021 17:47:49 +0000 (UTC)
+        id S1355135AbhCDAUi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 19:20:38 -0500
+Received: from p3plsmtpa11-03.prod.phx3.secureserver.net ([68.178.252.104]:47639
+        "EHLO p3plsmtpa11-03.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1349230AbhCCSNf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Mar 2021 13:13:35 -0500
+Received: from [192.168.0.116] ([71.184.94.153])
+        by :SMTPAUTH: with ESMTPSA
+        id HVvelXiCvKEOAHVvelgCok; Wed, 03 Mar 2021 11:08:58 -0700
+X-CMAE-Analysis: v=2.4 cv=erwacqlX c=1 sm=1 tr=0 ts=603fd0ba
+ a=vbvdVb1zh1xTTaY8rfQfKQ==:117 a=vbvdVb1zh1xTTaY8rfQfKQ==:17
+ a=IkcTkHD0fZMA:10 a=iox4zFpeAAAA:8 a=Dn3fJbBJWZ8bWwpP0-sA:9 a=QEXdDO2ut3YA:10
+ a=WzC6qhA0u3u7Ye7llzcV:22
+X-SECURESERVER-ACCT: tom@talpey.com
+Subject: Re: [PATCH v2] flock.2: add CIFS details
+To:     =?UTF-8?Q?Aur=c3=a9lien_Aptel?= <aaptel@suse.com>,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-man@vger.kernel.org, mtk.manpages@gmail.com
+Cc:     smfrench@gmail.com
+References: <8735xcxkv5.fsf@suse.com> <20210303163755.31127-1-aaptel@suse.com>
+From:   Tom Talpey <tom@talpey.com>
+Message-ID: <17fc432c-f485-0945-6d12-fa338ea0025f@talpey.com>
+Date:   Wed, 3 Mar 2021 13:08:58 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 03 Mar 2021 23:17:49 +0530
-From:   pintu@codeaurora.org
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        iamjoonsoo.kim@lge.com, sh_def@163.com, mateusznosek0@gmail.com,
-        bhe@redhat.com, nigupta@nvidia.com, yzaikin@google.com,
-        keescook@chromium.org, mcgrof@kernel.org,
-        mgorman@techsingularity.net, pintu.ping@gmail.com
-Subject: Re: [PATCH] mm/compaction: remove unused variable
- sysctl_compact_memory
-In-Reply-To: <486d7af3-95a3-9701-f0f9-706ff49b99d1@suse.cz>
-References: <1614707773-10725-1-git-send-email-pintu@codeaurora.org>
- <486d7af3-95a3-9701-f0f9-706ff49b99d1@suse.cz>
-Message-ID: <c99eb67f67e4e24b4df1a78a583837b1@codeaurora.org>
-X-Sender: pintu@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+In-Reply-To: <20210303163755.31127-1-aaptel@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfCWhMEvjwmzD8Up+kCe11ZTwxATDUaYkCaSiMu66xtAOJDknoqjgYDolWUzD30AASEU3ysNJTqgye3KgMwSCjrYbnSojIBN3xh9sSY7M38WZP//0PUlc
+ e8FRucMuxT+TXlO+yOfuCEu23fHOqGS2R4OjH5gcCUvLGWoE4cYmYqgAirQTj9yWA5HbR67TSI9xsnlKEB3D34fswAlSNIJ5hI5U69AFUtGRKovTyCril6Wa
+ Y3UHM4UmPcAuYKW16EqYRUUjY4UJu0sHPWNjwI0jsmdNTBn8mXAmMxAc5HRuK/mdVxqu39PAentTwAsva67FCqT4vKXZCb9zuQ6dnDsKIv0m4Jj6SDbtvhoQ
+ S5y4xRm4
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021-03-03 22:39, Vlastimil Babka wrote:
-> On 3/2/21 6:56 PM, Pintu Kumar wrote:
->> The sysctl_compact_memory is mostly unsed in mm/compaction.c
->> It just acts as a place holder for sysctl.
->> 
->> Thus we can remove it from here and move the declaration directly
->> in kernel/sysctl.c itself.
->> This will also eliminate the extern declaration from header file.
->> No functionality is broken or changed this way.
->> 
->> Signed-off-by: Pintu Kumar <pintu@codeaurora.org>
->> Signed-off-by: Pintu Agarwal <pintu.ping@gmail.com>
-> 
-> You should be able to remove the variable completely and set .data to 
-> NULL in
-> the corresponding entry. The sysctl_compaction_handler doesn't access 
-> it at all.
-> 
-> Then you could do the same with drop_caches. Currently
-> drop_caches_sysctl_handler currently writes to it, but that can be 
-> avoided using
-> a local variable - see how sysrq_sysctl_handler avoids the global 
-> variable and
-> its corresponding .data field is NULL.
-> 
+Definitely better! Couple of suggestions:
 
-Oh yes, thank you so much for the reference.
-Yes I was looking to do something similar but didn't realize that is 
-possible.
-I will re-submit the new patch.
+On 3/3/2021 11:37 AM, Aurélien Aptel wrote:
+> From: Aurelien Aptel <aaptel@suse.com>
+> 
+> Similarly to NFS, CIFS flock() locks behave differently than the
+> standard. Document those differences.
+> 
+> Here is the rendered text:
+> 
+> CIFS details
+>    In  Linux kernels up to 5.4, flock() is not propagated over SMB. A file
+>    with such locks will not appear locked for other SMB clients.
+> 
+>    Since Linux 5.5, flock() are emulated with SMB byte-range locks on  the
+>    entire  file.  Similarly  to  NFS, this means that fcntl(2) and flock()
+>    locks interact with one another over SMB. Another important side-effect
+>    is  that  the  locks are not advisory anymore: a write on a locked file
+>    will always fail with EACCESS.  This difference originates from the de-
+>    sign of locks in the SMB protocol, which provides mandatory locking se-
+>    mantics. The nobrl mount option can be used switch back to pre-5.5 ker-
+>    nel behavior.
+> 
+> Signed-off-by: Aurelien Aptel <aaptel@suse.com>
+> ---
+>   man2/flock.2 | 21 +++++++++++++++++++++
+>   1 file changed, 21 insertions(+)
+> 
+> diff --git a/man2/flock.2 b/man2/flock.2
+> index 61d4b5396..7c4e7e8c9 100644
+> --- a/man2/flock.2
+> +++ b/man2/flock.2
+> @@ -239,6 +239,27 @@ see the discussion of the
+>   .I "local_lock"
+>   option in
+>   .BR nfs (5).
+> +.SS CIFS details
+> +In Linux kernels up to 5.4,
+> +.BR flock ()
+> +is not propagated over SMB. A file with such locks will not appear
+> +locked for other SMB clients.
 
-And yes, I will try to explore more on drop_caches part as well.
+Other "remote" clients, right? It's not limited to SMB, if the server
+is also managing other protocols which might support flock'ing.
 
-Thanks,
-Pintu
+> +.PP
+> +Since Linux 5.5,
+> +.BR flock ()
+> +are emulated with SMB byte-range locks on the
+> +entire file. Similarly to NFS, this means that
+> +.BR fcntl (2)
+> +and
+> +.BR flock ()
+> +locks interact with one another over SMB. Another important
+
+There's a subtlety here. If the server implements these SMB byte-range
+locks in certain ways, the locks may interact with other protocols too.
+So constraining the statement to "over SMB" may be incomplete.
+
+Wy not simply say "this means that fcntl() and flock() locks interact
+with one another", and preserve the generality?
+
+> +side-effect is that the locks are not advisory anymore: a write on a
+> +locked file will always fail with
+> +.BR EACCESS .
+> +This difference originates from the design of locks in the SMB
+> +protocol, which provides mandatory locking semantics. The
+> +.BR nobrl
+> +mount option can be used switch back to pre-5.5 kernel behavior.
+
+Wait, the page just said that pre-5.5 was local only. Wouldn't it
+be better to just say that "nobrl" turns off the entire behavior of
+forwarding locks to the server, like before? Or are there other
+side effects...
+
+Tom.
+
+>   .SH SEE ALSO
+>   .BR flock (1),
+>   .BR close (2),
+> 
