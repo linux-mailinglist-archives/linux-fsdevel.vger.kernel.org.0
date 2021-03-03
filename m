@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D90C732C55E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:59:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DD5832C55F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:59:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245432AbhCDAUQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 19:20:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50054 "EHLO mail.kernel.org"
+        id S1345666AbhCDAUR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 19:20:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1346275AbhCCQ0Q (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1346415AbhCCQ0Q (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 3 Mar 2021 11:26:16 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3499364EE4;
-        Wed,  3 Mar 2021 16:23:14 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8C5A364F07;
+        Wed,  3 Mar 2021 16:23:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614788606;
-        bh=6b+ZR7FjQvlDr4jXaWCA00myeSkXgeo8Jm0+Vd2uO+U=;
+        s=k20201202; t=1614788617;
+        bh=WdLa9ZZxuBADbujeOJu0bHGHXitkk2itr8spRdpuWI0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YHeQbLIcDKvS2ckCbMg6k+t1IysBN45ZxZP/MMJoTxp3cd+oixDyqB+eoyd84yzF+
-         3k1Ft0hUp8zAyLWpW2uZTEAlPqk1ai+BH61Gg0ONbznoZjyC+QAQNym6EsrzhB0O/M
-         D08ZIqGfx/qKr38497ZhZvri9D/Nbc8R8zP3kAgkTTZmE+mR+WrvUWd3aLAg+xH/1x
-         eIZAALd/WGP1FWFZo4jW68g6iRI/lnpa0wBOU+kHbrPFXXca2YG4nqEvLc+XxafH7s
-         FsSpl9izxiUJs6Klybx63D1BfMoiCOa1QbCpu8KLom+GxW4ACueMy9kJLhmJj364Qx
-         Pjou0FB3EuGlQ==
+        b=P6UUIOPV22xfLrEOpt2xzhSw2pBYX/MTwSR02KL1KZxSKAdLTws3cJJfK3tjOv2Z3
+         J+nCzLR68Z01Hr8nuBKdWXN0s8Z2L17LN9mKeUyj3D7PTZgsL5EGPHq/eUV13tLU81
+         Mm9izr6C8t9K9McyBqXxdYRjuwCv6MixmsYZf/VqX3j86IvWiSmVWp5S1v0l8Nl+yo
+         HYepR7KuWlGjv37kGdhOIEhxfuk9Iz2hX9LC777+unKK2UAUIW8b5KGPt25s3+v1Xm
+         THCiq70xRX7f3GQeGuk6Exg9OckMLXjV5qCus1KWUKUH/usZ3KizczFODWOSxR2VPN
+         Mn12rHvUvVMmg==
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -61,9 +61,9 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
         x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
         Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: [PATCH v18 5/9] set_memory: allow querying whether set_direct_map_*() is actually enabled
-Date:   Wed,  3 Mar 2021 18:22:05 +0200
-Message-Id: <20210303162209.8609-6-rppt@kernel.org>
+Subject: [PATCH v18 6/9] mm: introduce memfd_secret system call to create "secret" memory areas
+Date:   Wed,  3 Mar 2021 18:22:06 +0200
+Message-Id: <20210303162209.8609-7-rppt@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20210303162209.8609-1-rppt@kernel.org>
 References: <20210303162209.8609-1-rppt@kernel.org>
@@ -75,38 +75,108 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mike Rapoport <rppt@linux.ibm.com>
 
-On arm64, set_direct_map_*() functions may return 0 without actually
-changing the linear map.  This behaviour can be controlled using kernel
-parameters, so we need a way to determine at runtime whether calls to
-set_direct_map_invalid_noflush() and set_direct_map_default_noflush() have
-any effect.
+Introduce "memfd_secret" system call with the ability to create memory
+areas visible only in the context of the owning process and not mapped not
+only to other processes but in the kernel page tables as well.
 
-Extend set_memory API with can_set_direct_map() function that allows
-checking if calling set_direct_map_*() will actually change the page
-table, replace several occurrences of open coded checks in arm64 with the
-new function and provide a generic stub for architectures that always
-modify page tables upon calls to set_direct_map APIs.
+The secretmem feature is off by default and the user must explicitly enable
+it at the boot time.
 
-[arnd@arndb.de: arm64: kfence: fix header inclusion ]
+Once secretmem is enabled, the user will be able to create a file
+descriptor using the memfd_secret() system call. The memory areas created
+by mmap() calls from this file descriptor will be unmapped from the kernel
+direct map and they will be only mapped in the page table of the processes
+that have access to the file descriptor.
+
+The file descriptor based memory has several advantages over the
+"traditional" mm interfaces, such as mlock(), mprotect(), madvise(). File
+descriptor approach allows explict and controlled sharing of the memory
+areas, it allows to seal the operations. Besides, file descriptor based
+memory paves the way for VMMs to remove the secret memory range from the
+userpace hipervisor process, for instance QEMU. Andy Lutomirski says:
+
+  "Getting fd-backed memory into a guest will take some possibly major work
+   in the kernel, but getting vma-backed memory into a guest without
+   mapping it in the host user address space seems much, much worse."
+
+memfd_secret() is made a dedicated system call rather than an extention to
+memfd_create() because it's purpose is to allow the user to create more
+secure memory mappings rather than to simply allow file based access to the
+memory. Nowadays a new system call cost is negligible while it is way
+simpler for userspace to deal with a clear-cut system calls than with a
+multiplexer or an overloaded syscall. Moreover, the initial implementation
+of memfd_secret() is completely distinct from memfd_create() so there is no
+much sense in overloading memfd_create() to begin with. If there will be a
+need for code sharing between these implementation it can be easily
+achieved without a need to adjust user visible APIs.
+
+The secret memory remains accessible in the process context using uaccess
+primitives, but it is not exposed to the kernel otherwise; secret memory
+areas are removed from the direct map and functions in the
+follow_page()/get_user_page() family will refuse to return a page that
+belongs to the secret memory area.
+
+Once there will be a use case that will require exposing secretmem to the
+kernel it will be an opt-in request in the system call flags so that user
+would have to decide what data can be exposed to the kernel.
+
+Removing of the pages from the direct map may cause its fragmentation on
+architectures that use large pages to map the physical memory which affects
+the system performance. However, the original Kconfig text for
+CONFIG_DIRECT_GBPAGES said that gigabyte pages in the direct map "... can
+improve the kernel's performance a tiny bit ..." (commit 00d1c5e05736
+("x86: add gbpages switches")) and the recent report [1] showed that "...
+although 1G mappings are a good default choice, there is no compelling
+evidence that it must be the only choice". Hence, it is sufficient to have
+secretmem disabled by default with the ability of a system administrator to
+enable it at boot time.
+
+Pages in the secretmem regions are unevictable and unmovable to avoid
+accidental exposure of the sensitive data via swap or during page
+migration.
+
+Since the secretmem mappings are locked in memory they cannot exceed
+RLIMIT_MEMLOCK. Since these mappings are already locked independently from
+mlock(), an attempt to mlock()/munlock() secretmem range would fail and
+mlockall()/munlockall() will ignore secretmem mappings.
+
+However, unlike mlock()ed memory, secretmem currently behaves more like
+long-term GUP: secretmem mappings are unmovable mappings directly consumed
+by user space. With default limits, there is no excessive use of secretmem
+and it poses no real problem in combination with ZONE_MOVABLE/CMA, but in
+the future this should be addressed to allow balanced use of large amounts
+of secretmem along with ZONE_MOVABLE/CMA.
+
+A page that was a part of the secret memory area is cleared when it is
+freed to ensure the data is not exposed to the next user of that page.
+
+The following example demonstrates creation of a secret mapping (error
+handling is omitted):
+
+	fd = memfd_secret(0);
+	ftruncate(fd, MAP_SIZE);
+	ptr = mmap(NULL, MAP_SIZE, PROT_READ | PROT_WRITE,
+		   MAP_SHARED, fd, 0);
+
+[1] https://lore.kernel.org/linux-mm/213b4567-46ce-f116-9cdf-bbd0c884eb3c@linux.intel.com/
 
 Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Acked-by: Hagen Paul Pfeifer <hagen@jauu.net>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Borislav Petkov <bp@alien8.de>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Christopher Lameter <cl@linux.com>
 Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Elena Reshetova <elena.reshetova@intel.com>
-Cc: Hagen Paul Pfeifer <hagen@jauu.net>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: James Bottomley <jejb@linux.ibm.com>
 Cc: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Michael Kerrisk <mtk.manpages@gmail.com>
 Cc: Palmer Dabbelt <palmer@dabbelt.com>
 Cc: Palmer Dabbelt <palmerdabbelt@google.com>
@@ -120,199 +190,408 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Tycho Andersen <tycho@tycho.ws>
 Cc: Will Deacon <will@kernel.org>
 ---
- arch/arm64/include/asm/Kbuild       |  1 -
- arch/arm64/include/asm/cacheflush.h |  6 ------
- arch/arm64/include/asm/kfence.h     |  2 +-
- arch/arm64/include/asm/set_memory.h | 17 +++++++++++++++++
- arch/arm64/kernel/machine_kexec.c   |  1 +
- arch/arm64/mm/mmu.c                 |  6 +++---
- arch/arm64/mm/pageattr.c            | 13 +++++++++----
- include/linux/set_memory.h          | 12 ++++++++++++
- 8 files changed, 43 insertions(+), 15 deletions(-)
- create mode 100644 arch/arm64/include/asm/set_memory.h
+ include/linux/secretmem.h  |  24 ++++
+ include/uapi/linux/magic.h |   1 +
+ kernel/sys_ni.c            |   2 +
+ mm/Kconfig                 |   3 +
+ mm/Makefile                |   1 +
+ mm/gup.c                   |  10 ++
+ mm/mlock.c                 |   3 +-
+ mm/secretmem.c             | 246 +++++++++++++++++++++++++++++++++++++
+ 8 files changed, 289 insertions(+), 1 deletion(-)
+ create mode 100644 include/linux/secretmem.h
+ create mode 100644 mm/secretmem.c
 
-diff --git a/arch/arm64/include/asm/Kbuild b/arch/arm64/include/asm/Kbuild
-index 07ac208edc89..73aa25843f65 100644
---- a/arch/arm64/include/asm/Kbuild
-+++ b/arch/arm64/include/asm/Kbuild
-@@ -3,5 +3,4 @@ generic-y += early_ioremap.h
- generic-y += mcs_spinlock.h
- generic-y += qrwlock.h
- generic-y += qspinlock.h
--generic-y += set_memory.h
- generic-y += user.h
-diff --git a/arch/arm64/include/asm/cacheflush.h b/arch/arm64/include/asm/cacheflush.h
-index ace2c3d7ae7e..4e3c13799735 100644
---- a/arch/arm64/include/asm/cacheflush.h
-+++ b/arch/arm64/include/asm/cacheflush.h
-@@ -131,12 +131,6 @@ static __always_inline void __flush_icache_all(void)
- 	dsb(ish);
- }
- 
--int set_memory_valid(unsigned long addr, int numpages, int enable);
--
--int set_direct_map_invalid_noflush(struct page *page, int numpages);
--int set_direct_map_default_noflush(struct page *page, int numpages);
--bool kernel_page_present(struct page *page);
--
- #include <asm-generic/cacheflush.h>
- 
- #endif /* __ASM_CACHEFLUSH_H */
-diff --git a/arch/arm64/include/asm/kfence.h b/arch/arm64/include/asm/kfence.h
-index d061176d57ea..aa855c6a0ae6 100644
---- a/arch/arm64/include/asm/kfence.h
-+++ b/arch/arm64/include/asm/kfence.h
-@@ -8,7 +8,7 @@
- #ifndef __ASM_KFENCE_H
- #define __ASM_KFENCE_H
- 
--#include <asm/cacheflush.h>
-+#include <asm/set_memory.h>
- 
- static inline bool arch_kfence_init_pool(void) { return true; }
- 
-diff --git a/arch/arm64/include/asm/set_memory.h b/arch/arm64/include/asm/set_memory.h
+diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
 new file mode 100644
-index 000000000000..ecb6b0f449ab
+index 000000000000..70e7db9f94fe
 --- /dev/null
-+++ b/arch/arm64/include/asm/set_memory.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
++++ b/include/linux/secretmem.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _LINUX_SECRETMEM_H
++#define _LINUX_SECRETMEM_H
 +
-+#ifndef _ASM_ARM64_SET_MEMORY_H
-+#define _ASM_ARM64_SET_MEMORY_H
++#ifdef CONFIG_SECRETMEM
 +
-+#include <asm-generic/set_memory.h>
++bool vma_is_secretmem(struct vm_area_struct *vma);
++bool page_is_secretmem(struct page *page);
 +
-+bool can_set_direct_map(void);
-+#define can_set_direct_map can_set_direct_map
++#else
 +
-+int set_memory_valid(unsigned long addr, int numpages, int enable);
-+
-+int set_direct_map_invalid_noflush(struct page *page, int numpages);
-+int set_direct_map_default_noflush(struct page *page, int numpages);
-+bool kernel_page_present(struct page *page);
-+
-+#endif /* _ASM_ARM64_SET_MEMORY_H */
-diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
-index 90a335c74442..0ec94e718724 100644
---- a/arch/arm64/kernel/machine_kexec.c
-+++ b/arch/arm64/kernel/machine_kexec.c
-@@ -11,6 +11,7 @@
- #include <linux/kernel.h>
- #include <linux/kexec.h>
- #include <linux/page-flags.h>
-+#include <linux/set_memory.h>
- #include <linux/smp.h>
- 
- #include <asm/cacheflush.h>
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 3802cfbdd20d..9243ea9f4e9f 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -22,6 +22,7 @@
- #include <linux/io.h>
- #include <linux/mm.h>
- #include <linux/vmalloc.h>
-+#include <linux/set_memory.h>
- 
- #include <asm/barrier.h>
- #include <asm/cputype.h>
-@@ -492,7 +493,7 @@ static void __init map_mem(pgd_t *pgdp)
- 	int flags = 0;
- 	u64 i;
- 
--	if (rodata_full || crash_mem_map || debug_pagealloc_enabled())
-+	if (can_set_direct_map() || crash_mem_map)
- 		flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
- 
- 	/*
-@@ -1470,8 +1471,7 @@ int arch_add_memory(int nid, u64 start, u64 size,
- 	 * KFENCE requires linear map to be mapped at page granularity, so that
- 	 * it is possible to protect/unprotect single pages in the KFENCE pool.
- 	 */
--	if (rodata_full || debug_pagealloc_enabled() ||
--	    IS_ENABLED(CONFIG_KFENCE))
-+	if (can_set_direct_map() || IS_ENABLED(CONFIG_KFENCE))
- 		flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
- 
- 	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
-diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
-index b53ef37bf95a..d505172265b0 100644
---- a/arch/arm64/mm/pageattr.c
-+++ b/arch/arm64/mm/pageattr.c
-@@ -19,6 +19,11 @@ struct page_change_data {
- 
- bool rodata_full __ro_after_init = IS_ENABLED(CONFIG_RODATA_FULL_DEFAULT_ENABLED);
- 
-+bool can_set_direct_map(void)
++static inline bool vma_is_secretmem(struct vm_area_struct *vma)
 +{
-+	return rodata_full || debug_pagealloc_enabled();
++	return false;
 +}
 +
- static int change_page_range(pte_t *ptep, unsigned long addr, void *data)
- {
- 	struct page_change_data *cdata = data;
-@@ -156,7 +161,7 @@ int set_direct_map_invalid_noflush(struct page *page, int numpages)
- 	};
- 	unsigned long size = PAGE_SIZE * numpages;
++static inline bool page_is_secretmem(struct page *page)
++{
++	return false;
++}
++
++#endif /* CONFIG_SECRETMEM */
++
++#endif /* _LINUX_SECRETMEM_H */
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index f3956fc11de6..35687dcb1a42 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -97,5 +97,6 @@
+ #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
+ #define Z3FOLD_MAGIC		0x33
+ #define PPC_CMM_MAGIC		0xc7571590
++#define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
  
--	if (!debug_pagealloc_enabled() && !rodata_full)
-+	if (!can_set_direct_map())
- 		return 0;
+ #endif /* __LINUX_MAGIC_H__ */
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index 19aa806890d5..e9a2011ee4a2 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -352,6 +352,8 @@ COND_SYSCALL(pkey_mprotect);
+ COND_SYSCALL(pkey_alloc);
+ COND_SYSCALL(pkey_free);
  
- 	return apply_to_page_range(&init_mm,
-@@ -172,7 +177,7 @@ int set_direct_map_default_noflush(struct page *page, int numpages)
- 	};
- 	unsigned long size = PAGE_SIZE * numpages;
++/* memfd_secret */
++COND_SYSCALL(memfd_secret);
  
--	if (!debug_pagealloc_enabled() && !rodata_full)
-+	if (!can_set_direct_map())
- 		return 0;
+ /*
+  * Architecture specific weak syscall entries.
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 24c045b24b95..5f8243442f66 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -872,4 +872,7 @@ config MAPPING_DIRTY_HELPERS
+ config KMAP_LOCAL
+ 	bool
  
- 	return apply_to_page_range(&init_mm,
-@@ -183,7 +188,7 @@ int set_direct_map_default_noflush(struct page *page, int numpages)
- #ifdef CONFIG_DEBUG_PAGEALLOC
- void __kernel_map_pages(struct page *page, int numpages, int enable)
- {
--	if (!debug_pagealloc_enabled() && !rodata_full)
-+	if (!can_set_direct_map())
- 		return;
++config SECRETMEM
++	def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
++
+ endmenu
+diff --git a/mm/Makefile b/mm/Makefile
+index 72227b24a616..b2a564eec27f 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -120,3 +120,4 @@ obj-$(CONFIG_MEMFD_CREATE) += memfd.o
+ obj-$(CONFIG_MAPPING_DIRTY_HELPERS) += mapping_dirty_helpers.o
+ obj-$(CONFIG_PTDUMP_CORE) += ptdump.o
+ obj-$(CONFIG_PAGE_REPORTING) += page_reporting.o
++obj-$(CONFIG_SECRETMEM) += secretmem.o
+diff --git a/mm/gup.c b/mm/gup.c
+index e40579624f10..ecadc80934b2 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -10,6 +10,7 @@
+ #include <linux/rmap.h>
+ #include <linux/swap.h>
+ #include <linux/swapops.h>
++#include <linux/secretmem.h>
  
- 	set_memory_valid((unsigned long)page_address(page), numpages, enable);
-@@ -208,7 +213,7 @@ bool kernel_page_present(struct page *page)
- 	pte_t *ptep;
- 	unsigned long addr = (unsigned long)page_address(page);
+ #include <linux/sched/signal.h>
+ #include <linux/rwsem.h>
+@@ -758,6 +759,9 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
+ 	struct follow_page_context ctx = { NULL };
+ 	struct page *page;
  
--	if (!debug_pagealloc_enabled() && !rodata_full)
-+	if (!can_set_direct_map())
- 		return true;
++	if (vma_is_secretmem(vma))
++		return NULL;
++
+ 	page = follow_page_mask(vma, address, foll_flags, &ctx);
+ 	if (ctx.pgmap)
+ 		put_dev_pagemap(ctx.pgmap);
+@@ -891,6 +895,9 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+ 	if ((gup_flags & FOLL_LONGTERM) && vma_is_fsdax(vma))
+ 		return -EOPNOTSUPP;
  
- 	pgdp = pgd_offset_k(addr);
-diff --git a/include/linux/set_memory.h b/include/linux/set_memory.h
-index c650f82db813..7b4b6626032d 100644
---- a/include/linux/set_memory.h
-+++ b/include/linux/set_memory.h
-@@ -28,7 +28,19 @@ static inline bool kernel_page_present(struct page *page)
- {
- 	return true;
- }
-+#else /* CONFIG_ARCH_HAS_SET_DIRECT_MAP */
++	if (vma_is_secretmem(vma))
++		return -EFAULT;
++
+ 	if (write) {
+ 		if (!(vm_flags & VM_WRITE)) {
+ 			if (!(gup_flags & FOLL_FORCE))
+@@ -2030,6 +2037,9 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
+ 		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
+ 		page = pte_page(pte);
+ 
++		if (page_is_secretmem(page))
++			goto pte_unmap;
++
+ 		head = try_grab_compound_head(page, 1, flags);
+ 		if (!head)
+ 			goto pte_unmap;
+diff --git a/mm/mlock.c b/mm/mlock.c
+index f8f8cc32d03d..188711c72b67 100644
+--- a/mm/mlock.c
++++ b/mm/mlock.c
+@@ -23,6 +23,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/memcontrol.h>
+ #include <linux/mm_inline.h>
++#include <linux/secretmem.h>
+ 
+ #include "internal.h"
+ 
+@@ -503,7 +504,7 @@ static int mlock_fixup(struct vm_area_struct *vma, struct vm_area_struct **prev,
+ 
+ 	if (newflags == vma->vm_flags || (vma->vm_flags & VM_SPECIAL) ||
+ 	    is_vm_hugetlb_page(vma) || vma == get_gate_vma(current->mm) ||
+-	    vma_is_dax(vma))
++	    vma_is_dax(vma) || vma_is_secretmem(vma))
+ 		/* don't set VM_LOCKED or VM_LOCKONFAULT and don't count */
+ 		goto out;
+ 
+diff --git a/mm/secretmem.c b/mm/secretmem.c
+new file mode 100644
+index 000000000000..fa6738e860c2
+--- /dev/null
++++ b/mm/secretmem.c
+@@ -0,0 +1,246 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Some architectures, e.g. ARM64 can disable direct map modifications at
-+ * boot time. Let them overrive this query.
++ * Copyright IBM Corporation, 2021
++ *
++ * Author: Mike Rapoport <rppt@linux.ibm.com>
 + */
-+#ifndef can_set_direct_map
-+static inline bool can_set_direct_map(void)
++
++#include <linux/mm.h>
++#include <linux/fs.h>
++#include <linux/swap.h>
++#include <linux/mount.h>
++#include <linux/memfd.h>
++#include <linux/bitops.h>
++#include <linux/printk.h>
++#include <linux/pagemap.h>
++#include <linux/syscalls.h>
++#include <linux/pseudo_fs.h>
++#include <linux/secretmem.h>
++#include <linux/set_memory.h>
++#include <linux/sched/signal.h>
++
++#include <uapi/linux/magic.h>
++
++#include <asm/tlbflush.h>
++
++#include "internal.h"
++
++#undef pr_fmt
++#define pr_fmt(fmt) "secretmem: " fmt
++
++/*
++ * Define mode and flag masks to allow validation of the system call
++ * parameters.
++ */
++#define SECRETMEM_MODE_MASK	(0x0)
++#define SECRETMEM_FLAGS_MASK	SECRETMEM_MODE_MASK
++
++static bool secretmem_enable __ro_after_init;
++module_param_named(enable, secretmem_enable, bool, 0400);
++MODULE_PARM_DESC(secretmem_enable,
++		 "Enable secretmem and memfd_secret(2) system call");
++
++static vm_fault_t secretmem_fault(struct vm_fault *vmf)
 +{
-+	return true;
++	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
++	struct inode *inode = file_inode(vmf->vma->vm_file);
++	pgoff_t offset = vmf->pgoff;
++	gfp_t gfp = vmf->gfp_mask;
++	unsigned long addr;
++	struct page *page;
++	int err;
++
++	if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
++		return vmf_error(-EINVAL);
++
++retry:
++	page = find_lock_page(mapping, offset);
++	if (!page) {
++		page = alloc_page(gfp | __GFP_ZERO);
++		if (!page)
++			return VM_FAULT_OOM;
++
++		err = set_direct_map_invalid_noflush(page, 1);
++		if (err) {
++			put_page(page);
++			return vmf_error(err);
++		}
++
++		__SetPageUptodate(page);
++		err = add_to_page_cache_lru(page, mapping, offset, gfp);
++		if (unlikely(err)) {
++			put_page(page);
++			/*
++			 * If a split of large page was required, it
++			 * already happened when we marked the page invalid
++			 * which guarantees that this call won't fail
++			 */
++			set_direct_map_default_noflush(page, 1);
++			if (err == -EEXIST)
++				goto retry;
++
++			return vmf_error(err);
++		}
++
++		addr = (unsigned long)page_address(page);
++		flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
++	}
++
++	vmf->page = page;
++	return VM_FAULT_LOCKED;
 +}
-+#define can_set_direct_map can_set_direct_map
- #endif
-+#endif /* CONFIG_ARCH_HAS_SET_DIRECT_MAP */
- 
- #ifndef set_mce_nospec
- static inline int set_mce_nospec(unsigned long pfn, bool unmap)
++
++static const struct vm_operations_struct secretmem_vm_ops = {
++	.fault = secretmem_fault,
++};
++
++static int secretmem_mmap(struct file *file, struct vm_area_struct *vma)
++{
++	unsigned long len = vma->vm_end - vma->vm_start;
++
++	if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
++		return -EINVAL;
++
++	if (mlock_future_check(vma->vm_mm, vma->vm_flags | VM_LOCKED, len))
++		return -EAGAIN;
++
++	vma->vm_flags |= VM_LOCKED | VM_DONTDUMP;
++	vma->vm_ops = &secretmem_vm_ops;
++
++	return 0;
++}
++
++bool vma_is_secretmem(struct vm_area_struct *vma)
++{
++	return vma->vm_ops == &secretmem_vm_ops;
++}
++
++static const struct file_operations secretmem_fops = {
++	.mmap		= secretmem_mmap,
++};
++
++static bool secretmem_isolate_page(struct page *page, isolate_mode_t mode)
++{
++	return false;
++}
++
++static int secretmem_migratepage(struct address_space *mapping,
++				 struct page *newpage, struct page *page,
++				 enum migrate_mode mode)
++{
++	return -EBUSY;
++}
++
++static void secretmem_freepage(struct page *page)
++{
++	set_direct_map_default_noflush(page, 1);
++	clear_highpage(page);
++}
++
++static const struct address_space_operations secretmem_aops = {
++	.freepage	= secretmem_freepage,
++	.migratepage	= secretmem_migratepage,
++	.isolate_page	= secretmem_isolate_page,
++};
++
++bool page_is_secretmem(struct page *page)
++{
++	struct address_space *mapping = page_mapping(page);
++
++	if (!mapping)
++		return false;
++
++	return mapping->a_ops == &secretmem_aops;
++}
++
++static struct vfsmount *secretmem_mnt;
++
++static struct file *secretmem_file_create(unsigned long flags)
++{
++	struct file *file = ERR_PTR(-ENOMEM);
++	struct inode *inode;
++
++	inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
++	if (IS_ERR(inode))
++		return ERR_CAST(inode);
++
++	file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
++				 O_RDWR, &secretmem_fops);
++	if (IS_ERR(file))
++		goto err_free_inode;
++
++	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
++	mapping_set_unevictable(inode->i_mapping);
++
++	inode->i_mapping->a_ops = &secretmem_aops;
++
++	/* pretend we are a normal file with zero size */
++	inode->i_mode |= S_IFREG;
++	inode->i_size = 0;
++
++	return file;
++
++err_free_inode:
++	iput(inode);
++	return file;
++}
++
++SYSCALL_DEFINE1(memfd_secret, unsigned long, flags)
++{
++	struct file *file;
++	int fd, err;
++
++	/* make sure local flags do not confict with global fcntl.h */
++	BUILD_BUG_ON(SECRETMEM_FLAGS_MASK & O_CLOEXEC);
++
++	if (!secretmem_enable)
++		return -ENOSYS;
++
++	if (flags & ~(SECRETMEM_FLAGS_MASK | O_CLOEXEC))
++		return -EINVAL;
++
++	fd = get_unused_fd_flags(flags & O_CLOEXEC);
++	if (fd < 0)
++		return fd;
++
++	file = secretmem_file_create(flags);
++	if (IS_ERR(file)) {
++		err = PTR_ERR(file);
++		goto err_put_fd;
++	}
++
++	file->f_flags |= O_LARGEFILE;
++
++	fd_install(fd, file);
++	return fd;
++
++err_put_fd:
++	put_unused_fd(fd);
++	return err;
++}
++
++static int secretmem_init_fs_context(struct fs_context *fc)
++{
++	return init_pseudo(fc, SECRETMEM_MAGIC) ? 0 : -ENOMEM;
++}
++
++static struct file_system_type secretmem_fs = {
++	.name		= "secretmem",
++	.init_fs_context = secretmem_init_fs_context,
++	.kill_sb	= kill_anon_super,
++};
++
++static int secretmem_init(void)
++{
++	int ret = 0;
++
++	if (!secretmem_enable)
++		return ret;
++
++	secretmem_mnt = kern_mount(&secretmem_fs);
++	if (IS_ERR(secretmem_mnt))
++		ret = PTR_ERR(secretmem_mnt);
++
++	return ret;
++}
++fs_initcall(secretmem_init);
 -- 
 2.28.0
 
