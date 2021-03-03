@@ -2,105 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F02D32B4F0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:39:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 272B132C4F7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:57:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1450216AbhCCFbS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 00:31:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43342 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1449691AbhCCECD (ORCPT
+        id S1359131AbhCDASo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 19:18:44 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:52082 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1354814AbhCCGAF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Mar 2021 23:02:03 -0500
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D863BC0617A9
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Mar 2021 20:01:48 -0800 (PST)
-Received: by mail-pf1-x433.google.com with SMTP id 201so15331488pfw.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Mar 2021 20:01:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=C+8aSxAix6GjFrfY/hP+1D1nUsbFIPsru7pSJjHkC8s=;
-        b=XiHexSnRLXUibZdmdLCk9F45MzW4UsjYA5hRjjqbkZDE2MBNMG1zWPesqrCtaSyY1m
-         IrgW06ZL1o13jgHWxlfNzlzfQQgvspQLyJFJv9tAX3xd9/BPHFsfk+OsjT9Ukh2JT1FD
-         t/5shXZnN8rMw0btxj2Pr16+JwteSAdio+Wqt8YFCOoIIzsR0PRh7QCvhWvZvd+BzQZC
-         eFpzklmp1mXZEIISeAo9JgWVqmYbdNWfQriHE/FzMwIKXGrPvyzi9K/vDNkgVuGdGIGL
-         JnAzcDRDoSgxh2mg6eDgsSPYSxF9Kibw5sDFTRjh+qtdJt7PHNGVplhGOW4oIKngH/z9
-         aC2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=C+8aSxAix6GjFrfY/hP+1D1nUsbFIPsru7pSJjHkC8s=;
-        b=hgc0UQjt4sKdzhDCTL1nHt1jTG0u4p98/5oHWjvZoDR6LwcQuEIa6Q5XVqxd4WK1kE
-         D4yph5Rs4iBgTQHk622k2vaw4XnLJ6BlUn6G6RiZmCGFSo4MRrfIjtPwwG3Y3IEmxx03
-         ISzO8faACOsi2M5HMx3OhbyRpIzSd32QLgJYrbBTudrRHK1X6Y/Iy2dchbsyfHtUVxFr
-         yvATQjcY2lhU1KEGuwbXGIRpPdQY8pqVDIRYhvc5tZtdD8lrLwooStUNRJgvgPD7Dyrj
-         wQ5sa3fDTK9FcM3Wotngw2Rw5bq/9CgOjPX9xEtA0L4phLfc17GKIy62l6u/+AV0vIzd
-         1FXg==
-X-Gm-Message-State: AOAM533vPFnJHiwq463LyX49xSN1iBXHXRB7asozeV5k6kRpubR9KBN+
-        Cz63GQgw9peWKJB4QeSYwJ5jpg==
-X-Google-Smtp-Source: ABdhPJz/lkInWkGXi5xNkZQiSZvVukmfQRl+TJb5xsQeZBc98cclT/FjzP3shu37PJUFwC3ouQ0myQ==
-X-Received: by 2002:aa7:80cc:0:b029:1da:689d:2762 with SMTP id a12-20020aa780cc0000b02901da689d2762mr6400115pfn.3.1614744108375;
-        Tue, 02 Mar 2021 20:01:48 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id b15sm21078349pgj.84.2021.03.02.20.01.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Mar 2021 20:01:47 -0800 (PST)
-Subject: Re: possible deadlock in io_poll_double_wake (2)
-To:     syzbot <syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com>,
-        asml.silence@gmail.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <00000000000017349305bc9254f4@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f83bda00-251c-af17-1073-05fd4da80f59@kernel.dk>
-Date:   Tue, 2 Mar 2021 21:01:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 3 Mar 2021 01:00:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1614751205; x=1646287205;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zHbP2PVz75/uxoCFw4ilooJsgZgJmV6Qp8xrir4zMRw=;
+  b=CKXHfKD8b7sUpHJDUMIwTT32RVvpzEVzwL3hkuXLr7Eai0KmqZmb1UoY
+   p9BumUcjs6332Y+q8D6txEiSBWiowmPaBkYKXxvIHclrtQfny6ffOovdy
+   FvKvRpYl/m9e56SpXB8ZenlXfigJ/Y+26FzDh6/s0ydcg4Z6U+EAuRqon
+   NHsj4gFdtRazIBR3HiWPjZ8gD39Nl1IhSW1kJ0nT/HPRblBDS27Jwk2nW
+   JcfCVbmMbMJgvSp/RV2WHA9q5JyoyUbFoA2zbhijrVmdhCs0yGjBbllwX
+   gZibgod2F8KBuj9f5qrCO9BSSh6iLNX0uPPCzl6liTYUvybvVWZr4c2fu
+   A==;
+IronPort-SDR: jnYlJZLq0F3qYRM0VAYadPDJMypIpYoS7P4zPGaDd1/b0qcZXwWoW36p56YFDs26panBhB/Tlo
+ EizeTgO/0NfE114djySG6cCXA3dONWEemNtAZlpxN3JDnMEG7F2g57MV76XTJeEifOebjg30od
+ qZGOVBHRUyJ3Jc5h3ymBazTshc8NbvVN9pSIjaOu6i0juvkK/Zs0YHwBTGZ+ZNSif3SCNxOWEp
+ LGDH6Q4KUCjWIuiK4cKcJhZOTuywNFmhuIlXy2qZFHhUrReSTitZFzxbNd+wGP9YPg+UVlXpR+
+ bEA=
+X-IronPort-AV: E=Sophos;i="5.81,219,1610380800"; 
+   d="scan'208";a="162392622"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 03 Mar 2021 13:59:00 +0800
+IronPort-SDR: deuwS+MDVCOM9IRdZZhUBIePbpFzWn4RHNYQouWafsa2B919XCF+jtEvlH/EuLGzEedNlHip0C
+ EdxOvA752fm6K5IU4tIvw8gB2a3RXsUPx5FL7NnCCjkI37ms/MKU/HKmOfvII0XNq/yMhQVpoG
+ npmp/KBMg7BRM3k9L7p7Jar9mdbnAY2fjuiwo5jGCfbCzTCZbJZChiePr1exEhObHzBR4V9EAZ
+ wOtSIbLrnJBJaHjIMyywXvwh/c6CpzXHrduAC+6N7UwOC9tHPWTP+6tza4nZOQbTWPOlZwdn7v
+ /hqGih6EjUa7MysVYXWL6scr
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2021 21:42:04 -0800
+IronPort-SDR: lLoAeHooPjrTPxXjr9uqr9EbU9hNYUnAu6LDJlOctTQ6l0brzYNMDUDmqTcO3tsY8j3EB/3hdy
+ 7/Tm6gOJEiuWvbP5FI4xPL5Z7yjrGU3qI4ZbQmoTngxYjeEXwfLAqNWue1vzMdMPsWoI9CwohG
+ d2+LfSohzRTpPDAdrFnOpXJ+IxXDke7HZ0DD43CO+sDU9sa0mvcClQk6T3OmA07O7DyVuby1tJ
+ 2pg4EtEzjQPlYuy0ETPtKIDiT7u1LYDUfvjclPVVmayHQ5JQ6eSY96Kzkf7Dk6aOlb8UObZu+Z
+ xtg=
+WDCIronportException: Internal
+Received: from bksm5s2.ad.shared (HELO naota-xeon) ([10.225.49.22])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2021 21:58:59 -0800
+Date:   Wed, 3 Mar 2021 14:58:57 +0900
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 0/2] fstests: two preperation patches for zoned device
+ support
+Message-ID: <20210303055857.yfevx2uyyhltn2jk@naota-xeon>
+References: <20210302091305.27828-1-johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <00000000000017349305bc9254f4@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210302091305.27828-1-johannes.thumshirn@wdc.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/2/21 11:59 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> possible deadlock in io_poll_double_wake
-> 
-> ============================================
-> WARNING: possible recursive locking detected
-> 5.12.0-rc1-syzkaller #0 Not tainted
-> --------------------------------------------
-> syz-executor.4/10454 is trying to acquire lock:
-> ffff8880343cc130 (&runtime->sleep){..-.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
-> ffff8880343cc130 (&runtime->sleep){..-.}-{2:2}, at: io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4925
-> 
-> but task is already holding lock:
-> ffff888034e3b130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
-> 
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
-> 
->        CPU0
->        ----
->   lock(&runtime->sleep);
->   lock(&runtime->sleep);
+Is this series intended to also Cc'ed to fstests@vger.kernel.org?
 
-This still makes no sense to me - naming is the same, but address of waitqueue_head
-is not (which is what matters). Unless I'm missing something obvious here.
-
-Anyway, added some debug printks, so let's try again.
-
-#syz test: git://git.kernel.dk/linux-block syzbot-test
-
--- 
-Jens Axboe
-
+On Tue, Mar 02, 2021 at 06:13:03PM +0900, Johannes Thumshirn wrote:
+> As btrfs zoned device support was merged with 5.12 here are the 1st two
+> preparational patches for zoned device support in fstests.
+> 
+> The 1st patch adds missing checks for fallocate support to tests that are
+> lacking it and the second patch checks for discard support availability.
+> 
+> Johannes Thumshirn (1):
+>   btrfs: require discard functionality from scratch device
+> 
+> Naohiro Aota (1):
+>   fstests: add missing checks of fallocate feature
+> 
+>  common/rc         | 8 ++++++++
+>  tests/btrfs/013   | 1 +
+>  tests/btrfs/016   | 1 +
+>  tests/btrfs/025   | 1 +
+>  tests/btrfs/034   | 1 +
+>  tests/btrfs/037   | 1 +
+>  tests/btrfs/046   | 1 +
+>  tests/btrfs/107   | 1 +
+>  tests/btrfs/116   | 1 +
+>  tests/btrfs/156   | 1 +
+>  tests/ext4/001    | 1 +
+>  tests/f2fs/001    | 1 +
+>  tests/generic/456 | 1 +
+>  tests/xfs/042     | 1 +
+>  tests/xfs/114     | 1 +
+>  tests/xfs/118     | 1 +
+>  tests/xfs/331     | 1 +
+>  tests/xfs/341     | 1 +
+>  tests/xfs/342     | 1 +
+>  tests/xfs/423     | 1 +
+>  20 files changed, 27 insertions(+)
+> 
+> -- 
+> 2.30.0
+> 
