@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91EE532C559
+	by mail.lfdr.de (Postfix) with ESMTP id DDC6C32C55A
 	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:59:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1450772AbhCDAUH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 19:20:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46330 "EHLO mail.kernel.org"
+        id S235177AbhCDAUI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 19:20:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237517AbhCCQXe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Mar 2021 11:23:34 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1C28564EFC;
-        Wed,  3 Mar 2021 16:22:40 +0000 (UTC)
+        id S238792AbhCCQYu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Mar 2021 11:24:50 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 699C564EF1;
+        Wed,  3 Mar 2021 16:22:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614788571;
-        bh=X/1ny8uglVuhfpYmrp6Fc32vjqohkdMv8EZUozNZySc=;
+        s=k20201202; t=1614788583;
+        bh=O4nT5/YvVTgsA8Uq9YZRjJp/C7wJQhyeo4C8+vcD1Lk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kyJa4OCSK43iTrFITQPoqKtpiDK0T+REEpq4p1Mh6+pUce21iER5SwDElH+oFQbIh
-         Z6zBY5QKkhea+XXH73zsfScmO8VM7FbDyudJ3bj+l9ox8botngiAbrronlv1T9OB6G
-         ZZ56/Tp908vg6XBZpeVQshQOfMW88Emr4d3r3zplUGA2EBK6QYSnLKVDU5gY6CE65E
-         VAO5DVx37EtLg7/37j64q3v4HKizGtazm6D5IbYz65fNOQJxYIb/cKaWCPrO8Hu8Aj
-         eCyWRhBjGp4EUR3A67hU7MOjKgs2Tm7uL6FLZdArMbZCUDdtwvjecGvhwDFwKzSmH6
-         0fRpSofH+sEZQ==
+        b=BuZEIk0kxIY9JM/Lt3HqGzCl2ST20PiYNnDTT/3KQ0jKlvbOcfwGBcXhbOC9nFLbg
+         07LruRFjETGAcxz+mbVDAvMtfW28FHCnFJyK1vIr5btMjDa0WMzFo5y/wRGkrwMg3m
+         W97qlbfvSQXHkf/tZ1HK0QCitJ4kfkSVgCMGHVt3/uobur4RBlb4ZgJzkG5CERLFcF
+         5pdsXG9JyUXeXGLKEL6NkjGyTKtWr1z6qNzmQ3N0env8/KbJ9bga17Mj+T0MpKA/km
+         cyvGQmss+vaKLSbh6SE4N5aCVu92v5P4Pt/PD1TuBO7BVV+b8aw1pOC5Mmb5W4nRAs
+         OX+RXYMHtAzog==
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -59,11 +59,10 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
         linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: [PATCH v18 2/9] mmap: make mlock_future_check() global
-Date:   Wed,  3 Mar 2021 18:22:02 +0200
-Message-Id: <20210303162209.8609-3-rppt@kernel.org>
+        x86@kernel.org, kernel test robot <lkp@intel.com>
+Subject: [PATCH v18 3/9] riscv/Kconfig: make direct map manipulation options depend on MMU
+Date:   Wed,  3 Mar 2021 18:22:03 +0200
+Message-Id: <20210303162209.8609-4-rppt@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20210303162209.8609-1-rppt@kernel.org>
 References: <20210303162209.8609-1-rppt@kernel.org>
@@ -75,73 +74,33 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mike Rapoport <rppt@linux.ibm.com>
 
-It will be used by the upcoming secret memory implementation.
+ARCH_HAS_SET_DIRECT_MAP and ARCH_HAS_SET_MEMORY configuration options have
+no meaning when CONFIG_MMU is disabled and there is no point to enable
+them for the nommu case.
+
+Add an explicit dependency on MMU for these options.
 
 Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Christopher Lameter <cl@linux.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Elena Reshetova <elena.reshetova@intel.com>
-Cc: Hagen Paul Pfeifer <hagen@jauu.net>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: James Bottomley <jejb@linux.ibm.com>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Palmer Dabbelt <palmerdabbelt@google.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Shakeel Butt <shakeelb@google.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tycho Andersen <tycho@tycho.ws>
-Cc: Will Deacon <will@kernel.org>
+Reported-by: kernel test robot <lkp@intel.com>
 ---
- mm/internal.h | 3 +++
- mm/mmap.c     | 5 ++---
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ arch/riscv/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 9902648f2206..8e9c660f33ca 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -353,6 +353,9 @@ static inline void munlock_vma_pages_all(struct vm_area_struct *vma)
- extern void mlock_vma_page(struct page *page);
- extern unsigned int munlock_vma_page(struct page *page);
- 
-+extern int mlock_future_check(struct mm_struct *mm, unsigned long flags,
-+			      unsigned long len);
-+
- /*
-  * Clear the page's PageMlocked().  This can be useful in a situation where
-  * we want to unconditionally remove a page from the pagecache -- e.g.,
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 3f287599a7a3..f989aa170de4 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1346,9 +1346,8 @@ static inline unsigned long round_hint_to_min(unsigned long hint)
- 	return hint;
- }
- 
--static inline int mlock_future_check(struct mm_struct *mm,
--				     unsigned long flags,
--				     unsigned long len)
-+int mlock_future_check(struct mm_struct *mm, unsigned long flags,
-+		       unsigned long len)
- {
- 	unsigned long locked, lock_limit;
- 
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 85d626b8ce5e..87ccc29fc31d 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -25,8 +25,8 @@ config RISCV
+ 	select ARCH_HAS_KCOV
+ 	select ARCH_HAS_MMIOWB
+ 	select ARCH_HAS_PTE_SPECIAL
+-	select ARCH_HAS_SET_DIRECT_MAP
+-	select ARCH_HAS_SET_MEMORY
++	select ARCH_HAS_SET_DIRECT_MAP if MMU
++	select ARCH_HAS_SET_MEMORY if MMU
+ 	select ARCH_HAS_STRICT_KERNEL_RWX if MMU
+ 	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
+ 	select ARCH_OPTIONAL_KERNEL_RWX_DEFAULT
 -- 
 2.28.0
 
