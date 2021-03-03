@@ -2,182 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E248032C570
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E37632C571
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:59:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355160AbhCDAUp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 19:20:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54350 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1388011AbhCCUYG (ORCPT
+        id S1355162AbhCDAUq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 19:20:46 -0500
+Received: from p3plsmtpa11-01.prod.phx3.secureserver.net ([68.178.252.102]:42260
+        "EHLO p3plsmtpa11-01.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1388012AbhCCUYO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Mar 2021 15:24:06 -0500
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB9A6C061756;
-        Wed,  3 Mar 2021 12:23:26 -0800 (PST)
-Received: by mail-pg1-x530.google.com with SMTP id e6so17221676pgk.5;
-        Wed, 03 Mar 2021 12:23:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=0FH7LxOsmxIsgoTenyw1jRon/uhYAlBiA4+ZL3nwHtQ=;
-        b=AIxxwOFh8H6cXbMpEdUcTMgTdPU74pl6sVrvlULaxh05OgQMd7JETuqq6JECoOf+1t
-         SNlWMPlsbvKX8LXBSllxuBVY4Fh4k3kT9RciAiOqo70OYzQagHRgd1TTACTGBOS8a1Zl
-         D4GuPN//j2pELtPdyiQ6YCP7l9V8CtyHtz5llwdzhNs2iAmYf7f01+tlPM6xPuDFMTgR
-         d2tWa8VGxraO/6LahwJzsCNWcC3FzO7b85LnyOymqMgzzk9Q3NBzwLnZApS4/VdWzR3s
-         Ejev7zAmc8y9v2fFS2VwEjmP+tfa70h2/0Jw85ETgMA7OR9zaP47plt7PYF6SxvTT5kS
-         PO5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=0FH7LxOsmxIsgoTenyw1jRon/uhYAlBiA4+ZL3nwHtQ=;
-        b=ClfWi/wOKB23vs1bJG0OCtPQXOMBQCH8+veGg92nipXw6evdmAHivTSvnwle6YG9vD
-         akYgRroqjYd8OX6YRtM64SfFhZoAonYfSJkkZAJPO1nch8AXjGj3rP0LZ84IhG9uinj7
-         ziUr/KW0aOGMkBQyudW9fLtZ72NYAmOzoaGvnYPb4U85Jmchwj7ws/gyd5NGI4W35KDr
-         q8UO3AJlIZNr40/49NQBW03va+AoXYw8BZVzk8sFmF+z63+fsKuqVq1XQwumerjqfeVr
-         Qe/+oCcFknRC1rKY5IP/xi/NUSsjNs3X+fLYvqK7NtWhEKJbQihlIrvDOT9WhlP1Dv55
-         QNCw==
-X-Gm-Message-State: AOAM532WFwhmqEgL5jsP5bbW0N7EupEsdxIyZhktlYrG7GxPxdYhK/HB
-        GbC3/VAdMC2L/Wtbh3Czv3g=
-X-Google-Smtp-Source: ABdhPJzjTbg+doQsb4ri01ZrBnPufRMmByvBrcHUbX8wMYPuO9f//uSNLvMzwnmMPt3noGJiw4BXEA==
-X-Received: by 2002:a63:74d:: with SMTP id 74mr619392pgh.316.1614803006263;
-        Wed, 03 Mar 2021 12:23:26 -0800 (PST)
-Received: from google.com ([2620:15c:211:201:c87:c34:99dc:ba23])
-        by smtp.gmail.com with ESMTPSA id g15sm25192777pfb.30.2021.03.03.12.23.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Mar 2021 12:23:24 -0800 (PST)
-Sender: Minchan Kim <minchan.kim@gmail.com>
-Date:   Wed, 3 Mar 2021 12:23:22 -0800
-From:   Minchan Kim <minchan@kernel.org>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, joaodias@google.com,
-        surenb@google.com, cgoldswo@codeaurora.org, willy@infradead.org,
-        david@redhat.com, vbabka@suse.cz, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm: disable LRU pagevec during the migration
- temporarily
-Message-ID: <YD/wOq3lf9I5HK85@google.com>
-References: <20210302210949.2440120-1-minchan@kernel.org>
- <YD+F4LgPH0zMBDGW@dhcp22.suse.cz>
+        Wed, 3 Mar 2021 15:24:14 -0500
+Received: from [192.168.0.116] ([71.184.94.153])
+        by :SMTPAUTH: with ESMTPSA
+        id HY1ml85cHSxgqHY1mle4LS; Wed, 03 Mar 2021 13:23:27 -0700
+X-CMAE-Analysis: v=2.4 cv=I6mg+Psg c=1 sm=1 tr=0 ts=603ff03f
+ a=vbvdVb1zh1xTTaY8rfQfKQ==:117 a=vbvdVb1zh1xTTaY8rfQfKQ==:17
+ a=IkcTkHD0fZMA:10 a=SEc3moZ4AAAA:8 a=iox4zFpeAAAA:8 a=Dn3fJbBJWZ8bWwpP0-sA:9
+ a=QEXdDO2ut3YA:10 a=5oRCH6oROnRZc2VpWJZ3:22 a=WzC6qhA0u3u7Ye7llzcV:22
+X-SECURESERVER-ACCT: tom@talpey.com
+Subject: Re: [PATCH v3] flock.2: add CIFS details
+To:     =?UTF-8?Q?Aur=c3=a9lien_Aptel?= <aaptel@suse.com>,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-man@vger.kernel.org, mtk.manpages@gmail.com
+Cc:     smfrench@gmail.com
+References: <17fc432c-f485-0945-6d12-fa338ea0025f@talpey.com>
+ <20210303190353.31605-1-aaptel@suse.com>
+From:   Tom Talpey <tom@talpey.com>
+Message-ID: <be8416d4-64f8-675e-3f46-f55dddf1e03b@talpey.com>
+Date:   Wed, 3 Mar 2021 15:23:27 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YD+F4LgPH0zMBDGW@dhcp22.suse.cz>
+In-Reply-To: <20210303190353.31605-1-aaptel@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfAi6iph6xbnYCuduuU9qfMGGJWBIgyBcmX2RkF6vN2+w6He2BuhNBiKlSLggG+89PJmlmW2OkTfUZWnaHdsXs82nXF3EBGAUJnRG5luN8KQ1biBV6fMP
+ S3HzkNICTNjCqoW7TB803VDlO+iwTnsV5X7dyf/NbWxPJezYAhQ3SQUg0Qg6CdUjeJfqfRLPYnrylKuVbzePowkKlqLpT5qITwJN+Za74xDY9Q5XNUCyYZLi
+ 850x9J/FbRAf9Vz/ejbblWP0fI2+aG8/7KUSUKj8WWbYZ3zLGf/jwrdFz8oNHjL43dC7qEkNXOvc6FnrW/ZVggscqXD7ORgmKHM0MWvaexJ7/b6zrZyDGaNP
+ 5PpRf2AQ
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 03, 2021 at 01:49:36PM +0100, Michal Hocko wrote:
-> On Tue 02-03-21 13:09:48, Minchan Kim wrote:
-> > LRU pagevec holds refcount of pages until the pagevec are drained.
-> > It could prevent migration since the refcount of the page is greater
-> > than the expection in migration logic. To mitigate the issue,
-> > callers of migrate_pages drains LRU pagevec via migrate_prep or
-> > lru_add_drain_all before migrate_pages call.
-> > 
-> > However, it's not enough because pages coming into pagevec after the
-> > draining call still could stay at the pagevec so it could keep
-> > preventing page migration. Since some callers of migrate_pages have
-> > retrial logic with LRU draining, the page would migrate at next trail
-> > but it is still fragile in that it doesn't close the fundamental race
-> > between upcoming LRU pages into pagvec and migration so the migration
-> > failure could cause contiguous memory allocation failure in the end.
-> > 
-> > To close the race, this patch disables lru caches(i.e, pagevec)
-> > during ongoing migration until migrate is done.
-> > 
-> > Since it's really hard to reproduce, I measured how many times
-> > migrate_pages retried with force mode below debug code.
-> > 
-> > int migrate_pages(struct list_head *from, new_page_t get_new_page,
-> > 			..
-> > 			..
-> > 
-> > if (rc && reason == MR_CONTIG_RANGE && pass > 2) {
-> >        printk(KERN_ERR, "pfn 0x%lx reason %d\n", page_to_pfn(page), rc);
-> >        dump_page(page, "fail to migrate");
-> > }
-> > 
-> > The test was repeating android apps launching with cma allocation
-> > in background every five seconds. Total cma allocation count was
-> > about 500 during the testing. With this patch, the dump_page count
-> > was reduced from 400 to 30.
-> 
-> Have you seen any improvement on the CMA allocation success rate?
+It looks great, and sorry to be a pest, but I just noticed - it's
+EACCES (not EACCESS).
 
-Unfortunately, the cma alloc failure rate with reasonable margin
-of error is really hard to reproduce under real workload.
-That's why I measured the soft metric instead of direct cma fail
-under real workload(I don't want to make some adhoc artificial
-benchmark and keep tunes system knobs until it could show 
-extremly exaggerated result to convice patch effect).
+Reviewed-By: Tom Talpey <tom@talpey.com>
 
-Please say if you belive this work is pointless unless there is
-stable data under reproducible scenario. I am happy to drop it.
+On 3/3/2021 2:03 PM, Aurélien Aptel wrote:
+> From: Aurelien Aptel <aaptel@suse.com>
+> 
+> Similarly to NFS, CIFS flock() locks behave differently than the
+> standard. Document those differences.
+> 
+> Here is the rendered text:
+> 
+> CIFS details
+>    In  Linux kernels up to 5.4, flock() is not propagated over SMB. A file
+>    with such locks will not appear locked for remote clients.
+> 
+>    Since Linux 5.5, flock() locks are emulated with SMB  byte-range  locks
+>    on  the  entire  file.  Similarly  to NFS, this means that fcntl(2) and
+>    flock() locks interact with one another. Another important  side-effect
+>    is  that  the  locks are not advisory anymore: a write on a locked file
+>    will always fail with EACCESS.  This difference originates from the de-
+>    sign of locks in the SMB protocol, which provides mandatory locking se-
+>    mantics. The nobrl mount option (see mount.cifs(8)) turns off  fnctl(2)
+>    and  flock() lock propagation to remote clients and makes flock() locks
+>    advisory again.
+> 
+> Signed-off-by: Aurelien Aptel <aaptel@suse.com>
+> ---
+>   man2/flock.2 | 29 +++++++++++++++++++++++++++++
+>   1 file changed, 29 insertions(+)
+> 
+> diff --git a/man2/flock.2 b/man2/flock.2
+> index 61d4b5396..4b6e5cc24 100644
+> --- a/man2/flock.2
+> +++ b/man2/flock.2
+> @@ -239,6 +239,35 @@ see the discussion of the
+>   .I "local_lock"
+>   option in
+>   .BR nfs (5).
+> +.SS CIFS details
+> +In Linux kernels up to 5.4,
+> +.BR flock ()
+> +is not propagated over SMB. A file with such locks will not appear
+> +locked for remote clients.
+> +.PP
+> +Since Linux 5.5,
+> +.BR flock ()
+> +locks are emulated with SMB byte-range locks on the entire
+> +file. Similarly to NFS, this means that
+> +.BR fcntl (2)
+> +and
+> +.BR flock ()
+> +locks interact with one another. Another important side-effect is that
+> +the locks are not advisory anymore: a write on a locked file will
+> +always fail with
+> +.BR EACCESS .
 
-> 
-> > Signed-off-by: Minchan Kim <minchan@kernel.org>
-> > ---
-> > * from RFC - http://lore.kernel.org/linux-mm/20210216170348.1513483-1-minchan@kernel.org
-> >   * use atomic and lru_add_drain_all for strict ordering - mhocko
-> >   * lru_cache_disable/enable - mhocko
-> > 
-> >  fs/block_dev.c          |  2 +-
-> >  include/linux/migrate.h |  6 +++--
-> >  include/linux/swap.h    |  4 ++-
-> >  mm/compaction.c         |  4 +--
-> >  mm/fadvise.c            |  2 +-
-> >  mm/gup.c                |  2 +-
-> >  mm/khugepaged.c         |  2 +-
-> >  mm/ksm.c                |  2 +-
-> >  mm/memcontrol.c         |  4 +--
-> >  mm/memfd.c              |  2 +-
-> >  mm/memory-failure.c     |  2 +-
-> >  mm/memory_hotplug.c     |  2 +-
-> >  mm/mempolicy.c          |  6 +++++
-> >  mm/migrate.c            | 15 ++++++-----
-> >  mm/page_alloc.c         |  5 +++-
-> >  mm/swap.c               | 55 +++++++++++++++++++++++++++++++++++------
-> >  16 files changed, 85 insertions(+), 30 deletions(-)
-> 
-> The churn seems to be quite big for something that should have been a
-> very small change. Have you considered not changing lru_add_drain_all
-> but rather introduce __lru_add_dain_all that would implement the
-> enforced flushing?
+EACCES
 
-Good idea.
-
+> +This difference originates from the design of locks in the SMB
+> +protocol, which provides mandatory locking semantics. The
+> +.I nobrl
+> +mount option (see
+> +.BR mount.cifs (8))
+> +turns off
+> +.BR fnctl (2)
+> +and
+> +.BR flock ()
+> +lock propagation to remote clients and makes
+> +.BR flock ()
+> +locks advisory again.
+>   .SH SEE ALSO
+>   .BR flock (1),
+>   .BR close (2),
 > 
-> [...]
-> > +static atomic_t lru_disable_count = ATOMIC_INIT(0);
-> > +
-> > +bool lru_cache_disabled(void)
-> > +{
-> > +	return atomic_read(&lru_disable_count);
-> > +}
-> > +
-> > +void lru_cache_disable(void)
-> > +{
-> > +	/*
-> > +	 * lru_add_drain_all's IPI will make sure no new pages are added
-> > +	 * to the pcp lists and drain them all.
-> > +	 */
-> > +	atomic_inc(&lru_disable_count);
-> 
-> As already mentioned in the last review. The IPI reference is more
-> cryptic than useful. I would go with something like this instead
-> 
-> 	/*
-> 	 * lru_add_drain_all in the force mode will schedule draining on
-> 	 * all online CPUs so any calls of lru_cache_disabled wrapped by
-> 	 * local_lock or preemption disabled would be  ordered by that.
-> 	 * The atomic operation doesn't need to have stronger ordering
-> 	 * requirements because that is enforece by the scheduling
-> 	 * guarantees.
-> 	 */
-
-Thanks for the nice description.
-I will use it in next revision if you believe this work is useful.
