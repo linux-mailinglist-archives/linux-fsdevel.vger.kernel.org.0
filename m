@@ -2,91 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F170D32C54C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:59:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 502BB32C54D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 01:59:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1450698AbhCDAT7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1450710AbhCDAT7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 3 Mar 2021 19:19:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49362 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351380AbhCCPhZ (ORCPT
+Received: from p3plsmtpa11-09.prod.phx3.secureserver.net ([68.178.252.110]:51141
+        "EHLO p3plsmtpa11-09.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S245634AbhCCPtc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Mar 2021 10:37:25 -0500
-Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86C6DC06175F
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Mar 2021 07:36:36 -0800 (PST)
-Received: by mail-vs1-xe29.google.com with SMTP id p24so3724366vsj.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Mar 2021 07:36:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Yr1qOumuS8TXWEOrqim0XuS33cj0E8thnCAJCT0r9GY=;
-        b=ZhRS1Ok6vhL7zeDZkgmGxaMYhwI3zcCvbfNUajVPoWdIK7sa0Qg3QadGgEpwbgZPwI
-         WYG5/mB6f3ljby+rTF1atb4Fzjq7V2Bh9gxg8DPAC83591G7R1A7ABhYpVpBv88FjR6G
-         jlGtz+N88vdwfHPiocq9EWVTpEgpzPl6hyFUQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Yr1qOumuS8TXWEOrqim0XuS33cj0E8thnCAJCT0r9GY=;
-        b=RCa5yceNyHbMjjg7D6d51TZr3bjTdiI5WxFv6zhJ56/m1bIhRBit+OiJ23E/xuOC4o
-         OUClauKtukfTbZMR0HuljlIEBXsqrjCb7JP2oAPCMoncrsjy5J/pSsF+JAJ1D0MGJxsg
-         Xj2aQuW1sNFxvGWxTz59vdGmMzWVx1Go1T8ry+02XcO/KdqpSeM4kgVMWgjlNIFGC0he
-         ZyEaqR9wdRTPiEi51rVVzpgQO6lAnJ9X9X5ws65Z7+wAxThVLH1Eev/jZalHIeR7J819
-         mCkLQ2sLn6KZPSfF3XACXqQ8VCJd6KTQmg5u4DY51OY4fcLE042efkHfBmIAgGWb1pfg
-         IQqw==
-X-Gm-Message-State: AOAM532frcY6/BgXZg47jJ79sh3rP3CZJ5SFOBjTgZjUFHzwf2baBPYh
-        AhpyzPk0aPvXPg6d9yUdYMkjLVftd0q8LFhhQTpy/g==
-X-Google-Smtp-Source: ABdhPJwdR6lr6rfem6g68OGV+xNgCuKFByuMYSgHWe9UZYcANiOzASdFonlabHuTZd4ATGAeavQUJ7X12XHr51EjVJU=
-X-Received: by 2002:a67:c992:: with SMTP id y18mr6718750vsk.7.1614785795666;
- Wed, 03 Mar 2021 07:36:35 -0800 (PST)
+        Wed, 3 Mar 2021 10:49:32 -0500
+Received: from [192.168.0.116] ([71.184.94.153])
+        by :SMTPAUTH: with ESMTPSA
+        id HTZMlAcQuysOoHTZNlpAJZ; Wed, 03 Mar 2021 08:37:49 -0700
+X-CMAE-Analysis: v=2.4 cv=Q50XX66a c=1 sm=1 tr=0 ts=603fad4d
+ a=vbvdVb1zh1xTTaY8rfQfKQ==:117 a=vbvdVb1zh1xTTaY8rfQfKQ==:17
+ a=IkcTkHD0fZMA:10 a=iox4zFpeAAAA:8 a=dLoG2OG8YrFFX4pwRQ8A:9 a=QEXdDO2ut3YA:10
+ a=WzC6qhA0u3u7Ye7llzcV:22
+X-SECURESERVER-ACCT: tom@talpey.com
+Subject: Re: [man-pages][PATCH v1] flock.2: add CIFS details
+To:     =?UTF-8?Q?Aur=c3=a9lien_Aptel?= <aaptel@suse.com>,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-man@vger.kernel.org, mtk.manpages@gmail.com
+Cc:     smfrench@gmail.com
+References: <20210302154831.17000-1-aaptel@suse.com>
+From:   Tom Talpey <tom@talpey.com>
+Message-ID: <5ae02f1f-af45-25aa-71b1-4f8782286158@talpey.com>
+Date:   Wed, 3 Mar 2021 10:37:49 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.1
 MIME-Version: 1.0
-References: <20210226183357.28467-1-lhenriques@suse.de> <20210301163324.GC186178@redhat.com>
- <YD0wbmulcBVZ7VZy@suse.de> <20210302160033.GD220334@redhat.com> <20210302162554.GE220334@redhat.com>
-In-Reply-To: <20210302162554.GE220334@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 3 Mar 2021 16:36:24 +0100
-Message-ID: <CAJfpegt7U_-gv0QKFF8D9P6DmsHbQ=fNUOBrC17X6Z+O7WzrzQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] fuse: Clear SGID bit when setting mode in setacl
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Luis Henriques <lhenriques@suse.de>, linux-fsdevel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210302154831.17000-1-aaptel@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfNWWA6+JBY3iBMyjGgCLKpJR3mVvXKC3n/82WsrTs31y2PEuhA2FlomIEVE5+/+Jwpm4q57KUJ0hieYlgq+s32vmvafx/MPbA0oRxpqsPKMSwYinB97+
+ uoyL3jOesNNmQO5nY87ES58qDYnNclAJfgHLw+ApYJBslf1SulONvOIcnrs+7hIhfCIyKQj+goE9D9VodCgCwTZnmjKZpLce/E/jpf7Kgy5gKZIL+IP4nxtY
+ csJRnmmy0If+6MmYkJURdi5x8k0siYjK3eOCcyyMI94htJdLO04V+IGEj/srt4G9LgDMQ5tHp6eCZuMcAWxT5lQsuwFQ91yZrfbQO8Yaa864e2nUinT1DtZK
+ USSuzpr1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 2, 2021 at 5:26 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+On 3/2/2021 10:48 AM, Aurélien Aptel wrote:
+> From: Aurelien Aptel <aaptel@suse.com>
+> 
+> Similarly to NFS, CIFS flock() locks behave differently than the
+> standard. Document those differences.
+> 
+> Signed-off-by: Aurelien Aptel <aaptel@suse.com>
+> ---
+>   man2/flock.2 | 22 ++++++++++++++++++++++
+>   1 file changed, 22 insertions(+)
+> 
+> diff --git a/man2/flock.2 b/man2/flock.2
+> index 61d4b5396..9271b8fef 100644
+> --- a/man2/flock.2
+> +++ b/man2/flock.2
+> @@ -239,6 +239,28 @@ see the discussion of the
+>   .I "local_lock"
+>   option in
+>   .BR nfs (5).
+> +.SS CIFS details
+> +CIFS mounts share similar limitations with NFS.
 
-> > I still feel that it should probably be fixed in virtiofsd, given fuse client
-> > is expecting file server to take care of any change of mode (file
-> > permission bits).
->
-> Havid said that, there is one disadvantage of relying on server to
-> do this. Now idmapped mount patches have been merged. If virtiofs
-> were to ever support idmapped mounts, this will become an issue.
-> Server does not know about idmapped mounts, and it does not have
-> information on how to shift inode gid to determine if SGID should
-> be cleared or not.
->
-> So if we were to keep possible future support of idmapped mounts in mind,
-> then solving it in client makes more sense.  (/me is afraid that there
-> might be other dependencies like this elsewhere).
->
-> Miklos, WDYT.
+I'd suggest removing this sentence. It doesn't really add anything to
+the definition.
 
-Hmm sounds like two different modes of operation.
+> +.PP
+> +In Linux kernels up to 5.4,
+> +.BR flock ()
+> +locks files on the local system,
+> +not over SMB. A locked file won't appear locked for other SMB clients
+> +accessing the same share.
 
-1) shared, non-idmapped: need to take care of races, so do the sgid
-clearing in the server
-2) non-shared, idmapped: can only do it in client
+This is discussing the scenario where a process on the server performs
+an flock(), right? That's perhaps confusingly special. How about
 
-The same applies to all the other FUSE_*_KILL* stuff, so I guess the
-decision about the mode just needs to be tied to a flag in some way.
-Not sure if an existing one could be used.
+"In Linux kernels up to 5.4, flock() is not propagated over SMB. A file
+with such locks will not appear locked for remote clients."
 
-Thanks,
-Miklos
+> +.PP
+> +Since Linux 5.5,
+> +.BR flock ()
+> +are emulated with SMB byte-range locks on the
+> +entire file. Similarly to NFS, this means that
+> +.BR fcntl (2)
+> +and
+> +.BR flock ()
+> +locks interact with one another over SMB. Another important
+> +side-effect is that the locks are not advisory anymore: a write on a
+> +locked file will always fail with
+> +.BR EACCESS .
+> +This difference originates from the design of locks in the SMB
+> +protocol and cannot be worked around.
+
+"protocol, which provides mandatory locking semantics."
+
+>   .SH SEE ALSO
+>   .BR flock (1),
+>   .BR close (2),
+> 
