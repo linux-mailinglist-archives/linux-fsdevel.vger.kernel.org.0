@@ -2,53 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FF9532B4E5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:39:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FB0332B4E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Mar 2021 06:39:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1450163AbhCCFax (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 00:30:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42316 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235382AbhCCBbX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Mar 2021 20:31:23 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 39B1E64E21;
-        Wed,  3 Mar 2021 01:30:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1614735040;
-        bh=OF8WUPKSv4QXc/+YPWIqmJarQdHRZfG1pwud0AaXB9s=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Px3O4abFVJu9eUSMf9VaWKMuxsy66RLx0Lx7pWv0Sl7yoYE0IZMJtGTGjGpvYtShx
-         kPXTmRk05YMHg9YPfXNuQufBngiDT2dYPdPRZZi4m9ACvuAzniw16o7b6XzfcK8tnC
-         bfBBq6PNazSz7XQPt5GY6rrVQmMCE/eAIF790xUA=
-Date:   Tue, 2 Mar 2021 17:30:39 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+        id S1450168AbhCCFa7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 00:30:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39858 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237684AbhCCBfB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Mar 2021 20:35:01 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91D70C061756
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Mar 2021 17:33:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=UUCunpPK/kEanZj5qySdAgYlSOPrCb0CzB9Vx5ufnXY=; b=KwIWmwUhK2ceCpxvoFWtLsuxLu
+        mayXYnhwOt/Q8WQI7S8tL6z/cRUtwyWdrmQwOuOEwQwUcU529uChVXxmpUhZS7dMjBY0c3STSR7qB
+        A6ujRtTGvvMY9Rc0BA80wyoXja0TCviYQ2CPyEm0Ry6tVwDIV/aAzoXQzUSpg5jt9YSApJWLPGl7T
+        FXE+bedrynxDeAAn519S72xD/rISeTaIONR69bzLVoRsDdkS392N7LhKqXGMw6RJspOJzYTTfVphy
+        8qCe2HYHyX8dCE6v9PHubLeKZGxcbNdsu9MI7xi91xqGQA1tlGm6MOO7tZn+p7ZBYDGCeeaChMEtr
+        V7UsGGhg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lHGO1-000sSZ-KF; Wed, 03 Mar 2021 01:33:14 +0000
+Date:   Wed, 3 Mar 2021 01:33:13 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Kent Overstreet <kent.overstreet@gmail.com>,
         Christoph Hellwig <hch@lst.de>
 Subject: Re: [PATCH] mm/filemap: Use filemap_read_page in filemap_fault
-Message-Id: <20210302173039.4625f403846abd20413f6dad@linux-foundation.org>
-In-Reply-To: <20210226140011.2883498-1-willy@infradead.org>
+Message-ID: <20210303013313.GZ2723601@casper.infradead.org>
 References: <20210226140011.2883498-1-willy@infradead.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ <20210302173039.4625f403846abd20413f6dad@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210302173039.4625f403846abd20413f6dad@linux-foundation.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 26 Feb 2021 14:00:11 +0000 "Matthew Wilcox (Oracle)" <willy@infradead.org> wrote:
+On Tue, Mar 02, 2021 at 05:30:39PM -0800, Andrew Morton wrote:
+> On Fri, 26 Feb 2021 14:00:11 +0000 "Matthew Wilcox (Oracle)" <willy@infradead.org> wrote:
+> 
+> > After splitting generic_file_buffered_read() into smaller parts, it
+> > turns out we can reuse one of the parts in filemap_fault().  This fixes
+> > an oversight -- waiting for the I/O to complete is now interruptible
+> > by a fatal signal.  And it saves us a few bytes of text in an unlikely
+> > path.
+> 
+> We also handle AOP_TRUNCATED_PAGE which the present code fails to do. 
+> Should this be in the changelog?
 
-> After splitting generic_file_buffered_read() into smaller parts, it
-> turns out we can reuse one of the parts in filemap_fault().  This fixes
-> an oversight -- waiting for the I/O to complete is now interruptible
-> by a fatal signal.  And it saves us a few bytes of text in an unlikely
-> path.
+No, the present code does handle AOP_TRUNCATED_PAGE.  It's perhaps not
+the clearest in the diff, but it's there.  Here's git show -U5:
 
-We also handle AOP_TRUNCATED_PAGE which the present code fails to do. 
-Should this be in the changelog?
-
-Did we handle AOP_TRUNCATED_PAGE in the pre-splitup code, or is this new?
-
-
+-       ClearPageError(page);
+        fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+-       error = mapping->a_ops->readpage(file, page);
+-       if (!error) {
+-               wait_on_page_locked(page);
+-               if (!PageUptodate(page))
+-                       error = -EIO;
+-       }
++       error = filemap_read_page(file, mapping, page);
+        if (fpin)
+                goto out_retry;
+        put_page(page);
+ 
+        if (!error || error == AOP_TRUNCATED_PAGE)
+                goto retry_find;
+ 
+-       shrink_readahead_size_eio(ra);
+        return VM_FAULT_SIGBUS;
