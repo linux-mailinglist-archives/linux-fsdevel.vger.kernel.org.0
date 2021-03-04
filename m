@@ -2,241 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BCCAC32CAE5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 04:40:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CF1732CAEF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 04:44:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232635AbhCDDiF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 22:38:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35088 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232675AbhCDDiC (ORCPT
+        id S232812AbhCDDnf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 22:43:35 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:50274 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232799AbhCDDnH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Mar 2021 22:38:02 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13742C061756
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Mar 2021 19:37:22 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id d2so5901423pjs.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Mar 2021 19:37:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=V5aaETOTZkHBTtEXphmw/cUhBvHYGOGg2bi64gc0COM=;
-        b=fZ7WA8txY9uXEXqTFaVbB4DIu0hZ0dICn+uHs2p4lCHU4k3P47Yo0zFYBBq7GpxFH+
-         NRN/Iz/ofK337vNhjF8Ttoyok/6H25rgUDLSkYtumyFREI78IqpOuNJEU4YtAt++YJNA
-         67QO5GDhjSaqve0o0ZH2ujiGkGQ60l6raKjrMw7Unc/KHTCOxJZc+OnXC5RMu/ESzfC0
-         +QwEAaNeGndLDHeZgven22q6jpxUt00LwhdFxPtyE1s/lKjiVZ+8kNVQCmHmRFrh13dR
-         +3Fe8JsYKC6e5qK1PDz5rkeqMlMIwccy5FdQaL2yEjluQ3A57xKCCUXuwtEEqu2IzbA8
-         2Wdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=V5aaETOTZkHBTtEXphmw/cUhBvHYGOGg2bi64gc0COM=;
-        b=M8eajidZd3nP7MOXVu83KAH5kaQkpTouP+Gg79sJ6CP/fDnJYkv1nAsVY7TTh2nT+J
-         9m8zh1JAlK4qQQpn7jmgfJ3Ky4Sd6ObRSt5b+YUsJhm96jnMOjGkjdIhAoqe9M/LMlOF
-         JI5UI6mRproJVxPHfDNRbS/2Gh12kyNL9hcvFpREPJJYa6Ks/i6FI8Ws1Jh4tSDtnZgF
-         UjDEp/WYFBpbh4nbbZysaezBNQQLH2qfsKTtM4Cazb84nv/kjMp+UuobXAchF9UlhQko
-         5JY/5tnOyoma0M0w/q1/ioF5a3WuE0xjPR8pdEeHAufqjBohURZu25MVBisQ39/8QrH4
-         bN7g==
-X-Gm-Message-State: AOAM5319opERQsXt+5QN7MHRYOt9RLgA8UJnERr+s/hNfXC8dr52FCNa
-        G8JIj4cE1aHyk6yIKXMDfrWlT+82HGkMDUjHo1eq0A==
-X-Google-Smtp-Source: ABdhPJw+Pt8GPG27iErHvkZjPIsoVxDhuetCkdHSYGA/hC/MW/L8FCiOy4ferytRGPCEKiUQQmnWNi6Pibpf7dqHNls=
-X-Received: by 2002:a17:90a:f008:: with SMTP id bt8mr2359360pjb.13.1614829041551;
- Wed, 03 Mar 2021 19:37:21 -0800 (PST)
+        Wed, 3 Mar 2021 22:43:07 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210304034225epoutp02ea121fcd10890648f7a10b94ce4b9386~pBrvu9lGE2491624916epoutp02e
+        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Mar 2021 03:42:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210304034225epoutp02ea121fcd10890648f7a10b94ce4b9386~pBrvu9lGE2491624916epoutp02e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1614829345;
+        bh=B+6dMBxtcSUu6W/9okaioUJOpO8DxXMXNSJCTv2oFbY=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=CJKt2EioxIG0LQiX2TZCspntYxc9r41oeSUkkN0ReeOxFRLc2XXIO3QWsPFnf6udR
+         rxTHds8v4WdVoEQRFDoB7gh4SaNTUuN7LO6UOM6O1BezKQXfFDCvG5ZTkONYNjzRMc
+         XE1YEysbu/8fGDrtRYh+B/sl0yZ4Hpo/Ns8mP40o=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20210304034225epcas1p138bb275b600ecf45204f3fefb85cea22~pBrvMgqVn2304223042epcas1p1R;
+        Thu,  4 Mar 2021 03:42:25 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.163]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4DrcBQ4wqvz4x9QM; Thu,  4 Mar
+        2021 03:42:22 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        3F.32.63458.E1750406; Thu,  4 Mar 2021 12:42:22 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20210304034222epcas1p35c7ae7b4baae4b6c28d32ade4fe00e62~pBrseZIzG1695416954epcas1p3l;
+        Thu,  4 Mar 2021 03:42:22 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210304034222epsmtrp296082612ef95e070ed0c7a7da79482a9~pBrsduer_2714327143epsmtrp2C;
+        Thu,  4 Mar 2021 03:42:22 +0000 (GMT)
+X-AuditID: b6c32a36-c6d65a800000f7e2-04-6040571e4b12
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        31.89.08745.D1750406; Thu,  4 Mar 2021 12:42:21 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210304034221epsmtip2c45d0f3ea02e5a5d07fdafc1ce700c6d~pBrsR2JJK2508525085epsmtip25;
+        Thu,  4 Mar 2021 03:42:21 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Hyeongseok Kim'" <hyeongseok@gmail.com>, <sj1557.seo@samsung.com>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>
+In-Reply-To: <20210302052020.63598-1-hyeongseok@gmail.com>
+Subject: RE: [PATCH v2] exfat: fix erroneous discard when clear cluster bit
+Date:   Thu, 4 Mar 2021 12:42:21 +0900
+Message-ID: <002f01d710a8$624be490$26e3adb0$@samsung.com>
 MIME-Version: 1.0
-References: <20210225132130.26451-1-songmuchun@bytedance.com> <e9ef3479-24f1-9304-ee0e-6f06fb457d50@gmail.com>
-In-Reply-To: <e9ef3479-24f1-9304-ee0e-6f06fb457d50@gmail.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Thu, 4 Mar 2021 11:36:44 +0800
-Message-ID: <CAMZfGtWeyo8+uWf7oB4ODqpyOw_--K+LdYeJDhdFj+ob0OaoeA@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v17 0/9] Free some vmemmap pages of HugeTLB page
-To:     "Singh, Balbir" <bsingharora@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de, x86@kernel.org,
-        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQG+mIOZmBktm/oL05f7SJkQ+BJOQgN+CcSTqogt6BA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdlhTT1cu3CHBYNIlBYu/Ez8xWezZe5LF
+        4vKuOWwWW/4dYbVYsPERowOrx85Zd9k9+rasYvT4vEkugDkqxyYjNTEltUghNS85PyUzL91W
+        yTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaKWSQlliTilQKCCxuFhJ386mKL+0JFUh
+        I7+4xFYptSAlp8DQoECvODG3uDQvXS85P9fK0MDAyBSoMiEnY/fC5awFXwUr5j17ytbAOI+v
+        i5GTQ0LAROLTo4uMXYxcHEICOxglbp1+zw7hfGKUaF13hhnC+cwo8evtNFaYloU3X0O17GKU
+        uHDkECuE85JR4t731SwgVWwCuhL//uxnA7FFBNwldr3rYQSxmQXiJd4v+QdWwylgJbH/3g6w
+        uLCAt8TWXdeZQGwWARWJq2s+gsV5BSwlns5axgxhC0qcnPmEBWKOvMT2t3OYIS5SkPj5dBkr
+        xC4riXd7dzBD1IhIzO5sA3tBQuAnu8S2bWuBnuMAclwklm1yhugVlnh1fAs7hC0l8fndXjaI
+        kmqJj/uhxncwSrz4bgthG0vcXL+BFaSEWUBTYv0ufYiwosTO33OhPuSTePe1hxViCq9ER5sQ
+        RImqRN+lw0wQtrREV/sH9gmMSrOQ/DULyV+zkNw/C2HZAkaWVYxiqQXFuempxYYFRshxvYkR
+        nBq1zHYwTnr7Qe8QIxMH4yFGCQ5mJRFe8Ze2CUK8KYmVValF+fFFpTmpxYcYTYEhPZFZSjQ5
+        H5ic80riDU2NjI2NLUzMzM1MjZXEeRMNHsQLCaQnlqRmp6YWpBbB9DFxcEo1MBWeEb90d9f6
+        i3duz+uy0Zq7ZNKzxuff3B6IRn4RuhBqb1q73DnkBdf0VX+zT+SaRG4xOuT2xuOix9Lc+jD7
+        3pjjB/RkMl31J0su2qFR8POsCNdjZ6OAxAVrQwv0J/s1dn22bdrxPsX5V0aPx6OvqlbMHRt0
+        K70Xh8nx3vnzJqLQXNE1Z29a7d7ZwQ7ufUaSVjtjw5hLq1JFPsnMMj31ZJGzzsLn9ndrrc7e
+        LvZgaOKwFjpkk/020bXV6Rn/192cgev26aQc8i945nZGwYNnSmvv7LvPTif4CXbNZRDc1GN9
+        6P7ZN1araz2/f31r4PrK1M/bYM3OrOoki9/OjmlMMc91nJYJc+SGmByb3sSvxFKckWioxVxU
+        nAgAIVtpBRYEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNLMWRmVeSWpSXmKPExsWy7bCSvK5cuEOCQV+wxd+Jn5gs9uw9yWJx
+        edccNost/46wWizY+IjRgdVj56y77B59W1YxenzeJBfAHMVlk5Kak1mWWqRvl8CVsXvhctaC
+        r4IV8549ZWtgnMfXxcjJISFgIrHw5mvGLkYuDiGBHYwSO1fuYoJISEscO3GGuYuRA8gWljh8
+        uBii5jmjxKXXyxlBatgEdCX+/dnPBmKLCHhKrDi4ggmknlkgUeLoaweI+m5Gial/VrKC1HAK
+        WEnsv7cDrFdYwFti667rYLtYBFQkrq75CBbnFbCUeDprGTOELShxcuYTFoiZehJtG8FKmAXk
+        Jba/ncMMcaaCxM+ny1ghTrCSeLd3BzNEjYjE7M425gmMwrOQTJqFMGkWkkmzkHQsYGRZxSiZ
+        WlCcm55bbFhglJdarlecmFtcmpeul5yfu4kRHB9aWjsY96z6oHeIkYmD8RCjBAezkgiv+Evb
+        BCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8F7pOxgsJpCeWpGanphakFsFkmTg4pRqYhCOiXFhe
+        R4i/eFbMlKm1b5bcpKhn+nsuvNJY4HW6qtk6VUJx7T2Og1WBlxTXmG7fax96tNcsdqW49RuL
+        X36LPuSpxxqasQXHNEhWhcT4vy3ray/mlSxa+PfNCT3zaXbG1zOXHFieOLOGgzU29dnvP2s4
+        n/zcdJKd88uuhTFnj02fdFng05xPMw49VNDMrdhTaJu9ese15+8FY01Pb5mkLnJX+kxIhcMH
+        q7K2Ey7W6rFpem0tybHNt/QM1rmWJHc2TXv2I/m8y5YtCp3Le+wYSmerbwhb78e+3mOtpI+f
+        le8Xk2sum7ym/2lIXKMs034265uS+6Hfl9+LhzEc2KNu1j9Hfc8Cgyk3zrxTP1asxFKckWio
+        xVxUnAgAMddktf4CAAA=
+X-CMS-MailID: 20210304034222epcas1p35c7ae7b4baae4b6c28d32ade4fe00e62
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210302052033epcas1p3c1bac591bdd1f94ffbef1272a3df137f
+References: <CGME20210302052033epcas1p3c1bac591bdd1f94ffbef1272a3df137f@epcas1p3.samsung.com>
+        <20210302052020.63598-1-hyeongseok@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 4, 2021 at 11:14 AM Singh, Balbir <bsingharora@gmail.com> wrote:
->
-> On 26/2/21 12:21 am, Muchun Song wrote:
-> > Hi all,
-> >
-> > This patch series will free some vmemmap pages(struct page structures)
-> > associated with each hugetlbpage when preallocated to save memory.
-> >
-> > In order to reduce the difficulty of the first version of code review.
-> > From this version, we disable PMD/huge page mapping of vmemmap if this
-> > feature was enabled. This accutualy eliminate a bunch of the complex code
-> > doing page table manipulation. When this patch series is solid, we cam add
-> > the code of vmemmap page table manipulation in the future.
-> >
-> > The struct page structures (page structs) are used to describe a physical
-> > page frame. By default, there is a one-to-one mapping from a page frame to
-> > it's corresponding page struct.
-> >
-> > The HugeTLB pages consist of multiple base page size pages and is supported
-> > by many architectures. See hugetlbpage.rst in the Documentation directory
-> > for more details. On the x86 architecture, HugeTLB pages of size 2MB and 1GB
-> > are currently supported. Since the base page size on x86 is 4KB, a 2MB
-> > HugeTLB page consists of 512 base pages and a 1GB HugeTLB page consists of
-> > 4096 base pages. For each base page, there is a corresponding page struct.
-> >
-> > Within the HugeTLB subsystem, only the first 4 page structs are used to
-> > contain unique information about a HugeTLB page. HUGETLB_CGROUP_MIN_ORDER
-> > provides this upper limit. The only 'useful' information in the remaining
-> > page structs is the compound_head field, and this field is the same for all
-> > tail pages.
->
-> The HUGETLB_CGROUP_MIN_ORDER is only when CGROUP_HUGETLB is enabled, but I guess
-> that does not matter
+> If mounted with discard option, exFAT issues discard command when clear cluster bit to remove file.
+> But the input parameter of cluster-to-sector calculation is abnormally added by reserved cluster size
+> which is 2, leading to discard unrelated sectors included in target+2 cluster.
+> With fixing this, remove the wrong comments in set/clear/find bitmap functions.
+> 
+> Fixes: 1e49a94cf707 ("exfat: add bitmap operations")
+Cc: stable@vger.kernel.org # v5.7+
+> Signed-off-by: Hyeongseok Kim <hyeongseok@gmail.com>
+> Acked-by: Sungjong Seo <sj1557.seo@samsung.com>
+Applied. Thanks for your patch!
 
-Agree.
+> ---
+>  fs/exfat/balloc.c | 15 +--------------
+>  1 file changed, 1 insertion(+), 14 deletions(-)
+> 
+> diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c index 761c79c3a4ba..54f1bcbddb26 100644
+> --- a/fs/exfat/balloc.c
+> +++ b/fs/exfat/balloc.c
+> @@ -141,10 +141,6 @@ void exfat_free_bitmap(struct exfat_sb_info *sbi)
+>  	kfree(sbi->vol_amap);
+>  }
+> 
+> -/*
+> - * If the value of "clu" is 0, it means cluster 2 which is the first cluster of
+> - * the cluster heap.
+> - */
+>  int exfat_set_bitmap(struct inode *inode, unsigned int clu)  {
+>  	int i, b;
+> @@ -162,10 +158,6 @@ int exfat_set_bitmap(struct inode *inode, unsigned int clu)
+>  	return 0;
+>  }
+> 
+> -/*
+> - * If the value of "clu" is 0, it means cluster 2 which is the first cluster of
+> - * the cluster heap.
+> - */
+>  void exfat_clear_bitmap(struct inode *inode, unsigned int clu, bool sync)  {
+>  	int i, b;
+> @@ -186,8 +178,7 @@ void exfat_clear_bitmap(struct inode *inode, unsigned int clu, bool sync)
+>  		int ret_discard;
+> 
+>  		ret_discard = sb_issue_discard(sb,
+> -			exfat_cluster_to_sector(sbi, clu +
+> -						EXFAT_RESERVED_CLUSTERS),
+> +			exfat_cluster_to_sector(sbi, clu),
+>  			(1 << sbi->sect_per_clus_bits), GFP_NOFS, 0);
+> 
+>  		if (ret_discard == -EOPNOTSUPP) {
+> @@ -197,10 +188,6 @@ void exfat_clear_bitmap(struct inode *inode, unsigned int clu, bool sync)
+>  	}
+>  }
+> 
+> -/*
+> - * If the value of "clu" is 0, it means cluster 2 which is the first cluster of
+> - * the cluster heap.
+> - */
+>  unsigned int exfat_find_free_bitmap(struct super_block *sb, unsigned int clu)  {
+>  	unsigned int i, map_i, map_b, ent_idx;
+> --
+> 2.27.0.83.g0313f36
 
->
-> >
-> > By removing redundant page structs for HugeTLB pages, memory can returned to
-> > the buddy allocator for other uses.
-> >
-> > When the system boot up, every 2M HugeTLB has 512 struct page structs which
-> > size is 8 pages(sizeof(struct page) * 512 / PAGE_SIZE).
-> >
-> >     HugeTLB                  struct pages(8 pages)         page frame(8 pages)
-> >  +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
-> >  |           |                     |     0     | -------------> |     0     |
-> >  |           |                     +-----------+                +-----------+
-> >  |           |                     |     1     | -------------> |     1     |
-> >  |           |                     +-----------+                +-----------+
-> >  |           |                     |     2     | -------------> |     2     |
-> >  |           |                     +-----------+                +-----------+
-> >  |           |                     |     3     | -------------> |     3     |
-> >  |           |                     +-----------+                +-----------+
-> >  |           |                     |     4     | -------------> |     4     |
-> >  |    2MB    |                     +-----------+                +-----------+
-> >  |           |                     |     5     | -------------> |     5     |
-> >  |           |                     +-----------+                +-----------+
-> >  |           |                     |     6     | -------------> |     6     |
-> >  |           |                     +-----------+                +-----------+
-> >  |           |                     |     7     | -------------> |     7     |
-> >  |           |                     +-----------+                +-----------+
-> >  |           |
-> >  |           |
-> >  |           |
-> >  +-----------+
-> >
-> > The value of page->compound_head is the same for all tail pages. The first
-> > page of page structs (page 0) associated with the HugeTLB page contains the 4
-> > page structs necessary to describe the HugeTLB. The only use of the remaining
-> > pages of page structs (page 1 to page 7) is to point to page->compound_head.
-> > Therefore, we can remap pages 2 to 7 to page 1. Only 2 pages of page structs
-> > will be used for each HugeTLB page. This will allow us to free the remaining
-> > 6 pages to the buddy allocator.
->
-> What is page 1 used for? page 0 carries the 4 struct pages needed, does compound_head
-> need a full page? IOW, why do we need two full pages -- may be the patches have the
-> answer to something I am missing?
 
-Yeah. It really can free 7 pages. But we need some work to support this. Why?
-
-Now for the 2MB HugeTLB page, we only free 6 vmemmap pages. we really can
-free 7 vmemmap pages. In this case, we can see 8 of the 512 struct page
-structures have been set PG_head flag. If we can adjust compound_head()
-slightly and make compound_head() return the real head struct page when
-the parameter is the tail struct page but with PG_head flag set.
-
-In order to make the code evolution route clearer. This feature can be
-a separate patch (and send it out) after this patchset is solid and applied.
-
->
-> >
-> > Here is how things look after remapping.
-> >
-> >     HugeTLB                  struct pages(8 pages)         page frame(8 pages)
-> >  +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
-> >  |           |                     |     0     | -------------> |     0     |
-> >  |           |                     +-----------+                +-----------+
-> >  |           |                     |     1     | -------------> |     1     |
-> >  |           |                     +-----------+                +-----------+
-> >  |           |                     |     2     | ----------------^ ^ ^ ^ ^ ^
-> >  |           |                     +-----------+                   | | | | |
-> >  |           |                     |     3     | ------------------+ | | | |
-> >  |           |                     +-----------+                     | | | |
-> >  |           |                     |     4     | --------------------+ | | |
-> >  |    2MB    |                     +-----------+                       | | |
-> >  |           |                     |     5     | ----------------------+ | |
-> >  |           |                     +-----------+                         | |
-> >  |           |                     |     6     | ------------------------+ |
-> >  |           |                     +-----------+                           |
-> >  |           |                     |     7     | --------------------------+
-> >  |           |                     +-----------+
-> >  |           |
-> >  |           |
-> >  |           |
-> >  +-----------+
-> >
-> > When a HugeTLB is freed to the buddy system, we should allocate 6 pages for
-> > vmemmap pages and restore the previous mapping relationship.
-> >
->
-> Can these 6 pages come from the hugeTLB page itself? When you say 6 pages,
-> I presume you mean 6 pages of PAGE_SIZE
-
-There was a decent discussion about this in a previous version of the
-series starting here:
-
-https://lore.kernel.org/linux-mm/20210126092942.GA10602@linux/
-
-In this thread various other options were suggested and discussed.
-
-Thanks.
-
->
-> > Apart from 2MB HugeTLB page, we also have 1GB HugeTLB page. It is similar
-> > to the 2MB HugeTLB page. We also can use this approach to free the vmemmap
-> > pages.
-> >
-> > In this case, for the 1GB HugeTLB page, we can save 4094 pages. This is a
-> > very substantial gain. On our server, run some SPDK/QEMU applications which
-> > will use 1024GB hugetlbpage. With this feature enabled, we can save ~16GB
-> > (1G hugepage)/~12GB (2MB hugepage) memory.
->
-> Thanks,
-> Balbir Singh
->
->
->
->
->
->
->
->
->
->
->
->
->
