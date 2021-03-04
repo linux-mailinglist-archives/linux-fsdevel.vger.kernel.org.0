@@ -2,389 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 113A232CC1B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 06:43:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C481632CC26
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 06:45:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234186AbhCDFmS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Mar 2021 00:42:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33768 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234172AbhCDFlv (ORCPT
+        id S234253AbhCDFo5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Mar 2021 00:44:57 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:29093 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S234236AbhCDFo0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Mar 2021 00:41:51 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DB47C061756
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Mar 2021 21:41:10 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id x9so1381819edd.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Mar 2021 21:41:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=rWsjVB9Em8jxffhCk8PKglKjzOG0xdctw7R4jfAWYpI=;
-        b=oMSlvClA0Xjp+3nzrzI82/u22YbIwmbFhpzPoXY6W+FqrMByYHtj0XCrXdbXf7l6f+
-         a56w6opganYlF5Pz4JIT7t0RoAd+ZSfBqp0mYEKkKFkIxQif7aisbF/vST2Z9Tedt+BZ
-         YDiWuRahr7r5UTmv33b5ml3E3wMJpwcUnDSwMnB0+fz/oPSbbDwqOVq2flqg9+xtA2ei
-         LyRyxZj/co14RMyVng8RlkJz30KWpb8t+brQ0XOU/Y8X4omIYsMGVOv5B38mv63GN6Ku
-         TOjgtLr0zhCebZe9g92awFMezKg3ksMyywTnukI6noz/QjsPZQVBAdkXCT5kKL68tMjr
-         R5NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=rWsjVB9Em8jxffhCk8PKglKjzOG0xdctw7R4jfAWYpI=;
-        b=WGMf1iozBhp3fBqtNcJmHts/ZWB/9iNVo5nsGGz7oiOVDP0m61U225kFZzLsqA20Pu
-         Ea/m2lFx85RYU64obTSzmbbZ4tjNh8rjWCHicZ8ZqHgU5m27QHEhtMnlgfcY0kaBYxrs
-         n+3zOGh7945ctYyHYBIwIHDVxnxzi9464t1eqdWeHqaurdIydZtwzSo2ElW3zEs1kKQK
-         wDQRXeyRJ1t0nRuamY6ARCOp6UV6iuTAf69EaXrPgciWfrCS2XW4V3iEUfdtX63o8+rT
-         dgh+4XO1oxzsMmKMK3WRyJLiNRwyBXEiSluMBGjuLEocJFt1B/vGHwwistpbHMw62b2o
-         1e8w==
-X-Gm-Message-State: AOAM531qx/Ww1xGBC+d7Ze6KXRprTK2nlwtvhdpWZL9d1J029IyXFyyZ
-        Xuj3DAYEnMQLRALRLIyHM6U0ITbXgS0dzCZF7Wot
-X-Google-Smtp-Source: ABdhPJyauXZFmD5zPpOL119+bKvzohfB/5QeMWrK+gxkxy5IEI0PGVP7ms1tAAHI6iSOChrlYRZBLWVhi3HjqN/+uDE=
-X-Received: by 2002:a05:6402:4314:: with SMTP id m20mr2443472edc.5.1614836469003;
- Wed, 03 Mar 2021 21:41:09 -0800 (PST)
+        Thu, 4 Mar 2021 00:44:26 -0500
+X-IronPort-AV: E=Sophos;i="5.81,221,1610380800"; 
+   d="scan'208";a="105143058"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 04 Mar 2021 13:42:03 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id 8BD674CE92FD;
+        Thu,  4 Mar 2021 13:41:57 +0800 (CST)
+Received: from G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Thu, 4 Mar 2021 13:41:47 +0800
+Received: from irides.mr.mr.mr (10.167.225.141) by
+ G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.2 via Frontend Transport; Thu, 4 Mar 2021 13:41:47 +0800
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <linux-nvdimm@lists.01.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
+        <willy@infradead.org>, <jack@suse.cz>, <viro@zeniv.linux.org.uk>,
+        <linux-btrfs@vger.kernel.org>, <ocfs2-devel@oss.oracle.com>,
+        <david@fromorbit.com>, <hch@lst.de>, <rgoldwyn@suse.de>
+Subject: [RESEND PATCH v2.1 07/10] iomap: Introduce iomap_apply2() for operations on two files
+Date:   Thu, 4 Mar 2021 13:41:42 +0800
+Message-ID: <20210304054142.1147895-1-ruansy.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.30.1
+In-Reply-To: <20210226002030.653855-8-ruansy.fnst@fujitsu.com>
+References: <20210226002030.653855-8-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-References: <20210223115048.435-1-xieyongji@bytedance.com> <20210223115048.435-6-xieyongji@bytedance.com>
- <9a00b494-bcea-c874-4d3d-5378b62a8913@redhat.com>
-In-Reply-To: <9a00b494-bcea-c874-4d3d-5378b62a8913@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Thu, 4 Mar 2021 13:40:58 +0800
-Message-ID: <CACycT3s7MMWDiwOC2XFSupbG9-f3WqtxzS4yfyYKhbC39JyF9g@mail.gmail.com>
-Subject: Re: Re: [RFC v4 05/11] vdpa: Support transferring virtual addressing
- during DMA mapping
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: 8BD674CE92FD.A45E2
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 4, 2021 at 11:07 AM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> On 2021/2/23 7:50 =E4=B8=8B=E5=8D=88, Xie Yongji wrote:
-> > This patch introduces an attribute for vDPA device to indicate
-> > whether virtual address can be used. If vDPA device driver set
-> > it, vhost-vdpa bus driver will not pin user page and transfer
-> > userspace virtual address instead of physical address during
-> > DMA mapping. And corresponding vma->vm_file and offset will be
-> > also passed as an opaque pointer.
-> >
-> > Suggested-by: Jason Wang <jasowang@redhat.com>
-> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> > ---
-> >   drivers/vdpa/ifcvf/ifcvf_main.c   |   2 +-
-> >   drivers/vdpa/mlx5/net/mlx5_vnet.c |   2 +-
-> >   drivers/vdpa/vdpa.c               |   9 +++-
-> >   drivers/vdpa/vdpa_sim/vdpa_sim.c  |   2 +-
-> >   drivers/vhost/vdpa.c              | 104 +++++++++++++++++++++++++++++=
-++-------
-> >   include/linux/vdpa.h              |  20 ++++++--
-> >   6 files changed, 113 insertions(+), 26 deletions(-)
-> >
-> > diff --git a/drivers/vdpa/ifcvf/ifcvf_main.c b/drivers/vdpa/ifcvf/ifcvf=
-_main.c
-> > index 7c8bbfcf6c3e..228b9f920fea 100644
-> > --- a/drivers/vdpa/ifcvf/ifcvf_main.c
-> > +++ b/drivers/vdpa/ifcvf/ifcvf_main.c
-> > @@ -432,7 +432,7 @@ static int ifcvf_probe(struct pci_dev *pdev, const =
-struct pci_device_id *id)
-> >
-> >       adapter =3D vdpa_alloc_device(struct ifcvf_adapter, vdpa,
-> >                                   dev, &ifc_vdpa_ops,
-> > -                                 IFCVF_MAX_QUEUE_PAIRS * 2, NULL);
-> > +                                 IFCVF_MAX_QUEUE_PAIRS * 2, NULL, fals=
-e);
-> >       if (adapter =3D=3D NULL) {
-> >               IFCVF_ERR(pdev, "Failed to allocate vDPA structure");
-> >               return -ENOMEM;
-> > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/=
-mlx5_vnet.c
-> > index 029822060017..54290438da28 100644
-> > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > @@ -1964,7 +1964,7 @@ static int mlx5v_probe(struct auxiliary_device *a=
-dev,
-> >       max_vqs =3D min_t(u32, max_vqs, MLX5_MAX_SUPPORTED_VQS);
-> >
-> >       ndev =3D vdpa_alloc_device(struct mlx5_vdpa_net, mvdev.vdev, mdev=
-->device, &mlx5_vdpa_ops,
-> > -                              2 * mlx5_vdpa_max_qps(max_vqs), NULL);
-> > +                              2 * mlx5_vdpa_max_qps(max_vqs), NULL, fa=
-lse);
-> >       if (IS_ERR(ndev))
-> >               return PTR_ERR(ndev);
-> >
-> > diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-> > index 9700a0adcca0..fafc0ee5eb05 100644
-> > --- a/drivers/vdpa/vdpa.c
-> > +++ b/drivers/vdpa/vdpa.c
-> > @@ -72,6 +72,7 @@ static void vdpa_release_dev(struct device *d)
-> >    * @nvqs: number of virtqueues supported by this device
-> >    * @size: size of the parent structure that contains private data
-> >    * @name: name of the vdpa device; optional.
-> > + * @use_va: indicate whether virtual address can be used by this devic=
-e
->
->
-> I think "use_va" means va must be used instead of "can be" here.
->
+Some operations, such as comparing a range of data in two files under
+fsdax mode, requires nested iomap_open()/iomap_end() on two file.  Thus,
+we introduce iomap_apply2() to accept arguments from two files and
+iomap_actor2_t for actions on two files.
 
-Right.
+Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+---
+ fs/iomap/apply.c      | 56 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/iomap.h |  7 +++++-
+ 2 files changed, 62 insertions(+), 1 deletion(-)
 
->
-> >    *
-> >    * Driver should use vdpa_alloc_device() wrapper macro instead of
-> >    * using this directly.
-> > @@ -81,7 +82,8 @@ static void vdpa_release_dev(struct device *d)
-> >    */
-> >   struct vdpa_device *__vdpa_alloc_device(struct device *parent,
-> >                                       const struct vdpa_config_ops *con=
-fig,
-> > -                                     int nvqs, size_t size, const char=
- *name)
-> > +                                     int nvqs, size_t size, const char=
- *name,
-> > +                                     bool use_va)
-> >   {
-> >       struct vdpa_device *vdev;
-> >       int err =3D -EINVAL;
-> > @@ -92,6 +94,10 @@ struct vdpa_device *__vdpa_alloc_device(struct devic=
-e *parent,
-> >       if (!!config->dma_map !=3D !!config->dma_unmap)
-> >               goto err;
-> >
-> > +     /* It should only work for the device that use on-chip IOMMU */
-> > +     if (use_va && !(config->dma_map || config->set_map))
-> > +             goto err;
-> > +
-> >       err =3D -ENOMEM;
-> >       vdev =3D kzalloc(size, GFP_KERNEL);
-> >       if (!vdev)
-> > @@ -108,6 +114,7 @@ struct vdpa_device *__vdpa_alloc_device(struct devi=
-ce *parent,
-> >       vdev->config =3D config;
-> >       vdev->features_valid =3D false;
-> >       vdev->nvqs =3D nvqs;
-> > +     vdev->use_va =3D use_va;
-> >
-> >       if (name)
-> >               err =3D dev_set_name(&vdev->dev, "%s", name);
-> > diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim.c b/drivers/vdpa/vdpa_sim/v=
-dpa_sim.c
-> > index 5cfc262ce055..3a9a2dd4e987 100644
-> > --- a/drivers/vdpa/vdpa_sim/vdpa_sim.c
-> > +++ b/drivers/vdpa/vdpa_sim/vdpa_sim.c
-> > @@ -235,7 +235,7 @@ struct vdpasim *vdpasim_create(struct vdpasim_dev_a=
-ttr *dev_attr)
-> >               ops =3D &vdpasim_config_ops;
-> >
-> >       vdpasim =3D vdpa_alloc_device(struct vdpasim, vdpa, NULL, ops,
-> > -                                 dev_attr->nvqs, dev_attr->name);
-> > +                                 dev_attr->nvqs, dev_attr->name, false=
-);
-> >       if (!vdpasim)
-> >               goto err_alloc;
-> >
-> > diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> > index 70857fe3263c..93769ace34df 100644
-> > --- a/drivers/vhost/vdpa.c
-> > +++ b/drivers/vhost/vdpa.c
-> > @@ -480,21 +480,31 @@ static long vhost_vdpa_unlocked_ioctl(struct file=
- *filep,
-> >   static void vhost_vdpa_iotlb_unmap(struct vhost_vdpa *v, u64 start, u=
-64 last)
-> >   {
-> >       struct vhost_dev *dev =3D &v->vdev;
-> > +     struct vdpa_device *vdpa =3D v->vdpa;
-> >       struct vhost_iotlb *iotlb =3D dev->iotlb;
-> >       struct vhost_iotlb_map *map;
-> > +     struct vdpa_map_file *map_file;
-> >       struct page *page;
-> >       unsigned long pfn, pinned;
-> >
-> >       while ((map =3D vhost_iotlb_itree_first(iotlb, start, last)) !=3D=
- NULL) {
-> > -             pinned =3D map->size >> PAGE_SHIFT;
-> > -             for (pfn =3D map->addr >> PAGE_SHIFT;
-> > -                  pinned > 0; pfn++, pinned--) {
-> > -                     page =3D pfn_to_page(pfn);
-> > -                     if (map->perm & VHOST_ACCESS_WO)
-> > -                             set_page_dirty_lock(page);
-> > -                     unpin_user_page(page);
-> > +             if (!vdpa->use_va) {
-> > +                     pinned =3D map->size >> PAGE_SHIFT;
-> > +                     for (pfn =3D map->addr >> PAGE_SHIFT;
-> > +                          pinned > 0; pfn++, pinned--) {
-> > +                             page =3D pfn_to_page(pfn);
-> > +                             if (map->perm & VHOST_ACCESS_WO)
-> > +                                     set_page_dirty_lock(page);
-> > +                             unpin_user_page(page);
-> > +                     }
-> > +                     atomic64_sub(map->size >> PAGE_SHIFT,
-> > +                                     &dev->mm->pinned_vm);
-> > +             } else {
-> > +                     map_file =3D (struct vdpa_map_file *)map->opaque;
-> > +                     if (map_file->file)
-> > +                             fput(map_file->file);
-> > +                     kfree(map_file);
-> >               }
-> > -             atomic64_sub(map->size >> PAGE_SHIFT, &dev->mm->pinned_vm=
-);
-> >               vhost_iotlb_map_free(iotlb, map);
-> >       }
-> >   }
-> > @@ -530,21 +540,21 @@ static int perm_to_iommu_flags(u32 perm)
-> >       return flags | IOMMU_CACHE;
-> >   }
-> >
-> > -static int vhost_vdpa_map(struct vhost_vdpa *v,
-> > -                       u64 iova, u64 size, u64 pa, u32 perm)
-> > +static int vhost_vdpa_map(struct vhost_vdpa *v, u64 iova,
-> > +                       u64 size, u64 pa, u32 perm, void *opaque)
-> >   {
-> >       struct vhost_dev *dev =3D &v->vdev;
-> >       struct vdpa_device *vdpa =3D v->vdpa;
-> >       const struct vdpa_config_ops *ops =3D vdpa->config;
-> >       int r =3D 0;
-> >
-> > -     r =3D vhost_iotlb_add_range(dev->iotlb, iova, iova + size - 1,
-> > -                               pa, perm);
-> > +     r =3D vhost_iotlb_add_range_ctx(dev->iotlb, iova, iova + size - 1=
-,
-> > +                                   pa, perm, opaque);
-> >       if (r)
-> >               return r;
-> >
-> >       if (ops->dma_map) {
-> > -             r =3D ops->dma_map(vdpa, iova, size, pa, perm, NULL);
-> > +             r =3D ops->dma_map(vdpa, iova, size, pa, perm, opaque);
-> >       } else if (ops->set_map) {
-> >               if (!v->in_batch)
-> >                       r =3D ops->set_map(vdpa, dev->iotlb);
-> > @@ -552,13 +562,15 @@ static int vhost_vdpa_map(struct vhost_vdpa *v,
-> >               r =3D iommu_map(v->domain, iova, pa, size,
-> >                             perm_to_iommu_flags(perm));
-> >       }
-> > -
-> > -     if (r)
-> > +     if (r) {
-> >               vhost_iotlb_del_range(dev->iotlb, iova, iova + size - 1);
-> > -     else
-> > +             return r;
-> > +     }
-> > +
-> > +     if (!vdpa->use_va)
-> >               atomic64_add(size >> PAGE_SHIFT, &dev->mm->pinned_vm);
-> >
-> > -     return r;
-> > +     return 0;
-> >   }
-> >
-> >   static void vhost_vdpa_unmap(struct vhost_vdpa *v, u64 iova, u64 size=
-)
-> > @@ -579,10 +591,60 @@ static void vhost_vdpa_unmap(struct vhost_vdpa *v=
-, u64 iova, u64 size)
-> >       }
-> >   }
-> >
-> > +static int vhost_vdpa_va_map(struct vhost_vdpa *v,
-> > +                          u64 iova, u64 size, u64 uaddr, u32 perm)
-> > +{
-> > +     struct vhost_dev *dev =3D &v->vdev;
-> > +     u64 offset, map_size, map_iova =3D iova;
-> > +     struct vdpa_map_file *map_file;
-> > +     struct vm_area_struct *vma;
-> > +     int ret;
-> > +
-> > +     mmap_read_lock(dev->mm);
-> > +
-> > +     while (size) {
-> > +             vma =3D find_vma(dev->mm, uaddr);
-> > +             if (!vma) {
-> > +                     ret =3D -EINVAL;
-> > +                     goto err;
-> > +             }
-> > +             map_size =3D min(size, vma->vm_end - uaddr);
-> > +             offset =3D (vma->vm_pgoff << PAGE_SHIFT) + uaddr - vma->v=
-m_start;
-> > +             map_file =3D kzalloc(sizeof(*map_file), GFP_KERNEL);
-> > +             if (!map_file) {
-> > +                     ret =3D -ENOMEM;
-> > +                     goto err;
-> > +             }
-> > +             if (vma->vm_file && (vma->vm_flags & VM_SHARED) &&
-> > +                     !(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
-> > +                     map_file->file =3D get_file(vma->vm_file);
-> > +                     map_file->offset =3D offset;
-> > +             }
->
->
-> I think it's better to do the flag check right after find_vma(), this
-> can avoid things like kfree etc (e.g the code will still call
-> vhost_vdpa_map() even if the flag is not expected now).
->
+diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
+index 26ab6563181f..fbc38ce3d5b6 100644
+--- a/fs/iomap/apply.c
++++ b/fs/iomap/apply.c
+@@ -97,3 +97,59 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
+ 
+ 	return written ? written : ret;
+ }
++
++loff_t
++iomap_apply2(struct inode *ino1, loff_t pos1, struct inode *ino2, loff_t pos2,
++		loff_t length, unsigned int flags, const struct iomap_ops *ops,
++		void *data, iomap_actor2_t actor)
++{
++	struct iomap smap = { .type = IOMAP_HOLE };
++	struct iomap dmap = { .type = IOMAP_HOLE };
++	loff_t written = 0, ret, ret2 = 0;
++	loff_t len1 = length, len2, min_len;
++
++	ret = ops->iomap_begin(ino1, pos1, len1, flags, &smap, NULL);
++	if (ret)
++		goto out_src;
++	if (WARN_ON(smap.offset > pos1)) {
++		written = -EIO;
++		goto out_src;
++	}
++	if (WARN_ON(smap.length == 0)) {
++		written = -EIO;
++		goto out_src;
++	}
++	len2 = min_t(loff_t, len1, smap.length);
++
++	ret = ops->iomap_begin(ino2, pos2, len2, flags, &dmap, NULL);
++	if (ret)
++		goto out_dest;
++	if (WARN_ON(dmap.offset > pos2)) {
++		written = -EIO;
++		goto out_dest;
++	}
++	if (WARN_ON(dmap.length == 0)) {
++		written = -EIO;
++		goto out_dest;
++	}
++	min_len = min_t(loff_t, len2, dmap.length);
++
++	written = actor(ino1, pos1, ino2, pos2, min_len, data, &smap, &dmap);
++
++out_dest:
++	if (ops->iomap_end)
++		ret2 = ops->iomap_end(ino2, pos2, len2,
++				      written > 0 ? written : 0, flags, &dmap);
++out_src:
++	if (ops->iomap_end)
++		ret = ops->iomap_end(ino1, pos1, len1,
++				     written > 0 ? written : 0, flags, &smap);
++
++	if (ret)
++		return written ? written : ret;
++
++	if (ret2)
++		return written ? written : ret2;
++
++	return written;
++}
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 5bd3cac4df9c..913f98897a77 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -148,10 +148,15 @@ struct iomap_ops {
+  */
+ typedef loff_t (*iomap_actor_t)(struct inode *inode, loff_t pos, loff_t len,
+ 		void *data, struct iomap *iomap, struct iomap *srcmap);
+-
++typedef loff_t (*iomap_actor2_t)(struct inode *ino1, loff_t pos1,
++		struct inode *ino2, loff_t pos2, loff_t len, void *data,
++		struct iomap *smap, struct iomap *dmap);
+ loff_t iomap_apply(struct inode *inode, loff_t pos, loff_t length,
+ 		unsigned flags, const struct iomap_ops *ops, void *data,
+ 		iomap_actor_t actor);
++loff_t iomap_apply2(struct inode *ino1, loff_t pos1, struct inode *ino2,
++		loff_t pos2, loff_t length, unsigned int flags,
++		const struct iomap_ops *ops, void *data, iomap_actor2_t actor);
+ 
+ ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
+ 		const struct iomap_ops *ops);
+-- 
+2.30.1
 
-Make sense to me.
 
->
-> > +             ret =3D vhost_vdpa_map(v, map_iova, map_size, uaddr,
-> > +                                  perm, map_file);
-> > +             if (ret) {
-> > +                     if (map_file->file)
-> > +                             fput(map_file->file);
-> > +                     kfree(map_file);
-> > +                     goto err;
-> > +             }
-> > +             size -=3D map_size;
-> > +             uaddr +=3D map_size;
-> > +             map_iova +=3D map_size;
-> > +     }
-> > +     mmap_read_unlock(dev->mm);
-> > +
-> > +     return 0;
-> > +err:
-> > +     vhost_vdpa_unmap(v, iova, map_iova - iova);
-> > +     return ret;
-> > +}
-> > +
-> >   static int vhost_vdpa_process_iotlb_update(struct vhost_vdpa *v,
-> >                                          struct vhost_iotlb_msg *msg)
-> >   {
-> >       struct vhost_dev *dev =3D &v->vdev;
-> > +     struct vdpa_device *vdpa =3D v->vdpa;
-> >       struct vhost_iotlb *iotlb =3D dev->iotlb;
-> >       struct page **page_list;
-> >       unsigned long list_size =3D PAGE_SIZE / sizeof(struct page *);
-> > @@ -601,6 +663,10 @@ static int vhost_vdpa_process_iotlb_update(struct =
-vhost_vdpa *v,
-> >                                   msg->iova + msg->size - 1))
-> >               return -EEXIST;
-> >
-> > +     if (vdpa->use_va)
-> > +             return vhost_vdpa_va_map(v, msg->iova, msg->size,
-> > +                                      msg->uaddr, msg->perm);
->
->
-> If possible, I would like to factor out the pa map below into a
-> something like vhost_vdpa_pa_map() first with a separated patch. Then
-> introduce vhost_vdpa_va_map().
->
 
-Fine, will do it.
-
-Thanks,
-Yongji
