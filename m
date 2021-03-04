@@ -2,125 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 818D132D448
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 14:39:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A404F32D485
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 14:49:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240901AbhCDNi7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Mar 2021 08:38:59 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:13432 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241065AbhCDNid (ORCPT
+        id S241527AbhCDNtH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Mar 2021 08:49:07 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:33525 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241480AbhCDNsl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Mar 2021 08:38:33 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4DrsMt2L4JzjVKJ;
-        Thu,  4 Mar 2021 21:36:26 +0800 (CST)
-Received: from [10.174.176.202] (10.174.176.202) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.498.0; Thu, 4 Mar 2021 21:37:43 +0800
-Subject: Re: [PATCH] block_dump: don't put the last refcount when marking
- inode dirty
-To:     Jan Kara <jack@suse.cz>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
-        <tytso@mit.edu>, <viro@zeniv.linux.org.uk>,
-        <linfeilong@huawei.com>, Ye Bin <yebin10@huawei.com>
-References: <20210226103103.3048803-1-yi.zhang@huawei.com>
- <20210301112102.GD25026@quack2.suse.cz>
-From:   "zhangyi (F)" <yi.zhang@huawei.com>
-Message-ID: <5f72dc70-9fb0-0d3b-dc31-f60d35929991@huawei.com>
-Date:   Thu, 4 Mar 2021 21:37:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
+        Thu, 4 Mar 2021 08:48:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1614865635;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hNSJeU6DHgk1JDrXPc6wXwBH7UNAGKwi0d2+igWtU6Y=;
+        b=SnjAsjpErilPN7UqsfPvyID4eHUhI97DdfqH6C27rpzEgZ4XX8+k3y8fOv/jX8xdlEVTbe
+        hYBBWHINrJpRx05l7CyqMnaOS/tsL2HMjhtWd7IuXrGtkYGtwFANUXhWvvI9JFrF/u5YFJ
+        e7ketTp5CzVunoohCB7NSRKFsjcTMvA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-167-hcFeYL5qNHGg6spmwsZ5Zw-1; Thu, 04 Mar 2021 08:47:13 -0500
+X-MC-Unique: hcFeYL5qNHGg6spmwsZ5Zw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 76E8BEC1A3;
+        Thu,  4 Mar 2021 13:47:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-66.rdu2.redhat.com [10.10.112.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D08AD5C1A1;
+        Thu,  4 Mar 2021 13:47:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <2653261.1614813611@warthog.procyon.org.uk>
+References: <2653261.1614813611@warthog.procyon.org.uk>
+To:     linux-cachefs@redhat.com
+Cc:     dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: fscache: Redesigning the on-disk cache - LRU handling
 MIME-Version: 1.0
-In-Reply-To: <20210301112102.GD25026@quack2.suse.cz>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.176.202]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2973222.1614865624.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 04 Mar 2021 13:47:04 +0000
+Message-ID: <2973223.1614865624@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021/3/1 19:21, Jan Kara wrote:
-> On Fri 26-02-21 18:31:03, zhangyi (F) wrote:
->> There is an AA deadlock problem when using block_dump on ext4 file
->> system with data=journal mode.
->>
->>   watchdog: BUG: soft lockup - CPU#19 stuck for 22s! [jbd2/pmem0-8:1002]
->>   CPU: 19 PID: 1002 Comm: jbd2/pmem0-8
->>   RIP: 0010:queued_spin_lock_slowpath+0x60/0x3b0
->>   ...
->>   Call Trace:
->>    _raw_spin_lock+0x57/0x70
->>    jbd2_journal_invalidatepage+0x166/0x680
->>    __ext4_journalled_invalidatepage+0x8c/0x120
->>    ext4_journalled_invalidatepage+0x12/0x40
->>    truncate_cleanup_page+0x10e/0x1c0
->>    truncate_inode_pages_range+0x2c8/0xec0
->>    truncate_inode_pages_final+0x41/0x90
->>    ext4_evict_inode+0x254/0xac0
->>    evict+0x11c/0x2f0
->>    iput+0x20e/0x3a0
->>    dentry_unlink_inode+0x1bf/0x1d0
->>    __dentry_kill+0x14c/0x2c0
->>    dput+0x2bc/0x630
->>    block_dump___mark_inode_dirty.cold+0x5c/0x111
->>    __mark_inode_dirty+0x678/0x6b0
->>    mark_buffer_dirty+0x16e/0x1d0
->>    __jbd2_journal_temp_unlink_buffer+0x127/0x1f0
->>    __jbd2_journal_unfile_buffer+0x24/0x80
->>    __jbd2_journal_refile_buffer+0x12f/0x1b0
->>    jbd2_journal_commit_transaction+0x244b/0x3030
->>
->> The problem is a race between jbd2 committing data buffer and user
->> unlink the file concurrently. The jbd2 will get jh->b_state_lock and
->> redirty the inode's data buffer and inode itself. If block_dump is
->> enabled, it will try to find inode's dentry and invoke the last dput()
->> after the inode was unlinked. Then the evict procedure will unmap
->> buffer and get jh->b_state_lock again in journal_unmap_buffer(), and
->> finally lead to deadlock. It works fine if block_dump is not enabled
->> because the last evict procedure is not invoked in jbd2 progress and
->> the jh->b_state_lock will also prevent inode use after free.
->>
->> jbd2                                xxx
->>                                     vfs_unlink
->>                                      ext4_unlink
->> jbd2_journal_commit_transaction
->> **get jh->b_state_lock**
->> jbd2_journal_refile_buffer
->>  mark_buffer_dirty
->>   __mark_inode_dirty
->>    block_dump___mark_inode_dirty
->>     d_find_alias
->>                                      d_delete
->>                                       unhash
->>     dput  //put the last refcount
->>      evict
->>       journal_unmap_buffer
->>        **get jh->b_state_lock again**
->>
->> In most cases of where invoking mark_inode_dirty() will get inode's
->> refcount and the last iput may not happen, but it's not safe. After
->> checking the block_dump code, it only want to dump the file name of the
->> dirty inode, so there is no need to get and put denrty, and dump an
->> unhashed dentry is also fine. This patch remove the dget() && dput(),
->> print the dentry name directly.
->>
->> Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
->> Signed-off-by: yebin (H) <yebin10@huawei.com>
-> 
-> Hrm, ok. Honestly, I wanted to just delete that code for a long time. IMO
-> tracepoints (and we have one in __mark_inode_dirty) are much more useful
-> for tracing anyway. This code exists only because it was there much before
-> tracepoints existed... Do you have a strong reason why are you using
-> block_dump instead of tracepoint trace_writeback_mark_inode_dirty() for
-> your monitoring?
-> 
+David Howells <dhowells@redhat.com> wrote:
 
-Hi, Jan. We just do some stress tests and find this issue, I'm not sure who
-are still using this old debug interface and gather it may need time. Could
-we firstly fix this issue, and then delete this code if no opposed?
+> =
 
-Thanks,
-Yi.
+>  (3) OpenAFS-style format.  One index file to look up {file_key,block#} =
+and an
+>      array of data files, each holding one block (e.g. a 256KiB-aligned =
+chunk
+>      of a file).  Each index entry has valid start/end offsets for easy
+>      truncation.
+> =
+
+>      The index has a hash to facilitate the lookup and an LRU that allow=
+s a
+>      block to be recycled at any time.
+
+The LRU would probably have to be a doubly-linked list so that entries can=
+ be
+removed from it easily.  This means typically touching two other entries,
+which might not be in the same page; further, if the entry is being freed,
+we'd need to excise it from the hash chain also, necessitating touching ma=
+ybe
+two more entries - which might also be in different pages.
+
+Maybe the LRU idea plus a free block bitmap could be combined, however.
+
+ (1) Say that there's a bit-pair map, with one bit pair per block.  The pa=
+ir
+     is set to 0 when the block is free.  When the block is accessed, the =
+pair
+     is set to 3.
+
+ (2) When we run out of free blocks (ie. pairs that are zero), we decremen=
+t
+     all the pairs and then look again.
+
+ (3) Excision from the old hash chain would need to be done at allocation,
+     though it does give a block whose usage has been reduced to 0 the cha=
+nce
+     to be resurrected.
+
+Possible variations on the theme could be:
+
+ (*) Set the pair to 2, not 3 when accessed.  Set the block to 3 to pin it=
+;
+     the process of decrementing all the pairs would leave it at 3.
+
+ (*) Rather than decrementing all pairs at once, have a rotating window th=
+at
+     does a part of the map at once.
+
+ (*) If a round of decrementing doesn't reduce any pairs to zero, reject a
+     request for space.
+
+This would also work for a file index.
+
+David
+
