@@ -2,92 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D7EB32CE4A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 09:21:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D5AE32CE87
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 09:33:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236544AbhCDIUN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Mar 2021 03:20:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39512 "EHLO
+        id S231311AbhCDIb5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Mar 2021 03:31:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236530AbhCDIT6 (ORCPT
+        with ESMTP id S234605AbhCDIbl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Mar 2021 03:19:58 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62FB4C061760
-        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Mar 2021 00:19:18 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id v13so17145563edw.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Mar 2021 00:19:18 -0800 (PST)
+        Thu, 4 Mar 2021 03:31:41 -0500
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 131D2C061574;
+        Thu,  4 Mar 2021 00:31:01 -0800 (PST)
+Received: by mail-yb1-xb30.google.com with SMTP id d9so27648506ybq.1;
+        Thu, 04 Mar 2021 00:31:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=H3NNNzQtUvXt5Fye8sZNpucfc9FPlOfifbnnwnh2RMc=;
-        b=ZoNG+FOvrEGHS/G3iAhwPINVlJ00oFmpga62+C65qKMJLCK4lSbZFux+QNQ8qcgoLI
-         2Pjybn3zmN9ufzyxe+II872P6eW3hasLTfs1yAW7HjxrxeYpDk7mgOpHgQhwBtTR9UnX
-         120J1MYC7h8BiR2cv0B3NBxL5kBA3hQdNerlmAn+uu7tr0QaIo6HREKBcyAts+hf4EFL
-         AXpwqIU4unILaT5VN1PbiiyWAo4EsgeSAq/HTdr9Xs9VIxzE8MyPt6MbL2SB78rjnUM8
-         vPKsXhynMiDIkKHlYSa6ASqoHyJHCgDQGWK77SWBDp/vpkM8MSgYz0CBNGLjynfHBBjG
-         O3sg==
+         :cc;
+        bh=TBUtXor9JHig51XwOk2hKqYVPwMBdbUM5CT6K0S4ndc=;
+        b=Podv25yUm88aY+8mEUWBOnr7ph6i86M9YgHhCbaqEq1+ciSnQ4CGjjNmHjNc2RzeTr
+         aaQS6ot9VEQZ/i6l7rnzI6+Mtu3I0p9XyLD6Q6yA0mZLQ+quxvFQ5ScOyVXW3FMHmZiC
+         drSHvhQraY61uCEBdDRm/72oRpjmqT1+MhWT5i2Zxgf2P4okcqdk7Pj+JTGw6ALqqVYP
+         L9395H+E6IRqthsuZM8dmObEB3z3PzHnFDMeae5IHm50h3QfloLbDqjCNeIqZ7c7nMcN
+         2IS6BZuB0IPOAWXYLlVCUQL92jtKYdioEWJdYzG0xvcdRQ9nfysMd9+AS7lsmUfkPvu7
+         u8FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=H3NNNzQtUvXt5Fye8sZNpucfc9FPlOfifbnnwnh2RMc=;
-        b=RuXPVCVpA6L2283Nl28j8WJSEM4i6OMs4cCqcVCKgiSd8Gv2sOCNvB0aa9z5vhI9Zj
-         zL1/eOwi+PrvcPPCUZoJfErR+hARbq+Xrjc+nZzDspcwqqqQ9zzGJr6Q80c5NkV7ru3d
-         1lY3jTfg0+dNAZq68IHIHHPWxznd1VcM2KNyVWK3pJqo5Uwxl2PhYp9hSy2rkiyhAyy5
-         sJ1kYaCaegThoOA5HgsDuGWPfzJ3fForH5trD7XhKj7daOQXvyJoSy4abuRbgvFxhr/6
-         2tje96Eu79cFesfevrzgwtM1GbUdIiOhRvaeEt70ntN83zBezyd8UFHa4tM4noiM/mrT
-         XnRQ==
-X-Gm-Message-State: AOAM5332t1YSfDSjs/rB8o20xGPRA0Ih0OUvLPvsQ0HsiWP95I7Uo2FG
-        Kz608TPKLD79r0k3Tc+VxY6GqXeNKNjXtdRG+CFc
-X-Google-Smtp-Source: ABdhPJw7SQ5FmCmRVMs4bNdd9alpNsZzQvjSqli5sYS72PmhDvyRbtBr1jsItQcl4lUj1MuiSdZrKEphdwvmCULLauo=
-X-Received: by 2002:a05:6402:3122:: with SMTP id dd2mr2975252edb.253.1614845957202;
- Thu, 04 Mar 2021 00:19:17 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=TBUtXor9JHig51XwOk2hKqYVPwMBdbUM5CT6K0S4ndc=;
+        b=N2yySH4DMegZu8X+GfBE+Mz6ZR2xQzQl7Bx/liiuQAsVAI9rTOF1MBCg8qfdL9i5vA
+         9SjKd6LbofjusPU4jTeXEK7AZ6cbnXnJB4RXxgH+x42ToF7GwgXLlB/vwoGk+waZ3Ah0
+         kV+mzzjcPHANo3Uwrx1u1QKQCtbYJujxMMy7gbRbpkvQU/YOrd1YxUljLBCTfG2BAwLx
+         YMkBMbHp66Ndrp1OqHvfModmR+9ponYaKcQ5VfRYFotjuyqV9gDIsYtPdnnAZTZrqQzI
+         GsaO5PIooX7zXseDy5B0GZZzDWkXaamBCiJtLkE64jgNSmo7Cx+zFVg1wtOauXNWZoq2
+         n0bg==
+X-Gm-Message-State: AOAM533aciS9nSw/6IpQi4/Y6HIfc/9fMHg0HKCUbMPCqydNu7stvpbg
+        oUyGhFs9GZi2CByHT6SlHZNBX/7DYGxBMiCPwG4=
+X-Google-Smtp-Source: ABdhPJwueHAY695LaUUFe5cSJfYyxtyB+83dn4Q/EVZ6w477nyX3CpA7IBDWq8xAbPTmbwv9XmtGCbOEOKV5EiUYbiI=
+X-Received: by 2002:a25:d4d0:: with SMTP id m199mr5066850ybf.26.1614846660505;
+ Thu, 04 Mar 2021 00:31:00 -0800 (PST)
 MIME-Version: 1.0
-References: <20210223115048.435-1-xieyongji@bytedance.com> <20210223115048.435-12-xieyongji@bytedance.com>
- <d104a518-799d-c13f-311c-f7a673f9241b@redhat.com>
-In-Reply-To: <d104a518-799d-c13f-311c-f7a673f9241b@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Thu, 4 Mar 2021 16:19:06 +0800
-Message-ID: <CACycT3uaOU5ybwojfiSL0kSpW9GUnh82ZeDH7drdkfK72iP8bg@mail.gmail.com>
-Subject: Re: Re: [RFC v4 11/11] vduse: Support binding irq to the specified cpu
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
+References: <20210301160102.2884774-1-almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <20210301160102.2884774-1-almaz.alexandrovich@paragon-software.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Thu, 4 Mar 2021 09:30:49 +0100
+Message-ID: <CANiq72nRpxe5M5rsBdWe_2tEpGju7Oe0bBhOdwMBa6MHkHi_Qg@mail.gmail.com>
+Subject: Re: [PATCH v22 00/10] NTFS read-write driver GPL implementation by
+ Paragon Software
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>, pali@kernel.org,
+        dsterba@suse.cz, aaptel@suse.com,
+        Matthew Wilcox <willy@infradead.org>,
         Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org
+        Joe Perches <joe@perches.com>, mark@harmstone.com,
+        nborisov@suse.com, linux-ntfs-dev@lists.sourceforge.net,
+        anton@tuxera.com, Dan <dan.carpenter@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, ebiggers@kernel.org,
+        andy.lavr@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 4, 2021 at 3:30 PM Jason Wang <jasowang@redhat.com> wrote:
+On Thu, Mar 4, 2021 at 1:09 AM Konstantin Komarov
+<almaz.alexandrovich@paragon-software.com> wrote:
 >
->
-> On 2021/2/23 7:50 =E4=B8=8B=E5=8D=88, Xie Yongji wrote:
-> > Add a parameter for the ioctl VDUSE_INJECT_VQ_IRQ to support
-> > injecting virtqueue's interrupt to the specified cpu.
->
->
-> How userspace know which CPU is this irq for? It looks to me we need to
-> do it at different level.
->
-> E.g introduce some API in sys to allow admin to tune for that.
->
-> But I think we can do that in antoher patch on top of this series.
->
+> - use clang-format 11.0 instead of 10.0 to format code
 
-OK. I will think more about it.
+Out of curiosity: was this due to some specific reason? i.e. have you
+found it provides better output? (it is useful to know this to justify
+later an increase of the minimum version etc.)
 
-Thanks,
-Yongji
+Thanks!
+
+Cheers,
+Miguel
