@@ -2,83 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D5AE32CE87
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 09:33:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0124732CF21
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 10:01:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231311AbhCDIb5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Mar 2021 03:31:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42028 "EHLO
+        id S237166AbhCDI7N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Mar 2021 03:59:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234605AbhCDIbl (ORCPT
+        with ESMTP id S232891AbhCDI6y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Mar 2021 03:31:41 -0500
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 131D2C061574;
-        Thu,  4 Mar 2021 00:31:01 -0800 (PST)
-Received: by mail-yb1-xb30.google.com with SMTP id d9so27648506ybq.1;
-        Thu, 04 Mar 2021 00:31:01 -0800 (PST)
+        Thu, 4 Mar 2021 03:58:54 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85C51C061574
+        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Mar 2021 00:58:39 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id l12so33718807edt.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Mar 2021 00:58:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TBUtXor9JHig51XwOk2hKqYVPwMBdbUM5CT6K0S4ndc=;
-        b=Podv25yUm88aY+8mEUWBOnr7ph6i86M9YgHhCbaqEq1+ciSnQ4CGjjNmHjNc2RzeTr
-         aaQS6ot9VEQZ/i6l7rnzI6+Mtu3I0p9XyLD6Q6yA0mZLQ+quxvFQ5ScOyVXW3FMHmZiC
-         drSHvhQraY61uCEBdDRm/72oRpjmqT1+MhWT5i2Zxgf2P4okcqdk7Pj+JTGw6ALqqVYP
-         L9395H+E6IRqthsuZM8dmObEB3z3PzHnFDMeae5IHm50h3QfloLbDqjCNeIqZ7c7nMcN
-         2IS6BZuB0IPOAWXYLlVCUQL92jtKYdioEWJdYzG0xvcdRQ9nfysMd9+AS7lsmUfkPvu7
-         u8FQ==
+         :cc:content-transfer-encoding;
+        bh=WcsXXXbrDSVn9JnL1kI4tSiyWOxm9D+WqcuRuZ8ZPPY=;
+        b=SgIJQX+v/dAp6zKtCoUdKvxd747j/oIsOOlWt3BXoINpvb8gM2GUvlCR5DCRqwiLzx
+         qanElF3lR5Fr1/bcxvlAMjAdzVuPop19Ck5lylT/XrIhZ3r2rle5OmJX8PxYEU9XKxuu
+         Iw6L1WE502mtn0lYP9httAirkVvwVutnvdqLR0+0sBBVZsjZd2vA/zVcYpTZI5p/MXAR
+         +tsVCNpQxU53RtJ4KyP79ztx2eVInM9T5VemFzBVpaRDtn5ogkX3Y6iMsEL6on25AwGM
+         QzTayVrZ5DCL6nhyaK0As2yq9bQ2XY7aGG4uM3iZbe2E67jW4p4yj4D7UlTLfDhQXcNl
+         Au8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TBUtXor9JHig51XwOk2hKqYVPwMBdbUM5CT6K0S4ndc=;
-        b=N2yySH4DMegZu8X+GfBE+Mz6ZR2xQzQl7Bx/liiuQAsVAI9rTOF1MBCg8qfdL9i5vA
-         9SjKd6LbofjusPU4jTeXEK7AZ6cbnXnJB4RXxgH+x42ToF7GwgXLlB/vwoGk+waZ3Ah0
-         kV+mzzjcPHANo3Uwrx1u1QKQCtbYJujxMMy7gbRbpkvQU/YOrd1YxUljLBCTfG2BAwLx
-         YMkBMbHp66Ndrp1OqHvfModmR+9ponYaKcQ5VfRYFotjuyqV9gDIsYtPdnnAZTZrqQzI
-         GsaO5PIooX7zXseDy5B0GZZzDWkXaamBCiJtLkE64jgNSmo7Cx+zFVg1wtOauXNWZoq2
-         n0bg==
-X-Gm-Message-State: AOAM533aciS9nSw/6IpQi4/Y6HIfc/9fMHg0HKCUbMPCqydNu7stvpbg
-        oUyGhFs9GZi2CByHT6SlHZNBX/7DYGxBMiCPwG4=
-X-Google-Smtp-Source: ABdhPJwueHAY695LaUUFe5cSJfYyxtyB+83dn4Q/EVZ6w477nyX3CpA7IBDWq8xAbPTmbwv9XmtGCbOEOKV5EiUYbiI=
-X-Received: by 2002:a25:d4d0:: with SMTP id m199mr5066850ybf.26.1614846660505;
- Thu, 04 Mar 2021 00:31:00 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=WcsXXXbrDSVn9JnL1kI4tSiyWOxm9D+WqcuRuZ8ZPPY=;
+        b=I34l6haV12ZU7KSwaRoLYl32QBzPIy8I888AarafzPWT5F3mndHzixW5+5PpLmMhdh
+         WivUltRWYrMlnMqDnd7XcHbYDsQxYUgGmHSoxIav5nO5GhbmAAyvoVnp0qKw788sd53m
+         eObzsxTR61XfzZsBKYX1WX0NUlG4jzTKXu5eKFnoXdrsdIBK+MQLZ9SH8y7jgJ4niqxg
+         nRoiu3uNY9rMA+4B17lzUotrIwMN6RVo0UBw9p++uk5hFHI9LRiAEsPe6dTwx4ednIDx
+         G8Qapv48ELwiFVLQZ++0utouBdlTPZHCJ7iqHlkLWsgp42kK2S7jmesAHo2Ev7Z0XW8b
+         LuDQ==
+X-Gm-Message-State: AOAM531nsVtZKxFAJxHL5fw8xzOkdGsNobBhrsGA6Y7IkUY+g5EiXhGP
+        twGsUMWYJGjHAwNlfJZQN6aTt1OLbgApWHgk/wED
+X-Google-Smtp-Source: ABdhPJz1yhS4bpogbrj7802vVThEsweuzWygoO16SS4Sm5PZ+sHcuk5hH2T4ZXUpPr/tI/5DOjViugXNCjqXBngk2S0=
+X-Received: by 2002:a05:6402:6ca:: with SMTP id n10mr3201074edy.312.1614848318350;
+ Thu, 04 Mar 2021 00:58:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20210301160102.2884774-1-almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <20210301160102.2884774-1-almaz.alexandrovich@paragon-software.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Thu, 4 Mar 2021 09:30:49 +0100
-Message-ID: <CANiq72nRpxe5M5rsBdWe_2tEpGju7Oe0bBhOdwMBa6MHkHi_Qg@mail.gmail.com>
-Subject: Re: [PATCH v22 00/10] NTFS read-write driver GPL implementation by
- Paragon Software
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel <linux-kernel@vger.kernel.org>, pali@kernel.org,
-        dsterba@suse.cz, aaptel@suse.com,
-        Matthew Wilcox <willy@infradead.org>,
+References: <20210223115048.435-1-xieyongji@bytedance.com> <20210223115048.435-11-xieyongji@bytedance.com>
+ <d63e4cfd-4992-8493-32b0-18e0478f6e1a@redhat.com>
+In-Reply-To: <d63e4cfd-4992-8493-32b0-18e0478f6e1a@redhat.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Thu, 4 Mar 2021 16:58:27 +0800
+Message-ID: <CACycT3tqM=ALOG1r0Ve6UTGmwJ7Wg7fQpLZypjZsJF1mJ+adMA@mail.gmail.com>
+Subject: Re: Re: [RFC v4 10/11] vduse: Introduce a workqueue for irq injection
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
         Randy Dunlap <rdunlap@infradead.org>,
-        Joe Perches <joe@perches.com>, mark@harmstone.com,
-        nborisov@suse.com, linux-ntfs-dev@lists.sourceforge.net,
-        anton@tuxera.com, Dan <dan.carpenter@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, ebiggers@kernel.org,
-        andy.lavr@gmail.com
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 4, 2021 at 1:09 AM Konstantin Komarov
-<almaz.alexandrovich@paragon-software.com> wrote:
+On Thu, Mar 4, 2021 at 2:59 PM Jason Wang <jasowang@redhat.com> wrote:
 >
-> - use clang-format 11.0 instead of 10.0 to format code
+>
+> On 2021/2/23 7:50 =E4=B8=8B=E5=8D=88, Xie Yongji wrote:
+> > This patch introduces a workqueue to support injecting
+> > virtqueue's interrupt asynchronously. This is mainly
+> > for performance considerations which makes sure the push()
+> > and pop() for used vring can be asynchronous.
+>
+>
+> Do you have pref numbers for this patch?
+>
 
-Out of curiosity: was this due to some specific reason? i.e. have you
-found it provides better output? (it is useful to know this to justify
-later an increase of the minimum version etc.)
+No, I can do some tests for it if needed.
 
-Thanks!
+Another problem is the VIRTIO_RING_F_EVENT_IDX feature will be useless
+if we call irq callback in ioctl context. Something like:
 
-Cheers,
-Miguel
+virtqueue_push();
+virtio_notify();
+    ioctl()
+-------------------------------------------------
+        irq_cb()
+            virtqueue_get_buf()
+
+The used vring is always empty each time we call virtqueue_push() in
+userspace. Not sure if it is what we expected.
+
+Thanks,
+Yongji
