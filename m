@@ -2,93 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DBC932D64C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 16:19:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D24232D737
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 16:57:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233853AbhCDPRk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Mar 2021 10:17:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33736 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234053AbhCDPRL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Mar 2021 10:17:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B4D88AAC5;
-        Thu,  4 Mar 2021 15:16:29 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 56556DA81D; Thu,  4 Mar 2021 16:14:33 +0100 (CET)
-Date:   Thu, 4 Mar 2021 16:14:33 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] btrfs: zoned: move superblock logging zone
- location
-Message-ID: <20210304151433.GR7604@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <naohiro.aota@wdc.com>,
-        linux-btrfs@vger.kernel.org, dsterba@suse.com,
-        linux-fsdevel@vger.kernel.org
-References: <cover.1614760899.git.naohiro.aota@wdc.com>
- <fe07f3ca7b17b6739cff8ab228d57bdbea0c447b.1614760899.git.naohiro.aota@wdc.com>
+        id S235912AbhCDP4E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Mar 2021 10:56:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53026 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234366AbhCDPzz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Mar 2021 10:55:55 -0500
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3959C061574;
+        Thu,  4 Mar 2021 07:55:15 -0800 (PST)
+Received: by mail-pg1-x534.google.com with SMTP id e6so19151231pgk.5;
+        Thu, 04 Mar 2021 07:55:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=U3iTluQgGyqxe4+jJndhNTExcQnQsciF6nhWB0kk+pw=;
+        b=ei+wYitBRmGEEn/UcyXoLKra3hocBkpQN/35lFTbFSvabwNZKmRexsZ9R9hvjzxVSl
+         mytwFZSkZJqRySVE/m4MMhASeuhRSKW3HH7+6Zvl0a2c3dyAyCDWsmQKa8v/CYQMNbgY
+         KCohb0qYJ+9ruOM3pkm/zoYVonzIgVDu3Ty2ezKU7P7EoCEDFc704qQ+H2eRTsWE4a12
+         CkNy2S64lGzcdpt1yNvUPvBFUMD/xPqzzYHRvunH9GR7g7bICR18EamWIgkYCN9uRYFB
+         2kVxp7NM0m4s96vpwXXAdKYYvD7Cmb9lPMQNKyczsIAoVzExeF0QLPmAhTnxLjLYTB8r
+         bvSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=U3iTluQgGyqxe4+jJndhNTExcQnQsciF6nhWB0kk+pw=;
+        b=jGmpS88Ss1Tm2XzzcZfIbC1MyVs0g4Be3S8jl1jrmoiKKMm3152V2CuVWtRnxfJP5W
+         1LwiNMzQVFFIh8qz17arMDz89g+OlEly7E8ZfNmxGEB2kSI4Ia7sNviGszYg0hRjV8HL
+         uDkTa8r++P47ZwJFrJB5LU14/lmQ/BQYwpWW1oJjV14Vxj1PCy6X/+GkI7LC10S9xrIS
+         4MW+Wqkj8EYqcUxGMSmhsJN9+DKDSt3wCrHKz/tddfToat7AkP0Q5xH3qrKZGuKo0Gf5
+         MPtor6sue1DVi7avyvvvccKPTKIHr69CRLBx5o+K3Wj5ypxn5IlAJ+V6fR6zpgHb7QqX
+         OHxg==
+X-Gm-Message-State: AOAM532lwaCz1y9xqsH1GQJfbyF7+F861Ee/wbj1eL3dNN2DFMsEGwoX
+        xQUdcgLNSAr9+zmfMmK2gf0=
+X-Google-Smtp-Source: ABdhPJz8Xzi+8fVrR6B2TEpOBJ3j4oO00zfVw3RtfA4v1iffBj4R4AC4xnLpAvhDgp6wiUUwBP5pvw==
+X-Received: by 2002:a63:e442:: with SMTP id i2mr4094318pgk.12.1614873315168;
+        Thu, 04 Mar 2021 07:55:15 -0800 (PST)
+Received: from google.com ([2620:15c:211:201:edb1:8010:5c27:a8cc])
+        by smtp.gmail.com with ESMTPSA id l3sm28030868pfc.81.2021.03.04.07.55.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Mar 2021 07:55:14 -0800 (PST)
+Sender: Minchan Kim <minchan.kim@gmail.com>
+Date:   Thu, 4 Mar 2021 07:55:12 -0800
+From:   Minchan Kim <minchan@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, joaodias@google.com,
+        surenb@google.com, cgoldswo@codeaurora.org, willy@infradead.org,
+        vbabka@suse.cz, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm: disable LRU pagevec during the migration
+ temporarily
+Message-ID: <YEEC4EjxKB5+zl6t@google.com>
+References: <20210302210949.2440120-1-minchan@kernel.org>
+ <YD+F4LgPH0zMBDGW@dhcp22.suse.cz>
+ <YD/wOq3lf9I5HK85@google.com>
+ <fc76eca3-f986-3980-065f-64c8dc92530a@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fe07f3ca7b17b6739cff8ab228d57bdbea0c447b.1614760899.git.naohiro.aota@wdc.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <fc76eca3-f986-3980-065f-64c8dc92530a@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 03, 2021 at 05:55:47PM +0900, Naohiro Aota wrote:
-> This commit moves the location of superblock logging zones basing on the
-> fixed address instead of the fixed zone number.
+On Thu, Mar 04, 2021 at 09:07:28AM +0100, David Hildenbrand wrote:
+> On 03.03.21 21:23, Minchan Kim wrote:
+> > On Wed, Mar 03, 2021 at 01:49:36PM +0100, Michal Hocko wrote:
+> > > On Tue 02-03-21 13:09:48, Minchan Kim wrote:
+> > > > LRU pagevec holds refcount of pages until the pagevec are drained.
+> > > > It could prevent migration since the refcount of the page is greater
+> > > > than the expection in migration logic. To mitigate the issue,
+> > > > callers of migrate_pages drains LRU pagevec via migrate_prep or
+> > > > lru_add_drain_all before migrate_pages call.
+> > > > 
+> > > > However, it's not enough because pages coming into pagevec after the
+> > > > draining call still could stay at the pagevec so it could keep
+> > > > preventing page migration. Since some callers of migrate_pages have
+> > > > retrial logic with LRU draining, the page would migrate at next trail
+> > > > but it is still fragile in that it doesn't close the fundamental race
+> > > > between upcoming LRU pages into pagvec and migration so the migration
+> > > > failure could cause contiguous memory allocation failure in the end.
+> > > > 
+> > > > To close the race, this patch disables lru caches(i.e, pagevec)
+> > > > during ongoing migration until migrate is done.
+> > > > 
+> > > > Since it's really hard to reproduce, I measured how many times
+> > > > migrate_pages retried with force mode below debug code.
+> > > > 
+> > > > int migrate_pages(struct list_head *from, new_page_t get_new_page,
+> > > > 			..
+> > > > 			..
+> > > > 
+> > > > if (rc && reason == MR_CONTIG_RANGE && pass > 2) {
+> > > >         printk(KERN_ERR, "pfn 0x%lx reason %d\n", page_to_pfn(page), rc);
+> > > >         dump_page(page, "fail to migrate");
+> > > > }
+> > > > 
+> > > > The test was repeating android apps launching with cma allocation
+> > > > in background every five seconds. Total cma allocation count was
+> > > > about 500 during the testing. With this patch, the dump_page count
+> > > > was reduced from 400 to 30.
+> > > 
+> > > Have you seen any improvement on the CMA allocation success rate?
+> > 
+> > Unfortunately, the cma alloc failure rate with reasonable margin
+> > of error is really hard to reproduce under real workload.
+> > That's why I measured the soft metric instead of direct cma fail
+> > under real workload(I don't want to make some adhoc artificial
+> > benchmark and keep tunes system knobs until it could show
+> > extremly exaggerated result to convice patch effect).
+> > 
+> > Please say if you belive this work is pointless unless there is
+> > stable data under reproducible scenario. I am happy to drop it.
 > 
-> By locating the superblock zones using fixed addresses, we can scan a
-> dumped file system image without the zone information. And, no drawbacks
-> exist.
+> Do you have *some* application that triggers such a high retry count?
+
+I have no idea what the specific appliction could trigger the high
+retry count since the LRUs(the VM LRU and buffer_head LRU) are
+common place everybody could use and every process could trigger.
+
 > 
-> The following zones are reserved as the circular buffer on zoned btrfs.
->   - The primary superblock: zone at LBA 0 and the next zone
->   - The first copy: zone at LBA 16G and the next zone
->   - The second copy: zone at LBA 256G and the next zone
+> I'd love to run it along with virtio-mem and report the actual allocation
+> success rate / necessary retries. That could give an indication of how
+> helpful your work would be.
+
+If it could give stable report, that would be very helpful.
+
 > 
-> If the location of the zones are outside of disk, we don't record the
-> superblock copy.
-> 
-> The addresses are much larger than the usual superblock copies locations.
-> The copies' locations are decided to support possible future larger zone
-> size, not to overlap the log zones. We support zone size up to 8GB.
+> Anything that improves the reliability of alloc_contig_range() is of high
+> interest to me. If it doesn't increase the reliability but merely does some
+> internal improvements (less retries), it might still be valuable, but not
+> that important.
 
-One thing I don't see is that the reserved space for superblock is fixed
-regardless of the actual device zone size. In exclude_super_stripes.
-
-0-16G for primary
-... and now what, 16G would be the next copy thus reserving 16 up to 32G
-
-So the 64G offset for the 1st copy is more suitable:
-
-0    -  16G primary
-64G  -  80G 1st copy
-256G - 272G 2nd copy
-
-This still does not sound great because it just builds on the original
-offsets from 10 years ago.  The device sizes are expected to be in
-terabytes but all the superblocks are in the first terabyte.
-
-What if we do that like
-
-0   -  16G
-1T  -  1T+16G
-8T  -  8T+16G
-
-The HDD sizes start somewhere at 4T so the first two copies cover the
-small sizes, larger have all three copies. But we could go wild even
-more, like 0/4T/16T.
-
-I'm not sure if the capacities for non-HDD are going to be also that
-large, I could not find anything specific, the only existing ZNS is some
-DC ZN540 but no details.
-
-We need to get this right (best effort), so I'll postpone this patch
-until it's all sorted.
+less retrial is good but I'd like to put more effort to close the race
+I mentioned completely since the cma allocation failure for our usecases
+are critical for user experience.
