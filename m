@@ -2,211 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BCAC932C96D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 02:18:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFFFF32CA29
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 02:47:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353783AbhCDBD0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 20:03:26 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51537 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1355344AbhCDAXb (ORCPT
+        id S235150AbhCDBp4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 20:45:56 -0500
+Received: from esa9.fujitsucc.c3s2.iphmx.com ([68.232.159.90]:23554 "EHLO
+        esa9.fujitsucc.c3s2.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235085AbhCDBpu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Mar 2021 19:23:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614817324;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=gXOtBmgY5MdqpQGzSKCvOP3QkZbnNtvngwVGLI4VAgk=;
-        b=Ko7cgZT+UXhXXj2Ryc6TZpH+61ZK5Kr9uJq0MW8+KPxg4P4rSnrhAzmGDK+OzXK9zH5E4r
-        c96DVSRNeor/yvn/7ms5T96r14JNQ0lSE+tkhkRoeCV0EQoExb4HMeazlf1NVDNMlA+FVK
-        3UrOW2hrPhZYsj24UIBsHspfsdu2rt8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-415-dv_IBc6QNiipp5PAUfyt4w-1; Wed, 03 Mar 2021 18:20:21 -0500
-X-MC-Unique: dv_IBc6QNiipp5PAUfyt4w-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ECB8D193578C;
-        Wed,  3 Mar 2021 23:20:18 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-119-68.rdu2.redhat.com [10.10.119.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E6AC612D7E;
-        Wed,  3 Mar 2021 23:20:12 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     linux-cachefs@redhat.com
-Cc:     dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: fscache: Redesigning the on-disk cache
+        Wed, 3 Mar 2021 20:45:50 -0500
+X-Greylist: delayed 459 seconds by postgrey-1.27 at vger.kernel.org; Wed, 03 Mar 2021 20:45:49 EST
+IronPort-SDR: BQtHiU4AOJIr7GeJAAYCTDbGw9rqdsvCP5GIvwYnUl2Bb0uo8HriH2OBWHh67DhbVbnCWpp+dZ
+ nlpB2AHEXJC1UTxVPsGqap9xtu02F9FvfOPeyiz/Nrl7XSgypHK7FZIbZ/pMWOk3+MHFxlH2Ao
+ wAXL+Iu3b2CsAZMS4HUMaHA5an7us2DjxmlZwkctD73EEaogZomHkvWPlImc0EPlRwJjylAu73
+ UJYecVD/DU5YjX/YZJQM5DQHCmymFh/EExd0VrTsxhXKZiukTLHT9SMj/MqKLD7z2k3FMjI0zs
+ 78A=
+X-IronPort-AV: E=McAfee;i="6000,8403,9912"; a="27265699"
+X-IronPort-AV: E=Sophos;i="5.81,221,1610377200"; 
+   d="scan'208";a="27265699"
+Received: from mail-ty1jpn01lp2056.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([104.47.93.56])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2021 10:35:49 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=H9ZO1Xy8IZUhetjtsoJmmTlBNTBLA1MzXEeLLobL13xBcPSAorTFuZuGkCZ+h974kUrqFRu5HuiJqQviP2yilFGMeSnMhQAJ5DMYhQQ55SB0vQbVUg70yZiGb/er/7u485EgSnCW+cCqthJJsUO9/gMyIfvPm1p0dRmtzASJpPKfL45aC2uBPwWfN4BSLP9wJb8vhApx/YfbzaWdOejYzGGpDJft2zxjiwswP/dI3adO4qx9EhR8ypOVMXUJ+dwojI/CGJQhflyZEwBkZz5hIOcauGA9Ovm3uxn8xOF+1OlVwG1nvvBvyNi8GBT5WuwApo1WUN6sWsyMbJVZsDBeMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MIL2Dr2YdSTWXskDM/fOA2riQ14xz+EbLhIn02JrwuE=;
+ b=UndqhMGIYxoYvZ2eUk+c8OfQZBDiPj8YeLV4eULnQkrnOwCENWt1iuGGfO1zfirm4MjAoRqtf9XRopDShu8LHF5JMslY+F/3sjzvX/uQ8HqTOFydFv0XqfzGaXzrXHvqvw4+1sszh11WUey8k+Xtd5wfsjMIwTVzi12LS3GBAdgyOICmZaZWx/WFYhYLWSIfazAr5ttZtXKvzyt/k+qfbkJyUU0u7UAUMDE2OjhEsr2NjZH9Ctwml4VxHS+RZxer9mONfxxnXq3fkpZ4b0pQViA4Gw3XlwBgjkm8urtUYbQTDW9Uf3iAww6Yr7eHRMaNohFMjQ67J06J1tvMBVnJMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fujitsu.onmicrosoft.com; s=selector2-fujitsu-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MIL2Dr2YdSTWXskDM/fOA2riQ14xz+EbLhIn02JrwuE=;
+ b=M+8G2rG9hrn7b/usa4Yjsp5cR1pZQxkGLN4590n8+toG4v3XlHdqWHTLlqDrsQPUF9gR9uy+YpTWiqGFFQQXY0QfVj+GjaIQ9sFZHsHEenvoYIxbFqqLYBNgdTlcMZ4So0GqNzXmOZxI4wybMI0Nf8EXT76WirTRYUEo8GKyesg=
+Received: from OSAPR01MB2913.jpnprd01.prod.outlook.com (2603:1096:603:3f::16)
+ by OSBPR01MB5223.jpnprd01.prod.outlook.com (2603:1096:604:7f::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17; Thu, 4 Mar
+ 2021 01:35:46 +0000
+Received: from OSAPR01MB2913.jpnprd01.prod.outlook.com
+ ([fe80::c447:a3af:7d9:f846]) by OSAPR01MB2913.jpnprd01.prod.outlook.com
+ ([fe80::c447:a3af:7d9:f846%3]) with mapi id 15.20.3890.029; Thu, 4 Mar 2021
+ 01:35:46 +0000
+From:   "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>
+To:     Christoph Hellwig <hch@lst.de>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "rgoldwyn@suse.de" <rgoldwyn@suse.de>
+Subject: Re: [PATCH v2 09/10] fs/xfs: Handle CoW for fsdax write() path
+Thread-Topic: [PATCH v2 09/10] fs/xfs: Handle CoW for fsdax write() path
+Thread-Index: AQHXC9Vk3oCFfiQYI0S5UeFuOjPnZ6pyC5KAgAABpsWAAA89AIAA9U0O
+Date:   Thu, 4 Mar 2021 01:35:45 +0000
+Message-ID: <OSAPR01MB29138D275A7375EF6BA52E0FF4979@OSAPR01MB2913.jpnprd01.prod.outlook.com>
+References: <20210226002030.653855-1-ruansy.fnst@fujitsu.com>
+ <OSBPR01MB2920500BEA2DF0D47885A8FDF4989@OSBPR01MB2920.jpnprd01.prod.outlook.com>,<20210303104336.GA20371@lst.de>
+In-Reply-To: <20210303104336.GA20371@lst.de>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: lst.de; dkim=none (message not signed)
+ header.d=none;lst.de; dmarc=none action=none header.from=fujitsu.com;
+x-originating-ip: [49.74.161.241]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 5edba1ac-f314-4c52-2569-08d8deadd534
+x-ms-traffictypediagnostic: OSBPR01MB5223:
+x-microsoft-antispam-prvs: <OSBPR01MB5223CE37A3F18AE517F0CCE1F4979@OSBPR01MB5223.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: feMXUbB3X5SGfAZvFxhtx3Y9cA7OobVdaGt5yo47BbUfN6hsmnq+HN/5xy2NwHKehbIh/w/6HoT0liL6uAR0bPLYy2aHzCtJU2xViU3dL7vR07FdwgDQgWHyYKR4oJclG58kZpoBaptZVFGsDL4zWYUJbWW2KjBEI+fQabb22/tdfDf2vXEz/j/EYrUCoQUYABuOIH9R9166abiTxcwiC8DXM7neK9AxKAtqzWKuBY8QPthWMUwfbjglSxj/L4+EmUHs+6tEpGd1Bu8dFYjQ+u78trX8AHC4OslAuQhJGi7gbEgZoUkXsiKElCWoPi3FNpBkVSDAcye8A6FwEfTY3ufEf9XaNVr2OIpY/4pgHi1vj9B5QIGEJnjtmfyPF1iDHHLHR/3QOCnTIdpPGLhnIR2KxBHY1c8I27OTJ5VEepLT56b0NHQOGFBc/DVIUGZFr9nPuGfL2EucIJg86+ff+HEzi5RIOmqZKl7ck/qtkaPdPP2zHzOksZlynzmS2DtLFCI/Bv14AMgqx6xMNLkukw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSAPR01MB2913.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(376002)(396003)(136003)(346002)(366004)(8936002)(5660300002)(66446008)(52536014)(8676002)(71200400001)(66556008)(7696005)(6506007)(55016002)(478600001)(33656002)(186003)(4744005)(26005)(6916009)(7416002)(86362001)(54906003)(85182001)(64756008)(316002)(76116006)(2906002)(66946007)(9686003)(66476007)(4326008);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: =?gb2312?B?ZWVUckI5cDA0cTFwSFNVSmxSSWtQOVduMFJGZ2h0elJ6ZFUwY3kraDY1Wjh5?=
+ =?gb2312?B?cFFBYWFOSm9scFpSQXA5bGt5cFFDQ1V4RmFQWDNnQ09ManhNZXdIeXRySmwy?=
+ =?gb2312?B?dWV0OGVreVBLZ3BQU3RraFR4SllOSVRxSFo4VFdLSUpnVCtlYWw3UFF0Y25z?=
+ =?gb2312?B?T2VlQ0JjZjJLaEp2dUxRaDQxVW9FNmhobnNGWWk0cGlhNTFLR0cvVzRRRk50?=
+ =?gb2312?B?RXlXNVVKYVlmQzg1LzN5WWVYblJBUDZEZWRPTjFRZ054d3VzZlZMV05DNU5o?=
+ =?gb2312?B?Y0p2REVLQkhEZHF3aElxcUoxZmxoZ1hzbzJGc3JvcjVTbkYrK09HRmI2dVBV?=
+ =?gb2312?B?SkxpSDlZOFh5emR2NlNLby9nZXA0UlpsT2NoVm0yNTVNN24rY2xBMm9IZk1o?=
+ =?gb2312?B?S3FuMkZ0M3k2UG0xSjRaaHQ3ZW9rUkE4UElIaVVYQkJaeU5nY3NSWkkzQ2pH?=
+ =?gb2312?B?UDNPYkVuUzAzMmJaWlVidlR0MVhpUHZqclQrcE1ZZ2NNRU5KR2RvZ1A3cHNM?=
+ =?gb2312?B?NjY4cnhOQU9mZFJrVzI4VkZWNmlLc2trOHNvVlRYMjhkaTUzczI3TnRwTGNr?=
+ =?gb2312?B?NHF4S1B3SENwWTh5SVRtSVZOSGVQSzZmUEtyQkxvZTd0eGk5czdjNUdRUXJw?=
+ =?gb2312?B?NzhNVnVvNVlrSFJ6MFQ0L1BVMmJ2VGpPSlhNRjR3RHdWZFpEYk5MR3ZudUla?=
+ =?gb2312?B?eG1MOW5rdGRtUTlqYUs2YUNBTmJwQUM1cldKSHBzbnlCd3h6d3pkMk9ZUWZE?=
+ =?gb2312?B?WUx3azdYZ0M0UkIveWRjWUFHOWhXYlVLd2tWZUhaRGlTdy9qVUo4VGNVQnlp?=
+ =?gb2312?B?MFJWY2dVS3h4MWZaNThVNVRSbDVTVElSekp3MFVrK01vMjhGbUh6U1dOREly?=
+ =?gb2312?B?S2JQNU1IU1R4ZkxJY3FGSGdmNzJDMllabU40dzJsYlYvZWFQWlYvUVpKZUtu?=
+ =?gb2312?B?Vlc1TDBSaS9vVkFOM09IYWhYTjdRZXZPUTJRSDRiTS96dnFWT3JLWXMwOU1s?=
+ =?gb2312?B?VVRheDdjS25CR0lWWVRubEpHM2VwVWNVUC9vekxGa2k2QkJJZE44M3VXVHAz?=
+ =?gb2312?B?SUhMMkhTYWFjOEVnMHRtZFBwNStnSC9pRDVnTmF1WEk5WEVPTHRhbkdtWlNl?=
+ =?gb2312?B?cWp3eHpuaDJUbVdtbm5LVW9uMXRKQ1dzdFZRSU9QWnpNcWVia0pkS2c5bzNz?=
+ =?gb2312?B?SDJZeWFXT3NiNDZVSDkyNGdldlY0V2JvZGxQcUFaUnhMYlQrVjVuc3kzN2g4?=
+ =?gb2312?B?Tm90SHNZd1BsVVZyR2tDTzF2Ni9UY291SDIxN0NhdWl6WnB4c0NDdVNYcXFN?=
+ =?gb2312?B?am4vTjZFNmhNaWFRN1BYWDRGSytoRjl4RDFaWlJFZHl3b3g5NkpUeGVMMEtH?=
+ =?gb2312?B?ekRqU1lVcnJlMThyMFNsQ0crWlhYaGpxQndLSnhuaTZCWUsyb3FGVzlQRFVH?=
+ =?gb2312?B?cXB2bDlSVVhEOE13MVloVUwzZ3VqNW4zOVgvVnF4YlpEMnJRYWZ2ZGE0WkZn?=
+ =?gb2312?B?aUxvVE5VanhjWnBTNDhwMmNYN3lja1FDeU0ybjE0cG1CRXpSay9WZzd0cFRm?=
+ =?gb2312?B?bTJQZ2JsVzVyUlRBZHRweWJoNWxKUTZFZGFxVDVOdGRXQ291OFNZSmduay9h?=
+ =?gb2312?B?dlorTnBBbHVuZjZxME4waTdqRHA2cldrZVZFOWNGaFdHVk9Ec0w1ZWhrMVkw?=
+ =?gb2312?B?RFRZVzhySEtuOHdFM2VyTHRuWGJWR3ZUd0ZoOCtrZFlHWkJmQmZUSk9XdGpt?=
+ =?gb2312?Q?GrVoJT06xDUFYJH1OY=3D?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2653260.1614813611.1@warthog.procyon.org.uk>
-Date:   Wed, 03 Mar 2021 23:20:11 +0000
-Message-ID: <2653261.1614813611@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSAPR01MB2913.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5edba1ac-f314-4c52-2569-08d8deadd534
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Mar 2021 01:35:45.9588
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: fIyjeACilrpZm3yU52qPFQwUXfSG59mZAxRsT8b3hbGQEShYeA1se1S2koUJKKjsIQlMtucbrZhq8iHu+3YJ6Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB5223
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I'm looking at redesigning the on-disk cache format used by fscache's
-cachefiles driver to try and eliminate the number of synchronous metadata
-operations done by the driver, to improve culling performance and to reduce
-the amount of opens/files open.  I also need to stop relying on the backing
-filesystem to track where I have data stored.
-
-There are a number of options that I've considered:
-
- (0) The current format lays out a directory tree, with directories for each
-     level of index (so in AFS's terms, you've got an overall "afs" dir
-     containing a dir for each cell.  In each cell dir, there's a dir for each
-     volume and within that there's a file for each afs vnode cached.  Extra
-     levels of directory are also interposed to reduce the number of entries
-     in a directory.
-
-     - Pathwalk cost to open a cache file.
-     - Netfs coherency data is in xattrs.
-     - Invalidation done by truncate or unlink.
-     - Uses backing filesystem metadata to keep track of present data.
-       - Determined by bmap() on the cache file.
-     - Culling performed by userspace daemon.
-     - Data file opened for every write.
-     - Read done by readpage without file.
-
- (0a) As (0) but using SEEK_DATA/SEEK_HOLE instead of bmap and opening the
-      file for every whole operation (which may combine reads and writes).
-
- (1) Structured the same as (0), but keeping an independent content map and
-     not relying on backing fs metadata.  Use a larger blocksize, say 256K, to
-     reduce the size of the content map.
-
-     - Netfs coherency data in xattrs.
-     - Invalidation done by tmpfile creation and link-replace.
-     - Content bitmap kept in xattr.
-       - Limited capacity.  Could use multiple bitmaps.
-       - Can skip the bitmap for a non-sparse file that we have all of.
-     - "Open" state kept in xattr.
-     - File is kept open
-     - Culling performed by userspace daemon.
-     - Cache file open whilst netfs file is open.
-
- (2) Structured the same as (1), but keeping an extent list instead of a
-     bitmap.
-
-     - Content extent map kept in xattr.
-       - Limited capacity.
-       - Highly scattered extents use a lot of map space.
-
- (3) OpenAFS-style format.  One index file to look up {file_key,block#} and an
-     array of data files, each holding one block (e.g. a 256KiB-aligned chunk
-     of a file).  Each index entry has valid start/end offsets for easy
-     truncation.
-
-     The index has a hash to facilitate the lookup and an LRU that allows a
-     block to be recycled at any time.
-
-     - File keys, are highly variable in length and can be rather long,
-       particularly NFS FIDs.
-       - Might want a separate file index that maps file keys to a slot ID
-       	 that can then be used in the block index.
-     - Netfs coherency data in vnode index entry.
-     - Invalidation done by clearing matching entries in the index.
-       - Dead data files can be lazily unlinked or truncated or just
-         overwritten.
-     - Content mapping by lookup in block index hash table.
-       - Fine if the hash table is large and scatter is good.
-     - Potential coherency problem between indices and data file.
-     - Culling performed by block index LRU.
-     - Really want to retain entire block index in RAM.
-     - Data files are opened for every read/write.
-
- (4) Similar format to (3), but could put entirety of data in one file.
-
-     - Data file open entire time cache online.
-     - Unused block bitmap.
-     - Can use fallocate to punch out dead blocks.
-     - Could put data file on blockdev.
-
- (5) Similar idea to (4), but just have a file index and use block pointers
-     and indirection blocks instead.  Use an LRU in the file index and cull
-     whole files only, not individual blocks.
-
-     - File keys, are highly variable in length and can be rather long,
-       particularly NFS FIDs.
-     - Netfs coherency data in vnode index entry.
-     - Unused data block bitmap.
-     - Invalidation done by clearing entries in the file index.
-       - Data blocks must be recycled and returned to bitmap.
-       - Dead data blocks can be lazily punched out with fallocate.
-     - Potential coherency problem between index, pointers/indirection and
-       bitmap.
-     - Culling performed by file index LRU.
-     - Really want to retain entire file index and block bitmap in RAM.
-       - May be less memory than block index.
-     - Data file open entire time cache online.
-     - Could put data file on blockdev.
-     - If the block size is large, lots of dead space in indirection blocks.
-
- (6) Similar to (5), but use extent lists rather than indirection blocks.
-
-     - Requires allocation of contiguous space to be worthwhile.
-     - Buddy allocator approach?
-       - Can always arbitrarily recycle buddies to make larger spaces - if we
-       	 can find them...
-
- (7) Hybrid approach.  Stick the first block of every netfs file in one big
-     cache file.  For a lot of cases, that would suffice for the entire file
-     if the block size is large enough.  Store the tails of larger files in
-     separate files.
-
-     - File index with LRU.
-     - More complicated to manage.
-     - Fewer files open.
-
-So (0) is what's upstream.  I have (0a) implemented in my fscache-netfs-lib
-branch and (1) implemented in my fscache-iter branch.  However, it spends a
-lot of cpu time doing synchronous metadata ops, such as creating tmpfiles,
-link creation and setting xattrs, particularly when unmounting the filesystem
-or disabling the cache - both of which are done during shutdown.
-
-I'm leaning towards (4) or (5).  I could use extent maps, but I don't
-necessarily have a good idea of what access patterns I have to deal with till
-later.  With network filesystems that are going to read and cache large blocks
-(say 2MiB), extents would allow reduction of the metadata, particularly where
-it would span a bitmap.
-
-Using a block index (4) allows me to easily recycle a large chunk of cache in
-one go - even if it means arbitrarily kicking out blocks that weren't near the
-end of the LRU yet.
-
-Using block pointers and indirection blocks (5) means I only need this data in
-RAM when I need it; with the LRU management being done in the file index.
-
-Either way with (4) and (5), at least one index really needs to be resident in
-RAM to make LRU wangling efficient.  Also, I need to decide how to handle
-coherency management - setting an "in use" flag on the file index entry and
-flushing it before making any modifications might work.
-
-On the other hand, sticking with (1) or (2) makes it easier to add extra
-metadata very easily (say to handle disconnected operation), though it's
-harder to manage culling and manage the capacity of the cache.
-
-I have a suspicion that the answer is "it depends" and that the best choice is
-very much going to be workload dependent - and may even vary from volume to
-volume within the same workload.
-
-Any thoughts or better solutions?
-
-David
-
+PiBPbiBXZWQsIE1hciAwMywgMjAyMSBhdCAwOTo1Nzo0OEFNICswMDAwLCBydWFuc3kuZm5zdEBm
+dWppdHN1LmNvbSB3cm90ZToKPiA+ID4gV2hhdCBpcyB0aGUgYWR2YW50YWdlIG9mIHRoZSBpb2Vt
+YXBfZW5kIGhhbmRsZXIgaGVyZT8gIEl0IGFkZHMgYW5vdGhlcgo+ID4gPiBpbmRpcmVjdCBmdW50
+aW9uIGNhbGwgdG8gdGhlIGZhc3QgcGF0aCwgc28gaWYgd2UgY2FuIGF2b2lkIGl0LCBJJ2QKPiA+
+ID4gcmF0aGVyIGRvIHRoYXQuCj4gPgo+ID4gVGhlc2UgY29kZSB3ZXJlIGluIHhmc19maWxlX2Rh
+eF93cml0ZSgpLiAgSSBtb3ZlZCB0aGVtIGludG8gdGhlIGlvbWFwX2VuZAo+ID4gYmVjYXVzZSB0
+aGUgbW1hcGVkIENvVyBuZWVkIHRoaXMuCj4gPgo+ID4gSSBrbm93IHRoaXMgaXMgbm90IHNvIGdv
+b2QsIGJ1dCBJIGNvdWxkIG5vdCBmaW5kIGFub3RoZXIgYmV0dGVyIHdheS4gRG8geW91Cj4gPiBo
+YXZlIGFueSBpZGVhcz8KPiBtbWFwZWQgY29weSBpcyB0aGUgY29weV9lZGdlIGNhc2U/ICBNYXli
+ZSBqdXN0IHVzZSBkaWZmZXJlbnQgaW9tYXBfb3BzIGZvcgo+IHRoYXQgY2FzZSB2cyBwbGFpbiB3
+cml0ZT8KCk5vLCBJIG1lYW4gbW1hcGVkIENvVyBuZWVkIGEgeGZzX3JlZmxpbmtfZW5kX2Nvdygp
+IHRvIG1ha2Ugc3VyZSB0aGUgbmV3IGV4dGVudAp3aWxsIGJlIGNvcnJlY3RseSByZW1hcGVkIHRv
+IHRoZSBmaWxlLiAgT3RoZXJ3aXNlLCB0aGUgZmlsZSB3aWxsIHN0aWxsIHJlZmVyIHRvCnRoZSBl
+eHRlbnQgdGhhdCBzcmNtYXAgcG9pbnQgdG8uCgpXZSBhcmUgYWJsZSB0byBjYWxsIHRoaXMgaW4g
+eGZzX2ZpbGVfZGF4X3dyaXRlKCksIGJ1dCBjYW5ub3QgY2FsbCBpdCBhbnl3aGVyZQpleGNlcHQg
+aW9tYXBfZW5kIGluIG1tYXAgcGF0aC4KCgotLQpUaGFua3MsClJ1YW4gU2hpeWFuZy4=
