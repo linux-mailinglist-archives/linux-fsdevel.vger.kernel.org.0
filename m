@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1605132D121
+	by mail.lfdr.de (Postfix) with ESMTP id 8851332D122
 	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 11:51:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238997AbhCDKti (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Mar 2021 05:49:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43446 "EHLO
+        id S239005AbhCDKtj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Mar 2021 05:49:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238970AbhCDKtO (ORCPT
+        with ESMTP id S233319AbhCDKtT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Mar 2021 05:49:14 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFAC9C061762
-        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Mar 2021 02:48:33 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id u187so7588667wmg.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Mar 2021 02:48:33 -0800 (PST)
+        Thu, 4 Mar 2021 05:49:19 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD141C061763
+        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Mar 2021 02:48:34 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id m7so855558wmq.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Mar 2021 02:48:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=RHdXsN1dDRguch5eNFV4tjCjETyCykOPLKwz0UC7oU4=;
-        b=FKH5Ab0geeGI0DFid88+m1KptQWaetMiZKgNqdKYH60NrAEQ8UhAA5heebKEd2w/PI
-         MAS+ZBIvEckbcvC1m7lXLe72gJRzxCokDgpFHTVCPm/nfvoY0jxtwhWtkvbpjy/qDMja
-         qrIyiLp4fsTYarI8HaADSVyT957PT6U/xG3i49YthUo7YsJS6sq+5Vr8m3FALxCYuPNH
-         U2CtHNMx+ET+lr71o5JxXFWcOpcZKe+ssVQWc4UeSldDF7r4Nb1Jdp9a1zowtB5o+lbx
-         7G78eqvsdzMmzxPSrQ5TjiNIzr6da2++IAXH5+iOpoSeH5WsrTfNolcmd6XNdlewhhqQ
-         zHZg==
+        bh=FvPLtIk/5SiiU+j2q2PGjFncYC4qy1AB2pH3m11fCww=;
+        b=ae3jM5QLbnfnscL8uko6EeVnXU4DVO4iACXzvcVd03z2GXgHT7CniHjZBqB/EirQ/S
+         1b118isd/nRhpEp7X0KfhIDaGgi6rioK5LagTvT+X8vyQg+96QiM3DL9yBLUuvMVSKBQ
+         3PaN0iLLHjZSGxKjtFS1lbv6W/rS5Ur37EsEt3bsMKbmTAbWFlR6wIXJE1xj8H5zfag9
+         Vyh3yPH8PsoFzGl53zy80ZUeqgk4ycm0E3ZMdLv4gJJkql7dpsSwPwFRBfhBODoUFxeI
+         PVhp9N1FfCE11449c/qLipK95f+G+0O7m+yLD/3r6AjGi4BeU9B861/6T2ttSNJiTDec
+         THUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=RHdXsN1dDRguch5eNFV4tjCjETyCykOPLKwz0UC7oU4=;
-        b=TURpie3b1OXBXPj1VkpHEqoXVF9HBEIi1qIT7G9Kk9x+iZTZ+ui9mveddqCeJbNbEf
-         BNrUhKRMWd8pASMTKyUc91mmHxrglI6Od/Pc2SS/gBV7MWyr8vBPwgPMUVgTRCpszka1
-         pm/wArAdNfaTq1j1z7Wt0U3z/0zBgZ3dMb4PoB1CqAEWVxLImPBkyBu2rSRxuzPPRnld
-         awzXiBetjOrdOziuiXBmYAUdHl5iFUgwvuprGx6JWMY5mUyUA54h4FEqXFXX6cqcpABI
-         vIAvtRGqpR2w7PBRcw04UESj8pu4BFLXAGm0RWuoGvJHHudBDgbQFPRaGwVDUaFf5GYr
-         Y7hA==
-X-Gm-Message-State: AOAM5317T1hg50kzsu2uiTgIFv1KXx/rUsaCf5R5dQimgSeRWyuF3QRV
-        Db+dLDl6yaxX7YD0unHkUjY=
-X-Google-Smtp-Source: ABdhPJy5mvC9yFjTVDyAeBFcMx9YK7SyHipW/lVhSe7X/GORJDc0l2Fk6XFBJIVsICGz6oCyMU8Qkw==
-X-Received: by 2002:a1c:f708:: with SMTP id v8mr3221492wmh.25.1614854912538;
-        Thu, 04 Mar 2021 02:48:32 -0800 (PST)
+        bh=FvPLtIk/5SiiU+j2q2PGjFncYC4qy1AB2pH3m11fCww=;
+        b=pKRyj42FOCXRC+9LRTcTVykv5K04Q4PGAGqHVLfhO3s0wGSycdXZrXBJDNZ0iHEMHd
+         yCiOI+jpVS9o9g0eakFZRhB32XIIuBIvfaylGqXNLEcS+ZPM7TFtqKsMbcdanGnzJDSF
+         pfbd1FeIZJAbMCDkLRJH1FlfApT4nN9P1BE9NdBaZ8g1IOi6pyPSBEgwvIVl4REeXdLt
+         O9fn1Vkn8eAAAcugoFEAi1lg9sThvpJWX4U4BMbNA2mFDs7fh/QzM+jE5aUgbepRDZMb
+         tBamPwQvx7qCswOxIe6kBIQUMzBlrjUeeGxF4CHtwf0z8ftFj8yiCw/8bERDSux2slkM
+         gLDQ==
+X-Gm-Message-State: AOAM5327IL9MEC9vqSURnf4LzmVGek9opYXhWDkSGB7bJ+wPXF0L6xr8
+        g/6b2en0yrp3tbUUiut57XY=
+X-Google-Smtp-Source: ABdhPJw2vrZ9Gp1Q9Vv0iYvzNu4nBynKFQsJo8+ycEjF0sGkLLh+nc/sl9EPjdbOBKbe+B8bcwDEBw==
+X-Received: by 2002:a1c:7e45:: with SMTP id z66mr3284116wmc.126.1614854913601;
+        Thu, 04 Mar 2021 02:48:33 -0800 (PST)
 Received: from localhost.localdomain ([141.226.13.117])
-        by smtp.gmail.com with ESMTPSA id d7sm6736635wrs.42.2021.03.04.02.48.31
+        by smtp.gmail.com with ESMTPSA id d7sm6736635wrs.42.2021.03.04.02.48.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Mar 2021 02:48:32 -0800 (PST)
+        Thu, 04 Mar 2021 02:48:33 -0800 (PST)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 3/5] fanotify: mix event info and pid into merge key hash
-Date:   Thu,  4 Mar 2021 12:48:24 +0200
-Message-Id: <20210304104826.3993892-4-amir73il@gmail.com>
+Subject: [PATCH v2 4/5] fsnotify: use hash table for faster events merge
+Date:   Thu,  4 Mar 2021 12:48:25 +0200
+Message-Id: <20210304104826.3993892-5-amir73il@gmail.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210304104826.3993892-1-amir73il@gmail.com>
 References: <20210304104826.3993892-1-amir73il@gmail.com>
@@ -63,263 +63,349 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Improve the merge key hash by mixing more values relevant for merge.
+In order to improve event merge performance, hash events in a 128 size
+hash table by the event merge key.
 
-For example, all FAN_CREATE name events in the same dir used to have the
-same merge key based on the dir inode.  With this change the created
-file name is mixed into the merge key.
+The fanotify_event size grows by two pointers, but we just reduced its
+size by removing the objectid member, so overall its size is increased
+by one pointer.
 
-The object id that was used as merge key is redundant to the event info
-so it is no longer mixed into the hash.
-
-Permission events are not hashed, so no need to hash their info.
+Permission events and overflow event are not merged so they are also
+not hashed.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify.c | 87 ++++++++++++++++++++++++-----------
- fs/notify/fanotify/fanotify.h |  5 ++
- 2 files changed, 66 insertions(+), 26 deletions(-)
+ fs/notify/fanotify/fanotify.c        | 40 +++++++++++++++++++++++-----
+ fs/notify/fanotify/fanotify.h        | 25 +++++++++++++++++
+ fs/notify/fanotify/fanotify_user.c   | 39 +++++++++++++++++++++++++++
+ fs/notify/inotify/inotify_fsnotify.c |  7 ++---
+ fs/notify/notification.c             | 22 ++++++++++-----
+ include/linux/fsnotify_backend.h     | 10 ++++---
+ 6 files changed, 123 insertions(+), 20 deletions(-)
 
 diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 8a2bb6954e02..db30db61a815 100644
+index db30db61a815..1795facc5439 100644
 --- a/fs/notify/fanotify/fanotify.c
 +++ b/fs/notify/fanotify/fanotify.c
-@@ -14,6 +14,7 @@
- #include <linux/audit.h>
- #include <linux/sched/mm.h>
- #include <linux/statfs.h>
-+#include <linux/stringhash.h>
- 
- #include "fanotify.h"
- 
-@@ -22,12 +23,24 @@ static bool fanotify_path_equal(struct path *p1, struct path *p2)
- 	return p1->mnt == p2->mnt && p1->dentry == p2->dentry;
+@@ -149,12 +149,15 @@ static bool fanotify_should_merge(struct fanotify_event *old,
  }
  
-+static unsigned int fanotify_hash_path(const struct path *path)
-+{
-+	return hash_ptr(path->dentry, FANOTIFY_EVENT_HASH_BITS) ^
-+		hash_ptr(path->mnt, FANOTIFY_EVENT_HASH_BITS);
-+}
-+
- static inline bool fanotify_fsid_equal(__kernel_fsid_t *fsid1,
- 				       __kernel_fsid_t *fsid2)
+ /* and the list better be locked by something too! */
+-static int fanotify_merge(struct list_head *list, struct fsnotify_event *event)
++static int fanotify_merge(struct fsnotify_group *group,
++			  struct fsnotify_event *event)
  {
- 	return fsid1->val[0] == fsid2->val[0] && fsid1->val[1] == fsid2->val[1];
- }
+-	struct fsnotify_event *test_event;
+ 	struct fanotify_event *old, *new = FANOTIFY_E(event);
++	unsigned int bucket = fanotify_event_hash_bucket(group, new);
++	struct hlist_head *hlist = &group->fanotify_data.merge_hash[bucket];
  
-+static unsigned int fanotify_hash_fsid(__kernel_fsid_t *fsid)
-+{
-+	return hash_32(fsid->val[0], FANOTIFY_EVENT_HASH_BITS) ^
-+		hash_32(fsid->val[1], FANOTIFY_EVENT_HASH_BITS);
-+}
-+
- static bool fanotify_fh_equal(struct fanotify_fh *fh1,
- 			      struct fanotify_fh *fh2)
- {
-@@ -38,6 +51,16 @@ static bool fanotify_fh_equal(struct fanotify_fh *fh1,
- 		!memcmp(fanotify_fh_buf(fh1), fanotify_fh_buf(fh2), fh1->len);
- }
+-	pr_debug("%s: list=%p event=%p\n", __func__, list, event);
++	pr_debug("%s: group=%p event=%p bucket=%u\n", __func__,
++		 group, event, bucket);
  
-+static unsigned int fanotify_hash_fh(struct fanotify_fh *fh)
-+{
-+	long salt = (long)fh->type | (long)fh->len << 8;
-+
-+	/*
-+	 * full_name_hash() works long by long, so it handles fh buf optimally.
-+	 */
-+	return full_name_hash((void *)salt, fanotify_fh_buf(fh), fh->len);
-+}
-+
- static bool fanotify_fid_event_equal(struct fanotify_fid_event *ffe1,
- 				     struct fanotify_fid_event *ffe2)
- {
-@@ -325,7 +348,8 @@ static int fanotify_encode_fh_len(struct inode *inode)
-  * Return 0 on failure to encode.
-  */
- static int fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
--			      unsigned int fh_len, gfp_t gfp)
-+			      unsigned int fh_len, unsigned int *hash,
-+			      gfp_t gfp)
- {
- 	int dwords, type = 0;
- 	char *ext_buf = NULL;
-@@ -368,6 +392,9 @@ static int fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
- 	fh->type = type;
- 	fh->len = fh_len;
+ 	/*
+ 	 * Don't merge a permission event with any other event so that we know
+@@ -164,8 +167,7 @@ static int fanotify_merge(struct list_head *list, struct fsnotify_event *event)
+ 	if (fanotify_is_perm_event(new->mask))
+ 		return 0;
  
-+	/* Mix fh into event merge key */
-+	*hash ^= fanotify_hash_fh(fh);
-+
- 	return FANOTIFY_FH_HDR_LEN + fh_len;
- 
- out_err:
-@@ -421,6 +448,7 @@ static struct inode *fanotify_dfid_inode(u32 event_mask, const void *data,
- }
- 
- static struct fanotify_event *fanotify_alloc_path_event(const struct path *path,
-+							unsigned int *hash,
- 							gfp_t gfp)
- {
- 	struct fanotify_path_event *pevent;
-@@ -431,6 +459,7 @@ static struct fanotify_event *fanotify_alloc_path_event(const struct path *path,
- 
- 	pevent->fae.type = FANOTIFY_EVENT_TYPE_PATH;
- 	pevent->path = *path;
-+	*hash ^= fanotify_hash_path(path);
- 	path_get(path);
- 
- 	return &pevent->fae;
-@@ -456,6 +485,7 @@ static struct fanotify_event *fanotify_alloc_perm_event(const struct path *path,
- 
- static struct fanotify_event *fanotify_alloc_fid_event(struct inode *id,
- 						       __kernel_fsid_t *fsid,
-+						       unsigned int *hash,
- 						       gfp_t gfp)
- {
- 	struct fanotify_fid_event *ffe;
-@@ -466,16 +496,18 @@ static struct fanotify_event *fanotify_alloc_fid_event(struct inode *id,
- 
- 	ffe->fae.type = FANOTIFY_EVENT_TYPE_FID;
- 	ffe->fsid = *fsid;
-+	*hash ^= fanotify_hash_fsid(fsid);
- 	fanotify_encode_fh(&ffe->object_fh, id, fanotify_encode_fh_len(id),
--			   gfp);
-+			   hash, gfp);
- 
- 	return &ffe->fae;
- }
- 
- static struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
- 							__kernel_fsid_t *fsid,
--							const struct qstr *file_name,
-+							const struct qstr *name,
- 							struct inode *child,
-+							unsigned int *hash,
- 							gfp_t gfp)
- {
- 	struct fanotify_name_event *fne;
-@@ -488,24 +520,30 @@ static struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
- 	size = sizeof(*fne) + FANOTIFY_FH_HDR_LEN + dir_fh_len;
- 	if (child_fh_len)
- 		size += FANOTIFY_FH_HDR_LEN + child_fh_len;
--	if (file_name)
--		size += file_name->len + 1;
-+	if (name)
-+		size += name->len + 1;
- 	fne = kmalloc(size, gfp);
- 	if (!fne)
- 		return NULL;
- 
- 	fne->fae.type = FANOTIFY_EVENT_TYPE_FID_NAME;
- 	fne->fsid = *fsid;
-+	*hash ^= fanotify_hash_fsid(fsid);
- 	info = &fne->info;
- 	fanotify_info_init(info);
- 	dfh = fanotify_info_dir_fh(info);
--	info->dir_fh_totlen = fanotify_encode_fh(dfh, id, dir_fh_len, 0);
-+	info->dir_fh_totlen = fanotify_encode_fh(dfh, id, dir_fh_len, hash, 0);
- 	if (child_fh_len) {
- 		ffh = fanotify_info_file_fh(info);
--		info->file_fh_totlen = fanotify_encode_fh(ffh, child, child_fh_len, 0);
-+		info->file_fh_totlen = fanotify_encode_fh(ffh, child,
-+							child_fh_len, hash, 0);
-+	}
-+	if (name) {
-+		long salt = name->len;
-+
-+		fanotify_info_copy_name(info, name);
-+		*hash ^= full_name_hash((void *)salt, name->name, name->len);
- 	}
--	if (file_name)
--		fanotify_info_copy_name(info, file_name);
- 
- 	pr_debug("%s: ino=%lu size=%u dir_fh_len=%u child_fh_len=%u name_len=%u name='%.*s'\n",
- 		 __func__, id->i_ino, size, dir_fh_len, child_fh_len,
-@@ -530,6 +568,8 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
- 	struct inode *child = NULL;
- 	bool name_event = false;
- 	unsigned int hash = 0;
-+	unsigned long ondir = (mask & FAN_ONDIR) ? 1UL : 0;
-+	struct pid *pid;
- 
- 	if ((fid_mode & FAN_REPORT_DIR_FID) && dirid) {
- 		/*
-@@ -537,8 +577,7 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
- 		 * report the child fid for events reported on a non-dir child
- 		 * in addition to reporting the parent fid and maybe child name.
- 		 */
--		if ((fid_mode & FAN_REPORT_FID) &&
--		    id != dirid && !(mask & FAN_ONDIR))
-+		if ((fid_mode & FAN_REPORT_FID) && id != dirid && !ondir)
- 			child = id;
- 
- 		id = dirid;
-@@ -559,8 +598,7 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
- 		if (!(fid_mode & FAN_REPORT_NAME)) {
- 			name_event = !!child;
- 			file_name = NULL;
--		} else if ((mask & ALL_FSNOTIFY_DIRENT_EVENTS) ||
--			   !(mask & FAN_ONDIR)) {
-+		} else if ((mask & ALL_FSNOTIFY_DIRENT_EVENTS) || !ondir) {
- 			name_event = true;
+-	list_for_each_entry_reverse(test_event, list, list) {
+-		old = FANOTIFY_E(test_event);
++	hlist_for_each_entry(old, hlist, merge_list) {
+ 		if (fanotify_should_merge(old, new)) {
+ 			old->mask |= new->mask;
+ 			return 1;
+@@ -203,8 +205,11 @@ static int fanotify_get_response(struct fsnotify_group *group,
+ 			return ret;
  		}
- 	}
-@@ -583,28 +621,25 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
- 		event = fanotify_alloc_perm_event(path, gfp);
- 	} else if (name_event && (file_name || child)) {
- 		event = fanotify_alloc_name_event(id, fsid, file_name, child,
--						  gfp);
-+						  &hash, gfp);
- 	} else if (fid_mode) {
--		event = fanotify_alloc_fid_event(id, fsid, gfp);
-+		event = fanotify_alloc_fid_event(id, fsid, &hash, gfp);
- 	} else {
--		event = fanotify_alloc_path_event(path, gfp);
-+		event = fanotify_alloc_path_event(path, &hash, gfp);
- 	}
+ 		/* Event not yet reported? Just remove it. */
+-		if (event->state == FAN_EVENT_INIT)
++		if (event->state == FAN_EVENT_INIT) {
+ 			fsnotify_remove_queued_event(group, &event->fae.fse);
++			/* Permission events are not supposed to be hashed */
++			WARN_ON_ONCE(!hlist_unhashed(&event->fae.merge_list));
++		}
+ 		/*
+ 		 * Event may be also answered in case signal delivery raced
+ 		 * with wakeup. In that case we have nothing to do besides
+@@ -679,6 +684,24 @@ static __kernel_fsid_t fanotify_get_fsid(struct fsnotify_iter_info *iter_info)
+ 	return fsid;
+ }
  
- 	if (!event)
- 		goto out;
- 
--	/*
--	 * Use the victim inode instead of the watching inode as the id for
--	 * event queue, so event reported on parent is merged with event
--	 * reported on child when both directory and child watches exist.
--	 * Hash object id for queue merge.
--	 */
--	hash = hash_ptr(id, FANOTIFY_EVENT_HASH_BITS);
--	fanotify_init_event(event, hash, mask);
- 	if (FAN_GROUP_FLAG(group, FAN_REPORT_TID))
--		event->pid = get_pid(task_pid(current));
-+		pid = get_pid(task_pid(current));
- 	else
--		event->pid = get_pid(task_tgid(current));
-+		pid = get_pid(task_tgid(current));
++/*
++ * Add an event to hash table for faster merge.
++ */
++static void fanotify_insert_event(struct fsnotify_group *group,
++				  struct fsnotify_event *fsn_event)
++{
++	struct fanotify_event *event = FANOTIFY_E(fsn_event);
++	unsigned int bucket = fanotify_event_hash_bucket(group, event);
++	struct hlist_head *hlist = &group->fanotify_data.merge_hash[bucket];
 +
-+	/* Mix event info, FAN_ONDIR flag and pid into event merge key */
-+	hash ^= hash_long((unsigned long)pid | ondir, FANOTIFY_EVENT_HASH_BITS);
-+	fanotify_init_event(event, hash, mask);
-+	event->pid = pid;
++	assert_spin_locked(&group->notification_lock);
++
++	pr_debug("%s: group=%p event=%p bucket=%u\n", __func__,
++		 group, event, bucket);
++
++	hlist_add_head(&event->merge_list, hlist);
++}
++
+ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
+ 				 const void *data, int data_type,
+ 				 struct inode *dir,
+@@ -749,7 +772,9 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
+ 	}
  
- out:
- 	set_active_memcg(old_memcg);
+ 	fsn_event = &event->fse;
+-	ret = fsnotify_add_event(group, fsn_event, fanotify_merge);
++	ret = fsnotify_add_event(group, fsn_event, fanotify_merge,
++				 fanotify_is_hashed_event(mask) ?
++				 fanotify_insert_event : NULL);
+ 	if (ret) {
+ 		/* Permission events shouldn't be merged */
+ 		BUG_ON(ret == 1 && mask & FANOTIFY_PERM_EVENTS);
+@@ -772,6 +797,7 @@ static void fanotify_free_group_priv(struct fsnotify_group *group)
+ {
+ 	struct user_struct *user;
+ 
++	kfree(group->fanotify_data.merge_hash);
+ 	user = group->fanotify_data.user;
+ 	atomic_dec(&user->fanotify_listeners);
+ 	free_uid(user);
 diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-index d531f0cfa46f..9871f76cd9c2 100644
+index 9871f76cd9c2..4a5e555dc3d2 100644
 --- a/fs/notify/fanotify/fanotify.h
 +++ b/fs/notify/fanotify/fanotify.h
-@@ -115,6 +115,11 @@ static inline void fanotify_info_init(struct fanotify_info *info)
- 	info->name_len = 0;
- }
+@@ -3,6 +3,7 @@
+ #include <linux/path.h>
+ #include <linux/slab.h>
+ #include <linux/exportfs.h>
++#include <linux/hashtable.h>
  
-+static inline unsigned int fanotify_info_len(struct fanotify_info *info)
+ extern struct kmem_cache *fanotify_mark_cache;
+ extern struct kmem_cache *fanotify_fid_event_cachep;
+@@ -150,6 +151,7 @@ enum fanotify_event_type {
+ 
+ struct fanotify_event {
+ 	struct fsnotify_event fse;
++	struct hlist_node merge_list;	/* List for hashed merge */
+ 	u32 mask;
+ 	struct {
+ 		unsigned int type : FANOTIFY_EVENT_TYPE_BITS;
+@@ -162,6 +164,7 @@ static inline void fanotify_init_event(struct fanotify_event *event,
+ 				       unsigned int hash, u32 mask)
+ {
+ 	fsnotify_init_event(&event->fse);
++	INIT_HLIST_NODE(&event->merge_list);
+ 	event->hash = hash;
+ 	event->mask = mask;
+ 	event->pid = NULL;
+@@ -299,3 +302,25 @@ static inline struct path *fanotify_event_path(struct fanotify_event *event)
+ 	else
+ 		return NULL;
+ }
++
++/*
++ * Use 128 size hash table to speed up events merge.
++ */
++#define FANOTIFY_HTABLE_BITS	(7)
++#define FANOTIFY_HTABLE_SIZE	(1 << FANOTIFY_HTABLE_BITS)
++#define FANOTIFY_HTABLE_MASK	(FANOTIFY_HTABLE_SIZE - 1)
++
++/*
++ * Permission events and overflow event do not get merged - don't hash them.
++ */
++static inline bool fanotify_is_hashed_event(u32 mask)
 +{
-+	return info->dir_fh_totlen + info->file_fh_totlen + info->name_len;
++	return !fanotify_is_perm_event(mask) && !(mask & FS_Q_OVERFLOW);
 +}
 +
- static inline void fanotify_info_copy_name(struct fanotify_info *info,
- 					   const struct qstr *name)
++static inline unsigned int fanotify_event_hash_bucket(
++						struct fsnotify_group *group,
++						struct fanotify_event *event)
++{
++	return event->hash & FANOTIFY_HTABLE_MASK;
++}
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 16162207e886..b89f332248bd 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -89,6 +89,23 @@ static int fanotify_event_info_len(unsigned int fid_mode,
+ 	return info_len;
+ }
+ 
++/*
++ * Remove an hashed event from merge hash table.
++ */
++static void fanotify_unhash_event(struct fsnotify_group *group,
++				  struct fanotify_event *event)
++{
++	assert_spin_locked(&group->notification_lock);
++
++	pr_debug("%s: group=%p event=%p bucket=%u\n", __func__,
++		 group, event, fanotify_event_hash_bucket(group, event));
++
++	if (WARN_ON_ONCE(hlist_unhashed(&event->merge_list)))
++		return;
++
++	hlist_del_init(&event->merge_list);
++}
++
+ /*
+  * Get an fanotify notification event if one exists and is small
+  * enough to fit in "count". Return an error pointer if the count
+@@ -126,6 +143,8 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
+ 	fsnotify_remove_first_event(group);
+ 	if (fanotify_is_perm_event(event->mask))
+ 		FANOTIFY_PERM(event)->state = FAN_EVENT_REPORTED;
++	if (fanotify_is_hashed_event(event->mask))
++		fanotify_unhash_event(group, event);
+ out:
+ 	spin_unlock(&group->notification_lock);
+ 	return event;
+@@ -925,6 +944,20 @@ static struct fsnotify_event *fanotify_alloc_overflow_event(void)
+ 	return &oevent->fse;
+ }
+ 
++static struct hlist_head *fanotify_alloc_merge_hash(void)
++{
++	struct hlist_head *hash;
++
++	hash = kmalloc(sizeof(struct hlist_head) << FANOTIFY_HTABLE_BITS,
++		       GFP_KERNEL_ACCOUNT);
++	if (!hash)
++		return NULL;
++
++	__hash_init(hash, FANOTIFY_HTABLE_SIZE);
++
++	return hash;
++}
++
+ /* fanotify syscalls */
+ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
  {
+@@ -993,6 +1026,12 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 	atomic_inc(&user->fanotify_listeners);
+ 	group->memcg = get_mem_cgroup_from_mm(current->mm);
+ 
++	group->fanotify_data.merge_hash = fanotify_alloc_merge_hash();
++	if (!group->fanotify_data.merge_hash) {
++		fd = -ENOMEM;
++		goto out_destroy_group;
++	}
++
+ 	group->overflow_event = fanotify_alloc_overflow_event();
+ 	if (unlikely(!group->overflow_event)) {
+ 		fd = -ENOMEM;
+diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
+index 0533bacbd584..d1a64daa0171 100644
+--- a/fs/notify/inotify/inotify_fsnotify.c
++++ b/fs/notify/inotify/inotify_fsnotify.c
+@@ -46,9 +46,10 @@ static bool event_compare(struct fsnotify_event *old_fsn,
+ 	return false;
+ }
+ 
+-static int inotify_merge(struct list_head *list,
+-			  struct fsnotify_event *event)
++static int inotify_merge(struct fsnotify_group *group,
++			 struct fsnotify_event *event)
+ {
++	struct list_head *list = &group->notification_list;
+ 	struct fsnotify_event *last_event;
+ 
+ 	last_event = list_entry(list->prev, struct fsnotify_event, list);
+@@ -115,7 +116,7 @@ int inotify_handle_inode_event(struct fsnotify_mark *inode_mark, u32 mask,
+ 	if (len)
+ 		strcpy(event->name, name->name);
+ 
+-	ret = fsnotify_add_event(group, fsn_event, inotify_merge);
++	ret = fsnotify_add_event(group, fsn_event, inotify_merge, NULL);
+ 	if (ret) {
+ 		/* Our event wasn't used in the end. Free it. */
+ 		fsnotify_destroy_event(group, fsn_event);
+diff --git a/fs/notify/notification.c b/fs/notify/notification.c
+index 001cfe7d2e4e..0582c7209bc0 100644
+--- a/fs/notify/notification.c
++++ b/fs/notify/notification.c
+@@ -68,16 +68,22 @@ void fsnotify_destroy_event(struct fsnotify_group *group,
+ }
+ 
+ /*
+- * Add an event to the group notification queue.  The group can later pull this
+- * event off the queue to deal with.  The function returns 0 if the event was
+- * added to the queue, 1 if the event was merged with some other queued event,
++ * Try to Add an event to the notification queue.
++ * The group can later pull this event off the queue to deal with.
++ * The group can use the @merge hook to merge the event with a queued event.
++ * The group can use the @insert hook to insert the event into hash table.
++ * The function returns:
++ * 0 if the event was added to a queue
++ * 1 if the event was merged with some other queued event
+  * 2 if the event was not queued - either the queue of events has overflown
+- * or the group is shutting down.
++ *   or the group is shutting down.
+  */
+ int fsnotify_add_event(struct fsnotify_group *group,
+ 		       struct fsnotify_event *event,
+-		       int (*merge)(struct list_head *,
+-				    struct fsnotify_event *))
++		       int (*merge)(struct fsnotify_group *,
++				    struct fsnotify_event *),
++		       void (*insert)(struct fsnotify_group *,
++				      struct fsnotify_event *))
+ {
+ 	int ret = 0;
+ 	struct list_head *list = &group->notification_list;
+@@ -104,7 +110,7 @@ int fsnotify_add_event(struct fsnotify_group *group,
+ 	}
+ 
+ 	if (!list_empty(list) && merge) {
+-		ret = merge(list, event);
++		ret = merge(group, event);
+ 		if (ret) {
+ 			spin_unlock(&group->notification_lock);
+ 			return ret;
+@@ -114,6 +120,8 @@ int fsnotify_add_event(struct fsnotify_group *group,
+ queue:
+ 	group->q_len++;
+ 	list_add_tail(&event->list, list);
++	if (insert)
++		insert(group, event);
+ 	spin_unlock(&group->notification_lock);
+ 
+ 	wake_up(&group->notification_waitq);
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index fc98f9f88d12..63fb766f0f3e 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -233,6 +233,8 @@ struct fsnotify_group {
+ #endif
+ #ifdef CONFIG_FANOTIFY
+ 		struct fanotify_group_private_data {
++			/* Hash table of events for merge */
++			struct hlist_head *merge_hash;
+ 			/* allows a group to block waiting for a userspace response */
+ 			struct list_head access_list;
+ 			wait_queue_head_t access_waitq;
+@@ -486,12 +488,14 @@ extern void fsnotify_destroy_event(struct fsnotify_group *group,
+ /* attach the event to the group notification queue */
+ extern int fsnotify_add_event(struct fsnotify_group *group,
+ 			      struct fsnotify_event *event,
+-			      int (*merge)(struct list_head *,
+-					   struct fsnotify_event *));
++			      int (*merge)(struct fsnotify_group *,
++					   struct fsnotify_event *),
++			      void (*insert)(struct fsnotify_group *,
++					     struct fsnotify_event *));
+ /* Queue overflow event to a notification group */
+ static inline void fsnotify_queue_overflow(struct fsnotify_group *group)
+ {
+-	fsnotify_add_event(group, group->overflow_event, NULL);
++	fsnotify_add_event(group, group->overflow_event, NULL, NULL);
+ }
+ 
+ static inline bool fsnotify_notify_queue_is_empty(struct fsnotify_group *group)
 -- 
 2.30.0
 
