@@ -2,268 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6D3332D94A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 19:12:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39A5D32D966
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 19:26:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233511AbhCDSLY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Mar 2021 13:11:24 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:54881 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232744AbhCDSLS (ORCPT
+        id S234425AbhCDSZQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Mar 2021 13:25:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56906 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234201AbhCDSYr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Mar 2021 13:11:18 -0500
-Received: from [95.90.240.160] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1lHsQm-0003cl-8l; Thu, 04 Mar 2021 18:10:36 +0000
-Date:   Thu, 4 Mar 2021 19:10:35 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        David Howells <dhowells@redhat.com>, Al Viro <viro@zeniv.linux>
-Cc:     linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] mount: fix mounting of detached mounts onto targets that
- reside on shared mounts
-Message-ID: <20210304181035.7t24o2ufnuxrro5u@wittgenstein>
-References: <20210304174155.61792-1-christian.brauner@ubuntu.com>
+        Thu, 4 Mar 2021 13:24:47 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE906C061574;
+        Thu,  4 Mar 2021 10:24:06 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id j2so15879787wrx.9;
+        Thu, 04 Mar 2021 10:24:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zOtCkSuP3/sSeDKbXtcuyFbcQjnAEtPQvMYWbEo0RWc=;
+        b=YfKywlVxA2OwkHFlyyqrfje5azAqfgnYnUxA9d2jP0QvhjMAlxLR3r6C/Elzp9q92h
+         qyNvO+EX+nMI++2Pa08tB3EF/iDL28VoGHPvvuo83KL7wz5rIqdO4IYtJ/E2EM8HjKns
+         RTj1wCLR3uGl9uaqG3daUJn2+peqIV5Gsj4O4DYbgjLbrNCM7vrdoRaYmAhEOi1gJ0Ul
+         OIkZ50/qDGctum/YlbqL4IeRhcdDcXO+Ll0CO1+kK09Rh7em/N+JV2ZBNcbz0Sa4hHfQ
+         Pasn8ntj+5g6E+Ahcl84DTVVDaAxmkqSZX5p/SxvajryIPc639gS0VB5UWev/7NlpPao
+         Zx3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zOtCkSuP3/sSeDKbXtcuyFbcQjnAEtPQvMYWbEo0RWc=;
+        b=BueaABldXxSdpMgmg4C8ssYiArOin/qNCbEIwAdduBGxI92PaNKOJVV2PxNAjzabwT
+         NEWfpmBG9EVdWb2wB1x64TN6StxVGfBcbuwjYL2LgIdID/LPvgSEEw0CBzPCtYmmBV6+
+         kEFCS/l4DOWwLQ8ImuM6hnGQyVkJes0HThE7aJLVrApa54H7EReBtMF/2TSrOhC1Pz6T
+         DTydRewHDlKW0dphHl37kxyCyLmjEf4cLCBTLY4vqh71p/4QNWhjWIWaBImIwdBvUk4N
+         rih3M3It45uaIi56niyCOtKBDI7ak1x7tyVj0kFigjhxFugDa4doOFI8o1SCf1lj67S5
+         6zQw==
+X-Gm-Message-State: AOAM531llen+U9r2ZvBcXaMeOz/X+a9vXYauK3tGvRIRVMzmbr5MOCPt
+        FBGvUYZeLMyVgOs4bt4NW3Y=
+X-Google-Smtp-Source: ABdhPJw9IGXfIEwP2LVQ0WhlSyUoO96IZPZPEYenv21JjYYT4AGCNBo1c0TUm4fQXkse7RWu/AHxvQ==
+X-Received: by 2002:adf:a1ce:: with SMTP id v14mr5534243wrv.228.1614882244603;
+        Thu, 04 Mar 2021 10:24:04 -0800 (PST)
+Received: from [192.168.1.143] ([170.253.51.130])
+        by smtp.gmail.com with ESMTPSA id w18sm143376wrr.7.2021.03.04.10.24.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Mar 2021 10:24:04 -0800 (PST)
+Subject: Re: [RFC v4] copy_file_range.2: Update cross-filesystem support for
+ 5.12
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-man@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Luis Henriques <lhenriques@suse.de>,
+        Steve French <sfrench@samba.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Ian Lance Taylor <iant@google.com>,
+        Luis Lozano <llozano@chromium.org>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Olga Kornievskaia <aglo@umich.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Walter Harms <wharms@bfs.de>
+References: <20210224142307.7284-1-lhenriques@suse.de>
+ <20210304093806.10589-1-alx.manpages@gmail.com>
+ <20210304171350.GC7267@magnolia>
+From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
+Message-ID: <37df00f9-a88e-3f16-d0b4-3297248aee66@gmail.com>
+Date:   Thu, 4 Mar 2021 19:24:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210304174155.61792-1-christian.brauner@ubuntu.com>
+In-Reply-To: <20210304171350.GC7267@magnolia>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 04, 2021 at 06:41:55PM +0100, Christian Brauner wrote:
-> Creating a series of detached mounts, attaching them to the filesystem,
-> and unmounting them can be used to trigger an integer overflow in
-> ns->mounts causing the kernel to block any new mounts in count_mounts()
-> and returning ENOSPC because it falsely assumes that the maximum number
-> of mounts in the mount namespace has been reached, i.e. it thinks it
-> can't fit the new mounts into the mount namespace anymore.
-> 
-> Depending on the number of mounts in your system, this can be reproduced
-> on any kernel that supportes open_tree() and move_mount() with the
-> following instructions:
-> 
-> 1. Compile the following program "repro.c" via "make repro"
->   > cat repro.c
-> 
->   #define _GNU_SOURCE
->   #include <errno.h>
->   #include <fcntl.h>
->   #include <getopt.h>
->   #include <limits.h>
->   #include <stdbool.h>
->   #include <stdio.h>
->   #include <stdlib.h>
->   #include <linux/mount.h>
->   #include <sys/syscall.h>
->   #include <sys/types.h>
->   #include <unistd.h>
-> 
->   /* open_tree() */
->   #ifndef OPEN_TREE_CLONE
->   #define OPEN_TREE_CLONE 1
->   #endif
-> 
->   #ifndef OPEN_TREE_CLOEXEC
->   #define OPEN_TREE_CLOEXEC O_CLOEXEC
->   #endif
-> 
->   #ifndef __NR_open_tree
->   	#if defined __alpha__
->   		#define __NR_open_tree 538
->   	#elif defined _MIPS_SIM
->   		#if _MIPS_SIM == _MIPS_SIM_ABI32	/* o32 */
->   			#define __NR_open_tree 4428
->   		#endif
->   		#if _MIPS_SIM == _MIPS_SIM_NABI32	/* n32 */
->   			#define __NR_open_tree 6428
->   		#endif
->   		#if _MIPS_SIM == _MIPS_SIM_ABI64	/* n64 */
->   			#define __NR_open_tree 5428
->   		#endif
->   	#elif defined __ia64__
->   		#define __NR_open_tree (428 + 1024)
->   	#else
->   		#define __NR_open_tree 428
->   	#endif
->   #endif
-> 
->   /* move_mount() */
->   #ifndef MOVE_MOUNT_F_EMPTY_PATH
->   #define MOVE_MOUNT_F_EMPTY_PATH 0x00000004 /* Empty from path permitted */
->   #endif
-> 
->   #ifndef __NR_move_mount
->   	#if defined __alpha__
->   		#define __NR_move_mount 539
->   	#elif defined _MIPS_SIM
->   		#if _MIPS_SIM == _MIPS_SIM_ABI32	/* o32 */
->   			#define __NR_move_mount 4429
->   		#endif
->   		#if _MIPS_SIM == _MIPS_SIM_NABI32	/* n32 */
->   			#define __NR_move_mount 6429
->   		#endif
->   		#if _MIPS_SIM == _MIPS_SIM_ABI64	/* n64 */
->   			#define __NR_move_mount 5429
->   		#endif
->   	#elif defined __ia64__
->   		#define __NR_move_mount (428 + 1024)
->   	#else
->   		#define __NR_move_mount 429
->   	#endif
->   #endif
-> 
->   static inline int sys_open_tree(int dfd, const char *filename, unsigned int flags)
->   {
->   	return syscall(__NR_open_tree, dfd, filename, flags);
->   }
-> 
->   static inline int sys_move_mount(int from_dfd, const char *from_pathname, int to_dfd,
->   				 const char *to_pathname, unsigned int flags)
->   {
->   	return syscall(__NR_move_mount, from_dfd, from_pathname, to_dfd, to_pathname, flags);
->   }
-> 
->   static void usage(void)
->   {
->   	const char *text = "mount-new [--recursive] <source> <target>\n";
->   	fprintf(stderr, "%s", text);
->   	_exit(EXIT_SUCCESS);
->   }
-> 
->   #define exit_usage(format, ...)                         \
->   	({                                              \
->   		fprintf(stderr, format, ##__VA_ARGS__); \
->   		usage();                                \
->   	})
-> 
->   #define exit_log(format, ...)                           \
->   	({                                              \
->   		fprintf(stderr, format, ##__VA_ARGS__); \
->   		exit(EXIT_FAILURE);                     \
->   	})
-> 
->   static const struct option longopts[] = {
->   	{"recursive",	no_argument,		0,	'a'},
->   	{"help",	no_argument,		0,	'b'},
->   	{ NULL,		no_argument,		0,	 0 },
->   };
-> 
->   int main(int argc, char *argv[])
->   {
->   	int index = 0;
->   	bool recursive = false;
->   	int fd_tree, new_argc, ret;
->   	char *source, *target;
->   	char *const *new_argv;
-> 
->   	while ((ret = getopt_long_only(argc, argv, "", longopts, &index)) != -1) {
->   		switch (ret) {
->   		case 'a':
->   			recursive = true;
->   			break;
->   		case 'b':
->   			/* fallthrough */
->   		default:
->   			usage();
->   		}
->   	}
-> 
->   	new_argv = &argv[optind];
->   	new_argc = argc - optind;
->   	if (new_argc < 2)
->   		exit_usage("Missing source or target mountpoint\n\n");
->   	source = new_argv[0];
->   	target = new_argv[1];
-> 
->   	fd_tree = sys_open_tree(-EBADF, source,
->   				OPEN_TREE_CLONE |
->   				OPEN_TREE_CLOEXEC |
->   				AT_EMPTY_PATH |
->   				(recursive ? AT_RECURSIVE : 0));
->   	if (fd_tree < 0) {
->   		exit_log("%m - Failed to open %s\n", source);
->   		exit(EXIT_FAILURE);
->   	}
-> 
->   	ret = sys_move_mount(fd_tree, "", -EBADF, target, MOVE_MOUNT_F_EMPTY_PATH);
->   	if (ret < 0)
->   		exit_log("%m - Failed to attach mount to %s\n", target);
->   	close(fd_tree);
-> 
->   	exit(EXIT_SUCCESS);
->   }
-> 
-> 2. Run a loop like:
-> 
-> while true; do sudo ./repro; done
+Hi Darrick,
 
-The full reproducer is:
+On 3/4/21 6:13 PM, Darrick J. Wong wrote:
+> On Thu, Mar 04, 2021 at 10:38:07AM +0100, Alejandro Colomar wrote:
+>> +However, on some virtual filesystems,
+>> +the call failed to copy, while still reporting success.
+> 
+> ...success, or merely a short copy?
 
-while true; do sudo ./repro /mnt /mnt; sudo umount -l /mnt; done
+Okay.
 
 > 
-> and wait for the kernel to refuse any new mounts by returning ENOSPC.
-> Depending on the number of mounts you have on the system this might take
-> shorter or longer.
-> 
-> The root cause of this is that detached mounts aren't handled correctly
-> when the destination mount point is MS_SHARED causing  a borked mount
-> tree and ultimately to a miscalculation of the number of mounts in the
-> mount namespace.
-> 
-> Detached mounts created via
-> open_tree(fd, path, OPEN_TREE_CLONE)
-> are essentially like an unattached new mount, or an unattached
-> bind-mount. They can then later on be attached to the filesystem via
-> move_mount() which calles into attach_recursive_mount(). Part of
-> attaching it to the filesystem is making sure that mounts get correctly
-> propagated in case the destination mountpoint is MS_SHARED, i.e.  is a
-> shared mountpoint. This is done by calling into propagate_mnt() which
-> walks the list of peers calling propagate_one() on each mount in this
-> list making sure it receives the propagation event.
-> For new mounts and bind-mounts propagate_one() knows to skip them by
-> realizing that there's no mount namespace attached to them.
-> However, detached mounts have an anonymous mount namespace attached to
-> them and so they aren't skipped causing the mount table to get wonky and
-> ultimately preventing any new mounts via the ENOSPC issue.
-> 
-> So teach propagation to handle detached mounts by making it aware of
-> them. I've been tracking this issue down for the last couple of days by
-> unmounting everything in my current mount table leaving only /proc and
-> /sys mounted and running the reproducer above verifying the counting of
-> the mounts. With this fix the counts are correct and the ENOSPC issue
-> can't be reproduced.
-> 
-> Fixes: 2db154b3ea8e ("vfs: syscall: Add move_mount(2) to move mounts around")
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> ---
->  fs/pnode.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/pnode.h b/fs/pnode.h
-> index 26f74e092bd9..988f1aa9b02a 100644
-> --- a/fs/pnode.h
-> +++ b/fs/pnode.h
-> @@ -12,7 +12,7 @@
->  
->  #define IS_MNT_SHARED(m) ((m)->mnt.mnt_flags & MNT_SHARED)
->  #define IS_MNT_SLAVE(m) ((m)->mnt_master)
-> -#define IS_MNT_NEW(m)  (!(m)->mnt_ns)
-> +#define IS_MNT_NEW(m)  (!(m)->mnt_ns || is_anon_ns((m)->mnt_ns))
->  #define CLEAR_MNT_SHARED(m) ((m)->mnt.mnt_flags &= ~MNT_SHARED)
->  #define IS_MNT_UNBINDABLE(m) ((m)->mnt.mnt_flags & MNT_UNBINDABLE)
->  #define IS_MNT_MARKED(m) ((m)->mnt.mnt_flags & MNT_MARKED)
-> 
-> base-commit: f69d02e37a85645aa90d18cacfff36dba370f797
-> -- 
-> 2.27.0
-> 
+> (The rest looks reasonable (at least by c_f_r standards) to me.)
+
+I'm curious, what does "c_f_r standards" mean? :)
+
+Cheers,
+
+Alex
+
+-- 
+Alejandro Colomar
+Linux man-pages comaintainer; https://www.kernel.org/doc/man-pages/
+http://www.alejandro-colomar.es/
