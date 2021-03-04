@@ -2,170 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CF1732CAEF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 04:44:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3662532CB13
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 04:45:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232812AbhCDDnf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Mar 2021 22:43:35 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:50274 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232799AbhCDDnH (ORCPT
+        id S233034AbhCDDom (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Mar 2021 22:44:42 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:45334 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233020AbhCDDoT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Mar 2021 22:43:07 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210304034225epoutp02ea121fcd10890648f7a10b94ce4b9386~pBrvu9lGE2491624916epoutp02e
-        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Mar 2021 03:42:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210304034225epoutp02ea121fcd10890648f7a10b94ce4b9386~pBrvu9lGE2491624916epoutp02e
+        Wed, 3 Mar 2021 22:44:19 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210304034338epoutp03e2f8653a209314027691797c64c356ff~pBszVi9Qa0689806898epoutp03K
+        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Mar 2021 03:43:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210304034338epoutp03e2f8653a209314027691797c64c356ff~pBszVi9Qa0689806898epoutp03K
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1614829345;
-        bh=B+6dMBxtcSUu6W/9okaioUJOpO8DxXMXNSJCTv2oFbY=;
+        s=mail20170921; t=1614829418;
+        bh=xz/N1IYmDAPJsmtztTVuH+rwAP7Ga3ZX6IrYa8UqZfI=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=CJKt2EioxIG0LQiX2TZCspntYxc9r41oeSUkkN0ReeOxFRLc2XXIO3QWsPFnf6udR
-         rxTHds8v4WdVoEQRFDoB7gh4SaNTUuN7LO6UOM6O1BezKQXfFDCvG5ZTkONYNjzRMc
-         XE1YEysbu/8fGDrtRYh+B/sl0yZ4Hpo/Ns8mP40o=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210304034225epcas1p138bb275b600ecf45204f3fefb85cea22~pBrvMgqVn2304223042epcas1p1R;
-        Thu,  4 Mar 2021 03:42:25 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.163]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4DrcBQ4wqvz4x9QM; Thu,  4 Mar
-        2021 03:42:22 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3F.32.63458.E1750406; Thu,  4 Mar 2021 12:42:22 +0900 (KST)
+        b=c6xsDoab+2E/OD4Jxa5NFWdP8eWaI3QFkf1O2R3NDBuAYtesZMbRDr1aPULu+K0ej
+         ZtrCNUmA7CthfiAGO3CAwPyy+HDsL3+V3zq6V/DdwQ3OBePYAeq6eDaeiOzPNawtHC
+         WW1SPSew4d8/V05Bpug+VmiOprobus++eOAFiBnE=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20210304034337epcas1p4a7ec01be07efbf298d5b883af9dbf803~pBszDRTBT0309603096epcas1p4n;
+        Thu,  4 Mar 2021 03:43:37 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.162]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4DrcCr6t9Pz4x9Pv; Thu,  4 Mar
+        2021 03:43:36 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DD.ED.10463.86750406; Thu,  4 Mar 2021 12:43:36 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
         epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20210304034222epcas1p35c7ae7b4baae4b6c28d32ade4fe00e62~pBrseZIzG1695416954epcas1p3l;
-        Thu,  4 Mar 2021 03:42:22 +0000 (GMT)
+        20210304034336epcas1p3d36927ab291bc5814a43f75a3f5ef9eb~pBsx2yd2J1226012260epcas1p3C;
+        Thu,  4 Mar 2021 03:43:36 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210304034222epsmtrp296082612ef95e070ed0c7a7da79482a9~pBrsduer_2714327143epsmtrp2C;
-        Thu,  4 Mar 2021 03:42:22 +0000 (GMT)
-X-AuditID: b6c32a36-c6d65a800000f7e2-04-6040571e4b12
+        20210304034336epsmtrp2f0cfc05d96b145b356c4858bc2a9fff3~pBsx2NNCB2741027410epsmtrp2y;
+        Thu,  4 Mar 2021 03:43:36 +0000 (GMT)
+X-AuditID: b6c32a38-f11ff700000028df-d0-604057686c2d
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        31.89.08745.D1750406; Thu,  4 Mar 2021 12:42:21 +0900 (KST)
+        40.99.08745.86750406; Thu,  4 Mar 2021 12:43:36 +0900 (KST)
 Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20210304034221epsmtip2c45d0f3ea02e5a5d07fdafc1ce700c6d~pBrsR2JJK2508525085epsmtip25;
-        Thu,  4 Mar 2021 03:42:21 +0000 (GMT)
+        20210304034336epsmtip24bce12b84e298e9bc97270a44af9999d~pBsxqU6qm2398223982epsmtip2K;
+        Thu,  4 Mar 2021 03:43:36 +0000 (GMT)
 From:   "Namjae Jeon" <namjae.jeon@samsung.com>
 To:     "'Hyeongseok Kim'" <hyeongseok@gmail.com>, <sj1557.seo@samsung.com>
-Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-In-Reply-To: <20210302052020.63598-1-hyeongseok@gmail.com>
-Subject: RE: [PATCH v2] exfat: fix erroneous discard when clear cluster bit
-Date:   Thu, 4 Mar 2021 12:42:21 +0900
-Message-ID: <002f01d710a8$624be490$26e3adb0$@samsung.com>
+Cc:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+In-Reply-To: <20210302050521.6059-1-hyeongseok@gmail.com>
+Subject: RE: [PATCH v4 0/2] Add FITRIM ioctl support for exFAT filesystem
+Date:   Thu, 4 Mar 2021 12:43:36 +0900
+Message-ID: <003001d710a8$8eb27850$ac1768f0$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQG+mIOZmBktm/oL05f7SJkQ+BJOQgN+CcSTqogt6BA=
+Thread-Index: AQJHsQEWbOBopBEJvn3/+Fchao77+gGcWnf6qYUL/RA=
 Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdlhTT1cu3CHBYNIlBYu/Ez8xWezZe5LF
-        4vKuOWwWW/4dYbVYsPERowOrx85Zd9k9+rasYvT4vEkugDkqxyYjNTEltUghNS85PyUzL91W
-        yTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaKWSQlliTilQKCCxuFhJ386mKL+0JFUh
-        I7+4xFYptSAlp8DQoECvODG3uDQvXS85P9fK0MDAyBSoMiEnY/fC5awFXwUr5j17ytbAOI+v
-        i5GTQ0LAROLTo4uMXYxcHEICOxglbp1+zw7hfGKUaF13hhnC+cwo8evtNFaYloU3X0O17GKU
-        uHDkECuE85JR4t731SwgVWwCuhL//uxnA7FFBNwldr3rYQSxmQXiJd4v+QdWwylgJbH/3g6w
-        uLCAt8TWXdeZQGwWARWJq2s+gsV5BSwlns5axgxhC0qcnPmEBWKOvMT2t3OYIS5SkPj5dBkr
-        xC4riXd7dzBD1IhIzO5sA3tBQuAnu8S2bWuBnuMAclwklm1yhugVlnh1fAs7hC0l8fndXjaI
-        kmqJj/uhxncwSrz4bgthG0vcXL+BFaSEWUBTYv0ufYiwosTO33OhPuSTePe1hxViCq9ER5sQ
-        RImqRN+lw0wQtrREV/sH9gmMSrOQ/DULyV+zkNw/C2HZAkaWVYxiqQXFuempxYYFRshxvYkR
-        nBq1zHYwTnr7Qe8QIxMH4yFGCQ5mJRFe8Ze2CUK8KYmVValF+fFFpTmpxYcYTYEhPZFZSjQ5
-        H5ic80riDU2NjI2NLUzMzM1MjZXEeRMNHsQLCaQnlqRmp6YWpBbB9DFxcEo1MBWeEb90d9f6
-        i3duz+uy0Zq7ZNKzxuff3B6IRn4RuhBqb1q73DnkBdf0VX+zT+SaRG4xOuT2xuOix9Lc+jD7
-        3pjjB/RkMl31J0su2qFR8POsCNdjZ6OAxAVrQwv0J/s1dn22bdrxPsX5V0aPx6OvqlbMHRt0
-        K70Xh8nx3vnzJqLQXNE1Z29a7d7ZwQ7ufUaSVjtjw5hLq1JFPsnMMj31ZJGzzsLn9ndrrc7e
-        LvZgaOKwFjpkk/020bXV6Rn/192cgev26aQc8i945nZGwYNnSmvv7LvPTif4CXbNZRDc1GN9
-        6P7ZN1araz2/f31r4PrK1M/bYM3OrOoki9/OjmlMMc91nJYJc+SGmByb3sSvxFKckWioxVxU
-        nAgAIVtpBRYEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNLMWRmVeSWpSXmKPExsWy7bCSvK5cuEOCQV+wxd+Jn5gs9uw9yWJx
-        edccNost/46wWizY+IjRgdVj56y77B59W1YxenzeJBfAHMVlk5Kak1mWWqRvl8CVsXvhctaC
-        r4IV8549ZWtgnMfXxcjJISFgIrHw5mvGLkYuDiGBHYwSO1fuYoJISEscO3GGuYuRA8gWljh8
-        uBii5jmjxKXXyxlBatgEdCX+/dnPBmKLCHhKrDi4ggmknlkgUeLoaweI+m5Gial/VrKC1HAK
-        WEnsv7cDrFdYwFti667rYLtYBFQkrq75CBbnFbCUeDprGTOELShxcuYTFoiZehJtG8FKmAXk
-        Jba/ncMMcaaCxM+ny1ghTrCSeLd3BzNEjYjE7M425gmMwrOQTJqFMGkWkkmzkHQsYGRZxSiZ
-        WlCcm55bbFhglJdarlecmFtcmpeul5yfu4kRHB9aWjsY96z6oHeIkYmD8RCjBAezkgiv+Evb
-        BCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8F7pOxgsJpCeWpGanphakFsFkmTg4pRqYhCOiXFhe
-        R4i/eFbMlKm1b5bcpKhn+nsuvNJY4HW6qtk6VUJx7T2Og1WBlxTXmG7fax96tNcsdqW49RuL
-        X36LPuSpxxqasQXHNEhWhcT4vy3ray/mlSxa+PfNCT3zaXbG1zOXHFieOLOGgzU29dnvP2s4
-        n/zcdJKd88uuhTFnj02fdFng05xPMw49VNDMrdhTaJu9ese15+8FY01Pb5mkLnJX+kxIhcMH
-        q7K2Ey7W6rFpem0tybHNt/QM1rmWJHc2TXv2I/m8y5YtCp3Le+wYSmerbwhb78e+3mOtpI+f
-        le8Xk2sum7ym/2lIXKMs034265uS+6Hfl9+LhzEc2KNu1j9Hfc8Cgyk3zrxTP1asxFKckWio
-        xVxUnAgAMddktf4CAAA=
-X-CMS-MailID: 20210304034222epcas1p35c7ae7b4baae4b6c28d32ade4fe00e62
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDKsWRmVeSWpSXmKPExsWy7bCmrm5GuEOCwdYuC4u/Ez8xWezZe5LF
+        4vKuOWwWW/4dYXVg8dg56y67R9+WVYwenzfJBTBH5dhkpCampBYppOYl56dk5qXbKnkHxzvH
+        m5oZGOoaWlqYKynkJeam2iq5+AToumXmAG1TUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gq
+        pRak5BQYGhToFSfmFpfmpesl5+daGRoYGJkCVSbkZDxZ+IC9oJW74t2F3+wNjDc5uhg5OSQE
+        TCSWTzzOCGILCexglHg9j7mLkQvI/sQo0fP8KiuE85lR4su7HcwwHS3/+qESuxgluq7cZ4Jw
+        XjJKbH+6kh2kik1AV+Lfn/1sILaIgLvErnc9YDuYBZwlOi+eZgWxOQUsJZY9Pw5Uz8EhLOAp
+        0bFeG8RkEVCROH3PH6SCF6hiac8ndghbUOLkzCcsEFPkJba/nQN1j4LEz6fLWCE2WUm0ztrJ
+        BFEjIjG7sw3sGwmBj+wSj/bsYINocJF48O0JK4QtLPHq+BZ2CFtK4vO7vWwgN0gIVEt83A81
+        v4NR4sV3WwjbWOLm+g2sICXMApoS63fpQ4QVJXb+ngv1IJ/Eu689rBBTeCU62oQgSlQl+i4d
+        ZoKwpSW62j+wT2BUmoXksVlIHpuF5IFZCMsWMLKsYhRLLSjOTU8tNiwwQY7pTYzgZKhlsYNx
+        7tsPeocYmTgYDzFKcDArifCKv7RNEOJNSaysSi3Kjy8qzUktPsRoCgzpicxSosn5wHScVxJv
+        aGpkbGxsYWJmbmZqrCTOm2TwIF5IID2xJDU7NbUgtQimj4mDU6qBifH/+m3beWdf/PW7OZgj
+        59Em1eWSHw8eK7rusj1q+uPCyZunet9ZJd+1pVmteU1HNXfrObt/7yOD+FbbTHOe9qk/h//Z
+        kajXaX9SD89QKHzQ2W1otiprb2DxpgfGu94n/AyYwXOmxW1x62v5P6vfrt4zuegLN/P/3ONC
+        19dvXsA776RIu0mtlmsBJ1dV9tnXP6ZqxbztEPvw56bGOe3Lyjvtnk3VqHYSSXih6jT9UU38
+        oi07d0xn8jWu/md8S9ZPe/3u42fq4l+2eAWeVJauu+a1VHOX7bRnHhwb33myp8sWMSTv51x5
+        Vlkv9tDM+8HFj6eGxSxQj6owyYlU5unQMrto8XPdTle2g/ob+Rk2zlJiKc5INNRiLipOBAAa
+        3wXXDwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsWy7bCSvG5GuEOCwftdchZ/J35istiz9ySL
+        xeVdc9gstvw7wurA4rFz1l12j74tqxg9Pm+SC2CO4rJJSc3JLEst0rdL4Mp4svABe0Erd8W7
+        C7/ZGxhvcnQxcnJICJhItPzrZ+1i5OIQEtjBKPGj5yU7REJa4tiJM8xdjBxAtrDE4cPFEDXP
+        GSValy5mBqlhE9CV+PdnPxuILSLgKbHi4AomEJtZwFWi7cURqKFdjBIt/+8xgiQ4BSwllj0/
+        zg4yVBiooWO9NojJIqAicfqeP0gFL1DF0p5P7BC2oMTJmU9YQEqYBfQk2jYyQkyXl9j+dg4z
+        xJUKEj+fLmOFuMBKonXWTqgLRCRmd7YxT2AUnoVk0iyESbOQTJqFpGMBI8sqRsnUguLc9Nxi
+        wwKjvNRyveLE3OLSvHS95PzcTYzgqNDS2sG4Z9UHvUOMTByMhxglOJiVRHjFX9omCPGmJFZW
+        pRblxxeV5qQWH2KU5mBREue90HUyXkggPbEkNTs1tSC1CCbLxMEp1cBUonB9cmbr69ddE6+x
+        M3NY9r6IPZww6fDn1Qd8f1+T+F311O/j3qi1M3nX8FXN6NR42PAn/u6uDb+kDV43SPWWMeY9
+        sZkqnHbG7tGLp/l57dtulTFPOf3kWwUvx52ICcduCCya++7OhOOMK+czfd8hyz3L3nqDinSl
+        47dJ06sfVoqtkH9x4OF0qZBXBh5XNh09EPzDwbqFu/5YrPdbS80MRQafLRNvFwdPNPw4hdFT
+        O31uoW0Kiz+j8NzNmqVchjkiz1PX5CuouxoEac3VrDqTbMC2VadvY08TT2bDooOLnrv1Jgkc
+        P9ohoRYmPvO0ndkjdZnn11esFH75y0NekH1vfVvZHGeWOwtumHGmVrIrsRRnJBpqMRcVJwIA
+        +upXtvkCAAA=
+X-CMS-MailID: 20210304034336epcas1p3d36927ab291bc5814a43f75a3f5ef9eb
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210302052033epcas1p3c1bac591bdd1f94ffbef1272a3df137f
-References: <CGME20210302052033epcas1p3c1bac591bdd1f94ffbef1272a3df137f@epcas1p3.samsung.com>
-        <20210302052020.63598-1-hyeongseok@gmail.com>
+X-CMS-RootMailID: 20210302050548epcas1p2ccec84f5de16f0971fc0479abe64ec3e
+References: <CGME20210302050548epcas1p2ccec84f5de16f0971fc0479abe64ec3e@epcas1p2.samsung.com>
+        <20210302050521.6059-1-hyeongseok@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> If mounted with discard option, exFAT issues discard command when clear cluster bit to remove file.
-> But the input parameter of cluster-to-sector calculation is abnormally added by reserved cluster size
-> which is 2, leading to discard unrelated sectors included in target+2 cluster.
-> With fixing this, remove the wrong comments in set/clear/find bitmap functions.
+> This is for adding FITRIM ioctl functionality to exFAT filesystem.
+> Firstly, because the fstrim is long operation, introduce bitmap_lock to narrow the lock range to
+> prevent read operation stall.
+> After that, add generic ioctl function and FITRIM handler.
 > 
-> Fixes: 1e49a94cf707 ("exfat: add bitmap operations")
-Cc: stable@vger.kernel.org # v5.7+
-> Signed-off-by: Hyeongseok Kim <hyeongseok@gmail.com>
-> Acked-by: Sungjong Seo <sj1557.seo@samsung.com>
-Applied. Thanks for your patch!
+> Changelog
+> =========
+> v3->v4:
+> - Introduce bitmap_lock mutex to narrow the lock range for bitmap access
+>   and change to use bitmap_lock instead of s_lock in FITRIM handler to
+>   prevent read stall while ongoing fstrim.
+> - Minor code style fix
+> 
+> v2->v3:
+> - Remove unnecessary local variable
+> - Merge all changes to a single patch
+> 
+> v1->v2:
+> - Change variable declaration order as reverse tree style.
+> - Return -EOPNOTSUPP from sb_issue_discard() just as it is.
+> - Remove cond_resched() in while loop.
+> - Move ioctl related code into it's helper function.
+> 
+> Hyeongseok Kim (2):
+>   exfat: introduce bitmap_lock for cluster bitmap access
+>   exfat: add support ioctl and FITRIM function
+Applied. Thanks for your patches!
 
-> ---
->  fs/exfat/balloc.c | 15 +--------------
->  1 file changed, 1 insertion(+), 14 deletions(-)
 > 
-> diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c index 761c79c3a4ba..54f1bcbddb26 100644
-> --- a/fs/exfat/balloc.c
-> +++ b/fs/exfat/balloc.c
-> @@ -141,10 +141,6 @@ void exfat_free_bitmap(struct exfat_sb_info *sbi)
->  	kfree(sbi->vol_amap);
->  }
+>  fs/exfat/balloc.c   | 80 +++++++++++++++++++++++++++++++++++++++++++++
+>  fs/exfat/dir.c      |  5 +++
+>  fs/exfat/exfat_fs.h |  5 +++
+>  fs/exfat/fatent.c   | 37 ++++++++++++++++-----
+>  fs/exfat/file.c     | 53 ++++++++++++++++++++++++++++++
+>  fs/exfat/super.c    |  1 +
+>  6 files changed, 173 insertions(+), 8 deletions(-)
 > 
-> -/*
-> - * If the value of "clu" is 0, it means cluster 2 which is the first cluster of
-> - * the cluster heap.
-> - */
->  int exfat_set_bitmap(struct inode *inode, unsigned int clu)  {
->  	int i, b;
-> @@ -162,10 +158,6 @@ int exfat_set_bitmap(struct inode *inode, unsigned int clu)
->  	return 0;
->  }
-> 
-> -/*
-> - * If the value of "clu" is 0, it means cluster 2 which is the first cluster of
-> - * the cluster heap.
-> - */
->  void exfat_clear_bitmap(struct inode *inode, unsigned int clu, bool sync)  {
->  	int i, b;
-> @@ -186,8 +178,7 @@ void exfat_clear_bitmap(struct inode *inode, unsigned int clu, bool sync)
->  		int ret_discard;
-> 
->  		ret_discard = sb_issue_discard(sb,
-> -			exfat_cluster_to_sector(sbi, clu +
-> -						EXFAT_RESERVED_CLUSTERS),
-> +			exfat_cluster_to_sector(sbi, clu),
->  			(1 << sbi->sect_per_clus_bits), GFP_NOFS, 0);
-> 
->  		if (ret_discard == -EOPNOTSUPP) {
-> @@ -197,10 +188,6 @@ void exfat_clear_bitmap(struct inode *inode, unsigned int clu, bool sync)
->  	}
->  }
-> 
-> -/*
-> - * If the value of "clu" is 0, it means cluster 2 which is the first cluster of
-> - * the cluster heap.
-> - */
->  unsigned int exfat_find_free_bitmap(struct super_block *sb, unsigned int clu)  {
->  	unsigned int i, map_i, map_b, ent_idx;
 > --
 > 2.27.0.83.g0313f36
 
