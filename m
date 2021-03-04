@@ -2,264 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 510B832D0EB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 11:37:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EAEF32D11C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 11:51:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237370AbhCDKgP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Mar 2021 05:36:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40564 "EHLO
+        id S238985AbhCDKtg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Mar 2021 05:49:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238771AbhCDKfz (ORCPT
+        with ESMTP id S238964AbhCDKtK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Mar 2021 05:35:55 -0500
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 023C8C061574
-        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Mar 2021 02:35:15 -0800 (PST)
-Received: by mail-ed1-x530.google.com with SMTP id b13so24914767edx.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Mar 2021 02:35:14 -0800 (PST)
+        Thu, 4 Mar 2021 05:49:10 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A88AC061574
+        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Mar 2021 02:48:30 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id u14so27101956wri.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Mar 2021 02:48:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=13pRJm2U7Qqc8F9qRjqfsDkKUIYvnnbBQbaolObg0q8=;
-        b=AZtMAjdXY//iyWTmLxk0j7cOQAlyWKNBrh3ejJbnk9TUwqtZTe598NEFSvxvlLcJn9
-         4AYPqCUGzzyA/E4xI3BlzeSYPnra4K6vxLHHs2K0cBNxurgCw2Br9lp8dR8hf79/2fxn
-         dufdO9CO/Ps9ke3cfkni694EKtxvfa+Fj1eJRmaM4VLKk85tNwSzZ6R1T0a/7YLJqINt
-         gnNMNnDfY3TZLOYJx9H7PD1raw4/CVQc4wRnb+qJ9ucq8u7kTwkAQVFXhPC5XvGlpElY
-         x+EQdNVFlFnB33ZFc4nzUyGMWi/AMFy/5myzYMRwEk+07fysdMJZFy9Zr2tD+DkFkyBZ
-         Dc0A==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wIN4nv0rU5QC5nHqjpRiW8LK2uZ3eh4ZlvsaWV1ax/Y=;
+        b=WJ4eZxhVXy6RPRpDNIY+AlW/6r6wJLquYSt30nEqBudPttocAU/YjspcKpeWfQY/Ik
+         8RFJkcF4QA2ZYgJvGk0ziu5pPlhV4mx+9hcBZX2xXPefIUELmrknmkgiy5g7MMm1ZY+S
+         1gevVYeaBfBavFUuMhT5ZlHPB9M2xXOW82K3jlPYWy8UUqdnGFTr7x04sIKTlZDj53wU
+         6xwPjmVH5ZWdPvnrmPuIaFFch/HNUom6j1mUXqpveMbkWhxISQ7n1HiycRO3xrYtJpMw
+         6y6eC9WIGPxuKSeDzQrWxZwTQfXo6R79DLSlGhU2z/9pmpGb5WLap2XOlaynH9bUZ05A
+         jKYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=13pRJm2U7Qqc8F9qRjqfsDkKUIYvnnbBQbaolObg0q8=;
-        b=bR0egF1Qbp+c8XhVRC3pnJxiM9DkjCRIAGQ0VXxwBrc062Gr6SrsL4zItrDlYRtvoG
-         zbeb9he8wbgrA18nOFbjy/OTq0qWFTzL0IG9B/b+Zra+ujoU2DU3yVMjgScM0Mnwlanz
-         46KZDX/2xMt+ttTXYMIvFaX0cXVss6t5RVZqnWX83Apzz1way6stig7wnVdPfMeH80iU
-         b8b9nagLWbgmISXAZFT9x30VecrwUguKOGqISGzDz0Uqp7DDZRyU5xjv+rSYPWQOHu+5
-         4bYJlyA86Qn7HKWjk0/6Bm9L4VfHbsm6jCTcKlLAJXeZ2no/mMg3UlwKnpItNSWV5SqB
-         jibg==
-X-Gm-Message-State: AOAM531mnQR5qo1cIkDWkuKcMq+8JftGBTz4bkk6EMznifCPL3ToapqQ
-        zCqSyqsodZCj10XmBZDW0p73bk4JMoj+Go4w8IOJ
-X-Google-Smtp-Source: ABdhPJyD011kYY+HKgFkmf0rSBAIy7U69faBXx9uGl7Gx818AoP3kpEtIvHyyz6wUVmsWr2aBzKkLIZfV+QLw4I9FS8=
-X-Received: by 2002:a05:6402:4314:: with SMTP id m20mr3456223edc.5.1614854113728;
- Thu, 04 Mar 2021 02:35:13 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wIN4nv0rU5QC5nHqjpRiW8LK2uZ3eh4ZlvsaWV1ax/Y=;
+        b=PrO9IUP4f5zXnIhE+E2KVcnUH/wHVwPvSxZrAlIOxNFzXlzvPRwiyoCi01qteIvhrb
+         V32pl02l90kmmiWEUVGiEbcOrV7jr6R2g22jCFjvu4WcKJo4tLyBg8mpqMMe6Pw459v8
+         3yZ5X6Ck8FsZ13XyiMY+B/bgkR6azoCOnOop48AWJrcfWwKoKubnL/Xa/i0nracIXM9S
+         P3sKa/yHljqfHBa0/Ho5FoSgnufX7897N7cL4J022BCFfavL2w1S/RRWBihPpTHSh3Ht
+         XpsmGIIRH247tdadn1bKYn3CV9PHzLlIPP1JickU8O/Jd6YuvL2sNXN3TPJJvXsAHvGl
+         cEww==
+X-Gm-Message-State: AOAM530APlJncfjAqSqQMoS9KoA2SWPgLG+0xAVM+Dha83gv5QRiwKLw
+        bE9GTqdJYXseX7njeQCm7CE=
+X-Google-Smtp-Source: ABdhPJyCb7oqarHThUQHmPgzbyj2+26wiZhEWe0oXo/RuCVtOFOpURmhYPpQqMelTNVWc+fB8IHYZw==
+X-Received: by 2002:adf:b60e:: with SMTP id f14mr3331171wre.99.1614854908903;
+        Thu, 04 Mar 2021 02:48:28 -0800 (PST)
+Received: from localhost.localdomain ([141.226.13.117])
+        by smtp.gmail.com with ESMTPSA id d7sm6736635wrs.42.2021.03.04.02.48.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Mar 2021 02:48:28 -0800 (PST)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/5] Performance improvement for fanotify merge
+Date:   Thu,  4 Mar 2021 12:48:21 +0200
+Message-Id: <20210304104826.3993892-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-References: <20210223115048.435-1-xieyongji@bytedance.com> <20210223115048.435-10-xieyongji@bytedance.com>
- <366f2dcf-51ab-4d66-9c94-517349ef0bdd@redhat.com>
-In-Reply-To: <366f2dcf-51ab-4d66-9c94-517349ef0bdd@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Thu, 4 Mar 2021 18:35:03 +0800
-Message-ID: <CACycT3tvj6Hie1bjnprenhevkGC-hknPGOrsfmY6TLxFYBXNxA@mail.gmail.com>
-Subject: Re: Re: [RFC v4 09/11] Documentation: Add documentation for VDUSE
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 4, 2021 at 2:40 PM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> On 2021/2/23 7:50 =E4=B8=8B=E5=8D=88, Xie Yongji wrote:
-> > VDUSE (vDPA Device in Userspace) is a framework to support
-> > implementing software-emulated vDPA devices in userspace. This
-> > document is intended to clarify the VDUSE design and usage.
-> >
-> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> > ---
-> >   Documentation/userspace-api/index.rst |   1 +
-> >   Documentation/userspace-api/vduse.rst | 112 +++++++++++++++++++++++++=
-+++++++++
-> >   2 files changed, 113 insertions(+)
-> >   create mode 100644 Documentation/userspace-api/vduse.rst
-> >
-> > diff --git a/Documentation/userspace-api/index.rst b/Documentation/user=
-space-api/index.rst
-> > index acd2cc2a538d..f63119130898 100644
-> > --- a/Documentation/userspace-api/index.rst
-> > +++ b/Documentation/userspace-api/index.rst
-> > @@ -24,6 +24,7 @@ place where this information is gathered.
-> >      ioctl/index
-> >      iommu
-> >      media/index
-> > +   vduse
-> >
-> >   .. only::  subproject and html
-> >
-> > diff --git a/Documentation/userspace-api/vduse.rst b/Documentation/user=
-space-api/vduse.rst
-> > new file mode 100644
-> > index 000000000000..2a20e686bb59
-> > --- /dev/null
-> > +++ b/Documentation/userspace-api/vduse.rst
-> > @@ -0,0 +1,112 @@
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +VDUSE - "vDPA Device in Userspace"
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +vDPA (virtio data path acceleration) device is a device that uses a
-> > +datapath which complies with the virtio specifications with vendor
-> > +specific control path. vDPA devices can be both physically located on
-> > +the hardware or emulated by software. VDUSE is a framework that makes =
-it
-> > +possible to implement software-emulated vDPA devices in userspace.
-> > +
-> > +How VDUSE works
-> > +------------
-> > +Each userspace vDPA device is created by the VDUSE_CREATE_DEV ioctl on
-> > +the character device (/dev/vduse/control). Then a device file with the
-> > +specified name (/dev/vduse/$NAME) will appear, which can be used to
-> > +implement the userspace vDPA device's control path and data path.
->
->
-> It's better to mention that in order to le thte device to be registered
-> on the bus, admin need to use the management API(netlink) to create the
-> vDPA device.
->
-> Some codes to demnonstrate how to create the device will be better.
->
+Jan,
 
-OK.
+Following is v2 for the fanotify_merge() performance improvements.
 
->
-> > +
-> > +To implement control path, a message-based communication protocol and =
-some
-> > +types of control messages are introduced in the VDUSE framework:
-> > +
-> > +- VDUSE_SET_VQ_ADDR: Set the vring address of virtqueue.
-> > +
-> > +- VDUSE_SET_VQ_NUM: Set the size of virtqueue
-> > +
-> > +- VDUSE_SET_VQ_READY: Set ready status of virtqueue
-> > +
-> > +- VDUSE_GET_VQ_READY: Get ready status of virtqueue
-> > +
-> > +- VDUSE_SET_VQ_STATE: Set the state for virtqueue
-> > +
-> > +- VDUSE_GET_VQ_STATE: Get the state for virtqueue
-> > +
-> > +- VDUSE_SET_FEATURES: Set virtio features supported by the driver
-> > +
-> > +- VDUSE_GET_FEATURES: Get virtio features supported by the device
-> > +
-> > +- VDUSE_SET_STATUS: Set the device status
-> > +
-> > +- VDUSE_GET_STATUS: Get the device status
-> > +
-> > +- VDUSE_SET_CONFIG: Write to device specific configuration space
-> > +
-> > +- VDUSE_GET_CONFIG: Read from device specific configuration space
-> > +
-> > +- VDUSE_UPDATE_IOTLB: Notify userspace to update the memory mapping in=
- device IOTLB
-> > +
-> > +Those control messages are mostly based on the vdpa_config_ops in
-> > +include/linux/vdpa.h which defines a unified interface to control
-> > +different types of vdpa device. Userspace needs to read()/write()
-> > +on the VDUSE device file to receive/reply those control messages
-> > +from/to VDUSE kernel module as follows:
-> > +
-> > +.. code-block:: c
-> > +
-> > +     static int vduse_message_handler(int dev_fd)
-> > +     {
-> > +             int len;
-> > +             struct vduse_dev_request req;
-> > +             struct vduse_dev_response resp;
-> > +
-> > +             len =3D read(dev_fd, &req, sizeof(req));
-> > +             if (len !=3D sizeof(req))
-> > +                     return -1;
-> > +
-> > +             resp.request_id =3D req.unique;
-> > +
-> > +             switch (req.type) {
-> > +
-> > +             /* handle different types of message */
-> > +
-> > +             }
-> > +
-> > +             len =3D write(dev_fd, &resp, sizeof(resp));
-> > +             if (len !=3D sizeof(resp))
-> > +                     return -1;
-> > +
-> > +             return 0;
-> > +     }
-> > +
-> > +In the deta path, vDPA device's iova regions will be mapped into users=
-pace
-> > +with the help of VDUSE_IOTLB_GET_FD ioctl on the VDUSE device file:
-> > +
-> > +- VDUSE_IOTLB_GET_FD: get the file descriptor to iova region. Userspac=
-e can
-> > +  access this iova region by passing the fd to mmap().
->
->
-> It would be better to have codes to explain how it is expected to work he=
-re.
->
+For more details on functional and performance tests please refer to
+v1 cover letter [1].
 
-OK.
-
->
-> > +
-> > +Besides, the following ioctls on the VDUSE device file are provided to=
- support
-> > +interrupt injection and setting up eventfd for virtqueue kicks:
-> > +
-> > +- VDUSE_VQ_SETUP_KICKFD: set the kickfd for virtqueue, this eventfd is=
- used
-> > +  by VDUSE kernel module to notify userspace to consume the vring.
-> > +
-> > +- VDUSE_INJECT_VQ_IRQ: inject an interrupt for specific virtqueue
-> > +
-> > +- VDUSE_INJECT_CONFIG_IRQ: inject a config interrupt
-> > +
-> > +MMU-based IOMMU Driver
-> > +----------------------
-> > +In virtio-vdpa case, VDUSE framework implements an MMU-based on-chip I=
-OMMU
-> > +driver to support mapping the kernel DMA buffer into the userspace iov=
-a
-> > +region dynamically.
-> > +
-> > +The basic idea behind this driver is treating MMU (VA->PA) as IOMMU (I=
-OVA->PA).
-> > +The driver will set up MMU mapping instead of IOMMU mapping for the DM=
-A transfer
-> > +so that the userspace process is able to use its virtual address to ac=
-cess
-> > +the DMA buffer in kernel.
-> > +
-> > +And to avoid security issue, a bounce-buffering mechanism is introduce=
-d to
-> > +prevent userspace accessing the original buffer directly which may con=
-tain other
-> > +kernel data.
->
->
-> It's worth to mention this is designed for virtio-vdpa (kernel virtio
-> drivers).
->
-
-Will do it.
+This version is much simpler than v1 using standard hlist.
+It was rebased and tested against 5.12-rc1 using LTP tests [2].
 
 Thanks,
-Yongji
+Amir.
+
+Chanes since v1:
+- Use hlist instead of multi notification lists
+- Handling all hashing within fanotify backend
+- Cram event key member together with event type
+- Remove ifdefs and use constant queue hash bits
+- Address other review comments on v1
+
+[1] https://lore.kernel.org/linux-fsdevel/20210202162010.305971-1-amir73il@gmail.com/
+[2] https://github.com/amir73il/ltp/commits/fanotify_merge
+
+Amir Goldstein (5):
+  fsnotify: allow fsnotify_{peek,remove}_first_event with empty queue
+  fanotify: reduce event objectid to 29-bit hash
+  fanotify: mix event info and pid into merge key hash
+  fsnotify: use hash table for faster events merge
+  fanotify: limit number of event merge attempts
+
+ fs/notify/fanotify/fanotify.c        | 150 +++++++++++++++++++--------
+ fs/notify/fanotify/fanotify.h        |  46 +++++++-
+ fs/notify/fanotify/fanotify_user.c   |  65 ++++++++++--
+ fs/notify/inotify/inotify_fsnotify.c |   9 +-
+ fs/notify/inotify/inotify_user.c     |   7 +-
+ fs/notify/notification.c             |  64 ++++++------
+ include/linux/fsnotify_backend.h     |  23 ++--
+ 7 files changed, 263 insertions(+), 101 deletions(-)
+
+-- 
+2.30.0
+
