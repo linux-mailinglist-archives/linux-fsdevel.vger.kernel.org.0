@@ -2,138 +2,259 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7AF632D89A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 18:27:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90C0F32D8D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Mar 2021 18:46:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238063AbhCDR1R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Mar 2021 12:27:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40324 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239347AbhCDR1M (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Mar 2021 12:27:12 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E386664E89;
-        Thu,  4 Mar 2021 17:26:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614878792;
-        bh=HB4loAXLWA5MoyQDvfOGFQeSomA30bqcWhsrZ2wxtsw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TFRhTk+0/ppdWpGnyHUxo6Gb/F0UjQUMOROnNxn+GSprEm5X8oX5gmpzN6xRwA9J9
-         KVwwRFZvXZ3gY1fFfRNdjgOdjDgZbAReN2aHjgNZ2mEDV+JQayw7cdCfPvK623by0N
-         w7jjIoMN/hKzcGwh+YIa3JNYvksroW4Z9vMFNluOX5p/aCIdRc0MNl73I6jBj1uByJ
-         Le9C9eepeV831JgDxJuoMXfI7DbRx8N9auvR49Zc6+CQAw+0saca14lm6DBBvYS4Ir
-         WxytlnNqmujBaSs6vdBwbGw6w+XHLD4hR0zEnynHOgXs3eBHX0TbHHxNJTNfwlo7m2
-         PekzeBi/fDf0g==
-Date:   Thu, 4 Mar 2021 09:26:31 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, anju@linux.vnet.ibm.com
-Subject: Re: [PATCH] iomap: Fix negative assignment to unsigned sis->pages in
- iomap_swapfile_activate
-Message-ID: <20210304172631.GD7267@magnolia>
-References: <b39319ab99d9c5541b2cdc172a4b25f39cbaad50.1614838615.git.riteshh@linux.ibm.com>
+        id S234524AbhCDRnR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Mar 2021 12:43:17 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53956 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230450AbhCDRmt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Mar 2021 12:42:49 -0500
+Received: from [95.90.240.160] (helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1lHrzC-0001Yc-Mn; Thu, 04 Mar 2021 17:42:06 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>, Al Viro <viro@zeniv.linux>
+Cc:     linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH] mount: fix mounting of detached mounts onto targets that reside on shared mounts
+Date:   Thu,  4 Mar 2021 18:41:55 +0100
+Message-Id: <20210304174155.61792-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b39319ab99d9c5541b2cdc172a4b25f39cbaad50.1614838615.git.riteshh@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 04, 2021 at 11:51:26AM +0530, Ritesh Harjani wrote:
-> In case if isi.nr_pages is 0, we are making sis->pages (which is
-> unsigned int) a huge value in iomap_swapfile_activate() by assigning -1.
-> This could cause a kernel crash in kernel v4.18 (with below signature).
-> Or could lead to unknown issues on latest kernel if the fake big swap gets
-> used.
-> 
-> Fix this issue by returning -EINVAL in case of nr_pages is 0, since it
-> is anyway a invalid swapfile. Looks like this issue will be hit when
-> we have pagesize < blocksize type of configuration.
-> 
-> I was able to hit the issue in case of a tiny swap file with below
-> test script.
-> https://raw.githubusercontent.com/riteshharjani/LinuxStudy/master/scripts/swap-issue.sh
+Creating a series of detached mounts, attaching them to the filesystem,
+and unmounting them can be used to trigger an integer overflow in
+ns->mounts causing the kernel to block any new mounts in count_mounts()
+and returning ENOSPC because it falsely assumes that the maximum number
+of mounts in the mount namespace has been reached, i.e. it thinks it
+can't fit the new mounts into the mount namespace anymore.
 
-Can you turn this into a dangerous-group fstest, please?
+Depending on the number of mounts in your system, this can be reproduced
+on any kernel that supportes open_tree() and move_mount() with the
+following instructions:
 
-> kernel crash analysis on v4.18
-> ==============================
-> On v4.18 kernel, it causes a kernel panic, since sis->pages becomes
-> a huge value and isi.nr_extents is 0. When 0 is returned it is
-> considered as a swapfile over NFS and SWP_FILE is set (sis->flags |= SWP_FILE).
-> Then when swapoff was getting called it was calling a_ops->swap_deactivate()
-> if (sis->flags & SWP_FILE) is true. Since a_ops->swap_deactivate() is
-> NULL in case of XFS, it causes below panic.
+1. Compile the following program "repro.c" via "make repro"
+  > cat repro.c
 
-Does the same reasoning apply to upstream?
+  #define _GNU_SOURCE
+  #include <errno.h>
+  #include <fcntl.h>
+  #include <getopt.h>
+  #include <limits.h>
+  #include <stdbool.h>
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <linux/mount.h>
+  #include <sys/syscall.h>
+  #include <sys/types.h>
+  #include <unistd.h>
 
-> Panic signature on v4.18 kernel:
-> =======================================
-> root@qemu:/home/qemu# [ 8291.723351] XFS (loop2): Unmounting Filesystem
-> [ 8292.123104] XFS (loop2): Mounting V5 Filesystem
-> [ 8292.132451] XFS (loop2): Ending clean mount
-> [ 8292.263362] Adding 4294967232k swap on /mnt1/test/swapfile.  Priority:-2 extents:1 across:274877906880k
-> [ 8292.277834] Unable to handle kernel paging request for instruction fetch
-> [ 8292.278677] Faulting instruction address: 0x00000000
-> cpu 0x19: Vector: 400 (Instruction Access) at [c0000009dd5b7ad0]
->     pc: 0000000000000000
->     lr: c0000000003eb9dc: destroy_swap_extents+0xfc/0x120
->     sp: c0000009dd5b7d50
->    msr: 8000000040009033
->   current = 0xc0000009b6710080
->   paca    = 0xc00000003ffcb280   irqmask: 0x03   irq_happened: 0x01
->     pid   = 5604, comm = swapoff
-> Linux version 4.18.0 (riteshh@xxxxxxx) (gcc version 8.4.0 (Ubuntu 8.4.0-1ubuntu1~18.04)) #57 SMP Wed Mar 3 01:33:04 CST 2021
-> enter ? for help
-> [link register   ] c0000000003eb9dc destroy_swap_extents+0xfc/0x120
-> [c0000009dd5b7d50] c0000000025a7058 proc_poll_event+0x0/0x4 (unreliable)
-> [c0000009dd5b7da0] c0000000003f0498 sys_swapoff+0x3f8/0x910
-> [c0000009dd5b7e30] c00000000000bbe4 system_call+0x5c/0x70
-> --- Exception: c01 (System Call) at 00007ffff7d208d8
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> ---
->  fs/iomap/swapfile.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
-> index a648dbf6991e..67953678c99f 100644
-> --- a/fs/iomap/swapfile.c
-> +++ b/fs/iomap/swapfile.c
-> @@ -170,6 +170,15 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
->  			return ret;
->  	}
-> 
-> +	/*
-> +	 * In case if nr_pages is 0 then we better return -EINVAL
-> +	 * since it is anyway an empty swapfile.
-> +	 */
-> +	if (isi.nr_pages == 0) {
-> +		pr_warn("swapon: Empty swap-file\n");
+  /* open_tree() */
+  #ifndef OPEN_TREE_CLONE
+  #define OPEN_TREE_CLONE 1
+  #endif
 
-The swapfile might not be empty, it's just that we couldn't find even a
-single page's worth of contiguous space in the whole file.  I would
-suggest:
+  #ifndef OPEN_TREE_CLOEXEC
+  #define OPEN_TREE_CLOEXEC O_CLOEXEC
+  #endif
 
-	/*
-	 * If this swapfile doesn't contain even a single page-aligned
-	 * contiguous range of blocks, reject this useless swapfile to
-	 * prevent confusion later on.
-	 */
-	if (isi.nr_pages == 0) {
-		pr_warn("swapon: Cannot find a single usable page in file.\n");
-		return -EINVAL;
-	}
+  #ifndef __NR_open_tree
+  	#if defined __alpha__
+  		#define __NR_open_tree 538
+  	#elif defined _MIPS_SIM
+  		#if _MIPS_SIM == _MIPS_SIM_ABI32	/* o32 */
+  			#define __NR_open_tree 4428
+  		#endif
+  		#if _MIPS_SIM == _MIPS_SIM_NABI32	/* n32 */
+  			#define __NR_open_tree 6428
+  		#endif
+  		#if _MIPS_SIM == _MIPS_SIM_ABI64	/* n64 */
+  			#define __NR_open_tree 5428
+  		#endif
+  	#elif defined __ia64__
+  		#define __NR_open_tree (428 + 1024)
+  	#else
+  		#define __NR_open_tree 428
+  	#endif
+  #endif
 
---D
+  /* move_mount() */
+  #ifndef MOVE_MOUNT_F_EMPTY_PATH
+  #define MOVE_MOUNT_F_EMPTY_PATH 0x00000004 /* Empty from path permitted */
+  #endif
 
-> +		return -EINVAL;
-> +	}
-> +
->  	*pagespan = 1 + isi.highest_ppage - isi.lowest_ppage;
->  	sis->max = isi.nr_pages;
->  	sis->pages = isi.nr_pages - 1;
-> --
-> 2.26.2
-> 
+  #ifndef __NR_move_mount
+  	#if defined __alpha__
+  		#define __NR_move_mount 539
+  	#elif defined _MIPS_SIM
+  		#if _MIPS_SIM == _MIPS_SIM_ABI32	/* o32 */
+  			#define __NR_move_mount 4429
+  		#endif
+  		#if _MIPS_SIM == _MIPS_SIM_NABI32	/* n32 */
+  			#define __NR_move_mount 6429
+  		#endif
+  		#if _MIPS_SIM == _MIPS_SIM_ABI64	/* n64 */
+  			#define __NR_move_mount 5429
+  		#endif
+  	#elif defined __ia64__
+  		#define __NR_move_mount (428 + 1024)
+  	#else
+  		#define __NR_move_mount 429
+  	#endif
+  #endif
+
+  static inline int sys_open_tree(int dfd, const char *filename, unsigned int flags)
+  {
+  	return syscall(__NR_open_tree, dfd, filename, flags);
+  }
+
+  static inline int sys_move_mount(int from_dfd, const char *from_pathname, int to_dfd,
+  				 const char *to_pathname, unsigned int flags)
+  {
+  	return syscall(__NR_move_mount, from_dfd, from_pathname, to_dfd, to_pathname, flags);
+  }
+
+  static void usage(void)
+  {
+  	const char *text = "mount-new [--recursive] <source> <target>\n";
+  	fprintf(stderr, "%s", text);
+  	_exit(EXIT_SUCCESS);
+  }
+
+  #define exit_usage(format, ...)                         \
+  	({                                              \
+  		fprintf(stderr, format, ##__VA_ARGS__); \
+  		usage();                                \
+  	})
+
+  #define exit_log(format, ...)                           \
+  	({                                              \
+  		fprintf(stderr, format, ##__VA_ARGS__); \
+  		exit(EXIT_FAILURE);                     \
+  	})
+
+  static const struct option longopts[] = {
+  	{"recursive",	no_argument,		0,	'a'},
+  	{"help",	no_argument,		0,	'b'},
+  	{ NULL,		no_argument,		0,	 0 },
+  };
+
+  int main(int argc, char *argv[])
+  {
+  	int index = 0;
+  	bool recursive = false;
+  	int fd_tree, new_argc, ret;
+  	char *source, *target;
+  	char *const *new_argv;
+
+  	while ((ret = getopt_long_only(argc, argv, "", longopts, &index)) != -1) {
+  		switch (ret) {
+  		case 'a':
+  			recursive = true;
+  			break;
+  		case 'b':
+  			/* fallthrough */
+  		default:
+  			usage();
+  		}
+  	}
+
+  	new_argv = &argv[optind];
+  	new_argc = argc - optind;
+  	if (new_argc < 2)
+  		exit_usage("Missing source or target mountpoint\n\n");
+  	source = new_argv[0];
+  	target = new_argv[1];
+
+  	fd_tree = sys_open_tree(-EBADF, source,
+  				OPEN_TREE_CLONE |
+  				OPEN_TREE_CLOEXEC |
+  				AT_EMPTY_PATH |
+  				(recursive ? AT_RECURSIVE : 0));
+  	if (fd_tree < 0) {
+  		exit_log("%m - Failed to open %s\n", source);
+  		exit(EXIT_FAILURE);
+  	}
+
+  	ret = sys_move_mount(fd_tree, "", -EBADF, target, MOVE_MOUNT_F_EMPTY_PATH);
+  	if (ret < 0)
+  		exit_log("%m - Failed to attach mount to %s\n", target);
+  	close(fd_tree);
+
+  	exit(EXIT_SUCCESS);
+  }
+
+2. Run a loop like:
+
+while true; do sudo ./repro; done
+
+and wait for the kernel to refuse any new mounts by returning ENOSPC.
+Depending on the number of mounts you have on the system this might take
+shorter or longer.
+
+The root cause of this is that detached mounts aren't handled correctly
+when the destination mount point is MS_SHARED causing  a borked mount
+tree and ultimately to a miscalculation of the number of mounts in the
+mount namespace.
+
+Detached mounts created via
+open_tree(fd, path, OPEN_TREE_CLONE)
+are essentially like an unattached new mount, or an unattached
+bind-mount. They can then later on be attached to the filesystem via
+move_mount() which calles into attach_recursive_mount(). Part of
+attaching it to the filesystem is making sure that mounts get correctly
+propagated in case the destination mountpoint is MS_SHARED, i.e.  is a
+shared mountpoint. This is done by calling into propagate_mnt() which
+walks the list of peers calling propagate_one() on each mount in this
+list making sure it receives the propagation event.
+For new mounts and bind-mounts propagate_one() knows to skip them by
+realizing that there's no mount namespace attached to them.
+However, detached mounts have an anonymous mount namespace attached to
+them and so they aren't skipped causing the mount table to get wonky and
+ultimately preventing any new mounts via the ENOSPC issue.
+
+So teach propagation to handle detached mounts by making it aware of
+them. I've been tracking this issue down for the last couple of days by
+unmounting everything in my current mount table leaving only /proc and
+/sys mounted and running the reproducer above verifying the counting of
+the mounts. With this fix the counts are correct and the ENOSPC issue
+can't be reproduced.
+
+Fixes: 2db154b3ea8e ("vfs: syscall: Add move_mount(2) to move mounts around")
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ fs/pnode.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/pnode.h b/fs/pnode.h
+index 26f74e092bd9..988f1aa9b02a 100644
+--- a/fs/pnode.h
++++ b/fs/pnode.h
+@@ -12,7 +12,7 @@
+ 
+ #define IS_MNT_SHARED(m) ((m)->mnt.mnt_flags & MNT_SHARED)
+ #define IS_MNT_SLAVE(m) ((m)->mnt_master)
+-#define IS_MNT_NEW(m)  (!(m)->mnt_ns)
++#define IS_MNT_NEW(m)  (!(m)->mnt_ns || is_anon_ns((m)->mnt_ns))
+ #define CLEAR_MNT_SHARED(m) ((m)->mnt.mnt_flags &= ~MNT_SHARED)
+ #define IS_MNT_UNBINDABLE(m) ((m)->mnt.mnt_flags & MNT_UNBINDABLE)
+ #define IS_MNT_MARKED(m) ((m)->mnt.mnt_flags & MNT_MARKED)
+
+base-commit: f69d02e37a85645aa90d18cacfff36dba370f797
+-- 
+2.27.0
+
