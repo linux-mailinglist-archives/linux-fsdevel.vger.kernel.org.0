@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DC7432DFE5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Mar 2021 04:05:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E31232DFF4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Mar 2021 04:11:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbhCEDFF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Mar 2021 22:05:05 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36833 "EHLO
+        id S229582AbhCEDL5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Mar 2021 22:11:57 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26768 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229688AbhCEDFE (ORCPT
+        by vger.kernel.org with ESMTP id S229517AbhCEDL4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Mar 2021 22:05:04 -0500
+        Thu, 4 Mar 2021 22:11:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614913503;
+        s=mimecast20190719; t=1614913916;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NyeZ19kifPGrNPSu9tsx+U9SHlXSaVFqXfzKSyjA9QU=;
-        b=akXjkY7I7/KhYreHSpOxxu+QzE3GRP1Id0PuO6HmLdWORgiR/N/7zCJNLMDbHvCGV1Sz6B
-        rk/w+rIJCPMR5wE7p0+cnsuctCTDWsawRuAhHJkVUT29QLQtsJk4fn8sVFlXKNHxW00Z/Y
-        8YmOuZ0LJxc9Qm0KQ4FUazHE6M8xP5Y=
+        bh=bRNOpSLwFJxiZfQagzjze9iaWCzAF8OGRLFEB+wT6tI=;
+        b=YLBOzpRPG48V4uJOGoqmgAXQorKLf8zVDRI7jORLxFKJ4/cTfXTwsGUuwTmN3qVUKwWUbE
+        n5ZsXEwtq9UcySHQQOtSIOOSjBLmRs+RKov3FjPz9Wq+i8JKRJuw7jqo+8jMiLDX9w35nS
+        ZptaHUjUvD8GqtKyuKBYTSco13dRlDA=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-583-3LT2sfD5N0eNx-b62H3FiQ-1; Thu, 04 Mar 2021 22:05:00 -0500
-X-MC-Unique: 3LT2sfD5N0eNx-b62H3FiQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-439-ZMZ_vDNzMG6EOd8-U9krxA-1; Thu, 04 Mar 2021 22:11:54 -0500
+X-MC-Unique: ZMZ_vDNzMG6EOd8-U9krxA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7C35F1084C83;
-        Fri,  5 Mar 2021 03:04:57 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0E081107465F;
+        Fri,  5 Mar 2021 03:11:52 +0000 (UTC)
 Received: from wangxiaodeMacBook-Air.local (ovpn-13-196.pek2.redhat.com [10.72.13.196])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9ECCC60C0F;
-        Fri,  5 Mar 2021 03:04:44 +0000 (UTC)
-Subject: Re: [RFC v4 10/11] vduse: Introduce a workqueue for irq injection
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 66B4A6268B;
+        Fri,  5 Mar 2021 03:11:40 +0000 (UTC)
+Subject: Re: [RFC v4 11/11] vduse: Support binding irq to the specified cpu
 To:     Yongji Xie <xieyongji@bytedance.com>
 Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
@@ -49,56 +49,45 @@ Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         kvm@vger.kernel.org, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org
 References: <20210223115048.435-1-xieyongji@bytedance.com>
- <20210223115048.435-11-xieyongji@bytedance.com>
- <d63e4cfd-4992-8493-32b0-18e0478f6e1a@redhat.com>
- <CACycT3tqM=ALOG1r0Ve6UTGmwJ7Wg7fQpLZypjZsJF1mJ+adMA@mail.gmail.com>
+ <20210223115048.435-12-xieyongji@bytedance.com>
+ <d104a518-799d-c13f-311c-f7a673f9241b@redhat.com>
+ <CACycT3uaOU5ybwojfiSL0kSpW9GUnh82ZeDH7drdkfK72iP8bg@mail.gmail.com>
 From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <2d3418d9-856c-37ee-7614-af5b721becd7@redhat.com>
-Date:   Fri, 5 Mar 2021 11:04:42 +0800
+Message-ID: <86af7b84-23f0-dca7-183b-e4d586cbcea6@redhat.com>
+Date:   Fri, 5 Mar 2021 11:11:38 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
  Gecko/20100101 Thunderbird/78.8.0
 MIME-Version: 1.0
-In-Reply-To: <CACycT3tqM=ALOG1r0Ve6UTGmwJ7Wg7fQpLZypjZsJF1mJ+adMA@mail.gmail.com>
+In-Reply-To: <CACycT3uaOU5ybwojfiSL0kSpW9GUnh82ZeDH7drdkfK72iP8bg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-GB
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-On 2021/3/4 4:58 下午, Yongji Xie wrote:
-> On Thu, Mar 4, 2021 at 2:59 PM Jason Wang <jasowang@redhat.com> wrote:
+On 2021/3/4 4:19 下午, Yongji Xie wrote:
+> On Thu, Mar 4, 2021 at 3:30 PM Jason Wang <jasowang@redhat.com> wrote:
 >>
 >> On 2021/2/23 7:50 下午, Xie Yongji wrote:
->>> This patch introduces a workqueue to support injecting
->>> virtqueue's interrupt asynchronously. This is mainly
->>> for performance considerations which makes sure the push()
->>> and pop() for used vring can be asynchronous.
+>>> Add a parameter for the ioctl VDUSE_INJECT_VQ_IRQ to support
+>>> injecting virtqueue's interrupt to the specified cpu.
 >>
->> Do you have pref numbers for this patch?
+>> How userspace know which CPU is this irq for? It looks to me we need to
+>> do it at different level.
 >>
-> No, I can do some tests for it if needed.
->
-> Another problem is the VIRTIO_RING_F_EVENT_IDX feature will be useless
-> if we call irq callback in ioctl context. Something like:
->
-> virtqueue_push();
-> virtio_notify();
->      ioctl()
-> -------------------------------------------------
->          irq_cb()
->              virtqueue_get_buf()
->
-> The used vring is always empty each time we call virtqueue_push() in
-> userspace. Not sure if it is what we expected.
+>> E.g introduce some API in sys to allow admin to tune for that.
+>>
+>> But I think we can do that in antoher patch on top of this series.
+>>
+> OK. I will think more about it.
 
 
-I'm not sure I get the issue.
-
-THe used ring should be filled by virtqueue_push() which is done by 
-userspace before?
+It should be soemthing like 
+/sys/class/vduse/$dev_name/vq/0/irq_affinity. Also need to make sure 
+eventfd could not be reused.
 
 Thanks
 
