@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 482E032EE90
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Mar 2021 16:22:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A152232EE8E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Mar 2021 16:22:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230429AbhCEPVl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Mar 2021 10:21:41 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2632 "EHLO
+        id S230408AbhCEPVj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Mar 2021 10:21:39 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2629 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229992AbhCEPVN (ORCPT
+        with ESMTP id S229589AbhCEPVN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 5 Mar 2021 10:21:13 -0500
 Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4DsWTH3m0jz67wDL;
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4DsWTH414lz67wDM;
         Fri,  5 Mar 2021 23:13:23 +0800 (CST)
 Received: from fraphisprd00473.huawei.com (7.182.8.141) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
@@ -25,9 +25,9 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v4 07/11] evm: Allow xattr/attr operations for portable signatures
-Date:   Fri, 5 Mar 2021 16:19:19 +0100
-Message-ID: <20210305151923.29039-8-roberto.sassu@huawei.com>
+Subject: [PATCH v4 08/11] evm: Allow setxattr() and setattr() for unmodified metadata
+Date:   Fri, 5 Mar 2021 16:19:20 +0100
+Message-ID: <20210305151923.29039-9-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210305151923.29039-1-roberto.sassu@huawei.com>
 References: <20210305151923.29039-1-roberto.sassu@huawei.com>
@@ -42,137 +42,162 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If files with portable signatures are copied from one location to another
-or are extracted from an archive, verification can temporarily fail until
-all xattrs/attrs are set in the destination. Only portable signatures may
-be moved or copied from one file to another, as they don't depend on
-system-specific information such as the inode generation. Instead portable
-signatures must include security.ima.
+With the patch to allow xattr/attr operations if a portable signature
+verification fails, cp and tar can copy all xattrs/attrs so that at the
+end of the process verification succeeds.
 
-Unlike other security.evm types, EVM portable signatures are also
-immutable. Thus, it wouldn't be a problem to allow xattr/attr operations
-when verification fails, as portable signatures will never be replaced with
-the HMAC on possibly corrupted xattrs/attrs.
+However, it might happen that the xattrs/attrs are already set to the
+correct value (taken at signing time) and signature verification succeeds
+before the copy has completed. For example, an archive might contains files
+owned by root and the archive is extracted by root.
 
-This patch first introduces a new integrity status called
-INTEGRITY_FAIL_IMMUTABLE, that allows callers of
-evm_verify_current_integrity() to detect that a portable signature didn't
-pass verification and then adds an exception in evm_protect_xattr() and
-evm_inode_setattr() for this status and returns 0 instead of -EPERM.
+Then, since portable signatures are immutable, all subsequent operations
+fail (e.g. fchown()), even if the operation is legitimate (does not alter
+the current value).
+
+This patch avoids this problem by reporting successful operation to user
+space when that operation does not alter the current value of xattrs/attrs.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- include/linux/integrity.h             |  1 +
- security/integrity/evm/evm_main.c     | 31 +++++++++++++++++++++------
- security/integrity/ima/ima_appraise.c |  2 ++
- 3 files changed, 28 insertions(+), 6 deletions(-)
+ security/integrity/evm/evm_main.c | 96 +++++++++++++++++++++++++++++++
+ 1 file changed, 96 insertions(+)
 
-diff --git a/include/linux/integrity.h b/include/linux/integrity.h
-index 2271939c5c31..2ea0f2f65ab6 100644
---- a/include/linux/integrity.h
-+++ b/include/linux/integrity.h
-@@ -13,6 +13,7 @@ enum integrity_status {
- 	INTEGRITY_PASS = 0,
- 	INTEGRITY_PASS_IMMUTABLE,
- 	INTEGRITY_FAIL,
-+	INTEGRITY_FAIL_IMMUTABLE,
- 	INTEGRITY_NOLABEL,
- 	INTEGRITY_NOXATTRS,
- 	INTEGRITY_UNKNOWN,
 diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 6556e8c22da9..eab536fa260f 100644
+index eab536fa260f..a07516dcb920 100644
 --- a/security/integrity/evm/evm_main.c
 +++ b/security/integrity/evm/evm_main.c
-@@ -27,7 +27,8 @@
- int evm_initialized;
+@@ -18,6 +18,7 @@
+ #include <linux/integrity.h>
+ #include <linux/evm.h>
+ #include <linux/magic.h>
++#include <linux/posix_acl_xattr.h>
  
- static const char * const integrity_status_msg[] = {
--	"pass", "pass_immutable", "fail", "no_label", "no_xattrs", "unknown"
-+	"pass", "pass_immutable", "fail", "fail_immutable", "no_label",
-+	"no_xattrs", "unknown"
- };
- int evm_hmac_attrs;
+ #include <crypto/hash.h>
+ #include <crypto/hash_info.h>
+@@ -328,6 +329,79 @@ static enum integrity_status evm_verify_current_integrity(struct dentry *dentry)
+ 	return evm_verify_hmac(dentry, NULL, NULL, 0, NULL);
+ }
  
-@@ -155,7 +156,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
- 	enum integrity_status evm_status = INTEGRITY_PASS;
- 	struct evm_digest digest;
- 	struct inode *inode;
--	int rc, xattr_len;
-+	int rc, xattr_len, evm_immutable = 0;
- 
- 	if (iint && (iint->evm_status == INTEGRITY_PASS ||
- 		     iint->evm_status == INTEGRITY_PASS_IMMUTABLE))
-@@ -200,8 +201,10 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
- 		if (rc)
- 			rc = -EINVAL;
- 		break;
--	case EVM_IMA_XATTR_DIGSIG:
- 	case EVM_XATTR_PORTABLE_DIGSIG:
-+		evm_immutable = 1;
-+		fallthrough;
-+	case EVM_IMA_XATTR_DIGSIG:
- 		/* accept xattr with non-empty signature field */
- 		if (xattr_len <= sizeof(struct signature_v2_hdr)) {
- 			evm_status = INTEGRITY_FAIL;
-@@ -238,9 +241,12 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
- 		break;
- 	}
- 
--	if (rc)
--		evm_status = (rc == -ENODATA) ?
--				INTEGRITY_NOXATTRS : INTEGRITY_FAIL;
-+	if (rc) {
-+		evm_status = INTEGRITY_NOXATTRS;
-+		if (rc != -ENODATA)
-+			evm_status = evm_immutable ?
-+				     INTEGRITY_FAIL_IMMUTABLE : INTEGRITY_FAIL;
-+	}
- out:
- 	if (iint)
- 		iint->evm_status = evm_status;
-@@ -374,6 +380,14 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
- out:
- 	if (evm_ignore_error_safe(evm_status))
- 		return 0;
++/*
++ * evm_xattr_acl_change - check if passed ACL changes the inode mode
++ * @dentry: pointer to the affected dentry
++ * @xattr_name: requested xattr
++ * @xattr_value: requested xattr value
++ * @xattr_value_len: requested xattr value length
++ *
++ * Check if passed ACL changes the inode mode, which is protected by EVM.
++ *
++ * Returns 1 if passed ACL causes inode mode change, 0 otherwise.
++ */
++static int evm_xattr_acl_change(struct dentry *dentry, const char *xattr_name,
++				const void *xattr_value, size_t xattr_value_len)
++{
++	umode_t mode;
++	struct posix_acl *acl = NULL, *acl_res;
++	struct inode *inode = d_backing_inode(dentry);
++	int rc;
 +
-+	/*
-+	 * Writing other xattrs is safe for portable signatures, as portable
-+	 * signatures are immutable and can never be updated.
-+	 */
-+	if (evm_status == INTEGRITY_FAIL_IMMUTABLE)
++	/* UID/GID in ACL have been already converted from user to init ns */
++	acl = posix_acl_from_xattr(&init_user_ns, xattr_value, xattr_value_len);
++	if (!acl)
++		return 1;
++
++	acl_res = acl;
++	rc = posix_acl_update_mode(&init_user_ns, inode, &mode, &acl_res);
++
++	posix_acl_release(acl);
++
++	if (rc)
++		return 1;
++
++	if (inode->i_mode != mode)
++		return 1;
++
++	return 0;
++}
++
++/*
++ * evm_xattr_change - check if passed xattr value differs from current value
++ * @dentry: pointer to the affected dentry
++ * @xattr_name: requested xattr
++ * @xattr_value: requested xattr value
++ * @xattr_value_len: requested xattr value length
++ *
++ * Check if passed xattr value differs from current value.
++ *
++ * Returns 1 if passed xattr value differs from current value, 0 otherwise.
++ */
++static int evm_xattr_change(struct dentry *dentry, const char *xattr_name,
++			    const void *xattr_value, size_t xattr_value_len)
++{
++	char *xattr_data = NULL;
++	int rc = 0;
++
++	if (posix_xattr_acl(xattr_name))
++		return evm_xattr_acl_change(dentry, xattr_name, xattr_value,
++					    xattr_value_len);
++
++	rc = vfs_getxattr_alloc(&init_user_ns, dentry, xattr_name, &xattr_data,
++				0, GFP_NOFS);
++	if (rc < 0)
++		return 1;
++
++	if (rc == xattr_value_len)
++		rc = memcmp(xattr_value, xattr_data, rc);
++	else
++		rc = 1;
++
++	kfree(xattr_data);
++	return rc;
++}
++
+ /*
+  * evm_protect_xattr - protect the EVM extended attribute
+  *
+@@ -388,6 +462,10 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 	if (evm_status == INTEGRITY_FAIL_IMMUTABLE)
+ 		return 0;
+ 
++	if (evm_status == INTEGRITY_PASS_IMMUTABLE &&
++	    !evm_xattr_change(dentry, xattr_name, xattr_value, xattr_value_len))
 +		return 0;
 +
  	if (evm_status != INTEGRITY_PASS)
  		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
  				    dentry->d_name.name, "appraise_metadata",
-@@ -534,8 +548,13 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
- 	if (!(ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID)))
- 		return 0;
- 	evm_status = evm_verify_current_integrity(dentry);
-+	/*
-+	 * Writing attrs is safe for portable signatures, as portable signatures
-+	 * are immutable and can never be updated.
-+	 */
- 	if ((evm_status == INTEGRITY_PASS) ||
- 	    (evm_status == INTEGRITY_NOXATTRS) ||
-+	    (evm_status == INTEGRITY_FAIL_IMMUTABLE) ||
+@@ -527,6 +605,19 @@ void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
+ 	evm_update_evmxattr(dentry, xattr_name, NULL, 0);
+ }
+ 
++static int evm_attr_change(struct dentry *dentry, struct iattr *attr)
++{
++	struct inode *inode = d_backing_inode(dentry);
++	unsigned int ia_valid = attr->ia_valid;
++
++	if ((!(ia_valid & ATTR_UID) || uid_eq(attr->ia_uid, inode->i_uid)) &&
++	    (!(ia_valid & ATTR_GID) || gid_eq(attr->ia_gid, inode->i_gid)) &&
++	    (!(ia_valid & ATTR_MODE) || attr->ia_mode == inode->i_mode))
++		return 0;
++
++	return 1;
++}
++
+ /**
+  * evm_inode_setattr - prevent updating an invalid EVM extended attribute
+  * @dentry: pointer to the affected dentry
+@@ -557,6 +648,11 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ 	    (evm_status == INTEGRITY_FAIL_IMMUTABLE) ||
  	    (evm_ignore_error_safe(evm_status)))
  		return 0;
++
++	if (evm_status == INTEGRITY_PASS_IMMUTABLE &&
++	    !evm_attr_change(dentry, attr))
++		return 0;
++
  	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index d4b8db1acadd..24d59893aab0 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -416,6 +416,8 @@ int ima_appraise_measurement(enum ima_hooks func,
- 	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
- 		cause = "missing-HMAC";
- 		goto out;
-+	case INTEGRITY_FAIL_IMMUTABLE:
-+		fallthrough;
- 	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
- 		cause = "invalid-HMAC";
- 		goto out;
+ 			    dentry->d_name.name, "appraise_metadata",
+ 			    integrity_status_msg[evm_status], -EPERM, 0);
 -- 
 2.26.2
 
