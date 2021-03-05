@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76BBA32E092
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Mar 2021 05:20:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA06532E096
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Mar 2021 05:21:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229517AbhCEEUn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Mar 2021 23:20:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45036 "EHLO
+        id S229687AbhCEEV3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Mar 2021 23:21:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbhCEEUm (ORCPT
+        with ESMTP id S229463AbhCEEV2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Mar 2021 23:20:42 -0500
+        Thu, 4 Mar 2021 23:21:28 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFFC6C061574;
-        Thu,  4 Mar 2021 20:20:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BFD3C061574;
+        Thu,  4 Mar 2021 20:21:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=dP5UMVOfza3vmGEPtSLp/DyWFDFLrJcWbOeP/yqlT/g=; b=jZ+XY+kY4DkzL8xI9W+ptjKuDC
-        BE6f7v9Dile/BYECrEL77EDUjJToAGJcpex9iNwpqZdJTbUZKT9s16e/o6dfzwRq75RLKn373Yb5P
-        OQUvCoW6CEstjPO9EBcrTtJwgidoihgFdviLyWlBXRtnBuHZswteNy69ffc6QPnrrA8qbUAbUcf3+
-        rgjY56IS5mg6BSHFA8YENtL69WVzAAtUw1e+bMM3Z8fKph7ftqW20HVWs/K+QhfSPWkmPIo66NRgo
-        LE4DsJ8wSRZEdBpEQ8XKdRYGVEoXmuruQJtrFIFWWh+m1ynnzsYRV/0XUI2PBRUxl46/6WCkPFdj2
-        xLyQWlBw==;
+        bh=VTFfmSh3PtwZWFi9FZ9t/kJrbRPQg2Phw+OnoZy+bTo=; b=FeDX+TJ7yiCS7D3DPp2FWORI0Z
+        67MDf1+YHsLWiW14UZeVUfTITA8le6UqpwTPq2/duAAfwTNk97c+S4beIQfjJXCr9E2QE0Qoymwu0
+        ITKHEC9t7YRRWalsjC6niGbQXqk5rhE4Lk4E7bonvtdOvQNhfoYd1kKsmWogUkZyTdLt3SwBtzdSr
+        tSbY8b2s9vrciwG8zhE1zmJVe/SxGvPbKDoT6yYCLd+a5P64/halNz5uJ0xirA7oMPov8WUBASs40
+        KQh7agI9n0CTMb+cCkKOstq9SYUxzBaAinloxaLESoyyQXHDyFykyib+DCZdSwfEvHflIzYxv4hCy
+        /q7H9jEQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lI1w5-00A3To-HA; Fri, 05 Mar 2021 04:19:42 +0000
+        id 1lI1wg-00A3Zj-Tw; Fri, 05 Mar 2021 04:20:22 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 07/25] mm: Create FolioFlags
-Date:   Fri,  5 Mar 2021 04:18:43 +0000
-Message-Id: <20210305041901.2396498-8-willy@infradead.org>
+Subject: [PATCH v4 08/25] mm: Handle per-folio private data
+Date:   Fri,  5 Mar 2021 04:18:44 +0000
+Message-Id: <20210305041901.2396498-9-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210305041901.2396498-1-willy@infradead.org>
 References: <20210305041901.2396498-1-willy@infradead.org>
@@ -43,281 +43,138 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These new functions are the folio analogues of the PageFlags functions.
-If CONFIG_DEBUG_VM_PGFLAGS is enabled, we check the folio is not a tail
-page at every invocation.  Note that this will also catch the PagePoisoned
-case as a poisoned page has every bit set, which would include PageTail.
+Add folio_private() and set_folio_private() which mirror page_private()
+and set_page_private() -- ie folio private data is the same as page
+private data.
 
-This saves 1740 bytes of text with the distro-derived config that
-I'm testing due to removing a double call to compound_head() in
-PageSwapCache().
+Turn attach_page_private() into attach_folio_private() and reimplement
+attach_page_private() as a wrapper.  No filesystem which uses page private
+data currently supports compound pages, so we're free to define the rules.
+attach_page_private() may only be called on a head page; if you want
+to add private data to a tail page, you can call set_page_private()
+directly (and shouldn't increment the page refcount!  That should be
+done when adding private data to the head page / folio).
+
+This saves 886 bytes of text with the distro-derived config that I'm
+testing due to removing the calls to compound_head() in get_page()
+& put_page().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/fscache.h    |   5 ++
- include/linux/page-flags.h | 104 ++++++++++++++++++++++++++++++-------
- 2 files changed, 89 insertions(+), 20 deletions(-)
+ include/linux/mm_types.h | 16 ++++++++++++++
+ include/linux/pagemap.h  | 48 ++++++++++++++++++++++++----------------
+ 2 files changed, 45 insertions(+), 19 deletions(-)
 
-diff --git a/include/linux/fscache.h b/include/linux/fscache.h
-index a1c928fe98e7..c274006f4037 100644
---- a/include/linux/fscache.h
-+++ b/include/linux/fscache.h
-@@ -38,6 +38,11 @@
- #define ClearPageFsCache(page)		ClearPagePrivate2((page))
- #define TestSetPageFsCache(page)	TestSetPagePrivate2((page))
- #define TestClearPageFsCache(page)	TestClearPagePrivate2((page))
-+#define FolioFsCache(folio)		FolioPrivate2((folio))
-+#define SetFolioFsCache(folio)		SetFolioPrivate2((folio))
-+#define ClearFolioFsCache(folio)	ClearFolioPrivate2((folio))
-+#define TestSetFolioFsCache(folio)	TestSetFolioPrivate2((folio))
-+#define TestClearFolioFsCache(folio)	TestClearFolioPrivate2((folio))
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index a311cb48526f..b650423fcba6 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -258,6 +258,12 @@ static inline atomic_t *compound_pincount_ptr(struct page *page)
+ #define PAGE_FRAG_CACHE_MAX_SIZE	__ALIGN_MASK(32768, ~PAGE_MASK)
+ #define PAGE_FRAG_CACHE_MAX_ORDER	get_order(PAGE_FRAG_CACHE_MAX_SIZE)
  
- /* pattern used to fill dead space in an index entry */
- #define FSCACHE_INDEX_DEADFILL_PATTERN 0x79
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 04a34c08e0a6..90381858d901 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -212,6 +212,12 @@ static inline void page_init_poison(struct page *page, size_t size)
++/*
++ * page_private can be used on tail pages.  However, PagePrivate is only
++ * checked by the VM on the head page.  So page_private on the tail pages
++ * should be used for data that's ancillary to the head page (eg attaching
++ * buffer heads to tail pages after attaching buffer heads to the head page)
++ */
+ #define page_private(page)		((page)->private)
+ 
+ static inline void set_page_private(struct page *page, unsigned long private)
+@@ -265,6 +271,16 @@ static inline void set_page_private(struct page *page, unsigned long private)
+ 	page->private = private;
  }
- #endif
  
-+static unsigned long *folio_flags(struct folio *folio)
++static inline unsigned long folio_private(struct folio *folio)
 +{
-+	VM_BUG_ON_PGFLAGS(PageTail(&folio->page), &folio->page);
-+	return &folio->page.flags;
++	return folio->page.private;
 +}
 +
- /*
-  * Page flags policies wrt compound pages
++static inline void set_folio_private(struct folio *folio, unsigned long v)
++{
++	folio->page.private = v;
++}
++
+ struct page_frag_cache {
+ 	void * va;
+ #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 20225b067583..f07c03da83f6 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -245,42 +245,52 @@ static inline int page_cache_add_speculative(struct page *page, int count)
+ }
+ 
+ /**
+- * attach_page_private - Attach private data to a page.
+- * @page: Page to attach data to.
+- * @data: Data to attach to page.
++ * attach_folio_private - Attach private data to a folio.
++ * @folio: Folio to attach data to.
++ * @data: Data to attach to folio.
   *
-@@ -260,30 +266,44 @@ static inline void page_init_poison(struct page *page, size_t size)
-  * Macros to create function definitions for page flags
+- * Attaching private data to a page increments the page's reference count.
+- * The data must be detached before the page will be freed.
++ * Attaching private data to a folio increments the page's reference count.
++ * The data must be detached before the folio will be freed.
   */
- #define TESTPAGEFLAG(uname, lname, policy)				\
-+static __always_inline int Folio##uname(struct folio *folio)		\
-+	{ return test_bit(PG_##lname, folio_flags(folio)); }		\
- static __always_inline int Page##uname(struct page *page)		\
- 	{ return test_bit(PG_##lname, &policy(page, 0)->flags); }
- 
- #define SETPAGEFLAG(uname, lname, policy)				\
-+static __always_inline void SetFolio##uname(struct folio *folio)	\
-+	{ set_bit(PG_##lname, folio_flags(folio)); }			\
- static __always_inline void SetPage##uname(struct page *page)		\
- 	{ set_bit(PG_##lname, &policy(page, 1)->flags); }
- 
- #define CLEARPAGEFLAG(uname, lname, policy)				\
-+static __always_inline void ClearFolio##uname(struct folio *folio)	\
-+	{ clear_bit(PG_##lname, folio_flags(folio)); }			\
- static __always_inline void ClearPage##uname(struct page *page)		\
- 	{ clear_bit(PG_##lname, &policy(page, 1)->flags); }
- 
- #define __SETPAGEFLAG(uname, lname, policy)				\
-+static __always_inline void __SetFolio##uname(struct folio *folio)	\
-+	{ __set_bit(PG_##lname, folio_flags(folio)); }			\
- static __always_inline void __SetPage##uname(struct page *page)		\
- 	{ __set_bit(PG_##lname, &policy(page, 1)->flags); }
- 
- #define __CLEARPAGEFLAG(uname, lname, policy)				\
-+static __always_inline void __ClearFolio##uname(struct folio *folio)	\
-+	{ __clear_bit(PG_##lname, folio_flags(folio)); }		\
- static __always_inline void __ClearPage##uname(struct page *page)	\
- 	{ __clear_bit(PG_##lname, &policy(page, 1)->flags); }
- 
- #define TESTSETFLAG(uname, lname, policy)				\
-+static __always_inline int TestSetFolio##uname(struct folio *folio)	\
-+	{ return test_and_set_bit(PG_##lname, folio_flags(folio)); }	\
- static __always_inline int TestSetPage##uname(struct page *page)	\
- 	{ return test_and_set_bit(PG_##lname, &policy(page, 1)->flags); }
- 
- #define TESTCLEARFLAG(uname, lname, policy)				\
-+static __always_inline int TestClearFolio##uname(struct folio *folio)	\
-+	{ return test_and_clear_bit(PG_##lname, folio_flags(folio)); }	\
- static __always_inline int TestClearPage##uname(struct page *page)	\
- 	{ return test_and_clear_bit(PG_##lname, &policy(page, 1)->flags); }
- 
-@@ -302,21 +322,27 @@ static __always_inline int TestClearPage##uname(struct page *page)	\
- 	TESTCLEARFLAG(uname, lname, policy)
- 
- #define TESTPAGEFLAG_FALSE(uname)					\
-+static inline int Folio##uname(const struct folio *folio) { return 0; }	\
- static inline int Page##uname(const struct page *page) { return 0; }
- 
- #define SETPAGEFLAG_NOOP(uname)						\
-+static inline void SetFolio##uname(struct folio *folio) { }		\
- static inline void SetPage##uname(struct page *page) {  }
- 
- #define CLEARPAGEFLAG_NOOP(uname)					\
-+static inline void ClearFolio##uname(struct folio *folio) { }		\
- static inline void ClearPage##uname(struct page *page) {  }
- 
- #define __CLEARPAGEFLAG_NOOP(uname)					\
-+static inline void __ClearFolio##uname(struct folio *folio) { }		\
- static inline void __ClearPage##uname(struct page *page) {  }
- 
- #define TESTSETFLAG_FALSE(uname)					\
-+static inline int TestSetFolio##uname(struct folio *folio) { return 0; } \
- static inline int TestSetPage##uname(struct page *page) { return 0; }
- 
- #define TESTCLEARFLAG_FALSE(uname)					\
-+static inline int TestClearFolio##uname(struct folio *folio) { return 0; } \
- static inline int TestClearPage##uname(struct page *page) { return 0; }
- 
- #define PAGEFLAG_FALSE(uname) TESTPAGEFLAG_FALSE(uname)			\
-@@ -393,14 +419,18 @@ PAGEFLAG_FALSE(HighMem)
- #endif
- 
- #ifdef CONFIG_SWAP
--static __always_inline int PageSwapCache(struct page *page)
-+static __always_inline bool FolioSwapCache(struct folio *folio)
+-static inline void attach_page_private(struct page *page, void *data)
++static inline void attach_folio_private(struct folio *folio, void *data)
  {
--#ifdef CONFIG_THP_SWAP
--	page = compound_head(page);
--#endif
--	return PageSwapBacked(page) && test_bit(PG_swapcache, &page->flags);
-+	return FolioSwapBacked(folio) &&
-+			test_bit(PG_swapcache, folio_flags(folio));
- 
+-	get_page(page);
+-	set_page_private(page, (unsigned long)data);
+-	SetPagePrivate(page);
++	get_folio(folio);
++	set_folio_private(folio, (unsigned long)data);
++	SetFolioPrivate(folio);
  }
-+
-+static __always_inline bool PageSwapCache(struct page *page)
+ 
+ /**
+- * detach_page_private - Detach private data from a page.
+- * @page: Page to detach data from.
++ * detach_folio_private - Detach private data from a folio.
++ * @folio: Folio to detach data from.
+  *
+- * Removes the data that was previously attached to the page and decrements
++ * Removes the data that was previously attached to the folio and decrements
+  * the refcount on the page.
+  *
+- * Return: Data that was attached to the page.
++ * Return: Data that was attached to the folio.
+  */
+-static inline void *detach_page_private(struct page *page)
++static inline void *detach_folio_private(struct folio *folio)
+ {
+-	void *data = (void *)page_private(page);
++	void *data = (void *)folio_private(folio);
+ 
+-	if (!PagePrivate(page))
++	if (!FolioPrivate(folio))
+ 		return NULL;
+-	ClearPagePrivate(page);
+-	set_page_private(page, 0);
+-	put_page(page);
++	ClearFolioPrivate(folio);
++	set_folio_private(folio, 0);
++	put_folio(folio);
+ 
+ 	return data;
+ }
+ 
++static inline void attach_page_private(struct page *page, void *data)
 +{
-+	return FolioSwapCache(page_folio(page));
++	attach_folio_private((struct folio *)page, data);
 +}
 +
- SETPAGEFLAG(SwapCache, swapcache, PF_NO_TAIL)
- CLEARPAGEFLAG(SwapCache, swapcache, PF_NO_TAIL)
++static inline void *detach_page_private(struct page *page)
++{
++	return detach_folio_private((struct folio *)page);
++}
++
+ #ifdef CONFIG_NUMA
+ extern struct page *__page_cache_alloc(gfp_t gfp);
  #else
-@@ -478,10 +508,14 @@ static __always_inline int PageMappingFlags(struct page *page)
- 	return ((unsigned long)page->mapping & PAGE_MAPPING_FLAGS) != 0;
- }
- 
--static __always_inline int PageAnon(struct page *page)
-+static __always_inline bool FolioAnon(struct folio *folio)
- {
--	page = compound_head(page);
--	return ((unsigned long)page->mapping & PAGE_MAPPING_ANON) != 0;
-+	return ((unsigned long)folio->page.mapping & PAGE_MAPPING_ANON) != 0;
-+}
-+
-+static __always_inline bool PageAnon(struct page *page)
-+{
-+	return FolioAnon(page_folio(page));
- }
- 
- static __always_inline int __PageMovable(struct page *page)
-@@ -509,18 +543,16 @@ TESTPAGEFLAG_FALSE(Ksm)
- 
- u64 stable_page_flags(struct page *page);
- 
--static inline int PageUptodate(struct page *page)
-+static inline int FolioUptodate(struct folio *folio)
- {
--	int ret;
--	page = compound_head(page);
--	ret = test_bit(PG_uptodate, &(page)->flags);
-+	int ret = test_bit(PG_uptodate, folio_flags(folio));
- 	/*
- 	 * Must ensure that the data we read out of the page is loaded
- 	 * _after_ we've loaded page->flags to check for PageUptodate.
- 	 * We can skip the barrier if the page is not uptodate, because
- 	 * we wouldn't be reading anything from it.
- 	 *
--	 * See SetPageUptodate() for the other side of the story.
-+	 * See SetFolioUptodate() for the other side of the story.
- 	 */
- 	if (ret)
- 		smp_rmb();
-@@ -528,23 +560,36 @@ static inline int PageUptodate(struct page *page)
- 	return ret;
- }
- 
--static __always_inline void __SetPageUptodate(struct page *page)
-+static inline int PageUptodate(struct page *page)
-+{
-+	return FolioUptodate(page_folio(page));
-+}
-+
-+static __always_inline void __SetFolioUptodate(struct folio *folio)
- {
--	VM_BUG_ON_PAGE(PageTail(page), page);
- 	smp_wmb();
--	__set_bit(PG_uptodate, &page->flags);
-+	__set_bit(PG_uptodate, folio_flags(folio));
- }
- 
--static __always_inline void SetPageUptodate(struct page *page)
-+static __always_inline void SetFolioUptodate(struct folio *folio)
- {
--	VM_BUG_ON_PAGE(PageTail(page), page);
- 	/*
- 	 * Memory barrier must be issued before setting the PG_uptodate bit,
- 	 * so that all previous stores issued in order to bring the page
- 	 * uptodate are actually visible before PageUptodate becomes true.
- 	 */
- 	smp_wmb();
--	set_bit(PG_uptodate, &page->flags);
-+	set_bit(PG_uptodate, folio_flags(folio));
-+}
-+
-+static __always_inline void __SetPageUptodate(struct page *page)
-+{
-+	__SetFolioUptodate((struct folio *)page);
-+}
-+
-+static __always_inline void SetPageUptodate(struct page *page)
-+{
-+	SetFolioUptodate((struct folio *)page);
- }
- 
- CLEARPAGEFLAG(Uptodate, uptodate, PF_NO_TAIL)
-@@ -569,6 +614,17 @@ static inline void set_page_writeback_keepwrite(struct page *page)
- 
- __PAGEFLAG(Head, head, PF_ANY) CLEARPAGEFLAG(Head, head, PF_ANY)
- 
-+/* Whether there are one or multiple pages in a folio */
-+static inline bool FolioSingle(struct folio *folio)
-+{
-+	return !FolioHead(folio);
-+}
-+
-+static inline bool FolioMulti(struct folio *folio)
-+{
-+	return FolioHead(folio);
-+}
-+
- static __always_inline void set_compound_head(struct page *page, struct page *head)
- {
- 	WRITE_ONCE(page->compound_head, (unsigned long)head + 1);
-@@ -592,12 +648,15 @@ static inline void ClearPageCompound(struct page *page)
- #ifdef CONFIG_HUGETLB_PAGE
- int PageHuge(struct page *page);
- int PageHeadHuge(struct page *page);
-+static inline bool FolioHuge(struct folio *folio)
-+{
-+	return PageHeadHuge(&folio->page);
-+}
- #else
- TESTPAGEFLAG_FALSE(Huge)
- TESTPAGEFLAG_FALSE(HeadHuge)
- #endif
- 
--
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- /*
-  * PageHuge() only returns true for hugetlbfs pages, but not for
-@@ -844,6 +903,11 @@ static inline int page_has_private(struct page *page)
- 	return !!(page->flags & PAGE_FLAGS_PRIVATE);
- }
- 
-+static inline bool folio_has_private(struct folio *folio)
-+{
-+	return page_has_private(&folio->page);
-+}
-+
- #undef PF_ANY
- #undef PF_HEAD
- #undef PF_ONLY_HEAD
 -- 
 2.30.0
 
