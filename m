@@ -2,78 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0406432ECA8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Mar 2021 14:57:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DF4132ED6B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Mar 2021 15:48:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229674AbhCEN5X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Mar 2021 08:57:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34108 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229788AbhCEN5T (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Mar 2021 08:57:19 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 58F27AD21;
-        Fri,  5 Mar 2021 13:57:18 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id E46B6DA79B; Fri,  5 Mar 2021 14:55:21 +0100 (CET)
-Date:   Fri, 5 Mar 2021 14:55:21 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     dsterba@suse.cz, Neal Gompa <ngompa13@gmail.com>,
-        Amy Parker <enbyamy@gmail.com>,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: Adding LZ4 compression support to Btrfs
-Message-ID: <20210305135521.GX7604@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Eric Biggers <ebiggers@kernel.org>,
-        Neal Gompa <ngompa13@gmail.com>, Amy Parker <enbyamy@gmail.com>,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <CAE1WUT53F+xPT-Rt83EStGimQXKoU-rE+oYgcib87pjP4Sm0rw@mail.gmail.com>
- <CAEg-Je-Hs3+F9yshrW2MUmDNTaN-y6J-YxeQjneZx=zC5=58JA@mail.gmail.com>
- <20210225132647.GB7604@twin.jikos.cz>
- <YDfxkGkWnLEfsDwZ@gmail.com>
- <20210226093653.GI7604@twin.jikos.cz>
- <YDkkUx7UXszXi6hV@gmail.com>
+        id S229730AbhCEOsX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Mar 2021 09:48:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38314 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229576AbhCEOsO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Mar 2021 09:48:14 -0500
+Received: from mail-vs1-xe2d.google.com (mail-vs1-xe2d.google.com [IPv6:2607:f8b0:4864:20::e2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C02DBC061574
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Mar 2021 06:48:13 -0800 (PST)
+Received: by mail-vs1-xe2d.google.com with SMTP id d25so1066683vsr.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Mar 2021 06:48:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=37W8TGaMYq9fdsSZ/oWmvBfLa7Md34iai9k20+Je5v8=;
+        b=Ke6uANZjKR7vA/CtgRdIzIJXRk582DxKVDqpGSzjylquDV86pphvXTewuyAjurdHmZ
+         y6GchW4zzV9z5NkmfE37HBY5EupivsmScUdp3s7ZwoHEb25eRSZ/Dit3jVLoG8I+CNFm
+         4C15d6S6/qIcOhaXfQMCa0EM8rDc6SgewQixs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=37W8TGaMYq9fdsSZ/oWmvBfLa7Md34iai9k20+Je5v8=;
+        b=YrF8Vy1WC71A0bfJLdcLl+/UnMd33aDiB3nsHzsMcbfysCPtejBGt1KKsYMyCzW3ER
+         uaAYMstEn3QQ195elD+EZgAlJ4Ezy/NsJd25wYOxaz5zeDGahobtGZuKIVH2RVywAZGP
+         CKD5ynuCEVlGQpiBV49hJVAnC35gjWYDygpKhKw0IOeQ0hiFITrOVfCh308PUqNkqa1e
+         sedc4MnOijWVXQvZ10H/TihQGS1gLbFsLZWAm9zgFglI1kp26y196W8wVfkg6NtjDaTH
+         YlDBEYR8Dc9gHnPWfeqlrHvlXbQVJEjjaSLlghAqwWhgmsARWGWN7zY2XwSLGz+y/Cwf
+         eXsQ==
+X-Gm-Message-State: AOAM533AOGPPpmoCIiytoq+7v174ISz94fIdxu36xbwuUozUzoLKVvo6
+        lMCZPTEcMNE84n54LNFNCyE610MEWBn4Eaxxo8iZ2w==
+X-Google-Smtp-Source: ABdhPJxLqFb4GRSUG2242Vb2y5H6eZMVJCR4nE5VMZyxxWTfNaBcAll11X2rtONq+ZojNoi1hHvf9M7MXr4Y9memdco=
+X-Received: by 2002:a67:c992:: with SMTP id y18mr6763594vsk.7.1614955693024;
+ Fri, 05 Mar 2021 06:48:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YDkkUx7UXszXi6hV@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+References: <20210209224754.GG3171@redhat.com> <20210305133401.GA109162@redhat.com>
+In-Reply-To: <20210305133401.GA109162@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 5 Mar 2021 15:48:02 +0100
+Message-ID: <CAJfpegs9uCd8666YKjuhSd_0=_tqLNEmrtQEtX44=+AdcEHVdA@mail.gmail.com>
+Subject: Re: [PATCH] virtiofs: Fail dax mount if device does not support it
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 26, 2021 at 08:39:47AM -0800, Eric Biggers wrote:
-> On Fri, Feb 26, 2021 at 10:36:53AM +0100, David Sterba wrote:
-> > On Thu, Feb 25, 2021 at 10:50:56AM -0800, Eric Biggers wrote:
-> > > On Thu, Feb 25, 2021 at 02:26:47PM +0100, David Sterba wrote:
+On Fri, Mar 5, 2021 at 2:34 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Tue, Feb 09, 2021 at 05:47:54PM -0500, Vivek Goyal wrote:
+> > Right now "mount -t virtiofs -o dax myfs /mnt/virtiofs" succeeds even
+> > if filesystem deivce does not have a cache window and hence DAX can't
+> > be supported.
+> >
+> > This gives a false sense to user that they are using DAX with virtiofs
+> > but fact of the matter is that they are not.
+> >
+> > Fix this by returning error if dax can't be supported and user has asked
+> > for it.
+>
+> Hi Miklos,
+>
+> Did you get a chance to look at this patch.
 
-> Okay so you have 128K to compress, but not in a virtually contiguous buffer, so
-> you need the algorithm to support streaming of 4K chunks.  And the LZ4
-> implementation doesn't properly support that.  (Note that this is a property of
-> the LZ4 *implementation*, not the LZ4 *format*.)
-> 
-> How about using vm_map_ram() to get a contiguous buffer, like what f2fs does?
-> Then you wouldn't need streaming support.
-> 
-> There is some overhead in setting up page mappings, but it might actually turn
-> out to be faster (also for the other algorithms, not just LZ4) since it avoids
-> the overhead of streaming, such as the algorithm having to copy all the data
-> into an internal buffer for matchfinding.
+Thanks for the reminder.  Pushed out now.
 
-Yes the mapping allows to compress the buffer in one go but the overhead
-is not small. I had it in one of the prototypes back then too but did
-not finish it because it would mean to update the on-disk compression
-container format.
-
-vm_map_ram needs to be called twice per buffer (both compression and
-decompressin), there are some additional data allocated, the virual
-aliases have to be flushed each time and this could be costly as I'm
-told (TLB shootdowns, IPI).
-
-Also vm_map_ram is deadlock prone because it unconditionally allocates
-with GFP_KERNEL, so the scoped NOFS protection has to be in place. And
-F2FS does not do that, but that's fixable.
+Miklos
