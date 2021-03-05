@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CFAA532E0C1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Mar 2021 05:27:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 986CE32E0C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Mar 2021 05:28:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229538AbhCEE1O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Mar 2021 23:27:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46462 "EHLO
+        id S229523AbhCEE2D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Mar 2021 23:28:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbhCEE1O (ORCPT
+        with ESMTP id S229463AbhCEE2C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Mar 2021 23:27:14 -0500
+        Thu, 4 Mar 2021 23:28:02 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5503C061574;
-        Thu,  4 Mar 2021 20:27:13 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE74FC061574;
+        Thu,  4 Mar 2021 20:28:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=zWeB6aqDwj65PTFEYVpI7YPXR8x4bwFky9HOKv5MiL0=; b=LLWyhqLGjwShJrcyau7YFLyoZm
-        JK4v5iTnEt2pgVKNSSpd28WJZebmAJvbBCSpYzRytFLx1A0yVR9j+NtlmCDCHYkRyVVmv6tCxSUwG
-        XB4Xvv5fFCXDdDaKVXX4bJE6XQkg3incAQVqkXsgf7CtKHPeE8664Jo/uFpTbXuznhd7CaznfhbPJ
-        7YFQw1wO/q31+PBPaFxI0P/lm/tcKF6YQ/Yb41iVJdU9DxonpL/Qw55a0S5lIhev7sE0fW1ioqLm4
-        nhWmgAXLaBE/EDICf11R5An6v77/W9FrXeJSgfMljBf7yuYNLM13bkEbUK88X+cP+dz2fAtXDpAdP
-        AG+vd6Jw==;
+        bh=xwpBIqAEuLM6Zld1KeVwy1SyI/6FWtXxGIYJ0bk67Ms=; b=nZiEQlDA3UiHbQK+LAi8BPFS61
+        pB+mHWU8LiaXKjDF3kxZeSTkTK3OkjP4umVg2cdiABFuLz6H45hnwPCd0a7ybRUwVsyHA1OIzANUT
+        5Q2d/uFqBS1raiTwf8RvPqhUP7VGa6jAU6vtBF8Za/ihsNvQdLSZLKCarFURQFzlNWGxNao0bxhCh
+        eG6rqCE1S/m/nstsiTogOdORYksqHAXQoQHAhzbOFgXwtEvgJe40VyiAUdoL6xPLtsvnUs3MrDkNa
+        9y1pNasEG50jfZqfwtvdyp0yOl2S0mWayXvU4qK2tjHz8PFmnp9X1PXmxxwvSn7xOXabyy9fWkbYy
+        APFybfzA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lI231-00A4pJ-TB; Fri, 05 Mar 2021 04:26:48 +0000
+        id 1lI23F-00A4qX-PL; Fri, 05 Mar 2021 04:26:58 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 23/25] mm/page-writeback: Convert test_clear_page_writeback to take a folio
-Date:   Fri,  5 Mar 2021 04:18:59 +0000
-Message-Id: <20210305041901.2396498-24-willy@infradead.org>
+Subject: [PATCH v4 24/25] mm/filemap: Convert page wait queues to be folios
+Date:   Fri,  5 Mar 2021 04:19:00 +0000
+Message-Id: <20210305041901.2396498-25-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210305041901.2396498-1-willy@infradead.org>
 References: <20210305041901.2396498-1-willy@infradead.org>
@@ -43,105 +43,148 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The one caller of test_clear_page_writeback() already has a folio,
-so rename it to test_clear_folio_writeback() to make it clear that it
-operates on the entire folio.  This removes a few calls to compound_head()
-but actually grows the function by 49 bytes because it now accounts for
-the number of pages in the folio.
+Reinforce that if we're waiting for a bit in a struct page, that's
+actually in the head page by changing the type from page to folio.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/page-flags.h |  2 +-
- mm/filemap.c               |  2 +-
- mm/page-writeback.c        | 20 ++++++++++----------
- 3 files changed, 12 insertions(+), 12 deletions(-)
+ include/linux/pagemap.h |  6 +++---
+ mm/filemap.c            | 30 ++++++++++++++++--------------
+ 2 files changed, 19 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 90381858d901..01aa4a71bf14 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -594,7 +594,7 @@ static __always_inline void SetPageUptodate(struct page *page)
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 6ee4bc843f98..2236f726bf01 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -611,13 +611,13 @@ static inline pgoff_t linear_page_index(struct vm_area_struct *vma,
  
- CLEARPAGEFLAG(Uptodate, uptodate, PF_NO_TAIL)
+ /* This has the same layout as wait_bit_key - see fs/cachefiles/rdwr.c */
+ struct wait_page_key {
+-	struct page *page;
++	struct folio *folio;
+ 	int bit_nr;
+ 	int page_match;
+ };
  
--int test_clear_page_writeback(struct page *page);
-+int test_clear_folio_writeback(struct folio *folio);
- int __test_set_page_writeback(struct page *page, bool keep_write);
+ struct wait_page_queue {
+-	struct page *page;
++	struct folio *folio;
+ 	int bit_nr;
+ 	wait_queue_entry_t wait;
+ };
+@@ -625,7 +625,7 @@ struct wait_page_queue {
+ static inline bool wake_page_match(struct wait_page_queue *wait_page,
+ 				  struct wait_page_key *key)
+ {
+-	if (wait_page->page != key->page)
++	if (wait_page->folio != key->folio)
+ 	       return false;
+ 	key->page_match = 1;
  
- #define test_set_page_writeback(page)			\
 diff --git a/mm/filemap.c b/mm/filemap.c
-index e91fa14c86c7..57f46ff2f230 100644
+index 57f46ff2f230..1cdd565c69a6 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1446,7 +1446,7 @@ void end_folio_writeback(struct folio *folio)
- 	 * reused before the wake_up_folio().
- 	 */
- 	get_folio(folio);
--	if (!test_clear_page_writeback(&folio->page))
-+	if (!test_clear_folio_writeback(folio))
- 		BUG();
- 
- 	smp_mb__after_atomic();
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 6c1b4737c383..fa3411ea4cd3 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -589,7 +589,7 @@ static void wb_domain_writeout_inc(struct wb_domain *dom,
- 
- /*
-  * Increment @wb's writeout completion count and the global writeout
-- * completion count. Called from test_clear_page_writeback().
-+ * completion count. Called from test_clear_folio_writeback().
+@@ -992,11 +992,11 @@ EXPORT_SYMBOL(__page_cache_alloc);
   */
- static inline void __wb_writeout_inc(struct bdi_writeback *wb)
+ #define PAGE_WAIT_TABLE_BITS 8
+ #define PAGE_WAIT_TABLE_SIZE (1 << PAGE_WAIT_TABLE_BITS)
+-static wait_queue_head_t page_wait_table[PAGE_WAIT_TABLE_SIZE] __cacheline_aligned;
++static wait_queue_head_t folio_wait_table[PAGE_WAIT_TABLE_SIZE] __cacheline_aligned;
+ 
+-static wait_queue_head_t *page_waitqueue(struct page *page)
++static wait_queue_head_t *folio_waitqueue(struct folio *folio)
  {
-@@ -2719,24 +2719,24 @@ int clear_page_dirty_for_io(struct page *page)
+-	return &page_wait_table[hash_ptr(page, PAGE_WAIT_TABLE_BITS)];
++	return &folio_wait_table[hash_ptr(folio, PAGE_WAIT_TABLE_BITS)];
  }
- EXPORT_SYMBOL(clear_page_dirty_for_io);
  
--int test_clear_page_writeback(struct page *page)
-+int test_clear_folio_writeback(struct folio *folio)
+ void __init pagecache_init(void)
+@@ -1004,7 +1004,7 @@ void __init pagecache_init(void)
+ 	int i;
+ 
+ 	for (i = 0; i < PAGE_WAIT_TABLE_SIZE; i++)
+-		init_waitqueue_head(&page_wait_table[i]);
++		init_waitqueue_head(&folio_wait_table[i]);
+ 
+ 	page_writeback_init();
+ }
+@@ -1059,10 +1059,11 @@ static int wake_page_function(wait_queue_entry_t *wait, unsigned mode, int sync,
+ 	 */
+ 	flags = wait->flags;
+ 	if (flags & WQ_FLAG_EXCLUSIVE) {
+-		if (test_bit(key->bit_nr, &key->page->flags))
++		if (test_bit(key->bit_nr, &key->folio->page.flags))
+ 			return -1;
+ 		if (flags & WQ_FLAG_CUSTOM) {
+-			if (test_and_set_bit(key->bit_nr, &key->page->flags))
++			if (test_and_set_bit(key->bit_nr,
++						&key->folio->page.flags))
+ 				return -1;
+ 			flags |= WQ_FLAG_DONE;
+ 		}
+@@ -1096,12 +1097,12 @@ static int wake_page_function(wait_queue_entry_t *wait, unsigned mode, int sync,
+ 
+ static void wake_up_folio_bit(struct folio *folio, int bit_nr)
  {
--	struct address_space *mapping = page_mapping(page);
-+	struct address_space *mapping = folio_mapping(folio);
- 	struct mem_cgroup *memcg;
- 	struct lruvec *lruvec;
- 	int ret;
+-	wait_queue_head_t *q = page_waitqueue(&folio->page);
++	wait_queue_head_t *q = folio_waitqueue(folio);
+ 	struct wait_page_key key;
+ 	unsigned long flags;
+ 	wait_queue_entry_t bookmark;
  
--	memcg = lock_page_memcg(page);
--	lruvec = mem_cgroup_page_lruvec(page, page_pgdat(page));
-+	memcg = lock_folio_memcg(folio);
-+	lruvec = mem_cgroup_folio_lruvec(folio, folio_pgdat(folio));
- 	if (mapping && mapping_use_writeback_tags(mapping)) {
- 		struct inode *inode = mapping->host;
- 		struct backing_dev_info *bdi = inode_to_bdi(inode);
- 		unsigned long flags;
+-	key.page = &folio->page;
++	key.folio = folio;
+ 	key.bit_nr = bit_nr;
+ 	key.page_match = 0;
  
- 		xa_lock_irqsave(&mapping->i_pages, flags);
--		ret = TestClearPageWriteback(page);
-+		ret = TestClearFolioWriteback(folio);
- 		if (ret) {
--			__xa_clear_mark(&mapping->i_pages, page_index(page),
-+			__xa_clear_mark(&mapping->i_pages, folio_index(folio),
- 						PAGECACHE_TAG_WRITEBACK);
- 			if (bdi->capabilities & BDI_CAP_WRITEBACK_ACCT) {
- 				struct bdi_writeback *wb = inode_to_wb(inode);
-@@ -2752,12 +2752,12 @@ int test_clear_page_writeback(struct page *page)
+@@ -1193,7 +1194,7 @@ int sysctl_page_lock_unfairness = 5;
+ static inline int wait_on_folio_bit_common(struct folio *folio, int bit_nr,
+ 		int state, enum behavior behavior)
+ {
+-	wait_queue_head_t *q = page_waitqueue(&folio->page);
++	wait_queue_head_t *q = folio_waitqueue(folio);
+ 	int unfairness = sysctl_page_lock_unfairness;
+ 	struct wait_page_queue wait_page;
+ 	wait_queue_entry_t *wait = &wait_page.wait;
+@@ -1213,7 +1214,7 @@ static inline int wait_on_folio_bit_common(struct folio *folio, int bit_nr,
  
- 		xa_unlock_irqrestore(&mapping->i_pages, flags);
- 	} else {
--		ret = TestClearPageWriteback(page);
-+		ret = TestClearFolioWriteback(folio);
- 	}
- 	if (ret) {
- 		dec_lruvec_state(lruvec, NR_WRITEBACK);
--		dec_zone_page_state(page, NR_ZONE_WRITE_PENDING);
--		inc_node_page_state(page, NR_WRITTEN);
-+		dec_zone_folio_stat(folio, NR_ZONE_WRITE_PENDING);
-+		inc_node_folio_stat(folio, NR_WRITTEN);
- 	}
- 	__unlock_page_memcg(memcg);
- 	return ret;
+ 	init_wait(wait);
+ 	wait->func = wake_page_function;
+-	wait_page.page = &folio->page;
++	wait_page.folio = folio;
+ 	wait_page.bit_nr = bit_nr;
+ 
+ repeat:
+@@ -1370,12 +1371,13 @@ int put_and_wait_on_page_locked(struct page *page, int state)
+  */
+ void add_page_wait_queue(struct page *page, wait_queue_entry_t *waiter)
+ {
+-	wait_queue_head_t *q = page_waitqueue(page);
++	struct folio *folio = page_folio(page);
++	wait_queue_head_t *q = folio_waitqueue(folio);
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&q->lock, flags);
+ 	__add_wait_queue_entry_tail(q, waiter);
+-	SetPageWaiters(page);
++	SetFolioWaiters(folio);
+ 	spin_unlock_irqrestore(&q->lock, flags);
+ }
+ EXPORT_SYMBOL_GPL(add_page_wait_queue);
+@@ -1503,10 +1505,10 @@ EXPORT_SYMBOL_GPL(__lock_folio_killable);
+ 
+ int __lock_folio_async(struct folio *folio, struct wait_page_queue *wait)
+ {
+-	struct wait_queue_head *q = page_waitqueue(&folio->page);
++	struct wait_queue_head *q = folio_waitqueue(folio);
+ 	int ret = 0;
+ 
+-	wait->page = &folio->page;
++	wait->folio = folio;
+ 	wait->bit_nr = PG_locked;
+ 
+ 	spin_lock_irq(&q->lock);
 -- 
 2.30.0
 
