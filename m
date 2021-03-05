@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A02F32EE6B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Mar 2021 16:21:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CCC732EE75
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Mar 2021 16:21:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230395AbhCEPUg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Mar 2021 10:20:36 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2626 "EHLO
+        id S230450AbhCEPUm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Mar 2021 10:20:42 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2627 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230107AbhCEPUE (ORCPT
+        with ESMTP id S229781AbhCEPUE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 5 Mar 2021 10:20:04 -0500
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4DsWWv5vdlz67tVj;
-        Fri,  5 Mar 2021 23:15:39 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4DsWRs000Dz67tqR;
+        Fri,  5 Mar 2021 23:12:08 +0800 (CST)
 Received: from fraphisprd00473.huawei.com (7.182.8.141) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
@@ -25,10 +25,10 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH v4 03/11] evm: Refuse EVM_ALLOW_METADATA_WRITES only if an HMAC key is loaded
-Date:   Fri, 5 Mar 2021 16:19:15 +0100
-Message-ID: <20210305151923.29039-4-roberto.sassu@huawei.com>
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to post hooks
+Date:   Fri, 5 Mar 2021 16:19:16 +0100
+Message-ID: <20210305151923.29039-5-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210305151923.29039-1-roberto.sassu@huawei.com>
 References: <20210305151923.29039-1-roberto.sassu@huawei.com>
@@ -43,56 +43,145 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-EVM_ALLOW_METADATA_WRITES is an EVM initialization flag that can be set to
-temporarily disable metadata verification until all xattrs/attrs necessary
-to verify an EVM portable signature are copied to the file. This flag is
-cleared when EVM is initialized with an HMAC key, to avoid that the HMAC is
-calculated on unverified xattrs/attrs.
+ima_inode_setxattr() and ima_inode_removexattr() hooks are called before an
+operation is performed. Thus, ima_reset_appraise_flags() should not be
+called there, as flags might be unnecessarily reset if the operation is
+denied.
 
-Currently EVM unnecessarily denies setting this flag if EVM is initialized
-with a public key, which is not a concern as it cannot be used to trust
-xattrs/attrs updates. This patch removes this limitation.
+This patch introduces the post hooks ima_inode_post_setxattr() and
+ima_inode_post_removexattr(), and adds the call to
+ima_reset_appraise_flags() in the new functions.
 
-Cc: stable@vger.kernel.org # 4.16.x
-Fixes: ae1ba1676b88e ("EVM: Allow userland to permit modification of EVM-protected metadata")
+Cc: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- Documentation/ABI/testing/evm      | 5 +++--
- security/integrity/evm/evm_secfs.c | 4 ++--
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ fs/xattr.c                            |  2 ++
+ include/linux/ima.h                   | 18 ++++++++++++++++++
+ security/integrity/ima/ima_appraise.c | 25 ++++++++++++++++++++++---
+ security/security.c                   |  1 +
+ 4 files changed, 43 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/ABI/testing/evm b/Documentation/ABI/testing/evm
-index 3c477ba48a31..eb6d70fd6fa2 100644
---- a/Documentation/ABI/testing/evm
-+++ b/Documentation/ABI/testing/evm
-@@ -49,8 +49,9 @@ Description:
- 		modification of EVM-protected metadata and
- 		disable all further modification of policy
+diff --git a/fs/xattr.c b/fs/xattr.c
+index b3444e06cded..81847f132d26 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -16,6 +16,7 @@
+ #include <linux/namei.h>
+ #include <linux/security.h>
+ #include <linux/evm.h>
++#include <linux/ima.h>
+ #include <linux/syscalls.h>
+ #include <linux/export.h>
+ #include <linux/fsnotify.h>
+@@ -502,6 +503,7 @@ __vfs_removexattr_locked(struct user_namespace *mnt_userns,
  
--		Note that once a key has been loaded, it will no longer be
--		possible to enable metadata modification.
-+		Note that once an HMAC key has been loaded, it will no longer
-+		be possible to enable metadata modification and, if it is
-+		already enabled, it will be disabled.
+ 	if (!error) {
+ 		fsnotify_xattr(dentry);
++		ima_inode_post_removexattr(dentry, name);
+ 		evm_inode_post_removexattr(dentry, name);
+ 	}
  
- 		Until key loading has been signaled EVM can not create
- 		or validate the 'security.evm' xattr, but returns
-diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-index bbc85637e18b..197a4b83e534 100644
---- a/security/integrity/evm/evm_secfs.c
-+++ b/security/integrity/evm/evm_secfs.c
-@@ -81,10 +81,10 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
- 		return -EINVAL;
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 61d5723ec303..5e059da43857 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -171,7 +171,13 @@ extern void ima_inode_post_setattr(struct user_namespace *mnt_userns,
+ 				   struct dentry *dentry);
+ extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+ 		       const void *xattr_value, size_t xattr_value_len);
++extern void ima_inode_post_setxattr(struct dentry *dentry,
++				    const char *xattr_name,
++				    const void *xattr_value,
++				    size_t xattr_value_len);
+ extern int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name);
++extern void ima_inode_post_removexattr(struct dentry *dentry,
++				       const char *xattr_name);
+ #else
+ static inline bool is_ima_appraise_enabled(void)
+ {
+@@ -192,11 +198,23 @@ static inline int ima_inode_setxattr(struct dentry *dentry,
+ 	return 0;
+ }
  
- 	/* Don't allow a request to freshly enable metadata writes if
--	 * keys are loaded.
-+	 * an HMAC key is loaded.
- 	 */
- 	if ((i & EVM_ALLOW_METADATA_WRITES) &&
--	    ((evm_initialized & EVM_KEY_MASK) != 0) &&
-+	    ((evm_initialized & EVM_INIT_HMAC) != 0) &&
- 	    !(evm_initialized & EVM_ALLOW_METADATA_WRITES))
- 		return -EPERM;
++static inline void ima_inode_post_setxattr(struct dentry *dentry,
++					   const char *xattr_name,
++					   const void *xattr_value,
++					   size_t xattr_value_len)
++{
++}
++
+ static inline int ima_inode_removexattr(struct dentry *dentry,
+ 					const char *xattr_name)
+ {
+ 	return 0;
+ }
++
++static inline void ima_inode_post_removexattr(struct dentry *dentry,
++					      const char *xattr_name)
++{
++}
+ #endif /* CONFIG_IMA_APPRAISE */
+ 
+ #if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 565e33ff19d0..1f029e4c8d7f 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -577,21 +577,40 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+ 	if (result == 1) {
+ 		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
+ 			return -EINVAL;
+-		ima_reset_appraise_flags(d_backing_inode(dentry),
+-			xvalue->type == EVM_IMA_XATTR_DIGSIG);
+ 		result = 0;
+ 	}
+ 	return result;
+ }
+ 
++void ima_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
++			     const void *xattr_value, size_t xattr_value_len)
++{
++	const struct evm_ima_xattr_data *xvalue = xattr_value;
++	int result;
++
++	result = ima_protect_xattr(dentry, xattr_name, xattr_value,
++				   xattr_value_len);
++	if (result == 1)
++		ima_reset_appraise_flags(d_backing_inode(dentry),
++			xvalue->type == EVM_IMA_XATTR_DIGSIG);
++}
++
+ int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name)
+ {
+ 	int result;
+ 
+ 	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
+ 	if (result == 1) {
+-		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
+ 		result = 0;
+ 	}
+ 	return result;
+ }
++
++void ima_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
++{
++	int result;
++
++	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
++	if (result == 1)
++		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
++}
+diff --git a/security/security.c b/security/security.c
+index 5ac96b16f8fa..efb1f874dc41 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1319,6 +1319,7 @@ void security_inode_post_setxattr(struct dentry *dentry, const char *name,
+ 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+ 		return;
+ 	call_void_hook(inode_post_setxattr, dentry, name, value, size, flags);
++	ima_inode_post_setxattr(dentry, name, value, size);
+ 	evm_inode_post_setxattr(dentry, name, value, size);
+ }
  
 -- 
 2.26.2
