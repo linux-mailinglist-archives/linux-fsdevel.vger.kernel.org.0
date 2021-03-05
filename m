@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB5F032E088
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Mar 2021 05:19:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EDC932E08A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Mar 2021 05:19:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229772AbhCEETZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Mar 2021 23:19:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44748 "EHLO
+        id S229815AbhCEETe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Mar 2021 23:19:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229759AbhCEETZ (ORCPT
+        with ESMTP id S229609AbhCEETd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Mar 2021 23:19:25 -0500
+        Thu, 4 Mar 2021 23:19:33 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75476C061574;
-        Thu,  4 Mar 2021 20:19:25 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 217B8C061574;
+        Thu,  4 Mar 2021 20:19:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=7x6Ty5MYTpzZNiotwF3DtVw5Sni26V7oFSAW6dNR/BU=; b=Wb1jSPKPO3K3fViSoGnK2DgV5d
-        Ax0oAKOCehujoZ4ZEATVJC28w0SEsEwINRYnpBUoXisBj3XrGOwSa8B8E+AwRCenM+i6KMNVJArif
-        KOqWKiiDrk143vmc9gb1d2KaNTH2neA9x2uIjUN8bqte7g8NzK2ejMa0f/4QUJuTAwPWe21BzjIWS
-        GUCtLphocGVnHQ3ZvP1QG2V1IbvpqYWVbo9ixux5y9i1MqlGwU+C8FPOTvCmTz5DKjp0MeFw89ufn
-        p5ilyvYhRJ3IyGz+hZWdVzf0p7stsd+XLWPGZCzyIVAU6ZGOmwub0pa8SF9/2ofgQNWh2JQYajK71
-        Ll28toNg==;
+        bh=M6kHCP2ErIBVLFqPGPar7eIkGAUP7r+SY6+0x2DcRsk=; b=BtYx3on1gAjsZVKoYT5FUu6v1a
+        EM/Rq722gHomS4jffeqmg1qCOPQ3GOB7fJHzuQhCgBrMckl8DVZEtA+XQTEvlXZInbF1+iRJaT6bg
+        8JCeAdRuleiE8u0XQtFMkcKSQKQClhQTFCxIEI4kQen8VzaQ+EIkUt8jXUqzew4jEL6NrHfeI1gV1
+        mM50ZICpfcjvM15fTiI5Td0yb5iK0naAb+HBVoEqWVIJ3EynFXLoT537u+r6BtjTMOiB4Exd4seWS
+        6/z4b9wZZ+HXyla9cicOdUN/ax8VBu5NCCeYG2aFHOxRpVEKfrbEYSFRpbeAIuJfQ6OwkXKxj6qJk
+        PJnEd3kQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lI1vm-00A3Sl-Co; Fri, 05 Mar 2021 04:19:15 +0000
+        id 1lI1vr-00A3T3-LO; Fri, 05 Mar 2021 04:19:22 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v4 04/25] mm/debug: Add VM_BUG_ON_FOLIO and VM_WARN_ON_ONCE_FOLIO
-Date:   Fri,  5 Mar 2021 04:18:40 +0000
-Message-Id: <20210305041901.2396498-5-willy@infradead.org>
+Subject: [PATCH v4 05/25] mm: Add put_folio
+Date:   Fri,  5 Mar 2021 04:18:41 +0000
+Message-Id: <20210305041901.2396498-6-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210305041901.2396498-1-willy@infradead.org>
 References: <20210305041901.2396498-1-willy@infradead.org>
@@ -44,64 +44,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These are the folio equivalents of VM_BUG_ON_PAGE and VM_WARN_ON_ONCE_PAGE.
+If we know we have a folio, we can call put_folio() instead of put_page()
+and save the overhead of calling compound_head().  Also skips the
+devmap checks.
+
+This commit looks like it should be a no-op, but actually saves 1714 bytes
+of text with the distro-derived config that I'm testing.  Some functions
+grow a little while others shrink.  I presume the compiler is making
+different inlining decisions.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Zi Yan <ziy@nvidia.com>
 ---
- include/linux/mmdebug.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ include/linux/mm.h | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/mmdebug.h b/include/linux/mmdebug.h
-index 5d0767cb424a..77d24e1dcaec 100644
---- a/include/linux/mmdebug.h
-+++ b/include/linux/mmdebug.h
-@@ -23,6 +23,13 @@ void dump_mm(const struct mm_struct *mm);
- 			BUG();						\
- 		}							\
- 	} while (0)
-+#define VM_BUG_ON_FOLIO(cond, folio)					\
-+	do {								\
-+		if (unlikely(cond)) {					\
-+			dump_page(&folio->page, "VM_BUG_ON_FOLIO(" __stringify(cond)")");\
-+			BUG();						\
-+		}							\
-+	} while (0)
- #define VM_BUG_ON_VMA(cond, vma)					\
- 	do {								\
- 		if (unlikely(cond)) {					\
-@@ -48,6 +55,17 @@ void dump_mm(const struct mm_struct *mm);
- 	}								\
- 	unlikely(__ret_warn_once);					\
- })
-+#define VM_WARN_ON_ONCE_FOLIO(cond, folio)	({			\
-+	static bool __section(".data.once") __warned;			\
-+	int __ret_warn_once = !!(cond);					\
-+									\
-+	if (unlikely(__ret_warn_once && !__warned)) {			\
-+		dump_page(&folio->page, "VM_WARN_ON_ONCE_FOLIO(" __stringify(cond)")");\
-+		__warned = true;					\
-+		WARN_ON(1);						\
-+	}								\
-+	unlikely(__ret_warn_once);					\
-+})
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ecfe202aa4ec..30fd431b1b05 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1205,9 +1205,15 @@ static inline __must_check bool try_get_page(struct page *page)
+ 	return true;
+ }
  
- #define VM_WARN_ON(cond) (void)WARN_ON(cond)
- #define VM_WARN_ON_ONCE(cond) (void)WARN_ON_ONCE(cond)
-@@ -56,11 +74,13 @@ void dump_mm(const struct mm_struct *mm);
- #else
- #define VM_BUG_ON(cond) BUILD_BUG_ON_INVALID(cond)
- #define VM_BUG_ON_PAGE(cond, page) VM_BUG_ON(cond)
-+#define VM_BUG_ON_FOLIO(cond, folio) VM_BUG_ON(cond)
- #define VM_BUG_ON_VMA(cond, vma) VM_BUG_ON(cond)
- #define VM_BUG_ON_MM(cond, mm) VM_BUG_ON(cond)
- #define VM_WARN_ON(cond) BUILD_BUG_ON_INVALID(cond)
- #define VM_WARN_ON_ONCE(cond) BUILD_BUG_ON_INVALID(cond)
- #define VM_WARN_ON_ONCE_PAGE(cond, page)  BUILD_BUG_ON_INVALID(cond)
-+#define VM_WARN_ON_ONCE_FOLIO(cond, folio)  BUILD_BUG_ON_INVALID(cond)
- #define VM_WARN_ONCE(cond, format...) BUILD_BUG_ON_INVALID(cond)
- #define VM_WARN(cond, format...) BUILD_BUG_ON_INVALID(cond)
- #endif
++static inline void put_folio(struct folio *folio)
++{
++	if (put_page_testzero(&folio->page))
++		__put_page(&folio->page);
++}
++
+ static inline void put_page(struct page *page)
+ {
+-	page = compound_head(page);
++	struct folio *folio = page_folio(page);
+ 
+ 	/*
+ 	 * For devmap managed pages we need to catch refcount transition from
+@@ -1215,13 +1221,12 @@ static inline void put_page(struct page *page)
+ 	 * need to inform the device driver through callback. See
+ 	 * include/linux/memremap.h and HMM for details.
+ 	 */
+-	if (page_is_devmap_managed(page)) {
+-		put_devmap_managed_page(page);
++	if (page_is_devmap_managed(&folio->page)) {
++		put_devmap_managed_page(&folio->page);
+ 		return;
+ 	}
+ 
+-	if (put_page_testzero(page))
+-		__put_page(page);
++	put_folio(folio);
+ }
+ 
+ /*
 -- 
 2.30.0
 
