@@ -2,351 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8A2632F950
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Mar 2021 11:11:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68C8A32FD2C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Mar 2021 21:37:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229813AbhCFKKv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 Mar 2021 05:10:51 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53561 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229662AbhCFKKT (ORCPT
+        id S231434AbhCFUhA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 Mar 2021 15:37:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54636 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231443AbhCFUgq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 Mar 2021 05:10:19 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1lITt0-0007mC-M3; Sat, 06 Mar 2021 10:10:14 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH] mount: fix mounting of detached mounts onto targets that reside on shared mounts
-Date:   Sat,  6 Mar 2021 11:10:10 +0100
-Message-Id: <20210306101010.243666-1-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.27.0
+        Sat, 6 Mar 2021 15:36:46 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 781ECC061760
+        for <linux-fsdevel@vger.kernel.org>; Sat,  6 Mar 2021 12:36:45 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id r17so11501320ejy.13
+        for <linux-fsdevel@vger.kernel.org>; Sat, 06 Mar 2021 12:36:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bVBJNOetXrqKceA6PQT3AoaWCMo1uBzTwNd40e3p5Mg=;
+        b=DUH2TaJDmYKl3P+nqyQnZD/L+UUehgvGZ+JdR6f29HgDHqUZMlDctwBIl8mYEmOyr0
+         N4JfiYpVnsK20wsamLI2lVHA89Wfq08BTq5pazwlWEnowiN+pvdoMlOFkXMkezTctVU6
+         yLVLH/j9zqqOc1XXIzlPNblcwaWBnvPKoE+8ygaflWqyueqL8GQUxJqDZ0IOPsbLAq4D
+         ClAITvBD9MRRxeIdqI+0cvIdl865zgrrN5mPPgRQlFQTjJcqKYMYzsPzMflqD2WkyucY
+         yYqxvUtScFD3cWQ3k6qWXggCW2IBUYcSUf7R3K/wcLL0Zz3r5yXY54vMvwFWm819EQIv
+         72nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bVBJNOetXrqKceA6PQT3AoaWCMo1uBzTwNd40e3p5Mg=;
+        b=ZdR0DnNWsjdAhvs4yl+wAb8GCCZ/DquKnBergu6+TfS7lQuRFvRRccl4CuZvt6q8Xs
+         Q9huh43Dq9xTIKoL8n5zlnvvASDREgBSn2o3aXpIWZwUVOlfmeBthIdH5H/J32JkknIF
+         y90VCBA7V3kDOyB2qy1iavw3rHkWEqgdAMB7/z5z9dq7XffmGp9TxmiVKlo+LYCZ4PHD
+         GXAboz4IIPKLB8NUH3B/2xwTPL7qUVY9u5G4ppO8hY3oKs1/K8aDaDOUhwmEK0lCb06x
+         nQt3MXRkRhjGH+ivPXR/jBBuRaRpV/lrGxnEq9daxhge8q4tW8OHW/KE0MBDcKoP9kR8
+         oK5A==
+X-Gm-Message-State: AOAM530kuihHKpp1L13Dm+iJg5A/iKKASPsg3zOYGLp9kRzYsNlQzDiD
+        +QNHSC2E48y0+Z/PI24CifEGD4DflfeoAUFeigubyg==
+X-Google-Smtp-Source: ABdhPJwWg5JZfa53VPl0WuQEKYMbCdynjlz48fz7pdzLNK+5tXI6itu2L3u8T4IRUn3/J6V3gGOhtuytQtomfVZ9FIo=
+X-Received: by 2002:a17:906:2818:: with SMTP id r24mr8202331ejc.472.1615063004125;
+ Sat, 06 Mar 2021 12:36:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210208105530.3072869-1-ruansy.fnst@cn.fujitsu.com> <20210208105530.3072869-2-ruansy.fnst@cn.fujitsu.com>
+In-Reply-To: <20210208105530.3072869-2-ruansy.fnst@cn.fujitsu.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Sat, 6 Mar 2021 12:36:39 -0800
+Message-ID: <CAPcyv4jqEdPoF5YM+jSYJd74KqRTwbbEum7=moa3=Wyn6UyU9g@mail.gmail.com>
+Subject: Re: [PATCH v3 01/11] pagemap: Introduce ->memory_failure()
+To:     Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        david <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>, qi.fuli@fujitsu.com,
+        Yasunori Goto <y-goto@fujitsu.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Creating a series of detached mounts, attaching them to the filesystem,
-and unmounting them can be used to trigger an integer overflow in
-ns->mounts causing the kernel to block any new mounts in count_mounts()
-and returning ENOSPC because it falsely assumes that the maximum number
-of mounts in the mount namespace has been reached, i.e. it thinks it
-can't fit the new mounts into the mount namespace anymore.
+On Mon, Feb 8, 2021 at 2:55 AM Shiyang Ruan <ruansy.fnst@cn.fujitsu.com> wrote:
+>
+> When memory-failure occurs, we call this function which is implemented
+> by each kind of devices.  For the fsdax case, pmem device driver
+> implements it.  Pmem device driver will find out the block device where
+> the error page locates in, and try to get the filesystem on this block
+> device.  And finally call filesystem handler to deal with the error.
+> The filesystem will try to recover the corrupted data if possiable.
+>
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+> ---
+>  include/linux/memremap.h | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+> index 79c49e7f5c30..0bcf2b1e20bd 100644
+> --- a/include/linux/memremap.h
+> +++ b/include/linux/memremap.h
+> @@ -87,6 +87,14 @@ struct dev_pagemap_ops {
+>          * the page back to a CPU accessible page.
+>          */
+>         vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
+> +
+> +       /*
+> +        * Handle the memory failure happens on one page.  Notify the processes
+> +        * who are using this page, and try to recover the data on this page
+> +        * if necessary.
+> +        */
+> +       int (*memory_failure)(struct dev_pagemap *pgmap, unsigned long pfn,
+> +                             int flags);
+>  };
 
-Depending on the number of mounts in your system, this can be reproduced
-on any kernel that supportes open_tree() and move_mount() by compiling
-and running the following program:
+After the conversation with Dave I don't see the point of this. If
+there is a memory_failure() on a page, why not just call
+memory_failure()? That already knows how to find the inode and the
+filesystem can be notified from there.
 
-  /* SPDX-License-Identifier: LGPL-2.1+ */
-
-  #define _GNU_SOURCE
-  #include <errno.h>
-  #include <fcntl.h>
-  #include <getopt.h>
-  #include <limits.h>
-  #include <stdbool.h>
-  #include <stdio.h>
-  #include <stdlib.h>
-  #include <string.h>
-  #include <sys/mount.h>
-  #include <sys/stat.h>
-  #include <sys/syscall.h>
-  #include <sys/types.h>
-  #include <unistd.h>
-
-  /* open_tree() */
-  #ifndef OPEN_TREE_CLONE
-  #define OPEN_TREE_CLONE 1
-  #endif
-
-  #ifndef OPEN_TREE_CLOEXEC
-  #define OPEN_TREE_CLOEXEC O_CLOEXEC
-  #endif
-
-  #ifndef __NR_open_tree
-          #if defined __alpha__
-                  #define __NR_open_tree 538
-          #elif defined _MIPS_SIM
-                  #if _MIPS_SIM == _MIPS_SIM_ABI32        /* o32 */
-                          #define __NR_open_tree 4428
-                  #endif
-                  #if _MIPS_SIM == _MIPS_SIM_NABI32       /* n32 */
-                          #define __NR_open_tree 6428
-                  #endif
-                  #if _MIPS_SIM == _MIPS_SIM_ABI64        /* n64 */
-                          #define __NR_open_tree 5428
-                  #endif
-          #elif defined __ia64__
-                  #define __NR_open_tree (428 + 1024)
-          #else
-                  #define __NR_open_tree 428
-          #endif
-  #endif
-
-  /* move_mount() */
-  #ifndef MOVE_MOUNT_F_EMPTY_PATH
-  #define MOVE_MOUNT_F_EMPTY_PATH 0x00000004 /* Empty from path permitted */
-  #endif
-
-  #ifndef __NR_move_mount
-          #if defined __alpha__
-                  #define __NR_move_mount 539
-          #elif defined _MIPS_SIM
-                  #if _MIPS_SIM == _MIPS_SIM_ABI32        /* o32 */
-                          #define __NR_move_mount 4429
-                  #endif
-                  #if _MIPS_SIM == _MIPS_SIM_NABI32       /* n32 */
-                          #define __NR_move_mount 6429
-                  #endif
-                  #if _MIPS_SIM == _MIPS_SIM_ABI64        /* n64 */
-                          #define __NR_move_mount 5429
-                  #endif
-          #elif defined __ia64__
-                  #define __NR_move_mount (428 + 1024)
-          #else
-                  #define __NR_move_mount 429
-          #endif
-  #endif
-
-  static inline int sys_open_tree(int dfd, const char *filename, unsigned int flags)
-  {
-          return syscall(__NR_open_tree, dfd, filename, flags);
-  }
-
-  static inline int sys_move_mount(int from_dfd, const char *from_pathname, int to_dfd,
-                                   const char *to_pathname, unsigned int flags)
-  {
-          return syscall(__NR_move_mount, from_dfd, from_pathname, to_dfd, to_pathname, flags);
-  }
-
-  static bool is_shared_mountpoint(const char *path)
-  {
-          bool shared = false;
-          FILE *f = NULL;
-          char *line = NULL;
-          int i;
-          size_t len = 0;
-
-          f = fopen("/proc/self/mountinfo", "re");
-          if (!f)
-                  return 0;
-
-          while (getline(&line, &len, f) > 0) {
-                  char *slider1, *slider2;
-
-                  for (slider1 = line, i = 0; slider1 && i < 4; i++)
-                          slider1 = strchr(slider1 + 1, ' ');
-
-                  if (!slider1)
-                          continue;
-
-                  slider2 = strchr(slider1 + 1, ' ');
-                  if (!slider2)
-                          continue;
-
-                  *slider2 = '\0';
-                  if (strcmp(slider1 + 1, path) == 0) {
-                          /* This is the path. Is it shared? */
-                          slider1 = strchr(slider2 + 1, ' ');
-                          if (slider1 && strstr(slider1, "shared:")) {
-                                  shared = true;
-                                  break;
-                          }
-                  }
-          }
-          fclose(f);
-          free(line);
-
-          return shared;
-  }
-
-  static void usage(void)
-  {
-          const char *text = "mount-new [--recursive] <base-dir>\n";
-          fprintf(stderr, "%s", text);
-          _exit(EXIT_SUCCESS);
-  }
-
-  #define exit_usage(format, ...)                              \
-          ({                                                   \
-                  fprintf(stderr, format "\n", ##__VA_ARGS__); \
-                  usage();                                     \
-          })
-
-  #define exit_log(format, ...)                                \
-          ({                                                   \
-                  fprintf(stderr, format "\n", ##__VA_ARGS__); \
-                  exit(EXIT_FAILURE);                          \
-          })
-
-  static const struct option longopts[] = {
-          {"help",        no_argument,            0,      'a'},
-          { NULL,         no_argument,            0,       0 },
-  };
-
-  int main(int argc, char *argv[])
-  {
-          int exit_code = EXIT_SUCCESS, index = 0;
-          int dfd, fd_tree, new_argc, ret;
-          char *base_dir;
-          char *const *new_argv;
-          char target[PATH_MAX];
-
-          while ((ret = getopt_long_only(argc, argv, "", longopts, &index)) != -1) {
-                  switch (ret) {
-                  case 'a':
-                          /* fallthrough */
-                  default:
-                          usage();
-                  }
-          }
-
-          new_argv = &argv[optind];
-          new_argc = argc - optind;
-          if (new_argc < 1)
-                  exit_usage("Missing base directory\n");
-          base_dir = new_argv[0];
-
-          if (*base_dir != '/')
-                  exit_log("Please specify an absolute path");
-
-          /* Ensure that target is a shared mountpoint. */
-          if (!is_shared_mountpoint(base_dir))
-                  exit_log("Please ensure that \"%s\" is a shared mountpoint", base_dir);
-
-          dfd = open(base_dir, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
-          if (dfd < 0)
-                  exit_log("%m - Failed to open base directory \"%s\"", base_dir);
-
-          ret = mkdirat(dfd, "detached-move-mount", 0755);
-          if (ret < 0)
-                  exit_log("%m - Failed to create required temporary directories");
-
-          ret = snprintf(target, sizeof(target), "%s/detached-move-mount", base_dir);
-          if (ret < 0 || (size_t)ret >= sizeof(target))
-                  exit_log("%m - Failed to assemble target path");
-
-          /*
-           * Having a mount table with 10000 mounts is already quite excessive
-           * and shoult account even for weird test systems.
-           */
-          for (size_t i = 0; i < 10000; i++) {
-                  fd_tree = sys_open_tree(dfd, "detached-move-mount",
-                                          OPEN_TREE_CLONE |
-                                          OPEN_TREE_CLOEXEC |
-                                          AT_EMPTY_PATH);
-                  if (fd_tree < 0) {
-                          fprintf(stderr, "%m - Failed to open %d(detached-move-mount)", dfd);
-                          exit_code = EXIT_FAILURE;
-                          break;
-                  }
-
-                  ret = sys_move_mount(fd_tree, "", dfd, "detached-move-mount", MOVE_MOUNT_F_EMPTY_PATH);
-                  if (ret < 0) {
-                          if (errno == ENOSPC)
-                                  fprintf(stderr, "%m - Buggy mount counting");
-                          else
-                                  fprintf(stderr, "%m - Failed to attach mount to %d(detached-move-mount)", dfd);
-                          exit_code = EXIT_FAILURE;
-                          break;
-                  }
-                  close(fd_tree);
-
-                  ret = umount2(target, MNT_DETACH);
-                  if (ret < 0) {
-                          fprintf(stderr, "%m - Failed to unmount %s", target);
-                          exit_code = EXIT_FAILURE;
-                          break;
-                  }
-          }
-
-          (void)unlinkat(dfd, "detached-move-mount", AT_REMOVEDIR);
-          close(dfd);
-
-          exit(exit_code);
-  }
-
-and wait for the kernel to refuse any new mounts by returning ENOSPC.
-How many iterations are needed depends on the number of mounts in your
-system. Assuming you have something like 50 mounts on a standard system
-it should be almost instantaneous.
-
-The root cause of this is that detached mounts aren't handled correctly
-when source and target mount are identical and reside on a shared mount
-causing a broken mount tree where the detached source itself is
-propagated which propagation prevents for regular bind-mounts and new
-mounts. This ultimately leads to a miscalculation of the number of
-mounts in the mount namespace.
-
-Detached mounts created via
-open_tree(fd, path, OPEN_TREE_CLONE)
-are essentially like an unattached new mount, or an unattached
-bind-mount. They can then later on be attached to the filesystem via
-move_mount() which calls into attach_recursive_mount(). Part of
-attaching it to the filesystem is making sure that mounts get correctly
-propagated in case the destination mountpoint is MS_SHARED, i.e. is a
-shared mountpoint. This is done by calling into propagate_mnt() which
-walks the list of peers calling propagate_one() on each mount in this
-list making sure it receives the propagation event.
-The propagate_one() functions thereby skips both new mounts and bind
-mounts to not propagate them "into themselves". Both are identified by
-checking whether the mount is already attached to any mount namespace in
-mnt->mnt_ns. The is what the IS_MNT_NEW() helper is responsible for.
-
-However, detached mounts have an anonymous mount namespace attached to
-them stashed in mnt->mnt_ns which means that IS_MNT_NEW() doesn't
-realize they need to be skipped causing the mount to propagate "into
-itself" breaking the mount table and causing a disconnect between the
-number of mounts recorded as being beneath or reachable from the target
-mountpoint and the number of mounts actually recorded/counted in
-ns->mounts ultimately causing an overflow which in turn prevents any new
-mounts via the ENOSPC issue.
-
-So teach propagation to handle detached mounts by making it aware of
-them. I've been tracking this issue down for the last couple of days and
-then verifying that the fix is correct by
-unmounting everything in my current mount table leaving only /proc and
-/sys mounted and running the reproducer above overnight verifying the
-number of mounts counted in ns->mounts. With this fix the counts are
-correct and the ENOSPC issue can't be reproduced.
-
-This change will only have an effect on mounts created with the new
-mount API since detached mounts cannot be created with the old mount API
-so regressions are extremely unlikely.
-
-Fixes: 2db154b3ea8e ("vfs: syscall: Add move_mount(2) to move mounts around")
-Cc: David Howells <dhowells@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/pnode.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/pnode.h b/fs/pnode.h
-index 26f74e092bd9..988f1aa9b02a 100644
---- a/fs/pnode.h
-+++ b/fs/pnode.h
-@@ -12,7 +12,7 @@
- 
- #define IS_MNT_SHARED(m) ((m)->mnt.mnt_flags & MNT_SHARED)
- #define IS_MNT_SLAVE(m) ((m)->mnt_master)
--#define IS_MNT_NEW(m)  (!(m)->mnt_ns)
-+#define IS_MNT_NEW(m)  (!(m)->mnt_ns || is_anon_ns((m)->mnt_ns))
- #define CLEAR_MNT_SHARED(m) ((m)->mnt.mnt_flags &= ~MNT_SHARED)
- #define IS_MNT_UNBINDABLE(m) ((m)->mnt.mnt_flags & MNT_UNBINDABLE)
- #define IS_MNT_MARKED(m) ((m)->mnt.mnt_flags & MNT_MARKED)
-
-base-commit: f69d02e37a85645aa90d18cacfff36dba370f797
--- 
-2.27.0
-
+Although memory_failure() is inefficient for large range failures, I'm
+not seeing a better option, so I'm going to test calling
+memory_failure() over a large range whenever an in-use dax-device is
+hot-removed.
