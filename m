@@ -2,702 +2,351 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35D7532F91D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Mar 2021 10:14:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8A2632F950
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Mar 2021 11:11:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbhCFJN7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 Mar 2021 04:13:59 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:46033 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229626AbhCFJNp (ORCPT
+        id S229813AbhCFKKv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 Mar 2021 05:10:51 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53561 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229662AbhCFKKT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 Mar 2021 04:13:45 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id A805C580426;
-        Sat,  6 Mar 2021 04:13:44 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Sat, 06 Mar 2021 04:13:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        YtWyk9YdlhW2thABbEzpxjTnTp1tcEGbrnugzxLG54k=; b=VtybgslF+uXlIVYM
-        8GXo+nSKN0Jf54JskG1k6CMBNHnQiVKJIifR4FiBdp5Nd4uJ5/E5AdWqHbokDZW7
-        hBedtheIv5lk44FHKGIPXn3SVSOVaZu8XnOGOf/SIyg8O9XahxDlg6Ge6RWP0xuI
-        1u0PluhqVmdgooWB1ahZ0h51doG/3WNKcMsEcxtHunxUP5QcaBWvx79vh5SACRtB
-        Jmjed8IlYk3afwBNkj3Eg5JPHFJAEddDtnFbf++rcMZvQbKvPol4rpFHtM48cCTJ
-        0hpR/42LLgb8BHTBDhwqD5s5218VoM/PfjQC1BCrLyPZ8S59HZ33Ya8cjUUtJrSo
-        A8kl+w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=YtWyk9YdlhW2thABbEzpxjTnTp1tcEGbrnugzxLG5
-        4k=; b=SQtSMfXDfkhnCoPmnhteUG4tKUSpFiRBt/PWF5UreCvWdDNV8ZirE0PLP
-        /4TCJCnZyQ0+WKjY7wcfcOFNZ/9Es4sC4ugb/oMFOfCnlFFm4XSWWCeQT7aCYM8Y
-        LMHe6oxV5vureOlodm/L5vp/22hYDJlbB6ZMXyXOzz1qA4YKVfTAS0N2Ut89B4Yg
-        fC5wRKdFb3Cqyqm8VD0dObtg6SpxXEM/vdUlWBuSxhMooyzpNf4BhvO2XOgdLOaZ
-        J/rDyfwuH84pud9yVUyHi65pIQCVDpwt9gnRSvsp/a2IgOuDG3/9+dba3WE2Nnhu
-        JuZIvOGq9IKuxHyLFxOTXNytDsyrg==
-X-ME-Sender: <xms:xkdDYIWEIDgHNdVvXaS9fVMU2xjMWCMW8VMbtiSyha2a_NhVFHrxQQ>
-    <xme:xkdDYMkGeuUdZ8mM1uGUUeLhihFGGWzLGFKw-xA_nah57dfPgJE361rY0zs6k-8kx
-    aP3dvJOhPan>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledruddtjedguddujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghn
-    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
-    epfeefteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecu
-    kfhppedutdeirdeiledrvddvjedrvdefgeenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:xkdDYMbRud0QfwGZs3hqWJ7-F1uC--ScwPeCpSElq4rqnSi8HHxkgw>
-    <xmx:xkdDYHWhAbbe335eMufKPn3rCcQePfBaaQ1sQEGAMouQ4AKZRlNYZg>
-    <xmx:xkdDYCmh4H_-HpL7OSI-SEJDb0_9vr8ycPeiIKI7LUBSO3Cnhit1dg>
-    <xmx:yEdDYEfjiam8Qmg4lblcddd_yVSkXBUL9eowfml2PfvUfIFYlpAY6g>
-Received: from mickey.themaw.net (106-69-227-234.dyn.iinet.net.au [106.69.227.234])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1364D24005B;
-        Sat,  6 Mar 2021 04:13:37 -0500 (EST)
-Message-ID: <05b879c83b7aa2b6c6ceee6a05a52651b83e43de.camel@themaw.net>
-Subject: Re: [RFC PATCH] autofs: find_autofs_mount overmounted parent support
-From:   Ian Kent <raven@themaw.net>
-To:     Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, autofs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Ross Zwisler <zwisler@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Mattias Nissler <mnissler@chromium.org>,
-        linux-fsdevel@vger.kernel.org, alexander@mihalicyn.com
-Date:   Sat, 06 Mar 2021 17:13:32 +0800
-In-Reply-To: <20210305145535.f5e41f54290f91968687f474@virtuozzo.com>
-References: <20210303152931.771996-1-alexander.mikhalitsyn@virtuozzo.com>
-         <832c1a384dc0b71b2902accf3091ea84381acc10.camel@themaw.net>
-         <20210304131133.0ad93dee12a17f41f4052bcb@virtuozzo.com>
-         <4f9d9c80d9d5ae7f8eb80db60e1fa572a9c015dc.camel@themaw.net>
-         <20210305145535.f5e41f54290f91968687f474@virtuozzo.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        Sat, 6 Mar 2021 05:10:19 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1lITt0-0007mC-M3; Sat, 06 Mar 2021 10:10:14 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH] mount: fix mounting of detached mounts onto targets that reside on shared mounts
+Date:   Sat,  6 Mar 2021 11:10:10 +0100
+Message-Id: <20210306101010.243666-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2021-03-05 at 14:55 +0300, Alexander Mikhalitsyn wrote:
-> On Fri, 05 Mar 2021 18:10:02 +0800
-> Ian Kent <raven@themaw.net> wrote:
-> 
-> > On Thu, 2021-03-04 at 13:11 +0300, Alexander Mikhalitsyn wrote:
-> > > On Thu, 04 Mar 2021 14:54:11 +0800
-> > > Ian Kent <raven@themaw.net> wrote:
-> > > 
-> > > > On Wed, 2021-03-03 at 18:28 +0300, Alexander Mikhalitsyn wrote:
-> > > > > It was discovered that find_autofs_mount() function
-> > > > > in autofs not support cases when autofs mount
-> > > > > parent is overmounted. In this case this function will
-> > > > > always return -ENOENT.
-> > > > 
-> > > > Ok, I get this shouldn't happen.
-> > > > 
-> > > > > Real-life reproducer is fairly simple.
-> > > > > Consider the following mounts on root mntns:
-> > > > > --
-> > > > > 35 24 0:36 / /proc/sys/fs/binfmt_misc ... shared:16 - autofs
-> > > > > systemd-
-> > > > > 1 ...
-> > > > > 654 35 0:57 / /proc/sys/fs/binfmt_misc ... shared:322 -
-> > > > > binfmt_misc
-> > > > > ...
-> > > > > --
-> > > > > and some process which calls
-> > > > > ioctl(AUTOFS_DEV_IOCTL_OPENMOUNT)
-> > > > > $ unshare -m -p --fork --mount-proc ./process-bin
-> > > > > 
-> > > > > Due to "mount-proc" /proc will be overmounted and
-> > > > > ioctl() will fail with -ENOENT
-> > > > 
-> > > > I think I need a better explanation ...
-> > > 
-> > > Thank you for the quick reply, Ian.
-> > > I'm sorry If my patch description was not sufficiently clear and
-> > > detailed.
-> > > 
-> > > That problem connected with CRIU (Checkpoint-Restore in
-> > > Userspace)
-> > > project.
-> > > In CRIU we have support of autofs mounts C/R. To acheive that we
-> > > need
-> > > to use
-> > > ioctl's from /dev/autofs to get data about mounts, restore mount
-> > > as
-> > > catatonic
-> > > (if needed), change pipe fd and so on. But the problem is that
-> > > during
-> > > CRIU
-> > > dump we may meet situation when VFS subtree where autofs mount
-> > > present was
-> > > overmounted as whole.
-> > > 
-> > > Simpliest example is /proc/sys/fs/binfmt_misc. This mount present
-> > > on
-> > > most
-> > > GNU/Linux distributions by default. For instance on my Fedora 33:
-> > 
-> > Yes, I don't know why systemd uses this direct mount, there must
-> > have been a reason for it.
-> > 
-> > > trigger automount of binfmt_misc
-> > > $ ls /proc/sys/fs/binfmt_misc
-> > > 
-> > > $ cat /proc/1/mountinfo | grep binfmt
-> > > 35 24 0:36 / /proc/sys/fs/binfmt_misc rw,relatime shared:16 -
-> > > autofs
-> > > systemd-1 rw,...,direct,pipe_ino=223
-> > > 632 35 0:56 / /proc/sys/fs/binfmt_misc rw,...,relatime shared:315
-> > > -
-> > > binfmt_misc binfmt_misc rw
-> > 
-> > Yes, I think this looks normal.
-> > 
-> > > $ sudo unshare -m -p --fork --mount-proc sh
-> > > # cat /proc/self/mountinfo | grep "/proc"
-> > > 828 809 0:23 / /proc rw,nosuid,nodev,noexec,relatime - proc proc
-> > > rw
-> > > 829 828 0:36 / /proc/sys/fs/binfmt_misc rw,relatime - autofs
-> > > systemd-
-> > > 1 rw,...,direct,pipe_ino=223
-> > > 943 829 0:56 / /proc/sys/fs/binfmt_misc rw,...,relatime -
-> > > binfmt_misc
-> > > binfmt_misc rw
-> > > 949 828 0:57 / /proc rw...,relatime - proc proc rw
-> > 
-> > Isn't this screwed up, /proc is on top of the binfmt_misc mount ...
-> > 
-> > Is this what's seen from the root namespace?
-> 
-> No-no, after issuing
-> $ sudo unshare -m -p --fork --mount-proc sh
-> 
-> we enter to the pid+mount namespace and:
-> 
-> # cat /proc/self/mountinfo | grep "/proc"
-> 
-> So, it's picture from inside namespaces.
+Creating a series of detached mounts, attaching them to the filesystem,
+and unmounting them can be used to trigger an integer overflow in
+ns->mounts causing the kernel to block any new mounts in count_mounts()
+and returning ENOSPC because it falsely assumes that the maximum number
+of mounts in the mount namespace has been reached, i.e. it thinks it
+can't fit the new mounts into the mount namespace anymore.
 
-Ok, so potentially some of those have been propagated from the
-original mount namespace.
+Depending on the number of mounts in your system, this can be reproduced
+on any kernel that supportes open_tree() and move_mount() by compiling
+and running the following program:
 
-It seems to me the sensible thing would be those mounts would
-not propagate when a new proc has been requested. It doesn't
-make sense to me to carry around mounts that are not accessible
-because of something requested by the mount namespace creator.
+  /* SPDX-License-Identifier: LGPL-2.1+ */
 
-But that's nothing new and isn't likely to change any time soon.
+  #define _GNU_SOURCE
+  #include <errno.h>
+  #include <fcntl.h>
+  #include <getopt.h>
+  #include <limits.h>
+  #include <stdbool.h>
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <string.h>
+  #include <sys/mount.h>
+  #include <sys/stat.h>
+  #include <sys/syscall.h>
+  #include <sys/types.h>
+  #include <unistd.h>
 
-> 
-> > > As we can see now autofs mount /proc/sys/fs/binfmt_misc is
-> > > inaccessible.
-> > > If we do something like:
-> > > 
-> > > struct autofs_dev_ioctl *param;
-> > > param = malloc(...);
-> > > devfd = open("/dev/autofs", O_RDONLY);
-> > > init_autofs_dev_ioctl(param);
-> > > param->size = size;
-> > > strcpy(param->path, "/proc/sys/fs/binfmt_misc");
-> > > param->openmount.devid = 36;
-> > > err = ioctl(devfd, AUTOFS_DEV_IOCTL_OPENMOUNT, param)
-> > > 
-> > > now we get err = -ENOENT.
-> > 
-> > Maybe that should be EINVAL, not sure about cases though.
-> 
-> in current version -ENOENT is returned in this particular case
-> 
-> > > > What's being said here?
-> > > > 
-> > > > For a start your talking about direct mounts, I'm pretty sure
-> > > > this
-> > > > use case can't occur with indirect mounts in the sense that the
-> > > > indirect mount base should/must never be over mounted and IIRC
-> > > > that
-> > > > base can't be /proc (but maybe that's just mounts inside proc
-> > > > ...),
-> > > > can't remember now but from a common sense POV an indirect
-> > > > mount
-> > > > won't/can't be on /proc.
-> > > > 
-> > > > And why is this ioctl be called?
-> > > 
-> > > We call this ioctl during criu dump stage to open fd from autofs
-> > > mount dentry. This fd is used later to call
-> > > ioctl(AUTOFS_IOC_CATATONIC)
-> > > (we do that on criu dump if we see that control process of autofs
-> > > mount
-> > > is dead or pipe is dead).
-> > 
-> > Right so your usage "is" the way it's intended, ;)
-> 
-> That's good! ;)
-> 
-> > > > If the mount is over mounted should that prevent expiration of
-> > > > the
-> > > > over mounted /proc anyway, so maybe the return is correct ...
-> > > > or
-> > > > not ...
-> > > 
-> > > I agree that case with overmounted subtree with autofs mount is
-> > > weird
-> > > case.
-> > > But it may be easily created by user and we in CRIU try to handle
-> > > that.
-> > 
-> > I'm not yet ready to make a call on how I think this this should
-> > be done.
-> > 
-> > Since you seem to be clear on what this should be used for I'll
-> > need to look more closely at the patch.
-> > 
-> > But, at first glance, it looked like it would break the existing
-> > function of the ioctl.
-> > 
-> > Could you explain how the patch works, in particular why it doesn't
-> > break the existing functionality.
-> 
-> Sure. With pleasure. Idea of patch is naive:
-> 1. find_autofs_mount() function called only from syscall context, so,
-> we always can determine current mount namespace of caller.
-> So, I've introduced
-> 
-> > > > > + int lookup_mount_path(struct mnt_namespace *ns,
-> > > > > +		      struct path *res,
-> > > > > +		      int test(const struct path *mnt, void
-> > > > > *data),
-> > > > > +		      void *data)
-> 
-> lookup_mount_path() helper function, which allows to traverse mounts
-> list of
-> mount namespace and find proper autofs mount by user-provided helper
-> test().
-> 
-> 2. Helper function is fairly simple:
-> a) it checks that mount is autofs mount (by magic number on
-> superblock)
-> b) it calculates full path to mount point of each mount in mount
-> namespace
-> and compare it with path which user was provided to the
-> ioctl(AUTOFS_DEV_IOCTL_OPENMOUNT)
-> parameters.
+  /* open_tree() */
+  #ifndef OPEN_TREE_CLONE
+  #define OPEN_TREE_CLONE 1
+  #endif
 
-Oh right, it's using the mounts list, it isn't a path walk oriented
-search. That's probably why I didn't see the expected follow call.
+  #ifndef OPEN_TREE_CLOEXEC
+  #define OPEN_TREE_CLOEXEC O_CLOEXEC
+  #endif
 
-Another problem with the existing code is it will get it wrong if
-there is more than one autofs mount in the stack. For example an
-autofs submount mounted on a direct mount which is rare and not
-all that sensible but possible.
+  #ifndef __NR_open_tree
+          #if defined __alpha__
+                  #define __NR_open_tree 538
+          #elif defined _MIPS_SIM
+                  #if _MIPS_SIM == _MIPS_SIM_ABI32        /* o32 */
+                          #define __NR_open_tree 4428
+                  #endif
+                  #if _MIPS_SIM == _MIPS_SIM_NABI32       /* n32 */
+                          #define __NR_open_tree 6428
+                  #endif
+                  #if _MIPS_SIM == _MIPS_SIM_ABI64        /* n64 */
+                          #define __NR_open_tree 5428
+                  #endif
+          #elif defined __ia64__
+                  #define __NR_open_tree (428 + 1024)
+          #else
+                  #define __NR_open_tree 428
+          #endif
+  #endif
 
-So, if we change this, there will need to be some agreed policy
-about which mount would is selected.
+  /* move_mount() */
+  #ifndef MOVE_MOUNT_F_EMPTY_PATH
+  #define MOVE_MOUNT_F_EMPTY_PATH 0x00000004 /* Empty from path permitted */
+  #endif
 
-The originally code (long before what is there now) selected the
-lowest mount in the stack because this mechanism is only needed
-for direct mounts and, as long as there's not something seriously
-wrong, that is the mount you would need. That's what would be needed
-for the case above and I think it's what's needed in your case too.
+  #ifndef __NR_move_mount
+          #if defined __alpha__
+                  #define __NR_move_mount 539
+          #elif defined _MIPS_SIM
+                  #if _MIPS_SIM == _MIPS_SIM_ABI32        /* o32 */
+                          #define __NR_move_mount 4429
+                  #endif
+                  #if _MIPS_SIM == _MIPS_SIM_NABI32       /* n32 */
+                          #define __NR_move_mount 6429
+                  #endif
+                  #if _MIPS_SIM == _MIPS_SIM_ABI64        /* n64 */
+                          #define __NR_move_mount 5429
+                  #endif
+          #elif defined __ia64__
+                  #define __NR_move_mount (428 + 1024)
+          #else
+                  #define __NR_move_mount 429
+          #endif
+  #endif
 
-I still haven't yet looked closely at your change, I'll need to do
-that.
+  static inline int sys_open_tree(int dfd, const char *filename, unsigned int flags)
+  {
+          return syscall(__NR_open_tree, dfd, filename, flags);
+  }
 
-> 
-> Problem here is case when user provided relative path in ioctl
-> parameters
-> (struct autofs_dev_ioctl). In this case we may fail to resolve user
-> provided path to
-> struct path. For instance:
+  static inline int sys_move_mount(int from_dfd, const char *from_pathname, int to_dfd,
+                                   const char *to_pathname, unsigned int flags)
+  {
+          return syscall(__NR_move_mount, from_dfd, from_pathname, to_dfd, to_pathname, flags);
+  }
 
-I don't like the idea of allowing a relative path as an a parameter
-at all. I think that should be a failure case.
+  static bool is_shared_mountpoint(const char *path)
+  {
+          bool shared = false;
+          FILE *f = NULL;
+          char *line = NULL;
+          int i;
+          size_t len = 0;
 
-These direct mounts come from a table (a map in autofs or a unit
-in systemd) and they should always be identified by that full path.
+          f = fopen("/proc/self/mountinfo", "re");
+          if (!f)
+                  return 0;
 
-Ian
+          while (getline(&line, &len, f) > 0) {
+                  char *slider1, *slider2;
 
-> 
-> # cat /proc/self/mountinfo | grep "/proc"
-> 828 809 0:23 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw
-> 829 828 0:36 / /proc/sys/fs/binfmt_misc rw,relatime - autofs systemd-
-> 1 rw,...,direct,pipe_ino=223
-> 943 829 0:56 / /proc/sys/fs/binfmt_misc rw,...,relatime - binfmt_misc
-> binfmt_misc rw
-> 949 828 0:57 / /proc rw...,relatime - proc proc rw
-> 
-> in this case 
-> kern_path("/proc/sys/fs/binfmt_misc", LOOKUP_MOUNTPOINT, &path) ==
-> -ENOENT
-> 
-> To overcome this issue, if kern_path() failed with -ENOENT
-> AND user-provided mount path looks like fullpath (starts from /)
-> we just try to find autofs mount in mounts list just by searching
-> autofs mounts in mounts list with mount point path equal to user-
-> provided
-> path. This covers our problem case.
-> 
-> This patch is fully compatible with old behaviour - if parent mounts
-> of
-> autofs mount is not overmounted - then
-> kern_path("/proc/sys/fs/binfmt_misc", LOOKUP_MOUNTPOINT, &path)
-> will not fail, and we also easily find needed autofs mount in mounts
-> list
-> of caller mount namespace.
-> 
-> > Long ago I'm pretty sure I continued to follow up but IIRC that
-> > went away and was replaced by a single follow_up(), but since
-> > the changes didn't break the existing function of autofs I
-> > didn't pay that much attention to them, I'll need to look at
-> > that too. Not only that, the namespace code has moved a long
-> > way too however there's still little attention given to
-> > sanitizing the mounts in the new namespace by anything that I'm
-> > aware of that uses the feature. TBH I'm not sure why I don't
-> > see a lot more problems of that nature.
-> > 
-> > I have to wonder if what's needed is attention to the follow up
-> > but that /proc covering the earlier mounts is a bit of a concern.
-> > 
-> > > > I get that the mount namespaces should be independent and
-> > > > intuitively
-> > > > this is a bug but what is the actual use and expected result.
-> > > > 
-> > > > But anyway, aren't you saying that the VFS path walk isn't
-> > > > handling
-> > > > mount namespaces properly or are you saying that a process
-> > > > outside
-> > > > this new mount namespace becomes broken because of it?
-> > > 
-> > > No-no, it's only about opening autofs mount by device id + path.
-> > 
-> > That's right, specifically getting a file handle to a covered
-> > autofs
-> > mount for things like bringing it back to life etc. But that
-> > silently
-> > implies the same mount namespace.
-> > 
-> > Let me look at the patch and think about it a bit.
-> > I'll probably need to run some tests too.
-> > I am a little busy right now so it may take a bit of time.
-> > 
-> > Ian 
-> 
-> Thank you very much for your attention to the patch and comments.
-> 
-> Regards,
-> Alex
-> 
-> > > > Either way the solution looks more complicated than I'd expect
-> > > > so
-> > > > some explanation along these lines would be good.
-> > > > 
-> > > > Ian
-> > > 
-> > > Regards,
-> > > Alex
-> > > 
-> > > > > Cc: Matthew Wilcox <willy@infradead.org>
-> > > > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > > > Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-> > > > > Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
-> > > > > Cc: autofs@vger.kernel.org
-> > > > > Cc: linux-kernel@vger.kernel.org
-> > > > > Signed-off-by: Alexander Mikhalitsyn <
-> > > > > alexander.mikhalitsyn@virtuozzo.com>
-> > > > > ---
-> > > > >  fs/autofs/dev-ioctl.c | 127
-> > > > > +++++++++++++++++++++++++++++++++++++---
-> > > > > --
-> > > > >  fs/namespace.c        |  44 +++++++++++++++
-> > > > >  include/linux/mount.h |   5 ++
-> > > > >  3 files changed, 162 insertions(+), 14 deletions(-)
-> > > > > 
-> > > > > diff --git a/fs/autofs/dev-ioctl.c b/fs/autofs/dev-ioctl.c
-> > > > > index 5bf781ea6d67..55edd3eba8ce 100644
-> > > > > --- a/fs/autofs/dev-ioctl.c
-> > > > > +++ b/fs/autofs/dev-ioctl.c
-> > > > > @@ -10,6 +10,7 @@
-> > > > >  #include <linux/fdtable.h>
-> > > > >  #include <linux/magic.h>
-> > > > >  #include <linux/nospec.h>
-> > > > > +#include <linux/nsproxy.h>
-> > > > >  
-> > > > >  #include "autofs_i.h"
-> > > > >  
-> > > > > @@ -179,32 +180,130 @@ static int
-> > > > > autofs_dev_ioctl_protosubver(struct
-> > > > > file *fp,
-> > > > >  	return 0;
-> > > > >  }
-> > > > >  
-> > > > > +struct filter_autofs_data {
-> > > > > +	char *pathbuf;
-> > > > > +	const char *fpathname;
-> > > > > +	int (*test)(const struct path *path, void *data);
-> > > > > +	void *data;
-> > > > > +};
-> > > > > +
-> > > > > +static int filter_autofs(const struct path *path, void *p)
-> > > > > +{
-> > > > > +	struct filter_autofs_data *data = p;
-> > > > > +	char *name;
-> > > > > +	int err;
-> > > > > +
-> > > > > +	if (path->mnt->mnt_sb->s_magic != AUTOFS_SUPER_MAGIC)
-> > > > > +		return 0;
-> > > > > +
-> > > > > +	name = d_path(path, data->pathbuf, PATH_MAX);
-> > > > > +	if (IS_ERR(name)) {
-> > > > > +		err = PTR_ERR(name);
-> > > > > +		pr_err("d_path failed, errno %d\n", err);
-> > > > > +		return 0;
-> > > > > +	}
-> > > > > +
-> > > > > +	if (strncmp(data->fpathname, name, PATH_MAX))
-> > > > > +		return 0;
-> > > > > +
-> > > > > +	if (!data->test(path, data->data))
-> > > > > +		return 0;
-> > > > > +
-> > > > > +	return 1;
-> > > > > +}
-> > > > > +
-> > > > >  /* Find the topmost mount satisfying test() */
-> > > > >  static int find_autofs_mount(const char *pathname,
-> > > > >  			     struct path *res,
-> > > > >  			     int test(const struct path *path,
-> > > > > void
-> > > > > *data),
-> > > > >  			     void *data)
-> > > > >  {
-> > > > > -	struct path path;
-> > > > > +	struct filter_autofs_data mdata = {
-> > > > > +		.pathbuf = NULL,
-> > > > > +		.test = test,
-> > > > > +		.data = data,
-> > > > > +	};
-> > > > > +	struct mnt_namespace *mnt_ns = current->nsproxy-
-> > > > > >mnt_ns;
-> > > > > +	struct path path = {};
-> > > > > +	char *fpathbuf = NULL;
-> > > > >  	int err;
-> > > > >  
-> > > > > +	/*
-> > > > > +	 * In most cases user will provide full path to autofs
-> > > > > mount
-> > > > > point
-> > > > > +	 * as it is in /proc/X/mountinfo. But if not, then we
-> > > > > need to
-> > > > > +	 * open provided relative path and calculate full path.
-> > > > > +	 * It will not work in case when parent mount of autofs
-> > > > > mount
-> > > > > +	 * is overmounted:
-> > > > > +	 * cd /root
-> > > > > +	 * ./autofs_mount /root/autofs_yard/mnt
-> > > > > +	 * mount -t tmpfs tmpfs /root/autofs_yard/mnt
-> > > > > +	 * mount -t tmpfs tmpfs /root/autofs_yard
-> > > > > +	 * ./call_ioctl /root/autofs_yard/mnt <- all fine here
-> > > > > because
-> > > > > we
-> > > > > +	 * 					 have full
-> > > > > path and
-> > > > > don't
-> > > > > +	 * 					 need to call
-> > > > > kern_path()
-> > > > > +	 * 					 and d_path()
-> > > > > +	 * ./call_ioctl autofs_yard/mnt <- will fail because
-> > > > > kern_path()
-> > > > > +	 * 				   can't lookup
-> > > > > /root/autofs_yard/mnt
-> > > > > +	 * 				   (/root/autofs_yard
-> > > > > directory is
-> > > > > +	 * 				    empty)
-> > > > > +	 *
-> > > > > +	 * TO DISCUSS: we can write special algorithm for
-> > > > > relative path
-> > > > > case
-> > > > > +	 * by getting cwd path combining it with relative path
-> > > > > from
-> > > > > user. But
-> > > > > +	 * is it worth it? User also may use paths with
-> > > > > symlinks in
-> > > > > components
-> > > > > +	 * of path.
-> > > > > +	 *
-> > > > > +	 */
-> > > > >  	err = kern_path(pathname, LOOKUP_MOUNTPOINT, &path);
-> > > > > -	if (err)
-> > > > > -		return err;
-> > > > > -	err = -ENOENT;
-> > > > > -	while (path.dentry == path.mnt->mnt_root) {
-> > > > > -		if (path.dentry->d_sb->s_magic ==
-> > > > > AUTOFS_SUPER_MAGIC) {
-> > > > > -			if (test(&path, data)) {
-> > > > > -				path_get(&path);
-> > > > > -				*res = path;
-> > > > > -				err = 0;
-> > > > > -				break;
-> > > > > -			}
-> > > > > +	if (err) {
-> > > > > +		if (pathname[0] == '/') {
-> > > > > +			/*
-> > > > > +			 * pathname looks like full path let's
-> > > > > try to
-> > > > > use it
-> > > > > +			 * as it is when searching autofs mount
-> > > > > +			 */
-> > > > > +			mdata.fpathname = pathname;
-> > > > > +			err = 0;
-> > > > > +			pr_debug("kern_path failed on %s, errno
-> > > > > %d.
-> > > > > Will use path as it is to search mount\n",
-> > > > > +				 pathname, err);
-> > > > > +		} else {
-> > > > > +			pr_err("kern_path failed on %s, errno
-> > > > > %d\n",
-> > > > > +			       pathname, err);
-> > > > > +			return err;
-> > > > > +		}
-> > > > > +	} else {
-> > > > > +		pr_debug("find_autofs_mount: let's resolve full
-> > > > > path
-> > > > > %s\n",
-> > > > > +			 pathname);
-> > > > > +
-> > > > > +		fpathbuf = kmalloc(PATH_MAX, GFP_KERNEL);
-> > > > > +		if (!fpathbuf) {
-> > > > > +			err = -ENOMEM;
-> > > > > +			goto err;
-> > > > > +		}
-> > > > > +
-> > > > > +		/*
-> > > > > +		 * We have pathname from user but it may be
-> > > > > relative,
-> > > > > we need to
-> > > > > +		 * have full path because we want to compare it
-> > > > > with
-> > > > > mountpoints
-> > > > > +		 * paths later.
-> > > > > +		 */
-> > > > > +		mdata.fpathname = d_path(&path, fpathbuf,
-> > > > > PATH_MAX);
-> > > > > +		if (IS_ERR(mdata.fpathname)) {
-> > > > > +			err = PTR_ERR(mdata.fpathname);
-> > > > > +			pr_err("d_path failed, errno %d\n",
-> > > > > err);
-> > > > > +			goto err;
-> > > > >  		}
-> > > > > -		if (!follow_up(&path))
-> > > > > -			break;
-> > > > >  	}
-> > > > > +
-> > > > > +	mdata.pathbuf = kmalloc(PATH_MAX, GFP_KERNEL);
-> > > > > +	if (!mdata.pathbuf) {
-> > > > > +		err = -ENOMEM;
-> > > > > +		goto err;
-> > > > > +	}
-> > > > > +
-> > > > > +	err = lookup_mount_path(mnt_ns, res, filter_autofs,
-> > > > > &mdata);
-> > > > > +
-> > > > > +err:
-> > > > >  	path_put(&path);
-> > > > > +	kfree(fpathbuf);
-> > > > > +	kfree(mdata.pathbuf);
-> > > > >  	return err;
-> > > > >  }
-> > > > >  
-> > > > > diff --git a/fs/namespace.c b/fs/namespace.c
-> > > > > index 56bb5a5fdc0d..e1d006dbdfe2 100644
-> > > > > --- a/fs/namespace.c
-> > > > > +++ b/fs/namespace.c
-> > > > > @@ -1367,6 +1367,50 @@ void mnt_cursor_del(struct
-> > > > > mnt_namespace
-> > > > > *ns,
-> > > > > struct mount *cursor)
-> > > > >  }
-> > > > >  #endif  /* CONFIG_PROC_FS */
-> > > > >  
-> > > > > +/**
-> > > > > + * lookup_mount_path - traverse all mounts in mount
-> > > > > namespace
-> > > > > + *                     and filter using test() probe
-> > > > > callback
-> > > > > + * As a result struct path will be provided.
-> > > > > + * @ns: root of mount tree
-> > > > > + * @res: struct path pointer where resulting path will be
-> > > > > written
-> > > > > + * @test: filter callback
-> > > > > + * @data: will be provided as argument to test() callback
-> > > > > + *
-> > > > > + */
-> > > > > +int lookup_mount_path(struct mnt_namespace *ns,
-> > > > > +		      struct path *res,
-> > > > > +		      int test(const struct path *mnt, void
-> > > > > *data),
-> > > > > +		      void *data)
-> > > > > +{
-> > > > > +	struct mount *mnt;
-> > > > > +	int err = -ENOENT;
-> > > > > +
-> > > > > +	down_read(&namespace_sem);
-> > > > > +	lock_ns_list(ns);
-> > > > > +	list_for_each_entry(mnt, &ns->list, mnt_list) {
-> > > > > +		struct path tmppath;
-> > > > > +
-> > > > > +		if (mnt_is_cursor(mnt))
-> > > > > +			continue;
-> > > > > +
-> > > > > +		tmppath.dentry = mnt->mnt.mnt_root;
-> > > > > +		tmppath.mnt = &mnt->mnt;
-> > > > > +
-> > > > > +		if (test(&tmppath, data)) {
-> > > > > +			path_get(&tmppath);
-> > > > > +			*res = tmppath;
-> > > > > +			err = 0;
-> > > > > +			break;
-> > > > > +		}
-> > > > > +	}
-> > > > > +	unlock_ns_list(ns);
-> > > > > +	up_read(&namespace_sem);
-> > > > > +
-> > > > > +	return err;
-> > > > > +}
-> > > > > +
-> > > > > +EXPORT_SYMBOL(lookup_mount_path);
-> > > > > +
-> > > > >  /**
-> > > > >   * may_umount_tree - check if a mount tree is busy
-> > > > >   * @mnt: root of mount tree
-> > > > > diff --git a/include/linux/mount.h b/include/linux/mount.h
-> > > > > index 5d92a7e1a742..a79e6392e38e 100644
-> > > > > --- a/include/linux/mount.h
-> > > > > +++ b/include/linux/mount.h
-> > > > > @@ -118,6 +118,11 @@ extern unsigned int sysctl_mount_max;
-> > > > >  
-> > > > >  extern bool path_is_mountpoint(const struct path *path);
-> > > > >  
-> > > > > +extern int lookup_mount_path(struct mnt_namespace *ns,
-> > > > > +			     struct path *res,
-> > > > > +			     int test(const struct path *mnt,
-> > > > > void
-> > > > > *data),
-> > > > > +			     void *data);
-> > > > > +
-> > > > >  extern void kern_unmount_array(struct vfsmount *mnt[],
-> > > > > unsigned
-> > > > > int
-> > > > > num);
-> > > > >  
-> > > > >  #endif /* _LINUX_MOUNT_H */
+                  for (slider1 = line, i = 0; slider1 && i < 4; i++)
+                          slider1 = strchr(slider1 + 1, ' ');
+
+                  if (!slider1)
+                          continue;
+
+                  slider2 = strchr(slider1 + 1, ' ');
+                  if (!slider2)
+                          continue;
+
+                  *slider2 = '\0';
+                  if (strcmp(slider1 + 1, path) == 0) {
+                          /* This is the path. Is it shared? */
+                          slider1 = strchr(slider2 + 1, ' ');
+                          if (slider1 && strstr(slider1, "shared:")) {
+                                  shared = true;
+                                  break;
+                          }
+                  }
+          }
+          fclose(f);
+          free(line);
+
+          return shared;
+  }
+
+  static void usage(void)
+  {
+          const char *text = "mount-new [--recursive] <base-dir>\n";
+          fprintf(stderr, "%s", text);
+          _exit(EXIT_SUCCESS);
+  }
+
+  #define exit_usage(format, ...)                              \
+          ({                                                   \
+                  fprintf(stderr, format "\n", ##__VA_ARGS__); \
+                  usage();                                     \
+          })
+
+  #define exit_log(format, ...)                                \
+          ({                                                   \
+                  fprintf(stderr, format "\n", ##__VA_ARGS__); \
+                  exit(EXIT_FAILURE);                          \
+          })
+
+  static const struct option longopts[] = {
+          {"help",        no_argument,            0,      'a'},
+          { NULL,         no_argument,            0,       0 },
+  };
+
+  int main(int argc, char *argv[])
+  {
+          int exit_code = EXIT_SUCCESS, index = 0;
+          int dfd, fd_tree, new_argc, ret;
+          char *base_dir;
+          char *const *new_argv;
+          char target[PATH_MAX];
+
+          while ((ret = getopt_long_only(argc, argv, "", longopts, &index)) != -1) {
+                  switch (ret) {
+                  case 'a':
+                          /* fallthrough */
+                  default:
+                          usage();
+                  }
+          }
+
+          new_argv = &argv[optind];
+          new_argc = argc - optind;
+          if (new_argc < 1)
+                  exit_usage("Missing base directory\n");
+          base_dir = new_argv[0];
+
+          if (*base_dir != '/')
+                  exit_log("Please specify an absolute path");
+
+          /* Ensure that target is a shared mountpoint. */
+          if (!is_shared_mountpoint(base_dir))
+                  exit_log("Please ensure that \"%s\" is a shared mountpoint", base_dir);
+
+          dfd = open(base_dir, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+          if (dfd < 0)
+                  exit_log("%m - Failed to open base directory \"%s\"", base_dir);
+
+          ret = mkdirat(dfd, "detached-move-mount", 0755);
+          if (ret < 0)
+                  exit_log("%m - Failed to create required temporary directories");
+
+          ret = snprintf(target, sizeof(target), "%s/detached-move-mount", base_dir);
+          if (ret < 0 || (size_t)ret >= sizeof(target))
+                  exit_log("%m - Failed to assemble target path");
+
+          /*
+           * Having a mount table with 10000 mounts is already quite excessive
+           * and shoult account even for weird test systems.
+           */
+          for (size_t i = 0; i < 10000; i++) {
+                  fd_tree = sys_open_tree(dfd, "detached-move-mount",
+                                          OPEN_TREE_CLONE |
+                                          OPEN_TREE_CLOEXEC |
+                                          AT_EMPTY_PATH);
+                  if (fd_tree < 0) {
+                          fprintf(stderr, "%m - Failed to open %d(detached-move-mount)", dfd);
+                          exit_code = EXIT_FAILURE;
+                          break;
+                  }
+
+                  ret = sys_move_mount(fd_tree, "", dfd, "detached-move-mount", MOVE_MOUNT_F_EMPTY_PATH);
+                  if (ret < 0) {
+                          if (errno == ENOSPC)
+                                  fprintf(stderr, "%m - Buggy mount counting");
+                          else
+                                  fprintf(stderr, "%m - Failed to attach mount to %d(detached-move-mount)", dfd);
+                          exit_code = EXIT_FAILURE;
+                          break;
+                  }
+                  close(fd_tree);
+
+                  ret = umount2(target, MNT_DETACH);
+                  if (ret < 0) {
+                          fprintf(stderr, "%m - Failed to unmount %s", target);
+                          exit_code = EXIT_FAILURE;
+                          break;
+                  }
+          }
+
+          (void)unlinkat(dfd, "detached-move-mount", AT_REMOVEDIR);
+          close(dfd);
+
+          exit(exit_code);
+  }
+
+and wait for the kernel to refuse any new mounts by returning ENOSPC.
+How many iterations are needed depends on the number of mounts in your
+system. Assuming you have something like 50 mounts on a standard system
+it should be almost instantaneous.
+
+The root cause of this is that detached mounts aren't handled correctly
+when source and target mount are identical and reside on a shared mount
+causing a broken mount tree where the detached source itself is
+propagated which propagation prevents for regular bind-mounts and new
+mounts. This ultimately leads to a miscalculation of the number of
+mounts in the mount namespace.
+
+Detached mounts created via
+open_tree(fd, path, OPEN_TREE_CLONE)
+are essentially like an unattached new mount, or an unattached
+bind-mount. They can then later on be attached to the filesystem via
+move_mount() which calls into attach_recursive_mount(). Part of
+attaching it to the filesystem is making sure that mounts get correctly
+propagated in case the destination mountpoint is MS_SHARED, i.e. is a
+shared mountpoint. This is done by calling into propagate_mnt() which
+walks the list of peers calling propagate_one() on each mount in this
+list making sure it receives the propagation event.
+The propagate_one() functions thereby skips both new mounts and bind
+mounts to not propagate them "into themselves". Both are identified by
+checking whether the mount is already attached to any mount namespace in
+mnt->mnt_ns. The is what the IS_MNT_NEW() helper is responsible for.
+
+However, detached mounts have an anonymous mount namespace attached to
+them stashed in mnt->mnt_ns which means that IS_MNT_NEW() doesn't
+realize they need to be skipped causing the mount to propagate "into
+itself" breaking the mount table and causing a disconnect between the
+number of mounts recorded as being beneath or reachable from the target
+mountpoint and the number of mounts actually recorded/counted in
+ns->mounts ultimately causing an overflow which in turn prevents any new
+mounts via the ENOSPC issue.
+
+So teach propagation to handle detached mounts by making it aware of
+them. I've been tracking this issue down for the last couple of days and
+then verifying that the fix is correct by
+unmounting everything in my current mount table leaving only /proc and
+/sys mounted and running the reproducer above overnight verifying the
+number of mounts counted in ns->mounts. With this fix the counts are
+correct and the ENOSPC issue can't be reproduced.
+
+This change will only have an effect on mounts created with the new
+mount API since detached mounts cannot be created with the old mount API
+so regressions are extremely unlikely.
+
+Fixes: 2db154b3ea8e ("vfs: syscall: Add move_mount(2) to move mounts around")
+Cc: David Howells <dhowells@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ fs/pnode.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/pnode.h b/fs/pnode.h
+index 26f74e092bd9..988f1aa9b02a 100644
+--- a/fs/pnode.h
++++ b/fs/pnode.h
+@@ -12,7 +12,7 @@
+ 
+ #define IS_MNT_SHARED(m) ((m)->mnt.mnt_flags & MNT_SHARED)
+ #define IS_MNT_SLAVE(m) ((m)->mnt_master)
+-#define IS_MNT_NEW(m)  (!(m)->mnt_ns)
++#define IS_MNT_NEW(m)  (!(m)->mnt_ns || is_anon_ns((m)->mnt_ns))
+ #define CLEAR_MNT_SHARED(m) ((m)->mnt.mnt_flags &= ~MNT_SHARED)
+ #define IS_MNT_UNBINDABLE(m) ((m)->mnt.mnt_flags & MNT_UNBINDABLE)
+ #define IS_MNT_MARKED(m) ((m)->mnt.mnt_flags & MNT_MARKED)
+
+base-commit: f69d02e37a85645aa90d18cacfff36dba370f797
+-- 
+2.27.0
 
