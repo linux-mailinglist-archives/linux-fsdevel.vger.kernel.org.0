@@ -2,104 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23D3B3319C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Mar 2021 22:56:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CD5F3319DA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Mar 2021 22:57:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230176AbhCHV4V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Mar 2021 16:56:21 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:56725 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230047AbhCHVzs (ORCPT
+        id S231890AbhCHV5Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Mar 2021 16:57:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41840 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230457AbhCHV5X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Mar 2021 16:55:48 -0500
-Received: from dread.disaster.area (pa49-181-239-12.pa.nsw.optusnet.com.au [49.181.239.12])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 29E148289A3;
-        Tue,  9 Mar 2021 08:55:36 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1lJNqh-000HG4-6L; Tue, 09 Mar 2021 08:55:35 +1100
-Date:   Tue, 9 Mar 2021 08:55:35 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>, linux-cachefs@redhat.com,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-afs@lists.infradead.org,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: fscache: Redesigning the on-disk cache
-Message-ID: <20210308215535.GA63242@dread.disaster.area>
-References: <CAOQ4uxhxwKHLT559f8v5aFTheKgPUndzGufg0E58rkEqa9oQ3Q@mail.gmail.com>
- <2653261.1614813611@warthog.procyon.org.uk>
- <517184.1615194835@warthog.procyon.org.uk>
+        Mon, 8 Mar 2021 16:57:23 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 858C4C06175F
+        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Mar 2021 13:57:22 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id f1so23547900lfu.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Mar 2021 13:57:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=khP6ZcxYFVDRWDYG0T+rbHb6YKkL+/NsAq7MfcJL/3k=;
+        b=DAuY2SnkTq4kpznO/OR8hpixQWW/2Z9iRHBq2QFf3hMnIXGIFb03qdLXNtJxwrhNGd
+         3izsTWnjGrT67Huo9kgm3bJSkk8jBNm2Fy0lQccrE8yEp3sGHlzxuKdoGe5B8gypbEZs
+         PgguuAqFFpsJwemWMW9ZYiC9flS1cdAsb3YWVwmNyGTU294MM+n0e6SASQ1RL8zKeMHY
+         TBbz6GmWAzgwRIUeOJxS9jx/lNMJUfQa6EstM5U8eWNqc7ZqRvIE35Qovzzfc7LtQX3+
+         zCB6QbIYWpKRmOg5SrsCB84iOf99jFLmgmRJhgG5ndhSLC5ILGtzRAvNz8eBtux+l04v
+         vpiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=khP6ZcxYFVDRWDYG0T+rbHb6YKkL+/NsAq7MfcJL/3k=;
+        b=nr2tASnGEasY9SbnnU5RBxRMYPrdyfoL7dA5BgeITeaqJzxLBnVQbfF64itBp8fSvH
+         kfKfJ5w6wo+COtpYxtdfQiZBPw+6h0lKJsASmpXZX8CWhUKsInMt8+43tWaGVf92et8x
+         r5I1a/uuCr2oyyw86XU7L0ErdOyrPxX3NQ/Ziibv+6+mAKiwhZaS2OYnDBxPnN2VLolS
+         sFTjNMXhhXiTzbOpVuSYGFuRA0p/cAnEE5Xie9ZS8IEZk/pJlPTI9Dlm5RiVFSny20h+
+         m7vyOCwYi3rRUt7B5mUyinhgVkDSQTHSr0XP11SFw92RstSl5bJbpfYxbLXXlJjMWqE0
+         P7/g==
+X-Gm-Message-State: AOAM5322qa4IBPz9RKofWZJuUd9t4Do1342ORvKMONsZnGc5+E8xZgk9
+        MnL6M00hAzxKhrTUIxU01RjMhl5+0bEdQf+7I+Ujhw==
+X-Google-Smtp-Source: ABdhPJwJKP9j6TADl4BG8Z3lqly76Sb5BltQAcueClPCVCtYYwOA6NDC7q4ME8VtgpxXEhBkyFAjORyMMciln0a+Tmo=
+X-Received: by 2002:a19:f50e:: with SMTP id j14mr5587045lfb.299.1615240640883;
+ Mon, 08 Mar 2021 13:57:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <517184.1615194835@warthog.procyon.org.uk>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0 cx=a_idp_d
-        a=gO82wUwQTSpaJfP49aMSow==:117 a=gO82wUwQTSpaJfP49aMSow==:17
-        a=kj9zAlcOel0A:10 a=dESyimp9J3IA:10 a=pGLkceISAAAA:8 a=7-415B0cAAAA:8
-        a=tj5_YPy7viIAn9pg2yAA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20210217001322.2226796-1-shy828301@gmail.com> <20210217001322.2226796-12-shy828301@gmail.com>
+In-Reply-To: <20210217001322.2226796-12-shy828301@gmail.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Mon, 8 Mar 2021 13:57:06 -0800
+Message-ID: <CALvZod7Cg9x4x8Jmgu6z9LAn0y-1OosnHSUCL_=DcCfgbGThJg@mail.gmail.com>
+Subject: Re: [v8 PATCH 11/13] mm: vmscan: don't need allocate
+ shrinker->nr_deferred for memcg aware shrinkers
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 08, 2021 at 09:13:55AM +0000, David Howells wrote:
-> Amir Goldstein <amir73il@gmail.com> wrote:
-> 
-> > >  (0a) As (0) but using SEEK_DATA/SEEK_HOLE instead of bmap and opening the
-> > >       file for every whole operation (which may combine reads and writes).
-> > 
-> > I read that NFSv4 supports hole punching, so when using ->bmap() or SEEK_DATA
-> > to keep track of present data, it's hard to distinguish between an
-> > invalid cached range and a valid "cached hole".
-> 
-> I wasn't exactly intending to permit caching over NFS.  That leads to fun
-> making sure that the superblock you're caching isn't the one that has the
-> cache in it.
-> 
-> However, we will need to handle hole-punching being done on a cached netfs,
-> even if that's just to completely invalidate the cache for that file.
-> 
-> > With ->fiemap() you can at least make the distinction between a non existing
-> > and an UNWRITTEN extent.
-> 
-> I can't use that for XFS, Ext4 or btrfs, I suspect.  Christoph and Dave's
-> assertion is that the cache can't rely on the backing filesystem's metadata
-> because these can arbitrarily insert or remove blocks of zeros to bridge or
-> split extents.
+On Tue, Feb 16, 2021 at 4:13 PM Yang Shi <shy828301@gmail.com> wrote:
+>
+> Now nr_deferred is available on per memcg level for memcg aware shrinkers, so don't need
+> allocate shrinker->nr_deferred for such shrinkers anymore.
+>
+> The prealloc_memcg_shrinker() would return -ENOSYS if !CONFIG_MEMCG or memcg is disabled
+> by kernel command line, then shrinker's SHRINKER_MEMCG_AWARE flag would be cleared.
+> This makes the implementation of this patch simpler.
+>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> Acked-by: Roman Gushchin <guro@fb.com>
+> Signed-off-by: Yang Shi <shy828301@gmail.com>
 
-Well, that's not the big problem. The issue that makes FIEMAP
-unusable for determining if there is user data present in a file is
-that on-disk extent maps aren't exactly coherent with in-memory user
-data state.
-
-That is, we can have a hole on disk with delalloc user data in
-memory.  There's user data in the file, just not on disk. Same goes
-for unwritten extents - there can be dirty data in memory over an
-unwritten extent, and it won't get converted to written until the
-data is written back and the filesystem runs a conversion
-transaction.
-
-So, yeah, if you use FIEMAP to determine where data lies in a file
-that is being actively modified, you're going get corrupt data
-sooner rather than later.  SEEK_HOLE/DATA are coherent with in
-memory user data, so don't have this problem.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
