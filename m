@@ -2,101 +2,272 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAB663316FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Mar 2021 20:10:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BE5B331707
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Mar 2021 20:13:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230373AbhCHTJc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Mar 2021 14:09:32 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22799 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229701AbhCHTJE (ORCPT
+        id S231243AbhCHTMu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Mar 2021 14:12:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33968 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231263AbhCHTMU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Mar 2021 14:09:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1615230543;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pBhajOJHrx3P1bFfpTnaW+JD8S792IZZwlNpIQC5Q0g=;
-        b=Wa4JJmEsSW657KZboi0NuNYCQXrcQKQCtgdmsY34DNdoKDodEQNsFhO+K82qcz6gnXw3Am
-        bYFm5nlw2LlXa7zv3+yRNJKop2+0AW3SkmncBdXUTIvmnY6QEqvJD0OH5QYAXX3wWi5faE
-        px3MGm5oi5ZdKAjrcO5E9eXxvseaqnQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-285-mfpi1OsCPjKSNXMW3mY4Qw-1; Mon, 08 Mar 2021 14:09:02 -0500
-X-MC-Unique: mfpi1OsCPjKSNXMW3mY4Qw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E8114801814;
-        Mon,  8 Mar 2021 19:08:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B45F19C79;
-        Mon,  8 Mar 2021 19:08:53 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210308185410.GE7284@fieldses.org>
-References: <20210308185410.GE7284@fieldses.org> <CAOQ4uxhxwKHLT559f8v5aFTheKgPUndzGufg0E58rkEqa9oQ3Q@mail.gmail.com> <2653261.1614813611@warthog.procyon.org.uk> <517184.1615194835@warthog.procyon.org.uk>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     dhowells@redhat.com, Amir Goldstein <amir73il@gmail.com>,
-        linux-cachefs@redhat.com, Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-afs@lists.infradead.org,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: fscache: Redesigning the on-disk cache
+        Mon, 8 Mar 2021 14:12:20 -0500
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9933EC06174A
+        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Mar 2021 11:12:19 -0800 (PST)
+Received: by mail-lj1-x230.google.com with SMTP id 2so17530519ljr.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Mar 2021 11:12:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6lphpwLFld/gj6xJlJyOO7lHoVH9+/eeuknXpn9es+U=;
+        b=A85oOlhvLmMYG+jDFsWRVBu/cnZwePzqql9t9WBFBx59OqZJoMWuCF0MWN9qj2rV5E
+         hAid/1yrUHgklq8XGGnk8xeZqN//wbDPaTxY5WI70oXoxb2B8sfXFQvzk0HHsp6tuU25
+         i6uABvQNuaaSGXKGfUFhqxTaYDdODGfRXdMa/FMvenEXGfwFueCPgNK/kBiImTAm37MI
+         3urV6N0IFcmQO9ZBWJkdYDiy9LBIltrkDNqf0F6kXk6S8qWPG1QJV452AeNOa4ySLjC6
+         dmi5ErtSe99XmVMiYpeQzPcZ5I1jGf2U/hZyijvvW+/27B0Ey1671eTcG4SRn+IXoU1Y
+         OB1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6lphpwLFld/gj6xJlJyOO7lHoVH9+/eeuknXpn9es+U=;
+        b=qwuW+o3HdWcEmLINFHnzeUprQMjScJ8EWQuSvcJKPDlb4e2n3yAb1AV4FdD0t7E7S1
+         KJcwxtXgv7VS+Qb1fQhdKq37wY9sgBOj+AfSf7y6WSq9vPw0FFR4CnyEvLnpSw/JejgM
+         S5cHeYCy3WpKeV+xCvanQ1Rh51T0NdFWBUlpY4C61ba1xjyOta97seAGfcqqP5WfG+D5
+         V//nLicwS+zO/jJ58vCcbf7OqtoLG9/DprTXK34r3b3/5XQ4UaOJUrUdZlzA8/zNt6c2
+         ivIvQuZJgSVVd27NJ3cNrrPmvVF82lhlckrT+9MQZZ+fWA2iVu4ij62mhy5sMXJh3b71
+         ymKw==
+X-Gm-Message-State: AOAM531A7xRS6HzPSa5L6JF8luJLlVNawBtwD5l1RV6Pv26pEKn8f5Yb
+        3sco9tjvXxBCbpgYj4exTMlEIJIllLjnAWVzRMoW5A==
+X-Google-Smtp-Source: ABdhPJzQmw14vkzJ3AJMLh+464Tumni34U9qtfTufyTIa2fwlW6C3qDAs1zNSWlUwqMQyuGoJ9X56V1I9hofuVbt+Mc=
+X-Received: by 2002:a2e:8084:: with SMTP id i4mr11438404ljg.122.1615230737841;
+ Mon, 08 Mar 2021 11:12:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <19638.1615230532.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 08 Mar 2021 19:08:52 +0000
-Message-ID: <19639.1615230532@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <20210217001322.2226796-1-shy828301@gmail.com> <20210217001322.2226796-10-shy828301@gmail.com>
+In-Reply-To: <20210217001322.2226796-10-shy828301@gmail.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Mon, 8 Mar 2021 11:12:03 -0800
+Message-ID: <CALvZod6R=cEwK+AND+E3CG3LrWViNjWDd0dy-Brz1MhJWyJ+ZQ@mail.gmail.com>
+Subject: Re: [v8 PATCH 09/13] mm: vmscan: add per memcg shrinker nr_deferred
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-J. Bruce Fields <bfields@fieldses.org> wrote:
+On Tue, Feb 16, 2021 at 4:13 PM Yang Shi <shy828301@gmail.com> wrote:
+>
+> Currently the number of deferred objects are per shrinker, but some slabs, for example,
+> vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
+>
+> The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
+> excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
+> may suffer from over shrink, excessive reclaim latency, etc.
+>
+> For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
+> heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
+> might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
+>
+> We observed this hit in our production environment which was running vfs heavy workload
+> shown as the below tracing log:
+>
+> <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
+> cache items 246404277 delta 31345 total_scan 123202138
+> <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
+> last shrinker return val 123186855
+>
+> The vfs cache and page cache ratio was 10:1 on this machine, and half of caches were dropped.
+> This also resulted in significant amount of page caches were dropped due to inodes eviction.
+>
+> Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
+> better isolation.
+>
+> When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
+> would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
+>
+> Signed-off-by: Yang Shi <shy828301@gmail.com>
+> ---
+>  include/linux/memcontrol.h |  7 +++--
+>  mm/vmscan.c                | 60 ++++++++++++++++++++++++++------------
+>  2 files changed, 46 insertions(+), 21 deletions(-)
+>
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 4c9253896e25..c457fc7bc631 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -93,12 +93,13 @@ struct lruvec_stat {
+>  };
+>
+>  /*
+> - * Bitmap of shrinker::id corresponding to memcg-aware shrinkers,
+> - * which have elements charged to this memcg.
+> + * Bitmap and deferred work of shrinker::id corresponding to memcg-aware
+> + * shrinkers, which have elements charged to this memcg.
+>   */
+>  struct shrinker_info {
+>         struct rcu_head rcu;
+> -       unsigned long map[];
+> +       atomic_long_t *nr_deferred;
+> +       unsigned long *map;
+>  };
+>
+>  /*
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index a1047ea60ecf..fcb399e18fc3 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -187,11 +187,17 @@ static DECLARE_RWSEM(shrinker_rwsem);
+>  #ifdef CONFIG_MEMCG
+>  static int shrinker_nr_max;
+>
+> +/* The shrinker_info is expanded in a batch of BITS_PER_LONG */
+>  static inline int shrinker_map_size(int nr_items)
+>  {
+>         return (DIV_ROUND_UP(nr_items, BITS_PER_LONG) * sizeof(unsigned long));
+>  }
+>
+> +static inline int shrinker_defer_size(int nr_items)
+> +{
+> +       return (round_up(nr_items, BITS_PER_LONG) * sizeof(atomic_long_t));
+> +}
+> +
+>  static struct shrinker_info *shrinker_info_protected(struct mem_cgroup *memcg,
+>                                                      int nid)
+>  {
+> @@ -200,10 +206,12 @@ static struct shrinker_info *shrinker_info_protected(struct mem_cgroup *memcg,
+>  }
+>
+>  static int expand_one_shrinker_info(struct mem_cgroup *memcg,
+> -                                   int size, int old_size)
+> +                                   int map_size, int defer_size,
+> +                                   int old_map_size, int old_defer_size)
+>  {
+>         struct shrinker_info *new, *old;
+>         int nid;
+> +       int size = map_size + defer_size;
+>
+>         for_each_node(nid) {
+>                 old = shrinker_info_protected(memcg, nid);
+> @@ -215,9 +223,16 @@ static int expand_one_shrinker_info(struct mem_cgroup *memcg,
+>                 if (!new)
+>                         return -ENOMEM;
+>
+> -               /* Set all old bits, clear all new bits */
+> -               memset(new->map, (int)0xff, old_size);
+> -               memset((void *)new->map + old_size, 0, size - old_size);
+> +               new->nr_deferred = (atomic_long_t *)(new + 1);
+> +               new->map = (void *)new->nr_deferred + defer_size;
+> +
+> +               /* map: set all old bits, clear all new bits */
+> +               memset(new->map, (int)0xff, old_map_size);
+> +               memset((void *)new->map + old_map_size, 0, map_size - old_map_size);
+> +               /* nr_deferred: copy old values, clear all new values */
+> +               memcpy(new->nr_deferred, old->nr_deferred, old_defer_size);
+> +               memset((void *)new->nr_deferred + old_defer_size, 0,
+> +                      defer_size - old_defer_size);
+>
+>                 rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, new);
+>                 kvfree_rcu(old);
+> @@ -232,9 +247,6 @@ void free_shrinker_info(struct mem_cgroup *memcg)
+>         struct shrinker_info *info;
+>         int nid;
+>
+> -       if (mem_cgroup_is_root(memcg))
+> -               return;
+> -
+>         for_each_node(nid) {
+>                 pn = mem_cgroup_nodeinfo(memcg, nid);
+>                 info = shrinker_info_protected(memcg, nid);
+> @@ -247,12 +259,12 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>  {
+>         struct shrinker_info *info;
+>         int nid, size, ret = 0;
+> -
+> -       if (mem_cgroup_is_root(memcg))
+> -               return 0;
 
-> On Mon, Mar 08, 2021 at 09:13:55AM +0000, David Howells wrote:
-> > Amir Goldstein <amir73il@gmail.com> wrote:
-> > > With ->fiemap() you can at least make the distinction between a non =
-existing
-> > > and an UNWRITTEN extent.
-> > =
+Can you please comment on the consequences on allowing to allocate
+shrinker_info for root memcg? Why didn't we do that before but now it
+is fine (or maybe required)? Please add the explanation in the commit
+message.
 
-> > I can't use that for XFS, Ext4 or btrfs, I suspect.  Christoph and Dav=
-e's
-> > assertion is that the cache can't rely on the backing filesystem's met=
-adata
-> > because these can arbitrarily insert or remove blocks of zeros to brid=
-ge or
-> > split extents.
-> =
-
-> Could you instead make some sort of explicit contract with the
-> filesystem?  Maybe you'd flag it at mkfs time and query for it before
-> allowing a filesystem to be used for fscache.  You don't need every
-> filesystem to support fscache, right, just one acceptable one?
-
-I've asked about that, but the filesystem maintainers are reluctant to do
-that.
-
-Something might be possible in ext4 using direct access to jbd2, though I
-don't know exactly what facilities that offers.
-
-David
-
+> +       int map_size, defer_size = 0;
+>
+>         down_write(&shrinker_rwsem);
+> -       size = shrinker_map_size(shrinker_nr_max);
+> +       map_size = shrinker_map_size(shrinker_nr_max);
+> +       defer_size = shrinker_defer_size(shrinker_nr_max);
+> +       size = map_size + defer_size;
+>         for_each_node(nid) {
+>                 info = kvzalloc_node(sizeof(*info) + size, GFP_KERNEL, nid);
+>                 if (!info) {
+> @@ -260,6 +272,8 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>                         ret = -ENOMEM;
+>                         break;
+>                 }
+> +               info->nr_deferred = (atomic_long_t *)(info + 1);
+> +               info->map = (void *)info->nr_deferred + defer_size;
+>                 rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+>         }
+>         up_write(&shrinker_rwsem);
+> @@ -267,15 +281,21 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>         return ret;
+>  }
+>
+> +static inline bool need_expand(int nr_max)
+> +{
+> +       return round_up(nr_max, BITS_PER_LONG) >
+> +              round_up(shrinker_nr_max, BITS_PER_LONG);
+> +}
+> +
+>  static int expand_shrinker_info(int new_id)
+>  {
+> -       int size, old_size, ret = 0;
+> +       int ret = 0;
+>         int new_nr_max = new_id + 1;
+> +       int map_size, defer_size = 0;
+> +       int old_map_size, old_defer_size = 0;
+>         struct mem_cgroup *memcg;
+>
+> -       size = shrinker_map_size(new_nr_max);
+> -       old_size = shrinker_map_size(shrinker_nr_max);
+> -       if (size <= old_size)
+> +       if (!need_expand(new_nr_max))
+>                 goto out;
+>
+>         if (!root_mem_cgroup)
+> @@ -283,11 +303,15 @@ static int expand_shrinker_info(int new_id)
+>
+>         lockdep_assert_held(&shrinker_rwsem);
+>
+> +       map_size = shrinker_map_size(new_nr_max);
+> +       defer_size = shrinker_defer_size(new_nr_max);
+> +       old_map_size = shrinker_map_size(shrinker_nr_max);
+> +       old_defer_size = shrinker_defer_size(shrinker_nr_max);
+> +
+>         memcg = mem_cgroup_iter(NULL, NULL, NULL);
+>         do {
+> -               if (mem_cgroup_is_root(memcg))
+> -                       continue;
+> -               ret = expand_one_shrinker_info(memcg, size, old_size);
+> +               ret = expand_one_shrinker_info(memcg, map_size, defer_size,
+> +                                              old_map_size, old_defer_size);
+>                 if (ret) {
+>                         mem_cgroup_iter_break(NULL, memcg);
+>                         goto out;
+> --
+> 2.26.2
+>
