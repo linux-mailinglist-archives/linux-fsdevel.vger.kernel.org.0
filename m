@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C4A5E3306FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Mar 2021 05:50:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEECB330710
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Mar 2021 06:07:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234235AbhCHEuW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Mar 2021 23:50:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45066 "EHLO
+        id S229893AbhCHFFy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Mar 2021 00:05:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232471AbhCHEuT (ORCPT
+        with ESMTP id S229471AbhCHFFi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Mar 2021 23:50:19 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3A72C06174A
-        for <linux-fsdevel@vger.kernel.org>; Sun,  7 Mar 2021 20:50:18 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id p1so12726195edy.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Mar 2021 20:50:18 -0800 (PST)
+        Mon, 8 Mar 2021 00:05:38 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A82CC06175F
+        for <linux-fsdevel@vger.kernel.org>; Sun,  7 Mar 2021 21:05:38 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id dx17so17646866ejb.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Mar 2021 21:05:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=f8lrR0ZiQSWaL4KkWmwSgVmShpah+Hqkiq/7u9MC3Ec=;
-        b=bmd/qNoUyZ3W++JI1eWHTA6hXgZHecFIc0E547jJwbtTn70UxX6QzwAFus163+j3KJ
-         Zb0UcgxnaOojruQmNOPQsc6F47QRL9F+1kHeKJciVxhV1UPMoVF93dUkhassGHVxl3N9
-         /KruMtkdxz98BVXZCY8VWL0HB2ybk3mC9gO8yaq6Yn6lWJoocOIwUTaugpeUpDLGmvLL
-         o5h39mCM6sn6c8GF3cuEMrvR7eE573EuO7HYzPSv2Vjtzgr5zmDYL7y9sWTEHQ33AGQ4
-         Kn0xT2AzgvT06obRqhjb3FLEJ/kmHJNBd+le74lwvBZaw0D9zpsHFquJ1TvgGygxZRG0
-         j7Xg==
+        bh=U9i5hJKZHEDQ9s5oCqXQ1ESfIvIrxn1WeIspzrScC9U=;
+        b=QUvoUWYDMWPjl3s4eUS+psdEu1frwjV33fbBe8PYtO4N/7rvwojIh/Atm84CDeeha9
+         nvWgzCDqflFFKSKgtSmCj3rA6hjlNCYZJEDaL4gx950dEILIJueYNgtJfxNevewKpkLN
+         8zCOtOjKqThpHhCptj2r4l6DQ+Es9nGeatqJbMQCa7Eoxk9rPvU2cdMWDnbXwC/rXPuZ
+         CIxncjgrPqGmkTHuYpQjf14UEN17yemaOEbrn/xKpiPKmWueNkvWCJjOgsPJ8JQQWPNi
+         nGgDYHwedErEFQkFGm9M4QLz98Qw/IP1mgrZKaWy1NgrCHLlbXKarbvLgqkQhDcKSyn/
+         I7SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=f8lrR0ZiQSWaL4KkWmwSgVmShpah+Hqkiq/7u9MC3Ec=;
-        b=CIzxFEas2mDNtHw0UB+n2Ubi4LloYslp80yWZeLr6vqeweZA5D3AoKN61hepT3T+tg
-         //da5lrWjyeDZZvmAiHhbvhNu2cFsGzdScWH2uYc9qs4K8yUrMo0jgS1cHHVo46D2u0K
-         qw8znjOZ0zn3IVwudFA/r8vFWzTg3P7ygTiP5Jz429LlWxh9Lp5oPrdRHqZJ11NpE4oZ
-         rpoOpYrecfmp/ADi/RxzpNerBAKWbnPJmGIBcMOCceAyjq1Vks94xfBAqZJLVYaCJV4q
-         TSDrvZdDt/qMe/+pWz163/9kdSSZOQl79oVbmjor1hsr4EyyDiuLeIxueTMXHVtKB947
-         jXfg==
-X-Gm-Message-State: AOAM532JBxmWWgNW4R1rTxUlIm84gg/kVX8kuN91XRtmAzBkjb9URmHg
-        fZZFPjzn3dTRfiFoirlC+Dho2awyB8lDEJTGUSqg
-X-Google-Smtp-Source: ABdhPJyP73PgPrTEn5ZRwI0uF0fAfXgSrG4K8zBx7Ya+smcB67VFKL3uJxgtQS1IadQYI/2VpEQd/iR/G9g05fsqakg=
-X-Received: by 2002:a05:6402:4314:: with SMTP id m20mr19843171edc.5.1615179017444;
- Sun, 07 Mar 2021 20:50:17 -0800 (PST)
+        bh=U9i5hJKZHEDQ9s5oCqXQ1ESfIvIrxn1WeIspzrScC9U=;
+        b=kznaHzXC5wyBJjSQCjbyxJct5W8ErOu6XqIT6h3580UJ5+NIAJzMCphMcT0yrehFHq
+         QWTe34QUVn0POw/VRmKbXqzWh6ZH9cE/o6r4/GLL3xwXvUvpwAdJKXgCqffpaKahdbFa
+         NYTwFgOsZC2U998ibzMN+GEtj7GkGsrzXa0cGza+8n/fJ6Qg36eERaSz8AIPfJbngOHK
+         Jpb6ceWE3qnqYxYRuobKtKdggE5qv4+Iy29PYLJoFpOmVYGE9K/lP5rERs3kDEluUccK
+         TxtMdOd/Lrf8j62qfLFRZFXAQL7QdE+zSyjpFtwB2wzbESMC6xeilMUXdsrh2D5Mnt9q
+         sdZw==
+X-Gm-Message-State: AOAM53213GE5rLRW/5/5kcGjj6ABR/RNvLNEmIymxmHEeDDUsW8vASwZ
+        TsmuBtusANg86sOyekUjJBZaZYePiS35NBznYb9K
+X-Google-Smtp-Source: ABdhPJzArI4nQUDbllLNwaDXzEUsWPSCVR7LD8mTcQ1y9O47fIB9CgHOQD162B2SFhKuNPY+4vqsTCYH/lt2EO68VF8=
+X-Received: by 2002:a17:906:7b8d:: with SMTP id s13mr13488428ejo.247.1615179936950;
+ Sun, 07 Mar 2021 21:05:36 -0800 (PST)
 MIME-Version: 1.0
-References: <20210223115048.435-1-xieyongji@bytedance.com> <20210223115048.435-11-xieyongji@bytedance.com>
- <d63e4cfd-4992-8493-32b0-18e0478f6e1a@redhat.com> <CACycT3tqM=ALOG1r0Ve6UTGmwJ7Wg7fQpLZypjZsJF1mJ+adMA@mail.gmail.com>
- <2d3418d9-856c-37ee-7614-af5b721becd7@redhat.com> <CACycT3u0+LTbtFMS75grKGZ2mnXzHnKug+HGWbf+nqVybqwkZQ@mail.gmail.com>
- <b3faa4a6-a65b-faf7-985a-b2771533c8bb@redhat.com> <CACycT3uZ2ZPjUwVZqzQPZ4ke=VrHCkfNvYagA-oxggPUEUi0Vg@mail.gmail.com>
- <e933ec33-9d47-0ef5-9152-25cedd330ce2@redhat.com> <CACycT3ug30sQptdoSP8XzRJVN7Yb2DPLBtfG-RNbus3BOhdONA@mail.gmail.com>
- <b01d9ee7-b038-cef2-8996-cd6401003267@redhat.com> <CACycT3vSRvRUbqbPNjAPQ-TeXnbqtrQO+gD1M0qDRRqX1zovVA@mail.gmail.com>
- <44c21bf4-874d-24c9-334b-053c54e8422e@redhat.com>
-In-Reply-To: <44c21bf4-874d-24c9-334b-053c54e8422e@redhat.com>
+References: <20210223115048.435-1-xieyongji@bytedance.com> <20210223115048.435-7-xieyongji@bytedance.com>
+ <573ab913-55ce-045a-478f-1200bd78cf7b@redhat.com> <CACycT3sVhDKKu4zGbt1Lw-uWfKDAWs=O=C7kXXcuSnePohmBdQ@mail.gmail.com>
+ <c173b7ec-8c90-d0e3-7272-a56aa8935e64@redhat.com> <CACycT3vb=WyrMpiOOdVDGEh8cEDb-xaj1esQx2UEQpJnOOWhmw@mail.gmail.com>
+ <4db35f8c-ee3a-90fb-8d14-5d6014b4f6fa@redhat.com> <CACycT3sUJNmi2BdLsi3W72+qTKQaCo_nQYu-fdxg9y4pAvBMow@mail.gmail.com>
+ <2652f696-faf7-26eb-a8b2-c4cfe3aaed15@redhat.com> <CACycT3uMV9wg5yVKmEJpbZrs3x0b4+b9eNcUTh3+CjxsG7x2LA@mail.gmail.com>
+ <d4681614-bd1e-8fe7-3b03-72eb2011c3c2@redhat.com> <CACycT3uA5y=jcKPwu6rZ83Lqf1ytuPhnxWLCeMpDYrvRodHFVg@mail.gmail.com>
+ <0b671aef-f2b2-6162-f407-7ca5178dbebb@redhat.com>
+In-Reply-To: <0b671aef-f2b2-6162-f407-7ca5178dbebb@redhat.com>
 From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Mon, 8 Mar 2021 12:50:07 +0800
-Message-ID: <CACycT3sZD2DEU=JxM-T+6dHBdsX5gOfAghh=Kg4PVw0PkNzEGw@mail.gmail.com>
-Subject: Re: Re: [RFC v4 10/11] vduse: Introduce a workqueue for irq injection
+Date:   Mon, 8 Mar 2021 13:05:26 +0800
+Message-ID: <CACycT3tnd0SziHVpH=yUZFYpeG3c0V+vcGRNT19cp0q9b1GH2Q@mail.gmail.com>
+Subject: Re: Re: [RFC v4 06/11] vduse: Implement an MMU-based IOMMU driver
 To:     Jason Wang <jasowang@redhat.com>
 Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
@@ -76,105 +76,116 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 8, 2021 at 11:04 AM Jason Wang <jasowang@redhat.com> wrote:
+On Mon, Mar 8, 2021 at 11:52 AM Jason Wang <jasowang@redhat.com> wrote:
 >
 >
-> On 2021/3/5 4:12 =E4=B8=8B=E5=8D=88, Yongji Xie wrote:
-> > On Fri, Mar 5, 2021 at 3:37 PM Jason Wang <jasowang@redhat.com> wrote:
+> On 2021/3/8 11:45 =E4=B8=8A=E5=8D=88, Yongji Xie wrote:
+> > On Mon, Mar 8, 2021 at 11:17 AM Jason Wang <jasowang@redhat.com> wrote:
 > >>
-> >> On 2021/3/5 3:27 =E4=B8=8B=E5=8D=88, Yongji Xie wrote:
-> >>> On Fri, Mar 5, 2021 at 3:01 PM Jason Wang <jasowang@redhat.com> wrote=
+> >> On 2021/3/5 3:59 =E4=B8=8B=E5=8D=88, Yongji Xie wrote:
+> >>> On Fri, Mar 5, 2021 at 3:27 PM Jason Wang <jasowang@redhat.com> wrote=
 :
-> >>>> On 2021/3/5 2:36 =E4=B8=8B=E5=8D=88, Yongji Xie wrote:
-> >>>>> On Fri, Mar 5, 2021 at 11:42 AM Jason Wang <jasowang@redhat.com> wr=
-ote:
-> >>>>>> On 2021/3/5 11:30 =E4=B8=8A=E5=8D=88, Yongji Xie wrote:
-> >>>>>>> On Fri, Mar 5, 2021 at 11:05 AM Jason Wang <jasowang@redhat.com> =
-wrote:
-> >>>>>>>> On 2021/3/4 4:58 =E4=B8=8B=E5=8D=88, Yongji Xie wrote:
-> >>>>>>>>> On Thu, Mar 4, 2021 at 2:59 PM Jason Wang <jasowang@redhat.com>=
- wrote:
-> >>>>>>>>>> On 2021/2/23 7:50 =E4=B8=8B=E5=8D=88, Xie Yongji wrote:
-> >>>>>>>>>>> This patch introduces a workqueue to support injecting
-> >>>>>>>>>>> virtqueue's interrupt asynchronously. This is mainly
-> >>>>>>>>>>> for performance considerations which makes sure the push()
-> >>>>>>>>>>> and pop() for used vring can be asynchronous.
-> >>>>>>>>>> Do you have pref numbers for this patch?
-> >>>>>>>>>>
-> >>>>>>>>> No, I can do some tests for it if needed.
-> >>>>>>>>>
-> >>>>>>>>> Another problem is the VIRTIO_RING_F_EVENT_IDX feature will be =
-useless
-> >>>>>>>>> if we call irq callback in ioctl context. Something like:
-> >>>>>>>>>
-> >>>>>>>>> virtqueue_push();
-> >>>>>>>>> virtio_notify();
-> >>>>>>>>>          ioctl()
-> >>>>>>>>> -------------------------------------------------
-> >>>>>>>>>              irq_cb()
-> >>>>>>>>>                  virtqueue_get_buf()
-> >>>>>>>>>
-> >>>>>>>>> The used vring is always empty each time we call virtqueue_push=
-() in
-> >>>>>>>>> userspace. Not sure if it is what we expected.
-> >>>>>>>> I'm not sure I get the issue.
-> >>>>>>>>
-> >>>>>>>> THe used ring should be filled by virtqueue_push() which is done=
- by
-> >>>>>>>> userspace before?
-> >>>>>>>>
-> >>>>>>> After userspace call virtqueue_push(), it always call virtio_noti=
-fy()
-> >>>>>>> immediately. In traditional VM (vhost-vdpa) cases, virtio_notify(=
-)
-> >>>>>>> will inject an irq to VM and return, then vcpu thread will call
-> >>>>>>> interrupt handler. But in container (virtio-vdpa) cases,
-> >>>>>>> virtio_notify() will call interrupt handler directly. So it looks=
- like
-> >>>>>>> we have to optimize the virtio-vdpa cases. But one problem is we =
-don't
-> >>>>>>> know whether we are in the VM user case or container user case.
-> >>>>>> Yes, but I still don't get why used ring is empty after the ioctl(=
-)?
-> >>>>>> Used ring does not use bounce page so it should be visible to the =
-kernel
-> >>>>>> driver. What did I miss :) ?
+> >>>> On 2021/3/5 3:13 =E4=B8=8B=E5=8D=88, Yongji Xie wrote:
+> >>>>> On Fri, Mar 5, 2021 at 2:52 PM Jason Wang <jasowang@redhat.com> wro=
+te:
+> >>>>>> On 2021/3/5 2:15 =E4=B8=8B=E5=8D=88, Yongji Xie wrote:
 > >>>>>>
-> >>>>> Sorry, I'm not saying the kernel can't see the correct used vring. =
-I
-> >>>>> mean the kernel will consume the used vring in the ioctl context
-> >>>>> directly in the virtio-vdpa case. In userspace's view, that means
-> >>>>> virtqueue_push() is used vring's producer and virtio_notify() is us=
-ed
-> >>>>> vring's consumer. They will be called one by one in one thread rath=
-er
-> >>>>> than different threads, which looks odd and has a bad effect on
-> >>>>> performance.
-> >>>> Yes, that's why we need a workqueue (WQ_UNBOUND you used). Or do you
-> >>>> want to squash this patch into patch 8?
-> >>>>
-> >>>> So I think we can see obvious difference when virtio-vdpa is used.
-> >>>>
-> >>> But it looks like we don't need this workqueue in vhost-vdpa cases.
-> >>> Any suggestions?
-> >>
-> >> I haven't had a deep thought. But I feel we can solve this by using th=
+> >>>>>> Sorry if I've asked this before.
+> >>>>>>
+> >>>>>> But what's the reason for maintaing a dedicated IOTLB here? I thin=
+k we
+> >>>>>> could reuse vduse_dev->iommu since the device can not be used by b=
+oth
+> >>>>>> virtio and vhost in the same time or use vduse_iova_domain->iotlb =
+for
+> >>>>>> set_map().
+> >>>>>>
+> >>>>>> The main difference between domain->iotlb and dev->iotlb is the wa=
+y to
+> >>>>>> deal with bounce buffer. In the domain->iotlb case, bounce buffer
+> >>>>>> needs to be mapped each DMA transfer because we need to get the bo=
+unce
+> >>>>>> pages by an IOVA during DMA unmapping. In the dev->iotlb case, bou=
+nce
+> >>>>>> buffer only needs to be mapped once during initialization, which w=
+ill
+> >>>>>> be used to tell userspace how to do mmap().
+> >>>>>>
+> >>>>>> Also, since vhost IOTLB support per mapping token (opauqe), can we=
+ use
+> >>>>>> that instead of the bounce_pages *?
+> >>>>>>
+> >>>>>> Sorry, I didn't get you here. Which value do you mean to store in =
+the
+> >>>>>> opaque pointer=EF=BC=9F
+> >>>>>>
+> >>>>>> So I would like to have a way to use a single IOTLB for manage all=
+ kinds
+> >>>>>> of mappings. Two possible ideas:
+> >>>>>>
+> >>>>>> 1) map bounce page one by one in vduse_dev_map_page(), in
+> >>>>>> VDUSE_IOTLB_GET_FD, try to merge the result if we had the same fd.=
+ Then
+> >>>>>> for bounce pages, userspace still only need to map it once and we =
+can
+> >>>>>> maintain the actual mapping by storing the page or pa in the opaqu=
 e
-> >> irq bypass manager (or something similar). Then we don't need it to be
-> >> relayed via workqueue and vdpa. But I'm not sure how hard it will be.
+> >>>>>> field of IOTLB entry.
+> >>>>>>
+> >>>>>> Looks like userspace still needs to unmap the old region and map a=
+ new
+> >>>>>> region (size is changed) with the fd in each VDUSE_IOTLB_GET_FD io=
+ctl.
+> >>>>>>
+> >>>>>>
+> >>>>>> I don't get here. Can you give an example?
+> >>>>>>
+> >>>>> For example, userspace needs to process two I/O requests (one page =
+per
+> >>>>> request). To process the first request, userspace uses
+> >>>>> VDUSE_IOTLB_GET_FD ioctl to query the iova region (0 ~ 4096) and mm=
+ap
+> >>>>> it.
+> >>>> I think in this case we should let VDUSE_IOTLB_GET_FD return the max=
+imum
+> >>>> range as far as they are backed by the same fd.
+> >>>>
+> >>> But now the bounce page is mapped one by one. The second page (4096 ~
+> >>> 8192) might not be mapped when userspace is processing the first
+> >>> request. So the maximum range is 0 ~ 4096 at that time.
+> >>>
+> >>> Thanks,
+> >>> Yongji
 > >>
-> >   Or let vdpa bus drivers give us some information?
+> >> A question, if I read the code correctly, VDUSE_IOTLB_GET_FD will retu=
+rn
+> >> the whole bounce map range which is setup in vduse_dev_map_page()? So =
+my
+> >> understanding is that usersapce may choose to map all its range via mm=
+ap().
+> >>
+> > Yes.
+> >
+> >> So if we 'map' bounce page one by one in vduse_dev_map_page(). (Here
+> >> 'map' means using multiple itree entries instead of a single one). The=
+n
+> >> in the VDUSE_IOTLB_GET_FD we can keep traversing itree (dev->iommu)
+> >> until the range is backed by a different file.
+> >>
+> >> With this, there's no userspace visible changes and there's no need fo=
+r
+> >> the domain->iotlb?
+> >>
+> > In this case, I wonder what range can be obtained if userspace calls
+> > VDUSE_IOTLB_GET_FD when the first I/O (e.g. 4K) occurs. [0, 4K] or [0,
+> > 64M]? In current implementation, userspace will map [0, 64M].
 >
 >
-> This kind of 'type' is proposed in the early RFC of vDPA series. One
-> issue is that at device level, we should not differ virtio from vhost,
-> so if we introduce that, it might encourge people to design a device
-> that is dedicated to vhost or virtio which might not be good.
->
-> But we can re-visit this when necessary.
+> It should still be [0, 64M). Do you see any issue?
 >
 
-OK, I see. How about adding some information in ops.set_vq_cb()?
+Does it mean we still need to map the whole bounce buffer into itree
+(dev->iommu) at initialization?
 
 Thanks,
 Yongji
