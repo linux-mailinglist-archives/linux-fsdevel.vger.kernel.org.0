@@ -2,190 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AEECB330710
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Mar 2021 06:07:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1988C330741
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Mar 2021 06:24:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229893AbhCHFFy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Mar 2021 00:05:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48328 "EHLO
+        id S234408AbhCHFYL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Mar 2021 00:24:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbhCHFFi (ORCPT
+        with ESMTP id S234377AbhCHFXw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Mar 2021 00:05:38 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A82CC06175F
-        for <linux-fsdevel@vger.kernel.org>; Sun,  7 Mar 2021 21:05:38 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id dx17so17646866ejb.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Mar 2021 21:05:38 -0800 (PST)
+        Mon, 8 Mar 2021 00:23:52 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E8EEC06175F
+        for <linux-fsdevel@vger.kernel.org>; Sun,  7 Mar 2021 21:23:51 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id c10so17643902ejx.9
+        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Mar 2021 21:23:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=U9i5hJKZHEDQ9s5oCqXQ1ESfIvIrxn1WeIspzrScC9U=;
-        b=QUvoUWYDMWPjl3s4eUS+psdEu1frwjV33fbBe8PYtO4N/7rvwojIh/Atm84CDeeha9
-         nvWgzCDqflFFKSKgtSmCj3rA6hjlNCYZJEDaL4gx950dEILIJueYNgtJfxNevewKpkLN
-         8zCOtOjKqThpHhCptj2r4l6DQ+Es9nGeatqJbMQCa7Eoxk9rPvU2cdMWDnbXwC/rXPuZ
-         CIxncjgrPqGmkTHuYpQjf14UEN17yemaOEbrn/xKpiPKmWueNkvWCJjOgsPJ8JQQWPNi
-         nGgDYHwedErEFQkFGm9M4QLz98Qw/IP1mgrZKaWy1NgrCHLlbXKarbvLgqkQhDcKSyn/
-         I7SQ==
+         :cc;
+        bh=4vk8NjZWUWMSC21zZsC5XhaD9emmq9PjiDCa5A5wz7c=;
+        b=dmfnCfqpjw4sbFySyQCvKT/bnV1gdfJE//RwUw+/gEad1qlgdXYzLJo6gW07X7BaWi
+         fOhjzy+D1McnNY1FlfUUZ2eVsZX4PMmPnHHnfvK/QcHbludMlyF7P2E7NSHAbcqrf5gm
+         aJ9t9GCUBUf7zQgOZPuMx/DcsYpEXNWI2O0bdl6RCMydWb7xFXo4rl9dJRw0Qhj5rYcP
+         2LxgpXUh4l+i7nWNKqBaapAousEIDyzh4EFeoGR7B+xkGxD2oRsrUJHseSmx3kgzJrJn
+         DP5PrPXZJVUI/wFIKhOVGuOZLzXVvn/Osj8paaq9+KZ4pIoYwDefy+eJcO2VWrZ8JUde
+         amxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=U9i5hJKZHEDQ9s5oCqXQ1ESfIvIrxn1WeIspzrScC9U=;
-        b=kznaHzXC5wyBJjSQCjbyxJct5W8ErOu6XqIT6h3580UJ5+NIAJzMCphMcT0yrehFHq
-         QWTe34QUVn0POw/VRmKbXqzWh6ZH9cE/o6r4/GLL3xwXvUvpwAdJKXgCqffpaKahdbFa
-         NYTwFgOsZC2U998ibzMN+GEtj7GkGsrzXa0cGza+8n/fJ6Qg36eERaSz8AIPfJbngOHK
-         Jpb6ceWE3qnqYxYRuobKtKdggE5qv4+Iy29PYLJoFpOmVYGE9K/lP5rERs3kDEluUccK
-         TxtMdOd/Lrf8j62qfLFRZFXAQL7QdE+zSyjpFtwB2wzbESMC6xeilMUXdsrh2D5Mnt9q
-         sdZw==
-X-Gm-Message-State: AOAM53213GE5rLRW/5/5kcGjj6ABR/RNvLNEmIymxmHEeDDUsW8vASwZ
-        TsmuBtusANg86sOyekUjJBZaZYePiS35NBznYb9K
-X-Google-Smtp-Source: ABdhPJzArI4nQUDbllLNwaDXzEUsWPSCVR7LD8mTcQ1y9O47fIB9CgHOQD162B2SFhKuNPY+4vqsTCYH/lt2EO68VF8=
-X-Received: by 2002:a17:906:7b8d:: with SMTP id s13mr13488428ejo.247.1615179936950;
- Sun, 07 Mar 2021 21:05:36 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=4vk8NjZWUWMSC21zZsC5XhaD9emmq9PjiDCa5A5wz7c=;
+        b=X5A4gUI+Y8+HwGKPwFmIB3sEnwuSJW4nrY6om7OvKGjzjS+DzzW8edxfEuuvXNpL56
+         ufcjQ5KlUEeNLgCT+jAyCM0JGsIWxsQdNmpg8EsqsW88D6bpTAn92mlbTXITY1Fwg5Sx
+         N6wzpnINUqP6WMQEZkG8MGG7+kL4b243x/nG3cJgqcXlvO0MB+O2LT0YcFh4gXqtznzC
+         guD/qcn3Q3zO8ypHq8+Pv72CH2LkcARp8bAoYMc8QmN/phnOquMwvj5Pl8Cbf0UzAy6q
+         9V8xBua3fCYO6P/XTNMMdrokTyB3j8TIgO2WhKt32Uf9PDPpBwNr/grGzGRDxrJNYDNk
+         wsGg==
+X-Gm-Message-State: AOAM532NTB6AD4Bk4V+AWVFB2cA/pbyZt5wswBraF/3QzKtGJgFESDqU
+        yszpiObEpB7paURH5s8RaIcVtd6wo2NIe9XMDb6H8w==
+X-Google-Smtp-Source: ABdhPJxP4YeKftw4Lj6ZQkw1k0hTAM+QWLRj2zfFwlL8QUnJAuQwAg2fpXUMBBNPLZZXJqNMxEP+ZhTef3D9nTDkcKU=
+X-Received: by 2002:a17:906:1bf2:: with SMTP id t18mr13449685ejg.418.1615181030278;
+ Sun, 07 Mar 2021 21:23:50 -0800 (PST)
 MIME-Version: 1.0
-References: <20210223115048.435-1-xieyongji@bytedance.com> <20210223115048.435-7-xieyongji@bytedance.com>
- <573ab913-55ce-045a-478f-1200bd78cf7b@redhat.com> <CACycT3sVhDKKu4zGbt1Lw-uWfKDAWs=O=C7kXXcuSnePohmBdQ@mail.gmail.com>
- <c173b7ec-8c90-d0e3-7272-a56aa8935e64@redhat.com> <CACycT3vb=WyrMpiOOdVDGEh8cEDb-xaj1esQx2UEQpJnOOWhmw@mail.gmail.com>
- <4db35f8c-ee3a-90fb-8d14-5d6014b4f6fa@redhat.com> <CACycT3sUJNmi2BdLsi3W72+qTKQaCo_nQYu-fdxg9y4pAvBMow@mail.gmail.com>
- <2652f696-faf7-26eb-a8b2-c4cfe3aaed15@redhat.com> <CACycT3uMV9wg5yVKmEJpbZrs3x0b4+b9eNcUTh3+CjxsG7x2LA@mail.gmail.com>
- <d4681614-bd1e-8fe7-3b03-72eb2011c3c2@redhat.com> <CACycT3uA5y=jcKPwu6rZ83Lqf1ytuPhnxWLCeMpDYrvRodHFVg@mail.gmail.com>
- <0b671aef-f2b2-6162-f407-7ca5178dbebb@redhat.com>
-In-Reply-To: <0b671aef-f2b2-6162-f407-7ca5178dbebb@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Mon, 8 Mar 2021 13:05:26 +0800
-Message-ID: <CACycT3tnd0SziHVpH=yUZFYpeG3c0V+vcGRNT19cp0q9b1GH2Q@mail.gmail.com>
-Subject: Re: Re: [RFC v4 06/11] vduse: Implement an MMU-based IOMMU driver
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org
+References: <20210208105530.3072869-1-ruansy.fnst@cn.fujitsu.com>
+ <20210208105530.3072869-2-ruansy.fnst@cn.fujitsu.com> <CAPcyv4jqEdPoF5YM+jSYJd74KqRTwbbEum7=moa3=Wyn6UyU9g@mail.gmail.com>
+ <OSBPR01MB29207A1C06968705C2FEBACFF4939@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB29207A1C06968705C2FEBACFF4939@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Sun, 7 Mar 2021 21:23:47 -0800
+Message-ID: <CAPcyv4iBnWbG0FYw6-K0MaH--rq62s7RY_yoT9rOYWMa94Yakw@mail.gmail.com>
+Subject: Re: [PATCH v3 01/11] pagemap: Introduce ->memory_failure()
+To:     "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        david <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
+        "y-goto@fujitsu.com" <y-goto@fujitsu.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 8, 2021 at 11:52 AM Jason Wang <jasowang@redhat.com> wrote:
+On Sun, Mar 7, 2021 at 7:38 PM ruansy.fnst@fujitsu.com
+<ruansy.fnst@fujitsu.com> wrote:
 >
->
-> On 2021/3/8 11:45 =E4=B8=8A=E5=8D=88, Yongji Xie wrote:
-> > On Mon, Mar 8, 2021 at 11:17 AM Jason Wang <jasowang@redhat.com> wrote:
-> >>
-> >> On 2021/3/5 3:59 =E4=B8=8B=E5=8D=88, Yongji Xie wrote:
-> >>> On Fri, Mar 5, 2021 at 3:27 PM Jason Wang <jasowang@redhat.com> wrote=
-:
-> >>>> On 2021/3/5 3:13 =E4=B8=8B=E5=8D=88, Yongji Xie wrote:
-> >>>>> On Fri, Mar 5, 2021 at 2:52 PM Jason Wang <jasowang@redhat.com> wro=
-te:
-> >>>>>> On 2021/3/5 2:15 =E4=B8=8B=E5=8D=88, Yongji Xie wrote:
-> >>>>>>
-> >>>>>> Sorry if I've asked this before.
-> >>>>>>
-> >>>>>> But what's the reason for maintaing a dedicated IOTLB here? I thin=
-k we
-> >>>>>> could reuse vduse_dev->iommu since the device can not be used by b=
-oth
-> >>>>>> virtio and vhost in the same time or use vduse_iova_domain->iotlb =
-for
-> >>>>>> set_map().
-> >>>>>>
-> >>>>>> The main difference between domain->iotlb and dev->iotlb is the wa=
-y to
-> >>>>>> deal with bounce buffer. In the domain->iotlb case, bounce buffer
-> >>>>>> needs to be mapped each DMA transfer because we need to get the bo=
-unce
-> >>>>>> pages by an IOVA during DMA unmapping. In the dev->iotlb case, bou=
-nce
-> >>>>>> buffer only needs to be mapped once during initialization, which w=
-ill
-> >>>>>> be used to tell userspace how to do mmap().
-> >>>>>>
-> >>>>>> Also, since vhost IOTLB support per mapping token (opauqe), can we=
- use
-> >>>>>> that instead of the bounce_pages *?
-> >>>>>>
-> >>>>>> Sorry, I didn't get you here. Which value do you mean to store in =
-the
-> >>>>>> opaque pointer=EF=BC=9F
-> >>>>>>
-> >>>>>> So I would like to have a way to use a single IOTLB for manage all=
- kinds
-> >>>>>> of mappings. Two possible ideas:
-> >>>>>>
-> >>>>>> 1) map bounce page one by one in vduse_dev_map_page(), in
-> >>>>>> VDUSE_IOTLB_GET_FD, try to merge the result if we had the same fd.=
- Then
-> >>>>>> for bounce pages, userspace still only need to map it once and we =
-can
-> >>>>>> maintain the actual mapping by storing the page or pa in the opaqu=
-e
-> >>>>>> field of IOTLB entry.
-> >>>>>>
-> >>>>>> Looks like userspace still needs to unmap the old region and map a=
- new
-> >>>>>> region (size is changed) with the fd in each VDUSE_IOTLB_GET_FD io=
-ctl.
-> >>>>>>
-> >>>>>>
-> >>>>>> I don't get here. Can you give an example?
-> >>>>>>
-> >>>>> For example, userspace needs to process two I/O requests (one page =
-per
-> >>>>> request). To process the first request, userspace uses
-> >>>>> VDUSE_IOTLB_GET_FD ioctl to query the iova region (0 ~ 4096) and mm=
-ap
-> >>>>> it.
-> >>>> I think in this case we should let VDUSE_IOTLB_GET_FD return the max=
-imum
-> >>>> range as far as they are backed by the same fd.
-> >>>>
-> >>> But now the bounce page is mapped one by one. The second page (4096 ~
-> >>> 8192) might not be mapped when userspace is processing the first
-> >>> request. So the maximum range is 0 ~ 4096 at that time.
-> >>>
-> >>> Thanks,
-> >>> Yongji
-> >>
-> >> A question, if I read the code correctly, VDUSE_IOTLB_GET_FD will retu=
-rn
-> >> the whole bounce map range which is setup in vduse_dev_map_page()? So =
-my
-> >> understanding is that usersapce may choose to map all its range via mm=
-ap().
-> >>
-> > Yes.
+> > On Mon, Feb 8, 2021 at 2:55 AM Shiyang Ruan <ruansy.fnst@cn.fujitsu.com> wrote:
+> > >
+> > > When memory-failure occurs, we call this function which is implemented
+> > > by each kind of devices.  For the fsdax case, pmem device driver
+> > > implements it.  Pmem device driver will find out the block device where
+> > > the error page locates in, and try to get the filesystem on this block
+> > > device.  And finally call filesystem handler to deal with the error.
+> > > The filesystem will try to recover the corrupted data if possiable.
+> > >
+> > > Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+> > > ---
+> > >  include/linux/memremap.h | 8 ++++++++
+> > >  1 file changed, 8 insertions(+)
+> > >
+> > > diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+> > > index 79c49e7f5c30..0bcf2b1e20bd 100644
+> > > --- a/include/linux/memremap.h
+> > > +++ b/include/linux/memremap.h
+> > > @@ -87,6 +87,14 @@ struct dev_pagemap_ops {
+> > >          * the page back to a CPU accessible page.
+> > >          */
+> > >         vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
+> > > +
+> > > +       /*
+> > > +        * Handle the memory failure happens on one page.  Notify the processes
+> > > +        * who are using this page, and try to recover the data on this page
+> > > +        * if necessary.
+> > > +        */
+> > > +       int (*memory_failure)(struct dev_pagemap *pgmap, unsigned long pfn,
+> > > +                             int flags);
+> > >  };
 > >
-> >> So if we 'map' bounce page one by one in vduse_dev_map_page(). (Here
-> >> 'map' means using multiple itree entries instead of a single one). The=
-n
-> >> in the VDUSE_IOTLB_GET_FD we can keep traversing itree (dev->iommu)
-> >> until the range is backed by a different file.
-> >>
-> >> With this, there's no userspace visible changes and there's no need fo=
-r
-> >> the domain->iotlb?
-> >>
-> > In this case, I wonder what range can be obtained if userspace calls
-> > VDUSE_IOTLB_GET_FD when the first I/O (e.g. 4K) occurs. [0, 4K] or [0,
-> > 64M]? In current implementation, userspace will map [0, 64M].
+> > After the conversation with Dave I don't see the point of this. If
+> > there is a memory_failure() on a page, why not just call
+> > memory_failure()? That already knows how to find the inode and the
+> > filesystem can be notified from there.
 >
->
-> It should still be [0, 64M). Do you see any issue?
+> We want memory_failure() supports reflinked files.  In this case, we are not
+> able to track multiple files from a page(this broken page) because
+> page->mapping,page->index can only track one file.  Thus, I introduce this
+> ->memory_failure() implemented in pmem driver, to call ->corrupted_range()
+> upper level to upper level, and finally find out files who are
+> using(mmapping) this page.
 >
 
-Does it mean we still need to map the whole bounce buffer into itree
-(dev->iommu) at initialization?
-
-Thanks,
-Yongji
+I know the motivation, but this implementation seems backwards. It's
+already the case that memory_failure() looks up the address_space
+associated with a mapping. From there I would expect a new 'struct
+address_space_operations' op to let the fs handle the case when there
+are multiple address_spaces associated with a given file.
