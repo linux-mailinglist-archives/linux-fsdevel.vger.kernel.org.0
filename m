@@ -2,126 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1988C330741
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Mar 2021 06:24:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F31FE330800
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Mar 2021 07:14:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234408AbhCHFYL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Mar 2021 00:24:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52180 "EHLO
+        id S234805AbhCHGNl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Mar 2021 01:13:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234377AbhCHFXw (ORCPT
+        with ESMTP id S234811AbhCHGNU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Mar 2021 00:23:52 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E8EEC06175F
-        for <linux-fsdevel@vger.kernel.org>; Sun,  7 Mar 2021 21:23:51 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id c10so17643902ejx.9
-        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Mar 2021 21:23:51 -0800 (PST)
+        Mon, 8 Mar 2021 01:13:20 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC28C06175F
+        for <linux-fsdevel@vger.kernel.org>; Sun,  7 Mar 2021 22:13:19 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id x4so12467970lfu.7
+        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Mar 2021 22:13:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=4vk8NjZWUWMSC21zZsC5XhaD9emmq9PjiDCa5A5wz7c=;
-        b=dmfnCfqpjw4sbFySyQCvKT/bnV1gdfJE//RwUw+/gEad1qlgdXYzLJo6gW07X7BaWi
-         fOhjzy+D1McnNY1FlfUUZ2eVsZX4PMmPnHHnfvK/QcHbludMlyF7P2E7NSHAbcqrf5gm
-         aJ9t9GCUBUf7zQgOZPuMx/DcsYpEXNWI2O0bdl6RCMydWb7xFXo4rl9dJRw0Qhj5rYcP
-         2LxgpXUh4l+i7nWNKqBaapAousEIDyzh4EFeoGR7B+xkGxD2oRsrUJHseSmx3kgzJrJn
-         DP5PrPXZJVUI/wFIKhOVGuOZLzXVvn/Osj8paaq9+KZ4pIoYwDefy+eJcO2VWrZ8JUde
-         amxA==
+        bh=5zuLyIMtTu9vDSB4XkfAbZ0uX4PD6RfhA/3r6OaoQnI=;
+        b=r6Qi4/4arJHvPgvhwoboibouvpk0NWSX8MipZS8QZ+BrdZdxwLBJKUDwMfgmWSW8Yu
+         OZH2B04mSUrDBog35HKb+a26mrY/JSo/rqgSYqxxjkElj0TqI93KxvK8mDOdBk4yZ7J4
+         X/0C1ExrYOpYy5hiIVH9AbKIOyHIhFTpjKjr+hIOCJRuZ+ncLhH7CbLiEcOvouFEaks8
+         ShgECUbJ2CftJDm7mTfytGlC3iYLnz1LyTBoe8LmYjmUAUctAzwe0brhEZqv408a/h58
+         shgs2HrLbuotvQ96Mkx66y73Bhm7sRyhj8qZJ3j4bk8muAJ9YVm+P3RmqRFS57fU58zb
+         pGIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4vk8NjZWUWMSC21zZsC5XhaD9emmq9PjiDCa5A5wz7c=;
-        b=X5A4gUI+Y8+HwGKPwFmIB3sEnwuSJW4nrY6om7OvKGjzjS+DzzW8edxfEuuvXNpL56
-         ufcjQ5KlUEeNLgCT+jAyCM0JGsIWxsQdNmpg8EsqsW88D6bpTAn92mlbTXITY1Fwg5Sx
-         N6wzpnINUqP6WMQEZkG8MGG7+kL4b243x/nG3cJgqcXlvO0MB+O2LT0YcFh4gXqtznzC
-         guD/qcn3Q3zO8ypHq8+Pv72CH2LkcARp8bAoYMc8QmN/phnOquMwvj5Pl8Cbf0UzAy6q
-         9V8xBua3fCYO6P/XTNMMdrokTyB3j8TIgO2WhKt32Uf9PDPpBwNr/grGzGRDxrJNYDNk
-         wsGg==
-X-Gm-Message-State: AOAM532NTB6AD4Bk4V+AWVFB2cA/pbyZt5wswBraF/3QzKtGJgFESDqU
-        yszpiObEpB7paURH5s8RaIcVtd6wo2NIe9XMDb6H8w==
-X-Google-Smtp-Source: ABdhPJxP4YeKftw4Lj6ZQkw1k0hTAM+QWLRj2zfFwlL8QUnJAuQwAg2fpXUMBBNPLZZXJqNMxEP+ZhTef3D9nTDkcKU=
-X-Received: by 2002:a17:906:1bf2:: with SMTP id t18mr13449685ejg.418.1615181030278;
- Sun, 07 Mar 2021 21:23:50 -0800 (PST)
+        bh=5zuLyIMtTu9vDSB4XkfAbZ0uX4PD6RfhA/3r6OaoQnI=;
+        b=INmN1nYHelV8k5l6XVI6BVYpyL04FN9+EqavQgNgUrPdLvcATK8gLxs0XUNngy1Dcm
+         AM45B0AAfklTAMSilIbH2EaURxRH/zxXzotIIGVMJH9iND9wD9wBxC+GfZL++q7tofkw
+         bOPo+AkKyKTZcRdm0e23kE019a+cBo5K74opdrS+xLsdsJg247PiBIZbT0UOx3BbObQ6
+         9+HAIp/Z+UXns58yIHRXW2oIdCRrTYByM0r2OUMN89AHUjXjTFPySivQY+tDtrzjxx7k
+         R0YBbECpwHeyeXtXrGWI5/uDKbtJTy/IovcaThlBxtGSjS3vtF1U1BiVHJn8XpBlyl0F
+         gTUQ==
+X-Gm-Message-State: AOAM533m7qT3+7FpoDV9yy/69u6HWjSMYLyQZqS96z8jPC4GpWbsqUjX
+        NEFBPyLdg1JcfNGiU8FCeXbFi8YjyiAgxhah23jW+A==
+X-Google-Smtp-Source: ABdhPJxc0v63Dy8DvVAk/DYaLK47IbF3fY9fLvX7nIB1BSkKIxNiS3PvWjGKhbB+E2Joya7ljUn0FqeLRBf/8nKdAng=
+X-Received: by 2002:a05:6512:6c6:: with SMTP id u6mr13260075lff.347.1615183998124;
+ Sun, 07 Mar 2021 22:13:18 -0800 (PST)
 MIME-Version: 1.0
-References: <20210208105530.3072869-1-ruansy.fnst@cn.fujitsu.com>
- <20210208105530.3072869-2-ruansy.fnst@cn.fujitsu.com> <CAPcyv4jqEdPoF5YM+jSYJd74KqRTwbbEum7=moa3=Wyn6UyU9g@mail.gmail.com>
- <OSBPR01MB29207A1C06968705C2FEBACFF4939@OSBPR01MB2920.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSBPR01MB29207A1C06968705C2FEBACFF4939@OSBPR01MB2920.jpnprd01.prod.outlook.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Sun, 7 Mar 2021 21:23:47 -0800
-Message-ID: <CAPcyv4iBnWbG0FYw6-K0MaH--rq62s7RY_yoT9rOYWMa94Yakw@mail.gmail.com>
-Subject: Re: [PATCH v3 01/11] pagemap: Introduce ->memory_failure()
-To:     "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
+References: <20210217001322.2226796-1-shy828301@gmail.com> <20210217001322.2226796-6-shy828301@gmail.com>
+In-Reply-To: <20210217001322.2226796-6-shy828301@gmail.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Sun, 7 Mar 2021 22:13:04 -0800
+Message-ID: <CALvZod75fge=B9LNg_sxbCiwDZjjtn8A9Q2HzU_R6rcg551o6Q@mail.gmail.com>
+Subject: Re: [v8 PATCH 05/13] mm: vmscan: use kvfree_rcu instead of call_rcu
+To:     Yang Shi <shy828301@gmail.com>, paulmck@kernel.org
+Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linux MM <linux-mm@kvack.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        david <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
-        "y-goto@fujitsu.com" <y-goto@fujitsu.com>
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Mar 7, 2021 at 7:38 PM ruansy.fnst@fujitsu.com
-<ruansy.fnst@fujitsu.com> wrote:
+On Tue, Feb 16, 2021 at 4:13 PM Yang Shi <shy828301@gmail.com> wrote:
 >
-> > On Mon, Feb 8, 2021 at 2:55 AM Shiyang Ruan <ruansy.fnst@cn.fujitsu.com> wrote:
-> > >
-> > > When memory-failure occurs, we call this function which is implemented
-> > > by each kind of devices.  For the fsdax case, pmem device driver
-> > > implements it.  Pmem device driver will find out the block device where
-> > > the error page locates in, and try to get the filesystem on this block
-> > > device.  And finally call filesystem handler to deal with the error.
-> > > The filesystem will try to recover the corrupted data if possiable.
-> > >
-> > > Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
-> > > ---
-> > >  include/linux/memremap.h | 8 ++++++++
-> > >  1 file changed, 8 insertions(+)
-> > >
-> > > diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-> > > index 79c49e7f5c30..0bcf2b1e20bd 100644
-> > > --- a/include/linux/memremap.h
-> > > +++ b/include/linux/memremap.h
-> > > @@ -87,6 +87,14 @@ struct dev_pagemap_ops {
-> > >          * the page back to a CPU accessible page.
-> > >          */
-> > >         vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
-> > > +
-> > > +       /*
-> > > +        * Handle the memory failure happens on one page.  Notify the processes
-> > > +        * who are using this page, and try to recover the data on this page
-> > > +        * if necessary.
-> > > +        */
-> > > +       int (*memory_failure)(struct dev_pagemap *pgmap, unsigned long pfn,
-> > > +                             int flags);
-> > >  };
-> >
-> > After the conversation with Dave I don't see the point of this. If
-> > there is a memory_failure() on a page, why not just call
-> > memory_failure()? That already knows how to find the inode and the
-> > filesystem can be notified from there.
+> Using kvfree_rcu() to free the old shrinker_maps instead of call_rcu().
+> We don't have to define a dedicated callback for call_rcu() anymore.
 >
-> We want memory_failure() supports reflinked files.  In this case, we are not
-> able to track multiple files from a page(this broken page) because
-> page->mapping,page->index can only track one file.  Thus, I introduce this
-> ->memory_failure() implemented in pmem driver, to call ->corrupted_range()
-> upper level to upper level, and finally find out files who are
-> using(mmapping) this page.
+> Signed-off-by: Yang Shi <shy828301@gmail.com>
+> ---
+>  mm/vmscan.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
 >
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 2e753c2516fa..c2a309acd86b 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -192,11 +192,6 @@ static inline int shrinker_map_size(int nr_items)
+>         return (DIV_ROUND_UP(nr_items, BITS_PER_LONG) * sizeof(unsigned long));
+>  }
+>
+> -static void free_shrinker_map_rcu(struct rcu_head *head)
+> -{
+> -       kvfree(container_of(head, struct memcg_shrinker_map, rcu));
+> -}
+> -
+>  static int expand_one_shrinker_map(struct mem_cgroup *memcg,
+>                                    int size, int old_size)
+>  {
+> @@ -219,7 +214,7 @@ static int expand_one_shrinker_map(struct mem_cgroup *memcg,
+>                 memset((void *)new->map + old_size, 0, size - old_size);
+>
+>                 rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_map, new);
+> -               call_rcu(&old->rcu, free_shrinker_map_rcu);
+> +               kvfree_rcu(old);
 
-I know the motivation, but this implementation seems backwards. It's
-already the case that memory_failure() looks up the address_space
-associated with a mapping. From there I would expect a new 'struct
-address_space_operations' op to let the fs handle the case when there
-are multiple address_spaces associated with a given file.
+Please use kvfree_rcu(old, rcu) instead of kvfree_rcu(old). The single
+param can call synchronize_rcu().
