@@ -2,86 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ACFEE331F04
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Mar 2021 07:12:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D008331F61
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Mar 2021 07:40:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229684AbhCIGMR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Mar 2021 01:12:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35482 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229623AbhCIGL4 (ORCPT
+        id S229916AbhCIGjf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Mar 2021 01:39:35 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:45134 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229929AbhCIGjH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Mar 2021 01:11:56 -0500
-Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0033C06174A;
-        Mon,  8 Mar 2021 22:11:55 -0800 (PST)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DvlGZ29Fqz9sW5;
-        Tue,  9 Mar 2021 17:11:50 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1615270311;
-        bh=yLJJE5xxeeaZ/0EtxYZhcbzn8VJqWRF42XlqZ1TBzpc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=cVsM1vdAyP10esMijFiQ3sbTwoyHJXfYRxDuLalpWLARR+9KrOxUi+J/A6+YszFnv
-         8t431YoqqFNS2QK/v0oj8utxDb4ua+SUn2VUs6RKGfQzUWRPUqh3Otl9YFtpZm/faX
-         zLGyUArJSW/+l+23LCzy3pzj7nS/qDJTr0p2Nhx+MO6agIoBOpMNVnLiZfEg7Vkm0M
-         pok0YryqA5zwcCvAQdtbZ4D3Fc/vIVtMiApKbqLn6apmKMyVPbf/DaJ1VDmsQIUVT8
-         YoUWJ4I0vp6f3xYbZXda4ppuOgpFB4w8i8Wh1hlZ9K5c1tvDrCchpIEyvKrGTsfQog
-         scfTp3jCgmM7g==
-Date:   Tue, 9 Mar 2021 17:11:49 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     akpm@linux-foundation.org
-Cc:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org
-Subject: Re: mmotm 2021-03-08-21-52 uploaded
-Message-ID: <20210309171149.0039e74d@canb.auug.org.au>
-In-Reply-To: <20210309055255.QSi-xADe2%akpm@linux-foundation.org>
-References: <20210309055255.QSi-xADe2%akpm@linux-foundation.org>
+        Tue, 9 Mar 2021 01:39:07 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0UR3PFCN_1615271941;
+Received: from 30.225.32.219(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UR3PFCN_1615271941)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 09 Mar 2021 14:39:01 +0800
+Subject: Re: [PATCH v2 00/10] fsdax,xfs: Add reflink&dedupe support for fsdax
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org
+Cc:     darrick.wong@oracle.com, dan.j.williams@intel.com,
+        willy@infradead.org, jack@suse.cz, viro@zeniv.linux.org.uk,
+        linux-btrfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        david@fromorbit.com, hch@lst.de, rgoldwyn@suse.de
+References: <20210226002030.653855-1-ruansy.fnst@fujitsu.com>
+From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Message-ID: <5e7766f9-0224-10be-6810-2e516e610191@linux.alibaba.com>
+Date:   Tue, 9 Mar 2021 14:36:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ITWOSbH7WFIqE1bGc_i+rPH";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20210226002030.653855-1-ruansy.fnst@fujitsu.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/ITWOSbH7WFIqE1bGc_i+rPH
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+hi,
 
-Hi Andrew,
+First thanks for your patchset.
+I'd like to know whether your patchset pass fstests? Thanks.
 
-On Mon, 08 Mar 2021 21:52:55 -0800 akpm@linux-foundation.org wrote:
->
-> * mm-mempool-minor-coding-style-tweaks.patch
-	.
-	.
-> * mm-mempool-minor-coding-style-tweaks.patch
+Regards,
+Xiaoguang Wang
 
-This patch appears twice (I just dropped the second one).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ITWOSbH7WFIqE1bGc_i+rPH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmBHEaUACgkQAVBC80lX
-0GwewQf/YCCIFc/sK82ulf0nzcVKVA13VkyYW3HgqZX3/t7wCiwRmEVcEpz27EwW
-dy48G68N83df+nSgy1dfHJrMtden0nZsp15cQ1S4YX3C6AkY3brRTKYd/bxYzIAi
-fE8U1Q5Bb6m13ouBiqrrijvkZ6E7i+nPOK9dlNHiVrqV3AAO16sP7+6r1Xol7Jfb
-OxgBsnl2z9mNItbkalYSaJEYZg/TlwsloZnh5PB4wHd7Mrhtl0TbNW9qOJCCTVdw
-yM/n6/z15TaxQR0RmTZwKVdw2mc3SnmkAnoU8/Uy4qidPfv/YBNlQebLsaNlWCgo
-bSaRJD8QZNNqgu07tOxajEBrVP2CxQ==
-=1Gcw
------END PGP SIGNATURE-----
-
---Sig_/ITWOSbH7WFIqE1bGc_i+rPH--
+> This patchset is attempt to add CoW support for fsdax, and take XFS,
+> which has both reflink and fsdax feature, as an example.
+> 
+> Changes from V1:
+>   - Factor some helper functions to simplify dax fault code
+>   - Introduce iomap_apply2() for dax_dedupe_file_range_compare()
+>   - Fix mistakes and other problems
+>   - Rebased on v5.11
+> 
+> One of the key mechanism need to be implemented in fsdax is CoW.  Copy
+> the data from srcmap before we actually write data to the destance
+> iomap.  And we just copy range in which data won't be changed.
+> 
+> Another mechanism is range comparison.  In page cache case, readpage()
+> is used to load data on disk to page cache in order to be able to
+> compare data.  In fsdax case, readpage() does not work.  So, we need
+> another compare data with direct access support.
+> 
+> With the two mechanism implemented in fsdax, we are able to make reflink
+> and fsdax work together in XFS.
+> 
+> 
+> Some of the patches are picked up from Goldwyn's patchset.  I made some
+> changes to adapt to this patchset.
+> 
+> (Rebased on v5.11)
+> ==
+> 
+> Shiyang Ruan (10):
+>    fsdax: Factor helpers to simplify dax fault code
+>    fsdax: Factor helper: dax_fault_actor()
+>    fsdax: Output address in dax_iomap_pfn() and rename it
+>    fsdax: Introduce dax_iomap_cow_copy()
+>    fsdax: Replace mmap entry in case of CoW
+>    fsdax: Add dax_iomap_cow_copy() for dax_iomap_zero
+>    iomap: Introduce iomap_apply2() for operations on two files
+>    fsdax: Dedup file range to use a compare function
+>    fs/xfs: Handle CoW for fsdax write() path
+>    fs/xfs: Add dedupe support for fsdax
+> 
+>   fs/dax.c               | 532 +++++++++++++++++++++++++++--------------
+>   fs/iomap/apply.c       |  51 ++++
+>   fs/iomap/buffered-io.c |   2 +-
+>   fs/remap_range.c       |  45 +++-
+>   fs/xfs/xfs_bmap_util.c |   3 +-
+>   fs/xfs/xfs_file.c      |  29 ++-
+>   fs/xfs/xfs_inode.c     |   8 +-
+>   fs/xfs/xfs_inode.h     |   1 +
+>   fs/xfs/xfs_iomap.c     |  30 ++-
+>   fs/xfs/xfs_iomap.h     |   1 +
+>   fs/xfs/xfs_iops.c      |  11 +-
+>   fs/xfs/xfs_reflink.c   |  16 +-
+>   include/linux/dax.h    |   7 +-
+>   include/linux/fs.h     |  15 +-
+>   include/linux/iomap.h  |   7 +-
+>   15 files changed, 550 insertions(+), 208 deletions(-)
+> 
