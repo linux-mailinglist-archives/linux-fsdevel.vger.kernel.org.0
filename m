@@ -2,87 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F667332195
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Mar 2021 10:04:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 625583321D4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Mar 2021 10:22:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbhCIJEI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Mar 2021 04:04:08 -0500
-Received: from foss.arm.com ([217.140.110.172]:50268 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230325AbhCIJDp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Mar 2021 04:03:45 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0386231B;
-        Tue,  9 Mar 2021 01:03:45 -0800 (PST)
-Received: from [10.163.66.57] (unknown [10.163.66.57])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 19E6D3F71B;
-        Tue,  9 Mar 2021 01:03:40 -0800 (PST)
-Subject: Re: [PATCH 0/6] mm: some config cleanups
-To:     linux-mm@kvack.org
-Cc:     x86@kernel.org, linux-ia64@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1615278790-18053-1-git-send-email-anshuman.khandual@arm.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <a3cb7daf-641f-4e50-316f-60b9c53b3e51@arm.com>
-Date:   Tue, 9 Mar 2021 14:34:17 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S229726AbhCIJWL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Mar 2021 04:22:11 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:44562 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229544AbhCIJV7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 9 Mar 2021 04:21:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615281718;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JbGQhFsWORLegeM9HGujB/YiUTVMdc6Nb8R30vrP8qg=;
+        b=QANZGjB7q6airvkYHP7s24/3Y5T31h0I4MEXFYStBomr1I7e/F8+wGOwiOFDAI/hpfCgv3
+        GcM1YE5ZQnsM0hFr2wJmRhvM6NJYZsfz3zLwrSFABEInCoZ+/ar5/M7JioDVKrI91Ib20q
+        hnCupH9AHjs4vhtG/6/TDJVs2rpTbN8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-566-WXeLrfhUNES_-vEl3omWaQ-1; Tue, 09 Mar 2021 04:21:57 -0500
+X-MC-Unique: WXeLrfhUNES_-vEl3omWaQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 92A4B193F560;
+        Tue,  9 Mar 2021 09:21:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A9F7059458;
+        Tue,  9 Mar 2021 09:21:46 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20210308215535.GA63242@dread.disaster.area>
+References: <20210308215535.GA63242@dread.disaster.area> <CAOQ4uxhxwKHLT559f8v5aFTheKgPUndzGufg0E58rkEqa9oQ3Q@mail.gmail.com> <2653261.1614813611@warthog.procyon.org.uk> <517184.1615194835@warthog.procyon.org.uk>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     dhowells@redhat.com, Amir Goldstein <amir73il@gmail.com>,
+        linux-cachefs@redhat.com, Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-afs@lists.infradead.org,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: fscache: Redesigning the on-disk cache
 MIME-Version: 1.0
-In-Reply-To: <1615278790-18053-1-git-send-email-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <152280.1615281705.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 09 Mar 2021 09:21:45 +0000
+Message-ID: <152281.1615281705@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Dave Chinner <david@fromorbit.com> wrote:
 
-On 3/9/21 2:03 PM, Anshuman Khandual wrote:
-> This series contains config cleanup patches which reduces code duplication
-> across platforms and also improves maintainability. There is no functional
-> change intended with this series. This has been boot tested on arm64 but
-> only build tested on some other platforms.
-> 
-> This applies on 5.12-rc2
-> 
-> Cc: x86@kernel.org
-> Cc: linux-ia64@vger.kernel.org
-> Cc: linux-s390@vger.kernel.org
-> Cc: linux-snps-arc@lists.infradead.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-mips@vger.kernel.org
-> Cc: linux-parisc@vger.kernel.org
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Cc: linux-riscv@lists.infradead.org
-> Cc: linux-sh@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> 
-> Anshuman Khandual (6):
->   mm: Generalize ARCH_HAS_CACHE_LINE_SIZE
->   mm: Generalize SYS_SUPPORTS_HUGETLBFS (rename as ARCH_SUPPORTS_HUGETLBFS)
->   mm: Generalize ARCH_ENABLE_MEMORY_[HOTPLUG|HOTREMOVE]
->   mm: Drop redundant ARCH_ENABLE_[HUGEPAGE|THP]_MIGRATION
->   mm: Drop redundant ARCH_ENABLE_SPLIT_PMD_PTLOCK
->   mm: Drop redundant HAVE_ARCH_TRANSPARENT_HUGEPAGE
+> > > With ->fiemap() you can at least make the distinction between a non
+> > > existing and an UNWRITTEN extent.
+> > =
 
-Again the same thing happened.
+> > I can't use that for XFS, Ext4 or btrfs, I suspect.  Christoph and Dav=
+e's
+> > assertion is that the cache can't rely on the backing filesystem's met=
+adata
+> > because these can arbitrarily insert or remove blocks of zeros to brid=
+ge or
+> > split extents.
+> =
 
-https://patchwork.kernel.org/project/linux-mm/list/?series=444393
-https://lore.kernel.org/linux-mm/1615278790-18053-1-git-send-email-anshuman.khandual@arm.com/
+> Well, that's not the big problem. The issue that makes FIEMAP
+> unusable for determining if there is user data present in a file is
+> that on-disk extent maps aren't exactly coherent with in-memory user
+> data state.
+> =
 
-From past experiences, this problem might be just related to many
-entries on the CC list. But this time even dropped the --cc-cover
-parameter which would have expanded the CC list on each individual
-patches further, like last time.
+> That is, we can have a hole on disk with delalloc user data in
+> memory.  There's user data in the file, just not on disk. Same goes
+> for unwritten extents - there can be dirty data in memory over an
+> unwritten extent, and it won't get converted to written until the
+> data is written back and the filesystem runs a conversion
+> transaction.
+> =
 
-If it helps, have hosted these six patches on v5.12-rc2
+> So, yeah, if you use FIEMAP to determine where data lies in a file
+> that is being actively modified, you're going get corrupt data
+> sooner rather than later.  SEEK_HOLE/DATA are coherent with in
+> memory user data, so don't have this problem.
 
-https://gitlab.arm.com/linux-arm/linux-anshuman/-/commits/mm/mm_config_cleanups/v1/
+I thought you and/or Christoph said it *was* a problem to use the backing
+filesystem's metadata to track presence of data in the cache because the
+filesystem (or its tools) can arbitrarily insert blocks of zeros to
+bridge/break up extents.
 
-- Anshuman
+If that is the case, then that is a big problem, and SEEK_HOLE/DATA won't
+suffice.
+
+If it's not a problem - maybe if I can set a mark on a file to tell the
+filesystem and tools not to do that - then that would obviate the need for=
+ me
+to store my own maps.
+
+David
+
