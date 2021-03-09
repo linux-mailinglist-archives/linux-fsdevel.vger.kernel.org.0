@@ -2,68 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 13CE5332D9E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Mar 2021 18:55:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53278332E4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Mar 2021 19:31:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231682AbhCIRzX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Mar 2021 12:55:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56076 "EHLO mx2.suse.de"
+        id S230359AbhCISa2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Mar 2021 13:30:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231571AbhCIRyy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Mar 2021 12:54:54 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1615312493; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=U/QDGXem12Pxb7eLy5qL+FVC4i3Gwof8hgAbnQWzXZQ=;
-        b=nJktd1E7kuiWKgLuQn2T5fbjub8/ihZ6F/p8Mpfiybg3fLsbOne/B+4tVBh3QTSanWO0DA
-        4iVmn8VLUrAFMgRd6lUhml9bpgAsAgGdbRM72/te9R4gcIvJUFn2lSGAE7nR5YHzytHsoY
-        bR4OjzBpc8LpBLW2QuxjMer+5PfTxQE=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id E9813ACC6;
-        Tue,  9 Mar 2021 17:54:52 +0000 (UTC)
-Date:   Tue, 9 Mar 2021 18:54:52 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, joaodias@google.com,
-        surenb@google.com, cgoldswo@codeaurora.org, willy@infradead.org,
-        david@redhat.com, vbabka@suse.cz, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] mm: disable LRU pagevec during the migration
- temporarily
-Message-ID: <YEe2bIfYZvmaTMIb@dhcp22.suse.cz>
-References: <20210309051628.3105973-1-minchan@kernel.org>
- <YEdV7Leo7MC93PlK@dhcp22.suse.cz>
- <YEeiYbBjefM08h18@google.com>
+        id S230372AbhCISaZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 9 Mar 2021 13:30:25 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9AABB65062;
+        Tue,  9 Mar 2021 18:30:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615314624;
+        bh=tRYGs1afC4aUKzNs4pVIOuMVj2QEYFFqBfyuqhUD1RU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FH2kFKrtY54pC3u2e3ROhnxiM6wDk5CC8+3QpDa1m6zTVYvNrCA3JfrOc6a/oTKho
+         Z05NIAyL1NswHpueCktCWaYmUnnHx5QSE84qm8YBT+Itk/R852AWnoxkIyNbsShsEK
+         hmzql3KVqiDNL+3adotrJt+k8YEQZYeoTsMo4h+yoYN/g64WyTD3KdWrm8wWjERfYu
+         sOIZZEf8dn4tnX5nWA6aXXgI+YAA/yqD0feKqbvRzEm8RUUWam2WSSSAMJ0+qMmABq
+         Neaei65ZrbW9BaoG578eNI4BOU886cUnzlkmkLU5SDPByA3m5BD7Veh/nzwNrhk1rk
+         7thDaMl0h4DvQ==
+Date:   Tue, 9 Mar 2021 10:30:23 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     adobriyan@gmail.com, christian@brauner.io, ebiederm@xmission.com,
+        akpm@linux-foundation.org, keescook@chromium.org,
+        gladkov.alexey@gmail.com, walken@google.com,
+        bernd.edlinger@hotmail.de, avagin@gmail.com, deller@gmx.de,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: proc: fix error return code of
+ proc_map_files_readdir()
+Message-ID: <YEe+v+ywMrxgmj05@gmail.com>
+References: <20210309095527.27969-1-baijiaju1990@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YEeiYbBjefM08h18@google.com>
+In-Reply-To: <20210309095527.27969-1-baijiaju1990@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 09-03-21 08:29:21, Minchan Kim wrote:
-> On Tue, Mar 09, 2021 at 12:03:08PM +0100, Michal Hocko wrote:
-[...]
-> > Sorry for nit picking but I think the additional abstraction for
-> > migrate_prep is not really needed and we can remove some more code.
-> > Maybe we should even get rid of migrate_prep_local which only has a
-> > single caller and open coding lru draining with a comment would be
-> > better from code reading POV IMO.
+On Tue, Mar 09, 2021 at 01:55:27AM -0800, Jia-Ju Bai wrote:
+> When get_task_mm() returns NULL to mm, no error return code of
+> proc_map_files_readdir() is assigned.
+> To fix this bug, ret is assigned with -ENOENT in this case.
 > 
-> Thanks for the code. I agree with you.
-> However, in this moment, let's go with this one until we conclude.
-> The removal of migrate_prep could be easily done after that.
-> I am happy to work on it.
+> Fixes: f0c3b5093add ("[readdir] convert procfs")
+> Reported-by: TOTE Robot <oslab@tsinghua.edu.cn>
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  fs/proc/base.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 3851bfcdba56..254cc6ac65fb 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -2332,8 +2332,10 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
+>  		goto out_put_task;
+>  
+>  	mm = get_task_mm(task);
+> -	if (!mm)
+> +	if (!mm) {
+> +		ret = -ENOENT;
+>  		goto out_put_task;
+> +	}
+>  
+>  	ret = mmap_read_lock_killable(mm);
 
-I will leave that up to you but I find it a bit pointless to add
-migrate_finish just to remove it in the next patch.
+Is there something in particular that makes you think that returning ENOENT is
+the correct behavior in this case?  Try 'ls /proc/$pid/map_files' where pid is a
+kernel thread; it's an empty directory, which is probably intentional.  Your
+patch would change reading the directory to fail with ENOENT.
 
-Btw. you should also move lru_cache_disabled up in swap.c to fix up
-compilation issues by 0 day bot. I didn't do that in my version.
--- 
-Michal Hocko
-SUSE Labs
+- Eric
