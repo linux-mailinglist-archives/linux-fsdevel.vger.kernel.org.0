@@ -2,282 +2,244 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E156332409
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Mar 2021 12:28:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B41D6332416
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Mar 2021 12:32:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbhCIL2W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Mar 2021 06:28:22 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:24419 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231197AbhCIL2Q (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Mar 2021 06:28:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1615289296;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LvGBiPlaIdzFAXyfsy1qEVyMatChi1ggtZKGPfWh9R0=;
-        b=LVNz0z1YXL803AlW9Gs/ynHrnvWU4RjOIPNSJpN5vQ32F89xgpyktcLJuHIXad+HeePI48
-        BvjtiUJkYDV5Q5qqEtYG491cFSm2XS80I9WHSikQOO1DntMDYWo5KN49l1KijwoM5Ud1PC
-        Cb6GwYpLZ0bF2u+LRsvXeD3BSHsWrVM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-316-p4rhjGRAM9idlqpMeWWWYA-1; Tue, 09 Mar 2021 06:28:12 -0500
-X-MC-Unique: p4rhjGRAM9idlqpMeWWWYA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7E714881D50;
-        Tue,  9 Mar 2021 11:28:10 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 542A75D9CD;
-        Tue,  9 Mar 2021 11:27:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210308223247.GB63242@dread.disaster.area>
-References: <20210308223247.GB63242@dread.disaster.area> <CAOQ4uxjYWprb7trvamCx+DaP2yn8HCaZeZx1dSvPyFH2My303w@mail.gmail.com> <2653261.1614813611@warthog.procyon.org.uk> <CAOQ4uxhxwKHLT559f8v5aFTheKgPUndzGufg0E58rkEqa9oQ3Q@mail.gmail.com> <517184.1615194835@warthog.procyon.org.uk> <584529.1615202921@warthog.procyon.org.uk>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     dhowells@redhat.com, Amir Goldstein <amir73il@gmail.com>,
-        linux-cachefs@redhat.com, Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-afs@lists.infradead.org,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: Metadata writtenback notification? -- was Re: fscache: Redesigning the on-disk cache
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <156604.1615289274.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 09 Mar 2021 11:27:54 +0000
-Message-ID: <156605.1615289274@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+        id S229656AbhCILbg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Mar 2021 06:31:36 -0500
+Received: from relay.sw.ru ([185.231.240.75]:53178 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229851AbhCILbb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 9 Mar 2021 06:31:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=virtuozzo.com; s=relay; h=Content-Type:Mime-Version:Message-Id:Subject:From
+        :Date; bh=BXd1hSVtrD4/uekhnZIaLPAgkTFGGDFt9xqe7bOG5Vo=; b=V8fTybDI1Mx9MdXzCKc
+        g6Benb3WzgoGp6+ckV18V3u/JLaNnqegGZBHusRpXhzqgweA7uagbKKzKAMFI5RpwgVJkw93I8QMj
+        gyJnXTDcm7i1yiF7yvPnqMnGO96vNhMQnI7PDTi7g0zMByj5q2BwEd+nDz4eq6SSXmnEJ37y6mY=
+Received: from [192.168.15.228] (helo=alexm-laptop.lan)
+        by relay.sw.ru with smtp (Exim 4.94)
+        (envelope-from <alexander.mikhalitsyn@virtuozzo.com>)
+        id 1lJaZk-002rPk-4d; Tue, 09 Mar 2021 14:30:56 +0300
+Date:   Tue, 9 Mar 2021 14:31:05 +0300
+From:   Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Ian Kent <raven@themaw.net>, Matthew Wilcox <willy@infradead.org>,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, autofs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Ross Zwisler <zwisler@google.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Mattias Nissler <mnissler@chromium.org>,
+        linux-fsdevel@vger.kernel.org, alexander@mihalicyn.com
+Subject: Re: [RFC PATCH] autofs: find_autofs_mount overmounted parent
+ support
+Message-Id: <20210309143105.6ec608dca7764bc58707b213@virtuozzo.com>
+In-Reply-To: <YEVvnvFNpfld7MXM@zeniv-ca.linux.org.uk>
+References: <20210303152931.771996-1-alexander.mikhalitsyn@virtuozzo.com>
+        <832c1a384dc0b71b2902accf3091ea84381acc10.camel@themaw.net>
+        <20210304131133.0ad93dee12a17f41f4052bcb@virtuozzo.com>
+        <YEVm+KH/R5y2rU7K@zeniv-ca.linux.org.uk>
+        <YEVr5jNlpu2jcdzs@zeniv-ca.linux.org.uk>
+        <YEVvnvFNpfld7MXM@zeniv-ca.linux.org.uk>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dave Chinner <david@fromorbit.com> wrote:
+On Mon, 8 Mar 2021 00:12:22 +0000
+Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-> > > There was a discussion about fsyncing a range of files on LSFMM [1].
-> > > In the last comment on the article dchinner argues why we already ha=
-ve that
-> > > API (and now also with io_uring(), but AFAIK, we do not have a usefu=
-l
-> > > wait_for_sync() API. And it doesn't need to be exposed to userspace =
-at all.
-> > > =
+> On Sun, Mar 07, 2021 at 11:51:20PM +0000, Al Viro wrote:
+> > On Thu, Mar 04, 2021 at 01:11:33PM +0300, Alexander Mikhalitsyn wrote:
+> > 
+> > > That problem connected with CRIU (Checkpoint-Restore in Userspace) project.
+> > > In CRIU we have support of autofs mounts C/R. To acheive that we need to use
+> > > ioctl's from /dev/autofs to get data about mounts, restore mount as catatonic
+> > > (if needed), change pipe fd and so on. But the problem is that during CRIU
+> > > dump we may meet situation when VFS subtree where autofs mount present was
+> > > overmounted as whole.
+> > > 
+> > > Simpliest example is /proc/sys/fs/binfmt_misc. This mount present on most
+> > > GNU/Linux distributions by default. For instance on my Fedora 33:
+> > > 
+> > > trigger automount of binfmt_misc
+> > > $ ls /proc/sys/fs/binfmt_misc
+> > > 
+> > > $ cat /proc/1/mountinfo | grep binfmt
+> > > 35 24 0:36 / /proc/sys/fs/binfmt_misc rw,relatime shared:16 - autofs systemd-1 rw,...,direct,pipe_ino=223
+> > > 632 35 0:56 / /proc/sys/fs/binfmt_misc rw,...,relatime shared:315 - binfmt_misc binfmt_misc rw
+> > > 
+> > > $ sudo unshare -m -p --fork --mount-proc sh
+> > > # cat /proc/self/mountinfo | grep "/proc"
+> > > 828 809 0:23 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw
+> > > 829 828 0:36 / /proc/sys/fs/binfmt_misc rw,relatime - autofs systemd-1 rw,...,direct,pipe_ino=223
+> > > 943 829 0:56 / /proc/sys/fs/binfmt_misc rw,...,relatime - binfmt_misc binfmt_misc rw
+> > > 949 828 0:57 / /proc rw...,relatime - proc proc rw
+> > > 
+> > > As we can see now autofs mount /proc/sys/fs/binfmt_misc is inaccessible.
+> > > If we do something like:
+> > > 
+> > > struct autofs_dev_ioctl *param;
+> > > param = malloc(...);
+> > > devfd = open("/dev/autofs", O_RDONLY);
+> > > init_autofs_dev_ioctl(param);
+> > > param->size = size;
+> > > strcpy(param->path, "/proc/sys/fs/binfmt_misc");
+> > > param->openmount.devid = 36;
+> > > err = ioctl(devfd, AUTOFS_DEV_IOCTL_OPENMOUNT, param)
+> > > 
+> > > now we get err = -ENOENT.
+> > 
+> Where does that -ENOENT come from?  AFAICS, pathwalk ought to succeed and
+> return you the root of overmounting binfmt_misc.  Why doesn't the loop in
+> find_autofs_mount() locate anything it would accept?
+> 
 
-> > > [1] https://lwn.net/Articles/789024/
-> > =
+Consider our mounts tree:
+> > > # cat /proc/self/mountinfo | grep "/proc"
+> > > 828 809 0:23 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw
+> > > 829 828 0:36 / /proc/sys/fs/binfmt_misc rw,relatime - autofs systemd-1 rw,...,direct,pipe_ino=223
+> > > 943 829 0:56 / /proc/sys/fs/binfmt_misc rw,...,relatime - binfmt_misc binfmt_misc rw
+> > > 949 828 0:57 / /proc rw...,relatime - proc proc rw
 
-> > This sounds like an interesting idea.  Actually, what I probably want =
-is a
-> > notification to say that a particular object has been completely sync'=
-d to
-> > disk, metadata and all.
-> =
+ENOENT comes from here (current kernel code):
+/* Find the topmost mount satisfying test() */
+static int find_autofs_mount(const char *pathname,
+			     struct path *res,
+			     int test(const struct path *path, void *data),
+			     void *data)
+{
+	struct path path;
+	int err;
 
-> This isn't hard to do yourself in the kernel. All it takes is a
-> workqueue to run vfs_fsync() calls asynchronously and for the work
-> to queue a local notification/wakeup when the fsync completes...
-> =
+	err = kern_path(pathname, LOOKUP_MOUNTPOINT, &path);
+	if (err)
+		return err;
+<-------- here we successfuly open root dentry (/proc/sys/fs/binfmt_misc) of /proc (mnt_id = 949)
 
-> That's all aio_fsync() does - the notification it queues on
-> completion is the AIO completion event for userspace - so I think
-> you could do this in about 50 lines of code if you really needed
-> it...
+	err = -ENOENT;
+<---- set err and start search autofs mount
+/*
+ here we use follow_up to move through upper dentries and find overmounted autofs.
+ But in our case we opened dentry from /proc (mnt_id = 949) and this concrete dentry is *NOT*
+overmounted (whole /proc overmounted).
+*/
+	while (path.dentry == path.mnt->mnt_root) {
+		if (path.dentry->d_sb->s_magic == AUTOFS_SUPER_MAGIC) {
+			if (test(&path, data)) {
+/*
+ we never get there
+*/
+				path_get(&path);
+				*res = path;
+				err = 0;
+				break;
+			}
+		}
+		if (!follow_up(&path))
+			break;
+	}
+/*
+loop finished. err stays as it was err = -ENOENT
+*/
+	path_put(&path);
+	return err;
+}
 
-I was thinking more in terms of passively finding out when metadata has be=
-en
-flushed to disk rather than actively forcing it.  Obviously I can manually
-flush from a worker thread, but that ties up a thread per file I want to
-flush (unless I want to do a higher-level sync).
+Source: https://github.com/torvalds/linux/blob/master/fs/autofs/dev-ioctl.c#L194
 
-Btw, looking at aio_fsync(), is there any reason it copies the current cre=
-ds
-rather than just taking a ref on them?  (Granted, this may not be a questi=
-on
-for you)
+> I really dislike the patch - the whole "normalize path" thing is fundamentally
+> bogus, not to mention the iterator over all mounts, etc., so I would like to
+> understand what the hell is going on before even thinking of *not* NAKing
+> it on sight.
 
-> > However, there are some performance problems are arising in my fscache=
--iter
-> > branch:
-> > =
+I'm not trying to break current API or something similar. I'm just prepared
+RFC patch with my proposal. I'm ready to rework all of that to make it good.
+But without maintainers/community comments/suggestions it's unreal :)
 
-> >  (1) It's doing a lot of synchronous metadata operations (tmpfile, tru=
-ncate,
-> >      setxattr).
-> =
+Please, explain what do you mean by "normalize path thing"?
+I'm not changing semantics of current ioctl() I've just trying to extend it to make
+it work in case when parent mount of autofs mount is overmounted.
 
-> Async pipelines using unbound workqueues are your friend.
+> 
+> 	Wait, so you have /proc overmounted, without anything autofs-related on
+> /proc/sys/fs/binfmt_misc and still want to have the pathname resolved, just
+> because it would've resolved with that overmount of /proc removed?
 
-Maybe.  I could just throw everything into a workqueue and let the workque=
-ue
-deal with it.  There still have to be synchronisation points, though - I c=
-an't
-schedule a cache-write from a server-read to the cache following a 3rd-par=
-ty
-induced invalidation until after the invalidation has happened - and that
-holds up userspace from writing to the cache.  But maybe it will work.
+Something like that.
 
-Btw, how expensive is it to throw an operation off to a workqueue versus d=
-oing
-it in thread?  Particularly if it's a synchronous op that the thread is go=
-ing
-to have to wait for (e.g. write_begin()).
+1. I don't expect that /proc/sys/fs/binfmt_misc path will be resolved
+(because, for instance we can overmount /proc by empty tmpfs and in this case after
+overmounting we can't even open /proc/sys/fs/binfmt_misc and that's okay).
 
-> >  (2) It's retaining a lot of open file structs on cache files.  Cachef=
-iles
-> >      opens the file when it's first asked to access it and retains tha=
-t till
-> >      the cookie is relinquished or the cache withdrawn (the file* does=
-n't
-> >      contribute to ENFILE/EMFILE but it still eats memory).
-> =
+2. We talking about autofs specific function which is used in several autofs-specific
+ioctls. One of that ioctl(AUTOFS_DEV_IOCTL_OPENMOUNT) which is designed to open
+overmounted autofs mounts. Because it's frequent case when autofs mount is overmounted
+(when we talk about direct mounts). This ioctl allows to open file desciptor
+of autofs root dentry and later, autofs daemon use it to manage mount (call another autofs
+ioctls on that fd).
 
-> Sounds similar to the problem that the NFSd open file cache solves.
-> (fs/nfsd/filecache.c)
+I've just meet problem, that this API not works when parent mount of autofs mount is overmounted.
+For example:
+tmpfs     /some-dir
+autofs    /some-dir/autofs1 <-autofs direct mount
+nfs       /some-dir/autofs1 <-automounted fs on top of autofs
 
-Looks similiarish to what I was thinking of with having a queue of
-currently-not-in-use cookies to go through and commit and close.
+ioctl(AUTOFS_DEV_IOCTL_OPENMOUNT) will work in this case. Because loop
+with follow_up() starts from /some-dir/autofs1 dentry of nfs, then follow_up()
+and move to /some-dir/autofs1 dentry of autofs.
 
-> >      but if the file is truncated
-> >      larger, that excess data now becomes part of the file.
-> =
+But if we change picture to:
+tmpfs1     /some-dir
+autofs     /some-dir/autofs1 <-autofs direct mount
+nfs        /some-dir/autofs1 <-automounted fs on top of autofs
+tmpfs2     /some-dir
 
-> Keep the actual file size in your tracking xattr.
+This will breaks API. Because know we can't even open /some-dir/autofs1
+dentry.
 
-I do that, but it doesn't help entirely.  If someone truncates the file la=
-rger
-and then writes non-contiguously, the problem occurs.
+Ok. We can create this dentry at first by mkdir /some-dir/autofs1.
+But it will not help because our loop:
+	while (path.dentry == path.mnt->mnt_root) {
+		if (path.dentry->d_sb->s_magic == AUTOFS_SUPER_MAGIC) {
+			if (test(&path, data)) {
+...
+		if (!follow_up(&path))
+			break;
+	}
+will start from dentry /some-dir/autofs1 from tmpfs2. And after follow_up
+on that dentry we will move to / dentry => loop finishes => user get ENOENT.
 
-I've tried truncating the file down and then truncating it up, but that
-requires two synchronous ops - though the latter is relatively cheap.  I'v=
-e
-also tried fallocate() to clear the block.  What I've found is that the ne=
-xt
-DIO write then has to sync because these may read data into the pagecache =
-of
-the backing file.
+> 
+> 	I hope I'm misreading you; in case I'm not, the ABI is extremely
+> tasteless and until you manage to document the exact semantics you want
+> for param->path, consider it NAKed.
+> 
+> 	BTW, if that thing would be made to work, what's to stop somebody from
+> doing ...at() syscalls with the resulting fd as a starting point and pathnames
+> starting with ".."?  "/foo is overmounted, but we can get to anything under
+> /foo/bar/ in the underlying tree since there's an autofs mount somewhere in
+> /foo/bar/splat/puke/*"?
 
-Apart from clearing the tail of a page on writing, it might be better for =
-me
-to read the data into a spare page, clear the tail and write it back.
+Interesting point. Thank you!
+I'm not sure. But is it serious problem for us? What stop somebody to open
+and hold fd to any directory before overmounting?
 
-> >      Possibly it's sufficient to just clear the excess page space befo=
-re
-> >      writing, but that doesn't necessarily stop a writable mmap from
-> >      scribbling on it.
-> =
+> 
+> 	IOW, the real question (aside of "WTF?") is what are you using the
+> resulting descriptor for and what do you need to be able to do with it.
+> Details, please.
 
-> We can't stop mmap from scribbling in it. All filesystems have this
-> problem, so to prevent data leaks we have to zero the post-eof tail
-> region on every write of the EOF block, anyway.
+Sure. I've covered use cases of file descriptor returned by ioctl(AUTOFS_DEV_IOCTL_OPENMOUNT)
+above.
 
-I meant an mmap scribbling on it after it's been cleared - but I guess tak=
-ing
-away the PTE-writeable flag and making page_mkwrite() wait should solve th=
-at.
+Thanks for your reply!
+I'm sorry If my patch description is unclear. I'm newbie here :)
 
-> >  (4) Committing outstanding cache metadata at cache withdrawal or netf=
-s
-> >      unmount.  I've previously mentioned this: it ends up with a whole
-> >      slew of synchronous metadata changes being committed to the cache=
- in
-> >      one go (truncates, fallocates, fsync, xattrs, unlink+link of tmpf=
-ile)
-> >      - and this can take quite a long time.  The cache needs to be mor=
-e
-> >      proactive in getting stuff committed as it goes along.
-> =
-
-> Workqueues give you an easy mechanism for async dispatch and
-> concurrency for synchronous operations. This is a largely solved
-> problem...
-
-Yes and no.  Yes, I can fan out the number of threads doing the committing=
-,
-but there's still a limit on the I/O bandwidth - and a lot of the operatio=
-ns
-still have to hit the disk in the right order.  It still stuffs up the use=
-r
-experience if the cache eats up the entirety of the disk I/O for a few sec=
-onds
-just because an automount expired.
-
-Probably the progressive committing approach is a better one so that there=
-'s
-less to do at the end.
-
-> >  (5) Attaching to an object requires a pathwalk to it (normally only t=
-wo
-> >      steps) and then reading various xattrs on it - all synchronous, b=
-ut can
-> >      be punted to a background threadpool.
-> =
-
-> a.k.a. punting to a workqueue :)
-
-I do that, but it doesn't help so much.  Whilst it can mitigate the effect=
- by
-running parallel to userspace, userspace tends to move pretty quickly from
-open() to read() - at which point we have to wait anyway.
-
-The problem is that all the steps are synchronous and, for the most part, =
-have
-to be sequential because there's a dependency chain: 2 x dir-lookup, get L=
-SM
-xattrs, get cache xattrs - then read the data if it's present.  I might be
-able to speculate at the end and read two cache xattrs in parallel, but ea=
-ch
-one requires a separate thread to do it.
-
-On top of that, if the user is running a parallel application such as buil=
-ding
-a kernel, a CPU running an offloaded I/O thread isn't running a user threa=
-d.
-What I've found is that increasing the size of the threadpool doesn't actu=
-ally
-affect the time taken.
-
-What I've done in my fscache-iter branch is to have a small thread pool an=
-d
-offload work to it if there's a thread free - otherwise process the work i=
-n
-the calling userspace thread and avoid the context switching.
-
-
-One reason I was wondering about moving to an approach whereby I have an i=
-ndex
-that locates all the blocks (which are then kept in a single file) is that=
- I
-can probably keep the entire index in RAM and so the lookup costs are vast=
-ly
-reduced.  The downside as Amir pointed out is that metadata coherency is m=
-uch
-harder if I don't just want to blow the cache away if cache isn't properly
-committed when the machine is rebooted.
-
-Note that OpenAFS has been using a single-index approach, with each 256K b=
-lock
-of data in its own file.  They then zap any file that's newer than the ind=
-ex
-file when the cache is started, assuming that that file might be corrupted=
-.
-
-David
-
+Regards,
+Alex
