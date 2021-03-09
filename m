@@ -2,209 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CE2633274F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Mar 2021 14:38:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD9CC332B18
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Mar 2021 16:55:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230462AbhCINhc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Mar 2021 08:37:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52008 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231229AbhCINhY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Mar 2021 08:37:24 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E1B46650F5;
-        Tue,  9 Mar 2021 13:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615297043;
-        bh=zS2pYAyshXgLq2yLld4RkUTUIVQfJijL3GDy3c1h90U=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=XN6WcZODNg9ibjdgtZ4tOM1QYwYRRgfTE8ZQheffRWsRL0QLcEg9yTIdP0lscIhTR
-         85ZfcBt1msbAHG9CYXmIBjLgS2WMsDqlNVb1KrkLggVWll0Zfph4dgzg8m4v79XYuF
-         Lz7SYyBlgvH5mKvVV6UDWkhopxh16caGTOAH0Eq+RJ/042VN4n1G+JrV9H2Obh8yzK
-         N2HAAq46pwWkMwBZwIsFQ7lo8sNl6qmiSaWNy05rNoyTJTgI3uDxvXSEm5npoQnbTk
-         Soif9hbZ+SYsN3RJiT6veL4Sepn270IuHIh0Sj3CBZbnEEcmfVPRl+BQXGXwzlcaWx
-         WOXk+nCtOTJuw==
-Message-ID: <f8c7a7fe8ee7fc1f1a36f35f38cc653d167b25a1.camel@kernel.org>
-Subject: Re: [PATCH v3] fs/locks: print full locks information
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luo Longjun <luolongjun@huawei.com>, viro@zeniv.linux.org.uk,
-        bfields@fieldses.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sangyan@huawei.com, luchunhua@huawei.com
-Date:   Tue, 09 Mar 2021 08:37:21 -0500
-In-Reply-To: <685386c2840b76c49b060bf7dcea1fefacf18176.1614322182.git.luolongjun@huawei.com>
-References: <20210221201024.GB15975@fieldses.org>
-         <685386c2840b76c49b060bf7dcea1fefacf18176.1614322182.git.luolongjun@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        id S231673AbhCIPzP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Mar 2021 10:55:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48976 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231367AbhCIPyr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 9 Mar 2021 10:54:47 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5077C06175F;
+        Tue,  9 Mar 2021 07:54:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=KGWSD1qzjw8jWYcVTd5k5Vux/eD/dPBH9TiN6yLVseE=; b=UqioM+JOtMrCZY+99WNlohS+n6
+        D8sXLpSvt07nrEhE9GYHmdMTmjw4DL1jAclk+Ci+jnYGdn+IEIwZ0S8fpKJ2whNwkyjmljxBPh47g
+        cMsKfNPA0fujb0XrwseHmDs/2m816gk63sTddN9x9X9wgRohgavTvx8tm6KQtpAyIG7cxz0OK5MKP
+        PgIH6/WtutbbPjhpmXZVF7C1m9jWVkHGrdDIIbgcgrxaJ3JqKKlPb7/Swf8vZxBO2cCE67ILF7rVn
+        MmRlVgFU4oQqmQ/DBvwu33p+M9TPPMt61GrQMTQJl2w3aFf67m+MltPsTuxfefjtilLeB/ZfnOnxB
+        lkLQIpmA==;
+Received: from [2001:4bb8:180:9884:c70:4a89:bc61:3] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lJegA-000lLy-1I; Tue, 09 Mar 2021 15:53:56 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Vetter <daniel@ffwll.ch>, Nadav Amit <namit@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Nitin Gupta <ngupta@vflare.org>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: make alloc_anon_inode more useful
+Date:   Tue,  9 Mar 2021 16:53:39 +0100
+Message-Id: <20210309155348.974875-1-hch@lst.de>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2021-02-25 at 22:58 -0500, Luo Longjun wrote:
-> Commit fd7732e033e3 ("fs/locks: create a tree of dependent requests.")
-> has put blocked locks into a tree.
-> 
-> So, with a for loop, we can't check all locks information.
-> 
-> To solve this problem, we should traverse the tree.
-> 
-> Signed-off-by: Luo Longjun <luolongjun@huawei.com>
-> ---
->  fs/locks.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++--------
->  1 file changed, 56 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 99ca97e81b7a..ecaecd1f1b58 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -2828,7 +2828,7 @@ struct locks_iterator {
->  };
->  
-> 
-> 
-> 
->  static void lock_get_status(struct seq_file *f, struct file_lock *fl,
-> -			    loff_t id, char *pfx)
-> +			    loff_t id, char *pfx, int repeat)
->  {
->  	struct inode *inode = NULL;
->  	unsigned int fl_pid;
-> @@ -2844,7 +2844,11 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
->  	if (fl->fl_file != NULL)
->  		inode = locks_inode(fl->fl_file);
->  
-> 
-> 
-> 
-> -	seq_printf(f, "%lld:%s ", id, pfx);
-> +	seq_printf(f, "%lld: ", id);
-> +
-> +	if (repeat)
-> +		seq_printf(f, "%*s", repeat - 1 + (int)strlen(pfx), pfx);
+Hi all,
 
-Shouldn't that be "%.*s" ?
+this series first renames the existing alloc_anon_inode to
+alloc_anon_inode_sb to clearly mark it as requiring a superblock.
 
-Also, isn't this likely to end up walking past the end of "pfx" (or even
-ending up at an address before the buffer)? You have this below:
+It then adds a new alloc_anon_inode that works on the anon_inode
+file system super block, thus removing tons of boilerplate code.
 
-    lock_get_status(f, fl, *id, "", 0);
+The few remainig callers of alloc_anon_inode_sb all use alloc_file_pseudo
+later, but might also be ripe for some cleanup.
 
-...so the "length" value you're passing into the format there is going
-to be -1. It also seems like if you get a large "level" value in
-locks_show, then you'll end up with a length that is much longer than
-the actual string.
-
-> +
->  	if (IS_POSIX(fl)) {
->  		if (fl->fl_flags & FL_ACCESS)
->  			seq_puts(f, "ACCESS");
-> @@ -2906,21 +2910,64 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
->  	}
->  }
->  
-> 
-> 
-> 
-> +static struct file_lock *get_next_blocked_member(struct file_lock *node)
-> +{
-> +	struct file_lock *tmp;
-> +
-> +	/* NULL node or root node */
-> +	if (node == NULL || node->fl_blocker == NULL)
-> +		return NULL;
-> +
-> +	/* Next member in the linked list could be itself */
-> +	tmp = list_next_entry(node, fl_blocked_member);
-> +	if (list_entry_is_head(tmp, &node->fl_blocker->fl_blocked_requests, fl_blocked_member)
-> +		|| tmp == node) {
-> +		return NULL;
-> +	}
-> +
-> +	return tmp;
-> +}
-> +
->  static int locks_show(struct seq_file *f, void *v)
->  {
->  	struct locks_iterator *iter = f->private;
-> -	struct file_lock *fl, *bfl;
-> +	struct file_lock *cur, *tmp;
->  	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
-> +	int level = 0;
->  
-> 
-> 
-> 
-> -	fl = hlist_entry(v, struct file_lock, fl_link);
-> +	cur = hlist_entry(v, struct file_lock, fl_link);
->  
-> 
-> 
-> 
-> -	if (locks_translate_pid(fl, proc_pidns) == 0)
-> +	if (locks_translate_pid(cur, proc_pidns) == 0)
->  		return 0;
->  
-> 
-> 
-> 
-> -	lock_get_status(f, fl, iter->li_pos, "");
-> +	/* View this crossed linked list as a binary tree, the first member of fl_blocked_requests
-> +	 * is the left child of current node, the next silibing in fl_blocked_member is the
-> +	 * right child, we can alse get the parent of current node from fl_blocker, so this
-> +	 * question becomes traversal of a binary tree
-> +	 */
-> +	while (cur != NULL) {
-> +		if (level)
-> +			lock_get_status(f, cur, iter->li_pos, "-> ", level);
-> +		else
-> +			lock_get_status(f, cur, iter->li_pos, "", level);
->  
-> 
-> 
-> 
-> -	list_for_each_entry(bfl, &fl->fl_blocked_requests, fl_blocked_member)
-> -		lock_get_status(f, bfl, iter->li_pos, " ->");
-> +		if (!list_empty(&cur->fl_blocked_requests)) {
-> +			/* Turn left */
-> +			cur = list_first_entry_or_null(&cur->fl_blocked_requests,
-> +				struct file_lock, fl_blocked_member);
-> +			level++;
-> +		} else {
-> +			/* Turn right */
-> +			tmp = get_next_blocked_member(cur);
-> +			/* Fall back to parent node */
-> +			while (tmp == NULL && cur->fl_blocker != NULL) {
-> +				cur = cur->fl_blocker;
-> +				level--;
-> +				tmp = get_next_blocked_member(cur);
-> +			}
-> +			cur = tmp;
-> +		}
-> +	}
->  
-> 
-> 
-> 
->  	return 0;
->  }
-> @@ -2941,7 +2988,7 @@ static void __show_fd_locks(struct seq_file *f,
->  
-> 
-> 
-> 
->  		(*id)++;
->  		seq_puts(f, "lock:\t");
-> -		lock_get_status(f, fl, *id, "");
-> +		lock_get_status(f, fl, *id, "", 0);
->  	}
->  }
->  
-> 
-> 
-> 
-
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Diffstat:
+ arch/powerpc/platforms/pseries/cmm.c |   27 +-------------
+ drivers/dma-buf/dma-buf.c            |    2 -
+ drivers/gpu/drm/drm_drv.c            |   64 +----------------------------------
+ drivers/misc/cxl/api.c               |    2 -
+ drivers/misc/vmw_balloon.c           |   24 +------------
+ drivers/scsi/cxlflash/ocxl_hw.c      |    2 -
+ drivers/virtio/virtio_balloon.c      |   30 +---------------
+ fs/aio.c                             |    2 -
+ fs/anon_inodes.c                     |   15 +++++++-
+ fs/libfs.c                           |    2 -
+ include/linux/anon_inodes.h          |    1 
+ include/linux/fs.h                   |    2 -
+ kernel/resource.c                    |   30 ++--------------
+ mm/z3fold.c                          |   38 +-------------------
+ mm/zsmalloc.c                        |   48 +-------------------------
+ 15 files changed, 39 insertions(+), 250 deletions(-)
