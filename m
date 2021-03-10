@@ -2,57 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 80EBA333A4F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Mar 2021 11:42:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36F79333A59
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Mar 2021 11:43:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231897AbhCJKmY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S232582AbhCJKmY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 10 Mar 2021 05:42:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38598 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232537AbhCJKl4 (ORCPT
+        with ESMTP id S232552AbhCJKl6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Mar 2021 05:41:56 -0500
-Received: from mail-qt1-x84a.google.com (mail-qt1-x84a.google.com [IPv6:2607:f8b0:4864:20::84a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27A73C061761
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 02:41:56 -0800 (PST)
-Received: by mail-qt1-x84a.google.com with SMTP id 16so12634346qtw.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 02:41:56 -0800 (PST)
+        Wed, 10 Mar 2021 05:41:58 -0500
+Received: from mail-qk1-x749.google.com (mail-qk1-x749.google.com [IPv6:2607:f8b0:4864:20::749])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D5EFC061761
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 02:41:58 -0800 (PST)
+Received: by mail-qk1-x749.google.com with SMTP id h134so12441194qke.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 02:41:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=LX0emKbgsHYtGpYyL1x1FnLQ5ewlS0gEm+vlZ3nascQ=;
-        b=N/u3p5qkgkVCIorblwjlo0ALkDKW6OemYeWX+fR+AT8w6i0Gh/XvradEyaRC0Nmutk
-         j3AGpbLlTACkVr5oi/De9Cf9L/VxHIbruSwuU7HfD6sKWBig/HP45lCrnKDX1aRSOhp6
-         ZgdsDxtOtDhrvcdiYBVzGE0Yz/2W3v0FmAEpbD1N+n6ggnT8qnl47gG7JmqqPv3PrAko
-         qGwATz9jmqBUcMVHnIzIDgnkvckIW8Sp98YOu5u5o5EwKc4jVHB3aVNz+K9uwfv9Y1rQ
-         WjLGhhIrjQcVepjxDJ+LjtV/n+fiN6L3yTzeRv74Ev9+ZDMb8KBoXkY739owMIXjSb+n
-         Ursw==
+        bh=dOVfTFewU2OVBxfkqxI1NPon3rxqJk0MP/D8NHNSqQA=;
+        b=q1jQ16YbsnqIDBn5nBGRtDoStGi+RN0sGNM2jXfR0WlnzZ0m1QJ+LuURos4FjT52Oj
+         j5GJfLS9NZbPypEgX45w2ZaWBBIqOUxMg4w/QA7kuYIyM6DGtddI7j14cXsB1uOKooJR
+         xlLaN3QhYFUnc8tqDxrGszVCHf4LntSANKCervuZRhsRtUNTLSQ1BRUG2wOJXiyZRqNT
+         jZYMfmSKEODrH/cBBMftUMy1ScyCkdUUwpGw2QU3syBSWkCd+bFPsH53rNOacPywjo72
+         Azvh9Fk7EBMxvXkTblPINbobb5NEaGoZTrRk4PK32kIHSJtJgoINr+KfcHX+qfPyXaU5
+         6Vdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=LX0emKbgsHYtGpYyL1x1FnLQ5ewlS0gEm+vlZ3nascQ=;
-        b=E4Fg7eVwOeDHtTIzx3d97VqAMx8avXBVAfa04gG/1OED7ez/fQ+3mAD+Tno/YV/VcO
-         de3AqlkJjczO00dCurssjXh+MuH+i+glyWBgJmS00nDwo4bRV73z3C+NFfvDUX+cFAxY
-         s3OLHZdFVlXu5wiR0DkVlO5FYbJqwInu/26mVxxpzuGouIA7QXtOSOTjRwKX3S3dXBzK
-         jgv8w11lOf+uw3jyoLByLS5IKd8UB5cSxIF+ZUGPtf9UGv+/xwMkWV8kNRSKIdI1Xia0
-         jTZhw513KKVpd7a41iZ3twylAT5uow1Lai+Ie1E6QRXn0ggbuX4XIeAZ59XUVoku4Pms
-         /wgQ==
-X-Gm-Message-State: AOAM53157I3l3oayEeIWPUks/qx8s1RxKYLY0827+2gtfQeh3KC/gJTR
-        dq+Uc94kMCZYbN66MustIzQclEprUg==
-X-Google-Smtp-Source: ABdhPJymJDYxCT4IzRtfNhWaSFV/kqnhDLbM/p7NNyqwqrXyZsRP8XQdyy5hJ1tEInGdDs/E4CUY8BMuEw==
+        bh=dOVfTFewU2OVBxfkqxI1NPon3rxqJk0MP/D8NHNSqQA=;
+        b=jTteWamHzsSJd51njOOW7BB+PBMUG2pFEEGeUM6U3nQ6MrfvKGuHwajolcG2V+c/KJ
+         GJtZD6YbHGYCNVqisrDubBIBe5MjCGgcCW8O/jrEfwzhT6XwB+Pa4M8xDIa3zy4fssqV
+         MREqd5ZLsUfoEiRnO2x4EV8oraEVaFTwukSmckazkYf5D/wHOv4CEjlPXMO7AMiD6+SY
+         Kcp5o6WtjnGwfBlWjIsthccC6/3sfipqBVtD+qVEy3dupY8BuUcaP4bPcT4m9wJAbwEn
+         yi1MzfRgssyxuuAIzU2+hVBNSY0THyGM7CAcmhFPG26bZ/O9yfdpBG4wnv7LJK7SaXhP
+         gEwg==
+X-Gm-Message-State: AOAM53288dGTBDOl5xtfmEEgR7GRJA8vMGC3QofY/xqt1ezQKf0fPam5
+        MhqJUzSZ+Lfx6dKWU3lFYUUPqCQmDQ==
+X-Google-Smtp-Source: ABdhPJw2duZKZHANH9M/H/FlahCExA+5z683QS7WBEwd4bOLuqI3t5lqneYmFDDGv4KnW0XshRNEvwlpQg==
 X-Received: from elver.muc.corp.google.com ([2a00:79e0:15:13:e995:ac0b:b57c:49a4])
- (user=elver job=sendgmr) by 2002:ad4:4d82:: with SMTP id cv2mr2356657qvb.6.1615372915311;
- Wed, 10 Mar 2021 02:41:55 -0800 (PST)
-Date:   Wed, 10 Mar 2021 11:41:33 +0100
+ (user=elver job=sendgmr) by 2002:ad4:4991:: with SMTP id t17mr2036844qvx.33.1615372917507;
+ Wed, 10 Mar 2021 02:41:57 -0800 (PST)
+Date:   Wed, 10 Mar 2021 11:41:34 +0100
 In-Reply-To: <20210310104139.679618-1-elver@google.com>
-Message-Id: <20210310104139.679618-3-elver@google.com>
+Message-Id: <20210310104139.679618-4-elver@google.com>
 Mime-Version: 1.0
 References: <20210310104139.679618-1-elver@google.com>
 X-Mailer: git-send-email 2.30.1.766.gb4fecdf3b7-goog
-Subject: [PATCH RFC v2 2/8] perf/core: Support only inheriting events if
- cloned with CLONE_THREAD
+Subject: [PATCH RFC v2 3/8] perf/core: Add support for event removal on exec
 From:   Marco Elver <elver@google.com>
 To:     elver@google.com, peterz@infradead.org,
         alexander.shishkin@linux.intel.com, acme@kernel.org,
@@ -70,154 +69,106 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adds bit perf_event_attr::inherit_thread, to restricting inheriting
-events only if the child was cloned with CLONE_THREAD.
+Adds bit perf_event_attr::remove_on_exec, to support removing an event
+from a task on exec.
 
 This option supports the case where an event is supposed to be
-process-wide only (including subthreads), but should not propagate
-beyond the current process's shared environment.
+process-wide only, and should not propagate beyond exec, to limit
+monitoring to the original process image only.
 
-Link: https://lore.kernel.org/lkml/YBvj6eJR%2FDY2TsEB@hirez.programming.kicks-ass.net/
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Marco Elver <elver@google.com>
 ---
 v2:
 * Add patch to series.
 ---
- include/linux/perf_event.h      |  5 +++--
  include/uapi/linux/perf_event.h |  3 ++-
- kernel/events/core.c            | 21 ++++++++++++++-------
- kernel/fork.c                   |  2 +-
- 4 files changed, 20 insertions(+), 11 deletions(-)
+ kernel/events/core.c            | 45 +++++++++++++++++++++++++++++++++
+ 2 files changed, 47 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index fab42cfbd350..982ad61c653a 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -955,7 +955,7 @@ extern void __perf_event_task_sched_in(struct task_struct *prev,
- 				       struct task_struct *task);
- extern void __perf_event_task_sched_out(struct task_struct *prev,
- 					struct task_struct *next);
--extern int perf_event_init_task(struct task_struct *child);
-+extern int perf_event_init_task(struct task_struct *child, u64 clone_flags);
- extern void perf_event_exit_task(struct task_struct *child);
- extern void perf_event_free_task(struct task_struct *task);
- extern void perf_event_delayed_put(struct task_struct *task);
-@@ -1446,7 +1446,8 @@ perf_event_task_sched_in(struct task_struct *prev,
- static inline void
- perf_event_task_sched_out(struct task_struct *prev,
- 			  struct task_struct *next)			{ }
--static inline int perf_event_init_task(struct task_struct *child)	{ return 0; }
-+static inline int perf_event_init_task(struct task_struct *child,
-+				       u64 clone_flags)			{ return 0; }
- static inline void perf_event_exit_task(struct task_struct *child)	{ }
- static inline void perf_event_free_task(struct task_struct *task)	{ }
- static inline void perf_event_delayed_put(struct task_struct *task)	{ }
 diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index ad15e40d7f5d..813efb65fea8 100644
+index 813efb65fea8..8c5b9f5ad63f 100644
 --- a/include/uapi/linux/perf_event.h
 +++ b/include/uapi/linux/perf_event.h
-@@ -389,7 +389,8 @@ struct perf_event_attr {
- 				cgroup         :  1, /* include cgroup events */
+@@ -390,7 +390,8 @@ struct perf_event_attr {
  				text_poke      :  1, /* include text poke events */
  				build_id       :  1, /* use build id in mmap2 events */
--				__reserved_1   : 29;
-+				inherit_thread :  1, /* children only inherit if cloned with CLONE_THREAD */
-+				__reserved_1   : 28;
+ 				inherit_thread :  1, /* children only inherit if cloned with CLONE_THREAD */
+-				__reserved_1   : 28;
++				remove_on_exec :  1, /* event is removed from task on exec */
++				__reserved_1   : 27;
  
  	union {
  		__u32		wakeup_events;	  /* wakeup every n events */
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index bff498766065..a8382e6c907c 100644
+index a8382e6c907c..bc9e6e35e414 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -11597,6 +11597,9 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
- 	    (attr->sample_type & PERF_SAMPLE_WEIGHT_STRUCT))
+@@ -4195,6 +4195,46 @@ static void perf_event_enable_on_exec(int ctxn)
+ 		put_ctx(clone_ctx);
+ }
+ 
++static void perf_remove_from_owner(struct perf_event *event);
++static void perf_event_exit_event(struct perf_event *child_event,
++				  struct perf_event_context *child_ctx,
++				  struct task_struct *child);
++
++/*
++ * Removes all events from the current task that have been marked
++ * remove-on-exec, and feeds their values back to parent events.
++ */
++static void perf_event_remove_on_exec(void)
++{
++	int ctxn;
++
++	for_each_task_context_nr(ctxn) {
++		struct perf_event_context *ctx;
++		struct perf_event *event, *next;
++
++		ctx = perf_pin_task_context(current, ctxn);
++		if (!ctx)
++			continue;
++		mutex_lock(&ctx->mutex);
++
++		list_for_each_entry_safe(event, next, &ctx->event_list, event_entry) {
++			if (!event->attr.remove_on_exec)
++				continue;
++
++			if (!is_kernel_event(event))
++				perf_remove_from_owner(event);
++			perf_remove_from_context(event, DETACH_GROUP);
++			/*
++			 * Remove the event and feed back its values to the
++			 * parent event.
++			 */
++			perf_event_exit_event(event, ctx, current);
++		}
++		mutex_unlock(&ctx->mutex);
++		put_ctx(ctx);
++	}
++}
++
+ struct perf_read_data {
+ 	struct perf_event *event;
+ 	bool group;
+@@ -7519,6 +7559,8 @@ void perf_event_exec(void)
+ 				   true);
+ 	}
+ 	rcu_read_unlock();
++
++	perf_event_remove_on_exec();
+ }
+ 
+ struct remote_output {
+@@ -11600,6 +11642,9 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
+ 	if (!attr->inherit && attr->inherit_thread)
  		return -EINVAL;
  
-+	if (!attr->inherit && attr->inherit_thread)
++	if (attr->remove_on_exec && attr->enable_on_exec)
 +		return -EINVAL;
 +
  out:
  	return ret;
  
-@@ -12820,12 +12823,13 @@ static int
- inherit_task_group(struct perf_event *event, struct task_struct *parent,
- 		   struct perf_event_context *parent_ctx,
- 		   struct task_struct *child, int ctxn,
--		   int *inherited_all)
-+		   u64 clone_flags, int *inherited_all)
- {
- 	int ret;
- 	struct perf_event_context *child_ctx;
- 
--	if (!event->attr.inherit) {
-+	if (!event->attr.inherit ||
-+	    (event->attr.inherit_thread && !(clone_flags & CLONE_THREAD))) {
- 		*inherited_all = 0;
- 		return 0;
- 	}
-@@ -12857,7 +12861,8 @@ inherit_task_group(struct perf_event *event, struct task_struct *parent,
- /*
-  * Initialize the perf_event context in task_struct
-  */
--static int perf_event_init_context(struct task_struct *child, int ctxn)
-+static int perf_event_init_context(struct task_struct *child, int ctxn,
-+				   u64 clone_flags)
- {
- 	struct perf_event_context *child_ctx, *parent_ctx;
- 	struct perf_event_context *cloned_ctx;
-@@ -12897,7 +12902,8 @@ static int perf_event_init_context(struct task_struct *child, int ctxn)
- 	 */
- 	perf_event_groups_for_each(event, &parent_ctx->pinned_groups) {
- 		ret = inherit_task_group(event, parent, parent_ctx,
--					 child, ctxn, &inherited_all);
-+					 child, ctxn, clone_flags,
-+					 &inherited_all);
- 		if (ret)
- 			goto out_unlock;
- 	}
-@@ -12913,7 +12919,8 @@ static int perf_event_init_context(struct task_struct *child, int ctxn)
- 
- 	perf_event_groups_for_each(event, &parent_ctx->flexible_groups) {
- 		ret = inherit_task_group(event, parent, parent_ctx,
--					 child, ctxn, &inherited_all);
-+					 child, ctxn, clone_flags,
-+					 &inherited_all);
- 		if (ret)
- 			goto out_unlock;
- 	}
-@@ -12955,7 +12962,7 @@ static int perf_event_init_context(struct task_struct *child, int ctxn)
- /*
-  * Initialize the perf_event context in task_struct
-  */
--int perf_event_init_task(struct task_struct *child)
-+int perf_event_init_task(struct task_struct *child, u64 clone_flags)
- {
- 	int ctxn, ret;
- 
-@@ -12964,7 +12971,7 @@ int perf_event_init_task(struct task_struct *child)
- 	INIT_LIST_HEAD(&child->perf_event_list);
- 
- 	for_each_task_context_nr(ctxn) {
--		ret = perf_event_init_context(child, ctxn);
-+		ret = perf_event_init_context(child, ctxn, clone_flags);
- 		if (ret) {
- 			perf_event_free_task(child);
- 			return ret;
-diff --git a/kernel/fork.c b/kernel/fork.c
-index d3171e8e88e5..d090366d1206 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2070,7 +2070,7 @@ static __latent_entropy struct task_struct *copy_process(
- 	if (retval)
- 		goto bad_fork_cleanup_policy;
- 
--	retval = perf_event_init_task(p);
-+	retval = perf_event_init_task(p, clone_flags);
- 	if (retval)
- 		goto bad_fork_cleanup_policy;
- 	retval = audit_alloc(p);
 -- 
 2.30.1.766.gb4fecdf3b7-goog
 
