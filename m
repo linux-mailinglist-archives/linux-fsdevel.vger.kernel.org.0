@@ -2,142 +2,254 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 765CB33450D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Mar 2021 18:23:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AAD2334562
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Mar 2021 18:47:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232970AbhCJRWf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Mar 2021 12:22:35 -0500
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com ([66.163.184.153]:34154
-        "EHLO sonic309-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233340AbhCJRWV (ORCPT
+        id S233102AbhCJRq3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Mar 2021 12:46:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46116 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230522AbhCJRqP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Mar 2021 12:22:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1615396939; bh=+Loh3xxfpBT+y85qqEDSrP4zjimJVjMXFRqS42pGqPA=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=E1wuzBEL1TaCpKSgsSQYwyLYOi5WKKtVGIOdOggoA0KvYde8HV30uI6zVHGIZkZNCuAGZcpfSYQoBGP99LjwBtS0hhZaAxHNi+SkxoduTJw4EmsmH9NL8ZTNDhFk1lddM0QBMJValK+sya9pz4Dw05EdEz2uaq5lMXn2RPWSUbIh0ZbnNK2WKaeshokDXboBd/WnAl65eccYQc94iHWaPUtO3e5558xR84tUxG2Dlj+1RCxI44kndrbNTsVm7Oc7e9DXyFhec52/oELtHhzaAv3jrcDLNkYaYSCn6NfKcKHG6JVOb2z+tSwDrIOnY8SEihWXOFhb4sAhFRdbUAtlCw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1615396939; bh=nS5FRGVz2OlUxHs1IwfkQz36GQMYV+kUKMI0S9ZJcp8=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=AWLxzpiDkcZqlz3dIDRVdSGP22Vu7mUupVBFiJpzD2t/Yu7M/LSNdAK/nTvo3Im7ZO11F8Gs/8QyJJXE94XNea0b0Vr/AEc6DQGigFwfpAgVkW1pm+flDfuoyKBZjJbRydcke0EMCao5etaXfLrPbmYjKIoOXavZIdGiCwNEJd7Ad4Qh9KnEO+Q9bDIQMUtZCIblMrLBjCRultD14NEU8U7qvwNTgoj/8eHjeldm7wlnJn/UgrfuxrHgTBQ8Y1H+cTt+Bql2EkCyPrQZGQgogImiYUPZL6WRl3G0hkZttwI8T7vtCVHqIAAwNh3in4ri7sWQUfmo91ujzJ5mZM9Cew==
-X-YMail-OSG: CfWGai0VM1mtPjmFrgEwIwzHuJ79d_iisi9mPSWcff6xtOiQD4KiZHtLzB5n9py
- CfFmYdZ4nkjB9tgAKtUK3MUiOHeA9M2kUfXKYPw1pvGAZycnzuHnERgHlcaaLvmcflUSmSUlV7d3
- fkShnhZi3FWXx8hdFiNgrOprzOzc9WJOQOCCUrWn.asLAA.KQiUKwLkZF.t0Bvg37lAaf0P0d1nL
- nxH4gIMzT_34uLxo3yEg.JEDLzZoroDcWJHgehPhXN03BdGSaFRElPXjlggG7sKEYHuVbwRzah_I
- YU4EhIYcvLFLWlgzdcQBNzI_v9YbJHqaRUpJ8DVE2MAG1Jq0JSua9wZkFA4ilqagSVW.klhW4sbM
- 6LDAGCIdj0feyi_IUkhzmMP0fhbmMncI0RPMYc9vJ104qpauSXfTPD0GkrziAbBODVypV_Kg0269
- QwQNxCKa32DHkcsFbP4xixJ.KKXQteWnfPdTTEi_rbeMUlQ_vIV3QAUzEQi6N__dEl8FIK7dqztT
- l78MnQOkZWuC.Z3uqloeVMjB7Zkb0IjRTv6Ql1wN0pfOrMDnLFgs6mF_x5OnYWzTWyxd6l97aq3.
- 8eh_XOSxei5VAhPRC0a7lEUFW6tNBk93jZJp8.PpxwHOE6UW22PIYCqXyac_G5aKgnTvmAjGLkzi
- aR7Ei7sZF5OlMa.Y2pePgRXelPa8kD8zRjdlUZjYSxD52DbEByQfVV3Zvqx31QO1pmRllPK1u4nW
- sq1BF1wDk7lDMt9LpH69VtbFqL3bGkTyFb75KqBlyjRn8L9GA2jYrZZ5HCLkWjMbjBxH7oH2sHmR
- 3u7.rZZ.EYBeY6soYoi8eLSaT4z246OjpMU3nBY4Z9Dvz5c6Dw8qnBRPJXjmwLsdJa5urYMTf6eR
- Es9Fty6XnMp3nymmqoNJaC8Rlo_T68r7b8e_Hu3Yofjgd6fOBtcXhqPgQuFNrL9wi_LU6C7XaaoW
- XkpSidGu6rstJCnoq4btSqquF4XOhW2logrgMKhFLSNymFOdUBUdhYG5S51J.rzo3UKmyCAk5oBf
- tENsHhM7F0P9JQEqP6zsQhCp9_AyZd9jJoTl9d5J1mRdPRxHoPkcG2E1S_oQQkMbPIbc51r4yERF
- wxk3rHSig_q7VvX5RZcdJ2U0PWmJqQ_F4yPmGfdLJMn_kvrkFgpnTvwRoW1teRHQ3NDcYEYKFJ1G
- 5DrMrUV9rLs87xs3g5GOs2siUkVeYS4E35EzEEHLQvcYVrQ.n6lX8BEp64kfbqDAzLYVF89ooA0f
- kg7KKhzGQmuw7.6leLyR7VIfQVuC92_APUPUL0M3NVRxdHK74UNdLcVp8S.oe4g8vUIGRX9Wh5QA
- bpvwgZqny5P800X_vzsUtthHkf8VTG5EShvoEJWzzYOYQqxwOb8ejIFNEe2qpm34j_iWu_8FQ28R
- wSopbdqoW84ZFJej84oAVAyxMYB.mcH5qaqNprXDxYdUX_ECOQwues8fzOqo4vCv6kFdYZbQH79E
- Nn3xJ2oDG2x7Zy787zOdO5FdIpbYMrYsJLp4Tc5QNuvTuTNNLhOiiSfUFrD.9Au277ze6XjmwCFs
- Msf.sIC.SzWuv40uuGRPDqXg1NGWdGYWYcbahnC_iftXlhlrU1ho0OL5k3gVnB_i.IfJkdqRSdM6
- jhlTIrdoFo0pjfU1bkc3TuhOx8cBEpHUTIVzp5mKZvjeQydQlSPsuY48uM.2OpT.4S_1Ip77RN4G
- 2oDHOC_pBYL4m6IBr20r56k9nhfdlgSK_jhttIuQnBR1Fbz8e0Sj2hg0SM6vwJ88hihwsOGDJlrf
- I2h7mdpT2n44OQ8x35PeDTGqrctVx0_5rpIPAKP2ij08koFdKtXMn8pgqHrt0l1kZ7vCU8BqO2m5
- ESmeynm5_OV_Rq2YF2FmTScCYGtO4Bn6jiDwt4S1wgIJFHpXka7gbS8EsYL6Jbgt5E_7FuquonS_
- h0ET2Z4GlZAS6Z5pxLu92Mm5V811ZQkEEx8rgODFBWbRtWfrf8wCfxB7y7_3ZKW5Viyk5vwUH_Ri
- 2KX5eKG63QtmogiEo49oxLGgr6TQXJine40afCca7OJ6toCwpg51ocvKfnBkIAdcQcAK9agz27OQ
- ycLeId2uXepIHqdVr.3tVmqvqkJaIXActKPjtzv5RjihZmCjom17P7xGTRO6_oZ3afgucZSmqS.w
- 0DjbNYcSbO66EUaBiJ8LqjCFIS6IsN.UWmh_JJjVkzKGNoUyEWkqjJ.7_lDrHoT8TOAZd8uEKxE3
- rtWjrovBXEkhrTGM1nS4q9uSKQ73LllZ8JAO6YbTDAJCjRroJfVAoxMVusm3GxjCa4oMjzQgzGjs
- E2lCcqyx4ZNlml6k.yDrYCzHSY6KH6CIapdMSHof7tTMtNEr8toPjKChBBvzPmgpukMn7xL_ftbd
- BWSvNfaeAmkSf34P4Pxt8CEBzD_ZqTiEwli5pqpNKAxXvCkrXw6bHufu0rhSiZjIAtCFjhKEclqX
- xt8SZhYyCCoqi6bOrioPhBMzfWRacffn7MfJZahwb7ueIsX3uvYtxx6ku69rKB0aFm.DY227hzLZ
- ZRMN.IKLEaOcDweb_.MsxipKLQYrT96xqJGp5aAiwfOKxJu7v.nxJmDPQRAmBjjY_HwmyywAAXJG
- ReL_qZ4cYzGDOqkd__At30C6c.T8bMYARaoXi4zZAo6Nea.5oTRkkIhW0dwnSil_dXtfadSIjovN
- WTTywGQobWLB19uhWulbTIQrRGk5VkUcpBJkv0N7GjBe1MnTY0mcP8yiWqpo27iytWfcn6xoZLE6
- cRq70XDl0iXT_o_1NZ.5ksvrdnCSg0Zx8NX3LFJEZoOrCQxdJGSbk8CCOyKLkbl4I3tsD2arNegd
- yAbijbvWkDSBTvt.CFAuZV9ZxUXiJqsSMIIZXZeg0RUglpaX1hQdD3J8xa.OKtaWvsC2K6IbAY61
- heS.diDVBxjcTMieu03IKZxF4RjDc68EQMU6XRBejw6Y8dvG.BrABUO_YIT4WckUGtnPBhbpFhmj
- CJpiB7Q12MNbVGR7.X.yKYq2jpbKUhw2LTeUnbPOZlHFX5qJDdUj3AKLV7ztY0YBB6ci3Fujv5qH
- NBHRybnjvpVOBnAy2hvgjQlYg9.pAbSv7dpuKfoXzMVj.yuN.i_vQKlp2qtLP67eq4TYqCe2UCTT
- kjYYa9gYImfwuZOy21Ni.1u47UGpyP6oWvTFy8sMydCiOZJEFiyY0iyuIT99hDfu.0doc4zaKobl
- 2AOJ_3NXQhSXzoj301pMaWSlu_yQq9o5yWM0P5LIUtHGnRntr4lrJGspRdWKyPl6UCxhnRY8yc7S
- TnZZc_DysyxICw61I1Y8nf3uFroPW4RROlj7wkJ_Vx5sAj7fbd5F7tBopD1DVPyeCDNPR7sqII.K
- D1ydgXWlQtR4SSNuC76U42L1i9vASPL753Xy7fbA9Tbd0ZFzy87_W.LS.3WFBcVFrvDODMf.cpEs
- nMVGJGqjWSnegYx8UXwMpk5jHKKVP6Lz8X8NVv8gCmY6FR1jSuanGRCEbcFuhHgPzMkjoEpky0H4
- bXKGVx6jXutfa8gx3dOTWmApPxC33Dm0zf7Iw647tzL2n74Kio_QwIjJ6DxjAgumBzmZ4PjOV22T
- GS5uCpAfQ9yc2bdX2K57H3LOaLANgMYCx5YjPmtB5xQSzt1h.Yc6gxt7ZSU3MKmEgc1dxDuPNPat
- RUuoOVrUM3mzVU.ACmciUAn8imK5cE2kYiflUEK5PF8WwGtS9Qu7wMX7kbxs.4PENZbd74LuwnWA
- 5_fFebpt28o9J.jPPNT9iUACmyXTY_dMXOdoR3PwPQzHNFFezkjpoPcSF3zTXoNPZOlVw2cU1sdv
- mJ6mC.g1S
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Wed, 10 Mar 2021 17:22:19 +0000
-Received: by kubenode539.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID ba9bffa2d7f179da830e683e77ac8886;
-          Wed, 10 Mar 2021 17:22:18 +0000 (UTC)
-Subject: Re: [PATCH v1 0/1] Unprivileged chroot
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Serge Hallyn <serge@hallyn.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Howells <dhowells@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Eric Biederman <ebiederm@xmission.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20210310161000.382796-1-mic@digikod.net>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <4b9a1bb3-94f0-72af-f8f6-27f1ca2b43a2@schaufler-ca.com>
-Date:   Wed, 10 Mar 2021 09:22:16 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        Wed, 10 Mar 2021 12:46:15 -0500
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83186C061760;
+        Wed, 10 Mar 2021 09:46:15 -0800 (PST)
+Received: by mail-pf1-x430.google.com with SMTP id t85so7296124pfc.13;
+        Wed, 10 Mar 2021 09:46:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3HUOsonn4VLySqWQdRZ91ooc9zFLB61U6540yqwpgDE=;
+        b=hCt7e3Jk7/QHi0DrvshPm70dC4LjEfeyEx+0wei5MG6bx6GR0KEb15mqTHbNGMp4dB
+         wMcq07yPy3fgbWTOH8lDBN59IHZ/1Va0g21o/5bK1JmY1d+XBINBedd2DdQhpsZmiSxQ
+         3WcHQCO+t97CYyuTT1IQpoNzEN3PS4huHYm28rjampnE3ocau2zQR7Ohn1bJbcURx9Y6
+         s8Ihz2rGYZIJo3L8Y8PrOTKzZppod2Ih7O9d/E0I0RQKQuCahekNrASe+BQqf82Pfj/+
+         0KJsZsKe09fo98QVcCHjdbwjbtLWDIWByzvNbf3dKlslVWtG7GzSJr9xIBdx/C4CXxqe
+         xqYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3HUOsonn4VLySqWQdRZ91ooc9zFLB61U6540yqwpgDE=;
+        b=R0dC09ZxyfUH67bxlP53SbE0cWtpfDqCocfiwsIhFjIxgeroBvouK2J066ad9tyJEx
+         NNhvT8aSQbcwQHU0Xcq4MSa3rN5uq0U87vK+oKDqhcWYmy+2Fk5dQE5T9f3hlSKo2kh/
+         3q79HxD55ihK+RJk86jVBkxHztaK9loqCLvyMC+B1mAyJadUy2OqDflT8eLZyvTHh9in
+         7rRwSUTlqaU3jdgtS9OutN7kG5Re0IPjrYWg0VKsDWS7CuylgkLf0427eFnURbJCNo8J
+         qDHepQu0BOttdRYRZNacJk919x95mC6lA1nB9Pganmg8S0WhtFBVZHU1V4rEmjNhvFqQ
+         Fzyg==
+X-Gm-Message-State: AOAM531ICvdyTywIwrDCqL/J6vHeRxaEMXdb8aW9snXlX83HWtkKNV36
+        TDkBKZOUGNtqHcitgD/P0gI=
+X-Google-Smtp-Source: ABdhPJwKB/YJhH4fkSKeqPFTmHfr0lU6X2wQRNKE7AmPDBPk3VFvwy50yjRL8qf5WHLGXO1ZXt14rQ==
+X-Received: by 2002:a62:7ccd:0:b029:1fb:2316:b93e with SMTP id x196-20020a627ccd0000b02901fb2316b93emr3691069pfc.34.1615398374923;
+        Wed, 10 Mar 2021 09:46:14 -0800 (PST)
+Received: from localhost.localdomain (c-73-93-239-127.hsd1.ca.comcast.net. [73.93.239.127])
+        by smtp.gmail.com with ESMTPSA id d6sm145804pfq.109.2021.03.10.09.46.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Mar 2021 09:46:14 -0800 (PST)
+From:   Yang Shi <shy828301@gmail.com>
+To:     guro@fb.com, ktkhai@virtuozzo.com, vbabka@suse.cz,
+        shakeelb@google.com, david@fromorbit.com, hannes@cmpxchg.org,
+        mhocko@suse.com, akpm@linux-foundation.org
+Cc:     shy828301@gmail.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [v9 PATCH 00/13] Make shrinker's nr_deferred memcg aware
+Date:   Wed, 10 Mar 2021 09:45:50 -0800
+Message-Id: <20210310174603.5093-1-shy828301@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <20210310161000.382796-1-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Mailer: WebService/1.1.17872 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.9.1)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/10/2021 8:09 AM, Micka=C3=ABl Sala=C3=BCn wrote:
-> Hi,
->
-> The chroot system call is currently limited to be used by processes wit=
-h
-> the CAP_SYS_CHROOT capability.  This protects against malicious
-> procesess willing to trick SUID-like binaries.  The following patch
-> allows unprivileged users to safely use chroot(2).
 
-Mount namespaces have pretty well obsoleted chroot(). CAP_SYS_CHROOT is
-one of the few fine grained capabilities. We're still finding edge cases
-(e.g. ptrace) where no_new_privs is imperfect. I doesn't seem that there
-is a compelling reason to remove the privilege requirement on chroot().
+Changelog
+v8 --> v9:
+    * Used two parameters form of kvfree_rcu() per Shakeel.
+    * Amended commit log about allocating shrinker_info for root memcg for
+      patch 09/13 per Shakeel.
+    * Colleted more ack and review tags.
+    * Rebased onto 5.12-rc2.
+v7 --> v8:
+    * Added lockdep assert in expand_shrinker_info() per Roman.
+    * Added patch 05/13 to use kvfree_rcu() instead of call_rcu() per Roman
+      and Kirill.
+    * Moved rwsem acquire/release out of unregister_memcg_shrinker() per Roman.
+    * Renamed count_nr_deferred_{memcg} to xchg_nr_deferred_{memcg} per Roman.
+    * Fixed the next_deferred logic per Vlastimil.
+    * Misc minor code cleanup, refactor and spelling correction per Roman
+      and Shakeel.
+    * Collected more ack and review tags from Roman, Shakeel and Vlastimil.
+v6 --> v7:
+    * Expanded shrinker_info in a batch of BITS_PER_LONG per Kirill.
+    * Added patch 06/12 to introduce a helper for dereferencing shrinker_info
+      per Kirill.
+    * Renamed set_nr_deferred_memcg to add_nr_deferred_memcg per Kirill.
+    * Collected Acked-by from Kirill.
+v5 --> v6:
+    * Rebased on top of https://lore.kernel.org/linux-mm/1611216029-34397-1-git-send-email-abaci-bugfix@linux.alibaba.com/
+      per Kirill.
+    * Don't register shrinker idr with NULL and remove idr_replace() per Vlastimil.
+    * Move nr_deferred before map to guarantee the alignment per Vlastimil.
+    * Misc minor code cleanup and refactor per Kirill and Vlastimil.
+    * Added Acked-by from Vlastimil for path #1, #2, #3, #5, #9 and #10.
+v4 --> v5:
+    * Incorporated the comments from Kirill.
+    * Rebased to v5.11-rc5.
+v3 --> v4:
+    * Removed "memcg_" prefix for shrinker_maps related functions per Roman.
+    * Use write lock instead of read lock per Kirill. Also removed Johannes's ack
+      since write lock is used.
+    * Incorporated the comments from Kirill.
+    * Removed RFC.
+    * Rebased to v5.11-rc4.
+v2 --> v3:
+    * Moved shrinker_maps related code to vmscan.c per Dave.
+    * Removed memcg_shrinker_map_size. Calcuated the size of map via shrinker_nr_max
+      per Johannes.
+    * Consolidated shrinker_deferred with shrinker_maps into one struct per Dave.
+    * Simplified the nr_deferred related code.
+    * Dropped the memory barrier from v2.
+    * Moved nr_deferred reparent code to vmscan.c per Dave.
+    * Added test coverage information in patch #11. Dave is concerned about the
+      potential regression. I didn't notice regression with my tests, but suggestions
+      about more test coverage is definitely welcome. And it may help spot regression
+      with this patch in -mm tree then linux-next tree so I keep it in this version.
+    * The code cleanup and consolidation resulted in the series grow to 11 patches.
+    * Rebased onto 5.11-rc2. 
+v1 --> v2:
+    * Use shrinker->flags to store the new SHRINKER_REGISTERED flag per Roman.
+    * Folded patch #1 into patch #6 per Roman.
+    * Added memory barrier to prevent shrink_slab_memcg from seeing NULL shrinker_maps/
+      shrinker_deferred per Kirill.
+    * Removed memcg_shrinker_map_mutex. Protcted shrinker_map/shrinker_deferred
+      allocations from expand with shrinker_rwsem per Johannes.
 
->
-> This patch is a follow-up of a previous one sent by Andy Lutomirski som=
-e
-> time ago:
-> https://lore.kernel.org/lkml/0e2f0f54e19bff53a3739ecfddb4ffa9a6dbde4d.1=
-327858005.git.luto@amacapital.net/
->
-> This patch can be applied on top of v5.12-rc2 .  I would really
-> appreciate constructive reviews.
->
-> Regards,
->
-> Micka=C3=ABl Sala=C3=BCn (1):
->   fs: Allow no_new_privs tasks to call chroot(2)
->
->  fs/open.c | 64 ++++++++++++++++++++++++++++++++++++++++++++++++++++---=
+Recently huge amount one-off slab drop was seen on some vfs metadata heavy workloads,
+it turned out there were huge amount accumulated nr_deferred objects seen by the
+shrinker.
 
->  1 file changed, 61 insertions(+), 3 deletions(-)
->
->
-> base-commit: a38fd8748464831584a19438cbb3082b5a2dab15
+On our production machine, I saw absurd number of nr_deferred shown as the below
+tracing result: 
+
+<...>-48776 [032] .... 27970562.458916: mm_shrink_slab_start:
+super_cache_scan+0x0/0x1a0 ffff9a83046f3458: nid: 0 objects to shrink
+2531805877005 gfp_flags GFP_HIGHUSER_MOVABLE pgs_scanned 32 lru_pgs
+9300 cache items 1667 delta 11 total_scan 833
+
+There are 2.5 trillion deferred objects on one node, assuming all of them
+are dentry (192 bytes per object), so the total size of deferred on
+one node is ~480TB. It is definitely ridiculous.
+
+I managed to reproduce this problem with kernel build workload plus negative dentry
+generator.
+
+First step, run the below kernel build test script:
+
+NR_CPUS=`cat /proc/cpuinfo | grep -e processor | wc -l`
+
+cd /root/Buildarea/linux-stable
+
+for i in `seq 1500`; do
+        cgcreate -g memory:kern_build
+        echo 4G > /sys/fs/cgroup/memory/kern_build/memory.limit_in_bytes
+
+        echo 3 > /proc/sys/vm/drop_caches
+        cgexec -g memory:kern_build make clean > /dev/null 2>&1
+        cgexec -g memory:kern_build make -j$NR_CPUS > /dev/null 2>&1
+
+        cgdelete -g memory:kern_build
+done
+
+Then run the below negative dentry generator script:
+
+NR_CPUS=`cat /proc/cpuinfo | grep -e processor | wc -l`
+
+mkdir /sys/fs/cgroup/memory/test
+echo $$ > /sys/fs/cgroup/memory/test/tasks
+
+for i in `seq $NR_CPUS`; do
+        while true; do
+                FILE=`head /dev/urandom | tr -dc A-Za-z0-9 | head -c 64`
+                cat $FILE 2>/dev/null
+        done &
+done
+
+Then kswapd will shrink half of dentry cache in just one loop as the below tracing result
+showed:
+
+	kswapd0-475   [028] .... 305968.252561: mm_shrink_slab_start: super_cache_scan+0x0/0x190 0000000024acf00c: nid: 0
+objects to shrink 4994376020 gfp_flags GFP_KERNEL cache items 93689873 delta 45746 total_scan 46844936 priority 12
+	kswapd0-475   [021] .... 306013.099399: mm_shrink_slab_end: super_cache_scan+0x0/0x190 0000000024acf00c: nid: 0 unused
+scan count 4994376020 new scan count 4947576838 total_scan 8 last shrinker return val 46844928
+
+There were huge number of deferred objects before the shrinker was called, the behavior
+does match the code but it might be not desirable from the user's stand of point.
+
+The excessive amount of nr_deferred might be accumulated due to various reasons, for example:
+    * GFP_NOFS allocation
+    * Significant times of small amount scan (< scan_batch, 1024 for vfs metadata)
+
+However the LRUs of slabs are per memcg (memcg-aware shrinkers) but the deferred objects
+is per shrinker, this may have some bad effects:
+    * Poor isolation among memcgs. Some memcgs which happen to have frequent limit
+      reclaim may get nr_deferred accumulated to a huge number, then other innocent
+      memcgs may take the fall. In our case the main workload was hit.
+    * Unbounded deferred objects. There is no cap for deferred objects, it can outgrow
+      ridiculously as the tracing result showed.
+    * Easy to get out of control. Although shrinkers take into account deferred objects,
+      but it can go out of control easily. One misconfigured memcg could incur absurd 
+      amount of deferred objects in a period of time.
+    * Sort of reclaim problems, i.e. over reclaim, long reclaim latency, etc. There may be
+      hundred GB slab caches for vfe metadata heavy workload, shrink half of them may take
+      minutes. We observed latency spike due to the prolonged reclaim.
+
+These issues also have been discussed in https://lore.kernel.org/linux-mm/20200916185823.5347-1-shy828301@gmail.com/.
+The patchset is the outcome of that discussion.
+
+So this patchset makes nr_deferred per-memcg to tackle the problem. It does:
+    * Have memcg_shrinker_deferred per memcg per node, just like what shrinker_map
+      does. Instead it is an atomic_long_t array, each element represent one shrinker
+      even though the shrinker is not memcg aware, this simplifies the implementation.
+      For memcg aware shrinkers, the deferred objects are just accumulated to its own
+      memcg. The shrinkers just see nr_deferred from its own memcg. Non memcg aware
+      shrinkers still use global nr_deferred from struct shrinker.
+    * Once the memcg is offlined, its nr_deferred will be reparented to its parent along
+      with LRUs.
+    * The root memcg has memcg_shrinker_deferred array too. It simplifies the handling of
+      reparenting to root memcg.
+    * Cap nr_deferred to 2x of the length of lru. The idea is borrowed from Dave Chinner's
+      series (https://lore.kernel.org/linux-xfs/20191031234618.15403-1-david@fromorbit.com/)
+
+The downside is each memcg has to allocate extra memory to store the nr_deferred array.
+On our production environment, there are typically around 40 shrinkers, so each memcg
+needs ~320 bytes. 10K memcgs would need ~3.2MB memory. It seems fine.
+
+We have been running the patched kernel on some hosts of our fleet (test and production) for
+months, it works very well. The monitor data shows the working set is sustained as expected.
+
+Yang Shi (13):
+      mm: vmscan: use nid from shrink_control for tracepoint
+      mm: vmscan: consolidate shrinker_maps handling code
+      mm: vmscan: use shrinker_rwsem to protect shrinker_maps allocation
+      mm: vmscan: remove memcg_shrinker_map_size
+      mm: vmscan: use kvfree_rcu instead of call_rcu
+      mm: memcontrol: rename shrinker_map to shrinker_info
+      mm: vmscan: add shrinker_info_protected() helper
+      mm: vmscan: use a new flag to indicate shrinker is registered
+      mm: vmscan: add per memcg shrinker nr_deferred
+      mm: vmscan: use per memcg nr_deferred of shrinker
+      mm: vmscan: don't need allocate shrinker->nr_deferred for memcg aware shrinkers
+      mm: memcontrol: reparent nr_deferred when memcg offline
+      mm: vmscan: shrink deferred objects proportional to priority
+
+ include/linux/memcontrol.h |  23 +++---
+ include/linux/shrinker.h   |   7 +-
+ mm/huge_memory.c           |   4 +-
+ mm/list_lru.c              |   6 +-
+ mm/memcontrol.c            | 130 +------------------------------
+ mm/vmscan.c                | 394 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------------------------
+ 6 files changed, 319 insertions(+), 245 deletions(-)
 
