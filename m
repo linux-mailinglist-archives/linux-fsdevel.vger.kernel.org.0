@@ -2,112 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 63B84334A1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Mar 2021 22:50:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BB35334A22
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Mar 2021 22:51:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232153AbhCJVtQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Mar 2021 16:49:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44086 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231636AbhCJVtK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Mar 2021 16:49:10 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E62A764E27;
-        Wed, 10 Mar 2021 21:49:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615412950;
-        bh=k4nA3Eis+qAbq10nmWD8z7V/kQBE/rHbRJtN9QWQBw0=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=P5sKfqEbajEnmE7axLxcCMjxpejmZbLeK/35uQ75J2PTcy2fnAMV4slxTa8XGxp0O
-         6M12d7qF70AIb555wieAmHBgSiLAsK5lSUU3DeoewzlfOTT4y0UkJ4zRhwZPYNDRmQ
-         E1NS///fOr6Rjo7kiNl8M89ii91dTn5FmQk2B4FA4u4LRt8pEsJBkMFekpVJW8BqXA
-         kZzgtbp5pwCUxSUIHIhqirnDaeaF6gn6tQjuUN4mlo6pm41bqlBfNFNJfJ9xr++O/a
-         cAJkEKjYuIFGdfkKqeIMidCG0/O19aFeR0P7PkFa03mpo27vHPlgdSIKVMaWYdq+GC
-         5eSPUE2QdHLuA==
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 940603522611; Wed, 10 Mar 2021 13:49:09 -0800 (PST)
-Date:   Wed, 10 Mar 2021 13:49:09 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
-        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
-        peterz@infradead.org, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        osalvador@suse.de, song.bao.hua@hisilicon.com, david@redhat.com,
-        naoya.horiguchi@nec.com, joao.m.martins@oracle.com,
-        duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Chen Huang <chenhuang5@huawei.com>,
-        Bodeddula Balasubramaniam <bodeddub@amazon.com>
-Subject: Re: [PATCH v18 4/9] mm: hugetlb: alloc the vmemmap pages associated
- with each HugeTLB page
-Message-ID: <20210310214909.GY2696@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20210308102807.59745-1-songmuchun@bytedance.com>
- <20210308102807.59745-5-songmuchun@bytedance.com>
- <YEjji9oAwHuZaZEt@dhcp22.suse.cz>
- <f9f19d38-f1a7-ac8c-6ba8-3ce0bcc1e6a0@oracle.com>
- <YEk1+mDZ4u85RKL3@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YEk1+mDZ4u85RKL3@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S230527AbhCJVuw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Mar 2021 16:50:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42518 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231410AbhCJVu1 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Mar 2021 16:50:27 -0500
+Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE906C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 13:50:27 -0800 (PST)
+Received: by mail-pl1-x649.google.com with SMTP id z13so9645464plo.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 13:50:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=2/H3hQCaHwfnzylFb005783iZv8m6Dk6xxFiFwYXl2k=;
+        b=Hyv7Yh9phqQMd9/cQHrN4FjQjTAIfhsLRQRAPalxsJHB3yJRGs2AojFWAa8BaOJkV5
+         XA8L6EvPO3gAkv2ugEKvSMnE2r2ChiYSLA9EsTr0lRlBpf8YqW1Zjc5QJ35N7ZIORxgy
+         qPnRNow7FeFO0LnedAdmGzFF2GFnginNfR+5aVDCEWQfTvJDn3sGly7P3UD69RCV3rVF
+         WoWhvBdNlO3b4cJ7r4PoIiz0QKU0D5sbQXXoYEL4aRLjD3UPlxDHrh14QXHeew+iOUcX
+         vvLPfvCXr0KMItO7NQdXkANh7gB1NT1vgMxjxMxS1siSrkXaFDHVF9gkIAoK1Zq3u5lb
+         Hyyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=2/H3hQCaHwfnzylFb005783iZv8m6Dk6xxFiFwYXl2k=;
+        b=ApKhuwdJFV5qi+6uBhgjFu+iMYid+LKq+TBuUtMbnVepi4JorGtxUsZVbTQYPpmr9f
+         XfjoSXrUR4BEXVizckmOgEiJfLEUdjNAm43ZoPRnPv/5w4oCT8qttRVgn0OF2tvRPqkW
+         k4X0t4xFNNNqFSxeudDMfGQUZKaMgKatzGraXjiSbrsh+Nwd9T8bbqqnEIOJDetROjTJ
+         gD7ntmKIKCmw+gNqzN4+SlWR3S7dAURkeJtP3z6mWpEaWwMGHv0A2iP1Yc+8YZnrLWeE
+         0gh1eQ1yTvGxw1MnmaO5nMWcahq5hw0QodCYKJDoMsX3M4soKtjmsasirRgTE74ORaX4
+         jf6A==
+X-Gm-Message-State: AOAM531z99mzvPhJfCKLwM6QJ/5OLkVUoHykfqK+66V9rDEv803QpeWz
+        hU2STD39FDDdwwg/MzRR/yws1BjLb9aH
+X-Google-Smtp-Source: ABdhPJwlSrVzqRPm69b5UEV6PXGiLUfSpKQVWYPiqhBw+JgQscqn/bQx4VAmuAjckiMbWHQlPW10jb/GZSRA
+X-Received: from bg.sfo.corp.google.com ([2620:15c:8:10:f8cb:bbee:22b1:7932])
+ (user=bgeffon job=sendgmr) by 2002:aa7:8a56:0:b029:1f3:9c35:3cbb with SMTP id
+ n22-20020aa78a560000b02901f39c353cbbmr4562813pfa.24.1615413027247; Wed, 10
+ Mar 2021 13:50:27 -0800 (PST)
+Date:   Wed, 10 Mar 2021 13:50:23 -0800
+Message-Id: <20210310215023.4129753-1-bgeffon@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.30.1.766.gb4fecdf3b7-goog
+Subject: [PATCH] eventfd: Introduce EFD_ZERO_ON_WAKE
+From:   Brian Geffon <bgeffon@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Brian Geffon <bgeffon@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Sonny Rao <sonnyrao@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 10, 2021 at 10:11:22PM +0100, Michal Hocko wrote:
-> On Wed 10-03-21 10:56:08, Mike Kravetz wrote:
-> > On 3/10/21 7:19 AM, Michal Hocko wrote:
-> > > On Mon 08-03-21 18:28:02, Muchun Song wrote:
-> > > [...]
-> > >> @@ -1447,7 +1486,7 @@ void free_huge_page(struct page *page)
-> > >>  	/*
-> > >>  	 * Defer freeing if in non-task context to avoid hugetlb_lock deadlock.
-> > >>  	 */
-> > >> -	if (!in_task()) {
-> > >> +	if (in_atomic()) {
-> > > 
-> > > As I've said elsewhere in_atomic doesn't work for CONFIG_PREEMPT_COUNT=n.
-> > > We need this change for other reasons and so it would be better to pull
-> > > it out into a separate patch which also makes HUGETLB depend on
-> > > PREEMPT_COUNT.
-> > 
-> > Yes, the issue of calling put_page for hugetlb pages from any context
-> > still needs work.  IMO, that is outside the scope of this series.  We
-> > already have code in this path which blocks/sleeps.
-> > 
-> > Making HUGETLB depend on PREEMPT_COUNT is too restrictive.  IIUC,
-> > PREEMPT_COUNT will only be enabled if we enable:
-> > PREEMPT "Preemptible Kernel (Low-Latency Desktop)"
-> > PREEMPT_RT "Fully Preemptible Kernel (Real-Time)"
-> > or, other 'debug' options.  These are not enabled in 'more common'
-> > kernels.  Of course, we do not want to disable HUGETLB in common
-> > configurations.
-> 
-> I haven't tried that but PREEMPT_COUNT should be selectable even without
-> any change to the preemption model (e.g. !PREEMPT).
+This patch introduces a new flag to eventfd, called EFD_ZERO_ON_WAKE.
+This change is primarily introduced for use cases which do not care about
+the value stored in the eventfd itself. Such existing use cases require an
+additional read syscall to clear the count.
 
-It works reliably for me, for example as in the diff below.  So,
-as Michal says, you should be able to add "select PREEMPT_COUNT" to
-whatever Kconfig option you need to.
+This flag provides the following guarantees:
 
-							Thanx, Paul
+(1) Writes can never block or return EAGAIN.
+    The reason this is true is because we don't actually need to store the
+    value and as a result the internal value is only changed between 0 and
+    1 and back to 0. Therefore POLLERR and POLLOUT are never possible
+    outcomes. A poll with POLLOUT or a write will always immediately
+    return regardless of EFD_NONBLOCK.
 
-diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
-index 3128b7c..7d9f989 100644
---- a/kernel/rcu/Kconfig
-+++ b/kernel/rcu/Kconfig
-@@ -8,6 +8,7 @@ menu "RCU Subsystem"
- config TREE_RCU
- 	bool
- 	default y if SMP
-+	select PREEMPT_COUNT
- 	help
- 	  This option selects the RCU implementation that is
- 	  designed for very large SMP system with hundreds or
+(2) Read / POLLIN result in the internal value being reset to 0.
+    When EFD_NONBLOCK is set reads when the internal value is 0 will
+    immediately return with EAGAIN, as it always has. Similiarly, when
+    a read is performed without EFD_NONBLOCK it will block until a write
+    occurs. In both cases after the read completes successfully the
+    internal value is reset to 0. When polling with POLLIN, upon return
+    of a POLLIN event the internal value will be reset to 0.
+
+Signed-off-by: Brian Geffon <bgeffon@google.com>
+---
+ fs/eventfd.c            | 39 +++++++++++++++++++++++++++++++++++++--
+ include/linux/eventfd.h |  8 +++++++-
+ 2 files changed, 44 insertions(+), 3 deletions(-)
+
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index e265b6dd4f34..56bf04d6461e 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -172,8 +172,21 @@ static __poll_t eventfd_poll(struct file *file, poll_table *wait)
+ 	 */
+ 	count = READ_ONCE(ctx->count);
+ 
+-	if (count > 0)
++	if (count > 0) {
++		if ((ctx->flags & EFD_ZERO_ON_WAKE) &&
++				(poll_requested_events(wait) & EPOLLIN)) {
++			/*
++			 * We're going to cause a wake on EPOLLIN, we need to zero the count.
++			 * We validate that EPOLLIN is a requested event because if the user
++			 * did something odd like POLLPRI we wouldn't want to zero the count
++			 * if no wake happens.
++			 */
++			spin_lock_irq(&ctx->wqh.lock);
++			ctx->count = 0;
++			spin_unlock_irq(&ctx->wqh.lock);
++		}
+ 		events |= EPOLLIN;
++	}
+ 	if (count == ULLONG_MAX)
+ 		events |= EPOLLERR;
+ 	if (ULLONG_MAX - 1 > count)
+@@ -239,8 +252,11 @@ static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
+ 		__add_wait_queue(&ctx->wqh, &wait);
+ 		for (;;) {
+ 			set_current_state(TASK_INTERRUPTIBLE);
+-			if (ctx->count)
++			if (ctx->count) {
++				if (ctx->flags & EFD_ZERO_ON_WAKE)
++					ctx->count = 0;
+ 				break;
++			}
+ 			if (signal_pending(current)) {
+ 				__remove_wait_queue(&ctx->wqh, &wait);
+ 				__set_current_state(TASK_RUNNING);
+@@ -280,6 +296,18 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
+ 		return -EINVAL;
+ 	spin_lock_irq(&ctx->wqh.lock);
+ 	res = -EAGAIN;
++
++	/*
++	 * In the case of EFD_ZERO_ON_WAKE the actual count is never needed, for this
++	 * reason we only adjust it to set it from 0 to 1 or 1 to 0. This means that
++	 * write will never return EWOULDBLOCK or block, because there is always
++	 * going to be enough space to write as the amount we will increment could
++	 * be at most 1 as it's clamped below. Additionally, we know that POLLERR
++	 * cannot be returned when EFD_ZERO_ON_WAKE is used for the same reason.
++	 */
++	if (ctx->flags & EFD_ZERO_ON_WAKE)
++		ucnt = (ctx->count == 0) ? 1 : 0;
++
+ 	if (ULLONG_MAX - ctx->count > ucnt)
+ 		res = sizeof(ucnt);
+ 	else if (!(file->f_flags & O_NONBLOCK)) {
+@@ -414,9 +442,16 @@ static int do_eventfd(unsigned int count, int flags)
+ 	BUILD_BUG_ON(EFD_CLOEXEC != O_CLOEXEC);
+ 	BUILD_BUG_ON(EFD_NONBLOCK != O_NONBLOCK);
+ 
++	/* O_NOFOLLOW has been repurposed as EFD_ZERO_ON_WAKE */
++	BUILD_BUG_ON(EFD_ZERO_ON_WAKE != O_NOFOLLOW);
++
+ 	if (flags & ~EFD_FLAGS_SET)
+ 		return -EINVAL;
+ 
++	/* The semaphore semantics would be lost if using EFD_ZERO_ON_WAKE */
++	if ((flags & EFD_ZERO_ON_WAKE) && (flags & EFD_SEMAPHORE))
++		return -EINVAL;
++
+ 	ctx = kmalloc(sizeof(*ctx), GFP_KERNEL);
+ 	if (!ctx)
+ 		return -ENOMEM;
+diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
+index fa0a524baed0..19cab0b654a4 100644
+--- a/include/linux/eventfd.h
++++ b/include/linux/eventfd.h
+@@ -26,8 +26,14 @@
+ #define EFD_CLOEXEC O_CLOEXEC
+ #define EFD_NONBLOCK O_NONBLOCK
+ 
++/*
++ * We intentionally use the value of O_NOFOLLOW for EFD_ZERO_ON_WAKE
++ * because O_NOFOLLOW would have no meaning with an eventfd.
++ */
++#define EFD_ZERO_ON_WAKE O_NOFOLLOW
++
+ #define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
+-#define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
++#define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE | EFD_ZERO_ON_WAKE)
+ 
+ struct eventfd_ctx;
+ struct file;
+-- 
+2.30.1.766.gb4fecdf3b7-goog
+
