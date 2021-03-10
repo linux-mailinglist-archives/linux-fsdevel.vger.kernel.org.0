@@ -2,159 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8286833458C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Mar 2021 18:49:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC4D133465E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Mar 2021 19:14:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233644AbhCJRrJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Mar 2021 12:47:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46232 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233495AbhCJRqm (ORCPT
+        id S232918AbhCJSNt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Mar 2021 13:13:49 -0500
+Received: from smtp-42a9.mail.infomaniak.ch ([84.16.66.169]:45663 "EHLO
+        smtp-42a9.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229503AbhCJSNl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Mar 2021 12:46:42 -0500
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1EA2C061760;
-        Wed, 10 Mar 2021 09:46:41 -0800 (PST)
-Received: by mail-pj1-x1035.google.com with SMTP id kk2-20020a17090b4a02b02900c777aa746fso7900391pjb.3;
-        Wed, 10 Mar 2021 09:46:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=sHD52Sa+hkPXZ82uTwxwMMAdUbtnhYs3jM+eAa3hQC4=;
-        b=PMvgCUnE80nILtQ2zlCJoYAgUvQmTVJucA6+y4K4wxwO6YJrKobwbUSLVLeis7S1KP
-         d6UAmZakJ6HVzaoCYaOUOiQ87cpXlRynpv8Bdx94Osz6Ftkzr6wCePVsT1sWHtlg9t+u
-         iXaL0vCXp4wW9yJa4ABJ8J0FK+LgqGPjx3Z/Wa4iu0fa97r1AiOiMX+vt9tT3ltyErqS
-         tORkHF48vI39D1syGD3K2TzbOOs6S52RzC2oIl8HKh5dum7GPMi623Bz2mD2aUUIGQ3Z
-         5Tiqo/hn89JdQ0CGpkcxgi9hm/yMlCRAPcoNLPrMQszIe6HMuu6cHctnB4murDsq3NOk
-         MqEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=sHD52Sa+hkPXZ82uTwxwMMAdUbtnhYs3jM+eAa3hQC4=;
-        b=hmWCTSpkuJPh0xXIYXM14ZNY+nRonHqLSU1s9WSe0rEgXMJ7NOM6XuyPKBEzCYU9ho
-         CEEyQvv9MzAEHBfr3fH3BFA382g2tVqHza1IdtnefLC4nzBI4d9QH4Plz1yu+IRpK308
-         Gos0MjFaEA1OglDStryNQvBBl43E+XDz+VP5HcDdHnvwfxX2zTG7KcegjH0slfL782IF
-         3djlLJOgU0iW0H7Jdi4utZrJEoPhYY2FpV6zN6CegeQtkPusA/ZqBG7/HY84fCTdryG/
-         ptZASPoucfiEEkKy2VEnpJPY399U4I+jirV1yzFzg29hCOfObSg8Cy+4+dH95Af3WIev
-         9eyA==
-X-Gm-Message-State: AOAM5327IAzpZ0kRCsMnYZTni2SEzbF4vQLZJnk/eYOQL2i/fPHrFMeJ
-        bzhX+AdTC8R/8xUSXPuo+oo=
-X-Google-Smtp-Source: ABdhPJy0/FEbV2UYtiznaebUra6fBNIUYPi6n9765r1hA2Y/cHKhUMldo7IUnb9SWEgqSkqvqxTrdQ==
-X-Received: by 2002:a17:90a:8908:: with SMTP id u8mr4549214pjn.135.1615398401563;
-        Wed, 10 Mar 2021 09:46:41 -0800 (PST)
-Received: from localhost.localdomain (c-73-93-239-127.hsd1.ca.comcast.net. [73.93.239.127])
-        by smtp.gmail.com with ESMTPSA id d6sm145804pfq.109.2021.03.10.09.46.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Mar 2021 09:46:41 -0800 (PST)
-From:   Yang Shi <shy828301@gmail.com>
-To:     guro@fb.com, ktkhai@virtuozzo.com, vbabka@suse.cz,
-        shakeelb@google.com, david@fromorbit.com, hannes@cmpxchg.org,
-        mhocko@suse.com, akpm@linux-foundation.org
-Cc:     shy828301@gmail.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [v9 PATCH 13/13] mm: vmscan: shrink deferred objects proportional to priority
-Date:   Wed, 10 Mar 2021 09:46:03 -0800
-Message-Id: <20210310174603.5093-14-shy828301@gmail.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210310174603.5093-1-shy828301@gmail.com>
-References: <20210310174603.5093-1-shy828301@gmail.com>
+        Wed, 10 Mar 2021 13:13:41 -0500
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DwgDz4NX7zMqMqc;
+        Wed, 10 Mar 2021 19:13:39 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4DwgDt0Ylzzlh8TK;
+        Wed, 10 Mar 2021 19:13:33 +0100 (CET)
+Subject: Re: [PATCH v1 1/1] fs: Allow no_new_privs tasks to call chroot(2)
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20210310161000.382796-1-mic@digikod.net>
+ <20210310161000.382796-2-mic@digikod.net> <m1lfavt0bf.fsf@fess.ebiederm.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <5edd8272-a2d5-028d-28da-de76a93f2fa4@digikod.net>
+Date:   Wed, 10 Mar 2021 19:13:33 +0100
+User-Agent: 
 MIME-Version: 1.0
+In-Reply-To: <m1lfavt0bf.fsf@fess.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The number of deferred objects might get windup to an absurd number, and it
-results in clamp of slab objects.  It is undesirable for sustaining workingset.
 
-So shrink deferred objects proportional to priority and cap nr_deferred to twice
-of cache items.
+On 10/03/2021 17:56, Eric W. Biederman wrote:
+> Mickaël Salaün <mic@digikod.net> writes:
+> 
+>> From: Mickaël Salaün <mic@linux.microsoft.com>
+>>
+>> Being able to easily change root directories enable to ease some
+>> development workflow and can be used as a tool to strengthen
+>> unprivileged security sandboxes.  chroot(2) is not an access-control
+>> mechanism per se, but it can be used to limit the absolute view of the
+>> filesystem, and then limit ways to access data and kernel interfaces
+>> (e.g. /proc, /sys, /dev, etc.).
+> 
+> Actually chroot does not so limit the view of things.  It only limits
+> the default view.
+> 
+> A process that is chrooted can always escape by something like
+> chroot("../../../../../../../../..").
 
-The idea is borrowed from Dave Chinner's patch:
-https://lore.kernel.org/linux-xfs/20191031234618.15403-13-david@fromorbit.com/
+Not with this patch.
 
-Tested with kernel build and vfs metadata heavy workload in our production
-environment, no regression is spotted so far.
+> 
+> So I don't see the point of allowing chroot once you are in your locked
+> down sandbox.
+> 
+>> Users may not wish to expose namespace complexity to potentially
+>> malicious processes, or limit their use because of limited resources.
+>> The chroot feature is much more simple (and limited) than the mount
+>> namespace, but can still be useful.  As for containers, users of
+>> chroot(2) should take care of file descriptors or data accessible by
+>> other means (e.g. current working directory, leaked FDs, passed FDs,
+>> devices, mount points, etc.).  There is a lot of literature that discuss
+>> the limitations of chroot, and users of this feature should be aware of
+>> the multiple ways to bypass it.  Using chroot(2) for security purposes
+>> can make sense if it is combined with other features (e.g. dedicated
+>> user, seccomp, LSM access-controls, etc.).
+>>
+>> One could argue that chroot(2) is useless without a properly populated
+>> root hierarchy (i.e. without /dev and /proc).  However, there are
+>> multiple use cases that don't require the chrooting process to create
+>> file hierarchies with special files nor mount points, e.g.:
+>> * A process sandboxing itself, once all its libraries are loaded, may
+>>   not need files other than regular files, or even no file at all.
+>> * Some pre-populated root hierarchies could be used to chroot into,
+>>   provided for instance by development environments or tailored
+>>   distributions.
+>> * Processes executed in a chroot may not require access to these special
+>>   files (e.g. with minimal runtimes, or by emulating some special files
+>>   with a LD_PRELOADed library or seccomp).
+>>
+>> Allowing a task to change its own root directory is not a threat to the
+>> system if we can prevent confused deputy attacks, which could be
+>> performed through execution of SUID-like binaries.  This can be
+>> prevented if the calling task sets PR_SET_NO_NEW_PRIVS on itself with
+>> prctl(2).  To only affect this task, its filesystem information must not
+>> be shared with other tasks, which can be achieved by not passing
+>> CLONE_FS to clone(2).  A similar no_new_privs check is already used by
+>> seccomp to avoid the same kind of security issues.  Furthermore, because
+>> of its security use and to avoid giving a new way for attackers to get
+>> out of a chroot (e.g. using /proc/<pid>/root), an unprivileged chroot is
+>> only allowed if the new root directory is the same or beneath the
+>> current one.  This still allows a process to use a subset of its
+>> legitimate filesystem to chroot into and then further reduce its view of
+>> the filesystem.
+>>
+>> This change may not impact systems relying on other permission models
+>> than POSIX capabilities (e.g. Tomoyo).  Being able to use chroot(2) on
+>> such systems may require to update their security policies.
+>>
+>> Only the chroot system call is relaxed with this no_new_privs check; the
+>> init_chroot() helper doesn't require such change.
+>>
+>> Allowing unprivileged users to use chroot(2) is one of the initial
+>> objectives of no_new_privs:
+>> https://www.kernel.org/doc/html/latest/userspace-api/no_new_privs.html
+>> This patch is a follow-up of a previous one sent by Andy Lutomirski, but
+>> with less limitations:
+>> https://lore.kernel.org/lkml/0e2f0f54e19bff53a3739ecfddb4ffa9a6dbde4d.1327858005.git.luto@amacapital.net/
+> 
+> Last time I remember talking architecture we agreed that user namespaces
+> would be used for enabling features and that no_new_privs would just be
+> used to lock-down userspace.  That way no_new_privs could be kept simple
+> and trivial to audit and understand.
 
-Signed-off-by: Yang Shi <shy828301@gmail.com>
----
- mm/vmscan.c | 46 +++++++++++-----------------------------------
- 1 file changed, 11 insertions(+), 35 deletions(-)
+chroot(2) is simple.
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 9a2dfeaa79f4..6a0a91b23597 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -662,7 +662,6 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 	 */
- 	nr = xchg_nr_deferred(shrinker, shrinkctl);
- 
--	total_scan = nr;
- 	if (shrinker->seeks) {
- 		delta = freeable >> priority;
- 		delta *= 4;
-@@ -676,37 +675,9 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 		delta = freeable / 2;
- 	}
- 
-+	total_scan = nr >> priority;
- 	total_scan += delta;
--	if (total_scan < 0) {
--		pr_err("shrink_slab: %pS negative objects to delete nr=%ld\n",
--		       shrinker->scan_objects, total_scan);
--		total_scan = freeable;
--		next_deferred = nr;
--	} else
--		next_deferred = total_scan;
--
--	/*
--	 * We need to avoid excessive windup on filesystem shrinkers
--	 * due to large numbers of GFP_NOFS allocations causing the
--	 * shrinkers to return -1 all the time. This results in a large
--	 * nr being built up so when a shrink that can do some work
--	 * comes along it empties the entire cache due to nr >>>
--	 * freeable. This is bad for sustaining a working set in
--	 * memory.
--	 *
--	 * Hence only allow the shrinker to scan the entire cache when
--	 * a large delta change is calculated directly.
--	 */
--	if (delta < freeable / 4)
--		total_scan = min(total_scan, freeable / 2);
--
--	/*
--	 * Avoid risking looping forever due to too large nr value:
--	 * never try to free more than twice the estimate number of
--	 * freeable entries.
--	 */
--	if (total_scan > freeable * 2)
--		total_scan = freeable * 2;
-+	total_scan = min(total_scan, (2 * freeable));
- 
- 	trace_mm_shrink_slab_start(shrinker, shrinkctl, nr,
- 				   freeable, delta, total_scan, priority);
-@@ -745,10 +716,15 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 		cond_resched();
- 	}
- 
--	if (next_deferred >= scanned)
--		next_deferred -= scanned;
--	else
--		next_deferred = 0;
-+	/*
-+	 * The deferred work is increased by any new work (delta) that wasn't
-+	 * done, decreased by old deferred work that was done now.
-+	 *
-+	 * And it is capped to two times of the freeable items.
-+	 */
-+	next_deferred = max_t(long, (nr + delta - scanned), 0);
-+	next_deferred = min(next_deferred, (2 * freeable));
-+
- 	/*
- 	 * move the unused scan count back into the shrinker in a
- 	 * manner that handles concurrent updates.
--- 
-2.26.2
+> 
+> You can build your sandbox and use chroot if you use a user namespace at
+> the start.  A mount namespace would also help lock things down.  Still
+> allowing chroot after the sanbox has been built, a seccomp filter has
+> been installed and no_new_privs has been enabled seems like it is asking
+> for trouble and may weaken existing sandboxes.
 
+Could you please provide a new attack scenario?
+
+> 
+> So I think we need a pretty compelling use case to consider allowing
+> chroot(2).  You haven't even mentioned what your usecase is at this
+> point so I don't know why we would tackle that complexity.
+
+They are explained in this commit message.
+
+> 
+> Eric
+> 
