@@ -2,17 +2,17 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 53D18334689
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Mar 2021 19:21:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C682D334690
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Mar 2021 19:21:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232690AbhCJSUq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Mar 2021 13:20:46 -0500
-Received: from raptor.unsafe.ru ([5.9.43.93]:56494 "EHLO raptor.unsafe.ru"
+        id S233730AbhCJSUs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Mar 2021 13:20:48 -0500
+Received: from raptor.unsafe.ru ([5.9.43.93]:56500 "EHLO raptor.unsafe.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233336AbhCJSUV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Mar 2021 13:20:21 -0500
+        id S233416AbhCJSUW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Mar 2021 13:20:22 -0500
 Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-94-113-225-162.net.upcbroadband.cz [94.113.225.162])
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 0196541758;
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 504AF4175E;
         Wed, 10 Mar 2021 18:20:20 +0000 (UTC)
 From:   Alexey Gladkov <gladkov.alexey@gmail.com>
 To:     LKML <linux-kernel@vger.kernel.org>,
@@ -22,9 +22,9 @@ Cc:     Alexey Gladkov <legion@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Linux Containers <containers@lists.linux-foundation.org>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH v5 2/5] proc: Show /proc/self/net only for CAP_NET_ADMIN
-Date:   Wed, 10 Mar 2021 19:19:57 +0100
-Message-Id: <cd4679cac6fc8f9ec469f23318ea23ffb6d736d0.1615400395.git.gladkov.alexey@gmail.com>
+Subject: [PATCH v5 3/5] proc: Disable cancellation of subset=pid option
+Date:   Wed, 10 Mar 2021 19:19:58 +0100
+Message-Id: <a1e1ef4b8552726b1dfc0ebfe55b19e9961b9e5c.1615400395.git.gladkov.alexey@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1615400395.git.gladkov.alexey@gmail.com>
 References: <cover.1615400395.git.gladkov.alexey@gmail.com>
@@ -35,94 +35,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Cache the mounters credentials and make access to the net directories
-contingent of the permissions of the mounter of proc.
+There is no way to remount procfs mountpoint with subset=pid option
+without it. This is done in order not to make visible what was hidden
+since some checks occur during mount.
 
-Show /proc/self/net only if mounter has CAP_NET_ADMIN and if proc is
-mounted with subset=pid option.
+This patch makes this limitation explicit and demonstrates the error.
 
 Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
 ---
- fs/proc/proc_net.c      | 8 ++++++++
- fs/proc/root.c          | 5 +++++
- include/linux/proc_fs.h | 1 +
- 3 files changed, 14 insertions(+)
+ fs/proc/root.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
-index 18601042af99..a198f74cdb3b 100644
---- a/fs/proc/proc_net.c
-+++ b/fs/proc/proc_net.c
-@@ -26,6 +26,7 @@
- #include <linux/uidgid.h>
- #include <net/net_namespace.h>
- #include <linux/seq_file.h>
-+#include <linux/security.h>
- 
- #include "internal.h"
- 
-@@ -259,6 +260,7 @@ static struct net *get_proc_task_net(struct inode *dir)
- 	struct task_struct *task;
- 	struct nsproxy *ns;
- 	struct net *net = NULL;
-+	struct proc_fs_info *fs_info = proc_sb_info(dir->i_sb);
- 
- 	rcu_read_lock();
- 	task = pid_task(proc_pid(dir), PIDTYPE_PID);
-@@ -271,6 +273,12 @@ static struct net *get_proc_task_net(struct inode *dir)
- 	}
- 	rcu_read_unlock();
- 
-+	if (net && (fs_info->pidonly == PROC_PIDONLY_ON) &&
-+	    security_capable(fs_info->mounter_cred, net->user_ns, CAP_NET_ADMIN, CAP_OPT_NONE) < 0) {
-+		put_net(net);
-+		net = NULL;
-+	}
-+
- 	return net;
- }
- 
 diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 5e444d4f9717..6a75ac717455 100644
+index 6a75ac717455..0d20bb67e79a 100644
 --- a/fs/proc/root.c
 +++ b/fs/proc/root.c
-@@ -171,6 +171,7 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
- 		return -ENOMEM;
- 
- 	fs_info->pid_ns = get_pid_ns(ctx->pid_ns);
-+	fs_info->mounter_cred = get_cred(fc->cred);
- 	proc_apply_options(fs_info, fc, current_user_ns());
- 
- 	/* User space would break if executables or devices appear on proc */
-@@ -220,6 +221,9 @@ static int proc_reconfigure(struct fs_context *fc)
- 
- 	sync_filesystem(sb);
- 
-+	put_cred(fs_info->mounter_cred);
-+	fs_info->mounter_cred = get_cred(fc->cred);
-+
- 	proc_apply_options(fs_info, fc, current_user_ns());
+@@ -145,7 +145,7 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
  	return 0;
  }
-@@ -274,6 +278,7 @@ static void proc_kill_sb(struct super_block *sb)
  
- 	kill_anon_super(sb);
- 	put_pid_ns(fs_info->pid_ns);
-+	put_cred(fs_info->mounter_cred);
- 	kfree(fs_info);
+-static void proc_apply_options(struct proc_fs_info *fs_info,
++static int proc_apply_options(struct proc_fs_info *fs_info,
+ 			       struct fs_context *fc,
+ 			       struct user_namespace *user_ns)
+ {
+@@ -155,8 +155,12 @@ static void proc_apply_options(struct proc_fs_info *fs_info,
+ 		fs_info->pid_gid = make_kgid(user_ns, ctx->gid);
+ 	if (ctx->mask & (1 << Opt_hidepid))
+ 		fs_info->hide_pid = ctx->hidepid;
+-	if (ctx->mask & (1 << Opt_subset))
++	if (ctx->mask & (1 << Opt_subset)) {
++		if (ctx->pidonly != PROC_PIDONLY_ON && fs_info->pidonly == PROC_PIDONLY_ON)
++			return invalf(fc, "proc: subset=pid cannot be unset\n");
+ 		fs_info->pidonly = ctx->pidonly;
++	}
++	return 0;
  }
  
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 000cc0533c33..ffa871941bd0 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -64,6 +64,7 @@ struct proc_fs_info {
- 	kgid_t pid_gid;
- 	enum proc_hidepid hide_pid;
- 	enum proc_pidonly pidonly;
-+	const struct cred *mounter_cred;
- };
+ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
+@@ -172,7 +176,9 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
  
- static inline struct proc_fs_info *proc_sb_info(struct super_block *sb)
+ 	fs_info->pid_ns = get_pid_ns(ctx->pid_ns);
+ 	fs_info->mounter_cred = get_cred(fc->cred);
+-	proc_apply_options(fs_info, fc, current_user_ns());
++	ret = proc_apply_options(fs_info, fc, current_user_ns());
++	if (ret)
++		return ret;
+ 
+ 	/* User space would break if executables or devices appear on proc */
+ 	s->s_iflags |= SB_I_USERNS_VISIBLE | SB_I_NOEXEC | SB_I_NODEV;
+@@ -224,8 +230,7 @@ static int proc_reconfigure(struct fs_context *fc)
+ 	put_cred(fs_info->mounter_cred);
+ 	fs_info->mounter_cred = get_cred(fc->cred);
+ 
+-	proc_apply_options(fs_info, fc, current_user_ns());
+-	return 0;
++	return proc_apply_options(fs_info, fc, current_user_ns());
+ }
+ 
+ static int proc_get_tree(struct fs_context *fc)
 -- 
 2.29.2
 
