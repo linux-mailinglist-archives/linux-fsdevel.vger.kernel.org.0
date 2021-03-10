@@ -2,131 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EDB63341C2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Mar 2021 16:42:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 740A733428F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Mar 2021 17:11:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232504AbhCJPlx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Mar 2021 10:41:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53824 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229851AbhCJPlZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Mar 2021 10:41:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1615390884; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bO+sT2tMSpXMY6TPV+kBsEIA4iGXD+t9OpjWOBtCQhk=;
-        b=NdaImVBGCpcQaixkjGkqa30awoCeRc5HPhvyiPOFSsXDe5FT1dtZY3jaWiAKULzYWtRtUU
-        egRRbumGbOuq0D0jaRlgRPA0h6cuDgCqTonOYsrcHWiX/UJsxhie+fR0sg/NJdP90cFo00
-        Vf1OI0Q3URcsV5e68gr9S93NtXTZGEY=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id D45B5ABD7;
-        Wed, 10 Mar 2021 15:41:23 +0000 (UTC)
-Date:   Wed, 10 Mar 2021 16:41:23 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        osalvador@suse.de, song.bao.hua@hisilicon.com, david@redhat.com,
-        naoya.horiguchi@nec.com, joao.m.martins@oracle.com,
-        duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Miaohe Lin <linmiaohe@huawei.com>,
-        Chen Huang <chenhuang5@huawei.com>,
-        Bodeddula Balasubramaniam <bodeddub@amazon.com>
-Subject: Re: [PATCH v18 9/9] mm: hugetlb: optimize the code with the help of
- the compiler
-Message-ID: <YEjoozshsvKeMAAu@dhcp22.suse.cz>
-References: <20210308102807.59745-1-songmuchun@bytedance.com>
- <20210308102807.59745-10-songmuchun@bytedance.com>
+        id S232931AbhCJQK2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Mar 2021 11:10:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53710 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233209AbhCJQKV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Mar 2021 11:10:21 -0500
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [IPv6:2001:1600:3:17::190d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79048C061760
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 08:10:21 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DwcVf5S9hzMqMCP;
+        Wed, 10 Mar 2021 17:10:18 +0100 (CET)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4DwcVc2fkqzlh8TK;
+        Wed, 10 Mar 2021 17:10:16 +0100 (CET)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Eric Biederman <ebiederm@xmission.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v1 0/1] Unprivileged chroot
+Date:   Wed, 10 Mar 2021 17:09:59 +0100
+Message-Id: <20210310161000.382796-1-mic@digikod.net>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210308102807.59745-10-songmuchun@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 08-03-21 18:28:07, Muchun Song wrote:
-> When the "struct page size" crosses page boundaries we cannot
-> make use of this feature. Let free_vmemmap_pages_per_hpage()
-> return zero if that is the case, most of the functions can be
-> optimized away.
+Hi,
 
-I am confused. Don't you check for this in early_hugetlb_free_vmemmap_param already?
-Why do we need any runtime checks?
+The chroot system call is currently limited to be used by processes with
+the CAP_SYS_CHROOT capability.  This protects against malicious
+procesess willing to trick SUID-like binaries.  The following patch
+allows unprivileged users to safely use chroot(2).
 
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
-> Reviewed-by: Oscar Salvador <osalvador@suse.de>
-> Tested-by: Chen Huang <chenhuang5@huawei.com>
-> Tested-by: Bodeddula Balasubramaniam <bodeddub@amazon.com>
-> ---
->  include/linux/hugetlb.h | 3 ++-
->  mm/hugetlb_vmemmap.c    | 7 +++++++
->  mm/hugetlb_vmemmap.h    | 6 ++++++
->  3 files changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index c70421e26189..333dd0479fc2 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -880,7 +880,8 @@ extern bool hugetlb_free_vmemmap_enabled;
->  
->  static inline bool is_hugetlb_free_vmemmap_enabled(void)
->  {
-> -	return hugetlb_free_vmemmap_enabled;
-> +	return hugetlb_free_vmemmap_enabled &&
-> +	       is_power_of_2(sizeof(struct page));
->  }
->  #else
->  static inline bool is_hugetlb_free_vmemmap_enabled(void)
-> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-> index 33e42678abe3..1ba1ef45c48c 100644
-> --- a/mm/hugetlb_vmemmap.c
-> +++ b/mm/hugetlb_vmemmap.c
-> @@ -265,6 +265,13 @@ void __init hugetlb_vmemmap_init(struct hstate *h)
->  	BUILD_BUG_ON(__NR_USED_SUBPAGE >=
->  		     RESERVE_VMEMMAP_SIZE / sizeof(struct page));
->  
-> +	/*
-> +	 * The compiler can help us to optimize this function to null
-> +	 * when the size of the struct page is not power of 2.
-> +	 */
-> +	if (!is_power_of_2(sizeof(struct page)))
-> +		return;
-> +
->  	if (!hugetlb_free_vmemmap_enabled)
->  		return;
->  
-> diff --git a/mm/hugetlb_vmemmap.h b/mm/hugetlb_vmemmap.h
-> index cb2bef8f9e73..29aaaf7b741e 100644
-> --- a/mm/hugetlb_vmemmap.h
-> +++ b/mm/hugetlb_vmemmap.h
-> @@ -21,6 +21,12 @@ void hugetlb_vmemmap_init(struct hstate *h);
->   */
->  static inline unsigned int free_vmemmap_pages_per_hpage(struct hstate *h)
->  {
-> +	/*
-> +	 * This check aims to let the compiler help us optimize the code as
-> +	 * much as possible.
-> +	 */
-> +	if (!is_power_of_2(sizeof(struct page)))
-> +		return 0;
->  	return h->nr_free_vmemmap_pages;
->  }
->  #else
-> -- 
-> 2.11.0
-> 
+This patch is a follow-up of a previous one sent by Andy Lutomirski some
+time ago:
+https://lore.kernel.org/lkml/0e2f0f54e19bff53a3739ecfddb4ffa9a6dbde4d.1327858005.git.luto@amacapital.net/
 
+This patch can be applied on top of v5.12-rc2 .  I would really
+appreciate constructive reviews.
+
+Regards,
+
+Mickaël Salaün (1):
+  fs: Allow no_new_privs tasks to call chroot(2)
+
+ fs/open.c | 64 ++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 61 insertions(+), 3 deletions(-)
+
+
+base-commit: a38fd8748464831584a19438cbb3082b5a2dab15
 -- 
-Michal Hocko
-SUSE Labs
+2.30.2
+
