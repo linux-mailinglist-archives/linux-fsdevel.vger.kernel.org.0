@@ -2,117 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F684334C20
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 00:02:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 764D3334C85
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 00:29:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232966AbhCJXBw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Mar 2021 18:01:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57892 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231301AbhCJXBd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Mar 2021 18:01:33 -0500
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80C47C061574;
-        Wed, 10 Mar 2021 15:01:33 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id mm21so42091050ejb.12;
-        Wed, 10 Mar 2021 15:01:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=f1OhGlJz2j6YTYfzWFHdwbgV7PiLTTKaD5d9gsHnl1E=;
-        b=lW9tBi577tyTEpO0bVugV0TKRv6FllVdghAXpihF0GR4vMLzn0uSraikC/rbKnuPYJ
-         r5jAHQTZ/EnQknxboJLonWglrqlTh/g3klmXPo/QOGAIz7Y+dk/tISVVbNUAH0KGBpWV
-         iMvXTPXW1c5IcYFETm0fA3JpvbH0vxcicS9CSZaB0aJURFnqEiafMc/4UIKR52neb+v1
-         jsdVFgZfr8uv99djkzUxiOK5WoctFNNHVaS4Tg8kYlazUr4IiRJIDuZBvlqHaK84Eliy
-         55YciVi6/r2iVCksW9DMsaQcCYFxhF5JBgazUoPzAmJmd2Lpp502Qpuzg5pLIwvoSxbh
-         FvlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=f1OhGlJz2j6YTYfzWFHdwbgV7PiLTTKaD5d9gsHnl1E=;
-        b=d7L+GOqj88uzABAZlwzf5r2JUPT96mcfKMGTRqvY+eytGlegXTxopjASQtQZ/eHWqT
-         H21cWcmXiyk1jzw7Mow5cWob6ugfNFLUUT8Cafsk46+HmH1vOndaxgLj6q6Mz290oX2W
-         3uzhJ7XeKRxfz8mGezHEFX8WfRCru0xUL1dcikspkAqAnwCperq5vb67keKhQ96DeRqb
-         FA0nMBSM36lNA6efGMmrLI5f2vcBiMsV8Q+rU2V7AWzhOIdKix5ZmD+5WGrQyMVPTfqc
-         oNRkkaYAsKDCvl53MQmU7upLEpjbmNuEtqx1dokbT5C8XWJL011KZNlhT/7+RoDNi67H
-         Cd4A==
-X-Gm-Message-State: AOAM531LZ/ro4Pu6ekFUVPgquTaKiPrs5Upz7RFPyzu0SPR2usiHXlsF
-        ovVNQUOZvoTaoaXANM3c2pB1ZThWuuDm5s4CAKg=
-X-Google-Smtp-Source: ABdhPJyY+VKalzfc/sF2/xknKh2RDncIBUn9TMdHzcFeNKNt27z04V3g7uqrolj9U24rxex3L59xU3HgbnW/g+ZIOnQ=
-X-Received: by 2002:a17:906:3088:: with SMTP id 8mr185785ejv.499.1615417292149;
- Wed, 10 Mar 2021 15:01:32 -0800 (PST)
+        id S233653AbhCJX30 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Mar 2021 18:29:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39070 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232181AbhCJX2v (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Mar 2021 18:28:51 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6670C64DDA;
+        Wed, 10 Mar 2021 23:28:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615418931;
+        bh=UfbEKg7ZAq2wNBsMx+afAVr4IIua3XrGFwGBZrz0vpc=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=Pxqrud2EzPMQj3J7ZkeyPjCaBiCrgraTkfbmZGAwJubVY1cLHgx8BduRi5fBh+j56
+         7BfBHxONDXEVCkll5nk55pDsGkZ3a0GF2j4+yzMWcYxaz5oHG60MVQD7xg9XQijCMz
+         W8W4gyVk2zIJhAPWJqiVr/JEgEmZse+XmzxOTzZW5r8/j0JOjrJiL+H4Ymz22m4YfX
+         vqa8zY1+OR+jinBdJ3m1to4lLBILfdN093WjOXqzvS0mVVfVHLDFZr1xlG9BVW9ao3
+         3FkQH8z9lWG++YK6XzPIK8jwsKgqrF0PEBiZZeiO8zjiUiRZPuDDaLUBLUSCi5K6XX
+         iD+lNI2RB4Nkw==
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 285C6352261C; Wed, 10 Mar 2021 15:28:51 -0800 (PST)
+Date:   Wed, 10 Mar 2021 15:28:51 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
+        peterz@infradead.org, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        osalvador@suse.de, song.bao.hua@hisilicon.com, david@redhat.com,
+        naoya.horiguchi@nec.com, joao.m.martins@oracle.com,
+        duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Chen Huang <chenhuang5@huawei.com>,
+        Bodeddula Balasubramaniam <bodeddub@amazon.com>
+Subject: Re: [PATCH v18 4/9] mm: hugetlb: alloc the vmemmap pages associated
+ with each HugeTLB page
+Message-ID: <20210310232851.GZ2696@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20210308102807.59745-1-songmuchun@bytedance.com>
+ <20210308102807.59745-5-songmuchun@bytedance.com>
+ <YEjji9oAwHuZaZEt@dhcp22.suse.cz>
+ <f9f19d38-f1a7-ac8c-6ba8-3ce0bcc1e6a0@oracle.com>
+ <YEk1+mDZ4u85RKL3@dhcp22.suse.cz>
+ <20210310214909.GY2696@paulmck-ThinkPad-P72>
+ <68bc8cc9-a15b-2e97-9a2a-282fe6e9bd3f@oracle.com>
 MIME-Version: 1.0
-References: <20210310174603.5093-1-shy828301@gmail.com> <20210310174603.5093-14-shy828301@gmail.com>
- <CALvZod5q5LDEfUMuvO7V2hTf+oCsBGXKZn3tBByOXL952wqbRw@mail.gmail.com>
- <CAHbLzkpX0h2_FpeOWfrK3AO8RY4GE=wDqgSwFt69vn+roo6U3A@mail.gmail.com>
- <CALvZod4hSCBsXPisPT_Tai3kHW1Oo5k8z2ihbSgmLsMTAqWGHg@mail.gmail.com>
- <CAHbLzkp2pW+nR-7Z0w3mGG4+ZBgRy4X4O+nfn03hLWBfB1HVXw@mail.gmail.com> <CALvZod5B+JZT2WK=_fKH7tfpXG=NLhwhN=Y83y4+HmsG8TT2LA@mail.gmail.com>
-In-Reply-To: <CALvZod5B+JZT2WK=_fKH7tfpXG=NLhwhN=Y83y4+HmsG8TT2LA@mail.gmail.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Wed, 10 Mar 2021 15:01:20 -0800
-Message-ID: <CAHbLzkrju=bYk3mrBUxhL8uq9Q=H0Nw4dqD3sDx8G7AJY-n=Wg@mail.gmail.com>
-Subject: Re: [v9 PATCH 13/13] mm: vmscan: shrink deferred objects proportional
- to priority
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68bc8cc9-a15b-2e97-9a2a-282fe6e9bd3f@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 10, 2021 at 2:41 PM Shakeel Butt <shakeelb@google.com> wrote:
->
-> On Wed, Mar 10, 2021 at 1:41 PM Yang Shi <shy828301@gmail.com> wrote:
-> >
-> > On Wed, Mar 10, 2021 at 1:08 PM Shakeel Butt <shakeelb@google.com> wrote:
-> > >
-> > > On Wed, Mar 10, 2021 at 10:54 AM Yang Shi <shy828301@gmail.com> wrote:
-> > > >
-> > > > On Wed, Mar 10, 2021 at 10:24 AM Shakeel Butt <shakeelb@google.com> wrote:
-> > > > >
-> > > > > On Wed, Mar 10, 2021 at 9:46 AM Yang Shi <shy828301@gmail.com> wrote:
-> > > > > >
-> > > > > > The number of deferred objects might get windup to an absurd number, and it
-> > > > > > results in clamp of slab objects.  It is undesirable for sustaining workingset.
-> > > > > >
-> > > > > > So shrink deferred objects proportional to priority and cap nr_deferred to twice
-> > > > > > of cache items.
-> > > > > >
-> > > > > > The idea is borrowed from Dave Chinner's patch:
-> > > > > > https://lore.kernel.org/linux-xfs/20191031234618.15403-13-david@fromorbit.com/
-> > > > > >
-> > > > > > Tested with kernel build and vfs metadata heavy workload in our production
-> > > > > > environment, no regression is spotted so far.
-> > > > >
-> > > > > Did you run both of these workloads in the same cgroup or separate cgroups?
-> > > >
-> > > > Both are covered.
-> > > >
-> > >
-> > > Have you tried just this patch i.e. without the first 12 patches?
-> >
-> > No. It could be applied without the first 12 patches, but I didn't
-> > test this combination specifically since I don't think it would have
-> > any difference from with the first 12 patches. I tested running the
-> > test case under root memcg, it seems equal to w/o the first 12 patches
-> > and the only difference is where to get nr_deferred.
->
-> I am trying to measure the impact of this patch independently. One
-> point I can think of is the global reclaim. The first 12 patches do
-> not aim to improve the global reclaim but this patch will. I am just
-> wondering what would be negative if any of this patch.
+On Wed, Mar 10, 2021 at 02:10:12PM -0800, Mike Kravetz wrote:
+> On 3/10/21 1:49 PM, Paul E. McKenney wrote:
+> > On Wed, Mar 10, 2021 at 10:11:22PM +0100, Michal Hocko wrote:
+> >> On Wed 10-03-21 10:56:08, Mike Kravetz wrote:
+> >>> On 3/10/21 7:19 AM, Michal Hocko wrote:
+> >>>> On Mon 08-03-21 18:28:02, Muchun Song wrote:
+> >>>> [...]
+> >>>>> @@ -1447,7 +1486,7 @@ void free_huge_page(struct page *page)
+> >>>>>  	/*
+> >>>>>  	 * Defer freeing if in non-task context to avoid hugetlb_lock deadlock.
+> >>>>>  	 */
+> >>>>> -	if (!in_task()) {
+> >>>>> +	if (in_atomic()) {
+> >>>>
+> >>>> As I've said elsewhere in_atomic doesn't work for CONFIG_PREEMPT_COUNT=n.
+> >>>> We need this change for other reasons and so it would be better to pull
+> >>>> it out into a separate patch which also makes HUGETLB depend on
+> >>>> PREEMPT_COUNT.
+> >>>
+> >>> Yes, the issue of calling put_page for hugetlb pages from any context
+> >>> still needs work.  IMO, that is outside the scope of this series.  We
+> >>> already have code in this path which blocks/sleeps.
+> >>>
+> >>> Making HUGETLB depend on PREEMPT_COUNT is too restrictive.  IIUC,
+> >>> PREEMPT_COUNT will only be enabled if we enable:
+> >>> PREEMPT "Preemptible Kernel (Low-Latency Desktop)"
+> >>> PREEMPT_RT "Fully Preemptible Kernel (Real-Time)"
+> >>> or, other 'debug' options.  These are not enabled in 'more common'
+> >>> kernels.  Of course, we do not want to disable HUGETLB in common
+> >>> configurations.
+> >>
+> >> I haven't tried that but PREEMPT_COUNT should be selectable even without
+> >> any change to the preemption model (e.g. !PREEMPT).
+> > 
+> > It works reliably for me, for example as in the diff below.  So,
+> > as Michal says, you should be able to add "select PREEMPT_COUNT" to
+> > whatever Kconfig option you need to.
+> > 
+> 
+> Thanks Paul.
+> 
+> I may have been misreading Michal's suggestion of "make HUGETLB depend on
+> PREEMPT_COUNT".  We could "select PREEMPT_COUNT" if HUGETLB is enabled.
+> However, since HUGETLB is enabled in most configs, then this would
+> result in PREEMPT_COUNT also being enabled in most configs.  I honestly
+> do not know how much this will cost us?  I assume that if it was free or
+> really cheap it would already be always on?
 
-Feel free to do so. More tests from more workloads are definitely
-appreciated. That could give us more confidence about this patch or
-catch regression sooner.
+There are a -lot- of configs out there, so are you sure that HUGETLB is
+really enabled in most of them?  ;-)
+
+More seriously, I was going by earlier emails in this and related threads
+plus Michal's "PREEMPT_COUNT should be selectable".  But there are other
+situations that would like PREEMPT_COUNT.  And to your point, some who
+would rather PREEMPT_COUNT not be universally enabled.  I haven't seen
+any performance or kernel-size numbers from any of them, however.
+
+							Thanx, Paul
+
+> -- 
+> Mike Kravetz
+> 
+> > 							Thanx, Paul
+> > 
+> > diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
+> > index 3128b7c..7d9f989 100644
+> > --- a/kernel/rcu/Kconfig
+> > +++ b/kernel/rcu/Kconfig
+> > @@ -8,6 +8,7 @@ menu "RCU Subsystem"
+> >  config TREE_RCU
+> >  	bool
+> >  	default y if SMP
+> > +	select PREEMPT_COUNT
+> >  	help
+> >  	  This option selects the RCU implementation that is
+> >  	  designed for very large SMP system with hundreds or
+> > 
