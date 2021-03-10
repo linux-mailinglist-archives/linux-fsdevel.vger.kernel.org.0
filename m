@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6852333468C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Mar 2021 19:21:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53D18334689
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Mar 2021 19:21:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233711AbhCJSUr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Mar 2021 13:20:47 -0500
-Received: from raptor.unsafe.ru ([5.9.43.93]:56482 "EHLO raptor.unsafe.ru"
+        id S232690AbhCJSUq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Mar 2021 13:20:46 -0500
+Received: from raptor.unsafe.ru ([5.9.43.93]:56494 "EHLO raptor.unsafe.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232828AbhCJSUV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S233336AbhCJSUV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 10 Mar 2021 13:20:21 -0500
 Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-94-113-225-162.net.upcbroadband.cz [94.113.225.162])
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 87B0140F00;
-        Wed, 10 Mar 2021 18:20:19 +0000 (UTC)
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 0196541758;
+        Wed, 10 Mar 2021 18:20:20 +0000 (UTC)
 From:   Alexey Gladkov <gladkov.alexey@gmail.com>
 To:     LKML <linux-kernel@vger.kernel.org>,
         "Eric W . Biederman" <ebiederm@xmission.com>
@@ -22,58 +22,107 @@ Cc:     Alexey Gladkov <legion@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Linux Containers <containers@lists.linux-foundation.org>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH v5 1/5] docs: proc: add documentation about mount restrictions
-Date:   Wed, 10 Mar 2021 19:19:56 +0100
-Message-Id: <333cf0c988255d7bf54871ad4fa02af2aaa8d4a3.1615400395.git.gladkov.alexey@gmail.com>
+Subject: [PATCH v5 2/5] proc: Show /proc/self/net only for CAP_NET_ADMIN
+Date:   Wed, 10 Mar 2021 19:19:57 +0100
+Message-Id: <cd4679cac6fc8f9ec469f23318ea23ffb6d736d0.1615400395.git.gladkov.alexey@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1615400395.git.gladkov.alexey@gmail.com>
 References: <cover.1615400395.git.gladkov.alexey@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.4 (raptor.unsafe.ru [0.0.0.0]); Wed, 10 Mar 2021 18:20:19 +0000 (UTC)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.4 (raptor.unsafe.ru [0.0.0.0]); Wed, 10 Mar 2021 18:20:20 +0000 (UTC)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Cache the mounters credentials and make access to the net directories
+contingent of the permissions of the mounter of proc.
+
+Show /proc/self/net only if mounter has CAP_NET_ADMIN and if proc is
+mounted with subset=pid option.
+
 Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
 ---
- Documentation/filesystems/proc.rst | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ fs/proc/proc_net.c      | 8 ++++++++
+ fs/proc/root.c          | 5 +++++
+ include/linux/proc_fs.h | 1 +
+ 3 files changed, 14 insertions(+)
 
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 2fa69f710e2a..3daf0e7d1071 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -50,6 +50,7 @@ fixes/update part 1.1  Stefani Seibold <stefani@seibold.net>    June 9 2009
+diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
+index 18601042af99..a198f74cdb3b 100644
+--- a/fs/proc/proc_net.c
++++ b/fs/proc/proc_net.c
+@@ -26,6 +26,7 @@
+ #include <linux/uidgid.h>
+ #include <net/net_namespace.h>
+ #include <linux/seq_file.h>
++#include <linux/security.h>
  
-   4	Configuring procfs
-   4.1	Mount options
-+  4.2	Mount restrictions
+ #include "internal.h"
  
-   5	Filesystem behavior
+@@ -259,6 +260,7 @@ static struct net *get_proc_task_net(struct inode *dir)
+ 	struct task_struct *task;
+ 	struct nsproxy *ns;
+ 	struct net *net = NULL;
++	struct proc_fs_info *fs_info = proc_sb_info(dir->i_sb);
  
-@@ -2175,6 +2176,21 @@ information about processes information, just add identd to this group.
- subset=pid hides all top level files and directories in the procfs that
- are not related to tasks.
+ 	rcu_read_lock();
+ 	task = pid_task(proc_pid(dir), PIDTYPE_PID);
+@@ -271,6 +273,12 @@ static struct net *get_proc_task_net(struct inode *dir)
+ 	}
+ 	rcu_read_unlock();
  
-+4.2	Mount restrictions
-+--------------------------
++	if (net && (fs_info->pidonly == PROC_PIDONLY_ON) &&
++	    security_capable(fs_info->mounter_cred, net->user_ns, CAP_NET_ADMIN, CAP_OPT_NONE) < 0) {
++		put_net(net);
++		net = NULL;
++	}
 +
-+The procfs can be mounted without any special restrictions if user namespace is
-+not used. You only need to have permission to mount (CAP_SYS_ADMIN).
-+
-+If you are inside the user namespace, the kernel checks the instances of procfs
-+available to you and will not allow procfs to be mounted if:
-+
-+  1. There is a bind mount of part of procfs visible. Whoever mounts should be
-+     able to see the entire filesystem.
-+  2. Mount is prohibited if a new mount overrides the readonly option or family
-+     of atime options.
-+  3. If any file or non-empty procfs directory is hidden by another filesystem.
-+
- Chapter 5: Filesystem behavior
- ==============================
+ 	return net;
+ }
  
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index 5e444d4f9717..6a75ac717455 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -171,6 +171,7 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
+ 		return -ENOMEM;
+ 
+ 	fs_info->pid_ns = get_pid_ns(ctx->pid_ns);
++	fs_info->mounter_cred = get_cred(fc->cred);
+ 	proc_apply_options(fs_info, fc, current_user_ns());
+ 
+ 	/* User space would break if executables or devices appear on proc */
+@@ -220,6 +221,9 @@ static int proc_reconfigure(struct fs_context *fc)
+ 
+ 	sync_filesystem(sb);
+ 
++	put_cred(fs_info->mounter_cred);
++	fs_info->mounter_cred = get_cred(fc->cred);
++
+ 	proc_apply_options(fs_info, fc, current_user_ns());
+ 	return 0;
+ }
+@@ -274,6 +278,7 @@ static void proc_kill_sb(struct super_block *sb)
+ 
+ 	kill_anon_super(sb);
+ 	put_pid_ns(fs_info->pid_ns);
++	put_cred(fs_info->mounter_cred);
+ 	kfree(fs_info);
+ }
+ 
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index 000cc0533c33..ffa871941bd0 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -64,6 +64,7 @@ struct proc_fs_info {
+ 	kgid_t pid_gid;
+ 	enum proc_hidepid hide_pid;
+ 	enum proc_pidonly pidonly;
++	const struct cred *mounter_cred;
+ };
+ 
+ static inline struct proc_fs_info *proc_sb_info(struct super_block *sb)
 -- 
 2.29.2
 
