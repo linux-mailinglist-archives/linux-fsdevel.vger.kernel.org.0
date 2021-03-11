@@ -2,84 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A42C337AC1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 18:26:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB23F337AD7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 18:30:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230033AbhCKRZu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Mar 2021 12:25:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41110 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229729AbhCKRZX (ORCPT
+        id S229904AbhCKRaJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Mar 2021 12:30:09 -0500
+Received: from p3plsmtpa07-07.prod.phx3.secureserver.net ([173.201.192.236]:55921
+        "EHLO p3plsmtpa07-07.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229729AbhCKR3h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Mar 2021 12:25:23 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1B3AC061760
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Mar 2021 09:25:22 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id z1so3984177edb.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Mar 2021 09:25:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yG/vJmP1bt9V/zcHq9LX/hDiqMUciXWcy0fyRaWMlUE=;
-        b=0YX0R0Q2hP+VRr62VJBofrj5bwB+MCjUnWO/PvCvGfcEsYGhMMejCqBm8Pfj5e8TdI
-         tREJb6S5wxcQOrnVPKESltVTqt698WVEwkHUhw6f646QkClKEo46BT5Pnx4PgGwwzpO3
-         tmo5tkrk/yQ2sRylmuPQmAPVuX47NBSI2bBBy2oVNLI2mE2W9cw46R8sHkRC8vbvs8aM
-         fJk54uUOb4JlfqsCahno6tBFIGSrTM11D1eXjVahUlcYLWXbPEs/bKkZIqkR95ZVBOgP
-         gfHGo42KJ88F0zo9mQ7JNr4WkHjSitiNGvkyRqyfELfoh99GZtkbGnaEih5B1EUO51t6
-         eiVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yG/vJmP1bt9V/zcHq9LX/hDiqMUciXWcy0fyRaWMlUE=;
-        b=HLs0RDCYmaKYeEDVabwWOnj+Fa5n8jUcjKJmItXwD7g/SkpJtmtXINNc1PdfivlsZC
-         sMQUYO6Kyg31Zs8ihE/c8GHF/B+600oDydXoKvOrfIo7hNtRBv5wFsDUS89eh/1FKe5l
-         ZBrvoZ+E/HvNuWtFxI+teAqQ02owz08n6hYMkcEVqR1+/bHh1I/78EUVypMk5MSeqmD/
-         F2S4mvrPOnqOhKvJXyUOMHcgHy/142ltvmsTP3igNZANT2M1ktKU42VQuvhkUepo973I
-         4X0W6FOYQtx2S2IUwVeqtJZrRcTshCDdn5iTX76j19lAJQGZPCX0xKr/0SmJVCokx4Nm
-         lHDg==
-X-Gm-Message-State: AOAM532vcdXaK+my6lqU3OoN5cmPJmZSmKxaM1V1sPijSOzkfqBHRIcq
-        cvaaGLJkHSseDfuWKu85aehYuDmNwRaQKM3bsWV4Pg==
-X-Google-Smtp-Source: ABdhPJy90akk7moyg6odTY/2ggxqCFkjHdNlPxywRl8kvBDuR1hqSnlJiDWgzS2rTOPef79+7VRiSHGqGyssrZy3vH4=
-X-Received: by 2002:a05:6402:4301:: with SMTP id m1mr9971780edc.210.1615483521452;
- Thu, 11 Mar 2021 09:25:21 -0800 (PST)
+        Thu, 11 Mar 2021 12:29:37 -0500
+Received: from [192.168.0.116] ([71.184.94.153])
+        by :SMTPAUTH: with ESMTPSA
+        id KP7tlQdLndxhWKP7uls8lT; Thu, 11 Mar 2021 10:29:35 -0700
+X-CMAE-Analysis: v=2.4 cv=cpdeL30i c=1 sm=1 tr=0 ts=604a537f
+ a=vbvdVb1zh1xTTaY8rfQfKQ==:117 a=vbvdVb1zh1xTTaY8rfQfKQ==:17
+ a=IkcTkHD0fZMA:10 a=SEc3moZ4AAAA:8 a=pGLkceISAAAA:8 a=B3RzK8wqSUdCYLsOpbkA:9
+ a=QEXdDO2ut3YA:10 a=5oRCH6oROnRZc2VpWJZ3:22
+X-SECURESERVER-ACCT: tom@talpey.com
+Subject: Re: [PATCH v4] flock.2: add CIFS details
+To:     =?UTF-8?Q?Aur=c3=a9lien_Aptel?= <aaptel@suse.com>,
+        "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
+Cc:     smfrench@gmail.com, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, mtk.manpages@gmail.com,
+        linux-man@vger.kernel.org
+References: <87v9a7w8q7.fsf@suse.com> <20210304095026.782-1-aaptel@suse.com>
+ <45b64990-b879-02d3-28e5-b896af0502c4@gmail.com> <87sg52t2xj.fsf@suse.com>
+ <139a3729-9460-7272-b1d7-c2feb5679ee9@talpey.com> <87eegltxzd.fsf@suse.com>
+From:   Tom Talpey <tom@talpey.com>
+Message-ID: <d602e3e4-721a-a1c5-3375-1c9899da4383@talpey.com>
+Date:   Thu, 11 Mar 2021 12:29:33 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.1
 MIME-Version: 1.0
-References: <CE1E7D7EFA066443B6454A6A5063B50220D0B849@dggeml509-mbs.china.huawei.com>
- <20210311121923.GU3479805@casper.infradead.org>
-In-Reply-To: <20210311121923.GU3479805@casper.infradead.org>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 11 Mar 2021 09:25:10 -0800
-Message-ID: <CAPcyv4jz7-uq+T-sd_U3O_C7SB9nYWVJDnhVsaM0VNR207m8xA@mail.gmail.com>
-Subject: Re: [question] Panic in dax_writeback_one
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "chenjun (AM)" <chenjun102@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        "Xiangrui (Euler)" <rui.xiang@huawei.com>,
-        "lizhe (Y)" <lizhe67@huawei.com>, yangerkun <yangerkun@huawei.com>,
-        "zhangyi (F)" <yi.zhang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <87eegltxzd.fsf@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfEgeUJrJHZJrI1wvEDZrPU9VWzHHHJ5etqjy022aGphLjk++a8foxL3rXHHG0tRZxb9Hko2HiUskvSndihWG1Nb+JosWO3EycH8JyQr3uTcd8Ruf8d6m
+ nBuih9xCePs1zsJQ9EDQBRL+ghH4bWcB7opxsgB1UA1ZQyQ2MUThzCV7VrrnBr5d+wZdP1tykAbw8DZTn96trhDod1tuzS23MxPQNUo+y2q+hGjy7lJL2Owi
+ bN51XQ7ZgvH3PBt6OMq53TH94saRqu4gW3LR5qdu/91RF581L2rNlmK0BlDh4mBYUhkq+cH1Oq1HjdqUBBt4EXl1PggmVxj8z3cZ6HQe9AYeX1VhfP9kxTJQ
+ ALhkBGHQq43ldwuDmW3PBvhtTcS1sK+iHpF5y3vvyF//UI3CeY8=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 11, 2021 at 4:20 AM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Thu, Mar 11, 2021 at 07:48:25AM +0000, chenjun (AM) wrote:
-> > static int dax_writeback_one(struct xa_state *xas, struct dax_device
-> > *dax_dev, struct address_space *mapping, void *entry)
-> > ----dax_flush(dax_dev, page_address(pfn_to_page(pfn)), count * PAGE_SIZE);
-> > The pfn is returned by the driver. In my case, the pfn does not have
-> > struct page. so pfn_to_page(pfn) return a wrong address.
->
-> I wasn't involved, but I think the right solution here is simply to
-> replace page_address(pfn_to_page(pfn)) with pfn_to_virt(pfn).  I don't
-> know why Dan decided to do this in the more complicated way.
+On 3/11/2021 12:13 PM, Aurélien Aptel wrote:
+> Tom Talpey <tom@talpey.com> writes:
+> 
+>> On 3/11/2021 5:11 AM, Aurélien Aptel wrote:
+>>> "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com> writes:
+>>>> I agree with Tom.  It's much easier to read if you just say that 'nobrl'
+>>>> torns off the non-locale behaviour, and acts as 5.4 and earlier kernels.
+>>>>     Unless there's any subtlety that makes it different.  Is there any?
+>>>
+>>> nobrl also makes fnctl() locks local.
+>>> In 5.4 and earlier kernel, flock() is local but fnctl() isn't.
+>>>
+>>>> BTW, you should use "semantic newlines":
+>>>
+>>> Ok, I'll redo once we agree on the text.
+>>
+>> I wonder if it's best to leave the nobrl details to the mount.cifs
+>> manpage, and just make a reference from here.
+>>
+>> Another advantage of putting this in a cifs.ko-specific manpage
+>> is that it would be significantly easier to maintain. The details
+>> of a 5.4-to-5.5 transition are going to fade over time, and the
+>> APIs in fcntl(2)/flock(2) really aren't driving that.
+> 
+> I was trying to write in the same style as the NFS details just above (see
+> existing man page). Give basic overview of the issues.
+> 
+>> If not, it's going to be messy... Aurélien is this correct?
+>>
+>> cifs.ko flock()
+>> - local in <= 5.4
+>> - remote by default in >= 5.5
+>> - local if nobrl in >= 5.5
+>>
+>> cifs.ko fcntl()
+>> - remote by default in X.Y
+>> - local if nobrl in X.Y
+> 
+> Correct.
+> 
+>> Not sure what the value(s) of X.Y actually might be.
+> 
+> AFAIK fcntl() was always remote by default.
+> And nobrl was added in 2.6.15 (15 years ago). I wouldn't bother
+> mentionning X.Y, it's already complex enough as it is.
+> 
+>> It seems odd that "nobrl" means "handle locking locally, and never
+>> send to server". I mean, there is always byte-range locking, right?
+> 
+> Yes the option name can be confusing. Byte-range locking is always
+> possible, but with "nobrl" it's local-only.
+> 
+>> Are there any other options or configurations that alter this?
+> 
+> I've taken another long look at the cifs.ko and samba code. There are
+> many knobs that would make an accurate matrix table pretty big.
 
-pfn_to_virt() only works for the direct-map. If pages are not mapped I
-don't see how pfn_to_virt() is expected to work.
+I vote for simplicity! Especially on the fcntl(2) page in question.
+Totally agree on not mentioning 2.6.x in a current manpage.
 
-The real question Chenjun is why are you writing a new simulator of
-memory as a block-device vs reusing the pmem driver or brd?
+> * If the mount point is done on an SMB1+UNIX Extensions
+>    connection, locking becomes advisory. Unless
+>    forcemandatorylock option is passed. This will eventually be
+>    implemented for SMB3 posix extensions as well (I've started a
+>    thread on the samba-technical mailing list).
+
+NO SMB1 discussion! Any manpage update should not add discussion of
+an obsolete nonsecure deprecated protocol, and should definitely not
+passively encourage its consideration.
+
+> * If cifs.ko can get guarantees (via oplocks or leases) that it is the
+>    only user of a file, it caches read/writes but also locking
+>    locally. If the lease is broke then it will send the locks.
+>    The levels of caching cifs.ko can do can be changed with the cache
+>    mount option.
+
+I think this is relevant to some sort of smb(7) manpage, but is much
+too detailed and subtle for a paragraph summary in fcntl(2).
+
+To be more clear, my updated thinking is to mostly drop the details
+in the closing sentence:
+
+> The nobrl mount option (see mount.cifs(8)) turns off  fnctl(2)
+>   and  flock() lock propagation to remote clients and makes flock() locks
+>   advisory again.
+
+and simply state (perhaps)
+
+  "Remote and mandatory locking semantics may vary with SMB protocol,
+   mount options and server type. See mount.cifs(8) for additional
+   information."
+
+Tom.
