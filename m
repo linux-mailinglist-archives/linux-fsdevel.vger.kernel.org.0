@@ -2,201 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A9F09336B1C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 05:27:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75BFC336B4B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 06:02:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231126AbhCKE1T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Mar 2021 23:27:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43204 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230478AbhCKE1K (ORCPT
+        id S229661AbhCKFBy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Mar 2021 00:01:54 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:61569 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229585AbhCKFBU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Mar 2021 23:27:10 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4C06C061761
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 20:27:10 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id j6-20020a17090adc86b02900cbfe6f2c96so8711665pjv.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 20:27:10 -0800 (PST)
+        Thu, 11 Mar 2021 00:01:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1615438888; x=1646974888;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=jZRIjwAoKyVaQXGobpMAuuxe2bfZvr/nDiLtBMIbfE4=;
+  b=bqldS+ZNDk2EbPUJi7fss3/9uyIyTXx9pT/+IAOKDWtMfNftVZjvXdoJ
+   FDjVrAYGrHHHmb9gz7GsM7LdHgiajQWbat51TUB+cJrki6YmR/5YR6YmY
+   t2wKp/XIMAFroUWCoHlL1vmgAzL3zEeIv+EKqZDyviogsnikdcOObgSVJ
+   x3N/nqE7kaEPm4PAkuNH7tNnW2BiIX+15RcF4CKlb0vy//4dxI/f/1D7c
+   GlQYd5l2YfChyM4bv73Pqw7J0lgJEtHEQ2huCBIp5fe7e102Y1XYMZC+6
+   buMOa20thS6dGMwGVTGPYxmlnZBBEbTqHAM8e9o1bDlkAweWjGtIxaEG8
+   g==;
+IronPort-SDR: FSaN5MZW5nzVaeDfygtHP3eQoqjCLNfAkqd2LikuiLaojz5ZyUvdu5/TtExJeySHxV0HhhslR+
+ 7QcDogkrCQuToDJFjU6Tiqm0AQ7Jn/HjrPC6BISffN/nvh/nZu5IYgM7ImwBBqETVu+wAbt06k
+ UC1pbvQ3X5tPO0a+nf1qhXekr4ns/6UiH7nFTNDj6bYzK2Cm7KohdS9v7U5ZrGtApAgvKiMsDC
+ gj6KS20P878RVyRZk3BScgwjsNQYVeuUhjLQ7dy68RJbIM/yKCEFloU5G+Lc0o1VTQBAJTEcyR
+ 4q0=
+X-IronPort-AV: E=Sophos;i="5.81,239,1610380800"; 
+   d="scan'208";a="266230138"
+Received: from mail-mw2nam10lp2106.outbound.protection.outlook.com (HELO NAM10-MW2-obe.outbound.protection.outlook.com) ([104.47.55.106])
+  by ob1.hgst.iphmx.com with ESMTP; 11 Mar 2021 13:01:26 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CtV3QTbB5gKj5nnXFznPKxc5f/qv2honEZTZWw7Yx6R12eL6P0ci8yp0jT+xPLpZ3pDhCcNSxEQ0E7mOTYgSYZieFE65vHsa1kN97aEBj3NesF0fPecb98GdLZJr6Mmv4OcG+824JkAA71+6L3+1FfVvdwcyRrUTGfcl2Ee2x+Yep8R9KsI7dn3VLEIbKOweNeq8qKUCUGU1VKaE1DCaDXzy3p914T3f4y1h4SM/0HiUzvD5OGqns9nIwN75SaY2FfKCHde9oLczaliVNqlm2mQg03Z6wejecdhjWV+VcFqhUJzJxmzzYXG01pLoUsRIzoG2vL/WPgzIw4UR3t1MqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pDKOKrbrdq0xspjj6la/Qz4neMku2mlD2sMlWiW4MWQ=;
+ b=IP8JgMD9eVbpeeTXPEH58QccRK0AM/CafVl9J+egFLKPrwSMG7DJTvxqbOma17sUZ3HZcZI9UdTUBDgjTWmKMeeK5zWlgQHkFEjabL+1AbYVGcuHHgI/YAG43CRt2qNSMaLd5sjOEbFXY6isnfTRfZoOgymGkfGvhgi/bjXtCsuRpMRZgXOpt8RHkt2hBmHdAqEtOcOF/s6YRYvPRI8iCPPnVDyIfjU024H59Vq6VmToPGT9TkYyUi2MtvdQK01VqAzGLeFPnKusxUJ96g+7oczvtaKxIsSkxlSQsKVfl59JQXmWJQ7ptbhnrEqN3vwxC+IVSOheJwXQoiaj7e1CIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wdHJK3DnjapBMDB3J4nzxo9opMMpuJCwZjO8+x8sSxg=;
-        b=AVptnHxhFF2lfdrbogOfvyXoS+iA20CjdW0Y3g3Im2CA4FDVur+gpc9RDSc4nV8vpn
-         DJJIGc6sd1ZnOt8Sf45R27jnkdEnwUytHhendjXcAGSizUGRxZkm8dnkfY1ouBOlLkjH
-         qjVoz1+1VCtqTyybwJiF+PCpTZrfH5mlgFw3xD4vqnk3MVVxtSMjeLHW8amWMPkzsSCj
-         NgSJFKW0TdWpZG9lcIERXexLuv01GSqWVrmA5bHD8rB/WqvoucKuDEH1jyfei/KIPRp8
-         SHwFwaL37o+276bp2p4UFrR6ft87rIemm+HhxvpUz9VzglEUjUMd/BvET7TfwvSGfBdF
-         i/eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wdHJK3DnjapBMDB3J4nzxo9opMMpuJCwZjO8+x8sSxg=;
-        b=p21WXCirOAVpTj0svy/tHswva6Bk3qGI13Xi1qL9FgouH9IkrlHZMJxMEQNKGCdmyL
-         pg4e1KAvC0YHjQzBNotYobgE7LfbTM1lvcCigIMEWLoj0dtGiBcf1bRTzXpw6eEXs+AO
-         +kiNP1iCO41OxaObdr3RytIfbW8Z19q9roukTSSQFDRSkARwdNOAfbQc/ECzIogbKjE4
-         yXVp/jJ9ACbr00OgbSELcKgdfcJGKqO9Vs7hRHoRUGfnPVOxS2IcOIy2v6oVlRGlFF8p
-         prxpk7sVOWlqfg+js0Nn8fyz7fT+/RtrsFzhSkyhPYUhhiES6COcapX85Qtc8zomuMSy
-         1NhQ==
-X-Gm-Message-State: AOAM532wm/KvY1AZR79qEnA+HnHm/k7hHZ/LLvu9fVI/8H85IIgnhGNj
-        nB/Nz891n1GThFVpzZ4XbIMSZwkKuJLSGQTw0OItow==
-X-Google-Smtp-Source: ABdhPJyFtT1jcfBftxM1fBYo/GZ7Tgw6kfQp8Ydlw2Ya/FFTN4zt3q/TTwrXarOyu5SWEbQXYC+mJdl4VJaaDNvgL/g=
-X-Received: by 2002:a17:90a:901:: with SMTP id n1mr7048144pjn.147.1615436830045;
- Wed, 10 Mar 2021 20:27:10 -0800 (PST)
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pDKOKrbrdq0xspjj6la/Qz4neMku2mlD2sMlWiW4MWQ=;
+ b=Im0XDTF+eERles4TiLUhwyHTNvTjVvPK/aavJPxVmiTotPx9plvz+ruS23OmAR6SoHA2ni3Jb1eLqrzsfVxiOoqgp2gOeIEmphBwnnc5hsAdrH2yi1vCvtmz92Tx+MSEfQLHwEu5OPJyKkfpE3gg03k8GpGrWEy1cO10F6mnc3k=
+Received: from BL0PR04MB6514.namprd04.prod.outlook.com (2603:10b6:208:1ca::23)
+ by MN2PR04MB6976.namprd04.prod.outlook.com (2603:10b6:208:1e7::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17; Thu, 11 Mar
+ 2021 05:01:16 +0000
+Received: from BL0PR04MB6514.namprd04.prod.outlook.com
+ ([fe80::e9c5:588:89e:6887]) by BL0PR04MB6514.namprd04.prod.outlook.com
+ ([fe80::e9c5:588:89e:6887%3]) with mapi id 15.20.3912.026; Thu, 11 Mar 2021
+ 05:01:16 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Subject: Re: [PATCH] zonefs: Fix O_APPEND async write handling
+Thread-Topic: [PATCH] zonefs: Fix O_APPEND async write handling
+Thread-Index: AQHXFiXgoirGtY7WzEOZyfO7/xDSiA==
+Date:   Thu, 11 Mar 2021 05:01:16 +0000
+Message-ID: <BL0PR04MB651484CFF88B469A23C95DFBE7909@BL0PR04MB6514.namprd04.prod.outlook.com>
+References: <20210311032230.159925-1-damien.lemoal@wdc.com>
+ <20210311033624.GE7267@magnolia>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [2400:2411:43c0:6000:c1a6:aaec:6201:ec23]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 45b8dbf4-2861-4431-390a-08d8e44ab36c
+x-ms-traffictypediagnostic: MN2PR04MB6976:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR04MB6976CA69E9A71A89F2B23CAFE7909@MN2PR04MB6976.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: VBGo/s1+fBhOawh5OCiXtPk5ikJ8vDtl/RVNLrHY09uB8TetLHga8vITH0+y82k3O11+7wBnXoby8CkcZBffmAFDZnFO3fOs7dqso50WE4DYyzc8SC+HR7aD1Yw46gHq++nEPza5tKrwl89HsZU85e+2hE60CMYeAHB5WnlX+1rxjsEgC5kc001L+iWhDTPAViK8aC0745Fqx8enud6bVQUUpNxGrXR6apeNbiSAv4RayZLJzUJ3OSK2uA34q9MutV7oilbgGkohBHgkytcTC7WkysD9T/fZWPg9Nq01KBl0v4njVRNrC8PHjspbHflgMypVt4dybewDZTo79Ndk1T1nu0r+CADrzCk5Dt4D1oEDDT0BHzKnufPzjGD9/peDl8H9PWLkdgA3Py2MwQEVTuA2KKReD6y/kwTfTS3qXrJaj0wj1TWLJWFQUTTzVLLrrvLZ39bNbc3QFyj2d04msxO3e2rAcXaCNblpVmXRya2fuZRjKDF6yiuLi59m8sVszB8OlmpKqe+jWPel7DQWqA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR04MB6514.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(346002)(396003)(136003)(376002)(39860400002)(54906003)(6506007)(478600001)(9686003)(66446008)(186003)(4326008)(52536014)(2906002)(55016002)(6916009)(7696005)(53546011)(86362001)(5660300002)(66476007)(91956017)(316002)(64756008)(76116006)(8936002)(66946007)(66556008)(83380400001)(71200400001)(8676002)(33656002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?KnZja5qxKbHhzFqu3pEAZ/yrdGFpPQrnYJH+a7pN+vXqCSGWITFbdG2e1yGu?=
+ =?us-ascii?Q?G9Hg5//7DEVMDDwEnkzA18d+0/CQtLypOFXIpwY2gqKFgErp4jnZjEXj4wke?=
+ =?us-ascii?Q?sllxPvWGwnGrZ9UPTjUCoLIayPTgz87ngd8Np+UrELjfgc+/xiwf7F/0RT0s?=
+ =?us-ascii?Q?pkVw86QLg/AHzM/2D5INeMU0hOxwOi5LntpA9cU1D8a1bn7LlDJ0h4r0cTAu?=
+ =?us-ascii?Q?ub9+XxwuZTP07FGd5Hif7o4RibmW9xMvuZomdNmZtR8iV3FPZHgGSfAo9wa7?=
+ =?us-ascii?Q?je0xqwht1D6AbIvEByMk/iqZcMHK9B9xC9x5OlDN537t7yxuoWJauhu6Xg1l?=
+ =?us-ascii?Q?WVPeJoPtipmAgWkMpeooEt7FAtyz8hI7TOX8qh87nFWM2mzg2NpKxn1tOvr4?=
+ =?us-ascii?Q?c11yL2DTacMIU4vDwN0VJZvH4LXbwu0iPictuKOfLFbO8JO/VtvD7SsPLWPV?=
+ =?us-ascii?Q?k1PyFyMh1ZdLtW9EQ8mkFDxb5bZK7OasxQfOyH2Ofkc2N2p7j6FfJF+qaWLn?=
+ =?us-ascii?Q?z0kEM8En2iC1L3lks/Y8kq+fjfDP2BTLBlt6AqaK+96sApSySE0LgzY2678o?=
+ =?us-ascii?Q?n/ZGTXC4IeZh+C4l6T63U0j8J4eDXyqiOT1LLp2AFHt4F+qBAQlRkHCI+cIH?=
+ =?us-ascii?Q?hU/8GHawEVmw4eoobF5necHesuSY24aQv9vuCWjkBZnf38Y7wRBXYXFH37/b?=
+ =?us-ascii?Q?NEQ/RPntYEtcnBbwbAl/hqgHwZ8tbPgZ6/dkl4cs82d/1zFe7RdnWq+Z8CP/?=
+ =?us-ascii?Q?4Jfua4/WMRQE1vqxz1adh3OIrQxvIRXViqYVX0aCx/dqPiddnw6hflw+hRrJ?=
+ =?us-ascii?Q?8kLJKseKn2aBx+1xXewpTl9UNRi6hKAYFPx0IMEBWneW7KdaRNKmU//8kwdr?=
+ =?us-ascii?Q?KYqSt9B3FFbhH5kc/SUvpVdvRk9MfBs07P/Tcbn9FGFN/8dCCkEeooaWzpmE?=
+ =?us-ascii?Q?d/B3Gd5VKMoCfEfjFji+IEGv2F+yOdoI+/sbovKbtDmhu1ltrbEbgs7BzwzC?=
+ =?us-ascii?Q?7wjmZ0yMLsRrtKluJm7Yap9h1R7ntVEgsEPBEjvQp9c8RxlhLsrgjst+bItP?=
+ =?us-ascii?Q?p710tzsjCgrviQ+FXjgd+3h8BKCdPXBChcsAl5jXFFO/5avPVfif/EqFZHDJ?=
+ =?us-ascii?Q?YlCdAPDugVgtPD7fFbM0+IRZnyATllIy6jSmVkaihrTe2HwsoZxruq2jrew1?=
+ =?us-ascii?Q?eyQY214ZbrcWdrvbV/lQ6DDqljVyrUheIWvXmUFp7yIbQ32aN0a7FnWWS262?=
+ =?us-ascii?Q?9fN11b3WjRkpRKLuBbzLZ88ho5UTZRcr77kLoZSuXfgEqsTOWEAOPG13YBUY?=
+ =?us-ascii?Q?cSVjOlWEgWx/P1Sluu6Uj89U/WGXOoE47Bq5W4tiZSTI4lK/w78C5imdD0Ck?=
+ =?us-ascii?Q?cwRe6G5EscdCTSR2B99vnp/xf6qf/LUcVbLXThMBK9rWlQKr0Q=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20210308102807.59745-1-songmuchun@bytedance.com>
- <20210308102807.59745-5-songmuchun@bytedance.com> <YEjji9oAwHuZaZEt@dhcp22.suse.cz>
-In-Reply-To: <YEjji9oAwHuZaZEt@dhcp22.suse.cz>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Thu, 11 Mar 2021 12:26:32 +0800
-Message-ID: <CAMZfGtVjLOF27VMVJ5fF8CDJRpZ0t7fWpmMHB9D-ipMK6b=POg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v18 4/9] mm: hugetlb: alloc the vmemmap
- pages associated with each HugeTLB page
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de, x86@kernel.org,
-        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Chen Huang <chenhuang5@huawei.com>,
-        Bodeddula Balasubramaniam <bodeddub@amazon.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR04MB6514.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 45b8dbf4-2861-4431-390a-08d8e44ab36c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2021 05:01:16.0289
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Ud6WFGDnAMcFO7VB6FjAh8RudCsEaVh9Q5AyELwb0n3YTfKAZkN6wxByT146P2m1KspKi18XFUuAiK341EXrOg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6976
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 10, 2021 at 11:19 PM Michal Hocko <mhocko@suse.com> wrote:
->
-> On Mon 08-03-21 18:28:02, Muchun Song wrote:
-> [...]
-> > -static void update_and_free_page(struct hstate *h, struct page *page)
-> > +static int update_and_free_page(struct hstate *h, struct page *page)
-> > +     __releases(&hugetlb_lock) __acquires(&hugetlb_lock)
-> >  {
-> >       int i;
-> >       struct page *subpage = page;
-> > +     int nid = page_to_nid(page);
-> >
-> >       if (hstate_is_gigantic(h) && !gigantic_page_runtime_supported())
-> > -             return;
-> > +             return 0;
-> >
-> >       h->nr_huge_pages--;
-> > -     h->nr_huge_pages_node[page_to_nid(page)]--;
-> > +     h->nr_huge_pages_node[nid]--;
-> > +     VM_BUG_ON_PAGE(hugetlb_cgroup_from_page(page), page);
-> > +     VM_BUG_ON_PAGE(hugetlb_cgroup_from_page_rsvd(page), page);
->
-> > +     set_page_refcounted(page);
-> > +     set_compound_page_dtor(page, NULL_COMPOUND_DTOR);
-> > +
-> > +     /*
-> > +      * If the vmemmap pages associated with the HugeTLB page can be
-> > +      * optimized or the page is gigantic, we might block in
-> > +      * alloc_huge_page_vmemmap() or free_gigantic_page(). In both
-> > +      * cases, drop the hugetlb_lock.
-> > +      */
-> > +     if (free_vmemmap_pages_per_hpage(h) || hstate_is_gigantic(h))
-> > +             spin_unlock(&hugetlb_lock);
-> > +
-> > +     if (alloc_huge_page_vmemmap(h, page)) {
-> > +             spin_lock(&hugetlb_lock);
-> > +             INIT_LIST_HEAD(&page->lru);
-> > +             set_compound_page_dtor(page, HUGETLB_PAGE_DTOR);
-> > +             h->nr_huge_pages++;
-> > +             h->nr_huge_pages_node[nid]++;
-> > +
-> > +             /*
-> > +              * If we cannot allocate vmemmap pages, just refuse to free the
-> > +              * page and put the page back on the hugetlb free list and treat
-> > +              * as a surplus page.
-> > +              */
-> > +             h->surplus_huge_pages++;
-> > +             h->surplus_huge_pages_node[nid]++;
-> > +
-> > +             /*
-> > +              * The refcount can possibly be increased by memory-failure or
-> > +              * soft_offline handlers.
->
-> This comment could be more helpful. I believe you want to say this
->                 /*
->                  * HWpoisoning code can increment the reference
->                  * count here. If there is a race then bail out
->                  * the holder of the additional reference count will
->                  * free up the page with put_page.
-
-Right. I will reuse this. Thanks.
-
-> > +              */
-> > +             if (likely(put_page_testzero(page))) {
-> > +                     arch_clear_hugepage_flags(page);
-> > +                     enqueue_huge_page(h, page);
-> > +             }
-> > +
-> > +             return -ENOMEM;
-> > +     }
-> > +
-> >       for (i = 0; i < pages_per_huge_page(h);
-> >            i++, subpage = mem_map_next(subpage, page, i)) {
-> >               subpage->flags &= ~(1 << PG_locked | 1 << PG_error |
-> [...]
-> > @@ -1447,7 +1486,7 @@ void free_huge_page(struct page *page)
-> >       /*
-> >        * Defer freeing if in non-task context to avoid hugetlb_lock deadlock.
-> >        */
-> > -     if (!in_task()) {
-> > +     if (in_atomic()) {
->
-> As I've said elsewhere in_atomic doesn't work for CONFIG_PREEMPT_COUNT=n.
-> We need this change for other reasons and so it would be better to pull
-> it out into a separate patch which also makes HUGETLB depend on
-> PREEMPT_COUNT.
->
-> [...]
-> > @@ -1771,8 +1813,12 @@ int dissolve_free_huge_page(struct page *page)
-> >               h->free_huge_pages--;
-> >               h->free_huge_pages_node[nid]--;
-> >               h->max_huge_pages--;
-> > -             update_and_free_page(h, head);
-> > -             rc = 0;
-> > +             rc = update_and_free_page(h, head);
-> > +             if (rc) {
-> > +                     h->surplus_huge_pages--;
-> > +                     h->surplus_huge_pages_node[nid]--;
-> > +                     h->max_huge_pages++;
->
-> This is quite ugly and confusing. update_and_free_page is careful to do
-> the proper counters accounting and now you just override it partially.
-> Why cannot we rely on update_and_free_page do the right thing?
-
-Dissolving path is special here. Since update_and_free_page failed,
-the number of surplus pages was incremented.  Surplus pages are
-the number of pages greater than max_huge_pages.  Since we are
-incrementing max_huge_pages, we should decrement (undo) the
-addition to surplus_huge_pages and surplus_huge_pages_node[nid].
-
-
->
-> --
-> Michal Hocko
-> SUSE Labs
+On 2021/03/11 12:36, Darrick J. Wong wrote:=0A=
+> On Thu, Mar 11, 2021 at 12:22:30PM +0900, Damien Le Moal wrote:=0A=
+>> zonefs updates the size of a sequential zone file inode only on=0A=
+>> completion of direct writes. When executing asynchronous append writes=
+=0A=
+>> (with a file open with O_APPEND or using RWF_APPEND), the use of the=0A=
+>> current inode size in generic_write_checks() to set an iocb offset thus=
+=0A=
+>> leads to unaligned write if an application issues an append write=0A=
+>> operation with another write already being executed.=0A=
+> =0A=
+> Ah, I /had/ wondered if setting i_size to the zone size (instead of the=
+=0A=
+> write pointer) would have side effects...=0A=
+=0A=
+In retrospect, the problem is obvious :)=0A=
+But a hole in the test suite let this one slip for some time. That is fixed=
+ now.=0A=
+=0A=
+=0A=
+[...]=0A=
+>> +static ssize_t zonefs_write_checks(struct kiocb *iocb, struct iov_iter =
+*from)=0A=
+>> +{=0A=
+>> +	struct file *file =3D iocb->ki_filp;=0A=
+>> +	struct inode *inode =3D file_inode(file);=0A=
+>> +	struct zonefs_inode_info *zi =3D ZONEFS_I(inode);=0A=
+>> +	loff_t count;=0A=
+>> +=0A=
+>> +	if (IS_SWAPFILE(inode))=0A=
+>> +		return -ETXTBSY;=0A=
+> =0A=
+> ...but can zonefs really do swap files now?=0A=
+=0A=
+Conventional zone files could, I guess, but I have not tested that. Not ent=
+irely=0A=
+sure about this as I am not familiar with the swap code. I think it would b=
+e=0A=
+safer to disallow swapfile use with zonefs, similarly to what claim_swap() =
+does=0A=
+with zoned block devices. But I am not sure how to do that. Sequential zone=
+=0A=
+files definitely will not be able to handle swap.=0A=
+=0A=
+=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
