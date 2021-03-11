@@ -2,126 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B687F336A21
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 03:29:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17BC8336A48
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 03:59:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbhCKC3J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Mar 2021 21:29:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46102 "EHLO
+        id S229810AbhCKC7V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Mar 2021 21:59:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbhCKC25 (ORCPT
+        with ESMTP id S229767AbhCKC64 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Mar 2021 21:28:57 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59849C061760
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 18:28:57 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id p8so43026193ejb.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 18:28:57 -0800 (PST)
+        Wed, 10 Mar 2021 21:58:56 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B00FC061760
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 18:58:45 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id g25so389438wmh.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 18:58:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=nGcG4vIt8aK8XQYHFfVsg5ZilyuH9KX5JCZmjoZKMsA=;
-        b=bJFaB7w2p1VmRWq7tx9CxGxY3HG7DINc80iCJrafg+N0T0fIpXcxAoRLUhZsrZnkHt
-         Li+G0KV/JQX5TdIQxf37qh2Yh8LnfZPN/iDVu1Wl6OQR9hFnk23cnOM0oiD2tEnQ89T9
-         XM0l6SErGC3jeogkdBxN1tzHYTiSG+OKvV36N+3Lc6TJL8YSDu8TguWfBvbVQGHctCtt
-         pvZgbIR96nCZ85xunUrkBEdeR8PN4Wpg7gQgxEIYuMa45vei3621A6dP4TDWpGvUIMs0
-         bMz74FHMW5d9Q5QDgyt+facrntknlie1x4j9Cc6p3TXqkvVu44bycD9Yd4KnJXHRbxSA
-         yH9w==
+         :cc;
+        bh=GRM9zMw9cONpV3FPTOs+yqjYIo2ZpevTzYckbkAXLwQ=;
+        b=Cnwj1JgoXGJEI1UB44KCDg0G/iPkB97ChLiwZXSc7SGMq/dWa0QyuLMXKMCUIxGaOH
+         ItTaIc3lGmgfbHSbK1AY3fk/FD7iloS2NCnboWriNBG0SVU/vWyZxIInBWmq2R7X0Wxc
+         kBLy5p1MzlIGdrtNf4dV+a/5kmSlHsrDNZYElujlbCjzgwf7Rrg2iK6lOq99qvFlbcVZ
+         KGFjkwCawTLS0XTxHCmxC/j0J1rdGVfFqFb9F9cN6L28+HKDwmlOoRWVaNnqWefwPm6+
+         5Ug7SJUfL5h037uhRzXrP4mH7/nw44sQwU/OEU+tjGqt8drUSPtEtQlH3Fcz6BZZEQK1
+         1sbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=nGcG4vIt8aK8XQYHFfVsg5ZilyuH9KX5JCZmjoZKMsA=;
-        b=sD6JvJcB/1vRoe0tcqwGeJbIk6gl4EeemGmfl9U76m0cThbcISHq3R+LUo/Spdzn0A
-         4KrGanFqG82o4odgheN0NyjNusw+kJ6D9Kqowe0hGcsqBWgyvaxfToyQNdULBdvQJmXx
-         0gxO4HZySfgCpgAFrq83Ephhris/n7PmYLwGm2WCWRsx1pJkELCh4iE97qsSlFrhZjqi
-         mJt6dp8eMQ3FKW5BX3gejACZ+p0HqSZoMMPaCFGfEUMll63pnG2Z1ldZqJYhhl3mfifH
-         AujMuJz86HP/IA99DbS45Z8ebj9kZXAfIpAAg1uV4YWe4DTrJn+AK1vMcYBQ1td4fBAJ
-         eBLg==
-X-Gm-Message-State: AOAM533JhKUfrWearEELX9OAcrvm8DXQ7Bbxo7R+dqrEBkibl0Mf6Gwx
-        yKHdDUlrFgsFE3SVuypQXGLoLKNtHY1dkPm5A8iQ
-X-Google-Smtp-Source: ABdhPJwETmRnZq0PVHiftngf3TWvad/EGIWbau++w4aXQxStI2INxttwkESh3Zs0S3paI2zoVX/YMR2WB71SMvc7KXM=
-X-Received: by 2002:a17:906:18f1:: with SMTP id e17mr825050ejf.372.1615429736001;
- Wed, 10 Mar 2021 18:28:56 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=GRM9zMw9cONpV3FPTOs+yqjYIo2ZpevTzYckbkAXLwQ=;
+        b=DntobD1yTO5zTabtqw1DK8MRdRon3QkLLmLk4JoP/MKMI5mc3zhEfE4rPCn/gE6c8R
+         ndQASkZ20HImzTUSYeUkDAe1T7qU822DCTFzVBAQEh/K+qNVIIdEKGxC/Ia1s7NqD+H6
+         HhXYr32mfKKNKUWiVN3bQSqWn5BNx0N+u5BgbCkd9JLamQne5VfpKWHmk9Tt81jJWiGT
+         6VzbHAsWSUIhXlQoM1avhO4qgBLarDUTdhhBBFZ+rFlcJspR5zI1sH5jwEjvRN+2s4HP
+         qP6EX7Olkn6TdXSsKgNB+QXfADwJwvyCRmt9UCs9VH+4yzyAqXCIW7BPiTJ71FEH94r1
+         dJFA==
+X-Gm-Message-State: AOAM533DtepIFD/sykdX5BS8Ee6KD6alTu0GCDNDMgO3yQY8tLIReUQf
+        KfTkbdFnhEfsac9bOlMtcdbyGH70JBluxUMDM2kTng==
+X-Google-Smtp-Source: ABdhPJxp5FRGwwb/+YpsrWUrU3Vq6fcoiitqZQLceHJQwTGgs34sWTNe0Nu7XmZOhhqlvJ2FvmXomaRxAk4sOigOwvw=
+X-Received: by 2002:a1c:a916:: with SMTP id s22mr6202421wme.82.1615431523833;
+ Wed, 10 Mar 2021 18:58:43 -0800 (PST)
 MIME-Version: 1.0
-References: <20210223115048.435-1-xieyongji@bytedance.com> <20210223115048.435-8-xieyongji@bytedance.com>
- <2c7446dd-38f8-a06a-e423-6744c6a7207f@redhat.com>
-In-Reply-To: <2c7446dd-38f8-a06a-e423-6744c6a7207f@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Thu, 11 Mar 2021 10:28:45 +0800
-Message-ID: <CACycT3vYPHNrgVTrtMegQu6VdbaOGvCcxP+w8oUK5kPt6XLPUw@mail.gmail.com>
-Subject: Re: Re: [RFC v4 07/11] vduse: Introduce VDUSE - vDPA Device in Userspace
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org
+References: <20210308102807.59745-1-songmuchun@bytedance.com>
+ <20210308102807.59745-2-songmuchun@bytedance.com> <YEjUYOIJb2kYoQIA@dhcp22.suse.cz>
+In-Reply-To: <YEjUYOIJb2kYoQIA@dhcp22.suse.cz>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Thu, 11 Mar 2021 10:58:07 +0800
+Message-ID: <CAMZfGtUj9vcVrSjT8Tk12jfkVE127Vkdkx6Js1JXzL+=rmu7Qw@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v18 1/9] mm: memory_hotplug: factor out
+ bootmem core functions to bootmem_info.c
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        David Hildenbrand <david@redhat.com>,
+        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Chen Huang <chenhuang5@huawei.com>,
+        Bodeddula Balasubramaniam <bodeddub@amazon.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 10, 2021 at 8:58 PM Jason Wang <jasowang@redhat.com> wrote:
+On Wed, Mar 10, 2021 at 10:14 PM Michal Hocko <mhocko@suse.com> wrote:
 >
->
-> On 2021/2/23 7:50 =E4=B8=8B=E5=8D=88, Xie Yongji wrote:
-> > +
-> > +     switch (cmd) {
-> > +     case VDUSE_IOTLB_GET_FD: {
-> > +             struct vduse_iotlb_entry entry;
-> > +             struct vhost_iotlb_map *map;
-> > +             struct vdpa_map_file *map_file;
-> > +             struct file *f =3D NULL;
-> > +
-> > +             ret =3D -EFAULT;
-> > +             if (copy_from_user(&entry, argp, sizeof(entry)))
-> > +                     break;
-> > +
-> > +             spin_lock(&dev->iommu_lock);
-> > +             map =3D vhost_iotlb_itree_first(dev->iommu, entry.start,
-> > +                                           entry.last);
-> > +             if (map) {
-> > +                     map_file =3D (struct vdpa_map_file *)map->opaque;
-> > +                     f =3D get_file(map_file->file);
-> > +                     entry.offset =3D map_file->offset;
-> > +                     entry.start =3D map->start;
-> > +                     entry.last =3D map->last;
-> > +                     entry.perm =3D map->perm;
-> > +             }
-> > +             spin_unlock(&dev->iommu_lock);
-> > +             if (!f) {
-> > +                     ret =3D -EINVAL;
-> > +                     break;
-> > +             }
-> > +             if (copy_to_user(argp, &entry, sizeof(entry))) {
-> > +                     fput(f);
-> > +                     ret =3D -EFAULT;
-> > +                     break;
-> > +             }
-> > +             ret =3D get_unused_fd_flags(perm_to_file_flags(entry.perm=
-));
-> > +             if (ret < 0) {
-> > +                     fput(f);
-> > +                     break;
-> > +             }
-> > +             fd_install(ret, f);
->
->
-> So at least we need to use receice_fd_user() here to give a chance to be
-> hooked into security module.
->
+> [I am sorry for a late review]
 
-Good point. Will do it in v5.
+Thanks for your review.
 
-Thanks,
-Yongji
+>
+> On Mon 08-03-21 18:27:59, Muchun Song wrote:
+> > Move bootmem info registration common API to individual bootmem_info.c.
+> > And we will use {get,put}_page_bootmem() to initialize the page for the
+> > vmemmap pages or free the vmemmap pages to buddy in the later patch.
+> > So move them out of CONFIG_MEMORY_HOTPLUG_SPARSE. This is just code
+> > movement without any functional change.
+> >
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
+> > Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> > Reviewed-by: David Hildenbrand <david@redhat.com>
+> > Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+> > Tested-by: Chen Huang <chenhuang5@huawei.com>
+> > Tested-by: Bodeddula Balasubramaniam <bodeddub@amazon.com>
+>
+> Separation from memory_hotplug.c is definitely a right step. I am
+> wondering about the config dependency though
+> [...]
+> > diff --git a/mm/Makefile b/mm/Makefile
+> > index 72227b24a616..daabf86d7da8 100644
+> > --- a/mm/Makefile
+> > +++ b/mm/Makefile
+> > @@ -83,6 +83,7 @@ obj-$(CONFIG_SLUB) += slub.o
+> >  obj-$(CONFIG_KASAN)  += kasan/
+> >  obj-$(CONFIG_KFENCE) += kfence/
+> >  obj-$(CONFIG_FAILSLAB) += failslab.o
+> > +obj-$(CONFIG_HAVE_BOOTMEM_INFO_NODE) += bootmem_info.o
+>
+> I would have expected this would depend on CONFIG_SPARSE.
+> BOOTMEM_INFO_NODE is really an odd thing to depend on here. There is
+> some functionality which requires the node info but that can be gated
+> specifically. Or what is the thinking behind?
+
+At first my idea was to free vmemmap pages through the bootmem
+interface. My first instinct is to rely on BOOTMEM_INFO_NODE.
+It makes sense to me to depend on CONFIG_SPARSE. I will
+update this in the next version.
+
+Thanks.
+
+>
+> This doesn't matter right now because it seems that the *_page_bootmem
+> is only used by x86 outside of the memory hotplug.
+>
+> Other than that looks good to me.
+> --
+> Michal Hocko
+> SUSE Labs
