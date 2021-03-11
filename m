@@ -2,72 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CF58337F2E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 21:42:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C95A337FA0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 22:31:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230300AbhCKUmG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Mar 2021 15:42:06 -0500
-Received: from p3plsmtpa07-10.prod.phx3.secureserver.net ([173.201.192.239]:33004
-        "EHLO p3plsmtpa07-10.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230118AbhCKUmD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Mar 2021 15:42:03 -0500
-Received: from [192.168.0.116] ([71.184.94.153])
-        by :SMTPAUTH: with ESMTPSA
-        id KS89l97tNukyLKS8Alc8bu; Thu, 11 Mar 2021 13:42:02 -0700
-X-CMAE-Analysis: v=2.4 cv=Od9dsjfY c=1 sm=1 tr=0 ts=604a809a
- a=vbvdVb1zh1xTTaY8rfQfKQ==:117 a=vbvdVb1zh1xTTaY8rfQfKQ==:17
- a=IkcTkHD0fZMA:10 a=SEc3moZ4AAAA:8 a=aZQ1mOuCFQjnfliJl3YA:9 a=QEXdDO2ut3YA:10
- a=5oRCH6oROnRZc2VpWJZ3:22
-X-SECURESERVER-ACCT: tom@talpey.com
-Subject: Re: [PATCH v4] flock.2: add CIFS details
-To:     =?UTF-8?Q?Aur=c3=a9lien_Aptel?= <aaptel@suse.com>,
-        "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-Cc:     smfrench@gmail.com, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, mtk.manpages@gmail.com,
-        linux-man@vger.kernel.org
-References: <87v9a7w8q7.fsf@suse.com> <20210304095026.782-1-aaptel@suse.com>
- <45b64990-b879-02d3-28e5-b896af0502c4@gmail.com> <87sg52t2xj.fsf@suse.com>
- <139a3729-9460-7272-b1d7-c2feb5679ee9@talpey.com> <87eegltxzd.fsf@suse.com>
- <d602e3e4-721a-a1c5-3375-1c9899da4383@talpey.com> <878s6ttwhd.fsf@suse.com>
-From:   Tom Talpey <tom@talpey.com>
-Message-ID: <23052c07-8050-4eb8-d2de-506c60dbed7d@talpey.com>
-Date:   Thu, 11 Mar 2021 15:42:01 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+        id S230386AbhCKVbA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Mar 2021 16:31:00 -0500
+Received: from mga03.intel.com ([134.134.136.65]:40304 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230372AbhCKVau (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Mar 2021 16:30:50 -0500
+IronPort-SDR: LF0e03fZJPwUGNmFY9BNzgizS6DVe/81WRuuJpOPaeiy2pqSfOka+4nlJHx8o3uG2xAijIcPlk
+ mRjjWKPDL6RA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9920"; a="188783606"
+X-IronPort-AV: E=Sophos;i="5.81,241,1610438400"; 
+   d="scan'208";a="188783606"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2021 13:30:45 -0800
+IronPort-SDR: DlRAVzb0h1LKCjR04Ra2E/3XWPdAp2Fxpkv9nhQVAdjWKKQblommhVGUuywhcc+8s8w5mCffqe
+ vtDIdfgFLSPw==
+X-IronPort-AV: E=Sophos;i="5.81,241,1610438400"; 
+   d="scan'208";a="410768023"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2021 13:30:45 -0800
+Date:   Thu, 11 Mar 2021 13:30:45 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     David Sterba <dsterba@suse.cz>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/4] btrfs: Convert more kmaps to kmap_local_page()
+Message-ID: <20210311213045.GT3014244@iweiny-DESK2.sc.intel.com>
+References: <20210217024826.3466046-1-ira.weiny@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <878s6ttwhd.fsf@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfKLGkDz/bysPE+Ob4fUuqGAQgwcF2OCEY1rdpqcTU0S0y7xfhrjWqllfUxiS2lalcN9qQjmCdsvrldDN+18YKw/HovBW1MvFFQ/CnkQF1oE0ooFtKFo8
- irpkx+UcEi/YeJz/XrVTwDCcuyhL+ClbyZMbLfMrBbTVMH/4eVPlSmZsOI12gK1SaUNniABPTCS4ndv5jNv2Q6yHEeZdXYPpVNZ0FEm1C+doN6h3TQkRJQtF
- ERddTEK2PvaTTViKMFmaWqoGYZZEyuW6Iail5zwR0AsHCGuaHbKkILAKeDHtzafmQnwJerMNe/ln3+GlFmazRrYZnGtuo9UY+a5HPRf7X+GuosFZhAUciQpW
- 0DkNKOx/JYPf0HT9Kmzk7+q6DE4xRFXzlmwCdAwkU6ezXoBmc/s=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210217024826.3466046-1-ira.weiny@intel.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/11/2021 12:45 PM, Aurélien Aptel wrote:
-> Tom Talpey <tom@talpey.com> writes:
->> and simply state (perhaps)
->>
->>    "Remote and mandatory locking semantics may vary with SMB protocol,
->>     mount options and server type. See mount.cifs(8) for additional
->>     information."
+On Tue, Feb 16, 2021 at 06:48:22PM -0800, 'Ira Weiny' wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
 > 
-> This would be the complete addition to the man page? I feel like we
+> I am submitting these for 5.13.
 
-Only replacing the last sentence, which I quoted earlier.
+Just a friendly ping on this set.
 
-> should at least say it is *likely* that:
-> - locks will be mandatory
-> - flock() is emulated via fnctl() and so they interact with each other
+Ira
+
 > 
-> Which are the 2 aspects that really diverges from the expected behaviour
-> of flock() and likely to hit people in the wild. Mentionning this will
-> send people trying to debug their app in the right direction.
-
-Ok, and agreed. SMB lock semantics are certainly important to describe.
-
-Tom.
+> Further work to remove more kmap() calls in favor of the kmap_local_page() this
+> series converts those calls which required more than a common pattern which
+> were covered in my previous series[1].  This is the second of what I hope to be
+> 3 series to fully convert btrfs.  However, the 3rd series is going to be an RFC
+> because I need to have more eyes on it before I'm sure about what to do.  For
+> now this series should be good to go for 5.13.
+> 
+> Also this series converts the kmaps in the raid5/6 code which required a fix to
+> the kmap'ings which was submitted in [2].
+> 
+> Thanks,
+> Ira
+> 
+> [1] https://lore.kernel.org/lkml/20210210062221.3023586-1-ira.weiny@intel.com/
+> [2] https://lore.kernel.org/lkml/20210205163943.GD5033@iweiny-DESK2.sc.intel.com/
+> 
+> 
+> Ira Weiny (4):
+>   fs/btrfs: Convert kmap to kmap_local_page() using coccinelle
+>   fs/btrfs: Convert raid5/6 kmaps to kmap_local_page()
+>   fs/btrfs: Use kmap_local_page() in __btrfsic_submit_bio()
+>   fs/btrfs: Convert block context kmap's to kmap_local_page()
+> 
+>  fs/btrfs/check-integrity.c | 12 ++++----
+>  fs/btrfs/compression.c     |  4 +--
+>  fs/btrfs/inode.c           |  4 +--
+>  fs/btrfs/lzo.c             |  9 +++---
+>  fs/btrfs/raid56.c          | 61 +++++++++++++++++++-------------------
+>  5 files changed, 44 insertions(+), 46 deletions(-)
+> 
+> -- 
+> 2.28.0.rc0.12.gb6a658bd00c9
+> 
