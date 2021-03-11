@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F92C336E3A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 09:50:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83F1D336E4C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 09:54:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231768AbhCKIuv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Mar 2021 03:50:51 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35998 "EHLO mx2.suse.de"
+        id S231790AbhCKIyD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Mar 2021 03:54:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37956 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231757AbhCKIu3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Mar 2021 03:50:29 -0500
+        id S231639AbhCKIxg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Mar 2021 03:53:36 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1615452628; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1615452814; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=RS6cifVwljfUL1yL0Nv+yv77FmIDhgMaVYQo3KVZdus=;
-        b=F3hhneljDTvJKrt0QbK7pY8ctwitEc/6a9igJJkMYOrDmU1vpjL3JouXQ3oC7euzYAziYF
-        99p6iaQRqrBkw6qufEy72UIQbWYoP/WHk0/5jXowdxIZiej77vP3rv+j0Q2pm9EQObHfTL
-        6BZXhWnGJPPXx3CKD8FERYkK+VLwI9g=
+        bh=iMdDHdKQUwFUd6NvEWE8XF/SFceIsCZgywYTHi2Bsgo=;
+        b=Mb2OWgKtA5moO/qXD2QpF0bvDUKXZ2yZfJKd07VICB6jBiVP7wLhht1TgkDfmZ7X3B/R+5
+        nDaI2S9Gz29aEQkTqFPHPbBgpgnjhG1GFHb+HfDIzm35kE93x6bhBwmNCO5yCi2Ujh0rp6
+        0F71Kkr+B0dCPdhiJLkUALRLwYgqKiI=
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id C6AE5AD73;
-        Thu, 11 Mar 2021 08:50:27 +0000 (UTC)
-Date:   Thu, 11 Mar 2021 09:50:26 +0100
+        by mx2.suse.de (Postfix) with ESMTP id 60A98AB8C;
+        Thu, 11 Mar 2021 08:53:34 +0000 (UTC)
+Date:   Thu, 11 Mar 2021 09:53:33 +0100
 From:   Michal Hocko <mhocko@suse.com>
 To:     Muchun Song <songmuchun@bytedance.com>
 Cc:     Jonathan Corbet <corbet@lwn.net>,
@@ -50,64 +50,81 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
         Linux Memory Management List <linux-mm@kvack.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miaohe Lin <linmiaohe@huawei.com>,
         Chen Huang <chenhuang5@huawei.com>,
         Bodeddula Balasubramaniam <bodeddub@amazon.com>
-Subject: Re: [External] Re: [PATCH v18 5/9] mm: hugetlb: set the PageHWPoison
- to the raw error page
-Message-ID: <YEnZ0lR/sycBrRIn@dhcp22.suse.cz>
+Subject: Re: [External] Re: [PATCH v18 1/9] mm: memory_hotplug: factor out
+ bootmem core functions to bootmem_info.c
+Message-ID: <YEnajfqDEjEMTYXE@dhcp22.suse.cz>
 References: <20210308102807.59745-1-songmuchun@bytedance.com>
- <20210308102807.59745-6-songmuchun@bytedance.com>
- <YEjlf/yV+hz+NksO@dhcp22.suse.cz>
- <CAMZfGtX28p-42bMCuddsYfE0AWpDbWUoLY32+4vn8L5nptNxqw@mail.gmail.com>
+ <20210308102807.59745-2-songmuchun@bytedance.com>
+ <YEjUYOIJb2kYoQIA@dhcp22.suse.cz>
+ <CAMZfGtUj9vcVrSjT8Tk12jfkVE127Vkdkx6Js1JXzL+=rmu7Qw@mail.gmail.com>
+ <CAMZfGtX37yBkKJjmBBSBeDeVAM6XywAJuEXjTSm7apOmQ-FOxA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMZfGtX28p-42bMCuddsYfE0AWpDbWUoLY32+4vn8L5nptNxqw@mail.gmail.com>
+In-Reply-To: <CAMZfGtX37yBkKJjmBBSBeDeVAM6XywAJuEXjTSm7apOmQ-FOxA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 11-03-21 14:34:04, Muchun Song wrote:
-> On Wed, Mar 10, 2021 at 11:28 PM Michal Hocko <mhocko@suse.com> wrote:
+On Thu 11-03-21 16:45:51, Muchun Song wrote:
+> On Thu, Mar 11, 2021 at 10:58 AM Muchun Song <songmuchun@bytedance.com> wrote:
 > >
-> > On Mon 08-03-21 18:28:03, Muchun Song wrote:
-> > > Because we reuse the first tail vmemmap page frame and remap it
-> > > with read-only, we cannot set the PageHWPosion on some tail pages.
-> > > So we can use the head[4].private (There are at least 128 struct
-> > > page structures associated with the optimized HugeTLB page, so
-> > > using head[4].private is safe) to record the real error page index
-> > > and set the raw error page PageHWPoison later.
+> > On Wed, Mar 10, 2021 at 10:14 PM Michal Hocko <mhocko@suse.com> wrote:
+> > >
+> > > [I am sorry for a late review]
 > >
-> > Can we have more poisoned tail pages? Also who does consume that index
-> > and set the HWPoison on the proper tail page?
+> > Thanks for your review.
+> >
+> > >
+> > > On Mon 08-03-21 18:27:59, Muchun Song wrote:
+> > > > Move bootmem info registration common API to individual bootmem_info.c.
+> > > > And we will use {get,put}_page_bootmem() to initialize the page for the
+> > > > vmemmap pages or free the vmemmap pages to buddy in the later patch.
+> > > > So move them out of CONFIG_MEMORY_HOTPLUG_SPARSE. This is just code
+> > > > movement without any functional change.
+> > > >
+> > > > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > > > Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
+> > > > Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> > > > Reviewed-by: David Hildenbrand <david@redhat.com>
+> > > > Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+> > > > Tested-by: Chen Huang <chenhuang5@huawei.com>
+> > > > Tested-by: Bodeddula Balasubramaniam <bodeddub@amazon.com>
+> > >
+> > > Separation from memory_hotplug.c is definitely a right step. I am
+> > > wondering about the config dependency though
+> > > [...]
+> > > > diff --git a/mm/Makefile b/mm/Makefile
+> > > > index 72227b24a616..daabf86d7da8 100644
+> > > > --- a/mm/Makefile
+> > > > +++ b/mm/Makefile
+> > > > @@ -83,6 +83,7 @@ obj-$(CONFIG_SLUB) += slub.o
+> > > >  obj-$(CONFIG_KASAN)  += kasan/
+> > > >  obj-$(CONFIG_KFENCE) += kfence/
+> > > >  obj-$(CONFIG_FAILSLAB) += failslab.o
+> > > > +obj-$(CONFIG_HAVE_BOOTMEM_INFO_NODE) += bootmem_info.o
+> > >
+> > > I would have expected this would depend on CONFIG_SPARSE.
+> > > BOOTMEM_INFO_NODE is really an odd thing to depend on here. There is
+> > > some functionality which requires the node info but that can be gated
+> > > specifically. Or what is the thinking behind?
 > 
-> Good point. I look at the routine of memory failure closely.
-> If we do not clear the HWPoison of the head page, we cannot
-> poison another tail page.
+> I have tried this. And I find that it is better to depend on
+> BOOTMEM_INFO_NODE instead of SPARSEMEM.
 > 
-> So we should not set the destructor of the huge page from
-> HUGETLB_PAGE_DTOR to NULL_COMPOUND_DTOR
-> before calling alloc_huge_page_vmemmap(). In this case,
-> the below check of PageHuge() always returns true.
-> 
-> I need to fix this in the previous patch.
-> 
-> memory_failure()
->     if (PageHuge(page))
->         memory_failure_hugetlb()
->             head = compound_head(page)
->             if (TestSetPageHWPoison(head))
->                 return
+> If we enable SPARSEMEM but disable HAVE_BOOTMEM_INFO_NODE,
+> the bootmem_info.c also is compiled. Actually, we do not
+> need those functions on other architectures. And these
+> functions are also related to bootmem info. So it may be
+> more reasonable to depend on BOOTMEM_INFO_NODE.
+> Just my thoughts.
 
-I have to say that I am not fully familiar with hwpoisoning code
-(especially after recent changes) but IIRC it does rely on hugetlb page
-dissolving. With the new code this operation can fail which is a new
-situation. Unless I am misunderstanding this can lead to a lost memory
-failure operation on other tail pages.
+If BOOTMEM_INFO_NODE is disbabled then bootmem_info.c would be
+effectivelly only {get,put}_page_bootmem, no?
 
-Anyway the above answers the question why a single slot is sufficient so
-it would be great to mention that in a changelog along with the caveat
-that some pages might miss their poisoning.
 -- 
 Michal Hocko
 SUSE Labs
