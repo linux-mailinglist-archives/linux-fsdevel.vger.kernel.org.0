@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 83F1D336E4C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 09:54:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E3EC336E51
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 09:55:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231790AbhCKIyD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Mar 2021 03:54:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37956 "EHLO mx2.suse.de"
+        id S231572AbhCKIzj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Mar 2021 03:55:39 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39160 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231639AbhCKIxg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Mar 2021 03:53:36 -0500
+        id S231440AbhCKIze (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Mar 2021 03:55:34 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1615452814; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1615452933; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=iMdDHdKQUwFUd6NvEWE8XF/SFceIsCZgywYTHi2Bsgo=;
-        b=Mb2OWgKtA5moO/qXD2QpF0bvDUKXZ2yZfJKd07VICB6jBiVP7wLhht1TgkDfmZ7X3B/R+5
-        nDaI2S9Gz29aEQkTqFPHPbBgpgnjhG1GFHb+HfDIzm35kE93x6bhBwmNCO5yCi2Ujh0rp6
-        0F71Kkr+B0dCPdhiJLkUALRLwYgqKiI=
+        bh=2w5ANi1macvYiB3pDe4T+IEha3dZ9yAJ5puO2kAQ6Ro=;
+        b=lo3a+pfMdhV6Wh7ucDBmOJEKVOFP3mbkP+QeNwaDcBq24Zk7acF4BUqNrSU+sJNsY9aZJJ
+        UBHU3squ8fz7EZKVUakckTKgd8ForrzC68n1aAr3YS/65BdLXj7+Q9kzJYzrLJ6pfjTvwK
+        aH4yPIpb/Q1IneABSwpG9SWq6v1KTpo=
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 60A98AB8C;
-        Thu, 11 Mar 2021 08:53:34 +0000 (UTC)
-Date:   Thu, 11 Mar 2021 09:53:33 +0100
+        by mx2.suse.de (Postfix) with ESMTP id C0646AC16;
+        Thu, 11 Mar 2021 08:55:32 +0000 (UTC)
+Date:   Thu, 11 Mar 2021 09:55:32 +0100
 From:   Michal Hocko <mhocko@suse.com>
 To:     Muchun Song <songmuchun@bytedance.com>
 Cc:     Jonathan Corbet <corbet@lwn.net>,
@@ -53,78 +53,51 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         Miaohe Lin <linmiaohe@huawei.com>,
         Chen Huang <chenhuang5@huawei.com>,
         Bodeddula Balasubramaniam <bodeddub@amazon.com>
-Subject: Re: [External] Re: [PATCH v18 1/9] mm: memory_hotplug: factor out
- bootmem core functions to bootmem_info.c
-Message-ID: <YEnajfqDEjEMTYXE@dhcp22.suse.cz>
+Subject: Re: [External] Re: [PATCH v18 9/9] mm: hugetlb: optimize the code
+ with the help of the compiler
+Message-ID: <YEnbBPviwU6N2RzK@dhcp22.suse.cz>
 References: <20210308102807.59745-1-songmuchun@bytedance.com>
- <20210308102807.59745-2-songmuchun@bytedance.com>
- <YEjUYOIJb2kYoQIA@dhcp22.suse.cz>
- <CAMZfGtUj9vcVrSjT8Tk12jfkVE127Vkdkx6Js1JXzL+=rmu7Qw@mail.gmail.com>
- <CAMZfGtX37yBkKJjmBBSBeDeVAM6XywAJuEXjTSm7apOmQ-FOxA@mail.gmail.com>
+ <20210308102807.59745-10-songmuchun@bytedance.com>
+ <YEjoozshsvKeMAAu@dhcp22.suse.cz>
+ <CAMZfGtV1Fp1RiQ64c9RrMmZ+=EwjGRHjwL8Wx3Q0YRWbbKF6xg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMZfGtX37yBkKJjmBBSBeDeVAM6XywAJuEXjTSm7apOmQ-FOxA@mail.gmail.com>
+In-Reply-To: <CAMZfGtV1Fp1RiQ64c9RrMmZ+=EwjGRHjwL8Wx3Q0YRWbbKF6xg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 11-03-21 16:45:51, Muchun Song wrote:
-> On Thu, Mar 11, 2021 at 10:58 AM Muchun Song <songmuchun@bytedance.com> wrote:
+On Thu 11-03-21 15:33:20, Muchun Song wrote:
+> On Wed, Mar 10, 2021 at 11:41 PM Michal Hocko <mhocko@suse.com> wrote:
 > >
-> > On Wed, Mar 10, 2021 at 10:14 PM Michal Hocko <mhocko@suse.com> wrote:
-> > >
-> > > [I am sorry for a late review]
+> > On Mon 08-03-21 18:28:07, Muchun Song wrote:
+> > > When the "struct page size" crosses page boundaries we cannot
+> > > make use of this feature. Let free_vmemmap_pages_per_hpage()
+> > > return zero if that is the case, most of the functions can be
+> > > optimized away.
 > >
-> > Thanks for your review.
-> >
-> > >
-> > > On Mon 08-03-21 18:27:59, Muchun Song wrote:
-> > > > Move bootmem info registration common API to individual bootmem_info.c.
-> > > > And we will use {get,put}_page_bootmem() to initialize the page for the
-> > > > vmemmap pages or free the vmemmap pages to buddy in the later patch.
-> > > > So move them out of CONFIG_MEMORY_HOTPLUG_SPARSE. This is just code
-> > > > movement without any functional change.
-> > > >
-> > > > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > > > Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
-> > > > Reviewed-by: Oscar Salvador <osalvador@suse.de>
-> > > > Reviewed-by: David Hildenbrand <david@redhat.com>
-> > > > Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
-> > > > Tested-by: Chen Huang <chenhuang5@huawei.com>
-> > > > Tested-by: Bodeddula Balasubramaniam <bodeddub@amazon.com>
-> > >
-> > > Separation from memory_hotplug.c is definitely a right step. I am
-> > > wondering about the config dependency though
-> > > [...]
-> > > > diff --git a/mm/Makefile b/mm/Makefile
-> > > > index 72227b24a616..daabf86d7da8 100644
-> > > > --- a/mm/Makefile
-> > > > +++ b/mm/Makefile
-> > > > @@ -83,6 +83,7 @@ obj-$(CONFIG_SLUB) += slub.o
-> > > >  obj-$(CONFIG_KASAN)  += kasan/
-> > > >  obj-$(CONFIG_KFENCE) += kfence/
-> > > >  obj-$(CONFIG_FAILSLAB) += failslab.o
-> > > > +obj-$(CONFIG_HAVE_BOOTMEM_INFO_NODE) += bootmem_info.o
-> > >
-> > > I would have expected this would depend on CONFIG_SPARSE.
-> > > BOOTMEM_INFO_NODE is really an odd thing to depend on here. There is
-> > > some functionality which requires the node info but that can be gated
-> > > specifically. Or what is the thinking behind?
+> > I am confused. Don't you check for this in early_hugetlb_free_vmemmap_param already?
 > 
-> I have tried this. And I find that it is better to depend on
-> BOOTMEM_INFO_NODE instead of SPARSEMEM.
+> Right.
 > 
-> If we enable SPARSEMEM but disable HAVE_BOOTMEM_INFO_NODE,
-> the bootmem_info.c also is compiled. Actually, we do not
-> need those functions on other architectures. And these
-> functions are also related to bootmem info. So it may be
-> more reasonable to depend on BOOTMEM_INFO_NODE.
-> Just my thoughts.
+> > Why do we need any runtime checks?
+> 
+> If the size of the struct page is not power of 2, compiler can think
+> is_hugetlb_free_vmemmap_enabled() always return false. So
+> the code snippet of this user can be optimized away.
+> 
+> E.g.
+> 
+> if (is_hugetlb_free_vmemmap_enabled())
+>         /* do something */
+> 
+> The compiler can drop "/* do something */" directly, because
+> it knows is_hugetlb_free_vmemmap_enabled() always returns
+> false.
 
-If BOOTMEM_INFO_NODE is disbabled then bootmem_info.c would be
-effectivelly only {get,put}_page_bootmem, no?
-
+OK, so this is a micro-optimization to generate a better code?
+Is this measurable to warrant more code?
 -- 
 Michal Hocko
 SUSE Labs
