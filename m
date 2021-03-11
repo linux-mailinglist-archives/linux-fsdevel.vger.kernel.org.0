@@ -2,169 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06996336C8F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 07:55:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57CA7336D28
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 08:35:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231151AbhCKGyp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Mar 2021 01:54:45 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52056 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231422AbhCKGyk (ORCPT
+        id S231783AbhCKHe4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Mar 2021 02:34:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54864 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231706AbhCKHd6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Mar 2021 01:54:40 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12B6XJj4122582;
-        Thu, 11 Mar 2021 01:54:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=mTIMi43/GTtLzUHp2kZekoxQOWkeIPI9HxCCfOarsbQ=;
- b=DMoqoKYXB8ILIhrzHhGwwuIuzS4mEDCtovpWAU5bsXj1vJnZHBYPkXYobNb0BKdiEZqY
- iecQcbg2o8SxBsLElNFV5RHccBckkEVtXYN1eOOblk6GnK0qOyirkCrMb4frBs1wAVv5
- 9vJy4zW62NaW7/1/CEtE113ibAoM/tH2Naddws5mnjw0PESNBK7mRXHtcOi5r/3n0iWx
- ZVClR+fyaGwv9RLSeo8+Ed3RDifa+BURMnY96qKHVH2HdueVuC9OcbzkaQL2jXatAwuT
- UCx0tZGoRhZlW4PfSuUvL1exHM0avDwaSC9ZAjYtpIzuMoVibX1uU+ZDCRcS4eZw9d5K 7Q== 
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3774mpwauh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Mar 2021 01:54:37 -0500
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12B6gGsr015262;
-        Thu, 11 Mar 2021 06:54:36 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma02fra.de.ibm.com with ESMTP id 376aqsrtm3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Mar 2021 06:54:36 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12B6sIbV33227170
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 Mar 2021 06:54:18 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CE5FA4C040;
-        Thu, 11 Mar 2021 06:54:33 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 99EB94C050;
-        Thu, 11 Mar 2021 06:54:32 +0000 (GMT)
-Received: from riteshh-domain.ibmuc.com (unknown [9.199.38.114])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 11 Mar 2021 06:54:32 +0000 (GMT)
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-To:     linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, anju@linux.vnet.ibm.com,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Ritesh Harjani <riteshh@linux.ibm.com>
-Subject: [PATCHv2] iomap: Fix negative assignment to unsigned sis->pages in iomap_swapfile_activate
-Date:   Thu, 11 Mar 2021 12:24:26 +0530
-Message-Id: <93fa3d674cda41261e529e1e9b75c2efb2e325be.1615445004.git.riteshh@linux.ibm.com>
-X-Mailer: git-send-email 2.26.2
+        Thu, 11 Mar 2021 02:33:58 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3513C061760
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 23:33:57 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id y13so10472125pfr.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Mar 2021 23:33:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PRwM5iGLtwZBTnG8om/++s86+EBuCATUoQNKFoo4Vus=;
+        b=CokBfhYF94Mz/PQxCgAws4A6RnAg0Rhfn9RMSb1BX25wrdmVgzZPCbYYIxXJsmHYTB
+         6BcvY6NwLwD/zR8WjrkD3uwQoFPwbW0tZstyoG2ypygIGqNezSd3TZDlyvtp3+41WOvb
+         RCUT10zMp6cIjsMD7ae40s5aJBwKeeF9OoEtxpcEcGejDlUgFs2FldnIlJWtAd6FjlnV
+         IZIoVrE5M+CqvBAxr1FFevb45gI6JqjyJB8C6qfxmMFb3ebPKuoVrdpQmUeW/4FrwHQd
+         sdOgA4hUun59ScPunvN91nYpGcjbNf1hb57ZrFnSDtR6hccNAT76r99kAVbsAFlzFjFZ
+         O09A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PRwM5iGLtwZBTnG8om/++s86+EBuCATUoQNKFoo4Vus=;
+        b=pqRmCQCuecGQN5AbzPu0uqCIZb+29lXFOM3NCWWC6smtaZ/t/avoAuJcj3n9IeUld7
+         VoCCi4hK0/Blcs8Wcer3MuRU0R6Dt0Ln3/qNg5sgjBa8HlPDSEXp/hrgX1IhdB/IqX4t
+         077obION5ZP0l9NDdHsTaiSsvt/+TRdFnOYEY2iicoh7pGssRyfI28n1aXrAH2D+LdNT
+         ZU8DRvUctv8Qci7Vf8bDQltup6gs+V+eRVYP7jcShdF1I8J3rGfmYUIa51k0UhxZU+dq
+         F82yt+BwrCujHc2Vc+2bOxvs9E4KbI5TyZUA7tya47Ld/mbWkCR0Oxm80Zr+UD/t6qb7
+         d5WA==
+X-Gm-Message-State: AOAM5325BZXUTmySCelWdLh1olIbp2sfCzvlU8g/9MOLlV0M8mLdJw6G
+        COeWIjoOpymMgXAQbgXYj418Ae7+CsAKSdL2jyp1pA==
+X-Google-Smtp-Source: ABdhPJxI8OpzzjMHc+EojMt4EpAQ1I5fSlulun0k4KemCXO9upjJHTPuwi6LSd+hznDbn0zA0DfJtSI2TRcL1/7lLY4=
+X-Received: by 2002:a63:141e:: with SMTP id u30mr6322639pgl.31.1615448037407;
+ Wed, 10 Mar 2021 23:33:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-11_01:2021-03-10,2021-03-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
- adultscore=0 clxscore=1015 impostorscore=0 mlxscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103110037
+References: <20210308102807.59745-1-songmuchun@bytedance.com>
+ <20210308102807.59745-10-songmuchun@bytedance.com> <YEjoozshsvKeMAAu@dhcp22.suse.cz>
+In-Reply-To: <YEjoozshsvKeMAAu@dhcp22.suse.cz>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Thu, 11 Mar 2021 15:33:20 +0800
+Message-ID: <CAMZfGtV1Fp1RiQ64c9RrMmZ+=EwjGRHjwL8Wx3Q0YRWbbKF6xg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v18 9/9] mm: hugetlb: optimize the code
+ with the help of the compiler
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        David Hildenbrand <david@redhat.com>,
+        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Chen Huang <chenhuang5@huawei.com>,
+        Bodeddula Balasubramaniam <bodeddub@amazon.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In case if isi.nr_pages is 0, we are making sis->pages (which is
-unsigned int) a huge value in iomap_swapfile_activate() by assigning -1.
-This could cause a kernel crash in kernel v4.18 (with below signature).
-This also crashes the upstream kernel with below signature, if the big fake
-swap gets used.
+On Wed, Mar 10, 2021 at 11:41 PM Michal Hocko <mhocko@suse.com> wrote:
+>
+> On Mon 08-03-21 18:28:07, Muchun Song wrote:
+> > When the "struct page size" crosses page boundaries we cannot
+> > make use of this feature. Let free_vmemmap_pages_per_hpage()
+> > return zero if that is the case, most of the functions can be
+> > optimized away.
+>
+> I am confused. Don't you check for this in early_hugetlb_free_vmemmap_param already?
 
-Fix this issue by returning -EINVAL in case of nr_pages is 0, since it
-is anyway a invalid swapfile. Looks like this issue will be hit when
-we have blocksize < pagesize type of configuration.
+Right.
 
-I was able to hit the issue in case of a tiny swap file with below
-test script.
-https://raw.githubusercontent.com/riteshharjani/LinuxStudy/master/scripts/swap-issue.sh
+> Why do we need any runtime checks?
 
-<kernel crash on upstream kernel>
-===============================
-[  120.682527] XFS (loop2): Mounting V5 Filesystem
-[  120.688448] XFS (loop2): Ending clean mount
-[  120.690555] xfs filesystem being mounted at /mnt1/test supports timestamps until 2038 (0x7fffffff)
-[  120.885793] Adding 4294967232k swap on /mnt1/test/swapfile.  Priority:-2 extents:1 across:274877906880k
-<...>
-[  186.068492] __swap_info_get: Bad swap offset entry 00000001
-[  186.071704] __swap_info_get: Bad swap offset entry 00000043
-<...>
-[  453.756321] Faulting instruction address: 0xc0000000005b6c50
-cpu 0x6: Vector: 300 (Data Access) at [c00000002a8b6f80]
-    pc: c0000000005b6c50: __mark_inode_dirty+0x40/0x870
-    lr: c0000000006435b0: iomap_set_page_dirty+0x170/0x1b0
-    pid   = 4635, comm = stress
-Linux version 5.12.0-rc1-00021-g23cdd4c7150 (gcc (Ubuntu 8.4.0-1ubuntu1~18.04)
-iomap_set_page_dirty+0x170/0x1b0
-swap_set_page_dirty+0xec/0x140
-set_page_dirty+0x1b4/0x2d0
-add_to_swap+0x178/0x1d0
-shrink_page_list+0xe78/0x2120
-shrink_inactive_list+0x2b0/0x640
-shrink_lruvec+0x710/0x7b0
-shrink_node+0x584/0x8e0
-do_try_to_free_pages+0x2f8/0x5d0
-<...>
+If the size of the struct page is not power of 2, compiler can think
+is_hugetlb_free_vmemmap_enabled() always return false. So
+the code snippet of this user can be optimized away.
 
-kernel crash analysis on v4.18
-==============================
-On v4.18 kernel, it causes a kernel panic, since sis->pages becomes
-a huge value and isi.nr_extents is 0. When 0 is returned it is
-considered as a swapfile over NFS and SWP_FILE is set (sis->flags |= SWP_FILE).
-Then when swapoff was getting called it was calling a_ops->swap_deactivate()
-if (sis->flags & SWP_FILE) is true. Since a_ops->swap_deactivate() is
-NULL in case of XFS, it causes below panic.
+E.g.
 
-Panic signature on v4.18 kernel:
-=======================================
-[ 8291.723351] XFS (loop2): Unmounting Filesystem
-[ 8292.123104] XFS (loop2): Mounting V5 Filesystem
-[ 8292.132451] XFS (loop2): Ending clean mount
-[ 8292.263362] Adding 4294967232k swap on /mnt1/test/swapfile.  Priority:-2 extents:1 across:274877906880k
-[ 8292.277834] Unable to handle kernel paging request for instruction fetch
-[ 8292.278677] Faulting instruction address: 0x00000000
-cpu 0x19: Vector: 400 (Instruction Access) at [c0000009dd5b7ad0]
-    pc: 0000000000000000
-    lr: c0000000003eb9dc: destroy_swap_extents+0xfc/0x120
-    pid   = 5604, comm = swapoff
-Linux version 4.18.0 (riteshh@xxxxxxx) (gcc version 8.4.0 (Ubuntu 8.4.0-1ubuntu1~18.04)) #57 SMP Wed Mar 3 01:33:04 CST 2021
-[link register   ] c0000000003eb9dc destroy_swap_extents+0xfc/0x120
-[c0000009dd5b7d50] c0000000025a7058 proc_poll_event+0x0/0x4 (unreliable)
-[c0000009dd5b7da0] c0000000003f0498 sys_swapoff+0x3f8/0x910
-[c0000009dd5b7e30] c00000000000bbe4 system_call+0x5c/0x70
---- Exception: c01 (System Call) at 00007ffff7d208d8
+if (is_hugetlb_free_vmemmap_enabled())
+        /* do something */
 
-Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
----
- fs/iomap/swapfile.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+The compiler can drop "/* do something */" directly, because
+it knows is_hugetlb_free_vmemmap_enabled() always returns
+false.
 
-diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
-index a648dbf6991e..23e44bf97c65 100644
---- a/fs/iomap/swapfile.c
-+++ b/fs/iomap/swapfile.c
-@@ -170,6 +170,16 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
- 			return ret;
- 	}
+Thanks.
 
-+	/*
-+	 * If this swapfile doesn't contain even a single page-aligned
-+	 * contiguous range of blocks, reject this useless swapfile to
-+	 * prevent confusion later on.
-+	 */
-+	if (isi.nr_pages == 0) {
-+		pr_warn("swapon: Empty swap-file\n");
-+		return -EINVAL;
-+	}
-+
- 	*pagespan = 1 + isi.highest_ppage - isi.lowest_ppage;
- 	sis->max = isi.nr_pages;
- 	sis->pages = isi.nr_pages - 1;
---
-2.26.2
-
+>
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+> > Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> > Tested-by: Chen Huang <chenhuang5@huawei.com>
+> > Tested-by: Bodeddula Balasubramaniam <bodeddub@amazon.com>
+> > ---
+> >  include/linux/hugetlb.h | 3 ++-
+> >  mm/hugetlb_vmemmap.c    | 7 +++++++
+> >  mm/hugetlb_vmemmap.h    | 6 ++++++
+> >  3 files changed, 15 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> > index c70421e26189..333dd0479fc2 100644
+> > --- a/include/linux/hugetlb.h
+> > +++ b/include/linux/hugetlb.h
+> > @@ -880,7 +880,8 @@ extern bool hugetlb_free_vmemmap_enabled;
+> >
+> >  static inline bool is_hugetlb_free_vmemmap_enabled(void)
+> >  {
+> > -     return hugetlb_free_vmemmap_enabled;
+> > +     return hugetlb_free_vmemmap_enabled &&
+> > +            is_power_of_2(sizeof(struct page));
+> >  }
+> >  #else
+> >  static inline bool is_hugetlb_free_vmemmap_enabled(void)
+> > diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> > index 33e42678abe3..1ba1ef45c48c 100644
+> > --- a/mm/hugetlb_vmemmap.c
+> > +++ b/mm/hugetlb_vmemmap.c
+> > @@ -265,6 +265,13 @@ void __init hugetlb_vmemmap_init(struct hstate *h)
+> >       BUILD_BUG_ON(__NR_USED_SUBPAGE >=
+> >                    RESERVE_VMEMMAP_SIZE / sizeof(struct page));
+> >
+> > +     /*
+> > +      * The compiler can help us to optimize this function to null
+> > +      * when the size of the struct page is not power of 2.
+> > +      */
+> > +     if (!is_power_of_2(sizeof(struct page)))
+> > +             return;
+> > +
+> >       if (!hugetlb_free_vmemmap_enabled)
+> >               return;
+> >
+> > diff --git a/mm/hugetlb_vmemmap.h b/mm/hugetlb_vmemmap.h
+> > index cb2bef8f9e73..29aaaf7b741e 100644
+> > --- a/mm/hugetlb_vmemmap.h
+> > +++ b/mm/hugetlb_vmemmap.h
+> > @@ -21,6 +21,12 @@ void hugetlb_vmemmap_init(struct hstate *h);
+> >   */
+> >  static inline unsigned int free_vmemmap_pages_per_hpage(struct hstate *h)
+> >  {
+> > +     /*
+> > +      * This check aims to let the compiler help us optimize the code as
+> > +      * much as possible.
+> > +      */
+> > +     if (!is_power_of_2(sizeof(struct page)))
+> > +             return 0;
+> >       return h->nr_free_vmemmap_pages;
+> >  }
+> >  #else
+> > --
+> > 2.11.0
+> >
+>
+> --
+> Michal Hocko
+> SUSE Labs
