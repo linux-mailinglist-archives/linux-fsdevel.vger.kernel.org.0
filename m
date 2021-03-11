@@ -2,55 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21DD3336E10
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 09:42:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 567ED336E21
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 09:47:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231614AbhCKImv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Mar 2021 03:42:51 -0500
-Received: from verein.lst.de ([213.95.11.211]:39923 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231147AbhCKImV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Mar 2021 03:42:21 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id E7A7968B05; Thu, 11 Mar 2021 09:42:17 +0100 (CET)
-Date:   Thu, 11 Mar 2021 09:42:17 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Vetter <daniel@ffwll.ch>, Nadav Amit <namit@vmware.com>,
-        "VMware, Inc." <pv-drivers@vmware.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Nitin Gupta <ngupta@vflare.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 3/9] powerpc/pseries: remove the ppc-cmm file system
-Message-ID: <20210311084217.GB7263@lst.de>
-References: <20210309155348.974875-1-hch@lst.de> <20210309155348.974875-4-hch@lst.de> <YEjz/+HfILCUwKwb@zeniv-ca.linux.org.uk>
+        id S231468AbhCKIqh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Mar 2021 03:46:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42148 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230290AbhCKIq3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Mar 2021 03:46:29 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1348C061762
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Mar 2021 00:46:28 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id x29so13242733pgk.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Mar 2021 00:46:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cQx/Zk70+m6LOsndOKLwPgVvEXoFZWWNDN7Tc+66h78=;
+        b=d5ZOzK0nHfiuWFgsYpozB26n2SNLgu+yC+cyMbLJskAa4uat6g2X7ZqzHq3MPzJkqT
+         e2EeCNXm48n2JGpBerR8kVEVlvjHVLj2cIpMFh2z9BIC+yQpRZzFcWfa5p5RF+Coj8z3
+         AdKrqpImJC5chGGGPbL0t4QjWFC13Y27lJvZ3x107SX7Uq6cE7Ao0/WkX5EjePrutbnD
+         HRvbrEiVa5H4a2RLFhQ0SPgGj02m2BvYCSW1GdfChG78rbnzWdwpmOpUbjQMvbja7gTy
+         NNTD6eQ6jEKoYCjDzGXv3JAQas4n8S7WxpjA5BPhKvy4EUFsH6oCrU4VsIfvVty8/8wt
+         M43g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cQx/Zk70+m6LOsndOKLwPgVvEXoFZWWNDN7Tc+66h78=;
+        b=Yl3Idk8pk7zK43ztNDegk+cm5LRfrixBNEZdjgmiNwJb7PBHDAtzHiWoPNo2uKWP5F
+         p1cLAx0OCR9S1i+b+V3S8GXKjcDZOS7JVkJtuTs/j67N6xlRbG4DAwLphT1gZNGT5fgp
+         2HDtCytATaRDcjN7bM1YpVlIGlBNsM8s9A8fNEIA7VGyGv+JndrwgO4lInpMvmMPye+a
+         ybTrW2MlOKNitK90NEkMQ6fi38oQRYqBc+06zJs3+xfTlKfpnlMJhJldSksDasNxtLMi
+         DYjPwh4mxfM+i2J2bpudsKnulsbf4C832HAvp+IV55LWEb/pt8smYa/48n7OzR4ri3LP
+         DyGQ==
+X-Gm-Message-State: AOAM531e5vA9W3vc2rwBvIHUoCf06AedKP5nOG9hiNXBLv/MFTyxxSfN
+        kiTyjCaP92p+KliW6fZ4ssYXIHWA3tbPWz3t2Mg8+A==
+X-Google-Smtp-Source: ABdhPJx8xoUZld8Sv1xB5EcygOS8Cx3xevOUQo1rIS2UOdYOWKLXng+0qazdq2+zuAO7Wv4IQBY5jVo18AZxOgHgpOo=
+X-Received: by 2002:aa7:9614:0:b029:1fa:e77b:722 with SMTP id
+ q20-20020aa796140000b02901fae77b0722mr6837612pfg.2.1615452388283; Thu, 11 Mar
+ 2021 00:46:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YEjz/+HfILCUwKwb@zeniv-ca.linux.org.uk>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20210308102807.59745-1-songmuchun@bytedance.com>
+ <20210308102807.59745-2-songmuchun@bytedance.com> <YEjUYOIJb2kYoQIA@dhcp22.suse.cz>
+ <CAMZfGtUj9vcVrSjT8Tk12jfkVE127Vkdkx6Js1JXzL+=rmu7Qw@mail.gmail.com>
+In-Reply-To: <CAMZfGtUj9vcVrSjT8Tk12jfkVE127Vkdkx6Js1JXzL+=rmu7Qw@mail.gmail.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Thu, 11 Mar 2021 16:45:51 +0800
+Message-ID: <CAMZfGtX37yBkKJjmBBSBeDeVAM6XywAJuEXjTSm7apOmQ-FOxA@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v18 1/9] mm: memory_hotplug: factor out
+ bootmem core functions to bootmem_info.c
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        David Hildenbrand <david@redhat.com>,
+        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Chen Huang <chenhuang5@huawei.com>,
+        Bodeddula Balasubramaniam <bodeddub@amazon.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 10, 2021 at 04:29:51PM +0000, Al Viro wrote:
-> On Tue, Mar 09, 2021 at 04:53:42PM +0100, Christoph Hellwig wrote:
-> > Just use the generic anon_inode file system.
-> 
-> Umm...  The only problem I see here is the lifetime rules for
-> that module, and that's not something introduced in this patchset.
-> Said that, looks like the logics around that place is duplicated in
-> cmm.c, vmw_balloon.c and virtion_balloon.c and I wonder if it would
-> be better off with a helper in mm/balloon.c to be used for that setup...
+On Thu, Mar 11, 2021 at 10:58 AM Muchun Song <songmuchun@bytedance.com> wrote:
+>
+> On Wed, Mar 10, 2021 at 10:14 PM Michal Hocko <mhocko@suse.com> wrote:
+> >
+> > [I am sorry for a late review]
+>
+> Thanks for your review.
+>
+> >
+> > On Mon 08-03-21 18:27:59, Muchun Song wrote:
+> > > Move bootmem info registration common API to individual bootmem_info.c.
+> > > And we will use {get,put}_page_bootmem() to initialize the page for the
+> > > vmemmap pages or free the vmemmap pages to buddy in the later patch.
+> > > So move them out of CONFIG_MEMORY_HOTPLUG_SPARSE. This is just code
+> > > movement without any functional change.
+> > >
+> > > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > > Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
+> > > Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> > > Reviewed-by: David Hildenbrand <david@redhat.com>
+> > > Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+> > > Tested-by: Chen Huang <chenhuang5@huawei.com>
+> > > Tested-by: Bodeddula Balasubramaniam <bodeddub@amazon.com>
+> >
+> > Separation from memory_hotplug.c is definitely a right step. I am
+> > wondering about the config dependency though
+> > [...]
+> > > diff --git a/mm/Makefile b/mm/Makefile
+> > > index 72227b24a616..daabf86d7da8 100644
+> > > --- a/mm/Makefile
+> > > +++ b/mm/Makefile
+> > > @@ -83,6 +83,7 @@ obj-$(CONFIG_SLUB) += slub.o
+> > >  obj-$(CONFIG_KASAN)  += kasan/
+> > >  obj-$(CONFIG_KFENCE) += kfence/
+> > >  obj-$(CONFIG_FAILSLAB) += failslab.o
+> > > +obj-$(CONFIG_HAVE_BOOTMEM_INFO_NODE) += bootmem_info.o
+> >
+> > I would have expected this would depend on CONFIG_SPARSE.
+> > BOOTMEM_INFO_NODE is really an odd thing to depend on here. There is
+> > some functionality which requires the node info but that can be gated
+> > specifically. Or what is the thinking behind?
 
-Independ of all other discussions untangling that mess does seem
-very useful.
+I have tried this. And I find that it is better to depend on
+BOOTMEM_INFO_NODE instead of SPARSEMEM.
+
+If we enable SPARSEMEM but disable HAVE_BOOTMEM_INFO_NODE,
+the bootmem_info.c also is compiled. Actually, we do not
+need those functions on other architectures. And these
+functions are also related to bootmem info. So it may be
+more reasonable to depend on BOOTMEM_INFO_NODE.
+Just my thoughts.
+
+Thanks.
+
+
+>
+> At first my idea was to free vmemmap pages through the bootmem
+> interface. My first instinct is to rely on BOOTMEM_INFO_NODE.
+> It makes sense to me to depend on CONFIG_SPARSE. I will
+> update this in the next version.
+>
+> Thanks.
+>
+> >
+> > This doesn't matter right now because it seems that the *_page_bootmem
+> > is only used by x86 outside of the memory hotplug.
+> >
+> > Other than that looks good to me.
+> > --
+> > Michal Hocko
+> > SUSE Labs
