@@ -2,46 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1585A337524
+	by mail.lfdr.de (Postfix) with ESMTP id 6786A337525
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 15:11:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232968AbhCKOKa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Mar 2021 09:10:30 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46875 "EHLO
+        id S233179AbhCKOKb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Mar 2021 09:10:31 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:54161 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233179AbhCKOKW (ORCPT
+        by vger.kernel.org with ESMTP id S233219AbhCKOK2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Mar 2021 09:10:22 -0500
+        Thu, 11 Mar 2021 09:10:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1615471822;
+        s=mimecast20190719; t=1615471828;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=8SAz47eHS2CgakOLUqpbe6DyZoVKv0WNeJAL94/owtQ=;
-        b=bF/56KfLOLl4wxka0734CvKf7w5uzdR/+TMakDwLePjkYuCSyQSiazToFlag6Updjx/7VY
-        4tg2RB5iY3MC7eU2iE029uVufGHh3/WGOX3mM/USlrG/MBGuEk78P+keK7Qj1V8y8nf2pP
-        bJDtPU36ik9IB0mQmZ2FvbNyK0hA8Wc=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Sa6wetqoaJXD5avPHDgES9Xzvvsmx+M+iS9y4Mh8zBg=;
+        b=hpLvQB1/Fx7bDYi75dHRwvj3p6rAktKYq/D9sLpuTXCjuHCALfqpRHKzr9MSXoHnMP6YAQ
+        vYniCAZRQrNhLHHN5B1hq+gvbF3S+yk7DMU0xYF0Tej6JWEI04eHRs11tvX7AXorOzlvY1
+        hd+rFG1oqh3Lqt9fYhZFDPCQoBPDElM=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-385-_GlUPJaANKSSX6U3yufcCg-1; Thu, 11 Mar 2021 09:10:19 -0500
-X-MC-Unique: _GlUPJaANKSSX6U3yufcCg-1
+ us-mta-130-rjxqRl4AOauHMjMLtKKV-Q-1; Thu, 11 Mar 2021 09:10:26 -0500
+X-MC-Unique: rjxqRl4AOauHMjMLtKKV-Q-1
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ACBE6100C618;
-        Thu, 11 Mar 2021 14:10:17 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E8314801817;
+        Thu, 11 Mar 2021 14:10:24 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 362CE196E3;
-        Thu, 11 Mar 2021 14:10:16 +0000 (UTC)
-Subject: [PATCH 0/2] AFS metadata xattr fixes
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BE1A7196E3;
+        Thu, 11 Mar 2021 14:10:23 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 1/2] afs: Fix accessing YFS xattrs on a non-YFS server
 From:   David Howells <dhowells@redhat.com>
 To:     linux-afs@lists.infradead.org
 Cc:     Gaja Sophie Peters <gaja.peters@math.uni-hamburg.de>,
+        Gaja Sophie Peters <gaja.peters@math.uni-hamburg.de>,
         dhowells@redhat.com,
         Gaja Sophie Peters <gaja.peters@math.uni-hamburg.de>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 11 Mar 2021 14:10:15 +0000
-Message-ID: <161547181530.1868820.12933722592029066752.stgit@warthog.procyon.org.uk>
+Date:   Thu, 11 Mar 2021 14:10:22 +0000
+Message-ID: <161547182293.1868820.9860274141056722598.stgit@warthog.procyon.org.uk>
+In-Reply-To: <161547181530.1868820.12933722592029066752.stgit@warthog.procyon.org.uk>
+References: <161547181530.1868820.12933722592029066752.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -51,49 +59,107 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+If someone attempts to access YFS-related xattrs (e.g. afs.yfs.acl) on a
+file on a non-YFS AFS server (such as OpenAFS), then the kernel will jump
+to a NULL function pointer because the afs_fetch_acl_operation descriptor
+doesn't point to a function for issuing an operation on a non-YFS
+server[1].
 
-Here's a pair of fixes for AFS.
+Fix this by making afs_wait_for_operation() check that the issue_afs_rpc
+method is set before jumping to it and setting -ENOTSUPP if not.  This fix
+also covers other potential operations that also only exist on YFS servers.
 
- (1) Fix an oops in AFS that can be triggered by accessing one of the
-     afs.yfs.* xattrs against a yfs server[1][2] - for instance by "cp -a"
-     or "rsync -X".  These try and copy all of the xattrs.
+afs_xattr_get/set_yfs() then need to translate -ENOTSUPP to -ENODATA as the
+former error is internal to the kernel.
 
-     They should pay attention to the list in /etc/xattr.conf, but cp
-     doesn't on Ubuntu and rsync doesn't seem to on Ubuntu or Fedora.
-     xattr.conf has been modified upstream[3], but a new version hasn't
-     been cut yet.  I've logged a bug against rsync for the problem
-     there[4].
+The bug shows up as an oops like the following:
 
- (2) Hide ACL-related AFS xattrs[6].  This removes them from the list
-     returned by listxattr(), but they're still available to get/set.
+	BUG: kernel NULL pointer dereference, address: 0000000000000000
+	[...]
+	Code: Unable to access opcode bytes at RIP 0xffffffffffffffd6.
+	[...]
+	Call Trace:
+	 afs_wait_for_operation+0x83/0x1b0 [kafs]
+	 afs_xattr_get_yfs+0xe6/0x270 [kafs]
+	 __vfs_getxattr+0x59/0x80
+	 vfs_getxattr+0x11c/0x140
+	 getxattr+0x181/0x250
+	 ? __check_object_size+0x13f/0x150
+	 ? __fput+0x16d/0x250
+	 __x64_sys_fgetxattr+0x64/0xb0
+	 do_syscall_64+0x49/0xc0
+	 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+	RIP: 0033:0x7fb120a9defe
 
-With further regard to the second patch, I tried just hiding the
-appropriate ACL-related xattrs[5] first, but it didn't work well,
-especially when a volume is replicated across servers of different types.
+This was triggered with "cp -a" which attempts to copy xattrs, including
+afs ones, but is easier to reproduce with getfattr, e.g.:
 
-I wonder if it's better to just hide all the afs.* xattrs from listxattr().
-It would probably be even better to not use xattrs for this, but I'm not
-sure what I would use instead.
+	getfattr -d -m ".*" /afs/openafs.org/
 
-The patches can be found here:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-fixes
-
-David
-
+Fixes: e49c7b2f6de7 ("afs: Build an abstraction around an "operation" concept")
+Reported-by: Gaja Sophie Peters <gaja.peters@math.uni-hamburg.de>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Tested-by: Gaja Sophie Peters <gaja.peters@math.uni-hamburg.de>
+cc: linux-afs@lists.infradead.org
 Link: http://lists.infradead.org/pipermail/linux-afs/2021-March/003498.html [1]
-Link: http://lists.infradead.org/pipermail/linux-afs/2021-March/003501.html [2]
-Link: https://git.savannah.nongnu.org/cgit/attr.git/commit/?id=74da517cc655a82ded715dea7245ce88ebc91b98 [3]
-Link: https://github.com/WayneD/rsync/issues/163 [4]
-Link: http://lists.infradead.org/pipermail/linux-afs/2021-March/003516.html [5]
-Link: http://lists.infradead.org/pipermail/linux-afs/2021-March/003524.html [6]
 ---
-David Howells (2):
-      afs: Fix accessing YFS xattrs on a non-YFS server
-      afs: Fix afs_listxattr() to not list afs ACL special xattrs
 
+ fs/afs/fs_operation.c |    7 +++++--
+ fs/afs/xattr.c        |    8 +++++++-
+ 2 files changed, 12 insertions(+), 3 deletions(-)
 
- fs/afs/xattr.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+diff --git a/fs/afs/fs_operation.c b/fs/afs/fs_operation.c
+index 97cab12b0a6c..71c58723763d 100644
+--- a/fs/afs/fs_operation.c
++++ b/fs/afs/fs_operation.c
+@@ -181,10 +181,13 @@ void afs_wait_for_operation(struct afs_operation *op)
+ 		if (test_bit(AFS_SERVER_FL_IS_YFS, &op->server->flags) &&
+ 		    op->ops->issue_yfs_rpc)
+ 			op->ops->issue_yfs_rpc(op);
+-		else
++		else if (op->ops->issue_afs_rpc)
+ 			op->ops->issue_afs_rpc(op);
++		else
++			op->ac.error = -ENOTSUPP;
+ 
+-		op->error = afs_wait_for_call_to_complete(op->call, &op->ac);
++		if (op->call)
++			op->error = afs_wait_for_call_to_complete(op->call, &op->ac);
+ 	}
+ 
+ 	switch (op->error) {
+diff --git a/fs/afs/xattr.c b/fs/afs/xattr.c
+index c629caae5002..4934e325a14a 100644
+--- a/fs/afs/xattr.c
++++ b/fs/afs/xattr.c
+@@ -231,6 +231,8 @@ static int afs_xattr_get_yfs(const struct xattr_handler *handler,
+ 			else
+ 				ret = -ERANGE;
+ 		}
++	} else if (ret == -ENOTSUPP) {
++		ret = -ENODATA;
+ 	}
+ 
+ error_yacl:
+@@ -256,6 +258,7 @@ static int afs_xattr_set_yfs(const struct xattr_handler *handler,
+ {
+ 	struct afs_operation *op;
+ 	struct afs_vnode *vnode = AFS_FS_I(inode);
++	int ret;
+ 
+ 	if (flags == XATTR_CREATE ||
+ 	    strcmp(name, "acl") != 0)
+@@ -270,7 +273,10 @@ static int afs_xattr_set_yfs(const struct xattr_handler *handler,
+ 		return afs_put_operation(op);
+ 
+ 	op->ops = &yfs_store_opaque_acl2_operation;
+-	return afs_do_sync_operation(op);
++	ret = afs_do_sync_operation(op);
++	if (ret == -ENOTSUPP)
++		ret = -ENODATA;
++	return ret;
+ }
+ 
+ static const struct xattr_handler afs_xattr_yfs_handler = {
 
 
