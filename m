@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C677B336E73
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 10:06:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CC39336E7E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 10:10:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231863AbhCKJGU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Mar 2021 04:06:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46332 "EHLO
+        id S231405AbhCKJJe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Mar 2021 04:09:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231867AbhCKJFy (ORCPT
+        with ESMTP id S231793AbhCKJJN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Mar 2021 04:05:54 -0500
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4450DC061760
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Mar 2021 01:05:54 -0800 (PST)
-Received: by mail-pg1-x52f.google.com with SMTP id n10so13271558pgl.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Mar 2021 01:05:54 -0800 (PST)
+        Thu, 11 Mar 2021 04:09:13 -0500
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CEE6C061760
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Mar 2021 01:09:13 -0800 (PST)
+Received: by mail-pg1-x52d.google.com with SMTP id o10so13283440pgg.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Mar 2021 01:09:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NEuWJ1IzW9w1LR0NVWyqtXThfP/VhN1PD6Tu5Oy4aJU=;
-        b=QiA3e4UOTC6PwCbi+C54OFbkwIRbRlQhWEa7Zi6lg6rbvSsuDTLFVYlZYgUbOQdEow
-         0Vj3Mk/FnadcKEVMgPih+IquWlvg/pWvvcQE9bv3mKi0TAs02CkadvB5Ai4/1QOmEL8h
-         UuWR228OYb2YtqQ6KBUtmbCz7ojNSbTBmmQTXYAa8YibyX/rIu5fj1whwsLToaQC1p++
-         l2wfbGX+6k98fxPNNio0d7M8SnD4R5D+fXNkhZkXkxoUwMkHORIe7f54+2cR7IVkeSri
-         m+fOaHETRjK6bCMuihy6y2WnFTbhwwqNHojA9xykcu7jXPBWzaw3hMUH+36nm2zvUMyM
-         n9YQ==
+        bh=mCTW04T6FDAWe0y3Y8uvQz02hfd4dMHzD/jXKV5ni0E=;
+        b=Y/r8l2GZWPIzxtFqFbqp+HB+jA7JeWZF1hQD73NXfYnjF7SBJAfx7VeoK/MbgtuJ+U
+         /nBBJotqN2Mf403kEiXPK8qB0HtHD4oVOQdAxqrVeKM/nu+s/VuXYV2gBCN4W6HX8uUd
+         vrlV2K+JzGTmxQ8VNsMRMYR0xV1FySxGdV/tAsHBP6a9Xyqf59Dr/rvMS/pCQ+oMIKrm
+         id/jvwgp6/1c/a6VOGgI7xfYp90v/9KaF9LCFSevI00Yja48jSe7n/pfx2xds0CdvsS8
+         VdmbKG4CLJuM6nK+lyVt5r5YTVtHvHQzI+p8VOlhWeuwc9FCEFFJLYVMrFQUcSzY1eiQ
+         0vrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NEuWJ1IzW9w1LR0NVWyqtXThfP/VhN1PD6Tu5Oy4aJU=;
-        b=cmVEzm3yD9jEHuBWMgr4TmZI4AlVAAIp8HTgkQnxnXSpS3e4DwwKjh86nI9W42lhav
-         MIb928R+3bPe/Cqr7vRWNPFXX6kKQEB6u0D/7rpzjeMKmtb0rQ2qFe6okaAQdBFiNHRb
-         YKHzz1Z1x+86RrGDYGqTbiieoOMJOKz+7npSBElhHw/vvRe7vqCqWOw/R883+josjTaz
-         wlykCZyezTijofEwMKYUSQwULV1aMjd+1A+jD20lbLIKa8Zcm0Fowfjq8hOkznadcMur
-         8Jt0byJ+gMjc1CxzOy1O50wnTENllxWXiKcVNBoemBNHwlueyWZyB7bWUeHd52bB8wff
-         EUeg==
-X-Gm-Message-State: AOAM532GSKQReSVWcSNFFl+FJIqhrIIA6mw9k01fPDAAcc/sH1e5sRcP
-        2+yQ+UyXfRc2JN1hceQJroRoGz/PoGkMpbG0ndQScQ==
-X-Google-Smtp-Source: ABdhPJxfLY17X+FDlSSom02cJEgvIJynJ88BEDZxL6oI/2zyXG78s5f6Q/h0nA9sEvkBon/N6NJyk8LdklhW7UNvJkU=
-X-Received: by 2002:a63:141e:: with SMTP id u30mr6601246pgl.31.1615453553609;
- Thu, 11 Mar 2021 01:05:53 -0800 (PST)
+        bh=mCTW04T6FDAWe0y3Y8uvQz02hfd4dMHzD/jXKV5ni0E=;
+        b=Mr5UxONO4AuojHIFjxK6F5Q040ZxJCZ2sCb70vAiQ154tHuDGDrw8cWn1A1h5SFxXM
+         UIXUvS0njyU+7UuVat6DzBZbcLaJ36nHs/RVM51piam+qaO/kFuD/Y7I7VLexLGm0Abr
+         3bedMxyahima+hIh8OVJsKVD0ZcJc1fk3cjyQ9BEimLrFjYloXJDKyVVmW5VZBSeDE+S
+         hcQ6DbzdNJnD1VGKVsnMOSLG2uDsVk6sNnw41a9CRGi47N/2Fdu86ey4bYv6LBG7HbtT
+         K0X1e5hGQQR0Y51BWVsjPwTs/EKy8KjTS2OP/8+u+npPmS/ORpk65uMmyPCjaSVJSqDB
+         CCKg==
+X-Gm-Message-State: AOAM533Kp+poGf27MYX+L9SepFOdTVpVHlc0PtEJ8bU32hy7SP8p7K+j
+        Dfj1KMkJ8uOr7HfhT6NPezw6E7JdrCwQWege0nGhCQ==
+X-Google-Smtp-Source: ABdhPJy8F/wYop3dZx7C28eOxSytt+4LbTA89Xyq6VmeWP+d2mbk9yMNhz3RbMDYqCmWI6x0q8mz5dNpU7Fue42Xc3E=
+X-Received: by 2002:aa7:910c:0:b029:1ed:ef1:81b with SMTP id
+ 12-20020aa7910c0000b02901ed0ef1081bmr6861804pfh.49.1615453752720; Thu, 11 Mar
+ 2021 01:09:12 -0800 (PST)
 MIME-Version: 1.0
 References: <20210308102807.59745-1-songmuchun@bytedance.com>
- <20210308102807.59745-2-songmuchun@bytedance.com> <YEjUYOIJb2kYoQIA@dhcp22.suse.cz>
- <CAMZfGtUj9vcVrSjT8Tk12jfkVE127Vkdkx6Js1JXzL+=rmu7Qw@mail.gmail.com>
- <CAMZfGtX37yBkKJjmBBSBeDeVAM6XywAJuEXjTSm7apOmQ-FOxA@mail.gmail.com> <YEnajfqDEjEMTYXE@dhcp22.suse.cz>
-In-Reply-To: <YEnajfqDEjEMTYXE@dhcp22.suse.cz>
+ <20210308102807.59745-10-songmuchun@bytedance.com> <YEjoozshsvKeMAAu@dhcp22.suse.cz>
+ <CAMZfGtV1Fp1RiQ64c9RrMmZ+=EwjGRHjwL8Wx3Q0YRWbbKF6xg@mail.gmail.com> <YEnbBPviwU6N2RzK@dhcp22.suse.cz>
+In-Reply-To: <YEnbBPviwU6N2RzK@dhcp22.suse.cz>
 From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Thu, 11 Mar 2021 17:05:15 +0800
-Message-ID: <CAMZfGtXN3b+XPCyWU4oz+wmnVKYhD6+W3wMk54b16pKTRrhu9g@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v18 1/9] mm: memory_hotplug: factor out
- bootmem core functions to bootmem_info.c
+Date:   Thu, 11 Mar 2021 17:08:34 +0800
+Message-ID: <CAMZfGtW5uHYiA_1an3W-jEmemsoN3Org7JwieeE2V271wh9X-A@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v18 9/9] mm: hugetlb: optimize the code
+ with the help of the compiler
 To:     Michal Hocko <mhocko@suse.com>
 Cc:     Jonathan Corbet <corbet@lwn.net>,
         Mike Kravetz <mike.kravetz@oracle.com>,
@@ -88,72 +88,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 11, 2021 at 4:53 PM Michal Hocko <mhocko@suse.com> wrote:
+On Thu, Mar 11, 2021 at 4:55 PM Michal Hocko <mhocko@suse.com> wrote:
 >
-> On Thu 11-03-21 16:45:51, Muchun Song wrote:
-> > On Thu, Mar 11, 2021 at 10:58 AM Muchun Song <songmuchun@bytedance.com> wrote:
+> On Thu 11-03-21 15:33:20, Muchun Song wrote:
+> > On Wed, Mar 10, 2021 at 11:41 PM Michal Hocko <mhocko@suse.com> wrote:
 > > >
-> > > On Wed, Mar 10, 2021 at 10:14 PM Michal Hocko <mhocko@suse.com> wrote:
-> > > >
-> > > > [I am sorry for a late review]
+> > > On Mon 08-03-21 18:28:07, Muchun Song wrote:
+> > > > When the "struct page size" crosses page boundaries we cannot
+> > > > make use of this feature. Let free_vmemmap_pages_per_hpage()
+> > > > return zero if that is the case, most of the functions can be
+> > > > optimized away.
 > > >
-> > > Thanks for your review.
-> > >
-> > > >
-> > > > On Mon 08-03-21 18:27:59, Muchun Song wrote:
-> > > > > Move bootmem info registration common API to individual bootmem_info.c.
-> > > > > And we will use {get,put}_page_bootmem() to initialize the page for the
-> > > > > vmemmap pages or free the vmemmap pages to buddy in the later patch.
-> > > > > So move them out of CONFIG_MEMORY_HOTPLUG_SPARSE. This is just code
-> > > > > movement without any functional change.
-> > > > >
-> > > > > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > > > > Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
-> > > > > Reviewed-by: Oscar Salvador <osalvador@suse.de>
-> > > > > Reviewed-by: David Hildenbrand <david@redhat.com>
-> > > > > Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
-> > > > > Tested-by: Chen Huang <chenhuang5@huawei.com>
-> > > > > Tested-by: Bodeddula Balasubramaniam <bodeddub@amazon.com>
-> > > >
-> > > > Separation from memory_hotplug.c is definitely a right step. I am
-> > > > wondering about the config dependency though
-> > > > [...]
-> > > > > diff --git a/mm/Makefile b/mm/Makefile
-> > > > > index 72227b24a616..daabf86d7da8 100644
-> > > > > --- a/mm/Makefile
-> > > > > +++ b/mm/Makefile
-> > > > > @@ -83,6 +83,7 @@ obj-$(CONFIG_SLUB) += slub.o
-> > > > >  obj-$(CONFIG_KASAN)  += kasan/
-> > > > >  obj-$(CONFIG_KFENCE) += kfence/
-> > > > >  obj-$(CONFIG_FAILSLAB) += failslab.o
-> > > > > +obj-$(CONFIG_HAVE_BOOTMEM_INFO_NODE) += bootmem_info.o
-> > > >
-> > > > I would have expected this would depend on CONFIG_SPARSE.
-> > > > BOOTMEM_INFO_NODE is really an odd thing to depend on here. There is
-> > > > some functionality which requires the node info but that can be gated
-> > > > specifically. Or what is the thinking behind?
+> > > I am confused. Don't you check for this in early_hugetlb_free_vmemmap_param already?
 > >
-> > I have tried this. And I find that it is better to depend on
-> > BOOTMEM_INFO_NODE instead of SPARSEMEM.
+> > Right.
 > >
-> > If we enable SPARSEMEM but disable HAVE_BOOTMEM_INFO_NODE,
-> > the bootmem_info.c also is compiled. Actually, we do not
-> > need those functions on other architectures. And these
-> > functions are also related to bootmem info. So it may be
-> > more reasonable to depend on BOOTMEM_INFO_NODE.
-> > Just my thoughts.
+> > > Why do we need any runtime checks?
+> >
+> > If the size of the struct page is not power of 2, compiler can think
+> > is_hugetlb_free_vmemmap_enabled() always return false. So
+> > the code snippet of this user can be optimized away.
+> >
+> > E.g.
+> >
+> > if (is_hugetlb_free_vmemmap_enabled())
+> >         /* do something */
+> >
+> > The compiler can drop "/* do something */" directly, because
+> > it knows is_hugetlb_free_vmemmap_enabled() always returns
+> > false.
 >
-> If BOOTMEM_INFO_NODE is disbabled then bootmem_info.c would be
-> effectivelly only {get,put}_page_bootmem, no?
+> OK, so this is a micro-optimization to generate a better code?
 
-{get,put}_page_bootmem also would be effective. I found that
-get_page_bootmem is only used in the scope of the
-CONFIG_BOOTMEM_INFO_NODE. So I move them
-to the bootmem_info.c.
+Right.
+
+> Is this measurable to warrant more code?
+
+I have disassembled the code to confirm this behavior.
+I know this is not the hot path. But it actually can decrease
+the code size.
 
 Thanks.
 
->
 > --
 > Michal Hocko
 > SUSE Labs
