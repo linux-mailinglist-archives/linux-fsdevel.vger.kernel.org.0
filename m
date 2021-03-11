@@ -2,119 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23530336F02
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 10:40:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F8E8336F21
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Mar 2021 10:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231994AbhCKJja (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Mar 2021 04:39:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57588 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231826AbhCKJjW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Mar 2021 04:39:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1615455560; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Hu/Cdr4n+Fu84h51ILPTJCG7x6gjXFjYTqSY3KHqpS0=;
-        b=ntsEAuleumNwt6HsDqK9dvf9jZZ+AVd9uXArrgRm8MTdJKc/R/St7o6eZN8YcuiuBG0HzV
-        2HpWBpQPfP0pWP+7rJeQ7Tf5D5aVBfg8pwAKhfQ1x2sV2Y6s4uewB0lApg1FaDahSkwlMt
-        Vmu4AWUKOJdszdWokf4dquhaaT9xjG0=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 550E2AB8C;
-        Thu, 11 Mar 2021 09:39:20 +0000 (UTC)
-Date:   Thu, 11 Mar 2021 10:39:18 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de, x86@kernel.org,
-        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Chen Huang <chenhuang5@huawei.com>,
-        Bodeddula Balasubramaniam <bodeddub@amazon.com>
-Subject: Re: [External] Re: [PATCH v18 9/9] mm: hugetlb: optimize the code
- with the help of the compiler
-Message-ID: <YEnlRlLJD1bK/Dup@dhcp22.suse.cz>
-References: <20210308102807.59745-1-songmuchun@bytedance.com>
- <20210308102807.59745-10-songmuchun@bytedance.com>
- <YEjoozshsvKeMAAu@dhcp22.suse.cz>
- <CAMZfGtV1Fp1RiQ64c9RrMmZ+=EwjGRHjwL8Wx3Q0YRWbbKF6xg@mail.gmail.com>
- <YEnbBPviwU6N2RzK@dhcp22.suse.cz>
- <CAMZfGtW5uHYiA_1an3W-jEmemsoN3Org7JwieeE2V271wh9X-A@mail.gmail.com>
+        id S232146AbhCKJqB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Mar 2021 04:46:01 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:41514 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232156AbhCKJps (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Mar 2021 04:45:48 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-225-4UYgS0e5NKS5qbXrFZ57sA-1; Thu, 11 Mar 2021 09:45:44 +0000
+X-MC-Unique: 4UYgS0e5NKS5qbXrFZ57sA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 11 Mar 2021 09:45:43 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 11 Mar 2021 09:45:43 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
+        =?utf-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "John Johansen" <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        =?utf-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
+Subject: RE: [PATCH v2 1/1] fs: Allow no_new_privs tasks to call chroot(2)
+Thread-Topic: [PATCH v2 1/1] fs: Allow no_new_privs tasks to call chroot(2)
+Thread-Index: AQHXFeMKfWlhWd9Z4UmL5GfL4v4dzap+ifLA
+Date:   Thu, 11 Mar 2021 09:45:43 +0000
+Message-ID: <e6baf7139fd14d0d82ff7be7eacccdca@AcuMS.aculab.com>
+References: <20210310181857.401675-1-mic@digikod.net>
+        <20210310181857.401675-2-mic@digikod.net>
+ <m17dmeq0co.fsf@fess.ebiederm.org>
+In-Reply-To: <m17dmeq0co.fsf@fess.ebiederm.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMZfGtW5uHYiA_1an3W-jEmemsoN3Org7JwieeE2V271wh9X-A@mail.gmail.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 11-03-21 17:08:34, Muchun Song wrote:
-> On Thu, Mar 11, 2021 at 4:55 PM Michal Hocko <mhocko@suse.com> wrote:
-> >
-> > On Thu 11-03-21 15:33:20, Muchun Song wrote:
-> > > On Wed, Mar 10, 2021 at 11:41 PM Michal Hocko <mhocko@suse.com> wrote:
-> > > >
-> > > > On Mon 08-03-21 18:28:07, Muchun Song wrote:
-> > > > > When the "struct page size" crosses page boundaries we cannot
-> > > > > make use of this feature. Let free_vmemmap_pages_per_hpage()
-> > > > > return zero if that is the case, most of the functions can be
-> > > > > optimized away.
-> > > >
-> > > > I am confused. Don't you check for this in early_hugetlb_free_vmemmap_param already?
-> > >
-> > > Right.
-> > >
-> > > > Why do we need any runtime checks?
-> > >
-> > > If the size of the struct page is not power of 2, compiler can think
-> > > is_hugetlb_free_vmemmap_enabled() always return false. So
-> > > the code snippet of this user can be optimized away.
-> > >
-> > > E.g.
-> > >
-> > > if (is_hugetlb_free_vmemmap_enabled())
-> > >         /* do something */
-> > >
-> > > The compiler can drop "/* do something */" directly, because
-> > > it knows is_hugetlb_free_vmemmap_enabled() always returns
-> > > false.
-> >
-> > OK, so this is a micro-optimization to generate a better code?
-> 
-> Right.
-> 
-> > Is this measurable to warrant more code?
-> 
-> I have disassembled the code to confirm this behavior.
-> I know this is not the hot path. But it actually can decrease
-> the code size.
+RnJvbTogRXJpYyBXLiBCaWVkZXJtYW4NCj4gU2VudDogMTAgTWFyY2ggMjAyMSAxOToyNA0KLi4u
+DQo+IFRoZSBhY3R1YWwgY2xhc3NpYyBjaHJvb3QgZXNjYXBlIGlzLg0KPiBjaGRpcigiLyIpOw0K
+PiBjaHJvb3QoIi9zb21lZGlyIik7DQo+IGNoZGlyKCIuLi8uLi8uLi8uLiIpOw0KDQpUaGF0IG9u
+ZSBpcyBlYXNpbHkgY2hlY2tlZC4NCg0KSSB0aG91Z2h0IHNvbWV0aGluZyBsaWtlOg0KY2hyb290
+KCIvc29tZWRpciIpOw0KY2hkaXIoIi9zb21lcGF0aCIpOw0KDQpGcmllbmRseSBwcm9jZXNzOg0K
+bXZkaXIoIi9zb21lZGlyL3NvbWVfcGF0aCIsICIvYmFyIik7DQoNCndhcyB0aGUgYWN0dWFsIGVz
+Y2FwZT8NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxl
+eSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0
+aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-struct page which is not power of 2 is not a common case. Are you sure
-it makes sense to micro optimize for an outliar. If you really want to
-microptimize then do that for a common case - the feature being
-disabled - via static key.
--- 
-Michal Hocko
-SUSE Labs
