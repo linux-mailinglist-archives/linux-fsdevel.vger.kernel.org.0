@@ -2,114 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34BDF339247
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Mar 2021 16:50:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ED653393CC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Mar 2021 17:43:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232005AbhCLPtx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Mar 2021 10:49:53 -0500
-Received: from hmm.wantstofly.org ([213.239.204.108]:40306 "EHLO
-        mail.wantstofly.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232269AbhCLPtl (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Mar 2021 10:49:41 -0500
-Received: by mail.wantstofly.org (Postfix, from userid 1000)
-        id AAFB07F279; Fri, 12 Mar 2021 17:49:40 +0200 (EET)
-Date:   Fri, 12 Mar 2021 17:49:40 +0200
-From:   Lennert Buytenhek <buytenh@wantstofly.org>
-To:     io-uring@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 1/2] readdir: split the core of getdents64(2) out into
- vfs_getdents()
-Message-ID: <YEuNlKWpQqGMCtL8@wantstofly.org>
-References: <YEuNMc5LlGftOHW6@wantstofly.org>
+        id S232905AbhCLQmk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Mar 2021 11:42:40 -0500
+Received: from raptor.unsafe.ru ([5.9.43.93]:49754 "EHLO raptor.unsafe.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232949AbhCLQmE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Mar 2021 11:42:04 -0500
+Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-94-113-225-162.net.upcbroadband.cz [94.113.225.162])
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 3173340C98;
+        Fri, 12 Mar 2021 16:42:00 +0000 (UTC)
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>
+Cc:     Alexey Gladkov <legion@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH v6 0/5] proc: subset=pid: Relax check of mount visibility
+Date:   Fri, 12 Mar 2021 17:41:43 +0100
+Message-Id: <cover.1615567183.git.gladkov.alexey@gmail.com>
+X-Mailer: git-send-email 2.29.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YEuNMc5LlGftOHW6@wantstofly.org>
+Content-Transfer-Encoding: 8bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.4 (raptor.unsafe.ru [0.0.0.0]); Fri, 12 Mar 2021 16:42:01 +0000 (UTC)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-So that IORING_OP_GETDENTS may use it, split out the core of the
-getdents64(2) syscall into a helper function, vfs_getdents().
+Allow to mount procfs with subset=pid option even if the entire procfs
+is not fully accessible to the mounter.
 
-vfs_getdents() calls into filesystems' ->iterate{,_shared}() which
-expect serialization on struct file, which means that callers of
-vfs_getdents() are responsible for either using fdget_pos() or
-performing the equivalent serialization by hand.
+Changelog
+---------
+v6:
+* Add documentation about procfs mount restrictions.
+* Reorder commits for better review.
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Lennert Buytenhek <buytenh@wantstofly.org>
----
- fs/readdir.c       | 25 +++++++++++++++++--------
- include/linux/fs.h |  4 ++++
- 2 files changed, 21 insertions(+), 8 deletions(-)
+v4:
+* Set SB_I_DYNAMIC only if pidonly is set.
+* Add an error message if subset=pid is canceled during remount.
 
-diff --git a/fs/readdir.c b/fs/readdir.c
-index 19434b3c982c..f52167c1eb61 100644
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -348,10 +348,9 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
- 	return -EFAULT;
- }
- 
--SYSCALL_DEFINE3(getdents64, unsigned int, fd,
--		struct linux_dirent64 __user *, dirent, unsigned int, count)
-+int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
-+		 unsigned int count)
- {
--	struct fd f;
- 	struct getdents_callback64 buf = {
- 		.ctx.actor = filldir64,
- 		.count = count,
-@@ -359,11 +358,7 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
- 	};
- 	int error;
- 
--	f = fdget_pos(fd);
--	if (!f.file)
--		return -EBADF;
--
--	error = iterate_dir(f.file, &buf.ctx);
-+	error = iterate_dir(file, &buf.ctx);
- 	if (error >= 0)
- 		error = buf.error;
- 	if (buf.prev_reclen) {
-@@ -376,6 +371,20 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
- 		else
- 			error = count - buf.count;
- 	}
-+	return error;
-+}
-+
-+SYSCALL_DEFINE3(getdents64, unsigned int, fd,
-+		struct linux_dirent64 __user *, dirent, unsigned int, count)
-+{
-+	struct fd f;
-+	int error;
-+
-+	f = fdget_pos(fd);
-+	if (!f.file)
-+		return -EBADF;
-+
-+	error = vfs_getdents(f.file, dirent, count);
- 	fdput_pos(f);
- 	return error;
- }
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ec8f3ddf4a6a..c03235883e18 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3227,6 +3227,10 @@ extern const struct inode_operations simple_symlink_inode_operations;
- 
- extern int iterate_dir(struct file *, struct dir_context *);
- 
-+struct linux_dirent64;
-+int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
-+		 unsigned int count);
-+
- int vfs_fstatat(int dfd, const char __user *filename, struct kstat *stat,
- 		int flags);
- int vfs_fstat(int fd, struct kstat *stat);
+v3:
+* Add 'const' to struct cred *mounter_cred (fix kernel test robot warning).
+
+v2:
+* cache the mounters credentials and make access to the net directories
+  contingent of the permissions of the mounter of procfs.
+
+--
+
+Alexey Gladkov (5):
+  docs: proc: add documentation about mount restrictions
+  proc: subset=pid: Show /proc/self/net only for CAP_NET_ADMIN
+  proc: Disable cancellation of subset=pid option
+  proc: Relax check of mount visibility
+  docs: proc: add documentation about relaxing visibility restrictions
+
+ Documentation/filesystems/proc.rst | 15 +++++++++++++++
+ fs/namespace.c                     | 30 ++++++++++++++++++------------
+ fs/proc/proc_net.c                 |  8 ++++++++
+ fs/proc/root.c                     | 24 +++++++++++++++++++-----
+ include/linux/fs.h                 |  1 +
+ include/linux/proc_fs.h            |  1 +
+ 6 files changed, 62 insertions(+), 17 deletions(-)
+
 -- 
-2.29.2
+2.29.3
+
