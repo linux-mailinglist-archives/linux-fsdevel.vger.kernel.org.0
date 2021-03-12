@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B3F833894F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Mar 2021 10:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B510C338952
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Mar 2021 10:56:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233028AbhCLJ4A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Mar 2021 04:56:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56174 "EHLO
+        id S232884AbhCLJ4D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Mar 2021 04:56:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232884AbhCLJzp (ORCPT
+        with ESMTP id S232939AbhCLJzw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Mar 2021 04:55:45 -0500
+        Fri, 12 Mar 2021 04:55:52 -0500
 Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99F51C061761;
-        Fri, 12 Mar 2021 01:55:45 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71FBDC061574;
+        Fri, 12 Mar 2021 01:55:52 -0800 (PST)
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
         (Exim 4.94)
         (envelope-from <johannes@sipsolutions.net>)
-        id 1lKeW0-00F7m8-Ro; Fri, 12 Mar 2021 10:55:29 +0100
+        id 1lKeW1-00F7m8-KI; Fri, 12 Mar 2021 10:55:29 +0100
 From:   Johannes Berg <johannes@sipsolutions.net>
 To:     linux-kernel@vger.kernel.org, linux-um@lists.infradead.org
 Cc:     Jessica Yu <jeyu@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org,
         Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 1/6] seq_file: rename mangle_path to seq_mangle_path
-Date:   Fri, 12 Mar 2021 10:55:21 +0100
-Message-Id: <20210312104627.3ac77adf84c4.I2f2e5cec5cc82a51652dafbeb0d1b88708b3c565@changeid>
+Subject: [PATCH 2/6] module: add support for CONFIG_MODULE_DESTRUCTORS
+Date:   Fri, 12 Mar 2021 10:55:22 +0100
+Message-Id: <20210312104627.8b2523b0593c.Ib0fb7906e3d7bd69ebe5eb877e2e9f33ef915d4b@changeid>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210312095526.197739-1-johannes@sipsolutions.net>
 References: <20210312095526.197739-1-johannes@sipsolutions.net>
@@ -39,103 +39,150 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Johannes Berg <johannes.berg@intel.com>
 
-The symbol mangle_path conflicts with a gcov symbol which
-can break the build of ARCH=um with gcov, and it's also
-not very specific and descriptive.
+At least in ARCH=um with CONFIG_GCOV (which writes all the
+coverage data directly out from the userspace binary rather
+than presenting it in debugfs) it's necessary to run all
+the atexit handlers (dtors/fini_array) so that gcov actually
+does write out the data.
 
-Rename mangle_path() to seq_mangle_path(), and also remove
-the export since it's not needed or used by any modules.
+Add a new config option CONFIG_MODULE_DESTRUCTORS that can
+be selected via CONFIG_WANT_MODULE_DESTRUCTORS that the arch
+selects (this indirection exists so the architecture doesn't
+have to worry about whether or not CONFIG_MODULES is on).
+Additionally, the architecture must then (when it exits and
+no more module code can run) call run_all_module_destructors
+to run the code for all modules that are still loaded. When
+modules are unloaded, the handlers are called as well.
 
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- fs/seq_file.c            | 11 +++++------
- include/linux/seq_file.h |  2 +-
- lib/seq_buf.c            |  2 +-
- 3 files changed, 7 insertions(+), 8 deletions(-)
+ include/linux/module.h | 14 ++++++++++++++
+ init/Kconfig           | 17 +++++++++++++++++
+ kernel/module.c        | 39 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 70 insertions(+)
 
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index cb11a34fb871..dfa1982a87ca 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -413,7 +413,7 @@ void seq_printf(struct seq_file *m, const char *f, ...)
- EXPORT_SYMBOL(seq_printf);
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 59f094fa6f74..8574d76a884d 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -517,6 +517,12 @@ struct module {
+ 	unsigned int num_ctors;
+ #endif
  
- /**
-- *	mangle_path -	mangle and copy path to buffer beginning
-+ *	seq_mangle_path -	mangle and copy path to buffer beginning
-  *	@s: buffer start
-  *	@p: beginning of path in above buffer
-  *	@esc: set of characters that need escaping
-@@ -423,7 +423,7 @@ EXPORT_SYMBOL(seq_printf);
-  *      Returns pointer past last written character in @s, or NULL in case of
-  *      failure.
-  */
--char *mangle_path(char *s, const char *p, const char *esc)
-+char *seq_mangle_path(char *s, const char *p, const char *esc)
++#ifdef CONFIG_MODULE_DESTRUCTORS
++	/* Destructor functions. */
++	ctor_fn_t *dtors;
++	unsigned int num_dtors;
++#endif
++
+ #ifdef CONFIG_FUNCTION_ERROR_INJECTION
+ 	struct error_injection_entry *ei_funcs;
+ 	unsigned int num_ei_funcs;
+@@ -853,4 +859,12 @@ int module_kallsyms_on_each_symbol(int (*fn)(void *, const char *,
+ 					     struct module *, unsigned long),
+ 				   void *data);
+ 
++#ifdef CONFIG_MODULE_DESTRUCTORS
++void run_all_module_destructors(void);
++#else
++static inline void run_all_module_destructors(void)
++{
++}
++#endif
++
+ #endif /* _LINUX_MODULE_H */
+diff --git a/init/Kconfig b/init/Kconfig
+index 22946fe5ded9..b0f0f51f9d2c 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -2295,6 +2295,23 @@ config UNUSED_KSYMS_WHITELIST
+ 
+ endif # MODULES
+ 
++config WANT_MODULE_DESTRUCTORS
++	bool
++	help
++	  Architectures may select this if they need atexit functions (such as
++	  generated by the compiler for -ftest-coverage/gcov) to run in modules.
++	  They're then responsible for calling run_all_module_destructors() at
++	  shutdown so that module destructors are called for all still loaded
++	  modules as well.
++
++	  Note that CONFIG_GCOV_KERNEL does *not* require this since it keeps
++	  all the coverage data in the kernel, notably CONFIG_GCOV in ARCH=um
++	  requires this.
++
++config MODULE_DESTRUCTORS
++	def_bool y
++	depends on WANT_MODULE_DESTRUCTORS && MODULES
++
+ config MODULES_TREE_LOOKUP
+ 	def_bool y
+ 	depends on PERF_EVENTS || TRACING
+diff --git a/kernel/module.c b/kernel/module.c
+index 30479355ab85..3023b5f054d4 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -904,6 +904,27 @@ EXPORT_SYMBOL(module_refcount);
+ /* This exists whether we can unload or not */
+ static void free_module(struct module *mod);
+ 
++#ifdef CONFIG_MODULE_DESTRUCTORS
++static void do_mod_dtors(struct module *mod)
++{
++	unsigned long i;
++
++	for (i = 0; i < mod->num_dtors; i++)
++		mod->dtors[i]();
++}
++
++void run_all_module_destructors(void)
++{
++	struct module *mod;
++
++	/* we no longer need to care about locking at this point */
++	list_for_each_entry(mod, &modules, list)
++		do_mod_dtors(mod);
++}
++#else
++static inline void do_mod_dtors(struct module *mod) {}
++#endif
++
+ SYSCALL_DEFINE2(delete_module, const char __user *, name_user,
+ 		unsigned int, flags)
  {
- 	while (s <= p) {
- 		char c = *p++;
-@@ -442,7 +442,6 @@ char *mangle_path(char *s, const char *p, const char *esc)
+@@ -966,6 +987,7 @@ SYSCALL_DEFINE2(delete_module, const char __user *, name_user,
+ 				     MODULE_STATE_GOING, mod);
+ 	klp_module_going(mod);
+ 	ftrace_release_mod(mod);
++	do_mod_dtors(mod);
+ 
+ 	async_synchronize_full();
+ 
+@@ -3263,6 +3285,23 @@ static int find_module_sections(struct module *mod, struct load_info *info)
  	}
- 	return NULL;
- }
--EXPORT_SYMBOL(mangle_path);
+ #endif
  
- /**
-  * seq_path - seq_file interface to print a pathname
-@@ -462,7 +461,7 @@ int seq_path(struct seq_file *m, const struct path *path, const char *esc)
- 	if (size) {
- 		char *p = d_path(path, buf, size);
- 		if (!IS_ERR(p)) {
--			char *end = mangle_path(buf, p, esc);
-+			char *end = seq_mangle_path(buf, p, esc);
- 			if (end)
- 				res = end - buf;
- 		}
-@@ -505,7 +504,7 @@ int seq_path_root(struct seq_file *m, const struct path *path,
- 			return SEQ_SKIP;
- 		res = PTR_ERR(p);
- 		if (!IS_ERR(p)) {
--			char *end = mangle_path(buf, p, esc);
-+			char *end = seq_mangle_path(buf, p, esc);
- 			if (end)
- 				res = end - buf;
- 			else
-@@ -529,7 +528,7 @@ int seq_dentry(struct seq_file *m, struct dentry *dentry, const char *esc)
- 	if (size) {
- 		char *p = dentry_path(dentry, buf, size);
- 		if (!IS_ERR(p)) {
--			char *end = mangle_path(buf, p, esc);
-+			char *end = seq_mangle_path(buf, p, esc);
- 			if (end)
- 				res = end - buf;
- 		}
-diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
-index b83b3ae3c877..0a7dda239e56 100644
---- a/include/linux/seq_file.h
-+++ b/include/linux/seq_file.h
-@@ -104,7 +104,7 @@ static inline void seq_setwidth(struct seq_file *m, size_t size)
- }
- void seq_pad(struct seq_file *m, char c);
++#ifdef CONFIG_MODULE_DESTRUCTORS
++	mod->dtors = section_objs(info, ".dtors",
++				  sizeof(*mod->dtors), &mod->num_dtors);
++	if (!mod->dtors)
++		mod->dtors = section_objs(info, ".fini_array",
++				sizeof(*mod->dtors), &mod->num_dtors);
++	else if (find_sec(info, ".fini_array")) {
++		/*
++		 * This shouldn't happen with same compiler and binutils
++		 * building all parts of the module.
++		 */
++		pr_warn("%s: has both .dtors and .fini_array.\n",
++		       mod->name);
++		return -EINVAL;
++	}
++#endif
++
+ 	mod->noinstr_text_start = section_objs(info, ".noinstr.text", 1,
+ 						&mod->noinstr_text_size);
  
--char *mangle_path(char *s, const char *p, const char *esc);
-+char *seq_mangle_path(char *s, const char *p, const char *esc);
- int seq_open(struct file *, const struct seq_operations *);
- ssize_t seq_read(struct file *, char __user *, size_t, loff_t *);
- ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter);
-diff --git a/lib/seq_buf.c b/lib/seq_buf.c
-index 707453f5d58e..90b50a514edb 100644
---- a/lib/seq_buf.c
-+++ b/lib/seq_buf.c
-@@ -274,7 +274,7 @@ int seq_buf_path(struct seq_buf *s, const struct path *path, const char *esc)
- 	if (size) {
- 		char *p = d_path(path, buf, size);
- 		if (!IS_ERR(p)) {
--			char *end = mangle_path(buf, p, esc);
-+			char *end = seq_mangle_path(buf, p, esc);
- 			if (end)
- 				res = end - buf;
- 		}
 -- 
 2.29.2
 
