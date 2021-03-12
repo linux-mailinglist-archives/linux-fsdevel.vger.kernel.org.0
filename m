@@ -2,115 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BC11339019
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Mar 2021 15:34:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34BDF339247
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Mar 2021 16:50:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231201AbhCLOdb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Mar 2021 09:33:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59904 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230302AbhCLOdN (ORCPT
+        id S232005AbhCLPtx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Mar 2021 10:49:53 -0500
+Received: from hmm.wantstofly.org ([213.239.204.108]:40306 "EHLO
+        mail.wantstofly.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232269AbhCLPtl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Mar 2021 09:33:13 -0500
-Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10A79C061574;
-        Fri, 12 Mar 2021 06:33:13 -0800 (PST)
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.94)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1lKiqc-00FE4K-N4; Fri, 12 Mar 2021 15:33:02 +0100
-Message-ID: <d36ea54d8c0a8dd706826ba844a6f27691f45d55.camel@sipsolutions.net>
-Subject: Re: [PATCH 0/6] um: fix up CONFIG_GCOV support
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     linux-kernel@vger.kernel.org, linux-um@lists.infradead.org
-Cc:     Jessica Yu <jeyu@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Date:   Fri, 12 Mar 2021 15:33:01 +0100
-In-Reply-To: <20210312095526.197739-1-johannes@sipsolutions.net>
-References: <20210312095526.197739-1-johannes@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        Fri, 12 Mar 2021 10:49:41 -0500
+Received: by mail.wantstofly.org (Postfix, from userid 1000)
+        id AAFB07F279; Fri, 12 Mar 2021 17:49:40 +0200 (EET)
+Date:   Fri, 12 Mar 2021 17:49:40 +0200
+From:   Lennert Buytenhek <buytenh@wantstofly.org>
+To:     io-uring@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4 1/2] readdir: split the core of getdents64(2) out into
+ vfs_getdents()
+Message-ID: <YEuNlKWpQqGMCtL8@wantstofly.org>
+References: <YEuNMc5LlGftOHW6@wantstofly.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YEuNMc5LlGftOHW6@wantstofly.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2021-03-12 at 10:55 +0100, Johannes Berg wrote:
-> CONFIG_GCOV is fairly useful for ARCH=um (e.g. with kunit, though
-> my main use case is a bit different) since it writes coverage data
-> directly out like a normal userspace binary. Theoretically, that
-> is.
-> 
-> Unfortunately, it's broken in multiple ways today:
-> 
->  1) it doesn't like, due to 'mangle_path' in seq_file, and the only
->     solution to that seems to be to rename our symbol, but that's
->     not so bad, and "mangle_path" sounds very generic anyway, which
->     it isn't quite
-> 
->  2) gcov requires exit handlers to write out the data, and those are
->     never called for modules, config CONSTRUCTORS exists for init
->     handlers, so add CONFIG_MODULE_DESTRUCTORS here that we can then
->     select in ARCH=um
+So that IORING_OP_GETDENTS may use it, split out the core of the
+getdents64(2) syscall into a helper function, vfs_getdents().
 
-Yeah, I wish.
+vfs_getdents() calls into filesystems' ->iterate{,_shared}() which
+expect serialization on struct file, which means that callers of
+vfs_getdents() are responsible for either using fdget_pos() or
+performing the equivalent serialization by hand.
 
-None of this can really work. Thing is, __gcov_init(), called from the
-constructors, will add the local data structure for the object file into
-the global list (__gcov_root). So far, so good.
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Lennert Buytenhek <buytenh@wantstofly.org>
+---
+ fs/readdir.c       | 25 +++++++++++++++++--------
+ include/linux/fs.h |  4 ++++
+ 2 files changed, 21 insertions(+), 8 deletions(-)
 
-However, __gcov_exit(), which is called from the destructors (fini_array
-which I added support for here) never gets passed the local data
-structure pointer. It dumps __gcov_root, and that's it.
-
-That basically means each executable/shared object should have its own
-instance of __gcov_root and the functions. But the code in UML was set
-up to export __gcov_exit(), which obviously then dumps the kernel's gcov
-data.
-
-So to make this really work we should treat modules like shared objects,
-and link libgcov.a into each one of them. That might even work, but we
-get
-
-ERROR: modpost: "free" [module.ko] undefined!
-ERROR: modpost: "vfprintf" [module.ko] undefined!
-ERROR: modpost: "fcntl" [module.ko] undefined!
-ERROR: modpost: "setbuf" [module.ko] undefined!
-ERROR: modpost: "exit" [module.ko] undefined!
-ERROR: modpost: "fwrite" [module.ko] undefined!
-ERROR: modpost: "stderr" [module.ko] undefined!
-ERROR: modpost: "fclose" [module.ko] undefined!
-ERROR: modpost: "ftell" [module.ko] undefined!
-ERROR: modpost: "fopen" [module.ko] undefined!
-ERROR: modpost: "fread" [module.ko] undefined!
-ERROR: modpost: "fdopen" [module.ko] undefined!
-ERROR: modpost: "fseek" [module.ko] undefined!
-ERROR: modpost: "fprintf" [module.ko] undefined!
-ERROR: modpost: "strtol" [module.ko] undefined!
-ERROR: modpost: "malloc" [module.ko] undefined!
-ERROR: modpost: "getpid" [module.ko] undefined!
-ERROR: modpost: "getenv" [module.ko] undefined!
-
-We could of course export those, but that makes me nervous, e.g.
-printf() is known to use a LOT of stack, far more than we have in the
-kernel.
-
-Also, we see:
-
-WARNING: modpost: "__gcov_var" [module] is COMMON symbol
-WARNING: modpost: "__gcov_root" [module] is COMMON symbol
-
-which means the module cannot be loaded.
-
-I think I'll just make CONFIG_GCOV depend on !MODULE instead, and for my
-use case use CONFIG_GCOV_KERNEL.
-
-Or maybe just kill CONFIG_GCOV entirely, since obviously nobody has ever
-tried to use it with modules or with recent toolchains (gcc 9 or newer,
-the mangle_path conflict).
-
-johannes
-
+diff --git a/fs/readdir.c b/fs/readdir.c
+index 19434b3c982c..f52167c1eb61 100644
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -348,10 +348,9 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+ 	return -EFAULT;
+ }
+ 
+-SYSCALL_DEFINE3(getdents64, unsigned int, fd,
+-		struct linux_dirent64 __user *, dirent, unsigned int, count)
++int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
++		 unsigned int count)
+ {
+-	struct fd f;
+ 	struct getdents_callback64 buf = {
+ 		.ctx.actor = filldir64,
+ 		.count = count,
+@@ -359,11 +358,7 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
+ 	};
+ 	int error;
+ 
+-	f = fdget_pos(fd);
+-	if (!f.file)
+-		return -EBADF;
+-
+-	error = iterate_dir(f.file, &buf.ctx);
++	error = iterate_dir(file, &buf.ctx);
+ 	if (error >= 0)
+ 		error = buf.error;
+ 	if (buf.prev_reclen) {
+@@ -376,6 +371,20 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
+ 		else
+ 			error = count - buf.count;
+ 	}
++	return error;
++}
++
++SYSCALL_DEFINE3(getdents64, unsigned int, fd,
++		struct linux_dirent64 __user *, dirent, unsigned int, count)
++{
++	struct fd f;
++	int error;
++
++	f = fdget_pos(fd);
++	if (!f.file)
++		return -EBADF;
++
++	error = vfs_getdents(f.file, dirent, count);
+ 	fdput_pos(f);
+ 	return error;
+ }
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ec8f3ddf4a6a..c03235883e18 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3227,6 +3227,10 @@ extern const struct inode_operations simple_symlink_inode_operations;
+ 
+ extern int iterate_dir(struct file *, struct dir_context *);
+ 
++struct linux_dirent64;
++int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
++		 unsigned int count);
++
+ int vfs_fstatat(int dfd, const char __user *filename, struct kstat *stat,
+ 		int flags);
+ int vfs_fstat(int fd, struct kstat *stat);
+-- 
+2.29.2
