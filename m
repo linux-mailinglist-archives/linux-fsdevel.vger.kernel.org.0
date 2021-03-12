@@ -2,139 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D70DE3387EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Mar 2021 09:52:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AF653387F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Mar 2021 09:54:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232536AbhCLIva (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Mar 2021 03:51:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46740 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232589AbhCLIvN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Mar 2021 03:51:13 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 41047AF3F;
-        Fri, 12 Mar 2021 08:51:12 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id d11deb55;
-        Fri, 12 Mar 2021 08:52:24 +0000 (UTC)
-Date:   Fri, 12 Mar 2021 08:52:24 +0000
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: fuse: kernel BUG at mm/truncate.c:763!
-Message-ID: <YEsryBEFq4HuLKBs@suse.de>
+        id S232530AbhCLIyM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Mar 2021 03:54:12 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:54317 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232474AbhCLIxz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Mar 2021 03:53:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615539234;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=on1Sxh6r3JqCY0LKPqjzYnWAizl5J1ZeYGQoA8ZcjwA=;
+        b=eQvUJdYOVtwNJgeDSHCP6jSoRWP5bZIF9zjcXUAjpb7+/Zk1dQtZIRg60PWWiaymbCQMEe
+        YJi8amz5bs3q120yWQEL+zFVZWvK/Hh8eczU47DxmfcZPxIgnLyeiCzh/xdvojlFxwi5q5
+        tfgfwiPHVrUige6QtQ9aVFYTe2s0xQc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-216-hFDHyMEnOBmbbT7osTOAvw-1; Fri, 12 Mar 2021 03:53:50 -0500
+X-MC-Unique: hFDHyMEnOBmbbT7osTOAvw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 38D2F8189CB;
+        Fri, 12 Mar 2021 08:53:49 +0000 (UTC)
+Received: from [10.36.114.197] (ovpn-114-197.ams2.redhat.com [10.36.114.197])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 833805D6D7;
+        Fri, 12 Mar 2021 08:53:46 +0000 (UTC)
+Subject: Re: [PATCH v3 1/3] mm: replace migrate_prep with lru_add_drain_all
+To:     Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        joaodias@google.com, surenb@google.com, cgoldswo@codeaurora.org,
+        willy@infradead.org, mhocko@suse.com, vbabka@suse.cz,
+        linux-fsdevel@vger.kernel.org
+References: <20210310161429.399432-1-minchan@kernel.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <bf9c13bf-4715-e598-3fa6-0b60f6615b90@redhat.com>
+Date:   Fri, 12 Mar 2021 09:53:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210310161429.399432-1-minchan@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Miklos,
+On 10.03.21 17:14, Minchan Kim wrote:
+> Currently, migrate_prep is merely a wrapper of lru_cache_add_all.
+> There is not much to gain from having additional abstraction.
+> 
+> Use lru_add_drain_all instead of migrate_prep, which would be more
+> descriptive.
+> 
+> note: migrate_prep_local in compaction.c changed into lru_add_drain
+> to avoid CPU schedule cost with involving many other CPUs to keep
+> keep old behavior.
+> 
+> Signed-off-by: Minchan Kim <minchan@kernel.org>
+> ---
+>   include/linux/migrate.h |  5 -----
+>   mm/compaction.c         |  3 ++-
+>   mm/mempolicy.c          |  4 ++--
+>   mm/migrate.c            | 24 +-----------------------
+>   mm/page_alloc.c         |  2 +-
+>   mm/swap.c               |  5 +++++
+>   6 files changed, 11 insertions(+), 32 deletions(-)
+> 
+> diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+> index 3a389633b68f..6155d97ec76c 100644
+> --- a/include/linux/migrate.h
+> +++ b/include/linux/migrate.h
+> @@ -45,8 +45,6 @@ extern struct page *alloc_migration_target(struct page *page, unsigned long priv
+>   extern int isolate_movable_page(struct page *page, isolate_mode_t mode);
+>   extern void putback_movable_page(struct page *page);
+>   
+> -extern void migrate_prep(void);
+> -extern void migrate_prep_local(void);
+>   extern void migrate_page_states(struct page *newpage, struct page *page);
+>   extern void migrate_page_copy(struct page *newpage, struct page *page);
+>   extern int migrate_huge_page_move_mapping(struct address_space *mapping,
+> @@ -66,9 +64,6 @@ static inline struct page *alloc_migration_target(struct page *page,
+>   static inline int isolate_movable_page(struct page *page, isolate_mode_t mode)
+>   	{ return -EBUSY; }
+>   
+> -static inline int migrate_prep(void) { return -ENOSYS; }
+> -static inline int migrate_prep_local(void) { return -ENOSYS; }
+> -
+>   static inline void migrate_page_states(struct page *newpage, struct page *page)
+>   {
+>   }
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index e04f4476e68e..3be017ececc0 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -2319,7 +2319,8 @@ compact_zone(struct compact_control *cc, struct capture_control *capc)
+>   	trace_mm_compaction_begin(start_pfn, cc->migrate_pfn,
+>   				cc->free_pfn, end_pfn, sync);
+>   
+> -	migrate_prep_local();
+> +	/* lru_add_drain_all could be expensive with involving other CPUs */
+> +	lru_add_drain();
+>   
+>   	while ((ret = compact_finished(cc)) == COMPACT_CONTINUE) {
+>   		int err;
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index ab51132547b8..fc024e97be37 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -1124,7 +1124,7 @@ int do_migrate_pages(struct mm_struct *mm, const nodemask_t *from,
+>   	int err = 0;
+>   	nodemask_t tmp;
+>   
+> -	migrate_prep();
+> +	lru_add_drain_all();
+>   
+>   	mmap_read_lock(mm);
+>   
+> @@ -1323,7 +1323,7 @@ static long do_mbind(unsigned long start, unsigned long len,
+>   
+>   	if (flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)) {
+>   
+> -		migrate_prep();
+> +		lru_add_drain_all();
+>   	}
+>   	{
+>   		NODEMASK_SCRATCH(scratch);
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 62b81d5257aa..45f925e10f5a 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -57,28 +57,6 @@
+>   
+>   #include "internal.h"
+>   
+> -/*
+> - * migrate_prep() needs to be called before we start compiling a list of pages
+> - * to be migrated using isolate_lru_page(). If scheduling work on other CPUs is
+> - * undesirable, use migrate_prep_local()
+> - */
+> -void migrate_prep(void)
+> -{
+> -	/*
+> -	 * Clear the LRU lists so pages can be isolated.
+> -	 * Note that pages may be moved off the LRU after we have
+> -	 * drained them. Those pages will fail to migrate like other
+> -	 * pages that may be busy.
+> -	 */
+> -	lru_add_drain_all();
+> -}
+> -
+> -/* Do the necessary work of migrate_prep but not if it involves other CPUs */
+> -void migrate_prep_local(void)
+> -{
+> -	lru_add_drain();
+> -}
+> -
+>   int isolate_movable_page(struct page *page, isolate_mode_t mode)
+>   {
+>   	struct address_space *mapping;
+> @@ -1769,7 +1747,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+>   	int start, i;
+>   	int err = 0, err1;
+>   
+> -	migrate_prep();
+> +	lru_add_drain_all();
+>   
+>   	for (i = start = 0; i < nr_pages; i++) {
+>   		const void __user *p;
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 2e8348936df8..f05a8db741ca 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -8467,7 +8467,7 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
+>   		.gfp_mask = GFP_USER | __GFP_MOVABLE | __GFP_RETRY_MAYFAIL,
+>   	};
+>   
+> -	migrate_prep();
+> +	lru_add_drain_all();
+>   
+>   	while (pfn < end || !list_empty(&cc->migratepages)) {
+>   		if (fatal_signal_pending(current)) {
+> diff --git a/mm/swap.c b/mm/swap.c
+> index 31b844d4ed94..441d1ae1f285 100644
+> --- a/mm/swap.c
+> +++ b/mm/swap.c
+> @@ -729,6 +729,11 @@ static void lru_add_drain_per_cpu(struct work_struct *dummy)
+>   }
+>   
+>   /*
+> + * lru_add_drain_all() usually needs to be called before we start compiling
+> + * a list of pages to be migrated using isolate_lru_page(). Note that pages
+> + * may be moved off the LRU after we have drained them. Those pages will
+> + * fail to migrate like other pages that may be busy.
+> + *
+>    * Doesn't need any cpu hotplug locking because we do rely on per-cpu
+>    * kworkers being shut down before our page_alloc_cpu_dead callback is
+>    * executed on the offlined cpu.
+> 
 
-I've seen a bug report (5.10.16 kernel splat below) that seems to be
-reproducible in kernels as early as 5.4.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-The commit that caught my attention when looking at what was merged in 5.4
-was e4648309b85a ("fuse: truncate pending writes on O_TRUNC") but I didn't
-went too deeper on that -- I was wondering if you have seen something
-similar before.
+-- 
+Thanks,
 
-There's another splat in the bug report[1] for a 5.4.14 kernel (which may
-be for a different bug, but the traces don't look as reliable as the one
-bellow).
-
-[1] https://bugzilla.opensuse.org/show_bug.cgi?id=1182929
-
-[97604.721590] kernel BUG at mm/truncate.c:763!
-[97604.721601] invalid opcode: 0000 [#1] SMP PTI
-[97604.721613] CPU: 18 PID: 1584438 Comm: g++ Tainted: P           O 
- 5.10.16-1-default #1 openSUSE Tumbleweed
-[97604.721618] Hardware name: Supermicro X11DPi-N(T)/X11DPi-N, BIOS 3.1a
-10/16/2019
-[97604.721631] RIP: 0010:invalidate_inode_pages2_range+0x366/0x4e0
-[97604.721637] Code: 0f 48 f0 e9 19 ff ff ff 31 c9 4c 89 e7 ba 01 00 00 00
-48 89 ee e8 1a c5 02 00 4c 89 ff e8 02 1b 01 00 84 c0 0f 84 ca fe ff ff <0f>
-0b 49 8b 57 18 49 39 d4 0f 85 e2 fe ff ff 49 f7 07 00 60 00 00
-[97604.721645] RSP: 0018:ffffa613aa54ba40 EFLAGS: 00010202
-[97604.721651] RAX: 0000000000000001 RBX: 000000000000000a RCX:
-0000000000000200
-[97604.721656] RDX: 0000000000000090 RSI: 00affff800010037 RDI:
-ffffd880718e0000
-[97604.721660] RBP: 0000000000001400 R08: 0000000000001400 R09:
-0000000000001a73
-[97604.721664] R10: 0000000000000000 R11: 0000000004a684da R12:
-ffff8a28d4549d78
-[97604.721669] R13: ffffffffffffffff R14: 0000000000000000 R15:
-ffffd880718e0000
-[97604.721674] FS:  00007f9cdd7fb740(0000) GS:ffff8a5c7f980000(0000)
-knlGS:0000000000000000
-[97604.721679] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[97604.721683] CR2: 00007f89d3d78d80 CR3: 0000004d8a14e005 CR4:
-00000000007706e0
-[97604.721688] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-0000000000000000
-[97604.721692] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-0000000000000400
-97604.721696] PKRU: 55555554
-[97604.721699] Call Trace:
-[97604.721719]  ? request_wait_answer+0x11a/0x210 [fuse]
-[97604.721729]  ? fuse_dentry_delete+0xb/0x20 [fuse]
-[97604.721740]  fuse_finish_open+0x85/0x150 [fuse]
-[97604.721750]  fuse_open_common+0x1a8/0x1b0 [fuse]
-[97604.721759]  ? fuse_open_common+0x1b0/0x1b0 [fuse]
-[97604.721766]  do_dentry_open+0x14e/0x380
-[97604.721775]  path_openat+0x600/0x10d0
-[97604.721782]  ? handle_mm_fault+0x103c/0x1a00
-[97604.721791]  ? follow_page_pte+0x314/0x5f0
-[97604.721795]  do_filp_open+0x88/0x130
-[97604.721803]  ? security_prepare_creds+0x6d/0x90
-[97604.721808]  ? __kmalloc+0x11d/0x2a0
-[97604.721814]  do_open_execat+0x6d/0x1a0
-[97604.721819]  bprm_execve+0x190/0x6b0
-[97604.721825]  do_execveat_common+0x192/0x1c0
-[97604.721830]  __x64_sys_execve+0x39/0x50
-[97604.721836]  do_syscall_64+0x33/0x80
-[97604.721843]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[97604.721848] RIP: 0033:0x7f9cdcfe2c37
-[97604.721853] Code: ff ff 76 df 89 c6 f7 de 64 41 89 32 eb d5 89 c6 f7 de
-64 41 89 32 eb db 66 2e 0f 1f 84 00 00 00 00 00 90 b8 3b 00 00 00 0f 05 <48>
-3d 00 f0 ff ff 77 02 f3 c3 48 8b 15 08 12 30 00 f7 d8 64 89 02
-[97604.721862] RSP: 002b:00007ffe444f5758 EFLAGS: 00000202 ORIG_RAX:
-000000000000003b
-[97604.721867] RAX: ffffffffffffffda RBX: 00007f9cdd7fb6a0 RCX:
-00007f9cdcfe2c37
-[97604.721872] RDX: 00000000020f5300 RSI: 00000000020f3bf8 RDI:
-00000000020f36a0
-[97604.721876] RBP: 0000000000000001 R08: 0000000000000000 R09:
-0000000000000000
-[97604.721880] R10: 00007ffe444f4b60 R11: 0000000000000202 R12:
-0000000000000000
-[97604.721884] R13: 0000000000000001 R14: 00000000020f36a0 R15:
-0000000000000000
-[97604.721890] Modules linked in: overlay rpcsec_gss_krb5 nfsv4 dns_resolver
-nfsv3 nfs fscache libafs(PO) iscsi_ibft iscsi_boot_sysfs rfkill
-vboxnetadp(O) vboxnetflt(O) vboxdrv(O) dmi_sysfs intel_rapl_msr
-intel_rapl_common isst_if_common joydev ipmi_ssif i40iw ib_uverbs iTCO_wdt
-intel_pmc_bxt ib_core hid_generic iTCO_vendor_support skx_edac nfit
-libnvdimm x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel acpi_ipmi
-usbhid kvm i40e ipmi_si ioatdma mei_me i2c_i801 irqbypass ipmi_devintf mei
-i2c_smbus lpc_ich dca efi_pstore pcspkr ipmi_msghandler tiny_power_button
-acpi_pad button nls_iso8859_1 nls_cp437 vfat fat nfsd nfs_acl lockd
-auth_rpcgss grace sunrpc fuse configfs nfs_ssc ast i2c_algo_bit
-drm_vram_helper drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops
-cec rc_core drm_ttm_helper xhci_pci ttm xhci_pci_renesas xhci_hcd
-crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel aesni_intel
-drm glue_helper crypto_simd cryptd usbcore wmi sg br_netfilter bridge stp
-llc
-[97604.721991]  dm_multipath dm_mod scsi_dh_rdac scsi_dh_emc scsi_dh_alua
-msr efivarfs
-[97604.722031] ---[ end trace edcabaccd35272e2 ]---
-[97604.727773] RIP: 0010:invalidate_inode_pages2_range+0x366/0x4e0
-
-Cheers,
---
-Luís
+David / dhildenb
 
