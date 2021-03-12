@@ -2,133 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EAE33398BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Mar 2021 21:57:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC5463398CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Mar 2021 22:01:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235087AbhCLU4b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Mar 2021 15:56:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58272 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235091AbhCLU4K (ORCPT
+        id S235124AbhCLVAN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Mar 2021 16:00:13 -0500
+Received: from mxchg03.rrz.uni-hamburg.de ([134.100.38.113]:40761 "EHLO
+        mxchg03.rrz.uni-hamburg.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235115AbhCLVAI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Mar 2021 15:56:10 -0500
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D12B9C061762
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Mar 2021 12:56:09 -0800 (PST)
-Received: by mail-pg1-x52a.google.com with SMTP id o10so16647683pgg.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Mar 2021 12:56:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0MZ2+8nOsi7HJhoAfY0jiveT3TjLCB961VetY/jrPME=;
-        b=hv4WP0ZL+I8JtgtyKJ7f7l9KqijZvL568YYhIiCgfdKI7r+UV7zLmMfPvTUHVRXyKx
-         o4CradS9EPYHOAmodxix7Nhkt427K+WQjUbz/aEHGlWGJrr6FqqOZqGXnyS7niQgUt+J
-         EvhCpgqbDwIhDRkgPuWskwZZtUa25kw7dfEzY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0MZ2+8nOsi7HJhoAfY0jiveT3TjLCB961VetY/jrPME=;
-        b=bvdxaiwSMkfhdNWTbE3Z3RFpiIueicoZmtK2VSxqcBVMYD4YaoTrAJyjaZjDKiNNUc
-         ZdLhD0HmwY+mNXFuU3Hw3h+FU/gdA8+L6aCC4xRas9vwkWCDjFjIR42JdO6hyZmK6iru
-         l6v8VdZIH6F2CcmIV+HyJFbKYkuD+3wYWQU23aCJSHvM3eyGqSgQyf/I08CwPnW4+kDd
-         hH0Ac2fTJWVPjc9BdBasmXRcgoV2Zp73OXSJk8TDAacjaErzuCeIv+yC6c2qje+ixX/k
-         56LUmUnUhvdzTXxJNwsRqChRE2R+B9kYRtN3Qo6s9t8BAc46uMquRv1lT6VqHn0xk9L/
-         EF2w==
-X-Gm-Message-State: AOAM5320Et8tC+DZjiwABfvwZGed3t4D0SxzIopN/itUPa8359AyeLkG
-        JsueNjDCy9FPoxmW1+g9LW2B9Q==
-X-Google-Smtp-Source: ABdhPJzafy8BkL0OjlmboQU08y3WvQDXVi4tBbIHv5S4LxUKUq0ByUCjHSgQQd7OLwhk4XwkCkPP+g==
-X-Received: by 2002:a63:4f59:: with SMTP id p25mr13380520pgl.335.1615582569298;
-        Fri, 12 Mar 2021 12:56:09 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id c25sm5919465pfo.101.2021.03.12.12.56.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Mar 2021 12:56:08 -0800 (PST)
-From:   Kees Cook <keescook@chromium.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
-        Adam Nichols <adam@grimm-co.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: [PATCH] seq_file: Unconditionally use vmalloc for buffer
-Date:   Fri, 12 Mar 2021 12:55:58 -0800
-Message-Id: <20210312205558.2947488-1-keescook@chromium.org>
-X-Mailer: git-send-email 2.25.1
+        Fri, 12 Mar 2021 16:00:08 -0500
+X-Greylist: delayed 477 seconds by postgrey-1.27 at vger.kernel.org; Fri, 12 Mar 2021 16:00:07 EST
+X-Virus-Scanned: by University of Hamburg ( RRZ / mgw05.rrz.uni-hamburg.de )
+Received: from mailhost.uni-hamburg.de (mailhost.uni-hamburg.de [134.100.38.99])
+        by mxchg03.rrz.uni-hamburg.de (Postfix) with ESMTPS;
+        Fri, 12 Mar 2021 21:52:04 +0100 (CET)
+X-Virus-Scanned: by University of Hamburg ( RRZ / mh06.rrz.uni-hamburg.de )
+Received: from [192.168.178.93] (dynamic-077-003-126-133.77.3.pool.telefonica.de [77.3.126.133])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: fmsv030@uni-hamburg.de)
+        by mailhost.uni-hamburg.de (Postfix) with ESMTPSA id 3FBDBBE2F3;
+        Fri, 12 Mar 2021 21:52:04 +0100 (CET)
+To:     David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <161550398415.1983424.4857046033308089813.stgit@warthog.procyon.org.uk>
+ <161550399833.1983424.16644306048746346626.stgit@warthog.procyon.org.uk>
+From:   Gaja Sophie Peters <gaja.peters@math.uni-hamburg.de>
+Subject: Re: [PATCH v2 2/2] afs: Stop listxattr() from listing "afs.*"
+ attributes
+Message-ID: <f58e6dbf-cc0b-8847-e66d-8d747d87531a@math.uni-hamburg.de>
+Date:   Fri, 12 Mar 2021 21:52:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; g=6e23cb09e9c77602ae36025771732e214a07d5d1; i=wnTs9CQ9b8oyAQUYWk1TWb6rr60OLTnvw/rrLAiBrmk=; m=mNgWWeM/mV0t2QLIflkURb7sIrkmH0bDqAx9/NsC4HI=; p=mfyYitSAa6+tmp4ZfMy/uMq8hKV0urLrdhp8kEobIBA=
-X-Patch-Sig: m=pgp; i=keescook@chromium.org; s=0x0x8972F4DFDC6DC026; b=iQIzBAABCgAdFiEEpcP2jyKd1g9yPm4TiXL039xtwCYFAmBL1V0ACgkQiXL039xtwCa3LQ/6Amd tpDEYqTBiE/cyKH5oUqsQxoRBQ19QCQ9ALOD4dXuoBkkGN2Z8c4FJjnPlpgEDPXleFKrWyxGVvQYs gzJxQAsLJ5cG0YYTFGMHHDTrWCNNCqi9+PpSZP8vZ7+HtwsHJIVWrZEGrkYLRIVVrY8sFTWpcKghS YGBi7qPuHqBiz0axrxoqgaX8KKG6wCDpgJn2yPZkwPFvv0gAKRPNdBRbgCk29gs/nc8/1/cPcXZuN fmd1JOG+7QeCK2EZ/0c2WkcYi1/tGVtJuFOeSGqmaJ+te9giO8ttPFZKSf68zxMsffb71+beLFXbx L2mplD8GK/yZZ3rDf7fl36bcIVF1EfzishGjcJEk4qMz+7WfyHCb7cLl74fcsWiv5NVjdQD8UHgdE rvgvzwZ6vo7XEipizdLTILPj7pdW+51I2RvZOreYuQxN3PY0HW4uTVb7RX/FKm4iE/E5birDDza4m Q+HGdnqsqXnni58jFh9EUwGzVeMpksHjIkPrMsy50opl3TAp1149pFv5IbpJ98FKhHpmeD9MqPbG+ EQU+zzxfuD7Tdg0Rq/LeN7/OWQdrdFh4wtU7+O1sbW/LLVyCd0tJEVGhF0FUWKTDLr+PzMLWyA16z dggneBkRh7rz6SCkRsaIXJYYYesvxRwBGxbt1E4u4BGQkdQimA5Y8fQsXpK2tkjc=
+In-Reply-To: <161550399833.1983424.16644306048746346626.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-AT-frami
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The sysfs interface to seq_file continues to be rather fragile, as seen
-with some recent exploits[1]. Move the seq_file buffer to the vmap area
-(while retaining the accounting flag), since it has guard pages that
-will catch and stop linear overflows. This seems justified given that
-seq_file already uses kvmalloc(), that allocations are normally short
-lived, and that they are not normally performance critical.
+Am 12.03.21 um 00:06 schrieb David Howells:
+> afs_listxattr() lists all the available special afs xattrs (i.e. those in
+> the "afs.*" space), no matter what type of server we're dealing with.  But
+> OpenAFS servers, for example, cannot deal with some of the extra-capable
+> attributes that AuriStor (YFS) servers provide.  Unfortunately, the
+> presence of the afs.yfs.* attributes causes errors[1] for anything that
+> tries to read them if the server is of the wrong type.
+> 
+> Fix the problem by removing afs_listxattr() so that none of the special
+> xattrs are listed (AFS doesn't support xattrs).  It does mean, however,
+> that getfattr won't list them, though they can still be accessed with
+> getxattr() and setxattr().
+> 
+> This can be tested with something like:
+> 
+> 	getfattr -d -m ".*" /afs/example.com/path/to/file
+> 
+> With this change, none of the afs.* attributes should be visible.
+> 
+> Changes:
+> ver #2:
+>  - Hide all of the afs.* xattrs, not just the ACL ones.
+> 
+> Fixes: ae46578b963f ("afs: Get YFS ACLs and information through xattrs")
+> Reported-by: Gaja Sophie Peters <gaja.peters@math.uni-hamburg.de>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: linux-afs@lists.infradead.org
+> Link: http://lists.infradead.org/pipermail/linux-afs/2021-March/003502.html [1]
+> Link: http://lists.infradead.org/pipermail/linux-afs/2021-March/003567.html # v1
+> ---
+> 
+>  fs/afs/dir.c      |    1 -
+>  fs/afs/file.c     |    1 -
+>  fs/afs/inode.c    |    1 -
+>  fs/afs/internal.h |    1 -
+>  fs/afs/mntpt.c    |    1 -
+>  fs/afs/xattr.c    |   23 -----------------------
+>  6 files changed, 28 deletions(-)
+> 
+> diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+> index 714fcca9af99..17548c1faf02 100644
+> --- a/fs/afs/dir.c
+> +++ b/fs/afs/dir.c
+> @@ -70,7 +70,6 @@ const struct inode_operations afs_dir_inode_operations = {
+>  	.permission	= afs_permission,
+>  	.getattr	= afs_getattr,
+>  	.setattr	= afs_setattr,
+> -	.listxattr	= afs_listxattr,
+>  };
+>  
+>  const struct address_space_operations afs_dir_aops = {
+> diff --git a/fs/afs/file.c b/fs/afs/file.c
+> index 85f5adf21aa0..960b64268623 100644
+> --- a/fs/afs/file.c
+> +++ b/fs/afs/file.c
+> @@ -43,7 +43,6 @@ const struct inode_operations afs_file_inode_operations = {
+>  	.getattr	= afs_getattr,
+>  	.setattr	= afs_setattr,
+>  	.permission	= afs_permission,
+> -	.listxattr	= afs_listxattr,
+>  };
+>  
+>  const struct address_space_operations afs_fs_aops = {
+> diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+> index 1156b2df28d3..12be88716e4c 100644
+> --- a/fs/afs/inode.c
+> +++ b/fs/afs/inode.c
+> @@ -27,7 +27,6 @@
+>  
+>  static const struct inode_operations afs_symlink_inode_operations = {
+>  	.get_link	= page_get_link,
+> -	.listxattr	= afs_listxattr,
+>  };
+>  
+>  static noinline void dump_vnode(struct afs_vnode *vnode, struct afs_vnode *parent_vnode)
+> diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+> index b626e38e9ab5..1627b1872812 100644
+> --- a/fs/afs/internal.h
+> +++ b/fs/afs/internal.h
+> @@ -1509,7 +1509,6 @@ extern int afs_launder_page(struct page *);
+>   * xattr.c
+>   */
+>  extern const struct xattr_handler *afs_xattr_handlers[];
+> -extern ssize_t afs_listxattr(struct dentry *, char *, size_t);
+>  
+>  /*
+>   * yfsclient.c
+> diff --git a/fs/afs/mntpt.c b/fs/afs/mntpt.c
+> index 052dab2f5c03..bbb2c210d139 100644
+> --- a/fs/afs/mntpt.c
+> +++ b/fs/afs/mntpt.c
+> @@ -32,7 +32,6 @@ const struct inode_operations afs_mntpt_inode_operations = {
+>  	.lookup		= afs_mntpt_lookup,
+>  	.readlink	= page_readlink,
+>  	.getattr	= afs_getattr,
+> -	.listxattr	= afs_listxattr,
+>  };
+>  
+>  const struct inode_operations afs_autocell_inode_operations = {
+> diff --git a/fs/afs/xattr.c b/fs/afs/xattr.c
+> index 4934e325a14a..7751b0b3f81d 100644
+> --- a/fs/afs/xattr.c
+> +++ b/fs/afs/xattr.c
+> @@ -11,29 +11,6 @@
+>  #include <linux/xattr.h>
+>  #include "internal.h"
+>  
+> -static const char afs_xattr_list[] =
+> -	"afs.acl\0"
+> -	"afs.cell\0"
+> -	"afs.fid\0"
+> -	"afs.volume\0"
+> -	"afs.yfs.acl\0"
+> -	"afs.yfs.acl_inherited\0"
+> -	"afs.yfs.acl_num_cleaned\0"
+> -	"afs.yfs.vol_acl";
+> -
+> -/*
+> - * Retrieve a list of the supported xattrs.
+> - */
+> -ssize_t afs_listxattr(struct dentry *dentry, char *buffer, size_t size)
+> -{
+> -	if (size == 0)
+> -		return sizeof(afs_xattr_list);
+> -	if (size < sizeof(afs_xattr_list))
+> -		return -ERANGE;
+> -	memcpy(buffer, afs_xattr_list, sizeof(afs_xattr_list));
+> -	return sizeof(afs_xattr_list);
+> -}
+> -
+>  /*
+>   * Deal with the result of a successful fetch ACL operation.
+>   */
 
-[1] https://blog.grimm-co.com/2021/03/new-old-bugs-in-linux-kernel.html
+Tested-by: Gaja Sophie Peters <gaja.peters@math.uni-hamburg.de>
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- fs/seq_file.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Works for me:
+$ getfattr -d -m - /afs/openafs.org/
+$ getfattr -d -m - /afs/your-file-system.com/
+these two show nothing as expected
 
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index cb11a34fb871..ad78577d4c2c 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -32,7 +32,7 @@ static void seq_set_overflow(struct seq_file *m)
- 
- static void *seq_buf_alloc(unsigned long size)
- {
--	return kvmalloc(size, GFP_KERNEL_ACCOUNT);
-+	return __vmalloc(size, GFP_KERNEL_ACCOUNT);
- }
- 
- /**
-@@ -130,7 +130,7 @@ static int traverse(struct seq_file *m, loff_t offset)
- 
- Eoverflow:
- 	m->op->stop(m, p);
--	kvfree(m->buf);
-+	vfree(m->buf);
- 	m->count = 0;
- 	m->buf = seq_buf_alloc(m->size <<= 1);
- 	return !m->buf ? -ENOMEM : -EAGAIN;
-@@ -237,7 +237,7 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 			goto Fill;
- 		// need a bigger buffer
- 		m->op->stop(m, p);
--		kvfree(m->buf);
-+		vfree(m->buf);
- 		m->count = 0;
- 		m->buf = seq_buf_alloc(m->size <<= 1);
- 		if (!m->buf)
-@@ -349,7 +349,7 @@ EXPORT_SYMBOL(seq_lseek);
- int seq_release(struct inode *inode, struct file *file)
- {
- 	struct seq_file *m = file->private_data;
--	kvfree(m->buf);
-+	vfree(m->buf);
- 	kmem_cache_free(seq_file_cache, m);
- 	return 0;
- }
-@@ -585,7 +585,7 @@ int single_open_size(struct file *file, int (*show)(struct seq_file *, void *),
- 		return -ENOMEM;
- 	ret = single_open(file, show, data);
- 	if (ret) {
--		kvfree(buf);
-+		vfree(buf);
- 		return ret;
- 	}
- 	((struct seq_file *)file->private_data)->buf = buf;
+$ getfattr -n afs.acl /afs/openafs.org/
+$ getfattr -n afs.acl /afs/your-file-system.com/
+these two show the ACL as expected
+
+$ getfattr -n afs.yfs.acl /afs/openafs.org/
+$ getfattr -n afs.yfs.acl /afs/your-file-system.com/
+the latter shows as expected the YFS-ACL,
+the former as expected the simple message "No such attribute".
+
+
+Only as a "BTW", the primary Patch-Description has a minor mistake: In
+the email titled "[PATCH v2 0/2] AFS metadata xattr fixes", you write:
+
+> Fix an oops in AFS that can be triggered by accessing one of the
+>      afs.yfs.* xattrs against a yfs server[1][2]
+
+That should of course be "against an OpenAFS server".
+
+Greetings,
+Gaja Peters
+
 -- 
-2.25.1
-
++----------
+| IT-Gruppe, Systemadministration
+| Universität Hamburg, Fachbereich Mathematik
+| Bundesstr. 55 (Geomatikum)
+| Raum 212; Tel. 42838-5175
++----------
