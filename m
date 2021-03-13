@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C0F74339BCA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Mar 2021 05:41:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E614B339BC4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Mar 2021 05:41:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233208AbhCMElA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S233206AbhCMElA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Fri, 12 Mar 2021 23:41:00 -0500
-Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:33582 "EHLO
+Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:33538 "EHLO
         zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233155AbhCMEkg (ORCPT
+        with ESMTP id S233119AbhCMEkg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 12 Mar 2021 23:40:36 -0500
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lKw2j-005Nzv-9t; Sat, 13 Mar 2021 04:38:25 +0000
+        id 1lKw2j-005Nzz-CM; Sat, 13 Mar 2021 04:38:25 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
@@ -26,9 +26,9 @@ Cc:     linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
         Richard Weinberger <richard@nod.at>,
         Dominique Martinet <asmadeus@codewreck.org>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 08/15] gfs2: be careful with inode refresh
-Date:   Sat, 13 Mar 2021 04:38:17 +0000
-Message-Id: <20210313043824.1283821-8-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 09/15] do_cifs_create(): don't set ->i_mode of something we had not created
+Date:   Sat, 13 Mar 2021 04:38:18 +0000
+Message-Id: <20210313043824.1283821-9-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210313043824.1283821-1-viro@zeniv.linux.org.uk>
 References: <YExBLBEbJRXDV19F@zeniv-ca.linux.org.uk>
@@ -40,56 +40,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-1) gfs2_dinode_in() should *not* touch ->i_rdev on live inodes; even
-"zero and immediately reread the same value from dinode" is broken -
-have it overlap with ->release() of char device and you can get all
-kinds of bogus behaviour.
-
-2) mismatch on inode type on live inodes should be treated as fs
-corruption rather than blindly setting ->i_mode.
+If the file had existed before we'd called ->atomic_open() (without
+O_EXCL, that is), we have no more business setting ->i_mode than
+we would setting ->i_uid or ->i_gid.  We also have no business
+doing either if another client has managed to get unlink+mkdir
+between ->open() and cifs_inode_get_info().
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/gfs2/glops.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ fs/cifs/dir.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/fs/gfs2/glops.c b/fs/gfs2/glops.c
-index 8e32d569c8bf..ef0b583c3417 100644
---- a/fs/gfs2/glops.c
-+++ b/fs/gfs2/glops.c
-@@ -394,18 +394,24 @@ static int gfs2_dinode_in(struct gfs2_inode *ip, const void *buf)
- 	const struct gfs2_dinode *str = buf;
- 	struct timespec64 atime;
- 	u16 height, depth;
-+	umode_t mode = be32_to_cpu(str->di_mode);
-+	bool is_new = ip->i_inode.i_flags & I_NEW;
- 
- 	if (unlikely(ip->i_no_addr != be64_to_cpu(str->di_num.no_addr)))
- 		goto corrupt;
-+	if (unlikely(!is_new && inode_wrong_type(&ip->i_inode, mode)))
-+		goto corrupt;
- 	ip->i_no_formal_ino = be64_to_cpu(str->di_num.no_formal_ino);
--	ip->i_inode.i_mode = be32_to_cpu(str->di_mode);
--	ip->i_inode.i_rdev = 0;
--	switch (ip->i_inode.i_mode & S_IFMT) {
--	case S_IFBLK:
--	case S_IFCHR:
--		ip->i_inode.i_rdev = MKDEV(be32_to_cpu(str->di_major),
--					   be32_to_cpu(str->di_minor));
--		break;
-+	ip->i_inode.i_mode = mode;
-+	if (is_new) {
-+		ip->i_inode.i_rdev = 0;
-+		switch (mode & S_IFMT) {
-+		case S_IFBLK:
-+		case S_IFCHR:
-+			ip->i_inode.i_rdev = MKDEV(be32_to_cpu(str->di_major),
-+						   be32_to_cpu(str->di_minor));
-+			break;
-+		}
+diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
+index a3fb81e0ba17..9d7ae93c8af7 100644
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@ -418,15 +418,16 @@ cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned int xid,
+ 		if (newinode) {
+ 			if (server->ops->set_lease_key)
+ 				server->ops->set_lease_key(newinode, fid);
+-			if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_DYNPERM)
+-				newinode->i_mode = mode;
+-			if ((*oplock & CIFS_CREATE_ACTION) &&
+-			    (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_SET_UID)) {
+-				newinode->i_uid = current_fsuid();
+-				if (inode->i_mode & S_ISGID)
+-					newinode->i_gid = inode->i_gid;
+-				else
+-					newinode->i_gid = current_fsgid();
++			if ((*oplock & CIFS_CREATE_ACTION) && S_ISREG(newinode->i_mode)) {
++				if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_DYNPERM)
++					newinode->i_mode = mode;
++				if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_SET_UID) {
++					newinode->i_uid = current_fsuid();
++					if (inode->i_mode & S_ISGID)
++						newinode->i_gid = inode->i_gid;
++					else
++						newinode->i_gid = current_fsgid();
++				}
+ 			}
+ 		}
  	}
- 
- 	i_uid_write(&ip->i_inode, be32_to_cpu(str->di_uid));
 -- 
 2.11.0
 
