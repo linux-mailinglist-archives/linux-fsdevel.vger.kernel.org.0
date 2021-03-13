@@ -2,88 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E05A833A193
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Mar 2021 23:08:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F20D933A1DC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Mar 2021 00:14:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234774AbhCMWID (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Mar 2021 17:08:03 -0500
-Received: from tartarus.angband.pl ([51.83.246.204]:41154 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234758AbhCMWHh (ORCPT
+        id S233550AbhCMXNO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Mar 2021 18:13:14 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:41392 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231329AbhCMXM5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Mar 2021 17:07:37 -0500
-Received: from kilobyte by tartarus.angband.pl with local (Exim 4.94)
-        (envelope-from <kilobyte@angband.pl>)
-        id 1lLCJc-00GN3W-3k; Sat, 13 Mar 2021 23:00:56 +0100
-Date:   Sat, 13 Mar 2021 23:00:56 +0100
-From:   Adam Borowski <kilobyte@angband.pl>
-To:     Neal Gompa <ngompa13@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, david <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 00/10] fsdax,xfs: Add reflink&dedupe support for fsdax
-Message-ID: <YE02GArtVnwEeJML@angband.pl>
-References: <20210226002030.653855-1-ruansy.fnst@fujitsu.com>
- <CAEg-Je-OLidbfzHCJvY55x+-cOfiUxX8CJ1AeN8VxXAVuVyxKQ@mail.gmail.com>
- <20210310130227.GN3479805@casper.infradead.org>
- <20210310142159.kudk7q2ogp4yqn36@fiona>
- <20210310142643.GQ3479805@casper.infradead.org>
- <YEy4+SPUvQkL44PQ@angband.pl>
- <CAEg-Je-JCW5xa6w5Z9n7+UNnLju251SmqnXiReA2v41fFaXAtw@mail.gmail.com>
+        Sat, 13 Mar 2021 18:12:57 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: shreeya)
+        with ESMTPSA id 5EA611F472EA
+From:   Shreeya Patel <shreeya.patel@collabora.com>
+To:     krisman@collabora.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     kernel@collabora.com, gustavo.padovan@collabora.com,
+        andre.almeida@collabora.com,
+        Shreeya Patel <shreeya.patel@collabora.com>
+Subject: [PATCH 0/3] Make UTF-8 encoding loadable
+Date:   Sun, 14 Mar 2021 04:42:10 +0530
+Message-Id: <20210313231214.383576-1-shreeya.patel@collabora.com>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEg-Je-JCW5xa6w5Z9n7+UNnLju251SmqnXiReA2v41fFaXAtw@mail.gmail.com>
-X-Junkbait: aaron@angband.pl, zzyx@angband.pl
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 13, 2021 at 11:24:00AM -0500, Neal Gompa wrote:
-> On Sat, Mar 13, 2021 at 8:09 AM Adam Borowski <kilobyte@angband.pl> wrote:
-> >
-> > On Wed, Mar 10, 2021 at 02:26:43PM +0000, Matthew Wilcox wrote:
-> > > On Wed, Mar 10, 2021 at 08:21:59AM -0600, Goldwyn Rodrigues wrote:
-> > > > DAX on btrfs has been attempted[1]. Of course, we could not
-> > >
-> > > But why?  A completeness fetish?  I don't understand why you decided
-> > > to do this work.
-> >
-> > * xfs can shapshot only single files, btrfs entire subvolumes
-> > * btrfs-send|receive
-> > * enumeration of changed parts of a file
-> 
-> XFS cannot do snapshots since it lacks metadata COW. XFS reflinking is
-> primarily for space efficiency.
-
-A reflink is a single-file snapshot.
-
-My work team really wants this very patchset -- reflinks on DAX allow
-backups and/or checkpointing, without stopping the world (there's a single
-file, "pool", here).
-
-Besides, you can still get poor-man's whole-subvolume(/directory)
-snapshots by manually walking the tree and reflinking everything.
-That's not atomic -- but rsync isn't atomic either.  That's enough for
-eg. dnf/dpkg purposes.
+utf8data.h_shipped has a large database table which is an auto-generated
+decodification trie for the unicode normalization functions and it is not
+necessary to carry this large table in the kernel.
+Goal is to make UTF-8 encoding loadable by converting it into a module
+and adding a layer between the filesystems and the utf8 module which will
+load the module whenever any filesystem that needs unicode is mounted.
+Unicode is the subsystem and utf8 is a charachter encoding for the
+subsystem, hence first two patches in the series are renaming functions
+and file name to unicode for better understanding the difference between
+UTF-8 module and unicode layer.
+Last patch in the series adds the layer and utf8 module.
 
 
-Meow!
+Shreeya Patel (3):
+  fs: unicode: Rename function names from utf8 to unicode
+  fs: unicode: Rename utf8-core file to unicode-core
+  fs: unicode: Add utf8 module and a unicode layer
+
+ fs/ext4/hash.c             |   2 +-
+ fs/ext4/namei.c            |  12 +-
+ fs/ext4/super.c            |   6 +-
+ fs/f2fs/dir.c              |  12 +-
+ fs/f2fs/super.c            |   6 +-
+ fs/libfs.c                 |   6 +-
+ fs/unicode/Kconfig         |   7 +-
+ fs/unicode/Makefile        |   5 +-
+ fs/unicode/unicode-core.c  | 112 +++++++++++++++++
+ fs/unicode/utf8-core.c     | 248 ++++++++++---------------------------
+ fs/unicode/utf8-selftest.c |   8 +-
+ fs/unicode/utf8mod.c       | 246 ++++++++++++++++++++++++++++++++++++
+ include/linux/unicode.h    |  52 +++++---
+ 13 files changed, 492 insertions(+), 230 deletions(-)
+ create mode 100644 fs/unicode/unicode-core.c
+ create mode 100644 fs/unicode/utf8mod.c
+
 -- 
-⢀⣴⠾⠻⢶⣦⠀
-⣾⠁⢰⠒⠀⣿⡁
-⢿⡄⠘⠷⠚⠋⠀ NADIE anticipa la inquisición de españa!
-⠈⠳⣄⠀⠀⠀⠀
+2.30.1
+
