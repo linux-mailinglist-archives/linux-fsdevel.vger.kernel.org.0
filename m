@@ -2,326 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3672C339E8B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Mar 2021 15:33:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F5DE339EF2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Mar 2021 16:33:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233188AbhCMOcT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Mar 2021 09:32:19 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:41178 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbhCMOby (ORCPT
+        id S233486AbhCMPci (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Mar 2021 10:32:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42758 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233478AbhCMPcJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Mar 2021 09:31:54 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1lL5Iz-0006T4-55; Sat, 13 Mar 2021 14:31:49 +0000
-Date:   Sat, 13 Mar 2021 15:31:48 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Vivek Goyal <vgoyal@redhat.com>, Christoph Hellwig <hch@lst.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Serge Hallyn <serge@hallyn.com>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 02/40] fs: add id translation helpers
-Message-ID: <20210313143148.d6rhgmhxwq6abb6y@wittgenstein>
-References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
- <20210121131959.646623-3-christian.brauner@ubuntu.com>
- <20210313000529.GA181317@redhat.com>
+        Sat, 13 Mar 2021 10:32:09 -0500
+Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5F3C061574
+        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Mar 2021 07:32:08 -0800 (PST)
+Received: by mail-ot1-x32b.google.com with SMTP id l11so1937510otq.7
+        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Mar 2021 07:32:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JjxFnib4GJ7o9UIJx9idNmQjKFRv3fxgW/EoBUe4vRU=;
+        b=c40f8ylotMqI32p9HmmjfEryFFjv17CDqDET2B50Mt0KQe+GIftQJYwlA5cnghuPAF
+         DKG8P/eKVy84y7ve5S9Y+8bxzeiurvpVOjZmWb2gYwfZ+Rp77St5XomIU3xm1rMbFFiJ
+         J8HqDGdkigKmmYzHzBPPW79OavyzthmcmDhF9n8skVxSI2sl4gvaogUzISI1y9DT4zYp
+         LgAsuaSDl4nsIPgg5Fi7optzGCEUNWFYkNKjy8QzeyRSoONyJ/KRexi4CZBcNi9HF6pX
+         1QB16xhepuuCSpCqV14onp1GqVZHIpdPw+jLx6QgJFqVwgxUVM9/FZa+QuYxTssFo1ZZ
+         QCzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JjxFnib4GJ7o9UIJx9idNmQjKFRv3fxgW/EoBUe4vRU=;
+        b=NDOg81lg4oFDQXrG7nSqQRJ7Zy6z9KMS+35YFoX3SlBXXDrvkgroWjoM5zBrCmx11J
+         iQN7u2C5bj5SVpfdhqfynvCkvCQrPKhTGVBVbZuUTYVemmOPoVkhVwKHM59ncytNc6ow
+         8aU1QEiKycrGUKFGZIcfj/ZecQlO7cYboAL2+adDFYZ41OdTGfn34AhUcURYb8wDdDPU
+         6ok0b15H4qJeK9/NU+mXqOyzfceZj0b1QeBJVWp3Mr+JPn9pGOaPukGo6h/jgXVVYAjI
+         gFvEyxEs71bZjkwaBpRigs87itmWomTrykGBP4cLWnuZlozRao9wHQTr3KubPPRyjUaZ
+         Tz8Q==
+X-Gm-Message-State: AOAM532hZdsVoeTf+drF2ifZYjcqAt8jHX5PZUCvD8QkWIaocpA5XcyU
+        eOOMG0ibPzcD/ZdaKcY+QR6ECjMnq34H/cmu53O6XlCDlZKLYA==
+X-Google-Smtp-Source: ABdhPJyTgmk3acVaQkO3OOwAyrqRG6hYn1Fvn/+qEnmzAvySgZ1oTg07r/qEVpn+QIntaydZkKwotiljcLojH27VCSo=
+X-Received: by 2002:a9d:bc9:: with SMTP id 67mr7730323oth.352.1615649526914;
+ Sat, 13 Mar 2021 07:32:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210313000529.GA181317@redhat.com>
+References: <CAOg9mSTQ-zNKXQGBK9QEnwJCvwqh=zFLbLJZy-ibGZwLve4o0w@mail.gmail.com>
+ <20210201130800.GP308988@casper.infradead.org> <CAOg9mSSd5ccoi1keeiRfkV+esekcQLxer9_1iZ-r9bQDjZLfBg@mail.gmail.com>
+In-Reply-To: <CAOg9mSSd5ccoi1keeiRfkV+esekcQLxer9_1iZ-r9bQDjZLfBg@mail.gmail.com>
+From:   Mike Marshall <hubcap@omnibond.com>
+Date:   Sat, 13 Mar 2021 10:31:55 -0500
+Message-ID: <CAOg9mSSEVE3PGs2E9ya5_B6dQkoH6n2wGAEW_wWSEvw0LurWuQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] implement orangefs_readahead
+To:     Matthew Wilcox <willy@infradead.org>,
+        Mike Marshall <hubcap@omnibond.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 12, 2021 at 07:05:29PM -0500, Vivek Goyal wrote:
-> On Thu, Jan 21, 2021 at 02:19:21PM +0100, Christian Brauner wrote:
-> > Add simple helpers to make it easy to map kuids into and from idmapped
-> > mounts. We provide simple wrappers that filesystems can use to e.g.
-> > initialize inodes similar to i_{uid,gid}_read() and i_{uid,gid}_write().
-> > Accessing an inode through an idmapped mount maps the i_uid and i_gid of
-> > the inode to the mount's user namespace. If the fsids are used to
-> > initialize inodes they are unmapped according to the mount's user
-> > namespace. Passing the initial user namespace to these helpers makes
-> > them a nop and so any non-idmapped paths will not be impacted.
-> > 
-> > Link: https://lore.kernel.org/r/20210112220124.837960-9-christian.brauner@ubuntu.com
-> > Cc: David Howells <dhowells@redhat.com>
-> > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > ---
-> > /* v2 */
-> > - Christoph Hellwig <hch@lst.de>:
-> >   - Get rid of the ifdefs and the config option that hid idmapped mounts.
-> > 
-> > /* v3 */
-> > unchanged
-> > 
-> > /* v4 */
-> > - Serge Hallyn <serge@hallyn.com>:
-> >   - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
-> >     terminology consistent.
-> > 
-> > /* v5 */
-> > unchanged
-> > base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
-> > 
-> > /* v6 */
-> > unchanged
-> > base-commit: 19c329f6808995b142b3966301f217c831e7cf31
-> > ---
-> >  include/linux/fs.h | 47 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 47 insertions(+)
-> > 
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index fd0b80e6361d..3165998e2294 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -40,6 +40,7 @@
-> >  #include <linux/build_bug.h>
-> >  #include <linux/stddef.h>
-> >  #include <linux/mount.h>
-> > +#include <linux/cred.h>
-> >  
-> >  #include <asm/byteorder.h>
-> >  #include <uapi/linux/fs.h>
-> > @@ -1573,6 +1574,52 @@ static inline void i_gid_write(struct inode *inode, gid_t gid)
-> >  	inode->i_gid = make_kgid(inode->i_sb->s_user_ns, gid);
-> >  }
-> >  
-> > +static inline kuid_t kuid_into_mnt(struct user_namespace *mnt_userns,
-> > +				   kuid_t kuid)
-> > +{
-> > +	return make_kuid(mnt_userns, __kuid_val(kuid));
-> > +}
-> > +
-> 
-> Hi Christian,
-> 
-> I am having little trouble w.r.t function names and trying to figure
-> out whether they are mapping id down or up.
-> 
-> For example, kuid_into_mnt() ultimately calls map_id_down(). That is,
-> id visible inside user namespace is mapped to host
-> (if observer is in init_user_ns, IIUC).
-> 
-> But fsuid_into_mnt() ultimately calls map_id_up(). That's take a kuid
-> and map it into the user_namespace.
-> 
-> So both the helpers end with into_mnt() but one maps id down and
-> other maps id up. I found this confusing and was wondering how
-> should I visualize it. So thought of asking you.
-> 
-> Is this intentional or can naming be improved so that *_into_mnt()
-> means one thing (Either map_id_up() or map_id_down()). And vice-a-versa
-> for *_from_mnt().
+Greetings everyone.
 
-[Trimming my crazy Cc list to not spam everyone.].
+I have made another version of orangefs_readahead, without any
+of my hand rolled page cache manipulations. I read a bunch of
+the source in other filesystems and mm and fs and pagemap.h to
+try and get an idea of how to implement readahead so that my
+implementation is "with the program".
 
-Hey Vivek,
+I have described the flawed code I have upstream now in an
+earlier message. My flawed code has no readahead implementation, but
+it is much faster than with this readahead implementation.
 
-Thank you for your feedback, really appreciated!
+If this readahead implementation is "the right idea", I can
+use it as a framework to implement an async orangefs read function
+and start the read at the beginning of my readahead function
+and collect the results at the end after the readahead pages
+have been marshaled. Also, once some mechanism like David Howells'
+code to control the readahead window goes upstream, I should be
+able take big enough gulps of readahead to make Orangefs do right.
+The heuristically chosen 64 page max that I can get now isn't enough.
 
-The naming was intended to always signify that the helpers always return
-a k{u,g}id but I can certainly see how the naming isn't as clear as it
-should be for those helpers in other ways. I would suggest we remove
-such direct exposures of these helpers completely and make it simpler
-for callers by introducing very straightforward helpers. See the tiny
-patches below (only compile tested for now):
+I hope some of y'all have the time to review this implementation of
+readahead...
 
-From 1bab0249295d0cad359f39a38e6171bcd2d68a60 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <christian.brauner@ubuntu.com>
-Date: Sat, 13 Mar 2021 15:08:04 +0100
-Subject: [PATCH 1/2] fs: introduce fsuidgid_has_mapping() helper
+Thanks!
 
-Don't open-code the checks and instead move them into a clean little
-helper we can call. This also reduces the risk that if we ever changing
-something here we forget to change all locations.
+-Mike
 
-Inspired-by: Vivek Goyal <vgoyal@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/namei.c         | 11 +++--------
- include/linux/fs.h | 13 +++++++++++++
- 2 files changed, 16 insertions(+), 8 deletions(-)
+static void orangefs_readahead(struct readahead_control *rac)
+{
+struct page **pages;
+unsigned int npages = readahead_count(rac);
+loff_t offset = readahead_pos(rac);
+struct bio_vec *bvs;
+int i;
+struct iov_iter iter;
+struct file *file = rac->file;
+struct inode *inode = file->f_mapping->host;
+int ret;
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 216f16e74351..bc03cbc37ba7 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2823,16 +2823,14 @@ static int may_delete(struct user_namespace *mnt_userns, struct inode *dir,
- static inline int may_create(struct user_namespace *mnt_userns,
- 			     struct inode *dir, struct dentry *child)
- {
--	struct user_namespace *s_user_ns;
- 	audit_inode_child(dir, child, AUDIT_TYPE_CHILD_CREATE);
- 	if (child->d_inode)
- 		return -EEXIST;
- 	if (IS_DEADDIR(dir))
- 		return -ENOENT;
--	s_user_ns = dir->i_sb->s_user_ns;
--	if (!kuid_has_mapping(s_user_ns, fsuid_into_mnt(mnt_userns)) ||
--	    !kgid_has_mapping(s_user_ns, fsgid_into_mnt(mnt_userns)))
-+	if (!fsuidgid_has_mapping(dir->i_sb, mnt_userns))
- 		return -EOVERFLOW;
-+
- 	return inode_permission(mnt_userns, dir, MAY_WRITE | MAY_EXEC);
- }
- 
-@@ -3034,14 +3032,11 @@ static int may_o_create(struct user_namespace *mnt_userns,
- 			const struct path *dir, struct dentry *dentry,
- 			umode_t mode)
- {
--	struct user_namespace *s_user_ns;
- 	int error = security_path_mknod(dir, dentry, mode, 0);
- 	if (error)
- 		return error;
- 
--	s_user_ns = dir->dentry->d_sb->s_user_ns;
--	if (!kuid_has_mapping(s_user_ns, fsuid_into_mnt(mnt_userns)) ||
--	    !kgid_has_mapping(s_user_ns, fsgid_into_mnt(mnt_userns)))
-+	if (!fsuidgid_has_mapping(dir->dentry->d_sb, mnt_userns))
- 		return -EOVERFLOW;
- 
- 	error = inode_permission(mnt_userns, dir->dentry->d_inode,
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ec8f3ddf4a6a..a970a43afb0a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1620,6 +1620,19 @@ static inline kgid_t fsgid_into_mnt(struct user_namespace *mnt_userns)
- 	return kgid_from_mnt(mnt_userns, current_fsgid());
- }
- 
-+static inline bool fsuidgid_has_mapping(struct super_block *sb,
-+					struct user_namespace *mnt_userns)
-+{
-+	struct user_namespace *s_user_ns = sb->s_user_ns;
-+	if (!kuid_has_mapping(s_user_ns,
-+		kuid_from_mnt(mnt_userns, current_fsuid())))
-+		return false;
-+	if (!kgid_has_mapping(s_user_ns,
-+		kgid_from_mnt(mnt_userns, current_fsgid())))
-+		return false;
-+	return true;
-+}
-+
- extern struct timespec64 current_time(struct inode *inode);
- 
- /*
--- 
-2.27.0
+/* allocate an array of page pointers. */
+pages = kzalloc(npages * (sizeof(struct page *)), GFP_KERNEL);
 
+/* Get a batch of pages to read. */
+npages = __readahead_batch(rac, pages, npages);
 
-From 2f316f7de3ac96ecc8cc889724c0132e96b47b51 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <christian.brauner@ubuntu.com>
-Date: Sat, 13 Mar 2021 15:11:55 +0100
-Subject: [PATCH 2/2] fs: introduce two little fs{u,g}id inode initialization
- helpers
+/* allocate an array of bio_vecs. */
+bvs = kzalloc(npages * (sizeof(struct bio_vec)), GFP_KERNEL);
 
-As Vivek pointed out we could tweak the names of the fs{u,g}id helpers.
-That's already good but the better approach is to not expose them in
-this way to filesystems at all and simply give the filesystems two
-helpers inode_fsuid_set() and inode_fsgid_set() that will do the right
-thing.
+/* hook the bio_vecs to the pages. */
+for (i = 0; i < npages; i++) {
+bvs[i].bv_page = pages[i];
+bvs[i].bv_len = PAGE_SIZE;
+bvs[i].bv_offset = 0;
+}
 
-Inspired-by: Vivek Goyal <vgoyal@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/ext4/ialloc.c   |  2 +-
- fs/inode.c         |  4 ++--
- fs/xfs/xfs_inode.c |  2 +-
- include/linux/fs.h | 10 ++++++----
- 4 files changed, 10 insertions(+), 8 deletions(-)
+iov_iter_bvec(&iter, READ, bvs, npages, npages * PAGE_SIZE);
 
-diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index 633ae7becd61..755a68bb7e22 100644
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -970,7 +970,7 @@ struct inode *__ext4_new_inode(struct user_namespace *mnt_userns,
- 		i_gid_write(inode, owner[1]);
- 	} else if (test_opt(sb, GRPID)) {
- 		inode->i_mode = mode;
--		inode->i_uid = fsuid_into_mnt(mnt_userns);
-+		inode_fsuid_set(inode, mnt_userns);
- 		inode->i_gid = dir->i_gid;
- 	} else
- 		inode_init_owner(mnt_userns, inode, dir, mode);
-diff --git a/fs/inode.c b/fs/inode.c
-index a047ab306f9a..21c5a620ca89 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2148,7 +2148,7 @@ EXPORT_SYMBOL(init_special_inode);
- void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
- 		      const struct inode *dir, umode_t mode)
- {
--	inode->i_uid = fsuid_into_mnt(mnt_userns);
-+	inode_fsuid_set(inode, mnt_userns);
- 	if (dir && dir->i_mode & S_ISGID) {
- 		inode->i_gid = dir->i_gid;
- 
-@@ -2160,7 +2160,7 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
- 			 !capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
- 			mode &= ~S_ISGID;
- 	} else
--		inode->i_gid = fsgid_into_mnt(mnt_userns);
-+		inode_fsgid_set(inode, mnt_userns);
- 	inode->i_mode = mode;
- }
- EXPORT_SYMBOL(inode_init_owner);
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index 46a861d55e48..aa924db90cd9 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -812,7 +812,7 @@ xfs_init_new_inode(
- 
- 	if (dir && !(dir->i_mode & S_ISGID) &&
- 	    (mp->m_flags & XFS_MOUNT_GRPID)) {
--		inode->i_uid = fsuid_into_mnt(mnt_userns);
-+		inode_fsuid_set(inode, mnt_userns);
- 		inode->i_gid = dir->i_gid;
- 		inode->i_mode = mode;
- 	} else {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index a970a43afb0a..b337daa6b191 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1610,14 +1610,16 @@ static inline kgid_t kgid_from_mnt(struct user_namespace *mnt_userns,
- 	return KGIDT_INIT(from_kgid(mnt_userns, kgid));
- }
- 
--static inline kuid_t fsuid_into_mnt(struct user_namespace *mnt_userns)
-+static inline void inode_fsuid_set(struct inode *inode,
-+				   struct user_namespace *mnt_userns)
- {
--	return kuid_from_mnt(mnt_userns, current_fsuid());
-+	inode->i_uid = kuid_from_mnt(mnt_userns, current_fsuid());
- }
- 
--static inline kgid_t fsgid_into_mnt(struct user_namespace *mnt_userns)
-+static inline void inode_fsgid_set(struct inode *inode,
-+				   struct user_namespace *mnt_userns)
- {
--	return kgid_from_mnt(mnt_userns, current_fsgid());
-+	inode->i_gid = kgid_from_mnt(mnt_userns, current_fsgid());
- }
- 
- static inline bool fsuidgid_has_mapping(struct super_block *sb,
--- 
-2.27.0
+/* read in the pages. */
+ret = wait_for_direct_io(ORANGEFS_IO_READ, inode, &offset, &iter,
+npages * PAGE_SIZE, inode->i_size, NULL, NULL, file);
 
+/* clean up. */
+for (i = 0; i < npages; i++) {
+SetPageUptodate(bvs[i].bv_page);
+unlock_page(bvs[i].bv_page);
+put_page(bvs[i].bv_page);
+}
+kfree(pages);
+kfree(bvs);
+}
+
+On Mon, Feb 1, 2021 at 10:32 PM Mike Marshall <hubcap@omnibond.com> wrote:
+>
+> >> This is not the way to do it. You need to actually kick
+> >> off readahead in this routine so that you get pipelining
+> >> (ie the app is working on pages 0-15 at the same time
+> >> the server is getting you pages 16-31).
+>
+> Orangefs isn't very good at reading or writing a few
+> pages at a time. Its optimal block size is four megabytes.
+> I'm trying to do IOs big enough to make Orangefs
+> start flowing like it needs to and then have pages
+> on hand to fill with the data. Perhaps I can figure
+> how to use Dave Howell's code to control the
+> readahead window and make adjustments to
+> how many pages Orangefs reads per IO and
+> end up with something that is closer to how
+> readahead is intended to be used.
+>
+> This patch is a big performance improvement over
+> the code that's upstream even though I'm
+> not using readahead as intended.
+>
+> >> I don't see much support in orangefs for doing async
+> >> operations; everything seems to be modelled on
+> >> "submit an I/O and wait for it to complete".
+>
+> Yep... when we were polishing up the kernel module to
+> attempt to go upstream, the code in there for async was
+> left behind... I might be able to make sense of it now,
+> Ida know... You've helped me to see this place where
+> it is needed.
+>
+> >> adding async
+> >> support to orangefs is a little bigger task than I'm willing to put
+> >> significant effort into right now.
+>
+> The effort and help that you're providing is much
+> appreciated and just what I need, thanks!
+>
+> -Mike
+>
+> On Mon, Feb 1, 2021 at 8:08 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Sun, Jan 31, 2021 at 05:25:02PM -0500, Mike Marshall wrote:
+> > > I wish I knew how to specify _nr_pages in the readahead_control
+> > > structure so that all the extra pages I need could be obtained
+> > > in readahead_page instead of part there and the rest in my
+> > > open-coded stuff in orangefs_readpage. But it looks to me as
+> > > if values in the readahead_control structure are set heuristically
+> > > outside of my control over in ondemand_readahead?
+> >
+> > That's right (for now).  I pointed you at some code from Dave Howells
+> > that will allow orangefs to enlarge the readahead window beyond that
+> > determined by the core code's algorithms.
+> >
+> > > [root@vm3 linux]# git diff master..readahead
+> > > diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+> > > index 48f0547d4850..682a968cb82a 100644
+> > > --- a/fs/orangefs/inode.c
+> > > +++ b/fs/orangefs/inode.c
+> > > @@ -244,6 +244,25 @@ static int orangefs_writepages(struct
+> > > address_space *mapping,
+> > >
+> > >  static int orangefs_launder_page(struct page *);
+> > >
+> > > +/*
+> > > + * Prefill the page cache with some pages that we're probably
+> > > + * about to need...
+> > > + */
+> > > +static void orangefs_readahead(struct readahead_control *rac)
+> > > +{
+> > > +       pgoff_t index = readahead_index(rac);
+> > > +       struct page *page;
+> > > +
+> > > +       while ((page = readahead_page(rac))) {
+> > > +               prefetchw(&page->flags);
+> > > +               put_page(page);
+> > > +               unlock_page(page);
+> > > +               index++;
+> > > +       }
+> > > +
+> > > +       return;
+> > > +}
+> >
+> > This is not the way to do it.  You need to actually kick off readahead in
+> > this routine so that you get pipelining (ie the app is working on pages
+> > 0-15 at the same time the server is getting you pages 16-31).  I don't
+> > see much support in orangefs for doing async operations; everything
+> > seems to be modelled on "submit an I/O and wait for it to complete".
+> >
+> > I'm happy to help out with pagecache interactions, but adding async
+> > support to orangefs is a little bigger task than I'm willing to put
+> > significant effort into right now.
