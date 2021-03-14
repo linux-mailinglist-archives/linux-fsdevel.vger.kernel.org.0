@@ -2,49 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 72A8133A267
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Mar 2021 03:32:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17E6B33A273
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Mar 2021 04:11:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234126AbhCNCb1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Mar 2021 21:31:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41934 "EHLO
+        id S233103AbhCNDJv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Mar 2021 22:09:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233906AbhCNCbG (ORCPT
+        with ESMTP id S229870AbhCNDJZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Mar 2021 21:31:06 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60BF8C061574;
-        Sat, 13 Mar 2021 18:31:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=EnE50NkSknnpue15HbJ3Qi37ZMK01SdHagRrgb71jbQ=; b=RDqSNWQOJC9ALFwiP8EzZw1Fny
-        m3YZL6xxDoiMlJGN5E2sZyaQRBn9fJsIzYKR6tN+gXo0nqmELhdF/L5OD9UamPloc4J4vel9S6xRM
-        EXq4ETP03jM5h+ICgwNm1EqvBr0wnKgbU5NxJlR0W+00ruNU0Lc+rrFS+S8spYKJCPo/8g4WUEKUf
-        TejesuB3jUJtfc7Ani/rLlkAceaaeCXGF3JV2f7VlZiUFELUl+rbqBgZRBUW4F4fTxUkEkLVmM8sV
-        KqYSmVLCtJRKJpNbL8rLRdm3ayBw8Ud4bWnsPVo2DDuQcB2v7r/brxNG5giPsbFXQo0D6W7jBJ3ut
-        XTP3Cmeg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lLGWf-00FPfH-UA; Sun, 14 Mar 2021 02:30:45 +0000
-Date:   Sun, 14 Mar 2021 02:30:41 +0000
-From:   Matthew Wilcox <willy@infradead.org>
+        Sat, 13 Mar 2021 22:09:25 -0500
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F7ECC061762
+        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Mar 2021 19:09:14 -0800 (PST)
+Received: by mail-qk1-x736.google.com with SMTP id a9so28490385qkn.13
+        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Mar 2021 19:09:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=d9FM6L9sZAo2rrsIX+LBkCTa7GLlkoS/+ZnZfUaJPW8=;
+        b=VpsaiAIWuDHqnqNjIwqWIdgZ3uD96X9TvSKxh2jm8AqRS6twpL3tMOYYyiMPjjyaSX
+         X1iZYqFZpd9Ru5UC/aV+3hWz1zhi/EBXS2fbo9aqMqLkW2G8zPBx4j+pnTL5RoSjwoXq
+         2nS4KkEguec2wegxlVY60mtloR+mRxUaT/GHPGzVchLzNNRrRZr1jS6kdT3/xyfjX5RK
+         G4DyE1rFaWofqZIDLwmBUmRs8dND6RWFbkNxkBHfk2lwXVMXRx97FGGNY4WGvz2l4LIR
+         fGip9daBy/n4030RhjMLcDPbLcqdC0rnt8F167J+v5fmsHE6kmeApRIKvCNVbY/GF8cK
+         roiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=d9FM6L9sZAo2rrsIX+LBkCTa7GLlkoS/+ZnZfUaJPW8=;
+        b=OXOr1P+UlChCLulofrZugx1xRdQVNBv2HdgbDB8UiPamPeDuNMPOgIAyn1YIp/gR2O
+         NNBoX90lEuiYTyEQH/kxKM+zcvY1/pztZ5pLC0nBMEpjDYSXP7ICvX+TAVmrgyY3gBh/
+         BJZr6HQdEFnc0562LSbsbX4JEiGxUFv1lWsZzTGtNHE7f5ILLA0LSH30aUkeOs9A2nEC
+         kzAwtQNwtNpCE4Td9o8gdOT5FWPoFt4LqE2u6J5MoQnLM8I81KyPfS8BJQIq8gk0M9ii
+         JcFLib5fZp+al4v7heam7oGqW+/8M4lqRUMWalMMfR1TwNFgRlQ52vjwws98Na+68o/j
+         eKFg==
+X-Gm-Message-State: AOAM5330uOUdGaCPnh21hwRWhWpTU+8K1kw5KDsZ/LuFvBIkv8Or3UbO
+        sRyi651+nGlkFvz6wCrf+lomOg==
+X-Google-Smtp-Source: ABdhPJzdU3lQ5tIu1bVYMh+3OU6wsyRZYbsmX/y79oqjN5rzA3naQ/csu0IRHznx8ME2dAElOZLjgQ==
+X-Received: by 2002:a37:5007:: with SMTP id e7mr19793266qkb.184.1615691352628;
+        Sat, 13 Mar 2021 19:09:12 -0800 (PST)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id s2sm7557978qti.54.2021.03.13.19.09.11
+        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
+        Sat, 13 Mar 2021 19:09:12 -0800 (PST)
+Date:   Sat, 13 Mar 2021 19:09:01 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
 To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH v4 00/25] Page folios
-Message-ID: <20210314023041.GM2577561@casper.infradead.org>
-References: <20210305041901.2396498-1-willy@infradead.org>
- <20210313123658.ad2dcf79a113a8619c19c33b@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20210313123658.ad2dcf79a113a8619c19c33b@linux-foundation.org>
+Message-ID: <alpine.LSU.2.11.2103131842590.14125@eggly.anvils>
+References: <20210305041901.2396498-1-willy@infradead.org> <20210313123658.ad2dcf79a113a8619c19c33b@linux-foundation.org>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 13, 2021 at 12:36:58PM -0800, Andrew Morton wrote:
+On Sat, 13 Mar 2021, Andrew Morton wrote:
 > On Fri,  5 Mar 2021 04:18:36 +0000 "Matthew Wilcox (Oracle)" <willy@infradead.org> wrote:
 > 
 > > Our type system does not currently distinguish between tail pages and
@@ -67,29 +89,15 @@ On Sat, Mar 13, 2021 at 12:36:58PM -0800, Andrew Morton wrote:
 > It's unclear to me that it's all really worth it.  What feedback have
 > you seen from others?
 
-Mmm.  The thing is, the alternative is ongoing bugs.  And inefficiencies.
-Today, we have code everywhere converting from tail pages to head pages
--- we just don't notice it because it's all wrapped up in macros.  I
-have over 10kB in text size reductions in my tree (yes, it's a monster
-series of patches), almost all from removing those conversions.  And
-it's far from done.
+My own feeling and feedback have been much like yours.
 
-And these conversions are all in hot paths, like handling page faults
-and read().  For example:
+I don't get very excited by type safety at this level; and although
+I protested back when all those compound_head()s got tucked into the
+*PageFlag() functions, the text size increase was not very much, and
+I never noticed any adverse performance reports.
 
-filemap_fault                               1980    1289    -691
+To me, it's distraction, churn and friction, ongoing for years; but
+that's just me, and I'm resigned to the possibility that it will go in.
+Matthew is not alone in wanting to pursue it: let others speak.
 
-it's two-thirds the size it was!  Surely that's not all in the hot path,
-but still it's going to have some kind of effect.
-
-As well, we have code today that _looks_ right but is buggy.  Take a
-look at vfs_dedupe_file_range_compare().  There's nothing wrong with
-it at first glance, until you realise that vfs_dedupe_get_page() might
-return a tail page, and you can't look at page->mapping for a tail page.
-Nor page->index, so vfs_lock_two_pages() is also broken.
-
-As far as feedback, I really want more.  Particularly from filesystem
-people.  I don't think a lot of them realise yet that I'm going to change
-15 of the 22 address_space_ops to work with folios instead of pages.
-Individual filesystems can keep working with pages, of course, until
-they enable the "use multipage folios" bit.
+Hugh
