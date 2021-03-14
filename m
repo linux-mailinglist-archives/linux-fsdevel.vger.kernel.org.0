@@ -2,807 +2,359 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 881B433A536
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Mar 2021 15:47:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B49533A869
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Mar 2021 23:03:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231329AbhCNOqr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Mar 2021 10:46:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57062 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229837AbhCNOqk (ORCPT
+        id S229532AbhCNWCg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Mar 2021 18:02:36 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:45832 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229494AbhCNWCf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Mar 2021 10:46:40 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04958C061574;
-        Sun, 14 Mar 2021 07:46:39 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: shreeya)
-        with ESMTPSA id 5D4CA1F40C05
-Subject: Re: [PATCH 3/3] fs: unicode: Add utf8 module and a unicode layer
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel@collabora.com, gustavo.padovan@collabora.com,
-        andre.almeida@collabora.com
-References: <20210313231214.383576-1-shreeya.patel@collabora.com>
- <20210313231214.383576-4-shreeya.patel@collabora.com>
- <8735wymrm5.fsf@collabora.com>
-From:   Shreeya Patel <shreeya.patel@collabora.com>
-Message-ID: <e4013ca4-db2f-8b29-a5b2-6d100a6a5059@collabora.com>
-Date:   Sun, 14 Mar 2021 20:16:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        Sun, 14 Mar 2021 18:02:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615759354;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4EK6hhWIbRoLqeWgTcfFUUNPNT97ooEQxQWo15yTnLQ=;
+        b=fik1dv4vIyiC049l5k2rfw12aXrLNjfsyvATvuQGTGTS2MLPiMUFiXOihVrjLw2kq7yAc4
+        vDmJgA29wxlrdbInw7e078DBPXY4jqQovZOsejNyvigopwtDmU7Aby7lbsKb9EsugI8EAH
+        FxGyUsqwMXvmAlg/xxilT6E7LdeKNKc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-369-NhuuvZxiPqO0az23AWwriA-1; Sun, 14 Mar 2021 18:02:30 -0400
+X-MC-Unique: NhuuvZxiPqO0az23AWwriA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7F3183E741;
+        Sun, 14 Mar 2021 22:02:27 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-112-132.rdu2.redhat.com [10.10.112.132])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C0466E519;
+        Sun, 14 Mar 2021 22:02:26 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 91DB922054F; Sun, 14 Mar 2021 18:02:25 -0400 (EDT)
+Date:   Sun, 14 Mar 2021 18:02:25 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Serge Hallyn <serge@hallyn.com>, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v6 02/40] fs: add id translation helpers
+Message-ID: <20210314220225.GA223210@redhat.com>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
+ <20210121131959.646623-3-christian.brauner@ubuntu.com>
+ <20210313000529.GA181317@redhat.com>
+ <20210313143148.d6rhgmhxwq6abb6y@wittgenstein>
 MIME-Version: 1.0
-In-Reply-To: <8735wymrm5.fsf@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210313143148.d6rhgmhxwq6abb6y@wittgenstein>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sat, Mar 13, 2021 at 03:31:48PM +0100, Christian Brauner wrote:
+> On Fri, Mar 12, 2021 at 07:05:29PM -0500, Vivek Goyal wrote:
+> > On Thu, Jan 21, 2021 at 02:19:21PM +0100, Christian Brauner wrote:
+> > > Add simple helpers to make it easy to map kuids into and from idmapped
+> > > mounts. We provide simple wrappers that filesystems can use to e.g.
+> > > initialize inodes similar to i_{uid,gid}_read() and i_{uid,gid}_write().
+> > > Accessing an inode through an idmapped mount maps the i_uid and i_gid of
+> > > the inode to the mount's user namespace. If the fsids are used to
+> > > initialize inodes they are unmapped according to the mount's user
+> > > namespace. Passing the initial user namespace to these helpers makes
+> > > them a nop and so any non-idmapped paths will not be impacted.
+> > > 
+> > > Link: https://lore.kernel.org/r/20210112220124.837960-9-christian.brauner@ubuntu.com
+> > > Cc: David Howells <dhowells@redhat.com>
+> > > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > > Cc: linux-fsdevel@vger.kernel.org
+> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > > ---
+> > > /* v2 */
+> > > - Christoph Hellwig <hch@lst.de>:
+> > >   - Get rid of the ifdefs and the config option that hid idmapped mounts.
+> > > 
+> > > /* v3 */
+> > > unchanged
+> > > 
+> > > /* v4 */
+> > > - Serge Hallyn <serge@hallyn.com>:
+> > >   - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
+> > >     terminology consistent.
+> > > 
+> > > /* v5 */
+> > > unchanged
+> > > base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
+> > > 
+> > > /* v6 */
+> > > unchanged
+> > > base-commit: 19c329f6808995b142b3966301f217c831e7cf31
+> > > ---
+> > >  include/linux/fs.h | 47 ++++++++++++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 47 insertions(+)
+> > > 
+> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > index fd0b80e6361d..3165998e2294 100644
+> > > --- a/include/linux/fs.h
+> > > +++ b/include/linux/fs.h
+> > > @@ -40,6 +40,7 @@
+> > >  #include <linux/build_bug.h>
+> > >  #include <linux/stddef.h>
+> > >  #include <linux/mount.h>
+> > > +#include <linux/cred.h>
+> > >  
+> > >  #include <asm/byteorder.h>
+> > >  #include <uapi/linux/fs.h>
+> > > @@ -1573,6 +1574,52 @@ static inline void i_gid_write(struct inode *inode, gid_t gid)
+> > >  	inode->i_gid = make_kgid(inode->i_sb->s_user_ns, gid);
+> > >  }
+> > >  
+> > > +static inline kuid_t kuid_into_mnt(struct user_namespace *mnt_userns,
+> > > +				   kuid_t kuid)
+> > > +{
+> > > +	return make_kuid(mnt_userns, __kuid_val(kuid));
+> > > +}
+> > > +
+> > 
+> > Hi Christian,
+> > 
+> > I am having little trouble w.r.t function names and trying to figure
+> > out whether they are mapping id down or up.
+> > 
+> > For example, kuid_into_mnt() ultimately calls map_id_down(). That is,
+> > id visible inside user namespace is mapped to host
+> > (if observer is in init_user_ns, IIUC).
+> > 
+> > But fsuid_into_mnt() ultimately calls map_id_up(). That's take a kuid
+> > and map it into the user_namespace.
+> > 
+> > So both the helpers end with into_mnt() but one maps id down and
+> > other maps id up. I found this confusing and was wondering how
+> > should I visualize it. So thought of asking you.
+> > 
+> > Is this intentional or can naming be improved so that *_into_mnt()
+> > means one thing (Either map_id_up() or map_id_down()). And vice-a-versa
+> > for *_from_mnt().
+> 
+> [Trimming my crazy Cc list to not spam everyone.].
+> 
+> Hey Vivek,
+> 
+> Thank you for your feedback, really appreciated!
+> 
+> The naming was intended to always signify that the helpers always return
+> a k{u,g}id but I can certainly see how the naming isn't as clear as it
+> should be for those helpers in other ways. I would suggest we remove
+> such direct exposures of these helpers completely and make it simpler
+> for callers by introducing very straightforward helpers. See the tiny
+> patches below (only compile tested for now):
 
-On 14/03/21 7:19 am, Gabriel Krisman Bertazi wrote:
-> Shreeya Patel <shreeya.patel@collabora.com> writes:
->
->> utf8data.h_shipped has a large database table which is an auto-generated
->> decodification trie for the unicode normalization functions.
->> It is not necessary to carry this large table in the kernel hence make
->> UTF-8 encoding loadable by converting it into a module.
->> Also, modify the file called unicode-core which will act as a layer for
->> unicode subsystem. It will load the UTF-8 module and access it's functions
->> whenever any filesystem that needs unicode is mounted.
->>
->> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
-> Hi Shreeya,
-Hi Gabriel,
->
->> ---
->>   fs/unicode/Kconfig        |   7 +-
->>   fs/unicode/Makefile       |   5 +-
->>   fs/unicode/unicode-core.c | 201 ++++++-------------------------
->>   fs/unicode/utf8-core.c    | 112 +++++++++++++++++
->>   fs/unicode/utf8mod.c      | 246 ++++++++++++++++++++++++++++++++++++++
->>   include/linux/unicode.h   |  20 ++++
->>   6 files changed, 427 insertions(+), 164 deletions(-)
->>   create mode 100644 fs/unicode/utf8-core.c
->>   create mode 100644 fs/unicode/utf8mod.c
->>
->> diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
->> index 2c27b9a5cd6c..33a27deef729 100644
->> --- a/fs/unicode/Kconfig
->> +++ b/fs/unicode/Kconfig
->> @@ -8,7 +8,12 @@ config UNICODE
->>   	  Say Y here to enable UTF-8 NFD normalization and NFD+CF casefolding
->>   	  support.
->>   
->> +config UNICODE_UTF8
->> +	tristate "UTF-8 module"
->> +	depends on UNICODE
->> +	default m
->> +
->>   config UNICODE_NORMALIZATION_SELFTEST
->>   	tristate "Test UTF-8 normalization support"
->> -	depends on UNICODE
->> +	depends on UNICODE_UTF8
->>   	default n
->> diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
->> index fbf9a629ed0d..9dbb04194b32 100644
->> --- a/fs/unicode/Makefile
->> +++ b/fs/unicode/Makefile
->> @@ -1,11 +1,14 @@
->>   # SPDX-License-Identifier: GPL-2.0
->>   
->>   obj-$(CONFIG_UNICODE) += unicode.o
->> +obj-$(CONFIG_UNICODE_UTF8) += utf8.o
->>   obj-$(CONFIG_UNICODE_NORMALIZATION_SELFTEST) += utf8-selftest.o
->>   
->> -unicode-y := utf8-norm.o unicode-core.o
->> +unicode-y := unicode-core.o
->> +utf8-y := utf8mod.o utf8-norm.o
->>   
->>   $(obj)/utf8-norm.o: $(obj)/utf8data.h
->> +$(obj)/utf8mod.o: $(obj)/utf8-norm.o
->>   
->>   # In the normal build, the checked-in utf8data.h is just shipped.
->>   #
->> diff --git a/fs/unicode/unicode-core.c b/fs/unicode/unicode-core.c
->> index d5f09e022ac5..b832341f1e7b 100644
->> --- a/fs/unicode/unicode-core.c
->> +++ b/fs/unicode/unicode-core.c
->> @@ -7,70 +7,29 @@
->>   #include <linux/errno.h>
->>   #include <linux/unicode.h>
->>   #include <linux/stringhash.h>
->> +#include <linux/delay.h>
->>   
->> -#include "utf8n.h"
->> +struct unicode_ops *utf8_ops;
->> +
->> +static int unicode_load_module(void);
-> This is unnecessary
->>   
->>   int unicode_validate(const struct unicode_map *um, const struct qstr *str)
->>   {
->> -	const struct utf8data *data = utf8nfdi(um->version);
->> -
->> -	if (utf8nlen(data, str->name, str->len) < 0)
->> -		return -1;
->> -	return 0;
->> +	return utf8_ops->validate(um, str);
->>   }
->>   EXPORT_SYMBOL(unicode_validate);
->>   
->>   int unicode_strncmp(const struct unicode_map *um,
->>   		    const struct qstr *s1, const struct qstr *s2)
->>   {
->> -	const struct utf8data *data = utf8nfdi(um->version);
->> -	struct utf8cursor cur1, cur2;
->> -	int c1, c2;
->> -
->> -	if (utf8ncursor(&cur1, data, s1->name, s1->len) < 0)
->> -		return -EINVAL;
->> -
->> -	if (utf8ncursor(&cur2, data, s2->name, s2->len) < 0)
->> -		return -EINVAL;
->> -
->> -	do {
->> -		c1 = utf8byte(&cur1);
->> -		c2 = utf8byte(&cur2);
->> -
->> -		if (c1 < 0 || c2 < 0)
->> -			return -EINVAL;
->> -		if (c1 != c2)
->> -			return 1;
->> -	} while (c1);
->> -
->> -	return 0;
->> +	return utf8_ops->strncmp(um, s1, s2);
->>   }
-> I think these would go on a header file and  inlined.
->
->>   EXPORT_SYMBOL(unicode_strncmp);
->>   
->>   int unicode_strncasecmp(const struct unicode_map *um,
->>   			const struct qstr *s1, const struct qstr *s2)
->>   {
->> -	const struct utf8data *data = utf8nfdicf(um->version);
->> -	struct utf8cursor cur1, cur2;
->> -	int c1, c2;
->> -
->> -	if (utf8ncursor(&cur1, data, s1->name, s1->len) < 0)
->> -		return -EINVAL;
->> -
->> -	if (utf8ncursor(&cur2, data, s2->name, s2->len) < 0)
->> -		return -EINVAL;
->> -
->> -	do {
->> -		c1 = utf8byte(&cur1);
->> -		c2 = utf8byte(&cur2);
->> -
->> -		if (c1 < 0 || c2 < 0)
->> -			return -EINVAL;
->> -		if (c1 != c2)
->> -			return 1;
->> -	} while (c1);
->> -
->> -	return 0;
->> +	return utf8_ops->strncasecmp(um, s1, s2);
->>   }
->>   EXPORT_SYMBOL(unicode_strncasecmp);
->>   
->> @@ -81,155 +40,73 @@ int unicode_strncasecmp_folded(const struct unicode_map *um,
->>   			       const struct qstr *cf,
->>   			       const struct qstr *s1)
->>   {
->> -	const struct utf8data *data = utf8nfdicf(um->version);
->> -	struct utf8cursor cur1;
->> -	int c1, c2;
->> -	int i = 0;
->> -
->> -	if (utf8ncursor(&cur1, data, s1->name, s1->len) < 0)
->> -		return -EINVAL;
->> -
->> -	do {
->> -		c1 = utf8byte(&cur1);
->> -		c2 = cf->name[i++];
->> -		if (c1 < 0)
->> -			return -EINVAL;
->> -		if (c1 != c2)
->> -			return 1;
->> -	} while (c1);
->> -
->> -	return 0;
->> +	return utf8_ops->strncasecmp_folded(um, cf, s1);
->>   }
->>   EXPORT_SYMBOL(unicode_strncasecmp_folded);
->>   
->>   int unicode_casefold(const struct unicode_map *um, const struct qstr *str,
->>   		     unsigned char *dest, size_t dlen)
->>   {
->> -	const struct utf8data *data = utf8nfdicf(um->version);
->> -	struct utf8cursor cur;
->> -	size_t nlen = 0;
->> -
->> -	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
->> -		return -EINVAL;
->> -
->> -	for (nlen = 0; nlen < dlen; nlen++) {
->> -		int c = utf8byte(&cur);
->> -
->> -		dest[nlen] = c;
->> -		if (!c)
->> -			return nlen;
->> -		if (c == -1)
->> -			break;
->> -	}
->> -	return -EINVAL;
->> +	return utf8_ops->casefold(um, str, dest, dlen);
->>   }
->>   EXPORT_SYMBOL(unicode_casefold);
->>   
->>   int unicode_casefold_hash(const struct unicode_map *um, const void *salt,
->>   			  struct qstr *str)
->>   {
->> -	const struct utf8data *data = utf8nfdicf(um->version);
->> -	struct utf8cursor cur;
->> -	int c;
->> -	unsigned long hash = init_name_hash(salt);
->> -
->> -	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
->> -		return -EINVAL;
->> -
->> -	while ((c = utf8byte(&cur))) {
->> -		if (c < 0)
->> -			return -EINVAL;
->> -		hash = partial_name_hash((unsigned char)c, hash);
->> -	}
->> -	str->hash = end_name_hash(hash);
->> -	return 0;
->> +	return utf8_ops->casefold_hash(um, salt, str);
->>   }
->>   EXPORT_SYMBOL(unicode_casefold_hash);
->>   
->>   int unicode_normalize(const struct unicode_map *um, const struct qstr *str,
->>   		      unsigned char *dest, size_t dlen)
->>   {
->> -	const struct utf8data *data = utf8nfdi(um->version);
->> -	struct utf8cursor cur;
->> -	ssize_t nlen = 0;
->> +	return utf8_ops->normalize(um, str, dest, dlen);
->> +}
->> +EXPORT_SYMBOL(unicode_normalize);
->>   
->> -	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
->> -		return -EINVAL;
->> +struct unicode_map *unicode_load(const char *version)
->> +{
->> +	int ret = unicode_load_module();
->>   
->> -	for (nlen = 0; nlen < dlen; nlen++) {
->> -		int c = utf8byte(&cur);
->> +	if (ret)
->> +		return ERR_PTR(ret);
->>   
->> -		dest[nlen] = c;
->> -		if (!c)
->> -			return nlen;
->> -		if (c == -1)
->> -			break;
->> -	}
->> -	return -EINVAL;
->> +	else
->> +		return utf8_ops->load(version);
->>   }
->> -EXPORT_SYMBOL(unicode_normalize);
->> +EXPORT_SYMBOL(unicode_load);
->>   
->> -static int unicode_parse_version(const char *version, unsigned int *maj,
->> -				 unsigned int *min, unsigned int *rev)
->> +void unicode_unload(struct unicode_map *um)
->>   {
->> -	substring_t args[3];
->> -	char version_string[12];
->> -	static const struct match_token token[] = {
->> -		{1, "%d.%d.%d"},
->> -		{0, NULL}
->> -	};
->> +	kfree(um);
->> +}
->> +EXPORT_SYMBOL(unicode_unload);
->>   
->> -	strncpy(version_string, version, sizeof(version_string));
->> +static int unicode_load_module(void)
->> +{
->> +	int ret = request_module("utf8");
->>   
->> -	if (match_token(version_string, token, args) != 1)
->> -		return -EINVAL;
->> +	msleep(100);
-> I think I misunderstood when you mentioned you did this msleep.  It was
-> ok to debug the issue you were observing, but it is not a solution.
-> Setting an arbitrary amount of time will either waste time, or you can
-> still fail if things take longer than expected.  There are mechanisms to
-> load and wait on a module.  See how fs/nls/nls_base.c do exactly this.
->
->> -	if (match_int(&args[0], maj) || match_int(&args[1], min) ||
->> -	    match_int(&args[2], rev))
->> -		return -EINVAL;
->> +	if (ret) {
->> +		pr_err("Failed to load UTF-8 module\n");
->> +		return ret;
->> +	}
->>   
->>   	return 0;
->>   }
->>   
->> -struct unicode_map *unicode_load(const char *version)
->> +void unicode_register(struct unicode_ops *ops)
->>   {
->> -	struct unicode_map *um = NULL;
->> -	int unicode_version;
->> -
->> -	if (version) {
->> -		unsigned int maj, min, rev;
->> -
->> -		if (unicode_parse_version(version, &maj, &min, &rev) < 0)
->> -			return ERR_PTR(-EINVAL);
->> -
->> -		if (!utf8version_is_supported(maj, min, rev))
->> -			return ERR_PTR(-EINVAL);
->> -
->> -		unicode_version = UNICODE_AGE(maj, min, rev);
->> -	} else {
->> -		unicode_version = utf8version_latest();
->> -		printk(KERN_WARNING"UTF-8 version not specified. "
->> -		       "Assuming latest supported version (%d.%d.%d).",
->> -		       (unicode_version >> 16) & 0xff,
->> -		       (unicode_version >> 8) & 0xff,
->> -		       (unicode_version & 0xff));
->> -	}
->> -
->> -	um = kzalloc(sizeof(struct unicode_map), GFP_KERNEL);
->> -	if (!um)
->> -		return ERR_PTR(-ENOMEM);
->> -
->> -	um->charset = "UTF-8";
->> -	um->version = unicode_version;
->> -
->> -	return um;
->> +	utf8_ops = ops;
->>   }
->> -EXPORT_SYMBOL(unicode_load);
->> +EXPORT_SYMBOL(unicode_register);
->>   
->> -void unicode_unload(struct unicode_map *um)
->> +void unicode_unregister(void)
->>   {
->> -	kfree(um);
->> +	utf8_ops = NULL;
->>   }
->> -EXPORT_SYMBOL(unicode_unload);
->> +EXPORT_SYMBOL(unicode_unregister);
->>   
->>   MODULE_LICENSE("GPL v2");
->> diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
->> new file mode 100644
->> index 000000000000..009faa68330c
->> --- /dev/null
->> +++ b/fs/unicode/utf8-core.c
->> @@ -0,0 +1,112 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#include <linux/module.h>
->> +#include <linux/kernel.h>
->> +#include <linux/string.h>
->> +#include <linux/slab.h>
->> +#include <linux/parser.h>
->> +#include <linux/errno.h>
->> +#include <linux/unicode.h>
->> +#include <linux/stringhash.h>
->> +#include <linux/delay.h>
->> +
->> +struct unicode_ops *utf8_ops;
->> +
->> +static int unicode_load_module(void);
->> +
->> +int unicode_validate(const struct unicode_map *um, const struct qstr *str)
->> +{
->> +	return utf8_ops->validate(um, str);
->> +}
->> +EXPORT_SYMBOL(unicode_validate);
->> +
->> +int unicode_strncmp(const struct unicode_map *um,
->> +		    const struct qstr *s1, const struct qstr *s2)
->> +{
->> +	return utf8_ops->strncmp(um, s1, s2);
->> +}
->> +EXPORT_SYMBOL(unicode_strncmp);
-> I'm confused now.  Isn't this redefining unicode_strncmp ?  It was
-> defined in unicode_core.c on the hunk above and now it is redefined on
-> utf8_core.c.  There is something odd here.
-sorry, I think I messed up patches while using git send-email and that 
-is why you might see
-two copies of the last patch. Let me resend the series and then it might 
-make sense. One question
-though, why would unicode_strncmp go into the header file?
->
->> +
->> +int unicode_strncasecmp(const struct unicode_map *um,
->> +			const struct qstr *s1, const struct qstr *s2)
->> +{
->> +	return utf8_ops->strncasecmp(um, s1, s2);
->> +}
->> +EXPORT_SYMBOL(unicode_strncasecmp);
->> +
->> +/* String cf is expected to be a valid UTF-8 casefolded
->> + * string.
->> + */
->> +int unicode_strncasecmp_folded(const struct unicode_map *um,
->> +			       const struct qstr *cf,
->> +			       const struct qstr *s1)
->> +{
->> +	return utf8_ops->strncasecmp_folded(um, cf, s1);
->> +}
->> +EXPORT_SYMBOL(unicode_strncasecmp_folded);
->> +
->> +int unicode_casefold(const struct unicode_map *um, const struct qstr *str,
->> +		     unsigned char *dest, size_t dlen)
->> +{
->> +	return utf8_ops->casefold(um, str, dest, dlen);
->> +}
->> +EXPORT_SYMBOL(unicode_casefold);
->> +
->> +int unicode_casefold_hash(const struct unicode_map *um, const void *salt,
->> +			  struct qstr *str)
->> +{
->> +	return utf8_ops->casefold_hash(um, salt, str);
->> +}
->> +EXPORT_SYMBOL(unicode_casefold_hash);
->> +
->> +int unicode_normalize(const struct unicode_map *um, const struct qstr *str,
->> +		      unsigned char *dest, size_t dlen)
->> +{
->> +	return utf8_ops->normalize(um, str, dest, dlen);
->> +}
->> +EXPORT_SYMBOL(unicode_normalize);
->> +
->> +struct unicode_map *unicode_load(const char *version)
->> +{
->> +	int ret = unicode_load_module();
->> +
->> +	if (ret)
->> +		return ERR_PTR(ret);
->> +
->> +	else
->> +		return utf8_ops->load(version);
->> +}
->> +EXPORT_SYMBOL(unicode_load);
->> +
->> +void unicode_unload(struct unicode_map *um)
->> +{
->> +	kfree(um);
->> +}
->> +EXPORT_SYMBOL(unicode_unload);
->> +
->> +void unicode_register(struct unicode_ops *ops)
->> +{
->> +	utf8_ops = ops;
->> +}
->> +EXPORT_SYMBOL(unicode_register);
->> +
->> +void unicode_unregister(void)
->> +{
->> +	utf8_ops = NULL;
->> +}
->> +EXPORT_SYMBOL(unicode_unregister);
->> +
->> +static int unicode_load_module(void)
->> +{
->> +	int ret = request_module("utf8");
->> +
->> +	msleep(100);
->> +
->> +	if (ret) {
->> +		pr_err("Failed to load UTF-8 module\n");
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +MODULE_LICENSE("GPL v2");
->> diff --git a/fs/unicode/utf8mod.c b/fs/unicode/utf8mod.c
->> new file mode 100644
->> index 000000000000..8eaeeb27255c
->> --- /dev/null
->> +++ b/fs/unicode/utf8mod.c
->> @@ -0,0 +1,246 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#include <linux/module.h>
->> +#include <linux/kernel.h>
->> +#include <linux/string.h>
->> +#include <linux/slab.h>
->> +#include <linux/parser.h>
->> +#include <linux/errno.h>
->> +#include <linux/unicode.h>
->> +#include <linux/stringhash.h>
->> +
->> +#include "utf8n.h"
->> +
->> +static int utf8_validate(const struct unicode_map *um, const struct qstr *str)
->> +{
->> +	const struct utf8data *data = utf8nfdi(um->version);
->> +
->> +	if (utf8nlen(data, str->name, str->len) < 0)
->> +		return -1;
->> +	return 0;
->> +}
->> +
->> +static int utf8_strncmp(const struct unicode_map *um,
->> +			const struct qstr *s1, const struct qstr *s2)
->> +{
->> +	const struct utf8data *data = utf8nfdi(um->version);
->> +	struct utf8cursor cur1, cur2;
->> +	int c1, c2;
->> +
->> +	if (utf8ncursor(&cur1, data, s1->name, s1->len) < 0)
->> +		return -EINVAL;
->> +
->> +	if (utf8ncursor(&cur2, data, s2->name, s2->len) < 0)
->> +		return -EINVAL;
->> +
->> +	do {
->> +		c1 = utf8byte(&cur1);
->> +		c2 = utf8byte(&cur2);
->> +
->> +		if (c1 < 0 || c2 < 0)
->> +			return -EINVAL;
->> +		if (c1 != c2)
->> +			return 1;
->> +	} while (c1);
->> +
->> +	return 0;
->> +}
->> +
->> +static int utf8_strncasecmp(const struct unicode_map *um,
->> +			    const struct qstr *s1, const struct qstr *s2)
->> +{
->> +	const struct utf8data *data = utf8nfdicf(um->version);
->> +	struct utf8cursor cur1, cur2;
->> +	int c1, c2;
->> +
->> +	if (utf8ncursor(&cur1, data, s1->name, s1->len) < 0)
->> +		return -EINVAL;
->> +
->> +	if (utf8ncursor(&cur2, data, s2->name, s2->len) < 0)
->> +		return -EINVAL;
->> +
->> +	do {
->> +		c1 = utf8byte(&cur1);
->> +		c2 = utf8byte(&cur2);
->> +
->> +		if (c1 < 0 || c2 < 0)
->> +			return -EINVAL;
->> +		if (c1 != c2)
->> +			return 1;
->> +	} while (c1);
->> +
->> +	return 0;
->> +}
->> +
->> +/* String cf is expected to be a valid UTF-8 casefolded
->> + * string.
->> + */
->> +static int utf8_strncasecmp_folded(const struct unicode_map *um,
->> +				   const struct qstr *cf,
->> +				   const struct qstr *s1)
->> +{
->> +	const struct utf8data *data = utf8nfdicf(um->version);
->> +	struct utf8cursor cur1;
->> +	int c1, c2;
->> +	int i = 0;
->> +
->> +	if (utf8ncursor(&cur1, data, s1->name, s1->len) < 0)
->> +		return -EINVAL;
->> +
->> +	do {
->> +		c1 = utf8byte(&cur1);
->> +		c2 = cf->name[i++];
->> +		if (c1 < 0)
->> +			return -EINVAL;
->> +		if (c1 != c2)
->> +			return 1;
->> +	} while (c1);
->> +
->> +	return 0;
->> +}
->> +
->> +static int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
->> +			 unsigned char *dest, size_t dlen)
->> +{
->> +	const struct utf8data *data = utf8nfdicf(um->version);
->> +	struct utf8cursor cur;
->> +	size_t nlen = 0;
->> +
->> +	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
->> +		return -EINVAL;
->> +
->> +	for (nlen = 0; nlen < dlen; nlen++) {
->> +		int c = utf8byte(&cur);
->> +
->> +		dest[nlen] = c;
->> +		if (!c)
->> +			return nlen;
->> +		if (c == -1)
->> +			break;
->> +	}
->> +	return -EINVAL;
->> +}
->> +
->> +static int utf8_casefold_hash(const struct unicode_map *um, const void *salt,
->> +			      struct qstr *str)
->> +{
->> +	const struct utf8data *data = utf8nfdicf(um->version);
->> +	struct utf8cursor cur;
->> +	int c;
->> +	unsigned long hash = init_name_hash(salt);
->> +
->> +	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
->> +		return -EINVAL;
->> +
->> +	while ((c = utf8byte(&cur))) {
->> +		if (c < 0)
->> +			return -EINVAL;
->> +		hash = partial_name_hash((unsigned char)c, hash);
->> +	}
->> +	str->hash = end_name_hash(hash);
->> +	return 0;
->> +}
->> +
->> +static int utf8_normalize(const struct unicode_map *um, const struct qstr *str,
->> +			  unsigned char *dest, size_t dlen)
->> +{
->> +	const struct utf8data *data = utf8nfdi(um->version);
->> +	struct utf8cursor cur;
->> +	ssize_t nlen = 0;
->> +
->> +	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
->> +		return -EINVAL;
->> +
->> +	for (nlen = 0; nlen < dlen; nlen++) {
->> +		int c = utf8byte(&cur);
->> +
->> +		dest[nlen] = c;
->> +		if (!c)
->> +			return nlen;
->> +		if (c == -1)
->> +			break;
->> +	}
->> +	return -EINVAL;
->> +}
->> +
->> +static int utf8_parse_version(const char *version, unsigned int *maj,
->> +			      unsigned int *min, unsigned int *rev)
->> +{
->> +	substring_t args[3];
->> +	char version_string[12];
->> +	static const struct match_token token[] = {
->> +		{1, "%d.%d.%d"},
->> +		{0, NULL}
->> +	};
->> +
->> +	strncpy(version_string, version, sizeof(version_string));
->> +
->> +	if (match_token(version_string, token, args) != 1)
->> +		return -EINVAL;
->> +
->> +	if (match_int(&args[0], maj) || match_int(&args[1], min) ||
->> +	    match_int(&args[2], rev))
->> +		return -EINVAL;
->> +
->> +	return 0;
->> +}
->> +
->> +static struct unicode_map *utf8_load(const char *version)
->> +{
->> +	struct unicode_map *um = NULL;
->> +	int unicode_version;
->> +
->> +	if (version) {
->> +		unsigned int maj, min, rev;
->> +
->> +		if (utf8_parse_version(version, &maj, &min, &rev) < 0)
->> +			return ERR_PTR(-EINVAL);
->> +
->> +		if (!utf8version_is_supported(maj, min, rev))
->> +			return ERR_PTR(-EINVAL);
->> +
->> +		unicode_version = UNICODE_AGE(maj, min, rev);
->> +	} else {
->> +		unicode_version = utf8version_latest();
->> +		printk(KERN_WARNING"UTF-8 version not specified. "
->> +		       "Assuming latest supported version (%d.%d.%d).",
->> +		       (unicode_version >> 16) & 0xff,
->> +		       (unicode_version >> 8) & 0xff,
->> +		       (unicode_version & 0xff));
->> +	}
->> +
->> +	um = kzalloc(sizeof(struct unicode_map), GFP_KERNEL);
->> +	if (!um)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	um->charset = "UTF-8";
->> +	um->version = unicode_version;
->> +
->> +	return um;
->> +}
->> +
->> +static struct unicode_ops ops = {
->> +	.validate = utf8_validate,
->> +	.strncmp = utf8_strncmp,
->> +	.strncasecmp = utf8_strncasecmp,
->> +	.strncasecmp_folded = utf8_strncasecmp_folded,
->> +	.casefold = utf8_casefold,
->> +	.casefold_hash = utf8_casefold_hash,
->> +	.normalize = utf8_normalize,
->> +	.load = utf8_load,
->> +};
->> +
->> +static int __init utf8_init(void)
->> +{
->> +	unicode_register(&ops);
->> +	return 0;
->> +}
->> +
->> +static void __exit utf8_exit(void)
->> +{
->> +	unicode_unregister();
->> +}
->> +
->> +module_init(utf8_init);
->> +module_exit(utf8_exit);
->> +
->> +MODULE_LICENSE("GPL v2");
->> diff --git a/include/linux/unicode.h b/include/linux/unicode.h
->> index de23f9ee720b..b0d59069e438 100644
->> --- a/include/linux/unicode.h
->> +++ b/include/linux/unicode.h
->> @@ -10,6 +10,23 @@ struct unicode_map {
->>   	int version;
->>   };
->>   
->> +struct unicode_ops {
->> +	int (*validate)(const struct unicode_map *um, const struct qstr *str);
->> +	int (*strncmp)(const struct unicode_map *um, const struct qstr *s1,
->> +		       const struct qstr *s2);
->> +	int (*strncasecmp)(const struct unicode_map *um, const struct qstr *s1,
->> +			   const struct qstr *s2);
->> +	int (*strncasecmp_folded)(const struct unicode_map *um, const struct qstr *cf,
->> +				  const struct qstr *s1);
->> +	int (*normalize)(const struct unicode_map *um, const struct qstr *str,
->> +			 unsigned char *dest, size_t dlen);
->> +	int (*casefold)(const struct unicode_map *um, const struct qstr *str,
->> +			unsigned char *dest, size_t dlen);
->> +	int (*casefold_hash)(const struct unicode_map *um, const void *salt,
->> +			     struct qstr *str);
->> +	struct unicode_map* (*load)(const char *version);
->> +};
-> Also, make sure you run checkpatch.pl on the patch series before
-> submitting.
-I ran checkpatch.pl over the patch, but it seems there were some 
-previously existing warnings
-which are not introduced due to any change made in this patch series.
-I am not sure if I am supposed to resolve those warnings in this patch 
-series.
+Hi Chirstian,
 
->> +
->>   int unicode_validate(const struct unicode_map *um, const struct qstr *str);
->>   
->>   int unicode_strncmp(const struct unicode_map *um,
->> @@ -33,4 +50,7 @@ int unicode_casefold_hash(const struct unicode_map *um, const void *salt,
->>   struct unicode_map *unicode_load(const char *version);
->>   void unicode_unload(struct unicode_map *um);
->>   
->> +void unicode_register(struct unicode_ops *ops);
->> +void unicode_unregister(void);
->> +
->>   #endif /* _LINUX_UNICODE_H */
+Thanks for the following patches. Now we are only left with
+kuid_from_mnt() and kuid_into_mnt() and I can wrap my head around
+it.
+
+Thanks
+Vivek
+
+> 
+> From 1bab0249295d0cad359f39a38e6171bcd2d68a60 Mon Sep 17 00:00:00 2001
+> From: Christian Brauner <christian.brauner@ubuntu.com>
+> Date: Sat, 13 Mar 2021 15:08:04 +0100
+> Subject: [PATCH 1/2] fs: introduce fsuidgid_has_mapping() helper
+> 
+> Don't open-code the checks and instead move them into a clean little
+> helper we can call. This also reduces the risk that if we ever changing
+> something here we forget to change all locations.
+> 
+> Inspired-by: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
+>  fs/namei.c         | 11 +++--------
+>  include/linux/fs.h | 13 +++++++++++++
+>  2 files changed, 16 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 216f16e74351..bc03cbc37ba7 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2823,16 +2823,14 @@ static int may_delete(struct user_namespace *mnt_userns, struct inode *dir,
+>  static inline int may_create(struct user_namespace *mnt_userns,
+>  			     struct inode *dir, struct dentry *child)
+>  {
+> -	struct user_namespace *s_user_ns;
+>  	audit_inode_child(dir, child, AUDIT_TYPE_CHILD_CREATE);
+>  	if (child->d_inode)
+>  		return -EEXIST;
+>  	if (IS_DEADDIR(dir))
+>  		return -ENOENT;
+> -	s_user_ns = dir->i_sb->s_user_ns;
+> -	if (!kuid_has_mapping(s_user_ns, fsuid_into_mnt(mnt_userns)) ||
+> -	    !kgid_has_mapping(s_user_ns, fsgid_into_mnt(mnt_userns)))
+> +	if (!fsuidgid_has_mapping(dir->i_sb, mnt_userns))
+>  		return -EOVERFLOW;
+> +
+>  	return inode_permission(mnt_userns, dir, MAY_WRITE | MAY_EXEC);
+>  }
+>  
+> @@ -3034,14 +3032,11 @@ static int may_o_create(struct user_namespace *mnt_userns,
+>  			const struct path *dir, struct dentry *dentry,
+>  			umode_t mode)
+>  {
+> -	struct user_namespace *s_user_ns;
+>  	int error = security_path_mknod(dir, dentry, mode, 0);
+>  	if (error)
+>  		return error;
+>  
+> -	s_user_ns = dir->dentry->d_sb->s_user_ns;
+> -	if (!kuid_has_mapping(s_user_ns, fsuid_into_mnt(mnt_userns)) ||
+> -	    !kgid_has_mapping(s_user_ns, fsgid_into_mnt(mnt_userns)))
+> +	if (!fsuidgid_has_mapping(dir->dentry->d_sb, mnt_userns))
+>  		return -EOVERFLOW;
+>  
+>  	error = inode_permission(mnt_userns, dir->dentry->d_inode,
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index ec8f3ddf4a6a..a970a43afb0a 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1620,6 +1620,19 @@ static inline kgid_t fsgid_into_mnt(struct user_namespace *mnt_userns)
+>  	return kgid_from_mnt(mnt_userns, current_fsgid());
+>  }
+>  
+> +static inline bool fsuidgid_has_mapping(struct super_block *sb,
+> +					struct user_namespace *mnt_userns)
+> +{
+> +	struct user_namespace *s_user_ns = sb->s_user_ns;
+> +	if (!kuid_has_mapping(s_user_ns,
+> +		kuid_from_mnt(mnt_userns, current_fsuid())))
+> +		return false;
+> +	if (!kgid_has_mapping(s_user_ns,
+> +		kgid_from_mnt(mnt_userns, current_fsgid())))
+> +		return false;
+> +	return true;
+> +}
+> +
+>  extern struct timespec64 current_time(struct inode *inode);
+>  
+>  /*
+> -- 
+> 2.27.0
+> 
+> 
+> From 2f316f7de3ac96ecc8cc889724c0132e96b47b51 Mon Sep 17 00:00:00 2001
+> From: Christian Brauner <christian.brauner@ubuntu.com>
+> Date: Sat, 13 Mar 2021 15:11:55 +0100
+> Subject: [PATCH 2/2] fs: introduce two little fs{u,g}id inode initialization
+>  helpers
+> 
+> As Vivek pointed out we could tweak the names of the fs{u,g}id helpers.
+> That's already good but the better approach is to not expose them in
+> this way to filesystems at all and simply give the filesystems two
+> helpers inode_fsuid_set() and inode_fsgid_set() that will do the right
+> thing.
+> 
+> Inspired-by: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
+>  fs/ext4/ialloc.c   |  2 +-
+>  fs/inode.c         |  4 ++--
+>  fs/xfs/xfs_inode.c |  2 +-
+>  include/linux/fs.h | 10 ++++++----
+>  4 files changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+> index 633ae7becd61..755a68bb7e22 100644
+> --- a/fs/ext4/ialloc.c
+> +++ b/fs/ext4/ialloc.c
+> @@ -970,7 +970,7 @@ struct inode *__ext4_new_inode(struct user_namespace *mnt_userns,
+>  		i_gid_write(inode, owner[1]);
+>  	} else if (test_opt(sb, GRPID)) {
+>  		inode->i_mode = mode;
+> -		inode->i_uid = fsuid_into_mnt(mnt_userns);
+> +		inode_fsuid_set(inode, mnt_userns);
+>  		inode->i_gid = dir->i_gid;
+>  	} else
+>  		inode_init_owner(mnt_userns, inode, dir, mode);
+> diff --git a/fs/inode.c b/fs/inode.c
+> index a047ab306f9a..21c5a620ca89 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -2148,7 +2148,7 @@ EXPORT_SYMBOL(init_special_inode);
+>  void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
+>  		      const struct inode *dir, umode_t mode)
+>  {
+> -	inode->i_uid = fsuid_into_mnt(mnt_userns);
+> +	inode_fsuid_set(inode, mnt_userns);
+>  	if (dir && dir->i_mode & S_ISGID) {
+>  		inode->i_gid = dir->i_gid;
+>  
+> @@ -2160,7 +2160,7 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
+>  			 !capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
+>  			mode &= ~S_ISGID;
+>  	} else
+> -		inode->i_gid = fsgid_into_mnt(mnt_userns);
+> +		inode_fsgid_set(inode, mnt_userns);
+>  	inode->i_mode = mode;
+>  }
+>  EXPORT_SYMBOL(inode_init_owner);
+> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> index 46a861d55e48..aa924db90cd9 100644
+> --- a/fs/xfs/xfs_inode.c
+> +++ b/fs/xfs/xfs_inode.c
+> @@ -812,7 +812,7 @@ xfs_init_new_inode(
+>  
+>  	if (dir && !(dir->i_mode & S_ISGID) &&
+>  	    (mp->m_flags & XFS_MOUNT_GRPID)) {
+> -		inode->i_uid = fsuid_into_mnt(mnt_userns);
+> +		inode_fsuid_set(inode, mnt_userns);
+>  		inode->i_gid = dir->i_gid;
+>  		inode->i_mode = mode;
+>  	} else {
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index a970a43afb0a..b337daa6b191 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1610,14 +1610,16 @@ static inline kgid_t kgid_from_mnt(struct user_namespace *mnt_userns,
+>  	return KGIDT_INIT(from_kgid(mnt_userns, kgid));
+>  }
+>  
+> -static inline kuid_t fsuid_into_mnt(struct user_namespace *mnt_userns)
+> +static inline void inode_fsuid_set(struct inode *inode,
+> +				   struct user_namespace *mnt_userns)
+>  {
+> -	return kuid_from_mnt(mnt_userns, current_fsuid());
+> +	inode->i_uid = kuid_from_mnt(mnt_userns, current_fsuid());
+>  }
+>  
+> -static inline kgid_t fsgid_into_mnt(struct user_namespace *mnt_userns)
+> +static inline void inode_fsgid_set(struct inode *inode,
+> +				   struct user_namespace *mnt_userns)
+>  {
+> -	return kgid_from_mnt(mnt_userns, current_fsgid());
+> +	inode->i_gid = kgid_from_mnt(mnt_userns, current_fsgid());
+>  }
+>  
+>  static inline bool fsuidgid_has_mapping(struct super_block *sb,
+> -- 
+> 2.27.0
+> 
+
