@@ -2,112 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F14FC33B1C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 12:55:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45BBB33B223
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 13:08:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbhCOLzI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 07:55:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45904 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229748AbhCOLy7 (ORCPT
+        id S229658AbhCOMIA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 08:08:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42557 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229878AbhCOMHs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 07:54:59 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34ECEC061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 04:54:59 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id y1so15838816ljm.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 04:54:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=TCKES4KspyjNo/wG6JlZwaabmOGw2Jey0GicXPV904o=;
-        b=QofG4+vX6fm1lS8Ti+Sc8uYu9K3mrAW/Zt51ntjHYb7oPYBEuUa71SJMW6Ix65YfHf
-         h6Rm2mkTYqfNHKZ63Wub4y/6rJxNGW4xwmcCNRbzKugLnrgiuDJEgNHFSktztrcSMzPh
-         wAV+TvvaV1AOZNYHNLrh3/M/iFG76m88mZied3mCZoXjYAZleUbSq0jKDWQOoUyoh8+C
-         ppMf6KNdOyBhWJr8W8V2O5SPmTfEb1wWRUQBVsD3tcQm/RNNemAqj9EFTS5MlCOzR/mE
-         x4lUP098Rcwiru++abTAX+uLsKMIuunUctiLmlUfWO+oqBWRGLVfdcbKQO6SK1XUinXY
-         OVOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=TCKES4KspyjNo/wG6JlZwaabmOGw2Jey0GicXPV904o=;
-        b=g4yOxfz3c/jMgreDyEuJtb6Rb8atB8hI2hYWjjy3EHTq8+dEZMHwBZyAJk2jN04NyK
-         G4f9vLUYdhQGiecc5p3udP3dIlrB28PUf+JjSBL6IIfE0pcUdV/mJ3i/WfFAUygHbx2E
-         PNmUHzggoNZl3KsX1EVtss5vuA7JMw+8ajxc9oStdYxrxVKvJc3c3mbsmQWEQyPyclQn
-         YpLQn5YjmFr6nifRsk05bFfhZVHAyVSncGIc6tQduEq71BTx9r1BaNTGRLjcscXaiC5Z
-         UVkc7U5Z7kF7dlix2Dp1Rg9ASt95nXeHQ+Fliou+kawNyTz/YHSgdiyOvJcOvRM6z8iX
-         yHbg==
-X-Gm-Message-State: AOAM5315Y0H5+sDFV/a9OYTXPxthVxs68L5Dr/2Y3wB7Jy1xa+EB6N+i
-        8oQ9VwOl5wOmsYwS9vNEyc6SSw==
-X-Google-Smtp-Source: ABdhPJxskvGqVCaD7c5cQLEXx7onYddRtZr2Vrf4cuw2WNFh8fiISy6s9e81NVnbHcCvTGkhNlNV2g==
-X-Received: by 2002:a2e:9a4e:: with SMTP id k14mr10494828ljj.116.1615809297641;
-        Mon, 15 Mar 2021 04:54:57 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id 200sm2688793lfl.2.2021.03.15.04.54.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Mar 2021 04:54:57 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 40B4A10246E; Mon, 15 Mar 2021 14:55:01 +0300 (+03)
-Date:   Mon, 15 Mar 2021 14:55:01 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 00/25] Page folios
-Message-ID: <20210315115501.7rmzaan2hxsqowgq@box>
-References: <20210305041901.2396498-1-willy@infradead.org>
- <20210313123658.ad2dcf79a113a8619c19c33b@linux-foundation.org>
- <alpine.LSU.2.11.2103131842590.14125@eggly.anvils>
+        Mon, 15 Mar 2021 08:07:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615810068;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=ufNP28iDEq7bxKgBp6VXlSCiguLGQUtUfb7Q0JdhYsQ=;
+        b=Y8IqBLfMP59k+6HFaJGmqhA5DLnExCG87R1jJcY0SDV3ffS1XM7nB6QSlN53qbcxhhDjJP
+        obiNCXZ/PdN8+68oBk/o+0wDreDkwkeQXnNlrKxyJWH9wQA+JvZoMpxDNpQy0PuKeu/m/Z
+        lmApJIQnHONZXAiyYmyjShs9K/M/ADU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-411-lM_eGnjbO4usxMzdgNrZ9w-1; Mon, 15 Mar 2021 08:07:44 -0400
+X-MC-Unique: lM_eGnjbO4usxMzdgNrZ9w-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ABAF5800C78;
+        Mon, 15 Mar 2021 12:07:42 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AA97310190A7;
+        Mon, 15 Mar 2021 12:07:40 +0000 (UTC)
+Subject: [RFC][PATCH 0/3] vfs: Use an xarray instead of inserted bookmarks to
+ scan mount list
+From:   David Howells <dhowells@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Matthew Wilcox <willy@infradead.org>, dhowells@redhat.com,
+        Matthew Wilcox <willy@infradead.org>,
+        Ian Kent <raven@themaw.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 15 Mar 2021 12:07:39 +0000
+Message-ID: <161581005972.2850696.12854461380574304411.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.11.2103131842590.14125@eggly.anvils>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 13, 2021 at 07:09:01PM -0800, Hugh Dickins wrote:
-> On Sat, 13 Mar 2021, Andrew Morton wrote:
-> > On Fri,  5 Mar 2021 04:18:36 +0000 "Matthew Wilcox (Oracle)" <willy@infradead.org> wrote:
-> > 
-> > > Our type system does not currently distinguish between tail pages and
-> > > head or single pages.  This is a problem because we call compound_head()
-> > > multiple times (and the compiler cannot optimise it out), bloating the
-> > > kernel.  It also makes programming hard as it is often unclear whether
-> > > a function operates on an individual page, or an entire compound page.
-> > > 
-> > > This patch series introduces the struct folio, which is a type that
-> > > represents an entire compound page.  This initial set reduces the kernel
-> > > size by approximately 6kB, although its real purpose is adding
-> > > infrastructure to enable further use of the folio.
-> > 
-> > Geeze it's a lot of noise.  More things to remember and we'll forever
-> > have a mismash of `page' and `folio' and code everywhere converting
-> > from one to the other.  Ongoing addition of folio
-> > accessors/manipulators to overlay the existing page
-> > accessors/manipulators, etc.
-> > 
-> > It's unclear to me that it's all really worth it.  What feedback have
-> > you seen from others?
-> 
-> My own feeling and feedback have been much like yours.
-> 
-> I don't get very excited by type safety at this level; and although
-> I protested back when all those compound_head()s got tucked into the
-> *PageFlag() functions, the text size increase was not very much, and
-> I never noticed any adverse performance reports.
-> 
-> To me, it's distraction, churn and friction, ongoing for years; but
-> that's just me, and I'm resigned to the possibility that it will go in.
-> Matthew is not alone in wanting to pursue it: let others speak.
 
-I'm with Matthew on this. I would really want to drop the number of places
-where we call compoud_head(). I hope we can get rid of the page flag
-policy hack I made.
+Hi Al, Miklós,
 
--- 
- Kirill A. Shutemov
+Can we consider replacing the "insert cursor" approach we're currently
+using for proc files to scan the current namespace's mount list[1] with
+something that uses an xarray of mounts indexed by mnt_id?
+
+This has some advantages:
+
+ (1) It's simpler.  We don't need to insert dummy mount objects as
+     bookmarks into the mount list and code that's walking the list doesn't
+     have to carefully step over them.
+
+ (2) We can use the file position to represent the mnt_id and can jump to
+     it directly - ie. using seek() to jump to a mount object by its ID.
+
+ (3) It might make it easier to use RCU in future to dump mount entries
+     rather than having to take namespace_sem.  xarray provides for the
+     possibility of tagging entries to say that they're viewable to avoid
+     dumping incomplete mount objects.
+
+But there are a number of disadvantages:
+
+ (1) We have to allocate memory to maintain the xarray, which becomes more
+     of a problem as mnt_id values get scattered.
+
+ (2) We need to preallocate the xarray memory because we're manipulating
+
+ (3) The effect could be magnified because someone mounts an entire
+     subtree and propagation has to copy all of it.
+
+David
+
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9f6c61f96f2d97cbb5f7fa85607bc398f843ff0f [1]
+
+---
+David Howells (3):
+      vfs: Use an xarray in the mount namespace to handle /proc/mounts list
+      vfs: Use the mounts_to_id array to do /proc/mounts and co.
+      vfs: Remove mount list trawling cursor stuff
+
+
+ fs/mount.h            |  2 +-
+ fs/namespace.c        | 66 ++++++++++---------------------------------
+ fs/proc_namespace.c   |  3 --
+ include/linux/mount.h |  4 +--
+ 4 files changed, 17 insertions(+), 58 deletions(-)
+
+
