@@ -2,79 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42D2B33B4CD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 14:42:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B34E33B4DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 14:46:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229831AbhCONmM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 09:42:12 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31002 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229660AbhCONl5 (ORCPT
+        id S229632AbhCONqA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 09:46:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41574 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229540AbhCONpj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 09:41:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1615815717;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=pIaBmIY3wpgp8eqLpLPVRWAADavoCBIo1W8aCkerR6M=;
-        b=IBa+/4uC/qUAayvMuH8AIe9TAogkwTwhK5zxBoQzOEsbpRQhs2/w0Md6Jis4rjDumKdODM
-        npyL1AwWt1YRQAU6DaHhB7eB+RFGSNwipIW94TwvYlPLSU1mEs+q60A7SPaiL87V201p8D
-        eyhuozeVJACBoYJESxUvcYJOuiAPHbQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-439-aHkpMn5yMBmMROU_HtnydA-1; Mon, 15 Mar 2021 09:41:53 -0400
-X-MC-Unique: aHkpMn5yMBmMROU_HtnydA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6C08380006E;
-        Mon, 15 Mar 2021 13:41:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E8E19620DE;
-        Mon, 15 Mar 2021 13:41:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpegsb9XrUct5zawN+kS_DSfowBf2BnrZzG+cQXUvsGZZuow@mail.gmail.com>
-References: <CAJfpegsb9XrUct5zawN+kS_DSfowBf2BnrZzG+cQXUvsGZZuow@mail.gmail.com> <161581005972.2850696.12854461380574304411.stgit@warthog.procyon.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ian Kent <raven@themaw.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH 0/3] vfs: Use an xarray instead of inserted bookmarks to scan mount list
+        Mon, 15 Mar 2021 09:45:39 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20616C06174A;
+        Mon, 15 Mar 2021 06:45:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=vX11bsGcJE0CRePOS5HuSnKaopIkgIWxWo8E8FVQGL8=; b=oQ69t1xbTPN6zyN+S04ZNJkw+1
+        NHEq0XYigCUv7yk6ZSAuVHwDlAK7Y6Doa2HYx1gTelmAJcpuvZf5R7Esrm2Fkc3v8923U3B5YIf3a
+        +WP6njTaJgADtltqncxuHYiEHjoJQHnoQMeqq7qzrd/TrOdVRTVx5gdVykRS4nzW5hgA8wkALDaJ1
+        QOeAca+77u8HF9PRx/8d66M2YZut228mYetTSnOL3tHYHD55D3f8/QoPRLr5NzX16+KJKJ1+l2U7h
+        V8f4fJ0tZAkO0I/GGeHWAOeuaIzH3+K94n9N8v+CY5hKgvOMZTAAm8zMR5TiQtRyewS9sIy/Q6DhV
+        xaOi0Usw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lLnWu-000Fop-2q; Mon, 15 Mar 2021 13:45:14 +0000
+Date:   Mon, 15 Mar 2021 13:45:08 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 00/25] Page folios
+Message-ID: <20210315134508.GX2577561@casper.infradead.org>
+References: <20210305041901.2396498-1-willy@infradead.org>
+ <20210313123658.ad2dcf79a113a8619c19c33b@linux-foundation.org>
+ <alpine.LSU.2.11.2103131842590.14125@eggly.anvils>
+ <20210315115501.7rmzaan2hxsqowgq@box>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2857439.1615815708.1@warthog.procyon.org.uk>
-Date:   Mon, 15 Mar 2021 13:41:48 +0000
-Message-ID: <2857440.1615815708@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210315115501.7rmzaan2hxsqowgq@box>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Mon, Mar 15, 2021 at 02:55:01PM +0300, Kirill A. Shutemov wrote:
+> I'm with Matthew on this. I would really want to drop the number of places
+> where we call compoud_head(). I hope we can get rid of the page flag
+> policy hack I made.
 
-> >  (2) We can use the file position to represent the mnt_id and can jump to
-> >      it directly - ie. using seek() to jump to a mount object by its ID.
-> 
-> What happens if the mount at the current position is removed?
-
-umount_tree() requires the namespace_sem to be writelocked, so that should be
-fine as the patches currently read-lock that whilst doing /proc/*/mount*
-
-I'm assuming that kern_unmount() won't be a problem as it is there to deal
-with mounts made by kern_mount() which don't get added to the mount list
-(mnt_ns is MNT_NS_INTERNAL).  kern_unmount_array() seems to be the same
-because overlayfs gives it mounts generated by clone_private_mount().  It
-might be worth putting a WARN_ON() in kern_unmount() to require this.
-
-When reading through proc, m_start() calls xas_find() which returns the entry
-at the starting index or, if not present, the next higher entry.
-
-David
+I can't see that far ahead too clearly, but I do think that at some
+point we'll actually distinguish between folio flags and page flags.
+For example, we won't have a FolioHWPoison, because we won't keep a folio
+together if one page in it has become defective.  Nor will we have a
+PageUptodate because we'll only care about whether a folio is uptodate.
+And at that point, we won't want page flag policies.
 
