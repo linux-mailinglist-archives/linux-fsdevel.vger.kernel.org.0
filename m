@@ -2,72 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A0B033B3A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 14:18:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42D2B33B4CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 14:42:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229731AbhCONSF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 09:18:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35594 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229746AbhCONRz (ORCPT
+        id S229831AbhCONmM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 09:42:12 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31002 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229660AbhCONl5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 09:17:55 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32946C06174A;
-        Mon, 15 Mar 2021 06:17:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=7Jrclnurpg02FW6SBK78iFY06pC4oqxMEZmAxzr40dg=; b=mLAmtzek/OysmlUkK2D+l/+ViO
-        P0JQHzdgMfu6NrsqY8zXpk6RTX/5nmNEn7oIDRUqEQM84J8B3lrsZGvkP5HHPKPkl0ZkPlrOGt31T
-        xLmeHPnJjSHqB50gbfaDl7P7BEhGCQo+FHsuI7rB0HWgJzaaV2BLxt752pSmbcJtzi+bcZ+w405PR
-        LUlCDthgLnKXM3rZxlWrYs+w7Fn7g+5hBePLZj+wRC9iUihLEQ2IQwyRZYa6GyFvoC+9pAMFj/oHO
-        jpdlTTW3D7CA4MMjxR5B+DrHb0PQVjhMQ/4QM/do1x1T9WIERqk5XF/F184c6va0yydPKlm5RGM5o
-        4zjRyPUg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lLn63-000DJ6-7o; Mon, 15 Mar 2021 13:17:26 +0000
-Date:   Mon, 15 Mar 2021 13:17:23 +0000
-From:   Matthew Wilcox <willy@infradead.org>
+        Mon, 15 Mar 2021 09:41:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615815717;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=pIaBmIY3wpgp8eqLpLPVRWAADavoCBIo1W8aCkerR6M=;
+        b=IBa+/4uC/qUAayvMuH8AIe9TAogkwTwhK5zxBoQzOEsbpRQhs2/w0Md6Jis4rjDumKdODM
+        npyL1AwWt1YRQAU6DaHhB7eB+RFGSNwipIW94TwvYlPLSU1mEs+q60A7SPaiL87V201p8D
+        eyhuozeVJACBoYJESxUvcYJOuiAPHbQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-439-aHkpMn5yMBmMROU_HtnydA-1; Mon, 15 Mar 2021 09:41:53 -0400
+X-MC-Unique: aHkpMn5yMBmMROU_HtnydA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6C08380006E;
+        Mon, 15 Mar 2021 13:41:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E8E19620DE;
+        Mon, 15 Mar 2021 13:41:49 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAJfpegsb9XrUct5zawN+kS_DSfowBf2BnrZzG+cQXUvsGZZuow@mail.gmail.com>
+References: <CAJfpegsb9XrUct5zawN+kS_DSfowBf2BnrZzG+cQXUvsGZZuow@mail.gmail.com> <161581005972.2850696.12854461380574304411.stgit@warthog.procyon.org.uk>
 To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     David Howells <dhowells@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+Cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
         Ian Kent <raven@themaw.net>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH 0/3] vfs: Use an xarray instead of inserted
- bookmarks to scan mount list
-Message-ID: <20210315131723.GW2577561@casper.infradead.org>
-References: <161581005972.2850696.12854461380574304411.stgit@warthog.procyon.org.uk>
- <CAJfpegsb9XrUct5zawN+kS_DSfowBf2BnrZzG+cQXUvsGZZuow@mail.gmail.com>
+Subject: Re: [RFC][PATCH 0/3] vfs: Use an xarray instead of inserted bookmarks to scan mount list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJfpegsb9XrUct5zawN+kS_DSfowBf2BnrZzG+cQXUvsGZZuow@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2857439.1615815708.1@warthog.procyon.org.uk>
+Date:   Mon, 15 Mar 2021 13:41:48 +0000
+Message-ID: <2857440.1615815708@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 15, 2021 at 02:14:35PM +0100, Miklos Szeredi wrote:
-> On Mon, Mar 15, 2021 at 1:07 PM David Howells <dhowells@redhat.com> wrote:
-> >
-> >
-> > Hi Al, Miklós,
-> >
-> > Can we consider replacing the "insert cursor" approach we're currently
-> > using for proc files to scan the current namespace's mount list[1] with
-> > something that uses an xarray of mounts indexed by mnt_id?
-> >
-> > This has some advantages:
-> >
-> >  (1) It's simpler.  We don't need to insert dummy mount objects as
-> >      bookmarks into the mount list and code that's walking the list doesn't
-> >      have to carefully step over them.
-> >
+Miklos Szeredi <miklos@szeredi.hu> wrote:
+
 > >  (2) We can use the file position to represent the mnt_id and can jump to
 > >      it directly - ie. using seek() to jump to a mount object by its ID.
 > 
 > What happens if the mount at the current position is removed?
 
-xa_find() will move to the next one.
+umount_tree() requires the namespace_sem to be writelocked, so that should be
+fine as the patches currently read-lock that whilst doing /proc/*/mount*
+
+I'm assuming that kern_unmount() won't be a problem as it is there to deal
+with mounts made by kern_mount() which don't get added to the mount list
+(mnt_ns is MNT_NS_INTERNAL).  kern_unmount_array() seems to be the same
+because overlayfs gives it mounts generated by clone_private_mount().  It
+might be worth putting a WARN_ON() in kern_unmount() to require this.
+
+When reading through proc, m_start() calls xas_find() which returns the entry
+at the starting index or, if not present, the next higher entry.
+
+David
+
