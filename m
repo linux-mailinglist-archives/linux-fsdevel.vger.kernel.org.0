@@ -2,88 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69CCF33AF35
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 10:47:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAE8433AF3E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 10:48:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229601AbhCOJrF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 05:47:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46588 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229887AbhCOJq4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 05:46:56 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E74DCC061762
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 02:46:55 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id mm21so64958625ejb.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 02:46:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QCH3VsMvUSEqRY0D77ObQA6OJaIvmvlJ89ZGUx/CcXM=;
-        b=KBdJN57ZQ8VQz1uCDRBPHQrOXwItBmwEOFNPq9ozYMbd8bVSP9hZj0v9/leZLxc2v+
-         bnEIog66c/xVxrJaQAQDSfaN+5ON+6/yYsZ8IdtMtK+aTlx4uX2mxihZsNBRUez/do4+
-         1KvtRI7pNUOjnhjQuA0DVTja0OSZL+D2vVMQuDfYKe+dQbply48UC3cv2rlAidtOomQs
-         k1BP33T2HNlfsNTa9+WA72vbFKmtOzfthLV8yRt2Y3aDsU1xaHrDx2k0biUGtA/628u1
-         XwtKg+gHWjT467qCsHWkew3z6+raHVfH7JAGoUlxnPeVEVkdXSpctfKubCK/DjB1C3Uf
-         K5Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QCH3VsMvUSEqRY0D77ObQA6OJaIvmvlJ89ZGUx/CcXM=;
-        b=oWldQ5kkjbSUl1/SWPhTBSi00wKdsfJSn09jK2HrA/AmpV+CNZHF95v9VACa73TRhH
-         MKnInMXQ7vKRRPwoBwrT324WoalX2Vo8KylMsIPsPtQLCxXjlCPTvU/0py+98dDc3lnS
-         rO8dXun66Em567WWPACf4Rg0KdVRHt0QOU0LQbMKTb5GbWc39JwWrNdpHkzXxPN+AxHr
-         73CsIPjZn5klw44E+jdDI6MP8f2pZ1cQbiNzc5wQGAsrWvWsmjrnm1cnd+HEHIJJEC9a
-         MGlBbmBsptN7w1Jt8/bT1Rq9P84e/mFVGT7bUykfg8r59Qapbe4KclTdxoRiTtjg4chk
-         6xRQ==
-X-Gm-Message-State: AOAM533vhvOMFUhYjXwtgNK1MYxuoQwjvkYY3p9lKT+00+ZpqxFjYbe1
-        PZ08bUZt+AxVCuNozwU/EztZ+rXbhlMIzfBiHOrm
-X-Google-Smtp-Source: ABdhPJwfPpbGsW1NwziEvCm+pu9W0AYA2Ip5t3r5CSavHkGCI1g9/KIycGHrq/KBYUgnQfbZQ1cImKEpNMiBrV1NXz0=
-X-Received: by 2002:a17:906:311a:: with SMTP id 26mr22439640ejx.395.1615801614537;
- Mon, 15 Mar 2021 02:46:54 -0700 (PDT)
+        id S229591AbhCOJsI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 05:48:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60690 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229624AbhCOJrr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 15 Mar 2021 05:47:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id BCC60AC1D;
+        Mon, 15 Mar 2021 09:47:45 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id CE6971E423D; Mon, 15 Mar 2021 10:47:44 +0100 (CET)
+Date:   Mon, 15 Mar 2021 10:47:44 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     "zhangyi (F)" <yi.zhang@huawei.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-block@vger.kernel.org, jack@suse.cz, tytso@mit.edu,
+        viro@zeniv.linux.org.uk, hch@infradead.org, axboe@kernel.dk,
+        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com
+Subject: Re: [RFC PATCH 1/3] block_dump: remove block_dump feature in
+ mark_inode_dirty()
+Message-ID: <20210315094744.GA3227@quack2.suse.cz>
+References: <20210313030146.2882027-1-yi.zhang@huawei.com>
+ <20210313030146.2882027-2-yi.zhang@huawei.com>
 MIME-Version: 1.0
-References: <20210315053721.189-1-xieyongji@bytedance.com> <20210315053721.189-2-xieyongji@bytedance.com>
- <20210315090822.GA4166677@infradead.org>
-In-Reply-To: <20210315090822.GA4166677@infradead.org>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Mon, 15 Mar 2021 17:46:43 +0800
-Message-ID: <CACycT3vrHOExXj6v8ULvUzdLcRkdzS5=TNK6=g4+RWEdN-nOJw@mail.gmail.com>
-Subject: Re: Re: [PATCH v5 01/11] file: Export __receive_fd() to modules
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210313030146.2882027-2-yi.zhang@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 15, 2021 at 5:08 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Mon, Mar 15, 2021 at 01:37:11PM +0800, Xie Yongji wrote:
-> > Export __receive_fd() so that some modules can use
-> > it to pass file descriptor between processes.
->
-> I really don't think any non-core code should do that, especilly not
-> modular mere driver code.
+On Sat 13-03-21 11:01:44, zhangyi (F) wrote:
+> block_dump is an old debugging interface, one of it's functions is used
+> to print the information about who write which file on disk. If we
+> enable block_dump through /proc/sys/vm/block_dump and turn on debug log
+> level, we can gather information about write process name, target file
+> name and disk from kernel message. This feature is realized in
+> block_dump___mark_inode_dirty(), it print above information into kernel
+> message directly when marking inode dirty, so it is noisy and can easily
+> trigger log storm. At the same time, get the dentry refcount is also not
+> safe, we found it will lead to deadlock on ext4 file system with
+> data=journal mode.
+> 
+> After tracepoints has been introduced into the kernel, we got a
+> tracepoint in __mark_inode_dirty(), which is a better replacement of
+> block_dump___mark_inode_dirty(). The only downside is that it only trace
+> the inode number and not a file name, but it probably doesn't matter
+> because the original printed file name in block_dump is not accurate in
+> some cases, and we can still find it through the inode number and device
+> id. So this patch delete the dirting inode part of block_dump feature.
+> 
+> Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
 
-Do you see any issue? Now I think we're able to do that with the help
-of get_unused_fd_flags() and fd_install() in modules. But we may miss
-some security stuff in this way. So I try to export __receive_fd() and
-use it instead.
+Looks good to me. Feel free to add:
 
-Thanks,
-Yongji
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/fs-writeback.c | 25 -------------------------
+>  1 file changed, 25 deletions(-)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index e91980f49388..7c46d1588a19 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -2205,28 +2205,6 @@ int dirtytime_interval_handler(struct ctl_table *table, int write,
+>  	return ret;
+>  }
+>  
+> -static noinline void block_dump___mark_inode_dirty(struct inode *inode)
+> -{
+> -	if (inode->i_ino || strcmp(inode->i_sb->s_id, "bdev")) {
+> -		struct dentry *dentry;
+> -		const char *name = "?";
+> -
+> -		dentry = d_find_alias(inode);
+> -		if (dentry) {
+> -			spin_lock(&dentry->d_lock);
+> -			name = (const char *) dentry->d_name.name;
+> -		}
+> -		printk(KERN_DEBUG
+> -		       "%s(%d): dirtied inode %lu (%s) on %s\n",
+> -		       current->comm, task_pid_nr(current), inode->i_ino,
+> -		       name, inode->i_sb->s_id);
+> -		if (dentry) {
+> -			spin_unlock(&dentry->d_lock);
+> -			dput(dentry);
+> -		}
+> -	}
+> -}
+> -
+>  /**
+>   * __mark_inode_dirty -	internal function to mark an inode dirty
+>   *
+> @@ -2296,9 +2274,6 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+>  	    (dirtytime && (inode->i_state & I_DIRTY_INODE)))
+>  		return;
+>  
+> -	if (unlikely(block_dump))
+> -		block_dump___mark_inode_dirty(inode);
+> -
+>  	spin_lock(&inode->i_lock);
+>  	if (dirtytime && (inode->i_state & I_DIRTY_INODE))
+>  		goto out_unlock_inode;
+> -- 
+> 2.25.4
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
