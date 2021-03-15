@@ -2,208 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4753533AEC5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 10:28:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69CCF33AF35
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 10:47:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229672AbhCOJ2C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 05:28:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42478 "EHLO
+        id S229601AbhCOJrF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 05:47:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229830AbhCOJ1l (ORCPT
+        with ESMTP id S229887AbhCOJq4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 05:27:41 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3307C061762
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 02:27:40 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id a188so6194993pfb.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 02:27:40 -0700 (PDT)
+        Mon, 15 Mar 2021 05:46:56 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E74DCC061762
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 02:46:55 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id mm21so64958625ejb.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 02:46:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cszE7wMfBbYNxizL5sc0ajOqCGxq2ZshpdXC0HOV9L4=;
-        b=km/CjZkCx6zyRgKYOGEoxWIjcIx1unZZquR8skWzd/pW6clIuXtwQGxiajPex0ATz2
-         P2wRVzt9l8BuviGhbq75n2agvjNjBaM/+hcKfgT8oClqlRtNdn/Apw1gj8ewV0jNmlxa
-         zTdGDKZxTmalwPV9uQWrR10edynmv54Hgj6Omv9jkDnilNrBJ1B/ZwQXuW3L7nCBkdLC
-         siDsQsYkTSH4fdAwnqQl7snYd/m1RG9Yy33+j6CuEKeRc64uxcxzXb9EMgpJjacVeavb
-         0PQT5RmteXVMLjtHYX+F4gVQzT3CT7yaEcTcn+A8fSICz6t22z82/cCKOR2nBV3yDgx3
-         ayWQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QCH3VsMvUSEqRY0D77ObQA6OJaIvmvlJ89ZGUx/CcXM=;
+        b=KBdJN57ZQ8VQz1uCDRBPHQrOXwItBmwEOFNPq9ozYMbd8bVSP9hZj0v9/leZLxc2v+
+         bnEIog66c/xVxrJaQAQDSfaN+5ON+6/yYsZ8IdtMtK+aTlx4uX2mxihZsNBRUez/do4+
+         1KvtRI7pNUOjnhjQuA0DVTja0OSZL+D2vVMQuDfYKe+dQbply48UC3cv2rlAidtOomQs
+         k1BP33T2HNlfsNTa9+WA72vbFKmtOzfthLV8yRt2Y3aDsU1xaHrDx2k0biUGtA/628u1
+         XwtKg+gHWjT467qCsHWkew3z6+raHVfH7JAGoUlxnPeVEVkdXSpctfKubCK/DjB1C3Uf
+         K5Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cszE7wMfBbYNxizL5sc0ajOqCGxq2ZshpdXC0HOV9L4=;
-        b=EJ40P4F6/iimqq/LjNWRSLRpQ59rL9+c3pAynpP84XiTWcY09aMzP0d3t/K6ebxorw
-         CKC/mUb8JeNC+ReYmTBRHWhUdC7Pi4F7WSqZw6WE3MwJXRpqFpTUbokwe/xrm07o8sWy
-         PP3yLoYYlG2MbbA8hvJds1Mhm1BuPxDXIzayX7G6oEr4VK/AdOp+urIjWHBacELGGpV+
-         66t0QWYfmKXimMTrsilxn+NkUUQsSgbsjgtV1G1L5RMUGDb5Rcq9yj0erzmAA5xa4Bkx
-         yw7YLnS8xkM77HLfPExPZa0tm4rS95yTMfbf3NgSURbMtbrExFVwzTJ+TmdkYVwMocvz
-         4lmw==
-X-Gm-Message-State: AOAM531tfnluyHVQOTE0td5cPLW98uITMQGvDmj4Z2zUQSKpKcjN5BaZ
-        hliZjFfc7S/TzWQCi/powyWjow==
-X-Google-Smtp-Source: ABdhPJxPEVdT+G36Se/9qGYicEGixno2NzopXRjEZUuaXgjgAEFZkNn1DOLUc0BnnJ58P4wMWFOvBA==
-X-Received: by 2002:a05:6a00:2da:b029:202:7800:567 with SMTP id b26-20020a056a0002dab029020278000567mr12592116pft.71.1615800460350;
-        Mon, 15 Mar 2021 02:27:40 -0700 (PDT)
-Received: from localhost.localdomain ([139.177.225.231])
-        by smtp.gmail.com with ESMTPSA id gm10sm10607883pjb.4.2021.03.15.02.27.27
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Mar 2021 02:27:40 -0700 (PDT)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        osalvador@suse.de, mhocko@suse.com, song.bao.hua@hisilicon.com,
-        david@redhat.com, naoya.horiguchi@nec.com,
-        joao.m.martins@oracle.com
-Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Chen Huang <chenhuang5@huawei.com>,
-        Bodeddula Balasubramaniam <bodeddub@amazon.com>
-Subject: [PATCH v19 8/8] mm: hugetlb: introduce nr_free_vmemmap_pages in the struct hstate
-Date:   Mon, 15 Mar 2021 17:20:15 +0800
-Message-Id: <20210315092015.35396-9-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122)
-In-Reply-To: <20210315092015.35396-1-songmuchun@bytedance.com>
-References: <20210315092015.35396-1-songmuchun@bytedance.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QCH3VsMvUSEqRY0D77ObQA6OJaIvmvlJ89ZGUx/CcXM=;
+        b=oWldQ5kkjbSUl1/SWPhTBSi00wKdsfJSn09jK2HrA/AmpV+CNZHF95v9VACa73TRhH
+         MKnInMXQ7vKRRPwoBwrT324WoalX2Vo8KylMsIPsPtQLCxXjlCPTvU/0py+98dDc3lnS
+         rO8dXun66Em567WWPACf4Rg0KdVRHt0QOU0LQbMKTb5GbWc39JwWrNdpHkzXxPN+AxHr
+         73CsIPjZn5klw44E+jdDI6MP8f2pZ1cQbiNzc5wQGAsrWvWsmjrnm1cnd+HEHIJJEC9a
+         MGlBbmBsptN7w1Jt8/bT1Rq9P84e/mFVGT7bUykfg8r59Qapbe4KclTdxoRiTtjg4chk
+         6xRQ==
+X-Gm-Message-State: AOAM533vhvOMFUhYjXwtgNK1MYxuoQwjvkYY3p9lKT+00+ZpqxFjYbe1
+        PZ08bUZt+AxVCuNozwU/EztZ+rXbhlMIzfBiHOrm
+X-Google-Smtp-Source: ABdhPJwfPpbGsW1NwziEvCm+pu9W0AYA2Ip5t3r5CSavHkGCI1g9/KIycGHrq/KBYUgnQfbZQ1cImKEpNMiBrV1NXz0=
+X-Received: by 2002:a17:906:311a:: with SMTP id 26mr22439640ejx.395.1615801614537;
+ Mon, 15 Mar 2021 02:46:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210315053721.189-1-xieyongji@bytedance.com> <20210315053721.189-2-xieyongji@bytedance.com>
+ <20210315090822.GA4166677@infradead.org>
+In-Reply-To: <20210315090822.GA4166677@infradead.org>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Mon, 15 Mar 2021 17:46:43 +0800
+Message-ID: <CACycT3vrHOExXj6v8ULvUzdLcRkdzS5=TNK6=g4+RWEdN-nOJw@mail.gmail.com>
+Subject: Re: Re: [PATCH v5 01/11] file: Export __receive_fd() to modules
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All the infrastructure is ready, so we introduce nr_free_vmemmap_pages
-field in the hstate to indicate how many vmemmap pages associated with
-a HugeTLB page that can be freed to buddy allocator. And initialize it
-in the hugetlb_vmemmap_init(). This patch is actual enablement of the
-feature.
+On Mon, Mar 15, 2021 at 5:08 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Mon, Mar 15, 2021 at 01:37:11PM +0800, Xie Yongji wrote:
+> > Export __receive_fd() so that some modules can use
+> > it to pass file descriptor between processes.
+>
+> I really don't think any non-core code should do that, especilly not
+> modular mere driver code.
 
-There are only (RESERVE_VMEMMAP_SIZE / sizeof(struct page)) struct
-page structs that can be used when CONFIG_HUGETLB_PAGE_FREE_VMEMMAP,
-so add a BUILD_BUG_ON to catch invalid usage of the tail struct page.
+Do you see any issue? Now I think we're able to do that with the help
+of get_unused_fd_flags() and fd_install() in modules. But we may miss
+some security stuff in this way. So I try to export __receive_fd() and
+use it instead.
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
-Tested-by: Chen Huang <chenhuang5@huawei.com>
-Tested-by: Bodeddula Balasubramaniam <bodeddub@amazon.com>
----
- include/linux/hugetlb.h |  3 +++
- mm/hugetlb.c            |  1 +
- mm/hugetlb_vmemmap.c    | 33 +++++++++++++++++++++++++++++++++
- mm/hugetlb_vmemmap.h    | 10 ++++++----
- 4 files changed, 43 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 3efc6b9b23f2..c70421e26189 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -580,6 +580,9 @@ struct hstate {
- 	unsigned int nr_huge_pages_node[MAX_NUMNODES];
- 	unsigned int free_huge_pages_node[MAX_NUMNODES];
- 	unsigned int surplus_huge_pages_node[MAX_NUMNODES];
-+#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
-+	unsigned int nr_free_vmemmap_pages;
-+#endif
- #ifdef CONFIG_CGROUP_HUGETLB
- 	/* cgroup control files */
- 	struct cftype cgroup_files_dfl[7];
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 53f239818293..37c06e0e3660 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3315,6 +3315,7 @@ void __init hugetlb_add_hstate(unsigned int order)
- 	h->next_nid_to_free = first_memory_node;
- 	snprintf(h->name, HSTATE_NAME_LEN, "hugepages-%lukB",
- 					huge_page_size(h)/1024);
-+	hugetlb_vmemmap_init(h);
- 
- 	parsed_hstate = h;
- }
-diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-index 721258beeb94..13e7e57a1327 100644
---- a/mm/hugetlb_vmemmap.c
-+++ b/mm/hugetlb_vmemmap.c
-@@ -254,3 +254,36 @@ void free_huge_page_vmemmap(struct hstate *h, struct page *head)
- 	 */
- 	vmemmap_remap_free(vmemmap_addr, vmemmap_end, vmemmap_reuse);
- }
-+
-+void __init hugetlb_vmemmap_init(struct hstate *h)
-+{
-+	unsigned int nr_pages = pages_per_huge_page(h);
-+	unsigned int vmemmap_pages;
-+
-+	/*
-+	 * There are only (RESERVE_VMEMMAP_SIZE / sizeof(struct page)) struct
-+	 * page structs that can be used when CONFIG_HUGETLB_PAGE_FREE_VMEMMAP,
-+	 * so add a BUILD_BUG_ON to catch invalid usage of the tail struct page.
-+	 */
-+	BUILD_BUG_ON(__NR_USED_SUBPAGE >=
-+		     RESERVE_VMEMMAP_SIZE / sizeof(struct page));
-+
-+	if (!hugetlb_free_vmemmap_enabled)
-+		return;
-+
-+	vmemmap_pages = (nr_pages * sizeof(struct page)) >> PAGE_SHIFT;
-+	/*
-+	 * The head page and the first tail page are not to be freed to buddy
-+	 * allocator, the other pages will map to the first tail page, so they
-+	 * can be freed.
-+	 *
-+	 * Could RESERVE_VMEMMAP_NR be greater than @vmemmap_pages? It is true
-+	 * on some architectures (e.g. aarch64). See Documentation/arm64/
-+	 * hugetlbpage.rst for more details.
-+	 */
-+	if (likely(vmemmap_pages > RESERVE_VMEMMAP_NR))
-+		h->nr_free_vmemmap_pages = vmemmap_pages - RESERVE_VMEMMAP_NR;
-+
-+	pr_info("can free %d vmemmap pages for %s\n", h->nr_free_vmemmap_pages,
-+		h->name);
-+}
-diff --git a/mm/hugetlb_vmemmap.h b/mm/hugetlb_vmemmap.h
-index a37771b0b82a..cb2bef8f9e73 100644
---- a/mm/hugetlb_vmemmap.h
-+++ b/mm/hugetlb_vmemmap.h
-@@ -13,17 +13,15 @@
- #ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
- int alloc_huge_page_vmemmap(struct hstate *h, struct page *head);
- void free_huge_page_vmemmap(struct hstate *h, struct page *head);
-+void hugetlb_vmemmap_init(struct hstate *h);
- 
- /*
-  * How many vmemmap pages associated with a HugeTLB page that can be freed
-  * to the buddy allocator.
-- *
-- * Todo: Returns zero for now, which means the feature is disabled. We will
-- * enable it once all the infrastructure is there.
-  */
- static inline unsigned int free_vmemmap_pages_per_hpage(struct hstate *h)
- {
--	return 0;
-+	return h->nr_free_vmemmap_pages;
- }
- #else
- static inline int alloc_huge_page_vmemmap(struct hstate *h, struct page *head)
-@@ -35,6 +33,10 @@ static inline void free_huge_page_vmemmap(struct hstate *h, struct page *head)
- {
- }
- 
-+static inline void hugetlb_vmemmap_init(struct hstate *h)
-+{
-+}
-+
- static inline unsigned int free_vmemmap_pages_per_hpage(struct hstate *h)
- {
- 	return 0;
--- 
-2.11.0
-
+Thanks,
+Yongji
