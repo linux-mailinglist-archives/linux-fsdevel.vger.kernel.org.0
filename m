@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B0D833C761
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 21:04:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D324A33C764
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 21:04:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233947AbhCOUDk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 16:03:40 -0400
-Received: from mail-ed1-f49.google.com ([209.85.208.49]:33453 "EHLO
-        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233951AbhCOUDY (ORCPT
+        id S234038AbhCOUEJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 16:04:09 -0400
+Received: from mail-ej1-f50.google.com ([209.85.218.50]:37007 "EHLO
+        mail-ej1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233956AbhCOUDi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 16:03:24 -0400
-Received: by mail-ed1-f49.google.com with SMTP id w18so18833519edc.0;
-        Mon, 15 Mar 2021 13:03:23 -0700 (PDT)
+        Mon, 15 Mar 2021 16:03:38 -0400
+Received: by mail-ej1-f50.google.com with SMTP id bm21so68386263ejb.4;
+        Mon, 15 Mar 2021 13:03:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=unr0lspPbExoMGaeory8crjBzhS6zdKvWVCk960aOU8=;
-        b=tHGuTWArVlnyWL96Q2qsOFW3yVRN6lP8hVWhh82OCtrYJ7KHsbrfwbYXpLHDs+mt8o
-         uHN6V4WL0Vs23l1xsBxB3g9pscXIBJhoeqHkYU1KBydaYfg3OrtfHyVm/AsFEW46dwUh
-         bGExCzkkcxMndbqOA9zrrCb78p9V+MJDeg/ZiEPSW3EZfBOwxlLlc6GSOXwI9tOZpiv1
-         LhYOkyiTsQtf33454f2flWelWsdarlrwjZZEE1iL4iRSBENubaEPiWEnsCkUr+FHZAXd
-         I2Znj19xwfq9DbCu8ZGWpqUP350Au/nBo6v56leVhcHBf6AfgJgy9gjxU7fhGb6WeCHx
-         gUcg==
-X-Gm-Message-State: AOAM5317WgsWDdvQHfHzIu9a4cHDoOb20/F6OmLSDCQ1ux2e5dRoiRTP
-        DUib/onmhaD1mU9JquWqwDU0NoYbDc9GaA==
-X-Google-Smtp-Source: ABdhPJw0N/kDWEh6kOqJlt94kMa0MzE7BuOPpXhECb38QCm2ntvmtWHsfe7q1B138tAx+Xg1wutazA==
-X-Received: by 2002:a05:6402:5189:: with SMTP id q9mr31635414edd.168.1615838602881;
-        Mon, 15 Mar 2021 13:03:22 -0700 (PDT)
+        bh=Jj0zDPT2eMcpk7VXig4zM0b2an7HEf8fKRrEJVtcizM=;
+        b=WLAI2MXGdCgxj+06DmtGszKUbEQg6GWtelcIXogBQrmK8QIYpBrhaQUP+dkez/dVlj
+         /R53ldRNPs8Bvjp/EXdCY8g+0Wyk6aiIgb0F9FnnmIM4yiCCADqvrBgTBclhjr3FR4dm
+         UFpdsYcFTr6ZZAQHtecAbv6kSqZklg+OwaPNB4KFxzFrx+6bZj5I8FQAbvAPuUEtokYn
+         ytiLKJnAULWFc3MPuqqRs1+V3dxF56XeWX6Mc+MD7J7Abiz07ttFL52RmlovigkOqkxj
+         p7dIBwgf9ABje8I16lDwapuo/p7K1TEMgNwZUzdlUaiV2qNLhSIb6zqpsdg+0J5ZBWGY
+         ccHw==
+X-Gm-Message-State: AOAM531vpS/v5t5mB0pNRtiEMbtNIPuP9884E5Bz8dq4xlPoyoWSfbNe
+        fepBZfiLHnSLmapa5EGfPGnLBtGgtzeFgA==
+X-Google-Smtp-Source: ABdhPJwHuxFC1/fxvXnG/nGf2cgzI69PNuS4CkzYFReqpiQTI2SRbo3Fu5bUBbama8j0gv9TbpUb+A==
+X-Received: by 2002:a17:906:8a6e:: with SMTP id hy14mr26063470ejc.356.1615838616004;
+        Mon, 15 Mar 2021 13:03:36 -0700 (PDT)
 Received: from msft-t490s.teknoraver.net (net-188-216-41-250.cust.vodafonedsl.it. [188.216.41.250])
-        by smtp.gmail.com with ESMTPSA id x21sm8551210eds.53.2021.03.15.13.03.21
+        by smtp.gmail.com with ESMTPSA id x21sm8551210eds.53.2021.03.15.13.03.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Mar 2021 13:03:22 -0700 (PDT)
+        Mon, 15 Mar 2021 13:03:35 -0700 (PDT)
 From:   Matteo Croce <mcroce@linux.microsoft.com>
 To:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Niklas Cassel <niklas.cassel@wdc.com>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Hannes Reinecke <hare@suse.de>
-Subject: [PATCH -next 3/5] block: refactor sysfs code
-Date:   Mon, 15 Mar 2021 21:02:40 +0100
-Message-Id: <20210315200242.67355-4-mcroce@linux.microsoft.com>
+Subject: [PATCH -next 4/5] block: export diskseq in sysfs
+Date:   Mon, 15 Mar 2021 21:02:41 +0100
+Message-Id: <20210315200242.67355-5-mcroce@linux.microsoft.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210315200242.67355-1-mcroce@linux.microsoft.com>
 References: <20210315200242.67355-1-mcroce@linux.microsoft.com>
@@ -60,72 +60,77 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Matteo Croce <mcroce@microsoft.com>
 
-Move the sysfs register code from a function named disk_add_events() to
-a new function named disk_add_sysfs(). Also, rename the attribute list
-with a more generic name than disk_events_attrs.
+Add a new sysfs handle to export the new diskseq value.
+Place it in <sysfs>/block/<disk>/diskseq and document it.
 
 Signed-off-by: Matteo Croce <mcroce@microsoft.com>
 ---
- block/genhd.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ Documentation/ABI/testing/sysfs-block | 12 ++++++++++++
+ block/genhd.c                         | 11 +++++++++++
+ 2 files changed, 23 insertions(+)
 
+diff --git a/Documentation/ABI/testing/sysfs-block b/Documentation/ABI/testing/sysfs-block
+index e34cdeeeb9d4..a0ed87386639 100644
+--- a/Documentation/ABI/testing/sysfs-block
++++ b/Documentation/ABI/testing/sysfs-block
+@@ -28,6 +28,18 @@ Description:
+ 		For more details refer Documentation/admin-guide/iostats.rst
+ 
+ 
++What:		/sys/block/<disk>/diskseq
++Date:		February 2021
++Contact:	Matteo Croce <mcroce@microsoft.com>
++Description:
++		The /sys/block/<disk>/diskseq files reports the disk
++		sequence number, which is a monotonically increasing
++		number assigned to every drive.
++		Some devices, like the loop device, refresh such number
++		every time the backing file is changed.
++		The value type is 64 bit unsigned.
++
++
+ What:		/sys/block/<disk>/<part>/stat
+ Date:		February 2008
+ Contact:	Jerome Marchand <jmarchan@redhat.com>
 diff --git a/block/genhd.c b/block/genhd.c
-index 92debcb9e061..57d92ea7ae05 100644
+index 57d92ea7ae05..6a7ed426def0 100644
 --- a/block/genhd.c
 +++ b/block/genhd.c
-@@ -41,6 +41,7 @@ static void disk_alloc_events(struct gendisk *disk);
- static void disk_add_events(struct gendisk *disk);
- static void disk_del_events(struct gendisk *disk);
- static void disk_release_events(struct gendisk *disk);
-+static void disk_add_sysfs(struct gendisk *disk);
- 
- void set_capacity(struct gendisk *disk, sector_t sectors)
+@@ -1764,6 +1764,7 @@ static void disk_check_events(struct disk_events *ev,
+  * events_async		: list of events which can be detected w/o polling
+  *			  (always empty, only for backwards compatibility)
+  * events_poll_msecs	: polling interval, 0: disable, -1: system default
++ * diskseq		: disk sequence number, since boot
+  */
+ static ssize_t __disk_events_show(unsigned int events, char *buf)
  {
-@@ -628,6 +629,7 @@ static void __device_add_disk(struct device *parent, struct gendisk *disk,
- 	 */
- 	WARN_ON_ONCE(!blk_get_queue(disk->queue));
- 
-+	disk_add_sysfs(disk);
- 	disk_add_events(disk);
- 	blk_integrity_add(disk);
+@@ -1834,16 +1835,26 @@ static ssize_t disk_events_poll_msecs_store(struct device *dev,
+ 	return count;
  }
-@@ -1838,7 +1840,7 @@ static const DEVICE_ATTR(events_poll_msecs, 0644,
+ 
++static ssize_t diskseq_show(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	struct gendisk *disk = dev_to_disk(dev);
++
++	return sprintf(buf, "%llu\n", disk->diskseq);
++}
++
+ static const DEVICE_ATTR(events, 0444, disk_events_show, NULL);
+ static const DEVICE_ATTR(events_async, 0444, disk_events_async_show, NULL);
+ static const DEVICE_ATTR(events_poll_msecs, 0644,
  			 disk_events_poll_msecs_show,
  			 disk_events_poll_msecs_store);
++static const DEVICE_ATTR(diskseq, 0444, diskseq_show, NULL);
  
--static const struct attribute *disk_events_attrs[] = {
-+static const struct attribute *disk_sysfs_attrs[] = {
+ static const struct attribute *disk_sysfs_attrs[] = {
  	&dev_attr_events.attr,
  	&dev_attr_events_async.attr,
  	&dev_attr_events_poll_msecs.attr,
-@@ -1909,13 +1911,16 @@ static void disk_alloc_events(struct gendisk *disk)
- 	disk->ev = ev;
- }
++	&dev_attr_diskseq.attr,
+ 	NULL,
+ };
  
--static void disk_add_events(struct gendisk *disk)
-+static void disk_add_sysfs(struct gendisk *disk)
- {
- 	/* FIXME: error handling */
--	if (sysfs_create_files(&disk_to_dev(disk)->kobj, disk_events_attrs) < 0)
-+	if (sysfs_create_files(&disk_to_dev(disk)->kobj, disk_sysfs_attrs) < 0)
- 		pr_warn("%s: failed to create sysfs files for events\n",
- 			disk->disk_name);
-+}
- 
-+static void disk_add_events(struct gendisk *disk)
-+{
- 	if (!disk->ev)
- 		return;
- 
-@@ -1940,7 +1945,7 @@ static void disk_del_events(struct gendisk *disk)
- 		mutex_unlock(&disk_events_mutex);
- 	}
- 
--	sysfs_remove_files(&disk_to_dev(disk)->kobj, disk_events_attrs);
-+	sysfs_remove_files(&disk_to_dev(disk)->kobj, disk_sysfs_attrs);
- }
- 
- static void disk_release_events(struct gendisk *disk)
 -- 
 2.30.2
 
