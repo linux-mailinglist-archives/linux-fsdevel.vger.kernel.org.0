@@ -2,206 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E36DD33AA26
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 04:50:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 569A333AA4E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 05:14:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229776AbhCODte (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Mar 2021 23:49:34 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:29592 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229775AbhCODtW (ORCPT
+        id S229466AbhCOENd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 00:13:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59636 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229506AbhCOENY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Mar 2021 23:49:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1615780181; x=1647316181;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cStN5xHdd90RnJb80LffzjZNk61ERCaMbgoxSq44p2A=;
-  b=pof3r1TZly8PlYA9Loze74WK0MFDV+GAP5arHWQO8Xq18urxEOO4LTiv
-   6zqDr1s4q7n+LvlR3CydBuAxBxGQcUIp12wBiT7+0Ni+WfzJNo5Vsa5eY
-   xqQds2W7YT/ApI3swIL/Wo8OvynIFoz8dUJ9rgrHS5DA1jPNXOBIIKqYV
-   ZOV3/3O/2VcMZPnf++6pgKlG2AuBhNmDg1qnA2nYXn9jZP4Z6ymhLiLnT
-   c8e6UCYJjTnbw3edXiQOT/wxn04vuXj5QEPVpnLXlkowRMNkCNPBSLHma
-   Oyag9gD5NLMwTkFK+qYmVE0tbOOM9SaFu3ldvWHyb5X7r7xKF/1UlCQJd
-   A==;
-IronPort-SDR: mH5nLPKzvy946xvJ2vlaTPY5caO982JythbJ0Nkk1/gSPfwjVl+tgmL4PQ3zFJRJA+Bt37+jLt
- 0dbF6vk6mk5UXJt/Fe15Kvry57SYiYrtnKDtAVJJ6d9BskrCKwPWEbTkiYgD7FhLxPUYytUAM6
- iEhfmetJLQpmuOKOvUaOW5R48G1T9vDngk+afMaVs4tWwPB3I/WptblX93VGYEOxIGS8jX8Nvx
- DihJeCUx/vxEmrEtRdHoUBOkMBMrr3Yt+fi6JQh3Ge4Qxw+JL/TaE0S6eGYKJMs9mQPglukHsi
- RDE=
-X-IronPort-AV: E=Sophos;i="5.81,249,1610380800"; 
-   d="scan'208";a="266509453"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Mar 2021 11:49:41 +0800
-IronPort-SDR: ++uQP0r7oep9flKpcMITkjWPphp9yi8Z6/bZjKcXmdowo9WJHEHNkuLtWXeoYravSlFPxLRfZM
- x136TVNEAXfmf9IyU39jOpEGmoQMGdgfOXNyCdSjuDVT3JqaRJQKFjqcbFv0kMyxstLUTp8cF6
- fn68lrQeG+++Ykdl4hwiQwuLTTg6O1X972JpQZYvVg7cX80BDwUUHC5/0HA8ST7o4kgcRx/BF5
- BrV5t0e3WTHrL1tANpTae80gTpa8zkbL35k5NE/5J/xtK6zTyu42CqLUZUFW4JCEX+8D3suZyZ
- t7QP8prIg6B9skoOsqxDDLFG
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2021 20:31:51 -0700
-IronPort-SDR: IVs2SXDxcHgFmZf8ZDgQbCF1TJ7RQrK+Zfs71V/Ov/yOY3aOLvQXVgiP915WEohlgCLAfqTpmL
- vhIdM0MCcYHXIB3TYHDPlD1LPmM6LCsKx6fOTb3rleh7QjcIsid3GZMgGCLDXHYgmeuDFZQb7K
- TgybswHDJcrJvP3h2Q0Zxe77oiKb/xHlJM2TC/XyWsoHmOhCdTt+WNQ6NXednRQCBQ02Qo4IDT
- 1hSpvkTghhedDyNi14JpDzHDMu3tk3J+3fW60PcA9kYtDHRV7sWt5Ok0LPW2rFVgzbkjy3s9/a
- Ddc=
-WDCIronportException: Internal
-Received: from washi.fujisawa.hgst.com ([10.149.53.254])
-  by uls-op-cesaip02.wdc.com with ESMTP; 14 Mar 2021 20:49:21 -0700
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH 2/2] zonefs: Fix O_APPEND async write handling
-Date:   Mon, 15 Mar 2021 12:49:19 +0900
-Message-Id: <20210315034919.87980-3-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210315034919.87980-1-damien.lemoal@wdc.com>
-References: <20210315034919.87980-1-damien.lemoal@wdc.com>
+        Mon, 15 Mar 2021 00:13:24 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE84CC061574;
+        Sun, 14 Mar 2021 21:13:23 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id lr1-20020a17090b4b81b02900ea0a3f38c1so1323384pjb.0;
+        Sun, 14 Mar 2021 21:13:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+1w+xdSCd8Ke2WCXQw7fwupYKhFB/Db/6JOzUH5OA4M=;
+        b=g+ctDWlh6zYMatSsVYn+os8JlCDg+zT1zIcreuYUCZZx2d7/r6UUzSAilDC++21TUW
+         oVdjJAZNesCF9U+SSTaiF+lwQaT6/bpsm6RiqQi2y8w8gD6nPjiBKxbYOykx42rAdHRZ
+         3gXu55Ola/y9c7OJL2B0LbaIC/0ocNsE8wKyKr8eBpyQAFzoyabbAMJ4Aqc3KeImg/8P
+         dMusCYOf8lAr00J33lh+OaQTXjlCJG3aEMuHtS7xdNkUZBbGkrRsazgoQGkPgCGcd3HE
+         f/PEnxBaLhUV1gAMBJodts2owGOPkZEcTn8LN7gOeq/SjZljbwi2MV22CYaYUzgCDri9
+         2WKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+1w+xdSCd8Ke2WCXQw7fwupYKhFB/Db/6JOzUH5OA4M=;
+        b=Qxffsawp+WqYGcyRby4+sD1B2SGtEV3C4KVnivSxrgd6GUYrsgVQx8BUhgtP6zqxA8
+         Mq9P+dGcZmIhcl/Nob+Zhxeez46ex7q9Hv0BOMjpcJ8tQcoRiogqmy3E7XjQBrqh3OYP
+         fO9sshTft0HVqWtcCBYQFNnrlA1nkrD9FCtlQvIOtgdwhDukaZ+S39d7HiLhorv6VjmF
+         koQVIYIem7sPOx5aj6WKgvylOo9QR6nHVnExDO5G29dW7MuejT1z90QD19OwSRzYDCdl
+         qHFNq51K+TBoa2H7DQSzNPd5w9B2IlztK2Uy/lo/yCPBqNyvDc2biUu6V6Y1dceAUR5n
+         ihWA==
+X-Gm-Message-State: AOAM532OyWQBqcwP6eSwiVh+D3qdRjztLvWVQboQsKvOaULAGDlCV6sA
+        tLUrj8kYrgNpMlPs+IUtpSE=
+X-Google-Smtp-Source: ABdhPJwCbBh0zjqMzS3xS3CIOrsaScPdecGECVx6lKttcjkbocirJLUPy3jMIVpU1yq/2PHWK4+hdw==
+X-Received: by 2002:a17:902:e2d4:b029:e4:be01:1d9a with SMTP id l20-20020a170902e2d4b02900e4be011d9amr9651144plc.43.1615781603387;
+        Sun, 14 Mar 2021 21:13:23 -0700 (PDT)
+Received: from localhost.localdomain ([27.122.242.75])
+        by smtp.gmail.com with ESMTPSA id z27sm10613900pff.111.2021.03.14.21.13.21
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 14 Mar 2021 21:13:23 -0700 (PDT)
+From:   Hyeongseok Kim <hyeongseok@gmail.com>
+To:     namjae.jeon@samsung.com, sj1557.seo@samsung.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Hyeongseok Kim <hyeongseok@gmail.com>
+Subject: [PATCH] exfat: improve write performance when dirsync enabled
+Date:   Mon, 15 Mar 2021 13:12:55 +0900
+Message-Id: <20210315041255.174167-1-hyeongseok@gmail.com>
+X-Mailer: git-send-email 2.27.0.83.g0313f36
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-zonefs updates the size of a sequential zone file inode only on
-completion of direct writes. When executing asynchronous append writes
-(with a file open with O_APPEND or using RWF_APPEND), the use of the
-current inode size in generic_write_checks() to set an iocb offset thus
-leads to unaligned write if an application issues an append write
-operation with another write already being executed.
+Degradation of write speed caused by frequent disk access for cluster
+bitmap update on every cluster allocation could be improved by
+selective syncing bitmap buffer. Change to flush bitmap buffer only
+for the directory related operations.
 
-Fix this problem by introducing zonefs_write_checks() as a modified
-version of generic_write_checks() using the file inode wp_offset for an
-append write iocb offset. Also introduce zonefs_write_check_limits() to
-replace generic_write_check_limits() call. This zonefs special helper
-makes sure that the maximum file limit used is the maximum size of the
-file being accessed.
-
-Since zonefs_write_checks() already truncates the iov_iter, the calls
-to iov_iter_truncate() in zonefs_file_dio_write() and
-zonefs_file_buffered_write() are removed.
-
-Fixes: 8dcc1a9d90c1 ("fs: New zonefs file system")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Hyeongseok Kim <hyeongseok@gmail.com>
 ---
- fs/zonefs/super.c | 76 ++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 66 insertions(+), 10 deletions(-)
+ fs/exfat/balloc.c   | 4 ++--
+ fs/exfat/dir.c      | 2 +-
+ fs/exfat/exfat_fs.h | 4 ++--
+ fs/exfat/fatent.c   | 4 ++--
+ fs/exfat/inode.c    | 3 ++-
+ fs/exfat/namei.c    | 2 +-
+ 6 files changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index a3d074f98660..81836a5b436e 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -743,6 +743,68 @@ static ssize_t zonefs_file_dio_append(struct kiocb *iocb, struct iov_iter *from)
- 	return ret;
+diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
+index 78bc87d5a11b..cc5cffc4a769 100644
+--- a/fs/exfat/balloc.c
++++ b/fs/exfat/balloc.c
+@@ -141,7 +141,7 @@ void exfat_free_bitmap(struct exfat_sb_info *sbi)
+ 	kfree(sbi->vol_amap);
  }
  
-+/*
-+ * Do not exceed the LFS limits nor the file zone size. If pos is under the
-+ * limit it becomes a short access. If it exceeds the limit, return -EFBIG.
-+ */
-+static loff_t zonefs_write_check_limits(struct file *file, loff_t pos,
-+					loff_t count)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct zonefs_inode_info *zi = ZONEFS_I(inode);
-+	loff_t limit = rlimit(RLIMIT_FSIZE);
-+	loff_t max_size = zi->i_max_size;
-+
-+	if (limit != RLIM_INFINITY) {
-+		if (pos >= limit) {
-+			send_sig(SIGXFSZ, current, 0);
-+			return -EFBIG;
-+		}
-+		count = min(count, limit - pos);
-+	}
-+
-+	if (!(file->f_flags & O_LARGEFILE))
-+		max_size = min_t(loff_t, MAX_NON_LFS, max_size);
-+
-+	if (unlikely(pos >= max_size))
-+		return -EFBIG;
-+
-+	return min(count, max_size - pos);
-+}
-+
-+static ssize_t zonefs_write_checks(struct kiocb *iocb, struct iov_iter *from)
-+{
-+	struct file *file = iocb->ki_filp;
-+	struct inode *inode = file_inode(file);
-+	struct zonefs_inode_info *zi = ZONEFS_I(inode);
-+	loff_t count;
-+
-+	if (IS_SWAPFILE(inode))
-+		return -ETXTBSY;
-+
-+	if (!iov_iter_count(from))
-+		return 0;
-+
-+	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
-+		return -EINVAL;
-+
-+	if (iocb->ki_flags & IOCB_APPEND) {
-+		if (zi->i_ztype != ZONEFS_ZTYPE_SEQ)
-+			return -EINVAL;
-+		mutex_lock(&zi->i_truncate_mutex);
-+		iocb->ki_pos = zi->i_wpoffset;
-+		mutex_unlock(&zi->i_truncate_mutex);
-+	}
-+
-+	count = zonefs_write_check_limits(file, iocb->ki_pos,
-+					  iov_iter_count(from));
-+	if (count < 0)
-+		return count;
-+
-+	iov_iter_truncate(from, count);
-+	return iov_iter_count(from);
-+}
-+
- /*
-  * Handle direct writes. For sequential zone files, this is the only possible
-  * write path. For these files, check that the user is issuing writes
-@@ -760,8 +822,7 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
- 	struct super_block *sb = inode->i_sb;
- 	bool sync = is_sync_kiocb(iocb);
- 	bool append = false;
--	size_t count;
--	ssize_t ret;
-+	ssize_t ret, count;
+-int exfat_set_bitmap(struct inode *inode, unsigned int clu)
++int exfat_set_bitmap(struct inode *inode, unsigned int clu, bool sync)
+ {
+ 	int i, b;
+ 	unsigned int ent_idx;
+@@ -154,7 +154,7 @@ int exfat_set_bitmap(struct inode *inode, unsigned int clu)
+ 	b = BITMAP_OFFSET_BIT_IN_SECTOR(sb, ent_idx);
  
- 	/*
- 	 * For async direct IOs to sequential zone files, refuse IOCB_NOWAIT
-@@ -779,13 +840,10 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
- 		inode_lock(inode);
- 	}
+ 	set_bit_le(b, sbi->vol_amap[i]->b_data);
+-	exfat_update_bh(sbi->vol_amap[i], IS_DIRSYNC(inode));
++	exfat_update_bh(sbi->vol_amap[i], sync);
+ 	return 0;
+ }
  
--	ret = generic_write_checks(iocb, from);
--	if (ret <= 0)
-+	count = zonefs_write_checks(iocb, from);
-+	if (count <= 0)
- 		goto inode_unlock;
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index e1d5536de948..7efb1c6d4808 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -320,7 +320,7 @@ int exfat_alloc_new_dir(struct inode *inode, struct exfat_chain *clu)
  
--	iov_iter_truncate(from, zi->i_max_size - iocb->ki_pos);
--	count = iov_iter_count(from);
--
- 	if ((iocb->ki_pos | count) & (sb->s_blocksize - 1)) {
- 		ret = -EINVAL;
- 		goto inode_unlock;
-@@ -844,12 +902,10 @@ static ssize_t zonefs_file_buffered_write(struct kiocb *iocb,
- 		inode_lock(inode);
- 	}
+ 	exfat_chain_set(clu, EXFAT_EOF_CLUSTER, 0, ALLOC_NO_FAT_CHAIN);
  
--	ret = generic_write_checks(iocb, from);
-+	ret = zonefs_write_checks(iocb, from);
- 	if (ret <= 0)
- 		goto inode_unlock;
+-	ret = exfat_alloc_cluster(inode, 1, clu);
++	ret = exfat_alloc_cluster(inode, 1, clu, IS_DIRSYNC(inode));
+ 	if (ret)
+ 		return ret;
  
--	iov_iter_truncate(from, zi->i_max_size - iocb->ki_pos);
--
- 	ret = iomap_file_buffered_write(iocb, from, &zonefs_iomap_ops);
- 	if (ret > 0)
- 		iocb->ki_pos += ret;
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index 169d0b602f5e..e77fe2f45cf2 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -389,7 +389,7 @@ int exfat_clear_volume_dirty(struct super_block *sb);
+ #define exfat_get_next_cluster(sb, pclu) exfat_ent_get(sb, *(pclu), pclu)
+ 
+ int exfat_alloc_cluster(struct inode *inode, unsigned int num_alloc,
+-		struct exfat_chain *p_chain);
++		struct exfat_chain *p_chain, bool sync_bmap);
+ int exfat_free_cluster(struct inode *inode, struct exfat_chain *p_chain);
+ int exfat_ent_get(struct super_block *sb, unsigned int loc,
+ 		unsigned int *content);
+@@ -408,7 +408,7 @@ int exfat_count_num_clusters(struct super_block *sb,
+ /* balloc.c */
+ int exfat_load_bitmap(struct super_block *sb);
+ void exfat_free_bitmap(struct exfat_sb_info *sbi);
+-int exfat_set_bitmap(struct inode *inode, unsigned int clu);
++int exfat_set_bitmap(struct inode *inode, unsigned int clu, bool sync);
+ void exfat_clear_bitmap(struct inode *inode, unsigned int clu, bool sync);
+ unsigned int exfat_find_free_bitmap(struct super_block *sb, unsigned int clu);
+ int exfat_count_used_clusters(struct super_block *sb, unsigned int *ret_count);
+diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
+index fd6c7fd12762..e949e563443c 100644
+--- a/fs/exfat/fatent.c
++++ b/fs/exfat/fatent.c
+@@ -320,7 +320,7 @@ int exfat_zeroed_cluster(struct inode *dir, unsigned int clu)
+ }
+ 
+ int exfat_alloc_cluster(struct inode *inode, unsigned int num_alloc,
+-		struct exfat_chain *p_chain)
++		struct exfat_chain *p_chain, bool sync_bmap)
+ {
+ 	int ret = -ENOSPC;
+ 	unsigned int num_clusters = 0, total_cnt;
+@@ -388,7 +388,7 @@ int exfat_alloc_cluster(struct inode *inode, unsigned int num_alloc,
+ 		}
+ 
+ 		/* update allocation bitmap */
+-		if (exfat_set_bitmap(inode, new_clu)) {
++		if (exfat_set_bitmap(inode, new_clu, sync_bmap)) {
+ 			ret = -EIO;
+ 			goto free_cluster;
+ 		}
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index 730373e0965a..1803ef3220fd 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -179,7 +179,8 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
+ 			return -EIO;
+ 		}
+ 
+-		ret = exfat_alloc_cluster(inode, num_to_be_allocated, &new_clu);
++		ret = exfat_alloc_cluster(inode, num_to_be_allocated, &new_clu,
++				inode_needs_sync(inode));
+ 		if (ret)
+ 			return ret;
+ 
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index d9e8ec689c55..1f7b3dc66fcd 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -340,7 +340,7 @@ static int exfat_find_empty_entry(struct inode *inode,
+ 		exfat_chain_set(&clu, last_clu + 1, 0, p_dir->flags);
+ 
+ 		/* allocate a cluster */
+-		ret = exfat_alloc_cluster(inode, 1, &clu);
++		ret = exfat_alloc_cluster(inode, 1, &clu, IS_DIRSYNC(inode));
+ 		if (ret)
+ 			return ret;
+ 
 -- 
-2.30.2
+2.27.0.83.g0313f36
 
