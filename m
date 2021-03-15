@@ -2,65 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0726733C7B5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 21:26:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC69033C7CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 21:35:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232070AbhCOUZd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 16:25:33 -0400
-Received: from mail-pj1-f41.google.com ([209.85.216.41]:55872 "EHLO
-        mail-pj1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232302AbhCOUZL (ORCPT
+        id S229943AbhCOUfK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 16:35:10 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:50766 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232326AbhCOUfC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 16:25:11 -0400
-Received: by mail-pj1-f41.google.com with SMTP id bt4so9428299pjb.5;
-        Mon, 15 Mar 2021 13:25:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=X98UQbro7aMmeZHPX6dU+ByuOhafClQ6kyEYLKaULEE=;
-        b=Ml205NcaoUINx3y8V2nMlvlMPtLRt4PRbqJZwgVRbxT/uchgGY/nawGAR7JPPaqZEy
-         HmVg/vn3JEJ37tPG64jusZpZHhv7YG1DxRxjVJ0IA4s90R+REYAhsNQKW5GoaTtHBG/T
-         SSYosGtdYgWuv/5WCj7PDCQ/NWJkP76pp9BWKAJqteYT6VK1sMzPXiuVZBiVxHNfxHk8
-         U7IN6iIvrAqZujZyjKNc/Nee55nUCswaE0OKmoG9jlvj7qAik7Bm4qMnKf1iHFQm+/Mv
-         eq5KRJgA/m12SeN8d/yUWDRlpW1f20cTigyrDVDc70YtCjqWz9NM71C2yEEGE/jB6wR/
-         rsFg==
-X-Gm-Message-State: AOAM532nI9U3y4fxGmW0YKlAoOWPy01nXsOaCeliQInCQNWVb1+t+tPv
-        q27GWiO/F9fGli1CEd++xxPFVvcnYFu+Nw==
-X-Google-Smtp-Source: ABdhPJyoqYMrxepLZ9Y/8aFZnhmESpYIrs2n3C2zImOGAuX5v9oEvE0iRCA78k1vAIFEqxTfqo/gbg==
-X-Received: by 2002:a17:90a:2d88:: with SMTP id p8mr877292pjd.159.1615839910684;
-        Mon, 15 Mar 2021 13:25:10 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id fh19sm471665pjb.33.2021.03.15.13.25.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Mar 2021 13:25:09 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id EAB1140106; Mon, 15 Mar 2021 20:25:08 +0000 (UTC)
-Date:   Mon, 15 Mar 2021 20:25:08 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     zhouchuangao <zhouchuangao@vivo.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] proc/sysctl: Fix function name error in comments
-Message-ID: <20210315202508.GD4332@42.do-not-panic.com>
-References: <1615807194-79646-1-git-send-email-zhouchuangao@vivo.com>
+        Mon, 15 Mar 2021 16:35:02 -0400
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 68C4820B39C5;
+        Mon, 15 Mar 2021 13:35:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 68C4820B39C5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1615840502;
+        bh=PFdwLFSkPuwOM57gZ2BEzv85ziJRcSCOWcRFEpG9jeE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=P+W60vTAzH1v5LIl8INhl8akgG5ir/YrliPxeYc+5JUFws81uD540X6DWOsCCFKLL
+         zokxDLTfuLgu9IRMphdjImqHuLx3D22t6lZwpdSKn+Y7IuPQ45zft4VRHeYw0AIKLs
+         PTVstZ8t8yi5wC6PB3wtT/Yg/RWQlmgC5Ruohv/Q=
+Received: by mail-pj1-f51.google.com with SMTP id mz6-20020a17090b3786b02900c16cb41d63so215364pjb.2;
+        Mon, 15 Mar 2021 13:35:02 -0700 (PDT)
+X-Gm-Message-State: AOAM531IO2NGc358WSe7fB0i5lnYnp3Pv9ZR+e8N+yeYZQiZDiDyfXGk
+        SPE79e5wtuLbzxUdKr9EQYOBfMl8p8XFkAgakJY=
+X-Google-Smtp-Source: ABdhPJzqcZesrfxHZp348Fs1TyxWSGkz8oWrITTvvw6RyZ6iExivLZrZuLUsNbRYpdRFzbjMksrTAP1Wgn2h5Ze8mjI=
+X-Received: by 2002:a17:903:30cd:b029:e6:a1fa:403b with SMTP id
+ s13-20020a17090330cdb02900e6a1fa403bmr10966417plc.43.1615840501925; Mon, 15
+ Mar 2021 13:35:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1615807194-79646-1-git-send-email-zhouchuangao@vivo.com>
+References: <20210315200242.67355-1-mcroce@linux.microsoft.com>
+ <20210315200242.67355-3-mcroce@linux.microsoft.com> <20210315201331.GA2577561@casper.infradead.org>
+In-Reply-To: <20210315201331.GA2577561@casper.infradead.org>
+From:   Matteo Croce <mcroce@linux.microsoft.com>
+Date:   Mon, 15 Mar 2021 21:34:26 +0100
+X-Gmail-Original-Message-ID: <CAFnufp3gLfjKPsq4YaG6XtbsfJHUfVdJ65gmaZ-miNeUE8TLeA@mail.gmail.com>
+Message-ID: <CAFnufp3gLfjKPsq4YaG6XtbsfJHUfVdJ65gmaZ-miNeUE8TLeA@mail.gmail.com>
+Subject: Re: [PATCH -next 2/5] block: add ioctl to read the disk sequence number
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        Luca Boccassi <bluca@debian.org>, Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Tejun Heo <tj@kernel.org>,
+        =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>,
+        Niklas Cassel <niklas.cassel@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Ajay Joshi <ajay.joshi@wdc.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matias Bjorling <matias.bjorling@wdc.com>,
+        Hans Holmberg <hans.holmberg@wdc.com>,
+        Dmitry Fomichev <dmitry.fomichev@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 15, 2021 at 04:19:54AM -0700, zhouchuangao wrote:
-> The function name should be modified to register_sysctl_paths instead
-> of register_sysctl_table_path.
-> 
-> Signed-off-by: zhouchuangao <zhouchuangao@vivo.com>
+On Mon, Mar 15, 2021 at 9:13 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Mon, Mar 15, 2021 at 09:02:39PM +0100, Matteo Croce wrote:
+> > +++ b/include/uapi/linux/fs.h
+> > @@ -184,6 +184,7 @@ struct fsxattr {
+> >  #define BLKSECDISCARD _IO(0x12,125)
+> >  #define BLKROTATIONAL _IO(0x12,126)
+> >  #define BLKZEROOUT _IO(0x12,127)
+> > +#define BLKGETDISKSEQ _IOR(0x12,128,__u64)
+> >  /*
+> >   * A jump here: 130-131 are reserved for zoned block devices
+> >   * (see uapi/linux/blkzoned.h)
+>
+> Not your bug, but this is now 130-136.
+>
+> +cc all the people who signed off on the commits that added those ioctl
+> numbers without updating this comment.  Perhaps one of them will figure
+> out how to stop this happening in future.
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+Note taken, thanks!
 
-  Luis
+-- 
+per aspera ad upstream
