@@ -2,135 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3AC633C410
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 18:25:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37F5233C4B1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 18:41:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233374AbhCORZX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 13:25:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:26591 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234618AbhCORZC (ORCPT
+        id S236318AbhCORk5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 13:40:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36788 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231974AbhCORkt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 13:25:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1615829102;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=/iLlVeV0kBl0vCchkuA6jyppxX0wnv4Ah3e5Q6JSthQ=;
-        b=YVZHrWpjQdzYLNPxIHO6Rc8P71/sJEQK+JSD4kHoUgzoqFJhbZiVfukLoeUQZZ+9uB6Llh
-        bk+T3Thw2f2N9KQ0Tz4y1fxKbIIYZzZCEqSBt/4TzRvFrmmUIM9Q7FGztklCueAbLAsArR
-        4DWFx3CNkejhQiyx8wwgCp0MOCEygpc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-254-bPTQR2kBPDWNgv07i7fCnA-1; Mon, 15 Mar 2021 13:24:58 -0400
-X-MC-Unique: bPTQR2kBPDWNgv07i7fCnA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3EB59363A1;
-        Mon, 15 Mar 2021 17:24:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8EC031037E81;
-        Mon, 15 Mar 2021 17:24:54 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com,
-        Gaja Sophie Peters <gaja.peters@math.uni-hamburg.de>,
-        Jeffrey Altman <jaltman@auristor.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] afs: Fix oops and confusion from metadata xattrs
+        Mon, 15 Mar 2021 13:40:49 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C01F7C061762
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 10:40:49 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id lr1-20020a17090b4b81b02900ea0a3f38c1so2294117pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 10:40:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=u9ZJZrVbjHX+sPNQkFOuO7kEAmZWytlGCPF2PK2JOqU=;
+        b=Y3zm8mn+hcguMv8v3TdJ/RgMcPs5ZhEjRfzBRw18H4RtgOixdvOeYslQC6QFBHIF23
+         AA1p+wG/RubaVeVlBcWxpLU7U0/BWFwEGlDW4JLwJoM37zfQhXUauiOjyGUWdfeYvS6s
+         yXZWHyaRyosLIrsEkk8Izy8TiNIr4mLSm1GN0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=u9ZJZrVbjHX+sPNQkFOuO7kEAmZWytlGCPF2PK2JOqU=;
+        b=txV0pjOgy9tW4ppFoAeelwyLkQXnvffgW51vS38vFIGiuIYa3rT5OVNo2SadE8xtxh
+         la2uHFBQqiwVPjbV7lzPx8/UngONrDN7RzWuy/9jPSBigRseY3zVFmn2RtdIHC2UhoRp
+         ByrXCntutcQ6FCsXrkwtezc1tqPmwJnQP/6hPlHVFXIdwKNPZj2B8wDCWURIChbrVs1x
+         rX9nrOmI+OmaELtMna2RjBZxb9rx85/Jy8TV+clfRq7UkwP4heGFWpWDRbyFHKuOfe3C
+         TmI9dI3NJRTKXfcuDr11kH7ojimHPplG4985DTYEYU8SUqCXb8KxMdLyr12z093h4idx
+         PuUQ==
+X-Gm-Message-State: AOAM531hHbsavFeZbOgTadvlxN6+PgG6jwKqQv/MX0734dL5ODQ6ZtPt
+        9I+Go3+CpHbotPIIbHs/CVElIQ==
+X-Google-Smtp-Source: ABdhPJyhiuHpYtDv/Lna03qrgA/JUfdkRRDVSKn6FkSn7ext1b4iqZwUEjQ+rc0ABzDdqGzkF8arjQ==
+X-Received: by 2002:a17:90a:e542:: with SMTP id ei2mr218020pjb.134.1615830049338;
+        Mon, 15 Mar 2021 10:40:49 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id l22sm275837pjl.14.2021.03.15.10.40.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Mar 2021 10:40:48 -0700 (PDT)
+Date:   Mon, 15 Mar 2021 10:40:47 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+        Adam Nichols <adam@grimm-co.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] seq_file: Unconditionally use vmalloc for buffer
+Message-ID: <202103151032.53E48DC@keescook>
+References: <20210312205558.2947488-1-keescook@chromium.org>
+ <YE8cCslnGkgmKTsY@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2932436.1615829093.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 15 Mar 2021 17:24:53 +0000
-Message-ID: <2932437.1615829093@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YE8cCslnGkgmKTsY@dhcp22.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Mon, Mar 15, 2021 at 09:34:18AM +0100, Michal Hocko wrote:
+> On Fri 12-03-21 12:55:58, Kees Cook wrote:
+> > The sysfs interface to seq_file continues to be rather fragile, as seen
+> > with some recent exploits[1]. Move the seq_file buffer to the vmap area
+> > (while retaining the accounting flag), since it has guard pages that
+> > will catch and stop linear overflows. This seems justified given that
+> > seq_file already uses kvmalloc(), that allocations are normally short
+> > lived, and that they are not normally performance critical.
+> 
+> What is the runtime effect of this change? The interface is widely used
 
-Can you pull these two fixes to the afs filesystem please?
+I haven't been able to measure any differences yet, but maybe I lack
+imagination about workloads that are heavy on /sys or /proc accesses.
 
- (1) Fix an oops in AFS that can be triggered by accessing one of the
-     afs.yfs.* xattrs against an OpenAFS server - for instance by "cp
-     -a"[1], "rsync -X" or getfattr[2].  These try and copy all of the
-     xattrs.
+> for many other interfaces - e.g. in proc. While from the correctness POV
+> this should be OK (ish for 64b it is definitely problem for kernels with
+> lowmem and limited vmalloc space). Vmalloc is also to be expected to
+> regress in performance for small allocations which is the most usual
+> case.
 
-     cp and rsync should pay attention to the list in /etc/xattr.conf, but
-     cp doesn't on Ubuntu and rsync doesn't seem to on Ubuntu or Fedora.
-     xattr.conf has been modified upstream[3], and a new version has just
-     been cut that includes it.  I've logged a bug against rsync for the
-     problem there[4].
+seq_file's default size is PAGE_SIZE (and just goes up by powers of 2
+from there), with the rare (3 callers) exception of single_open_size(),
+which for at least 1 case is always >PAGE_SIZE. (I realize PAGE_SIZE may
+be considered "small" for vmalloc, but I think gaining the guard page is
+worth it, given the recurring flaws we see with at least sysfs handlers.)
 
- (2) Stop listing "afs.*" xattrs[6], particularly ACL ones[8] so that they
-     don't confuse cp and rsync.  This removes them from the list returned
-     by listxattr(), but they're still available to get/set.
+-Kees
 
-Changes:
-ver #2:
- - Hide all of the afs.* xattrs, not just the ACL ones[7].
+>  
+> > [1] https://blog.grimm-co.com/2021/03/new-old-bugs-in-linux-kernel.html
+> > 
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > ---
+> >  fs/seq_file.c | 10 +++++-----
+> >  1 file changed, 5 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/fs/seq_file.c b/fs/seq_file.c
+> > index cb11a34fb871..ad78577d4c2c 100644
+> > --- a/fs/seq_file.c
+> > +++ b/fs/seq_file.c
+> > @@ -32,7 +32,7 @@ static void seq_set_overflow(struct seq_file *m)
+> >  
+> >  static void *seq_buf_alloc(unsigned long size)
+> >  {
+> > -	return kvmalloc(size, GFP_KERNEL_ACCOUNT);
+> > +	return __vmalloc(size, GFP_KERNEL_ACCOUNT);
+> >  }
+> >  
+> >  /**
+> > @@ -130,7 +130,7 @@ static int traverse(struct seq_file *m, loff_t offset)
+> >  
+> >  Eoverflow:
+> >  	m->op->stop(m, p);
+> > -	kvfree(m->buf);
+> > +	vfree(m->buf);
+> >  	m->count = 0;
+> >  	m->buf = seq_buf_alloc(m->size <<= 1);
+> >  	return !m->buf ? -ENOMEM : -EAGAIN;
+> > @@ -237,7 +237,7 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+> >  			goto Fill;
+> >  		// need a bigger buffer
+> >  		m->op->stop(m, p);
+> > -		kvfree(m->buf);
+> > +		vfree(m->buf);
+> >  		m->count = 0;
+> >  		m->buf = seq_buf_alloc(m->size <<= 1);
+> >  		if (!m->buf)
+> > @@ -349,7 +349,7 @@ EXPORT_SYMBOL(seq_lseek);
+> >  int seq_release(struct inode *inode, struct file *file)
+> >  {
+> >  	struct seq_file *m = file->private_data;
+> > -	kvfree(m->buf);
+> > +	vfree(m->buf);
+> >  	kmem_cache_free(seq_file_cache, m);
+> >  	return 0;
+> >  }
+> > @@ -585,7 +585,7 @@ int single_open_size(struct file *file, int (*show)(struct seq_file *, void *),
+> >  		return -ENOMEM;
+> >  	ret = single_open(file, show, data);
+> >  	if (ret) {
+> > -		kvfree(buf);
+> > +		vfree(buf);
+> >  		return ret;
+> >  	}
+> >  	((struct seq_file *)file->private_data)->buf = buf;
+> > -- 
+> > 2.25.1
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
 
-David
-
-Link: http://lists.infradead.org/pipermail/linux-afs/2021-March/003498.htm=
-l [1]
-Link: http://lists.infradead.org/pipermail/linux-afs/2021-March/003501.htm=
-l [2]
-Link: https://git.savannah.nongnu.org/cgit/attr.git/commit/?id=3D74da517cc=
-655a82ded715dea7245ce88ebc91b98 [3]
-Link: https://github.com/WayneD/rsync/issues/163 [4]
-Link: http://lists.infradead.org/pipermail/linux-afs/2021-March/003516.htm=
-l [5]
-Link: http://lists.infradead.org/pipermail/linux-afs/2021-March/003524.htm=
-l [6]
-Link: http://lists.infradead.org/pipermail/linux-afs/2021-March/003565.htm=
-l # v1
-Link: http://lists.infradead.org/pipermail/linux-afs/2021-March/003568.htm=
-l [7]
-Link: http://lists.infradead.org/pipermail/linux-afs/2021-March/003570.htm=
-l [8]
-Link: http://lists.infradead.org/pipermail/linux-afs/2021-March/003571.htm=
-l # v2
----
-The following changes since commit a38fd8748464831584a19438cbb3082b5a2dab1=
-5:
-
-  Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/afs-fixes-20210315
-
-for you to fetch changes up to a7889c6320b9200e3fe415238f546db677310fa9:
-
-  afs: Stop listxattr() from listing "afs.*" attributes (2021-03-15 17:09:=
-54 +0000)
-
-----------------------------------------------------------------
-AFS fixes
-
-----------------------------------------------------------------
-David Howells (2):
-      afs: Fix accessing YFS xattrs on a non-YFS server
-      afs: Stop listxattr() from listing "afs.*" attributes
-
- fs/afs/dir.c          |  1 -
- fs/afs/file.c         |  1 -
- fs/afs/fs_operation.c |  7 +++++--
- fs/afs/inode.c        |  1 -
- fs/afs/internal.h     |  1 -
- fs/afs/mntpt.c        |  1 -
- fs/afs/xattr.c        | 31 +++++++------------------------
- 7 files changed, 12 insertions(+), 31 deletions(-)
-
+-- 
+Kees Cook
