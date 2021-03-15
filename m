@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B18A33AB0F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 06:38:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 020D633AB11
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 06:38:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230134AbhCOFiO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 01:38:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49446 "EHLO
+        id S230138AbhCOFiP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 01:38:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229937AbhCOFiC (ORCPT
+        with ESMTP id S229945AbhCOFiF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 01:38:02 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E46AFC06175F
-        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Mar 2021 22:38:01 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id q2-20020a17090a2e02b02900bee668844dso13722020pjd.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Mar 2021 22:38:01 -0700 (PDT)
+        Mon, 15 Mar 2021 01:38:05 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99ED0C06175F
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Mar 2021 22:38:05 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id n17so11168555plc.7
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Mar 2021 22:38:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EwpfT4N+OvVlLx64Zz6EFx++RG+spKqj79bcGdpdHNo=;
-        b=IaLsea4Qapq24mtt06XRRqn77JxIdZFz5G+/ZPPDmRS64B/Xy2AGEz0qobHDLz8xfe
-         BZpZgwCy9nFn0d7KEzmZiXvBz/AWcBhxpdmIhkFmbGutN+kecLaoxO5nFt3I8XseBpCj
-         pQ/LgiaiYqJW1I2Ns1VkhijJsPlhNyHmTcRdXmUGkXadCRRZ9dKakoc9y+5ZxWXGYBX4
-         wej/YpyCk2M+mM3i3PQSGf/8lEZR9jTFoZ5imCYsnksDgmtrnGI5c+6jSXvhlXrNLgKD
-         wnibXBEXgWgS+dLgtJxMgVqWxNCVm4Mn52K7q+51Sw2Thj7ZrqO+/lVg6e/ExQezhZiP
-         cnCg==
+        bh=ZinwHoffrnXP3ywQjEhLA6Z7sImGc8X+vWD+k+yVcXw=;
+        b=jipQjp0vAxMfYHmaj5s0kWN9Ke/4CsNxigw7n7A+2C7XFhG+ZbANQFOyP1z77EE2gG
+         D1CrlOJtUQell0Q0O7/KhFhhg0FUMf1HI1/+D7/jipA+myFQwTySahEtiPG43luqyntR
+         o8Z1zfIw7kJ8sxezd5jBydusWziXzXjiQdvFexL5PeEmkILq6lMfjX/3Nihae952Vmom
+         iPj1LFIc/qHygjtZVY7w1+p5jsxuJIvVmoC4UKPOD3JXd4x1HLnDGMNxtOToK34nEb7W
+         u3mKYXALhOv64TaqFUWCio77ncAhbrzr5nMcuFfgcSmx3u89Y5f9ifbL/0M7CkNGEamD
+         /HIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EwpfT4N+OvVlLx64Zz6EFx++RG+spKqj79bcGdpdHNo=;
-        b=hArxKC6a0aBVTxeovyNjYsj59RrLSHwxG//9k50UBpEshw95vYT4TJ7AreYozNkHNv
-         kxD2FJkT56N3+dn2iiaEYq3RhWdbRMhjOLTXvyTuykRL/oSYY+y5JrqB2auPIySfXK+7
-         yHxzt1tw79AGGeUZgHwNieUZWoan8dm580z/yUamcpDTNTpZiNZJeB5ivJWdJhj0YPhW
-         iBLVjIPTg2mMZVsYABDgbIp/Bfs8ob8MBBBvach6gDIug9l90JU6kcwMWoLm139JEIWL
-         2qAgwOQGN4+/rE+FXeJ/GSTl8SXmMy7/o2KYZ/DIDxyv7Z8jQ34S1zIq3kXrSYsyWfL1
-         KLYA==
-X-Gm-Message-State: AOAM533Y43GQFAHKAgEX95lttuLhqYfxU5BLn4rc8J/prlCk1UY9kZBM
-        LPqHeafiiauJn36mSgsOHPpb
-X-Google-Smtp-Source: ABdhPJyrl/g0uemO0TIBbEB3y4rgqF1KLHEIEOQZKdoqnVu3n9aZkgI7tttjndhnEN+STq1za8FvEA==
-X-Received: by 2002:a17:90a:d903:: with SMTP id c3mr10967111pjv.27.1615786681561;
-        Sun, 14 Mar 2021 22:38:01 -0700 (PDT)
+        bh=ZinwHoffrnXP3ywQjEhLA6Z7sImGc8X+vWD+k+yVcXw=;
+        b=ClxH5qNOYZGEzMl5hGR+PBXLBJ+TU4o8gknv5nfa19IkUR4A9CfgrvB5vewpHcuqxS
+         f8OLZ/sOR+nBnVy3sPMHWYVHMPHwzcMgzh0VQ4s5IQBBKVdz7Y1NSRxroRYq7Om4AIU3
+         CJCIbEje8kvlpA8KfLppMdRsUtBzv9xBlLcV1VPegvSl4yhf79matlkhH2pJ0U7zej75
+         SzIqhs5baO9WOi1YU1lhLk/goL5RXmt9igKM8FcyLtTbVpx8oh09PzAwV/Q4o2wcXITM
+         /BkvXo/FJJXrKfhbs4xQKilt3LXSg04IyNKddSV9KAuTcEczGI+04iZHQC3sIlKAU7JD
+         plzA==
+X-Gm-Message-State: AOAM532RH0CtYfAr8aCMChgTz4JDZLuSgZ6W4/rinT1Wh5ifQrPa/wPp
+        o+IU/n+rUCysMjbLHVuHVeGv
+X-Google-Smtp-Source: ABdhPJz3eltTXJ6/U1MHiydOs5RJgb/pCjjpSyDi9M2ABZX4mV6uQbf0s9qvIlne9yl8ovrJ57QHKg==
+X-Received: by 2002:a17:902:74c4:b029:e4:9e16:18d9 with SMTP id f4-20020a17090274c4b02900e49e1618d9mr10219721plt.21.1615786685259;
+        Sun, 14 Mar 2021 22:38:05 -0700 (PDT)
 Received: from localhost ([139.177.225.227])
-        by smtp.gmail.com with ESMTPSA id f11sm5475738pga.34.2021.03.14.22.38.00
+        by smtp.gmail.com with ESMTPSA id b22sm12821599pff.173.2021.03.14.22.38.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Mar 2021 22:38:01 -0700 (PDT)
+        Sun, 14 Mar 2021 22:38:04 -0700 (PDT)
 From:   Xie Yongji <xieyongji@bytedance.com>
 To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
         sgarzare@redhat.com, parav@nvidia.com, bob.liu@oracle.com,
@@ -57,9 +57,9 @@ To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
         dan.carpenter@oracle.com
 Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v5 03/11] vhost-vdpa: protect concurrent access to vhost device iotlb
-Date:   Mon, 15 Mar 2021 13:37:13 +0800
-Message-Id: <20210315053721.189-4-xieyongji@bytedance.com>
+Subject: [PATCH v5 04/11] vhost-iotlb: Add an opaque pointer for vhost IOTLB
+Date:   Mon, 15 Mar 2021 13:37:14 +0800
+Message-Id: <20210315053721.189-5-xieyongji@bytedance.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210315053721.189-1-xieyongji@bytedance.com>
 References: <20210315053721.189-1-xieyongji@bytedance.com>
@@ -69,41 +69,92 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use vhost_dev->mutex to protect vhost device iotlb from
-concurrent access.
+Add an opaque pointer for vhost IOTLB. And introduce
+vhost_iotlb_add_range_ctx() to accept it.
 
-Fixes: 4c8cf318("vhost: introduce vDPA-based backend")
+Suggested-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 ---
- drivers/vhost/vdpa.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/vhost/iotlb.c       | 20 ++++++++++++++++----
+ include/linux/vhost_iotlb.h |  3 +++
+ 2 files changed, 19 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-index cb14c66eb2ec..3f7175c2ac24 100644
---- a/drivers/vhost/vdpa.c
-+++ b/drivers/vhost/vdpa.c
-@@ -719,9 +719,11 @@ static int vhost_vdpa_process_iotlb_msg(struct vhost_dev *dev,
- 	const struct vdpa_config_ops *ops = vdpa->config;
- 	int r = 0;
+diff --git a/drivers/vhost/iotlb.c b/drivers/vhost/iotlb.c
+index 0fd3f87e913c..5c99e1112cbb 100644
+--- a/drivers/vhost/iotlb.c
++++ b/drivers/vhost/iotlb.c
+@@ -36,19 +36,21 @@ void vhost_iotlb_map_free(struct vhost_iotlb *iotlb,
+ EXPORT_SYMBOL_GPL(vhost_iotlb_map_free);
  
-+	mutex_lock(&dev->mutex);
-+
- 	r = vhost_dev_check_owner(dev);
- 	if (r)
--		return r;
-+		goto unlock;
+ /**
+- * vhost_iotlb_add_range - add a new range to vhost IOTLB
++ * vhost_iotlb_add_range_ctx - add a new range to vhost IOTLB
+  * @iotlb: the IOTLB
+  * @start: start of the IOVA range
+  * @last: last of IOVA range
+  * @addr: the address that is mapped to @start
+  * @perm: access permission of this range
++ * @opaque: the opaque pointer for the new mapping
+  *
+  * Returns an error last is smaller than start or memory allocation
+  * fails
+  */
+-int vhost_iotlb_add_range(struct vhost_iotlb *iotlb,
+-			  u64 start, u64 last,
+-			  u64 addr, unsigned int perm)
++int vhost_iotlb_add_range_ctx(struct vhost_iotlb *iotlb,
++			      u64 start, u64 last,
++			      u64 addr, unsigned int perm,
++			      void *opaque)
+ {
+ 	struct vhost_iotlb_map *map;
  
- 	switch (msg->type) {
- 	case VHOST_IOTLB_UPDATE:
-@@ -742,6 +744,8 @@ static int vhost_vdpa_process_iotlb_msg(struct vhost_dev *dev,
- 		r = -EINVAL;
- 		break;
- 	}
-+unlock:
-+	mutex_unlock(&dev->mutex);
+@@ -71,6 +73,7 @@ int vhost_iotlb_add_range(struct vhost_iotlb *iotlb,
+ 	map->last = last;
+ 	map->addr = addr;
+ 	map->perm = perm;
++	map->opaque = opaque;
  
- 	return r;
+ 	iotlb->nmaps++;
+ 	vhost_iotlb_itree_insert(map, &iotlb->root);
+@@ -80,6 +83,15 @@ int vhost_iotlb_add_range(struct vhost_iotlb *iotlb,
+ 
+ 	return 0;
  }
++EXPORT_SYMBOL_GPL(vhost_iotlb_add_range_ctx);
++
++int vhost_iotlb_add_range(struct vhost_iotlb *iotlb,
++			  u64 start, u64 last,
++			  u64 addr, unsigned int perm)
++{
++	return vhost_iotlb_add_range_ctx(iotlb, start, last,
++					 addr, perm, NULL);
++}
+ EXPORT_SYMBOL_GPL(vhost_iotlb_add_range);
+ 
+ /**
+diff --git a/include/linux/vhost_iotlb.h b/include/linux/vhost_iotlb.h
+index 6b09b786a762..2d0e2f52f938 100644
+--- a/include/linux/vhost_iotlb.h
++++ b/include/linux/vhost_iotlb.h
+@@ -17,6 +17,7 @@ struct vhost_iotlb_map {
+ 	u32 perm;
+ 	u32 flags_padding;
+ 	u64 __subtree_last;
++	void *opaque;
+ };
+ 
+ #define VHOST_IOTLB_FLAG_RETIRE 0x1
+@@ -29,6 +30,8 @@ struct vhost_iotlb {
+ 	unsigned int flags;
+ };
+ 
++int vhost_iotlb_add_range_ctx(struct vhost_iotlb *iotlb, u64 start, u64 last,
++			      u64 addr, unsigned int perm, void *opaque);
+ int vhost_iotlb_add_range(struct vhost_iotlb *iotlb, u64 start, u64 last,
+ 			  u64 addr, unsigned int perm);
+ void vhost_iotlb_del_range(struct vhost_iotlb *iotlb, u64 start, u64 last);
 -- 
 2.11.0
 
