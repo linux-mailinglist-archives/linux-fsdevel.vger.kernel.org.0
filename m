@@ -2,109 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 84A2E33BE4C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 15:51:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 924F033BF2A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 16:01:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238311AbhCOOpD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 10:45:03 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37468 "EHLO
+        id S239498AbhCOOyy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 10:54:54 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37935 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238668AbhCOOot (ORCPT
+        with ESMTP id S239527AbhCOOyh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 10:44:49 -0400
-Received: from mail-ed1-f72.google.com ([209.85.208.72])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        Mon, 15 Mar 2021 10:54:37 -0400
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
-        (envelope-from <christian.brauner@canonical.com>)
-        id 1lLoSe-00061T-7J
-        for linux-fsdevel@vger.kernel.org; Mon, 15 Mar 2021 14:44:48 +0000
-Received: by mail-ed1-f72.google.com with SMTP id w16so16071914edc.22
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 07:44:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/rOw6JMsy5TmcuNfXsdMbz1wU7+IrDSNfY1nK4kmqAI=;
-        b=s/5YnufGU8Cw7ip35ah6nh1EnHbyny5FYyc+EXnu968Zps/WCHDcsQqdjDa9ZhhxWO
-         +mwCKsEM+ht1cK6X85mnuN6MWiGMEKBr/PmCLZxgfEKeFN8JB0W67GFpkX4toHaZ4Qw+
-         SA8SkYJBb4dyZWo3xI13qHlIiStuXZIIqFObPyVJ28BRnZYzzfcPT8Vdweox34zcse/4
-         gIWnffkVdioEtqIg4qCI280hvwE5DGFUHGy0+2f958OJq1nlSPKpDQVRohj/WPdrEdgA
-         zvEm1BHLQc6HRKwRJkjYopGjohj0DKgyjQiyP8UGGIQGxprpbQ2wHlQLCBaHQljwDyUt
-         QjXg==
-X-Gm-Message-State: AOAM530DZJTk3KoYmMbjWwhzKYAU3lvUgtsTaMPmBpOxKRviiQnbwK5f
-        63Mnk4n5pwVM8eegmrfQ/yZh/o9g0WYBwvtQOOiu1IvoOY5hjzcsU4qe3uusGIEM2GVmQqoXcfR
-        5DBBEJM0U7yjW7VRak7mbXAh2jys3dJeVh4eh22x+ekg=
-X-Received: by 2002:a17:906:e16:: with SMTP id l22mr23860038eji.173.1615819487935;
-        Mon, 15 Mar 2021 07:44:47 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyX850jlad2N9FOS0qZRXIsOYQvuD87/PkQkWtiWY3kY5mGjEJZj64Syjg1iARAIS5QEMLnoA==
-X-Received: by 2002:a17:906:e16:: with SMTP id l22mr23860009eji.173.1615819487785;
-        Mon, 15 Mar 2021 07:44:47 -0700 (PDT)
-Received: from gmail.com (ip5f5af0a0.dynamic.kabel-deutschland.de. [95.90.240.160])
-        by smtp.gmail.com with ESMTPSA id e4sm7443229ejz.4.2021.03.15.07.44.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Mar 2021 07:44:47 -0700 (PDT)
-Date:   Mon, 15 Mar 2021 15:44:44 +0100
-From:   Christian Brauner <christian.brauner@canonical.com>
-To:     Yongji Xie <xieyongji@bytedance.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mika =?utf-8?B?UGVudHRpbMOk?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 01/11] file: Export __receive_fd() to modules
-Message-ID: <20210315144444.bgtllddee7s55lfx@gmail.com>
-References: <20210315053721.189-1-xieyongji@bytedance.com>
- <20210315053721.189-2-xieyongji@bytedance.com>
- <20210315090822.GA4166677@infradead.org>
- <CACycT3vrHOExXj6v8ULvUzdLcRkdzS5=TNK6=g4+RWEdN-nOJw@mail.gmail.com>
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1lLoc2-0006o5-JN; Mon, 15 Mar 2021 14:54:30 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 0/3] tweak idmap helpers
+Date:   Mon, 15 Mar 2021 15:54:16 +0100
+Message-Id: <20210315145419.2612537-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CACycT3vrHOExXj6v8ULvUzdLcRkdzS5=TNK6=g4+RWEdN-nOJw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 15, 2021 at 05:46:43PM +0800, Yongji Xie wrote:
-> On Mon, Mar 15, 2021 at 5:08 PM Christoph Hellwig <hch@infradead.org> wrote:
-> >
-> > On Mon, Mar 15, 2021 at 01:37:11PM +0800, Xie Yongji wrote:
-> > > Export __receive_fd() so that some modules can use
-> > > it to pass file descriptor between processes.
-> >
-> > I really don't think any non-core code should do that, especilly not
-> > modular mere driver code.
-> 
-> Do you see any issue? Now I think we're able to do that with the help
-> of get_unused_fd_flags() and fd_install() in modules. But we may miss
-> some security stuff in this way. So I try to export __receive_fd() and
-> use it instead.
+Hey,
 
-The __receive_fd() helper was added for core-kernel code only and we
-mainly did it for the seccomp notifier (and scm rights). The "__" prefix
-was intended to convey that message.
-And I agree with Christoph that we should probably keep it that way
-since __receive_fd() allows a few operations that no driver should
-probably do.
-I can see it being kinda ok to export a variant that really only
-receives and installs an fd, i.e. if we were to export what's currently
-available as an inline helper:
+This little series tries to improve naming and developer friendliness of fs
+idmapping helpers triggered by a request/comment from Vivek.
+Let's remove the two open-coded checks for whether there's a mapping for
+fsuid/fsgid in the s_user_ns of the underlying filesystem. Instead move them
+into a tiny helper, getting rid of redundancy and making sure that if we ever
+change something it's changed in all places. Also add two helpers to initialize
+and inode's i_uid and i_gid fields taking into account idmapped mounts making
+it easier for fs developers.
 
-static inline int receive_fd(struct file *file, unsigned int o_flags)
+This patch series is on top of Darrick's changes in the xfs-5.12-fixes-2
+tag or xfs-5.12-fixes branch since renaming the two helpers in the second patch
+affects xfs which calls them when initializing quotas.
 
-but definitely none of the fd replacement stuff; that shold be
-off-limits. The seccomp notifier is the only codepath that should even
-think about fd replacement since it's about managing the syscalls of
-another task. Drivers swapping out fds doesn't sound like a good idea to
-me.
+The xfstests I sent out all pass:
 
+1. Idmapped mounts test-suite
+ubuntu@f1-vm:~/src/git/xfstests$ sudo ./check generic/627
+FSTYP         -- xfs (non-debug)
+PLATFORM      -- Linux/x86_64 f1-vm 5.12.0-rc3-inode-helpers #343 SMP Mon Mar 15 12:57:02 UTC 2021
+MKFS_OPTIONS  -- -f -bsize=4096 /dev/loop1
+MOUNT_OPTIONS -- /dev/loop1 /mnt/scratch
+
+generic/627      16s
+Ran: generic/627
+Passed all 1 tests
+
+2. Detached mount propagation
+ubuntu@f1-vm:~/src/git/xfstests$ sudo ./check generic/626
+FSTYP         -- xfs (non-debug)
+PLATFORM      -- Linux/x86_64 f1-vm 5.12.0-rc3-inode-helpers #343 SMP Mon Mar 15 12:57:02 UTC 2021
+MKFS_OPTIONS  -- -f -bsize=4096 /dev/loop1
+MOUNT_OPTIONS -- /dev/loop1 /mnt/scratch
+
+generic/626 10s ...  9s
+Ran: generic/626
+Passed all 1 tests
+
+3. Testing xfs quotas can't be exceeded/work correctly from idmapped mounts
+ubuntu@f1-vm:~/src/git/xfstests$ sudo ./check xfs/528
+FSTYP         -- xfs (non-debug)
+PLATFORM      -- Linux/x86_64 f1-vm 5.12.0-rc3-inode-helpers #343 SMP Mon Mar 15 12:57:02 UTC 2021
+MKFS_OPTIONS  -- -f -bsize=4096 /dev/loop1
+MOUNT_OPTIONS -- /dev/loop1 /mnt/scratch
+
+xfs/528 41s ...  44s
+Ran: xfs/528
+Passed all 1 tests
+
+4. Testing xfs qutoas on idmapped mounts
+ubuntu@f1-vm:~/src/git/xfstests$ sudo ./check xfs/529
+FSTYP         -- xfs (non-debug)
+PLATFORM      -- Linux/x86_64 f1-vm 5.12.0-rc3-inode-helpers #343 SMP Mon Mar 15 12:57:02 UTC 2021
+MKFS_OPTIONS  -- -f -bsize=4096 /dev/loop1
+MOUNT_OPTIONS -- /dev/loop1 /mnt/scratch
+
+xfs/529 23s ...  25s
+Ran: xfs/529
+Passed all 1 tests
+
+Thanks!
 Christian
+
+Christian Brauner (3):
+  fs: introduce fsuidgid_has_mapping() helper
+  fs: improve naming for fsid helpers
+  fs: introduce two little fs{u,g}id inode initialization helpers
+
+ fs/ext4/ialloc.c     |  2 +-
+ fs/inode.c           |  4 ++--
+ fs/namei.c           | 11 +++--------
+ fs/xfs/xfs_inode.c   | 10 +++++-----
+ fs/xfs/xfs_symlink.c |  4 ++--
+ include/linux/fs.h   | 27 +++++++++++++++++++++++++--
+ 6 files changed, 38 insertions(+), 20 deletions(-)
+
+
+base-commit: 1e28eed17697bcf343c6743f0028cc3b5dd88bf0
+prerequisite-patch-id: 0bdc07ef3137ce6d6ef284ad308de9a9bc2ea1f3
+prerequisite-patch-id: a1c05069d67f08ea75e88f54f5fdf86db4d82865
+prerequisite-patch-id: 707b24a3c6f71599e038a66aa3474b270d2699fe
+prerequisite-patch-id: c42d85f64933a4e48aa10192c374bebad07ca5c0
+prerequisite-patch-id: 5fcf22eea4b225691a034308a23c309f1583f970
+-- 
+2.27.0
+
