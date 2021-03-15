@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED36233AA21
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 04:50:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E36DD33AA26
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 04:50:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbhCODtc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Mar 2021 23:49:32 -0400
+        id S229776AbhCODte (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Mar 2021 23:49:34 -0400
 Received: from esa2.hgst.iphmx.com ([68.232.143.124]:29592 "EHLO
         esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229771AbhCODtV (ORCPT
+        with ESMTP id S229775AbhCODtW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Mar 2021 23:49:21 -0400
+        Sun, 14 Mar 2021 23:49:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1615780180; x=1647316180;
+  t=1615780181; x=1647316181;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=TMNqp6puhFs9cVzUL+PcsKNvjzULnsi5KVTwOEMC8Mo=;
-  b=clKUVToOdHRsucAyPq6sGJnHfrqj57ydx+5IMhiuRD+CNtmEttk7TQfo
-   oE9ixQdPRc+a4UVzBYPEoD8vrb6CF4vCr+PwEmBSZIMIOc7X04l9I9xg8
-   Au5v+yBvE3CZjw3tM/D6iFR0RF/X0G3p/5LAGNvhITnqwbgL4LtbeWY/I
-   SyV8Rzy6nI/eDES5HFFSYDEIxNcvHhorfLfU3bJ5w8L09nbaq6YM3jbka
-   NbBfSiH78z2H0YFsxBUXBUqzyx1kApCDA/40xxwnxbqTF9F/Fjm3rSHbw
-   w83fKJ41OHcbwamZKk+KhKGJ4VLGyKPBA3R24pYbST/I5NMZA7QG1HgFq
+  bh=cStN5xHdd90RnJb80LffzjZNk61ERCaMbgoxSq44p2A=;
+  b=pof3r1TZly8PlYA9Loze74WK0MFDV+GAP5arHWQO8Xq18urxEOO4LTiv
+   6zqDr1s4q7n+LvlR3CydBuAxBxGQcUIp12wBiT7+0Ni+WfzJNo5Vsa5eY
+   xqQds2W7YT/ApI3swIL/Wo8OvynIFoz8dUJ9rgrHS5DA1jPNXOBIIKqYV
+   ZOV3/3O/2VcMZPnf++6pgKlG2AuBhNmDg1qnA2nYXn9jZP4Z6ymhLiLnT
+   c8e6UCYJjTnbw3edXiQOT/wxn04vuXj5QEPVpnLXlkowRMNkCNPBSLHma
+   Oyag9gD5NLMwTkFK+qYmVE0tbOOM9SaFu3ldvWHyb5X7r7xKF/1UlCQJd
    A==;
-IronPort-SDR: sth3vHJpuuJKhtWo8i8JeB7tiTZ+6fn1l/8PfMGLrTKlOb1ewV42NK6Wd+iMuS2sUuM6g6JZAB
- EC4APh3JoaFFmmBuRi/nILZbhprxMppX9CNNrz8o4CSMkkdetrhWHmJvC17GKM58atQBnW5I/L
- f+iYa+8+pyi0/u9jw0QbgHRuzbhxf2+4bpjEB8XHypY2Z2Xp5GCIuagnhqUx/uXgj/G9eLjTPx
- yb2X64Js3n868Fc6PUXh87SMd9NMNy0Rpach7eG18wN5QSsIOQmojzxrdD3zI6s+pO6NkmgpiV
- SRA=
+IronPort-SDR: mH5nLPKzvy946xvJ2vlaTPY5caO982JythbJ0Nkk1/gSPfwjVl+tgmL4PQ3zFJRJA+Bt37+jLt
+ 0dbF6vk6mk5UXJt/Fe15Kvry57SYiYrtnKDtAVJJ6d9BskrCKwPWEbTkiYgD7FhLxPUYytUAM6
+ iEhfmetJLQpmuOKOvUaOW5R48G1T9vDngk+afMaVs4tWwPB3I/WptblX93VGYEOxIGS8jX8Nvx
+ DihJeCUx/vxEmrEtRdHoUBOkMBMrr3Yt+fi6JQh3Ge4Qxw+JL/TaE0S6eGYKJMs9mQPglukHsi
+ RDE=
 X-IronPort-AV: E=Sophos;i="5.81,249,1610380800"; 
-   d="scan'208";a="266509451"
+   d="scan'208";a="266509453"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Mar 2021 11:49:40 +0800
-IronPort-SDR: Gf4NIdTecg05AroepOGXPtp14kEZcfJEEBHSTKWKD55oY87gZkBUz3Ikd/580g+o9ts3pztqA1
- 1chqI46v6c60yeGmQr54BkDM5xVoJbAVJYWKwAfm7CmL9u8T9QAS7RKgm/Xxhr+oiY9Z837CoM
- LT/jKHKikUE8co+ZNUMx/a4MPfT6K/TfiEpLr2qHDRXlB5rqOPL7jX9CxdWjs1UYlyBB3Akxdd
- DfleTEwA9Ftc10peimGapTsgbuexsU1qOTX5SFGEDREaThlJb/7etT5P072tdWC0sYq6FAiqQo
- 1rcFMMnnPzG9oBM24+/vPKin
+  by ob1.hgst.iphmx.com with ESMTP; 15 Mar 2021 11:49:41 +0800
+IronPort-SDR: ++uQP0r7oep9flKpcMITkjWPphp9yi8Z6/bZjKcXmdowo9WJHEHNkuLtWXeoYravSlFPxLRfZM
+ x136TVNEAXfmf9IyU39jOpEGmoQMGdgfOXNyCdSjuDVT3JqaRJQKFjqcbFv0kMyxstLUTp8cF6
+ fn68lrQeG+++Ykdl4hwiQwuLTTg6O1X972JpQZYvVg7cX80BDwUUHC5/0HA8ST7o4kgcRx/BF5
+ BrV5t0e3WTHrL1tANpTae80gTpa8zkbL35k5NE/5J/xtK6zTyu42CqLUZUFW4JCEX+8D3suZyZ
+ t7QP8prIg6B9skoOsqxDDLFG
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
   by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2021 20:31:51 -0700
-IronPort-SDR: o8L7VNcJfUj1kyaajcU+PlwKGQbQRpzLMH52nVUVWQrHGegUzvo7Isu1kPSF19koMZJkIoL/HD
- P3BTt2E6W17ZFH4qRVb9Bu4jqT1l3NWf7pyY/TGYkVSaXNvKGXeIvsSIIxewcimfr8ZAtLnO+n
- Qnk82zmg3OggHT7cOVZJ0wEXbAVvHFxwhVT0RrvJ0qEWk9hr0f6QZVumvR/6w/Vpuy88fG6AR4
- EOw5VjliWUrgacdE33MjLwNSNMXiP64EuVEEZTgM4K5MzUZo6uOwm+RtgtBSTCy+UqJvDOSIBG
- 0Ic=
+IronPort-SDR: IVs2SXDxcHgFmZf8ZDgQbCF1TJ7RQrK+Zfs71V/Ov/yOY3aOLvQXVgiP915WEohlgCLAfqTpmL
+ vhIdM0MCcYHXIB3TYHDPlD1LPmM6LCsKx6fOTb3rleh7QjcIsid3GZMgGCLDXHYgmeuDFZQb7K
+ TgybswHDJcrJvP3h2Q0Zxe77oiKb/xHlJM2TC/XyWsoHmOhCdTt+WNQ6NXednRQCBQ02Qo4IDT
+ 1hSpvkTghhedDyNi14JpDzHDMu3tk3J+3fW60PcA9kYtDHRV7sWt5Ok0LPW2rFVgzbkjy3s9/a
+ Ddc=
 WDCIronportException: Internal
 Received: from washi.fujisawa.hgst.com ([10.149.53.254])
   by uls-op-cesaip02.wdc.com with ESMTP; 14 Mar 2021 20:49:21 -0700
 From:   Damien Le Moal <damien.lemoal@wdc.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH 1/2] zonefs: prevent use of seq files as swap file
-Date:   Mon, 15 Mar 2021 12:49:18 +0900
-Message-Id: <20210315034919.87980-2-damien.lemoal@wdc.com>
+Subject: [PATCH 2/2] zonefs: Fix O_APPEND async write handling
+Date:   Mon, 15 Mar 2021 12:49:19 +0900
+Message-Id: <20210315034919.87980-3-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210315034919.87980-1-damien.lemoal@wdc.com>
 References: <20210315034919.87980-1-damien.lemoal@wdc.com>
@@ -64,51 +64,144 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The sequential write constraint of sequential zone file prevent their
-use as swap files. Only allow conventional zone files to be used as swap
-files.
+zonefs updates the size of a sequential zone file inode only on
+completion of direct writes. When executing asynchronous append writes
+(with a file open with O_APPEND or using RWF_APPEND), the use of the
+current inode size in generic_write_checks() to set an iocb offset thus
+leads to unaligned write if an application issues an append write
+operation with another write already being executed.
+
+Fix this problem by introducing zonefs_write_checks() as a modified
+version of generic_write_checks() using the file inode wp_offset for an
+append write iocb offset. Also introduce zonefs_write_check_limits() to
+replace generic_write_check_limits() call. This zonefs special helper
+makes sure that the maximum file limit used is the maximum size of the
+file being accessed.
+
+Since zonefs_write_checks() already truncates the iov_iter, the calls
+to iov_iter_truncate() in zonefs_file_dio_write() and
+zonefs_file_buffered_write() are removed.
 
 Fixes: 8dcc1a9d90c1 ("fs: New zonefs file system")
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- fs/zonefs/super.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ fs/zonefs/super.c | 76 ++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 66 insertions(+), 10 deletions(-)
 
 diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index 0fe76f376dee..a3d074f98660 100644
+index a3d074f98660..81836a5b436e 100644
 --- a/fs/zonefs/super.c
 +++ b/fs/zonefs/super.c
-@@ -165,6 +165,21 @@ static int zonefs_writepages(struct address_space *mapping,
- 	return iomap_writepages(mapping, wbc, &wpc, &zonefs_writeback_ops);
+@@ -743,6 +743,68 @@ static ssize_t zonefs_file_dio_append(struct kiocb *iocb, struct iov_iter *from)
+ 	return ret;
  }
  
-+static int zonefs_swap_activate(struct swap_info_struct *sis,
-+				struct file *swap_file, sector_t *span)
++/*
++ * Do not exceed the LFS limits nor the file zone size. If pos is under the
++ * limit it becomes a short access. If it exceeds the limit, return -EFBIG.
++ */
++static loff_t zonefs_write_check_limits(struct file *file, loff_t pos,
++					loff_t count)
 +{
-+	struct inode *inode = file_inode(swap_file);
++	struct inode *inode = file_inode(file);
 +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
++	loff_t limit = rlimit(RLIMIT_FSIZE);
++	loff_t max_size = zi->i_max_size;
 +
-+	if (zi->i_ztype != ZONEFS_ZTYPE_CNV) {
-+		zonefs_err(inode->i_sb,
-+			   "swap file: not a conventional zone file\n");
-+		return -EINVAL;
++	if (limit != RLIM_INFINITY) {
++		if (pos >= limit) {
++			send_sig(SIGXFSZ, current, 0);
++			return -EFBIG;
++		}
++		count = min(count, limit - pos);
 +	}
 +
-+	return iomap_swapfile_activate(sis, swap_file, span, &zonefs_iomap_ops);
++	if (!(file->f_flags & O_LARGEFILE))
++		max_size = min_t(loff_t, MAX_NON_LFS, max_size);
++
++	if (unlikely(pos >= max_size))
++		return -EFBIG;
++
++	return min(count, max_size - pos);
 +}
 +
- static const struct address_space_operations zonefs_file_aops = {
- 	.readpage		= zonefs_readpage,
- 	.readahead		= zonefs_readahead,
-@@ -177,6 +192,7 @@ static const struct address_space_operations zonefs_file_aops = {
- 	.is_partially_uptodate	= iomap_is_partially_uptodate,
- 	.error_remove_page	= generic_error_remove_page,
- 	.direct_IO		= noop_direct_IO,
-+	.swap_activate		= zonefs_swap_activate,
- };
++static ssize_t zonefs_write_checks(struct kiocb *iocb, struct iov_iter *from)
++{
++	struct file *file = iocb->ki_filp;
++	struct inode *inode = file_inode(file);
++	struct zonefs_inode_info *zi = ZONEFS_I(inode);
++	loff_t count;
++
++	if (IS_SWAPFILE(inode))
++		return -ETXTBSY;
++
++	if (!iov_iter_count(from))
++		return 0;
++
++	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
++		return -EINVAL;
++
++	if (iocb->ki_flags & IOCB_APPEND) {
++		if (zi->i_ztype != ZONEFS_ZTYPE_SEQ)
++			return -EINVAL;
++		mutex_lock(&zi->i_truncate_mutex);
++		iocb->ki_pos = zi->i_wpoffset;
++		mutex_unlock(&zi->i_truncate_mutex);
++	}
++
++	count = zonefs_write_check_limits(file, iocb->ki_pos,
++					  iov_iter_count(from));
++	if (count < 0)
++		return count;
++
++	iov_iter_truncate(from, count);
++	return iov_iter_count(from);
++}
++
+ /*
+  * Handle direct writes. For sequential zone files, this is the only possible
+  * write path. For these files, check that the user is issuing writes
+@@ -760,8 +822,7 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+ 	struct super_block *sb = inode->i_sb;
+ 	bool sync = is_sync_kiocb(iocb);
+ 	bool append = false;
+-	size_t count;
+-	ssize_t ret;
++	ssize_t ret, count;
  
- static void zonefs_update_stats(struct inode *inode, loff_t new_isize)
+ 	/*
+ 	 * For async direct IOs to sequential zone files, refuse IOCB_NOWAIT
+@@ -779,13 +840,10 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+ 		inode_lock(inode);
+ 	}
+ 
+-	ret = generic_write_checks(iocb, from);
+-	if (ret <= 0)
++	count = zonefs_write_checks(iocb, from);
++	if (count <= 0)
+ 		goto inode_unlock;
+ 
+-	iov_iter_truncate(from, zi->i_max_size - iocb->ki_pos);
+-	count = iov_iter_count(from);
+-
+ 	if ((iocb->ki_pos | count) & (sb->s_blocksize - 1)) {
+ 		ret = -EINVAL;
+ 		goto inode_unlock;
+@@ -844,12 +902,10 @@ static ssize_t zonefs_file_buffered_write(struct kiocb *iocb,
+ 		inode_lock(inode);
+ 	}
+ 
+-	ret = generic_write_checks(iocb, from);
++	ret = zonefs_write_checks(iocb, from);
+ 	if (ret <= 0)
+ 		goto inode_unlock;
+ 
+-	iov_iter_truncate(from, zi->i_max_size - iocb->ki_pos);
+-
+ 	ret = iomap_file_buffered_write(iocb, from, &zonefs_iomap_ops);
+ 	if (ret > 0)
+ 		iocb->ki_pos += ret;
 -- 
 2.30.2
 
