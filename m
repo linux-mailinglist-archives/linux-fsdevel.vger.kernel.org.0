@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97F3F33B30D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 13:48:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B976433B316
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 13:55:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229673AbhCOMrf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 08:47:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57232 "EHLO
+        id S229588AbhCOMzR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 08:55:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbhCOMrS (ORCPT
+        with ESMTP id S229494AbhCOMyu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 08:47:18 -0400
+        Mon, 15 Mar 2021 08:54:50 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D253C061574;
-        Mon, 15 Mar 2021 05:47:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C33C061574;
+        Mon, 15 Mar 2021 05:54:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=k8kBd5XUDTT977pE3SWgeErOtsPBNTbq9YiM/WW5MBU=; b=WzJfxcPs+Wb6LWt63nadK8c89g
-        3kznciq1z0qw7lt7hNytHeFeAlG8pDIBT0ZprwO/b2Uu1uyW6XyVSyRmluZKR5Jl/A4clxkNCkI3E
-        NojWIHTgZ7QeX9QA5+AoPQNWWz5kDJmUA7uqE041i/ucAbT+o42RNK3AZegm5Nwxh50IrYmXpDCUQ
-        gWBKqkf992UbcGiS5AXOOp1noQr8abEa+LsEj6taEXQWBknyRVUPKdVxHfCwXFEUXySdaCfhXsY4Q
-        mabYu8E3Ty2rSilfFzGBjj6DEeu2u7dMdOtSHWZbUV6QpXJ/cUh2CXlAEN26DDOya0aZ3r0NFsPpc
-        k9lbM4hw==;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=hUmA3BEtzcJvz01TWYKXFbQSzi3Lt/8ZG4oFt7gXa3o=; b=LDzh+hErroH07/2l19Cc8w4NsG
+        ukMfGjjv1ZLXtEiDSYHtYgOE61fEooSW6yl6nYmKra259al18sIGMgcv6lSOJx/sWbd0ESuMSnohE
+        AJvjmCFzbMPyq+u0RpHtmoYqfKahvKPixclIb005c7/+IAobwcBZnMfI/ti9UdeexDue8yEzepCSc
+        kxCTTs0UEbjcOHQUEqOb9rIooC0wCCpkEZuU3WQP14rEsRORD/hzucOsH7n0W1ls2LtISwvipdtih
+        Xlbtbef+TST//pGjHM16t4AnVgO7yJyXDHg0h0yG/4mmvwqZnA26xBROyvCUZWAUxrLdg8ItU+LPj
+        TetyiKmA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lLmcO-000AnN-Q0; Mon, 15 Mar 2021 12:46:47 +0000
-Date:   Mon, 15 Mar 2021 12:46:44 +0000
+        id 1lLmk4-000BGZ-P8; Mon, 15 Mar 2021 12:54:43 +0000
+Date:   Mon, 15 Mar 2021 12:54:40 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     David Howells <dhowells@redhat.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -35,49 +35,62 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Ian Kent <raven@themaw.net>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH 0/3] vfs: Use an xarray instead of inserted
- bookmarks to scan mount list
-Message-ID: <20210315124644.GU2577561@casper.infradead.org>
+Subject: Re: [PATCH 2/3] vfs: Use the mounts_to_id array to do /proc/mounts
+ and co.
+Message-ID: <20210315125440.GV2577561@casper.infradead.org>
 References: <161581005972.2850696.12854461380574304411.stgit@warthog.procyon.org.uk>
+ <161581007628.2850696.11692651942358302102.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <161581005972.2850696.12854461380574304411.stgit@warthog.procyon.org.uk>
+In-Reply-To: <161581007628.2850696.11692651942358302102.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 15, 2021 at 12:07:39PM +0000, David Howells wrote:
-> 
-> Hi Al, Miklós,
-> 
-> Can we consider replacing the "insert cursor" approach we're currently
-> using for proc files to scan the current namespace's mount list[1] with
-> something that uses an xarray of mounts indexed by mnt_id?
-> 
-> This has some advantages:
-> 
->  (1) It's simpler.  We don't need to insert dummy mount objects as
->      bookmarks into the mount list and code that's walking the list doesn't
->      have to carefully step over them.
-> 
->  (2) We can use the file position to represent the mnt_id and can jump to
->      it directly - ie. using seek() to jump to a mount object by its ID.
-> 
->  (3) It might make it easier to use RCU in future to dump mount entries
->      rather than having to take namespace_sem.  xarray provides for the
->      possibility of tagging entries to say that they're viewable to avoid
->      dumping incomplete mount objects.
+On Mon, Mar 15, 2021 at 12:07:56PM +0000, David Howells wrote:
+> Use the mounts_to_id xarray added to the mount namespace to perform
 
-Usually one fully constructs the object, then inserts it into the XArray.
+You called it mounts_by_id in the last patch ...
 
-> But there are a number of disadvantages:
-> 
->  (1) We have to allocate memory to maintain the xarray, which becomes more
->      of a problem as mnt_id values get scattered.
+> Since it doesn't trawl a standard list_head, but rather uses xarray, this
+> could be done under the RCU read lock only.  To do this, we would need to
+> hide mounts that are in the process of being inserted into the tree by
+> marking them in the xarray itself or using a mount flag.
 
-mnt_id values don't seem to get particularly scattered.  They're allocated
-using an IDA, so they stay small (unlike someone using idr_alloc_cyclic
-;-).
+>  /* iterator; we want it to have access to namespace_sem, thus here... */
+>  static void *m_start(struct seq_file *m, loff_t *pos)
+>  {
+> -	struct proc_mounts *p = m->private;
+> -	struct list_head *prev;
+> +	struct proc_mounts *state = m->private;
+> +	void *entry;
+>  
+>  	down_read(&namespace_sem);
+> -	if (!*pos) {
+> -		prev = &p->ns->list;
+> -	} else {
+> -		prev = &p->cursor.mnt_list;
+> +	state->xas = (struct xa_state) __XA_STATE(&state->ns->mounts_by_id, *pos, 0, 0);
+>  
+> -		/* Read after we'd reached the end? */
+> -		if (list_empty(prev))
+> -			return NULL;
+> -	}
+> +	entry = xas_find(&state->xas, ULONG_MAX);
 
+I know you haven't enabled enough debugging because this will assert
+that either the RCU read lock or the xa_lock is held to prevent xa_nodes
+from disappearing underneath us.
+
+Why do you want to use an xa_state for this?  This is /proc, so efficiency
+isn't the highest priority.  I'd just use xa_find(), and then you don't
+need to care about an xa_state or locking -- it handles taking the rcu
+read lock for you.
+
+> +	while (entry && xas_invalid(entry))
+
+I've never seen anybody make that mistake before.  Good one.  Not sure
+if there's anything I can do to prevent it in future.
+
+> +		entry = xas_next_entry(&state->xas, ULONG_MAX);
