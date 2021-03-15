@@ -2,199 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C762533A997
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 03:25:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAB9833AA24
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 04:50:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229742AbhCOCZU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Mar 2021 22:25:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36560 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229663AbhCOCYy (ORCPT
+        id S229826AbhCODtd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Mar 2021 23:49:33 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:29592 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229672AbhCODtV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Mar 2021 22:24:54 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66879C061574;
-        Sun, 14 Mar 2021 19:24:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=2ZbagKXY+gGRN4QfZeaJfgicJ/AkLpAyRYqbVKVHiPU=; b=JKWzad7sSLKdeqo6iLiDUB1ccX
-        ilSNHANc6eWmSTvIo1X5LXjS1ab5ij5MfAQnSxkEG6i7LohbiaTghRSYL+orthkOuwLcBLfLzumFA
-        KjHQ29lHL5DvQc2s/2GJwtJe1qWTiMfCprK0D4XU5gIBVNjJ7TdjiwN5EpomMQa3TkKYSw01hRPY+
-        beqpr3uWSo6rX3IqyCck7stLeExvSC9OO3wquWVImXf+5F60ALQRbN/uexJ3nIOthH4lDqbAkjG9N
-        CFzG3P+ATKAUMaD3hT8ZprUQu8q0UbAvhBIULuVDJHM3UK1vINZx97D4LQyVss0yeoGuDkxhfxqoj
-        RAPkYhMA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lLcuG-00GzqN-G0; Mon, 15 Mar 2021 02:24:39 +0000
-Date:   Mon, 15 Mar 2021 02:24:32 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 07/25] mm: Create FolioFlags
-Message-ID: <20210315022432.GS2577561@casper.infradead.org>
-References: <20210305041901.2396498-1-willy@infradead.org>
- <20210305041901.2396498-8-willy@infradead.org>
+        Sun, 14 Mar 2021 23:49:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1615780180; x=1647316180;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=WbfHYkpK1Dek9W07jiOtlFKrqQVOub8bMeNjGa478pQ=;
+  b=alOdvrF55kdfJyANAWdp9MfWkhX89M/dROKxqdXZiaFJxRZiRJ/x6YjU
+   UhqL0sJ+hPhQljWelcn/S4fh5fvkSn8xuGWg4vgmHEDS0q/309XHAHudL
+   4VfeXMHYcnljl18+kW4H0OBq8odLXJlhRH73tCCeeqzrtZaZwNfuYAjT8
+   7C8wKNtiNOo+X2EZX4KKmYMzdU+Z5fJb7Sp7zYKhN0YAxz+yvDfU/Hzw9
+   keTy1doyBRashBQbM02+nU0Hvfs7E6NVDt4KiXLFDM5Fx9B4ULOjMUPdx
+   alx6kHJManspTncu4laVgHemtZ8Cc5SR8jDwIbF86ndXlETGvmJoVqvEa
+   w==;
+IronPort-SDR: AhUJZnc8KuIvfqi/eW/NWhuM3jcN4BvOPKnjRc5LjWaMa9bkC7q6l3JfGtR4pIQLPTNfmspQuX
+ KSPNKkQTTkSxD+IprXMH2QgxZBFbyn2/mQbcIwrIjecUv+Yg9z83EAl5P3J8T936cH4kGstDMJ
+ nMWIVp2eUaT2jViBXhjgPRbJF1kWDrG41LsZeE33EKF4SaaLeBnB90igK+XHGcRyGlFUtttFo4
+ h7E21M28R61y1I2ok7Hln58frpb082mg8nYjqXC2LjOFYvCdQr1FiQ43aWYX1F18uflQETJkq8
+ bZw=
+X-IronPort-AV: E=Sophos;i="5.81,249,1610380800"; 
+   d="scan'208";a="266509449"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 15 Mar 2021 11:49:39 +0800
+IronPort-SDR: PxqJrvgYEc1fnrHFpLqXsiWF9DYRrYcjfRoTZv0WzfMq+UhOAOC3/BmHhJvKPFc6VgL60C6Xtz
+ 74673KW227FRHOBEWPd6wsg0NTyG0Jsut8YFNfHw+mONWcJwtgDkrMazKhDhB7MwlZfZ1pzdjx
+ Z9Q50XgeGnepPSSd0YowpNHc45Ogp4wELFcIL0RLQbZKS16Khfy4qq4YxA9byPuHymkK1lbJ8W
+ qL6BQz0H/BGcZs8HyZwoMz710tM14kiRkhX7EcgDNHDPn6duNa/s1LV9wQMUa8KrhUsel6BPQU
+ E1cHzk6SS1J/Rp+50saEzAfg
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2021 20:31:50 -0700
+IronPort-SDR: DdTYgbLNyoGGildsRfknsch4YV7/T9Y9ZHzGi+qj5fVXM03/bR37q2jPaD9KEDvnxJ3dEy/7EW
+ nLl9ObbLGRRO6outu2kr8qLssgXX/mC84O0EvtXLUmPH9zE9RR4eZIrA/CLzM9iKIScuAV23c6
+ wgdt3SjS95/k28Pijt3DmONFG4LgsRNup0ddFcZf1o3qADuCXDfuSwj/YEOdRuwn26d9UcOi0+
+ hYSu94LS/MxnOyiyIZ3ZmwCDzR6fHMY4GjS564Rsb0utL9DCimy6OSKPrGjFbUnTgqHSsCNNjR
+ GAs=
+WDCIronportException: Internal
+Received: from washi.fujisawa.hgst.com ([10.149.53.254])
+  by uls-op-cesaip02.wdc.com with ESMTP; 14 Mar 2021 20:49:20 -0700
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH 0/2] zonefs fixes
+Date:   Mon, 15 Mar 2021 12:49:17 +0900
+Message-Id: <20210315034919.87980-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210305041901.2396498-8-willy@infradead.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 05, 2021 at 04:18:43AM +0000, Matthew Wilcox (Oracle) wrote:
-> These new functions are the folio analogues of the PageFlags functions.
-> If CONFIG_DEBUG_VM_PGFLAGS is enabled, we check the folio is not a tail
-> page at every invocation.  Note that this will also catch the PagePoisoned
-> case as a poisoned page has every bit set, which would include PageTail.
-> 
-> This saves 1740 bytes of text with the distro-derived config that
-> I'm testing due to removing a double call to compound_head() in
-> PageSwapCache().
+A couple of fixes:
+- prevent use of sequerntial zone files as swap files
+- Fix write offset initialization of asynchronous append write operation
+  (for sequential files open with O_APPEND or aio writes issued with
+  RWF_APPEND)
 
-This patch is buggy due to using the wrong page->flags for FolioDoubleMapped.
-I'm not totally in love with this fix, but it does work without changing
-every PAGEFLAG definition.
+Damien Le Moal (2):
+  zonefs: prevent use of seq files as swap file
+  zonefs: Fix O_APPEND async write handling
 
-(also, I needed FolioTransHuge())
+ fs/zonefs/super.c | 92 +++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 82 insertions(+), 10 deletions(-)
 
-commit fe8ca904171345d113f06f381c255a3c4b20074e
-Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-Date:   Sun Mar 14 17:34:48 2021 -0400
+-- 
+2.30.2
 
-    fix FolioFlags
-
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 01aa4a71bf14..b7fd4c3733ca 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -212,10 +212,13 @@ static inline void page_init_poison(struct page *page, size_t size)
- }
- #endif
- 
--static unsigned long *folio_flags(struct folio *folio)
-+static unsigned long *folio_flags(struct folio *folio, unsigned n)
- {
--	VM_BUG_ON_PGFLAGS(PageTail(&folio->page), &folio->page);
--	return &folio->page.flags;
-+	struct page *page = &folio->page;
-+
-+	VM_BUG_ON_PGFLAGS(PageTail(page), page);
-+	VM_BUG_ON_PGFLAGS(n > 0 && !test_bit(PG_head, &page->flags), page);
-+	return &page[n].flags;
- }
- 
- /*
-@@ -262,48 +265,56 @@ static unsigned long *folio_flags(struct folio *folio)
- 		VM_BUG_ON_PGFLAGS(!PageHead(page), page);		\
- 		PF_POISONED_CHECK(&page[1]); })
- 
-+/* Which page is the flag stored in */
-+#define FOLIO_PF_ANY		0
-+#define FOLIO_PF_HEAD		0
-+#define FOLIO_PF_ONLY_HEAD	0
-+#define FOLIO_PF_NO_TAIL	0
-+#define FOLIO_PF_NO_COMPOUND	0
-+#define FOLIO_PF_SECOND		1
-+
- /*
-  * Macros to create function definitions for page flags
-  */
- #define TESTPAGEFLAG(uname, lname, policy)				\
- static __always_inline int Folio##uname(struct folio *folio)		\
--	{ return test_bit(PG_##lname, folio_flags(folio)); }		\
-+	{ return test_bit(PG_##lname, folio_flags(folio, FOLIO_##policy)); } \
- static __always_inline int Page##uname(struct page *page)		\
- 	{ return test_bit(PG_##lname, &policy(page, 0)->flags); }
- 
- #define SETPAGEFLAG(uname, lname, policy)				\
- static __always_inline void SetFolio##uname(struct folio *folio)	\
--	{ set_bit(PG_##lname, folio_flags(folio)); }			\
-+	{ set_bit(PG_##lname, folio_flags(folio, FOLIO_##policy)); }	\
- static __always_inline void SetPage##uname(struct page *page)		\
- 	{ set_bit(PG_##lname, &policy(page, 1)->flags); }
- 
- #define CLEARPAGEFLAG(uname, lname, policy)				\
- static __always_inline void ClearFolio##uname(struct folio *folio)	\
--	{ clear_bit(PG_##lname, folio_flags(folio)); }			\
-+	{ clear_bit(PG_##lname, folio_flags(folio, FOLIO_##policy)); }	\
- static __always_inline void ClearPage##uname(struct page *page)		\
- 	{ clear_bit(PG_##lname, &policy(page, 1)->flags); }
- 
- #define __SETPAGEFLAG(uname, lname, policy)				\
- static __always_inline void __SetFolio##uname(struct folio *folio)	\
--	{ __set_bit(PG_##lname, folio_flags(folio)); }			\
-+	{ __set_bit(PG_##lname, folio_flags(folio, FOLIO_##policy)); }	\
- static __always_inline void __SetPage##uname(struct page *page)		\
- 	{ __set_bit(PG_##lname, &policy(page, 1)->flags); }
- 
- #define __CLEARPAGEFLAG(uname, lname, policy)				\
- static __always_inline void __ClearFolio##uname(struct folio *folio)	\
--	{ __clear_bit(PG_##lname, folio_flags(folio)); }		\
-+	{ __clear_bit(PG_##lname, folio_flags(folio, FOLIO_##policy)); } \
- static __always_inline void __ClearPage##uname(struct page *page)	\
- 	{ __clear_bit(PG_##lname, &policy(page, 1)->flags); }
- 
- #define TESTSETFLAG(uname, lname, policy)				\
- static __always_inline int TestSetFolio##uname(struct folio *folio)	\
--	{ return test_and_set_bit(PG_##lname, folio_flags(folio)); }	\
-+	{ return test_and_set_bit(PG_##lname, folio_flags(folio, FOLIO_##policy)); } \
- static __always_inline int TestSetPage##uname(struct page *page)	\
- 	{ return test_and_set_bit(PG_##lname, &policy(page, 1)->flags); }
- 
- #define TESTCLEARFLAG(uname, lname, policy)				\
- static __always_inline int TestClearFolio##uname(struct folio *folio)	\
--	{ return test_and_clear_bit(PG_##lname, folio_flags(folio)); }	\
-+	{ return test_and_clear_bit(PG_##lname, folio_flags(folio, FOLIO_##policy)); } \
- static __always_inline int TestClearPage##uname(struct page *page)	\
- 	{ return test_and_clear_bit(PG_##lname, &policy(page, 1)->flags); }
- 
-@@ -422,7 +433,7 @@ PAGEFLAG_FALSE(HighMem)
- static __always_inline bool FolioSwapCache(struct folio *folio)
- {
- 	return FolioSwapBacked(folio) &&
--			test_bit(PG_swapcache, folio_flags(folio));
-+			test_bit(PG_swapcache, folio_flags(folio, 0));
- 
- }
- 
-@@ -545,7 +556,7 @@ u64 stable_page_flags(struct page *page);
- 
- static inline int FolioUptodate(struct folio *folio)
- {
--	int ret = test_bit(PG_uptodate, folio_flags(folio));
-+	int ret = test_bit(PG_uptodate, folio_flags(folio, 0));
- 	/*
- 	 * Must ensure that the data we read out of the page is loaded
- 	 * _after_ we've loaded page->flags to check for PageUptodate.
-@@ -568,7 +579,7 @@ static inline int PageUptodate(struct page *page)
- static __always_inline void __SetFolioUptodate(struct folio *folio)
- {
- 	smp_wmb();
--	__set_bit(PG_uptodate, folio_flags(folio));
-+	__set_bit(PG_uptodate, folio_flags(folio, 0));
- }
- 
- static __always_inline void SetFolioUptodate(struct folio *folio)
-@@ -579,7 +590,7 @@ static __always_inline void SetFolioUptodate(struct folio *folio)
- 	 * uptodate are actually visible before PageUptodate becomes true.
- 	 */
- 	smp_wmb();
--	set_bit(PG_uptodate, folio_flags(folio));
-+	set_bit(PG_uptodate, folio_flags(folio, 0));
- }
- 
- static __always_inline void __SetPageUptodate(struct page *page)
-@@ -672,6 +683,11 @@ static inline int PageTransHuge(struct page *page)
- 	return PageHead(page);
- }
- 
-+static inline bool FolioTransHuge(struct folio *folio)
-+{
-+	return FolioHead(folio);
-+}
-+
- /*
-  * PageTransCompound returns true for both transparent huge pages
-  * and hugetlbfs pages, so it should only be called when it's known
