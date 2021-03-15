@@ -2,60 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F7AC33AE1B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 09:59:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 327BB33AE35
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Mar 2021 10:10:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229632AbhCOI6m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 04:58:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36116 "EHLO
+        id S229524AbhCOJKG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 05:10:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229602AbhCOI60 (ORCPT
+        with ESMTP id S229490AbhCOJJu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 04:58:26 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F9F5C061765
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 01:58:26 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id f2-20020a17090a4a82b02900c67bf8dc69so13980352pjh.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 01:58:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-        b=LbXdRz8hPnZqXslejUsgqIR1UD+ZWrpimEiaxIRNV2xNX9e7brdrBT+330tAZDGZ76
-         Z44Aj1/yyzeGeEkcMYIH//MrHNptNc2k8UMVVIbEobpJRFQZA5XUdWQqiNvRvLYVAtMv
-         xoKQqrZLhKUh1J45nJIpEkqDSvu1Tr5FBCilwjOhp0zEm3xGoD9/vG7Dh8s+ZnaHk+U5
-         aC4U8SAWGye+HmhE2PCrqjaznbIw1afwdXDR2ixAMyaUV9dRzZFQUIU2zeRr2wSRJLp7
-         p1AlF+JfxodPPIujXbeP44SJwrB9ufhws/ELF19RzCKTBjiq4R1k6O0qwSqq/Q2I9TSg
-         kWVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-        b=GyezFd+W+1GPJpFH62bavOEGcXySUEm7czMIgCCiDHZVPjgPDR7210nYy9PwzqFrt0
-         jcl/xZxY1bju5QgPA8PCOJ6q9z0kJKwdgIO5/3RjGUps6ZWodxIUfms/3yrSMyOoWMY+
-         YYzeoxty/w7RnMRC/pIhRBrLov9tkQ9gSsBKmPllLVwsgRnM36zulrSDUhDLPrPks+q3
-         aAqG771uGiJHFoboybZ7+dIKqLQITfm5PHL9r3dik90ERlgRvRoqyb5PolAX+/WA5LvR
-         JOQVZD+TJ7GTt7GIfp6Bmxo507+9JjLSXSzigxcYC4WFwQBgr2hHXhB31+wZqH/5NO9z
-         i2lw==
-X-Gm-Message-State: AOAM533QjHGg+Y8zU94Z6Q0HuLwJPdPgfWZYvJCwnt3yNs6L9iZ5W1u4
-        7ywMqu/RUC+Ry/WJhjyMXb23U4cR5X2X1LpKu3k=
-X-Google-Smtp-Source: ABdhPJzM3716DwOVGJCGkipl2s83y6Vr9QPdVnYrrkkfjWixAG+vz2jlo87ubzFNH0zawvhQR6gAd9jVx3Jr5JWxmEQ=
-X-Received: by 2002:a17:902:da91:b029:e5:e7cf:d737 with SMTP id
- j17-20020a170902da91b02900e5e7cfd737mr10466389plx.24.1615798705311; Mon, 15
- Mar 2021 01:58:25 -0700 (PDT)
+        Mon, 15 Mar 2021 05:09:50 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7701CC061574;
+        Mon, 15 Mar 2021 02:09:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=a9gg6oJQhPPM7u3VKZMtdQzIuN1q3Wx++payqsoQUyo=; b=mFecxq7ONcsePC6b0VSW3y9V6t
+        PVSk5CTm0jpk4ChPtmaYl9/Pwho3AkaNrtLDTUjN8pJaDVS0q9LjQy4FQ4/zNolRtK5KmIkXpYmZG
+        glLOI7o2kH5qU0A57FX81pbhx18d8uALXHe1TvXBG00Lj9H/jGkO1ZDUBGseO/2ihCMcY8EYKtHqO
+        P5CumkZonUW2+fOXpswXn98pf42x2mXffxiIcICa7g5hKQ6XkWKFWHErwDk51QE7+JF705Wg1geCp
+        4miqNpwdhMR1s4jjQJryKg/Br36ZPhbSFwCrN168mt6j75oZ1y22dtOwx4g7e0wW+SADD8jx2I3yn
+        kI8DmPiw==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lLjD4-00HUP1-8A; Mon, 15 Mar 2021 09:08:25 +0000
+Date:   Mon, 15 Mar 2021 09:08:22 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Xie Yongji <xieyongji@bytedance.com>
+Cc:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
+        sgarzare@redhat.com, parav@nvidia.com, bob.liu@oracle.com,
+        hch@infradead.org, rdunlap@infradead.org, willy@infradead.org,
+        viro@zeniv.linux.org.uk, axboe@kernel.dk, bcrl@kvack.org,
+        corbet@lwn.net, mika.penttila@nextfour.com,
+        dan.carpenter@oracle.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 01/11] file: Export __receive_fd() to modules
+Message-ID: <20210315090822.GA4166677@infradead.org>
+References: <20210315053721.189-1-xieyongji@bytedance.com>
+ <20210315053721.189-2-xieyongji@bytedance.com>
 MIME-Version: 1.0
-Received: by 2002:a05:6a10:b086:0:0:0:0 with HTTP; Mon, 15 Mar 2021 01:58:24
- -0700 (PDT)
-From:   Kevin Roberts <kossietenou@gmail.com>
-Date:   Mon, 15 Mar 2021 08:58:24 +0000
-Message-ID: <CAG0ufbSHz-LVYuzP1751truEWnrY1BuqX3DX+9fBeaRHrW_inQ@mail.gmail.com>
-Subject: I sent you a mail earlier but not sure if you received it, kindly
- check your email and get back to me for I have very urgent information to
- pass to you.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210315053721.189-2-xieyongji@bytedance.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Mar 15, 2021 at 01:37:11PM +0800, Xie Yongji wrote:
+> Export __receive_fd() so that some modules can use
+> it to pass file descriptor between processes.
 
+I really don't think any non-core code should do that, especilly not
+modular mere driver code.
