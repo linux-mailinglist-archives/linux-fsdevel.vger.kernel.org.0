@@ -2,343 +2,337 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B5ABA33CC0A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 04:22:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE62733CC2E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 04:40:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234949AbhCPDWK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 23:22:10 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:59263 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230177AbhCPDVr (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 23:21:47 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R801e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=zhongjiang-ali@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0US4IWG9_1615864901;
-Received: from L-X1DSLVDL-1420.local(mailfrom:zhongjiang-ali@linux.alibaba.com fp:SMTPD_---0US4IWG9_1615864901)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 16 Mar 2021 11:21:42 +0800
-Message-ID: <e1be1767-f9c0-e17a-5c14-22bb2f0ca5aa@linux.alibaba.com>
-Date:   Tue, 16 Mar 2021 11:21:41 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:87.0)
- Gecko/20100101 Thunderbird/87.0
-Subject: Re: [PATCH v3 05/11] mm, fsdax: Refactor memory-failure handler for
- dax mapping
-Content-Language: en-US
-To:     Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, dm-devel@redhat.com
-Cc:     darrick.wong@oracle.com, dan.j.williams@intel.com,
-        david@fromorbit.com, hch@lst.de, agk@redhat.com,
-        snitzer@redhat.com, rgoldwyn@suse.de, qi.fuli@fujitsu.com,
-        y-goto@fujitsu.com
-References: <20210208105530.3072869-1-ruansy.fnst@cn.fujitsu.com>
- <20210208105530.3072869-6-ruansy.fnst@cn.fujitsu.com>
-From:   zhong jiang <zhongjiang-ali@linux.alibaba.com>
-In-Reply-To: <20210208105530.3072869-6-ruansy.fnst@cn.fujitsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S233266AbhCPDje (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 23:39:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51284 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233371AbhCPDjD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 15 Mar 2021 23:39:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5CE1F6501D;
+        Tue, 16 Mar 2021 03:39:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1615865942;
+        bh=aDxjmb/Yra0eZ/I+42Y0k2ruoic2qRGjxfY+d84S6KQ=;
+        h=Date:From:To:Subject:From;
+        b=MjGngVAwe0VGgI4akDwBS/3F1HypbjX5GAIQb4w4lOBDJ7fsvJqJuhFszqGO4ykrF
+         QF7bLsZSwKki5t6z1hQ3aWRSXNhYDKcJp63upkAvKF2IN+aCyW89MH66LtYOj5rTrV
+         HeKucVeZfRO6p1eO4zaTt741xlfoyScself638Vw=
+Date:   Mon, 15 Mar 2021 20:39:01 -0700
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject:  mmotm 2021-03-15-20-38 uploaded
+Message-ID: <20210316033901.qJL7wWCP9%akpm@linux-foundation.org>
+User-Agent: s-nail v14.8.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+The mm-of-the-moment snapshot 2021-03-15-20-38 has been uploaded to
 
-On 2021/2/8 6:55 下午, Shiyang Ruan wrote:
-> The current memory_failure_dev_pagemap() can only handle single-mapped
-> dax page for fsdax mode.  The dax page could be mapped by multiple files
-> and offsets if we let reflink feature & fsdax mode work together.  So,
-> we refactor current implementation to support handle memory failure on
-> each file and offset.
->
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
-> ---
->   fs/dax.c            | 21 ++++++++++
->   include/linux/dax.h |  1 +
->   include/linux/mm.h  |  9 +++++
->   mm/memory-failure.c | 98 ++++++++++++++++++++++++++++++++++-----------
->   4 files changed, 105 insertions(+), 24 deletions(-)
->
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 26d5dcd2d69e..c64c3a0e76a6 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -378,6 +378,27 @@ static struct page *dax_busy_page(void *entry)
->   	return NULL;
->   }
->   
-> +/*
-> + * dax_load_pfn - Load pfn of the DAX entry corresponding to a page
-> + * @mapping: The file whose entry we want to load
-> + * @index:   The offset where the DAX entry located in
-> + *
-> + * Return:   pfn of the DAX entry
-> + */
-> +unsigned long dax_load_pfn(struct address_space *mapping, unsigned long index)
-> +{
-> +	XA_STATE(xas, &mapping->i_pages, index);
-> +	void *entry;
-> +	unsigned long pfn;
-> +
-> +	xas_lock_irq(&xas);
-> +	entry = xas_load(&xas);
-> +	pfn = dax_to_pfn(entry);
-> +	xas_unlock_irq(&xas);
-> +
-> +	return pfn;
-> +}
-> +
->   /*
->    * dax_lock_mapping_entry - Lock the DAX entry corresponding to a page
->    * @page: The page whose entry we want to lock
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index b52f084aa643..89e56ceeffc7 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -150,6 +150,7 @@ int dax_writeback_mapping_range(struct address_space *mapping,
->   
->   struct page *dax_layout_busy_page(struct address_space *mapping);
->   struct page *dax_layout_busy_page_range(struct address_space *mapping, loff_t start, loff_t end);
-> +unsigned long dax_load_pfn(struct address_space *mapping, unsigned long index);
->   dax_entry_t dax_lock_page(struct page *page);
->   void dax_unlock_page(struct page *page, dax_entry_t cookie);
->   #else
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index ecdf8a8cd6ae..ab52bc633d84 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1157,6 +1157,14 @@ static inline bool is_device_private_page(const struct page *page)
->   		page->pgmap->type == MEMORY_DEVICE_PRIVATE;
->   }
->   
-> +static inline bool is_device_fsdax_page(const struct page *page)
-> +{
-> +	return IS_ENABLED(CONFIG_DEV_PAGEMAP_OPS) &&
-> +		IS_ENABLED(CONFIG_FS_DAX) &&
-> +		is_zone_device_page(page) &&
-> +		page->pgmap->type == MEMORY_DEVICE_FS_DAX;
-> +}
-> +
->   static inline bool is_pci_p2pdma_page(const struct page *page)
->   {
->   	return IS_ENABLED(CONFIG_DEV_PAGEMAP_OPS) &&
-> @@ -3045,6 +3053,7 @@ enum mf_flags {
->   	MF_MUST_KILL = 1 << 2,
->   	MF_SOFT_OFFLINE = 1 << 3,
->   };
-> +extern int mf_dax_mapping_kill_procs(struct address_space *mapping, pgoff_t index, int flags);
->   extern int memory_failure(unsigned long pfn, int flags);
->   extern void memory_failure_queue(unsigned long pfn, int flags);
->   extern void memory_failure_queue_kick(int cpu);
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index e9481632fcd1..158fe0c8e602 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -56,6 +56,7 @@
->   #include <linux/kfifo.h>
->   #include <linux/ratelimit.h>
->   #include <linux/page-isolation.h>
-> +#include <linux/dax.h>
->   #include "internal.h"
->   #include "ras/ras_event.h"
->   
-> @@ -120,6 +121,13 @@ static int hwpoison_filter_dev(struct page *p)
->   	if (PageSlab(p))
->   		return -EINVAL;
->   
-> +	if (pfn_valid(page_to_pfn(p))) {
-> +		if (is_device_fsdax_page(p))
-> +			return 0;
-> +		else
-> +			return -EINVAL;
-> +	}
-> +
->   	mapping = page_mapping(p);
->   	if (mapping == NULL || mapping->host == NULL)
->   		return -EINVAL;
-> @@ -286,10 +294,9 @@ void shake_page(struct page *p, int access)
->   }
->   EXPORT_SYMBOL_GPL(shake_page);
->   
-> -static unsigned long dev_pagemap_mapping_shift(struct page *page,
-> -		struct vm_area_struct *vma)
-> +static unsigned long dev_pagemap_mapping_shift(struct vm_area_struct *vma,
-> +					       unsigned long address)
->   {
-> -	unsigned long address = vma_address(page, vma);
->   	pgd_t *pgd;
->   	p4d_t *p4d;
->   	pud_t *pud;
-> @@ -329,9 +336,8 @@ static unsigned long dev_pagemap_mapping_shift(struct page *page,
->    * Schedule a process for later kill.
->    * Uses GFP_ATOMIC allocations to avoid potential recursions in the VM.
->    */
-> -static void add_to_kill(struct task_struct *tsk, struct page *p,
-> -		       struct vm_area_struct *vma,
-> -		       struct list_head *to_kill)
-> +static void add_to_kill(struct task_struct *tsk, struct page *p, pgoff_t pgoff,
-> +			struct vm_area_struct *vma, struct list_head *to_kill)
->   {
->   	struct to_kill *tk;
->   
-> @@ -342,9 +348,12 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
->   	}
->   
->   	tk->addr = page_address_in_vma(p, vma);
-> -	if (is_zone_device_page(p))
-> -		tk->size_shift = dev_pagemap_mapping_shift(p, vma);
-> -	else
-> +	if (is_zone_device_page(p)) {
-> +		if (is_device_fsdax_page(p))
-> +			tk->addr = vma->vm_start +
-> +					((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
-> +		tk->size_shift = dev_pagemap_mapping_shift(vma, tk->addr);
-> +	} else
->   		tk->size_shift = page_shift(compound_head(p));
->   
->   	/*
-> @@ -492,7 +501,7 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
->   			if (!page_mapped_in_vma(page, vma))
->   				continue;
->   			if (vma->vm_mm == t->mm)
-> -				add_to_kill(t, page, vma, to_kill);
-> +				add_to_kill(t, page, 0, vma, to_kill);
->   		}
->   	}
->   	read_unlock(&tasklist_lock);
-> @@ -502,24 +511,19 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
->   /*
->    * Collect processes when the error hit a file mapped page.
->    */
-> -static void collect_procs_file(struct page *page, struct list_head *to_kill,
-> -				int force_early)
-> +static void collect_procs_file(struct page *page, struct address_space *mapping,
-> +		pgoff_t pgoff, struct list_head *to_kill, int force_early)
->   {
->   	struct vm_area_struct *vma;
->   	struct task_struct *tsk;
-> -	struct address_space *mapping = page->mapping;
-> -	pgoff_t pgoff;
->   
->   	i_mmap_lock_read(mapping);
->   	read_lock(&tasklist_lock);
-> -	pgoff = page_to_pgoff(page);
->   	for_each_process(tsk) {
->   		struct task_struct *t = task_early_kill(tsk, force_early);
-> -
->   		if (!t)
->   			continue;
-> -		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff,
-> -				      pgoff) {
-> +		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
->   			/*
->   			 * Send early kill signal to tasks where a vma covers
->   			 * the page but the corrupted page is not necessarily
-> @@ -528,7 +532,7 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
->   			 * to be informed of all such data corruptions.
->   			 */
->   			if (vma->vm_mm == t->mm)
-> -				add_to_kill(t, page, vma, to_kill);
-> +				add_to_kill(t, page, pgoff, vma, to_kill);
->   		}
->   	}
->   	read_unlock(&tasklist_lock);
-> @@ -547,7 +551,8 @@ static void collect_procs(struct page *page, struct list_head *tokill,
->   	if (PageAnon(page))
->   		collect_procs_anon(page, tokill, force_early);
->   	else
-> -		collect_procs_file(page, tokill, force_early);
-> +		collect_procs_file(page, page_mapping(page), page_to_pgoff(page),
-> +				   tokill, force_early);
->   }
->   
->   static const char *action_name[] = {
-> @@ -1214,6 +1219,50 @@ static int try_to_split_thp_page(struct page *page, const char *msg)
->   	return 0;
->   }
->   
-> +int mf_dax_mapping_kill_procs(struct address_space *mapping, pgoff_t index, int flags)
-> +{
-> +	const bool unmap_success = true;
-> +	unsigned long pfn, size = 0;
-> +	struct to_kill *tk;
-> +	LIST_HEAD(to_kill);
-> +	int rc = -EBUSY;
-> +	loff_t start;
-> +
-> +	/* load the pfn of the dax mapping file */
-> +	pfn = dax_load_pfn(mapping, index);
-> +	if (!pfn)
-> +		return rc;
-> +	/*
-> +	 * Unlike System-RAM there is no possibility to swap in a
-> +	 * different physical page at a given virtual address, so all
-> +	 * userspace consumption of ZONE_DEVICE memory necessitates
-> +	 * SIGBUS (i.e. MF_MUST_KILL)
-> +	 */
-> +	flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
+   https://www.ozlabs.org/~akpm/mmotm/
 
-MF_ACTION_REQUIRED only kill the current execution context. A page can be shared
-when reflink file be mapped by different process. We can not kill all process
-shared the page.  Other process still can access the posioned page ?
+mmotm-readme.txt says
 
-Thanks,
-zhong jiang
+README for mm-of-the-moment:
 
-> +	collect_procs_file(pfn_to_page(pfn), mapping, index, &to_kill,
-> +			   flags & MF_ACTION_REQUIRED);
-> +
-> +	list_for_each_entry(tk, &to_kill, nd)
-> +		if (tk->size_shift)
-> +			size = max(size, 1UL << tk->size_shift);
-> +	if (size) {
-> +		/*
-> +		 * Unmap the largest mapping to avoid breaking up
-> +		 * device-dax mappings which are constant size. The
-> +		 * actual size of the mapping being torn down is
-> +		 * communicated in siginfo, see kill_proc()
-> +		 */
-> +		start = (index << PAGE_SHIFT) & ~(size - 1);
-> +		unmap_mapping_range(mapping, start, start + size, 0);
-> +	}
-> +
-> +	kill_procs(&to_kill, flags & MF_MUST_KILL, !unmap_success,
-> +		   pfn, flags);
-> +	rc = 0;
-> +	return rc;
-> +}
-> +EXPORT_SYMBOL_GPL(mf_dax_mapping_kill_procs);
-> +
->   static int memory_failure_hugetlb(unsigned long pfn, int flags)
->   {
->   	struct page *p = pfn_to_page(pfn);
-> @@ -1297,7 +1346,7 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->   	const bool unmap_success = true;
->   	unsigned long size = 0;
->   	struct to_kill *tk;
-> -	LIST_HEAD(tokill);
-> +	LIST_HEAD(to_kill);
->   	int rc = -EBUSY;
->   	loff_t start;
->   	dax_entry_t cookie;
-> @@ -1345,9 +1394,10 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->   	 * SIGBUS (i.e. MF_MUST_KILL)
->   	 */
->   	flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
-> -	collect_procs(page, &tokill, flags & MF_ACTION_REQUIRED);
-> +	collect_procs_file(page, page->mapping, page->index, &to_kill,
-> +			   flags & MF_ACTION_REQUIRED);
->   
-> -	list_for_each_entry(tk, &tokill, nd)
-> +	list_for_each_entry(tk, &to_kill, nd)
->   		if (tk->size_shift)
->   			size = max(size, 1UL << tk->size_shift);
->   	if (size) {
-> @@ -1360,7 +1410,7 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->   		start = (page->index << PAGE_SHIFT) & ~(size - 1);
->   		unmap_mapping_range(page->mapping, start, start + size, 0);
->   	}
-> -	kill_procs(&tokill, flags & MF_MUST_KILL, !unmap_success, pfn, flags);
-> +	kill_procs(&to_kill, flags & MF_MUST_KILL, !unmap_success, pfn, flags);
->   	rc = 0;
->   unlock:
->   	dax_unlock_page(page, cookie);
+https://www.ozlabs.org/~akpm/mmotm/
+
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+https://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+	https://github.com/hnaz/linux-mm
+
+The directory https://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is also available at
+
+	https://github.com/hnaz/linux-mm
+
+
+
+This mmotm tree contains the following patches against 5.12-rc3:
+(patches marked "*" will be included in linux-next)
+
+* hugetlb_cgroup-fix-imbalanced-css_get-and-css_put-pair-for-shared-mappings.patch
+* kasan-fix-per-page-tags-for-non-page_alloc-pages.patch
+* mm-mmu_notifiers-esnure-range_end-is-paired-with-range_start.patch
+* selftests-vm-fix-out-of-tree-build.patch
+* z3fold-prevent-reclaim-free-race-for-headless-pages.patch
+* squashfs-fix-inode-lookup-sanity-checks.patch
+* squashfs-fix-xattr-id-and-id-lookup-sanity-checks.patch
+* ia64-mca-allocate-early-mca-with-gfp_atomic.patch
+* ia64-fix-format-strings-for-err_inject.patch
+* gcov-fix-clang-11-support.patch
+* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
+* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
+* module-remove-duplicate-include-in-arch-ia64-kernel-heads.patch
+* ia64-kernel-few-typos-fixed-in-the-file-fsyss.patch
+* ia64-include-asm-minor-typo-fixes-in-the-file-pgtableh.patch
+* sparse-can-do-constant-folding-of-__builtin_bswap.patch
+* scripts-spellingtxt-add-overlfow.patch
+* scripts-spellingtxt-add-diabled-typo.patch
+* scripts-spellingtxt-add-overflw.patch
+* sh-remove-duplicate-include-in-tlbh.patch
+* ocfs2-replace-define_simple_attribute-with-define_debugfs_attribute.patch
+* ocfs2-clear-links-count-in-ocfs2_mknod-if-an-error-occurs.patch
+* ocfs2-fix-ocfs2-corrupt-when-iputting-an-inode.patch
+* watchdog-rename-__touch_watchdog-to-a-better-descriptive-name.patch
+* watchdog-explicitly-update-timestamp-when-reporting-softlockup.patch
+* watchdog-softlockup-report-the-overall-time-of-softlockups.patch
+* watchdog-softlockup-remove-logic-that-tried-to-prevent-repeated-reports.patch
+* watchdog-fix-barriers-when-printing-backtraces-from-all-cpus.patch
+* watchdog-cleanup-handling-of-false-positives.patch
+  mm.patch
+* mm-slub-enable-slub_debug-static-key-when-creating-cache-with-explicit-debug-flags.patch
+* mm-page_owner-record-the-timestamp-of-all-pages-during-free.patch
+* mm-provide-filemap_range_needs_writeback-helper.patch
+* mm-use-filemap_range_needs_writeback-for-o_direct-reads.patch
+* iomap-use-filemap_range_needs_writeback-for-o_direct-reads.patch
+* mm-filemap-use-filemap_read_page-in-filemap_fault.patch
+* mm-filemap-drop-check-for-truncated-page-after-i-o.patch
+* mm-page-writeback-simplify-memcg-handling-in-test_clear_page_writeback.patch
+* mm-introduce-and-use-mapping_empty.patch
+* mm-stop-accounting-shadow-entries.patch
+* dax-account-dax-entries-as-nrpages.patch
+* mm-remove-nrexceptional-from-inode.patch
+* mm-msync-exit-early-when-the-flags-is-an-ms_async-and-start-vm_start.patch
+* mm-memremap-fixes-improper-spdx-comment-style.patch
+* mm-memcontrol-fix-kernel-stack-account.patch
+* memcg-cleanup-root-memcg-checks.patch
+* memcg-enable-memcg-oom-kill-for-__gfp_nofail.patch
+* memcg-charge-before-adding-to-swapcache-on-swapin.patch
+* mm-memcontrol-fix-cpuhotplug-statistics-flushing.patch
+* mm-memcontrol-kill-mem_cgroup_nodeinfo.patch
+* mm-memcontrol-privatize-memcg_page_state-query-functions.patch
+* cgroup-rstat-support-cgroup1.patch
+* cgroup-rstat-punt-root-level-optimization-to-individual-controllers.patch
+* mm-memcontrol-switch-to-rstat.patch
+* mm-memcontrol-switch-to-rstat-fix.patch
+* mm-memcontrol-switch-to-rstat-fix-2.patch
+* mm-memcontrol-consolidate-lruvec-stat-flushing.patch
+* kselftests-cgroup-update-kmem-test-for-new-vmstat-implementation.patch
+* mm-delete-bool-migrated.patch
+* mm-interval_tree-add-comments-to-improve-code-reading.patch
+* x86-vmemmap-drop-handling-of-4k-unaligned-vmemmap-range.patch
+* x86-vmemmap-drop-handling-of-1gb-vmemmap-ranges.patch
+* x86-vmemmap-handle-unpopulated-sub-pmd-ranges.patch
+* x86-vmemmap-optimize-for-consecutive-sections-in-partial-populated-pmds.patch
+* mm-tracing-improve-rss_stat-tracepoint-message.patch
+* mm-allow-shmem-mappings-with-mremap_dontunmap.patch
+* mm-dmapool-switch-from-strlcpy-to-strscpy.patch
+* samples-vfio-mdev-mdpy-use-remap_vmalloc_range.patch
+* mm-unexport-remap_vmalloc_range_partial.patch
+* mm-vmalloc-use-rb_tree-instead-of-list-for-vread-lookups.patch
+* kasan-remove-redundant-config-option.patch
+* kasan-remove-redundant-config-option-fix.patch
+* mm-kasan-switch-from-strlcpy-to-strscpy.patch
+* kasan-initialize-shadow-to-tag_invalid-for-sw_tags.patch
+* mm-kasan-dont-poison-boot-memory-with-tag-based-modes.patch
+* arm64-kasan-allow-to-init-memory-when-setting-tags.patch
+* kasan-init-memory-in-kasan_unpoison-for-hw_tags.patch
+* kasan-mm-integrate-page_alloc-init-with-hw_tags.patch
+* kasan-mm-integrate-slab-init_on_alloc-with-hw_tags.patch
+* kasan-mm-integrate-slab-init_on_free-with-hw_tags.patch
+* kasan-docs-clean-up-sections.patch
+* kasan-docs-update-overview-section.patch
+* kasan-docs-update-usage-section.patch
+* kasan-docs-update-error-reports-section.patch
+* kasan-docs-update-boot-parameters-section.patch
+* kasan-docs-update-generic-implementation-details-section.patch
+* kasan-docs-update-sw_tags-implementation-details-section.patch
+* kasan-docs-update-hw_tags-implementation-details-section.patch
+* kasan-docs-update-shadow-memory-section.patch
+* kasan-docs-update-ignoring-accesses-section.patch
+* kasan-docs-update-tests-section.patch
+* mm-page_alloc-drop-pr_info_ratelimited-in-alloc_contig_range.patch
+* mm-remove-lru_add_drain_all-in-alloc_contig_range.patch
+* mm-correctly-determine-last_cpupid_width.patch
+* mm-clean-up-include-linux-page-flags-layouth.patch
+* mm-page_alloc-rename-alloc_mask-to-alloc_gfp.patch
+* mm-page_alloc-rename-gfp_mask-to-gfp.patch
+* mm-page_alloc-combine-__alloc_pages-and-__alloc_pages_nodemask.patch
+* mm-mempolicy-rename-alloc_pages_current-to-alloc_pages.patch
+* mm-mempolicy-rewrite-alloc_pages-documentation.patch
+* mm-mempolicy-rewrite-alloc_pages_vma-documentation.patch
+* mm-mempolicy-fix-mpol_misplaced-kernel-doc.patch
+* mm-page_alloc-dump-migrate-failed-pages.patch
+* mm-remove-default-discontigmem_manual.patch
+* hugetlb-pass-vma-into-huge_pte_alloc-and-huge_pmd_share.patch
+* hugetlb-pass-vma-into-huge_pte_alloc-and-huge_pmd_share-fix.patch
+* hugetlb-userfaultfd-forbid-huge-pmd-sharing-when-uffd-enabled.patch
+* hugetlb-userfaultfd-forbid-huge-pmd-sharing-when-uffd-enabled-fix.patch
+* mm-hugetlb-move-flush_hugetlb_tlb_range-into-hugetlbh.patch
+* hugetlb-userfaultfd-unshare-all-pmds-for-hugetlbfs-when-register-wp.patch
+* mm-hugetlb-remove-redundant-reservation-check-condition-in-alloc_huge_page.patch
+* mm-generalize-hugetlb_page_size_variable.patch
+* mm-hugetlb-use-some-helper-functions-to-cleanup-code.patch
+* mm-hugetlb-optimize-the-surplus-state-transfer-code-in-move_hugetlb_state.patch
+* hugetlb_cgroup-remove-unnecessary-vm_bug_on_page-in-hugetlb_cgroup_migrate.patch
+* mm-hugetlb-simplify-the-code-when-alloc_huge_page-failed-in-hugetlb_no_page.patch
+* mm-hugetlb-avoid-calculating-fault_mutex_hash-in-truncate_op-case.patch
+* khugepaged-remove-unneeded-return-value-of-khugepaged_collapse_pte_mapped_thps.patch
+* khugepaged-reuse-the-smp_wmb-inside-__setpageuptodate.patch
+* khugepaged-use-helper-khugepaged_test_exit-in-__khugepaged_enter.patch
+* khugepaged-fix-wrong-result-value-for-trace_mm_collapse_huge_page_isolate.patch
+* mm-huge_memoryc-remove-unnecessary-local-variable-ret2.patch
+* mm-huge_memory-a-new-debugfs-interface-for-splitting-thp-tests.patch
+* mm-memory_hotplug-factor-out-bootmem-core-functions-to-bootmem_infoc.patch
+* mm-hugetlb-introduce-a-new-config-hugetlb_page_free_vmemmap.patch
+* mm-hugetlb-gather-discrete-indexes-of-tail-page.patch
+* mm-hugetlb-free-the-vmemmap-pages-associated-with-each-hugetlb-page.patch
+* mm-hugetlb-alloc-the-vmemmap-pages-associated-with-each-hugetlb-page.patch
+* mm-hugetlb-set-the-pagehwpoison-to-the-raw-error-page.patch
+* mm-hugetlb-add-a-kernel-parameter-hugetlb_free_vmemmap.patch
+* mm-hugetlb-introduce-nr_free_vmemmap_pages-in-the-struct-hstate.patch
+* userfaultfd-add-minor-fault-registration-mode.patch
+* userfaultfd-disable-huge-pmd-sharing-for-minor-registered-vmas.patch
+* userfaultfd-hugetlbfs-only-compile-uffd-helpers-if-config-enabled.patch
+* userfaultfd-add-uffdio_continue-ioctl.patch
+* userfaultfd-update-documentation-to-describe-minor-fault-handling.patch
+* userfaultfd-selftests-add-test-exercising-minor-fault-handling.patch
+* userfaultfd-support-minor-fault-handling-for-shmem.patch
+* userfaultfd-support-minor-fault-handling-for-shmem-fix.patch
+* userfaultfd-selftests-use-memfd_create-for-shmem-test-type.patch
+* userfaultfd-selftests-create-alias-mappings-in-the-shmem-test.patch
+* userfaultfd-selftests-reinitialize-test-context-in-each-test.patch
+* userfaultfd-selftests-exercise-minor-fault-handling-shmem-support.patch
+* userfaultfd-selftests-use-user-mode-only.patch
+* userfaultfd-selftests-remove-the-time-check-on-delayed-uffd.patch
+* userfaultfd-selftests-dropping-verify-check-in-locking_thread.patch
+* userfaultfd-selftests-only-dump-counts-if-mode-enabled.patch
+* userfaultfd-selftests-unify-error-handling.patch
+* mm-vmscan-move-reclaim-bits-to-uapi-header.patch
+* mm-vmscan-replace-implicit-reclaim_zone-checks-with-explicit-checks.patch
+* mm-vmscan-use-nid-from-shrink_control-for-tracepoint.patch
+* mm-vmscan-consolidate-shrinker_maps-handling-code.patch
+* mm-vmscan-use-shrinker_rwsem-to-protect-shrinker_maps-allocation.patch
+* mm-vmscan-remove-memcg_shrinker_map_size.patch
+* mm-vmscan-use-kvfree_rcu-instead-of-call_rcu.patch
+* mm-memcontrol-rename-shrinker_map-to-shrinker_info.patch
+* mm-vmscan-add-shrinker_info_protected-helper.patch
+* mm-vmscan-use-a-new-flag-to-indicate-shrinker-is-registered.patch
+* mm-vmscan-add-per-memcg-shrinker-nr_deferred.patch
+* mm-vmscan-use-per-memcg-nr_deferred-of-shrinker.patch
+* mm-vmscan-dont-need-allocate-shrinker-nr_deferred-for-memcg-aware-shrinkers.patch
+* mm-memcontrol-reparent-nr_deferred-when-memcg-offline.patch
+* mm-vmscan-shrink-deferred-objects-proportional-to-priority.patch
+* mm-compaction-remove-unused-variable-sysctl_compact_memory.patch
+* mm-compaction-update-the-compact-events-properly.patch
+* mm-vmstat-add-cma-statistics.patch
+* mm-cma-use-pr_err_ratelimited-for-cma-warning.patch
+* mm-cma-support-sysfs.patch
+* mm-restore-node-stat-checking-in-proc-sys-vm-stat_refresh.patch
+* mm-no-more-einval-from-proc-sys-vm-stat_refresh.patch
+* mm-proc-sys-vm-stat_refresh-skip-checking-known-negative-stats.patch
+* mm-proc-sys-vm-stat_refresh-stop-checking-monotonic-numa-stats.patch
+* x86-mm-tracking-linear-mapping-split-events.patch
+* mm-mmap-dont-unlock-vmas-in-remap_file_pages.patch
+* mm-reduce-mem_dump_obj-object-size.patch
+* mm-gup-dont-pin-migrated-cma-pages-in-movable-zone.patch
+* mm-gup-check-every-subpage-of-a-compound-page-during-isolation.patch
+* mm-gup-return-an-error-on-migration-failure.patch
+* mm-gup-check-for-isolation-errors.patch
+* mm-cma-rename-pf_memalloc_nocma-to-pf_memalloc_pin.patch
+* mm-apply-per-task-gfp-constraints-in-fast-path.patch
+* mm-honor-pf_memalloc_pin-for-all-movable-pages.patch
+* mm-gup-do-not-migrate-zero-page.patch
+* mm-gup-migrate-pinned-pages-out-of-movable-zone.patch
+* memory-hotplugrst-add-a-note-about-zone_movable-and-page-pinning.patch
+* mm-gup-change-index-type-to-long-as-it-counts-pages.patch
+* mm-gup-longterm-pin-migration-cleanup.patch
+* selftests-vm-gup_test-fix-test-flag.patch
+* selftests-vm-gup_test-test-faulting-in-kernel-and-verify-pinnable-pages.patch
+* mmmemory_hotplug-allocate-memmap-from-the-added-memory-range.patch
+* mmmemory_hotplug-allocate-memmap-from-the-added-memory-range-fix.patch
+* acpimemhotplug-enable-mhp_memmap_on_memory-when-supported.patch
+* mmmemory_hotplug-add-kernel-boot-option-to-enable-memmap_on_memory.patch
+* x86-kconfig-introduce-arch_mhp_memmap_on_memory_enable.patch
+* arm64-kconfig-introduce-arch_mhp_memmap_on_memory_enable.patch
+* mm-zswap-switch-from-strlcpy-to-strscpy.patch
+* iov_iter-lift-memzero_page-to-highmemh.patch
+* btrfs-use-memzero_page-instead-of-open-coded-kmap-pattern.patch
+* mm-highmemc-fix-coding-style-issue.patch
+* mm-highmem-remove-deprecated-kmap_atomic.patch
+* mm-mempool-minor-coding-style-tweaks.patch
+* mm-swapfile-minor-coding-style-tweaks.patch
+* mm-sparse-minor-coding-style-tweaks.patch
+* mm-vmscan-minor-coding-style-tweaks.patch
+* mm-compaction-minor-coding-style-tweaks.patch
+* mm-oom_kill-minor-coding-style-tweaks.patch
+* mm-shmem-minor-coding-style-tweaks.patch
+* mm-page_alloc-minor-coding-style-tweaks.patch
+* mm-filemap-minor-coding-style-tweaks.patch
+* mm-mlock-minor-coding-style-tweaks.patch
+* mm-frontswap-minor-coding-style-tweaks.patch
+* mm-vmalloc-minor-coding-style-tweaks.patch
+* mm-memory_hotplug-minor-coding-style-tweaks.patch
+* mm-mempolicy-minor-coding-style-tweaks.patch
+* mm-process_vm_access-remove-duplicate-include.patch
+* kfence-zero-guard-page-after-out-of-bounds-access.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* procfs-allow-reading-fdinfo-with-ptrace_mode_read.patch
+* procfs-dmabuf-add-inode-number-to-proc-fdinfo.patch
+* proc-sysctl-fix-function-name-error-in-comments.patch
+* proc-sysctl-make-protected_-world-readable.patch
+* include-remove-pagemaph-from-blkdevh.patch
+* kernel-asyncc-fix-pr_debug-statement.patch
+* kernel-credc-make-init_groups-static.patch
+* umh-fix-some-spelling-mistakes.patch
+* lib-fix-a-typo-in-the-file-bchc.patch
+* lib-fix-inconsistent-indenting-in-process_bit1.patch
+* lib-fix-typo-in-function-description.patch
+* compat-remove-unneeded-declaration-from-compat_syscall_definex.patch
+* fs-fat-fix-spelling-typo-of-values.patch
+* do_wait-make-pidtype_pid-case-o1-instead-of-on.patch
+* simplify-copy_mm.patch
+* kernel-crash_core-add-crashkernel=auto-for-vmcore-creation.patch
+* kexec-add-kexec-reboot-string.patch
+* kernel-kexec_file-fix-error-return-code-of-kexec_calculate_store_digests.patch
+* gcov-clang-drop-support-for-clang-10-and-older.patch
+* gcov-combine-common-code.patch
+* gcov-simplify-buffer-allocation.patch
+* gcov-use-kvmalloc.patch
+* aio-simplify-read_events.patch
+* gdb-lx-symbols-store-the-abspath.patch
+* scripts-gdb-document-lx_current-is-only-supported-by-x86.patch
+* scripts-gdb-add-lx_current-support-for-arm64.patch
+* kernel-asyncc-stop-guarding-pr_debug-statements.patch
+* kernel-asyncc-remove-async_unregister_domain.patch
+* init-initramfsc-do-unpacking-asynchronously.patch
+* modules-add-config_modprobe_path.patch
+  linux-next.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
