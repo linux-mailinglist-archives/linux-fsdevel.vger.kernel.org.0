@@ -2,153 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CC5433E1D9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 00:05:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9884033E21D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 00:31:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229585AbhCPXEi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Mar 2021 19:04:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50598 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbhCPXER (ORCPT
+        id S229602AbhCPXaa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Mar 2021 19:30:30 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:35723 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229482AbhCPXaO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Mar 2021 19:04:17 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA084C06174A;
-        Tue, 16 Mar 2021 16:04:16 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id u4so23510727edv.9;
-        Tue, 16 Mar 2021 16:04:16 -0700 (PDT)
+        Tue, 16 Mar 2021 19:30:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1615937414; x=1647473414;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=LIT7VoqiN5RPT6cSSgDdHiY644uQIvQdKeEy8rpOVcQ=;
+  b=dJRuqLDhjqjyznUrZIn6pL+7VvHh2JtmURmmIpmMoDm3zFbvOEDwDfys
+   p8M3488gaoQ0AdbXYDBH6p5A+uNUHB74hAXmr7vN8UNJlzSXhgg0D4OdK
+   O+gOJHfa5+qk2uu02JyssYLX/pcUOxfQnKYPoFKwGfqUv03QiwPqGQwuA
+   9SLy316LSWZx5V80EGJsErODwq7wVIVRg4sKx3bKYmImomBn1F0pYnMJW
+   EmMMABHgdIERQXZfekHYpOZzmdLIsXTRTMGbW9hGkSqBaqvECqfxv/o4u
+   GTsBN5Ye0TBdAWA6JguixOy+4e/DKJRLXU3oETMDa0QVw7Jo54/a8uUbA
+   A==;
+IronPort-SDR: LqX1K+g1NkwVxsxlpEfI5hT9Pav1Xzj9hzL/RjkRNzXhfltRwArRvTEzWF8pqkY8UkAvPprq2M
+ jMYmHob0c3CFWP42SonuHy2bKnJmQlNkW7U/BZOi+rgjktyqVZGpXB1EWACsq/SEkdnOxoYzAb
+ KQoePpjcu9oS30tpMo4rDNghrZ/QbqEXouOxeP96RkZWZJAsn/LR43ySWMM9sK4PUT0Is5N3yW
+ vxezzlt2yACTLZy/whjAQrEEIIpxH+AmcaElc8RKxMAVqLGCRjC31Vs+e1F8p2eHR7X/g3ddkp
+ o8Q=
+X-IronPort-AV: E=Sophos;i="5.81,254,1610380800"; 
+   d="scan'208";a="273028708"
+Received: from mail-mw2nam08lp2171.outbound.protection.outlook.com (HELO NAM04-MW2-obe.outbound.protection.outlook.com) ([104.47.73.171])
+  by ob1.hgst.iphmx.com with ESMTP; 17 Mar 2021 07:30:13 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ddzIwu4Kq8N0NylvFGjtnzvmwUSOiRgZIhhsjYDyHPHaKal8txRjRajkiB0eE/fbKh1R8K0EDQZ/Qkf9wphYppkQ5L9Der24DA3zlnsoTy0wd80/XtmeL71qxyfH20Nk1xD5c7NV7fiD9vz2ikZS2W2t66nVN2o8xoKJrtglSabk9QoL2b5xp+aBjtA7axTMOR0TLX9SnSpt+HDb2ev6KpPStXWvKGttmPGWs73G/9RzR8KQwZLq89+ckJI19lhl3aOf0B4KDJ3Lsxy0fs3hlidRiKVdRIoWm4InwRPON90A2fd2wOwlzyBDyWm4jGYV0T13pbUmLlkeu7xfsvW5uQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WrDsjC2SxVXsxV3u0AhCCWPGiLiutzS4lqOOg8mxmJ0=;
+ b=U/OSFLtFoP/+tobTg0MCIm8rfqRUq0YoQEIUfAZzOZ/mjHWpbi7+x3XnTLbApOudae/VULBDDOB2co8EPnvxhPuRlTrWq/1AKq2dKdV2ngOGfM5dBBEHFYi5SFa2iPIDtdmnt69DTK6KTN4IwbmbGIqBvW6f2RJ9zH153sJi/NDETvbTyKjq0XbIxvXTnmOB96ZEaD6GUFqZI5Bjdn06cumooTePUTyvMmcl7DR2mNtxWz26k3gFtYta3bEf0QlFOmwzQfzWKg5TGisSQjvC6iWqqMJlVheyWyBlAjATE5rQA3/tSQQnWPdASuSFoi2kkLGPR/bCjcSSb+eX9zSEDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=9Ibz/MKaorBJiGtv7aHxDLxxLWyi7tGgMy03wQkEJrU=;
-        b=KSqbbJPleL8QUEYg4kkb4pJp3oyUtVJWBvUCExaEu5C3Ncq94p13+08jjoW36LtR9R
-         v9R+4f2WTnB1ffAcqIP+jaGcgHap2j7AAS9RMj1mlu921ET7XmPWcjrRXsU+9F8XpWT8
-         z34i/1H7+LkLb7cwfvw00jTyzwNY5v+qkaFLhWS4BJMe/GDIXebViOUK1Ix8opdmJKSl
-         sWS5x34OXzmvCuFe6YoCysJK71WsyLhAJ+wOmMVTmYbbFXR4TAF2fLKyUxQ5oTVAhe9h
-         hxc514TKfyMUJgpU4hP2SAbHuEiI/1HgCSkTiB21kDQNyORrxtTYVQwODfJMuHj0mAq/
-         0xdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9Ibz/MKaorBJiGtv7aHxDLxxLWyi7tGgMy03wQkEJrU=;
-        b=Jsy8O5rUcYlBqlL9S2VjZkdxzz2p0eewfptNMASIDEtPeDndLNkerCkiq9nN1PXrbS
-         t8i74iRmPNxSWnwwWwTFbkVCY05Tr4y+dnwGbgCecioumy+iRcvRtjT8mPap7WGkIfUk
-         IYbMwqjWkfaAHVT0dHqJZvGfjD0sHqJnzJr8WQnG3scBUTIdJC4lVXuqNRnnvPiFEfvy
-         DgWUgfz54JybNVLg5q/9BH8kZuPRZGFQ3QkfGmO02Ohcp9TBRkJjbLYLQ+v330ETIKa5
-         qIpj3vOEXf36DTe2TQzyd1HBpLD9/+ZYXf15TO2JM2HZnrPAewoojfqz0O9PaPdVsHM/
-         NvTw==
-X-Gm-Message-State: AOAM531FEO6OGP9u6RUeqqVmLzjVu1XXNtt11yGfeCDrrVOcNQPIvm/8
-        Cs77pL7J0BeAUvEz9+EUgxAybTCEfjEmgArk69ZqIHAgYw==
-X-Google-Smtp-Source: ABdhPJyZaVdX7Pws79Bf3CzR1evP2Jbwaf9sVyGgtA4VitRZknR+/UED9a1+jT4siw7vsHc/VTQtXSA+64xzTMXTjoY=
-X-Received: by 2002:a05:6402:17e9:: with SMTP id t9mr38817270edy.211.1615935855478;
- Tue, 16 Mar 2021 16:04:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <87v9a7w8q7.fsf@suse.com> <20210304095026.782-1-aaptel@suse.com>
- <45b64990-b879-02d3-28e5-b896af0502c4@gmail.com> <87sg52t2xj.fsf@suse.com>
- <139a3729-9460-7272-b1d7-c2feb5679ee9@talpey.com> <87eegltxzd.fsf@suse.com>
- <d602e3e4-721a-a1c5-3375-1c9899da4383@talpey.com> <878s6ttwhd.fsf@suse.com>
- <23052c07-8050-4eb8-d2de-506c60dbed7d@talpey.com> <871rcltiw9.fsf@suse.com>
- <CAKywueREp5mib_4gmofwekrT=GhqoZo1kEmmUmNeqghG0EYYwQ@mail.gmail.com>
- <87pmzzs7lv.fsf@suse.com> <CAKywueQPr2H69wvju=U8aKHQw_SA4hB76BObzZVZPppKJnk++A@mail.gmail.com>
- <f25b6d85-0299-9557-2eb9-6c7666c8ea6e@talpey.com>
-In-Reply-To: <f25b6d85-0299-9557-2eb9-6c7666c8ea6e@talpey.com>
-From:   Pavel Shilovsky <piastryyy@gmail.com>
-Date:   Tue, 16 Mar 2021 16:04:04 -0700
-Message-ID: <CAKywueQkELXyRjihtD2G=vswVuaeoeyMjrDfqTQeVF_NoRVm6A@mail.gmail.com>
-Subject: Re: [PATCH v4] flock.2: add CIFS details
-To:     Tom Talpey <tom@talpey.com>
-Cc:     =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>,
-        "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>,
-        Steve French <smfrench@gmail.com>,
-        linux-cifs <linux-cifs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        mtk.manpages@gmail.com, linux-man@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WrDsjC2SxVXsxV3u0AhCCWPGiLiutzS4lqOOg8mxmJ0=;
+ b=SprtGDdwE26QBO9wbSVCb0miDA8j0vv7kffDjkwEwJA8LCuPZY5+sPbWI09km+F+v67iB6NaMm6yBebfkjOmyRc1z62ZgTa6FtjKiKwPn5Xj/l8d25FvqHt/3aYiuAf/hTjJiPqXe/iXnJCa3uUbOcXoImVh1eOF+1xBVuPjSGY=
+Received: from BL0PR04MB6514.namprd04.prod.outlook.com (2603:10b6:208:1ca::23)
+ by MN2PR04MB6448.namprd04.prod.outlook.com (2603:10b6:208:1a5::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3933.32; Tue, 16 Mar
+ 2021 23:30:11 +0000
+Received: from BL0PR04MB6514.namprd04.prod.outlook.com
+ ([fe80::e9c5:588:89e:6887]) by BL0PR04MB6514.namprd04.prod.outlook.com
+ ([fe80::e9c5:588:89e:6887%3]) with mapi id 15.20.3933.032; Tue, 16 Mar 2021
+ 23:30:11 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     Chao Yu <yuchao0@huawei.com>, Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "jth@kernel.org" <jth@kernel.org>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chao@kernel.org" <chao@kernel.org>
+Subject: Re: [PATCH] zonefs: fix to update .i_wr_refcnt correctly in
+ zonefs_open_zone()
+Thread-Topic: [PATCH] zonefs: fix to update .i_wr_refcnt correctly in
+ zonefs_open_zone()
+Thread-Index: AQHXGmAzbymjLrf+6Uyg2qboovgmbA==
+Date:   Tue, 16 Mar 2021 23:30:10 +0000
+Message-ID: <BL0PR04MB65145B310933D52C432DA7BAE76B9@BL0PR04MB6514.namprd04.prod.outlook.com>
+References: <20210316123026.115473-1-yuchao0@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: huawei.com; dkim=none (message not signed)
+ header.d=none;huawei.com; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [2400:2411:43c0:6000:d8f9:73e8:b1d8:d796]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: a7f1867b-3046-41d4-e0f4-08d8e8d3715c
+x-ms-traffictypediagnostic: MN2PR04MB6448:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR04MB6448E4744406DDFE01C7A2DFE76B9@MN2PR04MB6448.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:167;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 6s8vcMx1zoiLGx00FlaPE+rECRh4qQP4VQjALvnkz7VZE5aS/Doa/mqLMyMUFat9S7HQ6jYCdD4QKmL1yPwBowMuW+eeBFgYf5sKLAuOJwoEa4DxYd5TnMr8PdTjQKl2xiTlG9Xt1viDWVAtdc7dr+7A/YetX9rCXYoNqnxxKENlbdwOaXMzp/OpnNRvg3e92o1gbxehRBFMzuna8yhIbq4vNPby3aVGX8VEziztilSP8mBxRJi7k3oF+Qo0MyOxe6RzbSPAn0cvXadRb/UQYIcxpPRGWr6g6tmo6npruTQM5ZbsX0BqkEy/OVEx1mIdVYeN8INHJXN8FBrYpplrl1JQmseT94EbnFZfz+MjciYx0shCcYR2oDfXfrSMmnPyk2TCLHBj/JVxZmr9WlvEfCIZxsulu1BVeJJXELFlKhJz5p2sjMitHo05sacERf37sBnOEBVCUt9Oox4rqtATd1yr23ObRdPHIhGH7ftqOycNXQiKO2inUjr94NSfmGzSutZhPceHSVyK56hQYY3/hE7y6C592+FJ0y9K4fc5ChFGlYzf//pjogr0/a2C+/J3oBDKJrVqv6anYwmA5pD1cXYIy5DqJZfO+nVhU2NychLq9Yb7qov0YD+3Yz4pm3rE
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR04MB6514.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(346002)(366004)(136003)(39860400002)(396003)(8936002)(53546011)(316002)(83380400001)(110136005)(186003)(64756008)(66476007)(66446008)(8676002)(66556008)(6506007)(91956017)(478600001)(66946007)(71200400001)(33656002)(55016002)(7696005)(52536014)(2906002)(5660300002)(9686003)(54906003)(86362001)(4326008)(76116006)(142923001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?Fnh1kzvAaLVFqhDXDJmncge0FYgY0SeyKLZs8P19quKTT4YT5OPaZuHDtUrb?=
+ =?us-ascii?Q?o/tGUa/sHVZOzX7WAkLJP6Ye3JdPZtZBzoExbeU2j15CqDQfgCFxJM65o2zf?=
+ =?us-ascii?Q?35KoTcHhZEnVcEICvHbwPhzFZZHiSTVEZ9IcXdRmC6UCbFUHA6Vu/D8JbDHs?=
+ =?us-ascii?Q?5abQHUmmMNL9yCp2fLOuI6gnEMUiee82VwKbow6E5nlG4//U5ej+cNHX4d95?=
+ =?us-ascii?Q?mHvn4z16osBQcM4L3nQKHrQvIJAq6e+1XTfXAtMewCukfjUxYIMYhhSCDYxf?=
+ =?us-ascii?Q?bLJMbiMD2myMdZKLIBlGAwgPGGL9W5YgMvpLgiTK2oYGBk8h2c/V6pTuj3Zv?=
+ =?us-ascii?Q?V1U0ckz+z9I55ysEHUKnlBmpr3My8lR11G0HWExVFHkaXHKPHKmp2ySgwLmG?=
+ =?us-ascii?Q?WwIAsvy/ss9TOv8GuYosCrIjtGHzaDUAZbpPaR/SqID4Ui8wfZK9Pj7QAL4u?=
+ =?us-ascii?Q?BhM1RKdz8Q6MHarIbC0eF99cz4RigA2kQMmPJQGflkBnPZKh1efnwskJIH6L?=
+ =?us-ascii?Q?1aLROhPUAEDidkJf00HkkmT9tDIdVptt7NivOeDo8DDvtMqg3+p/63AHAmHo?=
+ =?us-ascii?Q?HyGcSAcSAaJdtvVQ6Lr/fAuqfowgZMxLvZhGhwdjrA4/yTcyRkLJZRdD7tJl?=
+ =?us-ascii?Q?ZyPL/t5R8TaB1YrZNpa27WiU9gY5ER4MahwTcjnZRlK69kLYrD/pS9A1zfWj?=
+ =?us-ascii?Q?uUgfu20UllrnXNdvpnDMG5KxXdGSWn9bZXbfRIp2dS32Uv3vuLw4MqmVSV8c?=
+ =?us-ascii?Q?F8HnvY2NbQjOb7Ww3RqOQ0NWiZmodOFw82Vdf8HqJ+CP3EFc40mDv56XTAhd?=
+ =?us-ascii?Q?HtcXHIbiYcEYf09liQZ/nW0R3DekSmUxhK+p04PjvjT4gqsrdFrJpNoJc5Um?=
+ =?us-ascii?Q?4DG/tyXMl/5BdpTZpaVHHuQWdwoO07JzAYJtl6Mf97SMgaHX2yyQfCPCDuo/?=
+ =?us-ascii?Q?H2mQUdUQtUBra4i/iczUmzIzaKTDeAlxfqRR7UNYyajHaJ59gwUVzwzP8Br7?=
+ =?us-ascii?Q?BVLT6CSaid39VAn+MrR5k3usGcNhfMlho4m8pEKIRByzFjVFiKbRYq/IT2m7?=
+ =?us-ascii?Q?2JbrNVwr4zZC7MEcpNIzkuYBaZA5AIimfrAvXhCKP3D96sY2yfauw/mwAbtY?=
+ =?us-ascii?Q?kpKK5WkMs/ra/nPXfgzUIYirCHlvA0mQQdHjfDq5/EMzxUer0PuTaLxAlNpE?=
+ =?us-ascii?Q?ALlI8NMx5ohES1jAf81eArbnW5MGIjwrhHUNNjad/g+H4JnfFoi+Zq/TArM7?=
+ =?us-ascii?Q?70dDlpRkMNrdVay6G0lVpA1unVGU5rXrjPX+93c1/kJVFPONumdXWXX5UZjp?=
+ =?us-ascii?Q?ygM1RUpnMYNKvZwpfP5pAmNpZJHtrcV2At5mL7/wzw2D2twIuHQcfxtt2RKi?=
+ =?us-ascii?Q?s+KJiwQLmmZbvRIPXf7889ERuBWTJlOWSWqhNdCNd4DpSAc5SA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR04MB6514.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7f1867b-3046-41d4-e0f4-08d8e8d3715c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Mar 2021 23:30:10.9416
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YcotxIYLMegyTqxOBP3FRsrOmkpfIZjvXG9XMjZEjqawK9G6zh2lnWQEh7hrqlzdAx53yRGK9NyUgynSU/IjmQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6448
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make sense to make it simpler. Then I would just propose a minor fix -
-to remove "even" on the last line because IO from the same file
-descriptor is allowed.
-
-"""
-  Another important side-effect is that the locks are not advisory anymore:
-  any IO on a locked file will always fail with EACCES,
-  when done from a separate file descriptor.
-"""
---
-Best regards,
-Pavel Shilovsky
-
-=D0=B2=D1=82, 16 =D0=BC=D0=B0=D1=80. 2021 =D0=B3. =D0=B2 12:42, Tom Talpey =
-<tom@talpey.com>:
->
-> On 3/16/2021 1:39 PM, Pavel Shilovsky wrote:
-> > Sure. Thanks!
-> >
-> > I would put more details from
-> > https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-l=
-ockfileex
-> > :
-> >
-> > """
-> >    Another important side-effect is that the locks are not advisory any=
-more:
-> >    any IO on an exclusively locked file will always fail with EACCES
-> >    when done from a separate file descriptor; write calls on
-> >    a file locked for shared access will fail with EACCES when done
-> >    from any file descriptor including the one used to lock the file.
-> > """
-> >
-> > Thoughts?
->
-> I think it'll be important to define what "exclusive" and "shared"
-> mean from a Linux/POSIX API perspective, and that will get into dragon
-> territory. I don't think it's a good idea to attempt that in this
-> manpage. It is best to leave Windows semantics, and interop with
-> Windows clients, out of it.
->
-> IOW, I personally prefer Aur=C3=A9lien's simple version for now.
->
-> Tom.
->
-> >
-> > --
-> > Best regards,
-> > Pavel Shilovsky
-> >
-> > =D0=B2=D1=82, 16 =D0=BC=D0=B0=D1=80. 2021 =D0=B3. =D0=B2 03:42, Aur=C3=
-=A9lien Aptel <aaptel@suse.com>:
-> >>
-> >> Pavel Shilovsky <piastryyy@gmail.com> writes:
-> >>> It is not only about writing to a locked file. It is also about any I=
-O
-> >>> against a locked file if such a file is locked through another file
-> >>> handle. Right?
-> >>
-> >> Yes that was implied, the write was a simple example to illustrate. I'=
-ll
-> >> update to make it more generic:
-> >>
-> >>    Another important side-effect is that the locks are not advisory an=
-ymore:
-> >>    any IO on a locked file will always fail with EACCES,
-> >>    even when done from a separate file descriptor.
-> >>
-> >> If you have comments please provide direct text suggestion to save tim=
-e.
-> >>
-> >> Cheers,
-> >> --
-> >> Aur=C3=A9lien Aptel / SUSE Labs Samba Team
-> >> GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-> >> SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnbe=
-rg, DE
-> >> GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=
-=C3=BCnchen)
-> >>
-> >
+On 2021/03/16 21:30, Chao Yu wrote:=0A=
+> In zonefs_open_zone(), if opened zone count is larger than=0A=
+> .s_max_open_zones threshold, we missed to recover .i_wr_refcnt,=0A=
+> fix this.=0A=
+> =0A=
+> Fixes: b5c00e975779 ("zonefs: open/close zone on file open/close")=0A=
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>=0A=
+> ---=0A=
+>  fs/zonefs/super.c | 6 +++---=0A=
+>  1 file changed, 3 insertions(+), 3 deletions(-)=0A=
+> =0A=
+> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c=0A=
+> index 0fe76f376dee..be6b99f7de74 100644=0A=
+> --- a/fs/zonefs/super.c=0A=
+> +++ b/fs/zonefs/super.c=0A=
+> @@ -966,8 +966,7 @@ static int zonefs_open_zone(struct inode *inode)=0A=
+>  =0A=
+>  	mutex_lock(&zi->i_truncate_mutex);=0A=
+>  =0A=
+> -	zi->i_wr_refcnt++;=0A=
+> -	if (zi->i_wr_refcnt =3D=3D 1) {=0A=
+> +	if (zi->i_wr_refcnt =3D=3D 0) {=0A=
+=0A=
+Nit: if (!zi->i_wr_refcnt) ? I can change that when applying.=0A=
+=0A=
+>  =0A=
+>  		if (atomic_inc_return(&sbi->s_open_zones) > sbi->s_max_open_zones) {=
+=0A=
+>  			atomic_dec(&sbi->s_open_zones);=0A=
+> @@ -978,7 +977,6 @@ static int zonefs_open_zone(struct inode *inode)=0A=
+>  		if (i_size_read(inode) < zi->i_max_size) {=0A=
+>  			ret =3D zonefs_zone_mgmt(inode, REQ_OP_ZONE_OPEN);=0A=
+>  			if (ret) {=0A=
+> -				zi->i_wr_refcnt--;=0A=
+>  				atomic_dec(&sbi->s_open_zones);=0A=
+>  				goto unlock;=0A=
+>  			}=0A=
+> @@ -986,6 +984,8 @@ static int zonefs_open_zone(struct inode *inode)=0A=
+>  		}=0A=
+>  	}=0A=
+>  =0A=
+> +	zi->i_wr_refcnt++;=0A=
+> +=0A=
+>  unlock:=0A=
+>  	mutex_unlock(&zi->i_truncate_mutex);=0A=
+>  =0A=
+> =0A=
+=0A=
+Good catch ! Will apply this and check zonefs test suite as this bug went=
+=0A=
+undetected.=0A=
+=0A=
+Thanks.=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
