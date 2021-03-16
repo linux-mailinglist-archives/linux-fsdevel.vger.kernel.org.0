@@ -2,201 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBBD233DE05
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 20:46:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BB7433DE68
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 21:07:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237285AbhCPTqX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Mar 2021 15:46:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35816 "EHLO
+        id S238870AbhCPUGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Mar 2021 16:06:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234528AbhCPTpQ (ORCPT
+        with ESMTP id S229529AbhCPUG3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Mar 2021 15:45:16 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFD5BC0613EE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 12:44:52 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id cl21-20020a17090af695b02900c61ac0f0e9so4108805pjb.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 12:44:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=csjtCPkdL7tZ0Hw4uLrgE01zyi/QWaclx9nbiJQ12+k=;
-        b=GlL1MupUUCck+C58n+nknBl7BOsxQ+q7L/a0RohyN9atfW008/oLMhFh/JYB5MXOme
-         uUXN0HwwkFb2X3hbCWr6Fo5fcP1jBhQ71cP1N039j/kNVPBH7OIAtuv1C4is9lTPl/Uv
-         saj/z5nRwCi6DnEVZkUkuDoHRqGn3Kn2D+pfRS3xn/jiMzELKxxjN9HqgK5XqiZCB8N0
-         iGFr/bpmf2NEszY28pZQXXLrR6OjUz4+GvU/qorIVndkVzTbKf17AHxIJf6THypXoKj5
-         h5julzh0zItmnmrIeTpdQXCrRcv7DQaFgmh7vZx3qpeSDNqbv4+gyEKdyW7jJB2Cjefc
-         iS0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=csjtCPkdL7tZ0Hw4uLrgE01zyi/QWaclx9nbiJQ12+k=;
-        b=C0mYM5rfeX50x+VwE8LeeFdAhLRctKJO9wijZoK5I48CYDtcHxERouA2P5hGM9/r7D
-         W3jqmCGMg4L7/gL48GWonKuqIRPq54AMrj/EHNyJ64RDhYiboyz/6nMFwKFPRrphoefZ
-         rzWO/E4Jt9cfVJcmY2adEWVnYE6q1W8pLT7tNPhHVfuB68+ti0+wAbHePhjVicQu+KED
-         NtMG5XytlOqDpGNhht8YKRMMwui8Et0Td1UYdCpw37pJiAqIkP9WU1ui/wUxL78bntzk
-         GyO8LNuiVYOd4HnkwfiIMnXAD/9PE1jgRMq8O3hjJQW2F/IzPMVbb8KDoR2R9kPvMOBI
-         /H2A==
-X-Gm-Message-State: AOAM5338a2oycH3BePDsD4VwESLWfJc2HVv6ucLuYooqzyuiud/Ukouy
-        g1+vrRpGkmiB7S7mfjuK9g+Pxw==
-X-Google-Smtp-Source: ABdhPJxDtOJ9qNhyYBLvbG6xRRmNP/szyGhfc6LFfiT/+MN1/08xcVlqFYTKrPS8tuqVNVZhF8W3Zg==
-X-Received: by 2002:a17:902:ee95:b029:e5:e2c7:5f76 with SMTP id a21-20020a170902ee95b02900e5e2c75f76mr864196pld.25.1615923892239;
-        Tue, 16 Mar 2021 12:44:52 -0700 (PDT)
-Received: from relinquished.tfbnw.net ([2620:10d:c090:400::5:532])
-        by smtp.gmail.com with ESMTPSA id w22sm16919104pfi.133.2021.03.16.12.44.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Mar 2021 12:44:51 -0700 (PDT)
-From:   Omar Sandoval <osandov@osandov.com>
-To:     linux-btrfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, kernel-team@fb.com
-Subject: [PATCH v4 11/11] btrfs-progs: receive: add tests for basic encoded_write send/receive
-Date:   Tue, 16 Mar 2021 12:44:05 -0700
-Message-Id: <10e4ab8447fd360b103229d866923f265204d940.1615922859.git.osandov@osandov.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <cover.1615922753.git.osandov@fb.com>
-References: <cover.1615922753.git.osandov@fb.com>
+        Tue, 16 Mar 2021 16:06:29 -0400
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc09])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4936C06174A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 13:06:28 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F0PSJ3SyNzMqHf6;
+        Tue, 16 Mar 2021 21:06:24 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4F0PSG4YVGzlh8TH;
+        Tue, 16 Mar 2021 21:06:22 +0100 (CET)
+Subject: Re: [PATCH v4 1/1] fs: Allow no_new_privs tasks to call chroot(2)
+To:     Jann Horn <jannh@google.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20210316170135.226381-1-mic@digikod.net>
+ <20210316170135.226381-2-mic@digikod.net>
+ <CAG48ez3=M-5WT73HqmFJr6UHwO0+2FJXxcAgRzp6wcd0P3TN=Q@mail.gmail.com>
+ <ec7a3a21-c402-c153-a932-ce4a40edadaa@digikod.net>
+ <CAG48ez0UHP=B6MW5ySMOAQ677byzyWkwgPto1RdW6FYJH5b7Zg@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <c7fbf088-02c2-6cac-f353-14bff23d6864@digikod.net>
+Date:   Tue, 16 Mar 2021 21:06:25 +0100
+User-Agent: 
 MIME-Version: 1.0
+In-Reply-To: <CAG48ez0UHP=B6MW5ySMOAQ677byzyWkwgPto1RdW6FYJH5b7Zg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Boris Burkov <boris@bur.io>
 
-Adapt the existing send/receive tests by passing '-o --force-compress'
-to the mount commands in a new test. After writing a few files in the
-various compression formats, send/receive them with and without
---force-decompress to test both the encoded_write path and the
-fallback to decode+write.
+On 16/03/2021 20:31, Jann Horn wrote:
+> On Tue, Mar 16, 2021 at 8:26 PM Mickaël Salaün <mic@digikod.net> wrote:
+>> On 16/03/2021 20:04, Jann Horn wrote:
+>>> On Tue, Mar 16, 2021 at 6:02 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>>> One could argue that chroot(2) is useless without a properly populated
+>>>> root hierarchy (i.e. without /dev and /proc).  However, there are
+>>>> multiple use cases that don't require the chrooting process to create
+>>>> file hierarchies with special files nor mount points, e.g.:
+>>>> * A process sandboxing itself, once all its libraries are loaded, may
+>>>>   not need files other than regular files, or even no file at all.
+>>>> * Some pre-populated root hierarchies could be used to chroot into,
+>>>>   provided for instance by development environments or tailored
+>>>>   distributions.
+>>>> * Processes executed in a chroot may not require access to these special
+>>>>   files (e.g. with minimal runtimes, or by emulating some special files
+>>>>   with a LD_PRELOADed library or seccomp).
+>>>>
+>>>> Unprivileged chroot is especially interesting for userspace developers
+>>>> wishing to harden their applications.  For instance, chroot(2) and Yama
+>>>> enable to build a capability-based security (i.e. remove filesystem
+>>>> ambient accesses) by calling chroot/chdir with an empty directory and
+>>>> accessing data through dedicated file descriptors obtained with
+>>>> openat2(2) and RESOLVE_BENEATH/RESOLVE_IN_ROOT/RESOLVE_NO_MAGICLINKS.
+>>>
+>>> I don't entirely understand. Are you writing this with the assumption
+>>> that a future change will make it possible to set these RESOLVE flags
+>>> process-wide, or something like that?
+>>
+>> No, this scenario is for applications willing to sandbox themselves and
+>> only use the FDs to access legitimate data.
+> 
+> But if you're chrooted to /proc/self/fdinfo and have an fd to some
+> directory - let's say /home/user/Downloads - there is nothing that
+> ensures that you only use that fd with RESOLVE_BENEATH, right? If the
+> application is compromised, it can do something like openat(fd,
+> "../.bashrc", O_RDWR), right? Or am I missing something?
 
-Signed-off-by: Boris Burkov <boris@bur.io>
----
- .../043-receive-write-encoded/test.sh         | 114 ++++++++++++++++++
- 1 file changed, 114 insertions(+)
- create mode 100755 tests/misc-tests/043-receive-write-encoded/test.sh
+You're totally right, I was mistaken, this simple use case doesn't work
+without a broker. Perhaps when seccomp will be able to check referenced
+structs, or with a new FD limitation…
 
-diff --git a/tests/misc-tests/043-receive-write-encoded/test.sh b/tests/misc-tests/043-receive-write-encoded/test.sh
-new file mode 100755
-index 00000000..b9390e88
---- /dev/null
-+++ b/tests/misc-tests/043-receive-write-encoded/test.sh
-@@ -0,0 +1,114 @@
-+#!/bin/bash
-+#
-+# test that we can send and receive encoded writes for three modes of
-+# transparent compression: zlib, lzo, and zstd.
-+
-+source "$TEST_TOP/common"
-+
-+check_prereq mkfs.btrfs
-+check_prereq btrfs
-+
-+setup_root_helper
-+prepare_test_dev
-+
-+here=`pwd`
-+
-+# assumes the filesystem exists, and does mount, write, snapshot, send, unmount
-+# for the specified encoding option
-+send_one() {
-+	local str
-+	local subv
-+	local snap
-+
-+	algorithm="$1"
-+	shift
-+	str="$1"
-+	shift
-+
-+	subv="subv-$algorithm"
-+	snap="snap-$algorithm"
-+
-+	run_check_mount_test_dev "-o" "compress-force=$algorithm"
-+	cd "$TEST_MNT" || _fail "cannot chdir to TEST_MNT"
-+
-+	run_check $SUDO_HELPER "$TOP/btrfs" subvolume create "$subv"
-+	run_check $SUDO_HELPER dd if=/dev/zero of="$subv/file1" bs=1M count=1
-+	run_check $SUDO_HELPER dd if=/dev/zero of="$subv/file2" bs=500K count=1
-+	run_check $SUDO_HELPER "$TOP/btrfs" subvolume snapshot -r "$subv" "$snap"
-+	run_check $SUDO_HELPER "$TOP/btrfs" send -f "$str" "$snap" "$@"
-+
-+	cd "$here" || _fail "cannot chdir back to test directory"
-+	run_check_umount_test_dev
-+}
-+
-+receive_one() {
-+	local str
-+	str="$1"
-+	shift
-+
-+	run_check_mkfs_test_dev
-+	run_check_mount_test_dev
-+	run_check $SUDO_HELPER "$TOP/btrfs" receive "$@" -v -f "$str" "$TEST_MNT"
-+	run_check_umount_test_dev
-+	run_check rm -f -- "$str"
-+}
-+
-+test_one_write_encoded() {
-+	local str
-+	local algorithm
-+	algorithm="$1"
-+	shift
-+	str="$here/stream-$algorithm.stream"
-+
-+	run_check_mkfs_test_dev
-+	send_one "$algorithm" "$str" --compressed-data
-+	receive_one "$str" "$@"
-+}
-+
-+test_one_stream_v1() {
-+	local str
-+	local algorithm
-+	algorithm="$1"
-+	shift
-+	str="$here/stream-$algorithm.stream"
-+
-+	run_check_mkfs_test_dev
-+	send_one "$algorithm" "$str" --stream-version 1
-+	receive_one "$str" "$@"
-+}
-+
-+test_mix_write_encoded() {
-+	local strzlib
-+	local strlzo
-+	local strzstd
-+	strzlib="$here/stream-zlib.stream"
-+	strlzo="$here/stream-lzo.stream"
-+	strzstd="$here/stream-zstd.stream"
-+
-+	run_check_mkfs_test_dev
-+
-+	send_one "zlib" "$strzlib" --compressed-data
-+	send_one "lzo" "$strlzo" --compressed-data
-+	send_one "zstd" "$strzstd" --compressed-data
-+
-+	receive_one "$strzlib"
-+	receive_one "$strlzo"
-+	receive_one "$strzstd"
-+}
-+
-+test_one_write_encoded "zlib"
-+test_one_write_encoded "lzo"
-+test_one_write_encoded "zstd"
-+
-+# with decompression forced
-+test_one_write_encoded "zlib" "--force-decompress"
-+test_one_write_encoded "lzo" "--force-decompress"
-+test_one_write_encoded "zstd" "--force-decompress"
-+
-+# send stream v1
-+test_one_stream_v1 "zlib"
-+test_one_stream_v1 "lzo"
-+test_one_stream_v1 "zstd"
-+
-+# files use a mix of compression algorithms
-+test_mix_write_encoded
--- 
-2.30.2
+> 
+>>> As long as that doesn't exist, I think that to make this safe, you'd
+>>> have to do something like the following - let a child process set up a
+>>> new mount namespace for you, and then chroot() into that namespace's
+>>> root:
+>>>
+>>> struct shared_data {
+>>>   int root_fd;
+>>> };
+>>> int helper_fn(void *args) {
+>>>   struct shared_data *shared = args;
+>>>   mount("none", "/tmp", "tmpfs", MS_NOSUID|MS_NODEV, "");
+>>>   mkdir("/tmp/old_root", 0700);
+>>>   pivot_root("/tmp", "/tmp/old_root");
+>>>   umount("/tmp/old_root", "");
+>>>   shared->root_fd = open("/", O_PATH);
+>>> }
+>>> void setup_chroot() {
+>>>   struct shared_data shared = {};
+>>>   prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+>>>   clone(helper_fn, my_stack,
+>>> CLONE_VFORK|CLONE_VM|CLONE_FILES|CLONE_NEWUSER|CLONE_NEWNS|SIGCHLD,
+>>> NULL);
+>>>   fchdir(shared.root_fd);
+>>>   chroot(".");
+>>> }
+>>
+>> What about this?
+>> chdir("/proc/self/fdinfo");
+>> chroot(".");
+>> close(all unnecessary FDs);
+> 
+> That breaks down if you can e.g. get a unix domain socket connected to
+> a process in a different chroot, right? Isn't that a bit too fragile?
 
+This relies on other (trusted) components, and yes it is fragile if the
+process communicates with a service able send FDs.
