@@ -2,126 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A7C1A33DD41
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 20:19:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8AB533DD61
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 20:25:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240328AbhCPTTF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Mar 2021 15:19:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58208 "EHLO
+        id S240375AbhCPTY5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Mar 2021 15:24:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236564AbhCPTSg (ORCPT
+        with ESMTP id S240384AbhCPTYK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Mar 2021 15:18:36 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F21BBC06174A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 12:18:35 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id c17so5908137pfv.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 12:18:35 -0700 (PDT)
+        Tue, 16 Mar 2021 15:24:10 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD508C06175F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 12:24:09 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id a8so10914513plp.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 12:24:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=kTFGaP3zw/Fu1Vu34NQdT6odvbGU01/j1hv611s2WEk=;
-        b=g+XpbAbEV6nyFc0yI+iTSaDBcvjMUj6QK0H/YiwhY2fWmatsW6E/QWhrvhEbSt0qRI
-         itfH+R+CErgok+kinhtw3NZbGKSpsjcaTAgf/tbECUhXtfZ62kPYd5tiy6vangOzXJSY
-         kYYcfjoKK9Tw9V/fKsSE5iwsER9ubGUm/XI/I=
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=a1ue4t11OJbVivGpc6C3VCzhlUkhH8Mj6uX3JQk/WHc=;
+        b=Nj8yYDluxqiAG+ej6jhoWTmPa96bXO9MvDia/puQbLS7/lpPxALfueZIRNjkZiCYCy
+         Ljgk8A2MGIt5sqxHhcmGFj9bwRx66ATTPVkIOCfXJarh9XeLaTErjE/lVX2YPbMfkUTR
+         weLoWOS0x3zLp07rZcrp0BhN98BIhcxt1Cq+U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=kTFGaP3zw/Fu1Vu34NQdT6odvbGU01/j1hv611s2WEk=;
-        b=MAafM5fkfpcrp9AFG24V/J5EgO2sVeFjQyyCq0kcU+TF0/Rt9ErJRSy2KNk4q7/Vi2
-         US7yD1Ls7Aba6V0dr4OTM0PYGuvPum/HVlzTvJBKoM4ntqwrZ5pnPIKWFKiW++eKDoVL
-         lGSMMWbVe8R6yMMLN2SngV+eXzCfMXgz2eBMzrsfzmbSUCCPum6zYk5F0wuNpxwov42l
-         C3pYX+FcAr4AIkv+D+gGD0dvWFplFtpZJfUusMRT3ufnl56sSQQ17M4mCJmEHOI7jmJm
-         qjIGilzx1RZZIgUHo7UHHQDG4XyKZzlRqxAfg29UZOc1YzHeb4eIW9jS4+O6fzaqfXDw
-         N/6w==
-X-Gm-Message-State: AOAM533SjYYXy9N2o9nXug6LF6PvUnIzxUXtvBD55zF1S/b+YXgscH+C
-        34I8WzwtYtx5uhd9QxM7i14I8Q==
-X-Google-Smtp-Source: ABdhPJwBczIEvob3FcudNUCo9qdlk3+Pv2lnIocMJV9rVeke6Yi6PDvwSg2ZOmChbIrhU5ZiKAaruA==
-X-Received: by 2002:a65:6107:: with SMTP id z7mr1040368pgu.435.1615922315588;
-        Tue, 16 Mar 2021 12:18:35 -0700 (PDT)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=a1ue4t11OJbVivGpc6C3VCzhlUkhH8Mj6uX3JQk/WHc=;
+        b=E8TUy6aYCu7Z/rkSuwRwShogUUGp5+Mz+GhWllC5a/HljmoGyLoba3hZu+RRMuQaDg
+         fWhJDPXQFx5cAjq1KjNwLDZu2cFaS83DIwHq/x9u+IFgQlGFEI7qAdi0A7bhRRZAuVIa
+         U6eZhbOa+PgcSqES5lDeq2/EPPF5U7DrqABJrfPzvapIWvQG1I0LDCC79cAYMQMrRqlr
+         /0ONGUY+x7dolzhlrgfepJRogTKjRUHWsDbPKOg1qSE0Gj+g1JeHwlx+DgmSk8knY4XW
+         CNtWvnX51Jt3oU21AQ71527fKbaS9uGxfSnVbQm/7NHKftywHYrSgKgyq+1PxQIwhxeK
+         LxfA==
+X-Gm-Message-State: AOAM532J+wIkL0Ru8J4pJSCeh391EOfAW6jBBkNHnJxzqSFUISIv4KRF
+        OOb4NzGyEkUGXQ8x8VfDUSOZ5A==
+X-Google-Smtp-Source: ABdhPJxdA7UfbYsvEPf38xgnGsO41RyHj+iYp3b8oYOJD+h6SmdhD+HE5h/MgGyUxrpMOZysl7Shew==
+X-Received: by 2002:a17:90a:b115:: with SMTP id z21mr594754pjq.162.1615922649291;
+        Tue, 16 Mar 2021 12:24:09 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id f14sm18421088pfk.92.2021.03.16.12.18.34
+        by smtp.gmail.com with ESMTPSA id e1sm191065pjt.10.2021.03.16.12.24.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Mar 2021 12:18:34 -0700 (PDT)
-Date:   Tue, 16 Mar 2021 12:18:33 -0700
+        Tue, 16 Mar 2021 12:24:08 -0700 (PDT)
+Date:   Tue, 16 Mar 2021 12:24:07 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
-        Adam Nichols <adam@grimm-co.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] seq_file: Unconditionally use vmalloc for buffer
-Message-ID: <202103161208.22FC78C8C@keescook>
-References: <20210315174851.622228-1-keescook@chromium.org>
- <YE+oZkSVNyaONMd9@zeniv-ca.linux.org.uk>
- <202103151336.78360DB34D@keescook>
- <YFBdQmT64c+2uBRI@kroah.com>
- <YFCn4ERBMGoqxvUU@zeniv-ca.linux.org.uk>
+To:     Jann Horn <jannh@google.com>
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
+Subject: Re: [PATCH v4 1/1] fs: Allow no_new_privs tasks to call chroot(2)
+Message-ID: <202103161221.8291CC3E6@keescook>
+References: <20210316170135.226381-1-mic@digikod.net>
+ <20210316170135.226381-2-mic@digikod.net>
+ <CAG48ez3=M-5WT73HqmFJr6UHwO0+2FJXxcAgRzp6wcd0P3TN=Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <YFCn4ERBMGoqxvUU@zeniv-ca.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez3=M-5WT73HqmFJr6UHwO0+2FJXxcAgRzp6wcd0P3TN=Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 16, 2021 at 12:43:12PM +0000, Al Viro wrote:
-> On Tue, Mar 16, 2021 at 08:24:50AM +0100, Greg Kroah-Hartman wrote:
+On Tue, Mar 16, 2021 at 08:04:09PM +0100, Jann Horn wrote:
+> On Tue, Mar 16, 2021 at 6:02 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > One could argue that chroot(2) is useless without a properly populated
+> > root hierarchy (i.e. without /dev and /proc).  However, there are
+> > multiple use cases that don't require the chrooting process to create
+> > file hierarchies with special files nor mount points, e.g.:
+> > * A process sandboxing itself, once all its libraries are loaded, may
+> >   not need files other than regular files, or even no file at all.
+> > * Some pre-populated root hierarchies could be used to chroot into,
+> >   provided for instance by development environments or tailored
+> >   distributions.
+> > * Processes executed in a chroot may not require access to these special
+> >   files (e.g. with minimal runtimes, or by emulating some special files
+> >   with a LD_PRELOADed library or seccomp).
+> >
+> > Unprivileged chroot is especially interesting for userspace developers
+> > wishing to harden their applications.  For instance, chroot(2) and Yama
+> > enable to build a capability-based security (i.e. remove filesystem
+> > ambient accesses) by calling chroot/chdir with an empty directory and
+> > accessing data through dedicated file descriptors obtained with
+> > openat2(2) and RESOLVE_BENEATH/RESOLVE_IN_ROOT/RESOLVE_NO_MAGICLINKS.
 > 
-> > > Completely agreed. seq_get_buf() should be totally ripped out.
-> > > Unfortunately, this is going to be a long road because of sysfs's ATTR
-> > > stuff, there are something like 5000 callers, and the entire API was
-> > > designed to avoid refactoring all those callers from
-> > > sysfs_kf_seq_show().
-> > 
-> > What is wrong with the sysfs ATTR stuff?  That should make it so that we
-> > do not have to change any caller for any specific change like this, why
-> > can't sysfs or kernfs handle it automatically?
+> I don't entirely understand. Are you writing this with the assumption
+> that a future change will make it possible to set these RESOLVE flags
+> process-wide, or something like that?
+
+I thought it meant "open all out-of-chroot dirs as fds using RESOLVE_...
+flags then chroot". As in, there's no way to then escape "up" for the
+old opens, and the new opens stay in the chroot.
+
+> [...]
+> > diff --git a/fs/open.c b/fs/open.c
+> [...]
+> > +static inline int current_chroot_allowed(void)
+> > +{
+> > +       /*
+> > +        * Changing the root directory for the calling task (and its future
+> > +        * children) requires that this task has CAP_SYS_CHROOT in its
+> > +        * namespace, or be running with no_new_privs and not sharing its
+> > +        * fs_struct and not escaping its current root (cf. create_user_ns()).
+> > +        * As for seccomp, checking no_new_privs avoids scenarios where
+> > +        * unprivileged tasks can affect the behavior of privileged children.
+> > +        */
+> > +       if (task_no_new_privs(current) && current->fs->users == 1 &&
 > 
-> Hard to tell, since that would require _finding_ the sodding ->show()
-> instances first.  Good luck with that, seeing that most of those appear
-> to come from templates-done-with-cpp...
+> this read of current->fs->users should be using READ_ONCE()
 
-I *think* I can get coccinelle to find them all, but my brute-force
-approach was to just do a debug build changing the ATTR macro to be
-typed, and changing the name of "show" and "store" in kobj_attribute
-(to make the compiler find them all).
-
-> AFAICS, Kees wants to protect against ->show() instances stomping beyond
-> the page size.  What I don't get is what do you get from using seq_file
-> if you insist on doing raw access to the buffer rather than using
-> seq_printf() and friends.  What's the point?
-
-To me, it looks like the kernfs/sysfs API happened around the time
-"container_of" was gaining ground. It's trying to do the same thing
-the "modern" callbacks do with finding a pointer from another, but it
-did so by making sure everything had a 0 offset and an identical
-beginning structure layout _but changed prototypes_.
-
-It's the changed prototypes that freaks out CFI.
-
-My current plan consists of these steps:
-
-- add two new callbacks to the kobj_attribute struct (and its clones):
-  "seq_show" and "seq_store", which will pass in the seq_file.
-- convert all callbacks to kobject/kboj_attribute and use container_of()
-  to find their respective pointers.
-- remove "show" and "store"
-- remove external use of seq_get_buf().
-
-The first two steps require thousands of lines of code changed, so
-I'm going to try to minimize it by trying to do as many conversions as
-possible to the appropriate helpers first. e.g. DEVICE_ATTR_INT exists,
-but there are only 2 users, yet there appears to be something like 500
-DEVICE_ATTR callers that have an open-coded '%d':
-
-$ git grep -B10 '\bDEVICE_ATTR' | grep '%d' | wc -l
-530
+Ah yeah, good call. I should remember this when I think "can this race?"
+:P
 
 -- 
 Kees Cook
