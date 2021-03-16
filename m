@@ -2,116 +2,343 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF08733CB9C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 03:49:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5ABA33CC0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 04:22:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232881AbhCPCs7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 22:48:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41710 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231953AbhCPCsi (ORCPT
+        id S234949AbhCPDWK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 23:22:10 -0400
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:59263 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230177AbhCPDVr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 22:48:38 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BC2CC061756
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 19:48:26 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id ox4so54061071ejb.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Mar 2021 19:48:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6YHRJMUQAt5BQU/ChG4TfRRnQRInjJDMBnIovWqAbr8=;
-        b=g5Bi3z8hLHYwdFuTjylEbiJvq0TJiQ+1F2Shv+P8OkxeXV+gLFKTUHQTGjvsshlopQ
-         zPKAgfc7edZwDm2MtCZdnGxNHIyFkmmI01KWJ3Xu/qHn26GD8daYprhLK/hUwVY4t88V
-         JqSPXeRxNQB5eNHGmZ6iNEdYmss8LI27jiGVoAINvjC8FBFjtccoEsXmQxEyU7P4AmOf
-         /kGDD16HcAjKfuvNHjPx5z1nRyIHsnXGG2SwITzAYqS7GJUKjaLpnXRiWn8tWm9NCUUE
-         O5PK/2k9vHHi9Ltw7fJ3LPRWafBb5NW55+WWLRwS8uirBQjQ09kztUliq/R47hkDeYv4
-         4MRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6YHRJMUQAt5BQU/ChG4TfRRnQRInjJDMBnIovWqAbr8=;
-        b=DkO9FGoPz301MvwN5yoI6UgRGoaZLVyvPXO66HLwxzsNi91XstHvNOTBn1stgYaojN
-         R203eJ4LJz0TitUr9PcfNswXUIdSh0OflFwR0cBD1fSsVu+jEOJ+QBH5rvaRYFs+6N5M
-         nxyvQj6ZucekRzBgXglVNLVCjJsFfjsMA/cm5jmmU7jGeYhMt7gGC8QXHMgFuP6+YiVz
-         NdGDJt7XgYVP7qnapgnHKRH0VfKVhAbnKtTAyTiUsWTyOLu3h3LZXLluJ8qD9HrAYCX+
-         XY82FtmjR3ms54pEhfuaKEBv3k5ZZxMjOG8xlOOpQUgbhAzdrzy7mO53RjBRcG1ebQeh
-         mONw==
-X-Gm-Message-State: AOAM530Yq51O9Ruc5MgUE0aCZFHFB69teudAazho/PAnqaVNrVEOYmTZ
-        OgLyf4D9+MJzCLt9cWQe5GMDEJuHlX6ACOAVfTlK
-X-Google-Smtp-Source: ABdhPJy0ICdduYRDHSmiF4haaSwq3bkzggSvGMl6zEhufrsHVi06l5MZQv1rzb9mRhh63kXlEFazRulaAIfKxc2r6kI=
-X-Received: by 2002:a17:906:311a:: with SMTP id 26mr26907944ejx.395.1615862905272;
- Mon, 15 Mar 2021 19:48:25 -0700 (PDT)
+        Mon, 15 Mar 2021 23:21:47 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R801e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=zhongjiang-ali@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0US4IWG9_1615864901;
+Received: from L-X1DSLVDL-1420.local(mailfrom:zhongjiang-ali@linux.alibaba.com fp:SMTPD_---0US4IWG9_1615864901)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 16 Mar 2021 11:21:42 +0800
+Message-ID: <e1be1767-f9c0-e17a-5c14-22bb2f0ca5aa@linux.alibaba.com>
+Date:   Tue, 16 Mar 2021 11:21:41 +0800
 MIME-Version: 1.0
-References: <20210315053721.189-1-xieyongji@bytedance.com> <20210315053721.189-2-xieyongji@bytedance.com>
- <20210315090822.GA4166677@infradead.org> <CACycT3vrHOExXj6v8ULvUzdLcRkdzS5=TNK6=g4+RWEdN-nOJw@mail.gmail.com>
- <20210315144444.bgtllddee7s55lfx@gmail.com>
-In-Reply-To: <20210315144444.bgtllddee7s55lfx@gmail.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Tue, 16 Mar 2021 10:48:14 +0800
-Message-ID: <CACycT3tX74QtzBoZ9UHWbdbvaUBruGyjyrOPmiWEwff5rJ7Bjg@mail.gmail.com>
-Subject: Re: Re: [PATCH v5 01/11] file: Export __receive_fd() to modules
-To:     Christian Brauner <christian.brauner@canonical.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:87.0)
+ Gecko/20100101 Thunderbird/87.0
+Subject: Re: [PATCH v3 05/11] mm, fsdax: Refactor memory-failure handler for
+ dax mapping
+Content-Language: en-US
+To:     Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, dm-devel@redhat.com
+Cc:     darrick.wong@oracle.com, dan.j.williams@intel.com,
+        david@fromorbit.com, hch@lst.de, agk@redhat.com,
+        snitzer@redhat.com, rgoldwyn@suse.de, qi.fuli@fujitsu.com,
+        y-goto@fujitsu.com
+References: <20210208105530.3072869-1-ruansy.fnst@cn.fujitsu.com>
+ <20210208105530.3072869-6-ruansy.fnst@cn.fujitsu.com>
+From:   zhong jiang <zhongjiang-ali@linux.alibaba.com>
+In-Reply-To: <20210208105530.3072869-6-ruansy.fnst@cn.fujitsu.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 15, 2021 at 10:44 PM Christian Brauner
-<christian.brauner@canonical.com> wrote:
->
-> On Mon, Mar 15, 2021 at 05:46:43PM +0800, Yongji Xie wrote:
-> > On Mon, Mar 15, 2021 at 5:08 PM Christoph Hellwig <hch@infradead.org> wrote:
-> > >
-> > > On Mon, Mar 15, 2021 at 01:37:11PM +0800, Xie Yongji wrote:
-> > > > Export __receive_fd() so that some modules can use
-> > > > it to pass file descriptor between processes.
-> > >
-> > > I really don't think any non-core code should do that, especilly not
-> > > modular mere driver code.
-> >
-> > Do you see any issue? Now I think we're able to do that with the help
-> > of get_unused_fd_flags() and fd_install() in modules. But we may miss
-> > some security stuff in this way. So I try to export __receive_fd() and
-> > use it instead.
->
-> The __receive_fd() helper was added for core-kernel code only and we
-> mainly did it for the seccomp notifier (and scm rights). The "__" prefix
-> was intended to convey that message.
-> And I agree with Christoph that we should probably keep it that way
-> since __receive_fd() allows a few operations that no driver should
-> probably do.
-> I can see it being kinda ok to export a variant that really only
-> receives and installs an fd, i.e. if we were to export what's currently
-> available as an inline helper:
->
-> static inline int receive_fd(struct file *file, unsigned int o_flags)
->
-> but definitely none of the fd replacement stuff; that shold be
-> off-limits. The seccomp notifier is the only codepath that should even
-> think about fd replacement since it's about managing the syscalls of
-> another task. Drivers swapping out fds doesn't sound like a good idea to
-> me.
->
 
-Thanks for the explanation, I got it. I will switch to use
-receive_fd() in the next version.
+On 2021/2/8 6:55 下午, Shiyang Ruan wrote:
+> The current memory_failure_dev_pagemap() can only handle single-mapped
+> dax page for fsdax mode.  The dax page could be mapped by multiple files
+> and offsets if we let reflink feature & fsdax mode work together.  So,
+> we refactor current implementation to support handle memory failure on
+> each file and offset.
+>
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+> ---
+>   fs/dax.c            | 21 ++++++++++
+>   include/linux/dax.h |  1 +
+>   include/linux/mm.h  |  9 +++++
+>   mm/memory-failure.c | 98 ++++++++++++++++++++++++++++++++++-----------
+>   4 files changed, 105 insertions(+), 24 deletions(-)
+>
+> diff --git a/fs/dax.c b/fs/dax.c
+> index 26d5dcd2d69e..c64c3a0e76a6 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -378,6 +378,27 @@ static struct page *dax_busy_page(void *entry)
+>   	return NULL;
+>   }
+>   
+> +/*
+> + * dax_load_pfn - Load pfn of the DAX entry corresponding to a page
+> + * @mapping: The file whose entry we want to load
+> + * @index:   The offset where the DAX entry located in
+> + *
+> + * Return:   pfn of the DAX entry
+> + */
+> +unsigned long dax_load_pfn(struct address_space *mapping, unsigned long index)
+> +{
+> +	XA_STATE(xas, &mapping->i_pages, index);
+> +	void *entry;
+> +	unsigned long pfn;
+> +
+> +	xas_lock_irq(&xas);
+> +	entry = xas_load(&xas);
+> +	pfn = dax_to_pfn(entry);
+> +	xas_unlock_irq(&xas);
+> +
+> +	return pfn;
+> +}
+> +
+>   /*
+>    * dax_lock_mapping_entry - Lock the DAX entry corresponding to a page
+>    * @page: The page whose entry we want to lock
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index b52f084aa643..89e56ceeffc7 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -150,6 +150,7 @@ int dax_writeback_mapping_range(struct address_space *mapping,
+>   
+>   struct page *dax_layout_busy_page(struct address_space *mapping);
+>   struct page *dax_layout_busy_page_range(struct address_space *mapping, loff_t start, loff_t end);
+> +unsigned long dax_load_pfn(struct address_space *mapping, unsigned long index);
+>   dax_entry_t dax_lock_page(struct page *page);
+>   void dax_unlock_page(struct page *page, dax_entry_t cookie);
+>   #else
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index ecdf8a8cd6ae..ab52bc633d84 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1157,6 +1157,14 @@ static inline bool is_device_private_page(const struct page *page)
+>   		page->pgmap->type == MEMORY_DEVICE_PRIVATE;
+>   }
+>   
+> +static inline bool is_device_fsdax_page(const struct page *page)
+> +{
+> +	return IS_ENABLED(CONFIG_DEV_PAGEMAP_OPS) &&
+> +		IS_ENABLED(CONFIG_FS_DAX) &&
+> +		is_zone_device_page(page) &&
+> +		page->pgmap->type == MEMORY_DEVICE_FS_DAX;
+> +}
+> +
+>   static inline bool is_pci_p2pdma_page(const struct page *page)
+>   {
+>   	return IS_ENABLED(CONFIG_DEV_PAGEMAP_OPS) &&
+> @@ -3045,6 +3053,7 @@ enum mf_flags {
+>   	MF_MUST_KILL = 1 << 2,
+>   	MF_SOFT_OFFLINE = 1 << 3,
+>   };
+> +extern int mf_dax_mapping_kill_procs(struct address_space *mapping, pgoff_t index, int flags);
+>   extern int memory_failure(unsigned long pfn, int flags);
+>   extern void memory_failure_queue(unsigned long pfn, int flags);
+>   extern void memory_failure_queue_kick(int cpu);
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index e9481632fcd1..158fe0c8e602 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -56,6 +56,7 @@
+>   #include <linux/kfifo.h>
+>   #include <linux/ratelimit.h>
+>   #include <linux/page-isolation.h>
+> +#include <linux/dax.h>
+>   #include "internal.h"
+>   #include "ras/ras_event.h"
+>   
+> @@ -120,6 +121,13 @@ static int hwpoison_filter_dev(struct page *p)
+>   	if (PageSlab(p))
+>   		return -EINVAL;
+>   
+> +	if (pfn_valid(page_to_pfn(p))) {
+> +		if (is_device_fsdax_page(p))
+> +			return 0;
+> +		else
+> +			return -EINVAL;
+> +	}
+> +
+>   	mapping = page_mapping(p);
+>   	if (mapping == NULL || mapping->host == NULL)
+>   		return -EINVAL;
+> @@ -286,10 +294,9 @@ void shake_page(struct page *p, int access)
+>   }
+>   EXPORT_SYMBOL_GPL(shake_page);
+>   
+> -static unsigned long dev_pagemap_mapping_shift(struct page *page,
+> -		struct vm_area_struct *vma)
+> +static unsigned long dev_pagemap_mapping_shift(struct vm_area_struct *vma,
+> +					       unsigned long address)
+>   {
+> -	unsigned long address = vma_address(page, vma);
+>   	pgd_t *pgd;
+>   	p4d_t *p4d;
+>   	pud_t *pud;
+> @@ -329,9 +336,8 @@ static unsigned long dev_pagemap_mapping_shift(struct page *page,
+>    * Schedule a process for later kill.
+>    * Uses GFP_ATOMIC allocations to avoid potential recursions in the VM.
+>    */
+> -static void add_to_kill(struct task_struct *tsk, struct page *p,
+> -		       struct vm_area_struct *vma,
+> -		       struct list_head *to_kill)
+> +static void add_to_kill(struct task_struct *tsk, struct page *p, pgoff_t pgoff,
+> +			struct vm_area_struct *vma, struct list_head *to_kill)
+>   {
+>   	struct to_kill *tk;
+>   
+> @@ -342,9 +348,12 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
+>   	}
+>   
+>   	tk->addr = page_address_in_vma(p, vma);
+> -	if (is_zone_device_page(p))
+> -		tk->size_shift = dev_pagemap_mapping_shift(p, vma);
+> -	else
+> +	if (is_zone_device_page(p)) {
+> +		if (is_device_fsdax_page(p))
+> +			tk->addr = vma->vm_start +
+> +					((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
+> +		tk->size_shift = dev_pagemap_mapping_shift(vma, tk->addr);
+> +	} else
+>   		tk->size_shift = page_shift(compound_head(p));
+>   
+>   	/*
+> @@ -492,7 +501,7 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
+>   			if (!page_mapped_in_vma(page, vma))
+>   				continue;
+>   			if (vma->vm_mm == t->mm)
+> -				add_to_kill(t, page, vma, to_kill);
+> +				add_to_kill(t, page, 0, vma, to_kill);
+>   		}
+>   	}
+>   	read_unlock(&tasklist_lock);
+> @@ -502,24 +511,19 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
+>   /*
+>    * Collect processes when the error hit a file mapped page.
+>    */
+> -static void collect_procs_file(struct page *page, struct list_head *to_kill,
+> -				int force_early)
+> +static void collect_procs_file(struct page *page, struct address_space *mapping,
+> +		pgoff_t pgoff, struct list_head *to_kill, int force_early)
+>   {
+>   	struct vm_area_struct *vma;
+>   	struct task_struct *tsk;
+> -	struct address_space *mapping = page->mapping;
+> -	pgoff_t pgoff;
+>   
+>   	i_mmap_lock_read(mapping);
+>   	read_lock(&tasklist_lock);
+> -	pgoff = page_to_pgoff(page);
+>   	for_each_process(tsk) {
+>   		struct task_struct *t = task_early_kill(tsk, force_early);
+> -
+>   		if (!t)
+>   			continue;
+> -		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff,
+> -				      pgoff) {
+> +		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
+>   			/*
+>   			 * Send early kill signal to tasks where a vma covers
+>   			 * the page but the corrupted page is not necessarily
+> @@ -528,7 +532,7 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
+>   			 * to be informed of all such data corruptions.
+>   			 */
+>   			if (vma->vm_mm == t->mm)
+> -				add_to_kill(t, page, vma, to_kill);
+> +				add_to_kill(t, page, pgoff, vma, to_kill);
+>   		}
+>   	}
+>   	read_unlock(&tasklist_lock);
+> @@ -547,7 +551,8 @@ static void collect_procs(struct page *page, struct list_head *tokill,
+>   	if (PageAnon(page))
+>   		collect_procs_anon(page, tokill, force_early);
+>   	else
+> -		collect_procs_file(page, tokill, force_early);
+> +		collect_procs_file(page, page_mapping(page), page_to_pgoff(page),
+> +				   tokill, force_early);
+>   }
+>   
+>   static const char *action_name[] = {
+> @@ -1214,6 +1219,50 @@ static int try_to_split_thp_page(struct page *page, const char *msg)
+>   	return 0;
+>   }
+>   
+> +int mf_dax_mapping_kill_procs(struct address_space *mapping, pgoff_t index, int flags)
+> +{
+> +	const bool unmap_success = true;
+> +	unsigned long pfn, size = 0;
+> +	struct to_kill *tk;
+> +	LIST_HEAD(to_kill);
+> +	int rc = -EBUSY;
+> +	loff_t start;
+> +
+> +	/* load the pfn of the dax mapping file */
+> +	pfn = dax_load_pfn(mapping, index);
+> +	if (!pfn)
+> +		return rc;
+> +	/*
+> +	 * Unlike System-RAM there is no possibility to swap in a
+> +	 * different physical page at a given virtual address, so all
+> +	 * userspace consumption of ZONE_DEVICE memory necessitates
+> +	 * SIGBUS (i.e. MF_MUST_KILL)
+> +	 */
+> +	flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
+
+MF_ACTION_REQUIRED only kill the current execution context. A page can be shared
+when reflink file be mapped by different process. We can not kill all process
+shared the page.  Other process still can access the posioned page ?
 
 Thanks,
-Yongji
+zhong jiang
+
+> +	collect_procs_file(pfn_to_page(pfn), mapping, index, &to_kill,
+> +			   flags & MF_ACTION_REQUIRED);
+> +
+> +	list_for_each_entry(tk, &to_kill, nd)
+> +		if (tk->size_shift)
+> +			size = max(size, 1UL << tk->size_shift);
+> +	if (size) {
+> +		/*
+> +		 * Unmap the largest mapping to avoid breaking up
+> +		 * device-dax mappings which are constant size. The
+> +		 * actual size of the mapping being torn down is
+> +		 * communicated in siginfo, see kill_proc()
+> +		 */
+> +		start = (index << PAGE_SHIFT) & ~(size - 1);
+> +		unmap_mapping_range(mapping, start, start + size, 0);
+> +	}
+> +
+> +	kill_procs(&to_kill, flags & MF_MUST_KILL, !unmap_success,
+> +		   pfn, flags);
+> +	rc = 0;
+> +	return rc;
+> +}
+> +EXPORT_SYMBOL_GPL(mf_dax_mapping_kill_procs);
+> +
+>   static int memory_failure_hugetlb(unsigned long pfn, int flags)
+>   {
+>   	struct page *p = pfn_to_page(pfn);
+> @@ -1297,7 +1346,7 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
+>   	const bool unmap_success = true;
+>   	unsigned long size = 0;
+>   	struct to_kill *tk;
+> -	LIST_HEAD(tokill);
+> +	LIST_HEAD(to_kill);
+>   	int rc = -EBUSY;
+>   	loff_t start;
+>   	dax_entry_t cookie;
+> @@ -1345,9 +1394,10 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
+>   	 * SIGBUS (i.e. MF_MUST_KILL)
+>   	 */
+>   	flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
+> -	collect_procs(page, &tokill, flags & MF_ACTION_REQUIRED);
+> +	collect_procs_file(page, page->mapping, page->index, &to_kill,
+> +			   flags & MF_ACTION_REQUIRED);
+>   
+> -	list_for_each_entry(tk, &tokill, nd)
+> +	list_for_each_entry(tk, &to_kill, nd)
+>   		if (tk->size_shift)
+>   			size = max(size, 1UL << tk->size_shift);
+>   	if (size) {
+> @@ -1360,7 +1410,7 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
+>   		start = (page->index << PAGE_SHIFT) & ~(size - 1);
+>   		unmap_mapping_range(page->mapping, start, start + size, 0);
+>   	}
+> -	kill_procs(&tokill, flags & MF_MUST_KILL, !unmap_success, pfn, flags);
+> +	kill_procs(&to_kill, flags & MF_MUST_KILL, !unmap_success, pfn, flags);
+>   	rc = 0;
+>   unlock:
+>   	dax_unlock_page(page, cookie);
