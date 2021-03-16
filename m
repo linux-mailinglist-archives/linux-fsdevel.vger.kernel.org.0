@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DF8833DF24
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 21:44:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2097733DF36
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 21:44:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231652AbhCPUn0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Mar 2021 16:43:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48372 "EHLO
+        id S231793AbhCPUna (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Mar 2021 16:43:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231587AbhCPUnE (ORCPT
+        with ESMTP id S231627AbhCPUnF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Mar 2021 16:43:04 -0400
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [IPv6:2001:1600:3:17::190f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B46EFC061765
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 13:43:02 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F0QGY0qHCzMqKyy;
-        Tue, 16 Mar 2021 21:43:01 +0100 (CET)
+        Tue, 16 Mar 2021 16:43:05 -0400
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ae])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1DD4C06174A;
+        Tue, 16 Mar 2021 13:43:03 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F0QGZ3cTLzMq06g;
+        Tue, 16 Mar 2021 21:43:02 +0100 (CET)
 Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4F0QGX56dXzlh8T5;
-        Tue, 16 Mar 2021 21:43:00 +0100 (CET)
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4F0QGZ0gz0zlh8T2;
+        Tue, 16 Mar 2021 21:43:02 +0100 (CET)
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
         "Serge E . Hallyn" <serge@hallyn.com>
@@ -45,9 +45,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-kselftest@vger.kernel.org,
         linux-security-module@vger.kernel.org, x86@kernel.org,
         =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v30 03/12] landlock: Set up the security framework and manage credentials
-Date:   Tue, 16 Mar 2021 21:42:43 +0100
-Message-Id: <20210316204252.427806-4-mic@digikod.net>
+Subject: [PATCH v30 04/12] landlock: Add ptrace restrictions
+Date:   Tue, 16 Mar 2021 21:42:44 +0100
+Message-Id: <20210316204252.427806-5-mic@digikod.net>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210316204252.427806-1-mic@digikod.net>
 References: <20210316204252.427806-1-mic@digikod.net>
@@ -60,303 +60,232 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mickaël Salaün <mic@linux.microsoft.com>
 
-Process's credentials point to a Landlock domain, which is underneath
-implemented with a ruleset.  In the following commits, this domain is
-used to check and enforce the ptrace and filesystem security policies.
-A domain is inherited from a parent to its child the same way a thread
-inherits a seccomp policy.
+Using ptrace(2) and related debug features on a target process can lead
+to a privilege escalation.  Indeed, ptrace(2) can be used by an attacker
+to impersonate another task and to remain undetected while performing
+malicious activities.  Thanks to  ptrace_may_access(), various part of
+the kernel can check if a tracer is more privileged than a tracee.
+
+A landlocked process has fewer privileges than a non-landlocked process
+and must then be subject to additional restrictions when manipulating
+processes. To be allowed to use ptrace(2) and related syscalls on a
+target process, a landlocked process must have a subset of the target
+process's rules (i.e. the tracee must be in a sub-domain of the tracer).
 
 Cc: James Morris <jmorris@namei.org>
 Cc: Kees Cook <keescook@chromium.org>
 Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
 Reviewed-by: Jann Horn <jannh@google.com>
 Acked-by: Serge Hallyn <serge@hallyn.com>
-Link: https://lore.kernel.org/r/20210316204252.427806-4-mic@digikod.net
+Link: https://lore.kernel.org/r/20210316204252.427806-5-mic@digikod.net
 ---
 
 Changes since v28:
 * Add Acked-by Serge Hallyn.
 
 Changes since v25:
-* Rename function to landlock_add_cred_hooks().
-
-Changes since v23:
-* Add an early check for the current domain in hook_cred_free() to avoid
-  superfluous call.
-* Cosmetic cleanup to make the code more readable.
+* Rename function to landlock_add_ptrace_hooks().
 
 Changes since v22:
-* Add Reviewed-by Jann Horn.
+* Add Reviewed-by: Jann Horn <jannh@google.com>
 
 Changes since v21:
 * Fix copyright dates.
 
-Changes since v17:
-* Constify returned domain pointers from landlock_get_current_domain()
-  and landlock_get_task_domain() helpers.
-
-Changes since v15:
-* Optimize landlocked() for current thread.
-* Display the greeting message when everything is initialized.
-
 Changes since v14:
-* Uses pr_fmt from common.h .
 * Constify variables.
-* Remove useless NULL initialization.
 
 Changes since v13:
-* totally get ride of the seccomp dependency
-* only keep credential management and LSM setup.
+* Make the ptrace restriction mandatory, like in the v10.
+* Remove the eBPF dependency.
 
 Previous changes:
-https://lore.kernel.org/lkml/20191104172146.30797-4-mic@digikod.net/
+https://lore.kernel.org/lkml/20191104172146.30797-5-mic@digikod.net/
 ---
- security/Kconfig           | 10 +++----
- security/landlock/Makefile |  3 +-
- security/landlock/common.h | 20 +++++++++++++
- security/landlock/cred.c   | 46 ++++++++++++++++++++++++++++++
- security/landlock/cred.h   | 58 ++++++++++++++++++++++++++++++++++++++
- security/landlock/setup.c  | 31 ++++++++++++++++++++
- security/landlock/setup.h  | 16 +++++++++++
- 7 files changed, 178 insertions(+), 6 deletions(-)
- create mode 100644 security/landlock/common.h
- create mode 100644 security/landlock/cred.c
- create mode 100644 security/landlock/cred.h
- create mode 100644 security/landlock/setup.c
- create mode 100644 security/landlock/setup.h
+ security/landlock/Makefile |   2 +-
+ security/landlock/ptrace.c | 120 +++++++++++++++++++++++++++++++++++++
+ security/landlock/ptrace.h |  14 +++++
+ security/landlock/setup.c  |   2 +
+ 4 files changed, 137 insertions(+), 1 deletion(-)
+ create mode 100644 security/landlock/ptrace.c
+ create mode 100644 security/landlock/ptrace.h
 
-diff --git a/security/Kconfig b/security/Kconfig
-index 15a4342b5d01..0ced7fd33e4d 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -278,11 +278,11 @@ endchoice
- 
- config LSM
- 	string "Ordered list of enabled LSMs"
--	default "lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
--	default "lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
--	default "lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
--	default "lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
--	default "lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
-+	default "landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-+	default "landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-+	default "landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
-+	default "landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
-+	default "landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
- 	help
- 	  A comma-separated list of LSMs, in initialization order.
- 	  Any LSMs left off this list will be ignored. This can be
 diff --git a/security/landlock/Makefile b/security/landlock/Makefile
-index d846eba445bb..041ea242e627 100644
+index 041ea242e627..f1d1eb72fa76 100644
 --- a/security/landlock/Makefile
 +++ b/security/landlock/Makefile
-@@ -1,3 +1,4 @@
+@@ -1,4 +1,4 @@
  obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
  
--landlock-y := object.o ruleset.o
-+landlock-y := setup.o object.o ruleset.o \
-+	cred.o
-diff --git a/security/landlock/common.h b/security/landlock/common.h
+ landlock-y := setup.o object.o ruleset.o \
+-	cred.o
++	cred.o ptrace.o
+diff --git a/security/landlock/ptrace.c b/security/landlock/ptrace.c
 new file mode 100644
-index 000000000000..5dc0fe15707d
+index 000000000000..f55b82446de2
 --- /dev/null
-+++ b/security/landlock/common.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Landlock LSM - Common constants and helpers
-+ *
-+ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2018-2020 ANSSI
-+ */
-+
-+#ifndef _SECURITY_LANDLOCK_COMMON_H
-+#define _SECURITY_LANDLOCK_COMMON_H
-+
-+#define LANDLOCK_NAME "landlock"
-+
-+#ifdef pr_fmt
-+#undef pr_fmt
-+#endif
-+
-+#define pr_fmt(fmt) LANDLOCK_NAME ": " fmt
-+
-+#endif /* _SECURITY_LANDLOCK_COMMON_H */
-diff --git a/security/landlock/cred.c b/security/landlock/cred.c
-new file mode 100644
-index 000000000000..6725af24c684
---- /dev/null
-+++ b/security/landlock/cred.c
-@@ -0,0 +1,46 @@
++++ b/security/landlock/ptrace.c
+@@ -0,0 +1,120 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Landlock LSM - Credential hooks
++ * Landlock LSM - Ptrace hooks
 + *
 + * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2018-2020 ANSSI
++ * Copyright © 2019-2020 ANSSI
 + */
 +
++#include <asm/current.h>
 +#include <linux/cred.h>
++#include <linux/errno.h>
++#include <linux/kernel.h>
 +#include <linux/lsm_hooks.h>
++#include <linux/rcupdate.h>
++#include <linux/sched.h>
 +
 +#include "common.h"
 +#include "cred.h"
++#include "ptrace.h"
 +#include "ruleset.h"
 +#include "setup.h"
 +
-+static int hook_cred_prepare(struct cred *const new,
-+		const struct cred *const old, const gfp_t gfp)
++/**
++ * domain_scope_le - Checks domain ordering for scoped ptrace
++ *
++ * @parent: Parent domain.
++ * @child: Potential child of @parent.
++ *
++ * Checks if the @parent domain is less or equal to (i.e. an ancestor, which
++ * means a subset of) the @child domain.
++ */
++static bool domain_scope_le(const struct landlock_ruleset *const parent,
++		const struct landlock_ruleset *const child)
 +{
-+	struct landlock_ruleset *const old_dom = landlock_cred(old)->domain;
++	const struct landlock_hierarchy *walker;
 +
-+	if (old_dom) {
-+		landlock_get_ruleset(old_dom);
-+		landlock_cred(new)->domain = old_dom;
++	if (!parent)
++		return true;
++	if (!child)
++		return false;
++	for (walker = child->hierarchy; walker; walker = walker->parent) {
++		if (walker == parent->hierarchy)
++			/* @parent is in the scoped hierarchy of @child. */
++			return true;
 +	}
-+	return 0;
++	/* There is no relationship between @parent and @child. */
++	return false;
 +}
 +
-+static void hook_cred_free(struct cred *const cred)
++static bool task_is_scoped(const struct task_struct *const parent,
++		const struct task_struct *const child)
 +{
-+	struct landlock_ruleset *const dom = landlock_cred(cred)->domain;
++	bool is_scoped;
++	const struct landlock_ruleset *dom_parent, *dom_child;
 +
-+	if (dom)
-+		landlock_put_ruleset_deferred(dom);
++	rcu_read_lock();
++	dom_parent = landlock_get_task_domain(parent);
++	dom_child = landlock_get_task_domain(child);
++	is_scoped = domain_scope_le(dom_parent, dom_child);
++	rcu_read_unlock();
++	return is_scoped;
++}
++
++static int task_ptrace(const struct task_struct *const parent,
++		const struct task_struct *const child)
++{
++	/* Quick return for non-landlocked tasks. */
++	if (!landlocked(parent))
++		return 0;
++	if (task_is_scoped(parent, child))
++		return 0;
++	return -EPERM;
++}
++
++/**
++ * hook_ptrace_access_check - Determines whether the current process may access
++ *			      another
++ *
++ * @child: Process to be accessed.
++ * @mode: Mode of attachment.
++ *
++ * If the current task has Landlock rules, then the child must have at least
++ * the same rules.  Else denied.
++ *
++ * Determines whether a process may access another, returning 0 if permission
++ * granted, -errno if denied.
++ */
++static int hook_ptrace_access_check(struct task_struct *const child,
++		const unsigned int mode)
++{
++	return task_ptrace(current, child);
++}
++
++/**
++ * hook_ptrace_traceme - Determines whether another process may trace the
++ *			 current one
++ *
++ * @parent: Task proposed to be the tracer.
++ *
++ * If the parent has Landlock rules, then the current task must have the same
++ * or more rules.  Else denied.
++ *
++ * Determines whether the nominated task is permitted to trace the current
++ * process, returning 0 if permission is granted, -errno if denied.
++ */
++static int hook_ptrace_traceme(struct task_struct *const parent)
++{
++	return task_ptrace(parent, current);
 +}
 +
 +static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
-+	LSM_HOOK_INIT(cred_prepare, hook_cred_prepare),
-+	LSM_HOOK_INIT(cred_free, hook_cred_free),
++	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
++	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
 +};
 +
-+__init void landlock_add_cred_hooks(void)
++__init void landlock_add_ptrace_hooks(void)
 +{
 +	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
 +			LANDLOCK_NAME);
 +}
-diff --git a/security/landlock/cred.h b/security/landlock/cred.h
+diff --git a/security/landlock/ptrace.h b/security/landlock/ptrace.h
 new file mode 100644
-index 000000000000..5f99d3decade
+index 000000000000..265b220ae3bf
 --- /dev/null
-+++ b/security/landlock/cred.h
-@@ -0,0 +1,58 @@
++++ b/security/landlock/ptrace.h
+@@ -0,0 +1,14 @@
 +/* SPDX-License-Identifier: GPL-2.0-only */
 +/*
-+ * Landlock LSM - Credential hooks
++ * Landlock LSM - Ptrace hooks
 + *
-+ * Copyright © 2019-2020 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2019-2020 ANSSI
++ * Copyright © 2017-2019 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2019 ANSSI
 + */
 +
-+#ifndef _SECURITY_LANDLOCK_CRED_H
-+#define _SECURITY_LANDLOCK_CRED_H
++#ifndef _SECURITY_LANDLOCK_PTRACE_H
++#define _SECURITY_LANDLOCK_PTRACE_H
 +
-+#include <linux/cred.h>
-+#include <linux/init.h>
-+#include <linux/rcupdate.h>
++__init void landlock_add_ptrace_hooks(void);
 +
-+#include "ruleset.h"
-+#include "setup.h"
-+
-+struct landlock_cred_security {
-+	struct landlock_ruleset *domain;
-+};
-+
-+static inline struct landlock_cred_security *landlock_cred(
-+		const struct cred *cred)
-+{
-+	return cred->security + landlock_blob_sizes.lbs_cred;
-+}
-+
-+static inline const struct landlock_ruleset *landlock_get_current_domain(void)
-+{
-+	return landlock_cred(current_cred())->domain;
-+}
-+
-+/*
-+ * The call needs to come from an RCU read-side critical section.
-+ */
-+static inline const struct landlock_ruleset *landlock_get_task_domain(
-+		const struct task_struct *const task)
-+{
-+	return landlock_cred(__task_cred(task))->domain;
-+}
-+
-+static inline bool landlocked(const struct task_struct *const task)
-+{
-+	bool has_dom;
-+
-+	if (task == current)
-+		return !!landlock_get_current_domain();
-+
-+	rcu_read_lock();
-+	has_dom = !!landlock_get_task_domain(task);
-+	rcu_read_unlock();
-+	return has_dom;
-+}
-+
-+__init void landlock_add_cred_hooks(void);
-+
-+#endif /* _SECURITY_LANDLOCK_CRED_H */
++#endif /* _SECURITY_LANDLOCK_PTRACE_H */
 diff --git a/security/landlock/setup.c b/security/landlock/setup.c
-new file mode 100644
-index 000000000000..8661112fb238
---- /dev/null
+index 8661112fb238..a5d6ef334991 100644
+--- a/security/landlock/setup.c
 +++ b/security/landlock/setup.c
-@@ -0,0 +1,31 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Landlock LSM - Security framework setup
-+ *
-+ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2018-2020 ANSSI
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/lsm_hooks.h>
-+
-+#include "common.h"
-+#include "cred.h"
-+#include "setup.h"
-+
-+struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
-+	.lbs_cred = sizeof(struct landlock_cred_security),
-+};
-+
-+static int __init landlock_init(void)
-+{
-+	landlock_add_cred_hooks();
-+	pr_info("Up and running.\n");
-+	return 0;
-+}
-+
-+DEFINE_LSM(LANDLOCK_NAME) = {
-+	.name = LANDLOCK_NAME,
-+	.init = landlock_init,
-+	.blobs = &landlock_blob_sizes,
-+};
-diff --git a/security/landlock/setup.h b/security/landlock/setup.h
-new file mode 100644
-index 000000000000..9fdbf33fcc33
---- /dev/null
-+++ b/security/landlock/setup.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Landlock LSM - Security framework setup
-+ *
-+ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2018-2020 ANSSI
-+ */
-+
-+#ifndef _SECURITY_LANDLOCK_SETUP_H
-+#define _SECURITY_LANDLOCK_SETUP_H
-+
-+#include <linux/lsm_hooks.h>
-+
-+extern struct lsm_blob_sizes landlock_blob_sizes;
-+
-+#endif /* _SECURITY_LANDLOCK_SETUP_H */
+@@ -11,6 +11,7 @@
+ 
+ #include "common.h"
+ #include "cred.h"
++#include "ptrace.h"
+ #include "setup.h"
+ 
+ struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
+@@ -20,6 +21,7 @@ struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
+ static int __init landlock_init(void)
+ {
+ 	landlock_add_cred_hooks();
++	landlock_add_ptrace_hooks();
+ 	pr_info("Up and running.\n");
+ 	return 0;
+ }
 -- 
 2.30.2
 
