@@ -2,76 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DD9233D2E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 12:24:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEE5033D30A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 12:29:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229862AbhCPLXc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Mar 2021 07:23:32 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43404 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229636AbhCPLXJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Mar 2021 07:23:09 -0400
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1lM7n0-0006XY-2K; Tue, 16 Mar 2021 11:23:06 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
-Cc:     linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH] cachefiles: do not yet allow on idmapped mounts
-Date:   Tue, 16 Mar 2021 12:22:57 +0100
-Message-Id: <20210316112257.2974212-1-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.27.0
+        id S234206AbhCPL30 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Mar 2021 07:29:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40414 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233069AbhCPL3S (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Mar 2021 07:29:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id C5112AC1D;
+        Tue, 16 Mar 2021 11:29:16 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5799B1F2C4C; Tue, 16 Mar 2021 12:29:16 +0100 (CET)
+Date:   Tue, 16 Mar 2021 12:29:16 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        kernel@pengutronix.de, Jan Kara <jack@suse.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: Re: [PATCH v3 0/2] quota: Add mountpath based quota support
+Message-ID: <20210316112916.GA23532@quack2.suse.cz>
+References: <20210304123541.30749-1-s.hauer@pengutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210304123541.30749-1-s.hauer@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Based on discussion with David Howells my understanding of cachefiles
-and the cachefiles userspace daemon is that it creates a cache on a
-local filesystem (e.g. ext4, xfs etc.) for a network filesystem. The way
-this is done is by writing "bind" to /dev/cachefiles and pointing it to
-the directory to use as the cache.
-So from our offline discussion I gather that cachefilesd creates a cache
-on a local filesystem (ext4, xfs etc.) for a network filesystem. The way
-this is done is by writing "bind" to /dev/cachefiles and pointing it to
-a directory to use as the cache.
-Currently this directory can technically also be an idmapped mount but
-cachefiles aren't yet fully aware of such mounts and thus don't take the
-idmapping into account. This could leave users confused as the ownership
-of the files wouldn't match to what they expressed in the idmapping. So
-let's not allow this for now and only make cachefiles aware of idmapped
-mounts after it's current rewrite/rework is done.
+On Thu 04-03-21 13:35:38, Sascha Hauer wrote:
+> Current quotactl syscall uses a path to a block device to specify the
+> filesystem to work on which makes it unsuitable for filesystems that
+> do not have a block device. This series adds a new syscall quotactl_path()
+> which replaces the path to the block device with a mountpath, but otherwise
+> behaves like original quotactl.
+> 
+> This is done to add quota support to UBIFS. UBIFS quota support has been
+> posted several times with different approaches to put the mountpath into
+> the existing quotactl() syscall until it has been suggested to make it a
+> new syscall instead, so here it is.
+> 
+> I'm not posting the full UBIFS quota series here as it remains unchanged
+> and I'd like to get feedback to the new syscall first. For those interested
+> the most recent series can be found here: https://lwn.net/Articles/810463/
 
-Link: https://lore.kernel.org/lkml/20210303161528.n3jzg66ou2wa43qb@wittgenstein
-Cc: David Howells <dhowells@redhat.com>
-Cc: linux-cachefs@redhat.com
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/cachefiles/bind.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks. I've merged the two patches into my tree and will push them to
+Linus for the next merge window.
 
-diff --git a/fs/cachefiles/bind.c b/fs/cachefiles/bind.c
-index dfb14dbddf51..bd7eab9a0539 100644
---- a/fs/cachefiles/bind.c
-+++ b/fs/cachefiles/bind.c
-@@ -115,6 +115,10 @@ static int cachefiles_daemon_add_cache(struct cachefiles_cache *cache)
- 	if (ret < 0)
- 		goto error_open_root;
- 
-+	ret = -EINVAL;
-+	if (mnt_user_ns(path.mnt) != &init_user_ns)
-+		goto error_unsupported;
-+
- 	cache->mnt = path.mnt;
- 	root = path.dentry;
- 
+								Honza
 
-base-commit: 1e28eed17697bcf343c6743f0028cc3b5dd88bf0
+> 
+> Changes since v2:
+> - Rebase on v5.12-rc1
+> - replace mountpath.dentry->d_inode->i_sb with mountpath.mnt->mnt_sb
+> - fix wrong macro usage in arch/x86/entry/syscalls/syscall_32.tbl
+> - +Cc linux-api@vger.kernel.org
+> 
+> Changes since (implicit) v1:
+> - Ignore second path argument to Q_QUOTAON. With this quotactl_path() can
+>   only do the Q_QUOTAON operation on filesystems which use hidden inodes
+>   for quota metadata storage
+> - Drop unnecessary quotactl_cmd_onoff() check
+> 
+> Sascha Hauer (2):
+>   quota: Add mountpath based quota support
+>   quota: wire up quotactl_path
+> 
+>  arch/alpha/kernel/syscalls/syscall.tbl      |  1 +
+>  arch/arm/tools/syscall.tbl                  |  1 +
+>  arch/arm64/include/asm/unistd.h             |  2 +-
+>  arch/arm64/include/asm/unistd32.h           |  2 +
+>  arch/ia64/kernel/syscalls/syscall.tbl       |  1 +
+>  arch/m68k/kernel/syscalls/syscall.tbl       |  1 +
+>  arch/microblaze/kernel/syscalls/syscall.tbl |  1 +
+>  arch/mips/kernel/syscalls/syscall_n32.tbl   |  1 +
+>  arch/mips/kernel/syscalls/syscall_n64.tbl   |  1 +
+>  arch/mips/kernel/syscalls/syscall_o32.tbl   |  1 +
+>  arch/parisc/kernel/syscalls/syscall.tbl     |  1 +
+>  arch/powerpc/kernel/syscalls/syscall.tbl    |  1 +
+>  arch/s390/kernel/syscalls/syscall.tbl       |  1 +
+>  arch/sh/kernel/syscalls/syscall.tbl         |  1 +
+>  arch/sparc/kernel/syscalls/syscall.tbl      |  1 +
+>  arch/x86/entry/syscalls/syscall_32.tbl      |  1 +
+>  arch/x86/entry/syscalls/syscall_64.tbl      |  1 +
+>  arch/xtensa/kernel/syscalls/syscall.tbl     |  1 +
+>  fs/quota/quota.c                            | 49 +++++++++++++++++++--
+>  include/linux/syscalls.h                    |  2 +
+>  include/uapi/asm-generic/unistd.h           |  4 +-
+>  kernel/sys_ni.c                             |  1 +
+>  22 files changed, 71 insertions(+), 5 deletions(-)
+> 
+> -- 
+> 2.29.2
+> 
 -- 
-2.27.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
