@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E41BE33DDF0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 20:46:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB2F933DDF2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 20:46:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240651AbhCPTpg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Mar 2021 15:45:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35708 "EHLO
+        id S240593AbhCPTpl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Mar 2021 15:45:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240593AbhCPToc (ORCPT
+        with ESMTP id S240596AbhCPTog (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Mar 2021 15:44:32 -0400
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B80DEC061756
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 12:44:30 -0700 (PDT)
-Received: by mail-pg1-x529.google.com with SMTP id v14so16387009pgq.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 12:44:30 -0700 (PDT)
+        Tue, 16 Mar 2021 15:44:36 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AD21C061765
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 12:44:32 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id y13so9558956pfr.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 12:44:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=afne12eWxC99ZM3RzCisiw1S1UD3p193Z3PzLDJZPos=;
-        b=gjVKxFNzVzllJs/RT8W4Egbh/OE3HnDf+Y0CMunCLsQxm014Xg6DKCojAJJe5I4a2P
-         J+4pnnGsjw4pa274nBt037XOwFcOOJk9V5VaJy98lcQ1oDXXEhyh/PtELyC4Z/gKQExY
-         XzrLQ8UQszcVkcb/Q414EFgaAa3L3cgrFGecymz+noqUHKjU76ADky4mrcK0npU2glI6
-         3eMgoZ0RcdFu/vkPDQXwocLDa2/cap5PltYtN4MdcDxdWiGUiqgEcnWdwriCRUBi91xa
-         jvGmmOscb+iWggMmd9+fU5O+EfsjQjD3bZRV0B/vTIxNXloOKaqVBM08Sf2P5PyTgjA/
-         aUSw==
+        bh=UnFkdLJUN9TtvBAkU5e5gC8CjqnLnnasN5mbIWLeeYY=;
+        b=ReDgWn6Bd9w+s2lcR0+83v4j8619TtqfvJyE6zZDOVJkwN3Ar50vaup7tsLEC9aqf3
+         4Gljz73V+iSHPmbi/lKJlootjqYPmlXHpsFeTLLsvdPQTAfrAKC4Te+Lv1jXMK2tGquQ
+         K5FSdG1KcsYd1nGfDp3E63U0z5L+Oz+hJXNvewNb3MIvlh21srFYJoY4NNKziyZWg51E
+         BCWE6ixSW4CtZwDv/04dMlGew4HuQI0X6saI3dH4v9VYBj1agXbr+INJl3hJtmFnEvdI
+         tUyvwa9HuefXJzS5aMmNZl1K5XIxCQYtnt2yhSQLoc9BdIpY05FEWM3oS0f1UdOVVGW7
+         uTKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=afne12eWxC99ZM3RzCisiw1S1UD3p193Z3PzLDJZPos=;
-        b=hyIqEM7Ejsl7dftgidAkXe6ox55nvEbIEGyQ7nKMCn+t3O1z5Ks/CLOZRPfJiq2h4p
-         H80LX4ggjuJqjhbZkkiiR9VyIaw8zOPCTDJZCnOt04E8LetDUAZa6EWdWgHpwP98z6ix
-         HfvZGHJJmX47cc3M7JFKTZdXjXYBkAWMwWTBYaxmQ2maQ4LmYZpNAMMu06hf/eJqSSSw
-         ui/5HSyWjNHWuss6I5NilE6VhlFy7qTaBsCNx0xlmD7Omj7dwVqyuW6v5nqbNvYXQ3wX
-         PIbfmP+4nDovN3N/4+qOw3pp+Q8kvThOqR/GGSYD5FnXecJBmtU+Ar6qvBDOvMAcjjGF
-         u2Dw==
-X-Gm-Message-State: AOAM533CqshfpsHTmfv7LM5bNf9dT9g0pWoPk/IkiYfUO1FE+0r2H9xy
-        WDdj9im7ukY6ptRX4t3+aDCBRA==
-X-Google-Smtp-Source: ABdhPJxYjxHpYGvE1UsK7N+mxBKfr8/iFr+Lwt+g/ozLYXOMwkRO+SVrODMOPJKOj8V6Hd+K0NIIhQ==
-X-Received: by 2002:a63:4708:: with SMTP id u8mr1162155pga.102.1615923870318;
-        Tue, 16 Mar 2021 12:44:30 -0700 (PDT)
+        bh=UnFkdLJUN9TtvBAkU5e5gC8CjqnLnnasN5mbIWLeeYY=;
+        b=NKmszMw5GTqoGmDVFcxNCm68W/qkd6AA5ZCLN1jkfZDKNbHrowVNhBiUmyV3UC/xOu
+         z2bpdeAB0Ia3ZlLE1MQvZDjRHzEh9dkJFLfUp1FEJCYO/nTNQ1cxzJPnAqwhL5zYrgxB
+         HvQ3pvx7U6nh0pay90vY0YBfSYqXl9oFp8czsymiu+YqXKZXFDTHciDCaBm9G4mNQ0yR
+         nLTXFd0VT2HX1Ucw9jorYomFyVSLmmu3YrO2na6+rO/93JqU9eRoc6reTHPbr3ekGwE0
+         sGDrlLeIr1yxdPjowr5gxYKpbF1e2CBZoICoMz+yfM3wRc7zpp/QEWVBX+JETdX+K+nE
+         xS5g==
+X-Gm-Message-State: AOAM531XVPPr19TzY6M1boRssxydOd/aMnQu2vHeB4bqdwwfd6rDRYX6
+        YbB9j3bGZPV5aPfWOjvKSzYVzQ==
+X-Google-Smtp-Source: ABdhPJwErqasvPtJK2lkxLDfU67zMGlFywvbyUETipq/bhyzk5aqcThTiFfQBAngEXwXAmZWzCFofg==
+X-Received: by 2002:a63:1d4d:: with SMTP id d13mr1094657pgm.103.1615923872244;
+        Tue, 16 Mar 2021 12:44:32 -0700 (PDT)
 Received: from relinquished.tfbnw.net ([2620:10d:c090:400::5:532])
-        by smtp.gmail.com with ESMTPSA id w22sm16919104pfi.133.2021.03.16.12.44.28
+        by smtp.gmail.com with ESMTPSA id w22sm16919104pfi.133.2021.03.16.12.44.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Mar 2021 12:44:29 -0700 (PDT)
+        Tue, 16 Mar 2021 12:44:31 -0700 (PDT)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-btrfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, kernel-team@fb.com
-Subject: [PATCH v4 03/11] btrfs-progs: receive: support v2 send stream DATA tlv format
-Date:   Tue, 16 Mar 2021 12:43:54 -0700
-Message-Id: <4ce95af75a4596ca20fed3d5112a600616e3e985.1615922859.git.osandov@osandov.com>
+Subject: [PATCH v4 3/5] btrfs: send: allocate send buffer with alloc_page() and vmap() for v2
+Date:   Tue, 16 Mar 2021 12:43:55 -0700
+Message-Id: <41449ae28ca4133f7aa27e6ec477d0c60586b3d4.1615922753.git.osandov@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <cover.1615922753.git.osandov@fb.com>
 References: <cover.1615922753.git.osandov@fb.com>
@@ -63,84 +63,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Boris Burkov <borisb@fb.com>
+From: Omar Sandoval <osandov@fb.com>
 
-The new format privileges the BTRFS_SEND_A_DATA attribute by
-guaranteeing it will always be the last attribute in any command that
-needs it, and by implicitly encoding the data length as the difference
-between the total command length in the command header and the sizes of
-the rest of the attributes (and of course the tlv_type identifying the
-DATA attribute). To parse the new stream, we must read the tlv_type and
-if it is not DATA, we proceed normally, but if it is DATA, we don't
-parse a tlv_len but simply compute the length.
+For encoded writes, we need the raw pages for reading compressed data
+directly via a bio. So, replace kvmalloc() with vmap() so we have access
+to the raw pages. 144k is large enough that it usually gets allocated
+with vmalloc(), anyways.
 
-In addition, we add some bounds checking when parsing each chunk of
-data, as well as for the tlv_len itself.
-
-Signed-off-by: Boris Burkov <boris@bur.io>
+Signed-off-by: Omar Sandoval <osandov@fb.com>
 ---
- common/send-stream.c | 36 ++++++++++++++++++++++++++----------
- 1 file changed, 26 insertions(+), 10 deletions(-)
+ fs/btrfs/send.c | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
-diff --git a/common/send-stream.c b/common/send-stream.c
-index 3d3585c3..4d819185 100644
---- a/common/send-stream.c
-+++ b/common/send-stream.c
-@@ -165,28 +165,44 @@ static int read_cmd(struct btrfs_send_stream *sctx)
- 
- 	pos = 0;
- 	while (pos < cmd_len) {
--		struct btrfs_tlv_header *tlv_hdr;
- 		u16 tlv_type;
--		u16 tlv_len;
- 		struct btrfs_send_attribute *send_attr;
- 
--		tlv_hdr = (struct btrfs_tlv_header *)data;
--		tlv_type = le16_to_cpu(tlv_hdr->tlv_type);
--		tlv_len = le16_to_cpu(tlv_hdr->tlv_len);
-+		if (cmd_len - pos < sizeof(__le16)) {
-+			error("send stream is truncated");
-+			ret = -EINVAL;
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index 98948568017c..25b1a60a568c 100644
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -81,6 +81,7 @@ struct send_ctx {
+ 	char *send_buf;
+ 	u32 send_size;
+ 	u32 send_max_size;
++	struct page **send_buf_pages;
+ 	u64 total_send_size;
+ 	u64 cmd_send_size[BTRFS_SEND_C_MAX + 1];
+ 	u64 flags;	/* 'flags' member of btrfs_ioctl_send_args is u64 */
+@@ -7203,6 +7204,7 @@ long btrfs_ioctl_send(struct file *mnt_file, struct btrfs_ioctl_send_args *arg)
+ 	struct btrfs_root *clone_root;
+ 	struct send_ctx *sctx = NULL;
+ 	u32 i;
++	u32 send_buf_num_pages = 0;
+ 	u64 *clone_sources_tmp = NULL;
+ 	int clone_sources_to_rollback = 0;
+ 	size_t alloc_size;
+@@ -7283,10 +7285,28 @@ long btrfs_ioctl_send(struct file *mnt_file, struct btrfs_ioctl_send_args *arg)
+ 	if (sctx->flags & BTRFS_SEND_FLAG_STREAM_V2) {
+ 		sctx->send_max_size = ALIGN(SZ_16K + BTRFS_MAX_COMPRESSED,
+ 					    PAGE_SIZE);
++		send_buf_num_pages = sctx->send_max_size >> PAGE_SHIFT;
++		sctx->send_buf_pages = kcalloc(send_buf_num_pages,
++					       sizeof(*sctx->send_buf_pages),
++					       GFP_KERNEL);
++		if (!sctx->send_buf_pages) {
++			send_buf_num_pages = 0;
++			ret = -ENOMEM;
 +			goto out;
 +		}
-+		tlv_type = le16_to_cpu(*(__le16 *)data);
- 
- 		if (tlv_type == 0 || tlv_type > BTRFS_SEND_A_MAX) {
--			error("invalid tlv in cmd tlv_type = %hu, tlv_len = %hu",
--					tlv_type, tlv_len);
-+			error("invalid tlv in cmd tlv_type = %hu", tlv_type);
- 			ret = -EINVAL;
- 			goto out;
- 		}
- 
- 		send_attr = &sctx->cmd_attrs[tlv_type];
- 		send_attr->tlv_type = tlv_type;
--		send_attr->tlv_len = tlv_len;
--		pos += sizeof(*tlv_hdr);
--		data += sizeof(*tlv_hdr);
- 
-+		pos += sizeof(tlv_type);
-+		data += sizeof(tlv_type);
-+		if (sctx->version == 2 && tlv_type == BTRFS_SEND_A_DATA) {
-+			send_attr->tlv_len = cmd_len - pos;
-+		} else {
-+			if (cmd_len - pos < sizeof(__le16)) {
-+				error("send stream is truncated");
-+				ret = -EINVAL;
++		for (i = 0; i < send_buf_num_pages; i++) {
++			sctx->send_buf_pages[i] = alloc_page(GFP_KERNEL);
++			if (!sctx->send_buf_pages[i]) {
++				ret = -ENOMEM;
 +				goto out;
 +			}
-+			send_attr->tlv_len = le16_to_cpu(*(__le16 *)data);
-+			pos += sizeof(__le16);
-+			data += sizeof(__le16);
 +		}
-+		if (cmd_len - pos < send_attr->tlv_len) {
-+			error("send stream is truncated");
-+			ret = -EINVAL;
-+			goto out;
++		sctx->send_buf = vmap(sctx->send_buf_pages, send_buf_num_pages,
++				      VM_MAP, PAGE_KERNEL);
+ 	} else {
+ 		sctx->send_max_size = BTRFS_SEND_BUF_SIZE_V1;
++		sctx->send_buf = kvmalloc(sctx->send_max_size, GFP_KERNEL);
+ 	}
+-	sctx->send_buf = kvmalloc(sctx->send_max_size, GFP_KERNEL);
+ 	if (!sctx->send_buf) {
+ 		ret = -ENOMEM;
+ 		goto out;
+@@ -7495,7 +7515,16 @@ long btrfs_ioctl_send(struct file *mnt_file, struct btrfs_ioctl_send_args *arg)
+ 			fput(sctx->send_filp);
+ 
+ 		kvfree(sctx->clone_roots);
+-		kvfree(sctx->send_buf);
++		if (sctx->flags & BTRFS_SEND_FLAG_STREAM_V2) {
++			vunmap(sctx->send_buf);
++			for (i = 0; i < send_buf_num_pages; i++) {
++				if (sctx->send_buf_pages[i])
++					__free_page(sctx->send_buf_pages[i]);
++			}
++			kfree(sctx->send_buf_pages);
++		} else {
++			kvfree(sctx->send_buf);
 +		}
- 		send_attr->data = data;
- 		pos += send_attr->tlv_len;
- 		data += send_attr->tlv_len;
+ 
+ 		name_cache_free(sctx);
+ 
 -- 
 2.30.2
 
