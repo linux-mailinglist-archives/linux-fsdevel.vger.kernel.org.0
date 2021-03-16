@@ -2,207 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5F8633CA8C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 02:09:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C765633CA96
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 02:12:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234122AbhCPBJE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Mar 2021 21:09:04 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:30425 "EHLO
+        id S229728AbhCPBMP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Mar 2021 21:12:15 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:9064 "EHLO
         esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234117AbhCPBJC (ORCPT
+        with ESMTP id S231531AbhCPBL7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Mar 2021 21:09:02 -0400
+        Mon, 15 Mar 2021 21:11:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1615856942; x=1647392942;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=97sPaW3qyvuDOyO3nuYtL75Oph/gLKaZ5/X37h9Beh4=;
-  b=I/ei3PAh6GsgiY5LhubDRS0mk7Vl/25v8gYy5Et03WVRrvTmTTDggQbS
-   uwrWOApdS7cslnJkSWWBzQjzUN+PW50nI7dH9e5HMpuQGztziGEPtsULS
-   kT+l9DI4kLrtKyN9Ef5hTOkmai18xQf0F3sGjFJffJHHc6ndUgnvrgOhA
-   /TIYhrH6hSQ0hguClDHA1vhvYGB2uQaxfLw2rScshO1L2nLPwAO9F1QJS
-   5WQpyNlUNrH0OKuD2VZWQe4R3H2qRQDYYByFWsZniOXicUVHtnsQNTss4
-   0BO6Mo3YlCKvV/vsf1UFCLM2Ge7iYJ6QJIi0VI6U1VT0P+jGiHsIQ+IJI
-   w==;
-IronPort-SDR: 1pRr+oJOIO7rpPp7bzf7F69Q294M3TWMw91enfFt6Y5PFtFoxxqnGWv1fSbZN45+u9S5fDE1Do
- eZhQAugtpZe6OmeIOgR8imixZdOZtr+Xq7OmDmHUyEsln1CDHMyMAfI6tZWnOAKDuxazgy4v90
- R8Tr8yEbMgc59FPT8Yi2qW+sjOEJABKfWLt/YA1y6g/r2QKMjxvERylKm/pPAuvQ6Fj5CwBgTs
- kjd+l1eSMgrZK7qSzwTLeAnQUdS1WGM79z+DzMCJqy6NQAU9iGVRLae3TAjjqO0snO2UIl7no4
- uts=
+  t=1615857119; x=1647393119;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=y/8rq/2KsJnsL/T4YdKQWtzf3Z3UDrlqieF6lUTHQpU=;
+  b=JsgFO/610dEjq0L30PqTtiobZ4ejhfU2p0/kP9fzS137MbS0k+KZTeo2
+   C9qlQDwIicdyxZSVIqSdpWodVuo0UMBTGqbPlAPQxjCmURDtGmksG82kz
+   5vTSi5PvuwDLrdS6IVltmsrqkrIzTHRzhIGDda2kNMTOCqstSPfwLGBm8
+   J5CF9nH5YAqZyUoDf37VEvpEd6NOLNLotNyFWXJQxmSZU7XSIOBK1BG8X
+   TsX5NVvxS7SDSFG7Sj8KTTQdf532Qr46IZqu+IPSxxTzOptRnLwAwe6XT
+   61eVaGyq2Q17FAPPH1PN7K3evAkfTpc+cz8cdifk7BenYEkH+GIxFJ3bB
+   g==;
+IronPort-SDR: KhG1zk7cy2NsaKhNcEBSSnl3vhd5pVWwyJTtEiJ/AD8/iule01nblMkXwUHX5sv360Be0kWzM/
+ 5Xp7QsQOwm7CwzLLI+hozDSuFgR0admKAUrY9b3MHJUJdC5qVFPfowrezxec9AR1ZginnXm+6I
+ gHzMWz7pEJvmD39w7toFFHhVBBxwOvHrm5uX9RrlKXt2MSdcIViDifRrt/CzchpDmjMZIP0vdx
+ UTy4LkwZjhlHTotp15aa26crm5SnxiUTMp3NEz14GwBiGIIZjQuDyvoJYNboDYmKiO2b72Eqgd
+ Er0=
 X-IronPort-AV: E=Sophos;i="5.81,251,1610380800"; 
-   d="scan'208";a="272929392"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 16 Mar 2021 09:09:02 +0800
-IronPort-SDR: Qp1gf1WrtVzHUWNzo/sakt5CRQeSzuvyMdTbuTpevp670pA3TBh/2o5/lA5kDwE34AgPfs0a1p
- GBjnBelUhbrcDvGHy2ABnsh59MwLHBvNj6ZC44G7u7ar0XGT3zeggnExn+vq1o7mPZ+aMUC5Cw
- RZ4c2yrGt8O9reIlZiHzTe1e1ITgVYc1vrynoVASPGnAzVJaR5kVMQyu5UKj+yOwAAHGBEDx0e
- GY33P4xOfOLgxcqdqQHRjaqK/9yVqtAqW5jHvclG/dy+D3XIXxiWu9qlKEHLm3NswOD/TqAIxk
- F+44NOcttyhsZ9nrpNWOzAXy
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2021 17:49:39 -0700
-IronPort-SDR: vA8dgIL4M4MEipOlZqGzoz5L2cRtwHJJHOKWzd6md35ttI/thZ1UF/WUJq0XzfpX7iUVI0MEix
- F1XE8sQk6XiWENnPX54OyV7qb0jE3l38BE5B8YQwyJ7HYgkbYOXmJJt7XgStMtDK+eeDe4dFg1
- GxjQm2EorerWcNxQocrqPX0OTthQNPAlYjbHoVlz9E1M72AGxBFNZ1dXcZfLnhUQEsDZoKyLW9
- JEiUXQt0CW6pEMagXD87fX3r2qezUzppCYwxeERq6oQ4L90qiH72oJpmWolfKYPTjnzlOs+ZDH
- hg0=
-WDCIronportException: Internal
-Received: from washi.fujisawa.hgst.com ([10.149.53.254])
-  by uls-op-cesaip01.wdc.com with ESMTP; 15 Mar 2021 18:09:02 -0700
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v2 2/2] zonefs: Fix O_APPEND async write handling
-Date:   Tue, 16 Mar 2021 10:08:59 +0900
-Message-Id: <20210316010859.122006-3-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210316010859.122006-1-damien.lemoal@wdc.com>
-References: <20210316010859.122006-1-damien.lemoal@wdc.com>
+   d="scan'208";a="272929655"
+Received: from mail-dm6nam12lp2173.outbound.protection.outlook.com (HELO NAM12-DM6-obe.outbound.protection.outlook.com) ([104.47.59.173])
+  by ob1.hgst.iphmx.com with ESMTP; 16 Mar 2021 09:11:58 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=e/PQf+0qMnrsUNT7qTlXadKLPNbo3ksVEvljWVNZOorbC8pc4CzgW/bWgNXHSo2xzt0WIbOaEuvejQtOynnkYmgEzFEIleFNkQILroXyrIKtCwv0mSGBpXedRTHbHqqc8wbmc1DVK1znGXdy9AViSwS6dScGCd/5QOXn1egZ1r16Acm//BPcXVmht35FtNUd15K7hwGXS4RxlCNbcU2cGCTNaKAwIJIO1iB+dRjcTnlsgJGVfq+cauKREjGI2JVLNf2JcN3LzXZzH3Z5j9IC1E4dKsqhZoqAUawr00hUXl6+Lde2meEFoCqfH/0xbqZY2PNE0xFK1rTzBPY+ERP/Iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n2dJcWOFxEkVcNN+tCJX8UKM8k5IIv1t5QVWLJYJxwU=;
+ b=cpUrsaiNvY2qKtnaY4G5qoOnRfCRMt+svFi9TBH4lGgYW/rK9mbRWUTALNu/mTri8c1y2qMG2Guyabg79oKafrcnOwfWmbplsRDsbUb2Z0bvp4PptH366CaEhCK2O2z2cB7zp9l3O3y9r5jxJ1UunOrpaOtvj63wbYENzOf5XIaDLLtsWs6399VZaPy6PQX+qyBng+4UxFno5DkyI3Xf0Wc/JuFossx3PmD+pXzBKq19oMNHc2j7WxjG+jo2T6liauuzSjvH+T94w6AinsnMDY9b1FVCBT/23vocjsVAfiy10IJCZcEKRewgzx2EOFMsFk6pRTtsEHZl6kAlQWM9Bg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n2dJcWOFxEkVcNN+tCJX8UKM8k5IIv1t5QVWLJYJxwU=;
+ b=gw9IYMmO5o1mn4G5qyHiiDqhilK/cNj1zfKYZlLI3+3fg6euizsNdBzNjg3aguy9aJe6/awvhs4kXPtYoTOmR2ohiuwmzc6vYGN1VaK365uN6j/SBkQAXDqBWBsZNLD6qfiwK8mIEzPkdDwXMyTGl8VxWHu6ofQu0RdtItqlA7w=
+Received: from BL0PR04MB6514.namprd04.prod.outlook.com (2603:10b6:208:1ca::23)
+ by MN2PR04MB7070.namprd04.prod.outlook.com (2603:10b6:208:1e1::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3933.31; Tue, 16 Mar
+ 2021 01:11:57 +0000
+Received: from BL0PR04MB6514.namprd04.prod.outlook.com
+ ([fe80::e9c5:588:89e:6887]) by BL0PR04MB6514.namprd04.prod.outlook.com
+ ([fe80::e9c5:588:89e:6887%3]) with mapi id 15.20.3933.032; Tue, 16 Mar 2021
+ 01:11:57 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     Nathan Chancellor <nathan@kernel.org>
+CC:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        kernel test robot <lkp@intel.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "kbuild-all@lists.01.org" <kbuild-all@lists.01.org>,
+        "clang-built-linux@googlegroups.com" 
+        <clang-built-linux@googlegroups.com>
+Subject: Re: [PATCH 2/2] zonefs: Fix O_APPEND async write handling
+Thread-Topic: [PATCH 2/2] zonefs: Fix O_APPEND async write handling
+Thread-Index: AQHXGU5UzgIQSOxcCkmbmdVM+KAasA==
+Date:   Tue, 16 Mar 2021 01:11:57 +0000
+Message-ID: <BL0PR04MB65145A954830D891B46CC2B4E76B9@BL0PR04MB6514.namprd04.prod.outlook.com>
+References: <20210315034919.87980-3-damien.lemoal@wdc.com>
+ <202103151548.W9MG3wiF-lkp@intel.com>
+ <PH0PR04MB741614B0DED04C088E0B075E9B6C9@PH0PR04MB7416.namprd04.prod.outlook.com>
+ <BL0PR04MB6514205221C23615549ED67DE76C9@BL0PR04MB6514.namprd04.prod.outlook.com>
+ <20210315170855.tguqrsl7wsbjojib@archlinux-ax161>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [2400:2411:43c0:6000:85a2:35e9:2c43:32e2]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 343d541c-2ecd-46d4-36a2-08d8e8187e7e
+x-ms-traffictypediagnostic: MN2PR04MB7070:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR04MB70702DBAE886D31DAB1876C0E76B9@MN2PR04MB7070.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:1002;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: PcKpDHGmEoVNX+WF55/lnwPJdKoS7BRdVCKa0tU71AkJsbWrh4T85mefpAP1c1b3CNeBNS5pib+WwB2c4wiAVTo85Xi+eh8hMhmAm1p4RHzzECY3r9OJcVebw1d3i+LZR25HAn8cmbfZxK1UN2a43jYHtK2UFz4zyUH7Qm4I7QkX+bJpqlawvU02F5r7iC0qhfRnOxGDShZ7YhkFN9hhz56/QdnHJhCaEfwZma3QXZ3RdxJ9IJNZlj8Tbb/Sj6bbrPKsXxmnMre4dUKxom4gauqN82byn9Cib0CEjVaP6fARqV9936ZoSDqqRXbPwa6tyH/ro1+UJydTmDwh7L0dBA/F+xKg/VAHkbS5dVA+YasccOLnPICYeYgHj96CZK481N/es6zwKo1CUzLEIae5qg2rycOSc62bFdP85lhtZGhm5r92O0VZ6A/DeITi3Ive7/htpiJ09P1Woy4TIjiIOYAHqbnotl21B34dzu4b5YrGFCDfcMnijf2oGSa9OxMXhQzQiQXD5kgGAz9qMsT+tbgHbb0TORuAmlQ5dU+bR9MddvJ1q4yNosqa+faTw2fR
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR04MB6514.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(376002)(39860400002)(396003)(366004)(136003)(33656002)(55016002)(9686003)(186003)(71200400001)(2906002)(83380400001)(86362001)(54906003)(76116006)(6916009)(66446008)(66476007)(66556008)(6506007)(53546011)(4326008)(8676002)(5660300002)(478600001)(91956017)(316002)(7696005)(66946007)(64756008)(52536014)(8936002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?VsBU7z/oGwViOSQWIM2HFkosjx+R2Ylcy/P6tMpRWDfpJyMPhx1YnrmgtJQg?=
+ =?us-ascii?Q?yzBefRMqMKTYifw/OvaDNSFN1tW+m+9Se6iAa7JudXLBLf3jRIfaAxZ4RFvP?=
+ =?us-ascii?Q?eJ1J4IY4X21qkYcIhGpr44hRJNVW5bUixLtcJFX+UsZlXfhIOD2WARWexFtc?=
+ =?us-ascii?Q?nkQLzswchawiCNW5b2JR3VEK7agkvhL4bKp7cDC8Sgv3O8Rw5lewDpBjWLjc?=
+ =?us-ascii?Q?zvBdJc5RsTeTBcdzxjrIJ8DIO5iyc1PtsPtESam0kCW96G9SDvp6LQlZqdd0?=
+ =?us-ascii?Q?VY2irL3mIMVrJgjidMZxpHkQmz6cHje0Kuqb1aYVuzi/mUqX+6itzZi/W5UT?=
+ =?us-ascii?Q?H5BDblRqXrrocSAs7YTbnPBprfpEX5p6Iw2+yr06FFG/8iqgIfjYsq2UManD?=
+ =?us-ascii?Q?JDQMzPIlR8OVaqUyM2WSfGDBOCI45CvDSBAUGDaupxOqefHJWQlBjCqxzEax?=
+ =?us-ascii?Q?OjChJdwYjzMiyPJl3p3K8gu314+Y2GrT0XtLWztLk5rJldYZ8lYwIQ1J1u8/?=
+ =?us-ascii?Q?ABjIV/sy5neBWC+YMzYV/8Puy/8gsIlhdceXpxqF9VPb6fOM+lyvSYow0yBG?=
+ =?us-ascii?Q?PohyqVo3NQWYSd9h4qt79z979dkWTcTWAI+71IdAeSoS1DDYOnkiW9+Uw9zl?=
+ =?us-ascii?Q?RxvKQfZbA9qAMxyERGx7sDvTDC9HF31FPXwRf11RZ0IE+tDyP7t3Z/QlQzJM?=
+ =?us-ascii?Q?v7uuylzX+L9iKoHx8W3+BZ0lM6OTatCb16ClEBSKRAwjxUZYqrQ2iHp4qBGJ?=
+ =?us-ascii?Q?4Cf7FGHtBJa0tqaBFRLWeKOLSRxPwdNFJI7/iLrhIsr+n9imGDJ7mv7xBlMb?=
+ =?us-ascii?Q?NsarckydxZGpNX2/jgYVy3mYomoDzV2FOnaCKakb3n+51AaHNpxU983gDqis?=
+ =?us-ascii?Q?OZWS+uVjDnmwHv22oQASHg9wLfXW6QXD44wdAJqvzkPRCVc9ADgS8g/m1MWK?=
+ =?us-ascii?Q?9yk5t1ZoenyJBb5wh8f7UJRqzn++R7RANPtt7SMkH77jlq+pC3N+i7enyi0o?=
+ =?us-ascii?Q?5r2aeVNG5Zlb796oTN0Pvw64WCtZCn9y+4NKa9Hgil/cfLs0pRrtFpGBNWP1?=
+ =?us-ascii?Q?4A9k00IbppZUYStusz1GHyw9eM98rKy1OD1q5Oy2E0RAC+GS3jGzSVgE/Z1Y?=
+ =?us-ascii?Q?e1bgTbXI5tjKc60uUMpw2NKZ80vrJXCv/JDCIFtcE3HKfPpjpuJcUqDXdoNN?=
+ =?us-ascii?Q?+PgGp3QXLjYHB5xRuW0d9RxL6/a9B4ghPu51CQgbtyO51OnCVPOKQ3bjEI9V?=
+ =?us-ascii?Q?kDTeC9ibVFLKTQDyv7VzrMKILgA2w/BMBMtzdOm+cxdq47fJfyotyVMIp187?=
+ =?us-ascii?Q?cvgDO8+Yf1wMG7QqPIuChYzq83qpPWA+g3NmxJRdytYuJArh1RirTMUQUQ4I?=
+ =?us-ascii?Q?6pY2UiUVtNLjq4sO88YyXCUb6sg9RUdtdn6HgVlVjZdDtrtwug=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR04MB6514.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 343d541c-2ecd-46d4-36a2-08d8e8187e7e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Mar 2021 01:11:57.1049
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: oXK52z8uh7Wct/D+1mj6nx3sTlmgATLQIdo1Z4fl0ensqFqoCsqpYY2otGd8MzD0jZg8qw9hk40HEyJLbZZrlQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB7070
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-zonefs updates the size of a sequential zone file inode only on
-completion of direct writes. When executing asynchronous append writes
-(with a file open with O_APPEND or using RWF_APPEND), the use of the
-current inode size in generic_write_checks() to set an iocb offset thus
-leads to unaligned write if an application issues an append write
-operation with another write already being executed.
-
-Fix this problem by introducing zonefs_write_checks() as a modified
-version of generic_write_checks() using the file inode wp_offset for an
-append write iocb offset. Also introduce zonefs_write_check_limits() to
-replace generic_write_check_limits() call. This zonefs special helper
-makes sure that the maximum file limit used is the maximum size of the
-file being accessed.
-
-Since zonefs_write_checks() already truncates the iov_iter, the calls
-to iov_iter_truncate() in zonefs_file_dio_write() and
-zonefs_file_buffered_write() are removed.
-
-Fixes: 8dcc1a9d90c1 ("fs: New zonefs file system")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- fs/zonefs/super.c | 78 +++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 68 insertions(+), 10 deletions(-)
-
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index a3d074f98660..3427c99abb4d 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -743,6 +743,68 @@ static ssize_t zonefs_file_dio_append(struct kiocb *iocb, struct iov_iter *from)
- 	return ret;
- }
- 
-+/*
-+ * Do not exceed the LFS limits nor the file zone size. If pos is under the
-+ * limit it becomes a short access. If it exceeds the limit, return -EFBIG.
-+ */
-+static loff_t zonefs_write_check_limits(struct file *file, loff_t pos,
-+					loff_t count)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct zonefs_inode_info *zi = ZONEFS_I(inode);
-+	loff_t limit = rlimit(RLIMIT_FSIZE);
-+	loff_t max_size = zi->i_max_size;
-+
-+	if (limit != RLIM_INFINITY) {
-+		if (pos >= limit) {
-+			send_sig(SIGXFSZ, current, 0);
-+			return -EFBIG;
-+		}
-+		count = min(count, limit - pos);
-+	}
-+
-+	if (!(file->f_flags & O_LARGEFILE))
-+		max_size = min_t(loff_t, MAX_NON_LFS, max_size);
-+
-+	if (unlikely(pos >= max_size))
-+		return -EFBIG;
-+
-+	return min(count, max_size - pos);
-+}
-+
-+static ssize_t zonefs_write_checks(struct kiocb *iocb, struct iov_iter *from)
-+{
-+	struct file *file = iocb->ki_filp;
-+	struct inode *inode = file_inode(file);
-+	struct zonefs_inode_info *zi = ZONEFS_I(inode);
-+	loff_t count;
-+
-+	if (IS_SWAPFILE(inode))
-+		return -ETXTBSY;
-+
-+	if (!iov_iter_count(from))
-+		return 0;
-+
-+	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
-+		return -EINVAL;
-+
-+	if (iocb->ki_flags & IOCB_APPEND) {
-+		if (zi->i_ztype != ZONEFS_ZTYPE_SEQ)
-+			return -EINVAL;
-+		mutex_lock(&zi->i_truncate_mutex);
-+		iocb->ki_pos = zi->i_wpoffset;
-+		mutex_unlock(&zi->i_truncate_mutex);
-+	}
-+
-+	count = zonefs_write_check_limits(file, iocb->ki_pos,
-+					  iov_iter_count(from));
-+	if (count < 0)
-+		return count;
-+
-+	iov_iter_truncate(from, count);
-+	return iov_iter_count(from);
-+}
-+
- /*
-  * Handle direct writes. For sequential zone files, this is the only possible
-  * write path. For these files, check that the user is issuing writes
-@@ -760,8 +822,7 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
- 	struct super_block *sb = inode->i_sb;
- 	bool sync = is_sync_kiocb(iocb);
- 	bool append = false;
--	size_t count;
--	ssize_t ret;
-+	ssize_t ret, count;
- 
- 	/*
- 	 * For async direct IOs to sequential zone files, refuse IOCB_NOWAIT
-@@ -779,12 +840,11 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
- 		inode_lock(inode);
- 	}
- 
--	ret = generic_write_checks(iocb, from);
--	if (ret <= 0)
-+	count = zonefs_write_checks(iocb, from);
-+	if (count <= 0) {
-+		ret = count;
- 		goto inode_unlock;
--
--	iov_iter_truncate(from, zi->i_max_size - iocb->ki_pos);
--	count = iov_iter_count(from);
-+	}
- 
- 	if ((iocb->ki_pos | count) & (sb->s_blocksize - 1)) {
- 		ret = -EINVAL;
-@@ -844,12 +904,10 @@ static ssize_t zonefs_file_buffered_write(struct kiocb *iocb,
- 		inode_lock(inode);
- 	}
- 
--	ret = generic_write_checks(iocb, from);
-+	ret = zonefs_write_checks(iocb, from);
- 	if (ret <= 0)
- 		goto inode_unlock;
- 
--	iov_iter_truncate(from, zi->i_max_size - iocb->ki_pos);
--
- 	ret = iomap_file_buffered_write(iocb, from, &zonefs_iomap_ops);
- 	if (ret > 0)
- 		iocb->ki_pos += ret;
--- 
-2.30.2
-
+On 2021/03/16 2:09, Nathan Chancellor wrote:=0A=
+> On Mon, Mar 15, 2021 at 07:22:56AM +0000, Damien Le Moal wrote:=0A=
+>> On 2021/03/15 16:21, Johannes Thumshirn wrote:=0A=
+>>> On 15/03/2021 08:16, kernel test robot wrote:=0A=
+>>>> 818	static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct io=
+v_iter *from)=0A=
+>>>>    819	{=0A=
+>>>>    820		struct inode *inode =3D file_inode(iocb->ki_filp);=0A=
+>>>>    821		struct zonefs_inode_info *zi =3D ZONEFS_I(inode);=0A=
+>>>>    822		struct super_block *sb =3D inode->i_sb;=0A=
+>>>>    823		bool sync =3D is_sync_kiocb(iocb);=0A=
+>>>>    824		bool append =3D false;=0A=
+>>>>    825		ssize_t ret, count;=0A=
+>>>=0A=
+>>>>    843		count =3D zonefs_write_checks(iocb, from);=0A=
+>>>>  > 844		if (count <=3D 0)=0A=
+>>>>    845			goto inode_unlock;=0A=
+>>>=0A=
+>>> Args that needs to be:=0A=
+>>> 			if (count <=3D 0) {=0A=
+>>> 				ret =3D count;=0A=
+>>> 				goto inode_unlock;=0A=
+>>> 			}=0A=
+>>>=0A=
+>>> Sorry for not spotting it.=0A=
+>>=0A=
+>> Yep. Sending v2. Weird that gcc does not complain on my local compile...=
+=0A=
+> =0A=
+> Unfortunately, GCC's version of this warning was disabled for default=0A=
+> compiles by Linus in commit 78a5255ffb6a ("Stop the ad-hoc games with=0A=
+> -Wno-maybe-initialized"). W=3D2 is required, which can be quite noisy fro=
+m=0A=
+> my understanding. KCFLAGS=3D-Wmaybe-uninitialized is a good option.=0A=
+=0A=
+I was not aware of that change. Thanks for the information !=0A=
+=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
