@@ -2,88 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11C2933DD84
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 20:29:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECAEE33DD25
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 20:08:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240475AbhCPT3M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Mar 2021 15:29:12 -0400
-Received: from casper.infradead.org ([90.155.50.34]:59198 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240460AbhCPT2c (ORCPT
+        id S240293AbhCPTIS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Mar 2021 15:08:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55970 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240309AbhCPTIF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Mar 2021 15:28:32 -0400
-X-Greylist: delayed 1253 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Mar 2021 15:28:32 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=a+0vOSKhaFyvZ89GWuo3huxCDtu4K+x/0Wx25fIk42U=; b=jt05dHVt86rt/fg//Nd6cO5DVR
-        1G3IYjzp8NmtC3ioV47ZhvEwsVO11uGSJs4d6RoCIe/BcJ/xaLebCaSFyAaRPStsmz5aU3Z0/tTjC
-        i2D7OiygMf3930tWOiLJfa4OdaVC2y2beYtlioE8Uk6T6FlNM29ZnQ8CELwXsvZbjeDKpcF11lhjh
-        fxWoakrSFVJne6ZMS7JRWMDDO0gZO7qnjt44rLaOVOowDrCMDY6XwMEq7NZ3RYp/xCyc/iArZ07hH
-        6dhLiP7mVnkIYcFu7Y/+Bu3gq9ijgn43hiplbkX3GbtJmVLUTJ4dq2oS7nwTEqPpCsU1+5QgJ/TDr
-        8DraJk1w==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lMF23-000UZR-6Y; Tue, 16 Mar 2021 19:07:08 +0000
-Date:   Tue, 16 Mar 2021 19:07:07 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 02/28] mm: Add an unlock function for
- PG_private_2/PG_fscache
-Message-ID: <20210316190707.GD3420@casper.infradead.org>
-References: <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk>
- <161539528910.286939.1252328699383291173.stgit@warthog.procyon.org.uk>
+        Tue, 16 Mar 2021 15:08:05 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6D47C061756
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 12:08:04 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id nh23-20020a17090b3657b02900c0d5e235a8so11881pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 12:08:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=8AoKzKPSw2tvyexd5NcXY+l1zYIQb/v5kLzQvhcVl08=;
+        b=hp0QAMcH2/+hAfF/v1msV9oc8S1hs4aD8wPtqsPN7CylkDbiC2m1t4yKCOjfkK0mT1
+         FH1k7n42emJvCQMg1E9+DdPPp7Jr8+UmkHBy5HPI7dHQP0de8TCmIAmALPbozA+obtPG
+         GNhpP5Hyv66XRv0RRDMyxY15UjtX3yzT9CtmA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=8AoKzKPSw2tvyexd5NcXY+l1zYIQb/v5kLzQvhcVl08=;
+        b=SZuVFfp/hYg5krOdIoa371RAM/WTepf6ri1NxHe67+E1yhY6IErU3NWevAvPwbInkZ
+         eisu0v5mmL3YctcCBuK1eY26GOIcXRh8rRkXAQ/ganR6f3ch0Cd05+yvP5mX1zJ5MpgJ
+         DRO5aT0SIt/i/aPpTwzq/fpigElVQ0lcm8IgmLqHNpAPXTYRqvSXq044hojbYyERWWxN
+         mqdeTK4cN4azPUWPuK4ALZ6tEMdYnwjuzsObwwJijQ64maR4aqaMWwftzynt3gO7Z9i6
+         xYbHJa2FHEWYkDH7dfw4pgit0BfE6vphejGgnT675v2Kbl6rKUBqB0HVzwMpvaBQ8Y1F
+         AI2A==
+X-Gm-Message-State: AOAM533FFMMGxrxUow7z8mqXDhQN50Z2jQO5upLt7UYPMQwZ2t6zRD+7
+        MR4RdsgXO2Qv4nbDhJG9IJInSQ==
+X-Google-Smtp-Source: ABdhPJwgNNfhDgUxxbbcJYMpgOpJMkOQakG4DPMXgYCnO/0AdsbjMLkkKC7Uuv2O2Z+6Y5Z6LdNrsw==
+X-Received: by 2002:a17:902:c382:b029:e4:7015:b646 with SMTP id g2-20020a170902c382b02900e47015b646mr922259plg.83.1615921684270;
+        Tue, 16 Mar 2021 12:08:04 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id v126sm17079279pfv.163.2021.03.16.12.08.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Mar 2021 12:08:03 -0700 (PDT)
+Date:   Tue, 16 Mar 2021 12:08:02 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+        Adam Nichols <adam@grimm-co.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] seq_file: Unconditionally use vmalloc for buffer
+Message-ID: <202103161205.B2181BDE38@keescook>
+References: <20210315174851.622228-1-keescook@chromium.org>
+ <YFBs202BqG9uqify@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <161539528910.286939.1252328699383291173.stgit@warthog.procyon.org.uk>
+In-Reply-To: <YFBs202BqG9uqify@dhcp22.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 10, 2021 at 04:54:49PM +0000, David Howells wrote:
-> Add a function, unlock_page_private_2(), to unlock PG_private_2 analogous
-> to that of PG_lock.  Add a kerneldoc banner to that indicating the example
-> usage case.
+On Tue, Mar 16, 2021 at 09:31:23AM +0100, Michal Hocko wrote:
+> On Mon 15-03-21 10:48:51, Kees Cook wrote:
+> > The sysfs interface to seq_file continues to be rather fragile, as seen
+> > with some recent exploits[1]. Move the seq_file buffer to the vmap area
+> > (while retaining the accounting flag), since it has guard pages that
+> > will catch and stop linear overflows. This seems justified given that
+> > seq_file already uses kvmalloc(), is almost always using a PAGE_SIZE or
+> > larger allocation, has allocations are normally short lived, and is not
+> > normally on a performance critical path.
+> 
+> I have already objected without having my concerns really addressed.
 
-This isn't a problem with this patch per se, but I'm concerned about
-private2 and expected page refcounts.
+Sorry, I didn't mean to ignore your comments!
 
-static inline int is_page_cache_freeable(struct page *page)
-{
-        /*
-         * A freeable page cache page is referenced only by the caller
-         * that isolated the page, the page cache and optional buffer
-         * heads at page->private.
-         */
-        int page_cache_pins = thp_nr_pages(page);
-        return page_count(page) - page_has_private(page) == 1 + page_cache_pins;
-}
+> Your observation that most of buffers are PAGE_SIZE in the vast majority
+> cases matches my experience and kmalloc should perform better than
+> vmalloc. You should check the most common /proc readers at least.
 
-static inline int page_has_private(struct page *page)
-{
-        return !!(page->flags & PAGE_FLAGS_PRIVATE);
-}
+Yeah, I'm going to build a quick test rig to see some before/after
+timings, etc.
 
-#define PAGE_FLAGS_PRIVATE                              \
-        (1UL << PG_private | 1UL << PG_private_2)
+> Also this cannot really be done for configurations with a very limited
+> vmalloc space (32b for example). Those systems are more and more rare
+> but you shouldn't really allow userspace to deplete the vmalloc space.
 
-So ... a page with both flags cleared should have a refcount of N.
-A page with one or both flags set should have a refcount of N+1.
+This sounds like two objections:
+- 32b has a small vmalloc space
+- userspace shouldn't allow depletion of vmalloc space
 
-How is a poor filesystem supposed to make that true?  Also btrfs has this
-problem since it uses private_2 for its own purposes.
+I'd be happy to make this 64b only. For the latter, I would imagine
+there are other vmalloc-exposed-to-userspace cases, but yes, this would
+be much more direct. Is that a problem in practice?
 
+> I would be also curious to see how vmalloc scales with huge number of
+> single page allocations which would be easy to trigger with this patch.
+
+Right -- what the best way to measure this (and what would be "too
+much")?
+
+-- 
+Kees Cook
