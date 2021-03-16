@@ -2,74 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBAEB33D9ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 17:57:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2E5833DA12
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 18:02:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236805AbhCPQ5Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Mar 2021 12:57:16 -0400
-Received: from mga11.intel.com ([192.55.52.93]:2203 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236819AbhCPQ5A (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Mar 2021 12:57:00 -0400
-IronPort-SDR: zDsb3nro9os8GuU01lAyz+/VxkpdUv7xJIODJgldO1NSaQZDPVC5Ojiux20QeA7xoqpHLKs3Ii
- yDOn2r9LqGPw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9925"; a="185935096"
-X-IronPort-AV: E=Sophos;i="5.81,254,1610438400"; 
-   d="scan'208";a="185935096"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2021 09:56:59 -0700
-IronPort-SDR: 0GXpxfw1ccaDKmouGv4eh+4O8g7EB/sXp/7qBYXgcKa8b91JsjRXVhXJA7l/h/xuPtxyer7xw7
- nexYuPBMYkDg==
-X-IronPort-AV: E=Sophos;i="5.81,254,1610438400"; 
-   d="scan'208";a="412288261"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2021 09:56:58 -0700
-Date:   Tue, 16 Mar 2021 09:56:58 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     dsterba@suse.cz, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/4] btrfs: Convert more kmaps to kmap_local_page()
-Message-ID: <20210316165658.GS3014244@iweiny-DESK2.sc.intel.com>
-References: <20210217024826.3466046-1-ira.weiny@intel.com>
- <20210312194141.GT7604@suse.cz>
- <20210312200500.GG3014244@iweiny-DESK2.sc.intel.com>
- <20210316110724.GJ7604@twin.jikos.cz>
+        id S237465AbhCPRCF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Mar 2021 13:02:05 -0400
+Received: from smtp-8fae.mail.infomaniak.ch ([83.166.143.174]:54225 "EHLO
+        smtp-8fae.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237210AbhCPRBo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Mar 2021 13:01:44 -0400
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F0KM82X67zMq2NJ;
+        Tue, 16 Mar 2021 18:01:40 +0100 (CET)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4F0KM501pgzlh8T6;
+        Tue, 16 Mar 2021 18:01:34 +0100 (CET)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v4 0/1] Unprivileged chroot
+Date:   Tue, 16 Mar 2021 18:01:34 +0100
+Message-Id: <20210316170135.226381-1-mic@digikod.net>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210316110724.GJ7604@twin.jikos.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 16, 2021 at 12:07:24PM +0100, David Sterba wrote:
-> On Fri, Mar 12, 2021 at 12:05:00PM -0800, Ira Weiny wrote:
-> > On Fri, Mar 12, 2021 at 08:41:41PM +0100, David Sterba wrote:
-> > > On Tue, Feb 16, 2021 at 06:48:22PM -0800, ira.weiny@intel.com wrote:
-> > > > From: Ira Weiny <ira.weiny@intel.com>
-> > > > 
-> > > > I am submitting these for 5.13.
-> > > > 
-> > > > Further work to remove more kmap() calls in favor of the kmap_local_page() this
-> > > > series converts those calls which required more than a common pattern which
-> > > > were covered in my previous series[1].  This is the second of what I hope to be
-> > > > 3 series to fully convert btrfs.  However, the 3rd series is going to be an RFC
-> > > > because I need to have more eyes on it before I'm sure about what to do.  For
-> > > > now this series should be good to go for 5.13.
-> > > > 
-> > > > Also this series converts the kmaps in the raid5/6 code which required a fix to
-> > > > the kmap'ings which was submitted in [2].
-> > > 
-> > > Branch added to for-next and will be moved to the devel queue next week.
-> > > I've added some comments about the ordering requirement, that's
-> > > something not obvious. There's a comment under 1st patch but that's
-> > > trivial to fix if needed. Thanks.
-> > 
-> > I've replied to the first patch.  LMK if you want me to respin it.
-> 
-> No need to respin, patchset now in misc-next. Thanks.
+Hi,
 
-Sweet!  Thanks!
-Ira
+This new patch group the current task security checks in a dedicated
+helper current_chroot_allowed() and extend the patch description.
+
+The chroot system call is currently limited to be used by processes with
+the CAP_SYS_CHROOT capability.  This protects against malicious
+procesess willing to trick SUID-like binaries.  The following patch
+allows unprivileged users to safely use chroot(2), which may be
+complementary to the use of user namespaces.
+
+This patch is a follow-up of a previous one sent by Andy Lutomirski some
+time ago:
+https://lore.kernel.org/lkml/0e2f0f54e19bff53a3739ecfddb4ffa9a6dbde4d.1327858005.git.luto@amacapital.net/
+
+This patch can be applied on top of v5.12-rc3 .  I would really
+appreciate constructive reviews.
+
+Previous versions:
+v3: https://lore.kernel.org/r/20210311105242.874506-1-mic@digikod.net
+v2: https://lore.kernel.org/r/20210310181857.401675-1-mic@digikod.net
+v1: https://lore.kernel.org/r/20210310161000.382796-1-mic@digikod.net
+
+Regards,
+
+Mickaël Salaün (1):
+  fs: Allow no_new_privs tasks to call chroot(2)
+
+ fs/open.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
+
+
+base-commit: 1e28eed17697bcf343c6743f0028cc3b5dd88bf0
+-- 
+2.30.2
+
