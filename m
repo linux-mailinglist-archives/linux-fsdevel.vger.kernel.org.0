@@ -2,45 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ED2233DCF0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 19:54:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DB8D33DCF9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 19:58:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231442AbhCPSx4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Mar 2021 14:53:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46434 "EHLO mail.kernel.org"
+        id S240215AbhCPS6A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Mar 2021 14:58:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240200AbhCPSxY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Mar 2021 14:53:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9D0856514B;
-        Tue, 16 Mar 2021 18:53:23 +0000 (UTC)
+        id S240252AbhCPS52 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Mar 2021 14:57:28 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4BD6365144;
+        Tue, 16 Mar 2021 18:57:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615920803;
-        bh=SdgPXfd1GX0HxBpnuqAYxYxIA045/B5izyywjEHSB2I=;
+        s=k20201202; t=1615921047;
+        bh=fuqPWT9ZfDTWjTv6w3Fb6GeBN41qTet6kJjS9fS4hHc=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oQQg9sAJMRzTz/mGOagHrIUD2U+4+dxDyV0stlTFPVZ80RKnA9wo0nRo3Ny1i51RP
-         QDbpQjA+VIC1dshlU4TbV2j79GqWGc7OaQasxwizX844yHrJ2QIUYgZqxouNFTkHTg
-         cR+YtKMvCfcJ1BKxZIGysOuWZfIo6Cna5Mr3NbHMSrXgD4xNDf2V+DdS8WUodh1LuP
-         4ueef99fiueVcFJzmH4BwV3ASixsQwE43K8HMRO2MWJoZ7RVe7hJgxg2fG0AbNU3ou
-         3wNAMAGwah7FmqdP8zzDQmB3rtHplYjXCFziVhODWnY4GF8z3XOSkcPLqpwFVoY0GD
-         hFwsiAUOPCsyQ==
-Received: by mail-oo1-f42.google.com with SMTP id n12-20020a4ad12c0000b02901b63e7bc1b4so4406565oor.5;
-        Tue, 16 Mar 2021 11:53:23 -0700 (PDT)
-X-Gm-Message-State: AOAM533O3ojaF195i8dK8TPCURqtQXn7wzvAUSl8diSAPF+Kars+e++c
-        jkPbJqJlvZ5DkHtL4jtRYV51Ty9u6uTPWRpKu8M=
-X-Google-Smtp-Source: ABdhPJzn0i4w3u0huXHq7pnjViu24Wv1YVxCUfI1amFd+69q4KthvnTtLggH8Vm3k4PUwrTQY3HpO0X6NmVh7Tt27Ow=
-X-Received: by 2002:a4a:8ed2:: with SMTP id c18mr197825ool.66.1615920802789;
- Tue, 16 Mar 2021 11:53:22 -0700 (PDT)
+        b=EI1G9nARmOORzV+S0XhsAd7FdHEnsgBS2qhowJTJUt7BWaNo8rEdQHkF7bvhlJl8T
+         rUQyWEVlEDpjgRBKx1eN83Ria/jsq3Na2kao9zn5hDb5RGGFqlGeJxZnMp+hW3HKXk
+         OZC4QM7xXQIIAYwyBxcx4BCERwVarTK4QsAH640yQmu83LLweFKgkYxE8DwKv7zmWY
+         r80ZhqDkAD+ycWTNYXeDX4yjqC8rBS8l30TQ0HC+rPH5JpXvIoeKWsL1o08dloPzxE
+         jdEk/ycE7fl0NP339OzdlLRKJzwvnJMhc/6ehuEcxRaEvLAncAH/tFej6MNioOqJ2T
+         hmBIYVvb7Z2Kw==
+Received: by mail-ot1-f43.google.com with SMTP id f8so9089497otp.8;
+        Tue, 16 Mar 2021 11:57:27 -0700 (PDT)
+X-Gm-Message-State: AOAM533ZG7pFvtNKMTAQKc1XGfqPrcpFd1Qw7A+U0LK/lAq/TIdCxzac
+        JMqr6ftHZgPByLQN5l6dTzRV5NMTahl8ziAMsLM=
+X-Google-Smtp-Source: ABdhPJz1W7Xll+XdK+pZriw5mP7sb2cdn1mH0Xz0V4HUQd4J/exhwq+Yn8DZw70WLdbDIdOAaV7C6wSZ5nhs6IubRBw=
+X-Received: by 2002:a05:6830:148c:: with SMTP id s12mr167743otq.251.1615921046478;
+ Tue, 16 Mar 2021 11:57:26 -0700 (PDT)
 MIME-Version: 1.0
 References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-3-balsini@android.com>
-In-Reply-To: <20210125153057.3623715-3-balsini@android.com>
+ <CAMAHBGzkfEd9-1u0iKXp65ReJQgUi_=4sMpmfkwEOaMp6Ux7pg@mail.gmail.com>
+ <YBFtXqgvcXW5fFCR@google.com> <CAMAHBGwpKW+30kNQ_Apt8A-FTmr94hBOzkT21cjEHHW+t7yUMQ@mail.gmail.com>
+ <YBLG+QlXqVB/bo/u@google.com>
+In-Reply-To: <YBLG+QlXqVB/bo/u@google.com>
 From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Tue, 16 Mar 2021 19:53:06 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2VDH9-reuj8QTkFzbaU9XTUEOWFCmCVg1Snb6RjD6mHw@mail.gmail.com>
-Message-ID: <CAK8P3a2VDH9-reuj8QTkFzbaU9XTUEOWFCmCVg1Snb6RjD6mHw@mail.gmail.com>
+Date:   Tue, 16 Mar 2021 19:57:09 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2K2FzPvqBYL9W=Yut58SFXyetXwU4Fz50G5O3TsS0pPQ@mail.gmail.com>
+Message-ID: <CAK8P3a2K2FzPvqBYL9W=Yut58SFXyetXwU4Fz50G5O3TsS0pPQ@mail.gmail.com>
 Subject: Re: [PATCH RESEND V12 2/8] fuse: 32-bit user space ioctl compat for
  fuse device
 To:     Alessio Balsini <balsini@android.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+Cc:     qxy <qxy65535@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>,
         Akilesh Kailash <akailash@google.com>,
         Amir Goldstein <amir73il@gmail.com>,
         Antonio SJ Musumeci <trapexit@spawn.link>,
@@ -62,32 +65,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 4:48 PM Alessio Balsini <balsini@android.com> wrote:
+On Thu, Jan 28, 2021 at 3:17 PM Alessio Balsini <balsini@android.com> wrote:
 >
-> With a 64-bit kernel build the FUSE device cannot handle ioctl requests
-> coming from 32-bit user space.
-> This is due to the ioctl command translation that generates different
-> command identifiers that thus cannot be used for direct comparisons
-> without proper manipulation.
+> Hi all,
 >
-> Explicitly extract type and number from the ioctl command to enable
-> 32-bit user space compatibility on 64-bit kernel builds.
+> I'm more than happy to change the interface into something that is
+> objectively better and accepted by everyone.
+> I would really love to reach the point at which we have a "stable-ish"
+> UAPI as soon as possible.
+
+It's in the mainline kernel, so you already have a stable uapi and
+cannot change that in any incompatible way!
+
+> I've been thinking about a few possible approaches to fix the issue, yet
+> to preserve its flexibility. These are mentioned below.
 >
-> Signed-off-by: Alessio Balsini <balsini@android.com>
+>
+>   Solution 1: Size
+>
+> As mentioned in my previous email, one solution could be to introduce
+> the "size" field to allow the structure to grow in the future.
+>
+> struct fuse_passthrough_out {
+>     uint32_t        size;   // Size of this data structure
+>     uint32_t        fd;
+> };
+>
+> The problem here is that we are making the promise that all the upcoming
+> fields are going to be maintained forever and at the offsets they were
+> originally defined.
+>
+>
+>   Solution 2: Version
+>
+> Another solution could be to s/size/version, where for every version of
+> FUSE passthrough we reserve the right to modifying the fields over time,
+> casting them to the right data structure according to the version.
 
-I saw this commit go into the mainline kernel, and I'm worried that this
-doesn't do what the description says. Since the argument is a 'uint32_t',
-it is the same on both 32-bit and 64-bit user space, and the patch won't
-make any difference for compat mode, as long as that is using the normal
-uapi headers.
 
-If there is any user space that has a different definition of
-FUSE_DEV_IOC_CLONE, that may now successfully call
-this ioctl command, but the kernel will now also accept any other
-command code that has the same type and number, but an
-arbitrary direction or size argument.
+Please read Documentation/driver-api/ioctl.rst for how to design
+ioctls. Neither 'size' nor 'version' fields are appropriate here. If you
+have a new behavior, you need a new command code.
 
-I think this should be changed back to specifically allow the
-command code(s) that are actually used and nothing else.
-
-       Arnd
+      Arnd
