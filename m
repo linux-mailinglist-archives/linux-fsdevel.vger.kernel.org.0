@@ -2,81 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC91633CD14
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 06:23:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 776CC33CE94
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Mar 2021 08:25:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235435AbhCPFXS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Mar 2021 01:23:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46794 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235431AbhCPFXR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Mar 2021 01:23:17 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1234::107])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2572C06174A;
-        Mon, 15 Mar 2021 22:23:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description;
-        bh=pzK6j1BLSUD4GBlBNhV6RS9vkRptruk9iGMar/4N4MQ=; b=gDait91fy1rP3SXxVBrgYA2sB5
-        jki0DZHU9GXlJcZAPXUjFdDFm2W2bgtC34WqAPPkJkA59Gi+TGJl6p/XcmfEiFT24NIXm2MdQ9nFD
-        Q1yuHLQU/+jNT4HvsaLPBBnIgVM/v0X9ONwPejoqEBmJm9FHrgunUhmDTty/0lIYItFgcRsP0ZCUJ
-        TFUlQ/64MqI/ZOET4+Y+jW0PNSYLNYNDVZ/qRNmhmq/3OEbrQJpzD6TKr882wQAS1FS3rOFNcAGAa
-        S02J0HJgZetlREyKDEZMY66O29A4EkCFrKOoZaf+nxWZ6vjMFNKKLPZNx3q7I64i7s2TxSkS7dLiT
-        MYoV4GXw==;
-Received: from [2601:1c0:6280:3f0::9757]
-        by merlin.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lM2Ak-001PTS-N1; Tue, 16 Mar 2021 05:23:15 +0000
-Subject: Re: [PATCH] fs: Trivial typo fix in the file coredump.c
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210316050302.3816253-1-unixbhaskar@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <515c0dca-2ce5-4c15-0682-b95374cb73e2@infradead.org>
-Date:   Mon, 15 Mar 2021 22:23:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        id S230411AbhCPHY5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Mar 2021 03:24:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41788 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229660AbhCPHYz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Mar 2021 03:24:55 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 02CD364F91;
+        Tue, 16 Mar 2021 07:24:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1615879494;
+        bh=8uUDAW08JUiZFZ6RLHXQ4tv6CD+Mof+kNjKmo7xGysQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Fu9N3c2Xdt+OkZcZjfn4Yrm4YjiyMGSf1mi/i74GYOsj5bJ2/FDKsAPWq8JxFnvoj
+         XOYEz2YkSBwczRBFMBwAhhBKQSczmGI82SNR2alFxYXXvEtQx8NIvjuajyPdBQru8I
+         mWwdw7YcJ0mzKblwP8D+/6G1rcfI1o6wsWSeojF8=
+Date:   Tue, 16 Mar 2021 08:24:50 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+        Adam Nichols <adam@grimm-co.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] seq_file: Unconditionally use vmalloc for buffer
+Message-ID: <YFBdQmT64c+2uBRI@kroah.com>
+References: <20210315174851.622228-1-keescook@chromium.org>
+ <YE+oZkSVNyaONMd9@zeniv-ca.linux.org.uk>
+ <202103151336.78360DB34D@keescook>
 MIME-Version: 1.0
-In-Reply-To: <20210316050302.3816253-1-unixbhaskar@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202103151336.78360DB34D@keescook>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/15/21 10:03 PM, Bhaskar Chowdhury wrote:
+On Mon, Mar 15, 2021 at 01:43:59PM -0700, Kees Cook wrote:
+> On Mon, Mar 15, 2021 at 06:33:10PM +0000, Al Viro wrote:
+> > On Mon, Mar 15, 2021 at 10:48:51AM -0700, Kees Cook wrote:
+> > > The sysfs interface to seq_file continues to be rather fragile, as seen
+> > > with some recent exploits[1]. Move the seq_file buffer to the vmap area
+> > > (while retaining the accounting flag), since it has guard pages that
+> > > will catch and stop linear overflows. This seems justified given that
+> > > seq_file already uses kvmalloc(), is almost always using a PAGE_SIZE or
+> > > larger allocation, has allocations are normally short lived, and is not
+> > > normally on a performance critical path.
+> > 
+> > You are attacking the wrong part of it.  Is there any reason for having
+> > seq_get_buf() public in the first place?
 > 
-> s/postion/position/
-> 
-> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+> Completely agreed. seq_get_buf() should be totally ripped out.
+> Unfortunately, this is going to be a long road because of sysfs's ATTR
+> stuff, there are something like 5000 callers, and the entire API was
+> designed to avoid refactoring all those callers from
+> sysfs_kf_seq_show().
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+What is wrong with the sysfs ATTR stuff?  That should make it so that we
+do not have to change any caller for any specific change like this, why
+can't sysfs or kernfs handle it automatically?
 
-> ---
->  Al, I hope this time I read the comments well enough,if still
->  I am at fault , curse me!
-> 
->  fs/coredump.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index 1c0fdc1aa70b..3ecae122ffd9 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -923,7 +923,7 @@ EXPORT_SYMBOL(dump_align);
-> 
->  /*
->   * Ensures that file size is big enough to contain the current file
-> - * postion. This prevents gdb from complaining about a truncated file
-> + * position. This prevents gdb from complaining about a truncated file
->   * if the last "write" to the file was dump_skip.
->   */
->  void dump_truncate(struct coredump_params *cprm)
-> --
+> However, since I also need to entirely rewrite the sysfs vs kobj APIs[1]
+> for CFI, I'm working on a plan to fix it all at once, but based on my
+> experience refactoring the timer struct, it's going to be a very painful
+> and long road.
 
+Oh yeah, that fun.  I don't think it's going to be as hard as you think,
+as the underlying code is doing the "right thing" here, so this feels
+like a problem in the CFI implementation more than anything else.
 
--- 
-~Randy
+So what can I do today in sysfs to help fix the seq_get_buf() stuff?
+What should it use instead?
 
+thanks,
+
+greg k-h
