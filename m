@@ -2,193 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59CC333F84E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 19:46:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90ADB33F8EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 20:15:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232964AbhCQSph (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 14:45:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54116 "EHLO
+        id S233116AbhCQTOn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 15:14:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232763AbhCQSpG (ORCPT
+        with ESMTP id S233193AbhCQTOS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 14:45:06 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4330CC06175F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Mar 2021 11:45:06 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id b184so1754455pfa.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Mar 2021 11:45:06 -0700 (PDT)
+        Wed, 17 Mar 2021 15:14:18 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8250C061762;
+        Wed, 17 Mar 2021 12:14:17 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id u20so361924iot.9;
+        Wed, 17 Mar 2021 12:14:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=YW9sFjqp97bhdYt8JWFRpF7hWLMW5DjM6fbGxnWtY+o=;
-        b=qRVekhfIMfv7kOhCjx92EP04cJ7NFnIbK+JUar9xuUADE/SZtoO2Mnp5j06V6rrhKc
-         03WsQTyU7zJzDZtZswqzqjq3QAp0go01d+84h32IMSDKHPLTlFMwDte3VB22Pr1w/1EX
-         Ohv3akLBTaQNBTvVQGqJM9vAzqeoRgzGMJVrE7K9ctIBdS5pqZKY1p6YTC6boti9bmEI
-         yisWy16lVNeqXsBXveiAlGiAErkxz2sUjIcZXwP+IzkHn0zGAQteOLjccunOdiFsfudU
-         /yy3jjyAEqZoQ/5gNxe0fNOI9Uoi1D3O0qbl6QUeh40Z3ErpUYimol/BFadN43aPTI0B
-         /m5A==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YQoPzktDaqJxILobH2+u2kQgFJc51uu97L9bjYEy/m8=;
+        b=bSfmyWXD55Fr6vMv36ATdXiLMTVH3n96e+3XqRGxykL2S3VDBQtIRUO4SD/TkH5LlI
+         AXGfy33REBXgnb5fNF11hBRgifGh3bKNjuRQvcaRRmxHHqNIfBpHCjPelWN8P2i/v0iH
+         Bt0lPVkHL2RPkV1OZt0Z6rCPJ7h87fw93ZVgwMvkz+GaYF5PR0MjYBwUNnGiMBTktL71
+         orpMgnCfIfkEcI7CWBWwfs3N8xIN4ypPhFX7LVO7tymn6QwNqCJX3I6c9IWH4hYkY2aL
+         IO+c5DIArHOStGHHBLSvKjhVZaxIuf8u/KJcdI6iiJOUeDIzLH8KAb0U+SCWnyaLCx0b
+         FRww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YW9sFjqp97bhdYt8JWFRpF7hWLMW5DjM6fbGxnWtY+o=;
-        b=s/H4KW3sv2ATtHl0DgWIiHU5XScmMgBOAz2ji0NEn8bHdLUikvn2D9Pgm/18Y5Czvb
-         kiqS+iohPkb7GxVFwIPiUjXHdvCLs1kZnCKiQ2xkS57t0/5kinNcAFdXhXj0vXpQmkJq
-         wlTI3o7KEUYI4UjCBfzqfuFpn4JJxpO5ZyvRa5OK11htEo9VwFCHGMxurQPdYCtKPLcm
-         7zxYoz6sS9tEiOMqjqg6KEF4e2ERKM33DDUqf4UF2ykVpvSAk1ylaALpAbPmYsAPjGDH
-         ZQ/dAqOZXOOoONy+wkyjq5wE8JKKH5RsHz0BcbPRl3qkKKHGNfdGF7n/ftV98bsYVnUg
-         AzkQ==
-X-Gm-Message-State: AOAM531CvZoRnkeR4igEmdLCnC7dOggYy/0zhgRb9V8zicHZEr4OBcUa
-        vfZMYppv79BQ3sMYHiaAKoC6Dw==
-X-Google-Smtp-Source: ABdhPJz9efKjQ397r3XHjnIbO8SP5XzgDEGsZDKGvjc79HWGrMxTZ1v9osdmfdQJJWRLzdDbWSpFAg==
-X-Received: by 2002:a63:40c5:: with SMTP id n188mr3755030pga.255.1616006705636;
-        Wed, 17 Mar 2021 11:45:05 -0700 (PDT)
-Received: from relinquished.localdomain ([2620:10d:c090:400::5:156])
-        by smtp.gmail.com with ESMTPSA id c22sm19556419pfl.169.2021.03.17.11.45.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Mar 2021 11:45:04 -0700 (PDT)
-Date:   Wed, 17 Mar 2021 11:45:02 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH v8 01/10] iov_iter: add copy_struct_from_iter()
-Message-ID: <YFJOLlm3GuZgoVSi@relinquished.localdomain>
-References: <cover.1615922644.git.osandov@fb.com>
- <e71e712d27b2e2c19efc5b1454bd8581ad98d900.1615922644.git.osandov@fb.com>
- <20210317175611.adntftl6w3avptvk@wittgenstein>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YQoPzktDaqJxILobH2+u2kQgFJc51uu97L9bjYEy/m8=;
+        b=pQv0lDDPgzy/c8X40j8vpsK2u3dOuy426GjP6ASr5iihQPpo18Gy3nldYLCkd0X2cy
+         xAwQkVLApgg8DkqXdoJrKDNanulp5IPgh+rKmBc1TZ5HAcdsSZ9jGzonp5HVhzY7yN1n
+         ZGqT70+H1Vf2tJbB5sNlzROfyLkY1FrBpR4aPT6oitiN7+/1FPbcyp68Ff8+Wt3Opuqy
+         +e+r/qJqlA9yxfTXy2DagUKsj190/Ud8P0z3RVba1rfW0ir1TMHcCaDCVuXGJZgKAOD4
+         HzehyYHq1lwttvOwSEbIyD8RgJCMEiYOk/+8X96mDuS/1O4Nqf4HQHlqje2wX6XLMx+v
+         rNhw==
+X-Gm-Message-State: AOAM530OCiyudBiIIsQswjdsEs1jGQvIdJ865547Fra6oFmVM4Fdb0Kk
+        +JKpgH7ytY5ylXxfey7Yqxh7E+Uoe0HiCVRb3St0KhkDp2o=
+X-Google-Smtp-Source: ABdhPJxSbAz5IKLX2l3Awx54vE70Jj644wz/4Jd/QG0Cv0TTZMUDsJrpOq3FvWHOoyOAuTgeNUmtkvvqAdCmeDVEvBI=
+X-Received: by 2002:a5d:9386:: with SMTP id c6mr7639153iol.203.1616008457379;
+ Wed, 17 Mar 2021 12:14:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210317175611.adntftl6w3avptvk@wittgenstein>
+References: <20210304112921.3996419-1-amir73il@gmail.com> <20210316155524.GD23532@quack2.suse.cz>
+ <CAOQ4uxgCv42_xkKpRH-ApMOeFCWfQGGc11CKxUkHJq-Xf=HnYg@mail.gmail.com>
+ <20210317114207.GB2541@quack2.suse.cz> <CAOQ4uxi7ZXJW3_6SN=vw_XJC+wy4eMTayN6X5yRy_HOV6323MA@mail.gmail.com>
+ <20210317174532.cllfsiagoudoz42m@wittgenstein>
+In-Reply-To: <20210317174532.cllfsiagoudoz42m@wittgenstein>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 17 Mar 2021 21:14:06 +0200
+Message-ID: <CAOQ4uxjCjapuAHbYuP8Q_k0XD59UmURbmkGC1qcPkPAgQbQ8DA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 17, 2021 at 06:56:11PM +0100, Christian Brauner wrote:
-> On Tue, Mar 16, 2021 at 12:42:57PM -0700, Omar Sandoval wrote:
-> > From: Omar Sandoval <osandov@fb.com>
-> > 
-> > This is essentially copy_struct_from_user() but for an iov_iter.
-> > 
-> > Suggested-by: Aleksa Sarai <cyphar@cyphar.com>
-> > Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> > Signed-off-by: Omar Sandoval <osandov@fb.com>
-> > ---
-> >  include/linux/uio.h |  2 ++
-> >  lib/iov_iter.c      | 82 +++++++++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 84 insertions(+)
-> > 
-> > diff --git a/include/linux/uio.h b/include/linux/uio.h
-> > index 72d88566694e..f4e6ea85a269 100644
-> > --- a/include/linux/uio.h
-> > +++ b/include/linux/uio.h
-> > @@ -121,6 +121,8 @@ size_t copy_page_to_iter(struct page *page, size_t offset, size_t bytes,
-> >  			 struct iov_iter *i);
-> >  size_t copy_page_from_iter(struct page *page, size_t offset, size_t bytes,
-> >  			 struct iov_iter *i);
-> > +int copy_struct_from_iter(void *dst, size_t ksize, struct iov_iter *i,
-> > +			  size_t usize);
-> >  
-> >  size_t _copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i);
-> >  size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i);
-> > diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-> > index a21e6a5792c5..f45826ed7528 100644
-> > --- a/lib/iov_iter.c
-> > +++ b/lib/iov_iter.c
-> > @@ -948,6 +948,88 @@ size_t copy_page_from_iter(struct page *page, size_t offset, size_t bytes,
-> >  }
-> >  EXPORT_SYMBOL(copy_page_from_iter);
-> >  
-> > +/**
-> > + * copy_struct_from_iter - copy a struct from an iov_iter
-> > + * @dst: Destination buffer.
-> > + * @ksize: Size of @dst struct.
-> > + * @i: Source iterator.
-> > + * @usize: (Alleged) size of struct in @i.
-> > + *
-> > + * Copies a struct from an iov_iter in a way that guarantees
-> > + * backwards-compatibility for struct arguments in an iovec (as long as the
-> > + * rules for copy_struct_from_user() are followed).
-> > + *
-> > + * The recommended usage is that @usize be taken from the current segment:
-> > + *
-> > + *   int do_foo(struct iov_iter *i)
-> > + *   {
-> > + *     size_t usize = iov_iter_single_seg_count(i);
-> > + *     struct foo karg;
-> > + *     int err;
-> > + *
-> > + *     if (usize > PAGE_SIZE)
-> > + *       return -E2BIG;
-> > + *     if (usize < FOO_SIZE_VER0)
-> > + *       return -EINVAL;
-> > + *     err = copy_struct_from_iter(&karg, sizeof(karg), i, usize);
-> > + *     if (err)
-> > + *       return err;
-> > + *
-> > + *     // ...
-> > + *   }
-> > + *
-> > + * Return: 0 on success, -errno on error (see copy_struct_from_user()).
-> > + *
-> > + * On success, the iterator is advanced @usize bytes. On error, the iterator is
-> > + * not advanced.
-> > + */
-> > +int copy_struct_from_iter(void *dst, size_t ksize, struct iov_iter *i,
-> > +			  size_t usize)
-> > +{
-> > +	if (usize <= ksize) {
-> > +		if (!copy_from_iter_full(dst, usize, i))
-> > +			return -EFAULT;
-> > +		memset(dst + usize, 0, ksize - usize);
-> > +	} else {
-> > +		size_t copied = 0, copy;
-> > +		int ret;
-> > +
-> > +		if (WARN_ON(iov_iter_is_pipe(i)) || unlikely(i->count < usize))
-> > +			return -EFAULT;
-> > +		if (iter_is_iovec(i))
-> > +			might_fault();
-> > +		iterate_all_kinds(i, usize, v, ({
-> > +			copy = min(ksize - copied, v.iov_len);
-> > +			if (copy && copyin(dst + copied, v.iov_base, copy))
-> > +				return -EFAULT;
-> > +			copied += copy;
-> > +			ret = check_zeroed_user(v.iov_base + copy,
-> > +						v.iov_len - copy);
-> > +			if (ret <= 0)
-> > +				return ret ?: -E2BIG;
-> > +			0;}), ({
-> > +			char *addr = kmap_atomic(v.bv_page);
-> > +			copy = min_t(size_t, ksize - copied, v.bv_len);
-> > +			memcpy(dst + copied, addr + v.bv_offset, copy);
-> > +			copied += copy;
-> > +			ret = memchr_inv(addr + v.bv_offset + copy, 0,
-> > +					 v.bv_len - copy) ? -E2BIG : 0;
-> > +			kunmap_atomic(addr);
-> > +			if (ret)
-> > +				return ret;
-> > +			}), ({
-> > +			copy = min(ksize - copied, v.iov_len);
-> > +			memcpy(dst + copied, v.iov_base, copy);
-> > +			if (memchr_inv(v.iov_base, 0, v.iov_len))
-> > +				return -E2BIG;
-> > +			})
-> > +		)
-> 
-> 
-> Following the semantics of copy_struct_from_user() is certainly a good
-> idea but can this in any way be rewritten to not look like this; at
-> least not as crammed. It's a bit painful to follow here what's going.
+On Wed, Mar 17, 2021 at 7:45 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> On Wed, Mar 17, 2021 at 02:19:57PM +0200, Amir Goldstein wrote:
+> > On Wed, Mar 17, 2021 at 1:42 PM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Wed 17-03-21 13:01:35, Amir Goldstein wrote:
+> > > > On Tue, Mar 16, 2021 at 5:55 PM Jan Kara <jack@suse.cz> wrote:
+> > > > >
+> > > > > On Thu 04-03-21 13:29:19, Amir Goldstein wrote:
+> > > > > > Jan,
+> > > > > >
+> > > > > > These patches try to implement a minimal set and least controversial
+> > > > > > functionality that we can allow for unprivileged users as a starting
+> > > > > > point.
+> > > > > >
+> > > > > > The patches were tested on top of v5.12-rc1 and the fanotify_merge
+> > > > > > patches using the unprivileged listener LTP tests written by Matthew
+> > > > > > and another LTP tests I wrote to test the sysfs tunable limits [1].
+> > > > >
+> > > > > Thanks. I've added both patches to my tree.
+> > > >
+> > > > Great!
+> > > > I'll go post the LTP tests and work on the man page updates.
+> > > >
+> > > > BTW, I noticed that you pushed the aggregating for_next branch,
+> > > > but not the fsnotify topic branch.
+> > > >
+> > > > Is this intentional?
+> > >
+> > > Not really, pushed now. Thanks for reminder.
+> > >
+> > > > I am asking because I am usually basing my development branches
+> > > > off of your fsnotify branch, but I can base them on the unpushed branch.
+> > > >
+> > > > Heads up. I am playing with extra privileges we may be able to
+> > > > allow an ns_capable user.
+> > > > For example, watching a FS_USERNS_MOUNT filesystem that the user
+> > > > itself has mounted inside userns.
+> > > >
+> > > > Another feature I am investigating is how to utilize the new idmapped
+> > > > mounts to get a subtree watch functionality. This requires attaching a
+> > > > userns to the group on fanotify_init().
+> > > >
+> > > > <hand waving>
+> > > > If the group's userns are the same or below the idmapped mount userns,
+> > > > then all the objects accessed via that idmapped mount are accessible
+> > > > to the group's userns admin. We can use that fact to filter events very
+> > > > early based on their mnt_userns and the group's userns, which should be
+> > > > cheaper than any subtree permission checks.
+> > > > <\hand waving>
+> > >
+> > > Yeah, I agree this should work. Just it seems to me the userbase for this
+> > > functionality will be (at least currently) rather limited. While full
+> >
+> > That may change when systemd home dirs feature starts to use
+> > idmapped mounts.
+> > Being able to watch the user's entire home directory is a big win
+> > already.
+>
+> Hey Amir,
+> Hey Jan,
+>
+> I think so too.
+>
+> >
+> > > subtree watches would be IMO interesting to much more users.
+> >
+> > Agreed.
+>
+> We have a use-case for subtree watches: One feature for containers we
+> have is that users can e.g. tell us that they want the container manager
+> to hotplug an arbitrary unix or block device into the container whenever
+> the relevant device shows up on the system. For example they could
+> instruct the container manager to plugin some new driver device when it
+> shows up in /dev. That works nicely because of uevents. But users quite
+> often also instruct us to plugin a path once it shows up in some
+> directory in the filesystem hierarchy and unplug it once it is removed.
+> Right now we're mainting an inotify-based hand-rolled recursive watch to
+> make this work so we detect that add and remove event. I would be wildly
+> excited if we could get rid of some of that complexity by using subtree
+> watches. The container manager on the host will be unaffected by this
+> feature since it will usually have root privileges and manage
+> unprivileged containers.
+> The unprivileged (userns use-case specifically here) subtree watches
+> will be necessary and really good to have to make this work for
+> container workloads and nested containers, i.e. where the container
+> manager itselfs runs in a container and starts new containres. Since the
+> subtree feature would be interesting for systemd itself and since our
+> container manager (ChromeOS etc.) runs systemd inside unprivileged
+> containers on a large scale it would be good if subtree watches could
+> work in userns too.
+>
 
-I think that's just the nature of the iov_iter code :) I'm just
-following the rest of this file, which uses some mind-expanding macros.
-Do you have any suggestions for how to clean this function up?
+I don't understand the subtree watch use case.
+You will have to walk me through it.
+
+What exactly is the container manager trying to detect?
+That a subdir of a specific name/path was created/deleted?
+It doesn't sound like a recursive watch is needed for that.
+What am I missing?
+
+As for nested container managers (and systemd), my thinking is
+that if all the mounts that manager is watching for serving its containers
+are idmapped to that manager's userns (is that a viable option?), then
+there shouldn't be a problem to setup userns filtered watches in order to
+be notified on all the events that happen via those idmapped mounts
+and filtering by "subtree" is not needed.
+I am clearly far from understanding the big picture.
+
+> >
+> > I was looking into that as well, using the example of nfsd_acceptable()
+> > to implement the subtree permission check.
+> >
+> > The problem here is that even if unprivileged users cannot compromise
+> > security, they can still cause significant CPU overhead either queueing
+> > events or filtering events and that is something I haven't been able to
+> > figure out a way to escape from.
+> >
+> > BUT, if you allow userns admin to setup subtree watches (a.k.a filtered
+> > filesystem marks) on a userns filesystem/idmapped mount, now users
+>
+> I think that sounds reasonable.
+> If the mount really is idmapped, it might be interesting to consider
+> checking for privilege in the mnt_userns in addition to the regular
+> permission checks that fanotify performs. My (equally handwavy) thinking
+> is that this might allow for a nice feature where the creator of the
+> mount (e.g. systemd) can block the creation of subtree watches by
+> attaching a mnt_userns to the mnt that the user has no privilege in.
+> (Just a thought.).
+>
+
+Currently, (upstream) only init_userns CAP_SYS_ADMIN can setup
+fanotify watches.
+In linux-next, unprivileged user can already setup inode watches
+(i.e. like inotify).
+
+So I am not sure what you are referring to by "block the creation of
+subtree watches".
+
+If systemd were to idmap my home dir to mnt_userns where my user
+has CAP_SYS_ADMIN, then allowing my user to setup a watch for
+all events on that mount should not be too hard.
+If you think that is useful and you want to play with this feature I can
+provide a WIP branch soon.
+
+Thanks,
+Amir.
