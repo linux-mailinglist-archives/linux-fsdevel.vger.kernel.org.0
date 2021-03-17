@@ -2,204 +2,272 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D43E433F50F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 17:08:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D5B533F581
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 17:30:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232165AbhCQQHc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 12:07:32 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:46556 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232158AbhCQQH2 (ORCPT
+        id S232565AbhCQQaO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 12:30:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52874 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232546AbhCQQ3m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 12:07:28 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210317160726epoutp024d8559d3b327742f7d4659352347b0fe~tLO8Ec8KS1913019130epoutp02Q
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Mar 2021 16:07:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210317160726epoutp024d8559d3b327742f7d4659352347b0fe~tLO8Ec8KS1913019130epoutp02Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1615997246;
-        bh=n0zZRnd8T3hVPp1YnknG772g+7440/OcsOH+e0Yx5wA=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=j+GCg7sqdKZlQpXqUVyvtBFuzdj5gfGnde1c8IBHnSHHl6kMYomr5JpJ6GPpV4q4J
-         8ANgS+6RzwGX9uS2nNjnXZNsPwrxihFG3ih3EOaSR2cvLS8twan/6NcavGWXQNHDU9
-         1FyS90j9wLznJQfGNjEljuk4Rwymd3RY31rIoCH8=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210317160725epcas1p2c7d4d0353af586049e4cc26237190738~tLO7fv7B22508125081epcas1p2f;
-        Wed, 17 Mar 2021 16:07:25 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.163]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4F0w623TzFz4x9Pt; Wed, 17 Mar
-        2021 16:07:22 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7D.E3.02418.A3922506; Thu, 18 Mar 2021 01:07:22 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20210317160721epcas1p4f5e3f89765a74d6d52ea925e51546b9b~tLO3eqeks1413614136epcas1p45;
-        Wed, 17 Mar 2021 16:07:21 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210317160721epsmtrp1432314af89509bf0c9ca2c68118fc625~tLO3eAw-K2051720517epsmtrp1B;
-        Wed, 17 Mar 2021 16:07:21 +0000 (GMT)
-X-AuditID: b6c32a35-c23ff70000010972-30-6052293a3f1d
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        00.96.13470.93922506; Thu, 18 Mar 2021 01:07:21 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210317160721epsmtip17c229866a97efb3e78b50eef1aa609e4~tLO3OvlB90869308693epsmtip1O;
-        Wed, 17 Mar 2021 16:07:21 +0000 (GMT)
-From:   "Sungjong Seo" <sj1557.seo@samsung.com>
-To:     "'Hyeongseok Kim'" <hyeongseok@gmail.com>,
-        <namjae.jeon@samsung.com>
-Cc:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <sj1557.seo@samsung.com>
-In-Reply-To: <20210315043316.54508-1-hyeongseok@gmail.com>
-Subject: RE: [PATCH] exfat: speed up iterate/lookup by fixing start point of
- traversing fat chain
-Date:   Thu, 18 Mar 2021 01:07:21 +0900
-Message-ID: <a64901d71b47$9cacb070$d6061150$@samsung.com>
+        Wed, 17 Mar 2021 12:29:42 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A726C06174A;
+        Wed, 17 Mar 2021 09:29:42 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id cl21-20020a17090af695b02900c61ac0f0e9so5506058pjb.1;
+        Wed, 17 Mar 2021 09:29:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=hS77tjdA+3f1XuSktu47De02hM9SEB7dyKGgmhEfkK8=;
+        b=r4sLqcfJR6SIl+mVMMYx4Z8o+0B6Y03/Z990zmaCrNRA+w473MjvokTHX+PsVzuadf
+         b+uZbXuH1NJy2Cdp4pNozC+gExt/pzgqDOu2MOHrULxLfW3VMDqbai2nxqmgp575mF5R
+         ZDKMlqa8D1FUUL2C3dE+VtNT/Q7epHM9aZ+YNoQs1nZotLX4DacEgvh4+HhEJHBsShBS
+         rhVk/CuVOzoHw1CtE6feedoj/8qc+t1ld0wdC13Fs9bOIU6n8RZvY4VnEUntPlsu7E2d
+         w9uHbkpyG4lDEGCYhDZyvbGGB9zemxFrNewH6MhkkKqXZC+UouXFaUGehJcBKJSti3qX
+         foBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=hS77tjdA+3f1XuSktu47De02hM9SEB7dyKGgmhEfkK8=;
+        b=as6RJIJSc1N1Ha7hK9OD/95XRO+z+rbfy/hjHkLysXOqJndUGJ5kfGPHXk8YAInhS4
+         Ea9XWdarRN5KjIeIY681IWeNBQAonuOQ/vhUX34nQCK1mxFdtlKzG2PvTcHCEM82Ee9O
+         gu6VBSiRSEJiDFXkSCbpG4aNoDzAZ0AqKirvq842+xyfl7M3fRcqjeOnVocfmgsZkGJ+
+         TSwZ4qzROcTcx0Pg9bbMRFGMnuUxLkVBpmTX16WBdTlIpwPdjHtPaYio+ofYm81SFS5F
+         nCXGCCb8w3QfOQ7f7w/5v8d52Rq7TtM83nloPI3ZXDBeoxsSaQoaC9KcRKglfBhLNOD+
+         /ZJQ==
+X-Gm-Message-State: AOAM532RhCdHpWSskoCaL0oP1o9XIDI4tFWjtLOVTLGviGuz0ufSIqk7
+        nUvEesYSHbCbIb4NJ8ATBJw=
+X-Google-Smtp-Source: ABdhPJxhWJhMi/2uuyShovt9lBWpy/lRxYtqeeEwGx3JtvcrnVEgG+mbeReJxXucZQkgTvvMFjeoCw==
+X-Received: by 2002:a17:90b:1490:: with SMTP id js16mr5311945pjb.131.1615998581500;
+        Wed, 17 Mar 2021 09:29:41 -0700 (PDT)
+Received: from google.com ([2620:15c:211:201:8914:cdf:bafb:bf7b])
+        by smtp.gmail.com with ESMTPSA id s28sm20866068pfd.155.2021.03.17.09.29.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Mar 2021 09:29:40 -0700 (PDT)
+Sender: Minchan Kim <minchan.kim@gmail.com>
+Date:   Wed, 17 Mar 2021 09:29:38 -0700
+From:   Minchan Kim <minchan@kernel.org>
+To:     kernel test robot <oliver.sang@intel.com>
+Cc:     0day robot <lkp@intel.com>,
+        Chris Goldsworthy <cgoldswo@codeaurora.org>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, joaodias@google.com,
+        surenb@google.com, willy@infradead.org, mhocko@suse.com,
+        david@redhat.com, vbabka@suse.cz, linux-fsdevel@vger.kernel.org
+Subject: Re: [mm]  8fd8d23ab1: WARNING:at_fs/buffer.c:#__brelse
+Message-ID: <YFIucgVd7Vu9eE50@google.com>
+References: <20210310161429.399432-3-minchan@kernel.org>
+ <20210317023756.GA22345@xsang-OptiPlex-9020>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQMRXeWm1FdVqcQKkWlBKzzAsqBg6wFwmgHlqAg8K+A=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphk+LIzCtJLcpLzFFi42LZdlhTX9dKMyjBoHu1pMXfiZ+YLPbsPcli
-        cXnXHDaLH9PrLbb8O8LqwOqxc9Zddo++LasYPT5vkgtgjsqxyUhNTEktUkjNS85PycxLt1Xy
-        Do53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAHaqKRQlphTChQKSCwuVtK3synKLy1JVcjI
-        Ly6xVUotSMkpMDQo0CtOzC0uzUvXS87PtTI0MDAyBapMyMlY9+I+Y8E5yYoZ894zNjDeFe5i
-        5OSQEDCReN2yhKmLkYtDSGAHo8SDb1PYIZxPjBLX3i5jhnC+MUo8OjOTEaZle8c2qKq9jBKL
-        +u6xQTgvGSU23b7DDlLFJqAr8eTGT2YQW0TAQ+Jx0zEmEJtZIF5i97Q+sEmcAlYSJ1YsYgOx
-        hQWSJXp2r2AFsVkEVCWWd08Eq+EVsJR4seMHlC0ocXLmExaIOfIS29/OYYa4SEFi96ejrBC7
-        rCR+Lm1mhKgRkZjd2Qb2goTAV3aJje/us0I0uEhsmvqFCcIWlnh1fAs7hC0l8bK/Dcqul/g/
-        fy07RHMLo8TDT9uAGjiAHHuJ95csQExmAU2J9bv0IcoVJXb+ngu1l0/i3dceVohqXomONiGI
-        EhWJ7x92ssBsuvLjKtMERqVZSD6bheSzWUg+mIWwbAEjyypGsdSC4tz01GLDAkPk2N7ECE6O
-        WqY7GCe+/aB3iJGJg/EQowQHs5IIr2leQIIQb0piZVVqUX58UWlOavEhRlNgWE9klhJNzgem
-        57ySeENTI2NjYwsTM3MzU2Mlcd4kgwfxQgLpiSWp2ampBalFMH1MHJxSDUzy1w/fSLiWXbk0
-        oz361N5PZUHc/7rYmTI4ksqebAq88urmxcAtMXwyr/3ntYZOb3gSwb6bs1E+Tuw3m2qtj8zV
-        swt5K7puslw/K3qFx9yn9znzXk/JmwwJHOxNS0r4jPr31HdbiS7VWlnSLjKJY4rztXXSgZVm
-        tbynja765e68UOYpcPtHp/uUk1xykZFnrjgoLyqInb//cI/NX1dz71BZiV2Xru9ifOG1avWl
-        P2rbwu88OyCb/54n8oDj2j9XGU59mHglnalHde07rS9/r84/XFL5s9wnc+H/VU/158ecLz0g
-        cvNrQJQ+myXn1jXbE+1OZwrIWDM+z5osIGnarHFqtjZff7jhi2mzzziLVCqxFGckGmoxFxUn
-        AgDdf6iuFwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSnK6lZlCCwZfPAhZ/J35istiz9ySL
-        xeVdc9gsfkyvt9jy7wirA6vHzll32T36tqxi9Pi8SS6AOYrLJiU1J7MstUjfLoErY92L+4wF
-        5yQrZsx7z9jAeFe4i5GTQ0LARGJ7xzb2LkYuDiGB3YwSM5ZuBnI4gBJSEgf3aUKYwhKHDxeD
-        lAsJPGeUWHPJFsRmE9CVeHLjJzOILSLgJbG/6TU7iM0skCjR/OUSE0R9N6PE27emIDangJXE
-        iRWL2EBsYaCaA/dbwWpYBFQllndPZASxeQUsJV7s+AFlC0qcnPmEBeQEZgE9ibaNjBDj5SW2
-        v53DDHG9gsTuT0dZIU6wkvi5tBmqRkRidmcb8wRG4VlIJs1CmDQLyaRZSDoWMLKsYpRMLSjO
-        Tc8tNiwwzEst1ytOzC0uzUvXS87P3cQIjg0tzR2M21d90DvEyMTBeIhRgoNZSYTXNC8gQYg3
-        JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQamNY7/vN/NEnj6
-        6vdkZyGGTNfrjqLyk/p4lRocj1+w/sea/CG4Mu9Zwd1nj02LrP5WLl21Qai6U+TDk0zNQ3xu
-        oRxsWrdzpWcIf56l4niWd6rhnadmYbdWVAgXWX9bIcindvGvoMwFeztbNsHnjXvWmJ47KnS7
-        Xf7al3mfBWrcvrUsbTk1SdG6evk10bPmEVnsu72DGs8YL1pknbo5njFcLz+t+P/FxUtVatd9
-        VOCY3fFgtmvkc8boiw/Ec5Ye22L8Zs0ZWxuzqlIv98JFXNlaXcy92vMWWV9lXnzawuaTh4us
-        xYr0Y+kLPpbNYD41mdF18oZUhS05L5p1HvFUXTvw0mVDdrxORNGdo77v2C8psRRnJBpqMRcV
-        JwIAHlxmLvwCAAA=
-X-CMS-MailID: 20210317160721epcas1p4f5e3f89765a74d6d52ea925e51546b9b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210315043335epcas1p2bf257806e9ba1c2a492739a6424a2b44
-References: <CGME20210315043335epcas1p2bf257806e9ba1c2a492739a6424a2b44@epcas1p2.samsung.com>
-        <20210315043316.54508-1-hyeongseok@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210317023756.GA22345@xsang-OptiPlex-9020>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> When directory iterate and lookup is called, there is a buggy rewinding of
-> start point for traversing fat chain to the directory entry's first
-> cluster. This caused repeated fat chain traversing from the first entry of
-> the directory that would show worse performance if huge amounts of files
-> exist under single directory.
-> Fix not to rewind, make continue from currently referenced cluster and dir
-> entry.
+On Wed, Mar 17, 2021 at 10:37:57AM +0800, kernel test robot wrote:
 > 
-> Tested with 50,000 files under single directory / 256GB sdcard, with
-> command "time ls -l > /dev/null",
-> Before :     0m08.69s real     0m00.27s user     0m05.91s system
-> After  :     0m07.01s real     0m00.25s user     0m04.34s system
 > 
-> Signed-off-by: Hyeongseok Kim <hyeongseok@gmail.com>
-> ---
->  fs/exfat/dir.c | 42 +++++++++++++++++++++++++++++++++---------
->  1 file changed, 33 insertions(+), 9 deletions(-)
+> Greeting,
 > 
-> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c index
-> e1d5536de948..59d12eaa0649 100644
-> --- a/fs/exfat/dir.c
-> +++ b/fs/exfat/dir.c
-> @@ -147,7 +147,7 @@ static int exfat_readdir(struct inode *inode, loff_t
-> *cpos, struct exfat_dir_ent
->  					0);
+> FYI, we noticed the following commit (built with gcc-9):
 > 
->  			*uni_name.name = 0x0;
-> -			exfat_get_uniname_from_ext_entry(sb, &dir, dentry,
-> +			exfat_get_uniname_from_ext_entry(sb, &clu, i,
->  				uni_name.name);
+> commit: 8fd8d23ab10cc2fceeac25ea7b0e2eaf98e78d64 ("[PATCH v3 3/3] mm: fs: Invalidate BH LRU during page migration")
+> url: https://github.com/0day-ci/linux/commits/Minchan-Kim/mm-replace-migrate_prep-with-lru_add_drain_all/20210311-001714
+> base: https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git 144c79ef33536b4ecb4951e07dbc1f2b7fa99d32
+> 
+> in testcase: blktests
+> version: blktests-x86_64-a210761-1_20210124
+> with following parameters:
+> 
+> 	test: nbd-group-01
+> 	ucode: 0xe2
+> 
+> 
+> 
+> on test machine: 4 threads Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz with 32G memory
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> 
+> 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> 
+> 
+> [   40.465061] WARNING: CPU: 2 PID: 5207 at fs/buffer.c:1177 __brelse (kbuild/src/consumer/fs/buffer.c:1177 kbuild/src/consumer/fs/buffer.c:1171) 
+> [   40.465066] Modules linked in: nbd loop xfs libcrc32c dm_multipath dm_mod ipmi_devintf ipmi_msghandler sd_mod t10_pi sg intel_rapl_msr intel_rapl_common x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel rapl i915 mei_wdt intel_cstate wmi_bmof intel_gtt drm_kms_helper syscopyarea ahci intel_uncore sysfillrect sysimgblt libahci fb_sys_fops drm libata mei_me mei intel_pch_thermal wmi video intel_pmc_core acpi_pad ip_tables
+> [   40.465086] CPU: 2 PID: 5207 Comm: mount_clear_soc Tainted: G          I       5.12.0-rc2-00062-g8fd8d23ab10c #1
+> [   40.465088] Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.1.1 10/07/2015
+> [   40.465089] RIP: 0010:__brelse (kbuild/src/consumer/fs/buffer.c:1177 kbuild/src/consumer/fs/buffer.c:1171) 
+> [ 40.465091] Code: 00 00 00 00 00 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 8b 47 60 85 c0 74 05 f0 ff 4f 60 c3 48 c7 c7 d8 99 57 82 e8 02 5d 80 00 <0f> 0b c3 0f 1f 44 00 00 55 65 ff 05 13 79 c8 7e 53 48 c7 c3 c0 89
 
-Looks good. Old code looks like a bug as you said.
+Hi,
 
->  			exfat_utf16_to_nls(sb, &uni_name,
->  				dir_entry->namebuf.lfn,
-> @@ -911,10 +911,15 @@ enum {
->  };
-> 
->  /*
-> - * return values:
-> - *   >= 0	: return dir entiry position with the name in dir
-> - *   -ENOENT	: entry with the name does not exist
-> - *   -EIO	: I/O error
-> + * @ei:         inode info of directory
-> + * @p_dir:      input as directory structure in which we search name
-> + *              if found, output as a cluster dir where the name exists
-> + *              if not found, not changed from input
-> + * @num_entries entry size of p_uniname
-> + * @return:
-> + *   >= 0:      dir entry position from output p_dir.dir
-> + *   -ENOENT:   entry with the name does not exist
-> + *   -EIO:      I/O error
->   */
->  int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info
-> *ei,
->  		struct exfat_chain *p_dir, struct exfat_uni_name *p_uniname,
-> @@ -925,14 +930,16 @@ int exfat_find_dir_entry(struct super_block *sb,
-> struct exfat_inode_info *ei,
-[snip]
-  			hint_stat->clu = p_dir->dir;
->  			hint_stat->eidx = 0;
-> -			return (dentry - num_ext);
-> +
-> +			exfat_chain_dup(p_dir, &tmp_clu);
-> +			return dentry_in_cluster;
->  		}
->  	}
-> 
->  	hint_stat->clu = clu.dir;
->  	hint_stat->eidx = dentry + 1;
-> -	return dentry - num_ext;
-> +
-> +	exfat_chain_dup(p_dir, &tmp_clu);
-> +	return dentry_in_cluster;
->  }
+Unfortunately, I couldn't set the lkp test in my local mahcine
+since installation failed(I guess my linux distribution is
+very minor)
 
-Changing the functionality of exfat find_dir_entry() will affect
-exfat_find() and exfat_lookup(), breaking the concept of ei->dir.dir
-which should have the starting cluster of its parent directory.
+Do you mind testing this patch? (Please replace the original
+patch with this one)
 
-Well, is there any missing patch related to exfat_find()?
-It would be nice to modify the caller of this function, exfat_find(),
-so that this change in functionality doesn't affect other functions.
+From 23cfe5a8e939e2c077223e009887af8a0b5d6381 Mon Sep 17 00:00:00 2001
+From: Minchan Kim <minchan@kernel.org>
+Date: Tue, 2 Mar 2021 12:05:08 -0800
+Subject: [PATCH] mm: fs: Invalidate BH LRU during page migration
 
-Thanks.
+Pages containing buffer_heads that are in one of the per-CPU
+buffer_head LRU caches will be pinned and thus cannot be migrated.
+This can prevent CMA allocations from succeeding, which are often used
+on platforms with co-processors (such as a DSP) that can only use
+physically contiguous memory. It can also prevent memory
+hot-unplugging from succeeding, which involves migrating at least
+MIN_MEMORY_BLOCK_SIZE bytes of memory, which ranges from 8 MiB to 1
+GiB based on the architecture in use.
 
-> 
->  int exfat_count_ext_entries(struct super_block *sb, struct exfat_chain
-> *p_dir,
-> --
-> 2.27.0.83.g0313f36
+Correspondingly, invalidate the BH LRU caches before a migration
+starts and stop any buffer_head from being cached in the LRU caches,
+until migration has finished.
+
+Signed-off-by: Chris Goldsworthy <cgoldswo@codeaurora.org>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+---
+ fs/buffer.c                 | 36 ++++++++++++++++++++++++++++++------
+ include/linux/buffer_head.h |  4 ++++
+ mm/swap.c                   |  5 ++++-
+ 3 files changed, 38 insertions(+), 7 deletions(-)
+
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 0cb7ffd4977c..e9872d0dcbf1 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1264,6 +1264,15 @@ static void bh_lru_install(struct buffer_head *bh)
+ 	int i;
+ 
+ 	check_irqs_on();
++	/*
++	 * the refcount of buffer_head in bh_lru prevents dropping the
++	 * attached page(i.e., try_to_free_buffers) so it could cause
++	 * failing page migration.
++	 * Skip putting upcoming bh into bh_lru until migration is done.
++	 */
++	if (lru_cache_disabled())
++		return;
++
+ 	bh_lru_lock();
+ 
+ 	b = this_cpu_ptr(&bh_lrus);
+@@ -1404,6 +1413,15 @@ __bread_gfp(struct block_device *bdev, sector_t block,
+ }
+ EXPORT_SYMBOL(__bread_gfp);
+ 
++static void __invalidate_bh_lrus(struct bh_lru *b)
++{
++	int i;
++
++	for (i = 0; i < BH_LRU_SIZE; i++) {
++		brelse(b->bhs[i]);
++		b->bhs[i] = NULL;
++	}
++}
+ /*
+  * invalidate_bh_lrus() is called rarely - but not only at unmount.
+  * This doesn't race because it runs in each cpu either in irq
+@@ -1412,16 +1430,12 @@ EXPORT_SYMBOL(__bread_gfp);
+ static void invalidate_bh_lru(void *arg)
+ {
+ 	struct bh_lru *b = &get_cpu_var(bh_lrus);
+-	int i;
+ 
+-	for (i = 0; i < BH_LRU_SIZE; i++) {
+-		brelse(b->bhs[i]);
+-		b->bhs[i] = NULL;
+-	}
++	__invalidate_bh_lrus(b);
+ 	put_cpu_var(bh_lrus);
+ }
+ 
+-static bool has_bh_in_lru(int cpu, void *dummy)
++bool has_bh_in_lru(int cpu, void *dummy)
+ {
+ 	struct bh_lru *b = per_cpu_ptr(&bh_lrus, cpu);
+ 	int i;
+@@ -1440,6 +1454,16 @@ void invalidate_bh_lrus(void)
+ }
+ EXPORT_SYMBOL_GPL(invalidate_bh_lrus);
+ 
++void invalidate_bh_lrus_cpu(int cpu)
++{
++	struct bh_lru *b;
++
++	bh_lru_lock();
++	b = per_cpu_ptr(&bh_lrus, cpu);
++	__invalidate_bh_lrus(b);
++	bh_lru_unlock();
++}
++
+ void set_bh_page(struct buffer_head *bh,
+ 		struct page *page, unsigned long offset)
+ {
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index 6b47f94378c5..e7e99da31349 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -194,6 +194,8 @@ void __breadahead_gfp(struct block_device *, sector_t block, unsigned int size,
+ struct buffer_head *__bread_gfp(struct block_device *,
+ 				sector_t block, unsigned size, gfp_t gfp);
+ void invalidate_bh_lrus(void);
++void invalidate_bh_lrus_cpu(int cpu);
++bool has_bh_in_lru(int cpu, void *dummy);
+ struct buffer_head *alloc_buffer_head(gfp_t gfp_flags);
+ void free_buffer_head(struct buffer_head * bh);
+ void unlock_buffer(struct buffer_head *bh);
+@@ -406,6 +408,8 @@ static inline int inode_has_buffers(struct inode *inode) { return 0; }
+ static inline void invalidate_inode_buffers(struct inode *inode) {}
+ static inline int remove_inode_buffers(struct inode *inode) { return 1; }
+ static inline int sync_mapping_buffers(struct address_space *mapping) { return 0; }
++static inline void invalidate_bh_lrus_cpu(int cpu) {}
++static inline bool has_bh_in_lru(int cpu, void *dummy) { return 0; }
+ #define buffer_heads_over_limit 0
+ 
+ #endif /* CONFIG_BLOCK */
+diff --git a/mm/swap.c b/mm/swap.c
+index fbdf6ac05aec..b962fe45bc02 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -36,6 +36,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/page_idle.h>
+ #include <linux/local_lock.h>
++#include <linux/buffer_head.h>
+ 
+ #include "internal.h"
+ 
+@@ -641,6 +642,7 @@ void lru_add_drain_cpu(int cpu)
+ 		pagevec_lru_move_fn(pvec, lru_lazyfree_fn);
+ 
+ 	activate_page_drain(cpu);
++	invalidate_bh_lrus_cpu(cpu);
+ }
+ 
+ /**
+@@ -828,7 +830,8 @@ static void __lru_add_drain_all(bool force_all_cpus)
+ 		    pagevec_count(&per_cpu(lru_pvecs.lru_deactivate_file, cpu)) ||
+ 		    pagevec_count(&per_cpu(lru_pvecs.lru_deactivate, cpu)) ||
+ 		    pagevec_count(&per_cpu(lru_pvecs.lru_lazyfree, cpu)) ||
+-		    need_activate_page_drain(cpu)) {
++		    need_activate_page_drain(cpu) ||
++		    has_bh_in_lru(cpu, NULL)) {
+ 			INIT_WORK(work, lru_add_drain_per_cpu);
+ 			queue_work_on(cpu, mm_percpu_wq, work);
+ 			__cpumask_set_cpu(cpu, &has_work);
+-- 
+2.31.0.rc2.261.g7f71774620-goog
 
 
