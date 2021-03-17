@@ -2,135 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2712333EC28
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 10:05:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CABC433ECF3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 10:27:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229490AbhCQJEq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 05:04:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54649 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229537AbhCQJEX (ORCPT
+        id S229751AbhCQJ0u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 05:26:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45712 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229675AbhCQJ0s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 05:04:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1615971862;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VuDrqP82HqiAtEe1crFqPJazQMGGUjNo8bu3IT7C6bE=;
-        b=Ewo8/XX6FHdLDCayjIWdjZX2gsb1ULd/3Xwn1vNpg/xz513b4htlGEkSGmQ82Y2hmJorMv
-        dVYPWjGmcDtWHhuhcZQqUafFgV7XOSa3o/mXYd2X4/IazY0f8+oUzjl7VJYMlzTm75hjmX
-        /9n+79zidVF2jaMCvf0HYfaKO58nEaQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-99-61mG3SLaOY-C1c44wLq3Ww-1; Wed, 17 Mar 2021 05:04:20 -0400
-X-MC-Unique: 61mG3SLaOY-C1c44wLq3Ww-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 195761009456;
-        Wed, 17 Mar 2021 09:04:18 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-113-138.rdu2.redhat.com [10.10.113.138])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6E43E60CCE;
-        Wed, 17 Mar 2021 09:04:10 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=whWoJhGeMn85LOh9FX-5d2-Upzmv1m2ZmYxvD31TKpUTA@mail.gmail.com>
-References: <CAHk-=whWoJhGeMn85LOh9FX-5d2-Upzmv1m2ZmYxvD31TKpUTA@mail.gmail.com> <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk> <161539528910.286939.1252328699383291173.stgit@warthog.procyon.org.uk> <20210316190707.GD3420@casper.infradead.org> <CAHk-=wjSGsRj7xwhSMQ6dAQiz53xA39pOG+XA_WeTgwBBu4uqg@mail.gmail.com> <887b9eb7-2764-3659-d0bf-6a034a031618@toxicpanda.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Josef Bacik <josef@toxicpanda.com>,
-        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux-MM <linux-mm@kvack.org>, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 02/28] mm: Add an unlock function for PG_private_2/PG_fscache
+        Wed, 17 Mar 2021 05:26:48 -0400
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAB62C06174A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Mar 2021 02:26:47 -0700 (PDT)
+Received: by mail-io1-xd29.google.com with SMTP id n132so40219284iod.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Mar 2021 02:26:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2vEzpbGKP6zTNanKU4x1/Nr2Ja/sGTWgtdcWKuv0CVw=;
+        b=nC5SPwOtwpdpcj/P5i3KAHcTOKPOo1a19unOW+Asvg06q8jlJrWAuX62cpJXzcG05p
+         eb1loYV1rY2yo3WgnYLaLyKcnp0h9bRkQrPHUoY9wANGfJnx0HthJCp9jyHbfdr02xDq
+         NNPeajWVHrDdsWp/FRBOp/vrQcMlKzqi5iXfukYA5XkRXMmGmISHyLgzTXkkatfdARtk
+         5JgyMU1kOs6YtgXi31M2m/8BvEHcKLSKIl5idrUsr80j+t7YP0u8fUSSpFAeKLxdR99d
+         jhotmogqQ49ieXfyIMdhVMrLfVVOTYDU+mcEyeANWfdoWJNulVYKS49lwv/Fy34E8j7G
+         pmHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2vEzpbGKP6zTNanKU4x1/Nr2Ja/sGTWgtdcWKuv0CVw=;
+        b=oQoRgJvcaRIc0j3upABeokh9Ej2lD6v+mtmRUWmq2Af3rpeOUfxIMbd66hmIWLlGeu
+         5Y5SnvsKPXC1DGqNwHcgIxkxzwYpBRgMjjwKu/m+qRDIFan86W5OfVEElCm/LVW4D6F0
+         lfPJact/fIl1ahrl5IIfZxhnT9t4wVazjjdS7Lsz4nyZfM0+qFMGNruCqe4TOEz28pED
+         UCgOnDQTezT5U3w/fBLxzZZU2J1yk+7+RvTjYZK35O8J63lqm+wmMFMUW3xTbuT+BJN7
+         ynoL5ZjPDMNHEObxQ3MznRELdjTbdYuSrXYjj5tfU8ZsL4cDIdUxkMWq3yMz45npxtNe
+         KfiA==
+X-Gm-Message-State: AOAM532FXWPVvazo2HeLzLd3QgS3ijtnAMg5t4BS72CVSAxYQ9lMsHCN
+        F0+m8zU8FIPCupC26Z4J7G79UCu+YtP/dwlUEAgAiBH3am8=
+X-Google-Smtp-Source: ABdhPJzdHHJY+D8n3Y6yEF0eYc0T44AxbW5JmIMMdXdzXaUVBSo0V/NnH9x9JwEpTRwIKGridExGt3iHSRIq23F3XtM=
+X-Received: by 2002:a02:605d:: with SMTP id d29mr2034100jaf.81.1615973207390;
+ Wed, 17 Mar 2021 02:26:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <31381.1615971849.1@warthog.procyon.org.uk>
-Date:   Wed, 17 Mar 2021 09:04:09 +0000
-Message-ID: <31382.1615971849@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <20210304104826.3993892-1-amir73il@gmail.com> <20210304104826.3993892-4-amir73il@gmail.com>
+ <20210316151807.GB23532@quack2.suse.cz>
+In-Reply-To: <20210316151807.GB23532@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 17 Mar 2021 11:26:36 +0200
+Message-ID: <CAOQ4uxizm9KdM+82MGni=fUkCzUvU2pt1q+0ynGLkDX47hJm3Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] fanotify: mix event info and pid into merge key hash
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Tue, Mar 16, 2021 at 5:18 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Thu 04-03-21 12:48:24, Amir Goldstein wrote:
+> > Improve the merge key hash by mixing more values relevant for merge.
+> >
+> > For example, all FAN_CREATE name events in the same dir used to have the
+> > same merge key based on the dir inode.  With this change the created
+> > file name is mixed into the merge key.
+> >
+> > The object id that was used as merge key is redundant to the event info
+> > so it is no longer mixed into the hash.
+> >
+> > Permission events are not hashed, so no need to hash their info.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>
+> ...
+>
+> > @@ -530,6 +568,8 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+> >       struct inode *child = NULL;
+> >       bool name_event = false;
+> >       unsigned int hash = 0;
+> > +     unsigned long ondir = (mask & FAN_ONDIR) ? 1UL : 0;
+> > +     struct pid *pid;
+>
+> I've made a tiny change here and changed 'ondir' to bool since I don't see
+> a strong reason to play games like this. Otherwise I took the patch as is.
+>
 
-> And as far as I can tell, fscache doesn't want that PG_private_2 bit
-> to interact with the random VM lifetime or migration rules either, and
-> should rely entirely on the page count. David?
+OK, so you kept this arithmetics with a bool:
 
-It's slightly complicated for fscache as there are two separate pieces of code
-involved:
+(unsigned long)pid | ondir
 
- (1) For the old fscache code that I'm trying to phase out, it does not take a
-     ref when PG_fscache is taken (probably incorrectly), relying instead on
-     releasepage, etc. getting called to strip the PG_fscache bit.  PG_fscache
-     is held for the lifetime of the page, indicating that fscache knows about
-     it and might access it at any time (to write to the cache in the
-     background for example or to move pages around in the cache).
+I suppose there's no harm.
 
-     Here PG_fscache should not prevent page eviction or migration and it's
-     analogous to PG_private.
-
-     That said, the old fscache code keeps its own radix trees of pages that
-     are undergoing write to the cache, so to allow a page to be evicted,
-     releasepage and co. have to consult those
-     (__fscache_maybe_release_page()).
-
- (2) For the new netfs lib, PG_fscache is ignored by fscache itself and is
-     used by the read helpers.  The helpers simply use it analogously to
-     PG_writeback, indicating that there's I/O in progress from this page to
-     the cache[*].  It's fine to take a ref here because we know we'll drop it
-     shortly.
-
-     Here PG_fscache might prevent page eviction or migration, but only
-     because I/O is in progress.  If an increment on the page refcount
-     suffices, that's fine.
-
-In both cases, releasepage, etc. look at PG_fscache and decide whether to wait
-or not (releasepage may tell the caller to skip the page if PG_fscache is
-set).
-
-[*] Willy suggested using PG_writeback to cover both write to the server and
-write to the cache, and getting rid of PG_fscache entirely, but that would
-require extra mechanisms.  There are three cases:
-
- (a) We might be writing to only the cache, e.g. because we just read from the
-     server.
-
-     Note that this may adversely affect code that does accounting associated
-     with PG_writeback because we woudn't actually be writing back a user-made
-     change or dealing with a dirty page.  I'm not sure if that's an issue.
-
- (b) We might writing to both, in which case we can expect both writes to
-     finish at different times.
-
- (c) We might only be writing to the server, e.g. because there's no space in
-     the cache or there is no cache.
-
-It's something that might make sense, however, and we can look at in the
-future, but for the moment having two separate page flags is simplest.
-
-An additional use of PG_fscache is to prevent a second write to the cache from
-being started whilst one is in progress.  I guess that would be taken over by
-PG_writeback if we used that.
-
-David
-
+Thanks,
+Amir.
