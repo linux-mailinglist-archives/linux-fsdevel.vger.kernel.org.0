@@ -2,155 +2,290 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 636A533E89A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 05:56:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E989B33E8AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 06:01:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229517AbhCQE4F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 00:56:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42540 "EHLO
+        id S229517AbhCQFAZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 01:00:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229492AbhCQEzf (ORCPT
+        with ESMTP id S229472AbhCQFAY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 00:55:35 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF3DEC06175F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 21:55:34 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id c10so464903ejx.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 21:55:34 -0700 (PDT)
+        Wed, 17 Mar 2021 01:00:24 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27B21C06174A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 22:00:24 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id v92so1174983ybi.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 22:00:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=R9Su8BT2yWWWTsxwDOrtHcEfB6yWhXQeHaQOaR7lJs0=;
-        b=O6sx9FFHvjxesWJe/kyNeeBwWtW52JhZ86uNybfLp1n5nVpFA0IdiS1FOjx1HpoaD3
-         v98nvCJdMQQRsZF4Ahu2nvix+wWfSe6qAHxAlqqAICsBrPdWX3GX5tW9Jy52xYO03bG2
-         tq7uMOyEKMG4n2m4kmyRyxz9EpkWw4r97rCHXVZFOL8YDM+2i24h4NIe9+6TTy1Ry1tu
-         QiRCdpVKVXGNYNe/nBpvBvBRoBPu2da836m6NDtDeN4NNFm6Y84CYIBl6C6eVwoPXJ5A
-         9d8jt1DnkFlIM91CFSuKs6O1m+RJp0IKPkWx3F1g46JqMwRFiBaSlwlFy8gmhIBpdAUc
-         4ybg==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=uR46A4nqOYwwJGkb7CjOd8YvMztGe4D67fEr9Lx0aK4=;
+        b=m15dh5m3XXgVhf5iWQarg86MSr3VNumGRieYIz4PfcfM8sNthpKwxA5HcN0Art4i5v
+         /bHjfTAZ/ReKbPrZl1wGPgFDj18CL3ET2UtjPuA+eqHEl3uMIJV448Nv6p2y+mxv5Ft1
+         d4Uxgm4KyT9ZWu89QAO69ESjmDMGlwNrgbhV0rwL+C6TClF9a8BRC5jWeCIpbPtLl64u
+         jJvaJGaXy9/+68C8LLAmwq+P4q3OLbHgIKf8uyJAExOatoEP399TehNCpr3hBgP/X8v8
+         N2+eYsMdUMeE9fOGiJKANZxdtWdLk4Y65UvhrQDqvPsmpoDoVGObMKxbszmNfNdRhp28
+         yguQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=R9Su8BT2yWWWTsxwDOrtHcEfB6yWhXQeHaQOaR7lJs0=;
-        b=pueOZ3oTvNNER7h37XRZ/nCBvAP0dZq6kBOn7I1m/ezTxy5FCHnjWgz+42JrSVrri/
-         BXrfgE0LZIyU1bkW/2uuVgEihor4w+RVLAdjGtb1aMQnCr4qiMnoM46qIsN6HlFAMrFX
-         28V5TZjrH7Ef9F193G16Cgy4UfyZUKqRi7JNuw+j+uj5EiF6BU6GJw4hwk56QpWTDr3Y
-         8L8djaL35Jxsdcca8Cz4UY1BYJdSEmW7ClQEAiquR8PzIFF0uCL0FzM34CtKRhjMnRNg
-         bmt1q0or+sTOvqyFM9d+I4SemoqeCo8hVIuS2iNOc2m+rOycmuupcThd5CzlfVjPnwys
-         zE0Q==
-X-Gm-Message-State: AOAM531B6SQ6Ulp7KG4qC14QgVvjJdzhMb0hIe4GZza66wQ78OvD4PnS
-        jNT3W6vFo9vPxz5VKZDCd87ic76W+jPePTltZ8WEEw==
-X-Google-Smtp-Source: ABdhPJwIO/ogRUlUiVl0dBLKIRZNfZtAdaRzwMYSyKIDI5BrQSkoOFC21rPTMy4VEFzJeUUvJsOKadQ+mLG8+8a/sbQ=
-X-Received: by 2002:a17:906:1386:: with SMTP id f6mr32943546ejc.45.1615956933554;
- Tue, 16 Mar 2021 21:55:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <CE1E7D7EFA066443B6454A6A5063B50220D0B849@dggeml509-mbs.china.huawei.com>
- <20210311121923.GU3479805@casper.infradead.org> <CAPcyv4jz7-uq+T-sd_U3O_C7SB9nYWVJDnhVsaM0VNR207m8xA@mail.gmail.com>
- <CE1E7D7EFA066443B6454A6A5063B50220D12A8A@dggeml509-mbs.china.huawei.com>
-In-Reply-To: <CE1E7D7EFA066443B6454A6A5063B50220D12A8A@dggeml509-mbs.china.huawei.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 16 Mar 2021 21:55:27 -0700
-Message-ID: <CAPcyv4i2evDrYVgh4ir_ddRfO7tOgmWPSZf893JTO=+mcG7-XQ@mail.gmail.com>
-Subject: Re: [question] Panic in dax_writeback_one
-To:     "chenjun (AM)" <chenjun102@huawei.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        "Xiangrui (Euler)" <rui.xiang@huawei.com>,
-        "lizhe (Y)" <lizhe67@huawei.com>, yangerkun <yangerkun@huawei.com>,
-        "zhangyi (F)" <yi.zhang@huawei.com>,
-        Joao Martins <joao.m.martins@oracle.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=uR46A4nqOYwwJGkb7CjOd8YvMztGe4D67fEr9Lx0aK4=;
+        b=qNnW2DMw7D8hhHVkbgnDQUw+xxn+/0y6cuXkadZQh/Bbr+BF5t0UvVHiJy47WZ0c5u
+         m/LYtuPTUmwrrgRGOUoF/3PbQaFoE6+439CWFR9MGJjUkEgaJzG1QFfs14Q1KsktNUxM
+         7YyaYZpTzRMVVSCIT2C31zgym1F0vheCpYH6PF27ARYrGHZl0SaKYjWPJojKsxOS3gY5
+         muDTaYZXU1qu50mRG1FbHuw8Btm2R9HJJ2VnVV0+TAF6FIHyGxarPHhQjONHTxqo/A/4
+         wfLdf0Xe2vdVuZFFm2EIdnxYrmhBC83cL+qESmzFCVJg0OPwyHMGg1PU8Q6bp1G4d2Qj
+         viRw==
+X-Gm-Message-State: AOAM5309p3OMRrCAnRhZjemqdCh1i3Tzvy1cfmUL5tw0FadsRlVa4MXA
+        8z8feCVNLMTcXW4ys8T+liX4MMZPxcFU
+X-Google-Smtp-Source: ABdhPJyGFfX7YbliA3oIHPHF+6wCyNHCB+/qSrZ0IwLrluGITLldY+ClN8AbHwDGi4297g0SL7yWMTU3fhN7
+X-Received: from joshdon.svl.corp.google.com ([2620:15c:2cd:202:d554:135a:678a:ce01])
+ (user=joshdon job=sendgmr) by 2002:a25:dad4:: with SMTP id
+ n203mr2720954ybf.233.1615957223214; Tue, 16 Mar 2021 22:00:23 -0700 (PDT)
+Date:   Tue, 16 Mar 2021 21:59:49 -0700
+Message-Id: <20210317045949.1584952-1-joshdon@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.31.0.rc2.261.g7f71774620-goog
+Subject: [PATCH] sched: Warn on long periods of pending need_resched
+From:   Josh Don <joshdon@google.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        David Rientjes <rientjes@google.com>,
+        Oleg Rombakh <olegrom@google.com>,
+        Paul Turner <pjt@google.com>, Josh Don <joshdon@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 16, 2021 at 8:00 PM chenjun (AM) <chenjun102@huawei.com> wrote:
->
-> =E5=9C=A8 2021/3/12 1:25, Dan Williams =E5=86=99=E9=81=93:
-> > On Thu, Mar 11, 2021 at 4:20 AM Matthew Wilcox <willy@infradead.org> wr=
-ote:
-> >>
-> >> On Thu, Mar 11, 2021 at 07:48:25AM +0000, chenjun (AM) wrote:
-> >>> static int dax_writeback_one(struct xa_state *xas, struct dax_device
-> >>> *dax_dev, struct address_space *mapping, void *entry)
-> >>> ----dax_flush(dax_dev, page_address(pfn_to_page(pfn)), count * PAGE_S=
-IZE);
-> >>> The pfn is returned by the driver. In my case, the pfn does not have
-> >>> struct page. so pfn_to_page(pfn) return a wrong address.
-> >>
-> >> I wasn't involved, but I think the right solution here is simply to
-> >> replace page_address(pfn_to_page(pfn)) with pfn_to_virt(pfn).  I don't
-> >> know why Dan decided to do this in the more complicated way.
-> >
-> > pfn_to_virt() only works for the direct-map. If pages are not mapped I
-> > don't see how pfn_to_virt() is expected to work.
-> >
-> > The real question Chenjun is why are you writing a new simulator of
-> > memory as a block-device vs reusing the pmem driver or brd?
-> >
->
-> Hi Dan
->
-> In my case, I do not want to take memory to create the struct page of
-> the memory my driver used.
+From: Paul Turner <pjt@google.com>
 
-There are efforts happening to drastically reduce that overhead. You
-might want to check out Joao's work [1]. I think that direction holds
-more promise than trying to extend FS_DAX_LIMITED.
+CPU scheduler marks need_resched flag to signal a schedule() on a
+particular CPU. But, schedule() may not happen immediately in cases
+where the current task is executing in the kernel mode (no
+preemption state) for extended periods of time.
 
-[1]: http://lore.kernel.org/r/20201208172901.17384-1-joao.m.martins@oracle.=
-com
+This patch adds a warn_on if need_resched is pending for more than the
+time specified in sysctl resched_latency_warn_ms. Monitoring is done via
+the tick and the accuracy is hence limited to jiffy scale. This also
+means that we won't trigger the warning if the tick is disabled.
 
-> And, I think this is also a problem for DCSSBLK.
+If resched_latency_warn_ms is set to the default value, only one warning
+will be produced per boot.
 
-If I understand correctly DAX replaced XIP for S390. There have not
-been reports about this problem, and I can only guess because XIP
-(eXecute-In-Place) is a read-only use case where dax_writeback_one()
-is never triggered, or S390 just isn't using DCSSBLK anymore. The last
-time I touched FS_DAX_LIMITED the DCSSBLK maintainers offered to just
-delete this driver to get it out of the way.
+This warning only exists under CONFIG_SCHED_DEBUG. If it goes off, it is
+likely that there is a missing cond_resched() somewhere.
 
->
-> So I want to go back the older way if CONFIG_FS_DAX_LIMITED
->
-> diff --git a/fs/dax.c b/fs/dax.c
-> index b3d27fd..6395e84 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -867,6 +867,9 @@ static int dax_writeback_one(struct xa_state *xas,
-> struct dax_device *dax_dev,
->   {
->         unsigned long pfn, index, count;
->         long ret =3D 0;
-> +       void *kaddr;
-> +       pfn_t new_pfn_t;
-> +       pgoff_t pgoff;
->
->         /*
->          * A page got tagged dirty in DAX mapping? Something is seriously
-> @@ -926,7 +929,25 @@ static int dax_writeback_one(struct xa_state *xas,
-> struct dax_device *dax_dev,
->         index =3D xas->xa_index & ~(count - 1);
->
->         dax_entry_mkclean(mapping, index, pfn);
-> -       dax_flush(dax_dev, page_address(pfn_to_page(pfn)), count * PAGE_S=
-IZE);
-> +
-> +       if (!IS_ENABLED(CONFIG_FS_DAX_LIMITED) || pfn_valid(pfn))
-> +               kaddr =3D page_address(pfn_to_page(pfn));
-> +       else {
-> +               ret =3D bdev_dax_pgoff(mapping->host->i_sb->s_bdev, pfn <=
-<
-> PFN_SECTION_SHIFT, count << PAGE_SHIFT, &pgoff);
+Signed-off-by: Paul Turner <pjt@google.com>
+Signed-off-by: Josh Don <joshdon@google.com>
+---
+We've caught various bugs using this patch. In fact, a followup patch to
+this one will be a patch introducing a missing cond_resched(). However,
+this may be too noisy to have as default enabled (especially given that
+it requires some tuning); I'm open to having this default disabled
+instead.
+ kernel/sched/core.c  | 91 ++++++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/sched.h |  6 +++
+ kernel/sysctl.c      |  8 ++++
+ 3 files changed, 105 insertions(+)
 
-This is broken:
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 98191218d891..ac037fc87d5e 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -58,7 +58,25 @@ const_debug unsigned int sysctl_sched_features =
+ #include "features.h"
+ 	0;
+ #undef SCHED_FEAT
++
++/*
++ * Print a warning if need_resched is set for at least this long. At the
++ * default value, only a single warning will be printed per boot.
++ *
++ * Values less than 2 disable the feature.
++ *
++ * A kernel compiled with CONFIG_KASAN tends to run more slowly on average.
++ * Increase the need_resched timeout to reduce false alarms.
++ */
++#ifdef CONFIG_KASAN
++#define RESCHED_DEFAULT_WARN_LATENCY_MS 101
++#define RESCHED_BOOT_QUIET_SEC 600
++#else
++#define RESCHED_DEFAULT_WARN_LATENCY_MS 51
++#define RESCHED_BOOT_QUIET_SEC 300
+ #endif
++int sysctl_resched_latency_warn_ms = RESCHED_DEFAULT_WARN_LATENCY_MS;
++#endif /* CONFIG_SCHED_DEBUG */
+ 
+ /*
+  * Number of tasks to iterate in a single balance run.
+@@ -4520,6 +4538,71 @@ unsigned long long task_sched_runtime(struct task_struct *p)
+ 	return ns;
+ }
+ 
++#ifdef CONFIG_SCHED_DEBUG
++
++static inline u64 resched_latency_check(struct rq *rq)
++{
++	int latency_warn_ms = READ_ONCE(sysctl_resched_latency_warn_ms);
++	bool warn_only_once = (latency_warn_ms == RESCHED_DEFAULT_WARN_LATENCY_MS);
++	u64 need_resched_latency, now = rq_clock(rq);
++	static bool warned_once;
++
++	if (warn_only_once && warned_once)
++		return 0;
++
++	if (!need_resched() || latency_warn_ms < 2)
++		return 0;
++
++	/* Disable this warning for the first few mins after boot */
++	if (now < RESCHED_BOOT_QUIET_SEC * NSEC_PER_SEC)
++		return 0;
++
++	if (!rq->last_seen_need_resched_ns) {
++		rq->last_seen_need_resched_ns = now;
++		rq->ticks_without_resched = 0;
++		return 0;
++	}
++
++	rq->ticks_without_resched++;
++	need_resched_latency = now - rq->last_seen_need_resched_ns;
++	if (need_resched_latency <= latency_warn_ms * NSEC_PER_MSEC)
++		return 0;
++
++	warned_once = true;
++
++	return need_resched_latency;
++}
++
++static inline void resched_latency_warn(int cpu, u64 latency)
++{
++	static DEFINE_RATELIMIT_STATE(latency_check_ratelimit, 60 * 60 * HZ, 1);
++
++	WARN(__ratelimit(&latency_check_ratelimit),
++	     "CPU %d: need_resched set for > %llu ns (%d ticks) "
++	     "without schedule\n",
++	     cpu, latency, cpu_rq(cpu)->ticks_without_resched);
++}
++
++
++static int __init setup_resched_latency_warn_ms(char *str)
++{
++	long val;
++
++	if ((kstrtol(str, 0, &val))) {
++		pr_warn("Unable to set resched_latency_warn_ms\n");
++		return 1;
++	}
++
++	sysctl_resched_latency_warn_ms = val;
++	return 1;
++}
++__setup("resched_latency_warn_ms=", setup_resched_latency_warn_ms);
++#else
++static inline u64 resched_latency_check(struct rq *rq) { return 0; }
++static inline void resched_latency_warn(int cpu, u64 latency) {}
++#endif /* CONFIG_SCHED_DEBUG */
++
++
+ /*
+  * This function gets called by the timer code, with HZ frequency.
+  * We call it with interrupts disabled.
+@@ -4531,6 +4614,7 @@ void scheduler_tick(void)
+ 	struct task_struct *curr = rq->curr;
+ 	struct rq_flags rf;
+ 	unsigned long thermal_pressure;
++	u64 resched_latency;
+ 
+ 	arch_scale_freq_tick();
+ 	sched_clock_tick();
+@@ -4541,11 +4625,15 @@ void scheduler_tick(void)
+ 	thermal_pressure = arch_scale_thermal_pressure(cpu_of(rq));
+ 	update_thermal_load_avg(rq_clock_thermal(rq), rq, thermal_pressure);
+ 	curr->sched_class->task_tick(rq, curr, 0);
++	resched_latency = resched_latency_check(rq);
+ 	calc_global_load_tick(rq);
+ 	psi_task_tick(rq);
+ 
+ 	rq_unlock(rq, &rf);
+ 
++	if (resched_latency)
++		resched_latency_warn(cpu, resched_latency);
++
+ 	perf_event_task_tick();
+ 
+ #ifdef CONFIG_SMP
+@@ -5040,6 +5128,9 @@ static void __sched notrace __schedule(bool preempt)
+ 	next = pick_next_task(rq, prev, &rf);
+ 	clear_tsk_need_resched(prev);
+ 	clear_preempt_need_resched();
++#ifdef CONFIG_SCHED_DEBUG
++	rq->last_seen_need_resched_ns = 0;
++#endif
+ 
+ 	if (likely(prev != next)) {
+ 		rq->nr_switches++;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 10a1522b1e30..912a8886bc7f 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -57,6 +57,7 @@
+ #include <linux/prefetch.h>
+ #include <linux/profile.h>
+ #include <linux/psi.h>
++#include <linux/ratelimit.h>
+ #include <linux/rcupdate_wait.h>
+ #include <linux/security.h>
+ #include <linux/stop_machine.h>
+@@ -963,6 +964,11 @@ struct rq {
+ 
+ 	atomic_t		nr_iowait;
+ 
++#ifdef CONFIG_SCHED_DEBUG
++	u64 last_seen_need_resched_ns;
++	int ticks_without_resched;
++#endif
++
+ #ifdef CONFIG_MEMBARRIER
+ 	int membarrier_state;
+ #endif
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 62fbd09b5dc1..526094fc364e 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -193,6 +193,7 @@ static int max_wakeup_granularity_ns = NSEC_PER_SEC;	/* 1 second */
+ static int min_sched_tunable_scaling = SCHED_TUNABLESCALING_NONE;
+ static int max_sched_tunable_scaling = SCHED_TUNABLESCALING_END-1;
+ #endif /* CONFIG_SMP */
++extern int sysctl_resched_latency_warn_ms;
+ #endif /* CONFIG_SCHED_DEBUG */
+ 
+ #ifdef CONFIG_COMPACTION
+@@ -1763,6 +1764,13 @@ static struct ctl_table kern_table[] = {
+ 		.extra2		= SYSCTL_ONE,
+ 	},
+ #endif /* CONFIG_NUMA_BALANCING */
++	{
++		.procname	= "resched_latency_warn_ms",
++		.data		= &sysctl_resched_latency_warn_ms,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++	},
+ #endif /* CONFIG_SCHED_DEBUG */
+ 	{
+ 		.procname	= "sched_rt_period_us",
+-- 
+2.31.0.rc2.261.g7f71774620-goog
 
-    mapping->host->i_sb->s_bdev
-
-...there is no guarantee that the superblock associated with the
-mapping is hosted on the same block device associated with the passed
-in dax_device. See dax_rtdev in xfs_open_devices().
