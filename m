@@ -2,130 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B32C33E74B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 04:00:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 547FD33E76A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 04:05:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229550AbhCQDAF convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Mar 2021 23:00:05 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:3041 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbhCQC77 (ORCPT
+        id S229590AbhCQDEz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Mar 2021 23:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47120 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230034AbhCQDEe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Mar 2021 22:59:59 -0400
-Received: from DGGEML404-HUB.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4F0ZYw6BYpzWMHZ;
-        Wed, 17 Mar 2021 10:56:52 +0800 (CST)
-Received: from DGGEML509-MBS.china.huawei.com ([169.254.4.125]) by
- DGGEML404-HUB.china.huawei.com ([fe80::b177:a243:7a69:5ab8%31]) with mapi id
- 14.03.0513.000; Wed, 17 Mar 2021 10:59:44 +0800
-From:   "chenjun (AM)" <chenjun102@huawei.com>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        "Xiangrui (Euler)" <rui.xiang@huawei.com>,
-        "lizhe (Y)" <lizhe67@huawei.com>, yangerkun <yangerkun@huawei.com>,
-        "zhangyi (F)" <yi.zhang@huawei.com>
-Subject: Re: [question] Panic in dax_writeback_one
-Thread-Topic: [question] Panic in dax_writeback_one
-Thread-Index: AdcWSusQwspXlegvQqCtsylm2CuWCw==
-Date:   Wed, 17 Mar 2021 02:59:43 +0000
-Message-ID: <CE1E7D7EFA066443B6454A6A5063B50220D12A8A@dggeml509-mbs.china.huawei.com>
-References: <CE1E7D7EFA066443B6454A6A5063B50220D0B849@dggeml509-mbs.china.huawei.com>
- <20210311121923.GU3479805@casper.infradead.org>
- <CAPcyv4jz7-uq+T-sd_U3O_C7SB9nYWVJDnhVsaM0VNR207m8xA@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.174.178.53]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 8BIT
+        Tue, 16 Mar 2021 23:04:34 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2541CC06174A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 20:04:34 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id u6so33042230oic.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Mar 2021 20:04:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MKJVDGq2fD/K8JDHgdceX4ZU6BQj507CK8v7EKjVYFU=;
+        b=fE1P5fiE4yp7C9fG/rJdKNBQynGyQfJdb36Od9usmkBMAdAubIkTGG9hWXO0/2KOjn
+         VzYa+76HCb9l0yG+p7X675qqfoDludKiClRHh7jUuKLqOP0s7DfXMhtCV2qf24jlg3BM
+         ofkHQUK2QbhbS/VvvvguAHA7Pr8tgxNKtJ7p9KuUE1X+PhPTfR+MFzKD7a+1Bo/ujYVj
+         uWpe3iQe0O07xg5r1okog40zamw4cwOOWk19OLGlolFxNZaUmBpp1zO7J712gW4ghWsA
+         R6SuhlOzDyKjfeYHxFHG7/qEcvOzS2HinM/j3coM8mOVmR5513IOYC4ChNgaiWnOxLa5
+         aMNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MKJVDGq2fD/K8JDHgdceX4ZU6BQj507CK8v7EKjVYFU=;
+        b=m7ARF/GhBqWKoY3BXuGUNZkuiiAujfGacOwc8p7MxL+Doch69Pf4Mi+n65gnI0d06O
+         h8dLauf3odB6CXpmz+9bHtNxYO4Jp+Y/MWc3JBiHgS7iwS+cWIG245v0i6PjrtUYKXOm
+         yH6i/lzzxHMBqIwS94LmhBKXKuI4mnvxmkhV1Md420GGlRMx0o8CPunMJTx7iDuHf+JN
+         /njDkxWrl4LmuSj+qeqlNnS1Z6kxufbIWnTfKFrM8kWMpKRSPSFA12jTg2nQ/cL2piU/
+         STGgTEyrBhjHAMNvxmOB15TziWxURHej7NWNdmn2OTYxQ7F8zccA4nPdx3qDlVGQNxQa
+         ZFbA==
+X-Gm-Message-State: AOAM5306MdSpfAgWv6o1v1iMu8+qjgECihftefAI8NbeSv5M+rG/Mcwp
+        S9U6OKgvlr2MZpsCPCvbQtyidV2yZoPFxumIryiubQ==
+X-Google-Smtp-Source: ABdhPJx9MvoNOrBNPbnCCBnJJ5/viAPiTOEuFqbFngZIsW27w22YA8/3lAfkGBk4Np6w9nV/GaqHrhIOwXD6W+8eIiw=
+X-Received: by 2002:aca:538c:: with SMTP id h134mr1265814oib.174.1615950273440;
+ Tue, 16 Mar 2021 20:04:33 -0700 (PDT)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+References: <CAOg9mSTQ-zNKXQGBK9QEnwJCvwqh=zFLbLJZy-ibGZwLve4o0w@mail.gmail.com>
+ <20210201130800.GP308988@casper.infradead.org> <CAOg9mSSd5ccoi1keeiRfkV+esekcQLxer9_1iZ-r9bQDjZLfBg@mail.gmail.com>
+ <CAOg9mSSEVE3PGs2E9ya5_B6dQkoH6n2wGAEW_wWSEvw0LurWuQ@mail.gmail.com>
+In-Reply-To: <CAOg9mSSEVE3PGs2E9ya5_B6dQkoH6n2wGAEW_wWSEvw0LurWuQ@mail.gmail.com>
+From:   Mike Marshall <hubcap@omnibond.com>
+Date:   Tue, 16 Mar 2021 23:04:22 -0400
+Message-ID: <CAOg9mSSW_fs73jmB1jmArJZ-bGSeVagp+R93W6k5sQ74xUyqcw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] implement orangefs_readahead
+To:     Matthew Wilcox <willy@infradead.org>,
+        Mike Marshall <hubcap@omnibond.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-在 2021/3/12 1:25, Dan Williams 写道:
-> On Thu, Mar 11, 2021 at 4:20 AM Matthew Wilcox <willy@infradead.org> wrote:
->>
->> On Thu, Mar 11, 2021 at 07:48:25AM +0000, chenjun (AM) wrote:
->>> static int dax_writeback_one(struct xa_state *xas, struct dax_device
->>> *dax_dev, struct address_space *mapping, void *entry)
->>> ----dax_flush(dax_dev, page_address(pfn_to_page(pfn)), count * PAGE_SIZE);
->>> The pfn is returned by the driver. In my case, the pfn does not have
->>> struct page. so pfn_to_page(pfn) return a wrong address.
->>
->> I wasn't involved, but I think the right solution here is simply to
->> replace page_address(pfn_to_page(pfn)) with pfn_to_virt(pfn).  I don't
->> know why Dan decided to do this in the more complicated way.
-> 
-> pfn_to_virt() only works for the direct-map. If pages are not mapped I
-> don't see how pfn_to_virt() is expected to work.
-> 
-> The real question Chenjun is why are you writing a new simulator of
-> memory as a block-device vs reusing the pmem driver or brd?
-> 
+So I took my orangefs_readahead patch and
+David Howells' patches from his fscache-iter
+branch and put them on top of Linux 5.12-rc3
+so as to get rid of all that
+ RIP: 0010:ttm_bo_release+0x2ea/0x340 [ttm]
+stuff that was happening to VMs with
+5.12-rc2.  Then I added a readahead_expand
+call at the start of orangefs_readahead. I
+played with various expansion values, but
+the bottom line is: it works GREAT in my
+simple tests, speeds reads WAY up.
 
-Hi Dan
+-Mike
 
-In my case, I do not want to take memory to create the struct page of 
-the memory my driver used.
-
-And, I think this is also a problem for DCSSBLK.
-
-So I want to go back the older way if CONFIG_FS_DAX_LIMITED
-
-diff --git a/fs/dax.c b/fs/dax.c
-index b3d27fd..6395e84 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -867,6 +867,9 @@ static int dax_writeback_one(struct xa_state *xas, 
-struct dax_device *dax_dev,
-  {
-  	unsigned long pfn, index, count;
-  	long ret = 0;
-+	void *kaddr;
-+	pfn_t new_pfn_t;
-+	pgoff_t pgoff;
-
-  	/*
-  	 * A page got tagged dirty in DAX mapping? Something is seriously
-@@ -926,7 +929,25 @@ static int dax_writeback_one(struct xa_state *xas, 
-struct dax_device *dax_dev,
-  	index = xas->xa_index & ~(count - 1);
-
-  	dax_entry_mkclean(mapping, index, pfn);
--	dax_flush(dax_dev, page_address(pfn_to_page(pfn)), count * PAGE_SIZE);
-+
-+	if (!IS_ENABLED(CONFIG_FS_DAX_LIMITED) || pfn_valid(pfn))
-+		kaddr = page_address(pfn_to_page(pfn));
-+	else {
-+		ret = bdev_dax_pgoff(mapping->host->i_sb->s_bdev, pfn << 
-PFN_SECTION_SHIFT, count << PAGE_SHIFT, &pgoff);
-+		if (ret)
-+			goto put_unlocked;
-+
-+		ret = dax_direct_access(dax_dev, pgoff, count, &kaddr, &new_pfn_t);
-+		if (ret < 0)
-+			goto put_unlocked;
-+
-+		if (WARN_ON_ONCE(ret < count) || WARN_ON_ONCE(pfn_t_to_pfn(new_pfn_t) 
-!= pfn)) {
-+			ret = -EIO;
-+		        goto put_unlocked;
-+		}
-+	}
-+
-+	dax_flush(dax_dev, kaddr, count * PAGE_SIZE);
-  	/*
-  	 * After we have flushed the cache, we can clear the dirty tag. There
-  	 * cannot be new dirty data in the pfn after the flush has completed as
--- 
-
--- 
-Regards
-Chen Jun
+On Sat, Mar 13, 2021 at 10:31 AM Mike Marshall <hubcap@omnibond.com> wrote:
+>
+> Greetings everyone.
+>
+> I have made another version of orangefs_readahead, without any
+> of my hand rolled page cache manipulations. I read a bunch of
+> the source in other filesystems and mm and fs and pagemap.h to
+> try and get an idea of how to implement readahead so that my
+> implementation is "with the program".
+>
+> I have described the flawed code I have upstream now in an
+> earlier message. My flawed code has no readahead implementation, but
+> it is much faster than with this readahead implementation.
+>
+> If this readahead implementation is "the right idea", I can
+> use it as a framework to implement an async orangefs read function
+> and start the read at the beginning of my readahead function
+> and collect the results at the end after the readahead pages
+> have been marshaled. Also, once some mechanism like David Howells'
+> code to control the readahead window goes upstream, I should be
+> able take big enough gulps of readahead to make Orangefs do right.
+> The heuristically chosen 64 page max that I can get now isn't enough.
+>
+> I hope some of y'all have the time to review this implementation of
+> readahead...
+>
+> Thanks!
+>
+> -Mike
+>
+> static void orangefs_readahead(struct readahead_control *rac)
+> {
+> struct page **pages;
+> unsigned int npages = readahead_count(rac);
+> loff_t offset = readahead_pos(rac);
+> struct bio_vec *bvs;
+> int i;
+> struct iov_iter iter;
+> struct file *file = rac->file;
+> struct inode *inode = file->f_mapping->host;
+> int ret;
+>
+> /* allocate an array of page pointers. */
+> pages = kzalloc(npages * (sizeof(struct page *)), GFP_KERNEL);
+>
+> /* Get a batch of pages to read. */
+> npages = __readahead_batch(rac, pages, npages);
+>
+> /* allocate an array of bio_vecs. */
+> bvs = kzalloc(npages * (sizeof(struct bio_vec)), GFP_KERNEL);
+>
+> /* hook the bio_vecs to the pages. */
+> for (i = 0; i < npages; i++) {
+> bvs[i].bv_page = pages[i];
+> bvs[i].bv_len = PAGE_SIZE;
+> bvs[i].bv_offset = 0;
+> }
+>
+> iov_iter_bvec(&iter, READ, bvs, npages, npages * PAGE_SIZE);
+>
+> /* read in the pages. */
+> ret = wait_for_direct_io(ORANGEFS_IO_READ, inode, &offset, &iter,
+> npages * PAGE_SIZE, inode->i_size, NULL, NULL, file);
+>
+> /* clean up. */
+> for (i = 0; i < npages; i++) {
+> SetPageUptodate(bvs[i].bv_page);
+> unlock_page(bvs[i].bv_page);
+> put_page(bvs[i].bv_page);
+> }
+> kfree(pages);
+> kfree(bvs);
+> }
+>
+> On Mon, Feb 1, 2021 at 10:32 PM Mike Marshall <hubcap@omnibond.com> wrote:
+> >
+> > >> This is not the way to do it. You need to actually kick
+> > >> off readahead in this routine so that you get pipelining
+> > >> (ie the app is working on pages 0-15 at the same time
+> > >> the server is getting you pages 16-31).
+> >
+> > Orangefs isn't very good at reading or writing a few
+> > pages at a time. Its optimal block size is four megabytes.
+> > I'm trying to do IOs big enough to make Orangefs
+> > start flowing like it needs to and then have pages
+> > on hand to fill with the data. Perhaps I can figure
+> > how to use Dave Howell's code to control the
+> > readahead window and make adjustments to
+> > how many pages Orangefs reads per IO and
+> > end up with something that is closer to how
+> > readahead is intended to be used.
+> >
+> > This patch is a big performance improvement over
+> > the code that's upstream even though I'm
+> > not using readahead as intended.
+> >
+> > >> I don't see much support in orangefs for doing async
+> > >> operations; everything seems to be modelled on
+> > >> "submit an I/O and wait for it to complete".
+> >
+> > Yep... when we were polishing up the kernel module to
+> > attempt to go upstream, the code in there for async was
+> > left behind... I might be able to make sense of it now,
+> > Ida know... You've helped me to see this place where
+> > it is needed.
+> >
+> > >> adding async
+> > >> support to orangefs is a little bigger task than I'm willing to put
+> > >> significant effort into right now.
+> >
+> > The effort and help that you're providing is much
+> > appreciated and just what I need, thanks!
+> >
+> > -Mike
+> >
+> > On Mon, Feb 1, 2021 at 8:08 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > >
+> > > On Sun, Jan 31, 2021 at 05:25:02PM -0500, Mike Marshall wrote:
+> > > > I wish I knew how to specify _nr_pages in the readahead_control
+> > > > structure so that all the extra pages I need could be obtained
+> > > > in readahead_page instead of part there and the rest in my
+> > > > open-coded stuff in orangefs_readpage. But it looks to me as
+> > > > if values in the readahead_control structure are set heuristically
+> > > > outside of my control over in ondemand_readahead?
+> > >
+> > > That's right (for now).  I pointed you at some code from Dave Howells
+> > > that will allow orangefs to enlarge the readahead window beyond that
+> > > determined by the core code's algorithms.
+> > >
+> > > > [root@vm3 linux]# git diff master..readahead
+> > > > diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+> > > > index 48f0547d4850..682a968cb82a 100644
+> > > > --- a/fs/orangefs/inode.c
+> > > > +++ b/fs/orangefs/inode.c
+> > > > @@ -244,6 +244,25 @@ static int orangefs_writepages(struct
+> > > > address_space *mapping,
+> > > >
+> > > >  static int orangefs_launder_page(struct page *);
+> > > >
+> > > > +/*
+> > > > + * Prefill the page cache with some pages that we're probably
+> > > > + * about to need...
+> > > > + */
+> > > > +static void orangefs_readahead(struct readahead_control *rac)
+> > > > +{
+> > > > +       pgoff_t index = readahead_index(rac);
+> > > > +       struct page *page;
+> > > > +
+> > > > +       while ((page = readahead_page(rac))) {
+> > > > +               prefetchw(&page->flags);
+> > > > +               put_page(page);
+> > > > +               unlock_page(page);
+> > > > +               index++;
+> > > > +       }
+> > > > +
+> > > > +       return;
+> > > > +}
+> > >
+> > > This is not the way to do it.  You need to actually kick off readahead in
+> > > this routine so that you get pipelining (ie the app is working on pages
+> > > 0-15 at the same time the server is getting you pages 16-31).  I don't
+> > > see much support in orangefs for doing async operations; everything
+> > > seems to be modelled on "submit an I/O and wait for it to complete".
+> > >
+> > > I'm happy to help out with pagecache interactions, but adding async
+> > > support to orangefs is a little bigger task than I'm willing to put
+> > > significant effort into right now.
