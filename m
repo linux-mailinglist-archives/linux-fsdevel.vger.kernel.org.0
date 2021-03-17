@@ -2,93 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 330D333F99D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 20:59:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4012C33FA7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 22:31:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233316AbhCQT7I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 15:59:08 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:60835 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233226AbhCQT6v (ORCPT
+        id S230406AbhCQVbF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 17:31:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33390 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230518AbhCQVau (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 15:58:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616011130;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ySpgGvyPy+abjN0pRAe2FOUozIdy/4aZ98taMwFLRJc=;
-        b=GcRWyjmq0fmYShXP2dHxntnkQ37cwbiASljrq+AQbXzh18FYvPdRkpQpOizHfnVf1H8GNx
-        OpMDfGBzGIwGjo798LRz5aFQPlZzMNsF39FZfFMTjVMvYhsq6GQW80ErGMLe/i4ULhkps7
-        5rCkssRyLCBHgy9s3zf9fAkqQ6qDgc0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-534-lawXoNKPPYO8Ngbhfe47oQ-1; Wed, 17 Mar 2021 15:58:46 -0400
-X-MC-Unique: lawXoNKPPYO8Ngbhfe47oQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 83A2F1007488;
-        Wed, 17 Mar 2021 19:58:45 +0000 (UTC)
-Received: from liberator.sandeen.net (ovpn04.gateway.prod.ext.phx2.redhat.com [10.5.9.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2A6306A90C;
-        Wed, 17 Mar 2021 19:58:45 +0000 (UTC)
-Subject: Re: fs: avoid softlockups in s_inodes iterators commit
-To:     David Mozes <david.mozes@silk.us>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <AM6PR04MB5639492BE427FDA2E1A9F74BF16B9@AM6PR04MB5639.eurprd04.prod.outlook.com>
- <4c7da46e-283b-c1e3-132a-2d8d5d9b2cea@sandeen.net>
- <AM6PR04MB563935FDA6010EA1383AA08BF16A9@AM6PR04MB5639.eurprd04.prod.outlook.com>
- <AM6PR04MB5639629BAB2CD2981BAA3AFDF16A9@AM6PR04MB5639.eurprd04.prod.outlook.com>
-From:   Eric Sandeen <sandeen@redhat.com>
-Message-ID: <80aafc03-90b2-ed68-54a9-0af1499854ec@redhat.com>
-Date:   Wed, 17 Mar 2021 14:58:44 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
- Gecko/20100101 Thunderbird/78.8.0
+        Wed, 17 Mar 2021 17:30:50 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DB1DC06175F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Mar 2021 14:30:50 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id u19so65380pgh.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Mar 2021 14:30:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=JcYcWHGmVNPGMhsAQmoPEgDMVOP5uAD1xio0p93SpaM=;
+        b=F2SGL0ebm1WN1AAXVrYPAflE0RRGNbDqRh5zWT6E/VDAvVhncHQW9rlh7inOf5XErV
+         eT01CBORU4s/hPImJxaRVOnYWJURa/EpWjUwCeBqyX1w70HMPLVFmoVGwzzKxMu/dyNs
+         /XSl3en+t+yMb+Vh+lIsSzolMrZwLO+UCWLC0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=JcYcWHGmVNPGMhsAQmoPEgDMVOP5uAD1xio0p93SpaM=;
+        b=DrKA8Xky8R2V9cGS3oRMpb8QyJTz/H9GxUbivUyQViJejs6c1HjSqxwS8rrpGD0Pnl
+         WVCooz+eEHzc9FdO1JoOXpx3Zi9qV79jdQHk8Y0tCc3TYNtovoewkAVru7NAI4O55E5l
+         I4a0JEaPBzX9872WKNIgYMaXIxPyqEJAlkd6ByckZKQYLwIqZxeIM/4yLEr9ONrQQIaP
+         PhhXYy2ekGSn6DcoU9CcE6Bc9G7+AJzeyissnYiEQ08XPS3q9lgv5dlFzrYgs/ANlsuT
+         jBdJCdCqVVDxy0Mcm+2Toahrun/k9WmVd+UZrbI/DnPEVMzHBER69knPwc+gQlM/3+4g
+         0dMw==
+X-Gm-Message-State: AOAM531lxehyDpRNN4U4qykzab8IEi4k0NNDjMMT8B26RjtIeL0s60yr
+        2DYFg8lgOqrSqaYOnYBHFI0spg==
+X-Google-Smtp-Source: ABdhPJxMlmgNJs/pSay3PORwaQblP+ABwko4SMVjMmgn6A+Fl8jjpE6/b/waFyC28qknA4CB+JWDTw==
+X-Received: by 2002:a05:6a00:78c:b029:1f5:d587:1701 with SMTP id g12-20020a056a00078cb02901f5d5871701mr889400pfu.59.1616016649608;
+        Wed, 17 Mar 2021 14:30:49 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id x190sm42856pfx.166.2021.03.17.14.30.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Mar 2021 14:30:48 -0700 (PDT)
+Date:   Wed, 17 Mar 2021 14:30:47 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+        Adam Nichols <adam@grimm-co.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        Uladzislau Rezki <urezki@gmail.com>
+Subject: Re: [PATCH v2] seq_file: Unconditionally use vmalloc for buffer
+Message-ID: <202103171425.CB0F4619A8@keescook>
+References: <20210315174851.622228-1-keescook@chromium.org>
+ <YFBs202BqG9uqify@dhcp22.suse.cz>
+ <202103161205.B2181BDE38@keescook>
+ <YFHxNT1Pwoslmhxq@dhcp22.suse.cz>
+ <YFIFY7mj65sStba1@kroah.com>
+ <YFIVwPWTo48ITkHs@dhcp22.suse.cz>
+ <YFIYrMVTC42boZ/Z@kroah.com>
+ <YFIeVLDsfBMa7fHW@dhcp22.suse.cz>
+ <YFIikaNixD57o3pk@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <AM6PR04MB5639629BAB2CD2981BAA3AFDF16A9@AM6PR04MB5639.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: base64
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YFIikaNixD57o3pk@kroah.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gMy8xNy8yMSAxMTo0NSBBTSwgRGF2aWQgTW96ZXMgd3JvdGU6DQo+IFNlbmQgZ2luIHRo
-ZSBzdGFjayBvZiB0aGUgZmlyc3QgY2FzZSBvbiBkaWZmZXJlbnQgcnVuIA0KPiANCj4gcGFu
-aWMgb24gMjUuMi4yMDIxDQo+IHdoYXRjaGcgb24gc2VydmVyIDQuIHRoZSBwbWMgd2FzIHNl
-cnZlciB3XDINCj4gRmViIDIzIDA1OjQ2OjA2IGMtbm9kZTA0IGtlcm5lbDogWzEyNTI1OS45
-OTAzMzJdIHdhdGNoZG9nOiBCVUc6IHNvZnQgbG9ja3VwIC0gQ1BVIzQxIHN0dWNrIGZvciAy
-MnMhIFtrdWljX21zZ19kb21haW46MTU3OTBdDQo+IEZlYiAyMyAwNTo0NjowNiBjLW5vZGUw
-NCBrZXJuZWw6IFsxMjUyNTkuOTkwMzMzXSBNb2R1bGVzIGxpbmtlZCBpbjogaXNjc2lfc2Nz
-dChPRSkgY3JjMzJjX2ludGVsKE8pIHNjc3RfbG9jYWwoT0UpIHNjc3RfdXNlcihPRSkgc2Nz
-dChPRSkgZHJiZChPKSBscnVfY2FjaGUoTykgODAyMXEoTykgbXJwKE8pIGdhcnAoTykgbmV0
-Y29uc29sZShPKSBuZnNkKE8pIG5mc19hY2woTykgYXV0aF9ycGNnc3MoTykgbG9ja2QoTykg
-c3VucnBjKE8pIGdyYWNlKE8pIHh0X01BU1FVRVJBREUoTykgeHRfbmF0KE8pIHh0X3N0YXRl
-KE8pIGlwdGFibGVfbmF0KE8pIHh0X2FkZHJ0eXBlKE8pIHh0X2Nvbm50cmFjayhPKSBuZl9u
-YXQoTykgbmZfY29ubnRyYWNrKE8pIG5mX2RlZnJhZ19pcHY0KE8pIG5mX2RlZnJhZ19pcHY2
-KE8pIGxpYmNyYzMyYyhPKSBicl9uZXRmaWx0ZXIoTykgYnJpZGdlKE8pIHN0cChPKSBsbGMo
-Tykgb3ZlcmxheShPKSBiZTJpc2NzaShPKSBpc2NzaV9ib290X3N5c2ZzKE8pIGJueDJpKE8p
-IGNuaWMoTykgdWlvKE8pIGN4Z2I0aShPKSBjeGdiNChPKSBjeGdiM2koTykgbGliY3hnYmko
-TykgY3hnYjMoTykgbWRpbyhPKSBsaWJjeGdiKE8pIGliX2lzZXIoT0UpIGlzY3NpX3RjcChP
-KSBsaWJpc2NzaV90Y3AoTykgbGliaXNjc2koTykgc2NzaV90cmFuc3BvcnRfaXNjc2koTykg
-ZG1fbXVsdGlwYXRoKE8pIHJkbWFfdWNtKE9FKSBpYl91Y20oT0UpIHJkbWFfY20oT0UpIGl3
-X2NtKE9FKSBpYl9pcG9pYihPRSkgaWJfY20oT0UpIGliX3VtYWQoT0UpIG1seDVfZnBnYV90
-b29scyhPRSkgbWx4NV9pYihPRSkgaWJfdXZlcmJzKE9FKSBtbHg1X2NvcmUoT0UpIG1kZXYo
-T0UpIG1seGZ3KE9FKSBwdHAoTykgcHBzX2NvcmUoTykgbWx4NF9pYihPRSkgaWJfY29yZShP
-RSkgbWx4NF9jb3JlKE9FKSBtbHhfY29tcGF0KE9FKSBmdXNlKE8pIGJpbmZtdF9taXNjKE8p
-IHB2cGFuaWMoTykgcGNzcGtyKE8pIHZpcnRpb19ybmcoTykgdmlydGlvX25ldChPKSBuZXRf
-ZmFpbG92ZXIoTykgZmFpbG92ZXIoTykgaTJjX3BpaXg0KA0KPiBGZWIgMjMgMDU6NDY6MDYg
-Yy1ub2RlMDQga2VybmVsOiBPKSBleHQ0KE9FKQ0KPiBGZWIgMjMgMDU6NDY6MDYgYy1ub2Rl
-MDQga2VybmVsOiBbMTI1MjU5Ljk5MDM2OF0gIGpiZDIoT0UpIG1iY2FjaGUoT0UpIHZpcnRp
-b19zY3NpKE9FKSB2aXJ0aW9fcGNpKE9FKSB2aXJ0aW9fcmluZyhPRSkgdmlydGlvKE9FKSBb
-bGFzdCB1bmxvYWRlZDogc2NzdF9sb2NhbF0NCg0Kb2ssIHlvdSBzdGlsbCBoYXZlbid0IHNh
-aWQgd2hhdCB5b3VyICJsaWdodCBjdXN0b20iIGNoYW5nZXMgdG8gdGhpcyBrZXJuZWwgYXJl
-LCBhbmQgYWxsIG9mIHlvdXIgbW9kdWxlcyBhcmUgb3V0IG9mIHRyZWUgKE8pIGFuZC9vciB1
-bnNpZ25lZCAoRSkgc28gSSB3b3VsZCBzdWdnZXN0IGZpcnN0IHRyeWluZyB0byByZXByb2R1
-Y2UgdGhpcyBvbiBzb21ldGhpbmcgYSBsb3QgbGVzcyBtZXNzeSBhbmQgY2xvc2VyIHRvIHVw
-c3RyZWFtLg0KDQotRXJpYw0K
+On Wed, Mar 17, 2021 at 04:38:57PM +0100, Greg Kroah-Hartman wrote:
+> On Wed, Mar 17, 2021 at 04:20:52PM +0100, Michal Hocko wrote:
+> > On Wed 17-03-21 15:56:44, Greg KH wrote:
+> > > On Wed, Mar 17, 2021 at 03:44:16PM +0100, Michal Hocko wrote:
+> > > > On Wed 17-03-21 14:34:27, Greg KH wrote:
+> > > > > On Wed, Mar 17, 2021 at 01:08:21PM +0100, Michal Hocko wrote:
+> > > > > > Btw. I still have problems with the approach. seq_file is intended to
+> > > > > > provide safe way to dump values to the userspace. Sacrificing
+> > > > > > performance just because of some abuser seems like a wrong way to go as
+> > > > > > Al pointed out earlier. Can we simply stop the abuse and disallow to
+> > > > > > manipulate the buffer directly? I do realize this might be more tricky
+> > > > > > for reasons mentioned in other emails but this is definitely worth
+> > > > > > doing.
+> > > > > 
+> > > > > We have to provide a buffer to "write into" somehow, so what is the best
+> > > > > way to stop "abuse" like this?
+> > > > 
+> > > > What is wrong about using seq_* interface directly?
+> > > 
+> > > Right now every show() callback of sysfs would have to be changed :(
+> > 
+> > Is this really the case? Would it be too ugly to have an intermediate
+> > buffer and then seq_puts it into the seq file inside sysfs_kf_seq_show.
+> 
+> Oh, good idea.
+> 
+> > Sure one copy more than necessary but it this shouldn't be a hot path or
+> > even visible on small strings. So that might be worth destroying an
+> > inherently dangerous seq API (seq_get_buf).
+> 
+> I'm all for that, let me see if I can carve out some time tomorrow to
+> try this out.
 
+The trouble has been that C string APIs are just so impossibly fragile.
+We just get too many bugs with it, so we really do need to rewrite the
+callbacks to use seq_file, since it has a safe API.
+
+I've been trying to write coccinelle scripts to do some of this
+refactoring, but I have not found a silver bullet. (This is why I've
+suggested adding the temporary "seq_show" and "seq_store" functions, so
+we can transition all the callbacks without a flag day.)
+
+> But, you don't get rid of the "ability" to have a driver write more than
+> a PAGE_SIZE into the buffer passed to it.  I guess I could be paranoid
+> and do some internal checks (allocate a bunch of memory and check for
+> overflow by hand), if this is something to really be concerned about...
+
+Besides the CFI prototype enforcement changes (which I can build into
+the new seq_show/seq_store callbacks), the buffer management is the
+primary issue: we just can't hand drivers a string (even with a length)
+because the C functions are terrible. e.g. just look at the snprintf vs
+scnprintf -- we constantly have to just build completely new API when
+what we need is a safe way (i.e. obfuscated away from the caller) to
+build a string. Luckily seq_file does this already, so leaning into that
+is good here.
+
+-- 
+Kees Cook
