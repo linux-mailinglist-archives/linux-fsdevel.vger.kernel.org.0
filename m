@@ -2,83 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F1D0233EE2F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 11:18:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E45933EE8D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 11:45:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229549AbhCQKSG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 06:18:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50200 "EHLO mx2.suse.de"
+        id S230096AbhCQKpE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 06:45:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229508AbhCQKR3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 06:17:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A305CAC1F;
-        Wed, 17 Mar 2021 10:17:28 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 59E871F2B76; Wed, 17 Mar 2021 11:17:28 +0100 (CET)
-Date:   Wed, 17 Mar 2021 11:17:28 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/5] fanotify: mix event info and pid into merge key
- hash
-Message-ID: <20210317101728.GA2541@quack2.suse.cz>
-References: <20210304104826.3993892-1-amir73il@gmail.com>
- <20210304104826.3993892-4-amir73il@gmail.com>
- <20210316151807.GB23532@quack2.suse.cz>
- <CAOQ4uxizm9KdM+82MGni=fUkCzUvU2pt1q+0ynGLkDX47hJm3Q@mail.gmail.com>
+        id S229897AbhCQKof (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Mar 2021 06:44:35 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 10B8F64F21;
+        Wed, 17 Mar 2021 10:44:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1615977874;
+        bh=ULh+I95lTl58eRFoikqOwheMexlwTAUFAS3ah2duRCc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iaju3pJvbW1Yp5JJrfVdlqY/+2HojAOyx7dBjT730LNyaWYjoRiYoOwvcRLuOsumb
+         2OjMwM5e6Np6YPOnkM5wHXOnaU0MpDZRv6Y4whWQnJaqzvnb30zWn8EZcbLN5+hfNV
+         HJDC3B7MZAq3EA3f1E+g4QN3R/YPwq1oHFXJ3QjQ=
+Date:   Wed, 17 Mar 2021 11:44:31 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+        Adam Nichols <adam@grimm-co.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] seq_file: Unconditionally use vmalloc for buffer
+Message-ID: <YFHdj+/65XO78J06@kroah.com>
+References: <20210315174851.622228-1-keescook@chromium.org>
+ <YE+oZkSVNyaONMd9@zeniv-ca.linux.org.uk>
+ <202103151336.78360DB34D@keescook>
+ <YFBdQmT64c+2uBRI@kroah.com>
+ <YFCn4ERBMGoqxvUU@zeniv-ca.linux.org.uk>
+ <202103161208.22FC78C8C@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxizm9KdM+82MGni=fUkCzUvU2pt1q+0ynGLkDX47hJm3Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <202103161208.22FC78C8C@keescook>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 17-03-21 11:26:36, Amir Goldstein wrote:
-> On Tue, Mar 16, 2021 at 5:18 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Thu 04-03-21 12:48:24, Amir Goldstein wrote:
-> > > Improve the merge key hash by mixing more values relevant for merge.
-> > >
-> > > For example, all FAN_CREATE name events in the same dir used to have the
-> > > same merge key based on the dir inode.  With this change the created
-> > > file name is mixed into the merge key.
-> > >
-> > > The object id that was used as merge key is redundant to the event info
-> > > so it is no longer mixed into the hash.
-> > >
-> > > Permission events are not hashed, so no need to hash their info.
-> > >
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> >
-> > ...
-> >
-> > > @@ -530,6 +568,8 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
-> > >       struct inode *child = NULL;
-> > >       bool name_event = false;
-> > >       unsigned int hash = 0;
-> > > +     unsigned long ondir = (mask & FAN_ONDIR) ? 1UL : 0;
-> > > +     struct pid *pid;
-> >
-> > I've made a tiny change here and changed 'ondir' to bool since I don't see
-> > a strong reason to play games like this. Otherwise I took the patch as is.
-> >
+On Tue, Mar 16, 2021 at 12:18:33PM -0700, Kees Cook wrote:
+> On Tue, Mar 16, 2021 at 12:43:12PM +0000, Al Viro wrote:
+> > On Tue, Mar 16, 2021 at 08:24:50AM +0100, Greg Kroah-Hartman wrote:
+> > 
+> > > > Completely agreed. seq_get_buf() should be totally ripped out.
+> > > > Unfortunately, this is going to be a long road because of sysfs's ATTR
+> > > > stuff, there are something like 5000 callers, and the entire API was
+> > > > designed to avoid refactoring all those callers from
+> > > > sysfs_kf_seq_show().
+> > > 
+> > > What is wrong with the sysfs ATTR stuff?  That should make it so that we
+> > > do not have to change any caller for any specific change like this, why
+> > > can't sysfs or kernfs handle it automatically?
+> > 
+> > Hard to tell, since that would require _finding_ the sodding ->show()
+> > instances first.  Good luck with that, seeing that most of those appear
+> > to come from templates-done-with-cpp...
 > 
-> OK, so you kept this arithmetics with a bool:
+> I *think* I can get coccinelle to find them all, but my brute-force
+> approach was to just do a debug build changing the ATTR macro to be
+> typed, and changing the name of "show" and "store" in kobj_attribute
+> (to make the compiler find them all).
 > 
-> (unsigned long)pid | ondir
+> > AFAICS, Kees wants to protect against ->show() instances stomping beyond
+> > the page size.  What I don't get is what do you get from using seq_file
+> > if you insist on doing raw access to the buffer rather than using
+> > seq_printf() and friends.  What's the point?
 > 
-> I suppose there's no harm.
+> To me, it looks like the kernfs/sysfs API happened around the time
+> "container_of" was gaining ground. It's trying to do the same thing
+> the "modern" callbacks do with finding a pointer from another, but it
+> did so by making sure everything had a 0 offset and an identical
+> beginning structure layout _but changed prototypes_.
+> 
+> It's the changed prototypes that freaks out CFI.
+> 
+> My current plan consists of these steps:
+> 
+> - add two new callbacks to the kobj_attribute struct (and its clones):
+>   "seq_show" and "seq_store", which will pass in the seq_file.
 
-Yes. Bool is guaranteed to be typed to int (and then subsequently lifted to
-unsigned long) in this expression with 'false' translated to 0 and 'true'
-translated to 1. So everything works as expected.
+Ick, why?  Why should the callback care about seq_file?  Shouldn't any
+wrapper logic in the kobject code be able to handle this automatically?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> - convert all callbacks to kobject/kboj_attribute and use container_of()
+>   to find their respective pointers.
+
+Which callbacks are you talking about here?
+
+> - remove "show" and "store"
+
+Hah!
+
+> - remove external use of seq_get_buf().
+
+So is this the main goal?  I still don't understand the sequence file
+problem here, what am I missing (becides the CFI stuff that is)?
+
+> The first two steps require thousands of lines of code changed, so
+> I'm going to try to minimize it by trying to do as many conversions as
+> possible to the appropriate helpers first. e.g. DEVICE_ATTR_INT exists,
+> but there are only 2 users, yet there appears to be something like 500
+> DEVICE_ATTR callers that have an open-coded '%d':
+> 
+> $ git grep -B10 '\bDEVICE_ATTR' | grep '%d' | wc -l
+> 530
+
+That's going to be hard, and a pain, and I really doubt all that useful
+as I still can't figure out why this is needed...
+
+thanks,
+
+greg k-h
