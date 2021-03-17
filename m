@@ -2,272 +2,277 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D5B533F581
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 17:30:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2129B33F5C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 17:41:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232565AbhCQQaO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 12:30:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52874 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232546AbhCQQ3m (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 12:29:42 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A726C06174A;
-        Wed, 17 Mar 2021 09:29:42 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id cl21-20020a17090af695b02900c61ac0f0e9so5506058pjb.1;
-        Wed, 17 Mar 2021 09:29:42 -0700 (PDT)
+        id S232642AbhCQQkh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 12:40:37 -0400
+Received: from mail-eopbgr00110.outbound.protection.outlook.com ([40.107.0.110]:9089
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232666AbhCQQkR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Mar 2021 12:40:17 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Y08B1laFQKrD4QnyICFC3PJSFtdHV6qS0Yizw4ftE/XI28GCrqCF0hNmujp0SnCR4FmUnFg8wompO4rMoAOlCKRg7y3gsvj6O9//yvwtCtoZP8GBUllWTu6fIq+C14RlwDv1d2aKQGrq4t3mD2616rSiF5nrz77Sz4p9eQiDaWq/dWs6KzWnqICELsytaOyQuNM1yxo9G49iSuVQPDsqOLZGsRIrvDob+jV2KUBQzNaw8dRcPjAhCNAJ4gp5rbjrd3P/FWnNulix4/XG0G8IvWiUHyUmAI/MROzbVKoDN+tVqKidcVSbW44SnljhqWdBaYKCXg5Co9ujfDZ5a6unjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IY1N0EnNSdu+rv7H3kcBSYwzAR8BPva/S2msG1JwlZI=;
+ b=Xw9DZW7bcQm6jJs7/PlILsxMxRDHPgXq/6SEo4Y49fJxGliKl+FSOloMNbgRDO9Xd+laALrxmqiAlnjy5qv+zlfqO3YJpiy0oNfM/gg6OGdcW9CkblFV28K66O1wWWVs48xjMca0UWTYoKDwBKgKaJEc0ZMR73klPpjpEV8k9nPfOeKb571xHjhe7jkwYYv3UU5DhdsienWkbZZpMUFa2gMNCFuuViR7NTp+t85VWxIOEBkaRCPwcBW3XqNOmifwO7eIzbJK/PVgqDEc83pXmASBlmuSo/Bz3bAl8/H9ZEXwyrsT+sz8MNZ+WMNAyFEqQMDA4gRXun2xuv0XKjxQsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=silk.us; dmarc=pass action=none header.from=silk.us; dkim=pass
+ header.d=silk.us; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=hS77tjdA+3f1XuSktu47De02hM9SEB7dyKGgmhEfkK8=;
-        b=r4sLqcfJR6SIl+mVMMYx4Z8o+0B6Y03/Z990zmaCrNRA+w473MjvokTHX+PsVzuadf
-         b+uZbXuH1NJy2Cdp4pNozC+gExt/pzgqDOu2MOHrULxLfW3VMDqbai2nxqmgp575mF5R
-         ZDKMlqa8D1FUUL2C3dE+VtNT/Q7epHM9aZ+YNoQs1nZotLX4DacEgvh4+HhEJHBsShBS
-         rhVk/CuVOzoHw1CtE6feedoj/8qc+t1ld0wdC13Fs9bOIU6n8RZvY4VnEUntPlsu7E2d
-         w9uHbkpyG4lDEGCYhDZyvbGGB9zemxFrNewH6MhkkKqXZC+UouXFaUGehJcBKJSti3qX
-         foBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=hS77tjdA+3f1XuSktu47De02hM9SEB7dyKGgmhEfkK8=;
-        b=as6RJIJSc1N1Ha7hK9OD/95XRO+z+rbfy/hjHkLysXOqJndUGJ5kfGPHXk8YAInhS4
-         Ea9XWdarRN5KjIeIY681IWeNBQAonuOQ/vhUX34nQCK1mxFdtlKzG2PvTcHCEM82Ee9O
-         gu6VBSiRSEJiDFXkSCbpG4aNoDzAZ0AqKirvq842+xyfl7M3fRcqjeOnVocfmgsZkGJ+
-         TSwZ4qzROcTcx0Pg9bbMRFGMnuUxLkVBpmTX16WBdTlIpwPdjHtPaYio+ofYm81SFS5F
-         nCXGCCb8w3QfOQ7f7w/5v8d52Rq7TtM83nloPI3ZXDBeoxsSaQoaC9KcRKglfBhLNOD+
-         /ZJQ==
-X-Gm-Message-State: AOAM532RhCdHpWSskoCaL0oP1o9XIDI4tFWjtLOVTLGviGuz0ufSIqk7
-        nUvEesYSHbCbIb4NJ8ATBJw=
-X-Google-Smtp-Source: ABdhPJxhWJhMi/2uuyShovt9lBWpy/lRxYtqeeEwGx3JtvcrnVEgG+mbeReJxXucZQkgTvvMFjeoCw==
-X-Received: by 2002:a17:90b:1490:: with SMTP id js16mr5311945pjb.131.1615998581500;
-        Wed, 17 Mar 2021 09:29:41 -0700 (PDT)
-Received: from google.com ([2620:15c:211:201:8914:cdf:bafb:bf7b])
-        by smtp.gmail.com with ESMTPSA id s28sm20866068pfd.155.2021.03.17.09.29.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Mar 2021 09:29:40 -0700 (PDT)
-Sender: Minchan Kim <minchan.kim@gmail.com>
-Date:   Wed, 17 Mar 2021 09:29:38 -0700
-From:   Minchan Kim <minchan@kernel.org>
-To:     kernel test robot <oliver.sang@intel.com>
-Cc:     0day robot <lkp@intel.com>,
-        Chris Goldsworthy <cgoldswo@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, joaodias@google.com,
-        surenb@google.com, willy@infradead.org, mhocko@suse.com,
-        david@redhat.com, vbabka@suse.cz, linux-fsdevel@vger.kernel.org
-Subject: Re: [mm]  8fd8d23ab1: WARNING:at_fs/buffer.c:#__brelse
-Message-ID: <YFIucgVd7Vu9eE50@google.com>
-References: <20210310161429.399432-3-minchan@kernel.org>
- <20210317023756.GA22345@xsang-OptiPlex-9020>
+ d=KAMINARIO.onmicrosoft.com; s=selector2-KAMINARIO-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IY1N0EnNSdu+rv7H3kcBSYwzAR8BPva/S2msG1JwlZI=;
+ b=nzhJAejBoXHkmcVMqh8Mbs51Zq1gJMBoM+0Zt82Kgp8AsilevLNdCsEZ5eO68vQ+EJclEZruTQZgLmknv4WvQNfdsKmlXypnsSNMdjBqh3XIbc/A/YbkzbEsgO9fO+cnZdpKyzt4xRswEMjkiA+Bs14lnA8mvG6jViIUhpMj0EM=
+Received: from AM6PR04MB5639.eurprd04.prod.outlook.com (2603:10a6:20b:ad::22)
+ by AS8PR04MB7719.eurprd04.prod.outlook.com (2603:10a6:20b:29a::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.18; Wed, 17 Mar
+ 2021 16:40:15 +0000
+Received: from AM6PR04MB5639.eurprd04.prod.outlook.com
+ ([fe80::d582:5989:a674:bfab]) by AM6PR04MB5639.eurprd04.prod.outlook.com
+ ([fe80::d582:5989:a674:bfab%7]) with mapi id 15.20.3933.032; Wed, 17 Mar 2021
+ 16:40:15 +0000
+From:   David Mozes <david.mozes@silk.us>
+To:     Eric Sandeen <sandeen@sandeen.net>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+CC:     "sandeen@redhat.com" <sandeen@redhat.com>
+Subject: RE: fs: avoid softlockups in s_inodes iterators commit
+Thread-Topic: fs: avoid softlockups in s_inodes iterators commit
+Thread-Index: AdcapuBpHwWWXKfESnKJze+uh6myxwAJencAAB5CKWA=
+Date:   Wed, 17 Mar 2021 16:40:15 +0000
+Message-ID: <AM6PR04MB563935FDA6010EA1383AA08BF16A9@AM6PR04MB5639.eurprd04.prod.outlook.com>
+References: <AM6PR04MB5639492BE427FDA2E1A9F74BF16B9@AM6PR04MB5639.eurprd04.prod.outlook.com>
+ <4c7da46e-283b-c1e3-132a-2d8d5d9b2cea@sandeen.net>
+In-Reply-To: <4c7da46e-283b-c1e3-132a-2d8d5d9b2cea@sandeen.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: sandeen.net; dkim=none (message not signed)
+ header.d=none;sandeen.net; dmarc=none action=none header.from=silk.us;
+x-originating-ip: [37.142.234.189]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: cd33a7b9-a550-4df2-b2fb-08d8e9635788
+x-ms-traffictypediagnostic: AS8PR04MB7719:
+x-microsoft-antispam-prvs: <AS8PR04MB77199427F4A3FCA74DC343FFF16A9@AS8PR04MB7719.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:136;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: BxbM7KudiDrQrML2yEZgthUy+tEi47XCcCARizk3bK7ajNK7gk/6G0aNSgMrIxVS+avUUhqd51eZ9iO8CYGifuvOr82ZrCJVC5rClvOb2R5gHsPQuSWcEogGA4feBkuo9B+AlZKEJMpXpu4SYizACDlHAh9FxQt+ci0v+JpO6gPCEkFXNJv/bhjsU60ze41APbKU2Z4NJX4vrziNE8DigAJNHCHj/npx99L+ipaibgyAKVKarhhSIc4GqT9hgqG1bAVAnGPXUfSW3L6HV+9N4YeGMaCPV0dbYpsBALA4NQr8CjbjKdYF1szqWgCkItqZtu3W1qvhO/Hzf+4bfunT+vfNM+nD994xMaPBzUSCmbbI2wOiTZ18jV5rZwE9cdFbPdMbfZY1q9nzuDbpl9n2CSlo53QqYtdEteE59RqTN9bs6NzudAQ9bCtpqLvHk1ODBgrqu4uj4eGAVxiNuvtugwsZ6itw0yA58zENRKqfPhLiv+WIrumVy1gN+MvFDAyCSQnaTWR/Uk/zD3FkxoGmlLfhhpwu1FacTOBoTYKtywQmige7iYdOj6K+IcOWWsHB0pRyMlnr4oHzQFvkc2ZFAql2MPfPknwHXfV/lFx3c7Z2aF78L9y8NSJez9zQ4Sc0Flt7AkLCjUhmFzYLqPZWlw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5639.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(376002)(346002)(39860400002)(396003)(136003)(26005)(8936002)(44832011)(83380400001)(4326008)(110136005)(55016002)(316002)(33656002)(478600001)(2906002)(9686003)(45080400002)(76116006)(66446008)(53546011)(5660300002)(8676002)(66946007)(66556008)(52536014)(66476007)(64756008)(7696005)(86362001)(71200400001)(6506007)(186003)(80162006)(80862006);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?r14LM5olsCfIyMofyA+ZhmlE5ood51C08TqxEV5YsCM95Ig0AVRa/MevF0YK?=
+ =?us-ascii?Q?vP2ymEW6dwV4qGQl6Eb3CH9wCOxO29Z/5kqrq0AbzNCBlodPBGZ9//9zcTr2?=
+ =?us-ascii?Q?24et3b9CfZFAkyegioD261P8VWwgGDiWzUcE0Bv73IDWFNTfl7qeuUGjjq3p?=
+ =?us-ascii?Q?nzgRWxiXvpcAm6DaqtFWsLEbBbQ98hZHE+0kyKRFEszO3zn/b0N+JPG0ctAg?=
+ =?us-ascii?Q?VOCrGJnxYFCZAIudDFAjzZA46gwCnw/glPw+JBE9yLFXbQarfjZgm7ykb4Wl?=
+ =?us-ascii?Q?fTIi0C2tV/7tcT0GV/xM0Fd0oHeQrchqs8f6VVfOQnx31dx+TEeCRYkgtHh7?=
+ =?us-ascii?Q?2CYE7gjxvR5DAkVc4U3v0pYwcgHSjC7v0oQbTOg7AkdprRl/ctJwivVmq0JQ?=
+ =?us-ascii?Q?VVESsvqOqAm54HqvzeD3CvUUBp3IKW6B6qXLBCmnsNTP1SHp9PPNy7n4NbZU?=
+ =?us-ascii?Q?RPRgzP2wJbP8881VfiqDyTwpsVX3CoNdvBh0e46IBDlieEwUX18pC8KCfmKR?=
+ =?us-ascii?Q?GCwUh986eZBl4YCfx11eoZ1SKGPc+Gix8tJU1+gvanskf7PeP2U6pU6ooheb?=
+ =?us-ascii?Q?wNSMNKJM0LTTY6HIiH6tvLlZtB2f/hMEkBoZjT7wdAEc59ULZyULb+aafzOv?=
+ =?us-ascii?Q?WSypV1j35B4G62K5T/3utOv4kzk9NCx0MQVgDiKYfDtOsU/kwjM//epOnziE?=
+ =?us-ascii?Q?DCKX//3vNT9vYbqgCA8AyQYTJ/1Ycz1NTfNVt2JCvoboZZy4HCXy7RgJVmUk?=
+ =?us-ascii?Q?0Fu55SPKkzPcHeLzxJzC9V8olBeXfDa12XAZUqUPzmwQXgl8LaP8dauPclDp?=
+ =?us-ascii?Q?wOWS852BI9L0GOa4rCXb6ukXMiLFwS3GPiiyUb7yMJhUq5BE8mcwEEbat/mO?=
+ =?us-ascii?Q?Jvwd1AnvtOaBO6M6pZ5i0O8N5eZZoXVHGdXbA05O89EP58cFzhiQQ+2kCEiI?=
+ =?us-ascii?Q?TD4u+rTHE7/WZXGcTXtXR9d8sG30UIUMDTmoLIUChOvKRi/gq9CxO7/KspNf?=
+ =?us-ascii?Q?FXpzziCWkEshrgeiEx/ulI6tNFDPNq5EbN9YqMvRu/HbdHYEIPGmH7UNG0Ow?=
+ =?us-ascii?Q?nkMdZBGyunJTg0fShnBrCUfx6mXW418H980yZtQiItdCUGxmxDDoZYaOFfU/?=
+ =?us-ascii?Q?Zl+LWK6MnTtmIKPeCUoJIA8mgdlHqiuvj51svCscbgGe6aBPYNI2dKliOLwx?=
+ =?us-ascii?Q?xpCA8OvGnJMrrKwyUSqb31MGd+ljJTJdB4sOh74W2hhK0+300+nk3n0dtl0r?=
+ =?us-ascii?Q?DhqaqSKnyHC1U+6URNkQOPQMPdDbsp0GK/WUEJkZfAfqsFpXnVEBJadmhre5?=
+ =?us-ascii?Q?susCWBVVTuD/WM1YGAvZfanb?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210317023756.GA22345@xsang-OptiPlex-9020>
+X-OriginatorOrg: silk.us
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5639.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd33a7b9-a550-4df2-b2fb-08d8e9635788
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2021 16:40:15.1456
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4a3c5477-cb0e-470b-aba6-13bd9debb76b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 08vY8elRywaZycBJXGBZ6Moc28ob0VtUlC2LZazdsFvEc3ZI7LxHblC/l0B2/7mrV+yoLj/p9g0EWZ/hzk8VFg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7719
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 17, 2021 at 10:37:57AM +0800, kernel test robot wrote:
-> 
-> 
-> Greeting,
-> 
-> FYI, we noticed the following commit (built with gcc-9):
-> 
-> commit: 8fd8d23ab10cc2fceeac25ea7b0e2eaf98e78d64 ("[PATCH v3 3/3] mm: fs: Invalidate BH LRU during page migration")
-> url: https://github.com/0day-ci/linux/commits/Minchan-Kim/mm-replace-migrate_prep-with-lru_add_drain_all/20210311-001714
-> base: https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git 144c79ef33536b4ecb4951e07dbc1f2b7fa99d32
-> 
-> in testcase: blktests
-> version: blktests-x86_64-a210761-1_20210124
-> with following parameters:
-> 
-> 	test: nbd-group-01
-> 	ucode: 0xe2
-> 
-> 
-> 
-> on test machine: 4 threads Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz with 32G memory
-> 
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> 
-> 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> 
-> 
-> [   40.465061] WARNING: CPU: 2 PID: 5207 at fs/buffer.c:1177 __brelse (kbuild/src/consumer/fs/buffer.c:1177 kbuild/src/consumer/fs/buffer.c:1171) 
-> [   40.465066] Modules linked in: nbd loop xfs libcrc32c dm_multipath dm_mod ipmi_devintf ipmi_msghandler sd_mod t10_pi sg intel_rapl_msr intel_rapl_common x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel rapl i915 mei_wdt intel_cstate wmi_bmof intel_gtt drm_kms_helper syscopyarea ahci intel_uncore sysfillrect sysimgblt libahci fb_sys_fops drm libata mei_me mei intel_pch_thermal wmi video intel_pmc_core acpi_pad ip_tables
-> [   40.465086] CPU: 2 PID: 5207 Comm: mount_clear_soc Tainted: G          I       5.12.0-rc2-00062-g8fd8d23ab10c #1
-> [   40.465088] Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.1.1 10/07/2015
-> [   40.465089] RIP: 0010:__brelse (kbuild/src/consumer/fs/buffer.c:1177 kbuild/src/consumer/fs/buffer.c:1171) 
-> [ 40.465091] Code: 00 00 00 00 00 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 8b 47 60 85 c0 74 05 f0 ff 4f 60 c3 48 c7 c7 d8 99 57 82 e8 02 5d 80 00 <0f> 0b c3 0f 1f 44 00 00 55 65 ff 05 13 79 c8 7e 53 48 c7 c3 c0 89
+Sure Eric,
+Send details again=20
+I run a very high load traffic (Iscsi storage-related IO load )on GCP.
+After one day of running, my kernel has been stack with two typical cases i=
+nvolving page fault.
+1)	Soft lockup, as described in the first typical case,=20
+2)	Panic as described in the second case.
 
-Hi,
+First typical case: (the soft lockup happens on several CPUs):
 
-Unfortunately, I couldn't set the lkp test in my local mahcine
-since installation failed(I guess my linux distribution is
-very minor)
+Feb 21 07:38:52 c-node02 kernel: [242408.563170]  ? flush_tlb_func_common.c=
+onstprop.10+0x250/0x250
+Feb 21 07:38:52 c-node02 kernel: [242408.563171]  on_each_cpu_mask+0x23/0x6=
+0
+Feb 21 07:38:52 c-node02 kernel: [242408.563173]  ? x86_configure_nx+0x40/0=
+x40
+Feb 21 07:38:52 c-node02 kernel: [242408.563174]  on_each_cpu_cond_mask+0xa=
+0/0xd0
+Feb 21 07:38:52 c-node02 kernel: [242408.563175]  ? flush_tlb_func_common.c=
+onstprop.10+0x250/0x250
+Feb 21 07:38:52 c-node02 kernel: [242408.563177]  flush_tlb_mm_range+0xbc/0=
+xf0
+Feb 21 07:38:52 c-node02 kernel: [242408.563179]  ptep_clear_flush+0x40/0x5=
+0
+Feb 21 07:38:52 c-node02 kernel: [242408.563180]  try_to_unmap_one+0x2ae/0x=
+ae0
+Feb 21 07:38:52 c-node02 kernel: [242408.563184]  ? mutex_lock+0xe/0x30
+Feb 21 07:38:52 c-node02 kernel: [242408.563186]  rmap_walk_anon+0x13a/0x2c=
+0
+Feb 21 07:38:52 c-node02 kernel: [242408.563188]  try_to_unmap+0x9c/0xf0
+Feb 21 07:38:52 c-node02 kernel: [242408.563190]  ? page_remove_rmap+0x330/=
+0x330
+Feb 21 07:38:52 c-node02 kernel: [242408.563192]  ? page_not_mapped+0x20/0x=
+20
+Feb 21 07:38:52 c-node02 kernel: [242408.563193]  ? page_get_anon_vma+0x80/=
+0x80
+Feb 21 07:38:52 c-node02 kernel: [242408.563195]  ? invalid_mkclean_vma+0x2=
+0/0x20
+Feb 21 07:38:52 c-node02 kernel: [242408.563196]  migrate_pages+0x3cd/0xc80
+Feb 21 07:38:52 c-node02 kernel: [242408.563197]  ? do_pages_stat+0x180/0x1=
+80
+Feb 21 07:38:52 c-node02 kernel: [242408.563198]  migrate_misplaced_page+0x=
+15e/0x270
+Feb 21 07:38:52 c-node02 kernel: [242408.563200]  __handle_mm_fault+0xd80/0=
+x12f0
+Feb 21 07:38:52 c-node02 kernel: [242408.563202]  handle_mm_fault+0xc2/0x1f=
+0
+Feb 21 07:38:52 c-node02 kernel: [242408.563204]  __do_page_fault+0x23e/0x4=
+f0
+Feb 21 07:38:52 c-node02 kernel: [242408.563206]  do_page_fault+0x30/0x110
+Feb 21 07:38:52 c-node02 kernel: [242408.563207]  page_fault+0x3e/0x50
+Feb 21 07:38:52 c-node02 kernel: [242408.563209] RIP: 0033:0x7f27fffb9e73
+Feb 21 07:38:52 c-node02 kernel: [242408.563211] Code: 89 6d e8 48 89 fb 4c=
+ 89 75 f0 4c 89 7d f8 49 89 f6 4c 89 65 e0 48 81 ec c0 06 00 00 4c 8b 3d 3c=
+ a1 34 00 49 89 d5 64 41 8b 07 <89> 85 dc fa ff ff 8b 87 c0 00 00 00 85 c0 =
+0f 85 b9 01 00 00 c7 87
+Feb 21 07:38:52 c-node02 kernel: [242408.563211] RSP: 002b:00007f12a37fda10=
+ EFLAGS: 00010202
+Feb 21 07:38:52 c-node02 kernel: [242408.563213] RAX: 0000000000000000 RBX:=
+ 00007f12a37fe0e0 RCX: 0000000000000000
+Feb 21 07:38:52 c-node02 kernel: [242408.563214] RDX: 00007f12a37fe200 RSI:=
+ 00000000017a9453 RDI: 00007f12a37fe0e0
+Feb 21 07:38:52 c-node02 kernel: [242408.563214] RBP: 00007f12a37fe0d0 R08:=
+ 0000000000000000 R09: 00000000017c7550
+Feb 21 07:38:52 c-node02 kernel: [242408.563215] R10: 0000000000000000 R11:=
+ 00000000000003f8 R12: 00000000017a9453
+Feb 21 07:38:52 c-node02 kernel: [242408.563216] R13: 00007f12a37fe200 R14:=
+ 00000000017a9453 R15: fffffffffffffe90
+Feb 21 07:38:52 c-node02 kernel: [242408.604094] watchdog: BUG: soft lockup=
+ - CPU#45 stuck for 22s! [km_target_creat:49068]
+Feb 21 07:38:52 c-node02 kernel: [242408.604095] Modules linked in: iscsi_s=
+cst(OE) crc32c_intel(O) scst_local(OE) netconsole(O) scst_user(OE) scst(OE)=
+ drbd(O) lru_cache(O) loop(O) 8021q(O) mrp(O) garp(O) nfsd(O) nfs_acl(O) au=
+th_rpcgss(O) lockd(O) sunrpc(O) grace(O) xt_MASQUERADE(O) xt_nat(O) xt_stat=
+e(O) iptable_nat(O) xt_addrtype(O) xt_conntrack(O) nf_nat(O) nf_conntrack(O=
+) nf_defrag_ipv4(O) nf_defrag_ipv6(O) libcrc32c(O) br_netfilter(O) bridge(O=
+) stp(O) llc(O) overlay(O) be2iscsi(O) iscsi_boot_sysfs(O) bnx2i(O) cnic(O)=
+ uio(O) cxgb4i(O) cxgb4(O) cxgb3i(O) libcxgbi(O) cxgb3(O) mdio(O) libcxgb(O=
+) ib_iser(OE) iscsi_tcp(O) libiscsi_tcp(O) libiscsi(O) scsi_transport_iscsi=
+(O) dm_multipath(O) rdma_ucm(OE) ib_ucm(OE) rdma_cm(OE) iw_cm(OE) ib_ipoib(=
+OE) ib_cm(OE) ib_umad(OE) mlx5_fpga_tools(OE) mlx5_ib(OE) ib_uverbs(OE) mlx=
+5_core(OE) mdev(OE) mlxfw(OE) ptp(O) pps_core(O) mlx4_ib(OE) ib_core(OE) ml=
+x4_core(OE) mlx_compat(OE) fuse(O) binfmt_misc(O) pvpanic(O) pcspkr(O) virt=
+io_rng(O) virtio_net(O) net_failover(O) failover(O) i2
+:
 
-Do you mind testing this patch? (Please replace the original
-patch with this one)
+Second typical case PANIC:=20
 
-From 23cfe5a8e939e2c077223e009887af8a0b5d6381 Mon Sep 17 00:00:00 2001
-From: Minchan Kim <minchan@kernel.org>
-Date: Tue, 2 Mar 2021 12:05:08 -0800
-Subject: [PATCH] mm: fs: Invalidate BH LRU during page migration
+From the cosule:
 
-Pages containing buffer_heads that are in one of the per-CPU
-buffer_head LRU caches will be pinned and thus cannot be migrated.
-This can prevent CMA allocations from succeeding, which are often used
-on platforms with co-processors (such as a DSP) that can only use
-physically contiguous memory. It can also prevent memory
-hot-unplugging from succeeding, which involves migrating at least
-MIN_MEMORY_BLOCK_SIZE bytes of memory, which ranges from 8 MiB to 1
-GiB based on the architecture in use.
+[123080.813877] kernel tried to execute NX-protected page - exploit attempt=
+? (uid: 0)
+[    0.000000] Linux version 5.4.80-KM8 (david.mozes@kbuilder64-tc8-test1) =
+(gcc version 8.3.1 20190311 (Red Hat 8.3.1-3) (GCC)) #14 SMP Mon Jan 11 16:=
+21:21 IST 2021
 
-Correspondingly, invalidate the BH LRU caches before a migration
-starts and stop any buffer_head from being cached in the LRU caches,
-until migration has finished.
+Mon Jan 11 16:21:21 IST 2021
+[    0.000000] Command line: ro root=3DLABEL=3D/ rd_NO_LUKS KEYBOARDTYPE=3D=
+pc KEYTABLE=3Dus LANG=3Den_US.UTF-8 rd_NO_MD SYSFONT=3Dlatarcyrheb-sun16 no=
+mpath append=3D"nmi_watchdog=3D2"
 
-Signed-off-by: Chris Goldsworthy <cgoldswo@codeaurora.org>
-Signed-off-by: Minchan Kim <minchan@kernel.org>
----
- fs/buffer.c                 | 36 ++++++++++++++++++++++++++++++------
- include/linux/buffer_head.h |  4 ++++
- mm/swap.c                   |  5 ++++-
- 3 files changed, 38 insertions(+), 7 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 0cb7ffd4977c..e9872d0dcbf1 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1264,6 +1264,15 @@ static void bh_lru_install(struct buffer_head *bh)
- 	int i;
- 
- 	check_irqs_on();
-+	/*
-+	 * the refcount of buffer_head in bh_lru prevents dropping the
-+	 * attached page(i.e., try_to_free_buffers) so it could cause
-+	 * failing page migration.
-+	 * Skip putting upcoming bh into bh_lru until migration is done.
-+	 */
-+	if (lru_cache_disabled())
-+		return;
-+
- 	bh_lru_lock();
- 
- 	b = this_cpu_ptr(&bh_lrus);
-@@ -1404,6 +1413,15 @@ __bread_gfp(struct block_device *bdev, sector_t block,
- }
- EXPORT_SYMBOL(__bread_gfp);
- 
-+static void __invalidate_bh_lrus(struct bh_lru *b)
-+{
-+	int i;
-+
-+	for (i = 0; i < BH_LRU_SIZE; i++) {
-+		brelse(b->bhs[i]);
-+		b->bhs[i] = NULL;
-+	}
-+}
- /*
-  * invalidate_bh_lrus() is called rarely - but not only at unmount.
-  * This doesn't race because it runs in each cpu either in irq
-@@ -1412,16 +1430,12 @@ EXPORT_SYMBOL(__bread_gfp);
- static void invalidate_bh_lru(void *arg)
- {
- 	struct bh_lru *b = &get_cpu_var(bh_lrus);
--	int i;
- 
--	for (i = 0; i < BH_LRU_SIZE; i++) {
--		brelse(b->bhs[i]);
--		b->bhs[i] = NULL;
--	}
-+	__invalidate_bh_lrus(b);
- 	put_cpu_var(bh_lrus);
- }
- 
--static bool has_bh_in_lru(int cpu, void *dummy)
-+bool has_bh_in_lru(int cpu, void *dummy)
- {
- 	struct bh_lru *b = per_cpu_ptr(&bh_lrus, cpu);
- 	int i;
-@@ -1440,6 +1454,16 @@ void invalidate_bh_lrus(void)
- }
- EXPORT_SYMBOL_GPL(invalidate_bh_lrus);
- 
-+void invalidate_bh_lrus_cpu(int cpu)
-+{
-+	struct bh_lru *b;
-+
-+	bh_lru_lock();
-+	b = per_cpu_ptr(&bh_lrus, cpu);
-+	__invalidate_bh_lrus(b);
-+	bh_lru_unlock();
-+}
-+
- void set_bh_page(struct buffer_head *bh,
- 		struct page *page, unsigned long offset)
- {
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 6b47f94378c5..e7e99da31349 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -194,6 +194,8 @@ void __breadahead_gfp(struct block_device *, sector_t block, unsigned int size,
- struct buffer_head *__bread_gfp(struct block_device *,
- 				sector_t block, unsigned size, gfp_t gfp);
- void invalidate_bh_lrus(void);
-+void invalidate_bh_lrus_cpu(int cpu);
-+bool has_bh_in_lru(int cpu, void *dummy);
- struct buffer_head *alloc_buffer_head(gfp_t gfp_flags);
- void free_buffer_head(struct buffer_head * bh);
- void unlock_buffer(struct buffer_head *bh);
-@@ -406,6 +408,8 @@ static inline int inode_has_buffers(struct inode *inode) { return 0; }
- static inline void invalidate_inode_buffers(struct inode *inode) {}
- static inline int remove_inode_buffers(struct inode *inode) { return 1; }
- static inline int sync_mapping_buffers(struct address_space *mapping) { return 0; }
-+static inline void invalidate_bh_lrus_cpu(int cpu) {}
-+static inline bool has_bh_in_lru(int cpu, void *dummy) { return 0; }
- #define buffer_heads_over_limit 0
- 
- #endif /* CONFIG_BLOCK */
-diff --git a/mm/swap.c b/mm/swap.c
-index fbdf6ac05aec..b962fe45bc02 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -36,6 +36,7 @@
- #include <linux/hugetlb.h>
- #include <linux/page_idle.h>
- #include <linux/local_lock.h>
-+#include <linux/buffer_head.h>
- 
- #include "internal.h"
- 
-@@ -641,6 +642,7 @@ void lru_add_drain_cpu(int cpu)
- 		pagevec_lru_move_fn(pvec, lru_lazyfree_fn);
- 
- 	activate_page_drain(cpu);
-+	invalidate_bh_lrus_cpu(cpu);
- }
- 
- /**
-@@ -828,7 +830,8 @@ static void __lru_add_drain_all(bool force_all_cpus)
- 		    pagevec_count(&per_cpu(lru_pvecs.lru_deactivate_file, cpu)) ||
- 		    pagevec_count(&per_cpu(lru_pvecs.lru_deactivate, cpu)) ||
- 		    pagevec_count(&per_cpu(lru_pvecs.lru_lazyfree, cpu)) ||
--		    need_activate_page_drain(cpu)) {
-+		    need_activate_page_drain(cpu) ||
-+		    has_bh_in_lru(cpu, NULL)) {
- 			INIT_WORK(work, lru_add_drain_per_cpu);
- 			queue_work_on(cpu, mm_percpu_wq, work);
- 			__cpumask_set_cpu(cpu, &has_work);
--- 
-2.31.0.rc2.261.g7f71774620-goog
 
+From the vmcore-dmesg:=20
+
+[121271.606463] ll header: 00000000: 42 01 0a ad 0c 02 42 01 0a ad 0c 01 08=
+ 00
+[122656.730235] sh (27931): drop_caches: 3
+[123080.813877] kernel tried to execute NX-protected page - exploit attempt=
+? (uid: 0)
+[123080.813887] sched: RT throttling activated
+[123080.821706] Kernel panic - not syncing: stack-protector: Kernel stack i=
+s corrupted in: serial8250_console_write+0x26e/0x270
+
+After I comment out=20
+
+
+After I comment out the cond_resched(), everything looks more stable.=20
+I Will try another run as Eric sagest with the:=20
+cond_resched()=20
+before the:
+Invalidtated_mapping_pages=20
+See and report regarding the behavior.
+I think we have a very stressful environment on GCP for testing that
+Thx
+David
+
+
+
+-----Original Message-----
+From: Eric Sandeen <sandeen@sandeen.net>=20
+Sent: Wednesday, March 17, 2021 3:28 AM
+To: David Mozes <david.mozes@silk.us>; linux-fsdevel@vger.kernel.org
+Cc: sandeen@redhat.com
+Subject: Re: fs: avoid softlockups in s_inodes iterators commit
+
+On 3/16/21 3:56 PM, David Mozes wrote:
+> Hi,
+> Per Eric's request, I forward this discussion to the list first.
+> My first answers are inside
+
+ok, but you stripped out all of the other useful information like backtrace=
+s, stack corruption, etc. You need to provide the evidence of the actual fa=
+ilure for the list to see. Also ..
+
+> -----Original Message-----
+> From: Eric Sandeen <sandeen@redhat.com>
+> Sent: Tuesday, March 16, 2021 10:18 PM
+> To: David Mozes <david.mozes@silk.us>
+> Subject: Re: Mail from David.Mozes regarding fs: avoid softlockups in=20
+> s_inodes iterators commit
+>=20
+> On 3/16/21 3:02 PM, David Mozes wrote:
+>> Hi Eric,
+>>
+
+...
+
+> David > Not sure yet,  Will check.
+>> 5.4.8 vanilla kernel it custom
+>=20
+> Is it vanilla, or is it custom? 5.4.8 or 5.4.80?
+>=20
+> David> 5.4.80 small custom as I mantion.=20
+
+what is a "small custom?" Can you reproduce it on an unmodified upstream ke=
+rnel?
+
+-Eric
 
