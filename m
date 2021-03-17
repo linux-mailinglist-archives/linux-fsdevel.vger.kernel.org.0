@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CDE333EB63
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 09:26:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8CEC33EB8D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 09:32:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229637AbhCQIZ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 04:25:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60490 "EHLO
+        id S229680AbhCQIbu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 04:31:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229623AbhCQIZz (ORCPT
+        with ESMTP id S229540AbhCQIbp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 04:25:55 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2A5DC06174A;
-        Wed, 17 Mar 2021 01:25:54 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id a132-20020a1c668a0000b029010f141fe7c2so643950wmc.0;
-        Wed, 17 Mar 2021 01:25:54 -0700 (PDT)
+        Wed, 17 Mar 2021 04:31:45 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E79DDC06174A;
+        Wed, 17 Mar 2021 01:31:44 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id j7so889624wrd.1;
+        Wed, 17 Mar 2021 01:31:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=XlkVO6VFXg55yuEE9nnAKjJmnNqPrYchZV1BwfG3vEE=;
-        b=Jam1UbwprzCXzzWEp+LYot8Zkf2BvneeSOULv9A/8hivTc7bJiuQdj2Lye7Ncn1/hI
-         yOWrgSsCJPKI81KEEUxt0cNhLIDhTj0zuXCAfSmKkjBEhq/C8C9n3RgPI4d7yTO3wndo
-         SRpue61U3aUFu2FhbI3SHxQseZdkr8adguroFIxHEuAIcmAmg/7dOmJOH2b+Ixr0J/P3
-         ilvdZXLP2uU7J6LoVy0R2mZkzrKnw58IZdkF3qQUtiHOkTjKgi3qKEmJmHn5XqMHbvfY
-         N9p558Mq3y/NlUET0mSgzuidFT9a7hGdiIfF25p6Q9tUYowSVA7wuIPq+X5W93N2bv51
-         cZiA==
+        bh=cHZTOPy8YpHReL/nMjpSJvrdN7LdFEoSUmRWRaZIzBY=;
+        b=ipURJRhme0LjS0xWeMuiAfAsTYp60CwUWHlam21Yc1mHDQp3XlFyUdsZcevsZdQpGD
+         JzpaZ+SAi2WBe1Qd1UV/y/P+LRs7O+q7t7eKYdQVS68po/G6bKGK1FJCML874VV+aHQM
+         V1dFw75iuMCx1rQ7dZj2dDNFXFVBxo/E8cqHoLU9Qdvu7LzPhUUn/uiiJfm4KBuPBrDm
+         9TcGoiQqldvN3uzuBOD4wWUZ7U2In25adEDuMWEvATGP/KfNa+uWl+B8/s1Zi/Mp97WV
+         nAUSJwz1HRNnxrny6TjEvH85L17I3mx1OSaVlPzCFpS/8ZD8rZw39thBYOWm13lAXPwl
+         X/iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to;
-        bh=XlkVO6VFXg55yuEE9nnAKjJmnNqPrYchZV1BwfG3vEE=;
-        b=P9VnCa8K5jKGbNowbz2UWCFST58eZ/NK/SrghSuhcrC5GYm+WvF1+R08JKsflK0Qis
-         40AtvYmY6fErHBzg2hr70KY5g4EVa7ZKVeUy7kIJWl++/WIYSIC0sh0nvAOdMvw91t12
-         5kpcrZ9YRpZXF1SLkPRURZOv/Ea3MZal2cxh9zAsghiWXHOTPPPqoBDDX95DhXzbJx+U
-         q/FlxAwEsO3rf50tQT4471nx6Ye9O6dArUGntnbr8eNLqxYseNoBHRWYSGXWtUgIs7Kg
-         ANH3AmLc/6zgz9mt58c4CISlSSOd7s8DkuQTM44goJebkN/QiP5dh/LgSrSE8wmChPjs
-         oTqA==
-X-Gm-Message-State: AOAM533X6DnO0eZXmOKO8BnuHPUV32rWgeR0o9Yq5xSy70DV2mFlIHRe
-        bT7xJYn6dQa952PKhugSlmQ=
-X-Google-Smtp-Source: ABdhPJyYp3dTaFQrggmXs8bfJj/VA/D+NPW2wY1Vxyf4X9WNVm/dAfNNvAW3+3t1iix/uEqsIqtUMg==
-X-Received: by 2002:a1c:e184:: with SMTP id y126mr2514928wmg.163.1615969553494;
-        Wed, 17 Mar 2021 01:25:53 -0700 (PDT)
+        bh=cHZTOPy8YpHReL/nMjpSJvrdN7LdFEoSUmRWRaZIzBY=;
+        b=orguoMhe9EWW7R2LpHVinsOGuohoe5J9YqqbD4BDOgE6gDhvAzKfvOFsTXCAl135dO
+         NZfVvbiJGB3x08S6ysKdokHs/Sjuxon4tIbytUDLU4RCRNnd5yXrMpNSLleyzxO4Rns9
+         JGH8Zsayw7BIxdpcTM92lZPrSLeuHePnqaxxgICLh7khBV9oYkY8ldKRl8CgjHhJuNnV
+         U7UlAQIcYI+sA3gPkaNf1DsLILl7PeFMeF/MlULgqgrsYrN5RMma0aVxxTHnbViRBEHz
+         QRM5VSoql1ilXpDdf0QYe8hmHslYOHpOydHmj4s6xb3RIQaQJMEOw1/P7eQXeFOpcgZt
+         V3qw==
+X-Gm-Message-State: AOAM532aheszyL+nHw5uLNeVb/1upHtztYf+y6ckas0BgbsoqiqwK1U8
+        nYCL/fISySn8wOFow/3XTYY=
+X-Google-Smtp-Source: ABdhPJyibQ2Uc98eNeu9vi5EmhQ9eYYBRZNyKIEdpgEeCv2v0TBVPOz8x7D8gOu3rmamKX3AEHpSrg==
+X-Received: by 2002:a5d:4ac4:: with SMTP id y4mr3127563wrs.86.1615969903780;
+        Wed, 17 Mar 2021 01:31:43 -0700 (PDT)
 Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id c6sm285377wri.32.2021.03.17.01.25.52
+        by smtp.gmail.com with ESMTPSA id v3sm1705710wmj.25.2021.03.17.01.31.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Mar 2021 01:25:52 -0700 (PDT)
+        Wed, 17 Mar 2021 01:31:43 -0700 (PDT)
 Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date:   Wed, 17 Mar 2021 09:25:50 +0100
+Date:   Wed, 17 Mar 2021 09:31:41 +0100
 From:   Ingo Molnar <mingo@kernel.org>
 To:     Josh Don <joshdon@google.com>
 Cc:     Ingo Molnar <mingo@redhat.com>,
@@ -67,7 +67,7 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         David Rientjes <rientjes@google.com>,
         Oleg Rombakh <olegrom@google.com>, Paul Turner <pjt@google.com>
 Subject: Re: [PATCH] sched: Warn on long periods of pending need_resched
-Message-ID: <20210317082550.GA3881262@gmail.com>
+Message-ID: <20210317083141.GB3881262@gmail.com>
 References: <20210317045949.1584952-1-joshdon@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -80,64 +80,36 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 * Josh Don <joshdon@google.com> wrote:
 
-> From: Paul Turner <pjt@google.com>
-> 
-> CPU scheduler marks need_resched flag to signal a schedule() on a
-> particular CPU. But, schedule() may not happen immediately in cases
-> where the current task is executing in the kernel mode (no
-> preemption state) for extended periods of time.
-> 
-> This patch adds a warn_on if need_resched is pending for more than the
-> time specified in sysctl resched_latency_warn_ms. Monitoring is done via
-> the tick and the accuracy is hence limited to jiffy scale. This also
-> means that we won't trigger the warning if the tick is disabled.
-
-Looks useful.
-
-> If resched_latency_warn_ms is set to the default value, only one warning
-> will be produced per boot.
-
-Looks like a value hack, should probably be a separate flag, 
-defaulting to warn-once.
-
-> This warning only exists under CONFIG_SCHED_DEBUG. If it goes off, it is
-> likely that there is a missing cond_resched() somewhere.
-
-CONFIG_SCHED_DEBUG is default-y, so most distros have it enabled.
-
-> +/*
-> + * Print a warning if need_resched is set for at least this long. At the
-> + * default value, only a single warning will be printed per boot.
-> + *
-> + * Values less than 2 disable the feature.
-> + *
-> + * A kernel compiled with CONFIG_KASAN tends to run more slowly on average.
-> + * Increase the need_resched timeout to reduce false alarms.
-> + */
-> +#ifdef CONFIG_KASAN
-> +#define RESCHED_DEFAULT_WARN_LATENCY_MS 101
-> +#define RESCHED_BOOT_QUIET_SEC 600
-> +#else
-> +#define RESCHED_DEFAULT_WARN_LATENCY_MS 51
-> +#define RESCHED_BOOT_QUIET_SEC 300
->  #endif
-> +int sysctl_resched_latency_warn_ms = RESCHED_DEFAULT_WARN_LATENCY_MS;
-> +#endif /* CONFIG_SCHED_DEBUG */
-
-I'd really just make this a single value - say 100 or 200 msecs.
-
-> +static inline void resched_latency_warn(int cpu, u64 latency)
+> +static inline u64 resched_latency_check(struct rq *rq)
 > +{
-> +	static DEFINE_RATELIMIT_STATE(latency_check_ratelimit, 60 * 60 * HZ, 1);
+> +	int latency_warn_ms = READ_ONCE(sysctl_resched_latency_warn_ms);
+> +	bool warn_only_once = (latency_warn_ms == RESCHED_DEFAULT_WARN_LATENCY_MS);
+> +	u64 need_resched_latency, now = rq_clock(rq);
+> +	static bool warned_once;
 > +
-> +	WARN(__ratelimit(&latency_check_ratelimit),
-> +	     "CPU %d: need_resched set for > %llu ns (%d ticks) "
-> +	     "without schedule\n",
-> +	     cpu, latency, cpu_rq(cpu)->ticks_without_resched);
-> +}
+> +	if (warn_only_once && warned_once)
+> +		return 0;
+> +
+> +	if (!need_resched() || latency_warn_ms < 2)
+> +		return 0;
+> +
+> +	/* Disable this warning for the first few mins after boot */
+> +	if (now < RESCHED_BOOT_QUIET_SEC * NSEC_PER_SEC)
+> +		return 0;
+> +
+> +	if (!rq->last_seen_need_resched_ns) {
+> +		rq->last_seen_need_resched_ns = now;
+> +		rq->ticks_without_resched = 0;
+> +		return 0;
+> +	}
+> +
+> +	rq->ticks_without_resched++;
 
-Could you please put the 'sched:' prefix into scheduler warnings. 
-Let's have a bit of a namespace structure in new warnings.
+So AFAICS this will only really do something useful on full-nohz 
+kernels with sufficiently long scheduler ticks, right?
+
+On other kernels the scheduler tick interrupt, when it returns to 
+user-space, will trigger a reschedule if it sees a need_resched.
 
 Thanks,
 
