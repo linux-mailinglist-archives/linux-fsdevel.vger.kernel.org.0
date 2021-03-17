@@ -2,98 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9C4333F4B0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 16:54:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ED9E33F47B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 16:51:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232249AbhCQPyF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 11:54:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33716 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232185AbhCQPxm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 11:53:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AAAD264F6E;
-        Wed, 17 Mar 2021 14:56:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1615993007;
-        bh=gDQD75TMDCBqwGcS8/6DWiM6ZUznIP9nwwkyyF+j8Rg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LOygU8AGnawuGblKbYnL84HONQ4oOWp27ZbL+v/iwlI+fVmNe/sneHFNCpdp02Vt7
-         yNkau1/uydbSwxRVEj950IpuMoX6LPbdLK+sgqHolhjCUEwIONczarsdFyimlllvQr
-         ZLKe0Olm2ALbYRhoaL4WN++JvYdgGlofrUvwI88U=
-Date:   Wed, 17 Mar 2021 15:56:44 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
-        Adam Nichols <adam@grimm-co.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        Uladzislau Rezki <urezki@gmail.com>
-Subject: Re: [PATCH v2] seq_file: Unconditionally use vmalloc for buffer
-Message-ID: <YFIYrMVTC42boZ/Z@kroah.com>
-References: <20210315174851.622228-1-keescook@chromium.org>
- <YFBs202BqG9uqify@dhcp22.suse.cz>
- <202103161205.B2181BDE38@keescook>
- <YFHxNT1Pwoslmhxq@dhcp22.suse.cz>
- <YFIFY7mj65sStba1@kroah.com>
- <YFIVwPWTo48ITkHs@dhcp22.suse.cz>
+        id S232514AbhCQPtt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 11:49:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40244 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232495AbhCQPtR (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Mar 2021 11:49:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615996156;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ojM9g5bXUmb7n3KgDuQWnhqjZ24DPefjMRpNBzV+8t4=;
+        b=W4+G3i0oAafLiaWb9OSLXCd8l0XNcubO3n2pU4rniCZNwDVPmvCpes2xVQHbakndZMgb6e
+        s22gKXMQIyH7PtMPWK70q2SzlIq+mK6jqtHPWXLs4aY8J/6UD/TvVfxWoZQY3LiJkM/2c/
+        7oppovShzNs/7M5psXbEBmlYomiCL2g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-368-x5NourVEOhGzr9N7HRFZ1A-1; Wed, 17 Mar 2021 11:19:02 -0400
+X-MC-Unique: x5NourVEOhGzr9N7HRFZ1A-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8EA8E100945F;
+        Wed, 17 Mar 2021 15:19:01 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-116-32.rdu2.redhat.com [10.10.116.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 48FEF10074FC;
+        Wed, 17 Mar 2021 15:18:58 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id AC0FD220BCF; Wed, 17 Mar 2021 11:18:57 -0400 (EDT)
+Date:   Wed, 17 Mar 2021 11:18:57 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        miklos@szeredi.hu, dgilbert@redhat.com, seth.forshee@canonical.com
+Subject: Re: [PATCH 0/1] fuse: acl: Send file mode updates using SETATTR
+Message-ID: <20210317151857.GC324911@redhat.com>
+References: <20210316160147.289193-1-vgoyal@redhat.com>
+ <YFISL+dvR/qy6P+1@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <YFIVwPWTo48ITkHs@dhcp22.suse.cz>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YFISL+dvR/qy6P+1@suse.de>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 17, 2021 at 03:44:16PM +0100, Michal Hocko wrote:
-> On Wed 17-03-21 14:34:27, Greg KH wrote:
-> > On Wed, Mar 17, 2021 at 01:08:21PM +0100, Michal Hocko wrote:
-> > > Btw. I still have problems with the approach. seq_file is intended to
-> > > provide safe way to dump values to the userspace. Sacrificing
-> > > performance just because of some abuser seems like a wrong way to go as
-> > > Al pointed out earlier. Can we simply stop the abuse and disallow to
-> > > manipulate the buffer directly? I do realize this might be more tricky
-> > > for reasons mentioned in other emails but this is definitely worth
-> > > doing.
+On Wed, Mar 17, 2021 at 02:29:03PM +0000, Luis Henriques wrote:
+> On Tue, Mar 16, 2021 at 12:01:46PM -0400, Vivek Goyal wrote:
+> > Hi Miklos,
 > > 
-> > We have to provide a buffer to "write into" somehow, so what is the best
-> > way to stop "abuse" like this?
+> > Please find attached a patch to fix the SGID clearing issue upon 
+> > ACL change. 
+> > 
+> > Luis reported that currently fstests generic/375 fails on virtiofs. And
+> > reason being that we don't clear SGID when it should be.
+> > 
+> > Setting ACL can lead to file mode change. And this in-turn also can
+> > lead to clearing SGID bit if.
+> > 
+> > - None of caller's groups match file owner group.
+> > AND
+> > - Caller does not have CAP_FSETID.
+> > 
+> > Current implementation relies on server updating the mode. But file
+> > server does not have enough information to do so. 
+> > 
+> > Initially I thought of sending CAP_FSETID information to server but
+> > then I realized, it is just one of the pieces. What about all the
+> > groups caller is a member of. If this has to work correctly, then
+> > all the information will have to be sent to virtiofsd somehow. Just
+> > sending CAP_FSETID information required adding V2 of fuse_setxattr_in
+> > because we don't have any space for sending extra information.
+> > 
+> > https://github.com/rhvgoyal/linux/commit/681cf5bdbba9c965c3dbd4337c16e9b17f27debe
+> > 
+> > Also this approach will not work with idmapped mounts because server
+> > does not have information about idmapped mappings.
+> > 
+> > So I started to look at the approach of sending file mode updates
+> > using SETATTR. As filesystems like 9pfs and ceph are doing. This
+> > seems simpler approach. Though it has its issues too.
+> > 
+> > - File mode update and setxattr(system.posix_acl_access) are not atomic.
 > 
-> What is wrong about using seq_* interface directly?
+> After reviewing (and testing) the patch, the only comment I have is that
+> we should at least pr_warn() an eventual failure in setxattr().  But f
+> that operation fails at that point, probably something went wrong on the
+> other side
 
-Right now every show() callback of sysfs would have to be changed :(
+Hi Luis,
 
-> > Right now, we do have helper functions, sysfs_emit(), that know to stop
-> > the overflow of the buffer size, but porting the whole kernel to them is
-> > going to take a bunch of churn, for almost no real benefit except a
-> > potential random driver that might be doing bad things here that we have
-> > not noticed yet.
+If setxattr failed, user will get the error. 
+
+I guess pr_warn() could help with figuring out that there was a side affect
+of failed failed setxattr operation. (mode changed). I will add something.
+
+> and the kernel is unlikely to be able to revert the mode
+> changes anyway.
+
+Interestingly ceph code seems to revert mode changes if setxattr fails.
+I think for now I am happy with just a pr_warn().
 > 
-> I am not familiar with sysfs, I just got lost in all the indirection but
-> replacing buffer by the seq_file and operate on that should be possible,
-> no?
+> (And a nit: your patch seems to require some whitespaces clean-up.)
 
-sysfs files should be very simple and easy, and have a single value
-being written to userspace.  I guess seq_printf() does handle the issue
-of "big buffers", but there should not be a big buffer here to worry
-about in the first place (yes, there was a bug where a driver took
-unchecked data and sent it to userspace overflowing the buffer which
-started this whole thread...)
+Will check it and fix it and post V2.
 
-I guess Kees wants to change all show functions to use the seq_ api,
-which now makes a bit more sense, but still seems like a huge overkill.
-But I now understand the idea here, the buffer management is handled by
-the core kernel and overflows are impossible.
+Thanks
+Vivek
 
-A "simpler" fix is to keep the api the same today, and just "force"
-everyone to use sysfs_emit() which does the length checking
-automatically.
+> 
+> Cheers,
+> --
+> Luís
+> 
+> 
+> > None of the approaches seem very clean to me. But sending SETATTR
+> > explicitly seems to be lesser of two evils to me at this point of time.
+> > Hence I am proposing this patch. 
+> > 
+> > I have run fstests acl tests and they pass. (./check -g acl).
+> > 
+> > Corresponding virtiofsd patches are here.
+> > 
+> > https://github.com/rhvgoyal/qemu/commits/acl-sgid-setattr
+> > 
+> > What do you think.
+> > 
+> > Vivek Goyal (1):
+> >   fuse: Add a mode where fuse client sends mode changes on ACL change
+> > 
+> >  fs/fuse/acl.c             | 54 ++++++++++++++++++++++++++++++++++++---
+> >  fs/fuse/dir.c             | 11 ++++----
+> >  fs/fuse/fuse_i.h          |  9 ++++++-
+> >  fs/fuse/inode.c           |  4 ++-
+> >  include/uapi/linux/fuse.h |  5 ++++
+> >  5 files changed, 71 insertions(+), 12 deletions(-)
+> > 
+> > -- 
+> > 2.25.4
+> > 
+> 
 
-I don't know, it all depends on how much effort we want to put into the
-"drivers can not do stupid things because we prevent them from it"
-type of work here...
-
-thanks,
-
-greg k-h
