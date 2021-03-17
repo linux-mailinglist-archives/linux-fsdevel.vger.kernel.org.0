@@ -2,71 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E52533F784
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 18:52:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6EF633F7A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 18:57:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229814AbhCQRv2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 13:51:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42412 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232809AbhCQRvY (ORCPT
+        id S232803AbhCQR4s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 13:56:48 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37674 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232901AbhCQR4P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 13:51:24 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36A18C06174A;
-        Wed, 17 Mar 2021 10:51:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=rGJfEo0c4N/BIwZMUyXKTYj49Ef/YOPV1DuFMT6A41I=; b=W3xmbSdfZ5iXeZvED39lrk7GjL
-        yCn8/s5ctILZyLudlyB8ZVNXAhGbX8JXuE4x4eNKUHXkIWhEKGHKyTb91mQHhuDZcq6m13PQE7s/L
-        ri09yPI1Csu67NLuhgaeUBRITOKSQboppcf/86L4C0Y33BUVyPtkOP42+tExCLbBjNDlwJyOVUCWl
-        +ASZGqoF6Rzi22GWrGZoTi2/XeucJWvG2B9UaNlrPQyQFYNsNmzLavWUp0vphXeo2xVDFzbwQgr2E
-        tGyokdiR2zFHkEbT5n9MjuEEShb4b4iEKRSvz8X85kZmWzJeUQvwBOihw8jnZeavKLOcnNMeTgFli
-        aXYC7GkA==;
-Received: from 089144199244.atnat0008.highway.a1.net ([89.144.199.244] helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lMaJq-001wL1-Od; Wed, 17 Mar 2021 17:50:58 +0000
-Date:   Wed, 17 Mar 2021 18:48:44 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 00/25] Page folios
-Message-ID: <YFJA/ExliTBVfj/8@infradead.org>
-References: <20210305041901.2396498-1-willy@infradead.org>
- <20210313123658.ad2dcf79a113a8619c19c33b@linux-foundation.org>
- <alpine.LSU.2.11.2103131842590.14125@eggly.anvils>
- <20210315115501.7rmzaan2hxsqowgq@box>
- <YE9VLGl50hLIJHci@dhcp22.suse.cz>
- <20210315190904.GB150808@infradead.org>
- <20210315194014.GZ2577561@casper.infradead.org>
+        Wed, 17 Mar 2021 13:56:15 -0400
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1lMaOy-0001My-QQ; Wed, 17 Mar 2021 17:56:12 +0000
+Date:   Wed, 17 Mar 2021 18:56:11 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH v8 01/10] iov_iter: add copy_struct_from_iter()
+Message-ID: <20210317175611.adntftl6w3avptvk@wittgenstein>
+References: <cover.1615922644.git.osandov@fb.com>
+ <e71e712d27b2e2c19efc5b1454bd8581ad98d900.1615922644.git.osandov@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210315194014.GZ2577561@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <e71e712d27b2e2c19efc5b1454bd8581ad98d900.1615922644.git.osandov@fb.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 15, 2021 at 07:40:14PM +0000, Matthew Wilcox wrote:
-> The reason I didn't go with 'head' is that traditionally 'head' implies
-> that there are tail pages.  It would be weird to ask 'if (HeadHead(head))'
-> That's currently spelled 'if (FolioMulti(folio))'.  But it can be changed
-> if there's a really better alternative.  It'll make me more grumpy if
-> somebody comes up with a really good alternative in six months.
+On Tue, Mar 16, 2021 at 12:42:57PM -0700, Omar Sandoval wrote:
+> From: Omar Sandoval <osandov@fb.com>
+> 
+> This is essentially copy_struct_from_user() but for an iov_iter.
+> 
+> Suggested-by: Aleksa Sarai <cyphar@cyphar.com>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+> Signed-off-by: Omar Sandoval <osandov@fb.com>
+> ---
+>  include/linux/uio.h |  2 ++
+>  lib/iov_iter.c      | 82 +++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 84 insertions(+)
+> 
+> diff --git a/include/linux/uio.h b/include/linux/uio.h
+> index 72d88566694e..f4e6ea85a269 100644
+> --- a/include/linux/uio.h
+> +++ b/include/linux/uio.h
+> @@ -121,6 +121,8 @@ size_t copy_page_to_iter(struct page *page, size_t offset, size_t bytes,
+>  			 struct iov_iter *i);
+>  size_t copy_page_from_iter(struct page *page, size_t offset, size_t bytes,
+>  			 struct iov_iter *i);
+> +int copy_struct_from_iter(void *dst, size_t ksize, struct iov_iter *i,
+> +			  size_t usize);
+>  
+>  size_t _copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i);
+>  size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i);
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index a21e6a5792c5..f45826ed7528 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -948,6 +948,88 @@ size_t copy_page_from_iter(struct page *page, size_t offset, size_t bytes,
+>  }
+>  EXPORT_SYMBOL(copy_page_from_iter);
+>  
+> +/**
+> + * copy_struct_from_iter - copy a struct from an iov_iter
+> + * @dst: Destination buffer.
+> + * @ksize: Size of @dst struct.
+> + * @i: Source iterator.
+> + * @usize: (Alleged) size of struct in @i.
+> + *
+> + * Copies a struct from an iov_iter in a way that guarantees
+> + * backwards-compatibility for struct arguments in an iovec (as long as the
+> + * rules for copy_struct_from_user() are followed).
+> + *
+> + * The recommended usage is that @usize be taken from the current segment:
+> + *
+> + *   int do_foo(struct iov_iter *i)
+> + *   {
+> + *     size_t usize = iov_iter_single_seg_count(i);
+> + *     struct foo karg;
+> + *     int err;
+> + *
+> + *     if (usize > PAGE_SIZE)
+> + *       return -E2BIG;
+> + *     if (usize < FOO_SIZE_VER0)
+> + *       return -EINVAL;
+> + *     err = copy_struct_from_iter(&karg, sizeof(karg), i, usize);
+> + *     if (err)
+> + *       return err;
+> + *
+> + *     // ...
+> + *   }
+> + *
+> + * Return: 0 on success, -errno on error (see copy_struct_from_user()).
+> + *
+> + * On success, the iterator is advanced @usize bytes. On error, the iterator is
+> + * not advanced.
+> + */
+> +int copy_struct_from_iter(void *dst, size_t ksize, struct iov_iter *i,
+> +			  size_t usize)
+> +{
+> +	if (usize <= ksize) {
+> +		if (!copy_from_iter_full(dst, usize, i))
+> +			return -EFAULT;
+> +		memset(dst + usize, 0, ksize - usize);
+> +	} else {
+> +		size_t copied = 0, copy;
+> +		int ret;
+> +
+> +		if (WARN_ON(iov_iter_is_pipe(i)) || unlikely(i->count < usize))
+> +			return -EFAULT;
+> +		if (iter_is_iovec(i))
+> +			might_fault();
+> +		iterate_all_kinds(i, usize, v, ({
+> +			copy = min(ksize - copied, v.iov_len);
+> +			if (copy && copyin(dst + copied, v.iov_base, copy))
+> +				return -EFAULT;
+> +			copied += copy;
+> +			ret = check_zeroed_user(v.iov_base + copy,
+> +						v.iov_len - copy);
+> +			if (ret <= 0)
+> +				return ret ?: -E2BIG;
+> +			0;}), ({
+> +			char *addr = kmap_atomic(v.bv_page);
+> +			copy = min_t(size_t, ksize - copied, v.bv_len);
+> +			memcpy(dst + copied, addr + v.bv_offset, copy);
+> +			copied += copy;
+> +			ret = memchr_inv(addr + v.bv_offset + copy, 0,
+> +					 v.bv_len - copy) ? -E2BIG : 0;
+> +			kunmap_atomic(addr);
+> +			if (ret)
+> +				return ret;
+> +			}), ({
+> +			copy = min(ksize - copied, v.iov_len);
+> +			memcpy(dst + copied, v.iov_base, copy);
+> +			if (memchr_inv(v.iov_base, 0, v.iov_len))
+> +				return -E2BIG;
+> +			})
+> +		)
 
-The folio name keeps growing on me.  Still not perfect, but I do like
-that it is:
 
- a) short
-
-and
-
- b) very different from page
+Following the semantics of copy_struct_from_user() is certainly a good
+idea but can this in any way be rewritten to not look like this; at
+least not as crammed. It's a bit painful to follow here what's going.
