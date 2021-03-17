@@ -2,133 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4012C33FA7F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 22:31:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CC7833FB8D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 23:58:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230406AbhCQVbF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 17:31:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33390 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230518AbhCQVau (ORCPT
+        id S229613AbhCQW6F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 18:58:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:38004 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229608AbhCQW5v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 17:30:50 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DB1DC06175F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Mar 2021 14:30:50 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id u19so65380pgh.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Mar 2021 14:30:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=JcYcWHGmVNPGMhsAQmoPEgDMVOP5uAD1xio0p93SpaM=;
-        b=F2SGL0ebm1WN1AAXVrYPAflE0RRGNbDqRh5zWT6E/VDAvVhncHQW9rlh7inOf5XErV
-         eT01CBORU4s/hPImJxaRVOnYWJURa/EpWjUwCeBqyX1w70HMPLVFmoVGwzzKxMu/dyNs
-         /XSl3en+t+yMb+Vh+lIsSzolMrZwLO+UCWLC0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=JcYcWHGmVNPGMhsAQmoPEgDMVOP5uAD1xio0p93SpaM=;
-        b=DrKA8Xky8R2V9cGS3oRMpb8QyJTz/H9GxUbivUyQViJejs6c1HjSqxwS8rrpGD0Pnl
-         WVCooz+eEHzc9FdO1JoOXpx3Zi9qV79jdQHk8Y0tCc3TYNtovoewkAVru7NAI4O55E5l
-         I4a0JEaPBzX9872WKNIgYMaXIxPyqEJAlkd6ByckZKQYLwIqZxeIM/4yLEr9ONrQQIaP
-         PhhXYy2ekGSn6DcoU9CcE6Bc9G7+AJzeyissnYiEQ08XPS3q9lgv5dlFzrYgs/ANlsuT
-         jBdJCdCqVVDxy0Mcm+2Toahrun/k9WmVd+UZrbI/DnPEVMzHBER69knPwc+gQlM/3+4g
-         0dMw==
-X-Gm-Message-State: AOAM531lxehyDpRNN4U4qykzab8IEi4k0NNDjMMT8B26RjtIeL0s60yr
-        2DYFg8lgOqrSqaYOnYBHFI0spg==
-X-Google-Smtp-Source: ABdhPJxMlmgNJs/pSay3PORwaQblP+ABwko4SMVjMmgn6A+Fl8jjpE6/b/waFyC28qknA4CB+JWDTw==
-X-Received: by 2002:a05:6a00:78c:b029:1f5:d587:1701 with SMTP id g12-20020a056a00078cb02901f5d5871701mr889400pfu.59.1616016649608;
-        Wed, 17 Mar 2021 14:30:49 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x190sm42856pfx.166.2021.03.17.14.30.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Mar 2021 14:30:48 -0700 (PDT)
-Date:   Wed, 17 Mar 2021 14:30:47 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
-        Adam Nichols <adam@grimm-co.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        Uladzislau Rezki <urezki@gmail.com>
-Subject: Re: [PATCH v2] seq_file: Unconditionally use vmalloc for buffer
-Message-ID: <202103171425.CB0F4619A8@keescook>
-References: <20210315174851.622228-1-keescook@chromium.org>
- <YFBs202BqG9uqify@dhcp22.suse.cz>
- <202103161205.B2181BDE38@keescook>
- <YFHxNT1Pwoslmhxq@dhcp22.suse.cz>
- <YFIFY7mj65sStba1@kroah.com>
- <YFIVwPWTo48ITkHs@dhcp22.suse.cz>
- <YFIYrMVTC42boZ/Z@kroah.com>
- <YFIeVLDsfBMa7fHW@dhcp22.suse.cz>
- <YFIikaNixD57o3pk@kroah.com>
+        Wed, 17 Mar 2021 18:57:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616021870;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=gZaK6gIsCAM0oxROYY9ggmqnBS3+yKAGQL9O/N4rfPw=;
+        b=G6w0yDPWm1V5IA73YaAIta0hBRIpsQVBKYBba+oeCc/lN3PsTWyTq/NoqiF/zQoeOPr5Sc
+        MEvv6DEhqQ6rHp7cw5/XWVVW+lJ1Qve/O2N3nizBvQojNz4aJjMZbLRxo1DdmH6JkcW3bh
+        /CEBZf5mmYEz5PHhQJHnlScEDO1+3Rk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-375-lzq7ykgKM6-wzD3kLQ3JfQ-1; Wed, 17 Mar 2021 18:57:46 -0400
+X-MC-Unique: lzq7ykgKM6-wzD3kLQ3JfQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F0FF8108BD06;
+        Wed, 17 Mar 2021 22:57:44 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-116-32.rdu2.redhat.com [10.10.116.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BF887610F0;
+        Wed, 17 Mar 2021 22:57:41 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 501E9220BCF; Wed, 17 Mar 2021 18:57:41 -0400 (EDT)
+Date:   Wed, 17 Mar 2021 18:57:41 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Luis Henriques <lhenriques@suse.de>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>
+Subject: Re: [PATCH 1/1] fuse: send file mode updates using SETATTR
+Message-ID: <20210317225741.GG324911@redhat.com>
+References: <20210316160147.289193-1-vgoyal@redhat.com>
+ <20210316160147.289193-2-vgoyal@redhat.com>
+ <CAJfpegtD-6Xt3JDtoOtqJLXeDzVgjfaVJhHU8OQ8Lpw9tu2FzA@mail.gmail.com>
+ <20210317170119.GE324911@redhat.com>
+ <CAJfpegvtYtfwsMCi38VjMGanarTStQNEnqveRUFhU1xCJ5EbUQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YFIikaNixD57o3pk@kroah.com>
+In-Reply-To: <CAJfpegvtYtfwsMCi38VjMGanarTStQNEnqveRUFhU1xCJ5EbUQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 17, 2021 at 04:38:57PM +0100, Greg Kroah-Hartman wrote:
-> On Wed, Mar 17, 2021 at 04:20:52PM +0100, Michal Hocko wrote:
-> > On Wed 17-03-21 15:56:44, Greg KH wrote:
-> > > On Wed, Mar 17, 2021 at 03:44:16PM +0100, Michal Hocko wrote:
-> > > > On Wed 17-03-21 14:34:27, Greg KH wrote:
-> > > > > On Wed, Mar 17, 2021 at 01:08:21PM +0100, Michal Hocko wrote:
-> > > > > > Btw. I still have problems with the approach. seq_file is intended to
-> > > > > > provide safe way to dump values to the userspace. Sacrificing
-> > > > > > performance just because of some abuser seems like a wrong way to go as
-> > > > > > Al pointed out earlier. Can we simply stop the abuse and disallow to
-> > > > > > manipulate the buffer directly? I do realize this might be more tricky
-> > > > > > for reasons mentioned in other emails but this is definitely worth
-> > > > > > doing.
-> > > > > 
-> > > > > We have to provide a buffer to "write into" somehow, so what is the best
-> > > > > way to stop "abuse" like this?
-> > > > 
-> > > > What is wrong about using seq_* interface directly?
-> > > 
-> > > Right now every show() callback of sysfs would have to be changed :(
-> > 
-> > Is this really the case? Would it be too ugly to have an intermediate
-> > buffer and then seq_puts it into the seq file inside sysfs_kf_seq_show.
+On Wed, Mar 17, 2021 at 08:25:51PM +0100, Miklos Szeredi wrote:
+> On Wed, Mar 17, 2021 at 6:01 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > On Wed, Mar 17, 2021 at 04:43:35PM +0100, Miklos Szeredi wrote:
+> > > On Tue, Mar 16, 2021 at 5:02 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > >
+> > > > If ACL changes, it is possible that file mode permission bits change. As of
+> > > > now fuse client relies on file server to make those changes. But it does
+> > > > not send enough information to server so that it can decide where SGID
+> > > > bit should be cleared or not. Server does not know if caller has CAP_FSETID
+> > > > or not. It also does not know what are caller's group memberships and if any
+> > > > of the groups match file owner group.
+> > >
+> > > Right.  So what about performing the capability and group membership
+> > > check in the client and sending the result of this check to the
+> > > server?
+> >
+> > Hi Miklos,
+> >
+> > But that will still be non-atomic, right? I mean server probably will
+> > do setxattr first, then check if SGID was cleared or not, and if it
+> > has not been cleared, then it needs to set the mode.
+> >
+> > IOW, we still have two operations (setxattr followed by mode setting).
+> >
+> > I had thought about that option. But could not understand what does
+> > it buy us as opposed to guest sending a SETATTR.
 > 
-> Oh, good idea.
+> If the non-atomic SETXATTR + SETATTR is done in the client, then the
+> server has no chance of ever operating correctly.
 > 
-> > Sure one copy more than necessary but it this shouldn't be a hot path or
-> > even visible on small strings. So that might be worth destroying an
-> > inherently dangerous seq API (seq_get_buf).
+> If the responsibility for clearing sgid is in the server, then it's up
+> to the server to decide how to best deal with this.  That may be the
+> racy way, but at least it's not the only possibility.
 > 
-> I'm all for that, let me see if I can carve out some time tomorrow to
-> try this out.
+> Not sure if virtiofsd can do this atomically or not.
+> setgid()/setgroups() require CAP_SETGID, but that's relative to the
+> user namespace of the daemon, so this might be possible to do, I
+> haven't put a lot of thought into this.
 
-The trouble has been that C string APIs are just so impossibly fragile.
-We just get too many bugs with it, so we really do need to rewrite the
-callbacks to use seq_file, since it has a safe API.
+I guess you are right. virtiofsd can do it atomically. If client says to
+clear SGID, then virtiofsd can do following.
 
-I've been trying to write coccinelle scripts to do some of this
-refactoring, but I have not found a silver bullet. (This is why I've
-suggested adding the temporary "seq_show" and "seq_store" functions, so
-we can transition all the callbacks without a flag day.)
+A. Query who is file owner group.
+B. setgid(non-file-owner-group)
+C. drop CAP_FSETID
+D. setxattr(system.posix_acl_access).
 
-> But, you don't get rid of the "ability" to have a driver write more than
-> a PAGE_SIZE into the buffer passed to it.  I guess I could be paranoid
-> and do some internal checks (allocate a bunch of memory and check for
-> overflow by hand), if this is something to really be concerned about...
+If file owner group is not root, then we don't have to do any setgid at all.
+If file owner group is root, then we have to find a gid which is valid
+in mount namespace of virtiofsd and switch to it. I guess at virtiofsd
+start time we can look at /proc/$$/gid_map and store on  non-root gid
+which is valid.
 
-Besides the CFI prototype enforcement changes (which I can build into
-the new seq_show/seq_store callbacks), the buffer management is the
-primary issue: we just can't hand drivers a string (even with a length)
-because the C functions are terrible. e.g. just look at the snprintf vs
-scnprintf -- we constantly have to just build completely new API when
-what we need is a safe way (i.e. obfuscated away from the caller) to
-build a string. Luckily seq_file does this already, so leaning into that
-is good here.
+Only race here will be if another client changes file owner group
+between A and D and sets to same non-file-onwer-group we changed to. In
+that case it will not be cleared. 
 
--- 
-Kees Cook
+Hmm.., may be post setxattr we can do another stat() and make sure SGID
+got cleared. If not, do a chmod. IOW, if atomic approach races, fall back
+to non-atomic approach.
+
+Litle twisted but should probably work. Will try.
+
+Thanks
+Vivek
+
