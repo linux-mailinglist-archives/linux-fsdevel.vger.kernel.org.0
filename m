@@ -2,105 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FA2033EEE2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 11:54:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB26633EF09
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Mar 2021 12:02:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230398AbhCQKyK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 06:54:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53303 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230159AbhCQKxv (ORCPT
+        id S231215AbhCQLCK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 07:02:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38546 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231187AbhCQLBr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 06:53:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1615978430;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CrP2lfrrdq12nJd/eCkP5MvOV60FCODOOLwLlbcHJdc=;
-        b=BXgd9mFEKFsNVzraqleu/LAUXDgwd35VgXYK4Qxm1rLofSc1fFY+MZJI5Gh/ev2gh2Nyle
-        /o/8ma8oVffjRKKn1ERgWjpjQVp9GECc9g1w40p1woBs+3u8aZavh4D6s+Hgd1o4k+agti
-        qaay9OMm2uk6gWgK7WsosFr/gvsjb90=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-149-YK1MK1d2OtGgyArc0_7DAQ-1; Wed, 17 Mar 2021 06:53:49 -0400
-X-MC-Unique: YK1MK1d2OtGgyArc0_7DAQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7B60C84BA43;
-        Wed, 17 Mar 2021 10:53:46 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-113-138.rdu2.redhat.com [10.10.113.138])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9D8CE6C32F;
-        Wed, 17 Mar 2021 10:53:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <31382.1615971849@warthog.procyon.org.uk>
-References: <31382.1615971849@warthog.procyon.org.uk> <CAHk-=whWoJhGeMn85LOh9FX-5d2-Upzmv1m2ZmYxvD31TKpUTA@mail.gmail.com> <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk> <161539528910.286939.1252328699383291173.stgit@warthog.procyon.org.uk> <20210316190707.GD3420@casper.infradead.org> <CAHk-=wjSGsRj7xwhSMQ6dAQiz53xA39pOG+XA_WeTgwBBu4uqg@mail.gmail.com> <887b9eb7-2764-3659-d0bf-6a034a031618@toxicpanda.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Josef Bacik <josef@toxicpanda.com>,
-        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux-MM <linux-mm@kvack.org>, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 02/28] mm: Add an unlock function for PG_private_2/PG_fscache
+        Wed, 17 Mar 2021 07:01:47 -0400
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 702E3C06175F;
+        Wed, 17 Mar 2021 04:01:47 -0700 (PDT)
+Received: by mail-il1-x131.google.com with SMTP id l5so1044060ilv.9;
+        Wed, 17 Mar 2021 04:01:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BYHMrjb4lyNPksOkVK6A39D0G0tsTSTkEMKh/7NW0Ws=;
+        b=JxFvcYZ+B8J7QCd4kzuV+NO0CnvorOH8KWvWMrBc80nPxj07Mf2ksJMN3kHpOvj2o7
+         PCOfX8qHeNfqNot7HL3+b9eCoiwGXgl2lg5GHww+6hbHDqvs7YBrvXEvu0cotQmVE9zz
+         D7ifjZBR2xsPWiB24Sjz03eug7rzRDN78RfD56xbGIt80nJaqU2ilMh3+u8Rwaf8WZVZ
+         M/mjt1Agx0xKc76rARiHJ+pExZAvbTZNMnnz355h/1qeZdb4eM4LNtEAHI64rWVp3153
+         rbFyQJ3HF7spJ+Woyo+MNloagpt/mA3wNrjtcGP8mbnvQX/7lgZIiczKfusc/Dj6cJHG
+         W18w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BYHMrjb4lyNPksOkVK6A39D0G0tsTSTkEMKh/7NW0Ws=;
+        b=nGhTdHpvo587ahKHCAB0XXrhpOSVSerfci/Y8VgN8bgc7+rkRbulylsYfn0HIbJGXy
+         Q2w0CmqsYIj1H/Bwdp+Fxv63VFPqNDYQRK9nk+RGSCs2xWiZNY8K1nuCHKPMQ5BlG8N8
+         8iKylJ15suo2ZMSQl2s2+wL40oq6GJPP6bDncrLRFO6w7XZXPDSLcSArFkcKTvVN5nf6
+         aSq2xudGAcmm79JNgpO3o4j4r4mKXx32jvKCRciZqUNowJaWvLCZst3pzehkZg/wA8pm
+         W9AJY5DWWBB+n0M05p4HoCC/KcLfkjwzubUF3XMxj7xeRqgllgKATs80l/hyDJ0p4yPV
+         9DbQ==
+X-Gm-Message-State: AOAM531qbcFz65eoNZgS4MRD2V4bjiaFHS6aWH0K09GXENNJFknicoG3
+        rWOHGMvi5oPH+FlEESS1CcLvL0I5qgAXVyE6j73cnDNnj2M=
+X-Google-Smtp-Source: ABdhPJwyBXpTmosErJ4afrXVoSkKn99fuKDH81ZQVYjSTjVuDG8QTOtu54nCcFrhzMqmIIXbw4l9YP3pGj/psrKhnXQ=
+X-Received: by 2002:a92:740c:: with SMTP id p12mr7305240ilc.9.1615978906872;
+ Wed, 17 Mar 2021 04:01:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <38367.1615978421.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 17 Mar 2021 10:53:41 +0000
-Message-ID: <38368.1615978421@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+References: <20210304112921.3996419-1-amir73il@gmail.com> <20210316155524.GD23532@quack2.suse.cz>
+In-Reply-To: <20210316155524.GD23532@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 17 Mar 2021 13:01:35 +0200
+Message-ID: <CAOQ4uxgCv42_xkKpRH-ApMOeFCWfQGGc11CKxUkHJq-Xf=HnYg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+On Tue, Mar 16, 2021 at 5:55 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Thu 04-03-21 13:29:19, Amir Goldstein wrote:
+> > Jan,
+> >
+> > These patches try to implement a minimal set and least controversial
+> > functionality that we can allow for unprivileged users as a starting
+> > point.
+> >
+> > The patches were tested on top of v5.12-rc1 and the fanotify_merge
+> > patches using the unprivileged listener LTP tests written by Matthew
+> > and another LTP tests I wrote to test the sysfs tunable limits [1].
+>
+> Thanks. I've added both patches to my tree.
 
->  (1) For the old fscache code that I'm trying to phase out, it does not =
-take a
->      ref when PG_fscache is taken (probably incorrectly), relying instea=
-d on
->      releasepage, etc. getting called to strip the PG_fscache bit.  PG_f=
-scache
->      is held for the lifetime of the page, indicating that fscache knows=
- about
->      it and might access it at any time (to write to the cache in the
->      background for example or to move pages around in the cache).
-> =
+Great!
+I'll go post the LTP tests and work on the man page updates.
 
->      Here PG_fscache should not prevent page eviction or migration and i=
-t's
->      analogous to PG_private.
-> =
+BTW, I noticed that you pushed the aggregating for_next branch,
+but not the fsnotify topic branch.
 
->      That said, the old fscache code keeps its own radix trees of pages =
-that
->      are undergoing write to the cache, so to allow a page to be evicted=
-,
->      releasepage and co. have to consult those
->      (__fscache_maybe_release_page()).
+Is this intentional?
 
-Note that, ideally, we'll be able to remove the old fscache I/O code in th=
-e
-next merge window or the one after.
+I am asking because I am usually basing my development branches
+off of your fsnotify branch, but I can base them on the unpushed branch.
 
-David
+Heads up. I am playing with extra privileges we may be able to
+allow an ns_capable user.
+For example, watching a FS_USERNS_MOUNT filesystem that the user
+itself has mounted inside userns.
 
+Another feature I am investigating is how to utilize the new idmapped
+mounts to get a subtree watch functionality. This requires attaching a
+userns to the group on fanotify_init().
+
+<hand waving>
+If the group's userns are the same or below the idmapped mount userns,
+then all the objects accessed via that idmapped mount are accessible
+to the group's userns admin. We can use that fact to filter events very
+early based on their mnt_userns and the group's userns, which should be
+cheaper than any subtree permission checks.
+<\hand waving>
+
+Thanks,
+Amir.
