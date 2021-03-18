@@ -2,112 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D51B340B03
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 18:07:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21AD1340C34
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 18:55:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232273AbhCRRHU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Mar 2021 13:07:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60456 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232009AbhCRRHL (ORCPT
+        id S232374AbhCRRys (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Mar 2021 13:54:48 -0400
+Received: from mail-pf1-f176.google.com ([209.85.210.176]:45584 "EHLO
+        mail-pf1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232355AbhCRRy0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Mar 2021 13:07:11 -0400
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9925FC06174A;
-        Thu, 18 Mar 2021 10:07:11 -0700 (PDT)
-Received: by mail-il1-x134.google.com with SMTP id l5so5542625ilv.9;
-        Thu, 18 Mar 2021 10:07:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9K4dPkNMUlUVtOXj1MYS0wdRhlKCjVW907Y6IqGc/WI=;
-        b=CjzTNdFbqB8zhvtlauDEDLO97NnwJVNiy6nJtH2yPJC7U3jgZQeOLSY41OGundz1SO
-         oNTHRlOg+3O/hiD59n9IzAJjjfNjZFhI0u0ii4WoGLiupIATOlCFzGiydyd9zI/G3D9O
-         7qJuft4OzxORAEk4A6umq+C33ZD7py45KYxV6Zt6YwRyUbjvdG9djqm/DnT8hyELANpd
-         euTlY1T5X5XTvzv2CSlk83mdOoIbHXNmIM9eiPbs84oAOsAsuaqtjbSv5215r3J0/Sjm
-         Y6iV+57BghupZbwEikSuF6RAmzEqfqMtspS918twustwcho+EFRjD8PfUMquHWJTCEBN
-         qM5g==
+        Thu, 18 Mar 2021 13:54:26 -0400
+Received: by mail-pf1-f176.google.com with SMTP id h3so4010489pfr.12;
+        Thu, 18 Mar 2021 10:54:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9K4dPkNMUlUVtOXj1MYS0wdRhlKCjVW907Y6IqGc/WI=;
-        b=AIAGisqo6tTP03MgcyuBjnaX0Ov00QZmR4hYqwxKkYmcSE6a0ABkuESrMkPD58Zvjf
-         FsDtn55C/DjFKMoDhBQkKMZxPFcBPxJ+ieMcTqtcFiej+E93l3ydJo6/7wmZcMMqqC82
-         mei5hDKGqtmsyW2JdrEizlAQ4MnoSW3wZw/l9SigMUMSb/BNEdYYVg1UzugzlklOz8RP
-         YHD5hF+WA+Y+IH7gIvEwUcSJKtNvf9iqWJXcHwc3VgDT8DK8GJVgl780OZGyygdjVtFu
-         n8cA6fTzhhwRaC37/qZk8oei9Ws6ZQmBgsNfffGSUrGd34d5XQHzBRtOSF+RIGJ9peZo
-         g/zA==
-X-Gm-Message-State: AOAM5304lUlS3Q2Al29aeosYYkS2MsMzQZmSN9c1PZdYw2SvnZi7E2JN
-        fbw+qr6zk2XTTJmUfEUzux2n87qSpEogBbfpb22kY+P+6T8=
-X-Google-Smtp-Source: ABdhPJwFCayL+wDkgj5sy6/o64eznREt2OcKt4/+w0aJMsBJJAuZ8wzOKuL/HX8W1GQMtzFQC/Ht2XYKgCB1yM+g4dA=
-X-Received: by 2002:a92:da48:: with SMTP id p8mr11475308ilq.137.1616087231056;
- Thu, 18 Mar 2021 10:07:11 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zw9NDxhZI9qzGWmlzDIZRAJNmsg1FVsGW1vH7/3lAzE=;
+        b=Uov5OHL0eXHyfEHVhZCeCACF4bIG4jlTj8VtVvfzrGu5btOKbi3O5piYbBxoUHcLqT
+         WJjkXihnma+c88xNRn3O+MYV4TgmEGvtjcVtwwTMseI6JjgtwP30QkYhv0Ct0S/huEje
+         zI7BIvKNBu7juvRljsnZmi6YXSlVT3dS62Pyf0VN+9+CLYnMSRDHEtbWlxQJEaHkQmLp
+         tIOYJe2i7/RgrsnorKzgvZ3iyOpphuUXkXhW0TTtdoklNxpYnntbgA4GVYpR4cttT4Su
+         k7ZP6Xrdb5cO/JECplAfo1CsJeaj0cCx/ptm9aq+ov4Z+hpIni44Xoc8vM/6ln/XV+8s
+         Cn/g==
+X-Gm-Message-State: AOAM533RxF1vnDaZPMvHVeqnIYwJ+W382P93wm3yavtckjJFHMDLzDC6
+        WDmzAzwBCt6bUdg6c+LkkZOCHy85uMZTPg==
+X-Google-Smtp-Source: ABdhPJxEZsgqX5znjy5cHX8VUcyqPfqRya34MwqfUBV/oA0KXRbq+gFLGOZDV+d4RYHUWWgu2TmJ/w==
+X-Received: by 2002:a62:fc10:0:b029:1ef:141f:609 with SMTP id e16-20020a62fc100000b02901ef141f0609mr5077001pfh.78.1616090066177;
+        Thu, 18 Mar 2021 10:54:26 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id u22sm2812190pgh.20.2021.03.18.10.54.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Mar 2021 10:54:25 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 3A27740244; Thu, 18 Mar 2021 17:54:24 +0000 (UTC)
+Date:   Thu, 18 Mar 2021 17:54:24 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     linux-block@vger.kernel.org, jejb@linux.ibm.com,
+        martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: blktests: block/009 next-20210304 failure rate average of 1/448
+Message-ID: <20210318175424.GR13911@42.do-not-panic.com>
+References: <20210316174645.GI4332@42.do-not-panic.com>
 MIME-Version: 1.0
-References: <20210304112921.3996419-1-amir73il@gmail.com> <20210316155524.GD23532@quack2.suse.cz>
- <CAOQ4uxgCv42_xkKpRH-ApMOeFCWfQGGc11CKxUkHJq-Xf=HnYg@mail.gmail.com>
- <20210317114207.GB2541@quack2.suse.cz> <CAOQ4uxi7ZXJW3_6SN=vw_XJC+wy4eMTayN6X5yRy_HOV6323MA@mail.gmail.com>
- <20210318154413.GA21462@quack2.suse.cz>
-In-Reply-To: <20210318154413.GA21462@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 18 Mar 2021 19:07:00 +0200
-Message-ID: <CAOQ4uxhpB+1iFSSoZy2NuF2diL=8uJ-j8JJVNnujqtphW147cw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210316174645.GI4332@42.do-not-panic.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > That may change when systemd home dirs feature starts to use idmapped
-> > mounts. Being able to watch the user's entire home directory is a big
-> > win already.
->
-> Do you mean that home directory would be an extra mount with userns in
-> which the user has CAP_SYS_ADMIN so he'd be able to watch subtrees on that
-> mount?
->
+Adding linux-fsdevel as folks working on fstests might be
+interested.
 
-That is what I meant.
-My understanding of the systemd-homed use case for idmapped mounts is
-that the user has CAP_SYS_ADMIN is the mapped userns, but I may be wrong.
+On Tue, Mar 16, 2021 at 05:46:45PM +0000, Luis Chamberlain wrote:
+> My personal suspicion is not on the block layer but on scsi_debug
+> because this can fail:
+> 
+> modprobe scsi_debug; rmmod scsi_debug
+> 
+> This second issue may be a secondary separate issue, but I figured 
+> I'd mention it. To fix this later issue I've looked at ways to
+> make scsi_debug_init() wait until its scsi devices are probed,
+> however its not clear how to do this correctly. If someone has
+> an idea let me know. If that fixes this issue then we know it was
+> that.
 
-> > > subtree watches would be IMO interesting to much more users.
-> >
-> > Agreed.
-> >
-> > I was looking into that as well, using the example of nfsd_acceptable()
-> > to implement the subtree permission check.
-> >
-> > The problem here is that even if unprivileged users cannot compromise
-> > security, they can still cause significant CPU overhead either queueing
-> > events or filtering events and that is something I haven't been able to
-> > figure out a way to escape from.
->
-> WRT queueing overhead, given a user can place ~1M of directory watches, he
-> can cause noticable total overhead for queueing events anyway. Furthermore
+OK so this other issue with scsi_debug indeed deserves its own tracking
+so I filed a bug for it but also looked into it and tried to see how to
+resolve it.
 
-I suppose so. But a user placing 1M dir watches at least adds this overhead
-knowingly. Adding a overhead on the entire filesystem when just wanting to
-watch a small subtree doesn't sound ideal. Especially in very nested setups.
-So yes, we need to be careful.
+Someone who works on scsi should revise my work as I haven't touched
+scsi before except for the recent block layer work I had done for the
+blktrace races, however, my own analysis is that this should not be
+fixed in scsi_debug but instead in the users of scsi_debug.
 
-> the queue size is limited so unless the user spends time consuming events
-> as well, the load won't last long. But I agree we need to be careful not to
-> introduce too big latencies to operations generating events. So I think if
-> we could quickly detect whether a generated event has a good chance of
-> being relevant for some subtree watch of a group and queue it in that case
-> and worry about permission checks only once events are received and thus
-> receiver pays the cost of expensive checks, that might be fine as well.
->
+The rationale for that is here:
 
-So far the only idea I had for "quickly detect" which I cannot find flaws in
-is to filter by mnt_userms, but its power is limited.
+https://bugzilla.kernel.org/show_bug.cgi?id=212337
 
-Thanks,
-Amir.
+The skinny of it is that we have no control over when userspace may muck
+with the newly exposed devices as they are being initialized, and
+shoe-horning a solution in scsi_debug_init() is prone to always be allow
+a race with userspace never letting scsi_debug_init() complete.
+
+So best we can do is just use something like lsof on the tools which
+use scsi_debug *prior* to mucking with the devices and / or removal of
+the module.
+
+I'll follow up with respective blktests / fstests patches, which I
+suspect may address a few false positives.
+
+  Luis
