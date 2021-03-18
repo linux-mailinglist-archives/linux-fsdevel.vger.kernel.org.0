@@ -2,93 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF80C340912
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 16:42:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4CBD34091F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 16:45:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231740AbhCRPl1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Mar 2021 11:41:27 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:45981 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229508AbhCRPk5 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Mar 2021 11:40:57 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-219-Z0U13KzUNJW_NStgkqAmDA-1; Thu, 18 Mar 2021 15:40:54 +0000
-X-MC-Unique: Z0U13KzUNJW_NStgkqAmDA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.2; Thu, 18 Mar 2021 15:40:53 +0000
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.012; Thu, 18 Mar 2021 15:40:53 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Shreeya Patel' <shreeya.patel@collabora.com>,
-        "krisman@collabora.com" <krisman@collabora.com>,
-        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
-        "yuchao0@huawei.com" <yuchao0@huawei.com>,
-        "tytso@mit.edu" <tytso@mit.edu>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "drosen@google.com" <drosen@google.com>,
-        "ebiggers@google.com" <ebiggers@google.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "kernel@collabora.com" <kernel@collabora.com>,
-        "andre.almeida@collabora.com" <andre.almeida@collabora.com>,
-        kernel test robot <lkp@intel.com>
-Subject: RE: [PATCH v2 3/4] fs: unicode: Use strscpy() instead of strncpy()
-Thread-Topic: [PATCH v2 3/4] fs: unicode: Use strscpy() instead of strncpy()
-Thread-Index: AQHXHADvVX9HQXwArESTX+RVn+Pn1qqJ39Rg
-Date:   Thu, 18 Mar 2021 15:40:53 +0000
-Message-ID: <609a9c29b91b4c9486f37c7ed74f0717@AcuMS.aculab.com>
-References: <20210318133305.316564-1-shreeya.patel@collabora.com>
- <20210318133305.316564-4-shreeya.patel@collabora.com>
- <f6bb5ec3-da94-ae9a-4ac4-e39038b42cb3@collabora.com>
-In-Reply-To: <f6bb5ec3-da94-ae9a-4ac4-e39038b42cb3@collabora.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S230509AbhCRPom (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Mar 2021 11:44:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58976 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230374AbhCRPoP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Mar 2021 11:44:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 6B5B6AB8C;
+        Thu, 18 Mar 2021 15:44:14 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E013D1F2BBF; Thu, 18 Mar 2021 16:44:13 +0100 (CET)
+Date:   Thu, 18 Mar 2021 16:44:13 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
+Message-ID: <20210318154413.GA21462@quack2.suse.cz>
+References: <20210304112921.3996419-1-amir73il@gmail.com>
+ <20210316155524.GD23532@quack2.suse.cz>
+ <CAOQ4uxgCv42_xkKpRH-ApMOeFCWfQGGc11CKxUkHJq-Xf=HnYg@mail.gmail.com>
+ <20210317114207.GB2541@quack2.suse.cz>
+ <CAOQ4uxi7ZXJW3_6SN=vw_XJC+wy4eMTayN6X5yRy_HOV6323MA@mail.gmail.com>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxi7ZXJW3_6SN=vw_XJC+wy4eMTayN6X5yRy_HOV6323MA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogU2hyZWV5YSBQYXRlbA0KPiBTZW50OiAxOCBNYXJjaCAyMDIxIDE0OjEzDQo+IA0KPiBP
-biAxOC8wMy8yMSA3OjAzIHBtLCBTaHJlZXlhIFBhdGVsIHdyb3RlOg0KPiA+IEZvbGxvd2luZyB3
-YXJuaW5nIHdhcyByZXBvcnRlZCBieSBLZXJuZWwgVGVzdCBSb2JvdC4NCj4gPg0KPiA+IEluIGZ1
-bmN0aW9uICd1dGY4X3BhcnNlX3ZlcnNpb24nLA0KPiA+IGlubGluZWQgZnJvbSAndXRmOF9sb2Fk
-JyBhdCBmcy91bmljb2RlL3V0Zjhtb2QuYzoxOTU6NzoNCj4gPj4+IGZzL3VuaWNvZGUvdXRmOG1v
-ZC5jOjE3NToyOiB3YXJuaW5nOiAnc3RybmNweScgc3BlY2lmaWVkIGJvdW5kIDEyIGVxdWFscw0K
-PiA+IGRlc3RpbmF0aW9uIHNpemUgWy1Xc3RyaW5nb3AtdHJ1bmNhdGlvbl0NCj4gPiAxNzUgfCAg
-c3RybmNweSh2ZXJzaW9uX3N0cmluZywgdmVyc2lvbiwgc2l6ZW9mKHZlcnNpb25fc3RyaW5nKSk7
-DQo+ID4gICAgICB8ICBefn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+
-fn5+fn5+fn5+fn5+fg0KPiA+DQo+ID4gVGhlIC1Xc3RyaW5nb3AtdHJ1bmNhdGlvbiB3YXJuaW5n
-IGhpZ2hsaWdodHMgdGhlIHVuaW50ZW5kZWQNCj4gPiB1c2VzIG9mIHRoZSBzdHJuY3B5IGZ1bmN0
-aW9uIHRoYXQgdHJ1bmNhdGUgdGhlIHRlcm1pbmF0aW5nIE5VTEwNCj4gPiBjaGFyYWN0ZXIgZnJv
-bSB0aGUgc291cmNlIHN0cmluZy4NCj4gPiBVbmxpa2Ugc3RybmNweSgpLCBzdHJzY3B5KCkgYWx3
-YXlzIG51bGwtdGVybWluYXRlcyB0aGUgZGVzdGluYXRpb24gc3RyaW5nLA0KPiA+IGhlbmNlIHVz
-ZSBzdHJzY3B5KCkgaW5zdGVhZCBvZiBzdHJuY3B5KCkuDQo+IA0KPiANCj4gTm90IHN1cmUgaWYg
-c3Ryc2NweSBpcyBwcmVmZXJhYmxlLiBKdXN0IGZvdW5kIHRoaXMgYXJ0aWNsZQ0KPiBodHRwczov
-L2x3bi5uZXQvQXJ0aWNsZXMvNjU5MjE0Lw0KPiBTaG91bGQgSSBnbyBmb3IgbWVtY3B5IGluc3Rl
-YWQ/DQoNCldoaWNoIGxlbmd0aCB3b3VsZCB5b3UgZ2l2ZSBtZW1jcHkoKSA/DQpUaGUgY29tcGls
-ZXIgd2lsbCBtb2FuIGlmIHlvdSB0cnkgdG8gcmVhZCBiZXlvbmQgdGhlIGVuZCBvZiB0aGUNCmlu
-cHV0IHN0cmluZy4NCg0Kc3Ryc2NweSgpIGlzIGFib3V0IHRoZSBiZXN0IG9mIGEgYmFkIGxvdC4N
-Cg0KSSB0aGluayAoSSdtIG5vdCBzdXJlISkgdGhhdCBhIGdvb2Qgc3RyaW5nIGNvcHkgZnVuY3Rp
-b24gc2hvdWxkDQpyZXR1cm4gdGhlIG51bWJlciBvZiBieXRlcyBjb3BpZXMgb3IgdGhlIGJ1ZmZl
-ciBsZW5ndGggaXMgdHJ1bmNhdGVkLg0KVGhlbiB5b3UgY2FuIGRvIHJlcGVhdGVkOg0KCW9mZiAr
-PSB4eHhjcHkoYnVmICsgb2ZmLCBidWZsZW4gLSBvZmYsIHh4eHh4KTsNCndpdGhvdXQgYW55IGRh
-bmdlciBvZiB3cml0aW5nIGJleW9uZCB0aGUgYnVmZmVyIGVuZCwgYWx3YXlzDQpnZXR0aW5nIGEg
-J1wwJyB0ZXJtaW5hdGVkIHN0cmluZywgYW5kIGJlaW5nIGFibGUgdG8gZGV0ZWN0IG92ZXJmbG93
-DQpyaWdodCBhdCB0aGUgZW5kLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExh
-a2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQs
-IFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+On Wed 17-03-21 14:19:57, Amir Goldstein wrote:
+> On Wed, Mar 17, 2021 at 1:42 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Wed 17-03-21 13:01:35, Amir Goldstein wrote:
+> > > On Tue, Mar 16, 2021 at 5:55 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > On Thu 04-03-21 13:29:19, Amir Goldstein wrote:
+> > > > > Jan,
+> > > > >
+> > > > > These patches try to implement a minimal set and least controversial
+> > > > > functionality that we can allow for unprivileged users as a starting
+> > > > > point.
+> > > > >
+> > > > > The patches were tested on top of v5.12-rc1 and the fanotify_merge
+> > > > > patches using the unprivileged listener LTP tests written by Matthew
+> > > > > and another LTP tests I wrote to test the sysfs tunable limits [1].
+> > > >
+> > > > Thanks. I've added both patches to my tree.
+> > >
+> > > Great!
+> > > I'll go post the LTP tests and work on the man page updates.
+> > >
+> > > BTW, I noticed that you pushed the aggregating for_next branch,
+> > > but not the fsnotify topic branch.
+> > >
+> > > Is this intentional?
+> >
+> > Not really, pushed now. Thanks for reminder.
+> >
+> > > I am asking because I am usually basing my development branches
+> > > off of your fsnotify branch, but I can base them on the unpushed branch.
+> > >
+> > > Heads up. I am playing with extra privileges we may be able to
+> > > allow an ns_capable user.
+> > > For example, watching a FS_USERNS_MOUNT filesystem that the user
+> > > itself has mounted inside userns.
+> > >
+> > > Another feature I am investigating is how to utilize the new idmapped
+> > > mounts to get a subtree watch functionality. This requires attaching a
+> > > userns to the group on fanotify_init().
+> > >
+> > > <hand waving>
+> > > If the group's userns are the same or below the idmapped mount userns,
+> > > then all the objects accessed via that idmapped mount are accessible
+> > > to the group's userns admin. We can use that fact to filter events very
+> > > early based on their mnt_userns and the group's userns, which should be
+> > > cheaper than any subtree permission checks.
+> > > <\hand waving>
+> >
+> > Yeah, I agree this should work. Just it seems to me the userbase for this
+> > functionality will be (at least currently) rather limited. While full
+> 
+> That may change when systemd home dirs feature starts to use idmapped
+> mounts. Being able to watch the user's entire home directory is a big
+> win already.
 
+Do you mean that home directory would be an extra mount with userns in
+which the user has CAP_SYS_ADMIN so he'd be able to watch subtrees on that
+mount?
+
+> > subtree watches would be IMO interesting to much more users.
+> 
+> Agreed.
+> 
+> I was looking into that as well, using the example of nfsd_acceptable()
+> to implement the subtree permission check.
+> 
+> The problem here is that even if unprivileged users cannot compromise
+> security, they can still cause significant CPU overhead either queueing
+> events or filtering events and that is something I haven't been able to
+> figure out a way to escape from.
+
+WRT queueing overhead, given a user can place ~1M of directory watches, he
+can cause noticable total overhead for queueing events anyway. Furthermore
+the queue size is limited so unless the user spends time consuming events
+as well, the load won't last long. But I agree we need to be careful not to
+introduce too big latencies to operations generating events. So I think if
+we could quickly detect whether a generated event has a good chance of
+being relevant for some subtree watch of a group and queue it in that case
+and worry about permission checks only once events are received and thus
+receiver pays the cost of expensive checks, that might be fine as well.
+
+								Honza
+ 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
