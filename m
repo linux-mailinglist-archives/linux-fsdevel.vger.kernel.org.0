@@ -2,125 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 892EB33FC83
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 02:03:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C1CE33FC94
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 02:15:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230228AbhCRBCg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 21:02:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50456 "EHLO
+        id S229946AbhCRBOX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 21:14:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbhCRBCb (ORCPT
+        with ESMTP id S229769AbhCRBN6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 21:02:31 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C09C06174A;
-        Wed, 17 Mar 2021 18:02:29 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id ay2so425821plb.3;
-        Wed, 17 Mar 2021 18:02:29 -0700 (PDT)
+        Wed, 17 Mar 2021 21:13:58 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D26A1C06174A;
+        Wed, 17 Mar 2021 18:13:57 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id x7-20020a17090a2b07b02900c0ea793940so4156328pjc.2;
+        Wed, 17 Mar 2021 18:13:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=CL3mpZeU+WmZERc2Fdv9igWqFClRL5x2TM3MaTKj5Js=;
-        b=NLNfQuquyc9Lgwz1xlL6WWBBQAAQdv48QhQyuEorz8yrWhgdjaHcfiwAxYdufXrxIZ
-         3a61MR0Fhn5EqttfalOWARo2ZYVvuQLyTkxvsXvOd4/bBHtSbfHMdxEV0BLo+Z/kxc42
-         YY8YJ50TT+uLlYx/VLqzvoNZwNsUN4sLGrxb7BxFgL6rCSh1kn5U297dViOshRQXxsN7
-         0YOV9kG3SqI2cfnbrtQzGuzI++zHVq7hBW8WtR7zbB8Uqc8Q5loIcLDjW6dQ30OvwSqz
-         pwGuHY25VSOz+6HLbQSTiabudvGaErtuYgloueeNQL+qFWqJQaKbucmRr0voDTTX3wls
-         +7lw==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=fNdMzczkKUo9vETo8mrg1+O94VBE2XEQqnmUQshmkE4=;
+        b=HPl4HwOLr/I9zn1/+omqUDDIx7OVcpGrw+CNbd+O+nKPxCQjq0dR4oRNCIozF5M0aS
+         mjGXuh6+FBVjgPX/lGuD7EKpuewFl6xHdi3n03UA1CTGlQxD+qyyK1ylr5wkH4rDILmx
+         z0HdZP4Ns+xCwiJFLCXMLQ/Zyi9lfBTHhevGMkBcioqMpA/Iz4kaTexb3zAqCZvzgVi7
+         JL7Oh3veFiEGgUDb07njyYHej2ABTPWQqMeEpU8ZkvQNxpM+AFxjJtFDvofrxMdglVBY
+         dMfl5xkcgtFRoRVeoY09xSCxXMhhaenNknxcPlgAYUmenLn9MucyfTEP2xYrn/2Mvsmg
+         CGqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=CL3mpZeU+WmZERc2Fdv9igWqFClRL5x2TM3MaTKj5Js=;
-        b=EsForFwT4azkP4YlTD/H9yi6/fBQNF77R3royH6HYS4NY5ky/yfA75dJpOmV07MN8g
-         k8X0tjFBbRmeyc5IN/8+FjvCrLu+q8SlJExmMn3DpUktYAyD5BcwCm9b5f7qlcD2vgdW
-         Di63XuiYeJr3N0vrLj8/efdqdL6Auu//i7CXfuqePlui468IEoAPPskHqYSS5s4rJnAT
-         4bTch+Pw8SEgnveyn39VyXD544dF51Ripc3NyMqZ6KMQLWBbQHfMV/IFJCBaXV7by1kh
-         6YR/fKpgyetGA3xZejGUU0hGz2XEC7x+apD4uWnqhAADeIrJSoO61lwm55ZoDWQOyM2l
-         KCmw==
-X-Gm-Message-State: AOAM533rbAf0byzD7ICY2IpTpnyMsYiSs9qHHFqS6h5HYATZfTBusGOg
-        HjD6Q/Aun+rFnSPE0ofxMU0hP++F9QZUrw==
-X-Google-Smtp-Source: ABdhPJwjzBuk8ibPxNIY932v5/q8E9aP+l+In8KRCzW8G7fHQXRb1IHIyV2p/vrsbD4iDB/wDFoH8Q==
-X-Received: by 2002:a17:902:7888:b029:e6:b94d:c72 with SMTP id q8-20020a1709027888b02900e6b94d0c72mr7349180pll.8.1616029348463;
-        Wed, 17 Mar 2021 18:02:28 -0700 (PDT)
-Received: from [192.168.0.12] ([125.186.151.199])
-        by smtp.googlemail.com with ESMTPSA id w79sm262216pfc.87.2021.03.17.18.02.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Mar 2021 18:02:28 -0700 (PDT)
-Subject: Re: [PATCH] exfat: speed up iterate/lookup by fixing start point of
- traversing fat chain
-To:     Sungjong Seo <sj1557.seo@samsung.com>, namjae.jeon@samsung.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <CGME20210315043335epcas1p2bf257806e9ba1c2a492739a6424a2b44@epcas1p2.samsung.com>
- <20210315043316.54508-1-hyeongseok@gmail.com>
- <a64901d71b47$9cacb070$d6061150$@samsung.com>
-From:   Hyeongseok Kim <hyeongseok@gmail.com>
-Message-ID: <1e43f9f0-5721-177b-8712-fa3018261b1e@gmail.com>
-Date:   Thu, 18 Mar 2021 10:02:24 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=fNdMzczkKUo9vETo8mrg1+O94VBE2XEQqnmUQshmkE4=;
+        b=S0Iav629wsVT06CLuNSDlvcIz3fczrLWOfr6ONVM8ERmfgjkNRsgpWLLSnfnD0MrP8
+         HKaUWm38m+cLbLM0W+vGBWntUFASmP3/Ks2sA+j7LyEg5RVwlac0twMYosTE7LkGa3IS
+         RKAmpwP8mt+ApKoSdY6YPmaoy+K7CzE7nrSuDbo5rN6kL/rn4u7bgfDMPjM85vYjQSWA
+         j98VjH8pn57fTbZvvt7VJEzGaBopU84KQn/WN4akfvqUU3mmYXzNkDGcpWwAj/0wbGQV
+         dhKXYkQC2l4Ws3RgkyiCobLSMO62qbJmsbQ65lmE/RX6O8eb1OuI0kiEL/F8wk5f+Dcf
+         pMnw==
+X-Gm-Message-State: AOAM533A1ft80LytBJZUAs7PwRIGAewBg4CJfidXP3e52nXDH0bglWIC
+        Av/BPzvJzMTd3lLx0NwxBrwi7Y45ikE=
+X-Google-Smtp-Source: ABdhPJxvSpLxn2AUaIjJIf4QAY0eai4wAMjZggQF+awiY9dfI/RPYBBXDxCGGvNSxc73JPzh2HHq2Q==
+X-Received: by 2002:a17:902:da81:b029:e5:de44:af5b with SMTP id j1-20020a170902da81b02900e5de44af5bmr7182638plx.27.1616030037123;
+        Wed, 17 Mar 2021 18:13:57 -0700 (PDT)
+Received: from google.com ([2620:15c:211:201:8914:cdf:bafb:bf7b])
+        by smtp.gmail.com with ESMTPSA id 22sm264464pjl.31.2021.03.17.18.13.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Mar 2021 18:13:55 -0700 (PDT)
+Sender: Minchan Kim <minchan.kim@gmail.com>
+Date:   Wed, 17 Mar 2021 18:13:53 -0700
+From:   Minchan Kim <minchan@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        joaodias@google.com, surenb@google.com, cgoldswo@codeaurora.org,
+        willy@infradead.org, mhocko@suse.com, david@redhat.com,
+        vbabka@suse.cz, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] mm: disable LRU pagevec during the migration
+ temporarily
+Message-ID: <YFKpUSwd3XCiCeOk@google.com>
+References: <20210310161429.399432-1-minchan@kernel.org>
+ <20210310161429.399432-2-minchan@kernel.org>
+ <20210317171316.d261de806203d8d99c6bf0ef@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <a64901d71b47$9cacb070$d6061150$@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: ko-KR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210317171316.d261de806203d8d99c6bf0ef@linux-foundation.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/18/21 1:07 AM, Sungjong Seo wrote:
->>   /*
->> - * return values:
->> - *   >= 0	: return dir entiry position with the name in dir
->> - *   -ENOENT	: entry with the name does not exist
->> - *   -EIO	: I/O error
->> + * @ei:         inode info of directory
->> + * @p_dir:      input as directory structure in which we search name
->> + *              if found, output as a cluster dir where the name exists
->> + *              if not found, not changed from input
->> + * @num_entries entry size of p_uniname
->> + * @return:
->> + *   >= 0:      dir entry position from output p_dir.dir
->> + *   -ENOENT:   entry with the name does not exist
->> + *   -EIO:      I/O error
->>    */
->>   int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info
->> *ei,
->>   		struct exfat_chain *p_dir, struct exfat_uni_name *p_uniname,
->> @@ -925,14 +930,16 @@ int exfat_find_dir_entry(struct super_block *sb,
->> struct exfat_inode_info *ei,
-> [snip]
->    			hint_stat->clu = p_dir->dir;
->>   			hint_stat->eidx = 0;
->> -			return (dentry - num_ext);
->> +
->> +			exfat_chain_dup(p_dir, &tmp_clu);
->> +			return dentry_in_cluster;
->>   		}
->>   	}
->>
->>   	hint_stat->clu = clu.dir;
->>   	hint_stat->eidx = dentry + 1;
->> -	return dentry - num_ext;
->> +
->> +	exfat_chain_dup(p_dir, &tmp_clu);
->> +	return dentry_in_cluster;
->>   }
-> Changing the functionality of exfat find_dir_entry() will affect
-> exfat_find() and exfat_lookup(), breaking the concept of ei->dir.dir
-> which should have the starting cluster of its parent directory.
->
-> Well, is there any missing patch related to exfat_find()?
-> It would be nice to modify the caller of this function, exfat_find(),
-> so that this change in functionality doesn't affect other functions.
->
-> Thanks.
->
-Whoops, it's a bug. I didn't catch that, thanks.
-Maybe it could make exfat inode hash problem.
-I wanted to reuse current function interface but, it would be better
-to add an addtional parameter. I'll fix this in v2.
+On Wed, Mar 17, 2021 at 05:13:16PM -0700, Andrew Morton wrote:
+> On Wed, 10 Mar 2021 08:14:28 -0800 Minchan Kim <minchan@kernel.org> wrote:
+> 
+> > LRU pagevec holds refcount of pages until the pagevec are drained.
+> > It could prevent migration since the refcount of the page is greater
+> > than the expection in migration logic. To mitigate the issue,
+> > callers of migrate_pages drains LRU pagevec via migrate_prep or
+> > lru_add_drain_all before migrate_pages call.
+> > 
+> > However, it's not enough because pages coming into pagevec after the
+> > draining call still could stay at the pagevec so it could keep
+> > preventing page migration. Since some callers of migrate_pages have
+> > retrial logic with LRU draining, the page would migrate at next trail
+> > but it is still fragile in that it doesn't close the fundamental race
+> > between upcoming LRU pages into pagvec and migration so the migration
+> > failure could cause contiguous memory allocation failure in the end.
+> > 
+> > To close the race, this patch disables lru caches(i.e, pagevec)
+> > during ongoing migration until migrate is done.
+> > 
+> > Since it's really hard to reproduce, I measured how many times
+> > migrate_pages retried with force mode(it is about a fallback to a
+> > sync migration) with below debug code.
+> > 
+> > int migrate_pages(struct list_head *from, new_page_t get_new_page,
+> > 			..
+> > 			..
+> > 
+> > if (rc && reason == MR_CONTIG_RANGE && pass > 2) {
+> >        printk(KERN_ERR, "pfn 0x%lx reason %d\n", page_to_pfn(page), rc);
+> >        dump_page(page, "fail to migrate");
+> > }
+> > 
+> > The test was repeating android apps launching with cma allocation
+> > in background every five seconds. Total cma allocation count was
+> > about 500 during the testing. With this patch, the dump_page count
+> > was reduced from 400 to 30.
+> > 
+> > The new interface is also useful for memory hotplug which currently
+> > drains lru pcp caches after each migration failure. This is rather
+> > suboptimal as it has to disrupt others running during the operation.
+> > With the new interface the operation happens only once. This is also in
+> > line with pcp allocator cache which are disabled for the offlining as
+> > well.
+> > 
+> 
+> This is really a rather ugly thing, particularly from a maintainability
+> point of view.  Are you sure you found all the sites which need the
 
+If you meant maintainability concern as "need pair but might miss",
+we have lots of examples on such API(zone_pcp_disable, inc_tlb_flush,
+kmap_atomic and so on) so I don't think you meant it.
 
+If you meant how user could decide whether they should use 
+lru_add_drain_all or lru_cache_disable/enable pair, we had already
+carried the concept by migrate_prep. IOW, if someone want to increase
+migration success ratio at the cost of drainning overhead,
+they could use the lru_cache_disable instead of lru_add_drain_all.
+
+Personally, I prefered migrate_prep/finish since it could include
+other stuffs(e.g., zone_pcp_disable) as well as lru_cache_disable
+but reviewerd didn't like to wrap it.
+
+I realized by your comment. During the trasition from v2 to v3,
+I missed a site which was most important site for me. :(
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index f1f0ee08628f..39775c8f8c90 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -8470,7 +8470,7 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
+                .gfp_mask = GFP_USER | __GFP_MOVABLE | __GFP_RETRY_MAYFAIL,
+        };
+
+-       lru_add_drain_all();
++       lru_cache_disable();
+
+        while (pfn < end || !list_empty(&cc->migratepages)) {
+                if (fatal_signal_pending(current)) {
+@@ -8498,6 +8498,9 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
+                ret = migrate_pages(&cc->migratepages, alloc_migration_target,
+                                NULL, (unsigned long)&mtc, cc->mode, MR_CONTIG_RANGE);
+        }
++
++       lru_cache_enable();
++
+        if (ret < 0) {
+                putback_movable_pages(&cc->migratepages);
+                return ret;
+
+However, it was just my mistake during patch stacking and didn't
+comes from semantic PoV.
+
+Do you see still any concern? Otherwise, I will submit the fix, again.
+
+> enable/disable?  How do we prevent new ones from creeping in which need
+
+> the same treatment?  Is there some way of adding a runtime check which
+> will trip if a conversion was missed?
+
+Are you concerning losing the pair? or places we should use
+lru_cache_disable, not lru_cache_drain_all?
+As I mentioned, I just replaced all of migrate_prep places with
+lru_cache_disable except the mistake above.
+
+> 
+> > ...
+> >
+> > +bool lru_cache_disabled(void)
+> > +{
+> > +	return atomic_read(&lru_disable_count);
+> > +}
+> > +
+> > +void lru_cache_enable(void)
+> > +{
+> > +	atomic_dec(&lru_disable_count);
+> > +}
+> > +
+> > +/*
+> > + * lru_cache_disable() needs to be called before we start compiling
+> > + * a list of pages to be migrated using isolate_lru_page().
+> > + * It drains pages on LRU cache and then disable on all cpus until
+> > + * lru_cache_enable is called.
+> > + *
+> > + * Must be paired with a call to lru_cache_enable().
+> > + */
+> > +void lru_cache_disable(void)
+> > +{
+> > +	atomic_inc(&lru_disable_count);
+> > +#ifdef CONFIG_SMP
+> > +	/*
+> > +	 * lru_add_drain_all in the force mode will schedule draining on
+> > +	 * all online CPUs so any calls of lru_cache_disabled wrapped by
+> > +	 * local_lock or preemption disabled would be ordered by that.
+> > +	 * The atomic operation doesn't need to have stronger ordering
+> > +	 * requirements because that is enforeced by the scheduling
+> > +	 * guarantees.
+> > +	 */
+> > +	__lru_add_drain_all(true);
+> > +#else
+> > +	lru_add_drain();
+> > +#endif
+> > +}
+> 
+> I guess at least the first two of these functions should be inlined.
+
+Sure. Let me respin with fixing missing piece above once we get some
+direction.
