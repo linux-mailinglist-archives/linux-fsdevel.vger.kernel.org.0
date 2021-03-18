@@ -2,133 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 482FF3400A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 09:08:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 627EF3400AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 09:10:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229725AbhCRIH6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Mar 2021 04:07:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48008 "EHLO mail.kernel.org"
+        id S229558AbhCRIJh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Mar 2021 04:09:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34716 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229600AbhCRIHs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Mar 2021 04:07:48 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EB4896186A;
-        Thu, 18 Mar 2021 08:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1616054868;
-        bh=xhFK7pf4ZvBe3zs5vAGSF6YW4d9H8T91UK5ubH1jH6I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S107w3Ekc/ywg/vb7Jnf4XXKL93WP8ZHx13XCckoJeancgXzlc5z1Ft2PIOeKpgXq
-         bBdsEEYxzqvshJhuGeXWTlvtjnGW46eCudxEDDZcg34hm5XX6Y4Slh+TernhhD3A9e
-         gIbE5qW+nrvuzOujQO8NG3H9fpAtv9vPg914vOHU=
-Date:   Thu, 18 Mar 2021 09:07:45 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
-        Adam Nichols <adam@grimm-co.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        Uladzislau Rezki <urezki@gmail.com>
-Subject: Re: [PATCH v2] seq_file: Unconditionally use vmalloc for buffer
-Message-ID: <YFMKUZ5p1QbqkabY@kroah.com>
-References: <20210315174851.622228-1-keescook@chromium.org>
- <YFBs202BqG9uqify@dhcp22.suse.cz>
- <202103161205.B2181BDE38@keescook>
- <YFHxNT1Pwoslmhxq@dhcp22.suse.cz>
- <YFIFY7mj65sStba1@kroah.com>
- <YFIVwPWTo48ITkHs@dhcp22.suse.cz>
- <YFIYrMVTC42boZ/Z@kroah.com>
- <YFIeVLDsfBMa7fHW@dhcp22.suse.cz>
- <YFIikaNixD57o3pk@kroah.com>
- <202103171425.CB0F4619A8@keescook>
+        id S229540AbhCRIJG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Mar 2021 04:09:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1616054945; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=AYbYHzxzMIJD7TqPSeyrbmTDs2X+aT9qDOtxlKAHE2s=;
+        b=DB7oESWT+Ryk/R9i0wJiVKnWYyAMJUTLOcSfnf0uHB4ImAz675V2H3hBp5P4iXqGU/s1T1
+        p9MaUvgMfRV3rJWDtuvcUGh9nuFdA1/K8YavJlfudfMjZ2jXa7Vv1h7B/NHhNqj8wNL5Ys
+        XfmnrDphhUkMYPmnIw9FvxkUq+h24nY=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 1ADB1AC17;
+        Thu, 18 Mar 2021 08:09:05 +0000 (UTC)
+Date:   Thu, 18 Mar 2021 09:09:01 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Minchan Kim <minchan@kernel.org>, linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, joaodias@google.com,
+        surenb@google.com, cgoldswo@codeaurora.org, willy@infradead.org,
+        david@redhat.com, vbabka@suse.cz, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] mm: disable LRU pagevec during the migration
+ temporarily
+Message-ID: <YFMKnakkxsAit17d@dhcp22.suse.cz>
+References: <20210310161429.399432-1-minchan@kernel.org>
+ <20210310161429.399432-2-minchan@kernel.org>
+ <20210317171316.d261de806203d8d99c6bf0ef@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202103171425.CB0F4619A8@keescook>
+In-Reply-To: <20210317171316.d261de806203d8d99c6bf0ef@linux-foundation.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 17, 2021 at 02:30:47PM -0700, Kees Cook wrote:
-> On Wed, Mar 17, 2021 at 04:38:57PM +0100, Greg Kroah-Hartman wrote:
-> > On Wed, Mar 17, 2021 at 04:20:52PM +0100, Michal Hocko wrote:
-> > > On Wed 17-03-21 15:56:44, Greg KH wrote:
-> > > > On Wed, Mar 17, 2021 at 03:44:16PM +0100, Michal Hocko wrote:
-> > > > > On Wed 17-03-21 14:34:27, Greg KH wrote:
-> > > > > > On Wed, Mar 17, 2021 at 01:08:21PM +0100, Michal Hocko wrote:
-> > > > > > > Btw. I still have problems with the approach. seq_file is intended to
-> > > > > > > provide safe way to dump values to the userspace. Sacrificing
-> > > > > > > performance just because of some abuser seems like a wrong way to go as
-> > > > > > > Al pointed out earlier. Can we simply stop the abuse and disallow to
-> > > > > > > manipulate the buffer directly? I do realize this might be more tricky
-> > > > > > > for reasons mentioned in other emails but this is definitely worth
-> > > > > > > doing.
-> > > > > > 
-> > > > > > We have to provide a buffer to "write into" somehow, so what is the best
-> > > > > > way to stop "abuse" like this?
-> > > > > 
-> > > > > What is wrong about using seq_* interface directly?
-> > > > 
-> > > > Right now every show() callback of sysfs would have to be changed :(
-> > > 
-> > > Is this really the case? Would it be too ugly to have an intermediate
-> > > buffer and then seq_puts it into the seq file inside sysfs_kf_seq_show.
+On Wed 17-03-21 17:13:16, Andrew Morton wrote:
+> On Wed, 10 Mar 2021 08:14:28 -0800 Minchan Kim <minchan@kernel.org> wrote:
+> 
+> > LRU pagevec holds refcount of pages until the pagevec are drained.
+> > It could prevent migration since the refcount of the page is greater
+> > than the expection in migration logic. To mitigate the issue,
+> > callers of migrate_pages drains LRU pagevec via migrate_prep or
+> > lru_add_drain_all before migrate_pages call.
 > > 
-> > Oh, good idea.
+> > However, it's not enough because pages coming into pagevec after the
+> > draining call still could stay at the pagevec so it could keep
+> > preventing page migration. Since some callers of migrate_pages have
+> > retrial logic with LRU draining, the page would migrate at next trail
+> > but it is still fragile in that it doesn't close the fundamental race
+> > between upcoming LRU pages into pagvec and migration so the migration
+> > failure could cause contiguous memory allocation failure in the end.
 > > 
-> > > Sure one copy more than necessary but it this shouldn't be a hot path or
-> > > even visible on small strings. So that might be worth destroying an
-> > > inherently dangerous seq API (seq_get_buf).
+> > To close the race, this patch disables lru caches(i.e, pagevec)
+> > during ongoing migration until migrate is done.
 > > 
-> > I'm all for that, let me see if I can carve out some time tomorrow to
-> > try this out.
+> > Since it's really hard to reproduce, I measured how many times
+> > migrate_pages retried with force mode(it is about a fallback to a
+> > sync migration) with below debug code.
+> > 
+> > int migrate_pages(struct list_head *from, new_page_t get_new_page,
+> > 			..
+> > 			..
+> > 
+> > if (rc && reason == MR_CONTIG_RANGE && pass > 2) {
+> >        printk(KERN_ERR, "pfn 0x%lx reason %d\n", page_to_pfn(page), rc);
+> >        dump_page(page, "fail to migrate");
+> > }
+> > 
+> > The test was repeating android apps launching with cma allocation
+> > in background every five seconds. Total cma allocation count was
+> > about 500 during the testing. With this patch, the dump_page count
+> > was reduced from 400 to 30.
+> > 
+> > The new interface is also useful for memory hotplug which currently
+> > drains lru pcp caches after each migration failure. This is rather
+> > suboptimal as it has to disrupt others running during the operation.
+> > With the new interface the operation happens only once. This is also in
+> > line with pcp allocator cache which are disabled for the offlining as
+> > well.
+> > 
 > 
-> The trouble has been that C string APIs are just so impossibly fragile.
-> We just get too many bugs with it, so we really do need to rewrite the
-> callbacks to use seq_file, since it has a safe API.
-> 
-> I've been trying to write coccinelle scripts to do some of this
-> refactoring, but I have not found a silver bullet. (This is why I've
-> suggested adding the temporary "seq_show" and "seq_store" functions, so
-> we can transition all the callbacks without a flag day.)
-> 
-> > But, you don't get rid of the "ability" to have a driver write more than
-> > a PAGE_SIZE into the buffer passed to it.  I guess I could be paranoid
-> > and do some internal checks (allocate a bunch of memory and check for
-> > overflow by hand), if this is something to really be concerned about...
-> 
-> Besides the CFI prototype enforcement changes (which I can build into
-> the new seq_show/seq_store callbacks), the buffer management is the
-> primary issue: we just can't hand drivers a string (even with a length)
-> because the C functions are terrible. e.g. just look at the snprintf vs
-> scnprintf -- we constantly have to just build completely new API when
-> what we need is a safe way (i.e. obfuscated away from the caller) to
-> build a string. Luckily seq_file does this already, so leaning into that
-> is good here.
+> This is really a rather ugly thing, particularly from a maintainability
+> point of view.  Are you sure you found all the sites which need the
+> enable/disable?  How do we prevent new ones from creeping in which need
+> the same treatment?  Is there some way of adding a runtime check which
+> will trip if a conversion was missed?
 
-But, is it really worth the churn here?
+I am not sure I am following. What is your concern here? This is a
+lock-like interface to disable a certain optimization because it stands
+in the way. Not using the interface is not a correctness problem.
 
-Yes, strings in C is "hard", but this _should_ be a simple thing for any
-driver to handle:
-	return sysfs_emit(buffer, "%d\n", my_dev->value);
+If you refer to disable/enable interface and one potentially missing
+enable for some reason then again this will not become a correctness
+problem. It will result in a suboptimal behavior. So in the end this is
+much less of a probel than leaving a lock behind.
 
-To change that to:
-	return seq_printf(seq, "%d\n", my_dev->value);
-feels very much "don't we have other more valuable things we could be
-doing?"
-
-So far we have found 1 driver that messed up and overflowed the buffer
-that I know of.  While reworking apis to make it "hard to get wrong" is
-a great goal, the work involved here vs. any "protection" feels very
-low.
-
-How about moving everyone to sysfs_emit() first?  That way it becomes
-much more "obvious" when drivers are doing stupid things with their
-sysfs buffer.  But even then, it would not have caught the iscsi issue
-as that was printing a user-provided string so maybe I'm just feeling
-grumpy about the potential churn here...
-
-I don't know...
-
-greg k-h
+The functionality is not exported to modules and I would agree that this
+is not something for out of core/MM code to be used. We can hide it into
+an internal mm header of you want?
+-- 
+Michal Hocko
+SUSE Labs
