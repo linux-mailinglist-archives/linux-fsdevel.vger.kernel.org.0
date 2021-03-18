@@ -2,85 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A07E340995
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 17:05:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A920B34099B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 17:06:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231805AbhCRQEo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Mar 2021 12:04:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38062 "EHLO mx2.suse.de"
+        id S231779AbhCRQFt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Mar 2021 12:05:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230338AbhCRQEN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Mar 2021 12:04:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id D0501AC1F;
-        Thu, 18 Mar 2021 16:04:11 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id A06151F2BBF; Thu, 18 Mar 2021 17:04:11 +0100 (CET)
-Date:   Thu, 18 Mar 2021 17:04:11 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH] quota: report warning limits for realtime space quotas
-Message-ID: <20210318160411.GB21462@quack2.suse.cz>
-References: <20210318041736.GB22094@magnolia>
+        id S231225AbhCRQFq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Mar 2021 12:05:46 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D3B4964DCE;
+        Thu, 18 Mar 2021 16:05:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616083545;
+        bh=sbaxlwQT2TIpNdemJxeA20XDIaIb1kgC++pGvNYbDVQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=GkUnhjqIhO5huIa4lX/HHbHt63j/+LKQ3AjXR9G0nwmqA4EDjGTQjuRp7w+qfICRt
+         0dP3VIszX39ryrII0HN8txcTjTAXnR2sesgTYBhJ6j+iErnytge+vddHdYdnru+aal
+         v/5UlTmMqVyOaRTmlV9AdpsmDVixWwvl6bbWHXYWon9EYktixfPyAIpMMIM7GXO8l0
+         2iNGSZY6zr0b6MCSjLsKQ0R4WntyL2d0RvGfFR7/rCZzx8z2DL3/UaqvcHVPHeAvJx
+         8+uqb9/3QCQgbG6SOWN82kVbOkdld70w5KNb5s0UHEaB4RquKOZfsnDrW3p4L4AQAt
+         BinXv2bRubcvQ==
+Date:   Thu, 18 Mar 2021 09:05:45 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de, linux-btrfs@vger.kernel.org,
+        naohiro.aota@wdc.com, riteshh@linux.ibm.com
+Subject: [GIT PULL] iomap: fixes for 5.12-rc4
+Message-ID: <20210318160545.GK22100@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210318041736.GB22094@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 17-03-21 21:17:36, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
-> 
-> Report the number of warnings that a user will get for exceeding the
-> soft limit of a realtime volume.  This plugs a gap needed before we
-> can land a realtime quota implementation for XFS in the next cycle.
-> 
-> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Hi Linus,
 
-Thanks. I've added the patch to my tree.
+Please pull this single fix to the iomap code for 5.12-rc4, which fixes
+some drama when someone gives us a {de,ma}liciously fragmented swap
+file.
 
-								Honza
+The branch merges cleanly with upstream as of a few minutes ago and has
+been soaking in for-next for a week without complaints.  Please let me
+know if there are any strange problems.
 
-> ---
->  fs/quota/quota.c               |    1 +
->  include/uapi/linux/dqblk_xfs.h |    5 ++++-
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-> index 6d16b2be5ac4..6ad06727e8ea 100644
-> --- a/fs/quota/quota.c
-> +++ b/fs/quota/quota.c
-> @@ -471,6 +471,7 @@ static int quota_getstatev(struct super_block *sb, int type,
->  	fqs->qs_rtbtimelimit = state.s_state[type].rt_spc_timelimit;
->  	fqs->qs_bwarnlimit = state.s_state[type].spc_warnlimit;
->  	fqs->qs_iwarnlimit = state.s_state[type].ino_warnlimit;
-> +	fqs->qs_rtbwarnlimit = state.s_state[type].rt_spc_warnlimit;
->  
->  	/* Inodes may be allocated even if inactive; copy out if present */
->  	if (state.s_state[USRQUOTA].ino) {
-> diff --git a/include/uapi/linux/dqblk_xfs.h b/include/uapi/linux/dqblk_xfs.h
-> index c71d909addda..8cda3e62e0e7 100644
-> --- a/include/uapi/linux/dqblk_xfs.h
-> +++ b/include/uapi/linux/dqblk_xfs.h
-> @@ -219,7 +219,10 @@ struct fs_quota_statv {
->  	__s32			qs_rtbtimelimit;/* limit for rt blks timer */
->  	__u16			qs_bwarnlimit;	/* limit for num warnings */
->  	__u16			qs_iwarnlimit;	/* limit for num warnings */
-> -	__u64			qs_pad2[8];	/* for future proofing */
-> +	__u16			qs_rtbwarnlimit;/* limit for rt blks warnings */
-> +	__u16			qs_pad3;
-> +	__u32			qs_pad4;
-> +	__u64			qs_pad2[7];	/* for future proofing */
->  };
->  
->  #endif	/* _LINUX_DQBLK_XFS_H */
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--D
+
+The following changes since commit a38fd8748464831584a19438cbb3082b5a2dab15:
+
+  Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git iomap-5.12-fixes
+
+for you to fetch changes up to 5808fecc572391867fcd929662b29c12e6d08d81:
+
+  iomap: Fix negative assignment to unsigned sis->pages in iomap_swapfile_activate (2021-03-09 09:29:11 -0800)
+
+----------------------------------------------------------------
+Ritesh Harjani (1):
+      iomap: Fix negative assignment to unsigned sis->pages in iomap_swapfile_activate
+
+ fs/iomap/swapfile.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
