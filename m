@@ -2,100 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97B22340AA5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 17:51:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C18CE340ADA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 18:04:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232187AbhCRQuf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Mar 2021 12:50:35 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44893 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232083AbhCRQu2 (ORCPT
+        id S232224AbhCRRDd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Mar 2021 13:03:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59576 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232218AbhCRRDN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Mar 2021 12:50:28 -0400
-Received: from mail-ed1-f70.google.com ([209.85.208.70])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@canonical.com>)
-        id 1lMvqt-0008Fp-KP
-        for linux-fsdevel@vger.kernel.org; Thu, 18 Mar 2021 16:50:27 +0000
-Received: by mail-ed1-f70.google.com with SMTP id h2so21434457edw.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Mar 2021 09:50:27 -0700 (PDT)
+        Thu, 18 Mar 2021 13:03:13 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4585DC06174A
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Mar 2021 10:03:13 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id z1so7582513edb.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Mar 2021 10:03:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ncWZPnyeBiWOdZ1rqhn/kolCjnyW0fSBUFhdCHieBDM=;
+        b=t7GWySP7B7GjasZeOxZIv+aUzBxCH4W8Be/Cy5Zw06Sb0yLfg7nYnjvi+LMPGBm+iy
+         XU1pC+kO/ONtX1X5jRrh3oWqaYzP8VrOMDMSdbE3sEb/K2OPCuj32WF8LUbnS7WUUkER
+         f/4lOy6HJMClpiu6qjhKKZtFhrjrVQKGnwMR9WtL5EBd/KCh9of1N1ll67hR0YZeKLV3
+         KK/KNTdOTBqCM8AiipskMe6qhvDgT+aMxNjpBn2xW5c+VJQ6/8OIeFu7onCvsXGWhx2J
+         VnXJ1RI+QZOWD8OVrk9m6l/pxM2WFTO5fyo5bQSttDcPLA4PDtmJKUqI3QzfSqUqh75G
+         Wkuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nI/HK/aZiw2vFmpQW7WXqgLR8ZA4MRBAnT3xFXPYJvY=;
-        b=TmoGJ7UMFl1T3wrgrimS9iEtTLsQBKmV+FZoteO6QFZvAaw0LQriutTerOQRit3sMr
-         5a0rYYH6KEebt5q9TvaMWFrDDuj+dzIbrHVb3aTW2DKlfwqHnEn+EL8A439PQ4kiDTRp
-         EFGoQpQNLYic0nFR4qiVfX7J+ZAysSyZPmTtqTuo3FiZMEeqeqj7tPdjc0IQKhXMokM1
-         kGLHllpRazDdgirYSGeJA/7kXXIe2Pu0hcW9pPcgiPhJ4JHNHGDsYOWvsmA+NsXlJ2qS
-         rGXrRYg57OYaIXdtqI0qrfdRCjk31l8P2QfrIhsFyeWyeUi7Q1z9KjGxr/JPsUnczyMq
-         lBTg==
-X-Gm-Message-State: AOAM53398MASMNrhk9pB/tucp6sii5EfQST5aHJ/mpPmeyyTLGeQngjJ
-        icgs5eLcZqOmIXLBAlQI7tzl9BYz6M8aZqgkO4blYK57AISFYo+5USTN9rB0mluH+vp4FNEWLo5
-        /NeF8YsUQvIO9+MpeGcLhGW/GCE6H2EUL8lu0HWeQdio=
-X-Received: by 2002:a17:907:7785:: with SMTP id ky5mr30156330ejc.133.1616086227303;
-        Thu, 18 Mar 2021 09:50:27 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyyoS4Ti12fWMuNJAcdVQigMxK1LzeM53WUAy30CtNftdFq6ca6eUEX5JvR4oEtxdOB/4ElZw==
-X-Received: by 2002:a17:907:7785:: with SMTP id ky5mr30156316ejc.133.1616086227110;
-        Thu, 18 Mar 2021 09:50:27 -0700 (PDT)
-Received: from gmail.com (ip5f5af0a0.dynamic.kabel-deutschland.de. [95.90.240.160])
-        by smtp.gmail.com with ESMTPSA id s20sm2279251ejj.38.2021.03.18.09.50.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Mar 2021 09:50:26 -0700 (PDT)
-Date:   Thu, 18 Mar 2021 17:50:25 +0100
-From:   Christian Brauner <christian.brauner@canonical.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Xiaofeng Cao <cxfcosmos@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xiaofeng Cao <caoxiaofeng@yulong.com>
-Subject: Re: [PATCH] fs/dcache: fix typos and sentence disorder
-Message-ID: <20210318165025.qquejvrcgwfyrrfg@gmail.com>
-References: <20210318143153.13455-1-caoxiaofeng@yulong.com>
- <20210318150020.GP3420@casper.infradead.org>
- <YFOBVg8UiQh4Z4II@zeniv-ca.linux.org.uk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ncWZPnyeBiWOdZ1rqhn/kolCjnyW0fSBUFhdCHieBDM=;
+        b=aLsiEBk+3QpcVOydMwD6XpNfduhszLFtKKlrwHfGMoE+lkccM9YADODlS7Ubgwh8ap
+         j3+heoENMCOALzRIXLxpJIlTU+vZcixIm9EmnLHVkkHjBuhvW1IVPN039qcRykntUg8Q
+         /8hQW/3FfPVpXI4JRu6ccPGW32yhwzhmU9qApl5F2IC6HnbiCjnguQr5GldhjcJy61MG
+         7LydkC4Xje/dAVIkQP7CJ+ni6DoJO6nNFK+Qz7Q+jeekmRveQm5Jh1kCfNclaXDGXnEF
+         OycEWL/DHbuDPzsRxS73nSO9tQqbFUS6l7LvmleZZnFRqBqv8lkPtwJGjZ2b1wSSgbqd
+         VfFw==
+X-Gm-Message-State: AOAM531KzcC5iY+w+W4vPcmGx3WRKbcSMsyW+dwmA33TCvkJ8/M2O/fj
+        f9FHUw88GeUDQxbjZkdsDp9dOA9m9qHdnKF/qe5H3w==
+X-Google-Smtp-Source: ABdhPJxuNsdRluFA0/M5LLOxZ8cJZSLdLyy24eAaZULCocflm5Th9Ab5OwvvWKq3EP121Lq2ytUniLx2mfNJE2c/9s0=
+X-Received: by 2002:a05:6402:1713:: with SMTP id y19mr3827680edu.52.1616086991914;
+ Thu, 18 Mar 2021 10:03:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YFOBVg8UiQh4Z4II@zeniv-ca.linux.org.uk>
+References: <161604048257.1463742.1374527716381197629.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <161604050866.1463742.7759521510383551055.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <66514812-6a24-8e2e-7be5-c61e188fecc4@oracle.com>
+In-Reply-To: <66514812-6a24-8e2e-7be5-c61e188fecc4@oracle.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 18 Mar 2021 10:03:06 -0700
+Message-ID: <CAPcyv4g8=kGoQiY14CDEZryb-7T1_tePnC_-21w-wTfA7fQcDg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] mm/devmap: Remove pgmap accounting in the
+ get_user_pages_fast() path
+To:     Joao Martins <joao.m.martins@oracle.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Christoph Hellwig <hch@lst.de>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        david <david@fromorbit.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 18, 2021 at 04:35:34PM +0000, Al Viro wrote:
-> On Thu, Mar 18, 2021 at 03:00:20PM +0000, Matthew Wilcox wrote:
-> > On Thu, Mar 18, 2021 at 10:31:53PM +0800, Xiaofeng Cao wrote:
-> > > change 'sould' to 'should'
-> > > change 'colocated' to 'collocated'
-> > 
-> > uh.  collocated is incorrect.  colocated is correct.
-> > https://www.merriam-webster.com/dictionary/colocate
-> > https://www.merriam-webster.com/dictionary/collocate
-> 
-> A bit more condensed variant: these two are both derived from
-> con- + loco, but have different meanings -
-> 	colocated: occupying the same place
-> 	collocated: sitting next to each other
-> 
-> In this case it's very much the former - the point of comment is that
-> the fields in question share the same memory location, but we are
-> guaranteed that any dentry we find in the alias list of an inode will
-> have that location used for ->i_dentry.
-> 
-> "co-located" would probably work better there.
-> 
-> PS: history of that word pair is amusing.  Both are (English) past participles,
-> of co-locate and collocate resp.  The former had the (Latin) prefix applied in
-> English to borrowing from Latin (co-locate < locate < locatus) , the latter
-> is straight borrowing (collocate < collocatus).  Incidentally, in both cases
-> the borrowed form had already been a past participle (of loco and
-> colloco) resp.  And colloco had the same prefix (com-/con-/co-) applied
-> in Latin, with regular assimilation of -nl- to -ll-.  But at that stage
-> the meaning of the verb had been closer to "put in place" than to
-> "be in place", so that gave "put next to each other" instead of "share
-> the place".  Shift towards "be found next to each other" happened long after
-> the prefix had been applied...
+On Thu, Mar 18, 2021 at 3:02 AM Joao Martins <joao.m.martins@oracle.com> wrote:
+>
+> On 3/18/21 4:08 AM, Dan Williams wrote:
+> > Now that device-dax and filesystem-dax are guaranteed to unmap all user
+> > mappings of devmap / DAX pages before tearing down the 'struct page'
+> > array, get_user_pages_fast() can rely on its traditional synchronization
+> > method "validate_pte(); get_page(); revalidate_pte()" to catch races with
+> > device shutdown. Specifically the unmap guarantee ensures that gup-fast
+> > either succeeds in taking a page reference (lock-less), or it detects a
+> > need to fall back to the slow path where the device presence can be
+> > revalidated with locks held.
+>
+> [...]
+>
+> > @@ -2087,21 +2078,26 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
+> >  #endif /* CONFIG_ARCH_HAS_PTE_SPECIAL */
+> >
+> >  #if defined(CONFIG_ARCH_HAS_PTE_DEVMAP) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
+> > +
+> >  static int __gup_device_huge(unsigned long pfn, unsigned long addr,
+> >                            unsigned long end, unsigned int flags,
+> >                            struct page **pages, int *nr)
+> >  {
+> >       int nr_start = *nr;
+> > -     struct dev_pagemap *pgmap = NULL;
+> >
+> >       do {
+> > -             struct page *page = pfn_to_page(pfn);
+> > +             struct page *page;
+> > +
+> > +             /*
+> > +              * Typically pfn_to_page() on a devmap pfn is not safe
+> > +              * without holding a live reference on the hosting
+> > +              * pgmap. In the gup-fast path it is safe because any
+> > +              * races will be resolved by either gup-fast taking a
+> > +              * reference or the shutdown path unmapping the pte to
+> > +              * trigger gup-fast to fall back to the slow path.
+> > +              */
+> > +             page = pfn_to_page(pfn);
+> >
+> > -             pgmap = get_dev_pagemap(pfn, pgmap);
+> > -             if (unlikely(!pgmap)) {
+> > -                     undo_dev_pagemap(nr, nr_start, flags, pages);
+> > -                     return 0;
+> > -             }
+> >               SetPageReferenced(page);
+> >               pages[*nr] = page;
+> >               if (unlikely(!try_grab_page(page, flags))) {
+>
+> So for allowing FOLL_LONGTERM[0] would it be OK if we used page->pgmap after
+> try_grab_page() for checking pgmap type to see if we are in a device-dax
+> longterm pin?
+>
 
-(Flashback to my latin exams. The only thing that is missing is
-complete confusion about nested subordinate clauses... ;))
+Yes. I still need to answer the question of whether mapping
+invalidation triggers longterm pin holders to relinquish their hold,
+but that's a problem regardless of whether gup-fast is supported or
+not.
