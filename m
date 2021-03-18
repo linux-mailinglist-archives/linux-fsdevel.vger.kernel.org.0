@@ -2,124 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 10EAA33FC15
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 01:07:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E331733FC19
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 01:14:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229946AbhCRAGz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 20:06:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38604 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229884AbhCRAGo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 20:06:44 -0400
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06407C06175F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Mar 2021 17:06:44 -0700 (PDT)
-Received: by mail-qk1-x72d.google.com with SMTP id d20so378481qkc.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Mar 2021 17:06:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Xnnnpd2csmTZ0lK2n7cLmK6b42cUVgaKFGkxOmUg7Vo=;
-        b=J9sGEwgRnAT1eVln6y/b3oPEwiWWUasu9IJXEcghKp3qlfU8XLyqUm+Xkw0WyJIC5H
-         XdwqmUx+ny9U4qqSt0HWMmnmocZwrFk/+XhwcqZILYKBsgrwbtpB4jbRigXsRwZTuiZW
-         pHhiRrwzpO+9p93zRonA5LSCBOufk5xGtXCHb7h6MZCg/Ce6tBdWrYnavHdETpBU+mXY
-         AAeV+JcI+OA66FvSn3LujLO6IEXPvxJHlizkfX16K6DHxKWVFcaGHNn4fg4Cy4WiGv/V
-         GSOrN+3N/aBBtJOdx2vXT6LGqgKD6FFvaVxHNETxF+/CdRU7xsng7pQX38UvnD7HdMxa
-         iFZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Xnnnpd2csmTZ0lK2n7cLmK6b42cUVgaKFGkxOmUg7Vo=;
-        b=rNuXQ7J9YtrUPvECe4mZn4DtJLvOGcBd5qUTPgJNYRo3LCcMLe6j78ASuoKZ1NZeQ5
-         XXMiQXGn/7iF3ZOVNgl9jMLL0aEKATKw/AMldCAze0wp2Es6FWXX9yvpXZoP5pq8Rvsf
-         WbJ7gTayvNFGfzDj2RJoLn7IGWe+ttzKFuIg5lcmWVfzPWL569PTr2dVvRNcjUzhdqM0
-         sJjF+gkKAV3GC4OPbFnS6xsSeKUTVNAn1tChIxW6nEyQG2xwimJD9jR5KGj4HqeZFbpl
-         u0P+vpJ6J/QxB1v0RPJMJRGgrDB5QLrJYgttTfPV/hQWkzHI0Q1U0V/Q/eKHw9cwGBCC
-         zl1w==
-X-Gm-Message-State: AOAM53344WOT3pkGQMZzrhRgmp60GGahxKw6pBLkBjrgOcqH/7xXA2Uz
-        KV4BBin2ST8IMk22i+l9FgoAbeNHZTXpfrstrrPWlQ==
-X-Google-Smtp-Source: ABdhPJz7keNgboG0A5QU6NVwQhRdr3IXK5N/8Lw9uhEOO1HnJqHWVdhKlgKFZVtTJnHfrNfBQXCMqDPWktT6EPO6q4I=
-X-Received: by 2002:a37:a643:: with SMTP id p64mr1862917qke.276.1616026002308;
- Wed, 17 Mar 2021 17:06:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210317045949.1584952-1-joshdon@google.com> <20210317082550.GA3881262@gmail.com>
-In-Reply-To: <20210317082550.GA3881262@gmail.com>
-From:   Josh Don <joshdon@google.com>
-Date:   Wed, 17 Mar 2021 17:06:31 -0700
-Message-ID: <CABk29NvGx6KQa_+RU-6xmL6mUeBrqZjH1twOw93SCVD-NZkbMQ@mail.gmail.com>
-Subject: Re: [PATCH] sched: Warn on long periods of pending need_resched
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        David Rientjes <rientjes@google.com>,
-        Oleg Rombakh <olegrom@google.com>, Paul Turner <pjt@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S229570AbhCRANW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 20:13:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56160 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229562AbhCRANS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Mar 2021 20:13:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AC41964F0F;
+        Thu, 18 Mar 2021 00:13:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1616026398;
+        bh=fSIIYD4Bqq9DjOcJ00I7RmGxvGVeisJfg5itiZrWuHk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dx2142MJ4udauam6sy8vYa+l2BrMlHhDtLm82C5w2FxZOH+zh5poMNLBuOfjTH9PY
+         YrH34VWJ6SNWpYYGs9v72EsDYsYYQnuXboQFKGsbIAwB9ciSYAOYU8G7sG2QLCW0Ch
+         cWgTie2g1YKTddJEH6EuGC3OKB/UiaSCNKBGLdWA=
+Date:   Wed, 17 Mar 2021 17:13:16 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        joaodias@google.com, surenb@google.com, cgoldswo@codeaurora.org,
+        willy@infradead.org, mhocko@suse.com, david@redhat.com,
+        vbabka@suse.cz, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] mm: disable LRU pagevec during the migration
+ temporarily
+Message-Id: <20210317171316.d261de806203d8d99c6bf0ef@linux-foundation.org>
+In-Reply-To: <20210310161429.399432-2-minchan@kernel.org>
+References: <20210310161429.399432-1-minchan@kernel.org>
+        <20210310161429.399432-2-minchan@kernel.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 17, 2021 at 1:25 AM Ingo Molnar <mingo@kernel.org> wrote:
+On Wed, 10 Mar 2021 08:14:28 -0800 Minchan Kim <minchan@kernel.org> wrote:
+
+> LRU pagevec holds refcount of pages until the pagevec are drained.
+> It could prevent migration since the refcount of the page is greater
+> than the expection in migration logic. To mitigate the issue,
+> callers of migrate_pages drains LRU pagevec via migrate_prep or
+> lru_add_drain_all before migrate_pages call.
+> 
+> However, it's not enough because pages coming into pagevec after the
+> draining call still could stay at the pagevec so it could keep
+> preventing page migration. Since some callers of migrate_pages have
+> retrial logic with LRU draining, the page would migrate at next trail
+> but it is still fragile in that it doesn't close the fundamental race
+> between upcoming LRU pages into pagvec and migration so the migration
+> failure could cause contiguous memory allocation failure in the end.
+> 
+> To close the race, this patch disables lru caches(i.e, pagevec)
+> during ongoing migration until migrate is done.
+> 
+> Since it's really hard to reproduce, I measured how many times
+> migrate_pages retried with force mode(it is about a fallback to a
+> sync migration) with below debug code.
+> 
+> int migrate_pages(struct list_head *from, new_page_t get_new_page,
+> 			..
+> 			..
+> 
+> if (rc && reason == MR_CONTIG_RANGE && pass > 2) {
+>        printk(KERN_ERR, "pfn 0x%lx reason %d\n", page_to_pfn(page), rc);
+>        dump_page(page, "fail to migrate");
+> }
+> 
+> The test was repeating android apps launching with cma allocation
+> in background every five seconds. Total cma allocation count was
+> about 500 during the testing. With this patch, the dump_page count
+> was reduced from 400 to 30.
+> 
+> The new interface is also useful for memory hotplug which currently
+> drains lru pcp caches after each migration failure. This is rather
+> suboptimal as it has to disrupt others running during the operation.
+> With the new interface the operation happens only once. This is also in
+> line with pcp allocator cache which are disabled for the offlining as
+> well.
+> 
+
+This is really a rather ugly thing, particularly from a maintainability
+point of view.  Are you sure you found all the sites which need the
+enable/disable?  How do we prevent new ones from creeping in which need
+the same treatment?  Is there some way of adding a runtime check which
+will trip if a conversion was missed?
+
+> ...
 >
-> * Josh Don <joshdon@google.com> wrote:
->
-> > If resched_latency_warn_ms is set to the default value, only one warning
-> > will be produced per boot.
->
-> Looks like a value hack, should probably be a separate flag,
-> defaulting to warn-once.
+> +bool lru_cache_disabled(void)
+> +{
+> +	return atomic_read(&lru_disable_count);
+> +}
+> +
+> +void lru_cache_enable(void)
+> +{
+> +	atomic_dec(&lru_disable_count);
+> +}
+> +
+> +/*
+> + * lru_cache_disable() needs to be called before we start compiling
+> + * a list of pages to be migrated using isolate_lru_page().
+> + * It drains pages on LRU cache and then disable on all cpus until
+> + * lru_cache_enable is called.
+> + *
+> + * Must be paired with a call to lru_cache_enable().
+> + */
+> +void lru_cache_disable(void)
+> +{
+> +	atomic_inc(&lru_disable_count);
+> +#ifdef CONFIG_SMP
+> +	/*
+> +	 * lru_add_drain_all in the force mode will schedule draining on
+> +	 * all online CPUs so any calls of lru_cache_disabled wrapped by
+> +	 * local_lock or preemption disabled would be ordered by that.
+> +	 * The atomic operation doesn't need to have stronger ordering
+> +	 * requirements because that is enforeced by the scheduling
+> +	 * guarantees.
+> +	 */
+> +	__lru_add_drain_all(true);
+> +#else
+> +	lru_add_drain();
+> +#endif
+> +}
 
-Agreed, done.
-
-> > This warning only exists under CONFIG_SCHED_DEBUG. If it goes off, it is
-> > likely that there is a missing cond_resched() somewhere.
->
-> CONFIG_SCHED_DEBUG is default-y, so most distros have it enabled.
-
-To avoid log spam for people who don't care, I was considering having
-the feature default disabled. Perhaps a better alternative is to only
-show a single line warning and not print the full backtrace by
-default. Does the latter sound good to you?
-
-> > +#ifdef CONFIG_KASAN
-> > +#define RESCHED_DEFAULT_WARN_LATENCY_MS 101
-> > +#define RESCHED_BOOT_QUIET_SEC 600
-> > +#else
-> > +#define RESCHED_DEFAULT_WARN_LATENCY_MS 51
-> > +#define RESCHED_BOOT_QUIET_SEC 300
-> >  #endif
-> > +int sysctl_resched_latency_warn_ms = RESCHED_DEFAULT_WARN_LATENCY_MS;
-> > +#endif /* CONFIG_SCHED_DEBUG */
->
-> I'd really just make this a single value - say 100 or 200 msecs.
-
-Replacing these both with a single value (the more conservative
-default of 100ms and 600s).
-
-> > +static inline void resched_latency_warn(int cpu, u64 latency)
-> > +{
-> > +     static DEFINE_RATELIMIT_STATE(latency_check_ratelimit, 60 * 60 * HZ, 1);
-> > +
-> > +     WARN(__ratelimit(&latency_check_ratelimit),
-> > +          "CPU %d: need_resched set for > %llu ns (%d ticks) "
-> > +          "without schedule\n",
-> > +          cpu, latency, cpu_rq(cpu)->ticks_without_resched);
-> > +}
->
-> Could you please put the 'sched:' prefix into scheduler warnings.
-> Let's have a bit of a namespace structure in new warnings.
-
-Sounds good, done.
+I guess at least the first two of these functions should be inlined.
