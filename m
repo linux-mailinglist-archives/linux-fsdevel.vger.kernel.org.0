@@ -2,103 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C39AD340FB1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 22:16:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52114340FC9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 22:28:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233080AbhCRVQP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Mar 2021 17:16:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45886 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233258AbhCRVQB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Mar 2021 17:16:01 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9090564E02;
-        Thu, 18 Mar 2021 21:16:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616102160;
-        bh=3xDkvaW8GlfwEpu6Ok3K5BbG+SXWmgmEnOMjmlPKbfw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=qdIrjuItgQGC8WeWbSWgP91x7L/bBAFacA/u+c60pVdHrLz7VFrgzsKy9gJQwb5XV
-         2oty6btRgJpX3jrvQSNBQfjWA49z11R+bpXq+yzbJlDpA8ZXBL5FKqmlnH7LwVyIck
-         fW2kGcVuamALhzFvcdawcKP689Czr93PsT0rK4qe5MsKgn9ChiFh1c61zcCmIE9QPZ
-         l8GjNAis9gWxLCaq65IjfYZksyc/U5SiF1JKtu1FQ+v5mETm71416rfVkqJauvw7bl
-         qL81YFjUjaY0RpPeyYvOa34FDTmTCAktxGX28YNBWstSpYxSjZqTLzs/N54KnTdC4f
-         imAUBu8jfKe6A==
-Received: by mail-oi1-f172.google.com with SMTP id i3so2481327oik.7;
-        Thu, 18 Mar 2021 14:16:00 -0700 (PDT)
-X-Gm-Message-State: AOAM530HYiNArJrF6ApCCKFqmC9fVPpEJG9Nt5LQ0Y2T0EUcTfgRodEE
-        MUAIJIQb6CJwl8JY2Nmd+3Bfd4cc31U0d6MbGc0=
-X-Google-Smtp-Source: ABdhPJxKYgLl8fYQ8VticfZtJO+yxbMjJVhbodTKk/n+YQeTpe3cchm4y/YrJuRX1lVcHuSXsJS+SQDXdnu5U4Z7BA4=
-X-Received: by 2002:a05:6808:3d9:: with SMTP id o25mr4563556oie.4.1616102159988;
- Thu, 18 Mar 2021 14:15:59 -0700 (PDT)
+        id S230506AbhCRV2B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Mar 2021 17:28:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230297AbhCRV1g (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Mar 2021 17:27:36 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF62C06174A
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Mar 2021 14:27:35 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id kr3-20020a17090b4903b02900c096fc01deso3782062pjb.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Mar 2021 14:27:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dbJ4tu0h2vfoq5iEJyv9eBMmHHIseIpXprgJl8iJhoU=;
+        b=hrxzCDgYaqrTpyC7RhpNufMokxP+WsITJYO5fQlSQA5Jp5rA4ymV6vYAHVpLuz1ZFK
+         cyEaJxDUeU3I0W9Mly7jHqjk9uOizXul73LUJLaPDx2FbvSVs8qA0KWKFVMv7N0kklfn
+         GoAXJtReybfqlKwh5myjGv+CNEq7s2he7RIszIY83DkPi9wkKG6gBAmXWEQbk6cDOYZK
+         TMUiiZZeKoK1qmSYuUxT2dGBLTbuFTEbQDzOf8U8PSoor7WBQT31WfitypyWeSGKjclA
+         VSLnyLpOQuH9MkI0zPMc6z3jRNGlHJzG7XIXITFtj8I4wLz2Bl79M0CVXVGqqXf33ISB
+         CoSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dbJ4tu0h2vfoq5iEJyv9eBMmHHIseIpXprgJl8iJhoU=;
+        b=KfJxlvo61hQpYCOH2APgGMsR/sK1xwGzzo8RMzy92eN6lhA/S03UEICBPy57DCBnBt
+         Q/UHSJAakrQ0Y1CXt3Z3op+bXYfDcLEViHaAkAsW+119sFwmaBAs24khLSwvPcvESJuT
+         TbNgMr53sbL+CbXnUqoN3XKazzmYSPOgDAvfhvC5srlvqlveue6HFcm3EFxwaVS22x2t
+         GFCrEWesbJbvlF5LoNZxvpMPuhpnKtWYYuhH1fWyTZ4OVWBQR3SGRiLVxRo5Rex7IPM/
+         06a6VogrPEUGIAEwJGAby+FqBBcRhk7yFHF7GD0RJVpULfTen5u1f1QfzkzHewNtArWR
+         iTgg==
+X-Gm-Message-State: AOAM5332elkTDpgiM218AS9lDauhkbZjfShhVcoSjaL60NakWqa655wR
+        xnudbBJNlnQpEWBSKkxx/U4QoYbFwjd1ECS9BFQkSQ==
+X-Google-Smtp-Source: ABdhPJy9j3X2ul9CXpfJuYjxYK4sS2lUaXNeTmcRcxjq10tEczdsEry9ruv+vRp/MwEQwcravOMjxZqh5cKYnjOe0oE=
+X-Received: by 2002:a17:90a:f489:: with SMTP id bx9mr6141115pjb.80.1616102854950;
+ Thu, 18 Mar 2021 14:27:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-3-balsini@android.com>
- <CAK8P3a2VDH9-reuj8QTkFzbaU9XTUEOWFCmCVg1Snb6RjD6mHw@mail.gmail.com> <YFN8IyFTdqhlS9Lf@google.com>
-In-Reply-To: <YFN8IyFTdqhlS9Lf@google.com>
-From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Thu, 18 Mar 2021 22:15:43 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a36ToSbvW1F_0w0gCiWGCoZgFwoLHmQ7Tz2jtwV++VrWA@mail.gmail.com>
-Message-ID: <CAK8P3a36ToSbvW1F_0w0gCiWGCoZgFwoLHmQ7Tz2jtwV++VrWA@mail.gmail.com>
-Subject: Re: [PATCH RESEND V12 2/8] fuse: 32-bit user space ioctl compat for
- fuse device
-To:     Alessio Balsini <balsini@android.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Akilesh Kailash <akailash@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Antonio SJ Musumeci <trapexit@spawn.link>,
-        David Anderson <dvander@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Peng Tao <bergwolf@gmail.com>,
-        Stefano Duo <duostefano93@gmail.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
-        fuse-devel@lists.sourceforge.net,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20210312095526.197739-1-johannes@sipsolutions.net> <20210312104627.927fb4c7d36f.Idb980393c41c2129ee592de4ed71e7a5518212f9@changeid>
+In-Reply-To: <20210312104627.927fb4c7d36f.Idb980393c41c2129ee592de4ed71e7a5518212f9@changeid>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Thu, 18 Mar 2021 14:27:24 -0700
+Message-ID: <CAFd5g47uR=HxjVET3uygeND8tFsZtfkgsS-PjMagbcagPMTBEg@mail.gmail.com>
+Subject: Re: [PATCH 4/6] um: split up CONFIG_GCOV
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-um <linux-um@lists.infradead.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 18, 2021 at 5:13 PM Alessio Balsini <balsini@android.com> wrote:
-> On Tue, Mar 16, 2021 at 07:53:06PM +0100, Arnd Bergmann wrote:
-> > On Mon, Jan 25, 2021 at 4:48 PM Alessio Balsini <balsini@android.com> wrote:
-> > >
+On Fri, Mar 12, 2021 at 1:56 AM Johannes Berg <johannes@sipsolutions.net> wrote:
 >
-> Thanks for spotting this possible criticality.
+> From: Johannes Berg <johannes.berg@intel.com>
 >
-> I noticed that 32-bit users pace was unable to use the
-> FUSE_DEV_IOC_CLONE ioctl on 64-bit kernels, so this change avoid this
-> issue by forcing the kernel to interpret 32 and 64 bit
-> FUSE_DEV_IOC_CLONE command as if they were the same.
-
-As far as I can tell from the kernel headers, the command code should
-be the same for both 32-bit and 64-bit tasks: 0x8004e500.
-Can you find out what exact value you see in the user space that was
-causing problems, and how it ended up with a different value than
-the 64-bit version?
-
-If there are two possible command codes, I'd suggest you just change
-the driver to handle both variants explicitly, but not any other one.
-
-> This is the simplest solution I could find as the UAPI is not changed
-> as, as you mentioned, the argument doesn't require any conversion.
+> It's not always desirable to collect coverage data for the
+> entire kernel, so split off CONFIG_GCOV_BASE. This option
+> only enables linking with coverage options, and compiles a
+> single file (reboot.c) with them as well to force gcov to
+> be linked into the kernel binary. That way, modules also
+> work.
 >
-> I understand that this might limit possible future extensions of the
-> FUSE_DEV_IOC_XXX ioctls if their in/out argument changed depending on
-> the architecture, but only at that point we can switch to using the
-> compat layer, right?
+> To use this new option properly, one needs to manually add
+> '-fprofile-arcs -ftest-coverage' to the compiler options
+> of some object(s) or subdir(s) to collect coverage data at
+> the desired places.
 >
-> What I'm worried about is the direction, do you think this would be an
-> issue?
->
-> I can start working on a compat layer fix meanwhile.
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 
-For a proper well-designed ioctl interface, compat support should not
-need anything beyond the '.compat_ioctl = compat_ptr_ioctl'
-assignment.
+Hey, thanks for doing this! I was looking into this a few weeks ago
+and root caused part of the issue in GCC and in the kernel, but I did
+not have a fix put together.
 
-       Arnd
+Anyway, most of the patches make sense to me, but I am not able to
+apply this patch on torvalds/master. Do you mind sending a rebase so I
+can test it?
+
+Thanks!
