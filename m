@@ -2,272 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 55E613407E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 15:32:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96B0E3407E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 15:32:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231439AbhCROcP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S231470AbhCROcP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 18 Mar 2021 10:32:15 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40304 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230048AbhCRObo (ORCPT
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55120 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230010AbhCROb4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Mar 2021 10:31:44 -0400
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1lMtgb-0007D5-Ji; Thu, 18 Mar 2021 14:31:41 +0000
-Date:   Thu, 18 Mar 2021 15:31:40 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
-Message-ID: <20210318143140.jxycfn3fpqntq34z@wittgenstein>
-References: <20210304112921.3996419-1-amir73il@gmail.com>
- <20210316155524.GD23532@quack2.suse.cz>
- <CAOQ4uxgCv42_xkKpRH-ApMOeFCWfQGGc11CKxUkHJq-Xf=HnYg@mail.gmail.com>
- <20210317114207.GB2541@quack2.suse.cz>
- <CAOQ4uxi7ZXJW3_6SN=vw_XJC+wy4eMTayN6X5yRy_HOV6323MA@mail.gmail.com>
- <20210317174532.cllfsiagoudoz42m@wittgenstein>
- <CAOQ4uxjCjapuAHbYuP8Q_k0XD59UmURbmkGC1qcPkPAgQbQ8DA@mail.gmail.com>
+        Thu, 18 Mar 2021 10:31:56 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED49CC06174A;
+        Thu, 18 Mar 2021 07:31:55 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id k4so1394876plk.5;
+        Thu, 18 Mar 2021 07:31:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nR83JA4b5HB5bOQRjKcdlvfRl/xxpZygi7T8aV5A6LE=;
+        b=AHQ8xDkXbGTG01WcTU2JkX2eQcjwwDt6XMo3ENY3ygLd8xXK3wl7SrwkcVaC9fzXfr
+         RqunxnshDJ9x8LB6rJlmUbtY2WaKVDg12XkxGKAbW+MHN7/WdJNLmb8rTdpQKm9VMYBc
+         mnh/VtfYY0j0w6x5W+GW3jjelOQkc6Z1E6NkgdCaKez8dRaObJlOQgpdpSzqxZ+afB2F
+         heyODydj+Ntk6xeMwBt4tiHJhiFAFenwVtS5OWFPJ9qehNIMCNm3U4ZxgUZ0E24TaIMU
+         CqpGtrfcXwceNP/S3B+eAwET8skFxHYBidwJSb99Ky5I0jgLCpT0PUluFGbEmX8+Jmc8
+         S+Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nR83JA4b5HB5bOQRjKcdlvfRl/xxpZygi7T8aV5A6LE=;
+        b=egydzy10YLHutx26Sf57ncMkR6uhLI0Qk7b0zrwfrYNfSzhDvgq8f6CUVz3JArk8rl
+         QQsQ6VKWFd+/d27ldCWG+h7TNOoE6z26uaR00rdfLEFGZ6/zy0X1ViZbyUaw8nU4G+h8
+         YTN7JA0gjRFZMbxIbXXE49nJageP/8HIeErBc0REJ9U2/evcIBg+NG4Tq8GPelFZwGqA
+         t6VnQe/KHefYTLF3sG7dTaOoJmdjCu0qS9BX1gTs7xhxPDFLlbcLbWO6DOW+wduBBMZl
+         KnYfmlaLhtuqRpBFe9hJckyt9dBO875PirZh8uXOgpKn/ABkVFsiLAn8gRoOddtlAxom
+         EnWQ==
+X-Gm-Message-State: AOAM533thY8DnNcDpHPDqtsiSkMakF7enpk4D65Q2fxFLZSm15oATYgT
+        rexu6T7WaVoMjgyGrRLpP7RDW238H3fsGQ==
+X-Google-Smtp-Source: ABdhPJwGsYoRYYunnE/ubzWh74dGQCPIG2yueitlRNavJmalQVkEXzYnKrgNQFHSphloVxNqum+Pmg==
+X-Received: by 2002:a17:90a:7f87:: with SMTP id m7mr4588416pjl.64.1616077915484;
+        Thu, 18 Mar 2021 07:31:55 -0700 (PDT)
+Received: from DESKTOP-4V60UBS.ccdomain.com ([103.220.76.197])
+        by smtp.gmail.com with ESMTPSA id x19sm2838254pfc.152.2021.03.18.07.31.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Mar 2021 07:31:55 -0700 (PDT)
+From:   Xiaofeng Cao <cxfcosmos@gmail.com>
+X-Google-Original-From: Xiaofeng Cao <caoxiaofeng@yulong.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xiaofeng Cao <caoxiaofeng@yulong.com>
+Subject: [PATCH] fs/dcache: fix typos and sentence disorder
+Date:   Thu, 18 Mar 2021 22:31:53 +0800
+Message-Id: <20210318143153.13455-1-caoxiaofeng@yulong.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjCjapuAHbYuP8Q_k0XD59UmURbmkGC1qcPkPAgQbQ8DA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 17, 2021 at 09:14:06PM +0200, Amir Goldstein wrote:
-> On Wed, Mar 17, 2021 at 7:45 PM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
-> >
-> > On Wed, Mar 17, 2021 at 02:19:57PM +0200, Amir Goldstein wrote:
-> > > On Wed, Mar 17, 2021 at 1:42 PM Jan Kara <jack@suse.cz> wrote:
-> > > >
-> > > > On Wed 17-03-21 13:01:35, Amir Goldstein wrote:
-> > > > > On Tue, Mar 16, 2021 at 5:55 PM Jan Kara <jack@suse.cz> wrote:
-> > > > > >
-> > > > > > On Thu 04-03-21 13:29:19, Amir Goldstein wrote:
-> > > > > > > Jan,
-> > > > > > >
-> > > > > > > These patches try to implement a minimal set and least controversial
-> > > > > > > functionality that we can allow for unprivileged users as a starting
-> > > > > > > point.
-> > > > > > >
-> > > > > > > The patches were tested on top of v5.12-rc1 and the fanotify_merge
-> > > > > > > patches using the unprivileged listener LTP tests written by Matthew
-> > > > > > > and another LTP tests I wrote to test the sysfs tunable limits [1].
-> > > > > >
-> > > > > > Thanks. I've added both patches to my tree.
-> > > > >
-> > > > > Great!
-> > > > > I'll go post the LTP tests and work on the man page updates.
-> > > > >
-> > > > > BTW, I noticed that you pushed the aggregating for_next branch,
-> > > > > but not the fsnotify topic branch.
-> > > > >
-> > > > > Is this intentional?
-> > > >
-> > > > Not really, pushed now. Thanks for reminder.
-> > > >
-> > > > > I am asking because I am usually basing my development branches
-> > > > > off of your fsnotify branch, but I can base them on the unpushed branch.
-> > > > >
-> > > > > Heads up. I am playing with extra privileges we may be able to
-> > > > > allow an ns_capable user.
-> > > > > For example, watching a FS_USERNS_MOUNT filesystem that the user
-> > > > > itself has mounted inside userns.
-> > > > >
-> > > > > Another feature I am investigating is how to utilize the new idmapped
-> > > > > mounts to get a subtree watch functionality. This requires attaching a
-> > > > > userns to the group on fanotify_init().
-> > > > >
-> > > > > <hand waving>
-> > > > > If the group's userns are the same or below the idmapped mount userns,
-> > > > > then all the objects accessed via that idmapped mount are accessible
-> > > > > to the group's userns admin. We can use that fact to filter events very
-> > > > > early based on their mnt_userns and the group's userns, which should be
-> > > > > cheaper than any subtree permission checks.
-> > > > > <\hand waving>
-> > > >
-> > > > Yeah, I agree this should work. Just it seems to me the userbase for this
-> > > > functionality will be (at least currently) rather limited. While full
-> > >
-> > > That may change when systemd home dirs feature starts to use
-> > > idmapped mounts.
-> > > Being able to watch the user's entire home directory is a big win
-> > > already.
-> >
-> > Hey Amir,
-> > Hey Jan,
-> >
-> > I think so too.
-> >
-> > >
-> > > > subtree watches would be IMO interesting to much more users.
-> > >
-> > > Agreed.
-> >
-> > We have a use-case for subtree watches: One feature for containers we
-> > have is that users can e.g. tell us that they want the container manager
-> > to hotplug an arbitrary unix or block device into the container whenever
-> > the relevant device shows up on the system. For example they could
-> > instruct the container manager to plugin some new driver device when it
-> > shows up in /dev. That works nicely because of uevents. But users quite
-> > often also instruct us to plugin a path once it shows up in some
-> > directory in the filesystem hierarchy and unplug it once it is removed.
-> > Right now we're mainting an inotify-based hand-rolled recursive watch to
-> > make this work so we detect that add and remove event. I would be wildly
-> > excited if we could get rid of some of that complexity by using subtree
-> > watches. The container manager on the host will be unaffected by this
-> > feature since it will usually have root privileges and manage
-> > unprivileged containers.
-> > The unprivileged (userns use-case specifically here) subtree watches
-> > will be necessary and really good to have to make this work for
-> > container workloads and nested containers, i.e. where the container
-> > manager itselfs runs in a container and starts new containres. Since the
-> > subtree feature would be interesting for systemd itself and since our
-> > container manager (ChromeOS etc.) runs systemd inside unprivileged
-> > containers on a large scale it would be good if subtree watches could
-> > work in userns too.
-> >
-> 
-> I don't understand the subtree watch use case.
-> You will have to walk me through it.
-> 
-> What exactly is the container manager trying to detect?
-> That a subdir of a specific name/path was created/deleted?
-> It doesn't sound like a recursive watch is needed for that.
-> What am I missing?
+change 'sould' to 'should'
+change 'colocated' to 'collocated'
+change 'talke' to 'take'
+reorganize sentence
 
-Sorry if I was unclear. For example, a user may tell the container
-manager to hotplug
+Signed-off-by: Xiaofeng Cao <caoxiaofeng@yulong.com>
+---
+ fs/dcache.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-/home/jdoe/some/path/
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 7d24ff7eb206..99a58676f478 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -741,7 +741,7 @@ static inline bool fast_dput(struct dentry *dentry)
+ 	unsigned int d_flags;
+ 
+ 	/*
+-	 * If we have a d_op->d_delete() operation, we sould not
++	 * If we have a d_op->d_delete() operation, we should not
+ 	 * let the dentry count go to zero, so use "put_or_lock".
+ 	 */
+ 	if (unlikely(dentry->d_flags & DCACHE_OP_DELETE))
+@@ -1053,7 +1053,7 @@ struct dentry *d_find_alias_rcu(struct inode *inode)
+ 	struct dentry *de = NULL;
+ 
+ 	spin_lock(&inode->i_lock);
+-	// ->i_dentry and ->i_rcu are colocated, but the latter won't be
++	// ->i_dentry and ->i_rcu are collocated, but the latter won't be
+ 	// used without having I_FREEING set, which means no aliases left
+ 	if (likely(!(inode->i_state & I_FREEING) && !hlist_empty(l))) {
+ 		if (S_ISDIR(inode->i_mode)) {
+@@ -1297,7 +1297,7 @@ void shrink_dcache_sb(struct super_block *sb)
+ EXPORT_SYMBOL(shrink_dcache_sb);
+ 
+ /**
+- * enum d_walk_ret - action to talke during tree walk
++ * enum d_walk_ret - action to take during tree walk
+  * @D_WALK_CONTINUE:	contrinue walk
+  * @D_WALK_QUIT:	quit walk
+  * @D_WALK_NORETRY:	quit when retry is needed
+@@ -2156,8 +2156,8 @@ EXPORT_SYMBOL(d_obtain_alias);
+  *
+  * On successful return, the reference to the inode has been transferred
+  * to the dentry.  In case of an error the reference on the inode is
+- * released.  A %NULL or IS_ERR inode may be passed in and will be the
+- * error will be propagate to the return value, with a %NULL @inode
++ * released.  A %NULL or IS_ERR inode may be passed in and the error will
++ * be propagated to the return value, with a %NULL @inode
+  * replaced by ERR_PTR(-ESTALE).
+  */
+ struct dentry *d_obtain_root(struct inode *inode)
+-- 
+2.25.1
 
-into the container. Users are free to tell the container manager that
-that path doesn't need exist. At that poing the container manager will
-start to mirror the first part of the path that does exist. And as soon
-as the full path has been created the container manager will hotplug
-that path as a new mount into the container. Similarly it will
-remove that mount from the container as soon as the path is deleted from
-the host.
-
-So say the user tells the container manager to inject
-
-/home/jdoe/some/path
-
-into the container but only
-
-/home/jdoe
-
-currently exists then the container manager will recursively watch:
-
-/home/jdoe
-
-waiting for the full path to be created.
-
-This is all a bit nasty since we need to ensure that we notice all
-events. For example, the user could create
-
-/home/jdoe/some
-
-but then right after that
-
-/home/jdoe/some
-
-could be removed again. With the inotify listener we need to constantly
-add (and remove iirc) watch fds and ensure that we never miss an event
-and that's brittle. I'd rather have something that allows me to mirror
-
-/home/jdoe
-
-recursively directly. But maybe I'm misunderstanding fanotify and it
-can't really help us but I thought that subtree watches might.
-
-One of the reason't I didn't use fanotiy when we implemented this was
-that it couldn't be used inside of user namespaces, i.e. CAP_SYS_ADMIN
-in the initial userns was required.
-We always make very sure that users can properly nest containers and
-have almost all the same features available that they have with
-non-nested containers. And since fanotify currently requires
-CAP_SYS_ADMIN in the init userns it means a container manager running
-inside a container wanting to hotplug paths for nested containers can't
-use fanotify. 
-
-(Btw, this is part of the code I wrote to implement this logic via
-inotify a long time ago
-https://github.com/lxc/lxd/blob/f12f03a4ba4645892ef6cc167c24da49d1217b02/lxd/device/device_utils_inotify.go
-[I'm sorry you have to see this in case you click on it...])
-
-> 
-> As for nested container managers (and systemd), my thinking is
-> that if all the mounts that manager is watching for serving its containers
-> are idmapped to that manager's userns (is that a viable option?), then
-
-Yes, it is possible. We do now support AT_RECURSIVE with all mount
-attributes including idmapping mounts.
-
-> there shouldn't be a problem to setup userns filtered watches in order to
-> be notified on all the events that happen via those idmapped mounts
-> and filtering by "subtree" is not needed.
-> I am clearly far from understanding the big picture.
-
-I think I need to refamiliarize myself with what "subtree" watches do.
-Maybe I misunderstood what they do. I'll take a look.
-
-> 
-> > >
-> > > I was looking into that as well, using the example of nfsd_acceptable()
-> > > to implement the subtree permission check.
-> > >
-> > > The problem here is that even if unprivileged users cannot compromise
-> > > security, they can still cause significant CPU overhead either queueing
-> > > events or filtering events and that is something I haven't been able to
-> > > figure out a way to escape from.
-> > >
-> > > BUT, if you allow userns admin to setup subtree watches (a.k.a filtered
-> > > filesystem marks) on a userns filesystem/idmapped mount, now users
-> >
-> > I think that sounds reasonable.
-> > If the mount really is idmapped, it might be interesting to consider
-> > checking for privilege in the mnt_userns in addition to the regular
-> > permission checks that fanotify performs. My (equally handwavy) thinking
-> > is that this might allow for a nice feature where the creator of the
-> > mount (e.g. systemd) can block the creation of subtree watches by
-> > attaching a mnt_userns to the mnt that the user has no privilege in.
-> > (Just a thought.).
-> >
-> 
-> Currently, (upstream) only init_userns CAP_SYS_ADMIN can setup
-> fanotify watches.
-> In linux-next, unprivileged user can already setup inode watches
-> (i.e. like inotify).
-
-Just to clarify: you mean "unprivileged" as in non-root users in
-init_user_ns and therefore also users in non-init userns. That's what
-inotify allows you. This would probably allows us to use fanotify
-instead of the hand-rolled recursive notify watching we currently do and
-that I linked to above.
-
-> 
-> So I am not sure what you are referring to by "block the creation of
-> subtree watches".
-> 
-> If systemd were to idmap my home dir to mnt_userns where my user
-> has CAP_SYS_ADMIN, then allowing my user to setup a watch for
-> all events on that mount should not be too hard.
-
-Right, that was essentially what my comment was about.
-
-> If you think that is useful and you want to play with this feature I can
-> provide a WIP branch soon.
-
-I would like to first play with the support for unprivileged fanotify
-but sure, it does sound useful!
-
-Christian
