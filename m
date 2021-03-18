@@ -2,132 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E331733FC19
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 01:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CA2933FC27
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Mar 2021 01:18:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229570AbhCRANW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Mar 2021 20:13:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56160 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229562AbhCRANS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Mar 2021 20:13:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AC41964F0F;
-        Thu, 18 Mar 2021 00:13:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1616026398;
-        bh=fSIIYD4Bqq9DjOcJ00I7RmGxvGVeisJfg5itiZrWuHk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dx2142MJ4udauam6sy8vYa+l2BrMlHhDtLm82C5w2FxZOH+zh5poMNLBuOfjTH9PY
-         YrH34VWJ6SNWpYYGs9v72EsDYsYYQnuXboQFKGsbIAwB9ciSYAOYU8G7sG2QLCW0Ch
-         cWgTie2g1YKTddJEH6EuGC3OKB/UiaSCNKBGLdWA=
-Date:   Wed, 17 Mar 2021 17:13:16 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        joaodias@google.com, surenb@google.com, cgoldswo@codeaurora.org,
-        willy@infradead.org, mhocko@suse.com, david@redhat.com,
-        vbabka@suse.cz, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] mm: disable LRU pagevec during the migration
- temporarily
-Message-Id: <20210317171316.d261de806203d8d99c6bf0ef@linux-foundation.org>
-In-Reply-To: <20210310161429.399432-2-minchan@kernel.org>
-References: <20210310161429.399432-1-minchan@kernel.org>
-        <20210310161429.399432-2-minchan@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S230142AbhCRARw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Mar 2021 20:17:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40972 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230118AbhCRARt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Mar 2021 20:17:49 -0400
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75EE8C06175F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Mar 2021 17:17:49 -0700 (PDT)
+Received: by mail-qt1-x82b.google.com with SMTP id l13so2830708qtu.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Mar 2021 17:17:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qBWp64Pug/SrgiIyadWuZwnOsiwL1P6TZRSFM00kaTE=;
+        b=IIqq6Eoj+LnGC7XeDnJA2LmQcviLVkZMtifQwLfmDot9ahXHP36PaGWUF7TjDY03Kc
+         CgLSKDVnRGfD2QD1G+Nr0Ytv3ywTh3OkyHJjNtkRqgVhyv+we+Fw00hJ1T5SNf7bwCGf
+         VdDFtMk+sITBGsRFfRFHeWThbRqSa6TGuRndAK9twANKLboIlc5el7Wg/rqlqUyA/RIp
+         HJpOvztH5oI8kn0X+pqy8c/jqavu/Oqc8I3CHtT7/oNd1b2ayXGM4tSOCN7AfgeCt6sW
+         x+zNRXN3ACaNJ00Rcic+TJobm40DIc/TTTsKAHwWTiPX0RcMDB3X+01RkybEOEOyg9PU
+         Adzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qBWp64Pug/SrgiIyadWuZwnOsiwL1P6TZRSFM00kaTE=;
+        b=YrSLaRwtp2Hxr3TE1qQopU2MMFrX7/rkZjdT3MFkKDPo5IOFGuN4eMDgJ+PkSie4TA
+         HcjK4x+4t843MVWdw6LAZdpYietJtcs3lP0rUA1P2kq+wvDU28jP3VMH7q6lGurgIMJB
+         TxCRmynLyq0n/Z3zKqpxDctdehiEflIFInkykZIIhT4cRa+NBhtGYs5C1co7gTHe0sfh
+         4cwFywVE2oTs4s0VEiEci3Eu1fHsCgfnNA2dpVqB92UmmUCfOtRMUCeWVkim4Q6UK3UE
+         MPdnAtIGIPgxw9jbiKJ60SaEENuafFIbYwtSOtsLQgiQjkhrXwn/72Y+HmrOblACiV9K
+         UElw==
+X-Gm-Message-State: AOAM5300FkWYpUbw9uTAwRp1/snyLNFQ90HwTK4iPJkoU7uo7j/DPE+e
+        Ju4mxlwIIKd74onzYzcI+rV2qWXJN/XKx4OeKXFfHg==
+X-Google-Smtp-Source: ABdhPJx0spgied9F00Q5lkECPAZWv345xymxG9XfK1q1w/CRjgQhQ3Xc/nTCSQS1+d1cZdKWm4aFSqhy2jaIazOr1ag=
+X-Received: by 2002:a05:622a:114:: with SMTP id u20mr1443275qtw.317.1616026668446;
+ Wed, 17 Mar 2021 17:17:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210317045949.1584952-1-joshdon@google.com> <20210317083141.GB3881262@gmail.com>
+In-Reply-To: <20210317083141.GB3881262@gmail.com>
+From:   Josh Don <joshdon@google.com>
+Date:   Wed, 17 Mar 2021 17:17:37 -0700
+Message-ID: <CABk29Nu8iYDzY+GHa+z7oJyGF_0JKdF9+-zBbiL7C2hgSfHqMg@mail.gmail.com>
+Subject: Re: [PATCH] sched: Warn on long periods of pending need_resched
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        David Rientjes <rientjes@google.com>,
+        Oleg Rombakh <olegrom@google.com>, Paul Turner <pjt@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 10 Mar 2021 08:14:28 -0800 Minchan Kim <minchan@kernel.org> wrote:
-
-> LRU pagevec holds refcount of pages until the pagevec are drained.
-> It could prevent migration since the refcount of the page is greater
-> than the expection in migration logic. To mitigate the issue,
-> callers of migrate_pages drains LRU pagevec via migrate_prep or
-> lru_add_drain_all before migrate_pages call.
-> 
-> However, it's not enough because pages coming into pagevec after the
-> draining call still could stay at the pagevec so it could keep
-> preventing page migration. Since some callers of migrate_pages have
-> retrial logic with LRU draining, the page would migrate at next trail
-> but it is still fragile in that it doesn't close the fundamental race
-> between upcoming LRU pages into pagvec and migration so the migration
-> failure could cause contiguous memory allocation failure in the end.
-> 
-> To close the race, this patch disables lru caches(i.e, pagevec)
-> during ongoing migration until migrate is done.
-> 
-> Since it's really hard to reproduce, I measured how many times
-> migrate_pages retried with force mode(it is about a fallback to a
-> sync migration) with below debug code.
-> 
-> int migrate_pages(struct list_head *from, new_page_t get_new_page,
-> 			..
-> 			..
-> 
-> if (rc && reason == MR_CONTIG_RANGE && pass > 2) {
->        printk(KERN_ERR, "pfn 0x%lx reason %d\n", page_to_pfn(page), rc);
->        dump_page(page, "fail to migrate");
-> }
-> 
-> The test was repeating android apps launching with cma allocation
-> in background every five seconds. Total cma allocation count was
-> about 500 during the testing. With this patch, the dump_page count
-> was reduced from 400 to 30.
-> 
-> The new interface is also useful for memory hotplug which currently
-> drains lru pcp caches after each migration failure. This is rather
-> suboptimal as it has to disrupt others running during the operation.
-> With the new interface the operation happens only once. This is also in
-> line with pcp allocator cache which are disabled for the offlining as
-> well.
-> 
-
-This is really a rather ugly thing, particularly from a maintainability
-point of view.  Are you sure you found all the sites which need the
-enable/disable?  How do we prevent new ones from creeping in which need
-the same treatment?  Is there some way of adding a runtime check which
-will trip if a conversion was missed?
-
-> ...
+On Wed, Mar 17, 2021 at 1:31 AM Ingo Molnar <mingo@kernel.org> wrote:
 >
-> +bool lru_cache_disabled(void)
-> +{
-> +	return atomic_read(&lru_disable_count);
-> +}
-> +
-> +void lru_cache_enable(void)
-> +{
-> +	atomic_dec(&lru_disable_count);
-> +}
-> +
-> +/*
-> + * lru_cache_disable() needs to be called before we start compiling
-> + * a list of pages to be migrated using isolate_lru_page().
-> + * It drains pages on LRU cache and then disable on all cpus until
-> + * lru_cache_enable is called.
-> + *
-> + * Must be paired with a call to lru_cache_enable().
-> + */
-> +void lru_cache_disable(void)
-> +{
-> +	atomic_inc(&lru_disable_count);
-> +#ifdef CONFIG_SMP
-> +	/*
-> +	 * lru_add_drain_all in the force mode will schedule draining on
-> +	 * all online CPUs so any calls of lru_cache_disabled wrapped by
-> +	 * local_lock or preemption disabled would be ordered by that.
-> +	 * The atomic operation doesn't need to have stronger ordering
-> +	 * requirements because that is enforeced by the scheduling
-> +	 * guarantees.
-> +	 */
-> +	__lru_add_drain_all(true);
-> +#else
-> +	lru_add_drain();
-> +#endif
-> +}
+>
+> * Josh Don <joshdon@google.com> wrote:
+>
+> > +static inline u64 resched_latency_check(struct rq *rq)
+> > +{
+> > +     int latency_warn_ms = READ_ONCE(sysctl_resched_latency_warn_ms);
+> > +     bool warn_only_once = (latency_warn_ms == RESCHED_DEFAULT_WARN_LATENCY_MS);
+> > +     u64 need_resched_latency, now = rq_clock(rq);
+> > +     static bool warned_once;
+> > +
+> > +     if (warn_only_once && warned_once)
+> > +             return 0;
+> > +
+> > +     if (!need_resched() || latency_warn_ms < 2)
+> > +             return 0;
+> > +
+> > +     /* Disable this warning for the first few mins after boot */
+> > +     if (now < RESCHED_BOOT_QUIET_SEC * NSEC_PER_SEC)
+> > +             return 0;
+> > +
+> > +     if (!rq->last_seen_need_resched_ns) {
+> > +             rq->last_seen_need_resched_ns = now;
+> > +             rq->ticks_without_resched = 0;
+> > +             return 0;
+> > +     }
+> > +
+> > +     rq->ticks_without_resched++;
+>
+> So AFAICS this will only really do something useful on full-nohz
+> kernels with sufficiently long scheduler ticks, right?
 
-I guess at least the first two of these functions should be inlined.
+Not quite sure what you mean; it is actually the inverse? Since we
+rely on the tick to detect the resched latency, on nohz-full we won't
+have detection on cpus running a single thread. The ideal scenario is
+!nohz-full and tick interval << warn_ms.
+
+> On other kernels the scheduler tick interrupt, when it returns to
+> user-space, will trigger a reschedule if it sees a need_resched.
+
+True for the case where we return to userspace, but we could instead
+be executing in a non-preemptible region of the kernel. This is where
+we've seen/fixed kernel bugs.
+
+Best,
+Josh
