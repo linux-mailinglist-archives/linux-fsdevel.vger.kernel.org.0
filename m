@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AE1C3423D9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 18:57:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AA943423F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 19:04:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230267AbhCSR5F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Mar 2021 13:57:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43640 "EHLO
+        id S229990AbhCSSEH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Mar 2021 14:04:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230324AbhCSR4e (ORCPT
+        with ESMTP id S230015AbhCSSDo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Mar 2021 13:56:34 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B316EC061762
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 10:56:34 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id u19so4199386pgh.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 10:56:34 -0700 (PDT)
+        Fri, 19 Mar 2021 14:03:44 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63E42C06175F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 11:03:44 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id y200so6437011pfb.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 11:03:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=+q/3pbtU4KRBeCiClf1jVde3rqJff5tAE3G/yUO/twY=;
-        b=Px46bBJ7mvrljx8ek9g5SOvd1jKb2iflgcqeVZiVe5xUV+ssBoFXrkhepVOQKvAu0W
-         wc544ZAyTrYKxp4eU7wneG31VhgV2pG4OO8vR/OUGy+eT4tlva1ClajEyl5BGBpqNmzG
-         hunNRfv4R9KjhPsKcrcyZbynh9VC1EqLCPhJk=
+        bh=Fgm96KdkqPPp5AyePMeoZ4bVy8WajnICuOF6lgD+oIg=;
+        b=WLn4qJw0mRnRd2MuhQP7t0sfnyhwEvjNu988xXSPLRxMyhbXuwpXBBTk46I7unAvON
+         cjyhkk6qSlLOYR0UI87kTBxgP/Wnddx3aAKZdL5coNoywwluId0NvmkBbwQcv409IPbH
+         mzySyBVh/E+KEz95rYinZ5MCAQ1HFNil/owiM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=+q/3pbtU4KRBeCiClf1jVde3rqJff5tAE3G/yUO/twY=;
-        b=YxeG1oq0I3mL/WM9QF7SWn7wSN31LCjqdGsaBXbJcbK0fv2P0tcBr2T+KEYfwth6Yt
-         vRm8UrW086xwxEYQxpQaJIFbWZxPTEMuCaya4+ec0H3Zk1z+vi9pCcLZYEIIidx0FmZt
-         F9U/xTq+9lyZ0FAkIfQEcJm5U70fN6ZF2ey2DCRLFO1eAzEebp7T07LaXXhCzivnstGL
-         6x5QuxO0hMdAAj3Rv8tf9kVxcSbUbrPK/I7K2MK/ux0rAgPMpgBEpxuerQ756KfLEzJ5
-         dfcrUYjsjFoOke/RHjm64J9r/v+kefDtFtfiysr6JtmgBQG0CVc+vDxC0RtzI5Qc2QtK
-         gsBg==
-X-Gm-Message-State: AOAM530Rnhff6zr73xvBmLkxpYrljaRf07ooMxfi2zPbwRgvpEYlNJ5p
-        QCgXowhdaZh76j9L+XeTtVEtRA==
-X-Google-Smtp-Source: ABdhPJx6hzgtsuXfb3wb8ZxJRkArVpobtGIGuejpGbWx0f2z95FZcMrh5SMDfiqjnPliwFHzGPG83w==
-X-Received: by 2002:aa7:8493:0:b029:1ee:75b2:2865 with SMTP id u19-20020aa784930000b02901ee75b22865mr10002946pfn.61.1616176594196;
-        Fri, 19 Mar 2021 10:56:34 -0700 (PDT)
+        bh=Fgm96KdkqPPp5AyePMeoZ4bVy8WajnICuOF6lgD+oIg=;
+        b=l4rZd6saiHlvHV3XimccPdJ+H7ElqQndmSN/3/XkRya7hKSQxjxeMMezcIa/ujB78n
+         hgKr2DSjTS+99RQrt2g3YcAVhWSi4bKU/O2lLCXwjc5a6pBQ/XAlSILqkD/gSYNt5R8C
+         AvmewbRniLP/Vf+CAMlFXklPlslIxWgBU/3KZDQqAbZYCOYc8hUvJuNg1XzVqwCUN2M8
+         gf4Emyh48vAWR6WvinHt5DmKD7fbt8fVyKaQXP8vdyG+7f3+za9LE3kuAHyxWPn3lyEt
+         PSgHmHI6SeJrpygUaQJftq2P2e2KKCQApb6iv/IL5oDsIbVI7ss40kVrDtqqSIMDrkD3
+         ep7w==
+X-Gm-Message-State: AOAM530H+itmohYIkyPVapUyR1tEKmIGW2xbWlzXVNXfWXxyKuWvx4ff
+        DcUz0+SyHrnWo9feClq6ZsLJSw==
+X-Google-Smtp-Source: ABdhPJzhTUxr8xtElyOo2sGLLBM/SHQIPL7qbearL3PQEkxev8oiF1oDVJM+cInZoueV8pCU8aX6hQ==
+X-Received: by 2002:aa7:99c4:0:b029:1f6:c0bf:43d1 with SMTP id v4-20020aa799c40000b02901f6c0bf43d1mr10042556pfi.37.1616177023839;
+        Fri, 19 Mar 2021 11:03:43 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t1sm6114696pfc.173.2021.03.19.10.56.33
+        by smtp.gmail.com with ESMTPSA id m16sm5544874pgj.26.2021.03.19.11.03.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Mar 2021 10:56:33 -0700 (PDT)
-Date:   Fri, 19 Mar 2021 10:56:32 -0700
+        Fri, 19 Mar 2021 11:03:43 -0700 (PDT)
+Date:   Fri, 19 Mar 2021 11:03:42 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
 Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
@@ -70,122 +70,98 @@ Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
         linux-kselftest@vger.kernel.org,
         linux-security-module@vger.kernel.org, x86@kernel.org,
         =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
-Subject: Re: [PATCH v30 10/12] selftests/landlock: Add user space tests
-Message-ID: <202103191026.D936362B@keescook>
+Subject: Re: [PATCH v30 12/12] landlock: Add user and kernel documentation
+Message-ID: <202103191056.71AB0515A@keescook>
 References: <20210316204252.427806-1-mic@digikod.net>
- <20210316204252.427806-11-mic@digikod.net>
+ <20210316204252.427806-13-mic@digikod.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210316204252.427806-11-mic@digikod.net>
+In-Reply-To: <20210316204252.427806-13-mic@digikod.net>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 16, 2021 at 09:42:50PM +0100, Mickaël Salaün wrote:
+On Tue, Mar 16, 2021 at 09:42:52PM +0100, Mickaël Salaün wrote:
 > From: Mickaël Salaün <mic@linux.microsoft.com>
 > 
-> Test all Landlock system calls, ptrace hooks semantic and filesystem
-> access-control with multiple layouts.
-> 
-> Test coverage for security/landlock/ is 93.6% of lines.  The code not
-> covered only deals with internal kernel errors (e.g. memory allocation)
-> and race conditions.
-> 
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-> Reviewed-by: Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>
-> Link: https://lore.kernel.org/r/20210316204252.427806-11-mic@digikod.net
+> This documentation can be built with the Sphinx framework.
 
-This is terrific. I love the coverage. How did you measure this, BTW?
-To increase it into memory allocation failures, have you tried
-allocation fault injection:
-https://www.kernel.org/doc/html/latest/fault-injection/fault-injection.html
+Well, yes. :) Maybe describe what the documentation covers instead here.
+Regardless: yay docs! This is great.
 
 > [...]
-> +TEST(inconsistent_attr) {
-> +	const long page_size = sysconf(_SC_PAGESIZE);
-> +	char *const buf = malloc(page_size + 1);
-> +	struct landlock_ruleset_attr *const ruleset_attr = (void *)buf;
+> +Bind mounts and OverlayFS
+> +-------------------------
 > +
-> +	ASSERT_NE(NULL, buf);
+> +Landlock enables to restrict access to file hierarchies, which means that these
+> +access rights can be propagated with bind mounts (cf.
+> +:doc:`/filesystems/sharedsubtree`) but not with :doc:`/filesystems/overlayfs`.
 > +
-> +	/* Checks copy_from_user(). */
-> +	ASSERT_EQ(-1, landlock_create_ruleset(ruleset_attr, 0, 0));
-> +	/* The size if less than sizeof(struct landlock_attr_enforce). */
-> +	ASSERT_EQ(EINVAL, errno);
-> +	ASSERT_EQ(-1, landlock_create_ruleset(ruleset_attr, 1, 0));
-> +	ASSERT_EQ(EINVAL, errno);
+> +A bind mount mirrors a source file hierarchy to a destination.  The destination
+> +hierarchy is then composed of the exact same files, on which Landlock rules can
+> +be tied, either via the source or the destination path.  These rules restrict
+> +access when they are encountered on a path, which means that they can restrict
+> +access to multiple file hierarchies at the same time, whether these hierarchies
+> +are the result of bind mounts or not.
+> +
+> +An OverlayFS mount point consists of upper and lower layers.  These layers are
+> +combined in a merge directory, result of the mount point.  This merge hierarchy
+> +may include files from the upper and lower layers, but modifications performed
+> +on the merge hierarchy only reflects on the upper layer.  From a Landlock
+> +policy point of view, each OverlayFS layers and merge hierarchies are
+> +standalone and contains their own set of files and directories, which is
+> +different from bind mounts.  A policy restricting an OverlayFS layer will not
+> +restrict the resulted merged hierarchy, and vice versa.
 
-Almost everywhere you're using ASSERT instead of EXPECT. Is this correct
-(in the sense than as soon as an ASSERT fails the rest of the test is
-skipped)? I do see you using EXPECT is some places, but I figured I'd
-ask about the intention here.
+Can you include some examples about what a user of landlock should do?
+i.e. what are some examples of unexpected results when trying to write
+policy that runs on top of overlayfs, etc?
 
-> +/*
-> + * TEST_F_FORK() is useful when a test drop privileges but the corresponding
-> + * FIXTURE_TEARDOWN() requires them (e.g. to remove files from a directory
-> + * where write actions are denied).  For convenience, FIXTURE_TEARDOWN() is
-> + * also called when the test failed, but not when FIXTURE_SETUP() failed.  For
-> + * this to be possible, we must not call abort() but instead exit smoothly
-> + * (hence the step print).
-> + */
+> [...]
+> +File renaming and linking
+> +-------------------------
+> +
+> +Because Landlock targets unprivileged access controls, it is needed to properly
+> +handle composition of rules.  Such property also implies rules nesting.
+> +Properly handling multiple layers of ruleset, each one of them able to restrict
+> +access to files, also implies to inherit the ruleset restrictions from a parent
+> +to its hierarchy.  Because files are identified and restricted by their
+> +hierarchy, moving or linking a file from one directory to another implies to
+> +propagate the hierarchy constraints.  To protect against privilege escalations
+> +through renaming or linking, and for the sack of simplicity, Landlock currently
 
-Hm, interesting. I think this should be extracted into a separate patch
-and added to the test harness proper.
+typo: sack -> sake
 
-Could this be solved with TEARDOWN being called on SETUP failure?
+> [...]
+> +Special filesystems
+> +-------------------
+> +
+> +Access to regular files and directories can be restricted by Landlock,
+> +according to the handled accesses of a ruleset.  However, files that do not
+> +come from a user-visible filesystem (e.g. pipe, socket), but can still be
+> +accessed through /proc/self/fd/, cannot currently be restricted.  Likewise,
+> +some special kernel filesystems such as nsfs, which can be accessed through
+> +/proc/self/ns/, cannot currently be restricted.  For now, these kind of special
+> +paths are then always allowed.  Future Landlock evolutions will enable to
+> +restrict such paths with dedicated ruleset flags.
 
-> +#define TEST_F_FORK(fixture_name, test_name) \
-> +	static void fixture_name##_##test_name##_child( \
-> +		struct __test_metadata *_metadata, \
-> +		FIXTURE_DATA(fixture_name) *self, \
-> +		const FIXTURE_VARIANT(fixture_name) *variant); \
-> +	TEST_F(fixture_name, test_name) \
-> +	{ \
-> +		int status; \
-> +		const pid_t child = fork(); \
-> +		if (child < 0) \
-> +			abort(); \
-> +		if (child == 0) { \
-> +			_metadata->no_print = 1; \
-> +			fixture_name##_##test_name##_child(_metadata, self, variant); \
-> +			if (_metadata->skip) \
-> +				_exit(255); \
-> +			if (_metadata->passed) \
-> +				_exit(0); \
-> +			_exit(_metadata->step); \
-> +		} \
-> +		if (child != waitpid(child, &status, 0)) \
-> +			abort(); \
-> +		if (WIFSIGNALED(status) || !WIFEXITED(status)) { \
-> +			_metadata->passed = 0; \
-> +			_metadata->step = 1; \
-> +			return; \
-> +		} \
-> +		switch (WEXITSTATUS(status)) { \
-> +		case 0: \
-> +			_metadata->passed = 1; \
-> +			break; \
-> +		case 255: \
-> +			_metadata->passed = 1; \
-> +			_metadata->skip = 1; \
-> +			break; \
-> +		default: \
-> +			_metadata->passed = 0; \
-> +			_metadata->step = WEXITSTATUS(status); \
-> +			break; \
-> +		} \
-> +	} \
+With this series, can /proc (at the top level) be blocked? (i.e. can a
+landlock user avoid the weirdness by making /proc/$pid/ unavailable?)
 
-This looks like a subset of __wait_for_test()? Could __TEST_F_IMPL() be
-updated instead to do this? (Though the fork overhead might not be great
-for everyone.)
+> +Ruleset layers
+> +--------------
+> +
+> +There is a limit of 64 layers of stacked rulesets.  This can be an issue for a
+> +task willing to enforce a new ruleset in complement to its 64 inherited
+> +rulesets.  Once this limit is reached, sys_landlock_restrict_self() returns
+> +E2BIG.  It is then strongly suggested to carefully build rulesets once in the
+> +life of a thread, especially for applications able to launch other applications
+> +that may also want to sandbox themselves (e.g. shells, container managers,
+> +etc.).
+
+How was this value (64) chosen?
 
 -- 
 Kees Cook
