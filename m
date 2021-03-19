@@ -2,127 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81E5834268A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 20:57:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC74C3426AF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 21:09:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230343AbhCST4o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Mar 2021 15:56:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:39770 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230235AbhCST4M (ORCPT
+        id S230394AbhCSUIs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Mar 2021 16:08:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44002 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230476AbhCSUI0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Mar 2021 15:56:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616183771;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=dDhWGmnkBlPVA2wfhVuOmZxNRvF9OYsPldF2ff4rzQI=;
-        b=EFXCPpwHyo7h1cyC+gaQBz+Uxs3J0QtOpswvq+qI7vGKiOtEb8cGiOe3xCdQOc2h5KKKiY
-        pu4t4e26/3gnP4G/4trVHeItq5sxOz1baJMDfkVICQWxZi7DLB2rsdeSqOp9jfVyBDkJsO
-        UiXs8yGDekEFqbZHEIkR8ULwe3kIAZA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-554-323jm4FoMbWKwZPNs9Igug-1; Fri, 19 Mar 2021 15:56:07 -0400
-X-MC-Unique: 323jm4FoMbWKwZPNs9Igug-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 453B7839A43;
-        Fri, 19 Mar 2021 19:56:06 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-114-114.rdu2.redhat.com [10.10.114.114])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C280B10013C1;
-        Fri, 19 Mar 2021 19:56:02 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 4AE90225FCD; Fri, 19 Mar 2021 15:56:02 -0400 (EDT)
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, miklos@szeredi.hu
-Cc:     vgoyal@redhat.com, lhenriques@suse.de, dgilbert@redhat.com,
-        seth.forshee@canonical.com
-Subject: [PATCH 3/3] fuse: Add a flag FUSE_SETXATTR_ACL_KILL_SGID to kill SGID
-Date:   Fri, 19 Mar 2021 15:55:47 -0400
-Message-Id: <20210319195547.427371-4-vgoyal@redhat.com>
-In-Reply-To: <20210319195547.427371-1-vgoyal@redhat.com>
-References: <20210319195547.427371-1-vgoyal@redhat.com>
+        Fri, 19 Mar 2021 16:08:26 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31F7C061760
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 13:08:25 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id m12so11842988lfq.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 13:08:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=l/0awmwbYpldGtvhGbGrjtgg5S5AmtnvrJ31RfQjWzg=;
+        b=Udu99pfuLvrG3/uGIHBn854uuyD2MnagNpLodzU1KeSa2MMu8iHwpvgaE2s5sLcD22
+         weRb6idNCOSd97o1eHiD3ISp6GYnVz2SUXOIzQcXDYj1Oz/8mwXreNqGUuJeQNjkMvkB
+         hBIs/RjQ8pcafCqVnLFRmLTU+wZUiLkOdJY5E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=l/0awmwbYpldGtvhGbGrjtgg5S5AmtnvrJ31RfQjWzg=;
+        b=HDafSQ/eH1wKR6mkM1rmPdR3GQ30ocBumZW4FvSpv7OEn3XitkjBJ8IVnPuyYQHtM/
+         XLBEvOFUL8xyIFQsl9U4gSuSQXaQAoW4l1OLT3N8i4SyLttb6RKE/RskV7b8SiAbH4Lc
+         xT63oMWxtd20wfDEH70mpJ3W2LcoPzsmz/r6oOpkV0+hS+wQvzWdJVsok6hnftdHAAoa
+         ChPw8HvDTIlIcQrs85iXEMi56Uh8t/mX79sHM2cu9KppFu9PrYJyGKvFciFxR7fX1Qzy
+         v7E8ipeikRRWTpFidNgPTiAlPeffxGVg6ZBDQHq6aA6muiuYSncRL1AvgTxRTNkgGk23
+         l60g==
+X-Gm-Message-State: AOAM5322jhMa6B8zw49zbPq+m4Io2RxSgCe+Wiur+qvCnHxvu6TvaNVH
+        wIS8TcZYb2SCB2YZmGApm/bpav9PrQoSVw==
+X-Google-Smtp-Source: ABdhPJx8zp5+RQFH5vKuZ5dK06O8Q9uFcKBDaya3i9h12cYYBcKlRmkXMO4tcmPEjUEyD25pUOksNw==
+X-Received: by 2002:ac2:5fae:: with SMTP id s14mr1779894lfe.15.1616184504176;
+        Fri, 19 Mar 2021 13:08:24 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id h62sm723142lfd.234.2021.03.19.13.08.21
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Mar 2021 13:08:22 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id o126so2344848lfa.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 13:08:21 -0700 (PDT)
+X-Received: by 2002:a05:6512:33cc:: with SMTP id d12mr1663604lfg.487.1616184501624;
+ Fri, 19 Mar 2021 13:08:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <cover.1615922644.git.osandov@fb.com> <8f741746-fd7f-c81a-3cdf-fb81aeea34b5@toxicpanda.com>
+In-Reply-To: <8f741746-fd7f-c81a-3cdf-fb81aeea34b5@toxicpanda.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 19 Mar 2021 13:08:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj6MjPt+V7VrQ=muspc0DZ-7bg5bvmE2ZF-1Ea_AQh8Xg@mail.gmail.com>
+Message-ID: <CAHk-=wj6MjPt+V7VrQ=muspc0DZ-7bg5bvmE2ZF-1Ea_AQh8Xg@mail.gmail.com>
+Subject: Re: [PATCH v8 00/10] fs: interface for directly reading/writing
+ compressed data
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     Omar Sandoval <osandov@osandov.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When posix access ACL is set, it can have an effect on file mode and
-it can also need to clear SGID if.
+On Fri, Mar 19, 2021 at 11:21 AM Josef Bacik <josef@toxicpanda.com> wrote:
+>
+> Can we get some movement on this?  Omar is sort of spinning his wheels here
+> trying to get this stuff merged, no major changes have been done in a few
+> postings.
 
-- None of caller's group/supplementary groups match file owner group.
-AND
-- Caller is not priviliged (No CAP_FSETID).
+I'm not Al, and I absolutely detest the IOCB_ENCODED thing, and want
+more explanations of why this should be done that way, and pollute our
+iov_iter handling EVEN MORE.
 
-As of now fuser server is responsible for changing the file mode as well. But
-it does not know whether to clear SGID or not.
+Our iov_iter stuff isn't the most legible, and I don't understand why
+anybody would ever think it's a good idea to spread what is clearly a
+"struct" inside multiple different iov extents.
 
-So add a flag FUSE_SETXATTR_ACL_KILL_SGID and send this info with
-SETXATTR to let file server know that sgid needs to be cleared as well.
+Honestly, this sounds way more like an ioctl interface than
+read/write. We've done that before.
 
-Reported-by: Luis Henriques <lhenriques@suse.de>
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/fuse/acl.c             | 7 ++++++-
- include/uapi/linux/fuse.h | 7 +++++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+But if it has to be done with an iov_iter, is there *any* reason to
+not make it be a hard rule that iov[0] should not be the entirely of
+the struct, and the code shouldn't ever need to iterate?
 
-diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
-index d31260a139d4..45358124181a 100644
---- a/fs/fuse/acl.c
-+++ b/fs/fuse/acl.c
-@@ -71,6 +71,7 @@ int fuse_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
- 		return -EINVAL;
- 
- 	if (acl) {
-+		unsigned extra_flags = 0;
- 		/*
- 		 * Fuse userspace is responsible for updating access
- 		 * permissions in the inode, if needed. fuse_setxattr
-@@ -94,7 +95,11 @@ int fuse_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
- 			return ret;
- 		}
- 
--		ret = fuse_setxattr(inode, name, value, size, 0, 0);
-+		if (fc->setxattr_v2 &&
-+		    posix_acl_mode_clear_sgid(&init_user_ns, inode))
-+			extra_flags |= FUSE_SETXATTR_ACL_KILL_SGID;
-+
-+		ret = fuse_setxattr(inode, name, value, size, 0, extra_flags);
- 		kfree(value);
- 	} else {
- 		ret = fuse_removexattr(inode, name);
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 1bb555c1c117..08c11a7beaa7 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -180,6 +180,7 @@
-  *  - add FUSE_HANDLE_KILLPRIV_V2, FUSE_WRITE_KILL_SUIDGID, FATTR_KILL_SUIDGID
-  *  - add FUSE_OPEN_KILL_SUIDGID
-  *  - add FUSE_SETXATTR_V2
-+ *  - add FUSE_SETXATTR_ACL_KILL_SGID
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -454,6 +455,12 @@ struct fuse_file_lock {
-  */
- #define FUSE_OPEN_KILL_SUIDGID	(1 << 0)
- 
-+/**
-+ * setxattr flags
-+ * FUSE_SETXATTR_ACL_KILL_SGID: Clear SGID when system.posix_acl_access is set
-+ */
-+#define FUSE_SETXATTR_ACL_KILL_SGID	(1 << 0)
-+
- enum fuse_opcode {
- 	FUSE_LOOKUP		= 1,
- 	FUSE_FORGET		= 2,  /* no reply */
--- 
-2.25.4
+Also I see references to the man-page, but honestly, that's not how
+the kernel UAPI should be defined ("just read the man-page"), plus I
+refuse to live in the 70's, and consider troff to be an atrocious
+format.
 
+So make the UAPI explanation for this horror be in a legible format
+that is actually part of the kernel so that I can read what the intent
+is, instead of having to decode hieroglypics.
+
+            Linus
