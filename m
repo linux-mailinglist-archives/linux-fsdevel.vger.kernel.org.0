@@ -2,94 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F37BE3425B7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 20:06:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7724B3425A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 20:03:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230096AbhCSTGB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Mar 2021 15:06:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58708 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229956AbhCSTFi (ORCPT
+        id S230379AbhCSTDW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Mar 2021 15:03:22 -0400
+Received: from smtp-8fad.mail.infomaniak.ch ([83.166.143.173]:35767 "EHLO
+        smtp-8fad.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229990AbhCSTDM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Mar 2021 15:05:38 -0400
-X-Greylist: delayed 4289 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 19 Mar 2021 12:05:38 PDT
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EF8AC06174A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 12:05:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Type:MIME-Version:
-        References:Message-ID:In-Reply-To:Subject:cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=0ey7YfbgzAR3jH196JzXqYrJSyCm8QIKuZOJc+hwz/U=; b=VS+VfScgyEfNFcvWHbSF1a17CT
-        X+62m9+nHK+9BFu8/Y//fM6aPmO44pEqXjTHBSHyz1gdDXweRMbKE0c+rjEsbWlIvGs8kuBWNfOIY
-        zCYyCgKD8BdprZ/MUXiy5g13IGdE6eNsZp/L6WLrj8OaEjLS0C2OBeu0imIpTsBGN2PM5zWYcq6wr
-        UQ04FjlT/rck1cCCMyydRlB/GcZBb2Gt8iHFuqoPRRpU+eCviJ+UjbEQTpbAsJ2I1EWTDfRsCiqOv
-        nHdTwwUB6hTrPv1n3SneQh0fqhS2cosL8biwxlQ5Tqv2kdyMMzuZLlicgZ0DTdwDXl/PdbxO8Ypjj
-        IqFIMBTQ==;
-Received: from rdunlap (helo=localhost)
-        by bombadil.infradead.org with local-esmtp (Exim 4.94 #2 (Red Hat Linux))
-        id 1lNJK1-001R5X-VI; Fri, 19 Mar 2021 17:54:07 +0000
-Date:   Fri, 19 Mar 2021 10:54:05 -0700 (PDT)
-From:   Randy Dunlap <rdunlap@bombadil.infradead.org>
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
-cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/inode.c: Fix a rudimentary typo
-In-Reply-To: <20210319005342.23795-1-unixbhaskar@gmail.com>
-Message-ID: <b6e29afe-96c2-1016-8a2-40baa542d92@bombadil.infradead.org>
-References: <20210319005342.23795-1-unixbhaskar@gmail.com>
+        Fri, 19 Mar 2021 15:03:12 -0400
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F2Cvy58JSzMqrNj;
+        Fri, 19 Mar 2021 20:03:10 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4F2Cvt0cSqzlh8T3;
+        Fri, 19 Mar 2021 20:03:06 +0100 (CET)
+Subject: Re: [PATCH v30 02/12] landlock: Add ruleset and domain management
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20210316204252.427806-1-mic@digikod.net>
+ <20210316204252.427806-3-mic@digikod.net> <202103191114.C87C5E2B69@keescook>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <acda4be1-4076-a31d-fcfd-27764dd598c8@digikod.net>
+Date:   Fri, 19 Mar 2021 20:03:22 +0100
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-Sender: Randy Dunlap <rdunlap@infradead.org>
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20210319_105406_026685_1B21D747 
-X-CRM114-Status: GOOD (  12.58  )
-X-Spam-Score: -0.0 (/)
-X-Spam-Report: Spam detection software, running on the system "bombadil.infradead.org",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- Content preview:  On Fri, 19 Mar 2021, Bhaskar Chowdhury wrote: > s/funtion/function/
-    > > Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com> Acked-by: Randy
-    Dunlap <rdunlap@infradead.org> 
- Content analysis details:   (-0.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -0.0 NO_RELAYS              Informational: message was not relayed via SMTP
+In-Reply-To: <202103191114.C87C5E2B69@keescook>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+On 19/03/2021 19:40, Kees Cook wrote:
+> On Tue, Mar 16, 2021 at 09:42:42PM +0100, Mickaël Salaün wrote:
+>> From: Mickaël Salaün <mic@linux.microsoft.com>
+>>
+>> A Landlock ruleset is mainly a red-black tree with Landlock rules as
+>> nodes.  This enables quick update and lookup to match a requested
+>> access, e.g. to a file.  A ruleset is usable through a dedicated file
+>> descriptor (cf. following commit implementing syscalls) which enables a
+>> process to create and populate a ruleset with new rules.
+>>
+>> A domain is a ruleset tied to a set of processes.  This group of rules
+>> defines the security policy enforced on these processes and their future
+>> children.  A domain can transition to a new domain which is the
+>> intersection of all its constraints and those of a ruleset provided by
+>> the current process.  This modification only impact the current process.
+>> This means that a process can only gain more constraints (i.e. lose
+>> accesses) over time.
+>>
+>> Cc: James Morris <jmorris@namei.org>
+>> Cc: Jann Horn <jannh@google.com>
+>> Cc: Kees Cook <keescook@chromium.org>
+>> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+>> Acked-by: Serge Hallyn <serge@hallyn.com>
+>> Link: https://lore.kernel.org/r/20210316204252.427806-3-mic@digikod.net
+> 
+> (Aside: you appear to be self-adding your Link: tags -- AIUI, this is
+> normally done by whoever pulls your series. I've only seen Link: tags
+> added when needing to refer to something else not included in the
+> series.)
 
-On Fri, 19 Mar 2021, Bhaskar Chowdhury wrote:
+It is an insurance to not lose history. :)
 
-> s/funtion/function/
->
-> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+> 
+>> [...]
+>> +static void put_rule(struct landlock_rule *const rule)
+>> +{
+>> +	might_sleep();
+>> +	if (!rule)
+>> +		return;
+>> +	landlock_put_object(rule->object);
+>> +	kfree(rule);
+>> +}
+> 
+> I'd expect this to be named "release" rather than "put" since it doesn't
+> do any lifetime reference counting.
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+It does decrement rule->object->usage .
 
+> 
+>> +static void build_check_ruleset(void)
+>> +{
+>> +	const struct landlock_ruleset ruleset = {
+>> +		.num_rules = ~0,
+>> +		.num_layers = ~0,
+>> +	};
+>> +
+>> +	BUILD_BUG_ON(ruleset.num_rules < LANDLOCK_MAX_NUM_RULES);
+>> +	BUILD_BUG_ON(ruleset.num_layers < LANDLOCK_MAX_NUM_LAYERS);
+>> +}
+> 
+> This is checking that the largest possible stored value is correctly
+> within the LANDLOCK_MAX_* macro value?
 
-> ---
-> fs/inode.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/inode.c b/fs/inode.c
-> index a047ab306f9a..38c2e6b58dc4 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1423,7 +1423,7 @@ EXPORT_SYMBOL(ilookup);
->  * function must never block --- find_inode() can block in
->  * __wait_on_freeing_inode() --- or when the caller can not increment
->  * the reference count because the resulting iput() might cause an
-> - * inode eviction.  The tradeoff is that the @match funtion must be
-> + * inode eviction.  The tradeoff is that the @match function must be
->  * very carefully implemented.
->  */
-> struct inode *find_inode_nowait(struct super_block *sb,
-> --
-> 2.26.2
->
->
+Yes, there is builtin checks for all Landlock limits.
+
+> 
+>> [...]
+> 
+> The locking all looks right, and given your test coverage and syzkaller
+> work, it's hard for me to think of ways to prove it out any better. :)
+
+Thanks!
+
+> 
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> 
+> 
