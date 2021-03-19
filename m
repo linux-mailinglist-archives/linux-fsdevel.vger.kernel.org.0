@@ -2,79 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 37F0F3417E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 10:01:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F05DD3417E7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 10:03:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbhCSJBV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Mar 2021 05:01:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51032 "EHLO mx2.suse.de"
+        id S229841AbhCSJC7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Mar 2021 05:02:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52422 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229818AbhCSJBS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Mar 2021 05:01:18 -0400
+        id S229644AbhCSJC5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 19 Mar 2021 05:02:57 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B027AAB8C;
-        Fri, 19 Mar 2021 09:01:17 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 9c7ac99a;
-        Fri, 19 Mar 2021 09:02:33 +0000 (UTC)
-Date:   Fri, 19 Mar 2021 09:02:33 +0000
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>
-Subject: Re: fuse: kernel BUG at mm/truncate.c:763!
-Message-ID: <YFRoqYYqATd6R9GF@suse.de>
-References: <CAJfpegu+T-4m=OLMorJrZyWaDNff1eviKUaE2gVuMmLG+g9JVQ@mail.gmail.com>
- <YEtc54pWLLjb6SgL@suse.de>
- <20210312131123.GZ3479805@casper.infradead.org>
- <YE8tQc66C6MW7EqY@suse.de>
- <20210315110659.GT2577561@casper.infradead.org>
- <YFMct4z1gEa8tXkh@suse.de>
- <CAJfpeguX7NrdTH4JLbCtkQ1u7TFvUh+8s7RmwB_wmuPHJsQyiA@mail.gmail.com>
- <20210318110302.nxddmrhmgmlw4adq@black.fi.intel.com>
- <YFM5mEZ8dZBhZWLI@suse.de>
- <20210318115543.GM3420@casper.infradead.org>
+        by mx2.suse.de (Postfix) with ESMTP id D1383AC1F;
+        Fri, 19 Mar 2021 09:02:55 +0000 (UTC)
+Date:   Fri, 19 Mar 2021 09:02:52 +0000
+From:   Mel Gorman <mgorman@suse.de>
+To:     Josh Don <joshdon@google.com>
+Cc:     Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        David Rientjes <rientjes@google.com>,
+        Oleg Rombakh <olegrom@google.com>, Paul Turner <pjt@google.com>
+Subject: Re: [PATCH] sched: Warn on long periods of pending need_resched
+Message-ID: <20210319090252.GF15768@suse.de>
+References: <20210317045949.1584952-1-joshdon@google.com>
+ <20210317082550.GA3881262@gmail.com>
+ <CABk29NvGx6KQa_+RU-6xmL6mUeBrqZjH1twOw93SCVD-NZkbMQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210318115543.GM3420@casper.infradead.org>
+In-Reply-To: <CABk29NvGx6KQa_+RU-6xmL6mUeBrqZjH1twOw93SCVD-NZkbMQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 18, 2021 at 11:55:43AM +0000, Matthew Wilcox wrote:
-> On Thu, Mar 18, 2021 at 11:29:28AM +0000, Luis Henriques wrote:
-> > On Thu, Mar 18, 2021 at 02:03:02PM +0300, Kirill A. Shutemov wrote:
-> > > On Thu, Mar 18, 2021 at 11:59:59AM +0100, Miklos Szeredi wrote:
-> > > > > [16247.536348] page:00000000dfe36ab1 refcount:673 mapcount:0 mapping:00000000f982a7f8 index:0x1400 pfn:0x4c65e00
-> > > > > [16247.536359] head:00000000dfe36ab1 order:9 compound_mapcount:0 compound_pincount:0
-> > > > 
-> > > > This is a compound page alright.   Have no idea how it got into fuse's
-> > > > pagecache.
-> > > 
-> > > 
-> > > Luis, do you have CONFIG_READ_ONLY_THP_FOR_FS enabled?
-> > 
-> > Yes, it looks like Tumbleweed kernels have that config option enabled by
-> > default.  And it this feature was introduced in 5.4 (the bug doesn't seem
-> > to be reproducible in 5.3).
+On Wed, Mar 17, 2021 at 05:06:31PM -0700, Josh Don wrote:
+> On Wed, Mar 17, 2021 at 1:25 AM Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > * Josh Don <joshdon@google.com> wrote:
+> >
+> > > If resched_latency_warn_ms is set to the default value, only one warning
+> > > will be produced per boot.
+> >
+> > Looks like a value hack, should probably be a separate flag,
+> > defaulting to warn-once.
 > 
-> Can you try adding this patch?
+> Agreed, done.
 > 
-> https://git.infradead.org/users/willy/pagecache.git/commitdiff/369a4fcd78369b7a026bdef465af9669bde98ef4
+> > > This warning only exists under CONFIG_SCHED_DEBUG. If it goes off, it is
+> > > likely that there is a missing cond_resched() somewhere.
+> >
+> > CONFIG_SCHED_DEBUG is default-y, so most distros have it enabled.
+> 
+> To avoid log spam for people who don't care, I was considering having
+> the feature default disabled. Perhaps a better alternative is to only
+> show a single line warning and not print the full backtrace by
+> default. Does the latter sound good to you?
+> 
 
-Good news, looks like this patch fixes the issue[1].  Thanks a lot
-everyone.  Is this already queued somewhere for 5.12?  Also, it would be
-nice to have it Cc'ed for stable kernels >= 5.4.
+Default disabling and hidden behind a static branch would be useful
+because the majority of users are not going to know what to do about
+a need_resched warning and the sysctl is not documented. As Ingo said,
+SCHED_DEBUG is enabled by default a lot. While I'm not sure what motivates
+most distributions, I have found it useful to display topology information
+on boot and in rare cases, for the enabling/disabling of sched features.
+Hence, sched debug features should avoid adding too much overhead where
+possible.
 
-[1] https://bugzilla.suse.com/show_bug.cgi?id=1182929#c24
+The static branch would mean splitting the very large inline functions
+adding by the patch. The inline section should do a static check only and
+do the main work in a function in kernel/sched/debug.c so it has minimal
+overhead if unused.
 
-Cheers,
---
-Luís
+-- 
+Mel Gorman
+SUSE Labs
