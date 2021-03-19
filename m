@@ -2,59 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 802BA341C12
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 13:17:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DD1F341D02
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 13:37:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229979AbhCSMQ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Mar 2021 08:16:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54784 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229962AbhCSMQf (ORCPT
+        id S230024AbhCSMgw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Mar 2021 08:36:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37948 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229805AbhCSMge (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Mar 2021 08:16:35 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78F46C06175F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 05:16:35 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id w8so4567218pjf.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 05:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=affLRntRZcInzHgZqXHL31AIW6roXMHiPl+j3xoyydw=;
-        b=Wwr3uymKFr1n+YOBEyGZs0UOSJMaYAZ56KTR7KZVL7k18g5qAOBt+YgiJoL8G92Uv7
-         t5ZSkP2F51JdFVKcgvsGhdWRS7lBXt+T83x/JmFbldKB7GuiA6oVMRQVllzP+A/nlfkY
-         6OcwpsxZjmDLyHA/jJjRsthgxYbLCRaPfUTWLfYy0qtmxHxEYx3++3yEzCHb5ZFIPP1Y
-         FpwnGU/AiT/7tJroR5E+LgvNyPu96pkAcyTaIqSrz1CHc4HSrezFYQysVJOjCSLEPuTm
-         n4wgQWBO10IbmJMFeSAGIs16rA6lAm7o93XYLQCZp76IUd9q9ZtS/iK9+4fEbZan6bVK
-         WWEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=affLRntRZcInzHgZqXHL31AIW6roXMHiPl+j3xoyydw=;
-        b=QgFiZSWvQ1U7y8WZRxanXDP06l2NEbByrH5A+EAVthIDDWPkXFoefDVHZwzA5AP3oI
-         YRRKUQdx8C1uDXJhh5cKiz0D2OHJzRpT9EF2UzB0vdtW5smY8vjPUyUYJYbkcGS5gYFv
-         zrgG0jjIUscNz6KAHs0zi9CGgONt3xWrf/wyHekiLogktWShz1uHZ4tCPDBTNkdH57oE
-         9oyNM3FbVxBSs1XCq/n3LVE3sESYt6T/BaIN7idBgy62kaLnoY+EcVmnaxUS2rO9Vx1j
-         OmgPu7NyFbMoPn2Bnnfd+A6XsqUg1gIKkivJv9w/jrxNuchBFdi6mox8Tg5JVtxO+Wd2
-         UYyg==
-X-Gm-Message-State: AOAM531DcEfxOj9kjK1Fw5PM0j5CmMI49ujP3ZJvTIoGeAA8Qd8e9tyU
-        avdSupM5M6LMf6KXv/kxbpzqGtsu4/Wv/amrzQHrag==
-X-Google-Smtp-Source: ABdhPJwrqbdyuQfn4t1x4h3FwSP0uWjg3FdAAnwpfMkicRuHl1UB8RVx3Ukwq3U6YKkcOX2CFsmx8BMA4NisJmIyh6E=
-X-Received: by 2002:a17:90a:d991:: with SMTP id d17mr9339151pjv.229.1616156194913;
- Fri, 19 Mar 2021 05:16:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210315092015.35396-1-songmuchun@bytedance.com>
- <20210315092015.35396-8-songmuchun@bytedance.com> <20210319085948.GA5695@linux>
-In-Reply-To: <20210319085948.GA5695@linux>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Fri, 19 Mar 2021 20:15:58 +0800
-Message-ID: <CAMZfGtXAgcJQp59AVuieqLT+1Qb3RGQmFK-SGNZH-T6K83Y=HQ@mail.gmail.com>
+        Fri, 19 Mar 2021 08:36:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616157393;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YTBdIvYVKxivTQZ4/xumg0qxwF0ioqcJs62QwTk4pVg=;
+        b=dA28z0i7DM9ag+n4WnV+BjqsOqeEUTV9jAEoO98N+wIeiZDFW67NminjWOV3xNMuBNxtun
+        MP+CpULci1NLQKkKImlpWNZxrKP/IlKIsSXof6GyI5lWsALKjL0hglgHnS1r7x16kpr+rM
+        t8DOKCrS0Hyet24zXwkZHe7vRbmGycg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-319-pJqJ1ligM1iGru6-v09lpA-1; Fri, 19 Mar 2021 08:36:30 -0400
+X-MC-Unique: pJqJ1ligM1iGru6-v09lpA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5A944107ACCA;
+        Fri, 19 Mar 2021 12:36:26 +0000 (UTC)
+Received: from [10.36.112.11] (ovpn-112-11.ams2.redhat.com [10.36.112.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7F4095DAA5;
+        Fri, 19 Mar 2021 12:36:19 +0000 (UTC)
 Subject: Re: [External] Re: [PATCH v19 7/8] mm: hugetlb: add a kernel
  parameter hugetlb_free_vmemmap
-To:     Oscar Salvador <osalvador@suse.de>,
-        David Hildenbrand <david@redhat.com>
+To:     Muchun Song <songmuchun@bytedance.com>,
+        Oscar Salvador <osalvador@suse.de>
 Cc:     Jonathan Corbet <corbet@lwn.net>,
         Mike Kravetz <mike.kravetz@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -82,69 +65,99 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         Miaohe Lin <linmiaohe@huawei.com>,
         Chen Huang <chenhuang5@huawei.com>,
         Bodeddula Balasubramaniam <bodeddub@amazon.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20210315092015.35396-1-songmuchun@bytedance.com>
+ <20210315092015.35396-8-songmuchun@bytedance.com>
+ <20210319085948.GA5695@linux>
+ <CAMZfGtXAgcJQp59AVuieqLT+1Qb3RGQmFK-SGNZH-T6K83Y=HQ@mail.gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <e9af16bb-2296-c9fb-976f-f99472490940@redhat.com>
+Date:   Fri, 19 Mar 2021 13:36:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAMZfGtXAgcJQp59AVuieqLT+1Qb3RGQmFK-SGNZH-T6K83Y=HQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 19, 2021 at 4:59 PM Oscar Salvador <osalvador@suse.de> wrote:
->
-> On Mon, Mar 15, 2021 at 05:20:14PM +0800, Muchun Song wrote:
-> > --- a/arch/x86/mm/init_64.c
-> > +++ b/arch/x86/mm/init_64.c
-> > @@ -34,6 +34,7 @@
-> >  #include <linux/gfp.h>
-> >  #include <linux/kcore.h>
-> >  #include <linux/bootmem_info.h>
-> > +#include <linux/hugetlb.h>
-> >
-> >  #include <asm/processor.h>
-> >  #include <asm/bios_ebda.h>
-> > @@ -1557,7 +1558,8 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
-> >  {
-> >       int err;
-> >
-> > -     if (end - start < PAGES_PER_SECTION * sizeof(struct page))
-> > +     if ((is_hugetlb_free_vmemmap_enabled()  && !altmap) ||
-> > +         end - start < PAGES_PER_SECTION * sizeof(struct page))
-> >               err = vmemmap_populate_basepages(start, end, node, NULL);
-> >       else if (boot_cpu_has(X86_FEATURE_PSE))
-> >               err = vmemmap_populate_hugepages(start, end, node, altmap);
->
-> I've been thinking about this some more.
->
-> Assume you opt-in the hugetlb-vmemmap feature, and assume you pass a valid altmap
-> to vmemmap_populate.
-> This will lead to use populating the vmemmap array with hugepages.
+On 19.03.21 13:15, Muchun Song wrote:
+> On Fri, Mar 19, 2021 at 4:59 PM Oscar Salvador <osalvador@suse.de> wrote:
+>>
+>> On Mon, Mar 15, 2021 at 05:20:14PM +0800, Muchun Song wrote:
+>>> --- a/arch/x86/mm/init_64.c
+>>> +++ b/arch/x86/mm/init_64.c
+>>> @@ -34,6 +34,7 @@
+>>>   #include <linux/gfp.h>
+>>>   #include <linux/kcore.h>
+>>>   #include <linux/bootmem_info.h>
+>>> +#include <linux/hugetlb.h>
+>>>
+>>>   #include <asm/processor.h>
+>>>   #include <asm/bios_ebda.h>
+>>> @@ -1557,7 +1558,8 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
+>>>   {
+>>>        int err;
+>>>
+>>> -     if (end - start < PAGES_PER_SECTION * sizeof(struct page))
+>>> +     if ((is_hugetlb_free_vmemmap_enabled()  && !altmap) ||
+>>> +         end - start < PAGES_PER_SECTION * sizeof(struct page))
+>>>                err = vmemmap_populate_basepages(start, end, node, NULL);
+>>>        else if (boot_cpu_has(X86_FEATURE_PSE))
+>>>                err = vmemmap_populate_hugepages(start, end, node, altmap);
+>>
+>> I've been thinking about this some more.
+>>
+>> Assume you opt-in the hugetlb-vmemmap feature, and assume you pass a valid altmap
+>> to vmemmap_populate.
+>> This will lead to use populating the vmemmap array with hugepages.
+> 
+> Right.
+> 
+>>
+>> What if then, a HugeTLB gets allocated and falls within that memory range (backed
+>> by hugetpages)?
+> 
+> I am not sure whether we can allocate the HugeTLB pages from there.
+> Will only device memory pass a valid altmap parameter to
+> vmemmap_populate()? If yes, can we allocate HugeTLB pages from
+> device memory? Sorry, I am not an expert on this.
 
-Right.
+I think, right now, yes. System RAM that's applicable for HugePages 
+never uses an altmap. But Oscar's patch will change that, maybe before 
+your series might get included from what I've been reading. [1]
 
->
-> What if then, a HugeTLB gets allocated and falls within that memory range (backed
-> by hugetpages)?
+[1] https://lkml.kernel.org/r/20210319092635.6214-1-osalvador@suse.de
 
-I am not sure whether we can allocate the HugeTLB pages from there.
-Will only device memory pass a valid altmap parameter to
-vmemmap_populate()? If yes, can we allocate HugeTLB pages from
-device memory? Sorry, I am not an expert on this.
+> 
+> 
+>> AFAIK, this will get us in trouble as currently the code can only operate on memory
+>> backed by PAGE_SIZE pages, right?
+>>
+>> I cannot remember, but I do not think nothing prevents that from happening?
+>> Am I missing anything?
+> 
+> Maybe David H is more familiar with this.
+> 
+> Hi David,
+> 
+> Do you have some suggestions on this?
 
+There has to be some way to identify whether we can optimize specific 
+vmemmap pages or should just leave them alone. altmap vs. !altmap.
 
-> AFAIK, this will get us in trouble as currently the code can only operate on memory
-> backed by PAGE_SIZE pages, right?
->
-> I cannot remember, but I do not think nothing prevents that from happening?
-> Am I missing anything?
+Unfortunately, there is no easy way to detect that - e.g., 
+PageReserved() applies also to boot memory.
 
-Maybe David H is more familiar with this.
+We could go back to setting a special PageType for these vmemmap pages, 
+indicating "this is a page allocated from an altmap, don't touch it".
 
-Hi David,
+-- 
+Thanks,
 
-Do you have some suggestions on this?
+David / dhildenb
 
-Thanks.
-
-
->
-> --
-> Oscar Salvador
-> SUSE L3
