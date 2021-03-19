@@ -2,67 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C1E341215
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 02:26:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A802A34125D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 02:53:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231589AbhCSB0R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Mar 2021 21:26:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56196 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230507AbhCSBZ7 (ORCPT
+        id S229680AbhCSBw4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Mar 2021 21:52:56 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:41437 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230389AbhCSBws (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Mar 2021 21:25:59 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23ED5C06174A;
-        Thu, 18 Mar 2021 18:25:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=epBGpvSKb5BDsLBUPy9iK8A8YY2xiMLqJ0JDHh+J84k=; b=XW4/4ZnjAQWR2NFfKClgD4ZoY2
-        PJuV2K+Y/67OJuM7CtWJFtFESWrV+JySdZFUEhNiM9v3CB7NbORoUpKrqC0U+vn56u+Kkwbt9nkwh
-        aizAHFmrE6htQAFPOc6PR7x1V7yjZ0yTkiZwxSfihm42sLR1saFEXmCGIYyUimzLx39yz8BPsQfmC
-        VUNpuRAguPJDAeISfRleO2cZ1mJmd3Wa999ryMFw40fMOFlPnIeo+TmhCh6NiNw+3u/sNghoUfDDM
-        FeaVq4f+rABkPUkse9K1LezlIo9yz9YMn7dXgruKU6kv20P4Vamt9MmVcSFhHl2hEg6GeTQD4vGgo
-        aTyR5bQw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lN3tH-003k0x-JB; Fri, 19 Mar 2021 01:25:30 +0000
-Date:   Fri, 19 Mar 2021 01:25:27 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Balbir Singh <bsingharora@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 01/25] mm: Introduce struct folio
-Message-ID: <20210319012527.GX3420@casper.infradead.org>
-References: <20210305041901.2396498-1-willy@infradead.org>
- <20210305041901.2396498-2-willy@infradead.org>
- <20210318235645.GB3346@balbir-desktop>
+        Thu, 18 Mar 2021 21:52:48 -0400
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AARB8MK8Ih9lumEGjpUVuk+A4I+orLtY04lQ7?=
+ =?us-ascii?q?vn1ZYxpTb8CeioSSjO0WvCWE7Ao5dVMBvZS7OKeGSW7B7pId2+QsFJqrQQWOgg?=
+ =?us-ascii?q?WVBa5v4YboyzfjXw3Sn9Q26Y5OaK57YeeQMXFfreLXpDa1CMwhxt7vytHMuc77?=
+ =?us-ascii?q?w212RQ9nL4FMhj0JaTqzKUF9SAlYCZdRLvP1ifZvnSaqengcc62Adxs4dtXEzu?=
+ =?us-ascii?q?eqqLvWJTYCBzMCrDKFlC6U7tfBeCSw71MzVCxuzN4ZnVT4rw=3D=3D?=
+X-IronPort-AV: E=Sophos;i="5.81,259,1610380800"; 
+   d="scan'208";a="105876646"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 19 Mar 2021 09:52:46 +0800
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
+        by cn.fujitsu.com (Postfix) with ESMTP id 122074CEB2A3;
+        Fri, 19 Mar 2021 09:52:46 +0800 (CST)
+Received: from G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) by
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Fri, 19 Mar 2021 09:52:46 +0800
+Received: from G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) by
+ G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Fri, 19 Mar 2021 09:52:42 +0800
+Received: from irides.mr.mr.mr (10.167.225.141) by
+ G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.2 via Frontend Transport; Fri, 19 Mar 2021 09:52:41 +0800
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <linux-nvdimm@lists.01.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
+        <willy@infradead.org>, <jack@suse.cz>, <viro@zeniv.linux.org.uk>,
+        <linux-btrfs@vger.kernel.org>, <ocfs2-devel@oss.oracle.com>,
+        <david@fromorbit.com>, <hch@lst.de>, <rgoldwyn@suse.de>,
+        Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+Subject: [PATCH v3 00/10] fsdax,xfs: Add reflink&dedupe support for fsdax
+Date:   Fri, 19 Mar 2021 09:52:27 +0800
+Message-ID: <20210319015237.993880-1-ruansy.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210318235645.GB3346@balbir-desktop>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: 122074CEB2A3.A4D15
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 19, 2021 at 10:56:45AM +1100, Balbir Singh wrote:
-> On Fri, Mar 05, 2021 at 04:18:37AM +0000, Matthew Wilcox (Oracle) wrote:
-> > A struct folio refers to an entire (possibly compound) page.  A function
-> > which takes a struct folio argument declares that it will operate on the
-> > entire compound page, not just PAGE_SIZE bytes.  In return, the caller
-> > guarantees that the pointer it is passing does not point to a tail page.
-> >
-> 
-> Is this a part of a larger use case or general cleanup/refactor where
-> the split between page and folio simplify programming?
+From: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
 
-The goal here is to manage memory in larger chunks.  Pages are now too
-small for just about every workload.  Even compiling the kernel sees a 7%
-performance improvement just by doing readahead using relatively small
-THPs (16k-256k).  You can see that work here:
-https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/master
+This patchset is attempt to add CoW support for fsdax, and take XFS,
+which has both reflink and fsdax feature, as an example.
 
-I think Kirill, Hugh and others have done a fantastic job stretching
-the page struct to work in shmem, but we really need a different type
-to avoid people writing code that _looks_ right but is actually buggy.
-So I'm starting again, this time with the folio metaphor.
+Changes from V2:
+ - Fix the mistake in iomap_apply2() and dax_dedupe_file_range_compare()
+ - Add CoW judgement in dax_iomap_zero()
+ - Fix other code style problems and mistakes
+
+Changes from V1:
+ - Factor some helper functions to simplify dax fault code
+ - Introduce iomap_apply2() for dax_dedupe_file_range_compare()
+ - Fix mistakes and other problems
+ - Rebased on v5.11
+
+One of the key mechanism need to be implemented in fsdax is CoW.  Copy
+the data from srcmap before we actually write data to the destance
+iomap.  And we just copy range in which data won't be changed.
+
+Another mechanism is range comparison.  In page cache case, readpage()
+is used to load data on disk to page cache in order to be able to
+compare data.  In fsdax case, readpage() does not work.  So, we need
+another compare data with direct access support.
+
+With the two mechanism implemented in fsdax, we are able to make reflink
+and fsdax work together in XFS.
+
+
+Some of the patches are picked up from Goldwyn's patchset.  I made some
+changes to adapt to this patchset.
+
+(Rebased on v5.11)
+==
+
+Shiyang Ruan (10):
+  fsdax: Factor helpers to simplify dax fault code
+  fsdax: Factor helper: dax_fault_actor()
+  fsdax: Output address in dax_iomap_pfn() and rename it
+  fsdax: Introduce dax_iomap_cow_copy()
+  fsdax: Replace mmap entry in case of CoW
+  fsdax: Add dax_iomap_cow_copy() for dax_iomap_zero
+  iomap: Introduce iomap_apply2() for operations on two files
+  fsdax: Dedup file range to use a compare function
+  fs/xfs: Handle CoW for fsdax write() path
+  fs/xfs: Add dedupe support for fsdax
+
+ fs/dax.c               | 596 ++++++++++++++++++++++++++---------------
+ fs/iomap/apply.c       |  56 ++++
+ fs/iomap/buffered-io.c |   2 +-
+ fs/remap_range.c       |  45 +++-
+ fs/xfs/xfs_bmap_util.c |   3 +-
+ fs/xfs/xfs_file.c      |  29 +-
+ fs/xfs/xfs_inode.c     |   8 +-
+ fs/xfs/xfs_inode.h     |   1 +
+ fs/xfs/xfs_iomap.c     |  58 +++-
+ fs/xfs/xfs_iomap.h     |   4 +
+ fs/xfs/xfs_iops.c      |   7 +-
+ fs/xfs/xfs_reflink.c   |  17 +-
+ include/linux/dax.h    |   7 +-
+ include/linux/fs.h     |  15 +-
+ include/linux/iomap.h  |   7 +-
+ 15 files changed, 602 insertions(+), 253 deletions(-)
+
+--
+2.30.1
+
+
+
