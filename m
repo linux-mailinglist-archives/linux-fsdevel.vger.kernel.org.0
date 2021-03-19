@@ -2,87 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 179583417DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 10:00:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37F0F3417E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 10:01:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbhCSJAR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Mar 2021 05:00:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49946 "EHLO mx2.suse.de"
+        id S229806AbhCSJBV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Mar 2021 05:01:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51032 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229725AbhCSJAA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Mar 2021 05:00:00 -0400
+        id S229818AbhCSJBS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 19 Mar 2021 05:01:18 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 63818AC1F;
-        Fri, 19 Mar 2021 08:59:58 +0000 (UTC)
-Date:   Fri, 19 Mar 2021 09:59:53 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        mhocko@suse.com, song.bao.hua@hisilicon.com, david@redhat.com,
-        naoya.horiguchi@nec.com, joao.m.martins@oracle.com,
-        duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Miaohe Lin <linmiaohe@huawei.com>,
-        Chen Huang <chenhuang5@huawei.com>,
-        Bodeddula Balasubramaniam <bodeddub@amazon.com>
-Subject: Re: [PATCH v19 7/8] mm: hugetlb: add a kernel parameter
- hugetlb_free_vmemmap
-Message-ID: <20210319085948.GA5695@linux>
-References: <20210315092015.35396-1-songmuchun@bytedance.com>
- <20210315092015.35396-8-songmuchun@bytedance.com>
+        by mx2.suse.de (Postfix) with ESMTP id B027AAB8C;
+        Fri, 19 Mar 2021 09:01:17 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 9c7ac99a;
+        Fri, 19 Mar 2021 09:02:33 +0000 (UTC)
+Date:   Fri, 19 Mar 2021 09:02:33 +0000
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>
+Subject: Re: fuse: kernel BUG at mm/truncate.c:763!
+Message-ID: <YFRoqYYqATd6R9GF@suse.de>
+References: <CAJfpegu+T-4m=OLMorJrZyWaDNff1eviKUaE2gVuMmLG+g9JVQ@mail.gmail.com>
+ <YEtc54pWLLjb6SgL@suse.de>
+ <20210312131123.GZ3479805@casper.infradead.org>
+ <YE8tQc66C6MW7EqY@suse.de>
+ <20210315110659.GT2577561@casper.infradead.org>
+ <YFMct4z1gEa8tXkh@suse.de>
+ <CAJfpeguX7NrdTH4JLbCtkQ1u7TFvUh+8s7RmwB_wmuPHJsQyiA@mail.gmail.com>
+ <20210318110302.nxddmrhmgmlw4adq@black.fi.intel.com>
+ <YFM5mEZ8dZBhZWLI@suse.de>
+ <20210318115543.GM3420@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20210315092015.35396-8-songmuchun@bytedance.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210318115543.GM3420@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 15, 2021 at 05:20:14PM +0800, Muchun Song wrote:
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -34,6 +34,7 @@
->  #include <linux/gfp.h>
->  #include <linux/kcore.h>
->  #include <linux/bootmem_info.h>
-> +#include <linux/hugetlb.h>
->  
->  #include <asm/processor.h>
->  #include <asm/bios_ebda.h>
-> @@ -1557,7 +1558,8 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
->  {
->  	int err;
->  
-> -	if (end - start < PAGES_PER_SECTION * sizeof(struct page))
-> +	if ((is_hugetlb_free_vmemmap_enabled()  && !altmap) ||
-> +	    end - start < PAGES_PER_SECTION * sizeof(struct page))
->  		err = vmemmap_populate_basepages(start, end, node, NULL);
->  	else if (boot_cpu_has(X86_FEATURE_PSE))
->  		err = vmemmap_populate_hugepages(start, end, node, altmap);
+On Thu, Mar 18, 2021 at 11:55:43AM +0000, Matthew Wilcox wrote:
+> On Thu, Mar 18, 2021 at 11:29:28AM +0000, Luis Henriques wrote:
+> > On Thu, Mar 18, 2021 at 02:03:02PM +0300, Kirill A. Shutemov wrote:
+> > > On Thu, Mar 18, 2021 at 11:59:59AM +0100, Miklos Szeredi wrote:
+> > > > > [16247.536348] page:00000000dfe36ab1 refcount:673 mapcount:0 mapping:00000000f982a7f8 index:0x1400 pfn:0x4c65e00
+> > > > > [16247.536359] head:00000000dfe36ab1 order:9 compound_mapcount:0 compound_pincount:0
+> > > > 
+> > > > This is a compound page alright.   Have no idea how it got into fuse's
+> > > > pagecache.
+> > > 
+> > > 
+> > > Luis, do you have CONFIG_READ_ONLY_THP_FOR_FS enabled?
+> > 
+> > Yes, it looks like Tumbleweed kernels have that config option enabled by
+> > default.  And it this feature was introduced in 5.4 (the bug doesn't seem
+> > to be reproducible in 5.3).
+> 
+> Can you try adding this patch?
+> 
+> https://git.infradead.org/users/willy/pagecache.git/commitdiff/369a4fcd78369b7a026bdef465af9669bde98ef4
 
-I've been thinking about this some more.
+Good news, looks like this patch fixes the issue[1].  Thanks a lot
+everyone.  Is this already queued somewhere for 5.12?  Also, it would be
+nice to have it Cc'ed for stable kernels >= 5.4.
 
-Assume you opt-in the hugetlb-vmemmap feature, and assume you pass a valid altmap
-to vmemmap_populate.
-This will lead to use populating the vmemmap array with hugepages.
+[1] https://bugzilla.suse.com/show_bug.cgi?id=1182929#c24
 
-What if then, a HugeTLB gets allocated and falls within that memory range (backed
-by hugetpages)?
-AFAIK, this will get us in trouble as currently the code can only operate on memory
-backed by PAGE_SIZE pages, right?
-
-I cannot remember, but I do not think nothing prevents that from happening?
-Am I missing anything?
-
--- 
-Oscar Salvador
-SUSE L3
+Cheers,
+--
+Luís
