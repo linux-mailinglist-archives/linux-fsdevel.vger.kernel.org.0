@@ -2,52 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68C64341279
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 02:54:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10CB234127B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 02:54:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231478AbhCSByA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Mar 2021 21:54:00 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:41511 "EHLO
+        id S233324AbhCSByD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Mar 2021 21:54:03 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:41531 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231893AbhCSBxf (ORCPT
+        with ESMTP id S233118AbhCSBxq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Mar 2021 21:53:35 -0400
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AehSLzK9zHZ1IGwalXjZuk+A4I+orLtY04lQ7?=
- =?us-ascii?q?vn1ZYxpTb8CeioSSjO0WvCWE7Ao5dVMBvZS7OKeGSW7B7pId2+QsFJqrQQWOgg?=
- =?us-ascii?q?WVBa5v4YboyzfjXw3Sn9Q26Y5OaK57YeeQMXFfreLXpDa1CMwhxt7vytHMuc77?=
- =?us-ascii?q?w212RQ9nL4FMhj0JaTqzKUF9SAlYCZdRLvP1ifZvnSaqengcc62Adxs4dtXEzu?=
- =?us-ascii?q?eqqLvWJTYCBzMCrDKFlC6U7tfBeCSw71MzVCxuzN4ZnVT4rw=3D=3D?=
+        Thu, 18 Mar 2021 21:53:46 -0400
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3A4TDbYqroIo4wHGMDj4d8rnkaV5rLeYIsi2QD?=
+ =?us-ascii?q?101hICF9WMqeisyogbAnxQb54QxhPE0ItPKhHO27QX3a/YNo+oV5B9qfdSTvpW?=
+ =?us-ascii?q?fAFu9fxKTvzzDqEyf9ss5xvJ0LT4FQE9v1ZGIase/fwC2VV+kt28OG9qfAv5a6?=
+ =?us-ascii?q?815IQRtxY69tqydVYzzrcXFefwVNCZonGJf03KMuyAaIQ2gdbciwGxA+Lor+ju?=
+ =?us-ascii?q?DM/aiHXTc2QzYj6CSryQij8aPGFXGjtSs2YndixqgD/AH+/zDE2g=3D=3D?=
 X-IronPort-AV: E=Sophos;i="5.81,259,1610380800"; 
-   d="scan'208";a="105876721"
+   d="scan'208";a="105876738"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 19 Mar 2021 09:53:32 +0800
-Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
-        by cn.fujitsu.com (Postfix) with ESMTP id F1BD94CEB2B4;
-        Fri, 19 Mar 2021 09:53:31 +0800 (CST)
+  by heian.cn.fujitsu.com with ESMTP; 19 Mar 2021 09:53:44 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id 7840A4CEB2AC;
+        Fri, 19 Mar 2021 09:53:43 +0800 (CST)
 Received: from G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) by
- G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Fri, 19 Mar 2021 09:53:21 +0800
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Fri, 19 Mar 2021 09:53:33 +0800
 Received: from irides.mr.mr.mr (10.167.225.141) by
  G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.2 via Frontend Transport; Fri, 19 Mar 2021 09:53:21 +0800
+ id 15.0.1497.2 via Frontend Transport; Fri, 19 Mar 2021 09:53:32 +0800
 From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
         <linux-nvdimm@lists.01.org>, <linux-fsdevel@vger.kernel.org>
 CC:     <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
         <willy@infradead.org>, <jack@suse.cz>, <viro@zeniv.linux.org.uk>,
         <linux-btrfs@vger.kernel.org>, <ocfs2-devel@oss.oracle.com>,
-        <david@fromorbit.com>, <hch@lst.de>, <rgoldwyn@suse.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH v3 08/10] fsdax: Dedup file range to use a compare function
-Date:   Fri, 19 Mar 2021 09:52:35 +0800
-Message-ID: <20210319015237.993880-9-ruansy.fnst@fujitsu.com>
+        <david@fromorbit.com>, <hch@lst.de>, <rgoldwyn@suse.de>
+Subject: [PATCH v3 09/10] fs/xfs: Handle CoW for fsdax write() path
+Date:   Fri, 19 Mar 2021 09:52:36 +0800
+Message-ID: <20210319015237.993880-10-ruansy.fnst@fujitsu.com>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210319015237.993880-1-ruansy.fnst@fujitsu.com>
 References: <20210319015237.993880-1-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: F1BD94CEB2B4.A5BD3
+X-yoursite-MailScanner-ID: 7840A4CEB2AC.A38B4
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
 X-Spam-Status: No
@@ -55,247 +54,202 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With dax we cannot deal with readpage() etc. So, we create a dax
-comparison funciton which is similar with
-vfs_dedupe_file_range_compare().
-And introduce dax_remap_file_range_prep() for filesystem use.
+In fsdax mode, WRITE and ZERO on a shared extent need CoW performed. After
+CoW, new allocated extents needs to be remapped to the file.  So, add an
+iomap_end for dax write ops to do the remapping work.
 
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
 ---
- fs/dax.c             | 56 ++++++++++++++++++++++++++++++++++++++++++++
- fs/remap_range.c     | 45 ++++++++++++++++++++++++++++-------
- fs/xfs/xfs_reflink.c |  9 +++++--
- include/linux/dax.h  |  4 ++++
- include/linux/fs.h   | 15 ++++++++----
- 5 files changed, 115 insertions(+), 14 deletions(-)
+ fs/xfs/xfs_bmap_util.c |  3 +--
+ fs/xfs/xfs_file.c      |  9 +++----
+ fs/xfs/xfs_iomap.c     | 58 +++++++++++++++++++++++++++++++++++++++++-
+ fs/xfs/xfs_iomap.h     |  4 +++
+ fs/xfs/xfs_iops.c      |  7 +++--
+ fs/xfs/xfs_reflink.c   |  3 +--
+ 6 files changed, 69 insertions(+), 15 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 348297b38f76..76f81f1d76ec 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1833,3 +1833,59 @@ vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
- 	return dax_insert_pfn_mkwrite(vmf, pfn, order);
- }
- EXPORT_SYMBOL_GPL(dax_finish_sync_fault);
-+
-+static loff_t dax_range_compare_actor(struct inode *ino1, loff_t pos1,
-+		struct inode *ino2, loff_t pos2, loff_t len, void *data,
-+		struct iomap *smap, struct iomap *dmap)
-+{
-+	void *saddr, *daddr;
-+	bool *same = data;
-+	int ret;
-+
-+	if (smap->type == IOMAP_HOLE && dmap->type == IOMAP_HOLE) {
-+		*same = true;
-+		return len;
-+	}
-+
-+	if (smap->type == IOMAP_HOLE || dmap->type == IOMAP_HOLE) {
-+		*same = false;
-+		return 0;
-+	}
-+
-+	ret = dax_iomap_direct_access(smap, pos1, ALIGN(pos1 + len, PAGE_SIZE),
-+				      &saddr, NULL);
-+	if (ret < 0)
-+		return -EIO;
-+
-+	ret = dax_iomap_direct_access(dmap, pos2, ALIGN(pos2 + len, PAGE_SIZE),
-+				      &daddr, NULL);
-+	if (ret < 0)
-+		return -EIO;
-+
-+	*same = !memcmp(saddr, daddr, len);
-+	return len;
-+}
-+
-+int dax_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
-+		struct inode *dest, loff_t destoff, loff_t len, bool *is_same,
-+		const struct iomap_ops *ops)
-+{
-+	int id, ret = 0;
-+
-+	id = dax_read_lock();
-+	while (len) {
-+		ret = iomap_apply2(src, srcoff, dest, destoff, len, 0, ops,
-+				   is_same, dax_range_compare_actor);
-+		if (ret < 0 || !*is_same)
-+			goto out;
-+
-+		len -= ret;
-+		srcoff += ret;
-+		destoff += ret;
-+	}
-+	ret = 0;
-+out:
-+	dax_read_unlock(id);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(dax_dedupe_file_range_compare);
-diff --git a/fs/remap_range.c b/fs/remap_range.c
-index 77dba3a49e65..9079390edaf3 100644
---- a/fs/remap_range.c
-+++ b/fs/remap_range.c
-@@ -14,6 +14,7 @@
- #include <linux/compat.h>
- #include <linux/mount.h>
- #include <linux/fs.h>
-+#include <linux/dax.h>
- #include "internal.h"
+diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+index 7371a7f7c652..809013de9915 100644
+--- a/fs/xfs/xfs_bmap_util.c
++++ b/fs/xfs/xfs_bmap_util.c
+@@ -976,8 +976,7 @@ xfs_free_file_space(
+ 		return 0;
+ 	if (offset + len > XFS_ISIZE(ip))
+ 		len = XFS_ISIZE(ip) - offset;
+-	error = iomap_zero_range(VFS_I(ip), offset, len, NULL,
+-			&xfs_buffered_write_iomap_ops);
++	error = xfs_iomap_zero_range(VFS_I(ip), offset, len, NULL);
+ 	if (error)
+ 		return error;
  
- #include <linux/uaccess.h>
-@@ -199,9 +200,9 @@ static void vfs_unlock_two_pages(struct page *page1, struct page *page2)
-  * Compare extents of two files to see if they are the same.
-  * Caller must have locked both inodes to prevent write races.
-  */
--static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
--					 struct inode *dest, loff_t destoff,
--					 loff_t len, bool *is_same)
-+int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
-+				  struct inode *dest, loff_t destoff,
-+				  loff_t len, bool *is_same)
- {
- 	loff_t src_poff;
- 	loff_t dest_poff;
-@@ -280,6 +281,7 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
- out_error:
- 	return error;
- }
-+EXPORT_SYMBOL(vfs_dedupe_file_range_compare);
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index 5b0f93f73837..1987d15eab61 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -623,11 +623,8 @@ xfs_file_dax_write(
+ 	count = iov_iter_count(from);
  
- /*
-  * Check that the two inodes are eligible for cloning, the ranges make
-@@ -289,9 +291,11 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
-  * If there's an error, then the usual negative error code is returned.
-  * Otherwise returns 0 with *len set to the request length.
-  */
--int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
--				  struct file *file_out, loff_t pos_out,
--				  loff_t *len, unsigned int remap_flags)
+ 	trace_xfs_file_dax_write(ip, count, pos);
+-	ret = dax_iomap_rw(iocb, from, &xfs_direct_write_iomap_ops);
+-	if (ret > 0 && iocb->ki_pos > i_size_read(inode)) {
+-		i_size_write(inode, iocb->ki_pos);
+-		error = xfs_setfilesize(ip, pos, ret);
+-	}
++	ret = dax_iomap_rw(iocb, from, &xfs_dax_write_iomap_ops);
++
+ out:
+ 	xfs_iunlock(ip, iolock);
+ 	if (error)
+@@ -1250,7 +1247,7 @@ __xfs_filemap_fault(
+ 
+ 		ret = dax_iomap_fault(vmf, pe_size, &pfn, NULL,
+ 				(write_fault && !vmf->cow_page) ?
+-				 &xfs_direct_write_iomap_ops :
++				 &xfs_dax_write_iomap_ops :
+ 				 &xfs_read_iomap_ops);
+ 		if (ret & VM_FAULT_NEEDDSYNC)
+ 			ret = dax_finish_sync_fault(vmf, pe_size, pfn);
+diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+index 7b9ff824e82d..0afae5dbbce1 100644
+--- a/fs/xfs/xfs_iomap.c
++++ b/fs/xfs/xfs_iomap.c
+@@ -771,7 +771,8 @@ xfs_direct_write_iomap_begin(
+ 
+ 		/* may drop and re-acquire the ilock */
+ 		error = xfs_reflink_allocate_cow(ip, &imap, &cmap, &shared,
+-				&lockmode, flags & IOMAP_DIRECT);
++				&lockmode,
++				flags & IOMAP_DIRECT || IS_DAX(inode));
+ 		if (error)
+ 			goto out_unlock;
+ 		if (shared)
+@@ -850,6 +851,38 @@ const struct iomap_ops xfs_direct_write_iomap_ops = {
+ 	.iomap_begin		= xfs_direct_write_iomap_begin,
+ };
+ 
 +static int
-+__generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
-+				struct file *file_out, loff_t pos_out,
-+				loff_t *len, unsigned int remap_flags,
-+				const struct iomap_ops *ops)
- {
- 	struct inode *inode_in = file_inode(file_in);
- 	struct inode *inode_out = file_inode(file_out);
-@@ -351,8 +355,15 @@ int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
- 	if (remap_flags & REMAP_FILE_DEDUP) {
- 		bool		is_same = false;
- 
--		ret = vfs_dedupe_file_range_compare(inode_in, pos_in,
--				inode_out, pos_out, *len, &is_same);
-+		if (!IS_DAX(inode_in) && !IS_DAX(inode_out))
-+			ret = vfs_dedupe_file_range_compare(inode_in, pos_in,
-+					inode_out, pos_out, *len, &is_same);
-+		else if (IS_DAX(inode_in) && IS_DAX(inode_out) && ops)
-+			ret = dax_dedupe_file_range_compare(inode_in, pos_in,
-+					inode_out, pos_out, *len, &is_same,
-+					ops);
-+		else
-+			return -EINVAL;
- 		if (ret)
- 			return ret;
- 		if (!is_same)
-@@ -370,6 +381,24 @@ int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
- 
- 	return ret;
- }
-+
-+int dax_remap_file_range_prep(struct file *file_in, loff_t pos_in,
-+			      struct file *file_out, loff_t pos_out,
-+			      loff_t *len, unsigned int remap_flags,
-+			      const struct iomap_ops *ops)
++xfs_dax_write_iomap_end(
++	struct inode		*inode,
++	loff_t			pos,
++	loff_t			length,
++	ssize_t			written,
++	unsigned int		flags,
++	struct iomap		*iomap)
 +{
-+	return __generic_remap_file_range_prep(file_in, pos_in, file_out,
-+					       pos_out, len, remap_flags, ops);
-+}
-+EXPORT_SYMBOL(dax_remap_file_range_prep);
++	int			error = 0;
++	xfs_inode_t		*ip = XFS_I(inode);
++	bool			cow = xfs_is_cow_inode(ip);
 +
-+int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
-+				  struct file *file_out, loff_t pos_out,
-+				  loff_t *len, unsigned int remap_flags)
-+{
-+	return __generic_remap_file_range_prep(file_in, pos_in, file_out,
-+					       pos_out, len, remap_flags, NULL);
++	if (pos + written > i_size_read(inode)) {
++		i_size_write(inode, pos + written);
++		error = xfs_setfilesize(ip, pos, written);
++		if (error && cow) {
++			xfs_reflink_cancel_cow_range(ip, pos, written, true);
++			return error;
++		}
++	}
++	if (cow)
++		error = xfs_reflink_end_cow(ip, pos, written);
++
++	return error;
 +}
- EXPORT_SYMBOL(generic_remap_file_range_prep);
++
++const struct iomap_ops xfs_dax_write_iomap_ops = {
++	.iomap_begin		= xfs_direct_write_iomap_begin,
++	.iomap_end		= xfs_dax_write_iomap_end,
++};
++
+ static int
+ xfs_buffered_write_iomap_begin(
+ 	struct inode		*inode,
+@@ -1308,3 +1341,26 @@ xfs_xattr_iomap_begin(
+ const struct iomap_ops xfs_xattr_iomap_ops = {
+ 	.iomap_begin		= xfs_xattr_iomap_begin,
+ };
++
++int
++xfs_iomap_zero_range(
++	struct inode		*inode,
++	loff_t			offset,
++	loff_t			len,
++	bool			*did_zero)
++{
++	return iomap_zero_range(inode, offset, len, did_zero,
++			IS_DAX(inode) ? &xfs_dax_write_iomap_ops :
++					&xfs_buffered_write_iomap_ops);
++}
++
++int
++xfs_iomap_truncate_page(
++	struct inode		*inode,
++	loff_t			pos,
++	bool			*did_zero)
++{
++	return iomap_truncate_page(inode, pos, did_zero,
++			IS_DAX(inode) ? &xfs_dax_write_iomap_ops :
++					&xfs_buffered_write_iomap_ops);
++}
+diff --git a/fs/xfs/xfs_iomap.h b/fs/xfs/xfs_iomap.h
+index 7d3703556d0e..8adb2bf78a5a 100644
+--- a/fs/xfs/xfs_iomap.h
++++ b/fs/xfs/xfs_iomap.h
+@@ -14,6 +14,9 @@ struct xfs_bmbt_irec;
+ int xfs_iomap_write_direct(struct xfs_inode *ip, xfs_fileoff_t offset_fsb,
+ 		xfs_fileoff_t count_fsb, struct xfs_bmbt_irec *imap);
+ int xfs_iomap_write_unwritten(struct xfs_inode *, xfs_off_t, xfs_off_t, bool);
++int xfs_iomap_zero_range(struct inode *inode, loff_t offset, loff_t len,
++		bool *did_zero);
++int xfs_iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero);
+ xfs_fileoff_t xfs_iomap_eof_align_last_fsb(struct xfs_inode *ip,
+ 		xfs_fileoff_t end_fsb);
  
- loff_t do_clone_file_range(struct file *file_in, loff_t pos_in,
+@@ -42,6 +45,7 @@ xfs_aligned_fsb_count(
+ 
+ extern const struct iomap_ops xfs_buffered_write_iomap_ops;
+ extern const struct iomap_ops xfs_direct_write_iomap_ops;
++extern const struct iomap_ops xfs_dax_write_iomap_ops;
+ extern const struct iomap_ops xfs_read_iomap_ops;
+ extern const struct iomap_ops xfs_seek_iomap_ops;
+ extern const struct iomap_ops xfs_xattr_iomap_ops;
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 67c8dc9de8aa..2281161e05c8 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -889,8 +889,8 @@ xfs_setattr_size(
+ 	 */
+ 	if (newsize > oldsize) {
+ 		trace_xfs_zero_eof(ip, oldsize, newsize - oldsize);
+-		error = iomap_zero_range(inode, oldsize, newsize - oldsize,
+-				&did_zeroing, &xfs_buffered_write_iomap_ops);
++		error = xfs_iomap_zero_range(inode, oldsize, newsize - oldsize,
++				&did_zeroing);
+ 	} else {
+ 		/*
+ 		 * iomap won't detect a dirty page over an unwritten block (or a
+@@ -902,8 +902,7 @@ xfs_setattr_size(
+ 						     newsize);
+ 		if (error)
+ 			return error;
+-		error = iomap_truncate_page(inode, newsize, &did_zeroing,
+-				&xfs_buffered_write_iomap_ops);
++		error = xfs_iomap_truncate_page(inode, newsize, &did_zeroing);
+ 	}
+ 
+ 	if (error)
 diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-index 6fa05fb78189..f5b3a3da36b7 100644
+index f5b3a3da36b7..73c556c2ff76 100644
 --- a/fs/xfs/xfs_reflink.c
 +++ b/fs/xfs/xfs_reflink.c
-@@ -1308,8 +1308,13 @@ xfs_reflink_remap_prep(
- 	if (IS_DAX(inode_in) || IS_DAX(inode_out))
- 		goto out_unlock;
+@@ -1245,8 +1245,7 @@ xfs_reflink_zero_posteof(
+ 		return 0;
  
--	ret = generic_remap_file_range_prep(file_in, pos_in, file_out, pos_out,
--			len, remap_flags);
-+	if (IS_DAX(inode_in))
-+		ret = generic_remap_file_range_prep(file_in, pos_in, file_out,
-+						    pos_out, len, remap_flags);
-+	else
-+		ret = dax_remap_file_range_prep(file_in, pos_in, file_out,
-+						pos_out, len, remap_flags,
-+						&xfs_read_iomap_ops);
- 	if (ret || *len == 0)
- 		goto out_unlock;
+ 	trace_xfs_zero_eof(ip, isize, pos - isize);
+-	return iomap_zero_range(VFS_I(ip), isize, pos - isize, NULL,
+-			&xfs_buffered_write_iomap_ops);
++	return xfs_iomap_zero_range(VFS_I(ip), isize, pos - isize, NULL);
+ }
  
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 3275e01ed33d..32e1c34349f2 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -239,6 +239,10 @@ int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
- 				      pgoff_t index);
- s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap,
- 		struct iomap *srcmap);
-+int dax_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
-+				  struct inode *dest, loff_t destoff,
-+				  loff_t len, bool *is_same,
-+				  const struct iomap_ops *ops);
- static inline bool dax_mapping(struct address_space *mapping)
- {
- 	return mapping->host && IS_DAX(mapping->host);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fd47deea7c17..2e6ec5bdf82a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -68,6 +68,7 @@ struct fsverity_info;
- struct fsverity_operations;
- struct fs_context;
- struct fs_parameter_spec;
-+struct iomap_ops;
- 
- extern void __init inode_init(void);
- extern void __init inode_init_early(void);
-@@ -1910,13 +1911,19 @@ extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_t *);
- extern ssize_t vfs_write(struct file *, const char __user *, size_t, loff_t *);
- extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
- 				   loff_t, size_t, unsigned int);
-+typedef int (*compare_range_t)(struct inode *src, loff_t srcpos,
-+			       struct inode *dest, loff_t destpos,
-+			       loff_t len, bool *is_same);
- extern ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
- 				       struct file *file_out, loff_t pos_out,
- 				       size_t len, unsigned int flags);
--extern int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
--					 struct file *file_out, loff_t pos_out,
--					 loff_t *count,
--					 unsigned int remap_flags);
-+int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
-+				  struct file *file_out, loff_t pos_out,
-+				  loff_t *count, unsigned int remap_flags);
-+int dax_remap_file_range_prep(struct file *file_in, loff_t pos_in,
-+			      struct file *file_out, loff_t pos_out,
-+			      loff_t *len, unsigned int remap_flags,
-+			      const struct iomap_ops *ops);
- extern loff_t do_clone_file_range(struct file *file_in, loff_t pos_in,
- 				  struct file *file_out, loff_t pos_out,
- 				  loff_t len, unsigned int remap_flags);
+ /*
 -- 
 2.30.1
 
