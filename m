@@ -2,86 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 02FD93411D0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 01:56:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18C1E341215
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 02:26:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232674AbhCSA4S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Mar 2021 20:56:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49794 "EHLO
+        id S231589AbhCSB0R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Mar 2021 21:26:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229657AbhCSA4E (ORCPT
+        with ESMTP id S230507AbhCSBZ7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Mar 2021 20:56:04 -0400
-Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1571C06174A;
-        Thu, 18 Mar 2021 17:56:03 -0700 (PDT)
-Received: by mail-qt1-x831.google.com with SMTP id 94so5632407qtc.0;
-        Thu, 18 Mar 2021 17:56:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3/qfLSyLd0K9YGBbsrkX6y/zxovsImFNR4VD6QZeGkI=;
-        b=RYUQcQDTiHBQersdyIlqcOM22jD3MwhlaHLHXE9hrTJE6c1kFSKKvc5Fkn4tSFXLQx
-         AUmfGyPoKIzzWzXJCgdl8Kj53WVKI4NETi5Sh4x7wB9nTcoszT6oLEI0hLi6dsfTKY0x
-         OMd5kK5zqqusQVSOqx6OOVRwkIPXVAJhv6GgI5dD5BwzbOEAIpaEDxBkGHk58YT4z2N3
-         vAyRFQss/db0CVMuCuoKJB5AO73DhZWxvUaLbilCcWgsYRds2iQ+mz5ERgmhagcRPyse
-         txoFDHFk38wF2HOT912T3+mKRXiK/pQBDqlIgkjlaSQKL2B+CGic6sP0WzTm8y+tYGED
-         M5mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3/qfLSyLd0K9YGBbsrkX6y/zxovsImFNR4VD6QZeGkI=;
-        b=rO1aX6XL2ktURYIIWwrVKB1LQ0jOwmN5Vjg5YroRWDUiC4pHxkzcDd+tgtwfLDcYZz
-         2xnld46ZbeyvAaPTgr4CFiSutw/iczSlg4x0mPE9Vr2KPkrnUL6W3N5oUk4ybqY7Jg5D
-         WmG0/zV2E5lvE0RukRr9pj/utDIM24ht7OdXE3RU2FD2HQmyWnJT/2im2qun8bI4tdVw
-         BRxzuJzd3F0TWqY8c/M6Zo6BtB8ezvw+bd+C01Lk7zUMRevogBiY3GZ+a24KAhNQgaK7
-         1yM4E3jZqnCEqYoxmOVgvOpILZM6E4vd/CM/B7a8oHM5m62akp4SquSgBa+MS4qbAYzy
-         eYEA==
-X-Gm-Message-State: AOAM533lHitFen4mw9o95vtnZ8yT6q9EQ6lekB5eCMbdM9zCZJVy+oUq
-        JXn2EhF0qsev1ncJ0RP1WSpLILxpji5FG3kQ
-X-Google-Smtp-Source: ABdhPJxq4i7nB2mxLIjfC82G/X3cc5MA28UM+DRIRDZEtfKdckVKadT8wpQdDhlgnA71DceRfA5sew==
-X-Received: by 2002:a05:622a:253:: with SMTP id c19mr6276095qtx.355.1616115362720;
-        Thu, 18 Mar 2021 17:56:02 -0700 (PDT)
-Received: from localhost.localdomain ([37.19.198.87])
-        by smtp.gmail.com with ESMTPSA id j6sm3205216qkm.81.2021.03.18.17.55.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Mar 2021 17:56:02 -0700 (PDT)
-From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
-To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     rdunlap@infradead.org, Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Subject: [PATCH] fs/inode.c: Fix a rudimentary typo
-Date:   Fri, 19 Mar 2021 06:23:42 +0530
-Message-Id: <20210319005342.23795-1-unixbhaskar@gmail.com>
-X-Mailer: git-send-email 2.26.2
+        Thu, 18 Mar 2021 21:25:59 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23ED5C06174A;
+        Thu, 18 Mar 2021 18:25:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=epBGpvSKb5BDsLBUPy9iK8A8YY2xiMLqJ0JDHh+J84k=; b=XW4/4ZnjAQWR2NFfKClgD4ZoY2
+        PJuV2K+Y/67OJuM7CtWJFtFESWrV+JySdZFUEhNiM9v3CB7NbORoUpKrqC0U+vn56u+Kkwbt9nkwh
+        aizAHFmrE6htQAFPOc6PR7x1V7yjZ0yTkiZwxSfihm42sLR1saFEXmCGIYyUimzLx39yz8BPsQfmC
+        VUNpuRAguPJDAeISfRleO2cZ1mJmd3Wa999ryMFw40fMOFlPnIeo+TmhCh6NiNw+3u/sNghoUfDDM
+        FeaVq4f+rABkPUkse9K1LezlIo9yz9YMn7dXgruKU6kv20P4Vamt9MmVcSFhHl2hEg6GeTQD4vGgo
+        aTyR5bQw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lN3tH-003k0x-JB; Fri, 19 Mar 2021 01:25:30 +0000
+Date:   Fri, 19 Mar 2021 01:25:27 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Balbir Singh <bsingharora@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 01/25] mm: Introduce struct folio
+Message-ID: <20210319012527.GX3420@casper.infradead.org>
+References: <20210305041901.2396498-1-willy@infradead.org>
+ <20210305041901.2396498-2-willy@infradead.org>
+ <20210318235645.GB3346@balbir-desktop>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210318235645.GB3346@balbir-desktop>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-s/funtion/function/
+On Fri, Mar 19, 2021 at 10:56:45AM +1100, Balbir Singh wrote:
+> On Fri, Mar 05, 2021 at 04:18:37AM +0000, Matthew Wilcox (Oracle) wrote:
+> > A struct folio refers to an entire (possibly compound) page.  A function
+> > which takes a struct folio argument declares that it will operate on the
+> > entire compound page, not just PAGE_SIZE bytes.  In return, the caller
+> > guarantees that the pointer it is passing does not point to a tail page.
+> >
+> 
+> Is this a part of a larger use case or general cleanup/refactor where
+> the split between page and folio simplify programming?
 
-Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
----
- fs/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The goal here is to manage memory in larger chunks.  Pages are now too
+small for just about every workload.  Even compiling the kernel sees a 7%
+performance improvement just by doing readahead using relatively small
+THPs (16k-256k).  You can see that work here:
+https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/master
 
-diff --git a/fs/inode.c b/fs/inode.c
-index a047ab306f9a..38c2e6b58dc4 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1423,7 +1423,7 @@ EXPORT_SYMBOL(ilookup);
-  * function must never block --- find_inode() can block in
-  * __wait_on_freeing_inode() --- or when the caller can not increment
-  * the reference count because the resulting iput() might cause an
-- * inode eviction.  The tradeoff is that the @match funtion must be
-+ * inode eviction.  The tradeoff is that the @match function must be
-  * very carefully implemented.
-  */
- struct inode *find_inode_nowait(struct super_block *sb,
---
-2.26.2
-
+I think Kirill, Hugh and others have done a fantastic job stretching
+the page struct to work in shmem, but we really need a different type
+to avoid people writing code that _looks_ right but is actually buggy.
+So I'm starting again, this time with the folio metaphor.
