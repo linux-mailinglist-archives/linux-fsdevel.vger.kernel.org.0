@@ -2,62 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 481AF341ABE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 12:03:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3263341BAB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 12:42:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229941AbhCSLCV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Mar 2021 07:02:21 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:37072 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbhCSLCM (ORCPT
+        id S229854AbhCSLmP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Mar 2021 07:42:15 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:42420 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229766AbhCSLmC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Mar 2021 07:02:12 -0400
-Received: by mail-io1-f72.google.com with SMTP id a18so29758728ioo.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 04:02:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=3kE9urkd9NS2DuoN7WUKMGk6xYQqlb0lhJPiUJGc07Q=;
-        b=nR+BtJsC1GrWdCHFSmq9QtRQsneY7ZvoxoLyX08c2AiJjD50j4EEXfMC6XrDmwJaYF
-         latF/S5KUa0B6PXCfZj09ilS37p2U6zUE8pmIZ4hJQpD1g446rYzOUTaYHyszYd7KIdT
-         FZyydeiS2+3i095XBSCVtiShP9LQgppZMJ8+J5PJ0UavQ724XcX+Vk2I/Xmx03C3oGjO
-         AcbTJnMNUz3hCnwv+2fmO5gkZHXIs1gLz1cpdLylyxZLlfx0Jr8E3cIilnStXJOVyH3z
-         BepynMfkiRJvCwzTHKJWhRTy8VIVyH4bbnkw7A+oASEDLsHgSJpCU6NL8pDVfkLF04sQ
-         Sw2A==
-X-Gm-Message-State: AOAM533ibjulv9hrhyF5d9T4tKOogVPlnDswjEZ9qIEwr9/cY+uo0k6P
-        4jnm+3hdv5PsO8YTS/lFbX0CPjM7h8M1hm4TW9SZ7RCxn0Nj
-X-Google-Smtp-Source: ABdhPJz+kK4gMhywPYy9lQKtIKqExdj6dBXtuhCNKCvGyX4ec6P8xmes238+oDV+K8NqRw7qdQfcXpEuNSpryoDeSuUPHnN4TqSf
+        Fri, 19 Mar 2021 07:42:02 -0400
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1lNDVx-0006Mu-0N; Fri, 19 Mar 2021 11:42:01 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
+Cc:     linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v3] cachefiles: do not yet allow on idmapped mounts
+Date:   Fri, 19 Mar 2021 12:41:47 +0100
+Message-Id: <20210319114146.410329-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2141:: with SMTP id d1mr2302995ilv.85.1616151731732;
- Fri, 19 Mar 2021 04:02:11 -0700 (PDT)
-Date:   Fri, 19 Mar 2021 04:02:11 -0700
-In-Reply-To: <cd88eb14-f250-54d1-d36b-7af3917d3bec@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000df888f05bde1a5b4@google.com>
-Subject: Re: [syzbot] KASAN: use-after-free Read in idr_for_each (2)
-From:   syzbot <syzbot+12056a09a0311d758e60@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Based on discussions (e.g. in [1]) my understanding of cachefiles and
+the cachefiles userspace daemon is that it creates a cache on a local
+filesystem (e.g. ext4, xfs etc.) for a network filesystem. The way this
+is done is by writing "bind" to /dev/cachefiles and pointing it to the
+directory to use as the cache.
+Currently this directory can technically also be an idmapped mount but
+cachefiles aren't yet fully aware of such mounts and thus don't take the
+idmapping into account when creating cache entries. This could leave
+users confused as the ownership of the files wouldn't match to what they
+expressed in the idmapping. Block cache files on idmapped mounts until
+the fscache rework is done and we have ported it to support idmapped
+mounts.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+[1]: https://lore.kernel.org/lkml/20210303161528.n3jzg66ou2wa43qb@wittgenstein
+Cc: David Howells <dhowells@redhat.com>
+Cc: linux-cachefs@redhat.com
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+/* v2 */
+- Christian Brauner <christian.brauner@ubuntu.com>:
+  - Ensure that "root" is initialized when cleaning up.
 
-Reported-and-tested-by: syzbot+12056a09a0311d758e60@syzkaller.appspotmail.com
+/* v3 */
+- David Howells <dhowells@redhat.com>:
+  - Reformulate commit message to avoid paragraphs with duplicated
+    content.
+  - Add a pr_warn() when cachefiles are supposed to be created on
+    idmapped mounts.
+---
+ fs/cachefiles/bind.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Tested on:
+diff --git a/fs/cachefiles/bind.c b/fs/cachefiles/bind.c
+index dfb14dbddf51..38bb7764b454 100644
+--- a/fs/cachefiles/bind.c
++++ b/fs/cachefiles/bind.c
+@@ -118,6 +118,12 @@ static int cachefiles_daemon_add_cache(struct cachefiles_cache *cache)
+ 	cache->mnt = path.mnt;
+ 	root = path.dentry;
+ 
++	ret = -EINVAL;
++	if (mnt_user_ns(path.mnt) != &init_user_ns) {
++		pr_warn("File cache on idmapped mounts not supported");
++		goto error_unsupported;
++	}
++
+ 	/* check parameters */
+ 	ret = -EOPNOTSUPP;
+ 	if (d_is_negative(root) ||
 
-commit:         ece5fae7 io_uring: don't leak creds on SQO attach error
-git tree:       git://git.kernel.dk/linux-block io_uring-5.12
-kernel config:  https://syzkaller.appspot.com/x/.config?x=28f8268e740d48dd
-dashboard link: https://syzkaller.appspot.com/bug?extid=12056a09a0311d758e60
-compiler:       
+base-commit: 1e28eed17697bcf343c6743f0028cc3b5dd88bf0
+-- 
+2.27.0
 
-Note: testing is done by a robot and is best-effort only.
