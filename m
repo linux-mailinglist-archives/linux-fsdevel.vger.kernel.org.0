@@ -2,86 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F3263341BAB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 12:42:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 802BA341C12
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 13:17:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229854AbhCSLmP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Mar 2021 07:42:15 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42420 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229766AbhCSLmC (ORCPT
+        id S229979AbhCSMQ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Mar 2021 08:16:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54784 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229962AbhCSMQf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Mar 2021 07:42:02 -0400
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1lNDVx-0006Mu-0N; Fri, 19 Mar 2021 11:42:01 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
-Cc:     linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v3] cachefiles: do not yet allow on idmapped mounts
-Date:   Fri, 19 Mar 2021 12:41:47 +0100
-Message-Id: <20210319114146.410329-1-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.27.0
+        Fri, 19 Mar 2021 08:16:35 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78F46C06175F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 05:16:35 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id w8so4567218pjf.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 05:16:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=affLRntRZcInzHgZqXHL31AIW6roXMHiPl+j3xoyydw=;
+        b=Wwr3uymKFr1n+YOBEyGZs0UOSJMaYAZ56KTR7KZVL7k18g5qAOBt+YgiJoL8G92Uv7
+         t5ZSkP2F51JdFVKcgvsGhdWRS7lBXt+T83x/JmFbldKB7GuiA6oVMRQVllzP+A/nlfkY
+         6OcwpsxZjmDLyHA/jJjRsthgxYbLCRaPfUTWLfYy0qtmxHxEYx3++3yEzCHb5ZFIPP1Y
+         FpwnGU/AiT/7tJroR5E+LgvNyPu96pkAcyTaIqSrz1CHc4HSrezFYQysVJOjCSLEPuTm
+         n4wgQWBO10IbmJMFeSAGIs16rA6lAm7o93XYLQCZp76IUd9q9ZtS/iK9+4fEbZan6bVK
+         WWEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=affLRntRZcInzHgZqXHL31AIW6roXMHiPl+j3xoyydw=;
+        b=QgFiZSWvQ1U7y8WZRxanXDP06l2NEbByrH5A+EAVthIDDWPkXFoefDVHZwzA5AP3oI
+         YRRKUQdx8C1uDXJhh5cKiz0D2OHJzRpT9EF2UzB0vdtW5smY8vjPUyUYJYbkcGS5gYFv
+         zrgG0jjIUscNz6KAHs0zi9CGgONt3xWrf/wyHekiLogktWShz1uHZ4tCPDBTNkdH57oE
+         9oyNM3FbVxBSs1XCq/n3LVE3sESYt6T/BaIN7idBgy62kaLnoY+EcVmnaxUS2rO9Vx1j
+         OmgPu7NyFbMoPn2Bnnfd+A6XsqUg1gIKkivJv9w/jrxNuchBFdi6mox8Tg5JVtxO+Wd2
+         UYyg==
+X-Gm-Message-State: AOAM531DcEfxOj9kjK1Fw5PM0j5CmMI49ujP3ZJvTIoGeAA8Qd8e9tyU
+        avdSupM5M6LMf6KXv/kxbpzqGtsu4/Wv/amrzQHrag==
+X-Google-Smtp-Source: ABdhPJwrqbdyuQfn4t1x4h3FwSP0uWjg3FdAAnwpfMkicRuHl1UB8RVx3Ukwq3U6YKkcOX2CFsmx8BMA4NisJmIyh6E=
+X-Received: by 2002:a17:90a:d991:: with SMTP id d17mr9339151pjv.229.1616156194913;
+ Fri, 19 Mar 2021 05:16:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210315092015.35396-1-songmuchun@bytedance.com>
+ <20210315092015.35396-8-songmuchun@bytedance.com> <20210319085948.GA5695@linux>
+In-Reply-To: <20210319085948.GA5695@linux>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Fri, 19 Mar 2021 20:15:58 +0800
+Message-ID: <CAMZfGtXAgcJQp59AVuieqLT+1Qb3RGQmFK-SGNZH-T6K83Y=HQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v19 7/8] mm: hugetlb: add a kernel
+ parameter hugetlb_free_vmemmap
+To:     Oscar Salvador <osalvador@suse.de>,
+        David Hildenbrand <david@redhat.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
+        X86 ML <x86@kernel.org>, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Chen Huang <chenhuang5@huawei.com>,
+        Bodeddula Balasubramaniam <bodeddub@amazon.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Based on discussions (e.g. in [1]) my understanding of cachefiles and
-the cachefiles userspace daemon is that it creates a cache on a local
-filesystem (e.g. ext4, xfs etc.) for a network filesystem. The way this
-is done is by writing "bind" to /dev/cachefiles and pointing it to the
-directory to use as the cache.
-Currently this directory can technically also be an idmapped mount but
-cachefiles aren't yet fully aware of such mounts and thus don't take the
-idmapping into account when creating cache entries. This could leave
-users confused as the ownership of the files wouldn't match to what they
-expressed in the idmapping. Block cache files on idmapped mounts until
-the fscache rework is done and we have ported it to support idmapped
-mounts.
+On Fri, Mar 19, 2021 at 4:59 PM Oscar Salvador <osalvador@suse.de> wrote:
+>
+> On Mon, Mar 15, 2021 at 05:20:14PM +0800, Muchun Song wrote:
+> > --- a/arch/x86/mm/init_64.c
+> > +++ b/arch/x86/mm/init_64.c
+> > @@ -34,6 +34,7 @@
+> >  #include <linux/gfp.h>
+> >  #include <linux/kcore.h>
+> >  #include <linux/bootmem_info.h>
+> > +#include <linux/hugetlb.h>
+> >
+> >  #include <asm/processor.h>
+> >  #include <asm/bios_ebda.h>
+> > @@ -1557,7 +1558,8 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
+> >  {
+> >       int err;
+> >
+> > -     if (end - start < PAGES_PER_SECTION * sizeof(struct page))
+> > +     if ((is_hugetlb_free_vmemmap_enabled()  && !altmap) ||
+> > +         end - start < PAGES_PER_SECTION * sizeof(struct page))
+> >               err = vmemmap_populate_basepages(start, end, node, NULL);
+> >       else if (boot_cpu_has(X86_FEATURE_PSE))
+> >               err = vmemmap_populate_hugepages(start, end, node, altmap);
+>
+> I've been thinking about this some more.
+>
+> Assume you opt-in the hugetlb-vmemmap feature, and assume you pass a valid altmap
+> to vmemmap_populate.
+> This will lead to use populating the vmemmap array with hugepages.
 
-[1]: https://lore.kernel.org/lkml/20210303161528.n3jzg66ou2wa43qb@wittgenstein
-Cc: David Howells <dhowells@redhat.com>
-Cc: linux-cachefs@redhat.com
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
-/* v2 */
-- Christian Brauner <christian.brauner@ubuntu.com>:
-  - Ensure that "root" is initialized when cleaning up.
+Right.
 
-/* v3 */
-- David Howells <dhowells@redhat.com>:
-  - Reformulate commit message to avoid paragraphs with duplicated
-    content.
-  - Add a pr_warn() when cachefiles are supposed to be created on
-    idmapped mounts.
----
- fs/cachefiles/bind.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+>
+> What if then, a HugeTLB gets allocated and falls within that memory range (backed
+> by hugetpages)?
 
-diff --git a/fs/cachefiles/bind.c b/fs/cachefiles/bind.c
-index dfb14dbddf51..38bb7764b454 100644
---- a/fs/cachefiles/bind.c
-+++ b/fs/cachefiles/bind.c
-@@ -118,6 +118,12 @@ static int cachefiles_daemon_add_cache(struct cachefiles_cache *cache)
- 	cache->mnt = path.mnt;
- 	root = path.dentry;
- 
-+	ret = -EINVAL;
-+	if (mnt_user_ns(path.mnt) != &init_user_ns) {
-+		pr_warn("File cache on idmapped mounts not supported");
-+		goto error_unsupported;
-+	}
-+
- 	/* check parameters */
- 	ret = -EOPNOTSUPP;
- 	if (d_is_negative(root) ||
+I am not sure whether we can allocate the HugeTLB pages from there.
+Will only device memory pass a valid altmap parameter to
+vmemmap_populate()? If yes, can we allocate HugeTLB pages from
+device memory? Sorry, I am not an expert on this.
 
-base-commit: 1e28eed17697bcf343c6743f0028cc3b5dd88bf0
--- 
-2.27.0
 
+> AFAIK, this will get us in trouble as currently the code can only operate on memory
+> backed by PAGE_SIZE pages, right?
+>
+> I cannot remember, but I do not think nothing prevents that from happening?
+> Am I missing anything?
+
+Maybe David H is more familiar with this.
+
+Hi David,
+
+Do you have some suggestions on this?
+
+Thanks.
+
+
+>
+> --
+> Oscar Salvador
+> SUSE L3
