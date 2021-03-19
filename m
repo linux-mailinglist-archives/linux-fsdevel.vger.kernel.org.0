@@ -2,162 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0899A341F32
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 15:17:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A915341F3B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 15:22:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230154AbhCSOQn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Mar 2021 10:16:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54846 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230142AbhCSOQc (ORCPT
+        id S230047AbhCSOVb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Mar 2021 10:21:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53488 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229965AbhCSOV3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Mar 2021 10:16:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616163381;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=G9zw8CBtfbLr4B7lOytRKxO98oyOVaQpoL0ZeKO0tUA=;
-        b=hpa8ZcdlwUCYGhzE6vxDqJVaPXqHgaIJmvCei9GfL0D8unSJBpm+z+8n093DnvAQXw1e0Z
-        z6t95hz+HOgUW8oCJBFY53ibZaBTs9aabuIsOeoMEH2z2s/7PMbqpOGLrC7X57e5JCyLUw
-        2eMYVU+XguOdYTnZU3Txl1uoLJ1Ee2c=
-Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com
- [209.85.210.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-5-6-K-SGvIM-i4gxGis0rahA-1; Fri, 19 Mar 2021 10:16:18 -0400
-X-MC-Unique: 6-K-SGvIM-i4gxGis0rahA-1
-Received: by mail-ot1-f69.google.com with SMTP id b16so18846408otl.13
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 07:16:18 -0700 (PDT)
+        Fri, 19 Mar 2021 10:21:29 -0400
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81A87C06174A;
+        Fri, 19 Mar 2021 07:21:29 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id e8so6259001iok.5;
+        Fri, 19 Mar 2021 07:21:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dwE0qt0FlUFF8JoMdn7egAuryxQVcNL7exhu+ZVpDJc=;
+        b=PPRsb/y1bi5DZWddDkVMMVxiklZZg0ixRxcLehArlxZTjXDlIv0+W4+jZdKcpNGF57
+         0KKXXf+2gy0/B1wgaVpKC8trUO3rER/9g77s7xISgI4jsx9f9gnHpNPNjaG2u4dgM0xx
+         QPdoDdKWf6j4s3t/Z3AMM0wa6Acil0PbWq9h/bwfg+aY7RUgVgxtyOmS1wgN7eIwgByr
+         /+kbADobKn3sTY/WhA6Z43n3OvLr54oaYpz2DH75WX9DdbIRKx72YUU8Gyl3vEhIjVpe
+         GRjP2lJXmjvBYSya/5Ppz11koXjfxtwR3R13ScNsSz3lv8cvqsjBz3XM/gUhPn1Eut/2
+         JLng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=G9zw8CBtfbLr4B7lOytRKxO98oyOVaQpoL0ZeKO0tUA=;
-        b=OzkkJCmiuqprohL08uRMf/UohjdSvH8V9B6+E6UirT1rzMbvx1si2WqTd8eAL0++oU
-         tUOnrn86So9aqWUThuqg4m15tXEniOBc+unq3hxIZqLQAw5e32zv7VgNFgpccJhSdh1V
-         uSFP5Zck0owUHjgg+rJIyOv8acfi4z1NdqXP+pTgviiJHhG6/WQFMbcF2PPfCF6gnZCp
-         gQjYZsl0k9NA9YxExT5yZAKqrNV9UYNirHRiPOgozVah9hQ//eMyoUH0G/CrmTnD7dMG
-         bwTR79D/aZb/7kG/dGkHwlb7Fav7kd2tpnUcwQiWdvnWokj+RtzbmmKF/n1vFPz8+h63
-         YCOw==
-X-Gm-Message-State: AOAM530v5y6wWva7YoxNjjaGIGPZe1KDPc55xJ8DaQZ+oi7OfyNvIMMK
-        +Vv8UHa3vqImVxp/HW1Gdx/P6xjjAWAsbZ3lTPK6LPh/0hMrh4J+4C5X4vtOJhjxENSU1VuwACU
-        X7lS05Fp281OROmCWAgC4G6Si4w==
-X-Received: by 2002:a4a:9843:: with SMTP id z3mr1589790ooi.51.1616163377365;
-        Fri, 19 Mar 2021 07:16:17 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzx2MNWNkKfrw15p1iOgcE1WNwGab8mOM64AvISX48wKkP2zrsJ388mw1npd31B6KpqhIwamA==
-X-Received: by 2002:a4a:9843:: with SMTP id z3mr1589778ooi.51.1616163377153;
-        Fri, 19 Mar 2021 07:16:17 -0700 (PDT)
-Received: from [192.168.0.173] (ip68-103-222-6.ks.ok.cox.net. [68.103.222.6])
-        by smtp.gmail.com with ESMTPSA id v6sm1253529ook.40.2021.03.19.07.16.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Mar 2021 07:16:16 -0700 (PDT)
-Subject: Re: [PATCH 2/3] virtiofs: split requests that exceed virtqueue size
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     virtio-fs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, stefanha@redhat.com,
-        miklos@szeredi.hu, jasowang@redhat.com, mst@redhat.com
-References: <20210318135223.1342795-1-ckuehl@redhat.com>
- <20210318135223.1342795-3-ckuehl@redhat.com>
- <20210319134948.GA402287@redhat.com>
-From:   Connor Kuehl <ckuehl@redhat.com>
-Message-ID: <6a44908d-7e2d-d239-c56a-68730c5357cd@redhat.com>
-Date:   Fri, 19 Mar 2021 09:16:15 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dwE0qt0FlUFF8JoMdn7egAuryxQVcNL7exhu+ZVpDJc=;
+        b=aFu7fYA8ZIONEK3zwLa+73WTmc0Hgw6x2kc/gwNKIOEr8t7hPA6wHIH7Tz+hw1zU2y
+         TIHuktPWACqnUT1bIKu/sJKzTSSErs38ffTHvx75JILEQdD1m+DMsLwlEIdnXzV26WlU
+         cMHAk/n80tkVI1uG0TccHvMdisrosI5BKaYz3dIW7oarwK+IlfKk1Ie0UEFLBpApE5AA
+         lkfbsz9Ozk3RPjZyBr2IOcqMCiRpu2vzqFwVVW7pk4uZYtMVW6pYnBP3pX/Jf+hXZJTI
+         YiNt0tf2psH1CiRX5BR47OzvnczGwPSY/pPXTk/iltMSTyfXKSqOL+e4UwOSX8iY1eFA
+         FlHw==
+X-Gm-Message-State: AOAM532j2Ew+D0Q3fFKmk6IU0kEL5ue7WKZa0MYInF6tZ+irhPONcFAp
+        ZyT6biKvj7lU2o7ufoK6httcMnT0xUrzbJiwkcI=
+X-Google-Smtp-Source: ABdhPJyRMqLRB3Ava3LI8SEOYwcvdcFzqwlLEavQTP6JrvgYg/Mb2Z5gmWrP1G6irp/2JJtbSp2GOov9VYvRrSR2qJQ=
+X-Received: by 2002:a02:9382:: with SMTP id z2mr1615964jah.120.1616163688966;
+ Fri, 19 Mar 2021 07:21:28 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210319134948.GA402287@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210304112921.3996419-1-amir73il@gmail.com> <20210316155524.GD23532@quack2.suse.cz>
+ <CAOQ4uxgCv42_xkKpRH-ApMOeFCWfQGGc11CKxUkHJq-Xf=HnYg@mail.gmail.com>
+ <20210317114207.GB2541@quack2.suse.cz> <CAOQ4uxi7ZXJW3_6SN=vw_XJC+wy4eMTayN6X5yRy_HOV6323MA@mail.gmail.com>
+ <20210317174532.cllfsiagoudoz42m@wittgenstein> <CAOQ4uxjCjapuAHbYuP8Q_k0XD59UmURbmkGC1qcPkPAgQbQ8DA@mail.gmail.com>
+ <20210318143140.jxycfn3fpqntq34z@wittgenstein> <CAOQ4uxiRHwmxTKsLteH_sBW_dSPshVE8SohJYEmpszxaAwjEyg@mail.gmail.com>
+ <20210319134043.c2wcpn4lbefrkhkg@wittgenstein>
+In-Reply-To: <20210319134043.c2wcpn4lbefrkhkg@wittgenstein>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 19 Mar 2021 16:21:17 +0200
+Message-ID: <CAOQ4uxhLYdWOUmpWP+c_JzVeGDbkJ5eUM+1-hhq7zFq23g5J1g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/19/21 8:49 AM, Vivek Goyal wrote:
-> On Thu, Mar 18, 2021 at 08:52:22AM -0500, Connor Kuehl wrote:
->> If an incoming FUSE request can't fit on the virtqueue, the request is
->> placed onto a workqueue so a worker can try to resubmit it later where
->> there will (hopefully) be space for it next time.
->>
->> This is fine for requests that aren't larger than a virtqueue's maximum
->> capacity. However, if a request's size exceeds the maximum capacity of
->> the virtqueue (even if the virtqueue is empty), it will be doomed to a
->> life of being placed on the workqueue, removed, discovered it won't fit,
->> and placed on the workqueue yet again.
->>
->> Furthermore, from section 2.6.5.3.1 (Driver Requirements: Indirect
->> Descriptors) of the virtio spec:
->>
->>    "A driver MUST NOT create a descriptor chain longer than the Queue
->>    Size of the device."
->>
->> To fix this, limit the number of pages FUSE will use for an overall
->> request. This way, each request can realistically fit on the virtqueue
->> when it is decomposed into a scattergather list and avoid violating
->> section 2.6.5.3.1 of the virtio spec.
-> 
-> Hi Connor,
-> 
-> So as of now if a request is bigger than what virtqueue can support,
-> it never gets dispatched and caller waits infinitely? So this patch
-> will fix it by forcing fuse to split the request. That sounds good.
+On Fri, Mar 19, 2021 at 3:40 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> On Thu, Mar 18, 2021 at 06:48:11PM +0200, Amir Goldstein wrote:
+> > [...]
+> >
+> > I understand the use case.
+> >
+> > > I'd rather have something that allows me to mirror
+> > >
+> > > /home/jdoe
+> > >
+> > > recursively directly. But maybe I'm misunderstanding fanotify and it
+> > > can't really help us but I thought that subtree watches might.
+> > >
+> >
+> > There are no subtree watches. They are still a holy grale for fanotify...
+> > There are filesystem and mnt watches and the latter support far fewer
+> > events (only events for operations that carry the path argument).
+> >
+> > With filesystem watches, you can get events for all mkdirs and you can
+> > figure out the created path, but you'd have to do all the filtering in
+> > userspace.
+> >
+> > What I am trying to create is "filtered" filesystem watches and the filter needs
+> > to be efficient enough so the watcher will not incur too big of a penalty
+> > on all the operations in the filesystem.
+> >
+> > Thanks to your mnt_userns changes, implementing a filter to intercept
+> > (say) mkdir calles on a specific mnt_userns should be quite simple, but
+> > filtering by "path" (i.e. /home/jdoe/some/path) will still need to happen in
+> > userspace.
+> >
+> > This narrows the problem to the nested container manager that will only
+> > need to filter events which happened via mounts under its control.
+> >
+> > [...]
+> >
+> > > > there shouldn't be a problem to setup userns filtered watches in order to
+> > > > be notified on all the events that happen via those idmapped mounts
+> > > > and filtering by "subtree" is not needed.
+> > > > I am clearly far from understanding the big picture.
+> > >
+> > > I think I need to refamiliarize myself with what "subtree" watches do.
+> > > Maybe I misunderstood what they do. I'll take a look.
+> > >
+> >
+> > You will not find them :-)
+>
+> Heh. :)
+>
+> >
+> > [...]
+> >
+> > > > Currently, (upstream) only init_userns CAP_SYS_ADMIN can setup
+> > > > fanotify watches.
+> > > > In linux-next, unprivileged user can already setup inode watches
+> > > > (i.e. like inotify).
+> > >
+> > > Just to clarify: you mean "unprivileged" as in non-root users in
+> > > init_user_ns and therefore also users in non-init userns. That's what
+> >
+> > Correct.
+> >
+> > > inotify allows you. This would probably allows us to use fanotify
+> > > instead of the hand-rolled recursive notify watching we currently do and
+> > > that I linked to above.
+> > >
+> >
+> > The code that sits in linux-next can give you pretty much a drop-in
+> > replacement of inotify and nothing more. See example code:
+> > https://github.com/amir73il/inotify-tools/commits/fanotify_name_fid
+>
+> This is really great. Thank you for doing that work this will help quite
+> a lot of use-cases and make things way simpler. I created a TODO to port
+> our path-hotplug to this once this feature lands.
+>
 
-Right, in theory. Certain configurations make it easier to avoid this 
-from happening, such as using indirect descriptors; however, in that 
-case, the virtio spec says even if indirect descriptors are used, the 
-descriptor chain length shouldn't exceed the length of the queue's size 
-anyways. So having FUSE split the request also helps to uphold that 
-property.
+FWIW, I just tried to build this branch on Ubuntu 20.04.2 with LTS kernel
+and there were some build issues, so rebased my branch on upstream
+inotify-tools to fix those build issues.
 
-This is my reading of the potential looping problem:
+I was not aware that the inotify-tools project is alive, I never intended
+to upstream this demo code and never created a github pull request
+but rebasing on upstream brought in some CI scripts, when I pushed the
+branch to my github it triggered some tests that reported build failures on
+Ubuntu 16.04 and 18.04.
 
-virtio_fs_wake_pending_and_unlock
-   calls
-     virtio_fs_enqueue_req
-       calls
-         virtqueue_add_sgs
+Anyway, there is a pre-rebase branch 'fanotify_name' and the post rebase
+branch 'fanotify_name_fid'. You can try whichever works for you.
 
-virtqueue_add_sgs can return -ENOSPC if there aren't enough descriptors 
-available.
+You can look at the test script src/test_demo.sh for usage example.
+Or just cd into a writable directory and run the script to see the demo.
+The demo determines whether to use a recursive watch or "global"
+watch by the uid of the user.
 
-This error gets propagated back down to 
-virtio_fs_wake_pending_and_unlock which checks for this exact issue and 
-places the request on a workqueue to retry submission later.
+> >
+> > > > If you think that is useful and you want to play with this feature I can
+> > > > provide a WIP branch soon.
+> > >
+> > > I would like to first play with the support for unprivileged fanotify
+> > > but sure, it does sound useful!
+> >
+> > Just so you have an idea what I am talking about, this is a very early
+> > POC branch:
+> > https://github.com/amir73il/linux/commits/fanotify_userns
+>
+> Thanks!  I'll try to pull this and take a look next week. I hope that's
+> ok.
+>
 
-Resubmission occurs in virtio_fs_request_dispatch_work, which does a 
-similar dance, where if the request fails with -ENOSPC it just puts it 
-back in the queue. However, for a sufficiently large request that would 
-exceed the capacity of the virtqueue (even when empty), no amount of 
-retrying will ever make it fit.
+Fine. I'm curious to know what it does.
+Did not get to test it with userns yet :)
 
-> 
-> 
-> [..]
->> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
->> index 8868ac31a3c0..a6ffba85d59a 100644
->> --- a/fs/fuse/virtio_fs.c
->> +++ b/fs/fuse/virtio_fs.c
->> @@ -18,6 +18,12 @@
->>   #include <linux/uio.h>
->>   #include "fuse_i.h"
->>   
->> +/* Used to help calculate the FUSE connection's max_pages limit for a request's
->> + * size. Parts of the struct fuse_req are sliced into scattergather lists in
->> + * addition to the pages used, so this can help account for that overhead.
->> + */
->> +#define FUSE_HEADER_OVERHEAD    4
-> 
-> How did yo arrive at this overhead. Is it following.
-> 
-> - One sg element for fuse_in_header.
-> - One sg element for input arguments.
-> - One sg element for fuse_out_header.
-> - One sg element for output args.
-
-Yes, that's exactly how I got to that number.
-
-Connor
-
-
+Thanks,
+Amir.
