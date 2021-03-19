@@ -2,100 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58DEE342083
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 16:07:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53CB93420C6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 16:22:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231144AbhCSPHF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Mar 2021 11:07:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35036 "EHLO
+        id S229991AbhCSPVl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Mar 2021 11:21:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229942AbhCSPGn (ORCPT
+        with ESMTP id S230090AbhCSPVf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Mar 2021 11:06:43 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A878C06175F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 08:06:43 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id k8so9437831wrc.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 08:06:43 -0700 (PDT)
+        Fri, 19 Mar 2021 11:21:35 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90120C06175F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 08:21:35 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id j7so9509526wrd.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 08:21:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=O1cliPNt4IOuiJ9NAYStWdoDOAvSKQBjj0GaKYwsRdg=;
-        b=C7B11toD2TiZrKj3lUFGE6nIMpJt59OarnlrWaEPVb/dlUNaAI44URh9mHbRj5Mtsm
-         CFbdzOKA5NliU2BRgP9V7b/Wyj87h0LMQWZnjq8/oAXMyKDgeTLzx22oETziyJkwdGCt
-         vRuvYYbZVZ2iMw4pujpbyzsO+WQ9m/W3s22lEB+Jd4INJtM5OS0I0rewOFW1klije2Gk
-         hD/uF+swP6rbRbbeGXdzyph++nVVpjVtxFfg0RR/oS69IHjcKpGVwTe6rqzNbeFNXy9q
-         PA2mm79+6wP4DjDzPS13Alx+sWEqLzoljLVWHUqjih7ACGLUcKCuwkxNXt0X076iFnx3
-         MeWQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ZHMAhBAQOpphLRREZJlNVL6uBoRegoHiEupgJ4ClwKw=;
+        b=BeQ/Y7G9PKlLSgTvrVqTbv9UYOwFvwQV2vCiiXKrpFdx48ue4RJWqK2E5Y3hZBX0Zc
+         cRVLYAI4PKFcOpaD8KDxYlQVbGKLLSC0XGuySmfIV1xJ7P3J7gkrsggRSyd7n/GhIvwp
+         Csf/+kj/SYoazFwU7t7Q+PMp29QGE0HTy8GowqGzTWMGtmcdsgOSiiJK2e1maqB05JUv
+         P/68MkGcd14W8EKxbJzg0rkb/bmuYLW/u9JDDRIBwfb1p4BPkcyLEFBQ6UsCobSzKv2y
+         jmHkj/KS5zKOJsKRl8B0siydrMFBIJ+hQmh2zfkZYZmMkoJeC/G6cAf2hs96B7ZL8DZu
+         zSjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=O1cliPNt4IOuiJ9NAYStWdoDOAvSKQBjj0GaKYwsRdg=;
-        b=XalNe4pwwyA9DJJ1lR8vdkoLybMCaIkTjeF/HQrOx9dTLcIE0jP5i2JQD8JVPxiKv2
-         GQGC1z6d5SSFTXg/0VqrYC6lM/pZ6ZCc+PfaVO0pZz/sCWiBGRFBY17289nV8PxG3ooE
-         UIZ66O7fhE9jRsPcJHE/65oZFaGhn+Xxr6dVWp2V+eZdC6y92TyvFdoT61mScK2PltzR
-         TSLBnQzOvCdsEUzQ1SclBd9rO7mG8gJS+cNADo7dloosgno7wc8x9AmEQV1U5wcpCHIs
-         YBk7ueS1jzL8cAqk3LVmkdgaMq1K/x6jtFfTG/NTDQvn78Hl3vwgcCvLBrBPRPIiMxMN
-         +MAw==
-X-Gm-Message-State: AOAM531Akp6Ge2FeSCgSp5zvNiErxRmRMupjqBdVD4rKc5bDWoyvqokj
-        jNTK5PTd3QLqpCw+ztwjGzzuLQ==
-X-Google-Smtp-Source: ABdhPJylifZpjlgybLtsRkl9QRce48/5Mik44BkROT+y6TCzi+J69u+qGfIUwuE5ieQk3X0q5NEtUA==
-X-Received: by 2002:a5d:4686:: with SMTP id u6mr5040256wrq.60.1616166401927;
-        Fri, 19 Mar 2021 08:06:41 -0700 (PDT)
-Received: from balsini.lon.corp.google.com ([2a00:79e0:d:210:d49c:45f3:9d86:b2e9])
-        by smtp.gmail.com with ESMTPSA id w6sm8381391wrl.49.2021.03.19.08.06.41
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ZHMAhBAQOpphLRREZJlNVL6uBoRegoHiEupgJ4ClwKw=;
+        b=I3gbLMLvpQaQdxcMZE+TyuEg3y85VO6STmObYv4T3Bq0gBLdPSf7kWa+omWR2sk55b
+         yL9bBm0PHxGc9vpk51G0sQRrVbNtpkmi5K6mwcgc36beIlJI43Yay63veiy0ln6IRF5d
+         gB1D35YitjLSDq3N+SfnU9OA+s8zQdsNqHTDwK1T+krVf8vB8oaK5sbtFp0VglNCkB1y
+         IPZO+eboJ+ji42goT8z/Es3KIJPaaCqaZoXOOPBihUYBRnGyjoOVXd5Kz7C1Ef5HrQve
+         KIcHDLBVv3A4wn8QeVZgMY9NDBmVmOyH7wfmumOMde8ZYDiFG8GYfj3vgAmYrwO0zjBY
+         4tgw==
+X-Gm-Message-State: AOAM530U15hlW1A+PF05CfRh1Z+bG0vjQkQMaaarI2e88tunabLc1tCp
+        As1aWDUBHT0fpfm/vqGlSAaVag==
+X-Google-Smtp-Source: ABdhPJzpd//qGkoZOkBXxWlfCTANMCBbP+Zjg7e/uHwpznDUuHjsxQ6xjLoT+rNA0RUU8Bvw9l8prg==
+X-Received: by 2002:a5d:67c8:: with SMTP id n8mr5097586wrw.351.1616167294369;
+        Fri, 19 Mar 2021 08:21:34 -0700 (PDT)
+Received: from google.com ([2a00:79e0:d:210:d49c:45f3:9d86:b2e9])
+        by smtp.gmail.com with ESMTPSA id 13sm6777119wmw.5.2021.03.19.08.21.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Mar 2021 08:06:41 -0700 (PDT)
+        Fri, 19 Mar 2021 08:21:34 -0700 (PDT)
+Date:   Fri, 19 Mar 2021 15:21:32 +0000
 From:   Alessio Balsini <balsini@android.com>
-To:     Arnd Bergmann <arnd@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
-Cc:     kernel-team@android.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/fuse: Fix matching of FUSE_DEV_IOC_CLONE command
-Date:   Fri, 19 Mar 2021 15:05:14 +0000
-Message-Id: <20210319150514.1315985-1-balsini@android.com>
-X-Mailer: git-send-email 2.31.0.291.g576ba9dcdaf-goog
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Alessio Balsini <balsini@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Akilesh Kailash <akailash@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Antonio SJ Musumeci <trapexit@spawn.link>,
+        David Anderson <dvander@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Peng Tao <bergwolf@gmail.com>,
+        Stefano Duo <duostefano93@gmail.com>,
+        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
+        fuse-devel@lists.sourceforge.net,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND V12 2/8] fuse: 32-bit user space ioctl compat for
+ fuse device
+Message-ID: <YFTBfKslrZsHYQPi@google.com>
+References: <20210125153057.3623715-1-balsini@android.com>
+ <20210125153057.3623715-3-balsini@android.com>
+ <CAK8P3a2VDH9-reuj8QTkFzbaU9XTUEOWFCmCVg1Snb6RjD6mHw@mail.gmail.com>
+ <YFN8IyFTdqhlS9Lf@google.com>
+ <CAK8P3a36ToSbvW1F_0w0gCiWGCoZgFwoLHmQ7Tz2jtwV++VrWA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a36ToSbvW1F_0w0gCiWGCoZgFwoLHmQ7Tz2jtwV++VrWA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With commit f8425c939663 ("fuse: 32-bit user space ioctl compat for fuse
-device") the matching constraints for the FUSE_DEV_IOC_CLONE ioctl
-command are relaxed, limited to the testing of command type and number.
-As Arnd noticed, this is wrong as it wouldn't ensure the correctness of
-the data size or direction for the received FUSE device ioctl.
+On Thu, Mar 18, 2021 at 10:15:43PM +0100, Arnd Bergmann wrote:
+> On Thu, Mar 18, 2021 at 5:13 PM Alessio Balsini <balsini@android.com> wrote:
+> > On Tue, Mar 16, 2021 at 07:53:06PM +0100, Arnd Bergmann wrote:
+> > > On Mon, Jan 25, 2021 at 4:48 PM Alessio Balsini <balsini@android.com> wrote:
+> > > >
+> >
+> > Thanks for spotting this possible criticality.
+> >
+> > I noticed that 32-bit users pace was unable to use the
+> > FUSE_DEV_IOC_CLONE ioctl on 64-bit kernels, so this change avoid this
+> > issue by forcing the kernel to interpret 32 and 64 bit
+> > FUSE_DEV_IOC_CLONE command as if they were the same.
+> 
+> As far as I can tell from the kernel headers, the command code should
+> be the same for both 32-bit and 64-bit tasks: 0x8004e500.
+> Can you find out what exact value you see in the user space that was
+> causing problems, and how it ended up with a different value than
+> the 64-bit version?
+> 
+> If there are two possible command codes, I'd suggest you just change
+> the driver to handle both variants explicitly, but not any other one.
+> 
+> > This is the simplest solution I could find as the UAPI is not changed
+> > as, as you mentioned, the argument doesn't require any conversion.
+> >
+> > I understand that this might limit possible future extensions of the
+> > FUSE_DEV_IOC_XXX ioctls if their in/out argument changed depending on
+> > the architecture, but only at that point we can switch to using the
+> > compat layer, right?
+> >
+> > What I'm worried about is the direction, do you think this would be an
+> > issue?
+> >
+> > I can start working on a compat layer fix meanwhile.
+> 
+> For a proper well-designed ioctl interface, compat support should not
+> need anything beyond the '.compat_ioctl = compat_ptr_ioctl'
+> assignment.
+> 
+>        Arnd
 
-Fix by bringing back the comparison of the ioctl received by the FUSE
-device to the originally generated FUSE_DEV_IOC_CLONE.
+You are right and now I can see what happened here.
 
-Fixes: f8425c939663 ("fuse: 32-bit user space ioctl compat for fuse device")
-Reported-by: Arnd Bergmann <arnd@kernel.org>
-Signed-off-by: Alessio Balsini <balsini@android.com>
----
- fs/fuse/dev.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+When I introduce the PASSTHROUGH ioctl, because of the 'void *', the
+command mismatches on _IOC_SIZE(nr). I solved this by only testing
+_IOC_NUMBER and _IOC_TYPE, implicitely (mistakenly) removing the
+_IOC_SIZE check.  So, the fuse_dev_ioctl was correctly rejecting the
+ioctl request from 32-bit userspace because of the wrong size and I was
+just forcing it to digest the wrong data regardless.
+Ouch!
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index c0fee830a34e..a5ceccc5ef00 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -2233,11 +2233,8 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
- 	int oldfd;
- 	struct fuse_dev *fud = NULL;
- 
--	if (_IOC_TYPE(cmd) != FUSE_DEV_IOC_MAGIC)
--		return -ENOTTY;
--
--	switch (_IOC_NR(cmd)) {
--	case _IOC_NR(FUSE_DEV_IOC_CLONE):
-+	switch (cmd) {
-+	case FUSE_DEV_IOC_CLONE:
- 		res = -EFAULT;
- 		if (!get_user(oldfd, (__u32 __user *)arg)) {
- 			struct file *old = fget(oldfd);
--- 
-2.31.0.291.g576ba9dcdaf-goog
+The commit message for this patch would still be incorrect, but I posted
+a fix here to bring the ioctl checking back to the original behavior:
+
+  https://lore.kernel.org/lkml/20210319150514.1315985-1-balsini@android.com/
+
+Thanks for spotting this!
+Alessio
 
