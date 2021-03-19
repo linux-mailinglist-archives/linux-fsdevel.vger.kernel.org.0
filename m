@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D3A9D3423B4
+	by mail.lfdr.de (Postfix) with ESMTP id 3C3B23423B2
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 18:52:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230228AbhCSRwO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Mar 2021 13:52:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42608 "EHLO
+        id S230235AbhCSRwP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Mar 2021 13:52:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230113AbhCSRvw (ORCPT
+        with ESMTP id S230145AbhCSRvy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Mar 2021 13:51:52 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF832C06174A;
-        Fri, 19 Mar 2021 10:51:52 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id ot17-20020a17090b3b51b0290109c9ac3c34so4809533pjb.4;
-        Fri, 19 Mar 2021 10:51:52 -0700 (PDT)
+        Fri, 19 Mar 2021 13:51:54 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DA7BC06174A;
+        Fri, 19 Mar 2021 10:51:54 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id g15so6419743pfq.3;
+        Fri, 19 Mar 2021 10:51:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AUG0YiSUOTPE19D4JV8qDGUQXAattgMTMVymnVqLA6s=;
-        b=bR2GpVXnMjeqmMVaIhmgrqbcgqNYbuHFt1BndQ96+WWMpFi/vnZ69veZuD+/T6c1jG
-         S2RlYI8E8ZzEJJDpOg3dvHNhB9Dtgy+AfDY1v8lgk5PF1O7JkGA1HYF7Q+cHKepuMBZP
-         ETCPFdBQzYMLpdvwQoode6VaYIxDEv5KBBTvWnhi8So3z1xVO4QpzaXLdWtuugNzkgYl
-         0v3D514iB031azsnQhis1MiOxR2Emhvn51BKO3dKmAVgQo6xzbEqBw1jMb8YTYiXDcUT
-         QJjnhaN7lrZhDw+Qk903Bfv9oSFW0k4y57gUNelPeoef5APHXmIbzyG1ij/plx4wxdOf
-         X28A==
+        bh=q5cs7BR95iNbZ6WMCZed7NnR/Mld0Eh7IFrfWwaLHq8=;
+        b=ZqvQWkv7qc3+G9XEcpiufuNDs1mOJJbP8ItCeiZtB0Yxsa1x1XSzxYvaB4NFwwHQHt
+         0N2GrBu3calLG4NLoPppXrXp7mYrsdzwYiiFfvoFvKLlPSQboreA2U/5GzE4KcCaccLT
+         c83g+eos6DixdQ6+x5Eb18c0FyHN9JW98mw8gE7KrPkJqpw+d83dLtww2Wvcg4fMEM0I
+         B2wrxY/SM/vzcG9n1cZ3RVdww/y8WsY51LahgLt46zYdWpETOGH8LRWlreb6+kau+KGQ
+         1Lf6amVkcHQZ8prVpbVVO34FS9Cljo/O83XbI/VBsmUs0pzMCk9vDCBHPdYQXFOh7xuB
+         E16g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=AUG0YiSUOTPE19D4JV8qDGUQXAattgMTMVymnVqLA6s=;
-        b=XkVSvYxGiKNFuafNMiJyMsWeWi+gF52zF0PonnH4ZOn3mvZGaCfhePLPYVpMiPHn+o
-         XvNIPu8RJK9vSPb+LrjXDIFUMmA91wFBE8ozK9VE+787UpYY6nHvOyjE9LiH9dVy7pQy
-         VGAcpw7Gp7glLjfimawdjF3c53qEFaze3uMGtpNGBlfggh5cfol1J4MCoYNlhPBgaIb8
-         oHrLHXHBeC5MUMpMV7YJ9o+66pdgAe4IB5kexg4p8k7F0/50IC8C1imGpvWzy0MkES3X
-         t4tFErtixUt5V291MgDfkt743schpyYBcw1fSqUqsU5ouGS2uvdJSOML0aRo4zS7eMK1
-         fNuw==
-X-Gm-Message-State: AOAM532Zs4irX8culNaEtjxLbBRPhOdRlNBGZT5vSLvGnWiXFyjup89A
-        GzOUZybcA8vjN2SE8bmVNzA=
-X-Google-Smtp-Source: ABdhPJxYxz2FHA40AdEL/r3rMHxxo8IfNmZT8tRl4SmF5qEo/I3lprQ2K3TzEvXWMNfUV6mDHhBw1A==
-X-Received: by 2002:a17:902:c40a:b029:e4:99fc:c09f with SMTP id k10-20020a170902c40ab02900e499fcc09fmr15082101plk.46.1616176312322;
-        Fri, 19 Mar 2021 10:51:52 -0700 (PDT)
+        bh=q5cs7BR95iNbZ6WMCZed7NnR/Mld0Eh7IFrfWwaLHq8=;
+        b=GonHEmPwlgX9c15aJxCGwipEgMqjjVDsw9RFOG0UmnFiDNKXpUdMXSSqxtZH2EumJS
+         lJQYXb9GcWkCgfU0F4a12khgnh1RNJQGfJXcURkbtIPYNs/X4bfWaS7tjtDocLFesbUQ
+         5QxEZS1g/Ydq0b4AD1ZjDBzc+qmSxRHnClhVudFx5JCKcUAayG5F1oa5hmjqIgb1YXPx
+         yA2norVdaOw5I73ke2n3dt8T9X77sGlcmB7Uq6SFd5Ofxuu5WjGpJaGisvDDaYiF+xag
+         S/UH67iDvvOhroUnycMzsp2700qRiAPMcehi4llvOuoFaC2HZIlH9Cc5j02B7DKxbDbc
+         5SRw==
+X-Gm-Message-State: AOAM53146gVe6GgiXd8YmDs/cfSkK8rH3LtNXOdT8dc9DctB67d+IwUh
+        7UTzk9hSKOMU5X7gGPDrHhU=
+X-Google-Smtp-Source: ABdhPJxA3BmuVyAsv9cP2aECptIsxggqkZ3YsQbA0KajbfUtZGT9Iw5MS6vCF49mYU3xhCxczVdHOQ==
+X-Received: by 2002:a62:1713:0:b029:1f1:56e2:8ec6 with SMTP id 19-20020a6217130000b02901f156e28ec6mr10095937pfx.56.1616176314032;
+        Fri, 19 Mar 2021 10:51:54 -0700 (PDT)
 Received: from bbox-1.mtv.corp.google.com ([2620:15c:211:201:913d:5573:c956:f033])
-        by smtp.gmail.com with ESMTPSA id w8sm5498287pgk.46.2021.03.19.10.51.50
+        by smtp.gmail.com with ESMTPSA id w8sm5498287pgk.46.2021.03.19.10.51.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Mar 2021 10:51:51 -0700 (PDT)
+        Fri, 19 Mar 2021 10:51:53 -0700 (PDT)
 Sender: Minchan Kim <minchan.kim@gmail.com>
 From:   Minchan Kim <minchan@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
@@ -56,9 +56,9 @@ Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
         willy@infradead.org, mhocko@suse.com, david@redhat.com,
         vbabka@suse.cz, linux-fsdevel@vger.kernel.org,
         oliver.sang@intel.com, Minchan Kim <minchan@kernel.org>
-Subject: [PATCH v4 2/3] mm: replace migrate_[prep|finish] with lru_cache_[disable|enable]
-Date:   Fri, 19 Mar 2021 10:51:26 -0700
-Message-Id: <20210319175127.886124-2-minchan@kernel.org>
+Subject: [PATCH v4 3/3] mm: fs: Invalidate BH LRU during page migration
+Date:   Fri, 19 Mar 2021 10:51:27 -0700
+Message-Id: <20210319175127.886124-3-minchan@kernel.org>
 X-Mailer: git-send-email 2.31.0.rc2.261.g7f71774620-goog
 In-Reply-To: <20210319175127.886124-1-minchan@kernel.org>
 References: <20210319175127.886124-1-minchan@kernel.org>
@@ -68,182 +68,153 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently, migrate_[prep|finish] is merely a wrapper of
-lru_cache_[disable|enable]. There is not much to gain from
-having additional abstraction.
+Pages containing buffer_heads that are in one of the per-CPU
+buffer_head LRU caches will be pinned and thus cannot be migrated.
+This can prevent CMA allocations from succeeding, which are often used
+on platforms with co-processors (such as a DSP) that can only use
+physically contiguous memory. It can also prevent memory
+hot-unplugging from succeeding, which involves migrating at least
+MIN_MEMORY_BLOCK_SIZE bytes of memory, which ranges from 8 MiB to 1
+GiB based on the architecture in use.
 
-Use lru_cache_[disable|enable] instead of migrate_[prep|finish],
-which would be more descriptive.
+Correspondingly, invalidate the BH LRU caches before a migration
+starts and stop any buffer_head from being cached in the LRU caches,
+until migration has finished.
 
-note: migrate_prep_local in compaction.c changed into lru_add_drain
-to avoid CPU schedule cost with involving many other CPUs to keep
-keep old behavior.
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Tested-by: Oliver Sang <oliver.sang@intel.com>
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Signed-off-by: Chris Goldsworthy <cgoldswo@codeaurora.org>
 Signed-off-by: Minchan Kim <minchan@kernel.org>
 ---
- include/linux/migrate.h |  7 -------
- mm/compaction.c         |  3 ++-
- mm/mempolicy.c          |  8 ++++----
- mm/migrate.c            | 28 ++--------------------------
- mm/page_alloc.c         |  4 ++--
- 5 files changed, 10 insertions(+), 40 deletions(-)
+ fs/buffer.c                 | 36 ++++++++++++++++++++++++++++++------
+ include/linux/buffer_head.h |  4 ++++
+ mm/swap.c                   |  5 ++++-
+ 3 files changed, 38 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index 9e4a2dc8622c..6155d97ec76c 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -45,9 +45,6 @@ extern struct page *alloc_migration_target(struct page *page, unsigned long priv
- extern int isolate_movable_page(struct page *page, isolate_mode_t mode);
- extern void putback_movable_page(struct page *page);
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 0cb7ffd4977c..e9872d0dcbf1 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1264,6 +1264,15 @@ static void bh_lru_install(struct buffer_head *bh)
+ 	int i;
  
--extern void migrate_prep(void);
--extern void migrate_finish(void);
--extern void migrate_prep_local(void);
- extern void migrate_page_states(struct page *newpage, struct page *page);
- extern void migrate_page_copy(struct page *newpage, struct page *page);
- extern int migrate_huge_page_move_mapping(struct address_space *mapping,
-@@ -67,10 +64,6 @@ static inline struct page *alloc_migration_target(struct page *page,
- static inline int isolate_movable_page(struct page *page, isolate_mode_t mode)
- 	{ return -EBUSY; }
+ 	check_irqs_on();
++	/*
++	 * the refcount of buffer_head in bh_lru prevents dropping the
++	 * attached page(i.e., try_to_free_buffers) so it could cause
++	 * failing page migration.
++	 * Skip putting upcoming bh into bh_lru until migration is done.
++	 */
++	if (lru_cache_disabled())
++		return;
++
+ 	bh_lru_lock();
  
--static inline int migrate_prep(void) { return -ENOSYS; }
--static inline int migrate_finish(void) { return -ENOSYS; }
--static inline int migrate_prep_local(void) { return -ENOSYS; }
--
- static inline void migrate_page_states(struct page *newpage, struct page *page)
+ 	b = this_cpu_ptr(&bh_lrus);
+@@ -1404,6 +1413,15 @@ __bread_gfp(struct block_device *bdev, sector_t block,
+ }
+ EXPORT_SYMBOL(__bread_gfp);
+ 
++static void __invalidate_bh_lrus(struct bh_lru *b)
++{
++	int i;
++
++	for (i = 0; i < BH_LRU_SIZE; i++) {
++		brelse(b->bhs[i]);
++		b->bhs[i] = NULL;
++	}
++}
+ /*
+  * invalidate_bh_lrus() is called rarely - but not only at unmount.
+  * This doesn't race because it runs in each cpu either in irq
+@@ -1412,16 +1430,12 @@ EXPORT_SYMBOL(__bread_gfp);
+ static void invalidate_bh_lru(void *arg)
  {
- }
-diff --git a/mm/compaction.c b/mm/compaction.c
-index e04f4476e68e..3be017ececc0 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -2319,7 +2319,8 @@ compact_zone(struct compact_control *cc, struct capture_control *capc)
- 	trace_mm_compaction_begin(start_pfn, cc->migrate_pfn,
- 				cc->free_pfn, end_pfn, sync);
+ 	struct bh_lru *b = &get_cpu_var(bh_lrus);
+-	int i;
  
--	migrate_prep_local();
-+	/* lru_add_drain_all could be expensive with involving other CPUs */
-+	lru_add_drain();
- 
- 	while ((ret = compact_finished(cc)) == COMPACT_CONTINUE) {
- 		int err;
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 495b43a4b0f8..6daf9cc4c843 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -1124,7 +1124,7 @@ int do_migrate_pages(struct mm_struct *mm, const nodemask_t *from,
- 	int err = 0;
- 	nodemask_t tmp;
- 
--	migrate_prep();
-+	lru_cache_disable();
- 
- 	mmap_read_lock(mm);
- 
-@@ -1209,7 +1209,7 @@ int do_migrate_pages(struct mm_struct *mm, const nodemask_t *from,
- 	}
- 	mmap_read_unlock(mm);
- 
--	migrate_finish();
-+	lru_cache_enable();
- 	if (err < 0)
- 		return err;
- 	return busy;
-@@ -1325,7 +1325,7 @@ static long do_mbind(unsigned long start, unsigned long len,
- 
- 	if (flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)) {
- 
--		migrate_prep();
-+		lru_cache_disable();
- 	}
- 	{
- 		NODEMASK_SCRATCH(scratch);
-@@ -1374,7 +1374,7 @@ static long do_mbind(unsigned long start, unsigned long len,
- mpol_out:
- 	mpol_put(new);
- 	if (flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL))
--		migrate_finish();
-+		lru_cache_enable();
- 	return err;
+-	for (i = 0; i < BH_LRU_SIZE; i++) {
+-		brelse(b->bhs[i]);
+-		b->bhs[i] = NULL;
+-	}
++	__invalidate_bh_lrus(b);
+ 	put_cpu_var(bh_lrus);
  }
  
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 4d6c306d41c6..acc9913e4303 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -57,30 +57,6 @@
+-static bool has_bh_in_lru(int cpu, void *dummy)
++bool has_bh_in_lru(int cpu, void *dummy)
+ {
+ 	struct bh_lru *b = per_cpu_ptr(&bh_lrus, cpu);
+ 	int i;
+@@ -1440,6 +1454,16 @@ void invalidate_bh_lrus(void)
+ }
+ EXPORT_SYMBOL_GPL(invalidate_bh_lrus);
+ 
++void invalidate_bh_lrus_cpu(int cpu)
++{
++	struct bh_lru *b;
++
++	bh_lru_lock();
++	b = per_cpu_ptr(&bh_lrus, cpu);
++	__invalidate_bh_lrus(b);
++	bh_lru_unlock();
++}
++
+ void set_bh_page(struct buffer_head *bh,
+ 		struct page *page, unsigned long offset)
+ {
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index 6b47f94378c5..e7e99da31349 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -194,6 +194,8 @@ void __breadahead_gfp(struct block_device *, sector_t block, unsigned int size,
+ struct buffer_head *__bread_gfp(struct block_device *,
+ 				sector_t block, unsigned size, gfp_t gfp);
+ void invalidate_bh_lrus(void);
++void invalidate_bh_lrus_cpu(int cpu);
++bool has_bh_in_lru(int cpu, void *dummy);
+ struct buffer_head *alloc_buffer_head(gfp_t gfp_flags);
+ void free_buffer_head(struct buffer_head * bh);
+ void unlock_buffer(struct buffer_head *bh);
+@@ -406,6 +408,8 @@ static inline int inode_has_buffers(struct inode *inode) { return 0; }
+ static inline void invalidate_inode_buffers(struct inode *inode) {}
+ static inline int remove_inode_buffers(struct inode *inode) { return 1; }
+ static inline int sync_mapping_buffers(struct address_space *mapping) { return 0; }
++static inline void invalidate_bh_lrus_cpu(int cpu) {}
++static inline bool has_bh_in_lru(int cpu, void *dummy) { return 0; }
+ #define buffer_heads_over_limit 0
+ 
+ #endif /* CONFIG_BLOCK */
+diff --git a/mm/swap.c b/mm/swap.c
+index c94f55e7b649..a75a8265302b 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -36,6 +36,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/page_idle.h>
+ #include <linux/local_lock.h>
++#include <linux/buffer_head.h>
  
  #include "internal.h"
  
--/*
-- * migrate_prep() needs to be called before we start compiling a list of pages
-- * to be migrated using isolate_lru_page(). If scheduling work on other CPUs is
-- * undesirable, use migrate_prep_local()
-- */
--void migrate_prep(void)
--{
--	/*
--	 * Clear the LRU lists so pages can be isolated.
--	 */
--	lru_cache_disable();
--}
--
--void migrate_finish(void)
--{
--	lru_cache_enable();
--}
--
--/* Do the necessary work of migrate_prep but not if it involves other CPUs */
--void migrate_prep_local(void)
--{
--	lru_add_drain();
--}
--
- int isolate_movable_page(struct page *page, isolate_mode_t mode)
- {
- 	struct address_space *mapping;
-@@ -1771,7 +1747,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
- 	int start, i;
- 	int err = 0, err1;
+@@ -641,6 +642,7 @@ void lru_add_drain_cpu(int cpu)
+ 		pagevec_lru_move_fn(pvec, lru_lazyfree_fn);
  
--	migrate_prep();
-+	lru_cache_disable();
- 
- 	for (i = start = 0; i < nr_pages; i++) {
- 		const void __user *p;
-@@ -1840,7 +1816,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
- 	if (err >= 0)
- 		err = err1;
- out:
--	migrate_finish();
-+	lru_cache_enable();
- 	return err;
+ 	activate_page_drain(cpu);
++	invalidate_bh_lrus_cpu(cpu);
  }
  
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index af5d4eeb2999..bf1606c7965a 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -8467,7 +8467,7 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
- 		.gfp_mask = GFP_USER | __GFP_MOVABLE | __GFP_RETRY_MAYFAIL,
- 	};
- 
--	migrate_prep();
-+	lru_cache_disable();
- 
- 	while (pfn < end || !list_empty(&cc->migratepages)) {
- 		if (fatal_signal_pending(current)) {
-@@ -8496,7 +8496,7 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
- 				NULL, (unsigned long)&mtc, cc->mode, MR_CONTIG_RANGE);
- 	}
- 
--	migrate_finish();
-+	lru_cache_enable();
- 	if (ret < 0) {
- 		putback_movable_pages(&cc->migratepages);
- 		return ret;
+ /**
+@@ -828,7 +830,8 @@ inline void __lru_add_drain_all(bool force_all_cpus)
+ 		    pagevec_count(&per_cpu(lru_pvecs.lru_deactivate_file, cpu)) ||
+ 		    pagevec_count(&per_cpu(lru_pvecs.lru_deactivate, cpu)) ||
+ 		    pagevec_count(&per_cpu(lru_pvecs.lru_lazyfree, cpu)) ||
+-		    need_activate_page_drain(cpu)) {
++		    need_activate_page_drain(cpu) ||
++		    has_bh_in_lru(cpu, NULL)) {
+ 			INIT_WORK(work, lru_add_drain_per_cpu);
+ 			queue_work_on(cpu, mm_percpu_wq, work);
+ 			__cpumask_set_cpu(cpu, &has_work);
 -- 
 2.31.0.rc2.261.g7f71774620-goog
 
