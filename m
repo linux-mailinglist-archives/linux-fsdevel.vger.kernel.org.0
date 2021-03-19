@@ -2,143 +2,474 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD9BB3427F9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 22:48:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF215342835
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Mar 2021 22:54:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229942AbhCSVri (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Mar 2021 17:47:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37114 "EHLO
+        id S230229AbhCSVxc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Mar 2021 17:53:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229990AbhCSVrX (ORCPT
+        with ESMTP id S230203AbhCSVxY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Mar 2021 17:47:23 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21ABEC06175F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 14:47:23 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id g8so5050993lfv.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 14:47:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N6aTi9USXUTEe6463tZeUFfEF6sydMc4F3aHzBvCJTg=;
-        b=EVtmZajDtoqqVNxo4gyn0Tekfg+N2EalnddFD5XT8VNUvhcJONV0/s2Heiwtgg/XEu
-         Jo9KfgMdjGMAoM5ySFRHJGYq+wD1juQy4450shqWKbaECyQ2+tHotorC/Fh3vCah1/gh
-         VNS8lE91M6kD7wqZS20wJD/pq9hJ4BfB/aGbs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N6aTi9USXUTEe6463tZeUFfEF6sydMc4F3aHzBvCJTg=;
-        b=mJZgdnBEuw/mO7lEiyrirUz8Wi0tLbK/6YZbjQD5Tgza8TzAgeHrCbOpL06AgWhK7f
-         w3TNcSQm5eJM/EtQEovvCBGHL5yaBJ4Wz5OpAaKF9/PHITa8BjbXl9dvVK+EKIYvd8dk
-         RFSiKBvvJ0vVr3PkXYRkQggL0LQORt2r0yqm0jil+dVl7u3ze6P8nLxGbrZI3ELW8dTn
-         Bl3doXSNr21dlxcbiMagwtosdkBv++laR2ylNtqHAAkLUJPs0jIYXg48I32omu5DVEcd
-         Ix4frCPuMdp+r1Oz/yO/AC9FXBcYUmvSoAr+ZZNo71W5HOrQ0sGcIFl6S3CH8ATNpfEa
-         qW9A==
-X-Gm-Message-State: AOAM532OCuOXca348EgIJ8oPYlmI28/EpzPcxicPOf7AZSnIr55oeljf
-        exS5950m2j6gRHcykaeSz4qKFVk35rOK8Q==
-X-Google-Smtp-Source: ABdhPJze9vzSQcJkqVRtmaQQ4MgdAzUx+VAYdCUza5ftdAl7qzm5yMeyDn+xd0hm2+vWWvbOC4zzSA==
-X-Received: by 2002:a05:6512:3e20:: with SMTP id i32mr1985903lfv.257.1616190441214;
-        Fri, 19 Mar 2021 14:47:21 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id i22sm911021ljg.37.2021.03.19.14.47.20
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Mar 2021 14:47:20 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id q29so12068443lfb.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 14:47:20 -0700 (PDT)
-X-Received: by 2002:ac2:4250:: with SMTP id m16mr1890000lfl.40.1616190439785;
- Fri, 19 Mar 2021 14:47:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1615922644.git.osandov@fb.com> <8f741746-fd7f-c81a-3cdf-fb81aeea34b5@toxicpanda.com>
- <CAHk-=wj6MjPt+V7VrQ=muspc0DZ-7bg5bvmE2ZF-1Ea_AQh8Xg@mail.gmail.com>
- <YFUJLUnXnsv9X/vN@relinquished.localdomain> <CAHk-=whGEM0YX4eavgGuoOqhGU1g=bhdOK=vUiP1Qeb5ZxK56Q@mail.gmail.com>
- <YFUTnDaCdjWHHht5@relinquished.localdomain>
-In-Reply-To: <YFUTnDaCdjWHHht5@relinquished.localdomain>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 19 Mar 2021 14:47:03 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjhSP88EcBnqVZQhGa4M6Tp5Zii4GCBoNBBdcAc3PUYbg@mail.gmail.com>
-Message-ID: <CAHk-=wjhSP88EcBnqVZQhGa4M6Tp5Zii4GCBoNBBdcAc3PUYbg@mail.gmail.com>
-Subject: Re: [PATCH v8 00/10] fs: interface for directly reading/writing
- compressed data
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     Josef Bacik <josef@toxicpanda.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Fri, 19 Mar 2021 17:53:24 -0400
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [IPv6:2001:1600:3:17::1909])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2966C06175F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 14:53:23 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F2HhL0SLdzMqNhY;
+        Fri, 19 Mar 2021 22:53:22 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4F2HhB6LQyzlh8T8;
+        Fri, 19 Mar 2021 22:53:14 +0100 (CET)
+Subject: Re: [PATCH v30 08/12] landlock: Add syscall implementations
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20210316204252.427806-1-mic@digikod.net>
+ <20210316204252.427806-9-mic@digikod.net> <202103191157.CF13C34@keescook>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <380d65b2-f515-f3f5-5d57-7f99c528e5c7@digikod.net>
+Date:   Fri, 19 Mar 2021 22:53:31 +0100
+User-Agent: 
+MIME-Version: 1.0
+In-Reply-To: <202103191157.CF13C34@keescook>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 19, 2021 at 2:12 PM Omar Sandoval <osandov@osandov.com> wrote:
->
-> After spending a few minutes trying to simplify copy_struct_from_iter(),
-> it's honestly easier to just use the iterate_all_kinds() craziness than
-> open coding it to only operate on iov[0]. But that's an implementation
-> detail, and we can trivially make the interface stricter:
 
-This is an improvement, but talking about the iterate_all_kinds()
-craziness, I think your existing code is broken.
+On 19/03/2021 20:06, Kees Cook wrote:
+> On Tue, Mar 16, 2021 at 09:42:48PM +0100, Mickaël Salaün wrote:
+>> From: Mickaël Salaün <mic@linux.microsoft.com>
+>>
+>> These 3 system calls are designed to be used by unprivileged processes
+>> to sandbox themselves:
+>> * landlock_create_ruleset(2): Creates a ruleset and returns its file
+>>   descriptor.
+>> * landlock_add_rule(2): Adds a rule (e.g. file hierarchy access) to a
+>>   ruleset, identified by the dedicated file descriptor.
+>> * landlock_restrict_self(2): Enforces a ruleset on the calling thread
+>>   and its future children (similar to seccomp).  This syscall has the
+>>   same usage restrictions as seccomp(2): the caller must have the
+>>   no_new_privs attribute set or have CAP_SYS_ADMIN in the current user
+>>   namespace.
+>>
+>> All these syscalls have a "flags" argument (not currently used) to
+>> enable extensibility.
+> 
+> For the new-style extensible syscalls, you want only a "size" argument;
+> "flags" should be within the argument structure.
 
-That third case (kernel pointer source):
+Not necessarily, we should avoid complexity as much as possible. A flag
+argument is simple, and extensible arguments should be avoided as much
+as possible. Here it is only used for an extensible list of properties
+that can't be expressed otherwise.
 
-+    copy = min(ksize - copied, v.iov_len);
-+    memcpy(dst + copied, v.iov_base, copy);
-+    if (memchr_inv(v.iov_base, 0, v.iov_len))
-+        return -E2BIG;
+> 
+> (And to this end, why 3 syscalls instead of 1, if you're going to use
+> extensibility anyway?)
 
-can't be right. Aren't you checking that it's *all* zero, even the
-part you copied?
+This was discussed with people such as Arnd and Jann. Multiplexer
+syscalls should be avoided. Here are some background:
+https://lore.kernel.org/lkml/CAG48ez2V-eSH2+HL9zrYYD4QMpP4a5y8=mTQtk20PB0wUz_4Tw@mail.gmail.com/
 
-Our iov_iter stuff is really complicated already, this is part of why
-I'm not a huge fan of using it.
+> 
+>> +/**
+>> + * copy_min_struct_from_user - Safe future-proof argument copying
+>> + *
+>> + * Extend copy_struct_from_user() to check for consistent user buffer.
+>> + *
+>> + * @dst: Kernel space pointer or NULL.
+>> + * @ksize: Actual size of the data pointed to by @dst.
+>> + * @ksize_min: Minimal required size to be copied.
+>> + * @src: User space pointer or NULL.
+>> + * @usize: (Alleged) size of the data pointed to by @src.
+>> + */
+>> +static __always_inline int copy_min_struct_from_user(void *const dst,
+>> +		const size_t ksize, const size_t ksize_min,
+>> +		const void __user *const src, const size_t usize)
+>> +{
+>> +	/* Checks buffer inconsistencies. */
+>> +	BUILD_BUG_ON(!dst);
+>> +	if (!src)
+>> +		return -EFAULT;
+>> +
+>> +	/* Checks size ranges. */
+>> +	BUILD_BUG_ON(ksize <= 0);
+>> +	BUILD_BUG_ON(ksize < ksize_min);
+>> +	if (usize < ksize_min)
+>> +		return -EINVAL;
+>> +	if (usize > PAGE_SIZE)
+>> +		return -E2BIG;
+>> +
+>> +	/* Copies user buffer and fills with zeros. */
+>> +	return copy_struct_from_user(dst, ksize, src, usize);
+>> +}
+> 
+> I still wish this was built into copy_struct_from_user(). :) But yes,
+> this appears to be the way to protect one's self when using
+> copy_struct_from_user().
+> 
+>> +/**
+>> + * sys_landlock_create_ruleset - Create a new ruleset
+>> + *
+>> + * @attr: Pointer to a &struct landlock_ruleset_attr identifying the scope of
+>> + *        the new ruleset.
+>> + * @size: Size of the pointed &struct landlock_ruleset_attr (needed for
+>> + *        backward and forward compatibility).
+>> + * @flags: Must be 0.
+>> + *
+>> + * This system call enables to create a new Landlock ruleset, and returns the
+>> + * related file descriptor on success.
+>> + *
+>> + * Possible returned errors are:
+>> + *
+>> + * - EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
+>> + * - EINVAL: @flags is not 0, or unknown access, or too small @size;
+>> + * - E2BIG or EFAULT: @attr or @size inconsistencies;
+>> + * - ENOMSG: empty &landlock_ruleset_attr.handled_access_fs.
+>> + */
+>> +SYSCALL_DEFINE3(landlock_create_ruleset,
+>> +		const struct landlock_ruleset_attr __user *const, attr,
+>> +		const size_t, size, const __u32, flags)
+>> +{
+>> +	struct landlock_ruleset_attr ruleset_attr;
+>> +	struct landlock_ruleset *ruleset;
+>> +	int err, ruleset_fd;
+>> +
+>> +	/* Build-time checks. */
+>> +	build_check_abi();
+>> +
+>> +	if (!landlock_initialized)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	/* No flag for now. */
+>> +	if (flags)
+>> +		return -EINVAL;
+>> +
+>> +	/* Copies raw user space buffer. */
+>> +	err = copy_min_struct_from_user(&ruleset_attr, sizeof(ruleset_attr),
+>> +			offsetofend(typeof(ruleset_attr), handled_access_fs),
+> 
+> The use of offsetofend() here appears to be kind of the "V1", "V2", ...
+> sizes used in other extensible syscall implementations?
 
-I still suspect you'd be better off not using the iterate_all_kinds()
-thing at all, and just explicitly checking ITER_BVEC/ITER_KVEC
-manually.
+ruleset_attr is an extensible argument.
 
-Because you can play games like fooling your "copy_struct_from_iter()"
-to not copy anything at all with ITER_DISCARD, can't you?
+> 
+>> +			attr, size);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	/* Checks content (and 32-bits cast). */
+>> +	if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_ACCESS_FS) !=
+>> +			LANDLOCK_MASK_ACCESS_FS)
+>> +		return -EINVAL;
+>> +
+>> +	/* Checks arguments and transforms to kernel struct. */
+>> +	ruleset = landlock_create_ruleset(ruleset_attr.handled_access_fs);
+>> +	if (IS_ERR(ruleset))
+>> +		return PTR_ERR(ruleset);
+>> +
+>> +	/* Creates anonymous FD referring to the ruleset. */
+>> +	ruleset_fd = anon_inode_getfd("landlock-ruleset", &ruleset_fops,
+>> +			ruleset, O_RDWR | O_CLOEXEC);
+>> +	if (ruleset_fd < 0)
+>> +		landlock_put_ruleset(ruleset);
+>> +	return ruleset_fd;
+>> +}
+>> +
+>> +/*
+>> + * Returns an owned ruleset from a FD. It is thus needed to call
+>> + * landlock_put_ruleset() on the return value.
+>> + */
+>> +static struct landlock_ruleset *get_ruleset_from_fd(const int fd,
+>> +		const fmode_t mode)
+>> +{
+>> +	struct fd ruleset_f;
+>> +	struct landlock_ruleset *ruleset;
+>> +
+>> +	ruleset_f = fdget(fd);
+>> +	if (!ruleset_f.file)
+>> +		return ERR_PTR(-EBADF);
+>> +
+>> +	/* Checks FD type and access right. */
+>> +	if (ruleset_f.file->f_op != &ruleset_fops) {
+>> +		ruleset = ERR_PTR(-EBADFD);
+>> +		goto out_fdput;
+>> +	}
+>> +	if (!(ruleset_f.file->f_mode & mode)) {
+>> +		ruleset = ERR_PTR(-EPERM);
+>> +		goto out_fdput;
+>> +	}
+>> +	ruleset = ruleset_f.file->private_data;
+>> +	if (WARN_ON_ONCE(ruleset->num_layers != 1)) {
+>> +		ruleset = ERR_PTR(-EINVAL);
+>> +		goto out_fdput;
+>> +	}
+>> +	landlock_get_ruleset(ruleset);
+>> +
+>> +out_fdput:
+>> +	fdput(ruleset_f);
+>> +	return ruleset;
+>> +}
+>> +
+>> +/* Path handling */
+>> +
+>> +/*
+>> + * @path: Must call put_path(@path) after the call if it succeeded.
+>> + */
+>> +static int get_path_from_fd(const s32 fd, struct path *const path)
+>> +{
+>> +	struct fd f;
+>> +	int err = 0;
+>> +
+>> +	BUILD_BUG_ON(!__same_type(fd,
+>> +		((struct landlock_path_beneath_attr *)NULL)->parent_fd));
+>> +
+>> +	/* Handles O_PATH. */
+>> +	f = fdget_raw(fd);
+>> +	if (!f.file)
+>> +		return -EBADF;
+>> +	/*
+>> +	 * Only allows O_PATH file descriptor: enables to restrict ambient
+>> +	 * filesystem access without requiring to open and risk leaking or
+>> +	 * misusing a file descriptor.  Forbids ruleset FDs, internal
+>> +	 * filesystems (e.g. nsfs), including pseudo filesystems that will
+>> +	 * never be mountable (e.g. sockfs, pipefs).
+>> +	 */
+>> +	if (!(f.file->f_mode & FMODE_PATH) ||
+>> +			(f.file->f_op == &ruleset_fops) ||
+>> +			(f.file->f_path.mnt->mnt_flags & MNT_INTERNAL) ||
+>> +			(f.file->f_path.dentry->d_sb->s_flags & SB_NOUSER) ||
+>> +			d_is_negative(f.file->f_path.dentry) ||
+>> +			IS_PRIVATE(d_backing_inode(f.file->f_path.dentry))) {
+>> +		err = -EBADFD;
+>> +		goto out_fdput;
+>> +	}
+>> +	*path = f.file->f_path;
+>> +	path_get(path);
+>> +
+>> +out_fdput:
+>> +	fdput(f);
+>> +	return err;
+>> +}
+>> +
+>> +/**
+>> + * sys_landlock_add_rule - Add a new rule to a ruleset
+>> + *
+>> + * @ruleset_fd: File descriptor tied to the ruleset that should be extended
+>> + *		with the new rule.
+>> + * @rule_type: Identify the structure type pointed to by @rule_attr (only
+>> + *             LANDLOCK_RULE_PATH_BENEATH for now).
+>> + * @rule_attr: Pointer to a rule (only of type &struct
+>> + *             landlock_path_beneath_attr for now).
+>> + * @flags: Must be 0.
+>> + *
+>> + * This system call enables to define a new rule and add it to an existing
+>> + * ruleset.
+>> + *
+>> + * Possible returned errors are:
+>> + *
+>> + * - EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
+>> + * - EINVAL: @flags is not 0, or inconsistent access in the rule (i.e.
+>> + *   &landlock_path_beneath_attr.allowed_access is not a subset of the rule's
+>> + *   accesses);
+>> + * - ENOMSG: Empty accesses (e.g. &landlock_path_beneath_attr.allowed_access);
+>> + * - EBADF: @ruleset_fd is not a file descriptor for the current thread, or a
+>> + *   member of @rule_attr is not a file descriptor as expected;
+>> + * - EBADFD: @ruleset_fd is not a ruleset file descriptor, or a member of
+>> + *   @rule_attr is not the expected file descriptor type (e.g. file open
+>> + *   without O_PATH);
+>> + * - EPERM: @ruleset_fd has no write access to the underlying ruleset;
+>> + * - EFAULT: @rule_attr inconsistency.
+>> + */
+>> +SYSCALL_DEFINE4(landlock_add_rule,
+>> +		const int, ruleset_fd, const enum landlock_rule_type, rule_type,
+>> +		const void __user *const, rule_attr, const __u32, flags)
+>> +{
+> 
+> If this is an extensible syscall, I'd expect a structure holding
+> rule_type, rule_attr, and flags.
 
-Which then sounds like it might end up being useful as a kernel data
-leak, because it will use some random uninitialized kernel memory for
-the structure.
+This does not use an extensible argument. rule_type specifies a type and
+rule_attr specifies the content of this type. This is simpler and
+sufficient.
 
-Now, I don't think you can actually get that ITER_DISCARD case, so
-this is not *really* a problem, but it's another example of how that
-iterate_all_kinds() thing has these subtle cases embedded into it.
+> 
+>> +	struct landlock_path_beneath_attr path_beneath_attr;
+>> +	struct path path;
+>> +	struct landlock_ruleset *ruleset;
+>> +	int res, err;
+>> +
+>> +	if (!landlock_initialized)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	/* No flag for now. */
+>> +	if (flags)
+>> +		return -EINVAL;
+>> +
+>> +	if (rule_type != LANDLOCK_RULE_PATH_BENEATH)
+>> +		return -EINVAL;
+>> +
+>> +	/* Copies raw user space buffer, only one type for now. */
+>> +	res = copy_from_user(&path_beneath_attr, rule_attr,
+>> +			sizeof(path_beneath_attr));
+>> +	if (res)
+>> +		return -EFAULT;
+>> +
+>> +	/* Gets and checks the ruleset. */
+>> +	ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_WRITE);
+>> +	if (IS_ERR(ruleset))
+>> +		return PTR_ERR(ruleset);
+>> +
+>> +	/*
+>> +	 * Informs about useless rule: empty allowed_access (i.e. deny rules)
+>> +	 * are ignored in path walks.
+>> +	 */
+>> +	if (!path_beneath_attr.allowed_access) {
+>> +		err = -ENOMSG;
+>> +		goto out_put_ruleset;
+>> +	}
+>> +	/*
+>> +	 * Checks that allowed_access matches the @ruleset constraints
+>> +	 * (ruleset->fs_access_masks[0] is automatically upgraded to 64-bits).
+>> +	 */
+>> +	if ((path_beneath_attr.allowed_access | ruleset->fs_access_masks[0]) !=
+>> +			ruleset->fs_access_masks[0]) {
+>> +		err = -EINVAL;
+>> +		goto out_put_ruleset;
+>> +	}
+>> +
+>> +	/* Gets and checks the new rule. */
+>> +	err = get_path_from_fd(path_beneath_attr.parent_fd, &path);
+>> +	if (err)
+>> +		goto out_put_ruleset;
+>> +
+>> +	/* Imports the new rule. */
+>> +	err = landlock_append_fs_rule(ruleset, &path,
+>> +			path_beneath_attr.allowed_access);
+>> +	path_put(&path);
+>> +
+>> +out_put_ruleset:
+>> +	landlock_put_ruleset(ruleset);
+>> +	return err;
+>> +}
+>> +
+>> +/* Enforcement */
+>> +
+>> +/**
+>> + * sys_landlock_restrict_self - Enforce a ruleset on the calling thread
+>> + *
+>> + * @ruleset_fd: File descriptor tied to the ruleset to merge with the target.
+>> + * @flags: Must be 0.
+>> + *
+>> + * This system call enables to enforce a Landlock ruleset on the current
+>> + * thread.  Enforcing a ruleset requires that the task has CAP_SYS_ADMIN in its
+>> + * namespace or is running with no_new_privs.  This avoids scenarios where
+>> + * unprivileged tasks can affect the behavior of privileged children.
+>> + *
+>> + * Possible returned errors are:
+>> + *
+>> + * - EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
+>> + * - EINVAL: @flags is not 0.
+>> + * - EBADF: @ruleset_fd is not a file descriptor for the current thread;
+>> + * - EBADFD: @ruleset_fd is not a ruleset file descriptor;
+>> + * - EPERM: @ruleset_fd has no read access to the underlying ruleset, or the
+>> + *   current thread is not running with no_new_privs, or it doesn't have
+>> + *   CAP_SYS_ADMIN in its namespace.
+>> + * - E2BIG: The maximum number of stacked rulesets is reached for the current
+>> + *   thread.
+>> + */
+>> +SYSCALL_DEFINE2(landlock_restrict_self,
+>> +		const int, ruleset_fd, const __u32, flags)
+>> +{
+> 
+> Same observation about new style syscalls.
 
-The whole point of copy_struct_from_iter() is presumably to be the
-same kind of "obviously safe" interface as copy_struct_from_user() is
-meant to be, so these subtle cases just then make me go "Hmm".
+This design is simpler.
 
-I think just open-coding this when  you know there is no actual
-looping going on, and the data has to be at the *beginning*, should be
-fairly simple. What makes iterate_all_kinds() complicated is that
-iteration, the fact that there can be empty entries in there, but it's
-also that "iov_offset" thing etc.
-
-For the case where you just (a) require that iov_offset is zero, and
-(b) everything has to fit into the very first iov entry (regardless of
-what type that iov entry is), I think you actually end up with a much
-simpler model.
-
-I do realize that I am perhaps concentrating a bit too much on this
-one part of the patch series, but the iov_iter thing has bitten us
-before. And it has bitten really core developers and then Al has had
-to fix up mistakes.
-
-In fact, it wasn't that long ago that I asked Al to verify code I
-wrote, because I was worried about having missed something subtle. So
-now when I see these iov_iter users, it just makes me go all nervous.
-
-          Linus
+> 
+>> +	struct landlock_ruleset *new_dom, *ruleset;
+>> +	struct cred *new_cred;
+>> +	struct landlock_cred_security *new_llcred;
+>> +	int err;
+>> +
+>> +	if (!landlock_initialized)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	/* No flag for now. */
+>> +	if (flags)
+>> +		return -EINVAL;
+>> +
+>> +	/*
+>> +	 * Similar checks as for seccomp(2), except that an -EPERM may be
+>> +	 * returned.
+>> +	 */
+>> +	if (!task_no_new_privs(current) &&
+>> +			!ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN))
+>> +		return -EPERM;
+>> +
+>> +	/* Gets and checks the ruleset. */
+>> +	ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_READ);
+>> +	if (IS_ERR(ruleset))
+>> +		return PTR_ERR(ruleset);
+>> +
+>> +	/* Prepares new credentials. */
+>> +	new_cred = prepare_creds();
+>> +	if (!new_cred) {
+>> +		err = -ENOMEM;
+>> +		goto out_put_ruleset;
+>> +	}
+>> +	new_llcred = landlock_cred(new_cred);
+>> +
+>> +	/*
+>> +	 * There is no possible race condition while copying and manipulating
+>> +	 * the current credentials because they are dedicated per thread.
+>> +	 */
+>> +	new_dom = landlock_merge_ruleset(new_llcred->domain, ruleset);
+>> +	if (IS_ERR(new_dom)) {
+>> +		err = PTR_ERR(new_dom);
+>> +		goto out_put_creds;
+>> +	}
+>> +
+>> +	/* Replaces the old (prepared) domain. */
+>> +	landlock_put_ruleset(new_llcred->domain);
+>> +	new_llcred->domain = new_dom;
+>> +
+>> +	landlock_put_ruleset(ruleset);
+>> +	return commit_creds(new_cred);
+>> +
+>> +out_put_creds:
+>> +	abort_creds(new_cred);
+>> +
+>> +out_put_ruleset:
+>> +	landlock_put_ruleset(ruleset);
+>> +	return err;
+>> +}
+>> -- 
+>> 2.30.2
+>>
+> 
