@@ -2,59 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58B83342FC0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Mar 2021 22:55:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D164342FC2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Mar 2021 22:56:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229904AbhCTVyy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Mar 2021 17:54:54 -0400
-Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:35562 "EHLO
+        id S229835AbhCTVz1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Mar 2021 17:55:27 -0400
+Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:35574 "EHLO
         zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229886AbhCTVyx (ORCPT
+        with ESMTP id S229905AbhCTVzF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Mar 2021 17:54:53 -0400
+        Sat, 20 Mar 2021 17:55:05 -0400
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lNjWU-007jYa-0A; Sat, 20 Mar 2021 21:52:42 +0000
-Date:   Sat, 20 Mar 2021 21:52:41 +0000
+        id 1lNjYm-007jaJ-6S; Sat, 20 Mar 2021 21:55:04 +0000
+Date:   Sat, 20 Mar 2021 21:55:04 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Tyler Hicks <code@tyhicks.com>
 Cc:     ecryptfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/4] ecryptfs: ecryptfs_dentry_info->crypt_stat is never used
-Message-ID: <YFZuqS7OheVDgObg@zeniv-ca.linux.org.uk>
+Subject: Re: [PATCH 1/4] ecryptfs: get rid of pointless dget/dput in
+ ->symlink() and ->link()
+Message-ID: <YFZvOLzj5eytBV/Q@zeniv-ca.linux.org.uk>
 References: <YFZuSSpfWPrkJNVY@zeniv-ca.linux.org.uk>
- <YFZubuMq1akR1YDx@zeniv-ca.linux.org.uk>
- <YFZuiwhD7gKlu9Qs@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YFZuiwhD7gKlu9Qs@zeniv-ca.linux.org.uk>
+In-Reply-To: <YFZuSSpfWPrkJNVY@zeniv-ca.linux.org.uk>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-... and never had anything non-NULL stored into it.
+On Sat, Mar 20, 2021 at 09:51:05PM +0000, Al Viro wrote:
+> calls in ->unlink(), ->rmdir() and ->rename() make sense - we want
+> to prevent the underlying dentries going negative there.  In
+> ->symlink() and ->link() they are absolutely pointless.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/ecryptfs/ecryptfs_kernel.h | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+[snip]
 
-diff --git a/fs/ecryptfs/ecryptfs_kernel.h b/fs/ecryptfs/ecryptfs_kernel.h
-index 463b2d99b554..495fb4514d09 100644
---- a/fs/ecryptfs/ecryptfs_kernel.h
-+++ b/fs/ecryptfs/ecryptfs_kernel.h
-@@ -262,10 +262,7 @@ struct ecryptfs_inode_info {
-  * vfsmount too. */
- struct ecryptfs_dentry_info {
- 	struct path lower_path;
--	union {
--		struct ecryptfs_crypt_stat *crypt_stat;
--		struct rcu_head rcu;
--	};
-+	struct rcu_head rcu;
- };
- 
- /**
--- 
-2.11.0
-
+	FWIW, that patch series can also be found in
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.ecryptfs;
+Shortlog:
+Al Viro (4):
+      ecryptfs: get rid of pointless dget/dput in ->symlink() and ->link()
+      ecryptfs: saner API for lock_parent()
+      ecryptfs: get rid of unused accessors
+      ecryptfs: ecryptfs_dentry_info->crypt_stat is never used
+Diffstat:
+ fs/ecryptfs/ecryptfs_kernel.h |  17 +----
+ fs/ecryptfs/inode.c           | 163 +++++++++++++++++++-----------------------
+ 2 files changed, 75 insertions(+), 105 deletions(-)
