@@ -2,80 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23402342FE2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Mar 2021 23:28:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F22F7343032
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Mar 2021 23:57:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229835AbhCTW1g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Mar 2021 18:27:36 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:56802 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229815AbhCTW1J (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Mar 2021 18:27:09 -0400
-Received: from localhost (kaktus.kanapka.ml [151.237.229.131])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S229913AbhCTWwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Mar 2021 18:52:06 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:38645 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229805AbhCTWvp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 20 Mar 2021 18:51:45 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1616280705; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=h/kjQNHZr8syD5KgsFNW5AuVRmt+/DMN0c37FkLXUN4=;
+ b=ZBZfP2XDcwHe0Osr4MfazZvTX6izhKaZZtNbyeIHrOyMUCx1d6aJcrfltmTdMYPScXxXqKcD
+ ab0tbR3pEpXtRw+3NVoZZbvqgZ1sS/etH2RnvWgQZtHjTCcC+9H8hr2+IGQt5n47nFodz1Bt
+ iO/Ls6PkNZN1xKlNUtsfPfR+934=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
+ 60567c7d2b0e10a0ba709b66 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 20 Mar 2021 22:51:41
+ GMT
+Sender: cgoldswo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 3BC6FC43465; Sat, 20 Mar 2021 22:51:41 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by vulcan.natalenko.name (Postfix) with ESMTPSA id D43B19EC611;
-        Sat, 20 Mar 2021 23:26:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=dkim-20170712; t=1616279208;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UsXNI5haAYV6BEKBj6L7LHu9P+RpP6CzmUdNITyPG0o=;
-        b=sI6BioZLtNV835zQxrGbErLi+I0OXODLYz6UKZCHe4t4NMX2FhUxEesRWp6M5kKu7kG8F1
-        aM5SZh79zgODYJna0gAv/BoFU2bUQDjp2jNCGL42DfiFUTYqP02+PlJOjYkNh/SWYZW1DD
-        ZIrjsA+NhqIVNea2gi3kbDdk6G3NN7I=
-Date:   Sat, 20 Mar 2021 23:26:48 +0100
-From:   Oleksandr Natalenko <oleksandr@natalenko.name>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
-        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
-        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
-        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
-        andy.lavr@gmail.com
-Subject: Re: [PATCH v24 09/10] fs/ntfs3: Add NTFS3 in fs/Kconfig and
- fs/Makefile
-Message-ID: <20210320222648.qgqkqpdxzfejrfbt@spock.localdomain>
-References: <20210319185210.1703925-1-almaz.alexandrovich@paragon-software.com>
- <20210319185210.1703925-10-almaz.alexandrovich@paragon-software.com>
+        (Authenticated sender: cgoldswo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 61806C433C6;
+        Sat, 20 Mar 2021 22:51:40 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210319185210.1703925-10-almaz.alexandrovich@paragon-software.com>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Sat, 20 Mar 2021 15:51:40 -0700
+From:   Chris Goldsworthy <cgoldswo@codeaurora.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, joaodias@google.com,
+        surenb@google.com, mhocko@suse.com, david@redhat.com,
+        vbabka@suse.cz, linux-fsdevel@vger.kernel.org,
+        oliver.sang@intel.com
+Subject: Re: [PATCH v4 3/3] mm: fs: Invalidate BH LRU during page migration
+In-Reply-To: <20210320195439.GE3420@casper.infradead.org>
+References: <20210319175127.886124-1-minchan@kernel.org>
+ <20210319175127.886124-3-minchan@kernel.org>
+ <20210320093249.2df740cd139449312211c452@linux-foundation.org>
+ <YFYuyS51hpE2gp+f@google.com> <20210320195439.GE3420@casper.infradead.org>
+Message-ID: <8a01ba3dc10be8fa9d2cb52687f3f26b@codeaurora.org>
+X-Sender: cgoldswo@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 19, 2021 at 09:52:09PM +0300, Konstantin Komarov wrote:
-> This adds NTFS3 in fs/Kconfig and fs/Makefile
-> 
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> ---
->  fs/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/Kconfig b/fs/Kconfig
-> index a55bda4233bb..f61330e4efc0 100644
-> --- a/fs/Kconfig
-> +++ b/fs/Kconfig
-> @@ -145,6 +145,7 @@ menu "DOS/FAT/EXFAT/NT Filesystems"
->  source "fs/fat/Kconfig"
->  source "fs/exfat/Kconfig"
->  source "fs/ntfs/Kconfig"
-> +source "fs/ntfs3/Kconfig"
->  
->  endmenu
->  endif # BLOCK
-> -- 
-> 2.25.4
-> 
+On 2021-03-20 12:54, Matthew Wilcox wrote:
+> On Sat, Mar 20, 2021 at 10:20:09AM -0700, Minchan Kim wrote:
+>> > > Tested-by: Oliver Sang <oliver.sang@intel.com>
+>> > > Reported-by: kernel test robot <oliver.sang@intel.com>
+>> > > Signed-off-by: Chris Goldsworthy <cgoldswo@codeaurora.org>
+>> > > Signed-off-by: Minchan Kim <minchan@kernel.org>
+>> >
+>> > The signoff chain ordering might mean that Chris was the primary author, but
+>> > there is no From:him.  Please clarify?
+>> 
+>> He tried first version but was diffrent implementation since I
+>> changed a lot. That's why I added his SoB even though current
+>> implementaion is much different. So, maybe I am primary author?
 
-It seems fs/Makefile modification has been dropped from this patch for
-some reason. Mistake?
+Hey Minchan, let's have you as the primary author.
+
+> Maybe Chris is Reported-by: ?  And don't forget Laura Abbott as 
+> original
+> author of the patch Chris submitted.  I think she should be 
+> Reported-by:
+> as well, since there is no code from either of them in this version of
+> the patch.
+
+Yes, let's have a Reported-by: from Laura. We can change my 
+Signed-off-by to Reported-by: as well.
 
 -- 
-  Oleksandr Natalenko (post-factum)
+The Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,
+a Linux Foundation Collaborative Project
