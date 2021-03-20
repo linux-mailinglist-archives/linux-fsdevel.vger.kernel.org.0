@@ -2,94 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49B26342F2F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Mar 2021 20:14:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 129AC342F49
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Mar 2021 20:37:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229901AbhCTTOL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Mar 2021 15:14:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57668 "EHLO
+        id S229805AbhCTTgu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Mar 2021 15:36:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229854AbhCTTOF (ORCPT
+        with ESMTP id S229618AbhCTTgL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Mar 2021 15:14:05 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5045C061574;
-        Sat, 20 Mar 2021 12:14:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Type:MIME-Version:
-        References:Message-ID:In-Reply-To:Subject:cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=4SRcsqOR7mHsvlTEOKmrt3I6oj9DuUZJwfHn+BDyzWg=; b=LsJhf1TAEH9gQ5pX+wyRzqvn8U
-        GnJGsdXw8vwC6pteF7Stj3tkm0GCeqKjpNvfsQpFsm6m3X8t3BJatJnaunTkdyDST32Y4Dx3zHbji
-        ooT2E6CjoiuO9461LoC6Ducko7ddLVc7s4Aro9mxBvZnrK41RAIq0UeMxQoIh+k6IZ1SQt4yiqFiZ
-        y7EWcldSfP7SZRK72egjeWaMZM5kDhbmIfx+hNVsTyTmBTO6pNSyHdvVxcVmI6C7o6UntfvUJgt5d
-        /ankrKtLvtQvgC9bJZufNv5O6GtxJhpioJQPnHRDruMdEUxwFvetUKaGilvFI4R5EHegXrlGzs1Qy
-        x+GynFyg==;
-Received: from rdunlap (helo=localhost)
-        by bombadil.infradead.org with local-esmtp (Exim 4.94 #2 (Red Hat Linux))
-        id 1lNh2v-001zvF-OH; Sat, 20 Mar 2021 19:14:02 +0000
-Date:   Sat, 20 Mar 2021 12:14:01 -0700 (PDT)
-From:   Randy Dunlap <rdunlap@bombadil.infradead.org>
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
-cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        Sat, 20 Mar 2021 15:36:11 -0400
+Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3353BC061574;
+        Sat, 20 Mar 2021 12:36:11 -0700 (PDT)
+Received: by mail-qt1-x836.google.com with SMTP id j7so9496185qtx.5;
+        Sat, 20 Mar 2021 12:36:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zMHEua3Rqr0sCD6Y2P3gntqRo/krgVUNh1JAQn8GyqI=;
+        b=UFGNAVvkEoRnHc3HK4NfJKOAVcYOX8AbHLfLejALUCwpYyP5OSR1VL5ezpsRSecU9K
+         TahqbTMkoMIhMQU66MwFlPBMZZfoy7Hi6oxGimaa2jz1ZdcExiagrh2XuO1u9RENIPEW
+         KXOkKIQc+OaDpMWjX1GeDnkgAbBZQOEtqgB1v/eeTL8N9Vr9sVvsuRk+oKaDS7i8o0PC
+         SYq0NHL+oyzbJU8MmGkiIoBHoM6n2eV4UQ8WfJ+cDpURfB+hhfwQWvllW9eeJ+sF/J0K
+         Jv6dl8Vx+Ve/yiEXRGs7f7yAoIkGy8alJW5/5rYty7FpHkhSS23RP0I017q238TNJETa
+         DBRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zMHEua3Rqr0sCD6Y2P3gntqRo/krgVUNh1JAQn8GyqI=;
+        b=qteq9SW0rId0W1UlKMuYsHaBoSLjV3ekBqv83T/MOJBq7cX/HlzVGZiNKKcPyeJeDl
+         /rFE5TqhDT6foPPXYMU9ZmOphVUL8OROeivqlwpXhUi6yKmbZMUZtJkYRbyiWnR2lTKX
+         bHzaH2L0/lLYdpftNLmZtNHQHkCgvLAHCEUM0QQfnmYSjyJlw3nW+aAGiog07RnCDWJj
+         H5iLvtUHJqp6ld3MGHVc0aYzMPz/SRkN5m0LPZDVow9BYi23id4Asruqao33Ecy4ngm9
+         H8YG9OPfiWBqM6ebBH7R7jqxA2wFT1zIKc5fz0T7Ab01KMHBg6r4hljHTMWg1jSpnlX0
+         gJwg==
+X-Gm-Message-State: AOAM53339Rrwn79+nb8OOJEQbbt97xRpwpmUcoka0GcY3JV4PkfNLwZm
+        YYzIWMMoRtG9jdlYKWAwbT8=
+X-Google-Smtp-Source: ABdhPJze/j5CMlUibXCG6vXffBskEqG4/hc9Ue080S1Fb0GjnifY7PJTf7bKuvJ0dFT/weszgUmGig==
+X-Received: by 2002:ac8:70d1:: with SMTP id g17mr4104088qtp.380.1616268970242;
+        Sat, 20 Mar 2021 12:36:10 -0700 (PDT)
+Received: from localhost.localdomain ([138.199.13.205])
+        by smtp.gmail.com with ESMTPSA id i6sm3692813qkf.96.2021.03.20.12.36.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Mar 2021 12:36:09 -0700 (PDT)
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/namei.c: Mundane typo fix
-In-Reply-To: <20210320185332.27937-1-unixbhaskar@gmail.com>
-Message-ID: <2de2fc53-d65-7ccf-dabe-d8af526048e5@bombadil.infradead.org>
-References: <20210320185332.27937-1-unixbhaskar@gmail.com>
+Cc:     rdunlap@infradead.org, Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Subject: [PATCH] fs/attr.c: Couple of typo fixes
+Date:   Sun, 21 Mar 2021 01:03:53 +0530
+Message-Id: <20210320193353.30059-1-unixbhaskar@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-Sender: Randy Dunlap <rdunlap@infradead.org>
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20210320_121401_810997_0CF892D8 
-X-CRM114-Status: GOOD (  12.52  )
-X-Spam-Score: -0.0 (/)
-X-Spam-Report: Spam detection software, running on the system "bombadil.infradead.org",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- Content preview:  On Sun, 21 Mar 2021, Bhaskar Chowdhury wrote: > > s/carfully/carefully/
-    > > Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com> Acked-by: Randy
-    Dunlap <rdunlap@infradead.org> 
- Content analysis details:   (-0.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -0.0 NO_RELAYS              Informational: message was not relayed via SMTP
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+s/filesytem/filesystem/
+s/asssume/assume/
 
-On Sun, 21 Mar 2021, Bhaskar Chowdhury wrote:
+Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+---
+ fs/attr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->
-> s/carfully/carefully/
->
-> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+diff --git a/fs/attr.c b/fs/attr.c
+index 87ef39db1c34..e5330853c844 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -250,7 +250,7 @@ void setattr_copy(struct user_namespace *mnt_userns, struct inode *inode,
+ EXPORT_SYMBOL(setattr_copy);
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+ /**
+- * notify_change - modify attributes of a filesytem object
++ * notify_change - modify attributes of a filesystem object
+  * @mnt_userns:	user namespace of the mount the inode was found from
+  * @dentry:	object affected
+  * @attr:	new attributes
+@@ -265,7 +265,7 @@ EXPORT_SYMBOL(setattr_copy);
+  * caller should drop the i_mutex before doing so.
+  *
+  * If file ownership is changed notify_change() doesn't map ia_uid and
+- * ia_gid. It will asssume the caller has already provided the intended values.
++ * ia_gid. It will assume the caller has already provided the intended values.
+  *
+  * Alternatively, a caller may pass NULL for delegated_inode.  This may
+  * be appropriate for callers that expect the underlying filesystem not
+--
+2.26.2
 
-
-> ---
-> fs/namei.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 216f16e74351..bd0592000d87 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2045,7 +2045,7 @@ static inline unsigned int fold_hash(unsigned long x, unsigned long y)
-> #endif
->
-> /*
-> - * Return the hash of a string of known length.  This is carfully
-> + * Return the hash of a string of known length.  This is carefully
->  * designed to match hash_name(), which is the more critical function.
->  * In particular, we must end by hashing a final word containing 0..7
->  * payload bytes, to match the way that hash_name() iterates until it
-> --
-> 2.26.2
->
->
