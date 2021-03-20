@@ -2,148 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B00D1342CCA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Mar 2021 13:28:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41454342CE8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Mar 2021 13:58:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229686AbhCTM1d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Mar 2021 08:27:33 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48209 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbhCTM1B (ORCPT
+        id S229585AbhCTM5b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Mar 2021 08:57:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33690 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229505AbhCTM5R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Mar 2021 08:27:01 -0400
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1lNagm-0004Pf-Om; Sat, 20 Mar 2021 12:26:44 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v2 4/4] fs: introduce two inode i_{u,g}id initialization helpers
-Date:   Sat, 20 Mar 2021 13:26:24 +0100
-Message-Id: <20210320122623.599086-5-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210320122623.599086-1-christian.brauner@ubuntu.com>
-References: <20210320122623.599086-1-christian.brauner@ubuntu.com>
+        Sat, 20 Mar 2021 08:57:17 -0400
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D789C061762;
+        Sat, 20 Mar 2021 05:57:17 -0700 (PDT)
+Received: by mail-il1-x136.google.com with SMTP id u10so10549912ilb.0;
+        Sat, 20 Mar 2021 05:57:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aaz5vIn5nArItqTRFs02OpD1fPWq0lVp2I+2//tPwmE=;
+        b=e0mBNUGs5Pm9m68S9vqDUZ6s2mbVvqyEsryA2N4v0UG9AABaya6JAbS3bE5vuff/cg
+         4ls8ugBmiv5AUG136MKeyA44RKmfxs0DmJAF/7MMAZKabVVKlKJBrPIob3me6SFv0TCk
+         thcICgbvnnXPlZZWTMMqhCs3GD/Vp1dMHI2Ru5rZ3D6PQ+WeKwUw+BnSChBBA7AjSq/I
+         ZbR8vIrfXpJbnAV9aTSu+N/PGSHj3MijYFkrRHqbzfmoetvN7jf1UnvovW71fk2uBgIm
+         hgYCV5377cv+tJYc47mOzCFQtvhQIS/j6WBJdNdSZdasQ11S65NSh3lZh9mgQrmiwMso
+         2NZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aaz5vIn5nArItqTRFs02OpD1fPWq0lVp2I+2//tPwmE=;
+        b=T3HZnwQfn0GSIyfqSl/vakiyKKIIZNQTqJsyJal0JCXud6EMrOvjX/7NqKGPEXWYfo
+         jt+AL0o3huBeDPjx08dN0L4CBXkil0jNRpM+NnLasmVTxReJM1kHfQRtNBaINNJF6NC8
+         w7MwbIrj8D761CxVG9hqhpza2bbOxxJD6+8FDnuA8HJ2smyjvU2delvQBhszrBJpY0JB
+         /8fEDJmyhyPWGDPFPgQ/Fz7b3yN/WKzbF0CV/NtjB6MRK90up5+XrWal/ZfywJHOpawu
+         IX1SRLgqIJIMRB+v0QmV2B0ljNlh1oEE35LhLIB8JXJ9b2PDxzVR5AIarIFviZCe5NG3
+         sMKg==
+X-Gm-Message-State: AOAM531m98nWV2pGncvvSwu/Z84HRPX67eT8zUFl0MhkMpLCLbvY33PP
+        OPsax+34BaVVHVl9h67C8cAhDN694cAwlyPliDMEx2w4/NI=
+X-Google-Smtp-Source: ABdhPJyLFgFGvqV7T6clWmJMWQ3UrgZs99iYt4w/+E3129OthjlVw7w0r9abwwHb5WfKUlTN2XAM/tdS+D5lPcRVPBo=
+X-Received: by 2002:a92:da48:: with SMTP id p8mr5702355ilq.137.1616245036519;
+ Sat, 20 Mar 2021 05:57:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210304112921.3996419-1-amir73il@gmail.com> <20210316155524.GD23532@quack2.suse.cz>
+ <CAOQ4uxgCv42_xkKpRH-ApMOeFCWfQGGc11CKxUkHJq-Xf=HnYg@mail.gmail.com>
+ <20210317114207.GB2541@quack2.suse.cz> <CAOQ4uxi7ZXJW3_6SN=vw_XJC+wy4eMTayN6X5yRy_HOV6323MA@mail.gmail.com>
+ <20210317174532.cllfsiagoudoz42m@wittgenstein> <CAOQ4uxjCjapuAHbYuP8Q_k0XD59UmURbmkGC1qcPkPAgQbQ8DA@mail.gmail.com>
+ <20210318143140.jxycfn3fpqntq34z@wittgenstein> <CAOQ4uxiRHwmxTKsLteH_sBW_dSPshVE8SohJYEmpszxaAwjEyg@mail.gmail.com>
+ <20210319134043.c2wcpn4lbefrkhkg@wittgenstein> <CAOQ4uxhLYdWOUmpWP+c_JzVeGDbkJ5eUM+1-hhq7zFq23g5J1g@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhLYdWOUmpWP+c_JzVeGDbkJ5eUM+1-hhq7zFq23g5J1g@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 20 Mar 2021 14:57:05 +0200
+Message-ID: <CAOQ4uxhetKeEZX=_iAcREjibaR0ZcOdeZyR8mFEoHM+WRsuVtg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Give filesystem two little helpers that do the right thing when
-initializing the i_uid and i_gid fields on idmapped and non-idmapped
-mounts. Filesystems shouldn't have to be concerned with too many
-details.
+> > > The code that sits in linux-next can give you pretty much a drop-in
+> > > replacement of inotify and nothing more. See example code:
+> > > https://github.com/amir73il/inotify-tools/commits/fanotify_name_fid
+> >
+> > This is really great. Thank you for doing that work this will help quite
+> > a lot of use-cases and make things way simpler. I created a TODO to port
+> > our path-hotplug to this once this feature lands.
+> >
+>
+> FWIW, I just tried to build this branch on Ubuntu 20.04.2 with LTS kernel
+> and there were some build issues, so rebased my branch on upstream
+> inotify-tools to fix those build issues.
+>
+> I was not aware that the inotify-tools project is alive, I never intended
+> to upstream this demo code and never created a github pull request
+> but rebasing on upstream brought in some CI scripts, when I pushed the
+> branch to my github it triggered some tests that reported build failures on
+> Ubuntu 16.04 and 18.04.
+>
+> Anyway, there is a pre-rebase branch 'fanotify_name' and the post rebase
+> branch 'fanotify_name_fid'. You can try whichever works for you.
+>
+> You can look at the test script src/test_demo.sh for usage example.
+> Or just cd into a writable directory and run the script to see the demo.
+> The demo determines whether to use a recursive watch or "global"
+> watch by the uid of the user.
+>
+> > >
+> > > > > If you think that is useful and you want to play with this feature I can
+> > > > > provide a WIP branch soon.
+> > > >
+> > > > I would like to first play with the support for unprivileged fanotify
+> > > > but sure, it does sound useful!
+> > >
+> > > Just so you have an idea what I am talking about, this is a very early
+> > > POC branch:
+> > > https://github.com/amir73il/linux/commits/fanotify_userns
+> >
+> > Thanks!  I'll try to pull this and take a look next week. I hope that's
+> > ok.
+> >
+>
+> Fine. I'm curious to know what it does.
+> Did not get to test it with userns yet :)
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Inspired-by: Vivek Goyal <vgoyal@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
-/* v2 */
-- Christian Brauner <christian.brauner@ubuntu.com>:
-  - Add kernel docs to helpers.
----
- fs/ext4/ialloc.c   |  2 +-
- fs/inode.c         |  4 ++--
- fs/xfs/xfs_inode.c |  2 +-
- include/linux/fs.h | 28 ++++++++++++++++++++++++++++
- 4 files changed, 32 insertions(+), 4 deletions(-)
+Now tested FAN_MARK_FILESYSTEM watch on tmpfs mounted
+inside userns and works fine, with two wrinkles I needed to iron:
 
-diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index d0dc12197346..755a68bb7e22 100644
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -970,7 +970,7 @@ struct inode *__ext4_new_inode(struct user_namespace *mnt_userns,
- 		i_gid_write(inode, owner[1]);
- 	} else if (test_opt(sb, GRPID)) {
- 		inode->i_mode = mode;
--		inode->i_uid = mapped_fsuid(mnt_userns);
-+		inode_fsuid_set(inode, mnt_userns);
- 		inode->i_gid = dir->i_gid;
- 	} else
- 		inode_init_owner(mnt_userns, inode, dir, mode);
-diff --git a/fs/inode.c b/fs/inode.c
-index 81a6a59b7dd3..21c5a620ca89 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2148,7 +2148,7 @@ EXPORT_SYMBOL(init_special_inode);
- void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
- 		      const struct inode *dir, umode_t mode)
- {
--	inode->i_uid = mapped_fsuid(mnt_userns);
-+	inode_fsuid_set(inode, mnt_userns);
- 	if (dir && dir->i_mode & S_ISGID) {
- 		inode->i_gid = dir->i_gid;
- 
-@@ -2160,7 +2160,7 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
- 			 !capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
- 			mode &= ~S_ISGID;
- 	} else
--		inode->i_gid = mapped_fsgid(mnt_userns);
-+		inode_fsgid_set(inode, mnt_userns);
- 	inode->i_mode = mode;
- }
- EXPORT_SYMBOL(inode_init_owner);
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index dc91f8c34d35..2a8bdf33e6c4 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -812,7 +812,7 @@ xfs_init_new_inode(
- 
- 	if (dir && !(dir->i_mode & S_ISGID) &&
- 	    (mp->m_flags & XFS_MOUNT_GRPID)) {
--		inode->i_uid = mapped_fsuid(mnt_userns);
-+		inode_fsuid_set(inode, mnt_userns);
- 		inode->i_gid = dir->i_gid;
- 		inode->i_mode = mode;
- 	} else {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 0e2ce21b2552..4a4af6c26a01 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1692,6 +1692,34 @@ static inline kgid_t mapped_fsgid(struct user_namespace *mnt_userns)
- 	return kgid_from_mnt(mnt_userns, current_fsgid());
- }
- 
-+/**
-+ * inode_fsuid_set - initialize inode's i_uid field with callers fsuid
-+ * @inode: inode to initialize
-+ * @mnt_userns: user namespace of the mount the inode was found from
-+ *
-+ * Initialize the i_uid field of @inode. If the inode was found/created via
-+ * an idmapped mount map the caller's fsuid according to @mnt_users.
-+ */
-+static inline void inode_fsuid_set(struct inode *inode,
-+				   struct user_namespace *mnt_userns)
-+{
-+	inode->i_uid = mapped_fsuid(mnt_userns);
-+}
-+
-+/**
-+ * inode_fsgid_set - initialize inode's i_gid field with callers fsgid
-+ * @inode: inode to initialize
-+ * @mnt_userns: user namespace of the mount the inode was found from
-+ *
-+ * Initialize the i_gid field of @inode. If the inode was found/created via
-+ * an idmapped mount map the caller's fsgid according to @mnt_users.
-+ */
-+static inline void inode_fsgid_set(struct inode *inode,
-+				   struct user_namespace *mnt_userns)
-+{
-+	inode->i_gid = mapped_fsgid(mnt_userns);
-+}
-+
- /**
-  * fsuidgid_has_mapping() - check whether caller's fsuid/fsgid is mapped
-  * @sb: the superblock we want a mapping in
--- 
-2.27.0
+1. FAN_REPORT_FID not supported on tmpfs because tmpfs has
+    zero f_fsid (easy to fix)
+2. open_by_handle_at() is not userns aware (can relax for
+    FS_USERNS_MOUNT fs)
 
+Pushed these two fixes to branch fanotify_userns.
+
+Thanks,
+Amir.
