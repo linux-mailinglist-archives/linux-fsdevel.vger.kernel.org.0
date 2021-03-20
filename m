@@ -2,97 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9018434296E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Mar 2021 01:28:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E468D342976
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Mar 2021 01:32:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229640AbhCTA1j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Mar 2021 20:27:39 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:5489 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229680AbhCTA1Q (ORCPT
+        id S229640AbhCTAcH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Mar 2021 20:32:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44304 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229564AbhCTAbi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Mar 2021 20:27:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1616200041; x=1647736041;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Sg5xcL0RkzlKh/Ee73AUuPE+W4DNGMzOSE2MTxLLL8o=;
-  b=LRK+V084HfmT+GPIfArOIcoXCnmTTxwNZFDsA5aF3qkFmJXHYKcoLfn4
-   HLR36gMRZxBkVoG9jiccg/LQJHyVG9RvxntjE7UGM4a26jMwCV64nItdE
-   t7GQZ6Rc2QStpwQHq5p7BjBx5FORAYy8qiK2nAx2c4zLRgVDIIFduxlTS
-   02twAUvKXPER3vS02JAiNoszd7cBlg/U5X2PwTubXXCZDHN65ZfiyHt0b
-   yMn8uyrzNrsYfMgxCpMndiaQCruR59wl6DRZIb6sPkZLoI6HSso1Fo/x7
-   XOTSqSzN0iYypAnRjcxhtsfnJhniS1nnALTy1tAcizWgLjAb0NrjNVwiI
-   Q==;
-IronPort-SDR: 3so6ViqBZoFG2scmOcvB/oQ4t2PP7wxbyEm94yTKbEOnvmgNWt8rgxUVuKXzg9LzyBekIN1Jl9
- fBXjYcbq90CwED4OEQAu1np4S7F6QhTvbRxw1zWEqOdKVFflbVlmuteoV79gBMUBGS5OayOXkg
- O810v86moYMx6RB1CGBobbOsZE8jYaW10AL91F+sHK5ycRS5eV9fBJhARP+tUH7GXpdjeMGatt
- VzVbDF8Z7k1O9JvYRfdv0PYznm3udW8GGLP+cMVE1VoffqtnYggx8U7VJ0YJwXPtqYyIC4Nkxm
- Q4I=
-X-IronPort-AV: E=Sophos;i="5.81,263,1610380800"; 
-   d="scan'208";a="266993970"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 20 Mar 2021 08:27:20 +0800
-IronPort-SDR: VF1E4m7PQqbGOMcHnF60ZpUY1p0gUWJ8I0aoPTYq97nGDDklTHWZxNUFdN8nT9+uVr9dKWVjnb
- nXECf40NtSeDCoAmIw4YUStKbPM71Y/FpXiEE4ARchDaZiwzos81PbX/+r+TwkeTRICCVK9c6o
- qBTJRHtWImYlENqoNOcPOrV/06WCNh3m7IZN994CfXtqlbMO3T+2Dblz3+5FGyo3N5jbRu5Uk8
- /cxwo5I0e447amxtHZXm0Bukb74VKxfNawsWSwk5JiE/qXkEvUAj9mqrIRKc6p8Ba30oIKzPtC
- F11cLyYHqM/SbMWCt63fXMsz
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2021 17:07:47 -0700
-IronPort-SDR: rXIT4ZhlUxp3BMaB/9HEZEZT/mydUDepMmvNjaj6hadxRW2gXsrH6Qytb35Ad6VpbawYsoMah7
- /2VP/xNcYJD3VaHa90Zptnvb0qFhdUscHiUEgzQDDeaafI6YqMOQRK/r+NbG2HOVtx0pkQlJLO
- SNoxA2CxB6FDnasSQXdjAfft5qTyyxhGyYUCVEdQTdyqiRhfcpMM0ODlF2yO36uZNu92ndgdWH
- 8lo/L3Z6EsOjneTm/O3xwTR5bhKJnUKp2oRyLU32RnAIsMm/ji/d6BEmlkwCyBLCEAk9VDb411
- peI=
-WDCIronportException: Internal
-Received: from washi.fujisawa.hgst.com ([10.149.53.254])
-  by uls-op-cesaip02.wdc.com with ESMTP; 19 Mar 2021 17:27:15 -0700
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] zonefs fixes for 5.12-rc4
-Date:   Sat, 20 Mar 2021 09:27:14 +0900
-Message-Id: <20210320002714.436286-1-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.30.2
+        Fri, 19 Mar 2021 20:31:38 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B0E8C061762
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 17:31:38 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id x28so12627702lfu.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 17:31:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=61j+NwfICNWJWz0XMgFUBwrGhoQDi0J8u1n1is81ZYM=;
+        b=CpbSVYpb9YM1T9z1e1UZGf7HmWEG3ed4KwVewC9begrECftVwGF0pqxn4xXjZL6kO3
+         A9HqtpleUFq3FaYakT6UFgrfqOt7d3YRtgmx1JZdEDBxycA0My59WwVuumIknimBFEkM
+         fCqs/yzGnaUnaQYMf0T5oTP5vCgohxkIx1HUg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=61j+NwfICNWJWz0XMgFUBwrGhoQDi0J8u1n1is81ZYM=;
+        b=nklw481gBGY7P19fAphiI/VjoGyy1RgolXSC2hAeh/tpkHll3IjoKUb9/oAE+fk35/
+         WblC1xhsycecgv7FnyMagO0FqcoKwbI/ChuVCgQt+ggSmA8dtqlkzFLuwrHdvKFdpAix
+         K3KSVSpVnB1XIoiEYGZ+YNTbsmCaUxMhS2xGbmWZ8Nw1Bp25VPmoPFfbBa6h9/s6AktY
+         SS3pzCjVqj+g/o0p6mKJrDJCMF54dWLoHSxBud8mpjH7Uk0vEgEF+rFNU2FSxy1DqoRq
+         qKvt0hEWB/NTeKNk3wXDFeijaFMY4cXj3UZkyAfGGJ5F1gaAlb0BnUD9/B/KN8W+uUKE
+         3hmQ==
+X-Gm-Message-State: AOAM533esoeloAJsfLhhDdlNt+InF09nmyyz82h68UBuxl6Q0SfWDsYe
+        z4y1a0tgbe0oxQOwKUEi4CRTn5lQTf8eMA==
+X-Google-Smtp-Source: ABdhPJwc8Bx6crMJsNZ8zNouhqm8hsYeUmW7JtxP9oxZUWpAOz93HKEk7bl3dDCtFFGd/zvqIGNZPg==
+X-Received: by 2002:a19:f608:: with SMTP id x8mr2292150lfe.380.1616200296562;
+        Fri, 19 Mar 2021 17:31:36 -0700 (PDT)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id p22sm781167lfh.113.2021.03.19.17.31.34
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Mar 2021 17:31:35 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id o10so12628429lfb.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Mar 2021 17:31:34 -0700 (PDT)
+X-Received: by 2002:ac2:58fc:: with SMTP id v28mr2189309lfo.201.1616200294775;
+ Fri, 19 Mar 2021 17:31:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1615922644.git.osandov@fb.com> <8f741746-fd7f-c81a-3cdf-fb81aeea34b5@toxicpanda.com>
+ <CAHk-=wj6MjPt+V7VrQ=muspc0DZ-7bg5bvmE2ZF-1Ea_AQh8Xg@mail.gmail.com>
+ <YFUJLUnXnsv9X/vN@relinquished.localdomain> <CAHk-=whGEM0YX4eavgGuoOqhGU1g=bhdOK=vUiP1Qeb5ZxK56Q@mail.gmail.com>
+ <YFUTnDaCdjWHHht5@relinquished.localdomain> <CAHk-=wjhSP88EcBnqVZQhGa4M6Tp5Zii4GCBoNBBdcAc3PUYbg@mail.gmail.com>
+ <YFUpvFyXD0WoUHFu@relinquished.localdomain>
+In-Reply-To: <YFUpvFyXD0WoUHFu@relinquished.localdomain>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 19 Mar 2021 17:31:18 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whrT6C-fsUex1csb4OSi06LwaCNGVJYnnitaA80w9Ua7g@mail.gmail.com>
+Message-ID: <CAHk-=whrT6C-fsUex1csb4OSi06LwaCNGVJYnnitaA80w9Ua7g@mail.gmail.com>
+Subject: Re: [PATCH v8 00/10] fs: interface for directly reading/writing
+ compressed data
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus,
+On Fri, Mar 19, 2021 at 3:46 PM Omar Sandoval <osandov@osandov.com> wrote:
+>
+> Not much shorter, but it is easier to follow.
 
-The following changes since commit 1e28eed17697bcf343c6743f0028cc3b5dd88bf0:
+Yeah, that looks about right to me.
 
-  Linux 5.12-rc3 (2021-03-14 14:41:02 -0700)
+You should probably use kmap_local_page() rather than kmap_atomic()
+these days, but other than that this looks fairly straightforward, and
+I much prefer the model where we very much force that "must be the
+first iovec entry".
 
-are available in the Git repository at:
+As you say, maybe not shorter, but a lot more straightforward.
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git/ tags/zonefs-5.12-rc4
+That said, looking through the patch series, I see at least one other
+issue. Look at parisc:
 
-for you to fetch changes up to 6980d29ce4da223ad7f0751c7f1d61d3c6b54ab3:
+    +#define O_ALLOW_ENCODED 100000000
 
-  zonefs: fix to update .i_wr_refcnt correctly in zonefs_open_zone() (2021-03-17 08:56:50 +0900)
+yeah, that's completely wrong. I see how it happened, but that's _really_ wrong.
 
-----------------------------------------------------------------
-zonefs fixes for 5.12-rc4
+I would want others to take a look in case there's something else. I'm
+not qualified to comment about (nor do I deeply care) about the btrfs
+parts, but the generic interface parts should most definitely get more
+attention.
 
-3 patches in this pull request:
-- A fix of inode write open reference count, from Chao
-- Fix wrong write offset for asynchronous O_APPEND writes, from me
-- Prevent use of sequential zone file as swap files, from me
+By Al, if possible, but other fs people too..
 
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-
-----------------------------------------------------------------
-Chao Yu (1):
-      zonefs: fix to update .i_wr_refcnt correctly in zonefs_open_zone()
-
-Damien Le Moal (2):
-      zonefs: prevent use of seq files as swap file
-      zonefs: Fix O_APPEND async write handling
-
- fs/zonefs/super.c | 101 ++++++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 87 insertions(+), 14 deletions(-)
+           Linus
