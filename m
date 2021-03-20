@@ -2,131 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 168B4342C03
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Mar 2021 12:20:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EB53342CC2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Mar 2021 13:27:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230087AbhCTLT5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Mar 2021 07:19:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40970 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230189AbhCTLTg (ORCPT
+        id S229583AbhCTM07 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Mar 2021 08:26:59 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48186 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229505AbhCTM0p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Mar 2021 07:19:36 -0400
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7BA9C0613B7
-        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Mar 2021 03:47:47 -0700 (PDT)
-Received: by mail-il1-x12e.google.com with SMTP id l5so10367401ilv.9
-        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Mar 2021 03:47:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=L6Kgc3tRVFF2let9OqOhKw0hCmNshZRwLOFUvp7Qklc=;
-        b=GT13xEPHnei7z6CNdIriw9WTKtoVFo6sPJMjxQeIfIZGIcz4IQ9pziHiISTqH0TvwN
-         bO/0ddm4xi5/9q55PTusqtS7MKP1PNe09la5tR86DhPBWWVStuJBe1TnOKgLhyXAlG9B
-         TakdOyPBq1q5xHJY0sV5xTJeMlsJOBZVAEqKyfPDh7cTGFQjHdmVGinuluo/SVdzflJ9
-         IWdBz3a/pZGdaUEhkBhZn8znYXkw0NzowqaBP/wn8KMxNmNM+t9qrOV/PXymxEyDRKrR
-         GreIJSclqBgkDo4U03GJZY/Z3PulbjCAgEbG7PJ2tztW3ARTZHT8k+M6NS94IvjQiEaV
-         sHIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=L6Kgc3tRVFF2let9OqOhKw0hCmNshZRwLOFUvp7Qklc=;
-        b=L/KooaNPBna+WkBAiWZOor1LWFTxgf+XQ0dSDfsEMOow8v/bPu4OP4j+ahiJx6CHYP
-         1vx+QG+Tk5fvDPGPQ1q6XnQ+1so4cX4rlwPyENTb/NQZZ2buVvbtEc+B/bi7eOsKMRNn
-         sV/rLs5TA7/669u/THYf5N8mcL6mibAsRwEVrlcTwFw+TGynCVi65HDFFKPsgZKg+URL
-         DJVKQZSaEASkNiOhEirt0ziNOZdhPJ7zpVfnw6QoQ3V2Ov1CyxGT474ZFPBTGE+eVwlc
-         TC1RafVt4lOHTUBwrtu8X5mLWLHZrCuGixd5OP1FZMYgXDLZt1tFVe3e6O5xjF3VbbNr
-         0Gvg==
-X-Gm-Message-State: AOAM530g74fSLg1rQWAHsHkXiIuQgqDcYpeSwnvkxPzJprFXTzVPa+lI
-        idO5oziAN/bbqbbHjBD/b8tMviCCiu1dTXiJ
-X-Google-Smtp-Source: ABdhPJx74/Nh31ry6a74bwVBXC+iK9bBl7ifRcY+2msZrjZmEIXcV2+vzyBc4g1SUo4e0zgd087QxA==
-X-Received: by 2002:a65:68d6:: with SMTP id k22mr756097pgt.114.1616231158930;
-        Sat, 20 Mar 2021 02:05:58 -0700 (PDT)
-Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
-        by smtp.gmail.com with ESMTPSA id j10sm7443564pjs.11.2021.03.20.02.05.57
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 20 Mar 2021 02:05:58 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <0399B7C7-D6A1-4A92-ABDD-1EA13C80007E@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_18E6BF6C-9AA5-4C4D-A623-B79DF40D07C7";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH v2 1/2] ext4: Handle casefolding with encryption
-Date:   Sat, 20 Mar 2021 03:05:54 -0600
-In-Reply-To: <20210319073414.1381041-2-drosen@google.com>
-Cc:     "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com
-To:     Daniel Rosenberg <drosen@google.com>
-References: <20210319073414.1381041-1-drosen@google.com>
- <20210319073414.1381041-2-drosen@google.com>
-X-Mailer: Apple Mail (2.3273)
+        Sat, 20 Mar 2021 08:26:45 -0400
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1lNagg-0004Pf-6E; Sat, 20 Mar 2021 12:26:38 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v2 0/4] tweak fs mapping helpers
+Date:   Sat, 20 Mar 2021 13:26:20 +0100
+Message-Id: <20210320122623.599086-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hey,
 
---Apple-Mail=_18E6BF6C-9AA5-4C4D-A623-B79DF40D07C7
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
+/* v2 */
+Add some kernel docs to helpers as suggested by Christoph.
+Switch to Al's naming proposal for these helpers.
+(Added Acks.)
 
-On Mar 19, 2021, at 1:34 AM, Daniel Rosenberg <drosen@google.com> wrote:
-> 
-> This adds support for encryption with casefolding.
-> 
-> Since the name on disk is case preserving, and also encrypted, we can no
-> longer just recompute the hash on the fly. Additionally, to avoid
-> leaking extra information from the hash of the unencrypted name, we use
-> siphash via an fscrypt v2 policy.
-> 
-> The hash is stored at the end of the directory entry for all entries
-> inside of an encrypted and casefolded directory apart from those that
-> deal with '.' and '..'. This way, the change is backwards compatible
-> with existing ext4 filesystems.
-> 
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+This little series tries to improve naming and developer friendliness of
+fs idmapping helpers triggered by a request/comment from Vivek.
+Let's remove the two open-coded checks for whether there's a mapping for
+fsuid/fsgid in the s_user_ns of the underlying filesystem. Instead move them
+into a tiny helper, getting rid of redundancy and making sure that if we ever
+change something it's changed in all places. Also add two helpers to initialize
+and inode's i_uid and i_gid fields taking into account idmapped mounts making
+it easier for fs developers.
 
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+The xfstests I sent out all pass for both xfs and ext4:
 
-Cheers, Andreas
+#### xfs
+  1. Detached mount propagation
+     ubuntu@f1-vm:~/src/git/xfstests$ sudo ./check generic/631
+     FSTYP         -- xfs (non-debug)
+     PLATFORM      -- Linux/x86_64 f1-vm 5.12.0-rc3-idmapped-mounts-inode-helpers #351 SMP Sat Mar 20 10:32:48 UTC 2021
+     MKFS_OPTIONS  -- -f -bsize=4096 /dev/loop1
+     MOUNT_OPTIONS -- /dev/loop1 /mnt/scratch
+     
+     generic/631 9s ...  11s
+     Ran: generic/631
+     Passed all 1 tests
+    
+  2. Idmapped mounts test-suite
+     ubuntu@f1-vm:~/src/git/xfstests$ sudo ./check generic/632
+     FSTYP         -- xfs (non-debug)
+     PLATFORM      -- Linux/x86_64 f1-vm 5.12.0-rc3-idmapped-mounts-inode-helpers #351 SMP Sat Mar 20 10:32:48 UTC 2021
+     MKFS_OPTIONS  -- -f -bsize=4096 /dev/loop1
+     MOUNT_OPTIONS -- /dev/loop1 /mnt/scratch
+     
+     generic/632 13s ...  14s
+     Ran: generic/632
+     Passed all 1 tests
+    
+  3. Testing xfs quotas can't be exceeded/work correctly from idmapped mounts
+     ubuntu@f1-vm:~/src/git/xfstests$ sudo ./check xfs/529
+     FSTYP         -- xfs (non-debug)
+     PLATFORM      -- Linux/x86_64 f1-vm 5.12.0-rc3-idmapped-mounts-inode-helpers #351 SMP Sat Mar 20 10:32:48 UTC 2021
+     MKFS_OPTIONS  -- -f -bsize=4096 /dev/loop1
+     MOUNT_OPTIONS -- /dev/loop1 /mnt/scratch
+     
+     xfs/529 42s ...  44s
+     Ran: xfs/529
+     Passed all 1 tests
+    
+  4. Testing xfs qutoas on idmapped mounts
+     ubuntu@f1-vm:~/src/git/xfstests$ sudo ./check xfs/530
+     hFSTYP         -- xfs (non-debug)
+     PLATFORM      -- Linux/x86_64 f1-vm 5.12.0-rc3-idmapped-mounts-inode-helpers #351 SMP Sat Mar 20 10:32:48 UTC 2021
+     MKFS_OPTIONS  -- -f -bsize=4096 /dev/loop1
+     MOUNT_OPTIONS -- /dev/loop1 /mnt/scratch
+
+     xfs/530 20s ...  20s
+     Ran: xfs/530
+     Passed all 1 tests
+
+#### ext4
+  1. Detached mount propagation
+
+     ubuntu@f1-vm:~/src/git/xfstests$ sudo ./check generic/631
+     FSTYP         -- ext4
+     PLATFORM      -- Linux/x86_64 f1-vm 5.12.0-rc3-idmapped-mounts-inode-helpers #351 SMP Sat Mar 20 10:32:48 UTC 2021
+     MKFS_OPTIONS  -- /dev/loop1
+     MOUNT_OPTIONS -- -o acl,user_xattr /dev/loop1 /mnt/scratch
+     
+     generic/631 11s ...  8s
+     Ran: generic/631
+     Passed all 1 tests
+
+  2. Idmapped mounts test-suite
+
+     ubuntu@f1-vm:~/src/git/xfstests$ sudo ./check generic/632
+     FSTYP         -- ext4
+     PLATFORM      -- Linux/x86_64 f1-vm 5.12.0-rc3-idmapped-mounts-inode-helpers #351 SMP Sat Mar 20 10:32:48 UTC 2021
+     MKFS_OPTIONS  -- /dev/loop1
+     MOUNT_OPTIONS -- -o acl,user_xattr /dev/loop1 /mnt/scratch
+     
+     generic/632 14s ...  10s
+     Ran: generic/632
+     Passed all 1 tests
+
+  3. Testing xfs quotas can't be exceeded/work correctly from idmapped mounts
+     ubuntu@f1-vm:~/src/git/xfstests$ sudo ./check xfs/529
+     FSTYP         -- ext4
+     PLATFORM      -- Linux/x86_64 f1-vm 5.12.0-rc3-idmapped-mounts-inode-helpers #351 SMP Sat Mar 20 10:32:48 UTC 2021
+     MKFS_OPTIONS  -- /dev/loop1
+     MOUNT_OPTIONS -- -o acl,user_xattr /dev/loop1 /mnt/scratch
+     
+     xfs/529 44s ... [not run] not suitable for this filesystem type: ext4
+     Ran: xfs/529
+     Not run: xfs/529
+     Passed all 1 tests
+
+  4. Testing xfs qutoas on idmapped mounts
+     ubuntu@f1-vm:~/src/git/xfstests$ sudo ./check xfs/530
+     FSTYP         -- ext4
+     PLATFORM      -- Linux/x86_64 f1-vm 5.12.0-rc3-idmapped-mounts-inode-helpers #351 SMP Sat Mar 20 10:32:48 UTC 2021
+     MKFS_OPTIONS  -- /dev/loop1
+     MOUNT_OPTIONS -- -o acl,user_xattr /dev/loop1 /mnt/scratch
+     
+     xfs/530 20s ... [not run] not suitable for this filesystem type: ext4
+     Ran: xfs/530
+     Not run: xfs/530
+     Passed all 1 tests
+
+Thanks!
+Christian
+
+Christian Brauner (4):
+  fs: document mapping helpers
+  fs: document and rename fsid helpers
+  fs: introduce fsuidgid_has_mapping() helper
+  fs: introduce two inode i_{u,g}id initialization helpers
+
+ fs/ext4/ialloc.c     |   2 +-
+ fs/inode.c           |   4 +-
+ fs/namei.c           |  11 ++--
+ fs/xfs/xfs_inode.c   |  10 ++--
+ fs/xfs/xfs_symlink.c |   4 +-
+ include/linux/fs.h   | 124 ++++++++++++++++++++++++++++++++++++++++++-
+ 6 files changed, 135 insertions(+), 20 deletions(-)
 
 
+base-commit: 8b12a62a4e3ed4ae99c715034f557eb391d6b196
+-- 
+2.27.0
 
-
-
-
---Apple-Mail=_18E6BF6C-9AA5-4C4D-A623-B79DF40D07C7
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmBVuvIACgkQcqXauRfM
-H+CgSQ//TQ7/Yghzj7rHH0WAVnnYsTzF+puQeZV1rw/Uxa5I7oo/ldzng2TGjtrh
-dcNuJ42WRwCulz2qqmZB9UQSiU5KjlCMXsm2ELtCabY8XwRLvaLb+YsZRfnTB4nS
-IC/MBwAZy2u1j5nYuS0jZGE9o1WG/cgMTsb4ob5HH4nHhgRveRqnK7ts7bGJ0lZZ
-RMAWc+eUa1bE2vP0sDZqCoKL/1fBfuEEY3dCXigz/CpyTU46FeYT/Wjkm7qWkB2d
-txYZWKgUfVdXAIIWJI0jXExgsUDM5qyNvX+HKXMoxld5RQp1sN2tB2Wt9w62Jle7
-BnVOsIXDqSTmQVOJrmwEut2H+jaF9K+HZtx+43J/KPdkczpY+GPg/S4DIVkTWTVH
-10xnItp08XL46+8bHLjq9YDVWf+PP08UFu41UQx6wZtXmWlpOfUxH/wCvw3+lJEy
-/OM/bFoaJPx2UMGUCeaXibFnTTsq1w2bia2pWOcn55AITEV2EFRs5HPM7s6pjtCf
-yHCwbWiB+qIqS2Brc4kTm7l+HTbN43yUhC4zwnjror4w07OvVbK/OHvyJ2ET4HEJ
-lyvz0M+2yS9iu90VbwnpBcTU3gHCmZyjNRM76AEUiu3NSKZk02Sc7wd2U+vvmU4z
-IsumbcZeDZAhE4j+/aBBtebBgiLu6xeK+cy6rtE+/NSNkfoWH+8=
-=n6Sd
------END PGP SIGNATURE-----
-
---Apple-Mail=_18E6BF6C-9AA5-4C4D-A623-B79DF40D07C7--
