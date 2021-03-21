@@ -2,137 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8361C343089
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Mar 2021 02:43:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3130C343182
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Mar 2021 07:30:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229985AbhCUBm6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Mar 2021 21:42:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55758 "EHLO
+        id S229870AbhCUGQy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Mar 2021 02:16:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229787AbhCUBml (ORCPT
+        with ESMTP id S229817AbhCUGQ0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Mar 2021 21:42:41 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56484C061574;
-        Sat, 20 Mar 2021 18:42:41 -0700 (PDT)
+        Sun, 21 Mar 2021 02:16:26 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5107BC061574;
+        Sat, 20 Mar 2021 23:16:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=OHbnhUmSKXKUNQXDuUhAYkDR4SHYPZJ41RILLR4eq0o=; b=WJD6WJqsGwCY3P1j5e3ovPL//F
-        5RbS0a3Lg88hg9MB0jYULiy/rFKJzbGCbrOapYTb266XbbyKA8CTrtvek66/nG33VaFg7VdMBRbZR
-        rnPMGsBm9j06adyP+A8QTZhRk0UEwOFu8zRa/WX5OeKUuZ+8YrF+LcaXS/z87nWR3tKlZ6cwW0Syp
-        kq9Y5/xMHFDtxNLwNsH9lKI3RuLMynoTNQK4hzK4Vqwfsf9J1ZXgGgduQBDRr8PlJm3OFdHS6ZrwQ
-        3fhRurJFVDu4wmnenxltcI7MoWu83uWJo+ueqXyOwnSdoY74gjndAyvqk62MAvIAKmI/huMjFZFAX
-        h7v56bTQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lNn6Q-006Ymd-I3; Sun, 21 Mar 2021 01:42:05 +0000
-Date:   Sun, 21 Mar 2021 01:42:02 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@redhat.com>, linux-mm@kvack.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org,
-        David Wysochanski <dwysocha@redhat.com>,
+        d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:MIME-Version
+        :Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=Br1uGt6D1+jXGWTW1CUN2cJ2ukPw7FkusMkCoPTdIg0=; b=RfQCFWS3NRK2z1CuuDGmTLaTN+
+        V6ms5ObqVZn4RUgEnNxoZ2ab8grkXebFWDsSR/9u2SycKLXDuCNMIJksR4twPZUkqav0vGyspiHz/
+        ZzeaLe9Z4Xf05M2vNq4DDl4+2ezjpb3qY0Q+RxpQW1w2hrirSOYVMr8aAZqBdGAqbRnsmMz8yNvF3
+        /Z4CuQV0yhBX+C3UkyTrY0FR4UU7qqBu3d+BuipklNJIoCMnYOB7PMqhZZ9Pf2OBDH+lbFuMxlLQ0
+        bIGTOdHDAFmGkTAUOgjqWmXanJr057RIfy9tcXrkpgWftGWpVrOwUb/boXaNagJ2J6U/oLfgYfgK1
+        zGe2yrvA==;
+Received: from [2601:1c0:6280:3f0::3ba4] (helo=smtpauth.infradead.org)
+        by desiato.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lNrNu-009emY-Q0; Sun, 21 Mar 2021 06:16:23 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 08/28] netfs: Provide readahead and readpage netfs
- helpers
-Message-ID: <20210321014202.GF3420@casper.infradead.org>
-References: <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk>
- <161539537375.286939.16642940088716990995.stgit@warthog.procyon.org.uk>
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs: fs_context: make it be kernel-doc clean
+Date:   Sat, 20 Mar 2021 23:16:18 -0700
+Message-Id: <20210321061618.17754-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <161539537375.286939.16642940088716990995.stgit@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 10, 2021 at 04:56:13PM +0000, David Howells wrote:
-> +void netfs_readahead(struct readahead_control *ractl,
-> +		     const struct netfs_read_request_ops *ops,
-> +		     void *netfs_priv)
-> +{
-> +	struct netfs_read_request *rreq;
-> +	struct page *page;
-> +	unsigned int debug_index = 0;
-> +
-> +	_enter("%lx,%x", readahead_index(ractl), readahead_count(ractl));
-> +
-> +	if (readahead_count(ractl) == 0)
-> +		goto cleanup;
-> +
-> +	rreq = netfs_alloc_read_request(ops, netfs_priv, ractl->file);
-> +	if (!rreq)
-> +		goto cleanup;
-> +	rreq->mapping	= ractl->mapping;
-> +	rreq->start	= readahead_pos(ractl);
-> +	rreq->len	= readahead_length(ractl);
-> +
-> +	netfs_rreq_expand(rreq, ractl);
-> +
-> +	atomic_set(&rreq->nr_rd_ops, 1);
-> +	do {
-> +		if (!netfs_rreq_submit_slice(rreq, &debug_index))
-> +			break;
-> +
-> +	} while (rreq->submitted < rreq->len);
-> +
-> +	while ((page = readahead_page(ractl)))
-> +		put_page(page);
+Modify fs/fs_context.c to be kernel-doc clean.
+Use "Return:" notation for function return values.
+Add or modify function parameter descriptions as needed.
 
-You don't need this pair of lines (unless I'm missing something).
-read_pages() in mm/readahead.c puts the reference and unlocks any
-pages which are not read by the readahead op.  Indeed, I think doing
-this is buggy because you don't unlock the page.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: David Howells <dhowells@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org
+---
+ fs/fs_context.c |   16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-> +	/* If we decrement nr_rd_ops to 0, the ref belongs to us. */
-> +	if (atomic_dec_and_test(&rreq->nr_rd_ops))
-> +		netfs_rreq_assess(rreq, false);
-> +	return;
-> +
-> +cleanup:
-> +	if (netfs_priv)
-> +		ops->cleanup(ractl->mapping, netfs_priv);
-> +	return;
-> +}
-> +EXPORT_SYMBOL(netfs_readahead);
-
-> +int netfs_readpage(struct file *file,
-> +		   struct page *page,
-> +		   const struct netfs_read_request_ops *ops,
-> +		   void *netfs_priv)
-> +{
-> +	struct netfs_read_request *rreq;
-> +	unsigned int debug_index = 0;
-> +	int ret;
-> +
-> +	_enter("%lx", page->index);
-> +
-> +	rreq = netfs_alloc_read_request(ops, netfs_priv, file);
-> +	if (!rreq) {
-> +		if (netfs_priv)
-> +			ops->cleanup(netfs_priv, page->mapping);
-> +		unlock_page(page);
-> +		return -ENOMEM;
-> +	}
-> +	rreq->mapping	= page->mapping;
-
-FYI, this isn't going to work with swap-over-NFS.  You have to use
-page_file_mapping().
-
-> +	rreq->start	= page->index * PAGE_SIZE;
-
-and page_index() here.
-
-I rather dislike it that swap-over-NFS uses readpage which makes this
-need to exist.  If somebody were to switch SWP_FS_OPS to using kiocbs,
-some of this pain could go away.
-
+--- linux-next-20210319.orig/fs/fs_context.c
++++ linux-next-20210319/fs/fs_context.c
+@@ -92,7 +92,7 @@ static int vfs_parse_sb_flag(struct fs_c
+  *
+  * This may be called multiple times for a context.
+  *
+- * Returns 0 on success and a negative error code on failure.  In the event of
++ * Return: %0 on success and a negative error code on failure.  In the event of
+  * failure, supplementary error information may have been set.
+  */
+ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
+@@ -139,6 +139,10 @@ EXPORT_SYMBOL(vfs_parse_fs_param);
+ 
+ /**
+  * vfs_parse_fs_string - Convenience function to just parse a string.
++ * @fc: The filesystem context for this config option
++ * @key: The string option's name
++ * @value: The string option's value (optional)
++ * @v_size: Length of the @value string
+  */
+ int vfs_parse_fs_string(struct fs_context *fc, const char *key,
+ 			const char *value, size_t v_size)
+@@ -166,13 +170,13 @@ EXPORT_SYMBOL(vfs_parse_fs_string);
+ 
+ /**
+  * generic_parse_monolithic - Parse key[=val][,key[=val]]* mount data
+- * @ctx: The superblock configuration to fill in.
++ * @fc: The superblock configuration to fill in.
+  * @data: The data to parse
+  *
+  * Parse a blob of data that's in key[=val][,key[=val]]* form.  This can be
+  * called from the ->monolithic_mount_data() fs_context operation.
+  *
+- * Returns 0 on success or the error returned by the ->parse_option() fs_context
++ * Return: %0 on success or the error returned by the ->parse_option() fs_context
+  * operation on failure.
+  */
+ int generic_parse_monolithic(struct fs_context *fc, void *data)
+@@ -310,7 +314,7 @@ void fc_drop_locked(struct fs_context *f
+ static void legacy_fs_context_free(struct fs_context *fc);
+ 
+ /**
+- * vfs_dup_fc_config: Duplicate a filesystem context.
++ * vfs_dup_fs_context - Duplicate a filesystem context.
+  * @src_fc: The context to copy.
+  */
+ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
+@@ -356,7 +360,9 @@ EXPORT_SYMBOL(vfs_dup_fs_context);
+ 
+ /**
+  * logfc - Log a message to a filesystem context
+- * @fc: The filesystem context to log to.
++ * @log: The filesystem context to log to.
++ * @prefix: message prefix
++ * @level: kernel log message level
+  * @fmt: The format of the buffer.
+  */
+ void logfc(struct fc_log *log, const char *prefix, char level, const char *fmt, ...)
