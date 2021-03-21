@@ -2,87 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A162E343457
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Mar 2021 20:21:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62E09343474
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Mar 2021 20:59:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229955AbhCUTUk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Mar 2021 15:20:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54702 "EHLO
+        id S230414AbhCUT7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Mar 2021 15:59:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230227AbhCUTUk (ORCPT
+        with ESMTP id S230346AbhCUT7L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Mar 2021 15:20:40 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D5EC061574
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Mar 2021 12:20:39 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id r20so18442337ljk.4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Mar 2021 12:20:39 -0700 (PDT)
+        Sun, 21 Mar 2021 15:59:11 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A04EC061574;
+        Sun, 21 Mar 2021 12:59:10 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id x28so18019321lfu.6;
+        Sun, 21 Mar 2021 12:59:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=GFncp4+O1KZPv7CnqX2/Ghau8TfBtJkHUxqwd06JKQI=;
-        b=R4S7/z7YxJ8eV2nZse4wEhVq4dS/Oq5i6b3WnNHB7ih5Jv+h7B8J0HaX1z1/hA3jH5
-         Yrg6VjA8EgGGeBhcmz1csHzWaRynYwOsG+bSqOK1R0KZtV7UV+UdwjqD6/5XVwFFDbsc
-         XzpFmiy4CPGwLPUzu91wTzA441vV06wT7RWRg=
+        bh=SCbav4rA/1c8IGx7BoDDC3wW9SvxXS0LmGW2bJT/fsA=;
+        b=rt+lC0FSVeUk4pMgadZ3dyFX4/8mPlQPkc87b1dIIiqI3YDGa+ssswQ2i3YXnssupt
+         nL5ov8kUKfu0i4xVQ3ZA+IKUE+seR9mE4WYQP+BvnL8zrf+Wfyn/8joK3jw7UOgtmRxu
+         w6tbCkgc0m18xvbFf+elWx8fErN6ovxBo5UB6ngK5xBznAfSV/qfShpzO8VsIEX+mBAK
+         jHnDlEtukRUwJVJqqaXWtkYXtZT2zhNZsDQWzmGFh1CMaes1EduVlC0HGYqI1PHnuEea
+         CBGnQDGMtFFAkU1nq+lsG9CP0VoKAhkHzo4mNV2YCpIbDTwn7ytMovkQmMEMS/DofWUe
+         Ag/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=GFncp4+O1KZPv7CnqX2/Ghau8TfBtJkHUxqwd06JKQI=;
-        b=ecnIYMRbdgZ+2+MUimjdIWPL8FxoWu0VnnkugB7VwLJRNIkI4Vqw9x7ZII33hwBA51
-         eCNzvMLOETbRBIrxaI0Sok49sdoc8GnqRoIVnp8pD1woIOXF9p1jqlSTmCZjghFUEfyq
-         HSWE178f40GWgLPiLldZKaCNVxYml5iP+6fZcdempqa3wgbn+SubhCYDzM7IhzTBJtzA
-         VP3pyRxXX2iROn94JtoJF3lLb9MKPBbs/UEC42U1ur0vXnBY7Gev9euPJhicmtV/NqfK
-         H0LGrZE1oowg6JSph6rr4mhRg2TSlj5CVM7+Cqq1jTeV9VyeJVVh3474hS3p0LASPHmo
-         /4nQ==
-X-Gm-Message-State: AOAM532aOf0rhyY7fmJAf+cep4lXV/2wUbkb8z2wLQwJJjwii/NPhqRN
-        plIohJZdxULrxOpZFQ7lN8z3Xc+TFyq6ug==
-X-Google-Smtp-Source: ABdhPJxw6FDePOAuFcIspW8S/pcvRt/Hw7j+YqRBK4ebhkSoVVNKTjC/3RBNvqAs8rc4K7lKFSa8hw==
-X-Received: by 2002:a2e:9857:: with SMTP id e23mr7524600ljj.78.1616354438077;
-        Sun, 21 Mar 2021 12:20:38 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id w8sm1630437ljh.131.2021.03.21.12.20.37
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Mar 2021 12:20:37 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id 16so18383647ljc.11
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Mar 2021 12:20:37 -0700 (PDT)
-X-Received: by 2002:a2e:864d:: with SMTP id i13mr7258281ljj.48.1616354437158;
- Sun, 21 Mar 2021 12:20:37 -0700 (PDT)
+        bh=SCbav4rA/1c8IGx7BoDDC3wW9SvxXS0LmGW2bJT/fsA=;
+        b=eR5vQgL1j03dfEOUDjziO8ACGdws6cGCMjqbdiWGZi2BYXWVJk4Fcs3N9OeCczDAc+
+         95ohphDGSZUX2utQG76Z3L7X6uO7Mk0cVvVEP63hYmZCn7Zs+cFog9ZIOYER1E2F1jso
+         +z4jMtH2t5JITydUJjaw0E4xyYw9duTd/6cS8hgEvo+J6gPbI4VbowJiWEQXCWO1Axyy
+         m3Jta8UNNTsgFZTFUzgT1teMYAV/h81/mokQCP+9OU5CPefX+g4mYx0sZaDOSnglDLy5
+         XjAeN+QfNXdEbA2InrZm5UWvEP0CrnRrfoihFO3qW4jFz4gw2MnrRfYuXAesZShyIbcO
+         A3vA==
+X-Gm-Message-State: AOAM531EJNAgglZT4zBVGlVvbNHModJrQg4cg+UmpgJ+Zi8Ylc/3HOCI
+        p+i1agNqRbcq0QR13KJjgutdCw79whscuXohaY8=
+X-Google-Smtp-Source: ABdhPJz42+15F1ar4sJ+KjWjKAFWf+aLFKt3k95V+45NqXQyCskhwqHxpyWF1wBPVmP51mk6jtzQ17bWm3BXVTqa4+Q=
+X-Received: by 2002:a19:7515:: with SMTP id y21mr7161645lfe.282.1616356748934;
+ Sun, 21 Mar 2021 12:59:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210221050957.3601-1-penguin-kernel@I-love.SAKURA.ne.jp> <bd7b3f61-8f79-d287-cbe5-c221a81a76ca@i-love.sakura.ne.jp>
-In-Reply-To: <bd7b3f61-8f79-d287-cbe5-c221a81a76ca@i-love.sakura.ne.jp>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 21 Mar 2021 12:20:21 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjoa-F1mgQ8bFYhbyGCf+RP_WNrbciVqe42MYkjNjUMpg@mail.gmail.com>
-Message-ID: <CAHk-=wjoa-F1mgQ8bFYhbyGCf+RP_WNrbciVqe42MYkjNjUMpg@mail.gmail.com>
-Subject: Re: [PATCH] reiserfs: update reiserfs_xattrs_initialized() condition
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Jeff Mahoney <jeffm@suse.com>, Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <YFV6iexd6YQTybPr@zeniv-ca.linux.org.uk>
+In-Reply-To: <YFV6iexd6YQTybPr@zeniv-ca.linux.org.uk>
+From:   Steve French <smfrench@gmail.com>
+Date:   Sun, 21 Mar 2021 14:58:58 -0500
+Message-ID: <CAH2r5mvA0WeeV1ZSW4HPvksvs+=GmkiV5nDHqCRddfxkgPNfXA@mail.gmail.com>
+Subject: Re: [RFC][PATCHSET] hopefully saner handling of pathnames in cifs
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        Steve French <sfrench@samba.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Mar 21, 2021 at 7:37 AM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
+WIll run the automated tests on these.
+
+Also FYI - patches 2 and 6 had some checkpatch warnings (although fairly minor).
+
+On Fri, Mar 19, 2021 at 11:36 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> syzbot is reporting NULL pointer dereference at reiserfs_security_init()
+>         Patch series (#work.cifs in vfs.git) tries to clean the things
+> up in and around build_path_from_dentry().  Part of that is constifying
+> the pointers around that stuff, then it lifts the allocations into
+> callers and finally switches build_path_from_dentry() to using
+> dentry_path_raw() instead of open-coding it.  Handling of ->d_name
+> and friends is subtle enough, and it would be better to have fewer
+> places besides fs/d_path.c that need to mess with those...
+>
+>         Help with review and testing would be very much appreciated -
+> there's a plenty of mount options/server combinations ;-/
+>
+>         For those who prefer to look at it in git, it lives in
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.cifs;
+> individual patches go in followups.
+>
+> Shortlog:
+> Al Viro (7):
+>       cifs: don't cargo-cult strndup()
+>       cifs: constify get_normalized_path() properly
+>       cifs: constify path argument of ->make_node()
+>       cifs: constify pathname arguments in a bunch of helpers
+>       cifs: make build_path_from_dentry() return const char *
+>       cifs: allocate buffer in the caller of build_path_from_dentry()
+>       cifs: switch build_path_from_dentry() to using dentry_path_raw()
+>
+> 1) a bunch of kstrdup() calls got cargo-culted as kstrndup().
+> This is unidiomatic *and* pointless - it's not any "safer"
+> that way (pass it a non-NUL-terminated array, and strlen()
+> will barf same as kstrdup()) and it's actually a pessimization.
+> Converted to plain kstrdup() calls.
+>
+> 2) constifying pathnames: get_normalized_path() gets a
+> constant string and, on success, returns either that string
+> or its modified copy.  It is declared with the wrong prototype -
+> int get_normalized_path(const char *path, char **npath)
+> so the caller might get a non-const alias of the original const
+> string.  Fortunately, none of the callers actually use that
+> alias to modify the string, so it's not an active bug - just
+> the wrong typization.
+>
+> 3) constifying pathnames: ->make_node().  Unlike the rest of
+> methods that take pathname as an argument, it has that argument
+> declared as char *, not const char *.  Pure misannotation,
+> since all instances never modify that actual string (or pass it
+> to anything that might do the same).
+>
+> 4) constifying pathnames: a bunch of helpers.  Several functions
+> have pathname argument declared as char *, when const char *
+> would be fine - they neither modify the string nor pass it to
+> anything that might.
+>
+> 5) constifying pathnames: build_path_from_dentry().
+> That's the main source of pathnames; all callers are actually
+> treating the string it returns as constant one.  Declare it
+> to return const char * and adjust the callers.
+>
+> 6) take buffer allocation out of build_path_from_dentry().
+> Trying to do exact-sized allocation is pointless - allocated
+> object are short-lived anyway (the caller is always the one
+> to free the string it gets from build_path_from_dentry()).
+> As the matter of fact, we are in the same situation as with
+> pathname arguments of syscalls - short-lived allocations
+> limited to 4Kb and freed before the caller returns to userland.
+> So we can just do allocations from names_cachep and do that
+> in the caller; that way we don't need to bother with GFP_ATOMIC
+> allocations.  Moreover, having the caller do allocations will
+> permit us to switch build_path_from_dentry() to use of dentry_path_raw()
+> (in the next commit).
+>
+> 7) build_path_from_dentry() essentially open-codes dentry_path_raw();
+> the difference is that it wants to put the result in the beginning
+> of the buffer (which we don't need anymore, since the caller knows
+> what to free anyway) _and_ we might want '\\' for component separator
+> instead of the normal '/'.  It's easier to use dentry_path_raw()
+> and (optionally) post-process the result, replacing all '/' with
+> '\\'.  Note that the last part needs profiling - I would expect it
+> to be noise (we have just formed the string and it's all in hot cache),
+> but that needs to be verified.
+>
+> Diffstat:
+>  fs/cifs/cifs_dfs_ref.c |  14 +++--
+>  fs/cifs/cifsglob.h     |   2 +-
+>  fs/cifs/cifsproto.h    |  19 +++++--
+>  fs/cifs/connect.c      |   9 +--
+>  fs/cifs/dfs_cache.c    |  41 +++++++-------
+>  fs/cifs/dir.c          | 148 ++++++++++++++++++-------------------------------
+>  fs/cifs/file.c         |  79 +++++++++++++-------------
+>  fs/cifs/fs_context.c   |   2 +-
+>  fs/cifs/inode.c        | 110 ++++++++++++++++++------------------
+>  fs/cifs/ioctl.c        |  13 +++--
+>  fs/cifs/link.c         |  46 +++++++++------
+>  fs/cifs/misc.c         |   2 +-
+>  fs/cifs/readdir.c      |  15 ++---
+>  fs/cifs/smb1ops.c      |   6 +-
+>  fs/cifs/smb2ops.c      |  19 ++++---
+>  fs/cifs/unc.c          |   4 +-
+>  fs/cifs/xattr.c        |  40 +++++++------
+>  17 files changed, 278 insertions(+), 291 deletions(-)
 
-Whee. Both of the mentioned commits go back over a decade.
 
-I guess I could just take this directly, but let's add Jeff Mahoney
-and Jan Kara to the participants in case they didn't see it on the
-fsdevel list. I think they might want to be kept in the loop.
 
-I'll forward the original in a separate email to them.
+-- 
+Thanks,
 
-Jeff/Jan - just let me know if I should just apply this as-is.
-Otherwise I'd expect it to (eventually) come in through Jan's random
-fs tree, which is how I think most of these things have come in ..
-
-           Linus
+Steve
