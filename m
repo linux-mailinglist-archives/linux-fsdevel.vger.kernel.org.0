@@ -2,92 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FC7E3434F4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Mar 2021 22:04:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B566434359B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 00:05:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230214AbhCUVEF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Mar 2021 17:04:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229955AbhCUVDm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Mar 2021 17:03:42 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29B1FC061574;
-        Sun, 21 Mar 2021 14:03:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=8wfvQ4hFHLmLc+ykZLh0i4O/agaX7udT/HQCqpYqs5I=; b=b8Rm4pISqPpovUmHfX0518bszh
-        CtVQ/A8g6KR4OrKwqeDTiYjY+4Y+4WJ+dK5rZeXDa4MFRRDRZMGdWDeX+bGCJFMDO1BWUfIrmVvUk
-        HhLGsPdd8ldbWU9J29EliJsceQ4br6IyDS4cca48N3pfp+16In2etijmA65A6XkfQj8/rhh3m997h
-        y5bzv/qwAqEbV2q90M/C0teTJIH05UZ+qROjXVqiVD7UdhSzCxyFLY0bkuRlayjeiH8AwQNomifHw
-        gEJaC4xvxEcJCohlGTb6g/7bwcsfnjPlbDId/a2YWlygQM0j63V6u+jkbUxUuLlKqANBtOubzQqhZ
-        +r5+oHPQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lO5E8-007ZMB-VO; Sun, 21 Mar 2021 21:03:21 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH] btrfs: Use readahead_batch_length
-Date:   Sun, 21 Mar 2021 21:03:11 +0000
-Message-Id: <20210321210311.1803954-1-willy@infradead.org>
-X-Mailer: git-send-email 2.29.2
+        id S230107AbhCUXEw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Mar 2021 19:04:52 -0400
+Received: from sandeen.net ([63.231.237.45]:33210 "EHLO sandeen.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230080AbhCUXEU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 21 Mar 2021 19:04:20 -0400
+Received: from liberator.sandeen.net (liberator.sandeen.net [10.0.0.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by sandeen.net (Postfix) with ESMTPSA id C8E11552431;
+        Sun, 21 Mar 2021 18:03:36 -0500 (CDT)
+To:     David Mozes <david.mozes@silk.us>,
+        Eric Sandeen <sandeen@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <AM6PR04MB5639492BE427FDA2E1A9F74BF16B9@AM6PR04MB5639.eurprd04.prod.outlook.com>
+ <4c7da46e-283b-c1e3-132a-2d8d5d9b2cea@sandeen.net>
+ <AM6PR04MB563935FDA6010EA1383AA08BF16A9@AM6PR04MB5639.eurprd04.prod.outlook.com>
+ <AM6PR04MB5639629BAB2CD2981BAA3AFDF16A9@AM6PR04MB5639.eurprd04.prod.outlook.com>
+ <80aafc03-90b2-ed68-54a9-0af1499854ec@redhat.com>
+ <AM6PR04MB56399D13C91C1F49ACFD3294F1669@AM6PR04MB5639.eurprd04.prod.outlook.com>
+From:   Eric Sandeen <sandeen@sandeen.net>
+Subject: Re: fs: avoid softlockups in s_inodes iterators commit
+Message-ID: <4e264417-96fd-dc06-2b59-bc0dcdce5376@sandeen.net>
+Date:   Sun, 21 Mar 2021 18:04:17 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
+ Gecko/20100101 Thunderbird/78.8.1
 MIME-Version: 1.0
+In-Reply-To: <AM6PR04MB56399D13C91C1F49ACFD3294F1669@AM6PR04MB5639.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement readahead_batch_length() to determine the number of bytes in
-the current batch of readahead pages and use it in btrfs.
+On 3/21/21 6:47 AM, David Mozes wrote:
+> 
+> Our light custom is enabled us to load a very high load  IO on the VM/kernel.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/btrfs/extent_io.c    | 6 ++----
- include/linux/pagemap.h | 9 +++++++++
- 2 files changed, 11 insertions(+), 4 deletions(-)
+If you can't explain what this change is, I'm afraid the default assumption will be
+that your <unspecified> changes have contributed to the problem.
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index e9837562f7d6..97ac4ddb2857 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4875,10 +4875,8 @@ void extent_readahead(struct readahead_control *rac)
- 	int nr;
- 
- 	while ((nr = readahead_page_batch(rac, pagepool))) {
--		u64 contig_start = page_offset(pagepool[0]);
--		u64 contig_end = page_offset(pagepool[nr - 1]) + PAGE_SIZE - 1;
--
--		ASSERT(contig_start + nr * PAGE_SIZE - 1 == contig_end);
-+		u64 contig_start = readahead_pos(rac);
-+		u64 contig_end = contig_start + readahead_batch_length(rac) - 1;
- 
- 		contiguous_readpages(pagepool, nr, contig_start, contig_end,
- 				&em_cached, &bio, &bio_flags, &prev_em_start);
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 2cbfd4c36026..92939afd4944 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -1174,6 +1174,15 @@ static inline unsigned int readahead_count(struct readahead_control *rac)
- 	return rac->_nr_pages;
- }
- 
-+/**
-+ * readahead_batch_length - The number of bytes in the current batch.
-+ * @rac: The readahead request.
-+ */
-+static inline loff_t readahead_batch_length(struct readahead_control *rac)
-+{
-+	return rac->_batch_count * PAGE_SIZE;
-+}
-+
- static inline unsigned long dir_pages(struct inode *inode)
- {
- 	return (unsigned long)(inode->i_size + PAGE_SIZE - 1) >>
--- 
-2.30.2
+> In case  I remove them, we will not be able to generate such a high load on the Kernel.
+> 
+> Eric, after I moved the cond_resched to the place you asked for
+> See below:
+> 
+> --- a/fs/drop_caches.c
+> +++ b/fs/drop_caches.c
+> @@ -35,11 +35,11 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+>                 spin_unlock(&inode->i_lock);
+>                 spin_unlock(&sb->s_inode_list_lock);
+>  
+> +               cond_resched();
+>                 invalidate_mapping_pages(inode->i_mapping, 0, -1);
+>                 iput(toput_inode);
+>                 toput_inode = inode;
+> 
+> We got stuck again after one and a half-day of running under the heavy load:
+> What we saw on the node is:
 
+<a different backtrace than before with the actual warning omitted>
+
+Ok, then the change you flagged from my commit is not the root cause of your problem.
+
+At this point, I can only presume that your "light custom" is the root cause.
+
+If you can't reproduce the problem on a stock kernel, then I don't think we can proceed
+further.
+
+-Eric
