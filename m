@@ -2,172 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62E09343474
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Mar 2021 20:59:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FC7E3434F4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Mar 2021 22:04:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230414AbhCUT7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Mar 2021 15:59:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35840 "EHLO
+        id S230214AbhCUVEF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Mar 2021 17:04:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230346AbhCUT7L (ORCPT
+        with ESMTP id S229955AbhCUVDm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Mar 2021 15:59:11 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A04EC061574;
-        Sun, 21 Mar 2021 12:59:10 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id x28so18019321lfu.6;
-        Sun, 21 Mar 2021 12:59:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SCbav4rA/1c8IGx7BoDDC3wW9SvxXS0LmGW2bJT/fsA=;
-        b=rt+lC0FSVeUk4pMgadZ3dyFX4/8mPlQPkc87b1dIIiqI3YDGa+ssswQ2i3YXnssupt
-         nL5ov8kUKfu0i4xVQ3ZA+IKUE+seR9mE4WYQP+BvnL8zrf+Wfyn/8joK3jw7UOgtmRxu
-         w6tbCkgc0m18xvbFf+elWx8fErN6ovxBo5UB6ngK5xBznAfSV/qfShpzO8VsIEX+mBAK
-         jHnDlEtukRUwJVJqqaXWtkYXtZT2zhNZsDQWzmGFh1CMaes1EduVlC0HGYqI1PHnuEea
-         CBGnQDGMtFFAkU1nq+lsG9CP0VoKAhkHzo4mNV2YCpIbDTwn7ytMovkQmMEMS/DofWUe
-         Ag/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SCbav4rA/1c8IGx7BoDDC3wW9SvxXS0LmGW2bJT/fsA=;
-        b=eR5vQgL1j03dfEOUDjziO8ACGdws6cGCMjqbdiWGZi2BYXWVJk4Fcs3N9OeCczDAc+
-         95ohphDGSZUX2utQG76Z3L7X6uO7Mk0cVvVEP63hYmZCn7Zs+cFog9ZIOYER1E2F1jso
-         +z4jMtH2t5JITydUJjaw0E4xyYw9duTd/6cS8hgEvo+J6gPbI4VbowJiWEQXCWO1Axyy
-         m3Jta8UNNTsgFZTFUzgT1teMYAV/h81/mokQCP+9OU5CPefX+g4mYx0sZaDOSnglDLy5
-         XjAeN+QfNXdEbA2InrZm5UWvEP0CrnRrfoihFO3qW4jFz4gw2MnrRfYuXAesZShyIbcO
-         A3vA==
-X-Gm-Message-State: AOAM531EJNAgglZT4zBVGlVvbNHModJrQg4cg+UmpgJ+Zi8Ylc/3HOCI
-        p+i1agNqRbcq0QR13KJjgutdCw79whscuXohaY8=
-X-Google-Smtp-Source: ABdhPJz42+15F1ar4sJ+KjWjKAFWf+aLFKt3k95V+45NqXQyCskhwqHxpyWF1wBPVmP51mk6jtzQ17bWm3BXVTqa4+Q=
-X-Received: by 2002:a19:7515:: with SMTP id y21mr7161645lfe.282.1616356748934;
- Sun, 21 Mar 2021 12:59:08 -0700 (PDT)
+        Sun, 21 Mar 2021 17:03:42 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29B1FC061574;
+        Sun, 21 Mar 2021 14:03:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=8wfvQ4hFHLmLc+ykZLh0i4O/agaX7udT/HQCqpYqs5I=; b=b8Rm4pISqPpovUmHfX0518bszh
+        CtVQ/A8g6KR4OrKwqeDTiYjY+4Y+4WJ+dK5rZeXDa4MFRRDRZMGdWDeX+bGCJFMDO1BWUfIrmVvUk
+        HhLGsPdd8ldbWU9J29EliJsceQ4br6IyDS4cca48N3pfp+16In2etijmA65A6XkfQj8/rhh3m997h
+        y5bzv/qwAqEbV2q90M/C0teTJIH05UZ+qROjXVqiVD7UdhSzCxyFLY0bkuRlayjeiH8AwQNomifHw
+        gEJaC4xvxEcJCohlGTb6g/7bwcsfnjPlbDId/a2YWlygQM0j63V6u+jkbUxUuLlKqANBtOubzQqhZ
+        +r5+oHPQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lO5E8-007ZMB-VO; Sun, 21 Mar 2021 21:03:21 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH] btrfs: Use readahead_batch_length
+Date:   Sun, 21 Mar 2021 21:03:11 +0000
+Message-Id: <20210321210311.1803954-1-willy@infradead.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-References: <YFV6iexd6YQTybPr@zeniv-ca.linux.org.uk>
-In-Reply-To: <YFV6iexd6YQTybPr@zeniv-ca.linux.org.uk>
-From:   Steve French <smfrench@gmail.com>
-Date:   Sun, 21 Mar 2021 14:58:58 -0500
-Message-ID: <CAH2r5mvA0WeeV1ZSW4HPvksvs+=GmkiV5nDHqCRddfxkgPNfXA@mail.gmail.com>
-Subject: Re: [RFC][PATCHSET] hopefully saner handling of pathnames in cifs
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        Steve French <sfrench@samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-WIll run the automated tests on these.
+Implement readahead_batch_length() to determine the number of bytes in
+the current batch of readahead pages and use it in btrfs.
 
-Also FYI - patches 2 and 6 had some checkpatch warnings (although fairly minor).
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/btrfs/extent_io.c    | 6 ++----
+ include/linux/pagemap.h | 9 +++++++++
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-On Fri, Mar 19, 2021 at 11:36 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
->         Patch series (#work.cifs in vfs.git) tries to clean the things
-> up in and around build_path_from_dentry().  Part of that is constifying
-> the pointers around that stuff, then it lifts the allocations into
-> callers and finally switches build_path_from_dentry() to using
-> dentry_path_raw() instead of open-coding it.  Handling of ->d_name
-> and friends is subtle enough, and it would be better to have fewer
-> places besides fs/d_path.c that need to mess with those...
->
->         Help with review and testing would be very much appreciated -
-> there's a plenty of mount options/server combinations ;-/
->
->         For those who prefer to look at it in git, it lives in
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.cifs;
-> individual patches go in followups.
->
-> Shortlog:
-> Al Viro (7):
->       cifs: don't cargo-cult strndup()
->       cifs: constify get_normalized_path() properly
->       cifs: constify path argument of ->make_node()
->       cifs: constify pathname arguments in a bunch of helpers
->       cifs: make build_path_from_dentry() return const char *
->       cifs: allocate buffer in the caller of build_path_from_dentry()
->       cifs: switch build_path_from_dentry() to using dentry_path_raw()
->
-> 1) a bunch of kstrdup() calls got cargo-culted as kstrndup().
-> This is unidiomatic *and* pointless - it's not any "safer"
-> that way (pass it a non-NUL-terminated array, and strlen()
-> will barf same as kstrdup()) and it's actually a pessimization.
-> Converted to plain kstrdup() calls.
->
-> 2) constifying pathnames: get_normalized_path() gets a
-> constant string and, on success, returns either that string
-> or its modified copy.  It is declared with the wrong prototype -
-> int get_normalized_path(const char *path, char **npath)
-> so the caller might get a non-const alias of the original const
-> string.  Fortunately, none of the callers actually use that
-> alias to modify the string, so it's not an active bug - just
-> the wrong typization.
->
-> 3) constifying pathnames: ->make_node().  Unlike the rest of
-> methods that take pathname as an argument, it has that argument
-> declared as char *, not const char *.  Pure misannotation,
-> since all instances never modify that actual string (or pass it
-> to anything that might do the same).
->
-> 4) constifying pathnames: a bunch of helpers.  Several functions
-> have pathname argument declared as char *, when const char *
-> would be fine - they neither modify the string nor pass it to
-> anything that might.
->
-> 5) constifying pathnames: build_path_from_dentry().
-> That's the main source of pathnames; all callers are actually
-> treating the string it returns as constant one.  Declare it
-> to return const char * and adjust the callers.
->
-> 6) take buffer allocation out of build_path_from_dentry().
-> Trying to do exact-sized allocation is pointless - allocated
-> object are short-lived anyway (the caller is always the one
-> to free the string it gets from build_path_from_dentry()).
-> As the matter of fact, we are in the same situation as with
-> pathname arguments of syscalls - short-lived allocations
-> limited to 4Kb and freed before the caller returns to userland.
-> So we can just do allocations from names_cachep and do that
-> in the caller; that way we don't need to bother with GFP_ATOMIC
-> allocations.  Moreover, having the caller do allocations will
-> permit us to switch build_path_from_dentry() to use of dentry_path_raw()
-> (in the next commit).
->
-> 7) build_path_from_dentry() essentially open-codes dentry_path_raw();
-> the difference is that it wants to put the result in the beginning
-> of the buffer (which we don't need anymore, since the caller knows
-> what to free anyway) _and_ we might want '\\' for component separator
-> instead of the normal '/'.  It's easier to use dentry_path_raw()
-> and (optionally) post-process the result, replacing all '/' with
-> '\\'.  Note that the last part needs profiling - I would expect it
-> to be noise (we have just formed the string and it's all in hot cache),
-> but that needs to be verified.
->
-> Diffstat:
->  fs/cifs/cifs_dfs_ref.c |  14 +++--
->  fs/cifs/cifsglob.h     |   2 +-
->  fs/cifs/cifsproto.h    |  19 +++++--
->  fs/cifs/connect.c      |   9 +--
->  fs/cifs/dfs_cache.c    |  41 +++++++-------
->  fs/cifs/dir.c          | 148 ++++++++++++++++++-------------------------------
->  fs/cifs/file.c         |  79 +++++++++++++-------------
->  fs/cifs/fs_context.c   |   2 +-
->  fs/cifs/inode.c        | 110 ++++++++++++++++++------------------
->  fs/cifs/ioctl.c        |  13 +++--
->  fs/cifs/link.c         |  46 +++++++++------
->  fs/cifs/misc.c         |   2 +-
->  fs/cifs/readdir.c      |  15 ++---
->  fs/cifs/smb1ops.c      |   6 +-
->  fs/cifs/smb2ops.c      |  19 ++++---
->  fs/cifs/unc.c          |   4 +-
->  fs/cifs/xattr.c        |  40 +++++++------
->  17 files changed, 278 insertions(+), 291 deletions(-)
-
-
-
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index e9837562f7d6..97ac4ddb2857 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -4875,10 +4875,8 @@ void extent_readahead(struct readahead_control *rac)
+ 	int nr;
+ 
+ 	while ((nr = readahead_page_batch(rac, pagepool))) {
+-		u64 contig_start = page_offset(pagepool[0]);
+-		u64 contig_end = page_offset(pagepool[nr - 1]) + PAGE_SIZE - 1;
+-
+-		ASSERT(contig_start + nr * PAGE_SIZE - 1 == contig_end);
++		u64 contig_start = readahead_pos(rac);
++		u64 contig_end = contig_start + readahead_batch_length(rac) - 1;
+ 
+ 		contiguous_readpages(pagepool, nr, contig_start, contig_end,
+ 				&em_cached, &bio, &bio_flags, &prev_em_start);
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 2cbfd4c36026..92939afd4944 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -1174,6 +1174,15 @@ static inline unsigned int readahead_count(struct readahead_control *rac)
+ 	return rac->_nr_pages;
+ }
+ 
++/**
++ * readahead_batch_length - The number of bytes in the current batch.
++ * @rac: The readahead request.
++ */
++static inline loff_t readahead_batch_length(struct readahead_control *rac)
++{
++	return rac->_batch_count * PAGE_SIZE;
++}
++
+ static inline unsigned long dir_pages(struct inode *inode)
+ {
+ 	return (unsigned long)(inode->i_size + PAGE_SIZE - 1) >>
 -- 
-Thanks,
+2.30.2
 
-Steve
