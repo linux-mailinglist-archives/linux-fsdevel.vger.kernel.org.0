@@ -2,186 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6142934529A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 23:52:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F1323452BC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 00:04:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230230AbhCVWw0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 18:52:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37494 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230179AbhCVWvz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 18:51:55 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A191C61934;
-        Mon, 22 Mar 2021 22:51:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616453514;
-        bh=yVoEM8LaGuagHtZ7+mbGkmOdHq82G3SojkjBmnlu8to=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ucbc0tXct62/N5UleHxcuqtwafv0G71BN8MDIfu2u4KJ3OXbMVubJK4FEg+5q7Nc9
-         xqxmOBeUC5Bxz1rxhRhVeOy3kOW6F/se4ZRKjcKI/NoAOZvpmEPvRAnEYR2oJjjF5A
-         WLBgexYuJ1sZ4tJ9/kjf0MWLNYxgokoEmv3sW8oZ3tM/0+/dIW63Dlqmgad4tMpaMi
-         bd/kjYlrYwzxNVW4Ksej/016TQtcUdr2pm4sDLpfnbnbvwwyS/Qlw3x7dFuEWKEl58
-         GugsXxVkhVSfLAoSPrRSKcX9SBXs0DoSqX+G41ZxegA9664GWB54c/E46gXGSn4EbF
-         45mz7vAdgZSyg==
-Date:   Mon, 22 Mar 2021 15:51:54 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 18/18] vfs: remove unused ioctl helpers
-Message-ID: <20210322225154.GF22094@magnolia>
-References: <20210322144916.137245-1-mszeredi@redhat.com>
- <20210322144916.137245-19-mszeredi@redhat.com>
+        id S229871AbhCVXET (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 19:04:19 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:58552 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230280AbhCVXD4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Mar 2021 19:03:56 -0400
+Received: from dread.disaster.area (pa49-181-239-12.pa.nsw.optusnet.com.au [49.181.239.12])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id F3D6D828CF4;
+        Tue, 23 Mar 2021 10:03:52 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1lOTaS-005cGK-1s; Tue, 23 Mar 2021 10:03:52 +1100
+Date:   Tue, 23 Mar 2021 10:03:52 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH] xfs: use a unique and persistent value for f_fsid
+Message-ID: <20210322230352.GW63242@dread.disaster.area>
+References: <20210322171118.446536-1-amir73il@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210322144916.137245-19-mszeredi@redhat.com>
+In-Reply-To: <20210322171118.446536-1-amir73il@gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0 cx=a_idp_d
+        a=gO82wUwQTSpaJfP49aMSow==:117 a=gO82wUwQTSpaJfP49aMSow==:17
+        a=kj9zAlcOel0A:10 a=dESyimp9J3IA:10 a=pGLkceISAAAA:8 a=7-415B0cAAAA:8
+        a=UK19zw5Rb5foiGhwELMA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 22, 2021 at 03:49:16PM +0100, Miklos Szeredi wrote:
-> Remove vfs_ioc_setflags_prepare(), vfs_ioc_fssetxattr_check() and
-> simple_fill_fsxattr(), which are no longer used.
+On Mon, Mar 22, 2021 at 07:11:18PM +0200, Amir Goldstein wrote:
+> Some filesystems on persistent storage backend use a digest of the
+> filesystem's persistent uuid as the value for f_fsid returned by
+> statfs(2).
 > 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> xfs, as many other filesystem provide the non-persistent block device
+> number as the value of f_fsid.
+> 
+> Since kernel v5.1, fanotify_init(2) supports the flag FAN_REPORT_FID
+> for identifying objects using file_handle and f_fsid in events.
 
-Woo hoo, so much boilerplate goes away!
+The filesystem id is encoded into the VFS filehandle - it does not
+need some special external identifier to identify the filesystem it
+belongs to....
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> The xfs specific ioctl XFS_IOC_PATH_TO_FSHANDLE similarly attaches an
+> fsid to exported file handles, but it is not the same fsid exported
+> via statfs(2) - it is a persistent fsid based on the filesystem's uuid.
 
---D
+To actually use that {fshandle,fhandle} tuple for anything
+requires CAP_SYS_ADMIN. A user can read the fshandle, but it can't
+use it for anything useful. i.e. it's use is entirely isolated to
+the file handle interface for identifying the filesystem the handle
+belongs to. This is messy, but XFS inherited this "fixed fsid"
+interface from Irix filehandles and was needed to port
+xfsdump/xfsrestore to Linux.  Realistically, it is not functionality
+that should be duplicated/exposed more widely on Linux...
 
+IMO, if fanotify needs a persistent filesystem ID on Linux, it
+should be using something common across all filesystems from the
+linux superblock, not deep dark internal filesystem magic. The
+export interfaces that generate VFS (and NFS) filehandles already
+have a persistent fsid associated with them, which may in fact be
+the filesystem UUID in it's entirety.
+
+The export-derived "filesystem ID" is what should be exported to
+userspace in combination with the file handle to identify the fs the
+handle belongs to because then you have consistent behaviour and a
+change that invalidates the filehandle will also invalidate the
+fshandle....
+
+> Use the same persistent value for f_fsid, so object identifiers in
+> fanotify events will describe the objects more uniquely.
+
+It's not persistent as in "will never change". The moment a user
+changes the XFS filesystem uuid, the f_fsid changes.
+
+However, changing the uuid on XFS is an offline (unmounted)
+operation, so there will be no fanotify marks present when it is
+changed. Hence when it is remounted, there will be a new f_fsid
+returned in statvfs(), just like what happens now, and all
+applications dependent on "persistent" fsids (and persistent
+filehandles for that matter) will now get ESTALE errors...
+
+And, worse, mp->m_fixed_fsid (and XFS superblock UUIDs in general)
+are not unique if you've got snapshots and they've been mounted via
+"-o nouuid" to avoid XFS's duplicate uuid checking. This is one of
+the reasons that the duplicate checking exists - so that fshandles
+are unique and resolve to a single filesystem....
+
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > ---
->  fs/inode.c         | 87 ----------------------------------------------
->  include/linux/fs.h | 12 -------
->  2 files changed, 99 deletions(-)
 > 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index a047ab306f9a..ae526fd9c0a4 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -12,7 +12,6 @@
->  #include <linux/security.h>
->  #include <linux/cdev.h>
->  #include <linux/memblock.h>
-> -#include <linux/fscrypt.h>
->  #include <linux/fsnotify.h>
->  #include <linux/mount.h>
->  #include <linux/posix_acl.h>
-> @@ -2314,89 +2313,3 @@ struct timespec64 current_time(struct inode *inode)
->  	return timestamp_truncate(now, inode);
->  }
->  EXPORT_SYMBOL(current_time);
-> -
-> -/*
-> - * Generic function to check FS_IOC_SETFLAGS values and reject any invalid
-> - * configurations.
-> - *
-> - * Note: the caller should be holding i_mutex, or else be sure that they have
-> - * exclusive access to the inode structure.
-> - */
-> -int vfs_ioc_setflags_prepare(struct inode *inode, unsigned int oldflags,
-> -			     unsigned int flags)
-> -{
-> -	/*
-> -	 * The IMMUTABLE and APPEND_ONLY flags can only be changed by
-> -	 * the relevant capability.
-> -	 *
-> -	 * This test looks nicer. Thanks to Pauline Middelink
-> -	 */
-> -	if ((flags ^ oldflags) & (FS_APPEND_FL | FS_IMMUTABLE_FL) &&
-> -	    !capable(CAP_LINUX_IMMUTABLE))
-> -		return -EPERM;
-> -
-> -	return fscrypt_prepare_setflags(inode, oldflags, flags);
-> -}
-> -EXPORT_SYMBOL(vfs_ioc_setflags_prepare);
-> -
-> -/*
-> - * Generic function to check FS_IOC_FSSETXATTR values and reject any invalid
-> - * configurations.
-> - *
-> - * Note: the caller should be holding i_mutex, or else be sure that they have
-> - * exclusive access to the inode structure.
-> - */
-> -int vfs_ioc_fssetxattr_check(struct inode *inode, const struct fsxattr *old_fa,
-> -			     struct fsxattr *fa)
-> -{
-> -	/*
-> -	 * Can't modify an immutable/append-only file unless we have
-> -	 * appropriate permission.
-> -	 */
-> -	if ((old_fa->fsx_xflags ^ fa->fsx_xflags) &
-> -			(FS_XFLAG_IMMUTABLE | FS_XFLAG_APPEND) &&
-> -	    !capable(CAP_LINUX_IMMUTABLE))
-> -		return -EPERM;
-> -
-> -	/*
-> -	 * Project Quota ID state is only allowed to change from within the init
-> -	 * namespace. Enforce that restriction only if we are trying to change
-> -	 * the quota ID state. Everything else is allowed in user namespaces.
-> -	 */
-> -	if (current_user_ns() != &init_user_ns) {
-> -		if (old_fa->fsx_projid != fa->fsx_projid)
-> -			return -EINVAL;
-> -		if ((old_fa->fsx_xflags ^ fa->fsx_xflags) &
-> -				FS_XFLAG_PROJINHERIT)
-> -			return -EINVAL;
-> -	}
-> -
-> -	/* Check extent size hints. */
-> -	if ((fa->fsx_xflags & FS_XFLAG_EXTSIZE) && !S_ISREG(inode->i_mode))
-> -		return -EINVAL;
-> -
-> -	if ((fa->fsx_xflags & FS_XFLAG_EXTSZINHERIT) &&
-> -			!S_ISDIR(inode->i_mode))
-> -		return -EINVAL;
-> -
-> -	if ((fa->fsx_xflags & FS_XFLAG_COWEXTSIZE) &&
-> -	    !S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
-> -		return -EINVAL;
-> -
-> -	/*
-> -	 * It is only valid to set the DAX flag on regular files and
-> -	 * directories on filesystems.
-> -	 */
-> -	if ((fa->fsx_xflags & FS_XFLAG_DAX) &&
-> -	    !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
-> -		return -EINVAL;
-> -
-> -	/* Extent size hints of zero turn off the flags. */
-> -	if (fa->fsx_extsize == 0)
-> -		fa->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
-> -	if (fa->fsx_cowextsize == 0)
-> -		fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
-> -
-> -	return 0;
-> -}
-> -EXPORT_SYMBOL(vfs_ioc_fssetxattr_check);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 9e7f6a592a70..1e88ace15004 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3571,18 +3571,6 @@ extern int vfs_fadvise(struct file *file, loff_t offset, loff_t len,
->  extern int generic_fadvise(struct file *file, loff_t offset, loff_t len,
->  			   int advice);
->  
-> -int vfs_ioc_setflags_prepare(struct inode *inode, unsigned int oldflags,
-> -			     unsigned int flags);
-> -
-> -int vfs_ioc_fssetxattr_check(struct inode *inode, const struct fsxattr *old_fa,
-> -			     struct fsxattr *fa);
-> -
-> -static inline void simple_fill_fsxattr(struct fsxattr *fa, __u32 xflags)
-> -{
-> -	memset(fa, 0, sizeof(*fa));
-> -	fa->fsx_xflags = xflags;
-> -}
-> -
->  /*
->   * Flush file data before changing attributes.  Caller must hold any locks
->   * required to prevent further writes to this file until we're done setting
-> -- 
-> 2.30.2
+> Guys,
 > 
+> This change would be useful for fanotify users.
+> Do you see any problems with that minor change of uapi?
+
+Yes.
+
+IMO, we shouldn't be making a syscall interface rely on the
+undefined, filesystem specific behaviour a value some other syscall
+exposes to userspace. This means the fsid has no defined or
+standardised behaviour applications can rely on and can't be
+guaranteed unique and unchanging by fanotify. This seems like a
+lose-lose situation for everyone...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
