@@ -2,181 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A5CB344D07
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 18:15:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F9EF344D2A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 18:22:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232131AbhCVRPY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 13:15:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57250 "EHLO
+        id S230384AbhCVRWZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 13:22:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231776AbhCVRPP (ORCPT
+        with ESMTP id S232135AbhCVRWU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 13:15:15 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DC45C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Mar 2021 10:15:15 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id 11so11399588pfn.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Mar 2021 10:15:15 -0700 (PDT)
+        Mon, 22 Mar 2021 13:22:20 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B0ADC061574;
+        Mon, 22 Mar 2021 10:22:20 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id v26so14762038iox.11;
+        Mon, 22 Mar 2021 10:22:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UojHEz0pk6GNebu+2HDqWhxrBOGOhUOBrfY2ndpxyhs=;
-        b=GbkaRQiTIP+rsqDnSrsNsq0ubjJxbTV3elvqtaFuk9jtLD533Hx/SL/hr04uHKdU0K
-         HhUbjafxu5+7EbRgy5WekXc4xqk2BuhFDjT2JQi/qyyKCusBYDARQmsjztyjHcuClN+w
-         /k80QBWJkHUTdFBz8K8N0+yMAP+88AU8wBcB9suJI3wJHVzoJ9y4NwpXD28oc21XjYS+
-         NX7+AAe3hEOsUkiCZe3cURdMNfnOXEeEUxMbicih/IrR82QN2+TQG8lu1ewGqgX+izM5
-         4kycprnKUPqDxuFi0mtW6m8Bthu76/7xxlJj2bylU8lfkp0m0/YVj0K8/q6QtxRsuqBO
-         e58w==
+        bh=rPH2TP1ud5sxYXi4yLtOgCjSrqlriSXx6tlw55SJBFg=;
+        b=J9cj8XpfarEl95wH4kTBxChNRrRCI7/hFwGgahv7rbDnjAr8pLgo9COeGMbq2wjU0Y
+         ZJjnwtTDTM5VJoDnekqr028/Iedm0uloLmrJEl1BvPan25rgx53qzI7Lq+NlZ32cdJJh
+         FG1tcic02qnKmsncWQosIkLrOKfdjAYoCa2F+XLp3aksQEXyVVOsWKAGYimHZeNFQ3rC
+         rv1wSeEzuQYtLGsdpOLlCG2ZW5wQ7HU5uNH1o1VyoraDd8BjDU2CFxgZUMPwoeSYDm67
+         sKew2LcK039iDEvNhwt2wQxQtv2e6qDKEVPCgoOr+SLaCdbRx2pnEQF0NE/8mvIyopKH
+         4PfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UojHEz0pk6GNebu+2HDqWhxrBOGOhUOBrfY2ndpxyhs=;
-        b=Cce8m901Zlf9kKj73rBIlfsxwW+0vILD0wJN/Q4rjmOwVTsYyUXNAeZzt6/TZSnLQO
-         jN0eDVgU2Wt1TvSJzF8sHuAnXzyySwrC07jmQT74UnOoT7CytQUJOCMNCnNsyiLSUcxi
-         GsgBdSbDy3fRmzT6AxPzXb4ZQNL+JmDE6UvC2SRQhb+yQgwA96srirYsD4RV603RzAI8
-         WtEhUUCte+JlyEWACsbSKuEUhYo/L/t6STPU7Sv/H5i7vPuoeppX2oWB8iBnZ/1eUZIo
-         cLHP/Aue2dwJsnVCV8iUCTyBhHZV7GIvCv0E/XZL5k+MxiG/aQlAUwOeYtc7SlV+yfy6
-         vy0w==
-X-Gm-Message-State: AOAM532egfCoBkvySoezvckCn9NN1Jj0rgLBWQWZh6b90zyBomlFNJfm
-        saWN3YS/4kxb7NY7CDLGdi2o899i797ZKrSb8bC3MA==
-X-Google-Smtp-Source: ABdhPJwc2vn4A7n7qbnr9AqRUkT8NmfXqRbD1H48YgBvu1JCqC/2soGiI6q8Dk7W6NLU5eg2V2Dcna2D6zMHivG50vU=
-X-Received: by 2002:a05:6a00:ac8:b029:1ed:f8dc:cb3b with SMTP id
- c8-20020a056a000ac8b02901edf8dccb3bmr805272pfl.60.1616433314431; Mon, 22 Mar
- 2021 10:15:14 -0700 (PDT)
+        bh=rPH2TP1ud5sxYXi4yLtOgCjSrqlriSXx6tlw55SJBFg=;
+        b=fYzyfUMuS7srLqv21ZXKMEkVY5lsPw0StXf4ez9R2S5BkzvE4D3ucs+RpCjWYpe7zF
+         EdaQ2LniGqzAMDXfWDgvb2wuZoNMwCtqb6S9io8lVLJYl6TkcU9a15SizMjCBLrrhb17
+         SKiM26dbtgvqACk6WYR26RcVbj6p5yPqUrz+HM9cha87i2YWyg/Mp+V1BwRW8WT6pnRf
+         s4MMvgUasej+aNFERt0eom4B/P1BqXmGXd2kd1KcSnKEPlAQn7QKqHOXfLizPV8gMYhe
+         n+jJHF1Xh2Wvj8iNdrZ0SP/tYHXZyPmp+yCrCwkN9AxhVz8dvUDuuTUhjF92dc6OJJB6
+         ZnZQ==
+X-Gm-Message-State: AOAM531czOxt0Aqni+fCdETB6k4EWmNOZ03Qze7VmNiOtP6pnRH66P0e
+        sCgKC4usuQgKzvs0Ff5owUotV4gMts4/Jf5LSnU=
+X-Google-Smtp-Source: ABdhPJyS2chI6K9pPa4PZzaxvTzKsElfvRgC2QUH/DaTmPAhHUcrI7gQdj2d8t5yvP/yyO0oHbe8U2BixHYk9iJpkNs=
+X-Received: by 2002:a02:74a:: with SMTP id f71mr414219jaf.30.1616433739529;
+ Mon, 22 Mar 2021 10:22:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210302034928.3761098-1-varmam@google.com> <87pmzw7gvy.fsf@nanos.tec.linutronix.de>
-In-Reply-To: <87pmzw7gvy.fsf@nanos.tec.linutronix.de>
-From:   Manish Varma <varmam@google.com>
-Date:   Mon, 22 Mar 2021 10:15:03 -0700
-Message-ID: <CAMyCerL7UkcU1YgZ=dUTZadv-YPHGccO3PR-DCt2nX7nz0afgA@mail.gmail.com>
-Subject: Re: [PATCH] fs: Improve eventpoll logging to stop indicting timerfd
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kelly Rossmoyer <krossmo@google.com>, kernel-team@android.com
+References: <20210317114207.GB2541@quack2.suse.cz> <CAOQ4uxi7ZXJW3_6SN=vw_XJC+wy4eMTayN6X5yRy_HOV6323MA@mail.gmail.com>
+ <20210317174532.cllfsiagoudoz42m@wittgenstein> <CAOQ4uxjCjapuAHbYuP8Q_k0XD59UmURbmkGC1qcPkPAgQbQ8DA@mail.gmail.com>
+ <20210318143140.jxycfn3fpqntq34z@wittgenstein> <CAOQ4uxiRHwmxTKsLteH_sBW_dSPshVE8SohJYEmpszxaAwjEyg@mail.gmail.com>
+ <20210319134043.c2wcpn4lbefrkhkg@wittgenstein> <CAOQ4uxhLYdWOUmpWP+c_JzVeGDbkJ5eUM+1-hhq7zFq23g5J1g@mail.gmail.com>
+ <CAOQ4uxhetKeEZX=_iAcREjibaR0ZcOdeZyR8mFEoHM+WRsuVtg@mail.gmail.com>
+ <CAOQ4uxhfx012GtvXMfiaHSk1M7+gTqkz3LsT0i_cHLnZLMk8nw@mail.gmail.com> <20210322162855.mz7h2hvececu4rma@wittgenstein>
+In-Reply-To: <20210322162855.mz7h2hvececu4rma@wittgenstein>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 22 Mar 2021 19:22:08 +0200
+Message-ID: <CAOQ4uxgzp81DdV0LXR1hXauLag7jYZTA=iFTJF+SKFj=wiqYYw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Thomas,
-
-On Thu, Mar 18, 2021 at 6:04 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+On Mon, Mar 22, 2021 at 6:28 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
 >
-> Manish,
->
-> On Mon, Mar 01 2021 at 19:49, Manish Varma wrote:
->
-> > All together, that will give us names like the following:
+> On Mon, Mar 22, 2021 at 02:44:20PM +0200, Amir Goldstein wrote:
+> > On Sat, Mar 20, 2021 at 2:57 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > >
+> > > > > > The code that sits in linux-next can give you pretty much a drop-in
+> > > > > > replacement of inotify and nothing more. See example code:
+> > > > > > https://github.com/amir73il/inotify-tools/commits/fanotify_name_fid
+> > > > >
+> > > > > This is really great. Thank you for doing that work this will help quite
+> > > > > a lot of use-cases and make things way simpler. I created a TODO to port
+> > > > > our path-hotplug to this once this feature lands.
+> > > > >
+> > > >
+> > > > FWIW, I just tried to build this branch on Ubuntu 20.04.2 with LTS kernel
+> > > > and there were some build issues, so rebased my branch on upstream
+> > > > inotify-tools to fix those build issues.
+> > > >
+> > > > I was not aware that the inotify-tools project is alive, I never intended
+> > > > to upstream this demo code and never created a github pull request
+> > > > but rebasing on upstream brought in some CI scripts, when I pushed the
+> > > > branch to my github it triggered some tests that reported build failures on
+> > > > Ubuntu 16.04 and 18.04.
+> > > >
+> > > > Anyway, there is a pre-rebase branch 'fanotify_name' and the post rebase
+> > > > branch 'fanotify_name_fid'. You can try whichever works for you.
 > >
-> > 1) timerfd file descriptor: [timerfd14:system_server]
-> > 2) eventpoll top-level per-process wakesource: epoll:system_server
-> > 3) eventpoll-on-timerfd per-descriptor wakesource:
-> > epollitem:system_server.[timerfd14:system_server]
->
-> All together that should be splitted up into a change to eventpoll and
-> timerfd.
->
-
-Noted.
-
-> > diff --git a/fs/timerfd.c b/fs/timerfd.c
-> > index c5509d2448e3..4249e8c9a38c 100644
-> > --- a/fs/timerfd.c
-> > +++ b/fs/timerfd.c
-> > @@ -46,6 +46,8 @@ struct timerfd_ctx {
-> >       bool might_cancel;
-> >  };
+> > FYI, fixed the CI build errors on fanotify_name_fid branch.
 > >
-> > +static atomic_t instance_count = ATOMIC_INIT(0);
->
-> instance_count is misleading as it does not do any accounting of
-> instances as the name suggests.
->
-
-Not sure if I am missing a broader point here, but the objective of this
-patch is to:
-A. To help find the process a given timerfd associated with, and
-B. one step further, if there are multiple fds created by a single
-process then label each instance using monotonically increasing integer
-i.e. "instance_count" to help identify each of them separately.
-
-So, instance_count in my mind helps with "B", i.e. to keep track and
-identify each instance of timerfd individually.
-
-> >  static LIST_HEAD(cancel_list);
-> >  static DEFINE_SPINLOCK(cancel_lock);
+> > > >
+> > > > You can look at the test script src/test_demo.sh for usage example.
+> > > > Or just cd into a writable directory and run the script to see the demo.
+> > > > The demo determines whether to use a recursive watch or "global"
+> > > > watch by the uid of the user.
+> > > >
+> > > > > >
+> > > > > > > > If you think that is useful and you want to play with this feature I can
+> > > > > > > > provide a WIP branch soon.
+> > > > > > >
+> > > > > > > I would like to first play with the support for unprivileged fanotify
+> > > > > > > but sure, it does sound useful!
+> > > > > >
+> > > > > > Just so you have an idea what I am talking about, this is a very early
+> > > > > > POC branch:
+> > > > > > https://github.com/amir73il/linux/commits/fanotify_userns
+> > > > >
+> > > > > Thanks!  I'll try to pull this and take a look next week. I hope that's
+> > > > > ok.
+> > > > >
+> > > >
+> > > > Fine. I'm curious to know what it does.
+> > > > Did not get to test it with userns yet :)
+> > >
+> > > Now tested FAN_MARK_FILESYSTEM watch on tmpfs mounted
+> > > inside userns and works fine, with two wrinkles I needed to iron:
+> > >
+> > > 1. FAN_REPORT_FID not supported on tmpfs because tmpfs has
+> > >     zero f_fsid (easy to fix)
+> > > 2. open_by_handle_at() is not userns aware (can relax for
+> > >     FS_USERNS_MOUNT fs)
+> > >
+> > > Pushed these two fixes to branch fanotify_userns.
 > >
-> > @@ -391,6 +393,9 @@ SYSCALL_DEFINE2(timerfd_create, int, clockid, int, flags)
-> >  {
-> >       int ufd;
-> >       struct timerfd_ctx *ctx;
-> > +     char task_comm_buf[sizeof(current->comm)];
-> > +     char file_name_buf[32];
-> > +     int instance;
-> >
-> >       /* Check the TFD_* constants for consistency.  */
-> >       BUILD_BUG_ON(TFD_CLOEXEC != O_CLOEXEC);
-> > @@ -427,7 +432,11 @@ SYSCALL_DEFINE2(timerfd_create, int, clockid, int, flags)
-> >
-> >       ctx->moffs = ktime_mono_to_real(0);
-> >
-> > -     ufd = anon_inode_getfd("[timerfd]", &timerfd_fops, ctx,
-> > +     instance = atomic_inc_return(&instance_count);
-> > +     get_task_comm(task_comm_buf, current);
+> > Pushed another fix to mnt refcount bug in WIP and another commit to
+> > add the last piece that could make fanotify usable for systemd-homed
+> > setup - a filesystem watch filtered by mnt_userns (not tested yet).
 >
-> How is current->comm supposed to be unique? And with a wrapping counter
-> like the above you can end up with identical file descriptor names.
+> Sounds interesting.
 >
-> What's wrong with simply using the PID which is guaranteed to be unique
-> for the life time of a process/task?
+> So I'm looking and commenting on that branch a little.
+> One general question, when fanotify FANOTIFY_PERM_EVENTS is set fanotify
+> will return a file descriptor (for relevant events) referring to the
+> file/directory that e.g. got created. And there are no permissions
+> checks other than the capable(CAP_SYS_ADMIN) check when the fanotify
+> instance is created, right?
 >
 
-Thanks, and Yes, on a second thought, PID sounds like a better option.
-I will address in v2 patch.
+Correct.
+fanotify_init() enforces that in a few maybe not so obvious steps:
 
-> > +     snprintf(file_name_buf, sizeof(file_name_buf), "[timerfd%d:%s]",
-> > +              instance, task_comm_buf);
-> > +     ufd = anon_inode_getfd(file_name_buf, &timerfd_fops, ctx,
-> >                              O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS));
-> >       if (ufd < 0)
-> >               kfree(ctx);
->
-> I actually wonder, whether this should be part of anon_inode_get*().
->
+1. Either CAP_SYS_ADMIN or fid_mode (no file descriptor in event):
 
-I am curious (and open at the same time) if that will be helpful..
-In the case of timerfd, I could see it adds up value by stuffing more
-context to the file descriptor name as eventpoll is using the same file
-descriptor names as wakesource name, and hence the cost of slightly
-longer file descriptor name justifies. But I don't have a solid reason
-if this additional cost (of longer file descriptor names) will be
-helpful in general with other file descriptors.
+        if (!capable(CAP_SYS_ADMIN)) {
+                /*
+                 * An unprivileged user can setup an fanotify group with
+                 * limited functionality - an unprivileged group is limited to
+                 * notification events with file handles and it cannot use
+                 * unlimited queue/marks.
+                 */
+                if ((flags & FANOTIFY_ADMIN_INIT_FLAGS) || !fid_mode)
+                        return -EPERM;
+        }
 
-> Aside of that this is a user space visible change both for eventpoll and
-> timerfd.
->
-> Have you carefully investigated whether there is existing user space
-> which might depend on the existing naming conventions?
->
+2. fid_mode is not supported for high priority classes:
 
-I am not sure how I can confirm that for all userspace, but open for
-suggestions if you can share some ideas.
+        if (fid_mode && class != FAN_CLASS_NOTIF)
+                return -EINVAL;
 
-However, I have verified and can confirm for Android userspace that
-there is no dependency on existing naming conventions for timerfd and
-eventpoll wakesource names, if that helps.
+3. Permission events are only allowed for high priority classes:
+        /*
+         * group->priority == FS_PRIO_0 == FAN_CLASS_NOTIF.  These are not
+         * allowed to set permissions events.
+         */
+        ret = -EINVAL;
+        if (mask & FANOTIFY_PERM_EVENTS &&
+            group->priority == FS_PRIO_0)
 
-> The changelog is silent about this...
->
-
-Noted - will add this into the revised patch.
-
-> Thanks,
->
->         tglx
+You may want to look at the summary of all the limitations on
+unprivileged listener here:
+https://github.com/amir73il/man-pages/blob/fanotify_unpriv/man2/fanotify_init.2#L400
 
 Thanks,
-Manish
+Amir.
