@@ -2,611 +2,800 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 945EC345274
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 23:34:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4C71345298
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 23:52:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230131AbhCVWeN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 18:34:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50146 "EHLO mail.kernel.org"
+        id S229995AbhCVWvx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 18:51:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230031AbhCVWdk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 18:33:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D9663619A3;
-        Mon, 22 Mar 2021 22:33:39 +0000 (UTC)
+        id S230031AbhCVWvc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Mar 2021 18:51:32 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0BE8561934;
+        Mon, 22 Mar 2021 22:51:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616452420;
-        bh=iloLOHA0Jehw3FKXCwTRgrXRdHsIzfBx/OeIKz269/Q=;
+        s=k20201202; t=1616453492;
+        bh=aoYPNZB+V9JJs8v0Ae/GcBmrgTKiWvylxN/WEp3qrHo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=M16njQ5SVdwEaita+XaMleGPCvB3AJeNNX8nPqKOX8LDn0ODUEhsfDNqc9/OXQWjU
-         dD6wHid+qk6AZOd94Cxp9/NBGt6oTeXPo6sFC4HOLFWzictIgLiQIjHak7xRcOIfBA
-         qcMr4/R8Io7c1NmGlOmHUwYHg+fXrm8J55Ajwug6xjsblyyNN21LekaFaAuyZwSkO3
-         tYMckqJQ4mFSuKYVhLTU7TOwj8QjlqvQm+ljVidHspzIYpZw295pDFJVVIAnpczMuO
-         95ED1Zhz/brfzSDAgIV4PMJIJISn3T5VLBH7EpFbL4kV3aJv9mAeQ70gJ5fwTMdBlv
-         Wr/RNEWQt0fXA==
-Date:   Mon, 22 Mar 2021 15:33:38 -0700
+        b=mhfru2jau6Kk6qXVijTRm187f3Xtb/70wOMpryttbzszRGasT6qdiQC5c0jIefD5Z
+         9pa31IIJ9zh6GmuVtAp7CDKHEFGD1G08Y0PIyHM5XxgHA0kum1U41d/RbAwQ8hgqdw
+         yIOX5EYLw6b9j/flh/htGuZ3sWV5LnwS9vjxmpCeL3WNZHNOvlEdelu2oY8ISYkoW8
+         Kh1UrHvPuIDy6zqEX/s/X709Kezegt4rOjn9fUDE7MzMiVYPdhJCwWk/bzyt+ZTQAK
+         Hc8e/T2xKicvZ7FMJFBZTO4u2SeGNQQppgZvLowgRSTYyTqswUMNaNDsk7zAVqrFG7
+         bH4H8J95D5ybA==
+Date:   Mon, 22 Mar 2021 15:51:31 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Miklos Szeredi <mszeredi@redhat.com>
 Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 01/18] vfs: add miscattr ops
-Message-ID: <20210322223338.GD22094@magnolia>
+Subject: Re: [PATCH v2 10/18] xfs: convert to miscattr
+Message-ID: <20210322225131.GE22094@magnolia>
 References: <20210322144916.137245-1-mszeredi@redhat.com>
- <20210322144916.137245-2-mszeredi@redhat.com>
+ <20210322144916.137245-11-mszeredi@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210322144916.137245-2-mszeredi@redhat.com>
+In-Reply-To: <20210322144916.137245-11-mszeredi@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 22, 2021 at 03:48:59PM +0100, Miklos Szeredi wrote:
-> There's a substantial amount of boilerplate in filesystems handling
-> FS_IOC_[GS]ETFLAGS/ FS_IOC_FS[GS]ETXATTR ioctls.
-> 
-> Also due to userspace buffers being involved in the ioctl API this is
-> difficult to stack, as shown by overlayfs issues related to these ioctls.
-> 
-> Introduce a new internal API named "miscattr" (fsxattr can be confused with
-> xattr, xflags is inappropriate, since this is more than just flags).
-> 
-> There's significant overlap between flags and xflags and this API handles
-> the conversions automatically, so filesystems may choose which one to use.
-> 
-> In ->miscattr_get() a hint is provided to the filesystem whether flags or
-> xattr are being requested by userspace, but in this series this hint is
-> ignored by all filesystems, since generating all the attributes is cheap.
-> 
-> If a filesystem doesn't implemement the miscattr API, just fall back to
-> f_op->ioctl().  When all filesystems are converted, the fallback can be
-> removed.
-> 
-> 32bit compat ioctls are now handled by the generic code as well.
+On Mon, Mar 22, 2021 at 03:49:08PM +0100, Miklos Szeredi wrote:
+> Use the miscattr API to let the VFS handle locking, permission checking and
+> conversion.
 > 
 > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> Cc: Darrick J. Wong <djwong@kernel.org>
 > ---
->  Documentation/filesystems/locking.rst |   5 +
->  Documentation/filesystems/vfs.rst     |  15 ++
->  fs/ioctl.c                            | 329 ++++++++++++++++++++++++++
->  include/linux/fs.h                    |   4 +
->  include/linux/miscattr.h              |  53 +++++
->  5 files changed, 406 insertions(+)
->  create mode 100644 include/linux/miscattr.h
+>  fs/xfs/libxfs/xfs_fs.h |   4 -
+>  fs/xfs/xfs_ioctl.c     | 316 ++++++++++++-----------------------------
+>  fs/xfs/xfs_ioctl.h     |  11 ++
+>  fs/xfs/xfs_ioctl32.c   |   2 -
+>  fs/xfs/xfs_ioctl32.h   |   2 -
+>  fs/xfs/xfs_iops.c      |   7 +
+>  6 files changed, 107 insertions(+), 235 deletions(-)
 > 
-> diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-> index b7dcc86c92a4..a5aa2046d48f 100644
-> --- a/Documentation/filesystems/locking.rst
-> +++ b/Documentation/filesystems/locking.rst
-> @@ -80,6 +80,9 @@ prototypes::
->  				struct file *, unsigned open_flag,
->  				umode_t create_mode);
->  	int (*tmpfile) (struct inode *, struct dentry *, umode_t);
-> +	int (*miscattr_set)(struct user_namespace *mnt_userns,
-> +			    struct dentry *dentry, struct miscattr *ma);
-> +	int (*miscattr_get)(struct dentry *dentry, struct miscattr *ma);
+> diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
+> index 6fad140d4c8e..6bf7d8b7d743 100644
+> --- a/fs/xfs/libxfs/xfs_fs.h
+> +++ b/fs/xfs/libxfs/xfs_fs.h
+> @@ -770,8 +770,6 @@ struct xfs_scrub_metadata {
+>  /*
+>   * ioctl commands that are used by Linux filesystems
+>   */
+> -#define XFS_IOC_GETXFLAGS	FS_IOC_GETFLAGS
+> -#define XFS_IOC_SETXFLAGS	FS_IOC_SETFLAGS
+>  #define XFS_IOC_GETVERSION	FS_IOC_GETVERSION
 >  
->  locking rules:
->  	all may block
-> @@ -107,6 +110,8 @@ fiemap:		no
->  update_time:	no
->  atomic_open:	shared (exclusive if O_CREAT is set in open flags)
->  tmpfile:	no
-> +miscattr_get:	no or exclusive
-> +miscattr_set:	exclusive
->  ============	=============================================
+>  /*
+> @@ -782,8 +780,6 @@ struct xfs_scrub_metadata {
+>  #define XFS_IOC_ALLOCSP		_IOW ('X', 10, struct xfs_flock64)
+>  #define XFS_IOC_FREESP		_IOW ('X', 11, struct xfs_flock64)
+>  #define XFS_IOC_DIOINFO		_IOR ('X', 30, struct dioattr)
+> -#define XFS_IOC_FSGETXATTR	FS_IOC_FSGETXATTR
+> -#define XFS_IOC_FSSETXATTR	FS_IOC_FSSETXATTR
+>  #define XFS_IOC_ALLOCSP64	_IOW ('X', 36, struct xfs_flock64)
+>  #define XFS_IOC_FREESP64	_IOW ('X', 37, struct xfs_flock64)
+>  #define XFS_IOC_GETBMAP		_IOWR('X', 38, struct getbmap)
+> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> index 99dfe89a8d08..e27e3ff9a651 100644
+> --- a/fs/xfs/xfs_ioctl.c
+> +++ b/fs/xfs/xfs_ioctl.c
+> @@ -40,6 +40,7 @@
 >  
->  
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> index 2049bbf5e388..f125ce6c3b47 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -441,6 +441,9 @@ As of kernel 2.6.22, the following members are defined:
->  				   unsigned open_flag, umode_t create_mode);
->  		int (*tmpfile) (struct user_namespace *, struct inode *, struct dentry *, umode_t);
->  	        int (*set_acl)(struct user_namespace *, struct inode *, struct posix_acl *, int);
-> +		int (*miscattr_set)(struct user_namespace *mnt_userns,
-> +				    struct dentry *dentry, struct miscattr *ma);
-> +		int (*miscattr_get)(struct dentry *dentry, struct miscattr *ma);
->  	};
->  
->  Again, all methods are called without any locks being held, unless
-> @@ -588,6 +591,18 @@ otherwise noted.
->  	atomically creating, opening and unlinking a file in given
->  	directory.
->  
-> +``miscattr_get``
-
-I wish this wasn't named "misc" because miscellaneous is vague.
-
-fileattr_get, perhaps?
-
-(FWIW I'm not /that/ passionate about starting a naming bikeshed, feel
-free to ignore.)
-
-> +	called on ioctl(FS_IOC_GETFLAGS) and ioctl(FS_IOC_FSGETXATTR) to
-> +	retrieve miscellaneous filesystem flags and attributes.  Also
-
-"...miscellaneous *file* flags and attributes."
-
-> +	called before the relevant SET operation to check what is being
-> +	changed (in this case with i_rwsem locked exclusive).  If unset,
-> +	then fall back to f_op->ioctl().
-> +
-> +``miscattr_set``
-> +	called on ioctl(FS_IOC_SETFLAGS) and ioctl(FS_IOC_FSSETXATTR) to
-> +	change miscellaneous filesystem flags and attributes.  Callers hold
-
-Same here.
-
-> +	i_rwsem exclusive.  If unset, then fall back to f_op->ioctl().
-> +
->  
->  The Address Space Object
->  ========================
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index 4e6cc0a7d69c..e5f3820809a4 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -19,6 +19,9 @@
->  #include <linux/falloc.h>
->  #include <linux/sched/signal.h>
->  #include <linux/fiemap.h>
-> +#include <linux/mount.h>
-> +#include <linux/fscrypt.h>
+>  #include <linux/mount.h>
+>  #include <linux/namei.h>
 > +#include <linux/miscattr.h>
 >  
->  #include "internal.h"
+>  /*
+>   * xfs_find_handle maps from userspace xfs_fsop_handlereq structure to
+> @@ -1053,97 +1054,51 @@ xfs_ioc_ag_geometry(
+>   * Linux extended inode flags interface.
+>   */
 >  
-> @@ -657,6 +660,311 @@ static int ioctl_file_dedupe_range(struct file *file,
->  	return ret;
+> -STATIC unsigned int
+> -xfs_merge_ioc_xflags(
+> -	unsigned int	flags,
+> -	unsigned int	start)
+> -{
+> -	unsigned int	xflags = start;
+> -
+> -	if (flags & FS_IMMUTABLE_FL)
+> -		xflags |= FS_XFLAG_IMMUTABLE;
+> -	else
+> -		xflags &= ~FS_XFLAG_IMMUTABLE;
+> -	if (flags & FS_APPEND_FL)
+> -		xflags |= FS_XFLAG_APPEND;
+> -	else
+> -		xflags &= ~FS_XFLAG_APPEND;
+> -	if (flags & FS_SYNC_FL)
+> -		xflags |= FS_XFLAG_SYNC;
+> -	else
+> -		xflags &= ~FS_XFLAG_SYNC;
+> -	if (flags & FS_NOATIME_FL)
+> -		xflags |= FS_XFLAG_NOATIME;
+> -	else
+> -		xflags &= ~FS_XFLAG_NOATIME;
+> -	if (flags & FS_NODUMP_FL)
+> -		xflags |= FS_XFLAG_NODUMP;
+> -	else
+> -		xflags &= ~FS_XFLAG_NODUMP;
+> -	if (flags & FS_DAX_FL)
+> -		xflags |= FS_XFLAG_DAX;
+> -	else
+> -		xflags &= ~FS_XFLAG_DAX;
+> -
+> -	return xflags;
+> -}
+> -
+> -STATIC unsigned int
+> -xfs_di2lxflags(
+> -	uint16_t	di_flags,
+> -	uint64_t	di_flags2)
+> -{
+> -	unsigned int	flags = 0;
+> -
+> -	if (di_flags & XFS_DIFLAG_IMMUTABLE)
+> -		flags |= FS_IMMUTABLE_FL;
+> -	if (di_flags & XFS_DIFLAG_APPEND)
+> -		flags |= FS_APPEND_FL;
+> -	if (di_flags & XFS_DIFLAG_SYNC)
+> -		flags |= FS_SYNC_FL;
+> -	if (di_flags & XFS_DIFLAG_NOATIME)
+> -		flags |= FS_NOATIME_FL;
+> -	if (di_flags & XFS_DIFLAG_NODUMP)
+> -		flags |= FS_NODUMP_FL;
+> -	if (di_flags2 & XFS_DIFLAG2_DAX) {
+> -		flags |= FS_DAX_FL;
+> -	}
+> -	return flags;
+> -}
+> -
+>  static void
+>  xfs_fill_fsxattr(
+>  	struct xfs_inode	*ip,
+>  	bool			attr,
+> -	struct fsxattr		*fa)
+> +	struct miscattr		*ma)
+>  {
+>  	struct xfs_ifork	*ifp = attr ? ip->i_afp : &ip->i_df;
+
+Hm, could you replace "bool attr" with "int whichfork"?  The new
+signature and first line of code becomes:
+
+static void
+xfs_fill_fsxattr(
+	struct xfs_inode	*ip,
+	int			whichfork,
+	struct miscattr		*ma)
+{
+	struct xfs_ifork	*ifp = XFS_IFORK_PTR(ip, whichfork);
+
+...and then the two wrappers of xfs_fill_fsxattr become:
+
+STATIC int
+xfs_ioc_fsgetxattra(
+	struct xfs_inode	*ip,
+	void			__user *arg)
+{
+	struct miscattr		ma;
+
+	xfs_ilock(ip, XFS_ILOCK_SHARED);
+	xfs_fill_fsxattr(ip, XFS_ATTR_FORK, &ma);
+	xfs_iunlock(ip, XFS_ILOCK_SHARED);
+
+	return fsxattr_copy_to_user(&ma, arg);
+}
+
+int
+xfs_miscattr_get(
+	struct dentry		*dentry,
+	struct miscattr		*ma)
+{
+	struct xfs_inode	*ip = XFS_I(d_inode(dentry));
+
+	xfs_ilock(ip, XFS_ILOCK_SHARED);
+	xfs_fill_fsxattr(ip, XFS_DATA_FORK, ma);
+	xfs_iunlock(ip, XFS_ILOCK_SHARED);
+
+	return 0;
+}
+
+This makes it clearer that FSGETXATTRA reports on the extended attributes
+fork, and regular GETFLAGS/FSGETXATTR reports on the data fork.
+
+> -	simple_fill_fsxattr(fa, xfs_ip2xflags(ip));
+> -	fa->fsx_extsize = ip->i_d.di_extsize << ip->i_mount->m_sb.sb_blocklog;
+> -	fa->fsx_cowextsize = ip->i_d.di_cowextsize <<
+> +	miscattr_fill_xflags(ma, xfs_ip2xflags(ip));
+> +	ma->flags &= ~FS_PROJINHERIT_FL; /* Accidental? */
+
+Yes, this was an oversight when ext4/f2fs added PROJINHERIT_FL.
+
+> +	ma->fsx_extsize = ip->i_d.di_extsize << ip->i_mount->m_sb.sb_blocklog;
+> +	ma->fsx_cowextsize = ip->i_d.di_cowextsize <<
+>  			ip->i_mount->m_sb.sb_blocklog;
+> -	fa->fsx_projid = ip->i_d.di_projid;
+> +	ma->fsx_projid = ip->i_d.di_projid;
+>  	if (ifp && (ifp->if_flags & XFS_IFEXTENTS))
+> -		fa->fsx_nextents = xfs_iext_count(ifp);
+> +		ma->fsx_nextents = xfs_iext_count(ifp);
+>  	else
+> -		fa->fsx_nextents = xfs_ifork_nextents(ifp);
+> +		ma->fsx_nextents = xfs_ifork_nextents(ifp);
 >  }
 >  
-> +/**
-> + * miscattr_fill_xflags - initialize miscattr with xflags
-> + * @ma:		miscattr pointer
-> + * @xflags:	FS_XFLAG_* flags
-> + *
-> + * Set ->fsx_xflags, ->xattr_valid and ->flags (translated xflags).  All
-> + * other fields are zeroed.
-> + */
-> +void miscattr_fill_xflags(struct miscattr *ma, u32 xflags)
+>  STATIC int
+> -xfs_ioc_fsgetxattr(
+> +xfs_ioc_fsgetxattra(
+>  	xfs_inode_t		*ip,
+> -	int			attr,
+>  	void			__user *arg)
+>  {
+> -	struct fsxattr		fa;
+> +	struct miscattr		ma;
+>  
+>  	xfs_ilock(ip, XFS_ILOCK_SHARED);
+> -	xfs_fill_fsxattr(ip, attr, &fa);
+> +	xfs_fill_fsxattr(ip, true, &ma);
+> +	xfs_iunlock(ip, XFS_ILOCK_SHARED);
+> +
+> +	return fsxattr_copy_to_user(&ma, arg);
+> +}
+> +
+> +int
+> +xfs_miscattr_get(
+> +	struct dentry		*dentry,
+> +	struct miscattr		*ma)
 > +{
-> +	memset(ma, 0, sizeof(*ma));
-> +	ma->xattr_valid = true;
-> +	ma->fsx_xflags = xflags;
-> +	if (ma->fsx_xflags & FS_XFLAG_IMMUTABLE)
-> +		ma->flags |= FS_IMMUTABLE_FL;
+> +	xfs_inode_t		*ip = XFS_I(d_inode(dentry));
 
-I wonder if maintaining redundant sets of flags in the same structure is
-going to bite us some day.
+Please don't use struct typedefs.  We're trying to get rid of these.
 
-> +	if (ma->fsx_xflags & FS_XFLAG_APPEND)
-> +		ma->flags |= FS_APPEND_FL;
-> +	if (ma->fsx_xflags & FS_XFLAG_SYNC)
-> +		ma->flags |= FS_SYNC_FL;
-> +	if (ma->fsx_xflags & FS_XFLAG_NOATIME)
-> +		ma->flags |= FS_NOATIME_FL;
-> +	if (ma->fsx_xflags & FS_XFLAG_NODUMP)
-> +		ma->flags |= FS_NODUMP_FL;
-> +	if (ma->fsx_xflags & FS_XFLAG_DAX)
-> +		ma->flags |= FS_DAX_FL;
-> +	if (ma->fsx_xflags & FS_XFLAG_PROJINHERIT)
-> +		ma->flags |= FS_PROJINHERIT_FL;
-> +}
-> +EXPORT_SYMBOL(miscattr_fill_xflags);
+	struct xfs_inode	*ip = XFS_I(...);
+
 > +
-> +/**
-> + * miscattr_fill_flags - initialize miscattr with flags
-> + * @ma:		miscattr pointer
-> + * @flags:	FS_*_FL flags
-> + *
-> + * Set ->flags, ->flags_valid and ->fsx_xflags (translated flags).
-> + * All other fields are zeroed.
-> + */
-> +void miscattr_fill_flags(struct miscattr *ma, u32 flags)
-> +{
-> +	memset(ma, 0, sizeof(*ma));
-> +	ma->flags_valid = true;
-> +	ma->flags = flags;
-> +	if (ma->flags & FS_SYNC_FL)
-> +		ma->fsx_xflags |= FS_XFLAG_SYNC;
-> +	if (ma->flags & FS_IMMUTABLE_FL)
-> +		ma->fsx_xflags |= FS_XFLAG_IMMUTABLE;
-> +	if (ma->flags & FS_APPEND_FL)
-> +		ma->fsx_xflags |= FS_XFLAG_APPEND;
-> +	if (ma->flags & FS_NODUMP_FL)
-> +		ma->fsx_xflags |= FS_XFLAG_NODUMP;
-> +	if (ma->flags & FS_NOATIME_FL)
-> +		ma->fsx_xflags |= FS_XFLAG_NOATIME;
-> +	if (ma->flags & FS_DAX_FL)
-> +		ma->fsx_xflags |= FS_XFLAG_DAX;
-> +	if (ma->flags & FS_PROJINHERIT_FL)
-> +		ma->fsx_xflags |= FS_XFLAG_PROJINHERIT;
-> +}
-> +EXPORT_SYMBOL(miscattr_fill_flags);
+> +	xfs_ilock(ip, XFS_ILOCK_SHARED);
+> +	xfs_fill_fsxattr(ip, false, ma);
+>  	xfs_iunlock(ip, XFS_ILOCK_SHARED);
+>  
+> -	if (copy_to_user(arg, &fa, sizeof(fa)))
+> -		return -EFAULT;
+>  	return 0;
+>  }
+>  
+> @@ -1210,37 +1165,37 @@ static int
+>  xfs_ioctl_setattr_xflags(
+>  	struct xfs_trans	*tp,
+>  	struct xfs_inode	*ip,
+> -	struct fsxattr		*fa)
+> +	struct miscattr		*ma)
+>  {
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	uint64_t		di_flags2;
+>  
+>  	/* Can't change realtime flag if any extents are allocated. */
+>  	if ((ip->i_df.if_nextents || ip->i_delayed_blks) &&
+> -	    XFS_IS_REALTIME_INODE(ip) != (fa->fsx_xflags & FS_XFLAG_REALTIME))
+> +	    XFS_IS_REALTIME_INODE(ip) != (ma->fsx_xflags & FS_XFLAG_REALTIME))
+>  		return -EINVAL;
+>  
+>  	/* If realtime flag is set then must have realtime device */
+> -	if (fa->fsx_xflags & FS_XFLAG_REALTIME) {
+> +	if (ma->fsx_xflags & FS_XFLAG_REALTIME) {
+>  		if (mp->m_sb.sb_rblocks == 0 || mp->m_sb.sb_rextsize == 0 ||
+>  		    (ip->i_d.di_extsize % mp->m_sb.sb_rextsize))
+>  			return -EINVAL;
+>  	}
+>  
+>  	/* Clear reflink if we are actually able to set the rt flag. */
+> -	if ((fa->fsx_xflags & FS_XFLAG_REALTIME) && xfs_is_reflink_inode(ip))
+> +	if ((ma->fsx_xflags & FS_XFLAG_REALTIME) && xfs_is_reflink_inode(ip))
+>  		ip->i_d.di_flags2 &= ~XFS_DIFLAG2_REFLINK;
+>  
+>  	/* Don't allow us to set DAX mode for a reflinked file for now. */
+> -	if ((fa->fsx_xflags & FS_XFLAG_DAX) && xfs_is_reflink_inode(ip))
+> +	if ((ma->fsx_xflags & FS_XFLAG_DAX) && xfs_is_reflink_inode(ip))
+>  		return -EINVAL;
+>  
+>  	/* diflags2 only valid for v3 inodes. */
+> -	di_flags2 = xfs_flags2diflags2(ip, fa->fsx_xflags);
+> +	di_flags2 = xfs_flags2diflags2(ip, ma->fsx_xflags);
+>  	if (di_flags2 && !xfs_sb_version_has_v3inode(&mp->m_sb))
+>  		return -EINVAL;
+>  
+> -	ip->i_d.di_flags = xfs_flags2diflags(ip, fa->fsx_xflags);
+> +	ip->i_d.di_flags = xfs_flags2diflags(ip, ma->fsx_xflags);
+>  	ip->i_d.di_flags2 = di_flags2;
+>  
+>  	xfs_diflags_to_iflags(ip, false);
+> @@ -1253,7 +1208,7 @@ xfs_ioctl_setattr_xflags(
+>  static void
+>  xfs_ioctl_setattr_prepare_dax(
+>  	struct xfs_inode	*ip,
+> -	struct fsxattr		*fa)
+> +	struct miscattr		*ma)
+>  {
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	struct inode            *inode = VFS_I(ip);
+> @@ -1265,9 +1220,9 @@ xfs_ioctl_setattr_prepare_dax(
+>  	    (mp->m_flags & XFS_MOUNT_DAX_NEVER))
+>  		return;
+>  
+> -	if (((fa->fsx_xflags & FS_XFLAG_DAX) &&
+> +	if (((ma->fsx_xflags & FS_XFLAG_DAX) &&
+>  	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)) ||
+> -	    (!(fa->fsx_xflags & FS_XFLAG_DAX) &&
+> +	    (!(ma->fsx_xflags & FS_XFLAG_DAX) &&
+>  	     (ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)))
+>  		d_mark_dontcache(inode);
+>  }
+> @@ -1280,10 +1235,9 @@ xfs_ioctl_setattr_prepare_dax(
+>   */
+>  static struct xfs_trans *
+>  xfs_ioctl_setattr_get_trans(
+> -	struct file		*file,
+> +	struct xfs_inode	*ip,
+>  	struct xfs_dquot	*pdqp)
+>  {
+> -	struct xfs_inode	*ip = XFS_I(file_inode(file));
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	struct xfs_trans	*tp;
+>  	int			error = -EROFS;
+> @@ -1299,24 +1253,11 @@ xfs_ioctl_setattr_get_trans(
+>  	if (error)
+>  		goto out_error;
+>  
+> -	/*
+> -	 * CAP_FOWNER overrides the following restrictions:
+> -	 *
+> -	 * The user ID of the calling process must be equal to the file owner
+> -	 * ID, except in cases where the CAP_FSETID capability is applicable.
+> -	 */
+> -	if (!inode_owner_or_capable(file_mnt_user_ns(file), VFS_I(ip))) {
+> -		error = -EPERM;
+> -		goto out_cancel;
+> -	}
+> -
+>  	if (mp->m_flags & XFS_MOUNT_WSYNC)
+>  		xfs_trans_set_sync(tp);
+>  
+>  	return tp;
+>  
+> -out_cancel:
+> -	xfs_trans_cancel(tp);
+>  out_error:
+>  	return ERR_PTR(error);
+>  }
+> @@ -1340,25 +1281,28 @@ xfs_ioctl_setattr_get_trans(
+>  static int
+>  xfs_ioctl_setattr_check_extsize(
+>  	struct xfs_inode	*ip,
+> -	struct fsxattr		*fa)
+> +	struct miscattr		*ma)
+>  {
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	xfs_extlen_t		size;
+>  	xfs_fsblock_t		extsize_fsb;
+>  
+> +	if (!ma->xattr_valid)
+> +		return 0;
 > +
-> +/**
-> + * vfs_miscattr_get - retrieve miscellaneous inode attributes
-> + * @dentry:	the object to retrieve from
-> + * @ma:		miscattr pointer
-> + *
-> + * Call i_op->miscattr_get() callback, if exists.
-> + *
-> + * Returns 0 on success, or a negative error on failure.
-> + */
-> +int vfs_miscattr_get(struct dentry *dentry, struct miscattr *ma)
-> +{
-> +	struct inode *inode = d_inode(dentry);
-> +
-> +	if (d_is_special(dentry))
-> +		return -ENOTTY;
-> +
-> +	if (!inode->i_op->miscattr_get)
-> +		return -ENOIOCTLCMD;
-> +
-> +	return inode->i_op->miscattr_get(dentry, ma);
-> +}
-> +EXPORT_SYMBOL(vfs_miscattr_get);
-> +
-> +/**
-> + * fsxattr_copy_to_user - copy fsxattr to userspace.
-> + * @ma:		miscattr pointer
-> + * @ufa:	fsxattr user pointer
-> + *
-> + * Returns 0 on success, or -EFAULT on failure.
-> + */
-> +int fsxattr_copy_to_user(const struct miscattr *ma, struct fsxattr __user *ufa)
-> +{
-> +	struct fsxattr fa = {
-> +		.fsx_xflags	= ma->fsx_xflags,
-> +		.fsx_extsize	= ma->fsx_extsize,
-> +		.fsx_nextents	= ma->fsx_nextents,
-> +		.fsx_projid	= ma->fsx_projid,
-> +		.fsx_cowextsize	= ma->fsx_cowextsize,
-> +	};
-> +
-> +	if (copy_to_user(ufa, &fa, sizeof(fa)))
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(fsxattr_copy_to_user);
-> +
-> +static int fsxattr_copy_from_user(struct miscattr *ma,
-> +				  struct fsxattr __user *ufa)
-> +{
-> +	struct fsxattr fa;
-> +
-> +	if (copy_from_user(&fa, ufa, sizeof(fa)))
-> +		return -EFAULT;
-> +
-> +	miscattr_fill_xflags(ma, fa.fsx_xflags);
-> +	ma->fsx_extsize = fa.fsx_extsize;
-> +	ma->fsx_nextents = fa.fsx_nextents;
-> +	ma->fsx_projid = fa.fsx_projid;
-> +	ma->fsx_cowextsize = fa.fsx_cowextsize;
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Generic function to check FS_IOC_FSSETXATTR/FS_IOC_SETFLAGS values and reject
-> + * any invalid configurations.
-> + *
-> + * Note: must be called with inode lock held.
-> + */
-> +static int miscattr_set_prepare(struct inode *inode,
-> +			      const struct miscattr *old_ma,
-> +			      struct miscattr *ma)
-> +{
-> +	int err;
-> +
-> +	/*
-> +	 * The IMMUTABLE and APPEND_ONLY flags can only be changed by
-> +	 * the relevant capability.
-> +	 */
-> +	if ((ma->flags ^ old_ma->flags) & (FS_APPEND_FL | FS_IMMUTABLE_FL) &&
-> +	    !capable(CAP_LINUX_IMMUTABLE))
-> +		return -EPERM;
-> +
-> +	err = fscrypt_prepare_setflags(inode, old_ma->flags, ma->flags);
-> +	if (err)
-> +		return err;
-> +
-> +	/*
-> +	 * Project Quota ID state is only allowed to change from within the init
-> +	 * namespace. Enforce that restriction only if we are trying to change
-> +	 * the quota ID state. Everything else is allowed in user namespaces.
-> +	 */
-> +	if (current_user_ns() != &init_user_ns) {
-> +		if (old_ma->fsx_projid != ma->fsx_projid)
-> +			return -EINVAL;
-> +		if ((old_ma->fsx_xflags ^ ma->fsx_xflags) &
-> +				FS_XFLAG_PROJINHERIT)
-> +			return -EINVAL;
-> +	}
-> +
-> +	/* Check extent size hints. */
-> +	if ((ma->fsx_xflags & FS_XFLAG_EXTSIZE) && !S_ISREG(inode->i_mode))
-> +		return -EINVAL;
-> +
-> +	if ((ma->fsx_xflags & FS_XFLAG_EXTSZINHERIT) &&
-> +			!S_ISDIR(inode->i_mode))
-> +		return -EINVAL;
-> +
-> +	if ((ma->fsx_xflags & FS_XFLAG_COWEXTSIZE) &&
-> +	    !S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * It is only valid to set the DAX flag on regular files and
-> +	 * directories on filesystems.
-> +	 */
-> +	if ((ma->fsx_xflags & FS_XFLAG_DAX) &&
-> +	    !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
-> +		return -EINVAL;
-> +
-> +	/* Extent size hints of zero turn off the flags. */
+>  	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_df.if_nextents &&
+> -	    ((ip->i_d.di_extsize << mp->m_sb.sb_blocklog) != fa->fsx_extsize))
+> +	    ((ip->i_d.di_extsize << mp->m_sb.sb_blocklog) != ma->fsx_extsize))
+>  		return -EINVAL;
+>  
+> -	if (fa->fsx_extsize == 0)
 > +	if (ma->fsx_extsize == 0)
-> +		ma->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
+>  		return 0;
+>  
+> -	extsize_fsb = XFS_B_TO_FSB(mp, fa->fsx_extsize);
+> +	extsize_fsb = XFS_B_TO_FSB(mp, ma->fsx_extsize);
+>  	if (extsize_fsb > MAXEXTLEN)
+>  		return -EINVAL;
+>  
+>  	if (XFS_IS_REALTIME_INODE(ip) ||
+> -	    (fa->fsx_xflags & FS_XFLAG_REALTIME)) {
+> +	    (ma->fsx_xflags & FS_XFLAG_REALTIME)) {
+>  		size = mp->m_sb.sb_rextsize << mp->m_sb.sb_blocklog;
+>  	} else {
+>  		size = mp->m_sb.sb_blocksize;
+> @@ -1366,7 +1310,7 @@ xfs_ioctl_setattr_check_extsize(
+>  			return -EINVAL;
+>  	}
+>  
+> -	if (fa->fsx_extsize % size)
+> +	if (ma->fsx_extsize % size)
+>  		return -EINVAL;
+>  
+>  	return 0;
+> @@ -1390,22 +1334,25 @@ xfs_ioctl_setattr_check_extsize(
+>  static int
+>  xfs_ioctl_setattr_check_cowextsize(
+>  	struct xfs_inode	*ip,
+> -	struct fsxattr		*fa)
+> +	struct miscattr		*ma)
+>  {
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	xfs_extlen_t		size;
+>  	xfs_fsblock_t		cowextsize_fsb;
+>  
+> -	if (!(fa->fsx_xflags & FS_XFLAG_COWEXTSIZE))
+> +	if (!ma->xattr_valid)
+> +		return 0;
+> +
+> +	if (!(ma->fsx_xflags & FS_XFLAG_COWEXTSIZE))
+>  		return 0;
+>  
+>  	if (!xfs_sb_version_hasreflink(&ip->i_mount->m_sb))
+>  		return -EINVAL;
+>  
+> -	if (fa->fsx_cowextsize == 0)
 > +	if (ma->fsx_cowextsize == 0)
-> +		ma->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * vfs_miscattr_set - change miscellaneous inode attributes
-> + * @dentry:	the object to change
-> + * @ma:		miscattr pointer
-> + *
-> + * After verifying permissions, call i_op->miscattr_set() callback, if
-> + * exists.
-> + *
-> + * Verifying attributes involves retrieving current attributes with
-> + * i_op->miscattr_get(), this also allows initilaizing attributes that have
-> + * not been set by the caller to current values.  Inode lock is held
-> + * thoughout to prevent racing with another instance.
-> + *
-> + * Returns 0 on success, or a negative error on failure.
-> + */
-> +int vfs_miscattr_set(struct user_namespace *mnt_userns, struct dentry *dentry,
-> +		     struct miscattr *ma)
-> +{
-> +	struct inode *inode = d_inode(dentry);
-> +	struct miscattr old_ma = {};
-> +	int err;
-> +
-> +	if (d_is_special(dentry))
-> +		return -ENOTTY;
-> +
-> +	if (!inode->i_op->miscattr_set)
-> +		return -ENOIOCTLCMD;
-> +
-> +	if (!inode_owner_or_capable(mnt_userns, inode))
-> +		return -EPERM;
-> +
-> +	inode_lock(inode);
-> +	err = vfs_miscattr_get(dentry, &old_ma);
-> +	if (!err) {
-> +		/* initialize missing bits from old_ma */
-> +		if (ma->flags_valid) {
-> +			ma->fsx_xflags |= old_ma.fsx_xflags & ~FS_XFLAG_COMMON;
-> +			ma->fsx_extsize = old_ma.fsx_extsize;
-> +			ma->fsx_nextents = old_ma.fsx_nextents;
-> +			ma->fsx_projid = old_ma.fsx_projid;
-> +			ma->fsx_cowextsize = old_ma.fsx_cowextsize;
-> +		} else {
-> +			ma->flags |= old_ma.flags & ~FS_COMMON_FL;
-> +		}
-> +		err = miscattr_set_prepare(inode, &old_ma, ma);
-> +		if (!err)
-> +			err = inode->i_op->miscattr_set(mnt_userns, dentry, ma);
-> +	}
-> +	inode_unlock(inode);
-> +
-> +	return err;
-> +}
-> +EXPORT_SYMBOL(vfs_miscattr_set);
-> +
-> +static int ioctl_getflags(struct file *file, void __user *argp)
-> +{
-> +	struct miscattr ma = { .flags_valid = true }; /* hint only */
-> +	unsigned int flags;
-> +	int err;
-> +
-> +	err = vfs_miscattr_get(file_dentry(file), &ma);
-> +	if (!err) {
-> +		flags = ma.flags;
-> +		if (copy_to_user(argp, &flags, sizeof(flags)))
-> +			err = -EFAULT;
-> +	}
-> +	return err;
-> +}
-> +
-> +static int ioctl_setflags(struct file *file, void __user *argp)
-> +{
-> +	struct miscattr ma;
-> +	unsigned int flags;
-> +	int err;
-> +
-> +	if (copy_from_user(&flags, argp, sizeof(flags)))
-> +		return -EFAULT;
-> +
-> +	err = mnt_want_write_file(file);
-> +	if (!err) {
-> +		miscattr_fill_flags(&ma, flags);
-> +		err = vfs_miscattr_set(file_mnt_user_ns(file), file_dentry(file), &ma);
-> +		mnt_drop_write_file(file);
-> +	}
-> +	return err;
-> +}
-> +
-> +static int ioctl_fsgetxattr(struct file *file, void __user *argp)
-> +{
-> +	struct miscattr ma = { .xattr_valid = true }; /* hint only */
-> +	int err;
-> +
-> +	err = vfs_miscattr_get(file_dentry(file), &ma);
-> +	if (!err)
-> +		err = fsxattr_copy_to_user(&ma, argp);
-> +
-> +	return err;
-> +}
-> +
-> +static int ioctl_fssetxattr(struct file *file, void __user *argp)
-> +{
-> +	struct miscattr ma;
-> +	int err;
-> +
-> +	err = fsxattr_copy_from_user(&ma, argp);
-> +	if (!err) {
-> +		err = mnt_want_write_file(file);
-> +		if (!err) {
-> +			err = vfs_miscattr_set(file_mnt_user_ns(file), file_dentry(file), &ma);
-> +			mnt_drop_write_file(file);
-> +		}
-> +	}
-> +	return err;
-> +}
-> +
->  /*
->   * do_vfs_ioctl() is not for drivers and not intended to be EXPORT_SYMBOL()'d.
->   * It's just a simple helper for sys_ioctl and compat_sys_ioctl.
-> @@ -727,6 +1035,18 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
->  		return put_user(i_size_read(inode) - filp->f_pos,
->  				(int __user *)argp);
+>  		return 0;
 >  
-> +	case FS_IOC_GETFLAGS:
-> +		return ioctl_getflags(filp, argp);
-> +
-> +	case FS_IOC_SETFLAGS:
-> +		return ioctl_setflags(filp, argp);
-> +
-> +	case FS_IOC_FSGETXATTR:
-> +		return ioctl_fsgetxattr(filp, argp);
-> +
-> +	case FS_IOC_FSSETXATTR:
-> +		return ioctl_fssetxattr(filp, argp);
-> +
->  	default:
->  		if (S_ISREG(inode->i_mode))
->  			return file_ioctl(filp, cmd, argp);
-> @@ -827,6 +1147,15 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
->  		break;
->  #endif
+> -	cowextsize_fsb = XFS_B_TO_FSB(mp, fa->fsx_cowextsize);
+> +	cowextsize_fsb = XFS_B_TO_FSB(mp, ma->fsx_cowextsize);
+>  	if (cowextsize_fsb > MAXEXTLEN)
+>  		return -EINVAL;
 >  
-> +	/*
-> +	 * These access 32-bit values anyway so no further handling is
-> +	 * necessary.
-> +	 */
-> +	case FS_IOC32_GETFLAGS:
-> +	case FS_IOC32_SETFLAGS:
-> +		cmd = (cmd == FS_IOC32_GETFLAGS) ?
-> +			FS_IOC_GETFLAGS : FS_IOC_SETFLAGS;
-> +		fallthrough;
->  	/*
->  	 * everything else in do_vfs_ioctl() takes either a compatible
->  	 * pointer argument or no argument -- call it with a modified
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index ec8f3ddf4a6a..9e7f6a592a70 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -70,6 +70,7 @@ struct fsverity_info;
->  struct fsverity_operations;
->  struct fs_context;
->  struct fs_parameter_spec;
-> +struct miscattr;
+> @@ -1413,7 +1360,7 @@ xfs_ioctl_setattr_check_cowextsize(
+>  	if (cowextsize_fsb > mp->m_sb.sb_agblocks / 2)
+>  		return -EINVAL;
 >  
->  extern void __init inode_init(void);
->  extern void __init inode_init_early(void);
-> @@ -1963,6 +1964,9 @@ struct inode_operations {
->  			struct dentry *, umode_t);
->  	int (*set_acl)(struct user_namespace *, struct inode *,
->  		       struct posix_acl *, int);
-> +	int (*miscattr_set)(struct user_namespace *mnt_userns,
-> +			    struct dentry *dentry, struct miscattr *ma);
-> +	int (*miscattr_get)(struct dentry *dentry, struct miscattr *ma);
->  } ____cacheline_aligned;
+> -	if (fa->fsx_cowextsize % size)
+> +	if (ma->fsx_cowextsize % size)
+>  		return -EINVAL;
 >  
->  static inline ssize_t call_read_iter(struct file *file, struct kiocb *kio,
-> diff --git a/include/linux/miscattr.h b/include/linux/miscattr.h
-> new file mode 100644
-> index 000000000000..13683eb6ac78
-> --- /dev/null
-> +++ b/include/linux/miscattr.h
-> @@ -0,0 +1,53 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
+>  	return 0;
+> @@ -1422,23 +1369,25 @@ xfs_ioctl_setattr_check_cowextsize(
+>  static int
+>  xfs_ioctl_setattr_check_projid(
+>  	struct xfs_inode	*ip,
+> -	struct fsxattr		*fa)
+> +	struct miscattr		*ma)
+>  {
+> +	if (!ma->xattr_valid)
+> +		return 0;
 > +
-> +#ifndef _LINUX_MISCATTR_H
-> +#define _LINUX_MISCATTR_H
+>  	/* Disallow 32bit project ids if projid32bit feature is not enabled. */
+> -	if (fa->fsx_projid > (uint16_t)-1 &&
+> +	if (ma->fsx_projid > (uint16_t)-1 &&
+>  	    !xfs_sb_version_hasprojid32bit(&ip->i_mount->m_sb))
+>  		return -EINVAL;
+>  	return 0;
+>  }
+>  
+> -STATIC int
+> -xfs_ioctl_setattr(
+> -	struct file		*file,
+> -	struct fsxattr		*fa)
+> +int
+> +xfs_miscattr_set(
+> +	struct user_namespace	*mnt_userns,
+> +	struct dentry		*dentry,
+> +	struct miscattr		*ma)
+>  {
+> -	struct user_namespace	*mnt_userns = file_mnt_user_ns(file);
+> -	struct xfs_inode	*ip = XFS_I(file_inode(file));
+> -	struct fsxattr		old_fa;
+> +	xfs_inode_t		*ip = XFS_I(d_inode(dentry));
+
+Same thing here about struct typedefs.
+
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	struct xfs_trans	*tp;
+>  	struct xfs_dquot	*pdqp = NULL;
+> @@ -1447,7 +1396,15 @@ xfs_ioctl_setattr(
+>  
+>  	trace_xfs_ioctl_setattr(ip);
+>  
+> -	error = xfs_ioctl_setattr_check_projid(ip, fa);
+> +	if (!ma->xattr_valid) {
+> +		/* FS_PROJINHERIT_FL not accepted, deliberate? */
+
+No.  I think this is an oversight from when ext4/f2fs added
+PROJINHERIT_FL and forgot to update XFS.
+
+> +		if (ma->flags & ~(FS_IMMUTABLE_FL | FS_APPEND_FL |
+> +				  FS_NOATIME_FL | FS_NODUMP_FL |
+> +				  FS_SYNC_FL | FS_DAX_FL))
+> +			return -EOPNOTSUPP;
+> +	}
 > +
-> +/* Flags shared betwen flags/xflags */
-> +#define FS_COMMON_FL \
-> +	(FS_SYNC_FL | FS_IMMUTABLE_FL | FS_APPEND_FL | \
-> +	 FS_NODUMP_FL |	FS_NOATIME_FL | FS_DAX_FL | \
-> +	 FS_PROJINHERIT_FL)
-> +
-> +#define FS_XFLAG_COMMON \
-> +	(FS_XFLAG_SYNC | FS_XFLAG_IMMUTABLE | FS_XFLAG_APPEND | \
-> +	 FS_XFLAG_NODUMP | FS_XFLAG_NOATIME | FS_XFLAG_DAX | \
-> +	 FS_XFLAG_PROJINHERIT)
-> +
-> +struct miscattr {
-> +	u32	flags;		/* flags (FS_IOC_GETFLAGS/FS_IOC_SETFLAGS) */
-> +	/* struct fsxattr: */
-> +	u32	fsx_xflags;	/* xflags field value (get/set) */
+> +	error = xfs_ioctl_setattr_check_projid(ip, ma);
+>  	if (error)
+>  		return error;
+>  
+> @@ -1459,39 +1416,36 @@ xfs_ioctl_setattr(
+>  	 * If the IDs do change before we take the ilock, we're covered
+>  	 * because the i_*dquot fields will get updated anyway.
+>  	 */
+> -	if (XFS_IS_QUOTA_ON(mp)) {
+> +	if (ma->xattr_valid && XFS_IS_QUOTA_ON(mp)) {
+>  		error = xfs_qm_vop_dqalloc(ip, VFS_I(ip)->i_uid,
+> -				VFS_I(ip)->i_gid, fa->fsx_projid,
+> +				VFS_I(ip)->i_gid, ma->fsx_projid,
+>  				XFS_QMOPT_PQUOTA, NULL, NULL, &pdqp);
+>  		if (error)
+>  			return error;
+>  	}
+>  
+> -	xfs_ioctl_setattr_prepare_dax(ip, fa);
+> +	xfs_ioctl_setattr_prepare_dax(ip, ma);
+>  
+> -	tp = xfs_ioctl_setattr_get_trans(file, pdqp);
+> +	tp = xfs_ioctl_setattr_get_trans(ip, pdqp);
 
-Hrmm... could we have /some/ note here that fsx_xflags comes from XFS
-and "flags" comes from ext*?
+(Heh, and now the ip -> file -> ip churn cycle is complete. :/)
 
-> +	u32	fsx_extsize;	/* extsize field value (get/set)*/
-> +	u32	fsx_nextents;	/* nextents field value (get)	*/
-> +	u32	fsx_projid;	/* project identifier (get/set) */
-> +	u32	fsx_cowextsize;	/* CoW extsize field value (get/set)*/
-> +	/* selectors: */
-> +	bool	flags_valid:1;
-> +	bool	xattr_valid:1;
-
-What does this have to do with extended attributes?
-
-OH, it has nothing to do with xattrs; this flag means that the fsx_*
-fields of miscattr have any significance.  Can this be named fsx_valid?
-
-So what should XFS do here?  Set the fsx_* fields, clear flags_valid,
-and set fsx_valid?
-
-Oh, I guess there's an XFS conversion patch, so I'll wander off there
-now.
+Does this build on -rc4?
 
 --D
 
-> +};
+>  	if (IS_ERR(tp)) {
+>  		error = PTR_ERR(tp);
+>  		goto error_free_dquots;
+>  	}
+>  
+> -	xfs_fill_fsxattr(ip, false, &old_fa);
+> -	error = vfs_ioc_fssetxattr_check(VFS_I(ip), &old_fa, fa);
+> -	if (error)
+> -		goto error_trans_cancel;
+> -
+> -	error = xfs_ioctl_setattr_check_extsize(ip, fa);
+> +	error = xfs_ioctl_setattr_check_extsize(ip, ma);
+>  	if (error)
+>  		goto error_trans_cancel;
+>  
+> -	error = xfs_ioctl_setattr_check_cowextsize(ip, fa);
+> +	error = xfs_ioctl_setattr_check_cowextsize(ip, ma);
+>  	if (error)
+>  		goto error_trans_cancel;
+>  
+> -	error = xfs_ioctl_setattr_xflags(tp, ip, fa);
+> +	error = xfs_ioctl_setattr_xflags(tp, ip, ma);
+>  	if (error)
+>  		goto error_trans_cancel;
+>  
+> +	if (!ma->xattr_valid)
+> +		goto skip_xattr;
+>  	/*
+>  	 * Change file ownership.  Must be the owner or privileged.  CAP_FSETID
+>  	 * overrides the following restrictions:
+> @@ -1505,12 +1459,12 @@ xfs_ioctl_setattr(
+>  		VFS_I(ip)->i_mode &= ~(S_ISUID|S_ISGID);
+>  
+>  	/* Change the ownerships and register project quota modifications */
+> -	if (ip->i_d.di_projid != fa->fsx_projid) {
+> +	if (ip->i_d.di_projid != ma->fsx_projid) {
+>  		if (XFS_IS_QUOTA_RUNNING(mp) && XFS_IS_PQUOTA_ON(mp)) {
+>  			olddquot = xfs_qm_vop_chown(tp, ip,
+>  						&ip->i_pdquot, pdqp);
+>  		}
+> -		ip->i_d.di_projid = fa->fsx_projid;
+> +		ip->i_d.di_projid = ma->fsx_projid;
+>  	}
+>  
+>  	/*
+> @@ -1519,16 +1473,17 @@ xfs_ioctl_setattr(
+>  	 * are set on the inode then unconditionally clear the extent size hint.
+>  	 */
+>  	if (ip->i_d.di_flags & (XFS_DIFLAG_EXTSIZE | XFS_DIFLAG_EXTSZINHERIT))
+> -		ip->i_d.di_extsize = fa->fsx_extsize >> mp->m_sb.sb_blocklog;
+> +		ip->i_d.di_extsize = ma->fsx_extsize >> mp->m_sb.sb_blocklog;
+>  	else
+>  		ip->i_d.di_extsize = 0;
+>  	if (xfs_sb_version_has_v3inode(&mp->m_sb) &&
+>  	    (ip->i_d.di_flags2 & XFS_DIFLAG2_COWEXTSIZE))
+> -		ip->i_d.di_cowextsize = fa->fsx_cowextsize >>
+> +		ip->i_d.di_cowextsize = ma->fsx_cowextsize >>
+>  				mp->m_sb.sb_blocklog;
+>  	else
+>  		ip->i_d.di_cowextsize = 0;
+>  
+> +skip_xattr:
+>  	error = xfs_trans_commit(tp);
+>  
+>  	/*
+> @@ -1546,91 +1501,6 @@ xfs_ioctl_setattr(
+>  	return error;
+>  }
+>  
+> -STATIC int
+> -xfs_ioc_fssetxattr(
+> -	struct file		*filp,
+> -	void			__user *arg)
+> -{
+> -	struct fsxattr		fa;
+> -	int error;
+> -
+> -	if (copy_from_user(&fa, arg, sizeof(fa)))
+> -		return -EFAULT;
+> -
+> -	error = mnt_want_write_file(filp);
+> -	if (error)
+> -		return error;
+> -	error = xfs_ioctl_setattr(filp, &fa);
+> -	mnt_drop_write_file(filp);
+> -	return error;
+> -}
+> -
+> -STATIC int
+> -xfs_ioc_getxflags(
+> -	xfs_inode_t		*ip,
+> -	void			__user *arg)
+> -{
+> -	unsigned int		flags;
+> -
+> -	flags = xfs_di2lxflags(ip->i_d.di_flags, ip->i_d.di_flags2);
+> -	if (copy_to_user(arg, &flags, sizeof(flags)))
+> -		return -EFAULT;
+> -	return 0;
+> -}
+> -
+> -STATIC int
+> -xfs_ioc_setxflags(
+> -	struct xfs_inode	*ip,
+> -	struct file		*filp,
+> -	void			__user *arg)
+> -{
+> -	struct xfs_trans	*tp;
+> -	struct fsxattr		fa;
+> -	struct fsxattr		old_fa;
+> -	unsigned int		flags;
+> -	int			error;
+> -
+> -	if (copy_from_user(&flags, arg, sizeof(flags)))
+> -		return -EFAULT;
+> -
+> -	if (flags & ~(FS_IMMUTABLE_FL | FS_APPEND_FL | \
+> -		      FS_NOATIME_FL | FS_NODUMP_FL | \
+> -		      FS_SYNC_FL | FS_DAX_FL))
+> -		return -EOPNOTSUPP;
+> -
+> -	fa.fsx_xflags = xfs_merge_ioc_xflags(flags, xfs_ip2xflags(ip));
+> -
+> -	error = mnt_want_write_file(filp);
+> -	if (error)
+> -		return error;
+> -
+> -	xfs_ioctl_setattr_prepare_dax(ip, &fa);
+> -
+> -	tp = xfs_ioctl_setattr_get_trans(filp, NULL);
+> -	if (IS_ERR(tp)) {
+> -		error = PTR_ERR(tp);
+> -		goto out_drop_write;
+> -	}
+> -
+> -	xfs_fill_fsxattr(ip, false, &old_fa);
+> -	error = vfs_ioc_fssetxattr_check(VFS_I(ip), &old_fa, &fa);
+> -	if (error) {
+> -		xfs_trans_cancel(tp);
+> -		goto out_drop_write;
+> -	}
+> -
+> -	error = xfs_ioctl_setattr_xflags(tp, ip, &fa);
+> -	if (error) {
+> -		xfs_trans_cancel(tp);
+> -		goto out_drop_write;
+> -	}
+> -
+> -	error = xfs_trans_commit(tp);
+> -out_drop_write:
+> -	mnt_drop_write_file(filp);
+> -	return error;
+> -}
+> -
+>  static bool
+>  xfs_getbmap_format(
+>  	struct kgetbmap		*p,
+> @@ -2137,16 +2007,8 @@ xfs_file_ioctl(
+>  	case XFS_IOC_GETVERSION:
+>  		return put_user(inode->i_generation, (int __user *)arg);
+>  
+> -	case XFS_IOC_FSGETXATTR:
+> -		return xfs_ioc_fsgetxattr(ip, 0, arg);
+>  	case XFS_IOC_FSGETXATTRA:
+> -		return xfs_ioc_fsgetxattr(ip, 1, arg);
+> -	case XFS_IOC_FSSETXATTR:
+> -		return xfs_ioc_fssetxattr(filp, arg);
+> -	case XFS_IOC_GETXFLAGS:
+> -		return xfs_ioc_getxflags(ip, arg);
+> -	case XFS_IOC_SETXFLAGS:
+> -		return xfs_ioc_setxflags(ip, filp, arg);
+> +		return xfs_ioc_fsgetxattra(ip, arg);
+>  
+>  	case XFS_IOC_GETBMAP:
+>  	case XFS_IOC_GETBMAPA:
+> diff --git a/fs/xfs/xfs_ioctl.h b/fs/xfs/xfs_ioctl.h
+> index bab6a5a92407..3cb4a9d8cde0 100644
+> --- a/fs/xfs/xfs_ioctl.h
+> +++ b/fs/xfs/xfs_ioctl.h
+> @@ -47,6 +47,17 @@ xfs_handle_to_dentry(
+>  	void __user		*uhandle,
+>  	u32			hlen);
+>  
+> +extern int
+> +xfs_miscattr_get(
+> +	struct dentry		*dentry,
+> +	struct miscattr		*ma);
 > +
-> +int fsxattr_copy_to_user(const struct miscattr *ma, struct fsxattr __user *ufa);
+> +extern int
+> +xfs_miscattr_set(
+> +	struct user_namespace	*mnt_userns,
+> +	struct dentry		*dentry,
+> +	struct miscattr		*ma);
 > +
-> +void miscattr_fill_xflags(struct miscattr *ma, u32 xflags);
-> +void miscattr_fill_flags(struct miscattr *ma, u32 flags);
-> +
-> +/**
-> + * miscattr_has_xattr - check for extentended flags/attributes
-> + * @ma:		miscattr pointer
-> + *
-> + * Returns true if any attributes are present that are not represented in
-> + * ->flags.
-> + */
-> +static inline bool miscattr_has_xattr(const struct miscattr *ma)
-> +{
-> +	return ma->xattr_valid &&
-> +		((ma->fsx_xflags & ~FS_XFLAG_COMMON) || ma->fsx_extsize != 0 ||
-> +		 ma->fsx_projid != 0 ||	ma->fsx_cowextsize != 0);
-> +}
-> +
-> +int vfs_miscattr_get(struct dentry *dentry, struct miscattr *ma);
-> +int vfs_miscattr_set(struct user_namespace *mnt_userns, struct dentry *dentry,
-> +		     struct miscattr *ma);
-> +
-> +#endif /* _LINUX_MISCATTR_H */
+>  extern long
+>  xfs_file_ioctl(
+>  	struct file		*filp,
+> diff --git a/fs/xfs/xfs_ioctl32.c b/fs/xfs/xfs_ioctl32.c
+> index 33c09ec8e6c0..e6506773ba55 100644
+> --- a/fs/xfs/xfs_ioctl32.c
+> +++ b/fs/xfs/xfs_ioctl32.c
+> @@ -484,8 +484,6 @@ xfs_file_compat_ioctl(
+>  	}
+>  #endif
+>  	/* long changes size, but xfs only copiese out 32 bits */
+> -	case XFS_IOC_GETXFLAGS_32:
+> -	case XFS_IOC_SETXFLAGS_32:
+>  	case XFS_IOC_GETVERSION_32:
+>  		cmd = _NATIVE_IOC(cmd, long);
+>  		return xfs_file_ioctl(filp, cmd, p);
+> diff --git a/fs/xfs/xfs_ioctl32.h b/fs/xfs/xfs_ioctl32.h
+> index 053de7d894cd..9929482bf358 100644
+> --- a/fs/xfs/xfs_ioctl32.h
+> +++ b/fs/xfs/xfs_ioctl32.h
+> @@ -17,8 +17,6 @@
+>   */
+>  
+>  /* stock kernel-level ioctls we support */
+> -#define XFS_IOC_GETXFLAGS_32	FS_IOC32_GETFLAGS
+> -#define XFS_IOC_SETXFLAGS_32	FS_IOC32_SETFLAGS
+>  #define XFS_IOC_GETVERSION_32	FS_IOC32_GETVERSION
+>  
+>  /*
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index 66ebccb5a6ff..124c6a9f3872 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -21,6 +21,7 @@
+>  #include "xfs_dir2.h"
+>  #include "xfs_iomap.h"
+>  #include "xfs_error.h"
+> +#include "xfs_ioctl.h"
+>  
+>  #include <linux/posix_acl.h>
+>  #include <linux/security.h>
+> @@ -1152,6 +1153,8 @@ static const struct inode_operations xfs_inode_operations = {
+>  	.listxattr		= xfs_vn_listxattr,
+>  	.fiemap			= xfs_vn_fiemap,
+>  	.update_time		= xfs_vn_update_time,
+> +	.miscattr_get		= xfs_miscattr_get,
+> +	.miscattr_set		= xfs_miscattr_set,
+>  };
+>  
+>  static const struct inode_operations xfs_dir_inode_operations = {
+> @@ -1177,6 +1180,8 @@ static const struct inode_operations xfs_dir_inode_operations = {
+>  	.listxattr		= xfs_vn_listxattr,
+>  	.update_time		= xfs_vn_update_time,
+>  	.tmpfile		= xfs_vn_tmpfile,
+> +	.miscattr_get		= xfs_miscattr_get,
+> +	.miscattr_set		= xfs_miscattr_set,
+>  };
+>  
+>  static const struct inode_operations xfs_dir_ci_inode_operations = {
+> @@ -1202,6 +1207,8 @@ static const struct inode_operations xfs_dir_ci_inode_operations = {
+>  	.listxattr		= xfs_vn_listxattr,
+>  	.update_time		= xfs_vn_update_time,
+>  	.tmpfile		= xfs_vn_tmpfile,
+> +	.miscattr_get		= xfs_miscattr_get,
+> +	.miscattr_set		= xfs_miscattr_set,
+>  };
+>  
+>  static const struct inode_operations xfs_symlink_inode_operations = {
 > -- 
 > 2.30.2
 > 
