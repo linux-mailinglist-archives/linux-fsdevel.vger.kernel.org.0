@@ -2,157 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B47303442E8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 13:48:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8D553444BB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 14:05:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230087AbhCVMqm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 08:46:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54738 "EHLO
+        id S231809AbhCVNFV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 09:05:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231980AbhCVMoe (ORCPT
+        with ESMTP id S232280AbhCVNED (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 08:44:34 -0400
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E033FC061756;
-        Mon, 22 Mar 2021 05:44:31 -0700 (PDT)
-Received: by mail-io1-xd2f.google.com with SMTP id e8so13746052iok.5;
-        Mon, 22 Mar 2021 05:44:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Tx+8FwsejaTYxKwzQMimKUY8enUxzBYY0WcDHihEzc8=;
-        b=HiDecJyY3S4O7PaPC+k5/Btua4Q6OwE2Ads6a5RBuLheOTlji2JrpfmkFdUfsXkKBl
-         stqVEcIu2SKKNWbQbx0SixBaWIMj8f2jyA8d8jCCiJGIdOC1u1nTiyWaw5GZ0qaPptTz
-         jiXYNKDvGer4NS2YKa50O+sKAiLx1O17ZN8Zv5hVG6V/kK8UQ12j3M9ZM14TW22AZoFc
-         HweuB/MhPHBjOaStMvUop7X0JcBWWVAwuN+kkQtoHmMPeWKFutMqEf6j5yNhAnt8ceTf
-         7/6DqGuPMGFeSAlVVKdILcxaQWRcgnpeIeaeMP1ABT/HhJIM+qLTTzAMLa0a5B9DeSEd
-         w8WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Tx+8FwsejaTYxKwzQMimKUY8enUxzBYY0WcDHihEzc8=;
-        b=ezispHi325HIA2hQQzbup3wYwLAZtJFP7d1KtHnUnFE12nVw2oMYlfm2ibG+uGQcoG
-         GNc6l6UVyZt3dHgegIvMJvh1Ayz5w3ztd0naKRecSfOJZZtINsaVr+wpqW0sJyJJAtKA
-         Ju5W0m/d1yy+YJtrkXB6xbYUeZsdJSA1eA8kxMei6rS5VdLLGQ1CLsUpq8hi3UVVywE5
-         IXqBZiue/OtAjyXMr6yVc9Z+EALnvOJlI4rLkCeqOb8aLicr0oZ1LqtJg4xM8wdkx9Nd
-         b4imoVATxWe+9SBvxK/GogYiP3VcVbJ59YZFL+FTwcUkB/HEFVo16X1mFOJ/JcymS4Kl
-         V5QQ==
-X-Gm-Message-State: AOAM533yow0rzqJsfFKRlD6kLBLf0XVwHVNIx9HXaflEt1TWgG5+vUSY
-        SHQB2vfLFHGnTRSzxLYi6M3fdAJZeBM9T8v4X88=
-X-Google-Smtp-Source: ABdhPJwdTpXTpgQBdf60V0sOFxsUEGAFf2zZ8rAHtxYXYbnR/zDiP4zBGKXAeE+98OHzezDaiRM2bGMPykP0WNtRUYk=
-X-Received: by 2002:a5d:9f4a:: with SMTP id u10mr10623872iot.186.1616417071360;
- Mon, 22 Mar 2021 05:44:31 -0700 (PDT)
+        Mon, 22 Mar 2021 09:04:03 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82AFBC061756;
+        Mon, 22 Mar 2021 06:04:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=0JBjeWyjhSFrKTKJO4lwg4PnWP3NbPeMlvDqUV3159w=; b=HeYsUbcmAYNz575uDB1kdZw8+G
+        0OUFPH/q99s3mFwZM/wKTbsbbMGE9K3gE/uue/WEtux2YchdR7ZPjQ/BxkMFe2L5IP7Hogv8P2PXH
+        KwFceNsqE0J/TQNvJLHXcZPE51SWua8qgu+K381d4hGYdIAOILPDGZY2d67vdaqdju8eUwfWc5TNY
+        DfPe+zQMVCF1wkxcaDfTF6H8IHLEUUi+7ikk+3/KBhTlfsxlmdowf5Px3G4Adlnwe+oXshiMmwZRZ
+        XNkYnT/TgPe4jTYxmJbBVcIpPsGAowuHJwUVwkYoeNOBSRlYWDjCf9F5Cc3GQS8N24wbz7BczLliI
+        l0yiWqQQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lOKCg-008XPh-Ma; Mon, 22 Mar 2021 13:02:46 +0000
+Date:   Mon, 22 Mar 2021 13:02:42 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-cifs@vger.kernel.org,
+        linux-cifsd-devel@lists.sourceforge.net,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-mm@vger.kernel.org, Uladzislau Rezki <urezki@gmail.com>
+Subject: Re: [PATCH 3/5] cifsd: add file operations
+Message-ID: <20210322130242.GL1719932@casper.infradead.org>
+References: <20210322051344.1706-1-namjae.jeon@samsung.com>
+ <CGME20210322052207epcas1p3f0a5bdfd2c994a849a67b465479d0721@epcas1p3.samsung.com>
+ <20210322051344.1706-4-namjae.jeon@samsung.com>
+ <20210322081512.GI1719932@casper.infradead.org>
+ <YFhdWeedjQQgJdbi@google.com>
 MIME-Version: 1.0
-References: <20210304112921.3996419-1-amir73il@gmail.com> <20210316155524.GD23532@quack2.suse.cz>
- <CAOQ4uxgCv42_xkKpRH-ApMOeFCWfQGGc11CKxUkHJq-Xf=HnYg@mail.gmail.com>
- <20210317114207.GB2541@quack2.suse.cz> <CAOQ4uxi7ZXJW3_6SN=vw_XJC+wy4eMTayN6X5yRy_HOV6323MA@mail.gmail.com>
- <20210317174532.cllfsiagoudoz42m@wittgenstein> <CAOQ4uxjCjapuAHbYuP8Q_k0XD59UmURbmkGC1qcPkPAgQbQ8DA@mail.gmail.com>
- <20210318143140.jxycfn3fpqntq34z@wittgenstein> <CAOQ4uxiRHwmxTKsLteH_sBW_dSPshVE8SohJYEmpszxaAwjEyg@mail.gmail.com>
- <20210319134043.c2wcpn4lbefrkhkg@wittgenstein> <CAOQ4uxhLYdWOUmpWP+c_JzVeGDbkJ5eUM+1-hhq7zFq23g5J1g@mail.gmail.com>
- <CAOQ4uxhetKeEZX=_iAcREjibaR0ZcOdeZyR8mFEoHM+WRsuVtg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhetKeEZX=_iAcREjibaR0ZcOdeZyR8mFEoHM+WRsuVtg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 22 Mar 2021 14:44:20 +0200
-Message-ID: <CAOQ4uxhfx012GtvXMfiaHSk1M7+gTqkz3LsT0i_cHLnZLMk8nw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YFhdWeedjQQgJdbi@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 20, 2021 at 2:57 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > > > The code that sits in linux-next can give you pretty much a drop-in
-> > > > replacement of inotify and nothing more. See example code:
-> > > > https://github.com/amir73il/inotify-tools/commits/fanotify_name_fid
-> > >
-> > > This is really great. Thank you for doing that work this will help quite
-> > > a lot of use-cases and make things way simpler. I created a TODO to port
-> > > our path-hotplug to this once this feature lands.
-> > >
-> >
-> > FWIW, I just tried to build this branch on Ubuntu 20.04.2 with LTS kernel
-> > and there were some build issues, so rebased my branch on upstream
-> > inotify-tools to fix those build issues.
-> >
-> > I was not aware that the inotify-tools project is alive, I never intended
-> > to upstream this demo code and never created a github pull request
-> > but rebasing on upstream brought in some CI scripts, when I pushed the
-> > branch to my github it triggered some tests that reported build failures on
-> > Ubuntu 16.04 and 18.04.
-> >
-> > Anyway, there is a pre-rebase branch 'fanotify_name' and the post rebase
-> > branch 'fanotify_name_fid'. You can try whichever works for you.
+On Mon, Mar 22, 2021 at 06:03:21PM +0900, Sergey Senozhatsky wrote:
+> On (21/03/22 08:15), Matthew Wilcox wrote:
+> > 
+> > What's the scenario for which your allocator performs better than slub
+> > 
+> 
+> IIRC request and reply buffers can be up to 4M in size. So this stuff
+> just allocates a number of fat buffers and keeps them around so that
+> it doesn't have to vmalloc(4M) for every request and every response.
 
-FYI, fixed the CI build errors on fanotify_name_fid branch.
+That makes a lot more sense; I was thrown off by the kvmalloc, which
+is usually used for allocations that might be smaller than PAGE_SIZE.
 
-> >
-> > You can look at the test script src/test_demo.sh for usage example.
-> > Or just cd into a writable directory and run the script to see the demo.
-> > The demo determines whether to use a recursive watch or "global"
-> > watch by the uid of the user.
-> >
-> > > >
-> > > > > > If you think that is useful and you want to play with this feature I can
-> > > > > > provide a WIP branch soon.
-> > > > >
-> > > > > I would like to first play with the support for unprivileged fanotify
-> > > > > but sure, it does sound useful!
-> > > >
-> > > > Just so you have an idea what I am talking about, this is a very early
-> > > > POC branch:
-> > > > https://github.com/amir73il/linux/commits/fanotify_userns
-> > >
-> > > Thanks!  I'll try to pull this and take a look next week. I hope that's
-> > > ok.
-> > >
-> >
-> > Fine. I'm curious to know what it does.
-> > Did not get to test it with userns yet :)
->
-> Now tested FAN_MARK_FILESYSTEM watch on tmpfs mounted
-> inside userns and works fine, with two wrinkles I needed to iron:
->
-> 1. FAN_REPORT_FID not supported on tmpfs because tmpfs has
->     zero f_fsid (easy to fix)
-> 2. open_by_handle_at() is not userns aware (can relax for
->     FS_USERNS_MOUNT fs)
->
-> Pushed these two fixes to branch fanotify_userns.
+So what this patch is really saying is that vmalloc() should include
+some caching, so it can defer freeing until there's memory pressure
+or it's built up a large (percpu) backlog of freed areas.
 
-Pushed another fix to mnt refcount bug in WIP and another commit to
-add the last piece that could make fanotify usable for systemd-homed
-setup - a filesystem watch filtered by mnt_userns (not tested yet).
-
-One thing I am struggling with is the language to describe user ns
-and idmapped mounts related logic. I have a feeling that I am getting
-the vocabulary all wrong. See my commit message text below.
-Editorial corrections would be appreciated.
-
-Thanks,
-Amir.
-
----
-
-    fanotify: support sb mark filtered by idmapped mount
-
-    For a group created inside userns, adding a mount mark is allowed
-    if the mount is idmapped inside the group's userns and adding a
-    filesystem mark is allowed if the filesystem was mounted inside the
-    group's userns.
-
-    Allow also adding a filesystem mark on a filesystem that is mounted
-    in the group's userns via an idmapped mount.
-
-    In that case, the mark is created with an internal flag, which indicates
-    that events should be sent to the group only if they happened via an
-    idmapped mount inside the group's userns.
-
-    Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Vlad, have you thought about this?
