@@ -2,89 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ADBF343E8F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 11:57:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BD40343FBA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 12:29:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230262AbhCVK5A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 06:57:00 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:51951 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230439AbhCVK4i (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 06:56:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616410598;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QWqNRl3St0myqfYb/YgoRI1vcQ7ggUTH0MpgdoanYXM=;
-        b=Dx0WgpMK72PEo6sA0hWuOWE4QE6KMA/B7sSmIdR1trGTqvLTEUL06awviPnnyaMOO6+/9M
-        DXuPWygiYOUtAUJQVpu9IDXpsX/O3VJvrtRYpOD05ehymOsg4vf55Gv9uFvli5m7JZFDyD
-        D6hAIAIRsyKiaC0Y3n4w+d7IeoZN/xU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-552-FCLoq-t8N6KUPH3xmAXDmQ-1; Mon, 22 Mar 2021 06:56:36 -0400
-X-MC-Unique: FCLoq-t8N6KUPH3xmAXDmQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 34BE081622;
-        Mon, 22 Mar 2021 10:56:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-58.rdu2.redhat.com [10.10.112.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7152A54478;
-        Mon, 22 Mar 2021 10:56:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210321105309.GG3420@casper.infradead.org>
-References: <20210321105309.GG3420@casper.infradead.org> <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk> <161539528910.286939.1252328699383291173.stgit@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 02/28] mm: Add an unlock function for PG_private_2/PG_fscache
+        id S229810AbhCVL27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 07:28:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38598 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229547AbhCVL2u (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Mar 2021 07:28:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id C5D30ADD7;
+        Mon, 22 Mar 2021 11:28:48 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9CBE91F2BA4; Mon, 22 Mar 2021 12:28:47 +0100 (CET)
+Date:   Mon, 22 Mar 2021 12:28:47 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Jack Qiu <jack.qiu@huawei.com>
+Cc:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org, jack@suse.cz,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: direct-io: fix missing sdio->boundary
+Message-ID: <20210322112847.GB31783@quack2.suse.cz>
+References: <20210322042253.38312-1-jack.qiu@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1885295.1616410586.1@warthog.procyon.org.uk>
-Date:   Mon, 22 Mar 2021 10:56:26 +0000
-Message-ID: <1885296.1616410586@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210322042253.38312-1-jack.qiu@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
+On Mon 22-03-21 12:22:53, Jack Qiu wrote:
+> Function dio_send_cur_page may clear sdio->boundary,
+> so save it to avoid boundary missing.
+> 
+> Fixes: b1058b981272 ("direct-io: submit bio after boundary buffer is
+> added to it")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Jack Qiu <jack.qiu@huawei.com>
 
-> That also brings up that there is no set_page_private_2().  I think
-> that's OK -- you only set PageFsCache() immediately after reading the
-> page from the server.  But I feel this "unlock_page_private_2" is actually
-> "clear_page_private_2" -- ie it's equivalent to writeback, not to lock.
+Indeed. The patch looks good to me. Feel free to add:
 
-How about I do the following:
+Reviewed-by: Jan Kara <jack@suse.cz>
 
- (1) Add set_page_private_2() or mark_page_private_2() to set the PG_fscache_2
-     bit.  It could take a ref on the page here.
+								Honza
 
- (2) Rename unlock_page_private_2() to end_page_private_2().  It could drop
-     the ref on the page here, but that then means I can't use
-     pagevec_release().
-
- (3) Add wait_on_page_private_2() an analogue of wait_on_page_writeback()
-     rather than wait_on_page_locked().
-
- (4) Provide fscache synonyms of the above.
-
-David
-
+> ---
+>  fs/direct-io.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/direct-io.c b/fs/direct-io.c
+> index 9fe721dc04e0..c9023f0bb20a 100644
+> --- a/fs/direct-io.c
+> +++ b/fs/direct-io.c
+> @@ -812,6 +812,7 @@ submit_page_section(struct dio *dio, struct dio_submit *sdio, struct page *page,
+>  		    struct buffer_head *map_bh)
+>  {
+>  	int ret = 0;
+> +	int boundary = sdio->boundary;	/* dio_send_cur_page may clear it */
+> 
+>  	if (dio->op == REQ_OP_WRITE) {
+>  		/*
+> @@ -850,10 +851,10 @@ submit_page_section(struct dio *dio, struct dio_submit *sdio, struct page *page,
+>  	sdio->cur_page_fs_offset = sdio->block_in_file << sdio->blkbits;
+>  out:
+>  	/*
+> -	 * If sdio->boundary then we want to schedule the IO now to
+> +	 * If boundary then we want to schedule the IO now to
+>  	 * avoid metadata seeks.
+>  	 */
+> -	if (sdio->boundary) {
+> +	if (boundary) {
+>  		ret = dio_send_cur_page(dio, sdio, map_bh);
+>  		if (sdio->bio)
+>  			dio_bio_submit(dio, sdio);
+> --
+> 2.17.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
