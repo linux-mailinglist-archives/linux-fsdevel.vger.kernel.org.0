@@ -2,101 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DA7E34514F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 22:02:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A718D3451EB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 22:40:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230468AbhCVVBd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 17:01:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:43723 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231406AbhCVVAm (ORCPT
+        id S229591AbhCVVkW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 17:40:22 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56548 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229730AbhCVVkT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 17:00:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616446836;
+        Mon, 22 Mar 2021 17:40:19 -0400
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1616449218;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=c6WtZIP3Pv8Sts2xBUJYEw6AY7dI8VFWAi8J8oYd58g=;
-        b=aHAjZepqA7I5BBs6Q5u4Z7d0hYxhzXlhqTusvxNG6+2NutssQADo0dbQ6NrTu6V/bIxjBe
-        G06s/cEpJHTQtoU8EZ14teFNILgCeTUO1q9DREuOHR0eq29CjGvEZ2nhgPrmPeo+QzqyXh
-        caMLr+3RWz94/VtPmfySqrXuLmnye3g=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-327-d5TFu6qSOLSsSYYd97w71Q-1; Mon, 22 Mar 2021 17:00:35 -0400
-X-MC-Unique: d5TFu6qSOLSsSYYd97w71Q-1
-Received: by mail-qk1-f200.google.com with SMTP id v136so445205qkb.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Mar 2021 14:00:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=c6WtZIP3Pv8Sts2xBUJYEw6AY7dI8VFWAi8J8oYd58g=;
-        b=py7GLh+riwwqKlLP2lGFzDlVmne3Vfx5jrFAtzSufKIhozajvInUsHtbyTAlub6v1i
-         QwWudfrGQxBPdJopqUdr/YKhSHwzj1P9POtQsKsuxs1vKUkjQSDyAvwiemprQ0ZIy3JQ
-         Ck3Of3lTk1GEU8hm5+gIFk5Q5WPPZSqMW9c8J4HqDudPomgELL47BjwSGgRrNlOw8sGe
-         SzGd2QnPk9/0eYkLUeLtbpZP2aczSFGAhBunZ6ERF/U3ZfYg+7vU6VKKC3KigIp/ws/9
-         biAmak4uzuSbtxNxnaUjLTXpuyUXiABDTkNE9z89uRdKkqaCqf8lVvLk8BWReaqO2QBu
-         jH+w==
-X-Gm-Message-State: AOAM533DLE9nWC0OZqwAAiE4Hp122GajOeg2CWShAwA8zfCsvWQ7dzdi
-        hdh3U3k5zc8mzKYfG3tOGmy5TZvdg1UMQS0LinMw61vqLSbC+c98/O2uTfpkz+UuwP03qPRW9EC
-        UYiNOshnBLLSZDLQfiYcPcJ/97Q==
-X-Received: by 2002:a37:b07:: with SMTP id 7mr1967528qkl.437.1616446834812;
-        Mon, 22 Mar 2021 14:00:34 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwQd0PhyYegD6z3hStlomrWz7fldh8CLfj/9QsIxn62XAVmyQ2p22XQ5XNwdBsS8CuH5dU6Lg==
-X-Received: by 2002:a37:b07:: with SMTP id 7mr1967476qkl.437.1616446834557;
-        Mon, 22 Mar 2021 14:00:34 -0700 (PDT)
-Received: from xz-x1 (bras-base-toroon474qw-grc-82-174-91-135-175.dsl.bell.ca. [174.91.135.175])
-        by smtp.gmail.com with ESMTPSA id b17sm9688484qtp.73.2021.03.22.14.00.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Mar 2021 14:00:34 -0700 (PDT)
-Date:   Mon, 22 Mar 2021 17:00:31 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
+        bh=YD2wgp7SpXGUp/G8MdiJrAMp0JW8uovt7TJMeyjYpjg=;
+        b=d+Erj1BfcZZFsCHcogE8hsxroo9kRQgSDd1F4LzOGLNo63jeHh73Fk4kzHvUnMHcOVqwEZ
+        UB6h+6k0OHFTpDT/lb1UYCcC7GeGnL/QV4mdVFR2YScfz15xGDHKBebGq8fj5mBA1NfH8W
+        UPd5nir0oStZuV0V9Cgmri6nj93RARgE9dkQE9YWHChAqDmT7h3kR+6uarUMdc0dvtHF5S
+        VDzn3N+h0htCviUR2+VMETLK8g3H4ryJK1PJqklkzKPRUj34lA1UzCBkv3lBbS80lFXXRE
+        D4zwk/ARJS4KZ13lkyqikBjl2xajg5GpHGXYk+CLF8knuxtC5RoPOjIemmETVQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1616449218;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YD2wgp7SpXGUp/G8MdiJrAMp0JW8uovt7TJMeyjYpjg=;
+        b=s+nMsR5Wjestvb52A17GUi8LAfU3iflgcHBYmVi50LHsuScRVrR/sj4jBVuVg/R/6FEqk0
+        owIFRz6SoellVbCg==
+To:     Manish Varma <varmam@google.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
-        Wang Qing <wangqing@vivo.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, Brian Geffon <bgeffon@google.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Michel Lespinasse <walken@google.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH] userfaultfd/shmem: fix minor fault page leak
-Message-ID: <20210322210031.GH16645@xz-x1>
-References: <20210322204836.1650221-1-axelrasmussen@google.com>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kelly Rossmoyer <krossmo@google.com>, kernel-team@android.com
+Subject: Re: [PATCH] fs: Improve eventpoll logging to stop indicting timerfd
+In-Reply-To: <CAMyCerL7UkcU1YgZ=dUTZadv-YPHGccO3PR-DCt2nX7nz0afgA@mail.gmail.com>
+References: <20210302034928.3761098-1-varmam@google.com> <87pmzw7gvy.fsf@nanos.tec.linutronix.de> <CAMyCerL7UkcU1YgZ=dUTZadv-YPHGccO3PR-DCt2nX7nz0afgA@mail.gmail.com>
+Date:   Mon, 22 Mar 2021 22:40:17 +0100
+Message-ID: <87zgyurhoe.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210322204836.1650221-1-axelrasmussen@google.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 22, 2021 at 01:48:35PM -0700, Axel Rasmussen wrote:
-> This fix is analogous to Peter Xu's fix for hugetlb [0]. If we don't
-> put_page() after getting the page out of the page cache, we leak the
-> reference.
-> 
-> The fix can be verified by checking /proc/meminfo and running the
-> userfaultfd selftest in shmem mode. Without the fix, we see MemFree /
-> MemAvailable steadily decreasing with each run of the test. With the
-> fix, memory is correctly freed after the test program exits.
-> 
-> Fixes: 00da60b9d0a0 ("userfaultfd: support minor fault handling for shmem")
-> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+Manish,
 
-Reviewed-by: Peter Xu <peterx@redhat.com>
+On Mon, Mar 22 2021 at 10:15, Manish Varma wrote:
+> On Thu, Mar 18, 2021 at 6:04 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>> > +static atomic_t instance_count = ATOMIC_INIT(0);
+>>
+>> instance_count is misleading as it does not do any accounting of
+>> instances as the name suggests.
+>>
+>
+> Not sure if I am missing a broader point here, but the objective of this
+> patch is to:
+> A. To help find the process a given timerfd associated with, and
+> B. one step further, if there are multiple fds created by a single
+> process then label each instance using monotonically increasing integer
+> i.e. "instance_count" to help identify each of them separately.
+>
+> So, instance_count in my mind helps with "B", i.e. to keep track and
+> identify each instance of timerfd individually.
 
--- 
-Peter Xu
+I know what you want to do. The point is that instance_count is the
+wrong name as it suggests that it counts instances, and that in most
+cases implies active instances.
 
+It's not a counter, it's a token generator which allows you to create
+unique ids. The fact that it is just incrementing once per created file
+descriptor does not matter. That's just an implementation detail.
+
+Name it something like timerfd_create_id or timerfd_session_id which
+clearly tells that this is not counting any thing. It immediately tells
+the purpose of generating an id.
+
+Naming matters when reading code, really.
+
+>> > +     snprintf(file_name_buf, sizeof(file_name_buf), "[timerfd%d:%s]",
+>> > +              instance, task_comm_buf);
+>> > +     ufd = anon_inode_getfd(file_name_buf, &timerfd_fops, ctx,
+>> >                              O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS));
+>> >       if (ufd < 0)
+>> >               kfree(ctx);
+>>
+>> I actually wonder, whether this should be part of anon_inode_get*().
+>>
+>
+> I am curious (and open at the same time) if that will be helpful..
+> In the case of timerfd, I could see it adds up value by stuffing more
+> context to the file descriptor name as eventpoll is using the same file
+> descriptor names as wakesource name, and hence the cost of slightly
+> longer file descriptor name justifies. But I don't have a solid reason
+> if this additional cost (of longer file descriptor names) will be
+> helpful in general with other file descriptors.
+
+Obviously you want to make that depend on a flag handed to anon_...().
+
+The point is that there will be the next anonfd usecase which needs
+unique identification at some point. That is going to copy&pasta that
+timerfd code and then make it slightly different just because and then
+userspace needs to parse yet another format.
+
+>> Aside of that this is a user space visible change both for eventpoll and
+>> timerfd.
+
+Not when done right.
+
+>> Have you carefully investigated whether there is existing user space
+>> which might depend on the existing naming conventions?
+>>
+> I am not sure how I can confirm that for all userspace, but open for
+> suggestions if you can share some ideas.
+>
+> However, I have verified and can confirm for Android userspace that
+> there is no dependency on existing naming conventions for timerfd and
+> eventpoll wakesource names, if that helps.
+
+Well, there is a world outside Android and you're working for a company
+which should have tools to search for '[timerfd]' usage in a gazillion of
+projects. The obvious primary targets are distros of all sorts. I'm sure
+there are ways to figure this out without doing it manually.
+
+Not that I expect any real dependencies on it, but as always the devil
+is in the details.
+
+Thanks,
+
+        tglx
