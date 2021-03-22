@@ -2,131 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40C0D344CE5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 18:12:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 464E9344CFB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 18:14:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231811AbhCVRLa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 13:11:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56428 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231542AbhCVRLY (ORCPT
+        id S232037AbhCVROP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 13:14:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58975 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232119AbhCVRN7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 13:11:24 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A558DC061574;
-        Mon, 22 Mar 2021 10:11:23 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id b9so17953081wrt.8;
-        Mon, 22 Mar 2021 10:11:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fPEpEZgdFBNuAySe33wXUxS0c6QSZ5Fcq/SWTX6m1/c=;
-        b=crMqOcSSN0otgZYG8RYbdA5tgD/jzTplIRXBtlG4vOv+5IDPOF6nc8dyz8dK3UWYj4
-         WVkBuZgvjIzxVwdjISbsYKHXdgoFH6vFWnWiHoDnGDoDT3E76HxaD5lwlBk2f62JGW+L
-         Ndvi120N1oa7+CC29/6Mvj8+4voIe09KY+T02GykLug9gEo+rlj7txI+LS2JKWuaAP0Z
-         MdroSVeCncJdyoHKAJR3+b5HEiaTKG1hGRgzETNZXc/wbULCFoiwNN5gGj4uyAuC63sq
-         4qf+WVYW8hPt2AM+rW4M4tcuudtef+2rzcG0MpRpZyXOnFHW2v3Gqrx/85uWdLd0PXqw
-         gGMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fPEpEZgdFBNuAySe33wXUxS0c6QSZ5Fcq/SWTX6m1/c=;
-        b=eKff2+Cl4TWKXmRF8gifUtXvUY4FHeaIfHru53lvdOveKvdEPfU+2VSNEJnyM8Tr16
-         SDNUt2o++VkMsbg4aIVQTBUE0YEMcz60NLZGQf3bfJ3ZtG1NI78a3QBc/aLd+9DZs8Q5
-         hZZSCA4fAaRkIfgO0O8UVrB1I70wYDSDK7u+p1Uew/LEIcG+c580dcXLRQ5ov6iOKEiI
-         Mh0I2I7Aii6DIwXUx9E9Qxk5Y7I7OY2i/HwUFwCGZVEl3Ixgj/kMLgn1+C236SGB3A4U
-         QM78HxjJgQ/HfnP5nVbDp4kHNz5F1oKdJOEq8jI96PTzEvfEXqOsgS8VCTyxnj/nBoCB
-         REdQ==
-X-Gm-Message-State: AOAM533rvDOff4IGV6LMTR4epSh+7Z7/migw6qq+z/6r4otvomHnwk0H
-        crD6dnIVzUKowBGgGJEz3+Q=
-X-Google-Smtp-Source: ABdhPJx7b06btMqKpp1MNA9IjMnV7fQ1dYB3ciPRnHJNX6umMi9KLCwXh/fyKmch7fFCwo5RbO4tlg==
-X-Received: by 2002:adf:dfc9:: with SMTP id q9mr605282wrn.200.1616433082388;
-        Mon, 22 Mar 2021 10:11:22 -0700 (PDT)
-Received: from localhost.localdomain ([141.226.241.101])
-        by smtp.gmail.com with ESMTPSA id j9sm55119wmi.24.2021.03.22.10.11.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Mar 2021 10:11:21 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     "Darrick J . Wong" <darrick.wong@oracle.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: [PATCH] xfs: use a unique and persistent value for f_fsid
-Date:   Mon, 22 Mar 2021 19:11:18 +0200
-Message-Id: <20210322171118.446536-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 22 Mar 2021 13:13:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616433238;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aMbmUNAFvNWl2qhZsFpoWOGxDUGbmddTSEhEjr5Mf7I=;
+        b=gAM22rBbJFJ2eXkIzQ3JMSPhPCNkekCpAj2d07RUslS3SgjBobqh4tXx742ng3euvmL5MS
+        yQLLv0OvqOaaqtrYxRq6h+Bc8CD4HkvgLkGo0/HAWIK5lWBhjTHCE06q0qLGzN7r8ttCP9
+        WHmI4DzXd9hUho8swUNKOjJ8qU2yCiA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-537-03ysOJ7_MVCEbA-orqBIWQ-1; Mon, 22 Mar 2021 13:13:56 -0400
+X-MC-Unique: 03ysOJ7_MVCEbA-orqBIWQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 803B0801817;
+        Mon, 22 Mar 2021 17:13:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-58.rdu2.redhat.com [10.10.112.58])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A8BF860C0F;
+        Mon, 22 Mar 2021 17:13:48 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20210321014202.GF3420@casper.infradead.org>
+References: <20210321014202.GF3420@casper.infradead.org> <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk> <161539537375.286939.16642940088716990995.stgit@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org,
+        David Wysochanski <dwysocha@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 08/28] netfs: Provide readahead and readpage netfs helpers
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2285031.1616433227.1@warthog.procyon.org.uk>
+Date:   Mon, 22 Mar 2021 17:13:47 +0000
+Message-ID: <2285032.1616433227@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some filesystems on persistent storage backend use a digest of the
-filesystem's persistent uuid as the value for f_fsid returned by
-statfs(2).
+Matthew Wilcox <willy@infradead.org> wrote:
 
-xfs, as many other filesystem provide the non-persistent block device
-number as the value of f_fsid.
+> > +	while ((page = readahead_page(ractl)))
+> > +		put_page(page);
+> 
+> You don't need this pair of lines (unless I'm missing something).
+> read_pages() in mm/readahead.c puts the reference and unlocks any
+> pages which are not read by the readahead op.  Indeed, I think doing
+> this is buggy because you don't unlock the page.
 
-Since kernel v5.1, fanotify_init(2) supports the flag FAN_REPORT_FID
-for identifying objects using file_handle and f_fsid in events.
+Actually, I do need them.  The pages haven't been removed from the ractl at
+this point so just returning would cause them all to be unlocked prematurely.
 
-The xfs specific ioctl XFS_IOC_PATH_TO_FSHANDLE similarly attaches an
-fsid to exported file handles, but it is not the same fsid exported
-via statfs(2) - it is a persistent fsid based on the filesystem's uuid.
+I don't pass the ractl to the filesystem or the cache because I may be calling
+them for partial pages, I may be issuing multiple ops sequentially on a page
+and the ractl may have ceased to exist by the time I issue an op.
 
-Use the same persistent value for f_fsid, so object identifiers in
-fanotify events will describe the objects more uniquely.
+The unlocking is done by netfs_rreq_unlock(), even for pages that didn't get
+read.
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
+I've added a comment to this effect.
 
-Guys,
-
-This change would be useful for fanotify users.
-Do you see any problems with that minor change of uapi?
-
-The way I see it, now f_fsid of an xfs filesystem can change on reboots.
-With this change, it will change once more and never more.
-
-I did not find any kernel internal user other than fanotify and as for
-userland expectations, there should not be much expectations from the
-value of f_fsid as it is persistent for some filesystems and bdev number
-for others - there is no standard.
-
-Thanks,
-Amir.
-
- fs/xfs/xfs_super.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index e5e0713bebcd..37f8417b78c4 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -790,7 +790,7 @@ xfs_fs_statfs(
- 	struct xfs_mount	*mp = XFS_M(dentry->d_sb);
- 	xfs_sb_t		*sbp = &mp->m_sb;
- 	struct xfs_inode	*ip = XFS_I(d_inode(dentry));
--	uint64_t		fakeinos, id;
-+	uint64_t		fakeinos;
- 	uint64_t		icount;
- 	uint64_t		ifree;
- 	uint64_t		fdblocks;
-@@ -800,8 +800,8 @@ xfs_fs_statfs(
- 	statp->f_type = XFS_SUPER_MAGIC;
- 	statp->f_namelen = MAXNAMELEN - 1;
- 
--	id = huge_encode_dev(mp->m_ddev_targp->bt_dev);
--	statp->f_fsid = u64_to_fsid(id);
-+	statp->f_fsid.val[0] = mp->m_fixedfsid[0];
-+	statp->f_fsid.val[1] = mp->m_fixedfsid[1];
- 
- 	icount = percpu_counter_sum(&mp->m_icount);
- 	ifree = percpu_counter_sum(&mp->m_ifree);
--- 
-2.25.1
+David
 
