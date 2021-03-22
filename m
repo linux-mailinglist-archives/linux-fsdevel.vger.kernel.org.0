@@ -2,128 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E44CC3445A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 14:25:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1BB43445AD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 14:26:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230251AbhCVNZN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 09:25:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35140 "EHLO
+        id S231414AbhCVN0N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 09:26:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232348AbhCVNYt (ORCPT
+        with ESMTP id S230448AbhCVNZn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 09:24:49 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF555C061762
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Mar 2021 06:24:48 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id v11so16724637wro.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Mar 2021 06:24:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TMhYVugyzUF8SPxHtKMVFHW2d9U56xBeasWjyoJCSqQ=;
-        b=GOqOWv3PWULYhWC+ww6Br08BQ3+hu5bgizm80HEdUmXKmH2mFt8bV1ZJy436PQ/9I5
-         uqSoy/QiB+fCzh6uhZhycXJbCky+BIPod2AXCDdjWJJy5jkc3wIbsyv6atzkUVUK1b9V
-         lp6MtiFkGpzvqILZvRtjTDwG3Us4UswvmqAjiXnZVMAmV00NvwQqvp4pHVypdvgVHpsj
-         0Jk3NjrrSI+idQKE/wL2kN/JEJ21gNfeK8dvwbM/g7+Jp1FlMj9p3HUdpF3mn58JjWbS
-         JMQpsSti1bw3o3xWPdyqz0C3D6iY3eJaQZm3NNBYTarCuRoKiTn+maEvlGeWtDXigD40
-         BN1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TMhYVugyzUF8SPxHtKMVFHW2d9U56xBeasWjyoJCSqQ=;
-        b=lGFsSLF/AY4hJPlqFofjpEbmpeqjeLoZsUeTKb9qkLu7fk+hdHtZN76Um22Teo3IMS
-         /uH59rgSOeyAwMDIgQYOM3T5JwgNT3SJpEyMj+r/uFrC4PHcS/ZU57fsknmHl09XeOwd
-         xXR+BJwpWfPyj6RozyjZklMV2Q3QqgTQ9VI0sqTy//CYP2auxV8jFka+BKplQ/eZZbkZ
-         t09i+WnjUOKzvPIBbeJqNVzf+GKlwPXPSvaOqRrbRk3lqNe+b4qN4RLdXcKJQo4+Vrfn
-         TOV0jq8MdiLPtxN7f2bRAG+g9rKcpx5n+ppig1fVPmS6bq2h8/Eqiw6cMK8uCRDet06E
-         J5Pw==
-X-Gm-Message-State: AOAM530u7KLQJr2MUuONNh4SqOdWggMTOhhYLBuMH5TD87npSBQLbrT5
-        32zuEsLh6O1eHnI7czmwu9I3nA==
-X-Google-Smtp-Source: ABdhPJwC/rS7OkQu8efIWmWHkHtUUiOkhXCO7peTBGOEGaKEAdeI7EQBg4GOdpdUjIXkhjLjBvQVoQ==
-X-Received: by 2002:a1c:2857:: with SMTP id o84mr16021674wmo.181.1616419487136;
-        Mon, 22 Mar 2021 06:24:47 -0700 (PDT)
-Received: from elver.google.com ([2a00:79e0:15:13:58e2:985b:a5ad:807c])
-        by smtp.gmail.com with ESMTPSA id i8sm19692969wrx.43.2021.03.22.06.24.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Mar 2021 06:24:46 -0700 (PDT)
-Date:   Mon, 22 Mar 2021 14:24:40 +0100
-From:   Marco Elver <elver@google.com>
-To:     peterz@infradead.org, alexander.shishkin@linux.intel.com,
-        acme@kernel.org, mingo@redhat.com, jolsa@redhat.com,
-        mark.rutland@arm.com, namhyung@kernel.org, tglx@linutronix.de
-Cc:     glider@google.com, viro@zeniv.linux.org.uk, arnd@arndb.de,
-        christian@brauner.io, dvyukov@google.com, jannh@google.com,
-        axboe@kernel.dk, mascasa@google.com, pcc@google.com,
-        irogers@google.com, kasan-dev@googlegroups.com,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RFC v2 8/8] selftests/perf: Add kselftest for
- remove_on_exec
-Message-ID: <YFiamKX+xYH2HJ4E@elver.google.com>
-References: <20210310104139.679618-1-elver@google.com>
- <20210310104139.679618-9-elver@google.com>
+        Mon, 22 Mar 2021 09:25:43 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E74CEC061574;
+        Mon, 22 Mar 2021 06:25:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Date:Message-ID:From:Cc:To;
+        bh=2pTAH7EZAdLSAE5R2Xy8ywDt2Dc8ZTDLeumutAH0RKU=; b=F7YPZX3VvyRxSNzrKKb6ys3K0F
+        g+79KJDZCDh/WBu0TgwYzmdi2Nm+16fysh9gkcNlk9X6ZbJ9XHL/6KoUcFJIO3Mlw/M5Dd+pnqxmZ
+        wFi2LHPqy7D1kWTpHOvlJkzVYHx6eXIG1Dd3qmQm5nZf4hyIAdccTP4tWwmEBGRyVX0fyw7ZUMskC
+        X2aInc0n9a47I0H9A+Td2IpUQdgtWPJaswlqPYvA8KF6hEz61yZ0Kbc7G3440uwUjA+vYDcFJo6xZ
+        bIwkgpQTHOl+87LLFfANc7pO1zW/obLuA6t+wnIjW+agrMLgMqelSn4n8qTIcHyS8O47cBJ+PPaSg
+        HNNyY/077ThHBATQl3YhRxPimrc5LxT03J04G57L9mKP99/OeJTnmqGRx1w0IfOij2hQ45Ss5CSYl
+        ksytvPiVXaIN48IFTFpR8OXpH7nBZsqo2mbzQWeg7oLiQBH6JpBjhRE3FJiG1zmd/Qu7oGg8NKItA
+        kDRcB2xL2ccLwYcNVC/9yBiR;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1lOKYq-0003UK-Bn; Mon, 22 Mar 2021 13:25:36 +0000
+To:     Christoph Hellwig <hch@lst.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     linux-cifs@vger.kernel.org, aurelien.aptel@gmail.com,
+        linux-cifsd-devel@lists.sourceforge.net, senozhatsky@chromium.org,
+        rdunlap@infradead.org, sandeen@sandeen.net,
+        linux-kernel@vger.kernel.org, aaptel@suse.com, hch@infradead.org,
+        viro@zeniv.linux.org.uk, ronniesahlberg@gmail.com,
+        linux-fsdevel@vger.kernel.org, colin.king@canonical.com,
+        Steve French <stfrench@microsoft.com>
+References: <20210322051344.1706-1-namjae.jeon@samsung.com>
+ <CGME20210322052206epcas1p438f15851216f07540537c5547a0a2c02@epcas1p4.samsung.com>
+ <20210322051344.1706-3-namjae.jeon@samsung.com> <20210322064712.GD1667@kadam>
+ <20210322065011.GA2909@lst.de>
+From:   Stefan Metzmacher <metze@samba.org>
+Subject: Re: [Linux-cifsd-devel] [PATCH 2/5] cifsd: add server-side procedures
+ for SMB3
+Message-ID: <7894be19-54f6-4c2c-daaa-1db03141e87c@samba.org>
+Date:   Mon, 22 Mar 2021 14:25:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210310104139.679618-9-elver@google.com>
-User-Agent: Mutt/2.0.5 (2021-01-21)
+In-Reply-To: <20210322065011.GA2909@lst.de>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="6UnFxiyjAB23kM2930rUzzDEuwXWMZy9h"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 10, 2021 at 11:41AM +0100, Marco Elver wrote:
-> Add kselftest to test that remove_on_exec removes inherited events from
-> child tasks.
-> 
-> Signed-off-by: Marco Elver <elver@google.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--6UnFxiyjAB23kM2930rUzzDEuwXWMZy9h
+Content-Type: multipart/mixed; boundary="4qSVWlLiwZ2A06gYey0rbvw7kWnkj4pov";
+ protected-headers="v1"
+From: Stefan Metzmacher <metze@samba.org>
+To: Christoph Hellwig <hch@lst.de>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-cifs@vger.kernel.org, aurelien.aptel@gmail.com,
+ linux-cifsd-devel@lists.sourceforge.net, senozhatsky@chromium.org,
+ rdunlap@infradead.org, sandeen@sandeen.net, linux-kernel@vger.kernel.org,
+ aaptel@suse.com, hch@infradead.org, viro@zeniv.linux.org.uk,
+ ronniesahlberg@gmail.com, linux-fsdevel@vger.kernel.org,
+ colin.king@canonical.com, Steve French <stfrench@microsoft.com>
+Message-ID: <7894be19-54f6-4c2c-daaa-1db03141e87c@samba.org>
+Subject: Re: [Linux-cifsd-devel] [PATCH 2/5] cifsd: add server-side procedures
+ for SMB3
+References: <20210322051344.1706-1-namjae.jeon@samsung.com>
+ <CGME20210322052206epcas1p438f15851216f07540537c5547a0a2c02@epcas1p4.samsung.com>
+ <20210322051344.1706-3-namjae.jeon@samsung.com> <20210322064712.GD1667@kadam>
+ <20210322065011.GA2909@lst.de>
+In-Reply-To: <20210322065011.GA2909@lst.de>
 
-To make compatible with more recent libc, we'll need to fixup the tests
-with the below.
+--4qSVWlLiwZ2A06gYey0rbvw7kWnkj4pov
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Also, I've seen that tools/perf/tests exists, however it seems to be
-primarily about perf-tool related tests. Is this correct?
 
-I'd propose to keep these purely kernel ABI related tests separate, and
-that way we can also make use of the kselftests framework which will
-also integrate into various CI systems such as kernelci.org.
+Am 22.03.21 um 07:50 schrieb Christoph Hellwig:
+> On Mon, Mar 22, 2021 at 09:47:13AM +0300, Dan Carpenter wrote:
+>> On Mon, Mar 22, 2021 at 02:13:41PM +0900, Namjae Jeon wrote:
+>>> +static unsigned char
+>>> +asn1_octet_decode(struct asn1_ctx *ctx, unsigned char *ch)
+>>> +{
+>>> +	if (ctx->pointer >=3D ctx->end) {
+>>> +		ctx->error =3D ASN1_ERR_DEC_EMPTY;
+>>> +		return 0;
+>>> +	}
+>>> +	*ch =3D *(ctx->pointer)++;
+>>> +	return 1;
+>>> +}
+>>
+>>
+>> Make this bool.
+>>
+>=20
+> More importantly don't add another ANS1 parser, but use the generic
+> one in lib/asn1_decoder.c instead.  CIFS should also really use it.
 
-Thanks,
--- Marco
+I think the best would be to avoid asn1 completely in the kernel
+and do the whole authentication in userspace.
 
------- >8 ------
+The kernel can only deal this blobs here, I don't there's need to
+look inside the blobs.
 
-diff --git a/tools/testing/selftests/perf_events/remove_on_exec.c b/tools/testing/selftests/perf_events/remove_on_exec.c
-index e176b3a74d55..f89d0cfdb81e 100644
---- a/tools/testing/selftests/perf_events/remove_on_exec.c
-+++ b/tools/testing/selftests/perf_events/remove_on_exec.c
-@@ -13,6 +13,11 @@
- #define __have_siginfo_t 1
- #define __have_sigval_t 1
- #define __have_sigevent_t 1
-+#define __siginfo_t_defined
-+#define __sigval_t_defined
-+#define __sigevent_t_defined
-+#define _BITS_SIGINFO_CONSTS_H 1
-+#define _BITS_SIGEVENT_CONSTS_H 1
- 
- #include <linux/perf_event.h>
- #include <pthread.h>
-diff --git a/tools/testing/selftests/perf_events/sigtrap_threads.c b/tools/testing/selftests/perf_events/sigtrap_threads.c
-index 7ebb9bb34c2e..b9a7d4b64b3c 100644
---- a/tools/testing/selftests/perf_events/sigtrap_threads.c
-+++ b/tools/testing/selftests/perf_events/sigtrap_threads.c
-@@ -13,6 +13,11 @@
- #define __have_siginfo_t 1
- #define __have_sigval_t 1
- #define __have_sigevent_t 1
-+#define __siginfo_t_defined
-+#define __sigval_t_defined
-+#define __sigevent_t_defined
-+#define _BITS_SIGINFO_CONSTS_H 1
-+#define _BITS_SIGEVENT_CONSTS_H 1
- 
- #include <linux/hw_breakpoint.h>
- #include <linux/perf_event.h>
+1. ksmbd-mount would provide a fixed initial blob that's always
+   the same and will be returned in the
+   "2.2.4 SMB2 NEGOTIATE Response" PDU as SecurityBuffer
+
+2. The kernel just blindly forwards the SecurityBuffer
+   of "2.2.5 SMB2 SESSION_SETUP Request" to userspace
+   together with the client provided SessionId (from
+   2.2.1.2 SMB2 Packet Header - SYNC) as well as
+   negotiated signing and encryption algorithm ids
+   and the latest preauth hash.
+
+3. Userspace passes a NTSTATUS together with SecurityBuffer blob for the
+   2.2.6 SMB2 SESSION_SETUP Response back to the kernel:
+
+   - NT_STATUS_MORE_PROCESSING_REQUIRED (more authentication legs are req=
+uired)
+     SecurityBuffer is most likely a non empty buffer
+
+   - NT_STATUS_OK - The authentication is complete:
+     SecurityBuffer might be empty or not
+     It also pass a channel signing key, a decryption and encrytion key
+     as well as the unix token ( I guess in the current form it's only ui=
+d/gid)
+     down to the kernel
+
+   - Any other status means the authentication failed, which is a hard er=
+ror for the client
+
+The PDU definitions are defined here:
+https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/6eaf=
+6e75-9c23-4eda-be99-c9223c60b181
+
+I think everything else belongs to userspace.
+
+Such a "simple" design for the kernel part, would mean that ksmbd-mount w=
+ould do what the
+kernel part is currently doing, but it also means it will be trivial to p=
+lug the userspace
+part to samba's winbindd in future order to get domain wide authenticatio=
+n.
+
+metze
+
+
+--4qSVWlLiwZ2A06gYey0rbvw7kWnkj4pov--
+
+--6UnFxiyjAB23kM2930rUzzDEuwXWMZy9h
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAmBYmsQACgkQDbX1YShp
+vVYCDA/9HKKADvAj1r/udNzjMzn+kT+4lpHFRzQltPBVe7JMdFry6XDgGe1DG8Gs
+EHzPQpIOI2xJgOM+DnyIXM0DHnSrgjsYHsnQXikDYUw5gZMAx9djJI55ncFZrIj5
+cvbM4zmflCwErzMBVu2535fUmKoMgv0ny5nYoL5wzqlD5kaAz3l30Nzlul7HwH6X
+R7cZFrrKmO1h9Of5JOIicok5CieJgOq/1dcmilEJQ6P2sc9qYhnVlf2vnTSRWPbo
+XtaIB7kawTE3QrCCdUu6FYQe5h6yxwl9bOKHVZ1IQ8d8JHszi0OHCF5Z3PcJLg5Q
+n3vKFNMpeAeMjy813zSDvh6CDkgHsU/zkJnQeCu54Pe407NwoW9KSaDFG6PFZsyV
+cGuHyShF7YRP5PScFsM5YSR29T6pzQDbLocsIcxoMawu7Ls3wYAa2W1fqH9ZmtgN
+vyOQrP924JFkuxfpTlDygvYT/bnnos93tVBlX6Hq70LUcI5i1Thd6fQFEYcQ74zt
+xxFx0bwXZxwPgaAWxySEegYBHnV8dxxj336e7LhRcMyBmn/tQo3Pjb+Lv2866wee
+yqSMVDQX9sCXd7XIwewEN9fhZ3zvRmSNgPIdC82ge59LhT8oiYH/f2XHMc5/B/vY
++6wBng+/T/CNYdle2y1TCY4hRV58X0IdHDopdvxWogEG5Fvyx3w=
+=n0tH
+-----END PGP SIGNATURE-----
+
+--6UnFxiyjAB23kM2930rUzzDEuwXWMZy9h--
