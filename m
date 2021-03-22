@@ -2,58 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9346B343763
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 04:26:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E947234375D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 04:25:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229866AbhCVD0Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Mar 2021 23:26:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47498 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbhCVDZu (ORCPT
+        id S229871AbhCVDZL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Mar 2021 23:25:11 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14121 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229872AbhCVDYh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Mar 2021 23:25:50 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9821BC061574;
-        Sun, 21 Mar 2021 20:25:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=P72qzGDKAlZd08W3lP8UYDEYbOwiROYYMfl9MNHa8u0=; b=hjfkcSn0/SSn274T0yvdeKLsd3
-        GfQiDVlf2WSNKe6S4ojs8lcQ242XLIqaXbNfYR7jkr8eD9UWH5Lw824MJRGixpkbqPkW9Xa6SHwrn
-        6AWAa4CjIEiisZdaN0z0At/lWbyKzLooWH6x8rqPHH1ZY1cF7qAiS2FLfkFC7kPrD2dDulJlrQl2f
-        rA/MA1eQMkPOj2g6XS1dkDoaeAqgee+FeEZKBCn8XKLL0up3bBe+xDK2lrBaeZk/24EPAA7pu/vfS
-        xA51Wi9YY4+rdPJCdJq3qLiFGXIl6oO/SFptJ/AyqHRfvCPfajVwTC59xGQe73bLXq5kcIHRa6c5I
-        Mqle4zWA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lOBBu-007vD1-0H; Mon, 22 Mar 2021 03:25:26 +0000
-Date:   Mon, 22 Mar 2021 03:25:17 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org
-Subject: Re: [PATCH v5 00/27] Memory Folios
-Message-ID: <20210322032517.GC1719932@casper.infradead.org>
-References: <20210320054104.1300774-1-willy@infradead.org>
+        Sun, 21 Mar 2021 23:24:37 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F3fvK66n1z19GVm;
+        Mon, 22 Mar 2021 11:22:37 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.498.0; Mon, 22 Mar 2021
+ 11:24:26 +0800
+From:   Jack Qiu <jack.qiu@huawei.com>
+To:     <viro@zeniv.linux.org.uk>, <akpm@linux-foundation.org>,
+        <jack@suse.cz>
+CC:     <linux-fsdevel@vger.kernel.org>, <jack.qiu@huawei.com>
+Subject: [PATCH] fs: direct-io: fix missing sdio->boundary
+Date:   Mon, 22 Mar 2021 12:22:53 +0800
+Message-ID: <20210322042253.38312-1-jack.qiu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210320054104.1300774-1-willy@infradead.org>
+Content-Type: text/plain
+X-Originating-IP: [10.175.101.6]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 20, 2021 at 05:40:37AM +0000, Matthew Wilcox (Oracle) wrote:
-> Current tree at:
-> https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/folio
-> 
-> (contains another ~100 patches on top of this batch, not all of which are
-> in good shape for submission)
+Function dio_send_cur_page may clear sdio->boundary,
+so save it to avoid boundary missing.
 
-I've fixed the two buildbot bugs.  I also resplit the docs work, and
-did a bunch of other things to the patches that I haven't posted yet.
+Fixes: b1058b981272 ("direct-io: submit bio after boundary buffer is
+added to it")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jack Qiu <jack.qiu@huawei.com>
+---
+ fs/direct-io.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-I'll send the first three patches as a separate series tomorrow,
-and then the next four as their own series, then I'll repost the
-rest (up to and including "Convert page wait queues to be folios")
-later in the week.
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index 9fe721dc04e0..c9023f0bb20a 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -812,6 +812,7 @@ submit_page_section(struct dio *dio, struct dio_submit *sdio, struct page *page,
+ 		    struct buffer_head *map_bh)
+ {
+ 	int ret = 0;
++	int boundary = sdio->boundary;	/* dio_send_cur_page may clear it */
+
+ 	if (dio->op == REQ_OP_WRITE) {
+ 		/*
+@@ -850,10 +851,10 @@ submit_page_section(struct dio *dio, struct dio_submit *sdio, struct page *page,
+ 	sdio->cur_page_fs_offset = sdio->block_in_file << sdio->blkbits;
+ out:
+ 	/*
+-	 * If sdio->boundary then we want to schedule the IO now to
++	 * If boundary then we want to schedule the IO now to
+ 	 * avoid metadata seeks.
+ 	 */
+-	if (sdio->boundary) {
++	if (boundary) {
+ 		ret = dio_send_cur_page(dio, sdio, map_bh);
+ 		if (sdio->bio)
+ 			dio_bio_submit(dio, sdio);
+--
+2.17.1
+
