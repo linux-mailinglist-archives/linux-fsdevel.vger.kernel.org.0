@@ -2,69 +2,254 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E433D343AA7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 08:37:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62DE8343AFB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 08:54:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229647AbhCVHg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 03:36:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44516 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229548AbhCVHgX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 03:36:23 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4629C061574;
-        Mon, 22 Mar 2021 00:36:22 -0700 (PDT)
+        id S230027AbhCVHyE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 03:54:04 -0400
+Received: from relay.sw.ru ([185.231.240.75]:43236 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229933AbhCVHxp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Mar 2021 03:53:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Z4m/M55VB8Y3G3fgFMwYGwqrWcmJ6D4rQW8q9sssEIQ=; b=Gm1IeQnOphMA/G8kD9KPrTLtUx
-        UZLZWhe/Az9NvSpDvCHdNBwKdtOaML9q9Jr9CMXdaDRfmMZVNaoDeekw3lP4Iafnd2Br6M0BcwGmw
-        RFRjjnAw/l42nFWSVmc1rM3cAzgVTFwHAkODa24iFHiSEgYpdVjHs8p6nEwWh8SItBsXLm1dywA0C
-        l9D2BIVkJO0D2IJraVb0UXrxQHTerd8fog2R4VfFGW3lts433OtqT/atxyQDILsOUo/BSUJTqIJOl
-        lv78NvyOvS/sFqkNRSw+4hoJjQdxvCxEDDcpygtBxGy41s+JqiWoEVyKbwRPeMjVfzD0wRp0Ai7ld
-        zafQ1gtg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lOF6I-0089ls-9Z; Mon, 22 Mar 2021 07:35:53 +0000
-Date:   Mon, 22 Mar 2021 07:35:46 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] fs: document mapping helpers
-Message-ID: <20210322073546.GH1719932@casper.infradead.org>
-References: <20210320122623.599086-1-christian.brauner@ubuntu.com>
- <20210320122623.599086-2-christian.brauner@ubuntu.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210320122623.599086-2-christian.brauner@ubuntu.com>
+        d=virtuozzo.com; s=relay; h=Content-Type:Mime-Version:Message-Id:Subject:From
+        :Date; bh=jg0cKgD8NFJyVVjEy/kUHZkCDwJLVmnhiOx76/YsgbQ=; b=FmHshjP8FWiXd+LqzUg
+        oRrkZxLKzyCw3t9Nl0mw7s8tqjVySA0TSqKA6JbKeD8qmFGNK4x02V5cIfl0V0fqAeERX/R417nix
+        S4bu9/6lktv/eVGJaVpWjrWFcNge3btNb6e/Ihak+Bqjaih06LD2BhqTrNcjp4rqJSO/0dtNp6o=
+Received: from [192.168.15.178] (helo=alexm-laptop.lan)
+        by relay.sw.ru with smtp (Exim 4.94)
+        (envelope-from <alexander.mikhalitsyn@virtuozzo.com>)
+        id 1lOFNF-0003zk-8G; Mon, 22 Mar 2021 10:53:17 +0300
+Date:   Mon, 22 Mar 2021 10:53:25 +0300
+From:   Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+To:     Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, autofs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Ross Zwisler <zwisler@google.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Mattias Nissler <mnissler@chromium.org>,
+        linux-fsdevel@vger.kernel.org, alexander@mihalicyn.com
+Subject: Re: [RFC PATCH] autofs: find_autofs_mount overmounted parent
+ support
+Message-Id: <20210322105325.313fcf1b0232612d9047db04@virtuozzo.com>
+In-Reply-To: <20210309143105.6ec608dca7764bc58707b213@virtuozzo.com>
+References: <20210303152931.771996-1-alexander.mikhalitsyn@virtuozzo.com>
+        <832c1a384dc0b71b2902accf3091ea84381acc10.camel@themaw.net>
+        <20210304131133.0ad93dee12a17f41f4052bcb@virtuozzo.com>
+        <YEVm+KH/R5y2rU7K@zeniv-ca.linux.org.uk>
+        <YEVr5jNlpu2jcdzs@zeniv-ca.linux.org.uk>
+        <YEVvnvFNpfld7MXM@zeniv-ca.linux.org.uk>
+        <20210309143105.6ec608dca7764bc58707b213@virtuozzo.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 20, 2021 at 01:26:21PM +0100, Christian Brauner wrote:
-> +/**
-> + * kuid_into_mnt - map a kuid down into a mnt_userns
-> + * @mnt_userns: user namespace of the relevant mount
-> + * @kuid: kuid to be mapped
-> + *
-> + * Return @kuid mapped according to @mnt_userns.
-> + * If @kuid has no mapping INVALID_UID is returned.
-> + */
+On Tue, 9 Mar 2021 14:31:05 +0300
+Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com> wrote:
 
-If you could just put the ':' after 'Return', htmldoc would put this into
-a nice section for you.
+> On Mon, 8 Mar 2021 00:12:22 +0000
+> Al Viro <viro@zeniv.linux.org.uk> wrote:
+> 
+> > On Sun, Mar 07, 2021 at 11:51:20PM +0000, Al Viro wrote:
+> > > On Thu, Mar 04, 2021 at 01:11:33PM +0300, Alexander Mikhalitsyn wrote:
+> > > 
+> > > > That problem connected with CRIU (Checkpoint-Restore in Userspace) project.
+> > > > In CRIU we have support of autofs mounts C/R. To acheive that we need to use
+> > > > ioctl's from /dev/autofs to get data about mounts, restore mount as catatonic
+> > > > (if needed), change pipe fd and so on. But the problem is that during CRIU
+> > > > dump we may meet situation when VFS subtree where autofs mount present was
+> > > > overmounted as whole.
+> > > > 
+> > > > Simpliest example is /proc/sys/fs/binfmt_misc. This mount present on most
+> > > > GNU/Linux distributions by default. For instance on my Fedora 33:
+> > > > 
+> > > > trigger automount of binfmt_misc
+> > > > $ ls /proc/sys/fs/binfmt_misc
+> > > > 
+> > > > $ cat /proc/1/mountinfo | grep binfmt
+> > > > 35 24 0:36 / /proc/sys/fs/binfmt_misc rw,relatime shared:16 - autofs systemd-1 rw,...,direct,pipe_ino=223
+> > > > 632 35 0:56 / /proc/sys/fs/binfmt_misc rw,...,relatime shared:315 - binfmt_misc binfmt_misc rw
+> > > > 
+> > > > $ sudo unshare -m -p --fork --mount-proc sh
+> > > > # cat /proc/self/mountinfo | grep "/proc"
+> > > > 828 809 0:23 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw
+> > > > 829 828 0:36 / /proc/sys/fs/binfmt_misc rw,relatime - autofs systemd-1 rw,...,direct,pipe_ino=223
+> > > > 943 829 0:56 / /proc/sys/fs/binfmt_misc rw,...,relatime - binfmt_misc binfmt_misc rw
+> > > > 949 828 0:57 / /proc rw...,relatime - proc proc rw
+> > > > 
+> > > > As we can see now autofs mount /proc/sys/fs/binfmt_misc is inaccessible.
+> > > > If we do something like:
+> > > > 
+> > > > struct autofs_dev_ioctl *param;
+> > > > param = malloc(...);
+> > > > devfd = open("/dev/autofs", O_RDONLY);
+> > > > init_autofs_dev_ioctl(param);
+> > > > param->size = size;
+> > > > strcpy(param->path, "/proc/sys/fs/binfmt_misc");
+> > > > param->openmount.devid = 36;
+> > > > err = ioctl(devfd, AUTOFS_DEV_IOCTL_OPENMOUNT, param)
+> > > > 
+> > > > now we get err = -ENOENT.
+> > > 
+> > Where does that -ENOENT come from?  AFAICS, pathwalk ought to succeed and
+> > return you the root of overmounting binfmt_misc.  Why doesn't the loop in
+> > find_autofs_mount() locate anything it would accept?
+> > 
+> 
+> Consider our mounts tree:
+> > > > # cat /proc/self/mountinfo | grep "/proc"
+> > > > 828 809 0:23 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw
+> > > > 829 828 0:36 / /proc/sys/fs/binfmt_misc rw,relatime - autofs systemd-1 rw,...,direct,pipe_ino=223
+> > > > 943 829 0:56 / /proc/sys/fs/binfmt_misc rw,...,relatime - binfmt_misc binfmt_misc rw
+> > > > 949 828 0:57 / /proc rw...,relatime - proc proc rw
+> 
+> ENOENT comes from here (current kernel code):
+> /* Find the topmost mount satisfying test() */
+> static int find_autofs_mount(const char *pathname,
+> 			     struct path *res,
+> 			     int test(const struct path *path, void *data),
+> 			     void *data)
+> {
+> 	struct path path;
+> 	int err;
+> 
+> 	err = kern_path(pathname, LOOKUP_MOUNTPOINT, &path);
+> 	if (err)
+> 		return err;
+> <-------- here we successfuly open root dentry (/proc/sys/fs/binfmt_misc) of /proc (mnt_id = 949)
+> 
+> 	err = -ENOENT;
+> <---- set err and start search autofs mount
+> /*
+>  here we use follow_up to move through upper dentries and find overmounted autofs.
+>  But in our case we opened dentry from /proc (mnt_id = 949) and this concrete dentry is *NOT*
+> overmounted (whole /proc overmounted).
+> */
+> 	while (path.dentry == path.mnt->mnt_root) {
+> 		if (path.dentry->d_sb->s_magic == AUTOFS_SUPER_MAGIC) {
+> 			if (test(&path, data)) {
+> /*
+>  we never get there
+> */
+> 				path_get(&path);
+> 				*res = path;
+> 				err = 0;
+> 				break;
+> 			}
+> 		}
+> 		if (!follow_up(&path))
+> 			break;
+> 	}
+> /*
+> loop finished. err stays as it was err = -ENOENT
+> */
+> 	path_put(&path);
+> 	return err;
+> }
+> 
+> Source: https://github.com/torvalds/linux/blob/master/fs/autofs/dev-ioctl.c#L194
+> 
+> > I really dislike the patch - the whole "normalize path" thing is fundamentally
+> > bogus, not to mention the iterator over all mounts, etc., so I would like to
+> > understand what the hell is going on before even thinking of *not* NAKing
+> > it on sight.
+> 
+> I'm not trying to break current API or something similar. I'm just prepared
+> RFC patch with my proposal. I'm ready to rework all of that to make it good.
+> But without maintainers/community comments/suggestions it's unreal :)
+> 
+> Please, explain what do you mean by "normalize path thing"?
+> I'm not changing semantics of current ioctl() I've just trying to extend it to make
+> it work in case when parent mount of autofs mount is overmounted.
+> 
+> > 
+> > 	Wait, so you have /proc overmounted, without anything autofs-related on
+> > /proc/sys/fs/binfmt_misc and still want to have the pathname resolved, just
+> > because it would've resolved with that overmount of /proc removed?
+> 
+> Something like that.
+> 
+> 1. I don't expect that /proc/sys/fs/binfmt_misc path will be resolved
+> (because, for instance we can overmount /proc by empty tmpfs and in this case after
+> overmounting we can't even open /proc/sys/fs/binfmt_misc and that's okay).
+> 
+> 2. We talking about autofs specific function which is used in several autofs-specific
+> ioctls. One of that ioctl(AUTOFS_DEV_IOCTL_OPENMOUNT) which is designed to open
+> overmounted autofs mounts. Because it's frequent case when autofs mount is overmounted
+> (when we talk about direct mounts). This ioctl allows to open file desciptor
+> of autofs root dentry and later, autofs daemon use it to manage mount (call another autofs
+> ioctls on that fd).
+> 
+> I've just meet problem, that this API not works when parent mount of autofs mount is overmounted.
+> For example:
+> tmpfs     /some-dir
+> autofs    /some-dir/autofs1 <-autofs direct mount
+> nfs       /some-dir/autofs1 <-automounted fs on top of autofs
+> 
+> ioctl(AUTOFS_DEV_IOCTL_OPENMOUNT) will work in this case. Because loop
+> with follow_up() starts from /some-dir/autofs1 dentry of nfs, then follow_up()
+> and move to /some-dir/autofs1 dentry of autofs.
+> 
+> But if we change picture to:
+> tmpfs1     /some-dir
+> autofs     /some-dir/autofs1 <-autofs direct mount
+> nfs        /some-dir/autofs1 <-automounted fs on top of autofs
+> tmpfs2     /some-dir
+> 
+> This will breaks API. Because know we can't even open /some-dir/autofs1
+> dentry.
+> 
+> Ok. We can create this dentry at first by mkdir /some-dir/autofs1.
+> But it will not help because our loop:
+> 	while (path.dentry == path.mnt->mnt_root) {
+> 		if (path.dentry->d_sb->s_magic == AUTOFS_SUPER_MAGIC) {
+> 			if (test(&path, data)) {
+> ...
+> 		if (!follow_up(&path))
+> 			break;
+> 	}
+> will start from dentry /some-dir/autofs1 from tmpfs2. And after follow_up
+> on that dentry we will move to / dentry => loop finishes => user get ENOENT.
+> 
+> > 
+> > 	I hope I'm misreading you; in case I'm not, the ABI is extremely
+> > tasteless and until you manage to document the exact semantics you want
+> > for param->path, consider it NAKed.
+> > 
+> > 	BTW, if that thing would be made to work, what's to stop somebody from
+> > doing ...at() syscalls with the resulting fd as a starting point and pathnames
+> > starting with ".."?  "/foo is overmounted, but we can get to anything under
+> > /foo/bar/ in the underlying tree since there's an autofs mount somewhere in
+> > /foo/bar/splat/puke/*"?
+> 
+> Interesting point. Thank you!
+> I'm not sure. But is it serious problem for us? What stop somebody to open
+> and hold fd to any directory before overmounting?
+> 
+> > 
+> > 	IOW, the real question (aside of "WTF?") is what are you using the
+> > resulting descriptor for and what do you need to be able to do with it.
+> > Details, please.
+> 
+> Sure. I've covered use cases of file descriptor returned by ioctl(AUTOFS_DEV_IOCTL_OPENMOUNT)
+> above.
+> 
+> Thanks for your reply!
+> I'm sorry If my patch description is unclear. I'm newbie here :)
+> 
+> Regards,
+> Alex
 
-I also like to include a Context: section which lists whether the
-function takes locks / requires locks to be held / can be called in
-hard or soft interrupt context / may sleep / requires refcounts be held /
-...  Generally, what do you expect from your callers, and what your callers
-can expect from you.
+Gentle ping.
 
-I don't understand the thing you're documenting, so it may not make sense
-to talk about interrupt context, for example.
-
+Thanks,
+Alex
