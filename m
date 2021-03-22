@@ -2,70 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A426B343633
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 02:20:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FD28343686
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 03:05:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbhCVBUJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Mar 2021 21:20:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48782 "EHLO
+        id S229897AbhCVCEW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Mar 2021 22:04:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbhCVBTc (ORCPT
+        with ESMTP id S229854AbhCVCEF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Mar 2021 21:19:32 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE61EC061574
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Mar 2021 18:19:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=s8mDUf3Enn/FoZ62WD9h0qniVO0+W7pXAxP0P9xb0xM=; b=bxWPyq42IIMurRO11ZjV9eQYcx
-        hw+m+fcvKHIt7z61WaXAUpxnHNNAqVcDkgkFHsZ74MR2l2ys91uH/AAFMP5jKj5YGDCVyFTnC4bgK
-        Nd/yJFVsClbNzTYscrXYMvMAAV0/aud1pem6jjezn/Dbza3jHTlhKbckGoSOPEfV5pEEFLc59sMrh
-        7Imx66t68wq5fy76XBNnk+Z+9ttFqm8XB99EtXkRBybM58TJvjwQbByEILiJ4Sb1mJqiK7dw6KDtM
-        sckaYGz/97JGysnltywARUNTZENU7kNg/odcn5yfJGw2aJgC9avWxH8mZemRWm6MDAyEXRr8EoTPH
-        DG9GjA7g==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lO9Dn-007nXh-Mc; Mon, 22 Mar 2021 01:19:23 +0000
-Date:   Mon, 22 Mar 2021 01:19:07 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-mm@kvack.org
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: set_page_dirty variants
-Message-ID: <20210322011907.GB1719932@casper.infradead.org>
+        Sun, 21 Mar 2021 22:04:05 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D89C061756
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Mar 2021 19:04:05 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id x126so9915104pfc.13
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Mar 2021 19:04:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=x65YhMq/iIE/GtERdS4jdT1t3LPDIu95hEMHpqLewfQ=;
+        b=XrTYv7S7ygcocSpP6b76OaPDTYkOI7KCPq5noz1URQ5UN2wYHWrpq7jNy0TJzxQDlT
+         NmofbH+Ev4puboNp8o4V0J3FkTu+LguHsb41JsVdoEiTuXlkclSb0Nc7dfEVm9XW2K0f
+         3sZ7tsQcgR/mOoHZQdMSPDvLIvj8Y2pQ2N/gM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=x65YhMq/iIE/GtERdS4jdT1t3LPDIu95hEMHpqLewfQ=;
+        b=tbLp9VCehnMPVuhBl3QTz1vaaWvzfVoyT0R3inP8bvkZX9a1Nqno2YoJATtvjy83kZ
+         cqTfUd2WTC3144IuXSUdrMXAvmmW4jz59Mnk1N8AfevLiNAW1xQHulRbGfNz7sNn8Ad9
+         0VFk2Ua0o37b+tTV8VlEkCfLYgIy48G8RxySBVzwCWLPdpL1xh0fQa8M9k+IgauJWoR6
+         un7oO5GWWNcHfmFYm8x1SDW6jmxkuaKLrlPNcLMCgjLZD1Dl+prsaiGUFlBooND+M/PU
+         8D4Uvr4HAFQAy9+QTw0tr4DLVyFitf+e4FNPzWF0aYEzBnJYSGTJJ9dBuOedbW7UdMY/
+         PdtA==
+X-Gm-Message-State: AOAM530j6mTEb7dpow4MUa8tJweblO6nTgHgPd5V5cFoxNjrWw5X1cg5
+        nngcoU+7+b5pPGHvZG6+IUWIvA==
+X-Google-Smtp-Source: ABdhPJx83QBnIf0wj61XqsgP/x34LyD50kxnYCMCY7mstz/EnXTszo1slqBcQBUpu3OnflBed+k9Xg==
+X-Received: by 2002:a63:4845:: with SMTP id x5mr19891695pgk.315.1616378644662;
+        Sun, 21 Mar 2021 19:04:04 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id e1sm11649000pjt.10.2021.03.21.19.04.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Mar 2021 19:04:03 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     "Kenta.Tada@sony.com" <Kenta.Tada@sony.com>
+Cc:     Kees Cook <keescook@chromium.org>, wad@chromium.org,
+        christian.brauner@ubuntu.com, ebiederm@xmission.com,
+        linux-kernel@vger.kernel.org, axboe@kernel.dk,
+        gladkov.alexey@gmail.com, avagin@gmail.com, paulmck@kernel.org,
+        elver@google.com, a.darwish@linutronix.de, amistry@google.com,
+        linux-fsdevel@vger.kernel.org, andreyknvl@google.com,
+        samitolvanen@google.com, michael.weiss@aisec.fraunhofer.de,
+        rostedt@goodmis.org, peterz@infradead.org, luto@amacapital.net,
+        rppt@kernel.org, shorne@gmail.com, adobriyan@gmail.com,
+        containers@lists.linux-foundation.org
+Subject: Re: [PATCH] seccomp: fix the cond to report loaded filters
+Date:   Sun, 21 Mar 2021 19:03:29 -0700
+Message-Id: <161637860542.4053241.2227340233601035129.b4-ty@chromium.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <OSBPR01MB26772D245E2CF4F26B76A989F5669@OSBPR01MB2677.jpnprd01.prod.outlook.com>
+References: <OSBPR01MB26772D245E2CF4F26B76A989F5669@OSBPR01MB2677.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We currently have three near-identical implementations of the
-set_page_dirty address_space op:
+On Sun, 21 Mar 2021 15:52:19 +0000, Kenta.Tada@sony.com wrote:
+> Strictly speaking, seccomp filters are only used
+> when CONFIG_SECCOMP_FILTER.
+> This patch fixes the condition to enable "Seccomp_filters"
+> in /proc/$pid/status.
 
-__set_page_dirty_no_writeback added 2007 by Ken Chen (767193253bba)
-(return value fixed by Bob Liu in 2011 (c3f0da631539))
-anon_set_page_dirty added 2009 by Peter Zijlstra (d3a9262e59f7)
-noop_set_page_dirty added 2018 by Dan Williams (f44c77630d26)
+Applied to for-next/seccomp, thanks!
 
-I persuaded Mike to remove hugetlbfs_set_page_dirty and
-Daniel Vetter to remove fb_deferred_io_set_page_dirty (in -next)
-so we're down from five to three.
+[1/1] seccomp: fix the cond to report loaded filters
+      https://git.kernel.org/kees/c/15a2fd51384a
 
-I'd like to get it down to zero.  After all, the !mapping case in
-set_page_dirty() is exactly what we want.  So is there a problem
-with doing this?
+-- 
+Kees Cook
 
-+++ b/mm/page-writeback.c
-@@ -2562 +2562 @@ int set_page_dirty(struct page *page)
--       if (likely(mapping)) {
-+       if (likely(mapping && mapping_can_writeback(mapping))) {
-
-But then I noticed that we have both mapping_can_writeback()
-and mapping_use_writeback_tags(), and I'm no longer sure
-which one to use.  Also, why don't we mirror the results of
-inode_to_bdi(mapping->host)->capabilities & BDI_CAP_WRITEBACK into
-a mapping->flags & AS_something bit?  We have lots available, and
-inode_to_bdi seems relatively complicated to be a static inline that
-gets evaluated every time we call
-pagecache_get_page(FGP_CREAT | FGP_WRITE).
