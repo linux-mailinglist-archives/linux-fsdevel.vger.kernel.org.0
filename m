@@ -2,137 +2,508 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3363A3438CE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 06:53:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 144693439F2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 07:49:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229696AbhCVFwc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 01:52:32 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:13343 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbhCVFwZ (ORCPT
+        id S229941AbhCVGsh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 02:48:37 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:56002 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229746AbhCVGse (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 01:52:25 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210322055223epoutp02bee9088eeab8804866fe9eb1bc9c780d~ulEWpTFCR1431414314epoutp02K
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Mar 2021 05:52:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210322055223epoutp02bee9088eeab8804866fe9eb1bc9c780d~ulEWpTFCR1431414314epoutp02K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1616392343;
-        bh=PP2w29LcRm+fOI2DXfVTDKBWo6lLBIXZp2IdlOCtQp8=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=peaoZHKj3z56PrPNMXmkjsLT1aIvN1+JaYRSrzR/pT9NgnOxHSady7KxFf4h+W4cH
-         E+Op5oIAABC511FCqW7Fk9epbLwZKUSE6t9MMVu5LhcX1nJlV3l62yGYv1MnM07bYq
-         rkjE00av0//jn6j694hHGbgSa18zD4RJL1A+gwP0=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210322055222epcas1p1fd0422930a691742d6e2ca8c93cdcd4e~ulEWADich2865328653epcas1p1K;
-        Mon, 22 Mar 2021 05:52:22 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.159]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4F3kD468T0z4x9Py; Mon, 22 Mar
-        2021 05:52:20 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        03.EC.02418.49038506; Mon, 22 Mar 2021 14:52:20 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210322055219epcas1p109b6c93281293e885a234e65a6376603~ulETQq3Rs3022830228epcas1p1y;
-        Mon, 22 Mar 2021 05:52:19 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210322055219epsmtrp101eeb2b97cf7fb3a385289352f2aca4c~ulETP-P1s0364703647epsmtrp1h;
-        Mon, 22 Mar 2021 05:52:19 +0000 (GMT)
-X-AuditID: b6c32a35-c0dff70000010972-48-605830949b10
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        81.2A.08745.39038506; Mon, 22 Mar 2021 14:52:19 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210322055219epsmtip1927872865c5975443ce0d2516d3c47d7~ulETAxc5J0058800588epsmtip1H;
-        Mon, 22 Mar 2021 05:52:19 +0000 (GMT)
-From:   "Sungjong Seo" <sj1557.seo@samsung.com>
-To:     "'Hyeongseok Kim'" <hyeongseok@gmail.com>,
-        <namjae.jeon@samsung.com>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-Cc:     <sj1557.seo@samsung.com>
-In-Reply-To: <20210322035336.81050-1-hyeongseok@gmail.com>
-Subject: RE: [PATCH v3] exfat: speed up iterate/lookup by fixing start point
- of traversing cluster chain
-Date:   Mon, 22 Mar 2021 14:52:19 +0900
-Message-ID: <016101d71edf$8542b240$8fc816c0$@samsung.com>
+        Mon, 22 Mar 2021 02:48:34 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12M6iwE0127220;
+        Mon, 22 Mar 2021 06:47:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=tf+tAt74UwO2N02Ko+BjIW5Ek6bOwoHhS/QUNSqJJqE=;
+ b=vy43kz/ohhkQttLXmyPsB6uPeffM/ksvHcnQC7QQmkGNEluAVAHNri+SnknScdWMVwPe
+ wWO1NOhdfkLaXGYgV5ACQBN+BvakfVucEefl9UwGbD2pqWLob9hBEdbTQ5mynNMGC/y4
+ xQTZT6vpEYcEk+fF+goy+JB2IJeX82B3yKmnKdElQVp5e7lV2hMp5qmWzxRlFkY2R8Ei
+ 2+usE0l/3649PkMUGtWNg6dFxciC0sicX+/jZCFjCnHusjgkc/rM1/FeDiqrs4nJ7V4Q
+ 3pXoVrUAStAphx/uJ3LU8R66sOaeEnHm3US1HnYzoCnT0JadQdemzSLqC7pyjwGBV5t0 sw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 37d8fr2fkc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Mar 2021 06:47:34 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12M6k3BK045074;
+        Mon, 22 Mar 2021 06:47:32 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 37dttq74pp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Mar 2021 06:47:32 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 12M6lQPM001040;
+        Mon, 22 Mar 2021 06:47:26 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 21 Mar 2021 23:47:25 -0700
+Date:   Mon, 22 Mar 2021 09:47:13 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-cifs@vger.kernel.org,
+        linux-cifsd-devel@lists.sourceforge.net, smfrench@gmail.com,
+        senozhatsky@chromium.org, hyc.lee@gmail.com,
+        viro@zeniv.linux.org.uk, hch@lst.de, hch@infradead.org,
+        ronniesahlberg@gmail.com, aurelien.aptel@gmail.com,
+        aaptel@suse.com, sandeen@sandeen.net, colin.king@canonical.com,
+        rdunlap@infradead.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: Re: [PATCH 2/5] cifsd: add server-side procedures for SMB3
+Message-ID: <20210322064712.GD1667@kadam>
+References: <20210322051344.1706-1-namjae.jeon@samsung.com>
+ <CGME20210322052206epcas1p438f15851216f07540537c5547a0a2c02@epcas1p4.samsung.com>
+ <20210322051344.1706-3-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQFCCaC8jPi/61EWNQoXs0UvpNzAUAIaXSUoq6jXuSA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdlhTV3eKQUSCwcv5rBZ/J35istiz9ySL
-        xeVdc9gsfkyvt9jy7wirA6vHzll32T36tqxi9Pi8SS6AOSrHJiM1MSW1SCE1Lzk/JTMv3VbJ
-        OzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwdoo5JCWWJOKVAoILG4WEnfzqYov7QkVSEj
-        v7jEVim1ICWnwNCgQK84Mbe4NC9dLzk/18rQwMDIFKgyISejZ/cFtoLJHBUf9q5hb2DczNbF
-        yMkhIWAisXDhG9YuRi4OIYEdjBK/Ni1mg3A+MUp0zl/FAuF8ZpS4u6ODFablYssPRhBbSGAX
-        o8SF9ykQRS8ZJXZsmw02l01AV+LJjZ/MIAkRgW5GiRUvprKDJJgFZCQmtR8Bm8QpYCWxdNFc
-        JhBbWCBLYv1OiA0sAqoStzp+gsV5BSwlJkx/yQxhC0qcnPmEBWKOvMT2t3OYIS5SkNj96ShY
-        rwjQzMMP2qFqRCRmd7ZB1fxkl1gwTQ/CdpHY290GDQBhiVfHt7BD2FISL/vboOx6if/z17KD
-        PCAh0MIo8fDTNqCDOIAce4n3lyxATGYBTYn1u/QhyhUldv6eywixlk/i3dceVohqXomONiGI
-        EhWJ7x92ssBsuvLjKtMERqVZSB6bheSxWUgemIWwbAEjyypGsdSC4tz01GLDAkPkyN7ECE6N
-        WqY7GCe+/aB3iJGJg/EQowQHs5II74nkkAQh3pTEyqrUovz4otKc1OJDjKbAoJ7ILCWanA9M
-        znkl8YamRsbGxhYmZuZmpsZK4rxJBg/ihQTSE0tSs1NTC1KLYPqYODilGpik5fZf1Hsrppr+
-        u+UtI4tb4nze7dbpxpke7mGSsx+tsKjylryd1FZ6/ZOUzZET2uesdFtFvab5Ht3968bOgnU9
-        a2wCfh98LdfDqZn9MOzyUXuuOY8uaZsuaLNMa+Qv0P6wevPqhqIlL7laFt6coHv+j4yw5N2H
-        bp7fdq3VOzztWdGX4rApbyK+BSyYxiS34++r7B/cVVt1pqh2mx1fNXfFiunc03f573in/ms+
-        55N5iqZq/qHm8+WFd9R8YDKMaVV5E7bn2ZtqtXi7G63hb3Zry/5tP1lpcVskd+r1Z5o/t6Zs
-        U9hwjPGmadrCWBnlYvcgveryD4sfvZ8oVqSzwneN6wV+e031lQYV2sslLl5SYinOSDTUYi4q
-        TgQAHXde7BYEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDLMWRmVeSWpSXmKPExsWy7bCSnO5kg4gEg08zxC3+TvzEZLFn70kW
-        i8u75rBZ/Jheb7Hl3xFWB1aPnbPusnv0bVnF6PF5k1wAcxSXTUpqTmZZapG+XQJXRs/uC2wF
-        kzkqPuxdw97AuJmti5GTQ0LAROJiyw/GLkYuDiGBHYwSvz/eA0pwACWkJA7u04QwhSUOHy6G
-        KHnOKHHjXDtYL5uArsSTGz+ZQRIiAv2MErOmTWQCSTALyEhMaj/CCtHRzSixbvlFRpAEp4CV
-        xNJFc8GKhAUyJO5sf8sKYrMIqErc6vgJFucVsJSYMP0lM4QtKHFy5hMWkCuYBfQk2jYyQsyX
-        l9j+dg4zxAMKErs/HQUbIwI0/vCDdhaIGhGJ2Z1tzBMYhWchmTQLYdIsJJNmIelYwMiyilEy
-        taA4Nz232LDAKC+1XK84Mbe4NC9dLzk/dxMjOEK0tHYw7ln1Qe8QIxMH4yFGCQ5mJRHeE8kh
-        CUK8KYmVValF+fFFpTmpxYcYpTlYlMR5L3SdjBcSSE8sSc1OTS1ILYLJMnFwSjUwpRRq2Ft5
-        /Jn9YdLL3yJzfj+W3eDaZJrHsMTdpG1hcZifi+U6CdnVr+7+yt/XMmXDopsut55rnP1d6N8g
-        f4Xn0T/tYp5o3i/iJ8yPrgraYuffmnvmEGf0qSv33/EeTDu7tb7sxOE3/9O0T7Vf+H/lb/SV
-        dwd/dQoVtjZmM3pOmsh7q6yhPHhOyhydlMuf33tPvczb5mgnJz3zahQzy9W6uD2u3Ft3Cm3y
-        OsaxbO2mq4/qFlp6Tf77pXzd1OW3LDOsoz9Nz9L+oCQR9XzXtf8beQo0Bf2S+3KPyKyYuyWL
-        rdmdeYPUmgPxbzr62V0X5/xvWnGVydo793SzWU7qxQivPcoTvDNtmd/NWTfv9n/hcCWW4oxE
-        Qy3mouJEAMzrx+H/AgAA
-X-CMS-MailID: 20210322055219epcas1p109b6c93281293e885a234e65a6376603
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210322035356epcas1p35cf4d476030f5ebaf6357c5761355605
-References: <CGME20210322035356epcas1p35cf4d476030f5ebaf6357c5761355605@epcas1p3.samsung.com>
-        <20210322035336.81050-1-hyeongseok@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210322051344.1706-3-namjae.jeon@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9930 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
+ mlxscore=0 phishscore=0 suspectscore=0 mlxlogscore=767 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103220049
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9930 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 spamscore=0 mlxscore=0 suspectscore=0 mlxlogscore=712
+ phishscore=0 bulkscore=0 adultscore=0 malwarescore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103220049
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> When directory iterate and lookup is called, there's a buggy rewinding of
-> start point for traversing cluster chain to the parent directory entry's
-> first cluster. This caused repeated cluster chain traversing from the
-> first entry of the parent directory that would show worse performance if
-> huge amounts of files exist under the parent directory.
-> Fix not to rewind, make continue from currently referenced cluster and dir
-> entry.
-> 
-> Tested with 50,000 files under single directory / 256GB sdcard, with
-> command "time ls -l > /dev/null",
-> Before :     0m08.69s real     0m00.27s user     0m05.91s system
-> After  :     0m07.01s real     0m00.25s user     0m04.34s system
-> 
-> Signed-off-by: Hyeongseok Kim <hyeongseok@gmail.com>
+On Mon, Mar 22, 2021 at 02:13:41PM +0900, Namjae Jeon wrote:
+> +static unsigned char
+> +asn1_octet_decode(struct asn1_ctx *ctx, unsigned char *ch)
+> +{
+> +	if (ctx->pointer >= ctx->end) {
+> +		ctx->error = ASN1_ERR_DEC_EMPTY;
+> +		return 0;
+> +	}
+> +	*ch = *(ctx->pointer)++;
+> +	return 1;
+> +}
 
-Looks good.
-Thanks for your contribution.
 
-Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+Make this bool.
 
-> ---
->  fs/exfat/dir.c      | 19 +++++++++++++------
->  fs/exfat/exfat_fs.h |  2 +-
->  fs/exfat/namei.c    |  9 ++++++++-
->  3 files changed, 22 insertions(+), 8 deletions(-)
+> +
+> +static unsigned char
+> +asn1_tag_decode(struct asn1_ctx *ctx, unsigned int *tag)
+> +{
+> +	unsigned char ch;
+> +
+> +	*tag = 0;
+> +
+> +	do {
+> +		if (!asn1_octet_decode(ctx, &ch))
+> +			return 0;
+> +		*tag <<= 7;
+> +		*tag |= ch & 0x7F;
+> +	} while ((ch & 0x80) == 0x80);
+> +	return 1;
+> +}
+
+Bool.
+
+> +
+> +static unsigned char
+> +asn1_id_decode(struct asn1_ctx *ctx,
+> +	       unsigned int *cls, unsigned int *con, unsigned int *tag)
+> +{
+> +	unsigned char ch;
+> +
+> +	if (!asn1_octet_decode(ctx, &ch))
+> +		return 0;
+> +
+> +	*cls = (ch & 0xC0) >> 6;
+> +	*con = (ch & 0x20) >> 5;
+> +	*tag = (ch & 0x1F);
+> +
+> +	if (*tag == 0x1F) {
+> +		if (!asn1_tag_decode(ctx, tag))
+> +			return 0;
+> +	}
+> +	return 1;
+> +}
+
+
+Same.
+
+> +
+> +static unsigned char
+> +asn1_length_decode(struct asn1_ctx *ctx, unsigned int *def, unsigned int *len)
+> +{
+> +	unsigned char ch, cnt;
+> +
+> +	if (!asn1_octet_decode(ctx, &ch))
+> +		return 0;
+> +
+> +	if (ch == 0x80)
+> +		*def = 0;
+> +	else {
+> +		*def = 1;
+> +
+> +		if (ch < 0x80)
+> +			*len = ch;
+> +		else {
+> +			cnt = (unsigned char) (ch & 0x7F);
+> +			*len = 0;
+> +
+> +			while (cnt > 0) {
+> +				if (!asn1_octet_decode(ctx, &ch))
+> +					return 0;
+> +				*len <<= 8;
+> +				*len |= ch;
+> +				cnt--;
+> +			}
+> +		}
+> +	}
+> +
+> +	/* don't trust len bigger than ctx buffer */
+> +	if (*len > ctx->end - ctx->pointer)
+> +		return 0;
+> +
+> +	return 1;
+> +}
+
+
+Same etc for all.
+
+> +
+> +static unsigned char
+> +asn1_header_decode(struct asn1_ctx *ctx,
+> +		   unsigned char **eoc,
+> +		   unsigned int *cls, unsigned int *con, unsigned int *tag)
+> +{
+> +	unsigned int def = 0;
+> +	unsigned int len = 0;
+> +
+> +	if (!asn1_id_decode(ctx, cls, con, tag))
+> +		return 0;
+> +
+> +	if (!asn1_length_decode(ctx, &def, &len))
+> +		return 0;
+> +
+> +	/* primitive shall be definite, indefinite shall be constructed */
+> +	if (*con == ASN1_PRI && !def)
+> +		return 0;
+> +
+> +	if (def)
+> +		*eoc = ctx->pointer + len;
+> +	else
+> +		*eoc = NULL;
+> +	return 1;
+> +}
+> +
+> +static unsigned char
+> +asn1_eoc_decode(struct asn1_ctx *ctx, unsigned char *eoc)
+> +{
+> +	unsigned char ch;
+> +
+> +	if (!eoc) {
+> +		if (!asn1_octet_decode(ctx, &ch))
+> +			return 0;
+> +
+> +		if (ch != 0x00) {
+> +			ctx->error = ASN1_ERR_DEC_EOC_MISMATCH;
+> +			return 0;
+> +		}
+> +
+> +		if (!asn1_octet_decode(ctx, &ch))
+> +			return 0;
+> +
+> +		if (ch != 0x00) {
+> +			ctx->error = ASN1_ERR_DEC_EOC_MISMATCH;
+> +			return 0;
+> +		}
+> +	} else {
+> +		if (ctx->pointer != eoc) {
+> +			ctx->error = ASN1_ERR_DEC_LENGTH_MISMATCH;
+> +			return 0;
+> +		}
+> +	}
+> +	return 1;
+> +}
+> +
+> +static unsigned char
+> +asn1_subid_decode(struct asn1_ctx *ctx, unsigned long *subid)
+> +{
+> +	unsigned char ch;
+> +
+> +	*subid = 0;
+> +
+> +	do {
+> +		if (!asn1_octet_decode(ctx, &ch))
+> +			return 0;
+> +
+> +		*subid <<= 7;
+> +		*subid |= ch & 0x7F;
+> +	} while ((ch & 0x80) == 0x80);
+> +	return 1;
+> +}
+> +
+> +static int
+> +asn1_oid_decode(struct asn1_ctx *ctx,
+> +		unsigned char *eoc, unsigned long **oid, unsigned int *len)
+> +{
+> +	unsigned long subid;
+> +	unsigned int size;
+> +	unsigned long *optr;
+> +
+> +	size = eoc - ctx->pointer + 1;
+> +
+> +	/* first subid actually encodes first two subids */
+> +	if (size < 2 || size > UINT_MAX/sizeof(unsigned long))
+> +		return 0;
+> +
+> +	*oid = kmalloc(size * sizeof(unsigned long), GFP_KERNEL);
+> +	if (!*oid)
+> +		return 0;
+> +
+> +	optr = *oid;
+> +
+> +	if (!asn1_subid_decode(ctx, &subid)) {
+> +		kfree(*oid);
+> +		*oid = NULL;
+> +		return 0;
+> +	}
+> +
+> +	if (subid < 40) {
+> +		optr[0] = 0;
+> +		optr[1] = subid;
+> +	} else if (subid < 80) {
+> +		optr[0] = 1;
+> +		optr[1] = subid - 40;
+> +	} else {
+> +		optr[0] = 2;
+> +		optr[1] = subid - 80;
+> +	}
+> +
+> +	*len = 2;
+> +	optr += 2;
+> +
+> +	while (ctx->pointer < eoc) {
+> +		if (++(*len) > size) {
+> +			ctx->error = ASN1_ERR_DEC_BADVALUE;
+> +			kfree(*oid);
+> +			*oid = NULL;
+> +			return 0;
+> +		}
+> +
+> +		if (!asn1_subid_decode(ctx, optr++)) {
+> +			kfree(*oid);
+> +			*oid = NULL;
+> +			return 0;
+> +		}
+> +	}
+> +	return 1;
+> +}
+
+Still bool.
+
+> +
+> +static int
+> +compare_oid(unsigned long *oid1, unsigned int oid1len,
+> +	    unsigned long *oid2, unsigned int oid2len)
+> +{
+> +	unsigned int i;
+> +
+> +	if (oid1len != oid2len)
+> +		return 0;
+> +
+> +	for (i = 0; i < oid1len; i++) {
+> +		if (oid1[i] != oid2[i])
+> +			return 0;
+> +	}
+> +	return 1;
+> +}
+
+Call this oid_eq()?
+
+
+> +
+> +/* BB check for endian conversion issues here */
+> +
+> +int
+> +ksmbd_decode_negTokenInit(unsigned char *security_blob, int length,
+> +		    struct ksmbd_conn *conn)
+> +{
+> +	struct asn1_ctx ctx;
+> +	unsigned char *end;
+> +	unsigned char *sequence_end;
+> +	unsigned long *oid = NULL;
+> +	unsigned int cls, con, tag, oidlen, rc, mechTokenlen;
+> +	unsigned int mech_type;
+> +
+> +	ksmbd_debug(AUTH, "Received SecBlob: length %d\n", length);
+> +
+> +	asn1_open(&ctx, security_blob, length);
+> +
+> +	/* GSSAPI header */
+> +	if (asn1_header_decode(&ctx, &end, &cls, &con, &tag) == 0) {
+> +		ksmbd_debug(AUTH, "Error decoding negTokenInit header\n");
+> +		return 0;
+> +	} else if ((cls != ASN1_APL) || (con != ASN1_CON)
+
+No need for else after a return 0;  Surely, checkpatch complains about
+|| on the following line and the extra parentheses?
+
+	if (asn1_header_decode(&ctx, &end, &cls, &con, &tag) == 0) {
+		ksmbd_debug(AUTH, "Error decoding negTokenInit header\n");
+		return false;
+	}
+
+	if (cls != ASN1_APL || con != ASN1_CON || tag != ASN1_EOC) {
+		ksmbd_debug(AUTH, "cls = %d con = %d tag = %d\n", cls, con,
+			    tag);
+		return false;
+	}
+
+> +		   || (tag != ASN1_EOC)) {
+> +		ksmbd_debug(AUTH, "cls = %d con = %d tag = %d\n", cls, con,
+> +			tag);
+> +		return 0;
+> +	}
+> +
+> +	/* Check for SPNEGO OID -- remember to free obj->oid */
+> +	rc = asn1_header_decode(&ctx, &end, &cls, &con, &tag);
+> +	if (rc) {
+
+This code confused the me at first.  I've always assumed "rc" stands for
+"return code" but asn1_header_decode() doesn't return error codes, it
+returns true false.  Alway do failure handling, instead of success
+handling.  That way when you're reading the code you can just read the
+code indented one tab to see what it does and the code indented two
+tabs to see how the error handling works.
+
+Good:
+
+	frob();
+	if (fail)
+		clean up();
+	frob();
+	if (fail)
+		clean up();
+
+Bad:
+	frob();
+	if (success)
+		frob();
+		if (success)
+			frob();
+			if (success)
+				frob();
+		else
+			fail = 1;
+	if (fail)
+		clean up();
+
+So this code confused me.  Keep the ordering consistent with cls, con,
+and tag.  In fact just write it exactly like the lines before.
+
+	if (!asn1_header_decode(&ctx, &end, &cls, &con, &tag)) {
+		ksmbd_debug(AUTH, "Error decoding negTokenInit header\n");
+		return false;
+	}
+
+	if (cls != ASN1_UNI || con != ASN1_PRI || tag != ASN1_OJI) {
+		ksmbd_debug(AUTH, "cls = %d con = %d tag = %d\n", cls, con,
+			    tag);
+		return false;
+	}
+
+	if (!asn1_oid_decode(&ctx, end, &oid, &oidlen))
+		return false;
+	if (!oid_equiv()) {
+		free();
+		return false;
+	}
+
+	kfree(oid); <-- I added this
+
+Add a kfree(oid) to the success path to avoid a memory leak.
+
+> +		if ((tag == ASN1_OJI) && (con == ASN1_PRI) &&
+> +		    (cls == ASN1_UNI)) {
+> +			rc = asn1_oid_decode(&ctx, end, &oid, &oidlen);
+> +			if (rc) {
+> +				rc = compare_oid(oid, oidlen, SPNEGO_OID,
+> +						 SPNEGO_OID_LEN);
+> +				kfree(oid);
+> +			}
+> +		} else
+> +			rc = 0;
+> +	}
+> +
+> +	/* SPNEGO OID not present or garbled -- bail out */
+> +	if (!rc) {
+> +		ksmbd_debug(AUTH, "Error decoding negTokenInit header\n");
+> +		return 0;
+> +	}
+> +
+> +	/* SPNEGO */
+> +	if (asn1_header_decode(&ctx, &end, &cls, &con, &tag) == 0) {
+> +		ksmbd_debug(AUTH, "Error decoding negTokenInit\n");
+> +		return 0;
+> +	} else if ((cls != ASN1_CTX) || (con != ASN1_CON)
+> +		   || (tag != ASN1_EOC)) {
+> +		ksmbd_debug(AUTH,
+> +			"cls = %d con = %d tag = %d end = %p (%d) exit 0\n",
+> +			cls, con, tag, end, *end);
+> +		return 0;
+> +	}
+> +
+> +	/* negTokenInit */
+> +	if (asn1_header_decode(&ctx, &end, &cls, &con, &tag) == 0) {
+> +		ksmbd_debug(AUTH, "Error decoding negTokenInit\n");
+> +		return 0;
+> +	} else if ((cls != ASN1_UNI) || (con != ASN1_CON)
+> +		   || (tag != ASN1_SEQ)) {
+> +		ksmbd_debug(AUTH,
+> +			"cls = %d con = %d tag = %d end = %p (%d) exit 1\n",
+> +			cls, con, tag, end, *end);
+> +		return 0;
+> +	}
+> +
+> +	/* sequence */
+> +	if (asn1_header_decode(&ctx, &end, &cls, &con, &tag) == 0) {
+> +		ksmbd_debug(AUTH, "Error decoding 2nd part of negTokenInit\n");
+> +		return 0;
+> +	} else if ((cls != ASN1_CTX) || (con != ASN1_CON)
+> +		   || (tag != ASN1_EOC)) {
+> +		ksmbd_debug(AUTH,
+> +			"cls = %d con = %d tag = %d end = %p (%d) exit 0\n",
+> +			cls, con, tag, end, *end);
+> +		return 0;
+> +	}
+> +
+> +	/* sequence of */
+> +	if (asn1_header_decode
+> +	    (&ctx, &sequence_end, &cls, &con, &tag) == 0) {
+
+
+I just ran checkpatch.pl on your patch and I see that you actually fixed
+all the normal checkpatch.pl warnings.  But I'm used to checkpatch.pl
+--strict code because that's the default in net and staging.  This file
+has 1249 little things like this where checkpatch would have said to
+write it like:
+
+	if (!asn1_header_decode(&ctx, &sequence_end, &cls, &con, &tag)) {
+
+total: 1 errors, 1 warnings, 1249 checks, 24501 lines checked
+
+Once a patch has over a thousand style issues then it's too much for
+me to handle.  :P
+
+regards,
+dan carpenter
 
