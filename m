@@ -2,182 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E1BB43445AD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 14:26:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1390E3445E3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 14:36:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231414AbhCVN0N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 09:26:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35340 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230448AbhCVNZn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 09:25:43 -0400
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E74CEC061574;
-        Mon, 22 Mar 2021 06:25:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:Cc:To;
-        bh=2pTAH7EZAdLSAE5R2Xy8ywDt2Dc8ZTDLeumutAH0RKU=; b=F7YPZX3VvyRxSNzrKKb6ys3K0F
-        g+79KJDZCDh/WBu0TgwYzmdi2Nm+16fysh9gkcNlk9X6ZbJ9XHL/6KoUcFJIO3Mlw/M5Dd+pnqxmZ
-        wFi2LHPqy7D1kWTpHOvlJkzVYHx6eXIG1Dd3qmQm5nZf4hyIAdccTP4tWwmEBGRyVX0fyw7ZUMskC
-        X2aInc0n9a47I0H9A+Td2IpUQdgtWPJaswlqPYvA8KF6hEz61yZ0Kbc7G3440uwUjA+vYDcFJo6xZ
-        bIwkgpQTHOl+87LLFfANc7pO1zW/obLuA6t+wnIjW+agrMLgMqelSn4n8qTIcHyS8O47cBJ+PPaSg
-        HNNyY/077ThHBATQl3YhRxPimrc5LxT03J04G57L9mKP99/OeJTnmqGRx1w0IfOij2hQ45Ss5CSYl
-        ksytvPiVXaIN48IFTFpR8OXpH7nBZsqo2mbzQWeg7oLiQBH6JpBjhRE3FJiG1zmd/Qu7oGg8NKItA
-        kDRcB2xL2ccLwYcNVC/9yBiR;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1lOKYq-0003UK-Bn; Mon, 22 Mar 2021 13:25:36 +0000
-To:     Christoph Hellwig <hch@lst.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     linux-cifs@vger.kernel.org, aurelien.aptel@gmail.com,
-        linux-cifsd-devel@lists.sourceforge.net, senozhatsky@chromium.org,
-        rdunlap@infradead.org, sandeen@sandeen.net,
-        linux-kernel@vger.kernel.org, aaptel@suse.com, hch@infradead.org,
-        viro@zeniv.linux.org.uk, ronniesahlberg@gmail.com,
-        linux-fsdevel@vger.kernel.org, colin.king@canonical.com,
-        Steve French <stfrench@microsoft.com>
-References: <20210322051344.1706-1-namjae.jeon@samsung.com>
- <CGME20210322052206epcas1p438f15851216f07540537c5547a0a2c02@epcas1p4.samsung.com>
- <20210322051344.1706-3-namjae.jeon@samsung.com> <20210322064712.GD1667@kadam>
- <20210322065011.GA2909@lst.de>
-From:   Stefan Metzmacher <metze@samba.org>
-Subject: Re: [Linux-cifsd-devel] [PATCH 2/5] cifsd: add server-side procedures
- for SMB3
-Message-ID: <7894be19-54f6-4c2c-daaa-1db03141e87c@samba.org>
-Date:   Mon, 22 Mar 2021 14:25:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        id S229829AbhCVNgC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 09:36:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52782 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230164AbhCVNfo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Mar 2021 09:35:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1616420142; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bNwpWnU/mOEb8vDk9U6PPMjzkSSiO3GF6Uf0hvYy86c=;
+        b=T/88LUerDCEZ5aLb09F83ICr41UqeH2rh4J7zrGpXp20VeYsZHJpi/YuD6UnXQW4pyzMJd
+        jBAgDV46TT0Kz09FM1vI9JNZIIaETu438nFrfjiK/6ELDm8IlG80pWXjuPGHfOvQ9qSqDa
+        nwk9Za/1Mcrl0+PJNnBW15dSnFPW4Rw=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 2DDD7AC1F;
+        Mon, 22 Mar 2021 13:35:42 +0000 (UTC)
+Date:   Mon, 22 Mar 2021 14:35:41 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hillf Danton <hdanton@sina.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Minchan Kim <minchan@kernel.org>,
+        huang ying <huang.ying.caritas@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Brian Cain <bcain@codeaurora.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Rob Herring <robh@kernel.org>,
+        "Pavel Machek (CIP)" <pavel@denx.de>,
+        Theodore Dubois <tblodt@icloud.com>,
+        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
+        Pavel Machek <pavel@ucw.cz>, Sam Ravnborg <sam@ravnborg.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Xiaoming Ni <nixiaoming@huawei.com>,
+        Robert Richter <rric@kernel.org>,
+        William Cohen <wcohen@redhat.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Kairui Song <kasong@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        uclinux-h8-devel@lists.sourceforge.jp,
+        linux-hexagon@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        openrisc@lists.librecores.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-fsdevel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH RFC 1/3] drivers/char: remove /dev/kmem for good
+Message-ID: <YFidLVQs+/zw4aIF@dhcp22.suse.cz>
+References: <20210319143452.25948-1-david@redhat.com>
+ <20210319143452.25948-2-david@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20210322065011.GA2909@lst.de>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="6UnFxiyjAB23kM2930rUzzDEuwXWMZy9h"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210319143452.25948-2-david@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---6UnFxiyjAB23kM2930rUzzDEuwXWMZy9h
-Content-Type: multipart/mixed; boundary="4qSVWlLiwZ2A06gYey0rbvw7kWnkj4pov";
- protected-headers="v1"
-From: Stefan Metzmacher <metze@samba.org>
-To: Christoph Hellwig <hch@lst.de>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-cifs@vger.kernel.org, aurelien.aptel@gmail.com,
- linux-cifsd-devel@lists.sourceforge.net, senozhatsky@chromium.org,
- rdunlap@infradead.org, sandeen@sandeen.net, linux-kernel@vger.kernel.org,
- aaptel@suse.com, hch@infradead.org, viro@zeniv.linux.org.uk,
- ronniesahlberg@gmail.com, linux-fsdevel@vger.kernel.org,
- colin.king@canonical.com, Steve French <stfrench@microsoft.com>
-Message-ID: <7894be19-54f6-4c2c-daaa-1db03141e87c@samba.org>
-Subject: Re: [Linux-cifsd-devel] [PATCH 2/5] cifsd: add server-side procedures
- for SMB3
-References: <20210322051344.1706-1-namjae.jeon@samsung.com>
- <CGME20210322052206epcas1p438f15851216f07540537c5547a0a2c02@epcas1p4.samsung.com>
- <20210322051344.1706-3-namjae.jeon@samsung.com> <20210322064712.GD1667@kadam>
- <20210322065011.GA2909@lst.de>
-In-Reply-To: <20210322065011.GA2909@lst.de>
+On Fri 19-03-21 15:34:50, David Hildenbrand wrote:
+> Exploring /dev/kmem and /dev/mem in the context of memory hot(un)plug and
+> memory ballooning, I started questioning the existance of /dev/kmem.
+> 
+> Comparing it with the /proc/kcore implementation, it does not seem to be
+> able to deal with things like
+> a) Pages unmapped from the direct mapping (e.g., to be used by secretmem)
+>   -> kern_addr_valid(). virt_addr_valid() is not sufficient.
+> b) Special cases like gart aperture memory that is not to be touched
+>   -> mem_pfn_is_ram()
+> Unless I am missing something, it's at least broken in some cases and might
+> fault/crash the machine.
+> 
+> Looks like its existance has been questioned before in 2005 and 2010
+> [1], after ~11 additional years, it might make sense to revive the
+> discussion.
+> 
+> CONFIG_DEVKMEM is only enabled in a single defconfig (on purpose or by
+> mistake?). All distributions I looked at disable it.
+> 
+> 1) /dev/kmem was popular for rootkits [2] before it got disabled
+>    basically everywhere. Ubuntu documents [3] "There is no modern user of
+>    /dev/kmem any more beyond attackers using it to load kernel rootkits.".
+>    RHEL documents in a BZ [5] "it served no practical purpose other than to
+>    serve as a potential security problem or to enable binary module drivers
+>    to access structures/functions they shouldn't be touching"
+> 
+> 2) /proc/kcore is a decent interface to have a controlled way to read
+>    kernel memory for debugging puposes. (will need some extensions to
+>    deal with memory offlining/unplug, memory ballooning, and poisoned
+>    pages, though)
+> 
+> 3) It might be useful for corner case debugging [1]. KDB/KGDB might be a
+>    better fit, especially, to write random memory; harder to shoot
+>    yourself into the foot.
+> 
+> 4) "Kernel Memory Editor" hasn't seen any updates since 2000 and seems
+>    to be incompatible with 64bit [1]. For educational purposes,
+>    /proc/kcore might be used to monitor value updates -- or older
+>    kernels can be used.
+> 
+> 5) It's broken on arm64, and therefore, completely disabled there.
+> 
+> Looks like it's essentially unused and has been replaced by better
+> suited interfaces for individual tasks (/proc/kcore, KDB/KGDB). Let's
+> just remove it.
+> 
+> [1] https://lwn.net/Articles/147901/
+> [2] https://www.linuxjournal.com/article/10505
+> [3] https://wiki.ubuntu.com/Security/Features#A.2Fdev.2Fkmem_disabled
+> [4] https://sourceforge.net/projects/kme/
+> [5] https://bugzilla.redhat.com/show_bug.cgi?id=154796
+> 
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Hillf Danton <hdanton@sina.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: huang ying <huang.ying.caritas@gmail.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Gregory Clement <gregory.clement@bootlin.com>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+> Cc: Brian Cain <bcain@codeaurora.org>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Jonas Bonn <jonas@southpole.se>
+> Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
+> Cc: Stafford Horne <shorne@gmail.com>
+> Cc: Rich Felker <dalias@libc.org>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Chris Zankel <chris@zankel.net>
+> Cc: Max Filippov <jcmvbkbc@gmail.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: "Pavel Machek (CIP)" <pavel@denx.de>
+> Cc: Theodore Dubois <tblodt@icloud.com>
+> Cc: "Alexander A. Klimov" <grandmaster@al2klimov.de>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Xiaoming Ni <nixiaoming@huawei.com>
+> Cc: Robert Richter <rric@kernel.org>
+> Cc: William Cohen <wcohen@redhat.com>
+> Cc: Corentin Labbe <clabbe@baylibre.com>
+> Cc: Kairui Song <kasong@redhat.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: uclinux-h8-devel@lists.sourceforge.jp
+> Cc: linux-hexagon@vger.kernel.org
+> Cc: linux-m68k@lists.linux-m68k.org
+> Cc: openrisc@lists.librecores.org
+> Cc: linux-sh@vger.kernel.org
+> Cc: sparclinux@vger.kernel.org
+> Cc: linux-xtensa@linux-xtensa.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: Linux API <linux-api@vger.kernel.org>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
---4qSVWlLiwZ2A06gYey0rbvw7kWnkj4pov
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-
-Am 22.03.21 um 07:50 schrieb Christoph Hellwig:
-> On Mon, Mar 22, 2021 at 09:47:13AM +0300, Dan Carpenter wrote:
->> On Mon, Mar 22, 2021 at 02:13:41PM +0900, Namjae Jeon wrote:
->>> +static unsigned char
->>> +asn1_octet_decode(struct asn1_ctx *ctx, unsigned char *ch)
->>> +{
->>> +	if (ctx->pointer >=3D ctx->end) {
->>> +		ctx->error =3D ASN1_ERR_DEC_EMPTY;
->>> +		return 0;
->>> +	}
->>> +	*ch =3D *(ctx->pointer)++;
->>> +	return 1;
->>> +}
->>
->>
->> Make this bool.
->>
->=20
-> More importantly don't add another ANS1 parser, but use the generic
-> one in lib/asn1_decoder.c instead.  CIFS should also really use it.
-
-I think the best would be to avoid asn1 completely in the kernel
-and do the whole authentication in userspace.
-
-The kernel can only deal this blobs here, I don't there's need to
-look inside the blobs.
-
-1. ksmbd-mount would provide a fixed initial blob that's always
-   the same and will be returned in the
-   "2.2.4 SMB2 NEGOTIATE Response" PDU as SecurityBuffer
-
-2. The kernel just blindly forwards the SecurityBuffer
-   of "2.2.5 SMB2 SESSION_SETUP Request" to userspace
-   together with the client provided SessionId (from
-   2.2.1.2 SMB2 Packet Header - SYNC) as well as
-   negotiated signing and encryption algorithm ids
-   and the latest preauth hash.
-
-3. Userspace passes a NTSTATUS together with SecurityBuffer blob for the
-   2.2.6 SMB2 SESSION_SETUP Response back to the kernel:
-
-   - NT_STATUS_MORE_PROCESSING_REQUIRED (more authentication legs are req=
-uired)
-     SecurityBuffer is most likely a non empty buffer
-
-   - NT_STATUS_OK - The authentication is complete:
-     SecurityBuffer might be empty or not
-     It also pass a channel signing key, a decryption and encrytion key
-     as well as the unix token ( I guess in the current form it's only ui=
-d/gid)
-     down to the kernel
-
-   - Any other status means the authentication failed, which is a hard er=
-ror for the client
-
-The PDU definitions are defined here:
-https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/6eaf=
-6e75-9c23-4eda-be99-c9223c60b181
-
-I think everything else belongs to userspace.
-
-Such a "simple" design for the kernel part, would mean that ksmbd-mount w=
-ould do what the
-kernel part is currently doing, but it also means it will be trivial to p=
-lug the userspace
-part to samba's winbindd in future order to get domain wide authenticatio=
-n.
-
-metze
-
-
---4qSVWlLiwZ2A06gYey0rbvw7kWnkj4pov--
-
---6UnFxiyjAB23kM2930rUzzDEuwXWMZy9h
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEfFbGo3YXpfgryIw9DbX1YShpvVYFAmBYmsQACgkQDbX1YShp
-vVYCDA/9HKKADvAj1r/udNzjMzn+kT+4lpHFRzQltPBVe7JMdFry6XDgGe1DG8Gs
-EHzPQpIOI2xJgOM+DnyIXM0DHnSrgjsYHsnQXikDYUw5gZMAx9djJI55ncFZrIj5
-cvbM4zmflCwErzMBVu2535fUmKoMgv0ny5nYoL5wzqlD5kaAz3l30Nzlul7HwH6X
-R7cZFrrKmO1h9Of5JOIicok5CieJgOq/1dcmilEJQ6P2sc9qYhnVlf2vnTSRWPbo
-XtaIB7kawTE3QrCCdUu6FYQe5h6yxwl9bOKHVZ1IQ8d8JHszi0OHCF5Z3PcJLg5Q
-n3vKFNMpeAeMjy813zSDvh6CDkgHsU/zkJnQeCu54Pe407NwoW9KSaDFG6PFZsyV
-cGuHyShF7YRP5PScFsM5YSR29T6pzQDbLocsIcxoMawu7Ls3wYAa2W1fqH9ZmtgN
-vyOQrP924JFkuxfpTlDygvYT/bnnos93tVBlX6Hq70LUcI5i1Thd6fQFEYcQ74zt
-xxFx0bwXZxwPgaAWxySEegYBHnV8dxxj336e7LhRcMyBmn/tQo3Pjb+Lv2866wee
-yqSMVDQX9sCXd7XIwewEN9fhZ3zvRmSNgPIdC82ge59LhT8oiYH/f2XHMc5/B/vY
-+6wBng+/T/CNYdle2y1TCY4hRV58X0IdHDopdvxWogEG5Fvyx3w=
-=n0tH
------END PGP SIGNATURE-----
-
---6UnFxiyjAB23kM2930rUzzDEuwXWMZy9h--
+Acked-by: Michal Hocko <mhocko@suse.com>
+-- 
+Michal Hocko
+SUSE Labs
