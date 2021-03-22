@@ -2,172 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 70C63344F09
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 19:49:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F531344F8E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 20:02:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231316AbhCVStW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 14:49:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49162 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231618AbhCVStG (ORCPT
+        id S232347AbhCVTCQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 15:02:16 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:59584 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232156AbhCVTCA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 14:49:06 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 461FEC061574;
-        Mon, 22 Mar 2021 11:49:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=YxjzMmOBLMiHOiaQiqnC64+Oadts1R+tWB/7c0yIxpk=; b=GE0DXOJEGOlrSQpvHN5rZQdJdw
-        eY5YNVSHYOmqZe2p/snMgmsK5d5fh5VbtZU9tIDXvl0hfSlaguFtAYap7rg+H962JODYUqr6rAQtr
-        2MT8Vv7+c8qF/9sEvJ+Kj+pMRXFAkd26CDSV3j53VE7gcJQBNHp+PEH9xC2W0GA6RAvEnBHp/dabb
-        wrlW2pvEofkKSssyXR5+8+JPModtT6A2YiC/bPekvXOUGpQtJJHmPlfsVLM4CQhgGhFG3PoxR8bJJ
-        GERaGe9Yk7F2owcSGEcP4kpoDSBQTdRlS8Zz0rALzuWoVp/45cbHfGomXeWf8pW+Ke1DhngI7Hh5i
-        AjoOCdKQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lOPaa-008w3P-Gk; Mon, 22 Mar 2021 18:47:58 +0000
-Date:   Mon, 22 Mar 2021 18:47:44 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org
-Subject: Re: [PATCH v5 00/27] Memory Folios
-Message-ID: <20210322184744.GU1719932@casper.infradead.org>
-References: <20210320054104.1300774-1-willy@infradead.org>
- <YFja/LRC1NI6quL6@cmpxchg.org>
+        Mon, 22 Mar 2021 15:02:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616439719;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qluoECxq2K7G/BfO7M0nYnXwwyId6s6ooDe9jCbuw5I=;
+        b=ZFUtGc11OUmgEbFT05tBBfb0qPFS5pJ9a3kO3i3ceZwjwKqm7aT5vwNhPKV7pkXiJ+MOSv
+        Iq5rmaZEGoRJeDPfBoQb01THWbv+Cv34B8APJn0U9c2Mcu2ciiU0z2i6xtmj0g544RoyfN
+        G7JfcYU2PwA2aCa7Fpv+l2L6U89Cm6U=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-31-XNqlDppeMt6bwi6ecrEHOA-1; Mon, 22 Mar 2021 15:01:57 -0400
+X-MC-Unique: XNqlDppeMt6bwi6ecrEHOA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 39EEB8189C7;
+        Mon, 22 Mar 2021 19:01:56 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-132.rdu2.redhat.com [10.10.114.132])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9E0461835B;
+        Mon, 22 Mar 2021 19:01:45 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 1F839220BCF; Mon, 22 Mar 2021 15:01:45 -0400 (EDT)
+Date:   Mon, 22 Mar 2021 15:01:45 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Connor Kuehl <ckuehl@redhat.com>, virtio-fs@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, stefanha@redhat.com,
+        jasowang@redhat.com, mst@redhat.com
+Subject: Re: [PATCH 2/3] virtiofs: split requests that exceed virtqueue size
+Message-ID: <20210322190145.GF446288@redhat.com>
+References: <20210318135223.1342795-1-ckuehl@redhat.com>
+ <20210318135223.1342795-3-ckuehl@redhat.com>
+ <YFNvH8w4l7WyEMyr@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YFja/LRC1NI6quL6@cmpxchg.org>
+In-Reply-To: <YFNvH8w4l7WyEMyr@miu.piliscsaba.redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 22, 2021 at 01:59:24PM -0400, Johannes Weiner wrote:
-> On Sat, Mar 20, 2021 at 05:40:37AM +0000, Matthew Wilcox (Oracle) wrote:
-> > This series introduces the 'struct folio' as a replacement for
-> > head-or-base pages.  This initial set reduces the kernel size by
-> > approximately 6kB, although its real purpose is adding infrastructure
-> > to enable further use of the folio.
+On Thu, Mar 18, 2021 at 04:17:51PM +0100, Miklos Szeredi wrote:
+> On Thu, Mar 18, 2021 at 08:52:22AM -0500, Connor Kuehl wrote:
+> > If an incoming FUSE request can't fit on the virtqueue, the request is
+> > placed onto a workqueue so a worker can try to resubmit it later where
+> > there will (hopefully) be space for it next time.
 > > 
-> > The intent is to convert all filesystems and some device drivers to work
-> > in terms of folios.  This series contains a lot of explicit conversions,
-> > but it's important to realise it's removing a lot of implicit conversions
-> > in some relatively hot paths.  There will be very few conversions from
-> > folios when this work is completed; filesystems, the page cache, the
-> > LRU and so on will generally only deal with folios.
+> > This is fine for requests that aren't larger than a virtqueue's maximum
+> > capacity. However, if a request's size exceeds the maximum capacity of
+> > the virtqueue (even if the virtqueue is empty), it will be doomed to a
+> > life of being placed on the workqueue, removed, discovered it won't fit,
+> > and placed on the workqueue yet again.
+> > 
+> > Furthermore, from section 2.6.5.3.1 (Driver Requirements: Indirect
+> > Descriptors) of the virtio spec:
+> > 
+> >   "A driver MUST NOT create a descriptor chain longer than the Queue
+> >   Size of the device."
+> > 
+> > To fix this, limit the number of pages FUSE will use for an overall
+> > request. This way, each request can realistically fit on the virtqueue
+> > when it is decomposed into a scattergather list and avoid violating
+> > section 2.6.5.3.1 of the virtio spec.
 > 
-> If that is the case, shouldn't there in the long term only be very
-> few, easy to review instances of things like compound_head(),
-> PAGE_SIZE etc. deep in the heart of MM? And everybody else should 1)
-> never see tail pages and 2) never assume a compile-time page size?
-
-I don't know exactly where we get to eventually.  There are definitely
-some aspects of the filesystem<->mm interface which are page-based
-(eg ->fault needs to look up the exact page, regardless of its
-head/tail/base nature), while ->readpage needs to talk in terms of
-folios.
-
-> What are the higher-level places that in the long-term should be
-> dealing with tail pages at all? Are there legit ones besides the page
-> allocator, THP splitting internals & pte-mapped compound pages?
-
-I can't tell.  I think this patch maybe illustrates some of the
-problems, but maybe it's just an intermediate problem:
-
-https://git.infradead.org/users/willy/pagecache.git/commitdiff/047e9185dc146b18f56c6df0b49fe798f1805c7b
-
-It deals mostly in terms of folios, but when it needs to kmap() and
-memcmp(), then it needs to work in terms of pages.  I don't think it's
-avoidable (maybe we bury the "dealing with pages" inside a kmap()
-wrapper somewhere, but I'm not sure that's better).
-
-> I do agree that the current confusion around which layer sees which
-> types of pages is a problem. But I also think a lot of it is the
-> result of us being in a transitional period where we've added THP in
-> more places but not all code and data structures are or were fully
-> native yet, and so we had things leak out or into where maybe they
-> shouldn't be to make things work in the short term.
+> I removed the conditional compilation and renamed the limit.  Also made
+> virtio_fs_get_tree() bail out if it hit the WARN_ON().  Updated patch below.
 > 
-> But this part is already getting better, and has gotten better, with
-> the page cache (largely?) going native for example.
-
-Thanks ;-)  There's still more work to do on that (ie storing one
-entry to cover 512 indices instead of 512 identical entries), but it
-is getting better.  What can't be made better is the CPU page tables;
-they really do need to point to tail pages.
-
-One of my longer-term goals is to support largeish pages on ARM (and
-other CPUs).  Instead of these silly config options to have 16KiB
-or 64KiB pages, support "add PTEs for these 16 consecutive, aligned pages".
-And I'm not sure how we do that without folios.  The notion that a
-page is PAGE_SIZE is really, really ingrained.  I tried the page_size()
-macro to make things easier, but there's 17000 instances of PAGE_SIZE
-in the tree, and they just aren't going to go away.
-
-> Some compound_head() that are currently in the codebase are already
-> unnecessary. Like the one in activate_page().
-
-Right!  And it's hard to find & remove them without very careful analysis,
-or particularly deep knowledge.  With folios, we can remove them without
-terribly deep thought.
-
-> And looking at grep, I wouldn't be surprised if only the page table
-> walkers need the page_compound() that mark_page_accessed() does. We
-> would be better off if they did the translation once and explicitly in
-> the outer scope, where it's clear they're dealing with a pte-mapped
-> compound page, instead of having a series of rather low level helpers
-> (page flags testing, refcount operations, LRU operations, stat
-> accounting) all trying to be clever but really just obscuring things
-> and imposing unnecessary costs on the vast majority of cases.
+> The virtio_ring patch in this series should probably go through the respective
+> subsystem tree.
 > 
-> So I fully agree with the motivation behind this patch. But I do
-> wonder why it's special-casing the commmon case instead of the rare
-> case. It comes at a huge cost. Short term, the churn of replacing
-> 'page' with 'folio' in pretty much all instances is enormous.
+> 
+> Thanks,
+> Miklos
+> 
+> ---
+> From: Connor Kuehl <ckuehl@redhat.com>
+> Subject: virtiofs: split requests that exceed virtqueue size
+> Date: Thu, 18 Mar 2021 08:52:22 -0500
+> 
+> If an incoming FUSE request can't fit on the virtqueue, the request is
+> placed onto a workqueue so a worker can try to resubmit it later where
+> there will (hopefully) be space for it next time.
+> 
+> This is fine for requests that aren't larger than a virtqueue's maximum
+> capacity.  However, if a request's size exceeds the maximum capacity of the
+> virtqueue (even if the virtqueue is empty), it will be doomed to a life of
+> being placed on the workqueue, removed, discovered it won't fit, and placed
+> on the workqueue yet again.
+> 
+> Furthermore, from section 2.6.5.3.1 (Driver Requirements: Indirect
+> Descriptors) of the virtio spec:
+> 
+>   "A driver MUST NOT create a descriptor chain longer than the Queue
+>   Size of the device."
+> 
+> To fix this, limit the number of pages FUSE will use for an overall
+> request.  This way, each request can realistically fit on the virtqueue
+> when it is decomposed into a scattergather list and avoid violating section
+> 2.6.5.3.1 of the virtio spec.
+> 
+> Signed-off-by: Connor Kuehl <ckuehl@redhat.com>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
 
-Because people (think they) know what a page is.  It's PAGE_SIZE bytes
-long, it occupies one PTE, etc, etc.  A folio is new and instead of
-changing how something familiar (a page) behaves, we're asking them
-to think about something new instead that behaves a lot like a page,
-but has differences.
+Looks good to me.
 
-> And longer term, I'm not convinced folio is the abstraction we want
-> throughout the kernel. If nobody should be dealing with tail pages in
-> the first place, why are we making everybody think in 'folios'? Why
-> does a filesystem care that huge pages are composed of multiple base
-> pages internally? This feels like an implementation detail leaking out
-> of the MM code. The vast majority of places should be thinking 'page'
-> with a size of 'page_size()'. Including most parts of the MM itself.
+Reviewed-by: Vivek Goyal <vgoyal@redhat.com>
 
-I think pages already leaked out of the MM and into filesystems (and
-most of the filesystem writers seem pretty unknowledgable about how
-pages and the page cache work, TBH).  That's OK!  Or it should be OK.
-Filesystem authors should be experts on how their filesystem works.
-Everywhere that they have to learn about the page cache is a distraction
-and annoyance for them.
+Vivek
 
-I mean, I already tried what you're suggesting.  It's really freaking
-hard.  It's hard to do, it's hard to explain, it's hard to know if you
-got it right.  With folios, I've got the compiler working for me, telling
-me that I got some of the low-level bits right (or wrong), leaving me
-free to notice "Oh, wait, we got the accounting wrong because writeback
-assumes that a page is only PAGE_SIZE bytes".  I would _never_ have
-noticed that with the THP tree.  I only noticed it because transitioning
-things to folios made me read the writeback code and wonder about the
-'inc_wb_stat' call, see that it's measuring something in 'number of pages'
-and realise that the wb_stat accounting needs to be fixed.
+>  fs/fuse/fuse_i.h    |    3 +++
+>  fs/fuse/inode.c     |    3 ++-
+>  fs/fuse/virtio_fs.c |   19 +++++++++++++++++--
+>  3 files changed, 22 insertions(+), 3 deletions(-)
+> 
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -555,6 +555,9 @@ struct fuse_conn {
+>  	/** Maxmum number of pages that can be used in a single request */
+>  	unsigned int max_pages;
+>  
+> +	/** Constrain ->max_pages to this value during feature negotiation */
+> +	unsigned int max_pages_limit;
+> +
+>  	/** Input queue */
+>  	struct fuse_iqueue iq;
+>  
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -712,6 +712,7 @@ void fuse_conn_init(struct fuse_conn *fc
+>  	fc->pid_ns = get_pid_ns(task_active_pid_ns(current));
+>  	fc->user_ns = get_user_ns(user_ns);
+>  	fc->max_pages = FUSE_DEFAULT_MAX_PAGES_PER_REQ;
+> +	fc->max_pages_limit = FUSE_MAX_MAX_PAGES;
+>  
+>  	INIT_LIST_HEAD(&fc->mounts);
+>  	list_add(&fm->fc_entry, &fc->mounts);
+> @@ -1040,7 +1041,7 @@ static void process_init_reply(struct fu
+>  				fc->abort_err = 1;
+>  			if (arg->flags & FUSE_MAX_PAGES) {
+>  				fc->max_pages =
+> -					min_t(unsigned int, FUSE_MAX_MAX_PAGES,
+> +					min_t(unsigned int, fc->max_pages_limit,
+>  					max_t(unsigned int, arg->max_pages, 1));
+>  			}
+>  			if (IS_ENABLED(CONFIG_FUSE_DAX) &&
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -18,6 +18,12 @@
+>  #include <linux/uio.h>
+>  #include "fuse_i.h"
+>  
+> +/* Used to help calculate the FUSE connection's max_pages limit for a request's
+> + * size. Parts of the struct fuse_req are sliced into scattergather lists in
+> + * addition to the pages used, so this can help account for that overhead.
+> + */
+> +#define FUSE_HEADER_OVERHEAD    4
+> +
+>  /* List of virtio-fs device instances and a lock for the list. Also provides
+>   * mutual exclusion in device removal and mounting path
+>   */
+> @@ -1413,9 +1419,10 @@ static int virtio_fs_get_tree(struct fs_
+>  {
+>  	struct virtio_fs *fs;
+>  	struct super_block *sb;
+> -	struct fuse_conn *fc;
+> +	struct fuse_conn *fc = NULL;
+>  	struct fuse_mount *fm;
+> -	int err;
+> +	unsigned int virtqueue_size;
+> +	int err = -EIO;
+>  
+>  	/* This gets a reference on virtio_fs object. This ptr gets installed
+>  	 * in fc->iq->priv. Once fuse_conn is going away, it calls ->put()
+> @@ -1427,6 +1434,10 @@ static int virtio_fs_get_tree(struct fs_
+>  		return -EINVAL;
+>  	}
+>  
+> +	virtqueue_size = virtqueue_get_vring_size(fs->vqs[VQ_REQUEST].vq);
+> +	if (WARN_ON(virtqueue_size <= FUSE_HEADER_OVERHEAD))
+> +		goto out_err;
+> +
+>  	err = -ENOMEM;
+>  	fc = kzalloc(sizeof(struct fuse_conn), GFP_KERNEL);
+>  	if (!fc)
+> @@ -1442,6 +1453,10 @@ static int virtio_fs_get_tree(struct fs_
+>  	fc->delete_stale = true;
+>  	fc->auto_submounts = true;
+>  
+> +	/* Tell FUSE to split requests that exceed the virtqueue's size */
+> +	fc->max_pages_limit = min_t(unsigned int, fc->max_pages_limit,
+> +				    virtqueue_size - FUSE_HEADER_OVERHEAD);
+> +
+>  	fsc->s_fs_info = fm;
+>  	sb = sget_fc(fsc, virtio_fs_test_super, set_anon_super_fc);
+>  	if (fsc->s_fs_info) {
+> 
 
-> The compile-time check is nice, but I'm not sure it would be that much
-> more effective at catching things than a few centrally placed warns
-> inside PageFoo(), get_page() etc. and other things that should not
-> encounter tail pages in the first place (with __helpers for the few
-> instances that do). And given the invasiveness of this change, they
-> ought to be very drastically better at it, and obviously so, IMO.
-
-We should have come up with a new type 15 years ago instead of doing THP.
-But the second best time to invent a new type for "memory objects which
-are at least as big as a page" is right now.  Because it only gets more
-painful over time.
