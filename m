@@ -2,52 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1876B344653
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 14:58:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96449344697
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Mar 2021 15:05:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229467AbhCVN5v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 09:57:51 -0400
-Received: from verein.lst.de ([213.95.11.211]:55847 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229591AbhCVN5Z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 09:57:25 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 9A71868BEB; Mon, 22 Mar 2021 14:57:18 +0100 (CET)
-Date:   Mon, 22 Mar 2021 14:57:18 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-cifs@vger.kernel.org,
-        linux-cifsd-devel@lists.sourceforge.net, smfrench@gmail.com,
-        hyc.lee@gmail.com, viro@zeniv.linux.org.uk, hch@lst.de,
-        hch@infradead.org, ronniesahlberg@gmail.com,
-        aurelien.aptel@gmail.com, aaptel@suse.com, sandeen@sandeen.net,
-        dan.carpenter@oracle.com, colin.king@canonical.com,
-        rdunlap@infradead.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: Re: [PATCH 3/5] cifsd: add file operations
-Message-ID: <20210322135718.GA28451@lst.de>
-References: <20210322051344.1706-1-namjae.jeon@samsung.com> <CGME20210322052207epcas1p3f0a5bdfd2c994a849a67b465479d0721@epcas1p3.samsung.com> <20210322051344.1706-4-namjae.jeon@samsung.com> <20210322081512.GI1719932@casper.infradead.org> <YFhdWeedjQQgJdbi@google.com>
+        id S230378AbhCVOFY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 10:05:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:33785 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229728AbhCVOFL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Mar 2021 10:05:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616421910;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=QPkSFGAEFwyxkIsg8U3iEYvQY5nY02tfAo9JoeH500U=;
+        b=by2PYNeIThLlhcBBIBgso7RVuA0oT2sbTfsrbejt15LOK5/V16bAdE4ikqmK5GnaiKaTzm
+        QA794U5dYmmKy1CJqAhx6ARo2U4dEQ38i4AVBrtCVOniVPIcjawqmBCtLNY0rt4hv+VwiU
+        /kSTSVjxxG+LhazBBkW0Kjs6pB23AYE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-107-q7E0KdvfM_C12LWdMVHd9w-1; Mon, 22 Mar 2021 10:05:08 -0400
+X-MC-Unique: q7E0KdvfM_C12LWdMVHd9w-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F147887A826;
+        Mon, 22 Mar 2021 14:05:06 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A88CB5B6A8;
+        Mon, 22 Mar 2021 14:05:06 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 12ME56RX020189;
+        Mon, 22 Mar 2021 10:05:06 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 12ME556x020185;
+        Mon, 22 Mar 2021 10:05:05 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Mon, 22 Mar 2021 10:05:05 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>
+cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: [PATCH] buffer: a small optimization in grow_buffers
+Message-ID: <alpine.LRH.2.02.2103221002360.19948@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YFhdWeedjQQgJdbi@google.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 22, 2021 at 06:03:21PM +0900, Sergey Senozhatsky wrote:
-> On (21/03/22 08:15), Matthew Wilcox wrote:
-> > 
-> > What's the scenario for which your allocator performs better than slub
-> > 
-> 
-> IIRC request and reply buffers can be up to 4M in size. So this stuff
-> just allocates a number of fat buffers and keeps them around so that
-> it doesn't have to vmalloc(4M) for every request and every response.
+This patch replaces a loop with a "tzcnt" instruction.
 
-Do we have any data suggesting it is faster than vmalloc?
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+
+Index: linux-2.6/fs/buffer.c
+===================================================================
+--- linux-2.6.orig/fs/buffer.c
++++ linux-2.6/fs/buffer.c
+@@ -1020,11 +1020,7 @@ grow_buffers(struct block_device *bdev,
+ 	pgoff_t index;
+ 	int sizebits;
+ 
+-	sizebits = -1;
+-	do {
+-		sizebits++;
+-	} while ((size << sizebits) < PAGE_SIZE);
+-
++	sizebits = PAGE_SHIFT - __ffs(size);
+ 	index = block >> sizebits;
+ 
+ 	/*
+
