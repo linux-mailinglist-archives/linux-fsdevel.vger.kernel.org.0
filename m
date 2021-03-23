@@ -2,146 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50765346C25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 23:19:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF51D346C22
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 23:19:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234025AbhCWWTe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 18:19:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37968 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233930AbhCWWSa (ORCPT
+        id S234006AbhCWWTZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 18:19:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:55313 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233936AbhCWWSa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 23 Mar 2021 18:18:30 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E020C061574;
-        Tue, 23 Mar 2021 15:18:20 -0700 (PDT)
-Received: from [IPv6:2401:4900:5170:240f:f606:c194:2a1c:c147] (unknown [IPv6:2401:4900:5170:240f:f606:c194:2a1c:c147])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616537903;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EpBGXpU/wlpDT8hwfPjKyNBUh3Jhz2rUOUxyjRvEuBg=;
+        b=NgrW1dQJZ+lOj+IYl1Z96U0UnJI/EgjVCog2G+SD6eHQgkp4Rk78IrL7zv8h4hQ98Lm6r7
+        dZGeNYRRveNXfVOfnnK0srA+wVbns53qPiLOKi33cahbXyhYsUy2pvHlzraArmcv0P3Ut4
+        MiTg75pHZKQJPNnhmzUOEtK1ILfMZ4g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-346-Onfw741mPiqdYzPqx_wAAg-1; Tue, 23 Mar 2021 18:18:19 -0400
+X-MC-Unique: Onfw741mPiqdYzPqx_wAAg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: shreeya)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 2208F1F454D0;
-        Tue, 23 Mar 2021 22:18:14 +0000 (GMT)
-Subject: Re: [PATCH v3 5/5] fs: unicode: Add utf8 module and a unicode layer
-To:     Eric Biggers <ebiggers@kernel.org>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
-        chao@kernel.org, drosen@google.com, yuchao0@huawei.com,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-        andre.almeida@collabora.com
-References: <20210323183201.812944-1-shreeya.patel@collabora.com>
- <20210323183201.812944-6-shreeya.patel@collabora.com>
- <87eeg5d4xb.fsf@collabora.com> <YFpPxCQiMLqctIuS@gmail.com>
-From:   Shreeya Patel <shreeya.patel@collabora.com>
-Message-ID: <dd7dae42-6024-8868-3e3e-f6d672274682@collabora.com>
-Date:   Wed, 24 Mar 2021 03:48:10 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 14C731853021;
+        Tue, 23 Mar 2021 22:18:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-58.rdu2.redhat.com [10.10.112.58])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 06195196E3;
+        Tue, 23 Mar 2021 22:18:14 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH v5 04/28] mm: Implement readahead_control pageset expansion
+From:   David Howells <dhowells@redhat.com>
+To:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
+        Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 23 Mar 2021 22:18:14 +0000
+Message-ID: <161653789422.2770958.2108046612147345000.stgit@warthog.procyon.org.uk>
+In-Reply-To: <161653784755.2770958.11820491619308713741.stgit@warthog.procyon.org.uk>
+References: <161653784755.2770958.11820491619308713741.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-In-Reply-To: <YFpPxCQiMLqctIuS@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Provide a function, readahead_expand(), that expands the set of pages
+specified by a readahead_control object to encompass a revised area with a
+proposed size and length.
 
-On 24/03/21 1:59 am, Eric Biggers wrote:
-> On Tue, Mar 23, 2021 at 03:51:44PM -0400, Gabriel Krisman Bertazi wrote:
->>> -int unicode_validate(const struct unicode_map *um, const struct qstr *str)
->>> -{
->>> -	const struct utf8data *data = utf8nfdi(um->version);
->>> -
->>> -	if (utf8nlen(data, str->name, str->len) < 0)
->>> -		return -1;
->>> -	return 0;
->>> -}
->>> +struct unicode_ops *utf8_ops;
->>> +EXPORT_SYMBOL(utf8_ops);
->>> +
->>> +int _utf8_validate(const struct unicode_map *um, const struct qstr *str)
->>> +{
->>> +	return 0;
->>> +}
->>> -EXPORT_SYMBOL(unicode_validate);
->> I think that any calls to the default static calls should return errors
->> instead of succeeding without doing anything.
->>
->> In fact, are the default calls really necessary?  If someone gets here,
->> there is a bug elsewhere, so WARN_ON and maybe -EIO.
->>
->> int unicode_validate_default_static_call(...)
->> {
->>     WARN_ON(1);
->>     return -EIO;
->> }
->>
->> Or just have a NULL default, as I mentioned below, if that is possible.
->>
-> [...]
->>> +DEFINE_STATIC_CALL(utf8_validate, _utf8_validate);
->>> +DEFINE_STATIC_CALL(utf8_strncmp, _utf8_strncmp);
->>> +DEFINE_STATIC_CALL(utf8_strncasecmp, _utf8_strncasecmp);
->>> +DEFINE_STATIC_CALL(utf8_strncasecmp_folded, _utf8_strncasecmp_folded);
->>> +DEFINE_STATIC_CALL(utf8_normalize, _utf8_normalize);
->>> +DEFINE_STATIC_CALL(utf8_casefold, _utf8_casefold);
->>> +DEFINE_STATIC_CALL(utf8_casefold_hash, _utf8_casefold_hash);
->>> +DEFINE_STATIC_CALL(utf8_load, _utf8_load);
->>> +DEFINE_STATIC_CALL_NULL(utf8_unload, _utf8_unload);
->>> +EXPORT_STATIC_CALL(utf8_strncmp);
->>> +EXPORT_STATIC_CALL(utf8_strncasecmp);
->>> +EXPORT_STATIC_CALL(utf8_strncasecmp_folded);
->> I'm having a hard time understanding why some use
->> DEFINE_STATIC_CALL_NULL, while other use DEFINE_STATIC_CALL.  This new
->> static call API is new to me :).  None of this can be called if the
->> module is not loaded anyway, so perhaps the default function can just be
->> NULL, per the documentation of include/linux/static_call.h?
->>
->> Anyway, Aren't utf8_{validate,casefold,normalize} missing the
->> equivalent EXPORT_STATIC_CALL?
->>
-> The static_call API is fairly new to me too.  But the intent of this patch seems
-> to be that none of the utf8 functions are called without the utf8 module loaded.
-> If they are called, it's a kernel bug.  So there are two options for what to do
-> if it happens anyway:
->
->    1. call a "null" static call, which does nothing
->
-> *or*
->
->    2. call a default function which does WARN_ON_ONCE() and returns an error if
->       possible.
->
-> (or 3. don't use static calls and instead dereference a NULL utf8_ops like
-> previous versions of this patch did.)
->
-> It shouldn't really matter which of these approaches you take, but please be
-> consistent and use the same one everywhere.
->
->> + void unicode_unregister(void)
->> + {
->> +         spin_lock(&utf8ops_lock);
->> +         utf8_ops = NULL;
->> +         spin_unlock(&utf8ops_lock);
->> + }
->> + EXPORT_SYMBOL(unicode_unregister);
-> This should restore the static calls to their default values (either NULL or the
-> default functions, depending on what you decide).
->
-> Also, it's weird to still have the utf8_ops structure when using static calls.
-> It seems it should be one way or the other: static calls *or* utf8_ops.
->
-> The static calls could be exported, and the module could be responsible for
-> updating them.  That would eliminate the need for utf8_ops.
+The proposed area must include all of the old area and may be expanded yet
+more by this function so that the edges align on (transparent huge) page
+boundaries as allocated.
+
+The expansion will be cut short if a page already exists in either of the
+areas being expanded into.  Note that any expansion made in such a case is
+not rolled back.
+
+This will be used by fscache so that reads can be expanded to cache granule
+boundaries, thereby allowing whole granules to be stored in the cache, but
+there are other potential users also.
+
+Changes:
+- Moved the declaration of readahead_expand() to a better place[1].
+
+Suggested-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+cc: Alexander Viro <viro@zeniv.linux.org.uk>
+cc: Christoph Hellwig <hch@lst.de>
+cc: linux-mm@kvack.org
+cc: linux-cachefs@redhat.com
+cc: linux-afs@lists.infradead.org
+cc: linux-nfs@vger.kernel.org
+cc: linux-cifs@vger.kernel.org
+cc: ceph-devel@vger.kernel.org
+cc: v9fs-developer@lists.sourceforge.net
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/20210217161358.GM2858050@casper.infradead.org/ [1]
+Link: https://lore.kernel.org/r/159974633888.2094769.8326206446358128373.stgit@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/160588479816.3465195.553952688795241765.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/161118131787.1232039.4863969952441067985.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/161161028670.2537118.13831420617039766044.stgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/161340389201.1303470.14353807284546854878.stgit@warthog.procyon.org.uk/ # v3
+Link: https://lore.kernel.org/r/161539530488.286939.18085961677838089157.stgit@warthog.procyon.org.uk/ # v4
+---
+
+ include/linux/pagemap.h |    2 +
+ mm/readahead.c          |   70 +++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 72 insertions(+)
+
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index da5c38864037..5c14a9365aae 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -837,6 +837,8 @@ void page_cache_sync_ra(struct readahead_control *, struct file_ra_state *,
+ 		unsigned long req_count);
+ void page_cache_async_ra(struct readahead_control *, struct file_ra_state *,
+ 		struct page *, unsigned long req_count);
++void readahead_expand(struct readahead_control *ractl,
++		      loff_t new_start, size_t new_len);
+ 
+ /**
+  * page_cache_sync_readahead - generic file readahead
+diff --git a/mm/readahead.c b/mm/readahead.c
+index c5b0457415be..4446dada0bc2 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -638,3 +638,73 @@ SYSCALL_DEFINE3(readahead, int, fd, loff_t, offset, size_t, count)
+ {
+ 	return ksys_readahead(fd, offset, count);
+ }
++
++/**
++ * readahead_expand - Expand a readahead request
++ * @ractl: The request to be expanded
++ * @new_start: The revised start
++ * @new_len: The revised size of the request
++ *
++ * Attempt to expand a readahead request outwards from the current size to the
++ * specified size by inserting locked pages before and after the current window
++ * to increase the size to the new window.  This may involve the insertion of
++ * THPs, in which case the window may get expanded even beyond what was
++ * requested.
++ *
++ * The algorithm will stop if it encounters a conflicting page already in the
++ * pagecache and leave a smaller expansion than requested.
++ *
++ * The caller must check for this by examining the revised @ractl object for a
++ * different expansion than was requested.
++ */
++void readahead_expand(struct readahead_control *ractl,
++		      loff_t new_start, size_t new_len)
++{
++	struct address_space *mapping = ractl->mapping;
++	pgoff_t new_index, new_nr_pages;
++	gfp_t gfp_mask = readahead_gfp_mask(mapping);
++
++	new_index = new_start / PAGE_SIZE;
++
++	/* Expand the leading edge downwards */
++	while (ractl->_index > new_index) {
++		unsigned long index = ractl->_index - 1;
++		struct page *page = xa_load(&mapping->i_pages, index);
++
++		if (page && !xa_is_value(page))
++			return; /* Page apparently present */
++
++		page = __page_cache_alloc(gfp_mask);
++		if (!page)
++			return;
++		if (add_to_page_cache_lru(page, mapping, index, gfp_mask) < 0) {
++			put_page(page);
++			return;
++		}
++
++		ractl->_nr_pages++;
++		ractl->_index = page->index;
++	}
++
++	new_len += new_start - readahead_pos(ractl);
++	new_nr_pages = DIV_ROUND_UP(new_len, PAGE_SIZE);
++
++	/* Expand the trailing edge upwards */
++	while (ractl->_nr_pages < new_nr_pages) {
++		unsigned long index = ractl->_index + ractl->_nr_pages;
++		struct page *page = xa_load(&mapping->i_pages, index);
++
++		if (page && !xa_is_value(page))
++			return; /* Page apparently present */
++
++		page = __page_cache_alloc(gfp_mask);
++		if (!page)
++			return;
++		if (add_to_page_cache_lru(page, mapping, index, gfp_mask) < 0) {
++			put_page(page);
++			return;
++		}
++		ractl->_nr_pages++;
++	}
++}
++EXPORT_SYMBOL(readahead_expand);
 
 
-Hmmm yes, I think we are just using utf8_ops for getting the owner details
-which we can now remove and instead pass it as an argument while 
-registering the module.
-Will make this change in v4. Thanks
-
-
->
-> - Eric
