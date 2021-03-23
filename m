@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7556434589D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 08:26:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFA3E3458A0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 08:26:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230158AbhCWHZv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 03:25:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41844 "EHLO
+        id S230113AbhCWH00 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 03:26:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230146AbhCWHZa (ORCPT
+        with ESMTP id S229508AbhCWH0S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 03:25:30 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E374C061763
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 00:25:30 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id b7so25423789ejv.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 00:25:30 -0700 (PDT)
+        Tue, 23 Mar 2021 03:26:18 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3AA9C061756
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 00:26:17 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id e7so22177083edu.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 00:26:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=Xwa51kxw61uMIow80uqDkY+H/GARiTsVnf3Sas4+BxM=;
-        b=K/Y1f+FygYeHZ5bZBkEb+W+x4FQXWevwHu7nVAHSjHVtzShBuR+2g4FsS0kJzfB6Vy
-         VVwcas8GBISn7nl+PoNKFfW4EktWkZWdfe7V6IXLHkWp1zEZC6hF9n0f+y8hnWEnn678
-         bM2VOCVidgBxJJ7sHbiL6YqHT7ClwnTp1H6GfexhjZX5TAd7sYmJYCVyVM3dPzNdgjXp
-         +Qq1sveuTC1kxYnTl3bnJC7WJ+Z5RIIs1fHT6Tw3rQE53wfy5yPnAQ650qEzQBUAamIp
-         o/HlhyEARhMSvBBR5AeMuhWpQd/mMgr22U1IrIO9bKFBljAaC/j6nTrbC+LGXrHLs8hF
-         AVdA==
+        bh=U8lpUuZJGaV5U4oC4GW9RvpzpMAWQMtDrKTPzzjAf6w=;
+        b=ypwBn/3Rjk7uj3TA7mO19avc3Y511cmNHLraZ2ubCtyzXhyJNYo1u1TLU+LDahvPqJ
+         VQILrw/UDQuAlsZWiuI+DeEMAvEh1F9wkP3elzS2RKPih1LawkT9/THlqbO4QdqczdHa
+         goKjIRkvtiU/GO2mCuVbboaAeu6YjXz5CKwZgpeIy0G6RtcpH8Ie/fPvtNxMHuR9/3Ll
+         gX0XQgt2LjxvONbzbshs4ptOkp08YYyY9nuYTMQl1cBh3MAuaqavPdNesf1NsuyWfdD2
+         7jNCXVJrrYQJjk/yrkORJZnhoy61Da7t5WUlo9a0bu0dfTCvyUDMmfCGNkcZ/2s9ePdp
+         b7Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Xwa51kxw61uMIow80uqDkY+H/GARiTsVnf3Sas4+BxM=;
-        b=pLqAJQXg57D+fUQbWbCpLRIhkcHuC6DeTW8mjwmIbdmpcBTrVXIa3FYjbPGtwNa/wk
-         aFACEMr5jPUHS9DQzTdMs7ahredNSk3HklB7PS7KA2Zh4qtoAoX17Or8L9p7HQ9X0VNw
-         BXP4ev2jtf0nmSMWDuK5tzTpb0MzkJRm1etj3xJM+Rzvvmd9kDZDi+uYsixZdOwDb0iK
-         pR8QWd3JV2+FQIUzgWVoZ23c2n52a9enfAq99RxACD27zBLKMbZx4aT+NQeBFssckaTN
-         2W6rf4xfgHvALI4wpuXBWTv+10KwzeuKeo93l2U8VDSXABMTaFJ5IYor3iJ+byhfVX6v
-         IAbQ==
-X-Gm-Message-State: AOAM531pZme6fJoJ7SGsdz3gfLyXbfKsDs3+4b0u4F5MVL8LBoHONZyq
-        D9D/BmYqLiskmb6/t0VB/7B/67bsL6MZWW9sqV92
-X-Google-Smtp-Source: ABdhPJzJm68SUj19rBv+WCUqBy2FNifWaazEUCLQ3Uhyia48gmLbT4tJs0m9MQ2KYMXowDVwKahrwolbYciM+aEhnp8=
-X-Received: by 2002:a17:907:a042:: with SMTP id gz2mr3554509ejc.174.1616484329008;
- Tue, 23 Mar 2021 00:25:29 -0700 (PDT)
+        bh=U8lpUuZJGaV5U4oC4GW9RvpzpMAWQMtDrKTPzzjAf6w=;
+        b=OF3qHoZrZy7m1ContbaVx4FjUvKimlhRN+76+KB5OEYZLa1mUSwYrAFiqqgjwoDXwK
+         WNkI5GzHa48aRAAFaPzMWFDIFg0K3KU9NPUzDhJG8hGadMlrs7QBoM9yBvudCDImeRh1
+         8gShGpUQ/zzPD+D5tW0dMLhN95evcBt27Sm2H2g1tPYM1XDbtDZs9JQm7CUbqRHKzSA6
+         +3zC2j0H6TvClFiqeJcUCc+K2+KA7Yz1kik/X+ORl5VzoXuN//J9BgpJ4hdEzqBWRwRd
+         mzadwoPsPsw0z+pq/Fx1LyKgUt5fhaNiXOG110ow8W66BCtsD2A0lWzHuhimdAplBKGL
+         mjdg==
+X-Gm-Message-State: AOAM5333D8AqKKS3293LplYh1CB+i+459FPlPIs0FubSDwjAEv7M26xo
+        rwyzrKJyYIu2XRdNHr2lM18SYnlOuEcrr/SXLxaR
+X-Google-Smtp-Source: ABdhPJwTkBmxBjkwdo1emwyJPsm7yUl37+5xEFgHLcXdCuMiSkEo0ufMWzQf8nKuKTRV+BTEXxv+aSkgHCaPIIkuNdU=
+X-Received: by 2002:a05:6402:6ca:: with SMTP id n10mr3248475edy.312.1616484376542;
+ Tue, 23 Mar 2021 00:26:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210315053721.189-1-xieyongji@bytedance.com> <20210315053721.189-4-xieyongji@bytedance.com>
- <38a2ae38-ebf7-3e3b-3439-d95a6f49b48b@redhat.com>
-In-Reply-To: <38a2ae38-ebf7-3e3b-3439-d95a6f49b48b@redhat.com>
+References: <20210315053721.189-1-xieyongji@bytedance.com> <20210315053721.189-8-xieyongji@bytedance.com>
+ <07312477-6582-1ca9-c5ed-8ff936525d52@redhat.com>
+In-Reply-To: <07312477-6582-1ca9-c5ed-8ff936525d52@redhat.com>
 From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Tue, 23 Mar 2021 15:25:18 +0800
-Message-ID: <CACycT3vg=+08YWLrVPHATwFvCjEzmKuTLdX3=stLQqrsm-+1Vg@mail.gmail.com>
-Subject: Re: Re: [PATCH v5 03/11] vhost-vdpa: protect concurrent access to
- vhost device iotlb
+Date:   Tue, 23 Mar 2021 15:26:05 +0800
+Message-ID: <CACycT3vTXvwGjgjJvb1Skst+9NwAQB8BSEHE_h+D2xEprm6LTw@mail.gmail.com>
+Subject: Re: Re: [PATCH v5 07/11] vdpa: Support transferring virtual
+ addressing during DMA mapping
 To:     Jason Wang <jasowang@redhat.com>
 Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
@@ -73,24 +73,185 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 23, 2021 at 11:02 AM Jason Wang <jasowang@redhat.com> wrote:
+On Tue, Mar 23, 2021 at 11:13 AM Jason Wang <jasowang@redhat.com> wrote:
 >
 >
 > =E5=9C=A8 2021/3/15 =E4=B8=8B=E5=8D=881:37, Xie Yongji =E5=86=99=E9=81=93=
 :
-> > Use vhost_dev->mutex to protect vhost device iotlb from
-> > concurrent access.
+> > This patch introduces an attribute for vDPA device to indicate
+> > whether virtual address can be used. If vDPA device driver set
+> > it, vhost-vdpa bus driver will not pin user page and transfer
+> > userspace virtual address instead of physical address during
+> > DMA mapping. And corresponding vma->vm_file and offset will be
+> > also passed as an opaque pointer.
 > >
-> > Fixes: 4c8cf318("vhost: introduce vDPA-based backend")
+> > Suggested-by: Jason Wang <jasowang@redhat.com>
 > > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> > ---
+> >   drivers/vdpa/ifcvf/ifcvf_main.c   |   2 +-
+> >   drivers/vdpa/mlx5/net/mlx5_vnet.c |   2 +-
+> >   drivers/vdpa/vdpa.c               |   9 +++-
+> >   drivers/vdpa/vdpa_sim/vdpa_sim.c  |   2 +-
+> >   drivers/vdpa/virtio_pci/vp_vdpa.c |   2 +-
+> >   drivers/vhost/vdpa.c              | 104 +++++++++++++++++++++++++++++=
+++-------
+> >   include/linux/vdpa.h              |  19 +++++--
+> >   7 files changed, 113 insertions(+), 27 deletions(-)
+> >
+> > diff --git a/drivers/vdpa/ifcvf/ifcvf_main.c b/drivers/vdpa/ifcvf/ifcvf=
+_main.c
+> > index d555a6a5d1ba..aee013f3eb5f 100644
+> > --- a/drivers/vdpa/ifcvf/ifcvf_main.c
+> > +++ b/drivers/vdpa/ifcvf/ifcvf_main.c
+> > @@ -431,7 +431,7 @@ static int ifcvf_probe(struct pci_dev *pdev, const =
+struct pci_device_id *id)
+> >       }
+> >
+> >       adapter =3D vdpa_alloc_device(struct ifcvf_adapter, vdpa,
+> > -                                 dev, &ifc_vdpa_ops, NULL);
+> > +                                 dev, &ifc_vdpa_ops, NULL, false);
+> >       if (adapter =3D=3D NULL) {
+> >               IFCVF_ERR(pdev, "Failed to allocate vDPA structure");
+> >               return -ENOMEM;
+> > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/=
+mlx5_vnet.c
+> > index 71397fdafa6a..fb62ebcf464a 100644
+> > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > @@ -1982,7 +1982,7 @@ static int mlx5v_probe(struct auxiliary_device *a=
+dev,
+> >       max_vqs =3D min_t(u32, max_vqs, MLX5_MAX_SUPPORTED_VQS);
+> >
+> >       ndev =3D vdpa_alloc_device(struct mlx5_vdpa_net, mvdev.vdev, mdev=
+->device, &mlx5_vdpa_ops,
+> > -                              NULL);
+> > +                              NULL, false);
+> >       if (IS_ERR(ndev))
+> >               return PTR_ERR(ndev);
+> >
+> > diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+> > index 5cffce67cab0..97fbac276c72 100644
+> > --- a/drivers/vdpa/vdpa.c
+> > +++ b/drivers/vdpa/vdpa.c
+> > @@ -71,6 +71,7 @@ static void vdpa_release_dev(struct device *d)
+> >    * @config: the bus operations that is supported by this device
+> >    * @size: size of the parent structure that contains private data
+> >    * @name: name of the vdpa device; optional.
+> > + * @use_va: indicate whether virtual address must be used by this devi=
+ce
+> >    *
+> >    * Driver should use vdpa_alloc_device() wrapper macro instead of
+> >    * using this directly.
+> > @@ -80,7 +81,8 @@ static void vdpa_release_dev(struct device *d)
+> >    */
+> >   struct vdpa_device *__vdpa_alloc_device(struct device *parent,
+> >                                       const struct vdpa_config_ops *con=
+fig,
+> > -                                     size_t size, const char *name)
+> > +                                     size_t size, const char *name,
+> > +                                     bool use_va)
+> >   {
+> >       struct vdpa_device *vdev;
+> >       int err =3D -EINVAL;
+> > @@ -91,6 +93,10 @@ struct vdpa_device *__vdpa_alloc_device(struct devic=
+e *parent,
+> >       if (!!config->dma_map !=3D !!config->dma_unmap)
+> >               goto err;
+> >
+> > +     /* It should only work for the device that use on-chip IOMMU */
+> > +     if (use_va && !(config->dma_map || config->set_map))
+> > +             goto err;
+> > +
+> >       err =3D -ENOMEM;
+> >       vdev =3D kzalloc(size, GFP_KERNEL);
+> >       if (!vdev)
+> > @@ -106,6 +112,7 @@ struct vdpa_device *__vdpa_alloc_device(struct devi=
+ce *parent,
+> >       vdev->index =3D err;
+> >       vdev->config =3D config;
+> >       vdev->features_valid =3D false;
+> > +     vdev->use_va =3D use_va;
+> >
+> >       if (name)
+> >               err =3D dev_set_name(&vdev->dev, "%s", name);
+> > diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim.c b/drivers/vdpa/vdpa_sim/v=
+dpa_sim.c
+> > index ff331f088baf..d26334e9a412 100644
+> > --- a/drivers/vdpa/vdpa_sim/vdpa_sim.c
+> > +++ b/drivers/vdpa/vdpa_sim/vdpa_sim.c
+> > @@ -235,7 +235,7 @@ struct vdpasim *vdpasim_create(struct vdpasim_dev_a=
+ttr *dev_attr)
+> >               ops =3D &vdpasim_config_ops;
+> >
+> >       vdpasim =3D vdpa_alloc_device(struct vdpasim, vdpa, NULL, ops,
+> > -                                 dev_attr->name);
+> > +                                 dev_attr->name, false);
+> >       if (!vdpasim)
+> >               goto err_alloc;
+> >
+> > diff --git a/drivers/vdpa/virtio_pci/vp_vdpa.c b/drivers/vdpa/virtio_pc=
+i/vp_vdpa.c
+> > index 1321a2fcd088..03b36aed48d6 100644
+> > --- a/drivers/vdpa/virtio_pci/vp_vdpa.c
+> > +++ b/drivers/vdpa/virtio_pci/vp_vdpa.c
+> > @@ -377,7 +377,7 @@ static int vp_vdpa_probe(struct pci_dev *pdev, cons=
+t struct pci_device_id *id)
+> >               return ret;
+> >
+> >       vp_vdpa =3D vdpa_alloc_device(struct vp_vdpa, vdpa,
+> > -                                 dev, &vp_vdpa_ops, NULL);
+> > +                                 dev, &vp_vdpa_ops, NULL, false);
+> >       if (vp_vdpa =3D=3D NULL) {
+> >               dev_err(dev, "vp_vdpa: Failed to allocate vDPA structure\=
+n");
+> >               return -ENOMEM;
+> > diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> > index 7c83fbf3edac..b65c21ae98d1 100644
+> > --- a/drivers/vhost/vdpa.c
+> > +++ b/drivers/vhost/vdpa.c
+> > @@ -480,21 +480,30 @@ static long vhost_vdpa_unlocked_ioctl(struct file=
+ *filep,
+> >   static void vhost_vdpa_iotlb_unmap(struct vhost_vdpa *v, u64 start, u=
+64 last)
+> >   {
+> >       struct vhost_dev *dev =3D &v->vdev;
+> > +     struct vdpa_device *vdpa =3D v->vdpa;
+> >       struct vhost_iotlb *iotlb =3D dev->iotlb;
+> >       struct vhost_iotlb_map *map;
+> > +     struct vdpa_map_file *map_file;
+> >       struct page *page;
+> >       unsigned long pfn, pinned;
+> >
+> >       while ((map =3D vhost_iotlb_itree_first(iotlb, start, last)) !=3D=
+ NULL) {
+> > -             pinned =3D map->size >> PAGE_SHIFT;
+> > -             for (pfn =3D map->addr >> PAGE_SHIFT;
+> > -                  pinned > 0; pfn++, pinned--) {
+> > -                     page =3D pfn_to_page(pfn);
+> > -                     if (map->perm & VHOST_ACCESS_WO)
+> > -                             set_page_dirty_lock(page);
+> > -                     unpin_user_page(page);
+> > +             if (!vdpa->use_va) {
+> > +                     pinned =3D map->size >> PAGE_SHIFT;
+> > +                     for (pfn =3D map->addr >> PAGE_SHIFT;
+> > +                          pinned > 0; pfn++, pinned--) {
+> > +                             page =3D pfn_to_page(pfn);
+> > +                             if (map->perm & VHOST_ACCESS_WO)
+> > +                                     set_page_dirty_lock(page);
+> > +                             unpin_user_page(page);
+> > +                     }
+> > +                     atomic64_sub(map->size >> PAGE_SHIFT,
+> > +                                     &dev->mm->pinned_vm);
+> > +             } else {
+> > +                     map_file =3D (struct vdpa_map_file *)map->opaque;
+> > +                     fput(map_file->file);
+> > +                     kfree(map_file);
 >
 >
-> Acked-by: Jason Wang <jasowang@redhat.com>
->
-> Please cc stable for next version.
+> Let's factor out the logic of pa and va separatedly here.
 >
 
-Sure.
+Will do it.
 
 Thanks,
 Yongji
