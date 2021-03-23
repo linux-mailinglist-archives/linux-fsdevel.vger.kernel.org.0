@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D3063467B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 19:33:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 351023467B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 19:33:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231834AbhCWSdD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 14:33:03 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53220 "EHLO
+        id S232056AbhCWSdE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 14:33:04 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:53240 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231380AbhCWScm (ORCPT
+        with ESMTP id S231833AbhCWScz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 14:32:42 -0400
+        Tue, 23 Mar 2021 14:32:55 -0400
 Received: from localhost.localdomain (unknown [IPv6:2401:4900:5170:240f:f606:c194:2a1c:c147])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: shreeya)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 82FE31F44A66;
-        Tue, 23 Mar 2021 18:32:32 +0000 (GMT)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 368961F44A70;
+        Tue, 23 Mar 2021 18:32:41 +0000 (GMT)
 From:   Shreeya Patel <shreeya.patel@collabora.com>
 To:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
         chao@kernel.org, krisman@collabora.com, ebiggers@google.com,
@@ -25,10 +25,10 @@ To:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
 Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-        andre.almeida@collabora.com, kernel test robot <lkp@intel.com>
-Subject: [PATCH v3 1/5] fs: unicode: Use strscpy() instead of strncpy()
-Date:   Wed, 24 Mar 2021 00:01:57 +0530
-Message-Id: <20210323183201.812944-2-shreeya.patel@collabora.com>
+        andre.almeida@collabora.com
+Subject: [PATCH v3 2/5] fs: Check if utf8 encoding is loaded before calling utf8_unload()
+Date:   Wed, 24 Mar 2021 00:01:58 +0530
+Message-Id: <20210323183201.812944-3-shreeya.patel@collabora.com>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210323183201.812944-1-shreeya.patel@collabora.com>
 References: <20210323183201.812944-1-shreeya.patel@collabora.com>
@@ -38,52 +38,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Following warning was reported by Kernel Test Robot.
+utf8_unload is being called if CONFIG_UNICODE is enabled.
+The ifdef block doesn't check if utf8 encoding has been loaded
+or not before calling the utf8_unload() function.
+This is not the expected behavior since it would sometimes lead
+to unloading utf8 even before loading it.
+Hence, add a condition which will check if sb->encoding is NOT NULL
+before calling the utf8_unload().
 
-In function 'utf8_parse_version',
-inlined from 'utf8_load' at fs/unicode/utf8mod.c:195:7:
->> fs/unicode/utf8mod.c:175:2: warning: 'strncpy' specified bound 12 equals
-destination size [-Wstringop-truncation]
-175 |  strncpy(version_string, version, sizeof(version_string));
-    |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The -Wstringop-truncation warning highlights the unintended
-uses of the strncpy function that truncate the terminating NULL
-character from the source string.
-Unlike strncpy(), strscpy() always null-terminates the destination string,
-hence use strscpy() instead of strncpy().
-
-Fixes: 9d53690f0d4e5 (unicode: implement higher level API for string handling)
 Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
-Reported-by: kernel test robot <lkp@intel.com>
 ---
 
 Changes in v3
-  - Return error if strscpy() returns value < 0
-
-Changes in v2
-  - Resolve warning of -Wstringop-truncation reported by
-    kernel test robot.
-
- fs/unicode/utf8-core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
-index dc25823bf..706f086bb 100644
---- a/fs/unicode/utf8-core.c
-+++ b/fs/unicode/utf8-core.c
-@@ -180,7 +180,10 @@ static int utf8_parse_version(const char *version, unsigned int *maj,
- 		{0, NULL}
- 	};
+  - Add this patch to the series which checks if utf8 encoding
+    was loaded before calling uft8_unload().
  
--	strncpy(version_string, version, sizeof(version_string));
-+	int ret = strscpy(version_string, version, sizeof(version_string));
-+
-+	if (ret < 0)
-+		return ret;
+ fs/ext4/super.c | 6 ++++--
+ fs/f2fs/super.c | 9 ++++++---
+ 2 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index ad34a3727..e438d14f9 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1259,7 +1259,8 @@ static void ext4_put_super(struct super_block *sb)
+ 	fs_put_dax(sbi->s_daxdev);
+ 	fscrypt_free_dummy_policy(&sbi->s_dummy_enc_policy);
+ #ifdef CONFIG_UNICODE
+-	utf8_unload(sb->s_encoding);
++	if (sb->s_encoding)
++		utf8_unload(sb->s_encoding);
+ #endif
+ 	kfree(sbi);
+ }
+@@ -5165,7 +5166,8 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ 		crypto_free_shash(sbi->s_chksum_driver);
  
- 	if (match_token(version_string, token, args) != 1)
- 		return -EINVAL;
+ #ifdef CONFIG_UNICODE
+-	utf8_unload(sb->s_encoding);
++	if (sb->s_encoding)
++		utf8_unload(sb->s_encoding);
+ #endif
+ 
+ #ifdef CONFIG_QUOTA
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 706979375..0a04983c2 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1430,7 +1430,8 @@ static void f2fs_put_super(struct super_block *sb)
+ 	for (i = 0; i < NR_PAGE_TYPE; i++)
+ 		kvfree(sbi->write_io[i]);
+ #ifdef CONFIG_UNICODE
+-	utf8_unload(sb->s_encoding);
++	if (sb->s_encoding)
++		utf8_unload(sb->s_encoding);
+ #endif
+ 	kfree(sbi);
+ }
+@@ -4073,8 +4074,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		kvfree(sbi->write_io[i]);
+ 
+ #ifdef CONFIG_UNICODE
+-	utf8_unload(sb->s_encoding);
+-	sb->s_encoding = NULL;
++	if (sb->s_encoding) {
++		utf8_unload(sb->s_encoding);
++		sb->s_encoding = NULL;
++	}
+ #endif
+ free_options:
+ #ifdef CONFIG_QUOTA
 -- 
 2.24.3 (Apple Git-128)
 
