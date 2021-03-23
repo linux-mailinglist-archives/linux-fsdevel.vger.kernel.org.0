@@ -2,87 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED0AD346975
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 21:01:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1F0E3469AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 21:17:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231667AbhCWUAl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 16:00:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36340 "EHLO
+        id S233072AbhCWUQg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 16:16:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233109AbhCWUAP (ORCPT
+        with ESMTP id S233110AbhCWUQf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 16:00:15 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01840C061574;
-        Tue, 23 Mar 2021 13:00:15 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: tonyk)
-        with ESMTPSA id 145E31F44E0F
-From:   =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
-To:     Hugh Dickins <hughd@google.com>,
+        Tue, 23 Mar 2021 16:16:35 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C3BBC061574;
+        Tue, 23 Mar 2021 13:16:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=KBGGAbtQx5bJl1bepUiUvamzxwg3INvrVstI/LqAhE0=; b=Chs+SKa1t/9u5XyOgH99T3K+t6
+        1zbggaXTvMSHzTawMPMHFjFQyk2e9bI9KWdrzX5I2oa8KDwjzlyMYegYpOSWarqI+0G4YCX5n26NW
+        Nz9nO9tPFfgDA1Yk/RWKzwHi4fM1dj0buGCcolBN1QPe8HWRCUDNVTjDw+LL3YWfXN4Be8qTgiyDe
+        oc6LCfzd6f5PswOxQjntIi0/DFFchAdrtxv6DFAEd59uaIFIJorPpk35wOfPvFjFK601+2P9ZWJ9/
+        tg9qR73R2DGUvoG6ekvC4T0tRjIiyHcfChXm6eyxPARNURyFnS1kUD04n52MO/VfPmG3Ql/ctRIKr
+        vo/TnCiA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lOnR4-00AVBR-4A; Tue, 23 Mar 2021 20:15:36 +0000
+Date:   Tue, 23 Mar 2021 20:15:30 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@collabora.com>
+Cc:     Hugh Dickins <hughd@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     krisman@collabora.com, smcv@collabora.com, kernel@collabora.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        krisman@collabora.com, smcv@collabora.com, kernel@collabora.com,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Daniel Rosenberg <drosen@google.com>,
-        =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
-Subject: [RFC PATCH 4/4] docs: tmpfs: Add casefold options
-Date:   Tue, 23 Mar 2021 16:59:41 -0300
-Message-Id: <20210323195941.69720-5-andrealmeid@collabora.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20210323195941.69720-1-andrealmeid@collabora.com>
+        linux-kernel@vger.kernel.org, Daniel Rosenberg <drosen@google.com>
+Subject: Re: [RFC PATCH 1/4] Revert "libfs: unexport generic_ci_d_compare()
+ and generic_ci_d_hash()"
+Message-ID: <20210323201530.GL1719932@casper.infradead.org>
 References: <20210323195941.69720-1-andrealmeid@collabora.com>
+ <20210323195941.69720-2-andrealmeid@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210323195941.69720-2-andrealmeid@collabora.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Document mounting options to enable casefold support in tmpfs.
+On Tue, Mar 23, 2021 at 04:59:38PM -0300, AndrÈ Almeida wrote:
+> This reverts commit 794c43f716845e2d48ce195ed5c4179a4e05ce5f.
+> 
+> For implementing casefolding support at tmpfs, it needs to set dentry
+> operations at superblock level, given that tmpfs has no support for
+> fscrypt and we don't need to set operations on a per-dentry basis.
+> Revert this commit so we can access those exported function from tmpfs
+> code.
 
-Signed-off-by: Andr√© Almeida <andrealmeid@collabora.com>
----
- Documentation/filesystems/tmpfs.rst | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+But tmpfs / shmem are Kconfig bools, not tristate.  They can't be built
+as modules, so there's no need to export the symbols.
 
-diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
-index 0408c245785e..84c87c309bd7 100644
---- a/Documentation/filesystems/tmpfs.rst
-+++ b/Documentation/filesystems/tmpfs.rst
-@@ -170,6 +170,32 @@ So 'mount -t tmpfs -o size=10G,nr_inodes=10k,mode=700 tmpfs /mytmpfs'
- will give you tmpfs instance on /mytmpfs which can allocate 10GB
- RAM/SWAP in 10240 inodes and it is only accessible by root.
- 
-+tmpfs has the following mounting options for case-insesitive lookups support:
-+
-+=========   ==============================================================
-+casefold    Enable casefold support at this mount point using the given
-+            argument as enconding. Currently only utf8 encondings are supported.
-+cf_strict   Enable strict casefolding at this mouting point (disabled by
-+            default). This means that invalid strings should be reject by the
-+            file system.
-+=========   ==============================================================
-+
-+Note that this option doesn't enable casefold by default, one needs to set
-+casefold flag per directory, setting the +F attribute in an empty directory. New
-+directories within a casefolded one will inherit the flag.
-+
-+Example::
-+
-+    $ mount -t tmpfs -o casefold=utf8-12.1.0,cf_strict tmpfs /mytmpfs
-+    $ cd /mytmpfs
-+    $ touch a; touch A
-+    $ ls
-+    A  a
-+    $ mkdir dir
-+    $ chattr +F dir
-+    $ touch dir/a; touch dir/A
-+    $ ls dir
-+    a
- 
- :Author:
-    Christoph Rohland <cr@sap.com>, 1.12.01
--- 
-2.31.0
+> +#ifdef CONFIG_UNICODE
+> +extern int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
+> +extern int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+> +				const char *str, const struct qstr *name);
+> +#endif
 
+There's no need for the ifdef (it only causes unnecessary rebuilds) and
+the 'extern' keyword is also unwelcome.
