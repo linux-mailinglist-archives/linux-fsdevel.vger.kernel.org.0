@@ -2,125 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D0DCA346427
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 16:59:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AE0134642C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 16:59:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232855AbhCWP66 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 11:58:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40048 "EHLO
+        id S233043AbhCWP7A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 11:59:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233007AbhCWP6p (ORCPT
+        with ESMTP id S232976AbhCWP6z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 11:58:45 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B747C061764
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 08:58:45 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id b9so21315757wrt.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 08:58:45 -0700 (PDT)
+        Tue, 23 Mar 2021 11:58:55 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B52DDC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 08:58:55 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id e8so18209846iok.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 08:58:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cyK9GwZbrXgU/Gi6qb7KmMrpgs6Gz19VbNc5ko69Bxg=;
-        b=QvHJQk94nhdpZIpLpS8pC7Tlh0fNSviZlXkMnUDJKnNPuSmdT6Q+5JXnCTk/6GI3x/
-         vgmZ6p64/5ZcKERKyFRdvkxyoLLKOl1ZRnvEUNfdOACvF02pdG+9o4e3lCAEN478L50/
-         YQ8o+/ZOBCMbihsgK+Kk2CHOV6Tzff9UI6A/vYu9iA23C2CdEBbuyhjXmMk9Q7vYLzD/
-         Yv3O/dqNSVLC3aVA4AYGW6Xg89krtqa3y0DAVsDPHVY81I5JxbHeizOlDIYe3CkUWPZx
-         kTHQaUiZifKwn4OiJW/QSzkWIIJwEh8BFeVvares8RwnCT+ZVc/KDbWpy32VLn2vrwM4
-         FAlQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NO3WLs2vlBKiTCA7DRRz2cdPr87od0vVxyebRQ/JakY=;
+        b=f3vd+CopGTvevG8pEPkv8DeH4ALqoBzv+RVf1kXcnba6/+sTCctXQaaEajrj65fhwt
+         YXE+hqZsMzbd7Yxmx5VTJjZTE06KKiIvUiQHe+w6iWx6OMzp5AvvHRYthPBm9WZ9HaQ3
+         eysHTBCuabELRxnBPUwc/voVKA+FVDO5TF2zBD8Vj8x+JdV8Aso8ZoAoRsA07BE2uxYh
+         zvqKXXFOa5DiqI8/G1tdpKKmpAVGz/8RHhBbnJ2sQW+05MzkqADVLsR3qGRmP2yBZzPz
+         DLHy4U+rDB/Ou+AD70UYuLc/4YAWm2UpYr2c59+dQ+8q7LRjYC5BwEMIjs6r/UWzZCM5
+         fL5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cyK9GwZbrXgU/Gi6qb7KmMrpgs6Gz19VbNc5ko69Bxg=;
-        b=MG9pmU83Y/fwq3i4tu4KN5jHsnfM9W69R4YL9lR1Y8GMrfHbXbDFZyYVQFJtNEZK+U
-         uytPGAqidgvyuxhshAksD/l5i6D9JhA0Sme0J0wiZs5q/aGEdvGdLRULxCm46qFqqPBn
-         E4QqFR+9htpUMP7qyDGxLkbrUmIWeyz6ppEyMRUA459+ME2y5e36A1dGMmwMOHXzpEAt
-         IdgmpEJ1HemNIwOLnx68kq7ewV4qIX/EXpa8YqSmoBYVXWTwxVRPW3XfkOb1mjQqywBn
-         RARetpbMa34CKxxGaBRbtlTTPEIQIDcX5GZ2J+sFUt9NMfeAquHIVPwLl2nK1hBuOar0
-         t8kQ==
-X-Gm-Message-State: AOAM5334RwfiOrYAG/CC3v6DJx+ffkyRbzPDswwp0xhLcfykeLu/+1Gv
-        hLUcDWmtfh+iA6/LlAWdJmfFOA==
-X-Google-Smtp-Source: ABdhPJz8cnWW2wVZ8muoCssomvubYn8mNfgOqi/4zhknz6k8122Olf0TUYv2Djj79RY0e51HmPKViA==
-X-Received: by 2002:adf:dc91:: with SMTP id r17mr4692370wrj.293.1616515124001;
-        Tue, 23 Mar 2021 08:58:44 -0700 (PDT)
-Received: from elver.google.com ([2a00:79e0:15:13:4cfd:1405:ab5d:85f8])
-        by smtp.gmail.com with ESMTPSA id t20sm3076962wmi.15.2021.03.23.08.58.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Mar 2021 08:58:43 -0700 (PDT)
-Date:   Tue, 23 Mar 2021 16:58:37 +0100
-From:   Marco Elver <elver@google.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     alexander.shishkin@linux.intel.com, acme@kernel.org,
-        mingo@redhat.com, jolsa@redhat.com, mark.rutland@arm.com,
-        namhyung@kernel.org, tglx@linutronix.de, glider@google.com,
-        viro@zeniv.linux.org.uk, arnd@arndb.de, christian@brauner.io,
-        dvyukov@google.com, jannh@google.com, axboe@kernel.dk,
-        mascasa@google.com, pcc@google.com, irogers@google.com,
-        kasan-dev@googlegroups.com, linux-arch@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RFC v2 8/8] selftests/perf: Add kselftest for
- remove_on_exec
-Message-ID: <YFoQLfsZXPn9zuT4@elver.google.com>
-References: <20210310104139.679618-1-elver@google.com>
- <20210310104139.679618-9-elver@google.com>
- <YFiamKX+xYH2HJ4E@elver.google.com>
- <YFjI5qU0z3Q7J/jF@hirez.programming.kicks-ass.net>
- <YFm6aakSRlF2nWtu@elver.google.com>
- <YFnDo7dczjDzLP68@hirez.programming.kicks-ass.net>
- <YFn/I3aKF+TOjGcl@hirez.programming.kicks-ass.net>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NO3WLs2vlBKiTCA7DRRz2cdPr87od0vVxyebRQ/JakY=;
+        b=fKrLO9KFWPQeGjI8SES8bjYvdOYQIpu6odIwofekE9OkjMTFyZ3z6ddLDuB/12U83O
+         drrP4JR7bzCHnoUk58Fp6rB/+bQH5SuveW+P3g8fQwbCRdWwyR+4xuwCQ/QtnIzaB857
+         MPLXGNL3DWtg3/kMV1fdcJ1JI/Cl4Et++z1RY2qdaItiG0lmM5uXmf0+gIfZEasOPxEk
+         N5V/tGmbu66dSau/avpn84ymUr3zNcpF13C7xRa1qcOwvTywguK21i6YxNppxxcCTvcZ
+         TBsL+7oFu3NdgnLK9ts6O3QmcoqTo/gZ30NQf5YM5onkgFfw27V8kYzCOldi+f32/NGR
+         2W3A==
+X-Gm-Message-State: AOAM533fTHBXPA7WRhmNwqXbVgm7zTWpO9OeInT77oot5WHtJcAH9mQL
+        B4Vy/5sFLh2pEtHEp7yCj1S9c+2Fn75g0A==
+X-Google-Smtp-Source: ABdhPJwfcaCYU4OYAne4TbFTL8+80cuww4d05IMpb+sAobc+HNYDfnEuWSXybld8Ezbi8ZjwEU4QvA==
+X-Received: by 2002:a05:6638:f11:: with SMTP id h17mr5233398jas.67.1616515135123;
+        Tue, 23 Mar 2021 08:58:55 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id n7sm9895823ile.12.2021.03.23.08.58.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Mar 2021 08:58:54 -0700 (PDT)
+Subject: Re: [PATCH] block: clear GD_NEED_PART_SCAN later in bdev_disk_changed
+To:     chris.chiu@canonical.com, viro@zeniv.linux.org.uk, hch@lst.de
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210323085219.24428-1-chris.chiu@canonical.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <0ec65a30-741d-9f22-e90b-1f72f68b4346@kernel.dk>
+Date:   Tue, 23 Mar 2021 09:58:54 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YFn/I3aKF+TOjGcl@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/2.0.5 (2021-01-21)
+In-Reply-To: <20210323085219.24428-1-chris.chiu@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 23, 2021 at 03:45PM +0100, Peter Zijlstra wrote:
-> On Tue, Mar 23, 2021 at 11:32:03AM +0100, Peter Zijlstra wrote:
-> > And at that point there's very little value in still using
-> > perf_event_exit_event()... let me see if there's something to be done
-> > about that.
+On 3/23/21 2:52 AM, chris.chiu@canonical.com wrote:
+> From: Chris Chiu <chris.chiu@canonical.com>
 > 
-> I ended up with something like the below. Which then simplifies
-> remove_on_exec() to:
+> The GD_NEED_PART_SCAN is set by bdev_check_media_change to initiate
+> a partition scan while removing a block device. It should be cleared
+> after blk_drop_paritions because blk_drop_paritions could return
+> -EBUSY and then the consequence __blkdev_get has no chance to do
+> delete_partition if GD_NEED_PART_SCAN already cleared.
 > 
-[...]
-> 
-> Very lightly tested with that {1..1000} thing.
-> 
-> ---
-> 
-> Subject: perf: Rework perf_event_exit_event()
-> From: Peter Zijlstra <peterz@infradead.org>
-> Date: Tue Mar 23 15:16:06 CET 2021
-> 
-> Make perf_event_exit_event() more robust, such that we can use it from
-> other contexts. Specifically the up and coming remove_on_exec.
-> 
-> For this to work we need to address a few issues. Remove_on_exec will
-> not destroy the entire context, so we cannot rely on TASK_TOMBSTONE to
-> disable event_function_call() and we thus have to use
-> perf_remove_from_context().
-> 
-> When using perf_remove_from_context(), there's two races to consider.
-> The first is against close(), where we can have concurrent tear-down
-> of the event. The second is against child_list iteration, which should
-> not find a half baked event.
-> 
-> To address this, teach perf_remove_from_context() to special case
-> !ctx->is_active and about DETACH_CHILD.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> It causes some problems on some card readers. Ex. Realtek card
+> reader 0bda:0328 and 0bda:0158. The device node of the partition
+> will not disappear after the memory card removed. Thus the user
+> applications can not update the device mapping correctly.
 
-Very nice, thanks! It seems to all hold up to testing as well.
+Applied, thanks.
 
-Unless you already have this on some branch somewhere, I'll prepend it
-to the series for now. I'll test some more and try to get v3 out
-tomorrow.
+-- 
+Jens Axboe
 
-Thanks,
--- Marco
