@@ -2,113 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B0534587E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 08:21:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7556434589D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 08:26:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229897AbhCWHVC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 03:21:02 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52290 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230133AbhCWHU7 (ORCPT
+        id S230158AbhCWHZv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 03:25:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41844 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230146AbhCWHZa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 03:20:59 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12N78pon163839;
-        Tue, 23 Mar 2021 07:20:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=+06lCpqdOfejaxVMqAmaOiuZmidiGCUNKfmOlMN9K0g=;
- b=Uubky1p5Wze59pYeTEnRAJ3kw9aF3wdUmLpdMGbC6VgDgekneuUsd1jS7ERkOT+yOSu7
- 99DrgZ8ecjIeyfB7cJXr1IZb7Mv1xk/pLuNGEHLfr87kMBlPrqIufyhBKGM6mRQzu3od
- pnRQ2SHAr9Hm5SAe0zyuIeijHF2/UDwo1avxdUuShTLprv5RrunD899VdhrvZezH3cyW
- kYNEqPI6WQFi6F5cUbI7ILUYvIBdBr6nuTEZzYXCIPWWRyZwgIVvQ92BrvKjVzdyrUIZ
- StgZiaox2kngGArg5gdQWuyxLMozlDWtLQMpNIwX72giLmFQmCrmkuKAqcsVSkreVFrl zg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 37d8fr5vcm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Mar 2021 07:20:06 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12N7EfYk014961;
-        Tue, 23 Mar 2021 07:20:05 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 37dtyx2nqa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Mar 2021 07:20:04 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12N7JvvK022969;
-        Tue, 23 Mar 2021 07:19:57 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 23 Mar 2021 00:19:56 -0700
-Date:   Tue, 23 Mar 2021 10:19:45 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-cifs@vger.kernel.org,
-        linux-cifsd-devel@lists.sourceforge.net, smfrench@gmail.com,
-        senozhatsky@chromium.org, hyc.lee@gmail.com,
-        viro@zeniv.linux.org.uk, hch@lst.de, hch@infradead.org,
-        ronniesahlberg@gmail.com, aurelien.aptel@gmail.com,
-        aaptel@suse.com, sandeen@sandeen.net, colin.king@canonical.com,
-        rdunlap@infradead.org,
-        "'Sergey Senozhatsky'" <sergey.senozhatsky@gmail.com>,
-        "'Steve French'" <stfrench@microsoft.com>
-Subject: Re: [PATCH 2/5] cifsd: add server-side procedures for SMB3
-Message-ID: <20210323071945.GJ1667@kadam>
-References: <20210322051344.1706-1-namjae.jeon@samsung.com>
- <CGME20210322052206epcas1p438f15851216f07540537c5547a0a2c02@epcas1p4.samsung.com>
- <20210322051344.1706-3-namjae.jeon@samsung.com>
- <20210322064712.GD1667@kadam>
- <009b01d71f71$9224f4e0$b66edea0$@samsung.com>
+        Tue, 23 Mar 2021 03:25:30 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E374C061763
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 00:25:30 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id b7so25423789ejv.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 00:25:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Xwa51kxw61uMIow80uqDkY+H/GARiTsVnf3Sas4+BxM=;
+        b=K/Y1f+FygYeHZ5bZBkEb+W+x4FQXWevwHu7nVAHSjHVtzShBuR+2g4FsS0kJzfB6Vy
+         VVwcas8GBISn7nl+PoNKFfW4EktWkZWdfe7V6IXLHkWp1zEZC6hF9n0f+y8hnWEnn678
+         bM2VOCVidgBxJJ7sHbiL6YqHT7ClwnTp1H6GfexhjZX5TAd7sYmJYCVyVM3dPzNdgjXp
+         +Qq1sveuTC1kxYnTl3bnJC7WJ+Z5RIIs1fHT6Tw3rQE53wfy5yPnAQ650qEzQBUAamIp
+         o/HlhyEARhMSvBBR5AeMuhWpQd/mMgr22U1IrIO9bKFBljAaC/j6nTrbC+LGXrHLs8hF
+         AVdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Xwa51kxw61uMIow80uqDkY+H/GARiTsVnf3Sas4+BxM=;
+        b=pLqAJQXg57D+fUQbWbCpLRIhkcHuC6DeTW8mjwmIbdmpcBTrVXIa3FYjbPGtwNa/wk
+         aFACEMr5jPUHS9DQzTdMs7ahredNSk3HklB7PS7KA2Zh4qtoAoX17Or8L9p7HQ9X0VNw
+         BXP4ev2jtf0nmSMWDuK5tzTpb0MzkJRm1etj3xJM+Rzvvmd9kDZDi+uYsixZdOwDb0iK
+         pR8QWd3JV2+FQIUzgWVoZ23c2n52a9enfAq99RxACD27zBLKMbZx4aT+NQeBFssckaTN
+         2W6rf4xfgHvALI4wpuXBWTv+10KwzeuKeo93l2U8VDSXABMTaFJ5IYor3iJ+byhfVX6v
+         IAbQ==
+X-Gm-Message-State: AOAM531pZme6fJoJ7SGsdz3gfLyXbfKsDs3+4b0u4F5MVL8LBoHONZyq
+        D9D/BmYqLiskmb6/t0VB/7B/67bsL6MZWW9sqV92
+X-Google-Smtp-Source: ABdhPJzJm68SUj19rBv+WCUqBy2FNifWaazEUCLQ3Uhyia48gmLbT4tJs0m9MQ2KYMXowDVwKahrwolbYciM+aEhnp8=
+X-Received: by 2002:a17:907:a042:: with SMTP id gz2mr3554509ejc.174.1616484329008;
+ Tue, 23 Mar 2021 00:25:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <009b01d71f71$9224f4e0$b66edea0$@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9931 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 phishscore=0
- mlxlogscore=999 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103230050
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9931 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 spamscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
- phishscore=0 bulkscore=0 adultscore=0 malwarescore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103230049
+References: <20210315053721.189-1-xieyongji@bytedance.com> <20210315053721.189-4-xieyongji@bytedance.com>
+ <38a2ae38-ebf7-3e3b-3439-d95a6f49b48b@redhat.com>
+In-Reply-To: <38a2ae38-ebf7-3e3b-3439-d95a6f49b48b@redhat.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Tue, 23 Mar 2021 15:25:18 +0800
+Message-ID: <CACycT3vg=+08YWLrVPHATwFvCjEzmKuTLdX3=stLQqrsm-+1Vg@mail.gmail.com>
+Subject: Re: Re: [PATCH v5 03/11] vhost-vdpa: protect concurrent access to
+ vhost device iotlb
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 23, 2021 at 08:17:47AM +0900, Namjae Jeon wrote:
-> > > +
-> > > +static int
-> > > +compare_oid(unsigned long *oid1, unsigned int oid1len,
-> > > +	    unsigned long *oid2, unsigned int oid2len) {
-> > > +	unsigned int i;
-> > > +
-> > > +	if (oid1len != oid2len)
-> > > +		return 0;
-> > > +
-> > > +	for (i = 0; i < oid1len; i++) {
-> > > +		if (oid1[i] != oid2[i])
-> > > +			return 0;
-> > > +	}
-> > > +	return 1;
-> > > +}
-> > 
-> > Call this oid_eq()?
-> Why not compare_oid()? This code is come from cifs.
-> I need clear reason to change both cifs/cifsd...
-> 
+On Tue, Mar 23, 2021 at 11:02 AM Jason Wang <jasowang@redhat.com> wrote:
+>
+>
+> =E5=9C=A8 2021/3/15 =E4=B8=8B=E5=8D=881:37, Xie Yongji =E5=86=99=E9=81=93=
+:
+> > Use vhost_dev->mutex to protect vhost device iotlb from
+> > concurrent access.
+> >
+> > Fixes: 4c8cf318("vhost: introduce vDPA-based backend")
+> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+>
+>
+> Acked-by: Jason Wang <jasowang@redhat.com>
+>
+> Please cc stable for next version.
+>
 
-Boolean functions should tell you what they are testing in the name.
-Without any context you can't know what if (compare_oid(one, two)) {
-means, but if (oid_equal(one, two)) { is readable.
+Sure.
 
-regards,
-dan carpenter
-
-
+Thanks,
+Yongji
