@@ -2,285 +2,469 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2421D345ECE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 14:00:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12F9E345F7E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 14:19:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231617AbhCWM74 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 08:59:56 -0400
-Received: from mail-db8eur05on2123.outbound.protection.outlook.com ([40.107.20.123]:2304
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231476AbhCWM7a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 08:59:30 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FwHsrB2IT3b7iu55CZUVFE8hPeFk55hg4zXlX+TXWffjCr/1RnoVxXlL3as4j9H3qV8ZYxukr1JBalPsFmrjlKQ9V0dNEEZ87O7UWY0nZL6Zj/y3rYdfaQLZ4Z/2i0R5tnpdo0uuOv2Fs4FhK0wIyWQlDkstE4BmVVrd/eTvE4Y5bi1tUeR3ce/RuZWiNJBCGmlYW8iQprn7fBJdeO1IzHwSW2zeCXpj6CaPRgEjCI+bCMihvQTp2ipjVqLx444P1YzOnY+Mi3cjsD19XmG/TCmixjahvGWDsmH+jj06PWh+WPMFz8DDTHhyX/GonEGNLakY8PaW2oC4aEu338gibA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8uTZCJBdMzr/PKsLaVRWLGZlNcMBGDRnutxP+WyVVIo=;
- b=L/oLmqXSNUZto6myYxz+/CaANGZKgpnDime2kNKWBw0z0NjKAeTncdGvxt44OqMY7I+Bvw7jzP/0pnUuW3sJY+MEFFQSNOTRFsz8EXWUJNJoqX5icTDS1/87FEvYToCRrwt2K2NVx8HspLUy9ARvOk3zgFmBQyZwSnHjz419C/BhHqRtSjlBXGni1VbjyjS/OSM8L8INtGw00iI3hLwXQCWMQy1KoIAf6oh/RSi2pnGku+kjIzEpK8xq66JZvK5PrDkeqbNgdHN9LZgDM2ZEXJw9toYr+Hd8BuuNvLZiUylZcae4rdoFfGYO5AElRqvnWxpUk2SzKh+jDIcMxSyUBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
- header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8uTZCJBdMzr/PKsLaVRWLGZlNcMBGDRnutxP+WyVVIo=;
- b=bZtLD69RNPIGcaPsx2tFgIRSPce1QLuEVavdN0LTN8pl8ISc3rEM5QKelXnzWxTdyumzcrTlMZxsBAqWsjX5tIHQ0R3wW4+Y4oigILdWre9R8E4dyvSF3/NnzljtizhqMCOWBJIFmIAgjkclcd26P9uJxgBOYFDHbs9YDqoAKUc=
-Authentication-Results: openvz.org; dkim=none (message not signed)
- header.d=none;openvz.org; dmarc=none action=none header.from=virtuozzo.com;
-Received: from VE1PR08MB4989.eurprd08.prod.outlook.com (2603:10a6:803:114::19)
- by VI1PR08MB5375.eurprd08.prod.outlook.com (2603:10a6:803:130::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.18; Tue, 23 Mar
- 2021 12:59:26 +0000
-Received: from VE1PR08MB4989.eurprd08.prod.outlook.com
- ([fe80::d1ec:aee1:885c:ad1a]) by VE1PR08MB4989.eurprd08.prod.outlook.com
- ([fe80::d1ec:aee1:885c:ad1a%5]) with mapi id 15.20.3955.027; Tue, 23 Mar 2021
- 12:59:26 +0000
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Eric W . Biederman" <ebiederm@xmission.com>
-Cc:     Andrei Vagin <avagin@gmail.org>,
-        Pavel Tikhomirov <snorcht@gmail.com>,
-        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-        linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, crml <criu@openvz.org>
-From:   Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-In-Reply-To: <20170510235834.GA7889@outlook.office365.com>
-Subject: Re: [CRIU] [PATCH] mnt: allow to add a mount into an existing group
-Message-ID: <aba1e14c-8af8-e171-dbf8-c9000ddccb70@virtuozzo.com>
-Date:   Tue, 23 Mar 2021 15:59:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
-Content-Type: multipart/mixed;
- boundary="------------34BE2693C3EC608F4771CA57"
-Content-Language: en-US
-X-Originating-IP: [81.200.17.122]
-X-ClientProxiedBy: AM3PR04CA0133.eurprd04.prod.outlook.com (2603:10a6:207::17)
- To VE1PR08MB4989.eurprd08.prod.outlook.com (2603:10a6:803:114::19)
+        id S231704AbhCWNSt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 09:18:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:57358 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231683AbhCWNRf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Mar 2021 09:17:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616505453;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nRkjTtb93YUNeVAd/BbXfvOHeWrSjEm57bE3N3KyVfI=;
+        b=bSy/ibn8PkCE2CT1ODyrxtK69kdy8r0H8P1hL6Sv2VESg6PopstIDnlyc7NglzsZQg17U7
+        FFXgixpV7k2JdB7LUh1bnSl/DjlPdxZ3Gd6JK1wbTTzChEztoeyyxZO6FrN8W6iVHtQgOp
+        ktl/l9m81nN5KnU8eOJPa1VVNnPzHOc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-456-bJPnASvjNIq86k_X6wklsg-1; Tue, 23 Mar 2021 09:17:31 -0400
+X-MC-Unique: bJPnASvjNIq86k_X6wklsg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C1F8764151;
+        Tue, 23 Mar 2021 13:17:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-58.rdu2.redhat.com [10.10.112.58])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BBF8A610AF;
+        Tue, 23 Mar 2021 13:17:21 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <1885296.1616410586@warthog.procyon.org.uk>
+References: <1885296.1616410586@warthog.procyon.org.uk> <20210321105309.GG3420@casper.infradead.org> <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk> <161539528910.286939.1252328699383291173.stgit@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 02/28] mm: Add an unlock function for PG_private_2/PG_fscache
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.1.192] (81.200.17.122) by AM3PR04CA0133.eurprd04.prod.outlook.com (2603:10a6:207::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.18 via Frontend Transport; Tue, 23 Mar 2021 12:59:25 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5e2d2d24-5d63-47c6-1561-08d8edfb7d01
-X-MS-TrafficTypeDiagnostic: VI1PR08MB5375:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <VI1PR08MB5375B4CD0CD610979891366CB7649@VI1PR08MB5375.eurprd08.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Uzo0V88lLT9YWcE9+w/943BnsupKApkUM00c6r2w4LyWUld7QbUGOQPCoCrdEHSkOyqudvC+99cseq5hc7KyMDNU98abYbCahSVa28sfQNqRfuyc9fz/D6JYyTnj2yDNIl4mwpKGO7RgdCnSyqVqzQUtffl73AbGO8lYR48cJA1UqfzXAosPX9FYSv7n+7gWdp2AVsaALLwutg41AYFEaAiOArp1gehyncBjxSNpeBQUDtEznFpqqNscOLJlhFy8Ea8IkkYXGnB/YXFvpRTYsjAVm4M2P5napfAe6pop5ZK4zrC/DJPvOPwynFCgTaGzyjFqeHs6/40YBhkyLQk/gRYgZgALwribDl/nSfpa500Ai2GKJl6ifOjR8Xy+zW6e8xBuS4VIRmhTAm3TjIr0Mlwq2aEoaq86D3d+CF6sOHEi6y7S2Px1GCI/xWPjTmUl+CiIDySIVyQPXdQCvRN0WEDJS074hv9blDBDeXPTUMDrlmhWDdFB4lSVL9bVRYEsj9U1JaZRS6oosT2gQmlXJct8Fuat5ZuXWGVk0CwUwFOhWeaxDGOYQFWLzzPtaRk8A/Jn0NaeEW4R0QmCXPTu452/ChHGKkspiwRH/UPQ8TaSsZYuwK0UpZbcC2n402qSoSHGFRKw8Zi2/cOBFR/AA3N0+Mdlw7wyntJhNQJGoLqv9j9DmRANYZMGlqU/jgV4gMW2powYyuGTeCyP4QE4eQEssnB61PSrWu+/lXWzay6y4cFX9EyWZTiVNvTYgJcUVgl9yBgCMhukDfAYUvaTnPOQ9+5Xf4VSrTx3tMB46gA=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VE1PR08MB4989.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(136003)(396003)(39840400004)(366004)(376002)(16576012)(31696002)(54906003)(86362001)(26005)(5660300002)(956004)(110136005)(2616005)(6486002)(16526019)(316002)(31686004)(235185007)(66476007)(66556008)(186003)(66616009)(66946007)(478600001)(36756003)(38100700001)(2906002)(8936002)(83380400001)(107886003)(52116002)(4326008)(33964004)(8676002)(966005)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?Z0Z6OGxwK3dYYVNCUkIvd2Y0UkZ6NSt6bFVWUlQySUlUUU5kbzlXOWdzbnF0?=
- =?utf-8?B?K2JUc0NWbkR5TGdmREltRkN4eDErSFRoa21nUHdxWERVRTNueDFXUm5tY2tM?=
- =?utf-8?B?NzB2MWxQT29nS1pybHdmY1BIcTJzZVg2M1M3VDkzajVBV05ycHJCRnZsVDh0?=
- =?utf-8?B?Z1lxbnlJRm05UEhUZExmR3Brd2xrQm1XUjhVSHBmWTdJaUs0UWxhRElLaWNu?=
- =?utf-8?B?Nm5YVVczMGhtQmUvR0JndjdBdGVQZ0owWWZBRTNuSmpEdlNodHVwdlQ3RGlY?=
- =?utf-8?B?MGtid0hscW5ValpDMEV0K1paZGxtNXZsV0pkTDFrbTNTc1hvVElTTTZYOERV?=
- =?utf-8?B?NktEMzd1ZGp0WHFaVDA4T2c3ay8rR2NVSFc2bTU1Rk1vajF5ek0yMXpSd2o3?=
- =?utf-8?B?MVU4azJEY0EwZlAzQXFTOVpQYm82WDVxN3pmVkxZOE5mTG9EbWNkQW1TSlFh?=
- =?utf-8?B?RFlCL3F5OGdENUJyeFlmR1lZSmlCM3JVRVg4NW5IOEZmbjh5RTA4VVpsaEZS?=
- =?utf-8?B?UWo5UlQ0TWNka2VVdXljdnRwOE9XTlB4d2pmU2hnZVI0bGswaU1VVFNCRUcv?=
- =?utf-8?B?c2IyZUl5ZFU0VFQ1U1FBUTBLWTJCSm4vYjNqcXhqRDV1TUdyUG5ZS2E2UHQz?=
- =?utf-8?B?eENGUkkwNCtONkdRU0RvR1RkOThEd3BUL2ZZU216c2NMTzBEM3gvUHR5R0Rj?=
- =?utf-8?B?dW45c3JUOWZEMkgxdXdHbkJhSEluMEJoR09va1NxWG43OEpIcXNUczNXalMv?=
- =?utf-8?B?ZjdlejVBQTRha2VObjhxeW5xSklja3dRSDdlRDlXOUZnZkpsWXphNU9Wa3dG?=
- =?utf-8?B?bjkrTmdjZ3B2MUJIdmt6VW1oajJreVdoN2JRVUxRRU9ZaWhEd1ZVckthWG5p?=
- =?utf-8?B?dXUrTEJ5NVRyaUdKaExqcXZoWUpHUmxwZGlldmRBNGVpeHVJdTRmNXB1VEtL?=
- =?utf-8?B?UXcvSVo3N0pRZGhwZ2JHQ0hRM2FjUTdKUFZiUkthYnV3VWJZS1UxSmovV0FS?=
- =?utf-8?B?Uit4dFJHaXZucVRKdGFGM2lNNFBLOGtLdEVLUmtGUUJLR20xUjBwRndicVA3?=
- =?utf-8?B?eGhMN2dCQ2JoRUpNOUtURjR3VHVzbytYd2orL000c3FDeFcydjhKWVNwNzNL?=
- =?utf-8?B?LzcyamVMVlo5NE5sVEhhMTJqVU1IRFA4TkU3WlZXUnVvWTVLL1poRkx4VytK?=
- =?utf-8?B?V1ArNVNJbTZlYnJKbjNJbFh2MGxqM3FoT1RCQzdOZUh5Tk9yRDh4eW5FQ2JL?=
- =?utf-8?B?ekVhNjdiR1prZTZLNktjOFJlUVRLa3RuaVVOZ1I4bzlKRWhRQTUvVG1NNzlX?=
- =?utf-8?B?WnpRWVh5UXQ0T3JUamhvbVNRZkhnMmZOV05OYlA0V2d2cU1LQ0ZMWlBSSmwy?=
- =?utf-8?B?UzZJbmJoc1lBSXVXbUFWbDMvcjVCWC9Ob0ZZVHQ4UEw3eUhydWlQcHMrR243?=
- =?utf-8?B?STlsay81ZzY1RkVFS24xeDVMVDVjUng4cDZuOElxbU5RZ1l4ZnRzdDhvTkRJ?=
- =?utf-8?B?SmNsemYyWFRPVUxiRlF2L2l0QzJ3WWt5ZmlaaWMxSHdjY2gxSHhKblNhK3dC?=
- =?utf-8?B?alNOL2Q4aEtaSWI2MDRqdzdYVWFsRkhuSzRndnMvazlRRkVsT0NqTFVvY2JI?=
- =?utf-8?B?WC8xZGU0eTlEV3JqYkQ4RkZKRjIxVkNXVTRKUTlob2syMVNIZjFmVjByR0RC?=
- =?utf-8?B?WW1rMmJZWjcvTlNCdEMvWGlhTC9ZL0FRWGdoY1FTV1ExcFlVMkMwQzEwVDAv?=
- =?utf-8?Q?vwP23Sq2Nz1d4OEQEt6nLcy+LnEvy2UU0JQi0bN?=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e2d2d24-5d63-47c6-1561-08d8edfb7d01
-X-MS-Exchange-CrossTenant-AuthSource: VE1PR08MB4989.eurprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2021 12:59:26.7389
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UX5Pow8KxCdC1A+ufW30UNLzMUdQnp6tScQFGPl6MmUcaj7d95jqlRVYHuGDeMZzS4V4PuBmsDMAMRfFugwtm9ysXXmNXZlGuDNuCcG15OA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB5375
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2499406.1616505440.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 23 Mar 2021 13:17:20 +0000
+Message-ID: <2499407.1616505440@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---------------34BE2693C3EC608F4771CA57
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+David Howells <dhowells@redhat.com> wrote:
 
-Hi! Can we restart the discussion on this topic?
+> Matthew Wilcox <willy@infradead.org> wrote:
+> =
 
-In CRIU we need to be able to dump/restore all mount trees of system 
-container (CT). CT can have anything inside - users which create their 
-custom mounts configuration, systemd with custom mount namespaces for 
-it's services, nested application containers inside the CT with their 
-own mount namespaces, and all mounts in CT mount trees can be grouped by 
-sharing groupes (e.g. same shared_id + master_id pair), and those groups 
-can depend one from another forming a tree structure of sharing groups.
+> > That also brings up that there is no set_page_private_2().  I think
+> > that's OK -- you only set PageFsCache() immediately after reading the
+> > page from the server.  But I feel this "unlock_page_private_2" is actu=
+ally
+> > "clear_page_private_2" -- ie it's equivalent to writeback, not to lock=
+.
+> =
 
-1) Imagine that we have this sharing group tree (in format (shared_id, 
-master_id), 0 means no sharing, we don't care about actual mounts for 
-now only master-slave dependencies between sharing groups):
+> How about I do the following:
+> =
 
-(1,0)
-   |- (2,1)
-   |- (3,1)
-        |- (4,3)
-             |- (0,4)
+>  (1) Add set_page_private_2() or mark_page_private_2() to set the PG_fsc=
+ache_2
+>      bit.  It could take a ref on the page here.
+> =
 
-The main problem of restoring mounts is the fact that sharing groups 
-currently can be only inherited, e.g. if you have one mount (first) with 
-shared_id = x, master_id = y, the only way to get another mount with 
-(x,y) is to create a bindmount from the first mount. Also to create 
-mount (y,z) from mount (x,y) one should also first inherit (x,y) via 
-bindmount and than change to (y,z).
+>  (2) Rename unlock_page_private_2() to end_page_private_2().  It could d=
+rop
+>      the ref on the page here, but that then means I can't use
+>      pagevec_release().
+> =
 
-This means that mentioned above tree puts restriction on the mounts 
-creation order, one need to have at least one mount for each of sharing 
-groups (1,0), (3,1) and (4,3) before creating the first mount of the 
-sharing group (0,4).
+>  (3) Add wait_on_page_private_2() an analogue of wait_on_page_writeback(=
+)
+>      rather than wait_on_page_locked().
+> =
 
-But what if we want to mount (restore) actual mounts in this mount tree 
-"reverse" order:
+>  (4) Provide fscache synonyms of the above.
 
-mntid	parent	mountpoint	(shared_id, master_id)
-101	0	/tmp		(0,4)
-102	101	/tmp		(4,3)
-103	102	/tmp		(3,1)
-104	103	/tmp		(1,0)
+Perhaps something like the attached changes (they'll need merging back int=
+o
+the other patches).
 
-Mount 104's sharing group should be created before mount 101, 102 and 
-103 sharing groups, but mount 104 should be created after those mounts. 
-One can actually prepare this setup (on mainstream kernel) by 
-pre-creating sharing groups elsewhere and then binding to /tmp in proper 
-order with careful unmounting of propagations (see test.sh attached):
+David
+---
+ include/linux/pagemap.h |   21 +++++++++++++++++-
+ include/linux/netfs.h   |   54 ++++++++++++++++++++++++++++++++++++------=
+------
+ fs/afs/write.c          |    5 ++--
+ fs/netfs/read_helper.c  |   17 +++++----------
+ mm/filemap.c            |   49 +++++++++++++++++++++++++++++++++++++++---=
+-
+ mm/page-writeback.c     |   25 ++++++++++++++++++++++
+ 6 files changed, 139 insertions(+), 32 deletions(-)
 
-[root@snorch propagation-tests]# bash ../test.sh
-------------
-960 1120 0:56 / /tmp/propagation-tests/tmp rw,relatime master:452 - 
-tmpfs propagation-tests-src rw,inode64
-958 960 0:56 / /tmp/propagation-tests/tmp/sub rw,relatime shared:452 
-master:451 - tmpfs propagation-tests-src rw,inode64
-961 958 0:56 / /tmp/propagation-tests/tmp/sub/sub rw,relatime shared:451 
-master:433 - tmpfs propagation-tests-src rw,inode64
-963 961 0:56 / /tmp/propagation-tests/tmp/sub/sub/sub rw,relatime 
-shared:433 - tmpfs propagation-tests-src rw,inode64
-------------
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index bf05e99ce588..5c14a9365aae 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -591,7 +591,6 @@ extern int __lock_page_async(struct page *page, struct=
+ wait_page_queue *wait);
+ extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
+ 				unsigned int flags);
+ extern void unlock_page(struct page *page);
+-void unlock_page_private_2(struct page *page);
+ =
 
-But this "pre-creating" from test.sh is not universal at all and only 
-works for this simple case. CRIU does not know anything about the 
-history of mount creation for system container, it also does not know 
-anything about any temporary mounts which were used and then removed. So 
-understanding the proper order is almost impossible like Andrew says.
+ /*
+  * Return true if the page was successfully locked
+@@ -684,11 +683,31 @@ static inline int wait_on_page_locked_killable(struc=
+t page *page)
+ =
 
-I've also prepared a presentation on Linux Plumbers last year about how 
-much problems propagation brings to mounts restore in CRIU, you can take 
-a look here https://www.linuxplumbersconf.org/event/7/contributions/640/
+ int put_and_wait_on_page_locked(struct page *page, int state);
+ void wait_on_page_writeback(struct page *page);
++int wait_on_page_writeback_killable(struct page *page);
+ extern void end_page_writeback(struct page *page);
+ void wait_for_stable_page(struct page *page);
+ =
 
-2) Propagation creates tons of mounts
-3) Mount reparenting
-4) "Mount trap"
-5) "Non-uniform" propagation
-6) “Cross-namespace” sharing groups
+ void page_endio(struct page *page, bool is_write, int err);
+ =
 
-Allowing to create mounts private first and create sharing groups later 
-and copy sharing groups later instead of inheriting them resolves all 
-the problems with propagation at once.
++/**
++ * set_page_private_2 - Set PG_private_2 on a page and take a ref
++ * @page: The page.
++ *
++ * Set the PG_private_2 flag on a page and take the reference needed for =
+the VM
++ * to handle its lifetime correctly.  This sets the flag and takes the
++ * reference unconditionally, so care must be taken not to set the flag a=
+gain
++ * if it's already set.
++ */
++static inline void set_page_private_2(struct page *page)
++{
++	get_page(page);
++	SetPagePrivate2(page);
++}
++
++void end_page_private_2(struct page *page);
++void wait_on_page_private_2(struct page *page);
++int wait_on_page_private_2_killable(struct page *page);
++
+ /*
+  * Add an arbitrary waiter to a page's wait queue
+  */
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 9d3fbed4e30a..2299e7662ff0 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -29,32 +29,60 @@
+ #define TestClearPageFsCache(page)	TestClearPagePrivate2((page))
+ =
 
-One can take a look on the implementation of sharing group restore in 
-CRIU if we have this (mnt: allow to add a mount into an existing group) 
-patch applied: 
-https://github.com/Snorch/criu/blob/bebbded98128ec787950fa8365a6c74ce6a3b2cb/criu/mount-v2.c#L898
+ /**
+- * unlock_page_fscache - Unlock a page that's locked with PG_fscache
+- * @page: The page
++ * set_page_fscache - Set PG_fscache on a page and take a ref
++ * @page: The page.
+  *
+- * Unlocks a page that's locked with PG_fscache and wakes up sleepers in
+- * wait_on_page_fscache().  This page bit is used by the netfs helpers wh=
+en a
+- * netfs page is being written to a local disk cache, thereby allowing wr=
+ites
+- * to the cache for the same page to be serialised.
++ * Set the PG_fscache (PG_private_2) flag on a page and take the referenc=
+e
++ * needed for the VM to handle its lifetime correctly.  This sets the fla=
+g and
++ * takes the reference unconditionally, so care must be taken not to set =
+the
++ * flag again if it's already set.
+  */
+-static inline void unlock_page_fscache(struct page *page)
++static inline void set_page_fscache(struct page *page)
+ {
+-	unlock_page_private_2(page);
++	set_page_private_2(page);
+ }
+ =
 
-Obviously this does not solve all the problems with mounts I know about 
-but it's a big step forward in properly supporting them in CRIU. We 
-already have this tested in Virtuozzo for almost a year and it works nice.
+ /**
+- * wait_on_page_fscache - Wait for PG_fscache to be cleared on a page
++ * end_page_fscache - Clear PG_fscache and release any waiters
+  * @page: The page
+  *
+- * Wait for the PG_fscache (PG_private_2) page bit to be removed from a p=
+age.
+- * This is, for example, used to handle a netfs page being written to a l=
+ocal
++ * Clear the PG_fscache (PG_private_2) bit on a page and wake up any slee=
+pers
++ * waiting for this.  The page ref held for PG_private_2 being set is rel=
+eased.
++ *
++ * This is, for example, used when a netfs page is being written to a loc=
+al
+  * disk cache, thereby allowing writes to the cache for the same page to =
+be
+  * serialised.
+  */
++static inline void end_page_fscache(struct page *page)
++{
++	end_page_private_2(page);
++}
++
++/**
++ * wait_on_page_fscache - Wait for PG_fscache to be cleared on a page
++ * @page: The page to wait on
++ *
++ * Wait for PG_fscache (aka PG_private_2) to be cleared on a page.
++ */
+ static inline void wait_on_page_fscache(struct page *page)
+ {
+-	if (PageFsCache(page))
+-		wait_on_page_bit(compound_head(page), PG_fscache);
++	wait_on_page_private_2(page);
++}
++
++/**
++ * wait_on_page_fscache_killable - Wait for PG_fscache to be cleared on a=
+ page
++ * @page: The page to wait on
++ *
++ * Wait for PG_fscache (aka PG_private_2) to be cleared on a page or unti=
+l a
++ * fatal signal is received by the calling task.
++ *
++ * Return:
++ * - 0 if successful.
++ * - -EINTR if a fatal signal was encountered.
++ */
++static inline int wait_on_page_fscache_killable(struct page *page)
++{
++	return wait_on_page_private_2_killable(page);
+ }
+ =
 
-Notes:
+ enum netfs_read_source {
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index b2e03de09c24..9f82e2bb463e 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -846,7 +846,7 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
+ 	 */
+ #ifdef CONFIG_AFS_FSCACHE
+ 	if (PageFsCache(page) &&
+-	    wait_on_page_bit_killable(page, PG_fscache) < 0)
++	    wait_on_page_fscache_killable(page) < 0)
+ 		return VM_FAULT_RETRY;
+ #endif
+ =
 
-- There is another idea, but I should say early that I don't like it, 
-because with it restoring mounts with criu would be still super complex. 
-We can add extra flag to mount/move_mount syscall to disable propagation 
-temporary so that CRIU can restore the mount tree without problems 2-5, 
-also we can now create cross-namespace bindmounts with 
-(copy_tree+move_mount) to solve 6. But this solution does not help much 
-with problem 1 - ordering and the need of temporary mounts. As you can 
-see in test.sh you would still need to think hard to solve different 
-similar configurations of reverse order between mounts and sharing groups.
+@@ -861,7 +861,8 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
+ 	 * details the portion of the page we need to write back and we might
+ 	 * need to redirty the page if there's a problem.
+ 	 */
+-	wait_on_page_writeback(page);
++	if (wait_on_page_writeback_killable(page) < 0)
++		return VM_FAULT_RETRY | VM_FAULT_LOCKED;
+ =
 
-- We can actually prohibit cross-namespace MS_SET_GROUP if you like. (If 
-both namespaces are non abstract.) We can use open_tree to create a copy 
-of the mount with the same sharing group and only then copy sharing from 
-the copy while being in proper mountns.
+ 	priv =3D afs_page_dirty(page, 0, thp_size(page));
+ 	priv =3D afs_page_dirty_mmapped(priv);
+diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+index 56e90e0388f2..2b23584499b2 100644
+--- a/fs/netfs/read_helper.c
++++ b/fs/netfs/read_helper.c
+@@ -239,13 +239,10 @@ static void netfs_rreq_unmark_after_write(struct net=
+fs_read_request *rreq,
+ 					  bool was_async)
+ {
+ 	struct netfs_read_subrequest *subreq;
+-	struct pagevec pvec;
+ 	struct page *page;
+ 	pgoff_t unlocked =3D 0;
+ 	bool have_unlocked =3D false;
+ =
 
-- We still need it:
+-	pagevec_init(&pvec);
+-
+ 	rcu_read_lock();
+ =
 
- > this code might be made unnecessary by allowing bind mounts between
- > mount namespaces.
+ 	list_for_each_entry(subreq, &rreq->subrequests, rreq_link) {
+@@ -258,9 +255,7 @@ static void netfs_rreq_unmark_after_write(struct netfs=
+_read_request *rreq,
+ 			if (have_unlocked && page->index <=3D unlocked)
+ 				continue;
+ 			unlocked =3D page->index;
+-			unlock_page_fscache(page);
+-			if (pagevec_add(&pvec, page) =3D=3D 0)
+-				pagevec_release(&pvec);
++			end_page_fscache(page);
+ 			have_unlocked =3D true;
+ 		}
+ 	}
+@@ -419,10 +414,8 @@ static void netfs_rreq_unlock(struct netfs_read_reque=
+st *rreq)
+ 				pg_failed =3D true;
+ 				break;
+ 			}
+-			if (test_bit(NETFS_SREQ_WRITE_TO_CACHE, &subreq->flags)) {
+-				get_page(page);
+-				SetPageFsCache(page);
+-			}
++			if (test_bit(NETFS_SREQ_WRITE_TO_CACHE, &subreq->flags))
++				set_page_fscache(page);
+ 			pg_failed |=3D subreq_failed;
+ 			if (pgend < iopos + subreq->len)
+ 				break;
+@@ -1167,7 +1160,9 @@ int netfs_write_begin(struct file *file, struct addr=
+ess_space *mapping,
+ 		goto error;
+ =
 
-No, because of problem 1. Guessing right order would be still to complex.
+ have_page:
+-	wait_on_page_fscache(page);
++	ret =3D wait_on_page_fscache_killable(page);
++	if (ret < 0)
++		goto error;
+ have_page_no_wait:
+ 	if (netfs_priv)
+ 		ops->cleanup(netfs_priv, mapping);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 925964b67583..788b71e8a72d 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1433,24 +1433,63 @@ void unlock_page(struct page *page)
+ EXPORT_SYMBOL(unlock_page);
+ =
 
-- This approach does not allow creation of any "bad" trees.
+ /**
+- * unlock_page_private_2 - Unlock a page that's locked with PG_private_2
++ * end_page_private_2 - Clear PG_private_2 and release any waiters
+  * @page: The page
+  *
+- * Unlocks a page that's locked with PG_private_2 and wakes up sleepers i=
+n
+- * wait_on_page_private_2().
++ * Clear the PG_private_2 bit on a page and wake up any sleepers waiting =
+for
++ * this.  The page ref held for PG_private_2 being set is released.
+  *
+  * This is, for example, used when a netfs page is being written to a loc=
+al
+  * disk cache, thereby allowing writes to the cache for the same page to =
+be
+  * serialised.
+  */
+-void unlock_page_private_2(struct page *page)
++void end_page_private_2(struct page *page)
+ {
+ 	page =3D compound_head(page);
+ 	VM_BUG_ON_PAGE(!PagePrivate2(page), page);
+ 	clear_bit_unlock(PG_private_2, &page->flags);
+ 	wake_up_page_bit(page, PG_private_2);
++	put_page(page);
++}
++EXPORT_SYMBOL(end_page_private_2);
++
++/**
++ * wait_on_page_private_2 - Wait for PG_private_2 to be cleared on a page
++ * @page: The page to wait on
++ *
++ * Wait for PG_private_2 (aka PG_fscache) to be cleared on a page.
++ */
++void wait_on_page_private_2(struct page *page)
++{
++	while (PagePrivate2(page))
++		wait_on_page_bit(page, PG_private_2);
++}
++EXPORT_SYMBOL(wait_on_page_private_2);
++
++/**
++ * wait_on_page_private_2_killable - Wait for PG_private_2 to be cleared =
+on a page
++ * @page: The page to wait on
++ *
++ * Wait for PG_private_2 (aka PG_fscache) to be cleared on a page or unti=
+l a
++ * fatal signal is received by the calling task.
++ *
++ * Return:
++ * - 0 if successful.
++ * - -EINTR if a fatal signal was encountered.
++ */
++int wait_on_page_private_2_killable(struct page *page)
++{
++	int ret =3D 0;
++
++	while (PagePrivate2(page)) {
++		ret =3D wait_on_page_bit_killable(page, PG_private_2);
++		if (ret < 0)
++			break;
++	}
++
++	return ret;
+ }
+-EXPORT_SYMBOL(unlock_page_private_2);
++EXPORT_SYMBOL(wait_on_page_private_2_killable);
+ =
 
- > Can they create loops in mount propagation trees that we can not 
-create today?
+ /**
+  * end_page_writeback - end writeback against a page
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index eb34d204d4ee..b8bad275f94b 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2833,6 +2833,31 @@ void wait_on_page_writeback(struct page *page)
+ }
+ EXPORT_SYMBOL_GPL(wait_on_page_writeback);
+ =
 
-There would be no loops in "sharing groups tree" for sure, as this new 
-MS_SET_GROUP only adds one _private_ mount to one group (without moving 
-between groups), the tree itself is unchanged after mount(MS_SET_GROUP).
++/**
++ * Wait for a page to complete writeback
++ * @page: The page to wait on
++ *
++ * Wait for the writeback status of a page to clear or a fatal signal to =
+occur.
++ *
++ * Return:
++ * - 0 on success.
++ * - -EINTR if a fatal signal was encountered.
++ */
++int wait_on_page_writeback_killable(struct page *page)
++{
++	int ret =3D 0;
++
++	while (PageWriteback(page)) {
++		trace_wait_on_page_writeback(page, page_mapping(page));
++		ret =3D wait_on_page_bit_killable(page, PG_writeback);
++		if (ret < 0)
++			break;
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL(wait_on_page_writeback_killable);
++
+ /**
+  * wait_for_stable_page() - wait for writeback to finish, if necessary.
+  * @page:	The page to wait on.
 
-- Probably mount syscall is not the right place for MS_SET_GROUP. I see 
-new syscall mount_setattr, first I thought reworking MS_SET_GROUP to be 
-a part of it, but interface of mount_setattr for copying is not 
-convenient. Probably we can add MS_SET_GROUP flag to move_mount which 
-has exactly what we want path to source and destination relative to fd:
-
-static inline int move_mount(int from_dfd, const char *from_pathname,
-                              int to_dfd, const char *to_pathname,
-                              unsigned int flags)
-
-As in mount-v2 now I had to use proc hacks to access mounts at dfd:
-
-https://github.com/Snorch/criu/blob/bebbded98128ec787950fa8365a6c74ce6a3b2cb/criu/mount-v2.c#L923
-
-- I hope that we still have a chance for MS_SET_GROUP, this way we can 
-port mount-v2 to mainstream CRIU.
-
--- 
-Best regards, Tikhomirov Pavel
-Software Developer, Virtuozzo.
-
---------------34BE2693C3EC608F4771CA57
-Content-Type: application/x-shellscript;
- name="test.sh"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="test.sh"
-
-bWtkaXIgdGVzdDEgdGVzdDIgdGVzdDMgdG1wCm1vdW50IC10IHRtcGZzIHByb3BhZ2F0aW9uLXRl
-c3RzLXNyYyB0ZXN0MQptb3VudCAtLW1ha2Utc2hhcmVkIHRlc3QxCm1vdW50IC0tYmluZCB0ZXN0
-MSB0ZXN0Mgptb3VudCAtLW1ha2Utc2xhdmUgdGVzdDIKbW91bnQgLS1tYWtlLXNoYXJlZCB0ZXN0
-Mgptb3VudCAtLWJpbmQgdGVzdDIgdGVzdDMKbW91bnQgLS1tYWtlLXNsYXZlIHRlc3QzCm1vdW50
-IC0tbWFrZS1zaGFyZWQgdGVzdDMKbW91bnQgLS1iaW5kIHRlc3QzIHRtcAptb3VudCAtLW1ha2Ut
-c2xhdmUgdG1wCm1rZGlyIHRtcC9zdWIKCm1vdW50IC0tYmluZCB0ZXN0MSB0ZXN0Mi9zdWIKbW91
-bnQgLS1tYWtlLXJwcml2YXRlIHRlc3QxCnVtb3VudCAtbCB0ZXN0MQptb3VudCAtLW1ha2UtcnBy
-aXZhdGUgdGVzdDMvc3ViCnVtb3VudCAtbCB0ZXN0My9zdWIKCm1vdW50IC0tcmJpbmQgdGVzdDIg
-dGVzdDMvc3ViCm1vdW50IC0tbWFrZS1ycHJpdmF0ZSB0ZXN0Mgp1bW91bnQgLWwgdGVzdDIKbW91
-bnQgLS1tYWtlLXJwcml2YXRlIHRtcC9zdWIKdW1vdW50IC1sIHRtcC9zdWIKCm1vdW50IC0tcmJp
-bmQgdGVzdDMgdG1wL3N1Ygptb3VudCAtLW1ha2UtcnByaXZhdGUgdGVzdDMKdW1vdW50IC1sIHRl
-c3QzCgplY2hvICItLS0tLS0tLS0tLS0iCmNhdCAvcHJvYy9zZWxmL21vdW50aW5mbyB8IGdyZXAg
-cHJvcGFnYXRpb24tdGVzdHMtc3JjCmVjaG8gIi0tLS0tLS0tLS0tLSIK
-
---------------34BE2693C3EC608F4771CA57--
