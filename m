@@ -2,157 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1892C3457EE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 07:45:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E8E4345807
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 07:53:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230027AbhCWGpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 02:45:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33100 "EHLO
+        id S229992AbhCWGxP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 02:53:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230011AbhCWGot (ORCPT
+        with ESMTP id S229920AbhCWGwq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 02:44:49 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EF8EC061574;
-        Mon, 22 Mar 2021 23:44:48 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id c17so17190023ilj.7;
-        Mon, 22 Mar 2021 23:44:48 -0700 (PDT)
+        Tue, 23 Mar 2021 02:52:46 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E58DC061574;
+        Mon, 22 Mar 2021 23:52:46 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id n11so10717609pgm.12;
+        Mon, 22 Mar 2021 23:52:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GGJpq5DIESOrz5VgAc4RwOm2dSS4UQKJ9VSaMqtykXU=;
-        b=Z3OeJ0Li/khXg6Ob9OXwdl6Wt1u4zgUffuh9i9aTqjmyDd0SqPz/0RVWy+STQ+dTyz
-         v4a4EoEwCvU3fKtNmMr1f7cFZm5oVAs476QQLsB5nIpO9v/drOWNwRshPLXHIiHKwTFx
-         EoedErQVTIvTeAk1tJMU1LOl+xiXJcEAq0jCPNS0fiTonO00Dq6LqK6WGHNgnJKzgowR
-         mFB25VJFhEjrf6ljrfqECskBqnf61VMNRBiSap7jaJpZ5jgtkfNFYVu6nH/0kOz87ya3
-         KuTYyoJhl087LrYs81Ew+z/p0xxJBrwYYad6g9mRGVCerRsPPZU7pU8AjZSvpSvs9bJp
-         dXmQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4BJC7S/OHZH6r8G1p6h+vG5igR/AXMYKIeleYipdgog=;
+        b=Jmf0RegJqP2Pv3A4c4aF0/gmSf6+6HrlFHRVTSSUrghVF9nCaINxndubGsMjua+9jx
+         nVNN+74OAbU6Zq5NwuVqMNylj12C8z07gbNj3qGIBk+zo3WSvBvN4+MsetAWQPqTLwAR
+         jyZB4TsbmqkKMmqev9FTBFQ7uJrk/4yMYTXzWJYN1upgrZ25BlYgNynx+CX+A4dn+W7o
+         9+Z/ihGuQcb9pa7X9u8LNQQkO3alkdBaFgOmvIUkZR5LO2aDbhbF20GFe7hFctDkqYLZ
+         qa5m1tzZIZNbszlfmjSqM5JI6BIYB4PWQTf+BXADLazyiEOO7K6G8igQhTLes1QbTXt3
+         CE+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GGJpq5DIESOrz5VgAc4RwOm2dSS4UQKJ9VSaMqtykXU=;
-        b=ixbLr4+EHQFWYGYv2rMbv2fzkFoArD5zIWt4Ds6JkGkR/W8Owv1dWyOiOicq41Z0Kd
-         D8kHrXmSg+KnXbCb6TnpTYQ294eAreRqioEBVwtQ5gRUMLiv5kJXDpiKrkRBpGBYGrSx
-         dKVpcTOmzIL7rXjHOIRFsM8bfJJfd3l90DsUiJfG+GHGqv/dRzcM6UqSQ+E+CT5A0F9S
-         Ef1QqEFOiXqRoCE/cntWLoDdWMF5Uo3mnv5Xp3gtfvr1vxKjd53mwzCSZMquY/paF5DD
-         UUmK0oxwozGoBomatVR1Kt6JeT56fka+ZUaKGhkgnhhgCxiDyCRbt0qgduJA5XfWq5Th
-         pqZA==
-X-Gm-Message-State: AOAM532O3eGpAX8e1DDMxQElnHGpBQhER7CcUmtKsA1+kcM02DwJPTtK
-        eFfLoP/uLdtEV1xkm9e29RbkRgeBPEJ5YxIrNCA=
-X-Google-Smtp-Source: ABdhPJzARFYumAsWnQw0xWxVnBZAoK1OQkhtwDoBuERQFxkGGaqTPD0VeoIrvBqIvxWcSuMufMbrLP87kFNHytErdk8=
-X-Received: by 2002:a92:da90:: with SMTP id u16mr3530849iln.275.1616481887821;
- Mon, 22 Mar 2021 23:44:47 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4BJC7S/OHZH6r8G1p6h+vG5igR/AXMYKIeleYipdgog=;
+        b=NaV+VsOu4amCwlUiE7oqpmU8lD1WKcQe8ubiP5jl/rUWivg++9Jj24A4gLVI4QNi1v
+         nzkupYThspvHra1sPeVggl5JZRLy4w3wPPLPgBKvUpv4mq+r2QreSqdCeb1qK8kNrYZ5
+         8AbCDVVaFgDKuc6XrdYFXG+ZM629f7HwAZ1HoiUm2aOb89v5d3RchXX3F7/KmfY+h1Qf
+         V9ug4pSRpOludO/SSkY5YWN9GdLRRqp4XX1IkGkz4JocfCOgZsCsIwY9ra6GHyNRwchs
+         abrD3HWN/TPdWUHqGHsp6QcZU+CwxSgVpFuNafMMbYieM8gKGIJ3nP6vQhH714S+BCM1
+         tCKw==
+X-Gm-Message-State: AOAM532J4owVdGSQ5BUV2rJhTr2S3TyZT9ISFypXOZQsROxPnW1wXA2L
+        NXCCtHghcWTz8Gk221Pz8/R8GH7IryAbzw==
+X-Google-Smtp-Source: ABdhPJz8QAYoWG6wxn4mYky+RduES+d7sjpyy67TiBiUF7887q1MlGQU4J6U81nMYI4WCALE38vWdQ==
+X-Received: by 2002:aa7:92cb:0:b029:1f1:542f:2b2b with SMTP id k11-20020aa792cb0000b02901f1542f2b2bmr3454382pfa.31.1616482365799;
+        Mon, 22 Mar 2021 23:52:45 -0700 (PDT)
+Received: from DESKTOP-4V60UBS.ccdomain.com ([103.220.76.197])
+        by smtp.gmail.com with ESMTPSA id o9sm16633654pfh.47.2021.03.22.23.52.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Mar 2021 23:52:45 -0700 (PDT)
+From:   Xiaofeng Cao <cxfcosmos@gmail.com>
+X-Google-Original-From: Xiaofeng Cao <caoxiaofeng@yulong.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xiaofeng Cao <caoxiaofeng@yulong.com>
+Subject: [PATCH v2] fs/dcache: fix typos and sentence disorder
+Date:   Tue, 23 Mar 2021 14:52:45 +0800
+Message-Id: <20210323065245.15083-1-caoxiaofeng@yulong.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210322171118.446536-1-amir73il@gmail.com> <20210322230352.GW63242@dread.disaster.area>
- <CAOQ4uxjFMPNgR-aCqZt3FD90XtBVFZncdgNc4RdOCbsxukkyYQ@mail.gmail.com> <20210323063509.GJ22100@magnolia>
-In-Reply-To: <20210323063509.GJ22100@magnolia>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 23 Mar 2021 08:44:36 +0200
-Message-ID: <CAOQ4uxjfXZdt++_yUepkEzW6kbDmXwBNBWS75KYX686hXqT2nQ@mail.gmail.com>
-Subject: Re: [PATCH] xfs: use a unique and persistent value for f_fsid
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 23, 2021 at 8:35 AM Darrick J. Wong <djwong@kernel.org> wrote:
->
-> On Tue, Mar 23, 2021 at 06:50:44AM +0200, Amir Goldstein wrote:
-> > On Tue, Mar 23, 2021 at 1:03 AM Dave Chinner <david@fromorbit.com> wrote:
-> > >
-> > > On Mon, Mar 22, 2021 at 07:11:18PM +0200, Amir Goldstein wrote:
-> > > > Some filesystems on persistent storage backend use a digest of the
-> > > > filesystem's persistent uuid as the value for f_fsid returned by
-> > > > statfs(2).
-> > > >
-> > > > xfs, as many other filesystem provide the non-persistent block device
-> > > > number as the value of f_fsid.
-> > > >
-> > > > Since kernel v5.1, fanotify_init(2) supports the flag FAN_REPORT_FID
-> > > > for identifying objects using file_handle and f_fsid in events.
-> > >
-> > > The filesystem id is encoded into the VFS filehandle - it does not
-> > > need some special external identifier to identify the filesystem it
-> > > belongs to....
-> > >
-> >
-> > Let's take it from the start.
-> > There is no requirement for fanotify to get a persistent fs id, we just need
-> > a unique fs id that is known to userspace, so the statfs API is good enough
-> > for our needs.
-> >
-> > See quote from fanotify.7:
-> >
-> > " The fields of the fanotify_event_info_fid structure are as follows:
-> > ...
-> >        fsid   This  is  a  unique identifier of the filesystem
-> > containing the object associated with the event.  It is a structure of
-> > type __kernel_fsid_t and contains the same value as f_fsid when
-> >               calling statfs(2).
-> >
-> >        file_handle
-> >               This is a variable length structure of type struct
-> > file_handle.  It is an opaque handle that corresponds to a specified
-> > object on a filesystem as returned by name_to_handle_at(2).  It
-> >               can  be  used  to uniquely identify a file on a
-> > filesystem and can be passed as an argument to open_by_handle_at(2).
->
-> Hmmmm.... so I guess you'd /like/ a file handle that will survive across
-> unmount/mount cycles, and possibly even a reboot?
->
-> I looked at the first commit, and I guess you use name_to_handle_at,
-> which returns a mount_id that is .... that weird number in the leftmost
-> column of /proc/mountinfo, which increments monotonically for each mount
-> and definitely doesn't survive a remount cycle, let alone a reboot?
->
-> Hence wanting to use something less volatile than mnt_id_ida...?
->
-> My natural inclination is "just use whatever NFS does", but ... then I
-> saw fh_compose and realized that the fsid part of an NFS handle depends
-> on the export options and probably isn't all that easy for someone who
-> isn't an nfs client to extract.
->
-> Was that how you arrived at using the statfs fsid field?
+change 'sould' to 'should'
+change 'colocated' to 'co-located'
+change 'talke' to 'take'
+reorganize sentence
 
-Yes. Exactly.
+Signed-off-by: Xiaofeng Cao <caoxiaofeng@yulong.com>
+---
+v2:change 'colocated' to 'co-located' instead of 'collocated'
+ fs/dcache.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
->
-> ...except XFS doesn't guarantee that fsid is particularly unique or
-> stable, since a reboot can enumerate blockdevs in a different order and
-> hence the dev_t will change.  UUIDs also aren't a great idea because you
-> can snapshot an fs and mount it with nouuid, and now a "unique" file
-> handle can map ambiguously to two different files.
->
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 7d24ff7eb206..c23834334314 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -741,7 +741,7 @@ static inline bool fast_dput(struct dentry *dentry)
+ 	unsigned int d_flags;
+ 
+ 	/*
+-	 * If we have a d_op->d_delete() operation, we sould not
++	 * If we have a d_op->d_delete() operation, we should not
+ 	 * let the dentry count go to zero, so use "put_or_lock".
+ 	 */
+ 	if (unlikely(dentry->d_flags & DCACHE_OP_DELETE))
+@@ -1053,7 +1053,7 @@ struct dentry *d_find_alias_rcu(struct inode *inode)
+ 	struct dentry *de = NULL;
+ 
+ 	spin_lock(&inode->i_lock);
+-	// ->i_dentry and ->i_rcu are colocated, but the latter won't be
++	// ->i_dentry and ->i_rcu are co-located, but the latter won't be
+ 	// used without having I_FREEING set, which means no aliases left
+ 	if (likely(!(inode->i_state & I_FREEING) && !hlist_empty(l))) {
+ 		if (S_ISDIR(inode->i_mode)) {
+@@ -1297,7 +1297,7 @@ void shrink_dcache_sb(struct super_block *sb)
+ EXPORT_SYMBOL(shrink_dcache_sb);
+ 
+ /**
+- * enum d_walk_ret - action to talke during tree walk
++ * enum d_walk_ret - action to take during tree walk
+  * @D_WALK_CONTINUE:	contrinue walk
+  * @D_WALK_QUIT:	quit walk
+  * @D_WALK_NORETRY:	quit when retry is needed
+@@ -2156,8 +2156,8 @@ EXPORT_SYMBOL(d_obtain_alias);
+  *
+  * On successful return, the reference to the inode has been transferred
+  * to the dentry.  In case of an error the reference on the inode is
+- * released.  A %NULL or IS_ERR inode may be passed in and will be the
+- * error will be propagate to the return value, with a %NULL @inode
++ * released.  A %NULL or IS_ERR inode may be passed in and the error will
++ * be propagated to the return value, with a %NULL @inode
+  * replaced by ERR_PTR(-ESTALE).
+  */
+ struct dentry *d_obtain_root(struct inode *inode)
+-- 
+2.25.1
 
-As I explained in my reply to Dave, that's not a big issue.
-If program want to listen on events from multiple filesystems,
-the program will sample f_fsid of both filesystems before setting up the
-filesystem watches. If there is a collision, there are other ways to handle
-this case (i.e. run two separate listener programs).
-
-Also, as I wrote to Dave, I can easily handle the special case of "-o nouuid"
-by leaving the bdev number for f_fsid in that case.
-
-> Urgh, I'm gonna have to think about this one, all the options suck.
-> fanotify might be smart enough to handle ambiguous file handles but now
-
-Actually, fanotify is copletely dumb about this, it's the user of fanotify that
-needs to be able to do something useful with this information.
-
-There is a demo I wrote based on inotifywatch that demonstrates that [1].
-
-Thanks,
-Amir.
-
-[1] https://github.com/amir73il/inotify-tools/commits/fanotify_name_fid
