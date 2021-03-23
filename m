@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 544F1346CA2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 23:24:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A902346CA5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 23:24:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234158AbhCWWXs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 18:23:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:35100 "EHLO
+        id S233936AbhCWWXu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 18:23:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:56856 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234189AbhCWWVW (ORCPT
+        by vger.kernel.org with ESMTP id S234211AbhCWWVc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 18:21:22 -0400
+        Tue, 23 Mar 2021 18:21:32 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616538082;
+        s=mimecast20190719; t=1616538091;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=/lw7n8EZhTFf6vsDErmz10uAJ+CsvBYt+tq4D9h708k=;
-        b=GOiVaGvyHwQwmK8jPI9yGH+Ugnl+8LV8xoOkeNyuehnHxz6C2xHYLQlu/HmpSDVFmVm5os
-        HDEB6WawW5zcMMWu91IDqbm+uJIz3lKtFWJ47VwFqra31/7xULepcJfd/aCTIa+bfiwDEr
-        ZN26M6GdspKRb6iWzO3byxJ+Vb0Kf8w=
+        bh=aqoxomW0GsbWmKCuVPnEyYKooq4Cl5EBIh9/WTl53Hc=;
+        b=ho2jfEzIbv+QykDHrHDyTnOK6XhQoxjff3nt6MOO6snVjAArdQM2wBJJIsG0wx8NNlHLKT
+        oIedDPjNcfS2l0xS9KvN8A0yN6w5rtK87aGRdqWvnmivdYWMgTzaZ6ttSgYTOLgH55tSb0
+        y8zzczTYgmezZRumFATKGfGtnbFZ7U8=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-182-gHzXuPwqMWW-9sc4Kk6-zA-1; Tue, 23 Mar 2021 18:21:14 -0400
-X-MC-Unique: gHzXuPwqMWW-9sc4Kk6-zA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-578-Pnh8L5rwPty7awTBL0fEKA-1; Tue, 23 Mar 2021 18:21:27 -0400
+X-MC-Unique: Pnh8L5rwPty7awTBL0fEKA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AF88187A826;
-        Tue, 23 Mar 2021 22:21:12 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AE30C107ACCD;
+        Tue, 23 Mar 2021 22:21:24 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-112-58.rdu2.redhat.com [10.10.112.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A3D4010023B5;
-        Tue, 23 Mar 2021 22:21:07 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AD457196E3;
+        Tue, 23 Mar 2021 22:21:18 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v5 18/28] afs: Move key to afs_read struct
+Subject: [PATCH v5 19/28] afs: Don't truncate iter during data fetch
 From:   David Howells <dhowells@redhat.com>
 To:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
@@ -54,230 +54,254 @@ Cc:     linux-afs@lists.infradead.org, linux-cachefs@redhat.com,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 23 Mar 2021 22:21:06 +0000
-Message-ID: <161653806683.2770958.11300984379283401542.stgit@warthog.procyon.org.uk>
+Date:   Tue, 23 Mar 2021 22:21:17 +0000
+Message-ID: <161653807790.2770958.14034599989374173734.stgit@warthog.procyon.org.uk>
 In-Reply-To: <161653784755.2770958.11820491619308713741.stgit@warthog.procyon.org.uk>
 References: <161653784755.2770958.11820491619308713741.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Stash the key used to authenticate read operations in the afs_read struct.
-This will be necessary to reissue the operation against the server if a
-read from the cache fails in upcoming cache changes.
+Don't truncate the iterator to correspond to the actual data size when
+fetching the data from the server - rather, pass the length we want to read
+to rxrpc.
+
+This will allow the clear-after-read code in future to simply clear the
+remaining iterator capacity rather than having to reinitialise the
+iterator.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: linux-afs@lists.infradead.org
 cc: linux-cachefs@redhat.com
 cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/158861248336.340223.1851189950710196001.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/159465823899.1377938.11925978022348532049.stgit@warthog.procyon.org.uk/
-Link: https://lore.kernel.org/r/160588529557.3465195.7303323479305254243.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/161118147693.1232039.13780672951838643842.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/161161043340.2537118.511899217704140722.stgit@warthog.procyon.org.uk/ # v2
-Link: https://lore.kernel.org/r/161340406678.1303470.12676824086429446370.stgit@warthog.procyon.org.uk/ # v3
-Link: https://lore.kernel.org/r/161539550819.286939.1268332875889175195.stgit@warthog.procyon.org.uk/ # v4
+Link: https://lore.kernel.org/r/158861249201.340223.13035445866976590375.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/159465825061.1377938.14403904452300909320.stgit@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/160588531418.3465195.10712005940763063144.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/161118148567.1232039.13380313332292947956.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/161161044610.2537118.17908520793806837792.stgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/161340407907.1303470.6501394859511712746.stgit@warthog.procyon.org.uk/ # v3
+Link: https://lore.kernel.org/r/161539551721.286939.14655713136572200716.stgit@warthog.procyon.org.uk/ # v4
 ---
 
- fs/afs/dir.c      |    3 ++-
- fs/afs/file.c     |   16 +++++++++-------
- fs/afs/internal.h |    3 ++-
- fs/afs/write.c    |   12 ++++++------
- 4 files changed, 19 insertions(+), 15 deletions(-)
+ fs/afs/fsclient.c      |    6 ++++--
+ fs/afs/internal.h      |    6 ++++++
+ fs/afs/rxrpc.c         |   13 +++++++++----
+ fs/afs/yfsclient.c     |    6 ++++--
+ include/net/af_rxrpc.h |    2 +-
+ net/rxrpc/recvmsg.c    |    9 +++++----
+ 6 files changed, 29 insertions(+), 13 deletions(-)
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 714fcca9af99..30c769efee26 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -242,6 +242,7 @@ static struct afs_read *afs_read_dir(struct afs_vnode *dvnode, struct key *key)
- 		return ERR_PTR(-ENOMEM);
+diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
+index 1d95ed9dd86e..4a57c6c6f12b 100644
+--- a/fs/afs/fsclient.c
++++ b/fs/afs/fsclient.c
+@@ -305,8 +305,9 @@ static int afs_deliver_fs_fetch_data(struct afs_call *call)
+ 	unsigned int size;
+ 	int ret;
  
- 	refcount_set(&req->usage, 1);
-+	req->key = key_get(key);
- 	req->nr_pages = nr_pages;
- 	req->actual_len = i_size; /* May change */
- 	req->len = nr_pages * PAGE_SIZE; /* We can ask for more than there is */
-@@ -306,7 +307,7 @@ static struct afs_read *afs_read_dir(struct afs_vnode *dvnode, struct key *key)
+-	_enter("{%u,%zu/%llu}",
+-	       call->unmarshall, iov_iter_count(call->iter), req->actual_len);
++	_enter("{%u,%zu,%zu/%llu}",
++	       call->unmarshall, call->iov_len, iov_iter_count(call->iter),
++	       req->actual_len);
  
- 	if (!test_bit(AFS_VNODE_DIR_VALID, &dvnode->flags)) {
- 		trace_afs_reload_dir(dvnode);
--		ret = afs_fetch_data(dvnode, key, req);
-+		ret = afs_fetch_data(dvnode, req);
- 		if (ret < 0)
- 			goto error_unlock;
- 
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index 21868bfc3a44..d23192b3b933 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -199,6 +199,7 @@ void afs_put_read(struct afs_read *req)
- 			if (req->pages != req->array)
- 				kfree(req->pages);
- 		}
-+		key_put(req->key);
- 		kfree(req);
- 	}
- }
-@@ -229,7 +230,7 @@ static const struct afs_operation_ops afs_fetch_data_operation = {
- /*
-  * Fetch file data from the volume.
-  */
--int afs_fetch_data(struct afs_vnode *vnode, struct key *key, struct afs_read *req)
-+int afs_fetch_data(struct afs_vnode *vnode, struct afs_read *req)
- {
- 	struct afs_operation *op;
- 
-@@ -238,9 +239,9 @@ int afs_fetch_data(struct afs_vnode *vnode, struct key *key, struct afs_read *re
- 	       vnode->fid.vid,
- 	       vnode->fid.vnode,
- 	       vnode->fid.unique,
--	       key_serial(key));
-+	       key_serial(req->key));
- 
--	op = afs_alloc_operation(key, vnode->volume);
-+	op = afs_alloc_operation(req->key, vnode->volume);
- 	if (IS_ERR(op))
- 		return PTR_ERR(op);
- 
-@@ -279,6 +280,7 @@ int afs_page_filler(void *data, struct page *page)
- 	 * unmarshalling code will clear the unfilled space.
- 	 */
- 	refcount_set(&req->usage, 1);
-+	req->key = key_get(key);
- 	req->pos = (loff_t)page->index << PAGE_SHIFT;
- 	req->len = PAGE_SIZE;
- 	req->nr_pages = 1;
-@@ -288,7 +290,7 @@ int afs_page_filler(void *data, struct page *page)
- 
- 	/* read the contents of the file from the server into the
- 	 * page */
--	ret = afs_fetch_data(vnode, key, req);
-+	ret = afs_fetch_data(vnode, req);
- 	afs_put_read(req);
- 
- 	if (ret < 0) {
-@@ -373,7 +375,6 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
- 	struct afs_read *req;
- 	struct list_head *p;
- 	struct page *first, *page;
--	struct key *key = afs_file_key(file);
- 	pgoff_t index;
- 	int ret, n, i;
- 
-@@ -397,6 +398,7 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
- 
- 	refcount_set(&req->usage, 1);
- 	req->vnode = vnode;
-+	req->key = key_get(afs_file_key(file));
- 	req->page_done = afs_readpages_page_done;
- 	req->pos = first->index;
- 	req->pos <<= PAGE_SHIFT;
-@@ -426,11 +428,11 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
- 	} while (req->nr_pages < n);
- 
- 	if (req->nr_pages == 0) {
--		kfree(req);
-+		afs_put_read(req);
- 		return 0;
- 	}
- 
--	ret = afs_fetch_data(vnode, key, req);
-+	ret = afs_fetch_data(vnode, req);
- 	if (ret < 0)
- 		goto error;
- 
+ 	switch (call->unmarshall) {
+ 	case 0:
+@@ -343,6 +344,7 @@ static int afs_deliver_fs_fetch_data(struct afs_call *call)
+ 			size = PAGE_SIZE - req->offset;
+ 		else
+ 			size = req->remain;
++		call->iov_len = size;
+ 		call->bvec[0].bv_len = size;
+ 		call->bvec[0].bv_offset = req->offset;
+ 		call->bvec[0].bv_page = req->pages[req->index];
 diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 180eae8134da..921e7d3b2cfa 100644
+index 921e7d3b2cfa..4725cfc4aaef 100644
 --- a/fs/afs/internal.h
 +++ b/fs/afs/internal.h
-@@ -204,6 +204,7 @@ struct afs_read {
- 	loff_t			actual_len;	/* How much we're actually getting */
- 	loff_t			remain;		/* Amount remaining */
- 	loff_t			file_size;	/* File size returned by server */
-+	struct key		*key;		/* The key to use to reissue the read */
- 	afs_dataversion_t	data_version;	/* Version number returned by server */
- 	refcount_t		usage;
- 	unsigned int		index;		/* Which page we're reading into */
-@@ -1045,7 +1046,7 @@ extern int afs_cache_wb_key(struct afs_vnode *, struct afs_file *);
- extern void afs_put_wb_key(struct afs_wb_key *);
- extern int afs_open(struct inode *, struct file *);
- extern int afs_release(struct inode *, struct file *);
--extern int afs_fetch_data(struct afs_vnode *, struct key *, struct afs_read *);
-+extern int afs_fetch_data(struct afs_vnode *, struct afs_read *);
- extern int afs_page_filler(void *, struct page *);
- extern void afs_put_read(struct afs_read *);
+@@ -104,6 +104,7 @@ struct afs_call {
+ 	struct afs_server	*server;	/* The fileserver record if fs op (pins ref) */
+ 	struct afs_vlserver	*vlserver;	/* The vlserver record if vl op */
+ 	void			*request;	/* request data (first part) */
++	size_t			iov_len;	/* Size of *iter to be used */
+ 	struct iov_iter		def_iter;	/* Default buffer/data iterator */
+ 	struct iov_iter		*iter;		/* Iterator currently in use */
+ 	union {	/* Convenience for ->def_iter */
+@@ -1271,6 +1272,7 @@ static inline void afs_make_op_call(struct afs_operation *op, struct afs_call *c
  
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 9d0cef35ecba..7eba0d3201ba 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -25,9 +25,10 @@ int afs_set_page_dirty(struct page *page)
- /*
-  * partly or wholly fill a page that's under preparation for writing
+ static inline void afs_extract_begin(struct afs_call *call, void *buf, size_t size)
+ {
++	call->iov_len = size;
+ 	call->kvec[0].iov_base = buf;
+ 	call->kvec[0].iov_len = size;
+ 	iov_iter_kvec(&call->def_iter, READ, call->kvec, 1, size);
+@@ -1278,21 +1280,25 @@ static inline void afs_extract_begin(struct afs_call *call, void *buf, size_t si
+ 
+ static inline void afs_extract_to_tmp(struct afs_call *call)
+ {
++	call->iov_len = sizeof(call->tmp);
+ 	afs_extract_begin(call, &call->tmp, sizeof(call->tmp));
+ }
+ 
+ static inline void afs_extract_to_tmp64(struct afs_call *call)
+ {
++	call->iov_len = sizeof(call->tmp64);
+ 	afs_extract_begin(call, &call->tmp64, sizeof(call->tmp64));
+ }
+ 
+ static inline void afs_extract_discard(struct afs_call *call, size_t size)
+ {
++	call->iov_len = size;
+ 	iov_iter_discard(&call->def_iter, READ, size);
+ }
+ 
+ static inline void afs_extract_to_buf(struct afs_call *call, size_t size)
+ {
++	call->iov_len = size;
+ 	afs_extract_begin(call, call->buffer, size);
+ }
+ 
+diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
+index 8be709cb8542..0ec38b758f29 100644
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -363,6 +363,7 @@ void afs_make_call(struct afs_addr_cursor *ac, struct afs_call *call, gfp_t gfp)
+ 	struct rxrpc_call *rxcall;
+ 	struct msghdr msg;
+ 	struct kvec iov[1];
++	size_t len;
+ 	s64 tx_total_len;
+ 	int ret;
+ 
+@@ -466,9 +467,10 @@ void afs_make_call(struct afs_addr_cursor *ac, struct afs_call *call, gfp_t gfp)
+ 		rxrpc_kernel_abort_call(call->net->socket, rxcall,
+ 					RX_USER_ABORT, ret, "KSD");
+ 	} else {
++		len = 0;
+ 		iov_iter_kvec(&msg.msg_iter, READ, NULL, 0, 0);
+ 		rxrpc_kernel_recv_data(call->net->socket, rxcall,
+-				       &msg.msg_iter, false,
++				       &msg.msg_iter, &len, false,
+ 				       &call->abort_code, &call->service_id);
+ 		ac->abort_code = call->abort_code;
+ 		ac->responded = true;
+@@ -504,6 +506,7 @@ void afs_make_call(struct afs_addr_cursor *ac, struct afs_call *call, gfp_t gfp)
+ static void afs_deliver_to_call(struct afs_call *call)
+ {
+ 	enum afs_call_state state;
++	size_t len;
+ 	u32 abort_code, remote_abort = 0;
+ 	int ret;
+ 
+@@ -516,10 +519,11 @@ static void afs_deliver_to_call(struct afs_call *call)
+ 	       state == AFS_CALL_SV_AWAIT_ACK
+ 	       ) {
+ 		if (state == AFS_CALL_SV_AWAIT_ACK) {
++			len = 0;
+ 			iov_iter_kvec(&call->def_iter, READ, NULL, 0, 0);
+ 			ret = rxrpc_kernel_recv_data(call->net->socket,
+ 						     call->rxcall, &call->def_iter,
+-						     false, &remote_abort,
++						     &len, false, &remote_abort,
+ 						     &call->service_id);
+ 			trace_afs_receive_data(call, &call->def_iter, false, ret);
+ 
+@@ -929,10 +933,11 @@ int afs_extract_data(struct afs_call *call, bool want_more)
+ 	u32 remote_abort = 0;
+ 	int ret;
+ 
+-	_enter("{%s,%zu},%d", call->type->name, iov_iter_count(iter), want_more);
++	_enter("{%s,%zu,%zu},%d",
++	       call->type->name, call->iov_len, iov_iter_count(iter), want_more);
+ 
+ 	ret = rxrpc_kernel_recv_data(net->socket, call->rxcall, iter,
+-				     want_more, &remote_abort,
++				     &call->iov_len, want_more, &remote_abort,
+ 				     &call->service_id);
+ 	if (ret == 0 || ret == -EAGAIN)
+ 		return ret;
+diff --git a/fs/afs/yfsclient.c b/fs/afs/yfsclient.c
+index bd787e71a657..6c45d32da13c 100644
+--- a/fs/afs/yfsclient.c
++++ b/fs/afs/yfsclient.c
+@@ -363,8 +363,9 @@ static int yfs_deliver_fs_fetch_data64(struct afs_call *call)
+ 	unsigned int size;
+ 	int ret;
+ 
+-	_enter("{%u,%zu/%llu}",
+-	       call->unmarshall, iov_iter_count(call->iter), req->actual_len);
++	_enter("{%u,%zu, %zu/%llu}",
++	       call->unmarshall, call->iov_len, iov_iter_count(call->iter),
++	       req->actual_len);
+ 
+ 	switch (call->unmarshall) {
+ 	case 0:
+@@ -396,6 +397,7 @@ static int yfs_deliver_fs_fetch_data64(struct afs_call *call)
+ 			size = PAGE_SIZE - req->offset;
+ 		else
+ 			size = req->remain;
++		call->iov_len = size;
+ 		call->bvec[0].bv_len = size;
+ 		call->bvec[0].bv_offset = req->offset;
+ 		call->bvec[0].bv_page = req->pages[req->index];
+diff --git a/include/net/af_rxrpc.h b/include/net/af_rxrpc.h
+index f6abcc0bbd6e..cee5f83c0f11 100644
+--- a/include/net/af_rxrpc.h
++++ b/include/net/af_rxrpc.h
+@@ -53,7 +53,7 @@ int rxrpc_kernel_send_data(struct socket *, struct rxrpc_call *,
+ 			   struct msghdr *, size_t,
+ 			   rxrpc_notify_end_tx_t);
+ int rxrpc_kernel_recv_data(struct socket *, struct rxrpc_call *,
+-			   struct iov_iter *, bool, u32 *, u16 *);
++			   struct iov_iter *, size_t *, bool, u32 *, u16 *);
+ bool rxrpc_kernel_abort_call(struct socket *, struct rxrpc_call *,
+ 			     u32, int, const char *);
+ void rxrpc_kernel_end_call(struct socket *, struct rxrpc_call *);
+diff --git a/net/rxrpc/recvmsg.c b/net/rxrpc/recvmsg.c
+index fef3573fdc8b..eca6dda26c77 100644
+--- a/net/rxrpc/recvmsg.c
++++ b/net/rxrpc/recvmsg.c
+@@ -669,6 +669,7 @@ int rxrpc_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+  * @sock: The socket that the call exists on
+  * @call: The call to send data through
+  * @iter: The buffer to receive into
++ * @_len: The amount of data we want to receive (decreased on return)
+  * @want_more: True if more data is expected to be read
+  * @_abort: Where the abort code is stored if -ECONNABORTED is returned
+  * @_service: Where to store the actual service ID (may be upgraded)
+@@ -684,7 +685,7 @@ int rxrpc_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+  * *_abort should also be initialised to 0.
   */
--static int afs_fill_page(struct afs_vnode *vnode, struct key *key,
-+static int afs_fill_page(struct file *file,
- 			 loff_t pos, unsigned int len, struct page *page)
+ int rxrpc_kernel_recv_data(struct socket *sock, struct rxrpc_call *call,
+-			   struct iov_iter *iter,
++			   struct iov_iter *iter, size_t *_len,
+ 			   bool want_more, u32 *_abort, u16 *_service)
  {
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
- 	struct afs_read *req;
- 	size_t p;
- 	void *data;
-@@ -49,6 +50,7 @@ static int afs_fill_page(struct afs_vnode *vnode, struct key *key,
- 		return -ENOMEM;
+ 	size_t offset = 0;
+@@ -692,7 +693,7 @@ int rxrpc_kernel_recv_data(struct socket *sock, struct rxrpc_call *call,
  
- 	refcount_set(&req->usage, 1);
-+	req->key = key_get(afs_file_key(file));
- 	req->pos = pos;
- 	req->len = len;
- 	req->nr_pages = 1;
-@@ -56,7 +58,7 @@ static int afs_fill_page(struct afs_vnode *vnode, struct key *key,
- 	req->pages[0] = page;
- 	get_page(page);
+ 	_enter("{%d,%s},%zu,%d",
+ 	       call->debug_id, rxrpc_call_states[call->state],
+-	       iov_iter_count(iter), want_more);
++	       *_len, want_more);
  
--	ret = afs_fetch_data(vnode, key, req);
-+	ret = afs_fetch_data(vnode, req);
- 	afs_put_read(req);
- 	if (ret < 0) {
- 		if (ret == -ENOENT) {
-@@ -80,7 +82,6 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
- {
- 	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
- 	struct page *page;
--	struct key *key = afs_file_key(file);
- 	unsigned long priv;
- 	unsigned f, from = pos & (PAGE_SIZE - 1);
- 	unsigned t, to = from + len;
-@@ -95,7 +96,7 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
- 		return -ENOMEM;
+ 	ASSERTCMP(call->state, !=, RXRPC_CALL_SERVER_SECURING);
  
- 	if (!PageUptodate(page) && len != PAGE_SIZE) {
--		ret = afs_fill_page(vnode, key, pos & PAGE_MASK, PAGE_SIZE, page);
-+		ret = afs_fill_page(file, pos & PAGE_MASK, PAGE_SIZE, page);
- 		if (ret < 0) {
- 			unlock_page(page);
- 			put_page(page);
-@@ -163,7 +164,6 @@ int afs_write_end(struct file *file, struct address_space *mapping,
- 		  struct page *page, void *fsdata)
- {
- 	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
--	struct key *key = afs_file_key(file);
- 	unsigned long priv;
- 	unsigned int f, from = pos & (PAGE_SIZE - 1);
- 	unsigned int t, to = from + copied;
-@@ -193,7 +193,7 @@ int afs_write_end(struct file *file, struct address_space *mapping,
- 			 * unmarshalling routine will take care of clearing any
- 			 * bits that are beyond the EOF.
- 			 */
--			ret = afs_fill_page(vnode, key, pos + copied,
-+			ret = afs_fill_page(file, pos + copied,
- 					    len - copied, page);
- 			if (ret < 0)
- 				goto out;
+@@ -703,8 +704,8 @@ int rxrpc_kernel_recv_data(struct socket *sock, struct rxrpc_call *call,
+ 	case RXRPC_CALL_SERVER_RECV_REQUEST:
+ 	case RXRPC_CALL_SERVER_ACK_REQUEST:
+ 		ret = rxrpc_recvmsg_data(sock, call, NULL, iter,
+-					 iov_iter_count(iter), 0,
+-					 &offset);
++					 *_len, 0, &offset);
++		*_len -= offset;
+ 		if (ret < 0)
+ 			goto out;
+ 
 
 
