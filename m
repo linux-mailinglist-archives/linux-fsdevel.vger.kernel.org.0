@@ -2,228 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B46D346C19
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 23:19:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50765346C25
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 23:19:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233953AbhCWWSt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 18:18:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44527 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233916AbhCWWSR (ORCPT
+        id S234025AbhCWWTe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 18:19:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37968 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233930AbhCWWSa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 18:18:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616537895;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5dd3Wvg+wEHnVZubt2HljSZhhUh+SRzXvIVA09Ibt8Q=;
-        b=feZsQIKLD1O1T9SbZS9sUwCXE4AD+ATrvkotaxb5l9JaocARIPPLJtOlqIjz9oYg3YDXxc
-        cFl9XudOi02OqUcoTm1eDMhr0Z71iCp8TX+t5JV+ZhZPziqchj1mjtW4SSTF/2Q+rSiYV0
-        127tZyRQfGi33AYrLcYW+/rMvKk8v/8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-493-RD3RKnKKMB68RW6NO1X1hw-1; Tue, 23 Mar 2021 18:18:11 -0400
-X-MC-Unique: RD3RKnKKMB68RW6NO1X1hw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 23 Mar 2021 18:18:30 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E020C061574;
+        Tue, 23 Mar 2021 15:18:20 -0700 (PDT)
+Received: from [IPv6:2401:4900:5170:240f:f606:c194:2a1c:c147] (unknown [IPv6:2401:4900:5170:240f:f606:c194:2a1c:c147])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0862A88EF00;
-        Tue, 23 Mar 2021 22:18:09 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-58.rdu2.redhat.com [10.10.112.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C9BF9196E3;
-        Tue, 23 Mar 2021 22:18:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v5 03/28] mm: Add set/end/wait functions for PG_private_2
-From:   David Howells <dhowells@redhat.com>
-To:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 23 Mar 2021 22:18:02 +0000
-Message-ID: <161653788200.2770958.9517755716374927208.stgit@warthog.procyon.org.uk>
-In-Reply-To: <161653784755.2770958.11820491619308713741.stgit@warthog.procyon.org.uk>
-References: <161653784755.2770958.11820491619308713741.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        (Authenticated sender: shreeya)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 2208F1F454D0;
+        Tue, 23 Mar 2021 22:18:14 +0000 (GMT)
+Subject: Re: [PATCH v3 5/5] fs: unicode: Add utf8 module and a unicode layer
+To:     Eric Biggers <ebiggers@kernel.org>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        chao@kernel.org, drosen@google.com, yuchao0@huawei.com,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
+        andre.almeida@collabora.com
+References: <20210323183201.812944-1-shreeya.patel@collabora.com>
+ <20210323183201.812944-6-shreeya.patel@collabora.com>
+ <87eeg5d4xb.fsf@collabora.com> <YFpPxCQiMLqctIuS@gmail.com>
+From:   Shreeya Patel <shreeya.patel@collabora.com>
+Message-ID: <dd7dae42-6024-8868-3e3e-f6d672274682@collabora.com>
+Date:   Wed, 24 Mar 2021 03:48:10 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <YFpPxCQiMLqctIuS@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add three functions to manipulate PG_private_2:
 
- (*) set_page_private_2() - Set the flag and take an appropriate reference
-     on the flagged page.
-
- (*) end_page_private_2() - Clear the flag, drop the reference and wake up
-     any waiters, somewhat analogously with end_page_writeback().
-
- (*) wait_on_page_private_2() - Wait for the flag to be cleared.
-
-Wrappers will need to be placed in the netfs lib header in the patch that
-adds that.
-
-[This implements a suggestion by Linus[1] to not mix the terminology of
- PG_private_2 and PG_fscache in the mm core function]
-
-Changes:
-v5:
-- Add set and end functions, calling the end function end rather than
-  unlock[3].
-- Keep a ref on the page when PG_private_2 is set[4][5].
-
-v4:
-- Remove extern from the declaration[2].
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-cc: Alexander Viro <viro@zeniv.linux.org.uk>
-cc: Christoph Hellwig <hch@lst.de>
-cc: linux-mm@kvack.org
-cc: linux-cachefs@redhat.com
-cc: linux-afs@lists.infradead.org
-cc: linux-nfs@vger.kernel.org
-cc: linux-cifs@vger.kernel.org
-cc: ceph-devel@vger.kernel.org
-cc: v9fs-developer@lists.sourceforge.net
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/1330473.1612974547@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com/ [1]
-Link: https://lore.kernel.org/r/20210216102659.GA27714@lst.de/ [2]
-Link: https://lore.kernel.org/r/161340387944.1303470.7944159520278177652.stgit@warthog.procyon.org.uk/ # v3
-Link: https://lore.kernel.org/r/161539528910.286939.1252328699383291173.stgit@warthog.procyon.org.uk # v4
-Link: https://lore.kernel.org/r/20210321105309.GG3420@casper.infradead.org [3]
-Link: https://lore.kernel.org/r/CAHk-=wh+2gbF7XEjYc=HV9w_2uVzVf7vs60BPz0gFA=+pUm3ww@mail.gmail.com/ [4]
-Link: https://lore.kernel.org/r/CAHk-=wjSGsRj7xwhSMQ6dAQiz53xA39pOG+XA_WeTgwBBu4uqg@mail.gmail.com/ [5]
----
-
- include/linux/pagemap.h |   19 +++++++++++++++
- mm/filemap.c            |   59 +++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 78 insertions(+)
-
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 444155ae56c0..da5c38864037 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -689,6 +689,25 @@ void wait_for_stable_page(struct page *page);
- 
- void page_endio(struct page *page, bool is_write, int err);
- 
-+/**
-+ * set_page_private_2 - Set PG_private_2 on a page and take a ref
-+ * @page: The page.
-+ *
-+ * Set the PG_private_2 flag on a page and take the reference needed for the VM
-+ * to handle its lifetime correctly.  This sets the flag and takes the
-+ * reference unconditionally, so care must be taken not to set the flag again
-+ * if it's already set.
-+ */
-+static inline void set_page_private_2(struct page *page)
-+{
-+	get_page(page);
-+	SetPagePrivate2(page);
-+}
-+
-+void end_page_private_2(struct page *page);
-+void wait_on_page_private_2(struct page *page);
-+int wait_on_page_private_2_killable(struct page *page);
-+
- /*
-  * Add an arbitrary waiter to a page's wait queue
-  */
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 43700480d897..788b71e8a72d 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1432,6 +1432,65 @@ void unlock_page(struct page *page)
- }
- EXPORT_SYMBOL(unlock_page);
- 
-+/**
-+ * end_page_private_2 - Clear PG_private_2 and release any waiters
-+ * @page: The page
-+ *
-+ * Clear the PG_private_2 bit on a page and wake up any sleepers waiting for
-+ * this.  The page ref held for PG_private_2 being set is released.
-+ *
-+ * This is, for example, used when a netfs page is being written to a local
-+ * disk cache, thereby allowing writes to the cache for the same page to be
-+ * serialised.
-+ */
-+void end_page_private_2(struct page *page)
-+{
-+	page = compound_head(page);
-+	VM_BUG_ON_PAGE(!PagePrivate2(page), page);
-+	clear_bit_unlock(PG_private_2, &page->flags);
-+	wake_up_page_bit(page, PG_private_2);
-+	put_page(page);
-+}
-+EXPORT_SYMBOL(end_page_private_2);
-+
-+/**
-+ * wait_on_page_private_2 - Wait for PG_private_2 to be cleared on a page
-+ * @page: The page to wait on
-+ *
-+ * Wait for PG_private_2 (aka PG_fscache) to be cleared on a page.
-+ */
-+void wait_on_page_private_2(struct page *page)
-+{
-+	while (PagePrivate2(page))
-+		wait_on_page_bit(page, PG_private_2);
-+}
-+EXPORT_SYMBOL(wait_on_page_private_2);
-+
-+/**
-+ * wait_on_page_private_2_killable - Wait for PG_private_2 to be cleared on a page
-+ * @page: The page to wait on
-+ *
-+ * Wait for PG_private_2 (aka PG_fscache) to be cleared on a page or until a
-+ * fatal signal is received by the calling task.
-+ *
-+ * Return:
-+ * - 0 if successful.
-+ * - -EINTR if a fatal signal was encountered.
-+ */
-+int wait_on_page_private_2_killable(struct page *page)
-+{
-+	int ret = 0;
-+
-+	while (PagePrivate2(page)) {
-+		ret = wait_on_page_bit_killable(page, PG_private_2);
-+		if (ret < 0)
-+			break;
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(wait_on_page_private_2_killable);
-+
- /**
-  * end_page_writeback - end writeback against a page
-  * @page: the page
+On 24/03/21 1:59 am, Eric Biggers wrote:
+> On Tue, Mar 23, 2021 at 03:51:44PM -0400, Gabriel Krisman Bertazi wrote:
+>>> -int unicode_validate(const struct unicode_map *um, const struct qstr *str)
+>>> -{
+>>> -	const struct utf8data *data = utf8nfdi(um->version);
+>>> -
+>>> -	if (utf8nlen(data, str->name, str->len) < 0)
+>>> -		return -1;
+>>> -	return 0;
+>>> -}
+>>> +struct unicode_ops *utf8_ops;
+>>> +EXPORT_SYMBOL(utf8_ops);
+>>> +
+>>> +int _utf8_validate(const struct unicode_map *um, const struct qstr *str)
+>>> +{
+>>> +	return 0;
+>>> +}
+>>> -EXPORT_SYMBOL(unicode_validate);
+>> I think that any calls to the default static calls should return errors
+>> instead of succeeding without doing anything.
+>>
+>> In fact, are the default calls really necessary?  If someone gets here,
+>> there is a bug elsewhere, so WARN_ON and maybe -EIO.
+>>
+>> int unicode_validate_default_static_call(...)
+>> {
+>>     WARN_ON(1);
+>>     return -EIO;
+>> }
+>>
+>> Or just have a NULL default, as I mentioned below, if that is possible.
+>>
+> [...]
+>>> +DEFINE_STATIC_CALL(utf8_validate, _utf8_validate);
+>>> +DEFINE_STATIC_CALL(utf8_strncmp, _utf8_strncmp);
+>>> +DEFINE_STATIC_CALL(utf8_strncasecmp, _utf8_strncasecmp);
+>>> +DEFINE_STATIC_CALL(utf8_strncasecmp_folded, _utf8_strncasecmp_folded);
+>>> +DEFINE_STATIC_CALL(utf8_normalize, _utf8_normalize);
+>>> +DEFINE_STATIC_CALL(utf8_casefold, _utf8_casefold);
+>>> +DEFINE_STATIC_CALL(utf8_casefold_hash, _utf8_casefold_hash);
+>>> +DEFINE_STATIC_CALL(utf8_load, _utf8_load);
+>>> +DEFINE_STATIC_CALL_NULL(utf8_unload, _utf8_unload);
+>>> +EXPORT_STATIC_CALL(utf8_strncmp);
+>>> +EXPORT_STATIC_CALL(utf8_strncasecmp);
+>>> +EXPORT_STATIC_CALL(utf8_strncasecmp_folded);
+>> I'm having a hard time understanding why some use
+>> DEFINE_STATIC_CALL_NULL, while other use DEFINE_STATIC_CALL.  This new
+>> static call API is new to me :).  None of this can be called if the
+>> module is not loaded anyway, so perhaps the default function can just be
+>> NULL, per the documentation of include/linux/static_call.h?
+>>
+>> Anyway, Aren't utf8_{validate,casefold,normalize} missing the
+>> equivalent EXPORT_STATIC_CALL?
+>>
+> The static_call API is fairly new to me too.  But the intent of this patch seems
+> to be that none of the utf8 functions are called without the utf8 module loaded.
+> If they are called, it's a kernel bug.  So there are two options for what to do
+> if it happens anyway:
+>
+>    1. call a "null" static call, which does nothing
+>
+> *or*
+>
+>    2. call a default function which does WARN_ON_ONCE() and returns an error if
+>       possible.
+>
+> (or 3. don't use static calls and instead dereference a NULL utf8_ops like
+> previous versions of this patch did.)
+>
+> It shouldn't really matter which of these approaches you take, but please be
+> consistent and use the same one everywhere.
+>
+>> + void unicode_unregister(void)
+>> + {
+>> +         spin_lock(&utf8ops_lock);
+>> +         utf8_ops = NULL;
+>> +         spin_unlock(&utf8ops_lock);
+>> + }
+>> + EXPORT_SYMBOL(unicode_unregister);
+> This should restore the static calls to their default values (either NULL or the
+> default functions, depending on what you decide).
+>
+> Also, it's weird to still have the utf8_ops structure when using static calls.
+> It seems it should be one way or the other: static calls *or* utf8_ops.
+>
+> The static calls could be exported, and the module could be responsible for
+> updating them.  That would eliminate the need for utf8_ops.
 
 
+Hmmm yes, I think we are just using utf8_ops for getting the owner details
+which we can now remove and instead pass it as an argument while 
+registering the module.
+Will make this change in v4. Thanks
+
+
+>
+> - Eric
