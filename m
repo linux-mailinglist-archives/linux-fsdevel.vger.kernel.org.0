@@ -2,108 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF059345716
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 06:05:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBC5734571F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 06:19:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229548AbhCWFFL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 01:05:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40076 "EHLO
+        id S229482AbhCWFTM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 01:19:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbhCWFEr (ORCPT
+        with ESMTP id S229437AbhCWFSq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 01:04:47 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D6E5C061574;
-        Mon, 22 Mar 2021 22:04:47 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id f16so24002413ljm.1;
-        Mon, 22 Mar 2021 22:04:47 -0700 (PDT)
+        Tue, 23 Mar 2021 01:18:46 -0400
+Received: from ustc.edu.cn (email6.ustc.edu.cn [IPv6:2001:da8:d800::8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 15A60C061574;
+        Mon, 22 Mar 2021 22:18:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yFi4t0LwY0/K7P1KzIFPQAnrQ32/ev3JJFzV7tX7RKk=;
-        b=SMFDbPc0pk3vToOaNc6sXwfhvd1OwvXso6Z74eSubasphj185X6E7FYll5EeTQBU89
-         VxRpqCzu5wWAUKeAYemf0D8N9LZBXG+PzcmgVJNGv75dhHvjn/CZKo/fUCNf77lOjlm+
-         Kn36yzqSVey+L+LqEMAzMlNLZDspYBjRzcH5LFuXfYzVDiEde7iVohCTA437G5ntNRYz
-         OH8L4wBUrCR3VIE0VAFtTGyNECZOzEB9jwPOQ5So5p1kVoGB9DUcCPQ+pxaatPAAIB3M
-         RG+eS13Z3RhjEDDffJ6r+Vmsu5yK5NzZT+uKh7Gqo6YxCYKTvm0HiBBGvmj7yiTSvXp8
-         dqBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yFi4t0LwY0/K7P1KzIFPQAnrQ32/ev3JJFzV7tX7RKk=;
-        b=R0MJAoN3T7aS100QK5+hlowh76pS3r30B0/IoGiJfRp2ACw4ABBG1LBZbWwV5vPn3Z
-         0ks8WEtGIDLiNdSzUkiSjSOWwYyLWKKE0jIpJXbW4pbwh3q9xxdUNBkjKL6HJmzz1eWv
-         2sxYD9zfdmiLbOaIucN9oQ0kkM8Xy8qnTy+eoFis8G4ZeZnT5g3ryTHCKW8gZxC4TQG+
-         cZtL6QpxW+6bZd5LTWgvzI86EUbbJWaFRi3Xb4uhRlHP/tZqpF7ErUhtImbcH7j0nn/+
-         ooKHsmn+WgawaT2/iMVJmncm80d1b5GpHGM1vXJPqptd0XbyI7HBaGuhxiFC9fuiZuMu
-         gX3g==
-X-Gm-Message-State: AOAM530wSziPTUe9sLdTyCuNE9hcV83hQBA92oYQ8xdkOIQt9l3cqNZC
-        c2RM53hFREcVbY5gTX4xOtcUShbrVC8QeWS1qsVSO4U0aL0DtQ==
-X-Google-Smtp-Source: ABdhPJywpQh2eLBXniSg8yoBz0GpvCTWcxpxz+8wSJBCgMgMm31oTW2hJrxWfbkRs30lyz9cAL0vXn1cKlRpSFi20mM=
-X-Received: by 2002:a2e:98c5:: with SMTP id s5mr1823738ljj.218.1616475885492;
- Mon, 22 Mar 2021 22:04:45 -0700 (PDT)
+        d=mail.ustc.edu.cn; s=dkim; h=Received:From:To:Cc:Subject:Date:
+        Message-Id:MIME-Version:Content-Transfer-Encoding; bh=TiZe8UTTgE
+        Nquwib5uwcT0dF8caXTeaaWpOpfzenyxQ=; b=KsD29ddwEse7OSbf2UQkcjoSee
+        tKEVMEI5ImD0gAk1YrOHdjVS2vkaWMf29Q1Sns/daJqRRmwcB+cD/uA/Mb7Q9Jr4
+        pM3LSLle04E42SXglbeRefEHOMewww/5M3cHYxUwHWoeVyS8AohVUlKIt+oGtNNr
+        XXXmck+lfNXhCCiWM=
+Received: from ubuntu.localdomain (unknown [202.38.69.14])
+        by newmailweb.ustc.edu.cn (Coremail) with SMTP id LkAmygC3vkoqellg6XEbAA--.456S4;
+        Tue, 23 Mar 2021 13:18:34 +0800 (CST)
+From:   Lv Yunlong <lyl2019@mail.ustc.edu.cn>
+To:     vgoyal@redhat.com, stefanha@redhat.com, miklos@szeredi.hu
+Cc:     virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lv Yunlong <lyl2019@mail.ustc.edu.cn>
+Subject: [PATCH] fuse: Fix a potential double free in virtio_fs_get_tree
+Date:   Mon, 22 Mar 2021 22:18:31 -0700
+Message-Id: <20210323051831.13575-1-lyl2019@mail.ustc.edu.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <YFV6iexd6YQTybPr@zeniv-ca.linux.org.uk> <CAH2r5mvA0WeeV1ZSW4HPvksvs+=GmkiV5nDHqCRddfxkgPNfXA@mail.gmail.com>
- <CAH2r5msWJn5a7JCUdoyJ7nfyeafRS8TvtgF+mZCY08LBf=9LAQ@mail.gmail.com> <YFgDH6wzFZ6FIs3R@zeniv-ca.linux.org.uk>
-In-Reply-To: <YFgDH6wzFZ6FIs3R@zeniv-ca.linux.org.uk>
-From:   Steve French <smfrench@gmail.com>
-Date:   Tue, 23 Mar 2021 00:04:34 -0500
-Message-ID: <CAH2r5mucWfotrdXvVvvUG-GEOhB=zGAhuPXSzAyw7X=EZDDzYg@mail.gmail.com>
-Subject: Re: [RFC][PATCHSET] hopefully saner handling of pathnames in cifs
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        Steve French <sfrench@samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: LkAmygC3vkoqellg6XEbAA--.456S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw1rGF48Ar1kCF1DArW8WFg_yoW8JFyrpr
+        ykCr13Gr47Xry7Jas3CFnYg345K392kr1UGr92v343Cw4rJry0yrZ5Cry5Krs5ZrWxJFyr
+        tF4rJr4agFWDCFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+        6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+        0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+        rcIFxwCY02Avz4vE14v_GrWl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+        1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+        14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+        IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvE
+        x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+        DU0xZFpf9x0JU94SOUUUUU=
+X-CM-SenderInfo: ho1ojiyrz6zt1loo32lwfovvfxof0/
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-reran with the updated patch 7 and it failed (although I didn't have
-time to dig much into it today) - see
+In virtio_fs_get_tree, fm is allocated by kzalloc() and
+assigned to fsc->s_fs_info by fsc->s_fs_info=fm statement.
+If the kzalloc() failed, it will goto err directly, so that
+fsc->s_fs_info must be non-NULL and fm will be freed.
 
-http://smb3-test-rhel-75.southcentralus.cloudapp.azure.com/#/builders/2/builds/534
+But later fm is freed again when virtio_fs_fill_super() fialed.
+I think the statement if (fsc->s_fs_info) {kfree(fm);} is
+misplaced.
 
-but it seems to run ok without patch 7 (just the first six patches)
+My patch puts this statement in the correct palce to avoid
+double free.
 
-http://smb3-test-rhel-75.southcentralus.cloudapp.azure.com/#/builders/2/builds/535
+Signed-off-by: Lv Yunlong <lyl2019@mail.ustc.edu.cn>
+---
+ fs/fuse/virtio_fs.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-On Sun, Mar 21, 2021 at 9:40 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Sun, Mar 21, 2021 at 09:19:53PM -0500, Steve French wrote:
-> > automated tests failed so will need to dig in a little more and see
-> > what is going on
-> >
-> > http://smb3-test-rhel-75.southcentralus.cloudapp.azure.com/#/builders/2/builds/533
->
-> <looks>
->
-> Oh, bugger...  I think I see a braino that might be responsible for that;
-> whether it's all that's going on or not, that's an obvious bug.  Incremental
-> for that one would be
->
-> diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
-> index 3febf667d119..ed16f75ac0fa 100644
-> --- a/fs/cifs/dir.c
-> +++ b/fs/cifs/dir.c
-> @@ -132,7 +132,7 @@ build_path_from_dentry_optional_prefix(struct dentry *direntry, void *page,
->         }
->         if (dfsplen) {
->                 s -= dfsplen;
-> -               memcpy(page, tcon->treeName, dfsplen);
-> +               memcpy(s, tcon->treeName, dfsplen);
->                 if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS) {
->                         int i;
->                         for (i = 0; i < dfsplen; i++) {
->
->
-> Folded and force-pushed (same branch).  My apologies...
-
-
-
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index 8868ac31a3c0..727cf436828f 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -1437,10 +1437,7 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
+ 
+ 	fsc->s_fs_info = fm;
+ 	sb = sget_fc(fsc, virtio_fs_test_super, set_anon_super_fc);
+-	if (fsc->s_fs_info) {
+-		fuse_conn_put(fc);
+-		kfree(fm);
+-	}
++
+ 	if (IS_ERR(sb))
+ 		return PTR_ERR(sb);
+ 
+@@ -1457,6 +1454,11 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
+ 		sb->s_flags |= SB_ACTIVE;
+ 	}
+ 
++	if (fsc->s_fs_info) {
++		fuse_conn_put(fc);
++		kfree(fm);
++	}
++
+ 	WARN_ON(fsc->root);
+ 	fsc->root = dget(sb->s_root);
+ 	return 0;
 -- 
-Thanks,
+2.25.1
 
-Steve
+
