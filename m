@@ -2,81 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C1033466C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 18:51:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7F393467B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 19:33:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231272AbhCWRvR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 13:51:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:48657 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231346AbhCWRvB (ORCPT
+        id S231989AbhCWSdB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 14:33:01 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:53204 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232025AbhCWScd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 13:51:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616521860;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=LouRr+fCG0OmszLhP6L8WRvJgJF/XEnWkAzpMfXY6u4=;
-        b=ZeCFpsYMf6XdBAaQcxlV1Ayo1Hp9Mm7pu+DTPf6MgkIOqT6vWfGmv60Bv6soXRh76RYjZQ
-        Mr1492+Cu/+iK58eKojgV20Djq5dcjUfSi4NeAP0VHDywkbvpTjWytajjJAUa1Bw/mgqNE
-        OqII3EX3JUC0PHcl5uivUJlWKROmZnQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-232-02Qt-z3bNpaoL_QStgOmuw-1; Tue, 23 Mar 2021 13:50:56 -0400
-X-MC-Unique: 02Qt-z3bNpaoL_QStgOmuw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 23 Mar 2021 14:32:33 -0400
+Received: from localhost.localdomain (unknown [IPv6:2401:4900:5170:240f:f606:c194:2a1c:c147])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2F5D387A83E;
-        Tue, 23 Mar 2021 17:50:55 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-58.rdu2.redhat.com [10.10.112.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C517C6E6FB;
-        Tue, 23 Mar 2021 17:50:32 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <YFja/LRC1NI6quL6@cmpxchg.org>
-References: <YFja/LRC1NI6quL6@cmpxchg.org> <20210320054104.1300774-1-willy@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     dhowells@redhat.com,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org
-Subject: Re: [PATCH v5 00/27] Memory Folios
+        (Authenticated sender: shreeya)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 59CC01F44A65;
+        Tue, 23 Mar 2021 18:32:26 +0000 (GMT)
+From:   Shreeya Patel <shreeya.patel@collabora.com>
+To:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        chao@kernel.org, krisman@collabora.com, ebiggers@google.com,
+        drosen@google.com, ebiggers@kernel.org, yuchao0@huawei.com
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
+        andre.almeida@collabora.com
+Subject: [PATCH v3 0/4] Make UTF-8 encoding loadable
+Date:   Wed, 24 Mar 2021 00:01:56 +0530
+Message-Id: <20210323183201.812944-1-shreeya.patel@collabora.com>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2749828.1616521831.1@warthog.procyon.org.uk>
-Date:   Tue, 23 Mar 2021 17:50:31 +0000
-Message-ID: <2749829.1616521831@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Johannes Weiner <hannes@cmpxchg.org> wrote:
+utf8data.h_shipped has a large database table which is an auto-generated
+decodification trie for the unicode normalization functions and it is not
+necessary to carry this large table in the kernel.
+Goal is to make UTF-8 encoding loadable by converting it into a module
+and adding a layer between the filesystems and the utf8 module which will
+load the module whenever any filesystem that needs unicode is mounted.
 
-> So I fully agree with the motivation behind this patch. But I do
-> wonder why it's special-casing the commmon case instead of the rare
-> case. It comes at a huge cost. Short term, the churn of replacing
-> 'page' with 'folio' in pretty much all instances is enormous.
-> 
-> And longer term, I'm not convinced folio is the abstraction we want
-> throughout the kernel. If nobody should be dealing with tail pages in
-> the first place, why are we making everybody think in 'folios'? Why
-> does a filesystem care that huge pages are composed of multiple base
-> pages internally? This feels like an implementation detail leaking out
-> of the MM code. The vast majority of places should be thinking 'page'
-> with a size of 'page_size()'. Including most parts of the MM itself.
+1st patch in the series resolves the warning reported by kernel test robot
+and 2nd patch fixes the incorrect use of utf8_unload() in ext4 and
+f2fs filesystems.
 
-I like the idea of logically separating individual hardware pages from
-abstract bundles of pages by using a separate type for them - at least in
-filesystem code.  I'm trying to abstract some of the handling out of the
-network filesystems and into a common library plus ITER_XARRAY to insulate
-those filesystems from the VM.
+Unicode is the subsystem and utf8 is a charachter encoding for the
+subsystem, hence 3rd and 4th patches in the series are renaming functions
+and file name to unicode for better understanding the difference between
+UTF-8 module and unicode layer.
 
-David
+Last patch in the series adds the layer and utf8 module and also uses
+static_call() function introducted for preventing speculative execution
+attacks.
+
+---
+Changes in v3
+  - Add a patch which checks if utf8 is loaded before calling utf8_unload()
+    in ext4 and f2fs filesystems
+  - Return error if strscpy() returns value < 0
+  - Correct the conditions to prevent NULL pointer dereference while
+    accessing functions via utf8_ops variable.
+  - Add spinlock to avoid race conditions.
+  - Use static_call() for preventing speculative execution attacks.
+
+Changes in v2
+  - Remove the duplicate file from the last patch.
+  - Make the wrapper functions inline.
+  - Remove msleep and use try_module_get() and module_put()
+    for ensuring that module is loaded correctly and also
+    doesn't get unloaded while in use.
+  - Resolve the warning reported by kernel test robot.
+  - Resolve all the checkpatch.pl warnings.
+
+Shreeya Patel (4):
+  fs: unicode: Use strscpy() instead of strncpy()
+  fs: Check if utf8 encoding is loaded before calling utf8_unload()
+  fs: unicode: Rename function names from utf8 to unicode
+  fs: unicode: Rename utf8-core file to unicode-core
+
+ fs/ext4/hash.c                             |  2 +-
+ fs/ext4/namei.c                            | 12 ++---
+ fs/ext4/super.c                            |  8 +--
+ fs/f2fs/dir.c                              | 12 ++---
+ fs/f2fs/super.c                            | 11 ++--
+ fs/libfs.c                                 |  6 +--
+ fs/unicode/Makefile                        |  2 +-
+ fs/unicode/{utf8-core.c => unicode-core.c} | 62 +++++++++++-----------
+ fs/unicode/utf8-selftest.c                 |  8 +--
+ include/linux/unicode.h                    | 32 +++++------
+ 10 files changed, 81 insertions(+), 74 deletions(-)
+ rename fs/unicode/{utf8-core.c => unicode-core.c} (72%)
+
+-- 
+2.30.1
 
