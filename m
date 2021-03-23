@@ -2,377 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34B763461C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 15:46:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1389B3462D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 16:29:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232383AbhCWOqU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 10:46:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52604 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232336AbhCWOqJ (ORCPT
+        id S232803AbhCWP26 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 11:28:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:11272 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232816AbhCWP2c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 10:46:09 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 529EBC061574;
-        Tue, 23 Mar 2021 07:46:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=NJf+HZsOodPaZPW38P1Cps8i58xLSQI9qQh/4dJkNeU=; b=kLSH1p6RG6cZLeYwyy1gl9p4dS
-        s0vhnzxy8vzIum0++LWM3QIn9KYjyu7dRL+o1M2p663wEF01mi/I40vFi+q5s+c1kxEprYrOhKmby
-        6WrAi/9mUnId/ZjtDCXFMIysyNg6I3WKK4sHZUkxbUTF3KRddI+q+Rn8cFmDNetE8ds/PQNFoafBm
-        W+gcup2MWd1fEgwuLh/FiDAyPFjHONJ7lZDgrFOt1n3Ef8L0WvPOBGKLXqV9sldnamBD7dCINuLZ0
-        X6/NDQb55DisVT656yPPHZsx/PpeJsHMM8vVUAhUA73zV1ygvmQzAvsVVo26z7x7/MiZXljRFyeJi
-        6JivnI+A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lOiI8-00FCBz-R0; Tue, 23 Mar 2021 14:45:57 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7170130477A;
-        Tue, 23 Mar 2021 15:45:55 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4CC4C2D2A4F60; Tue, 23 Mar 2021 15:45:55 +0100 (CET)
-Date:   Tue, 23 Mar 2021 15:45:55 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Marco Elver <elver@google.com>
-Cc:     alexander.shishkin@linux.intel.com, acme@kernel.org,
-        mingo@redhat.com, jolsa@redhat.com, mark.rutland@arm.com,
-        namhyung@kernel.org, tglx@linutronix.de, glider@google.com,
-        viro@zeniv.linux.org.uk, arnd@arndb.de, christian@brauner.io,
-        dvyukov@google.com, jannh@google.com, axboe@kernel.dk,
-        mascasa@google.com, pcc@google.com, irogers@google.com,
-        kasan-dev@googlegroups.com, linux-arch@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RFC v2 8/8] selftests/perf: Add kselftest for
- remove_on_exec
-Message-ID: <YFn/I3aKF+TOjGcl@hirez.programming.kicks-ass.net>
-References: <20210310104139.679618-1-elver@google.com>
- <20210310104139.679618-9-elver@google.com>
- <YFiamKX+xYH2HJ4E@elver.google.com>
- <YFjI5qU0z3Q7J/jF@hirez.programming.kicks-ass.net>
- <YFm6aakSRlF2nWtu@elver.google.com>
- <YFnDo7dczjDzLP68@hirez.programming.kicks-ass.net>
+        Tue, 23 Mar 2021 11:28:32 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12NFGQtq158809;
+        Tue, 23 Mar 2021 11:27:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=HEgPNmOQ2fGg+4o6ggG+TNuvsojvFlxy9dBHlBe6Svc=;
+ b=j6Axg86BIT6TdVpK3dBy599D+sEsSqA4nMaJjCiiop2oShxkrUfHnnN/Xd3h/Swxo7aa
+ 5NKOVTNS1xlKE0pRfPk80TITeQTTiyDX19Dnq2BY0H3i2iy8EC2JnSL5ccfLWBgv394m
+ ab5x/brQxo90AIXLxqy2cFVgak4tCpENma9XCPf+ub+FBQ1D7d2OKK2ItTEFC/J6xGI2
+ 1xzVmwJQR9UAg+rnRwKM2mZ5SzMiZk7aJ6Yj+jPpon/fTZk3u/DB6Vfmq8jCRG2CeNxl
+ jpZEhKAeKLRcD3BG+t2CpzLz6jFlUKn0Cj93iuW7UNljsWf/qS7i2lfaigmROHE9DZ5Q MA== 
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 37fjth8dmw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Mar 2021 11:27:59 -0400
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12NFLY4H007748;
+        Tue, 23 Mar 2021 15:27:57 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma01fra.de.ibm.com with ESMTP id 37d99xhtu1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Mar 2021 15:27:57 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12NFRs1e30146828
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Mar 2021 15:27:54 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B779A52052;
+        Tue, 23 Mar 2021 15:27:54 +0000 (GMT)
+Received: from [9.199.34.65] (unknown [9.199.34.65])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 280B65205A;
+        Tue, 23 Mar 2021 15:27:52 +0000 (GMT)
+Subject: Re: [PATCH v3 00/10] fsdax,xfs: Add reflink&dedupe support for fsdax
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org
+Cc:     darrick.wong@oracle.com, dan.j.williams@intel.com,
+        willy@infradead.org, jack@suse.cz, viro@zeniv.linux.org.uk,
+        linux-btrfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        david@fromorbit.com, hch@lst.de, rgoldwyn@suse.de,
+        Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+References: <20210319015237.993880-1-ruansy.fnst@fujitsu.com>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Message-ID: <7f9d5477-b156-e084-9412-307dd67149b1@linux.ibm.com>
+Date:   Tue, 23 Mar 2021 20:57:50 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YFnDo7dczjDzLP68@hirez.programming.kicks-ass.net>
+In-Reply-To: <20210319015237.993880-1-ruansy.fnst@fujitsu.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-23_06:2021-03-22,2021-03-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ impostorscore=0 bulkscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 spamscore=0 clxscore=1011 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2103230112
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 23, 2021 at 11:32:03AM +0100, Peter Zijlstra wrote:
-
-> And at that point there's very little value in still using
-> perf_event_exit_event()... let me see if there's something to be done
-> about that.
-
-I ended up with something like the below. Which then simplifies
-remove_on_exec() to:
-
-static void perf_event_remove_on_exec(int ctxn)
-{
-	struct perf_event_context *ctx, *clone_ctx = NULL;
-	struct perf_event *event, *next;
-	bool modified = false;
-	unsigned long flags;
-
-	ctx = perf_pin_task_context(current, ctxn);
-	if (!ctx)
-		return;
-
-	mutex_lock(&ctx->mutex);
-
-	if (WARN_ON_ONCE(ctx->task != current))
-		goto unlock;
-
-	list_for_each_entry_safe(event, next, &ctx->event_list, event_entry) {
-		if (!event->attr.remove_on_exec)
-			continue;
-
-		if (!is_kernel_event(event))
-			perf_remove_from_owner(event);
-
-		modified = true;
-
-		perf_event_exit_event(event, ctx);
-	}
-
-	raw_spin_lock_irqsave(&ctx->lock, flags);
-	if (modified)
-		clone_ctx = unclone_ctx(ctx);
-	--ctx->pin_count;
-	raw_spin_unlock_irqrestore(&ctx->lock, flags);
-
-unlock:
-	mutex_unlock(&ctx->mutex);
-
-	put_ctx(ctx);
-	if (clone_ctx)
-		put_ctx(clone_ctx);
-}
 
 
-Very lightly tested with that {1..1000} thing.
+On 3/19/21 7:22 AM, Shiyang Ruan wrote:
+> From: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+> 
+> This patchset is attempt to add CoW support for fsdax, and take XFS,
+> which has both reflink and fsdax feature, as an example.
 
----
 
-Subject: perf: Rework perf_event_exit_event()
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Tue Mar 23 15:16:06 CET 2021
+Thanks for the patchset. I have tried reviewing the series from logical
+correctness and to some extent functional correctness.
+Since I am not well versed with the core functionality of COW operation,
+so I may have requested for some clarifications where I could not get
+the code 100% on what it is doing.
 
-Make perf_event_exit_event() more robust, such that we can use it from
-other contexts. Specifically the up and coming remove_on_exec.
 
-For this to work we need to address a few issues. Remove_on_exec will
-not destroy the entire context, so we cannot rely on TASK_TOMBSTONE to
-disable event_function_call() and we thus have to use
-perf_remove_from_context().
+> 
+> (Rebased on v5.11)
+> ==
+> 
+Thanks. Yes, I see some conflicts when tried to apply on latest kernel.
 
-When using perf_remove_from_context(), there's two races to consider.
-The first is against close(), where we can have concurrent tear-down
-of the event. The second is against child_list iteration, which should
-not find a half baked event.
-
-To address this, teach perf_remove_from_context() to special case
-!ctx->is_active and about DETACH_CHILD.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- include/linux/perf_event.h |    1 
- kernel/events/core.c       |  144 +++++++++++++++++++++++++--------------------
- 2 files changed, 81 insertions(+), 64 deletions(-)
-
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -607,6 +607,7 @@ struct swevent_hlist {
- #define PERF_ATTACH_TASK_DATA	0x08
- #define PERF_ATTACH_ITRACE	0x10
- #define PERF_ATTACH_SCHED_CB	0x20
-+#define PERF_ATTACH_CHILD	0x40
- 
- struct perf_cgroup;
- struct perf_buffer;
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2210,6 +2210,26 @@ static void perf_group_detach(struct per
- 	perf_event__header_size(leader);
- }
- 
-+static void sync_child_event(struct perf_event *child_event);
-+
-+static void perf_child_detach(struct perf_event *event)
-+{
-+	struct perf_event *parent_event = event->parent;
-+
-+	if (!(event->attach_state & PERF_ATTACH_CHILD))
-+		return;
-+
-+	event->attach_state &= ~PERF_ATTACH_CHILD;
-+
-+	if (WARN_ON_ONCE(!parent_event))
-+		return;
-+
-+	lockdep_assert_held(&parent_event->child_mutex);
-+
-+	sync_child_event(event);
-+	list_del_init(&event->child_list);
-+}
-+
- static bool is_orphaned_event(struct perf_event *event)
- {
- 	return event->state == PERF_EVENT_STATE_DEAD;
-@@ -2317,6 +2337,7 @@ group_sched_out(struct perf_event *group
- }
- 
- #define DETACH_GROUP	0x01UL
-+#define DETACH_CHILD	0x02UL
- 
- /*
-  * Cross CPU call to remove a performance event
-@@ -2340,6 +2361,8 @@ __perf_remove_from_context(struct perf_e
- 	event_sched_out(event, cpuctx, ctx);
- 	if (flags & DETACH_GROUP)
- 		perf_group_detach(event);
-+	if (flags & DETACH_CHILD)
-+		perf_child_detach(event);
- 	list_del_event(event, ctx);
- 
- 	if (!ctx->nr_events && ctx->is_active) {
-@@ -2368,25 +2391,21 @@ static void perf_remove_from_context(str
- 
- 	lockdep_assert_held(&ctx->mutex);
- 
--	event_function_call(event, __perf_remove_from_context, (void *)flags);
--
- 	/*
--	 * The above event_function_call() can NO-OP when it hits
--	 * TASK_TOMBSTONE. In that case we must already have been detached
--	 * from the context (by perf_event_exit_event()) but the grouping
--	 * might still be in-tact.
--	 */
--	WARN_ON_ONCE(event->attach_state & PERF_ATTACH_CONTEXT);
--	if ((flags & DETACH_GROUP) &&
--	    (event->attach_state & PERF_ATTACH_GROUP)) {
--		/*
--		 * Since in that case we cannot possibly be scheduled, simply
--		 * detach now.
--		 */
--		raw_spin_lock_irq(&ctx->lock);
--		perf_group_detach(event);
-+	 * Because of perf_event_exit_task(), perf_remove_from_context() ought
-+	 * to work in the face of TASK_TOMBSTONE, unlike every other
-+	 * event_function_call() user.
-+	 */
-+	raw_spin_lock_irq(&ctx->lock);
-+	if (!ctx->is_active) {
-+		__perf_remove_from_context(event, __get_cpu_context(ctx),
-+					   ctx, (void *)flags);
- 		raw_spin_unlock_irq(&ctx->lock);
-+		return;
- 	}
-+	raw_spin_unlock_irq(&ctx->lock);
-+
-+	event_function_call(event, __perf_remove_from_context, (void *)flags);
- }
- 
- /*
-@@ -12379,14 +12398,17 @@ void perf_pmu_migrate_context(struct pmu
- }
- EXPORT_SYMBOL_GPL(perf_pmu_migrate_context);
- 
--static void sync_child_event(struct perf_event *child_event,
--			       struct task_struct *child)
-+static void sync_child_event(struct perf_event *child_event)
- {
- 	struct perf_event *parent_event = child_event->parent;
- 	u64 child_val;
- 
--	if (child_event->attr.inherit_stat)
--		perf_event_read_event(child_event, child);
-+	if (child_event->attr.inherit_stat) {
-+		struct task_struct *task = child_event->ctx->task;
-+
-+		if (task)
-+			perf_event_read_event(child_event, task);
-+	}
- 
- 	child_val = perf_event_count(child_event);
- 
-@@ -12401,60 +12423,53 @@ static void sync_child_event(struct perf
- }
- 
- static void
--perf_event_exit_event(struct perf_event *child_event,
--		      struct perf_event_context *child_ctx,
--		      struct task_struct *child)
-+perf_event_exit_event(struct perf_event *event, struct perf_event_context *ctx)
- {
--	struct perf_event *parent_event = child_event->parent;
-+	struct perf_event *parent_event = event->parent;
-+	unsigned long detach_flags = 0;
- 
--	/*
--	 * Do not destroy the 'original' grouping; because of the context
--	 * switch optimization the original events could've ended up in a
--	 * random child task.
--	 *
--	 * If we were to destroy the original group, all group related
--	 * operations would cease to function properly after this random
--	 * child dies.
--	 *
--	 * Do destroy all inherited groups, we don't care about those
--	 * and being thorough is better.
--	 */
--	raw_spin_lock_irq(&child_ctx->lock);
--	WARN_ON_ONCE(child_ctx->is_active);
-+	if (parent_event) {
-+		/*
-+		 * Do not destroy the 'original' grouping; because of the
-+		 * context switch optimization the original events could've
-+		 * ended up in a random child task.
-+		 *
-+		 * If we were to destroy the original group, all group related
-+		 * operations would cease to function properly after this
-+		 * random child dies.
-+		 *
-+		 * Do destroy all inherited groups, we don't care about those
-+		 * and being thorough is better.
-+		 */
-+		detach_flags = DETACH_GROUP | DETACH_CHILD;
-+		mutex_lock(&parent_event->child_mutex);
-+	}
- 
--	if (parent_event)
--		perf_group_detach(child_event);
--	list_del_event(child_event, child_ctx);
--	perf_event_set_state(child_event, PERF_EVENT_STATE_EXIT); /* is_event_hup() */
--	raw_spin_unlock_irq(&child_ctx->lock);
-+	perf_remove_from_context(event, detach_flags);
-+
-+	raw_spin_lock_irq(&ctx->lock);
-+	if (event->state > PERF_EVENT_STATE_EXIT)
-+		perf_event_set_state(event, PERF_EVENT_STATE_EXIT);
-+	raw_spin_unlock_irq(&ctx->lock);
- 
- 	/*
--	 * Parent events are governed by their filedesc, retain them.
-+	 * Child events can be freed.
- 	 */
--	if (!parent_event) {
--		perf_event_wakeup(child_event);
-+	if (parent_event) {
-+		mutex_unlock(&parent_event->child_mutex);
-+		/*
-+		 * Kick perf_poll() for is_event_hup();
-+		 */
-+		perf_event_wakeup(parent_event);
-+		free_event(event);
-+		put_event(parent_event);
- 		return;
- 	}
--	/*
--	 * Child events can be cleaned up.
--	 */
--
--	sync_child_event(child_event, child);
- 
- 	/*
--	 * Remove this event from the parent's list
--	 */
--	WARN_ON_ONCE(parent_event->ctx->parent_ctx);
--	mutex_lock(&parent_event->child_mutex);
--	list_del_init(&child_event->child_list);
--	mutex_unlock(&parent_event->child_mutex);
--
--	/*
--	 * Kick perf_poll() for is_event_hup().
-+	 * Parent events are governed by their filedesc, retain them.
- 	 */
--	perf_event_wakeup(parent_event);
--	free_event(child_event);
--	put_event(parent_event);
-+	perf_event_wakeup(event);
- }
- 
- static void perf_event_exit_task_context(struct task_struct *child, int ctxn)
-@@ -12511,7 +12526,7 @@ static void perf_event_exit_task_context
- 	perf_event_task(child, child_ctx, 0);
- 
- 	list_for_each_entry_safe(child_event, next, &child_ctx->event_list, event_entry)
--		perf_event_exit_event(child_event, child_ctx, child);
-+		perf_event_exit_event(child_event, child_ctx);
- 
- 	mutex_unlock(&child_ctx->mutex);
- 
-@@ -12771,6 +12786,7 @@ inherit_event(struct perf_event *parent_
- 	 */
- 	raw_spin_lock_irqsave(&child_ctx->lock, flags);
- 	add_event_to_ctx(child_event, child_ctx);
-+	child_event->attach_state |= PERF_ATTACH_CHILD;
- 	raw_spin_unlock_irqrestore(&child_ctx->lock, flags);
- 
- 	/*
+-ritesh
