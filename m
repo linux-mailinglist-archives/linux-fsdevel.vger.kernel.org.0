@@ -2,128 +2,302 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 438A834539E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 01:06:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A69CA3453A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 01:13:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230393AbhCWAGO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 20:06:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60608 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231317AbhCWAGA (ORCPT
+        id S230095AbhCWAMo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 20:12:44 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:24481 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230166AbhCWAMU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 20:06:00 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E25DC061762
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Mar 2021 17:06:00 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id f2-20020a17090a4a82b02900c67bf8dc69so11401402pjh.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Mar 2021 17:06:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=YrwTxM1JRhwCBImEEMiXrWUueuGP8y0gV5ZRW5L/A0w=;
-        b=AJK6iy9YZIVcsFMyZdM9/n2Nq0jYRLcbLu0OgwUd6kWoGdYixeRnX91zceByThB+qg
-         1O9QBmew16jSEs3tCZj/VvWo4XFFHqr29XVTBN8INs9MAV1j69hzmrerT3ouIxnYD54Z
-         wl2MsvF3QF/MbjAbrMzOV+q/Tyj/tgJMdUMDY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YrwTxM1JRhwCBImEEMiXrWUueuGP8y0gV5ZRW5L/A0w=;
-        b=PYEp5Qaerw9ZTpx0PHK3jbl4lyVZDEPTkxoVwt8E02+TtJ4HCCwkTQ9bS+o/IygXOl
-         NXTE+iepcAxSdm4piZ9aB4UfE70Ua9cREYd3MgmMh5cMRuJR6EfBnHhUj1TidX/Azpmf
-         EzwQwERTPnIxn6OlqYz8orHjjNdJA6UcvomgG8zVlBNVJ1SfmWmnZmtcZAA3lBQrcssY
-         YULtKlRS5l9EdaIaVsbSGFoB3HYI0WzgdTinxuASitgoZLaIZl2Qp3Co5aTUAL/rWYwf
-         yaZYLr0TqXz6AY5OVQDVlIOSeZx/0UWc+Cbz+VSjCJtX9BJyAc3MV0nHyfE3nKUPeBmR
-         nejQ==
-X-Gm-Message-State: AOAM531NFaw54BmP8hvoJmYvBtOg9JahkLvI5AN3lz5fTX8PKbnnWLtT
-        h/JZU5Ya5lJ7Gf72wUYGusSeFg==
-X-Google-Smtp-Source: ABdhPJzi4JptaWSjZ+IpPh95R3QM3rbCmXAkIDW3AERR+GPKvu25DYfOuw1jEE+qkDYTJZUnMG4TkA==
-X-Received: by 2002:a17:90a:7c4b:: with SMTP id e11mr1510708pjl.151.1616457959673;
-        Mon, 22 Mar 2021 17:05:59 -0700 (PDT)
-Received: from google.com ([2409:10:2e40:5100:bcf2:e05a:a993:9494])
-        by smtp.gmail.com with ESMTPSA id t22sm493650pjw.54.2021.03.22.17.05.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Mar 2021 17:05:59 -0700 (PDT)
-Date:   Tue, 23 Mar 2021 09:05:51 +0900
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-cifs@vger.kernel.org,
-        linux-cifsd-devel@lists.sourceforge.net, smfrench@gmail.com,
-        hyc.lee@gmail.com, viro@zeniv.linux.org.uk, hch@lst.de,
-        hch@infradead.org, ronniesahlberg@gmail.com,
-        aurelien.aptel@gmail.com, aaptel@suse.com, sandeen@sandeen.net,
-        dan.carpenter@oracle.com, colin.king@canonical.com,
-        rdunlap@infradead.org, Steve French <stfrench@microsoft.com>
-Subject: Re: [PATCH 3/5] cifsd: add file operations
-Message-ID: <YFkw3yabfNCXuO05@google.com>
-References: <20210322051344.1706-1-namjae.jeon@samsung.com>
- <CGME20210322052207epcas1p3f0a5bdfd2c994a849a67b465479d0721@epcas1p3.samsung.com>
- <20210322051344.1706-4-namjae.jeon@samsung.com>
- <20210322081512.GI1719932@casper.infradead.org>
- <YFhdWeedjQQgJdbi@google.com>
- <20210322170916.GS1719932@casper.infradead.org>
+        Mon, 22 Mar 2021 20:12:20 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210323001218epoutp034ac9c27f748d8d312879abb1fd94ea6c~u0Etp5oNe2676826768epoutp033
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 00:12:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210323001218epoutp034ac9c27f748d8d312879abb1fd94ea6c~u0Etp5oNe2676826768epoutp033
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1616458338;
+        bh=uP47+MAZInBagtKyLFw181heQ369em/Nzhd92xvvz9U=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=beNP1Omd4FmDAWLbfWjpcTx3l8YZV7VkIbxtKe3cZrhp9sawdRHupkQfd16RHJSpc
+         Ve3e5XJTygihIg/l4OdQfGR2IQ2vKXq4O7+TlJMfyIvaUQsYalwZlA9QqgTcUIt3Ql
+         pLhw8RLlFRIkRNbt1y1a3KQt7HbzM1pXu64Lw8KY=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20210323001217epcas1p3c45c6d17e75c53afbf599ec76593cc04~u0EtF3VBR0148201482epcas1p3b;
+        Tue, 23 Mar 2021 00:12:17 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.161]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4F4BdF075Vz4x9Q5; Tue, 23 Mar
+        2021 00:12:17 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        1D.ED.10347.06239506; Tue, 23 Mar 2021 09:12:16 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210323001216epcas1p1e3f31c9ae427cb9beab59af3b4fc79ea~u0EroNvP11469614696epcas1p1w;
+        Tue, 23 Mar 2021 00:12:16 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210323001216epsmtrp2b1eb7f4357254bf9a3254a850857c8a4~u0ErnFcYs2193521935epsmtrp2T;
+        Tue, 23 Mar 2021 00:12:16 +0000 (GMT)
+X-AuditID: b6c32a39-15dff7000002286b-ee-60593260b1e2
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6A.8F.08745.06239506; Tue, 23 Mar 2021 09:12:16 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210323001216epsmtip217f211028a5629cc2745f4c5724f485f~u0ErTahbi1338313383epsmtip2K;
+        Tue, 23 Mar 2021 00:12:16 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Al Viro'" <viro@zeniv.linux.org.uk>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-cifs@vger.kernel.org>,
+        <linux-cifsd-devel@lists.sourceforge.net>, <smfrench@gmail.com>,
+        <senozhatsky@chromium.org>, <hyc.lee@gmail.com>, <hch@lst.de>,
+        <hch@infradead.org>, <ronniesahlberg@gmail.com>,
+        <aurelien.aptel@gmail.com>, <aaptel@suse.com>,
+        <sandeen@sandeen.net>, <dan.carpenter@oracle.com>,
+        <colin.king@canonical.com>, <rdunlap@infradead.org>,
+        "'Sergey Senozhatsky'" <sergey.senozhatsky@gmail.com>,
+        "'Steve French'" <stfrench@microsoft.com>
+In-Reply-To: <YFg/W4q9PHwTAJtZ@zeniv-ca.linux.org.uk>
+Subject: RE: [PATCH 3/5] cifsd: add file operations
+Date:   Tue, 23 Mar 2021 09:12:16 +0900
+Message-ID: <00ad01d71f79$2e9883d0$8bc98b70$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210322170916.GS1719932@casper.infradead.org>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGKnGOaYF8FWW41Vo1OapoCvoUV0QMvkMmsAV/TykYDBijVbqrtAR+g
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TbUxTVxjHc+69vS1kjEth7lgWh1choRvQUosHBs5FQ64MDcZtbu5D29Gb
+        llDappcahiwpRBxjAxG3OQpEhWlRAiiCQoGRAAtoSRg6p5AJQ2BDHa91I8jbWu6W8e33nPN/
+        Xv7nRYSLn5MSUZoxk7UYNQaa9CVudofLItTRH6llnYsI5U67CNT7bFWIlmuLSPRs7RyBXCVV
+        GLpS+yOGfhmdFaKpdSeOltYXAWrvuE2ge84KEk3/6tEVFS8IUP7PUtR2vYpEde5xIfpzqptE
+        w2fOk2hgtVewN5Cx24pIptw2SDCt9kdC5kaNlGm74MaYtiEbyeS3rAqZ+clhgmmqHsOYhqb7
+        BONu3MY0TkxjKS8dM8TrWY2WtYSwxlSTNs2oS6DfPaLap1LGyOQR8li0mw4xajLYBHp/ckpE
+        YprB45EOOa4xWD1LKRqOo6P2xFtM1kw2RG/iMhNo1qw1mOUycySnyeCsRl1kqikjTi6TRSs9
+        SrVBX1ndipsd4VkFEyOkDbzYVghEIkjtgmdX6ELgKxJTLQDmduYL+GABwDnbd0Qh8PEEbgCd
+        w3Fe9iYsNLYQvMgJYFNXP+CDJwCu3BnDvSqSioBrK52kl4OocLheWYJ7RThVRsCp70cF3g0f
+        SgkLnMtCLwdSCpi75MC8TFChsO6iY6OQHxUL74/YAc8B8HbZxMZIOPU6vDVdgfMjhcClycsC
+        vlkinOrPE/CaIFj+xamNxpBy+MCeSzWAT9gPBwtuCHgOhE97m4Q8S6B7poPkD+YEnO/8t34B
+        gFOLCTwr4FDDNYFXgnuMNTij+OXtsHW5EvBtX4Yzf30l4Kv4wYJTYl4SCovvdmM8B8PCz+eE
+        JYC2bzJm32TMvsmA/f9mFwBxFWxhzVyGjuXkZuXmu24EG89fGtsCzk3PRXYBTAS6ABThdJDf
+        yaMfqsV+Ws2n2azFpLJYDSzXBZSeoz6DS15JNXn+jzFTJVdGKxQKtCtmd4xSQb/q94nsN5WY
+        0mky2XSWNbOW//IwkY/EhqXv+5Ybq8+ApaZSidWcfTCprirywMPa+o6L/o6brvYfwoRHD9wJ
+        4w6dN8XrTpbvPBznb93atLpFWnramnR97dGl02E5gw/65tta29nhxK2Ec8+OipwEPO1jdnln
+        ku0NMZkd9VaJg7z74D01kD5erOlOfzPmVm5onnaA+/J9V06FrmbQ9dphWUny+uz42GRA8cr8
+        C8nz1D9GH/7d02eaPVuk3ivV+9YT4rKR5NXCax/05R16LH1SvaOTi9VF9FPbK3VYM+d+++tj
+        cvFPBxm2diDakTpe1Jz+tE91osdKZAdcbS/t6gs9zmbJZt+53OuqjxwK1v8+s3QP9/8mOO2z
+        rOYKmuD0GrkUt3CafwABX29dhwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHIsWRmVeSWpSXmKPExsWy7bCSvG6CUWSCwZk5fBaNb0+zWBx//Zfd
+        4vfqXjaL1/+ms1icnrCIyWLl6qNMFtfuv2e3ePF/F7PFz//fGS327D3JYnF51xw2i7d3gOp6
+        +z6xWrRe0bLYvXERm8Xaz4/ZLd68OMxmcWvifDaL83+PszoIe8xq6GXzmN1wkcVj56y77B6b
+        V2h57F7wmclj980GNo/WHX/ZPT4+vcXisWXxQyaP9Vuusnh83iTnsenJW6YAnigum5TUnMyy
+        1CJ9uwSujLmLdzIXLNes6Hhyj62B8ZdcFyMnh4SAicSnTTtYuhi5OIQEdjBK/O69wgKRkJY4
+        duIMcxcjB5AtLHH4cDFIWEjgOaPE55ZMEJtNQFfi35/9bCC2iICmxP+5E5hB5jALrGWR2HH4
+        CyvE0GeMEhcXvWQHqeIUMJXo2PUbzBYWMJZo/LmcCcRmEVCVWLtwOTOIzStgKXH13ixGCFtQ
+        4uTMJywgRzAL6Em0bQQLMwvIS2x/O4cZ4k4FiZ9Pl7FCHOEm8eJMEytEjYjE7M425gmMwrOQ
+        TJqFMGkWkkmzkHQsYGRZxSiZWlCcm55bbFhglJdarlecmFtcmpeul5yfu4kRnAS0tHYw7ln1
+        Qe8QIxMH4yFGCQ5mJRHelvCIBCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8F7pOxgsJpCeWpGan
+        phakFsFkmTg4pRqYjje9+qDRWtV0XeCJesQvt0/W93LZH73bv9XlpL/Ikd0Mu41/e0cFst1a
+        +VTFTizxtdc7LtPfzV92TfnPt1D+xentyTrBDWcrE3XyzvjUaLc/kg8z250bJhnmlVe4T/kZ
+        T9kttznCiT9mFxpYX2hdYFZTZHLRq///xhKGtOWm9d5lJbtTFv9xnPKuO+2hbbTJBh6OvRnz
+        tBlnb1nRe6NpS06ai/bG1+WvHlpMmd7q8qQl3FXzKedygav6cVWPFTzeyu1Qrry3rOK90VMN
+        v88pUe+zHsk9UNuvxinfcPv4psoy58Oqm55cbL9ZOu387Gs7u1S0c2/tZgjnlks8K1eczlOq
+        yDg7Xk1/2aOEE6+UWIozEg21mIuKEwGG9KvccQMAAA==
+X-CMS-MailID: 20210323001216epcas1p1e3f31c9ae427cb9beab59af3b4fc79ea
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210322052207epcas1p3f0a5bdfd2c994a849a67b465479d0721
+References: <20210322051344.1706-1-namjae.jeon@samsung.com>
+        <CGME20210322052207epcas1p3f0a5bdfd2c994a849a67b465479d0721@epcas1p3.samsung.com>
+        <20210322051344.1706-4-namjae.jeon@samsung.com>
+        <YFg/W4q9PHwTAJtZ@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On (21/03/22 17:09), Matthew Wilcox wrote:
-> On Mon, Mar 22, 2021 at 06:03:21PM +0900, Sergey Senozhatsky wrote:
-> > On (21/03/22 08:15), Matthew Wilcox wrote:
-> > > 
-> > > What's the scenario for which your allocator performs better than slub
-> > > 
-> > 
-> > IIRC request and reply buffers can be up to 4M in size. So this stuff
-> > just allocates a number of fat buffers and keeps them around so that
-> > it doesn't have to vmalloc(4M) for every request and every response.
+> On Mon, Mar 22, 2021 at 02:13:42PM +0900, Namjae Jeon wrote:
+> > This adds file operations and buffer pool for cifsd.
 > 
-> Hang on a minute, this speaks to a deeper design problem.  If we're doing
-> a 'request' or 'reply' that is that large, the I/O should be coming from
-> or going to the page cache.  If it goes via a 4MB virtually contiguous
-> buffer first, that's a memcpy that could/should be avoided.
+> Some random notes:
+> 
+> > +static void rollback_path_modification(char *filename) {
+> > +	if (filename) {
+> > +		filename--;
+> > +		*filename = '/';
+> What an odd way to spell filename[-1] = '/';...
+Okay. Will fix.
+> 
+> > +int ksmbd_vfs_inode_permission(struct dentry *dentry, int acc_mode,
+> > +bool delete) {
+> 
+> > +	if (delete) {
+> > +		struct dentry *parent;
+> > +
+> > +		parent = dget_parent(dentry);
+> > +		if (!parent)
+> > +			return -EINVAL;
+> > +
+> > +		if (inode_permission(&init_user_ns, d_inode(parent), MAY_EXEC | MAY_WRITE)) {
+> > +			dput(parent);
+> > +			return -EACCES;
+> > +		}
+> > +		dput(parent);
+> 
+> Who's to guarantee that parent is stable?  IOW, by the time of that
+> inode_permission() call dentry might very well not be a child of that thing...
+Okay, Will fix.
+> 
+> > +	parent = dget_parent(dentry);
+> > +	if (!parent)
+> > +		return 0;
+> > +
+> > +	if (!inode_permission(&init_user_ns, d_inode(parent), MAY_EXEC | MAY_WRITE))
+> > +		*daccess |= FILE_DELETE_LE;
+> 
+> Ditto.
+Okay.
+> 
+> > +int ksmbd_vfs_mkdir(struct ksmbd_work *work,
+> > +		    const char *name,
+> > +		    umode_t mode)
+> 
+> 
+> > +	err = vfs_mkdir(&init_user_ns, d_inode(path.dentry), dentry, mode);
+> > +	if (!err) {
+> > +		ksmbd_vfs_inherit_owner(work, d_inode(path.dentry),
+> > +			d_inode(dentry));
+> 
+> ->mkdir() might very well return success, with dentry left unhashed negative.
+> Look at the callers of vfs_mkdir() to see how it should be handled.
+Okay, Will fix.
+> 
+> > +static int check_lock_range(struct file *filp,
+> > +			    loff_t start,
+> > +			    loff_t end,
+> > +			    unsigned char type)
+> > +{
+> > +	struct file_lock *flock;
+> > +	struct file_lock_context *ctx = file_inode(filp)->i_flctx;
+> > +	int error = 0;
+> > +
+> > +	if (!ctx || list_empty_careful(&ctx->flc_posix))
+> > +		return 0;
+> > +
+> > +	spin_lock(&ctx->flc_lock);
+> > +	list_for_each_entry(flock, &ctx->flc_posix, fl_list) {
+> > +		/* check conflict locks */
+> > +		if (flock->fl_end >= start && end >= flock->fl_start) {
+> > +			if (flock->fl_type == F_RDLCK) {
+> > +				if (type == WRITE) {
+> > +					ksmbd_err("not allow write by shared lock\n");
+> > +					error = 1;
+> > +					goto out;
+> > +				}
+> > +			} else if (flock->fl_type == F_WRLCK) {
+> > +				/* check owner in lock */
+> > +				if (flock->fl_file != filp) {
+> > +					error = 1;
+> > +					ksmbd_err("not allow rw access by exclusive lock from other
+> opens\n");
+> > +					goto out;
+> > +				}
+> > +			}
+> > +		}
+> > +	}
+> > +out:
+> > +	spin_unlock(&ctx->flc_lock);
+> > +	return error;
+> > +}
+> 
+> WTF is that doing in smbd?
+This code was added to pass the smb2 lock test of samba's smbtorture.
+Will fix it.
+> 
+> > +	filp = fp->filp;
+> > +	inode = d_inode(filp->f_path.dentry);
+> 
+> That should be file_inode().  Try it on overlayfs, watch it do interesting things...
+Okay.
+> 
+> > +	nbytes = kernel_read(filp, rbuf, count, pos);
+> > +	if (nbytes < 0) {
+> > +		name = d_path(&filp->f_path, namebuf, sizeof(namebuf));
+> > +		if (IS_ERR(name))
+> > +			name = "(error)";
+> > +		ksmbd_err("smb read failed for (%s), err = %zd\n",
+> > +				name, nbytes);
+> 
+> Do you really want the full pathname here?  For (presumably) spew into syslog?
+No, Will fix.
+> 
+> > +int ksmbd_vfs_remove_file(struct ksmbd_work *work, char *name) {
+> > +	struct path parent;
+> > +	struct dentry *dir, *dentry;
+> > +	char *last;
+> > +	int err = -ENOENT;
+> > +
+> > +	last = extract_last_component(name);
+> > +	if (!last)
+> > +		return -ENOENT;
+> 
+> Yeccchhh...
+I guess I change it err instead of -ENOENT.
 
-But huge vmalloc buffers are still needed. For instance, `ls -la` in
-a directory with a huge number of entries.
+> 
+> > +	if (ksmbd_override_fsids(work))
+> > +		return -ENOMEM;
+> > +
+> > +	err = kern_path(name, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &parent);
+> > +	if (err) {
+> > +		ksmbd_debug(VFS, "can't get %s, err %d\n", name, err);
+> > +		ksmbd_revert_fsids(work);
+> > +		rollback_path_modification(last);
+> > +		return err;
+> > +	}
+> > +
+> > +	dir = parent.dentry;
+> > +	if (!d_inode(dir))
+> > +		goto out;
+> 
+> Really?  When does that happen?
+Will fix.
+> 
+> > +static int __ksmbd_vfs_rename(struct ksmbd_work *work,
+> > +			      struct dentry *src_dent_parent,
+> > +			      struct dentry *src_dent,
+> > +			      struct dentry *dst_dent_parent,
+> > +			      struct dentry *trap_dent,
+> > +			      char *dst_name)
+> > +{
+> > +	struct dentry *dst_dent;
+> > +	int err;
+> > +
+> > +	spin_lock(&src_dent->d_lock);
+> > +	list_for_each_entry(dst_dent, &src_dent->d_subdirs, d_child) {
+> > +		struct ksmbd_file *child_fp;
+> > +
+> > +		if (d_really_is_negative(dst_dent))
+> > +			continue;
+> > +
+> > +		child_fp = ksmbd_lookup_fd_inode(d_inode(dst_dent));
+> > +		if (child_fp) {
+> > +			spin_unlock(&src_dent->d_lock);
+> > +			ksmbd_debug(VFS, "Forbid rename, sub file/dir is in use\n");
+> > +			return -EACCES;
+> > +		}
+> > +	}
+> > +	spin_unlock(&src_dent->d_lock);
+> 
+> Hard NAK right there.  That thing has no business poking at that level.
+> And I'm pretty certain that it's racy as hell.
+Okay. It was same reason(smbtorture test), will fix it also.
 
-> But now i'm looking for how ksmbd_find_buffer() is used, and it isn't.
-> So it looks like someone came to the same conclusion I did, but forgot
-> to delete the wm code.
+Thanks for your review!
 
-Yes, I think it's disabled by default and requires some smb.conf
-configuration. So I guess that wm code can be removed. Especially given
-that
-
-> That said, there are plenty of opportunities to optimise the vmalloc code,
-> and that's worth pursuing.
-
-That would be really interesting to see!
-
-> And here's the receive path which contains
-> the memcpy that should be avoided (ok, it's actually the call to ->read;
-> we shouldn't be reading in the entire 4MB but rather the header):
-
-> +		conn->request_buf = ksmbd_alloc_request(size);
-> +		if (!conn->request_buf)
-> +			continue;
-> +
-> +		memcpy(conn->request_buf, hdr_buf, sizeof(hdr_buf));
-> +		if (!ksmbd_smb_request(conn))
-> +			break;
-> +
-> +		/*
-> +		 * We already read 4 bytes to find out PDU size, now
-> +		 * read in PDU
-> +		 */
-> +		size = t->ops->read(t, conn->request_buf + 4, pdu_size);
-
-
-// A side note, it seems that the maximum read/write/trans buffer size that
-// windows supports is 8MB, not 4MB.
