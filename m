@@ -2,425 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B98C834560B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 04:14:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E1D834561C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 04:16:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230078AbhCWDNm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Mar 2021 23:13:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36529 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229771AbhCWDNe (ORCPT
+        id S229904AbhCWDQY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Mar 2021 23:16:24 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:60007 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229822AbhCWDQG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Mar 2021 23:13:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616469212;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=w41mFHbzgB2quaG8pZT0R2//vOkJ9eW+GuT/TkEY06s=;
-        b=Pi2YOhsxxcvtXylTqicLPxHgpzFFuIuEHqDt3hYlgZvLJuFfqo/83too1D9v3K9l7DO6BE
-        u7re9HnEs4N43PINAcdLT08PHWXjBToUd7ZT/dbE0gJjWoLyOH2vE67KAJdsHUr3MmhUS5
-        s3ts+mAvXNn3US0g1P9oFWb+UCpVZgI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-314-ep2toTBYOYmoIY_mJ3S4ow-1; Mon, 22 Mar 2021 23:13:30 -0400
-X-MC-Unique: ep2toTBYOYmoIY_mJ3S4ow-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 50220101371B;
-        Tue, 23 Mar 2021 03:13:28 +0000 (UTC)
-Received: from wangxiaodeMacBook-Air.local (ovpn-12-238.pek2.redhat.com [10.72.12.238])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BD27460BD8;
-        Tue, 23 Mar 2021 03:13:15 +0000 (UTC)
-Subject: Re: [PATCH v5 07/11] vdpa: Support transferring virtual addressing
- during DMA mapping
-To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
-        stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
-        bob.liu@oracle.com, hch@infradead.org, rdunlap@infradead.org,
-        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
-        dan.carpenter@oracle.com
-Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20210315053721.189-1-xieyongji@bytedance.com>
- <20210315053721.189-8-xieyongji@bytedance.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <07312477-6582-1ca9-c5ed-8ff936525d52@redhat.com>
-Date:   Tue, 23 Mar 2021 11:13:13 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
- Gecko/20100101 Thunderbird/78.8.1
+        Mon, 22 Mar 2021 23:16:06 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210323031604epoutp0199c0a046f7575d0de277ae26547dd01f~u2lJ56-U82242822428epoutp01b
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 03:16:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210323031604epoutp0199c0a046f7575d0de277ae26547dd01f~u2lJ56-U82242822428epoutp01b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1616469364;
+        bh=PfIewouVH2Ir+58txrjoFu9xSKAXnOYq8B7QFAr/zSc=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=IWcPWQCeyFfroT539q/egcrwFCXH3+bxEDcknTNiPWJOdxpVd59jl7dEQe/Km2t2h
+         7vWJMl8Jv0JMbjKnWvXEL+EH8zm1/wTk+tKUFseGYRZrGqa8Fxn+gqFdgiZOJ4z+hw
+         k+ObvwUGQhLAi6b6fNgM9c+Q3c7P7B67ucGeA5GU=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20210323031603epcas1p14af7d0fd77eb3705c18dea20a9f21535~u2lJBQ2L-2643826438epcas1p1b;
+        Tue, 23 Mar 2021 03:16:03 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.162]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4F4GjG0q0lz4x9Q8; Tue, 23 Mar
+        2021 03:16:02 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BB.79.22618.17D59506; Tue, 23 Mar 2021 12:16:01 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20210323031600epcas1p4f611d0e4ebee1a9bb6a07356f0f232fd~u2lHAtkK32263122631epcas1p4F;
+        Tue, 23 Mar 2021 03:16:00 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210323031600epsmtrp28325c8cc037f775be1c98769a8b20e56~u2lG-gzRO2219922199epsmtrp2Q;
+        Tue, 23 Mar 2021 03:16:00 +0000 (GMT)
+X-AuditID: b6c32a38-e4dff7000001585a-83-60595d713a7a
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        10.66.13470.07D59506; Tue, 23 Mar 2021 12:16:00 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210323031600epsmtip2fd9bc04f1ff2bfb158bae1d4f8cfbd76~u2lGvHL-71604416044epsmtip2R;
+        Tue, 23 Mar 2021 03:16:00 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Matthew Wilcox'" <willy@infradead.org>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-cifs@vger.kernel.org>,
+        <linux-cifsd-devel@lists.sourceforge.net>, <smfrench@gmail.com>,
+        <senozhatsky@chromium.org>, <hyc.lee@gmail.com>,
+        <viro@zeniv.linux.org.uk>, <hch@lst.de>, <hch@infradead.org>,
+        <ronniesahlberg@gmail.com>, <aurelien.aptel@gmail.com>,
+        <aaptel@suse.com>, <sandeen@sandeen.net>,
+        <dan.carpenter@oracle.com>, <colin.king@canonical.com>,
+        <rdunlap@infradead.org>,
+        "'Sergey Senozhatsky'" <sergey.senozhatsky@gmail.com>,
+        "'Steve French'" <stfrench@microsoft.com>
+In-Reply-To: <20210323031242.GA1719932@casper.infradead.org>
+Subject: RE: [PATCH 1/5] cifsd: add server handler and tranport layers
+Date:   Tue, 23 Mar 2021 12:16:00 +0900
+Message-ID: <00da01d71f92$d9c76a50$8d563ef0$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20210315053721.189-8-xieyongji@bytedance.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGKnGOaYF8FWW41Vo1OapoCvoUV0QMoPiJ6Am1CcOcBjsy+tgLfBwFHAYenNeWqzZTjcA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTVxzHdx+9bQm4a4FxxqLAzRyxsdhSiscJC3HO3WT7A+ZkyDSlwg10
+        lrbpLUMEs2p4DUGozsgKgrANHI/Baqc8RlA6ggwTpmMOcFMQ3HgMX6C8YW0vy/jv8/ud7/n+
+        zvecHAEmmiN8BWqtkTFoVRqKcMOv2LdKJIZDB+KkDRHwxFQPDrsml/lwsbaAgJMr53HYU1SJ
+        wm9rO1F45/5jPhxbbcHg/OosAn9s68bhry2lBJz6w6ErOP2MB7P6xLD1+0oC1k+P8OE/Y3YC
+        DprLCdi73MWDi3OlRIQXbTEVEHSJ6RZON1v+5NOXL4np1ovTKN06YCLorKZlPv304SBO274a
+        RukG2284PW3dTFtHp9BI91hNWBKjSmAM/ow2Xpeg1iaGU+/tU76tVIRKZRLZTriD8teqkplw
+        as/7kZK9ao0jJ+X/qUqT4mhFqliW2v5WmEGXYmT8k3SsMZxi9AkavUyqD2JVyWyKNjEoXpf8
+        pkwqDVY4lHGapJpThbg+h3/03Nl7iAnp5uUhQgEgQ0B1cZ+D3QQisgkBt5ey1opnCFgd6cW5
+        4gUCZmqGHYXAtaW8OZXrtyEg6/EMwhXjDtH8dczpS5ASsLLUTjjZi9wG8savumwx0oaDGwsn
+        UeeCkAwD55r6XSJPci+4cu2si3FyC7hR9oXLyIPcCaqthWu8EXR/OYo7GSP9wNWpUowL4Q/m
+        H1bxnKfzIqNBpdWbk3iBks+zMedcQNYKwS8/3UU4/R7QMjHM59gTTHTZ1tgXTD9qI7iU6eBp
+        +5p9LgLGZsM5loOBhkbXKIzcChpatnPtANC8eAHhxm4Aj57n8zgXD5CbLeIkW8Dp23aU49dA
+        Xs4TfhFCWdblsqzLZVkXwPL/sIsIXoO8wujZ5ESGlelD1r+1FXF9ATFsQi5MPQnqQFAB0oEA
+        AUZ5eWR+FBMn8khQpR1jDDqlIUXDsB2IwnHTZszXO17n+ENao1KmCJbL5TAkdEeoQk75eByW
+        DilFZKLKyBxhGD1j+G8fKhD6mlDofb4fPdj00uLhzeSdxqqKuq7AmEB+8oPUCJOfTRswe2ms
+        LsQnMCbFrSfj3Yy44FjdYOZuUV129Tdn9r9uO4rXL8VW7FpQNI5/smmfqOH4tdF0+4kX5afU
+        c9A+ECQFtMj360z9zyPHqeWND+ilDfK4Hxbg7wfq/FZbJo706suyBf1Jn5W8k757f8XNDzR1
+        9X9/lyZu21RUVq3MkLubc4h7uUOy9lTp+HBnUb+PXKzL/0tYvHAo8WXrTfvdZuHc0MdGyRvx
+        Ia+ao9Tm4kD24IdRIzAy/1hWwK3GpcsBk9l9M2eMhcjzFU/1/Z7OhYLo61VB/Gn3kiiS2ma0
+        n9yVFm0up3A2SSUTYwZW9S+1ttRqiwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEIsWRmVeSWpSXmKPExsWy7bCSvG5BbGSCwebnhhaNb0+zWBx//Zfd
+        4vfqXjaL1/+ms1icnrCIyWLl6qNMFtfuv2e3ePF/F7PFz//fGS327D3JYnF51xw2i7d3gOp6
+        +z6xWrRe0bLYvXERm8Xaz4/ZLd68OMxmcWvifDaL83+Ps1r8/jGHzUHEY1ZDL5vH7IaLLB47
+        Z91l99i8Qstj94LPTB67bzawebTu+Mvu8fHpLRaPLYsfMnms33KVxePzJjmPTU/eMgXwRHHZ
+        pKTmZJalFunbJXBlrOruZyloZ6+YOvkeYwPjSdYuRg4OCQETifk7y7sYuTiEBHYzSizauoOl
+        i5ETKC4tcezEGWaIGmGJw4eLIWqeM0pMW3yCFaSGTUBX4t+f/WwgtoiAjkTXy+2sIEXMAqdY
+        JDb2LmSF6DjNJHG/bTM7SBWngI3E1B03wDqEBdwkth2YDGazCKhKnJg3hRnE5hWwlFi+qR/K
+        FpQ4OfMJC8gVzAJ6Em0bGUHCzALyEtvfzmGGOFRB4ufTZWDPiAiESSzaJApRIiIxu7ONeQKj
+        8Cwkg2YhDJqFZNAsJB0LGFlWMUqmFhTnpucWGxYY5qWW6xUn5haX5qXrJefnbmIEJwMtzR2M
+        21d90DvEyMTBeIhRgoNZSYS3JTwiQYg3JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6Ykl
+        qdmpqQWpRTBZJg5OqQYmLmO7msWFS3ad7V+vfsnbKuDu9HV/Czo4g9zn1TU9nO+QfXamgnI0
+        i/PFNQ6HdvK8PPFd4ft0YfU33Z/2rI+sWNksuCP+02TDBQzPq94X8m8Wm+i8T8ZCMFwjNvSh
+        t8/+KzseTXq3/cgU8/Jfa+9oSbzOeFLF0Pj36PEFdkY8U+WqLr3dIWgW4yTV7/9j+8neumQ+
+        7wL/zPfv8sR9uNc+5K7f+v/r01m7yrNOrvC9dV1W65Tx7ASDNf/bBLP2Pznxqn1/B9fF/zvn
+        PuMMO7nUPyx8J/87zeVvciwT5zOvWXzCw9PvtCQHt4i4o+25zUkzHDJXNHK5X7tRWStxZ6Z0
+        g65q7PSNh1580ovxsN6wVImlOCPRUIu5qDgRACDoB9h1AwAA
+X-CMS-MailID: 20210323031600epcas1p4f611d0e4ebee1a9bb6a07356f0f232fd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210322052204epcas1p1382cadbfe958d156c0ad9f7fcb8532b7
+References: <20210322051344.1706-1-namjae.jeon@samsung.com>
+        <CGME20210322052204epcas1p1382cadbfe958d156c0ad9f7fcb8532b7@epcas1p1.samsung.com>
+        <20210322051344.1706-2-namjae.jeon@samsung.com>
+        <20210322221816.GW1719932@casper.infradead.org>
+        <00d901d71f90$cdfd24f0$69f76ed0$@samsung.com>
+        <20210323031242.GA1719932@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-ÔÚ 2021/3/15 ÏÂÎç1:37, Xie Yongji Ð´µÀ:
-> This patch introduces an attribute for vDPA device to indicate
-> whether virtual address can be used. If vDPA device driver set
-> it, vhost-vdpa bus driver will not pin user page and transfer
-> userspace virtual address instead of physical address during
-> DMA mapping. And corresponding vma->vm_file and offset will be
-> also passed as an opaque pointer.
->
-> Suggested-by: Jason Wang <jasowang@redhat.com>
-> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> ---
->   drivers/vdpa/ifcvf/ifcvf_main.c   |   2 +-
->   drivers/vdpa/mlx5/net/mlx5_vnet.c |   2 +-
->   drivers/vdpa/vdpa.c               |   9 +++-
->   drivers/vdpa/vdpa_sim/vdpa_sim.c  |   2 +-
->   drivers/vdpa/virtio_pci/vp_vdpa.c |   2 +-
->   drivers/vhost/vdpa.c              | 104 +++++++++++++++++++++++++++++++-------
->   include/linux/vdpa.h              |  19 +++++--
->   7 files changed, 113 insertions(+), 27 deletions(-)
->
-> diff --git a/drivers/vdpa/ifcvf/ifcvf_main.c b/drivers/vdpa/ifcvf/ifcvf_main.c
-> index d555a6a5d1ba..aee013f3eb5f 100644
-> --- a/drivers/vdpa/ifcvf/ifcvf_main.c
-> +++ b/drivers/vdpa/ifcvf/ifcvf_main.c
-> @@ -431,7 +431,7 @@ static int ifcvf_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->   	}
->   
->   	adapter = vdpa_alloc_device(struct ifcvf_adapter, vdpa,
-> -				    dev, &ifc_vdpa_ops, NULL);
-> +				    dev, &ifc_vdpa_ops, NULL, false);
->   	if (adapter == NULL) {
->   		IFCVF_ERR(pdev, "Failed to allocate vDPA structure");
->   		return -ENOMEM;
-> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> index 71397fdafa6a..fb62ebcf464a 100644
-> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> @@ -1982,7 +1982,7 @@ static int mlx5v_probe(struct auxiliary_device *adev,
->   	max_vqs = min_t(u32, max_vqs, MLX5_MAX_SUPPORTED_VQS);
->   
->   	ndev = vdpa_alloc_device(struct mlx5_vdpa_net, mvdev.vdev, mdev->device, &mlx5_vdpa_ops,
-> -				 NULL);
-> +				 NULL, false);
->   	if (IS_ERR(ndev))
->   		return PTR_ERR(ndev);
->   
-> diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-> index 5cffce67cab0..97fbac276c72 100644
-> --- a/drivers/vdpa/vdpa.c
-> +++ b/drivers/vdpa/vdpa.c
-> @@ -71,6 +71,7 @@ static void vdpa_release_dev(struct device *d)
->    * @config: the bus operations that is supported by this device
->    * @size: size of the parent structure that contains private data
->    * @name: name of the vdpa device; optional.
-> + * @use_va: indicate whether virtual address must be used by this device
->    *
->    * Driver should use vdpa_alloc_device() wrapper macro instead of
->    * using this directly.
-> @@ -80,7 +81,8 @@ static void vdpa_release_dev(struct device *d)
->    */
->   struct vdpa_device *__vdpa_alloc_device(struct device *parent,
->   					const struct vdpa_config_ops *config,
-> -					size_t size, const char *name)
-> +					size_t size, const char *name,
-> +					bool use_va)
->   {
->   	struct vdpa_device *vdev;
->   	int err = -EINVAL;
-> @@ -91,6 +93,10 @@ struct vdpa_device *__vdpa_alloc_device(struct device *parent,
->   	if (!!config->dma_map != !!config->dma_unmap)
->   		goto err;
->   
-> +	/* It should only work for the device that use on-chip IOMMU */
-> +	if (use_va && !(config->dma_map || config->set_map))
-> +		goto err;
-> +
->   	err = -ENOMEM;
->   	vdev = kzalloc(size, GFP_KERNEL);
->   	if (!vdev)
-> @@ -106,6 +112,7 @@ struct vdpa_device *__vdpa_alloc_device(struct device *parent,
->   	vdev->index = err;
->   	vdev->config = config;
->   	vdev->features_valid = false;
-> +	vdev->use_va = use_va;
->   
->   	if (name)
->   		err = dev_set_name(&vdev->dev, "%s", name);
-> diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim.c b/drivers/vdpa/vdpa_sim/vdpa_sim.c
-> index ff331f088baf..d26334e9a412 100644
-> --- a/drivers/vdpa/vdpa_sim/vdpa_sim.c
-> +++ b/drivers/vdpa/vdpa_sim/vdpa_sim.c
-> @@ -235,7 +235,7 @@ struct vdpasim *vdpasim_create(struct vdpasim_dev_attr *dev_attr)
->   		ops = &vdpasim_config_ops;
->   
->   	vdpasim = vdpa_alloc_device(struct vdpasim, vdpa, NULL, ops,
-> -				    dev_attr->name);
-> +				    dev_attr->name, false);
->   	if (!vdpasim)
->   		goto err_alloc;
->   
-> diff --git a/drivers/vdpa/virtio_pci/vp_vdpa.c b/drivers/vdpa/virtio_pci/vp_vdpa.c
-> index 1321a2fcd088..03b36aed48d6 100644
-> --- a/drivers/vdpa/virtio_pci/vp_vdpa.c
-> +++ b/drivers/vdpa/virtio_pci/vp_vdpa.c
-> @@ -377,7 +377,7 @@ static int vp_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->   		return ret;
->   
->   	vp_vdpa = vdpa_alloc_device(struct vp_vdpa, vdpa,
-> -				    dev, &vp_vdpa_ops, NULL);
-> +				    dev, &vp_vdpa_ops, NULL, false);
->   	if (vp_vdpa == NULL) {
->   		dev_err(dev, "vp_vdpa: Failed to allocate vDPA structure\n");
->   		return -ENOMEM;
-> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> index 7c83fbf3edac..b65c21ae98d1 100644
-> --- a/drivers/vhost/vdpa.c
-> +++ b/drivers/vhost/vdpa.c
-> @@ -480,21 +480,30 @@ static long vhost_vdpa_unlocked_ioctl(struct file *filep,
->   static void vhost_vdpa_iotlb_unmap(struct vhost_vdpa *v, u64 start, u64 last)
->   {
->   	struct vhost_dev *dev = &v->vdev;
-> +	struct vdpa_device *vdpa = v->vdpa;
->   	struct vhost_iotlb *iotlb = dev->iotlb;
->   	struct vhost_iotlb_map *map;
-> +	struct vdpa_map_file *map_file;
->   	struct page *page;
->   	unsigned long pfn, pinned;
->   
->   	while ((map = vhost_iotlb_itree_first(iotlb, start, last)) != NULL) {
-> -		pinned = map->size >> PAGE_SHIFT;
-> -		for (pfn = map->addr >> PAGE_SHIFT;
-> -		     pinned > 0; pfn++, pinned--) {
-> -			page = pfn_to_page(pfn);
-> -			if (map->perm & VHOST_ACCESS_WO)
-> -				set_page_dirty_lock(page);
-> -			unpin_user_page(page);
-> +		if (!vdpa->use_va) {
-> +			pinned = map->size >> PAGE_SHIFT;
-> +			for (pfn = map->addr >> PAGE_SHIFT;
-> +			     pinned > 0; pfn++, pinned--) {
-> +				page = pfn_to_page(pfn);
-> +				if (map->perm & VHOST_ACCESS_WO)
-> +					set_page_dirty_lock(page);
-> +				unpin_user_page(page);
-> +			}
-> +			atomic64_sub(map->size >> PAGE_SHIFT,
-> +					&dev->mm->pinned_vm);
-> +		} else {
-> +			map_file = (struct vdpa_map_file *)map->opaque;
-> +			fput(map_file->file);
-> +			kfree(map_file);
-
-
-Let's factor out the logic of pa and va separatedly here.
-
-Other looks good to me.
-
-Thanks
-
-
->   		}
-> -		atomic64_sub(map->size >> PAGE_SHIFT, &dev->mm->pinned_vm);
->   		vhost_iotlb_map_free(iotlb, map);
->   	}
->   }
-> @@ -530,21 +539,21 @@ static int perm_to_iommu_flags(u32 perm)
->   	return flags | IOMMU_CACHE;
->   }
->   
-> -static int vhost_vdpa_map(struct vhost_vdpa *v,
-> -			  u64 iova, u64 size, u64 pa, u32 perm)
-> +static int vhost_vdpa_map(struct vhost_vdpa *v, u64 iova,
-> +			  u64 size, u64 pa, u32 perm, void *opaque)
->   {
->   	struct vhost_dev *dev = &v->vdev;
->   	struct vdpa_device *vdpa = v->vdpa;
->   	const struct vdpa_config_ops *ops = vdpa->config;
->   	int r = 0;
->   
-> -	r = vhost_iotlb_add_range(dev->iotlb, iova, iova + size - 1,
-> -				  pa, perm);
-> +	r = vhost_iotlb_add_range_ctx(dev->iotlb, iova, iova + size - 1,
-> +				      pa, perm, opaque);
->   	if (r)
->   		return r;
->   
->   	if (ops->dma_map) {
-> -		r = ops->dma_map(vdpa, iova, size, pa, perm, NULL);
-> +		r = ops->dma_map(vdpa, iova, size, pa, perm, opaque);
->   	} else if (ops->set_map) {
->   		if (!v->in_batch)
->   			r = ops->set_map(vdpa, dev->iotlb);
-> @@ -552,13 +561,15 @@ static int vhost_vdpa_map(struct vhost_vdpa *v,
->   		r = iommu_map(v->domain, iova, pa, size,
->   			      perm_to_iommu_flags(perm));
->   	}
-> -
-> -	if (r)
-> +	if (r) {
->   		vhost_iotlb_del_range(dev->iotlb, iova, iova + size - 1);
-> -	else
-> +		return r;
-> +	}
-> +
-> +	if (!vdpa->use_va)
->   		atomic64_add(size >> PAGE_SHIFT, &dev->mm->pinned_vm);
->   
-> -	return r;
-> +	return 0;
->   }
->   
->   static void vhost_vdpa_unmap(struct vhost_vdpa *v, u64 iova, u64 size)
-> @@ -579,6 +590,56 @@ static void vhost_vdpa_unmap(struct vhost_vdpa *v, u64 iova, u64 size)
->   	}
->   }
->   
-> +static int vhost_vdpa_va_map(struct vhost_vdpa *v,
-> +			     u64 iova, u64 size, u64 uaddr, u32 perm)
-> +{
-> +	struct vhost_dev *dev = &v->vdev;
-> +	u64 offset, map_size, map_iova = iova;
-> +	struct vdpa_map_file *map_file;
-> +	struct vm_area_struct *vma;
-> +	int ret;
-> +
-> +	mmap_read_lock(dev->mm);
-> +
-> +	while (size) {
-> +		vma = find_vma(dev->mm, uaddr);
-> +		if (!vma) {
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +		map_size = min(size, vma->vm_end - uaddr);
-> +		if (!(vma->vm_file && (vma->vm_flags & VM_SHARED) &&
-> +			!(vma->vm_flags & (VM_IO | VM_PFNMAP))))
-> +			goto next;
-> +
-> +		map_file = kzalloc(sizeof(*map_file), GFP_KERNEL);
-> +		if (!map_file) {
-> +			ret = -ENOMEM;
-> +			break;
-> +		}
-> +		offset = (vma->vm_pgoff << PAGE_SHIFT) + uaddr - vma->vm_start;
-> +		map_file->offset = offset;
-> +		map_file->file = get_file(vma->vm_file);
-> +		ret = vhost_vdpa_map(v, map_iova, map_size, uaddr,
-> +				     perm, map_file);
-> +		if (ret) {
-> +			fput(map_file->file);
-> +			kfree(map_file);
-> +			break;
-> +		}
-> +next:
-> +		size -= map_size;
-> +		uaddr += map_size;
-> +		map_iova += map_size;
-> +	}
-> +	if (ret)
-> +		vhost_vdpa_unmap(v, iova, map_iova - iova);
-> +
-> +	mmap_read_unlock(dev->mm);
-> +
-> +	return ret;
-> +}
-> +
->   static int vhost_vdpa_pa_map(struct vhost_vdpa *v,
->   			     u64 iova, u64 size, u64 uaddr, u32 perm)
->   {
-> @@ -645,7 +706,7 @@ static int vhost_vdpa_pa_map(struct vhost_vdpa *v,
->   				csize = (last_pfn - map_pfn + 1) << PAGE_SHIFT;
->   				ret = vhost_vdpa_map(v, iova, csize,
->   						     map_pfn << PAGE_SHIFT,
-> -						     perm);
-> +						     perm, NULL);
->   				if (ret) {
->   					/*
->   					 * Unpin the pages that are left unmapped
-> @@ -674,7 +735,7 @@ static int vhost_vdpa_pa_map(struct vhost_vdpa *v,
->   
->   	/* Pin the rest chunk */
->   	ret = vhost_vdpa_map(v, iova, (last_pfn - map_pfn + 1) << PAGE_SHIFT,
-> -			     map_pfn << PAGE_SHIFT, perm);
-> +			     map_pfn << PAGE_SHIFT, perm, NULL);
->   out:
->   	if (ret) {
->   		if (nchunks) {
-> @@ -707,6 +768,7 @@ static int vhost_vdpa_process_iotlb_update(struct vhost_vdpa *v,
->   					   struct vhost_iotlb_msg *msg)
->   {
->   	struct vhost_dev *dev = &v->vdev;
-> +	struct vdpa_device *vdpa = v->vdpa;
->   	struct vhost_iotlb *iotlb = dev->iotlb;
->   
->   	if (msg->iova < v->range.first ||
-> @@ -717,6 +779,10 @@ static int vhost_vdpa_process_iotlb_update(struct vhost_vdpa *v,
->   				    msg->iova + msg->size - 1))
->   		return -EEXIST;
->   
-> +	if (vdpa->use_va)
-> +		return vhost_vdpa_va_map(v, msg->iova, msg->size,
-> +					 msg->uaddr, msg->perm);
-> +
->   	return vhost_vdpa_pa_map(v, msg->iova, msg->size, msg->uaddr,
->   				 msg->perm);
->   }
-> diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
-> index b01f7c9096bf..e67404e4b23e 100644
-> --- a/include/linux/vdpa.h
-> +++ b/include/linux/vdpa.h
-> @@ -44,6 +44,7 @@ struct vdpa_mgmt_dev;
->    * @config: the configuration ops for this device.
->    * @index: device index
->    * @features_valid: were features initialized? for legacy guests
-> + * @use_va: indicate whether virtual address must be used by this device
->    * @nvqs: maximum number of supported virtqueues
->    * @mdev: management device pointer; caller must setup when registering device as part
->    *	  of dev_add() mgmtdev ops callback before invoking _vdpa_register_device().
-> @@ -54,6 +55,7 @@ struct vdpa_device {
->   	const struct vdpa_config_ops *config;
->   	unsigned int index;
->   	bool features_valid;
-> +	bool use_va;
->   	int nvqs;
->   	struct vdpa_mgmt_dev *mdev;
->   };
-> @@ -69,6 +71,16 @@ struct vdpa_iova_range {
->   };
->   
->   /**
-> + * Corresponding file area for device memory mapping
-> + * @file: vma->vm_file for the mapping
-> + * @offset: mapping offset in the vm_file
-> + */
-> +struct vdpa_map_file {
-> +	struct file *file;
-> +	u64 offset;
-> +};
-> +
-> +/**
->    * vDPA_config_ops - operations for configuring a vDPA device.
->    * Note: vDPA device drivers are required to implement all of the
->    * operations unless it is mentioned to be optional in the following
-> @@ -250,14 +262,15 @@ struct vdpa_config_ops {
->   
->   struct vdpa_device *__vdpa_alloc_device(struct device *parent,
->   					const struct vdpa_config_ops *config,
-> -					size_t size, const char *name);
-> +					size_t size, const char *name,
-> +					bool use_va);
->   
-> -#define vdpa_alloc_device(dev_struct, member, parent, config, name)   \
-> +#define vdpa_alloc_device(dev_struct, member, parent, config, name, use_va)   \
->   			  container_of(__vdpa_alloc_device( \
->   				       parent, config, \
->   				       sizeof(dev_struct) + \
->   				       BUILD_BUG_ON_ZERO(offsetof( \
-> -				       dev_struct, member)), name), \
-> +				       dev_struct, member)), name, use_va), \
->   				       dev_struct, member)
->   
->   int vdpa_register_device(struct vdpa_device *vdev, int nvqs);
+> On Tue, Mar 23, 2021 at 12:01:22PM +0900, Namjae Jeon wrote:
+> > > On Mon, Mar 22, 2021 at 02:13:40PM +0900, Namjae Jeon wrote:
+> > > > +#define RESPONSE_BUF(w)		((void *)(w)->response_buf)
+> > > > +#define REQUEST_BUF(w)		((void *)(w)->request_buf)
+> > >
+> > > Why do you do this obfuscation?
+> > I don't remember exactly, but back then, It looked easier...
+> > >
+> > > > +#define RESPONSE_BUF_NEXT(w)	\
+> > > > +	((void *)((w)->response_buf + (w)->next_smb2_rsp_hdr_off))
+> > > > +#define REQUEST_BUF_NEXT(w)	\
+> > > > +	((void *)((w)->request_buf + (w)->next_smb2_rcv_hdr_off))
+> > >
+> > > These obfuscations aren't even used; delete them
+> > They are used in many place.
+> 
+> Oh, argh.  patch 2/5 was too big, so it didn't make it into the mailing list archive I was using to
+> try to review this series.  Please break it up into smaller pieces for next time!
+Okay:)
+Thanks!
 
