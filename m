@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 60D9D34696B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 21:00:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E50934696F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Mar 2021 21:01:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232875AbhCWUAI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 16:00:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36274 "EHLO
+        id S231680AbhCWUAj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 16:00:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231648AbhCWUAC (ORCPT
+        with ESMTP id S231667AbhCWUAF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 16:00:02 -0400
+        Tue, 23 Mar 2021 16:00:05 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA53FC061574;
-        Tue, 23 Mar 2021 13:00:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B66DC061574;
+        Tue, 23 Mar 2021 13:00:05 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: tonyk)
-        with ESMTPSA id A653D1F44DA2
+        with ESMTPSA id 084781F44DB0
 From:   =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
 To:     Hugh Dickins <hughd@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -26,10 +26,12 @@ Cc:     krisman@collabora.com, smcv@collabora.com, kernel@collabora.com,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, Daniel Rosenberg <drosen@google.com>,
         =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
-Subject: [RFC PATCH 0/4] mm: shmem: Add case-insensitive support for tmpfs
-Date:   Tue, 23 Mar 2021 16:59:37 -0300
-Message-Id: <20210323195941.69720-1-andrealmeid@collabora.com>
+Subject: [RFC PATCH 1/4] Revert "libfs: unexport generic_ci_d_compare() and generic_ci_d_hash()"
+Date:   Tue, 23 Mar 2021 16:59:38 -0300
+Message-Id: <20210323195941.69720-2-andrealmeid@collabora.com>
 X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20210323195941.69720-1-andrealmeid@collabora.com>
+References: <20210323195941.69720-1-andrealmeid@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -37,111 +39,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+This reverts commit 794c43f716845e2d48ce195ed5c4179a4e05ce5f.
 
-This patchset adds support for case-insensitive file name lookups in
-tmpfs. The implementation (and even the commit message) was based on the
-work done at b886ee3e778e ("ext4: Support case-insensitive file name
-lookups").
+For implementing casefolding support at tmpfs, it needs to set dentry
+operations at superblock level, given that tmpfs has no support for
+fscrypt and we don't need to set operations on a per-dentry basis.
+Revert this commit so we can access those exported function from tmpfs
+code.
 
-* Use case
+Signed-off-by: André Almeida <andrealmeid@collabora.com>
+---
+ fs/libfs.c         | 8 +++++---
+ include/linux/fs.h | 5 +++++
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
-The use case for this feature is similar to the use case for ext4, to
-better support compatibility layers (like Wine), particularly in
-combination with sandboxing/container tools (like Flatpak). Those
-containerization tools can share a subset of the host filesystem with an
-application. In the container, the root directory and any parent
-directories required for a shared directory are on tmpfs, with the
-shared directories bind-mounted into the container's view of the
-filesystem.
-
-If the host filesystem is using case-insensitive directories, then the
-application can do lookups inside those directories in a
-case-insensitive way, without this needing to be implemented in
-user-space. However, if the host is only sharing a subset of a
-case-insensitive directory with the application, then the parent
-directories of the mount point will be part of the container's root
-tmpfs. When the application tries to do case-insensitive lookups of
-those parent directories on a case-sensitive tmpfs, the lookup will
-fail.
-
-For example, if /srv/games is a case-insensitive directory on the host,
-then applications will expect /srv/games/Steam/Half-Life and
-/srv/games/steam/half-life to be interchangeable; but if the
-container framework is only sharing /srv/games/Steam/Half-Life and
-/srv/games/Steam/Portal (and not the rest of /srv/games) with the
-container, with /srv, /srv/games and /srv/games/Steam as part of the
-container's tmpfs root, then making /srv/games a case-insensitive
-directory inside the container would be necessary to meet that
-expectation.
-
-* The patchset
-
-Note that, since there's no on disk information about this filesystem
-(and thus, no mkfs support) we need to pass this information in the
-mount options. This is the main difference with other fs supporting
-casefolding like ext4 and f2fs. The folder attribute uses the same value
-used by ext4/f2fs, so userspace tools like chattr already works with
-this implementation.
-
-- Patch 1 reverts the unexportation of casefolding functions for dentry
-operations that are going to be used by tmpfs.
-
-- Patch 2 does the wiring up of casefold functions inside tmpfs, along
-with creating the mounting options for casefold support.
-
-- Patch 3 gives tmpfs support for IOCTL for get/set file flags. This is
-needed since the casefold is done in a per-directory basis at supported
-mount points, via directory flags.
-
-- Patch 4 documents the new options, along with an usage example.
-
-This work is also available at
-https://gitlab.collabora.com/tonyk/linux/-/tree/tmpfs-ic
-
-* Testing
-
-xfstests already has a test for casefold filesystems (generic/556). I
-have adapted it to work with tmpfs in a hacky way and this work can be
-found at https://gitlab.collabora.com/tonyk/xfstests. All tests succeed.
-
-Whenever we manage to get in a common ground around the interface, I'll
-make it more upstreamable so it can get merged along with the kernel
-work.
-
-* FAQ
-
-- Can't this be done in userspace?
-
-Yes, but it's slow and can't assure correctness (imagine two files named
-file.c and FILE.C; an app asks for FiLe.C, which one is the correct?).
-
-- Which changes are required in userspace?
-
-Apart of the container tools that will use this feature, no change is
-needed. Both mount and chattr already work with this patchset.
-
-- This will completely obliterate my setup!
-  
-Casefold support in tmpfs is disabled by default.
-
-Thanks,
-	André
-
-André Almeida (4):
-  Revert "libfs: unexport generic_ci_d_compare() and
-    generic_ci_d_hash()"
-  mm: shmem: Support case-insensitive file name lookups
-  mm: shmem: Add IOCTL support for tmpfs
-  docs: tmpfs: Add casefold options
-
- Documentation/filesystems/tmpfs.rst |  26 +++++
- fs/libfs.c                          |   8 +-
- include/linux/fs.h                  |   5 +
- include/linux/shmem_fs.h            |   5 +
- mm/shmem.c                          | 175 +++++++++++++++++++++++++++-
- 5 files changed, 213 insertions(+), 6 deletions(-)
-
+diff --git a/fs/libfs.c b/fs/libfs.c
+index e2de5401abca..d1d06494463a 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1387,8 +1387,8 @@ static bool needs_casefold(const struct inode *dir)
+  *
+  * Return: 0 if names match, 1 if mismatch, or -ERRNO
+  */
+-static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+-				const char *str, const struct qstr *name)
++int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
++			  const char *str, const struct qstr *name)
+ {
+ 	const struct dentry *parent = READ_ONCE(dentry->d_parent);
+ 	const struct inode *dir = READ_ONCE(parent->d_inode);
+@@ -1425,6 +1425,7 @@ static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+ 		return 1;
+ 	return !!memcmp(str, name->name, len);
+ }
++EXPORT_SYMBOL(generic_ci_d_compare);
+ 
+ /**
+  * generic_ci_d_hash - generic d_hash implementation for casefolding filesystems
+@@ -1433,7 +1434,7 @@ static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+  *
+  * Return: 0 if hash was successful or unchanged, and -EINVAL on error
+  */
+-static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
++int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
+ {
+ 	const struct inode *dir = READ_ONCE(dentry->d_inode);
+ 	struct super_block *sb = dentry->d_sb;
+@@ -1448,6 +1449,7 @@ static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
+ 		return -EINVAL;
+ 	return 0;
+ }
++EXPORT_SYMBOL(generic_ci_d_hash);
+ 
+ static const struct dentry_operations generic_ci_dentry_ops = {
+ 	.d_hash = generic_ci_d_hash,
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ec8f3ddf4a6a..29a0c6371f7d 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3313,6 +3313,11 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
+ 
+ extern int generic_check_addressable(unsigned, u64);
+ 
++#ifdef CONFIG_UNICODE
++extern int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
++extern int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
++				const char *str, const struct qstr *name);
++#endif
+ extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
+ 
+ #ifdef CONFIG_MIGRATION
 -- 
 2.31.0
 
