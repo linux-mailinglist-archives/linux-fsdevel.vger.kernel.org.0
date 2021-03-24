@@ -2,362 +2,272 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 564B4346FFD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 04:12:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1EF234703C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 04:52:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232421AbhCXDL2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 23:11:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44192 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232412AbhCXDK4 (ORCPT
+        id S235150AbhCXDv2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 23:51:28 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50686 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235045AbhCXDvZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 23:10:56 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E9A4C0613DB
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 20:10:56 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id z25so28328618lja.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 20:10:56 -0700 (PDT)
+        Tue, 23 Mar 2021 23:51:25 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12O3ohuX020057;
+        Wed, 24 Mar 2021 03:51:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2020-01-29;
+ bh=frBJMaMpuJ3HbvO9cs6h3WpZ4nzincwrLEiOJiLNCkM=;
+ b=LPxTPzX06e0S06SPiLod/p6+n/bC95+RUHL0dFSnOcwaHJrFNQyrWTSAPIqWdVQSKDWv
+ kYL10efy0llz2BXVvtuw/YlrzYwIKR5MBr5KOW96X+oaut2g78z6A5IWKDwksmLPC5F5
+ lKVFJ5r/TCAw6T34Eud/3lyguNmymLSPIP+DVoo4PvWrcnoo2n2OaSVPzJitF9i+FrmO
+ 6VencsIVRxXtphm5uqLRizzN0OXmkxo6NKOtmbflHHhLUTOjxr3bZn8htKhYtx/7SChM
+ 1NZi1uSAOKm++knetE7o9KOMEpr2/pkTvjACTUuGIoM1EOpGMbLbfROFoz7o7e4W/10L Ig== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 37d9pn1992-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Mar 2021 03:51:17 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12O3pBmi077473;
+        Wed, 24 Mar 2021 03:51:16 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2108.outbound.protection.outlook.com [104.47.55.108])
+        by aserp3030.oracle.com with ESMTP id 37dtmqb34q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Mar 2021 03:51:16 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Up+kQhBAwIP/AiT18LNMuUkeY8YsvsFMIUE3kHlCytjjX4WpixN7frBOkvABHWzXrnQsyJky+l88thL3VyWX0JmY1P0FEI88lpVq8LIQyMmQ5ZEewcfJUeEk0Ptru4WeZaE+jQBOFs3hqi5P0nKmTkDoXaq0OOSQP/Y5r4idTKb53Pp9PnNh4ym9TgzEq4Sla6lWZFUKWY+IYUH7KiojCdKBlakadJQDX0jgLtreOtBoOYuA7Seqn8Z8/oVTZ8rgwsxWCMt3sIfL2mSlWltOKEfoSmaRI0bR4Ghg2r/RAgPmF7lZOo8dIrl1flWRoe7cqJYTOvn7ujh8MZ11MED6ng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=frBJMaMpuJ3HbvO9cs6h3WpZ4nzincwrLEiOJiLNCkM=;
+ b=HuMoplFcxuD1/I4CUgdO0Ifm+JhUP7pjvBscv+AKMYJfpB6jA91jbSap7crrredmROKi/YdV0ayk7oh6YevOJfZtH7sCjPjJ0zjrPHYxCkWWWFgdkk9YsjcpxuYisSPqtc3O9mxV8xcSXbfq/0QD+hIzB5Gq6nLkasgDVXB/ni+9jFklw96hg56mvSwZtjlyODIt4kg9j6TJYr2/0V0MazgwYtOWn15ofIgC3RwUtXVBFX787nOMzNoKmBzzQkvw7nojgB2bcKyfkfsCgkaiV1a54kKGu+FmP6XELL8iBJf3KVJRoeYSwEnXyydlAAXmwtB8EqssWjN99PWJh6t4Mw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ZegDJhsrs3t5DmLNRfuIr22Aaf3RCbcyU5Kj5Ptg79A=;
-        b=M1aeEDxmk9ECf3516Cji4G52oSFsAn8KliAgARkCx5OFt/DI6XCdQtqOSm9+ierP53
-         96dKx4KCJbD1lvEnlxaUGmiNHqSq7B9S+YnK8FMkPsxubMWmxCIKdd5hbiSOCmLVD8x2
-         y6n2VRtZwCuBVid10EDPdpch8y7Qu9isZUjXElYw2NB9WvCorTXHb/TyI6ot3eE3NxDI
-         7RsZdviWjL1D7m/r0hZMgfAIfoSy9HyDnzgjDhHI+4bgia3SIf9923vAMV2rMcGwAwJu
-         +fnXWI39SCzeRrtCZiqNDUgvaQvB4cbJ5ZtxdmrQjAnfMEHQ9KUtf86yaWDN3j/WVdih
-         Ii/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ZegDJhsrs3t5DmLNRfuIr22Aaf3RCbcyU5Kj5Ptg79A=;
-        b=EVl3Q2s9sEQ95qSh9rNPxPCAp6nC7dyqKMtjEvf60Doi4i0R0pzF5mc4DpbBSQRBPr
-         wARhxv0XsiUWyK57mYUMLr5TT7bEmxIBl4aVCE6jJ3liirfmQGMhhVaCp9OzvU5zJywB
-         ZLGu6hmjUBJliSBsFuCyNsyhrw4MFPF9EJxo8FcHS23viWoLnirL/vWNrLYBT7cEaibB
-         5mT9jX42p8hJqLhBBsQKAbrNe1Mx/e9CVEJaTWlygc/j9HaNWJ8pGuAbOJb7PQ7Zbe0C
-         LyvO90VPP28KQ+dKb0DrzaEX4Wbzd+4dn9WnArHkcU58Hvx9xMK5mBbdAQzyR8PUppdy
-         q2cA==
-X-Gm-Message-State: AOAM5303SbYpT9ZVsFDXdvARnHBrTqOchNNL38dkrnGrnOR/O8UR2n5s
-        4QoeCXNy1w08davvdfwULNg6c7XorAiPX2p37f46zg==
-X-Google-Smtp-Source: ABdhPJxSapwHRvBnLCwcoR2sXbNCQsSDCdMD6ytmf/icFhUU43QYK5yfde5P5ZIWyLr27rM90Izr4s50uVBB8ADYn3Q=
-X-Received: by 2002:a2e:9310:: with SMTP id e16mr638054ljh.226.1616555454025;
- Tue, 23 Mar 2021 20:10:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210316204252.427806-1-mic@digikod.net> <20210316204252.427806-8-mic@digikod.net>
- <CAG48ez1arKO3uYzwng8fst-UHkcH6J7YzyHFN+vfXUT2=1HT+w@mail.gmail.com>
- <b41a021c-69f4-075f-e9a0-a4483b280df8@digikod.net> <CAG48ez1Vkd3KtYphDHLLbbkKY9T_ByhUcxwYAcWuDAyiA04A+w@mail.gmail.com>
- <7e494b74-8d5d-a109-6327-992d7d8fca87@digikod.net>
-In-Reply-To: <7e494b74-8d5d-a109-6327-992d7d8fca87@digikod.net>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 24 Mar 2021 04:10:27 +0100
-Message-ID: <CAG48ez0ex48pCgunrg+BpJ-LppZUVXhsmiEW_2d2mhbkDB793Q@mail.gmail.com>
-Subject: Re: [PATCH v30 07/12] landlock: Support filesystem access-control
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=frBJMaMpuJ3HbvO9cs6h3WpZ4nzincwrLEiOJiLNCkM=;
+ b=WxZZzqk8Q6o2s9NDBDSF176KYcDvdeLNtIkRwKoms3/SLAVGZBpCmE9ZuQ5K6qzAgHWzcte5xogQPbD+uKT/yUGchmJ7AlbyI22pVeB+KrlAl/Aat997ro5eRn1AxHBO+GXJ7uFlXt5igpbf+AQ4OOmM6Ia13DWvZU7LVGaz7Pg=
+Received: from CY4PR1001MB2357.namprd10.prod.outlook.com
+ (2603:10b6:910:42::14) by CY4PR1001MB2261.namprd10.prod.outlook.com
+ (2603:10b6:910:41::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.18; Wed, 24 Mar
+ 2021 03:51:13 +0000
+Received: from CY4PR1001MB2357.namprd10.prod.outlook.com
+ ([fe80::2419:5987:3a8f:f376]) by CY4PR1001MB2357.namprd10.prod.outlook.com
+ ([fe80::2419:5987:3a8f:f376%6]) with mapi id 15.20.3955.025; Wed, 24 Mar 2021
+ 03:51:13 +0000
+From:   William Kucharski <william.kucharski@oracle.com>
+To:     Collin Fijalkovich <cfijalkovich@google.com>
+CC:     Song Liu <songliubraving@fb.com>,
+        "surenb@google.com" <surenb@google.com>,
+        "hridya@google.com" <hridya@google.com>,
+        "kaleshsingh@google.com" <kaleshsingh@google.com>,
+        "hughd@google.com" <hughd@google.com>,
+        "timmurray@google.com" <timmurray@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH] mm, thp: Relax the VM_DENYWRITE constraint on file-backed
+ THPs
+Thread-Topic: [PATCH] mm, thp: Relax the VM_DENYWRITE constraint on
+ file-backed THPs
+Thread-Index: AQHXH2bOPa1UqQyVl0aDup/ffvlZfKqSgw8A
+Date:   Wed, 24 Mar 2021 03:51:13 +0000
+Message-ID: <FDF4AA6D-1350-4A5F-9C1D-36032E2E25FF@oracle.com>
+References: <20210322215823.962758-1-cfijalkovich@google.com>
+In-Reply-To: <20210322215823.962758-1-cfijalkovich@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.20)
+authentication-results: google.com; dkim=none (message not signed)
+ header.d=none;google.com; dmarc=none action=none header.from=oracle.com;
+x-originating-ip: [2601:285:8200:4089:4d2b:b909:57a5:8009]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 612b689e-19f9-4df4-be86-08d8ee7811d0
+x-ms-traffictypediagnostic: CY4PR1001MB2261:
+x-microsoft-antispam-prvs: <CY4PR1001MB226147F0576F87E93A07F70881639@CY4PR1001MB2261.namprd10.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: VJxy6DPbzvrP+qEuyvOt386RtWZnTqbYs2wi7P2zsohclXQVXZe62Hua6hBFSQ0yoGKHT6TUaU9o9Fz3+Hf8iTd20KBAbODdHN29n2E3v/NYw6+i7RdsbMTq+GycOcB0Sia7jaXbZZ1TcYRZulPlvh0uAIDuloq8GhRPauYreHmsZa4MX4btuaNrF+qDBfQ86NJI32u5wMUQrJg6N1rhDymdnx3/lrJdy/cZIi+OkxtwFS+pcDRl42504Q6uJfwKk27KYnZnV197abBMO/R91IAFAecxm/dEvf4NQEa9C0/BDLWq15CQKML0JRxPL7Ip8GVDf6J0/6yRU0UpDD3gAhQL6Dtvxk7CYGCxhCFDUJfz1jabq9PeWrnjXle1h7SPZBfhr9Jw+UsuA9j0hC/gA0eTOFCIC5r6sTxWu/NzG2FPuJqC7gNSK3PofS2xe9ZigEaHaaWGYBZKW0CxH52XCvMhP7TGcg0Ww9dTBYLc6dIrBvkzCuqWkEmrQsxGPcvCUEzOR+DQzwTR5k2cm+klkkiSbj2L1EoYepUF1pR+wiEBqHvIHYeGbKlBKYzziIhHDgWHYIWN3VdWdoPiwoEduRmJEJGUtlYl+sfsktf/Wkr6B9NwVUjaPhCMrm5YdNYtctZRyLTZIs7rYc3tCPOCKrUV9Ur0w11ZZFNqJw9tbIqeYzTnaYfv/MRdyJK30hXL8KBxjyUk8sHkjkH3MlRe3w==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR1001MB2357.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(39860400002)(366004)(396003)(136003)(346002)(66446008)(2616005)(5660300002)(6512007)(64756008)(44832011)(478600001)(66946007)(6916009)(36756003)(186003)(4326008)(66476007)(66556008)(6506007)(8676002)(53546011)(7416002)(38100700001)(76116006)(8936002)(316002)(6486002)(33656002)(86362001)(71200400001)(54906003)(2906002)(83380400001)(21314003)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?gizTl1elVbnQCtIs14hiAmQHuru2is7jG+iOF+Do4tf/a4JIPppw84qj9o49?=
+ =?us-ascii?Q?h5ADckwCxdoCpzkpzk2i+BLMk4DEK3YgEVrGSiGBShUdPW5e2imT01ANsdHr?=
+ =?us-ascii?Q?8ZuQCPdn3n0xlIMJr61PsJbK1ow+6SK68qzYrvOSy1zijeHHLvHCjw02etOL?=
+ =?us-ascii?Q?d4L8owmUyanQtfcVi5FggUSuZiWF8/1588Ln8Hxv5LmRzLFdFjmRZdmZIwsr?=
+ =?us-ascii?Q?9zZGKPIrwNU2ag+QR9WKW4LQmHTWxCJuYFBHTjkbfsHnCnKXrMpHmjM5f278?=
+ =?us-ascii?Q?5SOVdGzY0ry05ZcocsEmvKNZ+eecJjI67y1H2Bz3SyIXDaJ/nkt9w8oCSqup?=
+ =?us-ascii?Q?EZgluXHLG87OfRH86tg3JBhdQEcv/2L9MKSjP2A4qur274mcaPZ4IO02cpYq?=
+ =?us-ascii?Q?WDugvV7dhUsREZw++HU2vXLYyNb+UalF7Y8GP4F+5vDLwM8Bh0ldobeseU8W?=
+ =?us-ascii?Q?Ur1ls/nLg1qUCy8d+zPBB+skeARs0G+dbpapbMKoVzPvQJ1qXAV3oV+CNhsc?=
+ =?us-ascii?Q?cXP6Ug4UJEag5CNy1wVTNkUJQlZtgQiEyzso1O0ar1JUF3Y1UsotucC5Ss9j?=
+ =?us-ascii?Q?CEt//+oV6ZFnnmgHJpaespsqyFSrW9YjBwHk93lK6JKQ3ldUiWczpfG3bbcs?=
+ =?us-ascii?Q?IBkc4xFhkJdkY4HcJ2DD2jMHLXkG7zfFGnoYwrEXnAJVpBhJvH+qm8jiBWao?=
+ =?us-ascii?Q?bDuVfDn4gRmHkXv65uAfqTYx6RQiPkXg5+CMjk9t9AZKUwEuMVryBsRjbkh1?=
+ =?us-ascii?Q?pHN8VoKEOuuVNKFZ1nVKdBRE2CQxwej5GuHF83eVKqmztzsUJg3DgbRfWhNu?=
+ =?us-ascii?Q?st/flCvnFC42CVaFiyIV2BkvS2uq8BR9mK00ZL/4alymjWUZnZS163WS9m7u?=
+ =?us-ascii?Q?fDSnWjjGM82L/+U5yQtH6AhITndR2NfTlIGKNoXtTnRNlQLpoZddF/abF1XB?=
+ =?us-ascii?Q?3wN7ZJ4w0sHUhTJEDuZlhPgZsTcxrYI0mALDX5isjvGTJ1824oxCrQvPEJ34?=
+ =?us-ascii?Q?oMFBlroPa9OSWlo9ZFrKuZZousG4SpynjNYGVADW6KMEW6gSf+sWX3J5DZTZ?=
+ =?us-ascii?Q?ajmJM7seuSettrZi+9QvQ/6O8ZXAjo4295+ujc5ymVfl+YGSxCP8LBNLLGO5?=
+ =?us-ascii?Q?Trk2pMSbhoYa4c6d+WytVbYsBvPSmqGZVjDe6k3YI/4mzn/pe8F3ufVfob/0?=
+ =?us-ascii?Q?jb4vaLjR7BWHEs2Wwz1TBNMwnDctLDJmbbckWa5YrRFKDFIqPu3nyAbDqxvH?=
+ =?us-ascii?Q?Z0kDpY4dwSRO6f9brvnDhHRY4XKhizryP7GDh7hTxjaAAA0pfPBcnUcnCOgU?=
+ =?us-ascii?Q?tIJ/LlhkGUcp0X38XDDUIKfpb38C5/xFXO3YfQ86vM4KcDzVAUtOF3euyOdz?=
+ =?us-ascii?Q?AGlS4dYB8MmxEhPh9nOQF07iueif?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <CDD0DBB880B4D14E8BD82DAB86956567@namprd10.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY4PR1001MB2357.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 612b689e-19f9-4df4-be86-08d8ee7811d0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2021 03:51:13.4284
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: SoTX43xlFxLSY2JzbxVhtgR/S1mRvO5pGjo6DnH5RehHo3fsiZty3T8O1OBEdfJLkC4fNnqqtzExqGHIHXIopWgiZqgDAVZKrHbLtuZtVUc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1001MB2261
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9932 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103240027
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9932 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 phishscore=0
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 bulkscore=0 spamscore=0
+ adultscore=0 clxscore=1011 malwarescore=0 mlxscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103240027
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 23, 2021 at 8:22 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
-wrote:
-> On 23/03/2021 18:49, Jann Horn wrote:
-> > On Tue, Mar 23, 2021 at 4:54 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
-et> wrote:
-> >> On 23/03/2021 01:13, Jann Horn wrote:
-> >>>  On Tue, Mar 16, 2021 at 9:43 PM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
-> >>>> Using Landlock objects and ruleset, it is possible to tag inodes
-> >>>> according to a process's domain.
-> >>> [...]
-> >>>> +static void release_inode(struct landlock_object *const object)
-> >>>> +       __releases(object->lock)
-> >>>> +{
-> >>>> +       struct inode *const inode =3D object->underobj;
-> >>>> +       struct super_block *sb;
-> >>>> +
-> >>>> +       if (!inode) {
-> >>>> +               spin_unlock(&object->lock);
-> >>>> +               return;
-> >>>> +       }
-> >>>> +
-> >>>> +       /*
-> >>>> +        * Protects against concurrent use by hook_sb_delete() of th=
-e reference
-> >>>> +        * to the underlying inode.
-> >>>> +        */
-> >>>> +       object->underobj =3D NULL;
-> >>>> +       /*
-> >>>> +        * Makes sure that if the filesystem is concurrently unmount=
-ed,
-> >>>> +        * hook_sb_delete() will wait for us to finish iput().
-> >>>> +        */
-> >>>> +       sb =3D inode->i_sb;
-> >>>> +       atomic_long_inc(&landlock_superblock(sb)->inode_refs);
-> >>>> +       spin_unlock(&object->lock);
-> >>>> +       /*
-> >>>> +        * Because object->underobj was not NULL, hook_sb_delete() a=
-nd
-> >>>> +        * get_inode_object() guarantee that it is safe to reset
-> >>>> +        * landlock_inode(inode)->object while it is not NULL.  It i=
-s therefore
-> >>>> +        * not necessary to lock inode->i_lock.
-> >>>> +        */
-> >>>> +       rcu_assign_pointer(landlock_inode(inode)->object, NULL);
-> >>>> +       /*
-> >>>> +        * Now, new rules can safely be tied to @inode with get_inod=
-e_object().
-> >>>> +        */
-> >>>> +
-> >>>> +       iput(inode);
-> >>>> +       if (atomic_long_dec_and_test(&landlock_superblock(sb)->inode=
-_refs))
-> >>>> +               wake_up_var(&landlock_superblock(sb)->inode_refs);
-> >>>> +}
-> >>> [...]
-> >>>> +static struct landlock_object *get_inode_object(struct inode *const=
- inode)
-> >>>> +{
-> >>>> +       struct landlock_object *object, *new_object;
-> >>>> +       struct landlock_inode_security *inode_sec =3D landlock_inode=
-(inode);
-> >>>> +
-> >>>> +       rcu_read_lock();
-> >>>> +retry:
-> >>>> +       object =3D rcu_dereference(inode_sec->object);
-> >>>> +       if (object) {
-> >>>> +               if (likely(refcount_inc_not_zero(&object->usage))) {
-> >>>> +                       rcu_read_unlock();
-> >>>> +                       return object;
-> >>>> +               }
-> >>>> +               /*
-> >>>> +                * We are racing with release_inode(), the object is=
- going
-> >>>> +                * away.  Wait for release_inode(), then retry.
-> >>>> +                */
-> >>>> +               spin_lock(&object->lock);
-> >>>> +               spin_unlock(&object->lock);
-> >>>> +               goto retry;
-> >>>> +       }
-> >>>> +       rcu_read_unlock();
-> >>>> +
-> >>>> +       /*
-> >>>> +        * If there is no object tied to @inode, then create a new o=
-ne (without
-> >>>> +        * holding any locks).
-> >>>> +        */
-> >>>> +       new_object =3D landlock_create_object(&landlock_fs_underops,=
- inode);
-> >>>> +       if (IS_ERR(new_object))
-> >>>> +               return new_object;
-> >>>> +
-> >>>> +       /* Protects against concurrent get_inode_object() calls. */
-> >>>> +       spin_lock(&inode->i_lock);
-> >>>> +       object =3D rcu_dereference_protected(inode_sec->object,
-> >>>> +                       lockdep_is_held(&inode->i_lock));
-> >>>
-> >>> rcu_dereference_protected() requires that inode_sec->object is not
-> >>> concurrently changed, but I think another thread could call
-> >>> get_inode_object() while we're in landlock_create_object(), and then
-> >>> we could race with the NULL write in release_inode() here? (It
-> >>> wouldn't actually be a UAF though because we're not actually accessin=
-g
-> >>> `object` here.) Or am I missing a lock that prevents this?
-> >>>
-> >>> In v28 this wasn't an issue because release_inode() was holding
-> >>> inode->i_lock (and object->lock) during the NULL store; but in v29 an=
-d
-> >>> this version the NULL store in release_inode() moved out of the locke=
-d
-> >>> region. I think you could just move the NULL store in release_inode()
-> >>> back up (and maybe add a comment explaining the locking rules for
-> >>> landlock_inode(...)->object)?
-> >>>
-> >>> (Or alternatively you could use rcu_dereference_raw() with a comment
-> >>> explaining that the read pointer is only used to check for NULL-ness,
-> >>> and that it is guaranteed that the pointer can't change if it is NULL
-> >>> and we're holding the lock. But that'd be needlessly complicated, I
-> >>> think.)
-> >>
-> >> To reach rcu_assign_pointer(landlock_inode(inode)->object, NULL) in
-> >> release_inode() or in hook_sb_delete(), the
-> >> landlock_inode(inode)->object need to be non-NULL,
-> >
-> > Yes.
-> >
-> >> which implies that a
-> >> call to get_inode_object(inode) either "retry" (because release_inode =
-is
-> >> only called by landlock_put_object, which set object->usage to 0) unti=
-l
-> >> it creates a new object, or reuses the existing referenced object (and
-> >> increments object->usage).
-> >
-> > But it can be that landlock_inode(inode)->object only becomes non-NULL
-> > after get_inode_object() has checked
-> > rcu_dereference(inode_sec->object).
-> >
-> >> The worse case would be if
-> >> get_inode_object(inode) is called just before the
-> >> rcu_assign_pointer(landlock_inode(inode)->object, NULL) from
-> >> hook_sb_delete(), which would result in an object with a NULL underobj=
-,
-> >> which is the expected behavior (and checked by release_inode).
-> >
-> > The scenario I'm talking about doesn't involve hook_sb_delete().
-> >
-> >> The line rcu_assign_pointer(inode_sec->object, new_object) from
-> >> get_inode_object() can only be reached if the underlying inode doesn't
-> >> reference an object,
-> >
-> > Yes.
-> >
-> >> in which case hook_sb_delete() will not reach the
-> >> rcu_assign_pointer(landlock_inode(inode)->object, NULL) line for this
-> >> same inode.
-> >>
-> >> This works because get_inode_object(inode) is mutually exclusive to
-> >> itself with the same inode (i.e. an inode can only point to an object
-> >> that references this same inode).
-> >
-> > To clarify: You can concurrently call get_inode_object() multiple
-> > times on the same inode, right? There are no locks held on entry to
-> > that function.
-> >
-> >> I tried to explain this with the comment "Protects against concurrent
-> >> get_inode_object() calls" in get_inode_object(), and the comments just
-> >> before both rcu_assign_pointer(landlock_inode(inode)->object, NULL).
-> >
-> > The scenario I'm talking about is:
-> >
-> > Initially the inode does not have an associated landlock_object. There
-> > are two threads A and B. Thread A is going to execute
-> > get_inode_object(). Thread B is going to execute get_inode_object()
-> > followed immediately by landlock_put_object().
-> >
-> > thread A: enters get_inode_object()
-> > thread A: rcu_dereference(inode_sec->object) returns NULL
-> > thread A: enters landlock_create_object()
-> > thread B: enters get_inode_object()
-> > thread B: rcu_dereference(inode_sec->object) returns NULL
-> > thread B: calls landlock_create_object()
-> > thread B: sets inode_sec->object while holding inode->i_lock
-> > thread B: leaves get_inode_object()
-> > thread B: enters landlock_put_object()
-> > thread B: object->usage drops to 0, object->lock is taken
-> > thread B: calls release_inode()
-> > thread B: drops object->lock
-> > thread A: returns from landlock_create_object()
-> > thread A: takes inode->i_lock
-> >
-> > At this point, thread B will run:
-> >
-> >     rcu_assign_pointer(landlock_inode(inode)->object, NULL);
-> >
-> > while thread A runs:
-> >
-> >     rcu_dereference_protected(inode_sec->object,
-> >         lockdep_is_held(&inode->i_lock));
-> >
-> > meaning there is a (theoretical) data race, since
-> > rcu_dereference_protected() doesn't use READ_ONCE().
->
-> Hum, I see, that is what I was missing. And that explain why there is
-> (in practice) no impact on winning the race.
->
-> I would prefer to use rcu_access_pointer() instead of
-> rcu_dereference_protected() to avoid pitfall, and it reflects what I was
-> expecting:
->
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -117,9 +117,7 @@ static struct landlock_object
-> *get_inode_object(struct inode *const inode)
->
->         /* Protects against concurrent get_inode_object() calls. */
->         spin_lock(&inode->i_lock);
-> -       object =3D rcu_dereference_protected(inode_sec->object,
-> -                       lockdep_is_held(&inode->i_lock));
-> -       if (unlikely(object)) {
-> +       if (unlikely(rcu_access_pointer(inode_sec->object))) {
->                 /* Someone else just created the object, bail out and
-> retry. */
->                 spin_unlock(&inode->i_lock);
->                 kfree(new_object);
+I like this, it reminds me of the changes I proposed a few years ago to try
+to automatically map read-only text regions of appropriate sizes and
+alignment with THPs.
 
-Ah, yeah, that should work. I had forgotten about rcu_access_pointer().
+My concern had always been whether commercial software and distro vendors
+would buy into supplying the appropriate linker flags when compiling; your
+solution is at the very least a good head start down that road.
 
-> But I'm not sure about your proposition to move the NULL store in
-> release_inode() back up. Do you mean to add back the inode lock in
-> release_inode() like this?
->
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -59,16 +59,12 @@ static void release_inode(struct landlock_object
-> *const object)
->          * Makes sure that if the filesystem is concurrently unmounted,
->          * hook_sb_delete() will wait for us to finish iput().
->          */
-> +       spin_lock(&inode->i_lock);
->         sb =3D inode->i_sb;
->         atomic_long_inc(&landlock_superblock(sb)->inode_refs);
->         spin_unlock(&object->lock);
-> -       /*
-> -        * Because object->underobj was not NULL, hook_sb_delete() and
-> -        * get_inode_object() guarantee that it is safe to reset
-> -        * landlock_inode(inode)->object while it is not NULL.  It is the=
-refore
-> -        * not necessary to lock inode->i_lock.
-> -        */
->         rcu_assign_pointer(landlock_inode(inode)->object, NULL);
-> +       spin_unlock(&inode->i_lock);
->         /*
->          * Now, new rules can safely be tied to @inode with get_inode_obj=
-ect().
->          */
->
->
-> I would prefer to avoid nested locks if it is not necessary though.
+Matthew Wilcox and I had noticed a lot of ordinary apps such as gcc, Chrome
+and Firefox would benefit from such mappings; have you tried building any
+of those with the appropriate linker flag to see how they might benefit
+from the change?
 
-Hm, yeah, you have a point there.
+Thanks,
+    -- Bill
 
-Doing it locklessly does make the locking rules a little complicated
-though, and you'll have to update the comment inside struct
-landlock_inode_security. At the moment, it says:
 
-* @object: Weak pointer to an allocated object.  All writes (i.e.
-* creating a new object or removing one) are protected by the
-* underlying inode->i_lock.  Disassociating @object from the inode is
-* additionally protected by @object->lock, from the time @object's
-* usage refcount drops to zero to the time this pointer is nulled out.
+> On Mar 22, 2021, at 3:58 PM, Collin Fijalkovich <cfijalkovich@google.com>=
+ wrote:
+>=20
+> Transparent huge pages are supported for read-only non-shmem filesystems,
+> but are only used for vmas with VM_DENYWRITE. This condition ensures that
+> file THPs are protected from writes while an application is running
+> (ETXTBSY).  Any existing file THPs are then dropped from the page cache
+> when a file is opened for write in do_dentry_open(). Since sys_mmap
+> ignores MAP_DENYWRITE, this constrains the use of file THPs to vmas
+> produced by execve().
+>=20
+> Systems that make heavy use of shared libraries (e.g. Android) are unable
+> to apply VM_DENYWRITE through the dynamic linker, preventing them from
+> benefiting from the resultant reduced contention on the TLB.
+>=20
+> This patch reduces the constraint on file THPs allowing use with any
+> executable mapping from a file not opened for write (see
+> inode_is_open_for_write()). It also introduces additional conditions to
+> ensure that files opened for write will never be backed by file THPs.
+>=20
+> Restricting the use of THPs to executable mappings eliminates the risk th=
+at
+> a read-only file later opened for write would encounter significant
+> latencies due to page cache truncation.
+>=20
+> The ld linker flag '-z max-page-size=3D(hugepage size)' can be used to
+> produce executables with the necessary layout. The dynamic linker must
+> map these file's segments at a hugepage size aligned vma for the mapping =
+to
+> be backed with THPs.
+>=20
+> Signed-off-by: Collin Fijalkovich <cfijalkovich@google.com>
+> ---
+> fs/open.c       | 13 +++++++++++--
+> mm/khugepaged.c | 16 +++++++++++++++-
+> 2 files changed, 26 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/fs/open.c b/fs/open.c
+> index e53af13b5835..f76e960d10ea 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -852,8 +852,17 @@ static int do_dentry_open(struct file *f,
+> 	 * XXX: Huge page cache doesn't support writing yet. Drop all page
+> 	 * cache for this file before processing writes.
+> 	 */
+> -	if ((f->f_mode & FMODE_WRITE) && filemap_nr_thps(inode->i_mapping))
+> -		truncate_pagecache(inode, 0);
+> +	if (f->f_mode & FMODE_WRITE) {
+> +		/*
+> +		 * Paired with smp_mb() in collapse_file() to ensure nr_thps
+> +		 * is up to date and the update to i_writecount by
+> +		 * get_write_access() is visible. Ensures subsequent insertion
+> +		 * of THPs into the page cache will fail.
+> +		 */
+> +		smp_mb();
+> +		if (filemap_nr_thps(inode->i_mapping))
+> +			truncate_pagecache(inode, 0);
+> +	}
+>=20
+> 	return 0;
+>=20
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index a7d6cb912b05..4c7cc877d5e3 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -459,7 +459,8 @@ static bool hugepage_vma_check(struct vm_area_struct =
+*vma,
+>=20
+> 	/* Read-only file mappings need to be aligned for THP to work. */
+> 	if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) && vma->vm_file &&
+> -	    (vm_flags & VM_DENYWRITE)) {
+> +	    !inode_is_open_for_write(vma->vm_file->f_inode) &&
+> +	    (vm_flags & VM_EXEC)) {
+> 		return IS_ALIGNED((vma->vm_start >> PAGE_SHIFT) - vma->vm_pgoff,
+> 				HPAGE_PMD_NR);
+> 	}
+> @@ -1872,6 +1873,19 @@ static void collapse_file(struct mm_struct *mm,
+> 	else {
+> 		__mod_lruvec_page_state(new_page, NR_FILE_THPS, nr);
+> 		filemap_nr_thps_inc(mapping);
+> +		/*
+> +		 * Paired with smp_mb() in do_dentry_open() to ensure
+> +		 * i_writecount is up to date and the update to nr_thps is
+> +		 * visible. Ensures the page cache will be truncated if the
+> +		 * file is opened writable.
+> +		 */
+> +		smp_mb();
+> +		if (inode_is_open_for_write(mapping->host)) {
+> +			result =3D SCAN_FAIL;
+> +			__mod_lruvec_page_state(new_page, NR_FILE_THPS, -nr);
+> +			filemap_nr_thps_dec(mapping);
+> +			goto xa_locked;
+> +		}
+> 	}
+>=20
+> 	if (nr_none) {
+> --=20
+> 2.31.0.rc2.261.g7f71774620-goog
+>=20
+>=20
 
-which isn't true anymore.
