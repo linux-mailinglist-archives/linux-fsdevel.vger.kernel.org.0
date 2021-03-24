@@ -2,156 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A61A347BA3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 16:06:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E341347BBF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 16:10:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236378AbhCXPGP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Mar 2021 11:06:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57898 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236480AbhCXPF5 (ORCPT
+        id S236474AbhCXPJ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Mar 2021 11:09:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:30064 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236492AbhCXPJU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Mar 2021 11:05:57 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB54C061763;
-        Wed, 24 Mar 2021 08:05:57 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id r193so21816828ior.9;
-        Wed, 24 Mar 2021 08:05:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rxJNaw8C7ayCx/gjJ/PWUgSwy3kpSmsxitzf9jz+190=;
-        b=ZBaoNm6/3tQSyepO0WOOzzDzgLpihJ5Tj09xZ/Lafhn+BwYnYsFOjwSrC5YaDB9/j5
-         JJj4QsxIaMmwev+zLeWqeGJHquqX+sIsMwNjqbpKONVdHnQ/5rarEhv6I3zcjHxNe7wP
-         gAUvklGrJfHvL+KU7dPSRevPNGG51maJMccMXmkjE+HQPT+++JYS8bBinWa1KKOax9Fs
-         lCHazkS+trEQRaJ+WIyT9f6ofBayx1ukFkLVR/ew/NrPnoatbXmJnajiK9nydC1XF/iK
-         PkK0tz9ItTErCo89SUYXlsHWb6QvS/ZCgCadclIdUv+Mtdi/T+hoknYxvbwf6GzF25FU
-         HxaQ==
+        Wed, 24 Mar 2021 11:09:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616598560;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jqXvs+0nCxAmKCtC0cP0qRElEwb5kKKFxyyMwoEAD/A=;
+        b=Xwl+doBCPJkWuff01SiWTaoQF017rZbSSfh7MYcYhe1MWkn9P+KPOW5l/Wo1l5SpGp73UC
+        d+ADAyJ7+8TVt/UEjqKwR5vRH5omuA7RqSR8xCAKetAPVXHXVRDD1LxSItuy4ZVXtSOqOD
+        AFWXA89z/4e6RB6TknpN0eUTcA9YlUs=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-35-6XkcEwQVMBaI4kr_4aDyQA-1; Wed, 24 Mar 2021 11:09:17 -0400
+X-MC-Unique: 6XkcEwQVMBaI4kr_4aDyQA-1
+Received: by mail-oo1-f69.google.com with SMTP id q23so1447037oot.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Mar 2021 08:09:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rxJNaw8C7ayCx/gjJ/PWUgSwy3kpSmsxitzf9jz+190=;
-        b=Aq2FrqPRTmny4BJWgk1J51E2USOGVJ3ezzJUHbNXzLP2G94bSNLlcdku2bGCYFzqrl
-         LVzGp907w7PJOEZ8C7FLmuf1t+4YtgKwdQmZ/41iEV5Yz6G2CDuu9Ue0eBtBUqniHCVO
-         iYw4h9JV1qwsKz3ZIv8nPFrss14PFfs0/Ddk9CxgHBcpZZ5rdvSrOoQOv8tEPMWY0GzF
-         bXys6/nCOxS/AW0Re+466aLAcI/gz4t+ZRzSZsBtY8qsRQXt88o6HOcKfrRi6d4iYJMp
-         FYeWHpW+px0XhfZ8FNPgLiNKeCN64pUMhHILLSAHdCWr8YmIAvbslZ0xy6oRmOrwBy5X
-         28ww==
-X-Gm-Message-State: AOAM531uQohqUSwYAFSAO3iYOz5xasgEYWVcxxop3E7WCrW9Qyga0cL5
-        yfbIw6vZAMsP9hLsuMSJTHDkbY9KpM70QqcZOinjXUXgGaE=
-X-Google-Smtp-Source: ABdhPJwwnDMvFAM+CO4W0KRW1ED8sOVT5mdfH2Z5K7bJmnG1XUeTloBkg4j+bGHA6eHCB3Nl1f1R7Hx61L0nXysZVRo=
-X-Received: by 2002:a02:9382:: with SMTP id z2mr3394301jah.120.1616598356447;
- Wed, 24 Mar 2021 08:05:56 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jqXvs+0nCxAmKCtC0cP0qRElEwb5kKKFxyyMwoEAD/A=;
+        b=mUvrXcKkbSnKaEwKLSjh+21h96wuhkZmjmraBaQf+qa0JK3E7JdgI1X8sRk8EYtZPn
+         G24YWvuyux0YDiF2ij8tVRb9jg0ajWhLuFvKYx0vRpMLhL3hdJvEmp8FhXs4t7r4DR2/
+         BFXKc3HM9PykAyxJ83uX781kGPTmSj3FuI5JeybzAvctkzUMQxiSn50azlUoLWDJpNUh
+         saIlkx6mvC+tGvYV6Z+SME2dFiwexS0/x7GSuJjwU4DVZN8igR6Om/oSUpoiryWvejDA
+         AD09zT1WumpwWWEPHbnAaeu5Z3OpzjNhdLGpls5/5jN4qmVHTOPmPQzAgrpAqsYf3JIR
+         cRrw==
+X-Gm-Message-State: AOAM531658ltpoAwpMMlMAPEx41WR+JdWsJTDG6Sy2/zbAMispqEVuZI
+        i1/3w60O58KTQMG6lL8htiH7qj+HWGTow+xV58Z1uFQCR8DwUzqJmNQuFY6Hsv4VXqVPiWnRgeB
+        rSMl/yABP7Wn+rimTXwcHjAgAEA==
+X-Received: by 2002:aca:6204:: with SMTP id w4mr2835030oib.86.1616598557121;
+        Wed, 24 Mar 2021 08:09:17 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzHPVgEdBZLrQFZ7Du7KylIQIiw5HTambi70oV6Rxz8VLEHPTtDJpdjuIgYn7pwxoFzoqH4cw==
+X-Received: by 2002:aca:6204:: with SMTP id w4mr2835008oib.86.1616598556903;
+        Wed, 24 Mar 2021 08:09:16 -0700 (PDT)
+Received: from [192.168.0.173] (ip68-103-222-6.ks.ok.cox.net. [68.103.222.6])
+        by smtp.gmail.com with ESMTPSA id t22sm596856otl.49.2021.03.24.08.09.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Mar 2021 08:09:16 -0700 (PDT)
+Subject: Re: [PATCH 2/3] virtiofs: split requests that exceed virtqueue size
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     virtio-fs@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, stefanha@redhat.com,
+        vgoyal@redhat.com, jasowang@redhat.com, mst@redhat.com
+References: <20210318135223.1342795-1-ckuehl@redhat.com>
+ <20210318135223.1342795-3-ckuehl@redhat.com>
+ <YFNvH8w4l7WyEMyr@miu.piliscsaba.redhat.com>
+From:   Connor Kuehl <ckuehl@redhat.com>
+Message-ID: <04e46a8c-df26-3b58-71f8-c0b94c546d70@redhat.com>
+Date:   Wed, 24 Mar 2021 10:09:15 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-References: <CAOQ4uxi7ZXJW3_6SN=vw_XJC+wy4eMTayN6X5yRy_HOV6323MA@mail.gmail.com>
- <20210317174532.cllfsiagoudoz42m@wittgenstein> <CAOQ4uxjCjapuAHbYuP8Q_k0XD59UmURbmkGC1qcPkPAgQbQ8DA@mail.gmail.com>
- <20210318143140.jxycfn3fpqntq34z@wittgenstein> <CAOQ4uxiRHwmxTKsLteH_sBW_dSPshVE8SohJYEmpszxaAwjEyg@mail.gmail.com>
- <20210319134043.c2wcpn4lbefrkhkg@wittgenstein> <CAOQ4uxhLYdWOUmpWP+c_JzVeGDbkJ5eUM+1-hhq7zFq23g5J1g@mail.gmail.com>
- <CAOQ4uxhetKeEZX=_iAcREjibaR0ZcOdeZyR8mFEoHM+WRsuVtg@mail.gmail.com>
- <CAOQ4uxhfx012GtvXMfiaHSk1M7+gTqkz3LsT0i_cHLnZLMk8nw@mail.gmail.com>
- <CAOQ4uxhFU=H8db35JMhfR+A5qDkmohQ01AWH995xeBAKuuPhzA@mail.gmail.com> <20210324143230.y36hga35xvpdb3ct@wittgenstein>
-In-Reply-To: <20210324143230.y36hga35xvpdb3ct@wittgenstein>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 24 Mar 2021 17:05:45 +0200
-Message-ID: <CAOQ4uxiPYbEk1N_7nxXMP7kz+KMnyH+0GqpJS36FR+-v9sHrcg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <YFNvH8w4l7WyEMyr@miu.piliscsaba.redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 24, 2021 at 4:32 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
->
-> On Wed, Mar 24, 2021 at 03:57:12PM +0200, Amir Goldstein wrote:
-> > > > Now tested FAN_MARK_FILESYSTEM watch on tmpfs mounted
-> > > > inside userns and works fine, with two wrinkles I needed to iron:
-> > > >
-> > > > 1. FAN_REPORT_FID not supported on tmpfs because tmpfs has
-> > > >     zero f_fsid (easy to fix)
-> > > > 2. open_by_handle_at() is not userns aware (can relax for
-> > > >     FS_USERNS_MOUNT fs)
-> > > >
-> > > > Pushed these two fixes to branch fanotify_userns.
-> > >
-> > > Pushed another fix to mnt refcount bug in WIP and another commit to
-> > > add the last piece that could make fanotify usable for systemd-homed
-> > > setup - a filesystem watch filtered by mnt_userns (not tested yet).
-> > >
-> >
-> > Now I used mount-idmapped (from xfstest) to test that last piece.
-> > Found a minor bug and pushed a fix.
-> >
-> > It is working as expected, that is filtering only the events generated via
-> > the idmapped mount. However, because the listener I tested is capable in
-> > the mapped userns and not in the sb userns, the listener cannot
-> > open_ny_handle_at(), so the result is not as useful as one might hope.
->
-> This is another dumb question probably but in general, are you saying
-> that someone watching a mount or directory and does _not_ want file
-> descriptors from fanotify to be returned has no other way of getting to
-> the path they want to open other than by using open_by_handle_at()?
->
+On 3/18/21 10:17 AM, Miklos Szeredi wrote:
+> I removed the conditional compilation and renamed the limit.  Also made
+> virtio_fs_get_tree() bail out if it hit the WARN_ON().  Updated patch below.
 
-Well there is another way.
-It is demonstrated in my demo with intoifywatch --fanotify --recursive.
-It involved userspace iterating a subtree of interest to create fid->path
-map.
+Hi Miklos,
 
-The fanotify recursive watch is similar but not exactly the same as the
-old intoify recursive watch, because with inotify recursive watch you
-can miss events.
+Has this patch been queued?
 
-With fanotify recursive watch, the listener (if capable) can setup a
-filesystem mark so events will not be missed. They will be recorded
-by fid with an unknown path and the path information can be found later
-by the crawler and updated in the map before the final report.
+Connor
 
-Events on fid that were not found by the crawler need not be reported.
-That's essentially a subtree watch for the poor implemented in userspace.
+> ---
+> From: Connor Kuehl <ckuehl@redhat.com>
+> Subject: virtiofs: split requests that exceed virtqueue size
+> Date: Thu, 18 Mar 2021 08:52:22 -0500
+> 
+> If an incoming FUSE request can't fit on the virtqueue, the request is
+> placed onto a workqueue so a worker can try to resubmit it later where
+> there will (hopefully) be space for it next time.
+> 
+> This is fine for requests that aren't larger than a virtqueue's maximum
+> capacity.  However, if a request's size exceeds the maximum capacity of the
+> virtqueue (even if the virtqueue is empty), it will be doomed to a life of
+> being placed on the workqueue, removed, discovered it won't fit, and placed
+> on the workqueue yet again.
+> 
+> Furthermore, from section 2.6.5.3.1 (Driver Requirements: Indirect
+> Descriptors) of the virtio spec:
+> 
+>    "A driver MUST NOT create a descriptor chain longer than the Queue
+>    Size of the device."
+> 
+> To fix this, limit the number of pages FUSE will use for an overall
+> request.  This way, each request can realistically fit on the virtqueue
+> when it is decomposed into a scattergather list and avoid violating section
+> 2.6.5.3.1 of the virtio spec.
+> 
+> Signed-off-by: Connor Kuehl <ckuehl@redhat.com>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>   fs/fuse/fuse_i.h    |    3 +++
+>   fs/fuse/inode.c     |    3 ++-
+>   fs/fuse/virtio_fs.c |   19 +++++++++++++++++--
+>   3 files changed, 22 insertions(+), 3 deletions(-)
+> 
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -555,6 +555,9 @@ struct fuse_conn {
+>   	/** Maxmum number of pages that can be used in a single request */
+>   	unsigned int max_pages;
+>   
+> +	/** Constrain ->max_pages to this value during feature negotiation */
+> +	unsigned int max_pages_limit;
+> +
+>   	/** Input queue */
+>   	struct fuse_iqueue iq;
+>   
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -712,6 +712,7 @@ void fuse_conn_init(struct fuse_conn *fc
+>   	fc->pid_ns = get_pid_ns(task_active_pid_ns(current));
+>   	fc->user_ns = get_user_ns(user_ns);
+>   	fc->max_pages = FUSE_DEFAULT_MAX_PAGES_PER_REQ;
+> +	fc->max_pages_limit = FUSE_MAX_MAX_PAGES;
+>   
+>   	INIT_LIST_HEAD(&fc->mounts);
+>   	list_add(&fm->fc_entry, &fc->mounts);
+> @@ -1040,7 +1041,7 @@ static void process_init_reply(struct fu
+>   				fc->abort_err = 1;
+>   			if (arg->flags & FUSE_MAX_PAGES) {
+>   				fc->max_pages =
+> -					min_t(unsigned int, FUSE_MAX_MAX_PAGES,
+> +					min_t(unsigned int, fc->max_pages_limit,
+>   					max_t(unsigned int, arg->max_pages, 1));
+>   			}
+>   			if (IS_ENABLED(CONFIG_FUSE_DAX) &&
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -18,6 +18,12 @@
+>   #include <linux/uio.h>
+>   #include "fuse_i.h"
+>   
+> +/* Used to help calculate the FUSE connection's max_pages limit for a request's
+> + * size. Parts of the struct fuse_req are sliced into scattergather lists in
+> + * addition to the pages used, so this can help account for that overhead.
+> + */
+> +#define FUSE_HEADER_OVERHEAD    4
+> +
+>   /* List of virtio-fs device instances and a lock for the list. Also provides
+>    * mutual exclusion in device removal and mounting path
+>    */
+> @@ -1413,9 +1419,10 @@ static int virtio_fs_get_tree(struct fs_
+>   {
+>   	struct virtio_fs *fs;
+>   	struct super_block *sb;
+> -	struct fuse_conn *fc;
+> +	struct fuse_conn *fc = NULL;
+>   	struct fuse_mount *fm;
+> -	int err;
+> +	unsigned int virtqueue_size;
+> +	int err = -EIO;
+>   
+>   	/* This gets a reference on virtio_fs object. This ptr gets installed
+>   	 * in fc->iq->priv. Once fuse_conn is going away, it calls ->put()
+> @@ -1427,6 +1434,10 @@ static int virtio_fs_get_tree(struct fs_
+>   		return -EINVAL;
+>   	}
+>   
+> +	virtqueue_size = virtqueue_get_vring_size(fs->vqs[VQ_REQUEST].vq);
+> +	if (WARN_ON(virtqueue_size <= FUSE_HEADER_OVERHEAD))
+> +		goto out_err;
+> +
+>   	err = -ENOMEM;
+>   	fc = kzalloc(sizeof(struct fuse_conn), GFP_KERNEL);
+>   	if (!fc)
+> @@ -1442,6 +1453,10 @@ static int virtio_fs_get_tree(struct fs_
+>   	fc->delete_stale = true;
+>   	fc->auto_submounts = true;
+>   
+> +	/* Tell FUSE to split requests that exceed the virtqueue's size */
+> +	fc->max_pages_limit = min_t(unsigned int, fc->max_pages_limit,
+> +				    virtqueue_size - FUSE_HEADER_OVERHEAD);
+> +
+>   	fsc->s_fs_info = fm;
+>   	sb = sget_fc(fsc, virtio_fs_test_super, set_anon_super_fc);
+>   	if (fsc->s_fs_info) {
+> 
 
-I did not implement the combination --fanotify --global --recursive in my
-demo, because it did not make sense with the current permission model
-(listener that can setup a fs mark can always resolve fids to path), but it
-would be quite trivial to add.
-
-
-> >
-> > I guess we will also need to make open_by_handle_at() idmapped aware
-> > and use a variant of vfs_dentry_acceptable() that validates that the opened
-> > path is legitimately accessible via the idmapped mount.
->
-> So as a first step, I think there's a legitimate case to be made for
-> open_by_handle_at() to be made useable inside user namespaces. That's a
-> change worth to be made independent of fanotify. For example, nowadays
-> cgroups have a 64 bit identifier that can be used with open_by_handle_at
-> to map a cgrp id to a path and back:
-> https://lkml.org/lkml/2020/12/2/1126
-> Right now this can't be used in user namespaces because of this
-> restriction but it is genuinely useful to have this feature available
-> since cgroups are FS_USERNS_MOUNT and that identifier <-> path mapping
-> is very convenient.
-
-FS_USERNS_MOUNT is a simple case and I think it is safe.
-There is already a patch for that on my fanotify_userns branch.
-
-> Without looking at the code I'm not super sure how name_to_handle_at()
-> and open_by_handle_at() behave in the face of mount namespaces so that
-> would need looking into to. But it would be a genuinely useful change, I
-> think.
->
-
-name_to_handle_at()/open_by_handle_at() should be indifferent to mount ns,
-because the former returns mount_id which is globally unique (I think)
-and the latter takes a mount_fd argument, which means the caller needs to
-prove access to the mount prior to getting an open fd in that mount.
-
-Thanks,
-Amir.
