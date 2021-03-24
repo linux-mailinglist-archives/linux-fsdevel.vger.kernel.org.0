@@ -2,190 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A30834797D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 14:22:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DEDD3479C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 14:40:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233465AbhCXNVx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Mar 2021 09:21:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35292 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234710AbhCXNVt (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Mar 2021 09:21:49 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A139C061763;
-        Wed, 24 Mar 2021 06:21:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=4WpXJrjstIuowWonzq4eFShaVDE/4VxJi8AtBgBCg04=; b=jjJOyq5elx6rtNmL15TaGiFG2H
-        ROIEFcSd320xiwFqKeAP51uoLF3jxgTM6DqhMN4M8WFBlPHdMAhmFUIKdMwpnbcVQhGPx0TPcmwAB
-        GTZcFH/aOOXsyLJeChFqeuuNVdJ+So8n4kGtwpbO+DCRteqmRBEUe+r+M9k3SnY7Gmfo1KGl3IOTO
-        z66L3EtCtpBwpAlxBsGWYjdT7ILq36txGq3jhGbWKJJ56lZBIameLC3v/VM3vZLy9gsoZid3tn4wq
-        LdLmKaLUYLEKP5jNesv2UiSlNADXPt+yIjOgB4SGmoizmr5Ox8hVPci7FnX05l+TW/wR2EIrJvok+
-        yyGFXhMQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lP3S6-00H977-Bb; Wed, 24 Mar 2021 13:21:38 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5A15F3010C8;
-        Wed, 24 Mar 2021 14:21:37 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 129BE20693989; Wed, 24 Mar 2021 14:21:37 +0100 (CET)
-Date:   Wed, 24 Mar 2021 14:21:37 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Marco Elver <elver@google.com>
-Cc:     alexander.shishkin@linux.intel.com, acme@kernel.org,
-        mingo@redhat.com, jolsa@redhat.com, mark.rutland@arm.com,
-        namhyung@kernel.org, tglx@linutronix.de, glider@google.com,
-        viro@zeniv.linux.org.uk, arnd@arndb.de, christian@brauner.io,
-        dvyukov@google.com, jannh@google.com, axboe@kernel.dk,
-        mascasa@google.com, pcc@google.com, irogers@google.com,
-        kasan-dev@googlegroups.com, linux-arch@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 07/11] perf: Add breakpoint information to siginfo on
- SIGTRAP
-Message-ID: <YFs84dx8KcAtSt5/@hirez.programming.kicks-ass.net>
-References: <20210324112503.623833-1-elver@google.com>
- <20210324112503.623833-8-elver@google.com>
- <YFs2XHqepwtlLinx@hirez.programming.kicks-ass.net>
- <YFs4RDKfbjw89tf3@hirez.programming.kicks-ass.net>
+        id S235395AbhCXNjq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Mar 2021 09:39:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44122 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235433AbhCXNjV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Mar 2021 09:39:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id AAB34AB8A;
+        Wed, 24 Mar 2021 13:39:19 +0000 (UTC)
+Date:   Wed, 24 Mar 2021 13:39:16 +0000
+From:   Mel Gorman <mgorman@suse.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        David Rientjes <rientjes@google.com>,
+        Oleg Rombakh <olegrom@google.com>, linux-doc@vger.kernel.org,
+        Paul Turner <pjt@google.com>
+Subject: Re: [PATCH v2] sched: Warn on long periods of pending need_resched
+Message-ID: <20210324133916.GQ15768@suse.de>
+References: <20210323035706.572953-1-joshdon@google.com>
+ <YFsIZjhCFbxKyos3@hirez.programming.kicks-ass.net>
+ <YFsaYBO/UqMHSpGS@hirez.programming.kicks-ass.net>
+ <20210324114224.GP15768@suse.de>
+ <YFssoD5NDl6dFfg/@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <YFs4RDKfbjw89tf3@hirez.programming.kicks-ass.net>
+In-Reply-To: <YFssoD5NDl6dFfg/@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 24, 2021 at 02:01:56PM +0100, Peter Zijlstra wrote:
-> On Wed, Mar 24, 2021 at 01:53:48PM +0100, Peter Zijlstra wrote:
-> > On Wed, Mar 24, 2021 at 12:24:59PM +0100, Marco Elver wrote:
-> > > Encode information from breakpoint attributes into siginfo_t, which
-> > > helps disambiguate which breakpoint fired.
+On Wed, Mar 24, 2021 at 01:12:16PM +0100, Peter Zijlstra wrote:
+> On Wed, Mar 24, 2021 at 11:42:24AM +0000, Mel Gorman wrote:
+> > On Wed, Mar 24, 2021 at 11:54:24AM +0100, Peter Zijlstra wrote:
+> > > On Wed, Mar 24, 2021 at 10:37:43AM +0100, Peter Zijlstra wrote:
+> > > > Should we perhaps take out all SCHED_DEBUG sysctls and move them to
+> > > > /debug/sched/ ? (along with the existing /debug/sched_{debug,features,preemp}
+> > > > files)
+> > > > 
+> > > > Having all that in sysctl and documented gives them far too much sheen
+> > > > of ABI.
 > > > 
-> > > Note, providing the event fd may be unreliable, since the event may have
-> > > been modified (via PERF_EVENT_IOC_MODIFY_ATTRIBUTES) between the event
-> > > triggering and the signal being delivered to user space.
+> > > ... a little something like this ...
 > > > 
-> > > Signed-off-by: Marco Elver <elver@google.com>
-> > > ---
-> > > v2:
-> > > * Add comment about si_perf==0.
-> > > ---
-> > >  kernel/events/core.c | 16 ++++++++++++++++
-> > >  1 file changed, 16 insertions(+)
-> > > 
-> > > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > > index 1e4c949bf75f..0316d39e8c8f 100644
-> > > --- a/kernel/events/core.c
-> > > +++ b/kernel/events/core.c
-> > > @@ -6399,6 +6399,22 @@ static void perf_sigtrap(struct perf_event *event)
-> > >  	info.si_signo = SIGTRAP;
-> > >  	info.si_code = TRAP_PERF;
-> > >  	info.si_errno = event->attr.type;
-> > > +
-> > > +	switch (event->attr.type) {
-> > > +	case PERF_TYPE_BREAKPOINT:
-> > > +		info.si_addr = (void *)(unsigned long)event->attr.bp_addr;
-> > > +		info.si_perf = (event->attr.bp_len << 16) | (u64)event->attr.bp_type;
 > > 
-> > Ahh, here's the si_perf user. I wasn't really clear to me what was
-> > supposed to be in that field at patch #5 where it was introduced.
+> > I did not read this particularly carefully or boot it to check but some
+> > of the sysctls moved are expected to exist and should never should have
+> > been under SCHED_DEBUG.
 > > 
-> > Would it perhaps make sense to put the user address of struct
-> > perf_event_attr in there instead? (Obviously we'd have to carry it from
-> > the syscall to here, but it might be more useful than a random encoding
-> > of some bits therefrom).
-> > 
-> > Then we can also clearly document that's in that field, and it might be
-> > more useful for possible other uses.
+> > For example, I'm surprised that numa_balancing is under the SCHED_DEBUG
+> > sysctl because there are legimiate reasons to disable that at runtime.
+> > For example, HPC clusters running various workloads may disable NUMA
+> > balancing globally for particular jobs without wanting to reboot and
+> > reenable it when finished.
 > 
-> Something like so...
+> Yeah, lets say I was pleasantly surprised to find it there :-)
+> 
 
-Ok possibly something like so, which also gets the data address right
-for more cases.
+Minimally, lets move that out before it gets kicked out. Patch below.
 
+> > Moving something like sched_min_granularity_ns will break a number of
+> > tuning guides as well as the "tuned" tool which ships by default with
+> > some distros and I believe some of the default profiles used for tuned
+> > tweak kernel.sched_min_granularity_ns
+> 
+> Yeah, can't say I care. I suppose some people with PREEMPT=n kernels
+> increase that to make their server workloads 'go fast'. But I'll
+> absolutely suck rock on anything desktop.
+> 
+
+Broadly speaking yes and despite the lack of documentation, enough people
+think of that parameter when tuning for throughput vs latency depending on
+the expected use of the machine.  kernel.sched_wakeup_granularity_ns might
+get tuned if preemption is causing overscheduling. Same potentially with
+kernel.sched_min_granularity_ns and kernel.sched_latency_ns. That said, I'm
+struggling to think of an instance where I've seen tuning recommendations
+properly quantified other than the impact on microbenchmarks but I
+think there will be complaining if they disappear. I suspect that some
+recommended tuning is based on "I tried a number of different values and
+this seemed to work reasonably well".
+
+kernel.sched_schedstats probably should not depend in SCHED_DEBUG because
+it has value for workload analysis which is not necessarily about debugging
+per-se. It might simply be informing whether another variable should be
+tuned or useful for debugging applications rather than the kernel.
+
+The others I'm less concerned with. kernel.sched_tunable_scaling is very
+specific. sysctl_sched_migration_cost is subtle because it affects lots
+of things including whether tasks are cache hot and load balancing and
+is best left alone. I wonder how many people can accurately predict how
+workloads will behave when that is tuned? sched_nr_migrate is also a hard
+one to tune in a sensible fashion.
+
+As an aside, I wonder how often SCHED_DEBUG has been enabled simply
+because LATENCYTOP selects it -- no idea offhand why LATENCYTOP even
+needs SCHED_DEBUG.
+
+> These knobs really shouldn't have been as widely available as they are.
+> 
+
+Probably not. Worse, some of the tuning is probably based on "this worked
+for workload X 10 years ago so I'll just keep doing that"
+
+> And guides, well, the writes have to earn a living too, right.
+> 
+
+For most of the guides I've seen they either specify values without
+explaining why or just describe roughly what the parameter does and it's
+not always that accurate a description.
+
+> > Whether there are legimiate reasons to modify those values or not,
+> > removing them may generate fun bug reports.
+> 
+> Which I'll close with -EDONTCARE, userspace has to cope with
+> SCHED_DEBUG=n in any case.
+
+True but removing the throughput vs latency parameters is likely to
+generate a lot of noise even if the reasons for tuning are bad ones.
+Some definitely should not be depending on SCHED_DEBUG, others may
+need to be moved to debugfs one patch at a time so they can be reverted
+individually if complaining is excessive and there is a legiminate reason
+why it should be tuned. It's possible that complaining will be based on
+a workload regression that really depended on tuned changing parameters.
+
+Anyway, I definitely want to save kernel.numa_balancing from the firing
+line so....
+
+--8<--
+sched/numa: Allow runtime enabling/disabling of NUMA balance without SCHED_DEBUG
+
+From: Mel Gorman <mgorman@suse.de>
+
+The ability to enable/disable NUMA balancing is not a debugging feature
+and should not depend on CONFIG_SCHED_DEBUG.  For example, machines within
+a HPC cluster may disable NUMA balancing temporarily for some jobs and
+re-enable it for other jobs without needing to reboot.
+
+This patch removes the dependency on CONFIG_SCHED_DEBUG for
+kernel.numa_balancing sysctl. The other numa balancing related sysctls
+are left as-is because if they need to be tuned then it is more likely
+that NUMA balancing needs to be fixed instead.
+
+Signed-off-by: Mel Gorman <mgorman@suse.de>
 ---
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -778,6 +778,8 @@ struct perf_event {
- 	void *security;
- #endif
- 	struct list_head		sb_list;
-+
-+	struct kernel_siginfo 		siginfo;
- #endif /* CONFIG_PERF_EVENTS */
- };
- 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -5652,13 +5652,17 @@ static long _perf_ioctl(struct perf_even
- 		return perf_event_query_prog_array(event, (void __user *)arg);
- 
- 	case PERF_EVENT_IOC_MODIFY_ATTRIBUTES: {
-+		struct perf_event_attr __user *uattr;
- 		struct perf_event_attr new_attr;
--		int err = perf_copy_attr((struct perf_event_attr __user *)arg,
--					 &new_attr);
-+		int err;
- 
-+		uattr = (struct perf_event_attr __user *)arg;
-+		err = perf_copy_attr(uattr, &new_attr);
- 		if (err)
- 			return err;
- 
-+		event->siginfo.si_perf = (unsigned long)uattr;
-+
- 		return perf_event_modify_attr(event,  &new_attr);
- 	}
- 	default:
-@@ -6394,13 +6398,7 @@ void perf_event_wakeup(struct perf_event
- 
- static void perf_sigtrap(struct perf_event *event)
- {
--	struct kernel_siginfo info;
--
--	clear_siginfo(&info);
--	info.si_signo = SIGTRAP;
--	info.si_code = TRAP_PERF;
--	info.si_errno = event->attr.type;
--	force_sig_info(&info);
-+	force_sig_info(&event->siginfo);
- }
- 
- static void perf_pending_event_disable(struct perf_event *event)
-@@ -6414,8 +6412,8 @@ static void perf_pending_event_disable(s
- 		WRITE_ONCE(event->pending_disable, -1);
- 
- 		if (event->attr.sigtrap) {
--			atomic_set(&event->event_limit, 1); /* rearm event */
- 			perf_sigtrap(event);
-+			atomic_set_release(&event->event_limit, 1); /* rearm event */
- 			return;
- 		}
- 
-@@ -9121,6 +9119,7 @@ static int __perf_event_overflow(struct
- 	if (events && atomic_dec_and_test(&event->event_limit)) {
- 		ret = 1;
- 		event->pending_kill = POLL_HUP;
-+		event->siginfo.si_addr = (void *)data->addr;
- 
- 		perf_event_disable_inatomic(event);
- 	}
-@@ -12011,6 +12010,11 @@ SYSCALL_DEFINE5(perf_event_open,
- 		goto err_task;
- 	}
- 
-+	clear_siginfo(&event->siginfo);
-+	event->siginfo.si_signo = SIGTRAP;
-+	event->siginfo.si_code = TRAP_PERF;
-+	event->siginfo.si_perf = (unsigned long)attr_uptr;
-+
- 	if (is_sampling_event(event)) {
- 		if (event->pmu->capabilities & PERF_PMU_CAP_NO_INTERRUPT) {
- 			err = -EOPNOTSUPP;
+ kernel/sysctl.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 62fbd09b5dc1..8042098ae080 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1753,6 +1753,9 @@ static struct ctl_table kern_table[] = {
+ 		.proc_handler	= proc_dointvec_minmax,
+ 		.extra1		= SYSCTL_ONE,
+ 	},
++#endif /* CONFIG_NUMA_BALANCING */
++#endif /* CONFIG_SCHED_DEBUG */
++#ifdef CONFIG_NUMA_BALANCING
+ 	{
+ 		.procname	= "numa_balancing",
+ 		.data		= NULL, /* filled in by handler */
+@@ -1763,7 +1766,6 @@ static struct ctl_table kern_table[] = {
+ 		.extra2		= SYSCTL_ONE,
+ 	},
+ #endif /* CONFIG_NUMA_BALANCING */
+-#endif /* CONFIG_SCHED_DEBUG */
+ 	{
+ 		.procname	= "sched_rt_period_us",
+ 		.data		= &sysctl_sched_rt_period,
