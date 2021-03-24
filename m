@@ -2,214 +2,362 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7312A346F5F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 03:20:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 564B4346FFD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 04:12:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234753AbhCXCTl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Mar 2021 22:19:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33198 "EHLO
+        id S232421AbhCXDL2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Mar 2021 23:11:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232020AbhCXCTi (ORCPT
+        with ESMTP id S232412AbhCXDK4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Mar 2021 22:19:38 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1336CC061765
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 19:19:38 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id ce10so30320878ejb.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 19:19:37 -0700 (PDT)
+        Tue, 23 Mar 2021 23:10:56 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E9A4C0613DB
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 20:10:56 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id z25so28328618lja.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Mar 2021 20:10:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O6pYt7i3ZfjZRsHKNRy9TSnJLBhdXZsjApsl7qVrkWA=;
-        b=RsVkB/Y0CZH9XZzn82erHDDP8QMmPgtgAa2wOWWwpxmakMZJgHzNO7I/+g4m4adiEA
-         /AuXJMSkwTq4YjUQhLPhFDbNlzE2s0z/XuQk4Yg9oVyPlFKtUWFGXz9b0FcDyGFf1ZSx
-         gkTTKLNlXDSjsuh3nOejNfxEfpMWeohC44aSax0AJ/HiZfzuvt5xWllMplzX3LmiyS9+
-         HFcxDA7Y913vpd56MDpHtmf02XWLCE3WdLeUSj4zP1CKL4A7JEBAF9uR9Tj6+4exlzq/
-         /21DNknGe39jAd9gmA5iOuCZzGMbd3mXM7qmNlmeF/yAv6uShf/XV5CbiPngHl/r30am
-         JXMQ==
+         :cc:content-transfer-encoding;
+        bh=ZegDJhsrs3t5DmLNRfuIr22Aaf3RCbcyU5Kj5Ptg79A=;
+        b=M1aeEDxmk9ECf3516Cji4G52oSFsAn8KliAgARkCx5OFt/DI6XCdQtqOSm9+ierP53
+         96dKx4KCJbD1lvEnlxaUGmiNHqSq7B9S+YnK8FMkPsxubMWmxCIKdd5hbiSOCmLVD8x2
+         y6n2VRtZwCuBVid10EDPdpch8y7Qu9isZUjXElYw2NB9WvCorTXHb/TyI6ot3eE3NxDI
+         7RsZdviWjL1D7m/r0hZMgfAIfoSy9HyDnzgjDhHI+4bgia3SIf9923vAMV2rMcGwAwJu
+         +fnXWI39SCzeRrtCZiqNDUgvaQvB4cbJ5ZtxdmrQjAnfMEHQ9KUtf86yaWDN3j/WVdih
+         Ii/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O6pYt7i3ZfjZRsHKNRy9TSnJLBhdXZsjApsl7qVrkWA=;
-        b=ZvHpS2P0U2JHNuIAMz9qf7hNKm6l96aVQ6YSuEF7UbSqy+Wmem/8fgy/b6915Wg+ap
-         rUcxFHIz/uT4ezmBUkr2yLE3wQupaCNC8xJutlITCF7mUv2ahWKJ08ZPuETuML//QhUE
-         Zb3KNdP/7y/Wy7LHwfuUZmTNPgMGLm8JysZSIEOXwxVh/7Ch3LUhacrvwCTOQOa65dYT
-         xCWIGjFTyUTAMsUmYVTqu06uGslfceBiXgds9Xy1sI6ThtywBaHGxHE1jPJf58z2Sf6m
-         KdXdS0CTWZZ8x4Nn14jlav8C0jAr7vm6hXTFpoLehuTVPq1Xgjevz8DeqTnjo2xxrpWQ
-         Bz2A==
-X-Gm-Message-State: AOAM531yyFEaH+MXMXQXmaa7dN1U07eSPwTPHIYSUYSOAoZv07lZx8tz
-        MNADfy9vH4HxOu9inQhgHG1Y4N06Nqld0JYVdG0M/wVnmLOjGg==
-X-Google-Smtp-Source: ABdhPJxD4PFaqvtvK1VRDwzCV3Hl7JUGp0Ljr770gbmSGeQf+7GIop0/MoqaotWJPaQPZgD8nzvxH/6snKVhCi2Z0VU=
-X-Received: by 2002:a17:906:2ac1:: with SMTP id m1mr1187750eje.472.1616552376639;
- Tue, 23 Mar 2021 19:19:36 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZegDJhsrs3t5DmLNRfuIr22Aaf3RCbcyU5Kj5Ptg79A=;
+        b=EVl3Q2s9sEQ95qSh9rNPxPCAp6nC7dyqKMtjEvf60Doi4i0R0pzF5mc4DpbBSQRBPr
+         wARhxv0XsiUWyK57mYUMLr5TT7bEmxIBl4aVCE6jJ3liirfmQGMhhVaCp9OzvU5zJywB
+         ZLGu6hmjUBJliSBsFuCyNsyhrw4MFPF9EJxo8FcHS23viWoLnirL/vWNrLYBT7cEaibB
+         5mT9jX42p8hJqLhBBsQKAbrNe1Mx/e9CVEJaTWlygc/j9HaNWJ8pGuAbOJb7PQ7Zbe0C
+         LyvO90VPP28KQ+dKb0DrzaEX4Wbzd+4dn9WnArHkcU58Hvx9xMK5mBbdAQzyR8PUppdy
+         q2cA==
+X-Gm-Message-State: AOAM5303SbYpT9ZVsFDXdvARnHBrTqOchNNL38dkrnGrnOR/O8UR2n5s
+        4QoeCXNy1w08davvdfwULNg6c7XorAiPX2p37f46zg==
+X-Google-Smtp-Source: ABdhPJxSapwHRvBnLCwcoR2sXbNCQsSDCdMD6ytmf/icFhUU43QYK5yfde5P5ZIWyLr27rM90Izr4s50uVBB8ADYn3Q=
+X-Received: by 2002:a2e:9310:: with SMTP id e16mr638054ljh.226.1616555454025;
+ Tue, 23 Mar 2021 20:10:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210208105530.3072869-1-ruansy.fnst@cn.fujitsu.com>
- <20210208105530.3072869-2-ruansy.fnst@cn.fujitsu.com> <CAPcyv4jqEdPoF5YM+jSYJd74KqRTwbbEum7=moa3=Wyn6UyU9g@mail.gmail.com>
- <OSBPR01MB29207A1C06968705C2FEBACFF4939@OSBPR01MB2920.jpnprd01.prod.outlook.com>
- <CAPcyv4iBnWbG0FYw6-K0MaH--rq62s7RY_yoT9rOYWMa94Yakw@mail.gmail.com>
- <OSBPR01MB29203F891F9584CC53616FB8F4939@OSBPR01MB2920.jpnprd01.prod.outlook.com>
- <CAPcyv4gn_AvT6BA7g4jLKRFODSpt7_ORowVd3KgyWxyaFG0k9g@mail.gmail.com>
- <OSBPR01MB2920E46CBE4816CDF711E004F46F9@OSBPR01MB2920.jpnprd01.prod.outlook.com>
- <OSBPR01MB29208779955B49F84D857F80F4689@OSBPR01MB2920.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSBPR01MB29208779955B49F84D857F80F4689@OSBPR01MB2920.jpnprd01.prod.outlook.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 23 Mar 2021 19:19:28 -0700
-Message-ID: <CAPcyv4jhUU3NVD8HLZnJzir+SugB6LnnrgJZ-jP45BZrbJ1dJQ@mail.gmail.com>
-Subject: Re: [PATCH v3 01/11] pagemap: Introduce ->memory_failure()
-To:     "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux MM <linux-mm@kvack.org>,
+References: <20210316204252.427806-1-mic@digikod.net> <20210316204252.427806-8-mic@digikod.net>
+ <CAG48ez1arKO3uYzwng8fst-UHkcH6J7YzyHFN+vfXUT2=1HT+w@mail.gmail.com>
+ <b41a021c-69f4-075f-e9a0-a4483b280df8@digikod.net> <CAG48ez1Vkd3KtYphDHLLbbkKY9T_ByhUcxwYAcWuDAyiA04A+w@mail.gmail.com>
+ <7e494b74-8d5d-a109-6327-992d7d8fca87@digikod.net>
+In-Reply-To: <7e494b74-8d5d-a109-6327-992d7d8fca87@digikod.net>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 24 Mar 2021 04:10:27 +0100
+Message-ID: <CAG48ez0ex48pCgunrg+BpJ-LppZUVXhsmiEW_2d2mhbkDB793Q@mail.gmail.com>
+Subject: Re: [PATCH v30 07/12] landlock: Support filesystem access-control
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        david <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
-        "y-goto@fujitsu.com" <y-goto@fujitsu.com>
+        kernel list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 18, 2021 at 7:18 PM ruansy.fnst@fujitsu.com
-<ruansy.fnst@fujitsu.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: ruansy.fnst@fujitsu.com <ruansy.fnst@fujitsu.com>
-> > Subject: RE: [PATCH v3 01/11] pagemap: Introduce ->memory_failure()
-> > > > > > >
-> > > > > > > After the conversation with Dave I don't see the point of this.
-> > > > > > > If there is a memory_failure() on a page, why not just call
-> > > > > > > memory_failure()? That already knows how to find the inode and
-> > > > > > > the filesystem can be notified from there.
-> > > > > >
-> > > > > > We want memory_failure() supports reflinked files.  In this
-> > > > > > case, we are not able to track multiple files from a page(this
-> > > > > > broken
-> > > > > > page) because
-> > > > > > page->mapping,page->index can only track one file.  Thus, I
-> > > > > > page->introduce this
-> > > > > > ->memory_failure() implemented in pmem driver, to call
-> > > > > > ->->corrupted_range()
-> > > > > > upper level to upper level, and finally find out files who are
-> > > > > > using(mmapping) this page.
-> > > > > >
-> > > > >
-> > > > > I know the motivation, but this implementation seems backwards.
-> > > > > It's already the case that memory_failure() looks up the
-> > > > > address_space associated with a mapping. From there I would expect
-> > > > > a new 'struct address_space_operations' op to let the fs handle
-> > > > > the case when there are multiple address_spaces associated with a given
-> > file.
-> > > > >
-> > > >
-> > > > Let me think about it.  In this way, we
-> > > >     1. associate file mapping with dax page in dax page fault;
-> > >
-> > > I think this needs to be a new type of association that proxies the
-> > > representation of the reflink across all involved address_spaces.
-> > >
-> > > >     2. iterate files reflinked to notify `kill processes signal` by the
-> > > >           new address_space_operation;
-> > > >     3. re-associate to another reflinked file mapping when unmmaping
-> > > >         (rmap qeury in filesystem to get the another file).
-> > >
-> > > Perhaps the proxy object is reference counted per-ref-link. It seems
-> > > error prone to keep changing the association of the pfn while the reflink is
-> > in-tact.
-> > Hi, Dan
+On Tue, Mar 23, 2021 at 8:22 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
+> On 23/03/2021 18:49, Jann Horn wrote:
+> > On Tue, Mar 23, 2021 at 4:54 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
+et> wrote:
+> >> On 23/03/2021 01:13, Jann Horn wrote:
+> >>>  On Tue, Mar 16, 2021 at 9:43 PM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
+> >>>> Using Landlock objects and ruleset, it is possible to tag inodes
+> >>>> according to a process's domain.
+> >>> [...]
+> >>>> +static void release_inode(struct landlock_object *const object)
+> >>>> +       __releases(object->lock)
+> >>>> +{
+> >>>> +       struct inode *const inode =3D object->underobj;
+> >>>> +       struct super_block *sb;
+> >>>> +
+> >>>> +       if (!inode) {
+> >>>> +               spin_unlock(&object->lock);
+> >>>> +               return;
+> >>>> +       }
+> >>>> +
+> >>>> +       /*
+> >>>> +        * Protects against concurrent use by hook_sb_delete() of th=
+e reference
+> >>>> +        * to the underlying inode.
+> >>>> +        */
+> >>>> +       object->underobj =3D NULL;
+> >>>> +       /*
+> >>>> +        * Makes sure that if the filesystem is concurrently unmount=
+ed,
+> >>>> +        * hook_sb_delete() will wait for us to finish iput().
+> >>>> +        */
+> >>>> +       sb =3D inode->i_sb;
+> >>>> +       atomic_long_inc(&landlock_superblock(sb)->inode_refs);
+> >>>> +       spin_unlock(&object->lock);
+> >>>> +       /*
+> >>>> +        * Because object->underobj was not NULL, hook_sb_delete() a=
+nd
+> >>>> +        * get_inode_object() guarantee that it is safe to reset
+> >>>> +        * landlock_inode(inode)->object while it is not NULL.  It i=
+s therefore
+> >>>> +        * not necessary to lock inode->i_lock.
+> >>>> +        */
+> >>>> +       rcu_assign_pointer(landlock_inode(inode)->object, NULL);
+> >>>> +       /*
+> >>>> +        * Now, new rules can safely be tied to @inode with get_inod=
+e_object().
+> >>>> +        */
+> >>>> +
+> >>>> +       iput(inode);
+> >>>> +       if (atomic_long_dec_and_test(&landlock_superblock(sb)->inode=
+_refs))
+> >>>> +               wake_up_var(&landlock_superblock(sb)->inode_refs);
+> >>>> +}
+> >>> [...]
+> >>>> +static struct landlock_object *get_inode_object(struct inode *const=
+ inode)
+> >>>> +{
+> >>>> +       struct landlock_object *object, *new_object;
+> >>>> +       struct landlock_inode_security *inode_sec =3D landlock_inode=
+(inode);
+> >>>> +
+> >>>> +       rcu_read_lock();
+> >>>> +retry:
+> >>>> +       object =3D rcu_dereference(inode_sec->object);
+> >>>> +       if (object) {
+> >>>> +               if (likely(refcount_inc_not_zero(&object->usage))) {
+> >>>> +                       rcu_read_unlock();
+> >>>> +                       return object;
+> >>>> +               }
+> >>>> +               /*
+> >>>> +                * We are racing with release_inode(), the object is=
+ going
+> >>>> +                * away.  Wait for release_inode(), then retry.
+> >>>> +                */
+> >>>> +               spin_lock(&object->lock);
+> >>>> +               spin_unlock(&object->lock);
+> >>>> +               goto retry;
+> >>>> +       }
+> >>>> +       rcu_read_unlock();
+> >>>> +
+> >>>> +       /*
+> >>>> +        * If there is no object tied to @inode, then create a new o=
+ne (without
+> >>>> +        * holding any locks).
+> >>>> +        */
+> >>>> +       new_object =3D landlock_create_object(&landlock_fs_underops,=
+ inode);
+> >>>> +       if (IS_ERR(new_object))
+> >>>> +               return new_object;
+> >>>> +
+> >>>> +       /* Protects against concurrent get_inode_object() calls. */
+> >>>> +       spin_lock(&inode->i_lock);
+> >>>> +       object =3D rcu_dereference_protected(inode_sec->object,
+> >>>> +                       lockdep_is_held(&inode->i_lock));
+> >>>
+> >>> rcu_dereference_protected() requires that inode_sec->object is not
+> >>> concurrently changed, but I think another thread could call
+> >>> get_inode_object() while we're in landlock_create_object(), and then
+> >>> we could race with the NULL write in release_inode() here? (It
+> >>> wouldn't actually be a UAF though because we're not actually accessin=
+g
+> >>> `object` here.) Or am I missing a lock that prevents this?
+> >>>
+> >>> In v28 this wasn't an issue because release_inode() was holding
+> >>> inode->i_lock (and object->lock) during the NULL store; but in v29 an=
+d
+> >>> this version the NULL store in release_inode() moved out of the locke=
+d
+> >>> region. I think you could just move the NULL store in release_inode()
+> >>> back up (and maybe add a comment explaining the locking rules for
+> >>> landlock_inode(...)->object)?
+> >>>
+> >>> (Or alternatively you could use rcu_dereference_raw() with a comment
+> >>> explaining that the read pointer is only used to check for NULL-ness,
+> >>> and that it is guaranteed that the pointer can't change if it is NULL
+> >>> and we're holding the lock. But that'd be needlessly complicated, I
+> >>> think.)
+> >>
+> >> To reach rcu_assign_pointer(landlock_inode(inode)->object, NULL) in
+> >> release_inode() or in hook_sb_delete(), the
+> >> landlock_inode(inode)->object need to be non-NULL,
 > >
-> > I think my early rfc patchset was implemented in this way:
-> >  - Create a per-page 'dax-rmap tree' to store each reflinked file's (mapping,
-> > offset) when causing dax page fault.
-> >  - Mount this tree on page->zone_device_data which is not used in fsdax, so
-> > that we can iterate reflinked file mappings in memory_failure() easily.
-> > In my understanding, the dax-rmap tree is the proxy object you mentioned.  If
-> > so, I have to say, this method was rejected. Because this will cause huge
-> > overhead in some case that every dax page have one dax-rmap tree.
+> > Yes.
 > >
+> >> which implies that a
+> >> call to get_inode_object(inode) either "retry" (because release_inode =
+is
+> >> only called by landlock_put_object, which set object->usage to 0) unti=
+l
+> >> it creates a new object, or reuses the existing referenced object (and
+> >> increments object->usage).
+> >
+> > But it can be that landlock_inode(inode)->object only becomes non-NULL
+> > after get_inode_object() has checked
+> > rcu_dereference(inode_sec->object).
+> >
+> >> The worse case would be if
+> >> get_inode_object(inode) is called just before the
+> >> rcu_assign_pointer(landlock_inode(inode)->object, NULL) from
+> >> hook_sb_delete(), which would result in an object with a NULL underobj=
+,
+> >> which is the expected behavior (and checked by release_inode).
+> >
+> > The scenario I'm talking about doesn't involve hook_sb_delete().
+> >
+> >> The line rcu_assign_pointer(inode_sec->object, new_object) from
+> >> get_inode_object() can only be reached if the underlying inode doesn't
+> >> reference an object,
+> >
+> > Yes.
+> >
+> >> in which case hook_sb_delete() will not reach the
+> >> rcu_assign_pointer(landlock_inode(inode)->object, NULL) line for this
+> >> same inode.
+> >>
+> >> This works because get_inode_object(inode) is mutually exclusive to
+> >> itself with the same inode (i.e. an inode can only point to an object
+> >> that references this same inode).
+> >
+> > To clarify: You can concurrently call get_inode_object() multiple
+> > times on the same inode, right? There are no locks held on entry to
+> > that function.
+> >
+> >> I tried to explain this with the comment "Protects against concurrent
+> >> get_inode_object() calls" in get_inode_object(), and the comments just
+> >> before both rcu_assign_pointer(landlock_inode(inode)->object, NULL).
+> >
+> > The scenario I'm talking about is:
+> >
+> > Initially the inode does not have an associated landlock_object. There
+> > are two threads A and B. Thread A is going to execute
+> > get_inode_object(). Thread B is going to execute get_inode_object()
+> > followed immediately by landlock_put_object().
+> >
+> > thread A: enters get_inode_object()
+> > thread A: rcu_dereference(inode_sec->object) returns NULL
+> > thread A: enters landlock_create_object()
+> > thread B: enters get_inode_object()
+> > thread B: rcu_dereference(inode_sec->object) returns NULL
+> > thread B: calls landlock_create_object()
+> > thread B: sets inode_sec->object while holding inode->i_lock
+> > thread B: leaves get_inode_object()
+> > thread B: enters landlock_put_object()
+> > thread B: object->usage drops to 0, object->lock is taken
+> > thread B: calls release_inode()
+> > thread B: drops object->lock
+> > thread A: returns from landlock_create_object()
+> > thread A: takes inode->i_lock
+> >
+> > At this point, thread B will run:
+> >
+> >     rcu_assign_pointer(landlock_inode(inode)->object, NULL);
+> >
+> > while thread A runs:
+> >
+> >     rcu_dereference_protected(inode_sec->object,
+> >         lockdep_is_held(&inode->i_lock));
+> >
+> > meaning there is a (theoretical) data race, since
+> > rcu_dereference_protected() doesn't use READ_ONCE().
 >
-> Hi, Dan
+> Hum, I see, that is what I was missing. And that explain why there is
+> (in practice) no impact on winning the race.
 >
-> How do you think about this?  I am still confused.  Could you give me some advice?
+> I would prefer to use rcu_access_pointer() instead of
+> rcu_dereference_protected() to avoid pitfall, and it reflects what I was
+> expecting:
+>
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -117,9 +117,7 @@ static struct landlock_object
+> *get_inode_object(struct inode *const inode)
+>
+>         /* Protects against concurrent get_inode_object() calls. */
+>         spin_lock(&inode->i_lock);
+> -       object =3D rcu_dereference_protected(inode_sec->object,
+> -                       lockdep_is_held(&inode->i_lock));
+> -       if (unlikely(object)) {
+> +       if (unlikely(rcu_access_pointer(inode_sec->object))) {
+>                 /* Someone else just created the object, bail out and
+> retry. */
+>                 spin_unlock(&inode->i_lock);
+>                 kfree(new_object);
 
-So I think the primary driver of this functionality is dax-devices and
-the architectural model for memory failure where several architectures
-and error handlers know how to route pfn failure to the
-memory_failure() frontend.
+Ah, yeah, that should work. I had forgotten about rcu_access_pointer().
 
-Compare that to block-devices where sector failure has no similar
-framework, and despite some initial interest about reusing 'struct
-badblocks' for this type of scenario there has been no real uptake to
-expand 'struct badblocks' outside of the pmem driver.
+> But I'm not sure about your proposition to move the NULL store in
+> release_inode() back up. Do you mean to add back the inode lock in
+> release_inode() like this?
+>
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -59,16 +59,12 @@ static void release_inode(struct landlock_object
+> *const object)
+>          * Makes sure that if the filesystem is concurrently unmounted,
+>          * hook_sb_delete() will wait for us to finish iput().
+>          */
+> +       spin_lock(&inode->i_lock);
+>         sb =3D inode->i_sb;
+>         atomic_long_inc(&landlock_superblock(sb)->inode_refs);
+>         spin_unlock(&object->lock);
+> -       /*
+> -        * Because object->underobj was not NULL, hook_sb_delete() and
+> -        * get_inode_object() guarantee that it is safe to reset
+> -        * landlock_inode(inode)->object while it is not NULL.  It is the=
+refore
+> -        * not necessary to lock inode->i_lock.
+> -        */
+>         rcu_assign_pointer(landlock_inode(inode)->object, NULL);
+> +       spin_unlock(&inode->i_lock);
+>         /*
+>          * Now, new rules can safely be tied to @inode with get_inode_obj=
+ect().
+>          */
+>
+>
+> I would prefer to avoid nested locks if it is not necessary though.
 
-I think the work you have done for ->corrupted_range() just needs to
-be repurposed away from a block-device operation to dax-device
-infrastructure. Christoph's pushback on extending
-block_device_operations makes sense to me because there is likely no
-other user of this facility than the pmem driver, and the pmem driver
-only needs it for the vestigial reason that filesystems mount on
-block-devices and not dax-devices.
+Hm, yeah, you have a point there.
 
-Recently Dave drove home the point that a filesystem can't do anything
-with pfns, it needs LBAs. A dax-device does not have LBA's, but it
-does operate on the concept of device-relative offsets. The filesystem
-is allowed to assume that dax-device:PFN[device_byte_offset >>
-PAGE_SHIFT] aliases the same data as the associated
-block-device:LBA[device_byte_offset >> SECTOR_SHIFT]. He also
-reiterated that this interface should be range based, which you
-already had, but I did not include in my attempt to communicate the
-mass failure of an entire surprise-removed device.
+Doing it locklessly does make the locking rules a little complicated
+though, and you'll have to update the comment inside struct
+landlock_inode_security. At the moment, it says:
 
-So I think the path forward is:
+* @object: Weak pointer to an allocated object.  All writes (i.e.
+* creating a new object or removing one) are protected by the
+* underlying inode->i_lock.  Disassociating @object from the inode is
+* additionally protected by @object->lock, from the time @object's
+* usage refcount drops to zero to the time this pointer is nulled out.
 
-- teach memory_failure() to allow for ranged failures
-
-- let interested drivers register for memory failure events via a
-blocking_notifier_head
-
-- teach memory_failure() to optionally let the notifier chain claim
-the event vs its current default of walking page->mapping
-
-- teach the pmem driver to register for memory_failure() events and
-filter the ones that apply to pfns that the driver owns
-
-- drop the nfit driver's usage of the mce notifier chain since
-memory_failure() is a superset of what the mce notifier communicates
-
-- augment the pmem driver's view of badblocks that it gets from
-address range scrub with one's it gets from memory_failure() events
-
-- when pmem handles a memory_failure() event or an address range scrub
-event fire a new event on a new per-dax-device blocking_notifier_head
-indicating the dax-relative offset ranges of the translated PFNs. This
-notification can optionally indicate failure, offline (for removal),
-and online (for repaired ranges).
-
-- teach dm to receive dax-device notifier events from its leaf devices
-and then translate them into dax-device notifications relative to the
-dm-device offset. This would seem to be a straightforward conversion
-of what you have done with ->corrupted_range()
-
-- teach filesystems to register for dax-device notifiers
-
-With all of that in place an interested filesystem can take ownership
-of a memory failure that impacts a range of pfns it is responsible for
-via a dax-device, but it also allows a not interested filesystem to
-default to standard single-pfn-at-a-time error handling and
-assumptions about page->mapping only referring to a single address
-space.
-
-This obviously does not solve Dave's desire to get this type of error
-reporting on block_devices, but I think there's nothing stopping a
-parallel notifier chain from being created for block-devices, but
-that's orthogonal to requirements and capabilities provided by
-dax-devices.
+which isn't true anymore.
