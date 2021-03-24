@@ -2,116 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB2AB3473E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 09:45:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C30C3473F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 09:52:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234106AbhCXIp0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Mar 2021 04:45:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59678 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234455AbhCXIpQ (ORCPT
+        id S233744AbhCXIv4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Mar 2021 04:51:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:59116 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233672AbhCXIvV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Mar 2021 04:45:16 -0400
-Received: from mail-vk1-xa2f.google.com (mail-vk1-xa2f.google.com [IPv6:2607:f8b0:4864:20::a2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 668A3C061763
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Mar 2021 01:45:14 -0700 (PDT)
-Received: by mail-vk1-xa2f.google.com with SMTP id o85so5267813vko.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Mar 2021 01:45:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fhT7lfu6P/3gT6Gg14tRPHhEqpMNGcVm3EE4u5owq+s=;
-        b=peHbnBR3pIePzrAZMjcifsEkQBojGOrwDnuQWDhUWpzj4w85Z7ehJuErLNCWzjLYQH
-         b5ohTRkn6WdZdl4P61CnWhHcE2bgUka8SuMwEhR9hBISYOu100MQGgF8e9+Io1/l4IHD
-         PsYJDjwxYA5b+eP/Z7mWPJ78Ld4UfsNSpqep4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fhT7lfu6P/3gT6Gg14tRPHhEqpMNGcVm3EE4u5owq+s=;
-        b=HaFLlDtYxshRcG3FbM+3T8fp9udiWPGwHNGlzj/QWdQGcp3KuFd9MVnxAGkjiyeHQU
-         UZrssY+ueK9UKAoHvA+fWIk6PrhMNN19Vid6ydTcU4Ztp81RyoGp5w0n92ngADrUv8E8
-         55uV28tMdfFAaYKppAsYOYV23E9DEQAMff9Fbv7MKAblsA/zXjOfsRXa0hYGT+nCnsDg
-         JggVIq0kRTVgwxvOR3TAyoa/nv35NsonhFvut0Au1QEJOCxnPVr7/2mERhRoeJr2pVkd
-         sjQr3840pp+vcmj2tfgCh2fJwRsGjNlxDGOrm1CBmlxeVoaE3+bUPPyxn0BJ9n/UdCfM
-         X7JQ==
-X-Gm-Message-State: AOAM531tnSdWcQ9XDa+XyIh7b+5JqChb37Nxd02x6xlU+ZHTFPxLObT1
-        hfa7XIDDlRRXaqtVR7NhIj5pDYTQtTKaZofylqlk+Q==
-X-Google-Smtp-Source: ABdhPJw6t3EbCij0cw/geB+IbiuwBERrBfJj3cGhUAeY6YqrDieR4WsbBp4SmyjICHzK0TzFHPudfmL9nLSjnapAOUo=
-X-Received: by 2002:a1f:a047:: with SMTP id j68mr825333vke.14.1616575513624;
- Wed, 24 Mar 2021 01:45:13 -0700 (PDT)
+        Wed, 24 Mar 2021 04:51:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616575881;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=W/86U4WY3HJ5VvQ3jx54R3hafA8M0dgjXIl/x1KumV4=;
+        b=E6eyTdtIowk+xTy/H1CMrF5Qd4copt36H68g6boCpH/HJyDd2fFy+WYHiMCRhHlMeNjVjR
+        ZAP2dwoizkYAXsg7HUqBmJ4kQSR89Q5uWp4UDgpExaNbaVbzjP3LjJ2N2ZfiyP04G4mJmJ
+        R0WiOHU/lwaIoQJ6jtGOEn8220SkRqI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-60-kGoMiK29PsCHzWkzHMHlzQ-1; Wed, 24 Mar 2021 04:51:17 -0400
+X-MC-Unique: kGoMiK29PsCHzWkzHMHlzQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 451F2801FCE;
+        Wed, 24 Mar 2021 08:51:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-58.rdu2.redhat.com [10.10.112.58])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B00A25D9DE;
+        Wed, 24 Mar 2021 08:51:11 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] cachefiles: do not yet allow on idmapped mounts
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-cachefs@redhat.com, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 24 Mar 2021 08:51:10 +0000
+Message-ID: <161657587086.2876766.8721792351947204187.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <20210322144916.137245-1-mszeredi@redhat.com> <20210322144916.137245-2-mszeredi@redhat.com>
- <YFrH098Tbbezg2hI@zeniv-ca.linux.org.uk>
-In-Reply-To: <YFrH098Tbbezg2hI@zeniv-ca.linux.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 24 Mar 2021 09:45:02 +0100
-Message-ID: <CAJfpegvy-bSoorAnPVRUxGjR5s10sJp3qRS0K-O91PcDvLSEPg@mail.gmail.com>
-Subject: Re: [PATCH v2 01/18] vfs: add miscattr ops
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 24, 2021 at 6:03 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Mon, Mar 22, 2021 at 03:48:59PM +0100, Miklos Szeredi wrote:
->
-> minor nit: copy_fsxattr_{to,from}_user() might be better.
->
-> > +int fsxattr_copy_to_user(const struct miscattr *ma, struct fsxattr __user *ufa)
-> > +{
-> > +     struct fsxattr fa = {
-> > +             .fsx_xflags     = ma->fsx_xflags,
-> > +             .fsx_extsize    = ma->fsx_extsize,
-> > +             .fsx_nextents   = ma->fsx_nextents,
-> > +             .fsx_projid     = ma->fsx_projid,
-> > +             .fsx_cowextsize = ma->fsx_cowextsize,
-> > +     };
->
-> That wants a comment along the lines of "guaranteed to be gap-free",
-> since otherwise you'd need memset() to avoid an infoleak.
+From: Christian Brauner <christian.brauner@ubuntu.com>
 
-Isn't structure initialization supposed to zero everything not
-explicitly initialized?
+Based on discussions (e.g. in [1]) my understanding of cachefiles and
+the cachefiles userspace daemon is that it creates a cache on a local
+filesystem (e.g. ext4, xfs etc.) for a network filesystem. The way this
+is done is by writing "bind" to /dev/cachefiles and pointing it to the
+directory to use as the cache.
+Currently this directory can technically also be an idmapped mount but
+cachefiles aren't yet fully aware of such mounts and thus don't take the
+idmapping into account when creating cache entries. This could leave
+users confused as the ownership of the files wouldn't match to what they
+expressed in the idmapping. Block cache files on idmapped mounts until
+the fscache rework is done and we have ported it to support idmapped
+mounts.
 
->
-> > +static int ioctl_getflags(struct file *file, void __user *argp)
-> > +{
-> > +     struct miscattr ma = { .flags_valid = true }; /* hint only */
-> > +     unsigned int flags;
-> > +     int err;
-> > +
-> > +     err = vfs_miscattr_get(file_dentry(file), &ma);
->
-> Umm...  Just to clarify - do we plan to have that ever called via
-> ovl_real_ioctl()?  IOW, is file_dentry() anything other than a way
-> to spell ->f_path.dentry here?
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Cc: linux-cachefs@redhat.com
+Link: https://lore.kernel.org/lkml/20210303161528.n3jzg66ou2wa43qb@wittgenstein [1]
+Link: https://lore.kernel.org/r/20210316112257.2974212-1-christian.brauner@ubuntu.com/ # v1
+Link: https://listman.redhat.com/archives/linux-cachefs/2021-March/msg00044.html # v2
+Link: https://lore.kernel.org/r/20210319114146.410329-1-christian.brauner@ubuntu.com/ # v3
+---
 
-Indeed, file_dentry() only makes sense when called from a layer inside
-overlayfs.
+ fs/cachefiles/bind.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-The one in io_uring() seems wrong also, as a beast needing
-file_dentry() should never get out of overlayfs and into io_uring:
-
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -9297,7 +9297,7 @@ static void __io_uring_show_fdinfo(struct
-io_ring_ctx *ctx, struct seq_file *m)
-                struct file *f = *io_fixed_file_slot(ctx->file_data, i);
-
-                if (f)
--                       seq_printf(m, "%5u: %s\n", i, file_dentry(f)->d_iname);
-+                       seq_printf(m, "%5u: %pD\n", i, f);
-                else
-                        seq_printf(m, "%5u: <none>\n", i);
-        }
+diff --git a/fs/cachefiles/bind.c b/fs/cachefiles/bind.c
+index dfb14dbddf51..38bb7764b454 100644
+--- a/fs/cachefiles/bind.c
++++ b/fs/cachefiles/bind.c
+@@ -118,6 +118,12 @@ static int cachefiles_daemon_add_cache(struct cachefiles_cache *cache)
+ 	cache->mnt = path.mnt;
+ 	root = path.dentry;
+ 
++	ret = -EINVAL;
++	if (mnt_user_ns(path.mnt) != &init_user_ns) {
++		pr_warn("File cache on idmapped mounts not supported");
++		goto error_unsupported;
++	}
++
+ 	/* check parameters */
+ 	ret = -EOPNOTSUPP;
+ 	if (d_is_negative(root) ||
 
 
-Thanks,
-Miklos
