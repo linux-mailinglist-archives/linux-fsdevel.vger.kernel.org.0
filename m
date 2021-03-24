@@ -2,148 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A349B347DB2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 17:29:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 887D0347DCC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 17:37:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236060AbhCXQ27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Mar 2021 12:28:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37424 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229653AbhCXQ2p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Mar 2021 12:28:45 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2373661A0D;
-        Wed, 24 Mar 2021 16:28:42 +0000 (UTC)
-Date:   Wed, 24 Mar 2021 17:28:38 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
-Message-ID: <20210324162838.spy7qotef3kxm3l4@wittgenstein>
-References: <CAOQ4uxjCjapuAHbYuP8Q_k0XD59UmURbmkGC1qcPkPAgQbQ8DA@mail.gmail.com>
- <20210318143140.jxycfn3fpqntq34z@wittgenstein>
- <CAOQ4uxiRHwmxTKsLteH_sBW_dSPshVE8SohJYEmpszxaAwjEyg@mail.gmail.com>
- <20210319134043.c2wcpn4lbefrkhkg@wittgenstein>
- <CAOQ4uxhLYdWOUmpWP+c_JzVeGDbkJ5eUM+1-hhq7zFq23g5J1g@mail.gmail.com>
- <CAOQ4uxhetKeEZX=_iAcREjibaR0ZcOdeZyR8mFEoHM+WRsuVtg@mail.gmail.com>
- <CAOQ4uxhfx012GtvXMfiaHSk1M7+gTqkz3LsT0i_cHLnZLMk8nw@mail.gmail.com>
- <CAOQ4uxhFU=H8db35JMhfR+A5qDkmohQ01AWH995xeBAKuuPhzA@mail.gmail.com>
- <20210324143230.y36hga35xvpdb3ct@wittgenstein>
- <CAOQ4uxiPYbEk1N_7nxXMP7kz+KMnyH+0GqpJS36FR+-v9sHrcg@mail.gmail.com>
+        id S234343AbhCXQhS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Mar 2021 12:37:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49564 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236012AbhCXQhO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Mar 2021 12:37:14 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06329C0613DE
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Mar 2021 09:37:13 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id bx7so28358338edb.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Mar 2021 09:37:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F78F4/Kq+ndIvAG3q41JlNnbimm1afFKY1uPrkgKEKE=;
+        b=CsDx6xAl1VtYRX8X8nlGVP72pS+Njf2eRG9UeLEcNYw/0GG+u51E8oRfnZj6k3/sNg
+         aRLLF/mmJCW58czyShqa6WkR7qJxQwuiCLVxyrBpZ+TAPagZGTpDfa7+zl7Dur1DKlk4
+         B1AAACFL6xsj3ekCmh1gjol0o/QSp3xiwcbei6jwyZhVy3/cDah43fcg8J30O9ZE/PgR
+         mQCXAHzOBzR2wsLGgkCG9GE3xk75u+tWfyPHSZJGznQsHqijxofg2L4Q1jPv+MKqUCHE
+         RQjr95+R6I9EMKEYtmdWrRAb9fTP8P6XndMLkaPTVlg8oBOUifEZ/RsV84+JGEN92W79
+         y2cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F78F4/Kq+ndIvAG3q41JlNnbimm1afFKY1uPrkgKEKE=;
+        b=BTxuvG4JTKqPyfQ4qganDoefMbRACP+o7FWAiISTUxfEP2BH0CMAK1DSQCkL419lSe
+         KrPMOb2e+7/Z3K4g3MP/z7bTvnPNXswnfgBovaOxWr3hhUj6zM6hPwOPiGDrG9zE+PyO
+         jcb1ayR36Te/sGNwiaBjdqL1fvJNOEH2vPDDQt7T+dhyWSCtiGZYsD7oRs1FDGym9Yrg
+         NXu1WDXl69of9h5jT7bsw4JG5qSlG43fNKFEmXUcYD+S9hCc4tsBnRlUzbcvjU6dRCx+
+         rlEv3zspcM+0p1HhBsh7JtMeFblhP6qC2a8XC1dkMJK6rVauxPXZRqKTb86xXNU2zCBG
+         UVGQ==
+X-Gm-Message-State: AOAM5331UtiCED9bPusZj1MQRf9GFRmYfa3bmEPxjmi/v3ZuHfOu8F8E
+        6hYf0K9j224AHRR96wAZuzmgOs94VzluBpWSyR8+Gw==
+X-Google-Smtp-Source: ABdhPJy0i6T+2AM1FhaOe2x1NOEA+VihVGm8Q0AyYdTDg9DUntxFo3NhisOlYTqdDwwzXOKs7/wWOwG2TBuN7zwJqD8=
+X-Received: by 2002:a05:6402:4301:: with SMTP id m1mr4548882edc.210.1616603832460;
+ Wed, 24 Mar 2021 09:37:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxiPYbEk1N_7nxXMP7kz+KMnyH+0GqpJS36FR+-v9sHrcg@mail.gmail.com>
+References: <20210208105530.3072869-1-ruansy.fnst@cn.fujitsu.com>
+ <20210208105530.3072869-2-ruansy.fnst@cn.fujitsu.com> <CAPcyv4jqEdPoF5YM+jSYJd74KqRTwbbEum7=moa3=Wyn6UyU9g@mail.gmail.com>
+ <OSBPR01MB29207A1C06968705C2FEBACFF4939@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <CAPcyv4iBnWbG0FYw6-K0MaH--rq62s7RY_yoT9rOYWMa94Yakw@mail.gmail.com>
+ <OSBPR01MB29203F891F9584CC53616FB8F4939@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <CAPcyv4gn_AvT6BA7g4jLKRFODSpt7_ORowVd3KgyWxyaFG0k9g@mail.gmail.com>
+ <OSBPR01MB2920E46CBE4816CDF711E004F46F9@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <OSBPR01MB29208779955B49F84D857F80F4689@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <CAPcyv4jhUU3NVD8HLZnJzir+SugB6LnnrgJZ-jP45BZrbJ1dJQ@mail.gmail.com> <20210324074751.GA1630@lst.de>
+In-Reply-To: <20210324074751.GA1630@lst.de>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 24 Mar 2021 09:37:01 -0700
+Message-ID: <CAPcyv4hOrYCW=wjkxkCP+JbyD+A_Po0rW-61qQWAOm3zp_eyUQ@mail.gmail.com>
+Subject: Re: [PATCH v3 01/11] pagemap: Introduce ->memory_failure()
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        david <david@fromorbit.com>, Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
+        "y-goto@fujitsu.com" <y-goto@fujitsu.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 24, 2021 at 05:05:45PM +0200, Amir Goldstein wrote:
-> On Wed, Mar 24, 2021 at 4:32 PM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
+On Wed, Mar 24, 2021 at 12:48 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> On Tue, Mar 23, 2021 at 07:19:28PM -0700, Dan Williams wrote:
+> > So I think the path forward is:
 > >
-> > On Wed, Mar 24, 2021 at 03:57:12PM +0200, Amir Goldstein wrote:
-> > > > > Now tested FAN_MARK_FILESYSTEM watch on tmpfs mounted
-> > > > > inside userns and works fine, with two wrinkles I needed to iron:
-> > > > >
-> > > > > 1. FAN_REPORT_FID not supported on tmpfs because tmpfs has
-> > > > >     zero f_fsid (easy to fix)
-> > > > > 2. open_by_handle_at() is not userns aware (can relax for
-> > > > >     FS_USERNS_MOUNT fs)
-> > > > >
-> > > > > Pushed these two fixes to branch fanotify_userns.
-> > > >
-> > > > Pushed another fix to mnt refcount bug in WIP and another commit to
-> > > > add the last piece that could make fanotify usable for systemd-homed
-> > > > setup - a filesystem watch filtered by mnt_userns (not tested yet).
-> > > >
-> > >
-> > > Now I used mount-idmapped (from xfstest) to test that last piece.
-> > > Found a minor bug and pushed a fix.
-> > >
-> > > It is working as expected, that is filtering only the events generated via
-> > > the idmapped mount. However, because the listener I tested is capable in
-> > > the mapped userns and not in the sb userns, the listener cannot
-> > > open_ny_handle_at(), so the result is not as useful as one might hope.
+> > - teach memory_failure() to allow for ranged failures
 > >
-> > This is another dumb question probably but in general, are you saying
-> > that someone watching a mount or directory and does _not_ want file
-> > descriptors from fanotify to be returned has no other way of getting to
-> > the path they want to open other than by using open_by_handle_at()?
-> >
-> 
-> Well there is another way.
-> It is demonstrated in my demo with intoifywatch --fanotify --recursive.
-> It involved userspace iterating a subtree of interest to create fid->path
-> map.
+> > - let interested drivers register for memory failure events via a
+> > blocking_notifier_head
+>
+> Eww.  As I said I think the right way is that the file system (or
+> other consumer) can register a set of callbacks for opening the device.
 
-Ok, so this seems to be
+How does that solve the problem of the driver being notified of all
+pfn failure events? Today pmem only finds out about the ones that are
+notified via native x86 machine check error handling via a notifier
+(yes "firmware-first" error handling fails to do the right thing for
+the pmem driver), or the ones that are eventually reported via address
+range scrub, but only for the nvdimms that implement range scrubbing.
+memory_failure() seems a reasonable catch all point to route pfn
+failure events, in an arch independent way, to interested drivers.
 
-inotifytools_filename_from_fid()
--> if (fanotify_mark_type != FAN_MARK_FILESYSTEM)
-           watch_from_fid()
-   -> read_path_from(/proc/self/fd/w->dirfd)
+I'm fine swapping out dax_device blocking_notiier chains for your
+proposal, but that does not address all the proposed reworks in my
+list which are:
 
-> 
-> The fanotify recursive watch is similar but not exactly the same as the
-> old intoify recursive watch, because with inotify recursive watch you
-> can miss events.
-> 
-> With fanotify recursive watch, the listener (if capable) can setup a
-> filesystem mark so events will not be missed. They will be recorded
-> by fid with an unknown path and the path information can be found later
-> by the crawler and updated in the map before the final report.
-> 
-> Events on fid that were not found by the crawler need not be reported.
-> That's essentially a subtree watch for the poor implemented in userspace.
+- delete "drivers/acpi/nfit/mce.c"
 
-This is already a good improvement.
-Honestly, having FAN_MARK_INODE workable unprivileged is already pretty
-great. In addition having FAN_MARK_MOUNT workable with idmapped mounts
-will likely get us what most users care about, afaict that is the POC
-in:
-https://github.com/amir73il/linux/commit/f0d5d462c5baeb82a658944c6df80704434f09a1
+- teach memory_failure() to be able to communicate range failure
 
-(I'm reading the source correctly that FAN_MARK_MOUNT works with
-FAN_REPORT_FID as long as no inode event set in FANOTIFY_INODE_EVENTS is
-set? I'm asking because my manpage - probably too old - seems to imply
-that FAN_REPORT_FID can't be used with FAN_MARK_MOUNT although I might
-just be stumbling over the phrasing.)
+- enable memory_failure() to defer to a filesystem that can say
+"critical metadata is impacted, no point in trying to do file-by-file
+isolation, bring the whole fs down".
 
-I think FAN_MARK_FILESYSTEM should simply stay under the s_userns_s
-capable requirement. That's imho the cleanest semantics for this, i.e.
-I'd drop:
-https://github.com/amir73il/linux/commit/bd20e273f3c3a650805b3da32e493f01cc2a4763
-This is neither an urgent use-case nor am I feeling very comfortable
-with it.
+> I have a series I need to finish and send out to do that for block
+> devices.  We probably also need the concept of a holder for the dax
+> device to make it work nicely, as otherwise we're going to have a bit
+> of a mess.
 
-> 
-> I did not implement the combination --fanotify --global --recursive in my
-> demo, because it did not make sense with the current permission model
-> (listener that can setup a fs mark can always resolve fids to path), but it
-> would be quite trivial to add.
-> 
-> 
-> > >
-> > > I guess we will also need to make open_by_handle_at() idmapped aware
-> > > and use a variant of vfs_dentry_acceptable() that validates that the opened
-> > > path is legitimately accessible via the idmapped mount.
-> >
-> > So as a first step, I think there's a legitimate case to be made for
-> > open_by_handle_at() to be made useable inside user namespaces. That's a
-> > change worth to be made independent of fanotify. For example, nowadays
-> > cgroups have a 64 bit identifier that can be used with open_by_handle_at
-> > to map a cgrp id to a path and back:
-> > https://lkml.org/lkml/2020/12/2/1126
-> > Right now this can't be used in user namespaces because of this
-> > restriction but it is genuinely useful to have this feature available
-> > since cgroups are FS_USERNS_MOUNT and that identifier <-> path mapping
-> > is very convenient.
-> 
-> FS_USERNS_MOUNT is a simple case and I think it is safe.
-> There is already a patch for that on my fanotify_userns branch.
+Ok, I'll take a look at adding a holder.
 
-Great!
-Christian
+>
+> > This obviously does not solve Dave's desire to get this type of error
+> > reporting on block_devices, but I think there's nothing stopping a
+> > parallel notifier chain from being created for block-devices, but
+> > that's orthogonal to requirements and capabilities provided by
+> > dax-devices.
+>
+> FYI, my series could easily accomodate that if we ever get a block
+> driver that actually could report such errors.
+
+Sure, whatever we land for a dax_device could easily be adopted for a
+block device.
