@@ -2,132 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16333347FBE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 18:46:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55D6A347FEF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 19:01:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237109AbhCXRq2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Mar 2021 13:46:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36476 "EHLO
+        id S237126AbhCXSA3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Mar 2021 14:00:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237215AbhCXRp7 (ORCPT
+        with ESMTP id S236337AbhCXSA3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Mar 2021 13:45:59 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB7ABC0613DE
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Mar 2021 10:45:54 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id bf3so28645729edb.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Mar 2021 10:45:54 -0700 (PDT)
+        Wed, 24 Mar 2021 14:00:29 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3926C0613DE
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Mar 2021 11:00:28 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id jy13so34349224ejc.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Mar 2021 11:00:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=gGg9bkmQmUrJEoYO//o+38WT2vp4tDvJ1YauvHLK3w0=;
-        b=FvQlkmFH+tOQEZcfLr3Wsp0O5iLofV5GNtUxR5JyPoM5RLG5vHO0fVqWiayt+ShEiq
-         6fOcX+/MeA/YjC57p8CPqmLsGiGYJLmRra8KGCVinVIoroyCsik+dyIWDBQTzm+1KveI
-         3phrbMjz/WSkCRSI41RGGf+W0S888ZEPvbBpYLoK3GfRyXt5qIb2rnZx9IzUiipPH6jt
-         zozhTgF1kG6BbfK756qY10AQSO1h33cgsHI0KI8CSfl3kX3LQVP7SGifZKvRhMAeV4d9
-         n+fPrenlEA+w78JYAcQjAowrJAfquHk2wnR7aqBvBIpXV+h1NRlYakr+HiETBpvDrqwm
-         drfA==
+        bh=2KFNkl1or0mmtXA1jvsRAF0OANfT9njIYX+exK4jOos=;
+        b=vFzEiq5fNjCN/7R0WwqtTXBrQesBMnmm7Yt0aIk36IUzb9nz2Iwwjuku88ov5xGoo7
+         I2nZHiAzvvorrWHog5G+fz0o6Iwgp6fPe5BX5ALrKM8J8rriLQBF2bQ6iQmCTySTWQeW
+         U//yvsIy1PSHAhs/SX8wnQHVLy4lhbL9aV+PelAq1xjXUrvVSvyfV6E/eLWQI3REFqaQ
+         He1p0+EQfwXwRd5c1XOplbo7llR+YgnDVh0Qw+Ot0l9QZsjaixzo1kAkhZJUMzGxY+ki
+         n7X09BFlfP5Sp9r65op8Vg3Ww+4V6SnFtzm8Ym0iKZ0MacVqsqNvp80/mc20puyxivuG
+         ceGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gGg9bkmQmUrJEoYO//o+38WT2vp4tDvJ1YauvHLK3w0=;
-        b=V7sykKb3KOSbCAbRFR0ZfyPEMfDSAnk6RfK1I22DezOGq+ZSuv8xN73ThdEklwRTID
-         ffdJzZPDj+s3hE9j3/IFrwNE1xb2bzg/cGvt37MxjIBMi0d1FGWCl34dbuU6s6m+ymle
-         8E4jP7W8ez/f/nqpnM3exT8KPiA4+CzZ9vMMhYDReUNehbdCibfQ84foFsiYRx5aafGP
-         Z0XbNC+zondYR7rTufqgER3EpJWfWsTTG+0HTaihPXmt1NNKjKz3usUVp6y+d6n73aO9
-         RV4tUTpWI3DsKyb2Ojj1nAUta5YbZnhySKB4OoqqPSEYTBSx9Lxt406zPCR7P448o8a2
-         LnQw==
-X-Gm-Message-State: AOAM530191lk87Lv3aiMrOl7NJbwNyMlXkwXqnR8O1aK1Y1ch3bcbGxO
-        d+0EP6cfcL2rP+8hdbdf/S9vezgKGFH/vNfouYnMLQ==
-X-Google-Smtp-Source: ABdhPJzYwYdMUsSiaziQc4bOwaRP/eIf8tsvN1+MbwfleMPszchzvYZawTUvBNwx7NAPJcu1DDlQkg6IjQ7Aaw/eheI=
-X-Received: by 2002:aa7:dd05:: with SMTP id i5mr4696265edv.300.1616607953325;
- Wed, 24 Mar 2021 10:45:53 -0700 (PDT)
+        bh=2KFNkl1or0mmtXA1jvsRAF0OANfT9njIYX+exK4jOos=;
+        b=DpOblRe5DfOzSosa0QSRRTino1P1i0X6S6X4eKpPM5ucRo1l6HxASdETIwP2wtMRWS
+         uZqjaUT00/3/K0BfDP89MBnWIu97UELnHlVGFKqxzmcgTfB38+w/fdMsnEfMguK+zNrg
+         F12SCSt4H+VLH6wYkSLHy7tIgX6tiHMaxBRZM0ve3A1Mi6P4a0c/ZruJl6/kAWWpFD5G
+         /Tux0KaP1uAA67Bt8fMkEQg9d8QcQisBAAjpG5mXvzOtvfCU4O4VZOiHfBZBC6KxLMwR
+         RNyL4LNnz3XFdrzmsw411c5jqR8rZ6bcR1yoEiOHlbXEgawJmEwtzjE2kvNxI4h7tJBV
+         LWdw==
+X-Gm-Message-State: AOAM531Tgi3w2tLS3OETUd7sPKK2x6aTIwJ/uler3vzLrFjgFstRekn0
+        qs5dpsv+SMWqKW+sd3PlPnoX3InctkcyV0c7FpaJpw==
+X-Google-Smtp-Source: ABdhPJy9J40IqLa/d+cck6PXVVGYBFPLo6iqEOA+v2R4s6asbN5wOCf5ZJ6fNNbFdsT8bCsuZH/tAzIMp5hm7zOGEdw=
+X-Received: by 2002:a17:906:8447:: with SMTP id e7mr5154772ejy.523.1616608827202;
+ Wed, 24 Mar 2021 11:00:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <161604048257.1463742.1374527716381197629.stgit@dwillia2-desk3.amr.corp.intel.com>
- <161604050866.1463742.7759521510383551055.stgit@dwillia2-desk3.amr.corp.intel.com>
- <66514812-6a24-8e2e-7be5-c61e188fecc4@oracle.com>
-In-Reply-To: <66514812-6a24-8e2e-7be5-c61e188fecc4@oracle.com>
+References: <CAPcyv4jqEdPoF5YM+jSYJd74KqRTwbbEum7=moa3=Wyn6UyU9g@mail.gmail.com>
+ <OSBPR01MB29207A1C06968705C2FEBACFF4939@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <CAPcyv4iBnWbG0FYw6-K0MaH--rq62s7RY_yoT9rOYWMa94Yakw@mail.gmail.com>
+ <OSBPR01MB29203F891F9584CC53616FB8F4939@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <CAPcyv4gn_AvT6BA7g4jLKRFODSpt7_ORowVd3KgyWxyaFG0k9g@mail.gmail.com>
+ <OSBPR01MB2920E46CBE4816CDF711E004F46F9@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <OSBPR01MB29208779955B49F84D857F80F4689@OSBPR01MB2920.jpnprd01.prod.outlook.com>
+ <CAPcyv4jhUU3NVD8HLZnJzir+SugB6LnnrgJZ-jP45BZrbJ1dJQ@mail.gmail.com>
+ <20210324074751.GA1630@lst.de> <CAPcyv4hOrYCW=wjkxkCP+JbyD+A_Po0rW-61qQWAOm3zp_eyUQ@mail.gmail.com>
+ <20210324173935.GB12770@lst.de>
+In-Reply-To: <20210324173935.GB12770@lst.de>
 From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 24 Mar 2021 10:45:42 -0700
-Message-ID: <CAPcyv4jidaz=33oWFMB_aBPtYDLe-AA_NP-k_pfGADVt=w5Vng@mail.gmail.com>
-Subject: Re: [PATCH 3/3] mm/devmap: Remove pgmap accounting in the
- get_user_pages_fast() path
-To:     Joao Martins <joao.m.martins@oracle.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Christoph Hellwig <hch@lst.de>,
-        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        david <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+Date:   Wed, 24 Mar 2021 11:00:16 -0700
+Message-ID: <CAPcyv4iyS0EB0zLNxLwML1C0E2Eqk3TweHvmgpNWpZKVPVpz5Q@mail.gmail.com>
+Subject: Re: [PATCH v3 01/11] pagemap: Introduce ->memory_failure()
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
         Linux MM <linux-mm@kvack.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        david <david@fromorbit.com>, Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
+        "y-goto@fujitsu.com" <y-goto@fujitsu.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 18, 2021 at 3:02 AM Joao Martins <joao.m.martins@oracle.com> wrote:
+On Wed, Mar 24, 2021 at 10:39 AM Christoph Hellwig <hch@lst.de> wrote:
 >
-> On 3/18/21 4:08 AM, Dan Williams wrote:
-> > Now that device-dax and filesystem-dax are guaranteed to unmap all user
-> > mappings of devmap / DAX pages before tearing down the 'struct page'
-> > array, get_user_pages_fast() can rely on its traditional synchronization
-> > method "validate_pte(); get_page(); revalidate_pte()" to catch races with
-> > device shutdown. Specifically the unmap guarantee ensures that gup-fast
-> > either succeeds in taking a page reference (lock-less), or it detects a
-> > need to fall back to the slow path where the device presence can be
-> > revalidated with locks held.
->
-> [...]
->
-> > @@ -2087,21 +2078,26 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
-> >  #endif /* CONFIG_ARCH_HAS_PTE_SPECIAL */
+> On Wed, Mar 24, 2021 at 09:37:01AM -0700, Dan Williams wrote:
+> > > Eww.  As I said I think the right way is that the file system (or
+> > > other consumer) can register a set of callbacks for opening the device.
 > >
-> >  #if defined(CONFIG_ARCH_HAS_PTE_DEVMAP) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
-> > +
-> >  static int __gup_device_huge(unsigned long pfn, unsigned long addr,
-> >                            unsigned long end, unsigned int flags,
-> >                            struct page **pages, int *nr)
-> >  {
-> >       int nr_start = *nr;
-> > -     struct dev_pagemap *pgmap = NULL;
-> >
-> >       do {
-> > -             struct page *page = pfn_to_page(pfn);
-> > +             struct page *page;
-> > +
-> > +             /*
-> > +              * Typically pfn_to_page() on a devmap pfn is not safe
-> > +              * without holding a live reference on the hosting
-> > +              * pgmap. In the gup-fast path it is safe because any
-> > +              * races will be resolved by either gup-fast taking a
-> > +              * reference or the shutdown path unmapping the pte to
-> > +              * trigger gup-fast to fall back to the slow path.
-> > +              */
-> > +             page = pfn_to_page(pfn);
-> >
-> > -             pgmap = get_dev_pagemap(pfn, pgmap);
-> > -             if (unlikely(!pgmap)) {
-> > -                     undo_dev_pagemap(nr, nr_start, flags, pages);
-> > -                     return 0;
-> > -             }
-> >               SetPageReferenced(page);
-> >               pages[*nr] = page;
-> >               if (unlikely(!try_grab_page(page, flags))) {
+> > How does that solve the problem of the driver being notified of all
+> > pfn failure events?
 >
-> So for allowing FOLL_LONGTERM[0] would it be OK if we used page->pgmap after
-> try_grab_page() for checking pgmap type to see if we are in a device-dax
-> longterm pin?
+> Ok, I probably just showed I need to spend more time looking at
+> your proposal vs the actual code..
+>
+> Don't we have a proper way how one of the nvdimm layers own a
+> spefific memory range and call directly into that instead of through
+> a notifier?
 
-So, there is an effort to add a new pte bit p{m,u}d_special to disable
-gup-fast for huge pages [1]. I'd like to investigate whether we could
-use devmap + special as an encoding for "no longterm" and never
-consult the pgmap in the gup-fast path.
+So that could be a new dev_pagemap operation as Ruan has here. I was
+thinking that other agents would be interested in non-dev_pagemap
+managed ranges, but we could leave that for later and just make the
+current pgmap->memory_failure() callback proposal range based.
 
-[1]: https://lore.kernel.org/linux-mm/a1fa7fa2-914b-366d-9902-e5b784e8428c@shipmail.org/
+>
+> > Today pmem only finds out about the ones that are
+> > notified via native x86 machine check error handling via a notifier
+> > (yes "firmware-first" error handling fails to do the right thing for
+> > the pmem driver),
+>
+> Did any kind of firmware-first error handling ever get anything
+> right?  I wish people would have learned that by now.
+
+Part of me wants to say if you use firmware-first you get to keep the
+pieces, but it's not always the end user choice as far as I
+understand.
+
+> > or the ones that are eventually reported via address
+> > range scrub, but only for the nvdimms that implement range scrubbing.
+> > memory_failure() seems a reasonable catch all point to route pfn
+> > failure events, in an arch independent way, to interested drivers.
+>
+> Yeah.
+>
+> > I'm fine swapping out dax_device blocking_notiier chains for your
+> > proposal, but that does not address all the proposed reworks in my
+> > list which are:
+> >
+> > - delete "drivers/acpi/nfit/mce.c"
+> >
+> > - teach memory_failure() to be able to communicate range failure
+> >
+> > - enable memory_failure() to defer to a filesystem that can say
+> > "critical metadata is impacted, no point in trying to do file-by-file
+> > isolation, bring the whole fs down".
+>
+> This all sounds sensible.
+
+Ok, Ruan, I think this means rework your dev_pagemap_ops callback to
+be range based. Add a holder concept for dax_devices and then layer
+that on Christoph's eventual dax_device callback mechanism that a
+dax_device holder can register.
