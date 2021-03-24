@@ -2,91 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DEAE347D92
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 17:21:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A349B347DB2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 17:29:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234916AbhCXQVG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Mar 2021 12:21:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45948 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234228AbhCXQUf (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Mar 2021 12:20:35 -0400
-Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0898EC0613E1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Mar 2021 09:20:34 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F5D401XLQzMq2Qd;
-        Wed, 24 Mar 2021 17:20:32 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4F5D3w2gZgzlh8TB;
-        Wed, 24 Mar 2021 17:20:28 +0100 (CET)
-Subject: Re: [PATCH v30 12/12] landlock: Add user and kernel documentation
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20210316204252.427806-1-mic@digikod.net>
- <20210316204252.427806-13-mic@digikod.net> <202103191056.71AB0515A@keescook>
- <81c76347-9e92-244f-6f32-600984a6c5cb@digikod.net>
-Message-ID: <57a2b232-f5ba-b585-da11-972845ac8067@digikod.net>
-Date:   Wed, 24 Mar 2021 17:21:07 +0100
-User-Agent: 
+        id S236060AbhCXQ27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Mar 2021 12:28:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37424 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229653AbhCXQ2p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Mar 2021 12:28:45 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2373661A0D;
+        Wed, 24 Mar 2021 16:28:42 +0000 (UTC)
+Date:   Wed, 24 Mar 2021 17:28:38 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
+Message-ID: <20210324162838.spy7qotef3kxm3l4@wittgenstein>
+References: <CAOQ4uxjCjapuAHbYuP8Q_k0XD59UmURbmkGC1qcPkPAgQbQ8DA@mail.gmail.com>
+ <20210318143140.jxycfn3fpqntq34z@wittgenstein>
+ <CAOQ4uxiRHwmxTKsLteH_sBW_dSPshVE8SohJYEmpszxaAwjEyg@mail.gmail.com>
+ <20210319134043.c2wcpn4lbefrkhkg@wittgenstein>
+ <CAOQ4uxhLYdWOUmpWP+c_JzVeGDbkJ5eUM+1-hhq7zFq23g5J1g@mail.gmail.com>
+ <CAOQ4uxhetKeEZX=_iAcREjibaR0ZcOdeZyR8mFEoHM+WRsuVtg@mail.gmail.com>
+ <CAOQ4uxhfx012GtvXMfiaHSk1M7+gTqkz3LsT0i_cHLnZLMk8nw@mail.gmail.com>
+ <CAOQ4uxhFU=H8db35JMhfR+A5qDkmohQ01AWH995xeBAKuuPhzA@mail.gmail.com>
+ <20210324143230.y36hga35xvpdb3ct@wittgenstein>
+ <CAOQ4uxiPYbEk1N_7nxXMP7kz+KMnyH+0GqpJS36FR+-v9sHrcg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <81c76347-9e92-244f-6f32-600984a6c5cb@digikod.net>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxiPYbEk1N_7nxXMP7kz+KMnyH+0GqpJS36FR+-v9sHrcg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 19/03/2021 19:54, Mickaël Salaün wrote:
+On Wed, Mar 24, 2021 at 05:05:45PM +0200, Amir Goldstein wrote:
+> On Wed, Mar 24, 2021 at 4:32 PM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> >
+> > On Wed, Mar 24, 2021 at 03:57:12PM +0200, Amir Goldstein wrote:
+> > > > > Now tested FAN_MARK_FILESYSTEM watch on tmpfs mounted
+> > > > > inside userns and works fine, with two wrinkles I needed to iron:
+> > > > >
+> > > > > 1. FAN_REPORT_FID not supported on tmpfs because tmpfs has
+> > > > >     zero f_fsid (easy to fix)
+> > > > > 2. open_by_handle_at() is not userns aware (can relax for
+> > > > >     FS_USERNS_MOUNT fs)
+> > > > >
+> > > > > Pushed these two fixes to branch fanotify_userns.
+> > > >
+> > > > Pushed another fix to mnt refcount bug in WIP and another commit to
+> > > > add the last piece that could make fanotify usable for systemd-homed
+> > > > setup - a filesystem watch filtered by mnt_userns (not tested yet).
+> > > >
+> > >
+> > > Now I used mount-idmapped (from xfstest) to test that last piece.
+> > > Found a minor bug and pushed a fix.
+> > >
+> > > It is working as expected, that is filtering only the events generated via
+> > > the idmapped mount. However, because the listener I tested is capable in
+> > > the mapped userns and not in the sb userns, the listener cannot
+> > > open_ny_handle_at(), so the result is not as useful as one might hope.
+> >
+> > This is another dumb question probably but in general, are you saying
+> > that someone watching a mount or directory and does _not_ want file
+> > descriptors from fanotify to be returned has no other way of getting to
+> > the path they want to open other than by using open_by_handle_at()?
+> >
 > 
-> On 19/03/2021 19:03, Kees Cook wrote:
->> On Tue, Mar 16, 2021 at 09:42:52PM +0100, Mickaël Salaün wrote:
->>> From: Mickaël Salaün <mic@linux.microsoft.com>
-[...]
->>
->>> [...]
->>> +Special filesystems
->>> +-------------------
->>> +
->>> +Access to regular files and directories can be restricted by Landlock,
->>> +according to the handled accesses of a ruleset.  However, files that do not
->>> +come from a user-visible filesystem (e.g. pipe, socket), but can still be
->>> +accessed through /proc/self/fd/, cannot currently be restricted.  Likewise,
->>> +some special kernel filesystems such as nsfs, which can be accessed through
->>> +/proc/self/ns/, cannot currently be restricted.  For now, these kind of special
->>> +paths are then always allowed.  Future Landlock evolutions will enable to
->>> +restrict such paths with dedicated ruleset flags.
->>
->> With this series, can /proc (at the top level) be blocked? (i.e. can a
->> landlock user avoid the weirdness by making /proc/$pid/ unavailable?)
-> 
-> /proc can be blocked, but not /proc/*/ns/* because of disconnected
-> roots. I plan to address this.
+> Well there is another way.
+> It is demonstrated in my demo with intoifywatch --fanotify --recursive.
+> It involved userspace iterating a subtree of interest to create fid->path
+> map.
 
-It is important to note that access to sensitive /proc files such as
-ns/* and fd/* are automatically restricted according to domain
-hierarchies. I'll add this detail to the documentation. :)
+Ok, so this seems to be
+
+inotifytools_filename_from_fid()
+-> if (fanotify_mark_type != FAN_MARK_FILESYSTEM)
+           watch_from_fid()
+   -> read_path_from(/proc/self/fd/w->dirfd)
+
+> 
+> The fanotify recursive watch is similar but not exactly the same as the
+> old intoify recursive watch, because with inotify recursive watch you
+> can miss events.
+> 
+> With fanotify recursive watch, the listener (if capable) can setup a
+> filesystem mark so events will not be missed. They will be recorded
+> by fid with an unknown path and the path information can be found later
+> by the crawler and updated in the map before the final report.
+> 
+> Events on fid that were not found by the crawler need not be reported.
+> That's essentially a subtree watch for the poor implemented in userspace.
+
+This is already a good improvement.
+Honestly, having FAN_MARK_INODE workable unprivileged is already pretty
+great. In addition having FAN_MARK_MOUNT workable with idmapped mounts
+will likely get us what most users care about, afaict that is the POC
+in:
+https://github.com/amir73il/linux/commit/f0d5d462c5baeb82a658944c6df80704434f09a1
+
+(I'm reading the source correctly that FAN_MARK_MOUNT works with
+FAN_REPORT_FID as long as no inode event set in FANOTIFY_INODE_EVENTS is
+set? I'm asking because my manpage - probably too old - seems to imply
+that FAN_REPORT_FID can't be used with FAN_MARK_MOUNT although I might
+just be stumbling over the phrasing.)
+
+I think FAN_MARK_FILESYSTEM should simply stay under the s_userns_s
+capable requirement. That's imho the cleanest semantics for this, i.e.
+I'd drop:
+https://github.com/amir73il/linux/commit/bd20e273f3c3a650805b3da32e493f01cc2a4763
+This is neither an urgent use-case nor am I feeling very comfortable
+with it.
+
+> 
+> I did not implement the combination --fanotify --global --recursive in my
+> demo, because it did not make sense with the current permission model
+> (listener that can setup a fs mark can always resolve fids to path), but it
+> would be quite trivial to add.
+> 
+> 
+> > >
+> > > I guess we will also need to make open_by_handle_at() idmapped aware
+> > > and use a variant of vfs_dentry_acceptable() that validates that the opened
+> > > path is legitimately accessible via the idmapped mount.
+> >
+> > So as a first step, I think there's a legitimate case to be made for
+> > open_by_handle_at() to be made useable inside user namespaces. That's a
+> > change worth to be made independent of fanotify. For example, nowadays
+> > cgroups have a 64 bit identifier that can be used with open_by_handle_at
+> > to map a cgrp id to a path and back:
+> > https://lkml.org/lkml/2020/12/2/1126
+> > Right now this can't be used in user namespaces because of this
+> > restriction but it is genuinely useful to have this feature available
+> > since cgroups are FS_USERNS_MOUNT and that identifier <-> path mapping
+> > is very convenient.
+> 
+> FS_USERNS_MOUNT is a simple case and I think it is safe.
+> There is already a patch for that on my fanotify_userns branch.
+
+Great!
+Christian
