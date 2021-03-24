@@ -2,85 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB333348313
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 21:48:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEA7A348539
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 00:21:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238209AbhCXUrk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Mar 2021 16:47:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47648 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238207AbhCXUrV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Mar 2021 16:47:21 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A8AC06174A;
-        Wed, 24 Mar 2021 13:47:21 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: tonyk)
-        with ESMTPSA id 510411F4422D
-Subject: Re: [RFC PATCH 4/4] docs: tmpfs: Add casefold options
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, smcv@collabora.com,
-        kernel@collabora.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Daniel Rosenberg <drosen@google.com>
-References: <20210323195941.69720-1-andrealmeid@collabora.com>
- <20210323195941.69720-5-andrealmeid@collabora.com>
- <87o8f9bjiw.fsf@collabora.com>
-From:   =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>
-Message-ID: <4058c0b9-d940-f069-8b31-39cd7ae16062@collabora.com>
-Date:   Wed, 24 Mar 2021 17:47:12 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
-MIME-Version: 1.0
-In-Reply-To: <87o8f9bjiw.fsf@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S234127AbhCXXUm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Mar 2021 19:20:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230385AbhCXXU3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Mar 2021 19:20:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id EE88661A0F;
+        Wed, 24 Mar 2021 23:20:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1616628028;
+        bh=DfPvVvnnPDOnWWAUCw/MMTu0BV/F1aFcs7Ds2Ng04gc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=mW4k3bZ+pK+Ysg7gscjEg94zbFO6h0wM0OI3WLRbjquYaGsdT9B6FGHJRwncMqk2o
+         3AmNZ3T7z2vK3kNKvl8TLZ6peKzmZHK9JXI2g/lDl6mAWf9awteRaHy4z57jtli3B4
+         Qg8KK7bbMeg+voQ1gLv3FOPPfzwy3S3GzuUFAHWY=
+Date:   Wed, 24 Mar 2021 16:20:27 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Axel Rasmussen <axelrasmussen@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
+        Shuah Khan <shuah@kernel.org>, Wang Qing <wangqing@vivo.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Brian Geffon <bgeffon@google.com>,
+        Cannon Matthews <cannonmatthews@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
+Subject: Re: [PATCH] userfaultfd/shmem: fix minor fault page leak
+Message-Id: <20210324162027.cc723b545ff62b1ad6f5223e@linux-foundation.org>
+In-Reply-To: <20210322204836.1650221-1-axelrasmussen@google.com>
+References: <20210322204836.1650221-1-axelrasmussen@google.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Gabriel,
+On Mon, 22 Mar 2021 13:48:35 -0700 Axel Rasmussen <axelrasmussen@google.com> wrote:
 
-Às 19:19 de 23/03/21, Gabriel Krisman Bertazi escreveu:
-> André Almeida <andrealmeid@collabora.com> writes:
+> This fix is analogous to Peter Xu's fix for hugetlb [0]. If we don't
+> put_page() after getting the page out of the page cache, we leak the
+> reference.
 > 
->> Document mounting options to enable casefold support in tmpfs.
->>
->> Signed-off-by: André Almeida <andrealmeid@collabora.com>
->> ---
->>   Documentation/filesystems/tmpfs.rst | 26 ++++++++++++++++++++++++++
->>   1 file changed, 26 insertions(+)
->>
->> diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
->> index 0408c245785e..84c87c309bd7 100644
->> --- a/Documentation/filesystems/tmpfs.rst
->> +++ b/Documentation/filesystems/tmpfs.rst
->> @@ -170,6 +170,32 @@ So 'mount -t tmpfs -o size=10G,nr_inodes=10k,mode=700 tmpfs /mytmpfs'
->>   will give you tmpfs instance on /mytmpfs which can allocate 10GB
->>   RAM/SWAP in 10240 inodes and it is only accessible by root.
->>   
->> +tmpfs has the following mounting options for case-insesitive lookups support:
->> +
->> +=========   ==============================================================
->> +casefold    Enable casefold support at this mount point using the given
->> +            argument as enconding. Currently only utf8 encondings are supported.
->> +cf_strict   Enable strict casefolding at this mouting point (disabled by
->> +            default). This means that invalid strings should be reject by the
->> +            file system.
+> The fix can be verified by checking /proc/meminfo and running the
+> userfaultfd selftest in shmem mode. Without the fix, we see MemFree /
+> MemAvailable steadily decreasing with each run of the test. With the
+> fix, memory is correctly freed after the test program exits.
 > 
-> strict mode refers to the encoding, not exactly casefold.  Maybe we
-> could have a parameter encoding_flags that accepts the flag 'strict'.
-> This would make it closer to the ext4 interface.
+> Fixes: 00da60b9d0a0 ("userfaultfd: support minor fault handling for shmem")
 
-What are the other enconding flags? Or is this more about having a 
-properly extensible interface?
+Confused.  The affected code:
 
-> Alternatively, call this option strict_encoding.
-> 
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1831,6 +1831,7 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+>  
+>  	if (page && vma && userfaultfd_minor(vma)) {
+>  		unlock_page(page);
+> +		put_page(page);
+>  		*fault_type = handle_userfault(vmf, VM_UFFD_MINOR);
+>  		return 0;
+>  	}
 
-Thanks,
-	André
+Is added by Peter's "page && vma && userfaultfd_minor".  I assume that
+"Fixes:" is incorrect?
