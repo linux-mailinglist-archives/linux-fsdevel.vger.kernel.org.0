@@ -2,98 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E75D4347AC1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 15:33:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC13E347ADC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Mar 2021 15:37:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236316AbhCXOcv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Mar 2021 10:32:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37544 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236335AbhCXOcf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Mar 2021 10:32:35 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 18EA961963;
-        Wed, 24 Mar 2021 14:32:32 +0000 (UTC)
-Date:   Wed, 24 Mar 2021 15:32:30 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
-Message-ID: <20210324143230.y36hga35xvpdb3ct@wittgenstein>
-References: <CAOQ4uxi7ZXJW3_6SN=vw_XJC+wy4eMTayN6X5yRy_HOV6323MA@mail.gmail.com>
- <20210317174532.cllfsiagoudoz42m@wittgenstein>
- <CAOQ4uxjCjapuAHbYuP8Q_k0XD59UmURbmkGC1qcPkPAgQbQ8DA@mail.gmail.com>
- <20210318143140.jxycfn3fpqntq34z@wittgenstein>
- <CAOQ4uxiRHwmxTKsLteH_sBW_dSPshVE8SohJYEmpszxaAwjEyg@mail.gmail.com>
- <20210319134043.c2wcpn4lbefrkhkg@wittgenstein>
- <CAOQ4uxhLYdWOUmpWP+c_JzVeGDbkJ5eUM+1-hhq7zFq23g5J1g@mail.gmail.com>
- <CAOQ4uxhetKeEZX=_iAcREjibaR0ZcOdeZyR8mFEoHM+WRsuVtg@mail.gmail.com>
- <CAOQ4uxhfx012GtvXMfiaHSk1M7+gTqkz3LsT0i_cHLnZLMk8nw@mail.gmail.com>
- <CAOQ4uxhFU=H8db35JMhfR+A5qDkmohQ01AWH995xeBAKuuPhzA@mail.gmail.com>
+        id S236277AbhCXOgh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Mar 2021 10:36:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51468 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236139AbhCXOga (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Mar 2021 10:36:30 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 119EAC061763;
+        Wed, 24 Mar 2021 07:36:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=gZNDVx2/PlbsIgQ9b2b5kJPlJKUPEQS2/HXJQTw43w4=; b=k3/gF41UIwj1Pdt2mjIaGfHC5U
+        coWuLaceQXKwR1Ko7RAtOy4xlyIXbxBRo4NgLh92ENxXW93dwqBSE6N2Svtedapqpuy+wsf0bdBE1
+        J2frHCckHbfJHmAGN49DtjD98oKjUMOov+CRq6KSmv9a/4K0bKEvxGMuDBy1kkz/Rr5VsZ/AXAnXo
+        ok++/B3yzrxaSg0JIxD2aHLt6uo6LGvq5YqXGdg1e09a4M6UEzABlQ8eAPuHqvYbxk0YLz7fNqrA5
+        ZNsDQDomwsrnfpUxLWDLS5PK1K/jvJ0N5EgRyNkkP5Uzgo1V64zqrrlVhy0UtsXZziAaw9dCabZt9
+        99Y0wJMQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lP4cJ-00HDi6-Gc; Wed, 24 Mar 2021 14:36:15 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9E615306099;
+        Wed, 24 Mar 2021 15:36:14 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 65EF720693989; Wed, 24 Mar 2021 15:36:14 +0100 (CET)
+Date:   Wed, 24 Mar 2021 15:36:14 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        David Rientjes <rientjes@google.com>,
+        Oleg Rombakh <olegrom@google.com>, linux-doc@vger.kernel.org,
+        Paul Turner <pjt@google.com>
+Subject: Re: [PATCH v2] sched: Warn on long periods of pending need_resched
+Message-ID: <YFtOXpl1vWp47Qud@hirez.programming.kicks-ass.net>
+References: <20210323035706.572953-1-joshdon@google.com>
+ <YFsIZjhCFbxKyos3@hirez.programming.kicks-ass.net>
+ <YFsaYBO/UqMHSpGS@hirez.programming.kicks-ass.net>
+ <20210324114224.GP15768@suse.de>
+ <YFssoD5NDl6dFfg/@hirez.programming.kicks-ass.net>
+ <20210324133916.GQ15768@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhFU=H8db35JMhfR+A5qDkmohQ01AWH995xeBAKuuPhzA@mail.gmail.com>
+In-Reply-To: <20210324133916.GQ15768@suse.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 24, 2021 at 03:57:12PM +0200, Amir Goldstein wrote:
-> > > Now tested FAN_MARK_FILESYSTEM watch on tmpfs mounted
-> > > inside userns and works fine, with two wrinkles I needed to iron:
-> > >
-> > > 1. FAN_REPORT_FID not supported on tmpfs because tmpfs has
-> > >     zero f_fsid (easy to fix)
-> > > 2. open_by_handle_at() is not userns aware (can relax for
-> > >     FS_USERNS_MOUNT fs)
-> > >
-> > > Pushed these two fixes to branch fanotify_userns.
-> >
-> > Pushed another fix to mnt refcount bug in WIP and another commit to
-> > add the last piece that could make fanotify usable for systemd-homed
-> > setup - a filesystem watch filtered by mnt_userns (not tested yet).
-> >
+On Wed, Mar 24, 2021 at 01:39:16PM +0000, Mel Gorman wrote:
+
+> > Yeah, lets say I was pleasantly surprised to find it there :-)
+> > 
 > 
-> Now I used mount-idmapped (from xfstest) to test that last piece.
-> Found a minor bug and pushed a fix.
+> Minimally, lets move that out before it gets kicked out. Patch below.
+
+OK, stuck that in front.
+
+> > > Moving something like sched_min_granularity_ns will break a number of
+> > > tuning guides as well as the "tuned" tool which ships by default with
+> > > some distros and I believe some of the default profiles used for tuned
+> > > tweak kernel.sched_min_granularity_ns
+> > 
+> > Yeah, can't say I care. I suppose some people with PREEMPT=n kernels
+> > increase that to make their server workloads 'go fast'. But I'll
+> > absolutely suck rock on anything desktop.
+> > 
 > 
-> It is working as expected, that is filtering only the events generated via
-> the idmapped mount. However, because the listener I tested is capable in
-> the mapped userns and not in the sb userns, the listener cannot
-> open_ny_handle_at(), so the result is not as useful as one might hope.
+> Broadly speaking yes and despite the lack of documentation, enough people
+> think of that parameter when tuning for throughput vs latency depending on
+> the expected use of the machine.  kernel.sched_wakeup_granularity_ns might
+> get tuned if preemption is causing overscheduling. Same potentially with
+> kernel.sched_min_granularity_ns and kernel.sched_latency_ns. That said, I'm
+> struggling to think of an instance where I've seen tuning recommendations
+> properly quantified other than the impact on microbenchmarks but I
+> think there will be complaining if they disappear. I suspect that some
+> recommended tuning is based on "I tried a number of different values and
+> this seemed to work reasonably well".
 
-This is another dumb question probably but in general, are you saying
-that someone watching a mount or directory and does _not_ want file
-descriptors from fanotify to be returned has no other way of getting to
-the path they want to open other than by using open_by_handle_at()?
+Right, except that due to that scaling thing, you'd have to re-evaluate
+when you change machine.
 
+Also, do you have any inclination on the perf difference we're talking
+about? (I should probably ask Google and not you...)
+
+> kernel.sched_schedstats probably should not depend in SCHED_DEBUG because
+> it has value for workload analysis which is not necessarily about debugging
+> per-se. It might simply be informing whether another variable should be
+> tuned or useful for debugging applications rather than the kernel.
+
+Dubious, if you're that far down the rabit hole, you're dang near
+debugging.
+
+> As an aside, I wonder how often SCHED_DEBUG has been enabled simply
+> because LATENCYTOP selects it -- no idea offhand why LATENCYTOP even
+> needs SCHED_DEBUG.
+
+Perhaps schedstats used to rely on debug? I can't remember. I don't
+think I've used latencytop in at least 10 years. ftrace and perf sorta
+killed the need for it.
+
+> > These knobs really shouldn't have been as widely available as they are.
+> > 
 > 
-> I guess we will also need to make open_by_handle_at() idmapped aware
-> and use a variant of vfs_dentry_acceptable() that validates that the opened
-> path is legitimately accessible via the idmapped mount.
+> Probably not. Worse, some of the tuning is probably based on "this worked
+> for workload X 10 years ago so I'll just keep doing that"
 
-So as a first step, I think there's a legitimate case to be made for
-open_by_handle_at() to be made useable inside user namespaces. That's a
-change worth to be made independent of fanotify. For example, nowadays
-cgroups have a 64 bit identifier that can be used with open_by_handle_at
-to map a cgrp id to a path and back:
-https://lkml.org/lkml/2020/12/2/1126
-Right now this can't be used in user namespaces because of this
-restriction but it is genuinely useful to have this feature available
-since cgroups are FS_USERNS_MOUNT and that identifier <-> path mapping
-is very convenient.
-Without looking at the code I'm not super sure how name_to_handle_at()
-and open_by_handle_at() behave in the face of mount namespaces so that
-would need looking into to. But it would be a genuinely useful change, I
-think.
+That sounds like an excellent reason to disrupt ;-)
 
+> > And guides, well, the writes have to earn a living too, right.
+> > 
 > 
-> I think I will leave this complexity to you should you think the userns filtered
-> watch is something worth the effort.
+> For most of the guides I've seen they either specify values without
+> explaining why or just describe roughly what the parameter does and it's
+> not always that accurate a description.
 
-Fair enough!
+Another good reason.
 
-Thanks!
-Christian
+> > > Whether there are legimiate reasons to modify those values or not,
+> > > removing them may generate fun bug reports.
+> > 
+> > Which I'll close with -EDONTCARE, userspace has to cope with
+> > SCHED_DEBUG=n in any case.
+> 
+> True but removing the throughput vs latency parameters is likely to
+> generate a lot of noise even if the reasons for tuning are bad ones.
+> Some definitely should not be depending on SCHED_DEBUG, others may
+> need to be moved to debugfs one patch at a time so they can be reverted
+> individually if complaining is excessive and there is a legiminate reason
+> why it should be tuned. It's possible that complaining will be based on
+> a workload regression that really depended on tuned changing parameters.
+
+The way I've done it, you can simply re-instate the systl table entry
+and it'll work again, except for the entries that had a custom handler.
+
+I'm ready to disrupt :-)
