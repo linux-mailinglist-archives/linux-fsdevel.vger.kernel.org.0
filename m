@@ -2,59 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62141349A21
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 20:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A430C349A4A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 20:32:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230166AbhCYTYd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Mar 2021 15:24:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49174 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230140AbhCYTY0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Mar 2021 15:24:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2DF6A61A14;
-        Thu, 25 Mar 2021 19:24:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616700265;
-        bh=v2b29AUs3Bj/0T+rnMHy1+6cbej0x22tQEJGkL//C2o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sKekDYOHQGkQrJyiIor6517Zyy72wryWiMa63GsFEKRAmvlFTHCyND4FYrVxI9E2s
-         5WcmtWrMrq55/IEN/Fj1e7sF5TD9Y8+m6Ch1TonvaNjWx09asB+b8Kor3DBqkVs/3S
-         pR1mRJ8GJcr7QfJ9psJ3KWDHoTOCA/p5QIMiKLjhpmNle9BnDRt7ivFuMheGSbVkfl
-         QzBLEgzYJmPhmekTUOovHtpywzqvAVo7eOrIQa8Ew13NlqF7hTJnWUyDyd1Lh2dLFB
-         NPYdg73QaAmle3YLwj/1pycssLmnLZWeqoxTO2ELxeBvpjJe4o7x9C6irGJvniqDXF
-         KlFcvoHbXjHEw==
-Date:   Thu, 25 Mar 2021 12:24:23 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Shreeya Patel <shreeya.patel@collabora.com>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
-        chao@kernel.org, krisman@collabora.com, drosen@google.com,
-        yuchao0@huawei.com, linux-ext4@vger.kernel.org,
+        id S230085AbhCYTcI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Mar 2021 15:32:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60656 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229576AbhCYTbr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Mar 2021 15:31:47 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D45AC06174A;
+        Thu, 25 Mar 2021 12:31:47 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id 0A0F11F46850
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Shreeya Patel <shreeya.patel@collabora.com>, tytso@mit.edu,
+        adilger.kernel@dilger.ca, jaegeuk@kernel.org, chao@kernel.org,
+        drosen@google.com, yuchao0@huawei.com, linux-ext4@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, kernel@collabora.com,
         andre.almeida@collabora.com
-Subject: Re: [PATCH v4 3/5] fs: unicode: Rename function names from utf8 to
- unicode
-Message-ID: <YFzjZ7u31PtAB9vQ@sol.localdomain>
+Subject: Re: [PATCH v4 2/5] fs: Check if utf8 encoding is loaded before
+ calling utf8_unload()
+Organization: Collabora
 References: <20210325000811.1379641-1-shreeya.patel@collabora.com>
- <20210325000811.1379641-4-shreeya.patel@collabora.com>
+        <20210325000811.1379641-3-shreeya.patel@collabora.com>
+        <YFziza/VMyzEs4s1@sol.localdomain>
+Date:   Thu, 25 Mar 2021 15:31:42 -0400
+In-Reply-To: <YFziza/VMyzEs4s1@sol.localdomain> (Eric Biggers's message of
+        "Thu, 25 Mar 2021 12:21:49 -0700")
+Message-ID: <878s6bt4gx.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210325000811.1379641-4-shreeya.patel@collabora.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 25, 2021 at 05:38:09AM +0530, Shreeya Patel wrote:
-> Rename the function names from utf8 to unicode for taking the first step
-> towards the transformation of utf8-core file into the unicode subsystem
-> layer file.
-> 
-> Reviewed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+Eric Biggers <ebiggers@kernel.org> writes:
 
-Can you add some more explanation about why this change is beneficial?  The
-functions still seem tied to UTF-8 specifically.
+> On Thu, Mar 25, 2021 at 05:38:08AM +0530, Shreeya Patel wrote:
+>> utf8_unload is being called if CONFIG_UNICODE is enabled.
+>> The ifdef block doesn't check if utf8 encoding has been loaded
+>> or not before calling the utf8_unload() function.
+>> This is not the expected behavior since it would sometimes lead
+>> to unloading utf8 even before loading it.
+>> Hence, add a condition which will check if sb->encoding is NOT NULL
+>> before calling the utf8_unload().
+>> 
+>> Reviewed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+>> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+>> ---
+>>  fs/ext4/super.c | 6 ++++--
+>>  fs/f2fs/super.c | 9 ++++++---
+>>  2 files changed, 10 insertions(+), 5 deletions(-)
+>> 
+>> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+>> index ad34a37278cd..e438d14f9a87 100644
+>> --- a/fs/ext4/super.c
+>> +++ b/fs/ext4/super.c
+>> @@ -1259,7 +1259,8 @@ static void ext4_put_super(struct super_block *sb)
+>>  	fs_put_dax(sbi->s_daxdev);
+>>  	fscrypt_free_dummy_policy(&sbi->s_dummy_enc_policy);
+>>  #ifdef CONFIG_UNICODE
+>> -	utf8_unload(sb->s_encoding);
+>> +	if (sb->s_encoding)
+>> +		utf8_unload(sb->s_encoding);
+>>  #endif
+>>  	kfree(sbi);
+>>  }
+>
+>
+> What's the benefit of this change?  utf8_unload is a no-op when passed a NULL
+> pointer; why not keep it that way?
 
-- Eric
+For the record, it no longer is a no-op after patch 5 of this series.
+Honestly, I prefer making it explicitly at the caller that we are not
+entering the function, like the patch does, instead of returning from it
+immediately.  Makes it more readable, IMO.
+
+-- 
+Gabriel Krisman Bertazi
