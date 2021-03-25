@@ -2,38 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07DFF348FA1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 12:29:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33E7C348FC8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 12:30:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231322AbhCYL2n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Mar 2021 07:28:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36180 "EHLO mail.kernel.org"
+        id S231485AbhCYL3u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Mar 2021 07:29:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231304AbhCYL0u (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Mar 2021 07:26:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E533661A36;
-        Thu, 25 Mar 2021 11:26:48 +0000 (UTC)
+        id S231469AbhCYL1X (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Mar 2021 07:27:23 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 86C5861A4E;
+        Thu, 25 Mar 2021 11:26:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616671609;
-        bh=0aF/PdqEgb2ANeMXTtBHFO+YHGb1fKkmuij9qI2K66k=;
+        s=k20201202; t=1616671618;
+        bh=QHdcJTezi9bvA14StpNy4bsRWJsJICWDl/4yxaAs0+Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RSOATvyl5LsGsFiGkdS7TISGUVRJXEFqJkWKfzDQvFL9P+Bnka7aEB9sfck+oXuzV
-         wIwkkLAjTEnjooLu8s4f42HzLPR1Ebs+8gdk28GOXNg85DsjnmkMLHzsnfU9fFKGCr
-         aGWtlgKX61NXSInqD6kAQ26/RJuPV53laUrOoeg9Or4x5RGwv2NfTkCPNlRIISnabX
-         ORr4m+WHYHXNtBYfkGgvGPFPdx4LsbQPocO6J6eZNEqaPy0g2fD7DB2z3qTJaXBxPY
-         Slt5gw4YixF9FNbsQORxA0GimWkab3H0qHpvDfKAtM1aXRrG7pbkgzt9I9M4FiVoHF
-         Xu5WMVqm2knJQ==
+        b=VCei0o4GR+gWeSj9he4fc41Mz+udEy5cF2dxh7HVShmwtmHNxO5yEskEzxPuIv9z7
+         lzuI71RM+WPlHDHyx5u2xZp1mBD25VMKukL9FefYJeYcVhLnlpgAV+0slL/Nu/fl+W
+         KfO+FzI+Hg9XmvrDR4NwWDtOPn+7F3d+Ivuosk5lM/q4icqORb2LbxyFsxP+hRL+I/
+         TurY5m2/jrMmGCWP/CYoVDmdFFbbu1RtUruLQ+/tOgLACGUAhsqa6ZI3ycbyAGvPoy
+         M8U+HKGjdhCfymvxkeerYQvYXbijWPY++3sVVaPrZi3HADe3gbdgyKgYmb6y4JOhuk
+         ytfluLeaMcA7g==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stefan Metzmacher <metze@samba.org>, netdev@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 39/39] io_uring: call req_set_fail_links() on short send[msg]()/recv[msg]() with MSG_WAITALL
-Date:   Thu, 25 Mar 2021 07:25:58 -0400
-Message-Id: <20210325112558.1927423-39-sashal@kernel.org>
+Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sasha Levin <sashal@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 05/24] iomap: Fix negative assignment to unsigned sis->pages in iomap_swapfile_activate
+Date:   Thu, 25 Mar 2021 07:26:31 -0400
+Message-Id: <20210325112651.1927828-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210325112558.1927423-1-sashal@kernel.org>
-References: <20210325112558.1927423-1-sashal@kernel.org>
+In-Reply-To: <20210325112651.1927828-1-sashal@kernel.org>
+References: <20210325112651.1927828-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -42,172 +44,88 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Stefan Metzmacher <metze@samba.org>
+From: Ritesh Harjani <riteshh@linux.ibm.com>
 
-[ Upstream commit 0031275d119efe16711cd93519b595e6f9b4b330 ]
+[ Upstream commit 5808fecc572391867fcd929662b29c12e6d08d81 ]
 
-Without that it's not safe to use them in a linked combination with
-others.
+In case if isi.nr_pages is 0, we are making sis->pages (which is
+unsigned int) a huge value in iomap_swapfile_activate() by assigning -1.
+This could cause a kernel crash in kernel v4.18 (with below signature).
+Or could lead to unknown issues on latest kernel if the fake big swap gets
+used.
 
-Now combinations like IORING_OP_SENDMSG followed by IORING_OP_SPLICE
-should be possible.
+Fix this issue by returning -EINVAL in case of nr_pages is 0, since it
+is anyway a invalid swapfile. Looks like this issue will be hit when
+we have pagesize < blocksize type of configuration.
 
-We already handle short reads and writes for the following opcodes:
+I was able to hit the issue in case of a tiny swap file with below
+test script.
+https://raw.githubusercontent.com/riteshharjani/LinuxStudy/master/scripts/swap-issue.sh
 
-- IORING_OP_READV
-- IORING_OP_READ_FIXED
-- IORING_OP_READ
-- IORING_OP_WRITEV
-- IORING_OP_WRITE_FIXED
-- IORING_OP_WRITE
-- IORING_OP_SPLICE
-- IORING_OP_TEE
+kernel crash analysis on v4.18
+==============================
+On v4.18 kernel, it causes a kernel panic, since sis->pages becomes
+a huge value and isi.nr_extents is 0. When 0 is returned it is
+considered as a swapfile over NFS and SWP_FILE is set (sis->flags |= SWP_FILE).
+Then when swapoff was getting called it was calling a_ops->swap_deactivate()
+if (sis->flags & SWP_FILE) is true. Since a_ops->swap_deactivate() is
+NULL in case of XFS, it causes below panic.
 
-Now we have it for these as well:
+Panic signature on v4.18 kernel:
+=======================================
+root@qemu:/home/qemu# [ 8291.723351] XFS (loop2): Unmounting Filesystem
+[ 8292.123104] XFS (loop2): Mounting V5 Filesystem
+[ 8292.132451] XFS (loop2): Ending clean mount
+[ 8292.263362] Adding 4294967232k swap on /mnt1/test/swapfile.  Priority:-2 extents:1 across:274877906880k
+[ 8292.277834] Unable to handle kernel paging request for instruction fetch
+[ 8292.278677] Faulting instruction address: 0x00000000
+cpu 0x19: Vector: 400 (Instruction Access) at [c0000009dd5b7ad0]
+    pc: 0000000000000000
+    lr: c0000000003eb9dc: destroy_swap_extents+0xfc/0x120
+    sp: c0000009dd5b7d50
+   msr: 8000000040009033
+  current = 0xc0000009b6710080
+  paca    = 0xc00000003ffcb280   irqmask: 0x03   irq_happened: 0x01
+    pid   = 5604, comm = swapoff
+Linux version 4.18.0 (riteshh@xxxxxxx) (gcc version 8.4.0 (Ubuntu 8.4.0-1ubuntu1~18.04)) #57 SMP Wed Mar 3 01:33:04 CST 2021
+enter ? for help
+[link register   ] c0000000003eb9dc destroy_swap_extents+0xfc/0x120
+[c0000009dd5b7d50] c0000000025a7058 proc_poll_event+0x0/0x4 (unreliable)
+[c0000009dd5b7da0] c0000000003f0498 sys_swapoff+0x3f8/0x910
+[c0000009dd5b7e30] c00000000000bbe4 system_call+0x5c/0x70
+Exception: c01 (System Call) at 00007ffff7d208d8
 
-- IORING_OP_SENDMSG
-- IORING_OP_SEND
-- IORING_OP_RECVMSG
-- IORING_OP_RECV
-
-For IORING_OP_RECVMSG we also check for the MSG_TRUNC and MSG_CTRUNC
-flags in order to call req_set_fail_links().
-
-There might be applications arround depending on the behavior
-that even short send[msg]()/recv[msg]() retuns continue an
-IOSQE_IO_LINK chain.
-
-It's very unlikely that such applications pass in MSG_WAITALL,
-which is only defined in 'man 2 recvmsg', but not in 'man 2 sendmsg'.
-
-It's expected that the low level sock_sendmsg() call just ignores
-MSG_WAITALL, as MSG_ZEROCOPY is also ignored without explicitly set
-SO_ZEROCOPY.
-
-We also expect the caller to know about the implicit truncation to
-MAX_RW_COUNT, which we don't detect.
-
-cc: netdev@vger.kernel.org
-Link: https://lore.kernel.org/r/c4e1a4cc0d905314f4d5dc567e65a7b09621aab3.1615908477.git.metze@samba.org
-Signed-off-by: Stefan Metzmacher <metze@samba.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+[djwong: rework the comment to provide more details]
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/io_uring.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ fs/iomap/swapfile.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 38a394c6260d..f8a47cebeacd 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4390,6 +4390,7 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock,
- 	struct io_async_msghdr iomsg, *kmsg;
- 	struct socket *sock;
- 	unsigned flags;
-+	int min_ret = 0;
- 	int ret;
+diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
+index 152a230f668d..bd0cc3dcc980 100644
+--- a/fs/iomap/swapfile.c
++++ b/fs/iomap/swapfile.c
+@@ -169,6 +169,16 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
+ 			return ret;
+ 	}
  
- 	sock = sock_from_file(req->file, &ret);
-@@ -4416,6 +4417,9 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock,
- 	else if (force_nonblock)
- 		flags |= MSG_DONTWAIT;
- 
-+	if (flags & MSG_WAITALL)
-+		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
++	/*
++	 * If this swapfile doesn't contain even a single page-aligned
++	 * contiguous range of blocks, reject this useless swapfile to
++	 * prevent confusion later on.
++	 */
++	if (isi.nr_pages == 0) {
++		pr_warn("swapon: Cannot find a single usable page in file.\n");
++		return -EINVAL;
++	}
 +
- 	ret = __sys_sendmsg_sock(sock, &kmsg->msg, flags);
- 	if (force_nonblock && ret == -EAGAIN)
- 		return io_setup_async_msg(req, kmsg);
-@@ -4425,7 +4429,7 @@ static int io_sendmsg(struct io_kiocb *req, bool force_nonblock,
- 	if (kmsg->iov != kmsg->fast_iov)
- 		kfree(kmsg->iov);
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
--	if (ret < 0)
-+	if (ret < min_ret)
- 		req_set_fail_links(req);
- 	__io_req_complete(req, ret, 0, cs);
- 	return 0;
-@@ -4439,6 +4443,7 @@ static int io_send(struct io_kiocb *req, bool force_nonblock,
- 	struct iovec iov;
- 	struct socket *sock;
- 	unsigned flags;
-+	int min_ret = 0;
- 	int ret;
- 
- 	sock = sock_from_file(req->file, &ret);
-@@ -4460,6 +4465,9 @@ static int io_send(struct io_kiocb *req, bool force_nonblock,
- 	else if (force_nonblock)
- 		flags |= MSG_DONTWAIT;
- 
-+	if (flags & MSG_WAITALL)
-+		min_ret = iov_iter_count(&msg.msg_iter);
-+
- 	msg.msg_flags = flags;
- 	ret = sock_sendmsg(sock, &msg);
- 	if (force_nonblock && ret == -EAGAIN)
-@@ -4467,7 +4475,7 @@ static int io_send(struct io_kiocb *req, bool force_nonblock,
- 	if (ret == -ERESTARTSYS)
- 		ret = -EINTR;
- 
--	if (ret < 0)
-+	if (ret < min_ret)
- 		req_set_fail_links(req);
- 	__io_req_complete(req, ret, 0, cs);
- 	return 0;
-@@ -4619,6 +4627,7 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
- 	struct socket *sock;
- 	struct io_buffer *kbuf;
- 	unsigned flags;
-+	int min_ret = 0;
- 	int ret, cflags = 0;
- 
- 	sock = sock_from_file(req->file, &ret);
-@@ -4654,6 +4663,9 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
- 	else if (force_nonblock)
- 		flags |= MSG_DONTWAIT;
- 
-+	if (flags & MSG_WAITALL)
-+		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
-+
- 	ret = __sys_recvmsg_sock(sock, &kmsg->msg, req->sr_msg.umsg,
- 					kmsg->uaddr, flags);
- 	if (force_nonblock && ret == -EAGAIN)
-@@ -4666,7 +4678,7 @@ static int io_recvmsg(struct io_kiocb *req, bool force_nonblock,
- 	if (kmsg->iov != kmsg->fast_iov)
- 		kfree(kmsg->iov);
- 	req->flags &= ~REQ_F_NEED_CLEANUP;
--	if (ret < 0)
-+	if (ret < min_ret || ((flags & MSG_WAITALL) && (kmsg->msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))))
- 		req_set_fail_links(req);
- 	__io_req_complete(req, ret, cflags, cs);
- 	return 0;
-@@ -4682,6 +4694,7 @@ static int io_recv(struct io_kiocb *req, bool force_nonblock,
- 	struct socket *sock;
- 	struct iovec iov;
- 	unsigned flags;
-+	int min_ret = 0;
- 	int ret, cflags = 0;
- 
- 	sock = sock_from_file(req->file, &ret);
-@@ -4712,6 +4725,9 @@ static int io_recv(struct io_kiocb *req, bool force_nonblock,
- 	else if (force_nonblock)
- 		flags |= MSG_DONTWAIT;
- 
-+	if (flags & MSG_WAITALL)
-+		min_ret = iov_iter_count(&msg.msg_iter);
-+
- 	ret = sock_recvmsg(sock, &msg, flags);
- 	if (force_nonblock && ret == -EAGAIN)
- 		return -EAGAIN;
-@@ -4720,7 +4736,7 @@ static int io_recv(struct io_kiocb *req, bool force_nonblock,
- out_free:
- 	if (req->flags & REQ_F_BUFFER_SELECTED)
- 		cflags = io_put_recv_kbuf(req);
--	if (ret < 0)
-+	if (ret < min_ret || ((flags & MSG_WAITALL) && (msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))))
- 		req_set_fail_links(req);
- 	__io_req_complete(req, ret, cflags, cs);
- 	return 0;
+ 	*pagespan = 1 + isi.highest_ppage - isi.lowest_ppage;
+ 	sis->max = isi.nr_pages;
+ 	sis->pages = isi.nr_pages - 1;
 -- 
 2.30.1
 
