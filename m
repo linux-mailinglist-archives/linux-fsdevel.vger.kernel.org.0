@@ -2,188 +2,350 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C102349C1A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 23:08:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFD2D349C8F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 23:54:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230468AbhCYWIR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Mar 2021 18:08:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37744 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230341AbhCYWHy (ORCPT
+        id S231148AbhCYWxp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Mar 2021 18:53:45 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:44213 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230341AbhCYWxU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Mar 2021 18:07:54 -0400
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 685BAC06174A
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Mar 2021 15:07:54 -0700 (PDT)
-Received: by mail-ot1-x333.google.com with SMTP id w21-20020a9d63950000b02901ce7b8c45b4so3467913otk.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Mar 2021 15:07:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v6OKtVcub91dYSaPvyVsAKXW46SJTqq4WnXTgmnLs34=;
-        b=0PUwv+2PWVwlpW2aY6aHp8veUSgV1FbtZZmbXE8kWXLn6kdy+7rzbDa/+V5mmbbrEt
-         AOfEBoXrka87yEaZQHFnCsejLWkmne27iK3YLpqywus5zS0wwZT3nS3UTuhbfGMWgRWD
-         m842yD6gV5XIpagYVFfqPb41gFq7J29Ge846sZxrnQQ0e4FDdz6AP7wfz4O8dUSYHLH2
-         iQtz+2YubiPAf24waYs4pSWRZe/pxj/U0pzHRmWTw9tV3jEfAS5l6mGtJvONwwAWiGI5
-         a9gE4rDA9kjwIfdDvyxIcV3O8DwaYgxGf60S4SbNvbJ2AqY6JH7zsg1Iw2PHlXqPKvRf
-         sGsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v6OKtVcub91dYSaPvyVsAKXW46SJTqq4WnXTgmnLs34=;
-        b=bWnt9Ep6bC76utxFaWxiDiypdOinh89hPXI0sYZe/pTFPrvqKbXWqHtbhqWgSU1ygk
-         EIfUrBei7rUe2w//g/xXf4aStAC6ZmAQdYAmssBK3QWvp76tnZZE93A6WnwfOk2oZLje
-         xGaN65TCki8aLWOucIdsrXYYWgpVYvwCZVMuPTzj7CxZ0OrgKPfy6ENqUGkQR5C2euIM
-         tLnWO9k1dHonNQqK9Yy4tPLz3C88SMHO1KF+6U2r6GPBMvh6FnOqeYccJsUcOALCaGf6
-         YTAUXIL2I204bUXCSEbAByLz4+7UzFOsQNdgrn0BEFpVzK6ipGJtOakRq/xdCfAkvfD9
-         R5pw==
-X-Gm-Message-State: AOAM533p/1yB+HUQ8UPaYEsbroqgwiSmwkzx79OXXZK7+7o7521MenqC
-        6MRGRz5LBd0mwpJ7i4A5ppBeMn7IVeAm5LFd5DaXEg==
-X-Google-Smtp-Source: ABdhPJwK306fhpDZcWKAG8rYKhHVg0IIoH9R6ksOA+8ZuRcYlXWpw3NJPAgdIg8RbLTcf3DIrF7UYdDXEy1jeHcm71I=
-X-Received: by 2002:a9d:ef1:: with SMTP id 104mr8984223otj.180.1616710073626;
- Thu, 25 Mar 2021 15:07:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210325193755.294925-1-mszeredi@redhat.com>
-In-Reply-To: <20210325193755.294925-1-mszeredi@redhat.com>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Thu, 25 Mar 2021 18:07:42 -0400
-Message-ID: <CAOg9mSQ+D2UwzuQFCivyvfQ-uRgZ2i7tKcpNR-nSivkNLSwR8Q@mail.gmail.com>
-Subject: Re: [PATCH v3 00/18] new kAPI for FS_IOC_[GS]ETFLAGS/FS_IOC_FS[GS]ETXATTR
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        David Sterba <dsterba@suse.cz>,
+        Thu, 25 Mar 2021 18:53:20 -0400
+Received: from dread.disaster.area (pa49-181-239-12.pa.nsw.optusnet.com.au [49.181.239.12])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id B1E1810423D5;
+        Fri, 26 Mar 2021 09:53:12 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1lPYqf-006koK-9E; Fri, 26 Mar 2021 09:53:05 +1100
+Date:   Fri, 26 Mar 2021 09:53:05 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>,
         Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: [PATCH] xfs: use a unique and persistent value for f_fsid
+Message-ID: <20210325225305.GM63242@dread.disaster.area>
+References: <20210322171118.446536-1-amir73il@gmail.com>
+ <20210322230352.GW63242@dread.disaster.area>
+ <CAOQ4uxjFMPNgR-aCqZt3FD90XtBVFZncdgNc4RdOCbsxukkyYQ@mail.gmail.com>
+ <20210323072607.GF63242@dread.disaster.area>
+ <CAOQ4uxgAddAfGkA7LMTPoBmrwVXbvHfnN8SWsW_WXm=LPVmc7Q@mail.gmail.com>
+ <20210324005421.GK63242@dread.disaster.area>
+ <CAOQ4uxhhMVQ4XE8DMU1EjaXBo-go3_pFX3CCWn=7GuUXcMW=PA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxhhMVQ4XE8DMU1EjaXBo-go3_pFX3CCWn=7GuUXcMW=PA@mail.gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Tu+Yewfh c=1 sm=1 tr=0 cx=a_idp_x
+        a=gO82wUwQTSpaJfP49aMSow==:117 a=gO82wUwQTSpaJfP49aMSow==:17
+        a=kj9zAlcOel0A:10 a=dESyimp9J3IA:10 a=7-415B0cAAAA:8
+        a=7db4axj67mjesEHiGaIA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+        a=fCgQI5UlmZDRPDxm0A3o:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Miklos...
+On Wed, Mar 24, 2021 at 08:53:25AM +0200, Amir Goldstein wrote:
+> On Wed, Mar 24, 2021 at 2:54 AM Dave Chinner <david@fromorbit.com> wrote:
+> > On Tue, Mar 23, 2021 at 11:35:46AM +0200, Amir Goldstein wrote:
+> > > On Tue, Mar 23, 2021 at 9:26 AM Dave Chinner <david@fromorbit.com> wrote:
+> > > > On Tue, Mar 23, 2021 at 06:50:44AM +0200, Amir Goldstein wrote:
+> > > Leaving fanotify out of the picture, the question that the prospect user is
+> > > trying answer is:
+> > > "Is the object at $PATH or at $FD the same object that was observed at
+> > >  'an earlier time'?"
+> > >
+> > > With XFS, that question can be answered (< 100% certainty)
+> > > using the XFS_IOC_PATH_TO_FSHANDLE interface.
+> >
+> > Actually, there's a bit more to it than that. See below.
+> >
+> > > name_to_handle_at(2) + statfs(2) is a generic interface that provides
+> > > this answer with less certainty, but it could provide the answer
+> > > with the same certainty for XFS.
+> >
+> > Let me see if I get this straight....
+> >
+> > Because the VFS filehandle interface does not cater for this by
+> > giving you a fshandle that is persistent, you have to know what path
+> > the filehandle was derived from to be able to open a mountfd for
+> > open_by_handle_at() on the file handle you have stored in userspace.
+> 
+> That is what NFS and DMAPI need, but this is not what I asked for.
+> I specifically asked for the ability to answer the question:
+> "Is the object at $PATH or at $FD the same object that was observed at
+>  'an earlier time'?"
 
-While you were sending out v3, I was running xfstests on v2...
-no orangefs problems with your changes.
+Define "at an earlier time". Once it means "across system reboots"
+then the problem scope becomes a lot larger...
 
--Mike
+> Note that as opposed to open_by_handle_at(), which requires
+> capabilities, checking the identity of the object does not require any
+> capabilities beyond search/read access permissions to the object.
 
-On Thu, Mar 25, 2021 at 3:38 PM Miklos Szeredi <mszeredi@redhat.com> wrote:
+How do you check the identity of a file handle without a filesystem
+identifier in it? having an external f_fsid isn't really sufficient
+- you need to query the filesytem for it's identifier and determine
+if the file handle contains that same identifier...
+
+> Furthermore, with name_to_handle_at(fd, ..., AT_EMPTY_PATH)
+> and fstatfs() there are none of the races you mention below and
+> fanotify obviously captures a valid {fsid,fhandle} tuple.
+
+Except that fsid is not guaranteed to be the same across mounts, let
+alone reboots. There is no guarantee of uniqueness, either. IOWs, in
+the bigger picture, f_fsid isn't something that can provide a
+guaranteed answer to your "is $obj the same as it was at $TIME"...
+
+You can't even infer a path from the fsid, even if it is unique, The
+fsid doesn't tell you what *mount point* it refers to. i.e in
+the present of bind mounts, there can be multiple disjoint directory
+heirachies that correspond to the same fsid...
+
+> > And that open_by_handle_at() returns an ephemeral mount ID, so the
+> > kernel does not provide what you need to use open_by_handle_at()
+> > immediately.
+> >
+> > To turn this ephemeral mount ID into a stable identifier you have to
+> > look up /proc/self/mounts to find the mount point, then statvfs()
+> > the mount point to get the f_fsid.
+> >
+> > To use the handle, you then need to open the path to the stored
+> > mount point, check that f_fsid still matches what you originally
+> > looked up, then you can run open_by_handle_at() on the file handle.
+> > If you have an open fd on the filesystem and f_fsid matches, you
+> > have the filesystem pinned until you close the mount fd, and so you
+> > can just sort your queued filehandles by f_fsid and process them all
+> > while you have the mount fd open....
+> >
+> > Is that right?
+> 
+> It's not wrong, but it's irrelevant to the requirement, which was to
+> *identify* the object, not to *access* the object.
+> See more below...
+> 
+> >
+> > But that still leaves a problem in that the VFS filehandle does not
+> > contain a filesystem identifier itself, so you can never actually
+> > verify that the filehandle belongs to the mount that you opened for
+> > that f_fsid. i.e. The file handle is built by exportfs_encode_fh(),
+> > which filesystems use to encode inode/gen/parent information.
+> > Nothing else is placed in the VFS handle, so the file handle cannot
+> > be used to identify what filesystem it came from.
+> >
+> > These seem like a fundamental problems for storing VFS handles
+> > across reboots: identifying the filesystem is not atomic with the
+> > file handle generation and it that identification is not encoded
+> > into the file handle for later verification.
+> >
+> > IOWs, if you get the fsid translation wrong, the filehandle will end
+> > up being used on the wrong filesystem and userspace has no way of
+> > knowing that this occurred - it will get ESTALE or data that isn't
+> > what it expected. Either way, it'll look like data corruption to the
+> > application(s). Using f_fsid for this seems fragile to me and has
+> > potential to break in unexpected ways in highly dynamic
+> > environments.
+> >
+> 
+> The potential damage sounds bad when you put it this way, but in fact
+> it really depends on the use case. For the use case of NFS client it's true
+> you MUST NOT get the wrong object when resolving file handles.
+> 
+> With fanotify, this is not the case.
+> When a listener gets an event with an object identifier, the listener cannot
+> infer the path of that object.
+> 
+> If the listener has several objects open (e.g. tail -f A B C) then when getting
+> an event, the identifier can be used to match the open file with certainty
+> (having verified no collisions of identifiers after opening the files).
+
+Sorry, you've lost me. How on do you reliably match a {fsid, fhandle}
+to an open file descriptor? You've got to have more information
+available than just a fd, fsid and a fhandle...
+
+> If the listener is watching multiple directories (e.g. inotifywatch --recursive)
+> then the listener has two options:
+> 1. Keep open fds for all watches dirs - this is what inotify_add_watch()
+>     does internally (not fds per-se but keeping an elevated i_count)
+> 2. Keep fid->path map for all watches dirs and accept the fact that the
+>     cached path information may be stale
+> 
+> The 2nd option is valid for applications that use the events as hints
+> to take action. An indexer application, for example, doesn't care if
+> it will scan a directory where there were no changes as long as it will
+> get the correct hint eventually.
 >
-> Thanks for the feedback, I think all comments are addressed.  Seems
-> "fileattr" has won a small majority of bikesheders' preference, so
-> switching over to that.
->
-> Changes since v2:
->
->  - renaming, most notably miscattr -> fileattr
->  - use memset instead of structure initialization
->  - drop gratuitous use of file_dentry()
->  - kerneldoc, comments, spelling improvements
->  - xfs: enable getting/setting FS_PROJINHERIT_FL and other tweaks
->  - btrfs: patch logistics
->
-> Changes since v1:
->
->  - rebased on 5.12-rc1 (mnt_userns churn)
->  - fixed LSM hook on overlayfs
->
-> Git tree is available here:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git#fileattr_v3
->
->
-> Miklos Szeredi (18):
->   vfs: add fileattr ops
->   ecryptfs: stack fileattr ops
->   ovl: stack fileattr ops
->   btrfs: convert to fileattr
->   ext2: convert to fileattr
->   ext4: convert to fileattr
->   f2fs: convert to fileattr
->   gfs2: convert to fileattr
->   orangefs: convert to fileattr
->   xfs: convert to fileattr
->   efivars: convert to fileattr
->   hfsplus: convert to fileattr
->   jfs: convert to fileattr
->   nilfs2: convert to fileattr
->   ocfs2: convert to fileattr
->   reiserfs: convert to fileattr
->   ubifs: convert to fileattr
->   vfs: remove unused ioctl helpers
->
->  Documentation/filesystems/locking.rst |   5 +
->  Documentation/filesystems/vfs.rst     |  15 ++
->  fs/btrfs/ctree.h                      |   3 +
->  fs/btrfs/inode.c                      |   4 +
->  fs/btrfs/ioctl.c                      | 226 +++---------------
->  fs/ecryptfs/inode.c                   |  22 ++
->  fs/efivarfs/file.c                    |  77 ------
->  fs/efivarfs/inode.c                   |  44 ++++
->  fs/ext2/ext2.h                        |   7 +-
->  fs/ext2/file.c                        |   2 +
->  fs/ext2/ioctl.c                       |  88 +++----
->  fs/ext2/namei.c                       |   2 +
->  fs/ext4/ext4.h                        |  12 +-
->  fs/ext4/file.c                        |   2 +
->  fs/ext4/ioctl.c                       | 208 ++++------------
->  fs/ext4/namei.c                       |   2 +
->  fs/f2fs/f2fs.h                        |   3 +
->  fs/f2fs/file.c                        | 216 +++--------------
->  fs/f2fs/namei.c                       |   2 +
->  fs/gfs2/file.c                        |  57 ++---
->  fs/gfs2/inode.c                       |   4 +
->  fs/gfs2/inode.h                       |   3 +
->  fs/hfsplus/dir.c                      |   2 +
->  fs/hfsplus/hfsplus_fs.h               |  14 +-
->  fs/hfsplus/inode.c                    |  54 +++++
->  fs/hfsplus/ioctl.c                    |  84 -------
->  fs/inode.c                            |  87 -------
->  fs/ioctl.c                            | 331 ++++++++++++++++++++++++++
->  fs/jfs/file.c                         |   6 +-
->  fs/jfs/ioctl.c                        | 105 +++-----
->  fs/jfs/jfs_dinode.h                   |   7 -
->  fs/jfs/jfs_inode.h                    |   4 +-
->  fs/jfs/namei.c                        |   6 +-
->  fs/nilfs2/file.c                      |   2 +
->  fs/nilfs2/ioctl.c                     |  61 ++---
->  fs/nilfs2/namei.c                     |   2 +
->  fs/nilfs2/nilfs.h                     |   3 +
->  fs/ocfs2/file.c                       |   2 +
->  fs/ocfs2/ioctl.c                      |  59 ++---
->  fs/ocfs2/ioctl.h                      |   3 +
->  fs/ocfs2/namei.c                      |   3 +
->  fs/ocfs2/ocfs2_ioctl.h                |   8 -
->  fs/orangefs/file.c                    |  79 ------
->  fs/orangefs/inode.c                   |  50 ++++
->  fs/overlayfs/dir.c                    |   2 +
->  fs/overlayfs/inode.c                  |  77 ++++++
->  fs/overlayfs/overlayfs.h              |   3 +
->  fs/reiserfs/file.c                    |   2 +
->  fs/reiserfs/ioctl.c                   | 121 +++++-----
->  fs/reiserfs/namei.c                   |   2 +
->  fs/reiserfs/reiserfs.h                |   7 +-
->  fs/reiserfs/super.c                   |   2 +-
->  fs/ubifs/dir.c                        |   2 +
->  fs/ubifs/file.c                       |   2 +
->  fs/ubifs/ioctl.c                      |  74 +++---
->  fs/ubifs/ubifs.h                      |   3 +
->  fs/xfs/libxfs/xfs_fs.h                |   4 -
->  fs/xfs/xfs_ioctl.c                    | 252 +++++---------------
->  fs/xfs/xfs_ioctl.h                    |  11 +
->  fs/xfs/xfs_ioctl32.c                  |   2 -
->  fs/xfs/xfs_ioctl32.h                  |   2 -
->  fs/xfs/xfs_iops.c                     |   7 +
->  include/linux/fileattr.h              |  59 +++++
->  include/linux/fs.h                    |  16 +-
->  64 files changed, 1136 insertions(+), 1490 deletions(-)
->  create mode 100644 include/linux/fileattr.h
->
-> --
-> 2.30.2
->
+> So if an indexer application were to act on FAN_MOVE events by
+> scanning the entire subtree under the parent dir where an entry was
+> renamed, the index will be eventually consistent, regardless of all
+> the events on objects with stale path cache that may have been
+> received after the rename.
+
+Sure, but you don't need a file handle for this. you can just scan
+the directory heirachy any time you get a notification for that
+fsid. Even if you have multiple directory heirarchies that you
+are watching on a given mount.
+
+I'm -guessing- that you are using the filehandle to differentiate
+between different watched heirarchies, and you do that by taking a
+name_to_handle_at() snapshot of the path when the watch is set, yes?
+
+AFAICT, the application cannot  care about whether it loses
+events across reboot because the indexer already needs to scan after
+boot to so that it is coherent with whatever state the filesystem is
+in after recovery.
+
+> > The XFS filehandle exposed by the ioctls, and the NFS filehandle for
+> > that matter, both include an identifier for the filesystem they
+> > belong to in the file handle. This identifier matches the stable
+> > filesystem identifier held by the filesystem (or the NFS export
+> > table), and hence the kernel could resolve whether the filehandle
+> > itself has been directed at the correct filesystem.
+> >
+> > The XFS ioctls do not do this fshandle checking - this is something
+> > performed by the libhandle library (part of xfsprogs).  libhandle
+> > knows the format of the XFS filehandles, so it peaks inside them to
+> > extract the fsid to determine where to direct them.
+> >
+> > Applications must first initialise filesystems that file handles can
+> > be used on by calling path_to_fshandle() to populate an open file
+> > cache.  Behind the scenes, this calls XFS_IOC_PATH_TO_FSHANDLE to
+> > associate a {fd, path, fshandle} tuple for that filesystem. The
+> > libhandle operations then match the fsid embedded in the file handle
+> > to the known open fshandles, and if they match it uses the
+> > associated fd to issue the ioctl to the correct filesystem.
+> >
+> > This fshandle fd is held open for as long as the application is
+> > running, so it pins the filesystem and so the fshandle obtained at
+> > init time is guaranteed to be valid until the application exits.
+> > Hence on startup an app simply needs to walk the paths it is
+> > interested in and call path_to_fshandle() on all of them, but
+> > otherwise it does not need to know what filesystem a filehandle
+> > belongs to - the libhandle implementation takes care of that
+> > entirely....
+> >
+> > IOWs, this whole "find the right filesystem for the file handle"
+> > implementation is largely abstracted away from userspace by
+> > libhandle. Hence just looking at what the the XFS ioctls do does not
+> > give the whole picture of how stable filehandles were actually used
+> > by applications...
+> >
+> > I suspect that the right thing to do here is extend the VFS
+> > filehandles to contain an 8 byte fsid prefix (supplied by a new an
+> > export op) and an AT_FSID flag for name_to_handle_at() to return
+> > just the 8 byte fsid that is used by handles on that filesystem.
+> > This provides the filesystems with a well defined API for providing
+> > a stable identifier instead of redefining what filesystems need to
+> > return in some other UAPI.
+> >
+> > This also means that userspace can be entirely filesystem agnostic
+> > and it doesn't need to rely on parsing proc files to translate
+> > ephemeral mount IDs to paths, statvfs() and hoping that f_fsid is
+> > stable enough that it doesn't get the destination wrong.  It also
+> > means that fanotify UAPI probably no longer needs to supply a
+> > f_fsid with the filehandle because it is built into the
+> > filehandle....
+> >
+> 
+> That is one option. Let's call it the "bullet proof" option.
+
+"Reliable". "Provides well defined behaviour". "Guarantees".
+
+> Another option, let's call it the "pragmatic" options, is that you accept
+> that my patch shouldn't break anything and agree to apply it.
+
+"shouldn't break anything" is the problem. You can assert all you
+want that nothing will break, but history tells us that even the
+most benign UAPI changes can break unexpected stuff in unexpected
+ways.
+
+That's the fundamental problem. We *know* that what you are trying
+to do with filehandles and fsid has -explicit, well known- issues.
+What we have here is a new interface that
+is .... problematic, and now it needs to redefine other parts
+of the UAPI to make "problems" with the new interface go away.
+
+Yes, we really suck at APIs, but that doesn't mean hacking a UAPI
+around to work around problems in another UAPI is the right answer.
+
+> In that case, a future indexer (or whatever) application author can use
+> fanotify, name_to_handle_at() and fstats() as is and document that after
+> mount cycle, the indexer may get confused and miss changes in obscure
+> filesystems that nobody uses on desktops and servers.
+
+But anyone wanting to use this for a HSM style application that
+needs a guarantee that the filehandle can be resolved to the correct
+filesystem for open_by_handle_at() is SOL?
+
+IOWs, this proposal is not really fixing the underlying problem,
+it's just kicking the can down the road.
+
+> The third option, let's call it the "sad" option, is that we do nothing
+> and said future indexer application author will need to find ways to
+> work around this deficiency or document that after mount cycle, the
+> indexer may get confused and miss changes in commonly used
+> desktop and server filesystems (i.e. XFS).
+
+Which it already needs to do, because there are many, many
+filesysetms out there that have f_fsid that change on every mount.
+
+> <side bar>
+> I think that what indexer author would really want is not "persistent fsid"
+> but rather a "persistent change journal" [1].
+> I have not abandoned this effort and I have a POC [2] for a new fsnotify
+> backend (not fanotify) based on inputs that also you provided in LSFMM.
+> In this POC, which is temporarily reusing the code of overlayfs index,
+> the persistent identifier of an object is {s_uuid,fhandle}.
+> </side bar>
+
+Yup, that's pretty much what HSMs on top of DMAPI did. But then the
+app developers realised that they can still miss events, especially
+when the system crashes. Not to mention that the filesystem may not
+actually replay all the changes it reports to userspace during
+journal recovery because it is using asynchronous journalling and so
+much of the pending in memory change was lost, even though change
+events were reported to userspace....
+
+Hence doing stuff like "fanotify intents" doesn't actually solve any
+"missing event" problems - it just creates more complex coherency
+problems because you cannot co-ordinate "intent done" events with
+filesystem journal completion points sanely. The fanotify journal
+needs to change state atomically with the filesystem journal state,
+and that's not really something that can be done by a layer above
+the filesystem....
+
+Hence the introduction of the bulkstat interface in XFS for fast,
+efficient scanning of all the inodes in the filesystem for changes.
+The HSMs -always- scanned the filesystems after an unclean mount
+(i.e. not having a registered unmount event recorded in the
+userspace application event database) because the filesystem and the
+userspace database state are never in sync after a crash event.
+
+And, well, because userspace applications can crash and/or have bugs
+that lose events, these HSMs would also do periodic scans to
+determine if it had missed anything. When you are indexing hundreds
+of millions of files and many petabytes of storage across disk and
+tape (this was the typical scale of DMAPI installations in the mid
+2000s), you care about proactively catching that one event that was
+missed because of a transient memory allocation event under heavy
+production load....
+
+> Would you be willing to accept the "pragmatic" option?
+
+It doesn't really seem "pragmatic" to me. It looks "convenient" for
+fanotify to redefine what f_fsid means, but I'm not convinced that
+we should be changing another UAPI to paper over a sub-optimal UAPI
+in relatively new and largely unused fanotify functionality....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
