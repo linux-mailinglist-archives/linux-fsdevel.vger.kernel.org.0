@@ -2,102 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2B99349A9C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 20:44:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F06C349AF7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 21:26:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230310AbhCYTn6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Mar 2021 15:43:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56100 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229833AbhCYTnY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Mar 2021 15:43:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CD9D0619C9;
-        Thu, 25 Mar 2021 19:43:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616701404;
-        bh=1r+GeFGCMbDDIXeRYKJ4Hm8F51/bPaP4XF8mxybzx2A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JGP1DZMB24r/DF69LXH/qos9xWt+IB2JQD2/pxxusRzuFj7yp8XP9X6ZX11xq7UI3
-         SqgDqD5EeTOq9jkARGuGO2Y0JjS2eKLD1lvQ4i83zw0FkGZLqPEa3b/DEr7vJrFQWM
-         rHRuNJnaf0MP6CSUnAClzOox/qpLeEiVup7Sm+LLExLdFtmcCn/BLnD9OtQ7Oo6VBs
-         d7Fde1+FRBsdZGBPah8hBCy9p2ot8rPBJtccyc2DJhao2COhMdQJ//x2+YRTz5xxdN
-         EXnfAdx8UBx9lXiF0DKxfcGOPjRXFd0HRnsj3Zr8bwt/TO151jqIYDrDv/W5Pcm7br
-         j61kk91T6iVTA==
-Date:   Thu, 25 Mar 2021 12:43:22 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     Shreeya Patel <shreeya.patel@collabora.com>, tytso@mit.edu,
-        adilger.kernel@dilger.ca, jaegeuk@kernel.org, chao@kernel.org,
-        drosen@google.com, yuchao0@huawei.com, linux-ext4@vger.kernel.org,
+        id S230207AbhCYU0T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Mar 2021 16:26:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44130 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229930AbhCYU0N (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Mar 2021 16:26:13 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF0B5C06174A;
+        Thu, 25 Mar 2021 13:26:12 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: shreeya)
+        with ESMTPSA id 407901F4684B
+Subject: Re: [PATCH v4 5/5] fs: unicode: Add utf8 module and a unicode layer
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        chao@kernel.org, krisman@collabora.com, drosen@google.com,
+        yuchao0@huawei.com, linux-ext4@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, kernel@collabora.com,
         andre.almeida@collabora.com
-Subject: Re: [PATCH v4 2/5] fs: Check if utf8 encoding is loaded before
- calling utf8_unload()
-Message-ID: <YFzn2rbN6P0LvdA+@sol.localdomain>
 References: <20210325000811.1379641-1-shreeya.patel@collabora.com>
- <20210325000811.1379641-3-shreeya.patel@collabora.com>
- <YFziza/VMyzEs4s1@sol.localdomain>
- <878s6bt4gx.fsf@collabora.com>
+ <20210325000811.1379641-6-shreeya.patel@collabora.com>
+ <YFznIVf/F68oEuC6@sol.localdomain>
+From:   Shreeya Patel <shreeya.patel@collabora.com>
+Message-ID: <2db48ab8-1297-e044-dcec-6c8b8875fdb0@collabora.com>
+Date:   Fri, 26 Mar 2021 01:56:00 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878s6bt4gx.fsf@collabora.com>
+In-Reply-To: <YFznIVf/F68oEuC6@sol.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 25, 2021 at 03:31:42PM -0400, Gabriel Krisman Bertazi wrote:
-> Eric Biggers <ebiggers@kernel.org> writes:
-> 
-> > On Thu, Mar 25, 2021 at 05:38:08AM +0530, Shreeya Patel wrote:
-> >> utf8_unload is being called if CONFIG_UNICODE is enabled.
-> >> The ifdef block doesn't check if utf8 encoding has been loaded
-> >> or not before calling the utf8_unload() function.
-> >> This is not the expected behavior since it would sometimes lead
-> >> to unloading utf8 even before loading it.
-> >> Hence, add a condition which will check if sb->encoding is NOT NULL
-> >> before calling the utf8_unload().
-> >> 
-> >> Reviewed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> >> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
-> >> ---
-> >>  fs/ext4/super.c | 6 ++++--
-> >>  fs/f2fs/super.c | 9 ++++++---
-> >>  2 files changed, 10 insertions(+), 5 deletions(-)
-> >> 
-> >> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> >> index ad34a37278cd..e438d14f9a87 100644
-> >> --- a/fs/ext4/super.c
-> >> +++ b/fs/ext4/super.c
-> >> @@ -1259,7 +1259,8 @@ static void ext4_put_super(struct super_block *sb)
-> >>  	fs_put_dax(sbi->s_daxdev);
-> >>  	fscrypt_free_dummy_policy(&sbi->s_dummy_enc_policy);
-> >>  #ifdef CONFIG_UNICODE
-> >> -	utf8_unload(sb->s_encoding);
-> >> +	if (sb->s_encoding)
-> >> +		utf8_unload(sb->s_encoding);
-> >>  #endif
-> >>  	kfree(sbi);
-> >>  }
-> >
-> >
-> > What's the benefit of this change?  utf8_unload is a no-op when passed a NULL
-> > pointer; why not keep it that way?
-> 
-> For the record, it no longer is a no-op after patch 5 of this series.
-> Honestly, I prefer making it explicitly at the caller that we are not
-> entering the function, like the patch does, instead of returning from it
-> immediately.  Makes it more readable, IMO.
-> 
 
-I don't think making all the callers do the NULL check is more readable.  It's
-conventional for free-like functions to accept NULL pointers.  See for example
-every other function in the code snippet above -- fs_put_dax(),
-fscrypt_free_dummy_policy(), and kfree().
+On 26/03/21 1:10 am, Eric Biggers wrote:
+> On Thu, Mar 25, 2021 at 05:38:11AM +0530, Shreeya Patel wrote:
+>> Also, indirect calls using function pointers are easily exploitable by
+>> speculative execution attacks, hence use static_call() in unicode.h and
+>> unicode-core.c files inorder to prevent these attacks by making direct
+>> calls and also to improve the performance of function pointers.
+> I don't think you need to worry about avoiding indirect calls to prevent
+> speculative execution attacks.  That's what the mitigations like Retpoline are
+> for.  Instead my concern was just that indirect calls are *slow*, especially
+> when those mitigations are enabled.  Some of the casefolding operations are
+> called a lot (e.g., repeatedly during path resolution), and it would be
+> desirable to avoid adding more overhead there.
+>
+>> diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
+>> index 2c27b9a5cd6c..2961b0206b4d 100644
+>> --- a/fs/unicode/Kconfig
+>> +++ b/fs/unicode/Kconfig
+>> @@ -8,7 +8,16 @@ config UNICODE
+>>   	  Say Y here to enable UTF-8 NFD normalization and NFD+CF casefolding
+>>   	  support.
+>>   
+>> +# UTF-8 encoding can be compiled as a module using UNICODE_UTF8 option.
+>> +# Having UTF-8 encoding as a module will avoid carrying large
+>> +# database table present in utf8data.h_shipped into the kernel
+>> +# by being able to load it only when it is required by the filesystem.
+>> +config UNICODE_UTF8
+>> +	tristate "UTF-8 module"
+>> +	depends on UNICODE
+>> +	default m
+>> +
+> The help for UNICODE still says that it enables UTF-8 support.  But now there is
+> a separate option that people will need to remember to enable.
+>
+> Please document each of these options properly.
+>
+> Perhaps EXT4_FS and F2FS_FS just should select UNICODE_UTF8 if UNICODE, so that
+> UNICODE_UTF8 doesn't have to be a user-selectable symbol?
 
-This seems more like an issue with patch 5; it shouldn't be dropping the NULL
-check from unicode_unload().
 
-- Eric
+It is not a user-selectable symbol. It depends on UNICODE and if someone 
+enables it,
+by default UNICODE_UTF8 will be enabled as a module.
+
+
+>> +DEFINE_STATIC_CALL(validate, unicode_validate_static_call);
+>> +EXPORT_STATIC_CALL(validate);
+> Global symbols can't have generic names like "validate".  Please add an
+> appropriate prefix like "unicode_".
+>
+> Also, the thing called "unicode_validate_static_call" isn't actually a static
+> call as the name suggests, but rather the default function used by the static
+> call.  It should be called something like unicode_validate_default.
+>
+> Likewise for all the others.
+
+
+Thanks for your reviews, I'll make the change suggested by you in v5.
+
+
+>
+> - Eric
+>
