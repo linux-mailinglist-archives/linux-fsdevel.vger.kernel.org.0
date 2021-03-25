@@ -2,100 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AAC7349B55
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 21:59:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52389349B8D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 22:27:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230215AbhCYU7C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Mar 2021 16:59:02 -0400
-Received: from gardel.0pointer.net ([85.214.157.71]:43180 "EHLO
-        gardel.0pointer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229581AbhCYU6p (ORCPT
+        id S230285AbhCYV03 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Mar 2021 17:26:29 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54726 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230340AbhCYV0K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Mar 2021 16:58:45 -0400
-Received: from gardel-login.0pointer.net (gardel-mail [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
-        by gardel.0pointer.net (Postfix) with ESMTP id 8EDABE80A76;
-        Thu, 25 Mar 2021 21:58:42 +0100 (CET)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-        id 3914A1608A1; Thu, 25 Mar 2021 21:58:42 +0100 (CET)
-Date:   Thu, 25 Mar 2021 21:58:42 +0100
-From:   Lennart Poettering <mzxreary@0pointer.de>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Matteo Croce <mcroce@linux.microsoft.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luca Boccassi <bluca@debian.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Tejun Heo <tj@kernel.org>,
-        Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier@javigon.com>,
-        Niklas Cassel <niklas.cassel@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH -next 1/5] block: add disk sequence number
-Message-ID: <YFz5gjRDtrW6RxFk@gardel-login>
-References: <20210315200242.67355-1-mcroce@linux.microsoft.com>
- <20210315200242.67355-2-mcroce@linux.microsoft.com>
- <20210315201824.GB2577561@casper.infradead.org>
- <20210315210452.GC2577561@casper.infradead.org>
+        Thu, 25 Mar 2021 17:26:10 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: shreeya)
+        with ESMTPSA id F018A1F46934
+Subject: Re: [PATCH v4 5/5] fs: unicode: Add utf8 module and a unicode layer
+From:   Shreeya Patel <shreeya.patel@collabora.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        chao@kernel.org, krisman@collabora.com, drosen@google.com,
+        yuchao0@huawei.com, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
+        andre.almeida@collabora.com
+References: <20210325000811.1379641-1-shreeya.patel@collabora.com>
+ <20210325000811.1379641-6-shreeya.patel@collabora.com>
+ <YFznIVf/F68oEuC6@sol.localdomain>
+ <2db48ab8-1297-e044-dcec-6c8b8875fdb0@collabora.com>
+Message-ID: <cb4e2292-51dc-70af-1b5f-b8312f94d82f@collabora.com>
+Date:   Fri, 26 Mar 2021 02:56:01 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210315210452.GC2577561@casper.infradead.org>
+In-Reply-To: <2db48ab8-1297-e044-dcec-6c8b8875fdb0@collabora.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mo, 15.03.21 21:04, Matthew Wilcox (willy@infradead.org) wrote:
 
-> On Mon, Mar 15, 2021 at 08:18:24PM +0000, Matthew Wilcox wrote:
-> > On Mon, Mar 15, 2021 at 09:02:38PM +0100, Matteo Croce wrote:
-> > > From: Matteo Croce <mcroce@microsoft.com>
-> > >
-> > > Add a sequence number to the disk devices. This number is put in the
-> > > uevent so userspace can correlate events when a driver reuses a device,
-> > > like the loop one.
-> >
-> > Should this be documented as monotonically increasing?  I think this
-> > is actually a media identifier.  Consider (if you will) a floppy disc.
-> > Back when such things were common, it was possible with personal computers
-> > of the era to have multiple floppy discs "in play" and be prompted to
-> > insert them as needed.  So shouldn't it be possible to support something
-> > similar here -- you're really removing the media from the loop device.
-> > With a monotonically increasing number, you're always destroying the
-> > media when you remove it, but in principle, it should be possible to
-> > reinsert the same media and have the same media identifier number.
+On 26/03/21 1:56 am, Shreeya Patel wrote:
 >
-> So ... a lot of devices have UUIDs or similar.  eg:
+> On 26/03/21 1:10 am, Eric Biggers wrote:
+>> On Thu, Mar 25, 2021 at 05:38:11AM +0530, Shreeya Patel wrote:
+>>> Also, indirect calls using function pointers are easily exploitable by
+>>> speculative execution attacks, hence use static_call() in unicode.h and
+>>> unicode-core.c files inorder to prevent these attacks by making direct
+>>> calls and also to improve the performance of function pointers.
+>> I don't think you need to worry about avoiding indirect calls to prevent
+>> speculative execution attacks.  That's what the mitigations like 
+>> Retpoline are
+>> for.  Instead my concern was just that indirect calls are *slow*, 
+>> especially
+>> when those mitigations are enabled.  Some of the casefolding 
+>> operations are
+>> called a lot (e.g., repeatedly during path resolution), and it would be
+>> desirable to avoid adding more overhead there.
+>>
+>>> diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
+>>> index 2c27b9a5cd6c..2961b0206b4d 100644
+>>> --- a/fs/unicode/Kconfig
+>>> +++ b/fs/unicode/Kconfig
+>>> @@ -8,7 +8,16 @@ config UNICODE
+>>>         Say Y here to enable UTF-8 NFD normalization and NFD+CF 
+>>> casefolding
+>>>         support.
+>>>   +# UTF-8 encoding can be compiled as a module using UNICODE_UTF8 
+>>> option.
+>>> +# Having UTF-8 encoding as a module will avoid carrying large
+>>> +# database table present in utf8data.h_shipped into the kernel
+>>> +# by being able to load it only when it is required by the filesystem.
+>>> +config UNICODE_UTF8
+>>> +    tristate "UTF-8 module"
+>>> +    depends on UNICODE
+>>> +    default m
+>>> +
+>> The help for UNICODE still says that it enables UTF-8 support. But 
+>> now there is
+>> a separate option that people will need to remember to enable.
+>>
+>> Please document each of these options properly.
+>>
+>> Perhaps EXT4_FS and F2FS_FS just should select UNICODE_UTF8 if 
+>> UNICODE, so that
+>> UNICODE_UTF8 doesn't have to be a user-selectable symbol?
 >
-> $ cat /sys/block/nvme0n1/uuid
-> e8238fa6-bf53-0001-001b-448b49cec94f
 >
-> https://linux.die.net/man/8/scsi_id (for scsi)
+> It is not a user-selectable symbol. It depends on UNICODE and if 
+> someone enables it,
+> by default UNICODE_UTF8 will be enabled as a module.
 >
-> how about making this way more generic; create an xattr on a file to
-> store the uuid (if one doesn't already exist) whenever it's used as the
-> base for a loop device.  then sysfs (or whatever) can report the contents
-> of that xattr as the unique id.
 >
-> That can be mostly in userspace -- losetup can create it, and read it.
-> It can be passed in as the first two current-reserved __u64 entries in
-> loop_config.  The only kernel change should be creating the sysfs
-> entry /sys/block/loopN/uuid from those two array entries.
 
-I prefer seqnos over uuids because we can order them when we see a
-bunch of uevents for the same loopback device with their seqnos, as
-mentioned in that other mail.
+Sorry, I think I misunderstood when you said EXT4_FS and F2FS_FS should 
+select
+UNICODE_UTF8 if UNICODE is enabled. I now get it that you don't want 
+them to be deselectable.
+I'll make this change. Thanks
 
-But beggars can't be choosers. If we could propagate some uuid from
-the loopback setup ioctl into the device so that that appears via
-sysfs that would work too for me, but not as robustly, since we lack
-the ordering to detect whether it's worth waiting for more uevents or
-if already somebody else took possesion of the device.
 
-TLDR: seqnos FTW! but uuids assigned at attachment time is better than
-nothing.
-
-Lennart
-
---
-Lennart Poettering, Berlin
+>>> +DEFINE_STATIC_CALL(validate, unicode_validate_static_call);
+>>> +EXPORT_STATIC_CALL(validate);
+>> Global symbols can't have generic names like "validate".  Please add an
+>> appropriate prefix like "unicode_".
+>>
+>> Also, the thing called "unicode_validate_static_call" isn't actually 
+>> a static
+>> call as the name suggests, but rather the default function used by 
+>> the static
+>> call.  It should be called something like unicode_validate_default.
+>>
+>> Likewise for all the others.
+>
+>
+> Thanks for your reviews, I'll make the change suggested by you in v5.
+>
+>
+>>
+>> - Eric
+>>
