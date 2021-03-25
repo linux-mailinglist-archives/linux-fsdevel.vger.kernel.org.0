@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D563349A78
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 20:39:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 059A8349A7A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 20:39:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230453AbhCYTiu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Mar 2021 15:38:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35050 "EHLO
+        id S230460AbhCYTiv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Mar 2021 15:38:51 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22578 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230329AbhCYTiR (ORCPT
+        by vger.kernel.org with ESMTP id S230337AbhCYTiV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Mar 2021 15:38:17 -0400
+        Thu, 25 Mar 2021 15:38:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616701097;
+        s=mimecast20190719; t=1616701100;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=6GizXdUuGbOlAXZSEFMPpS46MB5AxC3PE1iyOrg05GE=;
-        b=VFjV8nfo1juYad0B9dQYHpjlW8rKqnx3B7TpUPrD4cQcRnDWig/Sw47osXI3GkF6NjkwD6
-        o9JknB7F7NQ/bvPblHFuQ07krNhhcWVuanSsrdutnjahCWUOA8FNae42O3al7vdhA5WTQ4
-        toD/o8borx+t05bZmn8CyB4jC84eBb0=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-13-y001DUs5NvG1WNa6gYC0YQ-1; Thu, 25 Mar 2021 15:38:15 -0400
-X-MC-Unique: y001DUs5NvG1WNa6gYC0YQ-1
-Received: by mail-ed1-f69.google.com with SMTP id bi17so3202046edb.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Mar 2021 12:38:15 -0700 (PDT)
+        bh=/7NIBk6La/dqb6C44uocZQB5NEP7IgsPWWcJ4ROLNwg=;
+        b=H3aI0cKL8U5EEi3yg5yfTym9k3gu9rt7M/AZDL0dKDEJOicWL9pHZWMn5KKbXCbW5qgLJI
+        wNIbI8mCkHiuEVFDjuA8KVIlfAaEJ7/8WqE5KX3KFM8JkSKt9EwwUbT+SG8wMgAPLFeUKM
+        9eoPKTVxSZ/mFB/y+YWz65YcnASxfeE=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-358-M6GCLAA5OBmVxUaMeaF14g-1; Thu, 25 Mar 2021 15:38:16 -0400
+X-MC-Unique: M6GCLAA5OBmVxUaMeaF14g-1
+Received: by mail-ed1-f71.google.com with SMTP id t27so3212284edi.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Mar 2021 12:38:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6GizXdUuGbOlAXZSEFMPpS46MB5AxC3PE1iyOrg05GE=;
-        b=nGVff1E6S7SqwmFk9gqS1I2H9qNR52wlWspgY51RB3vXnw84PLD44Hyx5Nz8ZkG9DY
-         rhKFW/HYnZPQOpfBzfvfTdY8eHJ4IT3WnagnOtH3mxaRrpWqWFLH0M4HTmrwv+f/HgMv
-         Ppbz2p7xqTX7c03PuRnD33R1sqwnPyrCKr3zD92PNxSaYkNHE6sFYv4FOMO+rvNHYn7J
-         ly8EYIQ9O6KXR2Vl14ogjtGUheBX+obM49ZkZgH3imvO1c7/dBKWgxOT3wBhvMixpqPy
-         LTUarOLIMXvubcn78SrMqMCXXi1mCNF4c000i3XlSBwtgUXZw7fDkVFZpJ0KwkuShHEP
-         p42Q==
-X-Gm-Message-State: AOAM531Gm1u4cWg7Lrr0/IyYgB94E5oCZzXxdMOqvKYTAnXH2JjpJYq0
-        uag4459d1bHsPJ1mVTmJ/pCtoythK03rufKT7aVZXNYtuPxU3I7eDsMMSTDOHRFjz5nAcNGxpBL
-        LVsiFK5Re2auKJDpTacXRuZ/s/3LEd+QZpzOZDtFzEP9OxJjO3bztNdU4627yFpxBLpS+6uxNqg
-        LzDw==
-X-Received: by 2002:a17:906:16ca:: with SMTP id t10mr11485453ejd.85.1616701093868;
-        Thu, 25 Mar 2021 12:38:13 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw6RDFXB1ljV8dUCwZxdY9397fwZZAURPGhwStZ2+VYbKU5IiJfnY+bfWhJ3GRGIGpcwbMjVQ==
-X-Received: by 2002:a17:906:16ca:: with SMTP id t10mr11485433ejd.85.1616701093687;
-        Thu, 25 Mar 2021 12:38:13 -0700 (PDT)
+        bh=/7NIBk6La/dqb6C44uocZQB5NEP7IgsPWWcJ4ROLNwg=;
+        b=PX5hZVGkabX0n/dFP6Kqobqnv6w1s/s+qNgWNizUXi37qZMn6LZZZXLk4heMxF8n0B
+         ATtBTiG+NscQD6djTVWMAbilLFX3zGDThW6d26I74O91KFVoeC7s8RzUXFbn6bH0sejP
+         t3R3d+COO7LBGRF6JMSxC6yTRT8Wy+9iExVdK412ISUoZ3JnEEx77YHIze3LpfSIwOov
+         7T9ZsT9oLAeUVvSkn/uDu0GiXjVdhX3sWUnqP5FCgIrTrTlD3CMYfsR1/7ThHXtRGneQ
+         FOB7VTjggl3ORGm99XFK7XIoPoQDQli3L9O6F5o55AOM8/dF0MYRfRMdv/xHApPYlLEX
+         XrWQ==
+X-Gm-Message-State: AOAM531VKm2AiIW8JHIIjhSzGmTF+CJc3vOpYvoigtsV6HaxP8nPGU+s
+        +wR+1LG+uA2+idl0BlmdWjHi3rOnMzoRR/DE144dJeaIXiuR1Nsgv84/qPVuAOd+ZgSaQrK9QDC
+        isAVktoILMNOMli4R2iw1nZ5Z2yxnIDZkMfpUC0Qff2LA0nbuyPw83u9GV2jhn/MiI+HFY8qW18
+        y6Yg==
+X-Received: by 2002:a17:906:f56:: with SMTP id h22mr11536022ejj.494.1616701094836;
+        Thu, 25 Mar 2021 12:38:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyCfaqxaWTKq4yEr10PfJzWo9c2H6UizAKocA4OFfSS/sXX8O4cA0AQjbWHuhc5l33bw+YTnA==
+X-Received: by 2002:a17:906:f56:: with SMTP id h22mr11535997ejj.494.1616701094600;
+        Thu, 25 Mar 2021 12:38:14 -0700 (PDT)
 Received: from miu.piliscsaba.redhat.com (catv-86-101-169-67.catv.broadband.hu. [86.101.169.67])
-        by smtp.gmail.com with ESMTPSA id si7sm2881996ejb.84.2021.03.25.12.38.12
+        by smtp.gmail.com with ESMTPSA id si7sm2881996ejb.84.2021.03.25.12.38.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 12:38:13 -0700 (PDT)
+        Thu, 25 Mar 2021 12:38:14 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Al Viro <viro@ZenIV.linux.org.uk>, linux-kernel@vger.kernel.org,
-        Joel Becker <jlbec@evilplan.org>
-Subject: [PATCH v3 15/18] ocfs2: convert to fileattr
-Date:   Thu, 25 Mar 2021 20:37:52 +0100
-Message-Id: <20210325193755.294925-16-mszeredi@redhat.com>
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH v3 16/18] reiserfs: convert to fileattr
+Date:   Thu, 25 Mar 2021 20:37:53 +0100
+Message-Id: <20210325193755.294925-17-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210325193755.294925-1-mszeredi@redhat.com>
 References: <20210325193755.294925-1-mszeredi@redhat.com>
@@ -72,218 +72,244 @@ Use the fileattr API to let the VFS handle locking, permission checking and
 conversion.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Jan Kara <jack@suse.cz>
 ---
- fs/ocfs2/file.c        |  2 ++
- fs/ocfs2/ioctl.c       | 59 ++++++++++++++----------------------------
- fs/ocfs2/ioctl.h       |  3 +++
- fs/ocfs2/namei.c       |  3 +++
- fs/ocfs2/ocfs2_ioctl.h |  8 ------
- 5 files changed, 27 insertions(+), 48 deletions(-)
+ fs/reiserfs/file.c     |   2 +
+ fs/reiserfs/ioctl.c    | 121 +++++++++++++++++++----------------------
+ fs/reiserfs/namei.c    |   2 +
+ fs/reiserfs/reiserfs.h |   7 ++-
+ fs/reiserfs/super.c    |   2 +-
+ 5 files changed, 64 insertions(+), 70 deletions(-)
 
-diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
-index 6611c64ca0be..908d22b431fa 100644
---- a/fs/ocfs2/file.c
-+++ b/fs/ocfs2/file.c
-@@ -2645,6 +2645,8 @@ const struct inode_operations ocfs2_file_iops = {
- 	.fiemap		= ocfs2_fiemap,
- 	.get_acl	= ocfs2_iop_get_acl,
- 	.set_acl	= ocfs2_iop_set_acl,
-+	.fileattr_get	= ocfs2_fileattr_get,
-+	.fileattr_set	= ocfs2_fileattr_set,
+diff --git a/fs/reiserfs/file.c b/fs/reiserfs/file.c
+index 1db0254bc38b..203a47232707 100644
+--- a/fs/reiserfs/file.c
++++ b/fs/reiserfs/file.c
+@@ -258,4 +258,6 @@ const struct inode_operations reiserfs_file_inode_operations = {
+ 	.permission = reiserfs_permission,
+ 	.get_acl = reiserfs_get_acl,
+ 	.set_acl = reiserfs_set_acl,
++	.fileattr_get = reiserfs_fileattr_get,
++	.fileattr_set = reiserfs_fileattr_set,
  };
- 
- const struct inode_operations ocfs2_special_file_iops = {
-diff --git a/fs/ocfs2/ioctl.c b/fs/ocfs2/ioctl.c
-index 50c9b30ee9f6..f59461d85da4 100644
---- a/fs/ocfs2/ioctl.c
-+++ b/fs/ocfs2/ioctl.c
-@@ -10,6 +10,7 @@
- #include <linux/mount.h>
- #include <linux/blkdev.h>
+diff --git a/fs/reiserfs/ioctl.c b/fs/reiserfs/ioctl.c
+index 4f1cbd930179..4b86ecf5817e 100644
+--- a/fs/reiserfs/ioctl.c
++++ b/fs/reiserfs/ioctl.c
+@@ -10,6 +10,59 @@
+ #include <linux/uaccess.h>
+ #include <linux/pagemap.h>
  #include <linux/compat.h>
 +#include <linux/fileattr.h>
- 
- #include <cluster/masklog.h>
- 
-@@ -61,8 +62,10 @@ static inline int o2info_coherent(struct ocfs2_info_request *req)
- 	return (!(req->ir_flags & OCFS2_INFO_FL_NON_COHERENT));
- }
- 
--static int ocfs2_get_inode_attr(struct inode *inode, unsigned *flags)
-+int ocfs2_fileattr_get(struct dentry *dentry, struct fileattr *fa)
- {
-+	struct inode *inode = d_inode(dentry);
-+	unsigned int flags;
- 	int status;
- 
- 	status = ocfs2_inode_lock(inode, NULL, 0);
-@@ -71,15 +74,19 @@ static int ocfs2_get_inode_attr(struct inode *inode, unsigned *flags)
- 		return status;
- 	}
- 	ocfs2_get_inode_flags(OCFS2_I(inode));
--	*flags = OCFS2_I(inode)->ip_attr;
-+	flags = OCFS2_I(inode)->ip_attr;
- 	ocfs2_inode_unlock(inode, 0);
- 
-+	fileattr_fill_flags(fa, flags & OCFS2_FL_VISIBLE);
 +
- 	return status;
- }
- 
--static int ocfs2_set_inode_attr(struct inode *inode, unsigned flags,
--				unsigned mask)
-+int ocfs2_fileattr_set(struct user_namespace *mnt_userns,
-+		       struct dentry *dentry, struct fileattr *fa)
- {
++int reiserfs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
++{
++	struct inode *inode = d_inode(dentry);
++
++	if (!reiserfs_attrs(inode->i_sb))
++		return -ENOTTY;
++
++	fileattr_fill_flags(fa, REISERFS_I(inode)->i_attrs);
++
++	return 0;
++}
++
++int reiserfs_fileattr_set(struct user_namespace *mnt_userns,
++			  struct dentry *dentry, struct fileattr *fa)
++{
 +	struct inode *inode = d_inode(dentry);
 +	unsigned int flags = fa->flags;
- 	struct ocfs2_inode_info *ocfs2_inode = OCFS2_I(inode);
- 	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
- 	handle_t *handle = NULL;
-@@ -87,7 +94,8 @@ static int ocfs2_set_inode_attr(struct inode *inode, unsigned flags,
- 	unsigned oldflags;
- 	int status;
- 
--	inode_lock(inode);
++	int err;
++
++	reiserfs_write_lock(inode->i_sb);
++
++	err = -ENOTTY;
++	if (!reiserfs_attrs(inode->i_sb))
++		goto unlock;
++
++	err = -EOPNOTSUPP;
 +	if (fileattr_has_fsx(fa))
-+		return -EOPNOTSUPP;
++		goto unlock;
++
++	/*
++	 * Is it quota file? Do not allow user to mess with it
++	 */
++	err = -EPERM;
++	if (IS_NOQUOTA(inode))
++		goto unlock;
++
++	if ((flags & REISERFS_NOTAIL_FL) && S_ISREG(inode->i_mode)) {
++		err = reiserfs_unpack(inode);
++		if (err)
++			goto unlock;
++	}
++	sd_attrs_to_i_attrs(flags, inode);
++	REISERFS_I(inode)->i_attrs = flags;
++	inode->i_ctime = current_time(inode);
++	mark_inode_dirty(inode);
++	err = 0;
++unlock:
++	reiserfs_write_unlock(inode->i_sb);
++
++	return err;
++}
  
- 	status = ocfs2_inode_lock(inode, &bh, 1);
- 	if (status < 0) {
-@@ -95,19 +103,17 @@ static int ocfs2_set_inode_attr(struct inode *inode, unsigned flags,
- 		goto bail;
- 	}
- 
--	status = -EACCES;
--	if (!inode_owner_or_capable(&init_user_ns, inode))
--		goto bail_unlock;
--
- 	if (!S_ISDIR(inode->i_mode))
- 		flags &= ~OCFS2_DIRSYNC_FL;
- 
- 	oldflags = ocfs2_inode->ip_attr;
--	flags = flags & mask;
--	flags |= oldflags & ~mask;
-+	flags = flags & OCFS2_FL_MODIFIABLE;
-+	flags |= oldflags & ~OCFS2_FL_MODIFIABLE;
- 
--	status = vfs_ioc_setflags_prepare(inode, oldflags, flags);
--	if (status)
-+	/* Check already done by VFS, but repeat with ocfs lock */
-+	status = -EPERM;
-+	if ((flags ^ oldflags) & (FS_APPEND_FL | FS_IMMUTABLE_FL) &&
-+	    !capable(CAP_LINUX_IMMUTABLE))
- 		goto bail_unlock;
- 
- 	handle = ocfs2_start_trans(osb, OCFS2_INODE_UPDATE_CREDITS);
-@@ -129,8 +135,6 @@ static int ocfs2_set_inode_attr(struct inode *inode, unsigned flags,
- bail_unlock:
- 	ocfs2_inode_unlock(inode, 1);
- bail:
--	inode_unlock(inode);
--
- 	brelse(bh);
- 
- 	return status;
-@@ -836,7 +840,6 @@ static int ocfs2_info_handle(struct inode *inode, struct ocfs2_info *info,
- long ocfs2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ /*
+  * reiserfs_ioctl - handler for ioctl for inode
+@@ -23,7 +76,6 @@
+ long reiserfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
  {
  	struct inode *inode = file_inode(filp);
 -	unsigned int flags;
- 	int new_clusters;
- 	int status;
- 	struct ocfs2_space_resv sr;
-@@ -849,24 +852,6 @@ long ocfs2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	void __user *argp = (void __user *)arg;
+ 	int err = 0;
  
- 	switch (cmd) {
--	case OCFS2_IOC_GETFLAGS:
--		status = ocfs2_get_inode_attr(inode, &flags);
--		if (status < 0)
--			return status;
+ 	reiserfs_write_lock(inode->i_sb);
+@@ -32,7 +84,7 @@ long reiserfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	case REISERFS_IOC_UNPACK:
+ 		if (S_ISREG(inode->i_mode)) {
+ 			if (arg)
+-				err = reiserfs_unpack(inode, filp);
++				err = reiserfs_unpack(inode);
+ 		} else
+ 			err = -ENOTTY;
+ 		break;
+@@ -40,63 +92,6 @@ long reiserfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		 * following two cases are taken from fs/ext2/ioctl.c by Remy
+ 		 * Card (card@masi.ibp.fr)
+ 		 */
+-	case REISERFS_IOC_GETFLAGS:
+-		if (!reiserfs_attrs(inode->i_sb)) {
+-			err = -ENOTTY;
+-			break;
+-		}
 -
--		flags &= OCFS2_FL_VISIBLE;
--		return put_user(flags, (int __user *) arg);
--	case OCFS2_IOC_SETFLAGS:
--		if (get_user(flags, (int __user *) arg))
--			return -EFAULT;
+-		flags = REISERFS_I(inode)->i_attrs;
+-		err = put_user(flags, (int __user *)arg);
+-		break;
+-	case REISERFS_IOC_SETFLAGS:{
+-			if (!reiserfs_attrs(inode->i_sb)) {
+-				err = -ENOTTY;
+-				break;
+-			}
 -
--		status = mnt_want_write_file(filp);
--		if (status)
--			return status;
--		status = ocfs2_set_inode_attr(inode, flags,
--			OCFS2_FL_MODIFIABLE);
--		mnt_drop_write_file(filp);
--		return status;
- 	case OCFS2_IOC_RESVSP:
- 	case OCFS2_IOC_RESVSP64:
- 	case OCFS2_IOC_UNRESVSP:
-@@ -959,12 +944,6 @@ long ocfs2_compat_ioctl(struct file *file, unsigned cmd, unsigned long arg)
- 	void __user *argp = (void __user *)arg;
- 
- 	switch (cmd) {
--	case OCFS2_IOC32_GETFLAGS:
--		cmd = OCFS2_IOC_GETFLAGS;
+-			err = mnt_want_write_file(filp);
+-			if (err)
+-				break;
+-
+-			if (!inode_owner_or_capable(&init_user_ns, inode)) {
+-				err = -EPERM;
+-				goto setflags_out;
+-			}
+-			if (get_user(flags, (int __user *)arg)) {
+-				err = -EFAULT;
+-				goto setflags_out;
+-			}
+-			/*
+-			 * Is it quota file? Do not allow user to mess with it
+-			 */
+-			if (IS_NOQUOTA(inode)) {
+-				err = -EPERM;
+-				goto setflags_out;
+-			}
+-			err = vfs_ioc_setflags_prepare(inode,
+-						     REISERFS_I(inode)->i_attrs,
+-						     flags);
+-			if (err)
+-				goto setflags_out;
+-			if ((flags & REISERFS_NOTAIL_FL) &&
+-			    S_ISREG(inode->i_mode)) {
+-				int result;
+-
+-				result = reiserfs_unpack(inode, filp);
+-				if (result) {
+-					err = result;
+-					goto setflags_out;
+-				}
+-			}
+-			sd_attrs_to_i_attrs(flags, inode);
+-			REISERFS_I(inode)->i_attrs = flags;
+-			inode->i_ctime = current_time(inode);
+-			mark_inode_dirty(inode);
+-setflags_out:
+-			mnt_drop_write_file(filp);
+-			break;
+-		}
+ 	case REISERFS_IOC_GETVERSION:
+ 		err = put_user(inode->i_generation, (int __user *)arg);
+ 		break;
+@@ -138,12 +133,6 @@ long reiserfs_compat_ioctl(struct file *file, unsigned int cmd,
+ 	case REISERFS_IOC32_UNPACK:
+ 		cmd = REISERFS_IOC_UNPACK;
+ 		break;
+-	case REISERFS_IOC32_GETFLAGS:
+-		cmd = REISERFS_IOC_GETFLAGS;
 -		break;
--	case OCFS2_IOC32_SETFLAGS:
--		cmd = OCFS2_IOC_SETFLAGS;
+-	case REISERFS_IOC32_SETFLAGS:
+-		cmd = REISERFS_IOC_SETFLAGS;
 -		break;
- 	case OCFS2_IOC_RESVSP:
- 	case OCFS2_IOC_RESVSP64:
- 	case OCFS2_IOC_UNRESVSP:
-diff --git a/fs/ocfs2/ioctl.h b/fs/ocfs2/ioctl.h
-index 9f5e4d95e37f..0297c8846945 100644
---- a/fs/ocfs2/ioctl.h
-+++ b/fs/ocfs2/ioctl.h
-@@ -11,6 +11,9 @@
- #ifndef OCFS2_IOCTL_PROTO_H
- #define OCFS2_IOCTL_PROTO_H
- 
-+int ocfs2_fileattr_get(struct dentry *dentry, struct fileattr *fa);
-+int ocfs2_fileattr_set(struct user_namespace *mnt_userns,
-+		       struct dentry *dentry, struct fileattr *fa);
- long ocfs2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
- long ocfs2_compat_ioctl(struct file *file, unsigned cmd, unsigned long arg);
- 
-diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
-index 3abdd36da2e2..05ced86580d1 100644
---- a/fs/ocfs2/namei.c
-+++ b/fs/ocfs2/namei.c
-@@ -50,6 +50,7 @@
- #include "xattr.h"
- #include "acl.h"
- #include "ocfs2_trace.h"
-+#include "ioctl.h"
- 
- #include "buffer_head_io.h"
- 
-@@ -2918,4 +2919,6 @@ const struct inode_operations ocfs2_dir_iops = {
- 	.fiemap         = ocfs2_fiemap,
- 	.get_acl	= ocfs2_iop_get_acl,
- 	.set_acl	= ocfs2_iop_set_acl,
-+	.fileattr_get	= ocfs2_fileattr_get,
-+	.fileattr_set	= ocfs2_fileattr_set,
+ 	case REISERFS_IOC32_GETVERSION:
+ 		cmd = REISERFS_IOC_GETVERSION;
+ 		break;
+@@ -165,7 +154,7 @@ int reiserfs_commit_write(struct file *f, struct page *page,
+  * Function try to convert tail from direct item into indirect.
+  * It set up nopack attribute in the REISERFS_I(inode)->nopack
+  */
+-int reiserfs_unpack(struct inode *inode, struct file *filp)
++int reiserfs_unpack(struct inode *inode)
+ {
+ 	int retval = 0;
+ 	int index;
+diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
+index e6eb05e2b2f1..017db70d0f48 100644
+--- a/fs/reiserfs/namei.c
++++ b/fs/reiserfs/namei.c
+@@ -1660,6 +1660,8 @@ const struct inode_operations reiserfs_dir_inode_operations = {
+ 	.permission = reiserfs_permission,
+ 	.get_acl = reiserfs_get_acl,
+ 	.set_acl = reiserfs_set_acl,
++	.fileattr_get = reiserfs_fileattr_get,
++	.fileattr_set = reiserfs_fileattr_set,
  };
-diff --git a/fs/ocfs2/ocfs2_ioctl.h b/fs/ocfs2/ocfs2_ioctl.h
-index d7b31734f6be..273616bd4f19 100644
---- a/fs/ocfs2/ocfs2_ioctl.h
-+++ b/fs/ocfs2/ocfs2_ioctl.h
-@@ -12,14 +12,6 @@
- #ifndef OCFS2_IOCTL_H
- #define OCFS2_IOCTL_H
  
--/*
-- * ioctl commands
-- */
--#define OCFS2_IOC_GETFLAGS	FS_IOC_GETFLAGS
--#define OCFS2_IOC_SETFLAGS	FS_IOC_SETFLAGS
--#define OCFS2_IOC32_GETFLAGS	FS_IOC32_GETFLAGS
--#define OCFS2_IOC32_SETFLAGS	FS_IOC32_SETFLAGS
--
  /*
-  * Space reservation / allocation / free ioctls and argument structure
-  * are designed to be compatible with XFS.
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index 0ca2ac62e534..3aa928ec527a 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -18,8 +18,6 @@
+ 
+ /* the 32 bit compat definitions with int argument */
+ #define REISERFS_IOC32_UNPACK		_IOW(0xCD, 1, int)
+-#define REISERFS_IOC32_GETFLAGS		FS_IOC32_GETFLAGS
+-#define REISERFS_IOC32_SETFLAGS		FS_IOC32_SETFLAGS
+ #define REISERFS_IOC32_GETVERSION	FS_IOC32_GETVERSION
+ #define REISERFS_IOC32_SETVERSION	FS_IOC32_SETVERSION
+ 
+@@ -3408,7 +3406,10 @@ __u32 r5_hash(const signed char *msg, int len);
+ #define SPARE_SPACE 500
+ 
+ /* prototypes from ioctl.c */
++int reiserfs_fileattr_get(struct dentry *dentry, struct fileattr *fa);
++int reiserfs_fileattr_set(struct user_namespace *mnt_userns,
++			  struct dentry *dentry, struct fileattr *fa);
+ long reiserfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
+ long reiserfs_compat_ioctl(struct file *filp,
+ 		   unsigned int cmd, unsigned long arg);
+-int reiserfs_unpack(struct inode *inode, struct file *filp);
++int reiserfs_unpack(struct inode *inode);
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index 1b9c7a387dc7..3ffafc73acf0 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -2408,7 +2408,7 @@ static int reiserfs_quota_on(struct super_block *sb, int type, int format_id,
+ 	 * IO to work
+ 	 */
+ 	if (!(REISERFS_I(inode)->i_flags & i_nopack_mask)) {
+-		err = reiserfs_unpack(inode, NULL);
++		err = reiserfs_unpack(inode);
+ 		if (err) {
+ 			reiserfs_warning(sb, "super-6520",
+ 				"Unpacking tail of quota file failed"
 -- 
 2.30.2
 
