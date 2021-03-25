@@ -2,112 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 98C8F3494A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 15:53:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB4EA3494CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 16:01:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230115AbhCYOwn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Mar 2021 10:52:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55942 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230372AbhCYOwk (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Mar 2021 10:52:40 -0400
-Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C8FDC06175F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Mar 2021 07:52:40 -0700 (PDT)
-Received: by mail-vs1-xe2b.google.com with SMTP id h25so1032442vso.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Mar 2021 07:52:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GCLGgJAKjLjI5ddp5Jx+57wqu5xxECcnAuNRZawig58=;
-        b=mx+29ho7ycm8+QllWhmew29rye/m0r1+H3mer3m0RGn23pJdOCvHFW7tk1Fm3/mgSi
-         p0CTehFJAES/LIFMxlsbGfeakvD4Qqdca1yEVEtOY6pMrlC1zFHKpmzBgwtjpZ0I9SGB
-         2wNZYUBJ5REOohRaEbG0TV4pz3QKjR9Su6LrQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GCLGgJAKjLjI5ddp5Jx+57wqu5xxECcnAuNRZawig58=;
-        b=Dg/dZV0B0I+6mAgMltR/qiMt/nqcQtEyywkoSZQ8ispCiYsRDhKvgPFuQ0wsaf0Eo4
-         Uo1OPLwYhuE5tlWwamPmxhN7QwSY/KlpqYJxBNtsBpLkTqlCxKJsL9ZBfDSb6+3zMnDb
-         8/q3pXUHgZEsK8REQ1LcIE75Ohm1vWsVtbAIvQrXd0u17v+sjqG905qLvkR6cifdSVI0
-         j1qx8+GQYGVN0188MfCMVqrc1QHwn/vitIm35sdzFon7PUGe/9huAPgtN6lu9CGQHLM5
-         oV+dlLiRBeRMqZjMk445tepf7ldduNpHKHHf4rSdpznXWyfIAKi+XJmOIicrMVs6BF3A
-         czKw==
-X-Gm-Message-State: AOAM530jSvl/0TZvMj7RdtMzrJcvQK6vFUz0qcMtgGohe2OTc6CFpFYP
-        15ukonjaG8HpN+mgNmU/10/6bqBBMoTOyEtyZDXwtg==
-X-Google-Smtp-Source: ABdhPJyMZ7+hzDX13eHsxwbk6uA8EAhPRCptc8WwFFINhCjTxMFXxulI+bsZ5Lz39az8S8z1BdRvm/p9QNhGlC3MkAc=
-X-Received: by 2002:a67:ffc1:: with SMTP id w1mr5408105vsq.47.1616683959214;
- Thu, 25 Mar 2021 07:52:39 -0700 (PDT)
+        id S230229AbhCYPAq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Mar 2021 11:00:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37092 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229869AbhCYPA1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Mar 2021 11:00:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 24CB9AA55;
+        Thu, 25 Mar 2021 15:00:26 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id A5DEE1E4415; Thu, 25 Mar 2021 16:00:25 +0100 (CET)
+Date:   Thu, 25 Mar 2021 16:00:25 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Hugh Dickins <hughd@google.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] shmem: allow reporting fanotify events with file
+ handles on tmpfs
+Message-ID: <20210325150025.GF13673@quack2.suse.cz>
+References: <20210322173944.449469-1-amir73il@gmail.com>
+ <20210322173944.449469-3-amir73il@gmail.com>
 MIME-Version: 1.0
-References: <20210203124112.1182614-1-mszeredi@redhat.com> <20210203124112.1182614-2-mszeredi@redhat.com>
- <YFk08XPc2oNWoUWT@gmail.com>
-In-Reply-To: <YFk08XPc2oNWoUWT@gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 25 Mar 2021 15:52:28 +0100
-Message-ID: <CAJfpeguhAfLiTi0DdYzU-y98TCJZn2GuHBJhkXGLWRCBU2GfSg@mail.gmail.com>
-Subject: Re: [PATCH 01/18] vfs: add miscattr ops
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        David Sterba <dsterba@suse.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Joel Becker <jlbec@evilplan.org>,
-        Matthew Garrett <matthew.garrett@nebula.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Richard Weinberger <richard@nod.at>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Tyler Hicks <code@tyhicks.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210322173944.449469-3-amir73il@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 23, 2021 at 1:24 AM Eric Biggers <ebiggers@kernel.org> wrote:
+On Mon 22-03-21 19:39:44, Amir Goldstein wrote:
+> Since kernel v5.1, fanotify_init(2) supports the flag FAN_REPORT_FID
+> for identifying objects using file handle and fsid in events.
+> 
+> fanotify_mark(2) fails with -ENODEV when trying to set a mark on
+> filesystems that report null f_fsid in stasfs(2).
+> 
+> Use the digest of uuid as f_fsid for tmpfs to uniquely identify tmpfs
+> objects as best as possible and allow setting an fanotify mark that
+> reports events with file handles on tmpfs.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-> > +int vfs_miscattr_set(struct dentry *dentry, struct miscattr *ma)
-> > +{
-> > +     struct inode *inode = d_inode(dentry);
-> > +     struct miscattr old_ma = {};
-> > +     int err;
-> > +
-> > +     if (d_is_special(dentry))
-> > +             return -ENOTTY;
-> > +
-> > +     if (!inode->i_op->miscattr_set)
-> > +             return -ENOIOCTLCMD;
-> > +
-> > +     if (!inode_owner_or_capable(inode))
-> > +             return -EPERM;
->
-> Shouldn't this be EACCES, not EPERM?
+Hugh, any opinion on this patch?
 
-$ git diff master.. | grep -C1 inode_owner_or_capable | grep
-"^-.*\(EPERM\|EACCES\)" | cut -d- -f3 | sort | uniq -c
-     12 EACCES;
-      4 EPERM;
+								Honza
 
-So EACCES would win if this was a democracy.  However:
-
-"[EACCES]
-Permission denied. An attempt was made to access a file in a way
-forbidden by its file access permissions."
-
-"[EPERM]
-Operation not permitted. An attempt was made to perform an operation
-limited to processes with appropriate privileges or to the owner of a
-file or other resource."
-
-The EPERM description matches the semantics of
-inode_owner_or_capable() exactly.  It's a pretty clear choice.
-
-Thanks,
-Miklos
+> ---
+>  mm/shmem.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index b2db4ed0fbc7..162d8f8993bb 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2846,6 +2846,9 @@ static int shmem_statfs(struct dentry *dentry, struct kstatfs *buf)
+>  		buf->f_ffree = sbinfo->free_inodes;
+>  	}
+>  	/* else leave those fields 0 like simple_statfs */
+> +
+> +	buf->f_fsid = uuid_to_fsid(dentry->d_sb->s_uuid.b);
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.25.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
