@@ -2,166 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DD51349238
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 13:40:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 361CA34929F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 14:03:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230459AbhCYMkZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Mar 2021 08:40:25 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2742 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230182AbhCYMkL (ORCPT
+        id S230163AbhCYNDU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Mar 2021 09:03:20 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:49047 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230248AbhCYNCt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Mar 2021 08:40:11 -0400
-Received: from fraeml707-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4F5kzj43rfz6822r;
-        Thu, 25 Mar 2021 20:33:37 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml707-chm.china.huawei.com (10.206.15.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Thu, 25 Mar 2021 13:40:08 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2106.013;
- Thu, 25 Mar 2021 13:40:08 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-CC:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "mjg59@google.com" <mjg59@google.com>,
-        "agruenba@redhat.com" <agruenba@redhat.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v4 08/11] evm: Allow setxattr() and setattr() for
- unmodified metadata
-Thread-Topic: [PATCH v4 08/11] evm: Allow setxattr() and setattr() for
- unmodified metadata
-Thread-Index: AQHXEdMs3dcvjnFQvUyUTwTeWmdH4qqTStlAgAFhU4CAAAIZAIAAFakw
-Date:   Thu, 25 Mar 2021 12:40:08 +0000
-Message-ID: <5e724bfe526f4069ba4cb7b99e538856@huawei.com>
-References: <20210305151923.29039-1-roberto.sassu@huawei.com>
- <20210305151923.29039-9-roberto.sassu@huawei.com>
- <ad33c998ee834a588e0ca1a31ee2a530@huawei.com>
- <20210325121341.q2ufjhnqe3osjc7c@wittgenstein>
- <20210325122112.htkwkt3emura5day@wittgenstein>
-In-Reply-To: <20210325122112.htkwkt3emura5day@wittgenstein>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.4.143]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 25 Mar 2021 09:02:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616677368;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FwWZJPBaAmN+VY9ozn1oVCEcu1CBKTJa99Q0BFn4OQI=;
+        b=cGOygGXRS+CClPZ+WJnCEx98dFdpRMQmbSydrbGYRWZzzulIroljQSp5zqVMZ58/BUnzVw
+        1oWYuFoaNQtkQ0jy/Cwb563sitLjEScI7p89ihFihD5Avo8z33PLj3AVcy6WuW5YTPhiJO
+        k/zBwZo7LwT9zapsriTxXVjMI5ndVio=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-515-t0Ss08QpONaeHfc-Em4w5Q-1; Thu, 25 Mar 2021 09:02:43 -0400
+X-MC-Unique: t0Ss08QpONaeHfc-Em4w5Q-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 84AEE801817;
+        Thu, 25 Mar 2021 13:02:40 +0000 (UTC)
+Received: from [10.36.115.72] (ovpn-115-72.ams2.redhat.com [10.36.115.72])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C7EE25D9CA;
+        Thu, 25 Mar 2021 13:02:35 +0000 (UTC)
+To:     Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
+        linux-nvdimm@lists.01.org
+Cc:     Ira Weiny <ira.weiny@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <161604048257.1463742.1374527716381197629.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Subject: Re: [PATCH 0/3] mm, pmem: Force unmap pmem on surprise remove
+Message-ID: <22545105-d3f1-23b1-948c-8481af839f21@redhat.com>
+Date:   Thu, 25 Mar 2021 14:02:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <161604048257.1463742.1374527716381197629.stgit@dwillia2-desk3.amr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBGcm9tOiBDaHJpc3RpYW4gQnJhdW5lciBbbWFpbHRvOmNocmlzdGlhbi5icmF1bmVyQHVidW50
-dS5jb21dDQo+IFNlbnQ6IFRodXJzZGF5LCBNYXJjaCAyNSwgMjAyMSAxOjIxIFBNDQo+IE9uIFRo
-dSwgTWFyIDI1LCAyMDIxIGF0IDAxOjEzOjQxUE0gKzAxMDAsIENocmlzdGlhbiBCcmF1bmVyIHdy
-b3RlOg0KPiA+IE9uIFRodSwgTWFyIDI1LCAyMDIxIGF0IDEwOjUzOjQzQU0gKzAwMDAsIFJvYmVy
-dG8gU2Fzc3Ugd3JvdGU6DQo+ID4gPiA+IEZyb206IFJvYmVydG8gU2Fzc3UNCj4gPiA+ID4gU2Vu
-dDogRnJpZGF5LCBNYXJjaCA1LCAyMDIxIDQ6MTkgUE0NCj4gPiA+ID4gV2l0aCB0aGUgcGF0Y2gg
-dG8gYWxsb3cgeGF0dHIvYXR0ciBvcGVyYXRpb25zIGlmIGEgcG9ydGFibGUgc2lnbmF0dXJlDQo+
-ID4gPiA+IHZlcmlmaWNhdGlvbiBmYWlscywgY3AgYW5kIHRhciBjYW4gY29weSBhbGwgeGF0dHJz
-L2F0dHJzIHNvIHRoYXQgYXQgdGhlDQo+ID4gPiA+IGVuZCBvZiB0aGUgcHJvY2VzcyB2ZXJpZmlj
-YXRpb24gc3VjY2VlZHMuDQo+ID4gPiA+DQo+ID4gPiA+IEhvd2V2ZXIsIGl0IG1pZ2h0IGhhcHBl
-biB0aGF0IHRoZSB4YXR0cnMvYXR0cnMgYXJlIGFscmVhZHkgc2V0IHRvIHRoZQ0KPiA+ID4gPiBj
-b3JyZWN0IHZhbHVlICh0YWtlbiBhdCBzaWduaW5nIHRpbWUpIGFuZCBzaWduYXR1cmUgdmVyaWZp
-Y2F0aW9uDQo+IHN1Y2NlZWRzDQo+ID4gPiA+IGJlZm9yZSB0aGUgY29weSBoYXMgY29tcGxldGVk
-LiBGb3IgZXhhbXBsZSwgYW4gYXJjaGl2ZSBtaWdodA0KPiBjb250YWlucyBmaWxlcw0KPiA+ID4g
-PiBvd25lZCBieSByb290IGFuZCB0aGUgYXJjaGl2ZSBpcyBleHRyYWN0ZWQgYnkgcm9vdC4NCj4g
-PiA+ID4NCj4gPiA+ID4gVGhlbiwgc2luY2UgcG9ydGFibGUgc2lnbmF0dXJlcyBhcmUgaW1tdXRh
-YmxlLCBhbGwgc3Vic2VxdWVudA0KPiBvcGVyYXRpb25zDQo+ID4gPiA+IGZhaWwgKGUuZy4gZmNo
-b3duKCkpLCBldmVuIGlmIHRoZSBvcGVyYXRpb24gaXMgbGVnaXRpbWF0ZSAoZG9lcyBub3QgYWx0
-ZXINCj4gPiA+ID4gdGhlIGN1cnJlbnQgdmFsdWUpLg0KPiA+ID4gPg0KPiA+ID4gPiBUaGlzIHBh
-dGNoIGF2b2lkcyB0aGlzIHByb2JsZW0gYnkgcmVwb3J0aW5nIHN1Y2Nlc3NmdWwgb3BlcmF0aW9u
-IHRvDQo+IHVzZXINCj4gPiA+ID4gc3BhY2Ugd2hlbiB0aGF0IG9wZXJhdGlvbiBkb2VzIG5vdCBh
-bHRlciB0aGUgY3VycmVudCB2YWx1ZSBvZg0KPiB4YXR0cnMvYXR0cnMuDQo+ID4gPiA+DQo+ID4g
-PiA+IFNpZ25lZC1vZmYtYnk6IFJvYmVydG8gU2Fzc3UgPHJvYmVydG8uc2Fzc3VAaHVhd2VpLmNv
-bT4NCj4gPiA+ID4gLS0tDQo+ID4gPiA+ICBzZWN1cml0eS9pbnRlZ3JpdHkvZXZtL2V2bV9tYWlu
-LmMgfCA5Ng0KPiA+ID4gPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gPiA+
-ICAxIGZpbGUgY2hhbmdlZCwgOTYgaW5zZXJ0aW9ucygrKQ0KPiA+ID4gPg0KPiA+ID4gPiBkaWZm
-IC0tZ2l0IGEvc2VjdXJpdHkvaW50ZWdyaXR5L2V2bS9ldm1fbWFpbi5jDQo+ID4gPiA+IGIvc2Vj
-dXJpdHkvaW50ZWdyaXR5L2V2bS9ldm1fbWFpbi5jDQo+ID4gPiA+IGluZGV4IGVhYjUzNmZhMjYw
-Zi4uYTA3NTE2ZGNiOTIwIDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9zZWN1cml0eS9pbnRlZ3JpdHkv
-ZXZtL2V2bV9tYWluLmMNCj4gPiA+ID4gKysrIGIvc2VjdXJpdHkvaW50ZWdyaXR5L2V2bS9ldm1f
-bWFpbi5jDQo+ID4gPiA+IEBAIC0xOCw2ICsxOCw3IEBADQo+ID4gPiA+ICAjaW5jbHVkZSA8bGlu
-dXgvaW50ZWdyaXR5Lmg+DQo+ID4gPiA+ICAjaW5jbHVkZSA8bGludXgvZXZtLmg+DQo+ID4gPiA+
-ICAjaW5jbHVkZSA8bGludXgvbWFnaWMuaD4NCj4gPiA+ID4gKyNpbmNsdWRlIDxsaW51eC9wb3Np
-eF9hY2xfeGF0dHIuaD4NCj4gPiA+ID4NCj4gPiA+ID4gICNpbmNsdWRlIDxjcnlwdG8vaGFzaC5o
-Pg0KPiA+ID4gPiAgI2luY2x1ZGUgPGNyeXB0by9oYXNoX2luZm8uaD4NCj4gPiA+ID4gQEAgLTMy
-OCw2ICszMjksNzkgQEAgc3RhdGljIGVudW0gaW50ZWdyaXR5X3N0YXR1cw0KPiA+ID4gPiBldm1f
-dmVyaWZ5X2N1cnJlbnRfaW50ZWdyaXR5KHN0cnVjdCBkZW50cnkgKmRlbnRyeSkNCj4gPiA+ID4g
-IAlyZXR1cm4gZXZtX3ZlcmlmeV9obWFjKGRlbnRyeSwgTlVMTCwgTlVMTCwgMCwgTlVMTCk7DQo+
-ID4gPiA+ICB9DQo+ID4gPiA+DQo+ID4gPiA+ICsvKg0KPiA+ID4gPiArICogZXZtX3hhdHRyX2Fj
-bF9jaGFuZ2UgLSBjaGVjayBpZiBwYXNzZWQgQUNMIGNoYW5nZXMgdGhlIGlub2RlDQo+IG1vZGUN
-Cj4gPiA+ID4gKyAqIEBkZW50cnk6IHBvaW50ZXIgdG8gdGhlIGFmZmVjdGVkIGRlbnRyeQ0KPiA+
-ID4gPiArICogQHhhdHRyX25hbWU6IHJlcXVlc3RlZCB4YXR0cg0KPiA+ID4gPiArICogQHhhdHRy
-X3ZhbHVlOiByZXF1ZXN0ZWQgeGF0dHIgdmFsdWUNCj4gPiA+ID4gKyAqIEB4YXR0cl92YWx1ZV9s
-ZW46IHJlcXVlc3RlZCB4YXR0ciB2YWx1ZSBsZW5ndGgNCj4gPiA+ID4gKyAqDQo+ID4gPiA+ICsg
-KiBDaGVjayBpZiBwYXNzZWQgQUNMIGNoYW5nZXMgdGhlIGlub2RlIG1vZGUsIHdoaWNoIGlzIHBy
-b3RlY3RlZA0KPiBieQ0KPiA+ID4gPiBFVk0uDQo+ID4gPiA+ICsgKg0KPiA+ID4gPiArICogUmV0
-dXJucyAxIGlmIHBhc3NlZCBBQ0wgY2F1c2VzIGlub2RlIG1vZGUgY2hhbmdlLCAwIG90aGVyd2lz
-ZS4NCj4gPiA+ID4gKyAqLw0KPiA+ID4gPiArc3RhdGljIGludCBldm1feGF0dHJfYWNsX2NoYW5n
-ZShzdHJ1Y3QgZGVudHJ5ICpkZW50cnksIGNvbnN0IGNoYXINCj4gPiA+ID4gKnhhdHRyX25hbWUs
-DQo+ID4gPiA+ICsJCQkJY29uc3Qgdm9pZCAqeGF0dHJfdmFsdWUsIHNpemVfdA0KPiA+ID4gPiB4
-YXR0cl92YWx1ZV9sZW4pDQo+ID4gPiA+ICt7DQo+ID4gPiA+ICsJdW1vZGVfdCBtb2RlOw0KPiA+
-ID4gPiArCXN0cnVjdCBwb3NpeF9hY2wgKmFjbCA9IE5VTEwsICphY2xfcmVzOw0KPiA+ID4gPiAr
-CXN0cnVjdCBpbm9kZSAqaW5vZGUgPSBkX2JhY2tpbmdfaW5vZGUoZGVudHJ5KTsNCj4gPiA+ID4g
-KwlpbnQgcmM7DQo+ID4gPiA+ICsNCj4gPiA+ID4gKwkvKiBVSUQvR0lEIGluIEFDTCBoYXZlIGJl
-ZW4gYWxyZWFkeSBjb252ZXJ0ZWQgZnJvbSB1c2VyIHRvIGluaXQgbnMNCj4gPiA+ID4gKi8NCj4g
-PiA+ID4gKwlhY2wgPSBwb3NpeF9hY2xfZnJvbV94YXR0cigmaW5pdF91c2VyX25zLCB4YXR0cl92
-YWx1ZSwNCj4gPiA+ID4geGF0dHJfdmFsdWVfbGVuKTsNCj4gPiA+ID4gKwlpZiAoIWFjbCkNCj4g
-PiA+DQo+ID4gPiBCYXNlZCBvbiBNaW1pJ3MgcmV2aWV3LCBJIHdpbGwgY2hhbmdlIHRoaXMgdG86
-DQo+ID4gPg0KPiA+ID4gaWYgKElTX0VSUl9PUl9OVUxMKGFjbCkpDQo+ID4gPg0KPiA+ID4gPiAr
-CQlyZXR1cm4gMTsNCj4gPiA+ID4gKw0KPiA+ID4gPiArCWFjbF9yZXMgPSBhY2w7DQo+ID4gPiA+
-ICsJcmMgPSBwb3NpeF9hY2xfdXBkYXRlX21vZGUoJmluaXRfdXNlcl9ucywgaW5vZGUsICZtb2Rl
-LA0KPiA+ID4gPiAmYWNsX3Jlcyk7DQo+ID4gPg0KPiA+ID4gQWJvdXQgdGhpcyBwYXJ0LCBwcm9i
-YWJseSBpdCBpcyBub3QgY29ycmVjdC4NCj4gPiA+DQo+ID4gPiBJJ20gd3JpdGluZyBhIHRlc3Qg
-Zm9yIHRoaXMgcGF0Y2ggdGhhdCBjaGVja3MgaWYgb3BlcmF0aW9ucw0KPiA+ID4gdGhhdCBkb24n
-dCBjaGFuZ2UgdGhlIGZpbGUgbW9kZSBzdWNjZWVkIGFuZCB0aG9zZSB0aGF0DQo+ID4gPiBkbyBm
-YWlsLg0KPiA+ID4NCj4gPiA+IG1vdW50LWlkbWFwcGVkIC0tbWFwLW1vdW50IGI6MzAwMTowOjEg
-L21udCAvbW50LWlkbWFwcGVkDQo+ID4gPiBwdXNoZCAvbW50DQo+ID4gPiBlY2hvICJ0ZXN0IiA+
-IHRlc3QtZmlsZQ0KPiA+ID4gY2hvd24gMzAwMSB0ZXN0LWZpbGUNCj4gPiA+IGNoZ3JwIDMwMDEg
-dGVzdC1maWxlDQo+ID4gPiBjaG1vZCAyNjQ0IHRlc3QtZmlsZQ0KPiA+ID4gPGNoZWNrIGVuYWJs
-ZWQ+DQo+ID4gPiBzZXRmYWNsIC0tc2V0IHU6OnJ3LGc6OnIsbzo6cixtOnIgdGVzdC1maWxlIChl
-eHBlY3RlZCB0byBzdWNjZWVkLCBjYWxsZXIgaGFzDQo+IENBUF9GU0VUSUQsIHNvIFNfSVNHSUQg
-aXMgbm90IGRyb3BwZWQpDQo+ID4gPiBzZXRmYWNsIC0tc2V0IHU6OnJ3LGc6OnIsbzo6cixtOnJ3
-IHRlc3QtZmlsZSAoZXhwZWN0ZWQgdG8gZmFpbCkNCj4gPiA+IHB1c2hkIC9tbnQtaWRtYXBwZWQN
-Cj4gPiA+IGNhcHNoIC0tZHJvcD1jYXBfZnNldGlkIC0tIC1jIHNldGZhY2wgLS1zZXQgdTo6cncs
-Zzo6cixvOjpyIHRlc3QtZmlsZQ0KPiAoZXhwZWN0ZWQgdG8gc3VjY2VlZCwgY2FsbGVyIGlzIGlu
-IHRoZSBvd25pbmcgZ3JvdXAgb2YgdGVzdC1maWxlLCBzbyBTX0lTR0lEIGlzDQo+IG5vdCBkcm9w
-cGVkKQ0KPiA+ID4NCj4gPiA+IEFmdGVyIGFkZGluZyBhIGRlYnVnIGxpbmUgaW4gcG9zaXhfYWNs
-X3VwZGF0ZV9tb2RlKCk6DQo+ID4gPiBwcmludGsoIiVzOiAlZCglZCkgJWRcbiIsIF9fZnVuY19f
-LA0KPiBpbl9ncm91cF9wKGlfZ2lkX2ludG9fbW50KG1udF91c2VybnMsIGlub2RlKSksDQo+IF9f
-a2dpZF92YWwoaV9naWRfaW50b19tbnQobW50X3VzZXJucywgaW5vZGUpKSwNCj4gY2FwYWJsZV93
-cnRfaW5vZGVfdWlkZ2lkKG1udF91c2VybnMsIGlub2RlLCBDQVBfRlNFVElEKSk7DQo+ID4gPg0K
-PiA+ID4gd2l0aG91dCBwYXNzaW5nIG1udF91c2VybnM6DQo+ID4gPiBbICA3NDguMjYyNTgyXSBz
-ZXRmYWNsIC0tc2V0IHU6OnJ3LGc6OnIsbzo6cixtOnIgdGVzdC1maWxlDQo+ID4gPiBbICA3NDgu
-MjY4MDIxXSBwb3NpeF9hY2xfdXBkYXRlX21vZGU6IDAoMzAwMSkgMQ0KPiA+ID4gWyAgNzQ4LjI2
-ODAzNV0gcG9zaXhfYWNsX3VwZGF0ZV9tb2RlOiAwKDMwMDEpIDENCj4gPiA+IFsgIDc0OC4yNjg1
-NzBdIHNldGZhY2wgLS1zZXQgdTo6cncsZzo6cixvOjpyLG06cncgdGVzdC1maWxlDQo+ID4gPiBb
-ICA3NDguMjc0MTkzXSBwb3NpeF9hY2xfdXBkYXRlX21vZGU6IDAoMzAwMSkgMQ0KPiA+ID4gWyAg
-NzQ4LjI3OTE5OF0gY2Fwc2ggLS1kcm9wPWNhcF9mc2V0aWQgLS0gLWMgc2V0ZmFjbCAtLXNldCB1
-OjpydyxnOjpyLG86OnINCj4gdGVzdC1maWxlDQo+ID4gPiBbICA3NDguMjg3ODk0XSBwb3NpeF9h
-Y2xfdXBkYXRlX21vZGU6IDAoMzAwMSkgMA0KPiA+ID4NCj4gPiA+IHBhc3NpbmcgbW50X3VzZXJu
-czoNCj4gPiA+IFsgICA4MS4xNTk3NjZdIHNldGZhY2wgLS1zZXQgdTo6cncsZzo6cixvOjpyLG06
-ciB0ZXN0LWZpbGUNCj4gPiA+IFsgICA4MS4xNjUyMDddIHBvc2l4X2FjbF91cGRhdGVfbW9kZTog
-MCgzMDAxKSAxDQo+ID4gPiBbICAgODEuMTY1MjI2XSBwb3NpeF9hY2xfdXBkYXRlX21vZGU6IDAo
-MzAwMSkgMQ0KPiA+ID4gWyAgIDgxLjE2NTczMl0gc2V0ZmFjbCAtLXNldCB1OjpydyxnOjpyLG86
-OnIsbTpydyB0ZXN0LWZpbGUNCj4gPiA+IFsgICA4MS4xNzA5NzhdIHBvc2l4X2FjbF91cGRhdGVf
-bW9kZTogMCgzMDAxKSAxDQo+ID4gPiBbICAgODEuMTc2MDE0XSBjYXBzaCAtLWRyb3A9Y2FwX2Zz
-ZXRpZCAtLSAtYyBzZXRmYWNsIC0tc2V0IHU6OnJ3LGc6OnIsbzo6cg0KPiB0ZXN0LWZpbGUNCj4g
-PiA+IFsgICA4MS4xODQ2NDhdIHBvc2l4X2FjbF91cGRhdGVfbW9kZTogMSgwKSAwDQo+ID4gPiBb
-ICAgODEuMTg0NjYzXSBwb3NpeF9hY2xfdXBkYXRlX21vZGU6IDEoMCkgMA0KPiA+ID4NCj4gPiA+
-IFRoZSBkaWZmZXJlbmNlIGlzIHRoYXQsIGJ5IHBhc3NpbmcgbW50X3VzZXJucywgdGhlIGNhbGxl
-ciAocm9vdCkgaXMNCj4gPiA+IGluIHRoZSBvd25pbmcgZ3JvdXAgb2YgdGhlIGZpbGUgKDMwMDEg
-LT4gMCkuIFdpdGhvdXQgcGFzc2luZyBtbnRfdXNlcm5zLA0KPiA+ID4gaXQgaXMgbm90ICgzMDAx
-IC0+IDMwMDEpLg0KPiA+ID4NCj4gPiA+IENocmlzdGlhbiwgQW5kcmVhcywgY291bGQgeW91IGNv
-bmZpcm0gdGhhdCB0aGlzIGlzIGNvcnJlY3Q/DQo+ID4NCj4gPiBIZXkgUm9iZXJ0LA0KPiANCj4g
-cy9Sb2JlcnQvUm9iZXJ0by8NCj4gDQo+IFNvcnJ5IGZvciB0aGUgdHlwby4NCg0KTm8gd29ycmll
-cyENCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVTIER1ZXNzZWxkb3JmIEdtYkgsIEhS
-QiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIExpIEppYW4sIFNoaSBZYW5saQ0K
+On 18.03.21 05:08, Dan Williams wrote:
+> Summary:
+> 
+> A dax_dev can be unbound from its driver at any time. Unbind can not
+> fail. The driver-core will always trigger ->remove() and the result from
+> ->remove() is ignored. After ->remove() the driver-core proceeds to tear
+> down context. The filesystem-dax implementation can leave pfns mapped
+> after ->remove() if it is triggered while the filesystem is mounted.
+> Security and data-integrity is forfeit if the dax_dev is repurposed for
+> another security domain (new filesystem or change device modes), or if
+> the dax_dev is physically replaced. CXL is a hotplug bus that makes
+> dax_dev physical replace a real world prospect.
+> 
+> All dax_dev pfns must be unmapped at remove. Detect the "remove while
+> mounted" case and trigger memory_failure() over the entire dax_dev
+> range.
+> 
+> Details:
+> 
+> The get_user_pages_fast() path expects all synchronization to be handled
+> by the pattern of checking for pte presence, taking a page reference,
+> and then validating that the pte was stable over that event. The
+> gup-fast path for devmap / DAX pages additionally attempts to take/hold
+> a live reference against the hosting pgmap over the page pin. The
+> rational for the pgmap reference is to synchronize against a dax-device
+> unbind / ->remove() event, but that is unnecessary if pte invalidation
+> is guaranteed in the ->remove() path.
+> 
+> Global dax-device pte invalidation *does* happen when the device is in
+> raw "device-dax" mode where there is a single shared inode to unmap at
+> remove, but the filesystem-dax path has a large number of actively
+> mapped inodes unknown to the driver at ->remove() time. So, that unmap
+> does not happen today for filesystem-dax. However, as Jason points out,
+> that unmap / invalidation *needs* to happen not only to cleanup
+> get_user_pages_fast() semantics, but in a future (see CXL) where dax_dev
+> ->remove() is correlated with actual physical removal / replacement the
+> implications of allowing a physical pfn to be exchanged without tearing
+> down old mappings are severe (security and data-integrity).
+> 
+> What is not in this patch set is coordination with the dax_kmem driver
+> to trigger memory_failure() when the dax_dev is onlined as "System
+> RAM". The remove_memory() API was built with the assumption that
+> platform firmware negotiates all removal requests and the OS has a
+> chance to say "no". This is why dax_kmem today simply leaks
+> request_region() to burn that physical address space for any other
+> usage until the next reboot on a manual unbind event if the memory can't
+> be offlined. However a future to make sure that remove_memory() succeeds
+> after memory_failure() of the same range seems a better semantic than
+> permanently burning physical address space.
+
+I'd have similar requirements for virtio-mem on forced driver unloading 
+(although less of an issue, because in contrast to cxl, it doesn't 
+really happen in sane environments). However, I'm afraid there are 
+absolutely no guarantees that you can actually offline+rip out memory 
+exposed to the buddy, at least in the general case.
+
+I guess it might be possible to some degree if memory was onlined to 
+ZONE_MOVABLE (there are still no guarantees, though), however, bets are 
+completely off with ZONE_NORMAL. Just imagine the memmap of one dax 
+device being allocated from another dax device. You cannot possibly 
+invalidate via memory_failure() and rip out the memory without crashing 
+the whole system afterwards.
+
+-- 
+Thanks,
+
+David / dhildenb
+
