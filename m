@@ -2,106 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 78481348837
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 06:06:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FEBD348848
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 06:19:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229977AbhCYFF3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Mar 2021 01:05:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41794 "EHLO
+        id S229590AbhCYFSh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Mar 2021 01:18:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229914AbhCYFFT (ORCPT
+        with ESMTP id S229493AbhCYFST (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Mar 2021 01:05:19 -0400
-Received: from ustc.edu.cn (email6.ustc.edu.cn [IPv6:2001:da8:d800::8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BA0A9C06174A;
-        Wed, 24 Mar 2021 22:05:08 -0700 (PDT)
+        Thu, 25 Mar 2021 01:18:19 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 343CBC06174A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Mar 2021 22:18:19 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id u19so628074pgh.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Mar 2021 22:18:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mail.ustc.edu.cn; s=dkim; h=Received:Date:From:To:Cc:Subject:
-        In-Reply-To:References:Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Message-ID; bh=Zmxu5mXYLbKAJYF01aL8kRMb6lIz4CewMqsk
-        cpMGitY=; b=C62VsWKyXF+/cRtF5FYiAt+ePDmBBCPbIXoMjhksUwUhaDf+4cuv
-        PtnunBtcLk74zF1PnGZoGEPi773SAghEXxghMOKu4ThcVvXUFGu6Cn3HIsfaEQ9X
-        osMZUsBklF1v1MylWGtQta+QQwoZH78/1rdF3q88QU3fKT1gcY0akhA=
-Received: by ajax-webmail-newmailweb.ustc.edu.cn (Coremail) ; Thu, 25 Mar
- 2021 13:04:54 +0800 (GMT+08:00)
-X-Originating-IP: [202.38.69.14]
-Date:   Thu, 25 Mar 2021 13:04:54 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From:   lyl2019@mail.ustc.edu.cn
-To:     "Vivek Goyal" <vgoyal@redhat.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hu,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH] fuse: Fix a potential double free in
- virtio_fs_get_tree
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT3.0.8 dev build
- 20190610(cb3344cf) Copyright (c) 2002-2021 www.mailtech.cn ustc-xl
-In-Reply-To: <20210323171003.GC483930@redhat.com>
-References: <20210323051831.13575-1-lyl2019@mail.ustc.edu.cn>
- <20210323171003.GC483930@redhat.com>
-X-SendMailWithSms: false
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I+FWj6Hf+dd6h4E3BP2IBzagIqQQDvwZ4ToIMDO5/Z8=;
+        b=HK/gIPDVvBDJhFuyEmwfS35eTr6KF6wDJvNgHK1+iG61S3NFxBtyZti28W0tSkjPUk
+         E6NiID7Ry+S235L4XryGcMzfF8sF0U208+/OruC7DhenX6HWurVqsxShYrvTVxVWBM29
+         6UFQOncwFs2WD/kXLzVtwRnQ6SYElYB3+fprE78+Yf8GaXPRjHCOW+aj2RCKUdmx6HI+
+         z4naA1S+k/4xNXgU0KDEYzMNuo4nWF8K1Atz8DGWjOkAdCTgG7zd7904sHW83gfcjXjg
+         NW+UKcxWXn0fzPi7MfwabywBNC3z7gSTjPDdaDh5F7tOLZzF2jd9TVIe5FRGxGQ2N5IQ
+         dnew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I+FWj6Hf+dd6h4E3BP2IBzagIqQQDvwZ4ToIMDO5/Z8=;
+        b=RCsfzhjUc9v+iLMZxLIuV7J32eG+j+9qoeED48tB9ZLZQH2zbqklcLsyaebMWvIzwO
+         mLVnoASzyeJTjKB9hzLaXW1Gh07N8fuVsDHhBwTII4s0McTdO0WCKH7MZq/fM8GKUTh8
+         uqzeWv/oPuOoi49YDm33Zp2zXqjxnsOen4eRNS3MFJXNxxkjW9YbVwRlg7JUn9155PXy
+         AMYqDAW3NgyoRgmuQQzpPafUvmI9wNb2aPt58XeRqDfoMC+AtZhoFKQWN9mUBHV2EUKH
+         tnL78wAEhoyEHq0yfB9HBoVNPJ8KG7V09MDpj/B2s4oJTInr9hypdmPFekmcHdFXEYqi
+         +iHQ==
+X-Gm-Message-State: AOAM532679nXep9AdDlmWS5iw2D4gr7ouV7oV/y1xRjmSulRltB2OcZG
+        sEOtE+JTAhA/NySWQbHh65ZjBObTSUAoHS3ix9JTOfYnQ8FSz4kW
+X-Google-Smtp-Source: ABdhPJzURfHQIbEBC2BERiZzIrhBy6J7YK+04JNLB6WYh45GG+YG1q+NNJu/oz0vcQW+i1pyhaVn5AM96gOKZJGDFPg=
+X-Received: by 2002:a63:1562:: with SMTP id 34mr5814651pgv.71.1616649498504;
+ Wed, 24 Mar 2021 22:18:18 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <769a5512.127aa.17867c56a27.Coremail.lyl2019@mail.ustc.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: LkAmygDX3U32GVxgVTk9AA--.1W
-X-CM-SenderInfo: ho1ojiyrz6zt1loo32lwfovvfxof0/1tbiAQsKBlQhn5ZgeQACsh
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-        daVFxhVjvjDU=
+References: <20210302034928.3761098-1-varmam@google.com> <87pmzw7gvy.fsf@nanos.tec.linutronix.de>
+ <CAMyCerL7UkcU1YgZ=dUTZadv-YPHGccO3PR-DCt2nX7nz0afgA@mail.gmail.com> <87zgyurhoe.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <87zgyurhoe.fsf@nanos.tec.linutronix.de>
+From:   Manish Varma <varmam@google.com>
+Date:   Wed, 24 Mar 2021 22:18:07 -0700
+Message-ID: <CAMyCerKf4MfsjAcVhXi7DVuP9mvt0X6VamwMiHa3KgRvnr7p9Q@mail.gmail.com>
+Subject: Re: [PATCH] fs: Improve eventpoll logging to stop indicting timerfd
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kelly Rossmoyer <krossmo@google.com>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-DQoNCg0KPiAtLS0tLeWOn+Wni+mCruS7ti0tLS0tDQo+IOWPkeS7tuS6ujogIlZpdmVrIEdveWFs
-IiA8dmdveWFsQHJlZGhhdC5jb20+DQo+IOWPkemAgeaXtumXtDogMjAyMS0wMy0yNCAwMToxMDow
-MyAo5pif5pyf5LiJKQ0KPiDmlLbku7bkuro6ICJMdiBZdW5sb25nIiA8bHlsMjAxOUBtYWlsLnVz
-dGMuZWR1LmNuPg0KPiDmioTpgIE6IHN0ZWZhbmhhQHJlZGhhdC5jb20sIG1pa2xvc0BzemVyZWRp
-Lmh1LCB2aXJ0dWFsaXphdGlvbkBsaXN0cy5saW51eC1mb3VuZGF0aW9uLm9yZywgbGludXgtZnNk
-ZXZlbEB2Z2VyLmtlcm5lbC5vcmcsIGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4g5Li7
-6aKYOiBSZTogW1BBVENIXSBmdXNlOiBGaXggYSBwb3RlbnRpYWwgZG91YmxlIGZyZWUgaW4gdmly
-dGlvX2ZzX2dldF90cmVlDQo+IA0KPiBPbiBNb24sIE1hciAyMiwgMjAyMSBhdCAxMDoxODozMVBN
-IC0wNzAwLCBMdiBZdW5sb25nIHdyb3RlOg0KPiA+IEluIHZpcnRpb19mc19nZXRfdHJlZSwgZm0g
-aXMgYWxsb2NhdGVkIGJ5IGt6YWxsb2MoKSBhbmQNCj4gPiBhc3NpZ25lZCB0byBmc2MtPnNfZnNf
-aW5mbyBieSBmc2MtPnNfZnNfaW5mbz1mbSBzdGF0ZW1lbnQuDQo+ID4gSWYgdGhlIGt6YWxsb2Mo
-KSBmYWlsZWQsIGl0IHdpbGwgZ290byBlcnIgZGlyZWN0bHksIHNvIHRoYXQNCj4gPiBmc2MtPnNf
-ZnNfaW5mbyBtdXN0IGJlIG5vbi1OVUxMIGFuZCBmbSB3aWxsIGJlIGZyZWVkLg0KPiANCj4gc2dl
-dF9mYygpIHdpbGwgZWl0aGVyIGNvbnN1bWUgZnNjLT5zX2ZzX2luZm8gaW4gY2FzZSBhIG5ldyBz
-dXBlcg0KPiBibG9jayBpcyBhbGxvY2F0ZWQgYW5kIHNldCBmc2MtPnNfZnNfaW5mby4gSW4gdGhh
-dCBjYXNlIHdlIGRvbid0DQo+IGZyZWUgZmMgb3IgZm0uDQo+IA0KPiBPciwgc2dldF9mYygpIHdp
-bGwgcmV0dXJuIHdpdGggZnNjLT5zX2ZzX2luZm8gc2V0IGluIGNhc2Ugd2UgYWxyZWFkeQ0KPiBm
-b3VuZCBhIHN1cGVyIGJsb2NrLiBJbiB0aGF0IGNhc2Ugd2UgbmVlZCB0byBmcmVlIGZjIGFuZCBm
-bS4NCj4gDQo+IEluIGNhc2Ugb2YgZXJyb3IgZnJvbSBzZ2V0X2ZjKCksIGZjL2ZtIG5lZWQgdG8g
-YmUgZnJlZWQgZmlyc3QgYW5kDQo+IHRoZW4gZXJyb3IgbmVlZHMgdG8gYmUgcmV0dXJuZWQgdG8g
-Y2FsbGVyLg0KPiANCj4gICAgICAgICBpZiAoSVNfRVJSKHNiKSkNCj4gICAgICAgICAgICAgICAg
-IHJldHVybiBQVFJfRVJSKHNiKTsNCj4gDQo+IA0KPiBJZiB3ZSBhbGxvY2F0ZWQgYSBuZXcgc3Vw
-ZXIgYmxvY2sgaW4gc2dldF9mYygpLCB0aGVuIG5leHQgc3RlcCBpcw0KPiB0byBpbml0aWFsaXpl
-IGl0Lg0KPiANCj4gICAgICAgICBpZiAoIXNiLT5zX3Jvb3QpIHsNCj4gICAgICAgICAgICAgICAg
-IGVyciA9IHZpcnRpb19mc19maWxsX3N1cGVyKHNiLCBmc2MpOw0KPiAJfQ0KPiANCj4gSWYgd2Ug
-cnVuIGludG8gZXJyb3JzIGhlcmUsIHRoZW4gZmMvZm0gbmVlZCB0byBiZSBmcmVlZC4NCj4gDQo+
-IFNvIGN1cnJlbnQgY29kZSBsb29rcyBmaW5lIHRvIG1lLg0KPiANCj4gVml2ZWsNCj4gDQo+ID4g
-DQo+ID4gQnV0IGxhdGVyIGZtIGlzIGZyZWVkIGFnYWluIHdoZW4gdmlydGlvX2ZzX2ZpbGxfc3Vw
-ZXIoKSBmaWFsZWQuDQo+ID4gSSB0aGluayB0aGUgc3RhdGVtZW50IGlmIChmc2MtPnNfZnNfaW5m
-bykge2tmcmVlKGZtKTt9IGlzDQo+ID4gbWlzcGxhY2VkLg0KPiA+IA0KPiA+IE15IHBhdGNoIHB1
-dHMgdGhpcyBzdGF0ZW1lbnQgaW4gdGhlIGNvcnJlY3QgcGFsY2UgdG8gYXZvaWQNCj4gPiBkb3Vi
-bGUgZnJlZS4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBMdiBZdW5sb25nIDxseWwyMDE5QG1h
-aWwudXN0Yy5lZHUuY24+DQo+ID4gLS0tDQo+ID4gIGZzL2Z1c2UvdmlydGlvX2ZzLmMgfCAxMCAr
-KysrKystLS0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDQgZGVsZXRp
-b25zKC0pDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2ZzL2Z1c2UvdmlydGlvX2ZzLmMgYi9mcy9m
-dXNlL3ZpcnRpb19mcy5jDQo+ID4gaW5kZXggODg2OGFjMzFhM2MwLi43MjdjZjQzNjgyOGYgMTAw
-NjQ0DQo+ID4gLS0tIGEvZnMvZnVzZS92aXJ0aW9fZnMuYw0KPiA+ICsrKyBiL2ZzL2Z1c2Uvdmly
-dGlvX2ZzLmMNCj4gPiBAQCAtMTQzNywxMCArMTQzNyw3IEBAIHN0YXRpYyBpbnQgdmlydGlvX2Zz
-X2dldF90cmVlKHN0cnVjdCBmc19jb250ZXh0ICpmc2MpDQo+ID4gIA0KPiA+ICAJZnNjLT5zX2Zz
-X2luZm8gPSBmbTsNCj4gPiAgCXNiID0gc2dldF9mYyhmc2MsIHZpcnRpb19mc190ZXN0X3N1cGVy
-LCBzZXRfYW5vbl9zdXBlcl9mYyk7DQo+ID4gLQlpZiAoZnNjLT5zX2ZzX2luZm8pIHsNCj4gPiAt
-CQlmdXNlX2Nvbm5fcHV0KGZjKTsNCj4gPiAtCQlrZnJlZShmbSk7DQo+ID4gLQl9DQo+ID4gKw0K
-PiA+ICAJaWYgKElTX0VSUihzYikpDQo+ID4gIAkJcmV0dXJuIFBUUl9FUlIoc2IpOw0KPiA+ICAN
-Cj4gPiBAQCAtMTQ1Nyw2ICsxNDU0LDExIEBAIHN0YXRpYyBpbnQgdmlydGlvX2ZzX2dldF90cmVl
-KHN0cnVjdCBmc19jb250ZXh0ICpmc2MpDQo+ID4gIAkJc2ItPnNfZmxhZ3MgfD0gU0JfQUNUSVZF
-Ow0KPiA+ICAJfQ0KPiA+ICANCj4gPiArCWlmIChmc2MtPnNfZnNfaW5mbykgew0KPiA+ICsJCWZ1
-c2VfY29ubl9wdXQoZmMpOw0KPiA+ICsJCWtmcmVlKGZtKTsNCj4gPiArCX0NCj4gPiArDQo+ID4g
-IAlXQVJOX09OKGZzYy0+cm9vdCk7DQo+ID4gIAlmc2MtPnJvb3QgPSBkZ2V0KHNiLT5zX3Jvb3Qp
-Ow0KPiA+ICAJcmV0dXJuIDA7DQo+ID4gLS0gDQo+ID4gMi4yNS4xDQo+ID4gDQo+ID4gDQo+IA0K
-DQoNCk9rLCB0aGFua3MuDQpJdCBzaG91bGQgYmUgYSBmYWxzZSBwb3NpdGl2ZS4=
+Hi Thomas,
+
+On Mon, Mar 22, 2021 at 2:40 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Manish,
+>
+> On Mon, Mar 22 2021 at 10:15, Manish Varma wrote:
+> > On Thu, Mar 18, 2021 at 6:04 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+> >> > +static atomic_t instance_count = ATOMIC_INIT(0);
+> >>
+> >> instance_count is misleading as it does not do any accounting of
+> >> instances as the name suggests.
+> >>
+> >
+> > Not sure if I am missing a broader point here, but the objective of this
+> > patch is to:
+> > A. To help find the process a given timerfd associated with, and
+> > B. one step further, if there are multiple fds created by a single
+> > process then label each instance using monotonically increasing integer
+> > i.e. "instance_count" to help identify each of them separately.
+> >
+> > So, instance_count in my mind helps with "B", i.e. to keep track and
+> > identify each instance of timerfd individually.
+>
+> I know what you want to do. The point is that instance_count is the
+> wrong name as it suggests that it counts instances, and that in most
+> cases implies active instances.
+>
+> It's not a counter, it's a token generator which allows you to create
+> unique ids. The fact that it is just incrementing once per created file
+> descriptor does not matter. That's just an implementation detail.
+>
+> Name it something like timerfd_create_id or timerfd_session_id which
+> clearly tells that this is not counting any thing. It immediately tells
+> the purpose of generating an id.
+>
+> Naming matters when reading code, really.
+>
+
+Noted, and thanks for the clarification!
+
+> >> > +     snprintf(file_name_buf, sizeof(file_name_buf), "[timerfd%d:%s]",
+> >> > +              instance, task_comm_buf);
+> >> > +     ufd = anon_inode_getfd(file_name_buf, &timerfd_fops, ctx,
+> >> >                              O_RDWR | (flags & TFD_SHARED_FCNTL_FLAGS));
+> >> >       if (ufd < 0)
+> >> >               kfree(ctx);
+> >>
+> >> I actually wonder, whether this should be part of anon_inode_get*().
+> >>
+> >
+> > I am curious (and open at the same time) if that will be helpful..
+> > In the case of timerfd, I could see it adds up value by stuffing more
+> > context to the file descriptor name as eventpoll is using the same file
+> > descriptor names as wakesource name, and hence the cost of slightly
+> > longer file descriptor name justifies. But I don't have a solid reason
+> > if this additional cost (of longer file descriptor names) will be
+> > helpful in general with other file descriptors.
+>
+> Obviously you want to make that depend on a flag handed to anon_...().
+
+Unfortunately, changing file descriptor names does not seem to be a viable
+option here (more details in my answer in the next section), and
+hence changes in anon_...() does not seem to be required.
+
+>
+> The point is that there will be the next anonfd usecase which needs
+> unique identification at some point. That is going to copy&pasta that
+> timerfd code and then make it slightly different just because and then
+> userspace needs to parse yet another format.
+>
+> >> Aside of that this is a user space visible change both for eventpoll and
+> >> timerfd.
+>
+> Not when done right.
+>
+> >> Have you carefully investigated whether there is existing user space
+> >> which might depend on the existing naming conventions?
+> >>
+> > I am not sure how I can confirm that for all userspace, but open for
+> > suggestions if you can share some ideas.
+> >
+> > However, I have verified and can confirm for Android userspace that
+> > there is no dependency on existing naming conventions for timerfd and
+> > eventpoll wakesource names, if that helps.
+>
+> Well, there is a world outside Android and you're working for a company
+> which should have tools to search for '[timerfd]' usage in a gazillion of
+> projects. The obvious primary targets are distros of all sorts. I'm sure
+> there are ways to figure this out without doing it manually.
+>
+> Not that I expect any real dependencies on it, but as always the devil
+> is in the details.
+>
+
+Right, there are some userspace which depends on "[timerfd]" string
+https://codesearch.debian.net/search?q=%22%5Btimerfd%5D%22&literal=1
+
+So, modifying file descriptor names at-least for timerfd will definitely
+break those.
+
+With that said, I am now thinking about leaving alone the file descriptor
+names as is, and instead, adding those extra information about the
+associated processes (i.e. process name or rather PID of the
+process) along with token ID directly into wakesource name, at the
+time of creating new wakesource i.e. in ep_create_wakeup_source().
+
+So, the wakesource names, that currently named as "[timerfd]", will be
+named something like:
+"epollitem<N>:<PID>.[timerfd]"
+
+Where N is the number of wakesource created since boot.
+
+This way we can still associate the process with the wakesource
+name and also distinguish multiple instances of wakesources using
+the integer identifier.
+
+Please share your thoughts!
+
+> Thanks,
+>
+>         tglx
+
+Thanks,
+Manish
+--
+Manish Varma | Software Engineer | varmam@google.com | 650-686-0858
