@@ -2,130 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33E7C348FC8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 12:30:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AA903491AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 13:14:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231485AbhCYL3u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Mar 2021 07:29:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35468 "EHLO mail.kernel.org"
+        id S230313AbhCYMOA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Mar 2021 08:14:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231469AbhCYL1X (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Mar 2021 07:27:23 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 86C5861A4E;
-        Thu, 25 Mar 2021 11:26:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616671618;
-        bh=QHdcJTezi9bvA14StpNy4bsRWJsJICWDl/4yxaAs0+Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VCei0o4GR+gWeSj9he4fc41Mz+udEy5cF2dxh7HVShmwtmHNxO5yEskEzxPuIv9z7
-         lzuI71RM+WPlHDHyx5u2xZp1mBD25VMKukL9FefYJeYcVhLnlpgAV+0slL/Nu/fl+W
-         KfO+FzI+Hg9XmvrDR4NwWDtOPn+7F3d+Ivuosk5lM/q4icqORb2LbxyFsxP+hRL+I/
-         TurY5m2/jrMmGCWP/CYoVDmdFFbbu1RtUruLQ+/tOgLACGUAhsqa6ZI3ycbyAGvPoy
-         M8U+HKGjdhCfymvxkeerYQvYXbijWPY++3sVVaPrZi3HADe3gbdgyKgYmb6y4JOhuk
-         ytfluLeaMcA7g==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sasha Levin <sashal@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 05/24] iomap: Fix negative assignment to unsigned sis->pages in iomap_swapfile_activate
-Date:   Thu, 25 Mar 2021 07:26:31 -0400
-Message-Id: <20210325112651.1927828-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210325112651.1927828-1-sashal@kernel.org>
-References: <20210325112651.1927828-1-sashal@kernel.org>
+        id S230223AbhCYMNr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Mar 2021 08:13:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AE1F1619BA;
+        Thu, 25 Mar 2021 12:13:44 +0000 (UTC)
+Date:   Thu, 25 Mar 2021 13:13:41 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "mjg59@google.com" <mjg59@google.com>,
+        "agruenba@redhat.com" <agruenba@redhat.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 08/11] evm: Allow setxattr() and setattr() for
+ unmodified metadata
+Message-ID: <20210325121341.q2ufjhnqe3osjc7c@wittgenstein>
+References: <20210305151923.29039-1-roberto.sassu@huawei.com>
+ <20210305151923.29039-9-roberto.sassu@huawei.com>
+ <ad33c998ee834a588e0ca1a31ee2a530@huawei.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ad33c998ee834a588e0ca1a31ee2a530@huawei.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ritesh Harjani <riteshh@linux.ibm.com>
+On Thu, Mar 25, 2021 at 10:53:43AM +0000, Roberto Sassu wrote:
+> > From: Roberto Sassu
+> > Sent: Friday, March 5, 2021 4:19 PM
+> > With the patch to allow xattr/attr operations if a portable signature
+> > verification fails, cp and tar can copy all xattrs/attrs so that at the
+> > end of the process verification succeeds.
+> > 
+> > However, it might happen that the xattrs/attrs are already set to the
+> > correct value (taken at signing time) and signature verification succeeds
+> > before the copy has completed. For example, an archive might contains files
+> > owned by root and the archive is extracted by root.
+> > 
+> > Then, since portable signatures are immutable, all subsequent operations
+> > fail (e.g. fchown()), even if the operation is legitimate (does not alter
+> > the current value).
+> > 
+> > This patch avoids this problem by reporting successful operation to user
+> > space when that operation does not alter the current value of xattrs/attrs.
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  security/integrity/evm/evm_main.c | 96
+> > +++++++++++++++++++++++++++++++
+> >  1 file changed, 96 insertions(+)
+> > 
+> > diff --git a/security/integrity/evm/evm_main.c
+> > b/security/integrity/evm/evm_main.c
+> > index eab536fa260f..a07516dcb920 100644
+> > --- a/security/integrity/evm/evm_main.c
+> > +++ b/security/integrity/evm/evm_main.c
+> > @@ -18,6 +18,7 @@
+> >  #include <linux/integrity.h>
+> >  #include <linux/evm.h>
+> >  #include <linux/magic.h>
+> > +#include <linux/posix_acl_xattr.h>
+> > 
+> >  #include <crypto/hash.h>
+> >  #include <crypto/hash_info.h>
+> > @@ -328,6 +329,79 @@ static enum integrity_status
+> > evm_verify_current_integrity(struct dentry *dentry)
+> >  	return evm_verify_hmac(dentry, NULL, NULL, 0, NULL);
+> >  }
+> > 
+> > +/*
+> > + * evm_xattr_acl_change - check if passed ACL changes the inode mode
+> > + * @dentry: pointer to the affected dentry
+> > + * @xattr_name: requested xattr
+> > + * @xattr_value: requested xattr value
+> > + * @xattr_value_len: requested xattr value length
+> > + *
+> > + * Check if passed ACL changes the inode mode, which is protected by
+> > EVM.
+> > + *
+> > + * Returns 1 if passed ACL causes inode mode change, 0 otherwise.
+> > + */
+> > +static int evm_xattr_acl_change(struct dentry *dentry, const char
+> > *xattr_name,
+> > +				const void *xattr_value, size_t
+> > xattr_value_len)
+> > +{
+> > +	umode_t mode;
+> > +	struct posix_acl *acl = NULL, *acl_res;
+> > +	struct inode *inode = d_backing_inode(dentry);
+> > +	int rc;
+> > +
+> > +	/* UID/GID in ACL have been already converted from user to init ns
+> > */
+> > +	acl = posix_acl_from_xattr(&init_user_ns, xattr_value,
+> > xattr_value_len);
+> > +	if (!acl)
+> 
+> Based on Mimi's review, I will change this to:
+> 
+> if (IS_ERR_OR_NULL(acl))
+> 
+> > +		return 1;
+> > +
+> > +	acl_res = acl;
+> > +	rc = posix_acl_update_mode(&init_user_ns, inode, &mode,
+> > &acl_res);
+> 
+> About this part, probably it is not correct.
+> 
+> I'm writing a test for this patch that checks if operations
+> that don't change the file mode succeed and those that
+> do fail.
+> 
+> mount-idmapped --map-mount b:3001:0:1 /mnt /mnt-idmapped
+> pushd /mnt
+> echo "test" > test-file
+> chown 3001 test-file
+> chgrp 3001 test-file
+> chmod 2644 test-file
+> <check enabled>
+> setfacl --set u::rw,g::r,o::r,m:r test-file (expected to succeed, caller has CAP_FSETID, so S_ISGID is not dropped)
+> setfacl --set u::rw,g::r,o::r,m:rw test-file (expected to fail)
+> pushd /mnt-idmapped
+> capsh --drop=cap_fsetid -- -c setfacl --set u::rw,g::r,o::r test-file (expected to succeed, caller is in the owning group of test-file, so S_ISGID is not dropped)
+> 
+> After adding a debug line in posix_acl_update_mode():
+> printk("%s: %d(%d) %d\n", __func__, in_group_p(i_gid_into_mnt(mnt_userns, inode)), __kgid_val(i_gid_into_mnt(mnt_userns, inode)), capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID));
+> 
+> without passing mnt_userns:
+> [  748.262582] setfacl --set u::rw,g::r,o::r,m:r test-file
+> [  748.268021] posix_acl_update_mode: 0(3001) 1
+> [  748.268035] posix_acl_update_mode: 0(3001) 1
+> [  748.268570] setfacl --set u::rw,g::r,o::r,m:rw test-file
+> [  748.274193] posix_acl_update_mode: 0(3001) 1
+> [  748.279198] capsh --drop=cap_fsetid -- -c setfacl --set u::rw,g::r,o::r test-file
+> [  748.287894] posix_acl_update_mode: 0(3001) 0
+> 
+> passing mnt_userns:
+> [   81.159766] setfacl --set u::rw,g::r,o::r,m:r test-file
+> [   81.165207] posix_acl_update_mode: 0(3001) 1
+> [   81.165226] posix_acl_update_mode: 0(3001) 1
+> [   81.165732] setfacl --set u::rw,g::r,o::r,m:rw test-file
+> [   81.170978] posix_acl_update_mode: 0(3001) 1
+> [   81.176014] capsh --drop=cap_fsetid -- -c setfacl --set u::rw,g::r,o::r test-file
+> [   81.184648] posix_acl_update_mode: 1(0) 0
+> [   81.184663] posix_acl_update_mode: 1(0) 0
+> 
+> The difference is that, by passing mnt_userns, the caller (root) is
+> in the owning group of the file (3001 -> 0). Without passing mnt_userns,
+> it is not (3001 -> 3001).
+> 
+> Christian, Andreas, could you confirm that this is correct?
 
-[ Upstream commit 5808fecc572391867fcd929662b29c12e6d08d81 ]
+Hey Robert,
 
-In case if isi.nr_pages is 0, we are making sis->pages (which is
-unsigned int) a huge value in iomap_swapfile_activate() by assigning -1.
-This could cause a kernel crash in kernel v4.18 (with below signature).
-Or could lead to unknown issues on latest kernel if the fake big swap gets
-used.
+Thanks for the Cc and thanks for testing this with and without idmapped
+mounts; very much appreciated.
 
-Fix this issue by returning -EINVAL in case of nr_pages is 0, since it
-is anyway a invalid swapfile. Looks like this issue will be hit when
-we have pagesize < blocksize type of configuration.
+> 
+> If there are no objections, I will send an additional patch to pass
+> mnt_userns to EVM.
 
-I was able to hit the issue in case of a tiny swap file with below
-test script.
-https://raw.githubusercontent.com/riteshharjani/LinuxStudy/master/scripts/swap-issue.sh
+Yes, since you're starting to verify attrs and posix_acl changes that
+deal with uids/gids you need to account for the mnt_userns. I've pulled
+and applied your patch locally and looked through it. I think you need
+to change:
 
-kernel crash analysis on v4.18
-==============================
-On v4.18 kernel, it causes a kernel panic, since sis->pages becomes
-a huge value and isi.nr_extents is 0. When 0 is returned it is
-considered as a swapfile over NFS and SWP_FILE is set (sis->flags |= SWP_FILE).
-Then when swapoff was getting called it was calling a_ops->swap_deactivate()
-if (sis->flags & SWP_FILE) is true. Since a_ops->swap_deactivate() is
-NULL in case of XFS, it causes below panic.
+- evm_inode_setxattr()
+- evm_inode_removexattr()
 
-Panic signature on v4.18 kernel:
-=======================================
-root@qemu:/home/qemu# [ 8291.723351] XFS (loop2): Unmounting Filesystem
-[ 8292.123104] XFS (loop2): Mounting V5 Filesystem
-[ 8292.132451] XFS (loop2): Ending clean mount
-[ 8292.263362] Adding 4294967232k swap on /mnt1/test/swapfile.  Priority:-2 extents:1 across:274877906880k
-[ 8292.277834] Unable to handle kernel paging request for instruction fetch
-[ 8292.278677] Faulting instruction address: 0x00000000
-cpu 0x19: Vector: 400 (Instruction Access) at [c0000009dd5b7ad0]
-    pc: 0000000000000000
-    lr: c0000000003eb9dc: destroy_swap_extents+0xfc/0x120
-    sp: c0000009dd5b7d50
-   msr: 8000000040009033
-  current = 0xc0000009b6710080
-  paca    = 0xc00000003ffcb280   irqmask: 0x03   irq_happened: 0x01
-    pid   = 5604, comm = swapoff
-Linux version 4.18.0 (riteshh@xxxxxxx) (gcc version 8.4.0 (Ubuntu 8.4.0-1ubuntu1~18.04)) #57 SMP Wed Mar 3 01:33:04 CST 2021
-enter ? for help
-[link register   ] c0000000003eb9dc destroy_swap_extents+0xfc/0x120
-[c0000009dd5b7d50] c0000000025a7058 proc_poll_event+0x0/0x4 (unreliable)
-[c0000009dd5b7da0] c0000000003f0498 sys_swapoff+0x3f8/0x910
-[c0000009dd5b7e30] c00000000000bbe4 system_call+0x5c/0x70
-Exception: c01 (System Call) at 00007ffff7d208d8
+to take a mnt_userns. That should be straightforward. I already changed
+security_inode_setxattr() to pass down the mnt_userns so you need to
+simply pass that further down:
 
-Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-[djwong: rework the comment to provide more details]
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/iomap/swapfile.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+- security_inode_setxattr(mnt_userns, ...)
+  -> evm_inode_setxattr(mnt_userns, ...)
 
-diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
-index 152a230f668d..bd0cc3dcc980 100644
---- a/fs/iomap/swapfile.c
-+++ b/fs/iomap/swapfile.c
-@@ -169,6 +169,16 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
- 			return ret;
- 	}
- 
-+	/*
-+	 * If this swapfile doesn't contain even a single page-aligned
-+	 * contiguous range of blocks, reject this useless swapfile to
-+	 * prevent confusion later on.
-+	 */
-+	if (isi.nr_pages == 0) {
-+		pr_warn("swapon: Cannot find a single usable page in file.\n");
-+		return -EINVAL;
-+	}
-+
- 	*pagespan = 1 + isi.highest_ppage - isi.lowest_ppage;
- 	sis->max = isi.nr_pages;
- 	sis->pages = isi.nr_pages - 1;
--- 
-2.30.1
+- security_inode_removexattr(mnt_userns, ...)
+  -> evm_inode_removexattr(mnt_userns, ...)
 
+The rest looks sane to me.
+
+Fwiw, I'm mainting a large test-suite that I wrote for idmapped mounts
+but that aims to cover all vfs operations independent of them. It aims
+for:
+- test vfs feature x on regular mounts
+- test vfs feature on idmapped mounts
+- test vfs feature in user namespaces
+- test vfs feature on idmapped mount in user namespaces
+I'm in the process of upstreaming it for xfstests (cf. [1]). It also
+includes tests for xattrs/acls and fscaps. if ima and evm want to add
+something to this that'd be great but if you maintain your own testing
+that's of course totally ok.
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/brauner/xfstests-dev.git/log/?h=idmapped_mounts
+
+Thanks!
+Christian
