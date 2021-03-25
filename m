@@ -2,144 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57BFA34958F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 16:32:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0B703495B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 16:36:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231381AbhCYPcI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Mar 2021 11:32:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36686 "EHLO
+        id S231401AbhCYPfy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Mar 2021 11:35:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231433AbhCYPb1 (ORCPT
+        with ESMTP id S230512AbhCYPfp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Mar 2021 11:31:27 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6F15C06174A;
-        Thu, 25 Mar 2021 08:31:25 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id t5-20020a1c77050000b029010e62cea9deso1438218wmi.0;
-        Thu, 25 Mar 2021 08:31:25 -0700 (PDT)
+        Thu, 25 Mar 2021 11:35:45 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0E06C06174A;
+        Thu, 25 Mar 2021 08:35:43 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id bf3so2904075edb.6;
+        Thu, 25 Mar 2021 08:35:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sTR5VPwJmizPoTcmDricTHVhvHimEQP2h0sRVD3qCds=;
-        b=hHhdfYAvkFahY1fFiKam1uU24IgKTFvYD1i7rFmF6RobBjMT/RddgVwwtaMyQv4wN3
-         83I11YLEIFakrIDLEHG5s/lbca1/cXNbKJKAzqwhfdKYOwgobmC+AKFb0N9gzJPfZ9ea
-         5yfUgpYy2EyEwCVWCjFhx9+WTW2mSAP8iqNzVyHMlBF93Vy5SmwE0M+n7helAUtBLVsU
-         RaNn+dR5AHFAtEnx8X6762RPYCaiTifZurl1HYm/z0P0kpcvH7zRctGaZ5mfxEu/Czv8
-         lEzzD/D5hzOeQBNtwsZdsJNf8LQ62Hn2vGfKXHE1wqggQZI7DbOkXH9jifMsy0l8PcT/
-         0YjA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=1QKElLhOfCduB4W2ZnttsXzaaUpOx3i5hzbEvc+SfaM=;
+        b=vReFbpzUBBXDyQUErdI0nstv8yW0OW75oySEvy3/KYNqcwbs8aHjOCdxuz7BaMFh3U
+         UF+583vXaR5SNWYyaebRJ2npbrVh4f2FBE1HP0gXRRziMzcAxQynTX0+I2M9YnqKNMv2
+         wRcELASUKOjdxmiAuBnjEVzm7bveC8y1SyLfBrk+qwaVMRND4BEMUzyEQzO/cN2B+o5v
+         Lvn9XVEv4yi4jKI6S4bCugs0E5kJRol1NWonhvNfY6RtQUcjmB0Src2XvhzgK+ykZap2
+         KZCpV61fJAt2PEtl/i0j7ck/e7Vf8BtUOVN3JYzbOrIKyAcfRWVqlbnzW+lN8MpQx1KC
+         fwxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sTR5VPwJmizPoTcmDricTHVhvHimEQP2h0sRVD3qCds=;
-        b=nwz9HNUfc02grqNXA+vQ8QS/0dChZU6Tx3oeQZ2vMF9zLG0xt9vUuZ5f6uGEwajvhV
-         41tNvYtOhx8LmB03SbrX8zjqepxOJFseRYByi4j4Avqa3y0u82DXzpIYoF/QC7KqMPpo
-         U3QgL0DwkHKzqX2/0PbeC9odfjml8RQIYrbbEkKPGgTHOXSLVgn1NecDVr3RNG5Qa0/8
-         MkLZ4HYMgiz5KcqiF9hNHttGVXFTN/hEVUJ5DoIEfrbVIU5LUXgEFq3vy0Xv2x2gyluG
-         076yUFlhMB0ph03viKGfjD0D2WeHpNRMIOfC54AqUyxVQGtmkyiBDqg695SUWczD0WpX
-         60zQ==
-X-Gm-Message-State: AOAM533ACl12HpL0Tf+k7SJgBL6yKFcGIKD/KRIugoHcMNMAaewavPnm
-        aqLZgpwp5Lh8lL4zudP69zlghpyOddaOhal3eJo=
-X-Google-Smtp-Source: ABdhPJwm0ZpuWrzdry+mVU2VoaGTJ3AnVIHBrC4zMKC25ZR04pYBDJWZ+nsA2suJlshEpuCxfctdVl+/hPgWNqiDYYg=
-X-Received: by 2002:a1c:7905:: with SMTP id l5mr8815994wme.181.1616686284590;
- Thu, 25 Mar 2021 08:31:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAOQ4uxiRHwmxTKsLteH_sBW_dSPshVE8SohJYEmpszxaAwjEyg@mail.gmail.com>
- <20210319134043.c2wcpn4lbefrkhkg@wittgenstein> <CAOQ4uxhLYdWOUmpWP+c_JzVeGDbkJ5eUM+1-hhq7zFq23g5J1g@mail.gmail.com>
- <CAOQ4uxhetKeEZX=_iAcREjibaR0ZcOdeZyR8mFEoHM+WRsuVtg@mail.gmail.com>
- <CAOQ4uxhfx012GtvXMfiaHSk1M7+gTqkz3LsT0i_cHLnZLMk8nw@mail.gmail.com>
- <CAOQ4uxhFU=H8db35JMhfR+A5qDkmohQ01AWH995xeBAKuuPhzA@mail.gmail.com>
- <20210324143230.y36hga35xvpdb3ct@wittgenstein> <CAOQ4uxiPYbEk1N_7nxXMP7kz+KMnyH+0GqpJS36FR+-v9sHrcg@mail.gmail.com>
- <20210324162838.spy7qotef3kxm3l4@wittgenstein> <CAOQ4uxjcCEtuqyawNo7kCkb3213=vrstMupZt-KnGyanqKv=9Q@mail.gmail.com>
- <20210325111203.5o6ovkqgigxc3ihk@wittgenstein>
-In-Reply-To: <20210325111203.5o6ovkqgigxc3ihk@wittgenstein>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 25 Mar 2021 17:31:13 +0200
-Message-ID: <CAOQ4uxhdJWWRZSa0FfEiryQoBJYcGSADGoE7UZF8W=5-tcX9xg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=1QKElLhOfCduB4W2ZnttsXzaaUpOx3i5hzbEvc+SfaM=;
+        b=joQIGIrEqsUVi5PDEy4oK5TwU0zjCrox19klHdc1oDwxks4zR8JvGqAALkCX28sB3e
+         U8fgZ775tc91X1piKQ1/BRZjtzBQ5GfrHz9k2xGISNgGeYwzs6Olx+5RScJJh/a5BqEw
+         uPT8zDBjPYLuFVoqNNNLyTUJglyp3xj3jtDPdzOU6De2EZjwTQpO7G95ons8uKegLsEg
+         ZRukiBReMmb9RV7kEvWE4xHyxAM2WUD/pOzhFiX4mcVogv31McAVaom2gomKCPC7uQt1
+         avpZd7L5VSBPZzzTblAtbD3MHCARu5VfA93VBU+EqR5n2S41pLS2Jfmgd9Rs1JjIRg6k
+         +bcw==
+X-Gm-Message-State: AOAM5313PSgRQs8Qd6WASB8Vv4sbg9+WCh4wsV3FZya5FxaoL5FcKZTW
+        tb8re6F8ZLD+7j5VutaBff4=
+X-Google-Smtp-Source: ABdhPJy/1eWCFTCJH7El48i7bPgctwSRVRauBoblIf5Y4tbBowf/F2Xp7Kn8apN23vTJwgVJ8ljFTg==
+X-Received: by 2002:a05:6402:17d5:: with SMTP id s21mr9755769edy.65.1616686542501;
+        Thu, 25 Mar 2021 08:35:42 -0700 (PDT)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id r19sm2868681edp.52.2021.03.25.08.35.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Mar 2021 08:35:41 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date:   Thu, 25 Mar 2021 16:35:33 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Marco Elver <elver@google.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Potapenko <glider@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Matt Morehouse <mascasa@google.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Ian Rogers <irogers@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        LKML <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH v3 07/11] perf: Add breakpoint information to siginfo on
+ SIGTRAP
+Message-ID: <20210325153056.GA1895212@gmail.com>
+References: <20210324112503.623833-8-elver@google.com>
+ <YFs2XHqepwtlLinx@hirez.programming.kicks-ass.net>
+ <YFs4RDKfbjw89tf3@hirez.programming.kicks-ass.net>
+ <YFs84dx8KcAtSt5/@hirez.programming.kicks-ass.net>
+ <YFtB+Ta9pkMg4C2h@hirez.programming.kicks-ass.net>
+ <YFtF8tEPHrXnw7cX@hirez.programming.kicks-ass.net>
+ <CANpmjNPkBQwmNFO_hnUcjYGM=1SXJy+zgwb2dJeuOTAXphfDsw@mail.gmail.com>
+ <CACT4Y+aKmdsXhRZi2f3LsX3m=krdY4kPsEUcieSugO2wY=xA-Q@mail.gmail.com>
+ <20210325141820.GA1456211@gmail.com>
+ <CANpmjNNcYSGCC7587YzMzX1UpDvTA8ewAJRsKFdzQRdmWEO7Yw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNNcYSGCC7587YzMzX1UpDvTA8ewAJRsKFdzQRdmWEO7Yw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> I get that there are other use-cases that make subtree watches very
-> interesting but I don't think the container use-case is a particularly
-> pressing one.
->
 
-That's what I thought.
+* Marco Elver <elver@google.com> wrote:
 
-Containers are usually "contained" by a mount and possibly by userns,
-so it makes more sense and it would be more efficient to filter by those
-contexts.
+> > Yeah, so why cannot we allocate enough space from the signal 
+> > handler user-space stack and put the attr there, and point to it 
+> > from sig_info?
+> >
+> > The idea would be to create a stable, per-signal snapshot of 
+> > whatever the perf_attr state is at the moment the event happens 
+> > and the signal is generated - which is roughly what user-space 
+> > wants, right?
+> 
+> I certainly couldn't say how feasible this is. Is there 
+> infrastructure in place to do this? Or do we have to introduce 
+> support for stashing things on the signal stack?
+> 
+> From what we can tell, the most flexible option though appears to be 
+> just some user settable opaque data in perf_event_attr, that is 
+> copied to siginfo. It'd allow user space to store a pointer or a 
+> hash/key, or just encode the relevant information it wants; but 
+> could also go further, and add information beyond perf_event_attr, 
+> such as things like a signal receiver filter (e.g. task ID or set of 
+> threads which should process the signal etc.).
+> 
+> So if there's no strong objection to the additional field in 
+> perf_event_attr, I think it'll give us the simplest and most 
+> flexible option.
 
-> > I don't like it so much myself, but I have not had any better idea how to
-> > achieve that goal so far.
->
-> The limitations of FAN_MARK_MOUNT as I now understand them are indeed
-> unpleasant. If we could get FAN_MARK_MOUNT with the same event support
-> as FAN_MARK_INODE that would be great.
-> I think the delegation model that makes sense to me is to allow
-> FAN_MARK_MOUNT when the caller is ns_capable(mnt->mnt_userns) and of
-> course ns_capable() in the userns they called fanotify_init() in. That
-> feels ok and supportable.
-
-I present to you a demo [1][2] of FAN_MARK_MOUNT on idmapped mount that:
-
-1. Can subscribe and receive FAN_LINK (new) events
-2. Is capable of open_by_handle() if fid is under mount root
-
-FAN_LINK (temp name) is an event that I wanted to add anyway [3] and
-AFAIK it's the only event that you really need in order to detect when a dir
-was created for the use case of injecting a bind mount into a container.
-
-The kernel branch [1] intentionally excludes the controversial patch that
-added support for userns filtered sb marks.
-
-Therefore, trying to run the demo script as is on an idmapped mount
-inside userns will auto-detect UID 0, try to setup an sb mark and fail.
-
-Instead, the demo script should be run as follows to combine a
-mount mark and recursive inode marks:
-
-./test_demo.sh <idmapped-mount-path> 1
-
-For example:
-~# ./test_demo.sh /vdf 1
-+ WD=/vdf
-+ ID=1
-...
-+ inotifywatch --fanotify --recursive -w -e link --timeout -2 /vdf
-Establishing watches...
-...
-+ mkdir -p a/dir0 a/dir1 a/dir2/subdir2
-+ touch a/dir2/file2
-...
-[fid=ad91a2b8.81a99d43.3000081;name='dir2'] /vdf/a/dir2
-[fid=ad91a2b8.81a99d43.8a;name='.'] /vdf/a/dir2/.
-[fid=ad91a2b8.81a99d43.10000a6;name='.'] /vdf/a/dir2/subdir2/.
-[fid=ad91a2b8.81a99d43.8a;name='file2'] /vdf/a/dir2/file2
-...
-total  modify  ..................................  create  link
-delete  filename
-1      0       0       0       0       0        0       1       0
-0       /vdf/a/dir2
-1      0       0       0       0       0        0       0       1
-0       /vdf/a/dir2/.
-1      0       0       0       0       0        0       0       1
-0       /vdf/a/dir2/subdir2/.
-1      0       0       0       0       0        0       0       1
-0       /vdf/a/dir2/file2
+Sounds good to me - it's also probably measurably faster than copying 
+the not-so-small-anymore perf_attr structure.
 
 Thanks,
-Amir.
 
-[1] https://github.com/amir73il/linux/commits/fanotify_link
-[2] https://github.com/amir73il/inotify-tools/commits/fanotify_link
-[3] https://lore.kernel.org/linux-fsdevel/CAOQ4uxhEsbfA5+sW4XPnUKgCkXtwoDA-BR3iRO34Nx5c4y7Nug@mail.gmail.com/
+	Ingo
