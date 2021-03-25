@@ -2,166 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3008348B6D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 09:23:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 293B9348B7B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 09:26:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229622AbhCYIWh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Mar 2021 04:22:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55908 "EHLO
+        id S229576AbhCYI0Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Mar 2021 04:26:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229719AbhCYIWP (ORCPT
+        with ESMTP id S229533AbhCYI0U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Mar 2021 04:22:15 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87580C06175F;
-        Thu, 25 Mar 2021 01:22:15 -0700 (PDT)
+        Thu, 25 Mar 2021 04:26:20 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77EBAC06174A;
+        Thu, 25 Mar 2021 01:26:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=+rMCIoW7pA9LHheP4AD2vUH1j8gzDA0578xBrBuuLkU=; b=0pFdJY9A4UdALQUlD9PmA0KXgM
-        WVCQAe5hvjOzQw+9nEmscHTvFKGvdGoyY2wykYvjlAfrByYQqvhp7ZkDM/eqXWYwRpI0+4+Wr02Hh
-        7dWCo16BSmG9Na9l1ApMPwaU/MpyD1wtTuF6HmK42DKSVkQIJ83KKvBirBowGbsynrMCKiacwgxWg
-        aVx+MVz1WMUvXoJpdQwpmna3IGO1MRI1XXoAtu5zGCftq7gAbzjyUZJJ+faZjzbVt1BHA2p5f/i5S
-        wsf2ImXlxUTGyNEjh2bsV4CCoQh/FEXaFc6DKwsoiyMUNc7MAF1nAZPkKuhddI83WAOrBHH9W6O9y
-        AUaerolg==;
-Received: from [2001:4bb8:191:f692:9658:56e2:eade:cbfa] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lPLFu-004X66-Oe; Thu, 25 Mar 2021 08:22:15 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>
-Subject: [PATCH] fs: split receive_fd_replace from __receive_fd
-Date:   Thu, 25 Mar 2021 09:22:09 +0100
-Message-Id: <20210325082209.1067987-2-hch@lst.de>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210325082209.1067987-1-hch@lst.de>
-References: <20210325082209.1067987-1-hch@lst.de>
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=IzwmhOqvIxwQPFK4E3Oa+CaBwei0j7Z1kHs2r0VicEc=; b=XChpT9BvzSkcKTC2L6pglmtqNW
+        x+opZ3kV2asW/R1xhMVEPkDGdW6thedfIfn6YoDTFki6MY1t4h896/cTLH1MTjKCmfA4ngqa507b8
+        WqI6IhRpwUJDgUk8bEVyxoy3yHed8K1bWqir2Hdk7kV14K5JLpiZnuxtrPTIXiTE/XZiotNkhttx5
+        Bnd3Gw61TRDpDX6hpIPKwjWcrQ34+03fV66mFds8Q/u5F4dupsvAB58YKvJlNEZB6pkcFyA+UVw4X
+        FwcMMISnV5Wf0bZ0+GVp79yQbVdsIdAZjC+tCJtCXnHuC6c2KiXj4Dq+Aci4HMmLSOVCwCT0r9s1S
+        2y9CV1pA==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lPLHU-00CXQ9-Os; Thu, 25 Mar 2021 08:24:08 +0000
+Date:   Thu, 25 Mar 2021 08:23:52 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mika Penttil?? <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 01/11] file: Export __receive_fd() to modules
+Message-ID: <20210325082352.GA2988009@infradead.org>
+References: <20210315053721.189-1-xieyongji@bytedance.com>
+ <20210315053721.189-2-xieyongji@bytedance.com>
+ <20210315090822.GA4166677@infradead.org>
+ <CACycT3vrHOExXj6v8ULvUzdLcRkdzS5=TNK6=g4+RWEdN-nOJw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACycT3vrHOExXj6v8ULvUzdLcRkdzS5=TNK6=g4+RWEdN-nOJw@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-receive_fd_replace shares almost no code with the general case, so split
-it out.  Also remove the "Bump the sock usage counts" comment from
-both copies, as that is now what __receive_sock actually does.
+On Mon, Mar 15, 2021 at 05:46:43PM +0800, Yongji Xie wrote:
+> On Mon, Mar 15, 2021 at 5:08 PM Christoph Hellwig <hch@infradead.org> wrote:
+> >
+> > On Mon, Mar 15, 2021 at 01:37:11PM +0800, Xie Yongji wrote:
+> > > Export __receive_fd() so that some modules can use
+> > > it to pass file descriptor between processes.
+> >
+> > I really don't think any non-core code should do that, especilly not
+> > modular mere driver code.
+> 
+> Do you see any issue? Now I think we're able to do that with the help
+> of get_unused_fd_flags() and fd_install() in modules. But we may miss
+> some security stuff in this way. So I try to export __receive_fd() and
+> use it instead.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/file.c            | 39 +++++++++++++++++++--------------------
- include/linux/file.h | 11 ++++-------
- 2 files changed, 23 insertions(+), 27 deletions(-)
-
-diff --git a/fs/file.c b/fs/file.c
-index f3a4bac2cbe915..d8ccb95a7f4138 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -1068,8 +1068,6 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
- 
- /**
-  * __receive_fd() - Install received file into file descriptor table
-- *
-- * @fd: fd to install into (if negative, a new fd will be allocated)
-  * @file: struct file that was received from another process
-  * @ufd: __user pointer to write new fd number to
-  * @o_flags: the O_* flags to apply to the new fd entry
-@@ -1083,7 +1081,7 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
-  *
-  * Returns newly install fd or -ve on error.
-  */
--int __receive_fd(int fd, struct file *file, int __user *ufd, unsigned int o_flags)
-+int __receive_fd(struct file *file, int __user *ufd, unsigned int o_flags)
- {
- 	int new_fd;
- 	int error;
-@@ -1092,32 +1090,33 @@ int __receive_fd(int fd, struct file *file, int __user *ufd, unsigned int o_flag
- 	if (error)
- 		return error;
- 
--	if (fd < 0) {
--		new_fd = get_unused_fd_flags(o_flags);
--		if (new_fd < 0)
--			return new_fd;
--	} else {
--		new_fd = fd;
--	}
-+	new_fd = get_unused_fd_flags(o_flags);
-+	if (new_fd < 0)
-+		return new_fd;
- 
- 	if (ufd) {
- 		error = put_user(new_fd, ufd);
- 		if (error) {
--			if (fd < 0)
--				put_unused_fd(new_fd);
-+			put_unused_fd(new_fd);
- 			return error;
- 		}
- 	}
- 
--	if (fd < 0) {
--		fd_install(new_fd, get_file(file));
--	} else {
--		error = replace_fd(new_fd, file, o_flags);
--		if (error)
--			return error;
--	}
-+	fd_install(new_fd, get_file(file));
-+	__receive_sock(file);
-+	return new_fd;
-+}
- 
--	/* Bump the sock usage counts, if any. */
-+int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
-+{
-+	int error;
-+
-+	error = security_file_receive(file);
-+	if (error)
-+		return error;
-+	error = replace_fd(new_fd, file, o_flags);
-+	if (error)
-+		return error;
- 	__receive_sock(file);
- 	return new_fd;
- }
-diff --git a/include/linux/file.h b/include/linux/file.h
-index 225982792fa20e..2de2e4613d7bc3 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -92,23 +92,20 @@ extern void put_unused_fd(unsigned int fd);
- 
- extern void fd_install(unsigned int fd, struct file *file);
- 
--extern int __receive_fd(int fd, struct file *file, int __user *ufd,
-+extern int __receive_fd(struct file *file, int __user *ufd,
- 			unsigned int o_flags);
- static inline int receive_fd_user(struct file *file, int __user *ufd,
- 				  unsigned int o_flags)
- {
- 	if (ufd == NULL)
- 		return -EFAULT;
--	return __receive_fd(-1, file, ufd, o_flags);
-+	return __receive_fd(file, ufd, o_flags);
- }
- static inline int receive_fd(struct file *file, unsigned int o_flags)
- {
--	return __receive_fd(-1, file, NULL, o_flags);
--}
--static inline int receive_fd_replace(int fd, struct file *file, unsigned int o_flags)
--{
--	return __receive_fd(fd, file, NULL, o_flags);
-+	return __receive_fd(file, NULL, o_flags);
- }
-+int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags);
- 
- extern void flush_delayed_fput(void);
- extern void __fput_sync(struct file *);
--- 
-2.30.1
-
+The real problem is now what helper to use, but rather that random
+drivers should not just mess with the FD table like that.
