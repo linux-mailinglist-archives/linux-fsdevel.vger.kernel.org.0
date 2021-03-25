@@ -2,108 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F06C349AF7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 21:26:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 559FE349B4A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 21:53:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230207AbhCYU0T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Mar 2021 16:26:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44130 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229930AbhCYU0N (ORCPT
+        id S230357AbhCYUwb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Mar 2021 16:52:31 -0400
+Received: from gardel.0pointer.net ([85.214.157.71]:43152 "EHLO
+        gardel.0pointer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230140AbhCYUw0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Mar 2021 16:26:13 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF0B5C06174A;
-        Thu, 25 Mar 2021 13:26:12 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: shreeya)
-        with ESMTPSA id 407901F4684B
-Subject: Re: [PATCH v4 5/5] fs: unicode: Add utf8 module and a unicode layer
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
-        chao@kernel.org, krisman@collabora.com, drosen@google.com,
-        yuchao0@huawei.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-        andre.almeida@collabora.com
-References: <20210325000811.1379641-1-shreeya.patel@collabora.com>
- <20210325000811.1379641-6-shreeya.patel@collabora.com>
- <YFznIVf/F68oEuC6@sol.localdomain>
-From:   Shreeya Patel <shreeya.patel@collabora.com>
-Message-ID: <2db48ab8-1297-e044-dcec-6c8b8875fdb0@collabora.com>
-Date:   Fri, 26 Mar 2021 01:56:00 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        Thu, 25 Mar 2021 16:52:26 -0400
+Received: from gardel-login.0pointer.net (gardel-mail [85.214.157.71])
+        by gardel.0pointer.net (Postfix) with ESMTP id 8B60CE80932;
+        Thu, 25 Mar 2021 21:52:22 +0100 (CET)
+Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
+        id E49031608A1; Thu, 25 Mar 2021 21:52:21 +0100 (CET)
+Date:   Thu, 25 Mar 2021 21:52:21 +0100
+From:   Lennart Poettering <mzxreary@0pointer.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Matteo Croce <mcroce@linux.microsoft.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Luca Boccassi <bluca@debian.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Tejun Heo <tj@kernel.org>,
+        Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier@javigon.com>,
+        Niklas Cassel <niklas.cassel@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCH -next 1/5] block: add disk sequence number
+Message-ID: <YFz4BabOiNDcnHIm@gardel-login>
+References: <20210315200242.67355-1-mcroce@linux.microsoft.com>
+ <20210315200242.67355-2-mcroce@linux.microsoft.com>
+ <20210315201824.GB2577561@casper.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <YFznIVf/F68oEuC6@sol.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210315201824.GB2577561@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 26/03/21 1:10 am, Eric Biggers wrote:
-> On Thu, Mar 25, 2021 at 05:38:11AM +0530, Shreeya Patel wrote:
->> Also, indirect calls using function pointers are easily exploitable by
->> speculative execution attacks, hence use static_call() in unicode.h and
->> unicode-core.c files inorder to prevent these attacks by making direct
->> calls and also to improve the performance of function pointers.
-> I don't think you need to worry about avoiding indirect calls to prevent
-> speculative execution attacks.  That's what the mitigations like Retpoline are
-> for.  Instead my concern was just that indirect calls are *slow*, especially
-> when those mitigations are enabled.  Some of the casefolding operations are
-> called a lot (e.g., repeatedly during path resolution), and it would be
-> desirable to avoid adding more overhead there.
+On Mo, 15.03.21 20:18, Matthew Wilcox (willy@infradead.org) wrote:
+65;6203;1c
+> On Mon, Mar 15, 2021 at 09:02:38PM +0100, Matteo Croce wrote:
+> > From: Matteo Croce <mcroce@microsoft.com>
+> >
+> > Add a sequence number to the disk devices. This number is put in the
+> > uevent so userspace can correlate events when a driver reuses a device,
+> > like the loop one.
 >
->> diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
->> index 2c27b9a5cd6c..2961b0206b4d 100644
->> --- a/fs/unicode/Kconfig
->> +++ b/fs/unicode/Kconfig
->> @@ -8,7 +8,16 @@ config UNICODE
->>   	  Say Y here to enable UTF-8 NFD normalization and NFD+CF casefolding
->>   	  support.
->>   
->> +# UTF-8 encoding can be compiled as a module using UNICODE_UTF8 option.
->> +# Having UTF-8 encoding as a module will avoid carrying large
->> +# database table present in utf8data.h_shipped into the kernel
->> +# by being able to load it only when it is required by the filesystem.
->> +config UNICODE_UTF8
->> +	tristate "UTF-8 module"
->> +	depends on UNICODE
->> +	default m
->> +
-> The help for UNICODE still says that it enables UTF-8 support.  But now there is
-> a separate option that people will need to remember to enable.
->
-> Please document each of these options properly.
->
-> Perhaps EXT4_FS and F2FS_FS just should select UNICODE_UTF8 if UNICODE, so that
-> UNICODE_UTF8 doesn't have to be a user-selectable symbol?
+> Should this be documented as monotonically increasing?
 
+I think this would be great. My usecase for this would be to match up
+uevents with loopback block device attachments, because that's
+basically impossible right now: you attach a loopback device to a
+file, and then wait for the relevant uevents to happen, for all
+partitions but you cannot do this safely right now, since loopback
+block devices are heavily reused in many scenarios so you never know
+if a uevent is from the attachment you created yourself or from a
+previous one — or even already for the next.
 
-It is not a user-selectable symbol. It depends on UNICODE and if someone 
-enables it,
-by default UNICODE_UTF8 will be enabled as a module.
+If this would be documented as being monotonic this would be excellent
+for this usecase: if you know that your own use of a specific loopback
+device got seqno x then you know that if you see uevents for seqno < x
+it makes sense to wait longer, but when you see seqno > x then you
+know it's too late, somehow you lost uevents and hsould abort.
 
+Hence: for my usecase having this strictly monotonic, and thus being
+able to *order* attachments across all areas where the seqno appears
+would be absolutely excellent and make this as robust as it possibly
+could be.
 
->> +DEFINE_STATIC_CALL(validate, unicode_validate_static_call);
->> +EXPORT_STATIC_CALL(validate);
-> Global symbols can't have generic names like "validate".  Please add an
-> appropriate prefix like "unicode_".
->
-> Also, the thing called "unicode_validate_static_call" isn't actually a static
-> call as the name suggests, but rather the default function used by the static
-> call.  It should be called something like unicode_validate_default.
->
-> Likewise for all the others.
+> I think this is actually a media identifier.  Consider (if you will)
+> a floppy disc.  Back when such things were common, it was possible
+> with personal computers of the era to have multiple floppy discs "in
+> play" and be prompted to insert them as needed.  So shouldn't it be
+> possible to support something similar here -- you're really removing
+> the media from the loop device.  With a monotonically increasing
+> number, you're always destroying the media when you remove it, but
+> in principle, it should be possible to reinsert the same media and
+> have the same media identifier number.
 
+This would be useless for my usecase, we don't really care for the
+precise file being attached (which is queriable via sysfs anyway), but
+we want to match up our use of the device with the uevents it
+generates on itself and decendend partition block devices.
 
-Thanks for your reviews, I'll make the change suggested by you in v5.
+Hence: for my usecase I want something that recognizes *attachments*
+and not media. If i attach the same media 3 times i want to be able to
+discern the three times. And more importantly: if I attach it once and
+someone else also once, then I don't want to get confused by that and
+be able ti distinguish both attachments.
 
+Morevoer, I am not even sure what media identifier would mean: if you
+have one image and then copy it, is that still the same image? in your
+model, should that have distinct ids? or the same, because it is from
+the same common original version? and if i then modify one, what
+happens then?
 
->
-> - Eric
->
+Finally, media usually comes with ids anyway. i.e. file systems have
+uuids, GPT partition tables have meda uuids. The infrastructure for
+that already exists. What we need really is something that allows us
+to track attachments, not media.
+
+(That said, I think it would make sense to bump the IDs not only on
+explicit user-induced reattachments, but also when media is replaced,
+i.e. bump it more often than not)
+
+Lennart
+
+--
+Lennart Poettering, Berlin
