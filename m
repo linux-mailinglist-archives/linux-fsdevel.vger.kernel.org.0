@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 634B4349A64
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 20:39:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CCA6349A69
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Mar 2021 20:39:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230345AbhCYTik (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Mar 2021 15:38:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35991 "EHLO
+        id S230372AbhCYTim (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Mar 2021 15:38:42 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:24907 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230226AbhCYTiH (ORCPT
+        by vger.kernel.org with ESMTP id S230260AbhCYTiI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Mar 2021 15:38:07 -0400
+        Thu, 25 Mar 2021 15:38:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616701086;
+        s=mimecast20190719; t=1616701088;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FQQbc5zk+U36p6UN2mxt6grR8E6eAwJTRu6KEH3FV8k=;
-        b=AYUN5Z6C55y0bSsuoyITMNTmYZwafCz9T6LY7Mng4UCrObGtzmqn0QWWPbXxDYfdjeN/xF
-        p3SxeOqelntNK3s4NCBAhOsrj3J9qpMTpyytKPLRP4LHlT+bQybnPhkYkdL0by13XbSoLg
-        YeOhJnrakRJO80TF2ep/Y23DygpwMHc=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-159-D18RYBPVMkWuuNgJhFUL2Q-1; Thu, 25 Mar 2021 15:38:04 -0400
-X-MC-Unique: D18RYBPVMkWuuNgJhFUL2Q-1
-Received: by mail-ed1-f70.google.com with SMTP id bi17so3201818edb.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Mar 2021 12:38:04 -0700 (PDT)
+        bh=SfY0z2dyuWV5OkbnCJF2jdzX6hJ3uBxTOX5BsnnHzYI=;
+        b=QrJJW3F4HpnIA0H9dT1FN0um6tBReZte6LehbYkZVklHkpDdCge2EWb/iTgaLj5rpQK0Qu
+        19qZdgQakF/a0aaAlhZhRK10OTIgeCQK3+t+AhIDTwBHlWIYfspCZTDw9BaWfjHoGwjH5A
+        PD2waSgOSKrYx3fSqjZyAHHcVVt/218=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-396-iTi_AGXDOtSqPuHUg6QV5g-1; Thu, 25 Mar 2021 15:38:05 -0400
+X-MC-Unique: iTi_AGXDOtSqPuHUg6QV5g-1
+Received: by mail-ej1-f71.google.com with SMTP id li22so3082522ejb.18
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Mar 2021 12:38:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FQQbc5zk+U36p6UN2mxt6grR8E6eAwJTRu6KEH3FV8k=;
-        b=VRDgN9sgLZ+AZn9gE4lY2R2hRFlEapLmelZ3vgpFgZrwtjnwV7Emd1mM0WDpyK6kSA
-         GoDqqcn4p/BEECBU6dwrGqZeNct+gEvtF6Ahv3UVEQS4DAHp+WLcT89vXrEvlJsyIl+W
-         ZnU27XecrxcEFvra0dn/dh3aFGdfENbkcI0R+c1c75U0UAYz3EGMHaV/6j1y/WHfa9pO
-         sDCWb7g1iuyUInFasr69vh4C4JPQb0E85AYme8dmlHSnMgCvWrjjmrjVLT/FTCBHb4dh
-         H7jkSRfiKMe9+jBpPBs0XBCuSTZ1tdg2PwWD1ZQgXHt3TIasp7vBEArOLIlfUmGQiNYt
-         3WBg==
-X-Gm-Message-State: AOAM533fiojxtHwB0Llx6MOdQosvPppuzaadaqueNQYeOi30FDGbvvkk
-        ou+p3HMS8CnXXliIcfbkNUDlV3qBkmh/8pMejuomjRf/KPgNwu+W22Zs51lZ4PbMVVLBdcqm5J9
-        HxLSnS5kS0OPmW/l4WhQD6e5T6zoDMg5C244IEAqA50QI9mFWrjQWdMKLYo+0GfBV/JkTd1XMhk
-        1TuQ==
-X-Received: by 2002:a17:906:b846:: with SMTP id ga6mr11225861ejb.542.1616701083097;
+        bh=SfY0z2dyuWV5OkbnCJF2jdzX6hJ3uBxTOX5BsnnHzYI=;
+        b=X63cLBpVU9bp43tZeiwYhB8M7IIbJAdR5hAUC3FqkItkqHZZYG+XLgSMrlBe/gfMXy
+         o9BchXhZzf1gT/OCL+aX3Afv3DYqP/C+0luNVrQqHdh0EEvSsvp0stLWY47MgOkC9dZL
+         TXCjZhQT/WuQht0U0U8RFBFYdgyb+NrQ70hluU16iecr9h4k29bPHUHwppzsyJ165jNa
+         a9Lr4b1pEIvYdIYthw2eWUqUopQUmFlGloKru97U3mBOA7rjYHLK6jCFMLQYAbDshdiy
+         F2b4xOpdRQdzw0BycRoLkVQdJVNM2dF+kIs5LA6VsKoUYcyOpXCqdZtHqQBr2tWyXgYc
+         Vcpg==
+X-Gm-Message-State: AOAM5339DP23khmBaPgD9paYDOgaF88FxJRiuEVqkR3yV7+5Ejj/+/T4
+        EaC4ILlgl7ddYSF54/8e3o9Qv+PJ71I+/AQTwbHODVuCSvv/054ndiLzHw/cAJWn7dzx6hDdsJx
+        V4spxfvG02mdc0JHfGs67olKD6xEfPbqX/CSzE029YI60JuTFIgIUu/Hx5Se12sE6XxW2g+wcFH
+        EW6g==
+X-Received: by 2002:a17:906:5607:: with SMTP id f7mr11031885ejq.262.1616701084259;
+        Thu, 25 Mar 2021 12:38:04 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwMZe98Ce0Tu9vIMEMjZX2e7clAsWQZr2GTed8wrRVZNbbidX9MKw61PjL1CnFMjwREX4ebFA==
+X-Received: by 2002:a17:906:5607:: with SMTP id f7mr11031860ejq.262.1616701083990;
         Thu, 25 Mar 2021 12:38:03 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwtOH3s+nZ6mR/73hUnsZeVXNtuHgwt1PzOhLfeMk8hd4rTnGr6y9dzJLHw42g7Wjq8CuWG1A==
-X-Received: by 2002:a17:906:b846:: with SMTP id ga6mr11225840ejb.542.1616701082856;
-        Thu, 25 Mar 2021 12:38:02 -0700 (PDT)
 Received: from miu.piliscsaba.redhat.com (catv-86-101-169-67.catv.broadband.hu. [86.101.169.67])
-        by smtp.gmail.com with ESMTPSA id si7sm2881996ejb.84.2021.03.25.12.38.01
+        by smtp.gmail.com with ESMTPSA id si7sm2881996ejb.84.2021.03.25.12.38.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 12:38:02 -0700 (PDT)
+        Thu, 25 Mar 2021 12:38:03 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Al Viro <viro@ZenIV.linux.org.uk>, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH v3 05/18] ext2: convert to fileattr
-Date:   Thu, 25 Mar 2021 20:37:42 +0100
-Message-Id: <20210325193755.294925-6-mszeredi@redhat.com>
+        "Theodore Ts'o" <tytso@mit.edu>
+Subject: [PATCH v3 06/18] ext4: convert to fileattr
+Date:   Thu, 25 Mar 2021 20:37:43 +0100
+Message-Id: <20210325193755.294925-7-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210325193755.294925-1-mszeredi@redhat.com>
 References: <20210325193755.294925-1-mszeredi@redhat.com>
@@ -72,189 +72,365 @@ Use the fileattr API to let the VFS handle locking, permission checking and
 conversion.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Cc: Jan Kara <jack@suse.cz>
+Cc: "Theodore Ts'o" <tytso@mit.edu>
 ---
- fs/ext2/ext2.h  |  7 ++--
- fs/ext2/file.c  |  2 ++
- fs/ext2/ioctl.c | 88 ++++++++++++++++++-------------------------------
- fs/ext2/namei.c |  2 ++
- 4 files changed, 39 insertions(+), 60 deletions(-)
+ fs/ext4/ext4.h  |  12 +--
+ fs/ext4/file.c  |   2 +
+ fs/ext4/ioctl.c | 208 ++++++++++--------------------------------------
+ fs/ext4/namei.c |   2 +
+ 4 files changed, 50 insertions(+), 174 deletions(-)
 
-diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
-index 3309fb2d327a..23ffe5b96010 100644
---- a/fs/ext2/ext2.h
-+++ b/fs/ext2/ext2.h
-@@ -283,8 +283,6 @@ static inline __u32 ext2_mask_flags(umode_t mode, __u32 flags)
- /*
-  * ioctl commands
-  */
--#define	EXT2_IOC_GETFLAGS		FS_IOC_GETFLAGS
--#define	EXT2_IOC_SETFLAGS		FS_IOC_SETFLAGS
- #define	EXT2_IOC_GETVERSION		FS_IOC_GETVERSION
- #define	EXT2_IOC_SETVERSION		FS_IOC_SETVERSION
- #define	EXT2_IOC_GETRSVSZ		_IOR('f', 5, long)
-@@ -293,8 +291,6 @@ static inline __u32 ext2_mask_flags(umode_t mode, __u32 flags)
- /*
-  * ioctl commands in 32 bit emulation
-  */
--#define EXT2_IOC32_GETFLAGS		FS_IOC32_GETFLAGS
--#define EXT2_IOC32_SETFLAGS		FS_IOC32_SETFLAGS
- #define EXT2_IOC32_GETVERSION		FS_IOC32_GETVERSION
- #define EXT2_IOC32_SETVERSION		FS_IOC32_SETVERSION
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 826a56e3bbd2..18f021c988a1 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -472,15 +472,6 @@ struct flex_groups {
+ 					 EXT4_VERITY_FL | \
+ 					 EXT4_INLINE_DATA_FL)
  
-@@ -772,6 +768,9 @@ extern int ext2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 		       u64 start, u64 len);
- 
- /* ioctl.c */
-+extern int ext2_fileattr_get(struct dentry *dentry, struct fileattr *fa);
-+extern int ext2_fileattr_set(struct user_namespace *mnt_userns,
-+			     struct dentry *dentry, struct fileattr *fa);
- extern long ext2_ioctl(struct file *, unsigned int, unsigned long);
- extern long ext2_compat_ioctl(struct file *, unsigned int, unsigned long);
- 
-diff --git a/fs/ext2/file.c b/fs/ext2/file.c
-index 96044f5dbc0e..f98466acc672 100644
---- a/fs/ext2/file.c
-+++ b/fs/ext2/file.c
-@@ -204,4 +204,6 @@ const struct inode_operations ext2_file_inode_operations = {
- 	.get_acl	= ext2_get_acl,
- 	.set_acl	= ext2_set_acl,
- 	.fiemap		= ext2_fiemap,
-+	.fileattr_get	= ext2_fileattr_get,
-+	.fileattr_set	= ext2_fileattr_set,
- };
-diff --git a/fs/ext2/ioctl.c b/fs/ext2/ioctl.c
-index b399cbb7022d..e8340bf09b10 100644
---- a/fs/ext2/ioctl.c
-+++ b/fs/ext2/ioctl.c
-@@ -16,69 +16,51 @@
- #include <linux/mount.h>
- #include <asm/current.h>
- #include <linux/uaccess.h>
-+#include <linux/fileattr.h>
- 
+-/* Flags we can manipulate with through FS_IOC_FSSETXATTR */
+-#define EXT4_FL_XFLAG_VISIBLE		(EXT4_SYNC_FL | \
+-					 EXT4_IMMUTABLE_FL | \
+-					 EXT4_APPEND_FL | \
+-					 EXT4_NODUMP_FL | \
+-					 EXT4_NOATIME_FL | \
+-					 EXT4_PROJINHERIT_FL | \
+-					 EXT4_DAX_FL)
 -
--long ext2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-+int ext2_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+ /* Flags that should be inherited by new inodes from their parent. */
+ #define EXT4_FL_INHERITED (EXT4_SECRM_FL | EXT4_UNRM_FL | EXT4_COMPR_FL |\
+ 			   EXT4_SYNC_FL | EXT4_NODUMP_FL | EXT4_NOATIME_FL |\
+@@ -2928,6 +2919,9 @@ extern int ext4_ind_remove_space(handle_t *handle, struct inode *inode,
+ /* ioctl.c */
+ extern long ext4_ioctl(struct file *, unsigned int, unsigned long);
+ extern long ext4_compat_ioctl(struct file *, unsigned int, unsigned long);
++int ext4_fileattr_set(struct user_namespace *mnt_userns,
++		      struct dentry *dentry, struct fileattr *fa);
++int ext4_fileattr_get(struct dentry *dentry, struct fileattr *fa);
+ extern void ext4_reset_inode_seed(struct inode *inode);
+ 
+ /* migrate.c */
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 194f5d00fa32..5332dd3ea7e2 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -919,5 +919,7 @@ const struct inode_operations ext4_file_inode_operations = {
+ 	.get_acl	= ext4_get_acl,
+ 	.set_acl	= ext4_set_acl,
+ 	.fiemap		= ext4_fiemap,
++	.fileattr_get	= ext4_fileattr_get,
++	.fileattr_set	= ext4_fileattr_set,
+ };
+ 
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index a2cf35066f46..e9b0a1fa2ba8 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -20,6 +20,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/delay.h>
+ #include <linux/iversion.h>
++#include <linux/fileattr.h>
+ #include "ext4_jbd2.h"
+ #include "ext4.h"
+ #include <linux/fsmap.h>
+@@ -344,11 +345,6 @@ static int ext4_ioctl_setflags(struct inode *inode,
+ 		goto flags_out;
+ 
+ 	oldflags = ei->i_flags;
+-
+-	err = vfs_ioc_setflags_prepare(inode, oldflags, flags);
+-	if (err)
+-		goto flags_out;
+-
+ 	/*
+ 	 * The JOURNAL_DATA flag can only be changed by
+ 	 * the relevant capability.
+@@ -459,9 +455,8 @@ static int ext4_ioctl_setflags(struct inode *inode,
+ }
+ 
+ #ifdef CONFIG_QUOTA
+-static int ext4_ioctl_setproject(struct file *filp, __u32 projid)
++static int ext4_ioctl_setproject(struct inode *inode, __u32 projid)
  {
 -	struct inode *inode = file_inode(filp);
--	struct ext2_inode_info *ei = EXT2_I(inode);
--	unsigned int flags;
--	unsigned short rsv_window_size;
--	int ret;
-+	struct ext2_inode_info *ei = EXT2_I(d_inode(dentry));
+ 	struct super_block *sb = inode->i_sb;
+ 	struct ext4_inode_info *ei = EXT4_I(inode);
+ 	int err, rc;
+@@ -545,7 +540,7 @@ static int ext4_ioctl_setproject(struct file *filp, __u32 projid)
+ 	return err;
+ }
+ #else
+-static int ext4_ioctl_setproject(struct file *filp, __u32 projid)
++static int ext4_ioctl_setproject(struct inode *inode, __u32 projid)
+ {
+ 	if (projid != EXT4_DEF_PROJID)
+ 		return -EOPNOTSUPP;
+@@ -553,56 +548,6 @@ static int ext4_ioctl_setproject(struct file *filp, __u32 projid)
+ }
+ #endif
  
--	ext2_debug ("cmd = %u, arg = %lu\n", cmd, arg);
-+	fileattr_fill_flags(fa, ei->i_flags & EXT2_FL_USER_VISIBLE);
+-/* Transfer internal flags to xflags */
+-static inline __u32 ext4_iflags_to_xflags(unsigned long iflags)
+-{
+-	__u32 xflags = 0;
+-
+-	if (iflags & EXT4_SYNC_FL)
+-		xflags |= FS_XFLAG_SYNC;
+-	if (iflags & EXT4_IMMUTABLE_FL)
+-		xflags |= FS_XFLAG_IMMUTABLE;
+-	if (iflags & EXT4_APPEND_FL)
+-		xflags |= FS_XFLAG_APPEND;
+-	if (iflags & EXT4_NODUMP_FL)
+-		xflags |= FS_XFLAG_NODUMP;
+-	if (iflags & EXT4_NOATIME_FL)
+-		xflags |= FS_XFLAG_NOATIME;
+-	if (iflags & EXT4_PROJINHERIT_FL)
+-		xflags |= FS_XFLAG_PROJINHERIT;
+-	if (iflags & EXT4_DAX_FL)
+-		xflags |= FS_XFLAG_DAX;
+-	return xflags;
+-}
+-
+-#define EXT4_SUPPORTED_FS_XFLAGS (FS_XFLAG_SYNC | FS_XFLAG_IMMUTABLE | \
+-				  FS_XFLAG_APPEND | FS_XFLAG_NODUMP | \
+-				  FS_XFLAG_NOATIME | FS_XFLAG_PROJINHERIT | \
+-				  FS_XFLAG_DAX)
+-
+-/* Transfer xflags flags to internal */
+-static inline unsigned long ext4_xflags_to_iflags(__u32 xflags)
+-{
+-	unsigned long iflags = 0;
+-
+-	if (xflags & FS_XFLAG_SYNC)
+-		iflags |= EXT4_SYNC_FL;
+-	if (xflags & FS_XFLAG_IMMUTABLE)
+-		iflags |= EXT4_IMMUTABLE_FL;
+-	if (xflags & FS_XFLAG_APPEND)
+-		iflags |= EXT4_APPEND_FL;
+-	if (xflags & FS_XFLAG_NODUMP)
+-		iflags |= EXT4_NODUMP_FL;
+-	if (xflags & FS_XFLAG_NOATIME)
+-		iflags |= EXT4_NOATIME_FL;
+-	if (xflags & FS_XFLAG_PROJINHERIT)
+-		iflags |= EXT4_PROJINHERIT_FL;
+-	if (xflags & FS_XFLAG_DAX)
+-		iflags |= EXT4_DAX_FL;
+-
+-	return iflags;
+-}
+-
+ static int ext4_shutdown(struct super_block *sb, unsigned long arg)
+ {
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+@@ -770,15 +715,52 @@ static long ext4_ioctl_group_add(struct file *file,
+ 	return err;
+ }
  
--	switch (cmd) {
--	case EXT2_IOC_GETFLAGS:
--		flags = ei->i_flags & EXT2_FL_USER_VISIBLE;
--		return put_user(flags, (int __user *) arg);
--	case EXT2_IOC_SETFLAGS: {
--		unsigned int oldflags;
+-static void ext4_fill_fsxattr(struct inode *inode, struct fsxattr *fa)
++int ext4_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+ {
++	struct inode *inode = d_inode(dentry);
+ 	struct ext4_inode_info *ei = EXT4_I(inode);
++	u32 flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
+ 
+-	simple_fill_fsxattr(fa, ext4_iflags_to_xflags(ei->i_flags &
+-						      EXT4_FL_USER_VISIBLE));
++	if (S_ISREG(inode->i_mode))
++		flags &= ~FS_PROJINHERIT_FL;
+ 
++	fileattr_fill_flags(fa, flags);
+ 	if (ext4_has_feature_project(inode->i_sb))
+ 		fa->fsx_projid = from_kprojid(&init_user_ns, ei->i_projid);
++
 +	return 0;
 +}
- 
--		ret = mnt_want_write_file(filp);
--		if (ret)
--			return ret;
-+int ext2_fileattr_set(struct user_namespace *mnt_userns,
++
++int ext4_fileattr_set(struct user_namespace *mnt_userns,
 +		      struct dentry *dentry, struct fileattr *fa)
 +{
 +	struct inode *inode = d_inode(dentry);
-+	struct ext2_inode_info *ei = EXT2_I(inode);
- 
--		if (!inode_owner_or_capable(&init_user_ns, inode)) {
--			ret = -EACCES;
--			goto setflags_out;
--		}
-+	if (fileattr_has_fsx(fa))
-+		return -EOPNOTSUPP;
- 
--		if (get_user(flags, (int __user *) arg)) {
--			ret = -EFAULT;
--			goto setflags_out;
--		}
-+	/* Is it quota file? Do not allow user to mess with it */
-+	if (IS_NOQUOTA(inode))
-+		return -EPERM;
- 
--		flags = ext2_mask_flags(inode->i_mode, flags);
-+	ei->i_flags = (ei->i_flags & ~EXT2_FL_USER_MODIFIABLE) |
-+		(fa->flags & EXT2_FL_USER_MODIFIABLE);
- 
--		inode_lock(inode);
--		/* Is it quota file? Do not allow user to mess with it */
--		if (IS_NOQUOTA(inode)) {
--			inode_unlock(inode);
--			ret = -EPERM;
--			goto setflags_out;
--		}
--		oldflags = ei->i_flags;
-+	ext2_set_inode_flags(inode);
-+	inode->i_ctime = current_time(inode);
-+	mark_inode_dirty(inode);
- 
--		ret = vfs_ioc_setflags_prepare(inode, oldflags, flags);
--		if (ret) {
--			inode_unlock(inode);
--			goto setflags_out;
--		}
-+	return 0;
-+}
- 
--		flags = flags & EXT2_FL_USER_MODIFIABLE;
--		flags |= oldflags & ~EXT2_FL_USER_MODIFIABLE;
--		ei->i_flags = flags;
- 
--		ext2_set_inode_flags(inode);
--		inode->i_ctime = current_time(inode);
--		inode_unlock(inode);
-+long ext2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct ext2_inode_info *ei = EXT2_I(inode);
-+	unsigned short rsv_window_size;
-+	int ret;
- 
--		mark_inode_dirty(inode);
--setflags_out:
--		mnt_drop_write_file(filp);
--		return ret;
--	}
-+	ext2_debug ("cmd = %u, arg = %lu\n", cmd, arg);
++	u32 flags = fa->flags;
++	int err = -EOPNOTSUPP;
 +
-+	switch (cmd) {
- 	case EXT2_IOC_GETVERSION:
++	ext4_fc_start_update(inode);
++	if (flags & ~EXT4_FL_USER_VISIBLE)
++		goto out;
++
++	/*
++	 * chattr(1) grabs flags via GETFLAGS, modifies the result and
++	 * passes that to SETFLAGS. So we cannot easily make SETFLAGS
++	 * more restrictive than just silently masking off visible but
++	 * not settable flags as we always did.
++	 */
++	flags &= EXT4_FL_USER_MODIFIABLE;
++	if (ext4_mask_flags(inode->i_mode, flags) != flags)
++		goto out;
++	err = ext4_ioctl_check_immutable(inode, fa->fsx_projid, flags);
++	if (err)
++		goto out;
++	err = ext4_ioctl_setflags(inode, flags);
++	if (err)
++		goto out;
++	err = ext4_ioctl_setproject(inode, fa->fsx_projid);
++out:
++	ext4_fc_stop_update(inode);
++	return err;
+ }
+ 
+ /* So that the fiemap access checks can't overflow on 32 bit machines. */
+@@ -816,55 +798,13 @@ static long __ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+ 	struct inode *inode = file_inode(filp);
+ 	struct super_block *sb = inode->i_sb;
+-	struct ext4_inode_info *ei = EXT4_I(inode);
+ 	struct user_namespace *mnt_userns = file_mnt_user_ns(filp);
+-	unsigned int flags;
+ 
+ 	ext4_debug("cmd = %u, arg = %lu\n", cmd, arg);
+ 
+ 	switch (cmd) {
+ 	case FS_IOC_GETFSMAP:
+ 		return ext4_ioc_getfsmap(sb, (void __user *)arg);
+-	case FS_IOC_GETFLAGS:
+-		flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
+-		if (S_ISREG(inode->i_mode))
+-			flags &= ~EXT4_PROJINHERIT_FL;
+-		return put_user(flags, (int __user *) arg);
+-	case FS_IOC_SETFLAGS: {
+-		int err;
+-
+-		if (!inode_owner_or_capable(mnt_userns, inode))
+-			return -EACCES;
+-
+-		if (get_user(flags, (int __user *) arg))
+-			return -EFAULT;
+-
+-		if (flags & ~EXT4_FL_USER_VISIBLE)
+-			return -EOPNOTSUPP;
+-		/*
+-		 * chattr(1) grabs flags via GETFLAGS, modifies the result and
+-		 * passes that to SETFLAGS. So we cannot easily make SETFLAGS
+-		 * more restrictive than just silently masking off visible but
+-		 * not settable flags as we always did.
+-		 */
+-		flags &= EXT4_FL_USER_MODIFIABLE;
+-		if (ext4_mask_flags(inode->i_mode, flags) != flags)
+-			return -EOPNOTSUPP;
+-
+-		err = mnt_want_write_file(filp);
+-		if (err)
+-			return err;
+-
+-		inode_lock(inode);
+-		err = ext4_ioctl_check_immutable(inode,
+-				from_kprojid(&init_user_ns, ei->i_projid),
+-				flags);
+-		if (!err)
+-			err = ext4_ioctl_setflags(inode, flags);
+-		inode_unlock(inode);
+-		mnt_drop_write_file(filp);
+-		return err;
+-	}
+ 	case EXT4_IOC_GETVERSION:
+ 	case EXT4_IOC_GETVERSION_OLD:
  		return put_user(inode->i_generation, (int __user *) arg);
- 	case EXT2_IOC_SETVERSION: {
-@@ -163,12 +145,6 @@ long ext2_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+@@ -1246,60 +1186,6 @@ static long __ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	case EXT4_IOC_GET_ES_CACHE:
+ 		return ext4_ioctl_get_es_cache(filp, arg);
+ 
+-	case FS_IOC_FSGETXATTR:
+-	{
+-		struct fsxattr fa;
+-
+-		ext4_fill_fsxattr(inode, &fa);
+-
+-		if (copy_to_user((struct fsxattr __user *)arg,
+-				 &fa, sizeof(fa)))
+-			return -EFAULT;
+-		return 0;
+-	}
+-	case FS_IOC_FSSETXATTR:
+-	{
+-		struct fsxattr fa, old_fa;
+-		int err;
+-
+-		if (copy_from_user(&fa, (struct fsxattr __user *)arg,
+-				   sizeof(fa)))
+-			return -EFAULT;
+-
+-		/* Make sure caller has proper permission */
+-		if (!inode_owner_or_capable(mnt_userns, inode))
+-			return -EACCES;
+-
+-		if (fa.fsx_xflags & ~EXT4_SUPPORTED_FS_XFLAGS)
+-			return -EOPNOTSUPP;
+-
+-		flags = ext4_xflags_to_iflags(fa.fsx_xflags);
+-		if (ext4_mask_flags(inode->i_mode, flags) != flags)
+-			return -EOPNOTSUPP;
+-
+-		err = mnt_want_write_file(filp);
+-		if (err)
+-			return err;
+-
+-		inode_lock(inode);
+-		ext4_fill_fsxattr(inode, &old_fa);
+-		err = vfs_ioc_fssetxattr_check(inode, &old_fa, &fa);
+-		if (err)
+-			goto out;
+-		flags = (ei->i_flags & ~EXT4_FL_XFLAG_VISIBLE) |
+-			 (flags & EXT4_FL_XFLAG_VISIBLE);
+-		err = ext4_ioctl_check_immutable(inode, fa.fsx_projid, flags);
+-		if (err)
+-			goto out;
+-		err = ext4_ioctl_setflags(inode, flags);
+-		if (err)
+-			goto out;
+-		err = ext4_ioctl_setproject(filp, fa.fsx_projid);
+-out:
+-		inode_unlock(inode);
+-		mnt_drop_write_file(filp);
+-		return err;
+-	}
+ 	case EXT4_IOC_SHUTDOWN:
+ 		return ext4_shutdown(sb, arg);
+ 
+@@ -1340,12 +1226,6 @@ long ext4_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
  {
  	/* These are just misnamed, they actually get/put from/to user an int */
  	switch (cmd) {
--	case EXT2_IOC32_GETFLAGS:
--		cmd = EXT2_IOC_GETFLAGS;
+-	case FS_IOC32_GETFLAGS:
+-		cmd = FS_IOC_GETFLAGS;
 -		break;
--	case EXT2_IOC32_SETFLAGS:
--		cmd = EXT2_IOC_SETFLAGS;
+-	case FS_IOC32_SETFLAGS:
+-		cmd = FS_IOC_SETFLAGS;
 -		break;
- 	case EXT2_IOC32_GETVERSION:
- 		cmd = EXT2_IOC_GETVERSION;
+ 	case EXT4_IOC32_GETVERSION:
+ 		cmd = EXT4_IOC_GETVERSION;
  		break;
-diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
-index 3367384d344d..c03fc3c1533e 100644
---- a/fs/ext2/namei.c
-+++ b/fs/ext2/namei.c
-@@ -427,6 +427,8 @@ const struct inode_operations ext2_dir_inode_operations = {
- 	.get_acl	= ext2_get_acl,
- 	.set_acl	= ext2_set_acl,
- 	.tmpfile	= ext2_tmpfile,
-+	.fileattr_get	= ext2_fileattr_get,
-+	.fileattr_set	= ext2_fileattr_set,
+@@ -1405,8 +1285,6 @@ long ext4_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case EXT4_IOC_CLEAR_ES_CACHE:
+ 	case EXT4_IOC_GETSTATE:
+ 	case EXT4_IOC_GET_ES_CACHE:
+-	case FS_IOC_FSGETXATTR:
+-	case FS_IOC_FSSETXATTR:
+ 		break;
+ 	default:
+ 		return -ENOIOCTLCMD;
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 883e2a7cd4ab..a37a19fabee4 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -4172,6 +4172,8 @@ const struct inode_operations ext4_dir_inode_operations = {
+ 	.get_acl	= ext4_get_acl,
+ 	.set_acl	= ext4_set_acl,
+ 	.fiemap         = ext4_fiemap,
++	.fileattr_get	= ext4_fileattr_get,
++	.fileattr_set	= ext4_fileattr_set,
  };
  
- const struct inode_operations ext2_special_inode_operations = {
+ const struct inode_operations ext4_special_inode_operations = {
 -- 
 2.30.2
 
