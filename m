@@ -2,341 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A94634A164
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Mar 2021 07:05:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3B1F34A238
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Mar 2021 07:57:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229982AbhCZGEg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Mar 2021 02:04:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55370 "EHLO
+        id S230121AbhCZG4v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Mar 2021 02:56:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229949AbhCZGES (ORCPT
+        with ESMTP id S230063AbhCZG4U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Mar 2021 02:04:18 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B069EC0613AA;
-        Thu, 25 Mar 2021 23:04:17 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id z136so4279331iof.10;
-        Thu, 25 Mar 2021 23:04:17 -0700 (PDT)
+        Fri, 26 Mar 2021 02:56:20 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A599DC0613B0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Mar 2021 23:56:17 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id j3so5053818edp.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Mar 2021 23:56:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Mqj1pZGdQGCb79YTlJ4rUJ4Qk8Pv92ztE/LqTAF5fZg=;
-        b=ZAktI1CiEuZK+fylIwxZkZSGkp7P2An7HuKcU+Q1ehRceZCrpOYi9uK/PKQQpi4gsU
-         /tCzFrD1WzhM63s9CbiDJP7k8xJ+cnh77QEfSKa5noRnPYBHciKxX2pcudXKMYWiqXvn
-         bCJCQDWnyREMzBwfuO3+3vDeRm+TVmHAkSIeQlffESF1VfVo+BpaZkWg10H7A2Ry9WRH
-         m/hgejq+V9rPLyANGqoJ1Qd6ls1yCDMJhmISFDGyvj5JsDfRkDze6dQxkKnhW1NkRIcA
-         hO07uQ0fmHbJcJZpO5CDiIrstGy/YwNmXC1vQ7ZHOQSr9essdd4X3yNEasbIP2QO1VSX
-         ChZA==
+         :cc:content-transfer-encoding;
+        bh=PQypIBjUimiCDVu5dvIjV1qLemMlr0debSxZW75gths=;
+        b=r5Ga8+UedSB+p0J/ID7lgruod9NuIbmZYp4duaHkeV+6eGe3KTIBnBr/jUol6MK2xT
+         KigRHuLHX4UnrFmjSEkWk30i5s9ySzMlZZpPQ8e+Xl60EuTjkPa4pn23LBvKHhOaWSd4
+         ylVF2D9BNswpzd12vlataSJrOoKQxccgyy+5CwCCp6nHKKBTJIyFd3z3o0B0DjwBwCh+
+         BSzRyheU2Hdb5mZBGJXAkTce196LeaVm1tw2uwYX/3mHkbnA2xD8woqTfXFT68zWYagU
+         JDejzGcDAmUQstHf1XH88WvM/9oi8+CJjN8H6E5xGINYmMzcApiuJNEme9a2ng/xEdsJ
+         Usqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Mqj1pZGdQGCb79YTlJ4rUJ4Qk8Pv92ztE/LqTAF5fZg=;
-        b=l3GdSgI6EZpi21r9773i2WTDIrJYf8fKfAsyCC30ZOebIkWbXWMIYnr4hzj9LuRksO
-         SfqbY7HeU6seIYzKyudhpubbiIZvkukwtQlyI2DDlVAx/jhSKCWCsTfcUdsYf7yoGL7J
-         PSBy0f6aIxuS/Nd6UHiqsWTKIiSeDeM1DaE9ywcBPIC9EezECa+RtRnwACGnVwz4Kmmn
-         rBGIFy+4MNggZyphhZ46NiEu+ikjza4baAVtrvbtCxR8SAzSKohWgffmqa+QUkZQ+LxA
-         KD5tU2K0TgOGtFdpa5QimuaF+ZuzqgYvHcbXAyx6e0FrUsAMKrDWrmdX2k9PACxs7u8H
-         ypVQ==
-X-Gm-Message-State: AOAM5334ECQSmp5mkukQ2Rj6ifm7j8dGqoU5UMOqMakTI8gbLunPfuGO
-        gD5jtuEdeWUvVskS1O3Syp0LmtBJPWfdxOt1HKE=
-X-Google-Smtp-Source: ABdhPJwLqJje2qI1WKIvRg/wkacBGI583wQXbaTsdXSrq8OUfZmZHJ+UUmdjn/rr7LvGwtz45u//tEErPzjNtkTzqOk=
-X-Received: by 2002:a05:6638:1388:: with SMTP id w8mr4712850jad.30.1616738657030;
- Thu, 25 Mar 2021 23:04:17 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PQypIBjUimiCDVu5dvIjV1qLemMlr0debSxZW75gths=;
+        b=ayJs7ZlOBWNUIx3sObr/qLLMGZyC2J4PwUGehLI49Qa49p9mlsUMwWyU7lRncjxchw
+         hIhKkl6lQE9u001y70DHAg+Zu5c00lIrJOrg9lXflcxwb9oEPysNnXsHT4FVFWBLySed
+         DvVIXdRI+bE6A/cURBxa1oDw2UJBrcYBP4JMET/NTvbXj0dl9oP7U3zWQAZcx5mc7IDw
+         w0XflngupbowGfqJtQg7l68NxZwcijmlD9gqCUpM2n7Wa4jgoIw7tRiT9de/qllNLLRM
+         kGxLIUOPYUc4R2D6raP01pRybreaDTCm+EM0/jGIEz6Ly7dkZCmMmwNVXstyEZVnMtSg
+         SqqQ==
+X-Gm-Message-State: AOAM532xZ2j/+PdhjKR9ZL9uPVK8oa6hRYslS9nEwqmaK2rS94MuPVmr
+        b4beIlMq1sTHjtqVmUdIMLNKRuEFTbYn0lXrJx9z
+X-Google-Smtp-Source: ABdhPJwVqduG89yOSPZPZH6FO21xukl+7m/AtoIDrk4nR7UoWmIwrzX1T2oEszw1L5x8crslqmePwiOetelHUMIsq14=
+X-Received: by 2002:a05:6402:168c:: with SMTP id a12mr13336426edv.344.1616741776081;
+ Thu, 25 Mar 2021 23:56:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210322171118.446536-1-amir73il@gmail.com> <20210322230352.GW63242@dread.disaster.area>
- <CAOQ4uxjFMPNgR-aCqZt3FD90XtBVFZncdgNc4RdOCbsxukkyYQ@mail.gmail.com>
- <20210323072607.GF63242@dread.disaster.area> <CAOQ4uxgAddAfGkA7LMTPoBmrwVXbvHfnN8SWsW_WXm=LPVmc7Q@mail.gmail.com>
- <20210324005421.GK63242@dread.disaster.area> <CAOQ4uxhhMVQ4XE8DMU1EjaXBo-go3_pFX3CCWn=7GuUXcMW=PA@mail.gmail.com>
- <20210325225305.GM63242@dread.disaster.area>
-In-Reply-To: <20210325225305.GM63242@dread.disaster.area>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 26 Mar 2021 09:04:05 +0300
-Message-ID: <CAOQ4uxgAxUORpUJezg+oWKXEafn0o33+bP5EN+VKnoQA_KurOg@mail.gmail.com>
-Subject: Re: [PATCH] xfs: use a unique and persistent value for f_fsid
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>
+References: <20210315053721.189-1-xieyongji@bytedance.com> <20210315053721.189-9-xieyongji@bytedance.com>
+ <ec5b4146-9844-11b0-c9b0-c657d3328dd4@redhat.com> <CACycT3v_-G6ju-poofXEzYt8QPKWNFHwsS7t=KTLgs-=g+iPQQ@mail.gmail.com>
+ <7c90754b-681d-f3bf-514c-756abfcf3d23@redhat.com> <CACycT3uS870yy04rw7KBk==sioi+VNunxVz6BQH-Lmxk6m-VSg@mail.gmail.com>
+ <2db71996-037e-494d-6ef0-de3ff164d3c3@redhat.com> <CACycT3v6Lj61fafztOuzBNFLs2TbKeqrNLXkzv5RK6-h-iTnvA@mail.gmail.com>
+ <75e3b941-dfd2-ebbc-d752-8f25c1f14cab@redhat.com>
+In-Reply-To: <75e3b941-dfd2-ebbc-d752-8f25c1f14cab@redhat.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Fri, 26 Mar 2021 14:56:05 +0800
+Message-ID: <CACycT3t+2MC9rQ7iWdWQ4=O3ojCXHvHZ-M7y7AjXoXYZUiAOzQ@mail.gmail.com>
+Subject: Re: Re: [PATCH v5 08/11] vduse: Implement an MMU-based IOMMU driver
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> How do you check the identity of a file handle without a filesystem
-> identifier in it? having an external f_fsid isn't really sufficient
-> - you need to query the filesytem for it's identifier and determine
-> if the file handle contains that same identifier...
+On Fri, Mar 26, 2021 at 2:16 PM Jason Wang <jasowang@redhat.com> wrote:
 >
-> > Furthermore, with name_to_handle_at(fd, ..., AT_EMPTY_PATH)
-> > and fstatfs() there are none of the races you mention below and
-> > fanotify obviously captures a valid {fsid,fhandle} tuple.
 >
-> Except that fsid is not guaranteed to be the same across mounts, let
-> alone reboots. There is no guarantee of uniqueness, either. IOWs, in
-> the bigger picture, f_fsid isn't something that can provide a
-> guaranteed answer to your "is $obj the same as it was at $TIME"...
+> =E5=9C=A8 2021/3/26 =E4=B8=8B=E5=8D=881:14, Yongji Xie =E5=86=99=E9=81=93=
+:
 >
-> You can't even infer a path from the fsid, even if it is unique, The
-> fsid doesn't tell you what *mount point* it refers to. i.e in
-> the present of bind mounts, there can be multiple disjoint directory
-> heirachies that correspond to the same fsid...
+> +     }
+> +     map->bounce_page =3D page;
+> +
+> +     /* paired with vduse_domain_map_page() */
+> +     smp_mb();
 >
-
-This conversation is not converging.
-Partly because I may have failed to explain the requirements.
-
-I am telling you that I need to do X and you are telling me that I cannot
-do Y. I did not say that I needed to infer that path of an object nor that
-I cared which mount point the object was observed from.
-
-The application is able to cope with not being able to correctly resolve
-fid to path, but it is "incoventiet". The technical term to translate
-"inconvenient" is the "cost" of IO and time to recrawl the filesystem.
-
-I hear your main arguments against re-purposing f_fsid and potential
-breakage of applications loud and clear.
-
-On their own, they are perfectly valid and acceptable reasons to NACK
-my patch, so I am not going to pursue it.
-
-OTOH, I find your argument to leave f_fsid "less useful than it can be"
-because "it is not perfect", far less convincing, but it doesn't look like
-I am going to change your mind, so no point in arguing about that.
-
-[...]
-> > If the listener has several objects open (e.g. tail -f A B C) then when getting
-> > an event, the identifier can be used to match the open file with certainty
-> > (having verified no collisions of identifiers after opening the files).
+> So this is suspicious. It's better to explain like, we need make sure A
+> must be done after B.
 >
-> Sorry, you've lost me. How on do you reliably match a {fsid, fhandle}
-> to an open file descriptor? You've got to have more information
-> available than just a fd, fsid and a fhandle...
+> OK. I see. It's used to protect this pattern:
 >
-
-This was just an example of the simple case where the listener is started
-after opening the files and capturing the {fsid, fhandle} tuple from fd.
-The events received by the listener contain {fsid, fhandle} tuples that
-should match one of the captures fids.
-For this example, the stable fsid is irrelevant.
-
-> > If the listener is watching multiple directories (e.g. inotifywatch --recursive)
-> > then the listener has two options:
-> > 1. Keep open fds for all watches dirs - this is what inotify_add_watch()
-> >     does internally (not fds per-se but keeping an elevated i_count)
-> > 2. Keep fid->path map for all watches dirs and accept the fact that the
-> >     cached path information may be stale
-> >
-> > The 2nd option is valid for applications that use the events as hints
-> > to take action. An indexer application, for example, doesn't care if
-> > it will scan a directory where there were no changes as long as it will
-> > get the correct hint eventually.
-> >
-> > So if an indexer application were to act on FAN_MOVE events by
-> > scanning the entire subtree under the parent dir where an entry was
-> > renamed, the index will be eventually consistent, regardless of all
-> > the events on objects with stale path cache that may have been
-> > received after the rename.
+>      vduse_domain_alloc_bounce_page:          vduse_domain_map_page:
+>      write map->bounce_page                           write map->orig_phy=
+s
+>      mb()                                                            mb()
+>      read map->orig_phys                                 read map->bounce=
+_page
 >
-> Sure, but you don't need a file handle for this. you can just scan
-> the directory heirachy any time you get a notification for that
-> fsid. Even if you have multiple directory heirarchies that you
-> are watching on a given mount.
+> Make sure there will always be a path to do bouncing.
 >
-> I'm -guessing- that you are using the filehandle to differentiate
-> between different watched heirarchies, and you do that by taking a
-> name_to_handle_at() snapshot of the path when the watch is set, yes?
+> Ok.
 >
-
-More or less, yes.
-
-> AFAICT, the application cannot  care about whether it loses
-> events across reboot because the indexer already needs to scan after
-> boot to so that it is coherent with whatever state the filesystem is
-> in after recovery.
+>
+> And it looks to me the iotlb_lock is sufficnet to do the synchronization
+> here. E.g any reason that you don't take it in
+> vduse_domain_map_bounce_page().
+>
+> Yes, we can. But the performance in multi-queue cases will go down if
+> we use iotlb_lock on this critical path.
+>
+> And what's more, is there anyway to aovid holding the spinlock during
+> bouncing?
+>
+> Looks like we can't. In the case that multiple page faults happen on
+> the same page, we should make sure the bouncing is done before any
+> page fault handler returns.
+>
+> So it looks to me all those extra complexitiy comes from the fact that
+> the bounce_page and orig_phys are set by different places so we need to
+> do the bouncing in two places.
+>
+> I wonder how much we can gain from the "lazy" boucning in page fault.
+> The buffer mapped via dma_ops from virtio driver is expected to be
+> accessed by the userspace soon.  It looks to me we can do all those
+> stuffs during dma_map() then things would be greatly simplified.
+>
+> If so, we need to allocate lots of pages from the pool reserved for
+> atomic memory allocation requests.
+>
+> This should be fine, a lot of drivers tries to allocate pages in atomic
+> context. The point is to simplify the codes to make it easy to
+> determince the correctness so we can add optimization on top simply by
+> benchmarking the difference.
+>
+> OK. I will use this way in the next version.
+>
+> E.g we have serveral places that accesses orig_phys:
+>
+> 1) map_page(), write
+> 2) unmap_page(), write
+> 3) page fault handler, read
+>
+> It's not clear to me how they were synchronized. Or if it was
+> synchronzied implicitly (via iova allocator?), we'd better document it.
+>
+> Yes.
+>
+> Or simply use spinlock (which is the preferrable way I'd like to go). We
+> probably don't need to worry too much about the cost of spinlock since
+> iova allocater use it heavily.
+>
+> Actually iova allocator implements a per-CPU cache to optimize it.
+>
+> Thanks,
+> Yongji
+>
+>
+> Right, but have a quick glance, I guess what you meant is that usually th=
+ere's no lock contention unless cpu hot-plug. This can work but the problem=
+ is that such synchornization depends on the internal implementation of IOV=
+A allocator which is kind of fragile. I still think we should do that on ou=
+r own.
 >
 
-That is absolutely right.
-
-But a listener can watch several mounted filesystems on a live system
-and mounts can come and go (this is standard for e.g. an AV scanner).
-When a filesystem is mounted, the application cannot KNOW that
-filesystem was not mounted somewhere else and modified without
-supervision, so the safest thing would be a full crawl.
-
-But users should be able to configure that they trust that the filesystem
-was not mounted elsewhere and that they trust that the listener has
-subscribed to watch for changes, before untrusted users got access
-to make modifications in the watches filesystem.
-
-Under those specific circumstances, it is "inconvenient" and potentially
-very expensive for the identity of the filesystem to change across
-mount cycle (e.g. when using loop mount). That said, a good application
-can use libblkid to overcome the "inconvenience" and detect fsid changes.
-
-The argument of "many other filesystem have unstable fsid" is not
-relevant. The users making all the assumptions above would know
-what filesystem is used and if they know that filesystem's fsid can be
-trusted to be stable, because they read the code and/or documentation
-they can use that knowledge to improve their system.
-
-[...]
-
-> > That is one option. Let's call it the "bullet proof" option.
->
-> "Reliable". "Provides well defined behaviour". "Guarantees".
->
-
-Yes, and also "Application is able to do the right thing without
-admin configuration".
-
-> > Another option, let's call it the "pragmatic" options, is that you accept
-> > that my patch shouldn't break anything and agree to apply it.
->
-> "shouldn't break anything" is the problem. You can assert all you
-> want that nothing will break, but history tells us that even the
-> most benign UAPI changes can break unexpected stuff in unexpected
-> ways.
->
-
-No arguments here. My only claim was that risk is not high.
-
-> That's the fundamental problem. We *know* that what you are trying
-> to do with filehandles and fsid has -explicit, well known- issues.
-> What we have here is a new interface that
-> is .... problematic, and now it needs to redefine other parts
-> of the UAPI to make "problems" with the new interface go away.
->
-> Yes, we really suck at APIs, but that doesn't mean hacking a UAPI
-> around to work around problems in another UAPI is the right answer.
->
-
-All very very true.
-
-And yet, those very true words masquerade the fact that the change
-that I proposed, IMO, slightly improves an existing UAPI and aligns
-xfs behavior with the behavior of other "prominent" Linux local filesytems.
-
-It's really a matter of perspective how we choose to present it.
-
-> > In that case, a future indexer (or whatever) application author can use
-> > fanotify, name_to_handle_at() and fstats() as is and document that after
-> > mount cycle, the indexer may get confused and miss changes in obscure
-> > filesystems that nobody uses on desktops and servers.
->
-> But anyone wanting to use this for a HSM style application that
-> needs a guarantee that the filehandle can be resolved to the correct
-> filesystem for open_by_handle_at() is SOL?
->
-> IOWs, this proposal is not really fixing the underlying problem,
-> it's just kicking the can down the road.
->
-
-It's not a kick, it's just a nudge ;-)
-
-And I am not abandoning the HSM users. It's just a much bigger project
-that also involves persistent change intent journal.
-
-> > The third option, let's call it the "sad" option, is that we do nothing
-> > and said future indexer application author will need to find ways to
-> > work around this deficiency or document that after mount cycle, the
-> > indexer may get confused and miss changes in commonly used
-> > desktop and server filesystems (i.e. XFS).
->
-> Which it already needs to do, because there are many, many
-> filesysetms out there that have f_fsid that change on every mount.
->
-
-Not any of the filesystems that matter to desktop/server users.
-IOW, no other filesystem that comes as the default fs of any
-major distro.
-
-> > <side bar>
-> > I think that what indexer author would really want is not "persistent fsid"
-> > but rather a "persistent change journal" [1].
-> > I have not abandoned this effort and I have a POC [2] for a new fsnotify
-> > backend (not fanotify) based on inputs that also you provided in LSFMM.
-> > In this POC, which is temporarily reusing the code of overlayfs index,
-> > the persistent identifier of an object is {s_uuid,fhandle}.
-> > </side bar>
->
-> Yup, that's pretty much what HSMs on top of DMAPI did. But then the
-> app developers realised that they can still miss events, especially
-> when the system crashes. Not to mention that the filesystem may not
-> actually replay all the changes it reports to userspace during
-> journal recovery because it is using asynchronous journalling and so
-> much of the pending in memory change was lost, even though change
-> events were reported to userspace....
->
-
-Right...
-
-> Hence doing stuff like "fanotify intents" doesn't actually solve any
-> "missing event" problems - it just creates more complex coherency
-> problems because you cannot co-ordinate "intent done" events with
-> filesystem journal completion points sanely. The fanotify journal
-> needs to change state atomically with the filesystem journal state,
-> and that's not really something that can be done by a layer above
-> the filesystem....
->
-
-Surely, a filesystem can do it more efficiently internally, but perhaps
-the generic intent journal subsystem can be done...?
-
-My POC is a kernel subsystem (not fanotify)
-Intents are created in {mnt_want,{sb,file}_start}_write() call sites
-*before* fs freeze lock.
-
-When configured correctly, the backend store of the "modify intent"
-map is on the same filesystems that is being watched for changes
-and the ONLY information contained in the "modify intents" is the
-{uuid,fhandle} tuple of directories wherein modifications may have
-occurred.
-
-The "modify intent" records themselves are also metadata (directory
-entries), so after a crash, if there is no "modify intent" record for any
-given directory, it should be safe to assume that there were no
-modifications made under that directory.
-
-This assertion should hold also with crashes that "rollback" changes.
-
-My POC application uses that "map"/"index" of modified directories
-to perform a "pruned tree scan" after reboot.
-
-Do you see any flaws in this design?
-
-> Hence the introduction of the bulkstat interface in XFS for fast,
-> efficient scanning of all the inodes in the filesystem for changes.
-> The HSMs -always- scanned the filesystems after an unclean mount
-> (i.e. not having a registered unmount event recorded in the
-> userspace application event database) because the filesystem and the
-> userspace database state are never in sync after a crash event.
->
-> And, well, because userspace applications can crash and/or have bugs
-> that lose events, these HSMs would also do periodic scans to
-> determine if it had missed anything. When you are indexing hundreds
-> of millions of files and many petabytes of storage across disk and
-> tape (this was the typical scale of DMAPI installations in the mid
-> 2000s), you care about proactively catching that one event that was
-> missed because of a transient memory allocation event under heavy
-> production load....
->
-
-Yes, I know all about that.
-The game is trying to reduce the number of cases when fs scan is
-needed and reduce the cost of the scan to minimum.
-
-I'll be happy to share more information about my POC if anyone
-asks and/or in LSFMM when/if that eventually happens.
-
-w.r.t $SUBJECT, if nobody else shares my POV that this MAY be
-a beneficial and bening change that is worth doing regardless of
-fanotify, I am not going to argue for it more.
+I might miss something. Looks like we don't need any synchronization
+if the page fault handler is removed as you suggested. We should not
+access the same orig_phys concurrently (in map_page() and
+unmap_page()) unless we free the iova before accessing.
 
 Thanks,
-Amir.
+Yongji
