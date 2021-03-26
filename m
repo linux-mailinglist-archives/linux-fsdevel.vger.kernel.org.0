@@ -2,124 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 96DE934AEAB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Mar 2021 19:38:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF77934AF27
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Mar 2021 20:16:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbhCZSiM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Mar 2021 14:38:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39036 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229969AbhCZSiM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Mar 2021 14:38:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A620961A13;
-        Fri, 26 Mar 2021 18:38:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616783892;
-        bh=tl2BnRgFFmTrCujm04id4QN8NI6kqyDBnURR8pQv+I4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=HoLyiBkFPEI4CqtsPen93c8RmJpJ/0JCOnWBSwUGyhGsx4A5CQZuJ5ojDdDY3cQ3K
-         wPWeHORzlLzSBikwxghrbrHr85pytU3bEl0I0XRE3lBI6LEqyPSPZ5jv4PNgRlr49Z
-         /r+z/WgATkpXcRIJf9FRHXw0FU2pyzcmifFj40kfpTZNbEwLFlrYV7JS7tuFaJsEXQ
-         10V8w4yUf1TBJBvjm1ZTMF7QvxqH29/BeNnPpvK8e8iTahIOTiGRrBMFrk3yYDiY/4
-         uFHGTYSsJV/IQM8gLkOaIcl01OHmBZp6NFiG4N74pSluiFUQ6kn8Vibf3oYkpkWJyW
-         Jk2uGqV5zIp7w==
-Message-ID: <f7e34bd93f8e774cf11ff059d040a7ec19ef0b19.camel@kernel.org>
-Subject: Re: [RFC PATCH v5 00/19] ceph+fscrypt: context, filename and
- symlink support
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Fri, 26 Mar 2021 14:38:10 -0400
-In-Reply-To: <20210326173227.96363-1-jlayton@kernel.org>
-References: <20210326173227.96363-1-jlayton@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        id S230043AbhCZTQI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Mar 2021 15:16:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57276 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230188AbhCZTP4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Mar 2021 15:15:56 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7190C0613AA;
+        Fri, 26 Mar 2021 12:15:55 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 1EEF229EB; Fri, 26 Mar 2021 15:15:54 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 1EEF229EB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1616786154;
+        bh=6BHDn513XHsmgj36szMHNORK4Y9BRjndGUytTtfEmRY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=z3EuSgkHnh2Wq4aFs3kivdF0qaOGz5LYseH0nFH9hMml4IYnp027IjnBF5mNI0G+o
+         zDHJSILes7nlCbFotBKgMDxkC19nyNtRcAyy2gjNeyUwj1dGraVFV7JNB9v2PqKpoY
+         6Jgkvqocv98bO25STMTcfQ2zTtsp1NvpYJ5iXiSw=
+Date:   Fri, 26 Mar 2021 15:15:54 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] xfs: use a unique and persistent value for f_fsid
+Message-ID: <20210326191554.GB13139@fieldses.org>
+References: <20210322171118.446536-1-amir73il@gmail.com>
+ <20210322230352.GW63242@dread.disaster.area>
+ <CAOQ4uxjFMPNgR-aCqZt3FD90XtBVFZncdgNc4RdOCbsxukkyYQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjFMPNgR-aCqZt3FD90XtBVFZncdgNc4RdOCbsxukkyYQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2021-03-26 at 13:32 -0400, Jeff Layton wrote:
-> I haven't posted this in a while and there were some bugs shaken out of
-> the last posting. This adds (partial) support for fscrypt to kcephfs,
-> including crypto contexts, filenames and encrypted symlink targets. At
-> this point, the xfstests quick tests that generally pass without fscrypt
-> also pass with test_dummy_encryption enabled.
+On Tue, Mar 23, 2021 at 06:50:44AM +0200, Amir Goldstein wrote:
+> On Tue, Mar 23, 2021 at 1:03 AM Dave Chinner <david@fromorbit.com> wrote:
+> > should be using something common across all filesystems from the
+> > linux superblock, not deep dark internal filesystem magic. The
+> > export interfaces that generate VFS (and NFS) filehandles already
+> > have a persistent fsid associated with them, which may in fact be
+> > the filesystem UUID in it's entirety.
+> >
 > 
-> There is one lingering bug that I'm having trouble tracking down: xfstest
-> generic/477 (an open_by_handle_at test) sometimes throws a "Busy inodes
-> after umount" warning. I'm narrowed down the issue a bit, but there is
-> some raciness involved so I haven't quite nailed it down yet.
-> 
-> This set is quite invasive. There is probably some further work to be
-> done to add common code helpers and the like, but the final diffstat
-> probably won't look too different.
-> 
-> This set does not include encryption of file contents. That is turning
-> out to be a bit trickier than first expected owing to the fact that the
-> MDS is usually what handles truncation, and the i_size no longer
-> represents the amount of data stored in the backing store. That will
-> probably require an MDS change to fix, and we're still sorting out the
-> details.
-> 
-> Jeff Layton (19):
->   vfs: export new_inode_pseudo
->   fscrypt: export fscrypt_base64_encode and fscrypt_base64_decode
->   fscrypt: export fscrypt_fname_encrypt and fscrypt_fname_encrypted_size
->   fscrypt: add fscrypt_context_for_new_inode
->   ceph: crypto context handling for ceph
->   ceph: implement -o test_dummy_encryption mount option
->   ceph: preallocate inode for ops that may create one
->   ceph: add routine to create fscrypt context prior to RPC
->   ceph: make ceph_msdc_build_path use ref-walk
->   ceph: add encrypted fname handling to ceph_mdsc_build_path
->   ceph: decode alternate_name in lease info
->   ceph: send altname in MClientRequest
->   ceph: properly set DCACHE_NOKEY_NAME flag in lookup
->   ceph: make d_revalidate call fscrypt revalidator for encrypted
->     dentries
->   ceph: add helpers for converting names for userland presentation
->   ceph: add fscrypt support to ceph_fill_trace
->   ceph: add support to readdir for encrypted filenames
->   ceph: create symlinks with encrypted and base64-encoded targets
->   ceph: add fscrypt ioctls
-> 
->  fs/ceph/Makefile            |   1 +
->  fs/ceph/crypto.c            | 185 +++++++++++++++++++++++
->  fs/ceph/crypto.h            | 101 +++++++++++++
->  fs/ceph/dir.c               | 178 ++++++++++++++++++-----
->  fs/ceph/file.c              |  56 ++++---
->  fs/ceph/inode.c             | 255 +++++++++++++++++++++++++++++---
->  fs/ceph/ioctl.c             |  94 ++++++++++++
->  fs/ceph/mds_client.c        | 283 ++++++++++++++++++++++++++++++------
->  fs/ceph/mds_client.h        |  14 +-
->  fs/ceph/super.c             |  80 +++++++++-
->  fs/ceph/super.h             |  16 +-
->  fs/ceph/xattr.c             |  32 ++++
->  fs/crypto/fname.c           |  53 +++++--
->  fs/crypto/fscrypt_private.h |   9 +-
->  fs/crypto/hooks.c           |   6 +-
->  fs/crypto/policy.c          |  34 ++++-
->  fs/inode.c                  |   1 +
->  include/linux/fscrypt.h     |  10 ++
->  18 files changed, 1246 insertions(+), 162 deletions(-)
->  create mode 100644 fs/ceph/crypto.c
->  create mode 100644 fs/ceph/crypto.h
-> 
+> Yes, nfsd is using dark internal and AFAIK undocumnetd magic to
+> pick that identifier (Bruce, am I wrong?).
 
-Oh, I should mention that this is all in my ceph-fscrypt-fnames branch:
+Sorry, I kept putting off catching up with this thread and only now
+noticed the question.
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git/
+It's actually done mostly in userspace (rpc.mountd), so "dark internal"
+might not be fair, but it is rather complicated.  There are several
+options (UUID, device number, number provided by the user with fsid=
+option), and I don't recall the logic behind which we use when.
 
-This all still under heavy development, so I'm open to suggestions and
-review. If you're daring and want to test with it, please do.
+I don't *think* we have good comprehensive documentation of it anywhere.
+I wish we did.  It'd take a little time to put together.  Starting
+points would be linux/fs/nfsd/nfsfh.c and
+nfs-utils/support/export/cache.c.
 
-I do think this has the potential to be a "killer feature" for ceph (and
-maybe other network filesystems). Being able to store data securely on
-an otherwise "public" cluster seems like a very nice thing to have.
-
-Cheers,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+--b.
