@@ -2,86 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA17634B239
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Mar 2021 23:35:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 831AA34B315
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Mar 2021 00:37:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbhCZWfJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Mar 2021 18:35:09 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:51528 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230512AbhCZWel (ORCPT
+        id S230266AbhCZXg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Mar 2021 19:36:29 -0400
+Received: from fallback23.m.smailru.net ([94.100.187.222]:37338 "EHLO
+        fallback23.mail.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229986AbhCZXgL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Mar 2021 18:34:41 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 12QMYJsS010426
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 26 Mar 2021 18:34:20 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id C21F315C39CD; Fri, 26 Mar 2021 18:34:19 -0400 (EDT)
-Date:   Fri, 26 Mar 2021 18:34:19 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: [PATCH] xfs: use a unique and persistent value for f_fsid
-Message-ID: <YF5ha6TZlVocDpSY@mit.edu>
-References: <20210322171118.446536-1-amir73il@gmail.com>
- <20210322230352.GW63242@dread.disaster.area>
- <CAOQ4uxjFMPNgR-aCqZt3FD90XtBVFZncdgNc4RdOCbsxukkyYQ@mail.gmail.com>
- <20210323072607.GF63242@dread.disaster.area>
- <CAOQ4uxgAddAfGkA7LMTPoBmrwVXbvHfnN8SWsW_WXm=LPVmc7Q@mail.gmail.com>
- <20210324005421.GK63242@dread.disaster.area>
- <CAOQ4uxhhMVQ4XE8DMU1EjaXBo-go3_pFX3CCWn=7GuUXcMW=PA@mail.gmail.com>
- <20210325225305.GM63242@dread.disaster.area>
- <CAOQ4uxgAxUORpUJezg+oWKXEafn0o33+bP5EN+VKnoQA_KurOg@mail.gmail.com>
+        Fri, 26 Mar 2021 19:36:11 -0400
+X-Greylist: delayed 1393 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Mar 2021 19:36:11 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail3;
+        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:To:From; bh=TCgmuDJAYTsjobPwpCKnWi9eh9wfEhXbvIg+omz35DM=;
+        b=dI0bqD4nkxCQ+1/xvs4a7AnXSHFMzncnpaLYq46eSvS+Pd3HvSx2SktQAJXsonFolAYdJqA1h+9IwDfJn03wYZG5Yqg4rsu8DzKdyFNhMz0PPKIQVq18Jd5UkL3FkcGAAvd7nFOh5/RxT3MbAA4nG0gAQdLXM49AaLVoyDz2xxw=;
+Received: from [10.161.124.209] (port=54226 helo=f737.i.mail.ru)
+        by fallback23.m.smailru.net with esmtp (envelope-from <safinaskar@mail.ru>)
+        id 1lPvdP-0000fg-Ph; Sat, 27 Mar 2021 02:12:56 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail3;
+        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=TCgmuDJAYTsjobPwpCKnWi9eh9wfEhXbvIg+omz35DM=;
+        b=WzB97DjzJA6KD0rKtEvuFRcUXaH4NOyHg7rw5Ubpm+lhWb9s7s7AlhcXS333BC2lOLbl+Ixk6A/NWpQguI7Ob6kzw79FgLMA9zV4raNKs/yZJmB002IP637r/iGZJp/lNcpSPHtVpmtZcr+tn51fQ4ZS0ZuCtF+yTNpdpQYQGq4=;
+Received: by f737.i.mail.ru with local (envelope-from <safinaskar@mail.ru>)
+        id 1lPvdC-0000t8-LI; Sat, 27 Mar 2021 02:12:43 +0300
+Received: by light.mail.ru with HTTP;
+        Sat, 27 Mar 2021 02:12:42 +0300
+From:   =?UTF-8?B?QXNrYXIgU2FmaW4=?= <safinaskar@mail.ru>
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2NSAxLzFdIGZzOiBBbGxvdyBub19uZXdfcHJpdnMgdGFz?=
+ =?UTF-8?B?a3MgdG8gY2FsbCBjaHJvb3QoMik=?=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgAxUORpUJezg+oWKXEafn0o33+bP5EN+VKnoQA_KurOg@mail.gmail.com>
+X-Mailer: Mail.Ru Mailer 1.0
+Date:   Sat, 27 Mar 2021 02:12:42 +0300
+Reply-To: =?UTF-8?B?QXNrYXIgU2FmaW4=?= <safinaskar@mail.ru>
+X-Priority: 3 (Normal)
+Message-ID: <1616800362.522029786@f737.i.mail.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+X-7564579A: EEAE043A70213CC8
+X-77F55803: 119C1F4DF6A9251C54E3E0C6C5F9D941601365FF1EFA00A57B72CABF76C0DD1EABF6EAE57C0FACE9D8A01C7BE6A5AE8F10256108459FC4386EF9DF32E4A6FB8805836D1F9953231F
+X-7FA49CB5: 70AAF3C13DB7016878DA827A17800CE75C5A0068DDB44521D82A6BABE6F325AC08BE7437D75B48FABCF491FFA38154B613377AFFFEAFD269176DF2183F8FC7C05C0AD7D016C066E3C2099A533E45F2D0395957E7521B51C2CFCAF695D4D8E9FCEA1F7E6F0F101C6778DA827A17800CE74E9055D3307A84CAEA1F7E6F0F101C67CDEEF6D7F21E0D1D174C73DBBBFC7664C364260FAD8F937CCA2C1D19EE196DDBF4001F4B0FE1189D389733CBF5DBD5E913377AFFFEAFD269176DF2183F8FC7C04CF195F1528592878941B15DA834481FCF19DD082D7633A0EF3E4896CB9E6436389733CBF5DBD5E9D5E8D9A59859A8B64AAE2D1698E8717BCC7F00164DA146DA6F5DAA56C3B73B237318B6A418E8EAB86D1867E19FE14079C09775C1D3CA48CFC5EA940A35A165FF2DBA43225CD8A89FD63380FFBEB38773156CCFE7AF13BCA4B5C8C57E37DE458BEDA766A37F9254B7
+X-B7AD71C0: AC4F5C86D027EB782CDD5689AFBDA7A2368A440D3B0F6089093C9A16E5BC824AC8B6CDF511875BC4E8F7B195E1C97831F7A2AF59AE45E8C5AB73A7D1547457A7
+X-C1DE0DAB: 0D63561A33F958A5A6AFBEC59E2B787535FC3150985A3DCC196730366FEFC50BBDC6A1CF3F042BAD6DF99611D93F60EF4280523C145DA091699F904B3F4130E343918A1A30D5E7FCCB5012B2E24CD356
+X-C8649E89: 4E36BF7865823D7055A7F0CF078B5EC49A30900B95165D34C786159FDC4342B0C9E4B168990CD8780BCEBC64311BE505E8F3D0AD8841ECE51ADEA222FBDD9F961D7E09C32AA3244C0B0CF7C92C78415DA03BED48498C790D81560E2432555DBB83B48618A63566E0
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5+wYjsrrSY/u8Y3PrTqANeitKFiSd6Yd7yPpbiiZ/d5BsxIjK0jGQgCHUM3Ry2Lt2G3MDkMauH3h0dBdQGj+BB/iPzQYh7XS329fgu+/vnDhQDnxeTQymRYind6cQHiLPg==
+X-Mailru-Sender: 583F1D7ACE8F49BD48DC4DEF5972559E2B2CCB5D3FBD3778DD0ECC4DFEACCE8F1C238ED0579F4A1304DCC68E0365DB113919A3F0584408A7E277D648EEF17123F32B7A1AD1AAC36A3BEC1D9798BA4B85D186BC2F9B8D6AD3EAB4BC95F72C04283CDA0F3B3F5B9367
+X-Mras: Ok
+X-Spam: undefined
+X-7564579A: 646B95376F6C166E
+X-77F55803: 6242723A09DB00B4DF7173A40FF1347DA6106AACE9855D49AC59F2BC240176BE049FFFDB7839CE9EFBD1590308EC2BB2A3CE3E131277FC6ECD89962890259BEBE5C51A0269817717
+X-7FA49CB5: 0D63561A33F958A5FD61E137DE0202F7B6B12DFC72310FE8AFE25585DE82FD248941B15DA834481FA18204E546F3947C724336BCC0EE1BA8F6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F79006370B730A9793D99025389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C355B626DF3F312CC635872C767BF85DA2F004C90652538430E4A6367B16DE6309
+X-B7AD71C0: AC4F5C86D027EB782CDD5689AFBDA7A2AD77751E876CB595E8F7B195E1C97831F7A2AF59AE45E8C57D884B766E578A04
+X-C1DE0DAB: 0D63561A33F958A5FD61E137DE0202F7B6B12DFC72310FE808A87E9E263F8CBA8E8E86DC7131B365E7726E8460B7C23C
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5+wYjsrrSY/u8Y3PrTqANeitKFiSd6Yd7yPpbiiZ/d5BsxIjK0jGQgCHUM3Ry2Lt2G3MDkMauH3h0dBdQGj+BB/iPzQYh7XS329fgu+/vnDhQDnxeTQymRbJZryNFArqbw==
+X-Mailru-MI: 1000000000800
+X-Mras: Ok
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I've been reading through this whole thread, and it appears to me that
-the only real, long-term solution is to rely on file system UUID's
-(for those file systems that support real 128-bit UUID's), and
-optionally, for those file systems which support it, a new, "snapshot"
-or "fs-instance" UUID.
-
-The FS UUID is pretty simple; we just need an ioctl (or similar
-interface) which returns the UUID for a particular file system.
-
-The Snapshot UUID is the one which is bit trickier.  If the underlying
-block device can supply something unique --- for example, the WWN or
-WWID which is defined by FC, ATA, SATA, SCSI, NVMe, etc. then that
-plus a partition identifier could be hashed to form a Snapshot UUID.
-LVM volumes have a LV UUID that could be used for a similar purpose.
-
-If you have a block device which doesn't relibly provide a WWN or
-WWID, or we could could imagine that a file system has a field in the
-superblock, and a file system specific program could get used to set
-that field to a random UUID, and that becomes part of the snapshot
-process.  This may be problematic for remote/network file systems
-which don't have such a concept, but life's a bitch....
-
-With that, then userspace can fetch the st_dev, st_ino, the FS UUID,
-and the Snapshot UUID, and use some combination of those fields (as
-available) to try determine whether two objects are unique or not.
-
-Is this perfect?  Heck, no.  But ultimately, this is a hard problem,
-and trying to wave our hands and create something that works given one
-set of assumptions --- and completely breaks in a diferent operating
-environment --- is going lead to angry users blaming the fs
-developers.  It's a messy problem, and I think all we can do is expose
-the entire mess to userspace, and make it be a userspace problem.
-That way, the angry users can blame the userspace developers instead.  :-)
-
-     	      	    	      	    - Ted
+SGkuIFVucHJpdmlsZWdlZCB1c2VycyBhbHJlYWR5IGNhbiBkbyBjaHJvb3QuIEhlIHNob3VsZCBz
+aW1wbHkgY3JlYXRlIHVzZXJucyBhbmQgdGhlbiBjYWxsICJjaHJvb3QiIGluc2lkZS4gQXMgYW4g
+TFdOIGNvbW1lbnRlciBub3RlZCwgeW91IGNhbiBzaW1wbHkgcnVuIAoidW5zaGFyZSAtciAvdXNy
+L3NiaW4vY2hyb290IHNvbWUtZGlyIi4gKEkgcmVjb21tZW5kIHJlYWRpbmcgYWxsIGNvbW1lbnRz
+OiBodHRwczovL2x3bi5uZXQvQXJ0aWNsZXMvODQ5MTI1LyAuKQoKQWxzbzogaWYgeW91IG5lZWQg
+Y2hyb290IGZvciBwYXRoIHJlc29sdmluZyBvbmx5LCBjb25zaWRlciBvcGVuYXQyIHdpdGggUkVT
+T0xWRV9JTl9ST09UICggaHR0cHM6Ly9sd24ubmV0L0FydGljbGVzLzc5Njg2OC8gKS4KCgo9PQpB
+c2thciBTYWZpbgpodHRwczovL2dpdGh1Yi5jb20vc2FmaW5hc2thcgo=
