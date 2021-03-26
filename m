@@ -2,437 +2,341 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EA3A34A0CE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Mar 2021 06:15:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A94634A164
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Mar 2021 07:05:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229446AbhCZFPC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Mar 2021 01:15:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44780 "EHLO
+        id S229982AbhCZGEg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Mar 2021 02:04:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229624AbhCZFO4 (ORCPT
+        with ESMTP id S229949AbhCZGES (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Mar 2021 01:14:56 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3059C0613B1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Mar 2021 22:14:40 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id e14so6486418ejz.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Mar 2021 22:14:40 -0700 (PDT)
+        Fri, 26 Mar 2021 02:04:18 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B069EC0613AA;
+        Thu, 25 Mar 2021 23:04:17 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id z136so4279331iof.10;
+        Thu, 25 Mar 2021 23:04:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=OmwLO9vwtq0vP6FGf68sJX/wnflcZh+14wt3KK+6I8o=;
-        b=LkAGEmAA9jHGatA5l2XIeJoq8tJh6NoCRbKa+Z1k4b6/fRgrRYT/YNOAbzAk06Jiyi
-         iFm3WXmvz6H8OeaUCLqVCAVDsxhAxY6p1DXIF+2TYj23SeVV8JZddY8V6xXEQ70yhubD
-         5nZ0JSc6PCw1HVIJvRUK2QQlrh3nuLK7BwGhfpyN4E9gmImaOFsMe+1GmOw4pn96EKHz
-         /ABMgWPRao8Ebk52TaXBCQ8C8vFSCaCFS4aKfOSwvd81FmBUqdO+/onPJhcAkyUcez+T
-         WQ/5103uQQFv4Amhez+ZFQawhok5dw1Xgvp+p+1uLXs0RoqYHe6eSnNj9BfQjt3w+IGO
-         hF0Q==
+         :cc;
+        bh=Mqj1pZGdQGCb79YTlJ4rUJ4Qk8Pv92ztE/LqTAF5fZg=;
+        b=ZAktI1CiEuZK+fylIwxZkZSGkp7P2An7HuKcU+Q1ehRceZCrpOYi9uK/PKQQpi4gsU
+         /tCzFrD1WzhM63s9CbiDJP7k8xJ+cnh77QEfSKa5noRnPYBHciKxX2pcudXKMYWiqXvn
+         bCJCQDWnyREMzBwfuO3+3vDeRm+TVmHAkSIeQlffESF1VfVo+BpaZkWg10H7A2Ry9WRH
+         m/hgejq+V9rPLyANGqoJ1Qd6ls1yCDMJhmISFDGyvj5JsDfRkDze6dQxkKnhW1NkRIcA
+         hO07uQ0fmHbJcJZpO5CDiIrstGy/YwNmXC1vQ7ZHOQSr9essdd4X3yNEasbIP2QO1VSX
+         ChZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=OmwLO9vwtq0vP6FGf68sJX/wnflcZh+14wt3KK+6I8o=;
-        b=qIOVusv2YEYEp4K0X+wueFPOUjVSUNgc1X1rgFf43n1GsGoXJ3iuZ4I//5xebE9WZX
-         +75r59lorNwpKKDWgOHTruhCtNj6ZkVh1JgOLDhxJtpkRuEe6VfsV+3Yy4KYze6yAKOE
-         jCjrBr19nuWyNL1NPu6QPXS+X9ORa1T0xCBz7uyrrHkDfiwxRYDGgvwT8z7jpJ5RdTEL
-         G2lmoORm6l2Fagp3XMig3+KpN2EA2AkNilnse/r3cfShH1t0pFjo5WrjksZtYNHVrA3x
-         lQLPFYVmUpotmfa3YX6RYCUZLuVfvVHJnZvL3Lxe9cEK2SVSRCfKnt8J5Ag4cveNbzuo
-         xKJQ==
-X-Gm-Message-State: AOAM532g/mmWEAe6Fbaf1HarHIDfGhtTzL5UMJtpP1tcf6X3HwilzjR7
-        N8X+6ka7hP+DJ77KaHcv1eh74/Cn+l8ia4FC152+
-X-Google-Smtp-Source: ABdhPJw2/p/ISKUYKtQcsmlAWp1VJRiF5UAiXzMI7WXna6aALU0o5ALqjBhK098VirnkkSYaNAwI97dtz7BQsNsB2uY=
-X-Received: by 2002:a17:906:489b:: with SMTP id v27mr13207285ejq.1.1616735679250;
- Thu, 25 Mar 2021 22:14:39 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=Mqj1pZGdQGCb79YTlJ4rUJ4Qk8Pv92ztE/LqTAF5fZg=;
+        b=l3GdSgI6EZpi21r9773i2WTDIrJYf8fKfAsyCC30ZOebIkWbXWMIYnr4hzj9LuRksO
+         SfqbY7HeU6seIYzKyudhpubbiIZvkukwtQlyI2DDlVAx/jhSKCWCsTfcUdsYf7yoGL7J
+         PSBy0f6aIxuS/Nd6UHiqsWTKIiSeDeM1DaE9ywcBPIC9EezECa+RtRnwACGnVwz4Kmmn
+         rBGIFy+4MNggZyphhZ46NiEu+ikjza4baAVtrvbtCxR8SAzSKohWgffmqa+QUkZQ+LxA
+         KD5tU2K0TgOGtFdpa5QimuaF+ZuzqgYvHcbXAyx6e0FrUsAMKrDWrmdX2k9PACxs7u8H
+         ypVQ==
+X-Gm-Message-State: AOAM5334ECQSmp5mkukQ2Rj6ifm7j8dGqoU5UMOqMakTI8gbLunPfuGO
+        gD5jtuEdeWUvVskS1O3Syp0LmtBJPWfdxOt1HKE=
+X-Google-Smtp-Source: ABdhPJwLqJje2qI1WKIvRg/wkacBGI583wQXbaTsdXSrq8OUfZmZHJ+UUmdjn/rr7LvGwtz45u//tEErPzjNtkTzqOk=
+X-Received: by 2002:a05:6638:1388:: with SMTP id w8mr4712850jad.30.1616738657030;
+ Thu, 25 Mar 2021 23:04:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210315053721.189-1-xieyongji@bytedance.com> <20210315053721.189-9-xieyongji@bytedance.com>
- <ec5b4146-9844-11b0-c9b0-c657d3328dd4@redhat.com> <CACycT3v_-G6ju-poofXEzYt8QPKWNFHwsS7t=KTLgs-=g+iPQQ@mail.gmail.com>
- <7c90754b-681d-f3bf-514c-756abfcf3d23@redhat.com> <CACycT3uS870yy04rw7KBk==sioi+VNunxVz6BQH-Lmxk6m-VSg@mail.gmail.com>
- <2db71996-037e-494d-6ef0-de3ff164d3c3@redhat.com>
-In-Reply-To: <2db71996-037e-494d-6ef0-de3ff164d3c3@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Fri, 26 Mar 2021 13:14:28 +0800
-Message-ID: <CACycT3v6Lj61fafztOuzBNFLs2TbKeqrNLXkzv5RK6-h-iTnvA@mail.gmail.com>
-Subject: Re: Re: [PATCH v5 08/11] vduse: Implement an MMU-based IOMMU driver
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20210322171118.446536-1-amir73il@gmail.com> <20210322230352.GW63242@dread.disaster.area>
+ <CAOQ4uxjFMPNgR-aCqZt3FD90XtBVFZncdgNc4RdOCbsxukkyYQ@mail.gmail.com>
+ <20210323072607.GF63242@dread.disaster.area> <CAOQ4uxgAddAfGkA7LMTPoBmrwVXbvHfnN8SWsW_WXm=LPVmc7Q@mail.gmail.com>
+ <20210324005421.GK63242@dread.disaster.area> <CAOQ4uxhhMVQ4XE8DMU1EjaXBo-go3_pFX3CCWn=7GuUXcMW=PA@mail.gmail.com>
+ <20210325225305.GM63242@dread.disaster.area>
+In-Reply-To: <20210325225305.GM63242@dread.disaster.area>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 26 Mar 2021 09:04:05 +0300
+Message-ID: <CAOQ4uxgAxUORpUJezg+oWKXEafn0o33+bP5EN+VKnoQA_KurOg@mail.gmail.com>
+Subject: Re: [PATCH] xfs: use a unique and persistent value for f_fsid
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 26, 2021 at 12:27 PM Jason Wang <jasowang@redhat.com> wrote:
+> How do you check the identity of a file handle without a filesystem
+> identifier in it? having an external f_fsid isn't really sufficient
+> - you need to query the filesytem for it's identifier and determine
+> if the file handle contains that same identifier...
 >
+> > Furthermore, with name_to_handle_at(fd, ..., AT_EMPTY_PATH)
+> > and fstatfs() there are none of the races you mention below and
+> > fanotify obviously captures a valid {fsid,fhandle} tuple.
 >
-> =E5=9C=A8 2021/3/25 =E4=B8=8B=E5=8D=883:38, Yongji Xie =E5=86=99=E9=81=93=
-:
-> > On Thu, Mar 25, 2021 at 12:53 PM Jason Wang <jasowang@redhat.com> wrote=
-:
-> >>
-> >> =E5=9C=A8 2021/3/24 =E4=B8=8B=E5=8D=883:39, Yongji Xie =E5=86=99=E9=81=
-=93:
-> >>> On Wed, Mar 24, 2021 at 11:54 AM Jason Wang <jasowang@redhat.com> wro=
-te:
-> >>>> =E5=9C=A8 2021/3/15 =E4=B8=8B=E5=8D=881:37, Xie Yongji =E5=86=99=E9=
-=81=93:
-> >>>>> This implements an MMU-based IOMMU driver to support mapping
-> >>>>> kernel dma buffer into userspace. The basic idea behind it is
-> >>>>> treating MMU (VA->PA) as IOMMU (IOVA->PA). The driver will set
-> >>>>> up MMU mapping instead of IOMMU mapping for the DMA transfer so
-> >>>>> that the userspace process is able to use its virtual address to
-> >>>>> access the dma buffer in kernel.
-> >>>>>
-> >>>>> And to avoid security issue, a bounce-buffering mechanism is
-> >>>>> introduced to prevent userspace accessing the original buffer
-> >>>>> directly.
-> >>>>>
-> >>>>> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> >>>>> ---
-> >>>>>     drivers/vdpa/vdpa_user/iova_domain.c | 535 ++++++++++++++++++++=
-+++++++++++++++
-> >>>>>     drivers/vdpa/vdpa_user/iova_domain.h |  75 +++++
-> >>>>>     2 files changed, 610 insertions(+)
-> >>>>>     create mode 100644 drivers/vdpa/vdpa_user/iova_domain.c
-> >>>>>     create mode 100644 drivers/vdpa/vdpa_user/iova_domain.h
-> >>>>>
-> >>>>> diff --git a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vd=
-pa_user/iova_domain.c
-> >>>>> new file mode 100644
-> >>>>> index 000000000000..83de216b0e51
-> >>>>> --- /dev/null
-> >>>>> +++ b/drivers/vdpa/vdpa_user/iova_domain.c
-> >>>>> @@ -0,0 +1,535 @@
-> >>>>> +// SPDX-License-Identifier: GPL-2.0-only
-> >>>>> +/*
-> >>>>> + * MMU-based IOMMU implementation
-> >>>>> + *
-> >>>>> + * Copyright (C) 2020 Bytedance Inc. and/or its affiliates. All ri=
-ghts reserved.
-> >>>> 2021 as well.
-> >>>>
-> >>> Sure.
-> >>>
-> >>>>> + *
-> >>>>> + * Author: Xie Yongji <xieyongji@bytedance.com>
-> >>>>> + *
-> >>>>> + */
-> >>>>> +
-> >>>>> +#include <linux/slab.h>
-> >>>>> +#include <linux/file.h>
-> >>>>> +#include <linux/anon_inodes.h>
-> >>>>> +#include <linux/highmem.h>
-> >>>>> +#include <linux/vmalloc.h>
-> >>>>> +#include <linux/vdpa.h>
-> >>>>> +
-> >>>>> +#include "iova_domain.h"
-> >>>>> +
-> >>>>> +static int vduse_iotlb_add_range(struct vduse_iova_domain *domain,
-> >>>>> +                              u64 start, u64 last,
-> >>>>> +                              u64 addr, unsigned int perm,
-> >>>>> +                              struct file *file, u64 offset)
-> >>>>> +{
-> >>>>> +     struct vdpa_map_file *map_file;
-> >>>>> +     int ret;
-> >>>>> +
-> >>>>> +     map_file =3D kmalloc(sizeof(*map_file), GFP_ATOMIC);
-> >>>>> +     if (!map_file)
-> >>>>> +             return -ENOMEM;
-> >>>>> +
-> >>>>> +     map_file->file =3D get_file(file);
-> >>>>> +     map_file->offset =3D offset;
-> >>>>> +
-> >>>>> +     ret =3D vhost_iotlb_add_range_ctx(domain->iotlb, start, last,
-> >>>>> +                                     addr, perm, map_file);
-> >>>>> +     if (ret) {
-> >>>>> +             fput(map_file->file);
-> >>>>> +             kfree(map_file);
-> >>>>> +             return ret;
-> >>>>> +     }
-> >>>>> +     return 0;
-> >>>>> +}
-> >>>>> +
-> >>>>> +static void vduse_iotlb_del_range(struct vduse_iova_domain *domain=
-,
-> >>>>> +                               u64 start, u64 last)
-> >>>>> +{
-> >>>>> +     struct vdpa_map_file *map_file;
-> >>>>> +     struct vhost_iotlb_map *map;
-> >>>>> +
-> >>>>> +     while ((map =3D vhost_iotlb_itree_first(domain->iotlb, start,=
- last))) {
-> >>>>> +             map_file =3D (struct vdpa_map_file *)map->opaque;
-> >>>>> +             fput(map_file->file);
-> >>>>> +             kfree(map_file);
-> >>>>> +             vhost_iotlb_map_free(domain->iotlb, map);
-> >>>>> +     }
-> >>>>> +}
-> >>>>> +
-> >>>>> +int vduse_domain_set_map(struct vduse_iova_domain *domain,
-> >>>>> +                      struct vhost_iotlb *iotlb)
-> >>>>> +{
-> >>>>> +     struct vdpa_map_file *map_file;
-> >>>>> +     struct vhost_iotlb_map *map;
-> >>>>> +     u64 start =3D 0ULL, last =3D ULLONG_MAX;
-> >>>>> +     int ret;
-> >>>>> +
-> >>>>> +     spin_lock(&domain->iotlb_lock);
-> >>>>> +     vduse_iotlb_del_range(domain, start, last);
-> >>>>> +
-> >>>>> +     for (map =3D vhost_iotlb_itree_first(iotlb, start, last); map=
-;
-> >>>>> +          map =3D vhost_iotlb_itree_next(map, start, last)) {
-> >>>>> +             map_file =3D (struct vdpa_map_file *)map->opaque;
-> >>>>> +             ret =3D vduse_iotlb_add_range(domain, map->start, map=
-->last,
-> >>>>> +                                         map->addr, map->perm,
-> >>>>> +                                         map_file->file,
-> >>>>> +                                         map_file->offset);
-> >>>>> +             if (ret)
-> >>>>> +                     goto err;
-> >>>>> +     }
-> >>>>> +     spin_unlock(&domain->iotlb_lock);
-> >>>>> +
-> >>>>> +     return 0;
-> >>>>> +err:
-> >>>>> +     vduse_iotlb_del_range(domain, start, last);
-> >>>>> +     spin_unlock(&domain->iotlb_lock);
-> >>>>> +     return ret;
-> >>>>> +}
-> >>>>> +
-> >>>>> +static void vduse_domain_map_bounce_page(struct vduse_iova_domain =
-*domain,
-> >>>>> +                                      u64 iova, u64 size, u64 padd=
-r)
-> >>>>> +{
-> >>>>> +     struct vduse_bounce_map *map;
-> >>>>> +     unsigned int index;
-> >>>>> +     u64 last =3D iova + size - 1;
-> >>>>> +
-> >>>>> +     while (iova < last) {
-> >>>>> +             map =3D &domain->bounce_maps[iova >> PAGE_SHIFT];
-> >>>>> +             index =3D offset_in_page(iova) >> IOVA_ALLOC_ORDER;
-> >>>>> +             map->orig_phys[index] =3D paddr;
-> >>>>> +             paddr +=3D IOVA_ALLOC_SIZE;
-> >>>>> +             iova +=3D IOVA_ALLOC_SIZE;
-> >>>>> +     }
-> >>>>> +}
-> >>>>> +
-> >>>>> +static void vduse_domain_unmap_bounce_page(struct vduse_iova_domai=
-n *domain,
-> >>>>> +                                        u64 iova, u64 size)
-> >>>>> +{
-> >>>>> +     struct vduse_bounce_map *map;
-> >>>>> +     unsigned int index;
-> >>>>> +     u64 last =3D iova + size - 1;
-> >>>>> +
-> >>>>> +     while (iova < last) {
-> >>>>> +             map =3D &domain->bounce_maps[iova >> PAGE_SHIFT];
-> >>>>> +             index =3D offset_in_page(iova) >> IOVA_ALLOC_ORDER;
-> >>>>> +             map->orig_phys[index] =3D INVALID_PHYS_ADDR;
-> >>>>> +             iova +=3D IOVA_ALLOC_SIZE;
-> >>>>> +     }
-> >>>>> +}
-> >>>>> +
-> >>>>> +static void do_bounce(phys_addr_t orig, void *addr, size_t size,
-> >>>>> +                   enum dma_data_direction dir)
-> >>>>> +{
-> >>>>> +     unsigned long pfn =3D PFN_DOWN(orig);
-> >>>>> +
-> >>>>> +     if (PageHighMem(pfn_to_page(pfn))) {
-> >>>>> +             unsigned int offset =3D offset_in_page(orig);
-> >>>>> +             char *buffer;
-> >>>>> +             unsigned int sz =3D 0;
-> >>>>> +
-> >>>>> +             while (size) {
-> >>>>> +                     sz =3D min_t(size_t, PAGE_SIZE - offset, size=
-);
-> >>>>> +
-> >>>>> +                     buffer =3D kmap_atomic(pfn_to_page(pfn));
-> >>>> So kmap_atomic() can autoamtically go with fast path if the page doe=
-s
-> >>>> not belong to highmem.
-> >>>>
-> >>>> I think we can removce the condition and just use kmap_atomic() for =
-all
-> >>>> the cases here.
-> >>>>
-> >>> Looks good to me.
-> >>>
-> >>>>> +                     if (dir =3D=3D DMA_TO_DEVICE)
-> >>>>> +                             memcpy(addr, buffer + offset, sz);
-> >>>>> +                     else
-> >>>>> +                             memcpy(buffer + offset, addr, sz);
-> >>>>> +                     kunmap_atomic(buffer);
-> >>>>> +
-> >>>>> +                     size -=3D sz;
-> >>>>> +                     pfn++;
-> >>>>> +                     addr +=3D sz;
-> >>>>> +                     offset =3D 0;
-> >>>>> +             }
-> >>>>> +     } else if (dir =3D=3D DMA_TO_DEVICE) {
-> >>>>> +             memcpy(addr, phys_to_virt(orig), size);
-> >>>>> +     } else {
-> >>>>> +             memcpy(phys_to_virt(orig), addr, size);
-> >>>>> +     }
-> >>>>> +}
-> >>>>> +
-> >>>>> +static void vduse_domain_bounce(struct vduse_iova_domain *domain,
-> >>>>> +                             dma_addr_t iova, size_t size,
-> >>>>> +                             enum dma_data_direction dir)
-> >>>>> +{
-> >>>>> +     struct vduse_bounce_map *map;
-> >>>>> +     unsigned int index, offset;
-> >>>>> +     void *addr;
-> >>>>> +     size_t sz;
-> >>>>> +
-> >>>>> +     while (size) {
-> >>>>> +             map =3D &domain->bounce_maps[iova >> PAGE_SHIFT];
-> >>>>> +             offset =3D offset_in_page(iova);
-> >>>>> +             sz =3D min_t(size_t, IOVA_ALLOC_SIZE, size);
-> >>>>> +
-> >>>>> +             if (map->bounce_page &&
-> >>>>> +                 map->orig_phys[index] !=3D INVALID_PHYS_ADDR) {
-> >>>>> +                     addr =3D page_address(map->bounce_page) + off=
-set;
-> >>>>> +                     index =3D offset >> IOVA_ALLOC_ORDER;
-> >>>>> +                     do_bounce(map->orig_phys[index], addr, sz, di=
-r);
-> >>>>> +             }
-> >>>>> +             size -=3D sz;
-> >>>>> +             iova +=3D sz;
-> >>>>> +     }
-> >>>>> +}
-> >>>>> +
-> >>>>> +static struct page *
-> >>>>> +vduse_domain_get_mapping_page(struct vduse_iova_domain *domain, u6=
-4 iova)
-> >>>>> +{
-> >>>>> +     u64 start =3D iova & PAGE_MASK;
-> >>>>> +     u64 last =3D start + PAGE_SIZE - 1;
-> >>>>> +     struct vhost_iotlb_map *map;
-> >>>>> +     struct page *page =3D NULL;
-> >>>>> +
-> >>>>> +     spin_lock(&domain->iotlb_lock);
-> >>>>> +     map =3D vhost_iotlb_itree_first(domain->iotlb, start, last);
-> >>>>> +     if (!map)
-> >>>>> +             goto out;
-> >>>>> +
-> >>>>> +     page =3D pfn_to_page((map->addr + iova - map->start) >> PAGE_=
-SHIFT);
-> >>>>> +     get_page(page);
-> >>>>> +out:
-> >>>>> +     spin_unlock(&domain->iotlb_lock);
-> >>>>> +
-> >>>>> +     return page;
-> >>>>> +}
-> >>>>> +
-> >>>>> +static struct page *
-> >>>>> +vduse_domain_alloc_bounce_page(struct vduse_iova_domain *domain, u=
-64 iova)
-> >>>>> +{
-> >>>>> +     u64 start =3D iova & PAGE_MASK;
-> >>>>> +     struct page *page =3D alloc_page(GFP_KERNEL);
-> >>>>> +     struct vduse_bounce_map *map;
-> >>>>> +
-> >>>>> +     if (!page)
-> >>>>> +             return NULL;
-> >>>>> +
-> >>>>> +     spin_lock(&domain->iotlb_lock);
-> >>>>> +     map =3D &domain->bounce_maps[iova >> PAGE_SHIFT];
-> >>>>> +     if (map->bounce_page) {
-> >>>>> +             __free_page(page);
-> >>>>> +             goto out;
-> >>>>> +     }
-> >>>>> +     map->bounce_page =3D page;
-> >>>>> +
-> >>>>> +     /* paired with vduse_domain_map_page() */
-> >>>>> +     smp_mb();
-> >>>> So this is suspicious. It's better to explain like, we need make sur=
-e A
-> >>>> must be done after B.
-> >>> OK. I see. It's used to protect this pattern:
-> >>>
-> >>>      vduse_domain_alloc_bounce_page:          vduse_domain_map_page:
-> >>>      write map->bounce_page                           write map->orig=
-_phys
-> >>>      mb()                                                            =
-mb()
-> >>>      read map->orig_phys                                 read map->bo=
-unce_page
-> >>>
-> >>> Make sure there will always be a path to do bouncing.
-> >>
-> >> Ok.
-> >>
-> >>
-> >>>> And it looks to me the iotlb_lock is sufficnet to do the synchroniza=
-tion
-> >>>> here. E.g any reason that you don't take it in
-> >>>> vduse_domain_map_bounce_page().
-> >>>>
-> >>> Yes, we can. But the performance in multi-queue cases will go down if
-> >>> we use iotlb_lock on this critical path.
-> >>>
-> >>>> And what's more, is there anyway to aovid holding the spinlock durin=
-g
-> >>>> bouncing?
-> >>>>
-> >>> Looks like we can't. In the case that multiple page faults happen on
-> >>> the same page, we should make sure the bouncing is done before any
-> >>> page fault handler returns.
-> >>
-> >> So it looks to me all those extra complexitiy comes from the fact that
-> >> the bounce_page and orig_phys are set by different places so we need t=
-o
-> >> do the bouncing in two places.
-> >>
-> >> I wonder how much we can gain from the "lazy" boucning in page fault.
-> >> The buffer mapped via dma_ops from virtio driver is expected to be
-> >> accessed by the userspace soon.  It looks to me we can do all those
-> >> stuffs during dma_map() then things would be greatly simplified.
-> >>
-> > If so, we need to allocate lots of pages from the pool reserved for
-> > atomic memory allocation requests.
+> Except that fsid is not guaranteed to be the same across mounts, let
+> alone reboots. There is no guarantee of uniqueness, either. IOWs, in
+> the bigger picture, f_fsid isn't something that can provide a
+> guaranteed answer to your "is $obj the same as it was at $TIME"...
 >
->
-> This should be fine, a lot of drivers tries to allocate pages in atomic
-> context. The point is to simplify the codes to make it easy to
-> determince the correctness so we can add optimization on top simply by
-> benchmarking the difference.
+> You can't even infer a path from the fsid, even if it is unique, The
+> fsid doesn't tell you what *mount point* it refers to. i.e in
+> the present of bind mounts, there can be multiple disjoint directory
+> heirachies that correspond to the same fsid...
 >
 
-OK. I will use this way in the next version.
+This conversation is not converging.
+Partly because I may have failed to explain the requirements.
 
-> E.g we have serveral places that accesses orig_phys:
+I am telling you that I need to do X and you are telling me that I cannot
+do Y. I did not say that I needed to infer that path of an object nor that
+I cared which mount point the object was observed from.
+
+The application is able to cope with not being able to correctly resolve
+fid to path, but it is "incoventiet". The technical term to translate
+"inconvenient" is the "cost" of IO and time to recrawl the filesystem.
+
+I hear your main arguments against re-purposing f_fsid and potential
+breakage of applications loud and clear.
+
+On their own, they are perfectly valid and acceptable reasons to NACK
+my patch, so I am not going to pursue it.
+
+OTOH, I find your argument to leave f_fsid "less useful than it can be"
+because "it is not perfect", far less convincing, but it doesn't look like
+I am going to change your mind, so no point in arguing about that.
+
+[...]
+> > If the listener has several objects open (e.g. tail -f A B C) then when getting
+> > an event, the identifier can be used to match the open file with certainty
+> > (having verified no collisions of identifiers after opening the files).
 >
-> 1) map_page(), write
-> 2) unmap_page(), write
-> 3) page fault handler, read
->
-> It's not clear to me how they were synchronized. Or if it was
-> synchronzied implicitly (via iova allocator?), we'd better document it.
-
-Yes.
-
-> Or simply use spinlock (which is the preferrable way I'd like to go). We
-> probably don't need to worry too much about the cost of spinlock since
-> iova allocater use it heavily.
+> Sorry, you've lost me. How on do you reliably match a {fsid, fhandle}
+> to an open file descriptor? You've got to have more information
+> available than just a fd, fsid and a fhandle...
 >
 
-Actually iova allocator implements a per-CPU cache to optimize it.
+This was just an example of the simple case where the listener is started
+after opening the files and capturing the {fsid, fhandle} tuple from fd.
+The events received by the listener contain {fsid, fhandle} tuples that
+should match one of the captures fids.
+For this example, the stable fsid is irrelevant.
+
+> > If the listener is watching multiple directories (e.g. inotifywatch --recursive)
+> > then the listener has two options:
+> > 1. Keep open fds for all watches dirs - this is what inotify_add_watch()
+> >     does internally (not fds per-se but keeping an elevated i_count)
+> > 2. Keep fid->path map for all watches dirs and accept the fact that the
+> >     cached path information may be stale
+> >
+> > The 2nd option is valid for applications that use the events as hints
+> > to take action. An indexer application, for example, doesn't care if
+> > it will scan a directory where there were no changes as long as it will
+> > get the correct hint eventually.
+> >
+> > So if an indexer application were to act on FAN_MOVE events by
+> > scanning the entire subtree under the parent dir where an entry was
+> > renamed, the index will be eventually consistent, regardless of all
+> > the events on objects with stale path cache that may have been
+> > received after the rename.
+>
+> Sure, but you don't need a file handle for this. you can just scan
+> the directory heirachy any time you get a notification for that
+> fsid. Even if you have multiple directory heirarchies that you
+> are watching on a given mount.
+>
+> I'm -guessing- that you are using the filehandle to differentiate
+> between different watched heirarchies, and you do that by taking a
+> name_to_handle_at() snapshot of the path when the watch is set, yes?
+>
+
+More or less, yes.
+
+> AFAICT, the application cannot  care about whether it loses
+> events across reboot because the indexer already needs to scan after
+> boot to so that it is coherent with whatever state the filesystem is
+> in after recovery.
+>
+
+That is absolutely right.
+
+But a listener can watch several mounted filesystems on a live system
+and mounts can come and go (this is standard for e.g. an AV scanner).
+When a filesystem is mounted, the application cannot KNOW that
+filesystem was not mounted somewhere else and modified without
+supervision, so the safest thing would be a full crawl.
+
+But users should be able to configure that they trust that the filesystem
+was not mounted elsewhere and that they trust that the listener has
+subscribed to watch for changes, before untrusted users got access
+to make modifications in the watches filesystem.
+
+Under those specific circumstances, it is "inconvenient" and potentially
+very expensive for the identity of the filesystem to change across
+mount cycle (e.g. when using loop mount). That said, a good application
+can use libblkid to overcome the "inconvenience" and detect fsid changes.
+
+The argument of "many other filesystem have unstable fsid" is not
+relevant. The users making all the assumptions above would know
+what filesystem is used and if they know that filesystem's fsid can be
+trusted to be stable, because they read the code and/or documentation
+they can use that knowledge to improve their system.
+
+[...]
+
+> > That is one option. Let's call it the "bullet proof" option.
+>
+> "Reliable". "Provides well defined behaviour". "Guarantees".
+>
+
+Yes, and also "Application is able to do the right thing without
+admin configuration".
+
+> > Another option, let's call it the "pragmatic" options, is that you accept
+> > that my patch shouldn't break anything and agree to apply it.
+>
+> "shouldn't break anything" is the problem. You can assert all you
+> want that nothing will break, but history tells us that even the
+> most benign UAPI changes can break unexpected stuff in unexpected
+> ways.
+>
+
+No arguments here. My only claim was that risk is not high.
+
+> That's the fundamental problem. We *know* that what you are trying
+> to do with filehandles and fsid has -explicit, well known- issues.
+> What we have here is a new interface that
+> is .... problematic, and now it needs to redefine other parts
+> of the UAPI to make "problems" with the new interface go away.
+>
+> Yes, we really suck at APIs, but that doesn't mean hacking a UAPI
+> around to work around problems in another UAPI is the right answer.
+>
+
+All very very true.
+
+And yet, those very true words masquerade the fact that the change
+that I proposed, IMO, slightly improves an existing UAPI and aligns
+xfs behavior with the behavior of other "prominent" Linux local filesytems.
+
+It's really a matter of perspective how we choose to present it.
+
+> > In that case, a future indexer (or whatever) application author can use
+> > fanotify, name_to_handle_at() and fstats() as is and document that after
+> > mount cycle, the indexer may get confused and miss changes in obscure
+> > filesystems that nobody uses on desktops and servers.
+>
+> But anyone wanting to use this for a HSM style application that
+> needs a guarantee that the filehandle can be resolved to the correct
+> filesystem for open_by_handle_at() is SOL?
+>
+> IOWs, this proposal is not really fixing the underlying problem,
+> it's just kicking the can down the road.
+>
+
+It's not a kick, it's just a nudge ;-)
+
+And I am not abandoning the HSM users. It's just a much bigger project
+that also involves persistent change intent journal.
+
+> > The third option, let's call it the "sad" option, is that we do nothing
+> > and said future indexer application author will need to find ways to
+> > work around this deficiency or document that after mount cycle, the
+> > indexer may get confused and miss changes in commonly used
+> > desktop and server filesystems (i.e. XFS).
+>
+> Which it already needs to do, because there are many, many
+> filesysetms out there that have f_fsid that change on every mount.
+>
+
+Not any of the filesystems that matter to desktop/server users.
+IOW, no other filesystem that comes as the default fs of any
+major distro.
+
+> > <side bar>
+> > I think that what indexer author would really want is not "persistent fsid"
+> > but rather a "persistent change journal" [1].
+> > I have not abandoned this effort and I have a POC [2] for a new fsnotify
+> > backend (not fanotify) based on inputs that also you provided in LSFMM.
+> > In this POC, which is temporarily reusing the code of overlayfs index,
+> > the persistent identifier of an object is {s_uuid,fhandle}.
+> > </side bar>
+>
+> Yup, that's pretty much what HSMs on top of DMAPI did. But then the
+> app developers realised that they can still miss events, especially
+> when the system crashes. Not to mention that the filesystem may not
+> actually replay all the changes it reports to userspace during
+> journal recovery because it is using asynchronous journalling and so
+> much of the pending in memory change was lost, even though change
+> events were reported to userspace....
+>
+
+Right...
+
+> Hence doing stuff like "fanotify intents" doesn't actually solve any
+> "missing event" problems - it just creates more complex coherency
+> problems because you cannot co-ordinate "intent done" events with
+> filesystem journal completion points sanely. The fanotify journal
+> needs to change state atomically with the filesystem journal state,
+> and that's not really something that can be done by a layer above
+> the filesystem....
+>
+
+Surely, a filesystem can do it more efficiently internally, but perhaps
+the generic intent journal subsystem can be done...?
+
+My POC is a kernel subsystem (not fanotify)
+Intents are created in {mnt_want,{sb,file}_start}_write() call sites
+*before* fs freeze lock.
+
+When configured correctly, the backend store of the "modify intent"
+map is on the same filesystems that is being watched for changes
+and the ONLY information contained in the "modify intents" is the
+{uuid,fhandle} tuple of directories wherein modifications may have
+occurred.
+
+The "modify intent" records themselves are also metadata (directory
+entries), so after a crash, if there is no "modify intent" record for any
+given directory, it should be safe to assume that there were no
+modifications made under that directory.
+
+This assertion should hold also with crashes that "rollback" changes.
+
+My POC application uses that "map"/"index" of modified directories
+to perform a "pruned tree scan" after reboot.
+
+Do you see any flaws in this design?
+
+> Hence the introduction of the bulkstat interface in XFS for fast,
+> efficient scanning of all the inodes in the filesystem for changes.
+> The HSMs -always- scanned the filesystems after an unclean mount
+> (i.e. not having a registered unmount event recorded in the
+> userspace application event database) because the filesystem and the
+> userspace database state are never in sync after a crash event.
+>
+> And, well, because userspace applications can crash and/or have bugs
+> that lose events, these HSMs would also do periodic scans to
+> determine if it had missed anything. When you are indexing hundreds
+> of millions of files and many petabytes of storage across disk and
+> tape (this was the typical scale of DMAPI installations in the mid
+> 2000s), you care about proactively catching that one event that was
+> missed because of a transient memory allocation event under heavy
+> production load....
+>
+
+Yes, I know all about that.
+The game is trying to reduce the number of cases when fs scan is
+needed and reduce the cost of the scan to minimum.
+
+I'll be happy to share more information about my POC if anyone
+asks and/or in LSFMM when/if that eventually happens.
+
+w.r.t $SUBJECT, if nobody else shares my POV that this MAY be
+a beneficial and bening change that is worth doing regardless of
+fanotify, I am not going to argue for it more.
 
 Thanks,
-Yongji
+Amir.
