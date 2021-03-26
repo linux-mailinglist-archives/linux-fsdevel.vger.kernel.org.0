@@ -2,173 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E3B1F34A238
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Mar 2021 07:57:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6E7C34A26E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Mar 2021 08:19:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230121AbhCZG4v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Mar 2021 02:56:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38322 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230063AbhCZG4U (ORCPT
+        id S229832AbhCZHSs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Mar 2021 03:18:48 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:41493 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230233AbhCZHSa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Mar 2021 02:56:20 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A599DC0613B0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Mar 2021 23:56:17 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id j3so5053818edp.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Mar 2021 23:56:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=PQypIBjUimiCDVu5dvIjV1qLemMlr0debSxZW75gths=;
-        b=r5Ga8+UedSB+p0J/ID7lgruod9NuIbmZYp4duaHkeV+6eGe3KTIBnBr/jUol6MK2xT
-         KigRHuLHX4UnrFmjSEkWk30i5s9ySzMlZZpPQ8e+Xl60EuTjkPa4pn23LBvKHhOaWSd4
-         ylVF2D9BNswpzd12vlataSJrOoKQxccgyy+5CwCCp6nHKKBTJIyFd3z3o0B0DjwBwCh+
-         BSzRyheU2Hdb5mZBGJXAkTce196LeaVm1tw2uwYX/3mHkbnA2xD8woqTfXFT68zWYagU
-         JDejzGcDAmUQstHf1XH88WvM/9oi8+CJjN8H6E5xGINYmMzcApiuJNEme9a2ng/xEdsJ
-         Usqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=PQypIBjUimiCDVu5dvIjV1qLemMlr0debSxZW75gths=;
-        b=ayJs7ZlOBWNUIx3sObr/qLLMGZyC2J4PwUGehLI49Qa49p9mlsUMwWyU7lRncjxchw
-         hIhKkl6lQE9u001y70DHAg+Zu5c00lIrJOrg9lXflcxwb9oEPysNnXsHT4FVFWBLySed
-         DvVIXdRI+bE6A/cURBxa1oDw2UJBrcYBP4JMET/NTvbXj0dl9oP7U3zWQAZcx5mc7IDw
-         w0XflngupbowGfqJtQg7l68NxZwcijmlD9gqCUpM2n7Wa4jgoIw7tRiT9de/qllNLLRM
-         kGxLIUOPYUc4R2D6raP01pRybreaDTCm+EM0/jGIEz6Ly7dkZCmMmwNVXstyEZVnMtSg
-         SqqQ==
-X-Gm-Message-State: AOAM532xZ2j/+PdhjKR9ZL9uPVK8oa6hRYslS9nEwqmaK2rS94MuPVmr
-        b4beIlMq1sTHjtqVmUdIMLNKRuEFTbYn0lXrJx9z
-X-Google-Smtp-Source: ABdhPJwVqduG89yOSPZPZH6FO21xukl+7m/AtoIDrk4nR7UoWmIwrzX1T2oEszw1L5x8crslqmePwiOetelHUMIsq14=
-X-Received: by 2002:a05:6402:168c:: with SMTP id a12mr13336426edv.344.1616741776081;
- Thu, 25 Mar 2021 23:56:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210315053721.189-1-xieyongji@bytedance.com> <20210315053721.189-9-xieyongji@bytedance.com>
- <ec5b4146-9844-11b0-c9b0-c657d3328dd4@redhat.com> <CACycT3v_-G6ju-poofXEzYt8QPKWNFHwsS7t=KTLgs-=g+iPQQ@mail.gmail.com>
- <7c90754b-681d-f3bf-514c-756abfcf3d23@redhat.com> <CACycT3uS870yy04rw7KBk==sioi+VNunxVz6BQH-Lmxk6m-VSg@mail.gmail.com>
- <2db71996-037e-494d-6ef0-de3ff164d3c3@redhat.com> <CACycT3v6Lj61fafztOuzBNFLs2TbKeqrNLXkzv5RK6-h-iTnvA@mail.gmail.com>
- <75e3b941-dfd2-ebbc-d752-8f25c1f14cab@redhat.com>
-In-Reply-To: <75e3b941-dfd2-ebbc-d752-8f25c1f14cab@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Fri, 26 Mar 2021 14:56:05 +0800
-Message-ID: <CACycT3t+2MC9rQ7iWdWQ4=O3ojCXHvHZ-M7y7AjXoXYZUiAOzQ@mail.gmail.com>
-Subject: Re: Re: [PATCH v5 08/11] vduse: Implement an MMU-based IOMMU driver
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 26 Mar 2021 03:18:30 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UTM9vIo_1616743107;
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0UTM9vIo_1616743107)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 26 Mar 2021 15:18:28 +0800
+From:   Baolin Wang <baolin.wang@linux.alibaba.com>
+To:     miklos@szeredi.hu
+Cc:     tao.peng@linux.alibaba.com, baolin.wang@linux.alibaba.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fuse: Fix possible deadlock when writing back dirty pages
+Date:   Fri, 26 Mar 2021 15:18:15 +0800
+Message-Id: <646dfa21bf75729f0c81597122cdec60a80b2035.1616742789.git.baolin.wang@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 26, 2021 at 2:16 PM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> =E5=9C=A8 2021/3/26 =E4=B8=8B=E5=8D=881:14, Yongji Xie =E5=86=99=E9=81=93=
-:
->
-> +     }
-> +     map->bounce_page =3D page;
-> +
-> +     /* paired with vduse_domain_map_page() */
-> +     smp_mb();
->
-> So this is suspicious. It's better to explain like, we need make sure A
-> must be done after B.
->
-> OK. I see. It's used to protect this pattern:
->
->      vduse_domain_alloc_bounce_page:          vduse_domain_map_page:
->      write map->bounce_page                           write map->orig_phy=
-s
->      mb()                                                            mb()
->      read map->orig_phys                                 read map->bounce=
-_page
->
-> Make sure there will always be a path to do bouncing.
->
-> Ok.
->
->
-> And it looks to me the iotlb_lock is sufficnet to do the synchronization
-> here. E.g any reason that you don't take it in
-> vduse_domain_map_bounce_page().
->
-> Yes, we can. But the performance in multi-queue cases will go down if
-> we use iotlb_lock on this critical path.
->
-> And what's more, is there anyway to aovid holding the spinlock during
-> bouncing?
->
-> Looks like we can't. In the case that multiple page faults happen on
-> the same page, we should make sure the bouncing is done before any
-> page fault handler returns.
->
-> So it looks to me all those extra complexitiy comes from the fact that
-> the bounce_page and orig_phys are set by different places so we need to
-> do the bouncing in two places.
->
-> I wonder how much we can gain from the "lazy" boucning in page fault.
-> The buffer mapped via dma_ops from virtio driver is expected to be
-> accessed by the userspace soon.  It looks to me we can do all those
-> stuffs during dma_map() then things would be greatly simplified.
->
-> If so, we need to allocate lots of pages from the pool reserved for
-> atomic memory allocation requests.
->
-> This should be fine, a lot of drivers tries to allocate pages in atomic
-> context. The point is to simplify the codes to make it easy to
-> determince the correctness so we can add optimization on top simply by
-> benchmarking the difference.
->
-> OK. I will use this way in the next version.
->
-> E.g we have serveral places that accesses orig_phys:
->
-> 1) map_page(), write
-> 2) unmap_page(), write
-> 3) page fault handler, read
->
-> It's not clear to me how they were synchronized. Or if it was
-> synchronzied implicitly (via iova allocator?), we'd better document it.
->
-> Yes.
->
-> Or simply use spinlock (which is the preferrable way I'd like to go). We
-> probably don't need to worry too much about the cost of spinlock since
-> iova allocater use it heavily.
->
-> Actually iova allocator implements a per-CPU cache to optimize it.
->
-> Thanks,
-> Yongji
->
->
-> Right, but have a quick glance, I guess what you meant is that usually th=
-ere's no lock contention unless cpu hot-plug. This can work but the problem=
- is that such synchornization depends on the internal implementation of IOV=
-A allocator which is kind of fragile. I still think we should do that on ou=
-r own.
->
+We can meet below deadlock scenario when writing back dirty pages, and
+writing files at the same time. The deadlock scenario can be reproduced
+by:
 
-I might miss something. Looks like we don't need any synchronization
-if the page fault handler is removed as you suggested. We should not
-access the same orig_phys concurrently (in map_page() and
-unmap_page()) unless we free the iova before accessing.
+- A writeback worker thread A is trying to write a bunch of dirty pages by
+fuse_writepages(), and the fuse_writepages() will lock one page (named page 1),
+add it into rb_tree with setting writeback flag, and unlock this page 1,
+then try to lock next page (named page 2).
 
-Thanks,
-Yongji
+- But at the same time a file writing can be triggered by another process B,
+to write several pages by fuse_perform_write(), the fuse_perform_write()
+will lock all required pages firstly, then wait for all writeback pages
+are completed by fuse_wait_on_page_writeback().
+
+- Now the process B can already lock page 1 and page 2, and wait for page 1
+waritehack is completed (page 1 is under writeback set by process A). But
+process A can not complete the writeback of page 1, since it is still
+waiting for locking page 2, which was locked by process B already.
+
+A deadlock is occurred.
+
+To fix this issue, we should make sure each page writeback is completed after
+lock the page in fuse_fill_write_pages(), and then write them together when
+all pages are stable.
+
+[1450578.772896] INFO: task kworker/u259:6:119885 blocked for more than 120 seconds.
+[1450578.796179] kworker/u259:6  D    0 119885      2 0x00000028
+[1450578.796185] Workqueue: writeback wb_workfn (flush-0:78)
+[1450578.796188] Call trace:
+[1450578.798804]  __switch_to+0xd8/0x148
+[1450578.802458]  __schedule+0x280/0x6a0
+[1450578.806112]  schedule+0x34/0xe8
+[1450578.809413]  io_schedule+0x20/0x40
+[1450578.812977]  __lock_page+0x164/0x278
+[1450578.816718]  write_cache_pages+0x2b0/0x4a8
+[1450578.820986]  fuse_writepages+0x84/0x100 [fuse]
+[1450578.825592]  do_writepages+0x58/0x108
+[1450578.829412]  __writeback_single_inode+0x48/0x448
+[1450578.834217]  writeback_sb_inodes+0x220/0x520
+[1450578.838647]  __writeback_inodes_wb+0x50/0xe8
+[1450578.843080]  wb_writeback+0x294/0x3b8
+[1450578.846906]  wb_do_writeback+0x2ec/0x388
+[1450578.850992]  wb_workfn+0x80/0x1e0
+[1450578.854472]  process_one_work+0x1bc/0x3f0
+[1450578.858645]  worker_thread+0x164/0x468
+[1450578.862559]  kthread+0x108/0x138
+[1450578.865960] INFO: task doio:207752 blocked for more than 120 seconds.
+[1450578.888321] doio            D    0 207752 207740 0x00000000
+[1450578.888329] Call trace:
+[1450578.890945]  __switch_to+0xd8/0x148
+[1450578.894599]  __schedule+0x280/0x6a0
+[1450578.898255]  schedule+0x34/0xe8
+[1450578.901568]  fuse_wait_on_page_writeback+0x8c/0xc8 [fuse]
+[1450578.907128]  fuse_perform_write+0x240/0x4e0 [fuse]
+[1450578.912082]  fuse_file_write_iter+0x1dc/0x290 [fuse]
+[1450578.917207]  do_iter_readv_writev+0x110/0x188
+[1450578.921724]  do_iter_write+0x90/0x1c8
+[1450578.925598]  vfs_writev+0x84/0xf8
+[1450578.929071]  do_writev+0x70/0x110
+[1450578.932552]  __arm64_sys_writev+0x24/0x30
+[1450578.936727]  el0_svc_common.constprop.0+0x80/0x1f8
+[1450578.941694]  el0_svc_handler+0x30/0x80
+[1450578.945606]  el0_svc+0x10/0x14
+
+Suggested-by: Peng Tao <tao.peng@linux.alibaba.com>
+Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+---
+ fs/fuse/file.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 8cccecb..af082b6 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1166,6 +1166,8 @@ static ssize_t fuse_fill_write_pages(struct fuse_args_pages *ap,
+ 		if (!page)
+ 			break;
+ 
++		wait_on_page_writeback(page);
++
+ 		if (mapping_writably_mapped(mapping))
+ 			flush_dcache_page(page);
+ 
+-- 
+1.8.3.1
+
