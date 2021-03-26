@@ -2,111 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25F7534A2C5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Mar 2021 08:56:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B474C34A2D9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Mar 2021 09:01:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229624AbhCZHzu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Mar 2021 03:55:50 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:56889 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229969AbhCZHzT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Mar 2021 03:55:19 -0400
-Received: by mail-il1-f199.google.com with SMTP id v7so3302449ilh.23
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Mar 2021 00:55:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=2eBBmYU/ALPuMTlQsOGaHV63IlPxJR7X8iVzJ/P2w7Y=;
-        b=hoeRgyLxbIaxh1hjAmmzG66G102uVb4YkKYDdL5kA0PZWf3M6cYdiSxK4PefMW06LC
-         Ltu/9lPnzELrZnKMArE4gTtfylF8gBorWFfaYUtH5hHL1QCNI52cgezrA0ZRVG041jG1
-         j9SuUnWuA3L0NVSJo7zWPVev+/n2tDIjssvAHH83RjyxHBV6WIB5exfAODBaQ10VeA0T
-         philSe851KHE94zcjm19ACDFekv+FfcSYD8z2wvrUQ2COBEYwhvYboCrBGMxQFdxal7S
-         JgqUiD7FVFRFTFDSURyKVeqCVF3z3akysPXa43ULUPpUtfS21Un0BdJ3EufDQwvsqpLj
-         5t2A==
-X-Gm-Message-State: AOAM533Wv7ZuRNaRc+hxYa4QFw6LcJ6JaQ4aighuods4gCwykZkCMSm7
-        oblgKFMnrLd64rnQCqcdpiBl/X4ieHP8wkvdrOa2ZhlpWcNH
-X-Google-Smtp-Source: ABdhPJxGz+loRgOOjyTPw4XqiczYdsVcs/SUyaLeuGwpOm86KUlyAnTRkF58JgiqGIlWh8/Z/5fjo9lsBOgsWnSCZtu2SnWAUPNJ
+        id S229889AbhCZIAj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Mar 2021 04:00:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38634 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229573AbhCZIAP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Mar 2021 04:00:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 6B349ADEF;
+        Fri, 26 Mar 2021 08:00:13 +0000 (UTC)
+Subject: Re: [PATCH -next 1/5] block: add disk sequence number
+To:     Matteo Croce <mcroce@linux.microsoft.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        Luca Boccassi <bluca@debian.org>, Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Tejun Heo <tj@kernel.org>,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>,
+        Niklas Cassel <niklas.cassel@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+References: <20210315200242.67355-1-mcroce@linux.microsoft.com>
+ <20210315200242.67355-2-mcroce@linux.microsoft.com>
+ <20210315201824.GB2577561@casper.infradead.org>
+ <20210315210452.GC2577561@casper.infradead.org>
+ <CAFnufp3zKa+9K-hsV5vRkv-w8y-1nZioq_bFAnzaxs9RoP+sDA@mail.gmail.com>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <bf5478c7-e026-846c-3bb0-fd4c6c38372f@suse.de>
+Date:   Fri, 26 Mar 2021 09:00:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a22:: with SMTP id g2mr9893569ile.231.1616745318693;
- Fri, 26 Mar 2021 00:55:18 -0700 (PDT)
-Date:   Fri, 26 Mar 2021 00:55:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000069c40405be6bdad4@google.com>
-Subject: [syzbot] KASAN: null-ptr-deref Read in filp_close (2)
-From:   syzbot <syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAFnufp3zKa+9K-hsV5vRkv-w8y-1nZioq_bFAnzaxs9RoP+sDA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 3/25/21 6:29 PM, Matteo Croce wrote:
+> On Mon, Mar 15, 2021 at 10:05 PM Matthew Wilcox <willy@infradead.org> wrote:
+>>
+>> On Mon, Mar 15, 2021 at 08:18:24PM +0000, Matthew Wilcox wrote:
+>>> On Mon, Mar 15, 2021 at 09:02:38PM +0100, Matteo Croce wrote:
+>>>> From: Matteo Croce <mcroce@microsoft.com>
+>>>>
+>>>> Add a sequence number to the disk devices. This number is put in the
+>>>> uevent so userspace can correlate events when a driver reuses a device,
+>>>> like the loop one.
+>>>
+>>> Should this be documented as monotonically increasing?  I think this
+>>> is actually a media identifier.  Consider (if you will) a floppy disc.
+>>> Back when such things were common, it was possible with personal computers
+>>> of the era to have multiple floppy discs "in play" and be prompted to
+>>> insert them as needed.  So shouldn't it be possible to support something
+>>> similar here -- you're really removing the media from the loop device.
+>>> With a monotonically increasing number, you're always destroying the
+>>> media when you remove it, but in principle, it should be possible to
+>>> reinsert the same media and have the same media identifier number.
+>>
+>> So ... a lot of devices have UUIDs or similar.  eg:
+>>
+>> $ cat /sys/block/nvme0n1/uuid
+>> e8238fa6-bf53-0001-001b-448b49cec94f
+>>
+>> https://linux.die.net/man/8/scsi_id (for scsi)
+>>
+> 
+> Hi,
+> 
+> I don't have uuid anywhere:
+> 
+> matteo@saturno:~$ ll /dev/sd?
+> brw-rw---- 1 root disk 8,  0 feb 16 13:24 /dev/sda
+> brw-rw---- 1 root disk 8, 16 feb 16 13:24 /dev/sdb
+> brw-rw---- 1 root disk 8, 32 feb 16 13:24 /dev/sdc
+> brw-rw---- 1 root disk 8, 48 feb 16 13:24 /dev/sdd
+> brw-rw---- 1 root disk 8, 64 mar  4 06:26 /dev/sde
+> brw-rw---- 1 root disk 8, 80 feb 16 13:24 /dev/sdf
+> matteo@saturno:~$ ll /sys/block/*/uuid
+> ls: cannot access '/sys/block/*/uuid': No such file or directory
+> 
+> mcroce@t490s:~$ ll /dev/nvme0n1
+> brw-rw----. 1 root disk 259, 0 25 mar 14.22 /dev/nvme0n1
+> mcroce@t490s:~$ ll /sys/block/*/uuid
+> ls: cannot access '/sys/block/*/uuid': No such file or directory
+> 
+> I find it only on a mdraid array:
+> 
+> $ cat /sys/devices/virtual/block/md127/md/uuid
+> 26117338-4f54-f14e-b5d4-93feb7fe825d
+> 
+> I'm using a vanilla 5.11 kernel.
+> 
+The 'uuid' is optional for NVMe devices, and indeed not even present for 
+other device types.
+Use the 'wwid' attribute, which contains a unique identifier for all 
+nvme devices:
 
-syzbot found the following issue on:
+# cat /sys/block/nvme*/wwid
+nvme.8086-4356504436343735303034323430304e474e-564f303430304b45464a42-00000001
+nvme.8086-4356504436343735303034363430304e474e-564f303430304b45464a42-00000001
+uuid.3c6500ee-a775-4c89-b223-e9551f5a9f7a
 
-HEAD commit:    5ee96fa9 Merge tag 'irq-urgent-2021-03-21' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17fb84bed00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6abda3336c698a07
-dashboard link: https://syzkaller.appspot.com/bug?extid=283ce5a46486d6acdbaf
+and for SCSI the wwid is part of the SCSI device:
+# cat /sys/block/sd*/device/wwid
+naa.600508b1001ce2e648a35b6ec14a3996
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Cheers,
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:71 [inline]
-BUG: KASAN: null-ptr-deref in atomic64_read include/asm-generic/atomic-instrumented.h:837 [inline]
-BUG: KASAN: null-ptr-deref in atomic_long_read include/asm-generic/atomic-long.h:29 [inline]
-BUG: KASAN: null-ptr-deref in filp_close+0x22/0x170 fs/open.c:1289
-Read of size 8 at addr 0000000000000077 by task syz-executor.4/16965
-
-CPU: 0 PID: 16965 Comm: syz-executor.4 Not tainted 5.12.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0x141/0x1d7 lib/dump_stack.c:120
- __kasan_report mm/kasan/report.c:403 [inline]
- kasan_report.cold+0x5f/0xd8 mm/kasan/report.c:416
- check_region_inline mm/kasan/generic.c:180 [inline]
- kasan_check_range+0x13d/0x180 mm/kasan/generic.c:186
- instrument_atomic_read include/linux/instrumented.h:71 [inline]
- atomic64_read include/asm-generic/atomic-instrumented.h:837 [inline]
- atomic_long_read include/asm-generic/atomic-long.h:29 [inline]
- filp_close+0x22/0x170 fs/open.c:1289
- close_files fs/file.c:403 [inline]
- put_files_struct fs/file.c:418 [inline]
- put_files_struct+0x1d0/0x350 fs/file.c:415
- exit_files+0x7e/0xa0 fs/file.c:435
- do_exit+0xbc2/0x2a60 kernel/exit.c:820
- do_group_exit+0x125/0x310 kernel/exit.c:922
- get_signal+0x42c/0x2100 kernel/signal.c:2773
- arch_do_signal_or_restart+0x2a8/0x1eb0 arch/x86/kernel/signal.c:789
- handle_signal_work kernel/entry/common.c:147 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
- exit_to_user_mode_prepare+0x148/0x250 kernel/entry/common.c:208
- __syscall_exit_to_user_mode_work kernel/entry/common.c:290 [inline]
- syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:301
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x466459
-Code: Unable to access opcode bytes at RIP 0x46642f.
-RSP: 002b:00007feb5e334218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 000000000056bf68 RCX: 0000000000466459
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000056bf68
-RBP: 000000000056bf60 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf6c
-R13: 0000000000a9fb1f R14: 00007feb5e334300 R15: 0000000000022000
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Hannes
+-- 
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
