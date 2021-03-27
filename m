@@ -2,112 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 45B1D34B80F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Mar 2021 16:57:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52EE734B903
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Mar 2021 19:56:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230114AbhC0P4t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Mar 2021 11:56:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39538 "EHLO
+        id S230204AbhC0S4B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Mar 2021 14:56:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbhC0P4m (ORCPT
+        with ESMTP id S230127AbhC0Szo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Mar 2021 11:56:42 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0255FC0613B1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Mar 2021 08:56:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=k62a7JBi4IKU3V+Sgc3RyDAhnGCy97aEm4KPW9g+I44=; b=LXkVo076OKduVDq1YtLn5Y2OVt
-        uK/WSt3Gb+X40rJkVwxaJsyx5a8lJu4gDFWndDCVdqa4+WsSpTCOVXcRtZcVL0mX0Qh+UKLp6Xyxm
-        0iHBbg9ujgddVNHfYYO1eUmkjq7OT5aqt8IE1A+pRxBmxAuPP2k0xTBDJLeuhR6rzpVo6RoXgBqMa
-        I3X0UEsUqdr4qtYmtOLoGOBPE5TS8RoW1NaKf7I4zlWGPOAB3vgMKeqdnwGsiFKI0mu35emawxSpL
-        f/t0wdman/psYvYnWqNZ0zgEmjyYDNSwzz4I/FI8f43/23DycOTR0QsZjUg9k7Yo//cL+knUBgaiw
-        k/i+DOCQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lQBIc-00GXOo-Or; Sat, 27 Mar 2021 15:56:33 +0000
-Date:   Sat, 27 Mar 2021 15:56:30 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Mike Marshall <hubcap@omnibond.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2] implement orangefs_readahead
-Message-ID: <20210327155630.GJ1719932@casper.infradead.org>
-References: <20210327035019.GG1719932@casper.infradead.org>
- <CAOg9mSTQ-zNKXQGBK9QEnwJCvwqh=zFLbLJZy-ibGZwLve4o0w@mail.gmail.com>
- <20210201130800.GP308988@casper.infradead.org>
- <CAOg9mSSd5ccoi1keeiRfkV+esekcQLxer9_1iZ-r9bQDjZLfBg@mail.gmail.com>
- <CAOg9mSSEVE3PGs2E9ya5_B6dQkoH6n2wGAEW_wWSEvw0LurWuQ@mail.gmail.com>
- <2884397.1616584210@warthog.procyon.org.uk>
- <CAOg9mSQMDzMfg3C0TUvTWU61zQdjnthXSy01mgY=CpgaDjj=Pw@mail.gmail.com>
- <1507388.1616833898@warthog.procyon.org.uk>
- <20210327135659.GH1719932@casper.infradead.org>
- <CAOg9mSRCdaBfLABFYvikHPe1YH6TkTx2tGU186RDso0S=z-S4A@mail.gmail.com>
+        Sat, 27 Mar 2021 14:55:44 -0400
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fa8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCEC3C0613B1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Mar 2021 11:55:40 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F77MW1TjMzMptWs;
+        Sat, 27 Mar 2021 19:55:35 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4F77MV4KsDzlh8T9;
+        Sat, 27 Mar 2021 19:55:34 +0100 (CET)
+Subject: Re: [PATCH v5 1/1] fs: Allow no_new_privs tasks to call chroot(2)
+To:     Askar Safin <safinaskar@mail.ru>
+References: <1616800362.522029786@f737.i.mail.ru>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Cc:     kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Message-ID: <7d9c2a08-89da-14ea-6550-527a3f2c9c9e@digikod.net>
+Date:   Sat, 27 Mar 2021 19:56:23 +0100
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOg9mSRCdaBfLABFYvikHPe1YH6TkTx2tGU186RDso0S=z-S4A@mail.gmail.com>
+In-Reply-To: <1616800362.522029786@f737.i.mail.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 27, 2021 at 11:40:08AM -0400, Mike Marshall wrote:
-> int ret;
+
+On 27/03/2021 00:12, Askar Safin wrote:
+> Hi. Unprivileged users already can do chroot. He should simply create userns and then call "chroot" inside. As an LWN commenter noted, you can simply run 
+> "unshare -r /usr/sbin/chroot some-dir". (I recommend reading all comments: https://lwn.net/Articles/849125/ .)
+
+We know that userns can be use to get the required capability in a new
+namespace, but this patch is to not require to use this namespace, as
+explained in the commit message. I already added some comments in the
+LWN article though.
+
 > 
-> loff_t new_start = readahead_index(rac) * PAGE_SIZE;
+> Also: if you need chroot for path resolving only, consider openat2 with RESOLVE_IN_ROOT ( https://lwn.net/Articles/796868/ ).
 
-That looks like readahead_pos() to me.
-
-> size_t new_len = 524288;
-> readahead_expand(rac, new_start, new_len);
-> 
-> npages = readahead_count(rac);
-> offset = readahead_pos(rac);
-> i_pages = &file->f_mapping->i_pages;
-> 
-> iov_iter_xarray(&iter, READ, i_pages, offset, npages * PAGE_SIZE);
-
-readahead_length()?
-
-> /* read in the pages. */
-> ret = wait_for_direct_io(ORANGEFS_IO_READ, inode, &offset, &iter,
-> npages * PAGE_SIZE, inode->i_size, NULL, NULL, file);
-> 
-> /* clean up. */
-> while ((page = readahead_page(rac))) {
-> page_endio(page, false, 0);
-> put_page(page);
-> }
-> }
-
-What if wait_for_direct_io() returns an error?  Shouldn't you be calling
-
-page_endio(page, false, ret)
-
-?
-
-> On Sat, Mar 27, 2021 at 9:57 AM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Sat, Mar 27, 2021 at 08:31:38AM +0000, David Howells wrote:
-> > > However, in Mike's orangefs_readahead_cleanup(), he could replace:
-> > >
-> > >       rcu_read_lock();
-> > >       xas_for_each(&xas, page, last) {
-> > >               page_endio(page, false, 0);
-> > >               put_page(page);
-> > >       }
-> > >       rcu_read_unlock();
-> > >
-> > > with:
-> > >
-> > >       while ((page = readahead_page(ractl))) {
-> > >               page_endio(page, false, 0);
-> > >               put_page(page);
-> > >       }
-> > >
-> > > maybe?
-> >
-> > I'd rather see that than open-coded use of the XArray.  It's mildly
-> > slower, but given that we're talking about doing I/O, probably not enough
-> > to care about.
+openat2 was also discussed in previous versions of this patch.
