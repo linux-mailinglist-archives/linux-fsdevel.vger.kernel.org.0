@@ -2,208 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB36434B9B6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Mar 2021 22:59:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 214E834BA33
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Mar 2021 00:36:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230476AbhC0V5U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Mar 2021 17:57:20 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42630 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230439AbhC0V5R (ORCPT
+        id S230525AbhC0XeG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Mar 2021 19:34:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52172 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230442AbhC0Xds (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Mar 2021 17:57:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616882229;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Bj/1bcBSUwlXPODMgK+7TR54EtYdkqxCKK5SCH5Eb+k=;
-        b=XLvTBm0Nf2uQsVEG/xRWsz9KrubmRdjjXaGHwFrYRa8CiFsm5G9oo0vhRAJjdvWKvZv0z4
-        0pIOUlz3q3XTk9ZYSvutWr6WYrIYy72kTZ8O6r0qGZhAkrLNF8ux4WJKUtprPHd02IpR8k
-        vvqZfK8Zi3e2RlMgFcmkjS9gZawRUx0=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-433-AQI4Cai3NXquq2tQK4RouA-1; Sat, 27 Mar 2021 17:57:08 -0400
-X-MC-Unique: AQI4Cai3NXquq2tQK4RouA-1
-Received: by mail-qv1-f69.google.com with SMTP id bt20so8398161qvb.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Mar 2021 14:57:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Bj/1bcBSUwlXPODMgK+7TR54EtYdkqxCKK5SCH5Eb+k=;
-        b=SVPN38P2iTTsd6eJdEvW69de24bQe5nSlXOyiACB71DHhLuNrfRyVEYgWiA04kItFM
-         LZIwLTEGatdP9sjfwfMpll51waaWZTh3hafj2WqVgQDjn9kFNG6takkn8Kn3Mab11J22
-         Ch2d8ajOyzLj2fdOo1olJCcPRn4g4gM2cSO+HdEbVlNQZAjBbt3TE+xIEUbcROzsOp9y
-         bqj/dUAbpOOvWrzDlpPOs2s5EGl9IRCaOuO24OnEZyCBvzTM0B1wmNmcgUpT7nxqBmLs
-         tXQ2mywM2h71AQH7YKV5cTwB9eZpTIEdMI9r99l30saHtb+KL+qJAzjz5BopIQLFXxDs
-         IXHg==
-X-Gm-Message-State: AOAM5329410Y2B/9XxSmwmuCVUmGFe/wHLDKlQLnZhmqCCv8+UH7F4aS
-        GrNGd26Yc3Il4FQ4GoRRt9dw/UBER8CW5AsKUQvWAK/DOEJaQxHQTMdn4Dcx+C+N1mM6SkYKV8a
-        DkccG7GADB7QUv06To+OF8+o86Q==
-X-Received: by 2002:a05:620a:31a:: with SMTP id s26mr19301673qkm.355.1616882227417;
-        Sat, 27 Mar 2021 14:57:07 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzCJKaSGSlzQNoXwiiYL1bXbPYCri/xP97a1UnyExgW9n9/TCZ5ehH0OYORnNJ3nuDDuOgj8A==
-X-Received: by 2002:a05:620a:31a:: with SMTP id s26mr19301653qkm.355.1616882227094;
-        Sat, 27 Mar 2021 14:57:07 -0700 (PDT)
-Received: from xz-x1 (bras-base-toroon474qw-grc-82-174-91-135-175.dsl.bell.ca. [174.91.135.175])
-        by smtp.gmail.com with ESMTPSA id t24sm8185897qto.23.2021.03.27.14.57.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Mar 2021 14:57:06 -0700 (PDT)
-Date:   Sat, 27 Mar 2021 17:57:03 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wang Qing <wangqing@vivo.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, Brian Geffon <bgeffon@google.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Michel Lespinasse <walken@google.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH] userfaultfd/shmem: fix MCOPY_ATOMIC_CONTNUE error
- handling + accounting
-Message-ID: <20210327215703.GA429942@xz-x1>
-References: <20210325231027.3402321-1-axelrasmussen@google.com>
+        Sat, 27 Mar 2021 19:33:48 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 216FEC0613B1;
+        Sat, 27 Mar 2021 16:33:47 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lQIQz-000KUP-T2; Sat, 27 Mar 2021 23:33:38 +0000
+Date:   Sat, 27 Mar 2021 23:33:37 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] KASAN: null-ptr-deref Read in filp_close (2)
+Message-ID: <YF/A0eZdQwi0/PJU@zeniv-ca.linux.org.uk>
+References: <00000000000069c40405be6bdad4@google.com>
+ <CACT4Y+baP24jKmj-trhF8bG_d_zkz8jN7L1kYBnUR=EAY6hOaA@mail.gmail.com>
+ <20210326091207.5si6knxs7tn6rmod@wittgenstein>
+ <CACT4Y+atQdf_fe3BPFRGVCzT1Ba3V_XjAo6XsRciL8nwt4wasw@mail.gmail.com>
+ <CAHrFyr7iUpMh4sicxrMWwaUHKteU=qHt-1O-3hojAAX3d5879Q@mail.gmail.com>
+ <20210326135011.wscs4pxal7vvsmmw@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210325231027.3402321-1-axelrasmussen@google.com>
+In-Reply-To: <20210326135011.wscs4pxal7vvsmmw@wittgenstein>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Axel,
-
-On Thu, Mar 25, 2021 at 04:10:27PM -0700, Axel Rasmussen wrote:
-> Previously, in the error path, we unconditionally removed the page from
-> the page cache. But in the continue case, we didn't add it - it was
-> already there because the page is used by a second (non-UFFD-registered)
-> mapping. So, in that case, it's incorrect to remove it as the other
-> mapping may still use it normally.
-> 
-> For this error handling failure, trivially exercise it in the
-> userfaultfd selftest, to detect this kind of bug in the future.
-> 
-> Also, we previously were unconditionally calling shmem_inode_acct_block.
-> In the continue case, however, this is incorrect, because we would have
-> already accounted for the RAM usage when the page was originally
-> allocated (since at this point it's already in the page cache). So,
-> doing it in the continue case causes us to double-count.
-> 
-> Fixes: 00da60b9d0a0 ("userfaultfd: support minor fault handling for shmem")
-> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-> ---
->  mm/shmem.c                               | 15 ++++++++++-----
->  tools/testing/selftests/vm/userfaultfd.c | 12 ++++++++++++
->  2 files changed, 22 insertions(+), 5 deletions(-)
-> 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index d2e0e81b7d2e..5ac8ea737004 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2379,9 +2379,11 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
->  	int ret;
->  	pgoff_t offset, max_off;
+On Fri, Mar 26, 2021 at 02:50:11PM +0100, Christian Brauner wrote:
+> @@ -632,6 +632,7 @@ EXPORT_SYMBOL(close_fd); /* for ksys_close() */
+>  static inline void __range_cloexec(struct files_struct *cur_fds,
+>  				   unsigned int fd, unsigned int max_fd)
+>  {
+> +	unsigned int cur_max;
+>  	struct fdtable *fdt;
 >  
-> -	ret = -ENOMEM;
-> -	if (!shmem_inode_acct_block(inode, 1))
-
-IMHO a better change here is to only touch this line into:
-
-        if (!is_continue && !shmem_inode_acct_block(inode, 1))
-
-Then you don't need to touch any other line, also you can drop line [1] below
-too as a side benefit.
-
-> -		goto out;
-> +	if (!is_continue) {
-> +		ret = -ENOMEM;
-> +		if (!shmem_inode_acct_block(inode, 1))
-> +			goto out;
-> +	}
+>  	if (fd > max_fd)
+> @@ -639,7 +640,12 @@ static inline void __range_cloexec(struct files_struct *cur_fds,
 >  
->  	if (is_continue) {
->  		ret = -EFAULT;
-> @@ -2389,6 +2391,7 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
->  		if (!page)
->  			goto out_unacct_blocks;
->  	} else if (!*pagep) {
-> +		ret = -ENOMEM;
-
-[1]
-
->  		page = shmem_alloc_page(gfp, info, pgoff);
->  		if (!page)
->  			goto out_unacct_blocks;
-> @@ -2486,12 +2489,14 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
->  out_release_unlock:
->  	pte_unmap_unlock(dst_pte, ptl);
->  	ClearPageDirty(page);
-
-Should this be conditional too?  IIUC this will clear dirty for the page cache
-even if it was dirty.  I'm not sure whether it'll cause data loss.
-
-> -	delete_from_page_cache(page);
-> +	if (!is_continue)
-> +		delete_from_page_cache(page);
->  out_release:
->  	unlock_page(page);
->  	put_page(page);
->  out_unacct_blocks:
-> -	shmem_inode_unacct_blocks(inode, 1);
-> +	if (!is_continue)
-> +		shmem_inode_unacct_blocks(inode, 1);
->  	goto out;
+>  	spin_lock(&cur_fds->file_lock);
+>  	fdt = files_fdtable(cur_fds);
+> -	bitmap_set(fdt->close_on_exec, fd, max_fd - fd + 1);
+> +	/* make very sure we're using the correct maximum value */
+> +	cur_max = fdt->max_fds;
+> +	cur_max--;
+> +	cur_max = min(max_fd, cur_max);
+> +	if (fd <= cur_max)
+> +		bitmap_set(fdt->close_on_exec, fd, cur_max - fd + 1);
+>  	spin_unlock(&cur_fds->file_lock);
 >  }
 
-Besides the error handling, I looked at the function again and I have another
-two thoughts:
+Umm...  That's harder to follow than it ought to be.  What's the point of
+having
+        max_fd = min(max_fd, cur_max);
+done in the caller, anyway?  Note that in __range_close() you have to
+compare with re-fetched ->max_fds (look at pick_file()), so...
 
-1. IMHO in shmem_mcopy_atomic_pte() we should also conditionally call
-   pte_mkwrite() just like the hugetlb code too, so as to keep W bit clear when
-   !VM_SHARED.
-
-2. I see even more "if (!is_continue)" here.. I'm thinking whether we can
-   simply jump to pte installation "if (is_continue)" instead, because
-   uffdio-continue shoiuld really be a lightweight operation.
-
-   E.g., most of the things at the middle of the function is not relevant to
-   uffd-continue.  To be explicit:
-
-	ret = -EFAULT;
-	offset = linear_page_index(dst_vma, dst_addr);
-	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-	if (unlikely(offset >= max_off))
-		goto out_release;
-
-   These chunk can be put into !is_continue too, then if you see you're
-   bypassing mostly everything.  Then error handling of uffdio-continue would
-   be simple too, since it could only fail if either page cache not exist, or
-   pte changed.  Nothing else could happen.
-
-For above point (1), I even start to doubt whether we should conditionally
-grant the write bit for normal uffdio_copy case only if both WRITE|SHARED set
-for the vma flags. E.g., shmem_mcopy_atomic_pte() of a normal uffdio-copy will
-fill in the page cache into pte, however what if this mapping is privately
-mapped?  IMHO we can't apply write bit otherwise the process will be writting
-to the page cache directly.
-
-However I think that question will be irrelevant to this patch.
-
-Thanks,
-
--- 
-Peter Xu
-
+BTW, I really wonder if the cost of jerking ->file_lock up and down
+in that loop in __range_close() is negligible.  What values do we
+typically get from callers and how sparse does descriptor table tend
+to be for those?
