@@ -2,65 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C77C634B416
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Mar 2021 04:48:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5954834B426
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Mar 2021 04:52:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230150AbhC0Dr7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Mar 2021 23:47:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230152AbhC0DrO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Mar 2021 23:47:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2F77A619FF;
-        Sat, 27 Mar 2021 03:47:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616816823;
-        bh=yA8kD8ypT3ufo7csW1XItLYaTujjqa7SDCX8CvpPF7k=;
-        h=Date:From:To:Subject:From;
-        b=gPcMou40HgHH3cA6xOgTkmsHVH/ZbPNFiyomnDl70lzHB205rGzXWSBxj8RI6tG3M
-         S6erRCJjwnHu76PVov3oPaPiCXzr3PZQzRIrGdENOyQNg0b0qiH6jLtl7BuExt9AWf
-         18mlb4pmjrQS6UXmzhMbLQVNv1gsTp3dC1UOv6YlfWpUC+MYKOwDcxLNUgCyw4fHbS
-         apxi24ogXXyyJiSHRKOc66LFP74Vv8FHpZU/aTTOtmpLCaeVpkk7UQMWi6lW1sbc9P
-         07wF+OhMvy5y4Ekwt/hL213yYrSZelaHPItKQzJjQn4OcudBi7IGZ5LpDIaZMATSRv
-         WX2t17y5OfFFQ==
-Date:   Fri, 26 Mar 2021 20:46:59 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: [ANNOUNCE] xfs-linux: iomap-for-next updated to ad89b66cbad1
-Message-ID: <20210327034659.GB4090233@magnolia>
+        id S231390AbhC0DvW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Mar 2021 23:51:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54386 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231371AbhC0Duu (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Mar 2021 23:50:50 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00819C0613AA
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Mar 2021 20:50:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=0joRd3BVHG74/NUidLyeyPjblLNXF+awivZrAmng9Eg=; b=N0rYlfgqvBSYYpM1D2PFs/pc6v
+        kMLEo5+ZYtZogA8zJJTJw8kKWpRYHMI7rBoUmhZIGlsMZguIVMxKLrvLqG8/if6xKcEX0hJGgRfWz
+        YSLzii+gOhbF/jpccaSF1CG6h5W2k6O3pFC7w4Ygd2Ngqsh1OsnK2/qY8FEHdqLZgg5m35knv1vC0
+        /QEoBL61W9w3SJytsIBQl7J2Y+XBTDJgTnDjUKcJ6OMhOAs6DBsJkH1tK3toywYo2tmElWVcOPTk2
+        l4h/yZCRchx6iWoNW5n1Nw+UJfTiZmvnTh2jZ+mqAa+3jXt3cFRAHUIFjmFhUMOKZOCNtTbdpozdB
+        N0NC8xCg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lPzxr-00FtZv-VB; Sat, 27 Mar 2021 03:50:31 +0000
+Date:   Sat, 27 Mar 2021 03:50:19 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mike Marshall <hubcap@omnibond.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2] implement orangefs_readahead
+Message-ID: <20210327035019.GG1719932@casper.infradead.org>
+References: <CAOg9mSTQ-zNKXQGBK9QEnwJCvwqh=zFLbLJZy-ibGZwLve4o0w@mail.gmail.com>
+ <20210201130800.GP308988@casper.infradead.org>
+ <CAOg9mSSd5ccoi1keeiRfkV+esekcQLxer9_1iZ-r9bQDjZLfBg@mail.gmail.com>
+ <CAOg9mSSEVE3PGs2E9ya5_B6dQkoH6n2wGAEW_wWSEvw0LurWuQ@mail.gmail.com>
+ <2884397.1616584210@warthog.procyon.org.uk>
+ <CAOg9mSQMDzMfg3C0TUvTWU61zQdjnthXSy01mgY=CpgaDjj=Pw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAOg9mSQMDzMfg3C0TUvTWU61zQdjnthXSy01mgY=CpgaDjj=Pw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+On Fri, Mar 26, 2021 at 10:55:44PM -0400, Mike Marshall wrote:
+> Hi David.
+> 
+> I implemented a version with iov_iter_xarray (below).
+> It appears to be doing "the right thing" when it
+> gets called, but then I get a backtrace in the kernel
+> ring buffer "RIP: 0010:read_pages+0x1a1/0x2c0" which is
+> page dumped because: VM_BUG_ON_PAGE(!PageLocked(page))
+> ------------[ cut here ]------------
+> kernel BUG at include/linux/pagemap.h:892!
+> 
+> So it seems that in mm/readahead.c/read_pages I end up
+> entering the "Clean up the remaining pages" part, and
+> never make it through even one iteration... it happens
+> whether I use readahead_expand or not.
+> 
+> I've been looking at it a long time :-), I'll look more
+> tomorrow... do you see anything obvious?
 
-The iomap-for-next branch of the xfs-linux repository at:
+Yes; Dave's sample code doesn't consume the pages from the readahead
+iterator, so the core code thinks you didn't consume them and unlocks
+/ puts the pages for you.  That goes wrong, because you did actually
+consume them.  Glad I added the assertions now!
 
-	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+We should probably add something like:
 
-has just been updated.
+static inline void readahead_consume(struct readahead_control *ractl,
+		unsigned int nr)
+{
+	ractl->_nr_pages -= nr;
+	ractl->_index += nr;
+}
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.
-
-The new head of the iomap-for-next branch is commit:
-
-ad89b66cbad1 iomap: improve the warnings from iomap_swapfile_activate
-
-New Commits:
-
-Christoph Hellwig (1):
-      [ad89b66cbad1] iomap: improve the warnings from iomap_swapfile_activate
-
-
-Code Diffstat:
-
- fs/iomap/swapfile.c | 38 ++++++++++++++++++++++----------------
- 1 file changed, 22 insertions(+), 16 deletions(-)
+to indicate that you consumed the pages other than by calling
+readahead_page() or readahead_page_batch().  Or maybe Dave can
+wrap iov_iter_xarray() in a readahead_iter() macro or something
+that takes care of adjusting index & nr_pages for you.
