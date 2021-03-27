@@ -2,119 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A67F634B593
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Mar 2021 10:09:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 406AC34B59A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Mar 2021 10:27:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230392AbhC0JH2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Mar 2021 05:07:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36892 "EHLO
+        id S231173AbhC0JPe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Mar 2021 05:15:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230288AbhC0JGx (ORCPT
+        with ESMTP id S230329AbhC0JPD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Mar 2021 05:06:53 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14B2DC0613B1;
-        Sat, 27 Mar 2021 02:06:53 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id t6so7043171ilp.11;
-        Sat, 27 Mar 2021 02:06:53 -0700 (PDT)
+        Sat, 27 Mar 2021 05:15:03 -0400
+Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B908C0613B1;
+        Sat, 27 Mar 2021 02:15:03 -0700 (PDT)
+Received: by mail-il1-x134.google.com with SMTP id r17so923688ilt.0;
+        Sat, 27 Mar 2021 02:15:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8UM4qDTvG5FI1YwUQ+9DzYT4jA+A+wOqNSmHA+PMwTE=;
-        b=COmbHnhuXMA7YKPpBlncY+nXDIk6HTUMSNRf2QxFvG195l2gGhobNEeMoGkAZHb7wj
-         gkVHhbpzuWbAz1zLPYHdahE4U/LlxYS9Sd+8/dJ2b8/dWYqxIPnFNZ0x5LhN21SUssqs
-         3XFB6pMlukw077/gSYVQfcPwH6UcIccm38s7+y9GaYJiJ2OAuOHrcn0ofmNh3Rx6cQUO
-         fFuu5QO7VIweKAN4E30HD2WCvQMHywRCrPBxMgZR6PVzv/hYIYEkZS1ydpnw7jVlMGwv
-         c4Qif9Am+Qq/+5KKdGVdo/SeUBYA1867MnboswAjBvNks7ZLzAlA5dlmIQRqfou+E55F
-         OSkg==
+        bh=6lRguUrj+Do6M5eEzfByFdFuJEjwyRduDVTOBo9yEBo=;
+        b=R/djMivm1iqsiXDOdVttTn+WEjCJOgRN8UdEAeyFGNffTlkfYDfPKRJk+shqQiIsGU
+         v/2LReRniz/yq0V/ZxnQXa5FkNLlXC8Vpf/6k5U8mDkxLLHvXlqXVpGV9PjfW5kvzXLl
+         lEBa96ebdAIVcpKU1B4KRketUqzlfFQcTxxP31JkWZ9kvcyd/4qrGvQRUAk9Wof9rCj3
+         tPisCQ9QFA0FaAX/phRb84RPvRdN4N8BtbiBU09F90pFtdEIW79ZKVmFv83t8YglCM2u
+         UQyXTZj4lqWw1tzRFOULdBALLRYeU5CDAV+i5dGfDDHuiQItnlw9QoTVRNhUbMGtbztG
+         AThA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8UM4qDTvG5FI1YwUQ+9DzYT4jA+A+wOqNSmHA+PMwTE=;
-        b=o4w8cxvvAyLtJkiU+xkO5RBhYFe/FWshzI1GzjXawNZI+pqWA/BTvxFPl/2ne8T8an
-         1mZR4LmmS8cRiOodE6Datz0pucqyVoYzXYOOupZPx7K7p9gSKIpWigS5I1GKw1iYbqqs
-         83VLppz02xuWnxaHN4w0KOJJ0Ke2n00Hn3Eq/mUK4HXsbgjsHuP9fIQwnorTP0Y4PnnZ
-         p2tgZMRQfx/LF+QSnB2B00GcrQeO1MU/Z7GzA+OpuIFJlMKKgcZ79NKZO8bkQ+MTLcRB
-         k4kQpLIZxe1diRnS5TGQbNM3MJp5eYruW2nxr6kPK4+0PTfmlv87rOKDAriDjt1X398Q
-         yxmA==
-X-Gm-Message-State: AOAM532HDgM8LFAp0gMcxs8E2rnD5CHKrzgSbbwKWIemBMkM3lQmWgSb
-        DOxVuauxC5dviWig0d5hHX08/9XMaojNWoaCTY0=
-X-Google-Smtp-Source: ABdhPJxiTKRrMzN82uEne8nhFbmVOHw3BonW5Tq9jLuPr6eyGyfb4tzZRn23c0tY+eWAKcxwbwLETA67ULvF2iAhG4M=
-X-Received: by 2002:a92:50b:: with SMTP id q11mr14436909ile.250.1616836012381;
- Sat, 27 Mar 2021 02:06:52 -0700 (PDT)
+        bh=6lRguUrj+Do6M5eEzfByFdFuJEjwyRduDVTOBo9yEBo=;
+        b=bwVbJNzC6dlYWSZB6YRFj30Ff5mTDwx5/gFqwJTTmPCiTC6R3v3F2UtYu97/EIJ89c
+         KXlvWnCTAEkyt5zKCwb2+4XYt/cgVab+c0v020iR/8sAgrY3qBRbBEIK4f/5fBW+5cBf
+         LsNNQ9v87m2/lSX8ePbRvzzuLH5FjDcuX+PNa88Jz9pXP9GiGzmqaniN/pFaLyHWEPCv
+         dMnTzdnu3obPSF1A3MoZ0wO8dNibaMtlwecwPWtzAs1AJ33Y8mLlWiIazGr+k/ki6R06
+         wa4RqNyYLyRVaw4c+pJLOL/xJN0QK1HdmTEi8q7Lpm27JYmokqi6gEKQEjyQ9zmaWqKz
+         0ZRQ==
+X-Gm-Message-State: AOAM5330VUDkYmZKkw0lQ6iwZyoeMK0HSiMY7pjskk9HJHYIv5DgUO+g
+        9bJB6RBXw+B7xsprClUnou9Mu5lvZqm0CGxEC/o=
+X-Google-Smtp-Source: ABdhPJwXJobi6g1SYm1vNWyXXBov4yK4w6+Z/J2j0vbdbl3eKOz+P1yYCf1tvpKvJkHLwY1759AubGMZ1iRWxeKaR9Q=
+X-Received: by 2002:a92:b74e:: with SMTP id c14mr7869202ilm.275.1616836502466;
+ Sat, 27 Mar 2021 02:15:02 -0700 (PDT)
 MIME-Version: 1.0
 References: <20210322171118.446536-1-amir73il@gmail.com> <20210322230352.GW63242@dread.disaster.area>
- <CAOQ4uxjFMPNgR-aCqZt3FD90XtBVFZncdgNc4RdOCbsxukkyYQ@mail.gmail.com> <20210326191554.GB13139@fieldses.org>
-In-Reply-To: <20210326191554.GB13139@fieldses.org>
+ <CAOQ4uxjFMPNgR-aCqZt3FD90XtBVFZncdgNc4RdOCbsxukkyYQ@mail.gmail.com>
+ <20210323072607.GF63242@dread.disaster.area> <CAOQ4uxgAddAfGkA7LMTPoBmrwVXbvHfnN8SWsW_WXm=LPVmc7Q@mail.gmail.com>
+ <20210324005421.GK63242@dread.disaster.area> <CAOQ4uxhhMVQ4XE8DMU1EjaXBo-go3_pFX3CCWn=7GuUXcMW=PA@mail.gmail.com>
+ <20210325225305.GM63242@dread.disaster.area> <CAOQ4uxgAxUORpUJezg+oWKXEafn0o33+bP5EN+VKnoQA_KurOg@mail.gmail.com>
+ <YF5ha6TZlVocDpSY@mit.edu>
+In-Reply-To: <YF5ha6TZlVocDpSY@mit.edu>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 27 Mar 2021 12:06:41 +0300
-Message-ID: <CAOQ4uxgQNfESKGM3E_aFYtkj6SpP93h8Z3T5Q9yyDGNpGzTayg@mail.gmail.com>
+Date:   Sat, 27 Mar 2021 12:14:51 +0300
+Message-ID: <CAOQ4uxiz4hjMSd9POFF-vjpCPZ42MbpJ5K5_xO1sApRbDhcbCg@mail.gmail.com>
 Subject: Re: [PATCH] xfs: use a unique and persistent value for f_fsid
-To:     "J. Bruce Fields" <bfields@fieldses.org>
+To:     "Theodore Ts'o" <tytso@mit.edu>
 Cc:     Dave Chinner <david@fromorbit.com>,
         "Darrick J . Wong" <darrick.wong@oracle.com>,
         Jan Kara <jack@suse.cz>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         linux-xfs <linux-xfs@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
+        Linux API <linux-api@vger.kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 26, 2021 at 10:15 PM J. Bruce Fields <bfields@fieldses.org> wrote:
+On Sat, Mar 27, 2021 at 1:34 AM Theodore Ts'o <tytso@mit.edu> wrote:
 >
-> On Tue, Mar 23, 2021 at 06:50:44AM +0200, Amir Goldstein wrote:
-> > On Tue, Mar 23, 2021 at 1:03 AM Dave Chinner <david@fromorbit.com> wrote:
-> > > should be using something common across all filesystems from the
-> > > linux superblock, not deep dark internal filesystem magic. The
-> > > export interfaces that generate VFS (and NFS) filehandles already
-> > > have a persistent fsid associated with them, which may in fact be
-> > > the filesystem UUID in it's entirety.
-> > >
-> >
-> > Yes, nfsd is using dark internal and AFAIK undocumnetd magic to
-> > pick that identifier (Bruce, am I wrong?).
+> I've been reading through this whole thread, and it appears to me that
+> the only real, long-term solution is to rely on file system UUID's
+> (for those file systems that support real 128-bit UUID's), and
+> optionally, for those file systems which support it, a new, "snapshot"
+> or "fs-instance" UUID.
 >
-> Sorry, I kept putting off catching up with this thread and only now
-> noticed the question.
+> The FS UUID is pretty simple; we just need an ioctl (or similar
+> interface) which returns the UUID for a particular file system.
 >
-> It's actually done mostly in userspace (rpc.mountd), so "dark internal"
-> might not be fair, but it is rather complicated.  There are several
-> options (UUID, device number, number provided by the user with fsid=
-> option), and I don't recall the logic behind which we use when.
+> The Snapshot UUID is the one which is bit trickier.  If the underlying
+> block device can supply something unique --- for example, the WWN or
+> WWID which is defined by FC, ATA, SATA, SCSI, NVMe, etc. then that
+> plus a partition identifier could be hashed to form a Snapshot UUID.
+> LVM volumes have a LV UUID that could be used for a similar purpose.
 >
+> If you have a block device which doesn't relibly provide a WWN or
+> WWID, or we could could imagine that a file system has a field in the
+> superblock, and a file system specific program could get used to set
+> that field to a random UUID, and that becomes part of the snapshot
+> process.  This may be problematic for remote/network file systems
+> which don't have such a concept, but life's a bitch....
+>
+> With that, then userspace can fetch the st_dev, st_ino, the FS UUID,
+> and the Snapshot UUID, and use some combination of those fields (as
+> available) to try determine whether two objects are unique or not.
+>
+> Is this perfect?  Heck, no.  But ultimately, this is a hard problem,
+> and trying to wave our hands and create something that works given one
+> set of assumptions --- and completely breaks in a diferent operating
+> environment --- is going lead to angry users blaming the fs
+> developers.  It's a messy problem, and I think all we can do is expose
+> the entire mess to userspace, and make it be a userspace problem.
+> That way, the angry users can blame the userspace developers instead.  :-)
 
-I'll take back "dark internal" then and replace it with "light external" ;-)
-which is also a problem. If userspace is involved in declaring the id
-of the *export* then from NFS client POV, that is not a problem, but
-from fsnotify POV, that identifier cannot be determined when an event
-happens on an inode NOT via the NFS client.
+Sounds like a plan ;-)
 
-As a matter of fact, the fanotify requirements about fsid are even more
-strict than being able to get fsid from the inode. From fanotify_mark.2:
-"
-       EXDEV  The filesystem object indicated by pathname resides within
-              a filesystem subvolume (e.g., btrfs(5)) which uses a
-different fsid
-              than its root superblock...
-"
+FWIW, if and when we will have a standard userspace API (fsinfo()?) to
+export fs instance uuid to userspace, fanotify can use the uuid instead of
+fsid when available (opt-in by new faotify_init() flag).
 
-> I don't *think* we have good comprehensive documentation of it anywhere.
-> I wish we did.  It'd take a little time to put together.  Starting
-> points would be linux/fs/nfsd/nfsfh.c and
-> nfs-utils/support/export/cache.c.
-
-At least as far as fanotify is concerned, the documentation is not going
-to matter. The only thing needed is an fsid value that is queryable via
-a userspace API.
-
-f_fsid meets this criteria, which is why it was chosen for fanotify.
-Having the fsid reported by fanotify also be stable is a nice to have
-feature for very selective use cases, which is why I posted this xfs patch.
+The fanotify_event_info_header contains an "info_type" field, so it's not
+a problem for some events to report fsid (as today) and for other events
+to report uuid, depending on availability of the information per filesystem.
 
 Thanks,
 Amir.
