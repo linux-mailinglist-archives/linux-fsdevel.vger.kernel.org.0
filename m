@@ -2,71 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 831AA34B315
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Mar 2021 00:37:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31E9E34B3DF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Mar 2021 03:57:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230266AbhCZXg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Mar 2021 19:36:29 -0400
-Received: from fallback23.m.smailru.net ([94.100.187.222]:37338 "EHLO
-        fallback23.mail.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229986AbhCZXgL (ORCPT
+        id S230261AbhC0C41 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Mar 2021 22:56:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42738 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229880AbhC0Cz4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Mar 2021 19:36:11 -0400
-X-Greylist: delayed 1393 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Mar 2021 19:36:11 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail3;
-        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:To:From; bh=TCgmuDJAYTsjobPwpCKnWi9eh9wfEhXbvIg+omz35DM=;
-        b=dI0bqD4nkxCQ+1/xvs4a7AnXSHFMzncnpaLYq46eSvS+Pd3HvSx2SktQAJXsonFolAYdJqA1h+9IwDfJn03wYZG5Yqg4rsu8DzKdyFNhMz0PPKIQVq18Jd5UkL3FkcGAAvd7nFOh5/RxT3MbAA4nG0gAQdLXM49AaLVoyDz2xxw=;
-Received: from [10.161.124.209] (port=54226 helo=f737.i.mail.ru)
-        by fallback23.m.smailru.net with esmtp (envelope-from <safinaskar@mail.ru>)
-        id 1lPvdP-0000fg-Ph; Sat, 27 Mar 2021 02:12:56 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail3;
-        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=TCgmuDJAYTsjobPwpCKnWi9eh9wfEhXbvIg+omz35DM=;
-        b=WzB97DjzJA6KD0rKtEvuFRcUXaH4NOyHg7rw5Ubpm+lhWb9s7s7AlhcXS333BC2lOLbl+Ixk6A/NWpQguI7Ob6kzw79FgLMA9zV4raNKs/yZJmB002IP637r/iGZJp/lNcpSPHtVpmtZcr+tn51fQ4ZS0ZuCtF+yTNpdpQYQGq4=;
-Received: by f737.i.mail.ru with local (envelope-from <safinaskar@mail.ru>)
-        id 1lPvdC-0000t8-LI; Sat, 27 Mar 2021 02:12:43 +0300
-Received: by light.mail.ru with HTTP;
-        Sat, 27 Mar 2021 02:12:42 +0300
-From:   =?UTF-8?B?QXNrYXIgU2FmaW4=?= <safinaskar@mail.ru>
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2NSAxLzFdIGZzOiBBbGxvdyBub19uZXdfcHJpdnMgdGFz?=
- =?UTF-8?B?a3MgdG8gY2FsbCBjaHJvb3QoMik=?=
+        Fri, 26 Mar 2021 22:55:56 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B4DC0613AA
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Mar 2021 19:55:55 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id z15so7649370oic.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Mar 2021 19:55:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=llA7GqFEHJF1e+jvpYg3uLWI3+4tBu1h68vwQ2H7rpY=;
+        b=eSdhOSxLnqpaOGN2HogBSXG/Rq+Pv0iVK0LBC0ZThOe3Xe1AnJiS757YuWlSKWkYBH
+         IAERcsR73LCxIbG72dEgnbeTZEGusgbKDOTdcS9HJePbJSVzWePNqKLQw/aB0ZNqSfGi
+         /ltH5+AvVSDXNRxWN5p/0MQZErhNCKv5QtJoBRo0jHLQ/mYN2Rs1tnv+rC+YPHdmVeNO
+         gTqyc5lCcwpaHA2dKizOT/gtv5W4U8Smoy672fRv5ky0LLlGPWMUsdccSQ+UEG+bPYFP
+         QGlLMYyQ/U+R7LLYi4ZQi2glLPs3YXugUXqT5SRoTcxRFG18LjrZxw3zoPUjMzC9mwHD
+         /tlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=llA7GqFEHJF1e+jvpYg3uLWI3+4tBu1h68vwQ2H7rpY=;
+        b=bxvx0XMXyddv4jcpSov6mWwmvWdGxGIyXVSksMdIxoQuk6bMdRevG/s8y6NjPZLXa9
+         OfBIU+jq5ogUSDjHRxOfhoq2NnXY5MtIIOMbjXsJMReET0VV05ytHdQ7yNbFy2mlskdE
+         ZgBP9qCjLndrqmfsVwEflEoBVWv/dktS2rlcC5ThVRCeWc/1Tt4TSuRU2a5T4ChaqMBP
+         MmfESPzfj10vzYl5ivxeBgdDOBgOaTuoiAfKmaoJtgUP0Bo22ESdNyrYOY7QGrVbOCcO
+         14hJGePZDK5NWUOLcJFgOGUngPifUcAHGwJiCvZ7EQcPXAGJjl2DIvMsmMbdX4+eEg2L
+         N+FQ==
+X-Gm-Message-State: AOAM530jM8FnvR4QW+RSXqVdwEv8IRlXN0m51Ger8YlJDml7GaTImPlv
+        5vdVo3DIqTTkKi+iF0WkN4AyqMC/ICiVCB0d0Pul2Q==
+X-Google-Smtp-Source: ABdhPJyMY+chWpyz9lwXLTnH6VSC1U5wkD2yQ1RCJBAgmLTU8ojaSKvZ5vEBni0ZOuo1INjqhYQ16l6wcS2DU8O/AsQ=
+X-Received: by 2002:aca:478d:: with SMTP id u135mr11659357oia.174.1616813755110;
+ Fri, 26 Mar 2021 19:55:55 -0700 (PDT)
 MIME-Version: 1.0
-X-Mailer: Mail.Ru Mailer 1.0
-Date:   Sat, 27 Mar 2021 02:12:42 +0300
-Reply-To: =?UTF-8?B?QXNrYXIgU2FmaW4=?= <safinaskar@mail.ru>
-X-Priority: 3 (Normal)
-Message-ID: <1616800362.522029786@f737.i.mail.ru>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-X-7564579A: EEAE043A70213CC8
-X-77F55803: 119C1F4DF6A9251C54E3E0C6C5F9D941601365FF1EFA00A57B72CABF76C0DD1EABF6EAE57C0FACE9D8A01C7BE6A5AE8F10256108459FC4386EF9DF32E4A6FB8805836D1F9953231F
-X-7FA49CB5: 70AAF3C13DB7016878DA827A17800CE75C5A0068DDB44521D82A6BABE6F325AC08BE7437D75B48FABCF491FFA38154B613377AFFFEAFD269176DF2183F8FC7C05C0AD7D016C066E3C2099A533E45F2D0395957E7521B51C2CFCAF695D4D8E9FCEA1F7E6F0F101C6778DA827A17800CE74E9055D3307A84CAEA1F7E6F0F101C67CDEEF6D7F21E0D1D174C73DBBBFC7664C364260FAD8F937CCA2C1D19EE196DDBF4001F4B0FE1189D389733CBF5DBD5E913377AFFFEAFD269176DF2183F8FC7C04CF195F1528592878941B15DA834481FCF19DD082D7633A0EF3E4896CB9E6436389733CBF5DBD5E9D5E8D9A59859A8B64AAE2D1698E8717BCC7F00164DA146DA6F5DAA56C3B73B237318B6A418E8EAB86D1867E19FE14079C09775C1D3CA48CFC5EA940A35A165FF2DBA43225CD8A89FD63380FFBEB38773156CCFE7AF13BCA4B5C8C57E37DE458BEDA766A37F9254B7
-X-B7AD71C0: AC4F5C86D027EB782CDD5689AFBDA7A2368A440D3B0F6089093C9A16E5BC824AC8B6CDF511875BC4E8F7B195E1C97831F7A2AF59AE45E8C5AB73A7D1547457A7
-X-C1DE0DAB: 0D63561A33F958A5A6AFBEC59E2B787535FC3150985A3DCC196730366FEFC50BBDC6A1CF3F042BAD6DF99611D93F60EF4280523C145DA091699F904B3F4130E343918A1A30D5E7FCCB5012B2E24CD356
-X-C8649E89: 4E36BF7865823D7055A7F0CF078B5EC49A30900B95165D34C786159FDC4342B0C9E4B168990CD8780BCEBC64311BE505E8F3D0AD8841ECE51ADEA222FBDD9F961D7E09C32AA3244C0B0CF7C92C78415DA03BED48498C790D81560E2432555DBB83B48618A63566E0
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5+wYjsrrSY/u8Y3PrTqANeitKFiSd6Yd7yPpbiiZ/d5BsxIjK0jGQgCHUM3Ry2Lt2G3MDkMauH3h0dBdQGj+BB/iPzQYh7XS329fgu+/vnDhQDnxeTQymRYind6cQHiLPg==
-X-Mailru-Sender: 583F1D7ACE8F49BD48DC4DEF5972559E2B2CCB5D3FBD3778DD0ECC4DFEACCE8F1C238ED0579F4A1304DCC68E0365DB113919A3F0584408A7E277D648EEF17123F32B7A1AD1AAC36A3BEC1D9798BA4B85D186BC2F9B8D6AD3EAB4BC95F72C04283CDA0F3B3F5B9367
-X-Mras: Ok
-X-Spam: undefined
-X-7564579A: 646B95376F6C166E
-X-77F55803: 6242723A09DB00B4DF7173A40FF1347DA6106AACE9855D49AC59F2BC240176BE049FFFDB7839CE9EFBD1590308EC2BB2A3CE3E131277FC6ECD89962890259BEBE5C51A0269817717
-X-7FA49CB5: 0D63561A33F958A5FD61E137DE0202F7B6B12DFC72310FE8AFE25585DE82FD248941B15DA834481FA18204E546F3947C724336BCC0EE1BA8F6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F79006370B730A9793D99025389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C355B626DF3F312CC635872C767BF85DA2F004C90652538430E4A6367B16DE6309
-X-B7AD71C0: AC4F5C86D027EB782CDD5689AFBDA7A2AD77751E876CB595E8F7B195E1C97831F7A2AF59AE45E8C57D884B766E578A04
-X-C1DE0DAB: 0D63561A33F958A5FD61E137DE0202F7B6B12DFC72310FE808A87E9E263F8CBA8E8E86DC7131B365E7726E8460B7C23C
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5+wYjsrrSY/u8Y3PrTqANeitKFiSd6Yd7yPpbiiZ/d5BsxIjK0jGQgCHUM3Ry2Lt2G3MDkMauH3h0dBdQGj+BB/iPzQYh7XS329fgu+/vnDhQDnxeTQymRbJZryNFArqbw==
-X-Mailru-MI: 1000000000800
-X-Mras: Ok
+References: <CAOg9mSTQ-zNKXQGBK9QEnwJCvwqh=zFLbLJZy-ibGZwLve4o0w@mail.gmail.com>
+ <20210201130800.GP308988@casper.infradead.org> <CAOg9mSSd5ccoi1keeiRfkV+esekcQLxer9_1iZ-r9bQDjZLfBg@mail.gmail.com>
+ <CAOg9mSSEVE3PGs2E9ya5_B6dQkoH6n2wGAEW_wWSEvw0LurWuQ@mail.gmail.com> <2884397.1616584210@warthog.procyon.org.uk>
+In-Reply-To: <2884397.1616584210@warthog.procyon.org.uk>
+From:   Mike Marshall <hubcap@omnibond.com>
+Date:   Fri, 26 Mar 2021 22:55:44 -0400
+Message-ID: <CAOg9mSQMDzMfg3C0TUvTWU61zQdjnthXSy01mgY=CpgaDjj=Pw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] implement orangefs_readahead
+To:     David Howells <dhowells@redhat.com>,
+        Mike Marshall <hubcap@omnibond.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SGkuIFVucHJpdmlsZWdlZCB1c2VycyBhbHJlYWR5IGNhbiBkbyBjaHJvb3QuIEhlIHNob3VsZCBz
-aW1wbHkgY3JlYXRlIHVzZXJucyBhbmQgdGhlbiBjYWxsICJjaHJvb3QiIGluc2lkZS4gQXMgYW4g
-TFdOIGNvbW1lbnRlciBub3RlZCwgeW91IGNhbiBzaW1wbHkgcnVuIAoidW5zaGFyZSAtciAvdXNy
-L3NiaW4vY2hyb290IHNvbWUtZGlyIi4gKEkgcmVjb21tZW5kIHJlYWRpbmcgYWxsIGNvbW1lbnRz
-OiBodHRwczovL2x3bi5uZXQvQXJ0aWNsZXMvODQ5MTI1LyAuKQoKQWxzbzogaWYgeW91IG5lZWQg
-Y2hyb290IGZvciBwYXRoIHJlc29sdmluZyBvbmx5LCBjb25zaWRlciBvcGVuYXQyIHdpdGggUkVT
-T0xWRV9JTl9ST09UICggaHR0cHM6Ly9sd24ubmV0L0FydGljbGVzLzc5Njg2OC8gKS4KCgo9PQpB
-c2thciBTYWZpbgpodHRwczovL2dpdGh1Yi5jb20vc2FmaW5hc2thcgo=
+Hi David.
+
+I implemented a version with iov_iter_xarray (below).
+It appears to be doing "the right thing" when it
+gets called, but then I get a backtrace in the kernel
+ring buffer "RIP: 0010:read_pages+0x1a1/0x2c0" which is
+page dumped because: VM_BUG_ON_PAGE(!PageLocked(page))
+------------[ cut here ]------------
+kernel BUG at include/linux/pagemap.h:892!
+
+So it seems that in mm/readahead.c/read_pages I end up
+entering the "Clean up the remaining pages" part, and
+never make it through even one iteration... it happens
+whether I use readahead_expand or not.
+
+I've been looking at it a long time :-), I'll look more
+tomorrow... do you see anything obvious?
+
+
+
+
+static void orangefs_readahead_cleanup(struct xarray *i_pages,
+pgoff_t index,
+unsigned int npages,
+struct iov_iter *iter)
+{
+pgoff_t last;
+struct page *page;
+XA_STATE(xas, i_pages, index);
+
+last = npages - 1;
+
+if (iov_iter_count(iter) > 0)
+iov_iter_zero(iov_iter_count(iter), iter);
+
+rcu_read_lock();
+xas_for_each(&xas, page, last) {
+page_endio(page, false, 0);
+put_page(page);
+}
+rcu_read_unlock();
+}
+
+static void orangefs_readahead(struct readahead_control *rac)
+{
+unsigned int npages;
+loff_t offset;
+struct iov_iter iter;
+struct file *file = rac->file;
+struct inode *inode = file->f_mapping->host;
+
+struct xarray *i_pages;
+pgoff_t index;
+
+int ret;
+
+loff_t new_start = readahead_index(rac) * PAGE_SIZE;
+size_t new_len = 524288;
+
+readahead_expand(rac, new_start, new_len);
+
+npages = readahead_count(rac);
+offset = readahead_pos(rac);
+i_pages = &file->f_mapping->i_pages;
+
+
+iov_iter_xarray(&iter, READ, i_pages, offset, npages * PAGE_SIZE);
+
+/* read in the pages. */
+ret = wait_for_direct_io(ORANGEFS_IO_READ, inode, &offset, &iter,
+npages * PAGE_SIZE, inode->i_size, NULL, NULL, file);
+
+/* clean up. */
+index = offset >> PAGE_SHIFT;
+orangefs_readahead_cleanup(i_pages, index, npages, &iter);
+}
+
+On Wed, Mar 24, 2021 at 7:10 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Mike Marshall <hubcap@omnibond.com> wrote:
+>
+> > /* allocate an array of bio_vecs. */
+> > bvs = kzalloc(npages * (sizeof(struct bio_vec)), GFP_KERNEL);
+> >
+>
+> Better to use kcalloc() here as it has overflow checking.
+>
+> > /* hook the bio_vecs to the pages. */
+> > for (i = 0; i < npages; i++) {
+> > bvs[i].bv_page = pages[i];
+> > bvs[i].bv_len = PAGE_SIZE;
+> > bvs[i].bv_offset = 0;
+> > }
+> >
+> > iov_iter_bvec(&iter, READ, bvs, npages, npages * PAGE_SIZE);
+> >
+> > /* read in the pages. */
+> > ret = wait_for_direct_io(ORANGEFS_IO_READ, inode, &offset, &iter,
+> > npages * PAGE_SIZE, inode->i_size, NULL, NULL, file);
+> >
+> > /* clean up. */
+> > for (i = 0; i < npages; i++) {
+> > SetPageUptodate(bvs[i].bv_page);
+> > unlock_page(bvs[i].bv_page);
+> > put_page(bvs[i].bv_page);
+> > }
+> > kfree(pages);
+> > kfree(bvs);
+> > }
+>
+> Could you try ITER_XARRAY instead of ITER_BVEC:
+>
+>         https://lore.kernel.org/linux-fsdevel/161653786033.2770958.14154191921867463240.stgit@warthog.procyon.org.uk/T/#u
+>
+> Setting the iterator looks like:
+>
+>         iov_iter_xarray(&iter, READ, &mapping->i_pages,
+>                         offset, npages * PAGE_SIZE);
+>
+> The xarray iterator will handle THPs, but I'm not sure if bvecs will.
+>
+> Cleanup afterwards would look something like:
+>
+>         static void afs_file_read_done(struct afs_read *req)
+>         {
+>                 struct afs_vnode *vnode = req->vnode;
+>                 struct page *page;
+>                 pgoff_t index = req->pos >> PAGE_SHIFT;
+>                 pgoff_t last = index + req->nr_pages - 1;
+>
+>                 XA_STATE(xas, &vnode->vfs_inode.i_mapping->i_pages, index);
+>
+>                 if (iov_iter_count(req->iter) > 0) {
+>                         /* The read was short - clear the excess buffer. */
+>                         _debug("afterclear %zx %zx %llx/%llx",
+>                                req->iter->iov_offset,
+>                                iov_iter_count(req->iter),
+>                                req->actual_len, req->len);
+>                         iov_iter_zero(iov_iter_count(req->iter), req->iter);
+>                 }
+>
+>                 rcu_read_lock();
+>                 xas_for_each(&xas, page, last) {
+>                         page_endio(page, false, 0);
+>                         put_page(page);
+>                 }
+>                 rcu_read_unlock();
+>
+>                 task_io_account_read(req->len);
+>                 req->cleanup = NULL;
+>         }
+>
+> David
+>
