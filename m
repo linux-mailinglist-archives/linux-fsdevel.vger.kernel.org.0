@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 43E9834B99C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Mar 2021 22:43:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73EE934B999
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Mar 2021 22:43:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231124AbhC0VnF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Mar 2021 17:43:05 -0400
-Received: from relayfre-01.paragon-software.com ([176.12.100.13]:51402 "EHLO
-        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230474AbhC0Vmi (ORCPT
+        id S230525AbhC0VnE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Mar 2021 17:43:04 -0400
+Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:56227 "EHLO
+        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230176AbhC0Vme (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Mar 2021 17:42:38 -0400
+        Sat, 27 Mar 2021 17:42:34 -0400
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 8491D415;
+        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id A901A82239;
         Sun, 28 Mar 2021 00:42:31 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paragon-software.com; s=mail; t=1616881351;
-        bh=Oq8WFdb4Tg/OV1NWCQUvyKyTQ1S3GYc0yK9o11OM53k=;
+        bh=hMrdjomfNUx81SQGI895Lj99/Ld+2JIcHIQiI5PgAmU=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=umlpMrxzPDcX0lyBef4adttSVNGASkahPEBSi9stinqIB5V0u3MNNMgD6yJTkIpFa
-         Xs2rG4POKpILpg7a6B/a8JrHPa7uqIGNKdlYesGMDiUjacfABuAusRJGc9NQKA4BPT
-         7a8asXB+Rfkx7olQ0WgsZWU9tDQ7LY00ey6CTOrc=
+        b=YQcqs2HdJULD3h6aGVQt+x7y/X2t5AhXV6yoifcXGF/+qJCqGgR7GF0gqKuNLBxsx
+         Mcm+9jNfmEgC+3H/Zce2NBiOzhtC/PhUAYywGR2MkqLboMtZrhO4XQlNTi/PrOcKsZ
+         zDZaR5z4lnHsU2WnFqKfqEDjotyxKh32cZklyKBw=
 Received: from fsd-lkpg.ufsd.paragon-software.com (172.30.114.105) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
@@ -37,9 +37,9 @@ CC:     <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
         <andy.lavr@gmail.com>, <kari.argillander@gmail.com>,
         <oleksandr@natalenko.name>,
         Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Subject: [PATCH v25 09/10] fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
-Date:   Sun, 28 Mar 2021 00:40:22 +0300
-Message-ID: <20210327214023.3214923-10-almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH v25 10/10] fs/ntfs3: Add MAINTAINERS
+Date:   Sun, 28 Mar 2021 00:40:23 +0300
+Message-ID: <20210327214023.3214923-11-almaz.alexandrovich@paragon-software.com>
 X-Mailer: git-send-email 2.25.4
 In-Reply-To: <20210327214023.3214923-1-almaz.alexandrovich@paragon-software.com>
 References: <20210327214023.3214923-1-almaz.alexandrovich@paragon-software.com>
@@ -53,38 +53,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds NTFS3 in fs/Kconfig and fs/Makefile
+This adds MAINTAINERS
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
- fs/Kconfig  | 1 +
- fs/Makefile | 1 +
- 2 files changed, 2 insertions(+)
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 9e7e47933..1bf7b82d5 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -146,6 +146,7 @@ menu "DOS/FAT/EXFAT/NT Filesystems"
- source "fs/fat/Kconfig"
- source "fs/exfat/Kconfig"
- source "fs/ntfs/Kconfig"
-+source "fs/ntfs3/Kconfig"
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 67b104202..832f7d4d0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12875,6 +12875,13 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/aia21/ntfs.git
+ F:	Documentation/filesystems/ntfs.rst
+ F:	fs/ntfs/
  
- endmenu
- endif # BLOCK
-diff --git a/fs/Makefile b/fs/Makefile
-index 542a77374..8f199ba5b 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -101,6 +101,7 @@ obj-$(CONFIG_CIFS)		+= cifs/
- obj-$(CONFIG_SMB_SERVER)	+= cifsd/
- obj-$(CONFIG_HPFS_FS)		+= hpfs/
- obj-$(CONFIG_NTFS_FS)		+= ntfs/
-+obj-$(CONFIG_NTFS3_FS)		+= ntfs3/
- obj-$(CONFIG_UFS_FS)		+= ufs/
- obj-$(CONFIG_EFS_FS)		+= efs/
- obj-$(CONFIG_JFFS2_FS)		+= jffs2/
++NTFS3 FILESYSTEM
++M:	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
++S:	Supported
++W:	http://www.paragon-software.com/
++F:	Documentation/filesystems/ntfs3.rst
++F:	fs/ntfs3/
++
+ NUBUS SUBSYSTEM
+ M:	Finn Thain <fthain@telegraphics.com.au>
+ L:	linux-m68k@lists.linux-m68k.org
 -- 
 2.25.4
 
