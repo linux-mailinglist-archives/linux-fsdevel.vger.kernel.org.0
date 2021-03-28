@@ -2,294 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F46534BD19
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Mar 2021 17:57:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8381B34BD4F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Mar 2021 18:46:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229538AbhC1P4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Mar 2021 11:56:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35482 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230451AbhC1P4a (ORCPT
+        id S230184AbhC1QqH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Mar 2021 12:46:07 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:59008 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229595AbhC1QqB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Mar 2021 11:56:30 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 093F0C061756;
-        Sun, 28 Mar 2021 08:56:30 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id x16so10384769wrn.4;
-        Sun, 28 Mar 2021 08:56:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wzaJrj6qm4ly2Blj6LwN/Q19V8tdViJ7JjkrFUtAAFk=;
-        b=KFogYeqW56DETH5mHA+fWMQSgLtx0DV6pqTZpm3Q9txnv5IqxQU6zOiyePRYownqxC
-         0Tq8IbiNT1u87iG6cO3vL4LAejZ69AsZCKFajopCnMKpJ1eA5m8Jii9EJzznGgo936RG
-         XKkIFpojk+qUrEpDlei+9ga8zXiX/4uo9wbln+XDQT0euXwYNXyN5XCuH/dFMU8X9cGL
-         tNrmh+S3eSBafGoc9X6SNMqf568p7D4PkHNsZaXI9L/0HHYDkMUQgjgnJW7uZsw4t4iw
-         gi6NhFbUi9Qk8mzbwZiXGGYe3g4KPCGNktoLbDO3dzn1IobTuROZgwfuzsEA2vK0LGrM
-         c5PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wzaJrj6qm4ly2Blj6LwN/Q19V8tdViJ7JjkrFUtAAFk=;
-        b=TBONg8lYr7Stedurx+DNw9mjRlcNEWXENpL8dK9IKArMcxr7p6EFVT3HrJuwu4cSjV
-         NTpApbEmjRpP1fi8mh9pDV1fLYwjOg6Ubkoe2BPE9wUSGUHUlzimiAKDZnESg7rw06rK
-         oLEl6UnV+hLI9TqkwV/GcWQxJnkcxncTcOA2x7xWTSAUQrgd1lV1/tmBpDNZiin1UvL7
-         ELHe3IwhGHYiA0Y6AjhDfQaTHEaxLBBDbtG/P4YNBJkinYu7QqTi3uY24OIOGHDDX9tO
-         8RZPzUWZYiastUvTEL3zW8EURJtSj7ZsQBS34nK676cLldMOawFoddIBiXVVOMUoZw6m
-         GwLA==
-X-Gm-Message-State: AOAM532SjtcaLZkHSsTbanx9ppSg+urkHYUktE8F5L565ol/rYUhJwo2
-        JGU4FyjM5Kz28dOmzi+YcogabA/+17A=
-X-Google-Smtp-Source: ABdhPJzpUtNm25ny+sTqtt2G6ptkzX8TkfBOdl9JyDa9IdEo5ik23hdB8K5zCHvVVg+nF+F7lLDJZw==
-X-Received: by 2002:adf:f587:: with SMTP id f7mr24490257wro.147.1616946987517;
-        Sun, 28 Mar 2021 08:56:27 -0700 (PDT)
-Received: from localhost.localdomain ([141.226.241.101])
-        by smtp.gmail.com with ESMTPSA id k4sm31683289wrd.9.2021.03.28.08.56.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Mar 2021 08:56:26 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [RFC][PATCH] fanotify: allow setting FAN_CREATE in mount mark mask
-Date:   Sun, 28 Mar 2021 18:56:24 +0300
-Message-Id: <20210328155624.930558-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.30.0
+        Sun, 28 Mar 2021 12:46:01 -0400
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12SGjsWJ019669;
+        Sun, 28 Mar 2021 09:45:54 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=NBWoQetJjz/VNZDHzFdIwZ6885Hy3nLUXSWp1+Ie/Fo=;
+ b=Y/2C+J349PAUFbW+wAHSFbb7DDZpta8xgqNE45/P/lLna4sGV+TROj80ZPDZCT9InpfF
+ ISsUdhqJ14tzpx7b6lWuWLBJKZT23WKqifE2Q4oSchLnpWztp3GAwgi6wvN5ELriDZ2G
+ N6RkpL5F3jTlVy8S8Z5VQd6asaLjkpFPXhw= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com with ESMTP id 37jmhs9bny-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Sun, 28 Mar 2021 09:45:54 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (100.104.98.9) by
+ o365-in.thefacebook.com (100.104.94.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Sun, 28 Mar 2021 09:45:53 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=c4o6ib34YgyiYMjirJqR7MP/uKSW4AvZIw1yOHNelCgMa+WtLbBPTsp7dTtDtzL07p0DE1gZARsSe8DwFtirnkSLiANUuzM1Px3lWfKCv+U4m8tEGfxQ8gpZ6Ptora+uZQYzlSVIa9JD/cMALTnu1awB3Xr/lZdQlvRwFvv+31hpL1ntHQRfUxwA7Mul45DvoMwZXRegFlJrSlQ+rwrxc/I0jirKFiwIsoCRUv1BQ8R1leCqCHHb5JOKVlsivQ6L2dNYB/LYw/vpYpnu5jgH5BmWlHb1J3NyCIZU0H7RFqNHcIgoH5ia1bxxtisRv8azABt+2ABpRorZP5HA4lpt/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NBWoQetJjz/VNZDHzFdIwZ6885Hy3nLUXSWp1+Ie/Fo=;
+ b=kZDyeE/7cN2rpI63X9cORZm/IIR7URzKifx/8ugoSbWrnE0GsYWc5R7Izbxzsy22v3yXox88048Nvw2MuSxuwq76tfvaZMwFzNCqLWUnhquZTL47oc67vo8Z03mwu4Vx4/mGYiK1si/6qin+vKZaY0ZVCwN8x6V4GUqfcblxgLWR+8Ob3RG1q/n0aieXriiCgHnK8V1eUnhx3MvHflMN4SSN7SRwldbM7RJ9fQ+Xk0Uo7+Kwh8Tsb/Jk+mYjPDLIiXxSumYbJW+hq4UbNqP2sfKq0S3F9YCYSWkPJY9binNRGH2I6HlgP2gTz5zH7uneLgG61oR1iMUtqjg4VcIlSA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+Received: from BYAPR15MB2999.namprd15.prod.outlook.com (2603:10b6:a03:fa::12)
+ by BYAPR15MB2997.namprd15.prod.outlook.com (2603:10b6:a03:b0::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.27; Sun, 28 Mar
+ 2021 16:45:52 +0000
+Received: from BYAPR15MB2999.namprd15.prod.outlook.com
+ ([fe80::1ce0:8b27:f740:6b60]) by BYAPR15MB2999.namprd15.prod.outlook.com
+ ([fe80::1ce0:8b27:f740:6b60%4]) with mapi id 15.20.3933.039; Sun, 28 Mar 2021
+ 16:45:52 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     Collin Fijalkovich <cfijalkovich@google.com>
+CC:     Song Liu <song@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+        "Hridya Valsaraju" <hridya@google.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        "Hugh Dickins" <hughd@google.com>,
+        Tim Murray <timmurray@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Subject: Re: [PATCH] mm, thp: Relax the VM_DENYWRITE constraint on file-backed
+ THPs
+Thread-Topic: [PATCH] mm, thp: Relax the VM_DENYWRITE constraint on
+ file-backed THPs
+Thread-Index: AQHXH2a3EJT82fWS+UGTDxEEYLearKqQrtYAgAEh+4CAB9P/AA==
+Date:   Sun, 28 Mar 2021 16:45:51 +0000
+Message-ID: <2E59E29C-E04D-417C-9B2B-7F0F7D5E43EA@fb.com>
+References: <20210322215823.962758-1-cfijalkovich@google.com>
+ <CAPhsuW4RK9-yWrFmoUzi09bquxr_K16LqeZBYWoJXM0t=qo+Gw@mail.gmail.com>
+ <CAL+PeoGfCmbMSEYgaJNPHWfLvmmXJGaEM5G6rFstKzhTeY=2yw@mail.gmail.com>
+In-Reply-To: <CAL+PeoGfCmbMSEYgaJNPHWfLvmmXJGaEM5G6rFstKzhTeY=2yw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3654.60.0.2.21)
+authentication-results: google.com; dkim=none (message not signed)
+ header.d=none;google.com; dmarc=none action=none header.from=fb.com;
+x-originating-ip: [2620:10d:c090:400::5:4e3b]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7eaf61c4-dc1c-4fc3-6824-08d8f208f2d4
+x-ms-traffictypediagnostic: BYAPR15MB2997:
+x-microsoft-antispam-prvs: <BYAPR15MB299727672733A2638828EC27B37F9@BYAPR15MB2997.namprd15.prod.outlook.com>
+x-fb-source: Internal
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: NAgMh5Zc/2PCTrVWw3t80vgY8jmK9PNM7denbFQeUKuEbgOQySrNYhf1ch0xHFivym7kWjnvlPoE7E6XBfzDg7UISAjo3gZ65CWEjWpiQsRQfbFae0gDP4gUgM2DprW28cqu66oHpbVL2dZNw/KG0v5ULzmDFOd8g4+zFw6FtKM4Bja1qSVCVf9ZLvtuYSiVHtuevFhOr+EHBT2B0weXqL4iHJdrm/Heej2K0TiXi+rKpN5VHyQf0vYafLA3FVbTYDAiQPso4C2SwjDRZ0gocBsrO1XTwbvCofR7t+dHoOjoGd6p/PaaTLui8iYr3XEWsiWaK4puR6V/dZ/yXMw8MtWfe9Bt1wRE43M/ybT2ExgyfZVx1txrtOieSNWlSIyTQlcicD1VG18zA/3R/HXLI3sRR2llZ6qGmxCqPWMyIMbEUZKDjEPgjGUgQiFJkWZtLC97dR9NZoGLUF5MbBLVfnfJiVizEoOkuLmOkaunOb8m7PyScjn1jfpCeX9UrCHuuWt1BImJIBcRUJ2apenmAW+ZtWpRqFXhDPiMOqa16rBuyWCLmZP5UpoIyRiuWrYa8HVRPJguv9ClhwlK8BZ1g4Yjp3H/CBtABY0fU6Lvsm8qyoPZu+Qd96/SscjztyffK8AAoW5JYSIBDo4H7hFPriEQkxWnNerUrRpyakACBOtIvu8HWcPJkU8Ts9TAPI/T
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB2999.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(39860400002)(376002)(366004)(136003)(346002)(2906002)(71200400001)(54906003)(33656002)(6486002)(76116006)(316002)(8676002)(91956017)(8936002)(6916009)(6512007)(4326008)(6506007)(86362001)(2616005)(186003)(36756003)(64756008)(66446008)(66476007)(66556008)(66946007)(5660300002)(53546011)(478600001)(7416002)(38100700001)(83380400001)(45980500001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?KmvC6J1dl/M/EhtU/mI7a8h0mq8Qc5mL6vlPDrlyfBX+RFx5M4wsk8eHYz8z?=
+ =?us-ascii?Q?sEhUcBNZafz+rx+2IActl0hnSzolS+iOjIpr130HRjFgvXp0gPmg96f6tQPY?=
+ =?us-ascii?Q?CDxVxwPdx/EpgcXj64prBzAwJu9g2GXKPYaYFEmTsQ2XNWmZNQ4PXI71dk38?=
+ =?us-ascii?Q?lUlDL5RpuyGGGDbNUvLlhiV+WLrS6yDE5aWHq8ZF+uiQO81pOzSiRUPow174?=
+ =?us-ascii?Q?l+gLa5vpmYBWCXHiN55xnNktXRfHfLH+imvsvhf5FBijo96LZbqmuoqY+7Vo?=
+ =?us-ascii?Q?rP0eezXQ+9myFYB86qPTmru3fdaASj/3O5UjEQt3nGe01XKDI3tDEVfDuyRX?=
+ =?us-ascii?Q?mjhRM5QgaQ8+day3knf4jJpbpdq1unaou0xvu7lhnDzky6N77BYVbpzGE9a/?=
+ =?us-ascii?Q?019H8YN6YgALaDmBawwWEDMc+tZMvSTJWWTp9/4qeaAnlidSQ6oOD5VvpGTr?=
+ =?us-ascii?Q?NmasA+b5p1oOSqZIRgn/xEi/ElfM3E9Vp1De8fJYme1XPXFaF9YXKxMGeop3?=
+ =?us-ascii?Q?TraSdBsbVHuJpiJRL1t6sdKwYr8l/HqE7kJAc3trnl7j30Ul2OkMohB04Lzs?=
+ =?us-ascii?Q?xsD2w6IHP8abhzX3GVJOSqMUL5l5W/fLwnKh04OO3Pkt51FhTyCT83wYaMEE?=
+ =?us-ascii?Q?yGOWHn2rQu1XRngqU0f1P9bnHsK2Ue1auM1OR2AgMNeTjqlC8NIpUmsFjsf+?=
+ =?us-ascii?Q?3rSPBPoMPjvrrZIW7/mMPzTypnjPTsJlRuwkCTqnY2Jewh38Mhy4d4OptAVH?=
+ =?us-ascii?Q?WmFhHq+Xeta+gpmF5goQYPk6jg8CVWDZiFXcHZE3rdL8rwrrYIASbSo+0z3e?=
+ =?us-ascii?Q?OVxphLQ3xnFwc7nn3tN5U6/S5mksdkn613QkXceaOvbnOA3NcsXkCLlEBB36?=
+ =?us-ascii?Q?Np+TQ5PpMqJP7RHrscRwP13M86FBr5pC3JMjQtJBTyjyGp3seksWqK5gDXWJ?=
+ =?us-ascii?Q?z+5x0HeeelOiA1gsYTXlk+bfD7jR1MWD7II/yb3mee9OyDPO6vBLDL5wrXct?=
+ =?us-ascii?Q?FVRINwcAVA9mQc7h3JV1sPjrCRR5u3JnzIs18am1tm8AObvN9OrR8rGLzFfg?=
+ =?us-ascii?Q?/VlmnnqU71Ecvr4z27evtbBXizxDid7hy3OQM+hTQ77XzfcHsjhDbdBBi4TW?=
+ =?us-ascii?Q?fZQRBohcNKFt+umBGwgD4aE3RN4BGXMI7a0/KgsJr/hFOroPOkbuJGliDr0l?=
+ =?us-ascii?Q?vWjnki3Og7dLfYRnIUWmshFsmKPD6ORK/DQmIlbI0qFbBbH4btoe/k2HbuQm?=
+ =?us-ascii?Q?zR2DZa5nvcgqZZTvmUMPGs92H+22/y0bM6A5I+oeCUP58DA3N4d/1J/wMn89?=
+ =?us-ascii?Q?sRfBOr/du6r7X0cxhvb3R+I4wS2y7o5GL0ZBlhu/EDqiq5622Ryhd7AhIdxG?=
+ =?us-ascii?Q?FxxkD3I=3D?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <D5ABCEFA29D00E4B966FCF57D0E99C06@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB2999.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7eaf61c4-dc1c-4fc3-6824-08d8f208f2d4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Mar 2021 16:45:51.8673
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: e2LS9gj/GM8AxoIuzCuWYk3ksWW+Y7srhfwd+SF8vZustcFdJxVAZbo64/me3qiVMXtJYAt9hPr4kR+NqLj6ZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2997
+X-OriginatorOrg: fb.com
+X-Proofpoint-ORIG-GUID: RXkFAxigioASSnmlvVtnSf1wN7uXY-qE
+X-Proofpoint-GUID: RXkFAxigioASSnmlvVtnSf1wN7uXY-qE
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-28_08:2021-03-26,2021-03-28 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ mlxscore=0 impostorscore=0 adultscore=0 mlxlogscore=999 clxscore=1011
+ phishscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2103250000 definitions=main-2103280128
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a high level hook fsnotify_path_create() which is called from
-syscall context where mount context is available, so that FAN_CREATE
-event can be added to a mount mark mask.
 
-This high level hook is called in addition to fsnotify_create(),
-fsnotify_mkdir() and fsnotify_link() hooks in vfs helpers where the mount
-context is not available.
 
-In the context where fsnotify_path_create() will be called, a dentry flag
-flag is set on the new dentry the suppress the FS_CREATE event in the vfs
-level hooks.
+> On Mar 23, 2021, at 10:13 AM, Collin Fijalkovich <cfijalkovich@google.com=
+> wrote:
+>=20
+> Question: when we use this on shared library, the library is still
+> writable. When the
+> shared library is opened for write, these pages will refault in as 4kB
+> pages, right?=20
+>=20
+> That's correct, while a file is opened for write it will refault into 4kB=
+ pages and block use of THPs. Once all writers complete (i_writecount <=3D0=
+), the file can fault into THPs again and khugepaged can collapse existing =
+page ranges provided that it can successfully allocate new huge pages.
 
-This functionality was requested by Christian Brauner to replace
-recursive inotify watches for detecting when some path was created under
-an idmapped mount without having to monitor FAN_CREATE events in the
-entire filesystem.
-
-In combination with more changes to allow unprivileged fanotify listener
-to watch an idmapped mount, this functionality would be usable also by
-nested container managers.
-
-Link: https://lore.kernel.org/linux-fsdevel/20210318143140.jxycfn3fpqntq34z@wittgenstein/
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
-
-Jan,
-
-After trying several different approaches, I finally realized that
-making FAN_CREATE available for mount marks is not that hard and it could
-be very useful IMO.
-
-Adding support for other "inode events" with mount mark, such as
-FAN_ATTRIB, FAN_DELETE, FAN_MOVE may also be possible, but adding support
-for FAN_CREATE was really easy due to the fact that all call sites are
-already surrounded by filename_creat()/done_path_create() calls.
-
-Also, there is an inherent a-symetry between FAN_CREATE and other
-events. All the rest of the events may be set when watching a postive
-path, for example, to know when a path of a bind mount that was
-"injected" to a container was moved or deleted, it is possible to start
-watching that directory before injecting the bind mount.
-
-It is not possible to do the same with a "negative" path to know when
-a positive dentry was instantiated at that path.
-
-This patch provides functionality that is independant of other changes,
-but I also tested it along with other changes that demonstrate how it
-would be utilized in userns setups [1][2].
-
-As can be seen in dcache.h patch, this patch comes on top a revert patch
-to reclaim an unused dentry flag. If you accept this proposal, I will
-post the full series.
+Will it be a problem if a slow writer (say a slow scp) writes to the=20
+shared library while the shared library is in use?=20
 
 Thanks,
-Amir.
+Song
 
-[1] https://github.com/amir73il/linux/commits/fanotify_userns
-[2] https://github.com/amir73il/inotify-tools/commits/fanotify_userns
-
- fs/namei.c               | 21 ++++++++++++++++++++-
- include/linux/dcache.h   |  2 +-
- include/linux/fanotify.h |  8 ++++----
- include/linux/fsnotify.h | 36 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 61 insertions(+), 6 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 216f16e74351..cf979e956938 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3288,7 +3288,7 @@ static const char *open_last_lookups(struct nameidata *nd,
- 		inode_lock_shared(dir->d_inode);
- 	dentry = lookup_open(nd, file, op, got_write);
- 	if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
--		fsnotify_create(dir->d_inode, dentry);
-+		fsnotify_path_create(&nd->path, dentry);
- 	if (open_flag & O_CREAT)
- 		inode_unlock(dir->d_inode);
- 	else
-@@ -3560,6 +3560,20 @@ struct file *do_file_open_root(struct dentry *dentry, struct vfsmount *mnt,
- 	return file;
- }
- 
-+static void d_set_path_create(struct dentry *dentry)
-+{
-+	spin_lock(&dentry->d_lock);
-+	dentry->d_flags |= DCACHE_PATH_CREATE;
-+	spin_unlock(&dentry->d_lock);
-+}
-+
-+static void d_clear_path_create(struct dentry *dentry)
-+{
-+	spin_lock(&dentry->d_lock);
-+	dentry->d_flags &= ~DCACHE_PATH_CREATE;
-+	spin_unlock(&dentry->d_lock);
-+}
-+
- static struct dentry *filename_create(int dfd, struct filename *name,
- 				struct path *path, unsigned int lookup_flags)
- {
-@@ -3617,6 +3631,8 @@ static struct dentry *filename_create(int dfd, struct filename *name,
- 		goto fail;
- 	}
- 	putname(name);
-+	/* Start "path create" context that ends in done_path_create() */
-+	d_set_path_create(dentry);
- 	return dentry;
- fail:
- 	dput(dentry);
-@@ -3641,6 +3657,9 @@ EXPORT_SYMBOL(kern_path_create);
- 
- void done_path_create(struct path *path, struct dentry *dentry)
- {
-+	if (d_inode(dentry))
-+		fsnotify_path_create(path, dentry);
-+	d_clear_path_create(dentry);
- 	dput(dentry);
- 	inode_unlock(path->dentry->d_inode);
- 	mnt_drop_write(path->mnt);
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 4225caa8cf02..d153793d5b95 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -213,7 +213,7 @@ struct dentry_operations {
- #define DCACHE_SYMLINK_TYPE		0x00600000 /* Symlink (or fallthru to such) */
- 
- #define DCACHE_MAY_FREE			0x00800000
--/* Was #define DCACHE_FALLTHRU			0x01000000 */
-+#define DCACHE_PATH_CREATE		0x01000000 /* "path_create" context */
- #define DCACHE_NOKEY_NAME		0x02000000 /* Encrypted name encoded without key */
- #define DCACHE_OP_REAL			0x04000000
- 
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index bad41bcb25df..f0c5a4a82b6e 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -65,10 +65,10 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
- 
- /*
-  * Events that can be reported with data type FSNOTIFY_EVENT_PATH.
-- * Note that FAN_MODIFY can also be reported with data type
-+ * Note that FAN_MODIFY and FAN_CREATE can also be reported with data type
-  * FSNOTIFY_EVENT_INODE.
-  */
--#define FANOTIFY_PATH_EVENTS	(FAN_ACCESS | FAN_MODIFY | \
-+#define FANOTIFY_PATH_EVENTS	(FAN_ACCESS | FAN_MODIFY | FAN_CREATE | \
- 				 FAN_CLOSE | FAN_OPEN | FAN_OPEN_EXEC)
- 
- /*
-@@ -78,8 +78,8 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
- #define FANOTIFY_DIRENT_EVENTS	(FAN_MOVE | FAN_CREATE | FAN_DELETE)
- 
- /* Events that can only be reported with data type FSNOTIFY_EVENT_INODE */
--#define FANOTIFY_INODE_EVENTS	(FANOTIFY_DIRENT_EVENTS | \
--				 FAN_ATTRIB | FAN_MOVE_SELF | FAN_DELETE_SELF)
-+#define FANOTIFY_INODE_EVENTS	(FAN_MOVE | FAN_DELETE | FAN_ATTRIB | \
-+				 FAN_MOVE_SELF | FAN_DELETE_SELF)
- 
- /* Events that user can request to be notified on */
- #define FANOTIFY_EVENTS		(FANOTIFY_PATH_EVENTS | \
-diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index f8acddcf54fb..9a3d9f7beeb2 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -179,6 +179,30 @@ static inline void fsnotify_inoderemove(struct inode *inode)
- 	__fsnotify_inode_delete(inode);
- }
- 
-+/*
-+ * fsnotify_path_create - an inode was linked to namespace
-+ *
-+ * This higher level hook is called in addition to fsnotify_create(),
-+ * fsnotify_mkdir() and fsnotify_link() vfs hooks when the mount context is
-+ * available, so that FS_CREATE event can be added to a mount mark mask.
-+ *
-+ * In that case the, DCACHE_PATH_CREATE flag is set to suppress the FS_CREATE
-+ * event in the lower level vfs hooks.
-+ */
-+static inline void fsnotify_path_create(struct path *path,
-+					struct dentry *child)
-+{
-+	struct inode *dir = path->dentry->d_inode;
-+	__u32 mask = FS_CREATE;
-+
-+	WARN_ON_ONCE(!inode_is_locked(dir));
-+
-+	if (S_ISDIR(d_inode(child)->i_mode))
-+		mask |= FS_ISDIR;
-+
-+	fsnotify(mask, path, FSNOTIFY_EVENT_PATH, dir, &child->d_name, NULL, 0);
-+}
-+
- /*
-  * fsnotify_create - 'name' was linked in
-  */
-@@ -186,6 +210,10 @@ static inline void fsnotify_create(struct inode *inode, struct dentry *dentry)
- {
- 	audit_inode_child(inode, dentry, AUDIT_TYPE_CHILD_CREATE);
- 
-+	/* fsnotify_path_create() will be called */
-+	if (dentry->d_flags & DCACHE_PATH_CREATE)
-+		return;
-+
- 	fsnotify_dirent(inode, dentry, FS_CREATE);
- }
- 
-@@ -200,6 +228,10 @@ static inline void fsnotify_link(struct inode *dir, struct inode *inode,
- 	fsnotify_link_count(inode);
- 	audit_inode_child(dir, new_dentry, AUDIT_TYPE_CHILD_CREATE);
- 
-+	/* fsnotify_path_create() will be called */
-+	if (new_dentry->d_flags & DCACHE_PATH_CREATE)
-+		return;
-+
- 	fsnotify_name(dir, FS_CREATE, inode, &new_dentry->d_name, 0);
- }
- 
-@@ -223,6 +255,10 @@ static inline void fsnotify_mkdir(struct inode *inode, struct dentry *dentry)
- {
- 	audit_inode_child(inode, dentry, AUDIT_TYPE_CHILD_CREATE);
- 
-+	/* fsnotify_path_create() will be called */
-+	if (dentry->d_flags & DCACHE_PATH_CREATE)
-+		return;
-+
- 	fsnotify_dirent(inode, dentry, FS_CREATE | FS_ISDIR);
- }
- 
--- 
-2.30.0
+>=20
+> From,
+> Collin=20
+>=20
+> On Mon, Mar 22, 2021 at 4:55 PM Song Liu <song@kernel.org> wrote:
+> On Mon, Mar 22, 2021 at 3:00 PM Collin Fijalkovich
+> <cfijalkovich@google.com> wrote:
+> >
+> > Transparent huge pages are supported for read-only non-shmem filesystem=
+s,
+> > but are only used for vmas with VM_DENYWRITE. This condition ensures th=
+at
+> > file THPs are protected from writes while an application is running
+> > (ETXTBSY).  Any existing file THPs are then dropped from the page cache
+> > when a file is opened for write in do_dentry_open(). Since sys_mmap
+> > ignores MAP_DENYWRITE, this constrains the use of file THPs to vmas
+> > produced by execve().
+> >
+> > Systems that make heavy use of shared libraries (e.g. Android) are unab=
+le
+> > to apply VM_DENYWRITE through the dynamic linker, preventing them from
+> > benefiting from the resultant reduced contention on the TLB.
+> >
+> > This patch reduces the constraint on file THPs allowing use with any
+> > executable mapping from a file not opened for write (see
+> > inode_is_open_for_write()). It also introduces additional conditions to
+> > ensure that files opened for write will never be backed by file THPs.
+>=20
+> Thanks for working on this. We could also use this in many data center
+> workloads.
+>=20
+> Question: when we use this on shared library, the library is still
+> writable. When the
+> shared library is opened for write, these pages will refault in as 4kB
+> pages, right?
+>=20
+> Thanks,
+> Song
 
