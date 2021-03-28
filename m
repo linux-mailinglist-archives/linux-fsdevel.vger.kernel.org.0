@@ -2,132 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B06A134BCB8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Mar 2021 16:58:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D77E134BCC0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Mar 2021 17:09:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231265AbhC1O6Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Mar 2021 10:58:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51238 "EHLO
+        id S231208AbhC1PIQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Mar 2021 11:08:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229950AbhC1O6V (ORCPT
+        with ESMTP id S231131AbhC1PHg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Mar 2021 10:58:21 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1C10C061756;
-        Sun, 28 Mar 2021 07:58:21 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id k25so10219034iob.6;
-        Sun, 28 Mar 2021 07:58:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/eYAix15FgjxUSXJCP4qXmQFhnSMzpr5Egrrumal1u8=;
-        b=Y8KM+cjVd84KZATQrDTkyTJPx6mLM7c3K9+phsFU3TaozxwS8gMI0MRM1M9zCCXwtx
-         rki+3X4L9qt6W3KqzDj24fmaqR9TBp9LUomKTLKLOR151OchjgKEVNuuQf39EFMYW9mT
-         A3cijqfrOF5lz0uAPxkDrJVu+KeBne9AZ0cwa/6bDQ1KlrsvL6o48VQ61zz2N8uutD9P
-         Ycydsa/Yr2IAqcVGEZlS94wq4kf9FY0dLHFuixjI0UTq8FNgdZdPn8/J+37eRARLoZ2Y
-         89xuaFAgBsJbjlKpZ6vcpC9QO65/3zOZJjequ7ksxdp5qZ/JEWHmjtIizMi6jz7pk3tF
-         pnLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/eYAix15FgjxUSXJCP4qXmQFhnSMzpr5Egrrumal1u8=;
-        b=rXgUgmtW8KjMDMMhEljoXsM1LAwRscJ99k3g9eAAZmwafZRGoYklqSvopQ6gO1Ur5n
-         p6PHpAyQKCBQYVF141Ktt/WkTYMpurxQpXfD0+WbDoYcL/e8ym6yoTKOGSjcZGjUiiAO
-         Eg6YxWmAXWK45y0EBNgQLW92hSUAPMrGcyryIaGauKalvn/U4Dbmu9YcD7Y/nExf3IZ4
-         agCFQtE054WEGN3qkdPN8n1IVlbEycbHikbCvx9iVxAxRUL9sLSAd0rp2kLja9vtKbam
-         SUXhu1yX4PPYBU80XHFrpmWBY+JQi8FmWlzEkDWeExFO2SBO4gT65lk3udHJ/62scAke
-         T7KA==
-X-Gm-Message-State: AOAM533m1sqAzeceGs253IFi6MmjeNcw79FV6F1itC0RCqk3ewCzUNXf
-        lhkb20nQPbBynoFV+tSxcH3dX5w9z09Rd6yEUqIodYz0cyI=
-X-Google-Smtp-Source: ABdhPJzownYsFpeh9ldQnfS9yNG5OF2XNqqVF0IX+rwqYANkfuq3ROPpQspx2ebPBviNUCVfOgWIcCZRoPiWo95Uzvo=
-X-Received: by 2002:a02:ccb2:: with SMTP id t18mr19953035jap.123.1616943500906;
- Sun, 28 Mar 2021 07:58:20 -0700 (PDT)
+        Sun, 28 Mar 2021 11:07:36 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD65BC061756;
+        Sun, 28 Mar 2021 08:07:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=U3VUBgSWmtuhj2eaOcurajScUzkTC8xyuO2uGbgOuaE=; b=aSLec8BLfvM6s8JuxKcmT1Wg2W
+        m/And3P1jFN2IW/L1JYvNroaUyFxLz1W6U6oz2tM0c5Sp4BKZUJNortM4lqrYuDyQgFOu7KQfKV26
+        NE/GIoPujfo70lzZ3SrNV6WgavKVz7Mddbw9+fBhoAZuak+LqRB9jlhYNddifLa4BckCw1fK+2XZt
+        zaMHXwj84B8anfi9sKC1D8iIJj788XdTVYqtxEE9t9kVqlZcoc9xa3IdPN4IA4PPLZ5iTdV+QRT+d
+        bqgwGE1tdJzUh/NLuFafHWioh96XJcCZRhZ1Wg1yckv0WTHCdvtIBvJCBz4e0ODFl5hZk9rrMfG9V
+        OVKMzBeg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lQX0V-000CDn-KJ; Sun, 28 Mar 2021 15:07:20 +0000
+Date:   Sun, 28 Mar 2021 16:07:15 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@collabora.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        krisman@collabora.com, kernel@collabora.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        Daniel Rosenberg <drosen@google.com>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 1/3] fs/dcache: Add d_clear_dir_neg_dentries()
+Message-ID: <20210328150715.GA33249@casper.infradead.org>
+References: <20210328144356.12866-1-andrealmeid@collabora.com>
+ <20210328144356.12866-2-andrealmeid@collabora.com>
 MIME-Version: 1.0
-References: <CAOQ4uxiRHwmxTKsLteH_sBW_dSPshVE8SohJYEmpszxaAwjEyg@mail.gmail.com>
- <20210319134043.c2wcpn4lbefrkhkg@wittgenstein> <CAOQ4uxhLYdWOUmpWP+c_JzVeGDbkJ5eUM+1-hhq7zFq23g5J1g@mail.gmail.com>
- <CAOQ4uxhetKeEZX=_iAcREjibaR0ZcOdeZyR8mFEoHM+WRsuVtg@mail.gmail.com>
- <CAOQ4uxhfx012GtvXMfiaHSk1M7+gTqkz3LsT0i_cHLnZLMk8nw@mail.gmail.com>
- <CAOQ4uxhFU=H8db35JMhfR+A5qDkmohQ01AWH995xeBAKuuPhzA@mail.gmail.com>
- <20210324143230.y36hga35xvpdb3ct@wittgenstein> <CAOQ4uxiPYbEk1N_7nxXMP7kz+KMnyH+0GqpJS36FR+-v9sHrcg@mail.gmail.com>
- <20210324162838.spy7qotef3kxm3l4@wittgenstein> <CAOQ4uxjcCEtuqyawNo7kCkb3213=vrstMupZt-KnGyanqKv=9Q@mail.gmail.com>
- <20210325111203.5o6ovkqgigxc3ihk@wittgenstein> <CAOQ4uxhdJWWRZSa0FfEiryQoBJYcGSADGoE7UZF8W=5-tcX9xg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhdJWWRZSa0FfEiryQoBJYcGSADGoE7UZF8W=5-tcX9xg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 28 Mar 2021 17:58:09 +0300
-Message-ID: <CAOQ4uxje-zV2nWGa9juWUBzW29dgZBTnJR=jWGxjAJ4haiYTog@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] unprivileged fanotify listener
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210328144356.12866-2-andrealmeid@collabora.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > The limitations of FAN_MARK_MOUNT as I now understand them are indeed
-> > unpleasant. If we could get FAN_MARK_MOUNT with the same event support
-> > as FAN_MARK_INODE that would be great.
-> > I think the delegation model that makes sense to me is to allow
-> > FAN_MARK_MOUNT when the caller is ns_capable(mnt->mnt_userns) and of
-> > course ns_capable() in the userns they called fanotify_init() in. That
-> > feels ok and supportable.
->
-> I present to you a demo [1][2] of FAN_MARK_MOUNT on idmapped mount that:
->
-> 1. Can subscribe and receive FAN_LINK (new) events
-> 2. Is capable of open_by_handle() if fid is under mount root
->
-> FAN_LINK (temp name) is an event that I wanted to add anyway [3] and
-> AFAIK it's the only event that you really need in order to detect when a dir
-> was created for the use case of injecting a bind mount into a container.
+On Sun, Mar 28, 2021 at 11:43:54AM -0300, André Almeida wrote:
+> +/**
+> + * d_clear_dir_neg_dentries - Remove negative dentries in an inode
+> + * @dir: Directory to clear negative dentries
+> + *
+> + * For directories with negative dentries that are becoming case-insensitive
+> + * dirs, we need to remove all those negative dentries, otherwise they will
+> + * become dangling dentries. During the creation of a new file, if a d_hash
+> + * collision happens and the names match in a case-insensitive, the name of
+> + * the file will be the name defined at the negative dentry, that can be
+> + * different from the specified by the user. To prevent this from happening, we
+> + * need to remove all dentries in a directory. Given that the directory must be
+> + * empty before we call this function we are sure that all dentries there will
+> + * be negative.
+> + */
 
-Scratch that part about the new event.
-I found a way to make FAN_CREATE available for FAN_MARK_MOUNT.
-Will post an RFC patch.
-Same demo instructions. Different branches [1][2]:
+This is quite the landmine of a function.  It _assumes_ that the directory
+is empty, and clears all dentries in it.
 
->
-> The kernel branch [1] intentionally excludes the controversial patch that
-> added support for userns filtered sb marks.
->
-> Therefore, trying to run the demo script as is on an idmapped mount
-> inside userns will auto-detect UID 0, try to setup an sb mark and fail.
->
-> Instead, the demo script should be run as follows to combine a
-> mount mark and recursive inode marks:
->
-> ./test_demo.sh <idmapped-mount-path> 1
->
-> For example:
+> +void d_clear_dir_neg_dentries(struct inode *dir)
+> +{
+> +	struct dentry *alias, *dentry;
+> +
+> +	hlist_for_each_entry(alias, &dir->i_dentry, d_u.d_alias) {
+> +		list_for_each_entry(dentry, &alias->d_subdirs, d_child) {
+> +			d_drop(dentry);
+> +			dput(dentry);
+> +		}
 
-~# ./test_demo.sh /vdf 1
-+ WD=/vdf
-+ ID=1
-...
-+ inotifywatch --fanotify --recursive -w --timeout -2 /vdf
-Establishing watches...
-...
-+ mkdir -p a/dir0 a/dir1 a/dir2/A/B/C/
-+ touch a/dir2/A/B/C/file2
-...
-[fid=94847cf7.d74a50ab.30000c2;name='dir2'] /mnt/a/dir2
-Adding recursive watches on directory '/mnt/a/dir2/'...
-[fid=94847cf7.d74a50ab.87;name='A'] /mnt/a/dir2/A
-Adding recursive watches on directory '/mnt/a/dir2/A/'...
-[fid=94847cf7.d74a50ab.1000087;name='B'] /mnt/a/dir2/A/B
-Adding recursive watches on directory '/mnt/a/dir2/A/B/'...
-[fid=94847cf7.d74a50ab.20073e5;name='C'] /mnt/a/dir2/A/B/C
-Adding recursive watches on directory '/mnt/a/dir2/A/B/C/'...
-[fid=94847cf7.d74a50ab.30000c9;name='file2'] /mnt/a/dir2/A/B/C/file2
+I would be happier if it included a check for negativity.  d_is_negative()
+or maybe this newfangled d_really_is_negative() (i haven't stayed up
+to speed on the precise difference between the two)
 
-Hope that helps.
+> +	}
+> +}
+> +EXPORT_SYMBOL(d_clear_dir_neg_dentries);
 
-Thanks,
-Amir.
-
-[1] https://github.com/amir73il/linux/commits/fanotify_userns
-[2] https://github.com/amir73il/inotify-tools/commits/fanotify_userns
+I'd rather see this _GPL for such an internal thing.
