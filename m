@@ -2,63 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CACC234BDE3
+	by mail.lfdr.de (Postfix) with ESMTP id 2C14334BDE0
 	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Mar 2021 20:08:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231406AbhC1SH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Mar 2021 14:07:29 -0400
-Received: from mail.hanoi.gov.vn ([113.160.32.33]:31610 "EHLO
-        mx01.hanoi.gov.vn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229647AbhC1SHR (ORCPT
+        id S231354AbhC1SH2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Mar 2021 14:07:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35068 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229950AbhC1SHF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Mar 2021 14:07:17 -0400
-X-Greylist: delayed 474 seconds by postgrey-1.27 at vger.kernel.org; Sun, 28 Mar 2021 14:07:01 EDT
-Received: from mx01.hanoi.gov.vn (localhost [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 30259EC3D8;
-        Mon, 29 Mar 2021 00:57:51 +0700 (+07)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hanoi.gov.vn;
-        s=default; t=1616954272;
-        bh=FuW10Z6fSdeNlf/0u/BQ1jcwkjYBw0uHUPQgn0LGo7I=; h=Date:From:To;
-        b=R9blPfqJCHUsZAyZxsyyryS61fl4krmBjYKWM6eGGwB8ZdbTBVPL1mmKOmZXMqNlA
-         7CEqA0MXgUAy+X4oK/wthh4vC9Xoov1Ce8tjf/qJvnL7KGsGNVg9ic0krGeHrdNzGM
-         5cIEKsz0emmHL/izbEfCtadst3HYllOJWdonlm5o=
-X-IMSS-DKIM-Authentication-Result: mx01.hanoi.gov.vn; sigcount=0
-Received: from mx01.hanoi.gov.vn (localhost [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 50FCBEC3DD;
-        Mon, 29 Mar 2021 00:57:49 +0700 (+07)
-Received: from mail.hanoi.gov.vn (mail.hanoi.gov.vn [10.1.1.25])
-        by mx01.hanoi.gov.vn (Postfix) with ESMTPS;
-        Mon, 29 Mar 2021 00:57:49 +0700 (+07)
-Received: from mail.hanoi.gov.vn (localhost [127.0.0.1])
-        by mail.hanoi.gov.vn (Postfix) with ESMTPS id 02AFC7F41B42;
-        Mon, 29 Mar 2021 00:57:44 +0700 (+07)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.hanoi.gov.vn (Postfix) with ESMTP id 08FE47F41B5D;
-        Mon, 29 Mar 2021 00:57:41 +0700 (+07)
-Received: from mail.hanoi.gov.vn ([127.0.0.1])
-        by localhost (mail.hanoi.gov.vn [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 1D3oZsOAVsx3; Mon, 29 Mar 2021 00:57:36 +0700 (+07)
-Received: from mail.hanoi.gov.vn (mail.hanoi.gov.vn [10.1.1.25])
-        by mail.hanoi.gov.vn (Postfix) with ESMTP id 478CE7F41B59;
-        Mon, 29 Mar 2021 00:57:33 +0700 (+07)
-Date:   Mon, 29 Mar 2021 00:57:33 +0700 (ICT)
-From:   Mackenzie Scott <ttptqd_thanhoai@hanoi.gov.vn>
-Reply-To: Mackenzie Scott <propack@propck.net>
-Message-ID: <354204758.25920932.1616954253215.JavaMail.zimbra@hanoi.gov.vn>
-Subject: Congratulations ($ 100,800,000.00)
+        Sun, 28 Mar 2021 14:07:05 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DB0DC061756;
+        Sun, 28 Mar 2021 11:07:05 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lQZoU-000UU0-Fw; Sun, 28 Mar 2021 18:07:02 +0000
+Date:   Sun, 28 Mar 2021 18:07:02 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        David Sterba <dsterba@suse.cz>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/18] vfs: add fileattr ops
+Message-ID: <YGDFxh7+724niztd@zeniv-ca.linux.org.uk>
+References: <20210325193755.294925-1-mszeredi@redhat.com>
+ <20210325193755.294925-2-mszeredi@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [185.107.80.217]
-X-Mailer: Zimbra 8.8.15_GA_3894 (zclient/8.8.15_GA_3894)
-Thread-Index: ao/APhyKX+JH1nE2Rn/kAmnh2LEgkw==
-Thread-Topic: Congratulations ($ 100,800,000.00)
-To:     undisclosed-recipients:;
-X-TM-AS-GCONF: 00
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210325193755.294925-2-mszeredi@redhat.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Mar 25, 2021 at 08:37:38PM +0100, Miklos Szeredi wrote:
 
+> +int vfs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+> +{
+> +	struct inode *inode = d_inode(dentry);
+> +
+> +	if (d_is_special(dentry))
+> +		return -ENOTTY;
 
-Hello,i&#39;m Mackenzie Scott,Ex-wife of Amazon founder i&#39;m donating $4 billion to charities,individuals,universities across the Globe from my divorce funds,i&#39;m donating part of it to provide immediate support to people suffering economically during the COVID-19 pandemic,i have a donation worth $100,800,000.00 Dollars for you,you can contact me for more information if you&#39;re interested.
+FWIW - why?  For uses via ioctl() you simply won't get there with
+device nodes et.al. - they have file_operations of their own.
+If we add syscall(s) for getting/setting those, there's no reason
+for e.g. a device node not to have those attributes...
+
+> +static int ioctl_getflags(struct file *file, void __user *argp)
+
+unsigned int __user *argp, surely?
+
+> +{
+> +	struct fileattr fa = { .flags_valid = true }; /* hint only */
+> +	unsigned int flags;
+> +	int err;
+> +
+> +	err = vfs_fileattr_get(file->f_path.dentry, &fa);
+> +	if (!err) {
+> +		flags = fa.flags;
+> +		if (copy_to_user(argp, &flags, sizeof(flags)))
+> +			err = -EFAULT;
+
+... and put_user() here.
+
+> +	}
+> +	return err;
+> +}
+> +
+> +static int ioctl_setflags(struct file *file, void __user *argp)
+> +{
+> +	struct fileattr fa;
+> +	unsigned int flags;
+> +	int err;
+> +
+> +	if (copy_from_user(&flags, argp, sizeof(flags)))
+> +		return -EFAULT;
+> +
+> +	err = mnt_want_write_file(file);
+> +	if (!err) {
+> +		fileattr_fill_flags(&fa, flags);
+> +		err = vfs_fileattr_set(file_mnt_user_ns(file), file_dentry(file), &fa);
+> +		mnt_drop_write_file(file);
+> +	}
+> +	return err;
+> +}
+
+Similar here.
