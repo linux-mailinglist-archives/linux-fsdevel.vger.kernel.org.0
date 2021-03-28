@@ -2,72 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 840ED34BBC3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Mar 2021 11:12:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA4C234BCA9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Mar 2021 16:50:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230454AbhC1JMK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Mar 2021 05:12:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33934 "EHLO
+        id S231344AbhC1Ooz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Mar 2021 10:44:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbhC1JLy (ORCPT
+        with ESMTP id S230247AbhC1OoY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Mar 2021 05:11:54 -0400
-Received: from ustc.edu.cn (email6.ustc.edu.cn [IPv6:2001:da8:d800::8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B2771C061762;
-        Sun, 28 Mar 2021 02:11:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mail.ustc.edu.cn; s=dkim; h=Received:Date:From:To:Cc:Subject:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID;
-        bh=jSDB76cKI45AnX0KGZxYz6mDtclIJTURQk2j8oHwPlo=; b=qX4JpVuA+TfC6
-        AxKdbzmxUD0LGqSE60Gher5H7rwu1qos8FwUDgaJ6Ot1AY1S8oSu2pdt/wNKq+hZ
-        pVDMkCsOyMPEda/q4bofLOGz9arm3hu1zlr2O+hAKMbPK0kEhDeFE5xPssrKr9oS
-        Brd71zIR5ECkGEAnhEkADyQ3t3T+rQ=
-Received: by ajax-webmail-newmailweb.ustc.edu.cn (Coremail) ; Sun, 28 Mar
- 2021 17:11:43 +0800 (GMT+08:00)
-X-Originating-IP: [203.184.132.238]
-Date:   Sun, 28 Mar 2021 17:11:43 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From:   lyl2019@mail.ustc.edu.cn
-To:     jack@suse.cz, amir73il@gmail.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [BUG] fs/notify/mark: A potential use after free in
- fsnotify_put_mark_wake
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT3.0.8 dev build
- 20190610(cb3344cf) Copyright (c) 2002-2021 www.mailtech.cn ustc-xl
-X-SendMailWithSms: false
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset=UTF-8
+        Sun, 28 Mar 2021 10:44:24 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5B4EC061756;
+        Sun, 28 Mar 2021 07:44:23 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: tonyk)
+        with ESMTPSA id C1F5E1F42808
+From:   =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc:     krisman@collabora.com, kernel@collabora.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        Daniel Rosenberg <drosen@google.com>,
+        Chao Yu <yuchao0@huawei.com>,
+        =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+Subject: [PATCH 0/3] fs: Fix dangling dentries on casefold directories
+Date:   Sun, 28 Mar 2021 11:43:53 -0300
+Message-Id: <20210328144356.12866-1-andrealmeid@collabora.com>
+X-Mailer: git-send-email 2.31.0
 MIME-Version: 1.0
-Message-ID: <39095113.1936a.178781a774a.Coremail.lyl2019@mail.ustc.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: LkAmygBnb0tPSGBgJjNdAA--.0W
-X-CM-SenderInfo: ho1ojiyrz6zt1loo32lwfovvfxof0/1tbiAQoOBlQhn5fqvwABsq
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VW7Jw
-        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-        daVFxhVjvjDU=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-    My static analyzer tool reported a use after free in fsnotify_put_mark_wake
-of the file: fs/notify/mark.c.
+Hello,
 
-In fsnotify_put_mark_wake, it calls fsnotify_put_mark(mark). Inside the function
-fsnotify_put_mark(), if conn is NULL, it will call fsnotify_final_mark_destroy(mark)
-to free mark->group by fsnotify_put_group(group) and return. I also had inspected
-the implementation of fsnotify_put_group() and found that there is no cleanup operation
-about group->user_waits.
+This patchset fixes a bug in case-insensitive directories. When I
+submitted a patchset for adding case-insensitive support for tmpfs[0],
+Al Viro noted that my implementation didn't take in account previous
+dentries that the directory could have created before being changed.
+Further investigation showed that neither ext4 or f2fs also doesn't take
+this case in consideration as well.
 
-But after fsnotify_put_mark_wake() returned, mark->group is still used by 
-if (atomic_dec_and_test(&group->user_waits) && group->shutdown) and later.
+* Why can't we have negative dentries with casefold?
 
-Is this an issue?
+The assumption that the directory has no dentries can lead to a buggy
+behavior (note that since the directory must be empty when setting the
+casefold flag, all dentries there are negative). Imagine the following
+operation on a mounted ext4 with casefold support enabled:
 
-Thanks.
+mkdir dir
+mkdir dir/C	# creates a dentry for `C` (dentry D)
+rm -r dir/C	# makes dentry D a negative one
 
+Now, let's make it case-insensitive:
 
+chattr +F dir/	# now dir/ is a casefold directory
+mkdir dir/c	# if hash for `c` collides with dentry D
+		# d_compare does a case-insensitive compare
+		# and assumes that dentry D is the one to be used
+ls dir/		# VFS uses the name at dentry D for the final file
+C		# and here's the bug
 
+In that way, all negative dentries at dir/ will become dangling dentries
+that can't be trusted to be used an will just waste memory.
 
+The problem with negative dentries is well-know, and both the current
+code and commits documents it, but this case hasn't been taken in
+consideration so far.
+
+* Reproducing
+
+Given that the bug only happens with a hash collision, I added the
+following snippet at the beginning of generic_ci_d_hash():
+
+str->hash = 0;
+return 0;
+
+This means that all dentries will have the same hash. This is not good
+for performance, but it should not break anything AFAIK. Then, just run
+the example showed in the latter section.
+
+* Fixing
+
+To fix this bug, I added a function that, given an inode, for each alias
+of it, will remove all the sub-dentries at that directory. Given that
+they are all negative dentries, we don't need to do the whole d_walk,
+since they don't have children and are also ready to be d_droped and
+dputed.
+
+Then, at ext4 and f2fs, when a dir is going to turn on the casefold
+flag, we call this function.
+
+Thanks,
+	André
+
+[0] https://lore.kernel.org/linux-fsdevel/20210323195941.69720-1-andrealmeid@collabora.com/T/#m3265579197095b792ee8b8e8b7f84a58c25c456b
+
+André Almeida (3):
+  fs/dcache: Add d_clear_dir_neg_dentries()
+  ext4: Prevent dangling dentries on casefold directories
+  f2fs: Prevent dangling dentries on casefold directories
+
+ fs/dcache.c            | 27 +++++++++++++++++++++++++++
+ fs/ext4/ioctl.c        |  3 +++
+ fs/f2fs/file.c         |  4 ++++
+ include/linux/dcache.h |  1 +
+ 4 files changed, 35 insertions(+)
+
+-- 
+2.31.0
 
