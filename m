@@ -2,113 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E513534D269
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Mar 2021 16:33:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BB4734D2C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Mar 2021 16:50:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230391AbhC2Ocq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Mar 2021 10:32:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46076 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230339AbhC2Ocm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Mar 2021 10:32:42 -0400
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28D72C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Mar 2021 07:32:31 -0700 (PDT)
-Received: by mail-ot1-x333.google.com with SMTP id t23-20020a0568301e37b02901b65ab30024so12465358otr.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Mar 2021 07:32:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6pd5+1lyxF0IpfUFm+C/Q0BotbJ7mj/8xSGsdykFryU=;
-        b=WOGPfNiBH1rBOn7rKEj2te7OWuckEUpvJ+NQWbuqa1LLPtC8ni5+XceiDdRhii9Ezo
-         M3ZPxxLkR1FXKmahCW23aHCLAWw+1OTM6ecK7JG1myf3fkFFkHbKy3NxP5RvTvpov7Y9
-         EsByzRGNkr3bhxp3Sv7v6YCoNu0qTBw+quXgG6uVUGQ8KuWIX4x/qiDMmEaufKVIHUXm
-         6yyKWYP37AglSKbupam4uq5h1Nmct7LqgHslu+LbupQAHibZM9OqxzCSknm9Ae0xDYpl
-         o0BLDukK5niYeGEuiSDb/YFoa+1gQZhKm0HpxsyBbqblfmPZjrQumWmzZOKLO9gjRBmK
-         Nx5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6pd5+1lyxF0IpfUFm+C/Q0BotbJ7mj/8xSGsdykFryU=;
-        b=sTa3Ujz3PCKC4vjDEbpzSeKL5Uum9m14ROWRVnP4yKMxMMwWTOXjH1JmB5x3MW+LFa
-         +lMcOtyge1pnQD0Zc6m99JK2+pj8ybLWPcuJhAO4WTdAG9d6Qp6eX74QX1e4u47i1ReF
-         sxmMvBcykxUjqKwBn8C1/iyGtY8+Pz5nBLoVu6ArNStJgE15sdJ6cbQKLwbbUS1Amijp
-         CGvE/9hvyfVKuK2EFOALyS0MStFAKGkdfx4bHUc560qFGvoJ1FdGTJBsEvI1J34BOCzP
-         zmf7FqU7bYeNTzV9q+4Xyvgm3lGbgqiY39650UzwsA3A5tU1QZU/4b/clrUwVQtWkEMs
-         jyZg==
-X-Gm-Message-State: AOAM532XzGFuDZvfIez7PwcjfkKTkB9BM0DckQMcJ8ipB2/uzU6Cm7wA
-        tpm1N6TypSsQ67QTUcOsPlIGVZSYxKMnrUEHUe0rJg==
-X-Google-Smtp-Source: ABdhPJxXlJbzmAzqT33taumiK8BdMN/OkVmDMWa6AP1XrX+5I2Yys/7Pp8HpnlAdCIy2hzJQig2Zesc70wVcHKDSdNI=
-X-Received: by 2002:a05:6830:148c:: with SMTP id s12mr23773028otq.251.1617028350375;
- Mon, 29 Mar 2021 07:32:30 -0700 (PDT)
+        id S231312AbhC2Otx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Mar 2021 10:49:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43740 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231318AbhC2OtW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Mar 2021 10:49:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 6F825AD71;
+        Mon, 29 Mar 2021 14:49:17 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 4290c4bd;
+        Mon, 29 Mar 2021 14:50:37 +0000 (UTC)
+Date:   Mon, 29 Mar 2021 15:50:37 +0100
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtio-fs@redhat.com, miklos@szeredi.hu, dgilbert@redhat.com,
+        seth.forshee@canonical.com
+Subject: Re: [PATCH v2 1/2] fuse: Add support for FUSE_SETXATTR_V2
+Message-ID: <YGHpPWcZYQQWMvAi@suse.de>
+References: <20210325151823.572089-1-vgoyal@redhat.com>
+ <20210325151823.572089-2-vgoyal@redhat.com>
 MIME-Version: 1.0
-References: <20210324112503.623833-1-elver@google.com> <20210324112503.623833-7-elver@google.com>
- <YFxGb+QHEumZB6G8@elver.google.com> <YGHC7V3bbCxhRWTK@hirez.programming.kicks-ass.net>
- <20210329142705.GA24849@redhat.com>
-In-Reply-To: <20210329142705.GA24849@redhat.com>
-From:   Marco Elver <elver@google.com>
-Date:   Mon, 29 Mar 2021 16:32:18 +0200
-Message-ID: <CANpmjNN4kiGiuSSm2g0empgKo3DW-UJ=eNDB6sv1bpypD13vqQ@mail.gmail.com>
-Subject: Re: [PATCH v3 06/11] perf: Add support for SIGTRAP on perf events
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian@brauner.io>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Matt Morehouse <mascasa@google.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Ian Rogers <irogers@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, Jiri Olsa <jolsa@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210325151823.572089-2-vgoyal@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 29 Mar 2021 at 16:27, Oleg Nesterov <oleg@redhat.com> wrote:
-> On 03/29, Peter Zijlstra wrote:
-> >
-> > On Thu, Mar 25, 2021 at 09:14:39AM +0100, Marco Elver wrote:
-> > > @@ -6395,6 +6395,13 @@ static void perf_sigtrap(struct perf_event *event)
-> > >  {
-> > >     struct kernel_siginfo info;
-> > >
-> > > +   /*
-> > > +    * This irq_work can race with an exiting task; bail out if sighand has
-> > > +    * already been released in release_task().
-> > > +    */
-> > > +   if (!current->sighand)
-> > > +           return;
->
-> This is racy. If "current" has already passed exit_notify(), current->parent
-> can do release_task() and destroy current->sighand right after the check.
->
-> > Urgh.. I'm not entirely sure that check is correct, but I always forget
-> > the rules with signal. It could be we ought to be testing PF_EXISTING
-> > instead.
->
-> Agreed, PF_EXISTING check makes more sense in any case, the exiting task
-> can't receive the signal anyway.
+On Thu, Mar 25, 2021 at 11:18:22AM -0400, Vivek Goyal wrote:
+> Fuse client needs to send additional information to file server when
+> it calls SETXATTR(system.posix_acl_access). Right now there is no extra
+> space in fuse_setxattr_in. So introduce a v2 of the structure which has
+> more space in it and can be used to send extra flags.
+> 
+> "struct fuse_setxattr_in_v2" is only used if file server opts-in for it using
+> flag FUSE_SETXATTR_V2 during feature negotiations.
+> 
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  fs/fuse/acl.c             |  2 +-
+>  fs/fuse/fuse_i.h          |  5 ++++-
+>  fs/fuse/inode.c           |  4 +++-
+>  fs/fuse/xattr.c           | 21 +++++++++++++++------
+>  include/uapi/linux/fuse.h | 10 ++++++++++
+>  5 files changed, 33 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
+> index e9c0f916349d..d31260a139d4 100644
+> --- a/fs/fuse/acl.c
+> +++ b/fs/fuse/acl.c
+> @@ -94,7 +94,7 @@ int fuse_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
+>  			return ret;
+>  		}
+>  
+> -		ret = fuse_setxattr(inode, name, value, size, 0);
+> +		ret = fuse_setxattr(inode, name, value, size, 0, 0);
+>  		kfree(value);
+>  	} else {
+>  		ret = fuse_removexattr(inode, name);
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 63d97a15ffde..d00bf0b9a38c 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -668,6 +668,9 @@ struct fuse_conn {
+>  	/** Is setxattr not implemented by fs? */
+>  	unsigned no_setxattr:1;
+>  
+> +	/** Does file server support setxattr_v2 */
+> +	unsigned setxattr_v2:1;
+> +
 
-Thanks for confirming. I'll switch to just checking PF_EXITING
-(PF_EXISTING does not exist :-)).
+Minor (pedantic!) comment: most of the fields here start with 'no_*', so
+maybe it's worth setting the logic to use 'no_setxattr_v2' instead?
 
-Thanks,
--- Marco
+Cheers,
+--
+Luís
+
+
+>  	/** Is getxattr not implemented by fs? */
+>  	unsigned no_getxattr:1;
+>  
+> @@ -1170,7 +1173,7 @@ void fuse_unlock_inode(struct inode *inode, bool locked);
+>  bool fuse_lock_inode(struct inode *inode);
+>  
+>  int fuse_setxattr(struct inode *inode, const char *name, const void *value,
+> -		  size_t size, int flags);
+> +		  size_t size, int flags, unsigned extra_flags);
+>  ssize_t fuse_getxattr(struct inode *inode, const char *name, void *value,
+>  		      size_t size);
+>  ssize_t fuse_listxattr(struct dentry *entry, char *list, size_t size);
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index b0e18b470e91..1c726df13f80 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1052,6 +1052,8 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+>  				fc->handle_killpriv_v2 = 1;
+>  				fm->sb->s_flags |= SB_NOSEC;
+>  			}
+> +			if (arg->flags & FUSE_SETXATTR_V2)
+> +				fc->setxattr_v2 = 1;
+>  		} else {
+>  			ra_pages = fc->max_read / PAGE_SIZE;
+>  			fc->no_lock = 1;
+> @@ -1095,7 +1097,7 @@ void fuse_send_init(struct fuse_mount *fm)
+>  		FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
+>  		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
+>  		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
+> -		FUSE_HANDLE_KILLPRIV_V2;
+> +		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_V2;
+>  #ifdef CONFIG_FUSE_DAX
+>  	if (fm->fc->dax)
+>  		ia->in.flags |= FUSE_MAP_ALIGNMENT;
+> diff --git a/fs/fuse/xattr.c b/fs/fuse/xattr.c
+> index 1a7d7ace54e1..f2aae72653dc 100644
+> --- a/fs/fuse/xattr.c
+> +++ b/fs/fuse/xattr.c
+> @@ -12,24 +12,33 @@
+>  #include <linux/posix_acl_xattr.h>
+>  
+>  int fuse_setxattr(struct inode *inode, const char *name, const void *value,
+> -		  size_t size, int flags)
+> +		  size_t size, int flags, unsigned extra_flags)
+>  {
+>  	struct fuse_mount *fm = get_fuse_mount(inode);
+>  	FUSE_ARGS(args);
+>  	struct fuse_setxattr_in inarg;
+> +	struct fuse_setxattr_in_v2 inarg_v2;
+> +	bool setxattr_v2 = fm->fc->setxattr_v2;
+>  	int err;
+>  
+>  	if (fm->fc->no_setxattr)
+>  		return -EOPNOTSUPP;
+>  
+>  	memset(&inarg, 0, sizeof(inarg));
+> -	inarg.size = size;
+> -	inarg.flags = flags;
+> +	memset(&inarg_v2, 0, sizeof(inarg_v2));
+> +	if (setxattr_v2) {
+> +		inarg_v2.size = size;
+> +		inarg_v2.flags = flags;
+> +		inarg_v2.setxattr_flags = extra_flags;
+> +	} else {
+> +		inarg.size = size;
+> +		inarg.flags = flags;
+> +	}
+>  	args.opcode = FUSE_SETXATTR;
+>  	args.nodeid = get_node_id(inode);
+>  	args.in_numargs = 3;
+> -	args.in_args[0].size = sizeof(inarg);
+> -	args.in_args[0].value = &inarg;
+> +	args.in_args[0].size = setxattr_v2 ? sizeof(inarg_v2) : sizeof(inarg);
+> +	args.in_args[0].value = setxattr_v2 ? &inarg_v2 : (void *)&inarg;
+>  	args.in_args[1].size = strlen(name) + 1;
+>  	args.in_args[1].value = name;
+>  	args.in_args[2].size = size;
+> @@ -199,7 +208,7 @@ static int fuse_xattr_set(const struct xattr_handler *handler,
+>  	if (!value)
+>  		return fuse_removexattr(inode, name);
+>  
+> -	return fuse_setxattr(inode, name, value, size, flags);
+> +	return fuse_setxattr(inode, name, value, size, flags, 0);
+>  }
+>  
+>  static bool no_xattr_list(struct dentry *dentry)
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index 54442612c48b..1bb555c1c117 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -179,6 +179,7 @@
+>   *  7.33
+>   *  - add FUSE_HANDLE_KILLPRIV_V2, FUSE_WRITE_KILL_SUIDGID, FATTR_KILL_SUIDGID
+>   *  - add FUSE_OPEN_KILL_SUIDGID
+> + *  - add FUSE_SETXATTR_V2
+>   */
+>  
+>  #ifndef _LINUX_FUSE_H
+> @@ -330,6 +331,7 @@ struct fuse_file_lock {
+>   *			does not have CAP_FSETID. Additionally upon
+>   *			write/truncate sgid is killed only if file has group
+>   *			execute permission. (Same as Linux VFS behavior).
+> + * FUSE_SETXATTR_V2:	Does file server support V2 of struct fuse_setxattr_in
+>   */
+>  #define FUSE_ASYNC_READ		(1 << 0)
+>  #define FUSE_POSIX_LOCKS	(1 << 1)
+> @@ -360,6 +362,7 @@ struct fuse_file_lock {
+>  #define FUSE_MAP_ALIGNMENT	(1 << 26)
+>  #define FUSE_SUBMOUNTS		(1 << 27)
+>  #define FUSE_HANDLE_KILLPRIV_V2	(1 << 28)
+> +#define FUSE_SETXATTR_V2	(1 << 29)
+>  
+>  /**
+>   * CUSE INIT request/reply flags
+> @@ -686,6 +689,13 @@ struct fuse_setxattr_in {
+>  	uint32_t	flags;
+>  };
+>  
+> +struct fuse_setxattr_in_v2 {
+> +	uint32_t	size;
+> +	uint32_t	flags;
+> +	uint32_t	setxattr_flags;
+> +	uint32_t	padding;
+> +};
+> +
+>  struct fuse_getxattr_in {
+>  	uint32_t	size;
+>  	uint32_t	padding;
+> -- 
+> 2.25.4
+> 
