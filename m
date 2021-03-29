@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA30B34DA68
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 00:23:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4843034DAD4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 00:25:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232136AbhC2WWe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Mar 2021 18:22:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46098 "EHLO mail.kernel.org"
+        id S230500AbhC2WXm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Mar 2021 18:23:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231961AbhC2WWH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Mar 2021 18:22:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AD13D6198A;
-        Mon, 29 Mar 2021 22:22:05 +0000 (UTC)
+        id S232255AbhC2WWv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Mar 2021 18:22:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 91F18619A7;
+        Mon, 29 Mar 2021 22:22:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617056526;
-        bh=2xKGQUUFK8YeQRMSKWfNRRWjny9EKiRBskHn0N2MboE=;
+        s=k20201202; t=1617056570;
+        bh=dvqJDRbD2yEG3C1IfWVltxL+m6zIpiSLZWbf/J7c7gE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e9YY9qq1C8IibbnPjIDdPy7leLe7Rz+7phvfZHUkph3EaAmZDN3BPCg7RglZpHKKd
-         5GspMCzVrZZnu7er6NR3KP/27NhWQVEZbrx9T9mDnhQD9K+W+jfuAL7Hb318OGnxDa
-         hNPOco2QotSQYYXybtJ68ygOFNBHHbJrfzYoQBIzP0z0GO25D4c3mlsVLGWY/z37K7
-         3YDmjQfAVTnjNKc4C7Rek641GaEBBd9+QowxjJzi8rU6CMF8QSmWnzmeOMtsW6WQa4
-         XYYzmBZ0q5K5LTb1kGR1DE7F1kEqZ5u8tixecXN0Q76fw8MxhJ4oqFcGH3AW61FuDJ
-         U0h6Et68fc3Ww==
+        b=LakA5mRguLe8BNkbP4hpSTXXoJWIVK/vZb9wigtyfV3hvpIJ5dNhirlUcQETIQsZ8
+         5sMlNMeEhUgSvahXfGytssscHoFmtEju7XWZ5rgViz/BuhYebZzA0e2sikwpjpb9bu
+         9dBzPzzqQrrBSB4J1ZMLcH82TlQnoAGPAO11oyHZBOJgbUAzfAU9HAfra/usX62vTQ
+         IDLzTMwlLbvIpWJVPKgewoDCW+Ay2/K7ph4okL1+6PzbBzBzmy763W+7IupNPmM0/i
+         7CdujkskCfkg4Ev9p3FZyh012oTnOsMqPvaquPEeVkZ4pGGw2HG+QrUI+izvWKkiGz
+         KDxQXHMZBmZFw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Chris Chiu <chris.chiu@canonical.com>,
         Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.11 26/38] block: clear GD_NEED_PART_SCAN later in bdev_disk_changed
-Date:   Mon, 29 Mar 2021 18:21:21 -0400
-Message-Id: <20210329222133.2382393-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 23/33] block: clear GD_NEED_PART_SCAN later in bdev_disk_changed
+Date:   Mon, 29 Mar 2021 18:22:11 -0400
+Message-Id: <20210329222222.2382987-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210329222133.2382393-1-sashal@kernel.org>
-References: <20210329222133.2382393-1-sashal@kernel.org>
+In-Reply-To: <20210329222222.2382987-1-sashal@kernel.org>
+References: <20210329222222.2382987-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -69,10 +69,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/fs/block_dev.c b/fs/block_dev.c
-index c33151020bcd..85500e2400cf 100644
+index fe201b757baa..6516051807b8 100644
 --- a/fs/block_dev.c
 +++ b/fs/block_dev.c
-@@ -1240,13 +1240,13 @@ int bdev_disk_changed(struct block_device *bdev, bool invalidate)
+@@ -1404,13 +1404,13 @@ int bdev_disk_changed(struct block_device *bdev, bool invalidate)
  
  	lockdep_assert_held(&bdev->bd_mutex);
  
