@@ -2,212 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40A9B34C14B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Mar 2021 03:52:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 959E934C203
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Mar 2021 04:47:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230373AbhC2BwH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Mar 2021 21:52:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49478 "EHLO
+        id S230209AbhC2CrP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Mar 2021 22:47:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229645AbhC2Bvt (ORCPT
+        with ESMTP id S229645AbhC2Cqs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Mar 2021 21:51:49 -0400
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37681C061574
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Mar 2021 18:51:38 -0700 (PDT)
-Received: by mail-ot1-x32f.google.com with SMTP id t23-20020a0568301e37b02901b65ab30024so10844240otr.4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Mar 2021 18:51:38 -0700 (PDT)
+        Sun, 28 Mar 2021 22:46:48 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B0BC061574;
+        Sun, 28 Mar 2021 19:46:48 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id d2so10016072ilm.10;
+        Sun, 28 Mar 2021 19:46:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=CW2BqiAhijOdIATx0Mdvl2mxq7iOTJupj8It01JaPbo=;
-        b=PmFf+in024hTU+OBBNNMZ6/+fMt8ed//NiL4RG54oHprUnyURODJ4pRvu2L32DMDd5
-         rJMKNADXogEkqJk+KXwjM5VfjaLVp8rAIU6OILPdK+98LMaJhVprXXy3aRfaoFAQKbxN
-         8QLqrkPjW68V2ejAi6UhALfkdhpB4C7Rv9quqS6UKYyLnYhqsHcgBCYP7kCi0lJ8SVq6
-         JSP9Y1DrETKg01YYh2wKUVguj8N+2u0y7lKIioC2HNyzw+SjMcqD5XdmaguDkeV8JFWS
-         08lsxpfMRidXLpYgEEYxengxlsTUwN6e1P37StOnaWcoImbpEcepng7JKG8PEk+Z44mO
-         Efbg==
+        bh=2mMCjLRbIjMiUSToAvmZJzIfnIV25RQ2WsQmT7UZYZU=;
+        b=QOMWHgd2QrWw7jiMAnI/xdmwpXQN1T5eU38h3H1fzTbID7W0mjd14mTdNW5r5fEW9P
+         jZQ3viFABq+K91BFW8yCOI2PFIv2AWX8Hz6qDozShpGSt3mbhYSEALAg595qJDWP3l9O
+         Po3cBn4i4Uxi4Bk8c4a2ID36rQv9n+APgx3CJUDa0B0tSBIYQT00Pqiin8i+sGqOhDpy
+         GpO6iy6ExksRuVUhrccykuraaT+nK/4h996zXxvtTKBankpDlj0PW6RPc6Pbi5fd12KR
+         ZAI3GISSVPEerJijFMLdGHiu0s2ct1d33EXac2s7wckG/GViWk5L+qbM2I7e6N2FGVOM
+         hE7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=CW2BqiAhijOdIATx0Mdvl2mxq7iOTJupj8It01JaPbo=;
-        b=kIsalHRtM8g4qyj4UwCN3bVf1B9PYw9F0OyiPRWjbSmVlxh0kBI18U5fN266Ev7Mgu
-         qMcI+Wdk+A+kkV6OMIlTK4D+zgQ2iEujXANRjrVXfAOOorYHtndkrVx1vGlwnAzRw7fi
-         VUZ++2v8P4BFWcc9uagSZ0feVLM/zcYF0KFhTRetSJLc3GDAMN9A8USpLcsnasXX52Aj
-         KYvGiUu6wOMxcCrZKKyCkfr21ieZoqrnszFZ+yX0MXOYzyX7Eo98rd6FOcVRdm9zriM6
-         8OsrHSe+9lMj64iB3ysiGVEPjHPh7wjUkekQYsUoiFYfApmJLWKGXR/zvGLheIQ7XCcV
-         ZqKg==
-X-Gm-Message-State: AOAM532VcvTjsrEV8ljq2xzHT+83nPtlnZzzxvMupab4Gp2ybrNkKNrD
-        upUA5lYPwRNmCp+YRrOKIIvSjrzjhyL3ncjMlLN4xA==
-X-Google-Smtp-Source: ABdhPJwRQQ5MHsLqU/NnSPqZj8QTWBIYCaZontT/3bP/tIj75aaCLdz0hKPlr5C7hkUq3nSG2Rua6eJu2W3/J72kDs4=
-X-Received: by 2002:a05:6830:1c26:: with SMTP id f6mr20847573ote.53.1616982697629;
- Sun, 28 Mar 2021 18:51:37 -0700 (PDT)
+        bh=2mMCjLRbIjMiUSToAvmZJzIfnIV25RQ2WsQmT7UZYZU=;
+        b=RCSsoDH1Tfwk4X902es68J+20/OUL5YrnWguwewEcyLf1q51yt3Dm2eu41qaj9Er6/
+         MHJuKetN0NhHzcPZg+LU5+UAV6IrQAuI1yvPJja+ojsaA6zc9zzX53JWiAJU5yLokjkM
+         6/Rz8sjQkQV4YFwb5pUyVO3hOLyMIHJOPG3hDgjuizTijop4q/1Tz3Ou3fF2OxiqxNvs
+         kJ9aMcVqwNKgWQt6dgEVtOriXGt/hJfJqgjM8ARbtuKM5Jax63lqYiQOnadAJNrgnl6G
+         OMKo1luGjlNvQGpIPCW8lEZh1MiI9HZeeHJSWtgR+GXN2xRtgTgbNA5Mzuh9tD/ouPGy
+         +Mjw==
+X-Gm-Message-State: AOAM533slVrqmDfACnaFirucWIxkLDxZodKVTxgtn5J5dFR96fSGoIfm
+        8GVkClEUeVbEXZkTQhSMGLz4qVvzzRbZw9bSRFE=
+X-Google-Smtp-Source: ABdhPJz5iVWuJngtZQd1nTkw9/ta5qlvbGiWhBQE+Kw7sLtJVUTusR+2Vyb9eADCOVBwe83aZ5iwojG17zaHNb3ftSw=
+X-Received: by 2002:a05:6e02:104b:: with SMTP id p11mr12438494ilj.77.1616986007664;
+ Sun, 28 Mar 2021 19:46:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210327035019.GG1719932@casper.infradead.org>
- <CAOg9mSTQ-zNKXQGBK9QEnwJCvwqh=zFLbLJZy-ibGZwLve4o0w@mail.gmail.com>
- <20210201130800.GP308988@casper.infradead.org> <CAOg9mSSd5ccoi1keeiRfkV+esekcQLxer9_1iZ-r9bQDjZLfBg@mail.gmail.com>
- <CAOg9mSSEVE3PGs2E9ya5_B6dQkoH6n2wGAEW_wWSEvw0LurWuQ@mail.gmail.com>
- <2884397.1616584210@warthog.procyon.org.uk> <CAOg9mSQMDzMfg3C0TUvTWU61zQdjnthXSy01mgY=CpgaDjj=Pw@mail.gmail.com>
- <1507388.1616833898@warthog.procyon.org.uk> <20210327135659.GH1719932@casper.infradead.org>
- <CAOg9mSRCdaBfLABFYvikHPe1YH6TkTx2tGU186RDso0S=z-S4A@mail.gmail.com>
- <20210327155630.GJ1719932@casper.infradead.org> <CAOg9mSSxrPEd4XsWseMOnpMGzDAE5Pm0YHcZE7gBdefpsReRzg@mail.gmail.com>
-In-Reply-To: <CAOg9mSSxrPEd4XsWseMOnpMGzDAE5Pm0YHcZE7gBdefpsReRzg@mail.gmail.com>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Sun, 28 Mar 2021 21:51:26 -0400
-Message-ID: <CAOg9mSSaDsEEQD7cwbsCi9WA=nSAD78wSJV_5Gu=Kc778z57zA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] implement orangefs_readahead
-To:     Matthew Wilcox <willy@infradead.org>,
-        Mike Marshall <hubcap@omnibond.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <CALCv0x1NauG_13DmmzwYaRDaq3qjmvEdyi7=XzF04KR06Q=WHA@mail.gmail.com>
+ <m1wnuqhaew.fsf@fess.ebiederm.org> <CALCv0x1Wka10b-mgb1wRHW-W-qRaZOKvJ_-ptq85Hj849PFPSw@mail.gmail.com>
+ <m1blc1gxdx.fsf@fess.ebiederm.org> <CALCv0x2-Q9o7k1jhzN73nZ9F5+tcp7T8SkLKQWXW=1gLLJNegA@mail.gmail.com>
+ <m1r1kwdyo0.fsf@fess.ebiederm.org>
+In-Reply-To: <m1r1kwdyo0.fsf@fess.ebiederm.org>
+From:   Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>
+Date:   Sun, 28 Mar 2021 19:46:36 -0700
+Message-ID: <CALCv0x2YqOXEAy2Q=hafjhHCtTHVodChv1qpM=niAXOpqEbt7w@mail.gmail.com>
+Subject: Re: exec error: BUG: Bad rss-counter
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I have Linux 5.12-rc4.
+On Wed, Mar 3, 2021 at 7:50 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com> writes:
+>
+> > On Tue, Mar 2, 2021 at 11:37 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >>
+> >> Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com> writes:
+> >>
+> >> > On Mon, Mar 1, 2021 at 12:43 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >> >>
+> >> >> Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com> writes:
+> >> >>
+> >> >> > Eric, All,
+> >> >> >
+> >> >> > The following error appears when running Linux 5.10.18 on an embedded
+> >> >> > MIPS mt7621 target:
+> >> >> > [    0.301219] BUG: Bad rss-counter state mm:(ptrval) type:MM_ANONPAGES val:1
+> >> >> >
+> >> >> > Being a very generic error, I started digging and added a stack dump
+> >> >> > before the BUG:
+> >> >> > Call Trace:
+> >> >> > [<80008094>] show_stack+0x30/0x100
+> >> >> > [<8033b238>] dump_stack+0xac/0xe8
+> >> >> > [<800285e8>] __mmdrop+0x98/0x1d0
+> >> >> > [<801a6de8>] free_bprm+0x44/0x118
+> >> >> > [<801a86a8>] kernel_execve+0x160/0x1d8
+> >> >> > [<800420f4>] call_usermodehelper_exec_async+0x114/0x194
+> >> >> > [<80003198>] ret_from_kernel_thread+0x14/0x1c
+> >> >> >
+> >> >> > So that's how I got to looking at fs/exec.c and noticed quite a few
+> >> >> > changes last year. Turns out this message only occurs once very early
+> >> >> > at boot during the very first call to kernel_execve. current->mm is
+> >> >> > NULL at this stage, so acct_arg_size() is effectively a no-op.
+> >> >>
+> >> >> If you believe this is a new error you could bisect the kernel
+> >> >> to see which change introduced the behavior you are seeing.
+> >> >>
+> >> >> > More digging, and I traced the RSS counter increment to:
+> >> >> > [<8015adb4>] add_mm_counter_fast+0xb4/0xc0
+> >> >> > [<80160d58>] handle_mm_fault+0x6e4/0xea0
+> >> >> > [<80158aa4>] __get_user_pages.part.78+0x190/0x37c
+> >> >> > [<8015992c>] __get_user_pages_remote+0x128/0x360
+> >> >> > [<801a6d9c>] get_arg_page+0x34/0xa0
+> >> >> > [<801a7394>] copy_string_kernel+0x194/0x2a4
+> >> >> > [<801a880c>] kernel_execve+0x11c/0x298
+> >> >> > [<800420f4>] call_usermodehelper_exec_async+0x114/0x194
+> >> >> > [<80003198>] ret_from_kernel_thread+0x14/0x1c
+> >> >> >
+> >> >> > In fact, I also checked vma_pages(bprm->vma) and lo and behold it is set to 1.
+> >> >> >
+> >> >> > How is fs/exec.c supposed to handle implied RSS increments that happen
+> >> >> > due to page faults when discarding the bprm structure? In this case,
+> >> >> > the bug-generating kernel_execve call never succeeded, it returned -2,
+> >> >> > but I didn't trace exactly what failed.
+> >> >>
+> >> >> Unless I am mistaken any left over pages should be purged by exit_mmap
+> >> >> which is called by mmput before mmput calls mmdrop.
+> >> > Good to know. Some more digging and I can say that we hit this error
+> >> > when trying to unmap PFN 0 (is_zero_pfn(pfn) returns TRUE,
+> >> > vm_normal_page returns NULL, zap_pte_range does not decrement
+> >> > MM_ANONPAGES RSS counter). Is my understanding correct that PFN 0 is
+> >> > usable, but special? Or am I totally off the mark here?
+> >>
+> >> It would be good to know if that is the page that get_user_pages_remote
+> >> returned to copy_string_kernel.  The zero page that is always zero,
+> >> should never be returned when a writable mapping is desired.
+> >
+> > Indeed, pfn 0 is returned from get_arg_page: (page is 0x809cf000,
+> > page_to_pfn(page) is 0) and it is the same page that is being freed and not
+> > refcounted in mmput/zap_pte_range. Confirmed with good old printk. Also,
+> > ZERO_PAGE(0)==0x809fc000 -> PFN 5120.
+> >
+> > I think I have found the problem though, after much digging and thanks to all
+> > the information provided. init_zero_pfn() gets called too late (after
+> > the call to
+> > is_zero_pfn(0) from mmput returns true), until then zero_pfn == 0, and after,
+> > zero_pfn == 5120. Boom.
+> >
+> > So PFN 0 is special, but only for a little bit, enough for something
+> > on my system
+> > to call kernel_execve :)
+> >
+> > Question: is my system not supposed to be calling kernel_execve this
+> > early or does
+> > init_zero_pfn() need to happen earlier? init_zero_pfn is currently a
+> > core_initcall.
+>
+> Looking quickly it seems that init_zero_pfn() is in mm/memory.c and is
+> common for both mips and x86.  Further it appears init_zero_pfn() has
+> been that was since 2009 a13ea5b75964 ("mm: reinstate ZERO_PAGE").
+>
+> Given the testing that x86 gets and that nothing like this has been
+> reported it looks like whatever driver is triggering the kernel_execve
+> is doing something wrong.
+>
+> Because honestly.  If the zero page isn't working there is not a chance
+> that anything in userspace is working so it is clearly much too early.
+>
+> I suspect there is some driver that is initialized very early that is
+> doing something that looks innocuous (like triggering a hotplug event)
+> and that happens to cause a call_usermode_helper which then calls
+> kernel_execve.
 
-On top of that I have "David's patches", an 85 patch
-series I peeled off of David Howell's fscache-iter
-branch on git.kernel.org a few days ago. These
-patches include what I need to use
-readahead_expand.
+Here is the data that's passed into the very first kernel_execve call:
+kernel_filename: /sbin/hotplug
+argv: [/sbin/hotplug, bus]
+envp: [ACTION=add, DEVPATH=/bus/workqueue, SUBSYSTEM=bus, SEQNUM=4,
+HOME=/, PATH=/sbin:/bin:/usr/sbin:/usr/bin]
 
-On top of that is my orangefs_readahead patch.
+It comes from kobject_uevent_env() calling call_usermodehelper_exec()
+with UMH_NO_WAIT.
 
-I have run through the xfstests I run, and am
-failing generic 75 112 127 & 263, which I
-normally pass.
+Trace:
+[<80340dc8>] kobject_uevent_env+0x7e4/0x7ec
+[<8033f8b8>] kset_register+0x68/0x88
+[<803cf824>] bus_register+0xdc/0x34c
+[<803cfac8>] subsys_virtual_register+0x34/0x78
+[<8086afb0>] wq_sysfs_init+0x1c/0x4c
+[<80001648>] do_one_initcall+0x50/0x1a8
+[<8086503c>] kernel_init_freeable+0x230/0x2c8
+[<8066bca0>] kernel_init+0x10/0x100
+[<80003038>] ret_from_kernel_thread+0x14/0x1c
 
-So I got rid of my orangefs_readahead patch.
-Still failing 75 112 127 & 263.
+A bunch of other bus devices are initialized at the same time, but
+SEQNUM=4 gets to go first for some reason:
+[    0.420497] smp: Brought up 1 node, 4 CPUs
+[    0.431204] ACTION:add DEVPATH:/bus/platform SUBSYSTEM:bus SEQNUM: 1
+[    0.431249] ACTION:add DEVPATH:/bus/cpu SUBSYSTEM:bus SEQNUM: 2
+[    0.440594] ACTION:add DEVPATH:/bus/container SUBSYSTEM:bus SEQNUM: 3
+[    0.449994] ACTION:add DEVPATH:/bus/workqueue SUBSYSTEM:bus SEQNUM: 4
 
-Then I got rid of David's patches, I'm at
-generic Linux 5.12-rc4, and am no longer
-failing those tests.
+Since both wq_sysfs_init() and init_zero_pfn() are annotated with
+core_initcall() is there a race?
 
-Just thought I should mention it... other
-than that, I'm real happy with the
-orangefs_readahead patch, it is a
-giant improvement. Y'all's help
-made all the difference...
+Maybe there is still an argument for moving init_zero_pfn() to
+early_initcall()? According to the comment above init_zero_pfn(),
+"CONFIG_MMU architectures set up ZERO_PAGE in their paging_init()".
+paging_init() gets called in setup_arch(), which is way before
+do_pre_smp_initcalls(), so it should work, right? Obviously something
+that needs to be tested, but are my assumptions correct?
 
--Mike
+FWIW I tested it on my MIPS device and it boots fine and the BUG
+message is gone. I still don't know why it started appearing on 5.10+,
+maybe some core_initcalls got added that made the race worse?
 
-On Sat, Mar 27, 2021 at 11:04 PM Mike Marshall <hubcap@omnibond.com> wrote:
->
-> This seems OK... ?
->
-> static void orangefs_readahead(struct readahead_control *rac)
-> {
-> loff_t offset;
-> struct iov_iter iter;
-> struct file *file = rac->file;
-> struct inode *inode = file->f_mapping->host;
-> struct xarray *i_pages;
-> struct page *page;
-> loff_t new_start = readahead_pos(rac);
-> int ret;
-> size_t new_len = 0;
->
-> loff_t bytes_remaining = inode->i_size - readahead_pos(rac);
-> loff_t pages_remaining = bytes_remaining / PAGE_SIZE;
->
-> if (pages_remaining >= 1024)
-> new_len = 4194304;
-> else if (pages_remaining > readahead_count(rac))
-> new_len = bytes_remaining;
->
-> if (new_len)
-> readahead_expand(rac, new_start, new_len);
->
-> offset = readahead_pos(rac);
-> i_pages = &file->f_mapping->i_pages;
->
-> iov_iter_xarray(&iter, READ, i_pages, offset, readahead_length(rac));
->
-> /* read in the pages. */
-> if ((ret = wait_for_direct_io(ORANGEFS_IO_READ, inode,
-> &offset, &iter, readahead_length(rac),
-> inode->i_size, NULL, NULL, file)) < 0)
-> gossip_debug(GOSSIP_FILE_DEBUG,
-> "%s: wait_for_direct_io failed. \n", __func__);
-> else
-> ret = 0;
->
-> /* clean up. */
-> while ((page = readahead_page(rac))) {
-> page_endio(page, false, ret);
-> put_page(page);
-> }
-> }
->
-> I need to go remember how to git send-email through the
-> kernel.org email server, I apologize for the way gmail
-> unformats my code, even in plain text mode...
->
-> -Mike
->
-> On Sat, Mar 27, 2021 at 11:56 AM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Sat, Mar 27, 2021 at 11:40:08AM -0400, Mike Marshall wrote:
-> > > int ret;
-> > >
-> > > loff_t new_start = readahead_index(rac) * PAGE_SIZE;
-> >
-> > That looks like readahead_pos() to me.
-> >
-> > > size_t new_len = 524288;
-> > > readahead_expand(rac, new_start, new_len);
-> > >
-> > > npages = readahead_count(rac);
-> > > offset = readahead_pos(rac);
-> > > i_pages = &file->f_mapping->i_pages;
-> > >
-> > > iov_iter_xarray(&iter, READ, i_pages, offset, npages * PAGE_SIZE);
-> >
-> > readahead_length()?
-> >
-> > > /* read in the pages. */
-> > > ret = wait_for_direct_io(ORANGEFS_IO_READ, inode, &offset, &iter,
-> > > npages * PAGE_SIZE, inode->i_size, NULL, NULL, file);
-> > >
-> > > /* clean up. */
-> > > while ((page = readahead_page(rac))) {
-> > > page_endio(page, false, 0);
-> > > put_page(page);
-> > > }
-> > > }
-> >
-> > What if wait_for_direct_io() returns an error?  Shouldn't you be calling
-> >
-> > page_endio(page, false, ret)
-> >
-> > ?
-> >
-> > > On Sat, Mar 27, 2021 at 9:57 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > > >
-> > > > On Sat, Mar 27, 2021 at 08:31:38AM +0000, David Howells wrote:
-> > > > > However, in Mike's orangefs_readahead_cleanup(), he could replace:
-> > > > >
-> > > > >       rcu_read_lock();
-> > > > >       xas_for_each(&xas, page, last) {
-> > > > >               page_endio(page, false, 0);
-> > > > >               put_page(page);
-> > > > >       }
-> > > > >       rcu_read_unlock();
-> > > > >
-> > > > > with:
-> > > > >
-> > > > >       while ((page = readahead_page(ractl))) {
-> > > > >               page_endio(page, false, 0);
-> > > > >               put_page(page);
-> > > > >       }
-> > > > >
-> > > > > maybe?
-> > > >
-> > > > I'd rather see that than open-coded use of the XArray.  It's mildly
-> > > > slower, but given that we're talking about doing I/O, probably not enough
-> > > > to care about.
+Ilya
