@@ -2,107 +2,282 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AC5734DC6E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 01:26:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6911B34DC9B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 01:44:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230323AbhC2XZ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Mar 2021 19:25:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48196 "EHLO
+        id S230089AbhC2XoS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Mar 2021 19:44:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbhC2XZ2 (ORCPT
+        with ESMTP id S230204AbhC2XoO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Mar 2021 19:25:28 -0400
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64EE3C061762
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Mar 2021 16:25:28 -0700 (PDT)
-Received: by mail-ot1-x32a.google.com with SMTP id w31-20020a9d36220000b02901f2cbfc9743so13876301otb.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Mar 2021 16:25:28 -0700 (PDT)
+        Mon, 29 Mar 2021 19:44:14 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48FBBC061762
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Mar 2021 16:44:14 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id u128so20867784ybf.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Mar 2021 16:44:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Kfopmyrbr/GcMHD9psmtDMqZjT1PfgeegTPCEU08EiE=;
-        b=J7Fblzrr8H0/D0Vgsenq6S9RHUn3tBJEFubecR2cTg2QQjk95Lrnx74t0afFYBOhJZ
-         HRKP1mIY75YS6ayguV98qH764d0jinlSSBNl2tinFVLcnqAsjTkoAyQTO/4v7ucnL/uH
-         tE+ftAWh6Ygdsc2wSiR6Q3d/k09NBjViAfjavj0q+YOuc0QOV7LLV2mtbCiiOKntEHeS
-         PvVdNMXJy/AU4/rSSBF//RdnNmnxXW7PIuhbGtFkZ0lriylLxVRIQu3HV1oU3E2uae8a
-         zJYntg25CiGrjH7JCnY1nvwLaF58hQySL4Q6CzNtLAwaniSqmFH6r3ojC50jpBBMYYpD
-         5Lcg==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=uoU32IU0pqTRkbWEkjmYD519qCQDwaxCfM+B/mBEeuo=;
+        b=nsWDPG4/gHBmdumT95TxKr+RFTidK1afkH6jAkr7L0ngzD8b8e9ZPDpEmZpAeh2uyS
+         QPEYRRQl5TP8L0W8LhbBsrswqR3Wzjm1kkGwoco++CBEMZNWEQ6lOkM1fBeTttDtUCi/
+         Ltp9pspRsqyloBv1n3lFtDemERmM1N4opnVD/Mt1c4zVOhpM2j2Zq9sTXveOfUmrtD+Z
+         6b4k4PBuZydijBcvGlu2q16lGVL6PZz+HaRoS4x7wPVhW+BABzDYbzS/YSaDXTEfrz2u
+         bqRcMzJ1WzHXXnS5J3ait4UhU/etIqyINQUTlrvS1dRsBKBhRhSmJohg4pb+ignhth4j
+         5HFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Kfopmyrbr/GcMHD9psmtDMqZjT1PfgeegTPCEU08EiE=;
-        b=MT03pL05pYVOHOqo35xcFhBZjCvrSoEKRX4qVLlLZ9GRJtR3CPEk4s8cainFDVOxyo
-         V1XxiSIb62uEVS/Hif2Gfpw3SlMaiwNUrHWq7RdnGNoNTtzkgJ2IvlazueMSAPP+ptQX
-         ulIZ99Ok5DEYr3iYRHsPqjFiSpx0NOexjgdImnMiUz6hbUK8r3hoKLHqccXW5ZYrfTUn
-         qP3T+M9puHIaxqwiZw6HJKRLyvWagp8grXIpF8mbuNmSKQKt98Lhmc/ezPjn/V7h8qUB
-         jOHJRUjQKHohjz4vW0SLmTDlEmKWjy2lPWtQ7j8QKGv1nnjiMa7rVN1QCKN0+8SpAhyD
-         udkQ==
-X-Gm-Message-State: AOAM530zQ90ge0Hvt9+92mT4U3OC1jVQthuCOO/bQdF0KhccQpRg+GMQ
-        5DghRnRazvsBp1ZdtvbhRxE1v3B6uQVIAT90HVazYK8010Hr1BFK
-X-Google-Smtp-Source: ABdhPJwUrIUAlEIYdNAUESbil7h2HVIKRjM6HWFIgZe1ZW5L6ERaodz/BIujBTfrM9IKHrSELrCestMSKZhV0HUnDJE=
-X-Received: by 2002:a9d:bc9:: with SMTP id 67mr25187355oth.352.1617060327832;
- Mon, 29 Mar 2021 16:25:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210327035019.GG1719932@casper.infradead.org>
- <CAOg9mSTQ-zNKXQGBK9QEnwJCvwqh=zFLbLJZy-ibGZwLve4o0w@mail.gmail.com>
- <20210201130800.GP308988@casper.infradead.org> <CAOg9mSSd5ccoi1keeiRfkV+esekcQLxer9_1iZ-r9bQDjZLfBg@mail.gmail.com>
- <CAOg9mSSEVE3PGs2E9ya5_B6dQkoH6n2wGAEW_wWSEvw0LurWuQ@mail.gmail.com>
- <2884397.1616584210@warthog.procyon.org.uk> <CAOg9mSQMDzMfg3C0TUvTWU61zQdjnthXSy01mgY=CpgaDjj=Pw@mail.gmail.com>
- <1507388.1616833898@warthog.procyon.org.uk> <20210327135659.GH1719932@casper.infradead.org>
- <CAOg9mSRCdaBfLABFYvikHPe1YH6TkTx2tGU186RDso0S=z-S4A@mail.gmail.com>
- <20210327155630.GJ1719932@casper.infradead.org> <CAOg9mSSxrPEd4XsWseMOnpMGzDAE5Pm0YHcZE7gBdefpsReRzg@mail.gmail.com>
- <CAOg9mSSaDsEEQD7cwbsCi9WA=nSAD78wSJV_5Gu=Kc778z57zA@mail.gmail.com> <1720948.1617010659@warthog.procyon.org.uk>
-In-Reply-To: <1720948.1617010659@warthog.procyon.org.uk>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Mon, 29 Mar 2021 19:25:17 -0400
-Message-ID: <CAOg9mSTEepP-BjV85dOmk6hbhQXYtz2k1y5G1RbN9boN7Mw3wA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] implement orangefs_readahead
-To:     David Howells <dhowells@redhat.com>,
-        Mike Marshall <hubcap@omnibond.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=uoU32IU0pqTRkbWEkjmYD519qCQDwaxCfM+B/mBEeuo=;
+        b=F0LGB0+lqnaH0YvQd6wRZqKUW+qX23U827DGt5l7jUZ+clgbyT+SDMjvVF06YFCOIJ
+         CK2pvrNlshRm+2oBhLowEkOoTusIIKECXD5N+Kuvnd9aidvPyz08f5/NBnjqjCLK8aqw
+         bVBGDORuf5SoNZkjJTpCy/20mzSS15szUDpJvzoAzYXzhguMdld1VfL3W9cPUJjzzWB7
+         eAnel9fO+Z1/OxKxn2NgbqK/oeMROtyEzW8FTz5Zlp3d3OTLd5GZ9MnbBlxGovGPb0dI
+         s6UKPxbmLtSJcGeHPeYX6Gfy+aRxn/5MUlwSbXgq432FKnKkDZu41bwKdhufEKUkNDKP
+         EFWA==
+X-Gm-Message-State: AOAM533rEHipWg0+jmPBpODmWL0NaAd1HTvQzRE5sadLFaD2OCe1qrN3
+        f5YWq+0MHdvCPgnPbXo05CLZEq/s+EzNpDf8zOv7
+X-Google-Smtp-Source: ABdhPJwel6nkEx2Uf1jY/NOtLUUm4qo9nYXu+LKQeD/JFEoCY4Zo0CcVUV27K2q5Sw5mBSS1DEVk98amOijlC1q4s+YZ
+X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:8578:c167:dddf:13a2])
+ (user=axelrasmussen job=sendgmr) by 2002:a5b:751:: with SMTP id
+ s17mr778317ybq.108.1617061453526; Mon, 29 Mar 2021 16:44:13 -0700 (PDT)
+Date:   Mon, 29 Mar 2021 16:41:31 -0700
+Message-Id: <20210329234131.304999-1-axelrasmussen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.31.0.291.g576ba9dcdaf-goog
+Subject: [PATCH v3] userfaultfd/shmem: fix MCOPY_ATOMIC_CONTNUE behavior
+From:   Axel Rasmussen <axelrasmussen@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wang Qing <wangqing@vivo.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Cannon Matthews <cannonmatthews@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David>> Um - which patches?
+Previously, we shared too much of the code with COPY and ZEROPAGE, so we
+manipulated things in various invalid ways:
 
-fscache-iter from
-https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+- Previously, we unconditionally called shmem_inode_acct_block. In the
+  continue case, we're looking up an existing page which would have been
+  accounted for properly when it was allocated. So doing it twice
+  results in double-counting, and eventually leaking.
 
-When the top commit was
-cachefiles: Don't shorten if over 1G: ff60d1fc9c7cb93d53d1d081f65490ff4ab2f122
+- Previously, we made the pte writable whenever the VMA was writable.
+  However, for continue, consider this case:
 
-followed by a bunch of commits up to
-iov_iter: Add ITER_XARRAY: 153907f0e36425bdefd50182ca9733d8bc8e716a
+  1. A tmpfs file was created
+  2. The non-UFFD-registered side mmap()-s with MAP_SHARED
+  3. The UFFD-registered side mmap()-s with MAP_PRIVATE
 
-And after that it was Linus' 5.12-rc2 tree...
-Linux 5.12-rc2: a38fd8748464831584a19438cbb3082b5a2dab15
+  In this case, even though the UFFD-registered VMA may be writable, we
+  still want CoW behavior. So, check for this case and don't make the
+  pte writable.
 
-You were posting patches from there on fs-devel, and I was
-reading your messages and knew what I needed was included there.
-When you asked me to try iov_iter_xarray I looked for it
-in your git tree instead of peeling it out of my
-gmail. Perhaps I got more stuff than you intended...
+- The initial pgoff / max_off check isn't necessary, so we can skip past
+  it. The second one seems likely to be unnecessary too, but keep it
+  just in case. Modify both checks to use pgoff, as offset is equivalent
+  and not needed.
 
-I did    git format-patch a38fd874..ff60d1fc
-and added that to my Linux 5.12-rc4 tree to make my orangefs_readahead
-patch that uses readahead_expand.
+- Previously, we unconditionally called ClearPageDirty() in the error
+  path. In the continue case though, since this is an existing page, it
+  might have already been dirty before we started touching it. It's very
+  problematic to clear the bit incorrectly, but not a problem to leave
+  it - so, just omit the ClearPageDirty() entirely.
 
--Mike
+- Previously, we unconditionally removed the page from the page cache in
+  the error path. But in the continue case, we didn't add it - it was
+  already there because the page is present in some second
+  (non-UFFD-registered) mapping. So, removing it is invalid.
 
-On Mon, Mar 29, 2021 at 5:37 AM David Howells <dhowells@redhat.com> wrote:
->
-> Mike Marshall <hubcap@omnibond.com> wrote:
->
-> > Then I got rid of David's patches, I'm at
-> > generic Linux 5.12-rc4, and am no longer
-> > failing those tests.
->
-> Um - which patches?
->
-> David
->
+Because the error handling issues are easy to exercise in the selftest,
+make a small modification there to do so.
+
+Finally, refactor shmem_mcopy_atomic_pte a bit. By this point, we've
+added a lot of "if (!is_continue)"-s everywhere. It's cleaner to just
+check for that mode first thing, and then "goto" down to where the parts
+we actually want are. This leaves the code in between cleaner.
+
+Changes since v2:
+- Drop the ClearPageDirty() entirely, instead of trying to remember the
+  old value.
+- Modify both pgoff / max_off checks to use pgoff. It's equivalent to
+  offset, but offset wasn't initialized until the first check (which
+  we're skipping).
+- Keep the second pgoff / max_off check in the continue case.
+
+Changes since v1:
+- Refactor to skip ahead with goto, instead of adding several more
+  "if (!is_continue)".
+- Fix unconditional ClearPageDirty().
+- Don't pte_mkwrite() when is_continue && !VM_SHARED.
+
+Fixes: 00da60b9d0a0 ("userfaultfd: support minor fault handling for shmem")
+Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+---
+ mm/shmem.c                               | 60 +++++++++++++-----------
+ tools/testing/selftests/vm/userfaultfd.c | 12 +++++
+ 2 files changed, 44 insertions(+), 28 deletions(-)
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index d2e0e81b7d2e..fbcce850a16e 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2377,18 +2377,22 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+ 	struct page *page;
+ 	pte_t _dst_pte, *dst_pte;
+ 	int ret;
+-	pgoff_t offset, max_off;
+-
+-	ret = -ENOMEM;
+-	if (!shmem_inode_acct_block(inode, 1))
+-		goto out;
++	pgoff_t max_off;
++	int writable;
+ 
+ 	if (is_continue) {
+ 		ret = -EFAULT;
+ 		page = find_lock_page(mapping, pgoff);
+ 		if (!page)
+-			goto out_unacct_blocks;
+-	} else if (!*pagep) {
++			goto out;
++		goto install_ptes;
++	}
++
++	ret = -ENOMEM;
++	if (!shmem_inode_acct_block(inode, 1))
++		goto out;
++
++	if (!*pagep) {
+ 		page = shmem_alloc_page(gfp, info, pgoff);
+ 		if (!page)
+ 			goto out_unacct_blocks;
+@@ -2415,30 +2419,29 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+ 		*pagep = NULL;
+ 	}
+ 
+-	if (!is_continue) {
+-		VM_BUG_ON(PageSwapBacked(page));
+-		VM_BUG_ON(PageLocked(page));
+-		__SetPageLocked(page);
+-		__SetPageSwapBacked(page);
+-		__SetPageUptodate(page);
+-	}
++	VM_BUG_ON(PageSwapBacked(page));
++	VM_BUG_ON(PageLocked(page));
++	__SetPageLocked(page);
++	__SetPageSwapBacked(page);
++	__SetPageUptodate(page);
+ 
+ 	ret = -EFAULT;
+-	offset = linear_page_index(dst_vma, dst_addr);
+ 	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+-	if (unlikely(offset >= max_off))
++	if (unlikely(pgoff >= max_off))
+ 		goto out_release;
+ 
+-	/* If page wasn't already in the page cache, add it. */
+-	if (!is_continue) {
+-		ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL,
+-					      gfp & GFP_RECLAIM_MASK, dst_mm);
+-		if (ret)
+-			goto out_release;
+-	}
++	ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL,
++				      gfp & GFP_RECLAIM_MASK, dst_mm);
++	if (ret)
++		goto out_release;
+ 
++install_ptes:
+ 	_dst_pte = mk_pte(page, dst_vma->vm_page_prot);
+-	if (dst_vma->vm_flags & VM_WRITE)
++	/* For CONTINUE on a non-shared VMA, don't pte_mkwrite for CoW. */
++	writable = is_continue && !(dst_vma->vm_flags & VM_SHARED)
++		? 0
++		: dst_vma->vm_flags & VM_WRITE;
++	if (writable)
+ 		_dst_pte = pte_mkwrite(pte_mkdirty(_dst_pte));
+ 	else {
+ 		/*
+@@ -2455,7 +2458,7 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+ 
+ 	ret = -EFAULT;
+ 	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+-	if (unlikely(offset >= max_off))
++	if (unlikely(pgoff >= max_off))
+ 		goto out_release_unlock;
+ 
+ 	ret = -EEXIST;
+@@ -2485,13 +2488,14 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+ 	return ret;
+ out_release_unlock:
+ 	pte_unmap_unlock(dst_pte, ptl);
+-	ClearPageDirty(page);
+-	delete_from_page_cache(page);
++	if (!is_continue)
++		delete_from_page_cache(page);
+ out_release:
+ 	unlock_page(page);
+ 	put_page(page);
+ out_unacct_blocks:
+-	shmem_inode_unacct_blocks(inode, 1);
++	if (!is_continue)
++		shmem_inode_unacct_blocks(inode, 1);
+ 	goto out;
+ }
+ #endif /* CONFIG_USERFAULTFD */
+diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
+index f6c86b036d0f..d8541a59dae5 100644
+--- a/tools/testing/selftests/vm/userfaultfd.c
++++ b/tools/testing/selftests/vm/userfaultfd.c
+@@ -485,6 +485,7 @@ static void wp_range(int ufd, __u64 start, __u64 len, bool wp)
+ static void continue_range(int ufd, __u64 start, __u64 len)
+ {
+ 	struct uffdio_continue req;
++	int ret;
+ 
+ 	req.range.start = start;
+ 	req.range.len = len;
+@@ -493,6 +494,17 @@ static void continue_range(int ufd, __u64 start, __u64 len)
+ 	if (ioctl(ufd, UFFDIO_CONTINUE, &req))
+ 		err("UFFDIO_CONTINUE failed for address 0x%" PRIx64,
+ 		    (uint64_t)start);
++
++	/*
++	 * Error handling within the kernel for continue is subtly different
++	 * from copy or zeropage, so it may be a source of bugs. Trigger an
++	 * error (-EEXIST) on purpose, to verify doing so doesn't cause a BUG.
++	 */
++	req.mapped = 0;
++	ret = ioctl(ufd, UFFDIO_CONTINUE, &req);
++	if (ret >= 0 || req.mapped != -EEXIST)
++		err("failed to exercise UFFDIO_CONTINUE error handling, ret=%d, mapped=%" PRId64,
++		    ret, req.mapped);
+ }
+ 
+ static void *locking_thread(void *arg)
+-- 
+2.31.0.291.g576ba9dcdaf-goog
+
