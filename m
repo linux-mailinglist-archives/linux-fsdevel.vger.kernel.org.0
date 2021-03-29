@@ -2,140 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 29F0334CFBE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Mar 2021 14:09:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3263D34D1FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Mar 2021 15:58:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231725AbhC2MIr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Mar 2021 08:08:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42744 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231731AbhC2MIa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Mar 2021 08:08:30 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E82BAC061574;
-        Mon, 29 Mar 2021 05:08:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Njn/KvV5Snuv3RW7HAFUHdZEr2iaxCFGr7M1vBWlqyE=; b=HItK73o0bQo72HLTdxmUfNE+Tx
-        5RC7H0/B82q23CUYsvFs3+5H8CYap7vGcfq0YcTFFhKd5km8DdGvhmT4fnKoYz9ZE3vucoJ+2e5Rj
-        mZG4oju+VZl5ri5ckYwXVae1tbFoFCSmsPqAvAJW48MZmiws+JLzDkUENY9Z45KTju7JPqvLLaChv
-        pRyQfWKopxnNivlzrjrXRhnUXf43yDuNsAoPHohWhLRzhmg19LtEKMgjX25v9t2cgNfwDMtidlkw0
-        xR56RxWS6dOWGRZolAj79Ss/uzt26prrNSUD+nrBUUQJq6ffU99UownAzF74gEXF3/xIqrE09E6Qv
-        jeMw0Dxw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lQqfm-001WyJ-TV; Mon, 29 Mar 2021 12:07:18 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D5B5B304B90;
-        Mon, 29 Mar 2021 14:07:09 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9D5F52071A3CB; Mon, 29 Mar 2021 14:07:09 +0200 (CEST)
-Date:   Mon, 29 Mar 2021 14:07:09 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Marco Elver <elver@google.com>
-Cc:     alexander.shishkin@linux.intel.com, acme@kernel.org,
-        mingo@redhat.com, jolsa@redhat.com, mark.rutland@arm.com,
-        namhyung@kernel.org, tglx@linutronix.de, glider@google.com,
-        viro@zeniv.linux.org.uk, arnd@arndb.de, christian@brauner.io,
-        dvyukov@google.com, jannh@google.com, axboe@kernel.dk,
-        mascasa@google.com, pcc@google.com, irogers@google.com,
-        kasan-dev@googlegroups.com, linux-arch@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, linux-kselftest@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>, Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH v3 06/11] perf: Add support for SIGTRAP on perf events
-Message-ID: <YGHC7V3bbCxhRWTK@hirez.programming.kicks-ass.net>
-References: <20210324112503.623833-1-elver@google.com>
- <20210324112503.623833-7-elver@google.com>
- <YFxGb+QHEumZB6G8@elver.google.com>
+        id S229910AbhC2N5t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Mar 2021 09:57:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36318 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231378AbhC2N5n (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Mar 2021 09:57:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 46480B12A;
+        Mon, 29 Mar 2021 13:57:42 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9AC6F1E4353; Mon, 29 Mar 2021 15:57:40 +0200 (CEST)
+Date:   Mon, 29 Mar 2021 15:57:40 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     lyl2019@mail.ustc.edu.cn
+Cc:     jack@suse.cz, amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [BUG] fs/notify/mark: A potential use after free in
+ fsnotify_put_mark_wake
+Message-ID: <20210329135740.GB4283@quack2.suse.cz>
+References: <39095113.1936a.178781a774a.Coremail.lyl2019@mail.ustc.edu.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YFxGb+QHEumZB6G8@elver.google.com>
+In-Reply-To: <39095113.1936a.178781a774a.Coremail.lyl2019@mail.ustc.edu.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 25, 2021 at 09:14:39AM +0100, Marco Elver wrote:
-> On Wed, Mar 24, 2021 at 12:24PM +0100, Marco Elver wrote:
-> [...]
-> > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > index b6434697c516..1e4c949bf75f 100644
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -6391,6 +6391,17 @@ void perf_event_wakeup(struct perf_event *event)
-> >  	}
-> >  }
-> >  
-> > +static void perf_sigtrap(struct perf_event *event)
-> > +{
-> > +	struct kernel_siginfo info;
-> > +
+Hello!
+
+
+On Sun 28-03-21 17:11:43, lyl2019@mail.ustc.edu.cn wrote:
+>     My static analyzer tool reported a use after free in fsnotify_put_mark_wake
+> of the file: fs/notify/mark.c.
 > 
-> I think we need to add something like this here:
+> In fsnotify_put_mark_wake, it calls fsnotify_put_mark(mark). Inside the function
+> fsnotify_put_mark(), if conn is NULL, it will call fsnotify_final_mark_destroy(mark)
+> to free mark->group by fsnotify_put_group(group) and return. I also had inspected
+> the implementation of fsnotify_put_group() and found that there is no cleanup operation
+> about group->user_waits.
 > 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 4b82788fbaab..4fcd6b45ce66 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -6395,6 +6395,13 @@ static void perf_sigtrap(struct perf_event *event)
->  {
->  	struct kernel_siginfo info;
->  
-> +	/*
-> +	 * This irq_work can race with an exiting task; bail out if sighand has
-> +	 * already been released in release_task().
-> +	 */
-> +	if (!current->sighand)
-> +		return;
-> +
->  	clear_siginfo(&info);
->  	info.si_signo = SIGTRAP;
->  	info.si_code = TRAP_PERF;
+> But after fsnotify_put_mark_wake() returned, mark->group is still used by 
+> if (atomic_dec_and_test(&group->user_waits) && group->shutdown) and later.
 > 
-> 
+> Is this an issue?
 
-Urgh.. I'm not entirely sure that check is correct, but I always forget
-the rules with signal. It could be we ought to be testing PF_EXISTING
-instead.
+I don't think this scenario is possible. fsnotify_put_mark_wake() can be
+called only for marks attached to objects and these have mark->conn !=
+NULL and we are sure that fsnotify_destroy_group() will wait for all such
+marks to be torn down and freed before dropping last group reference and
+freeing the group.
 
-But also, I think Jiri Olsa was going to poke around here because all of
-this is broken on PREEMPT_RT. IIRC the plan was to add yet another stage
-to the construct. So where today we have:
-
-
-	<NMI>
-		irq_work_queue()
-	</NMI>
-	...
-	<IRQ>
-		perf_pending_event()
-	</IRQ>
-
-(and we might already have a problem on some architectures where there
-can be significant time between these due to not having
-arch_irq_work_raise(), so ideally we ought to double check current in
-your case)
-
-The idea was, I think to add a task_work(), such that we get:
-
-	<NMI>
-		irq_work_queue()
-	</NMI>
-	...
-	<IRQ>
-		perf_pending_event()
-		  task_work_add()
-	</IRQ>
-
-	<ret-to-user>
-		run_task_work()
-		  ...
-		    kill_fasync();
-
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
