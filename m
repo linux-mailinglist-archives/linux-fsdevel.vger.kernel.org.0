@@ -2,30 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BB4734D2C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Mar 2021 16:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E215734D2E1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Mar 2021 16:53:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231312AbhC2Otx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Mar 2021 10:49:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43740 "EHLO mx2.suse.de"
+        id S229822AbhC2OxE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Mar 2021 10:53:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45814 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231318AbhC2OtW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Mar 2021 10:49:22 -0400
+        id S230402AbhC2Owo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Mar 2021 10:52:44 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 6F825AD71;
-        Mon, 29 Mar 2021 14:49:17 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 563EBABB1;
+        Mon, 29 Mar 2021 14:52:43 +0000 (UTC)
 Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 4290c4bd;
-        Mon, 29 Mar 2021 14:50:37 +0000 (UTC)
-Date:   Mon, 29 Mar 2021 15:50:37 +0100
+        by brahms (OpenSMTPD) with ESMTPA id 15c5f649;
+        Mon, 29 Mar 2021 14:54:03 +0000 (UTC)
+Date:   Mon, 29 Mar 2021 15:54:03 +0100
 From:   Luis Henriques <lhenriques@suse.de>
 To:     Vivek Goyal <vgoyal@redhat.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         virtio-fs@redhat.com, miklos@szeredi.hu, dgilbert@redhat.com,
         seth.forshee@canonical.com
 Subject: Re: [PATCH v2 1/2] fuse: Add support for FUSE_SETXATTR_V2
-Message-ID: <YGHpPWcZYQQWMvAi@suse.de>
+Message-ID: <YGHqC7bZuh+ytg+p@suse.de>
 References: <20210325151823.572089-1-vgoyal@redhat.com>
  <20210325151823.572089-2-vgoyal@redhat.com>
 MIME-Version: 1.0
@@ -79,15 +79,6 @@ On Thu, Mar 25, 2021 at 11:18:22AM -0400, Vivek Goyal wrote:
 > +	/** Does file server support setxattr_v2 */
 > +	unsigned setxattr_v2:1;
 > +
-
-Minor (pedantic!) comment: most of the fields here start with 'no_*', so
-maybe it's worth setting the logic to use 'no_setxattr_v2' instead?
-
-Cheers,
---
-Luís
-
-
 >  	/** Is getxattr not implemented by fs? */
 >  	unsigned no_getxattr:1;
 >  
@@ -162,6 +153,17 @@ Luís
 > -	args.in_args[0].value = &inarg;
 > +	args.in_args[0].size = setxattr_v2 ? sizeof(inarg_v2) : sizeof(inarg);
 > +	args.in_args[0].value = setxattr_v2 ? &inarg_v2 : (void *)&inarg;
+
+And yet another minor:
+
+It's a bit awkward to have to cast '&inarg' to 'void *' just because
+you're using the ternary operator.  Why not use an 'if' statement instead
+for initializing .size and .value?
+
+Cheers,
+--
+Luís
+
 >  	args.in_args[1].size = strlen(name) + 1;
 >  	args.in_args[1].value = name;
 >  	args.in_args[2].size = size;
