@@ -2,119 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DEE1034D6D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Mar 2021 20:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0569634D6F0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Mar 2021 20:23:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbhC2SRx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Mar 2021 14:17:53 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:41863 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231346AbhC2SRi (ORCPT
+        id S231152AbhC2SXR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Mar 2021 14:23:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39520 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230435AbhC2SWr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Mar 2021 14:17:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617041857;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dgFeyPkzmPObOkTR5EkP4yemPrUTiyxU/lmEG6g4BQs=;
-        b=BsYPJCryDYzLV04YRZQIlJB+hZihp65Np0zH/mc7ilhliPpSVyx1mLwDwm5e1es9PtO5ij
-        bOHcBqxzZLkWB52JbbkHX5O8LPpdGxY1vTmJTSGzRZwDpd3wxcnt5VsHhywC61wFCkec4x
-        rlzuyScXxdMtNLaO6tRp+TryZKJ5Cjk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-303-igv5i0B5MrmOps8rHtPNUw-1; Mon, 29 Mar 2021 14:16:57 -0400
-X-MC-Unique: igv5i0B5MrmOps8rHtPNUw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 76EEC8030C4;
-        Mon, 29 Mar 2021 18:16:55 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-116-64.rdu2.redhat.com [10.10.116.64])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 508E539A60;
-        Mon, 29 Mar 2021 18:16:52 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id DB50F220BCF; Mon, 29 Mar 2021 14:16:51 -0400 (EDT)
-Date:   Mon, 29 Mar 2021 14:16:51 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, miklos@szeredi.hu, dgilbert@redhat.com,
-        seth.forshee@canonical.com
-Subject: Re: [PATCH v2 1/2] fuse: Add support for FUSE_SETXATTR_V2
-Message-ID: <20210329181651.GD676525@redhat.com>
-References: <20210325151823.572089-1-vgoyal@redhat.com>
- <20210325151823.572089-2-vgoyal@redhat.com>
- <YGHpPWcZYQQWMvAi@suse.de>
+        Mon, 29 Mar 2021 14:22:47 -0400
+Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85280C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Mar 2021 11:22:47 -0700 (PDT)
+Received: by mail-ot1-x334.google.com with SMTP id w31-20020a9d36220000b02901f2cbfc9743so13160602otb.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Mar 2021 11:22:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P+4V7kdgmOSoM2q5m0q378E9m02rDEI4zRk0CO5JIEk=;
+        b=ihmdOem+jlQqEIYcjQMemO9yzZ76f8aNqKaq2e8wFi4szCWed/e1VkYakstJEI3Drg
+         NaAdM5GWc0knwIVc+ct6Hw2HnP7hY90CMpni9QukM9RxNUdKXO+8UtDrP5hSr3OnGdo3
+         SKg0voWbPM4pd5WN6CYz0lwI3i8uBCJ9cypbH1Cf9U6oVSlVmAF/cJilJc+gS1S8l056
+         +rctM+5G8Sc+Et8OC9/ZiaHJ6YISl9zzcyHMyx8QAhSYg+ZfYEKNIsYVF8TO4CFqDl6K
+         bMRlibkCRKn3uTiSk9PfKBr3QBZq+/VnNjn39AfuF1jjVsf+WQ6k/kEX2sx+aMYVbwJH
+         2+fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P+4V7kdgmOSoM2q5m0q378E9m02rDEI4zRk0CO5JIEk=;
+        b=VmK2j5U9puxQkzQ1/BfRy4LXV9oxcieMkubfqogOCwXBz0H7Wu+gAx+5eBgMEOuINJ
+         KuEW3k/bmcastomik/MbCoIblw6ckBvnh/j62AvNVNvrAaPgnIJdAEE9Swnxy2UZXgOx
+         EhT0XuFTw8W8wDmy4DH3zaAhrRo1QvlTMcAo7Yds4idiIvjnmSdm+9miqZdMXGdUd/KK
+         chv/YOXQKQ3LvNJPNQra0LHaPDLyi8wDo6CD1gxxFFi/7Q5a8EgPv7dkK7p3CBTs6L3W
+         q8j60kH3tYljoZeoT+8Pt1qcbr6J00y7WidfmUl6QMlWbVTVb802mKzv7A0xz5BubDLT
+         3egQ==
+X-Gm-Message-State: AOAM5300eR2l+U+QQMjMCEsM/R+WHJ9vvXzwXRM9Q/geUEvp1/TtFj3a
+        OEf2wUAVy3TTrI8ZRxPd6KDFVWAmKSABeEThveeCkw==
+X-Google-Smtp-Source: ABdhPJxiVzLFlZAvOj3MGXOk8B4cJRaWtdZ8/zj6Pb9YYwrVffx1QS2Y35JTKZ3UFc6rYjOtTvwKJABEFVgoDhzoe8w=
+X-Received: by 2002:a05:6830:148c:: with SMTP id s12mr24623928otq.251.1617042166749;
+ Mon, 29 Mar 2021 11:22:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YGHpPWcZYQQWMvAi@suse.de>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+References: <20210324112503.623833-1-elver@google.com> <20210324112503.623833-7-elver@google.com>
+ <YFxGb+QHEumZB6G8@elver.google.com> <YGHC7V3bbCxhRWTK@hirez.programming.kicks-ass.net>
+ <20210329142705.GA24849@redhat.com>
+In-Reply-To: <20210329142705.GA24849@redhat.com>
+From:   Marco Elver <elver@google.com>
+Date:   Mon, 29 Mar 2021 20:22:34 +0200
+Message-ID: <CANpmjNN=dpMmanU1mzigUscZQ6_Bx6u4u5mS4Ukhy0PTiexgDA@mail.gmail.com>
+Subject: Re: [PATCH v3 06/11] perf: Add support for SIGTRAP on perf events
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Potapenko <glider@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian@brauner.io>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Matt Morehouse <mascasa@google.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Ian Rogers <irogers@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Jiri Olsa <jolsa@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 29, 2021 at 03:50:37PM +0100, Luis Henriques wrote:
-> On Thu, Mar 25, 2021 at 11:18:22AM -0400, Vivek Goyal wrote:
-> > Fuse client needs to send additional information to file server when
-> > it calls SETXATTR(system.posix_acl_access). Right now there is no extra
-> > space in fuse_setxattr_in. So introduce a v2 of the structure which has
-> > more space in it and can be used to send extra flags.
-> > 
-> > "struct fuse_setxattr_in_v2" is only used if file server opts-in for it using
-> > flag FUSE_SETXATTR_V2 during feature negotiations.
-> > 
-> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > ---
-> >  fs/fuse/acl.c             |  2 +-
-> >  fs/fuse/fuse_i.h          |  5 ++++-
-> >  fs/fuse/inode.c           |  4 +++-
-> >  fs/fuse/xattr.c           | 21 +++++++++++++++------
-> >  include/uapi/linux/fuse.h | 10 ++++++++++
-> >  5 files changed, 33 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
-> > index e9c0f916349d..d31260a139d4 100644
-> > --- a/fs/fuse/acl.c
-> > +++ b/fs/fuse/acl.c
-> > @@ -94,7 +94,7 @@ int fuse_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
-> >  			return ret;
-> >  		}
-> >  
-> > -		ret = fuse_setxattr(inode, name, value, size, 0);
-> > +		ret = fuse_setxattr(inode, name, value, size, 0, 0);
-> >  		kfree(value);
-> >  	} else {
-> >  		ret = fuse_removexattr(inode, name);
-> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > index 63d97a15ffde..d00bf0b9a38c 100644
-> > --- a/fs/fuse/fuse_i.h
-> > +++ b/fs/fuse/fuse_i.h
-> > @@ -668,6 +668,9 @@ struct fuse_conn {
-> >  	/** Is setxattr not implemented by fs? */
-> >  	unsigned no_setxattr:1;
-> >  
-> > +	/** Does file server support setxattr_v2 */
-> > +	unsigned setxattr_v2:1;
-> > +
-> 
-> Minor (pedantic!) comment: most of the fields here start with 'no_*', so
-> maybe it's worth setting the logic to use 'no_setxattr_v2' instead?
+On Mon, 29 Mar 2021 at 16:27, Oleg Nesterov <oleg@redhat.com> wrote:
+> On 03/29, Peter Zijlstra wrote:
+> >
+> > On Thu, Mar 25, 2021 at 09:14:39AM +0100, Marco Elver wrote:
+> > > @@ -6395,6 +6395,13 @@ static void perf_sigtrap(struct perf_event *event)
+> > >  {
+> > >     struct kernel_siginfo info;
+> > >
+> > > +   /*
+> > > +    * This irq_work can race with an exiting task; bail out if sighand has
+> > > +    * already been released in release_task().
+> > > +    */
+> > > +   if (!current->sighand)
+> > > +           return;
+>
+> This is racy. If "current" has already passed exit_notify(), current->parent
+> can do release_task() and destroy current->sighand right after the check.
+>
+> > Urgh.. I'm not entirely sure that check is correct, but I always forget
+> > the rules with signal. It could be we ought to be testing PF_EXISTING
+> > instead.
+>
+> Agreed, PF_EXISTING check makes more sense in any case, the exiting task
+> can't receive the signal anyway.
 
-Hi Luis,
+So, per off-list discussion, it appears that I should ask to clarify:
+PF_EXISTING or PF_EXITING?
 
-"setxattr_v2" kind of makes more sense to me because it is disabled
-by default untile and unless client opts in. If I use no_setxattr_v2,
-then it means by default I will have to initialize it to 1. Right
-now, following automatically takes care of it.
+It appears that PF_EXISTING is what's being suggested, whereas it has
+not been mentioned anywhere, nor are its semantics clear. If it is not
+simply the negation of PF_EXITING, what are its semantics? And why do
+we need it in the case here (instead of something else that already
+exists)?
 
-fc = kzalloc(sizeof(struct fuse_conn), GFP_KERNEL);
-
-Also, there are other examples which don't use "no_" prefix.
-
-auto_inval_data, explicit_inval_data, do_readdirplus, readdirplus_auto, 
-async_dio..... and list goes on.
-
-Vivek
-
+Thanks,
+-- Marco
