@@ -2,142 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E85B34CCEB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Mar 2021 11:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5B6834CCF9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Mar 2021 11:25:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231657AbhC2JVt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Mar 2021 05:21:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54294 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231490AbhC2JVe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Mar 2021 05:21:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EBE8761934;
-        Mon, 29 Mar 2021 09:21:31 +0000 (UTC)
-Date:   Mon, 29 Mar 2021 11:21:29 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] KASAN: null-ptr-deref Read in filp_close (2)
-Message-ID: <20210329092129.g425sscvyfagig7f@wittgenstein>
-References: <00000000000069c40405be6bdad4@google.com>
- <CACT4Y+baP24jKmj-trhF8bG_d_zkz8jN7L1kYBnUR=EAY6hOaA@mail.gmail.com>
- <20210326091207.5si6knxs7tn6rmod@wittgenstein>
- <CACT4Y+atQdf_fe3BPFRGVCzT1Ba3V_XjAo6XsRciL8nwt4wasw@mail.gmail.com>
- <CAHrFyr7iUpMh4sicxrMWwaUHKteU=qHt-1O-3hojAAX3d5879Q@mail.gmail.com>
- <20210326135011.wscs4pxal7vvsmmw@wittgenstein>
- <YF/A0eZdQwi0/PJU@zeniv-ca.linux.org.uk>
+        id S231635AbhC2JYw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Mar 2021 05:24:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34874 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231904AbhC2JYm (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Mar 2021 05:24:42 -0400
+Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCDF4C061756
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Mar 2021 02:24:41 -0700 (PDT)
+Received: by mail-vs1-xe33.google.com with SMTP id f19so1236525vsl.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Mar 2021 02:24:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nUqVYbOsgzJvFaHO534MA1Tdm9chX2nN9+FCc/y44XE=;
+        b=Guw+BOMais6EakAu9RohwYoxmmtYPJnwLs/4rXBB+5UKeB5Yk2UrYiXEwnNnkllavH
+         gR+Ayxy4vd3HWHJa9R982DXzyD662Iha+wtjn3IWiK37BiidxzCx7+ACDI+z1HXLucj4
+         ajJUXlLUtrwguVPFucQuJIwHsRtyodYMdnz88=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nUqVYbOsgzJvFaHO534MA1Tdm9chX2nN9+FCc/y44XE=;
+        b=gZCaHjhjP9RqGpLayj0mqdVDoQjZRqCmaKse8cVZOWKfo7VM33gKpYre+AgeteqYP1
+         ZgMm39iNI9WwqddPcv6k9x7sb9siY48C7Xpunx0tQDVTFV/7oKD1XJGC0MoJmuT7rP6f
+         2wH0u0mko1OjJ5AHbVqEZLESg7SynO/fmuZThcsvsgWEEqF6250gFx4XxJEVv1fi1oiE
+         wy6eet4cHt9xzrObvGuzcIxDI1wVqmMS6aispIK957D3/nlfvmWy3mLZXZGuTpGC7Kou
+         ciLwJwH51fyVh2zXwGNU05fD8nUVqJOIL1RGw2XOZO+0ys5ge8TKv0u/rhfQq4hOXpc7
+         C2zg==
+X-Gm-Message-State: AOAM530Dtc51b9rPqDTLFtVsYjqxWqYLBi6xSUhOr5bHxTa2OJqofy7V
+        7phF/0IX22GQOKrROk8gFCrdfS2oWtLdGz+Y0VWqig==
+X-Google-Smtp-Source: ABdhPJyZxxztIJkv/XIaxwQ8J2HG8Af2Yj5L8n64NOybPY5kHyelQ8Yf6zkuJ1gUrjuqCaWQkxiofplCj62NVVMbq+g=
+X-Received: by 2002:a67:63c5:: with SMTP id x188mr1682420vsb.9.1617009880930;
+ Mon, 29 Mar 2021 02:24:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YF/A0eZdQwi0/PJU@zeniv-ca.linux.org.uk>
+References: <20210325193755.294925-1-mszeredi@redhat.com> <20210325193755.294925-4-mszeredi@redhat.com>
+ <YGDGICWI6o+1zhPI@zeniv-ca.linux.org.uk>
+In-Reply-To: <YGDGICWI6o+1zhPI@zeniv-ca.linux.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 29 Mar 2021 11:24:30 +0200
+Message-ID: <CAJfpegun3LHMZ9uVxbf5knZB6w1CnUHHXeYpn_ReCTdXKaFX0w@mail.gmail.com>
+Subject: Re: [PATCH v3 03/18] ovl: stack fileattr ops
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 27, 2021 at 11:33:37PM +0000, Al Viro wrote:
-> On Fri, Mar 26, 2021 at 02:50:11PM +0100, Christian Brauner wrote:
-> > @@ -632,6 +632,7 @@ EXPORT_SYMBOL(close_fd); /* for ksys_close() */
-> >  static inline void __range_cloexec(struct files_struct *cur_fds,
-> >  				   unsigned int fd, unsigned int max_fd)
-> >  {
-> > +	unsigned int cur_max;
-> >  	struct fdtable *fdt;
-> >  
-> >  	if (fd > max_fd)
-> > @@ -639,7 +640,12 @@ static inline void __range_cloexec(struct files_struct *cur_fds,
-> >  
-> >  	spin_lock(&cur_fds->file_lock);
-> >  	fdt = files_fdtable(cur_fds);
-> > -	bitmap_set(fdt->close_on_exec, fd, max_fd - fd + 1);
-> > +	/* make very sure we're using the correct maximum value */
-> > +	cur_max = fdt->max_fds;
-> > +	cur_max--;
-> > +	cur_max = min(max_fd, cur_max);
-> > +	if (fd <= cur_max)
-> > +		bitmap_set(fdt->close_on_exec, fd, cur_max - fd + 1);
-> >  	spin_unlock(&cur_fds->file_lock);
-> >  }
-> 
-> Umm...  That's harder to follow than it ought to be.  What's the point of
-> having
->         max_fd = min(max_fd, cur_max);
-> done in the caller, anyway?  Note that in __range_close() you have to
-> compare with re-fetched ->max_fds (look at pick_file()), so...
+On Sun, Mar 28, 2021 at 8:09 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Thu, Mar 25, 2021 at 08:37:40PM +0100, Miklos Szeredi wrote:
+> > Add stacking for the fileattr operations.
+> >
+> > Add hack for calling security_file_ioctl() for now.  Probably better to
+> > have a pair of specific hooks for these operations.
+>
+> Umm...  Shouldn't you remove the old code from their ->ioctl() instance?
 
-Yeah, I'll massage that patch a bit. I wanted to know whether this fixes
-the issue first though.
+Will do, once fuse gets converted.
 
-> 
-> BTW, I really wonder if the cost of jerking ->file_lock up and down
-> in that loop in __range_close() is negligible.  What values do we
+And fuse will get converted, when I manage to decide on the best way to do it:
 
-Just for the record, I remember you pointing at that originally. Linus
-argued that this likely wasn't going to be a problem and that if people
-see performance hits we'll optimize.
+1) keep a list of open files for each inode, pick random one for doing
+the ioctl (really shouldn't matter which one)
 
-> typically get from callers and how sparse does descriptor table tend
-> to be for those?
+2) do a sequence of open - [sg]et attr - release for each invocation
 
-Weirdly, I can actually somewhat answer that question since I tend to
-regularly "survey" large userspace projects I know or am involved in
-that adopt new APIs we added just to see how they use it.
-
-A few users:
-1. crun
-   https://github.com/containers/crun/blob/a1c0ef1b886ca30c2fb0906c7c43be04b555c52c/src/libcrun/utils.c#L1490
-   ret = syscall_close_range (n, UINT_MAX, CLOSE_RANGE_CLOEXEC);
-
-2. LXD
-   https://github.com/lxc/lxd/blob/f12f03a4ba4645892ef6cc167c24da49d1217b02/lxd/main_forkexec.go#L293
-   ret = close_range(EXEC_PIPE_FD + 1, UINT_MAX, CLOSE_RANGE_UNSHARE);
-
-3. LXC
-   https://github.com/lxc/lxc/blob/1718e6d6018d5d6072a01d92a11d5aafc314f98f/src/lxc/rexec.c#L165
-   ret = close_range(STDERR_FILENO + 1, MAX_FILENO, CLOSE_RANGE_CLOEXEC);
-
-Of these three 1. and 3. don't matter because they rely on
-CLOSE_RANGE_CLOEXEC and exec.
-For 2. I can say that the fdtable is likely going to be sparse.
-close_range() here is basically used to prevent accidental fd leaks
-across an exec. So 2. should never have more > 4 file. In fact, this
-could and should probably be switched to CLOSE_RANGE_CLOEXEC too.
-
-The next two cases might be more interesting:
-
-4. systemd
-   - https://github.com/systemd/systemd/blob/fe96c0f86d15e844d74d539c6cff7f971078cf84/src/basic/fd-util.c#L228
-     close_range(3, -1, 0)
-   - https://github.com/systemd/systemd/blob/fe96c0f86d15e844d74d539c6cff7f971078cf84/src/basic/fd-util.c#L271
-     https://github.com/systemd/systemd/blob/fe96c0f86d15e844d74d539c6cff7f971078cf84/src/basic/fd-util.c#L288
-     /* Close everything between the start and end fds (both of which shall stay open) */
-     if (close_range(start + 1, end - 1, 0) < 0) {
-     if (close_range(sorted[n_sorted-1] + 1, -1, 0) >= 0)
-
-5. Python
-   https://github.com/python/cpython/blob/9976834f807ea63ca51bc4f89be457d734148682/Python/fileutils.c#L2250
-
-systemd has the regular case that others have too where it simply closes
-all fds over 3 and it also has the more complicated case where it has an
-ordered array of fds closing up to the lower bound and after the upper
-bound up to the maximum. PID 1 can have a large number of fds open
-because of socket activation so here close_range() will encounter less
-sparse fd tables where it needs to close a lot of fds.
-
-For Python's os.closerange() implementation which depends on our syscall
-it's harder to say given that this will be used by a lot of projects but
-I would _guess_ that if people use closerange() they do so because they
-actually have something to close.
-
-In short, I would think that close_range() without the
-CLOSE_RANGE_CLOEXEC feature will usually be used in scenarios where
-there's work to be done, i.e. where the caller likely knows that they
-might inherit a non-trivial number of file descriptors (usually after a
-fork) that they want to close and they want to do it either because they
-don't exec or they don't know when they'll exec. All others I'd expect
-to switch to CLOSE_RANGE_CLOEXEC on kernels where it's supported.
-
-Christian
+Thanks,
+Miklos
