@@ -2,81 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BEC0234CC9C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Mar 2021 11:07:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E85B34CCEB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Mar 2021 11:22:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232909AbhC2JEv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Mar 2021 05:04:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55590 "EHLO mx2.suse.de"
+        id S231657AbhC2JVt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Mar 2021 05:21:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235902AbhC2JAk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Mar 2021 05:00:40 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id C6365B3C1;
-        Mon, 29 Mar 2021 09:00:38 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 637eba85;
-        Mon, 29 Mar 2021 09:01:59 +0000 (UTC)
-Date:   Mon, 29 Mar 2021 10:01:58 +0100
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>
-Subject: Re: fuse: kernel BUG at mm/truncate.c:763!
-Message-ID: <YGGXhomAy9SF3VwN@suse.de>
-References: <YEtc54pWLLjb6SgL@suse.de>
- <20210312131123.GZ3479805@casper.infradead.org>
- <YE8tQc66C6MW7EqY@suse.de>
- <20210315110659.GT2577561@casper.infradead.org>
- <YFMct4z1gEa8tXkh@suse.de>
- <CAJfpeguX7NrdTH4JLbCtkQ1u7TFvUh+8s7RmwB_wmuPHJsQyiA@mail.gmail.com>
- <20210318110302.nxddmrhmgmlw4adq@black.fi.intel.com>
- <YFM5mEZ8dZBhZWLI@suse.de>
- <20210318115543.GM3420@casper.infradead.org>
- <YFRoqYYqATd6R9GF@suse.de>
+        id S231490AbhC2JVe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Mar 2021 05:21:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id EBE8761934;
+        Mon, 29 Mar 2021 09:21:31 +0000 (UTC)
+Date:   Mon, 29 Mar 2021 11:21:29 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] KASAN: null-ptr-deref Read in filp_close (2)
+Message-ID: <20210329092129.g425sscvyfagig7f@wittgenstein>
+References: <00000000000069c40405be6bdad4@google.com>
+ <CACT4Y+baP24jKmj-trhF8bG_d_zkz8jN7L1kYBnUR=EAY6hOaA@mail.gmail.com>
+ <20210326091207.5si6knxs7tn6rmod@wittgenstein>
+ <CACT4Y+atQdf_fe3BPFRGVCzT1Ba3V_XjAo6XsRciL8nwt4wasw@mail.gmail.com>
+ <CAHrFyr7iUpMh4sicxrMWwaUHKteU=qHt-1O-3hojAAX3d5879Q@mail.gmail.com>
+ <20210326135011.wscs4pxal7vvsmmw@wittgenstein>
+ <YF/A0eZdQwi0/PJU@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YFRoqYYqATd6R9GF@suse.de>
+In-Reply-To: <YF/A0eZdQwi0/PJU@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 19, 2021 at 09:02:33AM +0000, Luis Henriques wrote:
-> On Thu, Mar 18, 2021 at 11:55:43AM +0000, Matthew Wilcox wrote:
-> > On Thu, Mar 18, 2021 at 11:29:28AM +0000, Luis Henriques wrote:
-> > > On Thu, Mar 18, 2021 at 02:03:02PM +0300, Kirill A. Shutemov wrote:
-> > > > On Thu, Mar 18, 2021 at 11:59:59AM +0100, Miklos Szeredi wrote:
-> > > > > > [16247.536348] page:00000000dfe36ab1 refcount:673 mapcount:0 mapping:00000000f982a7f8 index:0x1400 pfn:0x4c65e00
-> > > > > > [16247.536359] head:00000000dfe36ab1 order:9 compound_mapcount:0 compound_pincount:0
-> > > > > 
-> > > > > This is a compound page alright.   Have no idea how it got into fuse's
-> > > > > pagecache.
-> > > > 
-> > > > 
-> > > > Luis, do you have CONFIG_READ_ONLY_THP_FOR_FS enabled?
-> > > 
-> > > Yes, it looks like Tumbleweed kernels have that config option enabled by
-> > > default.  And it this feature was introduced in 5.4 (the bug doesn't seem
-> > > to be reproducible in 5.3).
-> > 
-> > Can you try adding this patch?
-> > 
-> > https://git.infradead.org/users/willy/pagecache.git/commitdiff/369a4fcd78369b7a026bdef465af9669bde98ef4
+On Sat, Mar 27, 2021 at 11:33:37PM +0000, Al Viro wrote:
+> On Fri, Mar 26, 2021 at 02:50:11PM +0100, Christian Brauner wrote:
+> > @@ -632,6 +632,7 @@ EXPORT_SYMBOL(close_fd); /* for ksys_close() */
+> >  static inline void __range_cloexec(struct files_struct *cur_fds,
+> >  				   unsigned int fd, unsigned int max_fd)
+> >  {
+> > +	unsigned int cur_max;
+> >  	struct fdtable *fdt;
+> >  
+> >  	if (fd > max_fd)
+> > @@ -639,7 +640,12 @@ static inline void __range_cloexec(struct files_struct *cur_fds,
+> >  
+> >  	spin_lock(&cur_fds->file_lock);
+> >  	fdt = files_fdtable(cur_fds);
+> > -	bitmap_set(fdt->close_on_exec, fd, max_fd - fd + 1);
+> > +	/* make very sure we're using the correct maximum value */
+> > +	cur_max = fdt->max_fds;
+> > +	cur_max--;
+> > +	cur_max = min(max_fd, cur_max);
+> > +	if (fd <= cur_max)
+> > +		bitmap_set(fdt->close_on_exec, fd, cur_max - fd + 1);
+> >  	spin_unlock(&cur_fds->file_lock);
+> >  }
 > 
-> Good news, looks like this patch fixes the issue[1].  Thanks a lot
-> everyone.  Is this already queued somewhere for 5.12?  Also, it would be
-> nice to have it Cc'ed for stable kernels >= 5.4.
+> Umm...  That's harder to follow than it ought to be.  What's the point of
+> having
+>         max_fd = min(max_fd, cur_max);
+> done in the caller, anyway?  Note that in __range_close() you have to
+> compare with re-fetched ->max_fds (look at pick_file()), so...
 
-Ping.  Are you planning to push this for 5.12, or is that queued for the
-5.13 merged window?  Or "none of the above"? :)
+Yeah, I'll massage that patch a bit. I wanted to know whether this fixes
+the issue first though.
 
-Cheers,
---
-Luís
+> 
+> BTW, I really wonder if the cost of jerking ->file_lock up and down
+> in that loop in __range_close() is negligible.  What values do we
+
+Just for the record, I remember you pointing at that originally. Linus
+argued that this likely wasn't going to be a problem and that if people
+see performance hits we'll optimize.
+
+> typically get from callers and how sparse does descriptor table tend
+> to be for those?
+
+Weirdly, I can actually somewhat answer that question since I tend to
+regularly "survey" large userspace projects I know or am involved in
+that adopt new APIs we added just to see how they use it.
+
+A few users:
+1. crun
+   https://github.com/containers/crun/blob/a1c0ef1b886ca30c2fb0906c7c43be04b555c52c/src/libcrun/utils.c#L1490
+   ret = syscall_close_range (n, UINT_MAX, CLOSE_RANGE_CLOEXEC);
+
+2. LXD
+   https://github.com/lxc/lxd/blob/f12f03a4ba4645892ef6cc167c24da49d1217b02/lxd/main_forkexec.go#L293
+   ret = close_range(EXEC_PIPE_FD + 1, UINT_MAX, CLOSE_RANGE_UNSHARE);
+
+3. LXC
+   https://github.com/lxc/lxc/blob/1718e6d6018d5d6072a01d92a11d5aafc314f98f/src/lxc/rexec.c#L165
+   ret = close_range(STDERR_FILENO + 1, MAX_FILENO, CLOSE_RANGE_CLOEXEC);
+
+Of these three 1. and 3. don't matter because they rely on
+CLOSE_RANGE_CLOEXEC and exec.
+For 2. I can say that the fdtable is likely going to be sparse.
+close_range() here is basically used to prevent accidental fd leaks
+across an exec. So 2. should never have more > 4 file. In fact, this
+could and should probably be switched to CLOSE_RANGE_CLOEXEC too.
+
+The next two cases might be more interesting:
+
+4. systemd
+   - https://github.com/systemd/systemd/blob/fe96c0f86d15e844d74d539c6cff7f971078cf84/src/basic/fd-util.c#L228
+     close_range(3, -1, 0)
+   - https://github.com/systemd/systemd/blob/fe96c0f86d15e844d74d539c6cff7f971078cf84/src/basic/fd-util.c#L271
+     https://github.com/systemd/systemd/blob/fe96c0f86d15e844d74d539c6cff7f971078cf84/src/basic/fd-util.c#L288
+     /* Close everything between the start and end fds (both of which shall stay open) */
+     if (close_range(start + 1, end - 1, 0) < 0) {
+     if (close_range(sorted[n_sorted-1] + 1, -1, 0) >= 0)
+
+5. Python
+   https://github.com/python/cpython/blob/9976834f807ea63ca51bc4f89be457d734148682/Python/fileutils.c#L2250
+
+systemd has the regular case that others have too where it simply closes
+all fds over 3 and it also has the more complicated case where it has an
+ordered array of fds closing up to the lower bound and after the upper
+bound up to the maximum. PID 1 can have a large number of fds open
+because of socket activation so here close_range() will encounter less
+sparse fd tables where it needs to close a lot of fds.
+
+For Python's os.closerange() implementation which depends on our syscall
+it's harder to say given that this will be used by a lot of projects but
+I would _guess_ that if people use closerange() they do so because they
+actually have something to close.
+
+In short, I would think that close_range() without the
+CLOSE_RANGE_CLOEXEC feature will usually be used in scenarios where
+there's work to be done, i.e. where the caller likely knows that they
+might inherit a non-trivial number of file descriptors (usually after a
+fork) that they want to close and they want to do it either because they
+don't exec or they don't know when they'll exec. All others I'd expect
+to switch to CLOSE_RANGE_CLOEXEC on kernels where it's supported.
+
+Christian
