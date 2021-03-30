@@ -2,65 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E43E334F372
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 23:30:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDEE834F365
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 23:29:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233392AbhC3V3h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Mar 2021 17:29:37 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52270 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233283AbhC3V2l (ORCPT
+        id S233173AbhC3V3B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Mar 2021 17:29:01 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:33516 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233166AbhC3V2Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Mar 2021 17:28:41 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULP4EC145279;
-        Tue, 30 Mar 2021 21:27:40 GMT
+        Tue, 30 Mar 2021 17:28:25 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULObGB122825;
+        Tue, 30 Mar 2021 21:27:44 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : content-type :
  mime-version; s=corp-2020-01-29;
- bh=GZb4CKpxRwLNdd15u2UORaRNMHAWzMb1KyTaA8tHhy4=;
- b=mqRWvebD0I6wpyEJqjoYSO8ruKRCQ2WYAgSR7o2rieUPFL73AlwFyiDhp+Nsxokp/Imh
- 3ncEXPYbHcwOEDa6ZxM6IoocCjFw7GEQmCupqbf1xG7Ts+L7Xpj/++kRQ5KDYM8TCk7c
- 5BzUa/PyACJGKlUxAASVTzHrOX3nM97c11OWl9J7QRTv73MeVL34bWOIcndQvpxJ4Xai
- i3c8GfmK1bEIV+A7Ex/DNmb+fvkZEbzSJ6ra00Mjlv0SA3zyt+noK95y8xoB98TU+y8D
- MpQRWK9BUamAmjF1aI+vNp/FQ7f4FiKVHK/Ic457Kh0liVFRyyuFWGvgD4wZtRrxvJPu vQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 37mad9r8j8-1
+ bh=v2KigxXcZE6xlJHQ8aE8ca0rwLVEP3O2wfEC7HbsMsc=;
+ b=AkK8TuFiPJv0jHSk4n2XebcD44o3b65WbuJMMXQG1+tPElHSzlED3i+1IiaY/VDtlENu
+ ddACSfleBxr2XJJsoSAhn36QVSHa1CltgoSeekLA0TgaShzOO0ZNHpwalGvMsgNKlSSs
+ NkUPFW0OL8HtQ5Fs0Pfpb9I40WQ5Xj1vgSZrhMvCrIUVN5lsSUukY43hhosFM0X+H1kc
+ +T+yOYecqzawllcpgfsm+XeTuFT+YfsD/Rszf/5lGu6SZ5WUaFfOp0sjzdhhA8GDIahm
+ qdsag+XgDF8DUZ9krm1kQRH4OxPjZg/YcPu4qZb3HUvzxYvZ76oXsHohofcBz5w8bfXv yw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 37mafv084y-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Mar 2021 21:27:39 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULPRHc105743;
-        Tue, 30 Mar 2021 21:27:39 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2042.outbound.protection.outlook.com [104.47.66.42])
-        by userp3030.oracle.com with ESMTP id 37mabkbd9u-1
+        Tue, 30 Mar 2021 21:27:44 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULOZw2149611;
+        Tue, 30 Mar 2021 21:27:43 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2047.outbound.protection.outlook.com [104.47.66.47])
+        by userp3020.oracle.com with ESMTP id 37mac4kgfr-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Mar 2021 21:27:39 +0000
+        Tue, 30 Mar 2021 21:27:43 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cpI7jMc0Uc59Tx4VVJWOS2ZbVjg+g6Bei4PNGcCGVu1f60bEPUiIy9pQnk/QCq6OmrM9o8/uY4d+D0Mqx29mGsTXS3e+mpwi8fEroLtqn+1DYlBMMlSRRTiRutfmiA2sMATCAacJgBuGIhBZqBzTxKFUQPsanblezIsvTkRSm+ke21WpKLDw2mZavGjrSYjf6jvpI9+7m3cAapcy+aA54C+RtLf70N+aCdMG0mBk5ZODiURD8JiaSciPIxzrOh6kdNvNVrpv5hH6Re41oOz5feWiXSjk5TX5URnD097KxZvnnxhNmUR+lpVx6Jwhrv3umsZsRCME3XiSVMIm7+QaJQ==
+ b=Lx72bby8grU4JYVJckmq7gEECSGcbZMjIT01rs/10+otuUetNhI3dCHeLUGlfRdcUk++Dph1GAH4mypzfQwt2PO5llYOeMSCr7CPYG8F4mXt8zCnGrNl1d8QTsA/hoPSsvm8MroLzyczkY3M6XX0zJh2BdcDkFVLh2r1LJIUYOHhsnJdW8xiM8gAF6Usvu1U0gmIDcTHWACtsg0SRudxldl55bt9Xdc0Vmtodc6gBU/dfwc6Hmrw4XDNdKxfFoD4HJkiBIboSa8D+wxHRCs5a/ZT38ba0bKjyOUtFwTWdCwYZTIpnwSwbR8kF+zHhyNGqr2g0zmqSXmyNd9xPNZa5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GZb4CKpxRwLNdd15u2UORaRNMHAWzMb1KyTaA8tHhy4=;
- b=IIWNU6qCAlygsm08rB+7/Ed+wSdU8SaGDu0nAfL2YEQNtCl4Su0qfoNc2ebopyhguXHBMF+zaz0K8BY9Z0Wx6T13JXnRp6XmvwMqQAxx3gNG/fZ4Lygmid8D1ZExaWKI2KwhuxiOMcrnwyYsKEnN8qYmGk1TZjAecFVL+rq+Cr0lis1PeLD8v0QRR+6ldCxklJT2GceMVTA6VjrG9XJhxgzkJC/hbuz53iiuiDVY4opV5j2yyWgfMvpOxmw8snAvZ8rpXlkDornU5tCEvXZ3sCMPabp7l9jvo/3CfoliYRR5DoBAO4XPFvM5cHDERMJZBQwrWK6+bgIcSfWoOxa5jA==
+ bh=v2KigxXcZE6xlJHQ8aE8ca0rwLVEP3O2wfEC7HbsMsc=;
+ b=bar5iiuoypRROsFMFUNzzsTUdEmgaecKkJzvcGexMSyAjSMKZVgeYmtt2+Ux9FjkbP9wDDXn0KEwihynPl2BekCHFgF0Z8rdOEotgwe6tHT9kpIdEMKa6I1fJ7sUZ7bNpinc3JISTaqtcN6YOMOODLv5+k/ujfJSi1tgH8ISv9ZABwCF8cHenL7/0sMbD9PpI3znAFi6RKy04Bm2JUm4oJhRhYYTt4b2Gx3pLxZs6LSSyjrnYD5QkOuqxFS2Q11lZk1GgzD/pkiPK0CIlhgf7A9eS0GEJPTO8Yt1XongpZJuDYT6DFoM62iqWY2TC4mXuJI3Eht93Ot5zY+kjTeHHQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GZb4CKpxRwLNdd15u2UORaRNMHAWzMb1KyTaA8tHhy4=;
- b=KVzuITmvTMKqMWq2Lo+tOy0nMXa2xnpi41r3QpF0KuC2KazTOpaq+v1JfCTX53FH1PkZylSkDeqkKoTkJ26MMNz3oZy09Pf7M6OBCuXXVkzRCE88PJhAaPg+yJE7qgoYf29jVeYKP6iiqI2R+VqA8A7ioRwgqdycdOtQzJ57EKE=
+ bh=v2KigxXcZE6xlJHQ8aE8ca0rwLVEP3O2wfEC7HbsMsc=;
+ b=G/NSXdIBzxKG7dyPVZDlBpKV3+7TD2osDYN2fqQFo35JL+spDTFncJ+vrfj+JhYZAFGMe2J04obUXwJWL/+Aa3uAOkDHFADrCqFUjjO99FYsSEt0ucsfMYkuVHmQtWOYOQ6MN68RGdnJZpvjBuOj5JiITUG8i0tKZviWHq7ljhQ=
 Authentication-Results: kvack.org; dkim=none (message not signed)
  header.d=none;kvack.org; dmarc=none action=none header.from=oracle.com;
 Received: from MN2PR10MB3533.namprd10.prod.outlook.com (2603:10b6:208:118::32)
  by BLAPR10MB5265.namprd10.prod.outlook.com (2603:10b6:208:325::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.26; Tue, 30 Mar
- 2021 21:27:36 +0000
+ 2021 21:27:41 +0000
 Received: from MN2PR10MB3533.namprd10.prod.outlook.com
  ([fe80::cc79:c40e:430f:e254]) by MN2PR10MB3533.namprd10.prod.outlook.com
  ([fe80::cc79:c40e:430f:e254%4]) with mapi id 15.20.3977.033; Tue, 30 Mar 2021
- 21:27:36 +0000
+ 21:27:41 +0000
 From:   Anthony Yznaga <anthony.yznaga@oracle.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
@@ -81,9 +81,9 @@ Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
         lei.l.li@intel.com, daniel.m.jordan@oracle.com,
         steven.sistare@oracle.com, linux-fsdevel@vger.kernel.org,
         linux-doc@vger.kernel.org, kexec@lists.infradead.org
-Subject: [RFC v2 36/43] PKRAM: add support for loading pages in bulk
-Date:   Tue, 30 Mar 2021 14:36:11 -0700
-Message-Id: <1617140178-8773-37-git-send-email-anthony.yznaga@oracle.com>
+Subject: [RFC v2 37/43] shmem: PKRAM: enable bulk loading of preserved pages into shmem
+Date:   Tue, 30 Mar 2021 14:36:12 -0700
+Message-Id: <1617140178-8773-38-git-send-email-anthony.yznaga@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1617140178-8773-1-git-send-email-anthony.yznaga@oracle.com>
 References: <1617140178-8773-1-git-send-email-anthony.yznaga@oracle.com>
@@ -94,152 +94,118 @@ X-ClientProxiedBy: BYAPR11CA0099.namprd11.prod.outlook.com
  (2603:10b6:208:118::32)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from ca-qasparc-x86-2.us.oracle.com (148.87.23.8) by BYAPR11CA0099.namprd11.prod.outlook.com (2603:10b6:a03:f4::40) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.26 via Frontend Transport; Tue, 30 Mar 2021 21:27:32 +0000
+Received: from ca-qasparc-x86-2.us.oracle.com (148.87.23.8) by BYAPR11CA0099.namprd11.prod.outlook.com (2603:10b6:a03:f4::40) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.26 via Frontend Transport; Tue, 30 Mar 2021 21:27:36 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 24a46131-2667-4eca-bd58-08d8f3c2a375
+X-MS-Office365-Filtering-Correlation-Id: 4d5dfe61-72fe-468d-335c-08d8f3c2a60a
 X-MS-TrafficTypeDiagnostic: BLAPR10MB5265:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <BLAPR10MB52650E5C2C3AF4C0E7D8D806EC7D9@BLAPR10MB5265.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-Microsoft-Antispam-PRVS: <BLAPR10MB52651A7F32254037C5AE56C9EC7D9@BLAPR10MB5265.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1122;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ze00x5J0RiFSrqhD7dupwIb+f6ZKYyOFV3N+LvLIFVqoCG1dITM/qHKqfghXQhMPt2/79wPVTt+lO8/Ynb8OzkFMRLyDu/gsgPXhZn0pjTqik8J1WPHbIV8bnArwxDmdMPXQxSYhWpsuPY7wRp1+n02JgF4JTy/stdbxFAM++zsGOxyacPB7ceI2Gd5DX9fP8LfmeHwJSCLw8u/vpQ5LibS6E9bv6PzZ47O/+8i5RWLHuQPO1o5Plhz+uj1lQCAfR4cENh9T6On9zI4DHXbhH4c44s2DBAum36WW9LZ5NlY56QFxRvMlvxRA6AQVcEsBCF3rk5TRCcNi1eyNMBqKBOA3qQpUH/CYpe6EM3yIY1DwwtMI4iUey7Hznq4K4t6fFeCAlEyai92iknWRG046ZuaUVklZsNkIfTBRUWCcXXaaXTJRYieopK7IOi6ku2YcoGc4adyNaWKfzAahM8uHv2oBDWtgAml5M3xMu3xOIXR2Q/uUvjt9SjMwEHPRNj9dqZMTOsJNJYtV3a0TuzlBVsOxfY2rCcSToTdZkeEAm/k14zMZsL86rN6Ta598k6GTCPAnr5N2TCVJt8sfauwtyRWy2up0wXNQ00uuOgtRWNBIsflyazJ1z2Shh26JgVNeAXN/t0In/58pGJhVDM3nqg==
+X-Microsoft-Antispam-Message-Info: oaqzA23g1sHDTw1RWvfLsh93CZni+lpTjwCS2rW4KXqKfVJ40qwWgrgBXejrbj/ab16qaeuOzDbGfI0KlywnmbKvA5FmqQniUgFLtfn4yWqwMtXlGSOyfp74R4Ty/LPmEhsXSQ5ZVvKhFRExBHLnLbfGLTdfOZQrgXktOZg/VKy5dpyNHZGfexli1ENo23oivUNrgiPRJiK7JKSKM45ugbAaAPDUWwSEoyYi9i3Hj9L95F4NUzoN1YM3Z7gLuyNlR5Kz4+uvaOMyxq02Xt1HO4f/h7crHIpwy4FTyVzi2zYeTNCblMOR9WPSoMn7NE9wpDsYV57PEuBfLOY4Wrfo7RbdIIdiXFPlPjZ8Bqg3zS2IAY0XY6tGZucgqX9AJyFWe+n0VWqJGpJonslLCA7bIgx/naP0h+92xCcMRpRVIwocyEh7v7BGcSDQz0Lq16Hvp1obJl8TERnSfr0e1eM8Jczt6DwzLeR+wh7sC+JY/kktxuXCfK/CEB6UofCszjL6IBjeFu7Ft3KaRwTZOoXAcIP3pc/qsFjUvtdgqCZ2pZ7+WyWMblWDFwZLLEyHZDglKIuwLJLwb/CiW4wrDD2dMT7VUUDEQaEWzLoqBJJxLqE2Hz1DBrH3rHsPlUa2pXZvUKLOg+9lJGe0brOro6/NdA==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB3533.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(396003)(136003)(346002)(376002)(39860400002)(26005)(956004)(52116002)(186003)(38100700001)(36756003)(4326008)(8676002)(44832011)(2906002)(316002)(66476007)(2616005)(7696005)(478600001)(8936002)(86362001)(6666004)(83380400001)(7416002)(66946007)(5660300002)(16526019)(6486002)(7406005)(66556008);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?KVjdA1n0AV1WT4Gc9zYDX932WmIDW4OxC/dMk1b/ZEo+yW8GNbJDQvCV6tML?=
- =?us-ascii?Q?DtUew+84kmjj5HhojABgL6+TDMD7YJAuW3n//FUkmuJLmZW5u2N/7o+NPm75?=
- =?us-ascii?Q?GeAa+CpcebQ2cdbQD199rfWBWlnwiQaATF4SuatK5wYwPRxTSD/vrcqUoD9Z?=
- =?us-ascii?Q?IFjp6Nuf93nLuCswGwSPrbB7OflpfaFX982uOV20KyWViUT4YnA+U8P79Ve4?=
- =?us-ascii?Q?BMuka/qm/pKbKaEhr7JwsNeiJvRA6asuosOeK+UoZW0KIIdnK6adCVjjozji?=
- =?us-ascii?Q?d6q5xcCkG2EFsaebyUk8tSoT8Dk0xXFcEb/YHnPZcA4NY8KVPb2ZGjCzh7Td?=
- =?us-ascii?Q?ha0jYkgnDt6DNOQrHodneKPmNA/kIb2HJ2JdQbW6mBFzOJYsttuI6T5ycoi1?=
- =?us-ascii?Q?1CQo7M5vuNPRSpFdEvSwqmA0kuk1qsGircgPfSGx1ohTvD3CWgrPdYwkCZKV?=
- =?us-ascii?Q?jw8fu1O41DWQh62ncYcdprsSBDhYj9Gxgwu+KVqUiSIVle4TKJ6ob4KvkO8S?=
- =?us-ascii?Q?9crINQS7rXkUK3IjIUI2Wtn7CU2NsLOAud7wiWKFx/usrU8vDFcyM/AeS/e4?=
- =?us-ascii?Q?5s4nmAwAuWmv2k00frGZPNksMEtZEgouHGhio2ZFxzhrMnoZCLfJBZmGe4JZ?=
- =?us-ascii?Q?N3vej2zQRg38Gu9R4G9h+D7SxStNZFaUPD7rpLSOf97r2WmwhBPHD1VIFJAk?=
- =?us-ascii?Q?p7m1ux5PiLKqNTgT50KaxS0Mv2jiPRMEYVK/wxaHY8rhQw1MYTqjSoE7qTwL?=
- =?us-ascii?Q?Ev2jRurgEOFZPfyugayEFHqZjbo3Yj12JX3d9+rTLB9D/9dffGT+TY14JRij?=
- =?us-ascii?Q?El65CiYpmAXmJr7M0nW6xyJZPNY4sIQsza8pleSSuJqrPfjlVshPHeDpvuAn?=
- =?us-ascii?Q?AlBEhVPyp8hpCnWt2ZHvl61WSbkf+XzG+snAWxLq0jiyJ8doMPohYllsfbk8?=
- =?us-ascii?Q?E2+WPX12txBCTt57216AD6NBXRsWlauux5fuCcfL2Hg+aQOKht/ClaQ7v4xT?=
- =?us-ascii?Q?KA9LHiP1FUQgmcS70yP2sRnytA175oSK8pm4vRTdkxFxnzzI4uXrkZ/sHMqb?=
- =?us-ascii?Q?38fcyi9f0d3Yikp1d69ONwJs7rRkbWnV9SH5lJbUlS7VOxXdswwezJGvgRVs?=
- =?us-ascii?Q?rVYQMNHcGgdjJrTcm2X4JFcYMn2sk5h4dbQKk4nb/jrkoiIvp+UagRkfxSrr?=
- =?us-ascii?Q?945MLY6rKAIHUaS5GMSEEUpHVpQegmX15nvR8fUik4Jno/r1c4yeSbkF9WUW?=
- =?us-ascii?Q?w4gHqw/GDdUGA+OLrgoDR7mhkrvv9K8I45ZaQ3qSS9jCfcnMzXdvjsJUS8cO?=
- =?us-ascii?Q?VU/SC49yk4Y14ziK3Hxzuc3P?=
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?N9EVpIVg77lhR38oyow4xGf926FI59UZgXkx2TyPq48ldarLcQ8JRZCasn64?=
+ =?us-ascii?Q?lx1czalPGjTayajc3Lo1MDyS+WeHNndq/MKCP03/fxsjPOi3Y+PMboc8RY+3?=
+ =?us-ascii?Q?jguZHGdkN88rhtooy9vnAncc5xxLjj/wBwEGYZ7jCtqrVYGrVVU8dgll59Dk?=
+ =?us-ascii?Q?dG+myxO9h+olAttJ70s1B2m+WuxfYzReTZGZxQDGdp2a97wQ20Ma1xJhHRFG?=
+ =?us-ascii?Q?hNj/tMmCv9wmToP4LwvIUIa0eg/bZcjnqoVoW/18i8JqchEy2cS6+YpNbWFP?=
+ =?us-ascii?Q?AQL/OlekdUzTAhxj+GL8VXDiYMakVQX55KGgP1iRPg5o7OHLLvx5WGkJZRiz?=
+ =?us-ascii?Q?2FFQqJ4xV8nCaEKuex8c1PYAMYFRuwsPA/rhVlw5FEvwOey3BUBxaRadXl4J?=
+ =?us-ascii?Q?Q39NJDp45YQOcLHRhkTk3gadJQRgaECFG+xVte6PUIiltfBA+3YFmIELOu2+?=
+ =?us-ascii?Q?lOZGF4d+NhMZEEZGhTZf62KugFOwqNe2+g2uVrPIaWCSsKjA4NB+AGBOF+G6?=
+ =?us-ascii?Q?oIB9O71jwdUASxcbeCBYQpaZwJJv3+t4Fc37qWx+yUy9939US8ctCcclErD4?=
+ =?us-ascii?Q?W1SqbbmNRs72vNrS5EuBsa5GBrq7zkn0AnsFgB0BIpgLm0/3fTHcxYSGTVdy?=
+ =?us-ascii?Q?CItoJ56oZqJz/vjj55rInAlhB5xY8dafm55ydWmNmhD/WL8fX3jOLi1BxfAG?=
+ =?us-ascii?Q?yAXweYi/OiXfn5ff/YxXZvCBs9UcjTpIW8A4/3Yy8RX4AG+L+EFL07He1tpR?=
+ =?us-ascii?Q?Ash83UBlM4khxCQT4sI06LSM087rm0uqLvQO43eLEz/gS/kXwOc1lnVJ5dOI?=
+ =?us-ascii?Q?PvUoHcTbCSuhgC/Q9XyGji/eh1o065UKxKL8AirtiSmcrGFDTRuNO1fD/uKh?=
+ =?us-ascii?Q?ufDv+d+a+UmWfC6799/bfh74H6SLNgb4CqwIlJHsOd3agHLHjPYC52eMvVXC?=
+ =?us-ascii?Q?jBPBX6oed6INNYKA1tcJviMsGERFZUp4hitVpzxO0yNZ//UYzlOUSMZbMWUh?=
+ =?us-ascii?Q?dL8p3340PGK/UQfdR5Sz8Lbr0L4/VZq4mKVehGK9yf/x54U4Q/qUqImc8Nft?=
+ =?us-ascii?Q?YJNJeZZSeAQP+bDhiQ8rNXSNY4zxNVa3TrreAO9MzOEl0JWPH2i2WVGMVBfn?=
+ =?us-ascii?Q?AvC+/T32aT3XDow9vTo47GTCw6jgxfpbBxBr6l5MA8rdY/G1h1iCQGvmtvOc?=
+ =?us-ascii?Q?FXc11zV60iMd7Qh61d1G6p1dTq0IWrpnIgEDKMUIh+R9J9k+ATjQt6K0rtXV?=
+ =?us-ascii?Q?iW5Ihht+vxculzxRp/bN9/K/H77CYsFd+edITunBujbAIt3YQtMf//p51fqw?=
+ =?us-ascii?Q?1P8rrO6AAvBDp7XuGS58RRiO?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 24a46131-2667-4eca-bd58-08d8f3c2a375
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d5dfe61-72fe-468d-335c-08d8f3c2a60a
 X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB3533.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2021 21:27:36.6421
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2021 21:27:41.0285
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lx6J6g8oVLew/mQ8rJaDTzvnXWq/48/0rAOX9+LEMTljwfQjPw5etuyKfCHmYIAB0PMLZzJjvJnqf5wjVmT5chP31MsYhY5/736jHrAzTAE=
+X-MS-Exchange-CrossTenant-UserPrincipalName: EDSMHUQvsM10K6U275XDFiCedDIDxbBBgLGuae5kD/YTS+COD3xO/tRNuBOxtlL3QRXOtb0ka2c93i/akR/EOt8PArGWdbpzP/iaWjUAcgc=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5265
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9939 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 suspectscore=0 spamscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999
+ malwarescore=0 spamscore=0 mlxscore=0 suspectscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2103300000 definitions=main-2103300156
-X-Proofpoint-ORIG-GUID: N85R9sVWvAIJVK2_WzLDZcyc4B5qvzPL
-X-Proofpoint-GUID: N85R9sVWvAIJVK2_WzLDZcyc4B5qvzPL
+X-Proofpoint-ORIG-GUID: def8N68OmN_oEfauHp9oC2IQSk7O-f2M
+X-Proofpoint-GUID: def8N68OmN_oEfauHp9oC2IQSk7O-f2M
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9939 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- bulkscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0 adultscore=0
- spamscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 impostorscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 adultscore=0
+ impostorscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=999
+ priorityscore=1501 phishscore=0 malwarescore=0 mlxscore=0 suspectscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103300000
  definitions=main-2103300156
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement a new API function, pkram_load_file_pages(), to support
-loading pages in bulk.  A caller provided buffer not smaller than
-PKRAM_PAGES_BUFSIZE is populated with pages pointers that are contiguous
-by their original mapping index values.  The number of pages in the buffer
-and the mapping index of the first page are provided to the caller.
+Make use of new interfaces for loading and inserting preserved pages
+into a shmem file in bulk.
 
 Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 ---
- include/linux/pkram.h |  4 ++++
- mm/pkram.c            | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 50 insertions(+)
+ mm/shmem_pkram.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/pkram.h b/include/linux/pkram.h
-index 977cf45a1bcf..ca46e5eafe71 100644
---- a/include/linux/pkram.h
-+++ b/include/linux/pkram.h
-@@ -96,6 +96,10 @@ int pkram_prepare_save(struct pkram_stream *ps, const char *name,
- int pkram_save_file_page(struct pkram_access *pa, struct page *page);
- struct page *pkram_load_file_page(struct pkram_access *pa, unsigned long *index);
- 
-+#define PKRAM_PAGES_BUFSIZE	PAGE_SIZE
+diff --git a/mm/shmem_pkram.c b/mm/shmem_pkram.c
+index 354c2b58962c..24a1ebb4af59 100644
+--- a/mm/shmem_pkram.c
++++ b/mm/shmem_pkram.c
+@@ -328,20 +328,31 @@ static inline void pkram_load_report_one_done(void)
+ static int do_load_file_content(struct pkram_stream *ps, struct address_space *mapping, struct mm_struct *mm)
+ {
+ 	PKRAM_ACCESS(pa, ps, pages);
++	struct page **pages;
++	unsigned int nr_pages;
+ 	unsigned long index;
+-	struct page *page;
+-	int err = 0;
++	int i, err;
 +
-+int pkram_load_file_pages(struct pkram_access *pa, struct page *pages[], unsigned int *nr_pages, unsigned long *index);
-+
- ssize_t pkram_write(struct pkram_access *pa, const void *buf, size_t count);
- size_t pkram_read(struct pkram_access *pa, void *buf, size_t count);
++	pages = kzalloc(PKRAM_PAGES_BUFSIZE, GFP_KERNEL);
++	if (!pages)
++		return -ENOMEM;
  
-diff --git a/mm/pkram.c b/mm/pkram.c
-index 382ccf6f789f..b63b2a3958e7 100644
---- a/mm/pkram.c
-+++ b/mm/pkram.c
-@@ -1099,6 +1099,52 @@ struct page *pkram_load_file_page(struct pkram_access *pa, unsigned long *index)
+ 	do {
+-		page = pkram_load_file_page(&pa, &index);
+-		if (!page)
++		err = pkram_load_file_pages(&pa, pages, &nr_pages, &index);
++		if (err) {
++			if (err == -ENODATA)
++				err = 0;
+ 			break;
++		}
++
++		err = shmem_insert_pages(mm, mapping->host, index, pages, nr_pages);
+ 
+-		err = shmem_insert_page(mm, mapping->host, index, page);
+-		put_page(page);
++		for (i = 0; i < nr_pages; i++)
++			put_page(pages[i]);
+ 		cond_resched();
+ 	} while (!err);
+ 
++	kfree(pages);
+ 	pkram_finish_access(&pa, err == 0);
+ 	return err;
  }
- 
- /**
-+ * Load pages from the preserved memory node and object associated with
-+ * pkram stream access @pa. The stream must have been initialized with
-+ * pkram_prepare_load() and pkram_prepare_load_obj() and access initialized
-+ * with PKRAM_ACCESS().
-+ * The page entries of a single pkram_link are processed, and @pages is
-+ * populated with the page pointers.  @nr_pages is set to the number of
-+ * pages, and @index is set to the mapping index of the first page.
-+ *
-+ * Returns 0 if one or more pages are loaded or -ENODATA if there are no
-+ * pages to load.
-+ *
-+ * The pages loaded have an incremented refcount either because the page
-+ * was initialized with a refcount of 1 at boot or because the page was
-+ * subsequently preserved which increased the refcount.
-+ */
-+int pkram_load_file_pages(struct pkram_access *pa, struct page *pages[], unsigned int *nr_pages, unsigned long *index)
-+{
-+	struct pkram_data_stream *pds = &pa->pds;
-+	struct pkram_link *link;
-+	int nr_entries = 0;
-+	int i, ret;
-+
-+	ret = pkram_next_link(pds, &link);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < PKRAM_LINK_ENTRIES_MAX; i++) {
-+		unsigned long p = link->entry[i];
-+
-+		if (!p)
-+			break;
-+
-+		pages[i] = __pkram_prep_load_page(p);
-+		nr_entries++;
-+	}
-+
-+	*nr_pages = nr_entries;
-+	*index = link->index;
-+
-+	pkram_free_page(link);
-+	pds->link = NULL;
-+
-+	return 0;
-+}
-+
-+/**
-  * Copy @count bytes from @buf to the preserved memory node and object
-  * associated with pkram stream access @pa. The stream must have been
-  * initialized with pkram_prepare_save() and pkram_prepare_save_obj()
 -- 
 1.8.3.1
 
