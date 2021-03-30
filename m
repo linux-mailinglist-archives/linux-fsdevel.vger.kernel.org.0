@@ -2,119 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D2D834E49F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 11:43:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2900C34E4BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 11:50:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231552AbhC3JnP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Mar 2021 05:43:15 -0400
-Received: from smtp-8fa8.mail.infomaniak.ch ([83.166.143.168]:40949 "EHLO
-        smtp-8fa8.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231484AbhC3JnB (ORCPT
+        id S231584AbhC3JuN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Mar 2021 05:50:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41168 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231549AbhC3Jts (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Mar 2021 05:43:01 -0400
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F8kyW6mfzzMpvrk;
-        Tue, 30 Mar 2021 11:42:59 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4F8kyV6y72zlh8TT;
-        Tue, 30 Mar 2021 11:42:58 +0200 (CEST)
-Subject: Re: [PATCH v1] ovl: Fix leaked dentry
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Vivek Goyal <vgoyal@redhat.com>, stable@vger.kernel.org,
-        syzbot <syzkaller@googlegroups.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20210329164907.2133175-1-mic@digikod.net>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <bfcd9935-f51d-a94e-2827-373ec0962e70@digikod.net>
-Date:   Tue, 30 Mar 2021 11:44:00 +0200
-User-Agent: 
+        Tue, 30 Mar 2021 05:49:48 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0CCCC061574;
+        Tue, 30 Mar 2021 02:49:48 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: shreeya)
+        with ESMTPSA id B13D91F452F3
+Subject: Re: [PATCH v5 2/4] fs: unicode: Rename function names from utf8 to
+ unicode
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        chao@kernel.org, krisman@collabora.com, drosen@google.com,
+        yuchao0@huawei.com, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
+        andre.almeida@collabora.com
+References: <20210329204240.359184-1-shreeya.patel@collabora.com>
+ <20210329204240.359184-3-shreeya.patel@collabora.com>
+ <YGKEitULkZmMwk3f@gmail.com>
+From:   Shreeya Patel <shreeya.patel@collabora.com>
+Message-ID: <b5e09aaf-ed9a-c363-d188-96ca5bb4932c@collabora.com>
+Date:   Tue, 30 Mar 2021 15:19:37 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-In-Reply-To: <20210329164907.2133175-1-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <YGKEitULkZmMwk3f@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-On 29/03/2021 18:49, Mickaël Salaün wrote:
-> From: Mickaël Salaün <mic@linux.microsoft.com>
-> 
-> Since commit 6815f479ca90 ("ovl: use only uppermetacopy state in
-> ovl_lookup()"), overlayfs doesn't put temporary dentry when there is a
-> metacopy error, which leads to dentry leaks when shutting down the
-> related superblock:
-> 
->   overlayfs: refusing to follow metacopy origin for (/file0)
->   ...
->   BUG: Dentry (____ptrval____){i=3f33,n=file3}  still in use (1) [unmount of overlay overlay]
->   ...
->   WARNING: CPU: 1 PID: 432 at umount_check.cold+0x107/0x14d
->   CPU: 1 PID: 432 Comm: unmount-overlay Not tainted 5.12.0-rc5 #1
->   ...
->   RIP: 0010:umount_check.cold+0x107/0x14d
->   ...
->   Call Trace:
->    d_walk+0x28c/0x950
->    ? dentry_lru_isolate+0x2b0/0x2b0
->    ? __kasan_slab_free+0x12/0x20
->    do_one_tree+0x33/0x60
->    shrink_dcache_for_umount+0x78/0x1d0
->    generic_shutdown_super+0x70/0x440
->    kill_anon_super+0x3e/0x70
->    deactivate_locked_super+0xc4/0x160
->    deactivate_super+0xfa/0x140
->    cleanup_mnt+0x22e/0x370
->    __cleanup_mnt+0x1a/0x30
->    task_work_run+0x139/0x210
->    do_exit+0xb0c/0x2820
->    ? __kasan_check_read+0x1d/0x30
->    ? find_held_lock+0x35/0x160
->    ? lock_release+0x1b6/0x660
->    ? mm_update_next_owner+0xa20/0xa20
->    ? reacquire_held_locks+0x3f0/0x3f0
->    ? __sanitizer_cov_trace_const_cmp4+0x22/0x30
->    do_group_exit+0x135/0x380
->    __do_sys_exit_group.isra.0+0x20/0x20
->    __x64_sys_exit_group+0x3c/0x50
->    do_syscall_64+0x45/0x70
->    entry_SYSCALL_64_after_hwframe+0x44/0xae
->   ...
->   VFS: Busy inodes after unmount of overlay. Self-destruct in 5 seconds.  Have a nice day...
-> 
-> This fix has been tested with a syzkaller reproducer.
-> 
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: <stable@vger.kernel.org> # v5.7+
+On 30/03/21 7:23 am, Eric Biggers wrote:
+> On Tue, Mar 30, 2021 at 02:12:38AM +0530, Shreeya Patel wrote:
+>> utf8data.h_shipped has a large database table which is an auto-generated
+>> decodification trie for the unicode normalization functions and it is not
+>> necessary to carry this large table in the kernel.
+>> Goal is to make UTF-8 encoding loadable by converting it into a module
+>> and adding a unicode subsystem layer between the filesystems and the
+>> utf8 module.
+>> This layer will load the module whenever any filesystem that
+>> needs unicode is mounted.
+>> utf8-core will be converted into this layer file in the future patches,
+>> hence rename the function names from utf8 to unicode which will denote the
+>> functions as the unicode subsystem layer functions and this will also be
+>> the first step towards the transformation of utf8-core file into the
+>> unicode subsystem layer file.
+>>
+>> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+>> ---
+>> Changes in v5
+>>    - Improve the commit message.
+> This didn't really answer my questions about the reason for this renaming.
+> Aren't the functions like unicode_casefold() still tied to UTF-8 (as opposed to
+> e.g. supporting both UTF-8 and UTF-16)?  Is that something you're trying to
+> change?
 
-The bogus commit 6815f479ca90 was applied on v5.7-rc2 but it is only
-available since v5.8+ .
 
-> Reported-by: syzbot <syzkaller@googlegroups.com>
-> Fixes: 6815f479ca90 ("ovl: use only uppermetacopy state in ovl_lookup()")
-> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-> Link: https://lore.kernel.org/r/20210329164907.2133175-1-mic@digikod.net
-> ---
->  fs/overlayfs/namei.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-> index 3fe05fb5d145..424c594afd79 100644
-> --- a/fs/overlayfs/namei.c
-> +++ b/fs/overlayfs/namei.c
-> @@ -921,6 +921,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
->  		if ((uppermetacopy || d.metacopy) && !ofs->config.metacopy) {
->  			err = -EPERM;
->  			pr_warn_ratelimited("refusing to follow metacopy origin for (%pd2)\n", dentry);
-> +			dput(this);
->  			goto out_put;
->  		}
->  
-> 
-> base-commit: a5e13c6df0e41702d2b2c77c8ad41677ebb065b3
-> 
+Currently, layer's functions are still tied to UTF-8 encoding only. But 
+in future if we will have UTF-16 support then layer file would have to 
+be changed accordingly to support both.
+Unicode subsystem layer is a generic layer which connects the 
+filesystems and UTF8 module ( and/or UTF16 in future )
+
+
+>
+> - Eric
+>
