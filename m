@@ -2,108 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 79CCD34E1C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 09:08:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3824B34E1F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 09:17:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231163AbhC3HIJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Mar 2021 03:08:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34360 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230316AbhC3HIB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Mar 2021 03:08:01 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB916C061762;
-        Tue, 30 Mar 2021 00:07:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=X166VgoQn02EMb3f8ykwCC49d3dYou3bLIcu1kP5us0=; b=mEIz6zmnoSAw3j1Qd+Moj7BPqA
-        o1FPHvH8HA4uTXQgWju4LxdFzthKOCG4xQqrL5iK/DtsvNE48oHsIcpR4rDrTiLBm3iiBRrTlZTBN
-        CC8MY7tkotNFjxLmxv93ek4JzPSVR8fsaIhcAiUNmewBwq2a5sb9LM+WhRuum7nv4oxK/QaW/WVyX
-        PlfPdvhdFBiscnR/2IR8k05yLYzcxvS1h5uzsDwpA+Tr+RKs2MYbGuJT5frmJkmdcb0PPABLW7sem
-        +RW8E4axAPeY1QUxI69MN73T2kthyGMY+UiChulnX3Ic4YzdxLYFtMSFNCb/eT2TnJD6dbNbkURhT
-        GNOoFsZQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lR8Qa-002ddk-BT; Tue, 30 Mar 2021 07:04:56 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id F3363307001;
-        Tue, 30 Mar 2021 09:04:36 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BBF922B960A7F; Tue, 30 Mar 2021 09:04:36 +0200 (CEST)
-Date:   Tue, 30 Mar 2021 09:04:36 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Marco Elver <elver@google.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian@brauner.io>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Matt Morehouse <mascasa@google.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Ian Rogers <irogers@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH v3 06/11] perf: Add support for SIGTRAP on perf events
-Message-ID: <YGLNhKnx4wR38XpE@hirez.programming.kicks-ass.net>
-References: <20210324112503.623833-1-elver@google.com>
- <20210324112503.623833-7-elver@google.com>
- <YFxGb+QHEumZB6G8@elver.google.com>
- <YGHC7V3bbCxhRWTK@hirez.programming.kicks-ass.net>
- <20210329142705.GA24849@redhat.com>
- <CANpmjNN4kiGiuSSm2g0empgKo3DW-UJ=eNDB6sv1bpypD13vqQ@mail.gmail.com>
+        id S230122AbhC3HRW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Mar 2021 03:17:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54268 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229483AbhC3HRF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Mar 2021 03:17:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5789961989;
+        Tue, 30 Mar 2021 07:17:03 +0000 (UTC)
+Date:   Tue, 30 Mar 2021 09:17:00 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] fs: make do_mkdirat() take struct filename
+Message-ID: <20210330071700.kpjoyp5zlni7uejm@wittgenstein>
+References: <20210330055957.3684579-1-dkadashev@gmail.com>
+ <20210330055957.3684579-2-dkadashev@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CANpmjNN4kiGiuSSm2g0empgKo3DW-UJ=eNDB6sv1bpypD13vqQ@mail.gmail.com>
+In-Reply-To: <20210330055957.3684579-2-dkadashev@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 29, 2021 at 04:32:18PM +0200, Marco Elver wrote:
-> On Mon, 29 Mar 2021 at 16:27, Oleg Nesterov <oleg@redhat.com> wrote:
-> > On 03/29, Peter Zijlstra wrote:
-> > >
-> > > On Thu, Mar 25, 2021 at 09:14:39AM +0100, Marco Elver wrote:
-> > > > @@ -6395,6 +6395,13 @@ static void perf_sigtrap(struct perf_event *event)
-> > > >  {
-> > > >     struct kernel_siginfo info;
-> > > >
-> > > > +   /*
-> > > > +    * This irq_work can race with an exiting task; bail out if sighand has
-> > > > +    * already been released in release_task().
-> > > > +    */
-> > > > +   if (!current->sighand)
-> > > > +           return;
-> >
-> > This is racy. If "current" has already passed exit_notify(), current->parent
-> > can do release_task() and destroy current->sighand right after the check.
-> >
-> > > Urgh.. I'm not entirely sure that check is correct, but I always forget
-> > > the rules with signal. It could be we ought to be testing PF_EXISTING
-> > > instead.
-> >
-> > Agreed, PF_EXISTING check makes more sense in any case, the exiting task
-> > can't receive the signal anyway.
+On Tue, Mar 30, 2021 at 12:59:56PM +0700, Dmitry Kadashev wrote:
+> Pass in the struct filename pointers instead of the user string, and
+> update the three callers to do the same. This is heavily based on
+> commit dbea8d345177 ("fs: make do_renameat2() take struct filename").
 > 
-> Thanks for confirming. I'll switch to just checking PF_EXITING
-> (PF_EXISTING does not exist :-)).
+> This behaves like do_unlinkat() and do_renameat2().
+> 
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
+> ---
+>  fs/internal.h |  1 +
+>  fs/namei.c    | 25 +++++++++++++++++++------
+>  2 files changed, 20 insertions(+), 6 deletions(-)
 
-Indeed! Typing be hard :-)
+The only thing that is a bit unpleasant here is that this change
+breaks the consistency between the creation helpers:
+
+do_mkdirat()
+do_symlinkat()
+do_linkat()
+do_mknodat()
+
+All but of them currently take
+const char __user *pathname
+and call
+user_path_create()
+with that do_mkdirat() change that's no longer true. One of the major
+benefits over the recent years in this code is naming and type consistency.
+And since it's just matter of time until io_uring will also gain support
+for do_{symlinkat,linkat,mknodat} I would think switching all of them to
+take a struct filename
+and then have all do_* helpers call getname() might just be nicer in the
+long run.
+
+Christian
