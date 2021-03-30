@@ -2,98 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF03C34E0D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 07:48:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD8F034E0F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 08:01:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230501AbhC3FsP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Mar 2021 01:48:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229667AbhC3Fry (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Mar 2021 01:47:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3348A60C3E;
-        Tue, 30 Mar 2021 05:47:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617083274;
-        bh=sLNj16jz+MQWRyeegTuCAOgGNtHJE4k6qlmBk/8uBWI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=D5D0VXYmafeEBMtG4ve4wxOPt1WgZvZxYhS5O2cOf3CDcG5u8Mhb4E0WwnxKqerBi
-         0maG55PE9DYmIqSZnROblCGPgINK+wAy4saOuDtDFYPeNYucHsnzUBblvdVMUYa0V7
-         WgI08qZovt3PTgc30I9paP4w65zc62b75G9GZ3++Cm/HsHYbesw9TUIUSrBWq3GnXz
-         xoAneUB4YUsjj6/sDklBkYhXUaWtU+mt/hvkcsYVgWPU58VqPPhPpNB5XFJ+UvHxWx
-         tqR88XVAfDb9fT9RTNeEdkJX9qknZGctXrGhnF2fmt8QuLFCgpVnjj+v2Ou5ghI8hg
-         CQZA8PJ5oNpYQ==
-Date:   Mon, 29 Mar 2021 22:47:52 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     Shreeya Patel <shreeya.patel@collabora.com>, tytso@mit.edu,
-        adilger.kernel@dilger.ca, jaegeuk@kernel.org, chao@kernel.org,
-        drosen@google.com, yuchao0@huawei.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-        andre.almeida@collabora.com
-Subject: Re: [PATCH v5 4/4] fs: unicode: Add utf8 module and a unicode layer
-Message-ID: <YGK7iNRXcMr/ahsL@sol.localdomain>
-References: <20210329204240.359184-1-shreeya.patel@collabora.com>
- <20210329204240.359184-5-shreeya.patel@collabora.com>
- <YGKGhxaozX3ND6iB@gmail.com>
- <87v999pequ.fsf@collabora.com>
+        id S230248AbhC3GAo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Mar 2021 02:00:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48124 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230334AbhC3GAh (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Mar 2021 02:00:37 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3E23C061762;
+        Mon, 29 Mar 2021 23:00:36 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id m12so21945437lfq.10;
+        Mon, 29 Mar 2021 23:00:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eSZe7qy5irbYceIieVltp7POq2ofcrG7uqpRn8TJqD8=;
+        b=pFEPi0KHWu7YdWMEL3o16fSDT0r79piOo4PSTHPR6CJj/+B8lTUGaFH2prjSL3AHtN
+         G9b0BKRDV9GqOGmRl275TIvHW0l7IJtbuLq7eQRuVOp8Hy8wl+I2Gf6z23TvdwFNlcfN
+         uNxAgeSvFn/l89txTJm3lwP2HLnpJp8B54KonPnhKMFAQpFP4Ibqkfa5GGmN4lFI+omP
+         f2mAbFkFQDPJ2nsSlZC+YlKuuqwlbEQcJ4hswJUQ1I0jB/5bWFwVxRmusLDHxDzIgpaJ
+         RdsKOpHNlglrg5ggMfMsRDXSqLVxPsbNxdp4g7q390QCmshkVPx7T6tmmwIF+381UbNb
+         mxAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eSZe7qy5irbYceIieVltp7POq2ofcrG7uqpRn8TJqD8=;
+        b=l1fcLRMFZ+miED0/gDyi6wwVscoLbPhezHAOVjqpPnQzx3KiR0EdUj8J1O6Qs/aieQ
+         niRb5SVm+vBH2QQiSv4823HuoNoBKzINAh3gRJ9ICV1zIDbIjsIWEy9FRKx9rA5ECPWr
+         qbgAdAeMsGYFGUFKIu99JSn4yaIFu+vHeDhwQl4ZqUE4a307NW0ii1HdKu90XGJj93cI
+         98aiB51NqtBEF3EsuyFDbwTVIxlN2pCNs8DBomH0dAFDZKV6kmZY9FJYcJg1nKgPYUis
+         v2+LrvRbf7j/Qf1V1+twYK3gwRbjGFa5rCTmdgByG3BLDPcxRRE4mbr9vaxB8G/aq7Wx
+         Sl0Q==
+X-Gm-Message-State: AOAM5307Hf0urEQkQ01cdzXjLwoNappfDPC9+FgnYyqP0ZQovDC0vq3G
+        5ny4JdtO5gwLHvjWwrgGDOIpvrccw9g=
+X-Google-Smtp-Source: ABdhPJxNxyG9MkMMAx9k7vUcHIjEzFb8obp1d4C9OknXpivI8f2UJitBYVFnJsYi5hb4sB4bxVsKzg==
+X-Received: by 2002:a05:6512:4c4:: with SMTP id w4mr19014432lfq.91.1617084035401;
+        Mon, 29 Mar 2021 23:00:35 -0700 (PDT)
+Received: from carbon.v ([94.143.149.146])
+        by smtp.googlemail.com with ESMTPSA id e6sm2050089lfj.96.2021.03.29.23.00.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Mar 2021 23:00:35 -0700 (PDT)
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Dmitry Kadashev <dkadashev@gmail.com>
+Subject: [PATCH v3 0/2] io_uring: add mkdirat support
+Date:   Tue, 30 Mar 2021 12:59:55 +0700
+Message-Id: <20210330055957.3684579-1-dkadashev@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87v999pequ.fsf@collabora.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 29, 2021 at 10:16:57PM -0400, Gabriel Krisman Bertazi wrote:
-> Eric Biggers <ebiggers@kernel.org> writes:
-> 
-> > On Tue, Mar 30, 2021 at 02:12:40AM +0530, Shreeya Patel wrote:
-> >> diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
-> >> index 2c27b9a5cd6c..ad4b837f2eb2 100644
-> >> --- a/fs/unicode/Kconfig
-> >> +++ b/fs/unicode/Kconfig
-> >> @@ -2,13 +2,26 @@
-> >>  #
-> >>  # UTF-8 normalization
-> >>  #
-> >> +# CONFIG_UNICODE will be automatically enabled if CONFIG_UNICODE_UTF8
-> >> +# is enabled. This config option adds the unicode subsystem layer which loads
-> >> +# the UTF-8 module whenever any filesystem needs it.
-> >>  config UNICODE
-> >> -	bool "UTF-8 normalization and casefolding support"
-> >> +	bool
-> >> +
-> >> +# utf8data.h_shipped has a large database table which is an auto-generated
-> >> +# decodification trie for the unicode normalization functions and it is not
-> >> +# necessary to carry this large table in the kernel.
-> >> +# Enabling UNICODE_UTF8 option will allow UTF-8 encoding to be built as a
-> >> +# module and this module will be loaded by the unicode subsystem layer only
-> >> +# when any filesystem needs it.
-> >> +config UNICODE_UTF8
-> >> +	tristate "UTF-8 module"
-> >>  	help
-> >>  	  Say Y here to enable UTF-8 NFD normalization and NFD+CF casefolding
-> >>  	  support.
-> >> +	select UNICODE
-> >
-> > This seems problematic; it allows users to set CONFIG_EXT4_FS=y (or
-> > CONFIG_F2FS_FS=y) but then CONFIG_UNICODE_UTF8=m.  Then the filesystem won't
-> > work if the modules are located on the filesystem itself.
-> 
-> Hi Eric,
-> 
-> Isn't this a user problem?  If the modules required to boot are on the
-> filesystem itself, you are in trouble.  But, if that is the case, your
-> rootfs is case-insensitive and you gotta have utf8 as built-in or have
-> it in an early userspace.
-> 
+This adds mkdirat support to io_uring and is heavily based on recently
+added renameat() / unlinkat() support.
 
-We could make it the user's problem, but that seems rather unfriendly.
-Especially because the utf8 module would be needed if the filesystem has the
-casefold feature at all, regardless of whether any casefolded directories are
-needed at boot time or not.  (Unless there is a plan to change that?)
+The first patch is preparation with no functional changes, makes
+do_mkdirat accept struct filename pointer rather than the user string.
 
-- Eric
+The second one leverages that to implement mkdirat in io_uring.
+
+Based on for-5.13/io_uring.
+
+Changes since v2:
+- rebase
+
+Changes since v1:
+- do not mess with struct filename's refcount in do_mkdirat, instead add
+  and use __filename_create() that does not drop the name on success;
+
+Dmitry Kadashev (2):
+  fs: make do_mkdirat() take struct filename
+  io_uring: add support for IORING_OP_MKDIRAT
+
+ fs/internal.h                 |  1 +
+ fs/io_uring.c                 | 55 +++++++++++++++++++++++++++++++++++
+ fs/namei.c                    | 25 ++++++++++++----
+ include/uapi/linux/io_uring.h |  1 +
+ 4 files changed, 76 insertions(+), 6 deletions(-)
+
+-- 
+2.30.2
+
