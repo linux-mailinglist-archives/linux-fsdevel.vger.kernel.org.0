@@ -2,260 +2,281 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 04DC034F298
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 22:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA9A834F2CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 23:10:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232650AbhC3Uzu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Mar 2021 16:55:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:21228 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232601AbhC3Uz1 (ORCPT
+        id S232614AbhC3VK1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Mar 2021 17:10:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47816 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232558AbhC3VKG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Mar 2021 16:55:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617137725;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=uRvNsBmljdgCvcSL+wgK07oVws9y42KLzeTSspwyxR0=;
-        b=hQJvHYrpTVbL0jggHQyKorTGOeE+Pxi/XlELE0CkyYBaaIkBQnjnFcCy5BesYWYJQLESOS
-        A8H54lTbWm84MmPHS8sDV1r5eAWc65/Fi/xg5tZihMIV/HPxTz8OyvUIVmAz+VuIsWVJtP
-        M3Iw4/M7/diZBl8MQlsvAYnoGZMKyjQ=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-474-fgxzCKtBPQmGyJDIIb4F9Q-1; Tue, 30 Mar 2021 16:55:22 -0400
-X-MC-Unique: fgxzCKtBPQmGyJDIIb4F9Q-1
-Received: by mail-qt1-f200.google.com with SMTP id m11so10431836qtx.19
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Mar 2021 13:55:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uRvNsBmljdgCvcSL+wgK07oVws9y42KLzeTSspwyxR0=;
-        b=j92rKXoVH1basscUmSnVH61qJb5MC9+NFjQSL7Hnf+CenAbdNcFhmcgNTt1Vvm8Fhb
-         qVFYIV+j9m/zrmUuAp35usIX6Ncg48AQ27JeHw3gzInShIM7DEwEy6L74pvpQ0J3+e3/
-         r2a0aP7J2xkgfazDqNqixT0cnOvVi6HWuqsxQYXWIYOHzM2ZNaCTGXT431QK+5MHlllc
-         lPvK5olayKe+aBwTbDH/5hix4i/2oYYl40xMDZWvjUaAJOF2Gwf2KfHLehQfnt0PkdCC
-         HI0hVGF7/9JiidmayYPdPo1sDFpvxbjFTW8e13lD2olt8wjboELW7cmJPrbH7UqGaLZm
-         cLvw==
-X-Gm-Message-State: AOAM532eduY8mxLOaSNsyZgyzR6Cbj17hjaw4KeljPgPoD4hrBIdT/7T
-        tkNoU+xG2Q6vnC9LxSzUwj+bhrYJONpI4HVeObcbDonbvj1oByPCoJS7hAtClHEoYf1dWUtrexc
-        ykPeGHQoVGMHuKB1WsiF37dO3+A==
-X-Received: by 2002:a37:88d:: with SMTP id 135mr165754qki.132.1617137722211;
-        Tue, 30 Mar 2021 13:55:22 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw2Kog/qZQ7R1BmLPSOVMdEexOnqLe6WiVlBhyu9SYLj1PvmW487eU+osVI2uYtZQ4Jhzi0NA==
-X-Received: by 2002:a37:88d:: with SMTP id 135mr165724qki.132.1617137721817;
-        Tue, 30 Mar 2021 13:55:21 -0700 (PDT)
-Received: from xz-x1 (bras-base-toroon474qw-grc-82-174-91-135-175.dsl.bell.ca. [174.91.135.175])
-        by smtp.gmail.com with ESMTPSA id d24sm16158741qkl.49.2021.03.30.13.55.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Mar 2021 13:55:20 -0700 (PDT)
-Date:   Tue, 30 Mar 2021 16:55:19 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wang Qing <wangqing@vivo.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, Brian Geffon <bgeffon@google.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Michel Lespinasse <walken@google.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH v3] userfaultfd/shmem: fix MCOPY_ATOMIC_CONTNUE behavior
-Message-ID: <20210330205519.GK429942@xz-x1>
-References: <20210329234131.304999-1-axelrasmussen@google.com>
+        Tue, 30 Mar 2021 17:10:06 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CED3C061574;
+        Tue, 30 Mar 2021 14:10:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Gva7rshBMTcNQAxGf3qzC2UfY7zggOJ3p0zhv3yYKvU=; b=HZk/J185RHkGuydHA7b24NcVBh
+        EVQ3ipKEo1gD2TjjdrvTLEKTlG6CQpWvl2wZT+8jiMILpm7wPVJoAhKWIZtD94tHdM6A3hod59qC0
+        7pcrPy7T3HYouMcx7c7OFZ7P55iN2PejG6axSCIK27QYFcB2FidxQQPx1obfK8MXVqFHo1pCiti8+
+        UHcO9ikqLlxyQPsI/ghACMYgC8uzKKZpZsX2gXPC3YEHqOFIRyEm23yt5rAq4ECXtG82Rdt6Vm9MX
+        i31HTPt5ChilS+CU3Fc8aS22c5rCK5A6mPk12NLhuCW3NyYtV+FRmLXiYAu2Qu/Z5OevBUo7JdXWZ
+        AIu8zbeA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lRLc9-003bpa-7a; Tue, 30 Mar 2021 21:09:38 +0000
+Date:   Tue, 30 Mar 2021 22:09:29 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-afs@lists.infradead.org
+Subject: Re: [PATCH v5 00/27] Memory Folios
+Message-ID: <20210330210929.GR351017@casper.infradead.org>
+References: <20210320054104.1300774-1-willy@infradead.org>
+ <YFja/LRC1NI6quL6@cmpxchg.org>
+ <20210322184744.GU1719932@casper.infradead.org>
+ <YFqH3B80Gn8pcPqB@cmpxchg.org>
+ <20210324062421.GQ1719932@casper.infradead.org>
+ <YF4eX/VBPLmontA+@cmpxchg.org>
+ <20210329165832.GG351017@casper.infradead.org>
+ <YGN8biqigvPP0SGN@cmpxchg.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210329234131.304999-1-axelrasmussen@google.com>
+In-Reply-To: <YGN8biqigvPP0SGN@cmpxchg.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 29, 2021 at 04:41:31PM -0700, Axel Rasmussen wrote:
-> Previously, we shared too much of the code with COPY and ZEROPAGE, so we
-> manipulated things in various invalid ways:
+On Tue, Mar 30, 2021 at 03:30:54PM -0400, Johannes Weiner wrote:
+> Hi Willy,
 > 
-> - Previously, we unconditionally called shmem_inode_acct_block. In the
->   continue case, we're looking up an existing page which would have been
->   accounted for properly when it was allocated. So doing it twice
->   results in double-counting, and eventually leaking.
+> On Mon, Mar 29, 2021 at 05:58:32PM +0100, Matthew Wilcox wrote:
+> > I'm going to respond to some points in detail below, but there are a
+> > couple of overarching themes that I want to bring out up here.
+> > 
+> > Grand Vision
+> > ~~~~~~~~~~~~
+> > 
+> > I haven't outlined my long-term plan.  Partly because it is a _very_
+> > long way off, and partly because I think what I'm doing stands on its
+> > own.  But some of the points below bear on this, so I'll do it now.
+> > 
+> > Eventually, I want to make struct page optional for allocations.  It's too
+> > small for some things (allocating page tables, for example), and overly
+> > large for others (allocating a 2MB page, networking page_pool).  I don't
+> > want to change its size in the meantime; having a struct page refer to
+> > PAGE_SIZE bytes is something that's quite deeply baked in.
 > 
-> - Previously, we made the pte writable whenever the VMA was writable.
->   However, for continue, consider this case:
+> Right, I think it's overloaded and it needs to go away from many
+> contexts it's used in today.
 > 
->   1. A tmpfs file was created
->   2. The non-UFFD-registered side mmap()-s with MAP_SHARED
->   3. The UFFD-registered side mmap()-s with MAP_PRIVATE
+> I think it describes a real physical thing, though, and won't go away
+> as a concept. More on that below.
+
+I'm at least 90% with you on this, and we're just quibbling over details
+at this point, I think.
+
+> > In broad strokes, I think that having a Power Of Two Allocator
+> > with Descriptor (POTAD) is a useful foundational allocator to have.
+> > The specific allocator that we call the buddy allocator is very clever for
+> > the 1990s, but touches too many cachelines to be good with today's CPUs.
+> > The generalisation of the buddy allocator to the POTAD lets us allocate
+> > smaller quantities (eg a 512 byte block) and allocate descriptors which
+> > differ in size from a struct page.  For an extreme example, see xfs_buf
+> > which is 360 bytes and is the descriptor for an allocation between 512
+> > and 65536 bytes.
 > 
->   In this case, even though the UFFD-registered VMA may be writable, we
->   still want CoW behavior. So, check for this case and don't make the
->   pte writable.
+> I actually disagree with this rather strongly. If anything, the buddy
+> allocator has turned out to be a pretty poor fit for the foundational
+> allocator.
 > 
-> - The initial pgoff / max_off check isn't necessary, so we can skip past
->   it. The second one seems likely to be unnecessary too, but keep it
->   just in case. Modify both checks to use pgoff, as offset is equivalent
->   and not needed.
+> On paper, it is elegant and versatile in serving essentially arbitrary
+> memory blocks. In practice, we mostly just need 4k and 2M chunks from
+> it. And it sucks at the 2M ones because of the fragmentation caused by
+> the ungrouped 4k blocks.
+
+That's a very Intel-centric way of looking at it.  Other architectures
+support a multitude of page sizes, from the insane ia64 (4k, 8k, 16k, then
+every power of four up to 4GB) to more reasonable options like (4k, 32k,
+256k, 2M, 16M, 128M).  But we (in software) shouldn't constrain ourselves
+to thinking in terms of what the hardware currently supports.  Google
+have data showing that for their workloads, 32kB is the goldilocks size.
+I'm sure for some workloads, it's much higher and for others it's lower.
+But for almost no workload is 4kB the right choice any more, and probably
+hasn't been since the late 90s.
+
+> The great thing about the slab allocator isn't just that it manages
+> internal fragmentation of the larger underlying blocks. It also groups
+> related objects by lifetime/age and reclaimability, which dramatically
+> mitigates the external fragmentation of the memory space.
 > 
-> - Previously, we unconditionally called ClearPageDirty() in the error
->   path. In the continue case though, since this is an existing page, it
->   might have already been dirty before we started touching it. It's very
->   problematic to clear the bit incorrectly, but not a problem to leave
->   it - so, just omit the ClearPageDirty() entirely.
+> The buddy allocator on the other hand has no idea what you want that
+> 4k block for, and whether it pairs up well with the 4k block it just
+> handed to somebody else. But the decision it makes in that moment is
+> crucial for its ability to serve larger blocks later on.
 > 
-> - Previously, we unconditionally removed the page from the page cache in
->   the error path. But in the continue case, we didn't add it - it was
->   already there because the page is present in some second
->   (non-UFFD-registered) mapping. So, removing it is invalid.
+> We do some mobility grouping based on how reclaimable or migratable
+> the memory is, but it's not the full answer.
+
+I don't think that's entirely true.  The vast majority of memory in any
+machine is either anonymous or page cache.  The problem is that right now,
+all anonymous and page cache allocations are order-0 (... or order-9).
+So the buddy allocator can't know anything useful about the pages and will
+often allocate one order-0 page to the page cache, then allocate its buddy
+to the slab cache in order to allocate the radix_tree_node to store the
+pointer to the page in (ok, radix tree nodes come from an order-2 cache,
+but it still prevents this order-9 page from being assembled).
+
+If the movable allocations suddenly start being order-3 and order-4,
+the unmovable, unreclaimable allocations are naturally going to group
+down in the lower orders, and we won't have the problem that a single
+dentry blocks the allocation of an entire 2MB page.
+
+The problem, for me, with the ZONE_MOVABLE stuff is that it requires
+sysadmin intervention to set up.  I don't have a ZONE_MOVABLE on
+my laptop.  The allocator should be automatically handling movability
+hints without my intervention.
+
+> A variable size allocator without object type grouping will always
+> have difficulties producing anything but the smallest block size after
+> some uptime. It's inherently flawed that way.
+
+I think our buddy allocator is flawed, to be sure, but only because
+it doesn't handle movable hints more aggressively.  For example, at
+the point that a largeish block gets a single non-movable allocation,
+all the movable allocations within that block should be migrated out.
+If the offending allocation is freed quickly, it all collapses into a
+large, useful chunk, or if not, then it provides a sponge to soak up
+other non-movable allocations.
+
+> > What I haven't touched on anywhere in this, is whether a folio is the
+> > descriptor for all POTA or whether it's specifically the page cache
+> > descriptor.  I like the idea of having separate descriptors for objects
+> > in the page cache from anonymous or other allocations.  But I'm not very
+> > familiar with the rmap code, and that wants to do things like manipulate
+> > the refcount on a descriptor without knowing whether it's a file or
+> > anon page.  Or neither (eg device driver memory mapped to userspace.
+> > Or vmalloc memory mapped to userspace.  Or ...)
 > 
-> Because the error handling issues are easy to exercise in the selftest,
-> make a small modification there to do so.
+> The rmap code is all about the page type specifics, but once you get
+> into mmap, page reclaim, page migration, we're dealing with fully
+> fungible blocks of memory.
 > 
-> Finally, refactor shmem_mcopy_atomic_pte a bit. By this point, we've
-> added a lot of "if (!is_continue)"-s everywhere. It's cleaner to just
-> check for that mode first thing, and then "goto" down to where the parts
-> we actually want are. This leaves the code in between cleaner.
+> I do like the idea of using actual language typing for the different
+> things struct page can be today (fs page), but with a common type to
+> manage the fungible block of memory backing it (allocation state, LRU
+> & aging state, mmap state etc.)
 > 
-> Changes since v2:
-> - Drop the ClearPageDirty() entirely, instead of trying to remember the
->   old value.
-> - Modify both pgoff / max_off checks to use pgoff. It's equivalent to
->   offset, but offset wasn't initialized until the first check (which
->   we're skipping).
-> - Keep the second pgoff / max_off check in the continue case.
+> New types for the former are an easier sell. We all agree that there
+> are too many details of the page - including the compound page
+> implementation detail - inside the cache library, fs code and drivers.
 > 
-> Changes since v1:
-> - Refactor to skip ahead with goto, instead of adding several more
->   "if (!is_continue)".
-> - Fix unconditional ClearPageDirty().
-> - Don't pte_mkwrite() when is_continue && !VM_SHARED.
+> It's a slightly tougher sell to say that the core VM code itself
+> (outside the cache library) needs a tighter abstraction for the struct
+> page building block and the compound page structure. At least at this
+> time while we're still sorting out how it all may work down the line.
+> Certainly, we need something to describe fungible memory blocks:
+> either a struct page that can be 4k and 2M compound, or a new thing
+> that can be backed by a 2M struct page or a 4k struct smallpage. We
+> don't know yet, so I would table the new abstraction type for this.
 > 
-> Fixes: 00da60b9d0a0 ("userfaultfd: support minor fault handling for shmem")
-> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-> ---
->  mm/shmem.c                               | 60 +++++++++++++-----------
->  tools/testing/selftests/vm/userfaultfd.c | 12 +++++
->  2 files changed, 44 insertions(+), 28 deletions(-)
+> I generally don't think we want a new type that does everything that
+> the overloaded struct page already does PLUS the compound
+> abstraction. Whatever name we pick for it, it'll always be difficult
+> to wrap your head around such a beast.
 > 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index d2e0e81b7d2e..fbcce850a16e 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2377,18 +2377,22 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
->  	struct page *page;
->  	pte_t _dst_pte, *dst_pte;
->  	int ret;
-> -	pgoff_t offset, max_off;
-> -
-> -	ret = -ENOMEM;
-> -	if (!shmem_inode_acct_block(inode, 1))
-> -		goto out;
-> +	pgoff_t max_off;
-> +	int writable;
+> IMO starting with an explicit page cache descriptor that resolves to
+> struct page inside core VM code (and maybe ->fault) for now makes the
+> most sense: it greatly mitigates the PAGE_SIZE and tail page issue
+> right away, and it's not in conflict with, but rather helps work
+> toward, replacing the fungible memory unit behind it.
 
-Nit: can be bool.
+Right, and that's what struct folio is today.  It eliminates tail pages
+from consideration in a lot of paths.  I think it also makes sense for
+struct folio to be used for anonymous memory.  But I think that's where it
+stops; it isn't for Slab, it isn't for page table pages, and it's not
+for ZONE_DEVICE pages.
 
-[...]
+> There isn't too much overlap or generic code between cache and anon
+> pages such that sharing a common descriptor would be a huge win (most
+> overlap is at the fungible memory block level, and the physical struct
+> page layout of course), so I don't think we should aim for a generic
+> abstraction for both.
 
-> +install_ptes:
->  	_dst_pte = mk_pte(page, dst_vma->vm_page_prot);
-> -	if (dst_vma->vm_flags & VM_WRITE)
-> +	/* For CONTINUE on a non-shared VMA, don't pte_mkwrite for CoW. */
-> +	writable = is_continue && !(dst_vma->vm_flags & VM_SHARED)
-> +		? 0
-> +		: dst_vma->vm_flags & VM_WRITE;
+They're both on the LRU list, they use a lot of the same PageFlags,
+they both have a mapcount and refcount, and they both have memcg_data.
+The only things they really use differently are mapping, index and
+private.  And then we have to consider shmem which uses both in a
+pretty eldritch way.
 
-Nit: this code is slightly hard to read..  I'd slightly prefer "if
-(is_continue)...".  But more below.
+> As drivers go, I think there are slightly different requirements to
+> filesystems, too. For filesystems, when the VM can finally do it (and
+> the file range permits it), I assume we want to rather transparently
+> increase the unit of data transfer from 4k to 2M. Most drivers that
+> currently hardcode alloc_page() or PAGE_SIZE OTOH probably don't want
+> us to bump their allocation sizes.
 
-> +	if (writable)
->  		_dst_pte = pte_mkwrite(pte_mkdirty(_dst_pte));
->  	else {
->  		/*
-> @@ -2455,7 +2458,7 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
->  
->  	ret = -EFAULT;
->  	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-> -	if (unlikely(offset >= max_off))
-> +	if (unlikely(pgoff >= max_off))
->  		goto out_release_unlock;
->  
->  	ret = -EEXIST;
-> @@ -2485,13 +2488,14 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
->  	return ret;
->  out_release_unlock:
->  	pte_unmap_unlock(dst_pte, ptl);
-> -	ClearPageDirty(page);
-> -	delete_from_page_cache(page);
-> +	if (!is_continue)
-> +		delete_from_page_cache(page);
->  out_release:
->  	unlock_page(page);
->  	put_page(page);
->  out_unacct_blocks:
-> -	shmem_inode_unacct_blocks(inode, 1);
-> +	if (!is_continue)
-> +		shmem_inode_unacct_blocks(inode, 1);
+If you take a look at my earlier work, you'll see me using a range of
+sizes in the page cache, starting at 16kB and gradually increasing to
+(theoretically) 2MB, although the algorithm tended to top out around
+256kB.  Doing particularly large reads could see 512kB/1MB reads, but
+it was very hard to hit 2MB in practice.  I wasn't too concerned at the
+time, but my point is that we do want to automatically tune the size
+of the allocation unit to the workload.  An application which reads in
+64kB chunks is giving us a pretty clear signal that they want to manage
+memory in 64kB chunks.
 
-If you see we still have tons of "if (!is_continue)".  Those are the places
-error prone.. even if not in this patch, could be in the patch when this
-function got changed again.
+> > It'd probably be better to have the dcache realise that its old entries
+> > aren't useful any more and age them out instead of relying on memory
+> > pressure to remove old entries, so this is probably an unnecessary
+> > digression.
+> 
+> It's difficult to identify a universally acceptable line for
+> usefulness of caches other than physical memory pressure.
+> 
+> The good thing about the memory pressure threshold is that you KNOW
+> somebody else has immediate use for the memory, and you're justified
+> in recycling and reallocating caches from the cold end.
+> 
+> Without that, you'd either have to set an arbitrary size cutoff or an
+> arbitrary aging cutoff (not used in the last minute e.g.). But optimal
+> settings for either of those depend on the workload, and aren't very
+> intuitive to configure.
 
-Sorry to say this a bit late: how about introduce a helper to install the pte?
-Pesudo code:
+For the dentry cache, I think there is a more useful metric, and that's
+length of the hash chain.  If it gets too long, we're spending more time
+walking it than we're saving by having entries cached.  Starting reclaim
+based on "this bucket of the dcache has twenty entries in it" would
+probably work quite well.
 
-int shmem_install_uffd_pte(..., bool writable)
-{
-	...
-	_dst_pte = mk_pte(page, dst_vma->vm_page_prot);
-	if (dst_vma->vm_flags & VM_WRITE)
-		_dst_pte = pte_mkwrite(pte_mkdirty(_dst_pte));
-	else
-		set_page_dirty(page);
+> Our levels of internal fragmentation are historically low, which of
+> course is nice by itself. But that's also what's causing problems in
+> the form of external fragmentation, and why we struggle to produce 2M
+> blocks. It's multitudes easier to free one 2M slab page of
+> consecutively allocated inodes than it is to free 512 batches of
+> different objects with conflicting lifetimes, ages, or potentially
+> even reclaimability.
 
-	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
-	if (!pte_none(*dst_pte)) {
-		pte_unmap_unlock(dst_pte, ptl);
-		return -EEXIST;
-	}
+Unf.  I don't think freeing 2MB worth of _anything_ is ever going to be
+easy enough to rely on.  My actual root filesystem:
 
-	inc_mm_counter(dst_mm, mm_counter_file(page));
-	page_add_file_rmap(page, false);
-	set_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
+xfs_inode         143134 144460   1024   32    8 : tunables    0    0    0 : slabdata   4517   4517      0
 
-	/* No need to invalidate - it was non-present before */
-	update_mmu_cache(dst_vma, dst_addr, dst_pte);
-	pte_unmap_unlock(dst_pte, ptl);
-	return 0;
-}
+So we'd have to be able to free 2048 of those 143k inodes, and they all
+have to be consecutive (and aligned).  I suppose we could model that and
+try to work out how many we'd have to be able to free in order to get all
+2048 in any page free, but I bet it's a variant of the Birthday Paradox,
+and we'd find it's something crazy like half of them.
 
-Then at the entry of shmem_mcopy_atomic_pte():
+Without slab gaining the ability to ask users to relocate allocations,
+I think any memory sent to slab is never coming back.
 
-	if (is_continue) {
-		page = find_lock_page(mapping, pgoff);
-		if (!page)
-                    return -EFAULT;
-                ret = shmem_install_uffd_pte(...,
-                        is_continue && !(dst_vma->vm_flags & VM_SHARED));
-                unlock_page(page);
-                if (ret)
-                    put_page(page);
-                return ret;
-        }
 
-Do you think this would be cleaner?
-
--- 
-Peter Xu
-
+So ... even if I accept every part of your vision as the way things
+are going to be, I think the folio patchset I have now is a step in the
+right direction.  I'm going to send a v6 now and hope it's not too late
+for this merge window.
