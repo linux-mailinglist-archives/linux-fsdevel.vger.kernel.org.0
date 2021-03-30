@@ -2,146 +2,260 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B42634F1EB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 22:02:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04DC034F298
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 22:56:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233320AbhC3UBn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Mar 2021 16:01:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32974 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233316AbhC3UBM (ORCPT
+        id S232650AbhC3Uzu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Mar 2021 16:55:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:21228 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232601AbhC3Uz1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Mar 2021 16:01:12 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D2EC061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Mar 2021 13:01:11 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id s17so21272246ljc.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Mar 2021 13:01:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=iUQpi+sJY96M0oTRItdYRMKHG3+VxUz+t6vY8dGmO+U=;
-        b=oeUZ5mND0ZbBb92my2vpif9MOmzQpXmPHa6ESdE9DoEgmJ+f4n7aaHY2hH2cLOqBU5
-         lVvw3oI5Hub03dWw0BPaeUYp7WteB8Z+ilsGDG0uvhCNa0btjGOj4iqHeXlIKIh2AqM3
-         HMOgo3bj2JQddAe6BV9FPcySj7NAFx4dwvGTQHf3a30b44vc8Vpc/9QkLiUDRuMchM0k
-         zrxWJ4f6fkYlf0ube1r+3OFxfH05Nf0v9t/1zeHq26DG7zOuAjK/m1t0GVOiC3DM5hjt
-         iSsfM4b2LKDhF+tTotxIuu8AzYxnN/Tv5JkVaPgMIgPArL+cQSbK9IzJQvEkhuszTrYy
-         FdpA==
+        Tue, 30 Mar 2021 16:55:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617137725;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uRvNsBmljdgCvcSL+wgK07oVws9y42KLzeTSspwyxR0=;
+        b=hQJvHYrpTVbL0jggHQyKorTGOeE+Pxi/XlELE0CkyYBaaIkBQnjnFcCy5BesYWYJQLESOS
+        A8H54lTbWm84MmPHS8sDV1r5eAWc65/Fi/xg5tZihMIV/HPxTz8OyvUIVmAz+VuIsWVJtP
+        M3Iw4/M7/diZBl8MQlsvAYnoGZMKyjQ=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-474-fgxzCKtBPQmGyJDIIb4F9Q-1; Tue, 30 Mar 2021 16:55:22 -0400
+X-MC-Unique: fgxzCKtBPQmGyJDIIb4F9Q-1
+Received: by mail-qt1-f200.google.com with SMTP id m11so10431836qtx.19
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Mar 2021 13:55:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=iUQpi+sJY96M0oTRItdYRMKHG3+VxUz+t6vY8dGmO+U=;
-        b=LKkXpVYHvOzJTjPakw9o2WonHjU4yJ+BCTUCTyftq1htqAZkhsm+PGnc6hSFnWwZrU
-         llDwRpJRuebpfiD0/WpTgez+dpTPcVWdcGx/6MTofK2h+y5KQW+pLzQPx98eNJyB3gyo
-         rZyU8CewAb76zhYCeLJb55Xb405uQ0iGWIqpc+tpiacj47Mq7PUUeqToL2ckQE5Ge08m
-         OGMyMYkV91rnPmhafV8clB2y5QLCi3b/Kyie4v6/WVikv5bh86hnte+BUhrVTaUo1yOC
-         a4w/aqnekTmyyhsrm1tkrUGukx3w2nyL03oODsC6uGkkzFcTSifoKpWAQOfX/4PWuflY
-         ULlA==
-X-Gm-Message-State: AOAM531wBlTUVrd2b2IWCo3osBbYJTQZqg6apZ4ni/HdQqKaGUxsSJwe
-        eXcTJ7X6bLG0QDGFtkhoH2xAqFs78tfXZ3U3Sioxww==
-X-Google-Smtp-Source: ABdhPJz3sX1eTQm5fKKV5RmJJoxAuSmvn4gDPlEJ/96820aGiIae+uwCS6EeIvCfqacZ4jbrc/sDWj9KXHXzdKtgdwI=
-X-Received: by 2002:a2e:8196:: with SMTP id e22mr22326561ljg.398.1617134470053;
- Tue, 30 Mar 2021 13:01:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210322215823.962758-1-cfijalkovich@google.com>
- <CAPhsuW4RK9-yWrFmoUzi09bquxr_K16LqeZBYWoJXM0t=qo+Gw@mail.gmail.com>
- <CAL+PeoGfCmbMSEYgaJNPHWfLvmmXJGaEM5G6rFstKzhTeY=2yw@mail.gmail.com> <2E59E29C-E04D-417C-9B2B-7F0F7D5E43EA@fb.com>
-In-Reply-To: <2E59E29C-E04D-417C-9B2B-7F0F7D5E43EA@fb.com>
-From:   Collin Fijalkovich <cfijalkovich@google.com>
-Date:   Tue, 30 Mar 2021 13:00:59 -0700
-Message-ID: <CAL+PeoHXNjcgR=te+WnkGGMiGyqqdparX+HH8K2KCK0CV9sUKg@mail.gmail.com>
-Subject: Re: [PATCH] mm, thp: Relax the VM_DENYWRITE constraint on file-backed THPs
-To:     Song Liu <songliubraving@fb.com>
-Cc:     Song Liu <song@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
-        Hridya Valsaraju <hridya@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Hugh Dickins <hughd@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uRvNsBmljdgCvcSL+wgK07oVws9y42KLzeTSspwyxR0=;
+        b=j92rKXoVH1basscUmSnVH61qJb5MC9+NFjQSL7Hnf+CenAbdNcFhmcgNTt1Vvm8Fhb
+         qVFYIV+j9m/zrmUuAp35usIX6Ncg48AQ27JeHw3gzInShIM7DEwEy6L74pvpQ0J3+e3/
+         r2a0aP7J2xkgfazDqNqixT0cnOvVi6HWuqsxQYXWIYOHzM2ZNaCTGXT431QK+5MHlllc
+         lPvK5olayKe+aBwTbDH/5hix4i/2oYYl40xMDZWvjUaAJOF2Gwf2KfHLehQfnt0PkdCC
+         HI0hVGF7/9JiidmayYPdPo1sDFpvxbjFTW8e13lD2olt8wjboELW7cmJPrbH7UqGaLZm
+         cLvw==
+X-Gm-Message-State: AOAM532eduY8mxLOaSNsyZgyzR6Cbj17hjaw4KeljPgPoD4hrBIdT/7T
+        tkNoU+xG2Q6vnC9LxSzUwj+bhrYJONpI4HVeObcbDonbvj1oByPCoJS7hAtClHEoYf1dWUtrexc
+        ykPeGHQoVGMHuKB1WsiF37dO3+A==
+X-Received: by 2002:a37:88d:: with SMTP id 135mr165754qki.132.1617137722211;
+        Tue, 30 Mar 2021 13:55:22 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw2Kog/qZQ7R1BmLPSOVMdEexOnqLe6WiVlBhyu9SYLj1PvmW487eU+osVI2uYtZQ4Jhzi0NA==
+X-Received: by 2002:a37:88d:: with SMTP id 135mr165724qki.132.1617137721817;
+        Tue, 30 Mar 2021 13:55:21 -0700 (PDT)
+Received: from xz-x1 (bras-base-toroon474qw-grc-82-174-91-135-175.dsl.bell.ca. [174.91.135.175])
+        by smtp.gmail.com with ESMTPSA id d24sm16158741qkl.49.2021.03.30.13.55.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Mar 2021 13:55:20 -0700 (PDT)
+Date:   Tue, 30 Mar 2021 16:55:19 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Axel Rasmussen <axelrasmussen@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wang Qing <wangqing@vivo.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, Brian Geffon <bgeffon@google.com>,
+        Cannon Matthews <cannonmatthews@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
+Subject: Re: [PATCH v3] userfaultfd/shmem: fix MCOPY_ATOMIC_CONTNUE behavior
+Message-ID: <20210330205519.GK429942@xz-x1>
+References: <20210329234131.304999-1-axelrasmussen@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210329234131.304999-1-axelrasmussen@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There will be an immediate performance hit when the file is opened for
-write, as its associated pages are removed from the page cache. While
-the writer is present there will be the usual overhead of using 4kB
-pages instead of THPs, but there should not be an additional penalty.
-It is problematic if a file is repeatedly opened for write, as it will
-need to refault each time.
+On Mon, Mar 29, 2021 at 04:41:31PM -0700, Axel Rasmussen wrote:
+> Previously, we shared too much of the code with COPY and ZEROPAGE, so we
+> manipulated things in various invalid ways:
+> 
+> - Previously, we unconditionally called shmem_inode_acct_block. In the
+>   continue case, we're looking up an existing page which would have been
+>   accounted for properly when it was allocated. So doing it twice
+>   results in double-counting, and eventually leaking.
+> 
+> - Previously, we made the pte writable whenever the VMA was writable.
+>   However, for continue, consider this case:
+> 
+>   1. A tmpfs file was created
+>   2. The non-UFFD-registered side mmap()-s with MAP_SHARED
+>   3. The UFFD-registered side mmap()-s with MAP_PRIVATE
+> 
+>   In this case, even though the UFFD-registered VMA may be writable, we
+>   still want CoW behavior. So, check for this case and don't make the
+>   pte writable.
+> 
+> - The initial pgoff / max_off check isn't necessary, so we can skip past
+>   it. The second one seems likely to be unnecessary too, but keep it
+>   just in case. Modify both checks to use pgoff, as offset is equivalent
+>   and not needed.
+> 
+> - Previously, we unconditionally called ClearPageDirty() in the error
+>   path. In the continue case though, since this is an existing page, it
+>   might have already been dirty before we started touching it. It's very
+>   problematic to clear the bit incorrectly, but not a problem to leave
+>   it - so, just omit the ClearPageDirty() entirely.
+> 
+> - Previously, we unconditionally removed the page from the page cache in
+>   the error path. But in the continue case, we didn't add it - it was
+>   already there because the page is present in some second
+>   (non-UFFD-registered) mapping. So, removing it is invalid.
+> 
+> Because the error handling issues are easy to exercise in the selftest,
+> make a small modification there to do so.
+> 
+> Finally, refactor shmem_mcopy_atomic_pte a bit. By this point, we've
+> added a lot of "if (!is_continue)"-s everywhere. It's cleaner to just
+> check for that mode first thing, and then "goto" down to where the parts
+> we actually want are. This leaves the code in between cleaner.
+> 
+> Changes since v2:
+> - Drop the ClearPageDirty() entirely, instead of trying to remember the
+>   old value.
+> - Modify both pgoff / max_off checks to use pgoff. It's equivalent to
+>   offset, but offset wasn't initialized until the first check (which
+>   we're skipping).
+> - Keep the second pgoff / max_off check in the continue case.
+> 
+> Changes since v1:
+> - Refactor to skip ahead with goto, instead of adding several more
+>   "if (!is_continue)".
+> - Fix unconditional ClearPageDirty().
+> - Don't pte_mkwrite() when is_continue && !VM_SHARED.
+> 
+> Fixes: 00da60b9d0a0 ("userfaultfd: support minor fault handling for shmem")
+> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+> ---
+>  mm/shmem.c                               | 60 +++++++++++++-----------
+>  tools/testing/selftests/vm/userfaultfd.c | 12 +++++
+>  2 files changed, 44 insertions(+), 28 deletions(-)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index d2e0e81b7d2e..fbcce850a16e 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2377,18 +2377,22 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+>  	struct page *page;
+>  	pte_t _dst_pte, *dst_pte;
+>  	int ret;
+> -	pgoff_t offset, max_off;
+> -
+> -	ret = -ENOMEM;
+> -	if (!shmem_inode_acct_block(inode, 1))
+> -		goto out;
+> +	pgoff_t max_off;
+> +	int writable;
 
-- Collin
+Nit: can be bool.
 
+[...]
 
-On Sun, Mar 28, 2021 at 9:45 AM Song Liu <songliubraving@fb.com> wrote:
->
->
->
-> > On Mar 23, 2021, at 10:13 AM, Collin Fijalkovich <cfijalkovich@google.c=
-om> wrote:
-> >
-> > Question: when we use this on shared library, the library is still
-> > writable. When the
-> > shared library is opened for write, these pages will refault in as 4kB
-> > pages, right?
-> >
-> > That's correct, while a file is opened for write it will refault into 4=
-kB pages and block use of THPs. Once all writers complete (i_writecount <=
-=3D0), the file can fault into THPs again and khugepaged can collapse exist=
-ing page ranges provided that it can successfully allocate new huge pages.
->
-> Will it be a problem if a slow writer (say a slow scp) writes to the
-> shared library while the shared library is in use?
->
-> Thanks,
-> Song
->
-> >
-> > From,
-> > Collin
-> >
-> > On Mon, Mar 22, 2021 at 4:55 PM Song Liu <song@kernel.org> wrote:
-> > On Mon, Mar 22, 2021 at 3:00 PM Collin Fijalkovich
-> > <cfijalkovich@google.com> wrote:
-> > >
-> > > Transparent huge pages are supported for read-only non-shmem filesyst=
-ems,
-> > > but are only used for vmas with VM_DENYWRITE. This condition ensures =
-that
-> > > file THPs are protected from writes while an application is running
-> > > (ETXTBSY).  Any existing file THPs are then dropped from the page cac=
-he
-> > > when a file is opened for write in do_dentry_open(). Since sys_mmap
-> > > ignores MAP_DENYWRITE, this constrains the use of file THPs to vmas
-> > > produced by execve().
-> > >
-> > > Systems that make heavy use of shared libraries (e.g. Android) are un=
-able
-> > > to apply VM_DENYWRITE through the dynamic linker, preventing them fro=
-m
-> > > benefiting from the resultant reduced contention on the TLB.
-> > >
-> > > This patch reduces the constraint on file THPs allowing use with any
-> > > executable mapping from a file not opened for write (see
-> > > inode_is_open_for_write()). It also introduces additional conditions =
-to
-> > > ensure that files opened for write will never be backed by file THPs.
-> >
-> > Thanks for working on this. We could also use this in many data center
-> > workloads.
-> >
-> > Question: when we use this on shared library, the library is still
-> > writable. When the
-> > shared library is opened for write, these pages will refault in as 4kB
-> > pages, right?
-> >
-> > Thanks,
-> > Song
->
+> +install_ptes:
+>  	_dst_pte = mk_pte(page, dst_vma->vm_page_prot);
+> -	if (dst_vma->vm_flags & VM_WRITE)
+> +	/* For CONTINUE on a non-shared VMA, don't pte_mkwrite for CoW. */
+> +	writable = is_continue && !(dst_vma->vm_flags & VM_SHARED)
+> +		? 0
+> +		: dst_vma->vm_flags & VM_WRITE;
+
+Nit: this code is slightly hard to read..  I'd slightly prefer "if
+(is_continue)...".  But more below.
+
+> +	if (writable)
+>  		_dst_pte = pte_mkwrite(pte_mkdirty(_dst_pte));
+>  	else {
+>  		/*
+> @@ -2455,7 +2458,7 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+>  
+>  	ret = -EFAULT;
+>  	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+> -	if (unlikely(offset >= max_off))
+> +	if (unlikely(pgoff >= max_off))
+>  		goto out_release_unlock;
+>  
+>  	ret = -EEXIST;
+> @@ -2485,13 +2488,14 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+>  	return ret;
+>  out_release_unlock:
+>  	pte_unmap_unlock(dst_pte, ptl);
+> -	ClearPageDirty(page);
+> -	delete_from_page_cache(page);
+> +	if (!is_continue)
+> +		delete_from_page_cache(page);
+>  out_release:
+>  	unlock_page(page);
+>  	put_page(page);
+>  out_unacct_blocks:
+> -	shmem_inode_unacct_blocks(inode, 1);
+> +	if (!is_continue)
+> +		shmem_inode_unacct_blocks(inode, 1);
+
+If you see we still have tons of "if (!is_continue)".  Those are the places
+error prone.. even if not in this patch, could be in the patch when this
+function got changed again.
+
+Sorry to say this a bit late: how about introduce a helper to install the pte?
+Pesudo code:
+
+int shmem_install_uffd_pte(..., bool writable)
+{
+	...
+	_dst_pte = mk_pte(page, dst_vma->vm_page_prot);
+	if (dst_vma->vm_flags & VM_WRITE)
+		_dst_pte = pte_mkwrite(pte_mkdirty(_dst_pte));
+	else
+		set_page_dirty(page);
+
+	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
+	if (!pte_none(*dst_pte)) {
+		pte_unmap_unlock(dst_pte, ptl);
+		return -EEXIST;
+	}
+
+	inc_mm_counter(dst_mm, mm_counter_file(page));
+	page_add_file_rmap(page, false);
+	set_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
+
+	/* No need to invalidate - it was non-present before */
+	update_mmu_cache(dst_vma, dst_addr, dst_pte);
+	pte_unmap_unlock(dst_pte, ptl);
+	return 0;
+}
+
+Then at the entry of shmem_mcopy_atomic_pte():
+
+	if (is_continue) {
+		page = find_lock_page(mapping, pgoff);
+		if (!page)
+                    return -EFAULT;
+                ret = shmem_install_uffd_pte(...,
+                        is_continue && !(dst_vma->vm_flags & VM_SHARED));
+                unlock_page(page);
+                if (ret)
+                    put_page(page);
+                return ret;
+        }
+
+Do you think this would be cleaner?
+
+-- 
+Peter Xu
+
