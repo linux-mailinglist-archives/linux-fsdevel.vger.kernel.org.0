@@ -2,127 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D547434E7FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 14:55:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDCAB34E80B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 14:56:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232066AbhC3Mya (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Mar 2021 08:54:30 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:41120 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231910AbhC3MyK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Mar 2021 08:54:10 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: tonyk)
-        with ESMTPSA id 8DE8A1F44E69
-Subject: Re: [PATCH 1/3] fs/dcache: Add d_clear_dir_neg_dentries()
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        kernel@collabora.com, Daniel Rosenberg <drosen@google.com>,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        krisman@collabora.com
-References: <20210328144356.12866-1-andrealmeid@collabora.com>
- <20210328144356.12866-2-andrealmeid@collabora.com>
- <YGKDfo1vZfFXwG/v@gmail.com>
-From:   =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>
-Message-ID: <8ea3ba8e-2699-8786-5ca3-33ee3c70961b@collabora.com>
-Date:   Tue, 30 Mar 2021 09:54:01 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        id S232063AbhC3M4H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Mar 2021 08:56:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48378 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232002AbhC3Mzl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Mar 2021 08:55:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8DC1861955;
+        Tue, 30 Mar 2021 12:55:39 +0000 (UTC)
+Date:   Tue, 30 Mar 2021 14:55:36 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [RFC][PATCH] fanotify: allow setting FAN_CREATE in mount mark
+ mask
+Message-ID: <20210330125536.6t4ldihtty2f2kyl@wittgenstein>
+References: <20210328155624.930558-1-amir73il@gmail.com>
+ <20210330121204.b7uto3tesqf6m7hb@wittgenstein>
+ <CAOQ4uxjVdjLPbkkZd+_1csecDFuHxms3CcSLuAtRbKuozHUqWA@mail.gmail.com>
+ <20210330125336.vj2hkgwhyrh5okee@wittgenstein>
 MIME-Version: 1.0
-In-Reply-To: <YGKDfo1vZfFXwG/v@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210330125336.vj2hkgwhyrh5okee@wittgenstein>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Eric,
-
-Às 22:48 de 29/03/21, Eric Biggers escreveu:
-> On Sun, Mar 28, 2021 at 11:43:54AM -0300, André Almeida wrote:
->> For directories with negative dentries that are becoming case-insensitive
->> dirs, we need to remove all those negative dentries, otherwise they will
->> become dangling dentries. During the creation of a new file, if a d_hash
->> collision happens and the names match in a case-insensitive way, the name
->> of the file will be the name defined at the negative dentry, that may be
->> different from the specified by the user. To prevent this from
->> happening, we need to remove all dentries in a directory. Given that the
->> directory must be empty before we call this function we are sure that
->> all dentries there will be negative.
->>
->> Create a function to remove all negative dentries from a directory, to
->> be used as explained above by filesystems that support case-insensitive
->> lookups.
->>
->> Signed-off-by: André Almeida <andrealmeid@collabora.com>
->> ---
->>   fs/dcache.c            | 27 +++++++++++++++++++++++++++
->>   include/linux/dcache.h |  1 +
->>   2 files changed, 28 insertions(+)
->>
->> diff --git a/fs/dcache.c b/fs/dcache.c
->> index 7d24ff7eb206..fafb3016d6fd 100644
->> --- a/fs/dcache.c
->> +++ b/fs/dcache.c
->> @@ -1723,6 +1723,33 @@ void d_invalidate(struct dentry *dentry)
->>   }
->>   EXPORT_SYMBOL(d_invalidate);
->>   
->> +/**
->> + * d_clear_dir_neg_dentries - Remove negative dentries in an inode
->> + * @dir: Directory to clear negative dentries
->> + *
->> + * For directories with negative dentries that are becoming case-insensitive
->> + * dirs, we need to remove all those negative dentries, otherwise they will
->> + * become dangling dentries. During the creation of a new file, if a d_hash
->> + * collision happens and the names match in a case-insensitive, the name of
->> + * the file will be the name defined at the negative dentry, that can be
->> + * different from the specified by the user. To prevent this from happening, we
->> + * need to remove all dentries in a directory. Given that the directory must be
->> + * empty before we call this function we are sure that all dentries there will
->> + * be negative.
->> + */
->> +void d_clear_dir_neg_dentries(struct inode *dir)
->> +{
->> +	struct dentry *alias, *dentry;
->> +
->> +	hlist_for_each_entry(alias, &dir->i_dentry, d_u.d_alias) {
->> +		list_for_each_entry(dentry, &alias->d_subdirs, d_child) {
->> +			d_drop(dentry);
->> +			dput(dentry);
->> +		}
->> +	}
->> +}
->> +EXPORT_SYMBOL(d_clear_dir_neg_dentries);
+On Tue, Mar 30, 2021 at 02:53:36PM +0200, Christian Brauner wrote:
+> On Tue, Mar 30, 2021 at 03:33:23PM +0300, Amir Goldstein wrote:
+> > On Tue, Mar 30, 2021 at 3:12 PM Christian Brauner
+> > <christian.brauner@ubuntu.com> wrote:
+> > >
+> > > On Sun, Mar 28, 2021 at 06:56:24PM +0300, Amir Goldstein wrote:
+> > > > Add a high level hook fsnotify_path_create() which is called from
+> > > > syscall context where mount context is available, so that FAN_CREATE
+> > > > event can be added to a mount mark mask.
+> > > >
+> > > > This high level hook is called in addition to fsnotify_create(),
+> > > > fsnotify_mkdir() and fsnotify_link() hooks in vfs helpers where the mount
+> > > > context is not available.
+> > > >
+> > > > In the context where fsnotify_path_create() will be called, a dentry flag
+> > > > flag is set on the new dentry the suppress the FS_CREATE event in the vfs
+> > > > level hooks.
+> > >
+> > > Ok, just to make sure this scheme would also work for overlay-style
+> > > filesystems like ecryptfs where you possible generate two notify events:
+> > > - in the ecryptfs layer
+> > > - in the lower fs layer
+> > > at least when you set a regular inode watch.
+> > >
+> > > If you set a mount watch you ideally would generate two events in both
+> > > layers too, right? But afaict that wouldn't work.
+> > >
+> > > Say, someone creates a new link in ecryptfs the DENTRY_PATH_CREATE
+> > > flag will be set on the new ecryptfs dentry and so no notify event will
+> > > be generated for the ecryptfs layer again. Then ecryptfs calls
+> > > vfs_link() to create a new dentry in the lower layer. The new dentry in
+> > > the lower layer won't have DCACHE_PATH_CREATE set. Ok, that makes sense.
+> > >
+> > > But since vfs_link() doesn't have access to the mnt context itself you
+> > > can't generate a notify event for the mount associated with the lower
+> > > fs. This would cause people who a FAN_MARK_MOUNT watch on that lower fs
+> > > mount to not get notified about creation events going through the
+> > > ecryptfs layer. Is that right?  Seems like this could be a problem.
+> > >
+> > 
+> > Not sure I follow what the problem might be.
+> > 
+> > FAN_MARK_MOUNT subscribes to get only events that were
+> > generated via that vfsmount - that has been that way forever.
+> > 
+> > A listener may subscribe to (say) FAN_CREATE on a certain
+> > mount AND also also on a specific parent directory.
+> > 
+> > If the listener is watching the entire ecryptfs mount and the
+> > specific lower directory where said vfs_link() happens, both
+> > events will be reported. One from fsnotify_create_path() and
+> > the lower from fsnotify_create().
+> > 
+> > If one listener is watching the ecryptfs mount and another
+> > listener is watching the specific ecryptfs directory, both
+> > listeners will get a single event each. They will both get
+> > the event that is emitted from fsnotify_path_create().
+> > 
+> > Besides I am not sure about ecryptfs, but overlayfs uses
+> > private mount clone for accessing lower layer, so by definition
 > 
-> As Al already pointed out, this doesn't work as intended, for a number of
-> different reasons.
+> I know. That's why I was using ecryptfs as an example which doesn't do
+> that (And I think it should be switched tbh.). It simply uses
+> kern_path() and then stashes that path.
 > 
-> Did you consider just using shrink_dcache_parent()?  That already does what you
-> are trying to do here, I think.
+> My example probably would be something like:
+> 
+> mount -t ext4 /dev/sdb /A
+> 
+> 1. FAN_MARK_MOUNT(/A)
+> 
+> mount --bind /A /B
+> 
+> 2. FAN_MARK_MOUNT(/B)
+> 
+> mount -t ecryptfs /B /C
+> 
+> 3. FAN_MARK_MOUNT(/C)
+> 
+> let's say I now do
+> 
+> touch /unencrypted/bla
 
-When I wrote this patch, I didn't know it, but after Al Viro comments I 
-get back to the code and found it, and it seems do do what I intend 
-indeed, and my test is happy as well.
+touch /C/bla
 
 > 
-> The harder part (which I don't think you've considered) is how to ensure that
-> all negative dentries really get invalidated even if there are lookups of them
-> happening concurrently.  Concurrent lookups can take temporary references to the
-> negative dentries, preventing them from being invalidated.
+> I may be way off here but intuitively it seems both 1. and 2. should get
+> a creation event but not 3., right?
 > 
-
-I didn't consider that, thanks for the feedback. So this means that 
-those lookups will increase the refcount of the dentry, and it will only 
-get really invalidated when refcount reaches 0? Or do would I need to 
-call d_invalidate() again, until I succeed?
-
-> - Eric
+> But with your proposal would both 1. and 2. still get a creation event?
 > 
+> > users cannot watch the underlying overlayfs operations using
+> > a mount mark. Also, overlayfs suppresses fsnotify events on
+> > underlying files intentionally with FMODE_NONOTIFY.
+> 
+> Probably ecryptfs should too?
+> 
+> Christian
