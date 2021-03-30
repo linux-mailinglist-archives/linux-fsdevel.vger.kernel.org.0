@@ -2,94 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4173434DE1D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 04:18:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B7E234E02D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 06:33:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230337AbhC3CR2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Mar 2021 22:17:28 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58244 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230224AbhC3CRG (ORCPT
+        id S229656AbhC3Ecs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Mar 2021 00:32:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57496 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229470AbhC3Ecd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Mar 2021 22:17:06 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 3A9B61F451A2
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Shreeya Patel <shreeya.patel@collabora.com>, tytso@mit.edu,
-        adilger.kernel@dilger.ca, jaegeuk@kernel.org, chao@kernel.org,
-        drosen@google.com, yuchao0@huawei.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-        andre.almeida@collabora.com
-Subject: Re: [PATCH v5 4/4] fs: unicode: Add utf8 module and a unicode layer
-Organization: Collabora
-References: <20210329204240.359184-1-shreeya.patel@collabora.com>
-        <20210329204240.359184-5-shreeya.patel@collabora.com>
-        <YGKGhxaozX3ND6iB@gmail.com>
-Date:   Mon, 29 Mar 2021 22:16:57 -0400
-In-Reply-To: <YGKGhxaozX3ND6iB@gmail.com> (Eric Biggers's message of "Mon, 29
-        Mar 2021 19:01:43 -0700")
-Message-ID: <87v999pequ.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Tue, 30 Mar 2021 00:32:33 -0400
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 788F6C061762;
+        Mon, 29 Mar 2021 21:32:32 -0700 (PDT)
+Received: by mail-yb1-xb30.google.com with SMTP id k3so5694377ybh.4;
+        Mon, 29 Mar 2021 21:32:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8UOjwXmn4nf9zItYG6/NyUPHbJkTPi+XlQ9dAsXztIo=;
+        b=OQbe3zjHIQXdkbq3HZvrB6zq9XTTzoAEJLMk/Ec9QK0I9sE+oDczECGTr5B27lMHfn
+         EWvrFJDwp5mYxb620BipZXYKNPX7ybdgM+EIEMUx9T13a8AaCp/Wqi90Jzg/5VSI8QhD
+         6aWJdKGYYdvdpEleqhVk95ZKHqos96BNQCC8IN8wlD+VxVWZ1AiLZBgcwSOqlGqw9wXv
+         HpFcTqsAwsJ8Vix+3+rKYBrfyau5dZeh6rQW0GowMSyyfs0mtSkOKmFPV8w5p2KhD9h8
+         p1bDhuV5ozkDW8DiO9OESEBguEVDuaaZuKjU3kQ5B01ameqr4skT1up2535e4/HTJml7
+         YpFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8UOjwXmn4nf9zItYG6/NyUPHbJkTPi+XlQ9dAsXztIo=;
+        b=ZULkrEuxWfSJBx44mYIfjfJRgoNnQDxrcWm4aelKY++Acu6EKmdVCYrMWOVP1gdCxM
+         dKOxxjtnBXTaQ8f3K0OuU/7NT1YddCAmfEJPsFPlLgrQadWGOIojiq5iC4pc7i8BF/SH
+         cnlCKoB7tizYx9Ae1HIT8wRdgqN1Szx9IenRL6c95rkOStmvsDqFhiY6cd72llNmXirE
+         gH4Y0/YogyvfEkTuzCjF2N55/sayGL5I5pv0jQs0bzd8ZS866RFk4d9jsZnDC5qeD+h/
+         qhBJz102G5G7JrCOwZZe9MS++FVtf4UOuvHNhpKbkcVXId4VMT3MldFVy21f2A/uyjWB
+         oS/g==
+X-Gm-Message-State: AOAM532J8OGm8JAFjhQ/7MJFqtI4vtD58pjXr2n+l2JbTEoBM94sMSgn
+        LwGDIcRVO/Sn1HTQIJNRGgIRvFvm6rwlbXiFXFgtZZevdho=
+X-Google-Smtp-Source: ABdhPJx2inaN7aos17kqtnO502JmtLoRNxYR++Zm2z9iAv7LgNwkYtCz52p3ANriuzRs+xp1hcxlTfCE79LNsp5WOGY=
+X-Received: by 2002:a25:d0c7:: with SMTP id h190mr39450935ybg.428.1617078751736;
+ Mon, 29 Mar 2021 21:32:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20210202082353.2152271-1-dkadashev@gmail.com> <81aae948-940e-8fd3-7ac8-5b37692a931b@kernel.dk>
+In-Reply-To: <81aae948-940e-8fd3-7ac8-5b37692a931b@kernel.dk>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Tue, 30 Mar 2021 11:32:20 +0700
+Message-ID: <CAOKbgA4t7dQfptjSDwQEeH9iBhq8k0kHWqC4OTRq-u2QEvCa6A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] io_uring: add mkdirat support
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Biggers <ebiggers@kernel.org> writes:
+On Tue, Mar 30, 2021 at 3:37 AM Jens Axboe <axboe@kernel.dk> wrote:
+> On 2/2/21 1:23 AM, Dmitry Kadashev wrote:
+> > Based on for-5.11/io_uring.
 
-> On Tue, Mar 30, 2021 at 02:12:40AM +0530, Shreeya Patel wrote:
->> diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
->> index 2c27b9a5cd6c..ad4b837f2eb2 100644
->> --- a/fs/unicode/Kconfig
->> +++ b/fs/unicode/Kconfig
->> @@ -2,13 +2,26 @@
->>  #
->>  # UTF-8 normalization
->>  #
->> +# CONFIG_UNICODE will be automatically enabled if CONFIG_UNICODE_UTF8
->> +# is enabled. This config option adds the unicode subsystem layer which loads
->> +# the UTF-8 module whenever any filesystem needs it.
->>  config UNICODE
->> -	bool "UTF-8 normalization and casefolding support"
->> +	bool
->> +
->> +# utf8data.h_shipped has a large database table which is an auto-generated
->> +# decodification trie for the unicode normalization functions and it is not
->> +# necessary to carry this large table in the kernel.
->> +# Enabling UNICODE_UTF8 option will allow UTF-8 encoding to be built as a
->> +# module and this module will be loaded by the unicode subsystem layer only
->> +# when any filesystem needs it.
->> +config UNICODE_UTF8
->> +	tristate "UTF-8 module"
->>  	help
->>  	  Say Y here to enable UTF-8 NFD normalization and NFD+CF casefolding
->>  	  support.
->> +	select UNICODE
->
-> This seems problematic; it allows users to set CONFIG_EXT4_FS=y (or
-> CONFIG_F2FS_FS=y) but then CONFIG_UNICODE_UTF8=m.  Then the filesystem won't
-> work if the modules are located on the filesystem itself.
+Actually this was a typo (copy-n-paste error), it was on top of
+for-5.12/io_uring. Doesn't really matter though.
 
-Hi Eric,
+> Can you check if it still applies against for-5.13/io_uring? Both the
+> vfs and io_uring bits.
 
-Isn't this a user problem?  If the modules required to boot are on the
-filesystem itself, you are in trouble.  But, if that is the case, your
-rootfs is case-insensitive and you gotta have utf8 as built-in or have
-it in an early userspace.
-
-> I think it should work analogously to CONFIG_FS_ENCRYPTION and
-> CONFIG_FS_ENCRYPTION_ALGS.  That is, CONFIG_UNICODE should be a user-selectable
-> bool, and then the tristate symbols CONFIG_EXT4_FS and CONFIG_F2FS_FS should
-> select the tristate symbol CONFIG_UNICODE_UTF8 if CONFIG_UNICODE.
-
-
-
-
+It does not (the io_uring bits), I'll send v3 soon.
 
 -- 
-Gabriel Krisman Bertazi
+Dmitry Kadashev
