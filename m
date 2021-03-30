@@ -2,65 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0379E34F317
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 23:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E17B34F320
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 23:28:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232842AbhC3V1e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Mar 2021 17:27:34 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:50816 "EHLO
+        id S232853AbhC3V1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Mar 2021 17:27:35 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50814 "EHLO
         userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232614AbhC3V05 (ORCPT
+        with ESMTP id S232611AbhC3V05 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 30 Mar 2021 17:26:57 -0400
 Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULPCo4145310;
-        Tue, 30 Mar 2021 21:25:12 GMT
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULP9x2145305;
+        Tue, 30 Mar 2021 21:25:17 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : content-type :
  mime-version; s=corp-2020-01-29;
- bh=Vf2+P//blblnbGasvOJNQrK5gTSuHjVLlcP/vpjWUaU=;
- b=fnSM/zFJTQ6Mmg6wdLZyg/cpTjVEaSaDUSpgU/W/FIOJL3Nmn6MiFPbbsIOJ6TUz14Ah
- jsoMMCipAMPI8FyhmHUWgH6GnzS4WvsaXqlIBcr0uo5txabLtUNZKVfoeuTCu6U265Ms
- loleFHVrlRY7/Znboo7T//Dz0Kkvl8cZQSOy0MwMiB6ghYVTMVgkY9VoXtqSsWd2BaAG
- F/LSWThaTBGyku2cqDHZMSMV9ZvuixiIHCO2CChEbEWL1zvN+Cp2xRcOA5q7h7Ftp6hu
- 0D6A5ZTt6obsbOpnVHuR8pF5H4aNnrgFAudYujR5YW358fWG5FGHJepybwtYRnF0kMWR MQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 37mad9r8dj-1
+ bh=anR3JuhOf2/kaCECJEGMHmimb81ITGwiAVS+xEPtF6M=;
+ b=dOfVSRZLmdgwabn2pZONARFU7FGHUM1HEcW14B8nVrBZ0FJ3oyc1cZt9q2ogKAZPL5uS
+ YS1r6BV5AWdO+5iA4ObYSQFu7OChbl4Ij+ihHU31j8LVGql83n7t66Y35qmBeSWvcKCI
+ FC3T/DQX+AHL/Iq+H2zbbfgt0TJsliiZbalu8bh7uPbBvCS/xH49zxP6m5FL2A+IhhS3
+ EvZUbNfc0w190TwRTq+Y8FJYD3IxL1mq492QDSu94x7vPO3DVlrN7UDATxGEW86+fQQc
+ Sh2YsyF7He7gcjKcp2ZgTkrclqmdOSVPhhvxZcGu1DiMjcdfzxJUdBiSq5NSv6I3+hls tQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 37mad9r8ds-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Mar 2021 21:25:12 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULOnTX184142;
-        Tue, 30 Mar 2021 21:25:11 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2173.outbound.protection.outlook.com [104.47.55.173])
-        by aserp3020.oracle.com with ESMTP id 37mac7u3tk-1
+        Tue, 30 Mar 2021 21:25:17 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULOblx149856;
+        Tue, 30 Mar 2021 21:25:16 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2172.outbound.protection.outlook.com [104.47.55.172])
+        by userp3020.oracle.com with ESMTP id 37mac4kc6r-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Mar 2021 21:25:11 +0000
+        Tue, 30 Mar 2021 21:25:16 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=abZeMY/d7PKe2eglcqbMO5q3GS6EFRsE59MjbCZZoQJnXB/B8QUX4YCiUpUQxooKNQUSlQtkaksD9+FXPCZy69yQHLoCoyMTUk9uMYGqGvXaw/Whj1+ahbfHnvJaelv4CEsHDNrnyHQ3o5/GVQogVOz/Wto9FvepkspFad3Q1GiH4wvO27qs6VqUrw9c//65NMvdZpJwy/r3UwsPmh5D3Id/AlbEgwzWi/O7sFX2TpUrDLBhF0ZM3+cM03CDOG+VJQybxrfawwajbCK8S5fjaAv6iEsx+eMK6SntMPD/YbARwyqFZVrNRsEv1hnltwqvHliQqllp4Sy9TnS89zbibQ==
+ b=SMnBEyPyoyYn7HLnk2jOaisP6aZJs1SiOaKRl5iHlleYfruE9R/f6dc+WscDmaBoc7Dbvm1nXEmtZpHMNWaOx/yCyFL7i55jzXOwojf6dD4IY7PHI0X73l1OPruYsKCww+T5ji/S6b/xczpqCCEO32ZGyk/bd1w+rkEAQGTXeV4a1nulxcYbXh7Vug/m7ZBslljlepot1SPtlzewVmt4LUKK3p9x/YTnNzY8TGX8euHLezEUmPQB5XbwjBSPM8xlvmVyd5Spi5SZFR2JG4TeBPjRzDm2HPvY6g253rYQ2Omgf7K08BU4Jh38XDsgX+ckkIij7eDs4mPugCptDmTQ4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vf2+P//blblnbGasvOJNQrK5gTSuHjVLlcP/vpjWUaU=;
- b=a/M103EdwCNm6/+Xcc5Gr0AWP9FT62Iovw9J4hHuGZmc093O3CIxMoKNYG4NrNxVl1AvUA7TAcCd0a00nIaQiA935Syf+wUHox8lHZ4A+5CWiYqGvQFBNaRXT5hb7+BrwCEApKFPkNfBIZ0R6KmWMv8r3bRNt9aYULo5m12UWMGzGMBY5geYWCwbzohQQn5wzPeV1B56FG8AxKROs66HiKrQo/f/xpzF30lnlUK9BUUvx3BsEhOSXbvvZLnn+N6PNlf/Qp/JugJmKZ6SsSjDxxlowO4iZ+9Kt1EBhpZupwp32JPWL8PW7P1hjiATkrYg9ySruKbnjtc79y5O6C+tyA==
+ bh=anR3JuhOf2/kaCECJEGMHmimb81ITGwiAVS+xEPtF6M=;
+ b=dRwnIRdaVvkWBMHlwi8lYHpZxVJ0a0V7ial8IYPmWzOEtUsFToFEEAOBnBDbAAeEL6oy3ypnHha9Y7GE/Hu6RbGRG7awXI3se+a6W5v1UfBCVpTWv6srkddXooV5fa1SYzLpSuHA4omAivcU/wT5JJYimqHg27sBJWGlwxJ9kuEytZIwJvdRB124qknE5cSB6P0UBcMl+lXB5BvHNbFW0T2olWcDvYYzpOpaQUmW4SwInUT1QeK2ZK41glJvymEfTNXkIwvqoQqkorj4XETQPpPid49UQKQV6CU6z+10O1Bhs0aSiSNoyUFNeu9Siwn/I3ZIFX659cWDifjSyYM+Mw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vf2+P//blblnbGasvOJNQrK5gTSuHjVLlcP/vpjWUaU=;
- b=fdAUq0t43618EDfGIXEypCchQ8T6SYZ6lBAFQigpHF4+1YwQ3BTmjZ9gyXu+/P0cv6dRTldSe+POwyUfHix8TNdsxzbyW+5Ko0veGw64axHDmy51EtR2XFW4wOD3287wAYSGw36FiXgz5GcDRAVnTpXVaCDYpx+XqbYFf/RgB1o=
+ bh=anR3JuhOf2/kaCECJEGMHmimb81ITGwiAVS+xEPtF6M=;
+ b=RKYdKXCKO/teL6ersbZb/sgruguN1kC6tUVSlkKzFnqt39lZMYUx7thnpBmYuNO724hUtEA2Rl9h8spIwA+mL34yP/luscSwKPUpi5+HrqB8Vp79ovN0bNAjgcpxNwgg7dLoIo8GgsPpRnkuMDydStcmDczOltm6Gh2IYlqasyU=
 Authentication-Results: kvack.org; dkim=none (message not signed)
  header.d=none;kvack.org; dmarc=none action=none header.from=oracle.com;
 Received: from MN2PR10MB3533.namprd10.prod.outlook.com (2603:10b6:208:118::32)
  by MN2PR10MB3120.namprd10.prod.outlook.com (2603:10b6:208:122::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.24; Tue, 30 Mar
- 2021 21:25:08 +0000
+ 2021 21:25:12 +0000
 Received: from MN2PR10MB3533.namprd10.prod.outlook.com
  ([fe80::cc79:c40e:430f:e254]) by MN2PR10MB3533.namprd10.prod.outlook.com
  ([fe80::cc79:c40e:430f:e254%4]) with mapi id 15.20.3977.033; Tue, 30 Mar 2021
- 21:25:08 +0000
+ 21:25:12 +0000
 From:   Anthony Yznaga <anthony.yznaga@oracle.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
@@ -81,9 +81,9 @@ Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
         lei.l.li@intel.com, daniel.m.jordan@oracle.com,
         steven.sistare@oracle.com, linux-fsdevel@vger.kernel.org,
         linux-doc@vger.kernel.org, kexec@lists.infradead.org
-Subject: [RFC v2 02/43] mm: PKRAM: implement node load and save functions
-Date:   Tue, 30 Mar 2021 14:35:37 -0700
-Message-Id: <1617140178-8773-3-git-send-email-anthony.yznaga@oracle.com>
+Subject: [RFC v2 03/43] mm: PKRAM: implement object load and save functions
+Date:   Tue, 30 Mar 2021 14:35:38 -0700
+Message-Id: <1617140178-8773-4-git-send-email-anthony.yznaga@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1617140178-8773-1-git-send-email-anthony.yznaga@oracle.com>
 References: <1617140178-8773-1-git-send-email-anthony.yznaga@oracle.com>
@@ -94,58 +94,58 @@ X-ClientProxiedBy: BYAPR11CA0099.namprd11.prod.outlook.com
  (2603:10b6:208:118::32)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from ca-qasparc-x86-2.us.oracle.com (148.87.23.8) by BYAPR11CA0099.namprd11.prod.outlook.com (2603:10b6:a03:f4::40) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.26 via Frontend Transport; Tue, 30 Mar 2021 21:25:04 +0000
+Received: from ca-qasparc-x86-2.us.oracle.com (148.87.23.8) by BYAPR11CA0099.namprd11.prod.outlook.com (2603:10b6:a03:f4::40) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.26 via Frontend Transport; Tue, 30 Mar 2021 21:25:08 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 04d6137b-6f76-42e7-02ef-08d8f3c24b1f
+X-MS-Office365-Filtering-Correlation-Id: 84624cf4-e76b-473d-946c-08d8f3c24db2
 X-MS-TrafficTypeDiagnostic: MN2PR10MB3120:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR10MB3120432C5C480472CF922F06EC7D9@MN2PR10MB3120.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Microsoft-Antispam-PRVS: <MN2PR10MB31205C279102FEF31D6455DCEC7D9@MN2PR10MB3120.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: DYlF3OqMu5RtbmKD2rIG1RW68YQ+3Fc06VmpZBAiaeMxjsFFUkg2fMOcgdjHTzu8rB4IqUkx6nZcBVvpNJGDR82SiDnM5pNKn3ElOZoiZiA+iq+NMe4A3T1C5tHLXVg9aVQJA15dV9o4dmoLEX4pnTrcLjEnmhQ71/Gdjcbf3yjSZ8M2JorhGRHuGWfSm9ETl60G8EnIzRJkZ7POW9lhzldWcwXL+yASUGHh9e9Tm21tgcJ7jDkaKugYCdZ1WYv4KEM41caWFs/fPugyCeFC10N5p1e4sTZTqus+Frz7Ru7iSOYp9zomRdfM5+an/+uDUDALP3O2NIkF1dyLehrf7BXi6X13MsbJqFAt6jeopl/pIYp3YCAJKTGB7QyIuBMW4ldVT5nQrLu223uDLaEvA/MmoxDOm5/6CX95CmgkAcUpvVxTuOUfUCjEx7ltkA5v9arr2KQ5fsVQojU8wTU2yYwDRVUcFXynp6Q62M2tMAfljTbALHAP8R/sqFFtlLS+Lije7OH8cqGz4jiD0kND2PUBXJfIZ+XU1nwPocQ/fK6mbyp+Db85wE59t/6fZEPbmBDSSBfWBx7W34iq/iB8lkmYKC5cPLmu7jOPeMtYH/HRpXc0vIJjHr4KsRPQ3tvPJLKK2rMWD76xgMdF7qNmCbgPUXHtgn2v6Xzg5+N3fja2qGIdvaKVGxdWvKPNUCs/
+X-Microsoft-Antispam-Message-Info: qK1u7bhbLzniP866Jt/ifhzhVfWcUUDu8KAefS7+eYVjmZSILyCnhJKjsxkS+nb/X0fLrLBR7akgpjtSYwb1bIgwrrDcpUa9won4DJnmfZGz4tHbdsyuxOAnjo4EmT7sUhtScVS3Z4ZM/FdFjGRrPIeQ4mnSWt5gDxbCCprkfW/AdFp8sqyhM9Mv0CiZfslG5iIpplJiyc/PBgiCsuLBFUdTJ82728l0uMggFqNmWGC9di2WN8VeTCqTx5t3p4HQ7ru6WGah4wXbCX4C76GFECDtskLo2mF5EatceBkJEdgaFGiIfuYapMHSXmsZ0glipCzNPEQrBC7F146nMQQAMU4fToAPDvKxLxPKtNSCZaVPnMi0nQiCYWFGUhFQTM+oy4UYCZRACDqA+5QOomD+5/Zkz0rh/3bVLQQ5OIFniSOELmJN7KhrS2/p1OvKy/JoB2jH9bynCSXKACbjjzk5QSSb5eDQOtEhtaDp5L0qIav0gDpPLe9yuFsJC+XGQ74JlSTME5UIgw54K1H8dZxEieO+H2N4hgJharYhQCGrHrk94HAHeCCgMo404yMwfiPDSbladsA6V4dNJc6ZuL4YijU+1o3SCZZ7H9pn7oWpr+W5FtA7tLYkLBPwUIJ/ia4JNO/IuwoCY5wSmM/8V68wrbXndmBij73K09AlCJD2LKAS8HMEckoONhi/i8WXVPyi
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB3533.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(39860400002)(366004)(376002)(346002)(396003)(52116002)(316002)(186003)(6486002)(16526019)(5660300002)(2616005)(956004)(6666004)(8676002)(66556008)(44832011)(478600001)(83380400001)(7406005)(38100700001)(86362001)(7696005)(66476007)(66946007)(4326008)(2906002)(26005)(7416002)(36756003)(8936002)(134885004);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?zJxwS9HiYyHMdrKuRmK59Gd45ShubpZlA52qktc8NNGNcTgrKXOnTENM+6i/?=
- =?us-ascii?Q?wccGKfRRYS148Kh6oRTahFCY+4aZaaaQRpCydQ1FWRJ8SZslTtv//+kRQ+iV?=
- =?us-ascii?Q?nTiAt+7wOuoeywifwQ9c7/mIB7o9yWN8WZz7DLaGmjmkP31PJexp/ioFf4bM?=
- =?us-ascii?Q?V2SDj4yX15QKtqbr/9PIa5h838YpsxlNN98X9zVfvht1ndMzFka2b/urUfB0?=
- =?us-ascii?Q?d6K/Y6EtDerkTRRC3D2CMKqgoOcMcq5DCRKLovN3ItaWiM11EVboPMwomGDS?=
- =?us-ascii?Q?9PeKVc88i1cMAj/cKUK1GayEedJOpyPOtKbRtRByjcfrskhOiPFBf6USpNVF?=
- =?us-ascii?Q?BGiOarZOMg1Xu8tsHrd7DP8c96UjZKJMjNGWLbSZm1pDxC1ou90CvheXUnLs?=
- =?us-ascii?Q?4gDfUdhsRrYmYWCZ3zl6Uh+qKYwIhEcWX2AQZHniYxBxq72/IiRtD01nfwAQ?=
- =?us-ascii?Q?mI8t2Ap6bFMlcst4LnUTyHDVw9HcidYnJDq4/HTLf0mOdbFoKN5mwyJJyOza?=
- =?us-ascii?Q?/UIQXAcifGtcPWPNrx1wGCjxb5qaG8hUykobaPTApAUwJJs2ats4dqfbpaDh?=
- =?us-ascii?Q?XMnnTG3bMNOAfXJNjMFxUnFEgCyniZaycMx0wkI2gA6c5n0r/ysldE7pm75C?=
- =?us-ascii?Q?CXl/LsAlMGq3V097o3xwsP5NfHylx6HHcL8Pz6lHYDTJBuI1vr5s5fcOuUaZ?=
- =?us-ascii?Q?1UkrrULEcw11e3aEVnG6UpgcOsx9zD6kp3LfGllx/Ygw5h8hHQ323zSOkZWg?=
- =?us-ascii?Q?j87AqBRPNXF80L/A5dtl4XR6UyASMeR4O3Io74f/Cby0tPgyF7eXwiJgTW/v?=
- =?us-ascii?Q?i2pzoZA0xpX2QUHWHsGl7xDTBQhc+ZWUtkJjDVfViROHiJybmmCoP1YkRiXr?=
- =?us-ascii?Q?2w0J+PF0XAvCZA9dZc9mFf8eNFp7JY+UixdIBz8pAnm98JrQjV5RH+P7GaQN?=
- =?us-ascii?Q?U3VJ+2XxEWos1uhYKM3kA+cWBgjQTWvqX6Ujc5Ke9phHvm7tdp3WQs6y4gZv?=
- =?us-ascii?Q?NQPRUBDmkYfu1Qpt+TT9qXGxApW8mlR0YAOw9uaRb1yIPDzXezOOfeDgRDBc?=
- =?us-ascii?Q?Oouuhy9CgsYjia2C7j44NnfSF66wF8kyCZ3LKah3E3dauaX7/qqtfNPwjdNm?=
- =?us-ascii?Q?iGSj2f2Vp+jDsCmbzN0Niqj4XI/FBpy5edXl/1boqCifVK2hdd1Ehmr+vMjV?=
- =?us-ascii?Q?v0y7g14SZpvytCTdLPRWdiTA+1WBY9sDfgMylS5Y/aJHPK6MdqY0Gkl2ljiQ?=
- =?us-ascii?Q?CEUMtjZvZ0GNjTlQqrUpDDq7I8wnt4FF01HGm+fI1TnsR58FdWtQtD7zl6SM?=
- =?us-ascii?Q?XMH2cuWtHzw2eevBFg6vYZQl?=
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?mUdEfLqk1UcJ4n+VNMunRH1K6bg4BCk4dI1J0JJKK3IBdziwcVE0yu3Tu51F?=
+ =?us-ascii?Q?b1CWgeM4mnD4xSMemxXhEfMqkx1bj5QzlumgWvJ5XtwDXU9zomN7WIDWIhkw?=
+ =?us-ascii?Q?N6A/xnIXtL9TNXU73C3RsAD33sm80sSMSxmQnA+M07h4NI6nRVlDcg/yI2iC?=
+ =?us-ascii?Q?WAVs68t98qhn6OJL616qOxXyG2iMZ5rDE8HbGW43qQEB0tZJy/CsoCNQ/ZRy?=
+ =?us-ascii?Q?HJ+cQ6oDekt7VISQRxOTnjPeFZNfE2HDwJHtl00+UFSKkn0y7aaFOVlWFKP1?=
+ =?us-ascii?Q?ggLBGQFAgrTCtCa8f8YbvZSc0atLlL7Ldzmcu4w9nK4xVSzkmjte7gzCx6rI?=
+ =?us-ascii?Q?HXRtdES0WKSKT7QMAwdQl1BbF6F8amiq/web+O08867LxSoUanXqP2debfgW?=
+ =?us-ascii?Q?Vfl9APwT4vx8k2aUPulplxd5ArzesiYth875K21NueHlVolZzaaTUmJ11CUo?=
+ =?us-ascii?Q?UV7EwFYMAXWPw9yl7F/1yZeTd/FpzMmEs3aLci9Bhkb16FNAvD+fVB2Y2V5E?=
+ =?us-ascii?Q?Ke2C0LsEAA5mmi7RscKE6tFCHYfyr2RUI/iu4eDO8PviiIxPT5NM3cG2nbIT?=
+ =?us-ascii?Q?W1VFKyArdZiCNmw7d8TlkrgLAZBexmcJ/LG7XWTcNo9yWYPxQx2FncelF+C2?=
+ =?us-ascii?Q?1USe4dR5/8Xr1oqQR5j0HGgMWKP4+j1Xm/iLIKiQJCuk8t0MpltCR4ZdtZqF?=
+ =?us-ascii?Q?KXDXC38uYFKFddJ2wI1o9Rw6wyoFP6iOiGkYKczUSb+2J+SpywV07QMrE63p?=
+ =?us-ascii?Q?OOYsgyd1X7J8KNVI7D3QSQNvgynxyRi/8PPIaSiJgtaEgJQY04kYgCTEExQd?=
+ =?us-ascii?Q?Rs0XB1MH9ybeG8PpoodzhaegPRd4Iyq6nt0sg3OmAp88+vEOrrW4tO00VC7K?=
+ =?us-ascii?Q?9Ps+HB2t2t/eu+r57mt9xI8421rLg0xQ+cm15N9kXW9MoOxupJEboEGCxSwb?=
+ =?us-ascii?Q?j54kAb8aZpUAkEkh+r67H8+mUtFCHzbRXav8RVbJIkDionmnYALyobHlruJR?=
+ =?us-ascii?Q?4A8K/nrb76Ns13Md3imS4r9sFZG6vbRxKMJf0F8Le6hPCxo5MhI7a9De8RYl?=
+ =?us-ascii?Q?JgVeH7Sqn/rTs4xgD7CBKGVFXBUDfJRSqcNsromD8OvOVwv8UIAHLeT39nRU?=
+ =?us-ascii?Q?ORPWrF/PBVOtK4Q06CiH1bgF8nA++qInQciZg8403w6D1lxefQ0Wpc5PaUd2?=
+ =?us-ascii?Q?yTJkEZI2e7ro7tMpC04MTkkB9Xp2SqyTrkeys2hIdUS0lchtqF/tXFsLaE01?=
+ =?us-ascii?Q?OxMW0lqaLVT7H6JQxn3tPQWBTS3VVACtxgCpbDRPESGNa99R5xsq7+grAjLF?=
+ =?us-ascii?Q?1ctMRdFHqRg7o2+yjaUBuaEH?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04d6137b-6f76-42e7-02ef-08d8f3c24b1f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84624cf4-e76b-473d-946c-08d8f3c24db2
 X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB3533.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2021 21:25:08.4132
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2021 21:25:12.7388
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uuz81d8cXglpzvaU+wVP5EFoY1bFVsLIyncjDlwr//SoCfn32dFk1QavSm0QTevT285AxzlDgNYRq9KVfComYSmlgZKJe6Tlg4Tde723mc8=
+X-MS-Exchange-CrossTenant-UserPrincipalName: QKXDpl8Almwx6/03PHwtomxWUmCVmgG5Aqx0OVLHudtK2mtwU+DsD67OupkHQ8TSKzsfcnXfbyJduY5BWQak5bLoIeIvTKF0+6oQOCq+fuI=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB3120
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9939 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 adultscore=0
- spamscore=0 malwarescore=0 phishscore=0 suspectscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103300000
- definitions=main-2103300156
-X-Proofpoint-ORIG-GUID: kE4H91EIaDeftWTmgNuk0X_566WalKes
-X-Proofpoint-GUID: kE4H91EIaDeftWTmgNuk0X_566WalKes
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999
+ malwarescore=0 spamscore=0 mlxscore=0 suspectscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2103300000 definitions=main-2103300156
+X-Proofpoint-ORIG-GUID: UfBCMuY7yXcBH0vh78GwREoMME8RVcAi
+X-Proofpoint-GUID: UfBCMuY7yXcBH0vh78GwREoMME8RVcAi
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9939 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  bulkscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0 adultscore=0
@@ -156,260 +156,194 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Preserved memory is divided into nodes which can be saved and loaded
-independently of each other. PKRAM nodes are kept on a list and
-identified by unique names. Whenever a save operation is initiated by
-calling pkram_prepare_save(), a new node is created and linked to the
-list. When the save operation has been committed by calling
-pkram_finish_save(), the node becomes loadable. A load operation can be
-then initiated by calling pkram_prepare_load() which deletes the node
-from the list and prepares the corresponding stream for loading data
-from it. After the load has been finished, the pkram_finish_load()
-function must be called to free the node. Nodes are also deleted when a
-save operation is discarded, i.e. pkram_discard_save() is called instead
-of pkram_finish_save().
+PKRAM nodes are further divided into a list of objects. After a save
+operation has been initiated for a node, a save operation for an object
+associated with the node is initiated by calling pkram_prepare_save_obj().
+A new object is created and linked to the node.  The save operation for
+the object is committed by calling pkram_finish_save_obj().  After a load
+operation has been initiated, pkram_prepare_load_obj() is called to
+delete the next object from the node and prepare the corresponding
+stream for loading data from it.  After the load of object has been
+finished, pkram_finish_load_obj() is called to free the object.  Objects
+are also deleted when a save operation is discarded.
 
-Originally-by: Vladimir Davydov <vdavydov.dev@gmail.com>
 Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 ---
- include/linux/pkram.h |   8 ++-
- mm/pkram.c            | 148 ++++++++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 150 insertions(+), 6 deletions(-)
+ include/linux/pkram.h |  2 ++
+ mm/pkram.c            | 72 ++++++++++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 70 insertions(+), 4 deletions(-)
 
 diff --git a/include/linux/pkram.h b/include/linux/pkram.h
-index a575da2d6c79..01055a876450 100644
+index 01055a876450..a4d55af392c0 100644
 --- a/include/linux/pkram.h
 +++ b/include/linux/pkram.h
-@@ -6,6 +6,8 @@
- #include <linux/types.h>
+@@ -7,6 +7,7 @@
  #include <linux/mm_types.h>
  
-+struct pkram_node;
-+
+ struct pkram_node;
++struct pkram_obj;
+ 
  /**
   * enum pkram_data_flags - definition of data types contained in a pkram obj
-  * @PKRAM_DATA_none: No data types configured
-@@ -14,7 +16,11 @@ enum pkram_data_flags {
- 	PKRAM_DATA_none		= 0x0,  /* No data types configured */
+@@ -19,6 +20,7 @@ enum pkram_data_flags {
+ struct pkram_stream {
+ 	gfp_t gfp_mask;
+ 	struct pkram_node *node;
++	struct pkram_obj *obj;
  };
  
--struct pkram_stream;
-+struct pkram_stream {
-+	gfp_t gfp_mask;
-+	struct pkram_node *node;
-+};
-+
  struct pkram_access;
- 
- #define PKRAM_NAME_MAX		256	/* including nul */
 diff --git a/mm/pkram.c b/mm/pkram.c
-index 59e4661b2fb7..21976df6e0ea 100644
+index 21976df6e0ea..7c977c5982f8 100644
 --- a/mm/pkram.c
 +++ b/mm/pkram.c
-@@ -2,16 +2,85 @@
- #include <linux/err.h>
- #include <linux/gfp.h>
- #include <linux/kernel.h>
-+#include <linux/list.h>
+@@ -6,9 +6,14 @@
  #include <linux/mm.h>
-+#include <linux/mutex.h>
+ #include <linux/mutex.h>
  #include <linux/pkram.h>
-+#include <linux/string.h>
++#include <linux/sched.h>
+ #include <linux/string.h>
  #include <linux/types.h>
  
-+/*
-+ * Preserved memory is divided into nodes that can be saved or loaded
-+ * independently of each other. The nodes are identified by unique name
-+ * strings.
-+ *
-+ * The structure occupies a memory page.
-+ */
-+struct pkram_node {
-+	__u32	flags;
-+
-+	__u8	name[PKRAM_NAME_MAX];
++struct pkram_obj {
++	__u64   obj_pfn;	/* points to the next object in the list */
 +};
 +
-+#define PKRAM_SAVE		1
-+#define PKRAM_LOAD		2
-+#define PKRAM_ACCMODE_MASK	3
-+
-+static LIST_HEAD(pkram_nodes);			/* linked through page::lru */
-+static DEFINE_MUTEX(pkram_mutex);		/* serializes open/close */
-+
-+static inline struct page *pkram_alloc_page(gfp_t gfp_mask)
+ /*
+  * Preserved memory is divided into nodes that can be saved or loaded
+  * independently of each other. The nodes are identified by unique name
+@@ -18,6 +23,7 @@
+  */
+ struct pkram_node {
+ 	__u32	flags;
++	__u64	obj_pfn;	/* points to the first obj of the node */
+ 
+ 	__u8	name[PKRAM_NAME_MAX];
+ };
+@@ -62,6 +68,21 @@ static struct pkram_node *pkram_find_node(const char *name)
+ 	return NULL;
+ }
+ 
++static void pkram_truncate_node(struct pkram_node *node)
 +{
-+	return alloc_page(gfp_mask);
-+}
++	unsigned long obj_pfn;
++	struct pkram_obj *obj;
 +
-+static inline void pkram_free_page(void *addr)
-+{
-+	free_page((unsigned long)addr);
-+}
-+
-+static inline void pkram_insert_node(struct pkram_node *node)
-+{
-+	list_add(&virt_to_page(node)->lru, &pkram_nodes);
-+}
-+
-+static inline void pkram_delete_node(struct pkram_node *node)
-+{
-+	list_del(&virt_to_page(node)->lru);
-+}
-+
-+static struct pkram_node *pkram_find_node(const char *name)
-+{
-+	struct page *page;
-+	struct pkram_node *node;
-+
-+	list_for_each_entry(page, &pkram_nodes, lru) {
-+		node = page_address(page);
-+		if (strcmp(node->name, name) == 0)
-+			return node;
++	obj_pfn = node->obj_pfn;
++	while (obj_pfn) {
++		obj = pfn_to_kaddr(obj_pfn);
++		obj_pfn = obj->obj_pfn;
++		pkram_free_page(obj);
++		cond_resched();
 +	}
-+	return NULL;
++	node->obj_pfn = 0;
 +}
 +
-+static void pkram_stream_init(struct pkram_stream *ps,
-+			     struct pkram_node *node, gfp_t gfp_mask)
-+{
-+	memset(ps, 0, sizeof(*ps));
-+	ps->gfp_mask = gfp_mask;
-+	ps->node = node;
-+}
-+
- /**
-  * Create a preserved memory node with name @name and initialize stream @ps
-  * for saving data to it.
+ static void pkram_stream_init(struct pkram_stream *ps,
+ 			     struct pkram_node *node, gfp_t gfp_mask)
+ {
+@@ -124,12 +145,31 @@ int pkram_prepare_save(struct pkram_stream *ps, const char *name, gfp_t gfp_mask
   *
-  * @gfp_mask specifies the memory allocation mask to be used when saving data.
-  *
-+ * Error values:
-+ *	%ENAMETOOLONG: name len >= PKRAM_NAME_MAX
-+ *	%ENOMEM: insufficient memory available
-+ *	%EEXIST: node with specified name already exists
-+ *
   * Returns 0 on success, -errno on failure.
   *
-  * After the save has finished, pkram_finish_save() (or pkram_discard_save() in
-@@ -19,7 +88,34 @@
++ * Error values:
++ *	%ENOMEM: insufficient memory available
++ *
+  * After the save has finished, pkram_finish_save_obj() (or pkram_discard_save()
+  * in case of failure) is to be called.
   */
- int pkram_prepare_save(struct pkram_stream *ps, const char *name, gfp_t gfp_mask)
+ int pkram_prepare_save_obj(struct pkram_stream *ps, enum pkram_data_flags flags)
  {
 -	return -ENOSYS;
++	struct pkram_node *node = ps->node;
++	struct pkram_obj *obj;
 +	struct page *page;
-+	struct pkram_node *node;
-+	int err = 0;
 +
-+	if (strlen(name) >= PKRAM_NAME_MAX)
-+		return -ENAMETOOLONG;
++	BUG_ON((node->flags & PKRAM_ACCMODE_MASK) != PKRAM_SAVE);
 +
-+	page = pkram_alloc_page(gfp_mask | __GFP_ZERO);
++	page = pkram_alloc_page(ps->gfp_mask | __GFP_ZERO);
 +	if (!page)
 +		return -ENOMEM;
-+	node = page_address(page);
++	obj = page_address(page);
 +
-+	node->flags = PKRAM_SAVE;
-+	strcpy(node->name, name);
++	if (node->obj_pfn)
++		obj->obj_pfn = node->obj_pfn;
++	node->obj_pfn = page_to_pfn(page);
 +
-+	mutex_lock(&pkram_mutex);
-+	if (!pkram_find_node(name))
-+		pkram_insert_node(node);
-+	else
-+		err = -EEXIST;
-+	mutex_unlock(&pkram_mutex);
-+	if (err) {
-+		pkram_free_page(node);
-+		return err;
-+	}
-+
-+	pkram_stream_init(ps, node, gfp_mask);
++	ps->obj = obj;
 +	return 0;
  }
  
  /**
-@@ -50,7 +146,12 @@ void pkram_finish_save_obj(struct pkram_stream *ps)
+@@ -137,7 +177,9 @@ int pkram_prepare_save_obj(struct pkram_stream *ps, enum pkram_data_flags flags)
   */
- void pkram_finish_save(struct pkram_stream *ps)
+ void pkram_finish_save_obj(struct pkram_stream *ps)
  {
 -	BUG();
 +	struct pkram_node *node = ps->node;
 +
 +	BUG_ON((node->flags & PKRAM_ACCMODE_MASK) != PKRAM_SAVE);
-+
-+	smp_wmb();
-+	node->flags &= ~PKRAM_ACCMODE_MASK;
  }
  
  /**
-@@ -60,7 +161,15 @@ void pkram_finish_save(struct pkram_stream *ps)
-  */
- void pkram_discard_save(struct pkram_stream *ps)
- {
--	BUG();
-+	struct pkram_node *node = ps->node;
-+
-+	BUG_ON((node->flags & PKRAM_ACCMODE_MASK) != PKRAM_SAVE);
-+
-+	mutex_lock(&pkram_mutex);
-+	pkram_delete_node(node);
-+	mutex_unlock(&pkram_mutex);
-+
-+	pkram_free_page(node);
+@@ -169,6 +211,7 @@ void pkram_discard_save(struct pkram_stream *ps)
+ 	pkram_delete_node(node);
+ 	mutex_unlock(&pkram_mutex);
+ 
++	pkram_truncate_node(node);
+ 	pkram_free_page(node);
  }
  
- /**
-@@ -69,11 +178,36 @@ void pkram_discard_save(struct pkram_stream *ps)
+@@ -216,11 +259,26 @@ int pkram_prepare_load(struct pkram_stream *ps, const char *name)
   *
   * Returns 0 on success, -errno on failure.
   *
 + * Error values:
-+ *	%ENOENT: node with specified name does not exist
-+ *	%EBUSY: save to required node has not finished yet
++ *	%ENODATA: Stream @ps has no preserved memory objects
 + *
-  * After the load has finished, pkram_finish_load() is to be called.
+  * After the load has finished, pkram_finish_load_obj() is to be called.
   */
- int pkram_prepare_load(struct pkram_stream *ps, const char *name)
+ int pkram_prepare_load_obj(struct pkram_stream *ps)
  {
 -	return -ENOSYS;
-+	struct pkram_node *node;
-+	int err = 0;
-+
-+	mutex_lock(&pkram_mutex);
-+	node = pkram_find_node(name);
-+	if (!node) {
-+		err = -ENOENT;
-+		goto out_unlock;
-+	}
-+	if (node->flags & PKRAM_ACCMODE_MASK) {
-+		err = -EBUSY;
-+		goto out_unlock;
-+	}
-+	pkram_delete_node(node);
-+out_unlock:
-+	mutex_unlock(&pkram_mutex);
-+	if (err)
-+		return err;
-+
-+	node->flags |= PKRAM_LOAD;
-+	pkram_stream_init(ps, node, 0);
-+	return 0;
- }
- 
- /**
-@@ -106,7 +240,11 @@ void pkram_finish_load_obj(struct pkram_stream *ps)
-  */
- void pkram_finish_load(struct pkram_stream *ps)
- {
--	BUG();
 +	struct pkram_node *node = ps->node;
++	struct pkram_obj *obj;
 +
 +	BUG_ON((node->flags & PKRAM_ACCMODE_MASK) != PKRAM_LOAD);
 +
-+	pkram_free_page(node);
++	if (!node->obj_pfn)
++		return -ENODATA;
++
++	obj = pfn_to_kaddr(node->obj_pfn);
++	node->obj_pfn = obj->obj_pfn;
++
++	ps->obj = obj;
++	return 0;
  }
  
  /**
+@@ -230,7 +288,12 @@ int pkram_prepare_load_obj(struct pkram_stream *ps)
+  */
+ void pkram_finish_load_obj(struct pkram_stream *ps)
+ {
+-	BUG();
++	struct pkram_node *node = ps->node;
++	struct pkram_obj *obj = ps->obj;
++
++	BUG_ON((node->flags & PKRAM_ACCMODE_MASK) != PKRAM_LOAD);
++
++	pkram_free_page(obj);
+ }
+ 
+ /**
+@@ -244,6 +307,7 @@ void pkram_finish_load(struct pkram_stream *ps)
+ 
+ 	BUG_ON((node->flags & PKRAM_ACCMODE_MASK) != PKRAM_LOAD);
+ 
++	pkram_truncate_node(node);
+ 	pkram_free_page(node);
+ }
+ 
 -- 
 1.8.3.1
 
