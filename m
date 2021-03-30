@@ -2,65 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A952634F32A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 23:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AB2D34F351
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 23:29:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232896AbhC3V1i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Mar 2021 17:27:38 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:50866 "EHLO
+        id S232659AbhC3V21 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Mar 2021 17:28:27 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:51588 "EHLO
         userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232636AbhC3V1A (ORCPT
+        with ESMTP id S232636AbhC3V1y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Mar 2021 17:27:00 -0400
+        Tue, 30 Mar 2021 17:27:54 -0400
 Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULP4ob145272;
-        Tue, 30 Mar 2021 21:25:46 GMT
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULPGju145350;
+        Tue, 30 Mar 2021 21:25:51 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : content-type :
  mime-version; s=corp-2020-01-29;
- bh=sK0+kX48zyKrc5O2jB5SJhTBEc3qU76zrUCMJUFl03Y=;
- b=xHhR6d6nQsLVaxBawJD5zMHg1xZreANZojqmD2mUUb6npmTtWt+yTcoyz+HoVrkWIttx
- uXJPDPRmgrYg8fpeg6BxfLImmd2Sn5tqlP+cWauVjALUn9POWoWwYCaOja2cCXf6gyp8
- M+cbrpaSRsu/mFsnHiC0UvG5BmpSsCvmhkwxWK7cEEmhsz/+Im4rP6y99YYeBPrxLUEU
- er5F4PI4FtXSpOoYHLogD7flMFVkGqOlN1WkBHdI0KZ+oPBvMt2db3jzGnLuvB0RQKQm
- vt1H+pOI66W4xttL071bh8pQTFv1oFkfA4omugUd8Uj3fyde3+o/DRJvGZ4mHVP37Z96 sw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 37mad9r8en-1
+ bh=YqvghoD5svYRKsQeQ1oYy1SsBLqv8CMnuVd9yKWpWRs=;
+ b=pMr0nHEfZI0+bqUiZeOGBhnFYDRLv+ZCrkgctsYWCThM+fDfwxxaiCD2zMzhyswPHJCU
+ vrg5StC5N6mcKH5baQae5P3GTS2h8eoH9qoTxIExjfkW4HjZFJAG8TWCupkndNYjzdr+
+ h1CRhJROvFmWQXDA7FIzhOd3NKcWZFfxRxidfD/wJgEfwDBssXf/ZM2Bcyj2mrb1zEHn
+ bzm9qZ6b0M6Vxamn+MBiQWi2G8U7aBM8LWJsWA8nFuMVZ+jioXitgZDNUUHwzOo8TVNY
+ LobnZye19NwmiAS5TGwf7zZkBeAjxw91gqRomzxuKNUhx1mu1W4v2/PTfQH/LMcqwY5V gg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 37mad9r8ev-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Mar 2021 21:25:46 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULOasw149688;
-        Tue, 30 Mar 2021 21:25:45 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2102.outbound.protection.outlook.com [104.47.58.102])
-        by userp3020.oracle.com with ESMTP id 37mac4kd23-1
+        Tue, 30 Mar 2021 21:25:51 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULOmI5184039;
+        Tue, 30 Mar 2021 21:25:50 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2104.outbound.protection.outlook.com [104.47.58.104])
+        by aserp3020.oracle.com with ESMTP id 37mac7u47e-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Mar 2021 21:25:45 +0000
+        Tue, 30 Mar 2021 21:25:50 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eFKUdrzP6VSwPriPv6mUQFJXns6GWGNM0V43jpZCElbOv+tTGjfaNiBHsV1GfH/Gu8GYwqvog5RpY6xrJCnKmZbRxGXbIFFt+fqctNLGkloxRt4AWYOAx5Sl+oSIsdJcA18z9hIyu3W8tXaLTOBskhJ5ewrDXL+cqV9Td0Mp7c4f03zFv0DqcbB2msaRVtC7wdjvX3GoZr3zxv6NdoTXTR/nuvEL0RhbrlvSi8Kf3Pjeo350Az3d7ojyfF4p+WFNIYhvLdFOtxdzfrJu4NVGeWTEMVMV8LekQzpXWEAIgejRzKfYOBPJ3OTnY30sM339OEmNdVsufHZ9KzVGl4BVDg==
+ b=VFhufleDNH8PQPoyUSVwjzwx4bS/bRr7OUaIz6XFloo5zhoMnB2quT3VUV8GADoZnkqSD3eGAUbYW8htOjv9fYd48N3XyFF2UIrK8nfFk3d9p4I/uBhbIpBEOvJchNSA4Geb5LLbutFYaSkgyemEA4jZkEt/h1femlxJPVOKaH9BlOR/T7C9o3UELPBwhDKHjmsX9y91h2PQCBv2wLapk4vXl/Ej1vD5eO6vTIh94t6sZ4D0FBslKnokYswJJPPEiF5A7Pd1q5CFy5F6qbLv0eTfBxOQSfOBmnHKlF6slY4nUAkMFAoDd5WuDG3yUqiDXMbL4g79A1PtVzTQihyrfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sK0+kX48zyKrc5O2jB5SJhTBEc3qU76zrUCMJUFl03Y=;
- b=SUckduC53kdsmvRAR2pdpdVThl8oKiY0clG4jXQl0Ctuc0BW9f+aTGOscM7xZzgXUbskWMzn21bxj0Nvo7vRARZoZo7pll7VyOeoWCW5ewMTnG75mfnCew83NHO/ww9JBj8Khp2zzwuhfQCSBVjcFOZiEcyNSw7190Pqup60p9hyIoz8PHcFPwwdbA8TgVu56shjFAF1HXR1k77KrBf3oLmheHBBuSfZK1AgPjVmisDppMm10VgZgiYDLP9tY13V6uNbsT5DmHm2UtknZk4kMrXUQcGtnjJX08VbbXUBcnbABRfIE/SRGSm7Tolq1AX7I6ie/7qV8+GByIEpj3FkbQ==
+ bh=YqvghoD5svYRKsQeQ1oYy1SsBLqv8CMnuVd9yKWpWRs=;
+ b=co39iqGaS2XuNGvTkFN8Qf7zFQSNwmQlk8l8wkEvwlUuwoji0Bg+lk7Nz5Z7K/PxB3vphpCaHX1i1Eor/UCnaeADfZzshVMl6KO/e6uOL3+MnJaS9oIODmvg5cUx+LsXw2//VDV39v27xeiSZC6UkuOnD1lAMtzVBrdbwy2HxP1o9grHp7DPVNXPZqPMVIuF87chWwuBHZI+diMLvFvz61rDrrknT2FYLPfiM37ioINw46ayuQULdp3rKBdQmVqPto/UvYRoeJr/PBdLNmuJ6eT75CmEC7xZnoN+pskT/9t5Wlw3px49JzxeecQzH1mehEZcJWPX/wLhPNNIblvXVQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sK0+kX48zyKrc5O2jB5SJhTBEc3qU76zrUCMJUFl03Y=;
- b=FVoanjandHOy3oIvNB3bPsR6CbqjHx7K00TawVWBV+pKetYL5d9rC5kIKhAciiEjrqmP3Y0UbJbRz550oVsrOo3pjXo69ktBm0m4yym1YBOWfrXhZI0XNk1UxTlBjMidFHS5ywx5ggmuzmRUQ/AMPJ7nBUkLhlcb7IToCY154KM=
+ bh=YqvghoD5svYRKsQeQ1oYy1SsBLqv8CMnuVd9yKWpWRs=;
+ b=Q+acBETG24T18065kDDQZkSHYF/xidUcs/LfYyFxgwM8mVU+drJgswg3S/YLwSzznj/+5sQmgKrMibCqoSJ9OMwNCJ6IYTLfk4eyO5X19wgoPyOb3thtDqGQVCdp4/mA5Jareq+R88rXUvvUv6d8Jyx/FaTCOaWBHpGr/2Gft5s=
 Authentication-Results: kvack.org; dkim=none (message not signed)
  header.d=none;kvack.org; dmarc=none action=none header.from=oracle.com;
 Received: from MN2PR10MB3533.namprd10.prod.outlook.com (2603:10b6:208:118::32)
  by MN2PR10MB3613.namprd10.prod.outlook.com (2603:10b6:208:115::24) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.29; Tue, 30 Mar
- 2021 21:25:42 +0000
+ 2021 21:25:47 +0000
 Received: from MN2PR10MB3533.namprd10.prod.outlook.com
  ([fe80::cc79:c40e:430f:e254]) by MN2PR10MB3533.namprd10.prod.outlook.com
  ([fe80::cc79:c40e:430f:e254%4]) with mapi id 15.20.3977.033; Tue, 30 Mar 2021
- 21:25:42 +0000
+ 21:25:47 +0000
 From:   Anthony Yznaga <anthony.yznaga@oracle.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
@@ -81,9 +81,9 @@ Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
         lei.l.li@intel.com, daniel.m.jordan@oracle.com,
         steven.sistare@oracle.com, linux-fsdevel@vger.kernel.org,
         linux-doc@vger.kernel.org, kexec@lists.infradead.org
-Subject: [RFC v2 10/43] PKRAM: pass a list of preserved ranges to the next kernel
-Date:   Tue, 30 Mar 2021 14:35:45 -0700
-Message-Id: <1617140178-8773-11-git-send-email-anthony.yznaga@oracle.com>
+Subject: [RFC v2 11/43] PKRAM: prepare for adding preserved ranges to memblock reserved
+Date:   Tue, 30 Mar 2021 14:35:46 -0700
+Message-Id: <1617140178-8773-12-git-send-email-anthony.yznaga@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1617140178-8773-1-git-send-email-anthony.yznaga@oracle.com>
 References: <1617140178-8773-1-git-send-email-anthony.yznaga@oracle.com>
@@ -94,58 +94,58 @@ X-ClientProxiedBy: BYAPR11CA0099.namprd11.prod.outlook.com
  (2603:10b6:208:118::32)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from ca-qasparc-x86-2.us.oracle.com (148.87.23.8) by BYAPR11CA0099.namprd11.prod.outlook.com (2603:10b6:a03:f4::40) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.26 via Frontend Transport; Tue, 30 Mar 2021 21:25:38 +0000
+Received: from ca-qasparc-x86-2.us.oracle.com (148.87.23.8) by BYAPR11CA0099.namprd11.prod.outlook.com (2603:10b6:a03:f4::40) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.26 via Frontend Transport; Tue, 30 Mar 2021 21:25:42 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 83c2a063-b13c-4c74-5cc4-08d8f3c25f9d
+X-MS-Office365-Filtering-Correlation-Id: 3fa27c22-6c96-4f6c-54b3-08d8f3c26249
 X-MS-TrafficTypeDiagnostic: MN2PR10MB3613:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR10MB3613400718311B6038E6F86EEC7D9@MN2PR10MB3613.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3173;
+X-Microsoft-Antispam-PRVS: <MN2PR10MB3613F3DD953AB5660403E7E2EC7D9@MN2PR10MB3613.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: pC9EMlPEER2Pr2zpc+tiQnmD/d4d/bOTojvE5qlTGIq12L/Nfth/OCtStGM9RVrUpMAUI0LiH+BMZMmNr9NurOul/Yh7g+AP7oMt0QK3XKIbeERfPzqJtXBvlj/BRjr831NzWLmGLyZz+aF3JcYwtB2PF4Y/5YYP0RzxVzDaMpylhRhVtR1fvf2x0VEk+qUufVPKhTHxjvNkDGPxsxyDMy9FDHjBgrrDhEVmq7iP/4HcgRiTB95HbssdJf/ZEGD22zVoUtWBgvjgTadYeTQZtCouwzdlrshiOwGZOOD6VSYhSx93BkHSIquVsHt37cTT7J2UF7ANm46J21C++R0fVxzfSHII9Mmvn5AGFcIXl+0W192qfHI/06SA+XnYmHcz8WZZ0JjR5XlH7LFXse2rdW1XeS8RKz0AyB8S5tdmPYJnK+gzN0J+vvl4a45/3nO69UfMcode4Bg79KxUaAQ1l03rsV0hlbZ+tYAQG0zpur/C44IjU9xpiX6Pb6xE56z9S99cPNKk6nFAVxfM7jP3QHiNSPRGnTXsFFhX9zN136nHrHakx/sgTocYHosCKMU4hN0VcU+ZH7J6jDRxV2xPLkNWgVEnxZtmENuqbH/qsAM5WEn+mA1Aqjl6i2d5SCgpo5yNWpLkoNWcO91+Ua1HuQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB3533.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(346002)(366004)(396003)(136003)(376002)(8676002)(26005)(44832011)(5660300002)(8936002)(4326008)(7406005)(52116002)(956004)(186003)(7416002)(7696005)(6486002)(66476007)(2906002)(16526019)(66946007)(478600001)(38100700001)(36756003)(86362001)(6666004)(66556008)(316002)(83380400001)(2616005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?I2fl42ClRvZJRdAWpmpQh2iiOg+UPP82EqZVErQAj8BHuL3IE9fsl//D7uZ/?=
- =?us-ascii?Q?xFUBiSNxC896axp4eSej34Bxk6hwKxbRqdYrgspUCs/j/XFXEIKC3sSd+Mat?=
- =?us-ascii?Q?YK5D5T+QKMdSJRdPei+GgrH+Divjo687PpksmATjmF0uatpO1g3f0UIZOcUY?=
- =?us-ascii?Q?zZE6PogY5jOKasToUvaFdjYDLR8de7H0iI0EdvQoYodUpFR23/3nXz+JzzxP?=
- =?us-ascii?Q?v6qSLIK51tL2OPUaRUc4PKoOI5fp4vdTqHF8zqNlYpPF1Ty22jyh1sXkcsKv?=
- =?us-ascii?Q?36YCU83uNUxvZeQX3ExthT9iWBxyO5oyfbWVp89efUVSW2v//ExjK2AZIL18?=
- =?us-ascii?Q?BWpcX2krU/FNO61+GzuNyA8OU2PFA8n3qOi1dH7XV1srRpekm1D1TJ7xJfZs?=
- =?us-ascii?Q?no8cBobDBcQAlIuRlGnnJV/QpumwMwVi3B6KTwGL093dLxseJSsHpNSs78QC?=
- =?us-ascii?Q?duta6IXlCkAuCSAudu8Ct5Z5V4KrxTNwBsPSI29QVoZPXDHjtshX8QPnr6lb?=
- =?us-ascii?Q?MBjQFgf2DkI/9jGIYDT5ElPxjpx/hHoXBAweoaLMm0WycLIqLM45wIe8D/Ss?=
- =?us-ascii?Q?C71oX0TGK0dbndJ6dd0YX3pzjgxayeEXEyuJP5f6YBZtfXkEENOD3Dm2Dw+G?=
- =?us-ascii?Q?76Gn9bBPJ5MrZrj7WNW1AnJLb+41KOWXTvDCzg5PR8YdKYhK+Q9NJhO73oB5?=
- =?us-ascii?Q?2vUYp6xhqnSbu9gNRIV9lttFXxGRZyWBjQvYJFKL4Hw43A8475dcG01PvjGk?=
- =?us-ascii?Q?OOih41VB6AuMfVfyTMA9imogiFUrBZkMKTB/0V8KVxrfi/Hcc5X0WEwmGUM9?=
- =?us-ascii?Q?2SORNaFEKkloVlYOrJJSj+HZsPASgjw4am4ysvb95WehYb0QpzQ+WswqfI6q?=
- =?us-ascii?Q?x+GAdv0dJkmLZv6Q4lERVO6twnjTvotoD6+XYg5+hvg7U3YixxR2Ulif7K0p?=
- =?us-ascii?Q?LW2j6yPXhofh5TBz1uozjscHc8I3QQMSKa9fhP4oioixO2rrU/lM9ZBN2NDM?=
- =?us-ascii?Q?9lFN32jFJMttVKv9g/hG7AWdIrA6+N/UXewvYXzOD7YAVcE+h6go2Azq/1F3?=
- =?us-ascii?Q?pJ3rKW/aJkWwaOSsyOTRgZuv/+twNAwEkzg5PYVmw+VFRdHmxzDzmO89UqSN?=
- =?us-ascii?Q?DCyc5OxA57jejElm+L4lI3muBVgVdbvzzNpsHV+iJd81NXPM2SIF/KJLUSb9?=
- =?us-ascii?Q?rqN34xsSSFTR+rynjuj7wgc8ymPxjSIoeMwxNpUw5e22DixBjnM0AwASW+HU?=
- =?us-ascii?Q?C7WWQyfE9Smt1duWSZ+OBNA+AYJXjxHc8nx2lTBzgK5/pv+PzeRfBRJP2KGw?=
- =?us-ascii?Q?WQIibQpiufHWwDnqgdx4KB3f?=
+X-Microsoft-Antispam-Message-Info: cem83xutk/D6Annw7qyahQcZxzM78bunpmZ38SyZ4urHvAZtE7lprNTNJAH1wusVYCGQIvNifg+p0cY6x22YXy1AeS+v05NM4X42EQLtC1DLEsdPu82ue+yBvirExkSK6hksVaMT2iGJGelIH8x1cFXGsOwZCDlNNmr8PhvFxchj4YY2+VY3DS03YudGoENAn0uHcjOe4NHWFLVecoQVTp75fyPAoqtL4LSm/T1+EUjtSKdDkRs+/mM2pQmXVAywLFdnkpZtZaZpWCsTl68cQ32zHU+iMMTMTe6QxWYBvuMek8zp6xSFUKCn3xwi1xfwFnlHU2rHpzeeH44mf9aO24mCuGU6g7/GCI3YBJUanEOOjrVefmNoJQ7M4lD5hONh3ZGbtuIhnQRauuu6Tf7SErjKDNmntNKhV6woHGnZ2dQ3A0mnxrd7LagRFxvqRG7Q7Gzkl6kQMu+3pFhkhFUAGFKcjCVyAHWPr5coX3nOOEQxvEVndOKUPvLaTD5dpayXKKEh3N/51gVR9THdj2O33kelmTGfxlcdTceh3vr09AcFHnPh9QTLgB4ertIlf3u8BQJECWk6JyXQ3HoH2cspVDtKEUHqgk4PyHlFreFcTs5xyUgfohgEmUXUVqIZ271BX91j7uA5BS4tji71+pxhlQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB3533.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(346002)(366004)(396003)(136003)(376002)(8676002)(26005)(44832011)(5660300002)(8936002)(4326008)(7406005)(52116002)(956004)(186003)(7416002)(7696005)(6486002)(66476007)(2906002)(16526019)(66946007)(478600001)(38100700001)(36756003)(86362001)(66556008)(316002)(83380400001)(2616005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?mwg0cQ0j0FDEZw1mVtAmOf5kKZxy4BYWpY+DAoeeLBo/4jkr/dvLQthUJJ9C?=
+ =?us-ascii?Q?x1FqAT76vmCmmosWkraxEVQEX6yllY2HVUAUfJkLB4pWGm773UgEBymft3Co?=
+ =?us-ascii?Q?OI01RYKvKTolUAw2P9VfpqqZOuV92S1PUqBJUsN7VkjdsaZornf6Dd7ZMKfw?=
+ =?us-ascii?Q?0PFuMj8933kib6tsu4YlyQWqIQJyDQVNqHIjJ2XNCxPY+SrHko4B2MCvk7vQ?=
+ =?us-ascii?Q?aZDziq9m7/tiMw0MiXssG4UDh2IikaZjGRWh/yx3Y1A9MCKGOb8M6rqMRjKB?=
+ =?us-ascii?Q?Y/DFKJRfXRotjVt1mG5/VnhjW+TSOGZzv6MytdDhmf6MOcfaodELkejUdeuj?=
+ =?us-ascii?Q?LArNSW6VsB6sG5chtT2ZODC5mIr2qGrhnVSvxr2F1iGyocumKMX0vSUG/e8c?=
+ =?us-ascii?Q?mHHC4JMxsnHQZ3Z9dsbbEQKimPBm4SrPmVEQvkZc3zyYz6ZkGy5WeEALyw2i?=
+ =?us-ascii?Q?KsEL5LeGeEzSJjC9Y6jj8IM+DONPZNl+ISRYP9uXXYlxN2IiJp8uDMmeAI+K?=
+ =?us-ascii?Q?A/8spwU1Dzj8cuXUiiWvlNXJw/kTxz7nYnCPLV23J90JJQm2Cv82L/MO2Na9?=
+ =?us-ascii?Q?0EIp985WVFMG9xvztJQopHXCiMSEHmOJqLX7t+Zaq0vrLePABoPBGGblYA+4?=
+ =?us-ascii?Q?AsDRbZoJs8PwZxDRga9YQoDXXgAvw7/myu8EbPmGubWQm9D7b32BcB8ENJZI?=
+ =?us-ascii?Q?HPgzjO92k/PkGKBeeFDgxFe5EJKyrVnp1vaoI3Du3KrWqpmHQW4ATkoE21WG?=
+ =?us-ascii?Q?8jOFz3itHDq90bwizOW7t+nP3NJ8TdC0nrT7vL+qISRLHAF0o55yeU/eb9pO?=
+ =?us-ascii?Q?0b66M8IXE8tnfB0xsCQW4S7BysB4zd/9vNk6IkQoGYo6zCjLH3jh9WsFjiL8?=
+ =?us-ascii?Q?vbi7FTPZL2D1Su0y0UYsDe4z66kMZti6pSHq+TzV7GVBY07rj0kD66hYjYoH?=
+ =?us-ascii?Q?wCcH6AJUKgOONUvCBIYCQ/Jwtsy4uXbXP9CcaRHlAlBsiJ0F53aJsSThgRUt?=
+ =?us-ascii?Q?Yd9+4ZKTELPoBBDg/OeYcCPVEuYp3qOANdt5tx/noqDy/S7fAKS5w25H0O1I?=
+ =?us-ascii?Q?X6CA0Nx6qNOMLLAK8cK6wyFHoJMy72j2/KBnF3rTde8TgfftDYeHASbvIPO0?=
+ =?us-ascii?Q?1hzfbr4bzibPfYwoGMK4C+yAdP7EZtpGlVn8v5QgT/eKL/hAJa2s8oL9VHH6?=
+ =?us-ascii?Q?AAq59H+EMpLQs+XtICFMD1Uv294J2MBnFtfGmGduEAw1LaoBCtY6pmeF+Ac6?=
+ =?us-ascii?Q?Sxs/6ROfcNoa4LfpHhRwH3I7omHjlDrxctmD+p9eaXDCs8Zd8XMe4l3rGW05?=
+ =?us-ascii?Q?UBEldLQtNyCeSKpFhKvgfaYO?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83c2a063-b13c-4c74-5cc4-08d8f3c25f9d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3fa27c22-6c96-4f6c-54b3-08d8f3c26249
 X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB3533.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2021 21:25:42.7757
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2021 21:25:47.4891
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YOZ0qbY8YHHG0lleKe3U0aWcg4g6rUT8ck1nFYiAEUv94sCc0cZVsgp7xtIMtwPEMo+glilq3s44tj68iVCOgpMBVdR1whJ7Zcf7h2WZCG4=
+X-MS-Exchange-CrossTenant-UserPrincipalName: CVhVVJ18svfI3t83mVZD/eEZ2H1L3XcV/xkpEOLK7G1bxZ4usQInAEqtHrYCUtftJpGCuMVG7MThC+wumHt9meX4eW4GI9qSgZjBrWk9xMw=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB3613
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9939 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999
- malwarescore=0 spamscore=0 mlxscore=0 suspectscore=0 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2103300000 definitions=main-2103300156
-X-Proofpoint-ORIG-GUID: PQ_3p6rZNQQPFETrM5UOYB9qLkQavGnj
-X-Proofpoint-GUID: PQ_3p6rZNQQPFETrM5UOYB9qLkQavGnj
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 adultscore=0
+ spamscore=0 malwarescore=0 phishscore=0 suspectscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103300000
+ definitions=main-2103300156
+X-Proofpoint-ORIG-GUID: zFz7AVL2HY6fF-orVHxIb7fjRV8vBO6M
+X-Proofpoint-GUID: zFz7AVL2HY6fF-orVHxIb7fjRV8vBO6M
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9939 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  bulkscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0 adultscore=0
@@ -156,245 +156,273 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In order to build a new memblock reserved list during boot that
-includes ranges preserved by the previous kernel, a list of preserved
-ranges is passed to the next kernel via the pkram superblock. The
-ranges are stored in ascending order in a linked list of pages. A more
-complete memblock list is not prepared to avoid possible conflicts with
-changes in a newer kernel and to avoid having to allocate a contiguous
-range larger than a page.
+Calling memblock_reserve() repeatedly to add preserved ranges is
+inefficient and risks clobbering preserved memory if the memblock
+reserved regions array must be resized.  Instead, calculate the size
+needed to accomodate the preserved ranges, find a suitable range for
+a new reserved regions array that does not overlap any preserved range,
+and populate it with a new, merged regions array.
 
 Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 ---
- mm/pkram.c | 183 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 176 insertions(+), 7 deletions(-)
+ mm/pkram.c | 241 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 241 insertions(+)
 
 diff --git a/mm/pkram.c b/mm/pkram.c
-index a9e6cd8ca084..4cfa236a4126 100644
+index 4cfa236a4126..b4a14837946a 100644
 --- a/mm/pkram.c
 +++ b/mm/pkram.c
-@@ -86,6 +86,20 @@ struct pkram_node {
- #define PKRAM_LOAD		2
- #define PKRAM_ACCMODE_MASK	3
+@@ -7,6 +7,7 @@
+ #include <linux/kernel.h>
+ #include <linux/kobject.h>
+ #include <linux/list.h>
++#include <linux/memblock.h>
+ #include <linux/mm.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+@@ -1121,3 +1122,243 @@ static unsigned long pkram_populate_regions_list(void)
  
-+struct pkram_region {
-+	phys_addr_t base;
-+	phys_addr_t size;
-+};
-+
-+struct pkram_region_list {
-+	__u64	prev_pfn;
-+	__u64	next_pfn;
-+
-+	struct pkram_region regions[0];
-+};
-+
-+#define PKRAM_REGIONS_LIST_MAX \
-+	((PAGE_SIZE-sizeof(struct pkram_region_list))/sizeof(struct pkram_region))
- /*
-  * The PKRAM super block contains data needed to restore the preserved memory
-  * structure on boot. The pointer to it (pfn) should be passed via the 'pkram'
-@@ -98,13 +112,20 @@ struct pkram_node {
-  */
- struct pkram_super_block {
- 	__u64	node_pfn;		/* first element of the node list */
-+	__u64	region_list_pfn;
-+	__u64	nr_regions;
- };
- 
-+static struct pkram_region_list *pkram_regions_list;
-+static int pkram_init_regions_list(void);
-+static unsigned long pkram_populate_regions_list(void);
-+
- static unsigned long pkram_sb_pfn __initdata;
- static struct pkram_super_block *pkram_sb;
- 
- extern int pkram_add_identity_map(struct page *page);
- extern void pkram_remove_identity_map(struct page *page);
-+extern void pkram_find_preserved(unsigned long start, unsigned long end, void *private, int (*callback)(unsigned long base, unsigned long size, void *private));
- 
- /*
-  * For convenience sake PKRAM nodes are kept in an auxiliary doubly-linked list
-@@ -862,21 +883,48 @@ static void __pkram_reboot(void)
- 	struct page *page;
- 	struct pkram_node *node;
- 	unsigned long node_pfn = 0;
-+	unsigned long rl_pfn = 0;
-+	unsigned long nr_regions = 0;
-+	int err = 0;
- 
--	list_for_each_entry_reverse(page, &pkram_nodes, lru) {
--		node = page_address(page);
--		if (WARN_ON(node->flags & PKRAM_ACCMODE_MASK))
--			continue;
--		node->node_pfn = node_pfn;
--		node_pfn = page_to_pfn(page);
-+	if (!list_empty(&pkram_nodes)) {
-+		err = pkram_add_identity_map(virt_to_page(pkram_sb));
-+		if (err) {
-+			pr_err("PKRAM: failed to add super block to pagetable\n");
-+			goto done;
-+		}
-+		list_for_each_entry_reverse(page, &pkram_nodes, lru) {
-+			node = page_address(page);
-+			if (WARN_ON(node->flags & PKRAM_ACCMODE_MASK))
-+				continue;
-+			node->node_pfn = node_pfn;
-+			node_pfn = page_to_pfn(page);
-+		}
-+		err = pkram_init_regions_list();
-+		if (err) {
-+			pr_err("PKRAM: failed to init regions list\n");
-+			goto done;
-+		}
-+		nr_regions = pkram_populate_regions_list();
-+		if (IS_ERR_VALUE(nr_regions)) {
-+			err = nr_regions;
-+			pr_err("PKRAM: failed to populate regions list\n");
-+			goto done;
-+		}
-+		rl_pfn = page_to_pfn(virt_to_page(pkram_regions_list));
- 	}
- 
-+done:
- 	/*
- 	 * Zero out pkram_sb completely since it may have been passed from
- 	 * the previous boot.
- 	 */
- 	memset(pkram_sb, 0, PAGE_SIZE);
--	pkram_sb->node_pfn = node_pfn;
-+	if (!err && node_pfn) {
-+		pkram_sb->node_pfn = node_pfn;
-+		pkram_sb->region_list_pfn = rl_pfn;
-+		pkram_sb->nr_regions = nr_regions;
-+	}
+ 	return priv.nr_regions;
  }
- 
- static int pkram_reboot(struct notifier_block *notifier,
-@@ -952,3 +1000,124 @@ static int __init pkram_init(void)
- 	return 0;
- }
- module_init(pkram_init);
 +
-+static int count_region_cb(unsigned long base, unsigned long size, void *private)
++struct pkram_region *pkram_first_region(struct pkram_super_block *sb, struct pkram_region_list **rlp, int *idx)
 +{
-+	unsigned long *nr_regions = (unsigned long *)private;
++	WARN_ON(!sb);
++	WARN_ON(!sb->region_list_pfn);
 +
-+	(*nr_regions)++;
-+	return 0;
++	if (!sb || !sb->region_list_pfn)
++		return NULL;
++
++	*rlp = pfn_to_kaddr(sb->region_list_pfn);
++	*idx = 0;
++
++	return &(*rlp)->regions[0];
 +}
 +
-+static unsigned long pkram_count_regions(void)
++struct pkram_region *pkram_next_region(struct pkram_region_list **rlp, int *idx)
 +{
-+	unsigned long nr_regions = 0;
++	struct pkram_region_list *rl = *rlp;
++	int i = *idx;
 +
-+	pkram_find_preserved(0, PHYS_ADDR_MAX, &nr_regions, count_region_cb);
++	i++;
++	if (i >= PKRAM_REGIONS_LIST_MAX) {
++		if (!rl->next_pfn) {
++			pr_err("PKRAM: %s: no more pkram_region_list pages\n", __func__);
++			return NULL;
++		}
++		rl = pfn_to_kaddr(rl->next_pfn);
++		*rlp = rl;
++		i = 0;
++	}
++	*idx = i;
 +
-+	return nr_regions;
++	if (rl->regions[i].size == 0)
++		return NULL;
++
++	return &rl->regions[i];
++}
++
++struct pkram_region *pkram_first_region_topdown(struct pkram_super_block *sb, struct pkram_region_list **rlp, int *idx)
++{
++	struct pkram_region_list *rl;
++
++	WARN_ON(!sb);
++	WARN_ON(!sb->region_list_pfn);
++
++	if (!sb || !sb->region_list_pfn)
++		return NULL;
++
++	rl = pfn_to_kaddr(sb->region_list_pfn);
++	if (!rl->prev_pfn) {
++		WARN_ON(1);
++		return NULL;
++	}
++	rl = pfn_to_kaddr(rl->prev_pfn);
++
++	*rlp = rl;
++
++	*idx = (sb->nr_regions - 1) % PKRAM_REGIONS_LIST_MAX;
++
++	return &rl->regions[*idx];
++}
++
++struct pkram_region *pkram_next_region_topdown(struct pkram_region_list **rlp, int *idx)
++{
++	struct pkram_region_list *rl = *rlp;
++	int i = *idx;
++
++	if (i == 0) {
++		if (!rl->prev_pfn)
++			return NULL;
++		rl = pfn_to_kaddr(rl->prev_pfn);
++		*rlp = rl;
++		i = PKRAM_REGIONS_LIST_MAX - 1;
++	} else
++		i--;
++
++	*idx = i;
++
++	return &rl->regions[i];
 +}
 +
 +/*
-+ * To faciliate rapidly building a new memblock reserved list during boot
-+ * with the addition of preserved memory ranges a regions list is built
-+ * before reboot.
-+ * The regions list is a linked list of pages with each page containing an
-+ * array of preserved memory ranges.  The ranges are stored in each page
-+ * and across the list in address order.  A linked list is used rather than
-+ * a single contiguous range to mitigate against the possibility that a
-+ * larger, contiguous allocation may fail due to fragmentation.
-+ *
-+ * Since the pages of the regions list must be preserved and the pkram
-+ * pagetable is used to determine what ranges are preserved, the list pages
-+ * must be allocated and represented in the pkram pagetable before they can
-+ * be populated.  Rather than recounting the number of regions after
-+ * allocating pages and repeating until a precise number of pages are
-+ * are allocated, the number of pages needed is estimated.
++ * Use the pkram regions list to find an available block of memory that does
++ * not overlap with preserved pages.
 + */
-+static int pkram_init_regions_list(void)
++phys_addr_t __init find_available_topdown(phys_addr_t size)
 +{
++	phys_addr_t hole_start, hole_end, hole_size;
 +	struct pkram_region_list *rl;
-+	unsigned long nr_regions;
-+	unsigned long nr_lpages;
-+	struct page *page;
-+
-+	nr_regions = pkram_count_regions();
-+
-+	nr_lpages = DIV_ROUND_UP(nr_regions, PKRAM_REGIONS_LIST_MAX);
-+	nr_regions += nr_lpages;
-+	nr_lpages = DIV_ROUND_UP(nr_regions, PKRAM_REGIONS_LIST_MAX);
-+
-+	for (; nr_lpages; nr_lpages--) {
-+		page = pkram_alloc_page(GFP_KERNEL | __GFP_ZERO);
-+		if (!page)
-+			return -ENOMEM;
-+		rl = page_address(page);
-+		if (pkram_regions_list) {
-+			rl->next_pfn = page_to_pfn(virt_to_page(pkram_regions_list));
-+			pkram_regions_list->prev_pfn = page_to_pfn(page);
-+		}
-+		pkram_regions_list = rl;
-+	}
-+
-+	return 0;
-+}
-+
-+struct pkram_regions_priv {
-+	struct pkram_region_list *curr;
-+	struct pkram_region_list *last;
-+	unsigned long nr_regions;
++	struct pkram_region *r;
++	phys_addr_t addr = 0;
 +	int idx;
-+};
 +
-+static int add_region_cb(unsigned long base, unsigned long size, void *private)
++	hole_end = memblock.current_limit;
++	r = pkram_first_region_topdown(pkram_sb, &rl, &idx);
++
++	while (r) {
++		hole_start = r->base + r->size;
++		hole_size = hole_end - hole_start;
++
++		if (hole_size >= size) {
++			addr = memblock_find_in_range(hole_start, hole_end,
++							size, PAGE_SIZE);
++			if (addr)
++				break;
++		}
++
++		hole_end = r->base;
++		r = pkram_next_region_topdown(&rl, &idx);
++	}
++
++	if (!addr)
++		addr = memblock_find_in_range(0, hole_end, size, PAGE_SIZE);
++
++	return addr;
++}
++
++int __init pkram_create_merged_reserved(struct memblock_type *new)
 +{
-+	struct pkram_regions_priv *priv;
++	unsigned long cnt_a;
++	unsigned long cnt_b;
++	long i, j, k;
++	struct memblock_region *r;
++	struct memblock_region *rgn;
++	struct pkram_region *pkr;
 +	struct pkram_region_list *rl;
-+	int i;
++	int idx;
++	unsigned long total_size = 0;
++	unsigned long nr_preserved = 0;
 +
-+	priv = (struct pkram_regions_priv *)private;
-+	rl = priv->curr;
-+	i = priv->idx;
++	cnt_a = memblock.reserved.cnt;
++	cnt_b = pkram_sb->nr_regions;
 +
-+	if (!rl) {
-+		WARN_ON(1);
-+		return 1;
++	i = 0;
++	j = 0;
++	k = 0;
++
++	pkr = pkram_first_region(pkram_sb, &rl, &idx);
++	if (!pkr)
++		return -EINVAL;
++	while (i < cnt_a && j < cnt_b && pkr) {
++		r = &memblock.reserved.regions[i];
++		rgn = &new->regions[k];
++
++		if (r->base + r->size <= pkr->base) {
++			*rgn = *r;
++			i++;
++		} else if (pkr->base + pkr->size <= r->base) {
++			rgn->base = pkr->base;
++			rgn->size = pkr->size;
++			memblock_set_region_node(rgn, MAX_NUMNODES);
++
++			nr_preserved +=  (rgn->size >> PAGE_SHIFT);
++			pkr = pkram_next_region(&rl, &idx);
++			j++;
++		} else {
++			pr_err("PKRAM: unexpected overlap:\n");
++			pr_err("PKRAM: reserved: base=%pa,size=%pa,flags=0x%x\n", &r->base, &r->size, (int)r->flags);
++			pr_err("PKRAM: pkram: base=%pa,size=%pa\n", &pkr->base, &pkr->size);
++			return -EBUSY;
++		}
++		total_size += rgn->size;
++		k++;
 +	}
 +
-+	if (!i)
-+		priv->last = priv->curr;
++	while (i < cnt_a) {
++		r = &memblock.reserved.regions[i];
++		rgn = &new->regions[k];
 +
-+	rl->regions[i].base = base;
-+	rl->regions[i].size = size;
++		*rgn = *r;
 +
-+	priv->nr_regions++;
-+	i++;
-+	if (i == PKRAM_REGIONS_LIST_MAX) {
-+		u64 next_pfn = rl->next_pfn;
-+
-+		if (next_pfn)
-+			priv->curr = pfn_to_kaddr(next_pfn);
-+		else
-+			priv->curr = NULL;
-+
-+		i = 0;
++		total_size += rgn->size;
++		i++;
++		k++;
 +	}
-+	priv->idx = i;
++	while (j < cnt_b && pkr) {
++		rgn = &new->regions[k];
++		rgn->base = pkr->base;
++		rgn->size = pkr->size;
++		memblock_set_region_node(rgn, MAX_NUMNODES);
++
++		nr_preserved += (rgn->size >> PAGE_SHIFT);
++		total_size += rgn->size;
++		pkr = pkram_next_region(&rl, &idx);
++		j++;
++		k++;
++	}
++
++	WARN_ON(cnt_a + cnt_b != k);
++	new->cnt = cnt_a + cnt_b;
++	new->total_size = total_size;
 +
 +	return 0;
 +}
 +
-+static unsigned long pkram_populate_regions_list(void)
++/*
++ * Reserve pages that belong to preserved memory.  This is accomplished by
++ * merging the existing reserved ranges with the preserved ranges into
++ * a new, sufficiently sized memblock reserved array.
++ *
++ * This function should be called at boot time as early as possible to prevent
++ * preserved memory from being recycled.
++ */
++int __init pkram_merge_with_reserved(void)
 +{
-+	struct pkram_regions_priv priv = { .curr = pkram_regions_list };
-+
-+	pkram_find_preserved(0, PHYS_ADDR_MAX, &priv, add_region_cb);
++	struct memblock_type new;
++	unsigned long new_max;
++	phys_addr_t new_size;
++	phys_addr_t addr;
++	int err;
 +
 +	/*
-+	 * Link the first node to the last populated one.
++	 * Need space to insert one more range into memblock.reserved
++	 * without memblock_double_array() being called.
 +	 */
-+	pkram_regions_list->prev_pfn = page_to_pfn(virt_to_page(priv.last));
++	if (memblock.reserved.cnt == memblock.reserved.max) {
++		WARN_ONCE(1, "PKRAM: no space for new memblock list\n");
++		return -ENOMEM;
++	}
 +
-+	return priv.nr_regions;
++	new_max = memblock.reserved.max + pkram_sb->nr_regions;
++	new_size = PAGE_ALIGN(sizeof (struct memblock_region) * new_max);
++
++	addr = find_available_topdown(new_size);
++	if (!addr || memblock_reserve(addr, new_size))
++		return -ENOMEM;
++
++	new.regions = __va(addr);
++	new.max = new_max;
++	err = pkram_create_merged_reserved(&new);
++	if (err)
++		return err;
++
++	memblock.reserved.cnt = new.cnt;
++	memblock.reserved.max = new.max;
++	memblock.reserved.total_size = new.total_size;
++	memblock.reserved.regions = new.regions;
++
++	return 0;
 +}
 -- 
 1.8.3.1
