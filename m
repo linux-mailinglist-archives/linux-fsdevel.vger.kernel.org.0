@@ -2,65 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F2A134F376
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 23:30:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA03634F381
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 23:30:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233408AbhC3V3j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Mar 2021 17:29:39 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52280 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233287AbhC3V2m (ORCPT
+        id S233319AbhC3VaJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Mar 2021 17:30:09 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:43948 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233331AbhC3V2z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Mar 2021 17:28:42 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULPHwI145355;
-        Tue, 30 Mar 2021 21:27:57 GMT
+        Tue, 30 Mar 2021 17:28:55 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULOjq1011609;
+        Tue, 30 Mar 2021 21:28:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : content-type :
  mime-version; s=corp-2020-01-29;
- bh=MfqUNVuTZH17wEzrzvOmISttF92wGuYIZhlq/gCT0PM=;
- b=oEiWCD0oJbRxTK1qzWGzMGr9wwVhX8qX9EnQj1JdmBKiPRId35l3eqRygr9OcUQz/8Yz
- 0F2f+TIO02fnueVt5PTBp8igeupNR4XjckTcA91bfRUaB4908XZM+TimaPXM2iin26xn
- 9T8gz0RGAzDFnbbnJrwryUjki06KT6E/27MuzdPmwOKocvTe6dhUdVI30nOhL6LsD/j1
- x51fEFy5tOrySJ77mDXu9Sw2x7Rz/EQA1bV2fgb3RJ3uLX18NqShU27JNhnLDdscUCA+
- bs5uC9ElyDjwc6+hbPJuz8Ge4pGHHqen6gJevZETUXarFa/hIfrK4I0qFfYvM40/YDAG Mg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 37mad9r8jn-1
+ bh=StS8zsAa0vS/yJW7ncnSFIShqW2WyW3ks/4y0oh9XnE=;
+ b=yDaZu6T3voG18G+W3UL6lYZqiDnmZEAVxkp23w+G4nrQD+jqVrHZq+iNyxvV8cb9tqnv
+ UWjDKlK0VDX2BrxnyKaMN9mrfqPrP2+xg8FEvsYHonulePoeaUZOK/PFOYuRekGpsFGn
+ mcfpIyVDbCV0qts/wiGucXfUMZidRnDeESyegSH46skHxIa+7NN2wrgJi5rgApAsCVBD
+ //xAaxOnKWXlhWmhAJHl/b6inUIictd/RpZTu4OBjjRwTr8iOe5QYEt3fVYxpiuJB5AR
+ FyHQ7B2na5CoK1U0wMo6WzaYpmjOpDePcPpP/nauBCISIk+YkYJD9liJ26EW5pdGK++z XA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 37mab3g91g-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Mar 2021 21:27:56 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULOa1V149731;
-        Tue, 30 Mar 2021 21:27:56 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2043.outbound.protection.outlook.com [104.47.66.43])
-        by userp3020.oracle.com with ESMTP id 37mac4kgkj-1
+        Tue, 30 Mar 2021 21:28:02 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ULOmlg183986;
+        Tue, 30 Mar 2021 21:28:01 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2103.outbound.protection.outlook.com [104.47.55.103])
+        by aserp3020.oracle.com with ESMTP id 37mac7u5nv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Mar 2021 21:27:56 +0000
+        Tue, 30 Mar 2021 21:28:01 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JLrmciJi2i1/MUPuqsQuO0QUcVvHtMJC2zlk0FJoBFVR6srFzhobF7Aj69XLnDzy1Cgv29Whdc6sH5IB0HAZXOzkLiswnncLG2l8yZhW/TXKOsSZLKSu/D+RPbk6G/IWT55OqDP+0yDQ8JiIHYMeh+JIuldLiaKy+/HhI5CQ7eK+dz1nsTX/Kfpe064lmDiFQkrA3on6qBX2Ijnz7cuuQGFzA1/WmHwhjzqDFiIWMRpDJyzeyspDt6qHgwDbxFQsUg45YhDs3RSPIR8UlXN0bIuSYmZtxASpGkvBkVIDqzeRFvpuBps2fqVZEQFsq/YQnDrX0oyzpMIJwIJz5ypjEQ==
+ b=VSRlm3iCB3WuAZvRoMHtpXeUjLve6vGteF6OvM39UuIvd9PNu/KEmMrEhBhGPmyrLXzfF128SZaB2+FGOx4vWaWKsjTpb1f8X4FKbTwZI7QhJCmJWcW+L8fR1hLcB5BQpP7/Z62mvItlsVbcuG4FPRY5Jhz/KQtZdm+hJ5gClNNQyusHftLqf2x1lfE0NLvJpUjfmCZaWilpHJq9l0gPSzGu95Vf0aAf0xDdnviPOKXjEpsOUrOCN50r0MtKM051s3FCFHq8eSm2jTObZYE4y2kRG4tle9cmc4/MUdKZEPDePtoyqNhzf7pp8ZR8YSqfovsp5zH1s4JzSh4k136Fow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MfqUNVuTZH17wEzrzvOmISttF92wGuYIZhlq/gCT0PM=;
- b=VnV7NRVvm22T5bklS/yjIfsZTYHwwR7pV6cyaf87/HdewIG2/wlqj6FtvXEXpmq5qufyraxJS1tlwmtYGaN2Q8NdnyK73DZwPPTemQlV2y9ZgWIyYpf3l4DAAfSZ3H+ZJ7jQMLVZafMzNXT6xyhEAkxMPovjBWaEyDONfPsXFJkWhorw0YgoOdxiVnE749lRLFfagJjLcZVwjoH6dbZlCve4h/KUqZ4uH/RPCF1brxuNhAicgTpwFmmmlyPJ2zX5t6mrWQwjnFochrPfmTmiU0+oeQ9xuKaD/AKJr+IMCj667nX2ffyxnNHporPU12rYIVcmzvpr/K7EdBC7L8DlUA==
+ bh=StS8zsAa0vS/yJW7ncnSFIShqW2WyW3ks/4y0oh9XnE=;
+ b=VpSRymwyb/n6qHei3DxS6OVvKkeSgs12ZbeDGjUYDm104bUsgM5D98sWNwbvyX4Kv6txUDmX1LeY8/3L0N/E1TEzzFZCQlCkw2ykkSmEMKGwI5Ra8DASAqk8uyTbks84YwiSJm0qHS8gxB7cfvr9Vi8jbIUhnCjnouVzYSXjEBwkKNKv4bOAVvQa0YJsjyy3ATDENHLBHRJvBHDHN6MimfVcz33g/IPaYalJE3tq3YFGcnU5cu8i8J0ZUdDPUTHO4fCKc82zm5Y2wNN+Tf4D+EusjWm1yL28fZOMsUj2KhLoSDZ7s0an8uPPrWxibYJXUOieNhjyAr2AV2Kpu/t/vQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MfqUNVuTZH17wEzrzvOmISttF92wGuYIZhlq/gCT0PM=;
- b=fuiXK7as7vXE8QbRQH03DVtN+fxjx0nPIicGkjHtN6bV0zvY5uGMXO734G2lheakNLv/gsOBu9KlsaDBAg9v2l5myP/sujAgBh4oklBudTB2wixYMc/7rXe9xizzIsbynS9YeU+qx8Bp9fNbiOSNYvhqWNS/WdfwH3XCl6ZT7U4=
+ bh=StS8zsAa0vS/yJW7ncnSFIShqW2WyW3ks/4y0oh9XnE=;
+ b=jcEQedXq5pZkYWWBQclfxyy4ETw2cOKPYjjopbOffmbIp2SmLBS0TDpL5KCiDQy815W1D2lWsxy2SQxYnQLJ9l/atXWqQQF0uA4g1LTA13FWGQCNi+6/FNTrcIq7VEv3AWYY8Nj1BmyrapH8CvOPnhRLW8fsKMam96nLAcBRjec=
 Authentication-Results: kvack.org; dkim=none (message not signed)
  header.d=none;kvack.org; dmarc=none action=none header.from=oracle.com;
 Received: from MN2PR10MB3533.namprd10.prod.outlook.com (2603:10b6:208:118::32)
- by BLAPR10MB5265.namprd10.prod.outlook.com (2603:10b6:208:325::6) with
+ by MN2PR10MB3679.namprd10.prod.outlook.com (2603:10b6:208:11d::23) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.26; Tue, 30 Mar
- 2021 21:27:54 +0000
+ 2021 21:27:58 +0000
 Received: from MN2PR10MB3533.namprd10.prod.outlook.com
  ([fe80::cc79:c40e:430f:e254]) by MN2PR10MB3533.namprd10.prod.outlook.com
  ([fe80::cc79:c40e:430f:e254%4]) with mapi id 15.20.3977.033; Tue, 30 Mar 2021
- 21:27:54 +0000
+ 21:27:58 +0000
 From:   Anthony Yznaga <anthony.yznaga@oracle.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
@@ -81,9 +81,9 @@ Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
         lei.l.li@intel.com, daniel.m.jordan@oracle.com,
         steven.sistare@oracle.com, linux-fsdevel@vger.kernel.org,
         linux-doc@vger.kernel.org, kexec@lists.infradead.org
-Subject: [RFC v2 40/43] shmem: initial support for adding multiple pages to pagecache
-Date:   Tue, 30 Mar 2021 14:36:15 -0700
-Message-Id: <1617140178-8773-41-git-send-email-anthony.yznaga@oracle.com>
+Subject: [RFC v2 41/43] XArray: add xas_export_node() and xas_import_node()
+Date:   Tue, 30 Mar 2021 14:36:16 -0700
+Message-Id: <1617140178-8773-42-git-send-email-anthony.yznaga@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1617140178-8773-1-git-send-email-anthony.yznaga@oracle.com>
 References: <1617140178-8773-1-git-send-email-anthony.yznaga@oracle.com>
@@ -94,237 +94,297 @@ X-ClientProxiedBy: BYAPR11CA0099.namprd11.prod.outlook.com
  (2603:10b6:208:118::32)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from ca-qasparc-x86-2.us.oracle.com (148.87.23.8) by BYAPR11CA0099.namprd11.prod.outlook.com (2603:10b6:a03:f4::40) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.26 via Frontend Transport; Tue, 30 Mar 2021 21:27:49 +0000
+Received: from ca-qasparc-x86-2.us.oracle.com (148.87.23.8) by BYAPR11CA0099.namprd11.prod.outlook.com (2603:10b6:a03:f4::40) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.26 via Frontend Transport; Tue, 30 Mar 2021 21:27:54 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ba1fe498-4abc-4f85-e360-08d8f3c2add0
-X-MS-TrafficTypeDiagnostic: BLAPR10MB5265:
+X-MS-Office365-Filtering-Correlation-Id: 720da738-137f-4934-b7ba-08d8f3c2b078
+X-MS-TrafficTypeDiagnostic: MN2PR10MB3679:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <BLAPR10MB5265DECCF4BB71D3CC00A28CEC7D9@BLAPR10MB5265.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-Microsoft-Antispam-PRVS: <MN2PR10MB3679A957F83FADC882881C71EC7D9@MN2PR10MB3679.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5Iey2YuNQvFEH+OfRYKCcI/wdKSG4Y0lPKgi6RuSiihWJ9jZDtGH9YHI46lOeVssLo+hPJ55crOQLp1Fy7+Ds4nNRxJeS8+wO5nDdbznvo4zmJM4QxanZSxAt3GEhi11PLN6Ap8BriJtszui/7fCEXMRxayWzg7BXBQcjFxpyJVhoNyx205u7prA0o5j85AUpCenB2BB5lPM1qyvZyEGS4cgYb9xIVNWGvgHanv0QBCIYpkkLFTOFn4rzCFEjftshwCC+KRlu1QNxyx1XzSuR09HBJLvzCUJ+cRNUU8/be5xbKQIh8b9Vyk9B/RrDGR5ylT9XXkA0pvU4CvmsfaHoiMW0xzLF36SqlEusBBYa+1dZ/gOGBwHaY5Ddt1pzf+cOJZd/xvF/hkuefLW6i0zSUq7Yu04y6JrKrO5JHcbZlGltPee6QqxCyqmtuOIIx/FpQ/QR8lCojW+a+eIhlkGqoINs4x0JDX5Ah0uVKI3ko1vn+4WPJd+ex4KLeLu4MxKEJsLehmhszOGQUD+GHRjOFI43kSIiXUXDE3SmnUog1lP8lujmrVE7Nfdac6gSZLC1umgt9qEN+raGuBbqpU24cwoQQRJ+eAgsjg281eYMMvQzrT4hvQyGIhYWABz8+QnE8BOp3aL9lUKk5LBwdW3fw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB3533.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(396003)(136003)(346002)(376002)(39860400002)(26005)(956004)(52116002)(186003)(38100700001)(36756003)(4326008)(8676002)(44832011)(2906002)(316002)(66476007)(2616005)(7696005)(478600001)(8936002)(86362001)(6666004)(83380400001)(7416002)(66946007)(5660300002)(16526019)(6486002)(7406005)(66556008);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?nRI8UzovRGKm74IwWNHVtw61Zq32B36pQwRn4CwKxs5k0pO05HcV4QFPWCPs?=
- =?us-ascii?Q?Y8gBbm5BWySitXTbt3viEtDOtATQe3soFFc3VfJwbAia+FV+QL0g/KPr2zIo?=
- =?us-ascii?Q?eLsQy2BIi3iRd4Yk1d7HAN+64WCvIahAx0BpEjdE+jHQYBuh7OdbVsWkLPI7?=
- =?us-ascii?Q?5WpKA9E3T/fAwq4n6C72Pozs0O244ZGXw38vq4mJiD/nkFG8A9A1t+krngNa?=
- =?us-ascii?Q?gbVrqodjPz4/WH14hKbZbUt9UcWvPh7sOgEEMwwL5ZRF34ZFCRKKWijJOUsp?=
- =?us-ascii?Q?q6EwV8IYEUwmegydJOudt5fTgTEbJzpiw1Gh9lyBG4QGqUICwC2hG8ip3Znd?=
- =?us-ascii?Q?xU60DG4MiuRPxuZPFhjU+JqWFW2Pzp0j+kwOBkq5t+B4BGsnEXo4UDDrkqY0?=
- =?us-ascii?Q?OJgkG2yY+XG2SSYnSjXnOah++oAWKenGooHAOr/ymU7FQsuwbLgaeFVEhkJG?=
- =?us-ascii?Q?YNN83nNZ4ejyFuhwUm7x48GfuVqgj54PtNh2nvvIeX++0Sc0ldywBDlNd0lE?=
- =?us-ascii?Q?+qpQsOmlVHCymivSD4rlOfy2m3CgxJSILIfzoMxkX0z2kxw5IoKYEsy1zVms?=
- =?us-ascii?Q?ThEMwEHU4ECI953ifGfCrvnIS6Tu7fSLXA0MYvbGJEnomTZaKhxcegmw/RWU?=
- =?us-ascii?Q?ReGUgr/wZoZKtT2iP6aYJmmxGxsvt+9e0ohHz/K9QyeumH84kHu3tEg57XIJ?=
- =?us-ascii?Q?BFZsW/QOdZL7dTUwQ3L7W63as0rDgLBsxYqPEiI5f+0dSgmsCtD2ogUZiw+w?=
- =?us-ascii?Q?6fdhHMeo6z8yOwY0uA+h5H0je9uUMQ0XUv303qMtTgDEo+AH1uySofp9/G3T?=
- =?us-ascii?Q?HfAVL0hmpZgFm3d7ZFeIm12JaP3s7RnChvM7B3aCJdxf24p7TKZfUW8r0f/1?=
- =?us-ascii?Q?UBRrfg49Qi/pnBnJxh2S63ot8p/n5Z1xRqbaz1No9Suqop9EWFvvqpbYTZDw?=
- =?us-ascii?Q?LRQKNFoqx99ciY2MOGPUYjRAE3kgumi2UYy1DH+x5uQTT9KzwJuWTMKLTv9b?=
- =?us-ascii?Q?UgVI0HmBp1k3opwMSMHAfmyTT70A+iML3/8MsRKpwomICS5YQ7GKKCDaaw3c?=
- =?us-ascii?Q?EDUABUsY/UiRQM6tAxUER/WmLsf+ECyeqXRvKL60msn9co9Trx8A1eDBf/T2?=
- =?us-ascii?Q?OoYsWxUIkO2TSt3R+fFPNS7rDhnyEaDH5t9irr+CsO2RlAfLdSwDgKZ67ebE?=
- =?us-ascii?Q?NdQT4y0rQqH+pwdaxMaLlL6dPNJtfqeoKDfQ1yPDWYfC4EOl8xLPpC0voej7?=
- =?us-ascii?Q?DTNOXFCqcGm3OEiwmdbjcG8xdAEf7I4qPqZdf+MDwUVzBKCgxyIgk5B0HHnm?=
- =?us-ascii?Q?M3CQFJ2ZylTv+4/k3sqDggYK?=
+X-Microsoft-Antispam-Message-Info: APIWRvuKH+oXWT697yGj10JyMKQHD4MQmRBUKuO1EaIH+SKzg+r3qIHpXC/ExLd9QWqvYMltD3B5/rumzrg2cSH98bQGpd+rykSIxunFNAD7l9n3zGPAtOVB/CNXuKB9bLAQfa31fcrvpdTKpiLRo3S2NIeIn9diG9K9V4+du1uNeKW9YHdOyF32HM+Yza8rLthNKl4sQWnQjmhK86yK3R8BMhT3ZHs0jZB55jdF4K08VqDdyVl2ZUI4I4LavRc3BnpQacnqrfhvl0b855sL6ao57VsjeQLdS0TQ71o00OrpabgiBQQwvIwmLXKpdxwJHOSVXR7Ub0Ap+ctG9EUJo1GejLBiKzosmhJL9ogvKOzBumCgqB6rQFP9tiC6k9ax03BsrJZHrZakAKV/l//0DIG4aklxXvmIAXXhPCDvlEu9sjan9sFLapbN5G26Bn6ngYmhV9tzEkYtWGBS88QxuvXoQcxrLVEuu5naCLnBfMPdWXQ/8P2YCvCKp2dwNjKDhzZBMGrp/NMpj6RGK2fQ4dp2/DEzbDKJqjfqRhmVsxVc13yaiqEKEFaW5HeCmh+3lxDeNcDhpTUmzxM2NRpbrLoF5TXVLdgW7ES5IrIYvsGJFDQXStVdGXB2pgD2jewpLKyf99fP+lAWc2fl9oDytg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB3533.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(376002)(346002)(136003)(39860400002)(366004)(6666004)(4326008)(86362001)(52116002)(186003)(478600001)(36756003)(5660300002)(7416002)(26005)(66946007)(66556008)(7696005)(2616005)(16526019)(8676002)(316002)(2906002)(66476007)(956004)(38100700001)(6486002)(7406005)(8936002)(44832011)(83380400001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?S6jq4r6EP8JZ70qjeRB6agOM2dIojs28TI5Fi+ISRtF/dy62J4fMwj6x2uv+?=
+ =?us-ascii?Q?9Uj8AzyKojUVUqkJr6PO5AbvMdPErV/woe/4DkZXPaLrpMjkfc/iIU+6EgkB?=
+ =?us-ascii?Q?e+iHBihD1yeu1rxOXqQ26OXCFTZ3/F/7j/i1UbaXplt4KKwnl+4/k2d07Vyl?=
+ =?us-ascii?Q?8EemeST7jGKpTtGTmaIMktAK88olS8/bMz21cQ0msxNrZ1ErtW2dt1U4POPy?=
+ =?us-ascii?Q?bM57Wq9xqdawlbHTsTAyJsZDyCxRgq/u50Tg7N/B6BcnZVV4TzZqMBdkyOXK?=
+ =?us-ascii?Q?/iqpyG56Kh6ObNLXt7EAfymV3KkePX+TLrdn40cMmGNR69plsTUr8Fon7mlx?=
+ =?us-ascii?Q?Da0cy30t5Wlsj5jc5YuJjVmlfzajsELq9HvQqKTGTa1vBnl6GyxCwBkt0Xrx?=
+ =?us-ascii?Q?RZSJaXwER5RnEKT/PNsNDiNZchjUnukAgvUtf0iDSGBq/IjwPYugckdFxfPj?=
+ =?us-ascii?Q?KXZgYNCLyVMy+OZ+t0DZHc49P0c3aTw2fIHXUW31S3QdR2lDwbAOTxT5lz6U?=
+ =?us-ascii?Q?ObP5VCHEY/fYWCmEPYUeJQbxOmBa2HI7CVtJozF69Mv3O4meFUt/VoYcXlyu?=
+ =?us-ascii?Q?gA+XUaHJNeHRdpry3y/HbF8ZfthS4DMS/VPC3npiBuJ0rtbNCnXxnh53Vsxl?=
+ =?us-ascii?Q?2eJhGkRQeEZ4rqF+KGPoRsmArEuBzWceOi4PtqJ4iZXE30tVDETiPqxlHp6l?=
+ =?us-ascii?Q?/nTl62u1rwcOnG1Ml3T4ju5b3vNCZH4HcPivV9u3DXKhHQeZq6Zfna4jDNCN?=
+ =?us-ascii?Q?pkLFzMDQJDDW2m1YUzTipcAQC6kZmJxafMMXeMYRvweQfxD5g07yRJXhcslN?=
+ =?us-ascii?Q?ABl1XlQsNu2caX3tPM+n6h8wYc7UMBpiZic3sEFtm0IenG0HzsqsGrNhlBBy?=
+ =?us-ascii?Q?w7w1FjiTSEy14TYL+mBDNEVyEiwo1TWzt+CPOk2eu0K/XL6UZSnuPGxEIZK+?=
+ =?us-ascii?Q?rQGiNEcbUt7YoR2FF2qKX7bEgofHe/r0VQHRNtWcP8qtxr0EYXl6vkYfj6Iy?=
+ =?us-ascii?Q?gB09oefOT44bg5bKmlM5/PNvRcnwVLqeKRSvWdtqvZsI5LojnoKxdMJ16gxz?=
+ =?us-ascii?Q?eh2W1uklgmWMjO+6gl2XqBexthgluau/ZyYp2Ubihmm5Zm5LT/Bv28w9fxCy?=
+ =?us-ascii?Q?biMfpBMomc5AVcTYMP/3c/IRyIIfspfNdu4aouVPbUg1q0vYJzpsm1TqKl0r?=
+ =?us-ascii?Q?+BlJKqD6xYR7M9NyaO3NC9DPuKLE39iLcNQmmhriwFLe5LAe/dbi6R94ZLLm?=
+ =?us-ascii?Q?PC5V8bwJSag8wDX5ECZ8aWvxeUSkMwsGc+p5JqUOJtmsoOhshda53JdmBLVg?=
+ =?us-ascii?Q?E+28XE/VtFHKNzPn6RU9/FCd?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba1fe498-4abc-4f85-e360-08d8f3c2add0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 720da738-137f-4934-b7ba-08d8f3c2b078
 X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB3533.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2021 21:27:54.0057
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2021 21:27:58.4440
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /2qpNosNOoY1nGg/7PzeTm6ZIILF5w5/3d/VdluFmrpX6ILJG9abIDfj5GHN49mmD6iRB18zIW20WX2RExUU1dS0pUW3WGIUPJMXogU8V+A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5265
+X-MS-Exchange-CrossTenant-UserPrincipalName: q8KPoOfps9JiFF4NEjORrvVP9mjsbsVQ6Chrj9Kfsmjt81/DCkXb9qy6N0TdbsRYjhltHCOq9x+ilXqccGmIUxBF1Cb33adMHFqyyucSDik=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB3679
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9939 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999
- malwarescore=0 spamscore=0 mlxscore=0 suspectscore=0 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2103300000 definitions=main-2103300156
-X-Proofpoint-ORIG-GUID: WbnzDWW1Fov0WSyMuYuZkGF5hBKIsxtl
-X-Proofpoint-GUID: WbnzDWW1Fov0WSyMuYuZkGF5hBKIsxtl
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 adultscore=0
+ spamscore=0 malwarescore=0 phishscore=0 suspectscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103300000
+ definitions=main-2103300156
+X-Proofpoint-ORIG-GUID: 5sId7tjDJ2EdacY3ZifYoHTKYQaaeI4i
+X-Proofpoint-GUID: 5sId7tjDJ2EdacY3ZifYoHTKYQaaeI4i
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9939 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- bulkscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0 adultscore=0
- spamscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 impostorscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 lowpriorityscore=0
+ spamscore=0 priorityscore=1501 phishscore=0 malwarescore=0 suspectscore=0
+ clxscore=1015 impostorscore=0 adultscore=0 bulkscore=0 mlxlogscore=999
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103300000
  definitions=main-2103300156
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-shmem_insert_pages() currently loops over the array of pages passed
-to it and calls shmem_add_to_page_cache() for each one. Prepare
-for adding pages to the pagecache in bulk by adding and using a
-shmem_add_pages_to_cache() call.  For now it just iterates over
-an array and adds pages individually, but improvements in performance
-when multiple threads are adding to the same pagecache are achieved
-by calling a new shmem_add_to_page_cache_fast() function that does
-not check for conflicts and drops the xarray lock before updating stats.
+Contention on the xarray lock when multiple threads are adding to the
+same xarray can be mitigated by providing a way to add entries in
+bulk.
+
+Allow a caller to allocate and populate an xarray node outside of
+the target xarray and then only take the xarray lock long enough to
+import the node into it.
 
 Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 ---
- mm/shmem.c | 123 +++++++++++++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 108 insertions(+), 15 deletions(-)
+ Documentation/core-api/xarray.rst |   8 +++
+ include/linux/xarray.h            |   2 +
+ lib/test_xarray.c                 |  45 +++++++++++++++++
+ lib/xarray.c                      | 100 ++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 155 insertions(+)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 63299da75166..f495af51042e 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -738,6 +738,74 @@ static int shmem_add_to_page_cache(struct page *page,
- 	return error;
+diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
+index a137a0e6d068..12ec59038fc8 100644
+--- a/Documentation/core-api/xarray.rst
++++ b/Documentation/core-api/xarray.rst
+@@ -444,6 +444,14 @@ called each time the XArray updates a node.  This is used by the page
+ cache workingset code to maintain its list of nodes which contain only
+ shadow entries.
+ 
++xas_export_node() is used to remove and return a node from an XArray
++while xas_import_node() is used to add a node to an XArray.  Together
++these can be used, for example, to reduce lock contention when multiple
++threads are updating an XArray by allowing a caller to allocate and
++populate a node outside of the target XArray in a local XArray, export
++the node, and then take the target XArray lock just long enough to import
++the node.
++
+ Multi-Index Entries
+ -------------------
+ 
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 92c0160b3352..1eda38cbe020 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -1506,6 +1506,8 @@ static inline bool xas_retry(struct xa_state *xas, const void *entry)
+ void xas_pause(struct xa_state *);
+ 
+ void xas_create_range(struct xa_state *);
++struct xa_node *xas_export_node(struct xa_state *xas);
++void xas_import_node(struct xa_state *xas, struct xa_node *node);
+ 
+ #ifdef CONFIG_XARRAY_MULTI
+ int xa_get_order(struct xarray *, unsigned long index);
+diff --git a/lib/test_xarray.c b/lib/test_xarray.c
+index 8294f43f4981..9cca0921cf9b 100644
+--- a/lib/test_xarray.c
++++ b/lib/test_xarray.c
+@@ -1765,6 +1765,50 @@ static noinline void check_destroy(struct xarray *xa)
+ #endif
  }
  
-+static int shmem_add_to_page_cache_fast(struct page *page,
-+				   struct address_space *mapping,
-+				   pgoff_t index, gfp_t gfp,
-+				   struct mm_struct *charge_mm, bool skipcharge)
++static noinline void check_export_import_1(struct xarray *xa,
++		unsigned long index, unsigned int order)
 +{
-+	XA_STATE_ORDER(xas, &mapping->i_pages, index, thp_order(page));
-+	unsigned long nr = thp_nr_pages(page);
-+	unsigned long i = 0;
-+	int error;
++	int xa_shift = order + XA_CHUNK_SHIFT - (order % XA_CHUNK_SHIFT);
++	XA_STATE(xas, xa, index);
++	struct xa_node *node;
++	unsigned long i;
 +
-+	VM_BUG_ON_PAGE(PageTail(page), page);
-+	VM_BUG_ON_PAGE(index != round_down(index, nr), page);
-+	VM_BUG_ON_PAGE(!PageLocked(page), page);
-+	VM_BUG_ON_PAGE(!PageSwapBacked(page), page);
++	xa_store_many_order(xa, index, xa_shift);
 +
-+	page_ref_add(page, nr);
-+	page->mapping = mapping;
-+	page->index = index;
++	xas_lock(&xas);
++	xas_set_order(&xas, index, xa_shift);
++	node = xas_export_node(&xas);
++	xas_unlock(&xas);
 +
-+	if (!skipcharge && !PageSwapCache(page)) {
-+		error = mem_cgroup_charge(page, charge_mm, gfp);
-+		if (error) {
-+			if (PageTransHuge(page)) {
-+				count_vm_event(THP_FILE_FALLBACK);
-+				count_vm_event(THP_FILE_FALLBACK_CHARGE);
-+			}
-+			goto error;
-+		}
-+	}
-+	cgroup_throttle_swaprate(page, gfp);
++	XA_BUG_ON(xa, !xa_empty(xa));
 +
 +	do {
-+		xas_lock_irq(&xas);
-+		xas_create_range(&xas);
-+		if (xas_error(&xas))
-+			goto unlock;
-+next:
-+		xas_store(&xas, page);
-+		if (++i < nr) {
-+			xas_next(&xas);
-+			goto next;
-+		}
-+		mapping->nrpages += nr;
++		xas_lock(&xas);
++		xas_set_order(&xas, index, xa_shift);
++		xas_import_node(&xas, node);
 +		xas_unlock(&xas);
-+		if (PageTransHuge(page)) {
-+			count_vm_event(THP_FILE_ALLOC);
-+			__inc_node_page_state(page, NR_SHMEM_THPS);
-+		}
-+		__mod_lruvec_page_state(page, NR_FILE_PAGES, nr);
-+		__mod_lruvec_page_state(page, NR_SHMEM, nr);
-+		local_irq_enable();
-+		break;
-+unlock:
-+		xas_unlock_irq(&xas);
-+	} while (xas_nomem(&xas, gfp));
++	} while (xas_nomem(&xas, GFP_KERNEL));
 +
-+	if (xas_error(&xas)) {
-+		error = xas_error(&xas);
-+		goto error;
-+	}
++	for (i = index; i < index + (1UL << xa_shift); i++)
++		xa_erase_index(xa, i);
 +
-+	return 0;
-+error:
-+	page->mapping = NULL;
-+	page_ref_sub(page, nr);
-+	return error;
++	XA_BUG_ON(xa, !xa_empty(xa));
 +}
 +
- /*
-  * Like delete_from_page_cache, but substitutes swap for page.
-  */
-@@ -759,6 +827,41 @@ static void shmem_delete_from_page_cache(struct page *page, void *radswap)
- 	BUG_ON(error);
++static noinline void check_export_import(struct xarray *xa)
++{
++	unsigned int order;
++	unsigned int max_order = IS_ENABLED(CONFIG_XARRAY_MULTI) ? 12 : 1;
++
++	for (order = 0; order < max_order; order += XA_CHUNK_SHIFT) {
++		int xa_shift = order + XA_CHUNK_SHIFT;
++		unsigned long j;
++
++		for (j = 0; j < XA_CHUNK_SIZE; j++)
++			check_export_import_1(xa, j << xa_shift, order);
++	}
++}
++
+ static DEFINE_XARRAY(array);
+ 
+ static int xarray_checks(void)
+@@ -1797,6 +1841,7 @@ static int xarray_checks(void)
+ 	check_workingset(&array, 0);
+ 	check_workingset(&array, 64);
+ 	check_workingset(&array, 4096);
++	check_export_import(&array);
+ 
+ 	printk("XArray: %u of %u tests passed\n", tests_passed, tests_run);
+ 	return (tests_run == tests_passed) ? 0 : -EINVAL;
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 5fa51614802a..58d58333f0d0 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -510,6 +510,30 @@ static void xas_delete_node(struct xa_state *xas)
+ 		xas_shrink(xas);
  }
  
-+static int shmem_add_pages_to_cache(struct page *pages[], int npages,
-+				struct address_space *mapping,
-+				pgoff_t start, gfp_t gfp,
-+				struct mm_struct *charge_mm)
++static void xas_unlink_node(struct xa_state *xas)
 +{
-+	pgoff_t index = start;
-+	int i, err;
++	struct xa_node *node = xas->xa_node;
++	struct xa_node *parent;
 +
-+	i = 0;
-+	while (i < npages) {
-+		if (PageTransHuge(pages[i])) {
-+			err = shmem_add_to_page_cache_fast(pages[i], mapping, index, gfp, charge_mm, page_memcg(pages[i]) ? true : false);
-+			if (err)
-+				goto out_release;
-+			index += thp_nr_pages(pages[i]);
-+			i++;
-+			continue;
-+		}
++	parent = xa_parent_locked(xas->xa, node);
++	xas->xa_node = parent;
++	xas->xa_offset = node->offset;
 +
-+		err = shmem_add_to_page_cache_fast(pages[i], mapping, index, gfp, charge_mm, page_memcg(pages[i]) ? true : false);
-+		if (err)
-+			goto out_release;
-+		index++;
-+		i++;
++	if (!parent) {
++		xas->xa->xa_head = NULL;
++		xas->xa_node = XAS_BOUNDS;
++		return;
 +	}
-+	return 0;
 +
-+out_release:
-+	while (i < npages) {
-+		delete_from_page_cache(pages[i]);
-+		i--;
-+	}
-+	return err;
++	parent->slots[xas->xa_offset] = NULL;
++	parent->count--;
++	XA_NODE_BUG_ON(parent, parent->count > XA_CHUNK_SIZE);
++
++	xas_update(xas, parent);
++
++	xas_delete_node(xas);
 +}
 +
- int shmem_insert_page(struct mm_struct *mm, struct inode *inode, pgoff_t index,
- 		      struct page *page)
- {
-@@ -889,17 +992,10 @@ int shmem_insert_pages(struct mm_struct *charge_mm, struct inode *inode,
- 		__SetPageReferenced(pages[i]);
- 	}
+ /**
+  * xas_free_nodes() - Free this node and all nodes that it references
+  * @xas: Array operation state.
+@@ -1690,6 +1714,82 @@ static void xas_set_range(struct xa_state *xas, unsigned long first,
+ }
  
--	for (i = 0; i < npages; i++) {
--		bool ischarged = page_memcg(pages[i]) ? true : false;
--
--		err = shmem_add_to_page_cache(pages[i], mapping, index,
--					NULL, gfp & GFP_RECLAIM_MASK,
--					charge_mm, ischarged);
--		if (err)
--			goto out_release;
--
--		index += thp_nr_pages(pages[i]);
--	}
-+	err = shmem_add_pages_to_cache(pages, npages, mapping, index,
-+					gfp & GFP_RECLAIM_MASK, charge_mm);
-+	if (err)
-+		goto out_unlock;
- 
- 	spin_lock(&info->lock);
- 	info->alloced += nr;
-@@ -922,10 +1018,7 @@ int shmem_insert_pages(struct mm_struct *charge_mm, struct inode *inode,
- 
- 	return 0;
- 
--out_release:
--	while (--i >= 0)
--		delete_from_page_cache(pages[i]);
--
-+out_unlock:
- 	for (i = 0; i < npages; i++)
- 		unlock_page(pages[i]);
- 
+ /**
++ * xas_export_node() - remove and return a node from an XArray
++ * @xas: XArray operation state
++ *
++ * The range covered by @xas must be aligned to and cover a single node
++ * at any level of the tree.
++ *
++ * Return: On success, returns the removed node.  If the range is invalid,
++ * returns %NULL and sets -EINVAL in @xas.  Otherwise returns %NULL if the
++ * node does not exist.
++ */
++struct xa_node *xas_export_node(struct xa_state *xas)
++{
++	struct xa_node *node;
++
++	if (!xas->xa_shift || xas->xa_sibs) {
++		xas_set_err(xas, -EINVAL);
++		return NULL;
++	}
++
++	xas->xa_shift -= XA_CHUNK_SHIFT;
++
++	if (!xas_find(xas, xas->xa_index))
++		return NULL;
++	node = xas->xa_node;
++	xas_unlink_node(xas);
++	node->parent = NULL;
++
++	return node;
++}
++
++/**
++ * xas_import_node() - add a node to an XArray
++ * @xas: XArray operation state
++ * @node: The node to add
++ *
++ * The range covered by @xas must be aligned to and cover a single node
++ * at any level of the tree.  No nodes should already exist within the
++ * range.
++ * Sets an error in @xas if the range is invalid or xas_create() fails
++ */
++void xas_import_node(struct xa_state *xas, struct xa_node *node)
++{
++	struct xa_node *parent = NULL;
++	void __rcu **slot = &xas->xa->xa_head;
++	int count = 0;
++
++	if (!xas->xa_shift || xas->xa_sibs) {
++		xas_set_err(xas, -EINVAL);
++		return;
++	}
++
++	if (xas->xa_index || xa_head_locked(xas->xa)) {
++		xas_set_order(xas, xas->xa_index, node->shift + XA_CHUNK_SHIFT);
++		xas_create(xas, true);
++
++		if (xas_invalid(xas))
++			return;
++
++		parent = xas->xa_node;
++	}
++
++	if (parent) {
++		slot = &parent->slots[xas->xa_offset];
++		node->offset = xas->xa_offset;
++		count++;
++	}
++
++	RCU_INIT_POINTER(node->parent, parent);
++	node->array = xas->xa;
++
++	rcu_assign_pointer(*slot, xa_mk_node(node));
++
++	update_node(xas, parent, count, 0);
++}
++
++/**
+  * xa_store_range() - Store this entry at a range of indices in the XArray.
+  * @xa: XArray.
+  * @first: First index to affect.
 -- 
 1.8.3.1
 
