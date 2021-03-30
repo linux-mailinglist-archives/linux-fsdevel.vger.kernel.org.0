@@ -2,199 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7066634E0F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 08:01:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79CCD34E1C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Mar 2021 09:08:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230302AbhC3GBV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Mar 2021 02:01:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48176 "EHLO
+        id S231163AbhC3HIJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Mar 2021 03:08:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230303AbhC3GAw (ORCPT
+        with ESMTP id S230316AbhC3HIB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Mar 2021 02:00:52 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF1F1C061762;
-        Mon, 29 Mar 2021 23:00:51 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id d12so899782lfv.11;
-        Mon, 29 Mar 2021 23:00:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yLK0swGoAGAfWrFvdyaIBTEbLse0KE0XBAgDjxBZppA=;
-        b=R6fnDhi+6UM/fZamHcltmjBIsqP4pdQZZvnHqGxOdKjSr9yZ95gmjWbsV01YocnSrv
-         HWC/BoY2ZygLo3tfcObOL9vrJFuw+f/gYmjVCPu0t2Zu2nB5VfeNBnJeD3FzcOxjoUuv
-         4+KilRtXvS0CWd5mmZDrNkHx+hD3E9A7Ptj52JAX40ITwdgPWkRcyolfsq8IOFIupfTS
-         ork+/dkIjJew2duvaWUJeo+wHnWzwdGFaVoxK7+Ez6ZnNd48VVczQnZx1FS2TdNSRY5h
-         n/nOwBmg1W129DRdd8C+ZXL5k4tnf8ggOVnbdHactNqeEBMe2+gskSbklAjsnE0O4so7
-         E0Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yLK0swGoAGAfWrFvdyaIBTEbLse0KE0XBAgDjxBZppA=;
-        b=nD52O5I4joeeo4RIYlZwmVJea3Ph1xf0LRDWck6zTVawBpIPbDpQWijSxQhUGlx/go
-         x50sWnoze0+ltbcIDnXqLVrvksdpPrjoO76yrJ6bpI1qY0iDigrqlVfAP+F0AmoJVhTv
-         aiqCsS6R+Fv+95CJqIdpm6+RVwklIJryi40B9HiXSNsmqSBgE3N29yVHtlXpNi7Jip2J
-         Sk0T8cQ38yH3+yIr6tZJEzULKqYrfNfiXjAo39YRDsZGAN7BZuxJpIuTjod4yPfaCFCN
-         qrT2W6Eo1ECIwx+dpIaKfQmsCEqnJVQWaKKM8vv3RQiMXOBj/68TptXudBXGPjiT2jPf
-         fsSQ==
-X-Gm-Message-State: AOAM531g/AoJjvq6E2HLufFBjEf0Gdu2PqcG4QQDj8BY/2m73PIk4Kl0
-        pJv++aMVrJfWt+0Wm9DXt3A=
-X-Google-Smtp-Source: ABdhPJwcosGN8xcjtwRUGS7nQZAXNXFXE2RbGvwntJ8stZj1d7Vq+Aqkc31vPdAYoKfo2ZvtQPMYYw==
-X-Received: by 2002:a05:6512:6cd:: with SMTP id u13mr18737993lff.326.1617084050511;
-        Mon, 29 Mar 2021 23:00:50 -0700 (PDT)
-Received: from carbon.v ([94.143.149.146])
-        by smtp.googlemail.com with ESMTPSA id e6sm2050089lfj.96.2021.03.29.23.00.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Mar 2021 23:00:50 -0700 (PDT)
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH v3 2/2] io_uring: add support for IORING_OP_MKDIRAT
-Date:   Tue, 30 Mar 2021 12:59:57 +0700
-Message-Id: <20210330055957.3684579-3-dkadashev@gmail.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210330055957.3684579-1-dkadashev@gmail.com>
-References: <20210330055957.3684579-1-dkadashev@gmail.com>
+        Tue, 30 Mar 2021 03:08:01 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB916C061762;
+        Tue, 30 Mar 2021 00:07:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=X166VgoQn02EMb3f8ykwCC49d3dYou3bLIcu1kP5us0=; b=mEIz6zmnoSAw3j1Qd+Moj7BPqA
+        o1FPHvH8HA4uTXQgWju4LxdFzthKOCG4xQqrL5iK/DtsvNE48oHsIcpR4rDrTiLBm3iiBRrTlZTBN
+        CC8MY7tkotNFjxLmxv93ek4JzPSVR8fsaIhcAiUNmewBwq2a5sb9LM+WhRuum7nv4oxK/QaW/WVyX
+        PlfPdvhdFBiscnR/2IR8k05yLYzcxvS1h5uzsDwpA+Tr+RKs2MYbGuJT5frmJkmdcb0PPABLW7sem
+        +RW8E4axAPeY1QUxI69MN73T2kthyGMY+UiChulnX3Ic4YzdxLYFtMSFNCb/eT2TnJD6dbNbkURhT
+        GNOoFsZQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lR8Qa-002ddk-BT; Tue, 30 Mar 2021 07:04:56 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id F3363307001;
+        Tue, 30 Mar 2021 09:04:36 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BBF922B960A7F; Tue, 30 Mar 2021 09:04:36 +0200 (CEST)
+Date:   Tue, 30 Mar 2021 09:04:36 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Marco Elver <elver@google.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Potapenko <glider@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian@brauner.io>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Matt Morehouse <mascasa@google.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Ian Rogers <irogers@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Jiri Olsa <jolsa@kernel.org>
+Subject: Re: [PATCH v3 06/11] perf: Add support for SIGTRAP on perf events
+Message-ID: <YGLNhKnx4wR38XpE@hirez.programming.kicks-ass.net>
+References: <20210324112503.623833-1-elver@google.com>
+ <20210324112503.623833-7-elver@google.com>
+ <YFxGb+QHEumZB6G8@elver.google.com>
+ <YGHC7V3bbCxhRWTK@hirez.programming.kicks-ass.net>
+ <20210329142705.GA24849@redhat.com>
+ <CANpmjNN4kiGiuSSm2g0empgKo3DW-UJ=eNDB6sv1bpypD13vqQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNN4kiGiuSSm2g0empgKo3DW-UJ=eNDB6sv1bpypD13vqQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-IORING_OP_MKDIRAT behaves like mkdirat(2) and takes the same flags
-and arguments.
+On Mon, Mar 29, 2021 at 04:32:18PM +0200, Marco Elver wrote:
+> On Mon, 29 Mar 2021 at 16:27, Oleg Nesterov <oleg@redhat.com> wrote:
+> > On 03/29, Peter Zijlstra wrote:
+> > >
+> > > On Thu, Mar 25, 2021 at 09:14:39AM +0100, Marco Elver wrote:
+> > > > @@ -6395,6 +6395,13 @@ static void perf_sigtrap(struct perf_event *event)
+> > > >  {
+> > > >     struct kernel_siginfo info;
+> > > >
+> > > > +   /*
+> > > > +    * This irq_work can race with an exiting task; bail out if sighand has
+> > > > +    * already been released in release_task().
+> > > > +    */
+> > > > +   if (!current->sighand)
+> > > > +           return;
+> >
+> > This is racy. If "current" has already passed exit_notify(), current->parent
+> > can do release_task() and destroy current->sighand right after the check.
+> >
+> > > Urgh.. I'm not entirely sure that check is correct, but I always forget
+> > > the rules with signal. It could be we ought to be testing PF_EXISTING
+> > > instead.
+> >
+> > Agreed, PF_EXISTING check makes more sense in any case, the exiting task
+> > can't receive the signal anyway.
+> 
+> Thanks for confirming. I'll switch to just checking PF_EXITING
+> (PF_EXISTING does not exist :-)).
 
-Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
----
- fs/io_uring.c                 | 55 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |  1 +
- 2 files changed, 56 insertions(+)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 9a1a02fb3c9a..d9c100ed6132 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -663,6 +663,13 @@ struct io_unlink {
- 	struct filename			*filename;
- };
- 
-+struct io_mkdir {
-+	struct file			*file;
-+	int				dfd;
-+	umode_t				mode;
-+	struct filename			*filename;
-+};
-+
- struct io_completion {
- 	struct file			*file;
- 	struct list_head		list;
-@@ -803,6 +810,7 @@ struct io_kiocb {
- 		struct io_shutdown	shutdown;
- 		struct io_rename	rename;
- 		struct io_unlink	unlink;
-+		struct io_mkdir		mkdir;
- 		/* use only after cleaning per-op data, see io_clean_op() */
- 		struct io_completion	compl;
- 	};
-@@ -1016,6 +1024,7 @@ static const struct io_op_def io_op_defs[] = {
- 	},
- 	[IORING_OP_RENAMEAT] = {},
- 	[IORING_OP_UNLINKAT] = {},
-+	[IORING_OP_MKDIRAT] = {},
- };
- 
- static bool io_disarm_next(struct io_kiocb *req);
-@@ -3523,6 +3532,44 @@ static int io_unlinkat(struct io_kiocb *req, unsigned int issue_flags)
- 	return 0;
- }
- 
-+static int io_mkdirat_prep(struct io_kiocb *req,
-+			    const struct io_uring_sqe *sqe)
-+{
-+	struct io_mkdir *mkd = &req->mkdir;
-+	const char __user *fname;
-+
-+	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-+		return -EBADF;
-+
-+	mkd->dfd = READ_ONCE(sqe->fd);
-+	mkd->mode = READ_ONCE(sqe->len);
-+
-+	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	mkd->filename = getname(fname);
-+	if (IS_ERR(mkd->filename))
-+		return PTR_ERR(mkd->filename);
-+
-+	req->flags |= REQ_F_NEED_CLEANUP;
-+	return 0;
-+}
-+
-+static int io_mkdirat(struct io_kiocb *req, int issue_flags)
-+{
-+	struct io_mkdir *mkd = &req->mkdir;
-+	int ret;
-+
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+	ret = do_mkdirat(mkd->dfd, mkd->filename, mkd->mode);
-+
-+	req->flags &= ~REQ_F_NEED_CLEANUP;
-+	if (ret < 0)
-+		req_set_fail_links(req);
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- static int io_shutdown_prep(struct io_kiocb *req,
- 			    const struct io_uring_sqe *sqe)
- {
-@@ -5942,6 +5989,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return io_renameat_prep(req, sqe);
- 	case IORING_OP_UNLINKAT:
- 		return io_unlinkat_prep(req, sqe);
-+	case IORING_OP_MKDIRAT:
-+		return io_mkdirat_prep(req, sqe);
- 	}
- 
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6083,6 +6132,9 @@ static void io_clean_op(struct io_kiocb *req)
- 		case IORING_OP_UNLINKAT:
- 			putname(req->unlink.filename);
- 			break;
-+		case IORING_OP_MKDIRAT:
-+			putname(req->mkdir.filename);
-+			break;
- 		}
- 		req->flags &= ~REQ_F_NEED_CLEANUP;
- 	}
-@@ -6198,6 +6250,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	case IORING_OP_UNLINKAT:
- 		ret = io_unlinkat(req, issue_flags);
- 		break;
-+	case IORING_OP_MKDIRAT:
-+		ret = io_mkdirat(req, issue_flags);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 5beaa6bbc6db..cf26a94ab880 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -137,6 +137,7 @@ enum {
- 	IORING_OP_SHUTDOWN,
- 	IORING_OP_RENAMEAT,
- 	IORING_OP_UNLINKAT,
-+	IORING_OP_MKDIRAT,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
--- 
-2.30.2
-
+Indeed! Typing be hard :-)
