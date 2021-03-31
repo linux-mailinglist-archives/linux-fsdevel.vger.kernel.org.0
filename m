@@ -2,117 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BF39350A56
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 00:43:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C5E93509C9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 23:53:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232429AbhCaWnH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Mar 2021 18:43:07 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.1]:44768 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232406AbhCaWnE (ORCPT
+        id S230380AbhCaVww (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Mar 2021 17:52:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57260 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231579AbhCaVwU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 18:43:04 -0400
-X-Greylist: delayed 1277 seconds by postgrey-1.27 at vger.kernel.org; Wed, 31 Mar 2021 18:43:04 EDT
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id BB0EA6E960
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Mar 2021 17:21:41 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id RjDZllVwPMGeERjDZlNMk2; Wed, 31 Mar 2021 17:21:41 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=YojvDQ3EVOB0i+R+aoTOGVliEyEdWdfUxsBrA9b3YJY=; b=uqW4o/SQjZe6HtQmsZzdOzRPK0
-        pSPdwToqdS8sMt91UZdSz1IrfQ7EZTux2Ii5f6pm07i4UBfzGY6+SWRkXrprxlNYYjRLfnl87JLpf
-        /6XQyZ5LfhG3QRGeh8fSRddHgieVZPRWqIMaO8X6mxY0AdHJ0CHPISB2wIwsEkr3+m5qGvDlws2BJ
-        V/QCGQsr2YgkuI0dO8hXm7zuGz+DNBW8evNYMOxD5nROxMSZsKWZYqvGVcqoe6prPH5/rfZli5u19
-        J4wuAt0iyD+u2WnqOOPOpzcChZFS0uAP2zsi92q3/BUQCsITKT3iv1egE6s+0zRblMNm76hCiwPhB
-        73/0Kmbw==;
-Received: from 187-162-31-110.static.axtel.net ([187.162.31.110]:51022 helo=[192.168.15.8])
-        by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1lRjDZ-000iqw-CV; Wed, 31 Mar 2021 17:21:41 -0500
-Subject: Re: [PATCH][next] hfsplus: Fix out-of-bounds warnings in
- __hfsplus_setxattr
-To:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org
-References: <20210330145226.GA207011@embeddedor>
- <20210330214320.93600506530f1ab18338b467@linux-foundation.org>
- <20210331045357.GV351017@casper.infradead.org>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <2693ab27-64b6-9088-e172-83e7f8b4e95b@embeddedor.com>
-Date:   Wed, 31 Mar 2021 16:21:46 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        Wed, 31 Mar 2021 17:52:20 -0400
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43109C061574;
+        Wed, 31 Mar 2021 14:52:20 -0700 (PDT)
+Received: by mail-qk1-x735.google.com with SMTP id o5so389615qkb.0;
+        Wed, 31 Mar 2021 14:52:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=iVgFfy9Gk4TopgDWAZb3OEMFsekIXo3QttoRKgThI1I=;
+        b=LlC/3vOcZu0Rh5837wBCMc/jMQBLoS5tu19QTNj1eof7IhHTCSrowwreYpcEeTbT5X
+         NlWLfUqhbD9HhkHO9DsT4Tyx2dRlg91X71xYeCMm7fKtrUmafIBq7/LrPrNoupfhFp3m
+         GewFfvppFWbs9VRkNf6T/omLtxmxV/Um2gbRVOo+AHZwOoh9mGFiVd9+oTJRsbPr+urV
+         9+SzjFJBATN+dQCPHnqvB4BC59ngCo/QcWw7P40soldfgVxjJkBfgZEWDD018mop0vXZ
+         RHFwc/5vTY5r72yfm8jOOOnGx6oz9cJw+eVDnJnP827bZO8OihlinIME1rTQWHzKsxKK
+         ckUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=iVgFfy9Gk4TopgDWAZb3OEMFsekIXo3QttoRKgThI1I=;
+        b=agDMhbaDAHhjurNo28A9Y1aV0ZC/Zyt/xhO3l+yk31Vamck4ce7KHRm/vpbK+iLv7d
+         Wy6a9M6RF+Uhduu77L93Ar3mhuT2m+2/OdcydyCeDcIsBllYc8CVFLlxQJ74lNd0Qt/W
+         ZZ4PRKhthAZ4aCENq1pGyu/517QKZvod6UwcUnCWfDwHUaAIE6jOz52ffkQ+wN0yrt5Q
+         p6dJPbYNBGC5aoHTk3zyKj9y9AIzI+z3m2jwlnIiWC7PHCJqVIKiyH1tnDmp3vzxzGfv
+         xQIBg/aGjzEwZYTBKih505nmNuF7iTi45Io5/Y67q2ZdVAEP2dS0f9Bp9gu6aLkR98Ld
+         lWfQ==
+X-Gm-Message-State: AOAM533G4wIwFMIZpqZKQPjpNwq5k6JnUGs59f8qpN6bU0TE+I+fvTdK
+        ZD3YHFrVtp7CHOPDD0Q6OzU=
+X-Google-Smtp-Source: ABdhPJwK1AgyeLn7/B6+lfbSP03Q/ohuFDGUVnzdZCNHOlmGfkjpcbj+5GbXHWQQi4iDLVthXpiBHg==
+X-Received: by 2002:a37:78b:: with SMTP id 133mr5361746qkh.109.1617227539232;
+        Wed, 31 Mar 2021 14:52:19 -0700 (PDT)
+Received: from localhost ([207.98.216.60])
+        by smtp.gmail.com with ESMTPSA id d84sm2453310qke.53.2021.03.31.14.52.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Mar 2021 14:52:18 -0700 (PDT)
+Date:   Wed, 31 Mar 2021 14:52:18 -0700
+From:   Yury Norov <yury.norov@gmail.com>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+Subject: Re: [PATCH] memfd_secret: use unsigned int rather than long as
+ syscall flags type
+Message-ID: <20210331215218.GA3437@yury-ThinkPad>
+References: <20210331142345.27532-1-rppt@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20210331045357.GV351017@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.31.110
-X-Source-L: No
-X-Exim-ID: 1lRjDZ-000iqw-CV
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-31-110.static.axtel.net ([192.168.15.8]) [187.162.31.110]:51022
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210331142345.27532-1-rppt@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 3/30/21 23:53, Matthew Wilcox wrote:
-> On Tue, Mar 30, 2021 at 09:43:20PM -0700, Andrew Morton wrote:
->> On Tue, 30 Mar 2021 09:52:26 -0500 "Gustavo A. R. Silva" <gustavoars@kernel.org> wrote:
->>
->>> Fix the following out-of-bounds warnings by enclosing
->>> structure members file and finder into new struct info:
->>>
->>> fs/hfsplus/xattr.c:300:5: warning: 'memcpy' offset [65, 80] from the object at 'entry' is out of the bounds of referenced subobject 'user_info' with type 'struct DInfo' at offset 48 [-Warray-bounds]
->>> fs/hfsplus/xattr.c:313:5: warning: 'memcpy' offset [65, 80] from the object at 'entry' is out of the bounds of referenced subobject 'user_info' with type 'struct FInfo' at offset 48 [-Warray-bounds]
->>>
->>> Refactor the code by making it more "structured."
->>>
->>> Also, this helps with the ongoing efforts to enable -Warray-bounds and
->>> makes the code clearer and avoid confusing the compiler.
->>
->> Confused.  What was wrong with the old code?  Was this warning
->> legitimate and if so, why?  Or is this patch a workaround for a
->> compiler shortcoming?
+On Wed, Mar 31, 2021 at 05:23:45PM +0300, Mike Rapoport wrote:
+> From: Mike Rapoport <rppt@linux.ibm.com>
 > 
-> The offending line is this:
+> Yuri Norov says:
 > 
-> -                               memcpy(&entry.file.user_info, value,
-> +                               memcpy(&entry.file.info, value,
->                                                 file_finderinfo_len);
+>   If parameter size is the same for native and compat ABIs, we may
+>   wire a syscall made by compat client to native handler. This is
+>   true for unsigned int, but not true for unsigned long or pointer.
 > 
-> what it's trying to do is copy two structs which are adjacent to each
-> other in a single call to memcpy().  gcc legitimately complains that the
-> memcpy to this struct overruns the bounds of the struct.  What Gustavo
-> has done here is introduce a new struct that contains the two structs,
-> and now gcc is happy that the memcpy doesn't overrun the length of this
-> containing struct.
+>   That's why I suggest using unsigned int and so avoid creating compat
+>   entry point.
+> 
+> Use unsigned int as the type of the flags parameter in memfd_secret()
+> system call.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 
-Thanks for this, Matthew. :)
-
---
-Gustavo
+Acked-by: Yury Norov <yury.norov@gmail.com>
