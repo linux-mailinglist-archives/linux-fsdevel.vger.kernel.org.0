@@ -2,296 +2,270 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E6553506AC
+	by mail.lfdr.de (Postfix) with ESMTP id 2B9403506AB
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 20:48:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235046AbhCaSsM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Mar 2021 14:48:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45216 "EHLO
+        id S235071AbhCaSsO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Mar 2021 14:48:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234832AbhCaSrp (ORCPT
+        with ESMTP id S234913AbhCaSrz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 14:47:45 -0400
+        Wed, 31 Mar 2021 14:47:55 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7974C061574;
-        Wed, 31 Mar 2021 11:47:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E966C061574;
+        Wed, 31 Mar 2021 11:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=tIs14YIIwRZKfo0rAopimIxO5uzjJAKGGe9VnY1WNb8=; b=juB2iYt9PqzwSCiH/LNPjbxthY
-        oIE9Eonee/zirl4B/L1yLl/xjdICFHsAaR1g40TzUR5ttmoyIk+41i2ws0OddsGKQCbwtIpXwLuhO
-        5NT0CV42vMEJw8r0EBeTvDGHT3qWqx/gFbf5qkUnWFuuMTx8SFdhFR/wyY2qzwjhszWHTuWeZjRDr
-        m5A5guTOIDmh7IRqTou6iADC/XCYPkShk2613AUnTrgu5cLWH2kuctKnP71yRN+H29I3wiLuwr/Hk
-        Yg9kPF/pvbRh47bcM+31W2jqwbCS0Y2iwm+55Ag3dTryXb4h4ky9+tw2ZJmqiaK5rAcX2QzV+IdUk
-        nIx9L5aw==;
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=Ie4cQ4kdp9EyBykbrvlRvsDrsomhHooMgBYPcLk/a3c=; b=gZHJlNglaF/tDnX/IhRaI7RX+k
+        tiTjsjUNiSVfKRSbvesnb8NCYWS36Rdq6M3Sp0+JbtbYRE5akkAjofwEjh9p2O6kdkuI9SM86kVm1
+        5ViSmFoVq6FVQ0yuwtIsolkfUWCpfEspG+6svmDV1UQEsDlP7U+9pGV1XGIRZVa1FQDkx40ES+Il6
+        Ven8SAXpFBW8xZhYU3M3bf9RWiRSZ3iXsuKO3T9u4t6YqJhq3XHyBwqaphjgQbVyzVKhE8byQXyYF
+        NT+1uFbfzu42ETDvBxnMc30a9AQALu+qPChb2FnhBYdmiGtXE/2iYEoSSWmZJPNpbtVCNzkeYYzCo
+        0wvTRl6g==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lRfsH-004z5P-Vc; Wed, 31 Mar 2021 18:47:34 +0000
+        id 1lRfsT-004z5g-CL; Wed, 31 Mar 2021 18:47:41 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-cachefs@redhat.com, linux-afs@lists.infradead.org
-Subject: [PATCH v6 00/27] Memory Folios
-Date:   Wed, 31 Mar 2021 19:47:01 +0100
-Message-Id: <20210331184728.1188084-1-willy@infradead.org>
+Subject: [PATCH v6 01/27] mm: Introduce struct folio
+Date:   Wed, 31 Mar 2021 19:47:02 +0100
+Message-Id: <20210331184728.1188084-2-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210331184728.1188084-1-willy@infradead.org>
+References: <20210331184728.1188084-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Managing memory in 4KiB pages is a serious overhead.  Many benchmarks
-exist which show the benefits of a larger "page size".  As an example,
-an earlier iteration of this idea which used compound pages got a 7%
-performance boost when compiling the kernel using kernbench without any
-particular tuning.
+A struct folio is a new abstraction to replace the venerable struct page.
+A function which takes a struct folio argument declares that it will
+operate on the entire (possibly compound) page, not just PAGE_SIZE bytes.
+In return, the caller guarantees that the pointer it is passing does
+not point to a tail page.
 
-Using compound pages or THPs exposes a serious weakness in our type
-system.  Functions are often unprepared for compound pages to be passed
-to them, and may only act on PAGE_SIZE chunks.  Even functions which are
-aware of compound pages may expect a head page, and do the wrong thing
-if passed a tail page.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ include/linux/mm.h       | 78 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/mm_types.h | 65 +++++++++++++++++++++++++++++++++
+ mm/util.c                | 19 ++++++++++
+ 3 files changed, 162 insertions(+)
 
-There have been efforts to label function parameters as 'head' instead
-of 'page' to indicate that the function expects a head page, but this
-leaves us with runtime assertions instead of using the compiler to prove
-that nobody has mistakenly passed a tail page.  Calling a struct page
-'head' is also inaccurate as they will work perfectly well on base pages.
-The term 'nottail' has not proven popular.
-
-We also waste a lot of instructions ensuring that we're not looking at
-a tail page.  Almost every call to PageFoo() contains one or more hidden
-calls to compound_head().  This also happens for get_page(), put_page()
-and many more functions.  There does not appear to be a way to tell gcc
-that it can cache the result of compound_head(), nor is there a way to
-tell it that compound_head() is idempotent.
-
-This series introduces the 'struct folio' as a replacement for
-head-or-base pages.  This initial set reduces the kernel size by
-approximately 5kB by removing conversions from tail pages to head pages.
-The real purpose of this series is adding infrastructure to enable
-further use of the folio.
-
-The medium-term goal is to convert all filesystems and some device
-drivers to work in terms of folios.  This series contains a lot of
-explicit conversions, but it's important to realise it's removing a lot
-of implicit conversions in some relatively hot paths.  There will be very
-few conversions from folios when this work is completed; filesystems,
-the page cache, the LRU and so on will generally only deal with folios.
-
-I analysed the text size reduction using a config based on Oracle UEK
-with all modules changed to built-in.  That's obviously not a kernel
-which makes sense to run, but it serves to compare the effects on (many
-common) filesystems & drivers, not just the core.
-
-add/remove: 34266/34260 grow/shrink: 5220/3206 up/down: 1083860/-1088546 (-4686)
-
-Current tree at:
-https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/folio
-
-(contains another ~100 patches on top of this batch, not all of which are
-in good shape for submission)
-
-v6:
- - Rebase on next-20210330
-   - wait_bit_key patch merged by Linus
-   - wait_on_page_writeback_killable() patches merged by Linus
-   - Documentation patch merged by Andrew
- - Move folio_next_index() into this series
- - Move folio_offset() and folio_file_offset() into this series
- - Mirror members of struct page (for pagecache / anon) into struct folio,
-   so (eg) you can use folio->mapping instead of folio->page.mapping
- - Add folio_ref_* functions, including kernel-doc for folio_ref_count().
- - Add count_memcg_folio_event()
- - Add put_folio_testzero()
- - Add folio_mapcount()
- - Add FolioKsm()
- - Fix afs_page_mkwrite() compilation
- - Fix/improve kernel-doc for
-   - struct folio
-   - add_folio_wait_queue()
-   - wait_for_stable_folio()
-   - wait_on_folio_writeback()
-   - wait_on_folio_writeback_killable()
-v5:
- - Rebase on next-20210319
- - Pull out three bug-fix patches to the front of the series, allowing
-   them to be applied earlier.
- - Fix folio_page() against pages being moved between swap & page cache
- - Fix FolioDoubleMap to use the right page flags
- - Rename next_folio() to folio_next() (akpm)
- - Renamed folio stat functions (akpm)
- - Add 'mod' versions of the folio stats for users that already have 'nr'
- - Renamed folio_page to folio_file_page() (akpm)
- - Added kernel-doc for struct folio, folio_next(), folio_index(),
-   folio_file_page(), folio_contains(), folio_order(), folio_nr_pages(),
-   folio_shift(), folio_size(), page_folio(), get_folio(), put_folio()
- - Make folio_private() work in terms of void * instead of unsigned long
- - Used page_folio() in attach/detach page_private() (hch)
- - Drop afs_page_mkwrite folio conversion from this series
- - Add wait_on_folio_writeback_killable()
- - Convert add_page_wait_queue() to add_folio_wait_queue()
- - Add folio_swap_entry() helper
- - Drop the additions of *FolioFsCache
- - Simplify the addition of lock_folio_memcg() et al
- - Drop test_clear_page_writeback() conversion from this series
- - Add FolioTransHuge() definition
- - Rename __folio_file_mapping() to swapcache_mapping()
- - Added swapcache_index() helper
- - Removed lock_folio_async()
- - Made __lock_folio_async() static to filemap.c
- - Converted unlock_page_private_2() to use a folio internally
-v4:
- - Rebase on current Linus tree (including swap fix)
- - Analyse each patch in terms of its effects on kernel text size.
-   A few were modified to improve their effect.  In particular, where
-   pushing calls to page_folio() into the callers resulted in unacceptable
-   size increases, the wrapper was placed in mm/folio-compat.c.  This lets
-   us see all the places which are good targets for conversion to folios.
- - Some of the patches were reordered, split or merged in order to make
-   more logical sense.
- - Use nth_page() for folio_next() if we're using SPARSEMEM and not
-   VMEMMAP (Zi Yan)
- - Increment and decrement page stats in units of pages instead of units
-   of folios (Zi Yan)
-v3:
- - Rebase on next-20210127.  Two major sources of conflict, the
-   generic_file_buffered_read refactoring (in akpm tree) and the
-   fscache work (in dhowells tree).
-v2:
- - Pare patch series back to just infrastructure and the page waiting
-   parts.
-
-Matthew Wilcox (Oracle) (27):
-  mm: Introduce struct folio
-  mm: Add folio_pgdat and folio_zone
-  mm/vmstat: Add functions to account folio statistics
-  mm/debug: Add VM_BUG_ON_FOLIO and VM_WARN_ON_ONCE_FOLIO
-  mm: Add folio reference count functions
-  mm: Add put_folio
-  mm: Add get_folio
-  mm: Create FolioFlags
-  mm: Handle per-folio private data
-  mm/filemap: Add folio_index, folio_file_page and folio_contains
-  mm/filemap: Add folio_next_index
-  mm/filemap: Add folio_offset and folio_file_offset
-  mm/util: Add folio_mapping and folio_file_mapping
-  mm: Add folio_mapcount
-  mm/memcg: Add folio wrappers for various functions
-  mm/filemap: Add unlock_folio
-  mm/filemap: Add lock_folio
-  mm/filemap: Add lock_folio_killable
-  mm/filemap: Add __lock_folio_async
-  mm/filemap: Add __lock_folio_or_retry
-  mm/filemap: Add wait_on_folio_locked
-  mm/filemap: Add end_folio_writeback
-  mm/writeback: Add wait_on_folio_writeback
-  mm/writeback: Add wait_for_stable_folio
-  mm/filemap: Convert wait_on_page_bit to wait_on_folio_bit
-  mm/filemap: Convert wake_up_page_bit to wake_up_folio_bit
-  mm/filemap: Convert page wait queues to be folios
-
- Documentation/core-api/mm-api.rst |   3 +
- fs/afs/write.c                    |   7 +-
- fs/cachefiles/rdwr.c              |  16 +-
- fs/io_uring.c                     |   2 +-
- include/linux/memcontrol.h        |  30 ++++
- include/linux/mm.h                | 177 ++++++++++++++++----
- include/linux/mm_types.h          |  81 +++++++++
- include/linux/mmdebug.h           |  20 +++
- include/linux/netfs.h             |   2 +-
- include/linux/page-flags.h        | 130 +++++++++++---
- include/linux/page_ref.h          |  88 +++++++++-
- include/linux/pagemap.h           | 270 ++++++++++++++++++++++--------
- include/linux/swap.h              |   6 +
- include/linux/vmstat.h            | 107 ++++++++++++
- mm/Makefile                       |   2 +-
- mm/filemap.c                      | 242 +++++++++++++-------------
- mm/folio-compat.c                 |  37 ++++
- mm/memory.c                       |   8 +-
- mm/page-writeback.c               |  72 +++++---
- mm/swapfile.c                     |   8 +-
- mm/util.c                         |  49 ++++--
- 21 files changed, 1051 insertions(+), 306 deletions(-)
- create mode 100644 mm/folio-compat.c
-
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 3e4dc6678eb2..761063e733bf 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -936,6 +936,20 @@ static inline unsigned int compound_order(struct page *page)
+ 	return page[1].compound_order;
+ }
+ 
++/**
++ * folio_order - The allocation order of a folio.
++ * @folio: The folio.
++ *
++ * A folio is composed of 2^order pages.  See get_order() for the definition
++ * of order.
++ *
++ * Return: The order of the folio.
++ */
++static inline unsigned int folio_order(struct folio *folio)
++{
++	return compound_order(&folio->page);
++}
++
+ static inline bool hpage_pincount_available(struct page *page)
+ {
+ 	/*
+@@ -1581,6 +1595,69 @@ static inline void set_page_links(struct page *page, enum zone_type zone,
+ #endif
+ }
+ 
++/**
++ * folio_nr_pages - The number of pages in the folio.
++ * @folio: The folio.
++ *
++ * Return: A number which is a power of two.
++ */
++static inline unsigned long folio_nr_pages(struct folio *folio)
++{
++	return compound_nr(&folio->page);
++}
++
++/**
++ * folio_next - Move to the next physical folio.
++ * @folio: The folio we're currently operating on.
++ *
++ * If you have physically contiguous memory which may span more than
++ * one folio (eg a &struct bio_vec), use this function to move from one
++ * folio to the next.  Do not use it if the memory is only virtually
++ * contiguous as the folios are almost certainly not adjacent to each
++ * other.  This is the folio equivalent to writing ``page++``.
++ *
++ * Context: We assume that the folios are refcounted and/or locked at a
++ * higher level and do not adjust the reference counts.
++ * Return: The next struct folio.
++ */
++static inline struct folio *folio_next(struct folio *folio)
++{
++#if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
++	return (struct folio *)nth_page(&folio->page, folio_nr_pages(folio));
++#else
++	return folio + folio_nr_pages(folio);
++#endif
++}
++
++/**
++ * folio_shift - The number of bits covered by this folio.
++ * @folio: The folio.
++ *
++ * A folio contains a number of bytes which is a power-of-two in size.
++ * This function tells you which power-of-two the folio is.
++ *
++ * Context: The caller should have a reference on the folio to prevent
++ * it from being split.  It is not necessary for the folio to be locked.
++ * Return: The base-2 logarithm of the size of this folio.
++ */
++static inline unsigned int folio_shift(struct folio *folio)
++{
++	return PAGE_SHIFT + folio_order(folio);
++}
++
++/**
++ * folio_size - The number of bytes in a folio.
++ * @folio: The folio.
++ *
++ * Context: The caller should have a reference on the folio to prevent
++ * it from being split.  It is not necessary for the folio to be locked.
++ * Return: The number of bytes in this folio.
++ */
++static inline size_t folio_size(struct folio *folio)
++{
++	return PAGE_SIZE << folio_order(folio);
++}
++
+ /*
+  * Some inline functions in vmstat.h depend on page_zone()
+  */
+@@ -1685,6 +1762,7 @@ extern void pagefault_out_of_memory(void);
+ 
+ #define offset_in_page(p)	((unsigned long)(p) & ~PAGE_MASK)
+ #define offset_in_thp(page, p)	((unsigned long)(p) & (thp_size(page) - 1))
++#define offset_in_folio(folio, p) ((unsigned long)(p) & (folio_size(folio) - 1))
+ 
+ /*
+  * Flags passed to show_mem() and show_free_areas() to suppress output in
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 6613b26a8894..a0c7894fad1d 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -224,6 +224,71 @@ struct page {
+ #endif
+ } _struct_page_alignment;
+ 
++/**
++ * struct folio - Represents a contiguous set of bytes.
++ * @flags: Identical to the page flags.
++ * @lru: Least Recently Used list; tracks how recently this folio was used.
++ * @mapping: The file this page belongs to, or refers to the anon_vma for
++ *    anonymous pages.
++ * @index: Offset within the file, in units of pages.  For anonymous pages,
++ *    this is the index from the beginning of the mmap.
++ * @private: Filesystem per-folio data (see attach_folio_private()).
++ *    Used for swp_entry_t if FolioSwapCache().
++ * @_mapcount: How many times this folio is mapped to userspace.  Use
++ *    folio_mapcount() to access it.
++ * @_refcount: Number of references to this folio.  Use folio_ref_count()
++ *    to read it.
++ * @memcg_data: Memory Control Group data.
++ *
++ * A folio is a physically, virtually and logically contiguous set
++ * of bytes.  It is a power-of-two in size, and it is aligned to that
++ * same power-of-two.  It is at least as large as %PAGE_SIZE.  If it is
++ * in the page cache, it is at a file offset which is a multiple of that
++ * power-of-two.
++ */
++struct folio {
++	/* private: don't document the anon union */
++	union {
++		struct {
++	/* public: */
++			unsigned long flags;
++			struct list_head lru;
++			struct address_space *mapping;
++			pgoff_t index;
++			unsigned long private;
++			atomic_t _mapcount;
++			atomic_t _refcount;
++#ifdef CONFIG_MEMCG
++			unsigned long memcg_data;
++#endif
++	/* private: the union with struct page is transitional */
++		};
++		struct page page;
++	};
++};
++
++/**
++ * page_folio - Converts from page to folio.
++ * @page: The page.
++ *
++ * Every page is part of a folio.  This function cannot be called on a
++ * NULL pointer.
++ *
++ * Context: No reference, nor lock is required on @page.  If the caller
++ * does not hold a reference, this call may race with a folio split, so
++ * it should re-check the folio still contains this page after gaining
++ * a reference on the folio.
++ * Return: The folio which contains this page.
++ */
++static inline struct folio *page_folio(struct page *page)
++{
++	unsigned long head = READ_ONCE(page->compound_head);
++
++	if (unlikely(head & 1))
++		return (struct folio *)(head - 1);
++	return (struct folio *)page;
++}
++
+ static inline atomic_t *compound_mapcount_ptr(struct page *page)
+ {
+ 	return &page[1].compound_mapcount;
+diff --git a/mm/util.c b/mm/util.c
+index 0b6dd9d81da7..521a772f06eb 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -686,6 +686,25 @@ struct anon_vma *page_anon_vma(struct page *page)
+ 	return __page_rmapping(page);
+ }
+ 
++static inline void folio_build_bug(void)
++{
++#define FOLIO_MATCH(pg, fl)						\
++BUILD_BUG_ON(offsetof(struct page, pg) != offsetof(struct folio, fl));
++
++	FOLIO_MATCH(flags, flags);
++	FOLIO_MATCH(lru, lru);
++	FOLIO_MATCH(mapping, mapping);
++	FOLIO_MATCH(index, index);
++	FOLIO_MATCH(private, private);
++	FOLIO_MATCH(_mapcount, _mapcount);
++	FOLIO_MATCH(_refcount, _refcount);
++#ifdef CONFIG_MEMCG
++	FOLIO_MATCH(memcg_data, memcg_data);
++#endif
++#undef FOLIO_MATCH
++	BUILD_BUG_ON(sizeof(struct page) != sizeof(struct folio));
++}
++
+ struct address_space *page_mapping(struct page *page)
+ {
+ 	struct address_space *mapping;
 -- 
 2.30.2
-
-
-From 99da34311602826672621c3d69bad13813993c1a Mon Sep 17 00:00:00 2001
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Date: Tue, 30 Mar 2021 10:47:46 -0400
-Subject: [PATCH v6 00/25] *** SUBJECT HERE ***
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org,
-    linux-cachefs@redhat.com,
-    linux-afs@lists.infradead.org
-
-*** BLURB HERE ***
-
-Matthew Wilcox (Oracle) (25):
-  mm: Introduce struct folio
-  mm: Add folio_pgdat and folio_zone
-  mm/vmstat: Add functions to account folio statistics
-  mm/debug: Add VM_BUG_ON_FOLIO and VM_WARN_ON_ONCE_FOLIO
-  mm: Add put_folio
-  mm: Add get_folio
-  mm: Create FolioFlags
-  mm: Handle per-folio private data
-  mm/filemap: Add folio_index, folio_file_page and folio_contains
-  mm/filemap: Add folio_next_index
-  mm/filemap: Add folio_offset and folio_file_offset
-  mm/util: Add folio_mapping and folio_file_mapping
-  mm/memcg: Add folio wrappers for various functions
-  mm/filemap: Add unlock_folio
-  mm/filemap: Add lock_folio
-  mm/filemap: Add lock_folio_killable
-  mm/filemap: Add __lock_folio_async
-  mm/filemap: Add __lock_folio_or_retry
-  mm/filemap: Add wait_on_folio_locked
-  mm/filemap: Add end_folio_writeback
-  mm/writeback: Add wait_on_folio_writeback
-  mm/writeback: Add wait_for_stable_folio
-  mm/filemap: Convert wait_on_page_bit to wait_on_folio_bit
-  mm/filemap: Convert wake_up_page_bit to wake_up_folio_bit
-  mm/filemap: Convert page wait queues to be folios
-
- Documentation/core-api/mm-api.rst |   2 +
- fs/afs/write.c                    |   7 +-
- fs/cachefiles/rdwr.c              |  16 +-
- fs/io_uring.c                     |   2 +-
- include/linux/memcontrol.h        |  21 +++
- include/linux/mm.h                | 156 +++++++++++++----
- include/linux/mm_types.h          |  81 +++++++++
- include/linux/mmdebug.h           |  20 +++
- include/linux/netfs.h             |   2 +-
- include/linux/page-flags.h        | 120 ++++++++++---
- include/linux/pagemap.h           | 270 ++++++++++++++++++++++--------
- include/linux/swap.h              |   6 +
- include/linux/vmstat.h            | 107 ++++++++++++
- mm/Makefile                       |   2 +-
- mm/filemap.c                      | 242 +++++++++++++-------------
- mm/folio-compat.c                 |  37 ++++
- mm/memory.c                       |   8 +-
- mm/page-writeback.c               |  72 +++++---
- mm/swapfile.c                     |   8 +-
- mm/util.c                         |  49 ++++--
- 20 files changed, 926 insertions(+), 302 deletions(-)
- create mode 100644 mm/folio-compat.c
-
--- 
-2.30.2
-
-From 99da34311602826672621c3d69bad13813993c1a Mon Sep 17 00:00:00 2001
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Date: Tue, 30 Mar 2021 10:47:46 -0400
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org,
-    linux-cachefs@redhat.com,
-    linux-afs@lists.infradead.org
 
