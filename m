@@ -2,125 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BBC035064C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 20:29:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFBF73506A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 20:44:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234446AbhCaS3W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Mar 2021 14:29:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41158 "EHLO
+        id S235472AbhCaSob (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Mar 2021 14:44:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233831AbhCaS3J (ORCPT
+        with ESMTP id S234743AbhCaSoR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 14:29:09 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3710C061574;
-        Wed, 31 Mar 2021 11:29:08 -0700 (PDT)
+        Wed, 31 Mar 2021 14:44:17 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 570A3C061574;
+        Wed, 31 Mar 2021 11:44:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=qYhvdw4avJJTMESp5tkYv8hNlLwk4YC4NiuAbxqOmUI=; b=bQREb+OIGfQRwa5BZwbbhbTPhe
-        OMmGr72DRF/ibKkSoMlZxncoj0uKIhhm/cJC2KYCdcW66Tys1ZkVFrQFH9n/X41ZZqx4h0M3Wn5oO
-        FDMf9AHknldQgkKoQh3Dk6JCwE1EcVfiehS12lEDh+yo5+ODq1nYG22feVAJG4XO/j0+bo7M8Iprx
-        ONxh+YWEVrr8QpBm3Jk2xEFwjPON0nYwrtVKDS+umG/9mapvs5/CpZjN+Cc2pGbeh03rnsGZ+GKlb
-        puXhOFfsxdKTZfWcnHZ/JeqFnvY+eRWQUkwW88sszzGW0PBhCLr1+dMf7bMnR/2ptjB3S6Nr+muXs
-        Qj02o9/Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lRfaD-004xa8-Hb; Wed, 31 Mar 2021 18:28:53 +0000
-Date:   Wed, 31 Mar 2021 19:28:49 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org
-Subject: Re: [PATCH v5 00/27] Memory Folios
-Message-ID: <20210331182849.GZ351017@casper.infradead.org>
-References: <20210320054104.1300774-1-willy@infradead.org>
- <YFja/LRC1NI6quL6@cmpxchg.org>
- <20210322184744.GU1719932@casper.infradead.org>
- <YFqH3B80Gn8pcPqB@cmpxchg.org>
- <20210324062421.GQ1719932@casper.infradead.org>
- <YF4eX/VBPLmontA+@cmpxchg.org>
- <20210329165832.GG351017@casper.infradead.org>
- <YGN8biqigvPP0SGN@cmpxchg.org>
- <20210330210929.GR351017@casper.infradead.org>
- <YGS76CfjNc2jfYQ7@cmpxchg.org>
+        d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+        :In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=foqFS80zPOxuSFemW+uOI8Rh0rNdKKPnoCESHBhVtec=; b=rLaTSHz/edMFCMAm0d8R9GS5dT
+        mzZd5Z683y2gSfufpO6MSi8aCCn+CslJugFCy+o2M2xLpjzsTc/iXp5FfrOq0vBLlmPi9PjXaIPZr
+        50eghi+2A+eM6gsSwEfkHDExnMVy8lt5/rqpyUDq2kqL60CZ2uG2VDv1HYJZl6qFyEPhOtGi1vYJU
+        LPDaRgLsffbfSHe+VCeOG+ZCDy51UefrT9MdH5imqG8+HlfOGJh76PvSHRgTZ/RNCw8oiVOQjtfyu
+        8oth72Zg/wbJvxIE5t9vRKwgIBMLDKjW8QfXralXKcJAWpXjbFfg6iglwgY0i6OagwCVwUULhyPJc
+        +H3vYPJw==;
+Received: from [2601:1c0:6280:3f0::e0e1]
+        by desiato.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lRfp0-007J0X-Gx; Wed, 31 Mar 2021 18:44:06 +0000
+Subject: Re: [RFC v2 01/43] mm: add PKRAM API stubs and Kconfig
+To:     Anthony Yznaga <anthony.yznaga@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     willy@infradead.org, corbet@lwn.net, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        rppt@kernel.org, akpm@linux-foundation.org, hughd@google.com,
+        ebiederm@xmission.com, keescook@chromium.org, ardb@kernel.org,
+        nivedita@alum.mit.edu, jroedel@suse.de, masahiroy@kernel.org,
+        nathan@kernel.org, terrelln@fb.com, vincenzo.frascino@arm.com,
+        martin.b.radev@gmail.com, andreyknvl@google.com,
+        daniel.kiper@oracle.com, rafael.j.wysocki@intel.com,
+        dan.j.williams@intel.com, Jonathan.Cameron@huawei.com,
+        bhe@redhat.com, rminnich@gmail.com, ashish.kalra@amd.com,
+        guro@fb.com, hannes@cmpxchg.org, mhocko@kernel.org,
+        iamjoonsoo.kim@lge.com, vbabka@suse.cz, alex.shi@linux.alibaba.com,
+        david@redhat.com, richard.weiyang@gmail.com,
+        vdavydov.dev@gmail.com, graf@amazon.com, jason.zeng@intel.com,
+        lei.l.li@intel.com, daniel.m.jordan@oracle.com,
+        steven.sistare@oracle.com, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kexec@lists.infradead.org
+References: <1617140178-8773-1-git-send-email-anthony.yznaga@oracle.com>
+ <1617140178-8773-2-git-send-email-anthony.yznaga@oracle.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <b7c635e2-e607-03bb-30f4-66bd00bff69e@infradead.org>
+Date:   Wed, 31 Mar 2021 11:43:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YGS76CfjNc2jfYQ7@cmpxchg.org>
+In-Reply-To: <1617140178-8773-2-git-send-email-anthony.yznaga@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 31, 2021 at 02:14:00PM -0400, Johannes Weiner wrote:
-> Anyway, we digressed quite far here. My argument was simply that it's
-> conceivable we'll switch to a default allocation block and page size
-> that is larger than the smallest paging size supported by the CPU and
-> the kernel. (Various architectures might support multiple page sizes,
-> but once you pick one, that's the smallest quantity the kernel pages.)
-
-We've had several attempts in the past to make 'struct page' refer to
-a different number of bytes than the-size-of-a-single-pte, and they've
-all failed in one way or another.  I don't think changing PAGE_SIZE to
-any other size is reasonable.
-
-Maybe we have a larger allocation unit in the future, maybe we do
-something else, but that should have its own name, not 'struct page'.
-I think the shortest path to getting what you want is having a superpage
-allocator that the current page allocator can allocate from.  When a
-superpage is allocated from the superpage allocator, we allocate an
-array of struct pages for it.
-
-> I don't think folio as an abstraction is cooked enough to replace such
-> a major part of the kernel with it. so I'm against merging it now.
+On 3/30/21 2:35 PM, Anthony Yznaga wrote:
+> Preserved-across-kexec memory or PKRAM is a method for saving memory
+> pages of the currently executing kernel and restoring them after kexec
+> boot into a new one. This can be utilized for preserving guest VM state,
+> large in-memory databases, process memory, etc. across reboot. While
+> DRAM-as-PMEM or actual persistent memory could be used to accomplish
+> these things, PKRAM provides the latency of DRAM with the flexibility
+> of dynamically determining the amount of memory to preserve.
 > 
-> I would really like to see a better definition of what it actually
-> represents, instead of a fluid combination of implementation details
-> and conveniences.
+...
 
-Here's the current kernel-doc for it:
+> 
+> Originally-by: Vladimir Davydov <vdavydov.dev@gmail.com>
+> Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
+> ---
+>  include/linux/pkram.h |  47 +++++++++++++
+>  mm/Kconfig            |   9 +++
+>  mm/Makefile           |   1 +
+>  mm/pkram.c            | 179 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 236 insertions(+)
+>  create mode 100644 include/linux/pkram.h
+>  create mode 100644 mm/pkram.c
+> 
+> diff --git a/mm/pkram.c b/mm/pkram.c
+> new file mode 100644
+> index 000000000000..59e4661b2fb7
+> --- /dev/null
+> +++ b/mm/pkram.c
+> @@ -0,0 +1,179 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <linux/err.h>
+> +#include <linux/gfp.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mm.h>
+> +#include <linux/pkram.h>
+> +#include <linux/types.h>
+> +
 
-/**
- * struct folio - Represents a contiguous set of bytes.
- * @flags: Identical to the page flags.
- * @lru: Least Recently Used list; tracks how recently this folio was used.
- * @mapping: The file this page belongs to, or refers to the anon_vma for
- *    anonymous pages.
- * @index: Offset within the file, in units of pages.  For anonymous pages,
- *    this is the index from the beginning of the mmap.
- * @private: Filesystem per-folio data (see attach_folio_private()).
- *    Used for swp_entry_t if FolioSwapCache().
- * @_mapcount: How many times this folio is mapped to userspace.  Use
- *    folio_mapcount() to access it.
- * @_refcount: Number of references to this folio.  Use folio_ref_count()
- *    to read it.
- * @memcg_data: Memory Control Group data.
- *
- * A folio is a physically, virtually and logically contiguous set
- * of bytes.  It is a power-of-two in size, and it is aligned to that
- * same power-of-two.  It is at least as large as %PAGE_SIZE.  If it is
- * in the page cache, it is at a file offset which is a multiple of that
- * power-of-two.
- */
-struct folio {
-        /* private: don't document the anon union */
-        union {
-                struct {
-        /* public: */
-                        unsigned long flags;
-                        struct list_head lru;
-                        struct address_space *mapping;
-                        pgoff_t index;
-                        unsigned long private;
-                        atomic_t _mapcount;
-                        atomic_t _refcount;
-#ifdef CONFIG_MEMCG
-                        unsigned long memcg_data;
-#endif
-        /* private: the union with struct page is transitional */
-                };
-                struct page page;
-        };
-};
+Hi,
+
+There are several doc blocks that begin with "/**" but that are not
+in kernel-doc format (/** means kernel-doc format when inside the kernel
+source tree).
+
+Please either change those to "/*" or convert them to kernel-doc format.
+The latter is preferable for exported interfaces.
+
+> +/**
+> + * Create a preserved memory node with name @name and initialize stream @ps
+> + * for saving data to it.
+> + *
+> + * @gfp_mask specifies the memory allocation mask to be used when saving data.
+> + *
+> + * Returns 0 on success, -errno on failure.
+> + *
+> + * After the save has finished, pkram_finish_save() (or pkram_discard_save() in
+> + * case of failure) is to be called.
+> + */
+
+
+b) from patch 00/43:
+
+ documentation/core-api/xarray.rst       |    8 +
+
+How did "documentation" become lower case (instead of Documentation)?
+
+
+thanks.
+-- 
+~Randy
 
