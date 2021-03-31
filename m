@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81736350701
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 20:56:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1939350700
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 20:56:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235991AbhCaSyM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Mar 2021 14:54:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46602 "EHLO
+        id S236012AbhCaSyN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Mar 2021 14:54:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234289AbhCaSx4 (ORCPT
+        with ESMTP id S235916AbhCaSyA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 14:53:56 -0400
+        Wed, 31 Mar 2021 14:54:00 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70789C061574;
-        Wed, 31 Mar 2021 11:53:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD266C061574;
+        Wed, 31 Mar 2021 11:53:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=U5NCt1hhi6ejl0rYgO7/d81/HJ9ufI3Q3zidzFkj0w4=; b=LKvxtSNbpRL4cXIDuWR8BynI1/
-        RryHtIrhiybGcLkFTaMDJb5ap48zizaVesJ2wHEgIMguPdkTVsVXpRujJ3rna6YG+5VfTymMdA3BM
-        SKzCzDDj+RCZZlBAj1sChR8OGF5rsnvPEGhHYPnwSlpNUCPU07eRxIu6GJDoCcArRqraEwlzh+LAC
-        HCMqwLITWEXwVeDEA1e44sqlhUYp8ToslaWSdxhkekBDzIZ+15helT9P+kT6GzJnek1bxXWAZ2/GH
-        9wD8SfY3wgVpEY1qcaXN/OP4LR+NOCP5USNhyAeVvh7xWR+S3laIKC7b6BDnNgkI7KzGupLeL5xyE
-        OW0JDAwg==;
+        bh=hRF9ks9EIURuxyWJOm7/8XJzKIRDHnydc1Z48S71ES8=; b=UB5Hip080Tr342zsiCW6Bf+NEK
+        51y4qkUtzhXapCARYTEEi+1PK+8J0D6B+WHs9EZZCwd4UKIIAZVY9zPG271+kvod7A/uaC2gHlV9/
+        ihv7aKtDJaxM029PmHaao9EWcLktkhccZLBWRRFDVfG6rO/fO2DzpE0fmDMcrjTGd+FN+/dBrXIVG
+        QlED6308UFeQ0N6AKk62C8nlzjJQeg5enn/dvjk9qyQpiP4QgoCuGlCWEJjMUmXtmsDz94oLk3CbY
+        dFlnT2v85QZe3bH7gmNCVEI1lgxitCbU8+KT9VyFZF8tQpVCrRTDW9dU2/vMZxy1us+vesSGumFUl
+        WA9u7Izw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lRfyJ-004zhW-NO; Wed, 31 Mar 2021 18:53:44 +0000
+        id 1lRfyO-004ziK-Ev; Wed, 31 Mar 2021 18:53:50 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-cachefs@redhat.com, linux-afs@lists.infradead.org
-Subject: [PATCH v6 19/27] mm/filemap: Add __lock_folio_async
-Date:   Wed, 31 Mar 2021 19:47:20 +0100
-Message-Id: <20210331184728.1188084-20-willy@infradead.org>
+Subject: [PATCH v6 20/27] mm/filemap: Add __lock_folio_or_retry
+Date:   Wed, 31 Mar 2021 19:47:21 +0100
+Message-Id: <20210331184728.1188084-21-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210331184728.1188084-1-willy@infradead.org>
 References: <20210331184728.1188084-1-willy@infradead.org>
@@ -44,150 +44,119 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There aren't any actual callers of lock_page_async(), so remove it.
-Convert filemap_update_page() to call __lock_folio_async().
-
-__lock_folio_async() is 21 bytes smaller than __lock_page_async(),
-but the real savings come from using a folio in filemap_update_page(),
-shrinking it from 514 bytes to 403 bytes, saving 111 bytes.  The text
-shrinks by 132 bytes in total.
+Convert __lock_page_or_retry() to __lock_folio_or_retry().  This actually
+saves 4 bytes in the only caller of lock_page_or_retry() (due to better
+register allocation) and saves the 20 byte cost of calling page_folio()
+in __lock_folio_or_retry() for a total saving of 24 bytes.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/io_uring.c           |  2 +-
- include/linux/pagemap.h | 17 -----------------
- mm/filemap.c            | 31 ++++++++++++++++---------------
- 3 files changed, 17 insertions(+), 33 deletions(-)
+ include/linux/pagemap.h |  9 ++++++---
+ mm/filemap.c            | 10 ++++------
+ mm/memory.c             |  8 ++++----
+ 3 files changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 962c121fa107..64a22b2ea6c5 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3156,7 +3156,7 @@ static int io_read_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- }
- 
- /*
-- * This is our waitqueue callback handler, registered through lock_page_async()
-+ * This is our waitqueue callback handler, registered through lock_folio_async()
-  * when we initially tried to do the IO with the iocb armed our waitqueue.
-  * This gets called when the page is unlocked, and we generally expect that to
-  * happen when the page IO is completed and the page is now uptodate. This will
 diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 75060da77be5..054e9dd7628e 100644
+index 054e9dd7628e..43664bef7392 100644
 --- a/include/linux/pagemap.h
 +++ b/include/linux/pagemap.h
-@@ -716,7 +716,6 @@ static inline bool wake_page_match(struct wait_page_queue *wait_page,
+@@ -716,7 +716,7 @@ static inline bool wake_page_match(struct wait_page_queue *wait_page,
  
  void __lock_folio(struct folio *folio);
  int __lock_folio_killable(struct folio *folio);
--extern int __lock_page_async(struct page *page, struct wait_page_queue *wait);
- extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
+-extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
++int __lock_folio_or_retry(struct folio *folio, struct mm_struct *mm,
  				unsigned int flags);
  void unlock_page(struct page *page);
-@@ -774,22 +773,6 @@ static inline int lock_page_killable(struct page *page)
- 	return lock_folio_killable(page_folio(page));
+ void unlock_folio(struct folio *folio);
+@@ -778,13 +778,16 @@ static inline int lock_page_killable(struct page *page)
+  * caller indicated that it can handle a retry.
+  *
+  * Return value and mmap_lock implications depend on flags; see
+- * __lock_page_or_retry().
++ * __lock_folio_or_retry().
+  */
+ static inline int lock_page_or_retry(struct page *page, struct mm_struct *mm,
+ 				     unsigned int flags)
+ {
++	struct folio *folio;
+ 	might_sleep();
+-	return trylock_page(page) || __lock_page_or_retry(page, mm, flags);
++
++	folio = page_folio(page);
++	return trylock_folio(folio) || __lock_folio_or_retry(folio, mm, flags);
  }
  
--/*
-- * lock_page_async - Lock the page, unless this would block. If the page
-- * is already locked, then queue a callback when the page becomes unlocked.
-- * This callback can then retry the operation.
-- *
-- * Returns 0 if the page is locked successfully, or -EIOCBQUEUED if the page
-- * was already locked and the callback defined in 'wait' was queued.
-- */
--static inline int lock_page_async(struct page *page,
--				  struct wait_page_queue *wait)
--{
--	if (!trylock_page(page))
--		return __lock_page_async(page, wait);
--	return 0;
--}
--
  /*
-  * lock_page_or_retry - Lock the page, unless this would block and the
-  * caller indicated that it can handle a retry.
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 5675237c985a..84642e41c6b5 100644
+index 84642e41c6b5..c0a986ac830f 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1554,18 +1554,18 @@ int __lock_folio_killable(struct folio *folio)
- }
- EXPORT_SYMBOL_GPL(__lock_folio_killable);
+@@ -1582,20 +1582,18 @@ static int __lock_folio_async(struct folio *folio, struct wait_page_queue *wait)
  
--int __lock_page_async(struct page *page, struct wait_page_queue *wait)
-+static int __lock_folio_async(struct folio *folio, struct wait_page_queue *wait)
+ /*
+  * Return values:
+- * 1 - page is locked; mmap_lock is still held.
+- * 0 - page is not locked.
++ * 1 - folio is locked; mmap_lock is still held.
++ * 0 - folio is not locked.
+  *     mmap_lock has been released (mmap_read_unlock(), unless flags had both
+  *     FAULT_FLAG_ALLOW_RETRY and FAULT_FLAG_RETRY_NOWAIT set, in
+  *     which case mmap_lock is still held.
+  *
+  * If neither ALLOW_RETRY nor KILLABLE are set, will always return 1
+- * with the page locked and the mmap_lock unperturbed.
++ * with the folio locked and the mmap_lock unperturbed.
+  */
+-int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
++int __lock_folio_or_retry(struct folio *folio, struct mm_struct *mm,
+ 			 unsigned int flags)
  {
--	struct wait_queue_head *q = page_waitqueue(page);
-+	struct wait_queue_head *q = page_waitqueue(&folio->page);
- 	int ret = 0;
- 
--	wait->page = page;
-+	wait->page = &folio->page;
- 	wait->bit_nr = PG_locked;
- 
- 	spin_lock_irq(&q->lock);
- 	__add_wait_queue_entry_tail(q, &wait->wait);
--	SetPageWaiters(page);
--	ret = !trylock_page(page);
-+	SetFolioWaiters(folio);
-+	ret = !trylock_folio(folio);
- 	/*
- 	 * If we were successful now, we know we're still on the
- 	 * waitqueue as we're still under the lock. This means it's
-@@ -2312,41 +2312,42 @@ static int filemap_update_page(struct kiocb *iocb,
- 		struct address_space *mapping, struct iov_iter *iter,
- 		struct page *page)
+-	struct folio *folio = page_folio(page);
+-
+ 	if (fault_flag_allow_retry_first(flags)) {
+ 		/*
+ 		 * CAUTION! In this case, mmap_lock is not released
+diff --git a/mm/memory.c b/mm/memory.c
+index e66b11ac1659..d538441ccb49 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4077,7 +4077,7 @@ static vm_fault_t do_shared_fault(struct vm_fault *vmf)
+  * We enter with non-exclusive mmap_lock (to exclude vma changes,
+  * but allow concurrent faults).
+  * The mmap_lock may have been released depending on flags and our
+- * return value.  See filemap_fault() and __lock_page_or_retry().
++ * return value.  See filemap_fault() and __lock_folio_or_retry().
+  * If mmap_lock is released, vma may become invalid (for example
+  * by other thread calling munmap()).
+  */
+@@ -4309,7 +4309,7 @@ static vm_fault_t wp_huge_pud(struct vm_fault *vmf, pud_t orig_pud)
+  * concurrent faults).
+  *
+  * The mmap_lock may have been released depending on flags and our return value.
+- * See filemap_fault() and __lock_page_or_retry().
++ * See filemap_fault() and __lock_folio_or_retry().
+  */
+ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
  {
-+	struct folio *folio = page_folio(page);
- 	int error;
- 
--	if (!trylock_page(page)) {
-+	if (!trylock_folio(folio)) {
- 		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_NOIO))
- 			return -EAGAIN;
- 		if (!(iocb->ki_flags & IOCB_WAITQ)) {
--			put_and_wait_on_page_locked(page, TASK_KILLABLE);
-+			put_and_wait_on_page_locked(&folio->page, TASK_KILLABLE);
- 			return AOP_TRUNCATED_PAGE;
- 		}
--		error = __lock_page_async(page, iocb->ki_waitq);
-+		error = __lock_folio_async(folio, iocb->ki_waitq);
- 		if (error)
- 			return error;
- 	}
- 
--	if (!page->mapping)
-+	if (!folio->mapping)
- 		goto truncated;
- 
- 	error = 0;
--	if (filemap_range_uptodate(mapping, iocb->ki_pos, iter, page))
-+	if (filemap_range_uptodate(mapping, iocb->ki_pos, iter, &folio->page))
- 		goto unlock;
- 
- 	error = -EAGAIN;
- 	if (iocb->ki_flags & (IOCB_NOIO | IOCB_NOWAIT | IOCB_WAITQ))
- 		goto unlock;
- 
--	error = filemap_read_page(iocb->ki_filp, mapping, page);
-+	error = filemap_read_page(iocb->ki_filp, mapping, &folio->page);
- 	if (error == AOP_TRUNCATED_PAGE)
--		put_page(page);
-+		put_folio(folio);
- 	return error;
- truncated:
--	unlock_page(page);
--	put_page(page);
-+	unlock_folio(folio);
-+	put_folio(folio);
- 	return AOP_TRUNCATED_PAGE;
- unlock:
--	unlock_page(page);
-+	unlock_folio(folio);
- 	return error;
- }
- 
+@@ -4413,7 +4413,7 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
+  * By the time we get here, we already hold the mm semaphore
+  *
+  * The mmap_lock may have been released depending on flags and our
+- * return value.  See filemap_fault() and __lock_page_or_retry().
++ * return value.  See filemap_fault() and __lock_folio_or_retry().
+  */
+ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
+ 		unsigned long address, unsigned int flags)
+@@ -4569,7 +4569,7 @@ static inline void mm_account_fault(struct pt_regs *regs,
+  * By the time we get here, we already hold the mm semaphore
+  *
+  * The mmap_lock may have been released depending on flags and our
+- * return value.  See filemap_fault() and __lock_page_or_retry().
++ * return value.  See filemap_fault() and __lock_folio_or_retry().
+  */
+ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+ 			   unsigned int flags, struct pt_regs *regs)
 -- 
 2.30.2
 
