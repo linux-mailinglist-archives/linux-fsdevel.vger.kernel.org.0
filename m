@@ -2,73 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 425B93502D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 16:56:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0980A35047A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 18:29:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235758AbhCaO4N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Mar 2021 10:56:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51426 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235114AbhCaOzn (ORCPT
+        id S233917AbhCaQ2g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Mar 2021 12:28:36 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:45098 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232319AbhCaQ2M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 10:55:43 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65468C061574;
-        Wed, 31 Mar 2021 07:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=WOGmEDTpzeV+1sPuo1/4FzQmK0Bbmt6+Hd4kBlUeNn4=; b=ezANnEEwtA3WVH3yRzdT3IIjm/
-        hPtAZF+uX9BQ9Vf2DrfCxXGMegOYtEXonVofV18ODNEHrWv3451OJ112lzliorOZbgp5VD8aQsQOU
-        +hsiY3qspYBznIjxtmxCq0zjTC+dYgqfwkjWpuhvrV9Cvxn+CWE9ahveEsJIelBybB4kdDgTU7P0s
-        9bhLA8ioXyMoS+42FX8qW9gfNFBPspwG++LKkfETXQAbGFPBCnLAPKtj3KI42xW0pCdcQnZXSzwoA
-        27gLDyTtu9P5QiKxZQ/PxhM/iy/P4asC8Bun2EYeEufke2SERIYy+bmUulTkkUEjQ7+qKkjeLsDD+
-        4ETENptA==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lRcEh-004hdF-5c; Wed, 31 Mar 2021 14:54:35 +0000
-Date:   Wed, 31 Mar 2021 15:54:23 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org
-Subject: Re: [PATCH v5 00/27] Memory Folios
-Message-ID: <20210331145423.GA1118729@infradead.org>
-References: <20210320054104.1300774-1-willy@infradead.org>
- <YFja/LRC1NI6quL6@cmpxchg.org>
- <20210322184744.GU1719932@casper.infradead.org>
- <YFqH3B80Gn8pcPqB@cmpxchg.org>
- <20210324062421.GQ1719932@casper.infradead.org>
- <YF4eX/VBPLmontA+@cmpxchg.org>
- <20210329165832.GG351017@casper.infradead.org>
- <YGN8biqigvPP0SGN@cmpxchg.org>
+        Wed, 31 Mar 2021 12:28:12 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lRdhS-00HJ5m-1Q; Wed, 31 Mar 2021 10:28:10 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=fess.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lRdhP-005qdR-K5; Wed, 31 Mar 2021 10:28:08 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Dmitry Kadashev <dkadashev@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+References: <20201116044529.1028783-1-dkadashev@gmail.com>
+        <20201116044529.1028783-2-dkadashev@gmail.com>
+        <027e8488-2654-12cd-d525-37f249954b4d@kernel.dk>
+        <20210126225504.GM740243@zeniv-ca>
+        <CAOKbgA4fTyiU4Xi7zqELT+WeU79S07JF4krhNv3Nq_DS61xa-A@mail.gmail.com>
+        <20210201150042.GQ740243@zeniv-ca> <20210201152947.GR740243@zeniv-ca>
+Date:   Wed, 31 Mar 2021 11:28:04 -0500
+In-Reply-To: <20210201152947.GR740243@zeniv-ca> (Al Viro's message of "Mon, 1
+        Feb 2021 15:29:47 +0000")
+Message-ID: <m1ft0bqodn.fsf@fess.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YGN8biqigvPP0SGN@cmpxchg.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-XM-SPF: eid=1lRdhP-005qdR-K5;;;mid=<m1ft0bqodn.fsf@fess.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18axJtBcCUniFz8RzQG8ulDljcYSflJCpE=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,T_TooManySym_03,XMNoVowels autolearn=disabled
+        version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4915]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Al Viro <viro@zeniv.linux.org.uk>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1023 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 3.7 (0.4%), b_tie_ro: 2.6 (0.3%), parse: 0.63
+        (0.1%), extract_message_metadata: 8 (0.8%), get_uri_detail_list: 0.58
+        (0.1%), tests_pri_-1000: 3.7 (0.4%), tests_pri_-950: 1.08 (0.1%),
+        tests_pri_-900: 0.81 (0.1%), tests_pri_-90: 46 (4.5%), check_bayes: 45
+        (4.4%), b_tokenize: 3.4 (0.3%), b_tok_get_all: 4.7 (0.5%),
+        b_comp_prob: 1.16 (0.1%), b_tok_touch_all: 33 (3.2%), b_finish: 0.61
+        (0.1%), tests_pri_0: 138 (13.5%), check_dkim_signature: 0.36 (0.0%),
+        check_dkim_adsp: 2.2 (0.2%), poll_dns_idle: 807 (78.9%), tests_pri_10:
+        1.67 (0.2%), tests_pri_500: 818 (79.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/2] fs: make do_mkdirat() take struct filename
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 30, 2021 at 03:30:54PM -0400, Johannes Weiner wrote:
-> > Eventually, I want to make struct page optional for allocations.  It's too
-> > small for some things (allocating page tables, for example), and overly
-> > large for others (allocating a 2MB page, networking page_pool).  I don't
-> > want to change its size in the meantime; having a struct page refer to
-> > PAGE_SIZE bytes is something that's quite deeply baked in.
-> 
-> Right, I think it's overloaded and it needs to go away from many
-> contexts it's used in today.
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-FYI, one unrelated usage is that in many contet we use a struct page and
-an offset to describe locations for I/O (block layer, networking, DMA
-API).  With huge pages and merged I/O buffers this representation
-actually becomes increasingly painful.
+> On Mon, Feb 01, 2021 at 03:00:42PM +0000, Al Viro wrote:
+>
+>> The last one is the easiest to answer - we want to keep the imported strings
+>> around for audit.  It's not so much a proper refcounting as it is "we might
+>> want freeing delayed" implemented as refcount.
+>
+> BTW, regarding io_uring + audit interactions - just how is that supposed to
+> work if you offload any work that might lead to audit records (on permission
+> checks, etc.) to helper threads?
 
-And a little bit back to the topic:  I think the folio as in the
-current patchset is incredibly useful and someting we need like
-yesterday to help file systems and the block layer to cope with
-huge and compound pages of all sorts.  Once willy sends out a new
-version with the accumulated fixes I'm ready to ACK the whole thing.
+For people looking into these details.  Things have gotten much better
+recently.
+
+The big change is that io_uring helper threads are now proper
+threads of the process that is using io_uring.  The io_uring helper
+threads just happen to never execute any userspace code.
+
+Eric
+
+
