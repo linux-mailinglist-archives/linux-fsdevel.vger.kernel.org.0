@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C28C134FB23
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 10:07:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9252634FB1D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 10:07:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234294AbhCaIGt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Mar 2021 04:06:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47360 "EHLO
+        id S234321AbhCaIGw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Mar 2021 04:06:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234063AbhCaIGX (ORCPT
+        with ESMTP id S234207AbhCaIGg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 04:06:23 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1A92C06174A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Mar 2021 01:06:21 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id t18so9096309pjs.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Mar 2021 01:06:21 -0700 (PDT)
+        Wed, 31 Mar 2021 04:06:36 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 493ACC06174A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Mar 2021 01:06:25 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id cl21-20020a17090af695b02900c61ac0f0e9so2611818pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Mar 2021 01:06:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Qd7q0+7mMIaCO7kNrN03miiLmUUotvU02ar15rGLAYA=;
-        b=TC4wgya5iSyGQZApckwILsZ07cID8JY+wSUKJkkjSK6QenG/Nmjt6rFLbaVUVwLWuR
-         qZUC8Y0GjUhiGVid8GxHZKbu9gf4fU+lvhfmVfPgGy+5jgQjVK7BNWsvr6SfgOEkycaZ
-         5vq2ipI4hpOZ0O2rO+5j+j/r4ClYjWkyP2C+gZCHd4C/hmSUIOJRWa8irRXib6jNL6bu
-         kD4W62kB3IbxjCgNwxzpm1RKEIwtcxPZUTI1DX3Y9RXd+XOhqYwQUafQpdnDpvkcgH0M
-         D8Gqf8VvrAIYcVLhc6Mm5fymUe/OERG1iFMO5tcrA4RGKFIGu9cfuHfcaCK9xR+LNdNI
-         8BIQ==
+        bh=b7apvPbQfTG1FYg2uNsocmvMG/QdC7c4RuzNmrGKxtc=;
+        b=A3wAmnxCijyv4JmqyD+7kgtLs8qirdeNzXs9OkQLZgeSTN5oUQUq0roBMJbBPxt+/9
+         KCpvVlFgxw9ZZn26eKmnOXdTk/yUg65g4D7FuF+OkmhsVMHtXbzEo9csOzlt61WDfo5l
+         otQaPwZTrHtFhq2LaSUvhBbnk3a4qdoG8SzepxCM1HjSG+y4FAJrbwjVnc8KQwZGJR1e
+         CfGVzDy1y8PTrPtOC8GzgLs4uQqr400S/WFl8PXrgHskVyafDc7WUeOP2bcK8aupMQhG
+         i7D6kXW2EKvhLjAVavOvYtm/r8NX8BoRCI40+VVdhnIMvk6XnOHXiH9lgCy/TfikG8TD
+         wozA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Qd7q0+7mMIaCO7kNrN03miiLmUUotvU02ar15rGLAYA=;
-        b=k+pqyLbXcByFFb5dzbNWVrOiQhirr5cDdtf+nnq7V20fwehNZGPTdUlBkl1eClY88E
-         EgEkPI/TILiVH+4WmywVreR3eNZz+/Wx0gAosBid1Z1XP5ofS0MDq19uOtm8g6n9Ppak
-         Zh+QLrlJ+nrqvk89GIQGHebbK4n24da/zrN1L0BXbfEHPZVmCwEfijZFQNwoTqMVYJSY
-         TzPWKwZdx5Ze0lwaYFiiZ1kIl4m6f5sWcdlwJ7i6KEFEtGkdj8osPHbm6kV0Bzjo3s+t
-         Tj5Ht/FzR4xkK6RVyt6Qrcgl7hwNerByZsy7jY/y/26/I4+IRuYPm9h1p4TJurrwqm/D
-         0eJg==
-X-Gm-Message-State: AOAM531Y3i4zRaPpoLqkKYyj2ksA2ewi7NGQeaNuHf7C0GRoXvrz8yu9
-        UZDpVg1Dt7VDtMuW1tmxyVgJ
-X-Google-Smtp-Source: ABdhPJydrF0nk0d3cE3vx8KgidDGa8Zfry5KovS8f39HDenv+8gD9ih8HKxbhTFZ2J9TJmZpWj0qlg==
-X-Received: by 2002:a17:90a:fb83:: with SMTP id cp3mr2363661pjb.33.1617177981360;
-        Wed, 31 Mar 2021 01:06:21 -0700 (PDT)
+        bh=b7apvPbQfTG1FYg2uNsocmvMG/QdC7c4RuzNmrGKxtc=;
+        b=db+xqv+8znFySLanMrufNmafaW43U3FWGfkUQMNiMaKDTjhTcqoxES3UKnxWDYUJgo
+         Tz9yLH4nFWvfODI2ZyJ5aI30cwqEYkEbjVjynnH3XDwl7Y5Uj0hVvmy5Gfhgngj2wtRp
+         kxeGTSAtS6HubCD5qv32S86JCqqr0mok5tEMrl/FHWmVj8noNbsMGAC+HZhoGbJi4B8z
+         DjNVLek/CV+goGXPRZ/LvGDpSBzWHpCjemGDxRBv//WFxIQTgE9CUtwSYOoiEKEoqaYr
+         tH2HTZ3Wo7PFG67jkRuNgQi5Xpg6Y5CFj40yb/lhM5oKRBDaOfecSW935mlPaHDjs8ti
+         SJhQ==
+X-Gm-Message-State: AOAM530BPMun9cLkG2+lOBoyT+GouoiUwb+2edpwS12t0vbbaS6OhlS/
+        URhEQL9sr7LNAltrLqAyzlvA
+X-Google-Smtp-Source: ABdhPJxHUvXwhgpDdQBLTdQxkUD9V2flhkuKgUAC1U22SyapfEwojQlQDvAYR/WYJKJ9peQYTPOWLw==
+X-Received: by 2002:a17:902:7b82:b029:e7:32bc:92 with SMTP id w2-20020a1709027b82b02900e732bc0092mr1917558pll.34.1617177984900;
+        Wed, 31 Mar 2021 01:06:24 -0700 (PDT)
 Received: from localhost ([139.177.225.243])
-        by smtp.gmail.com with ESMTPSA id 23sm1644744pgo.53.2021.03.31.01.06.20
+        by smtp.gmail.com with ESMTPSA id p2sm1643371pgm.24.2021.03.31.01.06.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Mar 2021 01:06:20 -0700 (PDT)
+        Wed, 31 Mar 2021 01:06:24 -0700 (PDT)
 From:   Xie Yongji <xieyongji@bytedance.com>
 To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
         sgarzare@redhat.com, parav@nvidia.com, hch@infradead.org,
@@ -57,9 +57,9 @@ To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
         dan.carpenter@oracle.com
 Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v6 01/10] file: Export receive_fd() to modules
-Date:   Wed, 31 Mar 2021 16:05:10 +0800
-Message-Id: <20210331080519.172-2-xieyongji@bytedance.com>
+Subject: [PATCH v6 02/10] eventfd: Increase the recursion depth of eventfd_signal()
+Date:   Wed, 31 Mar 2021 16:05:11 +0800
+Message-Id: <20210331080519.172-3-xieyongji@bytedance.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210331080519.172-1-xieyongji@bytedance.com>
 References: <20210331080519.172-1-xieyongji@bytedance.com>
@@ -69,58 +69,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Export receive_fd() so that some modules can use
-it to pass file descriptor between processes without
-missing any security stuffs.
+Increase the recursion depth of eventfd_signal() to 1. This
+is the maximum recursion depth we have found so far, which
+can be triggered with the following call chain:
+
+    kvm_io_bus_write                        [kvm]
+      --> ioeventfd_write                   [kvm]
+        --> eventfd_signal                  [eventfd]
+          --> vhost_poll_wakeup             [vhost]
+            --> vduse_vdpa_kick_vq          [vduse]
+              --> eventfd_signal            [eventfd]
 
 Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
 ---
- fs/file.c            | 6 ++++++
- include/linux/file.h | 7 +++----
- 2 files changed, 9 insertions(+), 4 deletions(-)
+ fs/eventfd.c            | 2 +-
+ include/linux/eventfd.h | 5 ++++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/file.c b/fs/file.c
-index dab120b71e44..d7d957217576 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -1108,6 +1108,12 @@ int __receive_fd(int fd, struct file *file, int __user *ufd, unsigned int o_flag
- 	return new_fd;
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index e265b6dd4f34..cc7cd1dbedd3 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -71,7 +71,7 @@ __u64 eventfd_signal(struct eventfd_ctx *ctx, __u64 n)
+ 	 * it returns true, the eventfd_signal() call should be deferred to a
+ 	 * safe context.
+ 	 */
+-	if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count)))
++	if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count) > EFD_WAKE_DEPTH))
+ 		return 0;
+ 
+ 	spin_lock_irqsave(&ctx->wqh.lock, flags);
+diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
+index fa0a524baed0..886d99cd38ef 100644
+--- a/include/linux/eventfd.h
++++ b/include/linux/eventfd.h
+@@ -29,6 +29,9 @@
+ #define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
+ #define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
+ 
++/* Maximum recursion depth */
++#define EFD_WAKE_DEPTH 1
++
+ struct eventfd_ctx;
+ struct file;
+ 
+@@ -47,7 +50,7 @@ DECLARE_PER_CPU(int, eventfd_wake_count);
+ 
+ static inline bool eventfd_signal_count(void)
+ {
+-	return this_cpu_read(eventfd_wake_count);
++	return this_cpu_read(eventfd_wake_count) > EFD_WAKE_DEPTH;
  }
  
-+int receive_fd(struct file *file, unsigned int o_flags)
-+{
-+	return __receive_fd(-1, file, NULL, o_flags);
-+}
-+EXPORT_SYMBOL(receive_fd);
-+
- static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags)
- {
- 	int err = -EBADF;
-diff --git a/include/linux/file.h b/include/linux/file.h
-index 225982792fa2..4667f9567d3e 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -94,6 +94,9 @@ extern void fd_install(unsigned int fd, struct file *file);
- 
- extern int __receive_fd(int fd, struct file *file, int __user *ufd,
- 			unsigned int o_flags);
-+
-+extern int receive_fd(struct file *file, unsigned int o_flags);
-+
- static inline int receive_fd_user(struct file *file, int __user *ufd,
- 				  unsigned int o_flags)
- {
-@@ -101,10 +104,6 @@ static inline int receive_fd_user(struct file *file, int __user *ufd,
- 		return -EFAULT;
- 	return __receive_fd(-1, file, ufd, o_flags);
- }
--static inline int receive_fd(struct file *file, unsigned int o_flags)
--{
--	return __receive_fd(-1, file, NULL, o_flags);
--}
- static inline int receive_fd_replace(int fd, struct file *file, unsigned int o_flags)
- {
- 	return __receive_fd(fd, file, NULL, o_flags);
+ #else /* CONFIG_EVENTFD */
 -- 
 2.11.0
 
