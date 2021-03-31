@@ -2,139 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B82D4350211
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 16:24:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B893350216
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 16:24:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235951AbhCaOYT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Mar 2021 10:24:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235452AbhCaOX7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 10:23:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 725C060FED;
-        Wed, 31 Mar 2021 14:23:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617200639;
-        bh=MKND8RUjXo0TsNaafQ2pFvm3xr35TmSoHeHO5Oj9xjQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=TAXb6eUsGCa4pdiVCqqKZnGfljZXt9haax8xWlFgCI3e0unvgRQx8xBTVeRrFGV/q
-         ifZGF5satsq3w54m9YLloJlD4yd2NX9uvO/KNJ8oESnJDgML/1NhMS+UOSZqrNVaVB
-         LOeHARVji+rKirnnqECw1FuhzLstxw2Vju9F73YHNEp4DrZmDImtmvzWpwBG3HHmkU
-         gyTLq73p2b/dG60fDAuaUlJ92XmMV6XhiJLMiNEc5a1fHlv3Qz8pkdKafJ7VR5xJgS
-         Ch6PZXwz4Jdc6b/Yk37ku10IPVem2+6nVLkRC8BEnQFfEbcLU9I3SOjITDFAaL1C8C
-         nZikeyOe+Fp1w==
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-Subject: [PATCH] memfd_secret: use unsigned int rather than long as syscall flags type
-Date:   Wed, 31 Mar 2021 17:23:45 +0300
-Message-Id: <20210331142345.27532-1-rppt@kernel.org>
-X-Mailer: git-send-email 2.28.0
+        id S236000AbhCaOYU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Mar 2021 10:24:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44590 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235630AbhCaOYL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 31 Mar 2021 10:24:11 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EE5EC061574;
+        Wed, 31 Mar 2021 07:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=jGhCdX6Dfm1OSeRkmB4iA8KAAFuGkrxqCERpjTGrs7c=; b=XsHgwfwKwpjDiNdKG5k18eweRb
+        w5ZbyAAILz2O7Tk2CAkb9fLt6tTHZ/YIlUvVx9b6tNRndZc0bNEsnPcWAg7zVTkSNtB2M5VtfExE6
+        NOubqf8qJY8lLAq7hixdk/oK71ZSRGkjxI0xAs6vqjwbEcRs6vD/pfiMGsM1nO5bEixtXb3wXI/Kr
+        EeBQJZ5zwcorUL7Sw05zUydwd9Vn13US/IBy7ZIOe0LIzYC1FzGreIbOogw0oMxi8xAi2TjsR/q9u
+        VeFtM70uPcTvufDJzEj579BXr+mCwqkYR1+OLQjvvujM/624jxcW9j/sGiPPF9gu0nlt9uqeLKTJf
+        lL2Zru2g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lRblD-004fNg-Pf; Wed, 31 Mar 2021 14:24:02 +0000
+Date:   Wed, 31 Mar 2021 15:23:55 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, viro@zeniv.linux.org.uk,
+        matthew.wilcox@oracle.com, khlebnikov@yandex-team.ru
+Subject: Re: [PATCH RFC 0/6] fix the negative dentres bloating system memory
+ usage
+Message-ID: <20210331142355.GX351017@casper.infradead.org>
+References: <1611235185-1685-1-git-send-email-gautham.ananthakrishna@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1611235185-1685-1-git-send-email-gautham.ananthakrishna@oracle.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mike Rapoport <rppt@linux.ibm.com>
+Ping?  These patches are looking pretty good in our internal testing.
 
-Yuri Norov says:
-
-  If parameter size is the same for native and compat ABIs, we may
-  wire a syscall made by compat client to native handler. This is
-  true for unsigned int, but not true for unsigned long or pointer.
-
-  That's why I suggest using unsigned int and so avoid creating compat
-  entry point.
-
-Use unsigned int as the type of the flags parameter in memfd_secret()
-system call.
-
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
-
-@Andrew,
-The patch is vs v5.12-rc5-mmots-2021-03-30-23, I'd appreciate if it would
-be added as a fixup to the memfd_secret series.
-
- include/linux/syscalls.h                  | 2 +-
- mm/secretmem.c                            | 2 +-
- tools/testing/selftests/vm/memfd_secret.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 49c93c906893..1a1b5d724497 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1050,7 +1050,7 @@ asmlinkage long sys_landlock_create_ruleset(const struct landlock_ruleset_attr _
- asmlinkage long sys_landlock_add_rule(int ruleset_fd, enum landlock_rule_type rule_type,
- 		const void __user *rule_attr, __u32 flags);
- asmlinkage long sys_landlock_restrict_self(int ruleset_fd, __u32 flags);
--asmlinkage long sys_memfd_secret(unsigned long flags);
-+asmlinkage long sys_memfd_secret(unsigned int flags);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/mm/secretmem.c b/mm/secretmem.c
-index f2ae3f32a193..3b1ba3991964 100644
---- a/mm/secretmem.c
-+++ b/mm/secretmem.c
-@@ -199,7 +199,7 @@ static struct file *secretmem_file_create(unsigned long flags)
- 	return file;
- }
- 
--SYSCALL_DEFINE1(memfd_secret, unsigned long, flags)
-+SYSCALL_DEFINE1(memfd_secret, unsigned int, flags)
- {
- 	struct file *file;
- 	int fd, err;
-diff --git a/tools/testing/selftests/vm/memfd_secret.c b/tools/testing/selftests/vm/memfd_secret.c
-index c878c2b841fc..2462f52e9c96 100644
---- a/tools/testing/selftests/vm/memfd_secret.c
-+++ b/tools/testing/selftests/vm/memfd_secret.c
-@@ -38,7 +38,7 @@ static unsigned long page_size;
- static unsigned long mlock_limit_cur;
- static unsigned long mlock_limit_max;
- 
--static int memfd_secret(unsigned long flags)
-+static int memfd_secret(unsigned int flags)
- {
- 	return syscall(__NR_memfd_secret, flags);
- }
--- 
-2.28.0
-
+On Thu, Jan 21, 2021 at 06:49:39PM +0530, Gautham Ananthakrishna wrote:
+> For most filesystems result of every negative lookup is cached, content of
+> directories is usually cached too. Production of negative dentries isn't
+> limited with disk speed. It's really easy to generate millions of them if
+> system has enough memory.
+> 
+> Getting this memory back ins't that easy because slab frees pages only when
+> all related objects are gone. While dcache shrinker works in LRU order.
+> 
+> Typical scenario is an idle system where some process periodically creates
+> temporary files and removes them. After some time, memory will be filled
+> with negative dentries for these random file names.
+> 
+> Simple lookup of random names also generates negative dentries very fast.
+> Constant flow of such negative denries drains all other inactive caches.
+> Too many negative dentries in the system can cause memory fragmentation
+> and memory compaction.
+> 
+> Negative dentries are linked into siblings list along with normal positive
+> dentries. Some operations walks dcache tree but looks only for positive
+> dentries: most important is fsnotify/inotify. Hordes of negative dentries
+> slow down these operations significantly.
+> 
+> Time of dentry lookup is usually unaffected because hash table grows along
+> with size of memory. Unless somebody especially crafts hash collisions.
+> 
+> This patch set solves all of these problems:
+> 
+> Move negative denries to the end of sliblings list, thus walkers could
+> skip them at first sight (patches 1-4).
+> 
+> Keep in dcache at most three unreferenced negative denties in row in each
+> hash bucket (patches 5-6).
+> 
+> We tested this patch set recently and found it limiting negative dentry to a
+> small part of total memory. The following is the test result we ran on two
+> types of servers, one is 256G memory with 24 CPUS and another is 3T memory
+> with 384 CPUS. The test case is using a lot of processes to generate negative
+> dentry in parallel, the following is the test result after 72 hours, the
+> negative dentry number is stable around that number even after running longer
+> for much longer time. Without the patch set, in less than half an hour 197G was
+> taken by negative dentry on 256G system, in 1 day 2.4T was taken on 3T system.
+> 
+> system memory   neg-dentry-number   neg-dentry-mem-usage
+> 256G            55259084            10.6G
+> 3T              202306756           38.8G
+> 
+> For perf test, we ran the following, and no regression found.
+> 
+> 1. create 1M negative dentry and then touch them to convert them to positive
+>    dentry
+> 
+> 2. create 10K/100K/1M files
+> 
+> 3. remove 10K/100K/1M files
+> 
+> 4. kernel compile
+> 
+> To verify the fsnotify fix, we used inotifywait to watch file create/open in
+> some directory where there is a lot of negative dentry, without the patch set,
+> the system would run into soft lockup, with it, no soft lockup was found.
+> 
+> We also tried to defeat the limitation by making different processes generate
+> negative dentry with the same name, that will make one negative dentry being
+> accessed couple times around same time, DCACHE_REFERENCED will be set on it
+> and it can't be trimmed easily.
+> 
+> There were a lot of customer cases on this issue. It makes no sense to leave
+> so many negative dentry, it just causes memory fragmentation and compaction
+> and does not help a lot.
+> 
+> Konstantin Khlebnikov (6):
+>   dcache: sweep cached negative dentries to the end of list of siblings
+>   fsnotify: stop walking child dentries if remaining tail is negative
+>   dcache: add action D_WALK_SKIP_SIBLINGS to d_walk()
+>   dcache: stop walking siblings if remaining dentries all negative
+>   dcache: push releasing dentry lock into sweep_negative
+>   dcache: prevent flooding with negative dentries
+> 
+>  fs/dcache.c            | 135 +++++++++++++++++++++++++++++++++++++++++++++++--
+>  fs/libfs.c             |   3 ++
+>  fs/notify/fsnotify.c   |   6 ++-
+>  include/linux/dcache.h |   6 +++
+>  4 files changed, 145 insertions(+), 5 deletions(-)
+> 
+> -- 
+> 1.8.3.1
+> 
+> 
