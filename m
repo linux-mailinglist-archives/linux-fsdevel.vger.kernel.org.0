@@ -2,135 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D369834FDCE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 12:09:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6452334FE34
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 12:39:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234909AbhCaKJI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Mar 2021 06:09:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33594 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234916AbhCaKI7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 06:08:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A540661959;
-        Wed, 31 Mar 2021 10:08:57 +0000 (UTC)
-Date:   Wed, 31 Mar 2021 12:08:54 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [RFC][PATCH] fanotify: allow setting FAN_CREATE in mount mark
- mask
-Message-ID: <20210331100854.sdgtzma6ifj7w5yn@wittgenstein>
-References: <20210328155624.930558-1-amir73il@gmail.com>
- <20210330073101.5pqvw72fxvyp5kvf@wittgenstein>
- <CAOQ4uxjQFGdT0xH17pm-nSKE_0--z_AapRW70MNrLJLcCB6MAg@mail.gmail.com>
- <CAOQ4uxiizVxVJgtytYk_o7GvG2O2qwyKHgScq8KLhq218CNdnw@mail.gmail.com>
+        id S234987AbhCaKit (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Mar 2021 06:38:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52462 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234956AbhCaKip (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 31 Mar 2021 06:38:45 -0400
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D48A5C061574;
+        Wed, 31 Mar 2021 03:38:44 -0700 (PDT)
+Received: by mail-yb1-xb2f.google.com with SMTP id 8so20624164ybc.13;
+        Wed, 31 Mar 2021 03:38:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gwFWiAAo/CecaCtDMzpur7T6aDGvM/jPW87E1cydXFk=;
+        b=XVOhfxbq3nx/uzDm2FqCjeqii8oCTYYevIGGayQHXSkQQRkHgGiIpj66zecZk8S2Ll
+         SiV5yA/VgDku3elcXawY/Wzagnf+paaIAZG3qB0/qx3mVvJLm+gEd0dkjDuKPoxacQx3
+         2DxtuGubLgbOdsMoARCtTvKaq1eioIPYBenqPqCUGn7ZxIL3MZ3UcpvCHz1qVLcGyWfC
+         s7FQ6RPMkJCOWfNmGIo9yFz2k3ANSsUnZwcQ/mZlIGRkof70kzFMqulKVHaUzvedU+4A
+         idR/7QzoLC4CQcyDHEEDTNWyNZqUsDSqQgpLHEetXu89tuHtZgp5/SVqwN/kklMXQes0
+         XaMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gwFWiAAo/CecaCtDMzpur7T6aDGvM/jPW87E1cydXFk=;
+        b=OOID70N4BgKKQ/uEtIUg5g/QgEGEyeZMIjU7PbxavJA7saSoqBAuB/qthipdZW1AVV
+         TytZ6pjDN3wJcb5Ra7g5r2+IoLilvubJKKhjXYRbttQnY+NPFkF7ESKUgOw2HouLXmQA
+         xDkVfkqkkb1uD/koeOgvBUY2L/vhSvysrN9m2pL3OI4gOeUx8hGJC+4i5z8M3bHmaGC1
+         6zCO0oxG7+rW3QfNe0lnZsQ38Bv8Myn0Vl0pRSWDlwwVgX4nRkpXS98wcIZecHNHjC8k
+         zD4cHNd71fzuuU66kUqeDeI7N505ULTzKmPauIxa+78nEj92oY/5ZnRO2AVrwzxU5mc3
+         6cPg==
+X-Gm-Message-State: AOAM531uVkMpV9x6QrVcTDjo2VwZcNZxXq6UB1xlgHMk0FZHI9MCypU2
+        ooO6hHYbo7RDVOq1GR+Velqp0+Msr7OvngmnBXQ=
+X-Google-Smtp-Source: ABdhPJy4qcW/OU6viSzbLHrEQGcIB14rZ6fT/yOABp2fYuMtIY1Sbgz+O70ehDRP6JdPHt14yGIG+YiwxVETEC+kkPQ=
+X-Received: by 2002:a25:d0c7:: with SMTP id h190mr3984375ybg.428.1617187124194;
+ Wed, 31 Mar 2021 03:38:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxiizVxVJgtytYk_o7GvG2O2qwyKHgScq8KLhq218CNdnw@mail.gmail.com>
+References: <20210330055957.3684579-1-dkadashev@gmail.com> <20210330055957.3684579-3-dkadashev@gmail.com>
+ <YGPRCeimsXXaoCGZ@zeniv-ca.linux.org.uk>
+In-Reply-To: <YGPRCeimsXXaoCGZ@zeniv-ca.linux.org.uk>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Wed, 31 Mar 2021 17:38:33 +0700
+Message-ID: <CAOKbgA5C7u9imkbFOovD9Vyh3QojmdSFea1asPKjkiw5gB6zLg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] io_uring: add support for IORING_OP_MKDIRAT
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 30, 2021 at 07:24:02PM +0300, Amir Goldstein wrote:
-> On Tue, Mar 30, 2021 at 12:31 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Tue, Mar 30, 2021 at 10:31 AM Christian Brauner
-> > <christian.brauner@ubuntu.com> wrote:
-> > >
-> > > On Sun, Mar 28, 2021 at 06:56:24PM +0300, Amir Goldstein wrote:
-> > > > Add a high level hook fsnotify_path_create() which is called from
-> > > > syscall context where mount context is available, so that FAN_CREATE
-> > > > event can be added to a mount mark mask.
-> > > >
-> > > > This high level hook is called in addition to fsnotify_create(),
-> > > > fsnotify_mkdir() and fsnotify_link() hooks in vfs helpers where the mount
-> > > > context is not available.
-> > > >
-> > > > In the context where fsnotify_path_create() will be called, a dentry flag
-> > > > flag is set on the new dentry the suppress the FS_CREATE event in the vfs
-> > > > level hooks.
-> > > >
-> > > > This functionality was requested by Christian Brauner to replace
-> > > > recursive inotify watches for detecting when some path was created under
-> > > > an idmapped mount without having to monitor FAN_CREATE events in the
-> > > > entire filesystem.
-> > > >
-> > > > In combination with more changes to allow unprivileged fanotify listener
-> > > > to watch an idmapped mount, this functionality would be usable also by
-> > > > nested container managers.
-> > > >
-> > > > Link: https://lore.kernel.org/linux-fsdevel/20210318143140.jxycfn3fpqntq34z@wittgenstein/
-> > > > Cc: Christian Brauner <christian.brauner@ubuntu.com>
-> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > ---
-> > >
-> > > Was about to look at this. Does this require preliminary patches since
-> > > it doesn't apply to current master. If so, can you just give me a link
-> > > to a branch so I can pull from that? :)
-> > >
-> >
-> > The patch is less useful on its own.
-> > Better take the entire work for the demo which includes this patch:
-> >
-> > [1] https://github.com/amir73il/linux/commits/fanotify_userns
-> > [2] https://github.com/amir73il/inotify-tools/commits/fanotify_userns
-> >
-> 
-> Christian,
-> 
-> Apologies for the fast moving target.
+On Wed, Mar 31, 2021 at 8:32 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> had the questions about interplay with audit been resolved?
 
-No problem.
+Not to my knowledge. It's just Jens asked to rebase on for-5.13. I'll defer to
+Jens to discuss / decide whether adding new ops before the audit side is fixed
+worth it or not.
 
-> I just force force the kernel+demo branches to include support for
-> the two extra events (delete and move) on mount mark.
-
-Sounds good.
-
-One thing your patch
-
-commit ea31e84fda83c17b88851de399f76f5d9fc1abf4
-Author: Amir Goldstein <amir73il@gmail.com>
-Date:   Sat Mar 20 12:58:12 2021 +0200
-
-    fs: allow open by file handle inside userns
-
-    open_by_handle_at(2) requires CAP_DAC_READ_SEARCH in init userns,
-    where most filesystems are mounted.
-
-    Relax the requirement to allow a user with CAP_DAC_READ_SEARCH
-    inside userns to open by file handle in filesystems that were
-    mounted inside that userns.
-
-    In addition, also allow open by handle in an idmapped mount, which is
-    mapped to the userns while verifying that the returned open file path
-    is under the root of the idmapped mount.
-
-    This is going to be needed for setting an fanotify mark on a filesystem
-    and watching events inside userns.
-
-    Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-
-Requires fs/exportfs/expfs.c to be made idmapped mounts aware.
-open_by_handle_at() uses exportfs_decode_fh() which e.g. has the
-following and other callchains:
-
-exportfs_decode_fh()
--> exportfs_decode_fh_raw()
-   -> lookup_one_len()
-      -> inode_permission(mnt_userns, ...)
-
-That's not a huge problem though I did all these changes for the
-overlayfs support for idmapped mounts I have in a branch from an earlier
-version of the idmapped mounts patchset. Basically lookup_one_len(),
-lookup_one_len_unlocked(), and lookup_positive_unlocked() need to take
-the mnt_userns into account. I can rebase my change and send it for
-consideration next cycle. If you can live without the
-open_by_handle_at() support for now in this patchset (Which I think you
-said you could.) then it's not a blocker either. Sorry for the
-inconvenience.
-
-Christian
+-- 
+Dmitry Kadashev
