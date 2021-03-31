@@ -2,904 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A102F3508D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 23:09:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BF39350A56
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 00:43:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232523AbhCaVIw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Mar 2021 17:08:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47436 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232109AbhCaVIZ (ORCPT
+        id S232429AbhCaWnH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Mar 2021 18:43:07 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.1]:44768 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232406AbhCaWnE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 17:08:25 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBC32C061574;
-        Wed, 31 Mar 2021 14:08:24 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: shreeya)
-        with ESMTPSA id 1107A1F462A0
-From:   Shreeya Patel <shreeya.patel@collabora.com>
-To:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
-        chao@kernel.org, krisman@collabora.com, ebiggers@google.com,
-        drosen@google.com, ebiggers@kernel.org, yuchao0@huawei.com
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-        andre.almeida@collabora.com
-Subject: [PATCH v6 4/4] fs: unicode: Add utf8 module and a unicode layer
-Date:   Thu,  1 Apr 2021 02:37:51 +0530
-Message-Id: <20210331210751.281645-5-shreeya.patel@collabora.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210331210751.281645-1-shreeya.patel@collabora.com>
-References: <20210331210751.281645-1-shreeya.patel@collabora.com>
+        Wed, 31 Mar 2021 18:43:04 -0400
+X-Greylist: delayed 1277 seconds by postgrey-1.27 at vger.kernel.org; Wed, 31 Mar 2021 18:43:04 EDT
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id BB0EA6E960
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Mar 2021 17:21:41 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id RjDZllVwPMGeERjDZlNMk2; Wed, 31 Mar 2021 17:21:41 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=YojvDQ3EVOB0i+R+aoTOGVliEyEdWdfUxsBrA9b3YJY=; b=uqW4o/SQjZe6HtQmsZzdOzRPK0
+        pSPdwToqdS8sMt91UZdSz1IrfQ7EZTux2Ii5f6pm07i4UBfzGY6+SWRkXrprxlNYYjRLfnl87JLpf
+        /6XQyZ5LfhG3QRGeh8fSRddHgieVZPRWqIMaO8X6mxY0AdHJ0CHPISB2wIwsEkr3+m5qGvDlws2BJ
+        V/QCGQsr2YgkuI0dO8hXm7zuGz+DNBW8evNYMOxD5nROxMSZsKWZYqvGVcqoe6prPH5/rfZli5u19
+        J4wuAt0iyD+u2WnqOOPOpzcChZFS0uAP2zsi92q3/BUQCsITKT3iv1egE6s+0zRblMNm76hCiwPhB
+        73/0Kmbw==;
+Received: from 187-162-31-110.static.axtel.net ([187.162.31.110]:51022 helo=[192.168.15.8])
+        by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1lRjDZ-000iqw-CV; Wed, 31 Mar 2021 17:21:41 -0500
+Subject: Re: [PATCH][next] hfsplus: Fix out-of-bounds warnings in
+ __hfsplus_setxattr
+To:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+References: <20210330145226.GA207011@embeddedor>
+ <20210330214320.93600506530f1ab18338b467@linux-foundation.org>
+ <20210331045357.GV351017@casper.infradead.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <2693ab27-64b6-9088-e172-83e7f8b4e95b@embeddedor.com>
+Date:   Wed, 31 Mar 2021 16:21:46 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210331045357.GV351017@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.162.31.110
+X-Source-L: No
+X-Exim-ID: 1lRjDZ-000iqw-CV
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 187-162-31-110.static.axtel.net ([192.168.15.8]) [187.162.31.110]:51022
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-utf8data.h_shipped has a large database table which is an auto-generated
-decodification trie for the unicode normalization functions.
-It is not necessary to load this large table in the kernel if no
-filesystem is using it, hence make UTF-8 encoding loadable by converting
-it into a module.
 
-Modify the file called unicode-core which will act as a layer for
-unicode subsystem. It will load the UTF-8 module and access it's functions
-whenever any filesystem that needs unicode is mounted.
-Currently, only UTF-8 encoding is supported but if any other encodings
-are supported in future then the layer file would be responsible for
-loading the desired encoding module.
 
-Also, indirect calls using function pointers are slow, use static calls to
-avoid overhead caused in case of repeated indirect calls. Static calls
-improves the performance by directly calling the functions as opposed to
-indirect calls.
+On 3/30/21 23:53, Matthew Wilcox wrote:
+> On Tue, Mar 30, 2021 at 09:43:20PM -0700, Andrew Morton wrote:
+>> On Tue, 30 Mar 2021 09:52:26 -0500 "Gustavo A. R. Silva" <gustavoars@kernel.org> wrote:
+>>
+>>> Fix the following out-of-bounds warnings by enclosing
+>>> structure members file and finder into new struct info:
+>>>
+>>> fs/hfsplus/xattr.c:300:5: warning: 'memcpy' offset [65, 80] from the object at 'entry' is out of the bounds of referenced subobject 'user_info' with type 'struct DInfo' at offset 48 [-Warray-bounds]
+>>> fs/hfsplus/xattr.c:313:5: warning: 'memcpy' offset [65, 80] from the object at 'entry' is out of the bounds of referenced subobject 'user_info' with type 'struct FInfo' at offset 48 [-Warray-bounds]
+>>>
+>>> Refactor the code by making it more "structured."
+>>>
+>>> Also, this helps with the ongoing efforts to enable -Warray-bounds and
+>>> makes the code clearer and avoid confusing the compiler.
+>>
+>> Confused.  What was wrong with the old code?  Was this warning
+>> legitimate and if so, why?  Or is this patch a workaround for a
+>> compiler shortcoming?
+> 
+> The offending line is this:
+> 
+> -                               memcpy(&entry.file.user_info, value,
+> +                               memcpy(&entry.file.info, value,
+>                                                 file_finderinfo_len);
+> 
+> what it's trying to do is copy two structs which are adjacent to each
+> other in a single call to memcpy().  gcc legitimately complains that the
+> memcpy to this struct overruns the bounds of the struct.  What Gustavo
+> has done here is introduce a new struct that contains the two structs,
+> and now gcc is happy that the memcpy doesn't overrun the length of this
+> containing struct.
 
-Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
----
-Changes in v6
-  - Add spinlock to protect utf8mod and avoid NULL pointer
-    dereference.
-  - Change the static call function names for being consistent with
-    kernel coding style.
-  - Merge the unicode_load_module function with unicode_load as it is
-    not really needed to have a separate function.
-  - Use try_then_module_get instead of module_get to avoid loading the
-    module even when it is already loaded.
-  - Improve the commit message.
+Thanks for this, Matthew. :)
 
-Changes in v5
-  - Rename global variables and default static call functions for better
-    understanding
-  - Make only config UNICODE_UTF8 visible and config UNICODE to be always
-    enabled provided UNICODE_UTF8 is enabled.  
-  - Improve the documentation for Kconfig
-  - Improve the commit message.
- 
-Changes in v4
-  - Return error from the static calls instead of doing nothing and
-    succeeding even without loading the module.
-  - Remove the complete usage of utf8_ops and use static calls at all
-    places.
-  - Restore the static calls to default values when module is unloaded.
-  - Decrement the reference of module after calling the unload function.
-  - Remove spinlock as there will be no race conditions after removing
-    utf8_ops.
-
-Changes in v3
-  - Add a patch which checks if utf8 is loaded before calling utf8_unload()
-    in ext4 and f2fs filesystems
-  - Return error if strscpy() returns value < 0
-  - Correct the conditions to prevent NULL pointer dereference while
-    accessing functions via utf8_ops variable.
-  - Add spinlock to avoid race conditions.
-  - Use static_call() for preventing speculative execution attacks.
-
-Changes in v2
-  - Remove the duplicate file from the last patch.
-  - Make the wrapper functions inline.
-  - Remove msleep and use try_module_get() and module_put()
-    for ensuring that module is loaded correctly and also
-    doesn't get unloaded while in use.
-  - Resolve the warning reported by kernel test robot.
-  - Resolve all the checkpatch.pl warnings.
-
- fs/unicode/Kconfig        |  17 ++-
- fs/unicode/Makefile       |   5 +-
- fs/unicode/unicode-core.c | 289 ++++++++++++++------------------------
- fs/unicode/unicode-utf8.c | 264 ++++++++++++++++++++++++++++++++++
- include/linux/unicode.h   |  96 +++++++++++--
- 5 files changed, 467 insertions(+), 204 deletions(-)
- create mode 100644 fs/unicode/unicode-utf8.c
-
-diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
-index 2c27b9a5cd6c..ad4b837f2eb2 100644
---- a/fs/unicode/Kconfig
-+++ b/fs/unicode/Kconfig
-@@ -2,13 +2,26 @@
- #
- # UTF-8 normalization
- #
-+# CONFIG_UNICODE will be automatically enabled if CONFIG_UNICODE_UTF8
-+# is enabled. This config option adds the unicode subsystem layer which loads
-+# the UTF-8 module whenever any filesystem needs it.
- config UNICODE
--	bool "UTF-8 normalization and casefolding support"
-+	bool
-+
-+# utf8data.h_shipped has a large database table which is an auto-generated
-+# decodification trie for the unicode normalization functions and it is not
-+# necessary to carry this large table in the kernel.
-+# Enabling UNICODE_UTF8 option will allow UTF-8 encoding to be built as a
-+# module and this module will be loaded by the unicode subsystem layer only
-+# when any filesystem needs it.
-+config UNICODE_UTF8
-+	tristate "UTF-8 module"
- 	help
- 	  Say Y here to enable UTF-8 NFD normalization and NFD+CF casefolding
- 	  support.
-+	select UNICODE
- 
- config UNICODE_NORMALIZATION_SELFTEST
- 	tristate "Test UTF-8 normalization support"
--	depends on UNICODE
-+	depends on UNICODE_UTF8
- 	default n
-diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
-index fbf9a629ed0d..49d50083e6ee 100644
---- a/fs/unicode/Makefile
-+++ b/fs/unicode/Makefile
-@@ -1,11 +1,14 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- obj-$(CONFIG_UNICODE) += unicode.o
-+obj-$(CONFIG_UNICODE_UTF8) += utf8.o
- obj-$(CONFIG_UNICODE_NORMALIZATION_SELFTEST) += utf8-selftest.o
- 
--unicode-y := utf8-norm.o unicode-core.o
-+unicode-y := unicode-core.o
-+utf8-y := unicode-utf8.o utf8-norm.o
- 
- $(obj)/utf8-norm.o: $(obj)/utf8data.h
-+$(obj)/unicode-utf8.o: $(obj)/utf8-norm.o
- 
- # In the normal build, the checked-in utf8data.h is just shipped.
- #
-diff --git a/fs/unicode/unicode-core.c b/fs/unicode/unicode-core.c
-index 730dbaedf593..5fef398d8bdf 100644
---- a/fs/unicode/unicode-core.c
-+++ b/fs/unicode/unicode-core.c
-@@ -1,237 +1,152 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #include <linux/module.h>
- #include <linux/kernel.h>
--#include <linux/string.h>
- #include <linux/slab.h>
--#include <linux/parser.h>
- #include <linux/errno.h>
- #include <linux/unicode.h>
--#include <linux/stringhash.h>
-+#include <linux/spinlock.h>
- 
--#include "utf8n.h"
-+DEFINE_SPINLOCK(utf8mod_lock);
- 
--int unicode_validate(const struct unicode_map *um, const struct qstr *str)
--{
--	const struct utf8data *data = utf8nfdi(um->version);
-+static struct module *utf8mod;
- 
--	if (utf8nlen(data, str->name, str->len) < 0)
--		return -1;
--	return 0;
-+int unicode_validate_default(const struct unicode_map *um,
-+			     const struct qstr *str)
-+{
-+	WARN_ON(1);
-+	return -EIO;
- }
--EXPORT_SYMBOL(unicode_validate);
-+EXPORT_SYMBOL(unicode_validate_default);
- 
--int unicode_strncmp(const struct unicode_map *um,
--		    const struct qstr *s1, const struct qstr *s2)
-+int unicode_strncmp_default(const struct unicode_map *um,
-+			    const struct qstr *s1,
-+			    const struct qstr *s2)
- {
--	const struct utf8data *data = utf8nfdi(um->version);
--	struct utf8cursor cur1, cur2;
--	int c1, c2;
--
--	if (utf8ncursor(&cur1, data, s1->name, s1->len) < 0)
--		return -EINVAL;
--
--	if (utf8ncursor(&cur2, data, s2->name, s2->len) < 0)
--		return -EINVAL;
--
--	do {
--		c1 = utf8byte(&cur1);
--		c2 = utf8byte(&cur2);
--
--		if (c1 < 0 || c2 < 0)
--			return -EINVAL;
--		if (c1 != c2)
--			return 1;
--	} while (c1);
--
--	return 0;
-+	WARN_ON(1);
-+	return -EIO;
- }
--EXPORT_SYMBOL(unicode_strncmp);
-+EXPORT_SYMBOL(unicode_strncmp_default);
- 
--int unicode_strncasecmp(const struct unicode_map *um,
--			const struct qstr *s1, const struct qstr *s2)
-+int unicode_strncasecmp_default(const struct unicode_map *um,
-+				const struct qstr *s1,
-+				const struct qstr *s2)
- {
--	const struct utf8data *data = utf8nfdicf(um->version);
--	struct utf8cursor cur1, cur2;
--	int c1, c2;
--
--	if (utf8ncursor(&cur1, data, s1->name, s1->len) < 0)
--		return -EINVAL;
--
--	if (utf8ncursor(&cur2, data, s2->name, s2->len) < 0)
--		return -EINVAL;
--
--	do {
--		c1 = utf8byte(&cur1);
--		c2 = utf8byte(&cur2);
--
--		if (c1 < 0 || c2 < 0)
--			return -EINVAL;
--		if (c1 != c2)
--			return 1;
--	} while (c1);
--
--	return 0;
-+	WARN_ON(1);
-+	return -EIO;
- }
--EXPORT_SYMBOL(unicode_strncasecmp);
--
--/* String cf is expected to be a valid UTF-8 casefolded
-- * string.
-- */
--int unicode_strncasecmp_folded(const struct unicode_map *um,
--			       const struct qstr *cf,
--			       const struct qstr *s1)
-+EXPORT_SYMBOL(unicode_strncasecmp_default);
-+
-+int unicode_strncasecmp_folded_default(const struct unicode_map *um,
-+				       const struct qstr *cf,
-+				       const struct qstr *s1)
- {
--	const struct utf8data *data = utf8nfdicf(um->version);
--	struct utf8cursor cur1;
--	int c1, c2;
--	int i = 0;
--
--	if (utf8ncursor(&cur1, data, s1->name, s1->len) < 0)
--		return -EINVAL;
--
--	do {
--		c1 = utf8byte(&cur1);
--		c2 = cf->name[i++];
--		if (c1 < 0)
--			return -EINVAL;
--		if (c1 != c2)
--			return 1;
--	} while (c1);
--
--	return 0;
-+	WARN_ON(1);
-+	return -EIO;
- }
--EXPORT_SYMBOL(unicode_strncasecmp_folded);
-+EXPORT_SYMBOL(unicode_strncasecmp_folded_default);
- 
--int unicode_casefold(const struct unicode_map *um, const struct qstr *str,
--		     unsigned char *dest, size_t dlen)
-+int unicode_normalize_default(const struct unicode_map *um,
-+			      const struct qstr *str,
-+			      unsigned char *dest, size_t dlen)
- {
--	const struct utf8data *data = utf8nfdicf(um->version);
--	struct utf8cursor cur;
--	size_t nlen = 0;
--
--	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
--		return -EINVAL;
--
--	for (nlen = 0; nlen < dlen; nlen++) {
--		int c = utf8byte(&cur);
-+	WARN_ON(1);
-+	return -EIO;
-+}
-+EXPORT_SYMBOL(unicode_normalize_default);
- 
--		dest[nlen] = c;
--		if (!c)
--			return nlen;
--		if (c == -1)
--			break;
--	}
--	return -EINVAL;
-+int unicode_casefold_default(const struct unicode_map *um,
-+			     const struct qstr *str,
-+			     unsigned char *dest, size_t dlen)
-+{
-+	WARN_ON(1);
-+	return -EIO;
- }
--EXPORT_SYMBOL(unicode_casefold);
-+EXPORT_SYMBOL(unicode_casefold_default);
- 
--int unicode_casefold_hash(const struct unicode_map *um, const void *salt,
--			  struct qstr *str)
-+int unicode_casefold_hash_default(const struct unicode_map *um,
-+				  const void *salt, struct qstr *str)
- {
--	const struct utf8data *data = utf8nfdicf(um->version);
--	struct utf8cursor cur;
--	int c;
--	unsigned long hash = init_name_hash(salt);
--
--	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
--		return -EINVAL;
--
--	while ((c = utf8byte(&cur))) {
--		if (c < 0)
--			return -EINVAL;
--		hash = partial_name_hash((unsigned char)c, hash);
--	}
--	str->hash = end_name_hash(hash);
--	return 0;
-+	WARN_ON(1);
-+	return -EIO;
- }
--EXPORT_SYMBOL(unicode_casefold_hash);
-+EXPORT_SYMBOL(unicode_casefold_hash_default);
- 
--int unicode_normalize(const struct unicode_map *um, const struct qstr *str,
--		      unsigned char *dest, size_t dlen)
-+struct unicode_map *unicode_load_default(const char *version)
- {
--	const struct utf8data *data = utf8nfdi(um->version);
--	struct utf8cursor cur;
--	ssize_t nlen = 0;
-+	WARN_ON(1);
-+	return ERR_PTR(-EIO);
-+}
-+EXPORT_SYMBOL(unicode_load_default);
- 
--	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
--		return -EINVAL;
-+DEFINE_STATIC_CALL(unicode_validate_static_call, unicode_validate_default);
-+EXPORT_STATIC_CALL(unicode_validate_static_call);
- 
--	for (nlen = 0; nlen < dlen; nlen++) {
--		int c = utf8byte(&cur);
-+DEFINE_STATIC_CALL(unicode_strncmp_static_call, unicode_strncmp_default);
-+EXPORT_STATIC_CALL(unicode_strncmp_static_call);
- 
--		dest[nlen] = c;
--		if (!c)
--			return nlen;
--		if (c == -1)
--			break;
--	}
--	return -EINVAL;
--}
--EXPORT_SYMBOL(unicode_normalize);
-+DEFINE_STATIC_CALL(unicode_strncasecmp_static_call,
-+		   unicode_strncasecmp_default);
-+EXPORT_STATIC_CALL(unicode_strncasecmp_static_call);
- 
--static int unicode_parse_version(const char *version, unsigned int *maj,
--				 unsigned int *min, unsigned int *rev)
--{
--	substring_t args[3];
--	char version_string[12];
--	static const struct match_token token[] = {
--		{1, "%d.%d.%d"},
--		{0, NULL}
--	};
--	int ret = strscpy(version_string, version, sizeof(version_string));
-+DEFINE_STATIC_CALL(unicode_strncasecmp_folded_static_call,
-+		   unicode_strncasecmp_folded_default);
-+EXPORT_STATIC_CALL(unicode_strncasecmp_folded_static_call);
- 
--	if (ret < 0)
--		return ret;
-+DEFINE_STATIC_CALL(unicode_normalize_static_call, unicode_normalize_default);
-+EXPORT_STATIC_CALL(unicode_normalize_static_call);
- 
--	if (match_token(version_string, token, args) != 1)
--		return -EINVAL;
-+DEFINE_STATIC_CALL(unicode_casefold_static_call, unicode_casefold_default);
-+EXPORT_STATIC_CALL(unicode_casefold_static_call);
- 
--	if (match_int(&args[0], maj) || match_int(&args[1], min) ||
--	    match_int(&args[2], rev))
--		return -EINVAL;
-+DEFINE_STATIC_CALL(unicode_casefold_hash_static_call,
-+		   unicode_casefold_hash_default);
-+EXPORT_STATIC_CALL(unicode_casefold_hash_static_call);
- 
--	return 0;
--}
-+DEFINE_STATIC_CALL(unicode_load_static_call, unicode_load_default);
-+EXPORT_STATIC_CALL(unicode_load_static_call);
- 
- struct unicode_map *unicode_load(const char *version)
- {
--	struct unicode_map *um = NULL;
--	int unicode_version;
--
--	if (version) {
--		unsigned int maj, min, rev;
--
--		if (unicode_parse_version(version, &maj, &min, &rev) < 0)
--			return ERR_PTR(-EINVAL);
--
--		if (!utf8version_is_supported(maj, min, rev))
--			return ERR_PTR(-EINVAL);
--
--		unicode_version = UNICODE_AGE(maj, min, rev);
--	} else {
--		unicode_version = utf8version_latest();
--		printk(KERN_WARNING"UTF-8 version not specified. "
--		       "Assuming latest supported version (%d.%d.%d).",
--		       (unicode_version >> 16) & 0xff,
--		       (unicode_version >> 8) & 0xff,
--		       (unicode_version & 0xff));
-+	try_then_request_module(utf8mod, "utf8");
-+	if (!utf8mod) {
-+		pr_err("Failed to load UTF-8 module\n");
-+		return ERR_PTR(-ENODEV);
- 	}
- 
--	um = kzalloc(sizeof(struct unicode_map), GFP_KERNEL);
--	if (!um)
--		return ERR_PTR(-ENOMEM);
--
--	um->charset = "UTF-8";
--	um->version = unicode_version;
--
--	return um;
-+	spin_lock(&utf8mod_lock);
-+	if (!utf8mod || !try_module_get(utf8mod)) {
-+		spin_unlock(&utf8mod_lock);
-+		return ERR_PTR(-ENODEV);
-+	}
-+	spin_unlock(&utf8mod_lock);
-+	return static_call(unicode_load_static_call)(version);
- }
- EXPORT_SYMBOL(unicode_load);
- 
- void unicode_unload(struct unicode_map *um)
- {
- 	kfree(um);
-+
-+	spin_lock(&utf8mod_lock);
-+	if (utf8mod)
-+		module_put(utf8mod);
-+	spin_unlock(&utf8mod_lock);
-+
- }
- EXPORT_SYMBOL(unicode_unload);
- 
-+void unicode_register(struct module *owner)
-+{
-+	utf8mod = owner;
-+}
-+EXPORT_SYMBOL(unicode_register);
-+
-+void unicode_unregister(void)
-+{
-+	spin_lock(&utf8mod_lock);
-+	utf8mod = NULL;
-+	spin_unlock(&utf8mod_lock);
-+}
-+EXPORT_SYMBOL(unicode_unregister);
-+
- MODULE_LICENSE("GPL v2");
-diff --git a/fs/unicode/unicode-utf8.c b/fs/unicode/unicode-utf8.c
-new file mode 100644
-index 000000000000..e0180f1c5ea8
---- /dev/null
-+++ b/fs/unicode/unicode-utf8.c
-@@ -0,0 +1,264 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/string.h>
-+#include <linux/slab.h>
-+#include <linux/parser.h>
-+#include <linux/errno.h>
-+#include <linux/unicode.h>
-+#include <linux/stringhash.h>
-+#include <linux/static_call.h>
-+
-+#include "utf8n.h"
-+
-+static int utf8_validate(const struct unicode_map *um, const struct qstr *str)
-+{
-+	const struct utf8data *data = utf8nfdi(um->version);
-+
-+	if (utf8nlen(data, str->name, str->len) < 0)
-+		return -1;
-+	return 0;
-+}
-+
-+static int utf8_strncmp(const struct unicode_map *um,
-+			const struct qstr *s1, const struct qstr *s2)
-+{
-+	const struct utf8data *data = utf8nfdi(um->version);
-+	struct utf8cursor cur1, cur2;
-+	int c1, c2;
-+
-+	if (utf8ncursor(&cur1, data, s1->name, s1->len) < 0)
-+		return -EINVAL;
-+
-+	if (utf8ncursor(&cur2, data, s2->name, s2->len) < 0)
-+		return -EINVAL;
-+
-+	do {
-+		c1 = utf8byte(&cur1);
-+		c2 = utf8byte(&cur2);
-+
-+		if (c1 < 0 || c2 < 0)
-+			return -EINVAL;
-+		if (c1 != c2)
-+			return 1;
-+	} while (c1);
-+
-+	return 0;
-+}
-+
-+static int utf8_strncasecmp(const struct unicode_map *um,
-+			    const struct qstr *s1, const struct qstr *s2)
-+{
-+	const struct utf8data *data = utf8nfdicf(um->version);
-+	struct utf8cursor cur1, cur2;
-+	int c1, c2;
-+
-+	if (utf8ncursor(&cur1, data, s1->name, s1->len) < 0)
-+		return -EINVAL;
-+
-+	if (utf8ncursor(&cur2, data, s2->name, s2->len) < 0)
-+		return -EINVAL;
-+
-+	do {
-+		c1 = utf8byte(&cur1);
-+		c2 = utf8byte(&cur2);
-+
-+		if (c1 < 0 || c2 < 0)
-+			return -EINVAL;
-+		if (c1 != c2)
-+			return 1;
-+	} while (c1);
-+
-+	return 0;
-+}
-+
-+/* String cf is expected to be a valid UTF-8 casefolded
-+ * string.
-+ */
-+static int utf8_strncasecmp_folded(const struct unicode_map *um,
-+				   const struct qstr *cf,
-+				   const struct qstr *s1)
-+{
-+	const struct utf8data *data = utf8nfdicf(um->version);
-+	struct utf8cursor cur1;
-+	int c1, c2;
-+	int i = 0;
-+
-+	if (utf8ncursor(&cur1, data, s1->name, s1->len) < 0)
-+		return -EINVAL;
-+
-+	do {
-+		c1 = utf8byte(&cur1);
-+		c2 = cf->name[i++];
-+		if (c1 < 0)
-+			return -EINVAL;
-+		if (c1 != c2)
-+			return 1;
-+	} while (c1);
-+
-+	return 0;
-+}
-+
-+static int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
-+			 unsigned char *dest, size_t dlen)
-+{
-+	const struct utf8data *data = utf8nfdicf(um->version);
-+	struct utf8cursor cur;
-+	size_t nlen = 0;
-+
-+	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
-+		return -EINVAL;
-+
-+	for (nlen = 0; nlen < dlen; nlen++) {
-+		int c = utf8byte(&cur);
-+
-+		dest[nlen] = c;
-+		if (!c)
-+			return nlen;
-+		if (c == -1)
-+			break;
-+	}
-+	return -EINVAL;
-+}
-+
-+static int utf8_casefold_hash(const struct unicode_map *um, const void *salt,
-+			      struct qstr *str)
-+{
-+	const struct utf8data *data = utf8nfdicf(um->version);
-+	struct utf8cursor cur;
-+	int c;
-+	unsigned long hash = init_name_hash(salt);
-+
-+	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
-+		return -EINVAL;
-+
-+	while ((c = utf8byte(&cur))) {
-+		if (c < 0)
-+			return -EINVAL;
-+		hash = partial_name_hash((unsigned char)c, hash);
-+	}
-+	str->hash = end_name_hash(hash);
-+	return 0;
-+}
-+
-+static int utf8_normalize(const struct unicode_map *um, const struct qstr *str,
-+			  unsigned char *dest, size_t dlen)
-+{
-+	const struct utf8data *data = utf8nfdi(um->version);
-+	struct utf8cursor cur;
-+	ssize_t nlen = 0;
-+
-+	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
-+		return -EINVAL;
-+
-+	for (nlen = 0; nlen < dlen; nlen++) {
-+		int c = utf8byte(&cur);
-+
-+		dest[nlen] = c;
-+		if (!c)
-+			return nlen;
-+		if (c == -1)
-+			break;
-+	}
-+	return -EINVAL;
-+}
-+
-+static int utf8_parse_version(const char *version, unsigned int *maj,
-+			      unsigned int *min, unsigned int *rev)
-+{
-+	substring_t args[3];
-+	char version_string[12];
-+	static const struct match_token token[] = {
-+		{1, "%d.%d.%d"},
-+		{0, NULL}
-+	};
-+
-+	int ret = strscpy(version_string, version, sizeof(version_string));
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	if (match_token(version_string, token, args) != 1)
-+		return -EINVAL;
-+
-+	if (match_int(&args[0], maj) || match_int(&args[1], min) ||
-+	    match_int(&args[2], rev))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static struct unicode_map *utf8_load(const char *version)
-+{
-+	struct unicode_map *um = NULL;
-+	int unicode_version;
-+
-+	if (version) {
-+		unsigned int maj, min, rev;
-+
-+		if (utf8_parse_version(version, &maj, &min, &rev) < 0)
-+			return ERR_PTR(-EINVAL);
-+
-+		if (!utf8version_is_supported(maj, min, rev))
-+			return ERR_PTR(-EINVAL);
-+
-+		unicode_version = UNICODE_AGE(maj, min, rev);
-+	} else {
-+		unicode_version = utf8version_latest();
-+		pr_warn("UTF-8 version not specified. Assuming latest supported version (%d.%d.%d).",
-+			(unicode_version >> 16) & 0xff,
-+			(unicode_version >> 8) & 0xff,
-+			(unicode_version & 0xfe));
-+	}
-+
-+	um = kzalloc(sizeof(*um), GFP_KERNEL);
-+	if (!um)
-+		return ERR_PTR(-ENOMEM);
-+
-+	um->charset = "UTF-8";
-+	um->version = unicode_version;
-+
-+	return um;
-+}
-+
-+static int __init utf8_init(void)
-+{
-+	static_call_update(unicode_validate_static_call, utf8_validate);
-+	static_call_update(unicode_strncmp_static_call, utf8_strncmp);
-+	static_call_update(unicode_strncasecmp_static_call, utf8_strncasecmp);
-+	static_call_update(unicode_strncasecmp_folded_static_call,
-+			   utf8_strncasecmp_folded);
-+	static_call_update(unicode_normalize_static_call, utf8_normalize);
-+	static_call_update(unicode_casefold_static_call, utf8_casefold);
-+	static_call_update(unicode_casefold_hash_static_call,
-+			   utf8_casefold_hash);
-+	static_call_update(unicode_load_static_call, utf8_load);
-+
-+	unicode_register(THIS_MODULE);
-+	return 0;
-+}
-+
-+static void __exit utf8_exit(void)
-+{
-+	static_call_update(unicode_validate_static_call,
-+			   unicode_validate_default);
-+	static_call_update(unicode_strncmp_static_call, unicode_strncmp_default);
-+	static_call_update(unicode_strncasecmp_static_call,
-+			   unicode_strncasecmp_default);
-+	static_call_update(unicode_strncasecmp_folded_static_call,
-+			   unicode_strncasecmp_folded_default);
-+	static_call_update(unicode_normalize_static_call,
-+			   unicode_normalize_default);
-+	static_call_update(unicode_casefold_static_call,
-+			   unicode_casefold_default);
-+	static_call_update(unicode_casefold_hash_static_call,
-+			   unicode_casefold_hash_default);
-+	static_call_update(unicode_load_static_call, unicode_load_default);
-+
-+	unicode_unregister();
-+}
-+
-+module_init(utf8_init);
-+module_exit(utf8_exit);
-+
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/unicode.h b/include/linux/unicode.h
-index de23f9ee720b..0b157c6830c6 100644
---- a/include/linux/unicode.h
-+++ b/include/linux/unicode.h
-@@ -4,33 +4,101 @@
- 
- #include <linux/init.h>
- #include <linux/dcache.h>
-+#include <linux/static_call.h>
-+
- 
- struct unicode_map {
- 	const char *charset;
- 	int version;
- };
- 
--int unicode_validate(const struct unicode_map *um, const struct qstr *str);
-+int unicode_validate_default(const struct unicode_map *um,
-+			     const struct qstr *str);
-+
-+int unicode_strncmp_default(const struct unicode_map *um,
-+			    const struct qstr *s1,
-+			    const struct qstr *s2);
-+
-+int unicode_strncasecmp_default(const struct unicode_map *um,
-+				const struct qstr *s1,
-+				const struct qstr *s2);
-+
-+int unicode_strncasecmp_folded_default(const struct unicode_map *um,
-+				       const struct qstr *cf,
-+				       const struct qstr *s1);
-+
-+int unicode_normalize_default(const struct unicode_map *um,
-+			      const struct qstr *str,
-+			      unsigned char *dest, size_t dlen);
-+
-+int unicode_casefold_default(const struct unicode_map *um,
-+			     const struct qstr *str,
-+			     unsigned char *dest, size_t dlen);
-+
-+int unicode_casefold_hash_default(const struct unicode_map *um,
-+				  const void *salt, struct qstr *str);
- 
--int unicode_strncmp(const struct unicode_map *um,
--		    const struct qstr *s1, const struct qstr *s2);
-+struct unicode_map *unicode_load_default(const char *version);
- 
--int unicode_strncasecmp(const struct unicode_map *um,
--			const struct qstr *s1, const struct qstr *s2);
--int unicode_strncasecmp_folded(const struct unicode_map *um,
--			       const struct qstr *cf,
--			       const struct qstr *s1);
-+DECLARE_STATIC_CALL(unicode_validate_static_call, unicode_validate_default);
-+DECLARE_STATIC_CALL(unicode_strncmp_static_call, unicode_strncmp_default);
-+DECLARE_STATIC_CALL(unicode_strncasecmp_static_call,
-+		    unicode_strncasecmp_default);
-+DECLARE_STATIC_CALL(unicode_strncasecmp_folded_static_call,
-+		    unicode_strncasecmp_folded_default);
-+DECLARE_STATIC_CALL(unicode_normalize_static_call, unicode_normalize_default);
-+DECLARE_STATIC_CALL(unicode_casefold_static_call, unicode_casefold_default);
-+DECLARE_STATIC_CALL(unicode_casefold_hash_static_call,
-+		    unicode_casefold_hash_default);
-+DECLARE_STATIC_CALL(unicode_load_static_call, unicode_load_default);
- 
--int unicode_normalize(const struct unicode_map *um, const struct qstr *str,
--		      unsigned char *dest, size_t dlen);
- 
--int unicode_casefold(const struct unicode_map *um, const struct qstr *str,
--		     unsigned char *dest, size_t dlen);
-+static inline int unicode_validate(const struct unicode_map *um, const struct qstr *str)
-+{
-+	return static_call(unicode_validate_static_call)(um, str);
-+}
- 
--int unicode_casefold_hash(const struct unicode_map *um, const void *salt,
--			  struct qstr *str);
-+static inline int unicode_strncmp(const struct unicode_map *um,
-+				  const struct qstr *s1, const struct qstr *s2)
-+{
-+	return static_call(unicode_strncmp_static_call)(um, s1, s2);
-+}
-+
-+static inline int unicode_strncasecmp(const struct unicode_map *um,
-+				      const struct qstr *s1, const struct qstr *s2)
-+{
-+	return static_call(unicode_strncasecmp_static_call)(um, s1, s2);
-+}
-+
-+static inline int unicode_strncasecmp_folded(const struct unicode_map *um,
-+					     const struct qstr *cf,
-+					     const struct qstr *s1)
-+{
-+	return static_call(unicode_strncasecmp_folded_static_call)(um, cf, s1);
-+}
-+
-+static inline int unicode_normalize(const struct unicode_map *um, const struct qstr *str,
-+				    unsigned char *dest, size_t dlen)
-+{
-+	return static_call(unicode_normalize_static_call)(um, str, dest, dlen);
-+}
-+
-+static inline int unicode_casefold(const struct unicode_map *um, const struct qstr *str,
-+				   unsigned char *dest, size_t dlen)
-+{
-+	return static_call(unicode_casefold_static_call)(um, str, dest, dlen);
-+}
-+
-+static inline int unicode_casefold_hash(const struct unicode_map *um, const void *salt,
-+					struct qstr *str)
-+{
-+	return static_call(unicode_casefold_hash_static_call)(um, salt, str);
-+}
- 
- struct unicode_map *unicode_load(const char *version);
- void unicode_unload(struct unicode_map *um);
- 
-+void unicode_register(struct module *owner);
-+void unicode_unregister(void);
-+
- #endif /* _LINUX_UNICODE_H */
--- 
-2.30.2
-
+--
+Gustavo
