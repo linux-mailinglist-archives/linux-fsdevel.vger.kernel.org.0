@@ -2,148 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 061403508A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 23:00:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D5093508C9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 23:08:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbhCaVAL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Mar 2021 17:00:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45536 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229486AbhCaU7j (ORCPT
+        id S230401AbhCaVIQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Mar 2021 17:08:16 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34586 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229890AbhCaVIJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 16:59:39 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41A6BC061574;
-        Wed, 31 Mar 2021 13:59:39 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id r193so21559029ior.9;
-        Wed, 31 Mar 2021 13:59:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eDePH94ANbIKMvd2G9i+SiGf3YdKE6IhV3WRRwhTQ1M=;
-        b=IWVmeOX7iQ92y8O8c9eV9GaxSvV3dCj3ZN7HutzBKfjOOhftW5H/akJxbGAyBO6Jhx
-         U8sL1ZkcBMsG3nafESvHhNBcjS0U5H5uR7xmz/tBjCZBLEZpAzz1YU2Pq6GQ0zSCUSot
-         xMeUQikPM8H0gM+zN7c6xNsSams3r+TsJlLSuL9qT8SrbNeQYf4B4JxZ6LzX1k5kX7jH
-         zj0Sdenp5O6QpTvfsatlSN1m/K1+YvbxytG+YQLMZ/TNW0RplPMSJT+yXc8KKGNgwhzR
-         03LVNfOgvkM/Hc4fz9nA5UpjiOIcHoJAoDKJyot2VUBlBHDqT0VBkFKlg7fF/sqO1hao
-         XW+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eDePH94ANbIKMvd2G9i+SiGf3YdKE6IhV3WRRwhTQ1M=;
-        b=jbrgicEFwT8NVePtZm7tVvSjgusrGkDvpYxFzPq8t6xoODZZBUCBEbyYeyUw6KtPdL
-         WgsYjh5T42V7XZl7InmcmXaCIv4ymvSKLlE94qjdAJ8IPPQz79ePo+pkCojwrss/kj6Z
-         3QnKCKC3Nl7hu78OADRsoAra4PhUnVdzwtndkosHjTZvudJU29jS2LoW4F6afIqdggYY
-         zfLQbSHSvoocQA26NV4gMu0CN6zHrGIswBm7DAS8JwvUsqqfSqKThQZwRpd4vyh11Fw1
-         0iOY9hIswGYWE+5EW9on8CFALFas59/vg30mHetyPlwFCuAsMv+V9tV+GrGCuHc37LQK
-         ZAKQ==
-X-Gm-Message-State: AOAM532U5Geu+WfutNYD4VknqjQ7js1r4IXMYf9oYZI6c61RbPNYQE9m
-        xl83owEl1DZ1tD8lYHuCEBmPetCtEXCYpJLnyqImJP13
-X-Google-Smtp-Source: ABdhPJxIRn/hz6bIJY2N1JLMT3DvVU+rzVUIX9bv1z5L1rhkmLldjjpuxnWvCk8ww6Dwn1kRZoymkY+VSflwd0Soe+g=
-X-Received: by 2002:a05:6602:2596:: with SMTP id p22mr3826886ioo.186.1617224378554;
- Wed, 31 Mar 2021 13:59:38 -0700 (PDT)
+        Wed, 31 Mar 2021 17:08:09 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: shreeya)
+        with ESMTPSA id 626441F461A9
+From:   Shreeya Patel <shreeya.patel@collabora.com>
+To:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        chao@kernel.org, krisman@collabora.com, ebiggers@google.com,
+        drosen@google.com, ebiggers@kernel.org, yuchao0@huawei.com
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
+        andre.almeida@collabora.com
+Subject: [PATCH v6 0/4] Make UTF-8 encoding loadable
+Date:   Thu,  1 Apr 2021 02:37:47 +0530
+Message-Id: <20210331210751.281645-1-shreeya.patel@collabora.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20210328155624.930558-1-amir73il@gmail.com> <20210330121204.b7uto3tesqf6m7hb@wittgenstein>
- <CAOQ4uxjVdjLPbkkZd+_1csecDFuHxms3CcSLuAtRbKuozHUqWA@mail.gmail.com>
- <20210330125336.vj2hkgwhyrh5okee@wittgenstein> <CAOQ4uxjPhrY55kJLUr-=2+S4HOqF0qKAAX27h2T1H1uOnxM9pQ@mail.gmail.com>
- <20210330141703.lkttbuflr5z5ia7f@wittgenstein> <CAOQ4uxirMBzcaLeLoBWCMPPr7367qeKjnW3f88bh1VMr_3jv_A@mail.gmail.com>
- <20210331094604.xxbjl3krhqtwcaup@wittgenstein> <CAOQ4uxirud-+ot0kZ=8qaicvjEM5w1scAeoLP_-HzQx+LwihHw@mail.gmail.com>
- <20210331125412.GI30749@quack2.suse.cz> <CAOQ4uxjOyuvpJ7Tv3cGmv+ek7+z9BJBF4sK_-OLxwePUrHERUg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjOyuvpJ7Tv3cGmv+ek7+z9BJBF4sK_-OLxwePUrHERUg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 31 Mar 2021 23:59:27 +0300
-Message-ID: <CAOQ4uxhWE9JGOZ_jN9_RT5EkACdNWXOryRsm6Wg_zkaDNDSjsA@mail.gmail.com>
-Subject: Re: fsnotify path hooks
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "J. Bruce Fields" <bfields@fieldses.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 31, 2021 at 5:06 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > > As long as "exp_export: export of idmapped mounts not yet supported.\n"
-> > > I don't think it matters much.
-> > > It feels like adding idmapped mounts to nfsd is on your roadmap.
-> > > When you get to that we can discuss adding fsnotify path hooks to nfsd
-> > > if Jan agrees to the fsnotify path hooks concept.
-> >
-> > I was looking at the patch and thinking about it for a few days already. I
-> > think that generating fsnotify event later (higher up the stack where we
-> > have mount information) is fine and a neat idea. I just dislike the hackery
-> > with dentry flags.
->
-> Me as well. I used this hack for fast POC.
->
-> If we stick with the dual hooks approach, we will have to either pass a new
-> argument to vfs helpers or use another trick:
->
-> Convert all the many calls sites that were converted by Christian to:
->    vfs_XXX(&init_user_ns, ...
-> because they do not have mount context, to:
->    vfs_XXX(NULL, ...
->
-> Inside the vfs helpers, use init_user_ns when mnt_userns is NULL,
-> but pass the original mnt_userns argument to fsnotify_ns_XXX hooks.
-> A non-NULL mnt_userns arg means "path_notify" context.
-> I have already POC code for passing mnt_userns to fsnotify hooks [1].
->
-> I did not check if this assumption always works, but there seems to
-> be a large overlap between idmapped aware callers and use cases
-> that will require sending events to a mount mark.
->
+utf8data.h_shipped has a large database table which is an auto-generated
+decodification trie for the unicode normalization functions and it is not
+necessary to carry this large table in the kernel.
+Goal is to make UTF-8 encoding loadable by converting it into a module
+and adding a layer between the filesystems and the utf8 module which will
+load the module whenever any filesystem that needs unicode is mounted.
+Currently only UTF-8 encoding is supported but if any other encodings
+are supported in future then the layer file would be responsible for
+loading the desired encoding module.
 
-The above "trick" is pretty silly as I believe Christian intends
-to fix all those call sites that pass init_user_ns.
+1st patch in the series resolves the warning reported by kernel test
+robot by using strscpy instead of strncpy.
 
-> > Also I'm somewhat uneasy that it is random (from
-> > userspace POV) when path event is generated and when not (at least that's
-> > my impression from the patch - maybe I'm wrong). How difficult would it be
-> > to get rid of it? I mean what if we just moved say fsnotify_create() call
-> > wholly up the stack? It would mean more explicit calls to fsnotify_create()
-> > from filesystems - as far as I'm looking nfsd, overlayfs, cachefiles,
-> > ecryptfs. But that would seem to be manageable.  Also, to maintain sanity,
->
-> 1. I don't think we can do that for all the fsnotify_create() hooks, such as
->     debugfs for example
-> 2. It is useless to pass the mount from overlayfs to fsnotify, its a private
->     mount that users cannot set a mark on anyway and Christian has
->     promised to propose the same change for cachefiles and ecryptfs,
->     so I think it's not worth the churn in those call sites
-> 3. I am uneasy with removing the fsnotify hooks from vfs helpers and
->     trusting that new callers of vfs_create() will remember to add the high
->     level hooks, so I prefer the existing behavior remains for such callers
->
+Unicode is the subsystem and utf8 is a charachter encoding for the
+subsystem, hence 2nd and 3rd patches in the series are renaming functions
+and file name to unicode for better understanding the difference between
+UTF-8 module and unicode layer.
 
-So I read your proposal the wrong way.
-You meant move fsnotify_create() up *without* passing mount context
-from overlayfs and friends.
+Last patch in the series adds the layer and utf8 module and also uses
+static calls which gives performance benefit when compared to indirect
+calls using function pointers.
 
-So yeh, I do think it is manageable. I think the best solution would be
-something along the lines of wrappers like the following:
+---
+Changes in v6
+  - Add spinlock to protect utf8mod and avoid NULL pointer
+    dereference.
+  - Change the static call function names for being consistent with
+    kernel coding style.
+  - Merge the unicode_load_module function with unicode_load as it is
+    not really needed to have a separate function.
+  - Use try_then_module_get instead of module_get to avoid loading the
+    module even when it is already loaded.
+  - Improve the commit message.
 
-static inline int vfs_mkdir(...)
-{
-        int error = __vfs_mkdir_nonotify(...);
-        if (!error)
-                fsnotify_mkdir(dir, dentry);
-        return error;
-}
+Changes in v5
+  - Remove patch which adds NULL check in ext4/super.c and f2fs/super.c
+    before calling unicode_unload().
+  - Rename global variables and default static call functions for better
+    understanding
+  - Make only config UNICODE_UTF8 visible and config UNICODE to be always
+    enabled provided UNICODE_UTF8 is enabled.  
+  - Improve the documentation for Kconfig
+  - Improve the commit message.
+ 
+Changes in v4
+  - Return error from the static calls instead of doing nothing and
+    succeeding even without loading the module.
+  - Remove the complete usage of utf8_ops and use static calls at all
+    places.
+  - Restore the static calls to default values when module is unloaded.
+  - Decrement the reference of module after calling the unload function.
+  - Remove spinlock as there will be no race conditions after removing
+    utf8_ops.
 
-And then the few call sites that call the fsnotify_path_ hooks
-(i.e. in syscalls and perhaps later in nfsd) will call the
-__vfs_xxx_nonotify() variant.
+Changes in v3
+  - Add a patch which checks if utf8 is loaded before calling utf8_unload()
+    in ext4 and f2fs filesystems
+  - Return error if strscpy() returns value < 0
+  - Correct the conditions to prevent NULL pointer dereference while
+    accessing functions via utf8_ops variable.
+  - Add spinlock to avoid race conditions.
+  - Use static_call() for preventing speculative execution attacks.
 
-I suppose that with this approach I could make all the relevant events
-available for mount mark with relatively little churn.
-I will try it out.
+Changes in v2
+  - Remove the duplicate file from the last patch.
+  - Make the wrapper functions inline.
+  - Remove msleep and use try_module_get() and module_put()
+    for ensuring that module is loaded correctly and also
+    doesn't get unloaded while in use.
+  - Resolve the warning reported by kernel test robot.
+  - Resolve all the checkpatch.pl warnings.
 
-Thanks,
-Amir.
+Shreeya Patel (4):
+  fs: unicode: Use strscpy() instead of strncpy()
+  fs: unicode: Rename function names from utf8 to unicode
+  fs: unicode: Rename utf8-core file to unicode-core
+  fs: unicode: Add utf8 module and a unicode layer
+
+ fs/ext4/hash.c                             |   2 +-
+ fs/ext4/namei.c                            |  12 +-
+ fs/ext4/super.c                            |   6 +-
+ fs/f2fs/dir.c                              |  12 +-
+ fs/f2fs/super.c                            |   6 +-
+ fs/libfs.c                                 |   6 +-
+ fs/unicode/Kconfig                         |  17 ++-
+ fs/unicode/Makefile                        |   5 +-
+ fs/unicode/unicode-core.c                  | 152 +++++++++++++++++++++
+ fs/unicode/{utf8-core.c => unicode-utf8.c} |  98 ++++++++-----
+ fs/unicode/utf8-selftest.c                 |   8 +-
+ include/linux/unicode.h                    | 100 +++++++++++---
+ 12 files changed, 344 insertions(+), 80 deletions(-)
+ create mode 100644 fs/unicode/unicode-core.c
+ rename fs/unicode/{utf8-core.c => unicode-utf8.c} (57%)
+
+-- 
+2.30.2
+
