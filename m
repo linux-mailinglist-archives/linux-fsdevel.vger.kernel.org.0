@@ -2,40 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B92C3506BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 20:49:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F1513506BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 20:50:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235372AbhCaStR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Mar 2021 14:49:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45518 "EHLO
+        id S235416AbhCaStu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Mar 2021 14:49:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235436AbhCaStH (ORCPT
+        with ESMTP id S235335AbhCaStQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 14:49:07 -0400
+        Wed, 31 Mar 2021 14:49:16 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1822C061574;
-        Wed, 31 Mar 2021 11:49:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E49F8C061574;
+        Wed, 31 Mar 2021 11:49:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=V4CfUCmxoMh7fYAdXEYFgH1auhBTM+MLJMhUkFKBq20=; b=CI8MvsVbwBHspjWIc59P6Pd6EW
-        UMvtEYvWGlaDnsB0FDx3pkMJL2aommVN4RO0r3WaaW1/xTOvXEEkjNpPt9v2Opu2tExbG9NU+NoCV
-        Dcplbr5AgwaIBFNy0gAUgqhnwdE61NUrv8Secn/TsaepFYAWf+vV8opxWKZls0YdxkTjDKujnU3iM
-        fhNQzzVSGKSdp+vJS1ixsihsC5YtDc9wmNz/AIcbCx32KH+2UlWICyaqgcHS/bJxKwltSluLbpyh5
-        OgfFVmRqx3APVwMavZGeypH/MNinZfcWao1AyMv5mseaIsAXW8qlBmbhwhR3DqeoE3TIradxldVR2
-        1vFrT8ew==;
+        bh=dYXcqubbn/kuXkrXP1knS3VoxabPRjt+5mOpGQ3gMZ8=; b=ssTCJxihHcxjN5MHDDuJSmERTv
+        KFPp2ZjcehCo5r/RMRnY1AUYHH+r7VZW/2nmU51jGC1ZWVP3WgREu99jUiOfKlZ1C77WhTJ9EWZKJ
+        sTkmlOTGkulY46oWjZCyBI2YsgjLmp4J7fTwz9w6RXAFdiMhPxJmgfN9tqUT8zwXEqGJTULsjsqJc
+        LuVuF6wPIEMB/2rDCmtj5hcjQCMyf3+wbXTFP8IBFAWyRm1b5y71Z46RJ6SmxzgHLrcAUq01f4fV9
+        kwrYUQjdH1QUrrWQHoDhPc+G+gPWg7dzb6sOqFYSo7w9XKFo48571z2cQ/Mrea4Pwyg3KDYTrBH19
+        lxPpYYNA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lRft0-004z9A-2G; Wed, 31 Mar 2021 18:48:17 +0000
+        id 1lRftP-004zB9-36; Wed, 31 Mar 2021 18:48:51 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v6 04/27] mm/debug: Add VM_BUG_ON_FOLIO and VM_WARN_ON_ONCE_FOLIO
-Date:   Wed, 31 Mar 2021 19:47:05 +0100
-Message-Id: <20210331184728.1188084-5-willy@infradead.org>
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org
+Subject: [PATCH v6 05/27] mm: Add folio reference count functions
+Date:   Wed, 31 Mar 2021 19:47:06 +0100
+Message-Id: <20210331184728.1188084-6-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210331184728.1188084-1-willy@infradead.org>
 References: <20210331184728.1188084-1-willy@infradead.org>
@@ -45,63 +44,210 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These are the folio equivalents of VM_BUG_ON_PAGE and VM_WARN_ON_ONCE_PAGE.
+These functions mirror their page reference counterparts.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Zi Yan <ziy@nvidia.com>
 ---
- include/linux/mmdebug.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ Documentation/core-api/mm-api.rst |  1 +
+ include/linux/page_ref.h          | 88 ++++++++++++++++++++++++++++++-
+ 2 files changed, 88 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/mmdebug.h b/include/linux/mmdebug.h
-index 5d0767cb424a..77d24e1dcaec 100644
---- a/include/linux/mmdebug.h
-+++ b/include/linux/mmdebug.h
-@@ -23,6 +23,13 @@ void dump_mm(const struct mm_struct *mm);
- 			BUG();						\
- 		}							\
- 	} while (0)
-+#define VM_BUG_ON_FOLIO(cond, folio)					\
-+	do {								\
-+		if (unlikely(cond)) {					\
-+			dump_page(&folio->page, "VM_BUG_ON_FOLIO(" __stringify(cond)")");\
-+			BUG();						\
-+		}							\
-+	} while (0)
- #define VM_BUG_ON_VMA(cond, vma)					\
- 	do {								\
- 		if (unlikely(cond)) {					\
-@@ -48,6 +55,17 @@ void dump_mm(const struct mm_struct *mm);
- 	}								\
- 	unlikely(__ret_warn_once);					\
- })
-+#define VM_WARN_ON_ONCE_FOLIO(cond, folio)	({			\
-+	static bool __section(".data.once") __warned;			\
-+	int __ret_warn_once = !!(cond);					\
-+									\
-+	if (unlikely(__ret_warn_once && !__warned)) {			\
-+		dump_page(&folio->page, "VM_WARN_ON_ONCE_FOLIO(" __stringify(cond)")");\
-+		__warned = true;					\
-+		WARN_ON(1);						\
-+	}								\
-+	unlikely(__ret_warn_once);					\
-+})
+diff --git a/Documentation/core-api/mm-api.rst b/Documentation/core-api/mm-api.rst
+index 34f46df91a8b..1ead2570b217 100644
+--- a/Documentation/core-api/mm-api.rst
++++ b/Documentation/core-api/mm-api.rst
+@@ -97,3 +97,4 @@ More Memory Management Functions
+    :internal:
+ .. kernel-doc:: include/linux/mm.h
+    :internal:
++.. kernel-doc:: include/linux/page_ref.h
+diff --git a/include/linux/page_ref.h b/include/linux/page_ref.h
+index f3318f34fc54..f27005e760fd 100644
+--- a/include/linux/page_ref.h
++++ b/include/linux/page_ref.h
+@@ -69,7 +69,29 @@ static inline int page_ref_count(struct page *page)
  
- #define VM_WARN_ON(cond) (void)WARN_ON(cond)
- #define VM_WARN_ON_ONCE(cond) (void)WARN_ON_ONCE(cond)
-@@ -56,11 +74,13 @@ void dump_mm(const struct mm_struct *mm);
- #else
- #define VM_BUG_ON(cond) BUILD_BUG_ON_INVALID(cond)
- #define VM_BUG_ON_PAGE(cond, page) VM_BUG_ON(cond)
-+#define VM_BUG_ON_FOLIO(cond, folio) VM_BUG_ON(cond)
- #define VM_BUG_ON_VMA(cond, vma) VM_BUG_ON(cond)
- #define VM_BUG_ON_MM(cond, mm) VM_BUG_ON(cond)
- #define VM_WARN_ON(cond) BUILD_BUG_ON_INVALID(cond)
- #define VM_WARN_ON_ONCE(cond) BUILD_BUG_ON_INVALID(cond)
- #define VM_WARN_ON_ONCE_PAGE(cond, page)  BUILD_BUG_ON_INVALID(cond)
-+#define VM_WARN_ON_ONCE_FOLIO(cond, folio)  BUILD_BUG_ON_INVALID(cond)
- #define VM_WARN_ONCE(cond, format...) BUILD_BUG_ON_INVALID(cond)
- #define VM_WARN(cond, format...) BUILD_BUG_ON_INVALID(cond)
+ static inline int page_count(struct page *page)
+ {
+-	return atomic_read(&compound_head(page)->_refcount);
++	return page_ref_count(compound_head(page));
++}
++
++/**
++ * folio_ref_count - The reference count on this folio.
++ * @folio: The folio.
++ *
++ * The refcount is usually incremented by calls to get_folio() and
++ * decremented by calls to put_folio().  Some typical users of the
++ * folio refcount:
++ *
++ * - Each reference from a page table
++ * - The page cache
++ * - Filesystem private data
++ * - The LRU list
++ * - Pipes
++ * - Direct IO which references this page in the process address space
++ *
++ * Return: The number of references to this folio.
++ */
++static inline int folio_ref_count(struct folio *folio)
++{
++	return page_ref_count(&folio->page);
+ }
+ 
+ static inline void set_page_count(struct page *page, int v)
+@@ -79,6 +101,11 @@ static inline void set_page_count(struct page *page, int v)
+ 		__page_ref_set(page, v);
+ }
+ 
++static inline void set_folio_count(struct folio *folio, int v)
++{
++	set_page_count(&folio->page, v);
++}
++
+ /*
+  * Setup the page count before being freed into the page allocator for
+  * the first time (boot or memory hotplug)
+@@ -95,6 +122,11 @@ static inline void page_ref_add(struct page *page, int nr)
+ 		__page_ref_mod(page, nr);
+ }
+ 
++static inline void folio_ref_add(struct folio *folio, int nr)
++{
++	page_ref_add(&folio->page, nr);
++}
++
+ static inline void page_ref_sub(struct page *page, int nr)
+ {
+ 	atomic_sub(nr, &page->_refcount);
+@@ -102,6 +134,11 @@ static inline void page_ref_sub(struct page *page, int nr)
+ 		__page_ref_mod(page, -nr);
+ }
+ 
++static inline void folio_ref_sub(struct folio *folio, int nr)
++{
++	page_ref_sub(&folio->page, nr);
++}
++
+ static inline int page_ref_sub_return(struct page *page, int nr)
+ {
+ 	int ret = atomic_sub_return(nr, &page->_refcount);
+@@ -111,6 +148,11 @@ static inline int page_ref_sub_return(struct page *page, int nr)
+ 	return ret;
+ }
+ 
++static inline int folio_ref_sub_return(struct folio *folio, int nr)
++{
++	return page_ref_sub_return(&folio->page, nr);
++}
++
+ static inline void page_ref_inc(struct page *page)
+ {
+ 	atomic_inc(&page->_refcount);
+@@ -118,6 +160,11 @@ static inline void page_ref_inc(struct page *page)
+ 		__page_ref_mod(page, 1);
+ }
+ 
++static inline void folio_ref_inc(struct folio *folio)
++{
++	page_ref_inc(&folio->page);
++}
++
+ static inline void page_ref_dec(struct page *page)
+ {
+ 	atomic_dec(&page->_refcount);
+@@ -125,6 +172,11 @@ static inline void page_ref_dec(struct page *page)
+ 		__page_ref_mod(page, -1);
+ }
+ 
++static inline void folio_ref_dec(struct folio *folio)
++{
++	page_ref_dec(&folio->page);
++}
++
+ static inline int page_ref_sub_and_test(struct page *page, int nr)
+ {
+ 	int ret = atomic_sub_and_test(nr, &page->_refcount);
+@@ -134,6 +186,11 @@ static inline int page_ref_sub_and_test(struct page *page, int nr)
+ 	return ret;
+ }
+ 
++static inline int folio_ref_sub_and_test(struct folio *folio, int nr)
++{
++	return page_ref_sub_and_test(&folio->page, nr);
++}
++
+ static inline int page_ref_inc_return(struct page *page)
+ {
+ 	int ret = atomic_inc_return(&page->_refcount);
+@@ -143,6 +200,11 @@ static inline int page_ref_inc_return(struct page *page)
+ 	return ret;
+ }
+ 
++static inline int folio_ref_inc_return(struct folio *folio)
++{
++	return page_ref_inc_return(&folio->page);
++}
++
+ static inline int page_ref_dec_and_test(struct page *page)
+ {
+ 	int ret = atomic_dec_and_test(&page->_refcount);
+@@ -152,6 +214,11 @@ static inline int page_ref_dec_and_test(struct page *page)
+ 	return ret;
+ }
+ 
++static inline int folio_ref_dec_and_test(struct folio *folio)
++{
++	return page_ref_dec_and_test(&folio->page);
++}
++
+ static inline int page_ref_dec_return(struct page *page)
+ {
+ 	int ret = atomic_dec_return(&page->_refcount);
+@@ -161,6 +228,11 @@ static inline int page_ref_dec_return(struct page *page)
+ 	return ret;
+ }
+ 
++static inline int folio_ref_dec_return(struct folio *folio)
++{
++	return page_ref_dec_return(&folio->page);
++}
++
+ static inline int page_ref_add_unless(struct page *page, int nr, int u)
+ {
+ 	int ret = atomic_add_unless(&page->_refcount, nr, u);
+@@ -170,6 +242,11 @@ static inline int page_ref_add_unless(struct page *page, int nr, int u)
+ 	return ret;
+ }
+ 
++static inline int folio_ref_add_unless(struct folio *folio, int nr, int u)
++{
++	return page_ref_add_unless(&folio->page, nr, u);
++}
++
+ static inline int page_ref_freeze(struct page *page, int count)
+ {
+ 	int ret = likely(atomic_cmpxchg(&page->_refcount, count, 0) == count);
+@@ -179,6 +256,11 @@ static inline int page_ref_freeze(struct page *page, int count)
+ 	return ret;
+ }
+ 
++static inline int folio_ref_freeze(struct folio *folio, int count)
++{
++	return page_ref_freeze(&folio->page, count);
++}
++
+ static inline void page_ref_unfreeze(struct page *page, int count)
+ {
+ 	VM_BUG_ON_PAGE(page_count(page) != 0, page);
+@@ -189,4 +271,8 @@ static inline void page_ref_unfreeze(struct page *page, int count)
+ 		__page_ref_unfreeze(page, count);
+ }
+ 
++static inline void folio_ref_unfreeze(struct folio *folio, int count)
++{
++	page_ref_unfreeze(&folio->page, count);
++}
  #endif
 -- 
 2.30.2
