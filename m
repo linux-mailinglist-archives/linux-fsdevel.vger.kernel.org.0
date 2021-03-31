@@ -2,113 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 17B843500BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 14:55:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFE8D3500BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 14:55:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235654AbhCaMyo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Mar 2021 08:54:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22118 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235663AbhCaMyQ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 08:54:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617195256;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BLVqguYYRqWS+fkpiZrnYWlDg4Em6ZwexNgxX0lsnu4=;
-        b=dx3L1+9ehOrEp25SMsE/SQ9K9v/7FUe1CjK04fns1ADKVggh5/LAxB02HFTd1SsMXAE9Aw
-        eWwTvD3/XNl+JBgqWIDrxeCN5popCct+25aIjAsPQk0qpTlHSrpkuLr6tvjOQUqElOkjjv
-        /a+JFyA2dFNNTqX/Wvo6fLnegUqDJC4=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-396-Mka_-LRVPDmnrf7SDb9aWw-1; Wed, 31 Mar 2021 08:54:14 -0400
-X-MC-Unique: Mka_-LRVPDmnrf7SDb9aWw-1
-Received: by mail-qk1-f200.google.com with SMTP id j14so1319957qka.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Mar 2021 05:54:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=BLVqguYYRqWS+fkpiZrnYWlDg4Em6ZwexNgxX0lsnu4=;
-        b=U6SsH8iDUzN16HmnTzvNJ3xHQaM2jCUystsm0A1ix03a2qjtWiHLLVAjf9NqmyYenN
-         dmU8VRny8yclH2XUbSKKdH3ACOTlacgS+UoaYAdyfvzuhozLf0g3EDcdhZSy230L/0li
-         86E0aBwiMB1eDJAbGdldCzRxVbULV1MS6iQNwBQWcFulIn1Yi3LX72yG8PbqF2eUtY6a
-         PTagOhzN1s3EF9KD3QUSFfNJgK3Dsm06nzyBnRShH+EU57o2YmJ9rP2vvA1H1ciC0zBB
-         fHlhGMLgU9joPZLqNMAs4PWLEdwXYNEVwL9v/oYUfSawDlzgq1WXl1/HgIQKKS1KL6mz
-         ijmA==
-X-Gm-Message-State: AOAM531J2xAVK3vFKN6y4AwyaCLjBJeuToUjADHWvnuTq5UfdfBXKbxj
-        uheFWaWZlUkdFa/rlZJMCArO9CG1pFhHG28VoFCQZWUBsR+lK9CiClcQjKgdN1wKixkR1YWCO/X
-        B8WubZsgTgib8ldD9ndRilqKq5A==
-X-Received: by 2002:a05:622a:48d:: with SMTP id p13mr2279114qtx.21.1617195253822;
-        Wed, 31 Mar 2021 05:54:13 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyUI7wPo7TLqkGMdpy3kH1M1sXi6ovrIE72FbmoqiknBlD6P60sY1MhBQ3ElvmViqcwOGvUsQ==
-X-Received: by 2002:a05:622a:48d:: with SMTP id p13mr2279090qtx.21.1617195253556;
-        Wed, 31 Mar 2021 05:54:13 -0700 (PDT)
-Received: from xz-x1 (bras-base-toroon474qw-grc-82-174-91-135-175.dsl.bell.ca. [174.91.135.175])
-        by smtp.gmail.com with ESMTPSA id a19sm1330189qkl.126.2021.03.31.05.54.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Mar 2021 05:54:12 -0700 (PDT)
-Date:   Wed, 31 Mar 2021 08:54:09 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wang Qing <wangqing@vivo.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        linux-kselftest@vger.kernel.org, Brian Geffon <bgeffon@google.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Michel Lespinasse <walken@google.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH v3] userfaultfd/shmem: fix MCOPY_ATOMIC_CONTNUE behavior
-Message-ID: <20210331125409.GL429942@xz-x1>
-References: <20210329234131.304999-1-axelrasmussen@google.com>
- <20210330205519.GK429942@xz-x1>
- <CAJHvVcikF9MJepyvf6riVKZEUxQvV1QMdoQoN5Kirs0TLcn-Dg@mail.gmail.com>
+        id S235709AbhCaMyr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Mar 2021 08:54:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56050 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235414AbhCaMyP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 31 Mar 2021 08:54:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id CF4E8B1F3;
+        Wed, 31 Mar 2021 12:54:12 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 3FC2C1E4415; Wed, 31 Mar 2021 14:54:12 +0200 (CEST)
+Date:   Wed, 31 Mar 2021 14:54:12 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: [RFC][PATCH] fanotify: allow setting FAN_CREATE in mount mark
+ mask
+Message-ID: <20210331125412.GI30749@quack2.suse.cz>
+References: <20210328155624.930558-1-amir73il@gmail.com>
+ <20210330121204.b7uto3tesqf6m7hb@wittgenstein>
+ <CAOQ4uxjVdjLPbkkZd+_1csecDFuHxms3CcSLuAtRbKuozHUqWA@mail.gmail.com>
+ <20210330125336.vj2hkgwhyrh5okee@wittgenstein>
+ <CAOQ4uxjPhrY55kJLUr-=2+S4HOqF0qKAAX27h2T1H1uOnxM9pQ@mail.gmail.com>
+ <20210330141703.lkttbuflr5z5ia7f@wittgenstein>
+ <CAOQ4uxirMBzcaLeLoBWCMPPr7367qeKjnW3f88bh1VMr_3jv_A@mail.gmail.com>
+ <20210331094604.xxbjl3krhqtwcaup@wittgenstein>
+ <CAOQ4uxirud-+ot0kZ=8qaicvjEM5w1scAeoLP_-HzQx+LwihHw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJHvVcikF9MJepyvf6riVKZEUxQvV1QMdoQoN5Kirs0TLcn-Dg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxirud-+ot0kZ=8qaicvjEM5w1scAeoLP_-HzQx+LwihHw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Axel,
+On Wed 31-03-21 14:29:04, Amir Goldstein wrote:
+> On Wed, Mar 31, 2021 at 12:46 PM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> >
+> > On Tue, Mar 30, 2021 at 05:56:25PM +0300, Amir Goldstein wrote:
+> > > > > > My example probably would be something like:
+> > > > > >
+> > > > > > mount -t ext4 /dev/sdb /A
+> > > > > >
+> > > > > > 1. FAN_MARK_MOUNT(/A)
+> > > > > >
+> > > > > > mount --bind /A /B
+> > > > > >
+> > > > > > 2. FAN_MARK_MOUNT(/B)
+> > > > > >
+> > > > > > mount -t ecryptfs /B /C
+> > > > > >
+> > > > > > 3. FAN_MARK_MOUNT(/C)
+> > > > > >
+> > > > > > let's say I now do
+> > > > > >
+> > > > > > touch /C/bla
+> > > > > >
+> > > > > > I may be way off here but intuitively it seems both 1. and 2. should get
+> > > > > > a creation event but not 3., right?
+> > > > > >
+> > > > >
+> > > > > Why not 3?
+> > > > > You explicitly set a mark on /C requesting to be notified when
+> > > > > objects are created via /C.
+> > > >
+> > > > Sorry, that was a typo. I meant to write, both 2. and 3. should get a
+> > > > creation event but not 1.
+> > > >
+> > > > >
+> > > > > > But with your proposal would both 1. and 2. still get a creation event?
+> > > > > >
+> > > >
+> > > > Same obvious typo. The correct question would be: with your proposal do
+> > > > 2. and 3. both get an event?
+> > > >
+> > > > Because it feels like they both should since /C is mounted on top of /B
+> > > > and ecryptfs acts as a shim. Both FAN_MARK_MOUNT(/B) and
+> > > > FAN_MARK_MOUNT(/C) should get a creation event after all both will have
+> > > > mnt->mnt_fsnotify_marks set.
+> > > >
+> > >
+> > > Right.
+> > >
+> > > There are two ways to address this inconsistency:
+> > > 1. Change internal callers of vfs_ helpers to use a private mount,
+> > >     as you yourself suggested for ecryptfs and cachefiles
+> >
+> > I feel like this is he correct thing to do independently of the fanotify
+> > considerations. I think I'll send an RFC for this today or later this
+> > week.
+> >
+> > > 2. Add fsnotify_path_ hooks at caller site - that would be the
+> > >     correct thing to do for nfsd IMO
+> >
+> > I do not have an informed opinion yet on nfsd so I simply need to trust
+> > you here. :)
+> >
+> 
+> As long as "exp_export: export of idmapped mounts not yet supported.\n"
+> I don't think it matters much.
+> It feels like adding idmapped mounts to nfsd is on your roadmap.
+> When you get to that we can discuss adding fsnotify path hooks to nfsd
+> if Jan agrees to the fsnotify path hooks concept.
 
-On Tue, Mar 30, 2021 at 04:30:13PM -0700, Axel Rasmussen wrote:
-> Yes, a refactor like that is promising. It's hard to say for certain
-> without actually looking at the result - I'll spend some time tomorrow
-> on a few options, and send along the cleanest version I come up with.
+I was looking at the patch and thinking about it for a few days already. I
+think that generating fsnotify event later (higher up the stack where we
+have mount information) is fine and a neat idea. I just dislike the hackery
+with dentry flags. Also I'm somewhat uneasy that it is random (from
+userspace POV) when path event is generated and when not (at least that's
+my impression from the patch - maybe I'm wrong). How difficult would it be
+to get rid of it? I mean what if we just moved say fsnotify_create() call
+wholly up the stack? It would mean more explicit calls to fsnotify_create()
+from filesystems - as far as I'm looking nfsd, overlayfs, cachefiles,
+ecryptfs. But that would seem to be manageable.  Also, to maintain sanity,
+we would probably have to lift generation of all directory events like
+that. That would be already notable churn but maybe doable... I know you've
+been looking at similar things in the past so if you are aware why this
+won't fly, please tell me.
 
-Before you move onto a new version...  See this commit:
-
-5b51072e97d5 ("userfaultfd: shmem: allocate anonymous memory for MAP_PRIVATE shmem", 2018-11-30)
-
-I found it when I was thinking why not move the whole continue logic directly
-into mfill_atomic_pte(), if we can have the pte installation helper, because
-that's all we need.
-
-So previously I got the semantics a bit mixed up: for private shmem mappings,
-UFFDIO_COPY won't fill in page cache at all, but it's all private.  We keep the
-page cache empty even after UFFDIO_COPY for a private mapping.
-
-UFFDIO_CONTINUE is slightly different, since we _know_ the page cache is
-there..  So I'm thinking maybe you need to handle the continue request in
-mfill_atomic_pte() before the VM_SHARED check so as to cover both cases.
-
+								Honza
 -- 
-Peter Xu
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
