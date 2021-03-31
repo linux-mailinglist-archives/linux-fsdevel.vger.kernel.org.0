@@ -2,177 +2,248 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EF4234FE6E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 12:57:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FEDF34FF7D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Mar 2021 13:31:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235068AbhCaK51 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Mar 2021 06:57:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56402 "EHLO
+        id S235091AbhCaLav (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Mar 2021 07:30:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234865AbhCaK5M (ORCPT
+        with ESMTP id S235119AbhCaLaW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 06:57:12 -0400
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D0CBC061574;
-        Wed, 31 Mar 2021 03:57:12 -0700 (PDT)
-Received: by mail-il1-x136.google.com with SMTP id u2so16825714ilk.1;
-        Wed, 31 Mar 2021 03:57:12 -0700 (PDT)
+        Wed, 31 Mar 2021 07:30:22 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1D1BC061574;
+        Wed, 31 Mar 2021 04:29:15 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id r193so19716626ior.9;
+        Wed, 31 Mar 2021 04:29:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=dElUpclszfmuTzdAJR3Bfu932OnRJH6x2FQDa8QtJL4=;
-        b=FerCr8EPtI0zidGhTWSgpjD4X/nDK3LnZMveCkZ4z/arBcnQ4/sKtq9dLnfSRyox0X
-         gunAPTykB/Yz2uqBh4mwTYUd3GqDoNNPKsGmGSxPaPu1R93NMJp4HlD+V1xKauBvUn/b
-         z8HHc2UUafT4jSqGLH8JIU3eVAMQ4TMI52CaRZ9mYYDio/zz9htPnxF9w9ddz30NO/Gd
-         gkpnEXKpYbdRWa0p6vErLwa5VWYLqsvPwaOYFs2n4KtYbjHxK7n9lgdJ/yLvo1POC9L4
-         ahF/6DIjpiqpdDnB7u87LYX6uUJeu1nlZbjYTjdEOQNgRmjDD7qBjXxD/MuNMGl8HChY
-         /RHw==
+        bh=Iww1/sddqyH/KQZ8vJMvmYebJg1acq/WZ4H0LPzqvw4=;
+        b=PQ5AGqmPB8tH6bnXEqrsMkbA3ZVFT52CdooCurj6EyZawKGgdnPDiIL+LifLNSFDgN
+         ZYOqR/oDue7TOjs8nknqLtO0BSdnKJMMREspB/U8B0whDc/pHbItkDzgZpQGmcRohWOi
+         6bOz1rq/BV9+OHBxHcn/aol94Q1clX8WzXQ86HEi2HmyfpvT6n9EEpkdKllCppJt1NsN
+         4PEg0eK0Pt93ZHj9y9JjN+84c1UeuIY3Fp174Bt43KJVD0x30o6VLQnU+X+zPbVA7r5E
+         r8/wIG+1KPOxFpkXg5i4ee0IujjfLrHRW5Y+Gn4jOrlfXAgfBuiX6BDrnOOePMME6ASB
+         o7GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dElUpclszfmuTzdAJR3Bfu932OnRJH6x2FQDa8QtJL4=;
-        b=C1jqBEFETOBCx+1+SkCp4J1Ein/v/zNJFl151nwQs7GuDFfCxDxJNOUZ8/5g3BQy2o
-         I44ws/tOYHWvYAlJGthn3SWsVeNtgdIb2RRfd0zBc3iERKVK47EMLnsNI/gVjxLFnDKi
-         Xjzu0sjkqbhxPLL1iPsG119G3/4OhB6AZFQ7Lx+RVA96ZC0ibhZbD7OKmjj1o3WBuYI0
-         EcK93ehei/DLMilUwlB0Zjhmea2nPH9xwvx/Llc39UB92Ib0dXZ1MwInzROXQJpFfKPS
-         4DFVEAMZskeHQK7FeWGzn7j/bICyVh3ZW5dkrVAfFCqV2o6hlxAKXlk5Q7vUyQCr1GAM
-         RJfw==
-X-Gm-Message-State: AOAM533Frn8W71MgfzaCiyO8siCd0gsfYWqeCkgibh10TS+jbo5isOA6
-        sEVetf3VZs87SY1XhGiyFwQi7mTdsWj+9+ALpE4=
-X-Google-Smtp-Source: ABdhPJzNUOaZ9ft9fWBmsrxAFHCXpBCLP/guEUS2TWNPzYyMUz808JIMpJys3CmDxkKn9bzZICGWjSJTXop3T1GtgJM=
-X-Received: by 2002:a05:6e02:b2a:: with SMTP id e10mr2195129ilu.9.1617188231798;
- Wed, 31 Mar 2021 03:57:11 -0700 (PDT)
+        bh=Iww1/sddqyH/KQZ8vJMvmYebJg1acq/WZ4H0LPzqvw4=;
+        b=B4KgRrCUsO3t8X3cITNhTdsrFycwY1iQC4ctQTwdhySw4/WrRSkL9ZKFku50X2mllf
+         8OBemEMLK3+8nXRdI0vFoA71dXVbnhSQiBuRMUhzIkAkHV4Yk70rDnJ+Feu82lbBU7rR
+         y3mBWROFzApG5St1Wk5Jty9tDoRkZDze2FLJm5I6+sC6Zjhr3rIGduKOlNuvhBdZw4FF
+         7kttP2olL1ChRIiuU6JPHQcXV4a3vB/s4oUDh4As9IeOowCyJWIL2x81+YbbXd5d7WnG
+         sfDOOKByPfo4kT+shKAc1qeRhSq8KvTjwW9F/QYcL1fsgQVreN1wnSi2ifhe8k+lNocN
+         jV7w==
+X-Gm-Message-State: AOAM533u3aLB1eWwHyrIwx9/GgJPMisc3KZd+dwq4aM7MsmmpnT6BUYY
+        h5Jdir9NGQSwHXVhyztbivtHvwADGllS63Q2BAg6HdviuUA=
+X-Google-Smtp-Source: ABdhPJyReBk1uLPjW6MTvDywIpZN0zsxFkfQTS1oQHZqGQF1pQYhSWyhkKrmCcCj92DqngN5mWRxJNl6J8tbvmvQQc0=
+X-Received: by 2002:a05:6638:1388:: with SMTP id w8mr2500843jad.30.1617190155110;
+ Wed, 31 Mar 2021 04:29:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210328155624.930558-1-amir73il@gmail.com> <20210330073101.5pqvw72fxvyp5kvf@wittgenstein>
- <CAOQ4uxjQFGdT0xH17pm-nSKE_0--z_AapRW70MNrLJLcCB6MAg@mail.gmail.com>
- <CAOQ4uxiizVxVJgtytYk_o7GvG2O2qwyKHgScq8KLhq218CNdnw@mail.gmail.com> <20210331100854.sdgtzma6ifj7w5yn@wittgenstein>
-In-Reply-To: <20210331100854.sdgtzma6ifj7w5yn@wittgenstein>
+References: <20210328155624.930558-1-amir73il@gmail.com> <20210330121204.b7uto3tesqf6m7hb@wittgenstein>
+ <CAOQ4uxjVdjLPbkkZd+_1csecDFuHxms3CcSLuAtRbKuozHUqWA@mail.gmail.com>
+ <20210330125336.vj2hkgwhyrh5okee@wittgenstein> <CAOQ4uxjPhrY55kJLUr-=2+S4HOqF0qKAAX27h2T1H1uOnxM9pQ@mail.gmail.com>
+ <20210330141703.lkttbuflr5z5ia7f@wittgenstein> <CAOQ4uxirMBzcaLeLoBWCMPPr7367qeKjnW3f88bh1VMr_3jv_A@mail.gmail.com>
+ <20210331094604.xxbjl3krhqtwcaup@wittgenstein>
+In-Reply-To: <20210331094604.xxbjl3krhqtwcaup@wittgenstein>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 31 Mar 2021 13:57:00 +0300
-Message-ID: <CAOQ4uxiEx7YANtoBRrWCM26HA-XpbRcpgB+Nj-Up9-BWL=KHcA@mail.gmail.com>
+Date:   Wed, 31 Mar 2021 14:29:04 +0300
+Message-ID: <CAOQ4uxirud-+ot0kZ=8qaicvjEM5w1scAeoLP_-HzQx+LwihHw@mail.gmail.com>
 Subject: Re: [RFC][PATCH] fanotify: allow setting FAN_CREATE in mount mark mask
 To:     Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     Jan Kara <jack@suse.cz>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
+        Linux API <linux-api@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "J. Bruce Fields" <bfields@fieldses.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 31, 2021 at 1:08 PM Christian Brauner
+On Wed, Mar 31, 2021 at 12:46 PM Christian Brauner
 <christian.brauner@ubuntu.com> wrote:
 >
-> On Tue, Mar 30, 2021 at 07:24:02PM +0300, Amir Goldstein wrote:
-> > On Tue, Mar 30, 2021 at 12:31 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > >
-> > > On Tue, Mar 30, 2021 at 10:31 AM Christian Brauner
-> > > <christian.brauner@ubuntu.com> wrote:
+> On Tue, Mar 30, 2021 at 05:56:25PM +0300, Amir Goldstein wrote:
+> > > > > My example probably would be something like:
+> > > > >
+> > > > > mount -t ext4 /dev/sdb /A
+> > > > >
+> > > > > 1. FAN_MARK_MOUNT(/A)
+> > > > >
+> > > > > mount --bind /A /B
+> > > > >
+> > > > > 2. FAN_MARK_MOUNT(/B)
+> > > > >
+> > > > > mount -t ecryptfs /B /C
+> > > > >
+> > > > > 3. FAN_MARK_MOUNT(/C)
+> > > > >
+> > > > > let's say I now do
+> > > > >
+> > > > > touch /C/bla
+> > > > >
+> > > > > I may be way off here but intuitively it seems both 1. and 2. should get
+> > > > > a creation event but not 3., right?
+> > > > >
 > > > >
-> > > > On Sun, Mar 28, 2021 at 06:56:24PM +0300, Amir Goldstein wrote:
-> > > > > Add a high level hook fsnotify_path_create() which is called from
-> > > > > syscall context where mount context is available, so that FAN_CREATE
-> > > > > event can be added to a mount mark mask.
-> > > > >
-> > > > > This high level hook is called in addition to fsnotify_create(),
-> > > > > fsnotify_mkdir() and fsnotify_link() hooks in vfs helpers where the mount
-> > > > > context is not available.
-> > > > >
-> > > > > In the context where fsnotify_path_create() will be called, a dentry flag
-> > > > > flag is set on the new dentry the suppress the FS_CREATE event in the vfs
-> > > > > level hooks.
-> > > > >
-> > > > > This functionality was requested by Christian Brauner to replace
-> > > > > recursive inotify watches for detecting when some path was created under
-> > > > > an idmapped mount without having to monitor FAN_CREATE events in the
-> > > > > entire filesystem.
-> > > > >
-> > > > > In combination with more changes to allow unprivileged fanotify listener
-> > > > > to watch an idmapped mount, this functionality would be usable also by
-> > > > > nested container managers.
-> > > > >
-> > > > > Link: https://lore.kernel.org/linux-fsdevel/20210318143140.jxycfn3fpqntq34z@wittgenstein/
-> > > > > Cc: Christian Brauner <christian.brauner@ubuntu.com>
-> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > > ---
-> > > >
-> > > > Was about to look at this. Does this require preliminary patches since
-> > > > it doesn't apply to current master. If so, can you just give me a link
-> > > > to a branch so I can pull from that? :)
-> > > >
+> > > > Why not 3?
+> > > > You explicitly set a mark on /C requesting to be notified when
+> > > > objects are created via /C.
 > > >
-> > > The patch is less useful on its own.
-> > > Better take the entire work for the demo which includes this patch:
+> > > Sorry, that was a typo. I meant to write, both 2. and 3. should get a
+> > > creation event but not 1.
 > > >
-> > > [1] https://github.com/amir73il/linux/commits/fanotify_userns
-> > > [2] https://github.com/amir73il/inotify-tools/commits/fanotify_userns
+> > > >
+> > > > > But with your proposal would both 1. and 2. still get a creation event?
+> > > > >
+> > >
+> > > Same obvious typo. The correct question would be: with your proposal do
+> > > 2. and 3. both get an event?
+> > >
+> > > Because it feels like they both should since /C is mounted on top of /B
+> > > and ecryptfs acts as a shim. Both FAN_MARK_MOUNT(/B) and
+> > > FAN_MARK_MOUNT(/C) should get a creation event after all both will have
+> > > mnt->mnt_fsnotify_marks set.
 > > >
 > >
-> > Christian,
+> > Right.
 > >
-> > Apologies for the fast moving target.
+> > There are two ways to address this inconsistency:
+> > 1. Change internal callers of vfs_ helpers to use a private mount,
+> >     as you yourself suggested for ecryptfs and cachefiles
 >
-> No problem.
+> I feel like this is he correct thing to do independently of the fanotify
+> considerations. I think I'll send an RFC for this today or later this
+> week.
 >
-> > I just force force the kernel+demo branches to include support for
-> > the two extra events (delete and move) on mount mark.
+> > 2. Add fsnotify_path_ hooks at caller site - that would be the
+> >     correct thing to do for nfsd IMO
 >
-> Sounds good.
->
-> One thing your patch
->
-> commit ea31e84fda83c17b88851de399f76f5d9fc1abf4
-> Author: Amir Goldstein <amir73il@gmail.com>
-> Date:   Sat Mar 20 12:58:12 2021 +0200
->
->     fs: allow open by file handle inside userns
->
->     open_by_handle_at(2) requires CAP_DAC_READ_SEARCH in init userns,
->     where most filesystems are mounted.
->
->     Relax the requirement to allow a user with CAP_DAC_READ_SEARCH
->     inside userns to open by file handle in filesystems that were
->     mounted inside that userns.
->
->     In addition, also allow open by handle in an idmapped mount, which is
->     mapped to the userns while verifying that the returned open file path
->     is under the root of the idmapped mount.
->
->     This is going to be needed for setting an fanotify mark on a filesystem
->     and watching events inside userns.
->
->     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> Requires fs/exportfs/expfs.c to be made idmapped mounts aware.
-> open_by_handle_at() uses exportfs_decode_fh() which e.g. has the
-> following and other callchains:
->
-> exportfs_decode_fh()
-> -> exportfs_decode_fh_raw()
->    -> lookup_one_len()
->       -> inode_permission(mnt_userns, ...)
->
-> That's not a huge problem though I did all these changes for the
-> overlayfs support for idmapped mounts I have in a branch from an earlier
-> version of the idmapped mounts patchset. Basically lookup_one_len(),
-> lookup_one_len_unlocked(), and lookup_positive_unlocked() need to take
-> the mnt_userns into account. I can rebase my change and send it for
-> consideration next cycle. If you can live without the
-> open_by_handle_at() support for now in this patchset (Which I think you
-> said you could.) then it's not a blocker either. Sorry for the
-> inconvenience.
+> I do not have an informed opinion yet on nfsd so I simply need to trust
+> you here. :)
 >
 
-My preference is that you take this patch through your branch.
-I think you will do a much better job than me selling it and arguing for
-its correctness.
+As long as "exp_export: export of idmapped mounts not yet supported.\n"
+I don't think it matters much.
+It feels like adding idmapped mounts to nfsd is on your roadmap.
+When you get to that we can discuss adding fsnotify path hooks to nfsd
+if Jan agrees to the fsnotify path hooks concept.
 
-The ability to setup fanotify marks on idmapped mounts does not
-depend on it in any way.
-I've only added it to my branch to facilitate the demo, which also
-independently resolves the reported fids to paths.
+> >
+> > > >
+> > > > They would not get an event, because fsnotify() looks for CREATE event
+> > > > subscribers on inode->i_fsnotify_marks and inode->i_sb_s_fsnotify_marks
+> > > > and does not find any.
+> > >
+> > > Well yes, but my example has FAN_MARK_MOUNT(/B) set. So fanotify
+> > > _should_ look at
+> > >             (!mnt || !mnt->mnt_fsnotify_marks) &&
+> > > and see that there are subscribers and should notify the subscribers in
+> > > /B even if the file is created through /C.
+> > >
+> > > My point is with your solution this can't be handled and I want to make
+> > > sure that this is ok. Because right now you'd not be notified about a
+> > > new file having been created in /B even though mnt->mnt_fsnotify_marks
+> > > is set and the creation went through /B via /C.
+> > >
+> >
+> > If you are referring to the ecryptfs use case specifically, then I think it is
+> > ok. After all, whether ecryptfs uses a private mount clone or not is not
+> > something the user can know.
+> >
+> > > _Unless_ we switch to an argument like overlayfs and say "This is a
+> > > private mount which is opaque and so we don't need to generate events.".
+> > > Overlayfs handles this cleanly due to clone_private_mount() which will
+> > > shed all mnt->mnt_fsnotify_marks and ecryptfs should too if that is the
+> > > argument we follow, no?
+> > >
+> >
+> > There is simply no way that the user can infer from the documentation
+> > of FAN_MARK_MOUNT that the event on /B is expected when /B is
+> > underlying layer of ecryptfs or overlayfs.
+> > It requires deep internal knowledge of the stacked fs implementation.
+> > In best case, the user can infer that she MAY get an event on /B.
+> > Some users MAY also expect to get an event on /A because they do not
+> > understand the concept of bind mounts...
+> > Clone a mount ns and you will get more lost users...
+>
+> I disagree to some extent. For example, a user might remount /B
+> read-only at which point /C is effectively read-only too which makes it
+> plain obvious to the user that /C piggy-backs on /B.
+
+Yes, but that is a bug. /C should not become read-only. It should use
+a private clone of /B, so I don't see where this is going.
+
+> But leaving that aside my questioning is more concerned with whether the
+> implementation we're aiming for is consistent and intuitive and that
+> stacking example came to my mind pretty quickly.
+>
+
+This implementation is a compromise for not having clear user mount
+context in all places that call for an event.
+For every person you find that thinks it is intuitive to get an event on /B
+for touch C/bla, you will find another person that thinks it is not intuitive
+to get an event. I think we are way beyond the stage with mount
+namespaces where intuition alone suffice.
+
+w.r.t consistent, you gave a few examples and I suggested how IMO
+they should be fixed to behave consistently.
+If you have other examples of alleged inconsistencies, please list them.
+
+> >
+> > > >
+> > > > The vfs_create() -> fsnotify_create() hook passes data_type inode to
+> > > > fsnotify() so there is no fsnotify_data_path() to extract mnt event
+> > > > subscribers from.
+> > >
+> > > Right, that was my point. You don't have the mnt context for the
+> > > underlying fs at a time when e.g. call vfs_link() which ultimately calls
+> > > fsnotify_create/link() which I'm saying might be a problem.
+> > >
+> >
+> > It's a problem. If it wasn't a problem I wouldn't need to work around it ;-)
+> >
+> > It would be a problem if people think that the FAN_MOUNT_MARK
+> > is a subtree mark, which it certainly is not. And I have no doubt that
+>
+> I don't think subtree marks figure into the example above. But we
+> digress.
+>
+> > as Jan said, people really do want a subtree mark.
+> >
+> > My question to you with this RFC is: Does the ability to subscribe to
+> > CREATE/DELETE/MOVE events on a mount help any of your use
+> > cases? With or without the property that mount marks are allowed
+>
+> Since I explicitly pointed on in a prior mail that it would be great to
+> have the same events as for a regular fanotify watch I think I already
+> answered that question. :)
+>
+> > inside userns for idmapped mounts.
+>
+> But if it helps then I'll do it once: yes, both would indeed be very
+> useful.
+>
+
+OK. I understand that the "promise" of those abilities is very useful.
+Please also confirm once you tested the demo code that the new
+events on an idmapped mount will "actually" be useful to container
+managers. If you can work my demo code into a demo branch for
+the bind mount injection or something that would be best.
+
+The reason I am asking this is because while I was working on
+enabling sb/mount marks inside userns I found several other issues
+(e.g. open_by_handle_at()) without fixing them the demo would have
+been much less impressive and much less useful in practice.
+
+So I would like to know that we really have all the pieces needed for
+a useful solution, before proposing the fanotify patches.
 
 Thanks,
 Amir.
