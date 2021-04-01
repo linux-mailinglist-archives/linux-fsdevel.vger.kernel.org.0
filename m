@@ -2,379 +2,608 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 67468350B80
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 03:09:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B375350B87
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 03:09:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232429AbhDABIz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S232565AbhDABIz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 31 Mar 2021 21:08:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41330 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:41352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229486AbhDABIr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 21:08:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7EC5E61057;
-        Thu,  1 Apr 2021 01:08:47 +0000 (UTC)
+        id S229812AbhDABIx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 31 Mar 2021 21:08:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0B6D261057;
+        Thu,  1 Apr 2021 01:08:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617239327;
-        bh=HwWCq6SxvUfuy5a9dDVIH4MpXqTQrl97cM0rg3ExtiM=;
-        h=Subject:From:To:Cc:Date:From;
-        b=Yl5HamVNGOnj3haG2U2nvOySfjLHPBzAhMEHhQmph/+dSqFd3VvjzNOUTYeYvKHVM
-         b9bsUc2ZXAv1nim06P6QLD1yCKuZBXy2MpxAWxu0Cx2qsTKCn3YcD9K7p3doqLMBIY
-         gsrCCRCPe7Jroi3dnbouV7CVBW36DyD7sSLIvhgv7kcRkM5jILZZET5Xw03EGMbu87
-         IZLx415HF19SY2xfG4dYo7FuFSOwmpE35lGd7lWr8PATBr6L/zjCQclxy/A9/vDCqH
-         WAsmHGAU5oaz7CsI07qtv2R7UTUI3s18rBoG54N38PPOTu+IURMV8qZFDQ+ncQz0zn
-         6xO5exBs+N4ag==
-Subject: [PATCHSET RFC v3 00/18] xfs: atomic file updates
+        s=k20201202; t=1617239333;
+        bh=s1vnFkM93qidlmxs8gaOkPwGZyfYT15DiNKJAyKcX4I=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=ahtoiLSkVEulXiBJub8SgK+Ewp+Nd6/vKGwhTptZmc8SrIpB0O4fJKBZv4Bi7CZdI
+         L/f2th1yBlndKNO9fCNjh5nCYqDm+q582pJcgB6njiH+yubC9KiQNLCKV3NFI3XobL
+         bB/BvTHWk4aLcx3udav1+bu9ieLifSR3VMCPr2WwznnTOozavh8VO0awo/VrpRXDDc
+         qiVF3OppAIGKNLxWn0Gr7mLwGcZvEqQILqiX32Fhg2GWIrWAq2hxV1gMgodrEXu+N8
+         AlL1W4yLYCUHLUyV8y5Ek2WOyCt0NMw6TiQyUKN3R3dJH59SASd0XAhRk8CAbBjQhx
+         5RigQ0SD7D7Jg==
+Subject: [PATCH 01/18] vfs: introduce new file range exchange ioctl
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-api@vger.kernel.org
-Date:   Wed, 31 Mar 2021 18:08:46 -0700
-Message-ID: <161723932606.3149451.12366114306150243052.stgit@magnolia>
+Date:   Wed, 31 Mar 2021 18:08:52 -0700
+Message-ID: <161723933214.3149451.12102627412985512284.stgit@magnolia>
+In-Reply-To: <161723932606.3149451.12366114306150243052.stgit@magnolia>
+References: <161723932606.3149451.12366114306150243052.stgit@magnolia>
 User-Agent: StGit/0.19
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+From: Darrick J. Wong <djwong@kernel.org>
 
-This series creates a new FIEXCHANGE_RANGE system call to exchange
-ranges of bytes between two files atomically.  This new functionality
-enables data storage programs to stage and commit file updates such that
-reader programs will see either the old contents or the new contents in
-their entirety, with no chance of torn writes.  A successful call
-completion guarantees that the new contents will be seen even if the
-system fails.
+Introduce a new ioctl to handle swapping ranges of bytes between files.
 
-User programs will be able to update files atomically by opening an
-O_TMPFILE, reflinking the source file to it, making whatever updates
-they want to make, and exchange the relevant ranges of the temp file
-with the original file.  If the updates are aligned with the file block
-size, a new (since v2) flag provides for exchanging only the written
-areas.  Callers can arrange for the update to be rejected if the
-original file has been changed.
-
-The intent behind this new userspace functionality is to enable atomic
-rewrites of arbitrary parts of individual files.  For years, application
-programmers wanting to ensure the atomicity of a file update had to
-write the changes to a new file in the same directory, fsync the new
-file, rename the new file on top of the old filename, and then fsync the
-directory.  People get it wrong all the time, and $fs hacks abound.
-Here is the proposed manual page:
-
-IOCTL-FIEXCHANGE_RANGE(Linux Programmer's ManIOCTL-FIEXCHANGE_RANGE(2)
-
-NAME
-       ioctl_fiexchange_range  - exchange the contents of parts of two
-       files
-
-SYNOPSIS
-       #include <sys/ioctl.h>
-       #include <linux/fiexchange.h>
-
-       int    ioctl(int     file2_fd,     FIEXCHANGE_RANGE,     struct
-       file_xchg_range *arg);
-
-DESCRIPTION
-       Given  a  range  of bytes in a first file file1_fd and a second
-       range of bytes in a second file  file2_fd,  this  ioctl(2)  ex‐
-       changes the contents of the two ranges.
-
-       Exchanges  are  atomic  with  regards to concurrent file opera‐
-       tions, so no userspace-level locks need to be taken  to  obtain
-       consistent  results.  Implementations must guarantee that read‐
-       ers see either the old contents or the new  contents  in  their
-       entirety, even if the system fails.
-
-       The exchange parameters are conveyed in a structure of the fol‐
-       lowing form:
-
-           struct file_xchg_range {
-               __s64    file1_fd;
-               __s64    file1_offset;
-               __s64    file2_offset;
-               __s64    length;
-
-               __u64    flags;
-
-               __s64    file2_ino;
-               __s64    file2_mtime;
-               __s64    file2_ctime;
-               __s32    file2_mtime_nsec;
-               __s32    file2_ctime_nsec;
-
-               __u64    pad[6];
-           };
-
-       The field pad must be zero.
-
-       The fields file1_fd, file1_offset, and length define the  first
-       range of bytes to be exchanged.
-
-       The fields file2_fd, file2_offset, and length define the second
-       range of bytes to be exchanged.
-
-       Both files must be from the same filesystem mount.  If the  two
-       file  descriptors represent the same file, the byte ranges must
-       not overlap.  Most  disk-based  filesystems  require  that  the
-       starts  of  both ranges must be aligned to the file block size.
-       If this is the case, the ends of the ranges  must  also  be  so
-       aligned unless the FILE_XCHG_RANGE_TO_EOF flag is set.
-
-       The field flags control the behavior of the exchange operation.
-
-           FILE_XCHG_RANGE_FILE2_FRESH
-                  Check  the  freshness  of file2_fd after locking the
-                  file but before exchanging the contents.   The  sup‐
-                  plied  file2_ino field must match file2's inode num‐
-                  ber, and the supplied file2_mtime, file2_mtime_nsec,
-                  file2_ctime,  and file2_ctime_nsec fields must match
-                  the modification time and change time of file2.   If
-                  they do not match, EBUSY will be returned.
-
-           FILE_XCHG_RANGE_TO_EOF
-                  Ignore  the length parameter.  All bytes in file1_fd
-                  from file1_offset to EOF are moved to file2_fd,  and
-                  file2's  size is set to (file2_offset+(file1_length-
-                  file1_offset)).  Meanwhile, all bytes in file2  from
-                  file2_offset  to  EOF are moved to file1 and file1's
-                  size   is   set   to    (file1_offset+(file2_length-
-                  file2_offset)).   This option is not compatible with
-                  FILE_XCHG_RANGE_FULL_FILES.
-
-           FILE_XCHG_RANGE_FSYNC
-                  Ensure that all modified in-core data in  both  file
-                  ranges  and  all  metadata updates pertaining to the
-                  exchange operation are flushed to persistent storage
-                  before  the  call  returns.  Opening either file de‐
-                  scriptor with O_SYNC or O_DSYNC will have  the  same
-                  effect.
-
-           FILE_XCHG_RANGE_SKIP_FILE1_HOLES
-                  Skip  sub-ranges  of  file1_fd that are known not to
-                  contain data.  This facility can be used  to  imple‐
-                  ment  atomic scatter-gather writes of any complexity
-                  for software-defined storage targets.
-
-           FILE_XCHG_RANGE_DRY_RUN
-                  Check the parameters and the feasibility of the  op‐
-                  eration, but do not change anything.
-
-           FILE_XCHG_RANGE_COMMIT
-                  This      flag      is      a     combination     of
-                  FILE_XCHG_RANGE_FILE2_FRESH |  FILE_XCHG_RANGE_FSYNC
-                  and  can  be  used  to commit changes to file2_fd to
-                  persistent storage if and  only  if  file2  has  not
-                  changed.
-
-           FILE_XCHG_RANGE_FULL_FILES
-                  Require that file1_offset and file2_offset are zero,
-                  and that the length field  matches  the  lengths  of
-                  both  files.   If  not, EDOM will be returned.  This
-                  option      is       not       compatible       with
-                  FILE_XCHG_RANGE_TO_EOF.
-
-           FILE_XCHG_RANGE_NONATOMIC
-                  This  flag  relaxes the requirement that readers see
-                  only the old contents or the new contents  in  their
-                  entirety.   If  the system fails before all modified
-                  in-core data and metadata updates are  persisted  to
-                  disk,  the contents of both file ranges after recov‐
-                  ery are not defined and may be a mix of both.
-
-                  Do not use this flag unless  the  contents  of  both
-                  ranges  are  known  to be identical and there are no
-                  other writers.
-
-RETURN VALUE
-       On error, -1 is returned, and errno is set to indicate the  er‐
-       ror.
-
-ERRORS
-       Error  codes can be one of, but are not limited to, the follow‐
-       ing:
-
-       EBADF  file1_fd is not open for reading and writing or is  open
-              for  append-only  writes;  or  file2_fd  is not open for
-              reading and writing or is open for append-only writes.
-
-       EBUSY  The inode number and timestamps supplied  do  not  match
-              file2_fd  and  FILE_XCHG_RANGE_FILE2_FRESH  was  set  in
-              flags.
-
-       EDOM   The ranges do not cover the entirety of both files,  and
-              FILE_XCHG_RANGE_FULL_FILES was set in flags.
-
-       EINVAL The  parameters  are  not correct for these files.  This
-              error can also appear if either file  descriptor  repre‐
-              sents  a device, FIFO, or socket.  Disk filesystems gen‐
-              erally require the offset and  length  arguments  to  be
-              aligned to the fundamental block sizes of both files.
-
-       EIO    An I/O error occurred.
-
-       EISDIR One of the files is a directory.
-
-       ENOMEM The  kernel  was unable to allocate sufficient memory to
-              perform the operation.
-
-       ENOSPC There is not enough free space  in  the  filesystem  ex‐
-              change the contents safely.
-
-       EOPNOTSUPP
-              The filesystem does not support exchanging bytes between
-              the two files.
-
-       EPERM  file1_fd or file2_fd are immutable.
-
-       ETXTBSY
-              One of the files is a swap file.
-
-       EUCLEAN
-              The filesystem is corrupt.
-
-       EXDEV  file1_fd and  file2_fd  are  not  on  the  same  mounted
-              filesystem.
-
-CONFORMING TO
-       This API is Linux-specific.
-
-USE CASES
-       Three use cases are imagined for this system call.
-
-       The  first  is a filesystem defragmenter, which copies the con‐
-       tents of a file into another file and wishes  to  exchange  the
-       space  mappings  of  the  two files, provided that the original
-       file has not changed.  The flags NONATOMIC and FILE2_FRESH  are
-       recommended for this application.
-
-       The  second is a data storage program that wants to commit non-
-       contiguous updates to a file atomically.  This can be  done  by
-       creating a temporary file, calling FICLONE(2) to share the con‐
-       tents, and staging the updates into the temporary file.  Either
-       of  the  FULL_FILES or TO_EOF flags are recommended, along with
-       FSYNC.  Depending on  the  application's  locking  design,  the
-       flags FILE2_FRESH or COMMIT may be applicable here.  The tempo‐
-       rary file can be deleted or punched out afterwards.
-
-       The third is a software-defined storage host (e.g. a disk juke‐
-       box)  which  implements an atomic scatter-gather write command.
-       Provided the exported disk's logical  block  size  matches  the
-       file's  allocation  unit  size,  this can be done by creating a
-       temporary file and writing the data at the appropriate offsets.
-       Use  this  call  with  the SKIP_HOLES flag to exchange only the
-       blocks involved in the write command.  The  use  of  the  FSYNC
-       flag is recommended here.  The temporary file should be deleted
-       or punched out completely before being reused to stage  another
-       write.
-
-NOTES
-       Some  filesystems may limit the amount of data or the number of
-       extents that can be exchanged in a single call.
-
-SEE ALSO
-       ioctl(2)
-
-Linux                         2021-04-01     IOCTL-FIEXCHANGE_RANGE(2)
-
-The reference implementation in XFS creates a new log incompat feature
-and log intent items to track high level progress of swapping ranges of
-two files and finish interrupted work if the system goes down.  Sample
-code can be found in the corresponding changes to xfs_io to exercise the
-use case mentioned above.
-
-Note that this function is /not/ the O_DIRECT atomic file writes concept
-that has also been floating around for years.  This RFC is constructed
-entirely in software, which means that there are no limitations other
-than the general filesystem limits.
-
-As a side note, the original motivation behind the kernel functionality
-is online repair of file-based metadata.  The atomic file swap is
-implemented as an atomic inode fork swap, which means that we can
-implement online reconstruction of extended attributes and directories
-by building a new one in another inode and atomically swap the contents.
-
-Subsequent patchsets adapt the online filesystem repair code to use
-atomic extent swapping.  This enables repair functions to construct a
-clean copy of a directory, xattr information, realtime bitmaps, and
-realtime summary information in a temporary inode.  If this completes
-successfully, the new contents can be swapped atomically into the inode
-being repaired.  This is essential to avoid making corruption problems
-worse if the system goes down in the middle of running repair.
-
-If you're going to start using this mess, you probably ought to just
-pull from my git trees, which are linked below.
-
-This is an extraordinary way to destroy everything.  Enjoy!
-Comments and questions are, as always, welcome.
-
---D
-
-kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=atomic-file-updates
-
-xfsprogs git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=atomic-file-updates
-
-fstests git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfstests-dev.git/log/?h=atomic-file-updates
-
-xfsdocs git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-documentation.git/log/?h=atomic-file-updates
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- Documentation/filesystems/vfs.rst |   16 +
- fs/ioctl.c                        |   42 ++
- fs/remap_range.c                  |  283 ++++++++++
- fs/xfs/Makefile                   |    3 
- fs/xfs/libxfs/xfs_bmap.h          |    4 
- fs/xfs/libxfs/xfs_defer.c         |   49 +-
- fs/xfs/libxfs/xfs_defer.h         |   11 
- fs/xfs/libxfs/xfs_errortag.h      |    4 
- fs/xfs/libxfs/xfs_format.h        |   37 +
- fs/xfs/libxfs/xfs_fs.h            |    2 
- fs/xfs/libxfs/xfs_log_format.h    |   63 ++
- fs/xfs/libxfs/xfs_log_recover.h   |    4 
- fs/xfs/libxfs/xfs_sb.c            |    2 
- fs/xfs/libxfs/xfs_shared.h        |    6 
- fs/xfs/libxfs/xfs_swapext.c       | 1030 +++++++++++++++++++++++++++++++++++++
- fs/xfs/libxfs/xfs_swapext.h       |   89 +++
- fs/xfs/xfs_bmap_item.c            |   13 
- fs/xfs/xfs_bmap_util.c            |  611 ----------------------
- fs/xfs/xfs_bmap_util.h            |    3 
- fs/xfs/xfs_error.c                |    3 
- fs/xfs/xfs_extfree_item.c         |    2 
- fs/xfs/xfs_file.c                 |   49 ++
- fs/xfs/xfs_inode.c                |   13 
- fs/xfs/xfs_inode.h                |    1 
- fs/xfs/xfs_ioctl.c                |  102 +---
- fs/xfs/xfs_ioctl.h                |    4 
- fs/xfs/xfs_ioctl32.c              |    8 
- fs/xfs/xfs_log.c                  |   65 ++
- fs/xfs/xfs_log.h                  |    3 
- fs/xfs/xfs_log_priv.h             |    3 
- fs/xfs/xfs_log_recover.c          |   57 ++
- fs/xfs/xfs_mount.c                |  110 ++++
- fs/xfs/xfs_mount.h                |    2 
- fs/xfs/xfs_refcount_item.c        |    2 
- fs/xfs/xfs_rmap_item.c            |    2 
- fs/xfs/xfs_super.c                |   17 +
- fs/xfs/xfs_swapext_item.c         |  649 +++++++++++++++++++++++
- fs/xfs/xfs_swapext_item.h         |   61 ++
- fs/xfs/xfs_trace.c                |    1 
- fs/xfs/xfs_trace.h                |  196 +++++++
- fs/xfs/xfs_trans.c                |   14 -
- fs/xfs/xfs_xchgrange.c            |  772 ++++++++++++++++++++++++++++
- fs/xfs/xfs_xchgrange.h            |   30 +
- include/linux/fs.h                |   14 -
- include/uapi/linux/fiexchange.h   |  101 ++++
- 45 files changed, 3807 insertions(+), 746 deletions(-)
- create mode 100644 fs/xfs/libxfs/xfs_swapext.c
- create mode 100644 fs/xfs/libxfs/xfs_swapext.h
- create mode 100644 fs/xfs/xfs_swapext_item.c
- create mode 100644 fs/xfs/xfs_swapext_item.h
- create mode 100644 fs/xfs/xfs_xchgrange.c
- create mode 100644 fs/xfs/xfs_xchgrange.h
+ Documentation/filesystems/vfs.rst |   16 ++
+ fs/ioctl.c                        |   42 +++++
+ fs/remap_range.c                  |  283 +++++++++++++++++++++++++++++++++++++
+ fs/xfs/libxfs/xfs_fs.h            |    1 
+ include/linux/fs.h                |   14 ++
+ include/uapi/linux/fiexchange.h   |  101 +++++++++++++
+ 6 files changed, 456 insertions(+), 1 deletion(-)
  create mode 100644 include/uapi/linux/fiexchange.h
+
+
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 2049bbf5e388..9f16b260bc7e 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -1006,6 +1006,8 @@ This describes how the VFS can manipulate an open file.  As of kernel
+ 		loff_t (*remap_file_range)(struct file *file_in, loff_t pos_in,
+ 					   struct file *file_out, loff_t pos_out,
+ 					   loff_t len, unsigned int remap_flags);
++                int (*xchg_file_range)(struct file *file1, struct file *file2,
++                                       struct file_xchg_range *fxr);
+ 		int (*fadvise)(struct file *, loff_t, loff_t, int);
+ 	};
+ 
+@@ -1124,6 +1126,20 @@ otherwise noted.
+ 	ok with the implementation shortening the request length to
+ 	satisfy alignment or EOF requirements (or any other reason).
+ 
++``xchg_file_range``
++	called by the ioctl(2) system call for FIEXCHANGE_RANGE to exchange the
++	contents of two file ranges.  An implementation should exchange
++	fxr.length bytes starting at fxr.file1_offset in file1 with the same
++	number of bytes starting at fxr.file2_offset in file2.  Refer to
++	fiexchange.h file for more information.  Implementations must call
++	generic_xchg_file_range_prep to prepare the two files prior to taking
++	locks; they must call generic_xchg_file_range_check_fresh once the
++	inode is locked to abort the call if file2 has changed; and they must
++	update the inode change and mod times of both files as part of the
++	metadata update.  The timestamp updates must be done atomically as part
++	of the data exchange operation to ensure correctness of the freshness
++	check.
++
+ ``fadvise``
+ 	possibly called by the fadvise64() system call.
+ 
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index 4e6cc0a7d69c..a1c64fdfd2f2 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -260,6 +260,45 @@ static long ioctl_file_clone_range(struct file *file,
+ 				args.src_length, args.dest_offset);
+ }
+ 
++static long ioctl_file_xchg_range(struct file *file2,
++				  struct file_xchg_range __user *argp)
++{
++	struct file_xchg_range args;
++	struct fd file1;
++	__u64 old_flags;
++	int ret;
++
++	if (copy_from_user(&args, argp, sizeof(args)))
++		return -EFAULT;
++
++	file1 = fdget(args.file1_fd);
++	if (!file1.file)
++		return -EBADF;
++
++	ret = -EXDEV;
++	if (file1.file->f_path.mnt != file2->f_path.mnt)
++		goto fdput;
++
++	old_flags = args.flags;
++
++	ret = vfs_xchg_file_range(file1.file, file2, &args);
++	if (ret)
++		goto fdput;
++
++	/*
++	 * The VFS will set RANGE_FSYNC on its own if the file or inode require
++	 * synchronous writes.  Don't leak this back to userspace.
++	 */
++	args.flags &= ~FILE_XCHG_RANGE_FSYNC;
++	args.flags |= (old_flags & FILE_XCHG_RANGE_FSYNC);
++
++	if (copy_to_user(argp, &args, sizeof(args)))
++		ret = -EFAULT;
++fdput:
++	fdput(file1);
++	return ret;
++}
++
+ #ifdef CONFIG_BLOCK
+ 
+ static inline sector_t logical_to_blk(struct inode *inode, loff_t offset)
+@@ -720,6 +759,9 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
+ 	case FIDEDUPERANGE:
+ 		return ioctl_file_dedupe_range(filp, argp);
+ 
++	case FIEXCHANGE_RANGE:
++		return ioctl_file_xchg_range(filp, argp);
++
+ 	case FIONREAD:
+ 		if (!S_ISREG(inode->i_mode))
+ 			return vfs_ioctl(filp, cmd, arg);
+diff --git a/fs/remap_range.c b/fs/remap_range.c
+index e4a5fdd7ad7b..1a0bbd73106e 100644
+--- a/fs/remap_range.c
++++ b/fs/remap_range.c
+@@ -580,3 +580,286 @@ int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
+ 	return ret;
+ }
+ EXPORT_SYMBOL(vfs_dedupe_file_range);
++
++/* Performs necessary checks before doing a range exchange. */
++static int generic_xchg_file_range_checks(struct file *file1,
++					  struct file *file2,
++					  const struct file_xchg_range *fxr,
++					  unsigned int blocksize)
++{
++	struct inode *inode1 = file1->f_mapping->host;
++	struct inode *inode2 = file2->f_mapping->host;
++	int64_t test_len;
++	uint64_t blen;
++	loff_t size1, size2;
++	int ret;
++
++	if (fxr->length < 0)
++		return -EINVAL;
++
++	/* The start of both ranges must be aligned to an fs block. */
++	if (!IS_ALIGNED(fxr->file1_offset, blocksize) ||
++	    !IS_ALIGNED(fxr->file2_offset, blocksize))
++		return -EINVAL;
++
++	/* Ensure offsets don't wrap. */
++	if (fxr->file1_offset + fxr->length < fxr->file1_offset ||
++	    fxr->file2_offset + fxr->length < fxr->file2_offset)
++		return -EINVAL;
++
++	size1 = i_size_read(inode1);
++	size2 = i_size_read(inode2);
++
++	/*
++	 * We require both ranges to be within EOF, unless we're exchanging
++	 * to EOF.  generic_xchg_range_prep already checked that both
++	 * fxr->file1_offset and fxr->file2_offset are within EOF.
++	 */
++	if (!(fxr->flags & FILE_XCHG_RANGE_TO_EOF) &&
++	    (fxr->file1_offset + fxr->length > size1 ||
++	     fxr->file2_offset + fxr->length > size2))
++		return -EINVAL;
++
++	/*
++	 * Make sure we don't hit any file size limits.  If we hit any size
++	 * limits such that test_length was adjusted, we abort the whole
++	 * operation.
++	 */
++	test_len = fxr->length;
++	ret = generic_write_check_limits(file2, fxr->file2_offset, &test_len);
++	if (ret)
++		return ret;
++	ret = generic_write_check_limits(file1, fxr->file1_offset, &test_len);
++	if (ret)
++		return ret;
++	if (test_len != fxr->length)
++		return -EINVAL;
++
++	/*
++	 * If the user wanted us to exchange up to the infile's EOF, round up
++	 * to the next block boundary for this check.  Do the same for the
++	 * outfile.
++	 *
++	 * Otherwise, reject the range length if it's not block aligned.  We
++	 * already confirmed the starting offsets' block alignment.
++	 */
++	if (fxr->file1_offset + fxr->length == size1)
++		blen = ALIGN(size1, blocksize) - fxr->file1_offset;
++	else if (fxr->file2_offset + fxr->length == size2)
++		blen = ALIGN(size2, blocksize) - fxr->file2_offset;
++	else if (!IS_ALIGNED(fxr->length, blocksize))
++		return -EINVAL;
++	else
++		blen = fxr->length;
++
++	/* Don't allow overlapped exchanges within the same file. */
++	if (inode1 == inode2 &&
++	    fxr->file2_offset + blen > fxr->file1_offset &&
++	    fxr->file1_offset + blen > fxr->file2_offset)
++		return -EINVAL;
++
++	return 0;
++}
++
++/*
++ * Check that the two inodes are eligible for range exchanges, the ranges make
++ * sense, and then flush all dirty data.  Caller must ensure that the inodes
++ * have been locked against any other modifications.
++ */
++int generic_xchg_file_range_prep(struct file *file1, struct file *file2,
++				 struct file_xchg_range *fxr,
++				 unsigned int blocksize)
++{
++	struct inode *inode1 = file_inode(file1);
++	struct inode *inode2 = file_inode(file2);
++	u64 blkmask = blocksize - 1;
++	bool same_inode = (inode1 == inode2);
++	int ret;
++
++	/* Don't touch certain kinds of inodes */
++	if (IS_IMMUTABLE(inode1) || IS_IMMUTABLE(inode2))
++		return -EPERM;
++	if (IS_SWAPFILE(inode1) || IS_SWAPFILE(inode2))
++		return -ETXTBSY;
++
++	/* Don't reflink dirs, pipes, sockets... */
++	if (S_ISDIR(inode1->i_mode) || S_ISDIR(inode2->i_mode))
++		return -EISDIR;
++	if (!S_ISREG(inode1->i_mode) || !S_ISREG(inode2->i_mode))
++		return -EINVAL;
++
++	/* Ranges cannot start after EOF. */
++	if (fxr->file1_offset > i_size_read(inode1) ||
++	    fxr->file2_offset > i_size_read(inode2))
++		return -EINVAL;
++
++	/*
++	 * If the caller said to exchange to EOF, we set the length of the
++	 * request large enough to cover everything to the end of both files.
++	 */
++	if (fxr->flags & FILE_XCHG_RANGE_TO_EOF)
++		fxr->length = max_t(int64_t,
++				    i_size_read(inode1) - fxr->file1_offset,
++				    i_size_read(inode2) - fxr->file2_offset);
++
++	/* Zero length exchange exits immediately. */
++	if (fxr->length == 0)
++		return 0;
++
++	/* Check that we don't violate system file offset limits. */
++	ret = generic_xchg_file_range_checks(file1, file2, fxr, blocksize);
++	if (ret)
++		return ret;
++
++	/*
++	 * Ensure that we don't exchange a partial EOF block into the middle of
++	 * another file.
++	 */
++	if (fxr->length & blkmask) {
++		loff_t new_length = fxr->length;
++
++		if (fxr->file2_offset + new_length < i_size_read(inode2))
++			new_length &= ~blkmask;
++
++		if (fxr->file1_offset + new_length < i_size_read(inode1))
++			new_length &= ~blkmask;
++
++		if (new_length != fxr->length)
++			return -EINVAL;
++	}
++
++	/* Wait for the completion of any pending IOs on both files */
++	inode_dio_wait(inode1);
++	if (!same_inode)
++		inode_dio_wait(inode2);
++
++	ret = filemap_write_and_wait_range(inode1->i_mapping, fxr->file1_offset,
++					   fxr->file1_offset + fxr->length - 1);
++	if (ret)
++		return ret;
++
++	ret = filemap_write_and_wait_range(inode2->i_mapping, fxr->file2_offset,
++					   fxr->file2_offset + fxr->length - 1);
++	if (ret)
++		return ret;
++
++	/*
++	 * If the files or inodes involved require synchronous writes, amend
++	 * the request to force the filesystem to flush all data and metadata
++	 * to disk after the operation completes.
++	 */
++	if (((file1->f_flags | file2->f_flags) & (__O_SYNC | O_DSYNC)) ||
++	    IS_SYNC(file_inode(file1)) || IS_SYNC(file_inode(file2)))
++		fxr->flags |= FILE_XCHG_RANGE_FSYNC;
++
++	/* Remove privilege bits from both files. */
++	ret = file_remove_privs(file1);
++	if (ret)
++		return ret;
++	return file_remove_privs(file2);
++}
++EXPORT_SYMBOL(generic_xchg_file_range_prep);
++
++/*
++ * Check that both files' metadata agree with the snapshot that we took for
++ * the range exchange request.
++
++ * This should be called after the filesystem has locked /all/ inode metadata
++ * against modification.
++ */
++int generic_xchg_file_range_check_fresh(struct inode *inode1,
++					struct inode *inode2,
++					const struct file_xchg_range *fxr)
++{
++	/* Check that the offset/length values cover all of both files */
++	if ((fxr->flags & FILE_XCHG_RANGE_FULL_FILES) &&
++	    (fxr->file1_offset != 0 ||
++	     fxr->file2_offset != 0 ||
++	     fxr->length != i_size_read(inode1) ||
++	     fxr->length != i_size_read(inode2)))
++		return -EDOM;
++
++	/* Check that file2 hasn't otherwise been modified. */
++	if ((fxr->flags & FILE_XCHG_RANGE_FILE2_FRESH) &&
++	    (fxr->file2_ino        != inode2->i_ino ||
++	     fxr->file2_ctime      != inode2->i_ctime.tv_sec  ||
++	     fxr->file2_ctime_nsec != inode2->i_ctime.tv_nsec ||
++	     fxr->file2_mtime      != inode2->i_mtime.tv_sec  ||
++	     fxr->file2_mtime_nsec != inode2->i_mtime.tv_nsec))
++		return -EBUSY;
++
++	return 0;
++}
++EXPORT_SYMBOL(generic_xchg_file_range_check_fresh);
++
++static inline int xchg_range_verify_area(struct file *file, loff_t pos,
++					 struct file_xchg_range *fxr)
++{
++	int64_t len = fxr->length;
++
++	if (fxr->flags & FILE_XCHG_RANGE_TO_EOF)
++		len = min_t(int64_t, len, i_size_read(file_inode(file)) - pos);
++	return remap_verify_area(file, pos, len, true);
++}
++
++int do_xchg_file_range(struct file *file1, struct file *file2,
++		       struct file_xchg_range *fxr)
++{
++	int ret;
++
++	if ((fxr->flags & ~FILE_XCHG_RANGE_ALL_FLAGS) ||
++	    memchr_inv(&fxr->pad, 0, sizeof(fxr->pad)))
++		return -EINVAL;
++
++	if ((fxr->flags & FILE_XCHG_RANGE_FULL_FILES) &&
++	    (fxr->flags & FILE_XCHG_RANGE_TO_EOF))
++		return -EINVAL;
++
++	/*
++	 * The ioctl enforces that src and dest files are on the same mount.
++	 * Practically, they only need to be on the same file system.
++	 */
++	if (file_inode(file1)->i_sb != file_inode(file2)->i_sb)
++		return -EXDEV;
++
++	ret = generic_file_rw_checks(file1, file2);
++	if (ret < 0)
++		return ret;
++
++	ret = generic_file_rw_checks(file2, file1);
++	if (ret < 0)
++		return ret;
++
++	if (!file1->f_op->xchg_file_range)
++		return -EOPNOTSUPP;
++
++	ret = xchg_range_verify_area(file1, fxr->file1_offset, fxr);
++	if (ret)
++		return ret;
++
++	ret = xchg_range_verify_area(file2, fxr->file2_offset, fxr);
++	if (ret)
++		return ret;
++
++	ret = file2->f_op->xchg_file_range(file1, file2, fxr);
++	if (ret)
++		return ret;
++
++	fsnotify_modify(file1);
++	fsnotify_modify(file2);
++	return 0;
++}
++EXPORT_SYMBOL(do_xchg_file_range);
++
++int vfs_xchg_file_range(struct file *file1, struct file *file2,
++			struct file_xchg_range *fxr)
++{
++	int ret;
++
++	file_start_write(file2);
++	ret = do_xchg_file_range(file1, file2, fxr);
++	file_end_write(file2);
++
++	return ret;
++}
++EXPORT_SYMBOL(vfs_xchg_file_range);
+diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
+index 75cdf2685c0d..e7e1e3051739 100644
+--- a/fs/xfs/libxfs/xfs_fs.h
++++ b/fs/xfs/libxfs/xfs_fs.h
+@@ -848,6 +848,7 @@ struct xfs_scrub_metadata {
+ #define XFS_IOC_FSGEOMETRY	     _IOR ('X', 126, struct xfs_fsop_geom)
+ #define XFS_IOC_BULKSTAT	     _IOR ('X', 127, struct xfs_bulkstat_req)
+ #define XFS_IOC_INUMBERS	     _IOR ('X', 128, struct xfs_inumbers_req)
++/*	FIEXCHANGE_RANGE ----------- hoisted 129	 */
+ /*	XFS_IOC_GETFSUUID ---------- deprecated 140	 */
+ 
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ec8f3ddf4a6a..a38209fdf200 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -44,6 +44,7 @@
+ 
+ #include <asm/byteorder.h>
+ #include <uapi/linux/fs.h>
++#include <uapi/linux/fiexchange.h>
+ 
+ struct backing_dev_info;
+ struct bdi_writeback;
+@@ -1924,6 +1925,8 @@ struct file_operations {
+ 	loff_t (*remap_file_range)(struct file *file_in, loff_t pos_in,
+ 				   struct file *file_out, loff_t pos_out,
+ 				   loff_t len, unsigned int remap_flags);
++	int (*xchg_file_range)(struct file *file1, struct file *file2,
++			       struct file_xchg_range *fsr);
+ 	int (*fadvise)(struct file *, loff_t, loff_t, int);
+ } __randomize_layout;
+ 
+@@ -1993,6 +1996,9 @@ extern int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+ 					 struct file *file_out, loff_t pos_out,
+ 					 loff_t *count,
+ 					 unsigned int remap_flags);
++extern int generic_xchg_file_range_prep(struct file *file1, struct file *file2,
++					struct file_xchg_range *fsr,
++					unsigned int blocksize);
+ extern loff_t do_clone_file_range(struct file *file_in, loff_t pos_in,
+ 				  struct file *file_out, loff_t pos_out,
+ 				  loff_t len, unsigned int remap_flags);
+@@ -2004,7 +2010,13 @@ extern int vfs_dedupe_file_range(struct file *file,
+ extern loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
+ 					struct file *dst_file, loff_t dst_pos,
+ 					loff_t len, unsigned int remap_flags);
+-
++extern int do_xchg_file_range(struct file *file1, struct file *file2,
++			      struct file_xchg_range *fsr);
++extern int vfs_xchg_file_range(struct file *file1, struct file *file2,
++			       struct file_xchg_range *fsr);
++extern int generic_xchg_file_range_check_fresh(struct inode *inode1,
++					struct inode *inode2,
++					const struct file_xchg_range *fsr);
+ 
+ struct super_operations {
+    	struct inode *(*alloc_inode)(struct super_block *sb);
+diff --git a/include/uapi/linux/fiexchange.h b/include/uapi/linux/fiexchange.h
+new file mode 100644
+index 000000000000..17372590371a
+--- /dev/null
++++ b/include/uapi/linux/fiexchange.h
+@@ -0,0 +1,101 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later WITH Linux-syscall-note */
++/*
++ * FIEXCHANGE ioctl definitions, to facilitate exchanging parts of files.
++ *
++ * Copyright (C) 2021 Oracle.  All Rights Reserved.
++ *
++ * Author: Darrick J. Wong <djwong@kernel.org>
++ */
++#ifndef _LINUX_FIEXCHANGE_H
++#define _LINUX_FIEXCHANGE_H
++
++#include <linux/types.h>
++
++/*
++ * Exchange part of file1 with part of the file that this ioctl that is being
++ * called against (which we'll call file2).  Filesystems must be able to
++ * restart and complete the operation even after the system goes down.
++ */
++struct file_xchg_range {
++	__s64		file1_fd;
++	__s64		file1_offset;	/* file1 offset, bytes */
++	__s64		file2_offset;	/* file2 offset, bytes */
++	__s64		length;		/* bytes to exchange */
++
++	__u64		flags;		/* see FILE_XCHG_RANGE_* below */
++
++	/* file2 metadata for optional freshness checks */
++	__s64		file2_ino;	/* inode number */
++	__s64		file2_mtime;	/* modification time */
++	__s64		file2_ctime;	/* change time */
++	__s32		file2_mtime_nsec; /* mod time, nsec */
++	__s32		file2_ctime_nsec; /* change time, nsec */
++
++	__u64		pad[6];		/* must be zeroes */
++};
++
++/*
++ * Atomic exchange operations are not required.  This relaxes the requirement
++ * that the filesystem must be able to complete the operation after a crash.
++ */
++#define FILE_XCHG_RANGE_NONATOMIC	(1 << 0)
++
++/*
++ * Check that file2's inode number, mtime, and ctime against the values
++ * provided, and return -EBUSY if there isn't an exact match.
++ */
++#define FILE_XCHG_RANGE_FILE2_FRESH	(1 << 1)
++
++/*
++ * Check that the file1's length is equal to file1_offset + length, and that
++ * file2's length is equal to file2_offset + length.  Returns -EDOM if there
++ * isn't an exact match.
++ */
++#define FILE_XCHG_RANGE_FULL_FILES	(1 << 2)
++
++/*
++ * Exchange file data all the way to the ends of both files, and then exchange
++ * the file sizes.  This flag can be used to replace a file's contents with a
++ * different amount of data.  length will be ignored.
++ */
++#define FILE_XCHG_RANGE_TO_EOF		(1 << 3)
++
++/* Flush all changes in file data and file metadata to disk before returning. */
++#define FILE_XCHG_RANGE_FSYNC		(1 << 4)
++
++/* Dry run; do all the parameter verification but do not change anything. */
++#define FILE_XCHG_RANGE_DRY_RUN		(1 << 5)
++
++/*
++ * Do not exchange any part of the range where file1's mapping is a hole.  This
++ * can be used to emulate scatter-gather atomic writes with a temp file.
++ */
++#define FILE_XCHG_RANGE_SKIP_FILE1_HOLES (1 << 6)
++
++/*
++ * Commit the contents of file1 into file2 if file2 has the same inode number,
++ * mtime, and ctime as the arguments provided to the call.  The old contents of
++ * file2 will be moved to file1.
++ *
++ * With this flag, all committed information can be retrieved even if the
++ * system crashes or is rebooted.  This includes writing through or flushing a
++ * disk cache if present.  The call blocks until the device reports that the
++ * commit is complete.
++ *
++ * This flag should not be combined with NONATOMIC.  It can be combined with
++ * SKIP_FILE1_HOLES.
++ */
++#define FILE_XCHG_RANGE_COMMIT		(FILE_XCHG_RANGE_FILE2_FRESH | \
++					 FILE_XCHG_RANGE_FSYNC)
++
++#define FILE_XCHG_RANGE_ALL_FLAGS	(FILE_XCHG_RANGE_NONATOMIC | \
++					 FILE_XCHG_RANGE_FILE2_FRESH | \
++					 FILE_XCHG_RANGE_FULL_FILES | \
++					 FILE_XCHG_RANGE_TO_EOF | \
++					 FILE_XCHG_RANGE_FSYNC | \
++					 FILE_XCHG_RANGE_DRY_RUN | \
++					 FILE_XCHG_RANGE_SKIP_FILE1_HOLES)
++
++#define FIEXCHANGE_RANGE	_IOWR('X', 129, struct file_xchg_range)
++
++#endif /* _LINUX_FIEXCHANGE_H */
 
