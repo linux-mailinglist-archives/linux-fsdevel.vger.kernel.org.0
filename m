@@ -2,116 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D069351275
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 11:38:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CC2E3512BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 11:53:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233827AbhDAJhg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 05:37:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39786 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233940AbhDAJhL (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 05:37:11 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A293C061788
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Apr 2021 02:37:11 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id q5so1017990pfh.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Apr 2021 02:37:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mcgJPI+OLnXKS6f2jEHdXibOScXid3UD2wHpcMZsYC8=;
-        b=XXHnwjtjUIXHglDE8sYs3uix5dsEwoiOr126fLR+uD3MRWnDxS5mXundRMl6oyKp8G
-         0BLCnAd0wZdUTDQv56WayLebeE+LCDZkat3P2QE/0k4sHmu8NBn0RGQRL6DskgayhEpO
-         f7OYOJq4cZf1cTx/cZ9d26eS+5jXRdj/j6OunAYDgBQsW3YFdnLcJadkiiuoPIQepTQz
-         SejeuXsZq8aFLT/CMxOee3LtDWYILC+Tl5e/mZ9gSpTzd8IItpg22a7lTIMUfH+6YlmD
-         ZyTzP9SIX/AQO1VFFJHw8ibEa1T0YPK9AzIhi9n+n+HwhvxGAX+4pSKt25A/Ehm2YWml
-         n8CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mcgJPI+OLnXKS6f2jEHdXibOScXid3UD2wHpcMZsYC8=;
-        b=nle1NjZk6tNvc6F5LSRcW+Q9pwWwXxpsGVWBe0oPy2mlaYfp6FWbqX4aXWUqB+oNiy
-         fGg2SzSkVwTvnpWo/KBjA5qdA1e2X3w04Qnze5/8lRKjGJei1fJCYn+Qaxshxtwn65Tc
-         1WwUxOjPT/csT6RHrcKpK4WlwIrFXVfbIxtDI1062lxLooJMb5p34LYinfgUV0MBXul9
-         OQSQNTnR6vy9tKEfULjFUIo++oZqTXz+UKPbfIpGaI5IrkbV4dQv9AFKhkDdethjH+AX
-         duqaqZSk5apw9aQdhJdV0Xerk6zZFV1r+W/Wo944jJV1FlhHB+8mhJyx/rU5BXAPHyay
-         QpZQ==
-X-Gm-Message-State: AOAM532/6bJZF5menlVUscqKplkak0PGGJPyy39fTdfrUk+ie9E5ksUK
-        Ue0DngCvtziSChLGj7ZvKaS5Eg==
-X-Google-Smtp-Source: ABdhPJxkfP7QA7T16arIV78STn7cljX0N93gxkGF9gMmDTfxUDZogi1r5p1jZl2QT4ir2ZVOhGGaSQ==
-X-Received: by 2002:a65:4c43:: with SMTP id l3mr6637800pgr.327.1617269831183;
-        Thu, 01 Apr 2021 02:37:11 -0700 (PDT)
-Received: from localhost.localdomain ([139.177.225.233])
-        by smtp.gmail.com with ESMTPSA id h13sm4710189pjv.52.2021.04.01.02.37.07
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Apr 2021 02:37:10 -0700 (PDT)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     viro@zeniv.linux.org.uk, tj@kernel.org, axboe@fb.com,
-        willy@infradead.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH v2] writeback: fix obtain a reference to a freeing memcg css
-Date:   Thu,  1 Apr 2021 17:33:43 +0800
-Message-Id: <20210401093343.51299-1-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122)
+        id S233553AbhDAJwm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 05:52:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58266 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233670AbhDAJwg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Apr 2021 05:52:36 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 87A5961057;
+        Thu,  1 Apr 2021 09:52:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1617270756;
+        bh=WHuvuLwY5ZJzXTO21PWIte9+S4GwMD6X0OWMiT8SSu8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OlOAJLbasE0ogij9w8e0cFnlQojCi7vbXuC+/FcDVonQf6yP9VunIJGHmpERSZrLS
+         YZ614AqK6+kE5rLs4XT0HFZKbxIulRILiCHQMNX7MDEWAcJ72zfYnbHHdQBKuzqMZB
+         j2gLEgr4muLRwLsypUVR6ZyQHCCBtWhiUSa8jM6Q=
+Date:   Thu, 1 Apr 2021 11:52:33 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Xie Yongji <xieyongji@bytedance.com>
+Cc:     christian.brauner@ubuntu.com, hch@infradead.org, arve@android.com,
+        tkjos@android.com, maco@android.com, joel@joelfernandes.org,
+        hridya@google.com, surenb@google.com, viro@zeniv.linux.org.uk,
+        sargun@sargun.me, keescook@chromium.org, jasowang@redhat.com,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] file: Export receive_fd() to modules
+Message-ID: <YGWX4aIE5QNxsJQ9@kroah.com>
+References: <20210401090932.121-1-xieyongji@bytedance.com>
+ <20210401090932.121-2-xieyongji@bytedance.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210401090932.121-2-xieyongji@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The caller of wb_get_create() should pin the memcg, because
-wb_get_create() relies on this guarantee. The rcu read lock
-only can guarantee that the memcg css returned by css_from_id()
-cannot be released, but the reference of the memcg can be zero.
-Fix it by holding a reference to the css before calling
-wb_get_create(). This is not a problem I encountered in the
-real world. Just the result of a code review.
+On Thu, Apr 01, 2021 at 05:09:31PM +0800, Xie Yongji wrote:
+> Export receive_fd() so that some modules can use
+> it to pass file descriptor across processes without
+> missing any security stuffs.
+> 
+> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> ---
+>  fs/file.c            | 6 ++++++
+>  include/linux/file.h | 7 +++----
+>  2 files changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/file.c b/fs/file.c
+> index 56986e55befa..2a80c6c3e147 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -1107,6 +1107,12 @@ int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
+>  	return new_fd;
+>  }
+>  
+> +int receive_fd(struct file *file, unsigned int o_flags)
+> +{
+> +	return __receive_fd(file, NULL, o_flags);
+> +}
+> +EXPORT_SYMBOL(receive_fd);
 
-And it is unnecessary to use GFP_ATOMIC, so replace it with
-GFP_NOIO.
+What module uses this?
 
-Fixes: 682aa8e1a6a1 ("writeback: implement unlocked_inode_to_wb transaction and use it for stat updates")
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
----
-Changelog in v2:
- 1. Replace GFP_ATOMIC with GFP_NOIO suggested by Matthew.
+And why not EXPORT_SYMBOL_GPL()?
 
- fs/fs-writeback.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+thanks,
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index e91980f49388..df7f89f8f771 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -501,16 +501,21 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
- 	if (atomic_read(&isw_nr_in_flight) > WB_FRN_MAX_IN_FLIGHT)
- 		return;
- 
--	isw = kzalloc(sizeof(*isw), GFP_ATOMIC);
-+	isw = kzalloc(sizeof(*isw), GFP_NOIO);
- 	if (!isw)
- 		return;
- 
- 	/* find and pin the new wb */
- 	rcu_read_lock();
- 	memcg_css = css_from_id(new_wb_id, &memory_cgrp_subsys);
--	if (memcg_css)
--		isw->new_wb = wb_get_create(bdi, memcg_css, GFP_ATOMIC);
-+	if (memcg_css && !css_tryget(memcg_css))
-+		memcg_css = NULL;
- 	rcu_read_unlock();
-+	if (!memcg_css)
-+		goto out_free;
-+
-+	isw->new_wb = wb_get_create(bdi, memcg_css, GFP_NOIO);
-+	css_put(memcg_css);
- 	if (!isw->new_wb)
- 		goto out_free;
- 
--- 
-2.11.0
-
+greg k-h
