@@ -2,174 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 622E6350FE8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 09:13:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F013E350FED
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 09:15:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233153AbhDAHMm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 03:12:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36388 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229850AbhDAHMd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 03:12:33 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50B0FC0613E6;
-        Thu,  1 Apr 2021 00:12:33 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id h8so556233plt.7;
-        Thu, 01 Apr 2021 00:12:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=nxMNAPqfEecVrR9nsQ3IMQjDvIPPMionqLgGG/C5wWA=;
-        b=aAdIzAP/zZ+sCtwAMULjg8RvFRaUxbhfDBsKNuVR/XLjizIfWzDd3hUB/KicPKPnaC
-         02SG/m9gHQWaYwbykIIVmU8qS3ZSJfm+QB+hicInaV35nmphZneW5raMdoZelMgvkttF
-         oainkJuCjUbTJZvnT/QBcGMX4czVcKORLF64O34qQKY1HgrcosMTkxDccPg6DMcHfres
-         1wUAKSe4/3Ri9POKIIFzlUBoK+V3frEp3BNmCjuyE37qf1MTLnCc0j6/R+vhEM/06Lel
-         SHcZnQkxyKsa/kFfguLzr9cVP1LeXG8Y2eTcOVZ+0STaexxY5wynMrBmA8M0GWfVCCX8
-         GeMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nxMNAPqfEecVrR9nsQ3IMQjDvIPPMionqLgGG/C5wWA=;
-        b=m2nboxFkwhg3SXXACFc37/y79qK5djnbUPntTPON39+vH3s04uFgGL7+FzWFAY7juS
-         8bbCZF1CCGgrcMT8m0kasc+xlWOLNEcDCXs/W2I3sH20zUoRoPy5oiAxfoxcY7xn87/D
-         BkCI6wEB0Q2GDNFtUw9uuc807nbXNvJvBvFCySUNVS8a278SGH04fUH1Lw+ZbOxSK9hO
-         qIM9GjqUTivsc4mlwU5W6cRzMzoKUA66gtKUY7oeuC3toPdAlI/Cmnz1OqUHQnzl3s50
-         PdxOs6VGR+mg6uvIXPec9kpuoeVRX6YmoaK0EriYAyLNUmTxRDFmjY5kPcFGVkXEfCVN
-         s3FQ==
-X-Gm-Message-State: AOAM531bf6/wwP3XE5P807xvK7d9ulbXzW6+Q82bHJBDqzD3tzuld+Fn
-        QTF3OUqXg/mdeWVI+jcZOlQ=
-X-Google-Smtp-Source: ABdhPJx54GLu44ceRw1VOt4nY0MtGnri8a1v/wQ/JC9/nOhtBatQ1/YNYXNfg6t3Zm5Ef8q/zt/jjA==
-X-Received: by 2002:a17:90a:fa89:: with SMTP id cu9mr7702778pjb.204.1617261152822;
-        Thu, 01 Apr 2021 00:12:32 -0700 (PDT)
-Received: from localhost ([122.182.250.63])
-        by smtp.gmail.com with ESMTPSA id v2sm4292271pjg.34.2021.04.01.00.12.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Apr 2021 00:12:32 -0700 (PDT)
-Date:   Thu, 1 Apr 2021 12:42:30 +0530
-From:   Ritesh Harjani <ritesh.list@gmail.com>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
-        darrick.wong@oracle.com, dan.j.williams@intel.com,
-        willy@infradead.org, jack@suse.cz, viro@zeniv.linux.org.uk,
-        linux-btrfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        david@fromorbit.com, hch@lst.de, rgoldwyn@suse.de
-Subject: Re: [PATCH v3 07/10] iomap: Introduce iomap_apply2() for operations
- on two files
-Message-ID: <20210401071230.wbrawpzk3opzmntv@riteshh-domain>
-References: <20210319015237.993880-1-ruansy.fnst@fujitsu.com>
- <20210319015237.993880-8-ruansy.fnst@fujitsu.com>
+        id S233404AbhDAHOv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 03:14:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35080 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233179AbhDAHO1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Apr 2021 03:14:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1617261266; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EdG19ICQsbKOwlsiDe5wakN2BrS2LIAGNa7VKGcjnVQ=;
+        b=fv8kcptpBLAQc0tJiNubXbf0ugKJ2hvWgVLLMJZ/0LAHZ/H7hmdcW6UwavgsRRuc8UxgRK
+        uVOojLtyIhxNKuBsOGYqMKNXgag1BwBpmIwahMUC+Gy8wFkQmmFCaBhr0G2p/Uf6VRWUZI
+        jXwMtTfR7cz/IFgxCLmpSKRX8t+hfs8=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 61E08AF4F;
+        Thu,  1 Apr 2021 07:14:26 +0000 (UTC)
+Date:   Thu, 1 Apr 2021 09:14:25 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+        Adam Nichols <adam@grimm-co.com>,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] sysfs: Unconditionally use vmalloc for buffer
+Message-ID: <YGVy0WUG1OEFfjhx@dhcp22.suse.cz>
+References: <20210401022145.2019422-1-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210319015237.993880-8-ruansy.fnst@fujitsu.com>
+In-Reply-To: <20210401022145.2019422-1-keescook@chromium.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 21/03/19 09:52AM, Shiyang Ruan wrote:
-> Some operations, such as comparing a range of data in two files under
-> fsdax mode, requires nested iomap_open()/iomap_end() on two file.  Thus,
-> we introduce iomap_apply2() to accept arguments from two files and
-> iomap_actor2_t for actions on two files.
->
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+On Wed 31-03-21 19:21:45, Kees Cook wrote:
+> The sysfs interface to seq_file continues to be rather fragile
+> (seq_get_buf() should not be used outside of seq_file), as seen with
+> some recent exploits[1]. Move the seq_file buffer to the vmap area
+> (while retaining the accounting flag), since it has guard pages that
+> will catch and stop linear overflows.
+
+I thought the previous discussion has led to a conclusion that the
+preferred way is to disallow direct seq_file buffer usage. But this is
+obviously up to sysfs maintainers. I am happy you do not want to spread
+this out to all seq_file users anymore.
+
+> This seems justified given that
+> sysfs's use of seq_file already uses kvmalloc(), is almost always using
+> a PAGE_SIZE or larger allocation, has normally short-lived allocations,
+> and is not normally on a performance critical path.
+
+Let me clarify on this, because this is not quite right. kvmalloc vs
+vmalloc (both with GFP_KERNEL) on PAGE_SIZE are two different beasts.
+The first one is almost always going to use kmalloc because the page
+allocator almost never fails those requests.
+
+> Once seq_get_buf() has been removed (and all sysfs callbacks using
+> seq_file directly), this change can also be removed.
+> 
+> [1] https://blog.grimm-co.com/2021/03/new-old-bugs-in-linux-kernel.html
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 > ---
->  fs/iomap/apply.c      | 56 +++++++++++++++++++++++++++++++++++++++++++
->  include/linux/iomap.h |  7 +++++-
->  2 files changed, 62 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
-> index 26ab6563181f..fbc38ce3d5b6 100644
-> --- a/fs/iomap/apply.c
-> +++ b/fs/iomap/apply.c
-> @@ -97,3 +97,59 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
->
->  	return written ? written : ret;
+> v3:
+> - Limit to only sysfs (instead of all of seq_file).
+> v2: https://lore.kernel.org/lkml/20210315174851.622228-1-keescook@chromium.org/
+> v1: https://lore.kernel.org/lkml/20210312205558.2947488-1-keescook@chromium.org/
+> ---
+>  fs/sysfs/file.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+> index 9aefa7779b29..70e7a450e5d1 100644
+> --- a/fs/sysfs/file.c
+> +++ b/fs/sysfs/file.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/mm.h>
+> +#include <linux/vmalloc.h>
+>  
+>  #include "sysfs.h"
+>  
+> @@ -32,6 +33,25 @@ static const struct sysfs_ops *sysfs_file_ops(struct kernfs_node *kn)
+>  	return kobj->ktype ? kobj->ktype->sysfs_ops : NULL;
 >  }
-> +
-> +loff_t
-> +iomap_apply2(struct inode *ino1, loff_t pos1, struct inode *ino2, loff_t pos2,
-> +		loff_t length, unsigned int flags, const struct iomap_ops *ops,
-> +		void *data, iomap_actor2_t actor)
+>  
+> +/*
+> + * To be proactively defensive against sysfs show() handlers that do not
+> + * correctly stay within their PAGE_SIZE buffer, use the vmap area to gain
+> + * the trailing guard page which will stop linear buffer overflows.
+> + */
+> +static void *sysfs_kf_seq_start(struct seq_file *sf, loff_t *ppos)
 > +{
-> +	struct iomap smap = { .type = IOMAP_HOLE };
-> +	struct iomap dmap = { .type = IOMAP_HOLE };
-> +	loff_t written = 0, ret, ret2 = 0;
-> +	loff_t len1 = length, len2, min_len;
+> +	struct kernfs_open_file *of = sf->private;
+> +	struct kernfs_node *kn = of->kn;
 > +
-> +	ret = ops->iomap_begin(ino1, pos1, len1, flags, &smap, NULL);
-> +	if (ret)
-> +		goto out_src;
-
-if above call fails we need not call ->iomap_end() on smap.
-
-> +	if (WARN_ON(smap.offset > pos1)) {
-> +		written = -EIO;
-> +		goto out_src;
-> +	}
-> +	if (WARN_ON(smap.length == 0)) {
-> +		written = -EIO;
-> +		goto out_src;
-> +	}
-> +	len2 = min_t(loff_t, len1, smap.length);
+> +	WARN_ON_ONCE(sf->buf);
+> +	sf->buf = __vmalloc(kn->attr.size, GFP_KERNEL_ACCOUNT);
+> +	if (!sf->buf)
+> +		return ERR_PTR(-ENOMEM);
+> +	sf->size = kn->attr.size;
 > +
-> +	ret = ops->iomap_begin(ino2, pos2, len2, flags, &dmap, NULL);
-> +	if (ret)
-> +		goto out_dest;
-
-ditto
-
-> +	if (WARN_ON(dmap.offset > pos2)) {
-> +		written = -EIO;
-> +		goto out_dest;
-> +	}
-> +	if (WARN_ON(dmap.length == 0)) {
-> +		written = -EIO;
-> +		goto out_dest;
-> +	}
-> +	min_len = min_t(loff_t, len2, dmap.length);
-> +
-> +	written = actor(ino1, pos1, ino2, pos2, min_len, data, &smap, &dmap);
-> +
-> +out_dest:
-> +	if (ops->iomap_end)
-> +		ret2 = ops->iomap_end(ino2, pos2, len2,
-> +				      written > 0 ? written : 0, flags, &dmap);
-> +out_src:
-> +	if (ops->iomap_end)
-> +		ret = ops->iomap_end(ino1, pos1, len1,
-> +				     written > 0 ? written : 0, flags, &smap);
-> +
-
-I guess, this maynot be a problem, but I still think we should be
-consistent w.r.t len argument we are passing in ->iomap_end() for both type of
-iomap_apply* family of functions.
-IIUC, we used to call ->iomap_end() with the length argument filled by the
-filesystem from ->iomap_begin() call.
-
-whereas above breaks that behavior. Although I don't think this is FATAL, but
-still it is better to be consistent with the APIs.
-Thoughts?
-
-
-> +	if (ret)
-> +		return written ? written : ret;
-> +
-> +	if (ret2)
-> +		return written ? written : ret2;
-> +
-> +	return written;
+> +	return NULL + !*ppos;
 > +}
+> +
+>  /*
+>   * Reads on sysfs are handled through seq_file, which takes care of hairy
+>   * details like buffering and seeking.  The following function pipes
+> @@ -206,14 +226,17 @@ static const struct kernfs_ops sysfs_file_kfops_empty = {
+>  };
+>  
+>  static const struct kernfs_ops sysfs_file_kfops_ro = {
+> +	.seq_start	= sysfs_kf_seq_start,
+>  	.seq_show	= sysfs_kf_seq_show,
+>  };
+>  
+>  static const struct kernfs_ops sysfs_file_kfops_wo = {
+> +	.seq_start	= sysfs_kf_seq_start,
+>  	.write		= sysfs_kf_write,
+>  };
+>  
+>  static const struct kernfs_ops sysfs_file_kfops_rw = {
+> +	.seq_start	= sysfs_kf_seq_start,
+>  	.seq_show	= sysfs_kf_seq_show,
+>  	.write		= sysfs_kf_write,
+>  };
+> -- 
+> 2.25.1
 
-	if (written)
-		return written;
-
-	return ret ? ret : ret2;
-
-Is above a simpler version?
-
--ritesh
+-- 
+Michal Hocko
+SUSE Labs
