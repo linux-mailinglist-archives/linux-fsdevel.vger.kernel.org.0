@@ -2,145 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E134351AA6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22FB73519E3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:03:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236493AbhDASCc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 14:02:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33034 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235176AbhDAR5V (ORCPT
+        id S236656AbhDAR4u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 13:56:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:26782 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237198AbhDARvB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 13:57:21 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65BFDC02FEA2
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Apr 2021 09:09:20 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id f19so2737021ion.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Apr 2021 09:09:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=48dyaiUyVqMwLE0OwYdfA5ySCjDx5Xf12eY4xzzdxXs=;
-        b=Q/SR523Ar1LWM4oiRWdcYVGDmBiu+zeFT7gA4UE9r2y+wh90OYXx0JJGDPcwMu5adH
-         uaxbD0Pu9f5900tZeP3hEe5v2db7lKqxdaDTGAE/r7ppii0REDgnpsq6WNA0PbdjmASs
-         de+PdzOIIxIaRBSOh6zS9hLprKOaCN962rHWHBbcMLKOPqJaWZnw7i9AAS1x73820wX4
-         8sdjPlS3OXDG74thkV/VB4/we1prlMFDH0VAhEh7RXO01Mzf/ywd8gl8j+WVw6mGPw+B
-         rI1wrqE5kG1B24gee8UOlunMIzDWGoXzeN2be49I1Kr/MgV80/4Up2UOB+FRq0EsQwSm
-         ieQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=48dyaiUyVqMwLE0OwYdfA5ySCjDx5Xf12eY4xzzdxXs=;
-        b=KItj5nxWkETDQxvI4+MSjgVfAcCX4Z2/CysRyU1jsXbiIE1epxwh0Pv+Pb6XCJPTaD
-         SpwAI4A5tPN1+z30tiUZcZzhcpGMukblPOlGRmfSbDHvh0aRwxomDiGdgKZefO9Ximnr
-         DRjXQC3B2eHqTfXa2oXrpccxUMbGECyyoYCnCy7931UtrZrEgZltJPNsFoDJUZDZrSoX
-         uNSq8NSA7EGJWCEAKc5y8SduvHhPR7O0PQZ4X3FlSl1FdBT5IEGFIf2K+6IcHzQv3cKc
-         CW0hR6Kzbj42Jr1f6OQx9169UdpzDcbvxbqKljFqFvHk0HJ+2d3kxBcF1zKeriRbIj8p
-         dP8g==
-X-Gm-Message-State: AOAM532usxPB9KAPUNpht9kQ9LvcCXzfpDW1meVPPTT6NKL93NqvQz2o
-        eLQdhgUODB1LUHdOA+/R1PiiOctzBrMIBg==
-X-Google-Smtp-Source: ABdhPJx71PWvRQl21JSc09Uw5jU8+9y4mYpLpsKeo9v5KDSxkuD5Ozc7hcvTXmb/nzJ5eqed0eNeZw==
-X-Received: by 2002:a5e:c102:: with SMTP id v2mr7178492iol.137.1617293359632;
-        Thu, 01 Apr 2021 09:09:19 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id b4sm2637045ilj.11.2021.04.01.09.09.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Apr 2021 09:09:19 -0700 (PDT)
-Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        io-uring@vger.kernel.org
-References: <0000000000003a565e05bee596f2@google.com>
- <20210401154515.k24qdd2lzhtneu47@wittgenstein>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <90e7e339-eaec-adb2-cfed-6dc058a117a3@kernel.dk>
-Date:   Thu, 1 Apr 2021 10:09:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 1 Apr 2021 13:51:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617299461;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GXWPtffsDMR9QZWl6Ce2ebcQcVpDYm8f+5vNo4wn+Z8=;
+        b=caVGPMXDmYWuYM5hSrjUji+pXrwlKnH4igvZkHl+5eIrK9ssMsj+vKzljhC57Rw98JwsFQ
+        d28XfwRcJUs7Cxyvnl2ijoFJp3Q7r/5Ul0T0gUUY3Y9MCOXILSHwN9j3lsEaQaoSl2EM4P
+        unug7Ssq+iN4p9eqODI5jExC+FwJhzA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-184-QwU6G8GQPR-20xv5hW3C5w-1; Thu, 01 Apr 2021 12:50:28 -0400
+X-MC-Unique: QwU6G8GQPR-20xv5hW3C5w-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7070187A826;
+        Thu,  1 Apr 2021 16:50:27 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-113-97.rdu2.redhat.com [10.10.113.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C30F85D6D1;
+        Thu,  1 Apr 2021 16:50:25 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 683EA22054F; Thu,  1 Apr 2021 12:50:24 -0400 (EDT)
+Date:   Thu, 1 Apr 2021 12:50:24 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        Amir Goldstein <amir73il@gmail.com>, stable@vger.kernel.org,
+        syzbot <syzkaller@googlegroups.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
+Subject: Re: [PATCH v1] ovl: Fix leaked dentry
+Message-ID: <20210401165024.GB801967@redhat.com>
+References: <20210329164907.2133175-1-mic@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <20210401154515.k24qdd2lzhtneu47@wittgenstein>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210329164907.2133175-1-mic@digikod.net>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/1/21 9:45 AM, Christian Brauner wrote:
-> On Thu, Apr 01, 2021 at 02:09:20AM -0700, syzbot wrote:
->> Hello,
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    d19cc4bf Merge tag 'trace-v5.12-rc5' of git://git.kernel.o..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=1018f281d00000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=d1a3d65a48dbd1bc
->> dashboard link: https://syzkaller.appspot.com/bug?extid=c88a7030da47945a3cc3
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f50d11d00000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=137694a1d00000
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com
->>
->> ------------[ cut here ]------------
->> WARNING: CPU: 1 PID: 8409 at fs/namespace.c:1186 mntput_no_expire+0xaca/0xcb0 fs/namespace.c:1186
->> Modules linked in:
->> CPU: 1 PID: 8409 Comm: syz-executor035 Not tainted 5.12.0-rc5-syzkaller #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> RIP: 0010:mntput_no_expire+0xaca/0xcb0 fs/namespace.c:1186
->> Code: ff 48 c7 c2 e0 cb 78 89 be c2 02 00 00 48 c7 c7 a0 cb 78 89 c6 05 e5 6d e5 0b 01 e8 ff e1 f6 06 e9 3f fd ff ff e8 c6 a5 a8 ff <0f> 0b e9 fc fc ff ff e8 ba a5 a8 ff e8 55 dc 94 ff 31 ff 89 c5 89
->> RSP: 0018:ffffc9000165fc78 EFLAGS: 00010293
->> RAX: 0000000000000000 RBX: 1ffff920002cbf95 RCX: 0000000000000000
->> RDX: ffff88802072d4c0 RSI: ffffffff81cb4b8a RDI: 0000000000000003
->> RBP: ffff888011656900 R08: 0000000000000000 R09: ffffffff8fa978af
->> R10: ffffffff81cb4884 R11: 0000000000000000 R12: 0000000000000008
->> R13: ffffc9000165fcc8 R14: dffffc0000000000 R15: 00000000ffffffff
->> FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 000055a722053160 CR3: 000000000bc8e000 CR4: 00000000001506e0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> Call Trace:
->>  mntput fs/namespace.c:1232 [inline]
->>  cleanup_mnt+0x523/0x530 fs/namespace.c:1132
->>  task_work_run+0xdd/0x1a0 kernel/task_work.c:140
->>  exit_task_work include/linux/task_work.h:30 [inline]
->>  do_exit+0xbfc/0x2a60 kernel/exit.c:825
->>  do_group_exit+0x125/0x310 kernel/exit.c:922
->>  __do_sys_exit_group kernel/exit.c:933 [inline]
->>  __se_sys_exit_group kernel/exit.c:931 [inline]
->>  __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:931
->>  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->>  entry_SYSCALL_64_after_hwframe+0x44/0xae
->> RIP: 0033:0x446af9
->> Code: Unable to access opcode bytes at RIP 0x446acf.
->> RSP: 002b:00000000005dfe48 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
->> RAX: ffffffffffffffda RBX: 00000000004ce450 RCX: 0000000000446af9
->> RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000001
->> RBP: 0000000000000001 R08: ffffffffffffffbc R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004ce450
->> R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
+On Mon, Mar 29, 2021 at 06:49:07PM +0200, Mickaël Salaün wrote:
+> From: Mickaël Salaün <mic@linux.microsoft.com>
 > 
-> [+Cc Jens + io_uring]
+> Since commit 6815f479ca90 ("ovl: use only uppermetacopy state in
+> ovl_lookup()"), overlayfs doesn't put temporary dentry when there is a
+> metacopy error, which leads to dentry leaks when shutting down the
+> related superblock:
 > 
-> Hm, this reproducer uses io_uring and it's the io_uring_enter() that
-> triggers this reliably. With this reproducer I've managed to reproduce
-> the issue on v5.12-rc4, and v5.12-rc3, v5.12-rc2 and v5.12-rc1.
-> It's not reproducible at
-> 9820b4dca0f9c6b7ab8b4307286cdace171b724d
-> which is the commit immediately before the first v5.12 io_uring merge.
-> It's first reproducible with the first io_uring merge for v5.12, i.e.
-> 5bbb336ba75d95611a7b9456355b48705016bdb1
+>   overlayfs: refusing to follow metacopy origin for (/file0)
+>   ...
+>   BUG: Dentry (____ptrval____){i=3f33,n=file3}  still in use (1) [unmount of overlay overlay]
+>   ...
+>   WARNING: CPU: 1 PID: 432 at umount_check.cold+0x107/0x14d
+>   CPU: 1 PID: 432 Comm: unmount-overlay Not tainted 5.12.0-rc5 #1
+>   ...
+>   RIP: 0010:umount_check.cold+0x107/0x14d
+>   ...
+>   Call Trace:
+>    d_walk+0x28c/0x950
+>    ? dentry_lru_isolate+0x2b0/0x2b0
+>    ? __kasan_slab_free+0x12/0x20
+>    do_one_tree+0x33/0x60
+>    shrink_dcache_for_umount+0x78/0x1d0
+>    generic_shutdown_super+0x70/0x440
+>    kill_anon_super+0x3e/0x70
+>    deactivate_locked_super+0xc4/0x160
+>    deactivate_super+0xfa/0x140
+>    cleanup_mnt+0x22e/0x370
+>    __cleanup_mnt+0x1a/0x30
+>    task_work_run+0x139/0x210
+>    do_exit+0xb0c/0x2820
+>    ? __kasan_check_read+0x1d/0x30
+>    ? find_held_lock+0x35/0x160
+>    ? lock_release+0x1b6/0x660
+>    ? mm_update_next_owner+0xa20/0xa20
+>    ? reacquire_held_locks+0x3f0/0x3f0
+>    ? __sanitizer_cov_trace_const_cmp4+0x22/0x30
+>    do_group_exit+0x135/0x380
+>    __do_sys_exit_group.isra.0+0x20/0x20
+>    __x64_sys_exit_group+0x3c/0x50
+>    do_syscall_64+0x45/0x70
+>    entry_SYSCALL_64_after_hwframe+0x44/0xae
+>   ...
+>   VFS: Busy inodes after unmount of overlay. Self-destruct in 5 seconds.  Have a nice day...
+> 
+> This fix has been tested with a syzkaller reproducer.
+> 
 
-Thanks, that's good info. I'll take a look at it and see if I can
-reproduce.
+Looks good to me. I realized that dentry leak will happen on underlying
+filesystem so unmount of underlying filesystem will give this warning. I
+created nested overlayfs configuration and could reproduce this error
+and tested that this patch fixes it.
 
--- 
-Jens Axboe
+Reviewed-by: Vivek Goyal <vgoyal@redhat.com>
+
+Vivek
+
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: <stable@vger.kernel.org> # v5.7+
+> Reported-by: syzbot <syzkaller@googlegroups.com>
+> Fixes: 6815f479ca90 ("ovl: use only uppermetacopy state in ovl_lookup()")
+> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+> Link: https://lore.kernel.org/r/20210329164907.2133175-1-mic@digikod.net
+> ---
+>  fs/overlayfs/namei.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+> index 3fe05fb5d145..424c594afd79 100644
+> --- a/fs/overlayfs/namei.c
+> +++ b/fs/overlayfs/namei.c
+> @@ -921,6 +921,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+>  		if ((uppermetacopy || d.metacopy) && !ofs->config.metacopy) {
+>  			err = -EPERM;
+>  			pr_warn_ratelimited("refusing to follow metacopy origin for (%pd2)\n", dentry);
+> +			dput(this);
+>  			goto out_put;
+>  		}
+>  
+> 
+> base-commit: a5e13c6df0e41702d2b2c77c8ad41677ebb065b3
+> -- 
+> 2.30.2
+> 
 
