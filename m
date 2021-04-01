@@ -2,145 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 22FB73519E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:03:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39DCC351AA4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:07:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236656AbhDAR4u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 13:56:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:26782 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237198AbhDARvB (ORCPT
+        id S236455AbhDASC1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 14:02:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33038 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236045AbhDAR5R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 13:51:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617299461;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GXWPtffsDMR9QZWl6Ce2ebcQcVpDYm8f+5vNo4wn+Z8=;
-        b=caVGPMXDmYWuYM5hSrjUji+pXrwlKnH4igvZkHl+5eIrK9ssMsj+vKzljhC57Rw98JwsFQ
-        d28XfwRcJUs7Cxyvnl2ijoFJp3Q7r/5Ul0T0gUUY3Y9MCOXILSHwN9j3lsEaQaoSl2EM4P
-        unug7Ssq+iN4p9eqODI5jExC+FwJhzA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-184-QwU6G8GQPR-20xv5hW3C5w-1; Thu, 01 Apr 2021 12:50:28 -0400
-X-MC-Unique: QwU6G8GQPR-20xv5hW3C5w-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7070187A826;
-        Thu,  1 Apr 2021 16:50:27 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-113-97.rdu2.redhat.com [10.10.113.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C30F85D6D1;
-        Thu,  1 Apr 2021 16:50:25 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 683EA22054F; Thu,  1 Apr 2021 12:50:24 -0400 (EDT)
-Date:   Thu, 1 Apr 2021 12:50:24 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        Amir Goldstein <amir73il@gmail.com>, stable@vger.kernel.org,
-        syzbot <syzkaller@googlegroups.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
-Subject: Re: [PATCH v1] ovl: Fix leaked dentry
-Message-ID: <20210401165024.GB801967@redhat.com>
-References: <20210329164907.2133175-1-mic@digikod.net>
+        Thu, 1 Apr 2021 13:57:17 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64A95C031174;
+        Thu,  1 Apr 2021 10:06:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=iCMEzATsTfKSllJ0qHxWkotIZ1LmTIaj9wA1MfQzBRo=; b=mN+K+tNl7VN1Zh9vGb6RBIGpcG
+        URsI4ncd1qpZarWtFWlRAuRNMmA4vxy7ER+6UfyJh91G4FWy3JDQJovHDoLobLdF++cwQE3ixv75u
+        /IpLjAFNZj+qdihlzk21Vt0dXA1rLWBj8S+3sH6KGWY4VF85iEnryKOjm9UL/vAdQqynMq6Q5kEox
+        eNkMRVdwDGqWKaMrPiuEfzUa1aVuZMfSIqyuMRB/tpt0JhwrSc7aukHcJSUTbkxFVJ2Adz5qMYZAG
+        Luv5Z3aHjdby3V6GOV7WPfj/gHcPy8wStsVn0PMG7jk8TY3zmwKa1amIZvDRJodtacJLlETBSOCxU
+        dQkiQCAA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lS0lr-006OYt-NL; Thu, 01 Apr 2021 17:06:17 +0000
+Date:   Thu, 1 Apr 2021 18:06:15 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: BUG_ON(!mapping_empty(&inode->i_data))
+Message-ID: <20210401170615.GH351017@casper.infradead.org>
+References: <alpine.LSU.2.11.2103301654520.2648@eggly.anvils>
+ <20210331024913.GS351017@casper.infradead.org>
+ <alpine.LSU.2.11.2103311413560.1201@eggly.anvils>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210329164907.2133175-1-mic@digikod.net>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <alpine.LSU.2.11.2103311413560.1201@eggly.anvils>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 29, 2021 at 06:49:07PM +0200, Mickaël Salaün wrote:
-> From: Mickaël Salaün <mic@linux.microsoft.com>
-> 
-> Since commit 6815f479ca90 ("ovl: use only uppermetacopy state in
-> ovl_lookup()"), overlayfs doesn't put temporary dentry when there is a
-> metacopy error, which leads to dentry leaks when shutting down the
-> related superblock:
-> 
->   overlayfs: refusing to follow metacopy origin for (/file0)
->   ...
->   BUG: Dentry (____ptrval____){i=3f33,n=file3}  still in use (1) [unmount of overlay overlay]
->   ...
->   WARNING: CPU: 1 PID: 432 at umount_check.cold+0x107/0x14d
->   CPU: 1 PID: 432 Comm: unmount-overlay Not tainted 5.12.0-rc5 #1
->   ...
->   RIP: 0010:umount_check.cold+0x107/0x14d
->   ...
->   Call Trace:
->    d_walk+0x28c/0x950
->    ? dentry_lru_isolate+0x2b0/0x2b0
->    ? __kasan_slab_free+0x12/0x20
->    do_one_tree+0x33/0x60
->    shrink_dcache_for_umount+0x78/0x1d0
->    generic_shutdown_super+0x70/0x440
->    kill_anon_super+0x3e/0x70
->    deactivate_locked_super+0xc4/0x160
->    deactivate_super+0xfa/0x140
->    cleanup_mnt+0x22e/0x370
->    __cleanup_mnt+0x1a/0x30
->    task_work_run+0x139/0x210
->    do_exit+0xb0c/0x2820
->    ? __kasan_check_read+0x1d/0x30
->    ? find_held_lock+0x35/0x160
->    ? lock_release+0x1b6/0x660
->    ? mm_update_next_owner+0xa20/0xa20
->    ? reacquire_held_locks+0x3f0/0x3f0
->    ? __sanitizer_cov_trace_const_cmp4+0x22/0x30
->    do_group_exit+0x135/0x380
->    __do_sys_exit_group.isra.0+0x20/0x20
->    __x64_sys_exit_group+0x3c/0x50
->    do_syscall_64+0x45/0x70
->    entry_SYSCALL_64_after_hwframe+0x44/0xae
->   ...
->   VFS: Busy inodes after unmount of overlay. Self-destruct in 5 seconds.  Have a nice day...
-> 
-> This fix has been tested with a syzkaller reproducer.
-> 
+On Wed, Mar 31, 2021 at 02:58:12PM -0700, Hugh Dickins wrote:
+> I suspect there's a bug in the XArray handling in collapse_file(),
+> which sometimes leaves empty nodes behind.
 
-Looks good to me. I realized that dentry leak will happen on underlying
-filesystem so unmount of underlying filesystem will give this warning. I
-created nested overlayfs configuration and could reproduce this error
-and tested that this patch fixes it.
+Urp, yes, that can easily happen.
 
-Reviewed-by: Vivek Goyal <vgoyal@redhat.com>
+        /* This will be less messy when we use multi-index entries */
+        do {
+                xas_lock_irq(&xas);
+                xas_create_range(&xas);
+                if (!xas_error(&xas))
+                        break;
+                if (!xas_nomem(&xas, GFP_KERNEL)) {
+                        result = SCAN_FAIL;
+                        goto out;
+                }
 
-Vivek
+xas_create_range() can absolutely create nodes with zero entries.
+So if we create m/n nodes and then it runs out of memory (or cgroup
+denies it), we can leave nodes in the tree with zero entries.
 
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: <stable@vger.kernel.org> # v5.7+
-> Reported-by: syzbot <syzkaller@googlegroups.com>
-> Fixes: 6815f479ca90 ("ovl: use only uppermetacopy state in ovl_lookup()")
-> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-> Link: https://lore.kernel.org/r/20210329164907.2133175-1-mic@digikod.net
-> ---
->  fs/overlayfs/namei.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-> index 3fe05fb5d145..424c594afd79 100644
-> --- a/fs/overlayfs/namei.c
-> +++ b/fs/overlayfs/namei.c
-> @@ -921,6 +921,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
->  		if ((uppermetacopy || d.metacopy) && !ofs->config.metacopy) {
->  			err = -EPERM;
->  			pr_warn_ratelimited("refusing to follow metacopy origin for (%pd2)\n", dentry);
-> +			dput(this);
->  			goto out_put;
->  		}
->  
-> 
-> base-commit: a5e13c6df0e41702d2b2c77c8ad41677ebb065b3
-> -- 
-> 2.30.2
-> 
+There are three options for fixing it ...
+ - Switch to using multi-index entries.  We need to do this anyway, but
+   I don't yet have a handle on the bugs that you found last time I
+   pushed this into linux-next.  At -rc5 seems like a late stage to be
+   trying this solution.
+ - Add an xas_prune_range() that gets called on failure.  Should be
+   straightforward to write, but will be obsolete as soon as we do the
+   above and it's a pain for the callers.
+ - Change how xas_create_range() works to merely preallocate the xa_nodes
+   and not insert them into the tree until we're trying to insert data into
+   them.  I favour this option, and this scenario is amenable to writing
+   a test that will simulate failure halfway through.
 
+I'm going to start on option 3 now.
