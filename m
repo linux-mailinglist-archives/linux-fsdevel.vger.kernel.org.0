@@ -2,73 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF1CA351D19
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:48:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95AF9351D1B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:48:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237945AbhDASXy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 14:23:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37132 "EHLO
+        id S238018AbhDASYC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 14:24:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237043AbhDASNl (ORCPT
+        with ESMTP id S239204AbhDASPm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 14:13:41 -0400
-Received: from mail-pf1-x445.google.com (mail-pf1-x445.google.com [IPv6:2607:f8b0:4864:20::445])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E7A4C05BD12
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Apr 2021 05:54:33 -0700 (PDT)
-Received: by mail-pf1-x445.google.com with SMTP id g205so3330678pfb.15
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Apr 2021 05:54:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=jQVQMiS1LEWH5WtHi83sZSFNvCzxIq0JJNYo0pCyIds=;
-        b=VW/VbqkGqTTiSAhR3v0A0HhNagT3t2BS50Xb98zfYmtAIdh6+8dBbAQ6FSlTr2lxN4
-         R/seZlVuQ7/hbqgcad9ht9uglA0CzW8S8b8auMWEmSsV/6gULKhx9DRsP1Z7ts6t2abO
-         Y9jIQQR9CngB4IrpuSEInp9F5YJ7NFLi3SDZNWXgwIiGJXKpiSnMwHxsW5zgiJtmkgBL
-         bc4oyWxhxbyAtUHgOm8Dr/MvygBSMZ8uNFuFxhqnlpKGZNfDXOWVMbqOcTPMS5v9hK3d
-         TH9QL8mCBkx8Wozb9W5kbaoy+OAxsQVJtMZ4JwdTEmnJdmNV7umf0e261qFciYZmUFnG
-         /UCg==
-X-Gm-Message-State: AOAM533yUYaR6NY595yZAg8WkbPYpS6OH8Ihi9+xGqffj/DTnd4T/Oq+
-        FKJ8Vi4nvtz8FXN8ih5thQQWObZ9QRKufVOfM5pNZ69P/Sp0
-X-Google-Smtp-Source: ABdhPJwmxPi+IqOqqtvOaUuRwBvbO+Ll6B4LsWsA1DP5XCim1o0fOyk+c3GiRfbw6RMMWfUWK190yHSmAtKCH+A6sc01ISQtwEWH
+        Thu, 1 Apr 2021 14:15:42 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15637C05BD11;
+        Thu,  1 Apr 2021 05:52:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Yw41C/LM/CLkV/f2jz3URlFrp1rmhB03Zhe1Y9zc6w8=; b=VReZDpDt5aNf6kSFMIIU9tiZ9p
+        5jBuVEp/WF4EuLT2Hz8powvl9pghjOFAizPU5QqGxMcTSuk5AlVDG7Rzp7vHscBL2WL0TQuQJcoNB
+        x0M3qRg4kpC0vTnXlJxgPn+72DK0T1eUYtuMoLu8e/A6IiEJjVLlfctuB6CPjCh5eyenHHWvzrU0L
+        o0P6LZ0dsT4WJsi6JYfJt8nhNvLEzQAZpr4sOcMV4YaUBxdSKHBZhfHmOzrLSXhxZx45e1jrHyrBC
+        AKzBk8cRUSNvLbtv2B6nLwhzd1qQAd5DocwjB1H1ixZjYvH5kwC1SLLmit+KJ9coSwn2UTs06N8Ya
+        UZqijUyQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lRwnp-0068jn-3I; Thu, 01 Apr 2021 12:52:05 +0000
+Date:   Thu, 1 Apr 2021 13:52:01 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org
+Subject: Re: [PATCH v6 00/27] Memory Folios
+Message-ID: <20210401125201.GD351017@casper.infradead.org>
+References: <20210331184728.1188084-1-willy@infradead.org>
+ <20210401070537.GB1363493@infradead.org>
+ <20210401112656.GA351017@casper.infradead.org>
+ <20210401122803.GB2710221@ziepe.ca>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:841a:: with SMTP id h26mr6461960ioj.179.1617279363658;
- Thu, 01 Apr 2021 05:16:03 -0700 (PDT)
-Date:   Thu, 01 Apr 2021 05:16:03 -0700
-In-Reply-To: <0000000000003a565e05bee596f2@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f9391c05bee831ad@google.com>
-Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
-From:   syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, chaitanya.kulkarni@wdc.com, damien.lemoal@wdc.com,
-        hch@lst.de, johannes.thumshirn@edc.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210401122803.GB2710221@ziepe.ca>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+On Thu, Apr 01, 2021 at 09:28:03AM -0300, Jason Gunthorpe wrote:
+> On Thu, Apr 01, 2021 at 12:26:56PM +0100, Matthew Wilcox wrote:
+> > On Thu, Apr 01, 2021 at 08:05:37AM +0100, Christoph Hellwig wrote:
+> > > On Wed, Mar 31, 2021 at 07:47:01PM +0100, Matthew Wilcox (Oracle) wrote:
+> > > >  - Mirror members of struct page (for pagecache / anon) into struct folio,
+> > > >    so (eg) you can use folio->mapping instead of folio->page.mapping
+> > > 
+> > > Eww, why?
+> > 
+> > So that eventually we can rename page->mapping to page->_mapping and
+> > prevent the bugs from people doing page->mapping on a tail page.  eg
+> > https://lore.kernel.org/linux-mm/alpine.LSU.2.11.2103102214170.7159@eggly.anvils/
+> 
+> Is that gcc structure layout randomization stuff going to be a problem
+> here?
+> 
+> Add some 
+>   static_assert(offsetof(struct folio,..) == offsetof(struct page,..))
+> 
+> tests to force it?
 
-commit 73d90386b559d6f4c3c5db5e6bb1b68aae8fd3e7
-Author: Damien Le Moal <damien.lemoal@wdc.com>
-Date:   Thu Jan 28 04:47:27 2021 +0000
+You sound like the kind of person who hasn't read patch 1.
 
-    nvme: cleanup zone information initialization
+diff --git a/mm/util.c b/mm/util.c
+index 0b6dd9d81da7..521a772f06eb 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -686,6 +686,25 @@ struct anon_vma *page_anon_vma(struct page *page)
+ 	return __page_rmapping(page);
+ }
+ 
++static inline void folio_build_bug(void)
++{
++#define FOLIO_MATCH(pg, fl)						\
++BUILD_BUG_ON(offsetof(struct page, pg) != offsetof(struct folio, fl));
++
++	FOLIO_MATCH(flags, flags);
++	FOLIO_MATCH(lru, lru);
++	FOLIO_MATCH(mapping, mapping);
++	FOLIO_MATCH(index, index);
++	FOLIO_MATCH(private, private);
++	FOLIO_MATCH(_mapcount, _mapcount);
++	FOLIO_MATCH(_refcount, _refcount);
++#ifdef CONFIG_MEMCG
++	FOLIO_MATCH(memcg_data, memcg_data);
++#endif
++#undef FOLIO_MATCH
++	BUILD_BUG_ON(sizeof(struct page) != sizeof(struct folio));
++}
++
+ struct address_space *page_mapping(struct page *page)
+ {
+ 	struct address_space *mapping;
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1440e986d00000
-start commit:   d19cc4bf Merge tag 'trace-v5.12-rc5' of git://git.kernel.o..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1640e986d00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1240e986d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d1a3d65a48dbd1bc
-dashboard link: https://syzkaller.appspot.com/bug?extid=c88a7030da47945a3cc3
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f50d11d00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=137694a1d00000
-
-Reported-by: syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com
-Fixes: 73d90386b559 ("nvme: cleanup zone information initialization")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
