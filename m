@@ -2,195 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FDD2350FE3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 09:11:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCFD0351016
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 09:31:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233549AbhDAHKj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 03:10:39 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:15842 "EHLO
-        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233406AbhDAHKW (ORCPT
+        id S233258AbhDAHag (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 03:30:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40236 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233179AbhDAHa0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 03:10:22 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4F9vR00ZTPz93pF;
-        Thu,  1 Apr 2021 15:08:12 +0800 (CST)
-Received: from code-website.localdomain (10.175.127.227) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.498.0; Thu, 1 Apr 2021 15:10:10 +0800
-From:   yangerkun <yangerkun@huawei.com>
-To:     <viro@zeniv.linux.org.uk>, <axboe@kernel.dk>,
-        <asml.silence@gmail.com>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <io-uring@vger.kernel.org>, <yangerkun@huawei.com>
-Subject: [PATCH] block: reexpand iov_iter after read/write
-Date:   Thu, 1 Apr 2021 15:18:07 +0800
-Message-ID: <20210401071807.3328235-1-yangerkun@huawei.com>
-X-Mailer: git-send-email 2.25.4
+        Thu, 1 Apr 2021 03:30:26 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA21C06178A
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Apr 2021 00:30:26 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id c204so802861pfc.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Apr 2021 00:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=43NDXGgfotmd8T021xD/PzKrOkjvp9eU15TIWjuTS6Q=;
+        b=T9iei2az1OzZPGs33+INYA6qjEddSZl9tKJhi1hESi0WIplLaJgW+ZEPKXy6x+ZIo+
+         1f4ny5Hn1h7zTJsFFONy31149OM5jFoHqwnwlxZDw4tM8ASrDgyQ/KKcUgpv0+iku9kc
+         Ru/zk+iH34T6x/4CJt2Gi2PjDS0NEw+r+H+ts=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=43NDXGgfotmd8T021xD/PzKrOkjvp9eU15TIWjuTS6Q=;
+        b=cY9hHgTPkjaT8xk0iXMqcwz0gizh/j1Ktty3b6SiXDebcPT8T3sHyZGht63sjrM3pJ
+         YHOsOSrkG+r1xWzxyQ8S5Nb2Nz4kqY6EzUAjIrHjKRMA6e/hz4j4LeE819OMNH6EsKWe
+         Jx/lqOyuDB/mqm2S+LMUeEwJL3wucT1cC/Xzzix7NmVPvxBiHhhGGX3GZShy2rJVuqX8
+         URUmjE5wHwBdx2yGAaUjdi+0gmMeL+vDIhymcT18D8lnS0kpxNEy8JR/E1bkbkg1piBu
+         o+uzD6rFx2Q3/xL93xgIAxfP0HlllNkk+W7+cenn/492yUTCGK0DqrbLpkAOIR7EjgN2
+         i/xQ==
+X-Gm-Message-State: AOAM530u6jSgw8w1qMHn6W0eVDbkfG2CIaoyzGT/tdLB0DD0PqhCDL9F
+        RURhet15Cqp0hDhg+4Bz8lV41XH+RNghLg==
+X-Google-Smtp-Source: ABdhPJwOph9440oECFc16IlP9JvBFBtO6iz26JSpoM4SC7KHyxWIdK25RwtNSKbz1sSwmp7HkcBmrA==
+X-Received: by 2002:a63:ee04:: with SMTP id e4mr6351016pgi.446.1617262225974;
+        Thu, 01 Apr 2021 00:30:25 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id q25sm4149183pfh.34.2021.04.01.00.30.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Apr 2021 00:30:25 -0700 (PDT)
+Date:   Thu, 1 Apr 2021 00:30:24 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+        Adam Nichols <adam@grimm-co.com>,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] sysfs: Unconditionally use vmalloc for buffer
+Message-ID: <202104010022.5E7FB3069@keescook>
+References: <20210401022145.2019422-1-keescook@chromium.org>
+ <YGVXSFMlvX4RQI8n@kroah.com>
+ <202103312335.25EA9650@keescook>
+ <YGVxzSH8fV9MwBDM@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YGVxzSH8fV9MwBDM@kroah.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We get a bug:
+On Thu, Apr 01, 2021 at 09:10:05AM +0200, Greg Kroah-Hartman wrote:
+> On Wed, Mar 31, 2021 at 11:52:20PM -0700, Kees Cook wrote:
+> > On Thu, Apr 01, 2021 at 07:16:56AM +0200, Greg Kroah-Hartman wrote:
+> > > On Wed, Mar 31, 2021 at 07:21:45PM -0700, Kees Cook wrote:
+> > > > The sysfs interface to seq_file continues to be rather fragile
+> > > > (seq_get_buf() should not be used outside of seq_file), as seen with
+> > > > some recent exploits[1]. Move the seq_file buffer to the vmap area
+> > > > (while retaining the accounting flag), since it has guard pages that
+> > > > will catch and stop linear overflows. This seems justified given that
+> > > > sysfs's use of seq_file already uses kvmalloc(), is almost always using
+> > > > a PAGE_SIZE or larger allocation, has normally short-lived allocations,
+> > > > and is not normally on a performance critical path.
+> > > > 
+> > > > Once seq_get_buf() has been removed (and all sysfs callbacks using
+> > > > seq_file directly), this change can also be removed.
+> > > > 
+> > > > [1] https://blog.grimm-co.com/2021/03/new-old-bugs-in-linux-kernel.html
+> > > > 
+> > > > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > > > ---
+> > > > v3:
+> > > > - Limit to only sysfs (instead of all of seq_file).
+> > > > v2: https://lore.kernel.org/lkml/20210315174851.622228-1-keescook@chromium.org/
+> > > > v1: https://lore.kernel.org/lkml/20210312205558.2947488-1-keescook@chromium.org/
+> > > > ---
+> > > >  fs/sysfs/file.c | 23 +++++++++++++++++++++++
+> > > >  1 file changed, 23 insertions(+)
+> > > > 
+> > > > diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+> > > > index 9aefa7779b29..70e7a450e5d1 100644
+> > > > --- a/fs/sysfs/file.c
+> > > > +++ b/fs/sysfs/file.c
+> > > > @@ -16,6 +16,7 @@
+> > > >  #include <linux/mutex.h>
+> > > >  #include <linux/seq_file.h>
+> > > >  #include <linux/mm.h>
+> > > > +#include <linux/vmalloc.h>
+> > > >  
+> > > >  #include "sysfs.h"
+> > > >  
+> > > > @@ -32,6 +33,25 @@ static const struct sysfs_ops *sysfs_file_ops(struct kernfs_node *kn)
+> > > >  	return kobj->ktype ? kobj->ktype->sysfs_ops : NULL;
+> > > >  }
+> > > >  
+> > > > +/*
+> > > > + * To be proactively defensive against sysfs show() handlers that do not
+> > > > + * correctly stay within their PAGE_SIZE buffer, use the vmap area to gain
+> > > > + * the trailing guard page which will stop linear buffer overflows.
+> > > > + */
+> > > > +static void *sysfs_kf_seq_start(struct seq_file *sf, loff_t *ppos)
+> > > > +{
+> > > > +	struct kernfs_open_file *of = sf->private;
+> > > > +	struct kernfs_node *kn = of->kn;
+> > > > +
+> > > > +	WARN_ON_ONCE(sf->buf);
+> > > 
+> > > How can buf ever not be NULL?  And if it is, we will leak memory in the
+> > > next line so we shouldn't have _ONCE, we should always know, but not
+> > > rebooting the machine would be nice.
+> > 
+> > It should never be possible. I did this because seq_file has some
+> > unusual buf allocation patterns in the kernel, and I liked the cheap
+> > leak check. I use _ONCE because spewing endlessly doesn't help most
+> > cases. And if you want to trigger it again, you don't have to reboot:
+> > https://www.kernel.org/doc/html/latest/admin-guide/clearing-warn-once.html
+> 
+> True, I was thinking of the panic-on-warn people, and the hesitation of
+> adding new WARN_ON() to the kernel code.  If this really can happen,
+> shouldn't we handle it properly?
 
-BUG: KASAN: slab-out-of-bounds in iov_iter_revert+0x11c/0x404
-lib/iov_iter.c:1139
-Read of size 8 at addr ffff0000d3fb11f8 by task
+It should never happen, but I hate silent bugs. Given the existing
+pattern of "external preallocation", it seems like a fragile interface
+worth asserting our expectations.
 
-CPU: 0 PID: 12582 Comm: syz-executor.2 Not tainted
-5.10.0-00843-g352c8610ccd2 #2
-Hardware name: linux,dummy-virt (DT)
-Call trace:
- dump_backtrace+0x0/0x2d0 arch/arm64/kernel/stacktrace.c:132
- show_stack+0x28/0x34 arch/arm64/kernel/stacktrace.c:196
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x110/0x164 lib/dump_stack.c:118
- print_address_description+0x78/0x5c8 mm/kasan/report.c:385
- __kasan_report mm/kasan/report.c:545 [inline]
- kasan_report+0x148/0x1e4 mm/kasan/report.c:562
- check_memory_region_inline mm/kasan/generic.c:183 [inline]
- __asan_load8+0xb4/0xbc mm/kasan/generic.c:252
- iov_iter_revert+0x11c/0x404 lib/iov_iter.c:1139
- io_read fs/io_uring.c:3421 [inline]
- io_issue_sqe+0x2344/0x2d64 fs/io_uring.c:5943
- __io_queue_sqe+0x19c/0x520 fs/io_uring.c:6260
- io_queue_sqe+0x2a4/0x590 fs/io_uring.c:6326
- io_submit_sqe fs/io_uring.c:6395 [inline]
- io_submit_sqes+0x4c0/0xa04 fs/io_uring.c:6624
- __do_sys_io_uring_enter fs/io_uring.c:9013 [inline]
- __se_sys_io_uring_enter fs/io_uring.c:8960 [inline]
- __arm64_sys_io_uring_enter+0x190/0x708 fs/io_uring.c:8960
- __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
- invoke_syscall arch/arm64/kernel/syscall.c:48 [inline]
- el0_svc_common arch/arm64/kernel/syscall.c:158 [inline]
- do_el0_svc+0x120/0x290 arch/arm64/kernel/syscall.c:227
- el0_svc+0x1c/0x28 arch/arm64/kernel/entry-common.c:367
- el0_sync_handler+0x98/0x170 arch/arm64/kernel/entry-common.c:383
- el0_sync+0x140/0x180 arch/arm64/kernel/entry.S:670
+The panic_on_warn folks will get exactly what they wanted: immediate
+feedback on "expected to be impossible" cases:
+https://www.kernel.org/doc/html/latest/process/deprecated.html#bug-and-bug-on
 
-Allocated by task 12570:
- stack_trace_save+0x80/0xb8 kernel/stacktrace.c:121
- kasan_save_stack mm/kasan/common.c:48 [inline]
- kasan_set_track mm/kasan/common.c:56 [inline]
- __kasan_kmalloc+0xdc/0x120 mm/kasan/common.c:461
- kasan_kmalloc+0xc/0x14 mm/kasan/common.c:475
- __kmalloc+0x23c/0x334 mm/slub.c:3970
- kmalloc include/linux/slab.h:557 [inline]
- __io_alloc_async_data+0x68/0x9c fs/io_uring.c:3210
- io_setup_async_rw fs/io_uring.c:3229 [inline]
- io_read fs/io_uring.c:3436 [inline]
- io_issue_sqe+0x2954/0x2d64 fs/io_uring.c:5943
- __io_queue_sqe+0x19c/0x520 fs/io_uring.c:6260
- io_queue_sqe+0x2a4/0x590 fs/io_uring.c:6326
- io_submit_sqe fs/io_uring.c:6395 [inline]
- io_submit_sqes+0x4c0/0xa04 fs/io_uring.c:6624
- __do_sys_io_uring_enter fs/io_uring.c:9013 [inline]
- __se_sys_io_uring_enter fs/io_uring.c:8960 [inline]
- __arm64_sys_io_uring_enter+0x190/0x708 fs/io_uring.c:8960
- __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
- invoke_syscall arch/arm64/kernel/syscall.c:48 [inline]
- el0_svc_common arch/arm64/kernel/syscall.c:158 [inline]
- do_el0_svc+0x120/0x290 arch/arm64/kernel/syscall.c:227
- el0_svc+0x1c/0x28 arch/arm64/kernel/entry-common.c:367
- el0_sync_handler+0x98/0x170 arch/arm64/kernel/entry-common.c:383
- el0_sync+0x140/0x180 arch/arm64/kernel/entry.S:670
+> > > > +	sf->buf = __vmalloc(kn->attr.size, GFP_KERNEL_ACCOUNT);
+> > > > +	if (!sf->buf)
+> > > > +		return ERR_PTR(-ENOMEM);
+> > > > +	sf->size = kn->attr.size;
+> > > > +
+> > > > +	return NULL + !*ppos;
+> > > > +}
+> > > 
+> > > Will this also cause the vmalloc fragmentation/abuse that others have
+> > > mentioned as userspace can trigger this?
+> > 
+> > If I understood the concern correctly, it was about it being a risk for
+> > doing it for all seq_file uses. This version confines the changes to only
+> > sysfs seq_file uses.
+> 
+> There are a few sysfs files that userspace can read from out there :)
 
-Freed by task 12570:
- stack_trace_save+0x80/0xb8 kernel/stacktrace.c:121
- kasan_save_stack mm/kasan/common.c:48 [inline]
- kasan_set_track+0x38/0x6c mm/kasan/common.c:56
- kasan_set_free_info+0x20/0x40 mm/kasan/generic.c:355
- __kasan_slab_free+0x124/0x150 mm/kasan/common.c:422
- kasan_slab_free+0x10/0x1c mm/kasan/common.c:431
- slab_free_hook mm/slub.c:1544 [inline]
- slab_free_freelist_hook mm/slub.c:1577 [inline]
- slab_free mm/slub.c:3142 [inline]
- kfree+0x104/0x38c mm/slub.c:4124
- io_dismantle_req fs/io_uring.c:1855 [inline]
- __io_free_req+0x70/0x254 fs/io_uring.c:1867
- io_put_req_find_next fs/io_uring.c:2173 [inline]
- __io_queue_sqe+0x1fc/0x520 fs/io_uring.c:6279
- __io_req_task_submit+0x154/0x21c fs/io_uring.c:2051
- io_req_task_submit+0x2c/0x44 fs/io_uring.c:2063
- task_work_run+0xdc/0x128 kernel/task_work.c:151
- get_signal+0x6f8/0x980 kernel/signal.c:2562
- do_signal+0x108/0x3a4 arch/arm64/kernel/signal.c:658
- do_notify_resume+0xbc/0x25c arch/arm64/kernel/signal.c:722
- work_pending+0xc/0x180
+Yes, but the vmap area is also used by default for process stacks, etc.
+Malicious fragmentation is already possible. I understood the concern to
+be about "regular" use. (And if I'm wrong, we can add a knob maybe?)
 
-blkdev_read_iter can truncate iov_iter's count since the count + pos may
-exceed the size of the blkdev. This will confuse io_read that we have
-consume the iovec. And once we do the iov_iter_revert in io_read, we
-will trigger the slab-out-of-bounds. Fix it by reexpand the count with
-size has been truncated.
+> > > And what code frees it?
+> > 
+> > The existing hooks to seq_release() handle this already. This kind of
+> > "preallocation" of the seq_file buffer is done in a few places already
+> > (hence my desire for the sanity checking WARN lest future seq_file
+> > semantics change).
+> 
+> Ah, "magic", gotta love it...
 
-blkdev_write_iter can trigger the problem too.
+Yeeeah. :P
 
-Signed-off-by: yangerkun <yangerkun@huawei.com>
----
- fs/block_dev.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
-
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 92ed7d5df677..788e1014576f 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1680,6 +1680,7 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	struct inode *bd_inode = bdev_file_inode(file);
- 	loff_t size = i_size_read(bd_inode);
- 	struct blk_plug plug;
-+	size_t shorted = 0;
- 	ssize_t ret;
- 
- 	if (bdev_read_only(I_BDEV(bd_inode)))
-@@ -1697,12 +1698,17 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	if ((iocb->ki_flags & (IOCB_NOWAIT | IOCB_DIRECT)) == IOCB_NOWAIT)
- 		return -EOPNOTSUPP;
- 
--	iov_iter_truncate(from, size - iocb->ki_pos);
-+	size -= iocb->ki_pos;
-+	if (iov_iter_count(from) > size) {
-+		shorted = iov_iter_count(from) - size;
-+		iov_iter_truncate(from, size);
-+	}
- 
- 	blk_start_plug(&plug);
- 	ret = __generic_file_write_iter(iocb, from);
- 	if (ret > 0)
- 		ret = generic_write_sync(iocb, ret);
-+	iov_iter_reexpand(from, iov_iter_count(from) + shorted);
- 	blk_finish_plug(&plug);
- 	return ret;
- }
-@@ -1714,13 +1720,21 @@ ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	struct inode *bd_inode = bdev_file_inode(file);
- 	loff_t size = i_size_read(bd_inode);
- 	loff_t pos = iocb->ki_pos;
-+	size_t shorted = 0;
-+	ssize_t ret;
- 
- 	if (pos >= size)
- 		return 0;
- 
- 	size -= pos;
--	iov_iter_truncate(to, size);
--	return generic_file_read_iter(iocb, to);
-+	if (iov_iter_count(to) > size) {
-+		shorted = iov_iter_count(to) - size;
-+		iov_iter_truncate(to, size);
-+	}
-+
-+	ret = generic_file_read_iter(iocb, to);
-+	iov_iter_reexpand(to, iov_iter_count(to) + shorted);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(blkdev_read_iter);
- 
 -- 
-2.25.4
-
+Kees Cook
