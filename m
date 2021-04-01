@@ -2,152 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 271A9350C74
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 04:16:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FAB0350C7C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 04:17:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233092AbhDACPa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Mar 2021 22:15:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57274 "EHLO
+        id S233036AbhDACRH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Mar 2021 22:17:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232994AbhDACPV (ORCPT
+        with ESMTP id S233050AbhDACQw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Mar 2021 22:15:21 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AD14C061574;
-        Wed, 31 Mar 2021 19:15:19 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lRmr7-001X2U-Bm; Thu, 01 Apr 2021 02:14:45 +0000
-Date:   Thu, 1 Apr 2021 02:14:45 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v31 07/12] landlock: Support filesystem access-control
-Message-ID: <YGUslUPwp85Zrp4t@zeniv-ca.linux.org.uk>
-References: <20210324191520.125779-1-mic@digikod.net>
- <20210324191520.125779-8-mic@digikod.net>
- <d2764451-8970-6cbd-e2bf-254a42244ffc@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d2764451-8970-6cbd-e2bf-254a42244ffc@digikod.net>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+        Wed, 31 Mar 2021 22:16:52 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7763BC061762
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Mar 2021 19:16:52 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id x8so4392480ybo.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Mar 2021 19:16:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=EdylIR7+stbNhjEXK8dV5HwE4QZqh9PwApyPp+QxuSY=;
+        b=TLLcEGrtg1EzKDU1ONElskZnf8TljiwRA5z4zQSFjgDWD+6Yb7z2QEq0DZwSsjI1tl
+         v0v0IGW9LMqnS7xFdEzvkvsRQ/HCBEuTeL0buKzWaXnmGwS2pe4IQApxeJ4dGqic9M4y
+         BaQ+H9Hqe5jXNK+PlOR6brAZ3k09R/FdPGxX464Q6NnOMjeMlk7IA6hxs8Rs6+jUUhIR
+         rlar8GQls8+YYGDr5zY5zPlijN2NreIhOnL7x5IV2QmQUexXYOPaTRCbtnWZ4a3vr/n/
+         YBnmQrfv7q8sNGuW95tM4Wd2bxC8zNRB5M055MBfkWyiW436O67Es3q3CmHYekTfsOah
+         9VvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=EdylIR7+stbNhjEXK8dV5HwE4QZqh9PwApyPp+QxuSY=;
+        b=CFOg20QFwRfz9g4JDs3v5GDyrnCpljhfC3Qn/5EeTgmRJ/TaO3QF1RZPuhspf+yU8A
+         0zdqgBbSCgDeniN0d1bOR+HyFBfgsgdy4rZZ/bQqJM7q62euQnn4qKKMDgxP4cix8NMX
+         vh8cGEHm1TIpf3Ab57YU2NTUEUcYOsToY/EggyhieFdqiDaGFtnbKdUmLJVDtJjD0gk9
+         42b6b0IMdiHqryhWBlwCYhTQHiKPQISc8oQFdgUAbjqbrPs0qMD/1B6s23NYkfwQczLI
+         nvzuVW1C+aPLk/YpfVXGfsBE8p6xyXfGa9f86T0gtodkkQfb1UfVHms/e1/UBHn5+K4w
+         k57g==
+X-Gm-Message-State: AOAM532dsV2yHhijo3c/0N3IjtNGSszD2CencYH5h5HGoy7FY34+TCD3
+        MzgjarwHZ/oG47kl6r7LHK9veGmzFrE=
+X-Google-Smtp-Source: ABdhPJzFjJJJjbV7B6qbOLgEtEulybMwZdpPzXYIWNR+4Fi8ubkuKI0/HJ5rWnx+1ZxiSBdQ8C+cQ2mN6vk=
+X-Received: from legoland2.mtv.corp.google.com ([2620:15c:211:1:658a:a0c1:1f30:4141])
+ (user=varmam job=sendgmr) by 2002:a25:424c:: with SMTP id p73mr8794991yba.192.1617243411741;
+ Wed, 31 Mar 2021 19:16:51 -0700 (PDT)
+Date:   Wed, 31 Mar 2021 19:16:45 -0700
+Message-Id: <20210401021645.2609047-1-varmam@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.31.0.291.g576ba9dcdaf-goog
+Subject: [PATCH v2] fs: Improve eventpoll logging to stop indicting timerfd
+From:   Manish Varma <varmam@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, Manish Varma <varmam@google.com>,
+        Kelly Rossmoyer <krossmo@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 31, 2021 at 07:33:50PM +0200, Mickaël Salaün wrote:
+timerfd doesn't create any wakelocks, but eventpoll can.  When it does,
+it names them after the underlying file descriptor, and since all
+timerfd file descriptors are named "[timerfd]" (which saves memory on
+systems like desktops with potentially many timerfd instances), all
+wakesources created as a result of using the eventpoll-on-timerfd idiom
+are called... "[timerfd]".
 
-> > +static inline u64 unmask_layers(
-> > +		const struct landlock_ruleset *const domain,
-> > +		const struct path *const path, const u32 access_request,
-> > +		u64 layer_mask)
-> > +{
-> > +	const struct landlock_rule *rule;
-> > +	const struct inode *inode;
-> > +	size_t i;
-> > +
-> > +	if (d_is_negative(path->dentry))
-> > +		/* Continues to walk while there is no mapped inode. */
-				     ^^^^^
-Odd comment, that...
+However, it becomes impossible to tell which "[timerfd]" wakesource is
+affliated with which process and hence troubleshooting is difficult.
 
-> > +static int check_access_path(const struct landlock_ruleset *const domain,
-> > +		const struct path *const path, u32 access_request)
-> > +{
+This change addresses this problem by changing the way eventpoll
+wakesources are named:
 
-> > +	walker_path = *path;
-> > +	path_get(&walker_path);
+1) the top-level per-process eventpoll wakesource is now named "epoll:P"
+(instead of just "eventpoll"), where P, is the PID of the creating
+process.
+2) individual per-underlying-filedescriptor eventpoll wakesources are
+now named "epollitemN:P.F", where N is a unique ID token and P is PID
+of the creating process and F is the name of the underlying file
+descriptor.
 
-> > +	while (true) {
-> > +		struct dentry *parent_dentry;
-> > +
-> > +		layer_mask = unmask_layers(domain, &walker_path,
-> > +				access_request, layer_mask);
-> > +		if (layer_mask == 0) {
-> > +			/* Stops when a rule from each layer grants access. */
-> > +			allowed = true;
-> > +			break;
-> > +		}
-> > +
-> > +jump_up:
-> > +		if (walker_path.dentry == walker_path.mnt->mnt_root) {
-> > +			if (follow_up(&walker_path)) {
-> > +				/* Ignores hidden mount points. */
-> > +				goto jump_up;
-> > +			} else {
-> > +				/*
-> > +				 * Stops at the real root.  Denies access
-> > +				 * because not all layers have granted access.
-> > +				 */
-> > +				allowed = false;
-> > +				break;
-> > +			}
-> > +		}
-> > +		if (unlikely(IS_ROOT(walker_path.dentry))) {
-> > +			/*
-> > +			 * Stops at disconnected root directories.  Only allows
-> > +			 * access to internal filesystems (e.g. nsfs, which is
-> > +			 * reachable through /proc/<pid>/ns/<namespace>).
-> > +			 */
-> > +			allowed = !!(walker_path.mnt->mnt_flags & MNT_INTERNAL);
-> > +			break;
-> > +		}
-> > +		parent_dentry = dget_parent(walker_path.dentry);
-> > +		dput(walker_path.dentry);
-> > +		walker_path.dentry = parent_dentry;
-> > +	}
-> > +	path_put(&walker_path);
-> > +	return allowed ? 0 : -EACCES;
+All together that should be splitted up into a change to eventpoll and
+timerfd (or other file descriptors).
 
-That's a whole lot of grabbing/dropping references...  I realize that it's
-an utterly tactless question, but... how costly it is?  IOW, do you have
-profiling data?
+Co-developed-by: Kelly Rossmoyer <krossmo@google.com>
+Signed-off-by: Kelly Rossmoyer <krossmo@google.com>
+Signed-off-by: Manish Varma <varmam@google.com>
+---
+ fs/eventpoll.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-> > +/*
-> > + * pivot_root(2), like mount(2), changes the current mount namespace.  It must
-> > + * then be forbidden for a landlocked process.
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 7df8c0fa462b..8d3369a02633 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -297,6 +297,7 @@ static LIST_HEAD(tfile_check_list);
+ 
+ static long long_zero;
+ static long long_max = LONG_MAX;
++static atomic_t wakesource_create_id  = ATOMIC_INIT(0);
+ 
+ struct ctl_table epoll_table[] = {
+ 	{
+@@ -1451,15 +1452,23 @@ static int ep_create_wakeup_source(struct epitem *epi)
+ {
+ 	struct name_snapshot n;
+ 	struct wakeup_source *ws;
++	pid_t task_pid;
++	char buf[64];
++	int id;
++
++	task_pid = task_pid_nr(current);
+ 
+ 	if (!epi->ep->ws) {
+-		epi->ep->ws = wakeup_source_register(NULL, "eventpoll");
++		snprintf(buf, sizeof(buf), "epoll:%d", task_pid);
++		epi->ep->ws = wakeup_source_register(NULL, buf);
+ 		if (!epi->ep->ws)
+ 			return -ENOMEM;
+ 	}
+ 
++	id = atomic_inc_return(&wakesource_create_id);
+ 	take_dentry_name_snapshot(&n, epi->ffd.file->f_path.dentry);
+-	ws = wakeup_source_register(NULL, n.name.name);
++	snprintf(buf, sizeof(buf), "epollitem%d:%d.%s", id, task_pid, n.name.name);
++	ws = wakeup_source_register(NULL, buf);
+ 	release_dentry_name_snapshot(&n);
+ 
+ 	if (!ws)
+-- 
+2.31.0.291.g576ba9dcdaf-goog
 
-... and cross-directory rename(2) can change the tree topology.  Do you ban that
-as well?
-
-[snip]
-
-> > +static int hook_path_rename(const struct path *const old_dir,
-> > +		struct dentry *const old_dentry,
-> > +		const struct path *const new_dir,
-> > +		struct dentry *const new_dentry)
-> > +{
-> > +	const struct landlock_ruleset *const dom =
-> > +		landlock_get_current_domain();
-> > +
-> > +	if (!dom)
-> > +		return 0;
-> > +	/* The mount points are the same for old and new paths, cf. EXDEV. */
-> > +	if (old_dir->dentry != new_dir->dentry)
-> > +		/* For now, forbids reparenting. */
-> > +		return -EACCES;
-
-You do, apparently, and not in a way that would have the userland fall
-back to copy+unlink.  Lovely...  Does e.g. git survive such restriction?
-Same question for your average package build...
