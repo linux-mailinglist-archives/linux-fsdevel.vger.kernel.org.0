@@ -2,190 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 948423517AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 19:47:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F25F3518F7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 19:49:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234923AbhDARmh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 13:42:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57128 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234937AbhDARlW (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 13:41:22 -0400
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD3AFC03117D
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Apr 2021 10:11:06 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4FB8pb136rzMqMD8;
-        Thu,  1 Apr 2021 19:11:03 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4FB8pQ6Nzrzlh8TN;
-        Thu,  1 Apr 2021 19:10:54 +0200 (CEST)
-Subject: Re: [PATCH v31 07/12] landlock: Support filesystem access-control
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        id S235973AbhDARsk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 13:48:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235535AbhDARq0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Apr 2021 13:46:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2BF6261165;
+        Thu,  1 Apr 2021 17:46:17 +0000 (UTC)
+Date:   Thu, 1 Apr 2021 19:46:13 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-References: <20210324191520.125779-1-mic@digikod.net>
- <20210324191520.125779-8-mic@digikod.net>
- <d2764451-8970-6cbd-e2bf-254a42244ffc@digikod.net>
- <YGUslUPwp85Zrp4t@zeniv-ca.linux.org.uk>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <84e1cd29-0f09-1ed4-c680-65ca8c6988a3@digikod.net>
-Date:   Thu, 1 Apr 2021 19:12:05 +0200
-User-Agent: 
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        io-uring@vger.kernel.org
+Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
+Message-ID: <20210401174613.vymhhrfsemypougv@wittgenstein>
+References: <0000000000003a565e05bee596f2@google.com>
+ <20210401154515.k24qdd2lzhtneu47@wittgenstein>
+ <90e7e339-eaec-adb2-cfed-6dc058a117a3@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <YGUslUPwp85Zrp4t@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <90e7e339-eaec-adb2-cfed-6dc058a117a3@kernel.dk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 01/04/2021 04:14, Al Viro wrote:
-> On Wed, Mar 31, 2021 at 07:33:50PM +0200, Mickaël Salaün wrote:
+On Thu, Apr 01, 2021 at 10:09:18AM -0600, Jens Axboe wrote:
+> On 4/1/21 9:45 AM, Christian Brauner wrote:
+> > On Thu, Apr 01, 2021 at 02:09:20AM -0700, syzbot wrote:
+> >> Hello,
+> >>
+> >> syzbot found the following issue on:
+> >>
+> >> HEAD commit:    d19cc4bf Merge tag 'trace-v5.12-rc5' of git://git.kernel.o..
+> >> git tree:       upstream
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=1018f281d00000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=d1a3d65a48dbd1bc
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=c88a7030da47945a3cc3
+> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f50d11d00000
+> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=137694a1d00000
+> >>
+> >> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> >> Reported-by: syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com
+> >>
+> >> ------------[ cut here ]------------
+> >> WARNING: CPU: 1 PID: 8409 at fs/namespace.c:1186 mntput_no_expire+0xaca/0xcb0 fs/namespace.c:1186
+> >> Modules linked in:
+> >> CPU: 1 PID: 8409 Comm: syz-executor035 Not tainted 5.12.0-rc5-syzkaller #0
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> >> RIP: 0010:mntput_no_expire+0xaca/0xcb0 fs/namespace.c:1186
+> >> Code: ff 48 c7 c2 e0 cb 78 89 be c2 02 00 00 48 c7 c7 a0 cb 78 89 c6 05 e5 6d e5 0b 01 e8 ff e1 f6 06 e9 3f fd ff ff e8 c6 a5 a8 ff <0f> 0b e9 fc fc ff ff e8 ba a5 a8 ff e8 55 dc 94 ff 31 ff 89 c5 89
+> >> RSP: 0018:ffffc9000165fc78 EFLAGS: 00010293
+> >> RAX: 0000000000000000 RBX: 1ffff920002cbf95 RCX: 0000000000000000
+> >> RDX: ffff88802072d4c0 RSI: ffffffff81cb4b8a RDI: 0000000000000003
+> >> RBP: ffff888011656900 R08: 0000000000000000 R09: ffffffff8fa978af
+> >> R10: ffffffff81cb4884 R11: 0000000000000000 R12: 0000000000000008
+> >> R13: ffffc9000165fcc8 R14: dffffc0000000000 R15: 00000000ffffffff
+> >> FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >> CR2: 000055a722053160 CR3: 000000000bc8e000 CR4: 00000000001506e0
+> >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >> Call Trace:
+> >>  mntput fs/namespace.c:1232 [inline]
+> >>  cleanup_mnt+0x523/0x530 fs/namespace.c:1132
+> >>  task_work_run+0xdd/0x1a0 kernel/task_work.c:140
+> >>  exit_task_work include/linux/task_work.h:30 [inline]
+> >>  do_exit+0xbfc/0x2a60 kernel/exit.c:825
+> >>  do_group_exit+0x125/0x310 kernel/exit.c:922
+> >>  __do_sys_exit_group kernel/exit.c:933 [inline]
+> >>  __se_sys_exit_group kernel/exit.c:931 [inline]
+> >>  __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:931
+> >>  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+> >>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> >> RIP: 0033:0x446af9
+> >> Code: Unable to access opcode bytes at RIP 0x446acf.
+> >> RSP: 002b:00000000005dfe48 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> >> RAX: ffffffffffffffda RBX: 00000000004ce450 RCX: 0000000000446af9
+> >> RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000001
+> >> RBP: 0000000000000001 R08: ffffffffffffffbc R09: 0000000000000000
+> >> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004ce450
+> >> R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
+> > 
+> > [+Cc Jens + io_uring]
+> > 
+> > Hm, this reproducer uses io_uring and it's the io_uring_enter() that
+> > triggers this reliably. With this reproducer I've managed to reproduce
+> > the issue on v5.12-rc4, and v5.12-rc3, v5.12-rc2 and v5.12-rc1.
+> > It's not reproducible at
+> > 9820b4dca0f9c6b7ab8b4307286cdace171b724d
+> > which is the commit immediately before the first v5.12 io_uring merge.
+> > It's first reproducible with the first io_uring merge for v5.12, i.e.
+> > 5bbb336ba75d95611a7b9456355b48705016bdb1
 > 
->>> +static inline u64 unmask_layers(
->>> +		const struct landlock_ruleset *const domain,
->>> +		const struct path *const path, const u32 access_request,
->>> +		u64 layer_mask)
->>> +{
->>> +	const struct landlock_rule *rule;
->>> +	const struct inode *inode;
->>> +	size_t i;
->>> +
->>> +	if (d_is_negative(path->dentry))
->>> +		/* Continues to walk while there is no mapped inode. */
-> 				     ^^^^^
-> Odd comment, that...
+> Thanks, that's good info. I'll take a look at it and see if I can
+> reproduce.
 
-I'll replace that with something more appropriate, e.g. "Ignore
-nonexistent leafs".
+Ok, I was deep into this anyway and it didn't make much sense to do
+anything else at that point so I bisected this a bit further. The first
+bad commit is:
 
-> 
->>> +static int check_access_path(const struct landlock_ruleset *const domain,
->>> +		const struct path *const path, u32 access_request)
->>> +{
-> 
->>> +	walker_path = *path;
->>> +	path_get(&walker_path);
-> 
->>> +	while (true) {
->>> +		struct dentry *parent_dentry;
->>> +
->>> +		layer_mask = unmask_layers(domain, &walker_path,
->>> +				access_request, layer_mask);
->>> +		if (layer_mask == 0) {
->>> +			/* Stops when a rule from each layer grants access. */
->>> +			allowed = true;
->>> +			break;
->>> +		}
->>> +
->>> +jump_up:
->>> +		if (walker_path.dentry == walker_path.mnt->mnt_root) {
->>> +			if (follow_up(&walker_path)) {
->>> +				/* Ignores hidden mount points. */
->>> +				goto jump_up;
->>> +			} else {
->>> +				/*
->>> +				 * Stops at the real root.  Denies access
->>> +				 * because not all layers have granted access.
->>> +				 */
->>> +				allowed = false;
->>> +				break;
->>> +			}
->>> +		}
->>> +		if (unlikely(IS_ROOT(walker_path.dentry))) {
->>> +			/*
->>> +			 * Stops at disconnected root directories.  Only allows
->>> +			 * access to internal filesystems (e.g. nsfs, which is
->>> +			 * reachable through /proc/<pid>/ns/<namespace>).
->>> +			 */
->>> +			allowed = !!(walker_path.mnt->mnt_flags & MNT_INTERNAL);
->>> +			break;
->>> +		}
->>> +		parent_dentry = dget_parent(walker_path.dentry);
->>> +		dput(walker_path.dentry);
->>> +		walker_path.dentry = parent_dentry;
->>> +	}
->>> +	path_put(&walker_path);
->>> +	return allowed ? 0 : -EACCES;
-> 
-> That's a whole lot of grabbing/dropping references...  I realize that it's
-> an utterly tactless question, but... how costly it is?  IOW, do you have
-> profiling data?
+commit 3a81fd02045c329f25e5900fa61f613c9b317644
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Thu Dec 10 12:25:36 2020 -0700
 
-It looks like a legitimate question.
+    io_uring: enable LOOKUP_CACHED path resolution for filename lookups
 
-First, Landlock may not be appropriate for every workloads. The
-check_access_path()'s complexity is now linear, which is a consequence
-of the "unprivileged" target (i.e. multiple layers of file hierarchies).
-Adding caching should help a lot to improve performance (i.e. limit the
-path walking), but it will come with future improvements.
+    Instead of being pessimistic and assume that path lookup will block, use
+    LOOKUP_CACHED to attempt just a cached lookup. This ensures that the
+    fast path is always done inline, and we only punt to async context if
+    IO is needed to satisfy the lookup.
 
-I profiled a "find" loop on the linux-5.12-rc3 source tree in a tmpfs
-(and with cached entries): openat(2) calls spend ~30% of their time in
-check_access_path() with a base directory of one parent (/linux) and
-~45% with a base directory of ten parents (/1/2/3/4/5/6/7/8/9/linux).
-Overall, the performance impact is between 3.0% (with a minimum depth of
-1) and 5.4% (with a minimum depth of 10) of the full execution time of
-these worse case scenarios, which are ~4800 openat(2) calls. This is not
-a surprise and doesn't seem so bad without optimization.
+    For forced nonblock open attempts, mark the file O_NONBLOCK over the
+    actual ->open() call as well. We can safely clear this again before
+    doing fd_install(), so it'll never be user visible that we fiddled with
+    it.
 
+    This greatly improves the performance of file open where the dentry is
+    already cached:
 
-> 
->>> +/*
->>> + * pivot_root(2), like mount(2), changes the current mount namespace.  It must
->>> + * then be forbidden for a landlocked process.
-> 
-> ... and cross-directory rename(2) can change the tree topology.  Do you ban that
-> as well?
-> 
-> [snip]
-> 
->>> +static int hook_path_rename(const struct path *const old_dir,
->>> +		struct dentry *const old_dentry,
->>> +		const struct path *const new_dir,
->>> +		struct dentry *const new_dentry)
->>> +{
->>> +	const struct landlock_ruleset *const dom =
->>> +		landlock_get_current_domain();
->>> +
->>> +	if (!dom)
->>> +		return 0;
->>> +	/* The mount points are the same for old and new paths, cf. EXDEV. */
->>> +	if (old_dir->dentry != new_dir->dentry)
->>> +		/* For now, forbids reparenting. */
->>> +		return -EACCES;
-> 
-> You do, apparently, and not in a way that would have the userland fall
-> back to copy+unlink.  Lovely...  Does e.g. git survive such restriction?
-> Same question for your average package build...
+    ached           5.10-git        5.10-git+LOOKUP_CACHED  Speedup
+    ---------------------------------------------------------------
+    33%             1,014,975       900,474                 1.1x
+    89%              545,466        292,937                 1.9x
+    100%             435,636        151,475                 2.9x
 
-As explained in the documentation, there is some limitations that make
-this first step not appropriate for all use cases. I'll use EXDEV to
-gracefully forbid reparenting, which gives a chance to userspace to deal
-with that. It may not be enough for package management though. I plan to
-address such limitation with future evolutions.
+    The more cache hot we are, the faster the inline LOOKUP_CACHED
+    optimization helps. This is unsurprising and expected, as a thread
+    offload becomes a more dominant part of the total overhead. If we look
+    at io_uring tracing, doing an IORING_OP_OPENAT on a file that isn't in
+    the dentry cache will yield:
 
-Thanks for these suggestions.
+    275.550481: io_uring_create: ring 00000000ddda6278, fd 3 sq size 8, cq size 16, flags 0
+    275.550491: io_uring_submit_sqe: ring 00000000ddda6278, op 18, data 0x0, non block 1, sq_thread 0
+    275.550498: io_uring_queue_async_work: ring 00000000ddda6278, request 00000000c0267d17, flags 69760, normal queue, work 000000003d683991
+    275.550502: io_uring_cqring_wait: ring 00000000ddda6278, min_events 1
+    275.550556: io_uring_complete: ring 00000000ddda6278, user_data 0x0, result 4
+
+    which shows a failed nonblock lookup, then punt to worker, and then we
+    complete with fd == 4. This takes 65 usec in total. Re-running the same
+    test case again:
+
+    281.253956: io_uring_create: ring 0000000008207252, fd 3 sq size 8, cq size 16, flags 0
+    281.253967: io_uring_submit_sqe: ring 0000000008207252, op 18, data 0x0, non block 1, sq_thread 0
+    281.253973: io_uring_complete: ring 0000000008207252, user_data 0x0, result 4
+
+    shows the same request completing inline, also returning fd == 4. This
+    takes 6 usec.
+
+    Signed-off-by: Jens Axboe <axboe@kernel.dk>
