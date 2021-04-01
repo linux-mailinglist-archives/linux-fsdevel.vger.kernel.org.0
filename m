@@ -2,57 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71A6B351D1A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:48:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58B8A351E9F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:55:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235110AbhDASXz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 14:23:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36920 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238539AbhDASOp (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 14:14:45 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 154E4C0617AA;
-        Thu,  1 Apr 2021 04:27:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=vwT6t1XvIjaj4QuAa3P4UOmWUFIFgnQBx4zLk2dwX9Q=; b=tG/03x14U8fbdXage3fW66lH1Z
-        1G0mXooyTO3KydM/F+4rMb04dSOqZVGhkjpeJtXZAGlsadb5YzqJGHJpeTbtlRlCkxpUN3MQVZVEI
-        leehL8npa4veAd5L9meSprBxQ3kZnbFXpgBgp5cglolIe71eSxiGzEhSaWk+4UudJDi3NvlYXFtAD
-        rwmdCcG8VXQnvAd6fsVV+hkQLY9m0N+hb3KrIIQsFmXvEib5ZsAR5ZrIhRlL5JnGsFQ2dblObvj0G
-        HsSc4WOyPXM2wEqm2cLWzMlXPkSTwYf+CcVRVa2S+24Gg/VXb3Cf3fYQMd3IYzkoQEx5+7+6+3DNg
-        5NQNjpPA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lRvTU-0063dK-Sb; Thu, 01 Apr 2021 11:26:57 +0000
-Date:   Thu, 1 Apr 2021 12:26:56 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org
-Subject: Re: [PATCH v6 00/27] Memory Folios
-Message-ID: <20210401112656.GA351017@casper.infradead.org>
-References: <20210331184728.1188084-1-willy@infradead.org>
- <20210401070537.GB1363493@infradead.org>
+        id S237465AbhDASoH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 14:44:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32778 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235472AbhDASh7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Apr 2021 14:37:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BCF4F601FA;
+        Thu,  1 Apr 2021 11:33:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1617276783;
+        bh=5KMvA2+X56eTd5dyjjLD2hU0fGFm3/24CWsHPBvQ+Ig=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IBITasZ585a0W5dpATNVyHV+ozpDXKXjXXMpkscA6BRtiWbghKY/NvT30kNN9bfD4
+         ecM/TbWMQwY0kbqKVGThvO5+T+13qJJWC/iP1GkSM+6VF8nQhvphmODIoOBObxMhqS
+         kc8OIVsr1+YSIk6sakFY9eWRmDv3Eo21Gnz0gRTE=
+Date:   Thu, 1 Apr 2021 13:33:00 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     devel@driverdev.osuosl.org, tkjos@android.com,
+        Kees Cook <keescook@chromium.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Christoph Hellwig <hch@infradead.org>,
+        Hridya Valsaraju <hridya@google.com>, arve@android.com,
+        viro@zeniv.linux.org.uk, joel@joelfernandes.org,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        maco@android.com
+Subject: Re: Re: Re: [PATCH 2/2] binder: Use receive_fd() to receive file
+ from another process
+Message-ID: <YGWvbAXQO2Vsiupo@kroah.com>
+References: <20210401090932.121-1-xieyongji@bytedance.com>
+ <20210401090932.121-3-xieyongji@bytedance.com>
+ <YGWYZYbBzglUCxB2@kroah.com>
+ <CACycT3ux9NVu_L=Vse7v-xbwE-K0-HT-e-Ei=yHOQmF66nGjeQ@mail.gmail.com>
+ <YGWjh7qCJ8HJpFxv@kroah.com>
+ <CACycT3uEGRiDuOj2XBwF2PmnGXsQgrLDemJDFRytsJiJMyRWDw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210401070537.GB1363493@infradead.org>
+In-Reply-To: <CACycT3uEGRiDuOj2XBwF2PmnGXsQgrLDemJDFRytsJiJMyRWDw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 01, 2021 at 08:05:37AM +0100, Christoph Hellwig wrote:
-> On Wed, Mar 31, 2021 at 07:47:01PM +0100, Matthew Wilcox (Oracle) wrote:
-> >  - Mirror members of struct page (for pagecache / anon) into struct folio,
-> >    so (eg) you can use folio->mapping instead of folio->page.mapping
+On Thu, Apr 01, 2021 at 07:29:45PM +0800, Yongji Xie wrote:
+> On Thu, Apr 1, 2021 at 6:42 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Thu, Apr 01, 2021 at 06:12:51PM +0800, Yongji Xie wrote:
+> > > On Thu, Apr 1, 2021 at 5:54 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Thu, Apr 01, 2021 at 05:09:32PM +0800, Xie Yongji wrote:
+> > > > > Use receive_fd() to receive file from another process instead of
+> > > > > combination of get_unused_fd_flags() and fd_install(). This simplifies
+> > > > > the logic and also makes sure we don't miss any security stuff.
+> > > >
+> > > > But no logic is simplified here, and nothing is "missed", so I do not
+> > > > understand this change at all.
+> > > >
+> > >
+> > > I noticed that we have security_binder_transfer_file() when we
+> > > transfer some fds. I'm not sure whether we need something like
+> > > security_file_receive() here?
+> >
+> > Why would you?  And where is "here"?
+> >
+> > still confused,
+> >
 > 
-> Eww, why?
+> I mean do we need to go through the file_receive seccomp notifier when
+> we receive fd (use get_unused_fd_flags() + fd_install now) from
+> another process in binder_apply_fd_fixups().
 
-So that eventually we can rename page->mapping to page->_mapping and
-prevent the bugs from people doing page->mapping on a tail page.  eg
-https://lore.kernel.org/linux-mm/alpine.LSU.2.11.2103102214170.7159@eggly.anvils/
+Why?  this is internal things, why does seccomp come into play here?
 
