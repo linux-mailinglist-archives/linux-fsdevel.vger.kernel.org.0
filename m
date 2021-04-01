@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A8AB8351189
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 11:10:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2632635118A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 11:10:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233740AbhDAJJ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 05:09:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33592 "EHLO
+        id S233781AbhDAJKC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 05:10:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233620AbhDAJJt (ORCPT
+        with ESMTP id S233732AbhDAJJw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 05:09:49 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33F45C0613E6
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Apr 2021 02:09:49 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id y32so1150383pga.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Apr 2021 02:09:49 -0700 (PDT)
+        Thu, 1 Apr 2021 05:09:52 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCF56C0613E6
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Apr 2021 02:09:52 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id nh23-20020a17090b3657b02900c0d5e235a8so703968pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Apr 2021 02:09:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TcFW2882TDAB0Szg+grt3QNSfA4PwJpJAwOH20WQc3U=;
-        b=fqr736cKPoNsBHMb7WyFTgrU6fRrMvpOOsOByzUKP4cZh5dOqtzEVp+rAvVVFi90cK
-         hR/OTVJbXJMRiZJjYfIEPtHdj8DHn+v5moAuKMuYj1nwRUBfXBsHIjGNitslymjxfWa+
-         QEpPpnaBpZnj5M71DlPERV2FggpXB6HvhTlwrhQV2PsVXFp5X+bxsPwn5tRLDFSELFTA
-         BfO1LaoEDdB95RXDFWQnDiRIqHNHUZPwPVznCpB0BQKQEIJNhVVm95gyKftGfOhGlWdl
-         WZ4HsLfCtjlvHWUOnvzTq616lvhjUWNy9Jt6UDQJDaQFGy17UgxmGBtafhTWSFXyUhs+
-         J0Qg==
+        bh=+IsVjISMkpZP5tT2zT9xXS3PV75jGVHq8NuXz4FV7zU=;
+        b=Tcop26gJmkd/1TqpULLeDQ2otNmc6j+/VT4iMfeBNgjEfZGjZLKKY1ePPRrQIP3viG
+         Esvxv2FAIs51D5A/9yYudr9r1G81x0btHrw8kyZ99swJEdFy/+ABh7aE6ecvN3vRhOvv
+         7MvjzbztD7AU/8KGWNLBmKKRQpzfQTVyEelQwkJfB8O/1nqvRkIGHQBI7rN8xgI7pNb2
+         GduPhZ3AeBM5D7ClCe70GmFCitB8rR7szjOOuVl1AlLoToz0FbP7n/NAhunhM4nu8X3I
+         dnGXfOsxHa5nL7iMivXJJIuny92B72ytUP1lCBRLB5bv0EwmDE/euDet7RVGVBKcRaeR
+         /3gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TcFW2882TDAB0Szg+grt3QNSfA4PwJpJAwOH20WQc3U=;
-        b=LjGRcwIjG3fF7MwTXWg27wZFMIkY0Sl9IWjiOaM8KaO3X5WaHdz7a1iI43rYDqArLC
-         OsMOfv1T4CAhKkO13bMw6zRepEqPEq9WOO2eXws6H7pl9hFQTxPQ6WxxKnBd9OLL6Cfr
-         yaT0ZTJNznQuAr6p5bbMwXLknDyhzzZPcP57aEytYfwDVLAeTbrgEO+o5ap59KxVCyvv
-         r6I1nOxAbIjSmxq8ZbrFjSDhlAsYO9Wdlq5FBk/8XAQzgfXiD5PymwvsLLQ9fmHZSpB/
-         qzkWmunBsiYrqMcPbObjOP5/qhfGTwAFQal0mkuIrAGWIf699RWCgXSo6LR9Mi4jSiLE
-         jnxw==
-X-Gm-Message-State: AOAM531BdOCiWGVktSSpeUBTvCGHFjL7eRUQM4JCPV3nsSC2sgFemaUK
-        WD+RLHH7n/YXx4TDdddCsUkw
-X-Google-Smtp-Source: ABdhPJye1+QSmRDrJtotpPX35xPqPCPC9yfHjqxgCyLsQO2U3Q/jaWMwQ0mXFN6YqGYZgUHLaGEIYQ==
-X-Received: by 2002:a65:6414:: with SMTP id a20mr6613866pgv.424.1617268188789;
-        Thu, 01 Apr 2021 02:09:48 -0700 (PDT)
+        bh=+IsVjISMkpZP5tT2zT9xXS3PV75jGVHq8NuXz4FV7zU=;
+        b=c9r/wqHl6KoJ5CtrgRZaRELjZQg1vJnqONYmIfYyhbqsvnVxxkKODoXAhXsGyIJ6nl
+         /gko43GgeBZ8i9h+cXRelhmD0UVbbRXsn1DGxx8TVlD9pmtVHt0FxKS+P7yLYKH4B95n
+         oy7GiiEe8wsJzBUaZTUsNGdBDmya+qa1B42Ty+McRTdisJ06EIIuJbjwHYims1QsE0bz
+         fADNw7A2oMFuXcuZmD8slP36X12+jweX0Qy0OlfCgAAtFMuhS2ziGOTkpP1E/G6s9w1E
+         sl0PoKCtK0S8GX2BAALSlfFEGwX80rDKStutsHX5QHcPSqJu5KMnOlurnRlWr1y4VaFO
+         Dtsg==
+X-Gm-Message-State: AOAM533nHgyskED/g500M3ikdcdlCnYOVIwabpltad0KNjIJbGoP2s5V
+        iGKXCN9OOSLlp1rSwAKfaYLx
+X-Google-Smtp-Source: ABdhPJzD1ZPSRBjIXRewRBPdRngJTQcG7U1Ly+YzsKw0o4Hb/fRlfsUZ6aEHLdqdggJrzuxMD5kH5A==
+X-Received: by 2002:a17:902:c945:b029:e7:1ec4:4315 with SMTP id i5-20020a170902c945b02900e71ec44315mr6937613pla.51.1617268192395;
+        Thu, 01 Apr 2021 02:09:52 -0700 (PDT)
 Received: from localhost ([139.177.225.243])
-        by smtp.gmail.com with ESMTPSA id i10sm13946337pjm.1.2021.04.01.02.09.47
+        by smtp.gmail.com with ESMTPSA id f21sm4303758pfe.6.2021.04.01.02.09.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Apr 2021 02:09:48 -0700 (PDT)
+        Thu, 01 Apr 2021 02:09:52 -0700 (PDT)
 From:   Xie Yongji <xieyongji@bytedance.com>
 To:     christian.brauner@ubuntu.com, hch@infradead.org,
         gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
@@ -55,9 +55,9 @@ To:     christian.brauner@ubuntu.com, hch@infradead.org,
         surenb@google.com, viro@zeniv.linux.org.uk, sargun@sargun.me,
         keescook@chromium.org, jasowang@redhat.com
 Cc:     devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/2] file: Export receive_fd() to modules
-Date:   Thu,  1 Apr 2021 17:09:31 +0800
-Message-Id: <20210401090932.121-2-xieyongji@bytedance.com>
+Subject: [PATCH 2/2] binder: Use receive_fd() to receive file from another process
+Date:   Thu,  1 Apr 2021 17:09:32 +0800
+Message-Id: <20210401090932.121-3-xieyongji@bytedance.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210401090932.121-1-xieyongji@bytedance.com>
 References: <20210401090932.121-1-xieyongji@bytedance.com>
@@ -67,58 +67,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Export receive_fd() so that some modules can use
-it to pass file descriptor across processes without
-missing any security stuffs.
+Use receive_fd() to receive file from another process instead of
+combination of get_unused_fd_flags() and fd_install(). This simplifies
+the logic and also makes sure we don't miss any security stuff.
 
 Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 ---
- fs/file.c            | 6 ++++++
- include/linux/file.h | 7 +++----
- 2 files changed, 9 insertions(+), 4 deletions(-)
+ drivers/android/binder.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/file.c b/fs/file.c
-index 56986e55befa..2a80c6c3e147 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -1107,6 +1107,12 @@ int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
- 	return new_fd;
- }
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index c119736ca56a..080bcab7d632 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -3728,7 +3728,7 @@ static int binder_apply_fd_fixups(struct binder_proc *proc,
+ 	int ret = 0;
  
-+int receive_fd(struct file *file, unsigned int o_flags)
-+{
-+	return __receive_fd(file, NULL, o_flags);
-+}
-+EXPORT_SYMBOL(receive_fd);
-+
- static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags)
- {
- 	int err = -EBADF;
-diff --git a/include/linux/file.h b/include/linux/file.h
-index 2de2e4613d7b..51e830b4fe3a 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -94,6 +94,9 @@ extern void fd_install(unsigned int fd, struct file *file);
+ 	list_for_each_entry(fixup, &t->fd_fixups, fixup_entry) {
+-		int fd = get_unused_fd_flags(O_CLOEXEC);
++		int fd  = receive_fd(fixup->file, O_CLOEXEC);
  
- extern int __receive_fd(struct file *file, int __user *ufd,
- 			unsigned int o_flags);
-+
-+extern int receive_fd(struct file *file, unsigned int o_flags);
-+
- static inline int receive_fd_user(struct file *file, int __user *ufd,
- 				  unsigned int o_flags)
- {
-@@ -101,10 +104,6 @@ static inline int receive_fd_user(struct file *file, int __user *ufd,
- 		return -EFAULT;
- 	return __receive_fd(file, ufd, o_flags);
- }
--static inline int receive_fd(struct file *file, unsigned int o_flags)
--{
--	return __receive_fd(file, NULL, o_flags);
--}
- int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags);
- 
- extern void flush_delayed_fput(void);
+ 		if (fd < 0) {
+ 			binder_debug(BINDER_DEBUG_TRANSACTION,
+@@ -3741,7 +3741,7 @@ static int binder_apply_fd_fixups(struct binder_proc *proc,
+ 			     "fd fixup txn %d fd %d\n",
+ 			     t->debug_id, fd);
+ 		trace_binder_transaction_fd_recv(t, fd, fixup->offset);
+-		fd_install(fd, fixup->file);
++		fput(fixup->file);
+ 		fixup->file = NULL;
+ 		if (binder_alloc_copy_to_buffer(&proc->alloc, t->buffer,
+ 						fixup->offset, &fd,
 -- 
 2.11.0
 
