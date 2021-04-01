@@ -2,102 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95AF9351D1B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:48:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 415F6351E11
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:53:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238018AbhDASYC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 14:24:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36684 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239204AbhDASPm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 14:15:42 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15637C05BD11;
-        Thu,  1 Apr 2021 05:52:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Yw41C/LM/CLkV/f2jz3URlFrp1rmhB03Zhe1Y9zc6w8=; b=VReZDpDt5aNf6kSFMIIU9tiZ9p
-        5jBuVEp/WF4EuLT2Hz8powvl9pghjOFAizPU5QqGxMcTSuk5AlVDG7Rzp7vHscBL2WL0TQuQJcoNB
-        x0M3qRg4kpC0vTnXlJxgPn+72DK0T1eUYtuMoLu8e/A6IiEJjVLlfctuB6CPjCh5eyenHHWvzrU0L
-        o0P6LZ0dsT4WJsi6JYfJt8nhNvLEzQAZpr4sOcMV4YaUBxdSKHBZhfHmOzrLSXhxZx45e1jrHyrBC
-        AKzBk8cRUSNvLbtv2B6nLwhzd1qQAd5DocwjB1H1ixZjYvH5kwC1SLLmit+KJ9coSwn2UTs06N8Ya
-        UZqijUyQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lRwnp-0068jn-3I; Thu, 01 Apr 2021 12:52:05 +0000
-Date:   Thu, 1 Apr 2021 13:52:01 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org
-Subject: Re: [PATCH v6 00/27] Memory Folios
-Message-ID: <20210401125201.GD351017@casper.infradead.org>
-References: <20210331184728.1188084-1-willy@infradead.org>
- <20210401070537.GB1363493@infradead.org>
- <20210401112656.GA351017@casper.infradead.org>
- <20210401122803.GB2710221@ziepe.ca>
+        id S238074AbhDASeK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 14:34:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53832 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237828AbhDASXj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Apr 2021 14:23:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 08499B13B;
+        Thu,  1 Apr 2021 13:04:16 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id db075f99;
+        Thu, 1 Apr 2021 13:05:35 +0000 (UTC)
+Date:   Thu, 1 Apr 2021 14:05:35 +0100
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v5 20/19] ceph: make ceph_get_name decrypt filenames
+Message-ID: <YGXFH7XJW4H94xZu@suse.de>
+References: <20210326173227.96363-1-jlayton@kernel.org>
+ <20210331203520.65916-1-jlayton@kernel.org>
+ <YGWrKxYOdWgrhOPp@suse.de>
+ <8df5d18a65be8385f915dd7f3655db90d905b7c7.camel@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20210401122803.GB2710221@ziepe.ca>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8df5d18a65be8385f915dd7f3655db90d905b7c7.camel@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 01, 2021 at 09:28:03AM -0300, Jason Gunthorpe wrote:
-> On Thu, Apr 01, 2021 at 12:26:56PM +0100, Matthew Wilcox wrote:
-> > On Thu, Apr 01, 2021 at 08:05:37AM +0100, Christoph Hellwig wrote:
-> > > On Wed, Mar 31, 2021 at 07:47:01PM +0100, Matthew Wilcox (Oracle) wrote:
-> > > >  - Mirror members of struct page (for pagecache / anon) into struct folio,
-> > > >    so (eg) you can use folio->mapping instead of folio->page.mapping
+On Thu, Apr 01, 2021 at 08:15:51AM -0400, Jeff Layton wrote:
+> On Thu, 2021-04-01 at 12:14 +0100, Luis Henriques wrote:
+> > On Wed, Mar 31, 2021 at 04:35:20PM -0400, Jeff Layton wrote:
+> > > When we do a lookupino to the MDS, we get a filename in the trace.
+> > > ceph_get_name uses that name directly, so we must properly decrypt
+> > > it before copying it to the name buffer.
 > > > 
-> > > Eww, why?
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/ceph/export.c | 42 +++++++++++++++++++++++++++++++-----------
+> > >  1 file changed, 31 insertions(+), 11 deletions(-)
+> > > 
+> > > This patch is what's needed to fix the "busy inodes after umount"
+> > > issue I was seeing with xfstest generic/477, and also makes that
+> > > test pass reliably with mounts using -o test_dummy_encryption.
 > > 
-> > So that eventually we can rename page->mapping to page->_mapping and
-> > prevent the bugs from people doing page->mapping on a tail page.  eg
-> > https://lore.kernel.org/linux-mm/alpine.LSU.2.11.2103102214170.7159@eggly.anvils/
+> > You mentioned this issue the other day on IRC but I couldn't reproduce.
+> > 
+> > On the other hand, I'm seeing another issue.  Here's a way to reproduce:
+> > 
+> > - create an encrypted dir 'd' and create a file 'f'
+> > - umount and mount the filesystem
+> > - unlock dir 'd'
+> > - cat d/f
+> >   cat: d/2: No such file or directory
 > 
-> Is that gcc structure layout randomization stuff going to be a problem
-> here?
-> 
-> Add some 
->   static_assert(offsetof(struct folio,..) == offsetof(struct page,..))
-> 
-> tests to force it?
+> I assume the message really says "cat: d/f: No such file or directory"
 
-You sound like the kind of person who hasn't read patch 1.
+Yes, of course :)
 
-diff --git a/mm/util.c b/mm/util.c
-index 0b6dd9d81da7..521a772f06eb 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -686,6 +686,25 @@ struct anon_vma *page_anon_vma(struct page *page)
- 	return __page_rmapping(page);
- }
- 
-+static inline void folio_build_bug(void)
-+{
-+#define FOLIO_MATCH(pg, fl)						\
-+BUILD_BUG_ON(offsetof(struct page, pg) != offsetof(struct folio, fl));
-+
-+	FOLIO_MATCH(flags, flags);
-+	FOLIO_MATCH(lru, lru);
-+	FOLIO_MATCH(mapping, mapping);
-+	FOLIO_MATCH(index, index);
-+	FOLIO_MATCH(private, private);
-+	FOLIO_MATCH(_mapcount, _mapcount);
-+	FOLIO_MATCH(_refcount, _refcount);
-+#ifdef CONFIG_MEMCG
-+	FOLIO_MATCH(memcg_data, memcg_data);
-+#endif
-+#undef FOLIO_MATCH
-+	BUILD_BUG_ON(sizeof(struct page) != sizeof(struct folio));
-+}
-+
- struct address_space *page_mapping(struct page *page)
- {
- 	struct address_space *mapping;
+> > 
+> > It happens _almost_ every time I do the umount+mount+unlock+cat.  Looks
+> > like ceph_atomic_open() fails to see that directory as encrypted.  I don't
+> > think the problem is on this open itself, but in the unlock because a
+> > simple 'ls' also fails to show the decrypted names.  (On the other end, if
+> > you do an 'ls' _before_ the unlock, everything seems to work fine.)
+> > 
+> > I didn't had time to dig deeper into this yet, but I don't remember seeing
+> > this behaviour in previous versions of the patchset.
+> > 
+> > Cheers,
+> > --
+> > Luís
+> > 
+> 
+> I've tried several times to reproduce this, but I haven't seen it happen
+> at all. It may be dependent on something in your environment (MDS
+> version, perhaps?). I'll try some more, but let me know if you track
+> down the cause.
+
+Hmm... it could be indeed.  I'm running a vstart.sh cluster with pacific
+(HEAD in eb5d7a868c96 ("Merge PR #40473 into pacific")).  It's trivial to
+reproduce here, so I now wonder if I'm really missing something on the MDS
+side.  I had a disaster recently (a disk died) and I had to recreate my
+test environment.  I don't think I had anything extra to run fscrypt
+tests, but I can't really remember.
+
+Anyway, I'll let you know if I get something.
+
+Cheers,
+--
+Luís
+
+
+> Thanks,
+> Jeff
+> 
+> > > 
+> > > diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+> > > index 17d8c8f4ec89..f4e3a17ffc01 100644
+> > > --- a/fs/ceph/export.c
+> > > +++ b/fs/ceph/export.c
+> > > @@ -7,6 +7,7 @@
+> > >  
+> > >  #include "super.h"
+> > >  #include "mds_client.h"
+> > > +#include "crypto.h"
+> > >  
+> > >  /*
+> > >   * Basic fh
+> > > @@ -516,7 +517,9 @@ static int ceph_get_name(struct dentry *parent, char *name,
+> > >  {
+> > >  	struct ceph_mds_client *mdsc;
+> > >  	struct ceph_mds_request *req;
+> > > +	struct inode *dir = d_inode(parent);
+> > >  	struct inode *inode = d_inode(child);
+> > > +	struct ceph_mds_reply_info_parsed *rinfo;
+> > >  	int err;
+> > >  
+> > >  	if (ceph_snap(inode) != CEPH_NOSNAP)
+> > > @@ -528,29 +531,46 @@ static int ceph_get_name(struct dentry *parent, char *name,
+> > >  	if (IS_ERR(req))
+> > >  		return PTR_ERR(req);
+> > >  
+> > > -	inode_lock(d_inode(parent));
+> > > -
+> > > +	inode_lock(dir);
+> > >  	req->r_inode = inode;
+> > >  	ihold(inode);
+> > >  	req->r_ino2 = ceph_vino(d_inode(parent));
+> > > -	req->r_parent = d_inode(parent);
+> > > +	req->r_parent = dir;
+> > >  	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
+> > >  	req->r_num_caps = 2;
+> > >  	err = ceph_mdsc_do_request(mdsc, NULL, req);
+> > > +	inode_unlock(dir);
+> > >  
+> > > -	inode_unlock(d_inode(parent));
+> > > +	if (err)
+> > > +		goto out;
+> > >  
+> > > -	if (!err) {
+> > > -		struct ceph_mds_reply_info_parsed *rinfo = &req->r_reply_info;
+> > > +	rinfo = &req->r_reply_info;
+> > > +	if (!IS_ENCRYPTED(dir)) {
+> > >  		memcpy(name, rinfo->dname, rinfo->dname_len);
+> > >  		name[rinfo->dname_len] = 0;
+> > > -		dout("get_name %p ino %llx.%llx name %s\n",
+> > > -		     child, ceph_vinop(inode), name);
+> > >  	} else {
+> > > -		dout("get_name %p ino %llx.%llx err %d\n",
+> > > -		     child, ceph_vinop(inode), err);
+> > > -	}
+> > > +		struct fscrypt_str oname = FSTR_INIT(NULL, 0);
+> > > +		struct ceph_fname fname = { .dir	= dir,
+> > > +					    .name	= rinfo->dname,
+> > > +					    .ctext	= rinfo->altname,
+> > > +					    .name_len	= rinfo->dname_len,
+> > > +					    .ctext_len	= rinfo->altname_len };
+> > > +
+> > > +		err = ceph_fname_alloc_buffer(dir, &oname);
+> > > +		if (err < 0)
+> > > +			goto out;
+> > >  
+> > > +		err = ceph_fname_to_usr(&fname, NULL, &oname, NULL);
+> > > +		if (!err) {
+> > > +			memcpy(name, oname.name, oname.len);
+> > > +			name[oname.len] = 0;
+> > > +		}
+> > > +		ceph_fname_free_buffer(dir, &oname);
+> > > +	}
+> > > +out:
+> > > +	dout("get_name %p ino %llx.%llx err %d %s%s\n",
+> > > +		     child, ceph_vinop(inode), err,
+> > > +		     err ? "" : "name ", err ? "" : name);
+> > >  	ceph_mdsc_put_request(req);
+> > >  	return err;
+> > >  }
+> > > -- 
+> > > 2.30.2
+> > > 
+> 
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
 
