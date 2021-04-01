@@ -2,89 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3703C351BC4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:11:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F6EE351BC8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:11:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236110AbhDASLB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 14:11:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33956 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237297AbhDASDj (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S234781AbhDASLC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 14:11:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42002 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237278AbhDASDj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 1 Apr 2021 14:03:39 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0C98C0045DF;
-        Thu,  1 Apr 2021 07:30:53 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id x17so2416644iog.2;
-        Thu, 01 Apr 2021 07:30:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CBkETlvKVe+ouMdxhkvam6Q/O5hICHuKtI9SBgWhYvo=;
-        b=VptLX5o7vbk1tBFjFvKT+/LSulYSPzmQZvCGSBFdgGo7ZSdy39jY5TO3YYz3dToPuZ
-         uFnJULdyfkUSp5MK0VXAw5T4D4Ycc6HoH0Etx7fMKtnyTnOrSt9dc2fEGke2GiyNRv3G
-         +fH3mbjFH9we26IklRvGfbu53OzurHUfE5sNuTOHGVVP7km/58bwmMB+sufT7p6/dk8C
-         4h3w4loIcQC4A/aufl0VSCU3kN/qaUDThxOdyFQHdPbBFMnNd9q59NLXJ5Id8CiJza1l
-         ScxYoz0Ywcxt/D8mGjgM7Vclzevln8JmXz3YMi5KX6c+1xNp620Ul111/VWkA5nSohR4
-         cH6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CBkETlvKVe+ouMdxhkvam6Q/O5hICHuKtI9SBgWhYvo=;
-        b=lQJV4Yr6oY8mKuo+/4DX8h9/ZS7gJ42+UQAWFiA02+6JiVkiRVK+klfxBkTVi5GwBL
-         YVckNXrXjNfEye/uWOEeJmBtTlbspyI8f9mFANvK7DZF6sXS2kK3g14LkWPRpfd/vq9j
-         mS3Au+ZwOWA9i7sNWun0xXe+nHCkV62qVxu7oHIti59yqZz2LjUgndjuz3zyIPcjyNFb
-         fr2lwhKvWm5z+PnStmLMv3vPt52hPCEej5OcpAD0NSwqbf8JnzCs6Drz51jiAGGCRRlt
-         5XJeEjXz5bPu5A9kSBASUmHl5zE0rJCARE/D3yohKZ0aOGBAVlcI7s0XJgqrD2bzJgW+
-         NWCQ==
-X-Gm-Message-State: AOAM530FViHHRw5ON0Fx0qzVm5X+NJ9wgWRFSnGt0bgKEuToaBMdk/9D
-        v1VIc7jOyzPmDJxDLBSWybgKjG0LR8V/m2Qyaos=
-X-Google-Smtp-Source: ABdhPJwlusjpi1TKVZtt9iX9yEe2t+fJTLDD431j5l15qWGZ0JdoRPFlN83wccbrXyTJMlSMROpvZWSTWRNlZmgc5BQ=
-X-Received: by 2002:a05:6602:2596:: with SMTP id p22mr6836991ioo.186.1617287453057;
- Thu, 01 Apr 2021 07:30:53 -0700 (PDT)
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1617287853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=FJrA00uxIGXmEJZOjpdMpdaaSrHyC5HALtOFInOMB88=;
+        b=P0jFij1KoLqdUY5uwbXKSbR/LbYWyxi4Wk+q4F34B0IOYeUGzbxTVr3vKcCDt9FtsbE27w
+        9dHbGfZzGBYaU+qoeDZJ9UxWwnym0QoMmahTbtKn3jCFalv31tYB1tc8Ei6GEW/lZcFg1w
+        azGlcTsmU9JcyFTemfJobLE5oBejI9c=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id AA704B230;
+        Thu,  1 Apr 2021 14:37:33 +0000 (UTC)
+Date:   Thu, 1 Apr 2021 16:37:29 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Tejun Heo <tj@kernel.org>, axboe@fb.com,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [External] Re: [PATCH v2] writeback: fix obtain a reference to a
+ freeing memcg css
+Message-ID: <YGXaqcLOHjlCkNkt@dhcp22.suse.cz>
+References: <20210401093343.51299-1-songmuchun@bytedance.com>
+ <YGWf1C/gIZgs0AhR@dhcp22.suse.cz>
+ <CAMZfGtX9V898aezb-huMEYU_-NjqfL6HbXeaZr2Q2MUa+VG3qQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <CAJfpegtUOVF-_GWk8Z-zUHUss0=GAd7HOY_qPSNroUx9og_deA@mail.gmail.com>
-In-Reply-To: <CAJfpegtUOVF-_GWk8Z-zUHUss0=GAd7HOY_qPSNroUx9og_deA@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 1 Apr 2021 17:30:41 +0300
-Message-ID: <CAOQ4uxgcO-Wvjwbmjme+OwVz6bZnVz4C87dgJDJQY1u55BWGjw@mail.gmail.com>
-Subject: Re: overlayfs: overlapping upperdir path
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Vivek Goyal <vgoyal@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMZfGtX9V898aezb-huMEYU_-NjqfL6HbXeaZr2Q2MUa+VG3qQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 1, 2021 at 4:37 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> Commit 146d62e5a586 ("ovl: detect overlapping layers") made sure we
-> don't have overapping layers, but it also broke the arguably valid use
-> case of
->
->  mount -olowerdir=/,upperdir=/subdir,..
->
-> where subdir also resides on the root fs.
+On Thu 01-04-21 21:59:13, Muchun Song wrote:
+> On Thu, Apr 1, 2021 at 6:26 PM Michal Hocko <mhocko@suse.com> wrote:
+[...]
+> > Even if the css ref count is not really necessary it shouldn't cause any
+> > harm and it makes the code easier to understand. At least a comment
+> > explaining why that is not necessary would be required without it
+> 
+> OK. I will add a comment here to explain why we need to hold a
+> ref.
 
-How is 'ls /merged/subdir' expected to behave in that use case?
-Error?
+I do not think this is necessary. Taking the reference is a standard
+way and I am not sure it requires a comment. I meant to say that not
+having a reference should really have a comment explaining why.
 
->
-> I also see that we check for a trap at lookup time, so the question is
-> what does the up-front layer check buy us?
->
-
-I'm not sure. I know it bought us silence from syzbot that started
-mutating many overlapping layers repos....
-Will the lookup trap have stopped it too? maybe. We did not try.
-
-In general I think that if we can error out to user on mount time
-it is preferred, but if we need to make that use case work, I'd try
-to relax as minimum as possible from the check.
-
-Thanks,
-Amir.
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
