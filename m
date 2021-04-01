@@ -2,158 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F25F3518F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 19:49:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1384351AA9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:07:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235973AbhDARsk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 13:48:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47286 "EHLO mail.kernel.org"
+        id S236520AbhDASCe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 14:02:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235535AbhDARq0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 13:46:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2BF6261165;
-        Thu,  1 Apr 2021 17:46:17 +0000 (UTC)
-Date:   Thu, 1 Apr 2021 19:46:13 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        io-uring@vger.kernel.org
-Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
-Message-ID: <20210401174613.vymhhrfsemypougv@wittgenstein>
-References: <0000000000003a565e05bee596f2@google.com>
- <20210401154515.k24qdd2lzhtneu47@wittgenstein>
- <90e7e339-eaec-adb2-cfed-6dc058a117a3@kernel.dk>
+        id S236541AbhDAR57 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Apr 2021 13:57:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7E0276120A;
+        Thu,  1 Apr 2021 13:12:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617282767;
+        bh=9U9lp8FhKV0djkeNKa6S0sMX48F4dpbMPR2JL6GNpdk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=e5iEhqikF7dQHQ5BM5Y5pZ9Onvy4CTDOw53W7NTE+iABvFkg9uW7eT84W0FImRnj9
+         e9CeREKA56uHRzX/3tHWAB1zDGOG/8n9Z9FXS49BB6HlsRWgTZSDzJNbfz065N8T1Y
+         da6KmbbZKe1sPY14roRNwm+dDUBJz3wRpHlALR4CV6fdBw0188ytIgi7+iApzPRbiX
+         Qt7813QmRdBoQavMSIPasj9C3zoLNPPEm0P50F9XZB+fVQbj/iOsRIHGMLItxj2tDw
+         ShPw2kjSE21MQsI7rJIsdOSoWOTyg7egTvNHkdFel80IupxKO99ZzILThFUZb8YQLe
+         V55yPRE6/OaXg==
+Message-ID: <8533145423b08e36a80b27e949f322ae42eeeacc.camel@kernel.org>
+Subject: Re: [RFC PATCH v5 20/19] ceph: make ceph_get_name decrypt filenames
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Date:   Thu, 01 Apr 2021 09:12:45 -0400
+In-Reply-To: <YGXFH7XJW4H94xZu@suse.de>
+References: <20210326173227.96363-1-jlayton@kernel.org>
+         <20210331203520.65916-1-jlayton@kernel.org> <YGWrKxYOdWgrhOPp@suse.de>
+         <8df5d18a65be8385f915dd7f3655db90d905b7c7.camel@kernel.org>
+         <YGXFH7XJW4H94xZu@suse.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <90e7e339-eaec-adb2-cfed-6dc058a117a3@kernel.dk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 01, 2021 at 10:09:18AM -0600, Jens Axboe wrote:
-> On 4/1/21 9:45 AM, Christian Brauner wrote:
-> > On Thu, Apr 01, 2021 at 02:09:20AM -0700, syzbot wrote:
-> >> Hello,
-> >>
-> >> syzbot found the following issue on:
-> >>
-> >> HEAD commit:    d19cc4bf Merge tag 'trace-v5.12-rc5' of git://git.kernel.o..
-> >> git tree:       upstream
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=1018f281d00000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=d1a3d65a48dbd1bc
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=c88a7030da47945a3cc3
-> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f50d11d00000
-> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=137694a1d00000
-> >>
-> >> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> >> Reported-by: syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com
-> >>
-> >> ------------[ cut here ]------------
-> >> WARNING: CPU: 1 PID: 8409 at fs/namespace.c:1186 mntput_no_expire+0xaca/0xcb0 fs/namespace.c:1186
-> >> Modules linked in:
-> >> CPU: 1 PID: 8409 Comm: syz-executor035 Not tainted 5.12.0-rc5-syzkaller #0
-> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> >> RIP: 0010:mntput_no_expire+0xaca/0xcb0 fs/namespace.c:1186
-> >> Code: ff 48 c7 c2 e0 cb 78 89 be c2 02 00 00 48 c7 c7 a0 cb 78 89 c6 05 e5 6d e5 0b 01 e8 ff e1 f6 06 e9 3f fd ff ff e8 c6 a5 a8 ff <0f> 0b e9 fc fc ff ff e8 ba a5 a8 ff e8 55 dc 94 ff 31 ff 89 c5 89
-> >> RSP: 0018:ffffc9000165fc78 EFLAGS: 00010293
-> >> RAX: 0000000000000000 RBX: 1ffff920002cbf95 RCX: 0000000000000000
-> >> RDX: ffff88802072d4c0 RSI: ffffffff81cb4b8a RDI: 0000000000000003
-> >> RBP: ffff888011656900 R08: 0000000000000000 R09: ffffffff8fa978af
-> >> R10: ffffffff81cb4884 R11: 0000000000000000 R12: 0000000000000008
-> >> R13: ffffc9000165fcc8 R14: dffffc0000000000 R15: 00000000ffffffff
-> >> FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >> CR2: 000055a722053160 CR3: 000000000bc8e000 CR4: 00000000001506e0
-> >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> >> Call Trace:
-> >>  mntput fs/namespace.c:1232 [inline]
-> >>  cleanup_mnt+0x523/0x530 fs/namespace.c:1132
-> >>  task_work_run+0xdd/0x1a0 kernel/task_work.c:140
-> >>  exit_task_work include/linux/task_work.h:30 [inline]
-> >>  do_exit+0xbfc/0x2a60 kernel/exit.c:825
-> >>  do_group_exit+0x125/0x310 kernel/exit.c:922
-> >>  __do_sys_exit_group kernel/exit.c:933 [inline]
-> >>  __se_sys_exit_group kernel/exit.c:931 [inline]
-> >>  __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:931
-> >>  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-> >>  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> >> RIP: 0033:0x446af9
-> >> Code: Unable to access opcode bytes at RIP 0x446acf.
-> >> RSP: 002b:00000000005dfe48 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-> >> RAX: ffffffffffffffda RBX: 00000000004ce450 RCX: 0000000000446af9
-> >> RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000001
-> >> RBP: 0000000000000001 R08: ffffffffffffffbc R09: 0000000000000000
-> >> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004ce450
-> >> R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
+On Thu, 2021-04-01 at 14:05 +0100, Luis Henriques wrote:
+> On Thu, Apr 01, 2021 at 08:15:51AM -0400, Jeff Layton wrote:
+> > On Thu, 2021-04-01 at 12:14 +0100, Luis Henriques wrote:
+> > > On Wed, Mar 31, 2021 at 04:35:20PM -0400, Jeff Layton wrote:
+> > > > When we do a lookupino to the MDS, we get a filename in the trace.
+> > > > ceph_get_name uses that name directly, so we must properly decrypt
+> > > > it before copying it to the name buffer.
+> > > > 
+> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > ---
+> > > >  fs/ceph/export.c | 42 +++++++++++++++++++++++++++++++-----------
+> > > >  1 file changed, 31 insertions(+), 11 deletions(-)
+> > > > 
+> > > > This patch is what's needed to fix the "busy inodes after umount"
+> > > > issue I was seeing with xfstest generic/477, and also makes that
+> > > > test pass reliably with mounts using -o test_dummy_encryption.
+> > > 
+> > > You mentioned this issue the other day on IRC but I couldn't reproduce.
+> > > 
+> > > On the other hand, I'm seeing another issue.  Here's a way to reproduce:
+> > > 
+> > > - create an encrypted dir 'd' and create a file 'f'
+> > > - umount and mount the filesystem
+> > > - unlock dir 'd'
+> > > - cat d/f
+> > >   cat: d/2: No such file or directory
 > > 
-> > [+Cc Jens + io_uring]
-> > 
-> > Hm, this reproducer uses io_uring and it's the io_uring_enter() that
-> > triggers this reliably. With this reproducer I've managed to reproduce
-> > the issue on v5.12-rc4, and v5.12-rc3, v5.12-rc2 and v5.12-rc1.
-> > It's not reproducible at
-> > 9820b4dca0f9c6b7ab8b4307286cdace171b724d
-> > which is the commit immediately before the first v5.12 io_uring merge.
-> > It's first reproducible with the first io_uring merge for v5.12, i.e.
-> > 5bbb336ba75d95611a7b9456355b48705016bdb1
+> > I assume the message really says "cat: d/f: No such file or directory"
 > 
-> Thanks, that's good info. I'll take a look at it and see if I can
-> reproduce.
+> Yes, of course :)
+> 
+> > > 
+> > > It happens _almost_ every time I do the umount+mount+unlock+cat.  Looks
+> > > like ceph_atomic_open() fails to see that directory as encrypted.  I don't
+> > > think the problem is on this open itself, but in the unlock because a
+> > > simple 'ls' also fails to show the decrypted names.  (On the other end, if
+> > > you do an 'ls' _before_ the unlock, everything seems to work fine.)
+> > > 
+> > > I didn't had time to dig deeper into this yet, but I don't remember seeing
+> > > this behaviour in previous versions of the patchset.
+> > > 
+> > > Cheers,
+> > > --
+> > > Luís
+> > > 
+> > 
+> > I've tried several times to reproduce this, but I haven't seen it happen
+> > at all. It may be dependent on something in your environment (MDS
+> > version, perhaps?). I'll try some more, but let me know if you track
+> > down the cause.
+> 
+> Hmm... it could be indeed.  I'm running a vstart.sh cluster with pacific
+> (HEAD in eb5d7a868c96 ("Merge PR #40473 into pacific")).  It's trivial to
+> reproduce here, so I now wonder if I'm really missing something on the MDS
+> side.  I had a disaster recently (a disk died) and I had to recreate my
+> test environment.  I don't think I had anything extra to run fscrypt
+> tests, but I can't really remember.
+> 
+> Anyway, I'll let you know if I get something.
+> 
 
-Ok, I was deep into this anyway and it didn't make much sense to do
-anything else at that point so I bisected this a bit further. The first
-bad commit is:
+Thanks. FWIW, I'm on a cephadm built cluster using a pacific(-ish) build
+from about 2 weeks ago:
 
-commit 3a81fd02045c329f25e5900fa61f613c9b317644
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Thu Dec 10 12:25:36 2020 -0700
+$ sudo ./cephadm version
+Using recent ceph image docker.io/ceph/daemon-base@sha256:765d8c56160753aa4a92757a2e007f5821f8c0ec70b5fc998faf334a2b127df2
+ceph version 17.0.0-1983-g6a19e303 (6a19e303187c2defceb9c785284ca401a4309c47) quincy (dev)
 
-    io_uring: enable LOOKUP_CACHED path resolution for filename lookups
 
-    Instead of being pessimistic and assume that path lookup will block, use
-    LOOKUP_CACHED to attempt just a cached lookup. This ensures that the
-    fast path is always done inline, and we only punt to async context if
-    IO is needed to satisfy the lookup.
+> Cheers,
+> --
+> Luís
+> 
+> 
+> > Thanks,
+> > Jeff
+> > 
+> > > > 
+> > > > diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+> > > > index 17d8c8f4ec89..f4e3a17ffc01 100644
+> > > > --- a/fs/ceph/export.c
+> > > > +++ b/fs/ceph/export.c
+> > > > @@ -7,6 +7,7 @@
+> > > >  
+> > > >  #include "super.h"
+> > > >  #include "mds_client.h"
+> > > > +#include "crypto.h"
+> > > >  
+> > > >  /*
+> > > >   * Basic fh
+> > > > @@ -516,7 +517,9 @@ static int ceph_get_name(struct dentry *parent, char *name,
+> > > >  {
+> > > >  	struct ceph_mds_client *mdsc;
+> > > >  	struct ceph_mds_request *req;
+> > > > +	struct inode *dir = d_inode(parent);
+> > > >  	struct inode *inode = d_inode(child);
+> > > > +	struct ceph_mds_reply_info_parsed *rinfo;
+> > > >  	int err;
+> > > >  
+> > > >  	if (ceph_snap(inode) != CEPH_NOSNAP)
+> > > > @@ -528,29 +531,46 @@ static int ceph_get_name(struct dentry *parent, char *name,
+> > > >  	if (IS_ERR(req))
+> > > >  		return PTR_ERR(req);
+> > > >  
+> > > > -	inode_lock(d_inode(parent));
+> > > > -
+> > > > +	inode_lock(dir);
+> > > >  	req->r_inode = inode;
+> > > >  	ihold(inode);
+> > > >  	req->r_ino2 = ceph_vino(d_inode(parent));
+> > > > -	req->r_parent = d_inode(parent);
+> > > > +	req->r_parent = dir;
+> > > >  	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
+> > > >  	req->r_num_caps = 2;
+> > > >  	err = ceph_mdsc_do_request(mdsc, NULL, req);
+> > > > +	inode_unlock(dir);
+> > > >  
+> > > > -	inode_unlock(d_inode(parent));
+> > > > +	if (err)
+> > > > +		goto out;
+> > > >  
+> > > > -	if (!err) {
+> > > > -		struct ceph_mds_reply_info_parsed *rinfo = &req->r_reply_info;
+> > > > +	rinfo = &req->r_reply_info;
+> > > > +	if (!IS_ENCRYPTED(dir)) {
+> > > >  		memcpy(name, rinfo->dname, rinfo->dname_len);
+> > > >  		name[rinfo->dname_len] = 0;
+> > > > -		dout("get_name %p ino %llx.%llx name %s\n",
+> > > > -		     child, ceph_vinop(inode), name);
+> > > >  	} else {
+> > > > -		dout("get_name %p ino %llx.%llx err %d\n",
+> > > > -		     child, ceph_vinop(inode), err);
+> > > > -	}
+> > > > +		struct fscrypt_str oname = FSTR_INIT(NULL, 0);
+> > > > +		struct ceph_fname fname = { .dir	= dir,
+> > > > +					    .name	= rinfo->dname,
+> > > > +					    .ctext	= rinfo->altname,
+> > > > +					    .name_len	= rinfo->dname_len,
+> > > > +					    .ctext_len	= rinfo->altname_len };
+> > > > +
+> > > > +		err = ceph_fname_alloc_buffer(dir, &oname);
+> > > > +		if (err < 0)
+> > > > +			goto out;
+> > > >  
+> > > > +		err = ceph_fname_to_usr(&fname, NULL, &oname, NULL);
+> > > > +		if (!err) {
+> > > > +			memcpy(name, oname.name, oname.len);
+> > > > +			name[oname.len] = 0;
+> > > > +		}
+> > > > +		ceph_fname_free_buffer(dir, &oname);
+> > > > +	}
+> > > > +out:
+> > > > +	dout("get_name %p ino %llx.%llx err %d %s%s\n",
+> > > > +		     child, ceph_vinop(inode), err,
+> > > > +		     err ? "" : "name ", err ? "" : name);
+> > > >  	ceph_mdsc_put_request(req);
+> > > >  	return err;
+> > > >  }
+> > > > -- 
+> > > > 2.30.2
+> > > > 
+> > 
+> > -- 
+> > Jeff Layton <jlayton@kernel.org>
+> > 
+> 
 
-    For forced nonblock open attempts, mark the file O_NONBLOCK over the
-    actual ->open() call as well. We can safely clear this again before
-    doing fd_install(), so it'll never be user visible that we fiddled with
-    it.
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-    This greatly improves the performance of file open where the dentry is
-    already cached:
-
-    ached           5.10-git        5.10-git+LOOKUP_CACHED  Speedup
-    ---------------------------------------------------------------
-    33%             1,014,975       900,474                 1.1x
-    89%              545,466        292,937                 1.9x
-    100%             435,636        151,475                 2.9x
-
-    The more cache hot we are, the faster the inline LOOKUP_CACHED
-    optimization helps. This is unsurprising and expected, as a thread
-    offload becomes a more dominant part of the total overhead. If we look
-    at io_uring tracing, doing an IORING_OP_OPENAT on a file that isn't in
-    the dentry cache will yield:
-
-    275.550481: io_uring_create: ring 00000000ddda6278, fd 3 sq size 8, cq size 16, flags 0
-    275.550491: io_uring_submit_sqe: ring 00000000ddda6278, op 18, data 0x0, non block 1, sq_thread 0
-    275.550498: io_uring_queue_async_work: ring 00000000ddda6278, request 00000000c0267d17, flags 69760, normal queue, work 000000003d683991
-    275.550502: io_uring_cqring_wait: ring 00000000ddda6278, min_events 1
-    275.550556: io_uring_complete: ring 00000000ddda6278, user_data 0x0, result 4
-
-    which shows a failed nonblock lookup, then punt to worker, and then we
-    complete with fd == 4. This takes 65 usec in total. Re-running the same
-    test case again:
-
-    281.253956: io_uring_create: ring 0000000008207252, fd 3 sq size 8, cq size 16, flags 0
-    281.253967: io_uring_submit_sqe: ring 0000000008207252, op 18, data 0x0, non block 1, sq_thread 0
-    281.253973: io_uring_complete: ring 0000000008207252, user_data 0x0, result 4
-
-    shows the same request completing inline, also returning fd == 4. This
-    takes 6 usec.
-
-    Signed-off-by: Jens Axboe <axboe@kernel.dk>
