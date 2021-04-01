@@ -2,64 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F6EE351BC8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:11:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F110351AAD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 20:07:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234781AbhDASLC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 14:11:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42002 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237278AbhDASDj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 14:03:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1617287853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        id S236563AbhDASCh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 14:02:37 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:31717 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237520AbhDASAR (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Apr 2021 14:00:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617300016;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FJrA00uxIGXmEJZOjpdMpdaaSrHyC5HALtOFInOMB88=;
-        b=P0jFij1KoLqdUY5uwbXKSbR/LbYWyxi4Wk+q4F34B0IOYeUGzbxTVr3vKcCDt9FtsbE27w
-        9dHbGfZzGBYaU+qoeDZJ9UxWwnym0QoMmahTbtKn3jCFalv31tYB1tc8Ei6GEW/lZcFg1w
-        azGlcTsmU9JcyFTemfJobLE5oBejI9c=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id AA704B230;
-        Thu,  1 Apr 2021 14:37:33 +0000 (UTC)
-Date:   Thu, 1 Apr 2021 16:37:29 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Tejun Heo <tj@kernel.org>, axboe@fb.com,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [External] Re: [PATCH v2] writeback: fix obtain a reference to a
- freeing memcg css
-Message-ID: <YGXaqcLOHjlCkNkt@dhcp22.suse.cz>
-References: <20210401093343.51299-1-songmuchun@bytedance.com>
- <YGWf1C/gIZgs0AhR@dhcp22.suse.cz>
- <CAMZfGtX9V898aezb-huMEYU_-NjqfL6HbXeaZr2Q2MUa+VG3qQ@mail.gmail.com>
+        bh=DZ5o8xyhoYGjZMwbZbuoSG15PY6aGXxwCTwzusxwEpc=;
+        b=QGxIDx0wO+uOYhYaGHD1ebbtraUSs30PE3EzB+JeubT4+AxrqqiTzBvRuBhsLupMlbuxHm
+        oUHVJhZX71h+dKDyno7Ot2/FI+EYbdXRixh6mU4QbocMk9HvWIkwBTadJy77WL19bUPjea
+        2fu4PIQRC1j/uyXpmQKZM42PGxIU5Zw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-61-YVQssqzYNSmnqpfwZ9mZUA-1; Thu, 01 Apr 2021 11:58:19 -0400
+X-MC-Unique: YVQssqzYNSmnqpfwZ9mZUA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5909C1966324;
+        Thu,  1 Apr 2021 15:58:15 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-113-97.rdu2.redhat.com [10.10.113.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4687B5DDAD;
+        Thu,  1 Apr 2021 15:58:14 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id D9BD222054F; Thu,  1 Apr 2021 11:58:13 -0400 (EDT)
+Date:   Thu, 1 Apr 2021 11:58:13 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        Amir Goldstein <amir73il@gmail.com>, stable@vger.kernel.org,
+        syzbot <syzkaller@googlegroups.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
+Subject: Re: [PATCH v1] ovl: Fix leaked dentry
+Message-ID: <20210401155813.GA801967@redhat.com>
+References: <20210329164907.2133175-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAMZfGtX9V898aezb-huMEYU_-NjqfL6HbXeaZr2Q2MUa+VG3qQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210329164907.2133175-1-mic@digikod.net>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 01-04-21 21:59:13, Muchun Song wrote:
-> On Thu, Apr 1, 2021 at 6:26 PM Michal Hocko <mhocko@suse.com> wrote:
-[...]
-> > Even if the css ref count is not really necessary it shouldn't cause any
-> > harm and it makes the code easier to understand. At least a comment
-> > explaining why that is not necessary would be required without it
+On Mon, Mar 29, 2021 at 06:49:07PM +0200, Mickaël Salaün wrote:
+> From: Mickaël Salaün <mic@linux.microsoft.com>
 > 
-> OK. I will add a comment here to explain why we need to hold a
-> ref.
+> Since commit 6815f479ca90 ("ovl: use only uppermetacopy state in
+> ovl_lookup()"), overlayfs doesn't put temporary dentry when there is a
+> metacopy error, which leads to dentry leaks when shutting down the
+> related superblock:
+> 
 
-I do not think this is necessary. Taking the reference is a standard
-way and I am not sure it requires a comment. I meant to say that not
-having a reference should really have a comment explaining why.
+Hi,
 
-Thanks!
--- 
-Michal Hocko
-SUSE Labs
+Thanks for finding and fixing this bug. Patch looks correct to me. We
+need to drop that reference to this.
+
+I am not able to trigger this warning on umount of overlayfs. I copied
+up a file with metacopy enabled and then remounted overlay again with
+metacopy disabled. That does hit this code and I see the warning.
+
+refusing to follow metacopy origin for (/foo.txt)
+
+This should have lead to leak of dentry pointed by "this".
+
+But after that I unmounted, overlay and that succeeds. Is there any
+additional step to be done to trigger this VFS warning.
+
+Vivek
+
+>   overlayfs: refusing to follow metacopy origin for (/file0)
+>   ...
+>   BUG: Dentry (____ptrval____){i=3f33,n=file3}  still in use (1) [unmount of overlay overlay]
+>   ...
+>   WARNING: CPU: 1 PID: 432 at umount_check.cold+0x107/0x14d
+>   CPU: 1 PID: 432 Comm: unmount-overlay Not tainted 5.12.0-rc5 #1
+>   ...
+>   RIP: 0010:umount_check.cold+0x107/0x14d
+>   ...
+>   Call Trace:
+>    d_walk+0x28c/0x950
+>    ? dentry_lru_isolate+0x2b0/0x2b0
+>    ? __kasan_slab_free+0x12/0x20
+>    do_one_tree+0x33/0x60
+>    shrink_dcache_for_umount+0x78/0x1d0
+>    generic_shutdown_super+0x70/0x440
+>    kill_anon_super+0x3e/0x70
+>    deactivate_locked_super+0xc4/0x160
+>    deactivate_super+0xfa/0x140
+>    cleanup_mnt+0x22e/0x370
+>    __cleanup_mnt+0x1a/0x30
+>    task_work_run+0x139/0x210
+>    do_exit+0xb0c/0x2820
+>    ? __kasan_check_read+0x1d/0x30
+>    ? find_held_lock+0x35/0x160
+>    ? lock_release+0x1b6/0x660
+>    ? mm_update_next_owner+0xa20/0xa20
+>    ? reacquire_held_locks+0x3f0/0x3f0
+>    ? __sanitizer_cov_trace_const_cmp4+0x22/0x30
+>    do_group_exit+0x135/0x380
+>    __do_sys_exit_group.isra.0+0x20/0x20
+>    __x64_sys_exit_group+0x3c/0x50
+>    do_syscall_64+0x45/0x70
+>    entry_SYSCALL_64_after_hwframe+0x44/0xae
+>   ...
+>   VFS: Busy inodes after unmount of overlay. Self-destruct in 5 seconds.  Have a nice day...
+> 
+> This fix has been tested with a syzkaller reproducer.
+> 
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: <stable@vger.kernel.org> # v5.7+
+> Reported-by: syzbot <syzkaller@googlegroups.com>
+> Fixes: 6815f479ca90 ("ovl: use only uppermetacopy state in ovl_lookup()")
+> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+> Link: https://lore.kernel.org/r/20210329164907.2133175-1-mic@digikod.net
+> ---
+>  fs/overlayfs/namei.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+> index 3fe05fb5d145..424c594afd79 100644
+> --- a/fs/overlayfs/namei.c
+> +++ b/fs/overlayfs/namei.c
+> @@ -921,6 +921,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+>  		if ((uppermetacopy || d.metacopy) && !ofs->config.metacopy) {
+>  			err = -EPERM;
+>  			pr_warn_ratelimited("refusing to follow metacopy origin for (%pd2)\n", dentry);
+> +			dput(this);
+>  			goto out_put;
+>  		}
+>  
+> 
+> base-commit: a5e13c6df0e41702d2b2c77c8ad41677ebb065b3
+> -- 
+> 2.30.2
+> 
+
