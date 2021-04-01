@@ -2,174 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 439BB35139F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 12:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FDE13513C6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 12:41:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233629AbhDAKaM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 06:30:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49068 "EHLO mx2.suse.de"
+        id S233650AbhDAKlA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 06:41:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233917AbhDAK3t (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 06:29:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B7C7CB0B3;
-        Thu,  1 Apr 2021 10:29:47 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 713D31E4415; Thu,  1 Apr 2021 12:29:47 +0200 (CEST)
-Date:   Thu, 1 Apr 2021 12:29:47 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: fsnotify path hooks
-Message-ID: <20210401102947.GA29690@quack2.suse.cz>
-References: <CAOQ4uxjVdjLPbkkZd+_1csecDFuHxms3CcSLuAtRbKuozHUqWA@mail.gmail.com>
- <20210330125336.vj2hkgwhyrh5okee@wittgenstein>
- <CAOQ4uxjPhrY55kJLUr-=2+S4HOqF0qKAAX27h2T1H1uOnxM9pQ@mail.gmail.com>
- <20210330141703.lkttbuflr5z5ia7f@wittgenstein>
- <CAOQ4uxirMBzcaLeLoBWCMPPr7367qeKjnW3f88bh1VMr_3jv_A@mail.gmail.com>
- <20210331094604.xxbjl3krhqtwcaup@wittgenstein>
- <CAOQ4uxirud-+ot0kZ=8qaicvjEM5w1scAeoLP_-HzQx+LwihHw@mail.gmail.com>
- <20210331125412.GI30749@quack2.suse.cz>
- <CAOQ4uxjOyuvpJ7Tv3cGmv+ek7+z9BJBF4sK_-OLxwePUrHERUg@mail.gmail.com>
- <CAOQ4uxhWE9JGOZ_jN9_RT5EkACdNWXOryRsm6Wg_zkaDNDSjsA@mail.gmail.com>
+        id S233665AbhDAKkm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Apr 2021 06:40:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D1E1260FEA;
+        Thu,  1 Apr 2021 10:40:37 +0000 (UTC)
+Date:   Thu, 1 Apr 2021 12:40:34 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Xie Yongji <xieyongji@bytedance.com>, hch@infradead.org,
+        arve@android.com, tkjos@android.com, maco@android.com,
+        joel@joelfernandes.org, hridya@google.com, surenb@google.com,
+        viro@zeniv.linux.org.uk, sargun@sargun.me, keescook@chromium.org,
+        jasowang@redhat.com, devel@driverdev.osuosl.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] binder: Use receive_fd() to receive file from
+ another process
+Message-ID: <20210401104034.52qaaoea27htkpbh@wittgenstein>
+References: <20210401090932.121-1-xieyongji@bytedance.com>
+ <20210401090932.121-3-xieyongji@bytedance.com>
+ <YGWYZYbBzglUCxB2@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhWE9JGOZ_jN9_RT5EkACdNWXOryRsm6Wg_zkaDNDSjsA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <YGWYZYbBzglUCxB2@kroah.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 31-03-21 23:59:27, Amir Goldstein wrote:
-> On Wed, Mar 31, 2021 at 5:06 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > > > As long as "exp_export: export of idmapped mounts not yet supported.\n"
-> > > > I don't think it matters much.
-> > > > It feels like adding idmapped mounts to nfsd is on your roadmap.
-> > > > When you get to that we can discuss adding fsnotify path hooks to nfsd
-> > > > if Jan agrees to the fsnotify path hooks concept.
-> > >
-> > > I was looking at the patch and thinking about it for a few days already. I
-> > > think that generating fsnotify event later (higher up the stack where we
-> > > have mount information) is fine and a neat idea. I just dislike the hackery
-> > > with dentry flags.
-> >
-> > Me as well. I used this hack for fast POC.
-> >
-> > If we stick with the dual hooks approach, we will have to either pass a new
-> > argument to vfs helpers or use another trick:
-> >
-> > Convert all the many calls sites that were converted by Christian to:
-> >    vfs_XXX(&init_user_ns, ...
-> > because they do not have mount context, to:
-> >    vfs_XXX(NULL, ...
-> >
-> > Inside the vfs helpers, use init_user_ns when mnt_userns is NULL,
-> > but pass the original mnt_userns argument to fsnotify_ns_XXX hooks.
-> > A non-NULL mnt_userns arg means "path_notify" context.
-> > I have already POC code for passing mnt_userns to fsnotify hooks [1].
-> >
-> > I did not check if this assumption always works, but there seems to
-> > be a large overlap between idmapped aware callers and use cases
-> > that will require sending events to a mount mark.
-> >
+On Thu, Apr 01, 2021 at 11:54:45AM +0200, Greg KH wrote:
+> On Thu, Apr 01, 2021 at 05:09:32PM +0800, Xie Yongji wrote:
+> > Use receive_fd() to receive file from another process instead of
+> > combination of get_unused_fd_flags() and fd_install(). This simplifies
+> > the logic and also makes sure we don't miss any security stuff.
 > 
-> The above "trick" is pretty silly as I believe Christian intends
-> to fix all those call sites that pass init_user_ns.
-
-If he does that we also should have the mountpoint there to use for
-fsnotify, shouldn't we? :)
-
-> > > Also I'm somewhat uneasy that it is random (from
-> > > userspace POV) when path event is generated and when not (at least that's
-> > > my impression from the patch - maybe I'm wrong). How difficult would it be
-> > > to get rid of it? I mean what if we just moved say fsnotify_create() call
-> > > wholly up the stack? It would mean more explicit calls to fsnotify_create()
-> > > from filesystems - as far as I'm looking nfsd, overlayfs, cachefiles,
-> > > ecryptfs. But that would seem to be manageable.  Also, to maintain sanity,
-> >
-> > 1. I don't think we can do that for all the fsnotify_create() hooks, such as
-> >     debugfs for example
-> > 2. It is useless to pass the mount from overlayfs to fsnotify, its a private
-> >     mount that users cannot set a mark on anyway and Christian has
-> >     promised to propose the same change for cachefiles and ecryptfs,
-> >     so I think it's not worth the churn in those call sites
-> > 3. I am uneasy with removing the fsnotify hooks from vfs helpers and
-> >     trusting that new callers of vfs_create() will remember to add the high
-> >     level hooks, so I prefer the existing behavior remains for such callers
-> >
+> But no logic is simplified here, and nothing is "missed", so I do not
+> understand this change at all.
 > 
-> So I read your proposal the wrong way.
-> You meant move fsnotify_create() up *without* passing mount context
-> from overlayfs and friends.
-
-Well, I was thinking that we could find appropriate mount context for
-overlayfs or ecryptfs (which just shows how little I know about these
-filesystems ;) I didn't think of e.g. debugfs. Anyway, if we can make
-mountpoint marks work for directory events at least for most filesystems, I
-think that is OK as well. However it would be then needed to detect whether
-a given filesystem actually supports mount marks for dir events and if not,
-report error from fanotify_mark() instead of silently not generating
-events.
-
-> So yeh, I do think it is manageable. I think the best solution would be
-> something along the lines of wrappers like the following:
+> > 
+> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> > ---
+> >  drivers/android/binder.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> > index c119736ca56a..080bcab7d632 100644
+> > --- a/drivers/android/binder.c
+> > +++ b/drivers/android/binder.c
+> > @@ -3728,7 +3728,7 @@ static int binder_apply_fd_fixups(struct binder_proc *proc,
+> >  	int ret = 0;
+> >  
+> >  	list_for_each_entry(fixup, &t->fd_fixups, fixup_entry) {
+> > -		int fd = get_unused_fd_flags(O_CLOEXEC);
+> > +		int fd  = receive_fd(fixup->file, O_CLOEXEC);
 > 
-> static inline int vfs_mkdir(...)
-> {
->         int error = __vfs_mkdir_nonotify(...);
->         if (!error)
->                 fsnotify_mkdir(dir, dentry);
->         return error;
-> }
+> Why 2 spaces?
 > 
-> And then the few call sites that call the fsnotify_path_ hooks
-> (i.e. in syscalls and perhaps later in nfsd) will call the
-> __vfs_xxx_nonotify() variant.
+> >  
+> >  		if (fd < 0) {
+> >  			binder_debug(BINDER_DEBUG_TRANSACTION,
+> > @@ -3741,7 +3741,7 @@ static int binder_apply_fd_fixups(struct binder_proc *proc,
+> >  			     "fd fixup txn %d fd %d\n",
+> >  			     t->debug_id, fd);
+> >  		trace_binder_transaction_fd_recv(t, fd, fixup->offset);
+> > -		fd_install(fd, fixup->file);
+> > +		fput(fixup->file);
+> 
+> Are you sure this is the same???
+> 
+> I d onot understand the need for this change at all, what is wrong with
+> the existing code here?
 
-Yes, that is OK with me. Or we could have something like:
+I suggested something like this.
+Some time back we added receive_fd() for seccomp and SCM_RIGHTS to have
+a unified way of installing file descriptors including taking care of
+handling sockets and running security hooks. The helper also encompasses
+the whole get_unused_fd() + fd_install dance.
+My suggestion was to look at all the places were we currently open-code
+this in drivers/:
 
-static inline void fsnotify_dirent(struct vfsmount *mnt, struct inode *dir,
-				   struct dentry *dentry, __u32 mask)
-{
-	if (!mnt) {
-		fsnotify(mask, d_inode(dentry), FSNOTIFY_EVENT_INODE, dir,
-			 &dentry->d_name, NULL, 0);
-	} else {
-		struct path path = {
-			.mnt = mnt,
-			.dentry = d_find_any_alias(dir)
-		};
-		fsnotify(mask, d_inode(dentry), FSNOTIFY_EVENT_PATH, &path,
-			 &dentry->d_name, NULL, 0);
-	}
-}
+drivers/android/binder.c:               int fd = get_unused_fd_flags(O_CLOEXEC);
+drivers/char/tpm/tpm_vtpm_proxy.c:      fd = get_unused_fd_flags(O_RDWR);
+drivers/dma-buf/dma-buf.c:      fd = get_unused_fd_flags(flags);
+drivers/dma-buf/sw_sync.c:      int fd = get_unused_fd_flags(O_CLOEXEC);
+drivers/dma-buf/sync_file.c:    int fd = get_unused_fd_flags(O_CLOEXEC);
+drivers/gpio/gpiolib-cdev.c:    fd = get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
+drivers/gpio/gpiolib-cdev.c:    fd = get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
+drivers/gpio/gpiolib-cdev.c:    fd = get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
+drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c:         fd = get_unused_fd_flags(O_CLOEXEC);
+drivers/gpu/drm/drm_atomic_uapi.c:      fence_state->fd = get_unused_fd_flags(O_CLOEXEC);
+drivers/gpu/drm/drm_lease.c:    fd = get_unused_fd_flags(cl->flags & (O_CLOEXEC | O_NONBLOCK));
+drivers/gpu/drm/drm_syncobj.c:  fd = get_unused_fd_flags(O_CLOEXEC);
+drivers/gpu/drm/drm_syncobj.c:  int fd = get_unused_fd_flags(O_CLOEXEC);
+drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c:           out_fence_fd = get_unused_fd_flags(O_CLOEXEC);
+drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c:         out_fence_fd = get_unused_fd_flags(O_CLOEXEC);
+drivers/gpu/drm/msm/msm_gem_submit.c:           out_fence_fd = get_unused_fd_flags(O_CLOEXEC);
+drivers/gpu/drm/virtio/virtgpu_ioctl.c:         out_fence_fd = get_unused_fd_flags(O_CLOEXEC);
+drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c:                out_fence_fd = get_unused_fd_flags(O_CLOEXEC);
+drivers/infiniband/core/rdma_core.c:    new_fd = get_unused_fd_flags(O_CLOEXEC);
+drivers/media/mc/mc-request.c:  fd = get_unused_fd_flags(O_CLOEXEC);
+drivers/misc/cxl/api.c: rc = get_unused_fd_flags(flags);
+drivers/scsi/cxlflash/ocxl_hw.c:        rc = get_unused_fd_flags(flags);
+drivers/scsi/cxlflash/ocxl_hw.c:                dev_err(dev, "%s: get_unused_fd_flags failed rc=%d\n",
+drivers/tty/pty.c:      fd = get_unused_fd_flags(flags);
+drivers/vfio/vfio.c:    ret = get_unused_fd_flags(O_CLOEXEC);
+drivers/virt/nitro_enclaves/ne_misc_dev.c:      enclave_fd = get_unused_fd_flags(O_CLOEXEC);
 
-static inline void fsnotify_mkdir(struct vfsmount *mnt, struct inode *inode,
-				  struct dentry *dentry)
-{
-        audit_inode_child(inode, dentry, AUDIT_TYPE_CHILD_CREATE);
+and see whether all of them can be switched to simply using
+receive_fd(). I did a completely untested rough sketch to illustrate
+what I meant by using binder and devpts Xie seems to have just picked
+those two. But the change is obviously only worth it if all or nearly
+all callers can be switched over without risk of regression.
+It would most likely simplify quite a few codepaths though especially in
+the error paths since we can get rid of put_unused_fd() cleanup.
 
-        fsnotify_dirent(mnt, inode, dentry, FS_CREATE | FS_ISDIR);
-}
+But it requires buy in from others obviously.
 
-static inline int vfs_mkdir(mnt, ...)
-{
-	int error = __vfs_mkdir_nonotify(...);
-	if (!error)
-		fsnotify_mkdir(mnt, dir, dentry);
-}
-
-And pass mnt to vfs_mkdir() for filesystems where we have it...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Christian
