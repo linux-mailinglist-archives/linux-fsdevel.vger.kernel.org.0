@@ -2,109 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B29D35137F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 12:29:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EF80351383
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Apr 2021 12:29:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234352AbhDAK2K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 06:28:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50574 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234211AbhDAK1u (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 06:27:50 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 890F2C061788
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Apr 2021 03:24:49 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id b7so2131954ejv.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Apr 2021 03:24:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=J7YrrrhPr6H4+aJ1lkG34rMuFAOACvVaQCsE3shxThk=;
-        b=RwfJgvCkIljryl8uo0Vmwy2NZSGlqehWXjl1ezB3NnMbhUVMtz7Imp6cJmjHiV4c4u
-         MOCSZbF5KXM0BPkLoo8ln+fo9T/lLzR9fzRy6KS8Q9OZ5ddViqvPoqp/FlqF29SEobts
-         xvEBdEfRoyqb1GShptdxvCBIr5dG45kwTRF0enf0UE66rXgR0yEqI7Ijd22l0QnFpOGN
-         6B2abN4aaqhtSo4CJwJtTL84Va2BROJEi7VJg3gaQRP1rr3BjpaJK547ghRrBwijc8bl
-         lE16Qfqg/02+MSmoLwK7r+yDtF98UhWQ7qLtgbsXr4fCCdxmDBZeKulHdOUR1//IF5sz
-         K8Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J7YrrrhPr6H4+aJ1lkG34rMuFAOACvVaQCsE3shxThk=;
-        b=Rt3/KPSCfkr83gQk+QRsVshqFS2YWo0FkzZWY8JGTVeTadKi799GNjOrvMRzY+nGXp
-         hdjzf+UQbfprgJWTsNSELjH2oxvd7oLAwfD9j12Fw8G1a6ytzvk7x9b1qSx1GiaA0O5w
-         NjMmgh1EkvWAwpZIYbPDisHV1KAjdgUK7zwlQ+igrOlIi0mRNdY6zfyC9Pg2/7Qx7mdl
-         QiA7I9Qch48yYfvusqIjBiucnLF1I7KYXNwxJ1A5f1MPFm3AdO/oNtpxF0I4ErV/1Ef6
-         wU/Xv4NsJ3j/c9TpcX+KU604vU3rb5t1ld/Uop4G5OQPQLOib7cp0S9fhiicROZf8OkG
-         O1hg==
-X-Gm-Message-State: AOAM532+QA96adbd27XxkcsRqwvvR6TSpUoI9m+hQ4rXaNB56vq9J5Fo
-        ZE5Apr9OhYmIR0MTjcMHvhdpVHKrdWxCH82qfPsh
-X-Google-Smtp-Source: ABdhPJy9oPfEuG5lV875yMF7Gj8RMK+uoG/+oS6kYgJYXI10oZOQ1GgD81mnM9ZocBNO5F2BWGpmbruurhnPMXIWJWE=
-X-Received: by 2002:a17:906:311a:: with SMTP id 26mr8276109ejx.395.1617272688184;
- Thu, 01 Apr 2021 03:24:48 -0700 (PDT)
+        id S234356AbhDAK2L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Apr 2021 06:28:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46958 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234104AbhDAK1x (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Apr 2021 06:27:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1617272790; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Rnl+5Shh0MMxJGKfXqUCuHCs3WEt2AH5V5RzSicTE6w=;
+        b=Uxat7/Ac/69TeZfoeQt+B8i5enUrHOYTd86fl9WRiq3G51tu/k8DLG39X86j0tYact6i1R
+        1acLeCVIDbLCAgfsOkXo6tudqJI3GOGJ9HI5sc2qH/jxZTPhn/fc95E8UuloSkWGdjTmAP
+        a4Zp8dex/huJWowK1hrk88sOSiXZ5BI=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 751BFAEA6;
+        Thu,  1 Apr 2021 10:26:30 +0000 (UTC)
+Date:   Thu, 1 Apr 2021 12:26:28 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     viro@zeniv.linux.org.uk, tj@kernel.org, axboe@fb.com,
+        willy@infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] writeback: fix obtain a reference to a freeing memcg
+ css
+Message-ID: <YGWf1C/gIZgs0AhR@dhcp22.suse.cz>
+References: <20210401093343.51299-1-songmuchun@bytedance.com>
 MIME-Version: 1.0
-References: <20210401090932.121-1-xieyongji@bytedance.com> <20210401090932.121-2-xieyongji@bytedance.com>
- <YGWX4aIE5QNxsJQ9@kroah.com>
-In-Reply-To: <YGWX4aIE5QNxsJQ9@kroah.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Thu, 1 Apr 2021 18:24:37 +0800
-Message-ID: <CACycT3tESHmWUS6qrBpoOHGQKrJt7Qb8Xh1aawhDBHMPBb0Eag@mail.gmail.com>
-Subject: Re: Re: [PATCH 1/2] file: Export receive_fd() to modules
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Christoph Hellwig <hch@infradead.org>, arve@android.com,
-        tkjos@android.com, maco@android.com, joel@joelfernandes.org,
-        Hridya Valsaraju <hridya@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        viro@zeniv.linux.org.uk, Sargun Dhillon <sargun@sargun.me>,
-        Kees Cook <keescook@chromium.org>,
-        Jason Wang <jasowang@redhat.com>, devel@driverdev.osuosl.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210401093343.51299-1-songmuchun@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 1, 2021 at 5:52 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Apr 01, 2021 at 05:09:31PM +0800, Xie Yongji wrote:
-> > Export receive_fd() so that some modules can use
-> > it to pass file descriptor across processes without
-> > missing any security stuffs.
-> >
-> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> > ---
-> >  fs/file.c            | 6 ++++++
-> >  include/linux/file.h | 7 +++----
-> >  2 files changed, 9 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/file.c b/fs/file.c
-> > index 56986e55befa..2a80c6c3e147 100644
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -1107,6 +1107,12 @@ int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
-> >       return new_fd;
-> >  }
-> >
-> > +int receive_fd(struct file *file, unsigned int o_flags)
-> > +{
-> > +     return __receive_fd(file, NULL, o_flags);
-> > +}
-> > +EXPORT_SYMBOL(receive_fd);
->
-> What module uses this?
->
+On Thu 01-04-21 17:33:43, Muchun Song wrote:
+> The caller of wb_get_create() should pin the memcg, because
+> wb_get_create() relies on this guarantee. The rcu read lock
+> only can guarantee that the memcg css returned by css_from_id()
+> cannot be released, but the reference of the memcg can be zero.
+> Fix it by holding a reference to the css before calling
+> wb_get_create(). This is not a problem I encountered in the
+> real world. Just the result of a code review.
+> 
+> And it is unnecessary to use GFP_ATOMIC, so replace it with
+> GFP_NOIO.
 
-Looks like now it will be only used by the module in my proposal:
+This should go into it's own patch. With more explanation why NOIO is
+required.
 
-https://lore.kernel.org/linux-fsdevel/20210331080519.172-1-xieyongji@bytedance.com/
+> Fixes: 682aa8e1a6a1 ("writeback: implement unlocked_inode_to_wb transaction and use it for stat updates")
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 
-> And why not EXPORT_SYMBOL_GPL()?
->
+For the css part feel free to add
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-My fault, sorry.
+Even if the css ref count is not really necessary it shouldn't cause any
+harm and it makes the code easier to understand. At least a comment
+explaining why that is not necessary would be required without it.
 
-Thanks,
-Yongji
+Thanks!
+
+> ---
+> Changelog in v2:
+>  1. Replace GFP_ATOMIC with GFP_NOIO suggested by Matthew.
+> 
+>  fs/fs-writeback.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index e91980f49388..df7f89f8f771 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -501,16 +501,21 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
+>  	if (atomic_read(&isw_nr_in_flight) > WB_FRN_MAX_IN_FLIGHT)
+>  		return;
+>  
+> -	isw = kzalloc(sizeof(*isw), GFP_ATOMIC);
+> +	isw = kzalloc(sizeof(*isw), GFP_NOIO);
+>  	if (!isw)
+>  		return;
+>  
+>  	/* find and pin the new wb */
+>  	rcu_read_lock();
+>  	memcg_css = css_from_id(new_wb_id, &memory_cgrp_subsys);
+> -	if (memcg_css)
+> -		isw->new_wb = wb_get_create(bdi, memcg_css, GFP_ATOMIC);
+> +	if (memcg_css && !css_tryget(memcg_css))
+> +		memcg_css = NULL;
+>  	rcu_read_unlock();
+> +	if (!memcg_css)
+> +		goto out_free;
+> +
+> +	isw->new_wb = wb_get_create(bdi, memcg_css, GFP_NOIO);
+> +	css_put(memcg_css);
+>  	if (!isw->new_wb)
+>  		goto out_free;
+>  
+> -- 
+> 2.11.0
+
+-- 
+Michal Hocko
+SUSE Labs
