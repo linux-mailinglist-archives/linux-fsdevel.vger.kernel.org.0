@@ -2,343 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97713352598
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Apr 2021 05:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7285A352675
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Apr 2021 07:58:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233901AbhDBDNT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Apr 2021 23:13:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41356 "EHLO
+        id S229742AbhDBF5v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Apr 2021 01:57:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233665AbhDBDNT (ORCPT
+        with ESMTP id S229518AbhDBF5u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Apr 2021 23:13:19 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58D55C0613E6;
-        Thu,  1 Apr 2021 20:13:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ePkApq+eAbci5ih5uu3fsCIhPqtvRqCGqPeCVh/d5TY=; b=b44SXhjJbU77CePf/FjihR1EdV
-        D6RQM0PR6b2PNYbE1D5gmWOEXWQkImvclrbGpKlJCWQFBBxBEDEBxd1KTngIwS5gLASDVmyemjANR
-        AFTafoLjxYafVU7uiMxaWWxyiiakdQIkMPog5vPzwrnBzFefR1ZSO5VFA76kbX+V1oPfrCj1eD9Hs
-        I5BaskiVAktrLxuIoEazU7nSMcJaAahI0WssyRt06ymaee5I/wzV342/UKvIeZIroO3CbiYcEBH3T
-        3ZIuBWePhJhwbpXcYMvx5/Xxl9A31HBZHk+yK0nqAT/QZvk/HF5ZLYDxXjRc80ixi0dzyKSay3MW9
-        +sWil21A==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lSAF7-0077dJ-AS; Fri, 02 Apr 2021 03:13:07 +0000
-Date:   Fri, 2 Apr 2021 04:13:05 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: BUG_ON(!mapping_empty(&inode->i_data))
-Message-ID: <20210402031305.GK351017@casper.infradead.org>
-References: <alpine.LSU.2.11.2103301654520.2648@eggly.anvils>
- <20210331024913.GS351017@casper.infradead.org>
- <alpine.LSU.2.11.2103311413560.1201@eggly.anvils>
- <20210401170615.GH351017@casper.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210401170615.GH351017@casper.infradead.org>
+        Fri, 2 Apr 2021 01:57:50 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E557EC0613E6
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Apr 2021 22:57:49 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id d1so8261578ybj.15
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Apr 2021 22:57:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=LPDjYVsuuz78ydcsF2TccRXebl6RyftwNS4xQthlRJU=;
+        b=AW7AFbFdCw9ZjpwVkLM9vCH4RzMUNjrWeyDwr+/rCz/5buvedH8Y8rVLgFmcvMSqLA
+         dsX4p/CXRV3lsUYOi4SeM+902Qecnohw7Bl5hHCHzQLqnpxSu+SGSaAQ6yViYFqHPH9L
+         kOdBq+pTBHTuI/1SFKZJtVT0t582Wqz/RNh3uQlO6XEDdRFkBK1fW3TGbgnW1B5cXnpL
+         P2OV7pXyMA/Q/TnvS28INtn2OrRrbwOfh7cjke6EUG1Qmsh0n2aEBl7/0fmx0+4Qfk2r
+         sU5BBfKHBYivpVDDPDCBj3rz0jpP90iNw5TpaMtJlwEsKfFizFTTTiTVjP4A+FwtAFwJ
+         yOHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=LPDjYVsuuz78ydcsF2TccRXebl6RyftwNS4xQthlRJU=;
+        b=Yit/GEyjJsvxIq25Y0d7KJAUoIrCVHGQYdqKrjBpg/XlH9siJ5ICvYWMjBq+XGrDHk
+         ZsafXCzn2Q4oV8tNXeIh6n6nFcF41wGWz4OPerNdUOhlQUjvpeQe/s9Hl/UbOnzzMMZ/
+         ulAXlRTIgBbflqwd/eZ77hLHtkZ4clNdwZWbObwVmofYweBvSM/k5Atrj3xUWmgkx2hq
+         fOqNn0rTtRvyxfThvTpOmpppBoDDe04WDAqXHkqOFTAobQbzZ/6S1OqamSnYFd6Eoj4T
+         kP+qWVOs1dx3/NvE5f56340byH/Aar4Tc8Dm1hiB0FYFHHR/Xuh7ZKUwIWbtZMbSdw1T
+         +3Kw==
+X-Gm-Message-State: AOAM533bt5/pE1QL/qPDiW5lKAlpgzvAIoic31JuQXFT/LQPfD3bo0Jc
+        DsYM9jCcKVwayq9LdQMoHjh5Ht7riI4=
+X-Google-Smtp-Source: ABdhPJwYotMzhZ8ORbnpzqZuNWOWQ37DFSMdjl0rEsL7ha5ML/+joadSegq1SKDrQJJxJiwlE3ViuaCMC/E=
+X-Received: from legoland2.mtv.corp.google.com ([2620:15c:211:1:857d:472:1e7f:a7fe])
+ (user=varmam job=sendgmr) by 2002:a25:34d2:: with SMTP id b201mr3432474yba.307.1617343068996;
+ Thu, 01 Apr 2021 22:57:48 -0700 (PDT)
+Date:   Thu,  1 Apr 2021 22:57:45 -0700
+Message-Id: <20210402055745.3690281-1-varmam@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.31.0.208.g409f899ff0-goog
+Subject: [PATCH v3] fs: Improve eventpoll logging to stop indicting timerfd
+From:   Manish Varma <varmam@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, Manish Varma <varmam@google.com>,
+        kernel test robot <lkp@intel.com>,
+        Kelly Rossmoyer <krossmo@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 01, 2021 at 06:06:15PM +0100, Matthew Wilcox wrote:
-> On Wed, Mar 31, 2021 at 02:58:12PM -0700, Hugh Dickins wrote:
-> > I suspect there's a bug in the XArray handling in collapse_file(),
-> > which sometimes leaves empty nodes behind.
-> 
-> Urp, yes, that can easily happen.
-> 
->         /* This will be less messy when we use multi-index entries */
->         do {
->                 xas_lock_irq(&xas);
->                 xas_create_range(&xas);
->                 if (!xas_error(&xas))
->                         break;
->                 if (!xas_nomem(&xas, GFP_KERNEL)) {
->                         result = SCAN_FAIL;
->                         goto out;
->                 }
-> 
-> xas_create_range() can absolutely create nodes with zero entries.
-> So if we create m/n nodes and then it runs out of memory (or cgroup
-> denies it), we can leave nodes in the tree with zero entries.
-> 
-> There are three options for fixing it ...
->  - Switch to using multi-index entries.  We need to do this anyway, but
->    I don't yet have a handle on the bugs that you found last time I
->    pushed this into linux-next.  At -rc5 seems like a late stage to be
->    trying this solution.
->  - Add an xas_prune_range() that gets called on failure.  Should be
->    straightforward to write, but will be obsolete as soon as we do the
->    above and it's a pain for the callers.
->  - Change how xas_create_range() works to merely preallocate the xa_nodes
->    and not insert them into the tree until we're trying to insert data into
->    them.  I favour this option, and this scenario is amenable to writing
->    a test that will simulate failure halfway through.
-> 
-> I'm going to start on option 3 now.
+timerfd doesn't create any wakelocks, but eventpoll can.  When it does,
+it names them after the underlying file descriptor, and since all
+timerfd file descriptors are named "[timerfd]" (which saves memory on
+systems like desktops with potentially many timerfd instances), all
+wakesources created as a result of using the eventpoll-on-timerfd idiom
+are called... "[timerfd]".
 
-option 3 didn't work out terribly well.  So here's option 4; if we fail
-to allocate memory when creating a node, prune the tree.  This fixes
-(I think) the problem inherited from the radix tree, although the test
-case is only for xas_create_range().  I should add a couple of test cases
-for xas_create() failing, but I just got this to pass and I wanted to
-send it out as soon as possible.
+However, it becomes impossible to tell which "[timerfd]" wakesource is
+affliated with which process and hence troubleshooting is difficult.
 
-diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-index 8b1c318189ce..84c6057932f3 100644
---- a/lib/test_xarray.c
-+++ b/lib/test_xarray.c
-@@ -1463,6 +1463,30 @@ static noinline void check_create_range_4(struct xarray *xa,
- 	XA_BUG_ON(xa, !xa_empty(xa));
- }
- 
-+static noinline void check_create_range_5(struct xarray *xa,
-+		unsigned long index, unsigned order)
-+{
-+	XA_STATE_ORDER(xas, xa, index, order);
-+	int i = 0;
-+	gfp_t gfp = GFP_KERNEL;
-+
-+	XA_BUG_ON(xa, !xa_empty(xa));
-+
-+	do {
-+		xas_lock(&xas);
-+		xas_create_range(&xas);
-+		xas_unlock(&xas);
-+		if (++i == 4)
-+			gfp = GFP_NOWAIT;
-+	} while (xas_nomem(&xas, gfp));
-+
-+	if (!xas_error(&xas))
-+		xa_destroy(xa);
-+
-+	XA_BUG_ON(xa, xas.xa_alloc);
-+	XA_BUG_ON(xa, !xa_empty(xa));
-+}
-+
- static noinline void check_create_range(struct xarray *xa)
+This change addresses this problem by changing the way eventpoll
+wakesources are named:
+
+1) the top-level per-process eventpoll wakesource is now named "epoll:P"
+(instead of just "eventpoll"), where P, is the PID of the creating
+process.
+2) individual per-underlying-filedescriptor eventpoll wakesources are
+now named "epollitemN:P.F", where N is a unique ID token and P is PID
+of the creating process and F is the name of the underlying file
+descriptor.
+
+All together that should be splitted up into a change to eventpoll and
+timerfd (or other file descriptors).
+
+Reported-by: kernel test robot <lkp@intel.com>
+Co-developed-by: Kelly Rossmoyer <krossmo@google.com>
+Signed-off-by: Kelly Rossmoyer <krossmo@google.com>
+Signed-off-by: Manish Varma <varmam@google.com>
+---
+ drivers/base/power/wakeup.c | 10 ++++++++--
+ fs/eventpoll.c              | 10 ++++++++--
+ include/linux/pm_wakeup.h   |  4 ++--
+ 3 files changed, 18 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index 01057f640233..3628536c67a5 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -216,13 +216,19 @@ EXPORT_SYMBOL_GPL(wakeup_source_remove);
+ /**
+  * wakeup_source_register - Create wakeup source and add it to the list.
+  * @dev: Device this wakeup source is associated with (or NULL if virtual).
+- * @name: Name of the wakeup source to register.
++ * @fmt: format string for the wakeup source name
+  */
+ struct wakeup_source *wakeup_source_register(struct device *dev,
+-					     const char *name)
++					     const char *fmt, ...)
  {
- 	unsigned int order;
-@@ -1490,6 +1514,12 @@ static noinline void check_create_range(struct xarray *xa)
- 		check_create_range_4(xa, (3U << order) + 1, order);
- 		check_create_range_4(xa, (3U << order) - 1, order);
- 		check_create_range_4(xa, (1U << 24) + 1, order);
+ 	struct wakeup_source *ws;
+ 	int ret;
++	char name[128];
++	va_list args;
 +
-+		check_create_range_5(xa, 0, order);
-+		check_create_range_5(xa, (1U << order), order);
-+		check_create_range_5(xa, (2U << order), order);
-+		check_create_range_5(xa, (3U << order), order);
-+		check_create_range_5(xa, (1U << (2 * order)), order);
- 	}
++	va_start(args, fmt);
++	vsnprintf(name, sizeof(name), fmt, args);
++	va_end(args);
  
- 	check_create_range_3();
-diff --git a/lib/xarray.c b/lib/xarray.c
-index f5d8f54907b4..923ccde6379e 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -276,77 +276,6 @@ static void xas_destroy(struct xa_state *xas)
- 	}
- }
+ 	ws = wakeup_source_create(name);
+ 	if (ws) {
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 7df8c0fa462b..7c35987a8887 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -312,6 +312,7 @@ struct ctl_table epoll_table[] = {
+ };
+ #endif /* CONFIG_SYSCTL */
  
--/**
-- * xas_nomem() - Allocate memory if needed.
-- * @xas: XArray operation state.
-- * @gfp: Memory allocation flags.
-- *
-- * If we need to add new nodes to the XArray, we try to allocate memory
-- * with GFP_NOWAIT while holding the lock, which will usually succeed.
-- * If it fails, @xas is flagged as needing memory to continue.  The caller
-- * should drop the lock and call xas_nomem().  If xas_nomem() succeeds,
-- * the caller should retry the operation.
-- *
-- * Forward progress is guaranteed as one node is allocated here and
-- * stored in the xa_state where it will be found by xas_alloc().  More
-- * nodes will likely be found in the slab allocator, but we do not tie
-- * them up here.
-- *
-- * Return: true if memory was needed, and was successfully allocated.
-- */
--bool xas_nomem(struct xa_state *xas, gfp_t gfp)
--{
--	if (xas->xa_node != XA_ERROR(-ENOMEM)) {
--		xas_destroy(xas);
--		return false;
--	}
--	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
--		gfp |= __GFP_ACCOUNT;
--	xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
--	if (!xas->xa_alloc)
--		return false;
--	xas->xa_alloc->parent = NULL;
--	XA_NODE_BUG_ON(xas->xa_alloc, !list_empty(&xas->xa_alloc->private_list));
--	xas->xa_node = XAS_RESTART;
--	return true;
--}
--EXPORT_SYMBOL_GPL(xas_nomem);
--
--/*
-- * __xas_nomem() - Drop locks and allocate memory if needed.
-- * @xas: XArray operation state.
-- * @gfp: Memory allocation flags.
-- *
-- * Internal variant of xas_nomem().
-- *
-- * Return: true if memory was needed, and was successfully allocated.
-- */
--static bool __xas_nomem(struct xa_state *xas, gfp_t gfp)
--	__must_hold(xas->xa->xa_lock)
--{
--	unsigned int lock_type = xa_lock_type(xas->xa);
--
--	if (xas->xa_node != XA_ERROR(-ENOMEM)) {
--		xas_destroy(xas);
--		return false;
--	}
--	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
--		gfp |= __GFP_ACCOUNT;
--	if (gfpflags_allow_blocking(gfp)) {
--		xas_unlock_type(xas, lock_type);
--		xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
--		xas_lock_type(xas, lock_type);
--	} else {
--		xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
--	}
--	if (!xas->xa_alloc)
--		return false;
--	xas->xa_alloc->parent = NULL;
--	XA_NODE_BUG_ON(xas->xa_alloc, !list_empty(&xas->xa_alloc->private_list));
--	xas->xa_node = XAS_RESTART;
--	return true;
--}
--
- static void xas_update(struct xa_state *xas, struct xa_node *node)
++static atomic_t wakesource_create_id  = ATOMIC_INIT(0);
+ static const struct file_operations eventpoll_fops;
+ 
+ static inline int is_file_epoll(struct file *f)
+@@ -1451,15 +1452,20 @@ static int ep_create_wakeup_source(struct epitem *epi)
  {
- 	if (xas->xa_update)
-@@ -551,6 +480,120 @@ static void xas_free_nodes(struct xa_state *xas, struct xa_node *top)
- 	}
- }
+ 	struct name_snapshot n;
+ 	struct wakeup_source *ws;
++	pid_t task_pid;
++	int id;
++
++	task_pid = task_pid_nr(current);
  
-+static bool __xas_trim(struct xa_state *xas)
-+{
-+	unsigned long index = xas->xa_index;
-+	unsigned char shift = xas->xa_shift;
-+	unsigned char sibs = xas->xa_sibs;
-+
-+	xas->xa_index |= ((sibs + 1UL) << shift) - 1;
-+	xas->xa_shift = 0;
-+	xas->xa_sibs = 0;
-+	xas->xa_node = XAS_RESTART;
-+
-+	for (;;) {
-+		xas_load(xas);
-+		if (!xas_is_node(xas))
-+			break;
-+		xas_delete_node(xas);
-+		xas->xa_index -= XA_CHUNK_SIZE;
-+		if (xas->xa_index < index)
-+			break;
-+	}
-+
-+	xas->xa_shift = shift;
-+	xas->xa_sibs = sibs;
-+	xas->xa_index = index;
-+	xas->xa_node = XA_ERROR(-ENOMEM);
-+	return false;
-+}
-+
-+/*
-+ * We failed to allocate memory.  Trim any nodes we created along the
-+ * way which are now unused.
-+ */
-+static bool xas_trim(struct xa_state *xas)
-+{
-+	unsigned int lock_type = xa_lock_type(xas->xa);
-+
-+	xas_lock_type(xas, lock_type);
-+	__xas_trim(xas);
-+	xas_unlock_type(xas, lock_type);
-+
-+	return false;
-+}
-+
-+/**
-+ * xas_nomem() - Allocate memory if needed.
-+ * @xas: XArray operation state.
-+ * @gfp: Memory allocation flags.
-+ *
-+ * If we need to add new nodes to the XArray, we try to allocate memory
-+ * with GFP_NOWAIT while holding the lock, which will usually succeed.
-+ * If it fails, @xas is flagged as needing memory to continue.  The caller
-+ * should drop the lock and call xas_nomem().  If xas_nomem() succeeds,
-+ * the caller should retry the operation.
-+ *
-+ * Forward progress is guaranteed as one node is allocated here and
-+ * stored in the xa_state where it will be found by xas_alloc().  More
-+ * nodes will likely be found in the slab allocator, but we do not tie
-+ * them up here.
-+ *
-+ * Return: true if memory was needed, and was successfully allocated.
-+ */
-+bool xas_nomem(struct xa_state *xas, gfp_t gfp)
-+{
-+	if (xas->xa_node != XA_ERROR(-ENOMEM)) {
-+		xas_destroy(xas);
-+		return false;
-+	}
-+	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
-+		gfp |= __GFP_ACCOUNT;
-+	xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
-+	if (!xas->xa_alloc)
-+		return xas_trim(xas);
-+	xas->xa_alloc->parent = NULL;
-+	XA_NODE_BUG_ON(xas->xa_alloc, !list_empty(&xas->xa_alloc->private_list));
-+	xas->xa_node = XAS_RESTART;
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(xas_nomem);
-+
-+/*
-+ * __xas_nomem() - Drop locks and allocate memory if needed.
-+ * @xas: XArray operation state.
-+ * @gfp: Memory allocation flags.
-+ *
-+ * Internal variant of xas_nomem().
-+ *
-+ * Return: true if memory was needed, and was successfully allocated.
-+ */
-+static bool __xas_nomem(struct xa_state *xas, gfp_t gfp)
-+	__must_hold(xas->xa->xa_lock)
-+{
-+	unsigned int lock_type = xa_lock_type(xas->xa);
-+
-+	if (xas->xa_node != XA_ERROR(-ENOMEM)) {
-+		xas_destroy(xas);
-+		return false;
-+	}
-+	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
-+		gfp |= __GFP_ACCOUNT;
-+	if (gfpflags_allow_blocking(gfp)) {
-+		xas_unlock_type(xas, lock_type);
-+		xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
-+		xas_lock_type(xas, lock_type);
-+	} else {
-+		xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
-+	}
-+	if (!xas->xa_alloc)
-+		return __xas_trim(xas);
-+	xas->xa_alloc->parent = NULL;
-+	XA_NODE_BUG_ON(xas->xa_alloc, !list_empty(&xas->xa_alloc->private_list));
-+	xas->xa_node = XAS_RESTART;
-+	return true;
-+}
-+
- /*
-  * xas_expand adds nodes to the head of the tree until it has reached
-  * sufficient height to be able to contain @xas->xa_index
+ 	if (!epi->ep->ws) {
+-		epi->ep->ws = wakeup_source_register(NULL, "eventpoll");
++		epi->ep->ws = wakeup_source_register(NULL, "epoll:%d", task_pid);
+ 		if (!epi->ep->ws)
+ 			return -ENOMEM;
+ 	}
+ 
++	id = atomic_inc_return(&wakesource_create_id);
+ 	take_dentry_name_snapshot(&n, epi->ffd.file->f_path.dentry);
+-	ws = wakeup_source_register(NULL, n.name.name);
++	ws = wakeup_source_register(NULL, "epollitem%d:%d.%s", id, task_pid, n.name.name);
+ 	release_dentry_name_snapshot(&n);
+ 
+ 	if (!ws)
+diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
+index aa3da6611533..cb91c84f6f08 100644
+--- a/include/linux/pm_wakeup.h
++++ b/include/linux/pm_wakeup.h
+@@ -95,7 +95,7 @@ extern void wakeup_source_destroy(struct wakeup_source *ws);
+ extern void wakeup_source_add(struct wakeup_source *ws);
+ extern void wakeup_source_remove(struct wakeup_source *ws);
+ extern struct wakeup_source *wakeup_source_register(struct device *dev,
+-						    const char *name);
++						    const char *fmt, ...);
+ extern void wakeup_source_unregister(struct wakeup_source *ws);
+ extern int wakeup_sources_read_lock(void);
+ extern void wakeup_sources_read_unlock(int idx);
+@@ -137,7 +137,7 @@ static inline void wakeup_source_add(struct wakeup_source *ws) {}
+ static inline void wakeup_source_remove(struct wakeup_source *ws) {}
+ 
+ static inline struct wakeup_source *wakeup_source_register(struct device *dev,
+-							   const char *name)
++							   const char *fmt, ...)
+ {
+ 	return NULL;
+ }
+-- 
+2.31.0.208.g409f899ff0-goog
+
