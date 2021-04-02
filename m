@@ -2,145 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25715353175
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Apr 2021 01:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8ACF353177
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Apr 2021 01:21:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235598AbhDBXUy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Apr 2021 19:20:54 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:43506 "EHLO
+        id S235634AbhDBXVD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Apr 2021 19:21:03 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:43588 "EHLO
         userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234488AbhDBXUy (ORCPT
+        with ESMTP id S234488AbhDBXVC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Apr 2021 19:20:54 -0400
+        Fri, 2 Apr 2021 19:21:02 -0400
 Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 132NKpb1017968;
-        Fri, 2 Apr 2021 23:20:51 GMT
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 132NJtP4017384;
+        Fri, 2 Apr 2021 23:20:59 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
  references : from : message-id : date : in-reply-to : content-type :
  content-transfer-encoding : mime-version; s=corp-2020-01-29;
- bh=Qz8Hccl+PYzVEHSmsj+QSZRj0KO5+VCBlR/iyZtbFio=;
- b=yP2S9cN1AXHVOp8aE+aVm4J9/gu4z/6SMMLv6Izimj7ithtvnsx4CW/4XD0RnC/vusCp
- 62WCDtxavbv1IbwMS9n3NSz0GTqXuuBjfiG5fq8pSRT1zAmz6eZOLQ4Zp6IWENblHXah
- e51ZeNjLxtqVcWdGzY3GDAX1YQBrX0ZK2MhFgQt7vI9AaU6K9FVJDU0QpA1RX0A+SjnP
- EYR0Ypq3mTZw6SvIs/ts47K8Atuzrs1Jrkc+bZi2GvES2KlRBXjqNSOJhpU1TSOY/e6J
- EFlTARE0fQHUmoG4qNbYZF35wjwZ7Sg318JC9yg2dJ74WvzbTYY9Pe0VQlaG5vaZcX42 yQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 37n30sdn9x-1
+ bh=wCwwPwy/evzgUcBYHfIHIo4Kt08XHlj0Goa+kXizqu0=;
+ b=oeVfICakhzNhTi7wJabvFfb4sEvMyoHwQ7WLi2snbQUfIQN5Ct2D6BytZ7ZzhBuHP3Zc
+ zoNr0Z61Ys1bxiJFX/QtpYR3yzhHUyd0a+YMTpc4pIs5o1QfS513YOvOHqbl7YldG5BI
+ H5C/kiSPjCyTBC2N1QNu6pZmIx01L/DkQ2mP8weU+BB/bEzWERJdSdO1zUwUKUjqtgOV
+ qxr6m9ZZrxob6ulKWYfFt3fg0vlpO6pciNJ1KhFzpYhqLoFr+BjvRjRj30XLGHXMxPER
+ DLprPcHV4bmuZK5HUPrRuBMQL9d44ckyEQrTcFetnqPodd6ATqyAIE60+sGjlD1y7DG9 Ug== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 37n30sdna9-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 02 Apr 2021 23:20:51 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 132NFfDT056335;
-        Fri, 2 Apr 2021 23:20:50 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2105.outbound.protection.outlook.com [104.47.55.105])
-        by userp3030.oracle.com with ESMTP id 37n2auhg9j-1
+        Fri, 02 Apr 2021 23:20:59 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 132NF2tg010340;
+        Fri, 2 Apr 2021 23:20:58 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2104.outbound.protection.outlook.com [104.47.55.104])
+        by aserp3020.oracle.com with ESMTP id 37n2acx71r-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 02 Apr 2021 23:20:50 +0000
+        Fri, 02 Apr 2021 23:20:58 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hl5UUjqVZfo5w5I8FzJR/N+FsWhCGaud2wQNJJu/uS9z7f7Gq9tFP9IHreNgDDAlLLckSp6JJLhmj1GmDFlgfSOGeXGff/r1ZtIiKeq4vMb2W0Rbo8V4sKN97rhnyu04s9ZNEsEt9RvjOq4GpFbrOXGRM0hKv1xUo+zL0bcUdO+Z2bGii3+X+lakQ6+eSIGTg5JwSEmbRxshaBiUlJkcgl3FVCHn9lxx/kJI/vvJcnL5wElOelARf7IjNpKmMjMJVvNRY8julLXlBwNSOTp8ATQxeA2rd83ib7c/QuUAh4wIZjhBeLU6gCLMxi/nJEclzGu4xPHTndTVZpZ8RNCf1Q==
+ b=U70ZeoIz9HXZZXYQ93lbrEbhmPvyjfrgR8UIja2ngFdxRBMCZUZncCbuU0lps0KY8+TLbeROBKuCqk5Wxpcy7VNLqQ49GJSGEdc8tbptv2mAdva9i7F3g5ta6DJ6JlAf9ShB7Z7TrHgZiFTYDP9ZwHwjQdq8jBKc8/blyvKe6iowZmmsRLdsa7tqYGTAKRFFADTnKj6ssLGqk1rXHQDOqi/RMGTYuVj8fVtpZ4snsbWzxIgjF39K3HtXaHVImOqoiC/CRbe4U7xEfon/PDxAyWMhLkIGQXBM7D+OwxqL5c55GrhjGjbgtWWhbCqnm122mLrdMtNwvrxr+06x53qehQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qz8Hccl+PYzVEHSmsj+QSZRj0KO5+VCBlR/iyZtbFio=;
- b=XXlukGxRqGh5dMBh+2qWqfxKCoFbcXL+Kc9HD/ZDJAxexZGI5IdaXZ+aBXGqsxjqvEZ9/GOkrTibCvuMAAIuLOzRB1H70n/CZChIKaOLySYPGsnlRdTN5+pYS4cD0xKSUUd4EjqESAxE13hRXMyKoyBh2M0JibtUjH/VPw3WZ2BBcM6TDvkt29FWdZshYf5QSfwqPE8v+iyhzxRbFOtLJ6VnFBCmSrfsxiNB+rlWo4PeWZ0ZdyGLg8JJUJMA+fiyU5l9yZqEN+DQvzEjgCI0BAh0abcZK7RdW3u7OuE61GdvyHHmKo+qZb6qpGdukWd/6T2U7Q9FGf6zZUCr0jQagw==
+ bh=wCwwPwy/evzgUcBYHfIHIo4Kt08XHlj0Goa+kXizqu0=;
+ b=bwCOTh5QyJ50Onr0rEL1bnZujoZ7uq+Mry5NvOtK3CjCYpDKKfHhH7o4I9arU/q5QSU0rJCAANlJIoQ0ACykKPYOdfCZMZOHDps4qhLUKhcyrogWYanW4KLgubAZNO7wfwmXsXGWsi+UJs1wbcoT0NoA5iPRm3WsIk6D1lff8Hq/GpH9o1LqxIQagOTk0wp6oihsvd42uuko9ZdgUwoRBrBkNCxghDI0qpnKJdmciPtq0wgyABOA05hv2XBqAT3USa5+G8FRkktPC73PBNNwsYEKy5nB+lBIklH/AV6yFjdyrk3hOFMMn9qcLpA9bYb+gb850wQe9iKlXifCiZgmgA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qz8Hccl+PYzVEHSmsj+QSZRj0KO5+VCBlR/iyZtbFio=;
- b=IMiI6EQcSNQWwQc9vKyy4WgFuT+bZ4E7ra9CkpxIL7Hn2UWdjCidcDdtCgXVcDkwvzf2I+O9E52VjXZooDPt2A/p9DVEpS/+hpeXTAfDnSe5fO5DAagb0D1u1458cgzSV1eJT65Y2R6yTTpogXfwyB/iHL21sg6yxgKKJcGK73Q=
+ bh=wCwwPwy/evzgUcBYHfIHIo4Kt08XHlj0Goa+kXizqu0=;
+ b=ZpsfKgrZJg+NVUsWoKulIRlZGkN62O5ZrOtH8or3ayvzguwciA6UYfjhJvGvolc9TaPmJRporf0QNHQ2OruI23+bizCP4eeMbsv+yqrQD30gtQ5NB226giyKkNHoSVcUTCDz7hE0p8nTzcI37RehaSfrOJ+hBes180XJ2oSmiYg=
 Authentication-Results: vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=none action=none header.from=oracle.com;
 Received: from BY5PR10MB4306.namprd10.prod.outlook.com (2603:10b6:a03:211::7)
  by BYAPR10MB2789.namprd10.prod.outlook.com (2603:10b6:a03:82::27) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.28; Fri, 2 Apr
- 2021 23:20:48 +0000
+ 2021 23:20:56 +0000
 Received: from BY5PR10MB4306.namprd10.prod.outlook.com
  ([fe80::55a0:c9fb:d00:cd88]) by BY5PR10MB4306.namprd10.prod.outlook.com
  ([fe80::55a0:c9fb:d00:cd88%3]) with mapi id 15.20.3999.032; Fri, 2 Apr 2021
- 23:20:48 +0000
-Subject: Re: [PATCH 03/18] xfs: allow setting and clearing of log incompat
- feature flags
+ 23:20:56 +0000
+Subject: Re: [PATCH 04/18] xfs: clear log incompat feature bits when the log
+ is idle
 To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-api@vger.kernel.org
 References: <161723932606.3149451.12366114306150243052.stgit@magnolia>
- <161723934343.3149451.16679733325094950568.stgit@magnolia>
+ <161723934912.3149451.16053630119296453937.stgit@magnolia>
 From:   Allison Henderson <allison.henderson@oracle.com>
-Message-ID: <496a3d16-f53d-96f9-5fcd-cef5d03b2487@oracle.com>
-Date:   Fri, 2 Apr 2021 16:20:47 -0700
+Message-ID: <fc3f091d-fced-b342-6d58-f31a6552eccb@oracle.com>
+Date:   Fri, 2 Apr 2021 16:20:54 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
-In-Reply-To: <161723934343.3149451.16679733325094950568.stgit@magnolia>
+In-Reply-To: <161723934912.3149451.16053630119296453937.stgit@magnolia>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [67.1.223.248]
-X-ClientProxiedBy: BYAPR11CA0037.namprd11.prod.outlook.com
- (2603:10b6:a03:80::14) To BY5PR10MB4306.namprd10.prod.outlook.com
+X-ClientProxiedBy: BYAPR11CA0046.namprd11.prod.outlook.com
+ (2603:10b6:a03:80::23) To BY5PR10MB4306.namprd10.prod.outlook.com
  (2603:10b6:a03:211::7)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.1.226] (67.1.223.248) by BYAPR11CA0037.namprd11.prod.outlook.com (2603:10b6:a03:80::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.29 via Frontend Transport; Fri, 2 Apr 2021 23:20:48 +0000
+Received: from [192.168.1.226] (67.1.223.248) by BYAPR11CA0046.namprd11.prod.outlook.com (2603:10b6:a03:80::23) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.27 via Frontend Transport; Fri, 2 Apr 2021 23:20:55 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 548a679c-8f5a-4082-3d04-08d8f62df2fc
+X-MS-Office365-Filtering-Correlation-Id: 972d941c-526e-431c-887c-08d8f62df7a9
 X-MS-TrafficTypeDiagnostic: BYAPR10MB2789:
-X-Microsoft-Antispam-PRVS: <BYAPR10MB27897A5FA2E3081D52FC5988957A9@BYAPR10MB2789.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:392;
+X-Microsoft-Antispam-PRVS: <BYAPR10MB2789FAA7B932D914B526648A957A9@BYAPR10MB2789.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 6hl43PkK3FsWkQkz2xz7CU30aF0iKhsupSfCfx3avDEJvqvePk48IltcZIgFFbTh3YdDnQQyz300mH8qQloVQU0WLJQSH243YtNde3+K7IBVpK6w70lNqr2nVMcaCjpcu2uMpwyhXDYMWlFBlht9W6PyA45uEVSyhWd0uUl7LxRLNX7l8y+NN6ZGNjtnX+YEpHgPhHi4gN2sTISgh2NpQuNH3Mf1uxfuqLhFzLD4QytI1iX0kN/O9eRkuNnpG9dLnLSHBs8gJQiK2qnPF7uB0g7J3hn2HyFFD40EFzEa5MXzCRvGb1fFXr+lChjwomT9wu6y12lg5tZQ/voQlicX/ggQvzyghbAf+SxCyAbRW5INd1t+28BCSVajivlNJdGcX5AjuH/OTSSLYx7OmDwXq+qcLrkHwIusAGhebhJgNjFgHIJhJye5Yq4oTFbvlpXfhsNRIplUh5QMJeVb+yRPk71udKLoCX+uC9demJyfT/N59hH0YslluG1UlG+gOJKcqVbPbwi2OIalttqBGT6ihhOgXRe+Q4xN9ak0Qc5Ih1+TUC1Tf5LGvRw+JGXtjUcApMa58QK/dID1Rd9q6W8URaXBETY0N+NuVbnBqj6Zh/aKkHkVjyHDOWJrDAatew8p1NWaXIwHU871hnyvawCgGSaUt8pHvNurHIRlp/BUy49QziKNjCN7/kSUQi931VAf0Zxh/WNJEifja9tbl83u3g==
+X-Microsoft-Antispam-Message-Info: 421+GxlcNk4Sil82hsa6iiQuQ62W0uODN9m7iK/a9K4C3Di1LnAL8xuNS1cfFoAqrShTC7bCWwzg71y7J0GSLW07oLS0KNDaQquDzasX05PcQBVDifvGxxjGjDjCDHnBpmBzZY6OZFIHljMi/TqbzuNsYwgP17Vt9HWxh0l41PLPqthX7Fzr6W7wd3drBH0DjYmoe2oQxapsJ7tDNfPd1UZS5v6od5YhJXDQfE4SBihBbMbqxzWlRjIDNLFUplFQVFG+AZYZ76i8E1XEi+OJubRirVq7jWe0vjQvLoHGjCEqTixcv6iQRY+yZr3jB+ljPO8ECvV1mTLeWU9XTOx4o5kShmAiRW4+BgpNbd+9ZDvg3ylfEBYLYTwgJc1O+YNYHW9E14sB5qvXHEi4UHlXBRMVIBGD3a88P5Z6I3dO9T9gdcX7XDQg+vxmySiBmfBdBE/OTmW2HzUOffweQwNVuv7sldh5B6CFUIPBnr3vsVTRKRsMtdZK8FXezCm8hImDIn6x4k7L9E7FAxlOfGZDCDXRiP6dl83qNDmmN974wFWPNJvxH0TvZ6uo6XQYY55ZKyprTu0bsw+g/QlGExuA6eCG60EXmqoPu/bz5EhFC/F25qcpsEIzqqtUcY6+N9to3gVi0pUUVADi8fpzFOjKPSninxRgOYCDgEWNsCo8n9ZpWg2m5wY4kPhv9GppWO/Pshhl5w0/fWquRjseVZiP+g==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB4306.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(136003)(376002)(366004)(396003)(346002)(66476007)(66556008)(316002)(44832011)(36756003)(4326008)(16526019)(86362001)(38100700001)(31686004)(6916009)(8676002)(66946007)(8936002)(16576012)(31696002)(53546011)(52116002)(6486002)(478600001)(83380400001)(2616005)(956004)(186003)(26005)(5660300002)(2906002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?cVJPOUxMWVh3TGlDS1FCeEQ2QWdwUHVqUVNHWVBjN2NlcWsyWDZmTS9WNm9p?=
- =?utf-8?B?NGpOdng5b2VPQWNIVWtmdHg2Q1o0dEJTYnE0b1pZYTlvRVVveTBkeExYNUtO?=
- =?utf-8?B?M0dKWEU5Zmp1NTkyRVJBSkpFMGRtam9hL3UyZ0VhdFhEcUpRZDdnWjBHOTYz?=
- =?utf-8?B?Zm5uU3h5UFphWkVtYTZEeTIyRHpNR1AyeVZjZllWUDhHQlRMcmFIUG43UUxD?=
- =?utf-8?B?ZTV6RTFEd3RNaHdzSjBGOXd2RGFMSTdkWndpL2MzOVZqQ2orZys3U0o2Q05q?=
- =?utf-8?B?UFRPUmY2R3J3R0NCSmM0dE03RzY4SWV6cTNLcC9BQkVCZlpEV0JxWktjbHZW?=
- =?utf-8?B?d21qeHRxY29PZmFDZFI5b1lkb2g1NFFvQ2tCWXgyTkRMM0ZjYWpDMXpCbkRZ?=
- =?utf-8?B?N1ZxeTh6QzFBTUtsdHJ1UHZhS3owcVJ6TVg4MVAvaURHVFdGaVVPd1RZa1RO?=
- =?utf-8?B?Znd3Ym5wWWZQNGFUU2t3ajNGQmQ2Q2h6dVkyMDFXQXQycjFGdktYN0lidHZC?=
- =?utf-8?B?ajlycVl5OVpEQ1BzYlZybW1Rbi9RQm44QUZiUVV6cWhxNkRWL1luMHdzMnQw?=
- =?utf-8?B?aE9QUmxMVHB6RzVCczE2dVhmQzB2eGVjOTVyRlB2SGQxSHYxVDBldU4zczc4?=
- =?utf-8?B?cU1vRk12NVBpeGptREhGc0hDSm1BYXZpT0d4cUsva1F5bUhQKzY3bHkxbjQv?=
- =?utf-8?B?eGFTbUR4QkJMdldBcHdZd3pETlIzQWlXUEJjVWtVZnFWOU12UUpLQnFnaFBE?=
- =?utf-8?B?alczcVAxTUFaZ09XUkdWcFhMYzV5U3U1dzdhRHV4M25jUjNNSmdIYUNZcTBN?=
- =?utf-8?B?dXg3dHJmaU1wYm5pZUJFaVlGdEhvWDVHQzhUK0tWQ2J5M3R2c1JKb0RKa0VW?=
- =?utf-8?B?cWE5Qk1WTlVCVTJZVTRrTjNhZ0h6aVMwT1orYUkrRFZYaXl5WkhJQVV1YUE4?=
- =?utf-8?B?QkhneU9Ra1VjeDVyMDBlQUFrOGZYZmtCOU9IdE1YZVJWV1lJMDJlVlc3b2xO?=
- =?utf-8?B?VkJQUitGN0doZGE0anB4ZkthZ3BqQkhRM1l5KzJxSHhOWDFSSjV1aDRtZXBo?=
- =?utf-8?B?Y2V2emhZc1k0ZHJWZ0tiZmFkdDRON0pDV0hETUJRaVlhcUtXRHRBNElDWTV4?=
- =?utf-8?B?d1ZZZWtPem5UeGxsWGV1SHduZnRxUy9UczI2NGFrZTB6dkl2MnIwc2RWSDcz?=
- =?utf-8?B?ZnNGekpuYk1rTkdDLzNqT09LbXFyOWwrVUFtRGU3ZFg5ekpHckozNklVbTU4?=
- =?utf-8?B?dmQxTHZPbjlRbmc0TGZHTDRUVjloZ1hxNUZMRWNMTjJ3aEVVNUhUckZlQ1dT?=
- =?utf-8?B?Y3E3YVRUc1Z4aU1jalRRZk05UFFzQS9TT1dhOEExLzFSWEVXbnV4TzJKdUln?=
- =?utf-8?B?MHo1YXkzcE9QYlFsQ2tBS2xZMEVYTXNBTEZhRGlLTXVBbk54c1phWmlEL0da?=
- =?utf-8?B?U3hhN2VjMmZOU1QvRVlYQWNnVU5wcDg5dGhlSTc2UU4xNGxvWXJOUUQ3YWdv?=
- =?utf-8?B?VVRDcGtJVGJhMXp0MWx4QmVkZWY1bThwNFpJenQzOXNma0JkWHVub25pOS9r?=
- =?utf-8?B?MmZqeldEZlh4azNFNStBaXZvZEM1UlVqbDhPU1dOS3R0dEJmWDEvT3h1bmpY?=
- =?utf-8?B?TVAvZFlLOG10Wm03S3U4VElSRnY1VTF2aE83OGlGRzduZVpWcGZkVDdkWXNV?=
- =?utf-8?B?N2tteHNqR2ZmeFhsNFFzMWJuQVdERFozUk4yTkpNaVd1YUJvZktKN0s0TEJv?=
- =?utf-8?Q?/ompR+6/Qlmplq8Vgsd9uO2zUZv8ZLXbU2PEtQB?=
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?a3FNL2dUbjY2NGk4MGpqTWVOdStzOEdWTEFLVmNEOXA4K2lyZVBHZDdYZGVn?=
+ =?utf-8?B?ZzlZOUJNVzR2VURlL3FMRjRZWEptczROR1AzRHRpQlAxK2xjMG1tZ3FSZ0lD?=
+ =?utf-8?B?aW5rTi9TdTljZVBOSGIzMEtGMUJ6SS9PR2RVczRNNks3NmdOQmxlY3FuZmwz?=
+ =?utf-8?B?WXV4Q0t5UW0yNlBBNmtZeXVPTllRODFUYlNVZkNmRHl3UW1pSnJ4Vm9ha21a?=
+ =?utf-8?B?QUkwTVVjVWl5NE9DaUJ5MTFOV3FhTkZHOTM5WkRYQnVkUXo1MkluOVVBWjcv?=
+ =?utf-8?B?ZVJBYzBSTUtDMFhYZXBzZThoOGFpb1lidmxSckpIOUNPTHBQaHZUMUJQa3Fh?=
+ =?utf-8?B?NytLUmNSQWcwNDg2R3g3QWh3SzJMYlgvNlJtRUZxd3o5RnVqL1grM0RnbUlB?=
+ =?utf-8?B?THgxZWlSSEVNRVlMQlhoRmlDWTNUaWRtM09yemRmWHVyeVdnSCtvVTNRTTVQ?=
+ =?utf-8?B?cCs3MkhlY0w0Yjl3MHY0MTdORzgyWFpUQ2FaLzR5MUw1ZFdLVmt5dVhpb3NT?=
+ =?utf-8?B?NDFUTmxmd0FmNzdJOXdaVEU4eFJpSEc2RTVPUitJWERHMHUyZmU4VkZZYnBJ?=
+ =?utf-8?B?ZDU5ZHUrajFwZEZqWWlJTFJrRE5rRW5YV2IxYkpiMGRFQWRrL3VnU0NVUnJH?=
+ =?utf-8?B?SFNGU0twYWxMU1gwNEw3RHhsSmQ1VE5RWi93c1lWTVo2R1NoR25IWm55T2FM?=
+ =?utf-8?B?UU1XODlzNlJoeU45NGw4NDdIZUF3TkNYbWVRc3hjUmtlK0x3S2FKWmlOenQz?=
+ =?utf-8?B?T0NPelYvTzliL3BBYnN6eko1WjYxNzRqTk1IT3BmaWZ0RHg4WGhZbHZuYjl0?=
+ =?utf-8?B?T010cDFJVkUyU3oyT3Nwb0c5UUV1NElCMElWWXc1TTlwNUFkcmlYaVZpa2pS?=
+ =?utf-8?B?WVljVEl1UFVSY0ZZcHhrc0xUaCtCNEpDQ0dZaExGazlZdUZXNzdnM3FpUERS?=
+ =?utf-8?B?VzRkaEI0Q3U5RVhlMkFZb3N0eC8zSkR0TGZRRUdaZDlQa1MvNFBXOEpVVUQw?=
+ =?utf-8?B?RnNycFdoZnk2c01WMlNTWEZKZHdWRWE0QWdQdTRKTjZSMGd6VFpGazliZFRV?=
+ =?utf-8?B?MFVGb2E1NkY4YXRIVHMxOXQyV2YyN3JITGVueE1zWFZza21uTmlnWmdUZW5M?=
+ =?utf-8?B?Q2lBdC8zR3Z4M0k4dzBQajJheXgzM2VUOS9qMkdhcWFtcjU0TFZ3WG1rMHpB?=
+ =?utf-8?B?NTVDR0VQeWhEOWVCVEJocWI4dldtcWJrc0pFS285THczS0U3aWtsV1d0WHVR?=
+ =?utf-8?B?NjBhZ3ZabVJxUGZybDUwdGJrM01qWHpHMkxGV3lmUkFWNFZMMGt1MDRmb3g2?=
+ =?utf-8?B?eXc4WVBHVkIvbEtaY2ZOemdqWGhyMElDTnpTcEhjWG9VdGl0NW1SL1dBQlMv?=
+ =?utf-8?B?akZDcWJwOW9mOFdrbElmdGcyZEhZU3k3OW1WeUZ4bUFDL0J4RExlOU8vdnd4?=
+ =?utf-8?B?NXhYY0pPaUhxeWdWMzhPNlZNZUxjSUFXTUMxVmpkSzlSanRWR1UzZFdPeXRo?=
+ =?utf-8?B?M3FMWVFFbjJMSmdnd0d6SENiTnZ1SlRET24xV2lPcUdHdXpJbXJNTUlHMW5M?=
+ =?utf-8?B?eFRkK2o0VGJvRHc2S0dJdU1pbEFEcDh3ckQwU3lkNW9RWmZtdGNSUFp0S0ZY?=
+ =?utf-8?B?bDRHd1dJamF6WU1rOEF5aEdXVmJFOWNEME1lT1JrWk4wcHRCWnRRL2ZCaWdC?=
+ =?utf-8?B?MzF5OGZpQmdtWEJraWlmaG4vVllYbUJVOHlVRmZBaE84N24vVlprY1Y3d0xO?=
+ =?utf-8?Q?4Dl9s2IMj/bysSMbSnLfymRofgFfxD+SDVmPWEM?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 548a679c-8f5a-4082-3d04-08d8f62df2fc
+X-MS-Exchange-CrossTenant-Network-Message-Id: 972d941c-526e-431c-887c-08d8f62df7a9
 X-MS-Exchange-CrossTenant-AuthSource: BY5PR10MB4306.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2021 23:20:48.4817
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2021 23:20:56.3631
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FJdP2QuocybO2kTJy3TS3YGFm+gj0yNuqTDGw1waNVam5jD+HTU4dCw1t51EYzagrzFx8YqMWsmBBOywArbnhESJ+YowfCE2ob1bn+jsEvo=
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8+QyoIjqzY3WZDYn7hbmflSdpl2SG3/o9qGuFW6AVTai8LXMhmO0fzqYum9iHFCwoLpm8lXGGHh5sW/Joef9kS4peXMFq/YbNnBhhQ+/mMk=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB2789
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9942 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 spamscore=0
- mlxscore=0 mlxlogscore=999 bulkscore=0 adultscore=0 suspectscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 spamscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103310000
  definitions=main-2104020156
-X-Proofpoint-GUID: TWutrThs77O27VwA-0nGwka-EVh2JaGU
-X-Proofpoint-ORIG-GUID: TWutrThs77O27VwA-0nGwka-EVh2JaGU
+X-Proofpoint-GUID: 7sFxeU3QmlKSaEdC15U8_5GJTHN06j23
+X-Proofpoint-ORIG-GUID: 7sFxeU3QmlKSaEdC15U8_5GJTHN06j23
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9942 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 impostorscore=0
  bulkscore=0 priorityscore=1501 suspectscore=0 mlxscore=0 spamscore=0
@@ -156,241 +156,184 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On 3/31/21 6:09 PM, Darrick J. Wong wrote:
 > From: Darrick J. Wong <djwong@kernel.org>
 > 
-> Log incompat feature flags in the superblock exist for one purpose: to
-> protect the contents of a dirty log from replay on a kernel that isn't
-> prepared to handle those dirty contents.  This means that they can be
-> cleared if (a) we know the log is clean and (b) we know that there
-> aren't any other threads in the system that might be setting or relying
-> upon a log incompat flag.
+> When there are no ongoing transactions and the log contents have been
+> checkpointed back into the filesystem, the log performs 'covering',
+> which is to say that it log a dummy transaction to record the fact that
+> the tail has caught up with the head.  This is a good time to clear log
+> incompat feature flags, because they are flags that are temporarily set
+> to limit the range of kernels that can replay a dirty log.
 > 
-> Therefore, clear the log incompat flags when we've finished recovering
-> the log, when we're unmounting cleanly, remounting read-only, or
-> freezing; and provide a function so that subsequent patches can start
-> using this.
+> Since it's possible that some other higher level thread is about to
+> start logging items protected by a log incompat flag, we create a rwsem
+> so that upper level threads can coordinate this with the log.  It would
+> probably be more performant to use a percpu rwsem, but the ability to
+> /try/ taking the write lock during covering is critical, and percpu
+> rwsems do not provide that.
 > 
 > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-Ok, seems reasonable
+ok, makes sense
 Reviewed-by: Allison Henderson <allison.henderson@oracle.com>
 
 > ---
->   fs/xfs/libxfs/xfs_format.h |   15 ++++++
->   fs/xfs/xfs_log.c           |   14 ++++++
->   fs/xfs/xfs_log_recover.c   |   16 ++++++
->   fs/xfs/xfs_mount.c         |  110 ++++++++++++++++++++++++++++++++++++++++++++
->   fs/xfs/xfs_mount.h         |    2 +
->   5 files changed, 157 insertions(+)
+>   fs/xfs/libxfs/xfs_shared.h |    6 +++++
+>   fs/xfs/xfs_log.c           |   49 ++++++++++++++++++++++++++++++++++++++++++++
+>   fs/xfs/xfs_log.h           |    3 +++
+>   fs/xfs/xfs_log_priv.h      |    3 +++
+>   fs/xfs/xfs_trans.c         |   14 +++++++++----
+>   5 files changed, 71 insertions(+), 4 deletions(-)
 > 
 > 
-> diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
-> index 9620795a6e08..7e9c964772c9 100644
-> --- a/fs/xfs/libxfs/xfs_format.h
-> +++ b/fs/xfs/libxfs/xfs_format.h
-> @@ -495,6 +495,21 @@ xfs_sb_has_incompat_log_feature(
->   	return (sbp->sb_features_log_incompat & feature) != 0;
->   }
->   
-> +static inline void
-> +xfs_sb_remove_incompat_log_features(
-> +	struct xfs_sb	*sbp)
-> +{
-> +	sbp->sb_features_log_incompat &= ~XFS_SB_FEAT_INCOMPAT_LOG_ALL;
-> +}
-> +
-> +static inline void
-> +xfs_sb_add_incompat_log_features(
-> +	struct xfs_sb	*sbp,
-> +	unsigned int	features)
-> +{
-> +	sbp->sb_features_log_incompat |= features;
-> +}
-> +
->   /*
->    * V5 superblock specific feature checks
->    */
+> diff --git a/fs/xfs/libxfs/xfs_shared.h b/fs/xfs/libxfs/xfs_shared.h
+> index 8c61a461bf7b..c7c9a0cebb04 100644
+> --- a/fs/xfs/libxfs/xfs_shared.h
+> +++ b/fs/xfs/libxfs/xfs_shared.h
+> @@ -62,6 +62,12 @@ void	xfs_log_get_max_trans_res(struct xfs_mount *mp,
+>   #define	XFS_TRANS_SB_DIRTY	0x02	/* superblock is modified */
+>   #define	XFS_TRANS_PERM_LOG_RES	0x04	/* xact took a permanent log res */
+>   #define	XFS_TRANS_SYNC		0x08	/* make commit synchronous */
+> +/*
+> + * This transaction uses a log incompat feature, which means that we must tell
+> + * the log that we've finished using it at the transaction commit or cancel.
+> + * Callers must call xlog_use_incompat_feat before setting this flag.
+> + */
+> +#define XFS_TRANS_LOG_INCOMPAT	0x10
+>   #define XFS_TRANS_RESERVE	0x20    /* OK to use reserved data blocks */
+>   #define XFS_TRANS_NO_WRITECOUNT 0x40	/* do not elevate SB writecount */
+>   #define XFS_TRANS_RES_FDBLKS	0x80	/* reserve newly freed blocks */
 > diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-> index 06041834daa3..cf73bc9f4d18 100644
+> index cf73bc9f4d18..cb72be62da3e 100644
 > --- a/fs/xfs/xfs_log.c
 > +++ b/fs/xfs/xfs_log.c
-> @@ -945,6 +945,20 @@ int
->   xfs_log_quiesce(
->   	struct xfs_mount	*mp)
->   {
-> +	/*
-> +	 * Clear log incompat features since we're quiescing the log.  Report
-> +	 * failures, though it's not fatal to have a higher log feature
-> +	 * protection level than the log contents actually require.
-> +	 */
-> +	if (xfs_clear_incompat_log_features(mp)) {
-> +		int error;
-> +
-> +		error = xfs_sync_sb(mp, false);
-> +		if (error)
-> +			xfs_warn(mp,
-> +	"Failed to clear log incompat features on quiesce");
-> +	}
-> +
->   	cancel_delayed_work_sync(&mp->m_log->l_work);
->   	xfs_log_force(mp, XFS_LOG_SYNC);
->   
-> diff --git a/fs/xfs/xfs_log_recover.c b/fs/xfs/xfs_log_recover.c
-> index ce1a7928eb2d..fdba9b55822e 100644
-> --- a/fs/xfs/xfs_log_recover.c
-> +++ b/fs/xfs/xfs_log_recover.c
-> @@ -3480,6 +3480,22 @@ xlog_recover_finish(
->   		 */
->   		xfs_log_force(log->l_mp, XFS_LOG_SYNC);
->   
-> +		/*
-> +		 * Now that we've recovered the log and all the intents, we can
-> +		 * clear the log incompat feature bits in the superblock
-> +		 * because there's no longer anything to protect.  We rely on
-> +		 * the AIL push to write out the updated superblock after
-> +		 * everything else.
-> +		 */
-> +		if (xfs_clear_incompat_log_features(log->l_mp)) {
-> +			error = xfs_sync_sb(log->l_mp, false);
-> +			if (error < 0) {
-> +				xfs_alert(log->l_mp,
-> +	"Failed to clear log incompat features on recovery");
-> +				return error;
-> +			}
-> +		}
-> +
->   		xlog_recover_process_iunlinks(log);
->   
->   		xlog_recover_check_summary(log);
-> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-> index b7e653180d22..f16036e1986b 100644
-> --- a/fs/xfs/xfs_mount.c
-> +++ b/fs/xfs/xfs_mount.c
-> @@ -1333,6 +1333,116 @@ xfs_force_summary_recalc(
->   	xfs_fs_mark_checked(mp, XFS_SICK_FS_COUNTERS);
+> @@ -1335,6 +1335,32 @@ xfs_log_work_queue(
+>   				msecs_to_jiffies(xfs_syncd_centisecs * 10));
 >   }
 >   
 > +/*
-> + * Enable a log incompat feature flag in the primary superblock.  The caller
-> + * cannot have any other transactions in progress.
-> + */
-> +int
-> +xfs_add_incompat_log_feature(
-> +	struct xfs_mount	*mp,
-> +	uint32_t		feature)
-> +{
-> +	struct xfs_dsb		*dsb;
-> +	int			error;
-> +
-> +	ASSERT(hweight32(feature) == 1);
-> +	ASSERT(!(feature & XFS_SB_FEAT_INCOMPAT_LOG_UNKNOWN));
-> +
-> +	/*
-> +	 * Force the log to disk and kick the background AIL thread to reduce
-> +	 * the chances that the bwrite will stall waiting for the AIL to unpin
-> +	 * the primary superblock buffer.  This isn't a data integrity
-> +	 * operation, so we don't need a synchronous push.
-> +	 */
-> +	error = xfs_log_force(mp, XFS_LOG_SYNC);
-> +	if (error)
-> +		return error;
-> +	xfs_ail_push_all(mp->m_ail);
-> +
-> +	/*
-> +	 * Lock the primary superblock buffer to serialize all callers that
-> +	 * are trying to set feature bits.
-> +	 */
-> +	xfs_buf_lock(mp->m_sb_bp);
-> +	xfs_buf_hold(mp->m_sb_bp);
-> +
-> +	if (XFS_FORCED_SHUTDOWN(mp)) {
-> +		error = -EIO;
-> +		goto rele;
-> +	}
-> +
-> +	if (xfs_sb_has_incompat_log_feature(&mp->m_sb, feature))
-> +		goto rele;
-> +
-> +	/*
-> +	 * Write the primary superblock to disk immediately, because we need
-> +	 * the log_incompat bit to be set in the primary super now to protect
-> +	 * the log items that we're going to commit later.
-> +	 */
-> +	dsb = mp->m_sb_bp->b_addr;
-> +	xfs_sb_to_disk(dsb, &mp->m_sb);
-> +	dsb->sb_features_log_incompat |= cpu_to_be32(feature);
-> +	error = xfs_bwrite(mp->m_sb_bp);
-> +	if (error)
-> +		goto shutdown;
-> +
-> +	/*
-> +	 * Add the feature bits to the incore superblock before we unlock the
-> +	 * buffer.
-> +	 */
-> +	xfs_sb_add_incompat_log_features(&mp->m_sb, feature);
-> +	xfs_buf_relse(mp->m_sb_bp);
-> +
-> +	/* Log the superblock to disk. */
-> +	return xfs_sync_sb(mp, false);
-> +shutdown:
-> +	xfs_force_shutdown(mp, SHUTDOWN_META_IO_ERROR);
-> +rele:
-> +	xfs_buf_relse(mp->m_sb_bp);
-> +	return error;
-> +}
-> +
-> +/*
-> + * Clear all the log incompat flags from the superblock.
+> + * Clear the log incompat flags if we have the opportunity.
 > + *
-> + * The caller cannot be in a transaction, must ensure that the log does not
-> + * contain any log items protected by any log incompat bit, and must ensure
-> + * that there are no other threads that depend on the state of the log incompat
-> + * feature flags in the primary super.
-> + *
-> + * Returns true if the superblock is dirty.
+> + * This only happens if we're about to log the second dummy transaction as part
+> + * of covering the log and we can get the log incompat feature usage lock.
 > + */
-> +bool
-> +xfs_clear_incompat_log_features(
-> +	struct xfs_mount	*mp)
+> +static inline void
+> +xlog_clear_incompat(
+> +	struct xlog		*log)
 > +{
-> +	bool			ret = false;
+> +	struct xfs_mount	*mp = log->l_mp;
 > +
-> +	if (!xfs_sb_version_hascrc(&mp->m_sb) ||
-> +	    !xfs_sb_has_incompat_log_feature(&mp->m_sb,
-> +				XFS_SB_FEAT_INCOMPAT_LOG_ALL) ||
-> +	    XFS_FORCED_SHUTDOWN(mp))
-> +		return false;
+> +	if (!xfs_sb_has_incompat_log_feature(&mp->m_sb,
+> +				XFS_SB_FEAT_INCOMPAT_LOG_ALL))
+> +		return;
 > +
-> +	/*
-> +	 * Update the incore superblock.  We synchronize on the primary super
-> +	 * buffer lock to be consistent with the add function, though at least
-> +	 * in theory this shouldn't be necessary.
-> +	 */
-> +	xfs_buf_lock(mp->m_sb_bp);
-> +	xfs_buf_hold(mp->m_sb_bp);
+> +	if (log->l_covered_state != XLOG_STATE_COVER_DONE2)
+> +		return;
 > +
-> +	if (xfs_sb_has_incompat_log_feature(&mp->m_sb,
-> +				XFS_SB_FEAT_INCOMPAT_LOG_ALL)) {
-> +		xfs_info(mp, "Clearing log incompat feature flags.");
-> +		xfs_sb_remove_incompat_log_features(&mp->m_sb);
-> +		ret = true;
-> +	}
+> +	if (!down_write_trylock(&log->l_incompat_users))
+> +		return;
 > +
-> +	xfs_buf_relse(mp->m_sb_bp);
-> +	return ret;
+> +	xfs_clear_incompat_log_features(mp);
+> +	up_write(&log->l_incompat_users);
 > +}
 > +
 >   /*
->    * Update the in-core delayed block counter.
->    *
-> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-> index 63d0dc1b798d..eb45684b186a 100644
-> --- a/fs/xfs/xfs_mount.h
-> +++ b/fs/xfs/xfs_mount.h
-> @@ -453,6 +453,8 @@ int	xfs_zero_extent(struct xfs_inode *ip, xfs_fsblock_t start_fsb,
->   struct xfs_error_cfg * xfs_error_get_cfg(struct xfs_mount *mp,
->   		int error_class, int error);
->   void xfs_force_summary_recalc(struct xfs_mount *mp);
-> +int xfs_add_incompat_log_feature(struct xfs_mount *mp, uint32_t feature);
-> +bool xfs_clear_incompat_log_features(struct xfs_mount *mp);
->   void xfs_mod_delalloc(struct xfs_mount *mp, int64_t delta);
+>    * Every sync period we need to unpin all items in the AIL and push them to
+>    * disk. If there is nothing dirty, then we might need to cover the log to
+> @@ -1361,6 +1387,7 @@ xfs_log_worker(
+>   		 * synchronously log the superblock instead to ensure the
+>   		 * superblock is immediately unpinned and can be written back.
+>   		 */
+> +		xlog_clear_incompat(log);
+>   		xfs_sync_sb(mp, true);
+>   	} else
+>   		xfs_log_force(mp, 0);
+> @@ -1443,6 +1470,8 @@ xlog_alloc_log(
+>   	}
+>   	log->l_sectBBsize = 1 << log2_size;
 >   
->   void xfs_hook_init(struct xfs_hook_chain *chain);
+> +	init_rwsem(&log->l_incompat_users);
+> +
+>   	xlog_get_iclog_buffer_size(mp, log);
+>   
+>   	spin_lock_init(&log->l_icloglock);
+> @@ -3933,3 +3962,23 @@ xfs_log_in_recovery(
+>   
+>   	return log->l_flags & XLOG_ACTIVE_RECOVERY;
+>   }
+> +
+> +/*
+> + * Notify the log that we're about to start using a feature that is protected
+> + * by a log incompat feature flag.  This will prevent log covering from
+> + * clearing those flags.
+> + */
+> +void
+> +xlog_use_incompat_feat(
+> +	struct xlog		*log)
+> +{
+> +	down_read(&log->l_incompat_users);
+> +}
+> +
+> +/* Notify the log that we've finished using log incompat features. */
+> +void
+> +xlog_drop_incompat_feat(
+> +	struct xlog		*log)
+> +{
+> +	up_read(&log->l_incompat_users);
+> +}
+> diff --git a/fs/xfs/xfs_log.h b/fs/xfs/xfs_log.h
+> index 044e02cb8921..8b7d0a56cbf1 100644
+> --- a/fs/xfs/xfs_log.h
+> +++ b/fs/xfs/xfs_log.h
+> @@ -145,4 +145,7 @@ bool	xfs_log_in_recovery(struct xfs_mount *);
+>   
+>   xfs_lsn_t xlog_grant_push_threshold(struct xlog *log, int need_bytes);
+>   
+> +void xlog_use_incompat_feat(struct xlog *log);
+> +void xlog_drop_incompat_feat(struct xlog *log);
+> +
+>   #endif	/* __XFS_LOG_H__ */
+> diff --git a/fs/xfs/xfs_log_priv.h b/fs/xfs/xfs_log_priv.h
+> index 1c6fdbf3d506..75702c4fa69c 100644
+> --- a/fs/xfs/xfs_log_priv.h
+> +++ b/fs/xfs/xfs_log_priv.h
+> @@ -436,6 +436,9 @@ struct xlog {
+>   #endif
+>   	/* log recovery lsn tracking (for buffer submission */
+>   	xfs_lsn_t		l_recovery_lsn;
+> +
+> +	/* Users of log incompat features should take a read lock. */
+> +	struct rw_semaphore	l_incompat_users;
+>   };
+>   
+>   #define XLOG_BUF_CANCEL_BUCKET(log, blkno) \
+> diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
+> index eb2d8e2e5db6..e548d53c2091 100644
+> --- a/fs/xfs/xfs_trans.c
+> +++ b/fs/xfs/xfs_trans.c
+> @@ -71,6 +71,9 @@ xfs_trans_free(
+>   	xfs_extent_busy_sort(&tp->t_busy);
+>   	xfs_extent_busy_clear(tp->t_mountp, &tp->t_busy, false);
+>   
+> +	if (tp->t_flags & XFS_TRANS_LOG_INCOMPAT)
+> +		xlog_drop_incompat_feat(tp->t_mountp->m_log);
+> +
+>   	trace_xfs_trans_free(tp, _RET_IP_);
+>   	xfs_trans_clear_context(tp);
+>   	if (!(tp->t_flags & XFS_TRANS_NO_WRITECOUNT))
+> @@ -110,10 +113,13 @@ xfs_trans_dup(
+>   	ASSERT(tp->t_flags & XFS_TRANS_PERM_LOG_RES);
+>   	ASSERT(tp->t_ticket != NULL);
+>   
+> -	ntp->t_flags = XFS_TRANS_PERM_LOG_RES |
+> -		       (tp->t_flags & XFS_TRANS_RESERVE) |
+> -		       (tp->t_flags & XFS_TRANS_NO_WRITECOUNT) |
+> -		       (tp->t_flags & XFS_TRANS_RES_FDBLKS);
+> +	ntp->t_flags = tp->t_flags & (XFS_TRANS_PERM_LOG_RES |
+> +				      XFS_TRANS_RESERVE |
+> +				      XFS_TRANS_NO_WRITECOUNT |
+> +				      XFS_TRANS_RES_FDBLKS |
+> +				      XFS_TRANS_LOG_INCOMPAT);
+> +	/* Give our LOG_INCOMPAT reference to the new transaction. */
+> +	tp->t_flags &= ~XFS_TRANS_LOG_INCOMPAT;
+>   	/* We gave our writer reference to the new transaction */
+>   	tp->t_flags |= XFS_TRANS_NO_WRITECOUNT;
+>   	ntp->t_ticket = xfs_log_ticket_get(tp->t_ticket);
 > 
