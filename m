@@ -2,181 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7285A352675
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Apr 2021 07:58:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A74D35268A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Apr 2021 08:19:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229742AbhDBF5v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Apr 2021 01:57:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48366 "EHLO
+        id S229722AbhDBGTu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Apr 2021 02:19:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbhDBF5u (ORCPT
+        with ESMTP id S229599AbhDBGTt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Apr 2021 01:57:50 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E557EC0613E6
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Apr 2021 22:57:49 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id d1so8261578ybj.15
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Apr 2021 22:57:49 -0700 (PDT)
+        Fri, 2 Apr 2021 02:19:49 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB493C0613E6;
+        Thu,  1 Apr 2021 23:19:47 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id y17so3992021ila.6;
+        Thu, 01 Apr 2021 23:19:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=LPDjYVsuuz78ydcsF2TccRXebl6RyftwNS4xQthlRJU=;
-        b=AW7AFbFdCw9ZjpwVkLM9vCH4RzMUNjrWeyDwr+/rCz/5buvedH8Y8rVLgFmcvMSqLA
-         dsX4p/CXRV3lsUYOi4SeM+902Qecnohw7Bl5hHCHzQLqnpxSu+SGSaAQ6yViYFqHPH9L
-         kOdBq+pTBHTuI/1SFKZJtVT0t582Wqz/RNh3uQlO6XEDdRFkBK1fW3TGbgnW1B5cXnpL
-         P2OV7pXyMA/Q/TnvS28INtn2OrRrbwOfh7cjke6EUG1Qmsh0n2aEBl7/0fmx0+4Qfk2r
-         sU5BBfKHBYivpVDDPDCBj3rz0jpP90iNw5TpaMtJlwEsKfFizFTTTiTVjP4A+FwtAFwJ
-         yOHA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=44Sen/sBOu6E6dI3+swHBDOOeHMhhOSYmQFra7wWgWM=;
+        b=A4p8Q5kjRHDn7T1INRDlx1CA46ppc5lqZ9Y5tR22QbUQE4JmcSLSlTgRavElqkFlPN
+         q2VqXolnBSooi3TAnCKxfmdmoeu+IDoWIDyk1qKyvMoAcqTT3maX/YrDW7W/IS3yJvwp
+         QkxUoA01apspYrU/jnabqO1W5aDfr+S4jaUwDhfbT5JwrYD9M1pF2bHwKyezTzloLyxO
+         OFrqpJ2ugJ6hUC5Nqv7TjX2lcd4mMQD3rnlX8FoA3NtAHoI7JdEIWG6WELjODpSiwsg+
+         QlocUunyDDwSHHrVpgI4zBj621hipJDLxF4+pUAvmXTG4mVm99szOgnj4Yf64ENg2Oej
+         Cihg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=LPDjYVsuuz78ydcsF2TccRXebl6RyftwNS4xQthlRJU=;
-        b=Yit/GEyjJsvxIq25Y0d7KJAUoIrCVHGQYdqKrjBpg/XlH9siJ5ICvYWMjBq+XGrDHk
-         ZsafXCzn2Q4oV8tNXeIh6n6nFcF41wGWz4OPerNdUOhlQUjvpeQe/s9Hl/UbOnzzMMZ/
-         ulAXlRTIgBbflqwd/eZ77hLHtkZ4clNdwZWbObwVmofYweBvSM/k5Atrj3xUWmgkx2hq
-         fOqNn0rTtRvyxfThvTpOmpppBoDDe04WDAqXHkqOFTAobQbzZ/6S1OqamSnYFd6Eoj4T
-         kP+qWVOs1dx3/NvE5f56340byH/Aar4Tc8Dm1hiB0FYFHHR/Xuh7ZKUwIWbtZMbSdw1T
-         +3Kw==
-X-Gm-Message-State: AOAM533bt5/pE1QL/qPDiW5lKAlpgzvAIoic31JuQXFT/LQPfD3bo0Jc
-        DsYM9jCcKVwayq9LdQMoHjh5Ht7riI4=
-X-Google-Smtp-Source: ABdhPJwYotMzhZ8ORbnpzqZuNWOWQ37DFSMdjl0rEsL7ha5ML/+joadSegq1SKDrQJJxJiwlE3ViuaCMC/E=
-X-Received: from legoland2.mtv.corp.google.com ([2620:15c:211:1:857d:472:1e7f:a7fe])
- (user=varmam job=sendgmr) by 2002:a25:34d2:: with SMTP id b201mr3432474yba.307.1617343068996;
- Thu, 01 Apr 2021 22:57:48 -0700 (PDT)
-Date:   Thu,  1 Apr 2021 22:57:45 -0700
-Message-Id: <20210402055745.3690281-1-varmam@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.31.0.208.g409f899ff0-goog
-Subject: [PATCH v3] fs: Improve eventpoll logging to stop indicting timerfd
-From:   Manish Varma <varmam@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com, Manish Varma <varmam@google.com>,
-        kernel test robot <lkp@intel.com>,
-        Kelly Rossmoyer <krossmo@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=44Sen/sBOu6E6dI3+swHBDOOeHMhhOSYmQFra7wWgWM=;
+        b=soxWOfQLLNWOxLuPYXjW35KnZhKQNcmq+aaJ3mqt4Hg+sfCeS//uLjJ9ulHafAYZyC
+         XsOAzw3xrnAeTN/+nn+43sdQ+Zmcx1HEqz4qRMWhXomJdPIrmwFk9yolRH9jzdlbrO5b
+         upRCOhm7s0D8ZneZkHk1kWttCXAKvTy6okfAFVjoVqGBPYTezSxAFScjs/L115lW4UJO
+         4520VimBjGsPMgBAAEX5D9pi2JBMfcksZxcC30oUOnNSYTFnJuTzuvO3srhSgYzTN+xr
+         v5przxZCvEX3ikrIMr4eOM+QqvrJrSoUHggZxzQ3mlmEdQHhEmF0P4/899HNSnxLqEEN
+         IaXA==
+X-Gm-Message-State: AOAM533z+SNuddo31JWswXjd6c6mIVRcT2LHdVaLeHXJk0u70LHD/43L
+        ySO1KsfK8pgSEOBr9IbkswDEBURA60gp2Xj8ngQ=
+X-Google-Smtp-Source: ABdhPJyzJEDKTydXW/A8QNmnZ8I6gAv437PMJVIRUEJjpmVTLK9+HqMwT5rc+FLlIgZfP19axW8IHW9mwXXEe+KHAAk=
+X-Received: by 2002:a92:2c08:: with SMTP id t8mr9814763ile.72.1617344387083;
+ Thu, 01 Apr 2021 23:19:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210325032202.GS1719932@casper.infradead.org>
+In-Reply-To: <20210325032202.GS1719932@casper.infradead.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 2 Apr 2021 09:19:36 +0300
+Message-ID: <CAOQ4uxikP_GFNYzgatON2dRQyiHvTBP5iO4Xk091ruLUBDMt-w@mail.gmail.com>
+Subject: Re: [RFC] Convert sysv filesystem to use folios exclusively
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-timerfd doesn't create any wakelocks, but eventpoll can.  When it does,
-it names them after the underlying file descriptor, and since all
-timerfd file descriptors are named "[timerfd]" (which saves memory on
-systems like desktops with potentially many timerfd instances), all
-wakesources created as a result of using the eventpoll-on-timerfd idiom
-are called... "[timerfd]".
+On Thu, Mar 25, 2021 at 5:43 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+>
+> I decided to see what a filesystem free from struct page would look
+> like.  I chose sysv more-or-less at random; I wanted a relatively simple
+> filesystem, but I didn't want a toy.  The advantage of sysv is that the
+> maintainer is quite interested in folios ;-)
+>
+> $ git grep page fs/sysv
+> fs/sysv/dir.c:#include <linux/pagemap.h>
+> fs/sysv/dir.c:          if (offset_in_page(diter->pos)) {
+> fs/sysv/inode.c:        .get_link       = page_get_link,
+> fs/sysv/inode.c:        truncate_inode_pages_final(&inode->i_data);
+> fs/sysv/itree.c:        block_truncate_page(inode->i_mapping, inode->i_size, get_block);
+> fs/sysv/itree.c:                truncate_pagecache(inode, inode->i_size);
+> fs/sysv/itree.c:        .readpage = sysv_read_folio,
+> fs/sysv/itree.c:        .writepage = sysv_write_folio,
 
-However, it becomes impossible to tell which "[timerfd]" wakesource is
-affliated with which process and hence troubleshooting is difficult.
+I would like to address only the social engineering aspect of the s/page/folio
+conversion.
 
-This change addresses this problem by changing the way eventpoll
-wakesources are named:
+Personally, as a filesystem developer, I find the concept of the folio
+abstraction very useful and I think that the word is short, clear and witty.
 
-1) the top-level per-process eventpoll wakesource is now named "epoll:P"
-(instead of just "eventpoll"), where P, is the PID of the creating
-process.
-2) individual per-underlying-filedescriptor eventpoll wakesources are
-now named "epollitemN:P.F", where N is a unique ID token and P is PID
-of the creating process and F is the name of the underlying file
-descriptor.
+But the example above (writepage = sysv_write_folio) just goes to show
+how deeply rooted the term 'page' is throughout the kernel and this is
+just the tip of the iceberg. There are documents, comments and decades
+of using 'page' in our language - those will be very hard to root out.
 
-All together that should be splitted up into a change to eventpoll and
-timerfd (or other file descriptors).
+My first impression from looking at sample patches is that 90% of the churn
+does not serve any good purpose and by that, I am referring to the
+conversion of local variable names and struct field names s/page/folio.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Co-developed-by: Kelly Rossmoyer <krossmo@google.com>
-Signed-off-by: Kelly Rossmoyer <krossmo@google.com>
-Signed-off-by: Manish Varma <varmam@google.com>
----
- drivers/base/power/wakeup.c | 10 ++++++++--
- fs/eventpoll.c              | 10 ++++++++--
- include/linux/pm_wakeup.h   |  4 ++--
- 3 files changed, 18 insertions(+), 6 deletions(-)
+Those conversions won't add any clarity to subsystems that only need to
+deal with the simple page type (i.e. non-tail pages).
+The compiler type checks will have already did that job already and changing
+the name of the variables does not help in this case.
 
-diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-index 01057f640233..3628536c67a5 100644
---- a/drivers/base/power/wakeup.c
-+++ b/drivers/base/power/wakeup.c
-@@ -216,13 +216,19 @@ EXPORT_SYMBOL_GPL(wakeup_source_remove);
- /**
-  * wakeup_source_register - Create wakeup source and add it to the list.
-  * @dev: Device this wakeup source is associated with (or NULL if virtual).
-- * @name: Name of the wakeup source to register.
-+ * @fmt: format string for the wakeup source name
-  */
- struct wakeup_source *wakeup_source_register(struct device *dev,
--					     const char *name)
-+					     const char *fmt, ...)
+I think someone already proposed the "boring" name struct page_head as
+a replacement for the "cool" name struct folio.
+
+Whether it's page_head, page_ref or what not, anything that can
+be written in a way that these sort of "thin" conversions make sense:
+
+-static int sysv_readpage(struct file *file, struct page *page)
++static int sysv_readpage(struct file *file, struct page_head *page)
  {
- 	struct wakeup_source *ws;
- 	int ret;
-+	char name[128];
-+	va_list args;
-+
-+	va_start(args, fmt);
-+	vsnprintf(name, sizeof(name), fmt, args);
-+	va_end(args);
- 
- 	ws = wakeup_source_create(name);
- 	if (ws) {
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 7df8c0fa462b..7c35987a8887 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -312,6 +312,7 @@ struct ctl_table epoll_table[] = {
- };
- #endif /* CONFIG_SYSCTL */
- 
-+static atomic_t wakesource_create_id  = ATOMIC_INIT(0);
- static const struct file_operations eventpoll_fops;
- 
- static inline int is_file_epoll(struct file *f)
-@@ -1451,15 +1452,20 @@ static int ep_create_wakeup_source(struct epitem *epi)
- {
- 	struct name_snapshot n;
- 	struct wakeup_source *ws;
-+	pid_t task_pid;
-+	int id;
-+
-+	task_pid = task_pid_nr(current);
- 
- 	if (!epi->ep->ws) {
--		epi->ep->ws = wakeup_source_register(NULL, "eventpoll");
-+		epi->ep->ws = wakeup_source_register(NULL, "epoll:%d", task_pid);
- 		if (!epi->ep->ws)
- 			return -ENOMEM;
- 	}
- 
-+	id = atomic_inc_return(&wakesource_create_id);
- 	take_dentry_name_snapshot(&n, epi->ffd.file->f_path.dentry);
--	ws = wakeup_source_register(NULL, n.name.name);
-+	ws = wakeup_source_register(NULL, "epollitem%d:%d.%s", id, task_pid, n.name.name);
- 	release_dentry_name_snapshot(&n);
- 
- 	if (!ws)
-diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
-index aa3da6611533..cb91c84f6f08 100644
---- a/include/linux/pm_wakeup.h
-+++ b/include/linux/pm_wakeup.h
-@@ -95,7 +95,7 @@ extern void wakeup_source_destroy(struct wakeup_source *ws);
- extern void wakeup_source_add(struct wakeup_source *ws);
- extern void wakeup_source_remove(struct wakeup_source *ws);
- extern struct wakeup_source *wakeup_source_register(struct device *dev,
--						    const char *name);
-+						    const char *fmt, ...);
- extern void wakeup_source_unregister(struct wakeup_source *ws);
- extern int wakeup_sources_read_lock(void);
- extern void wakeup_sources_read_unlock(int idx);
-@@ -137,7 +137,7 @@ static inline void wakeup_source_add(struct wakeup_source *ws) {}
- static inline void wakeup_source_remove(struct wakeup_source *ws) {}
- 
- static inline struct wakeup_source *wakeup_source_register(struct device *dev,
--							   const char *name)
-+							   const char *fmt, ...)
- {
- 	return NULL;
+       return block_read_full_page(page, get_block);
  }
--- 
-2.31.0.208.g409f899ff0-goog
 
+So when a filesystem developer reviews your conversion patch
+he goes: "Whatever, if the compiler says this is fine, it's fine".
+
+Thanks,
+Amir.
