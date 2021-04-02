@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BADC352AB8
+	by mail.lfdr.de (Postfix) with ESMTP id B781D352AB9
 	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Apr 2021 14:38:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235441AbhDBMhY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Apr 2021 08:37:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53622 "EHLO mail.kernel.org"
+        id S235464AbhDBMh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Apr 2021 08:37:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235444AbhDBMhW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Apr 2021 08:37:22 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DBDB561158;
-        Fri,  2 Apr 2021 12:37:19 +0000 (UTC)
+        id S229932AbhDBMhZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Apr 2021 08:37:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 57E0C61002;
+        Fri,  2 Apr 2021 12:37:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617367041;
-        bh=H6rhK7YrJlG/TnSxkRrxaV6rrHER++o1pLWVgVT/hFM=;
+        s=k20201202; t=1617367044;
+        bh=dUbTt4/JMI0Wi0hAdKMzvQDwqNf84SO9tY537ehAXeA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mwQQARNS0037UZK89bxhtfJS0qxf3bmbfYK+TSZ2aszVj1R0CFT5JWFSJa+408xbU
-         LduHUJs3023xhEbFZhCn9rWliymuJQihvvlT/k4PyYw/dVN7so8BbUicQxSYGHqjpJ
-         yxPiGwKCz0d0/Eu7M3+QqU+oAwyvEDgvnc/XhMgLJ1uxl69N1AKaXGL40+mNnPjcwQ
-         LFpJJ+nr4QGnfFXH6RhXc0kaeXLdo5IXiKKUNnfRLYZJPmjLDnQe+p7vAdgblMxPj7
-         TAa8toiH/NVpeHJnh//typ7l7XiZAYoQU6/FgIBSJxxofEGYeleXfhb+bY1MkoiQwA
-         k3MHO07+sRL/w==
+        b=GoIkUPhVFBewCC2U86mUUUZBWAT3+TSZeHX0eLYf1HjbOXexFNb0w4byPaAZw2uz7
+         sYQKo13OrjfIUT/qN8HEeAy0iTENDkwDfpBHGb+0mlrrb/KjvCb4ncuh7+trLlHUkf
+         lN4hU35ettriK4Aod/Q/TIF/G6M7Ib5HGHmGvyjk2QGbK6RcjtkPtMGi2iE3yrsEdU
+         f4cDGxteEW8A4lxLeBtfy0/H7cokFtVWI8zjwjjXm+R/uL/qZuzdLBlLQsIJMqndX8
+         G2zAL9DUVnfWOdtG7Zx4BBJcpwN++FpZ6VbC6Ok/m1Z8RQybs4iny9ee995OpzlmNj
+         i2I0m69ageftQ==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
@@ -31,15 +31,15 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>,
         Giuseppe Scrivano <gscrivan@redhat.com>
-Subject: [PATCH 2/3] file: let pick_file() tell caller it's done
-Date:   Fri,  2 Apr 2021 14:35:47 +0200
-Message-Id: <20210402123548.108372-3-brauner@kernel.org>
+Subject: [PATCH 3/3] file: simplify logic in __close_range()
+Date:   Fri,  2 Apr 2021 14:35:48 +0200
+Message-Id: <20210402123548.108372-4-brauner@kernel.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <00000000000069c40405be6bdad4@google.com>
 References: <00000000000069c40405be6bdad4@google.com>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=u3FypIfYYEuouoQtFnkkSF1BaueP8r/+poOiz25rjy0=; m=XxDs1iQXFGporBJagccdLRPprhMJ0YTgd0CCqHCv/W0=; p=1aFtf2Ns3INd5B6Bg/dGOcnyrKqqA2iROlkVMFoo6vQ=; g=08c35118ac0e088c52bdd2f77bea1f7f51a1a5e2
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYGcPkgAKCRCRxhvAZXjcojxNAPsGKlX WDUEjrlXQwYn36lKSceQnpjvrryk0HoPfwLIR8AD+JW8wb+JEIELp2e+5u4hkMuWqLAgTWIgHDw4/ akXT3wE=
+X-Patch-Hashes: v=1; h=sha256; i=hxAQsk9Vm8whjH4fxdkcMpV9D/g/lrfRks3myDn8G5c=; m=nVAEuvMh4LK8seH9ue5IB38FN/6opr9N10BP3dDo73k=; p=c6iH7+6Y7h0lMivORcnihZU6RmsASk6k6ixprq2fgP8=; g=d55e07709d088c140ca4de213024a3759b86a094
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYGcPkwAKCRCRxhvAZXjcoiIYAQDvmHB 2mTiXLZaKEdlR+VJV0L4UXsCsU8pj5ca3PqhcdQD/eYIC8ayng5KsrLzBotDqfWYDVGfDAnoHymoI cURv1g4=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -47,11 +47,10 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Christian Brauner <christian.brauner@ubuntu.com>
 
-Let pick_file() report back that the fd it was passed exceeded the
-maximum fd in that fdtable. This allows us to simplify the caller of
-this helper because it doesn't need to care anymore whether the passed
-in max_fd is excessive. It can rely on pick_file() telling it that it's
-past the last valid fd.
+It never looked too pleasant and it doesn't really buy us anything
+anymore now that CLOSE_RANGE_CLOEXEC exists and we need to retake the
+current maximum under the lock for it anyway. This also makes the logic
+easier to follow.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: Giuseppe Scrivano <gscrivan@redhat.com>
@@ -59,78 +58,71 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- fs/file.c | 33 ++++++++++++++++++++++++++-------
- 1 file changed, 26 insertions(+), 7 deletions(-)
+ fs/file.c | 31 ++++++++++++++-----------------
+ 1 file changed, 14 insertions(+), 17 deletions(-)
 
 diff --git a/fs/file.c b/fs/file.c
-index f633348029a5..740040346a98 100644
+index 740040346a98..ed46cd3ae225 100644
 --- a/fs/file.c
 +++ b/fs/file.c
-@@ -596,18 +596,32 @@ void fd_install(unsigned int fd, struct file *file)
- 
- EXPORT_SYMBOL(fd_install);
- 
-+/**
-+ * pick_file - return file associatd with fd
-+ * @files: file struct to retrieve file from
-+ * @fd: file descriptor to retrieve file for
-+ *
-+ * If this functions returns an EINVAL error pointer the fd was beyond the
-+ * current maximum number of file descriptors for that fdtable.
-+ *
-+ * Returns: The file associated with @fd, on error returns an error pointer.
-+ */
- static struct file *pick_file(struct files_struct *files, unsigned fd)
+@@ -701,7 +701,6 @@ static inline void __range_close(struct files_struct *cur_fds, unsigned int fd,
+  */
+ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
  {
--	struct file *file = NULL;
-+	struct file *file;
- 	struct fdtable *fdt;
+-	unsigned int cur_max;
+ 	struct task_struct *me = current;
+ 	struct files_struct *cur_fds = me->files, *fds = NULL;
  
- 	spin_lock(&files->file_lock);
- 	fdt = files_fdtable(files);
--	if (fd >= fdt->max_fds)
-+	if (fd >= fdt->max_fds) {
-+		file = ERR_PTR(-EINVAL);
- 		goto out_unlock;
-+	}
- 	file = fdt->fd[fd];
--	if (!file)
-+	if (!file) {
-+		file = ERR_PTR(-EBADF);
- 		goto out_unlock;
-+	}
- 	rcu_assign_pointer(fdt->fd[fd], NULL);
- 	__put_unused_fd(files, fd);
+@@ -711,26 +710,26 @@ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
+ 	if (fd > max_fd)
+ 		return -EINVAL;
  
-@@ -622,7 +636,7 @@ int close_fd(unsigned fd)
- 	struct file *file;
+-	rcu_read_lock();
+-	cur_max = files_fdtable(cur_fds)->max_fds;
+-	rcu_read_unlock();
+-
+-	/* cap to last valid index into fdtable */
+-	cur_max--;
+-
+ 	if (flags & CLOSE_RANGE_UNSHARE) {
+ 		int ret;
+ 		unsigned int max_unshare_fds = NR_OPEN_MAX;
  
- 	file = pick_file(files, fd);
--	if (!file)
-+	if (IS_ERR(file))
- 		return -EBADF;
- 
- 	return filp_close(file, files);
-@@ -663,11 +677,16 @@ static inline void __range_close(struct files_struct *cur_fds, unsigned int fd,
- 		struct file *file;
- 
- 		file = pick_file(cur_fds, fd++);
--		if (!file)
-+		if (!IS_ERR(file)) {
-+			/* found a valid file to close */
-+			filp_close(file, cur_fds);
-+			cond_resched();
- 			continue;
+ 		/*
+-		 * If the requested range is greater than the current maximum,
+-		 * we're closing everything so only copy all file descriptors
+-		 * beneath the lowest file descriptor.
+-		 * If the caller requested all fds to be made cloexec copy all
+-		 * of the file descriptors since they still want to use them.
++		 * If the caller requested all fds to be made cloexec we always
++		 * copy all of the file descriptors since they still want to
++		 * use them.
+ 		 */
+-		if (!(flags & CLOSE_RANGE_CLOEXEC) && (max_fd >= cur_max))
+-			max_unshare_fds = fd;
++		if (!(flags & CLOSE_RANGE_CLOEXEC)) {
++			/*
++			 * If the requested range is greater than the current
++			 * maximum, we're closing everything so only copy all
++			 * file descriptors beneath the lowest file descriptor.
++			 */
++			rcu_read_lock();
++			if (max_fd >= last_fd(files_fdtable(cur_fds)))
++				max_unshare_fds = fd;
++			rcu_read_unlock();
 +		}
  
--		filp_close(file, cur_fds);
--		cond_resched();
-+		/* beyond the last fd in that table */
-+		if (PTR_ERR(file) == -EINVAL)
-+			return;
+ 		ret = unshare_fd(CLONE_FILES, max_unshare_fds, &fds);
+ 		if (ret)
+@@ -744,8 +743,6 @@ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
+ 			swap(cur_fds, fds);
  	}
- }
  
+-	max_fd = min(max_fd, cur_max);
+-
+ 	if (flags & CLOSE_RANGE_CLOEXEC)
+ 		__range_cloexec(cur_fds, fd, max_fd);
+ 	else
 -- 
 2.27.0
 
