@@ -2,391 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A612352DFA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Apr 2021 19:04:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDBA8352EBF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Apr 2021 19:51:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235341AbhDBRE3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Apr 2021 13:04:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51462 "EHLO
+        id S235134AbhDBRuz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Apr 2021 13:50:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229722AbhDBRE2 (ORCPT
+        with ESMTP id S234275AbhDBRuy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Apr 2021 13:04:28 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17986C0613E6;
-        Fri,  2 Apr 2021 10:04:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=z94LUPHpaa51HFoVgsD9v9ZdabEEczYPtm4XpU8VGA4=; b=RdzCldIIhZvEXpC6q0Z/8JLdX4
-        jhqufBz/uTaOAF/P1cxK3vQEn8ToUFbdziJtT/pMEMu7QCnQ2XM+HRehMsLqHPhdcLPFwynA2JSzx
-        xbSKX4IG/3GFZ6+mYvb04QHHgxdzbvwl+sVyuFHWSHsevEL4hzalzsnwYp9tu97WnegUbUVJC35pv
-        d/C80VgT7ffhQkNkJpQQiejCnfbaNoT1dYK7z11PgYk8JjgqNJDz4R3B+eITVLaj7P4nUlvOkBaM8
-        1TGfsvdaNyc27k1U0A6eS27eMd4bRNAyBcP5K2EM5nk3RV1BBcbsh6xgA9XSdoARsewTzvkDWmMBD
-        AnXSQgNw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lSNDS-007tvI-HC; Fri, 02 Apr 2021 17:04:16 +0000
-Date:   Fri, 2 Apr 2021 18:04:14 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: BUG_ON(!mapping_empty(&inode->i_data))
-Message-ID: <20210402170414.GQ351017@casper.infradead.org>
-References: <alpine.LSU.2.11.2103301654520.2648@eggly.anvils>
- <20210331024913.GS351017@casper.infradead.org>
- <alpine.LSU.2.11.2103311413560.1201@eggly.anvils>
- <20210401170615.GH351017@casper.infradead.org>
- <20210402031305.GK351017@casper.infradead.org>
- <20210402132708.GM351017@casper.infradead.org>
+        Fri, 2 Apr 2021 13:50:54 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1EB6C06178A
+        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Apr 2021 10:50:52 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id x21-20020a17090a5315b029012c4a622e4aso2887653pjh.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Apr 2021 10:50:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=eYX1VCobuv7ZghRLFjUBUx/jA51U229FVIFeLRu/n6g=;
+        b=uZcOrbj95WMDw9eW5IvdUkXZmw+FX3tdBKmnN727c4w+7bNNhnsgltsJ2Fcp/q1DLv
+         4LVESOmKbbodSySgHqpal85/8UmxTXG0bLxLQQvNQC59F9FMoYHA9Seobp6cGIG9vbBt
+         X92sEDAQLohDGs/j9lfttU1oU7asvzWdGgpa12bBZCK3PuvD6jUy0FadbEcGQG//OKg2
+         iSMTaN/qrMGwmUi8DxUQYUhdRP0KTlooSBD6ANyVJGiP0qdLs4EdRjgOC5IwNun0InJN
+         rOEf8sFRUKMQa2rgjsDlQskvoSy/yd8SR4gu98w/FIsOLzrBeerzBcUL1oFEGXt+SRvB
+         mjDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=eYX1VCobuv7ZghRLFjUBUx/jA51U229FVIFeLRu/n6g=;
+        b=iJrTM6NDAY6g0+VEB0lQuTZqJ8wMRzf1671vW2R40dOO8SznjpatMZtFaA974iglJY
+         06JN17nWbzaNnQWkIdYVIDGsQJWid/Zuxql/WRt9or9g04nTB7XSKfKnMT0M5/heyce9
+         jIRftUtvbs3LIFHGUnXxMqa1xFd6y88Hym5jVKPPHflgPWtAD9AGYT/16S7UQn2whhWE
+         yMAyJ+zRRQCkbCT6e2mNuhMc/2B1kwyoWGFFLcPbnX4VXYS7OInSUPPivY4TwQOusVti
+         lEkIua97oB0IDL7NF9HnMCRXxiLlAJgOSsVk3aqX59uRGHFVxCR7z827XmIRHjXJ7sO/
+         VaKg==
+X-Gm-Message-State: AOAM530/ONYtXOBg5MYhfbLPfQ1iG9fmzluCP0ZHJ38/TiP5sFxKa4hw
+        9anaSCWHDESJpgH7Gou96ytGaQ==
+X-Google-Smtp-Source: ABdhPJwc7UEZ8VNo4bnQIhOq7dyMaBrLDsA+tXAOfWXSiLl0wOd2t0uGD3skjne7xiJ4u5fOgwcx0A==
+X-Received: by 2002:a17:902:9345:b029:e7:4853:ff5f with SMTP id g5-20020a1709029345b02900e74853ff5fmr13857339plp.74.1617385852230;
+        Fri, 02 Apr 2021 10:50:52 -0700 (PDT)
+Received: from relinquished.localdomain ([2601:602:8b80:8e0::16fc])
+        by smtp.gmail.com with ESMTPSA id a15sm8751227pju.34.2021.04.02.10.50.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Apr 2021 10:50:51 -0700 (PDT)
+Date:   Fri, 2 Apr 2021 10:50:50 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>
+Subject: Re: [PATCH v9 1/9] iov_iter: add copy_struct_from_iter()
+Message-ID: <YGdZeh4K3BxQPcGx@relinquished.localdomain>
+References: <cover.1617258892.git.osandov@fb.com>
+ <0e7270919b461c4249557b12c7dfce0ad35af300.1617258892.git.osandov@fb.com>
+ <CAHk-=wgpn=GYW=2ZNizdVdM0qGGk_iM_Ho=0eawhNaKHifSdpg@mail.gmail.com>
+ <YGbIwOv0yq0z8i8K@relinquished.localdomain>
+ <20210402080423.t26zd34p2oxbzvuj@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210402132708.GM351017@casper.infradead.org>
+In-Reply-To: <20210402080423.t26zd34p2oxbzvuj@wittgenstein>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-OK, more competent testing, and that previous bug now detected and fixed.
-I have a reasonable amount of confidence this will solve your problem.
-If you do apply this patch, don't enable CONFIG_TEST_XARRAY as the new
-tests assume that attempting to allocate with a GFP flags of 0 will
-definitely fail, which is true for my userspace allocator, but not true
-inside the kernel.  I'll add some ifdeffery to skip these tests inside
-the kernel, as without a way to deterministically fail allocation,
-there's no way to test this code properly.
+On Fri, Apr 02, 2021 at 10:04:23AM +0200, Christian Brauner wrote:
+> On Fri, Apr 02, 2021 at 12:33:20AM -0700, Omar Sandoval wrote:
+> > On Thu, Apr 01, 2021 at 09:05:22AM -0700, Linus Torvalds wrote:
+> > > On Wed, Mar 31, 2021 at 11:51 PM Omar Sandoval <osandov@osandov.com> wrote:
+> > > >
+> > > > + *
+> > > > + * The recommended usage is something like the following:
+> > > > + *
+> > > > + *     if (usize > PAGE_SIZE)
+> > > > + *       return -E2BIG;
+> > > 
+> > > Maybe this should be more than a recommendation, and just be inside
+> > > copy_struct_from_iter(), because otherwise the "check_zeroed_user()"
+> > > call might be quite the timesink for somebody who does something
+> > > stupid.
+> > 
+> > I did actually almost send this out with the check in
+> > copy_struct_from_iter(), but decided not to for consistency with
+> > copy_struct_from_user().
+> > 
+> > openat2() seems to be the only user of copy_struct_from_user() that
+> > doesn't limit to PAGE_SIZE, which is odd given that Aleksa wrote both
+> 
+> Al said there's nothing wrong with copying large chunks of memory so we
+> shouldn't limit the helper but instead limit the callers which have
+> expectations about their size limit:
+> https://lore.kernel.org/lkml/20190905182801.GR1131@ZenIV.linux.org.uk/
 
-diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-index 8b1c318189ce..14cbc12bfeca 100644
---- a/lib/test_xarray.c
-+++ b/lib/test_xarray.c
-@@ -321,12 +321,10 @@ static noinline void check_xa_mark(struct xarray *xa)
- 	check_xa_mark_3(xa);
- }
- 
--static noinline void check_xa_shrink(struct xarray *xa)
-+static noinline void check_xa_shrink_1(struct xarray *xa)
- {
- 	XA_STATE(xas, xa, 1);
- 	struct xa_node *node;
--	unsigned int order;
--	unsigned int max_order = IS_ENABLED(CONFIG_XARRAY_MULTI) ? 15 : 1;
- 
- 	XA_BUG_ON(xa, !xa_empty(xa));
- 	XA_BUG_ON(xa, xa_store_index(xa, 0, GFP_KERNEL) != NULL);
-@@ -349,6 +347,13 @@ static noinline void check_xa_shrink(struct xarray *xa)
- 	XA_BUG_ON(xa, xa_load(xa, 0) != xa_mk_value(0));
- 	xa_erase_index(xa, 0);
- 	XA_BUG_ON(xa, !xa_empty(xa));
-+}
-+
-+static noinline void check_xa_shrink_2(struct xarray *xa)
-+{
-+	unsigned int order;
-+	unsigned int max_order = IS_ENABLED(CONFIG_XARRAY_MULTI) ? 15 : 1;
-+	struct xa_node *node;
- 
- 	for (order = 0; order < max_order; order++) {
- 		unsigned long max = (1UL << order) - 1;
-@@ -370,6 +375,34 @@ static noinline void check_xa_shrink(struct xarray *xa)
- 	}
- }
- 
-+static noinline void check_xa_shrink_3(struct xarray *xa, int nr,
-+		unsigned long anchor, unsigned long newbie)
-+{
-+	XA_STATE(xas, xa, newbie);
-+	int i;
-+
-+	xa_store_index(xa, anchor, GFP_KERNEL);
-+
-+	for (i = 0; i < nr; i++) {
-+		xas_create(&xas, true);
-+		xas_nomem(&xas, GFP_KERNEL);
-+	}
-+	xas_create(&xas, true);
-+	xas_nomem(&xas, 0);
-+	XA_BUG_ON(xa, xas_error(&xas) == 0);
-+
-+	xa_erase_index(xa, anchor);
-+	XA_BUG_ON(xa, !xa_empty(xa));
-+}
-+
-+static noinline void check_xa_shrink(struct xarray *xa)
-+{
-+	check_xa_shrink_1(xa);
-+	check_xa_shrink_2(xa);
-+	check_xa_shrink_3(xa, 8, 0, 1UL << 31);
-+	check_xa_shrink_3(xa, 4, 1UL << 31, 0);
-+}
-+
- static noinline void check_insert(struct xarray *xa)
- {
- 	unsigned long i;
-@@ -1463,6 +1496,36 @@ static noinline void check_create_range_4(struct xarray *xa,
- 	XA_BUG_ON(xa, !xa_empty(xa));
- }
- 
-+static noinline void check_create_range_5(struct xarray *xa, void *entry,
-+		unsigned long index, unsigned order)
-+{
-+	XA_STATE_ORDER(xas, xa, index, order);
-+	int i = 0;
-+	gfp_t gfp = GFP_KERNEL;
-+
-+	XA_BUG_ON(xa, !xa_empty(xa));
-+
-+	if (entry)
-+		xa_store(xa, xa_to_value(entry), entry, GFP_KERNEL);
-+
-+	do {
-+		xas_lock(&xas);
-+		xas_create_range(&xas);
-+		xas_unlock(&xas);
-+		if (++i == 4)
-+			gfp = GFP_NOWAIT;
-+	} while (xas_nomem(&xas, gfp));
-+
-+	if (entry)
-+		xa_erase(xa, xa_to_value(entry));
-+
-+	if (!xas_error(&xas))
-+		xa_destroy(xa);
-+
-+	XA_BUG_ON(xa, xas.xa_alloc);
-+	XA_BUG_ON(xa, !xa_empty(xa));
-+}
-+
- static noinline void check_create_range(struct xarray *xa)
- {
- 	unsigned int order;
-@@ -1490,6 +1553,24 @@ static noinline void check_create_range(struct xarray *xa)
- 		check_create_range_4(xa, (3U << order) + 1, order);
- 		check_create_range_4(xa, (3U << order) - 1, order);
- 		check_create_range_4(xa, (1U << 24) + 1, order);
-+
-+		check_create_range_5(xa, NULL, 0, order);
-+		check_create_range_5(xa, NULL, (1U << order), order);
-+		check_create_range_5(xa, NULL, (2U << order), order);
-+		check_create_range_5(xa, NULL, (3U << order), order);
-+		check_create_range_5(xa, NULL, (1U << (2 * order)), order);
-+
-+		check_create_range_5(xa, xa_mk_value(0), 0, order);
-+		check_create_range_5(xa, xa_mk_value(0), (1U << order), order);
-+		check_create_range_5(xa, xa_mk_value(0), (2U << order), order);
-+		check_create_range_5(xa, xa_mk_value(0), (3U << order), order);
-+		check_create_range_5(xa, xa_mk_value(0), (1U << (2 * order)), order);
-+
-+		check_create_range_5(xa, xa_mk_value(1U << order), 0, order);
-+		check_create_range_5(xa, xa_mk_value(1U << order), (1U << order), order);
-+		check_create_range_5(xa, xa_mk_value(1U << order), (2U << order), order);
-+		check_create_range_5(xa, xa_mk_value(1U << order), (3U << order), order);
-+		check_create_range_5(xa, xa_mk_value(1U << order), (1U << (2 * order)), order);
- 	}
- 
- 	check_create_range_3();
-diff --git a/lib/xarray.c b/lib/xarray.c
-index f5d8f54907b4..38a08eb99c7f 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -276,77 +276,6 @@ static void xas_destroy(struct xa_state *xas)
- 	}
- }
- 
--/**
-- * xas_nomem() - Allocate memory if needed.
-- * @xas: XArray operation state.
-- * @gfp: Memory allocation flags.
-- *
-- * If we need to add new nodes to the XArray, we try to allocate memory
-- * with GFP_NOWAIT while holding the lock, which will usually succeed.
-- * If it fails, @xas is flagged as needing memory to continue.  The caller
-- * should drop the lock and call xas_nomem().  If xas_nomem() succeeds,
-- * the caller should retry the operation.
-- *
-- * Forward progress is guaranteed as one node is allocated here and
-- * stored in the xa_state where it will be found by xas_alloc().  More
-- * nodes will likely be found in the slab allocator, but we do not tie
-- * them up here.
-- *
-- * Return: true if memory was needed, and was successfully allocated.
-- */
--bool xas_nomem(struct xa_state *xas, gfp_t gfp)
--{
--	if (xas->xa_node != XA_ERROR(-ENOMEM)) {
--		xas_destroy(xas);
--		return false;
--	}
--	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
--		gfp |= __GFP_ACCOUNT;
--	xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
--	if (!xas->xa_alloc)
--		return false;
--	xas->xa_alloc->parent = NULL;
--	XA_NODE_BUG_ON(xas->xa_alloc, !list_empty(&xas->xa_alloc->private_list));
--	xas->xa_node = XAS_RESTART;
--	return true;
--}
--EXPORT_SYMBOL_GPL(xas_nomem);
--
--/*
-- * __xas_nomem() - Drop locks and allocate memory if needed.
-- * @xas: XArray operation state.
-- * @gfp: Memory allocation flags.
-- *
-- * Internal variant of xas_nomem().
-- *
-- * Return: true if memory was needed, and was successfully allocated.
-- */
--static bool __xas_nomem(struct xa_state *xas, gfp_t gfp)
--	__must_hold(xas->xa->xa_lock)
--{
--	unsigned int lock_type = xa_lock_type(xas->xa);
--
--	if (xas->xa_node != XA_ERROR(-ENOMEM)) {
--		xas_destroy(xas);
--		return false;
--	}
--	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
--		gfp |= __GFP_ACCOUNT;
--	if (gfpflags_allow_blocking(gfp)) {
--		xas_unlock_type(xas, lock_type);
--		xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
--		xas_lock_type(xas, lock_type);
--	} else {
--		xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
--	}
--	if (!xas->xa_alloc)
--		return false;
--	xas->xa_alloc->parent = NULL;
--	XA_NODE_BUG_ON(xas->xa_alloc, !list_empty(&xas->xa_alloc->private_list));
--	xas->xa_node = XAS_RESTART;
--	return true;
--}
--
- static void xas_update(struct xa_state *xas, struct xa_node *node)
- {
- 	if (xas->xa_update)
-@@ -551,6 +480,120 @@ static void xas_free_nodes(struct xa_state *xas, struct xa_node *top)
- 	}
- }
- 
-+static bool __xas_trim(struct xa_state *xas)
-+{
-+	unsigned long index = xas->xa_index;
-+	unsigned char shift = xas->xa_shift;
-+	unsigned char sibs = xas->xa_sibs;
-+
-+	xas->xa_index |= ((sibs + 1UL) << shift) - 1;
-+	xas->xa_shift = 0;
-+	xas->xa_sibs = 0;
-+	xas->xa_node = XAS_RESTART;
-+
-+	for (;;) {
-+		xas_load(xas);
-+		if (!xas_is_node(xas))
-+			break;
-+		xas_delete_node(xas);
-+		if (xas->xa_index <= (index | XA_CHUNK_MASK))
-+			break;
-+		xas->xa_index -= XA_CHUNK_SIZE;
-+	}
-+
-+	xas->xa_shift = shift;
-+	xas->xa_sibs = sibs;
-+	xas->xa_index = index;
-+	xas->xa_node = XA_ERROR(-ENOMEM);
-+	return false;
-+}
-+
-+/*
-+ * We failed to allocate memory.  Trim any nodes we created along the
-+ * way which are now unused.
-+ */
-+static bool xas_trim(struct xa_state *xas)
-+{
-+	unsigned int lock_type = xa_lock_type(xas->xa);
-+
-+	xas_lock_type(xas, lock_type);
-+	__xas_trim(xas);
-+	xas_unlock_type(xas, lock_type);
-+
-+	return false;
-+}
-+
-+/**
-+ * xas_nomem() - Allocate memory if needed.
-+ * @xas: XArray operation state.
-+ * @gfp: Memory allocation flags.
-+ *
-+ * If we need to add new nodes to the XArray, we try to allocate memory
-+ * with GFP_NOWAIT while holding the lock, which will usually succeed.
-+ * If it fails, @xas is flagged as needing memory to continue.  The caller
-+ * should drop the lock and call xas_nomem().  If xas_nomem() succeeds,
-+ * the caller should retry the operation.
-+ *
-+ * Forward progress is guaranteed as one node is allocated here and
-+ * stored in the xa_state where it will be found by xas_alloc().  More
-+ * nodes will likely be found in the slab allocator, but we do not tie
-+ * them up here.
-+ *
-+ * Return: true if memory was needed, and was successfully allocated.
-+ */
-+bool xas_nomem(struct xa_state *xas, gfp_t gfp)
-+{
-+	if (xas->xa_node != XA_ERROR(-ENOMEM)) {
-+		xas_destroy(xas);
-+		return false;
-+	}
-+	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
-+		gfp |= __GFP_ACCOUNT;
-+	xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
-+	if (!xas->xa_alloc)
-+		return xas_trim(xas);
-+	xas->xa_alloc->parent = NULL;
-+	XA_NODE_BUG_ON(xas->xa_alloc, !list_empty(&xas->xa_alloc->private_list));
-+	xas->xa_node = XAS_RESTART;
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(xas_nomem);
-+
-+/*
-+ * __xas_nomem() - Drop locks and allocate memory if needed.
-+ * @xas: XArray operation state.
-+ * @gfp: Memory allocation flags.
-+ *
-+ * Internal variant of xas_nomem().
-+ *
-+ * Return: true if memory was needed, and was successfully allocated.
-+ */
-+static bool __xas_nomem(struct xa_state *xas, gfp_t gfp)
-+	__must_hold(xas->xa->xa_lock)
-+{
-+	unsigned int lock_type = xa_lock_type(xas->xa);
-+
-+	if (xas->xa_node != XA_ERROR(-ENOMEM)) {
-+		xas_destroy(xas);
-+		return false;
-+	}
-+	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
-+		gfp |= __GFP_ACCOUNT;
-+	if (gfpflags_allow_blocking(gfp)) {
-+		xas_unlock_type(xas, lock_type);
-+		xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
-+		xas_lock_type(xas, lock_type);
-+	} else {
-+		xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
-+	}
-+	if (!xas->xa_alloc)
-+		return __xas_trim(xas);
-+	xas->xa_alloc->parent = NULL;
-+	XA_NODE_BUG_ON(xas->xa_alloc, !list_empty(&xas->xa_alloc->private_list));
-+	xas->xa_node = XAS_RESTART;
-+	return true;
-+}
-+
- /*
-  * xas_expand adds nodes to the head of the tree until it has reached
-  * sufficient height to be able to contain @xas->xa_index
+Thanks for the context. So I guess it makes sense to keep the check
+"recommended" for both functions.
