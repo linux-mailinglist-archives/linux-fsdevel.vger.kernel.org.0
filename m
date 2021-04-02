@@ -2,41 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62834352716
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Apr 2021 09:49:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10A86352733
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Apr 2021 10:04:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234327AbhDBHtm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Apr 2021 03:49:42 -0400
-Received: from verein.lst.de ([213.95.11.211]:42836 "EHLO verein.lst.de"
+        id S234361AbhDBIEb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Apr 2021 04:04:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234184AbhDBHtm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Apr 2021 03:49:42 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 1C27A68BEB; Fri,  2 Apr 2021 09:49:37 +0200 (CEST)
-Date:   Fri, 2 Apr 2021 09:49:36 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>, dan.j.williams@intel.com
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
-        darrick.wong@oracle.com, willy@infradead.org, jack@suse.cz,
-        viro@zeniv.linux.org.uk, linux-btrfs@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, david@fromorbit.com, hch@lst.de,
-        rgoldwyn@suse.de, Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v3 00/10] fsdax,xfs: Add reflink&dedupe support for
- fsdax
-Message-ID: <20210402074936.GB7057@lst.de>
-References: <20210319015237.993880-1-ruansy.fnst@fujitsu.com>
+        id S233521AbhDBIE3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Apr 2021 04:04:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id EC3FF61104;
+        Fri,  2 Apr 2021 08:04:25 +0000 (UTC)
+Date:   Fri, 2 Apr 2021 10:04:23 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>
+Subject: Re: [PATCH v9 1/9] iov_iter: add copy_struct_from_iter()
+Message-ID: <20210402080423.t26zd34p2oxbzvuj@wittgenstein>
+References: <cover.1617258892.git.osandov@fb.com>
+ <0e7270919b461c4249557b12c7dfce0ad35af300.1617258892.git.osandov@fb.com>
+ <CAHk-=wgpn=GYW=2ZNizdVdM0qGGk_iM_Ho=0eawhNaKHifSdpg@mail.gmail.com>
+ <YGbIwOv0yq0z8i8K@relinquished.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210319015237.993880-1-ruansy.fnst@fujitsu.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <YGbIwOv0yq0z8i8K@relinquished.localdomain>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Shiyang, Dan:
+On Fri, Apr 02, 2021 at 12:33:20AM -0700, Omar Sandoval wrote:
+> On Thu, Apr 01, 2021 at 09:05:22AM -0700, Linus Torvalds wrote:
+> > On Wed, Mar 31, 2021 at 11:51 PM Omar Sandoval <osandov@osandov.com> wrote:
+> > >
+> > > + *
+> > > + * The recommended usage is something like the following:
+> > > + *
+> > > + *     if (usize > PAGE_SIZE)
+> > > + *       return -E2BIG;
+> > 
+> > Maybe this should be more than a recommendation, and just be inside
+> > copy_struct_from_iter(), because otherwise the "check_zeroed_user()"
+> > call might be quite the timesink for somebody who does something
+> > stupid.
+> 
+> I did actually almost send this out with the check in
+> copy_struct_from_iter(), but decided not to for consistency with
+> copy_struct_from_user().
+> 
+> openat2() seems to be the only user of copy_struct_from_user() that
+> doesn't limit to PAGE_SIZE, which is odd given that Aleksa wrote both
 
-given that the whole reflink+dax thing is going to take a while and thus
-not going to happen for this merge window, what about queueing up the
-cleanup patches 1,2 and 3 so that we can reduce the patch load a little?
+Al said there's nothing wrong with copying large chunks of memory so we
+shouldn't limit the helper but instead limit the callers which have
+expectations about their size limit:
+https://lore.kernel.org/lkml/20190905182801.GR1131@ZenIV.linux.org.uk/
+
+Christian
