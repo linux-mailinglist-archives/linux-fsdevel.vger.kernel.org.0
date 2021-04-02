@@ -2,127 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B781D352AB9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Apr 2021 14:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 732AA352AFF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Apr 2021 15:27:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235464AbhDBMh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Apr 2021 08:37:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53680 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229932AbhDBMhZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Apr 2021 08:37:25 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 57E0C61002;
-        Fri,  2 Apr 2021 12:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617367044;
-        bh=dUbTt4/JMI0Wi0hAdKMzvQDwqNf84SO9tY537ehAXeA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GoIkUPhVFBewCC2U86mUUUZBWAT3+TSZeHX0eLYf1HjbOXexFNb0w4byPaAZw2uz7
-         sYQKo13OrjfIUT/qN8HEeAy0iTENDkwDfpBHGb+0mlrrb/KjvCb4ncuh7+trLlHUkf
-         lN4hU35ettriK4Aod/Q/TIF/G6M7Ib5HGHmGvyjk2QGbK6RcjtkPtMGi2iE3yrsEdU
-         f4cDGxteEW8A4lxLeBtfy0/H7cokFtVWI8zjwjjXm+R/uL/qZuzdLBlLQsIJMqndX8
-         G2zAL9DUVnfWOdtG7Zx4BBJcpwN++FpZ6VbC6Ok/m1Z8RQybs4iny9ee995OpzlmNj
-         i2I0m69ageftQ==
-From:   Christian Brauner <brauner@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Giuseppe Scrivano <gscrivan@redhat.com>
-Subject: [PATCH 3/3] file: simplify logic in __close_range()
-Date:   Fri,  2 Apr 2021 14:35:48 +0200
-Message-Id: <20210402123548.108372-4-brauner@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <00000000000069c40405be6bdad4@google.com>
-References: <00000000000069c40405be6bdad4@google.com>
+        id S235366AbhDBN1n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Apr 2021 09:27:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60892 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229932AbhDBN1n (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 2 Apr 2021 09:27:43 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE78EC0613E6;
+        Fri,  2 Apr 2021 06:27:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Quv+d5ruToqASsYHkDYyM+RNKRKLkPKY2MzE/OEcBCc=; b=Hn4p16U0Xxhq5upbBRvlz8n2ox
+        zWm3vcPITR6WIgIRjEtrgfbpywR54mfRiOw1cS0cS9diYxrum7asLMiUvNEtR/bUQa9suts9rquNt
+        6h5DAKJQR8mxrMOT6YRTTRA2o9i73/i4wO3P43uXwZ/0kXaIRnEjeWSgQwXrfi/N/LUHpJalqporl
+        HfQAdmqsnJh/m1SlQtGsDDjmv81jNN5D6vhUhWLtxaZyNq1MxY3XN5tDgMXYqNBQBTO9ljSjUqaFY
+        pP5P053z76nhNadrx0wLL6GPQXV/dEzbk9NmQ68ylZ8oFQW2QYwjZRVpLURl9rRZnVeP4iXMTBLn+
+        cRrcvYcA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lSJpM-007gLj-Br; Fri, 02 Apr 2021 13:27:14 +0000
+Date:   Fri, 2 Apr 2021 14:27:08 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: BUG_ON(!mapping_empty(&inode->i_data))
+Message-ID: <20210402132708.GM351017@casper.infradead.org>
+References: <alpine.LSU.2.11.2103301654520.2648@eggly.anvils>
+ <20210331024913.GS351017@casper.infradead.org>
+ <alpine.LSU.2.11.2103311413560.1201@eggly.anvils>
+ <20210401170615.GH351017@casper.infradead.org>
+ <20210402031305.GK351017@casper.infradead.org>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=hxAQsk9Vm8whjH4fxdkcMpV9D/g/lrfRks3myDn8G5c=; m=nVAEuvMh4LK8seH9ue5IB38FN/6opr9N10BP3dDo73k=; p=c6iH7+6Y7h0lMivORcnihZU6RmsASk6k6ixprq2fgP8=; g=d55e07709d088c140ca4de213024a3759b86a094
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYGcPkwAKCRCRxhvAZXjcoiIYAQDvmHB 2mTiXLZaKEdlR+VJV0L4UXsCsU8pj5ca3PqhcdQD/eYIC8ayng5KsrLzBotDqfWYDVGfDAnoHymoI cURv1g4=
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210402031305.GK351017@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+On Fri, Apr 02, 2021 at 04:13:05AM +0100, Matthew Wilcox wrote:
+> +	for (;;) {
+> +		xas_load(xas);
+> +		if (!xas_is_node(xas))
+> +			break;
+> +		xas_delete_node(xas);
+> +		xas->xa_index -= XA_CHUNK_SIZE;
+> +		if (xas->xa_index < index)
+> +			break;
 
-It never looked too pleasant and it doesn't really buy us anything
-anymore now that CLOSE_RANGE_CLOEXEC exists and we need to retake the
-current maximum under the lock for it anyway. This also makes the logic
-easier to follow.
+That's a bug.  index can be 0, so the condition would never be true.
+It should be:
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Giuseppe Scrivano <gscrivan@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/file.c | 31 ++++++++++++++-----------------
- 1 file changed, 14 insertions(+), 17 deletions(-)
+		if (xas->xa_index <= (index | XA_CHUNK_MASK))
+			break;
+		xas->xa_index -= XA_CHUNK_SIZE;
 
-diff --git a/fs/file.c b/fs/file.c
-index 740040346a98..ed46cd3ae225 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -701,7 +701,6 @@ static inline void __range_close(struct files_struct *cur_fds, unsigned int fd,
-  */
- int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
- {
--	unsigned int cur_max;
- 	struct task_struct *me = current;
- 	struct files_struct *cur_fds = me->files, *fds = NULL;
- 
-@@ -711,26 +710,26 @@ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
- 	if (fd > max_fd)
- 		return -EINVAL;
- 
--	rcu_read_lock();
--	cur_max = files_fdtable(cur_fds)->max_fds;
--	rcu_read_unlock();
--
--	/* cap to last valid index into fdtable */
--	cur_max--;
--
- 	if (flags & CLOSE_RANGE_UNSHARE) {
- 		int ret;
- 		unsigned int max_unshare_fds = NR_OPEN_MAX;
- 
- 		/*
--		 * If the requested range is greater than the current maximum,
--		 * we're closing everything so only copy all file descriptors
--		 * beneath the lowest file descriptor.
--		 * If the caller requested all fds to be made cloexec copy all
--		 * of the file descriptors since they still want to use them.
-+		 * If the caller requested all fds to be made cloexec we always
-+		 * copy all of the file descriptors since they still want to
-+		 * use them.
- 		 */
--		if (!(flags & CLOSE_RANGE_CLOEXEC) && (max_fd >= cur_max))
--			max_unshare_fds = fd;
-+		if (!(flags & CLOSE_RANGE_CLOEXEC)) {
-+			/*
-+			 * If the requested range is greater than the current
-+			 * maximum, we're closing everything so only copy all
-+			 * file descriptors beneath the lowest file descriptor.
-+			 */
-+			rcu_read_lock();
-+			if (max_fd >= last_fd(files_fdtable(cur_fds)))
-+				max_unshare_fds = fd;
-+			rcu_read_unlock();
-+		}
- 
- 		ret = unshare_fd(CLONE_FILES, max_unshare_fds, &fds);
- 		if (ret)
-@@ -744,8 +743,6 @@ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
- 			swap(cur_fds, fds);
- 	}
- 
--	max_fd = min(max_fd, cur_max);
--
- 	if (flags & CLOSE_RANGE_CLOEXEC)
- 		__range_cloexec(cur_fds, fd, max_fd);
- 	else
--- 
-2.27.0
+The test doesn't notice this bug because the tree is otherwise empty,
+and the !xas_is_node(xas) condition is hit first.  The next test will
+notice this.
 
