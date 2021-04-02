@@ -2,165 +2,407 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC1CF352B1E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Apr 2021 15:56:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0A69352B86
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Apr 2021 16:42:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235285AbhDBNvH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Apr 2021 09:51:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37652 "EHLO
+        id S235812AbhDBOgo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Apr 2021 10:36:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229932AbhDBNvH (ORCPT
+        with ESMTP id S235728AbhDBOgo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Apr 2021 09:51:07 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F132EC0613E6;
-        Fri,  2 Apr 2021 06:51:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Ojnb5AIvRYpHX3nwnaimhPwXRkxGFRq4anavZ06KIcI=; b=A9CmSiqJOUZw+FjiFGvjfONx76
-        7f9d8eSVn8bxnE1bFTz4yK2ITxpmhlxKrHZfGByE6RdDKzoUa96V+h6/70XUpdxHzuZQY/esWkEa/
-        zmpX0+bcTGAbxBOIPWgU1ckx/krtVPfz8jK11qb3At656T1LQ486yxUFYx9LHSWeX7JKs53wlMXst
-        5V4ktpU0iVkI+MR9gEPWsDCmchm/vOUUaQyNWwEr9E4id+dyu46pg6X1kQ777PpNALbjQwboGLkfR
-        gHQwdFzYJnXfhB91htKAJXkL+8RqW4elR1xFm/orVtWCMd3Bo02ynVxc2S4k2qkMNXB4hQb3U5Egp
-        N/SeSzuQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lSKC7-007hZo-0W; Fri, 02 Apr 2021 13:50:48 +0000
-Date:   Fri, 2 Apr 2021 14:50:38 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [RFC] Convert sysv filesystem to use folios exclusively
-Message-ID: <20210402135038.GN351017@casper.infradead.org>
-References: <20210325032202.GS1719932@casper.infradead.org>
- <CAOQ4uxikP_GFNYzgatON2dRQyiHvTBP5iO4Xk091ruLUBDMt-w@mail.gmail.com>
+        Fri, 2 Apr 2021 10:36:44 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F453C0613E6;
+        Fri,  2 Apr 2021 07:36:42 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id k8so4931867wrc.3;
+        Fri, 02 Apr 2021 07:36:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pBNTZhzid/lSsmOKRnu9pitKT0WTypiimq+mXW76GFA=;
+        b=d2x6vyS8hLbBVczYz6R3IJ1p/Po8WPtGEFdlDA7tZUOv1gPdiYmhrx1Uk9e8eGWGZE
+         Knv+4a2H1+Y4RH8tNj16pRBVbuV9VaeS2lCXDGpaOiId3nMTgnSIBl9HdV+heWmEFmna
+         ZCMEb/m09T0CoqlLSnS59+L/GkCwAEDhCHlMxqsLi+At9Ns+r6ps4TFc9ACteWNqpeLz
+         2KhcSW07iPBm0qhxc/knNWcu/ZH81NZqmK20djZcAFU7Ag1aZyOWGd2NctlYWUWoseAH
+         Zvh48HXLqphVZXejKT4xFDoMLaxDC1BtasJOvQr4s2xszf1iE27Hq/YnxvCTvW4Lv93z
+         BwRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=pBNTZhzid/lSsmOKRnu9pitKT0WTypiimq+mXW76GFA=;
+        b=dcmIZlEaB1nE9D1mSjGweanNOOATRPmaSEr+ly6c6GbJAGdbSXMhaTOVzHYh7mOdOJ
+         aL1/8Scq6PtdRJzildOzNNhVXjpmM6jJ0ouGorlURl5H2HYcEQGzoUh1fhW0D9IRA+Gn
+         dBLGOhyGHhjG/2JC0U1Aslsx5klcEoRMGzSKOXF+3/KR5SUPwHjjcnoP167tluQkto7d
+         y+yw2SVKkqMvSVjt+u9mwPCCDaI3n9rx73kgLiPNU9VeZOSXy9NwemCzEn16Ht1rBCkE
+         dik/g5CZj8WSTH2UbCrIiBfHuDd2x1DnFyBMe2GCqLFuqkO/6yfR0GF4Sa7Lxc/exuZ/
+         fabg==
+X-Gm-Message-State: AOAM5331qbVW6N2tM/oKQfzCu9zjAou7T522iqkaFW4FqhVfRxCPWCzL
+        lEBir5QqWPDQALzI9HU2sHw=
+X-Google-Smtp-Source: ABdhPJzTTfiKONkh1rgNrq6+ZYUfhlExf3DyUCpHV+FiGKjsO9T0pJN640G5tF9Nh7VkUqoqnnOqAg==
+X-Received: by 2002:adf:f48e:: with SMTP id l14mr2656780wro.257.1617374201183;
+        Fri, 02 Apr 2021 07:36:41 -0700 (PDT)
+Received: from [192.168.8.131] ([148.252.129.229])
+        by smtp.gmail.com with ESMTPSA id z1sm15062318wru.95.2021.04.02.07.36.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Apr 2021 07:36:40 -0700 (PDT)
+Subject: Re: [PATCH v3 RESEND] iomap: set REQ_NOWAIT according to IOCB_NOWAIT
+ in Direct IO
+To:     JeffleXu <jefflexu@linux.alibaba.com>,
+        Dave Chinner <david@fromorbit.com>
+Cc:     Hao Xu <haoxu@linux.alibaba.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
+ <20201207022130.GC4170059@dread.disaster.area>
+ <9bbfafcf-688c-bad9-c288-6478a88c6097@linux.alibaba.com>
+ <20201209212358.GE4170059@dread.disaster.area>
+ <adf32418-dede-0b58-13da-40093e1e4e2d@linux.alibaba.com>
+ <20201210051808.GF4170059@dread.disaster.area>
+ <fdb6e01a-a662-90fa-3844-410b2107e850@linux.alibaba.com>
+ <20201214025655.GH3913616@dread.disaster.area>
+ <a0760c52-cdd7-eb66-27dc-27582c2db825@linux.alibaba.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <1e687bef-3d96-69ad-ec98-c674f5a88ca2@gmail.com>
+Date:   Fri, 2 Apr 2021 15:32:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxikP_GFNYzgatON2dRQyiHvTBP5iO4Xk091ruLUBDMt-w@mail.gmail.com>
+In-Reply-To: <a0760c52-cdd7-eb66-27dc-27582c2db825@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 02, 2021 at 09:19:36AM +0300, Amir Goldstein wrote:
-> On Thu, Mar 25, 2021 at 5:43 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > I decided to see what a filesystem free from struct page would look
-> > like.  I chose sysv more-or-less at random; I wanted a relatively simple
-> > filesystem, but I didn't want a toy.  The advantage of sysv is that the
-> > maintainer is quite interested in folios ;-)
+On 15/12/2020 09:43, JeffleXu wrote:
+> Thanks for your explanation, again.
+
+Got stale, let's bring it up again.
+
 > 
-> I would like to address only the social engineering aspect of the s/page/folio
-> conversion.
+> On 12/14/20 10:56 AM, Dave Chinner wrote:
+>> On Fri, Dec 11, 2020 at 10:50:44AM +0800, JeffleXu wrote:
+>>> Excellent explanation! Thanks a lot.
+>>>
+>>> Still some questions below.
+>>>
+>>> On 12/10/20 1:18 PM, Dave Chinner wrote:
+>>>> On Thu, Dec 10, 2020 at 09:55:32AM +0800, JeffleXu wrote:
+>>>>> Sorry I'm still a little confused.
+>>>>>
+>>>>>
+>>>>> On 12/10/20 5:23 AM, Dave Chinner wrote:
+>>>>>> On Tue, Dec 08, 2020 at 01:46:47PM +0800, JeffleXu wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 12/7/20 10:21 AM, Dave Chinner wrote:
+>>>>>>>> On Fri, Dec 04, 2020 at 05:44:56PM +0800, Hao Xu wrote:
+>>>>>>>>> Currently, IOCB_NOWAIT is ignored in Direct IO, REQ_NOWAIT is only set
+>>>>>>>>> when IOCB_HIPRI is set. But REQ_NOWAIT should be set as well when
+>>>>>>>>> IOCB_NOWAIT is set.
+>>>>>>>>>
+>>>>>>>>> Suggested-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+>>>>>>>>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+>>>>>>>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+>>>>>>>>> ---
+>>>>>>>>>
+>>>>>>>>> Hi all,
+>>>>>>>>> I tested fio io_uring direct read for a file on ext4 filesystem on a
+>>>>>>>>> nvme ssd. I found that IOCB_NOWAIT is ignored in iomap layer, which
+>>>>>>>>> means REQ_NOWAIT is not set in bio->bi_opf.
+>>>>>>>>
+>>>>>>>> What iomap is doing is correct behaviour. IOCB_NOWAIT applies to the
+>>>>>>>> filesystem behaviour, not the block device.
+>>>>>>>>
+>>>>>>>> REQ_NOWAIT can result in partial IO failures because the error is
+>>>>>>>> only reported to the iomap layer via IO completions. Hence we can
+>>>>>>>> split a DIO into multiple bios and have random bios in that IO fail
+>>>>>>>> with EAGAIN because REQ_NOWAIT is set. This error will
+>>>>>>>> get reported to the submitter via completion, and it will override
+>>>>>>>> any of the partial IOs that actually completed.
+>>>>>>>>
+>>>>>>>> Hence, like the recently reported multi-mapping IOCB_NOWAIT bug
+>>>>>>>> reported by Jens and fixed in commit 883a790a8440 ("xfs: don't allow
+>>>>>>>> NOWAIT DIO across extent boundaries") we'll get silent partial
+>>>>>>>> writes occurring because the second submitted bio in an IO can
+>>>>>>>> trigger EAGAIN errors with partial IO completion having already
+>>>>>>>> occurred.
+>>>>>>>>
+>>>>>
+>>>>>>>> Further, we don't allow partial IO completion for DIO on XFS at all.
+>>>>>>>> DIO must be completely submitted and completed or return an error
+>>>>>>>> without having issued any IO at all.  Hence using REQ_NOWAIT for
+>>>>>>>> DIO bios is incorrect and not desirable.
+>>>>>
+>>>>>
+>>>>> The current block layer implementation causes that, as long as one split
+>>>>> bio fails, then the whole DIO fails, in which case several split bios
+>>>>> maybe have succeeded and the content has been written to the disk. This
+>>>>> is obviously what you called "partial IO completion".
+>>>>>
+>>>>> I'm just concerned on how do you achieve that "DIO must return an error
+>>>>> without having issued any IO at all". Do you have some method of
+>>>>> reverting the content has already been written into the disk when a
+>>>>> partial error happened?
+>>>>
+>>>> I think you've misunderstood what I was saying. I did not say
+>>>> "DIO must return an error without having issued any IO at all".
+>>>> There are two parts to my statement, and you just smashed part of
+>>>> the first statement into part of the second statement and came up
+>>>> something I didn't actually say.
+>>>>
+>>>> The first statement is:
+>>>>
+>>>> 	1. "DIO must be fully submitted and completed ...."
+>>>>
+>>>> That is, if we need to break an IO up into multiple parts, the
+>>>> entire IO must be submitted and completed as a whole. We do not
+>>>> allow partial submission or completion of the IO at all because we
+>>>> cannot accurately report what parts of a multi-bio DIO that failed
+>>>> through the completion interface. IOWs, if any of the IOs after the
+>>>> first one fail submission, then we must complete all the IOs that
+>>>> have already been submitted before we can report the failure that
+>>>> occurred during the IO.
+>>>>
+>>>
+>>> 1. Actually I'm quite not clear on what you called "partial submission
+>>> or completion". Even when REQ_NOWAIT is set for all split bios of one
+>>> DIO, then all these split bios are **submitted** to block layer through
+>>> submit_bio(). Even when one split bio after the first one failed
+>>> **inside** submit_bio() because of REQ_NOWAIT, submit_bio() only returns
+>>> BLK_QC_T_NONE, and the DIO layer (such as __blkdev_direct_IO()) will
+>>> still call submit_bio() for the remaining split bios. And then only when
+>>> all split bios complete, will the whole kiocb complete.
+>>
+>> Yes, so what you have there is complete submission and completion.
+>> i.e. what I described as #1.
+>>
+>>> So if you define "submission" as submitting to hardware disk (such as
+>>> nvme device driver), then it is indeed **partial submission** when
+>>> REQ_NOWAIT set. But if the definition of "submission" is actually
+>>> "submitting to block layer by calling submit_bio()", then all split bios
+>>> of one DIO are indeed submitted to block layer, even when one split bio
+>>> gets BLK_STS_AGAIN because of REQ_NOWIAT.
+>>
+>> The latter is the definition we using in iomap, because at this
+>> layer we are the ones submitting the bios and defining the bounds of
+>> the IO. What happens in the lower layers does not concern us here.
+>>
+>> Partial submission can occur at the iomap layer if IOCB_NOWAIT is
+>> set - that was what 883a790a8440 fixed. i.e. we do
+>>
+>> 	loop for all mapped extents {
+>> 		loop for mapped range {
+>> 			submit_bio(subrange)
+>> 		}
+>> 	}
+>>
+>> So if we have an extent range like so:
+>>
+>> 	start					end
+>> 	+-----------+---------+------+-----------+
+>> 	  ext 1        ext 2    ext 3    ext 4
+>>
+>> We actually have to loop above 4 times to map the 4 extents that
+>> span the user IO range. That means we need to submit at least 4
+>> independent bios to run this IO.
+>>
+>> So if we submit all the bios in a first mapped range (ext 1), then
+>> go back to the filesystem to get the map for the next range to
+>> submit and it returns -EAGAIN, we break out of the outer loop
+>> without having completely submitted bios for the range spanning ext
+>> 2, 3 or 4. That's partial IO submission as the *iomap layer* defines
+>> it.
 > 
-> Personally, as a filesystem developer, I find the concept of the folio
-> abstraction very useful and I think that the word is short, clear and witty.
+> Now I can understand the context of commit 883a790a8440 and the root
+> issue here.
 > 
-> But the example above (writepage = sysv_write_folio) just goes to show
-> how deeply rooted the term 'page' is throughout the kernel and this is
-> just the tip of the iceberg. There are documents, comments and decades
-> of using 'page' in our language - those will be very hard to root out.
+>>
+>> And the "silent" part of the "partial write" it came from the fact
+>> this propagated -EAGAIN to the user despite the fact that some IO
+>> was actually successfully committed and completed. IOws, we may have
+>> corrupted data on disk by telling the user nothing was done with
+>> -EAGAIN rather than failing the partial IO with -EIO.>
+>> This is the problem commit 883a790a8440 fixed.
+>>
+>>> 2. One DIO could be split into multiple bios in DIO layer. Similarly one
+>>> big bio could be split into multiple bios in block layer. In the
+>>> situation when all split bios have already been submitted to block
+>>> layer, since the IO completion interface could return only one error
+>>> code, the whole DIO could fail as long as one split bio fails, while
+>>> several other split bios could have already succeeded and the
+>>> corresponding disk sectors have already been overwritten.
+>>
+>> Yup. That can happen. That's a data corruption for which prevention
+>> is the responsibility of the layer doing the splitting and
+>> recombining. 
 > 
-> My first impression from looking at sample patches is that 90% of the churn
-> does not serve any good purpose and by that, I am referring to the
-> conversion of local variable names and struct field names s/page/folio.
+> Unfortunately the block layer doesn't handle this well currently.
 > 
-> Those conversions won't add any clarity to subsystems that only need to
-> deal with the simple page type (i.e. non-tail pages).
-> The compiler type checks will have already did that job already and changing
-> the name of the variables does not help in this case.
 > 
-> I think someone already proposed the "boring" name struct page_head as
-> a replacement for the "cool" name struct folio.
+>> The iomap layer knows nothing of this - this situation
+>> needs to result in the entire bio that was split being marked with
+>> an EIO error because we do not know what parts of the bio made it to
+>> disk or not. IOWs, the result of the IO is undefined, and so we
+>> need to return EIO to the user.
 > 
-> Whether it's page_head, page_ref or what not, anything that can
-> be written in a way that these sort of "thin" conversions make sense:
+> What's the difference of EIO and EAGAIN here, besides the literal
+> semantics, when the data corruption has already happened? The upper user
+> has to resubmit the bio when EAGAIN is received, and the data corruption
+> should disappear once the resubmission completes successfully. But the
+> bio may not be resubmitted when EIO is received, and the data corruption
+> is just left there.
 > 
-> -static int sysv_readpage(struct file *file, struct page *page)
-> +static int sysv_readpage(struct file *file, struct page_head *page)
->  {
->        return block_read_full_page(page, get_block);
->  }
 > 
-> So when a filesystem developer reviews your conversion patch
-> he goes: "Whatever, if the compiler says this is fine, it's fine".
+> 
+>>
+>> This "data is inconsistent until all sub-devices complete their IO
+>> successfully" situation is also known as the "RAID 5 write hole".
+>> Crash while these IOs are in flight, and some might hit the disk and
+>> some might not. When the system comes back up, you've got no idea
+>> which part of that IO was completed or not, so the data in the
+>> entire stripe is corrupt.
+>>
+>>> I'm not sure
+>>> if this is what you called "silent partial writes", and if this is the
+>>> core reason for commit 883a790a8440 ("xfs: don't allow NOWAIT DIO across
+>>> extent boundaries") you mentioned in previous mail.
+>>
+>> No, it's not the same thing. This "split IO failed" should never
+>> result in a silent partial write - it should always result in EIO.
+> 
+> I'm doubted about this.
+> 
+> The block layer could split one big bio into multiple split bios. Also
+> one big DIO from one extent could also be split into multiple split
+> bios, since one single bio could maintain at most BIO_MAX_PAGES i.e. 256
+> segments. (see the loop in iomap_dio_bio_actor()) If the input iov_iter
+> contains more than 256 segments, then it will be split into multiple
+> split bios, though this iov_iter may be mapped to one single extent.
+> 
+> And once one split bio (among all these split bios) failed with EAGAIN,
+> the completion status of the whole IO is EAGAIN, rather than EIO, at
+> least for the current implementation of block layer. So this should also
+> be called "silent partial write", since partial bios may have been
+> written to the disk successfully, while still **EAGAIN** returned in
+> this situation?
+> 
+> 
+>>
+>>> If this is the case, then it seems that the IO completion interface
+>>> should be blamed for this issue. Besides REQ_NOWIAT, there may be more
+>>> situations that will cause "silent partial writes".
+>>
+>> Yes, there are many potential causes of this behaviour. They are all
+>> considered to be a data corruption, and so in all cases they should
+>> be returning EIO as the completion status to the submitter of the
+>> bio.
+>>>> As long as one split bios could fail (besides EAGAIN, maybe EOPNOTSUPP,
+>>> if possible), while other split bios may still succeeds, then the error
+>>> of one split bio will still override the completion status of the whole
+>>> DIO.
+>>
+>> If you get EOPNOTSUPP from on device in bio split across many
+>> devices, then you have a bug in the layer that is splitting the IO.
+>> All the sub-devices need to support the operation, or the top level
+>> device cannot safely support that operation.
+>>
+>> And if one device didn't do the opreation, then we have inconsistent
+>> data on disk now and so EIO is the result that should be returned to
+>> the user.
+> 
+> EOPNOTSUPP is just an example here. I admit that NOWAIT may be
+> problematic here. But what I mean here is that, once one split bio
+> fails, the whole IO fails with the same error code e.g.
+> EAGIAN/EOPNOTSUPP rather than EIO, while partial split bios may have
+> already succeeded. IOWs, the block layer may also trigger "silent
+> partial write" even without REQ_NOWAIT, though the possibility of
+> "silent partial write" may increase a lot when REQ_NOWAIT applied.
+> 
+> 
+>>
+>>> In this case "silent partial writes" is still possible? In my
+>>> understanding, passing REQ_NOWAIT flags from IOCB_NOWAIT in DIO layer
+>>> only makes the problem more likely to happen, but it's not the only
+>>> source of this problem?
+>>
+>> Passing REQ_NOWAIT from the iomap dio layer means that we will see
+>> data corruptions in stable storage simply due to high IO load, rather
+>> than the much, much rarer situations of software bugs or actual
+>> hardware errors.  IOWs, REQ_NOWAIT essentially guarantees data
+>> corruption in stable storage of a perfectly working storage stack
+>> will occur and there is nothing the application can do to prevent
+>> that occurring.
+>>
+>> The worst part of this is that REQ_NOWAIT also requires the
+>> application to detect and correct the corruption caused by the
+>> kernel using REQ_NOWAIT inappropriately. And if the application
+>> crashes before it can correct the data corruption, it's suddenly a
+>> permanent, uncorrectable data corruption.
+>>
+>> REQ_NOWAIT is dangerous and can easily cause harm to user data by
+>> aborting parts of submitted IOs. IOWs, it's more like a random IO
+>> error injection mechanism than a useful method of doing safe
+>> non-blocking IO.
+>>
+>> Cheers,
+>>
+>> Dave.
+>>
+> 
 
-The problem with page_head is that head page already has a meaning,
-which is that there are definitely tail pages following it.  Hence
-'folio' for 'head or base page'.
-
-I think reasonable people can disagree on whether we should keep the
-address_space operation called readpage or rename it to read_folio.
-I agree with you that the word "page" is deeply ingrained in our
-vocabulary.  The problem is that we don't all agree on what it means.
-
-I am proposing splitting the two meanings, where page refers to the
-finest granularity at which things are mapped by the MMU and folio is
-used to refer to a group of pages which are managed together by the MM.
-This is necessarily going to be churn because we've been using 'page'
-for both for so very long.
-
-As far as "thin" conversions go, here's the commit where I do the readpage
-conversion to folio:
-
-https://git.infradead.org/users/willy/pagecache.git/commitdiff/a3912fc2313e5c249e3d5b85eefd3394b0745b8f
-
-Some really are as simple as you propose:
-
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 974dd567e00fe73d1a7a414f3c5e9974e22b8a1e..1d2e228c49e756b55e8fe1ce166b64ca119ca96a 100644 (file)
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -635,9 +635,9 @@ static int blkdev_writepage(struct page *page, struct writeback_control *wbc)
-        return block_write_full_page(page, blkdev_get_block, wbc);
- }
- 
--static int blkdev_readpage(struct file * file, struct page * page)
-+static int blkdev_readpage(struct file *file, struct folio *folio)
- {
--       return block_read_full_page(page, blkdev_get_block);
-+       return block_read_full_page(folio, blkdev_get_block);
- }
- 
- static void blkdev_readahead(struct readahead_control *rac)
-
-Arguably, I should also rename block_read_full_page() to block_read_folio()
-as part of this commit.  And I probably shouldn't be as enthusiastic about
-spreading folios around in the same commit, eg I do this to btrfs:
-
-+++ b/fs/btrfs/free-space-cache.c
-@@ -450,15 +450,16 @@ static int io_ctl_prepare_pages(struct btrfs_io_ctl *io_ctl, bool uptodate)
- 
-                io_ctl->pages[i] = page;
-                if (uptodate && !PageUptodate(page)) {
--                       btrfs_readpage(NULL, page);
--                       lock_page(page);
--                       if (page->mapping != inode->i_mapping) {
-+                       struct folio *folio = page_folio(page);
-+                       btrfs_readpage(NULL, folio);
-+                       lock_folio(folio);
-+                       if (folio->page.mapping != inode->i_mapping) {
-                                btrfs_err(BTRFS_I(inode)->root->fs_info,
-                                          "free space cache page truncated");
-                                io_ctl_drop_pages(io_ctl);
-                                return -EIO;
-                        }
--                       if (!PageUptodate(page)) {
-+                       if (!FolioUptodate(folio)) {
-                                btrfs_err(BTRFS_I(inode)->root->fs_info,
-                                           "error reading free space cache");
-                                io_ctl_drop_pages(io_ctl);
-
-where it could just be:
-
-
--                       btrfs_readpage(NULL, page);
-+			btrfs_readpage(NULL, page_folio(page));
-
-and save all the benefits of using folios to a later patch.
-
-those kinds of things are why I haven't submitted that patch for
-review yet.
+-- 
+Pavel Begunkov
