@@ -2,96 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2D9835394D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Apr 2021 20:01:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E244353963
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Apr 2021 20:25:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231303AbhDDSBn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Apr 2021 14:01:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58782 "EHLO
+        id S230495AbhDDSZG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Apr 2021 14:25:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229861AbhDDSBd (ORCPT
+        with ESMTP id S229861AbhDDSZF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Apr 2021 14:01:33 -0400
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5885BC0617A7;
-        Sun,  4 Apr 2021 11:01:28 -0700 (PDT)
-Received: by mail-qk1-x72d.google.com with SMTP id v70so9693778qkb.8;
-        Sun, 04 Apr 2021 11:01:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=vqjTFrhw8is34xFbRLeJBk6zObb/0KU6NDcwEfDwcS0=;
-        b=l2AjGlLTHKa6vPsOcVT9lSv7QAhpNb1GX7xYJ2agOybHNczEtfkCFH8OmOx33qjzej
-         L6xkIjeDjGig1AIJjUxg7Zv9XNbsXefdFb/GnHKcBFfR3lkSLUneOAcvXaHhrYkavZDR
-         l/1VzqmAJTa1mBLECjiapkDCpOVKextkWwD/NeNFYta2KRsWyFlWCydm6JrL9XIX7l/t
-         tEZ3s5KlbhZUintD0sutFq6ELuQLeRTKm3hDFLgIXbbed6LmFHu2E34lM9aqBH+O9c/c
-         oxBGdJ2W2vmqB3jtvaYAUpZ6aOnrYV0B0m1Hlo9F14NlA5Avj4YQEzZTSp16hWhl0z4e
-         QI7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=vqjTFrhw8is34xFbRLeJBk6zObb/0KU6NDcwEfDwcS0=;
-        b=V7VCtEQ9xjw5WfKl9e+nj50qbwLAGyifXZcqWWj8URFCgbBtpHlsdsqQ3zTQ5J9Skb
-         lQgiB3cIWGNoRT9tMujwH2H4uvfh+ArBq43It87SYWc5+EfBeARgG7OhrLbgRrZzGF2f
-         BUpW064n/IYqEtNsAY1sb44YOp5kjakkqQ4kkPqEnh57QEhLjy0QUU9HMNIjRWgM72jz
-         qpfAfUL24xT4Vsqq4spcv2Z5AH5Tis3DMnz44BgsUweAdgPxd2opjqTgzvIp/kg4gxlR
-         b+BLqkCDYoNvDSjeCza+tl1WPuSSI295V6bNMoK9DOVjq4wng4TRiDFwxL2jPK4ItRYq
-         XFVg==
-X-Gm-Message-State: AOAM5335gWjoXoo/8VRFuWL4oXmWTC/lfPJNGnNcbXOLwyHUWtXCXoMp
-        zpXVAPLYS1WF6jLmpOnfMUqmTdjBrG5E3w==
-X-Google-Smtp-Source: ABdhPJzLNUaqWgD1Wf964A7EQG9L1i3NH/sayvR0/nfYb5WNXuZR+X12deaHWKWkor/+gKkJqRNq2g==
-X-Received: by 2002:a05:620a:527:: with SMTP id h7mr21428959qkh.108.1617559287424;
-        Sun, 04 Apr 2021 11:01:27 -0700 (PDT)
-Received: from localhost (dhcp-6c-ae-f6-dc-d8-61.cpe.echoes.net. [199.96.183.179])
-        by smtp.gmail.com with ESMTPSA id 79sm12220473qki.37.2021.04.04.11.01.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Apr 2021 11:01:27 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Sun, 4 Apr 2021 14:01:26 -0400
-From:   Tejun Heo <tj@kernel.org>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     viro@zeniv.linux.org.uk, axboe@fb.com, willy@infradead.org,
+        Sun, 4 Apr 2021 14:25:05 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FC88C061756;
+        Sun,  4 Apr 2021 11:24:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=rW0csn7XoqpOPoaG0JrdSLYq0KyjeZt2w0r8mrp3/Lo=; b=qk332i2lZy7ImQVl0Nt3pXDVda
+        DrP6tCq0Uq9uAsBRRTMcpk+JwcbETrzNoF4wVJ/WK663ushxk6wqlJLsH7YI5uYjFs7UhLC44pwOw
+        1XKQNvXd3yzFIfKIo3TfjK3/oGO448Cx2rq0+s7DivR+EbUS+7UjTyOUun8hIO82QthA2MSY7Sj1V
+        XaPe0FJVaLRYXsF0JWis1+6nz0QYAM7YZfGi4J5K8jNuq3tlalOKVkxNhe9+kRGEfuMZ05HxqNVPf
+        f7iH26AEfvHRyR0KJ6wsZkSSa0DR+6WM00U9AhczQ4OlgGJ03iVmJilWr09r3mZWEu4rTWVR/xadY
+        r61OMCtg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lT7Qb-00AQID-AZ; Sun, 04 Apr 2021 18:24:54 +0000
+Date:   Sun, 4 Apr 2021 19:24:53 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     syzbot <syzbot+dde0cc33951735441301@syzkaller.appspotmail.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        duanxiongchun@bytedance.com, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v3] writeback: fix obtain a reference to a freeing memcg
- css
-Message-ID: <YGn+9gY/VAc6YI/q@mtj.duckdns.org>
-References: <20210402091145.80635-1-songmuchun@bytedance.com>
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        netdev@vger.kernel.org, tglx@linutronix.de, peterz@infradead.org,
+        frederic@kernel.org
+Subject: Re: Something is leaking RCU holds from interrupt context
+Message-ID: <20210404182453.GT351017@casper.infradead.org>
+References: <00000000000025a67605bf1dd4ab@google.com>
+ <20210404102457.GS351017@casper.infradead.org>
+ <20210404164808.GZ2696@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210402091145.80635-1-songmuchun@bytedance.com>
+In-Reply-To: <20210404164808.GZ2696@paulmck-ThinkPad-P72>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 02, 2021 at 05:11:45PM +0800, Muchun Song wrote:
-> The caller of wb_get_create() should pin the memcg, because
-> wb_get_create() relies on this guarantee. The rcu read lock
-> only can guarantee that the memcg css returned by css_from_id()
-> cannot be released, but the reference of the memcg can be zero.
+On Sun, Apr 04, 2021 at 09:48:08AM -0700, Paul E. McKenney wrote:
+> On Sun, Apr 04, 2021 at 11:24:57AM +0100, Matthew Wilcox wrote:
+> > On Sat, Apr 03, 2021 at 09:15:17PM -0700, syzbot wrote:
+> > > HEAD commit:    2bb25b3a Merge tag 'mips-fixes_5.12_3' of git://git.kernel..
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=1284cc31d00000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=78ef1d159159890
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=dde0cc33951735441301
+> > > 
+> > > Unfortunately, I don't have any reproducer for this issue yet.
+> > > 
+> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > Reported-by: syzbot+dde0cc33951735441301@syzkaller.appspotmail.com
+> > > 
+> > > WARNING: suspicious RCU usage
+> > > 5.12.0-rc5-syzkaller #0 Not tainted
+> > > -----------------------------
+> > > kernel/sched/core.c:8294 Illegal context switch in RCU-bh read-side critical section!
+> > > 
+> > > other info that might help us debug this:
+> > > 
+> > > 
+> > > rcu_scheduler_active = 2, debug_locks = 0
+> > > no locks held by systemd-udevd/4825.
+> > 
+> > I think we have something that's taking the RCU read lock in
+> > (soft?) interrupt context and not releasing it properly in all
+> > situations.  This thread doesn't have any locks recorded, but
+> > lock_is_held(&rcu_bh_lock_map) is true.
+> > 
+> > Is there some debugging code that could find this?  eg should
+> > lockdep_softirq_end() check that rcu_bh_lock_map is not held?
+> > (if it's taken in process context, then BHs can't run, so if it's
+> > held at softirq exit, then there's definitely a problem).
 > 
->   rcu_read_lock()
->   memcg_css = css_from_id()
->   wb_get_create(memcg_css)
->       cgwb_create(memcg_css)
->           // css_get can change the ref counter from 0 back to 1
->           css_get(memcg_css)
->   rcu_read_unlock()
-> 
-> Fix it by holding a reference to the css before calling
-> wb_get_create(). This is not a problem I encountered in the
-> real world. Just the result of a code review.
-> 
-> Fixes: 682aa8e1a6a1 ("writeback: implement unlocked_inode_to_wb transaction and use it for stat updates")
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> Acked-by: Michal Hocko <mhocko@suse.com>
+> Something like the (untested) patch below?
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Maybe?  Will this tell us who took the lock?  I was really trying to
+throw out a suggestion in the hope that somebody who knows this area
+better than I do would tell me I was wrong.
 
-Thanks.
+> Please note that it does not make sense to also check for
+> either rcu_lock_map or rcu_sched_lock_map because either of
+> these might be held by the interrupted code.
 
--- 
-tejun
+Yes!  Although if we do it somewhere like tasklet_action_common(),
+we could do something like:
+
++++ b/kernel/softirq.c
+@@ -774,6 +774,7 @@ static void tasklet_action_common(struct softirq_action *a,
+ 
+        while (list) {
+                struct tasklet_struct *t = list;
++               unsigned long rcu_lockdep = rcu_get_lockdep_state();
+ 
+                list = list->next;
+ 
+@@ -790,6 +791,10 @@ static void tasklet_action_common(struct softirq_action *a,
+                        }
+                        tasklet_unlock(t);
+                }
++               if (rcu_lockdep != rcu_get_lockdep_state()) {
++                       printk(something useful about t);
++                       RCU_LOCKDEP_WARN(... something else useful ...);
++               }
+ 
+                local_irq_disable();
+
+where rcu_get_lockdep_state() returns a bitmap of whether the four rcu
+lockdep maps are held.
+
+We might also need something similar in __do_softirq(), in case it's
+not a tasklet that's the problem.
