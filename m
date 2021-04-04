@@ -2,80 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ACF2835363D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Apr 2021 04:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E1C5353665
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Apr 2021 06:18:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236698AbhDDCij (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 3 Apr 2021 22:38:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58814 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236618AbhDDCii (ORCPT
+        id S229789AbhDDEPX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Apr 2021 00:15:23 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:44373 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229754AbhDDEPX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 3 Apr 2021 22:38:38 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B660CC061756;
-        Sat,  3 Apr 2021 19:38:34 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lSsek-002NjV-B3; Sun, 04 Apr 2021 02:38:30 +0000
-Date:   Sun, 4 Apr 2021 02:38:30 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
-Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
-Message-ID: <YGkmpv1xNrTExS6l@zeniv-ca.linux.org.uk>
-References: <0000000000003a565e05bee596f2@google.com>
- <20210401154515.k24qdd2lzhtneu47@wittgenstein>
- <90e7e339-eaec-adb2-cfed-6dc058a117a3@kernel.dk>
- <20210401174613.vymhhrfsemypougv@wittgenstein>
- <20210401175919.jpiylhfrlb4xb67u@wittgenstein>
- <YGYa0B4gabEYi2Tx@zeniv-ca.linux.org.uk>
- <YGkloJhMFc4hEatk@zeniv-ca.linux.org.uk>
+        Sun, 4 Apr 2021 00:15:23 -0400
+Received: by mail-io1-f69.google.com with SMTP id e11so8805093ioh.11
+        for <linux-fsdevel@vger.kernel.org>; Sat, 03 Apr 2021 21:15:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=XwVdYv6tSytCkwcKFS5bJFOKjHMNQE78mO+cN9dKetk=;
+        b=Ny9cJU4qKPDC1wVX+vj1FdVTKOnLZAJyaCa8qLBWEMJenOP937PlHm1gSojtxFzzsQ
+         1yGHB2RmLt8RWJmxGwx/zxo0HKiukFZRpT+SF8mcOz63NroprNa6tuMvwtTVIc+BzvcI
+         NtRd0+Nh7MZ+DrZzIjCJLKOEfXQCD14ejv/kgbI3Zh4H+qraHnUJRYupEFgr0aqkbue1
+         /5fUTefsAneaY7Z8eZlNZ5sFd7Q1+cswDsRbTaNM0kf+mynTlNMjPbpTZLdTgyohHsDC
+         ZOu4ZxcuHfTVViPzADLrOxMXsJoI8oZIEvda5myWlGV0sAkBUV8r/N0bIxLA/aasXc2s
+         sq2w==
+X-Gm-Message-State: AOAM533FtM4T4mlqxSw6yZu/sUhcwC3GOWbJIQ1AnB6WfQkrwnPDSNA+
+        AwR9S6IMoM/BTD6pkIQmawLpKpq+iVioiblIdmf1biUm6iZ3
+X-Google-Smtp-Source: ABdhPJwZ5MI4HfRYIWlxcFFiKKZ8XNsKwjvwjNOfdJbs9wONLYMscwaLif5HPLDBuoHFWo8Wij6/bUkvBGLK6ccaUihclvJA5NAM
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YGkloJhMFc4hEatk@zeniv-ca.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a5e:990f:: with SMTP id t15mr15230556ioj.180.1617509717745;
+ Sat, 03 Apr 2021 21:15:17 -0700 (PDT)
+Date:   Sat, 03 Apr 2021 21:15:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000025a67605bf1dd4ab@google.com>
+Subject: [syzbot] WARNING: suspicious RCU usage in getname_flags
+From:   syzbot <syzbot+dde0cc33951735441301@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Apr 04, 2021 at 02:34:08AM +0000, Al Viro wrote:
+Hello,
 
-> I really wonder what mount is it happening to.  BTW, how painful would
-> it be to teach syzcaller to turn those cascades of
-> 	NONFAILING(*(uint8_t*)0x20000080 = 0x12);
-> 	NONFAILING(*(uint8_t*)0x20000081 = 0);
-> 	NONFAILING(*(uint16_t*)0x20000082 = 0);
-> 	NONFAILING(*(uint32_t*)0x20000084 = 0xffffff9c);
-> 	NONFAILING(*(uint64_t*)0x20000088 = 0);
-> 	NONFAILING(*(uint64_t*)0x20000090 = 0x20000180);
-> 	NONFAILING(memcpy((void*)0x20000180, "./file0\000", 8));
-> 	NONFAILING(*(uint32_t*)0x20000098 = 0);
-> 	NONFAILING(*(uint32_t*)0x2000009c = 0x80);
-> 	NONFAILING(*(uint64_t*)0x200000a0 = 0x23456);
-> 	....
-> 	NONFAILING(syz_io_uring_submit(r[1], r[2], 0x20000080, 0));
-> into something more readable?  Bloody annoyance every time...  Sure, I can
-> manually translate it into
-> 	struct io_uring_sqe *sqe = (void *)0x20000080;
-> 	char *s = (void *)0x20000180;
-> 	memset(sqe, '\0', sizeof(*sqe));
-> 	sqe->opcode = 0x12; // IORING_OP_OPENAT?
-> 	sqe->fd = -100;	// AT_FDCWD?
-> 	sqe->addr = s;
-> 	strcpy(s, "./file0");
-> 	sqe->open_flags = 0x80;	// O_EXCL???
-> 	sqe->user_data = 0x23456;	// random tag?
-> 	syz_io_uring_submit(r[1], r[2], (unsigned long)p, 0);
-> but it's really annoying as hell, especially since syz_io_uring_submit()
-> comes from syzcaller and the damn thing _knows_ that the third argument
-> is sodding io_uring_sqe, and never passed to anything other than
-> memcpy() in there, at that, so the exact address can't matter.
+syzbot found the following issue on:
 
-... especially since the native syzcaller reproducer clearly *does* have
-that information.  Simply putting that into comments side-by-side with
-what gets put into C reproducer would be nice, especially if it goes with
-field names...
+HEAD commit:    2bb25b3a Merge tag 'mips-fixes_5.12_3' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1284cc31d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=78ef1d159159890
+dashboard link: https://syzkaller.appspot.com/bug?extid=dde0cc33951735441301
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dde0cc33951735441301@syzkaller.appspotmail.com
+
+WARNING: suspicious RCU usage
+5.12.0-rc5-syzkaller #0 Not tainted
+-----------------------------
+kernel/sched/core.c:8294 Illegal context switch in RCU-bh read-side critical section!
+
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 0
+no locks held by systemd-udevd/4825.
+
+stack backtrace:
+CPU: 0 PID: 4825 Comm: systemd-udevd Not tainted 5.12.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack+0x141/0x1d7 lib/dump_stack.c:120
+ ___might_sleep+0x229/0x2c0 kernel/sched/core.c:8294
+ __might_fault+0x6e/0x180 mm/memory.c:5018
+ strncpy_from_user+0x2f/0x3e0 lib/strncpy_from_user.c:117
+ getname_flags.part.0+0x95/0x4f0 fs/namei.c:149
+ getname_flags fs/namei.c:2733 [inline]
+ user_path_at_empty+0xa1/0x100 fs/namei.c:2733
+ user_path_at include/linux/namei.h:60 [inline]
+ do_faccessat+0x127/0x850 fs/open.c:425
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7f840445f9c7
+Code: 83 c4 08 48 3d 01 f0 ff ff 73 01 c3 48 8b 0d c8 d4 2b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 b8 15 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a1 d4 2b 00 f7 d8 64 89 01 48
+RSP: 002b:00007ffdc40178d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000015
+RAX: ffffffffffffffda RBX: 0000564d558c9760 RCX: 00007f840445f9c7
+RDX: 00746e657665752f RSI: 0000000000000000 RDI: 00007ffdc40178e0
+RBP: 00007ffdc4017960 R08: 0000000000004400 R09: 0000000000001010
+R10: 0000000000000020 R11: 0000000000000246 R12: 0000564d557b1856
+R13: 0000564d558ed190 R14: 00007ffdc40178e0 R15: 0000564d558fe590
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
