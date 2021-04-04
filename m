@@ -2,129 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD9F53539FB
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Apr 2021 23:04:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9908353A05
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Apr 2021 23:36:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231599AbhDDUzZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Apr 2021 16:55:25 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:37732 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231628AbhDDUzW (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Apr 2021 16:55:22 -0400
-Received: by mail-il1-f200.google.com with SMTP id m1so8282655ilu.4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Apr 2021 13:55:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=8eI+Fn0OWtzHAxaZWv2hy0pkmfoNaRftOIWLgV2Kr3w=;
-        b=X76PKIcZvAFkuljTyQYav425T73Y+YK0B/Dpdk1Sh4niZYDcHPQnJcEhnaIk9LCXyS
-         4InFe+NETf1NaCg1lhw8+9hdW2gXVAv1w0xE2/7JWrFas0RjhLeq0Vodb29uRT2oQokJ
-         QJKOndVdJLKx47cf/U8Kz7mUlNOLwiGs8tl7vaZP3Aweh7vkDt/00+p2W8zu6clK29Bx
-         OztRbSg1NN/EyxpL5OZa6qOLcls5zSyaI1YqDnmnJebkHj4iQWAQlGb/gAqtPdgnxpf3
-         N1slJsIfYOnWStsbgHzYgFee+4G4UTb4htaDt3PqlXRvsKN20lkFqBOvQPCqN8RdmCgG
-         +TDg==
-X-Gm-Message-State: AOAM531liN5jXBBsIVO77qroNw4IrFm9Aqc4Y3MtZ1DMv/R1uI/6E0Vt
-        rAiShLyaT7Lb5jzSqafk+tHaP0J7WBu6zQHoP7wNNYRD11ka
-X-Google-Smtp-Source: ABdhPJz0gR6B0Awso2uk/2Y09F3TFmQF/w5+0P+QrYCndhU3koQPMDDyTJOmA9KOOPxYsh9d10pS67v3egpwNvuFwHdRE9SuiLQi
+        id S231571AbhDDVgM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Apr 2021 17:36:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60726 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229940AbhDDVgK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 4 Apr 2021 17:36:10 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9E24E6135F;
+        Sun,  4 Apr 2021 21:36:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617572165;
+        bh=H4Ds74LWsoA/BwpIQgOpltuAShIQTfCXQfyXi0DuRRI=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=uUUXBt9hiCCJ2UdfMZLkoU4HZITMSkkzHxQjGOMUa8FJbXWhBQqe1+k7qnGm0W8LV
+         It2vEqClpcieXhDt+TN9LB381+hggUaZa9vuFPl50VvQOkC13ist+GcdoGKVECC6iC
+         U5OcDlP9jZzUQOn7BHi+EGY5LStrn9hPyDs0G/KYhWXK9pjGdVgE5yqCsAcHWcA4iG
+         kk1qg++knK9Kiqjpm1ySSOcDPlzm15F1fGcLjkj99t/tL+QS/IBzymv+cfOHLjuX32
+         Rafcr9exBl4GHsfJTRI1AInhM/MuTekhjsgn1wSjsTu4C4wnT+bcJLtozh/XPEkM9P
+         RhqiKIgsWdXQQ==
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 619F23522F84; Sun,  4 Apr 2021 14:36:05 -0700 (PDT)
+Date:   Sun, 4 Apr 2021 14:36:05 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     syzbot <syzbot+dde0cc33951735441301@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        netdev@vger.kernel.org, tglx@linutronix.de, peterz@infradead.org,
+        frederic@kernel.org
+Subject: Re: Something is leaking RCU holds from interrupt context
+Message-ID: <20210404213605.GA2696@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <00000000000025a67605bf1dd4ab@google.com>
+ <20210404102457.GS351017@casper.infradead.org>
+ <20210404164808.GZ2696@paulmck-ThinkPad-P72>
+ <20210404182453.GT351017@casper.infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:8902:: with SMTP id k2mr17342886ioj.48.1617569717122;
- Sun, 04 Apr 2021 13:55:17 -0700 (PDT)
-Date:   Sun, 04 Apr 2021 13:55:17 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000637c4405bf2bccb8@google.com>
-Subject: [syzbot] WARNING: suspicious RCU usage in __ext4_handle_dirty_metadata
-From:   syzbot <syzbot+cb293a00f01b422bac7d@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210404182453.GT351017@casper.infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Sun, Apr 04, 2021 at 07:24:53PM +0100, Matthew Wilcox wrote:
+> On Sun, Apr 04, 2021 at 09:48:08AM -0700, Paul E. McKenney wrote:
+> > On Sun, Apr 04, 2021 at 11:24:57AM +0100, Matthew Wilcox wrote:
+> > > On Sat, Apr 03, 2021 at 09:15:17PM -0700, syzbot wrote:
+> > > > HEAD commit:    2bb25b3a Merge tag 'mips-fixes_5.12_3' of git://git.kernel..
+> > > > git tree:       upstream
+> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=1284cc31d00000
+> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=78ef1d159159890
+> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=dde0cc33951735441301
+> > > > 
+> > > > Unfortunately, I don't have any reproducer for this issue yet.
+> > > > 
+> > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > > Reported-by: syzbot+dde0cc33951735441301@syzkaller.appspotmail.com
+> > > > 
+> > > > WARNING: suspicious RCU usage
+> > > > 5.12.0-rc5-syzkaller #0 Not tainted
+> > > > -----------------------------
+> > > > kernel/sched/core.c:8294 Illegal context switch in RCU-bh read-side critical section!
+> > > > 
+> > > > other info that might help us debug this:
+> > > > 
+> > > > 
+> > > > rcu_scheduler_active = 2, debug_locks = 0
+> > > > no locks held by systemd-udevd/4825.
+> > > 
+> > > I think we have something that's taking the RCU read lock in
+> > > (soft?) interrupt context and not releasing it properly in all
+> > > situations.  This thread doesn't have any locks recorded, but
+> > > lock_is_held(&rcu_bh_lock_map) is true.
+> > > 
+> > > Is there some debugging code that could find this?  eg should
+> > > lockdep_softirq_end() check that rcu_bh_lock_map is not held?
+> > > (if it's taken in process context, then BHs can't run, so if it's
+> > > held at softirq exit, then there's definitely a problem).
+> > 
+> > Something like the (untested) patch below?
+> 
+> Maybe?  Will this tell us who took the lock?  I was really trying to
+> throw out a suggestion in the hope that somebody who knows this area
+> better than I do would tell me I was wrong.
 
-syzbot found the following issue on:
+No idea.  If it is reproducible, hopefully someone will try it.  If it
+is not reproducible, so it goes!
 
-HEAD commit:    5e46d1b7 reiserfs: update reiserfs_xattrs_initialized() co..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10808831d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=78ef1d159159890
-dashboard link: https://syzkaller.appspot.com/bug?extid=cb293a00f01b422bac7d
+And hey, it is not my fault that you sounded like you knew what you were
+talking about!  ;-)
 
-Unfortunately, I don't have any reproducer for this issue yet.
+But yes, now that you mention it, it is odd that rcu_sleep_check()
+thought that rcu_bh_lock_map was held, but lockdep_rcu_suspicious()
+does not.  One clue might be that rcu_sleep_check() is looking at
+rcu_bh_lock_map() itself, while lockdep_rcu_suspicious() and its callee,
+lockdep_print_held_locks(), rely on current->lockdep_depth.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+cb293a00f01b422bac7d@syzkaller.appspotmail.com
+Maybe these have gotten out of sync.
 
-=============================
-WARNING: suspicious RCU usage
-5.12.0-rc5-syzkaller #0 Not tainted
------------------------------
-kernel/sched/core.c:8294 Illegal context switch in RCU-bh read-side critical section!
+> > Please note that it does not make sense to also check for
+> > either rcu_lock_map or rcu_sched_lock_map because either of
+> > these might be held by the interrupted code.
+> 
+> Yes!  Although if we do it somewhere like tasklet_action_common(),
+> we could do something like:
+> 
+> +++ b/kernel/softirq.c
+> @@ -774,6 +774,7 @@ static void tasklet_action_common(struct softirq_action *a,
+>  
+>         while (list) {
+>                 struct tasklet_struct *t = list;
+> +               unsigned long rcu_lockdep = rcu_get_lockdep_state();
+>  
+>                 list = list->next;
+>  
+> @@ -790,6 +791,10 @@ static void tasklet_action_common(struct softirq_action *a,
+>                         }
+>                         tasklet_unlock(t);
+>                 }
+> +               if (rcu_lockdep != rcu_get_lockdep_state()) {
+> +                       printk(something useful about t);
+> +                       RCU_LOCKDEP_WARN(... something else useful ...);
+> +               }
+>  
+>                 local_irq_disable();
+> 
+> where rcu_get_lockdep_state() returns a bitmap of whether the four rcu
+> lockdep maps are held.
+> 
+> We might also need something similar in __do_softirq(), in case it's
+> not a tasklet that's the problem.
 
-other info that might help us debug this:
+The rcu_get_lockdep_state() function would just set bits based on RCU's
+various lockdep maps, but the comparison would need to take at least
+debug_lockdep_rcu_enabled() into account.  Just in case there is a
+lockdep report between the sampling and comparison.
 
+But first let's see what the lockdep experts have to say.
 
-rcu_scheduler_active = 2, debug_locks = 0
-7 locks held by syz-executor.2/17885:
- #0: 
-ffff888014000930
- (
-&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:961
- #1: ffff88802455a460 (sb_writers#5){.+.+}-{0:0}, at: ksys_write+0x12d/0x250 fs/read_write.c:658
- #2: ffff888080e91888 (&sb->s_type->i_mutex_key#9){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:775 [inline]
- #2: ffff888080e91888 (&sb->s_type->i_mutex_key#9){+.+.}-{3:3}, at: ext4_dio_write_iter fs/ext4/file.c:493 [inline]
- #2: ffff888080e91888 (&sb->s_type->i_mutex_key#9){+.+.}-{3:3}, at: ext4_file_write_iter+0xaeb/0x14e0 fs/ext4/file.c:661
- #3: ffff888080e91678 (&ei->i_data_sem){++++}-{3:3}, at: ext4_map_blocks+0x5e1/0x17d0 fs/ext4/inode.c:631
- #4: ffffffff8bf718a0 (rcu_read_lock){....}-{1:2}, at: ieee80211_rx_napi+0x0/0x3d0 arch/x86/include/asm/bitops.h:207
- #5: ffff88807b381580 (&local->rx_path_lock){+.-.}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:359 [inline]
- #5: ffff88807b381580 (&local->rx_path_lock){+.-.}-{2:2}, at: ieee80211_rx_handlers+0xd7/0xae60 net/mac80211/rx.c:3758
- #6: ffff8880b9d26358 (hrtimer_bases.lock){-.-.}-{2:2}, at: __run_hrtimer kernel/time/hrtimer.c:1541 [inline]
- #6: ffff8880b9d26358 (hrtimer_bases.lock){-.-.}-{2:2}, at: __hrtimer_run_queues+0x243/0xe40 kernel/time/hrtimer.c:1601
-
-stack backtrace:
-CPU: 1 PID: 17885 Comm: syz-executor.2 Not tainted 5.12.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0x141/0x1d7 lib/dump_stack.c:120
- ___might_sleep+0x229/0x2c0 kernel/sched/core.c:8294
- __ext4_handle_dirty_metadata+0x37/0x730 fs/ext4/ext4_jbd2.c:326
- ext4_mb_mark_diskspace_used+0x991/0x1160 fs/ext4/mballoc.c:3279
- ext4_mb_new_blocks+0xd46/0x51a0 fs/ext4/mballoc.c:5000
- ext4_new_meta_blocks+0x2fe/0x360 fs/ext4/balloc.c:693
- ext4_alloc_branch fs/ext4/indirect.c:335 [inline]
- ext4_ind_map_blocks+0xb0d/0x2450 fs/ext4/indirect.c:626
- ext4_map_blocks+0x9c9/0x17d0 fs/ext4/inode.c:640
- ext4_iomap_alloc fs/ext4/inode.c:3428 [inline]
- ext4_iomap_begin+0x463/0x7a0 fs/ext4/inode.c:3478
- iomap_apply+0x177/0xb50 fs/iomap/apply.c:46
- __iomap_dio_rw+0x71b/0x1280 fs/iomap/direct-io.c:553
- iomap_dio_rw+0x30/0x90 fs/iomap/direct-io.c:641
- ext4_dio_write_iter fs/ext4/file.c:551 [inline]
- ext4_file_write_iter+0xe18/0x14e0 fs/ext4/file.c:661
- call_write_iter include/linux/fs.h:1977 [inline]
- new_sync_write+0x426/0x650 fs/read_write.c:518
- vfs_write+0x796/0xa30 fs/read_write.c:605
- ksys_write+0x12d/0x250 fs/read_write.c:658
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x466459
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fadff8ad188 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 000000000056bf60 RCX: 0000000000466459
-RDX: 0000000000248800 RSI: 0000000020000000 RDI: 0000000000000005
-RBP: 00000000004bf9fb R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf60
-R13: 00007ffc9e5e3caf R14: 00007fadff8ad300 R15: 0000000000022000
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+							Thanx, Paul
