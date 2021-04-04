@@ -2,80 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 712573538F9
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Apr 2021 19:05:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2D9835394D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Apr 2021 20:01:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231150AbhDDRFZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Apr 2021 13:05:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60100 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229861AbhDDRFY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Apr 2021 13:05:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CDBC96128B;
-        Sun,  4 Apr 2021 17:05:16 +0000 (UTC)
-Date:   Sun, 4 Apr 2021 19:05:13 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
+        id S231303AbhDDSBn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Apr 2021 14:01:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58782 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229861AbhDDSBd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 4 Apr 2021 14:01:33 -0400
+Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5885BC0617A7;
+        Sun,  4 Apr 2021 11:01:28 -0700 (PDT)
+Received: by mail-qk1-x72d.google.com with SMTP id v70so9693778qkb.8;
+        Sun, 04 Apr 2021 11:01:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=vqjTFrhw8is34xFbRLeJBk6zObb/0KU6NDcwEfDwcS0=;
+        b=l2AjGlLTHKa6vPsOcVT9lSv7QAhpNb1GX7xYJ2agOybHNczEtfkCFH8OmOx33qjzej
+         L6xkIjeDjGig1AIJjUxg7Zv9XNbsXefdFb/GnHKcBFfR3lkSLUneOAcvXaHhrYkavZDR
+         l/1VzqmAJTa1mBLECjiapkDCpOVKextkWwD/NeNFYta2KRsWyFlWCydm6JrL9XIX7l/t
+         tEZ3s5KlbhZUintD0sutFq6ELuQLeRTKm3hDFLgIXbbed6LmFHu2E34lM9aqBH+O9c/c
+         oxBGdJ2W2vmqB3jtvaYAUpZ6aOnrYV0B0m1Hlo9F14NlA5Avj4YQEzZTSp16hWhl0z4e
+         QI7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=vqjTFrhw8is34xFbRLeJBk6zObb/0KU6NDcwEfDwcS0=;
+        b=V7VCtEQ9xjw5WfKl9e+nj50qbwLAGyifXZcqWWj8URFCgbBtpHlsdsqQ3zTQ5J9Skb
+         lQgiB3cIWGNoRT9tMujwH2H4uvfh+ArBq43It87SYWc5+EfBeARgG7OhrLbgRrZzGF2f
+         BUpW064n/IYqEtNsAY1sb44YOp5kjakkqQ4kkPqEnh57QEhLjy0QUU9HMNIjRWgM72jz
+         qpfAfUL24xT4Vsqq4spcv2Z5AH5Tis3DMnz44BgsUweAdgPxd2opjqTgzvIp/kg4gxlR
+         b+BLqkCDYoNvDSjeCza+tl1WPuSSI295V6bNMoK9DOVjq4wng4TRiDFwxL2jPK4ItRYq
+         XFVg==
+X-Gm-Message-State: AOAM5335gWjoXoo/8VRFuWL4oXmWTC/lfPJNGnNcbXOLwyHUWtXCXoMp
+        zpXVAPLYS1WF6jLmpOnfMUqmTdjBrG5E3w==
+X-Google-Smtp-Source: ABdhPJzLNUaqWgD1Wf964A7EQG9L1i3NH/sayvR0/nfYb5WNXuZR+X12deaHWKWkor/+gKkJqRNq2g==
+X-Received: by 2002:a05:620a:527:: with SMTP id h7mr21428959qkh.108.1617559287424;
+        Sun, 04 Apr 2021 11:01:27 -0700 (PDT)
+Received: from localhost (dhcp-6c-ae-f6-dc-d8-61.cpe.echoes.net. [199.96.183.179])
+        by smtp.gmail.com with ESMTPSA id 79sm12220473qki.37.2021.04.04.11.01.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Apr 2021 11:01:27 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Sun, 4 Apr 2021 14:01:26 -0400
+From:   Tejun Heo <tj@kernel.org>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     viro@zeniv.linux.org.uk, axboe@fb.com, willy@infradead.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
-Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
-Message-ID: <20210404170513.mfl5liccdaxjnpls@wittgenstein>
-References: <20210401154515.k24qdd2lzhtneu47@wittgenstein>
- <90e7e339-eaec-adb2-cfed-6dc058a117a3@kernel.dk>
- <20210401174613.vymhhrfsemypougv@wittgenstein>
- <20210401175919.jpiylhfrlb4xb67u@wittgenstein>
- <YGYa0B4gabEYi2Tx@zeniv-ca.linux.org.uk>
- <YGkloJhMFc4hEatk@zeniv-ca.linux.org.uk>
- <20210404113445.xo6ntgfpxigcb3x6@wittgenstein>
- <YGnhkoTfVfMSMPpK@zeniv-ca.linux.org.uk>
- <20210404164040.vtxdcfzgliuzghwk@wittgenstein>
- <YGns1iPBHeeMAtn8@zeniv-ca.linux.org.uk>
+        duanxiongchun@bytedance.com, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v3] writeback: fix obtain a reference to a freeing memcg
+ css
+Message-ID: <YGn+9gY/VAc6YI/q@mtj.duckdns.org>
+References: <20210402091145.80635-1-songmuchun@bytedance.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YGns1iPBHeeMAtn8@zeniv-ca.linux.org.uk>
+In-Reply-To: <20210402091145.80635-1-songmuchun@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Apr 04, 2021 at 04:44:06PM +0000, Al Viro wrote:
-> On Sun, Apr 04, 2021 at 06:40:40PM +0200, Christian Brauner wrote:
+On Fri, Apr 02, 2021 at 05:11:45PM +0800, Muchun Song wrote:
+> The caller of wb_get_create() should pin the memcg, because
+> wb_get_create() relies on this guarantee. The rcu read lock
+> only can guarantee that the memcg css returned by css_from_id()
+> cannot be released, but the reference of the memcg can be zero.
 > 
-> > > Very interesting.  What happens if you call loop() twice?  And now I wonder
-> > > whether it's root or cwd, actually...  Hmm...
-> > > 
-> > > How about this:
-> > > 	fd = open("/proc/self/mountinfo", 0);
-> > > 	mkdir("./newroot/foo", 0777);
-> > > 	mount("./newroot/foo", "./newroot/foo", 0, MS_BIND, NULL);
-> > > 	chroot("./newroot");
-> > > 	chdir("/foo");
-> > > 	while (1) {
-> > > 		static char buf[4096];
-> > > 		int n = read(fd, buf, 4096);
-> > > 		if (n <= 0)
-> > > 			break;
-> > > 		write(1, buf, n);
-> > > 	}
-> > > 	close(fd);
-> > > 	drop_caps();
-> > > 	loop();
-> > > as the end of namespace_sandbox_proc(), instead of
-> > > 	chroot("./newroot");
-> > > 	chdir("/");
-> > > 	drop_caps();
-> > > 	loop();
-> > > sequence we have there?
-> > 
-> > Uhum, well then we oops properly with a null-deref.
+>   rcu_read_lock()
+>   memcg_css = css_from_id()
+>   wb_get_create(memcg_css)
+>       cgwb_create(memcg_css)
+>           // css_get can change the ref counter from 0 back to 1
+>           css_get(memcg_css)
+>   rcu_read_unlock()
 > 
-> Cute...  Could you dump namei.o (ideally - with namei.s) from your build
-> someplace public?
+> Fix it by holding a reference to the css before calling
+> wb_get_create(). This is not a problem I encountered in the
+> real world. Just the result of a code review.
+> 
+> Fixes: 682aa8e1a6a1 ("writeback: implement unlocked_inode_to_wb transaction and use it for stat updates")
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
-Yeah, I have at least namei.o
+Acked-by: Tejun Heo <tj@kernel.org>
 
-https://drive.google.com/file/d/1AvO1St0YltIrA86DXjp1Xg3ojtS9owGh/view?usp=sharing
+Thanks.
 
-Christian
+-- 
+tejun
