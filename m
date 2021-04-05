@@ -2,38 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C28A354478
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Apr 2021 18:05:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49E4E354486
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Apr 2021 18:05:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242246AbhDEQFR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Apr 2021 12:05:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57390 "EHLO mail.kernel.org"
+        id S241987AbhDEQFa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Apr 2021 12:05:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242199AbhDEQFE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Apr 2021 12:05:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9BBC9613C9;
-        Mon,  5 Apr 2021 16:04:57 +0000 (UTC)
+        id S241977AbhDEQFO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Apr 2021 12:05:14 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7EE54613C5;
+        Mon,  5 Apr 2021 16:05:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617638698;
-        bh=g9MAv3HrLHNBtDeS5EIkFuSTE/0xOXN77La23FB3nJY=;
+        s=k20201202; t=1617638708;
+        bh=Sm8aQaGLHRowj8diWMhZrFvkldhFlLEA9Jvp+s9WktI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rD/u7ZweeFRw5M9Dwe5rV2bym880ubbeSZka35yoEDvRFdGpZMe09FlD6odTWUq2H
-         /zRg0EG4cuctH8aH0qWcxlSMp5uD4vZqSnUPJRacV3iHG11XlgZb3nH1bt0SNz97R8
-         x0xiJ3bJPIw18dxEvJXbuWeCAvU07OnAiEMxV3esUARblmCuvkySklORXuM6TWw0DN
-         o8yeIMoIPIa38LsMKeW207BuJXxSGAkgc4hO5dw8XZ9lE6wxZk38MgOK7TM/W5zMOu
-         dC46bT9Sv0DnjD1aaTva1ZBSJtY7PrW+VaeCxSaTBe2MKBm9FZfgK0Y/gpX4/Ng6D5
-         VhTU7BW3BkZyA==
+        b=n9s0CqnWs4mK4oDsB371tH8wOe84FL0WtIp/POQU2qmFN1zwhZtKs0S1+wZR0OW9Z
+         NOB5jKFtnqjeelzC9N/0BYFlnsDNHw6bltRDlzyVxDeQe6JpEM6ENwWwFCaT83q8KT
+         xZXgOKUth2XPlG964x5tjiNymL0GLDuO2AD7Qg+s+nSuoxSF6J6qz6cDbFoa7C6Fn+
+         6hLj/iO64L0Ib0Cby/wYHjwtL+1u1uuOcE1acI9sisqE6Ho2H4Xr2fWGonCysByxF4
+         eHGzWQ/8nNZwPZsvr11pTt3zl0/ggc+UXccZqF2piX2235CFRaMWB5fbWKay+iN98R
+         WNYyhSJ1hBMLw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 22/22] block: don't ignore REQ_NOWAIT for direct IO
-Date:   Mon,  5 Apr 2021 12:04:31 -0400
-Message-Id: <20210405160432.268374-22-sashal@kernel.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 07/13] radix tree test suite: Fix compilation
+Date:   Mon,  5 Apr 2021 12:04:52 -0400
+Message-Id: <20210405160459.268794-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210405160432.268374-1-sashal@kernel.org>
-References: <20210405160432.268374-1-sashal@kernel.org>
+In-Reply-To: <20210405160459.268794-1-sashal@kernel.org>
+References: <20210405160459.268794-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -42,44 +41,22 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-[ Upstream commit f8b78caf21d5bc3fcfc40c18898f9d52ed1451a5 ]
+[ Upstream commit dd841a749d1ded8e2e5facc4242ee0b6779fc0cb ]
 
-If IOCB_NOWAIT is set on submission, then that needs to get propagated to
-REQ_NOWAIT on the block side. Otherwise we completely lose this
-information, and any issuer of IOCB_NOWAIT IO will potentially end up
-blocking on eg request allocation on the storage side.
+Introducing local_lock broke compilation; fix it all up.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/block_dev.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ tools/testing/radix-tree/linux/compiler_types.h | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ delete mode 100644 tools/testing/radix-tree/linux/compiler_types.h
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index fe201b757baa..1b6a34fd1fef 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -280,6 +280,8 @@ __blkdev_direct_IO_simple(struct kiocb *iocb, struct iov_iter *iter,
- 		bio.bi_opf = dio_bio_write_op(iocb);
- 		task_io_account_write(ret);
- 	}
-+	if (iocb->ki_flags & IOCB_NOWAIT)
-+		bio.bi_opf |= REQ_NOWAIT;
- 	if (iocb->ki_flags & IOCB_HIPRI)
- 		bio_set_polled(&bio, iocb);
- 
-@@ -433,6 +435,8 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
- 			bio->bi_opf = dio_bio_write_op(iocb);
- 			task_io_account_write(bio->bi_iter.bi_size);
- 		}
-+		if (iocb->ki_flags & IOCB_NOWAIT)
-+			bio->bi_opf |= REQ_NOWAIT;
- 
- 		dio->size += bio->bi_iter.bi_size;
- 		pos += bio->bi_iter.bi_size;
+diff --git a/tools/testing/radix-tree/linux/compiler_types.h b/tools/testing/radix-tree/linux/compiler_types.h
+deleted file mode 100644
+index e69de29bb2d1..000000000000
 -- 
 2.30.2
 
