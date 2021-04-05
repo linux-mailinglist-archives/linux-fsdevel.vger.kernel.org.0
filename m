@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 30A69354920
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 01:11:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0055D354922
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 01:11:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238517AbhDEXKo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Apr 2021 19:10:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38366 "EHLO mx2.suse.de"
+        id S241486AbhDEXKr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Apr 2021 19:10:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38394 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235683AbhDEXKm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Apr 2021 19:10:42 -0400
+        id S238555AbhDEXKq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Apr 2021 19:10:46 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 4218CB148;
-        Mon,  5 Apr 2021 23:10:35 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 20343B115;
+        Mon,  5 Apr 2021 23:10:38 +0000 (UTC)
 From:   Davidlohr Bueso <dave@stgolabs.net>
 To:     akpm@linux-foundation.org
 Cc:     jbaron@akamai.com, rpenyaev@suse.de, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         dave@stgolabs.net, Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 1/2] kselftest: introduce new epoll test case
-Date:   Mon,  5 Apr 2021 16:10:24 -0700
-Message-Id: <20210405231025.33829-2-dave@stgolabs.net>
+Subject: [PATCH 2/2] fs/epoll: restore waking from ep_done_scan()
+Date:   Mon,  5 Apr 2021 16:10:25 -0700
+Message-Id: <20210405231025.33829-3-dave@stgolabs.net>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210405231025.33829-1-dave@stgolabs.net>
 References: <20210405231025.33829-1-dave@stgolabs.net>
@@ -32,72 +32,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This incorporates the testcase originally reported in:
+339ddb53d373 (fs/epoll: remove unnecessary wakeups of nested epoll) changed
+the userspace visible behavior of exclusive waiters blocked on a common
+epoll descriptor upon a single event becoming ready. Previously, all tasks
+doing epoll_wait would awake, and now only one is awoken, potentially causing
+missed wakeups on applications that rely on this behavior, such as Apache Qpid.
 
-     https://bugzilla.kernel.org/show_bug.cgi?id=208943
-
-Which ensures an event is reported to all threads blocked on the
-same epoll descriptor, otherwise only a single thread will receive
-the wakeup once the event become ready.
+While the aforementioned commit aims at having only a wakeup single path in
+ep_poll_callback (with the exceptions of epoll_ctl cases), we need to restore
+the wakeup in what was the old ep_scan_ready_list() such that the next thread
+can be awoken, in a cascading style, after the waker's corresponding ep_send_events().
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- .../filesystems/epoll/epoll_wakeup_test.c     | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ fs/eventpoll.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c b/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
-index ad7fabd575f9..65ede506305c 100644
---- a/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
-+++ b/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
-@@ -3449,4 +3449,48 @@ TEST(epoll63)
- 	close(sfd[1]);
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 73138ea68342..1e596e1d0bba 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -657,6 +657,12 @@ static void ep_done_scan(struct eventpoll *ep,
+ 	 */
+ 	list_splice(txlist, &ep->rdllist);
+ 	__pm_relax(ep->ws);
++
++	if (!list_empty(&ep->rdllist)) {
++		if (waitqueue_active(&ep->wq))
++			wake_up(&ep->wq);
++	}
++
+ 	write_unlock_irq(&ep->lock);
  }
  
-+/*
-+ *        t0    t1
-+ *     (ew) \  / (ew)
-+ *           e0
-+ *            | (lt)
-+ *           s0
-+ */
-+TEST(epoll64)
-+{
-+	pthread_t waiter[2];
-+	struct epoll_event e;
-+	struct epoll_mtcontext ctx = { 0 };
-+
-+	signal(SIGUSR1, signal_handler);
-+
-+	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, ctx.sfd), 0);
-+
-+	ctx.efd[0] = epoll_create(1);
-+	ASSERT_GE(ctx.efd[0], 0);
-+
-+	e.events = EPOLLIN;
-+	ASSERT_EQ(epoll_ctl(ctx.efd[0], EPOLL_CTL_ADD, ctx.sfd[0], &e), 0);
-+
-+	/*
-+	 * main will act as the emitter once both waiter threads are
-+	 * blocked and expects to both be awoken upon the ready event.
-+	 */
-+	ctx.main = pthread_self();
-+	ASSERT_EQ(pthread_create(&waiter[0], NULL, waiter_entry1a, &ctx), 0);
-+	ASSERT_EQ(pthread_create(&waiter[1], NULL, waiter_entry1a, &ctx), 0);
-+
-+	usleep(100000);
-+	ASSERT_EQ(write(ctx.sfd[1], "w", 1), 1);
-+
-+	ASSERT_EQ(pthread_join(waiter[0], NULL), 0);
-+	ASSERT_EQ(pthread_join(waiter[1], NULL), 0);
-+
-+	EXPECT_EQ(ctx.count, 2);
-+
-+	close(ctx.efd[0]);
-+	close(ctx.sfd[0]);
-+	close(ctx.sfd[1]);
-+}
-+
- TEST_HARNESS_MAIN
 -- 
 2.26.2
 
