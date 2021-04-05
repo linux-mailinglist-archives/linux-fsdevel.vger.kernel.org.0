@@ -2,197 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A90D935450F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Apr 2021 18:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D88D354591
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Apr 2021 18:47:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242385AbhDEQTS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Apr 2021 12:19:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36128 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242354AbhDEQTN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Apr 2021 12:19:13 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 499B0C061756;
-        Mon,  5 Apr 2021 09:19:07 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lTRwI-002mLy-UI; Mon, 05 Apr 2021 16:18:59 +0000
-Date:   Mon, 5 Apr 2021 16:18:58 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
-Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
-Message-ID: <YGs4clcRhyoXX8D0@zeniv-ca.linux.org.uk>
-References: <YGYa0B4gabEYi2Tx@zeniv-ca.linux.org.uk>
- <YGkloJhMFc4hEatk@zeniv-ca.linux.org.uk>
- <20210404113445.xo6ntgfpxigcb3x6@wittgenstein>
- <YGnhkoTfVfMSMPpK@zeniv-ca.linux.org.uk>
- <20210404164040.vtxdcfzgliuzghwk@wittgenstein>
- <YGns1iPBHeeMAtn8@zeniv-ca.linux.org.uk>
- <20210404170513.mfl5liccdaxjnpls@wittgenstein>
- <YGoKYktYPA86Qwju@zeniv-ca.linux.org.uk>
- <YGoe0VPs/Qmz/RxC@zeniv-ca.linux.org.uk>
- <20210405114437.hjcojekyp5zt6huu@wittgenstein>
+        id S230508AbhDEQqT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Apr 2021 12:46:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44632 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229654AbhDEQqS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Apr 2021 12:46:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 284FB610CB;
+        Mon,  5 Apr 2021 16:46:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617641172;
+        bh=vHWoc2JOnQ+CZItOE9VfRh/35PrGyBQ49qmG5ey4KhE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=C/mU7B7b1mXQhr6Xk1FkFkJYwR92bks7lAsnqTY99WtmdM5wy/dq2B34LOhQIqROu
+         Rc6DfTbt42GytYUZR0cSSlu3tI3uCTcLBlFEWg0/Ja3C2iXMnjB6OR7H2ytx++fVVB
+         hfXznHLVxFWiMvZoH6PNaFMpNwb7CMWFFXXDmlIPALii4avML1MjKSL+ZCd8B4B53n
+         GJ280HkYUcGlHgRgcYg5NM1afH/+li+KoB/L76yF4Ou2Nbw8r+AbO9eQt2uE0bo5Cy
+         JEpEgMFch7MKyfJJAs5NEwqLm+Tg+anW6iVWYPUOLsX57BKc49Hs69ZgzXB+9t5r4i
+         FVty4syNFc72g==
+From:   Christian Brauner <brauner@kernel.org>
+To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
+Cc:     linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH] cachefiles: use private mounts in cache->mnt
+Date:   Mon,  5 Apr 2021 18:46:03 +0200
+Message-Id: <20210405164603.281189-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210405114437.hjcojekyp5zt6huu@wittgenstein>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 05, 2021 at 01:44:37PM +0200, Christian Brauner wrote:
-> On Sun, Apr 04, 2021 at 08:17:21PM +0000, Al Viro wrote:
-> > On Sun, Apr 04, 2021 at 06:50:10PM +0000, Al Viro wrote:
-> > 
-> > > > Yeah, I have at least namei.o
-> > > > 
-> > > > https://drive.google.com/file/d/1AvO1St0YltIrA86DXjp1Xg3ojtS9owGh/view?usp=sharing
-> > > 
-> > > *grumble*
-> > > 
-> > > Is it reproducible without KASAN?  Would be much easier to follow the produced
-> > > asm...
-> > 
-> > 	Looks like inode_permission(_, NULL, _) from may_lookup(nd).  I.e.
-> > nd->inode == NULL.
-> 
-> Yeah, I already saw that.
-> 
-> > 
-> > 	Mind slapping BUG_ON(!nd->inode) right before may_lookup() call in
-> > link_path_walk() and trying to reproduce that oops?
-> 
-> Yep, no problem. If you run the reproducer in a loop for a little while
-> you eventually trigger the BUG_ON() and then you get the following splat
-> (and then an endless loop) in [1] with nd->inode NULL.
-> 
-> _But_ I managed to debug this further and was able to trigger the BUG_ON()
-> directly in path_init() in the AT_FDCWD branch (after all its AT_FDCWD(./file0)
-> with the patch in [3] (it's in LOOKUP_RCU) the corresponding splat is in [2].
-> So the crash happens for a PF_IO_WORKER thread with a NULL nd->inode for the
-> PF_IO_WORKER's pwd (The PF_IO_WORKER seems to be in async context.).
+From: Christian Brauner <christian.brauner@ubuntu.com>
 
-So we find current->fs->pwd.dentry negative, with current->fs->seq sampled
-equal before and after that?  Lovely...  The only places where we assign
-anything to ->pwd.dentry are
-void set_fs_pwd(struct fs_struct *fs, const struct path *path)
-{
-        struct path old_pwd; 
+Since [1] we support creating private mounts from a given path's
+vfsmount. This makes them very suitable for any filesystem or
+filesystem functionality that piggybacks on paths of another filesystem.
+Overlayfs and ecryptfs (which I'll port next) are just two such
+examples.
+Without trying to imply to many similarities cachefiles have one thing
+in common with stacking filesystems namely that they also stack on top
+of existing paths. These paths are then used as caches for a netfs.
+Since private mounts aren't attached in the filesystem the aren't
+affected by mount property changes after cachefiles makes use of them.
+This seems a rather desirable property as the underlying path can't e.g.
+suddenly go from read-write to read-only and in general it means that
+cachefiles is always in full control of the underlying mount after the
+user has allowed it to be used as a cache.
+Besides that - and probably irrelevant from the perspective of a
+cachefiles developer - it also makes things simpler for a variety of
+other vfs features. One concrete example is fanotify. When the path->mnt
+of the path that is used as a cache has been marked with FAN_MARK_MOUNT
+the semantics get tricky as it isn't clear whether the watchers of
+path->mnt should get notified about fsnotify events when files are
+created by cachefilesd via path->mnt. Using a private mount let's us
+elegantly handle this case too and aligns the behavior of stacks created
+by overlayfs.
 
-        path_get(path);
-        spin_lock(&fs->lock);
-        write_seqcount_begin(&fs->seq);
-        old_pwd = fs->pwd;
-        fs->pwd = *path;
-        write_seqcount_end(&fs->seq);
-        spin_unlock(&fs->lock);
+Reading through the codebase cachefiles currently takes path->mnt and
+stashes it in cache->mnt. Everytime a cache object needs to be created,
+looked-up, or in some other form interacted with cachefiles will create
+a custom path comprised of cache->mnt and the relevant dentry it is
+interested in:
 
-        if (old_pwd.dentry)
-                path_put(&old_pwd);
-}
-where we have ->seq bumped between dget new/assignment/ dput old,
-copy_fs_struct() where we have
-                spin_lock(&old->lock);
-                fs->root = old->root;
-                path_get(&fs->root);
-                fs->pwd = old->pwd;
-                path_get(&fs->pwd);
-                spin_unlock(&old->lock);
-fs being freshly allocated instance that couldn't have been observed
-by anyone and chroot_fs_refs(), where we have
-                        spin_lock(&fs->lock);
-                        write_seqcount_begin(&fs->seq);
-                        hits += replace_path(&fs->root, old_root, new_root);
-                        hits += replace_path(&fs->pwd, old_root, new_root);
-                        write_seqcount_end(&fs->seq);
-                        while (hits--) {
-                                count++;
-                                path_get(new_root);
-                        }
-                        spin_unlock(&fs->lock);
-...
-static inline int replace_path(struct path *p, const struct path *old, const struct path *new)
-{
-        if (likely(p->dentry != old->dentry || p->mnt != old->mnt))
-                return 0;
-        *p = *new;
-        return 1;
-}
-Here we have new_root->dentry pinned from the very beginning,
-and assignments are wrapped into bumps of ->seq.  Moreover,
-we are holding ->lock through that sequence (as all writers
-do), so these references can't be dropped before path_get()
-bumps new_root->dentry refcount.
+struct path cachefiles_path = {
+        .mnt = cache->mnt,
+        .dentry = dentry,
+};
 
-chroot_fs_refs() is called only by pivot_root(2):
-        chroot_fs_refs(&root, &new);
-and there new is set by
-        error = user_path_at(AT_FDCWD, new_root,
-                             LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &new);
-        if (error)
-                goto out0;
-which pins new.dentry *and* verifies that it's positive and a directory,
-at that.  Since pinned positive dentry can't be made negative by anybody
-else, we know it will remain in that state until
-	path_put(&new);
-well downstream of chroot_fs_refs().  In copy_fs_struct() we are
-copying someone's ->pwd, so it's also pinned positive.  And it
-won't be dropped outside of old->lock, so by the time somebody
-manages to drop the reference in old, path_get() effects will be
-visible (old->lock serving as a barrier).
+So cachefiles already passes the cache->mnt through everywhere so
+supporting private mounts with cachefiles is pretty simply. Instead of
+recording path->mnt in cache->mnt we simply record a new private mount
+we created as a copy of path->mnt via clone_private_mount() in
+cache->mnt. The rest is cleanly handled by cachefiles already.
 
-That leaves set_fs_pwd() calls:
-fs/init.c:54:           set_fs_pwd(current->fs, &path);
-	init_chdir(), path set by LOOKUP_DIRECTORY patwalk.  Pinned positive.
-fs/namespace.c:4207:    set_fs_pwd(current->fs, &root);
-	init_mount_tree(), root.dentry being ->mnt_root of rootfs.  Pinned
-positive (and it would've oopsed much earlier had that been it)
-fs/namespace.c:4485:    set_fs_pwd(fs, &root);
-	mntns_install(), root filled by successful LOOKUP_DOWN for "/"
-from mnt_ns->root.  Should be pinned positive.
-fs/open.c:501:  set_fs_pwd(current->fs, &path);
-	chdir(2), path set by LOOKUP_DIRECTORY pathwalk.  Pinned positive.
-fs/open.c:528:          set_fs_pwd(current->fs, &f.file->f_path);
-	fchdir(2), file->f_path of any opened file.  Pinned positive.
-kernel/usermode_driver.c:130:   set_fs_pwd(current->fs, &umd_info->wd);
-	umd_setup(), ->wd.dentry equal to ->wd.mnt->mnt_root, should be pinned positive.
-kernel/nsproxy.c:509:           set_fs_pwd(me->fs, &nsset->fs->pwd);
-	commit_nsset().  Let's see what's going on there...
+I have tested this patch with an nfs v4 export. Server on host:
 
-        if ((flags & CLONE_NEWNS) && (flags & ~CLONE_NEWNS)) {
-                set_fs_root(me->fs, &nsset->fs->root);
-                set_fs_pwd(me->fs, &nsset->fs->pwd);
-        }
-In those conditions nsset.fs has come from copy_fs_struct() done in
-prepare_nsset().  And the only thing that might've been done to it
-would be those set_fs_pwd() in mntns_install() (I'm not fond of the
-entire nsset->fs thing - looks like papering over bad calling
-conventions, but anyway)
+/srv/nfs        10.103.182.1/24(rw,sync,crossmnt,fsid=0)
+/srv/nfs/mnt 	10.103.182.1/24(rw,sync)
 
-Now, I might've missed some insanity (direct assignments to ->pwd.dentry,
-etc. - wouldn't be the first time io_uring folks went "layering? wassat?
-we'll just poke in whatever we can reach"), but I don't see anything
-obvious of that sort in the area...
+In a vm running a kernel with this patch I first created a separate
+bind-mount for /var/cache/fscache:
 
-OK, how about this: in path_init(), right after
-                        do {
-                                seq = read_seqcount_begin(&fs->seq);
-                                nd->path = fs->pwd;
-                                nd->inode = nd->path.dentry->d_inode;
-                                nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
-                        } while (read_seqcount_retry(&fs->seq, seq));
-slap
-			if (!nd->inode) {
-				// should never, ever happen
-				struct dentry *fucked = nd->path.dentry;
-				printk(KERN_ERR "%pd4 %d %x %p %d %d", fucked, d_count(fucked),
-							fucked->d_flags, fs, fs->users, seq);
-				BUG_ON(1);
-				return ERR_PTR(-EINVAL);
-			}
-and see what it catches?
+mount --bind /var/cache/fscache /var/cache/fscache
+
+Then I enabled and ran cachefilesd.
+
+and mounted the server:
+
+mount 10.103.182.1:/mnt /mnt
+
+and the cache worked fine! I then tried
+
+mount -o bind,remount,ro /var/cache/fscache
+
+and the cache continued to be working fine due to the private mount. I
+don't have access to a test-suite for cachefiles though and I haven't
+found one so far. If someone has a local test-suite I would very much
+appreciate a test-run.
+
+[1]: c771d683a62e ("vfs: introduce clone_private_mount()")
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: linux-cachefs@redhat.com
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ fs/cachefiles/bind.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
+
+diff --git a/fs/cachefiles/bind.c b/fs/cachefiles/bind.c
+index 38bb7764b454..ac03af93437b 100644
+--- a/fs/cachefiles/bind.c
++++ b/fs/cachefiles/bind.c
+@@ -81,7 +81,7 @@ int cachefiles_daemon_bind(struct cachefiles_cache *cache, char *args)
+ static int cachefiles_daemon_add_cache(struct cachefiles_cache *cache)
+ {
+ 	struct cachefiles_object *fsdef;
+-	struct path path;
++	struct path path, cache_path;
+ 	struct kstatfs stats;
+ 	struct dentry *graveyard, *cachedir, *root;
+ 	const struct cred *saved_cred;
+@@ -115,16 +115,22 @@ static int cachefiles_daemon_add_cache(struct cachefiles_cache *cache)
+ 	if (ret < 0)
+ 		goto error_open_root;
+ 
+-	cache->mnt = path.mnt;
+-	root = path.dentry;
++	cache->mnt = clone_private_mount(&path);
++	if (IS_ERR(cache->mnt)) {
++		ret = PTR_ERR(cache->mnt);
++		cache->mnt = NULL;
++		pr_warn("Failed to create private mount for file cache\n");
++		goto error_unsupported;
++	}
+ 
+ 	ret = -EINVAL;
+-	if (mnt_user_ns(path.mnt) != &init_user_ns) {
++	if (mnt_user_ns(cache->mnt) != &init_user_ns) {
+ 		pr_warn("File cache on idmapped mounts not supported");
+ 		goto error_unsupported;
+ 	}
+ 
+ 	/* check parameters */
++	root = path.dentry;
+ 	ret = -EOPNOTSUPP;
+ 	if (d_is_negative(root) ||
+ 	    !d_backing_inode(root)->i_op->lookup ||
+@@ -144,8 +150,10 @@ static int cachefiles_daemon_add_cache(struct cachefiles_cache *cache)
+ 	if (ret < 0)
+ 		goto error_unsupported;
+ 
++	cache_path = path;
++	cache_path.mnt = cache->mnt;
+ 	/* get the cache size and blocksize */
+-	ret = vfs_statfs(&path, &stats);
++	ret = vfs_statfs(&cache_path, &stats);
+ 	if (ret < 0)
+ 		goto error_unsupported;
+ 
+@@ -229,7 +237,12 @@ static int cachefiles_daemon_add_cache(struct cachefiles_cache *cache)
+ 
+ 	/* done */
+ 	set_bit(CACHEFILES_READY, &cache->flags);
+-	dput(root);
++
++	/*
++	 * We've created a private mount and we've stashed our "cache" and
++	 * "graveyard" dentries so we don't need the path anymore.
++	 */
++	path_put(&path);
+ 
+ 	pr_info("File cache on %s registered\n", cache->cache.identifier);
+ 
+@@ -242,11 +255,11 @@ static int cachefiles_daemon_add_cache(struct cachefiles_cache *cache)
+ 	dput(cache->graveyard);
+ 	cache->graveyard = NULL;
+ error_unsupported:
++	path_put(&path);
+ 	mntput(cache->mnt);
+ 	cache->mnt = NULL;
+ 	dput(fsdef->dentry);
+ 	fsdef->dentry = NULL;
+-	dput(root);
+ error_open_root:
+ 	kmem_cache_free(cachefiles_object_jar, fsdef);
+ error_root_object:
+
+base-commit: a5e13c6df0e41702d2b2c77c8ad41677ebb065b3
+-- 
+2.27.0
+
