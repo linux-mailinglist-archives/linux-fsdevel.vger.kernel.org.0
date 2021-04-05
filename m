@@ -2,268 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D9263545CF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Apr 2021 19:09:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6130F3545E3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Apr 2021 19:16:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233855AbhDERIO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Apr 2021 13:08:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48626 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232733AbhDERIM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Apr 2021 13:08:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 090AA6127A;
-        Mon,  5 Apr 2021 17:08:03 +0000 (UTC)
-Date:   Mon, 5 Apr 2021 19:08:01 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
-Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
-Message-ID: <20210405170801.zrdhnon6g4ggb6c7@wittgenstein>
-References: <YGkloJhMFc4hEatk@zeniv-ca.linux.org.uk>
- <20210404113445.xo6ntgfpxigcb3x6@wittgenstein>
- <YGnhkoTfVfMSMPpK@zeniv-ca.linux.org.uk>
- <20210404164040.vtxdcfzgliuzghwk@wittgenstein>
- <YGns1iPBHeeMAtn8@zeniv-ca.linux.org.uk>
- <20210404170513.mfl5liccdaxjnpls@wittgenstein>
- <YGoKYktYPA86Qwju@zeniv-ca.linux.org.uk>
- <YGoe0VPs/Qmz/RxC@zeniv-ca.linux.org.uk>
- <20210405114437.hjcojekyp5zt6huu@wittgenstein>
- <YGs4clcRhyoXX8D0@zeniv-ca.linux.org.uk>
+        id S237220AbhDERQp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Apr 2021 13:16:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48952 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237113AbhDERQo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Apr 2021 13:16:44 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C1DEC061794
+        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Apr 2021 10:16:38 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id k23-20020a17090a5917b02901043e35ad4aso8163836pji.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Apr 2021 10:16:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ai3CdCbkrXPSlQhahzdlfMoVkl12Ktt9EKKlkNpbqIk=;
+        b=T5OZIJi1a+S0UmB8ju9dRtp9RWLpyoSfUudALSFJBsooFu63xRQSZft0M3qzy93k0r
+         z7x2JAHldp19Jlo5384VoYUVNQ2yeLvjJ5z5R7QVmttinVeV9VjzoAdj8fejaeiR8lyF
+         62143nJ12x8hml5vfS8LwEeOZj9TXLo/W5cC4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ai3CdCbkrXPSlQhahzdlfMoVkl12Ktt9EKKlkNpbqIk=;
+        b=ukyhYj5epyhYg/Shllxatw7zxVyaZVdGR5wVdd6AZTiLK8Kto14589hxpirszNVxCu
+         776gCaESdQu/3xEmCYdbdzBOzSgEsmoRIRHwPpGwIUOGC5+u+Xnszg6yPf9tjxJfEekn
+         cdA4/NyUIPtuqPQuQCDnLF4xH/UmvWnDnAAK9dnrkDNeVoP96QMw52JBfGPTeiXh5qRP
+         5ce4LvOdHCFz9JxuqoRuuge4EIPXB0EzyijuhQKDPNezkPtuu+1MecLthx8kNkm+YR2h
+         QcFTeU68otN4XfN4x9BTlAfZIvrysl8zVzYHyK3R2ai0esxvJlT2HtKq1lXgNwrS2r1e
+         zX2A==
+X-Gm-Message-State: AOAM5302nvhWvcSQAfMM5PKMLoDTTbOUZUs/F+71beoRi/FKXfjvWGXy
+        ePnRBvMhDGUc39WlLhb1fJAVsA==
+X-Google-Smtp-Source: ABdhPJz2wXjLIg6rNu7hKfJ8t7qCHdoSv+LbFw67gBgLuT/syvhnAuVwrV+h3lzUsevbyEgwDBzhiQ==
+X-Received: by 2002:a17:902:6546:b029:e9:1e31:3351 with SMTP id d6-20020a1709026546b02900e91e313351mr3882734pln.26.1617642997543;
+        Mon, 05 Apr 2021 10:16:37 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id t18sm16339996pfh.57.2021.04.05.10.16.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Apr 2021 10:16:36 -0700 (PDT)
+Date:   Mon, 5 Apr 2021 10:16:35 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hillf Danton <hdanton@sina.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Minchan Kim <minchan@kernel.org>,
+        huang ying <huang.ying.caritas@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Brian Cain <bcain@codeaurora.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Rob Herring <robh@kernel.org>,
+        "Pavel Machek (CIP)" <pavel@denx.de>,
+        Theodore Dubois <tblodt@icloud.com>,
+        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
+        Pavel Machek <pavel@ucw.cz>, Sam Ravnborg <sam@ravnborg.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Xiaoming Ni <nixiaoming@huawei.com>,
+        Robert Richter <rric@kernel.org>,
+        William Cohen <wcohen@redhat.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Kairui Song <kasong@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        uclinux-h8-devel@lists.sourceforge.jp,
+        linux-hexagon@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        openrisc@lists.librecores.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-fsdevel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH RFC 1/3] drivers/char: remove /dev/kmem for good
+Message-ID: <202104051013.F432CAC4@keescook>
+References: <20210319143452.25948-1-david@redhat.com>
+ <20210319143452.25948-2-david@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YGs4clcRhyoXX8D0@zeniv-ca.linux.org.uk>
+In-Reply-To: <20210319143452.25948-2-david@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 05, 2021 at 04:18:58PM +0000, Al Viro wrote:
-> On Mon, Apr 05, 2021 at 01:44:37PM +0200, Christian Brauner wrote:
-> > On Sun, Apr 04, 2021 at 08:17:21PM +0000, Al Viro wrote:
-> > > On Sun, Apr 04, 2021 at 06:50:10PM +0000, Al Viro wrote:
-> > > 
-> > > > > Yeah, I have at least namei.o
-> > > > > 
-> > > > > https://drive.google.com/file/d/1AvO1St0YltIrA86DXjp1Xg3ojtS9owGh/view?usp=sharing
-> > > > 
-> > > > *grumble*
-> > > > 
-> > > > Is it reproducible without KASAN?  Would be much easier to follow the produced
-> > > > asm...
-> > > 
-> > > 	Looks like inode_permission(_, NULL, _) from may_lookup(nd).  I.e.
-> > > nd->inode == NULL.
-> > 
-> > Yeah, I already saw that.
-> > 
-> > > 
-> > > 	Mind slapping BUG_ON(!nd->inode) right before may_lookup() call in
-> > > link_path_walk() and trying to reproduce that oops?
-> > 
-> > Yep, no problem. If you run the reproducer in a loop for a little while
-> > you eventually trigger the BUG_ON() and then you get the following splat
-> > (and then an endless loop) in [1] with nd->inode NULL.
-> > 
-> > _But_ I managed to debug this further and was able to trigger the BUG_ON()
-> > directly in path_init() in the AT_FDCWD branch (after all its AT_FDCWD(./file0)
-> > with the patch in [3] (it's in LOOKUP_RCU) the corresponding splat is in [2].
-> > So the crash happens for a PF_IO_WORKER thread with a NULL nd->inode for the
-> > PF_IO_WORKER's pwd (The PF_IO_WORKER seems to be in async context.).
+On Fri, Mar 19, 2021 at 03:34:50PM +0100, David Hildenbrand wrote:
+> Exploring /dev/kmem and /dev/mem in the context of memory hot(un)plug and
+> memory ballooning, I started questioning the existance of /dev/kmem.
 > 
-> So we find current->fs->pwd.dentry negative, with current->fs->seq sampled
-> equal before and after that?  Lovely...  The only places where we assign
-> anything to ->pwd.dentry are
-> void set_fs_pwd(struct fs_struct *fs, const struct path *path)
-> {
->         struct path old_pwd; 
+> Comparing it with the /proc/kcore implementation, it does not seem to be
+> able to deal with things like
+> a) Pages unmapped from the direct mapping (e.g., to be used by secretmem)
+>   -> kern_addr_valid(). virt_addr_valid() is not sufficient.
+> b) Special cases like gart aperture memory that is not to be touched
+>   -> mem_pfn_is_ram()
+> Unless I am missing something, it's at least broken in some cases and might
+> fault/crash the machine.
 > 
->         path_get(path);
->         spin_lock(&fs->lock);
->         write_seqcount_begin(&fs->seq);
->         old_pwd = fs->pwd;
->         fs->pwd = *path;
->         write_seqcount_end(&fs->seq);
->         spin_unlock(&fs->lock);
+> Looks like its existance has been questioned before in 2005 and 2010
+> [1], after ~11 additional years, it might make sense to revive the
+> discussion.
 > 
->         if (old_pwd.dentry)
->                 path_put(&old_pwd);
-> }
-> where we have ->seq bumped between dget new/assignment/ dput old,
-> copy_fs_struct() where we have
->                 spin_lock(&old->lock);
->                 fs->root = old->root;
->                 path_get(&fs->root);
->                 fs->pwd = old->pwd;
->                 path_get(&fs->pwd);
->                 spin_unlock(&old->lock);
-> fs being freshly allocated instance that couldn't have been observed
-> by anyone and chroot_fs_refs(), where we have
->                         spin_lock(&fs->lock);
->                         write_seqcount_begin(&fs->seq);
->                         hits += replace_path(&fs->root, old_root, new_root);
->                         hits += replace_path(&fs->pwd, old_root, new_root);
->                         write_seqcount_end(&fs->seq);
->                         while (hits--) {
->                                 count++;
->                                 path_get(new_root);
->                         }
->                         spin_unlock(&fs->lock);
-> ...
-> static inline int replace_path(struct path *p, const struct path *old, const struct path *new)
-> {
->         if (likely(p->dentry != old->dentry || p->mnt != old->mnt))
->                 return 0;
->         *p = *new;
->         return 1;
-> }
-> Here we have new_root->dentry pinned from the very beginning,
-> and assignments are wrapped into bumps of ->seq.  Moreover,
-> we are holding ->lock through that sequence (as all writers
-> do), so these references can't be dropped before path_get()
-> bumps new_root->dentry refcount.
+> CONFIG_DEVKMEM is only enabled in a single defconfig (on purpose or by
+> mistake?). All distributions I looked at disable it.
 > 
-> chroot_fs_refs() is called only by pivot_root(2):
->         chroot_fs_refs(&root, &new);
-> and there new is set by
->         error = user_path_at(AT_FDCWD, new_root,
->                              LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &new);
->         if (error)
->                 goto out0;
-> which pins new.dentry *and* verifies that it's positive and a directory,
-> at that.  Since pinned positive dentry can't be made negative by anybody
-> else, we know it will remain in that state until
-> 	path_put(&new);
-> well downstream of chroot_fs_refs().  In copy_fs_struct() we are
-> copying someone's ->pwd, so it's also pinned positive.  And it
-> won't be dropped outside of old->lock, so by the time somebody
-> manages to drop the reference in old, path_get() effects will be
-> visible (old->lock serving as a barrier).
+> 1) /dev/kmem was popular for rootkits [2] before it got disabled
+>    basically everywhere. Ubuntu documents [3] "There is no modern user of
+>    /dev/kmem any more beyond attackers using it to load kernel rootkits.".
+>    RHEL documents in a BZ [5] "it served no practical purpose other than to
+>    serve as a potential security problem or to enable binary module drivers
+>    to access structures/functions they shouldn't be touching"
 > 
-> That leaves set_fs_pwd() calls:
-> fs/init.c:54:           set_fs_pwd(current->fs, &path);
-> 	init_chdir(), path set by LOOKUP_DIRECTORY patwalk.  Pinned positive.
-> fs/namespace.c:4207:    set_fs_pwd(current->fs, &root);
-> 	init_mount_tree(), root.dentry being ->mnt_root of rootfs.  Pinned
-> positive (and it would've oopsed much earlier had that been it)
-> fs/namespace.c:4485:    set_fs_pwd(fs, &root);
-> 	mntns_install(), root filled by successful LOOKUP_DOWN for "/"
-> from mnt_ns->root.  Should be pinned positive.
-> fs/open.c:501:  set_fs_pwd(current->fs, &path);
-> 	chdir(2), path set by LOOKUP_DIRECTORY pathwalk.  Pinned positive.
-> fs/open.c:528:          set_fs_pwd(current->fs, &f.file->f_path);
-> 	fchdir(2), file->f_path of any opened file.  Pinned positive.
-> kernel/usermode_driver.c:130:   set_fs_pwd(current->fs, &umd_info->wd);
-> 	umd_setup(), ->wd.dentry equal to ->wd.mnt->mnt_root, should be pinned positive.
-> kernel/nsproxy.c:509:           set_fs_pwd(me->fs, &nsset->fs->pwd);
-> 	commit_nsset().  Let's see what's going on there...
+> 2) /proc/kcore is a decent interface to have a controlled way to read
+>    kernel memory for debugging puposes. (will need some extensions to
+>    deal with memory offlining/unplug, memory ballooning, and poisoned
+>    pages, though)
 > 
->         if ((flags & CLONE_NEWNS) && (flags & ~CLONE_NEWNS)) {
->                 set_fs_root(me->fs, &nsset->fs->root);
->                 set_fs_pwd(me->fs, &nsset->fs->pwd);
->         }
-> In those conditions nsset.fs has come from copy_fs_struct() done in
-> prepare_nsset().  And the only thing that might've been done to it
-> would be those set_fs_pwd() in mntns_install() (I'm not fond of the
-> entire nsset->fs thing - looks like papering over bad calling
-> conventions, but anyway)
+> 3) It might be useful for corner case debugging [1]. KDB/KGDB might be a
+>    better fit, especially, to write random memory; harder to shoot
+>    yourself into the foot.
 > 
-> Now, I might've missed some insanity (direct assignments to ->pwd.dentry,
-> etc. - wouldn't be the first time io_uring folks went "layering? wassat?
-> we'll just poke in whatever we can reach"), but I don't see anything
-> obvious of that sort in the area...
+> 4) "Kernel Memory Editor" hasn't seen any updates since 2000 and seems
+>    to be incompatible with 64bit [1]. For educational purposes,
+>    /proc/kcore might be used to monitor value updates -- or older
+>    kernels can be used.
 > 
-> OK, how about this: in path_init(), right after
->                         do {
->                                 seq = read_seqcount_begin(&fs->seq);
->                                 nd->path = fs->pwd;
->                                 nd->inode = nd->path.dentry->d_inode;
->                                 nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
->                         } while (read_seqcount_retry(&fs->seq, seq));
-> slap
-> 			if (!nd->inode) {
-> 				// should never, ever happen
-> 				struct dentry *fucked = nd->path.dentry;
-> 				printk(KERN_ERR "%pd4 %d %x %p %d %d", fucked, d_count(fucked),
-> 							fucked->d_flags, fs, fs->users, seq);
-> 				BUG_ON(1);
-> 				return ERR_PTR(-EINVAL);
-> 			}
-> and see what it catches?
+> 5) It's broken on arm64, and therefore, completely disabled there.
+> 
+> Looks like it's essentially unused and has been replaced by better
+> suited interfaces for individual tasks (/proc/kcore, KDB/KGDB). Let's
+> just remove it.
+> 
+> [1] https://lwn.net/Articles/147901/
+> [2] https://www.linuxjournal.com/article/10505
+> [3] https://wiki.ubuntu.com/Security/Features#A.2Fdev.2Fkmem_disabled
+> [4] https://sourceforge.net/projects/kme/
+> [5] https://bugzilla.redhat.com/show_bug.cgi?id=154796
+> 
+> [...]
+> Cc: Linux API <linux-api@vger.kernel.org>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Ah dentry count of -127 looks... odd.
+Yes please! As James Troup pointed out already, this was turned off in
+Ubuntu in 2008. I don't remember a single complaint from anyone who
+wasn't a rootkit author. ;)
 
+Acked-by: Kees Cook <keescook@chromium.org>
 
-[  246.102077] /newroot/foo -127 18008 ffff888012819000 6 0
-[  246.102240] ------------[ cut here ]------------
-[  246.102264] /newroot/foo -127 18008 ffff888012819000 6 6
-[  246.104163] ------------[ cut here ]------------
-[  246.104943] kernel BUG at fs/namei.c:2359!
-[  246.106342] kernel BUG at fs/namei.c:2359!
-[  246.106385] invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-[  246.110540] CPU: 0 PID: 6345 Comm: uring_viro Tainted: G        W   E     5.12.0-rc5-1ebc00aa82b08217d1fc4eef5435f8499783194c #53
-[  246.113725] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009)/LXD, BIOS 0.0.0 02/06/2015
-[  246.116115] RIP: 0010:path_init.cold+0xbb/0xea
-[  246.117711] Code: d0 7c 04 84 d2 75 4b 4c 8b 45 98 41 89 d9 44 89 f9 4c 89 e6 41 8b 94 24 d0 00 00 00 48 c7 c7 20 93 1a b1 41 55 e8 1c 70 fe ff <0f> 0b 48 8b 7d b8 e8 1f ee e6 f8 e9 55 ff ff ff 48 8b 7d 98 e8 01
-[  246.124372] RSP: 0018:ffffc900073275f0 EFLAGS: 00010282
-[  246.126466] RAX: 000000000000002c RBX: 0000000000000006 RCX: 0000000000000000
-[  246.129685] RDX: 0000000000000000 RSI: ffff88801354d700 RDI: fffff52000e64eb0
-[  246.131400] RBP: ffffc900073276a0 R08: 000000000000002c R09: ffffed1002b46045
-[  246.133241] R10: ffff888015a30227 R11: ffffed1002b46044 R12: ffff8880303eb028
-[  246.135124] R13: 0000000000000006 R14: ffffc90007327820 R15: 0000000000018008
-[  246.136931] FS:  00007f8695724800(0000) GS:ffff888015a00000(0000) knlGS:0000000000000000
-[  246.139247] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  246.141604] CR2: 000055fdf3c11008 CR3: 000000002e9dd000 CR4: 0000000000350ef0
-[  246.143437] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  246.145337] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  246.147114] Call Trace:
-[  246.147910]  ? write_comp_data+0x2a/0x90
-[  246.149010]  path_openat+0x192/0x2790
-[  246.150062]  ? path_lookupat.isra.0+0x530/0x530
-[  246.151295]  ? rcu_read_lock_bh_held+0xb0/0xb0
-[  246.152561]  ? lockdep_hardirqs_on_prepare+0x400/0x400
-[  246.154071]  do_filp_open+0x197/0x270
-[  246.155157]  ? rcu_read_lock_bh_held+0xb0/0xb0
-[  246.156392]  ? may_open_dev+0xf0/0xf0
-[  246.157969]  ? do_raw_spin_lock+0x125/0x2e0
-[  246.159167]  ? write_comp_data+0x2a/0x90
-[  246.160319]  ? __sanitizer_cov_trace_pc+0x1d/0x50
-[  246.161649]  ? _raw_spin_unlock+0x29/0x40
-[  246.162823]  ? alloc_fd+0x499/0x640
-[  246.164092]  io_openat2+0x1d1/0x8f0
-[  246.165403]  ? io_req_complete_post+0xa90/0xa90
-[  246.166974]  ? __lock_acquire+0x1847/0x5850
-[  246.168455]  ? write_comp_data+0x2a/0x90
-[  246.169877]  io_issue_sqe+0x2a2/0x5ac0
-[  246.171226]  ? lockdep_hardirqs_on_prepare+0x400/0x400
-[  246.173079]  ? io_poll_complete.constprop.0+0x100/0x100
-[  246.174960]  ? rcu_read_lock_sched_held+0xa1/0xd0
-[  246.176468]  ? rcu_read_lock_bh_held+0xb0/0xb0
-[  246.187303]  ? find_held_lock+0x2d/0x110
-[  246.197951]  ? __might_fault+0xd8/0x180
-[  246.208458]  __io_queue_sqe+0x19f/0xcf0
-[  246.218694]  ? __check_object_size+0x1b4/0x4e0
-[  246.228802]  ? __ia32_sys_io_uring_setup+0x70/0x70
-[  246.239099]  ? write_comp_data+0x2a/0x90
-[  246.249152]  io_queue_sqe+0x612/0xb70
-[  246.258967]  io_submit_sqes+0x517d/0x6650
-[  246.268445]  ? __x64_sys_io_uring_enter+0xb15/0xdd0
-[  246.282682]  __x64_sys_io_uring_enter+0xb15/0xdd0
-[  246.292110]  ? __ia32_sys_io_uring_enter+0xdd0/0xdd0
-[  246.301285]  ? rcu_read_lock_bh_held+0xb0/0xb0
-[  246.310116]  ? syscall_enter_from_user_mode+0x27/0x70
-[  246.318845]  do_syscall_64+0x2d/0x70
-[  246.327328]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-[  246.336188] RIP: 0033:0x7f869583a67d
-[  246.344145] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d bb f7 0c 00 f7 d8 64 89 01 48
-[  246.367649] RSP: 002b:000055fdf2a89e98 EFLAGS: 00000212 ORIG_RAX: 00000000000001aa
-[  246.377100] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f869583a67d
-[  246.386119] RDX: 0000000000000000 RSI: 00000000000045f5 RDI: 0000000000000003
-[  246.395095] RBP: 000055fdf2a89f70 R08: 0000000000000000 R09: 0000000000000000
-[  246.403925] R10: 0000000000000000 R11: 0000000000000212 R12: 000055fdf295c640
-[  246.412977] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-[  246.425046] Modules linked in: efi_pstore(E) efivarfs(E)
-[  246.434681] invalid opcode: 0000 [#2] PREEMPT SMP KASAN
-[  246.435099] ---[ end trace b331351bc5a092fa ]---
+-- 
+Kees Cook
