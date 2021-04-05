@@ -2,34 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A8F8354418
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Apr 2021 18:04:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2208E354426
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Apr 2021 18:04:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242057AbhDEQE2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Apr 2021 12:04:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55742 "EHLO mail.kernel.org"
+        id S241887AbhDEQEe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Apr 2021 12:04:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242047AbhDEQE1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Apr 2021 12:04:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CC16A613B9;
-        Mon,  5 Apr 2021 16:04:20 +0000 (UTC)
+        id S242066AbhDEQEa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Apr 2021 12:04:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 034B9613C4;
+        Mon,  5 Apr 2021 16:04:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617638661;
-        bh=eNRxCHjDEZm7ZMVSCK8sEwsiZEqUyXr6H0sI5kRJgcc=;
+        s=k20201202; t=1617638663;
+        bh=S90Qc4S09UsEM8as6c0miYWhG2tCiQPkyucwsFYFP1w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iEjUj2eINKYSDyxeJ/pAuRfJwmv0hpRTw486TYbkHv8oj/RmOLYAVCsMiraTkYKth
-         4Xs35IDelJjQs4fYLA83fhxTgWDjat40jY0hCDwz3wINzpk4OtaojmBPCW6bg7BcBM
-         qOxr6/NEV+1LXszdilFss2uGBuHDw6gchSGC3oID5E0UF3BvWWm8C/am4FyaLs+gox
-         9XAyq8D5Y5P+2i6u48w5ZN32Lul7NE099Ra9lDjnIHoB+fLL65wD5FMe4JpMD7fhog
-         D9nPTC/bzSLY3L1mDOBJURlVlcFaeNlBLY3tMxsh6mYKdtZS8i96m70vmkFwH29k/E
-         4jYfnGxCD8T2g==
+        b=YY0NhW4GfJJGPQNng7qFYUS5TWYegbbRk9Bi/VsHVJu2Oo+cVcBfBy5kUeZmA+qjS
+         T+303ZNKLUjYhv1lpvbOX8k/5gniGRFKM+si9oAjeqkLLTatZhwW+FLAk9AZ3ISFgV
+         75+DIkuZ7bcGrJUGXRhoLLTsbAWALQ63PWjbQvrRkpi4zdYzCcyWvXjUO6sRhjK0w1
+         nJIRV5dhEgZ2IqZ9T71aJW8kck37nx9AN8Xo+siSzX2vdjMqOlyN/1tvbMnDC1BUMg
+         Dy9qPwNM8rUNJrZskIUbjpnvH8F0N6roqHYu4J95C4ylsQUqTULxCmibIWOF7qcna2
+         V6jS2IfmCar+w==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.11 13/22] radix tree test suite: Fix compilation
-Date:   Mon,  5 Apr 2021 12:03:56 -0400
-Message-Id: <20210405160406.268132-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.11 15/22] radix tree test suite: Register the main thread with the RCU library
+Date:   Mon,  5 Apr 2021 12:03:58 -0400
+Message-Id: <20210405160406.268132-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210405160406.268132-1-sashal@kernel.org>
 References: <20210405160406.268132-1-sashal@kernel.org>
@@ -43,25 +44,73 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-[ Upstream commit 7487de534dcbe143e6f41da751dd3ffcf93b00ee ]
+[ Upstream commit 1bb4bd266cf39fd2fa711f2d265c558b92df1119 ]
 
-Commit 4bba4c4bb09a added tools/include/linux/compiler_types.h which
-includes linux/compiler-gcc.h.  Unfortunately, we had our own (empty)
-compiler_types.h which overrode the one added by that commit, and
-so we lost the definition of __must_be_array().  Removing our empty
-compiler_types.h fixes the problem and reduces our divergence from the
-rest of the tools.
+Several test runners register individual worker threads with the
+RCU library, but neglect to register the main thread, which can lead
+to objects being freed while the main thread is in what appears to be
+an RCU critical section.
 
+Reported-by: Chris von Recklinghausen <crecklin@redhat.com>
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/radix-tree/linux/compiler_types.h | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- delete mode 100644 tools/testing/radix-tree/linux/compiler_types.h
+ tools/testing/radix-tree/idr-test.c   | 2 ++
+ tools/testing/radix-tree/multiorder.c | 2 ++
+ tools/testing/radix-tree/xarray.c     | 2 ++
+ 3 files changed, 6 insertions(+)
 
-diff --git a/tools/testing/radix-tree/linux/compiler_types.h b/tools/testing/radix-tree/linux/compiler_types.h
-deleted file mode 100644
-index e69de29bb2d1..000000000000
+diff --git a/tools/testing/radix-tree/idr-test.c b/tools/testing/radix-tree/idr-test.c
+index 3b796dd5e577..44ceff95a9b3 100644
+--- a/tools/testing/radix-tree/idr-test.c
++++ b/tools/testing/radix-tree/idr-test.c
+@@ -577,6 +577,7 @@ void ida_tests(void)
+ 
+ int __weak main(void)
+ {
++	rcu_register_thread();
+ 	radix_tree_init();
+ 	idr_checks();
+ 	ida_tests();
+@@ -584,5 +585,6 @@ int __weak main(void)
+ 	rcu_barrier();
+ 	if (nr_allocated)
+ 		printf("nr_allocated = %d\n", nr_allocated);
++	rcu_unregister_thread();
+ 	return 0;
+ }
+diff --git a/tools/testing/radix-tree/multiorder.c b/tools/testing/radix-tree/multiorder.c
+index 9eae0fb5a67d..e00520cc6349 100644
+--- a/tools/testing/radix-tree/multiorder.c
++++ b/tools/testing/radix-tree/multiorder.c
+@@ -224,7 +224,9 @@ void multiorder_checks(void)
+ 
+ int __weak main(void)
+ {
++	rcu_register_thread();
+ 	radix_tree_init();
+ 	multiorder_checks();
++	rcu_unregister_thread();
+ 	return 0;
+ }
+diff --git a/tools/testing/radix-tree/xarray.c b/tools/testing/radix-tree/xarray.c
+index e61e43efe463..f20e12cbbfd4 100644
+--- a/tools/testing/radix-tree/xarray.c
++++ b/tools/testing/radix-tree/xarray.c
+@@ -25,11 +25,13 @@ void xarray_tests(void)
+ 
+ int __weak main(void)
+ {
++	rcu_register_thread();
+ 	radix_tree_init();
+ 	xarray_tests();
+ 	radix_tree_cpu_dead(1);
+ 	rcu_barrier();
+ 	if (nr_allocated)
+ 		printf("nr_allocated = %d\n", nr_allocated);
++	rcu_unregister_thread();
+ 	return 0;
+ }
 -- 
 2.30.2
 
