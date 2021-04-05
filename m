@@ -2,34 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D853C35446A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Apr 2021 18:05:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C28A354478
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Apr 2021 18:05:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242069AbhDEQFH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Apr 2021 12:05:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56730 "EHLO mail.kernel.org"
+        id S242246AbhDEQFR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Apr 2021 12:05:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242162AbhDEQE6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Apr 2021 12:04:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F063B613F1;
-        Mon,  5 Apr 2021 16:04:51 +0000 (UTC)
+        id S242199AbhDEQFE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Apr 2021 12:05:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9BBC9613C9;
+        Mon,  5 Apr 2021 16:04:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617638692;
-        bh=V/EI5/0USRO1S1Novl45CCqwydSlfLph0clCRaXR6B0=;
+        s=k20201202; t=1617638698;
+        bh=g9MAv3HrLHNBtDeS5EIkFuSTE/0xOXN77La23FB3nJY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oAg5ADoPf9I94PTV9oaInyaLknczBVC+Mpi21SdQcps16gY/aHL+vicgWvjk5gafZ
-         9BQYsg3nh+OkMeIXOaHnOtdd1K2BnoZbx6poeJ7W2Jk8yYLRUELtIglvWzyDLmPbBb
-         GAc5K1a+kWcnfDSgNwj9yta6FDanoOdKBIr3LKjcIQ3a97VENdQ4mDdYvCa4bM9cJG
-         9WNg6Pi6L1uO8YPNl3FGLBjcU9DmY5Ucg7H54kPm77FAUbhjbDDC8HbYIWtjvW3dZJ
-         +uXZVaV6H64SczCPMAZzJ/QWoWFn+nDrA5cApZ+BtOb+BQh6wmnoEQ2dV57fVdTIGs
-         wazV+XrfdJOrg==
+        b=rD/u7ZweeFRw5M9Dwe5rV2bym880ubbeSZka35yoEDvRFdGpZMe09FlD6odTWUq2H
+         /zRg0EG4cuctH8aH0qWcxlSMp5uD4vZqSnUPJRacV3iHG11XlgZb3nH1bt0SNz97R8
+         x0xiJ3bJPIw18dxEvJXbuWeCAvU07OnAiEMxV3esUARblmCuvkySklORXuM6TWw0DN
+         o8yeIMoIPIa38LsMKeW207BuJXxSGAkgc4hO5dw8XZ9lE6wxZk38MgOK7TM/W5zMOu
+         dC46bT9Sv0DnjD1aaTva1ZBSJtY7PrW+VaeCxSaTBe2MKBm9FZfgK0Y/gpX4/Ng6D5
+         VhTU7BW3BkZyA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 17/22] idr test suite: Create anchor before launching throbber
-Date:   Mon,  5 Apr 2021 12:04:26 -0400
-Message-Id: <20210405160432.268374-17-sashal@kernel.org>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 22/22] block: don't ignore REQ_NOWAIT for direct IO
+Date:   Mon,  5 Apr 2021 12:04:31 -0400
+Message-Id: <20210405160432.268374-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210405160432.268374-1-sashal@kernel.org>
 References: <20210405160432.268374-1-sashal@kernel.org>
@@ -41,37 +42,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-[ Upstream commit 094ffbd1d8eaa27ed426feb8530cb1456348b018 ]
+[ Upstream commit f8b78caf21d5bc3fcfc40c18898f9d52ed1451a5 ]
 
-The throbber could race with creation of the anchor entry and cause the
-IDR to have zero entries in it, which would cause the test to fail.
+If IOCB_NOWAIT is set on submission, then that needs to get propagated to
+REQ_NOWAIT on the block side. Otherwise we completely lose this
+information, and any issuer of IOCB_NOWAIT IO will potentially end up
+blocking on eg request allocation on the storage side.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/radix-tree/idr-test.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/block_dev.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/testing/radix-tree/idr-test.c b/tools/testing/radix-tree/idr-test.c
-index 4a9b451b7ba0..6ce7460f3c7a 100644
---- a/tools/testing/radix-tree/idr-test.c
-+++ b/tools/testing/radix-tree/idr-test.c
-@@ -301,11 +301,11 @@ void idr_find_test_1(int anchor_id, int throbber_id)
- 	pthread_t throbber;
- 	time_t start = time(NULL);
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index fe201b757baa..1b6a34fd1fef 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -280,6 +280,8 @@ __blkdev_direct_IO_simple(struct kiocb *iocb, struct iov_iter *iter,
+ 		bio.bi_opf = dio_bio_write_op(iocb);
+ 		task_io_account_write(ret);
+ 	}
++	if (iocb->ki_flags & IOCB_NOWAIT)
++		bio.bi_opf |= REQ_NOWAIT;
+ 	if (iocb->ki_flags & IOCB_HIPRI)
+ 		bio_set_polled(&bio, iocb);
  
--	pthread_create(&throbber, NULL, idr_throbber, &throbber_id);
--
- 	BUG_ON(idr_alloc(&find_idr, xa_mk_value(anchor_id), anchor_id,
- 				anchor_id + 1, GFP_KERNEL) != anchor_id);
+@@ -433,6 +435,8 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
+ 			bio->bi_opf = dio_bio_write_op(iocb);
+ 			task_io_account_write(bio->bi_iter.bi_size);
+ 		}
++		if (iocb->ki_flags & IOCB_NOWAIT)
++			bio->bi_opf |= REQ_NOWAIT;
  
-+	pthread_create(&throbber, NULL, idr_throbber, &throbber_id);
-+
- 	rcu_read_lock();
- 	do {
- 		int id = 0;
+ 		dio->size += bio->bi_iter.bi_size;
+ 		pos += bio->bi_iter.bi_size;
 -- 
 2.30.2
 
