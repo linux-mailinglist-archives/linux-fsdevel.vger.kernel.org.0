@@ -2,53 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D0C53546A7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Apr 2021 20:11:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8C3A3546BE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Apr 2021 20:24:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233126AbhDESLn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Apr 2021 14:11:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32778 "EHLO
+        id S234809AbhDESYC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Apr 2021 14:24:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232597AbhDESLm (ORCPT
+        with ESMTP id S232740AbhDESYB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Apr 2021 14:11:42 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72B3FC061756;
-        Mon,  5 Apr 2021 11:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=1DcSFcfs5hJKK+fhbOE6H8WkSNb3vT4ZfE9fsTtukpk=; b=L66P4A3PjIeQO6/jslYbDiXLnA
-        8eb/QUsH1loXTfTQALSOa05Sf52ZfS2KJ1YGHGohXvyc1+gGe6+3wqRcm8i56UtrpFsgkxCbN5rOx
-        DfNWA4n9cWJ5/VxeY8ycsADF7giR9RUNdvHBNwQ+hINErinYQfAQZar8jBYzpg5eHeY0JZfy3FP7i
-        EukTtAsvAauUGiZgRR+TWgxJE8xR9aJkvD+fP3v3AVfTrHDdOm2QvzXRWpqfLTSmL/uZgIJDjudhW
-        nMz4oPhMO60oFq6MwlKetYY2PTZnFaMhOfKL6/ykZN4YN9jV2NB1nnVtHMeVH1DAnRu5UZcBG2hrq
-        4tsZ2/Kg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lTTgr-00Bigl-Ew; Mon, 05 Apr 2021 18:11:14 +0000
-Date:   Mon, 5 Apr 2021 19:11:09 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.19 6/8] radix tree test suite: Fix compilation
-Message-ID: <20210405181109.GH2531743@casper.infradead.org>
-References: <20210405160515.269020-1-sashal@kernel.org>
- <20210405160515.269020-6-sashal@kernel.org>
+        Mon, 5 Apr 2021 14:24:01 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EED7CC061788;
+        Mon,  5 Apr 2021 11:23:54 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lTTt7-002nw9-Sh; Mon, 05 Apr 2021 18:23:49 +0000
+Date:   Mon, 5 Apr 2021 18:23:49 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
+Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
+Message-ID: <YGtVtfbYXck3qPRl@zeniv-ca.linux.org.uk>
+References: <20210404113445.xo6ntgfpxigcb3x6@wittgenstein>
+ <YGnhkoTfVfMSMPpK@zeniv-ca.linux.org.uk>
+ <20210404164040.vtxdcfzgliuzghwk@wittgenstein>
+ <YGns1iPBHeeMAtn8@zeniv-ca.linux.org.uk>
+ <20210404170513.mfl5liccdaxjnpls@wittgenstein>
+ <YGoKYktYPA86Qwju@zeniv-ca.linux.org.uk>
+ <YGoe0VPs/Qmz/RxC@zeniv-ca.linux.org.uk>
+ <20210405114437.hjcojekyp5zt6huu@wittgenstein>
+ <YGs4clcRhyoXX8D0@zeniv-ca.linux.org.uk>
+ <20210405170801.zrdhnon6g4ggb6c7@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210405160515.269020-6-sashal@kernel.org>
+In-Reply-To: <20210405170801.zrdhnon6g4ggb6c7@wittgenstein>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 05, 2021 at 12:05:13PM -0400, Sasha Levin wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> [ Upstream commit dd841a749d1ded8e2e5facc4242ee0b6779fc0cb ]
-> 
-> Introducing local_lock broke compilation; fix it all up.
+On Mon, Apr 05, 2021 at 07:08:01PM +0200, Christian Brauner wrote:
 
-I don't think local_lock has been backported to 4.19?
+> Ah dentry count of -127 looks... odd.
+
+dead + 1...
+
+void lockref_mark_dead(struct lockref *lockref)
+{
+        assert_spin_locked(&lockref->lock);
+	lockref->count = -128;
+}
+
+IOW, a leaked (uncounted) reference to dentry, that got dget() called on
+it after dentry had been freed.
+
+	IOW, current->fs->pwd.dentry happens to point to an already freed
+struct dentry here.  Joy...
+
+	Could you slap
+
+spin_lock(&current->fs->lock);
+WARN_ON(d_count(current->fs->pwd.dentry) < 0);
+spin_unlock(&current->fs->lock);
+
+before and after calls of io_issue_sqe() and see if it triggers?  We definitely
+are seeing buggered dentry refcounting here.
