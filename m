@@ -2,521 +2,382 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED123545EA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Apr 2021 19:19:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2E1E35468B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Apr 2021 20:08:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236625AbhDERT2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Apr 2021 13:19:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49550 "EHLO
+        id S232797AbhDESIq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Apr 2021 14:08:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231390AbhDERT1 (ORCPT
+        with ESMTP id S230337AbhDESIq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Apr 2021 13:19:27 -0400
-Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29D27C061788
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Apr 2021 10:19:21 -0700 (PDT)
-Received: by mail-pg1-x549.google.com with SMTP id s10so6833709pgm.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Apr 2021 10:19:21 -0700 (PDT)
+        Mon, 5 Apr 2021 14:08:46 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAAD9C061788;
+        Mon,  5 Apr 2021 11:08:39 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id f8so9462515edd.11;
+        Mon, 05 Apr 2021 11:08:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=smRHtKh0sofAH08YA8piFhOVhZ9jZVfIv3hRd5nMU2Y=;
-        b=IYxiRs3GRQsuxWSmfi3pdhs/xvvWvCPlYnOnkGhyLlGnSMFahlFGnRFxaiag4Bsurh
-         8R5TfyXkCm8wG87E0i8Z7F7SxF6oZ+w/LkYPzc94tPb5+VuL4a+GVLwVIkPv6yMIkW0w
-         jTm0z75F/iZljMJxygUVk2taZums0r9HWVZfkqjmel/wW0ji55I0lMnODqJTxa/Ho+dP
-         7N/AVc/Esp5KqmMdjJ4QbNHZ6iBfql5iZi88aIf4KsXoVR2HHoJ5oB+fW+qdowRF7bqv
-         y8gp3pkgKXgyeofArhYedgYpEotOYmO1cgDoIvziijichp87kFcN0cmIwZVry+4xnd/f
-         VYMQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Tmgk94hGPMJZ0DJfUDyT8lY/33hyIlSDNP2Z5DjB0u0=;
+        b=g9Wap+Q15k1ReSr/I3Z3xioAF+6JrjhlTY46wJOQLoUkgoIkcC3jseuWKhtuyEzEQV
+         +9J7uCxdixfj/IxgT5yTJWXHKYUsMEyh3M9FJkPXKKxGQnFlb2zpsF6CGXUQmttByLNR
+         cvvMZlQdS89AmAASB7yBBayHxD2/H8Vikk9lvVRJcVS+ywSwmGsEuzH2H6hxChkMmaMJ
+         kQ8VGsT2DgCVljwdCaoyJCt/e4otenG/fTghHCnuodhClFRtEu+1sjCBP/H7IJQXsRZ0
+         TIbTtSHbw5wdtwJsNHE3SqvxowrDNo63opL9OOvAkYlKgndjlxiHF7ENxLRwbr06QJmB
+         6KuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=smRHtKh0sofAH08YA8piFhOVhZ9jZVfIv3hRd5nMU2Y=;
-        b=C/9QWgl8WF61QaSKjPzsZTLcDUnRGVH5zBGha3tlEv/y63/5fWqyJr7D22RN9Li3wg
-         atthQHVcLZRfn81HNTZRc8u6YflLYc5tKHn3SdYIePpsYwSqSx6nLTdUkTZsvqAD02be
-         CE+nMHVKQnaK7DaunmhGtHh6x2Ec4HkSa08AomSq5NncH7/hyHMIiDiJMjXNh2GYewXN
-         eP6cfJiMqWsn6Jdd7jtY1kqFlpZkydGztFoLu0lkKsycYwt3LPH33fhlYFjQCtJVbAdf
-         4eUwVHsnwidKPB+FxtugDURAzfHJ+P4Nw94M6JkUiROfzpPQpDDmSWvCj3vmxttyDsH1
-         BgXA==
-X-Gm-Message-State: AOAM530SNVDBvoq3wrx9m+3/rczN//NukrdD/XnUvaiEdZIKmeV05JRf
-        TjAxtRvYTXitGJuzuo8fhvfpNepa6szugY5f8AQ5
-X-Google-Smtp-Source: ABdhPJxtr07M3HN+M9pbN3alal/MseWQUtDZfU1bch2xeMf/X5Y2ip1A5sSV1jo4A5t0ih8l4nIwWbnNgDnnRM+NWt0r
-X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:b518:9786:f15a:398b])
- (user=axelrasmussen job=sendgmr) by 2002:a17:90a:4d81:: with SMTP id
- m1mr142662pjh.143.1617643160576; Mon, 05 Apr 2021 10:19:20 -0700 (PDT)
-Date:   Mon,  5 Apr 2021 10:19:17 -0700
-Message-Id: <20210405171917.2423068-1-axelrasmussen@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.31.0.208.g409f899ff0-goog
-Subject: [PATCH v5] userfaultfd/shmem: fix MCOPY_ATOMIC_CONTINUE behavior
-From:   Axel Rasmussen <axelrasmussen@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wang Qing <wangqing@vivo.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Michel Lespinasse <walken@google.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Tmgk94hGPMJZ0DJfUDyT8lY/33hyIlSDNP2Z5DjB0u0=;
+        b=A0jIeQcn+rUsQfRZQZM2h//DpgyFoQgn8StZ74blLUuF0RbMMULNjuex/qjjvXLc3P
+         lf9mJHERG4opbXsJvfRnLgsas3t6WvN23XoaVKHyoRS9gJ7zqFS2ndefjazudKDjw471
+         V5ilM5QJTthFtrjGNQ6qpEYb3GIzP8/1FI7U+LUZqhlmLX1WW9sWfvKpPlOIRwjXBjDL
+         DDBuNSm3KG/XTf8pmJtPy2b1mMR54atTFx6IdOP5Me5W1pccfhsDUsIAb340q98TCAc0
+         Tz+pkOJx/ZIv/T80OVcEJPQtbKIa4P6oiQogfSFvxk4y/nQ3sYNEu9l54M7ef6rEioV+
+         m3ow==
+X-Gm-Message-State: AOAM532LZSUxpbMvM6wE54F/qyEWhg3RRqH4mR1hr/UxVe1l0woj+Fmr
+        XaIOCxtvVAxb1pIhWgxJ0HyG8s5mPEHGvioscrM=
+X-Google-Smtp-Source: ABdhPJzFh/IEaJgbODhBxizGE6MiP5lU8uPS6w3cunO1s+x7Za/pdEjnP6iPzLURd12FFiEAJHwYl6VNuGG+G4FHpn4=
+X-Received: by 2002:a05:6402:518d:: with SMTP id q13mr33136364edd.313.1617646118553;
+ Mon, 05 Apr 2021 11:08:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210405054848.GA1077931@in.ibm.com>
+In-Reply-To: <20210405054848.GA1077931@in.ibm.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Mon, 5 Apr 2021 11:08:26 -0700
+Message-ID: <CAHbLzko-17bUWdxmOi-p2_MLSbsMCvhjKS1ktnBysC5dN_W90A@mail.gmail.com>
+Subject: Re: High kmalloc-32 slab cache consumption with 10k containers
+To:     Bharata B Rao <bharata@linux.ibm.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        aneesh.kumar@linux.ibm.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Previously, the continue implementation in shmem_mcopy_atomic_pte was
-incorrect for two main reasons:
+On Sun, Apr 4, 2021 at 10:49 PM Bharata B Rao <bharata@linux.ibm.com> wrote:
+>
+> Hi,
+>
+> When running 10000 (more-or-less-empty-)containers on a bare-metal Power9
+> server(160 CPUs, 2 NUMA nodes, 256G memory), it is seen that memory
+> consumption increases quite a lot (around 172G) when the containers are
+> running. Most of it comes from slab (149G) and within slab, the majority of
+> it comes from kmalloc-32 cache (102G)
+>
+> The major allocator of kmalloc-32 slab cache happens to be the list_head
+> allocations of list_lru_one list. These lists are created whenever a
+> FS mount happens. Specially two such lists are registered by alloc_super(),
+> one for dentry and another for inode shrinker list. And these lists
+> are created for all possible NUMA nodes and for all given memcgs
+> (memcg_nr_cache_ids to be particular)
+>
+> If,
+>
+> A = Nr allocation request per mount: 2 (one for dentry and inode list)
+> B = Nr NUMA possible nodes
+> C = memcg_nr_cache_ids
+> D = size of each kmalloc-32 object: 32 bytes,
+>
+> then for every mount, the amount of memory consumed by kmalloc-32 slab
+> cache for list_lru creation is A*B*C*D bytes.
 
-- It didn't correctly skip some sections of code which make sense for
-  newly allocated pages, but absolutely don't make sense for
-  pre-existing page cache pages.
+Yes, this is exactly what the current implementation does.
 
-- Because shmem_mcopy_continue_pte is called only if VM_SHARED is
-  detected in mm/userfaultd.c, we were incorrectly not supporting the
-  case where a tmpfs file had been mmap()-ed with MAP_PRIVATE.
+>
+> Following factors contribute to the excessive allocations:
+>
+> - Lists are created for possible NUMA nodes.
 
-So, this patch does the following:
+Yes, because filesystem caches (dentry and inode) are NUMA aware.
 
-In mm/userfaultfd.c, break the logic to install PTEs out of
-mcopy_atomic_pte, into a separate helper function.
+> - memcg_nr_cache_ids grows in bulk (see memcg_alloc_cache_id() and additional
+>   list_lrus are created when it grows. Thus we end up creating list_lru_one
+>   list_heads even for those memcgs which are yet to be created.
+>   For example, when 10000 memcgs are created, memcg_nr_cache_ids reach
+>   a value of 12286.
+> - When a memcg goes offline, the list elements are drained to the parent
+>   memcg, but the list_head entry remains.
+> - The lists are destroyed only when the FS is unmounted. So list_heads
+>   for non-existing memcgs remain and continue to contribute to the
+>   kmalloc-32 allocation. This is presumably done for performance
+>   reason as they get reused when new memcgs are created, but they end up
+>   consuming slab memory until then.
 
-In mfill_atomic_pte, for the MCOPY_ATOMIC_CONTINUE case, simply look
-up the existing page in the page cache, and then use the PTE
-installation helper to setup the mapping. This addresses the two issues
-noted above.
+The current implementation has list_lrus attached with super_block. So
+the list can't be freed until the super block is unmounted.
 
-The previous code's bugs manifested clearly in the error handling path.
-So, to detect this kind of issue in the future, modify the selftest to
-exercise the error handling path as well.
+I'm looking into consolidating list_lrus more closely with memcgs. It
+means the list_lrus will have the same life cycles as memcgs rather
+than filesystems. This may be able to improve some. But I'm supposed
+the filesystem will be unmounted once the container exits and the
+memcgs will get offlined for your usecase.
 
-Note that this patch is based on linux-next/akpm; the "fixes" line
-refers to a SHA1 in that branch.
+> - In case of containers, a few file systems get mounted and are specific
+>   to the container namespace and hence to a particular memcg, but we
+>   end up creating lists for all the memcgs.
 
-Changes since v4:
-- Added back the userfaultfd.c selftest changes from v3; this file was
-  mistakenly reverted in v4.
+Yes, because the kernel is *NOT* aware of containers.
 
-Changes since v3:
-- Significantly refactored the patch. Continue handling now happens in
-  mm/userfaultfd.c, via a PTE installation helper. Most of the
-  mm/shmem.c changes from the patch being fixed [1] are reverted.
+>   As an example, if 7 FS mounts are done for every container and when
+>   10k containers are created, we end up creating 2*7*12286 list_lru_one
+>   lists for each NUMA node. It appears that no elements will get added
+>   to other than 2*7=14 of them in the case of containers.
+>
+> One straight forward way to prevent this excessive list_lru_one
+> allocations is to limit the list_lru_one creation only to the
+> relevant memcg. However I don't see an easy way to figure out
+> that relevant memcg from FS mount path (alloc_super())
+>
+> As an alternative approach, I have this below hack that does lazy
+> list_lru creation. The memcg-specific list is created and initialized
+> only when there is a request to add an element to that particular
+> list. Though I am not sure about the full impact of this change
+> on the owners of the lists and also the performance impact of this,
+> the overall savings look good.
 
-Changes since v2:
-- Drop the ClearPageDirty() entirely, instead of trying to remember the
-  old value.
-- Modify both pgoff / max_off checks to use pgoff. It's equivalent to
-  offset, but offset wasn't initialized until the first check (which
-  we're skipping).
-- Keep the second pgoff / max_off check in the continue case.
+It is fine to reduce the memory consumption for your usecase, but I'm
+not sure if this would incur any noticeable overhead for vfs
+operations since list_lru_add() should be called quite often, but it
+just needs to allocate the list for once (for each memcg +
+filesystem), so the overhead might be fine.
 
-Changes since v1:
-- Refactor to skip ahead with goto, instead of adding several more
-  "if (!is_continue)".
-- Fix unconditional ClearPageDirty().
-- Don't pte_mkwrite() when is_continue && !VM_SHARED.
+And I'm wondering how much memory can be saved for real life workload.
+I don't expect most containers are idle in production environments.
 
-[1] https://lore.kernel.org/patchwork/patch/1392464/
+Added some more memcg/list_lru experts in this loop, they may have better ideas.
 
-Fixes: 00da60b9d0a0 ("userfaultfd: support minor fault handling for shmem")
-Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
----
- mm/shmem.c                               |  56 +++----
- mm/userfaultfd.c                         | 183 ++++++++++++++++-------
- tools/testing/selftests/vm/userfaultfd.c |  12 ++
- 3 files changed, 168 insertions(+), 83 deletions(-)
-
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 5cfd2fb6e52b..9d9a9f254f33 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2366,7 +2366,6 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
- 			   unsigned long dst_addr, unsigned long src_addr,
- 			   enum mcopy_atomic_mode mode, struct page **pagep)
- {
--	bool is_continue = (mode == MCOPY_ATOMIC_CONTINUE);
- 	struct inode *inode = file_inode(dst_vma->vm_file);
- 	struct shmem_inode_info *info = SHMEM_I(inode);
- 	struct address_space *mapping = inode->i_mapping;
-@@ -2377,18 +2376,17 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
- 	struct page *page;
- 	pte_t _dst_pte, *dst_pte;
- 	int ret;
--	pgoff_t offset, max_off;
-+	pgoff_t max_off;
-+
-+	/* Handled by mcontinue_atomic_pte instead. */
-+	if (WARN_ON_ONCE(mode == MCOPY_ATOMIC_CONTINUE))
-+		return -EINVAL;
- 
- 	ret = -ENOMEM;
- 	if (!shmem_inode_acct_block(inode, 1))
- 		goto out;
- 
--	if (is_continue) {
--		ret = -EFAULT;
--		page = find_lock_page(mapping, pgoff);
--		if (!page)
--			goto out_unacct_blocks;
--	} else if (!*pagep) {
-+	if (!*pagep) {
- 		page = shmem_alloc_page(gfp, info, pgoff);
- 		if (!page)
- 			goto out_unacct_blocks;
-@@ -2415,27 +2413,21 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
- 		*pagep = NULL;
- 	}
- 
--	if (!is_continue) {
--		VM_BUG_ON(PageSwapBacked(page));
--		VM_BUG_ON(PageLocked(page));
--		__SetPageLocked(page);
--		__SetPageSwapBacked(page);
--		__SetPageUptodate(page);
--	}
-+	VM_BUG_ON(PageSwapBacked(page));
-+	VM_BUG_ON(PageLocked(page));
-+	__SetPageLocked(page);
-+	__SetPageSwapBacked(page);
-+	__SetPageUptodate(page);
- 
- 	ret = -EFAULT;
--	offset = linear_page_index(dst_vma, dst_addr);
- 	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
--	if (unlikely(offset >= max_off))
-+	if (unlikely(pgoff >= max_off))
- 		goto out_release;
- 
--	/* If page wasn't already in the page cache, add it. */
--	if (!is_continue) {
--		ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL,
--					      gfp & GFP_RECLAIM_MASK, dst_mm);
--		if (ret)
--			goto out_release;
--	}
-+	ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL,
-+				      gfp & GFP_RECLAIM_MASK, dst_mm);
-+	if (ret)
-+		goto out_release;
- 
- 	_dst_pte = mk_pte(page, dst_vma->vm_page_prot);
- 	if (dst_vma->vm_flags & VM_WRITE)
-@@ -2455,22 +2447,20 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
- 
- 	ret = -EFAULT;
- 	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
--	if (unlikely(offset >= max_off))
-+	if (unlikely(pgoff >= max_off))
- 		goto out_release_unlock;
- 
- 	ret = -EEXIST;
- 	if (!pte_none(*dst_pte))
- 		goto out_release_unlock;
- 
--	if (!is_continue) {
--		lru_cache_add(page);
-+	lru_cache_add(page);
- 
--		spin_lock_irq(&info->lock);
--		info->alloced++;
--		inode->i_blocks += BLOCKS_PER_PAGE;
--		shmem_recalc_inode(inode);
--		spin_unlock_irq(&info->lock);
--	}
-+	spin_lock_irq(&info->lock);
-+	info->alloced++;
-+	inode->i_blocks += BLOCKS_PER_PAGE;
-+	shmem_recalc_inode(inode);
-+	spin_unlock_irq(&info->lock);
- 
- 	inc_mm_counter(dst_mm, mm_counter_file(page));
- 	page_add_file_rmap(page, false);
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index cbb7c8d79a4d..286d0657fbe2 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -48,21 +48,103 @@ struct vm_area_struct *find_dst_vma(struct mm_struct *dst_mm,
- 	return dst_vma;
- }
- 
-+/*
-+ * Install PTEs, to map dst_addr (within dst_vma) to page.
-+ *
-+ * This function handles MCOPY_ATOMIC_CONTINUE (which is always file-backed),
-+ * whether or not dst_vma is VM_SHARED. It also handles the more general
-+ * MCOPY_ATOMIC_NORMAL case, when dst_vma is *not* VM_SHARED (it may be file
-+ * backed, or not).
-+ *
-+ * Note that MCOPY_ATOMIC_NORMAL for a VM_SHARED dst_vma is handled by
-+ * shmem_mcopy_atomic_pte instead.
-+ */
-+static int mcopy_atomic_install_ptes(struct mm_struct *dst_mm, pmd_t *dst_pmd,
-+				     struct vm_area_struct *dst_vma,
-+				     unsigned long dst_addr, struct page *page,
-+				     enum mcopy_atomic_mode mode, bool wp_copy)
-+{
-+	int ret;
-+	pte_t _dst_pte, *dst_pte;
-+	bool is_continue = mode == MCOPY_ATOMIC_CONTINUE;
-+	int writable;
-+	bool vm_shared = dst_vma->vm_flags & VM_SHARED;
-+	bool is_file_backed = dst_vma->vm_file;
-+	spinlock_t *ptl;
-+	struct inode *inode;
-+	pgoff_t offset, max_off;
-+
-+	_dst_pte = mk_pte(page, dst_vma->vm_page_prot);
-+	writable = dst_vma->vm_flags & VM_WRITE;
-+	/* For CONTINUE on a non-shared VMA, don't pte_mkwrite for CoW. */
-+	if (is_continue && !vm_shared)
-+		writable = 0;
-+
-+	if (writable) {
-+		_dst_pte = pte_mkdirty(_dst_pte);
-+		if (wp_copy)
-+			_dst_pte = pte_mkuffd_wp(_dst_pte);
-+		else
-+			_dst_pte = pte_mkwrite(_dst_pte);
-+	} else if (vm_shared) {
-+		/*
-+		 * Since we didn't pte_mkdirty(), mark the page dirty or it
-+		 * could be freed from under us. We could do this
-+		 * unconditionally, but doing it only if !writable is faster.
-+		 */
-+		set_page_dirty(page);
-+	}
-+
-+	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
-+
-+	if (is_file_backed) {
-+		/* The shmem MAP_PRIVATE case requires checking the i_size */
-+		inode = dst_vma->vm_file->f_inode;
-+		offset = linear_page_index(dst_vma, dst_addr);
-+		max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-+		ret = -EFAULT;
-+		if (unlikely(offset >= max_off))
-+			goto out_unlock;
-+	}
-+
-+	ret = -EEXIST;
-+	if (!pte_none(*dst_pte))
-+		goto out_unlock;
-+
-+	inc_mm_counter(dst_mm, mm_counter(page));
-+	if (is_file_backed)
-+		page_add_file_rmap(page, false);
-+	else
-+		page_add_new_anon_rmap(page, dst_vma, dst_addr, false);
-+
-+	if (!is_continue)
-+		lru_cache_add_inactive_or_unevictable(page, dst_vma);
-+
-+	set_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
-+
-+	/* No need to invalidate - it was non-present before */
-+	update_mmu_cache(dst_vma, dst_addr, dst_pte);
-+	pte_unmap_unlock(dst_pte, ptl);
-+	ret = 0;
-+out:
-+	return ret;
-+out_unlock:
-+	pte_unmap_unlock(dst_pte, ptl);
-+	goto out;
-+}
-+
- static int mcopy_atomic_pte(struct mm_struct *dst_mm,
- 			    pmd_t *dst_pmd,
- 			    struct vm_area_struct *dst_vma,
- 			    unsigned long dst_addr,
- 			    unsigned long src_addr,
- 			    struct page **pagep,
-+			    enum mcopy_atomic_mode mode,
- 			    bool wp_copy)
- {
--	pte_t _dst_pte, *dst_pte;
--	spinlock_t *ptl;
- 	void *page_kaddr;
- 	int ret;
- 	struct page *page;
--	pgoff_t offset, max_off;
--	struct inode *inode;
- 
- 	if (!*pagep) {
- 		ret = -ENOMEM;
-@@ -99,43 +181,12 @@ static int mcopy_atomic_pte(struct mm_struct *dst_mm,
- 	if (mem_cgroup_charge(page, dst_mm, GFP_KERNEL))
- 		goto out_release;
- 
--	_dst_pte = pte_mkdirty(mk_pte(page, dst_vma->vm_page_prot));
--	if (dst_vma->vm_flags & VM_WRITE) {
--		if (wp_copy)
--			_dst_pte = pte_mkuffd_wp(_dst_pte);
--		else
--			_dst_pte = pte_mkwrite(_dst_pte);
--	}
--
--	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
--	if (dst_vma->vm_file) {
--		/* the shmem MAP_PRIVATE case requires checking the i_size */
--		inode = dst_vma->vm_file->f_inode;
--		offset = linear_page_index(dst_vma, dst_addr);
--		max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
--		ret = -EFAULT;
--		if (unlikely(offset >= max_off))
--			goto out_release_uncharge_unlock;
--	}
--	ret = -EEXIST;
--	if (!pte_none(*dst_pte))
--		goto out_release_uncharge_unlock;
--
--	inc_mm_counter(dst_mm, MM_ANONPAGES);
--	page_add_new_anon_rmap(page, dst_vma, dst_addr, false);
--	lru_cache_add_inactive_or_unevictable(page, dst_vma);
--
--	set_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
--
--	/* No need to invalidate - it was non-present before */
--	update_mmu_cache(dst_vma, dst_addr, dst_pte);
--
--	pte_unmap_unlock(dst_pte, ptl);
--	ret = 0;
-+	ret = mcopy_atomic_install_ptes(dst_mm, dst_pmd, dst_vma, dst_addr,
-+					page, mode, wp_copy);
-+	if (ret)
-+		goto out_release;
- out:
- 	return ret;
--out_release_uncharge_unlock:
--	pte_unmap_unlock(dst_pte, ptl);
- out_release:
- 	put_page(page);
- 	goto out;
-@@ -176,6 +227,38 @@ static int mfill_zeropage_pte(struct mm_struct *dst_mm,
- 	return ret;
- }
- 
-+static int mcontinue_atomic_pte(struct mm_struct *dst_mm,
-+				pmd_t *dst_pmd,
-+				struct vm_area_struct *dst_vma,
-+				unsigned long dst_addr,
-+				bool wp_copy)
-+{
-+	struct inode *inode = file_inode(dst_vma->vm_file);
-+	struct address_space *mapping = inode->i_mapping;
-+	pgoff_t pgoff = linear_page_index(dst_vma, dst_addr);
-+	struct page *page;
-+	int ret;
-+
-+	ret = -EFAULT;
-+	page = find_lock_page(mapping, pgoff);
-+	if (!page)
-+		goto out;
-+
-+	ret = mcopy_atomic_install_ptes(dst_mm, dst_pmd, dst_vma, dst_addr,
-+					page, MCOPY_ATOMIC_CONTINUE, wp_copy);
-+	if (ret)
-+		goto out_release;
-+
-+	unlock_page(page);
-+	ret = 0;
-+out:
-+	return ret;
-+out_release:
-+	unlock_page(page);
-+	put_page(page);
-+	goto out;
-+}
-+
- static pmd_t *mm_alloc_pmd(struct mm_struct *mm, unsigned long address)
- {
- 	pgd_t *pgd;
-@@ -418,7 +501,13 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
- 						enum mcopy_atomic_mode mode,
- 						bool wp_copy)
- {
--	ssize_t err;
-+	ssize_t err = 0;
-+
-+	if (mode == MCOPY_ATOMIC_CONTINUE) {
-+		err = mcontinue_atomic_pte(dst_mm, dst_pmd, dst_vma, dst_addr,
-+					   wp_copy);
-+		goto out;
-+	}
- 
- 	/*
- 	 * The normal page fault path for a shmem will invoke the
-@@ -431,26 +520,20 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
- 	 * and not in the radix tree.
- 	 */
- 	if (!(dst_vma->vm_flags & VM_SHARED)) {
--		switch (mode) {
--		case MCOPY_ATOMIC_NORMAL:
-+		if (mode == MCOPY_ATOMIC_NORMAL)
- 			err = mcopy_atomic_pte(dst_mm, dst_pmd, dst_vma,
- 					       dst_addr, src_addr, page,
--					       wp_copy);
--			break;
--		case MCOPY_ATOMIC_ZEROPAGE:
-+					       mode, wp_copy);
-+		else if (mode == MCOPY_ATOMIC_ZEROPAGE)
- 			err = mfill_zeropage_pte(dst_mm, dst_pmd,
- 						 dst_vma, dst_addr);
--			break;
--		case MCOPY_ATOMIC_CONTINUE:
--			err = -EINVAL;
--			break;
--		}
- 	} else {
- 		VM_WARN_ON_ONCE(wp_copy);
- 		err = shmem_mcopy_atomic_pte(dst_mm, dst_pmd, dst_vma, dst_addr,
- 					     src_addr, mode, page);
- 	}
- 
-+out:
- 	return err;
- }
- 
-diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-index f6c86b036d0f..d8541a59dae5 100644
---- a/tools/testing/selftests/vm/userfaultfd.c
-+++ b/tools/testing/selftests/vm/userfaultfd.c
-@@ -485,6 +485,7 @@ static void wp_range(int ufd, __u64 start, __u64 len, bool wp)
- static void continue_range(int ufd, __u64 start, __u64 len)
- {
- 	struct uffdio_continue req;
-+	int ret;
- 
- 	req.range.start = start;
- 	req.range.len = len;
-@@ -493,6 +494,17 @@ static void continue_range(int ufd, __u64 start, __u64 len)
- 	if (ioctl(ufd, UFFDIO_CONTINUE, &req))
- 		err("UFFDIO_CONTINUE failed for address 0x%" PRIx64,
- 		    (uint64_t)start);
-+
-+	/*
-+	 * Error handling within the kernel for continue is subtly different
-+	 * from copy or zeropage, so it may be a source of bugs. Trigger an
-+	 * error (-EEXIST) on purpose, to verify doing so doesn't cause a BUG.
-+	 */
-+	req.mapped = 0;
-+	ret = ioctl(ufd, UFFDIO_CONTINUE, &req);
-+	if (ret >= 0 || req.mapped != -EEXIST)
-+		err("failed to exercise UFFDIO_CONTINUE error handling, ret=%d, mapped=%" PRId64,
-+		    ret, req.mapped);
- }
- 
- static void *locking_thread(void *arg)
--- 
-2.31.0.208.g409f899ff0-goog
-
+>
+> Used memory
+>                 Before          During          After
+> W/o patch       23G             172G            40G
+> W/  patch       23G             69G             29G
+>
+> Slab consumption
+>                 Before          During          After
+> W/o patch       1.5G            149G            22G
+> W/  patch       1.5G            45G             10G
+>
+> Number of kmalloc-32 allocations
+>                 Before          During          After
+> W/o patch       178176          3442409472      388933632
+> W/  patch       190464          468992          468992
+>
+> Any thoughts on other approaches to address this scenario and
+> any specific comments about the approach that I have taken is
+> appreciated. Meanwhile the patch looks like below:
+>
+> From 9444a0c6734c2853057b1f486f85da2c409fdc84 Mon Sep 17 00:00:00 2001
+> From: Bharata B Rao <bharata@linux.ibm.com>
+> Date: Wed, 31 Mar 2021 18:21:45 +0530
+> Subject: [PATCH 1/1] mm: list_lru: Allocate list_lru_one only when required.
+>
+> Don't pre-allocate list_lru_one list heads for all memcg_cache_ids.
+> Instead allocate and initialize it only when required.
+>
+> Signed-off-by: Bharata B Rao <bharata@linux.ibm.com>
+> ---
+>  mm/list_lru.c | 79 +++++++++++++++++++++++++--------------------------
+>  1 file changed, 38 insertions(+), 41 deletions(-)
+>
+> diff --git a/mm/list_lru.c b/mm/list_lru.c
+> index 6f067b6b935f..b453fa5008cc 100644
+> --- a/mm/list_lru.c
+> +++ b/mm/list_lru.c
+> @@ -112,16 +112,32 @@ list_lru_from_kmem(struct list_lru_node *nlru, void *ptr,
+>  }
+>  #endif /* CONFIG_MEMCG_KMEM */
+>
+> +static void init_one_lru(struct list_lru_one *l)
+> +{
+> +       INIT_LIST_HEAD(&l->list);
+> +       l->nr_items = 0;
+> +}
+> +
+>  bool list_lru_add(struct list_lru *lru, struct list_head *item)
+>  {
+>         int nid = page_to_nid(virt_to_page(item));
+>         struct list_lru_node *nlru = &lru->node[nid];
+>         struct mem_cgroup *memcg;
+>         struct list_lru_one *l;
+> +       struct list_lru_memcg *memcg_lrus;
+>
+>         spin_lock(&nlru->lock);
+>         if (list_empty(item)) {
+>                 l = list_lru_from_kmem(nlru, item, &memcg);
+> +               if (!l) {
+> +                       l = kmalloc(sizeof(struct list_lru_one), GFP_ATOMIC);
+> +                       if (!l)
+> +                               goto out;
+> +
+> +                       init_one_lru(l);
+> +                       memcg_lrus = rcu_dereference_protected(nlru->memcg_lrus, true);
+> +                       memcg_lrus->lru[memcg_cache_id(memcg)] = l;
+> +               }
+>                 list_add_tail(item, &l->list);
+>                 /* Set shrinker bit if the first element was added */
+>                 if (!l->nr_items++)
+> @@ -131,6 +147,7 @@ bool list_lru_add(struct list_lru *lru, struct list_head *item)
+>                 spin_unlock(&nlru->lock);
+>                 return true;
+>         }
+> +out:
+>         spin_unlock(&nlru->lock);
+>         return false;
+>  }
+> @@ -176,11 +193,12 @@ unsigned long list_lru_count_one(struct list_lru *lru,
+>  {
+>         struct list_lru_node *nlru = &lru->node[nid];
+>         struct list_lru_one *l;
+> -       unsigned long count;
+> +       unsigned long count = 0;
+>
+>         rcu_read_lock();
+>         l = list_lru_from_memcg_idx(nlru, memcg_cache_id(memcg));
+> -       count = READ_ONCE(l->nr_items);
+> +       if (l)
+> +               count = READ_ONCE(l->nr_items);
+>         rcu_read_unlock();
+>
+>         return count;
+> @@ -207,6 +225,9 @@ __list_lru_walk_one(struct list_lru_node *nlru, int memcg_idx,
+>         unsigned long isolated = 0;
+>
+>         l = list_lru_from_memcg_idx(nlru, memcg_idx);
+> +       if (!l)
+> +               goto out;
+> +
+>  restart:
+>         list_for_each_safe(item, n, &l->list) {
+>                 enum lru_status ret;
+> @@ -251,6 +272,7 @@ __list_lru_walk_one(struct list_lru_node *nlru, int memcg_idx,
+>                         BUG();
+>                 }
+>         }
+> +out:
+>         return isolated;
+>  }
+>
+> @@ -312,12 +334,6 @@ unsigned long list_lru_walk_node(struct list_lru *lru, int nid,
+>  }
+>  EXPORT_SYMBOL_GPL(list_lru_walk_node);
+>
+> -static void init_one_lru(struct list_lru_one *l)
+> -{
+> -       INIT_LIST_HEAD(&l->list);
+> -       l->nr_items = 0;
+> -}
+> -
+>  #ifdef CONFIG_MEMCG_KMEM
+>  static void __memcg_destroy_list_lru_node(struct list_lru_memcg *memcg_lrus,
+>                                           int begin, int end)
+> @@ -328,41 +344,16 @@ static void __memcg_destroy_list_lru_node(struct list_lru_memcg *memcg_lrus,
+>                 kfree(memcg_lrus->lru[i]);
+>  }
+>
+> -static int __memcg_init_list_lru_node(struct list_lru_memcg *memcg_lrus,
+> -                                     int begin, int end)
+> -{
+> -       int i;
+> -
+> -       for (i = begin; i < end; i++) {
+> -               struct list_lru_one *l;
+> -
+> -               l = kmalloc(sizeof(struct list_lru_one), GFP_KERNEL);
+> -               if (!l)
+> -                       goto fail;
+> -
+> -               init_one_lru(l);
+> -               memcg_lrus->lru[i] = l;
+> -       }
+> -       return 0;
+> -fail:
+> -       __memcg_destroy_list_lru_node(memcg_lrus, begin, i);
+> -       return -ENOMEM;
+> -}
+> -
+>  static int memcg_init_list_lru_node(struct list_lru_node *nlru)
+>  {
+>         struct list_lru_memcg *memcg_lrus;
+>         int size = memcg_nr_cache_ids;
+>
+> -       memcg_lrus = kvmalloc(sizeof(*memcg_lrus) +
+> +       memcg_lrus = kvzalloc(sizeof(*memcg_lrus) +
+>                               size * sizeof(void *), GFP_KERNEL);
+>         if (!memcg_lrus)
+>                 return -ENOMEM;
+>
+> -       if (__memcg_init_list_lru_node(memcg_lrus, 0, size)) {
+> -               kvfree(memcg_lrus);
+> -               return -ENOMEM;
+> -       }
+>         RCU_INIT_POINTER(nlru->memcg_lrus, memcg_lrus);
+>
+>         return 0;
+> @@ -389,15 +380,10 @@ static int memcg_update_list_lru_node(struct list_lru_node *nlru,
+>
+>         old = rcu_dereference_protected(nlru->memcg_lrus,
+>                                         lockdep_is_held(&list_lrus_mutex));
+> -       new = kvmalloc(sizeof(*new) + new_size * sizeof(void *), GFP_KERNEL);
+> +       new = kvzalloc(sizeof(*new) + new_size * sizeof(void *), GFP_KERNEL);
+>         if (!new)
+>                 return -ENOMEM;
+>
+> -       if (__memcg_init_list_lru_node(new, old_size, new_size)) {
+> -               kvfree(new);
+> -               return -ENOMEM;
+> -       }
+> -
+>         memcpy(&new->lru, &old->lru, old_size * sizeof(void *));
+>
+>         /*
+> @@ -526,6 +512,7 @@ static void memcg_drain_list_lru_node(struct list_lru *lru, int nid,
+>         struct list_lru_node *nlru = &lru->node[nid];
+>         int dst_idx = dst_memcg->kmemcg_id;
+>         struct list_lru_one *src, *dst;
+> +       struct list_lru_memcg *memcg_lrus;
+>
+>         /*
+>          * Since list_lru_{add,del} may be called under an IRQ-safe lock,
+> @@ -534,7 +521,17 @@ static void memcg_drain_list_lru_node(struct list_lru *lru, int nid,
+>         spin_lock_irq(&nlru->lock);
+>
+>         src = list_lru_from_memcg_idx(nlru, src_idx);
+> +       if (!src)
+> +               goto out;
+> +
+>         dst = list_lru_from_memcg_idx(nlru, dst_idx);
+> +       if (!dst) {
+> +               /* TODO: Use __GFP_NOFAIL? */
+> +               dst = kmalloc(sizeof(struct list_lru_one), GFP_ATOMIC);
+> +               init_one_lru(dst);
+> +               memcg_lrus = rcu_dereference_protected(nlru->memcg_lrus, true);
+> +               memcg_lrus->lru[dst_idx] = dst;
+> +       }
+>
+>         list_splice_init(&src->list, &dst->list);
+>
+> @@ -543,7 +540,7 @@ static void memcg_drain_list_lru_node(struct list_lru *lru, int nid,
+>                 memcg_set_shrinker_bit(dst_memcg, nid, lru_shrinker_id(lru));
+>                 src->nr_items = 0;
+>         }
+> -
+> +out:
+>         spin_unlock_irq(&nlru->lock);
+>  }
+>
+> --
+> 2.26.2
+>
+>
