@@ -2,135 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7C9B355781
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 17:15:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D246E35581E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 17:37:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345552AbhDFPPa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Apr 2021 11:15:30 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54918 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1345526AbhDFPP2 (ORCPT
+        id S232431AbhDFPh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Apr 2021 11:37:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58436 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231708AbhDFPh0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Apr 2021 11:15:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617722120;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pfDBPF8LdvyhRPcGnZsgkl0rlZHryHgc3r1ioOxrtKc=;
-        b=Ka8QcY8iEf/oIyhrcnSitEvJKYfFrNXuG6lwGF511R65acEsxzLtxufJ79Mfc8gxDXMjGO
-        FxJoPWH+CUR0sJel7rg03OCCj4jRISERTNOa3rNgoJw3a6wo9gX26tnTpPQZ89w9VLUhHw
-        pjoUYKk+PiAzjXbZLxjEshjQZVC2tBs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-407-HZZ-fZE0OMKSN5kd71TJuA-1; Tue, 06 Apr 2021 11:15:16 -0400
-X-MC-Unique: HZZ-fZE0OMKSN5kd71TJuA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DBC18108BD0E;
-        Tue,  6 Apr 2021 15:15:15 +0000 (UTC)
-Received: from [10.36.112.13] (ovpn-112-13.ams2.redhat.com [10.36.112.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CFF81610A8;
-        Tue,  6 Apr 2021 15:15:11 +0000 (UTC)
-Subject: Re: [PATCH] fuse: Invalidate attrs when page writeback completes
-To:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     virtio-fs-list <virtio-fs@redhat.com>
-References: <20210406140706.GB934253@redhat.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <99147394-228d-9cbc-29b3-e3144e4bb9f9@redhat.com>
-Date:   Tue, 6 Apr 2021 17:15:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        Tue, 6 Apr 2021 11:37:26 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1433C061756
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Apr 2021 08:37:18 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id f29so8174733pgm.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Apr 2021 08:37:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zPyKzJiBUBXEF6n1UtK4a6/wqFFul/4nSSHBtrhDa7A=;
+        b=i+7kXT0ntuQcB9GC9Kxky/Vil0JP7usU8Zea6ll/BkXHIumSVIlTL4j9xR8n/APwAz
+         uvkkBfsunFDkT0pQxu/wbf/9R31+oGDqu4iXLy06IFOb7NvY5Sxn+TnWSUy2saepzcvW
+         3wykYfC43NdT/BoL68B8UHogi/coPHK0pGO7ZXGKSf+xXM6nKnKTXVb+JNj1nXwzvY+A
+         sKmwtM3FoRSKontbZ4yZ3tP4x5k7GdfjYSUQHpi9mIAZ5A7OqOKUC7d8pkIEPZSiuCsG
+         5vIziSOz0rvGwiW8Ae/hvzPOWl1juxI5viBbr046I15bQrThJZO1j1G/VVzgQ0Q2DuoK
+         UpIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zPyKzJiBUBXEF6n1UtK4a6/wqFFul/4nSSHBtrhDa7A=;
+        b=t8A7q9NGthBcgyk0ql2BFC6f9ZyxrBcrsA5JmQyDe2EjetFCF4L3vYl5HHg2Vsnl/M
+         7QiwqcTUbmWydUvyWHPcJOwb+ckACD6USlVahNIL7yCiURkeypb/BnlnE6GJNGxcdsou
+         oLifI9UVmlBbCES/vbt5s9njUgBDGe4rpdBSHux99XO4WDqs7iYpDiM0MnknfJsmkqZF
+         yvOEqGjjVn6xiJyapuRi0bqqQLO2PkJLQtMcGJFZ3NfYudtj1oawmElswNMxDkiSHCW7
+         ynFT3nlHPAXDlHTIQdayt6KSO5t5D4x8g5/PpOYCQQapsIREQ9/UcyKBMAJIhTZ1RSS5
+         NO8g==
+X-Gm-Message-State: AOAM531u88UEAD1j5ykijHe+bjqlYmIBsT7juN2XlWwzb6Q5azt/KSVH
+        u2AatHFOXkF4Sda5KQea1saB9A==
+X-Google-Smtp-Source: ABdhPJx6d1KX7EkIb6wInkFM/zhjxErRj2Op9pFFhoKno7iIa7788LfIl55TgJr+TpiLHT1lwlV5Dw==
+X-Received: by 2002:a63:f247:: with SMTP id d7mr26751734pgk.112.1617723438249;
+        Tue, 06 Apr 2021 08:37:18 -0700 (PDT)
+Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id 15sm18877321pfx.167.2021.04.06.08.37.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Apr 2021 08:37:17 -0700 (PDT)
+Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
+References: <YGs4clcRhyoXX8D0@zeniv-ca.linux.org.uk>
+ <20210405170801.zrdhnon6g4ggb6c7@wittgenstein>
+ <YGtVtfbYXck3qPRl@zeniv-ca.linux.org.uk>
+ <YGtW5g6EFFArtevk@zeniv-ca.linux.org.uk>
+ <20210405200737.qurhkqitoxweousx@wittgenstein>
+ <YGu7n+dhMep1741/@zeniv-ca.linux.org.uk>
+ <20210406123505.auxqtquoys6xg6yf@wittgenstein>
+ <YGxeaTzdnxn/3dsY@zeniv-ca.linux.org.uk>
+ <20210406132205.qnherkzif64xmgxg@wittgenstein>
+ <YGxs5b0pY4esY7J7@zeniv-ca.linux.org.uk>
+ <YGxu4OWMLE+XXy7Z@zeniv-ca.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e4425217-90b9-6566-fee8-fd21df343aa3@kernel.dk>
+Date:   Tue, 6 Apr 2021 09:37:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210406140706.GB934253@redhat.com>
+In-Reply-To: <YGxu4OWMLE+XXy7Z@zeniv-ca.linux.org.uk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Vivek,
+On 4/6/21 8:23 AM, Al Viro wrote:
+> On Tue, Apr 06, 2021 at 02:15:01PM +0000, Al Viro wrote:
+> 
+>> I'm referring to the fact that your diff is with an already modified path_lookupat()
+>> _and_ those modifications have managed to introduce a bug your patch reverts.
+>> No terminate_walk() paired with that path_init() failure, i.e. path_init() is
+>> responsible for cleanups on its (many) failure exits...
+> 
+> I can't tell without seeing the variant your diff is against, but at a guess
+> it had a non-trivial amount of trouble with missed rcu_read_unlock() in
+> cases when path_init() fails after having done rcu_read_lock().  For trivial
+> testcase, consider passing -1 for dfd, so that it would fail with -EBADF.
+> Or passing 0 for dfd and "blah" for name (assuming your stdin is not a directory).
+> Sure, you could handle those in path_init() (or delay grabbing rcu_read_lock()
+> in there, spreading it in a bunch of branches), but duplicated cleanup logics
+> for a bunch of failure exits is asking for trouble.
 
-On 4/6/21 4:07 PM, Vivek Goyal wrote:
-> In fuse when a direct/write-through write happens we invalidate attrs because
-> that might have updated mtime/ctime on server and cached mtime/ctime
-> will be stale.
-> 
-> What about page writeback path. Looks like we don't invalidate attrs there.
-> To be consistent, invalidate attrs in writeback path as well. Only exception
-> is when writeback_cache is enabled. In that case we strust local mtime/ctime
-> and there is no need to invalidate attrs.
-> 
-> Recently users started experiencing failure of xfstests generic/080,
-> geneirc/215 and generic/614 on virtiofs. This happened only newer
-> "stat" utility and not older one. This patch fixes the issue.
-> 
-> So what's the root cause of the issue. Here is detailed explanation.
-> 
-> generic/080 test does mmap write to a file, closes the file and then
-> checks if mtime has been updated or not. When file is closed, it
-> leads to flushing of dirty pages (and that should update mtime/ctime
-> on server). But we did not explicitly invalidate attrs after writeback
-> finished. Still generic/080 passed so far and reason being that we
-> invalidated atime in fuse_readpages_end(). This is called in fuse_readahead()
-> path and always seems to trigger before mmaped write.
-> 
-> So after mmaped write when lstat() is called, it sees that atleast one
-> of the fields being asked for is invalid (atime) and that results in
-> generating GETATTR to server and mtime/ctime also get updated and test
-> passes.
-> 
-> But newer /usr/bin/stat seems to have moved to using statx() syscall now
-> (instead of using lstat()). And statx() allows it to query only ctime
-> or mtime (and not rest of the basic stat fields). That means when
-> querying for mtime, fuse_update_get_attr() sees that mtime is not
-> invalid (only atime is invalid). So it does not generate a new GETATTR
-> and fill stat with cached mtime/ctime. And that means updated mtime
-> is not seen by xfstest and tests start failing.
-> 
-> Invalidating attrs after writeback completion should solve this problem
-> in a generic manner.
-> 
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-all the above tests now pass on aarch64 whereas they failed without the
-patch.
+Thanks for taking care of this Al, fwiw I'm (mostly) out on vacation.
 
-Tested-by: Eric Auger <eric.auger@redhat.com>
-
-Thanks!
-
-Eric
-
-> ---
->  fs/fuse/file.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 8cccecb55fb8..482281bf170a 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1759,8 +1759,17 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
->  		container_of(args, typeof(*wpa), ia.ap.args);
->  	struct inode *inode = wpa->inode;
->  	struct fuse_inode *fi = get_fuse_inode(inode);
-> +	struct fuse_conn *fc = get_fuse_conn(inode);
->  
->  	mapping_set_error(inode->i_mapping, error);
-> +	/*
-> +	 * A writeback finished and this might have updated mtime/ctime on
-> +	 * server making local mtime/ctime stale. Hence invalidate attrs.
-> +	 * Do this only if writeback_cache is not enabled. If writeback_cache
-> +	 * is enabled, we trust local ctime/mtime.
-> +	 */
-> +	if (!fc->writeback_cache)
-> +		fuse_invalidate_attr(inode);
->  	spin_lock(&fi->lock);
->  	rb_erase(&wpa->writepages_entry, &fi->writepages);
->  	while (wpa->next) {
-> 
+-- 
+Jens Axboe
 
