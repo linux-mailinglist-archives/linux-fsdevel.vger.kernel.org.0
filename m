@@ -2,118 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EAD20355779
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 17:14:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7C9B355781
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 17:15:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345446AbhDFPOj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Apr 2021 11:14:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233155AbhDFPOh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Apr 2021 11:14:37 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A0DD561363;
-        Tue,  6 Apr 2021 15:14:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617722069;
-        bh=6EwsObpnkQ5Dfea7gjpKREYGxQADGcmpX2jhvrqCVvk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=RmKRdevffH/BmKSNQGh8I3FH7lztg+9RgJlXEMubNtq2LQkdqPgIeqiVpbeayXjli
-         /xc6m1DPIBswndDuw4IpuYW+rmFX8Gmnzzz4yPefsAH4bidLENQzjFxrxJAlb+sEbp
-         ci7sLQ9BOrfpLkOJSHCexaG187bddwVLzZPXL6VtaT+kfVnjk7SG3VGGOrS0GpNR18
-         xJQC7fZqH4wECX+Aqv411LxhfSIDzc/Wu9YM2aj2oRvWvOBYkV2WgHHW2Pj+3a7cLE
-         r80lUzz3K/EoqaLeXjfNG6yDImXu30o7KlQWWw8WZ2zLbcTlJMTaUk2g4qXImv6PQJ
-         yTJl7LqN1KYaQ==
-Message-ID: <fa4fa9fc7236ff4a5f582ead8df4fd12ce08057d.camel@kernel.org>
-Subject: Re: [PATCH v6 00/27] Memory Folios
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org
-Date:   Tue, 06 Apr 2021 11:14:27 -0400
-In-Reply-To: <20210405193120.GL2531743@casper.infradead.org>
-References: <20210331184728.1188084-1-willy@infradead.org>
-         <759cfbb63ca960b2893f2b879035c2a42c80462d.camel@kernel.org>
-         <20210405193120.GL2531743@casper.infradead.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        id S1345552AbhDFPPa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Apr 2021 11:15:30 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54918 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1345526AbhDFPP2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Apr 2021 11:15:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617722120;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pfDBPF8LdvyhRPcGnZsgkl0rlZHryHgc3r1ioOxrtKc=;
+        b=Ka8QcY8iEf/oIyhrcnSitEvJKYfFrNXuG6lwGF511R65acEsxzLtxufJ79Mfc8gxDXMjGO
+        FxJoPWH+CUR0sJel7rg03OCCj4jRISERTNOa3rNgoJw3a6wo9gX26tnTpPQZ89w9VLUhHw
+        pjoUYKk+PiAzjXbZLxjEshjQZVC2tBs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-407-HZZ-fZE0OMKSN5kd71TJuA-1; Tue, 06 Apr 2021 11:15:16 -0400
+X-MC-Unique: HZZ-fZE0OMKSN5kd71TJuA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DBC18108BD0E;
+        Tue,  6 Apr 2021 15:15:15 +0000 (UTC)
+Received: from [10.36.112.13] (ovpn-112-13.ams2.redhat.com [10.36.112.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CFF81610A8;
+        Tue,  6 Apr 2021 15:15:11 +0000 (UTC)
+Subject: Re: [PATCH] fuse: Invalidate attrs when page writeback completes
+To:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     virtio-fs-list <virtio-fs@redhat.com>
+References: <20210406140706.GB934253@redhat.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <99147394-228d-9cbc-29b3-e3144e4bb9f9@redhat.com>
+Date:   Tue, 6 Apr 2021 17:15:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
+In-Reply-To: <20210406140706.GB934253@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2021-04-05 at 20:31 +0100, Matthew Wilcox wrote:
-> On Mon, Apr 05, 2021 at 03:14:29PM -0400, Jeff Layton wrote:
-> > On Wed, 2021-03-31 at 19:47 +0100, Matthew Wilcox (Oracle) wrote:
-> > > Managing memory in 4KiB pages is a serious overhead.  Many benchmarks
-> > > exist which show the benefits of a larger "page size".  As an example,
-> > > an earlier iteration of this idea which used compound pages got a 7%
-> > > performance boost when compiling the kernel using kernbench without any
-> > > particular tuning.
-> > > 
-> > > Using compound pages or THPs exposes a serious weakness in our type
-> > > system.  Functions are often unprepared for compound pages to be passed
-> > > to them, and may only act on PAGE_SIZE chunks.  Even functions which are
-> > > aware of compound pages may expect a head page, and do the wrong thing
-> > > if passed a tail page.
-> > > 
-> > > There have been efforts to label function parameters as 'head' instead
-> > > of 'page' to indicate that the function expects a head page, but this
-> > > leaves us with runtime assertions instead of using the compiler to prove
-> > > that nobody has mistakenly passed a tail page.  Calling a struct page
-> > > 'head' is also inaccurate as they will work perfectly well on base pages.
-> > > The term 'nottail' has not proven popular.
-> > > 
-> > > We also waste a lot of instructions ensuring that we're not looking at
-> > > a tail page.  Almost every call to PageFoo() contains one or more hidden
-> > > calls to compound_head().  This also happens for get_page(), put_page()
-> > > and many more functions.  There does not appear to be a way to tell gcc
-> > > that it can cache the result of compound_head(), nor is there a way to
-> > > tell it that compound_head() is idempotent.
-> > > 
-> > > This series introduces the 'struct folio' as a replacement for
-> > > head-or-base pages.  This initial set reduces the kernel size by
-> > > approximately 5kB by removing conversions from tail pages to head pages.
-> > > The real purpose of this series is adding infrastructure to enable
-> > > further use of the folio.
-> > > 
-> > > The medium-term goal is to convert all filesystems and some device
-> > > drivers to work in terms of folios.  This series contains a lot of
-> > > explicit conversions, but it's important to realise it's removing a lot
-> > > of implicit conversions in some relatively hot paths.  There will be very
-> > > few conversions from folios when this work is completed; filesystems,
-> > > the page cache, the LRU and so on will generally only deal with folios.
-> > 
-> > I too am a little concerned about the amount of churn this is likely to
-> > cause, but this does seem like a fairly promising way forward for
-> > actually using THPs in the pagecache. The set is fairly straightforward.
-> > 
-> > That said, there are few callers of these new functions in here. Is this
-> > set enough to allow converting some subsystem to use folios? It might be
-> > good to do that if possible, so we can get an idea of how much work
-> > we're in for.
-> 
-> It isn't enough to start converting much.  There needs to be a second set
-> of patches which add all the infrastructure for converting a filesystem.
-> Then we can start working on the filesystems.  I have a start at that
-> here:
-> 
-> https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/folio
-> 
-> I don't know if it's exactly how I'll arrange it for submission.  It might
-> be better to convert all the filesystem implementations of readpage
-> to work on a folio, and then the big bang conversion of ->readpage to
-> ->read_folio will look much more mechanical.
-> 
-> But if I can't convince people that a folio approach is what we need,
-> then I should stop working on it, and go back to fixing the endless
-> stream of bugs that the thp-based approach surfaces.
+Hi Vivek,
 
-Fair enough. I generally prefer to see some callers added at the same
-time as new functions, but I understand that the scale of this patchset
-makes that difficult. You can add this to the whole series. I don't see
-any major show-stoppers here:
+On 4/6/21 4:07 PM, Vivek Goyal wrote:
+> In fuse when a direct/write-through write happens we invalidate attrs because
+> that might have updated mtime/ctime on server and cached mtime/ctime
+> will be stale.
+> 
+> What about page writeback path. Looks like we don't invalidate attrs there.
+> To be consistent, invalidate attrs in writeback path as well. Only exception
+> is when writeback_cache is enabled. In that case we strust local mtime/ctime
+> and there is no need to invalidate attrs.
+> 
+> Recently users started experiencing failure of xfstests generic/080,
+> geneirc/215 and generic/614 on virtiofs. This happened only newer
+> "stat" utility and not older one. This patch fixes the issue.
+> 
+> So what's the root cause of the issue. Here is detailed explanation.
+> 
+> generic/080 test does mmap write to a file, closes the file and then
+> checks if mtime has been updated or not. When file is closed, it
+> leads to flushing of dirty pages (and that should update mtime/ctime
+> on server). But we did not explicitly invalidate attrs after writeback
+> finished. Still generic/080 passed so far and reason being that we
+> invalidated atime in fuse_readpages_end(). This is called in fuse_readahead()
+> path and always seems to trigger before mmaped write.
+> 
+> So after mmaped write when lstat() is called, it sees that atleast one
+> of the fields being asked for is invalid (atime) and that results in
+> generating GETATTR to server and mtime/ctime also get updated and test
+> passes.
+> 
+> But newer /usr/bin/stat seems to have moved to using statx() syscall now
+> (instead of using lstat()). And statx() allows it to query only ctime
+> or mtime (and not rest of the basic stat fields). That means when
+> querying for mtime, fuse_update_get_attr() sees that mtime is not
+> invalid (only atime is invalid). So it does not generate a new GETATTR
+> and fill stat with cached mtime/ctime. And that means updated mtime
+> is not seen by xfstest and tests start failing.
+> 
+> Invalidating attrs after writeback completion should solve this problem
+> in a generic manner.
+> 
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+all the above tests now pass on aarch64 whereas they failed without the
+patch.
 
-Acked-by: Jeff Layton <jlayton@kernel.org>
+Tested-by: Eric Auger <eric.auger@redhat.com>
+
+Thanks!
+
+Eric
+
+> ---
+>  fs/fuse/file.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 8cccecb55fb8..482281bf170a 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1759,8 +1759,17 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
+>  		container_of(args, typeof(*wpa), ia.ap.args);
+>  	struct inode *inode = wpa->inode;
+>  	struct fuse_inode *fi = get_fuse_inode(inode);
+> +	struct fuse_conn *fc = get_fuse_conn(inode);
+>  
+>  	mapping_set_error(inode->i_mapping, error);
+> +	/*
+> +	 * A writeback finished and this might have updated mtime/ctime on
+> +	 * server making local mtime/ctime stale. Hence invalidate attrs.
+> +	 * Do this only if writeback_cache is not enabled. If writeback_cache
+> +	 * is enabled, we trust local ctime/mtime.
+> +	 */
+> +	if (!fc->writeback_cache)
+> +		fuse_invalidate_attr(inode);
+>  	spin_lock(&fi->lock);
+>  	rb_erase(&wpa->writepages_entry, &fi->writepages);
+>  	while (wpa->next) {
+> 
 
