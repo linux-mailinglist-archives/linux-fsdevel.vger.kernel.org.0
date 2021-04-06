@@ -2,61 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EA5435568A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 16:23:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54352355691
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 16:26:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233787AbhDFOXk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Apr 2021 10:23:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42218 "EHLO
+        id S1345143AbhDFO0K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Apr 2021 10:26:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232556AbhDFOXj (ORCPT
+        with ESMTP id S230032AbhDFO0J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Apr 2021 10:23:39 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48A3BC06174A;
-        Tue,  6 Apr 2021 07:23:31 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lTmc4-0037of-6y; Tue, 06 Apr 2021 14:23:28 +0000
-Date:   Tue, 6 Apr 2021 14:23:28 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
-Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
-Message-ID: <YGxu4OWMLE+XXy7Z@zeniv-ca.linux.org.uk>
-References: <YGs4clcRhyoXX8D0@zeniv-ca.linux.org.uk>
- <20210405170801.zrdhnon6g4ggb6c7@wittgenstein>
- <YGtVtfbYXck3qPRl@zeniv-ca.linux.org.uk>
- <YGtW5g6EFFArtevk@zeniv-ca.linux.org.uk>
- <20210405200737.qurhkqitoxweousx@wittgenstein>
- <YGu7n+dhMep1741/@zeniv-ca.linux.org.uk>
- <20210406123505.auxqtquoys6xg6yf@wittgenstein>
- <YGxeaTzdnxn/3dsY@zeniv-ca.linux.org.uk>
- <20210406132205.qnherkzif64xmgxg@wittgenstein>
- <YGxs5b0pY4esY7J7@zeniv-ca.linux.org.uk>
+        Tue, 6 Apr 2021 10:26:09 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F535C06174A;
+        Tue,  6 Apr 2021 07:26:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=LhIPpgiu3IunGK9kWoKLuEzxpJl7JYNX6ujUKfF3uzA=; b=Suq2pCTc3wv08U6mvKbyu9Rser
+        5GX7i48KZIwT8vBbwj7ni8zlHmjSugiwPrl+xcYv6ZKfubM2po5pHncENHJuAirLyZZVWMWU42cCA
+        Q0yiKrjR2wX4bTemLze010X8gzReHd3oxKn4W0WbyterEq/j/cMguLJgOzpcG1zmA8XLui14jHA13
+        C4/EOLdJUa+14g/bPsNjmmD2RK5LRq0bauTHtkJ/uczCpYlaFnLbflDASpfWt++lX/1v23gydHU3U
+        HkfMz6IJiHju//g1MRaZQaf89QAqHHZaqVCRqqMR3PtYIAsym20sdi3CkDENTGIjkY8e90eqHxo2K
+        aKJPd14w==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lTmdh-00Cvsj-TS; Tue, 06 Apr 2021 14:25:16 +0000
+Date:   Tue, 6 Apr 2021 15:25:09 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-afs@lists.infradead.org
+Subject: Re: [PATCH v6 27/27] mm/filemap: Convert page wait queues to be
+ folios
+Message-ID: <20210406142509.GZ3062550@infradead.org>
+References: <20210331184728.1188084-1-willy@infradead.org>
+ <20210331184728.1188084-28-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YGxs5b0pY4esY7J7@zeniv-ca.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20210331184728.1188084-28-willy@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 06, 2021 at 02:15:01PM +0000, Al Viro wrote:
+On Wed, Mar 31, 2021 at 07:47:28PM +0100, Matthew Wilcox (Oracle) wrote:
+> Reinforce that if we're waiting for a bit in a struct page, that's
+> actually in the head page by changing the type from page to folio.
+> Increases the size of cachefiles by two bytes, but the kernel core
+> is unchanged in size.
 
-> I'm referring to the fact that your diff is with an already modified path_lookupat()
-> _and_ those modifications have managed to introduce a bug your patch reverts.
-> No terminate_walk() paired with that path_init() failure, i.e. path_init() is
-> responsible for cleanups on its (many) failure exits...
+Looks good,
 
-I can't tell without seeing the variant your diff is against, but at a guess
-it had a non-trivial amount of trouble with missed rcu_read_unlock() in
-cases when path_init() fails after having done rcu_read_lock().  For trivial
-testcase, consider passing -1 for dfd, so that it would fail with -EBADF.
-Or passing 0 for dfd and "blah" for name (assuming your stdin is not a directory).
-Sure, you could handle those in path_init() (or delay grabbing rcu_read_lock()
-in there, spreading it in a bunch of branches), but duplicated cleanup logics
-for a bunch of failure exits is asking for trouble.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
