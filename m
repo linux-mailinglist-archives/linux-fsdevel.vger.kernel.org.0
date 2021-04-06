@@ -2,76 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 105753556B0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 16:32:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9BAC3556C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 16:39:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345173AbhDFOdC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Apr 2021 10:33:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44250 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345168AbhDFOdB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Apr 2021 10:33:01 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A0FC06174A;
-        Tue,  6 Apr 2021 07:32:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=76Y+RpJl3c/zLDkucbQIVrpSXOundieidtG+VMNQ3II=; b=ABwBhwABT0zb+XUznUbXzl3gna
-        QrIvghe0Py38QdNyUo3z0fAezD/he5R3W91heecXoXp9dqnCsw/HpTjWxZa3SdD8Qsr2u6fNpEmds
-        qBKXlpKJ8MX7k8u8nq5qGQz4hK+U5aEIJWmhbW94Xhgw6G35jTuwQDFXsEzx/H9h1JfAdfbmQN5DT
-        wrrbPVJa1ePk1Y2RPw+Rc85lUvYC9IN4VCymFSak0LIT2EdicuJoN9V3wygWfBdMRIbWsyB8rzAgp
-        6lklwAQi10w6QH5iyzyafUUUB8w+EEWYdnS185eIXwYq0Lsp3yq+jC7zUnhR0oB6gn1I2rTvwepy7
-        F1ZNZNJw==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lTmkA-00CwNG-RE; Tue, 06 Apr 2021 14:32:10 +0000
-Date:   Tue, 6 Apr 2021 15:31:50 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org
-Subject: Re: [PATCH v6 01/27] mm: Introduce struct folio
-Message-ID: <20210406143150.GA3082513@infradead.org>
-References: <20210331184728.1188084-1-willy@infradead.org>
- <20210331184728.1188084-2-willy@infradead.org>
- <20210406122918.h5dsnbjhmwpfasf4@box.shutemov.name>
- <20210406124807.GO2531743@casper.infradead.org>
+        id S1345238AbhDFOjo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Apr 2021 10:39:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46654 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S243277AbhDFOjm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Apr 2021 10:39:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B468961041;
+        Tue,  6 Apr 2021 14:39:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617719974;
+        bh=G2BOVus52Iqv5BWziu8fp8dbl+kVdMy8pIchFSY+N7Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SlT7S0jfOQB0ipW94M+9K780g98fCxdRJ2QJSXci+Rly0qaDQCHFeXHTOsI463Xi7
+         S70I+/1OXQBcTfcIkIpl67B5zXSuZCsFVQzUBPU8aiRkhXqG4+Gr/kX784jry6UKjU
+         t/VEsOeLGhmj1jkbfR4iAG4mFD+vamcJPKxJMUcvNbOJ2RhmbWIpBgjpUvC0BANEGE
+         vr4AodXPx2i9E03UI+pPMK1LRyEpkXwf1hJUOL/xYCdBgDtehTwHpHwy3IOxolwkOe
+         Eefs8HR/7P44p9cGBhR5ZazQeydf2U0negBr9o85K3dg0zDsONcgGw+lFDOTompGZC
+         fzX5/aFjCjwKQ==
+Date:   Tue, 6 Apr 2021 17:39:15 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Joerg Roedel <jroedel@suse.de>, Wei Liu <wei.liu@kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Corey Minyard <cminyard@mvista.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-hyperv@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-remoteproc@vger.kernel.org, linux-arch@vger.kernel.org,
+        kexec@lists.infradead.org, rcu@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Corey Minyard <minyard@acm.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Subject: Re: [PATCH v1 1/1] kernel.h: Split out panic and oops helpers
+Message-ID: <YGxykw1Il6NvKTSe@kernel.org>
+References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210406124807.GO2531743@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 06, 2021 at 01:48:07PM +0100, Matthew Wilcox wrote:
-> Now, maybe we should put this optimisation into the definition of nth_page?
-
-That would be nice.
-
-> > As Christoph, I'm not a fan of this :/
+On Tue, Apr 06, 2021 at 04:31:58PM +0300, Andy Shevchenko wrote:
+> kernel.h is being used as a dump for all kinds of stuff for a long time.
+> Here is the attempt to start cleaning it up by splitting out panic and
+> oops helpers.
 > 
-> What would you prefer?
+> At the same time convert users in header and lib folder to use new header.
+> Though for time being include new header back to kernel.h to avoid twisted
+> indirected includes for existing users.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Looking at your full folio series on git.infradead.org, there are a
-total of 12 references to non-page members of struct folio, assuming
-my crude grep that expects a folio to be named folio did not miss any.
+Acked-by: Mike Rapoport <rppt@linux.ibm.com>
 
-Except for one that prints folio->flags in cachefiles code, and which
-should go away they are all in core MM code in mm/ or include/.  With
-enough file system conversions I do see potential uses for ->mapping
-and ->index outside of core code, but IMHO we can ignore those for now
-and just switch them over if/when we actually change the struct folio
-internals to split them from tail pages.
+> ---
+>  arch/powerpc/kernel/setup-common.c   |  1 +
+>  arch/x86/include/asm/desc.h          |  1 +
+>  arch/x86/kernel/cpu/mshyperv.c       |  1 +
+>  arch/x86/kernel/setup.c              |  1 +
+>  drivers/char/ipmi/ipmi_msghandler.c  |  1 +
+>  drivers/remoteproc/remoteproc_core.c |  1 +
+>  include/asm-generic/bug.h            |  3 +-
+>  include/linux/kernel.h               | 84 +-----------------------
+>  include/linux/panic.h                | 98 ++++++++++++++++++++++++++++
+>  include/linux/panic_notifier.h       | 12 ++++
+>  kernel/hung_task.c                   |  1 +
+>  kernel/kexec_core.c                  |  1 +
+>  kernel/panic.c                       |  1 +
+>  kernel/rcu/tree.c                    |  2 +
+>  kernel/sysctl.c                      |  1 +
+>  kernel/trace/trace.c                 |  1 +
+>  16 files changed, 126 insertions(+), 84 deletions(-)
+>  create mode 100644 include/linux/panic.h
+>  create mode 100644 include/linux/panic_notifier.h
+> 
+> diff --git a/arch/x86/include/asm/desc.h b/arch/x86/include/asm/desc.h
+> index 476082a83d1c..ceb12683b6d1 100644
+> --- a/arch/x86/include/asm/desc.h
+> +++ b/arch/x86/include/asm/desc.h
+> @@ -9,6 +9,7 @@
+>  #include <asm/irq_vectors.h>
+>  #include <asm/cpu_entry_area.h>
+>  
+> +#include <linux/debug_locks.h>
 
-So my opinion is:  leave these fields out for now, and when the problem
-that we'd have a lot of reference out of core code arises deal with it
-once we know about the scope.  Maybe we add wrappers for the few
-members that are reasonable "public", maybe we then do the union
-trick you have here because it is the least evil, or maybe we just do
-not do anything at all until these fields move over to the folio
-entirely.
+This seems unrelated, but I might be missing something.
+
+>  #include <linux/smp.h>
+>  #include <linux/percpu.h>
+>  
+
+-- 
+Sincerely yours,
+Mike.
