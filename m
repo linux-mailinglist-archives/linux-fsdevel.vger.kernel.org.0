@@ -2,99 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EF2E355C81
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 21:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 426CE355CC1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 22:15:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245005AbhDFToo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Apr 2021 15:44:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43156 "EHLO mx2.suse.de"
+        id S237713AbhDFUPK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Apr 2021 16:15:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229890AbhDFToj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Apr 2021 15:44:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id D7061B317;
-        Tue,  6 Apr 2021 19:44:28 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id F0482DA732; Tue,  6 Apr 2021 21:42:16 +0200 (CEST)
-Date:   Tue, 6 Apr 2021 21:42:16 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] btrfs: Use readahead_batch_length
-Message-ID: <20210406194216.GP7604@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20210321210311.1803954-1-willy@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210321210311.1803954-1-willy@infradead.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+        id S232628AbhDFUPK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Apr 2021 16:15:10 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 59900613C2;
+        Tue,  6 Apr 2021 20:15:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617740102;
+        bh=d0i5fE9ZWgos2cHY/Wh7wQMy1grscqYIv68Ws0MnzMU=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=MBuDK154jGz6b0DWDnqKJwHOEufLCQ1DbmlUsxuPTlA9JKmrDX+lxkoMGGAvhVM/1
+         AUanySBdqrkQGDhdX0h98jMThy6CIqkNamAYuDvqRWv4DjMVImzwz4/n7+23Nbc2I4
+         oXBbmj1N5Ayt4fA3aLlDAI/1QgBgiZ3iwldBHtKHd+qTv3mxpIWwFO3EEn/Hi3G02b
+         4AOGb9YfyPilIdbVGXUz2cHRq1oZC28PorWegQAhpNkP3QRj2eny4bYSbewP5qHxsB
+         qJATKIMzXTc9lnAKT1TDKhCoQLn1Ku5Y0GfgvDwHqEg8knh6ndKSiijS83DcuJ/46i
+         wUk9YeiusyCWw==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 46ACF60978;
+        Tue,  6 Apr 2021 20:15:02 +0000 (UTC)
+Subject: Re: [git pull] a couple of fixes in vfs.git
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <YGyXH6qTQbcoOLJ+@zeniv-ca.linux.org.uk>
+References: <YGyXH6qTQbcoOLJ+@zeniv-ca.linux.org.uk>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <YGyXH6qTQbcoOLJ+@zeniv-ca.linux.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
+X-PR-Tracked-Commit-Id: 7d01ef7585c07afaf487759a48486228cd065726
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2d743660786ec51f5c1fefd5782bbdee7b227db0
+Message-Id: <161774010222.9523.18312914559066876658.pr-tracker-bot@kernel.org>
+Date:   Tue, 06 Apr 2021 20:15:02 +0000
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Mar 21, 2021 at 09:03:11PM +0000, Matthew Wilcox (Oracle) wrote:
-> Implement readahead_batch_length() to determine the number of bytes in
-> the current batch of readahead pages and use it in btrfs.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+The pull request you sent on Tue, 6 Apr 2021 17:15:11 +0000:
 
-Thanks, I'll take it through my tree as btrfs is probably the only user
-of the new helper. The MM list hasn't been CCed, I've added it now but I
-think the patch is trivial enough and does not need another ack, so it's
-just for the record.
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
 
-> ---
->  fs/btrfs/extent_io.c    | 6 ++----
->  include/linux/pagemap.h | 9 +++++++++
->  2 files changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index e9837562f7d6..97ac4ddb2857 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -4875,10 +4875,8 @@ void extent_readahead(struct readahead_control *rac)
->  	int nr;
->  
->  	while ((nr = readahead_page_batch(rac, pagepool))) {
-> -		u64 contig_start = page_offset(pagepool[0]);
-> -		u64 contig_end = page_offset(pagepool[nr - 1]) + PAGE_SIZE - 1;
-> -
-> -		ASSERT(contig_start + nr * PAGE_SIZE - 1 == contig_end);
-> +		u64 contig_start = readahead_pos(rac);
-> +		u64 contig_end = contig_start + readahead_batch_length(rac) - 1;
->  
->  		contiguous_readpages(pagepool, nr, contig_start, contig_end,
->  				&em_cached, &bio, &bio_flags, &prev_em_start);
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 2cbfd4c36026..92939afd4944 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -1174,6 +1174,15 @@ static inline unsigned int readahead_count(struct readahead_control *rac)
->  	return rac->_nr_pages;
->  }
->  
-> +/**
-> + * readahead_batch_length - The number of bytes in the current batch.
-> + * @rac: The readahead request.
-> + */
-> +static inline loff_t readahead_batch_length(struct readahead_control *rac)
-> +{
-> +	return rac->_batch_count * PAGE_SIZE;
-> +}
-> +
->  static inline unsigned long dir_pages(struct inode *inode)
->  {
->  	return (unsigned long)(inode->i_size + PAGE_SIZE - 1) >>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2d743660786ec51f5c1fefd5782bbdee7b227db0
 
---
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
