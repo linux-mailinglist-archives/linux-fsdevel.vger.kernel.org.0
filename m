@@ -2,63 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F94035568D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 16:24:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EA5435568A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 16:23:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345131AbhDFOYi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Apr 2021 10:24:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42434 "EHLO
+        id S233787AbhDFOXk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Apr 2021 10:23:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230032AbhDFOYi (ORCPT
+        with ESMTP id S232556AbhDFOXj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Apr 2021 10:24:38 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73025C06174A;
-        Tue,  6 Apr 2021 07:24:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=h8Ohb5Nl+BWd1e8JB1eKnm6zirqglOxK/PIdWxnDxGc=; b=RnPjPifYJLwE8ugTNLmyZ8ufmm
-        WkEAfmFeG9q6iEoiCYK01PLavR5/z1Ea4z/iZjVNq3RoXmBLDHxU2mR1d6x4lQb3YAJa9jlqe2u+r
-        eWPQNkHGCaIOwyTOx0kdTw/1R64fQMrQPB0S1WenBmo34SNWpd+eqmqq1Nc5AjilJSqMKoNrGa5T4
-        +8s5HQC9vZbW0JmxPcovuIisYw+eH1XijlQmlnqGLI0hsA6TNlmYE3BHSXf7pj+134GYbN1SvgY2W
-        MlHFBTxAFVE1Fxrv6faOk/PuDsSlfZleybcANMFgDb/y/bSLGsUoBOgI0yCZoZitYnZPhZRPgWqoZ
-        6895580w==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lTmbs-00Cvj3-2f; Tue, 06 Apr 2021 14:23:22 +0000
-Date:   Tue, 6 Apr 2021 15:23:16 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org
-Subject: Re: [PATCH v6 26/27] mm/filemap: Convert wake_up_page_bit to
- wake_up_folio_bit
-Message-ID: <20210406142316.GY3062550@infradead.org>
-References: <20210331184728.1188084-1-willy@infradead.org>
- <20210331184728.1188084-27-willy@infradead.org>
+        Tue, 6 Apr 2021 10:23:39 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48A3BC06174A;
+        Tue,  6 Apr 2021 07:23:31 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lTmc4-0037of-6y; Tue, 06 Apr 2021 14:23:28 +0000
+Date:   Tue, 6 Apr 2021 14:23:28 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
+Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
+Message-ID: <YGxu4OWMLE+XXy7Z@zeniv-ca.linux.org.uk>
+References: <YGs4clcRhyoXX8D0@zeniv-ca.linux.org.uk>
+ <20210405170801.zrdhnon6g4ggb6c7@wittgenstein>
+ <YGtVtfbYXck3qPRl@zeniv-ca.linux.org.uk>
+ <YGtW5g6EFFArtevk@zeniv-ca.linux.org.uk>
+ <20210405200737.qurhkqitoxweousx@wittgenstein>
+ <YGu7n+dhMep1741/@zeniv-ca.linux.org.uk>
+ <20210406123505.auxqtquoys6xg6yf@wittgenstein>
+ <YGxeaTzdnxn/3dsY@zeniv-ca.linux.org.uk>
+ <20210406132205.qnherkzif64xmgxg@wittgenstein>
+ <YGxs5b0pY4esY7J7@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210331184728.1188084-27-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <YGxs5b0pY4esY7J7@zeniv-ca.linux.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 31, 2021 at 07:47:27PM +0100, Matthew Wilcox (Oracle) wrote:
->  void unlock_page_private_2(struct page *page)
->  {
-> -	page = compound_head(page);
-> -	VM_BUG_ON_PAGE(!PagePrivate2(page), page);
-> -	clear_bit_unlock(PG_private_2, &page->flags);
-> -	wake_up_page_bit(page, PG_private_2);
-> +	struct folio *folio = page_folio(page);
-> +	VM_BUG_ON_FOLIO(!FolioPrivate2(folio), folio);
+On Tue, Apr 06, 2021 at 02:15:01PM +0000, Al Viro wrote:
 
-A whitespace between the declaration and the code would be nice.
+> I'm referring to the fact that your diff is with an already modified path_lookupat()
+> _and_ those modifications have managed to introduce a bug your patch reverts.
+> No terminate_walk() paired with that path_init() failure, i.e. path_init() is
+> responsible for cleanups on its (many) failure exits...
 
-Otherwise looks good;
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+I can't tell without seeing the variant your diff is against, but at a guess
+it had a non-trivial amount of trouble with missed rcu_read_unlock() in
+cases when path_init() fails after having done rcu_read_lock().  For trivial
+testcase, consider passing -1 for dfd, so that it would fail with -EBADF.
+Or passing 0 for dfd and "blah" for name (assuming your stdin is not a directory).
+Sure, you could handle those in path_init() (or delay grabbing rcu_read_lock()
+in there, spreading it in a bunch of branches), but duplicated cleanup logics
+for a bunch of failure exits is asking for trouble.
