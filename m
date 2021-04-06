@@ -2,169 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C759354EB8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 10:33:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3031D354EBE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 10:36:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244342AbhDFIdy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Apr 2021 04:33:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49614 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232820AbhDFIdx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Apr 2021 04:33:53 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84996C06174A;
-        Tue,  6 Apr 2021 01:33:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=wOOvbvczBiqDUD1z9pJzeLiPhATvYrqx3RE9Hb+eT8I=; b=SjVFPWxveC/8e8EIbcjSMdBpLP
-        VkEzTkJad1jAtUK+M4B4jStCCl7tHk3qH/zi0s32A/0NFHArNrfl/oDm+PXQlfQ6uT2/2MbTcEnw7
-        64aaIxw6rQ5SKFeA6HDQWd6+9yo9qWTX0JrpqbwCKsvM8EInotd+Ug3ztl3ezeb+KNq8MbdnVqGde
-        LdHPFL+r0DoIDmPIQGvbmSt18HteM9uUIgqVwG4tdTLUOarUvhQbFc2Ye0LtUyebDAT128fcaAW+7
-        iP7R8QQXM26jTfrTzdyHfbVzyqnPytYGP570R/bsclofCma5ZgI/OdpKKYmd3izqPjsKtvsadjRcT
-        5ECNB2yA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lTh9K-001t7Z-Tk; Tue, 06 Apr 2021 08:33:27 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7D650301179;
-        Tue,  6 Apr 2021 10:33:25 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6B80D2BAE8C22; Tue,  6 Apr 2021 10:33:25 +0200 (CEST)
-Date:   Tue, 6 Apr 2021 10:33:25 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     syzbot <syzbot+dde0cc33951735441301@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        netdev@vger.kernel.org, tglx@linutronix.de, frederic@kernel.org,
-        paulmck@kernel.org
-Subject: Re: Something is leaking RCU holds from interrupt context
-Message-ID: <YGwc1d8049ySxfPE@hirez.programming.kicks-ass.net>
-References: <00000000000025a67605bf1dd4ab@google.com>
- <20210404102457.GS351017@casper.infradead.org>
+        id S239927AbhDFIgQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Apr 2021 04:36:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33036 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234953AbhDFIgP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Apr 2021 04:36:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 45AC4B0C6;
+        Tue,  6 Apr 2021 08:35:57 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id F21341F2B70; Tue,  6 Apr 2021 10:35:56 +0200 (CEST)
+Date:   Tue, 6 Apr 2021 10:35:56 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: fsnotify path hooks
+Message-ID: <20210406083556.GA19407@quack2.suse.cz>
+References: <CAOQ4uxjPhrY55kJLUr-=2+S4HOqF0qKAAX27h2T1H1uOnxM9pQ@mail.gmail.com>
+ <20210330141703.lkttbuflr5z5ia7f@wittgenstein>
+ <CAOQ4uxirMBzcaLeLoBWCMPPr7367qeKjnW3f88bh1VMr_3jv_A@mail.gmail.com>
+ <20210331094604.xxbjl3krhqtwcaup@wittgenstein>
+ <CAOQ4uxirud-+ot0kZ=8qaicvjEM5w1scAeoLP_-HzQx+LwihHw@mail.gmail.com>
+ <20210331125412.GI30749@quack2.suse.cz>
+ <CAOQ4uxjOyuvpJ7Tv3cGmv+ek7+z9BJBF4sK_-OLxwePUrHERUg@mail.gmail.com>
+ <CAOQ4uxhWE9JGOZ_jN9_RT5EkACdNWXOryRsm6Wg_zkaDNDSjsA@mail.gmail.com>
+ <20210401102947.GA29690@quack2.suse.cz>
+ <CAOQ4uxjHFkRVTY5iyTSpb0R5R6j-j=8+Htpu2hgMAz9MTci-HQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210404102457.GS351017@casper.infradead.org>
+In-Reply-To: <CAOQ4uxjHFkRVTY5iyTSpb0R5R6j-j=8+Htpu2hgMAz9MTci-HQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Apr 04, 2021 at 11:24:57AM +0100, Matthew Wilcox wrote:
-> On Sat, Apr 03, 2021 at 09:15:17PM -0700, syzbot wrote:
-> > HEAD commit:    2bb25b3a Merge tag 'mips-fixes_5.12_3' of git://git.kernel..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1284cc31d00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=78ef1d159159890
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=dde0cc33951735441301
-> > 
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+dde0cc33951735441301@syzkaller.appspotmail.com
-> > 
-> > WARNING: suspicious RCU usage
-> > 5.12.0-rc5-syzkaller #0 Not tainted
-> > -----------------------------
-> > kernel/sched/core.c:8294 Illegal context switch in RCU-bh read-side critical section!
-> > 
-> > other info that might help us debug this:
-> > 
-> > 
-> > rcu_scheduler_active = 2, debug_locks = 0
-> > no locks held by systemd-udevd/4825.
+On Thu 01-04-21 17:18:05, Amir Goldstein wrote:
+> > > > > Also I'm somewhat uneasy that it is random (from
+> > > > > userspace POV) when path event is generated and when not (at least that's
+> > > > > my impression from the patch - maybe I'm wrong). How difficult would it be
+> > > > > to get rid of it? I mean what if we just moved say fsnotify_create() call
+> > > > > wholly up the stack? It would mean more explicit calls to fsnotify_create()
+> > > > > from filesystems - as far as I'm looking nfsd, overlayfs, cachefiles,
+> > > > > ecryptfs. But that would seem to be manageable.  Also, to maintain sanity,
+> > > >
+> > > > 1. I don't think we can do that for all the fsnotify_create() hooks, such as
+> > > >     debugfs for example
+> > > > 2. It is useless to pass the mount from overlayfs to fsnotify, its a private
+> > > >     mount that users cannot set a mark on anyway and Christian has
+> > > >     promised to propose the same change for cachefiles and ecryptfs,
+> > > >     so I think it's not worth the churn in those call sites
+> > > > 3. I am uneasy with removing the fsnotify hooks from vfs helpers and
+> > > >     trusting that new callers of vfs_create() will remember to add the high
+> > > >     level hooks, so I prefer the existing behavior remains for such callers
+> > > >
+> > >
+> > > So I read your proposal the wrong way.
+> > > You meant move fsnotify_create() up *without* passing mount context
+> > > from overlayfs and friends.
+> >
+> > Well, I was thinking that we could find appropriate mount context for
+> > overlayfs or ecryptfs (which just shows how little I know about these
+> > filesystems ;) I didn't think of e.g. debugfs. Anyway, if we can make
+> > mountpoint marks work for directory events at least for most filesystems, I
+> > think that is OK as well. However it would be then needed to detect whether
+> > a given filesystem actually supports mount marks for dir events and if not,
+> > report error from fanotify_mark() instead of silently not generating
+> > events.
+> >
 > 
-> I think we have something that's taking the RCU read lock in
-> (soft?) interrupt context and not releasing it properly in all
-> situations.  This thread doesn't have any locks recorded, but
-> lock_is_held(&rcu_bh_lock_map) is true.
+> It's not about "filesystems that support mount marks".
+> mount marks will work perfectly well on overlayfs.
 > 
-> Is there some debugging code that could find this?  eg should
-> lockdep_softirq_end() check that rcu_bh_lock_map is not held?
-> (if it's taken in process context, then BHs can't run, so if it's
-> held at softirq exit, then there's definitely a problem).
+> The thing is if you place a mount mark on the underlying store of
+> overlayfs (say xfs) and then files are created/deleted by the
+> overlayfs driver (in xfs) you wont get any events, because
+> overlayfs uses a private mount clone to perform underlying operations.
 
-Hmm, I'm sure i've written something like that at least once, but I
-can't seem to find it :/
+OK, understood.
 
-Does something like the completely untested below work for you?
+> So while we CAN get the overlayfs underlying layer mount context
+> it is irrelevant because no user can setup a mount mark on that
+> private mount, so no need to bother calling the path hooks.
+> 
+> This is not the case with nfsd IMO.
+> With nfsd, when "exporting" a path to clients, nfsd is really exporting
+> a specific mount (and keeping that mount busy too).
+> It can even export whole mount topologies.
+> 
+> But then again, getting the mount context in every nfsd operation
+> is easy, there is an export context to client requests and the export
+> context has the exported path.
+> 
+> Therefore, nfsd is my only user using the vfs helpers that is expected
+> to call the fsnotify path hooks (other than syscalls).
 
----
+I agree.
 
-diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
-index 600c10da321a..d8aa1dc481b6 100644
---- a/include/linux/irqflags.h
-+++ b/include/linux/irqflags.h
-@@ -54,6 +54,8 @@ extern void trace_hardirqs_off_finish(void);
- extern void trace_hardirqs_on(void);
- extern void trace_hardirqs_off(void);
- 
-+extern void lockdep_validate_context_empty(void);
-+
- # define lockdep_hardirq_context()	(raw_cpu_read(hardirq_context))
- # define lockdep_softirq_context(p)	((p)->softirq_context)
- # define lockdep_hardirqs_enabled()	(this_cpu_read(hardirqs_enabled))
-@@ -69,6 +71,7 @@ do {						\
- } while (0)
- # define lockdep_hardirq_exit()			\
- do {						\
-+	lockdep_validate_context_empty();	\
- 	__this_cpu_dec(hardirq_context);	\
- } while (0)
- # define lockdep_softirq_enter()		\
-@@ -77,6 +80,7 @@ do {						\
- } while (0)
- # define lockdep_softirq_exit()			\
- do {						\
-+	lockdep_validate_context_empty();	\
- 	current->softirq_context--;		\
- } while (0)
- 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 82db977eada8..09ac70d1b3a6 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -2697,6 +2697,37 @@ static int check_irq_usage(struct task_struct *curr, struct held_lock *prev,
- 	return 0;
- }
- 
-+void lockdep_validate_context_empty(void)
-+{
-+	struct task_struct *curr = current;
-+	int depth, ctx = task_irq_context(curr);
-+
-+	if (debug_locks_silent)
-+		return;
-+
-+	depth = curr->lockdep_depth;
-+	if (!depth)
-+		return;
-+
-+	if (curr->held_locks[depth-1].irq_context != ctx)
-+		return;
-+
-+
-+	pr_warn("\n");
-+	pr_warn("====================================\n");
-+	pr_warn("WARNING: Asymmetric locking detected\n");
-+	print_kernel_ident();
-+	pr_warn("------------------------------------\n");
-+
-+	pr_warn("%s/%d is leaving an IRQ context with extra locks on\n",
-+		curr->comm, task_pid_nr(curr));
-+
-+	lockdep_printk_held_locks(curr);
-+
-+	printk("\nstack backtrace:\n");
-+	dump_stack();
-+}
-+
- #else
- 
- static inline int check_irq_usage(struct task_struct *curr,
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
