@@ -2,168 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A2C035499A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 02:15:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9F54354A09
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 03:28:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242939AbhDFAQB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Apr 2021 20:16:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55088 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242935AbhDFAQA (ORCPT
+        id S243092AbhDFB26 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Apr 2021 21:28:58 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15600 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230476AbhDFB25 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Apr 2021 20:16:00 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE355C061756
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Apr 2021 17:15:52 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id u20so14376878lja.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Apr 2021 17:15:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:cc;
-        bh=Yp7vvWni51LV8EH8AK8AP/Z8kIvz7Dlwt8s0OEZWhTU=;
-        b=u94Nzhwf1aopm5vCcjdO0RYqds0EHpaKSuc/nLxE5Eu4Qz6VvqUVJthq9kNsrz/7Nf
-         7OGziOdkgqU/cMgqUujqVxOTwGb32vTkSnGudlsCB8Iv4Itiw/jkHJWNXW/gCovxUiEq
-         bWsIZGVhylzhTe3g4xh81OlJNZ6zZBpz2vx9WyX0oOqRJH+mrJoWaU3VYsoeUP5SHgQQ
-         V/XJIS7v6S3a0MrkAutaFSWBtwXVOdeHhFHEa6PrkgZOTUJOetSEAdclOcAqqun7VRAQ
-         60O4pl+iPvlD0MQyoZGzPYR6J0riRB8NfPkY1SsdMIorXB3DHlabpFQsmlhOKLZ5F7XN
-         Kaiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:cc;
-        bh=Yp7vvWni51LV8EH8AK8AP/Z8kIvz7Dlwt8s0OEZWhTU=;
-        b=PfT9Bmcvy9pm+Bft7gkT9vBjaj2BpHj//SG4xkBEOKsswvKKVzpLT8YcpuBUo0RB7S
-         UkztTIsL1E6j78qUTEvaXfERkfvI6EpiNHjmmoGLIiA8lz8BwBsXyXpQq6ztau+EMZwh
-         CBcLzE7pDr/HLH3gxpd8eCVvKvqzfE14jE/ZvhTYkzCeJjBQUeg3jdPo51tH7e4XMwAV
-         gN3i1lJgV6urRkwAvElGgyyasS7ew1yAluayniJbW/pzc5JKUXkvmwbPGddBhIOZ5JDI
-         zbHU7d8Yp81xji5R/Cct0S6AZ1pFDDbGnK1V1c0F1sF48pi6jIDsvRWqTvT3wnPJ6iAM
-         cQWA==
-X-Gm-Message-State: AOAM532u4CRIOBTdDt88m5Yok0QY1QDkAKLrqnSSKJceKA2sVNI+V9UE
-        90vVVJJFm0BSzpdhdV3a0HpxYOoN5DaqLPFQqHXtsA==
-X-Received: by 2002:a2e:b0d0:: with SMTP id g16mt7992673ljl.382.1617668150982;
- Mon, 05 Apr 2021 17:15:50 -0700 (PDT)
+        Mon, 5 Apr 2021 21:28:57 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FDqcb002Rz17QKx;
+        Tue,  6 Apr 2021 09:26:38 +0800 (CST)
+Received: from [10.174.176.73] (10.174.176.73) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.498.0; Tue, 6 Apr 2021 09:28:44 +0800
+Subject: Re: [PATCH] block: reexpand iov_iter after read/write
+To:     <viro@zeniv.linux.org.uk>, <axboe@kernel.dk>,
+        <asml.silence@gmail.com>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <io-uring@vger.kernel.org>
+References: <20210401071807.3328235-1-yangerkun@huawei.com>
+From:   yangerkun <yangerkun@huawei.com>
+Message-ID: <3bd14a60-b259-377b-38d5-907780bc2416@huawei.com>
+Date:   Tue, 6 Apr 2021 09:28:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-References: <20210322215823.962758-1-cfijalkovich@google.com>
-In-Reply-To: <20210322215823.962758-1-cfijalkovich@google.com>
-From:   Collin Fijalkovich <cfijalkovich@google.com>
-Date:   Mon, 5 Apr 2021 17:15:40 -0700
-Message-ID: <CAL+PeoEpuOMOOL7=TTu7dKhHxO3Yb5CoTiMFeYGskx23bXkXhg@mail.gmail.com>
-Subject: Re: [PATCH] mm, thp: Relax the VM_DENYWRITE constraint on file-backed THPs
-Cc:     Song Liu <songliubraving@fb.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Hridya Valsaraju <hridya@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Hugh Dickins <hughd@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <20210401071807.3328235-1-yangerkun@huawei.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.176.73]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-v2 has been uploaded with performance testing results:
-https://lore.kernel.org/patchwork/patch/1408266/
+Ping...
 
-
-
-On Mon, Mar 22, 2021 at 2:59 PM Collin Fijalkovich
-<cfijalkovich@google.com> wrote:
->
-> Transparent huge pages are supported for read-only non-shmem filesystems,
-> but are only used for vmas with VM_DENYWRITE. This condition ensures that
-> file THPs are protected from writes while an application is running
-> (ETXTBSY).  Any existing file THPs are then dropped from the page cache
-> when a file is opened for write in do_dentry_open(). Since sys_mmap
-> ignores MAP_DENYWRITE, this constrains the use of file THPs to vmas
-> produced by execve().
->
-> Systems that make heavy use of shared libraries (e.g. Android) are unable
-> to apply VM_DENYWRITE through the dynamic linker, preventing them from
-> benefiting from the resultant reduced contention on the TLB.
->
-> This patch reduces the constraint on file THPs allowing use with any
-> executable mapping from a file not opened for write (see
-> inode_is_open_for_write()). It also introduces additional conditions to
-> ensure that files opened for write will never be backed by file THPs.
->
-> Restricting the use of THPs to executable mappings eliminates the risk that
-> a read-only file later opened for write would encounter significant
-> latencies due to page cache truncation.
->
-> The ld linker flag '-z max-page-size=(hugepage size)' can be used to
-> produce executables with the necessary layout. The dynamic linker must
-> map these file's segments at a hugepage size aligned vma for the mapping to
-> be backed with THPs.
->
-> Signed-off-by: Collin Fijalkovich <cfijalkovich@google.com>
+ÔÚ 2021/4/1 15:18, yangerkun Ð´µÀ:
+> We get a bug:
+> 
+> BUG: KASAN: slab-out-of-bounds in iov_iter_revert+0x11c/0x404
+> lib/iov_iter.c:1139
+> Read of size 8 at addr ffff0000d3fb11f8 by task
+> 
+> CPU: 0 PID: 12582 Comm: syz-executor.2 Not tainted
+> 5.10.0-00843-g352c8610ccd2 #2
+> Hardware name: linux,dummy-virt (DT)
+> Call trace:
+>   dump_backtrace+0x0/0x2d0 arch/arm64/kernel/stacktrace.c:132
+>   show_stack+0x28/0x34 arch/arm64/kernel/stacktrace.c:196
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x110/0x164 lib/dump_stack.c:118
+>   print_address_description+0x78/0x5c8 mm/kasan/report.c:385
+>   __kasan_report mm/kasan/report.c:545 [inline]
+>   kasan_report+0x148/0x1e4 mm/kasan/report.c:562
+>   check_memory_region_inline mm/kasan/generic.c:183 [inline]
+>   __asan_load8+0xb4/0xbc mm/kasan/generic.c:252
+>   iov_iter_revert+0x11c/0x404 lib/iov_iter.c:1139
+>   io_read fs/io_uring.c:3421 [inline]
+>   io_issue_sqe+0x2344/0x2d64 fs/io_uring.c:5943
+>   __io_queue_sqe+0x19c/0x520 fs/io_uring.c:6260
+>   io_queue_sqe+0x2a4/0x590 fs/io_uring.c:6326
+>   io_submit_sqe fs/io_uring.c:6395 [inline]
+>   io_submit_sqes+0x4c0/0xa04 fs/io_uring.c:6624
+>   __do_sys_io_uring_enter fs/io_uring.c:9013 [inline]
+>   __se_sys_io_uring_enter fs/io_uring.c:8960 [inline]
+>   __arm64_sys_io_uring_enter+0x190/0x708 fs/io_uring.c:8960
+>   __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
+>   invoke_syscall arch/arm64/kernel/syscall.c:48 [inline]
+>   el0_svc_common arch/arm64/kernel/syscall.c:158 [inline]
+>   do_el0_svc+0x120/0x290 arch/arm64/kernel/syscall.c:227
+>   el0_svc+0x1c/0x28 arch/arm64/kernel/entry-common.c:367
+>   el0_sync_handler+0x98/0x170 arch/arm64/kernel/entry-common.c:383
+>   el0_sync+0x140/0x180 arch/arm64/kernel/entry.S:670
+> 
+> Allocated by task 12570:
+>   stack_trace_save+0x80/0xb8 kernel/stacktrace.c:121
+>   kasan_save_stack mm/kasan/common.c:48 [inline]
+>   kasan_set_track mm/kasan/common.c:56 [inline]
+>   __kasan_kmalloc+0xdc/0x120 mm/kasan/common.c:461
+>   kasan_kmalloc+0xc/0x14 mm/kasan/common.c:475
+>   __kmalloc+0x23c/0x334 mm/slub.c:3970
+>   kmalloc include/linux/slab.h:557 [inline]
+>   __io_alloc_async_data+0x68/0x9c fs/io_uring.c:3210
+>   io_setup_async_rw fs/io_uring.c:3229 [inline]
+>   io_read fs/io_uring.c:3436 [inline]
+>   io_issue_sqe+0x2954/0x2d64 fs/io_uring.c:5943
+>   __io_queue_sqe+0x19c/0x520 fs/io_uring.c:6260
+>   io_queue_sqe+0x2a4/0x590 fs/io_uring.c:6326
+>   io_submit_sqe fs/io_uring.c:6395 [inline]
+>   io_submit_sqes+0x4c0/0xa04 fs/io_uring.c:6624
+>   __do_sys_io_uring_enter fs/io_uring.c:9013 [inline]
+>   __se_sys_io_uring_enter fs/io_uring.c:8960 [inline]
+>   __arm64_sys_io_uring_enter+0x190/0x708 fs/io_uring.c:8960
+>   __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
+>   invoke_syscall arch/arm64/kernel/syscall.c:48 [inline]
+>   el0_svc_common arch/arm64/kernel/syscall.c:158 [inline]
+>   do_el0_svc+0x120/0x290 arch/arm64/kernel/syscall.c:227
+>   el0_svc+0x1c/0x28 arch/arm64/kernel/entry-common.c:367
+>   el0_sync_handler+0x98/0x170 arch/arm64/kernel/entry-common.c:383
+>   el0_sync+0x140/0x180 arch/arm64/kernel/entry.S:670
+> 
+> Freed by task 12570:
+>   stack_trace_save+0x80/0xb8 kernel/stacktrace.c:121
+>   kasan_save_stack mm/kasan/common.c:48 [inline]
+>   kasan_set_track+0x38/0x6c mm/kasan/common.c:56
+>   kasan_set_free_info+0x20/0x40 mm/kasan/generic.c:355
+>   __kasan_slab_free+0x124/0x150 mm/kasan/common.c:422
+>   kasan_slab_free+0x10/0x1c mm/kasan/common.c:431
+>   slab_free_hook mm/slub.c:1544 [inline]
+>   slab_free_freelist_hook mm/slub.c:1577 [inline]
+>   slab_free mm/slub.c:3142 [inline]
+>   kfree+0x104/0x38c mm/slub.c:4124
+>   io_dismantle_req fs/io_uring.c:1855 [inline]
+>   __io_free_req+0x70/0x254 fs/io_uring.c:1867
+>   io_put_req_find_next fs/io_uring.c:2173 [inline]
+>   __io_queue_sqe+0x1fc/0x520 fs/io_uring.c:6279
+>   __io_req_task_submit+0x154/0x21c fs/io_uring.c:2051
+>   io_req_task_submit+0x2c/0x44 fs/io_uring.c:2063
+>   task_work_run+0xdc/0x128 kernel/task_work.c:151
+>   get_signal+0x6f8/0x980 kernel/signal.c:2562
+>   do_signal+0x108/0x3a4 arch/arm64/kernel/signal.c:658
+>   do_notify_resume+0xbc/0x25c arch/arm64/kernel/signal.c:722
+>   work_pending+0xc/0x180
+> 
+> blkdev_read_iter can truncate iov_iter's count since the count + pos may
+> exceed the size of the blkdev. This will confuse io_read that we have
+> consume the iovec. And once we do the iov_iter_revert in io_read, we
+> will trigger the slab-out-of-bounds. Fix it by reexpand the count with
+> size has been truncated.
+> 
+> blkdev_write_iter can trigger the problem too.
+> 
+> Signed-off-by: yangerkun <yangerkun@huawei.com>
 > ---
->  fs/open.c       | 13 +++++++++++--
->  mm/khugepaged.c | 16 +++++++++++++++-
->  2 files changed, 26 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/open.c b/fs/open.c
-> index e53af13b5835..f76e960d10ea 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -852,8 +852,17 @@ static int do_dentry_open(struct file *f,
->          * XXX: Huge page cache doesn't support writing yet. Drop all page
->          * cache for this file before processing writes.
->          */
-> -       if ((f->f_mode & FMODE_WRITE) && filemap_nr_thps(inode->i_mapping))
-> -               truncate_pagecache(inode, 0);
-> +       if (f->f_mode & FMODE_WRITE) {
-> +               /*
-> +                * Paired with smp_mb() in collapse_file() to ensure nr_thps
-> +                * is up to date and the update to i_writecount by
-> +                * get_write_access() is visible. Ensures subsequent insertion
-> +                * of THPs into the page cache will fail.
-> +                */
-> +               smp_mb();
-> +               if (filemap_nr_thps(inode->i_mapping))
-> +                       truncate_pagecache(inode, 0);
-> +       }
->
->         return 0;
->
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index a7d6cb912b05..4c7cc877d5e3 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -459,7 +459,8 @@ static bool hugepage_vma_check(struct vm_area_struct *vma,
->
->         /* Read-only file mappings need to be aligned for THP to work. */
->         if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) && vma->vm_file &&
-> -           (vm_flags & VM_DENYWRITE)) {
-> +           !inode_is_open_for_write(vma->vm_file->f_inode) &&
-> +           (vm_flags & VM_EXEC)) {
->                 return IS_ALIGNED((vma->vm_start >> PAGE_SHIFT) - vma->vm_pgoff,
->                                 HPAGE_PMD_NR);
->         }
-> @@ -1872,6 +1873,19 @@ static void collapse_file(struct mm_struct *mm,
->         else {
->                 __mod_lruvec_page_state(new_page, NR_FILE_THPS, nr);
->                 filemap_nr_thps_inc(mapping);
-> +               /*
-> +                * Paired with smp_mb() in do_dentry_open() to ensure
-> +                * i_writecount is up to date and the update to nr_thps is
-> +                * visible. Ensures the page cache will be truncated if the
-> +                * file is opened writable.
-> +                */
-> +               smp_mb();
-> +               if (inode_is_open_for_write(mapping->host)) {
-> +                       result = SCAN_FAIL;
-> +                       __mod_lruvec_page_state(new_page, NR_FILE_THPS, -nr);
-> +                       filemap_nr_thps_dec(mapping);
-> +                       goto xa_locked;
-> +               }
->         }
->
->         if (nr_none) {
-> --
-> 2.31.0.rc2.261.g7f71774620-goog
->
+>   fs/block_dev.c | 20 +++++++++++++++++---
+>   1 file changed, 17 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index 92ed7d5df677..788e1014576f 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -1680,6 +1680,7 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>   	struct inode *bd_inode = bdev_file_inode(file);
+>   	loff_t size = i_size_read(bd_inode);
+>   	struct blk_plug plug;
+> +	size_t shorted = 0;
+>   	ssize_t ret;
+>   
+>   	if (bdev_read_only(I_BDEV(bd_inode)))
+> @@ -1697,12 +1698,17 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>   	if ((iocb->ki_flags & (IOCB_NOWAIT | IOCB_DIRECT)) == IOCB_NOWAIT)
+>   		return -EOPNOTSUPP;
+>   
+> -	iov_iter_truncate(from, size - iocb->ki_pos);
+> +	size -= iocb->ki_pos;
+> +	if (iov_iter_count(from) > size) {
+> +		shorted = iov_iter_count(from) - size;
+> +		iov_iter_truncate(from, size);
+> +	}
+>   
+>   	blk_start_plug(&plug);
+>   	ret = __generic_file_write_iter(iocb, from);
+>   	if (ret > 0)
+>   		ret = generic_write_sync(iocb, ret);
+> +	iov_iter_reexpand(from, iov_iter_count(from) + shorted);
+>   	blk_finish_plug(&plug);
+>   	return ret;
+>   }
+> @@ -1714,13 +1720,21 @@ ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   	struct inode *bd_inode = bdev_file_inode(file);
+>   	loff_t size = i_size_read(bd_inode);
+>   	loff_t pos = iocb->ki_pos;
+> +	size_t shorted = 0;
+> +	ssize_t ret;
+>   
+>   	if (pos >= size)
+>   		return 0;
+>   
+>   	size -= pos;
+> -	iov_iter_truncate(to, size);
+> -	return generic_file_read_iter(iocb, to);
+> +	if (iov_iter_count(to) > size) {
+> +		shorted = iov_iter_count(to) - size;
+> +		iov_iter_truncate(to, size);
+> +	}
+> +
+> +	ret = generic_file_read_iter(iocb, to);
+> +	iov_iter_reexpand(to, iov_iter_count(to) + shorted);
+> +	return ret;
+>   }
+>   EXPORT_SYMBOL_GPL(blkdev_read_iter);
+>   
+> 
