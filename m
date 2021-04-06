@@ -2,105 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E663355761
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 17:10:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAD20355779
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 17:14:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345481AbhDFPKU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Apr 2021 11:10:20 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:40685 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbhDFPKT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Apr 2021 11:10:19 -0400
-Received: from mail-ot1-f42.google.com ([209.85.210.42]) by
- mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MQ5nE-1lGVe444tE-00M82P; Tue, 06 Apr 2021 17:10:09 +0200
-Received: by mail-ot1-f42.google.com with SMTP id y19-20020a0568301d93b02901b9f88a238eso14919233oti.11;
-        Tue, 06 Apr 2021 08:10:08 -0700 (PDT)
-X-Gm-Message-State: AOAM5339u61P3hcDQHSMv4Bb3Vc6UeOaPqfPKECpFig1uCct5fovZUts
-        XPwTqmkcSBGX/Hjod6hc9kc3/Hsfqq4PeYD4X4Y=
-X-Google-Smtp-Source: ABdhPJymivlM3E85H8Q+0NCLICsUYllvqqVKgV6xTox+xVrAvu7QQQ8spiRatNW1320IbQIk/CTiHARLx2Yc4o/NYxk=
-X-Received: by 2002:a05:6830:148c:: with SMTP id s12mr28037074otq.251.1617721807123;
- Tue, 06 Apr 2021 08:10:07 -0700 (PDT)
+        id S1345446AbhDFPOj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Apr 2021 11:14:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55948 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233155AbhDFPOh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Apr 2021 11:14:37 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A0DD561363;
+        Tue,  6 Apr 2021 15:14:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617722069;
+        bh=6EwsObpnkQ5Dfea7gjpKREYGxQADGcmpX2jhvrqCVvk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=RmKRdevffH/BmKSNQGh8I3FH7lztg+9RgJlXEMubNtq2LQkdqPgIeqiVpbeayXjli
+         /xc6m1DPIBswndDuw4IpuYW+rmFX8Gmnzzz4yPefsAH4bidLENQzjFxrxJAlb+sEbp
+         ci7sLQ9BOrfpLkOJSHCexaG187bddwVLzZPXL6VtaT+kfVnjk7SG3VGGOrS0GpNR18
+         xJQC7fZqH4wECX+Aqv411LxhfSIDzc/Wu9YM2aj2oRvWvOBYkV2WgHHW2Pj+3a7cLE
+         r80lUzz3K/EoqaLeXjfNG6yDImXu30o7KlQWWw8WZ2zLbcTlJMTaUk2g4qXImv6PQJ
+         yTJl7LqN1KYaQ==
+Message-ID: <fa4fa9fc7236ff4a5f582ead8df4fd12ce08057d.camel@kernel.org>
+Subject: Re: [PATCH v6 00/27] Memory Folios
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-afs@lists.infradead.org
+Date:   Tue, 06 Apr 2021 11:14:27 -0400
+In-Reply-To: <20210405193120.GL2531743@casper.infradead.org>
+References: <20210331184728.1188084-1-willy@infradead.org>
+         <759cfbb63ca960b2893f2b879035c2a42c80462d.camel@kernel.org>
+         <20210405193120.GL2531743@casper.infradead.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 6 Apr 2021 17:09:50 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a3PBvj_JEgxqSD6fg_J8kZzUz_KthZ66RdA5tF4CPPbdg@mail.gmail.com>
-Message-ID: <CAK8P3a3PBvj_JEgxqSD6fg_J8kZzUz_KthZ66RdA5tF4CPPbdg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] kernel.h: Split out panic and oops helpers
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Joerg Roedel <jroedel@suse.de>, Wei Liu <wei.liu@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Corey Minyard <cminyard@mvista.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-remoteproc@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        kexec@lists.infradead.org, rcu@vger.kernel.org,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Corey Minyard <minyard@acm.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:j4MYXLrEq3uWqMv+X0D99JwRTObPxDHDhULsj99en1zd/J0IS/M
- 9DH+aY6RDqyTbtsxdBcUfZb+VnY8T9dkC4Ci3fV4yaKiT3GP45iRwVaY38uzag+7e1eYfKy
- q/Sp50e+En2buLkJEK/wbFqVNilXsvIYeIUaIPF0vQBDu1+1gy8WogTZT+70k09VATRurYk
- GmKsn/l8oe0Pk4pW5dtGg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:GP+1VYp8m50=:bsgZllEAEV+Im6+kBThy/N
- JRso7MC3s7MZECvcG6PxvLGm48/w8u+AwOaEEM1TpolGdUeWEn/hhpdt6UWGtWJGzy0NgHb1b
- ECWpueBJLTVs7fSSrUUnujvbDiNbQeSq3j5DI0JIYFPG8qaXZquoG+NcbGehYjTJtibfwbaa4
- MhR08FPn0d9M6hcsAB8DWsEtr0KwkviFgvGkVMxMp7zB46YO9hPgBKPRtUiGdXjiY35QA422Z
- pI220xkX3UXgAJmZlsfT8lnTiwhJ6goIM5u4qGHoy1wGPTrwW0CvNzx+k8+QpKfm/nEmZcla/
- AY6TjYhY9EjBCHJ7tEnvJf+fKCFAdKwrH0GRt8ecy2tD99Z62l4JNkIlY0FoL0FqrCGA5R3Tl
- N5lgSxJoiGwhOxR1ax5wKVmJ8zCsMuMh925Jl7s4XakMqWmL5Dg62rWCzcp1sDnC/q+1gTyps
- xxdNyBrccocNyELt3aLU2Tv7JuleTWM=
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 6, 2021 at 3:31 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> kernel.h is being used as a dump for all kinds of stuff for a long time.
-> Here is the attempt to start cleaning it up by splitting out panic and
-> oops helpers.
->
-> At the same time convert users in header and lib folder to use new header.
-> Though for time being include new header back to kernel.h to avoid twisted
-> indirected includes for existing users.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Mon, 2021-04-05 at 20:31 +0100, Matthew Wilcox wrote:
+> On Mon, Apr 05, 2021 at 03:14:29PM -0400, Jeff Layton wrote:
+> > On Wed, 2021-03-31 at 19:47 +0100, Matthew Wilcox (Oracle) wrote:
+> > > Managing memory in 4KiB pages is a serious overhead.  Many benchmarks
+> > > exist which show the benefits of a larger "page size".  As an example,
+> > > an earlier iteration of this idea which used compound pages got a 7%
+> > > performance boost when compiling the kernel using kernbench without any
+> > > particular tuning.
+> > > 
+> > > Using compound pages or THPs exposes a serious weakness in our type
+> > > system.  Functions are often unprepared for compound pages to be passed
+> > > to them, and may only act on PAGE_SIZE chunks.  Even functions which are
+> > > aware of compound pages may expect a head page, and do the wrong thing
+> > > if passed a tail page.
+> > > 
+> > > There have been efforts to label function parameters as 'head' instead
+> > > of 'page' to indicate that the function expects a head page, but this
+> > > leaves us with runtime assertions instead of using the compiler to prove
+> > > that nobody has mistakenly passed a tail page.  Calling a struct page
+> > > 'head' is also inaccurate as they will work perfectly well on base pages.
+> > > The term 'nottail' has not proven popular.
+> > > 
+> > > We also waste a lot of instructions ensuring that we're not looking at
+> > > a tail page.  Almost every call to PageFoo() contains one or more hidden
+> > > calls to compound_head().  This also happens for get_page(), put_page()
+> > > and many more functions.  There does not appear to be a way to tell gcc
+> > > that it can cache the result of compound_head(), nor is there a way to
+> > > tell it that compound_head() is idempotent.
+> > > 
+> > > This series introduces the 'struct folio' as a replacement for
+> > > head-or-base pages.  This initial set reduces the kernel size by
+> > > approximately 5kB by removing conversions from tail pages to head pages.
+> > > The real purpose of this series is adding infrastructure to enable
+> > > further use of the folio.
+> > > 
+> > > The medium-term goal is to convert all filesystems and some device
+> > > drivers to work in terms of folios.  This series contains a lot of
+> > > explicit conversions, but it's important to realise it's removing a lot
+> > > of implicit conversions in some relatively hot paths.  There will be very
+> > > few conversions from folios when this work is completed; filesystems,
+> > > the page cache, the LRU and so on will generally only deal with folios.
+> > 
+> > I too am a little concerned about the amount of churn this is likely to
+> > cause, but this does seem like a fairly promising way forward for
+> > actually using THPs in the pagecache. The set is fairly straightforward.
+> > 
+> > That said, there are few callers of these new functions in here. Is this
+> > set enough to allow converting some subsystem to use folios? It might be
+> > good to do that if possible, so we can get an idea of how much work
+> > we're in for.
+> 
+> It isn't enough to start converting much.  There needs to be a second set
+> of patches which add all the infrastructure for converting a filesystem.
+> Then we can start working on the filesystems.  I have a start at that
+> here:
+> 
+> https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/folio
+> 
+> I don't know if it's exactly how I'll arrange it for submission.  It might
+> be better to convert all the filesystem implementations of readpage
+> to work on a folio, and then the big bang conversion of ->readpage to
+> ->read_folio will look much more mechanical.
+> 
+> But if I can't convince people that a folio approach is what we need,
+> then I should stop working on it, and go back to fixing the endless
+> stream of bugs that the thp-based approach surfaces.
 
-Nice!
+Fair enough. I generally prefer to see some callers added at the same
+time as new functions, but I understand that the scale of this patchset
+makes that difficult. You can add this to the whole series. I don't see
+any major show-stoppers here:
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Jeff Layton <jlayton@kernel.org>
+
