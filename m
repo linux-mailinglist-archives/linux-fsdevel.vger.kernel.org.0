@@ -2,103 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D246E35581E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 17:37:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46CEE355824
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Apr 2021 17:37:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232431AbhDFPh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Apr 2021 11:37:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58436 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231708AbhDFPh0 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Apr 2021 11:37:26 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1433C061756
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Apr 2021 08:37:18 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id f29so8174733pgm.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Apr 2021 08:37:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zPyKzJiBUBXEF6n1UtK4a6/wqFFul/4nSSHBtrhDa7A=;
-        b=i+7kXT0ntuQcB9GC9Kxky/Vil0JP7usU8Zea6ll/BkXHIumSVIlTL4j9xR8n/APwAz
-         uvkkBfsunFDkT0pQxu/wbf/9R31+oGDqu4iXLy06IFOb7NvY5Sxn+TnWSUy2saepzcvW
-         3wykYfC43NdT/BoL68B8UHogi/coPHK0pGO7ZXGKSf+xXM6nKnKTXVb+JNj1nXwzvY+A
-         sKmwtM3FoRSKontbZ4yZ3tP4x5k7GdfjYSUQHpi9mIAZ5A7OqOKUC7d8pkIEPZSiuCsG
-         5vIziSOz0rvGwiW8Ae/hvzPOWl1juxI5viBbr046I15bQrThJZO1j1G/VVzgQ0Q2DuoK
-         UpIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zPyKzJiBUBXEF6n1UtK4a6/wqFFul/4nSSHBtrhDa7A=;
-        b=t8A7q9NGthBcgyk0ql2BFC6f9ZyxrBcrsA5JmQyDe2EjetFCF4L3vYl5HHg2Vsnl/M
-         7QiwqcTUbmWydUvyWHPcJOwb+ckACD6USlVahNIL7yCiURkeypb/BnlnE6GJNGxcdsou
-         oLifI9UVmlBbCES/vbt5s9njUgBDGe4rpdBSHux99XO4WDqs7iYpDiM0MnknfJsmkqZF
-         yvOEqGjjVn6xiJyapuRi0bqqQLO2PkJLQtMcGJFZ3NfYudtj1oawmElswNMxDkiSHCW7
-         ynFT3nlHPAXDlHTIQdayt6KSO5t5D4x8g5/PpOYCQQapsIREQ9/UcyKBMAJIhTZ1RSS5
-         NO8g==
-X-Gm-Message-State: AOAM531u88UEAD1j5ykijHe+bjqlYmIBsT7juN2XlWwzb6Q5azt/KSVH
-        u2AatHFOXkF4Sda5KQea1saB9A==
-X-Google-Smtp-Source: ABdhPJx6d1KX7EkIb6wInkFM/zhjxErRj2Op9pFFhoKno7iIa7788LfIl55TgJr+TpiLHT1lwlV5Dw==
-X-Received: by 2002:a63:f247:: with SMTP id d7mr26751734pgk.112.1617723438249;
-        Tue, 06 Apr 2021 08:37:18 -0700 (PDT)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id 15sm18877321pfx.167.2021.04.06.08.37.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Apr 2021 08:37:17 -0700 (PDT)
-Subject: Re: [syzbot] WARNING in mntput_no_expire (2)
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     syzbot <syzbot+c88a7030da47945a3cc3@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, io-uring@vger.kernel.org
-References: <YGs4clcRhyoXX8D0@zeniv-ca.linux.org.uk>
- <20210405170801.zrdhnon6g4ggb6c7@wittgenstein>
- <YGtVtfbYXck3qPRl@zeniv-ca.linux.org.uk>
- <YGtW5g6EFFArtevk@zeniv-ca.linux.org.uk>
- <20210405200737.qurhkqitoxweousx@wittgenstein>
- <YGu7n+dhMep1741/@zeniv-ca.linux.org.uk>
- <20210406123505.auxqtquoys6xg6yf@wittgenstein>
- <YGxeaTzdnxn/3dsY@zeniv-ca.linux.org.uk>
- <20210406132205.qnherkzif64xmgxg@wittgenstein>
- <YGxs5b0pY4esY7J7@zeniv-ca.linux.org.uk>
- <YGxu4OWMLE+XXy7Z@zeniv-ca.linux.org.uk>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e4425217-90b9-6566-fee8-fd21df343aa3@kernel.dk>
-Date:   Tue, 6 Apr 2021 09:37:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S242755AbhDFPhm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Apr 2021 11:37:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42426 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237872AbhDFPhk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Apr 2021 11:37:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 6A66BAD7C;
+        Tue,  6 Apr 2021 15:37:31 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id ebf918cd;
+        Tue, 6 Apr 2021 15:38:54 +0000 (UTC)
+Date:   Tue, 6 Apr 2021 16:38:54 +0100
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v5 19/19] ceph: add fscrypt ioctls
+Message-ID: <YGyAjn5PcG9J/07/@suse.de>
+References: <20210326173227.96363-1-jlayton@kernel.org>
+ <20210326173227.96363-20-jlayton@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <YGxu4OWMLE+XXy7Z@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210326173227.96363-20-jlayton@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/6/21 8:23 AM, Al Viro wrote:
-> On Tue, Apr 06, 2021 at 02:15:01PM +0000, Al Viro wrote:
+Hi Jeff!
+
+On Fri, Mar 26, 2021 at 01:32:27PM -0400, Jeff Layton wrote:
+> We gate most of the ioctls on MDS feature support. The exception is the
+> key removal and status functions that we still want to work if the MDS's
+> were to (inexplicably) lose the feature.
 > 
->> I'm referring to the fact that your diff is with an already modified path_lookupat()
->> _and_ those modifications have managed to introduce a bug your patch reverts.
->> No terminate_walk() paired with that path_init() failure, i.e. path_init() is
->> responsible for cleanups on its (many) failure exits...
+> For the set_policy ioctl, we take Fcx caps to ensure that nothing can
+> create files in the directory while the ioctl is running. That should
+> be enough to ensure that the "empty_dir" check is reliable.
 > 
-> I can't tell without seeing the variant your diff is against, but at a guess
-> it had a non-trivial amount of trouble with missed rcu_read_unlock() in
-> cases when path_init() fails after having done rcu_read_lock().  For trivial
-> testcase, consider passing -1 for dfd, so that it would fail with -EBADF.
-> Or passing 0 for dfd and "blah" for name (assuming your stdin is not a directory).
-> Sure, you could handle those in path_init() (or delay grabbing rcu_read_lock()
-> in there, spreading it in a bunch of branches), but duplicated cleanup logics
-> for a bunch of failure exits is asking for trouble.
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/ioctl.c | 94 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 94 insertions(+)
+> 
+> diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+> index 6e061bf62ad4..34b85bcfcfc7 100644
+> --- a/fs/ceph/ioctl.c
+> +++ b/fs/ceph/ioctl.c
+> @@ -6,6 +6,7 @@
+>  #include "mds_client.h"
+>  #include "ioctl.h"
+>  #include <linux/ceph/striper.h>
+> +#include <linux/fscrypt.h>
+>  
+>  /*
+>   * ioctls
+> @@ -268,8 +269,56 @@ static long ceph_ioctl_syncio(struct file *file)
+>  	return 0;
+>  }
+>  
+> +static int vet_mds_for_fscrypt(struct file *file)
+> +{
+> +	int i, ret = -EOPNOTSUPP;
+> +	struct ceph_mds_client	*mdsc = ceph_sb_to_mdsc(file_inode(file)->i_sb);
+> +
+> +	mutex_lock(&mdsc->mutex);
+> +	for (i = 0; i < mdsc->max_sessions; i++) {
+> +		struct ceph_mds_session *s = mdsc->sessions[i];
+> +
+> +		if (!s)
+> +			continue;
+> +		if (test_bit(CEPHFS_FEATURE_ALTERNATE_NAME, &s->s_features))
+> +			ret = 0;
+> +		break;
+> +	}
+> +	mutex_unlock(&mdsc->mutex);
+> +	return ret;
+> +}
+> +
+> +static long ceph_set_encryption_policy(struct file *file, unsigned long arg)
+> +{
+> +	int ret, got = 0;
+> +	struct page *page = NULL;
+> +	struct inode *inode = file_inode(file);
+> +	struct ceph_inode_info *ci = ceph_inode(inode);
+> +
+> +	ret = vet_mds_for_fscrypt(file);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Ensure we hold these caps so that we _know_ that the rstats check
+> +	 * in the empty_dir check is reliable.
+> +	 */
+> +	ret = ceph_get_caps(file, CEPH_CAP_FILE_SHARED, 0, -1, &got, &page);
+> +	if (ret)
+> +		return ret;
+> +	if (page)
+> +		put_page(page);
+> +	ret = fscrypt_ioctl_set_policy(file, (const void __user *)arg);
+> +	if (got)
+> +		ceph_put_cap_refs(ci, got);
+> +	return ret;
+> +}
+> +
+>  long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  {
+> +	int ret;
+> +	struct ceph_inode_info *ci = ceph_inode(file_inode(file));
+> +
+>  	dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
+>  	switch (cmd) {
+>  	case CEPH_IOC_GET_LAYOUT:
+> @@ -289,6 +338,51 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  
+>  	case CEPH_IOC_SYNCIO:
+>  		return ceph_ioctl_syncio(file);
+> +
+> +	case FS_IOC_SET_ENCRYPTION_POLICY:
+> +		return ceph_set_encryption_policy(file, arg);
+> +
+> +	case FS_IOC_GET_ENCRYPTION_POLICY:
+> +		ret = vet_mds_for_fscrypt(file);
+> +		if (ret)
+> +			return ret;
+> +		return fscrypt_ioctl_get_policy(file, (void __user *)arg);
+> +
+> +	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
+> +		ret = vet_mds_for_fscrypt(file);
+> +		if (ret)
+> +			return ret;
+> +		return fscrypt_ioctl_get_policy_ex(file, (void __user *)arg);
+> +
+> +	case FS_IOC_ADD_ENCRYPTION_KEY:
+> +		ret = vet_mds_for_fscrypt(file);
+> +		if (ret)
+> +			return ret;
+> +		atomic_inc(&ci->i_shared_gen);
 
-Thanks for taking care of this Al, fwiw I'm (mostly) out on vacation.
+I've spent a few hours already looking at the bug I reported before, and I
+can't really understand this code.  What does it mean to increment
+->i_shared_gen at this point?
 
--- 
-Jens Axboe
+The reason I'm asking is because it looks like the problem I'm seeing goes
+away if I remove this code.  Here's what I'm doing/seeing:
 
+# mount ...
+# fscrypt unlock d
+
+  -> 'd' dentry is eventually pruned at this point *if* ->i_shared_gen was
+     incremented by the line above.
+
+# cat d/f
+
+  -> when ceph_fill_inode() is executed, 'd' isn't *not* set as encrypted
+     because both ci->i_xattrs.version and info->xattr_version are both
+     set to 0.
+
+cat: d/f: No such file or directory
+
+I'm not sure anymore if the issue is on the client or on the MDS side.
+Before digging deeper, I wonder if this ring any bell. ;-)
+
+Cheers,
+--
+Luís
+
+
+> +		ceph_dir_clear_ordered(file_inode(file));
+> +		ceph_dir_clear_complete(file_inode(file));
+> +		return fscrypt_ioctl_add_key(file, (void __user *)arg);
+> +
+> +	case FS_IOC_REMOVE_ENCRYPTION_KEY:
+> +		atomic_inc(&ci->i_shared_gen);
+> +		ceph_dir_clear_ordered(file_inode(file));
+> +		ceph_dir_clear_complete(file_inode(file));
+> +		return fscrypt_ioctl_remove_key(file, (void __user *)arg);
+> +
+> +	case FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS:
+> +		atomic_inc(&ci->i_shared_gen);
+> +		ceph_dir_clear_ordered(file_inode(file));
+> +		ceph_dir_clear_complete(file_inode(file));
+> +		return fscrypt_ioctl_remove_key_all_users(file, (void __user *)arg);
+> +
+> +	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
+> +		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
+> +
+> +	case FS_IOC_GET_ENCRYPTION_NONCE:
+> +		ret = vet_mds_for_fscrypt(file);
+> +		if (ret)
+> +			return ret;
+> +		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
+>  	}
+>  
+>  	return -ENOTTY;
+> -- 
+> 2.30.2
+> 
