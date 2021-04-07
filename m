@@ -2,106 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDEDD355FDA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 02:01:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BC513560DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 03:40:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347310AbhDGABk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Apr 2021 20:01:40 -0400
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:52900 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347328AbhDGABg (ORCPT
+        id S1347749AbhDGBkW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Apr 2021 21:40:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48662 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343675AbhDGBkT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Apr 2021 20:01:36 -0400
-X-Greylist: delayed 469 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Apr 2021 20:01:35 EDT
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 4FFPVm2cRzz9vBsP
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Apr 2021 23:53:36 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p6.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id pZBao7_CWp8V for <linux-fsdevel@vger.kernel.org>;
-        Tue,  6 Apr 2021 18:53:36 -0500 (CDT)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 4FFPVm11nQz9vBrm
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Apr 2021 18:53:36 -0500 (CDT)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mta-p6.oit.umn.edu 4FFPVm11nQz9vBrm
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-p6.oit.umn.edu 4FFPVm11nQz9vBrm
-Received: by mail-il1-f200.google.com with SMTP id y11so12762573ilq.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Apr 2021 16:53:36 -0700 (PDT)
+        Tue, 6 Apr 2021 21:40:19 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6F00C06174A;
+        Tue,  6 Apr 2021 18:40:10 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id u17so18674044ejk.2;
+        Tue, 06 Apr 2021 18:40:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mpfUu7thUIxHoKtSoeYtB9AvLxQFw0ALtYzefKcsYuM=;
-        b=aTmXU9Gh62tIhl9S96zDwBXdgT7sGNhAHueo9mfwzFXBETGlWWtfnvSeOxU4620x3m
-         8QENm+NfSf0Rce8m+Ik1+dYJ7YJbRbHj5pEknqLg1DldPynv4A/3xbPbZQddAJgTKnnK
-         XsGyO/aiOUu4RRM4NKC6hd1qps908IIT8EBH27oAVEGYWT615fL1HgTbpXCWM3g5qwVk
-         +oTgFgiQK1g/hItfzLi3HrU5O1kZdpS/Ba71EsMBA+DUxPE25lhHf9HELWNg4y4Cmfm6
-         5dlhJRS3jMsPUt9KkLlO/1rS1N/kznI7PXSNKFOzbBU/HE2BUD3W5pK4HF7QgX168Nek
-         h5AQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KgaoO4aVIvdCnnxzOAKQPy1sG+snfWsTn2UOD6n6K2M=;
+        b=qp7SBFC/kzC5O8ivCzGDdzsxtGk1CkA3R+tsTwgHn35v+87CgSB/kWhNyVH2k0Y4Ku
+         G+3X8p8Ew7Hq9YSA+VGoo0D+JJtkbNVouyAdDLX2b2vCanEsKUmTHYrMcVfJGA7dIRzu
+         WETqioKWyI3VhJXPNYPMgZVGKAlbycdTw3SGMG54DMPoo56EHnpj95kEEq9IfPArjfcP
+         iA/eDKgPTsBMaARKrG4b2hVg8ro2LDcc39Bufz+8tw3AsSZ92uqBRtZcmlI+WImua25r
+         OUyhBfg7K+tUO4BdSUyYORIP4jRh2MUrZtxrClfDz0oF3nBqOSzJxIiscZT+o9JZDMhx
+         d//Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mpfUu7thUIxHoKtSoeYtB9AvLxQFw0ALtYzefKcsYuM=;
-        b=ACWONbLseFqlYGU/o+B3WIlMY8dboFtLHUogo+leQafU8UXHlSWrdK1YddpkZ4r/zA
-         UCphnHW2QYja9Cf2TynuKhF2OT9bVqC9i6xghy3aIqzaGjbFtptmLt8g1uEDkkr0c5f6
-         EKJ2ndPiL+fujmC4DJmEm6laPiFG3nILkq7SZdViKSJXfMjuIITIBL02rXbPIayz4hFI
-         XBDD4GegUYxJC7Icv2NsicCBKsmYVsN5i91EW6ZGOgv+In79ZnfmYoZpH/2oBYWo0CmU
-         khDKQFX8hLpfr5SlLZYGVt4bonp39fYk67EkQtIp70uKGGOzvW6Okj5ynLskiBQtiBd+
-         pvYQ==
-X-Gm-Message-State: AOAM530zpYqs6l4pWqcm3oljlzZXuBm5d1D7SO0ZGj75UEhMDUgszjjX
-        z/Jl/3mvN4SU25+gGzHR1I/iV7iT65U3M9LmZBaiRBL1cAxtQEF3UDMv2EtiHv2h1+6MVf6OPxY
-        m1aoe9m6M4E3LL2wUY49vXHm8GMNNGw==
-X-Received: by 2002:a05:6638:371f:: with SMTP id k31mr635427jav.143.1617753215786;
-        Tue, 06 Apr 2021 16:53:35 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxi8sJ0PLHiI3wL+/tFsMyaM/WZnC/A5jmQCDdwzuGKrEi4KumtcWbwNFHqNaX8oCGHBeh+0Q==
-X-Received: by 2002:a05:6638:371f:: with SMTP id k31mr635414jav.143.1617753215614;
-        Tue, 06 Apr 2021 16:53:35 -0700 (PDT)
-Received: from syssec1.cs.umn.edu ([2607:ea00:101:3c74:6ecd:6512:5d03:eeb6])
-        by smtp.googlemail.com with ESMTPSA id w9sm14589257iox.20.2021.04.06.16.53.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Apr 2021 16:53:35 -0700 (PDT)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fuse: Avoid potential use after free
-Date:   Tue,  6 Apr 2021 18:53:32 -0500
-Message-Id: <20210406235332.2206460-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KgaoO4aVIvdCnnxzOAKQPy1sG+snfWsTn2UOD6n6K2M=;
+        b=hHi+9rY7cma+HGaZ1iiO+OmBqzghdj3T9Fgp+1lj8AjV94BcrYPzEg1C6rx81auwsE
+         5/9QgmmpZDUy7XOf3MaT8ZS97pTpIvBgElHSQq0dDU4nxo63XBlFlvnm03AKKvi/c5uE
+         gVvJWH7t1/Q2PJB8Sp2pzZeXM7o/5m1FeFVVdjpTipM/S7P5JuFhPd41qydSevoqZSVy
+         yWXmIU8MWnG+CMZpGSZ2lYcJu62uzgroxeAmJx3yH7HuVk9+QN/EG1icANc7LfNQSKsq
+         DOc82m4KRgIF30GvAqYpTaCQ6LsVXsfdiiAUJVPRnSzJKpHLl+VxICEGB6Q4lw47sF+J
+         1X/g==
+X-Gm-Message-State: AOAM530h46jFh0EMGPeiFpy/ausrw8JXC21kuXsWYuRzizJzNFCblbBh
+        DtITkuTkGHApmBXICXuapCf7fMo/IpkfCaMoBkChNo1l
+X-Google-Smtp-Source: ABdhPJyFC49JCqUBFLGxZTICw/91v9XINR8ntdSLd19HgHz4dK87x98F9fgW7wEKqC32QU1eFvrk+kgrHAmcQd1hmZc=
+X-Received: by 2002:a17:906:c143:: with SMTP id dp3mr931459ejc.499.1617759609648;
+ Tue, 06 Apr 2021 18:40:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210405054848.GA1077931@in.ibm.com> <CAHbLzko-17bUWdxmOi-p2_MLSbsMCvhjKS1ktnBysC5dN_W90A@mail.gmail.com>
+ <20210406100509.GA1354243@in.ibm.com>
+In-Reply-To: <20210406100509.GA1354243@in.ibm.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Tue, 6 Apr 2021 18:39:57 -0700
+Message-ID: <CAHbLzkoAGo=zdPW2cu0ZFyKq=sB5K8fN4oN48o8maPb-Dg=dhw@mail.gmail.com>
+Subject: Re: High kmalloc-32 slab cache consumption with 10k containers
+To:     Bharata B Rao <bharata@linux.ibm.com>
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>, Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        aneesh.kumar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In virtio_fs_get_tree, after fm is freed, it is again freed in case
-s_root is NULL and virtio_fs_fill_super() returns an error. To avoid
-a double free, set fm to NULL.
+On Tue, Apr 6, 2021 at 3:05 AM Bharata B Rao <bharata@linux.ibm.com> wrote:
+>
+> On Mon, Apr 05, 2021 at 11:08:26AM -0700, Yang Shi wrote:
+> > On Sun, Apr 4, 2021 at 10:49 PM Bharata B Rao <bharata@linux.ibm.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > When running 10000 (more-or-less-empty-)containers on a bare-metal Power9
+> > > server(160 CPUs, 2 NUMA nodes, 256G memory), it is seen that memory
+> > > consumption increases quite a lot (around 172G) when the containers are
+> > > running. Most of it comes from slab (149G) and within slab, the majority of
+> > > it comes from kmalloc-32 cache (102G)
+> > >
+> > > The major allocator of kmalloc-32 slab cache happens to be the list_head
+> > > allocations of list_lru_one list. These lists are created whenever a
+> > > FS mount happens. Specially two such lists are registered by alloc_super(),
+> > > one for dentry and another for inode shrinker list. And these lists
+> > > are created for all possible NUMA nodes and for all given memcgs
+> > > (memcg_nr_cache_ids to be particular)
+> > >
+> > > If,
+> > >
+> > > A = Nr allocation request per mount: 2 (one for dentry and inode list)
+> > > B = Nr NUMA possible nodes
+> > > C = memcg_nr_cache_ids
+> > > D = size of each kmalloc-32 object: 32 bytes,
+> > >
+> > > then for every mount, the amount of memory consumed by kmalloc-32 slab
+> > > cache for list_lru creation is A*B*C*D bytes.
+> >
+> > Yes, this is exactly what the current implementation does.
+> >
+> > >
+> > > Following factors contribute to the excessive allocations:
+> > >
+> > > - Lists are created for possible NUMA nodes.
+> >
+> > Yes, because filesystem caches (dentry and inode) are NUMA aware.
+>
+> True, but creating lists for possible nodes as against online nodes
+> can hurt platforms where possible is typically higher than online.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- fs/fuse/virtio_fs.c | 1 +
- 1 file changed, 1 insertion(+)
+I'm supposed just because hotplug doesn't handle memcg list_lru
+creation/deletion.
 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 4ee6f734ba83..a7484c1539bf 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -1447,6 +1447,7 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
- 	if (fsc->s_fs_info) {
- 		fuse_conn_put(fc);
- 		kfree(fm);
-+		fm = NULL;
- 	}
- 	if (IS_ERR(sb))
- 		return PTR_ERR(sb);
--- 
-2.25.1
+Get much simpler and less-prone implementation by wasting some memory.
 
+>
+> >
+> > > - memcg_nr_cache_ids grows in bulk (see memcg_alloc_cache_id() and additional
+> > >   list_lrus are created when it grows. Thus we end up creating list_lru_one
+> > >   list_heads even for those memcgs which are yet to be created.
+> > >   For example, when 10000 memcgs are created, memcg_nr_cache_ids reach
+> > >   a value of 12286.
+> > > - When a memcg goes offline, the list elements are drained to the parent
+> > >   memcg, but the list_head entry remains.
+> > > - The lists are destroyed only when the FS is unmounted. So list_heads
+> > >   for non-existing memcgs remain and continue to contribute to the
+> > >   kmalloc-32 allocation. This is presumably done for performance
+> > >   reason as they get reused when new memcgs are created, but they end up
+> > >   consuming slab memory until then.
+> >
+> > The current implementation has list_lrus attached with super_block. So
+> > the list can't be freed until the super block is unmounted.
+> >
+> > I'm looking into consolidating list_lrus more closely with memcgs. It
+> > means the list_lrus will have the same life cycles as memcgs rather
+> > than filesystems. This may be able to improve some. But I'm supposed
+> > the filesystem will be unmounted once the container exits and the
+> > memcgs will get offlined for your usecase.
+>
+> Yes, but when the containers are still running, the lists that get
+> created for non-existing memcgs and non-relavent memcgs are the main
+> cause of increased memory consumption.
+
+Since kernel doesn't know about containers so kernel simply doesn't
+know what memcgs are non-relevant.
+
+>
+> >
+> > > - In case of containers, a few file systems get mounted and are specific
+> > >   to the container namespace and hence to a particular memcg, but we
+> > >   end up creating lists for all the memcgs.
+> >
+> > Yes, because the kernel is *NOT* aware of containers.
+> >
+> > >   As an example, if 7 FS mounts are done for every container and when
+> > >   10k containers are created, we end up creating 2*7*12286 list_lru_one
+> > >   lists for each NUMA node. It appears that no elements will get added
+> > >   to other than 2*7=14 of them in the case of containers.
+> > >
+> > > One straight forward way to prevent this excessive list_lru_one
+> > > allocations is to limit the list_lru_one creation only to the
+> > > relevant memcg. However I don't see an easy way to figure out
+> > > that relevant memcg from FS mount path (alloc_super())
+> > >
+> > > As an alternative approach, I have this below hack that does lazy
+> > > list_lru creation. The memcg-specific list is created and initialized
+> > > only when there is a request to add an element to that particular
+> > > list. Though I am not sure about the full impact of this change
+> > > on the owners of the lists and also the performance impact of this,
+> > > the overall savings look good.
+> >
+> > It is fine to reduce the memory consumption for your usecase, but I'm
+> > not sure if this would incur any noticeable overhead for vfs
+> > operations since list_lru_add() should be called quite often, but it
+> > just needs to allocate the list for once (for each memcg +
+> > filesystem), so the overhead might be fine.
+>
+> Let me run some benchmarks to measure the overhead. Any particular
+> benchmark suggestion?
+
+Open/close files should manipulate list_lru.
+
+>
+> >
+> > And I'm wondering how much memory can be saved for real life workload.
+> > I don't expect most containers are idle in production environments.
+>
+> I don't think kmalloc-32 slab cache memory consumption from list_lru
+> would be any different for real life workload compared to idle containers.
+
+I don't mean the memory consumption itself. I mean the list is
+typically not empty with real life workload so the memory is not
+allocated in vain.
+
+>
+> >
+> > Added some more memcg/list_lru experts in this loop, they may have better ideas.
+>
+> Thanks.
+>
+> Regards,
+> Bharata.
