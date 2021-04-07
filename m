@@ -2,144 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EFBF0356C81
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 14:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8930356C90
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 14:49:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239517AbhDGMsK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Apr 2021 08:48:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52486 "EHLO mail.kernel.org"
+        id S1352402AbhDGMtr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Apr 2021 08:49:47 -0400
+Received: from relay.sw.ru ([185.231.240.75]:57556 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233022AbhDGMsJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Apr 2021 08:48:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BE2676135D;
-        Wed,  7 Apr 2021 12:47:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617799680;
-        bh=IHe3CdrXn9kgyESxdbEaXF0ihv/AkXarmdpQrlmiMHE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=NoRKhJbHcysHMJtNpsm3lEpfikVCmgoXYX/M9GWiGH737ykBudax6Pfnnqw3f+tvJ
-         M+7BjrkYwsIRgVLnwa48RA+d1jPUEiVlzVQT/1NacAABphIG/UQK1xJbPHO3ojjO/1
-         komlBniKiAjRI0BiV4zaRg0L7aF5sPwjH/KyLRJ8lkK9tnkhjHUrhvnWI2hSrEFOkr
-         Jj7I+rj5lANq71U51i43ogHKTvzoWNwyjLLEYx9otvXKlziLX3Zpi0w+snwIji3NaF
-         4JO35YjPySFUE+wi/aryd6yceEA7hNNq2JDMzhp84bByZKISMStWYHVXBHypFu9TrR
-         2u0ixVFUHcRGA==
-Message-ID: <37ab61e4647c44a52947550db75191dc6cc94a30.camel@kernel.org>
-Subject: Re: [RFC PATCH v5 19/19] ceph: add fscrypt ioctls
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Wed, 07 Apr 2021 08:47:58 -0400
-In-Reply-To: <YGyiy1B+BaOQihrM@suse.de>
-References: <20210326173227.96363-1-jlayton@kernel.org>
-         <20210326173227.96363-20-jlayton@kernel.org> <YGyAjn5PcG9J/07/@suse.de>
-         <ee49d17b2087d0f52c38931f13e648ee7a762b4f.camel@kernel.org>
-         <YGyLJcqhpU5gGjsW@suse.de>
-         <dc50279dba2d46921a200fbea8bd59702504adfc.camel@kernel.org>
-         <YGyiy1B+BaOQihrM@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        id S1352394AbhDGMtr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Apr 2021 08:49:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=virtuozzo.com; s=relay; h=Content-Type:MIME-Version:Date:Message-ID:From:
+        Subject; bh=eowKYMJJlOx02BM1yZgvM+Udc16+p9Iw201g2IU9Z6I=; b=kcnSys90lhoVgTg5F
+        oZBA3IRHy1eVLBOgupUS33+GdAo6R6/UT/dVolKE0qO7AgN56lmlnkYty19XVeqYANTfVXyMpOz6x
+        42M3wxSmu5Xm61IJzH7SVrSDugyUKiiOtUAD7w1I9UBCuwdVBtOalE6lQLi9aXD4sgLTl4ICnYPcI
+        =;
+Received: from [192.168.15.55]
+        by relay.sw.ru with esmtp (Exim 4.94)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1lU7ca-000P3X-2u; Wed, 07 Apr 2021 15:49:24 +0300
+Subject: Re: High kmalloc-32 slab cache consumption with 10k containers
+To:     bharata@linux.ibm.com
+Cc:     Dave Chinner <david@fromorbit.com>, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, aneesh.kumar@linux.ibm.com,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+References: <20210405054848.GA1077931@in.ibm.com>
+ <20210406222807.GD1990290@dread.disaster.area>
+ <20210407050541.GC1354243@in.ibm.com>
+ <c9bd1744-f15c-669a-b3a9-5a0c47bd4e1d@virtuozzo.com>
+ <20210407114723.GD1354243@in.ibm.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <82e806cb-9e3f-c61c-3cbf-484f0661c4f2@virtuozzo.com>
+Date:   Wed, 7 Apr 2021 15:49:23 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
+In-Reply-To: <20210407114723.GD1354243@in.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2021-04-06 at 19:04 +0100, Luis Henriques wrote:
-> On Tue, Apr 06, 2021 at 01:27:21PM -0400, Jeff Layton wrote:
-> <snip>
-> > > > > I've spent a few hours already looking at the bug I reported before, and I
-> > > > > can't really understand this code.  What does it mean to increment
-> > > > > ->i_shared_gen at this point?
-> > > > > 
-> > > > > The reason I'm asking is because it looks like the problem I'm seeing goes
-> > > > > away if I remove this code.  Here's what I'm doing/seeing:
-> > > > > 
-> > > > > # mount ...
-> > > > > # fscrypt unlock d
-> > > > > 
-> > > > >   -> 'd' dentry is eventually pruned at this point *if* ->i_shared_gen was
-> > > > >      incremented by the line above.
-> > > > > 
-> > > > > # cat d/f
-> > > > > 
-> > > > >   -> when ceph_fill_inode() is executed, 'd' isn't *not* set as encrypted
-> > > > >      because both ci->i_xattrs.version and info->xattr_version are both
-> > > > >      set to 0.
-> > > > > 
-> > > > 
-> > > > Interesting. That sounds like it might be the bug right there. "d"
-> > > > should clearly have a fscrypt context in its xattrs at that point. If
-> > > > the MDS isn't passing that back, then that could be a problem.
-> > > > 
-> > > > I had a concern about that when I was developing this, and I *thought*
-> > > > Zheng had assured us that the MDS will always pass along the xattr blob
-> > > > in a trace. Maybe that's not correct?
-> > > 
-> > > Hmm, that's what I thought too.  I was hoping not having to go look at the
-> > > MDS, but seems like I'll have to :-)
-> > > 
-> > 
-> > That'd be good, if possible.
-> > 
-> > > > > cat: d/f: No such file or directory
-> > > > > 
-> > > > > I'm not sure anymore if the issue is on the client or on the MDS side.
-> > > > > Before digging deeper, I wonder if this ring any bell. ;-)
-> > > > > 
-> > > > > 
-> > > > 
-> > > > No, this is not something I've seen before.
-> > > > 
-> > > > Dentries that live in a directory have a copy of the i_shared_gen of the
-> > > > directory when they are instantiated. Bumping that value on a directory
-> > > > should basically ensure that its child dentries end up invalidated,
-> > > > which is what we want once we add the key to the directory. Once we add
-> > > > a key, any old dentries in that directory are no longer valid.
-> > > > 
-> > > > That said, I could certainly have missed some subtlety here.
-> > > 
-> > > Great, thanks for clarifying.  This should help me investigate a little
-> > > bit more.
-> > > 
-> > > [ And I'm also surprised you don't see this behaviour as it's very easy to
-> > >   reproduce. ]
-> > > 
-> > > 
-> > 
-> > It is odd... fwiw, I ran this for 5 mins or so and never saw a problem:
-> > 
-> >     $ while [ $? -eq 0 ]; do sudo umount /mnt/crypt; sudo mount /mnt/crypt; fscrypt unlock --key=/home/jlayton/fscrypt-keyfile /mnt/crypt/d; cat /mnt/crypt/d/f; done
-> > 
+On 07.04.2021 14:47, Bharata B Rao wrote:
+> On Wed, Apr 07, 2021 at 01:07:27PM +0300, Kirill Tkhai wrote:
+>>> Here is how the calculation turns out to be in my setup:
+>>>
+>>> Number of possible NUMA nodes = 2
+>>> Number of mounts per container = 7 (Check below to see which are these)
+>>> Number of list creation requests per mount = 2
+>>> Number of containers = 10000
+>>> memcg_nr_cache_ids for 10k containers = 12286
+>>
+>> Luckily, we have "+1" in memcg_nr_cache_ids formula: size = 2 * (id + 1).
+>> In case of we only multiplied it, you would have to had memcg_nr_cache_ids=20000.
 > 
-> TBH I only do this operation once and it almost always fails.  The only
-> difference I see is that I don't really use a keyfile, but a passphrase
-> instead.  Not sure if it makes any difference.  Also, it may be worth
-> adding a delay before the 'cat' to make sure the dentry is pruned.
+> Not really, it would grow like this for size = 2 * id
 > 
-
-No joy. I tried different delays between 1-5s and it didn't change
-anything.
-
-> > ...do I need some other operations in between? Also, the cluster in this
-> > case is Pacific. It's possible this is a result of changes since then if
-> > you're on a vstart cluster or something.
-> > 
-> > $ sudo ./cephadm version
-> > Using recent ceph image docker.io/ceph/ceph@sha256:9b04c0f15704c49591640a37c7adfd40ffad0a4b42fecb950c3407687cb4f29a
-> > ceph version 16.2.0 (0c2054e95bcd9b30fdd908a79ac1d8bbc3394442) pacific (stable)
+> id 0 size 4
+> id 4 size 8
+> id 8 size 16
+> id 16 size 32
+> id 32 size 64
+> id 64 size 128
+> id 128 size 256
+> id 256 size 512
+> id 512 size 1024
+> id 1024 size 2048
+> id 2048 size 4096
+> id 4096 size 8192
+> id 8192 size 16384
 > 
-> I've re-compiled the cluster after hard-resetting it to commit
-> 6a19e303187c which you mentioned in a previous email in this thread.  But
-> the result was the same.
+> Currently (size = 2 * (id + 1)), it grows like this:
 > 
-> Anyway, using a vstart cluster is also a huge difference I guess.  I'll
-> keep debugging.  Thanks!
+> id 0 size 4
+> id 4 size 10
+> id 10 size 22
+> id 22 size 46
+> id 46 size 94
+> id 94 size 190
+> id 190 size 382
+> id 382 size 766
+> id 766 size 1534
+> id 1534 size 3070
+> id 3070 size 6142
+> id 6142 size 12286
+
+Oh, thanks, I forgot what power of two is :)
+ 
+>>
+>> Maybe, we need change that formula to increase memcg_nr_cache_ids more accurate
+>> for further growths of containers number. Say,
+>>
+>> size = id < 2000 ? 2 * (id + 1) : id + 2000
 > 
+> For the above, it would only be marginally better like this:
+> 
+> id 0 size 4
+> id 4 size 10
+> id 10 size 22
+> id 22 size 46
+> id 46 size 94
+> id 94 size 190
+> id 190 size 382
+> id 382 size 766
+> id 766 size 1534
+> id 1534 size 3070
+> id 3070 size 5070
+> id 5070 size 7070
+> id 7070 size 9070
+> id 9070 size 11070
+> 
+> All the above numbers are for 10k memcgs.
 
-I may try to set one up today to see if I can reproduce it. Thanks for
-the testing help so far!
-
--- 
-Jeff Layton <jlayton@kernel.org>
-
+I mean the number of containers bigger then your 10000.
