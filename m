@@ -2,109 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FFE53577E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 00:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECB813577E4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 00:43:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229505AbhDGWmJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Apr 2021 18:42:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43544 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229492AbhDGWmH (ORCPT
+        id S229588AbhDGWnq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Apr 2021 18:43:46 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:23176 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229570AbhDGWnq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Apr 2021 18:42:07 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95864C061760
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Apr 2021 15:41:55 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id 12so612318lfq.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Apr 2021 15:41:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=UlW0Ewz0TJE6dHdQktAkyDdaQS9xqmk5R6tFIsrvbdY=;
-        b=gMOvyRvSBdLpabOdz47dwXyDCQ31XoDE396g9e9aL0J9UTDdnWIijnPIJAGJU5tENC
-         +M2piM6MXnXRE4IDeq+Azj2ImaUAS0jjAG+VvnJhD5aGm0oHozbHgb/A+DIjd80qJ4jo
-         tKMB3w9XTcDjT0qyRm127hleWX61wE3jOvRPWYNgFYp5tlWbaOnrbxhAS73xNKtGbGNG
-         W0Yja9jm+h8QaSz6R+fIOqwkPWGWTF5xyDLvfMeUk5zJoz3xvkFRryyXZmpjBBzi0y+L
-         xRKqNI+bqCWBCo6WpRTycwdCdA2y2rXczgvxQWL5WknvKUo9oqSQFlla+KevDjb5iYbG
-         Cptw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=UlW0Ewz0TJE6dHdQktAkyDdaQS9xqmk5R6tFIsrvbdY=;
-        b=helnAH35WNkOXV0vo/qDRYGVJBElJm43lff3tCwKAaSRenk7m/DnLLUe5i+biXwb4K
-         Lfp3u2tipNSOqQpKMId7MnqF4jKoujeLDL31PGSRiaEb+pMV99fGsNomobThw9YF4MVp
-         tGr7Du0xfjBz7NEPI2QmWL21plXJD7xQOB5r/VNrXknFVA3U0h4jc+3VO1971lW8MGFY
-         iQ9oBqBuFUgD8wEaZW5w+uGi7zUS2ERBgbm1sjui7Fx/ji2rJZHd0XLtQTd6W/SS1jY/
-         LvNXJZzXE3qtINXFANAXeMxJ+M3YCLmRlk04a8JjD2RpI48MY+UmwSmfbeT0GJEKyXxQ
-         +Ijg==
-X-Gm-Message-State: AOAM530YCr0zX3M3gkieZHdo+yiXzrKlOD5oIqi+1fKHEoavntYnTm7X
-        9b/QbFUjU8DP9YVwrLszVLPUpiJrVw+QpB3qOre2Rj0Wg5q71A==
-X-Google-Smtp-Source: ABdhPJwyJehdxHhU1JqMYu/+AzWCxxU1DRmmxIyA/FStI2zhvfIh/yzuAfz6N+LvVZATklcauZYTfK1r9Ob13HgwCds=
-X-Received: by 2002:ac2:58d8:: with SMTP id u24mr3940661lfo.67.1617835314116;
- Wed, 07 Apr 2021 15:41:54 -0700 (PDT)
+        Wed, 7 Apr 2021 18:43:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617835416;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=OYVt7IOY92f4o6AihpWFYJ05SCAGXsSZd9ZYg963CF8=;
+        b=KWNPM52r3mLPmnten/CgcP+WUF/pI0Ekft8p8d4G9FwUGnKSV2jCWK2wclSa5j2FDMTs51
+        vAiCgciVdI00dDJSs4MqoQZ+YfaUoaW2Kx/ab+Q01Yy8Any5UvutawntXg+PLzZnNIAHv+
+        venMYqhf0o8H8TPemFFuZMDnHS8EU/Q=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-466--CHwVQfCMV-ArBwNt9JnQg-1; Wed, 07 Apr 2021 18:43:34 -0400
+X-MC-Unique: -CHwVQfCMV-ArBwNt9JnQg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 963208030A1;
+        Wed,  7 Apr 2021 22:43:33 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-201.rdu2.redhat.com [10.10.115.201])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E4F4819D7D;
+        Wed,  7 Apr 2021 22:43:32 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20210407201857.3582797-1-willy@infradead.org>
+References: <20210407201857.3582797-1-willy@infradead.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/3] readahead improvements
 MIME-Version: 1.0
-References: <20210407150255.GE2531743@casper.infradead.org>
-In-Reply-To: <20210407150255.GE2531743@casper.infradead.org>
-From:   Daeho Jeong <daeho43@gmail.com>
-Date:   Thu, 8 Apr 2021 07:41:42 +0900
-Message-ID: <CACOAw_wLgGyD0nLguoi2LGzWwTO-oT5W=hibaXGQK4aHYSm9VA@mail.gmail.com>
-Subject: Re: [f2fs-dev] Why use page_cache_ra_unbounded?
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Daeho Jeong <daehojeong@google.com>, linux-fsdevel@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <752550.1617835411.1@warthog.procyon.org.uk>
+Date:   Wed, 07 Apr 2021 23:43:31 +0100
+Message-ID: <752551.1617835411@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2021=EB=85=84 4=EC=9B=94 8=EC=9D=BC (=EB=AA=A9) =EC=98=A4=EC=A0=84 12:05, M=
-atthew Wilcox <willy@infradead.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
->
-> commit 5fdb322ff2c2b4ad519f490dcb7ebb96c5439af7
-> Author: Daeho Jeong <daehojeong@google.com>
-> Date:   Thu Dec 3 15:56:15 2020 +0900
->
->     f2fs: add F2FS_IOC_DECOMPRESS_FILE and F2FS_IOC_COMPRESS_FILE
->
-> +       page_cache_ra_unbounded(&ractl, len, 0);
->
-> /**
->  * page_cache_ra_unbounded - Start unchecked readahead.
->  * @ractl: Readahead control.
->  * @nr_to_read: The number of pages to read.
->  * @lookahead_size: Where to start the next readahead.
->  *
->  * This function is for filesystems to call when they want to start
->  * readahead beyond a file's stated i_size.  This is almost certainly
->  * not the function you want to call.  Use page_cache_async_readahead()
->  * or page_cache_sync_readahead() instead.
->  *
->  * Context: File is referenced by caller.  Mutexes may be held by caller.
->  * May sleep, but will not reenter filesystem to reclaim memory.
->  */
->
-> Why?
->
+Matthew Wilcox (Oracle) <willy@infradead.org> wrote:
 
-Hi Matthew,
+> As requested, fix up readahead_expand() so as to not confuse the ondemand
+> algorithm.  Also make the documentation slightly better.  Dave, could you
+> put in some debug and check this actually works?  I don't generally test
+> with any filesystems that use readahead_expand(), but printing (index,
+> nr_to_read, lookahead_size) in page_cache_ra_unbounded() would let a human
+> (such as your good self) determine whether it's working approximately
+> as designed.
 
-What I wanted here is like do_page_cache_ra(), but do_page_cache_ra()
-is defined in mm/internal.h only for internal use.
-So, I used it, because we already checked the i_size boundary on our own.
-Actually, I wanted to detour the internal readahead mechanism using
-page_cache_ra_unbounded() to generate cluster size aligned read requests.
-Plus, page_cache_sync_readahead() is not good for our situation,
-it might end up with cluster misaligned reads which trigger internal
-duplicated cluster reads.
+I added the patches to my fscache-netfs-lib branch and ran the quick group of
+xfstests with afs and got the same results.
 
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+David
+
