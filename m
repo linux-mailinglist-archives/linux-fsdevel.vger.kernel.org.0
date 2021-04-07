@@ -2,57 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3564935654D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 09:34:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10DF035672A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 10:47:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349449AbhDGHeL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Apr 2021 03:34:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40704 "EHLO
+        id S1349670AbhDGIrQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Apr 2021 04:47:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349438AbhDGHeK (ORCPT
+        with ESMTP id S1349709AbhDGIrD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Apr 2021 03:34:10 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49350C06174A;
-        Wed,  7 Apr 2021 00:34:01 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id i4so376058pjk.1;
-        Wed, 07 Apr 2021 00:34:01 -0700 (PDT)
+        Wed, 7 Apr 2021 04:47:03 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02CB5C06174A;
+        Wed,  7 Apr 2021 01:46:54 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id y16so318496pfc.5;
+        Wed, 07 Apr 2021 01:46:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=QvZSBrH1kmgxKZKSD+pBe7YtJvXFi8yG9kfTKSmsc5Q=;
-        b=O2cXbe0TlOnka3Htg7a7ktCEm4u84Apnd4pxAh+QckwGH1N5XUJxAQXGojK8urTwHW
-         S6qKShLuqQpXW7czN7NSppj8uMSG1ILItUs2jRqW9KCOM0ewsGPs471AJdd9fQwkregx
-         5WJsKLnvvgP9H/rO+GMThc5QqAWIM6vJUjUihrVpN1qBZ1PZrQQurpb3jy0hrvC8q/ga
-         193Hbzqy2uMvrG2DBivJBITDOAFTPHgkYrA0xxTN2O5/SDYNzxk8E+F9Ofv4wPxpKtYd
-         OpyTo6+F49K8x0yWEkTWuqKF3gTonWd9jxsyeBFNYymfsKPd0N1ZAJ/ruwq0yRVkpYX5
-         /xXQ==
+        bh=NZttKhZHU6qaVsRmUnPJpvZt0Hi/pFu56dbeZNbDXtU=;
+        b=UDQs+QKztlc50Xzz9tDRt+AdeuvS//lqLAuKnWXU/KpkdRIyYns185alJd77pimmOQ
+         Rm+SXfRq7Nbp44iFj09DlIBP8pB9Q/wr1Jktw0TsONZCLU6cUjKoAcBW9MELgEDcm9Fe
+         pjdoHv/Z1K75roAdGxxxm60OLnxr6B3j/huNdwRUOBcR/NfWwdJ0T2Ry1GSBSm5M8gQG
+         cPX3YXLL7dtqUWW4/37Lsyk3k7L76r1KootJDPbDvQIsbhQfbSpG/LRrVUU53kFzKElU
+         mZPAf+0lfHR42X+g8hHRO6PYug2sgsVVq7CJaXGQetXBqPCEBbWZWj0if+0XEWIBGBV8
+         f3cA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=QvZSBrH1kmgxKZKSD+pBe7YtJvXFi8yG9kfTKSmsc5Q=;
-        b=It3wmurtf3RzDQg5MbvIKfnNC72Wd9j3tdITngALofG7LqQTLW3OPQCtldNm0o7pfN
-         vv6qrC6BmiLflb9Y2jK8e1Tw6F6dvD6Xtb2GLk/VBPQZo76gtaVLMk8/Yl2jhR8i6JcA
-         Yupq8wnJ6MywTGqAe85FUj/riByuVr+xU4sH55ollKcjkNzKPONlw1OXXv0+pfnZ2iC2
-         vhTPcgreszCN1xGhxtPRCzfUXcUfC6yICtfAitgkGF4+T+HOwb0A9NPf9jbPalcw5SCj
-         hwv8xozO9qPdI7UeUMOvT7Jsv5e7gCF+8/NTzxcHKIkXX8YPoAEAwcMxFwWYOag9Fc3j
-         bU+g==
-X-Gm-Message-State: AOAM533NK4KGWEkiEc1OC1RcdlQTGg5Jw8Cdq/K5BEQAMNOaF47mYdvu
-        hJWvWJ4hVxY88VhiaFfAIAWd6OrjgZ86cPhgha0=
-X-Google-Smtp-Source: ABdhPJyRMoGPnuz4MO0FmGOHIM1XSyhsQpJQrKhPLw79y8VziNPPVSJYtRew3BRLtYZwwl4H1BLduTLJZdkCaUCy8qY=
-X-Received: by 2002:a17:902:a406:b029:e6:78c4:71c8 with SMTP id
- p6-20020a170902a406b02900e678c471c8mr1880447plq.17.1617780840716; Wed, 07 Apr
- 2021 00:34:00 -0700 (PDT)
+        bh=NZttKhZHU6qaVsRmUnPJpvZt0Hi/pFu56dbeZNbDXtU=;
+        b=U6xGKAfqxrLQgJHPe8FmLF8x8gAHUPieu4V5pp/CReJ9GyzSX7OxC13PhDrWxFcuBe
+         p+9uywwNqYWqNFlvhv/DwkYgjcNSaVUavom7Y2H3iu/7hryQwVpvtRFxBiKyelypWZBM
+         XmUZqei/7l8wblDlpP0TenIP6K+m/cXFStjyIjcU2V2QQkmLIJkBcVFCtqo3szb6A5FK
+         y9NHvPsQnWrmpnPV1SYsfvrvy+b7jV8bbligwQjcSU5O/HQl/YTv09NzjkNigG1y20XT
+         u1n89YwY7faLBOL4CLLaVrqcJxrWMuueTDsdMTdtKCp7HePLkIzD596S6B9iYSNhAlN2
+         HtkA==
+X-Gm-Message-State: AOAM531S82T3LQNp51YK3OHnBH50CMnAve9+VKkWDXoWcn+2oT/6ajEm
+        gEQVmIbqutQQmub8myghsy5hC2PGm63Mb7qygDI=
+X-Google-Smtp-Source: ABdhPJyOREH8pH5Yw3mdnLvelVM7fjh26m8MXKE2FHM7iVCNEkdX6M5hYPv1kbA5tQgLzWX2dL38Pt50r64dgAgPi18=
+X-Received: by 2002:a63:3e4b:: with SMTP id l72mr2244351pga.203.1617785213524;
+ Wed, 07 Apr 2021 01:46:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com> <20210406165108.GA4332@42.do-not-panic.com>
-In-Reply-To: <20210406165108.GA4332@42.do-not-panic.com>
+References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com> <202104061143.E11D2D0@keescook>
+In-Reply-To: <202104061143.E11D2D0@keescook>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 7 Apr 2021 10:33:44 +0300
-Message-ID: <CAHp75Ve9vBQqSegM2-ch9NUN-MdevxxOs5ZdHkk1W7AacN+Wrw@mail.gmail.com>
+Date:   Wed, 7 Apr 2021 11:46:37 +0300
+Message-ID: <CAHp75Ve+11u=dtNTO8BCohOJHGWSMJtb1nGCOrNde7bXaD4ehA@mail.gmail.com>
 Subject: Re: [PATCH v1 1/1] kernel.h: Split out panic and oops helpers
-To:     Luis Chamberlain <mcgrof@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Joerg Roedel <jroedel@suse.de>, Wei Liu <wei.liu@kernel.org>,
@@ -92,46 +91,37 @@ Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Lai Jiangshan <jiangshanlai@gmail.com>,
         Joel Fernandes <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
         Iurii Zaikin <yzaikin@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 7, 2021 at 10:25 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
+On Wed, Apr 7, 2021 at 11:17 AM Kees Cook <keescook@chromium.org> wrote:
 >
 > On Tue, Apr 06, 2021 at 04:31:58PM +0300, Andy Shevchenko wrote:
-> > diff --git a/include/linux/panic_notifier.h b/include/linux/panic_notifier.h
-> > new file mode 100644
-> > index 000000000000..41e32483d7a7
-> > --- /dev/null
-> > +++ b/include/linux/panic_notifier.h
-> > @@ -0,0 +1,12 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef _LINUX_PANIC_NOTIFIERS_H
-> > +#define _LINUX_PANIC_NOTIFIERS_H
-> > +
-> > +#include <linux/notifier.h>
-> > +#include <linux/types.h>
-> > +
-> > +extern struct atomic_notifier_head panic_notifier_list;
-> > +
-> > +extern bool crash_kexec_post_notifiers;
-> > +
-> > +#endif       /* _LINUX_PANIC_NOTIFIERS_H */
+> > kernel.h is being used as a dump for all kinds of stuff for a long time.
+> > Here is the attempt to start cleaning it up by splitting out panic and
+> > oops helpers.
+> >
+> > At the same time convert users in header and lib folder to use new header.
+> > Though for time being include new header back to kernel.h to avoid twisted
+> > indirected includes for existing users.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 >
-> Why is it worth it to add another file just for this?
+> I like it! Do you have a multi-arch CI to do allmodconfig builds to
+> double-check this?
 
-The main point is to break tons of loops that prevent having clean
-headers anymore.
+Unfortunately no, I rely on plenty of bots that are harvesting mailing lists.
 
-In this case, see bug.h, which is very important in this sense.
+But I will appreciate it if somebody can run this through various build tests.
 
->  Seems like a very
-> small file.
+> Acked-by: Kees Cook <keescook@chromium.org>
 
-If it is an argument, it's kinda strange. We have much smaller headers.
+Thanks!
+
 
 -- 
 With Best Regards,
