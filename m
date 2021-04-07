@@ -2,196 +2,221 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C033F3574E4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 21:23:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 577263574EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 21:28:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355619AbhDGTXO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Apr 2021 15:23:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56412 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355621AbhDGTXO (ORCPT
+        id S236530AbhDGT2s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Apr 2021 15:28:48 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2804 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229512AbhDGT2r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Apr 2021 15:23:14 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55F84C061760
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Apr 2021 12:23:04 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id l4so29494145ejc.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Apr 2021 12:23:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=JopOz03EEkTqIxcI1fz3+f5sIDcGohgXhrqvwOa7zzc=;
-        b=fYgEat3S5TRjhsX5Sy5lurynyLrcfD1do1btfeGSlk6AA0LO+vKYEeGCZiY0Qan/u5
-         Wt3cpybQYXh16FTDgHW7Z1CY/8xL4glHerxUVL9Wq9Y2Je+qpRiVLLdTFYRNdkiFqLOK
-         L8nQBP5pL5yLawNZFoptGEaueJ4/gTbNXz7YM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=JopOz03EEkTqIxcI1fz3+f5sIDcGohgXhrqvwOa7zzc=;
-        b=cOo84TfzMqiSQaBWS9T3qN7EgjcvzDWzghKieYkPiUT7Jb+TYsYZcg+ppZYryndDUt
-         r7goNt+5eFR/94mSqZdmAcuXaCEA03XRIzfApslLDBburYrCIbOGRUCueNGmLQV0/U8/
-         Z7SlPnyQsvxyT/4u3gNMv5yjywV93eh+LuN/sVeRHJp7sqGa5Ur+NgqHAZPyQ5Y5BJuN
-         zToelXxOdBnfGw/9IdXCavbY3sqeNh1V8FNiEuMbEzyg9jBqHf1oGx3DZ5nwJka2Etm0
-         u6S8aM948IjZQa5xyClKCe/9LTIhp8Gefqsob2KRBaCiQhd/4/3++5Ia8D0xje82r04J
-         9kFA==
-X-Gm-Message-State: AOAM5313a8qOhUDYl7c9SFpYlrDImdwiLsAPNQhp4mLv8fHtliqZ2FaP
-        XWToVurt44TOxi4y0FibHKSo/rVFgfYT3aOP
-X-Google-Smtp-Source: ABdhPJy4/lwlB88/hwiGMlYHEeQrMmjB5Z20uF1ATkPSuvZqEg5oBfNN5tljocnGD3JClC9IxLrtcA==
-X-Received: by 2002:a17:906:3487:: with SMTP id g7mr5490963ejb.222.1617823383009;
-        Wed, 07 Apr 2021 12:23:03 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-86-101-169-67.catv.broadband.hu. [86.101.169.67])
-        by smtp.gmail.com with ESMTPSA id q25sm16243267edt.51.2021.04.07.12.23.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Apr 2021 12:23:02 -0700 (PDT)
-Date:   Wed, 7 Apr 2021 21:22:52 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] fileattr API
-Message-ID: <YG4GjNEqC6Pmhmod@miu.piliscsaba.redhat.com>
+        Wed, 7 Apr 2021 15:28:47 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FFvQP56Zsz67nFq;
+        Thu,  8 Apr 2021 03:21:33 +0800 (CST)
+Received: from fraphisprd00473.huawei.com (7.182.8.141) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Wed, 7 Apr 2021 21:28:33 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        kernel test robot <lkp@intel.com>
+Subject: [RESEND][PATCH v5 09/12] evm: Allow setxattr() and setattr() for unmodified metadata
+Date:   Wed, 7 Apr 2021 21:28:18 +0200
+Message-ID: <20210407192818.9387-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <202104080245.Cn25aFdH-lkp@intel.com>
+References: <202104080245.Cn25aFdH-lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [7.182.8.141]
+X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Al,
+With the patch to allow xattr/attr operations if a portable signature
+verification fails, cp and tar can copy all xattrs/attrs so that at the
+end of the process verification succeeds.
 
-Please pull from:
+However, it might happen that the xattrs/attrs are already set to the
+correct value (taken at signing time) and signature verification succeeds
+before the copy has completed. For example, an archive might contains files
+owned by root and the archive is extracted by root.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git fileattr_v4
+Then, since portable signatures are immutable, all subsequent operations
+fail (e.g. fchown()), even if the operation is legitimate (does not alter
+the current value).
 
-Convert all (with the exception of CIFS) filesystems from handling
-FS_IOC_[GS]ETFLAGS and FS_IOC_FS[GS]ETXATTR themselves to new i_ops and
-common code moved into the VFS for these ioctls.  This removes boilerplate
-from filesystems, and allows these operations to be properly stacked in
-overlayfs.
+This patch avoids this problem by reporting successful operation to user
+space when that operation does not alter the current value of xattrs/attrs.
 
-Thanks,
-Miklos
-
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: Andreas Gruenbacher <agruenba@redhat.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reviewed-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
-Changes since v3:
+ security/integrity/evm/evm_main.c | 108 ++++++++++++++++++++++++++++++
+ 1 file changed, 108 insertions(+)
 
- - converted fuse
- - removed overlayfs ioctl code
- - moved d_is_special() check to callbacks where necessary
- - user copy cosmetics
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 74f9f3a2ae53..8e80af97021e 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -18,6 +18,7 @@
+ #include <linux/integrity.h>
+ #include <linux/evm.h>
+ #include <linux/magic.h>
++#include <linux/posix_acl_xattr.h>
+ 
+ #include <crypto/hash.h>
+ #include <crypto/hash_info.h>
+@@ -328,6 +329,90 @@ static enum integrity_status evm_verify_current_integrity(struct dentry *dentry)
+ 	return evm_verify_hmac(dentry, NULL, NULL, 0, NULL);
+ }
+ 
++/*
++ * evm_xattr_acl_change - check if passed ACL changes the inode mode
++ * @mnt_userns: user namespace of the idmapped mount
++ * @dentry: pointer to the affected dentry
++ * @xattr_name: requested xattr
++ * @xattr_value: requested xattr value
++ * @xattr_value_len: requested xattr value length
++ *
++ * Check if passed ACL changes the inode mode, which is protected by EVM.
++ *
++ * Returns 1 if passed ACL causes inode mode change, 0 otherwise.
++ */
++static int evm_xattr_acl_change(struct user_namespace *mnt_userns,
++				struct dentry *dentry, const char *xattr_name,
++				const void *xattr_value, size_t xattr_value_len)
++{
++#ifdef CONFIG_FS_POSIX_ACL
++	umode_t mode;
++	struct posix_acl *acl = NULL, *acl_res;
++	struct inode *inode = d_backing_inode(dentry);
++	int rc;
++
++	/* user_ns is not relevant here, ACL_USER/ACL_GROUP don't have impact
++	 * on the inode mode (see posix_acl_equiv_mode()).
++	 */
++	acl = posix_acl_from_xattr(&init_user_ns, xattr_value, xattr_value_len);
++	if (IS_ERR_OR_NULL(acl))
++		return 1;
++
++	acl_res = acl;
++	/* Passing mnt_userns is necessary to correctly determine the GID in
++	 * an idmapped mount, as the GID is used to clear the setgid bit in
++	 * the inode mode.
++	 */
++	rc = posix_acl_update_mode(mnt_userns, inode, &mode, &acl_res);
++
++	posix_acl_release(acl);
++
++	if (rc)
++		return 1;
++
++	if (inode->i_mode != mode)
++		return 1;
++#endif
++	return 0;
++}
++
++/*
++ * evm_xattr_change - check if passed xattr value differs from current value
++ * @mnt_userns: user namespace of the idmapped mount
++ * @dentry: pointer to the affected dentry
++ * @xattr_name: requested xattr
++ * @xattr_value: requested xattr value
++ * @xattr_value_len: requested xattr value length
++ *
++ * Check if passed xattr value differs from current value.
++ *
++ * Returns 1 if passed xattr value differs from current value, 0 otherwise.
++ */
++static int evm_xattr_change(struct user_namespace *mnt_userns,
++			    struct dentry *dentry, const char *xattr_name,
++			    const void *xattr_value, size_t xattr_value_len)
++{
++	char *xattr_data = NULL;
++	int rc = 0;
++
++	if (posix_xattr_acl(xattr_name))
++		return evm_xattr_acl_change(mnt_userns, dentry, xattr_name,
++					    xattr_value, xattr_value_len);
++
++	rc = vfs_getxattr_alloc(&init_user_ns, dentry, xattr_name, &xattr_data,
++				0, GFP_NOFS);
++	if (rc < 0)
++		return 1;
++
++	if (rc == xattr_value_len)
++		rc = !!memcmp(xattr_value, xattr_data, rc);
++	else
++		rc = 1;
++
++	kfree(xattr_data);
++	return rc;
++}
++
+ /*
+  * evm_protect_xattr - protect the EVM extended attribute
+  *
+@@ -389,6 +474,11 @@ static int evm_protect_xattr(struct user_namespace *mnt_userns,
+ 	if (evm_status == INTEGRITY_FAIL_IMMUTABLE)
+ 		return 0;
+ 
++	if (evm_status == INTEGRITY_PASS_IMMUTABLE &&
++	    !evm_xattr_change(mnt_userns, dentry, xattr_name, xattr_value,
++			      xattr_value_len))
++		return 0;
++
+ 	if (evm_status != INTEGRITY_PASS)
+ 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 				    dentry->d_name.name, "appraise_metadata",
+@@ -532,6 +622,19 @@ void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
+ 	evm_update_evmxattr(dentry, xattr_name, NULL, 0);
+ }
+ 
++static int evm_attr_change(struct dentry *dentry, struct iattr *attr)
++{
++	struct inode *inode = d_backing_inode(dentry);
++	unsigned int ia_valid = attr->ia_valid;
++
++	if ((!(ia_valid & ATTR_UID) || uid_eq(attr->ia_uid, inode->i_uid)) &&
++	    (!(ia_valid & ATTR_GID) || gid_eq(attr->ia_gid, inode->i_gid)) &&
++	    (!(ia_valid & ATTR_MODE) || attr->ia_mode == inode->i_mode))
++		return 0;
++
++	return 1;
++}
++
+ /**
+  * evm_inode_setattr - prevent updating an invalid EVM extended attribute
+  * @dentry: pointer to the affected dentry
+@@ -562,6 +665,11 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ 	    (evm_status == INTEGRITY_FAIL_IMMUTABLE) ||
+ 	    (evm_ignore_error_safe(evm_status)))
+ 		return 0;
++
++	if (evm_status == INTEGRITY_PASS_IMMUTABLE &&
++	    !evm_attr_change(dentry, attr))
++		return 0;
++
+ 	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 			    dentry->d_name.name, "appraise_metadata",
+ 			    integrity_status_msg[evm_status], -EPERM, 0);
+-- 
+2.26.2
 
-Changes since v2:
-
- - renaming, most notably miscattr -> fileattr
- - use memset instead of structure initialization
- - drop gratuitous use of file_dentry()
- - kerneldoc, comments, spelling improvements
- - xfs: enable getting/setting FS_PROJINHERIT_FL and other tweaks
- - btrfs: patch logistics
-
-Changes since v1:
-
- - rebased on 5.12-rc1 (mnt_userns churn)
- - fixed LSM hook on overlayfs
-
-----------------------------------------------------------------
-Miklos Szeredi (23):
-      vfs: add fileattr ops
-      ecryptfs: stack fileattr ops
-      ovl: stack fileattr ops
-      btrfs: convert to fileattr
-      ext2: convert to fileattr
-      ext4: convert to fileattr
-      f2fs: convert to fileattr
-      gfs2: convert to fileattr
-      orangefs: convert to fileattr
-      xfs: convert to fileattr
-      efivars: convert to fileattr
-      hfsplus: convert to fileattr
-      jfs: convert to fileattr
-      nilfs2: convert to fileattr
-      ocfs2: convert to fileattr
-      reiserfs: convert to fileattr
-      ubifs: convert to fileattr
-      vfs: remove unused ioctl helpers
-      fuse: move ioctl to separate source file
-      fuse: unsigned open flags
-      fuse: add internal open/release helpers
-      fuse: convert to fileattr
-      ovl: remove unneeded ioctls
-
----
- Documentation/filesystems/locking.rst |   5 +
- Documentation/filesystems/vfs.rst     |  15 ++
- fs/btrfs/ctree.h                      |   3 +
- fs/btrfs/inode.c                      |   4 +
- fs/btrfs/ioctl.c                      | 226 +++-------------
- fs/ecryptfs/inode.c                   |  22 ++
- fs/efivarfs/file.c                    |  77 ------
- fs/efivarfs/inode.c                   |  44 +++
- fs/ext2/ext2.h                        |   7 +-
- fs/ext2/file.c                        |   2 +
- fs/ext2/ioctl.c                       |  88 +++---
- fs/ext2/namei.c                       |   2 +
- fs/ext4/ext4.h                        |  12 +-
- fs/ext4/file.c                        |   2 +
- fs/ext4/ioctl.c                       | 208 +++------------
- fs/ext4/namei.c                       |   2 +
- fs/f2fs/f2fs.h                        |   3 +
- fs/f2fs/file.c                        | 216 +++------------
- fs/f2fs/namei.c                       |   2 +
- fs/fuse/Makefile                      |   2 +-
- fs/fuse/dir.c                         |   6 +-
- fs/fuse/file.c                        | 435 +++---------------------------
- fs/fuse/fuse_i.h                      |  40 ++-
- fs/fuse/ioctl.c                       | 490 ++++++++++++++++++++++++++++++++++
- fs/gfs2/file.c                        |  63 ++---
- fs/gfs2/inode.c                       |   4 +
- fs/gfs2/inode.h                       |   3 +
- fs/hfsplus/dir.c                      |   2 +
- fs/hfsplus/hfsplus_fs.h               |  14 +-
- fs/hfsplus/inode.c                    |  54 ++++
- fs/hfsplus/ioctl.c                    |  84 ------
- fs/inode.c                            |  87 ------
- fs/ioctl.c                            | 325 ++++++++++++++++++++++
- fs/jfs/file.c                         |   6 +-
- fs/jfs/ioctl.c                        | 111 +++-----
- fs/jfs/jfs_dinode.h                   |   7 -
- fs/jfs/jfs_inode.h                    |   4 +-
- fs/jfs/namei.c                        |   6 +-
- fs/nilfs2/file.c                      |   2 +
- fs/nilfs2/ioctl.c                     |  61 ++---
- fs/nilfs2/namei.c                     |   2 +
- fs/nilfs2/nilfs.h                     |   3 +
- fs/ocfs2/file.c                       |   2 +
- fs/ocfs2/ioctl.c                      |  59 ++--
- fs/ocfs2/ioctl.h                      |   3 +
- fs/ocfs2/namei.c                      |   3 +
- fs/ocfs2/ocfs2_ioctl.h                |   8 -
- fs/orangefs/file.c                    |  79 ------
- fs/orangefs/inode.c                   |  50 ++++
- fs/overlayfs/dir.c                    |   2 +
- fs/overlayfs/file.c                   | 110 --------
- fs/overlayfs/inode.c                  |  77 ++++++
- fs/overlayfs/overlayfs.h              |   5 +-
- fs/overlayfs/readdir.c                |   4 -
- fs/reiserfs/file.c                    |   2 +
- fs/reiserfs/ioctl.c                   | 121 ++++-----
- fs/reiserfs/namei.c                   |   2 +
- fs/reiserfs/reiserfs.h                |   7 +-
- fs/reiserfs/super.c                   |   2 +-
- fs/ubifs/dir.c                        |   2 +
- fs/ubifs/file.c                       |   2 +
- fs/ubifs/ioctl.c                      |  78 +++---
- fs/ubifs/ubifs.h                      |   3 +
- fs/xfs/libxfs/xfs_fs.h                |   4 -
- fs/xfs/xfs_ioctl.c                    | 258 +++++-------------
- fs/xfs/xfs_ioctl.h                    |  11 +
- fs/xfs/xfs_ioctl32.c                  |   2 -
- fs/xfs/xfs_ioctl32.h                  |   2 -
- fs/xfs/xfs_iops.c                     |   7 +
- include/linux/fileattr.h              |  59 ++++
- include/linux/fs.h                    |  16 +-
- 71 files changed, 1724 insertions(+), 2007 deletions(-)
- create mode 100644 fs/fuse/ioctl.c
- create mode 100644 include/linux/fileattr.h
