@@ -2,33 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE499356A6E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 12:54:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D49B3356A77
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 12:54:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351629AbhDGKxa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Apr 2021 06:53:30 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2788 "EHLO
+        id S244920AbhDGKyc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Apr 2021 06:54:32 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2789 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351597AbhDGKxR (ORCPT
+        with ESMTP id S233117AbhDGKyb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Apr 2021 06:53:17 -0400
+        Wed, 7 Apr 2021 06:54:31 -0400
 Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FFh1r3K6Fz686sR;
-        Wed,  7 Apr 2021 18:48:00 +0800 (CST)
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FFh3G0X36z686yJ;
+        Wed,  7 Apr 2021 18:49:14 +0800 (CST)
 Received: from fraphisprd00473.huawei.com (7.182.8.141) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Wed, 7 Apr 2021 12:53:06 +0200
+ 15.1.2106.2; Wed, 7 Apr 2021 12:54:19 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <mjg59@google.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH v5 04/12] ima: Move ima_reset_appraise_flags() call to post hooks
-Date:   Wed, 7 Apr 2021 12:52:44 +0200
-Message-ID: <20210407105252.30721-5-roberto.sassu@huawei.com>
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v5 05/12] evm: Introduce evm_status_revalidate()
+Date:   Wed, 7 Apr 2021 12:52:45 +0200
+Message-ID: <20210407105252.30721-6-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210407105252.30721-1-roberto.sassu@huawei.com>
 References: <20210407105252.30721-1-roberto.sassu@huawei.com>
@@ -43,146 +42,154 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ima_inode_setxattr() and ima_inode_removexattr() hooks are called before an
-operation is performed. Thus, ima_reset_appraise_flags() should not be
-called there, as flags might be unnecessarily reset if the operation is
-denied.
+When EVM_ALLOW_METADATA_WRITES is set, EVM allows any operation on
+metadata. Its main purpose is to allow users to freely set metadata when it
+is protected by a portable signature, until an HMAC key is loaded.
 
-This patch introduces the post hooks ima_inode_post_setxattr() and
-ima_inode_post_removexattr(), and adds the call to
-ima_reset_appraise_flags() in the new functions.
+However, callers of evm_verifyxattr() are not notified about metadata
+changes and continue to rely on the last status returned by the function.
+For example IMA, since it caches the appraisal result, will not call again
+evm_verifyxattr() until the appraisal flags are cleared, and will grant
+access to the file even if there was a metadata operation that made the
+portable signature invalid.
 
-Cc: Casey Schaufler <casey@schaufler-ca.com>
+This patch introduces evm_status_revalidate(), which callers of
+evm_verifyxattr() can use in their xattr post hooks to determine whether
+re-validation is necessary and to do the proper actions. IMA calls it in
+its xattr post hooks to reset the appraisal flags, so that the EVM status
+is re-evaluated after a metadata operation.
+
+Lastly, this patch also adds a call to evm_reset_status() in
+evm_inode_post_setattr() to invalidate the cached EVM status after a
+setattr operation.
+
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- fs/xattr.c                            |  2 ++
- include/linux/ima.h                   | 18 ++++++++++++++++++
- security/integrity/ima/ima_appraise.c | 25 ++++++++++++++++++++++---
- security/security.c                   |  1 +
- 4 files changed, 43 insertions(+), 3 deletions(-)
+ include/linux/evm.h                   |  6 +++++
+ security/integrity/evm/evm_main.c     | 33 +++++++++++++++++++++++----
+ security/integrity/ima/ima_appraise.c |  8 ++++---
+ 3 files changed, 40 insertions(+), 7 deletions(-)
 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index b3444e06cded..81847f132d26 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -16,6 +16,7 @@
- #include <linux/namei.h>
- #include <linux/security.h>
- #include <linux/evm.h>
-+#include <linux/ima.h>
- #include <linux/syscalls.h>
- #include <linux/export.h>
- #include <linux/fsnotify.h>
-@@ -502,6 +503,7 @@ __vfs_removexattr_locked(struct user_namespace *mnt_userns,
- 
- 	if (!error) {
- 		fsnotify_xattr(dentry);
-+		ima_inode_post_removexattr(dentry, name);
- 		evm_inode_post_removexattr(dentry, name);
- 	}
- 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 61d5723ec303..5e059da43857 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -171,7 +171,13 @@ extern void ima_inode_post_setattr(struct user_namespace *mnt_userns,
- 				   struct dentry *dentry);
- extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
- 		       const void *xattr_value, size_t xattr_value_len);
-+extern void ima_inode_post_setxattr(struct dentry *dentry,
-+				    const char *xattr_name,
-+				    const void *xattr_value,
-+				    size_t xattr_value_len);
- extern int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name);
-+extern void ima_inode_post_removexattr(struct dentry *dentry,
-+				       const char *xattr_name);
+diff --git a/include/linux/evm.h b/include/linux/evm.h
+index 8302bc29bb35..e5b7bcb152b9 100644
+--- a/include/linux/evm.h
++++ b/include/linux/evm.h
+@@ -35,6 +35,7 @@ extern void evm_inode_post_removexattr(struct dentry *dentry,
+ extern int evm_inode_init_security(struct inode *inode,
+ 				   const struct xattr *xattr_array,
+ 				   struct xattr *evm);
++extern bool evm_status_revalidate(const char *xattr_name);
+ #ifdef CONFIG_FS_POSIX_ACL
+ extern int posix_xattr_acl(const char *xattrname);
  #else
- static inline bool is_ima_appraise_enabled(void)
- {
-@@ -192,11 +198,23 @@ static inline int ima_inode_setxattr(struct dentry *dentry,
+@@ -104,5 +105,10 @@ static inline int evm_inode_init_security(struct inode *inode,
  	return 0;
  }
  
-+static inline void ima_inode_post_setxattr(struct dentry *dentry,
-+					   const char *xattr_name,
-+					   const void *xattr_value,
-+					   size_t xattr_value_len)
++static inline bool evm_status_revalidate(const char *xattr_name)
 +{
++	return false;
 +}
 +
- static inline int ima_inode_removexattr(struct dentry *dentry,
- 					const char *xattr_name)
- {
- 	return 0;
+ #endif /* CONFIG_EVM */
+ #endif /* LINUX_EVM_H */
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 7ac5204c8d1f..998818283fda 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -425,6 +425,30 @@ static void evm_reset_status(struct inode *inode)
+ 		iint->evm_status = INTEGRITY_UNKNOWN;
  }
-+
-+static inline void ima_inode_post_removexattr(struct dentry *dentry,
-+					      const char *xattr_name)
-+{
-+}
- #endif /* CONFIG_IMA_APPRAISE */
  
- #if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
++/**
++ * evm_status_revalidate - report whether EVM status re-validation is necessary
++ * @xattr_name: pointer to the affected extended attribute name
++ *
++ * Report whether callers of evm_verifyxattr() should re-validate the
++ * EVM status.
++ *
++ * Return true if re-validation is necessary, false otherwise.
++ */
++bool evm_status_revalidate(const char *xattr_name)
++{
++	if (!evm_key_loaded())
++		return false;
++
++	/* evm_inode_post_setattr() passes NULL */
++	if (!xattr_name)
++		return true;
++
++	if (!evm_protected_xattr(xattr_name) && !posix_xattr_acl(xattr_name))
++		return false;
++
++	return true;
++}
++
+ /**
+  * evm_inode_post_setxattr - update 'security.evm' to reflect the changes
+  * @dentry: pointer to the affected dentry
+@@ -441,8 +465,7 @@ static void evm_reset_status(struct inode *inode)
+ void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
+ 			     const void *xattr_value, size_t xattr_value_len)
+ {
+-	if (!evm_key_loaded() || (!evm_protected_xattr(xattr_name)
+-				  && !posix_xattr_acl(xattr_name)))
++	if (!evm_status_revalidate(xattr_name))
+ 		return;
+ 
+ 	evm_reset_status(dentry->d_inode);
+@@ -462,7 +485,7 @@ void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
+  */
+ void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
+ {
+-	if (!evm_key_loaded() || !evm_protected_xattr(xattr_name))
++	if (!evm_status_revalidate(xattr_name))
+ 		return;
+ 
+ 	evm_reset_status(dentry->d_inode);
+@@ -513,9 +536,11 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+  */
+ void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
+ {
+-	if (!evm_key_loaded())
++	if (!evm_status_revalidate(NULL))
+ 		return;
+ 
++	evm_reset_status(dentry->d_inode);
++
+ 	if (ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
+ 		evm_update_evmxattr(dentry, NULL, NULL, 0);
+ }
 diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 565e33ff19d0..1f029e4c8d7f 100644
+index 1f029e4c8d7f..d4b8db1acadd 100644
 --- a/security/integrity/ima/ima_appraise.c
 +++ b/security/integrity/ima/ima_appraise.c
-@@ -577,21 +577,40 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
- 	if (result == 1) {
- 		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
- 			return -EINVAL;
+@@ -586,13 +586,15 @@ void ima_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
+ 			     const void *xattr_value, size_t xattr_value_len)
+ {
+ 	const struct evm_ima_xattr_data *xvalue = xattr_value;
++	int digsig = 0;
+ 	int result;
+ 
+ 	result = ima_protect_xattr(dentry, xattr_name, xattr_value,
+ 				   xattr_value_len);
+ 	if (result == 1)
 -		ima_reset_appraise_flags(d_backing_inode(dentry),
 -			xvalue->type == EVM_IMA_XATTR_DIGSIG);
- 		result = 0;
- 	}
- 	return result;
++		digsig = (xvalue->type == EVM_IMA_XATTR_DIGSIG);
++	if (result == 1 || evm_status_revalidate(xattr_name))
++		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
  }
  
-+void ima_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
-+			     const void *xattr_value, size_t xattr_value_len)
-+{
-+	const struct evm_ima_xattr_data *xvalue = xattr_value;
-+	int result;
-+
-+	result = ima_protect_xattr(dentry, xattr_name, xattr_value,
-+				   xattr_value_len);
-+	if (result == 1)
-+		ima_reset_appraise_flags(d_backing_inode(dentry),
-+			xvalue->type == EVM_IMA_XATTR_DIGSIG);
-+}
-+
  int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name)
- {
+@@ -611,6 +613,6 @@ void ima_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
  	int result;
  
  	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
- 	if (result == 1) {
--		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
- 		result = 0;
- 	}
- 	return result;
+-	if (result == 1)
++	if (result == 1 || evm_status_revalidate(xattr_name))
+ 		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
  }
-+
-+void ima_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
-+{
-+	int result;
-+
-+	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
-+	if (result == 1)
-+		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
-+}
-diff --git a/security/security.c b/security/security.c
-index 5ac96b16f8fa..efb1f874dc41 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1319,6 +1319,7 @@ void security_inode_post_setxattr(struct dentry *dentry, const char *name,
- 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
- 		return;
- 	call_void_hook(inode_post_setxattr, dentry, name, value, size, flags);
-+	ima_inode_post_setxattr(dentry, name, value, size);
- 	evm_inode_post_setxattr(dentry, name, value, size);
- }
- 
 -- 
 2.26.2
 
