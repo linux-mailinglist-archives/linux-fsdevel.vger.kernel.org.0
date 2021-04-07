@@ -2,196 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4072D35690E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 12:08:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E91CD35692B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 12:15:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350701AbhDGKH6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Apr 2021 06:07:58 -0400
-Received: from relay.sw.ru ([185.231.240.75]:60322 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1350740AbhDGKHv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Apr 2021 06:07:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=virtuozzo.com; s=relay; h=Content-Type:MIME-Version:Date:Message-ID:From:
-        Subject; bh=viSTuxs1TbvntX0V9jn+SqiOPlF9KJSz3P3BWHyPYoI=; b=yatOTgcV++Qd/gWdU
-        Ns7Io0AqJ8bL8avA9ZvymCvehtt/AtVaQhm71N5IrjhVZrpsPapaESf2/2ZecmKupql7l6exrbe8l
-        QBLEtktvqnhyBYIGKRq3FQhUWA3sgSs4xq+a0l+/dMZcRqEwAezceKUpb82t5ePBTd3LToIQs8dhc
-        =;
-Received: from [192.168.15.55]
-        by relay.sw.ru with esmtp (Exim 4.94)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1lU55s-000OgD-G4; Wed, 07 Apr 2021 13:07:28 +0300
-Subject: Re: High kmalloc-32 slab cache consumption with 10k containers
-To:     bharata@linux.ibm.com, Dave Chinner <david@fromorbit.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        aneesh.kumar@linux.ibm.com, Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-References: <20210405054848.GA1077931@in.ibm.com>
- <20210406222807.GD1990290@dread.disaster.area>
- <20210407050541.GC1354243@in.ibm.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <c9bd1744-f15c-669a-b3a9-5a0c47bd4e1d@virtuozzo.com>
-Date:   Wed, 7 Apr 2021 13:07:27 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        id S1350788AbhDGKPk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Apr 2021 06:15:40 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:27222 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1350755AbhDGKPc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Apr 2021 06:15:32 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 137A3b4f058603;
+        Wed, 7 Apr 2021 06:14:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=qyvICg5bOR724dHN0jiYk0GhBKxcKHxFxhx+efkfdP0=;
+ b=gm4eY4fO8pB91ulNkCctgOVnU/mtR5c4og1a5cvGrhbR1Cm9pHAedvD8d1FO5zA9UuT5
+ I7J8dz4TYgOsqFxxQ1rIRCmGXYi5okj9JLNMXs1O7P0Sr4hl6V1KB/q+X0Xfk/U60jEq
+ 12rvuECWUyveozwWKcGxHM7aT5NmcqJVkVz+0okjBzXibYd17x9dGVcXPJY+HXkqCpOP
+ fNTz7RBbQf0qV0mKT/GH1Zk/CO9dTOkiMGyytP27gNriFohtzwFjEcdf5fS3cKmjocfr
+ m/t6lREXynRZUWlsZtr/+PyDg7LrnLen0c3ar+9j9sr363qZvKTOPAjCduJp3hw+0mXS tQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 37rw07bttq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Apr 2021 06:14:24 -0400
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 137A3wjB060848;
+        Wed, 7 Apr 2021 06:14:23 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 37rw07btt0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Apr 2021 06:14:23 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 137A3BvM010573;
+        Wed, 7 Apr 2021 10:14:21 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma06ams.nl.ibm.com with ESMTP id 37rvbw8knx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Apr 2021 10:14:21 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 137AEJ1o40239448
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 7 Apr 2021 10:14:19 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B1014C04A;
+        Wed,  7 Apr 2021 10:14:19 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C7DAF4C044;
+        Wed,  7 Apr 2021 10:14:18 +0000 (GMT)
+Received: from localhost (unknown [9.85.69.78])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  7 Apr 2021 10:14:18 +0000 (GMT)
+Date:   Wed, 7 Apr 2021 15:44:17 +0530
+From:   riteshh <riteshh@linux.ibm.com>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
+        darrick.wong@oracle.com, willy@infradead.org, jack@suse.cz,
+        viro@zeniv.linux.org.uk, linux-btrfs@vger.kernel.org,
+        david@fromorbit.com, hch@lst.de, rgoldwyn@suse.de,
+        Ritesh Harjani <riteshh@gmail.com>
+Subject: Re: [PATCH 1/3] fsdax: Factor helpers to simplify dax fault code
+Message-ID: <20210407101417.45mu2m35hfduizpn@riteshh-domain>
+References: <20210407063207.676753-1-ruansy.fnst@fujitsu.com>
+ <20210407063207.676753-2-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-In-Reply-To: <20210407050541.GC1354243@in.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210407063207.676753-2-ruansy.fnst@fujitsu.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 5kC7Gni9-yvd5Wl2UkGLEjQYyu3MvqY_
+X-Proofpoint-GUID: QQcIOBDcl5-T6SjKoKh9acNasKx7P6Z1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-04-07_07:2021-04-06,2021-04-07 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 suspectscore=0 phishscore=0 priorityscore=1501
+ bulkscore=0 malwarescore=0 clxscore=1011 impostorscore=0 mlxlogscore=999
+ mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104070070
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07.04.2021 08:05, Bharata B Rao wrote:
-> On Wed, Apr 07, 2021 at 08:28:07AM +1000, Dave Chinner wrote:
->> On Mon, Apr 05, 2021 at 11:18:48AM +0530, Bharata B Rao wrote:
->>> Hi,
->>>
->>> When running 10000 (more-or-less-empty-)containers on a bare-metal Power9
->>> server(160 CPUs, 2 NUMA nodes, 256G memory), it is seen that memory
->>> consumption increases quite a lot (around 172G) when the containers are
->>> running. Most of it comes from slab (149G) and within slab, the majority of
->>> it comes from kmalloc-32 cache (102G)
->>>
->>> The major allocator of kmalloc-32 slab cache happens to be the list_head
->>> allocations of list_lru_one list. These lists are created whenever a
->>> FS mount happens. Specially two such lists are registered by alloc_super(),
->>> one for dentry and another for inode shrinker list. And these lists
->>> are created for all possible NUMA nodes and for all given memcgs
->>> (memcg_nr_cache_ids to be particular)
->>>
->>> If,
->>>
->>> A = Nr allocation request per mount: 2 (one for dentry and inode list)
->>> B = Nr NUMA possible nodes
->>> C = memcg_nr_cache_ids
->>> D = size of each kmalloc-32 object: 32 bytes,
->>>
->>> then for every mount, the amount of memory consumed by kmalloc-32 slab
->>> cache for list_lru creation is A*B*C*D bytes.
->>>
->>> Following factors contribute to the excessive allocations:
->>>
->>> - Lists are created for possible NUMA nodes.
->>> - memcg_nr_cache_ids grows in bulk (see memcg_alloc_cache_id() and additional
->>>   list_lrus are created when it grows. Thus we end up creating list_lru_one
->>>   list_heads even for those memcgs which are yet to be created.
->>>   For example, when 10000 memcgs are created, memcg_nr_cache_ids reach
->>>   a value of 12286.
->>
->> So, by your numbers, we have 2 * 2 * 12286 * 32 = 1.5MB per mount.
->>
->> So for that to make up 100GB of RAM, you must have somewhere over
->> 500,000 mounted superblocks on the machine?
->>
->> That implies 50+ unique mounted superblocks per container, which
->> seems like an awful lot.
-> 
-> Here is how the calculation turns out to be in my setup:
-> 
-> Number of possible NUMA nodes = 2
-> Number of mounts per container = 7 (Check below to see which are these)
-> Number of list creation requests per mount = 2
-> Number of containers = 10000
-> memcg_nr_cache_ids for 10k containers = 12286
+On 21/04/07 02:32PM, Shiyang Ruan wrote:
+> The dax page fault code is too long and a bit difficult to read. And it
+> is hard to understand when we trying to add new features. Some of the
+> PTE/PMD codes have similar logic. So, factor them as helper functions to
+> simplify the code.
+>
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Ritesh Harjani <riteshh@gmail.com>
 
-Luckily, we have "+1" in memcg_nr_cache_ids formula: size = 2 * (id + 1).
-In case of we only multiplied it, you would have to had memcg_nr_cache_ids=20000.
+Sorry, but above email address is wrong. Either of below is ok.
 
-Maybe, we need change that formula to increase memcg_nr_cache_ids more accurate
-for further growths of containers number. Say,
+Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
+OR
+Reviewed-by: Ritesh Harjani <ritesh.list@gmail.com>
 
-size = id < 2000 ? 2 * (id + 1) : id + 2000
+>
+>
+> ---
+>  fs/dax.c | 152 ++++++++++++++++++++++++++++++-------------------------
+>  1 file changed, 84 insertions(+), 68 deletions(-)
 
-> size of kmalloc-32 = 32 byes
-> 
-> 2*7*2*10000*12286*32 = 110082560000 bytes = 102.5G
-> 
->>
->>> - When a memcg goes offline, the list elements are drained to the parent
->>>   memcg, but the list_head entry remains.
->>> - The lists are destroyed only when the FS is unmounted. So list_heads
->>>   for non-existing memcgs remain and continue to contribute to the
->>>   kmalloc-32 allocation. This is presumably done for performance
->>>   reason as they get reused when new memcgs are created, but they end up
->>>   consuming slab memory until then.
->>> - In case of containers, a few file systems get mounted and are specific
->>>   to the container namespace and hence to a particular memcg, but we
->>>   end up creating lists for all the memcgs.
->>>   As an example, if 7 FS mounts are done for every container and when
->>>   10k containers are created, we end up creating 2*7*12286 list_lru_one
->>>   lists for each NUMA node. It appears that no elements will get added
->>>   to other than 2*7=14 of them in the case of containers.
->>
->> Yeah, at first glance this doesn't strike me as a problem with the
->> list_lru structure, it smells more like a problem resulting from a
->> huge number of superblock instantiations on the machine. Which,
->> probably, mostly have no significant need for anything other than a
->> single memcg awareness?
->>
->> Can you post a typical /proc/self/mounts output from one of these
->> idle/empty containers so we can see exactly how many mounts and
->> their type are being instantiated in each container?
-> 
-> Tracing type->name in alloc_super() lists these 7 types for
-> every container.
-> 
-> 3-2691    [041] ....   222.761041: alloc_super: fstype: mqueue
-> 3-2692    [072] ....   222.812187: alloc_super: fstype: proc
-> 3-2692    [072] ....   222.812261: alloc_super: fstype: tmpfs
-> 3-2692    [072] ....   222.812329: alloc_super: fstype: devpts
-> 3-2692    [072] ....   222.812392: alloc_super: fstype: tmpfs
-> 3-2692    [072] ....   222.813102: alloc_super: fstype: tmpfs
-> 3-2692    [072] ....   222.813159: alloc_super: fstype: tmpfs
-> 
->>
->>> One straight forward way to prevent this excessive list_lru_one
->>> allocations is to limit the list_lru_one creation only to the
->>> relevant memcg. However I don't see an easy way to figure out
->>> that relevant memcg from FS mount path (alloc_super())
->>
->> Superblocks have to support an unknown number of memcgs after they
->> have been mounted. bind mounts, child memcgs, etc, all mean that we
->> can't just have a static, single mount time memcg instantiation.
->>
->>> As an alternative approach, I have this below hack that does lazy
->>> list_lru creation. The memcg-specific list is created and initialized
->>> only when there is a request to add an element to that particular
->>> list. Though I am not sure about the full impact of this change
->>> on the owners of the lists and also the performance impact of this,
->>> the overall savings look good.
->>
->> Avoiding memory allocation in list_lru_add() was one of the main
->> reasons for up-front static allocation of memcg lists. We cannot do
->> memory allocation while callers are holding multiple spinlocks in
->> core system algorithms (e.g. dentry_kill -> retain_dentry ->
->> d_lru_add -> list_lru_add), let alone while holding an internal
->> spinlock.
->>
->> Putting a GFP_ATOMIC allocation inside 3-4 nested spinlocks in a
->> path we know might have memory demand in the *hundreds of GB* range
->> gets an NACK from me. It's a great idea, but it's just not a
->> feasible, robust solution as proposed. Work out how to put the
->> memory allocation outside all the locks (including caller locks) and
->> it might be ok, but that's messy.
-> 
-> Ok, I see the problem and it looks like hard to get allocations
-> outside of those locks.
-> 
->>
->> Another approach may be to identify filesystem types that do not
->> need memcg awareness and feed that into alloc_super() to set/clear
->> the SHRINKER_MEMCG_AWARE flag. This could be based on fstype - most
->> virtual filesystems that expose system information do not really
->> need full memcg awareness because they are generally only visible to
->> a single memcg instance...
-> 
-> This however seems like a feasible approach, let me check on this.
-> 
-> Regards,
-> Bharata.
-> 
 
