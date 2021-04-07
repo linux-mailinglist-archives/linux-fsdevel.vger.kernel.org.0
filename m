@@ -2,136 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B8EA35704A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 17:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D9113570A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 17:43:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353586AbhDGPaL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Apr 2021 11:30:11 -0400
-Received: from mail-pj1-f43.google.com ([209.85.216.43]:41609 "EHLO
-        mail-pj1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353563AbhDGPaK (ORCPT
+        id S1353681AbhDGPm5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Apr 2021 11:42:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36130 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232537AbhDGPm4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Apr 2021 11:30:10 -0400
-Received: by mail-pj1-f43.google.com with SMTP id z22-20020a17090a0156b029014d4056663fso1531594pje.0;
-        Wed, 07 Apr 2021 08:30:00 -0700 (PDT)
+        Wed, 7 Apr 2021 11:42:56 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D367AC061756
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Apr 2021 08:42:45 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id u9so21241993ljd.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Apr 2021 08:42:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bk1tr8gnipD6uFCQutltHcbiRHj4dh2dyGytQA9wCWU=;
+        b=eALrPYdSxG5ztUUc6HNLmohxDavZmiWNBJfKHWtxO2z25tbLT0s77VUc8jnKkT7fTG
+         Jy77kKUVud/7YniQoUals7Kr1C7oq9aQSAzuWi/Wg4BChaO5rokhNH8FUyH4cBoqSXwt
+         Og8djPFUGKELXZauXW7sX5lIy0mvXskCnW3BmQBwZr5Xy3+xnn1kCFzCspcZNg+15DIL
+         N0TUbrS0DZ/SCy9hkCIFrwB6o8AsZzFPlj6AkxEbN0xSYGh7XXaKEGndh2XJJOTqfHrl
+         5YYZEu6C8eKvN5UdN8CDz4w0tBd9Vi+mLclahiyl2yTQb3Jlf4yQH/AI8AjXwleRiWXP
+         vLOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+M5ErOA6vMHXgHMo812hqipKBEarvAzxNuznNu4dPh4=;
-        b=jsvrsCk2USuWmPdJ3aMJwVWzy7393uAv08mKvsKYFaJ3jCz3VVW+3ptyPpHt+GKx4l
-         gu8PPEPO4ABq8AYUHGQRdtU2WGDKbxNh+d5+9X6fZqZ0bFodVnAgSlVZkClleG2AZ7/r
-         h3FWStbOqUeG0Z+tP0bxzNT5xF5sJ9dTINsUIQh9Xl4sC7+4A7Ekvo04F2GemAkmhlrg
-         H0euxVew93XQify4f3rbwJ4GvC3KOWGRPprBA2i2BqONFdVEMF65KAfxK6p20CvOCcot
-         yITsnojVRMOplQSR1DucFSuPOKLIdUhJXRLk+0tZRNqQLMG/GN5QHESxap34pjxgdthM
-         zdmQ==
-X-Gm-Message-State: AOAM533kWqDVeQEz732forA2TcK+LLVu5mlJfxMUpn4sSA/RFy4gbEcA
-        ZwqJzgEcQKtv84CmXQJ0khs=
-X-Google-Smtp-Source: ABdhPJxpL5KaAnDuQDJzuUb5KCGFxZ3YcW99M+WHBna9dnMuIO92XOsuZyqjUKOy0DftFppakeCj7Q==
-X-Received: by 2002:a17:902:b210:b029:e6:33b4:cd9e with SMTP id t16-20020a170902b210b02900e633b4cd9emr3418197plr.67.1617809399828;
-        Wed, 07 Apr 2021 08:29:59 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id f65sm22129550pgc.19.2021.04.07.08.29.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Apr 2021 08:29:58 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 00948402D7; Wed,  7 Apr 2021 15:29:56 +0000 (UTC)
-Date:   Wed, 7 Apr 2021 15:29:56 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joerg Roedel <jroedel@suse.de>, Wei Liu <wei.liu@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Corey Minyard <cminyard@mvista.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
-        <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-remoteproc@vger.kernel.org,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        kexec@lists.infradead.org, rcu@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Corey Minyard <minyard@acm.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Subject: Re: [PATCH v1 1/1] kernel.h: Split out panic and oops helpers
-Message-ID: <20210407152956.GE4332@42.do-not-panic.com>
-References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
- <20210406165108.GA4332@42.do-not-panic.com>
- <CAHp75Ve9vBQqSegM2-ch9NUN-MdevxxOs5ZdHkk1W7AacN+Wrw@mail.gmail.com>
- <20210407143040.GB4332@42.do-not-panic.com>
- <CAHp75VeXiLa0b49eoZKVR1DSqTc9hKxpSgy294hMiaUzt0ugOA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bk1tr8gnipD6uFCQutltHcbiRHj4dh2dyGytQA9wCWU=;
+        b=cFarTdiVvdyM97FhZTrlYcp0khSdr0ootrK704JrfTPEd4+VnR5OgHm0R/FLl8I5gt
+         FVK1ndpEArVY45Qvw5h9OLLWZdFVxGjnnmjwN17f0EHyttUS+/h5zx9iQqOzcaX//cUS
+         JHq0+WAKAYAL9YDZk16yjShn4VjqqfYwg129+cKmNOgfuu8xeIxzO7BezQAgBZ/1S+gQ
+         4vYq6Ij/pJzw5fAiSi+QrXh9hHDEwbSgRqREYACR26KqMhkvFazmE8ryZhxsTQS0DYwG
+         7BsxhA1gbeCeKAu+g41SZIjN9iw04deie+QO8E05H0aLsSrpfK4w4Hl3HXoUB2wT3mtW
+         SLwg==
+X-Gm-Message-State: AOAM532/sKrUsCXTDA3ExtsSdcMMBDmwdppte4YkIakAHnbO8GLZImI6
+        kHyrdxW0nhb1JufIrfvOm3wQlvv3wB2Gwl50I/ew4Q==
+X-Google-Smtp-Source: ABdhPJyItEPMRdkdL43c6GKpBK8KvHU+D+sruSGo8iOAoXefA95/2e3w/6+Yu9MghbdpFLXPZb1TTFuchX6pCiMoocY=
+X-Received: by 2002:a2e:85d9:: with SMTP id h25mr2522397ljj.81.1617810163862;
+ Wed, 07 Apr 2021 08:42:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VeXiLa0b49eoZKVR1DSqTc9hKxpSgy294hMiaUzt0ugOA@mail.gmail.com>
+References: <20210405054848.GA1077931@in.ibm.com> <YG2diKMPNSK2cMyG@dhcp22.suse.cz>
+In-Reply-To: <YG2diKMPNSK2cMyG@dhcp22.suse.cz>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Wed, 7 Apr 2021 08:42:31 -0700
+Message-ID: <CALvZod79PDmPLYAXm=EQDrn8mQfE9aQL+Mgaai6zu=uqucbMAQ@mail.gmail.com>
+Subject: Re: High kmalloc-32 slab cache consumption with 10k containers
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Bharata B Rao <bharata@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 07, 2021 at 05:59:19PM +0300, Andy Shevchenko wrote:
-> On Wed, Apr 7, 2021 at 5:30 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > On Wed, Apr 07, 2021 at 10:33:44AM +0300, Andy Shevchenko wrote:
-> > > On Wed, Apr 7, 2021 at 10:25 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > > > On Tue, Apr 06, 2021 at 04:31:58PM +0300, Andy Shevchenko wrote:
-> 
-> ...
-> 
-> > > > Why is it worth it to add another file just for this?
-> > >
-> > > The main point is to break tons of loops that prevent having clean
-> > > headers anymore.
-> > >
-> > > In this case, see bug.h, which is very important in this sense.
+On Wed, Apr 7, 2021 at 4:55 AM Michal Hocko <mhocko@suse.com> wrote:
+>
+> On Mon 05-04-21 11:18:48, Bharata B Rao wrote:
+> > Hi,
 > >
-> > OK based on the commit log this was not clear, it seemed more of moving
-> > panic stuff to its own file, so just cleanup.
-> 
-> Sorry for that. it should have mentioned the kernel folder instead of
-> lib. But I think it won't clarify the above.
-> 
-> In any case there are several purposes in this case
->  - dropping dependency in bug.h
->  - dropping a loop by moving out panic_notifier.h
->  - unload kernel.h from something which has its own domain
-> 
-> I think that you are referring to the commit message describing 3rd
-> one, but not 1st and 2nd.
+> > When running 10000 (more-or-less-empty-)containers on a bare-metal Power9
+> > server(160 CPUs, 2 NUMA nodes, 256G memory), it is seen that memory
+> > consumption increases quite a lot (around 172G) when the containers are
+> > running. Most of it comes from slab (149G) and within slab, the majority of
+> > it comes from kmalloc-32 cache (102G)
+>
+> Is this 10k cgroups a testing enviroment or does anybody really use that
+> in production? I would be really curious to hear how that behaves when
+> those containers are not idle. E.g. global memory reclaim iterating over
+> 10k memcgs will likely be very visible. I do remember playing with
+> similar setups few years back and the overhead was very high.
+> --
 
-Right!
+I can tell about our environment. Couple of thousands of memcgs (~2k)
+are very normal on our machines as machines can be running 100+ jobs
+(and each job can manage their own sub-memcgs). However each job can
+have a high number of mounts. There is no local disk and each package
+of the job is remotely mounted (a bit more complicated).
 
-> I will amend this for the future splits, thanks!
-
-Don't get me wrong, I love the motivation behind just the 3rd purpose,
-however I figured there might be something more when I saw panic_notifier.h.
-It was just not clear.
-
-But awesome stuff!
-
-  Luis
+We do have issues with global memory reclaim but mostly the proactive
+reclaim makes the global reclaim a tail issue (and at tail it often
+does create havoc).
