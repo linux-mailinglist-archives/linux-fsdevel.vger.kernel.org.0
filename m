@@ -2,221 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 577263574EE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 21:28:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0142735753C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 21:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236530AbhDGT2s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Apr 2021 15:28:48 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2804 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbhDGT2r (ORCPT
+        id S1355761AbhDGTz3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Apr 2021 15:55:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35140 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345736AbhDGTz2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Apr 2021 15:28:47 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FFvQP56Zsz67nFq;
-        Thu,  8 Apr 2021 03:21:33 +0800 (CST)
-Received: from fraphisprd00473.huawei.com (7.182.8.141) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Wed, 7 Apr 2021 21:28:33 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <mjg59@google.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        kernel test robot <lkp@intel.com>
-Subject: [RESEND][PATCH v5 09/12] evm: Allow setxattr() and setattr() for unmodified metadata
-Date:   Wed, 7 Apr 2021 21:28:18 +0200
-Message-ID: <20210407192818.9387-1-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <202104080245.Cn25aFdH-lkp@intel.com>
-References: <202104080245.Cn25aFdH-lkp@intel.com>
+        Wed, 7 Apr 2021 15:55:28 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49F8CC06175F;
+        Wed,  7 Apr 2021 12:55:18 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id dd20so15107281edb.12;
+        Wed, 07 Apr 2021 12:55:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=TBNRySCI10FxrjiNQBsHSAQLIpLS2uNRCuwmQV6Ng/4=;
+        b=PUNm7oipNKrzDTqheuwlgAIXg33l4OCmPsex10//cjvpaoRQuNZkJY3P/q+9OOVfrT
+         9nq4cWT48T7G7JY7O/XIkUWQMed8FjRDOJbmL1MsRsj0xIlGNogWiQaFqQrYMiPxSHZf
+         mdvL6Bm3QJGk22sFeqrrLL5TjG5S/0t5zdk3ZeDzYxZQ4ETtcOSwTOWGwY0lxNa9TYSh
+         s2BI8yWYzRIkWPWlZQTXkiclZhbs5rVCuj/k17AOZE2vPCLpqAs/AcFblX7OjSzW4+cM
+         P2pgxUrHy5u14Nn60L7vxQNaAX12s3J+u+tybpMD7Qxk7u841Ryi1roVf6PbhQ1fjPWa
+         M+XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TBNRySCI10FxrjiNQBsHSAQLIpLS2uNRCuwmQV6Ng/4=;
+        b=fZZRiYB3PiDkfffLl8NgsM1SgjjTG1HJa4W0fKi/C8DDFiSd5H8kUFhgF57dmr+ed8
+         D72t2TuMHsPUQN33j7OWjogUa5iqjdrJaevsClaptvDNk4EZV3ZZY7/k8wSk/KH0D//k
+         6e2uvWTBGFhetZgJT8pXzh8K+VkVjfqGlGdKiQA4QbQY5v5KlKn5s1Oc4FRFRe4VmfRP
+         cblgIQewhedB4uowNIfoB243OSJRi+EFjUHeY/ju5DCk7G3UtjWsByD2icf1Rs3j0/yO
+         x8IjgU/X5Hi6bcgJstwzQuJMYCw9sB/W4R7/dXAuFx1bN48aOuFJyVMtYocHkC/ltYE8
+         TuUA==
+X-Gm-Message-State: AOAM533IzE0jXU1aaAE8Hr/JZfE3Ev/43U5yGwP57URKaCFR4vKD8n7e
+        FTMMebjXeUN8DANOFdmLlz88xkPvxw==
+X-Google-Smtp-Source: ABdhPJwpYJJrO+3bC9FbqXdWVgcLE2mosMuypaqZvvvt6gnWf3IDNgqCojWIi/txPMUNxI9+0yptYg==
+X-Received: by 2002:aa7:c0ca:: with SMTP id j10mr4271260edp.291.1617825317121;
+        Wed, 07 Apr 2021 12:55:17 -0700 (PDT)
+Received: from localhost.localdomain ([46.53.252.73])
+        by smtp.gmail.com with ESMTPSA id z4sm3377985edb.97.2021.04.07.12.55.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Apr 2021 12:55:16 -0700 (PDT)
+Date:   Wed, 7 Apr 2021 22:55:14 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] proc: smoke test lseek()
+Message-ID: <YG4OIhChOrVTPgdN@localhost.localdomain>
+References: <20210328221524.ukfuztGsl%akpm@linux-foundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [7.182.8.141]
-X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210328221524.ukfuztGsl%akpm@linux-foundation.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With the patch to allow xattr/attr operations if a portable signature
-verification fails, cp and tar can copy all xattrs/attrs so that at the
-end of the process verification succeeds.
+Now that ->proc_lseek has been made mandatory it would be nice to test
+that nothing has been forgotten.
 
-However, it might happen that the xattrs/attrs are already set to the
-correct value (taken at signing time) and signature verification succeeds
-before the copy has completed. For example, an archive might contains files
-owned by root and the archive is extracted by root.
-
-Then, since portable signatures are immutable, all subsequent operations
-fail (e.g. fchown()), even if the operation is legitimate (does not alter
-the current value).
-
-This patch avoids this problem by reporting successful operation to user
-space when that operation does not alter the current value of xattrs/attrs.
-
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Cc: Andreas Gruenbacher <agruenba@redhat.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
- security/integrity/evm/evm_main.c | 108 ++++++++++++++++++++++++++++++
- 1 file changed, 108 insertions(+)
 
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 74f9f3a2ae53..8e80af97021e 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -18,6 +18,7 @@
- #include <linux/integrity.h>
- #include <linux/evm.h>
- #include <linux/magic.h>
-+#include <linux/posix_acl_xattr.h>
- 
- #include <crypto/hash.h>
- #include <crypto/hash_info.h>
-@@ -328,6 +329,90 @@ static enum integrity_status evm_verify_current_integrity(struct dentry *dentry)
- 	return evm_verify_hmac(dentry, NULL, NULL, 0, NULL);
- }
- 
-+/*
-+ * evm_xattr_acl_change - check if passed ACL changes the inode mode
-+ * @mnt_userns: user namespace of the idmapped mount
-+ * @dentry: pointer to the affected dentry
-+ * @xattr_name: requested xattr
-+ * @xattr_value: requested xattr value
-+ * @xattr_value_len: requested xattr value length
-+ *
-+ * Check if passed ACL changes the inode mode, which is protected by EVM.
-+ *
-+ * Returns 1 if passed ACL causes inode mode change, 0 otherwise.
-+ */
-+static int evm_xattr_acl_change(struct user_namespace *mnt_userns,
-+				struct dentry *dentry, const char *xattr_name,
-+				const void *xattr_value, size_t xattr_value_len)
-+{
-+#ifdef CONFIG_FS_POSIX_ACL
-+	umode_t mode;
-+	struct posix_acl *acl = NULL, *acl_res;
-+	struct inode *inode = d_backing_inode(dentry);
-+	int rc;
-+
-+	/* user_ns is not relevant here, ACL_USER/ACL_GROUP don't have impact
-+	 * on the inode mode (see posix_acl_equiv_mode()).
-+	 */
-+	acl = posix_acl_from_xattr(&init_user_ns, xattr_value, xattr_value_len);
-+	if (IS_ERR_OR_NULL(acl))
-+		return 1;
-+
-+	acl_res = acl;
-+	/* Passing mnt_userns is necessary to correctly determine the GID in
-+	 * an idmapped mount, as the GID is used to clear the setgid bit in
-+	 * the inode mode.
-+	 */
-+	rc = posix_acl_update_mode(mnt_userns, inode, &mode, &acl_res);
-+
-+	posix_acl_release(acl);
-+
-+	if (rc)
-+		return 1;
-+
-+	if (inode->i_mode != mode)
-+		return 1;
-+#endif
-+	return 0;
-+}
-+
-+/*
-+ * evm_xattr_change - check if passed xattr value differs from current value
-+ * @mnt_userns: user namespace of the idmapped mount
-+ * @dentry: pointer to the affected dentry
-+ * @xattr_name: requested xattr
-+ * @xattr_value: requested xattr value
-+ * @xattr_value_len: requested xattr value length
-+ *
-+ * Check if passed xattr value differs from current value.
-+ *
-+ * Returns 1 if passed xattr value differs from current value, 0 otherwise.
-+ */
-+static int evm_xattr_change(struct user_namespace *mnt_userns,
-+			    struct dentry *dentry, const char *xattr_name,
-+			    const void *xattr_value, size_t xattr_value_len)
-+{
-+	char *xattr_data = NULL;
-+	int rc = 0;
-+
-+	if (posix_xattr_acl(xattr_name))
-+		return evm_xattr_acl_change(mnt_userns, dentry, xattr_name,
-+					    xattr_value, xattr_value_len);
-+
-+	rc = vfs_getxattr_alloc(&init_user_ns, dentry, xattr_name, &xattr_data,
-+				0, GFP_NOFS);
-+	if (rc < 0)
-+		return 1;
-+
-+	if (rc == xattr_value_len)
-+		rc = !!memcmp(xattr_value, xattr_data, rc);
-+	else
-+		rc = 1;
-+
-+	kfree(xattr_data);
-+	return rc;
-+}
-+
- /*
-  * evm_protect_xattr - protect the EVM extended attribute
-  *
-@@ -389,6 +474,11 @@ static int evm_protect_xattr(struct user_namespace *mnt_userns,
- 	if (evm_status == INTEGRITY_FAIL_IMMUTABLE)
- 		return 0;
- 
-+	if (evm_status == INTEGRITY_PASS_IMMUTABLE &&
-+	    !evm_xattr_change(mnt_userns, dentry, xattr_name, xattr_value,
-+			      xattr_value_len))
-+		return 0;
-+
- 	if (evm_status != INTEGRITY_PASS)
- 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
- 				    dentry->d_name.name, "appraise_metadata",
-@@ -532,6 +622,19 @@ void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
- 	evm_update_evmxattr(dentry, xattr_name, NULL, 0);
- }
- 
-+static int evm_attr_change(struct dentry *dentry, struct iattr *attr)
-+{
-+	struct inode *inode = d_backing_inode(dentry);
-+	unsigned int ia_valid = attr->ia_valid;
-+
-+	if ((!(ia_valid & ATTR_UID) || uid_eq(attr->ia_uid, inode->i_uid)) &&
-+	    (!(ia_valid & ATTR_GID) || gid_eq(attr->ia_gid, inode->i_gid)) &&
-+	    (!(ia_valid & ATTR_MODE) || attr->ia_mode == inode->i_mode))
-+		return 0;
-+
-+	return 1;
-+}
-+
- /**
-  * evm_inode_setattr - prevent updating an invalid EVM extended attribute
-  * @dentry: pointer to the affected dentry
-@@ -562,6 +665,11 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
- 	    (evm_status == INTEGRITY_FAIL_IMMUTABLE) ||
- 	    (evm_ignore_error_safe(evm_status)))
- 		return 0;
-+
-+	if (evm_status == INTEGRITY_PASS_IMMUTABLE &&
-+	    !evm_attr_change(dentry, attr))
-+		return 0;
-+
- 	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
- 			    dentry->d_name.name, "appraise_metadata",
- 			    integrity_status_msg[evm_status], -EPERM, 0);
--- 
-2.26.2
+		May want to fold into
+	proc-mandate-proc_lseek-in-struct-proc_ops.patch
 
+ tools/testing/selftests/proc/read.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/tools/testing/selftests/proc/read.c
++++ b/tools/testing/selftests/proc/read.c
+@@ -14,7 +14,7 @@
+  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+ // Test
+-// 1) read of every file in /proc
++// 1) read and lseek on every file in /proc
+ // 2) readlink of every symlink in /proc
+ // 3) recursively (1) + (2) for every directory in /proc
+ // 4) write to /proc/*/clear_refs and /proc/*/task/*/clear_refs
+@@ -45,6 +45,8 @@ static void f_reg(DIR *d, const char *filename)
+ 	fd = openat(dirfd(d), filename, O_RDONLY|O_NONBLOCK);
+ 	if (fd == -1)
+ 		return;
++	/* struct proc_ops::proc_lseek is mandatory if file is seekable. */
++	(void)lseek(fd, 0, SEEK_SET);
+ 	rv = read(fd, buf, sizeof(buf));
+ 	assert((0 <= rv && rv <= sizeof(buf)) || rv == -1);
+ 	close(fd);
