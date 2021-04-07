@@ -2,233 +2,304 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC84B356DF5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 15:57:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05F8D356E4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 16:16:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347948AbhDGN5o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Apr 2021 09:57:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37458 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1344205AbhDGN5o (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Apr 2021 09:57:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4138C6128D;
-        Wed,  7 Apr 2021 13:57:32 +0000 (UTC)
-Date:   Wed, 7 Apr 2021 15:57:29 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Bharata B Rao <bharata@linux.ibm.com>, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, aneesh.kumar@linux.ibm.com
-Subject: Re: High kmalloc-32 slab cache consumption with 10k containers
-Message-ID: <20210407135729.qgbj6shvmfuzo7r7@wittgenstein>
-References: <20210405054848.GA1077931@in.ibm.com>
- <20210406222807.GD1990290@dread.disaster.area>
+        id S1348181AbhDGORA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Apr 2021 10:17:00 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15949 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232885AbhDGORA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Apr 2021 10:17:00 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FFmcD75PdzrdJT;
+        Wed,  7 Apr 2021 22:14:36 +0800 (CST)
+Received: from [10.174.176.73] (10.174.176.73) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 7 Apr 2021 22:16:43 +0800
+Subject: Re: [PATCH] block: reexpand iov_iter after read/write
+To:     Pavel Begunkov <asml.silence@gmail.com>, <viro@zeniv.linux.org.uk>,
+        <axboe@kernel.dk>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <io-uring@vger.kernel.org>
+References: <20210401071807.3328235-1-yangerkun@huawei.com>
+ <3bd14a60-b259-377b-38d5-907780bc2416@huawei.com>
+ <a0bcd483-180d-7c8b-b0bf-a419606a6c7e@gmail.com>
+From:   yangerkun <yangerkun@huawei.com>
+Message-ID: <67a90ee7-e5ce-fdda-626d-12b5dc70e4a7@huawei.com>
+Date:   Wed, 7 Apr 2021 22:16:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <a0bcd483-180d-7c8b-b0bf-a419606a6c7e@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210406222807.GD1990290@dread.disaster.area>
+X-Originating-IP: [10.174.176.73]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 07, 2021 at 08:28:07AM +1000, Dave Chinner wrote:
-> On Mon, Apr 05, 2021 at 11:18:48AM +0530, Bharata B Rao wrote:
-> > Hi,
-> > 
-> > When running 10000 (more-or-less-empty-)containers on a bare-metal Power9
-> > server(160 CPUs, 2 NUMA nodes, 256G memory), it is seen that memory
-> > consumption increases quite a lot (around 172G) when the containers are
-> > running. Most of it comes from slab (149G) and within slab, the majority of
-> > it comes from kmalloc-32 cache (102G)
-> > 
-> > The major allocator of kmalloc-32 slab cache happens to be the list_head
-> > allocations of list_lru_one list. These lists are created whenever a
-> > FS mount happens. Specially two such lists are registered by alloc_super(),
-> > one for dentry and another for inode shrinker list. And these lists
-> > are created for all possible NUMA nodes and for all given memcgs
-> > (memcg_nr_cache_ids to be particular)
-> > 
-> > If,
-> > 
-> > A = Nr allocation request per mount: 2 (one for dentry and inode list)
-> > B = Nr NUMA possible nodes
-> > C = memcg_nr_cache_ids
-> > D = size of each kmalloc-32 object: 32 bytes,
-> > 
-> > then for every mount, the amount of memory consumed by kmalloc-32 slab
-> > cache for list_lru creation is A*B*C*D bytes.
-> > 
-> > Following factors contribute to the excessive allocations:
-> > 
-> > - Lists are created for possible NUMA nodes.
-> > - memcg_nr_cache_ids grows in bulk (see memcg_alloc_cache_id() and additional
-> >   list_lrus are created when it grows. Thus we end up creating list_lru_one
-> >   list_heads even for those memcgs which are yet to be created.
-> >   For example, when 10000 memcgs are created, memcg_nr_cache_ids reach
-> >   a value of 12286.
-> 
-> So, by your numbers, we have 2 * 2 * 12286 * 32 = 1.5MB per mount.
-> 
-> So for that to make up 100GB of RAM, you must have somewhere over
-> 500,000 mounted superblocks on the machine?
-> 
-> That implies 50+ unique mounted superblocks per container, which
-> seems like an awful lot.
-> 
-> > - When a memcg goes offline, the list elements are drained to the parent
-> >   memcg, but the list_head entry remains.
-> > - The lists are destroyed only when the FS is unmounted. So list_heads
-> >   for non-existing memcgs remain and continue to contribute to the
-> >   kmalloc-32 allocation. This is presumably done for performance
-> >   reason as they get reused when new memcgs are created, but they end up
-> >   consuming slab memory until then.
-> > - In case of containers, a few file systems get mounted and are specific
-> >   to the container namespace and hence to a particular memcg, but we
-> >   end up creating lists for all the memcgs.
-> >   As an example, if 7 FS mounts are done for every container and when
-> >   10k containers are created, we end up creating 2*7*12286 list_lru_one
-> >   lists for each NUMA node. It appears that no elements will get added
-> >   to other than 2*7=14 of them in the case of containers.
-> 
-> Yeah, at first glance this doesn't strike me as a problem with the
-> list_lru structure, it smells more like a problem resulting from a
-> huge number of superblock instantiations on the machine. Which,
-> probably, mostly have no significant need for anything other than a
-> single memcg awareness?
-> 
-> Can you post a typical /proc/self/mounts output from one of these
-> idle/empty containers so we can see exactly how many mounts and
-> their type are being instantiated in each container?
 
-Similar to Michal I wonder how much of that is really used in production
-environments. From our experience it really depends on the type of
-container we're talking about.
-For a regular app container that essentially serves as an application
-isolator the number of mounts could be fairly limited and essentially be
-restricted to:
 
-tmpfs
-devptfs
-sysfs
-[cgroupfs]
-and a few bind-mounts of standard devices such as
-/dev/null
-/dev/zero
-/dev/full
-.
-.
-.
-from the host's devtmpfs into the container.
+在 2021/4/6 19:04, Pavel Begunkov 写道:
+> On 06/04/2021 02:28, yangerkun wrote:
+>> Ping...
+> 
+> It wasn't forgotten, but wouln't have worked because of
+> other reasons. With these two already queued, that's a
+> different story.
+> 
+> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.12&id=07204f21577a1d882f0259590c3553fe6a476381
+> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.12&id=230d50d448acb6639991440913299e50cacf1daf
+> 
+> Can you re-confirm, that the bug is still there (should be)
+> and your patch fixes it?
 
-Then there are containers that behave like regular systems and are
-managed like regular systems and those might have quite a bit more. For
-example, here is the output of a regular unprivileged Fedora 33
-container I created out of the box:
+Hi,
 
-[root@f33 ~]# findmnt 
-TARGET                                SOURCE                                                                       FSTYPE      OPTIONS
-/                                     /dev/mapper/ubuntu--vg-ubuntu--lv[/var/lib/lxd/storage-pools/default/containers/f33/rootfs]
-│                                                                                                                  xfs         rw,relatime,attr2,inode64,logbufs=8,logbsize=32k,noquota
-├─/run                                tmpfs                                                                        tmpfs       rw,nosuid,nodev,size=3226884k,nr_inodes=819200,mode=755,uid=100000,gid=100000
-│ └─/run/user/0                       tmpfs                                                                        tmpfs       rw,nosuid,nodev,relatime,size=1613440k,nr_inodes=403360,mode=700,uid=100000,gid=100000
-├─/tmp                                tmpfs                                                                        tmpfs       rw,nosuid,nodev,nr_inodes=409600,uid=100000,gid=100000
-├─/dev                                none                                                                         tmpfs       rw,relatime,size=492k,mode=755,uid=100000,gid=100000
-│ ├─/dev/shm                          tmpfs                                                                        tmpfs       rw,nosuid,nodev,uid=100000,gid=100000
-│ ├─/dev/fuse                         udev[/fuse]                                                                  devtmpfs    rw,nosuid,noexec,relatime,size=8019708k,nr_inodes=2004927,mode=755
-│ ├─/dev/net/tun                      udev[/net/tun]                                                               devtmpfs    rw,nosuid,noexec,relatime,size=8019708k,nr_inodes=2004927,mode=755
-│ ├─/dev/mqueue                       mqueue                                                                       mqueue      rw,nosuid,nodev,noexec,relatime
-│ ├─/dev/lxd                          tmpfs                                                                        tmpfs       rw,relatime,size=100k,mode=755
-│ ├─/dev/.lxd-mounts                  tmpfs[/f33]                                                                  tmpfs       rw,relatime,size=100k,mode=711
-│ ├─/dev/full                         udev[/full]                                                                  devtmpfs    rw,nosuid,noexec,relatime,size=8019708k,nr_inodes=2004927,mode=755
-│ ├─/dev/null                         udev[/null]                                                                  devtmpfs    rw,nosuid,noexec,relatime,size=8019708k,nr_inodes=2004927,mode=755
-│ ├─/dev/random                       udev[/random]                                                                devtmpfs    rw,nosuid,noexec,relatime,size=8019708k,nr_inodes=2004927,mode=755
-│ ├─/dev/tty                          udev[/tty]                                                                   devtmpfs    rw,nosuid,noexec,relatime,size=8019708k,nr_inodes=2004927,mode=755
-│ ├─/dev/urandom                      udev[/urandom]                                                               devtmpfs    rw,nosuid,noexec,relatime,size=8019708k,nr_inodes=2004927,mode=755
-│ ├─/dev/zero                         udev[/zero]                                                                  devtmpfs    rw,nosuid,noexec,relatime,size=8019708k,nr_inodes=2004927,mode=755
-│ ├─/dev/console                      devpts[/40]                                                                  devpts      rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000
-│ ├─/dev/pts                          devpts                                                                       devpts      rw,nosuid,noexec,relatime,gid=100005,mode=620,ptmxmode=666,max=1024
-│ └─/dev/ptmx                         devpts[/ptmx]                                                                devpts      rw,nosuid,noexec,relatime,gid=100005,mode=620,ptmxmode=666,max=1024
-├─/proc                               proc                                                                         proc        rw,nosuid,nodev,noexec,relatime
-│ ├─/proc/sys/fs/binfmt_misc          binfmt_misc                                                                  binfmt_misc rw,nosuid,nodev,noexec,relatime
-│ └─/proc/sys/kernel/random/boot_id   none[/.lxc-boot-id]                                                          tmpfs       ro,nosuid,nodev,noexec,relatime,size=492k,mode=755,uid=100000,gid=100000
-└─/sys                                sysfs                                                                        sysfs       rw,relatime
-  ├─/sys/fs/cgroup                    tmpfs                                                                        tmpfs       ro,nosuid,nodev,noexec,size=4096k,nr_inodes=1024,mode=755,uid=100000,gid=100000
-  │ ├─/sys/fs/cgroup/unified          cgroup2                                                                      cgroup2     rw,nosuid,nodev,noexec,relatime
-  │ ├─/sys/fs/cgroup/systemd          cgroup                                                                       cgroup      rw,nosuid,nodev,noexec,relatime,xattr,name=systemd
-  │ ├─/sys/fs/cgroup/net_cls,net_prio cgroup                                                                       cgroup      rw,nosuid,nodev,noexec,relatime,net_cls,net_prio
-  │ ├─/sys/fs/cgroup/hugetlb          cgroup                                                                       cgroup      rw,nosuid,nodev,noexec,relatime,hugetlb
-  │ ├─/sys/fs/cgroup/cpu,cpuacct      cgroup                                                                       cgroup      rw,nosuid,nodev,noexec,relatime,cpu,cpuacct
-  │ ├─/sys/fs/cgroup/blkio            cgroup                                                                       cgroup      rw,nosuid,nodev,noexec,relatime,blkio
-  │ ├─/sys/fs/cgroup/cpuset           cgroup                                                                       cgroup      rw,nosuid,nodev,noexec,relatime,cpuset,clone_children
-  │ ├─/sys/fs/cgroup/memory           cgroup                                                                       cgroup      rw,nosuid,nodev,noexec,relatime,memory
-  │ ├─/sys/fs/cgroup/devices          cgroup                                                                       cgroup      rw,nosuid,nodev,noexec,relatime,devices
-  │ ├─/sys/fs/cgroup/perf_event       cgroup                                                                       cgroup      rw,nosuid,nodev,noexec,relatime,perf_event
-  │ ├─/sys/fs/cgroup/freezer          cgroup                                                                       cgroup      rw,nosuid,nodev,noexec,relatime,freezer
-  │ ├─/sys/fs/cgroup/pids             cgroup                                                                       cgroup      rw,nosuid,nodev,noexec,relatime,pids
-  │ └─/sys/fs/cgroup/rdma             cgroup                                                                       cgroup      rw,nosuid,nodev,noexec,relatime,rdma
-  ├─/sys/firmware/efi/efivars         efivarfs                                                                     efivarfs    rw,nosuid,nodev,noexec,relatime
-  ├─/sys/fs/fuse/connections          fusectl                                                                      fusectl     rw,nosuid,nodev,noexec,relatime
-  ├─/sys/fs/pstore                    pstore                                                                       pstore      rw,nosuid,nodev,noexec,relatime
-  ├─/sys/kernel/config                configfs                                                                     configfs    rw,nosuid,nodev,noexec,relatime
-  ├─/sys/kernel/debug                 debugfs                                                                      debugfs     rw,nosuid,nodev,noexec,relatime
-  ├─/sys/kernel/security              securityfs                                                                   securityfs  rw,nosuid,nodev,noexec,relatime
-  ├─/sys/kernel/tracing               tracefs                                                                      tracefs     rw,nosuid,nodev,noexec,relatime
+This problem still exists in mainline (2d743660786e Merge branch 'fixes' 
+of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs), and this 
+patch will fix it.
 
-People that use those tend to also run systemd services in there and
-newer systemd has a range of service isolation features that may also
-create quite a few mounts. Those will again mostly be pseudo filesystems
-(A service might have private proc, tmp etc.) and bind-mounts. The
-number of actual separate superblocks for "real" filesystem such as xfs,
-ext4 per container is usually quite low. (For one, most of them can't
-even be mounted in a user namespace.). From experience it's rare to see
-workloads that exceed 500 containers (of this type at least) on a single
-machine. At least on x86_64 we have not yet had issues with memory
-consumption.
+The io_read for loop will return -EAGAIN. This will lead a 
+iov_iter_revert in io_read. Once we truncate iov_iter in 
+blkdev_read_iter, we will see this bug...
 
-We do run stress tests with thousands of such system containers. They
-tend to boot busybox, not e.g. Fedora or Debian or Ubuntu and that
-hasn't pushed us over the edge yet.
+
+[  181.204371][ T4241] loop0: detected capacity change from 0 to 232 
+
+[  181.253683][ T4241] 
+==================================================================
+[  181.255313][ T4241] BUG: KASAN: slab-out-of-bounds in 
+iov_iter_revert+0xd0/0x3e0
+[  181.256723][ T4241] Read of size 8 at addr ffff0000cfbc8ff8 by task 
+a.out/4241
+[  181.257776][ T4241] 
+
+[  181.258749][ T4241] CPU: 5 PID: 4241 Comm: a.out Not tainted 
+5.12.0-rc6-00006-g2d743660786e
+#1 
+
+[  181.260149][ T4241] Hardware name: linux,dummy-virt (DT) 
+
+[  181.261468][ T4241] Call trace: 
+
+[  181.262052][ T4241]  dump_backtrace+0x0/0x348 
+
+[  181.263139][ T4241]  show_stack+0x28/0x38 
+
+[  181.264234][ T4241]  dump_stack+0x134/0x1a4 
+
+[  181.265175][ T4241]  print_address_description.constprop.0+0x68/0x304 
+
+[  181.266430][ T4241]  kasan_report+0x1d0/0x238 
+
+[  181.267308][ T4241]  __asan_load8+0x88/0xc0 
+
+[  181.268317][ T4241]  iov_iter_revert+0xd0/0x3e0 
+
+[  181.269251][ T4241]  io_read+0x310/0x5c0 
+
+[  181.270208][ T4241]  io_issue_sqe+0x3fc/0x25d8 
+
+[  181.271134][ T4241]  __io_queue_sqe+0xf8/0x480 
+
+[  181.272142][ T4241]  io_queue_sqe+0x3a4/0x4c8 
+
+[  181.273053][ T4241]  io_submit_sqes+0xd9c/0x22d0 
+
+[  181.274375][ T4241]  __arm64_sys_io_uring_enter+0x3d0/0xce0 
+
+[  181.275554][ T4241]  do_el0_svc+0xc4/0x228 
+
+[  181.276411][ T4241]  el0_svc+0x24/0x30 
+
+[  181.277323][ T4241]  el0_sync_handler+0x158/0x160 
+
+[  181.278241][ T4241]  el0_sync+0x13c/0x140 
+
+[  181.279287][ T4241] 
+
+[  181.279820][ T4241] Allocated by task 4241: 
+
+[  181.280699][ T4241]  kasan_save_stack+0x24/0x50 
+
+[  181.281626][ T4241]  __kasan_kmalloc+0x84/0xa8 
+
+[  181.282578][ T4241]  io_wq_create+0x94/0x668 
+
+[  181.283469][ T4241]  io_uring_alloc_task_context+0x164/0x368 
+
+[  181.284748][ T4241]  io_uring_add_task_file+0x1b0/0x208 
+
+[  181.285865][ T4241]  io_uring_setup+0xaac/0x12a0 
+
+[  181.286823][ T4241]  __arm64_sys_io_uring_setup+0x34/0x40 
+
+[  181.287957][ T4241]  do_el0_svc+0xc4/0x228 
+
+[  181.288906][ T4241]  el0_svc+0x24/0x30 
+
+[  181.289816][ T4241]  el0_sync_handler+0x158/0x160 
+
+[  181.290751][ T4241]  el0_sync+0x13c/0x140 
+
+[  181.291697][ T4241] 
+
 
 > 
-> > One straight forward way to prevent this excessive list_lru_one
-> > allocations is to limit the list_lru_one creation only to the
-> > relevant memcg. However I don't see an easy way to figure out
-> > that relevant memcg from FS mount path (alloc_super())
+>>
+>> 在 2021/4/1 15:18, yangerkun 写道:
+>>> We get a bug:
+>>>
+>>> BUG: KASAN: slab-out-of-bounds in iov_iter_revert+0x11c/0x404
+>>> lib/iov_iter.c:1139
+>>> Read of size 8 at addr ffff0000d3fb11f8 by task
+>>>
+>>> CPU: 0 PID: 12582 Comm: syz-executor.2 Not tainted
+>>> 5.10.0-00843-g352c8610ccd2 #2
+>>> Hardware name: linux,dummy-virt (DT)
+>>> Call trace:
+>>>    dump_backtrace+0x0/0x2d0 arch/arm64/kernel/stacktrace.c:132
+>>>    show_stack+0x28/0x34 arch/arm64/kernel/stacktrace.c:196
+>>>    __dump_stack lib/dump_stack.c:77 [inline]
+>>>    dump_stack+0x110/0x164 lib/dump_stack.c:118
+>>>    print_address_description+0x78/0x5c8 mm/kasan/report.c:385
+>>>    __kasan_report mm/kasan/report.c:545 [inline]
+>>>    kasan_report+0x148/0x1e4 mm/kasan/report.c:562
+>>>    check_memory_region_inline mm/kasan/generic.c:183 [inline]
+>>>    __asan_load8+0xb4/0xbc mm/kasan/generic.c:252
+>>>    iov_iter_revert+0x11c/0x404 lib/iov_iter.c:1139
+>>>    io_read fs/io_uring.c:3421 [inline]
+>>>    io_issue_sqe+0x2344/0x2d64 fs/io_uring.c:5943
+>>>    __io_queue_sqe+0x19c/0x520 fs/io_uring.c:6260
+>>>    io_queue_sqe+0x2a4/0x590 fs/io_uring.c:6326
+>>>    io_submit_sqe fs/io_uring.c:6395 [inline]
+>>>    io_submit_sqes+0x4c0/0xa04 fs/io_uring.c:6624
+>>>    __do_sys_io_uring_enter fs/io_uring.c:9013 [inline]
+>>>    __se_sys_io_uring_enter fs/io_uring.c:8960 [inline]
+>>>    __arm64_sys_io_uring_enter+0x190/0x708 fs/io_uring.c:8960
+>>>    __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
+>>>    invoke_syscall arch/arm64/kernel/syscall.c:48 [inline]
+>>>    el0_svc_common arch/arm64/kernel/syscall.c:158 [inline]
+>>>    do_el0_svc+0x120/0x290 arch/arm64/kernel/syscall.c:227
+>>>    el0_svc+0x1c/0x28 arch/arm64/kernel/entry-common.c:367
+>>>    el0_sync_handler+0x98/0x170 arch/arm64/kernel/entry-common.c:383
+>>>    el0_sync+0x140/0x180 arch/arm64/kernel/entry.S:670
+>>>
+>>> Allocated by task 12570:
+>>>    stack_trace_save+0x80/0xb8 kernel/stacktrace.c:121
+>>>    kasan_save_stack mm/kasan/common.c:48 [inline]
+>>>    kasan_set_track mm/kasan/common.c:56 [inline]
+>>>    __kasan_kmalloc+0xdc/0x120 mm/kasan/common.c:461
+>>>    kasan_kmalloc+0xc/0x14 mm/kasan/common.c:475
+>>>    __kmalloc+0x23c/0x334 mm/slub.c:3970
+>>>    kmalloc include/linux/slab.h:557 [inline]
+>>>    __io_alloc_async_data+0x68/0x9c fs/io_uring.c:3210
+>>>    io_setup_async_rw fs/io_uring.c:3229 [inline]
+>>>    io_read fs/io_uring.c:3436 [inline]
+>>>    io_issue_sqe+0x2954/0x2d64 fs/io_uring.c:5943
+>>>    __io_queue_sqe+0x19c/0x520 fs/io_uring.c:6260
+>>>    io_queue_sqe+0x2a4/0x590 fs/io_uring.c:6326
+>>>    io_submit_sqe fs/io_uring.c:6395 [inline]
+>>>    io_submit_sqes+0x4c0/0xa04 fs/io_uring.c:6624
+>>>    __do_sys_io_uring_enter fs/io_uring.c:9013 [inline]
+>>>    __se_sys_io_uring_enter fs/io_uring.c:8960 [inline]
+>>>    __arm64_sys_io_uring_enter+0x190/0x708 fs/io_uring.c:8960
+>>>    __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
+>>>    invoke_syscall arch/arm64/kernel/syscall.c:48 [inline]
+>>>    el0_svc_common arch/arm64/kernel/syscall.c:158 [inline]
+>>>    do_el0_svc+0x120/0x290 arch/arm64/kernel/syscall.c:227
+>>>    el0_svc+0x1c/0x28 arch/arm64/kernel/entry-common.c:367
+>>>    el0_sync_handler+0x98/0x170 arch/arm64/kernel/entry-common.c:383
+>>>    el0_sync+0x140/0x180 arch/arm64/kernel/entry.S:670
+>>>
+>>> Freed by task 12570:
+>>>    stack_trace_save+0x80/0xb8 kernel/stacktrace.c:121
+>>>    kasan_save_stack mm/kasan/common.c:48 [inline]
+>>>    kasan_set_track+0x38/0x6c mm/kasan/common.c:56
+>>>    kasan_set_free_info+0x20/0x40 mm/kasan/generic.c:355
+>>>    __kasan_slab_free+0x124/0x150 mm/kasan/common.c:422
+>>>    kasan_slab_free+0x10/0x1c mm/kasan/common.c:431
+>>>    slab_free_hook mm/slub.c:1544 [inline]
+>>>    slab_free_freelist_hook mm/slub.c:1577 [inline]
+>>>    slab_free mm/slub.c:3142 [inline]
+>>>    kfree+0x104/0x38c mm/slub.c:4124
+>>>    io_dismantle_req fs/io_uring.c:1855 [inline]
+>>>    __io_free_req+0x70/0x254 fs/io_uring.c:1867
+>>>    io_put_req_find_next fs/io_uring.c:2173 [inline]
+>>>    __io_queue_sqe+0x1fc/0x520 fs/io_uring.c:6279
+>>>    __io_req_task_submit+0x154/0x21c fs/io_uring.c:2051
+>>>    io_req_task_submit+0x2c/0x44 fs/io_uring.c:2063
+>>>    task_work_run+0xdc/0x128 kernel/task_work.c:151
+>>>    get_signal+0x6f8/0x980 kernel/signal.c:2562
+>>>    do_signal+0x108/0x3a4 arch/arm64/kernel/signal.c:658
+>>>    do_notify_resume+0xbc/0x25c arch/arm64/kernel/signal.c:722
+>>>    work_pending+0xc/0x180
+>>>
+>>> blkdev_read_iter can truncate iov_iter's count since the count + pos may
+>>> exceed the size of the blkdev. This will confuse io_read that we have
+>>> consume the iovec. And once we do the iov_iter_revert in io_read, we
+>>> will trigger the slab-out-of-bounds. Fix it by reexpand the count with
+>>> size has been truncated.
+>>>
+>>> blkdev_write_iter can trigger the problem too.
+>>>
+>>> Signed-off-by: yangerkun <yangerkun@huawei.com>
+>>> ---
+>>>    fs/block_dev.c | 20 +++++++++++++++++---
+>>>    1 file changed, 17 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/fs/block_dev.c b/fs/block_dev.c
+>>> index 92ed7d5df677..788e1014576f 100644
+>>> --- a/fs/block_dev.c
+>>> +++ b/fs/block_dev.c
+>>> @@ -1680,6 +1680,7 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>>>        struct inode *bd_inode = bdev_file_inode(file);
+>>>        loff_t size = i_size_read(bd_inode);
+>>>        struct blk_plug plug;
+>>> +    size_t shorted = 0;
+>>>        ssize_t ret;
+>>>          if (bdev_read_only(I_BDEV(bd_inode)))
+>>> @@ -1697,12 +1698,17 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>>>        if ((iocb->ki_flags & (IOCB_NOWAIT | IOCB_DIRECT)) == IOCB_NOWAIT)
+>>>            return -EOPNOTSUPP;
+>>>    -    iov_iter_truncate(from, size - iocb->ki_pos);
+>>> +    size -= iocb->ki_pos;
+>>> +    if (iov_iter_count(from) > size) {
+>>> +        shorted = iov_iter_count(from) - size;
+>>> +        iov_iter_truncate(from, size);
+>>> +    }
+>>>          blk_start_plug(&plug);
+>>>        ret = __generic_file_write_iter(iocb, from);
+>>>        if (ret > 0)
+>>>            ret = generic_write_sync(iocb, ret);
+>>> +    iov_iter_reexpand(from, iov_iter_count(from) + shorted);
+>>>        blk_finish_plug(&plug);
+>>>        return ret;
+>>>    }
+>>> @@ -1714,13 +1720,21 @@ ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>>        struct inode *bd_inode = bdev_file_inode(file);
+>>>        loff_t size = i_size_read(bd_inode);
+>>>        loff_t pos = iocb->ki_pos;
+>>> +    size_t shorted = 0;
+>>> +    ssize_t ret;
+>>>          if (pos >= size)
+>>>            return 0;
+>>>          size -= pos;
+>>> -    iov_iter_truncate(to, size);
+>>> -    return generic_file_read_iter(iocb, to);
+>>> +    if (iov_iter_count(to) > size) {
+>>> +        shorted = iov_iter_count(to) - size;
+>>> +        iov_iter_truncate(to, size);
+>>> +    }
+>>> +
+>>> +    ret = generic_file_read_iter(iocb, to);
+>>> +    iov_iter_reexpand(to, iov_iter_count(to) + shorted);
+>>> +    return ret;
+>>>    }
+>>>    EXPORT_SYMBOL_GPL(blkdev_read_iter);
+>>>   
 > 
-> Superblocks have to support an unknown number of memcgs after they
-> have been mounted. bind mounts, child memcgs, etc, all mean that we
-> can't just have a static, single mount time memcg instantiation.
-> 
-> > As an alternative approach, I have this below hack that does lazy
-> > list_lru creation. The memcg-specific list is created and initialized
-> > only when there is a request to add an element to that particular
-> > list. Though I am not sure about the full impact of this change
-> > on the owners of the lists and also the performance impact of this,
-> > the overall savings look good.
-> 
-> Avoiding memory allocation in list_lru_add() was one of the main
-> reasons for up-front static allocation of memcg lists. We cannot do
-> memory allocation while callers are holding multiple spinlocks in
-> core system algorithms (e.g. dentry_kill -> retain_dentry ->
-> d_lru_add -> list_lru_add), let alone while holding an internal
-> spinlock.
-> 
-> Putting a GFP_ATOMIC allocation inside 3-4 nested spinlocks in a
-> path we know might have memory demand in the *hundreds of GB* range
-> gets an NACK from me. It's a great idea, but it's just not a
-> feasible, robust solution as proposed. Work out how to put the
-> memory allocation outside all the locks (including caller locks) and
-> it might be ok, but that's messy.
-> 
-> Another approach may be to identify filesystem types that do not
-> need memcg awareness and feed that into alloc_super() to set/clear
-> the SHRINKER_MEMCG_AWARE flag. This could be based on fstype - most
-> virtual filesystems that expose system information do not really
-
-I think that might already help quite a bit as those tend to make up
-most of the mounts and even unprivileged containers can create new
-instances of such mounts and will do so when they e.g. run systemd and
-thus also systemd services.
-
-Christian
