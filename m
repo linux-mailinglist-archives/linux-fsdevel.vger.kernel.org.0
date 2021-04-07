@@ -2,126 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 713003563FF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 08:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3564935654D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Apr 2021 09:34:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345757AbhDGGdA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Apr 2021 02:33:00 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:15974 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1345707AbhDGGc5 (ORCPT
+        id S1349449AbhDGHeL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Apr 2021 03:34:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40704 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1349438AbhDGHeK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Apr 2021 02:32:57 -0400
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AuPhIqq/2r5rmj5npc+luk+A4I+orLtY04lQ7?=
- =?us-ascii?q?vn1ZYxpTb8CeioSSjO0WvCWE7Ao5dVMBvZS7OKeGSW7B7pId2+QsFJqrQQWOgg?=
- =?us-ascii?q?WVBa5v4YboyzfjXw3Sn9Q26Y5OaK57YeeQMXFfreLXpDa1CMwhxt7vytHMuc77?=
- =?us-ascii?q?w212RQ9nL4FMhj0JaTqzKUF9SAlYCZdRLvP1ifZvnSaqengcc62Adxs4dtXEzu?=
- =?us-ascii?q?eqqLvWJTYCBzMCrDKFlC6U7tfBeCSw71MzVCxuzN4ZnVT4rw=3D=3D?=
-X-IronPort-AV: E=Sophos;i="5.82,201,1613404800"; 
-   d="scan'208";a="106725748"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 07 Apr 2021 14:32:46 +0800
-Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
-        by cn.fujitsu.com (Postfix) with ESMTP id 1FA064D0B8A5;
-        Wed,  7 Apr 2021 14:32:41 +0800 (CST)
-Received: from G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) by
- G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Wed, 7 Apr 2021 14:32:30 +0800
-Received: from G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) by
- G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Wed, 7 Apr 2021 14:32:29 +0800
-Received: from irides.mr.mr.mr (10.167.225.141) by
- G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.2 via Frontend Transport; Wed, 7 Apr 2021 14:32:29 +0800
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-fsdevel@vger.kernel.org>
-CC:     <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
-        <willy@infradead.org>, <jack@suse.cz>, <viro@zeniv.linux.org.uk>,
-        <linux-btrfs@vger.kernel.org>, <david@fromorbit.com>, <hch@lst.de>,
-        <rgoldwyn@suse.de>, Ritesh Harjani <riteshh@gmail.com>
-Subject: [PATCH 3/3] fsdax: Output address in dax_iomap_pfn() and rename it
-Date:   Wed, 7 Apr 2021 14:32:07 +0800
-Message-ID: <20210407063207.676753-4-ruansy.fnst@fujitsu.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20210407063207.676753-1-ruansy.fnst@fujitsu.com>
-References: <20210407063207.676753-1-ruansy.fnst@fujitsu.com>
+        Wed, 7 Apr 2021 03:34:10 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49350C06174A;
+        Wed,  7 Apr 2021 00:34:01 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id i4so376058pjk.1;
+        Wed, 07 Apr 2021 00:34:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QvZSBrH1kmgxKZKSD+pBe7YtJvXFi8yG9kfTKSmsc5Q=;
+        b=O2cXbe0TlOnka3Htg7a7ktCEm4u84Apnd4pxAh+QckwGH1N5XUJxAQXGojK8urTwHW
+         S6qKShLuqQpXW7czN7NSppj8uMSG1ILItUs2jRqW9KCOM0ewsGPs471AJdd9fQwkregx
+         5WJsKLnvvgP9H/rO+GMThc5QqAWIM6vJUjUihrVpN1qBZ1PZrQQurpb3jy0hrvC8q/ga
+         193Hbzqy2uMvrG2DBivJBITDOAFTPHgkYrA0xxTN2O5/SDYNzxk8E+F9Ofv4wPxpKtYd
+         OpyTo6+F49K8x0yWEkTWuqKF3gTonWd9jxsyeBFNYymfsKPd0N1ZAJ/ruwq0yRVkpYX5
+         /xXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QvZSBrH1kmgxKZKSD+pBe7YtJvXFi8yG9kfTKSmsc5Q=;
+        b=It3wmurtf3RzDQg5MbvIKfnNC72Wd9j3tdITngALofG7LqQTLW3OPQCtldNm0o7pfN
+         vv6qrC6BmiLflb9Y2jK8e1Tw6F6dvD6Xtb2GLk/VBPQZo76gtaVLMk8/Yl2jhR8i6JcA
+         Yupq8wnJ6MywTGqAe85FUj/riByuVr+xU4sH55ollKcjkNzKPONlw1OXXv0+pfnZ2iC2
+         vhTPcgreszCN1xGhxtPRCzfUXcUfC6yICtfAitgkGF4+T+HOwb0A9NPf9jbPalcw5SCj
+         hwv8xozO9qPdI7UeUMOvT7Jsv5e7gCF+8/NTzxcHKIkXX8YPoAEAwcMxFwWYOag9Fc3j
+         bU+g==
+X-Gm-Message-State: AOAM533NK4KGWEkiEc1OC1RcdlQTGg5Jw8Cdq/K5BEQAMNOaF47mYdvu
+        hJWvWJ4hVxY88VhiaFfAIAWd6OrjgZ86cPhgha0=
+X-Google-Smtp-Source: ABdhPJyRMoGPnuz4MO0FmGOHIM1XSyhsQpJQrKhPLw79y8VziNPPVSJYtRew3BRLtYZwwl4H1BLduTLJZdkCaUCy8qY=
+X-Received: by 2002:a17:902:a406:b029:e6:78c4:71c8 with SMTP id
+ p6-20020a170902a406b02900e678c471c8mr1880447plq.17.1617780840716; Wed, 07 Apr
+ 2021 00:34:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 1FA064D0B8A5.A1FAE
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
-X-Spam-Status: No
+References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com> <20210406165108.GA4332@42.do-not-panic.com>
+In-Reply-To: <20210406165108.GA4332@42.do-not-panic.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 7 Apr 2021 10:33:44 +0300
+Message-ID: <CAHp75Ve9vBQqSegM2-ch9NUN-MdevxxOs5ZdHkk1W7AacN+Wrw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] kernel.h: Split out panic and oops helpers
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Joerg Roedel <jroedel@suse.de>, Wei Liu <wei.liu@kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Corey Minyard <cminyard@mvista.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
+        <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
+        openipmi-developer@lists.sourceforge.net,
+        linux-remoteproc@vger.kernel.org,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        kexec@lists.infradead.org, rcu@vger.kernel.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Corey Minyard <minyard@acm.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add address output in dax_iomap_pfn() in order to perform a memcpy() in
-CoW case.  Since this function both output address and pfn, rename it to
-dax_iomap_direct_access().
+On Wed, Apr 7, 2021 at 10:25 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Tue, Apr 06, 2021 at 04:31:58PM +0300, Andy Shevchenko wrote:
+> > diff --git a/include/linux/panic_notifier.h b/include/linux/panic_notifier.h
+> > new file mode 100644
+> > index 000000000000..41e32483d7a7
+> > --- /dev/null
+> > +++ b/include/linux/panic_notifier.h
+> > @@ -0,0 +1,12 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +#ifndef _LINUX_PANIC_NOTIFIERS_H
+> > +#define _LINUX_PANIC_NOTIFIERS_H
+> > +
+> > +#include <linux/notifier.h>
+> > +#include <linux/types.h>
+> > +
+> > +extern struct atomic_notifier_head panic_notifier_list;
+> > +
+> > +extern bool crash_kexec_post_notifiers;
+> > +
+> > +#endif       /* _LINUX_PANIC_NOTIFIERS_H */
+>
+> Why is it worth it to add another file just for this?
 
-Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Ritesh Harjani <riteshh@gmail.com>
----
- fs/dax.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+The main point is to break tons of loops that prevent having clean
+headers anymore.
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 19fa22ab50fa..ec66207a3199 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -998,8 +998,8 @@ static sector_t dax_iomap_sector(struct iomap *iomap, loff_t pos)
- 	return (iomap->addr + (pos & PAGE_MASK) - iomap->offset) >> 9;
- }
- 
--static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
--			 pfn_t *pfnp)
-+static int dax_iomap_direct_access(struct iomap *iomap, loff_t pos, size_t size,
-+		void **kaddr, pfn_t *pfnp)
- {
- 	const sector_t sector = dax_iomap_sector(iomap, pos);
- 	pgoff_t pgoff;
-@@ -1011,11 +1011,13 @@ static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
- 		return rc;
- 	id = dax_read_lock();
- 	length = dax_direct_access(iomap->dax_dev, pgoff, PHYS_PFN(size),
--				   NULL, pfnp);
-+				   kaddr, pfnp);
- 	if (length < 0) {
- 		rc = length;
- 		goto out;
- 	}
-+	if (!pfnp)
-+		goto out_check_addr;
- 	rc = -EINVAL;
- 	if (PFN_PHYS(length) < size)
- 		goto out;
-@@ -1025,6 +1027,12 @@ static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
- 	if (length > 1 && !pfn_t_devmap(*pfnp))
- 		goto out;
- 	rc = 0;
-+
-+out_check_addr:
-+	if (!kaddr)
-+		goto out;
-+	if (!*kaddr)
-+		rc = -EFAULT;
- out:
- 	dax_read_unlock(id);
- 	return rc;
-@@ -1388,7 +1396,7 @@ static vm_fault_t dax_fault_actor(struct vm_fault *vmf, pfn_t *pfnp,
- 		return pmd ? VM_FAULT_FALLBACK : VM_FAULT_SIGBUS;
- 	}
- 
--	err = dax_iomap_pfn(iomap, pos, size, &pfn);
-+	err = dax_iomap_direct_access(iomap, pos, size, NULL, &pfn);
- 	if (err)
- 		return pmd ? VM_FAULT_FALLBACK : dax_fault_return(err);
- 
+In this case, see bug.h, which is very important in this sense.
+
+>  Seems like a very
+> small file.
+
+If it is an argument, it's kinda strange. We have much smaller headers.
+
 -- 
-2.31.0
-
-
-
+With Best Regards,
+Andy Shevchenko
