@@ -2,127 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E981358132
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 12:57:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BF7D35826D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 13:45:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229721AbhDHK5m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 06:57:42 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54346 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229640AbhDHK5h (ORCPT
+        id S231526AbhDHLpK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 07:45:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43886 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231341AbhDHLpK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 06:57:37 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 138AYKLh095072;
-        Thu, 8 Apr 2021 06:57:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=pp1; bh=1JvBFbXy1nAaQYFqmVrjybnlj0o+45Pq/1RhO7aPzqs=;
- b=A1+pJuBXDh9fN1jBTfcp2NxcYSspyH6NKvSLXc3q1RbklDSml++o1PBQN41z72gbf6nM
- TuCxy4NUzuPS9EaOVkiJUnmfKrvuKONdM+SCx5mFRI1QigulEN7P7XY30h/97Alr3IWi
- ZeL23TRSsq328SjLc5f/tgYvLatM4ZvJAHNi6YRUybaEhkqsRrQsgl8j5LuHoNUTEH1W
- 6DnBmAv0CMu0lMIWzFOEEYHRVFTpkubWoAgRxnHbkIrDyXHlxu0l5BvskZuYQfuSSLZ6
- K1oPyOb1gVjJTzTfQzgAOVkFt3Hg/ZLYFbC3wxK3GVC5bui9UGhXEXLqtXCO8OcVGxQS Fw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 37rw088fvq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 08 Apr 2021 06:57:11 -0400
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 138AmXrv161851;
-        Thu, 8 Apr 2021 06:57:11 -0400
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 37rw088fuw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 08 Apr 2021 06:57:11 -0400
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 138AmKEH023805;
-        Thu, 8 Apr 2021 10:57:09 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma04fra.de.ibm.com with ESMTP id 37rvc5gt87-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 08 Apr 2021 10:57:09 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 138Auki536307416
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 8 Apr 2021 10:56:46 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3530EAE051;
-        Thu,  8 Apr 2021 10:57:07 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D6505AE045;
-        Thu,  8 Apr 2021 10:57:06 +0000 (GMT)
-Received: from localhost (unknown [9.85.70.102])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  8 Apr 2021 10:57:06 +0000 (GMT)
-Date:   Thu, 8 Apr 2021 16:27:05 +0530
-From:   riteshh <riteshh@linux.ibm.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
-        Brendan Gregg <bgregg@netflix.com>
-Subject: Re: [PATCH 0/3] readahead improvements
-Message-ID: <20210408105705.exod2cvtvnr4467o@riteshh-domain>
-References: <20210407201857.3582797-1-willy@infradead.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210407201857.3582797-1-willy@infradead.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 6gJR7__kIDqB--F8SI89lnUVnUbFklX2
-X-Proofpoint-GUID: ykjPFvtqJT8-Fe_s7V45sfU35xtzCI8c
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Thu, 8 Apr 2021 07:45:10 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2266CC061760;
+        Thu,  8 Apr 2021 04:44:59 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id x17so1894028iog.2;
+        Thu, 08 Apr 2021 04:44:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pBcMG+dV/7+95vKcKuoiPYoSG5DzpuFNtQO+n2Bns/o=;
+        b=Qi1bT/IWDxI6zA/zoXi9Z9DnSpM4KJghPeUlP1IryoDhXaHlMDtiyw+YsgI0A31evm
+         W7FON9oyIubLuBD3rMLudaIe48zVHfHNMIjZIjLVyLzYEqDGflM49BSZvszsIeaImBON
+         FkWrEpnLEQaMaHrpYQuHs6IZsb/9q57uVu8B3/TWmrdFX7dFJqlDfueexlVP8X+P9xed
+         RgUy7wx+m0QGYld0LuVwVJpORmhca/MeGgJG4deW4uKT17wTQLskSfdxK8lwNEbYGdGt
+         M+AY72v6wm3BawvP6X7vV0VQuctfZmJHoUX1NCn/hrh/imZClCM8ZIHJd1koJY6hswr/
+         +3bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pBcMG+dV/7+95vKcKuoiPYoSG5DzpuFNtQO+n2Bns/o=;
+        b=GScEnzBKShtOJ/evxLGBCTUv0+iFqzc7JzlyLWSqaLGXoeaoZ8C0ICcPl6r0Q2TOns
+         oWYGcre7TT2WQW9FRd2ZYC4dLDfWLhiVUuZxhaR+EGAvKFqtpd/RkhchL63HZe+L3wDP
+         OpFNKBmEZjHyXv2KjCtnOMNc2nAv6d4vn1KyAi1oUkEdI91vnwy0AY9YHFKAVq6Ib/1N
+         bTNVXAsbxfAGav/dsNVE0TVSehMD2Z6xGYD47XRai3RBXGLhWsxYHZatO79MmMbguqp6
+         9NSS2TzFfscosjbd+Jgjr9LQaeUnXYuT2uAOBkx9vPJmEcrq9pZzL4ZUwK2ajuDUaIrL
+         2yew==
+X-Gm-Message-State: AOAM530UZZbolC6ui9Z58A47P9NCGAcPxKyCNBqCHFLPLfJVvNIhwATy
+        r8G15OOSz4gPUI9KuskHhSCpUS+ejdKbiupGBFfDoQQBCwE=
+X-Google-Smtp-Source: ABdhPJziG18OtJtOojNJhUmbh8ECPZy7NwUwithSHK0QoonoPEUgXM8AdPlzvYSsRRGH5vqUkFATXIOMaHxuOuZvjXc=
+X-Received: by 2002:a5e:8d01:: with SMTP id m1mr6322958ioj.72.1617882298600;
+ Thu, 08 Apr 2021 04:44:58 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-08_02:2021-04-08,2021-04-08 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 suspectscore=0 phishscore=0 priorityscore=1501
- bulkscore=0 malwarescore=0 clxscore=1011 impostorscore=0 mlxlogscore=999
- mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104080071
+References: <20210328155624.930558-1-amir73il@gmail.com> <20210330073101.5pqvw72fxvyp5kvf@wittgenstein>
+ <CAOQ4uxjQFGdT0xH17pm-nSKE_0--z_AapRW70MNrLJLcCB6MAg@mail.gmail.com>
+ <CAOQ4uxiizVxVJgtytYk_o7GvG2O2qwyKHgScq8KLhq218CNdnw@mail.gmail.com> <20210331100854.sdgtzma6ifj7w5yn@wittgenstein>
+In-Reply-To: <20210331100854.sdgtzma6ifj7w5yn@wittgenstein>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 8 Apr 2021 14:44:47 +0300
+Message-ID: <CAOQ4uxjHsqZqLT-DOPS0Q0FiHZ2Ge=d3tP+3-qd+O2optq9rZg@mail.gmail.com>
+Subject: Re: open_by_handle_at() in userns
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 21/04/07 09:18PM, Matthew Wilcox (Oracle) wrote:
-> As requested, fix up readahead_expand() so as to not confuse the ondemand
-> algorithm.  Also make the documentation slightly better.  Dave, could you
-> put in some debug and check this actually works?  I don't generally test
-> with any filesystems that use readahead_expand(), but printing (index,
-> nr_to_read, lookahead_size) in page_cache_ra_unbounded() would let a human
-> (such as your good self) determine whether it's working approximately
-> as designed.
+> One thing your patch
+>
+> commit ea31e84fda83c17b88851de399f76f5d9fc1abf4
+> Author: Amir Goldstein <amir73il@gmail.com>
+> Date:   Sat Mar 20 12:58:12 2021 +0200
+>
+>     fs: allow open by file handle inside userns
+>
+>     open_by_handle_at(2) requires CAP_DAC_READ_SEARCH in init userns,
+>     where most filesystems are mounted.
+>
+>     Relax the requirement to allow a user with CAP_DAC_READ_SEARCH
+>     inside userns to open by file handle in filesystems that were
+>     mounted inside that userns.
+>
+>     In addition, also allow open by handle in an idmapped mount, which is
+>     mapped to the userns while verifying that the returned open file path
+>     is under the root of the idmapped mount.
+>
+>     This is going to be needed for setting an fanotify mark on a filesystem
+>     and watching events inside userns.
+>
+>     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>
+> Requires fs/exportfs/expfs.c to be made idmapped mounts aware.
+> open_by_handle_at() uses exportfs_decode_fh() which e.g. has the
+> following and other callchains:
+>
+> exportfs_decode_fh()
+> -> exportfs_decode_fh_raw()
+>    -> lookup_one_len()
+>       -> inode_permission(mnt_userns, ...)
+>
+> That's not a huge problem though I did all these changes for the
+> overlayfs support for idmapped mounts I have in a branch from an earlier
+> version of the idmapped mounts patchset. Basically lookup_one_len(),
+> lookup_one_len_unlocked(), and lookup_positive_unlocked() need to take
+> the mnt_userns into account. I can rebase my change and send it for
+> consideration next cycle. If you can live without the
+> open_by_handle_at() support for now in this patchset (Which I think you
+> said you could.) then it's not a blocker either. Sorry for the
+> inconvenience.
+>
 
-Hello,
+Christian,
 
-Sorry about the silly question here, since I don't have much details of how
-readahead algorithm code path.
+I think making exportfs_decode_fh() idmapped mount aware is not
+enough, because when a dentry alias is found in dcache, none of
+those lookup functions are called.
 
-1. Do we know of a way to measure efficiency of readahead in Linux?
-2. And if there is any way to validate readahead is working correctly and as
-   intended in Linux?
-Like is there anything designed already to measure above two things?
-If not, are there any stats which can be collected and later should be parsed to
-say how efficient readahead is working in different use cases and also can
-verify if it's working correctly?
+I think we will also need something like this:
+https://github.com/amir73il/linux/commits/fhandle_userns
 
-I guess, we can already do point 1 from below. What about point 2 & 3?
-1. Turn on/off the readahead and measure file reads timings for different
-   patterns. - I guess this is already doable.
+I factored-out a helper from nfsd_apcceptable() which implements
+the "subtree_check" nfsd logic and uses it for open_by_handle_at().
 
-2. Collecting runtime histogram showing how readahead window is
-   increasing/decreasing based on changing read patterns. And collecting how
-   much IOs it takes to increase/decrease the readahead size.
-   Are there any tracepoints needed to be enabled for this?
+I've also added a small patch to name_to_handle_at() with a UAPI
+change that could make these changes usable by userspace nfs
+server inside userns, but I have no demo nor tests for that and frankly,
+I have little incentive to try and promote this UAPI change without
+anybody asking for it...
 
-3. I guess it won't be possible w/o a way to also measure page cache
-   efficiency. Like in case of a memory pressure, if the page which was read
-   using readahead is thrown out only to re-read it again.
-   So a way to measure page cache efficiency also will be required.
-
-Any idea from others on this?
-
-I do see below page[1] by Brendan showing some ways to measure page cache
-efficiency using cachestat. But there are also some problems mentioned in the
-conclusion section, which I am not sure of what is the latest state of that.
-Also it doesn't discusses much on the readahead efficiency measurement.
-
-[1]: http://www.brendangregg.com/blog/2014-12-31/linux-page-cache-hit-ratio.html
-
+Thanks,
+Amir.
