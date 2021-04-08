@@ -2,143 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27FCF3584AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 15:29:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D14C3584BF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 15:32:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231520AbhDHN3f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 09:29:35 -0400
-Received: from mga03.intel.com ([134.134.136.65]:48288 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229803AbhDHN3e (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 09:29:34 -0400
-IronPort-SDR: QUpz64eg2gnFCpzxDWzU/AwdrbTUJxrBXgfjbrrtWatHMBwK5ASN5glArcmYGrKckRBAVv66VO
- L60nOvGTEpHA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9948"; a="193579533"
-X-IronPort-AV: E=Sophos;i="5.82,206,1613462400"; 
-   d="scan'208";a="193579533"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2021 06:29:22 -0700
-IronPort-SDR: D3QHX5UVSB8YX34MZLNYlLK0kPKdVmkIBWjKvFADTZAC3rD9R9M8THaBbj3tnr/+TF6aChcI+z
- hErj278onk1A==
-X-IronPort-AV: E=Sophos;i="5.82,206,1613462400"; 
-   d="scan'208";a="419147368"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2021 06:29:13 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1lUUia-002IVr-4H; Thu, 08 Apr 2021 16:29:08 +0300
-Date:   Thu, 8 Apr 2021 16:29:08 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Joerg Roedel <jroedel@suse.de>, Wei Liu <wei.liu@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Corey Minyard <cminyard@mvista.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-hyperv@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-remoteproc@vger.kernel.org, linux-arch@vger.kernel.org,
-        kexec@lists.infradead.org, rcu@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Corey Minyard <minyard@acm.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Subject: Re: [PATCH v1 1/1] kernel.h: Split out panic and oops helpers
-Message-ID: <YG8FJOYVovYIOLXA@smile.fi.intel.com>
-References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
- <03be4ed9-8e8d-e2c2-611d-ac09c61d84f9@rasmusvillemoes.dk>
+        id S231668AbhDHNcK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 09:32:10 -0400
+Received: from eu-shark1.inbox.eu ([195.216.236.81]:59264 "EHLO
+        eu-shark1.inbox.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231637AbhDHNcH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Apr 2021 09:32:07 -0400
+X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Apr 2021 09:32:06 EDT
+Received: from eu-shark1.inbox.eu (localhost [127.0.0.1])
+        by eu-shark1-out.inbox.eu (Postfix) with ESMTP id F11186C01C6B;
+        Thu,  8 Apr 2021 16:25:11 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=inbox.eu; s=20140211;
+        t=1617888312; bh=O2I5sRbsIGV6O7BRd81yBLGFZqvG4P4JnLPd6Ijeamg=;
+        h=References:From:To:Cc:Subject:Date:In-reply-to;
+        b=WkugiplNaH4XCk6aVA2NznlBO0dCN+YN9BvN6Gu6tVb82IwiLGdY52NbzbrWikL7Z
+         nCn0ilSVtp6zVFqvcs6Hpt8z2FH1YBq0Fi9rCyXinFjhMesdZt48iFUC7pZlU+qFmu
+         /88sp16IKcOmTz+87ZCDc01atwu64Y7Q2CCLpEBc=
+Received: from localhost (localhost [127.0.0.1])
+        by eu-shark1-in.inbox.eu (Postfix) with ESMTP id E1F6B6C01C68;
+        Thu,  8 Apr 2021 16:25:11 +0300 (EEST)
+Received: from eu-shark1.inbox.eu ([127.0.0.1])
+        by localhost (eu-shark1.inbox.eu [127.0.0.1]) (spamfilter, port 35)
+        with ESMTP id cWmb_CTFk_k9; Thu,  8 Apr 2021 16:25:11 +0300 (EEST)
+Received: from mail.inbox.eu (eu-pop1 [127.0.0.1])
+        by eu-shark1-in.inbox.eu (Postfix) with ESMTP id 571956C019FD;
+        Thu,  8 Apr 2021 16:25:11 +0300 (EEST)
+Received: from nas (unknown [45.87.95.33])
+        (Authenticated sender: l@damenly.su)
+        by mail.inbox.eu (Postfix) with ESMTPA id 4E5D91BE2271;
+        Thu,  8 Apr 2021 16:25:02 +0300 (EEST)
+References: <20210408120432.1063608-1-ruansy.fnst@fujitsu.com>
+ <20210408120432.1063608-8-ruansy.fnst@fujitsu.com>
+User-agent: mu4e 1.5.8; emacs 27.2
+From:   Su Yue <l@damenly.su>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
+        darrick.wong@oracle.com, dan.j.williams@intel.com,
+        willy@infradead.org, jack@suse.cz, viro@zeniv.linux.org.uk,
+        linux-btrfs@vger.kernel.org, david@fromorbit.com, hch@lst.de,
+        rgoldwyn@suse.de
+Subject: Re: [PATCH v4 7/7] fs/xfs: Add dedupe support for fsdax
+Date:   Thu, 08 Apr 2021 21:12:00 +0800
+Message-ID: <czv4syut.fsf@damenly.su>
+In-reply-to: <20210408120432.1063608-8-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <03be4ed9-8e8d-e2c2-611d-ac09c61d84f9@rasmusvillemoes.dk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; format=flowed
+X-Virus-Scanned: OK
+X-ESPOL: 6N1mlY5SaUCpygHhXxmqCAcxrytLVO7k/+GmqX1UmH7kOSmad00TUxOr7h97Nxyk
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 08, 2021 at 02:45:12PM +0200, Rasmus Villemoes wrote:
-> On 06/04/2021 15.31, Andy Shevchenko wrote:
-> > kernel.h is being used as a dump for all kinds of stuff for a long time.
-> > Here is the attempt to start cleaning it up by splitting out panic and
-> > oops helpers.
-> 
-> Yay.
-> 
-> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-Thanks!
+On Thu 08 Apr 2021 at 20:04, Shiyang Ruan 
+<ruansy.fnst@fujitsu.com> wrote:
 
-> > At the same time convert users in header and lib folder to use new header.
-> > Though for time being include new header back to kernel.h to avoid twisted
-> > indirected includes for existing users.
-> 
-> I think it would be good to have some place to note that "This #include
-> is just for backwards compatibility, it will go away RealSoonNow, so if
-> you rely on something from linux/panic.h, include that explicitly
-> yourself TYVM. And if you're looking for a janitorial task, write a
-> script to check that every file that uses some identifier defined in
-> panic.h actually includes that file. When all offenders are found and
-> dealt with, remove the #include and this note.".
+> Add xfs_break_two_dax_layouts() to break layout for tow dax 
+> files.  Then
+> call compare range function only when files are both DAX or not.
+>
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+>
+Not family with xfs code but reading code make my sleep better :)
+See bellow.
 
-Good and...
+> ---
+>  fs/xfs/xfs_file.c    | 20 ++++++++++++++++++++
+>  fs/xfs/xfs_inode.c   |  8 +++++++-
+>  fs/xfs/xfs_inode.h   |  1 +
+>  fs/xfs/xfs_reflink.c |  5 +++--
+>  4 files changed, 31 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 5795d5d6f869..1fd457167c12 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -842,6 +842,26 @@ xfs_break_dax_layouts(
+>  			0, 0, xfs_wait_dax_page(inode));
+>  }
+>
+> +int
+> +xfs_break_two_dax_layouts(
+> +	struct inode		*src,
+> +	struct inode		*dest)
+> +{
+> +	int			error;
+> +	bool			retry = false;
+> +
+> +retry:
+>
+'retry = false;' ? since xfs_break_dax_layouts() won't
+set retry to false if there is no busy page in inode->i_mapping.
+Dead loop will happen if retry is true once.
 
-> > +struct taint_flag {
-> > +	char c_true;	/* character printed when tainted */
-> > +	char c_false;	/* character printed when not tainted */
-> > +	bool module;	/* also show as a per-module taint flag */
-> > +};
-> > +
-> > +extern const struct taint_flag taint_flags[TAINT_FLAGS_COUNT];
-> 
-> While you're doing this, nothing outside of kernel/panic.c cares about
-> the definition of struct taint_flag or use the taint_flags array, so
-> could you make the definition private to that file and make the array
-> static? (Another patch, of course.)
+> +	error = xfs_break_dax_layouts(src, &retry);
+> +	if (error || retry)
+> +		goto retry;
+> +
+> +	error = xfs_break_dax_layouts(dest, &retry);
+> +	if (error || retry)
+> +		goto retry;
+> +
+> +	return error;
+> +}
+> +
+>  int
+>  xfs_break_layouts(
+>  	struct inode		*inode,
+> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> index f93370bd7b1e..c01786917eef 100644
+> --- a/fs/xfs/xfs_inode.c
+> +++ b/fs/xfs/xfs_inode.c
+> @@ -3713,8 +3713,10 @@ xfs_ilock2_io_mmap(
+>  	struct xfs_inode	*ip2)
+>  {
+>  	int			ret;
+> +	struct inode		*inode1 = VFS_I(ip1);
+> +	struct inode		*inode2 = VFS_I(ip2);
+>
+> -	ret = xfs_iolock_two_inodes_and_break_layout(VFS_I(ip1), 
+> VFS_I(ip2));
+> +	ret = xfs_iolock_two_inodes_and_break_layout(inode1, inode2);
+>  	if (ret)
+>  		return ret;
+>  	if (ip1 == ip2)
+> @@ -3722,6 +3724,10 @@ xfs_ilock2_io_mmap(
+>  	else
+>  		xfs_lock_two_inodes(ip1, XFS_MMAPLOCK_EXCL,
+>  				    ip2, XFS_MMAPLOCK_EXCL);
+> +
+> +	if (IS_DAX(inode1) && IS_DAX(inode2))
+> +		ret = xfs_break_two_dax_layouts(inode1, inode2);
+> +
+ret is ignored here.
 
-...according to the above if *you are looking for a janitorial task*... :-))
-
-> > +enum lockdep_ok {
-> > +	LOCKDEP_STILL_OK,
-> > +	LOCKDEP_NOW_UNRELIABLE,
-> > +};
-> > +
-> > +extern const char *print_tainted(void);
-> > +extern void add_taint(unsigned flag, enum lockdep_ok);
-> > +extern int test_taint(unsigned flag);
-> > +extern unsigned long get_taint(void);
-> 
-> I know you're just moving code, but it would be a nice opportunity to
-> drop the redundant externs.
-
-As above. But for all these I have heard you. So, I'll keep this response
-as part of my always only growing TODO list.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--
+Su
+>  	return 0;
+>  }
+>
+> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> index 88ee4c3930ae..5ef21924dddc 100644
+> --- a/fs/xfs/xfs_inode.h
+> +++ b/fs/xfs/xfs_inode.h
+> @@ -435,6 +435,7 @@ enum xfs_prealloc_flags {
+>
+>  int	xfs_update_prealloc_flags(struct xfs_inode *ip,
+>  				  enum xfs_prealloc_flags flags);
+> +int	xfs_break_two_dax_layouts(struct inode *inode1, struct 
+> inode *inode2);
+>  int	xfs_break_layouts(struct inode *inode, uint *iolock,
+>  		enum layout_break_reason reason);
+>
+> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+> index a4cd6e8a7aa0..4426bcc8a985 100644
+> --- a/fs/xfs/xfs_reflink.c
+> +++ b/fs/xfs/xfs_reflink.c
+> @@ -29,6 +29,7 @@
+>  #include "xfs_iomap.h"
+>  #include "xfs_sb.h"
+>  #include "xfs_ag_resv.h"
+> +#include <linux/dax.h>
+>
+>  /*
+>   * Copy on Write of Shared Blocks
+> @@ -1324,8 +1325,8 @@ xfs_reflink_remap_prep(
+>  	if (XFS_IS_REALTIME_INODE(src) || XFS_IS_REALTIME_INODE(dest))
+>  		goto out_unlock;
+>
+> -	/* Don't share DAX file data for now. */
+> -	if (IS_DAX(inode_in) || IS_DAX(inode_out))
+> +	/* Don't share DAX file data with non-DAX file. */
+> +	if (IS_DAX(inode_in) != IS_DAX(inode_out))
+>  		goto out_unlock;
+>
+>  	if (!IS_DAX(inode_in))
