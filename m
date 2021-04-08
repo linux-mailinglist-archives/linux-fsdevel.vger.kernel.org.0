@@ -2,166 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 534D1358468
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 15:16:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27FCF3584AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 15:29:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231641AbhDHNQb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 09:16:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35820 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231623AbhDHNQa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 09:16:30 -0400
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8BB6C061760
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Apr 2021 06:16:18 -0700 (PDT)
-Received: by mail-qk1-x734.google.com with SMTP id i9so2084907qka.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Apr 2021 06:16:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netflix.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3w01U76ArOMU4qfaOfMuHKTEXURHPFfypn+mwAKgRWg=;
-        b=nWjywnpBjNgV+cJQeeOIwJRrVP48BPLuHoYlSr9oJG2v+NslBVjDlCWadFekYn0/9e
-         UC1zgzA047o8OgDc8ItdFDA2gyKmNaIzRyXiIa48aBpKTON4tph96fs3DbMe2fAz4RF+
-         yPanVIFoiIW0kCSukyxykuip3YpzZQivLqayo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3w01U76ArOMU4qfaOfMuHKTEXURHPFfypn+mwAKgRWg=;
-        b=M5Wcg2DSl9odMGp4yxaWyTfxeANhO1LxcIrCwigFMmJIrouYWpEHe5bQnlJqLjYqMF
-         bliXYDtIWqWk8oVtLfKx8BXxwK27jkK/8cavlRBJUAdaBP+qTaa5VjSmiv9XQ3dYbUoQ
-         gIJD54alDmJO2O+lZMPyn79S99yYwwAdZTKuxuTh/2vkus+M9tshmOe9/Z51JPJQUAt1
-         dAFx8BN5Esbl3P/LyEgGSqCbxUOTRxZZWHqjcmh6gkIpdvSZM4kgrY9kpIuI2yAwAQeT
-         GldLS0RBy7LhcRLqxel9zqCHeT689dwM0cj5VOj3QofdUKYDrVn2E8VYGkoOA9m5vj2N
-         Jbrw==
-X-Gm-Message-State: AOAM530BZCHthONWwc/YpInH+YIqsNX45LsUQkrpQRzDFto7JVz6bURd
-        w/k3o3aexH1MrDDhuoNyCfLNHJLqu5lu5GDxr0Fc2w==
-X-Google-Smtp-Source: ABdhPJzUIM8LUL6kkKTb6nlRS6A7oX/tRyttYG3XbBwPqopByJN20AgTfdEhnVLd+aQwcUBE5T8vsxoYpXrJL9qvzOY=
-X-Received: by 2002:a05:620a:714:: with SMTP id 20mr8461579qkc.192.1617887777933;
- Thu, 08 Apr 2021 06:16:17 -0700 (PDT)
+        id S231520AbhDHN3f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 09:29:35 -0400
+Received: from mga03.intel.com ([134.134.136.65]:48288 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229803AbhDHN3e (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Apr 2021 09:29:34 -0400
+IronPort-SDR: QUpz64eg2gnFCpzxDWzU/AwdrbTUJxrBXgfjbrrtWatHMBwK5ASN5glArcmYGrKckRBAVv66VO
+ L60nOvGTEpHA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9948"; a="193579533"
+X-IronPort-AV: E=Sophos;i="5.82,206,1613462400"; 
+   d="scan'208";a="193579533"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2021 06:29:22 -0700
+IronPort-SDR: D3QHX5UVSB8YX34MZLNYlLK0kPKdVmkIBWjKvFADTZAC3rD9R9M8THaBbj3tnr/+TF6aChcI+z
+ hErj278onk1A==
+X-IronPort-AV: E=Sophos;i="5.82,206,1613462400"; 
+   d="scan'208";a="419147368"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2021 06:29:13 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1lUUia-002IVr-4H; Thu, 08 Apr 2021 16:29:08 +0300
+Date:   Thu, 8 Apr 2021 16:29:08 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Joerg Roedel <jroedel@suse.de>, Wei Liu <wei.liu@kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Corey Minyard <cminyard@mvista.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-hyperv@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-remoteproc@vger.kernel.org, linux-arch@vger.kernel.org,
+        kexec@lists.infradead.org, rcu@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Corey Minyard <minyard@acm.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Subject: Re: [PATCH v1 1/1] kernel.h: Split out panic and oops helpers
+Message-ID: <YG8FJOYVovYIOLXA@smile.fi.intel.com>
+References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
+ <03be4ed9-8e8d-e2c2-611d-ac09c61d84f9@rasmusvillemoes.dk>
 MIME-Version: 1.0
-References: <20210407201857.3582797-1-willy@infradead.org> <20210408105705.exod2cvtvnr4467o@riteshh-domain>
-In-Reply-To: <20210408105705.exod2cvtvnr4467o@riteshh-domain>
-From:   Brendan Gregg <bgregg@netflix.com>
-Date:   Thu, 8 Apr 2021 23:15:51 +1000
-Message-ID: <CAJN39oidUmM2t9n6RaVpc9e09ckPF592cf8gBcpctm5Z-cveQw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] readahead improvements
-To:     riteshh <riteshh@linux.ibm.com>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <03be4ed9-8e8d-e2c2-611d-ac09c61d84f9@rasmusvillemoes.dk>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 8, 2021 at 8:57 PM riteshh <riteshh@linux.ibm.com> wrote:
->
-> On 21/04/07 09:18PM, Matthew Wilcox (Oracle) wrote:
-> > As requested, fix up readahead_expand() so as to not confuse the ondemand
-> > algorithm.  Also make the documentation slightly better.  Dave, could you
-> > put in some debug and check this actually works?  I don't generally test
-> > with any filesystems that use readahead_expand(), but printing (index,
-> > nr_to_read, lookahead_size) in page_cache_ra_unbounded() would let a human
-> > (such as your good self) determine whether it's working approximately
-> > as designed.
->
-> Hello,
->
-> Sorry about the silly question here, since I don't have much details of how
-> readahead algorithm code path.
->
-> 1. Do we know of a way to measure efficiency of readahead in Linux?
-> 2. And if there is any way to validate readahead is working correctly and as
->    intended in Linux?
+On Thu, Apr 08, 2021 at 02:45:12PM +0200, Rasmus Villemoes wrote:
+> On 06/04/2021 15.31, Andy Shevchenko wrote:
+> > kernel.h is being used as a dump for all kinds of stuff for a long time.
+> > Here is the attempt to start cleaning it up by splitting out panic and
+> > oops helpers.
+> 
+> Yay.
+> 
+> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-I created a bpftrace tool for measuring readahead efficiency for my
-LSFMM 2019 keynote, where it showed the age of readahead pages when
-they were finally used:
+Thanks!
 
-https://www.slideshare.net/brendangregg/lsfmm-2019-bpf-observability-143092820/29
+> > At the same time convert users in header and lib folder to use new header.
+> > Though for time being include new header back to kernel.h to avoid twisted
+> > indirected includes for existing users.
+> 
+> I think it would be good to have some place to note that "This #include
+> is just for backwards compatibility, it will go away RealSoonNow, so if
+> you rely on something from linux/panic.h, include that explicitly
+> yourself TYVM. And if you're looking for a janitorial task, write a
+> script to check that every file that uses some identifier defined in
+> panic.h actually includes that file. When all offenders are found and
+> dealt with, remove the #include and this note.".
 
-If they were mostly of a young age, one might conclude that readahead
-is not only working, but could be tuned higher. Mostly of an old age,
-and one might conclude readahead was tuned too high, and was reading
-too many pages (that were later used unrelated to the original
-workload).
+Good and...
 
-I think my tool is just the start. What else should we measure for
-understanding readahead efficiency? Code it today as a bpftrace tool
-(and share it)!
+> > +struct taint_flag {
+> > +	char c_true;	/* character printed when tainted */
+> > +	char c_false;	/* character printed when not tainted */
+> > +	bool module;	/* also show as a per-module taint flag */
+> > +};
+> > +
+> > +extern const struct taint_flag taint_flags[TAINT_FLAGS_COUNT];
+> 
+> While you're doing this, nothing outside of kernel/panic.c cares about
+> the definition of struct taint_flag or use the taint_flags array, so
+> could you make the definition private to that file and make the array
+> static? (Another patch, of course.)
 
->
-> Like is there anything designed already to measure above two things?
-> If not, are there any stats which can be collected and later should be parsed to
-> say how efficient readahead is working in different use cases and also can
-> verify if it's working correctly?
->
-> I guess, we can already do point 1 from below. What about point 2 & 3?
-> 1. Turn on/off the readahead and measure file reads timings for different
->    patterns. - I guess this is already doable.
->
-> 2. Collecting runtime histogram showing how readahead window is
->    increasing/decreasing based on changing read patterns. And collecting how
->    much IOs it takes to increase/decrease the readahead size.
->    Are there any tracepoints needed to be enabled for this?
->
-> 3. I guess it won't be possible w/o a way to also measure page cache
->    efficiency. Like in case of a memory pressure, if the page which was read
->    using readahead is thrown out only to re-read it again.
->    So a way to measure page cache efficiency also will be required.
->
-> Any idea from others on this?
->
-> I do see below page[1] by Brendan showing some ways to measure page cache
-> efficiency using cachestat. But there are also some problems mentioned in the
-> conclusion section, which I am not sure of what is the latest state of that.
-> Also it doesn't discusses much on the readahead efficiency measurement.
->
-> [1]: http://www.brendangregg.com/blog/2014-12-31/linux-page-cache-hit-ratio.html
+...according to the above if *you are looking for a janitorial task*... :-))
 
-Coincidentally, during the same LSFMMBPF keynote I showed cachestat
-and described it as a "sandcastle," as kernel changes easily wash it
-away. The MM folk discussed the various issues in measuring this
-accurately: while cachestat worked for my workloads, I think there's a
-lot more work to do to make it a robust tool for all workloads. I
-still think it should be /proc metrics instead, as I commonly want a
-page cache hit ratio metric (whereas many of my other tracing tools
-are more niche, and can stay as tracing tools).
+> > +enum lockdep_ok {
+> > +	LOCKDEP_STILL_OK,
+> > +	LOCKDEP_NOW_UNRELIABLE,
+> > +};
+> > +
+> > +extern const char *print_tainted(void);
+> > +extern void add_taint(unsigned flag, enum lockdep_ok);
+> > +extern int test_taint(unsigned flag);
+> > +extern unsigned long get_taint(void);
+> 
+> I know you're just moving code, but it would be a nice opportunity to
+> drop the redundant externs.
 
-I don't think there's a video of the talk, but there was a writeup:
-https://lwn.net/Articles/787131/
+As above. But for all these I have heard you. So, I'll keep this response
+as part of my always only growing TODO list.
 
-People keep porting my cachestat tool and building other things upon
-it, but aren't updating the code, which is getting a bit annoying.
-You're all assuming I solved it. But in my original Ftrace cachestat
-code I thought I made it clear that it was a proof of concept for
-3.13!:
-
-#!/bin/bash
-#
-# cachestat - show Linux page cache hit/miss statistics.
-#             Uses Linux ftrace.
-#
-# This is a proof of concept using Linux ftrace capabilities on older kernels,
-# and works by using function profiling for in-kernel counters. Specifically,
-# four kernel functions are traced:
-#
-# mark_page_accessed() for measuring cache accesses
-# mark_buffer_dirty() for measuring cache writes
-# add_to_page_cache_lru() for measuring page additions
-# account_page_dirtied() for measuring page dirties
-#
-# It is possible that these functions have been renamed (or are different
-# logically) for your kernel version, and this script will not work as-is.
-# This script was written on Linux 3.13. This script is a sandcastle: the
-# kernel may wash some away, and you'll need to rebuild.
-[...]
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Brendan
-
---
-Brendan Gregg, Senior Performance Architect, Netflix
