@@ -2,107 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC5B7358B01
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 19:10:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 203D6358D46
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 21:10:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232416AbhDHRLD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 13:11:03 -0400
-Received: from elasmtp-mealy.atl.sa.earthlink.net ([209.86.89.69]:35644 "EHLO
-        elasmtp-mealy.atl.sa.earthlink.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232208AbhDHRLD (ORCPT
+        id S232996AbhDHTKd convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 8 Apr 2021 15:10:33 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50728 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232969AbhDHTKd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 13:11:03 -0400
-X-Greylist: delayed 1320 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Apr 2021 13:11:02 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mindspring.com;
-        s=dk12062016; t=1617901852; bh=bQFvbVAy17UPJCo8TddDZiuDi1m5tCJ51+HC
-        FzSEF34=; h=Received:From:To:Cc:References:In-Reply-To:Subject:Date:
-         Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:
-         X-Mailer:Thread-Index:Content-Language:X-ELNK-Trace:
-         X-Originating-IP; b=VHKqNs/sMazeF7v88xW6O6LlbHLp8oPS6Rw6/7z2bu9jss
-        qCCmyhPg1sZz7n0I5hvVFChjLvIUUmqwhofe2DtvnM22ZeOUzS6+Y53k+d75P5qhALC
-        CkiSLCt2P/1crvIVUIKXLXi1bOVlvC2XJiCcrjl10Ka3KF/wrtFQNwjmU/ECzmUPqtY
-        OH7Rf35VAwl0wttwC9YfeY8kEwXtjpvRnC3iWWUY3Uhz7BTBsG2sXsAG7Q3CgR1dSQh
-        xB2EaifVlzuIPAnIxWL0+OYQsCMBWRM5g0WRe31kkDXLvsMRRbtsA4Ng7BJVoqotpzN
-        p3tT4h6SwuQcuvXylO2MExUADPNw==
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
-  s=dk12062016; d=mindspring.com;
-  b=jWNW66mnSYcgabzYKwMaEh5/8CP0us7VsFAOWOHFH41OfEzbPD284h6WiVd+kWeZsIBBgCeAOn7yoZAXmx3lYazyvsAoUvAO3EWJqY0GPirf4sMJ1OcdJ8mJ2m5NnCHHgQvyjiG0h3Tmswdd2x8Qfsf0NDze9BrtVMW1h569uqH4Q68JG6Ci9XwvrPHJRmB2CM8egEJr+OFRh3/EHflMg64XzVkObsC5R9Xo9h1FfB+PcEzvZZg1bcQfkt6w6BVZ3o58PSyqmO/FqCpGFKkKDWzBdx4Zp56g17aVk6WUBLby6Y5I2io4gDOIgd24FzX3zu6FT75Su5ymAvHMxyr0LA==;
-  h=Received:From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:X-Mailer:Thread-Index:Content-Language:X-ELNK-Trace:X-Originating-IP;
-Received: from [76.105.143.216] (helo=FRANKSTHINKPAD)
-        by elasmtp-mealy.atl.sa.earthlink.net with esmtpa (Exim 4)
-        (envelope-from <ffilzlnx@mindspring.com>)
-        id 1lUXpk-000CpV-OP; Thu, 08 Apr 2021 12:48:44 -0400
-From:   "Frank Filz" <ffilzlnx@mindspring.com>
-To:     "'J. Bruce Fields'" <bfields@fieldses.org>,
-        "'Amir Goldstein'" <amir73il@gmail.com>
-Cc:     "'Christian Brauner'" <christian.brauner@ubuntu.com>,
-        "'Jan Kara'" <jack@suse.cz>,
-        "'linux-fsdevel'" <linux-fsdevel@vger.kernel.org>,
-        "'Linux API'" <linux-api@vger.kernel.org>,
-        "'Miklos Szeredi'" <miklos@szeredi.hu>
-References: <20210328155624.930558-1-amir73il@gmail.com> <20210330073101.5pqvw72fxvyp5kvf@wittgenstein> <CAOQ4uxjQFGdT0xH17pm-nSKE_0--z_AapRW70MNrLJLcCB6MAg@mail.gmail.com> <CAOQ4uxiizVxVJgtytYk_o7GvG2O2qwyKHgScq8KLhq218CNdnw@mail.gmail.com> <20210331100854.sdgtzma6ifj7w5yn@wittgenstein> <CAOQ4uxjHsqZqLT-DOPS0Q0FiHZ2Ge=d3tP+3-qd+O2optq9rZg@mail.gmail.com> <20210408125530.gnv5hqcmgewklypn@wittgenstein> <20210408141504.GB25439@fieldses.org> <CAOQ4uxjkr_3d3KUkjMCtdpg===ZOPOwv41bUBkTppLmqRErHZQ@mail.gmail.com> <20210408160844.GD25439@fieldses.org>
-In-Reply-To: <20210408160844.GD25439@fieldses.org>
-Subject: RE: open_by_handle_at() in userns
-Date:   Thu, 8 Apr 2021 09:48:42 -0700
-Message-ID: <129801d72c97$09f82460$1de86d20$@mindspring.com>
+        Thu, 8 Apr 2021 15:10:33 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id 4F58F1F46053
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Shreeya Patel <shreeya.patel@collabora.com>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        chao@kernel.org, ebiggers@google.com, drosen@google.com,
+        ebiggers@kernel.org, yuchao0@huawei.com,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
+        andre.almeida@collabora.com
+Subject: Re: [PATCH v7 4/4] fs: unicode: Add utf8 module and a unicode layer
+Organization: Collabora
+References: <20210407144845.53266-1-shreeya.patel@collabora.com>
+        <20210407144845.53266-5-shreeya.patel@collabora.com>
+Date:   Thu, 08 Apr 2021 15:10:16 -0400
+In-Reply-To: <20210407144845.53266-5-shreeya.patel@collabora.com> (Shreeya
+        Patel's message of "Wed, 7 Apr 2021 20:18:45 +0530")
+Message-ID: <875z0wvbhj.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQHjiGW2X8wBJuoRKwYv8KHaUIoTfgHS+L1pAUFSJSIC9MC69wJifODqAY6fAV0BA8nN3wIhX2GkAmC2qi4CM0d6q6oEgc7A
-Content-Language: en-us
-X-ELNK-Trace: 136157f01908a8929c7f779228e2f6aeda0071232e20db4d686da7ba0b6815a578d96f8f8a770c38350badd9bab72f9c350badd9bab72f9c350badd9bab72f9c
-X-Originating-IP: 76.105.143.216
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On Thu, Apr 08, 2021 at 06:54:52PM +0300, Amir Goldstein wrote:
-> > They are understood to me :) but I didn't want to get into it, because
-> > it is complicated to explain and I wasn't sure if anyone cared...
-> >
-> > I started working on open_by_handle_at() in userns for fanotify and
-> > fanotify mostly reports directory fhandle, so no issues with
-cross-directory
-> renames.
-> > In any case, fanotify never reports "connectable" non-dir file handles.
-> >
-> > Because my proposed change ALSO makes it possible to start talking
-> > about userspace nfs server inside userns (in case anyone cares), I
-> > wanted to lay out the path towards a userspace "subtree_check" like
-solution.
-> 
-> We have to support subdirectory exports and subtree checking because we
-> already have, but, FWIW, if I were writing a new NFS server from scratch,
-I don't
-> think I would.  It's poorly understood, and the effort would be better
-spent on
-> more flexible storage management.
+Shreeya Patel <shreeya.patel@collabora.com> writes:
 
-Yea, nfs-ganesha does not attempt to support subtree checking. It will allow
-subtree exports, but it makes no assurance that they are secure. One option
-though that turns out to work well for them is btrfs subvols since each
-subvol has its own st_dev device ID, it's really as if it's a separate
-filesystem (and nfs-ganesha treats it as such).
+> utf8data.h_shipped has a large database table which is an auto-generated
+> decodification trie for the unicode normalization functions.
+> It is not necessary to load this large table in the kernel if no
+> filesystem is using it, hence make UTF-8 encoding loadable by converting
+> it into a module.
+>
+> Modify the file called unicode-core which will act as a layer for
+> unicode subsystem. It will load the UTF-8 module and access it's functions
+> whenever any filesystem that needs unicode is mounted.
+> Currently, only UTF-8 encoding is supported but if any other encodings
+> are supported in future then the layer file would be responsible for
+> loading the desired encoding module.
+>
+> Also, indirect calls using function pointers are slow, use static calls to
+> avoid overhead caused in case of repeated indirect calls. Static calls
+> improves the performance by directly calling the functions as opposed to
+> indirect calls.
+>
+> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> ---
+> Changes in v7
+>   - Update the help text in Kconfig
+>   - Handle the unicode_load_static_call function failure by decrementing
+>     the reference.
+>   - Correct the code for handling built-in utf8 option as well.
+>   - Correct the synchronization for accessing utf8mod.
+>   - Make changes to unicode_unload() for handling the situation where
+>     utf8mod != NULL and um == NULL.
+>
+> Changes in v6
+>   - Add spinlock to protect utf8mod and avoid NULL pointer
+>     dereference.
+>   - Change the static call function names for being consistent with
+>     kernel coding style.
+>   - Merge the unicode_load_module function with unicode_load as it is
+>     not really needed to have a separate function.
+>   - Use try_then_module_get instead of module_get to avoid loading the
+>     module even when it is already loaded.
+>   - Improve the commit message.
+>
+> Changes in v5
+>   - Rename global variables and default static call functions for better
+>     understanding
+>   - Make only config UNICODE_UTF8 visible and config UNICODE to be always
+>     enabled provided UNICODE_UTF8 is enabled.  
+>   - Improve the documentation for Kconfig
+>   - Improve the commit message.
+>  
+> Changes in v4
+>   - Return error from the static calls instead of doing nothing and
+>     succeeding even without loading the module.
+>   - Remove the complete usage of utf8_ops and use static calls at all
+>     places.
+>   - Restore the static calls to default values when module is unloaded.
+>   - Decrement the reference of module after calling the unload function.
+>   - Remove spinlock as there will be no race conditions after removing
+>     utf8_ops.
+>
+> Changes in v3
+>   - Add a patch which checks if utf8 is loaded before calling utf8_unload()
+>     in ext4 and f2fs filesystems
+>   - Return error if strscpy() returns value < 0
+>   - Correct the conditions to prevent NULL pointer dereference while
+>     accessing functions via utf8_ops variable.
+>   - Add spinlock to avoid race conditions.
+>   - Use static_call() for preventing speculative execution attacks.
+>
+> Changes in v2
+>   - Remove the duplicate file from the last patch.
+>   - Make the wrapper functions inline.
+>   - Remove msleep and use try_module_get() and module_put()
+>     for ensuring that module is loaded correctly and also
+>     doesn't get unloaded while in use.
+>   - Resolve the warning reported by kernel test robot.
+>   - Resolve all the checkpatch.pl warnings.
+>
+>  fs/unicode/Kconfig        |  26 +++-
+>  fs/unicode/Makefile       |   5 +-
+>  fs/unicode/unicode-core.c | 297 ++++++++++++++------------------------
+>  fs/unicode/unicode-utf8.c | 264 +++++++++++++++++++++++++++++++++
+>  include/linux/unicode.h   |  96 ++++++++++--
+>  5 files changed, 483 insertions(+), 205 deletions(-)
+>  create mode 100644 fs/unicode/unicode-utf8.c
+>
+> diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
+> index 2c27b9a5cd6c..0c69800a2a37 100644
+> --- a/fs/unicode/Kconfig
+> +++ b/fs/unicode/Kconfig
+> @@ -2,13 +2,31 @@
+>  #
+>  # UTF-8 normalization
+>  #
+> +# CONFIG_UNICODE will be automatically enabled if CONFIG_UNICODE_UTF8
+> +# is enabled. This config option adds the unicode subsystem layer which loads
+> +# the UTF-8 module whenever any filesystem needs it.
+>  config UNICODE
+> -	bool "UTF-8 normalization and casefolding support"
+> +	bool
+> +
+> +config UNICODE_UTF8
+> +	tristate "UTF-8 module"
 
-I'm curious about the userns solution. I'm not familiar with it, but we have
-issues with running nfs-ganesha inside containers due to the privileges it
-requires to properly run.
+"UTF-8 module" is the text that will appear in menuconfig and other
+configuration utilities.  This string not very helpful to describe what
+this code is about or why it is different from NLS_utf8.  People come to
+this option looking for the case-insensitive feature in ext4, so I'd
+prefer to keep the mention to 'casefolding'. or even improve the
+original a bit to say:
 
-> > Another thing I am contemplating is, if and when idmapped mount
-> > support is added to overlayfs, we can store an additional
-> > "connectable" file handle in the overlayfs index (whose key is the
-> > non-connectable fhandle) and fix ovl_acceptable() similar to
-> > nfsd_acceptable() and then we will be able to mount an overlayfs inside
-userns
-> with nfs_export support.
-> >
-> > I've included a two liner patch on the fhandle_userns branch to allow
-> > overlayfs inside userns with nfs_export support in the case that
-> > underlying filesystem was mounted inside userns, but that is not such
-> > an interesting use case IMO.
-> >
-> > Thanks,
-> > Amir.
+tristate: "UTF-8 support for native Case-Insensitive filesystems"
 
+Other than these and what Eric mentioned, the code looks good to me.  I
+gave this series a try and it seems to work fine.
+
+It does raise a new warning, though
+
+/home/krisman/src/linux/fs/unicode/unicode-core.c: In function ‘unicode_load’:
+/home/krisman/src/linux/include/linux/kmod.h:28:8: warning: the omitted middle operand in ‘?:’ will always be ‘true’, suggest explicit middle operand [-Wparentheses]
+   28 |  ((x) ?: (__request_module(true, mod), (x)))
+      |        ^
+/home/krisman/src/linux/fs/unicode/unicode-core.c:123:7: note: in expansion of macro ‘try_then_request_module’
+  123 |  if (!try_then_request_module(utf8mod_get(), "utf8")) {
+
+But in this specific case, i think gcc is just being silly. What would
+be the right way to avoid it?
+
+-- 
+Gabriel Krisman Bertazi
