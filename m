@@ -2,171 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 203D6358D46
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 21:10:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39710358DB2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 21:48:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232996AbhDHTKd convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 8 Apr 2021 15:10:33 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:50728 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232969AbhDHTKd (ORCPT
+        id S232416AbhDHTtG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 15:49:06 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:59851 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232023AbhDHTtG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 15:10:33 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 4F58F1F46053
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Shreeya Patel <shreeya.patel@collabora.com>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
-        chao@kernel.org, ebiggers@google.com, drosen@google.com,
-        ebiggers@kernel.org, yuchao0@huawei.com,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-        andre.almeida@collabora.com
-Subject: Re: [PATCH v7 4/4] fs: unicode: Add utf8 module and a unicode layer
-Organization: Collabora
-References: <20210407144845.53266-1-shreeya.patel@collabora.com>
-        <20210407144845.53266-5-shreeya.patel@collabora.com>
-Date:   Thu, 08 Apr 2021 15:10:16 -0400
-In-Reply-To: <20210407144845.53266-5-shreeya.patel@collabora.com> (Shreeya
-        Patel's message of "Wed, 7 Apr 2021 20:18:45 +0530")
-Message-ID: <875z0wvbhj.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Thu, 8 Apr 2021 15:49:06 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id 61BF65C00F9;
+        Thu,  8 Apr 2021 15:48:54 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Thu, 08 Apr 2021 15:48:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=fw9IHCLJHiRwr8mG8aPR5wNCw+y
+        Sr2ECQd6P2WIYQTA=; b=NUjIuKakvgWBWb63I3f5BeSkW2jFtfJjHEwDl7Gn9Kv
+        qZf0zp8LN02gDnCrEr2MFMUWj8VYzEUQlyVF24zV0P0BhA5N4lx2PBlLxdELp9NX
+        h8dqFRZLBh0Qi0/nMaI3Bl6Y0P7jju4dohJtGZ9zoEU9hP1NL4XBQZ+hL2hfNvnP
+        DpEaHnZPsp1A183gWRjA5+XsGoyY5dvDrHpXSokCGvr0fFncQyINaXUtkXeHdvFy
+        /ZLV/iJ/E/pPuii6RGn+cUPYof/8a3NGzLe2jKljsg8G5zQ7SjUG2rN8jR5b4Td1
+        YTWwjaeVea7uYO092nsTdupuCyGRyT8RDrHpUNX+PSQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=fw9IHC
+        LJHiRwr8mG8aPR5wNCw+ySr2ECQd6P2WIYQTA=; b=K6vo3oY3mP345AdlOqgpvG
+        MDIxj3WMxCM4GwBvGv09JZ7QreGswrNZMCCGhJyrh4U3JdctjJg4GCuBxl2XYmaA
+        2aCMuxTZmuohGeCTrz9eh/N7wcd7I6JNTROU/6oQF7TYhbM13tYInXrJo6c6DxT8
+        a/0bRdIZm+BY3XDfunvCguu0T88ha9ItyqZ0dwNS4Ia+toqTuSNBymatj4e+5SB2
+        8Vlq5BOpTgC0npw7CDbMiCzj+e7W9sS+pYygWjryEiycWWlggUTmCMHXNSzPTHZh
+        /d2+EnzAwpvxq5P7ggd1BAzglOi7CFmAm1WHg1LIpxVt5qjjQfHFr9e40YLl1OLQ
+        ==
+X-ME-Sender: <xms:JV5vYGU1ZWrzrTAUr2bMvroLreoIYiS0kscJJfqKYvT4UMPaNTKY0Q>
+    <xme:JV5vYJk6W20mIIu97g4hMFceyu7Njv5cLYIY_7aFuFknd4idkP9VmNu-4VrPawuSu
+    mbYPz9a6k6VcWc0wg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudejledgudegfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecuogfuuhhsphgvtghtffhomhgrihhnucdlgeelmd
+    enfghrlhcuvffnffculdefhedmnecujfgurhepfffhvffukfhfgggtuggjsehttdertddt
+    tddvnecuhfhrohhmpeffrghnihgvlhcuighuuceougiguhesugiguhhuuhdrgiihiieqne
+    cuggftrfgrthhtvghrnhepudevudelgedtjeehieekjeeiffevffevtedtheekudegvdef
+    ffegfeehjefhuddvnecuffhomhgrihhnpehigidrihhonecukfhppeduieefrdduudegrd
+    dufedvrddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhho
+    mhepugiguhesugiguhhuuhdrgiihii
+X-ME-Proxy: <xmx:JV5vYPZ2c6eURSAz3TGFymWFEhGHhOyK1LmgZtxCOkmR0CqR6MkhUw>
+    <xmx:JV5vYMO48uArW9L2NrCOACSZah3wFJhUgcu5vxmWhbWsBvF5JMWCXQ>
+    <xmx:JV5vYMYSXfQUCVKB32Pg0BrxECXQrr-hhiHrj2Dj4X5XP_YnTVmYtg>
+    <xmx:Jl5vYMz3k3eAkRrNExz_9VbjJwZaNSmYvEmG8zAHrWNRvGbiVbI2Hw>
+Received: from dlxu-fedora-R90QNFJV (unknown [163.114.132.1])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 8FD711080057;
+        Thu,  8 Apr 2021 15:48:51 -0400 (EDT)
+Date:   Thu, 8 Apr 2021 12:48:49 -0700
+From:   Daniel Xu <dxu@dxuuu.xyz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, jolsa@kernel.org, hannes@cmpxchg.org,
+        yhs@fb.com
+Subject: Re: [RFC bpf-next 1/1] bpf: Introduce iter_pagecache
+Message-ID: <20210408194849.wmueo74qcxghhf2d@dlxu-fedora-R90QNFJV>
+References: <cover.1617831474.git.dxu@dxuuu.xyz>
+ <22bededbd502e0df45326a54b3056941de65a101.1617831474.git.dxu@dxuuu.xyz>
+ <20210408061401.GI2531743@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210408061401.GI2531743@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Shreeya Patel <shreeya.patel@collabora.com> writes:
+On Thu, Apr 08, 2021 at 07:14:01AM +0100, Matthew Wilcox wrote:
+> On Wed, Apr 07, 2021 at 02:46:11PM -0700, Daniel Xu wrote:
+> > +struct bpf_iter_seq_pagecache_info {
+> > +	struct mnt_namespace *ns;
+> > +	struct radix_tree_root superblocks;
+> 
+> Why are you adding a new radix tree?  Use an XArray instead.
 
-> utf8data.h_shipped has a large database table which is an auto-generated
-> decodification trie for the unicode normalization functions.
-> It is not necessary to load this large table in the kernel if no
-> filesystem is using it, hence make UTF-8 encoding loadable by converting
-> it into a module.
->
-> Modify the file called unicode-core which will act as a layer for
-> unicode subsystem. It will load the UTF-8 module and access it's functions
-> whenever any filesystem that needs unicode is mounted.
-> Currently, only UTF-8 encoding is supported but if any other encodings
-> are supported in future then the layer file would be responsible for
-> loading the desired encoding module.
->
-> Also, indirect calls using function pointers are slow, use static calls to
-> avoid overhead caused in case of repeated indirect calls. Static calls
-> improves the performance by directly calling the functions as opposed to
-> indirect calls.
->
-> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
-> ---
-> Changes in v7
->   - Update the help text in Kconfig
->   - Handle the unicode_load_static_call function failure by decrementing
->     the reference.
->   - Correct the code for handling built-in utf8 option as well.
->   - Correct the synchronization for accessing utf8mod.
->   - Make changes to unicode_unload() for handling the situation where
->     utf8mod != NULL and um == NULL.
->
-> Changes in v6
->   - Add spinlock to protect utf8mod and avoid NULL pointer
->     dereference.
->   - Change the static call function names for being consistent with
->     kernel coding style.
->   - Merge the unicode_load_module function with unicode_load as it is
->     not really needed to have a separate function.
->   - Use try_then_module_get instead of module_get to avoid loading the
->     module even when it is already loaded.
->   - Improve the commit message.
->
-> Changes in v5
->   - Rename global variables and default static call functions for better
->     understanding
->   - Make only config UNICODE_UTF8 visible and config UNICODE to be always
->     enabled provided UNICODE_UTF8 is enabled.  
->   - Improve the documentation for Kconfig
->   - Improve the commit message.
->  
-> Changes in v4
->   - Return error from the static calls instead of doing nothing and
->     succeeding even without loading the module.
->   - Remove the complete usage of utf8_ops and use static calls at all
->     places.
->   - Restore the static calls to default values when module is unloaded.
->   - Decrement the reference of module after calling the unload function.
->   - Remove spinlock as there will be no race conditions after removing
->     utf8_ops.
->
-> Changes in v3
->   - Add a patch which checks if utf8 is loaded before calling utf8_unload()
->     in ext4 and f2fs filesystems
->   - Return error if strscpy() returns value < 0
->   - Correct the conditions to prevent NULL pointer dereference while
->     accessing functions via utf8_ops variable.
->   - Add spinlock to avoid race conditions.
->   - Use static_call() for preventing speculative execution attacks.
->
-> Changes in v2
->   - Remove the duplicate file from the last patch.
->   - Make the wrapper functions inline.
->   - Remove msleep and use try_module_get() and module_put()
->     for ensuring that module is loaded correctly and also
->     doesn't get unloaded while in use.
->   - Resolve the warning reported by kernel test robot.
->   - Resolve all the checkpatch.pl warnings.
->
->  fs/unicode/Kconfig        |  26 +++-
->  fs/unicode/Makefile       |   5 +-
->  fs/unicode/unicode-core.c | 297 ++++++++++++++------------------------
->  fs/unicode/unicode-utf8.c | 264 +++++++++++++++++++++++++++++++++
->  include/linux/unicode.h   |  96 ++++++++++--
->  5 files changed, 483 insertions(+), 205 deletions(-)
->  create mode 100644 fs/unicode/unicode-utf8.c
->
-> diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
-> index 2c27b9a5cd6c..0c69800a2a37 100644
-> --- a/fs/unicode/Kconfig
-> +++ b/fs/unicode/Kconfig
-> @@ -2,13 +2,31 @@
->  #
->  # UTF-8 normalization
->  #
-> +# CONFIG_UNICODE will be automatically enabled if CONFIG_UNICODE_UTF8
-> +# is enabled. This config option adds the unicode subsystem layer which loads
-> +# the UTF-8 module whenever any filesystem needs it.
->  config UNICODE
-> -	bool "UTF-8 normalization and casefolding support"
-> +	bool
-> +
-> +config UNICODE_UTF8
-> +	tristate "UTF-8 module"
+Ah right, sorry. Will do.
 
-"UTF-8 module" is the text that will appear in menuconfig and other
-configuration utilities.  This string not very helpful to describe what
-this code is about or why it is different from NLS_utf8.  People come to
-this option looking for the case-insensitive feature in ext4, so I'd
-prefer to keep the mention to 'casefolding'. or even improve the
-original a bit to say:
+> > +static struct page *goto_next_page(struct bpf_iter_seq_pagecache_info *info)
+> > +{
+> > +	struct page *page, *ret = NULL;
+> > +	unsigned long idx;
+> > +
+> > +	rcu_read_lock();
+> > +retry:
+> > +	BUG_ON(!info->cur_inode);
+> > +	ret = NULL;
+> > +	xa_for_each_start(&info->cur_inode->i_data.i_pages, idx, page,
+> > +			  info->cur_page_idx) {
+> > +		if (!page_cache_get_speculative(page))
+> > +			continue;
+> 
+> Why do you feel the need to poke around in i_pages directly?  Is there
+> something wrong with find_get_entries()?
 
-tristate: "UTF-8 support for native Case-Insensitive filesystems"
+No reason other than I didn't know about the latter. Thanks for the
+hint. find_get_entries() seems to return a pagevec of entries which
+would complicate the iteration (a 4th layer of things to iterate over).
 
-Other than these and what Eric mentioned, the code looks good to me.  I
-gave this series a try and it seems to work fine.
+But I did find find_get_pages_range() which I think can be used to find
+1 page at a time. I'll look into it further.
 
-It does raise a new warning, though
+> > +static int __pagecache_seq_show(struct seq_file *seq, struct page *page,
+> > +				bool in_stop)
+> > +{
+> > +	struct bpf_iter_meta meta;
+> > +	struct bpf_iter__pagecache ctx;
+> > +	struct bpf_prog *prog;
+> > +
+> > +	meta.seq = seq;
+> > +	prog = bpf_iter_get_info(&meta, in_stop);
+> > +	if (!prog)
+> > +		return 0;
+> > +
+> > +	meta.seq = seq;
+> > +	ctx.meta = &meta;
+> > +	ctx.page = page;
+> > +	return bpf_iter_run_prog(prog, &ctx);
+> 
+> I'm not really keen on the idea of random BPF programs being able to poke
+> at pages in the page cache like this.  From your initial description,
+> it sounded like all you needed was a list of which pages are present.
 
-/home/krisman/src/linux/fs/unicode/unicode-core.c: In function ‘unicode_load’:
-/home/krisman/src/linux/include/linux/kmod.h:28:8: warning: the omitted middle operand in ‘?:’ will always be ‘true’, suggest explicit middle operand [-Wparentheses]
-   28 |  ((x) ?: (__request_module(true, mod), (x)))
-      |        ^
-/home/krisman/src/linux/fs/unicode/unicode-core.c:123:7: note: in expansion of macro ‘try_then_request_module’
-  123 |  if (!try_then_request_module(utf8mod_get(), "utf8")) {
+Could you elaborate on what "list of which pages are present" implies?
+The overall goal with this patch is to detect duplicate content in the
+page cache. So anything that helps achieve that goal I would (in theory)
+be OK with.
 
-But in this specific case, i think gcc is just being silly. What would
-be the right way to avoid it?
+My understanding is the user would need to hash the contents
+of each page in the page cache. And BPF provides the flexibility such
+that this work could be reused for currently unanticipated use cases.
 
--- 
-Gabriel Krisman Bertazi
+Furthermore, bpf programs could already look at all the pages in the
+page cache by hooking into tracepoint:filemap:mm_filemap_add_to_page_cache,
+albeit at a much slower rate. I figure the downside of adding this
+page cache iterator is we're explicitly condoning the behavior.
+
+> > +	INIT_RADIX_TREE(&info->superblocks, GFP_KERNEL);
+> > +
+> > +	spin_lock(&info->ns->ns_lock);
+> > +	list_for_each_entry(mnt, &info->ns->list, mnt_list) {
+> > +		sb = mnt->mnt.mnt_sb;
+> > +
+> > +		/* The same mount may be mounted in multiple places */
+> > +		if (radix_tree_lookup(&info->superblocks, (unsigned long)sb))
+> > +			continue;
+> > +
+> > +		err = radix_tree_insert(&info->superblocks,
+> > +				        (unsigned long)sb, (void *)1);
+> > +		if (err)
+> > +			goto out;
+> > +	}
+> > +
+> > +	radix_tree_for_each_slot(slot, &info->superblocks, &iter, 0) {
+> > +		sb = (struct super_block *)iter.index;
+> > +		atomic_inc(&sb->s_active);
+> > +	}
+> 
+> Uh.  What on earth made you think this was a good way to use the radix
+> tree?  And, no, the XArray doesn't change that.
+
+The idea behind the radix tree was to deduplicate the mounts by
+superblock. Because a single filesystem may be mounted in different
+locations. I didn't find a set data structure I could reuse so I
+figured radix tree / xarray would work too.
+
+Happy to take any better ideas too.
+
+> If you don't understand why this is so bad, call xa_dump() on it after
+> constructing it.  I'll wait.
+
+I did a dump and got the following results: http://ix.io/2VpY .
+
+I receieved a hint that you may be referring to how the xarray/radix
+tree would be as large as the largest pointer. To my uneducated eye it
+doesn't look like that's the case in this dump. Could you please
+clarify?
+
+<...>
+
+Thanks,
+Daniel
