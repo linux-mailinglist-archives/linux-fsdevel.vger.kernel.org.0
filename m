@@ -2,182 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B583358FA5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 00:11:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B19C358FAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 00:12:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232684AbhDHWLr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 18:11:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40174 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232265AbhDHWLp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 18:11:45 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C668361107;
-        Thu,  8 Apr 2021 22:11:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617919893;
-        bh=JHtxDsKdHaTfSByGIt0LBvw1nnygzJIyZWR4wvxXFYU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aDiatDdZBUiYkGFU31JmrQVsKVFW+mN8umpeZ/t6bTNxSRnI5VgIPtNZ0MqMtEDqS
-         vilyR6P1dNLbbfLdTouNeKeSrC2k04mpG8ByCKDq/o+Ygtyj/AKYpYSD6Fbnz5oe7y
-         pkn3Xw+QZS8m0zNkxyRlaIeSJa5zWPvsxTYUxeExxOugb3cD79zY4yodH+5lpUWA56
-         s+G4R/UyRUko2Lw4YPpOwRyprb3A5jk4wbKXMlSAQ+dtkvuCalCzujDGYGQUy0I+DF
-         S2h8jZiMahtkDhjLIK7CDFpWe7FLBYBDXAItu5WnWcA93WgFhkFAr6NpuD/ZebOjsA
-         kNL51WVseojZQ==
-Date:   Thu, 8 Apr 2021 15:11:31 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
-        darrick.wong@oracle.com, dan.j.williams@intel.com,
-        willy@infradead.org, jack@suse.cz, viro@zeniv.linux.org.uk,
-        linux-btrfs@vger.kernel.org, david@fromorbit.com, hch@lst.de,
-        rgoldwyn@suse.de, Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Ritesh Harjani <riteshh@linux.ibm.com>
-Subject: Re: [PATCH v4 2/7] fsdax: Replace mmap entry in case of CoW
-Message-ID: <20210408221131.GZ3957620@magnolia>
-References: <20210408120432.1063608-1-ruansy.fnst@fujitsu.com>
- <20210408120432.1063608-3-ruansy.fnst@fujitsu.com>
+        id S232816AbhDHWMM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 18:12:12 -0400
+Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:58221 "EHLO
+        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232675AbhDHWMM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Apr 2021 18:12:12 -0400
+Received: from dread.disaster.area (pa49-181-239-12.pa.nsw.optusnet.com.au [49.181.239.12])
+        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 93C7665D21;
+        Fri,  9 Apr 2021 08:11:56 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1lUcsU-00GYk6-Mx; Fri, 09 Apr 2021 08:11:54 +1000
+Date:   Fri, 9 Apr 2021 08:11:54 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Daniel Xu <dxu@dxuuu.xyz>
+Cc:     bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, jolsa@kernel.org, hannes@cmpxchg.org,
+        yhs@fb.com
+Subject: Re: [RFC bpf-next 1/1] bpf: Introduce iter_pagecache
+Message-ID: <20210408221154.GL1990290@dread.disaster.area>
+References: <cover.1617831474.git.dxu@dxuuu.xyz>
+ <22bededbd502e0df45326a54b3056941de65a101.1617831474.git.dxu@dxuuu.xyz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210408120432.1063608-3-ruansy.fnst@fujitsu.com>
+In-Reply-To: <22bededbd502e0df45326a54b3056941de65a101.1617831474.git.dxu@dxuuu.xyz>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_f
+        a=gO82wUwQTSpaJfP49aMSow==:117 a=gO82wUwQTSpaJfP49aMSow==:17
+        a=kj9zAlcOel0A:10 a=3YhXtTcJ-WEA:10 a=7-415B0cAAAA:8
+        a=SkwiGy6gHLKnJZ6Ta9EA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 08, 2021 at 08:04:27PM +0800, Shiyang Ruan wrote:
-> We replace the existing entry to the newly allocated one in case of CoW.
-> Also, we mark the entry as PAGECACHE_TAG_TOWRITE so writeback marks this
-> entry as writeprotected.  This helps us snapshots so new write
-> pagefaults after snapshots trigger a CoW.
-> 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> ---
->  fs/dax.c | 39 ++++++++++++++++++++++++++++-----------
->  1 file changed, 28 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index b4fd3813457a..e6c1354b27a8 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -722,6 +722,10 @@ static int copy_cow_page_dax(struct block_device *bdev, struct dax_device *dax_d
->  	return 0;
->  }
->  
-> +/* DAX Insert Flag for the entry we insert */
+On Wed, Apr 07, 2021 at 02:46:11PM -0700, Daniel Xu wrote:
+> This commit introduces the bpf page cache iterator. This iterator allows
+> users to run a bpf prog against each page in the "page cache".
+> Internally, the "page cache" is extremely tied to VFS superblock + inode
+> combo. Because of this, iter_pagecache will only examine pages in the
+> caller's mount namespace.
 
-Might be worth mentioning that these are xarray marks for the inserted
-entry, since this comment didn't help much.
+No, it does not just examine pages with in the callers mount
+namespace, because ....
 
-> +#define DAX_IF_DIRTY		(1 << 0)
-> +#define DAX_IF_COW		(1 << 1)
+> +static struct inode *goto_next_inode(struct bpf_iter_seq_pagecache_info *info)
+> +{
+> +	struct inode *prev_inode = info->cur_inode;
+> +	struct inode *inode;
 > +
->  /*
->   * By this point grab_mapping_entry() has ensured that we have a locked entry
->   * of the appropriate size so we don't have to worry about downgrading PMDs to
-> @@ -729,16 +733,19 @@ static int copy_cow_page_dax(struct block_device *bdev, struct dax_device *dax_d
->   * already in the tree, we will skip the insertion and just dirty the PMD as
->   * appropriate.
->   */
-> -static void *dax_insert_entry(struct xa_state *xas,
-> -		struct address_space *mapping, struct vm_fault *vmf,
-> -		void *entry, pfn_t pfn, unsigned long flags, bool dirty)
-> +static void *dax_insert_entry(struct xa_state *xas, struct vm_fault *vmf,
-> +		void *entry, pfn_t pfn, unsigned long flags,
-> +		unsigned int insert_flags)
-
-Urk, two flags arguments.  Oh, I see.  We insert (shifted) pfn_t values
-into the mapping as xarray values, so @flags determines the state flags
-of the new entry value, whereas @insert_flags determines what xarray
-mark we're going to attach (if any) to the inserted value.
-
---D
-
->  {
-> +	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
->  	void *new_entry = dax_make_entry(pfn, flags);
-> +	bool dirty = insert_flags & DAX_IF_DIRTY;
-> +	bool cow = insert_flags & DAX_IF_COW;
->  
->  	if (dirty)
->  		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
->  
-> -	if (dax_is_zero_entry(entry) && !(flags & DAX_ZERO_PAGE)) {
-> +	if (cow || (dax_is_zero_entry(entry) && !(flags & DAX_ZERO_PAGE))) {
->  		unsigned long index = xas->xa_index;
->  		/* we are replacing a zero page with block mapping */
->  		if (dax_is_pmd_entry(entry))
-> @@ -750,7 +757,7 @@ static void *dax_insert_entry(struct xa_state *xas,
->  
->  	xas_reset(xas);
->  	xas_lock_irq(xas);
-> -	if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
-> +	if (cow || dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
->  		void *old;
->  
->  		dax_disassociate_entry(entry, mapping, false);
-> @@ -774,6 +781,9 @@ static void *dax_insert_entry(struct xa_state *xas,
->  	if (dirty)
->  		xas_set_mark(xas, PAGECACHE_TAG_DIRTY);
->  
-> +	if (cow)
-> +		xas_set_mark(xas, PAGECACHE_TAG_TOWRITE);
+> +retry:
+> +	BUG_ON(!info->cur_sb);
+> +	spin_lock(&info->cur_sb->s_inode_list_lock);
 > +
->  	xas_unlock_irq(xas);
->  	return entry;
->  }
-> @@ -1109,8 +1119,7 @@ static vm_fault_t dax_load_hole(struct xa_state *xas,
->  	pfn_t pfn = pfn_to_pfn_t(my_zero_pfn(vaddr));
->  	vm_fault_t ret;
->  
-> -	*entry = dax_insert_entry(xas, mapping, vmf, *entry, pfn,
-> -			DAX_ZERO_PAGE, false);
-> +	*entry = dax_insert_entry(xas, vmf, *entry, pfn, DAX_ZERO_PAGE, 0);
->  
->  	ret = vmf_insert_mixed(vmf->vma, vaddr, pfn);
->  	trace_dax_load_hole(inode, vmf, ret);
-> @@ -1137,8 +1146,8 @@ static vm_fault_t dax_pmd_load_hole(struct xa_state *xas, struct vm_fault *vmf,
->  		goto fallback;
->  
->  	pfn = page_to_pfn_t(zero_page);
-> -	*entry = dax_insert_entry(xas, mapping, vmf, *entry, pfn,
-> -			DAX_PMD | DAX_ZERO_PAGE, false);
-> +	*entry = dax_insert_entry(xas, vmf, *entry, pfn,
-> +				  DAX_PMD | DAX_ZERO_PAGE, 0);
->  
->  	if (arch_needs_pgtable_deposit()) {
->  		pgtable = pte_alloc_one(vma->vm_mm);
-> @@ -1444,6 +1453,7 @@ static vm_fault_t dax_fault_actor(struct vm_fault *vmf, pfn_t *pfnp,
->  	bool write = vmf->flags & FAULT_FLAG_WRITE;
->  	bool sync = dax_fault_is_synchronous(flags, vmf->vma, iomap);
->  	unsigned long entry_flags = pmd ? DAX_PMD : 0;
-> +	unsigned int insert_flags = 0;
->  	int err = 0;
->  	pfn_t pfn;
->  	void *kaddr;
-> @@ -1466,8 +1476,15 @@ static vm_fault_t dax_fault_actor(struct vm_fault *vmf, pfn_t *pfnp,
->  	if (err)
->  		return pmd ? VM_FAULT_FALLBACK : dax_fault_return(err);
->  
-> -	*entry = dax_insert_entry(xas, mapping, vmf, *entry, pfn, entry_flags,
-> -				  write && !sync);
-> +	if (write) {
-> +		if (!sync)
-> +			insert_flags |= DAX_IF_DIRTY;
-> +		if (iomap->flags & IOMAP_F_SHARED)
-> +			insert_flags |= DAX_IF_COW;
-> +	}
+> +	if (!info->cur_inode) {
+> +		list_for_each_entry(inode, &info->cur_sb->s_inodes, i_sb_list) {
+
+... this is an "all inodes on the superblock" walk.  This will also
+iterate inodes in other mount namespaces that point to the same
+superblock.
+
+IOWs, if you have different parts of the same filesystem mounted
+into hundreds of container mount namespaces, this script will not
+just iterate the local mount name space, it will iterate every inode
+in every mount namespace.
+
+And, of course, if the same files are mounted into multiple
+containers (think read-only bind mounts using idmapping) then you
+have zero indication of which container is actually using them, just
+that there are hundreds of paths to the same inode. And every
+container will appear to be using exactly the same amount of page cache.
+
+IOWs, the stats this generates provide no insight into page cache
+usage across mount namespaces in many situations, and it leaks
+information about page cache usage across mount namespace
+boundaries.
+
+And that's before I say "iterating all inodes in a superblock is
+bad" because it causes lock contention and interrupts normal usage.
+We avoid s_inodes lists walks as much as we possibly can, and the
+last thing we want is for userspace to be able to trivially
+instigate long running walks of the s_inodes list. Remember, we can
+have hundreds of millions of inodes on this list....
+
+> +			spin_lock(&inode->i_lock);
+> +			if (inode_unusual(inode)) {
+> +				spin_unlock(&inode->i_lock);
+> +				continue;
+> +			}
+> +			__iget(inode);
+> +			spin_unlock(&inode->i_lock);
+
+This can spin long enough to trigger livelock warnings. Even if it's
+not held that long, it can cause unexpected long tail latencies in
+memory reclaim and inode instantiation. Every s_inodes list walk has
+cond_resched() built into it now....
+
+> +	info->ns = current->nsproxy->mnt_ns;
+> +	get_mnt_ns(info->ns);
+> +	INIT_RADIX_TREE(&info->superblocks, GFP_KERNEL);
 > +
-> +	*entry = dax_insert_entry(xas, vmf, *entry, pfn, entry_flags,
-> +				  insert_flags);
->  
->  	if (write &&
->  	    srcmap->addr != IOMAP_HOLE && srcmap->addr != iomap->addr) {
-> -- 
-> 2.31.0
-> 
-> 
-> 
+> +	spin_lock(&info->ns->ns_lock);
+> +	list_for_each_entry(mnt, &info->ns->list, mnt_list) {
+> +		sb = mnt->mnt.mnt_sb;
+> +
+> +		/* The same mount may be mounted in multiple places */
+> +		if (radix_tree_lookup(&info->superblocks, (unsigned long)sb))
+> +			continue;
+> +
+> +		err = radix_tree_insert(&info->superblocks,
+> +				        (unsigned long)sb, (void *)1);
+
+And just because nobody has pointed it out yet: radix_tree_insert()
+will do GFP_KERNEL memory allocations inside the spinlock being held
+here.
+
+----
+
+You said that you didn't take the "walk the LRUs" approach because
+walking superblocks "seemed simpler". It's not. Page cache residency
+and accounting is managed by memcgs, not by mount namespaces.
+
+That is, containers usually have a memcg associated with them to control
+memory usage of the container. The page cache used by a container is
+accounted directly to the memcg, and memory reclaim can find all the
+file-backed page cache pages associated with a memcg very quickly
+(via mem_cgroup_lruvec()).  This will find pages associated directly
+with the memcg, so it gives you a fairly accurate picture of the
+page cache usage within the container.
+
+This has none of the issues that arise from "sb != mnt_ns" that
+walking superblocks and inode lists have, and it doesn't require you
+to play games with mounts, superblocks and inode references....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
