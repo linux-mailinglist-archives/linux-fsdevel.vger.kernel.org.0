@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99257358EA7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 22:44:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAD7C358EB7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 22:50:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232332AbhDHUo2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 16:44:28 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:54487 "EHLO
+        id S232345AbhDHUtw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 16:49:52 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:37427 "EHLO
         out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231676AbhDHUo1 (ORCPT
+        by vger.kernel.org with ESMTP id S231897AbhDHUtw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 16:44:27 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id CBA175C00AC;
-        Thu,  8 Apr 2021 16:44:15 -0400 (EDT)
+        Thu, 8 Apr 2021 16:49:52 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id CEA125C011A;
+        Thu,  8 Apr 2021 16:49:39 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 08 Apr 2021 16:44:15 -0400
+  by compute3.internal (MEProxy); Thu, 08 Apr 2021 16:49:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=
         date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=qd99tIwkyY/yAuS+FY1nRWCDzMJ
-        lvE3kBmaqzDP5T8I=; b=d5RbFQyskd2jDEewPuVtIYXhbjKJ0C3OJApXeMJmzQ5
-        QGU1zt28aKnfc2TKMx4BeCxELRQ6XFdHyN7aztL9bl+977LdnZ0YjRQep++GFj32
-        vvJl0VC2caDQ/SnpdOfbS1Ua4E3mJAw6nFFsXtuB77ePRBMRsNlMVb+AAVElAD4b
-        dTTyWJNw27ZMuPrOl50w6omLbRepdkP40KdXU9x2/9FQF4KYtCGZHytpm/TM3HCr
-        MrnC4cmftk1rwJMfllap1/FtDCugbbEY8vh9xcPJsDhqJw7XTuzlh7veA33W+uY0
-        DL1mqpUKY6oNp+S2JTw/AUnVeIWgFn9c5W6cfEMg0hw==
+        :content-type:in-reply-to; s=fm3; bh=MQtSHPJqtnoPnzsLmLnzXyuX+LY
+        DZOGWduO0MWZnQ4w=; b=V0/BROVaZviWOXWayii4M2rCj+aWENTi/HG+cw32BK6
+        JwhVkZg2PDP75XW8rAo4GS1xZQZ2ILRd2l4ZimrvbLdGYbv7IBIqsn/+paoScYUG
+        QwhDVizRXDtp0qp8MNmLjSmqdq8BgOwXeHbrM5ZARicn8lvD2Mr1pUkvlH1eI/p8
+        WQLiLuzD66Crf5G/8F2h86YpLZ3KDJi7uZyldlvPb754gQozWoKp8a1ihrPC5qYS
+        KpqpSoFUTxkxY5sPylqoIMRnordMt8jczn6Ci9kFJbwMOpMp+Blh+UzjvOlVCkZP
+        vMERXaRuzac1ndSim1CPUVvwG1btvbTxGq4GXHR0g7g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=qd99tI
-        wkyY/yAuS+FY1nRWCDzMJlvE3kBmaqzDP5T8I=; b=SDh4cvheVbh2qDob+ss9qD
-        +FD9wwn4xZsrkMHujv7PmqPYsEeMTwnDJ+vINSAVHbu4jHq2r39NuiyTiiIBatZs
-        Ndud9QH6jCxsN6qKbrLHaQEfh5p0mUNgcij3+IM2xi7IZt5p9jkKZJk8gIsqYxkI
-        Tae/IIvDRsouOAOzO9/FVfdqvxrPJlNkYkIctwGZPoc3ZoL+fZMV/lvwkwPdqOnb
-        C6UP4UQRILccy4TOuJO3AKjbyoOUIuWZCNPgwKOoBRBe5/WwKFbc8RVa3F7W8wQx
-        hrQ/b+6ccZ84wrkaJQSAa5LcPRCjtVruv8wrqflGoI//D1eiHO7wYi+HT8Nr75bQ
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=MQtSHP
+        JqtnoPnzsLmLnzXyuX+LYDZOGWduO0MWZnQ4w=; b=BL1kxNiYfljceJuJ5rR2GA
+        21qCSxk5t0DAhehulEWmXzDETz/h5OX//HNTnOdDXwsvTacRu49pWW53U6vLPyx+
+        kdm15sbFdteNVvZnUzlp/YlauBg8pDZ2+WSfxQmFdOVK/0Ne/LOm1BY8zjw6kFIF
+        XJF/+2vF0ZQLSeKW1T9a0VizAP/RmVqAJ7cXdx+RSOlKQnzNirp/1rNGIJgE9ZWR
+        t77Ehod/E5YrDajk2Sxe+jvEJWnqZRAvXj8s6/N28UEyuEc246JuL6ELoyCMiRO+
+        h7sxP2a/X2dJLPQdumIhEaIX6KfAcsWrQ8bbCziVGQ7aSOuYH08TdSvQ4XbUUxKA
         ==
-X-ME-Sender: <xms:H2tvYK7hDuVvRYZQa8BpuLFO8hkoPJdan5ew_HwPaYXoW5Sam7pWeg>
-    <xme:H2tvYD3s9T6lffHebe8KOw4uLxn7ka8cq3UToaYK4F1MqX0u1Fv3rQuNNpf4-9DHy
-    hR22zs37r96BIplmg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudejledgudehgecutefuodetggdotefrod
+X-ME-Sender: <xms:Y2xvYJRA8C-R_T2zMFhSdB-ii3EdQo_bbU9-UyexhSQew2JLnXC2cA>
+    <xme:Y2xvYCyTtmvQEAmnEsyKPZhIl_L73u651BvpndHMwvxKUmYNGMMRzGdwrllMlOZMY
+    4osvWdl-Wi8eQuOQg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudejledgudehhecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
     enfghrlhcuvffnffculdejtddmnecujfgurhepfffhvffukfhfgggtuggjsehttdertddt
@@ -49,116 +49,73 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudejledgudehgecutefuodetgg
     veelteevudelheejnecukfhppeduieefrdduudegrddufedvrddunecuvehluhhsthgvrh
     fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepugiguhesugiguhhuuhdrgiih
     ii
-X-ME-Proxy: <xmx:H2tvYGVZVRDHsdcyZ4XwA88XmJMpJm3bbMua5fjnHUVtlP2MM4Iuhg>
-    <xmx:H2tvYO66bmMCSoV44an8XyaPyRcVU3xPpW9djcQuGP6Y9YrQNlAe5g>
-    <xmx:H2tvYNJ0fpje33fosaQ2Tm6G_BD4Si9BtHFUgdzRSJpSAj_Kq4eG3w>
-    <xmx:H2tvYO_E4TXJTWpm6IPWiAkv1uLGnHEvlMpIyZPflRbvItFwhR4o2w>
+X-ME-Proxy: <xmx:Y2xvYO2J5rCQ6QmqQS_fKv_kxSIDpHKVSVcAed8aeP4bD7yXtKKq0g>
+    <xmx:Y2xvYBAUc2M6Tg2Bizo_JMFUldfxGze3X63Bkts1o5aVintRH8-kLg>
+    <xmx:Y2xvYCivCVfyDh0l05GYqefJjfYGOLxLEReAOm9Ct23Eoqvwqn4Edg>
+    <xmx:Y2xvYNXy_nr7lHZRpZ8hObQOVGL_oIF324qBSoPgXUTt2I-_anLi4g>
 Received: from dlxu-fedora-R90QNFJV (unknown [163.114.132.1])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B5B3F1080066;
-        Thu,  8 Apr 2021 16:44:12 -0400 (EDT)
-Date:   Thu, 8 Apr 2021 13:44:10 -0700
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0BD031080063;
+        Thu,  8 Apr 2021 16:49:36 -0400 (EDT)
+Date:   Thu, 8 Apr 2021 13:49:35 -0700
 From:   Daniel Xu <dxu@dxuuu.xyz>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         kernel-team@fb.com, jolsa@kernel.org, hannes@cmpxchg.org,
-        yhs@fb.com, Al Viro <viro@zeniv.linux.org.uk>
+        yhs@fb.com
 Subject: Re: [RFC bpf-next 1/1] bpf: Introduce iter_pagecache
-Message-ID: <20210408204410.wszz3rjmqbg4ps3q@dlxu-fedora-R90QNFJV>
+Message-ID: <20210408204935.4itnxm4ekdv7zlrw@dlxu-fedora-R90QNFJV>
 References: <cover.1617831474.git.dxu@dxuuu.xyz>
  <22bededbd502e0df45326a54b3056941de65a101.1617831474.git.dxu@dxuuu.xyz>
- <20210408081935.b3xollrzl6lejbyf@wittgenstein>
+ <YG8zMV59hSzpCHSn@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210408081935.b3xollrzl6lejbyf@wittgenstein>
+In-Reply-To: <YG8zMV59hSzpCHSn@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 08, 2021 at 10:19:35AM +0200, Christian Brauner wrote:
+On Thu, Apr 08, 2021 at 04:45:37PM +0000, Al Viro wrote:
 > On Wed, Apr 07, 2021 at 02:46:11PM -0700, Daniel Xu wrote:
-> > This commit introduces the bpf page cache iterator. This iterator allows
-> > users to run a bpf prog against each page in the "page cache".
-> > Internally, the "page cache" is extremely tied to VFS superblock + inode
-> > combo. Because of this, iter_pagecache will only examine pages in the
-> > caller's mount namespace.
-> > 
-> > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> > ---
-> >  kernel/bpf/Makefile         |   2 +-
-> >  kernel/bpf/pagecache_iter.c | 293 ++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 294 insertions(+), 1 deletion(-)
-> >  create mode 100644 kernel/bpf/pagecache_iter.c
-
-<...>
-
-> > 
-> > +static int init_seq_pagecache(void *priv_data, struct bpf_iter_aux_info *aux)
+> 
+> > +static void fini_seq_pagecache(void *priv_data)
 > > +{
 > > +	struct bpf_iter_seq_pagecache_info *info = priv_data;
 > > +	struct radix_tree_iter iter;
 > > +	struct super_block *sb;
-> > +	struct mount *mnt;
 > > +	void **slot;
-> > +	int err;
-> > +
-> > +	info->ns = current->nsproxy->mnt_ns;
-> > +	get_mnt_ns(info->ns);
-> > +	INIT_RADIX_TREE(&info->superblocks, GFP_KERNEL);
-> > +
-> > +	spin_lock(&info->ns->ns_lock);
-> > +	list_for_each_entry(mnt, &info->ns->list, mnt_list) {
-> 
-> Not just are there helpers for taking ns_lock
-> static inline void lock_ns_list(struct mnt_namespace *ns)
-> static inline void unlock_ns_list(struct mnt_namespace *ns)
-> they are private to fs/namespace.c because it's the only place that
-> should ever walk this list.
-
-Thanks for the hints. Would it be acceptable to add some helpers to
-fs/namespace.c to allow walking the list?
-
-IIUC the only way to find a list of mounts is by looking at the mount
-namespace. And walking each mount and looking at each `struct
-super_node`'s inode's `struct address_space` seemed like the cleanest
-way to walkthe page cache.
-
-> This seems buggy: why is it ok here to only take ns_lock and not also
-> namespace_sem like mnt_already_visible() and __is_local_mountpoint()
-> or the relevant proc iterators? I might be missing something.
-
-Thanks for the hints. I'll take a closer look at the locking. Most
-probably I didn't get it right.
-
-I should have also mentioned in the cover letter that I'm fairly sure I
-messed up the locking somewhere.
-
-> 
-> > +		sb = mnt->mnt.mnt_sb;
-> > +
-> > +		/* The same mount may be mounted in multiple places */
-> > +		if (radix_tree_lookup(&info->superblocks, (unsigned long)sb))
-> > +			continue;
-> > +
-> > +		err = radix_tree_insert(&info->superblocks,
-> > +				        (unsigned long)sb, (void *)1);
-> > +		if (err)
-> > +			goto out;
-> > +	}
 > > +
 > > +	radix_tree_for_each_slot(slot, &info->superblocks, &iter, 0) {
 > > +		sb = (struct super_block *)iter.index;
-> > +		atomic_inc(&sb->s_active);
+> > +		atomic_dec(&sb->s_active);
+> > +		radix_tree_delete(&info->superblocks, iter.index);
+> > +	}
 > 
-> It also isn't nice that you mess with sb->s_active directly.
+> ... and if in the meanwhile all other contributors to ->s_active have
+> gone away, that will result in...?
+
+Ah right, sorry. Nobody will clean up the super_block.
+
+> IOW, NAK.  The objects you are playing with have non-trivial lifecycle
+> and poking into the guts of data structures without bothering to
+> understand it is not a good idea.
 > 
-> Imho, this is poking around in a lot of fs/ specific stuff that other
-> parts of the kernel should not care about or have access to.
+> Rule of the thumb: if your code ends up using fields that are otherwise
+> handled by a small part of codebase, the odds are that you need to be
+> bloody careful.  In particular, ->ns_lock has 3 users - all in
+> fs/namespace.c.  ->list/->mnt_list: all users in fs/namespace.c and
+> fs/pnode.c.  ->s_active: majority in fs/super.c, with several outliers
+> in filesystems and safety of those is not trivial.
+> 
+> Any time you see that kind of pattern, you are risking to reprise
+> a scene from The Modern Times - the one with Charlie taking a trip
+> through the guts of machinery.
 
-Re above: do you think it'd be appropriate to add more helpers to fs/ ?
+I'll take a closer look at the lifetime semantics.
 
-<...>
+Hopefully the overall goal of the patch is ok. Happy to iterate on the
+implementation details until it's correct.
 
 Thanks,
 Daniel
