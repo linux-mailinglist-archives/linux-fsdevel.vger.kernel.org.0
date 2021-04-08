@@ -2,148 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B19C358FAD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 00:12:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6517C358FC8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 00:26:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232816AbhDHWMM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 18:12:12 -0400
-Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:58221 "EHLO
-        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232675AbhDHWMM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 18:12:12 -0400
-Received: from dread.disaster.area (pa49-181-239-12.pa.nsw.optusnet.com.au [49.181.239.12])
-        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 93C7665D21;
-        Fri,  9 Apr 2021 08:11:56 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1lUcsU-00GYk6-Mx; Fri, 09 Apr 2021 08:11:54 +1000
-Date:   Fri, 9 Apr 2021 08:11:54 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Daniel Xu <dxu@dxuuu.xyz>
-Cc:     bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, jolsa@kernel.org, hannes@cmpxchg.org,
-        yhs@fb.com
-Subject: Re: [RFC bpf-next 1/1] bpf: Introduce iter_pagecache
-Message-ID: <20210408221154.GL1990290@dread.disaster.area>
-References: <cover.1617831474.git.dxu@dxuuu.xyz>
- <22bededbd502e0df45326a54b3056941de65a101.1617831474.git.dxu@dxuuu.xyz>
+        id S232793AbhDHW05 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 18:26:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44700 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232265AbhDHW04 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Apr 2021 18:26:56 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 56B10610F7;
+        Thu,  8 Apr 2021 22:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617920804;
+        bh=0aS821BgGrwNDh6ecXyzgYTlL3k88Djp+rVvaNME4BQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=H9La33FljbUwnmdkKj5jf638xxBAXTcHtSzenNjnGrO7ykJBf8dr4YW6nlu49SXxP
+         KZ69pOfYcbg2KEEYPDjLlHhNjJli8GseaqyCskOlg/D078E6iE23ozhq/owWp8EXvp
+         xPTuRGJ7ofhN9i8BwP5ukG5LJehy7VQc8HuY6+ePSxoaQcwmc6VZPmdkrjPl+LMvFd
+         r5iD7PfBfsjP0Ucc74KfmA942ZEXxW7NBSFKk9WL7l2S1e4QHVFFd8LfWE0T3mydBj
+         vlJJd4NtxhRCDM4AFjpkw6CwP/Go3F2SvRmnIvioQb6gayA/X9m4QgbGIgGyPCblmS
+         W5L/9x/natMmA==
+Date:   Thu, 8 Apr 2021 15:26:43 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
+        darrick.wong@oracle.com, dan.j.williams@intel.com,
+        willy@infradead.org, jack@suse.cz, viro@zeniv.linux.org.uk,
+        linux-btrfs@vger.kernel.org, david@fromorbit.com, hch@lst.de,
+        rgoldwyn@suse.de
+Subject: Re: [PATCH v4 4/7] iomap: Introduce iomap_apply2() for operations on
+ two files
+Message-ID: <20210408222643.GA3957620@magnolia>
+References: <20210408120432.1063608-1-ruansy.fnst@fujitsu.com>
+ <20210408120432.1063608-5-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <22bededbd502e0df45326a54b3056941de65a101.1617831474.git.dxu@dxuuu.xyz>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_f
-        a=gO82wUwQTSpaJfP49aMSow==:117 a=gO82wUwQTSpaJfP49aMSow==:17
-        a=kj9zAlcOel0A:10 a=3YhXtTcJ-WEA:10 a=7-415B0cAAAA:8
-        a=SkwiGy6gHLKnJZ6Ta9EA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20210408120432.1063608-5-ruansy.fnst@fujitsu.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 07, 2021 at 02:46:11PM -0700, Daniel Xu wrote:
-> This commit introduces the bpf page cache iterator. This iterator allows
-> users to run a bpf prog against each page in the "page cache".
-> Internally, the "page cache" is extremely tied to VFS superblock + inode
-> combo. Because of this, iter_pagecache will only examine pages in the
-> caller's mount namespace.
+On Thu, Apr 08, 2021 at 08:04:29PM +0800, Shiyang Ruan wrote:
+> Some operations, such as comparing a range of data in two files under
+> fsdax mode, requires nested iomap_open()/iomap_end() on two file.  Thus,
+> we introduce iomap_apply2() to accept arguments from two files and
+> iomap_actor2_t for actions on two files.
+> 
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
 
-No, it does not just examine pages with in the callers mount
-namespace, because ....
+Kinda wish we weren't propagating even more indirect call usage, but oh
+well.
 
-> +static struct inode *goto_next_inode(struct bpf_iter_seq_pagecache_info *info)
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+> ---
+>  fs/iomap/apply.c      | 52 +++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/iomap.h |  7 +++++-
+>  2 files changed, 58 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
+> index 26ab6563181f..0493da5286ad 100644
+> --- a/fs/iomap/apply.c
+> +++ b/fs/iomap/apply.c
+> @@ -97,3 +97,55 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
+>  
+>  	return written ? written : ret;
+>  }
+> +
+> +loff_t
+> +iomap_apply2(struct inode *ino1, loff_t pos1, struct inode *ino2, loff_t pos2,
+> +		loff_t length, unsigned int flags, const struct iomap_ops *ops,
+> +		void *data, iomap_actor2_t actor)
 > +{
-> +	struct inode *prev_inode = info->cur_inode;
-> +	struct inode *inode;
+> +	struct iomap smap = { .type = IOMAP_HOLE };
+> +	struct iomap dmap = { .type = IOMAP_HOLE };
+> +	loff_t written = 0, ret, ret2 = 0;
+> +	loff_t len1 = length, len2, min_len;
 > +
-> +retry:
-> +	BUG_ON(!info->cur_sb);
-> +	spin_lock(&info->cur_sb->s_inode_list_lock);
+> +	ret = ops->iomap_begin(ino1, pos1, len1, flags, &smap, NULL);
+> +	if (ret)
+> +		goto out;
+> +	if (WARN_ON(smap.offset > pos1)) {
+> +		written = -EIO;
+> +		goto out_src;
+> +	}
+> +	if (WARN_ON(smap.length == 0)) {
+> +		written = -EIO;
+> +		goto out_src;
+> +	}
+> +	len2 = min_t(loff_t, len1, smap.length);
 > +
-> +	if (!info->cur_inode) {
-> +		list_for_each_entry(inode, &info->cur_sb->s_inodes, i_sb_list) {
-
-... this is an "all inodes on the superblock" walk.  This will also
-iterate inodes in other mount namespaces that point to the same
-superblock.
-
-IOWs, if you have different parts of the same filesystem mounted
-into hundreds of container mount namespaces, this script will not
-just iterate the local mount name space, it will iterate every inode
-in every mount namespace.
-
-And, of course, if the same files are mounted into multiple
-containers (think read-only bind mounts using idmapping) then you
-have zero indication of which container is actually using them, just
-that there are hundreds of paths to the same inode. And every
-container will appear to be using exactly the same amount of page cache.
-
-IOWs, the stats this generates provide no insight into page cache
-usage across mount namespaces in many situations, and it leaks
-information about page cache usage across mount namespace
-boundaries.
-
-And that's before I say "iterating all inodes in a superblock is
-bad" because it causes lock contention and interrupts normal usage.
-We avoid s_inodes lists walks as much as we possibly can, and the
-last thing we want is for userspace to be able to trivially
-instigate long running walks of the s_inodes list. Remember, we can
-have hundreds of millions of inodes on this list....
-
-> +			spin_lock(&inode->i_lock);
-> +			if (inode_unusual(inode)) {
-> +				spin_unlock(&inode->i_lock);
-> +				continue;
-> +			}
-> +			__iget(inode);
-> +			spin_unlock(&inode->i_lock);
-
-This can spin long enough to trigger livelock warnings. Even if it's
-not held that long, it can cause unexpected long tail latencies in
-memory reclaim and inode instantiation. Every s_inodes list walk has
-cond_resched() built into it now....
-
-> +	info->ns = current->nsproxy->mnt_ns;
-> +	get_mnt_ns(info->ns);
-> +	INIT_RADIX_TREE(&info->superblocks, GFP_KERNEL);
+> +	ret = ops->iomap_begin(ino2, pos2, len2, flags, &dmap, NULL);
+> +	if (ret)
+> +		goto out_src;
+> +	if (WARN_ON(dmap.offset > pos2)) {
+> +		written = -EIO;
+> +		goto out_dest;
+> +	}
+> +	if (WARN_ON(dmap.length == 0)) {
+> +		written = -EIO;
+> +		goto out_dest;
+> +	}
+> +	min_len = min_t(loff_t, len2, dmap.length);
 > +
-> +	spin_lock(&info->ns->ns_lock);
-> +	list_for_each_entry(mnt, &info->ns->list, mnt_list) {
-> +		sb = mnt->mnt.mnt_sb;
+> +	written = actor(ino1, pos1, ino2, pos2, min_len, data, &smap, &dmap);
 > +
-> +		/* The same mount may be mounted in multiple places */
-> +		if (radix_tree_lookup(&info->superblocks, (unsigned long)sb))
-> +			continue;
-> +
-> +		err = radix_tree_insert(&info->superblocks,
-> +				        (unsigned long)sb, (void *)1);
-
-And just because nobody has pointed it out yet: radix_tree_insert()
-will do GFP_KERNEL memory allocations inside the spinlock being held
-here.
-
-----
-
-You said that you didn't take the "walk the LRUs" approach because
-walking superblocks "seemed simpler". It's not. Page cache residency
-and accounting is managed by memcgs, not by mount namespaces.
-
-That is, containers usually have a memcg associated with them to control
-memory usage of the container. The page cache used by a container is
-accounted directly to the memcg, and memory reclaim can find all the
-file-backed page cache pages associated with a memcg very quickly
-(via mem_cgroup_lruvec()).  This will find pages associated directly
-with the memcg, so it gives you a fairly accurate picture of the
-page cache usage within the container.
-
-This has none of the issues that arise from "sb != mnt_ns" that
-walking superblocks and inode lists have, and it doesn't require you
-to play games with mounts, superblocks and inode references....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> +out_dest:
+> +	if (ops->iomap_end)
+> +		ret2 = ops->iomap_end(ino2, pos2, len2,
+> +				      written > 0 ? written : 0, flags, &dmap);
+> +out_src:
+> +	if (ops->iomap_end)
+> +		ret = ops->iomap_end(ino1, pos1, len1,
+> +				     written > 0 ? written : 0, flags, &smap);
+> +out:
+> +	if (written)
+> +		return written;
+> +	return ret ?: ret2;
+> +}
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index d202fd2d0f91..9493c48bcc9c 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -150,10 +150,15 @@ struct iomap_ops {
+>   */
+>  typedef loff_t (*iomap_actor_t)(struct inode *inode, loff_t pos, loff_t len,
+>  		void *data, struct iomap *iomap, struct iomap *srcmap);
+> -
+> +typedef loff_t (*iomap_actor2_t)(struct inode *ino1, loff_t pos1,
+> +		struct inode *ino2, loff_t pos2, loff_t len, void *data,
+> +		struct iomap *smap, struct iomap *dmap);
+>  loff_t iomap_apply(struct inode *inode, loff_t pos, loff_t length,
+>  		unsigned flags, const struct iomap_ops *ops, void *data,
+>  		iomap_actor_t actor);
+> +loff_t iomap_apply2(struct inode *ino1, loff_t pos1, struct inode *ino2,
+> +		loff_t pos2, loff_t length, unsigned int flags,
+> +		const struct iomap_ops *ops, void *data, iomap_actor2_t actor);
+>  
+>  ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
+>  		const struct iomap_ops *ops);
+> -- 
+> 2.31.0
+> 
+> 
+> 
