@@ -2,52 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE9DD3585A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 16:04:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2C613585AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 16:04:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231752AbhDHOEq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 10:04:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:24951 "EHLO
+        id S231809AbhDHOFD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 10:05:03 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:38529 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231653AbhDHOEo (ORCPT
+        by vger.kernel.org with ESMTP id S231812AbhDHOE6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 10:04:44 -0400
+        Thu, 8 Apr 2021 10:04:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617890672;
+        s=mimecast20190719; t=1617890687;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=gkpoPzVd3lCotCr0RNuaGhKSzWau+Gs276FMmfTG/go=;
-        b=FDH7QwVRw4bPmb/iQjeGZ5podsJhjCfINxQ51/ZFrmHlq7zciBRYPnOdZcYj0wfIb3pwXq
-        VoFoyj1HLLBFeZgPM5qm6pnGD6GmvdPSYv9C8soKNRYOuwJBngfIsOM3UBaIf8B83dbidq
-        nQ2lqMxBGRisewn8H0iMYqBRaJIfS+Y=
+        bh=m0EV77kj3MejMc1cPmr2Gy4Nx6vagV2LiI+Opic5OL8=;
+        b=T7PaCLAWljqLV7KMBOKmuz/e6zGX5ZO3wCm7N0iF86j0i6vSc7VIiW8DdF5FFu+h3qyQO+
+        kBd9WaPQSvAQq/aXtWznm1q4e0611iLNfKVXVRev9eS2wGWMexp/wOxjnV3KBnFK17TH63
+        q73tCSbbbhIKywfw0wHO1hSCQEmHcYk=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-604-GA4LVzw3PnqZG7-SfcnNnw-1; Thu, 08 Apr 2021 10:04:31 -0400
-X-MC-Unique: GA4LVzw3PnqZG7-SfcnNnw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-594-Nm3onHDVOj-26fScj9Jdjg-1; Thu, 08 Apr 2021 10:04:43 -0400
+X-MC-Unique: Nm3onHDVOj-26fScj9Jdjg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 178201883521;
-        Thu,  8 Apr 2021 14:04:29 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F3F9310054F6;
+        Thu,  8 Apr 2021 14:04:40 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-119-35.rdu2.redhat.com [10.10.119.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E849610074F1;
-        Thu,  8 Apr 2021 14:04:20 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 132415D764;
+        Thu,  8 Apr 2021 14:04:34 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v6 02/30] mm: Add set/end/wait functions for PG_private_2
+Subject: [PATCH v6 03/30] mm/filemap: Pass the file_ra_state in the ractl
 From:   David Howells <dhowells@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         dhowells@redhat.com,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
@@ -61,171 +55,267 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Date:   Thu, 08 Apr 2021 15:04:20 +0100
-Message-ID: <161789066013.6155.9816857201817288382.stgit@warthog.procyon.org.uk>
+Date:   Thu, 08 Apr 2021 15:04:34 +0100
+Message-ID: <161789067431.6155.8063840447229665720.stgit@warthog.procyon.org.uk>
 In-Reply-To: <161789062190.6155.12711584466338493050.stgit@warthog.procyon.org.uk>
 References: <161789062190.6155.12711584466338493050.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add three functions to manipulate PG_private_2:
+From: Matthew Wilcox (Oracle) <willy@infradead.org>
 
- (*) set_page_private_2() - Set the flag and take an appropriate reference
-     on the flagged page.
+For readahead_expand(), we need to modify the file ra_state, so pass it
+down by adding it to the ractl.  We have to do this because it's not always
+the same as f_ra in the struct file that is already being passed.
 
- (*) end_page_private_2() - Clear the flag, drop the reference and wake up
-     any waiters, somewhat analogously with end_page_writeback().
-
- (*) wait_on_page_private_2() - Wait for the flag to be cleared.
-
-Wrappers will need to be placed in the netfs lib header in the patch that
-adds that.
-
-[This implements a suggestion by Linus[1] to not mix the terminology of
- PG_private_2 and PG_fscache in the mm core function]
-
-Changes:
-v5:
-- Add set and end functions, calling the end function end rather than
-  unlock[3].
-- Keep a ref on the page when PG_private_2 is set[4][5].
-
-v4:
-- Remove extern from the declaration[2].
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-cc: Alexander Viro <viro@zeniv.linux.org.uk>
-cc: Christoph Hellwig <hch@lst.de>
-cc: linux-mm@kvack.org
-cc: linux-cachefs@redhat.com
-cc: linux-afs@lists.infradead.org
-cc: linux-nfs@vger.kernel.org
-cc: linux-cifs@vger.kernel.org
-cc: ceph-devel@vger.kernel.org
-cc: v9fs-developer@lists.sourceforge.net
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/1330473.1612974547@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com/ [1]
-Link: https://lore.kernel.org/r/20210216102659.GA27714@lst.de/ [2]
-Link: https://lore.kernel.org/r/161340387944.1303470.7944159520278177652.stgit@warthog.procyon.org.uk/ # v3
-Link: https://lore.kernel.org/r/161539528910.286939.1252328699383291173.stgit@warthog.procyon.org.uk # v4
-Link: https://lore.kernel.org/r/20210321105309.GG3420@casper.infradead.org [3]
-Link: https://lore.kernel.org/r/CAHk-=wh+2gbF7XEjYc=HV9w_2uVzVf7vs60BPz0gFA=+pUm3ww@mail.gmail.com/ [4]
-Link: https://lore.kernel.org/r/CAHk-=wjSGsRj7xwhSMQ6dAQiz53xA39pOG+XA_WeTgwBBu4uqg@mail.gmail.com/ [5]
-Link: https://lore.kernel.org/r/161653788200.2770958.9517755716374927208.stgit@warthog.procyon.org.uk/ # v5
+Link: https://lore.kernel.org/r/20210407201857.3582797-2-willy@infradead.org/
 ---
 
- include/linux/pagemap.h |   19 +++++++++++++++
- mm/filemap.c            |   59 +++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 78 insertions(+)
+ fs/ext4/verity.c        |    2 +-
+ fs/f2fs/file.c          |    2 +-
+ fs/f2fs/verity.c        |    2 +-
+ include/linux/pagemap.h |   20 +++++++++++---------
+ mm/filemap.c            |    4 ++--
+ mm/internal.h           |    7 +++----
+ mm/readahead.c          |   22 +++++++++++-----------
+ 7 files changed, 30 insertions(+), 29 deletions(-)
 
+diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
+index 00e3cbde472e..07438f46b558 100644
+--- a/fs/ext4/verity.c
++++ b/fs/ext4/verity.c
+@@ -370,7 +370,7 @@ static struct page *ext4_read_merkle_tree_page(struct inode *inode,
+ 					       pgoff_t index,
+ 					       unsigned long num_ra_pages)
+ {
+-	DEFINE_READAHEAD(ractl, NULL, inode->i_mapping, index);
++	DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
+ 	struct page *page;
+ 
+ 	index += ext4_verity_metadata_pos(inode) >> PAGE_SHIFT;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index d26ff2ae3f5e..c1e6f669a0c4 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4051,7 +4051,7 @@ static int f2fs_ioc_set_compress_option(struct file *filp, unsigned long arg)
+ 
+ static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
+ {
+-	DEFINE_READAHEAD(ractl, NULL, inode->i_mapping, page_idx);
++	DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, page_idx);
+ 	struct address_space *mapping = inode->i_mapping;
+ 	struct page *page;
+ 	pgoff_t redirty_idx = page_idx;
+diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
+index 054ec852b5ea..a7beff28a3c5 100644
+--- a/fs/f2fs/verity.c
++++ b/fs/f2fs/verity.c
+@@ -228,7 +228,7 @@ static struct page *f2fs_read_merkle_tree_page(struct inode *inode,
+ 					       pgoff_t index,
+ 					       unsigned long num_ra_pages)
+ {
+-	DEFINE_READAHEAD(ractl, NULL, inode->i_mapping, index);
++	DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
+ 	struct page *page;
+ 
+ 	index += f2fs_verity_metadata_pos(inode) >> PAGE_SHIFT;
 diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 8c9947fd62f3..4a7c916abb5c 100644
+index 4a7c916abb5c..9a9e558ce4c7 100644
 --- a/include/linux/pagemap.h
 +++ b/include/linux/pagemap.h
-@@ -688,6 +688,25 @@ void wait_for_stable_page(struct page *page);
- 
- void page_endio(struct page *page, bool is_write, int err);
- 
-+/**
-+ * set_page_private_2 - Set PG_private_2 on a page and take a ref
-+ * @page: The page.
-+ *
-+ * Set the PG_private_2 flag on a page and take the reference needed for the VM
-+ * to handle its lifetime correctly.  This sets the flag and takes the
-+ * reference unconditionally, so care must be taken not to set the flag again
-+ * if it's already set.
-+ */
-+static inline void set_page_private_2(struct page *page)
-+{
-+	get_page(page);
-+	SetPagePrivate2(page);
-+}
-+
-+void end_page_private_2(struct page *page);
-+void wait_on_page_private_2(struct page *page);
-+int wait_on_page_private_2_killable(struct page *page);
-+
- /*
-  * Add an arbitrary waiter to a page's wait queue
+@@ -811,20 +811,23 @@ static inline int add_to_page_cache(struct page *page,
+  * @file: The file, used primarily by network filesystems for authentication.
+  *	  May be NULL if invoked internally by the filesystem.
+  * @mapping: Readahead this filesystem object.
++ * @ra: File readahead state.  May be NULL.
   */
+ struct readahead_control {
+ 	struct file *file;
+ 	struct address_space *mapping;
++	struct file_ra_state *ra;
+ /* private: use the readahead_* accessors instead */
+ 	pgoff_t _index;
+ 	unsigned int _nr_pages;
+ 	unsigned int _batch_count;
+ };
+ 
+-#define DEFINE_READAHEAD(rac, f, m, i)					\
+-	struct readahead_control rac = {				\
++#define DEFINE_READAHEAD(ractl, f, r, m, i)				\
++	struct readahead_control ractl = {				\
+ 		.file = f,						\
+ 		.mapping = m,						\
++		.ra = r,						\
+ 		._index = i,						\
+ 	}
+ 
+@@ -832,10 +835,9 @@ struct readahead_control {
+ 
+ void page_cache_ra_unbounded(struct readahead_control *,
+ 		unsigned long nr_to_read, unsigned long lookahead_count);
+-void page_cache_sync_ra(struct readahead_control *, struct file_ra_state *,
++void page_cache_sync_ra(struct readahead_control *, unsigned long req_count);
++void page_cache_async_ra(struct readahead_control *, struct page *,
+ 		unsigned long req_count);
+-void page_cache_async_ra(struct readahead_control *, struct file_ra_state *,
+-		struct page *, unsigned long req_count);
+ 
+ /**
+  * page_cache_sync_readahead - generic file readahead
+@@ -855,8 +857,8 @@ void page_cache_sync_readahead(struct address_space *mapping,
+ 		struct file_ra_state *ra, struct file *file, pgoff_t index,
+ 		unsigned long req_count)
+ {
+-	DEFINE_READAHEAD(ractl, file, mapping, index);
+-	page_cache_sync_ra(&ractl, ra, req_count);
++	DEFINE_READAHEAD(ractl, file, ra, mapping, index);
++	page_cache_sync_ra(&ractl, req_count);
+ }
+ 
+ /**
+@@ -878,8 +880,8 @@ void page_cache_async_readahead(struct address_space *mapping,
+ 		struct file_ra_state *ra, struct file *file,
+ 		struct page *page, pgoff_t index, unsigned long req_count)
+ {
+-	DEFINE_READAHEAD(ractl, file, mapping, index);
+-	page_cache_async_ra(&ractl, ra, page, req_count);
++	DEFINE_READAHEAD(ractl, file, ra, mapping, index);
++	page_cache_async_ra(&ractl, page, req_count);
+ }
+ 
+ /**
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 43700480d897..788b71e8a72d 100644
+index 788b71e8a72d..0ce93c8799ca 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1432,6 +1432,65 @@ void unlock_page(struct page *page)
- }
- EXPORT_SYMBOL(unlock_page);
+@@ -2830,7 +2830,7 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+ 	struct file *file = vmf->vma->vm_file;
+ 	struct file_ra_state *ra = &file->f_ra;
+ 	struct address_space *mapping = file->f_mapping;
+-	DEFINE_READAHEAD(ractl, file, mapping, vmf->pgoff);
++	DEFINE_READAHEAD(ractl, file, ra, mapping, vmf->pgoff);
+ 	struct file *fpin = NULL;
+ 	unsigned int mmap_miss;
  
-+/**
-+ * end_page_private_2 - Clear PG_private_2 and release any waiters
-+ * @page: The page
-+ *
-+ * Clear the PG_private_2 bit on a page and wake up any sleepers waiting for
-+ * this.  The page ref held for PG_private_2 being set is released.
-+ *
-+ * This is, for example, used when a netfs page is being written to a local
-+ * disk cache, thereby allowing writes to the cache for the same page to be
-+ * serialised.
-+ */
-+void end_page_private_2(struct page *page)
-+{
-+	page = compound_head(page);
-+	VM_BUG_ON_PAGE(!PagePrivate2(page), page);
-+	clear_bit_unlock(PG_private_2, &page->flags);
-+	wake_up_page_bit(page, PG_private_2);
-+	put_page(page);
-+}
-+EXPORT_SYMBOL(end_page_private_2);
-+
-+/**
-+ * wait_on_page_private_2 - Wait for PG_private_2 to be cleared on a page
-+ * @page: The page to wait on
-+ *
-+ * Wait for PG_private_2 (aka PG_fscache) to be cleared on a page.
-+ */
-+void wait_on_page_private_2(struct page *page)
-+{
-+	while (PagePrivate2(page))
-+		wait_on_page_bit(page, PG_private_2);
-+}
-+EXPORT_SYMBOL(wait_on_page_private_2);
-+
-+/**
-+ * wait_on_page_private_2_killable - Wait for PG_private_2 to be cleared on a page
-+ * @page: The page to wait on
-+ *
-+ * Wait for PG_private_2 (aka PG_fscache) to be cleared on a page or until a
-+ * fatal signal is received by the calling task.
-+ *
-+ * Return:
-+ * - 0 if successful.
-+ * - -EINTR if a fatal signal was encountered.
-+ */
-+int wait_on_page_private_2_killable(struct page *page)
-+{
-+	int ret = 0;
-+
-+	while (PagePrivate2(page)) {
-+		ret = wait_on_page_bit_killable(page, PG_private_2);
-+		if (ret < 0)
-+			break;
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(wait_on_page_private_2_killable);
-+
- /**
-  * end_page_writeback - end writeback against a page
-  * @page: the page
+@@ -2842,7 +2842,7 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+ 
+ 	if (vmf->vma->vm_flags & VM_SEQ_READ) {
+ 		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+-		page_cache_sync_ra(&ractl, ra, ra->ra_pages);
++		page_cache_sync_ra(&ractl, ra->ra_pages);
+ 		return fpin;
+ 	}
+ 
+diff --git a/mm/internal.h b/mm/internal.h
+index 1432feec62df..83a07b2a7b1f 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -51,13 +51,12 @@ void unmap_page_range(struct mmu_gather *tlb,
+ 
+ void do_page_cache_ra(struct readahead_control *, unsigned long nr_to_read,
+ 		unsigned long lookahead_size);
+-void force_page_cache_ra(struct readahead_control *, struct file_ra_state *,
+-		unsigned long nr);
++void force_page_cache_ra(struct readahead_control *, unsigned long nr);
+ static inline void force_page_cache_readahead(struct address_space *mapping,
+ 		struct file *file, pgoff_t index, unsigned long nr_to_read)
+ {
+-	DEFINE_READAHEAD(ractl, file, mapping, index);
+-	force_page_cache_ra(&ractl, &file->f_ra, nr_to_read);
++	DEFINE_READAHEAD(ractl, file, &file->f_ra, mapping, index);
++	force_page_cache_ra(&ractl, nr_to_read);
+ }
+ 
+ unsigned find_lock_entries(struct address_space *mapping, pgoff_t start,
+diff --git a/mm/readahead.c b/mm/readahead.c
+index c5b0457415be..2088569a947e 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -272,9 +272,10 @@ void do_page_cache_ra(struct readahead_control *ractl,
+  * memory at once.
+  */
+ void force_page_cache_ra(struct readahead_control *ractl,
+-		struct file_ra_state *ra, unsigned long nr_to_read)
++		unsigned long nr_to_read)
+ {
+ 	struct address_space *mapping = ractl->mapping;
++	struct file_ra_state *ra = ractl->ra;
+ 	struct backing_dev_info *bdi = inode_to_bdi(mapping->host);
+ 	unsigned long max_pages, index;
+ 
+@@ -433,10 +434,10 @@ static int try_context_readahead(struct address_space *mapping,
+  * A minimal readahead algorithm for trivial sequential/random reads.
+  */
+ static void ondemand_readahead(struct readahead_control *ractl,
+-		struct file_ra_state *ra, bool hit_readahead_marker,
+-		unsigned long req_size)
++		bool hit_readahead_marker, unsigned long req_size)
+ {
+ 	struct backing_dev_info *bdi = inode_to_bdi(ractl->mapping->host);
++	struct file_ra_state *ra = ractl->ra;
+ 	unsigned long max_pages = ra->ra_pages;
+ 	unsigned long add_pages;
+ 	unsigned long index = readahead_index(ractl);
+@@ -550,7 +551,7 @@ static void ondemand_readahead(struct readahead_control *ractl,
+ }
+ 
+ void page_cache_sync_ra(struct readahead_control *ractl,
+-		struct file_ra_state *ra, unsigned long req_count)
++		unsigned long req_count)
+ {
+ 	bool do_forced_ra = ractl->file && (ractl->file->f_mode & FMODE_RANDOM);
+ 
+@@ -560,7 +561,7 @@ void page_cache_sync_ra(struct readahead_control *ractl,
+ 	 * read-ahead will do the right thing and limit the read to just the
+ 	 * requested range, which we'll set to 1 page for this case.
+ 	 */
+-	if (!ra->ra_pages || blk_cgroup_congested()) {
++	if (!ractl->ra->ra_pages || blk_cgroup_congested()) {
+ 		if (!ractl->file)
+ 			return;
+ 		req_count = 1;
+@@ -569,21 +570,20 @@ void page_cache_sync_ra(struct readahead_control *ractl,
+ 
+ 	/* be dumb */
+ 	if (do_forced_ra) {
+-		force_page_cache_ra(ractl, ra, req_count);
++		force_page_cache_ra(ractl, req_count);
+ 		return;
+ 	}
+ 
+ 	/* do read-ahead */
+-	ondemand_readahead(ractl, ra, false, req_count);
++	ondemand_readahead(ractl, false, req_count);
+ }
+ EXPORT_SYMBOL_GPL(page_cache_sync_ra);
+ 
+ void page_cache_async_ra(struct readahead_control *ractl,
+-		struct file_ra_state *ra, struct page *page,
+-		unsigned long req_count)
++		struct page *page, unsigned long req_count)
+ {
+ 	/* no read-ahead */
+-	if (!ra->ra_pages)
++	if (!ractl->ra->ra_pages)
+ 		return;
+ 
+ 	/*
+@@ -604,7 +604,7 @@ void page_cache_async_ra(struct readahead_control *ractl,
+ 		return;
+ 
+ 	/* do read-ahead */
+-	ondemand_readahead(ractl, ra, true, req_count);
++	ondemand_readahead(ractl, true, req_count);
+ }
+ EXPORT_SYMBOL_GPL(page_cache_async_ra);
+ 
 
 
