@@ -2,111 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2211D357945
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 03:01:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3787357949
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 03:06:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229922AbhDHBBj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Apr 2021 21:01:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46300 "EHLO mail.kernel.org"
+        id S229849AbhDHBG7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Apr 2021 21:06:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229497AbhDHBBi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Apr 2021 21:01:38 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CDABE6121E;
-        Thu,  8 Apr 2021 01:01:27 +0000 (UTC)
+        id S229497AbhDHBG7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Apr 2021 21:06:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CD9DA61245;
+        Thu,  8 Apr 2021 01:06:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617843688;
-        bh=4u5tOpeCMncpEEQTHvI1+RnAHtrGNOf7zF8rhQ0eQbI=;
+        s=k20201202; t=1617844004;
+        bh=sFYllywBCpJE30mUO1rJNe8qpCVkCAmq3GQyi4xsvzQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=f1IAmgDh/ajJXxqKR9vXpvbxKyFaWcCycgnCj0Czvr6yiCvIbQQqLEttUcyroC3iz
-         +b+B8zQ14heqrSnyfEi5fUdZyyJmW0vIMazvd2wIwAnoCcpMwd0k+tXBmDgOLi/8IJ
-         +AsOkm5cNi0GdTcNjikrbtPCvU5K/55cv6csvcuPqAtWDIXFB79v9Du4F4WiuO49Go
-         p0wTQekgcBuRylR/AP+Z+ncpt9dg2Ypv9RpIXnG+H3egdTZapV+MDYQLDhZ4ciHjlS
-         BdGYyUCH6GZ0C2BlVAP2EUdTP7SwusqsGPZFVNO8Mpg2L54LBtBbN8FCS3M+Rlytg8
-         PyJ1mhozAsknA==
-Date:   Wed, 7 Apr 2021 18:01:26 -0700
+        b=NvJlMfTdn62PEJbvV9dwqvsUS9TJZfL2oJZTbcw3zrztW3eiBzNfKaaN/VrMZ8O5p
+         Hvpw3RUwWJNBHcdPhHaiLJz2iFVGokP7g00VAb2cOosdNbz1Gerum/7l7iSqNOUtgq
+         5thSnMSOaAKbBMdUTrw5FAHB8bDCj53BtvevWUJ8OZgqpBuyot4ifHh7y/tLN8pMlc
+         SGcheGTwtkscMcsJ1Qbj+Giut+gx4t+X8aBTlLDdlJm3764dhAomZJYnKrqK4PJIyY
+         EB2rvtTHvkSFszZL/PZZYE6OI4hV7bK215zJvGiInGob7jgYqYCV5o47GQjLDPIVb4
+         ObDPsz+5bNBqw==
+Date:   Wed, 7 Apr 2021 18:06:42 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     Shreeya Patel <shreeya.patel@collabora.com>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
-        chao@kernel.org, krisman@collabora.com, drosen@google.com,
-        yuchao0@huawei.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-        andre.almeida@collabora.com
-Subject: Re: [PATCH v7 4/4] fs: unicode: Add utf8 module and a unicode layer
-Message-ID: <YG5V5l2pD3DCiyVA@gmail.com>
-References: <20210407144845.53266-1-shreeya.patel@collabora.com>
- <20210407144845.53266-5-shreeya.patel@collabora.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v5 02/19] fscrypt: export fscrypt_base64_encode and
+ fscrypt_base64_decode
+Message-ID: <YG5XIg0mGK708iiG@gmail.com>
+References: <20210326173227.96363-1-jlayton@kernel.org>
+ <20210326173227.96363-3-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210407144845.53266-5-shreeya.patel@collabora.com>
+In-Reply-To: <20210326173227.96363-3-jlayton@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 07, 2021 at 08:18:45PM +0530, Shreeya Patel wrote:
-> diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
-> index 2c27b9a5cd6c..0c69800a2a37 100644
-> --- a/fs/unicode/Kconfig
-> +++ b/fs/unicode/Kconfig
-> @@ -2,13 +2,31 @@
->  #
->  # UTF-8 normalization
->  #
-> +# CONFIG_UNICODE will be automatically enabled if CONFIG_UNICODE_UTF8
-> +# is enabled. This config option adds the unicode subsystem layer which loads
-> +# the UTF-8 module whenever any filesystem needs it.
->  config UNICODE
-> -	bool "UTF-8 normalization and casefolding support"
-> +	bool
-> +
-> +config UNICODE_UTF8
-> +	tristate "UTF-8 module"
-> +	select UNICODE
->  	help
-> -	  Say Y here to enable UTF-8 NFD normalization and NFD+CF casefolding
-> -	  support.
-> +	  Say M here to enable UTF-8 NFD normalization and NFD+CF casefolding
-> +	  support as a loadable module or say Y for building it into the kernel.
-> +
-> +	  utf8data.h_shipped has a large database table which is an
-> +	  auto-generated decodification trie for the unicode normalization
-> +	  functions and it is not necessary to carry this large table in the
-> +	  kernel. Hence, enabling UNICODE_UTF8 as M will allow you to avoid
-> +	  carrying this large table into the kernel and module will only be
-> +	  loaded whenever required by any filesystem.
-> +	  Please note, in this case utf8 module will only be available after
-> +	  booting into the compiled kernel. If your filesystem requires it to
-> +	  have utf8 during boot time then you should have it built into the
-> +	  kernel by saying Y here to avoid boot failure.
+On Fri, Mar 26, 2021 at 01:32:10PM -0400, Jeff Layton wrote:
+> Ceph will need to base64-encode some encrypted filenames, so make
+> these routines, and FSCRYPT_BASE64_CHARS available to modules.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-This help text seems to contradict itself; it says "it is not necessary to carry
-this large table in the kernel", and then later it says that in some cases it is
-in fact necessary.
-
-It would also be helpful for the help text to mention which filesystems actually
-support this feature.
-
-> diff --git a/fs/unicode/unicode-core.c b/fs/unicode/unicode-core.c
-> index 730dbaedf593..d9e9e410893d 100644
-> --- a/fs/unicode/unicode-core.c
-> +++ b/fs/unicode/unicode-core.c
-> @@ -1,228 +1,132 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
->  #include <linux/module.h>
->  #include <linux/kernel.h>
-> -#include <linux/string.h>
->  #include <linux/slab.h>
-> -#include <linux/parser.h>
->  #include <linux/errno.h>
->  #include <linux/unicode.h>
-> -#include <linux/stringhash.h>
-> +#include <linux/spinlock.h>
->  
-> -#include "utf8n.h"
-> +DEFINE_SPINLOCK(utf8mod_lock);
-
-This spinlock should be 'static'.
+It would be helpful to have a quick explanation here about *why* ceph has to do
+base64 encoding/decoding itself.
 
 - Eric
