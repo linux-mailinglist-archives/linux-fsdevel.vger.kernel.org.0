@@ -2,114 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E75003583E5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 14:55:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB6F335843B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 15:10:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231526AbhDHMzq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 08:55:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59072 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231502AbhDHMzp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 08:55:45 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 046DC610FC;
-        Thu,  8 Apr 2021 12:55:32 +0000 (UTC)
-Date:   Thu, 8 Apr 2021 14:55:30 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>, bfields@fieldses.org
-Subject: Re: open_by_handle_at() in userns
-Message-ID: <20210408125530.gnv5hqcmgewklypn@wittgenstein>
-References: <20210328155624.930558-1-amir73il@gmail.com>
- <20210330073101.5pqvw72fxvyp5kvf@wittgenstein>
- <CAOQ4uxjQFGdT0xH17pm-nSKE_0--z_AapRW70MNrLJLcCB6MAg@mail.gmail.com>
- <CAOQ4uxiizVxVJgtytYk_o7GvG2O2qwyKHgScq8KLhq218CNdnw@mail.gmail.com>
- <20210331100854.sdgtzma6ifj7w5yn@wittgenstein>
- <CAOQ4uxjHsqZqLT-DOPS0Q0FiHZ2Ge=d3tP+3-qd+O2optq9rZg@mail.gmail.com>
+        id S231295AbhDHNKm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 09:10:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34512 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229751AbhDHNKl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Apr 2021 09:10:41 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D726C061760
+        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Apr 2021 06:10:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=GyOWOoyPXcNXC/fx2ulYrcPr43XWPruw+BRPnWGm3Z8=; b=EihRiLIYF+p9dAMS9DhZCI0cOE
+        SN9hEagl56MM7nH0+X1OIRX+I7C5rJAYDn+T6yRAYFEjNlHxY5uxh+Un38n3PsUZdaJwVQNuGZp5q
+        iu2lyPYLLRKIT0syH5dMzaYYmgNDYG4pB6g1Gj3BjveNC6aQ69DcSr62HSFXflHBVFAIsCovuXt2Q
+        hLc3FJW97F9jTW4fngdBq8MHLnnMdQmDmYhQRDatjL1zxaAszkdVURlVRhUhYF47ym0pOikk9moye
+        KYMgvcq7j5zbQJBF0wLqyf7M0MQuxX6pG2nSxbSkgvjQuoi+7JymbyaaPV/hRH8/6YfNPlYlUF069
+        eAjqy8lg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lUUPb-00GDW8-6s; Thu, 08 Apr 2021 13:09:47 +0000
+Date:   Thu, 8 Apr 2021 14:09:31 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     jlayton@kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm, netfs: Fix readahead bits
+Message-ID: <20210408130931.GM2531743@casper.infradead.org>
+References: <20210407201857.3582797-4-willy@infradead.org>
+ <20210407201857.3582797-1-willy@infradead.org>
+ <1234933.1617886271@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjHsqZqLT-DOPS0Q0FiHZ2Ge=d3tP+3-qd+O2optq9rZg@mail.gmail.com>
+In-Reply-To: <1234933.1617886271@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 08, 2021 at 02:44:47PM +0300, Amir Goldstein wrote:
-> > One thing your patch
-> >
-> > commit ea31e84fda83c17b88851de399f76f5d9fc1abf4
-> > Author: Amir Goldstein <amir73il@gmail.com>
-> > Date:   Sat Mar 20 12:58:12 2021 +0200
-> >
-> >     fs: allow open by file handle inside userns
-> >
-> >     open_by_handle_at(2) requires CAP_DAC_READ_SEARCH in init userns,
-> >     where most filesystems are mounted.
-> >
-> >     Relax the requirement to allow a user with CAP_DAC_READ_SEARCH
-> >     inside userns to open by file handle in filesystems that were
-> >     mounted inside that userns.
-> >
-> >     In addition, also allow open by handle in an idmapped mount, which is
-> >     mapped to the userns while verifying that the returned open file path
-> >     is under the root of the idmapped mount.
-> >
-> >     This is going to be needed for setting an fanotify mark on a filesystem
-> >     and watching events inside userns.
-> >
-> >     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> >
-> > Requires fs/exportfs/expfs.c to be made idmapped mounts aware.
-> > open_by_handle_at() uses exportfs_decode_fh() which e.g. has the
-> > following and other callchains:
-> >
-> > exportfs_decode_fh()
-> > -> exportfs_decode_fh_raw()
-> >    -> lookup_one_len()
-> >       -> inode_permission(mnt_userns, ...)
-> >
-> > That's not a huge problem though I did all these changes for the
-> > overlayfs support for idmapped mounts I have in a branch from an earlier
-> > version of the idmapped mounts patchset. Basically lookup_one_len(),
-> > lookup_one_len_unlocked(), and lookup_positive_unlocked() need to take
-> > the mnt_userns into account. I can rebase my change and send it for
-> > consideration next cycle. If you can live without the
-> > open_by_handle_at() support for now in this patchset (Which I think you
-> > said you could.) then it's not a blocker either. Sorry for the
-> > inconvenience.
-> >
+On Thu, Apr 08, 2021 at 01:51:11PM +0100, David Howells wrote:
+> Hi Willy, Jeff,
 > 
-> Christian,
+> I think we need the attached change to readahead_expand() to fix the oops seen
+> when it tries to dereference ractl->ra when called indirectly from
+> netfs_write_begin().
 > 
-> I think making exportfs_decode_fh() idmapped mount aware is not
-> enough, because when a dentry alias is found in dcache, none of
-> those lookup functions are called.
-> 
-> I think we will also need something like this:
-> https://github.com/amir73il/linux/commits/fhandle_userns
-> 
-> I factored-out a helper from nfsd_apcceptable() which implements
-> the "subtree_check" nfsd logic and uses it for open_by_handle_at().
-> 
-> I've also added a small patch to name_to_handle_at() with a UAPI
-> change that could make these changes usable by userspace nfs
-> server inside userns, but I have no demo nor tests for that and frankly,
-> I have little incentive to try and promote this UAPI change without
-> anybody asking for it...
+> netfs_write_begin() should also be using DEFINE_READAHEAD() rather than
+> manually initialising the ractl variable so that Willy can find it;-).
 
-Ah, at first I was confused about why this would matter but it matters
-because nfsd already implements a check of that sort directly in nfsd
-independent of idmapped mounts:
-https://github.com/amir73il/linux/commit/4bef9ff1718935b7b42afbae71cfaab7770e8436
-
-Afaict, an nfs server can't be mounted inside of userns right now. That
-is something that folks from Netflix and from Kinvolk have been
-interested in enabling. They also want the ability to use idmapped
-mounts + nfs. Understandable that you don't want to drive this of
-course. I'll sync with them about this.
-
-Independent of that, I thought our last understanding was that you
-wouldn't need to handle open_by_handle_at() for now.
-
-Christian
+ACK.  Please fold into the appropriate patches.
