@@ -2,126 +2,227 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBE7B358018
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 11:58:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CF523580B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 12:36:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231225AbhDHJ6e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 05:58:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48792 "EHLO
+        id S230322AbhDHKg7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 06:36:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230424AbhDHJ6c (ORCPT
+        with ESMTP id S229803AbhDHKg6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 05:58:32 -0400
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03E0FC061761
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Apr 2021 02:58:22 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id v29so812534vsi.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Apr 2021 02:58:21 -0700 (PDT)
+        Thu, 8 Apr 2021 06:36:58 -0400
+Received: from mail-qk1-x74a.google.com (mail-qk1-x74a.google.com [IPv6:2607:f8b0:4864:20::74a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1DE3C061760
+        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Apr 2021 03:36:46 -0700 (PDT)
+Received: by mail-qk1-x74a.google.com with SMTP id g18so983361qki.15
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Apr 2021 03:36:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vqkcfcLmWPSwGQ7DXIyIlAdTx4eIhz1g0fE/uj8Jq5Q=;
-        b=ak4tVPm2ajctg+hnsjp8GHDd5d8rnO+htwb7t/lo2NiatS+hRAXSYXtJ2BFjM6x48U
-         pnA3KNNoIxXJdN3FUU5ajyCgsw02XIyHzdNzHBN+7meSGNIFDBPp1Wn0sT3/G/RLW0Wd
-         MKbnV+cT/6M5eRpLsuP/tywNIa+EUWls2KYUk=
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=EzmzmhSLYOYTzia53fwYPMbr67HMT97fl1vfB43xxy0=;
+        b=CE/uDe25jrKi/EcWF45IReCs/HFAUYt/zKGAJidnrsKwFNUr8ELTjdagRfyFQubgHp
+         iGKU1yedoQKg9fMIiEMOCB3X5xySq6bxtlRa7gbdIy84EcFI+ZaBdYUSX0YGoN8IbF8Y
+         saaPZu8y4+OBvZpN3gGUiW2h2NqH9Vs2Xvh3RRI8U9gXA6pbiZJREjQO1swkLYN40VjR
+         EEB2PGx7uESg3MkI3iaXTokKj92jpxPJhoTB83ZiPUqToht77ooyoWVfhaEtMHA5zTId
+         F+shhJlLS7yvXzL8u6aTmnR31XOQyP31C6qewYpqfFP9Cq1PfrEdoURacVW5ZRCY87G1
+         mtxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vqkcfcLmWPSwGQ7DXIyIlAdTx4eIhz1g0fE/uj8Jq5Q=;
-        b=HocU1NK92iP1nLukqPVNcj0pGkwgvkn9nRmNcOImF0cLT3qO0hoLzyVpGR4xz1KxQM
-         ha9GNT39i/9glHqYFbnJDPysbrHqmzgvUyMZqVmQLGCHKfy3uaUWhwfR1Eckt+B7rV2d
-         pXnJorKgUqCUA8TVb/TveNzo/VU8LxxhWRN6TuMIwzV9haDP3+egzu5iCV5fjrRW1Jt2
-         j9lq0KY4JTmQYsO/twmSs87/B06d/06reJ/o//QdKzgEtZ+42SF1hkvXf89Dtni3bADg
-         EylJXowGuRzj2ocDdHmwQgNb9lRwPnDv/IXxHWgJBD5aon/FuqI+BFYoyQbCILmB3l+k
-         TU8Q==
-X-Gm-Message-State: AOAM532laTN3PYzgGgWsvWpEnfm8GbZyt4vczWkC43HfSE7zzSt1/UHh
-        0G+1ib9VkCArwA+JTNaiFjwEHKvkYIpjck1mkd4OLg==
-X-Google-Smtp-Source: ABdhPJyjZoMXzPL6CXTNPSH+BhhMdLuVrO7eLmf1th5EWTHfKQwxBWgSOV4WX90df7ZbQ6ru8A72X72+OSsEU0sNU2I=
-X-Received: by 2002:a67:b005:: with SMTP id z5mr4869666vse.47.1617875901207;
- Thu, 08 Apr 2021 02:58:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210329164907.2133175-1-mic@digikod.net>
-In-Reply-To: <20210329164907.2133175-1-mic@digikod.net>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 8 Apr 2021 11:58:10 +0200
-Message-ID: <CAJfpegu=8L7Fd_qYK0cJRQ18NqyVeSvTp-vcC4KmqZEcw28naw@mail.gmail.com>
-Subject: Re: [PATCH v1] ovl: Fix leaked dentry
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        stable <stable@vger.kernel.org>,
-        syzbot <syzkaller@googlegroups.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=EzmzmhSLYOYTzia53fwYPMbr67HMT97fl1vfB43xxy0=;
+        b=es0zD8JyJ/mPw9xSc1kAONgDrmb9SnTWHbI9kMPO5WMPeucUGBeWQOc6CWGc17E+Dm
+         vgLRMaeyJV9awEffQ6tLft+6XARJwo5VDYe9D/c2raI7BuokP9gBk8/9rqHm7Btc83Mw
+         l5rL+/A+hAlB3VKxChKnfrDRfwEIDme6Gc6iKfx46SujFRzUJbI9QXcOvWduBFvedADS
+         5cdxku+RQER7cxPFklD3/Hk7xrj1uxdRR9pbWGGsuhTiL5o7x8pbL5i/GG73lanXA2hP
+         LTTcpkXbhG+KB1iCrkyRQUNUndY9hQngBreGX4Q+Vm8VdguzBHDq5xU2fzD+Fdq5jGRf
+         ayzQ==
+X-Gm-Message-State: AOAM531A/DVG/qOxyo8wzQgR3chwNzepQKpD+34AM+w/GYRg/gOgWYyR
+        TD14a1kfaEnXjH0l5wktIf1ccM6u9g==
+X-Google-Smtp-Source: ABdhPJzB0aHqU6Vvk6OAMCFdlq8fMrwJtVqGP2BZ9KnPFLZKFqsgLtH3YCZklfy1Z87D+fhG091DtXga6A==
+X-Received: from elver.muc.corp.google.com ([2a00:79e0:15:13:9038:bbd3:4a12:abda])
+ (user=elver job=sendgmr) by 2002:a0c:b348:: with SMTP id a8mr7834915qvf.7.1617878205926;
+ Thu, 08 Apr 2021 03:36:45 -0700 (PDT)
+Date:   Thu,  8 Apr 2021 12:35:55 +0200
+Message-Id: <20210408103605.1676875-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.31.0.208.g409f899ff0-goog
+Subject: [PATCH v4 00/10] Add support for synchronous signals on perf events
+From:   Marco Elver <elver@google.com>
+To:     elver@google.com, peterz@infradead.org,
+        alexander.shishkin@linux.intel.com, acme@kernel.org,
+        mingo@redhat.com, jolsa@redhat.com, mark.rutland@arm.com,
+        namhyung@kernel.org, tglx@linutronix.de
+Cc:     glider@google.com, viro@zeniv.linux.org.uk, arnd@arndb.de,
+        christian@brauner.io, dvyukov@google.com, jannh@google.com,
+        axboe@kernel.dk, mascasa@google.com, pcc@google.com,
+        irogers@google.com, oleg@redhat.com, kasan-dev@googlegroups.com,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 29, 2021 at 6:48 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
-wrote:
->
-> From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
->
-> Since commit 6815f479ca90 ("ovl: use only uppermetacopy state in
-> ovl_lookup()"), overlayfs doesn't put temporary dentry when there is a
-> metacopy error, which leads to dentry leaks when shutting down the
-> related superblock:
->
->   overlayfs: refusing to follow metacopy origin for (/file0)
->   ...
->   BUG: Dentry (____ptrval____){i=3D3f33,n=3Dfile3}  still in use (1) [unm=
-ount of overlay overlay]
->   ...
->   WARNING: CPU: 1 PID: 432 at umount_check.cold+0x107/0x14d
->   CPU: 1 PID: 432 Comm: unmount-overlay Not tainted 5.12.0-rc5 #1
->   ...
->   RIP: 0010:umount_check.cold+0x107/0x14d
->   ...
->   Call Trace:
->    d_walk+0x28c/0x950
->    ? dentry_lru_isolate+0x2b0/0x2b0
->    ? __kasan_slab_free+0x12/0x20
->    do_one_tree+0x33/0x60
->    shrink_dcache_for_umount+0x78/0x1d0
->    generic_shutdown_super+0x70/0x440
->    kill_anon_super+0x3e/0x70
->    deactivate_locked_super+0xc4/0x160
->    deactivate_super+0xfa/0x140
->    cleanup_mnt+0x22e/0x370
->    __cleanup_mnt+0x1a/0x30
->    task_work_run+0x139/0x210
->    do_exit+0xb0c/0x2820
->    ? __kasan_check_read+0x1d/0x30
->    ? find_held_lock+0x35/0x160
->    ? lock_release+0x1b6/0x660
->    ? mm_update_next_owner+0xa20/0xa20
->    ? reacquire_held_locks+0x3f0/0x3f0
->    ? __sanitizer_cov_trace_const_cmp4+0x22/0x30
->    do_group_exit+0x135/0x380
->    __do_sys_exit_group.isra.0+0x20/0x20
->    __x64_sys_exit_group+0x3c/0x50
->    do_syscall_64+0x45/0x70
->    entry_SYSCALL_64_after_hwframe+0x44/0xae
->   ...
->   VFS: Busy inodes after unmount of overlay. Self-destruct in 5 seconds. =
- Have a nice day...
->
-> This fix has been tested with a syzkaller reproducer.
->
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: <stable@vger.kernel.org> # v5.7+
-> Reported-by: syzbot <syzkaller@googlegroups.com>
-> Fixes: 6815f479ca90 ("ovl: use only uppermetacopy state in ovl_lookup()")
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> Link: https://lore.kernel.org/r/20210329164907.2133175-1-mic@digikod.net
+The perf subsystem today unifies various tracing and monitoring
+features, from both software and hardware. One benefit of the perf
+subsystem is automatically inheriting events to child tasks, which
+enables process-wide events monitoring with low overheads. By default
+perf events are non-intrusive, not affecting behaviour of the tasks
+being monitored.
 
-Thanks, applied.
+For certain use-cases, however, it makes sense to leverage the
+generality of the perf events subsystem and optionally allow the tasks
+being monitored to receive signals on events they are interested in.
+This patch series adds the option to synchronously signal user space on
+events.
 
-Miklos
+To better support process-wide synchronous self-monitoring, without
+events propagating to children that do not share the current process's
+shared environment, two pre-requisite patches are added to optionally
+restrict inheritance to CLONE_THREAD, and remove events on exec (without
+affecting the parent).
+
+Examples how to use these features can be found in the tests added at
+the end of the series. In addition to the tests added, the series has
+also been subjected to syzkaller fuzzing (focus on 'kernel/events/'
+coverage).
+
+Motivation and Example Uses
+---------------------------
+
+1. 	Our immediate motivation is low-overhead sampling-based race
+	detection for user space [1]. By using perf_event_open() at
+	process initialization, we can create hardware
+	breakpoint/watchpoint events that are propagated automatically
+	to all threads in a process. As far as we are aware, today no
+	existing kernel facility (such as ptrace) allows us to set up
+	process-wide watchpoints with minimal overheads (that are
+	comparable to mprotect() of whole pages).
+
+2.	Other low-overhead error detectors that rely on detecting
+	accesses to certain memory locations or code, process-wide and
+	also only in a specific set of subtasks or threads.
+
+[1] https://llvm.org/devmtg/2020-09/slides/Morehouse-GWP-Tsan.pdf
+
+Other ideas for use-cases we found interesting, but should only
+illustrate the range of potential to further motivate the utility (we're
+sure there are more):
+
+3.	Code hot patching without full stop-the-world. Specifically, by
+	setting a code breakpoint to entry to the patched routine, then
+	send signals to threads and check that they are not in the
+	routine, but without stopping them further. If any of the
+	threads will enter the routine, it will receive SIGTRAP and
+	pause.
+
+4.	Safepoints without mprotect(). Some Java implementations use
+	"load from a known memory location" as a safepoint. When threads
+	need to be stopped, the page containing the location is
+	mprotect()ed and threads get a signal. This could be replaced with
+	a watchpoint, which does not require a whole page nor DTLB
+	shootdowns.
+
+5.	Threads receiving signals on performance events to
+	throttle/unthrottle themselves.
+
+6.	Tracking data flow globally.
+
+Changelog
+---------
+v4:
+* Fix for parent and child racing to exit in sync_child_event().
+* Fix race between irq_work running and task's sighand being released by
+  release_task().
+* Generalize setting si_perf and si_addr independent of event type;
+  introduces perf_event_attr::sig_data, which can be set by user space
+  to be propagated to si_perf.
+* Warning in perf_sigtrap() if ctx->task and current mismatch; we expect
+  this on architectures that do not properly implement
+  arch_irq_work_raise().
+* Require events that want sigtrap to be associated with a task.
+* Dropped "perf: Add breakpoint information to siginfo on SIGTRAP"
+  in favor of more generic solution (perf_event_attr::sig_data).
+
+v3: 
+* Add patch "perf: Rework perf_event_exit_event()" to beginning of
+  series, courtesy of Peter Zijlstra.
+* Rework "perf: Add support for event removal on exec" based on
+  the added "perf: Rework perf_event_exit_event()".
+* Fix kselftests to work with more recent libc, due to the way it forces
+  using the kernel's own siginfo_t.
+* Add basic perf-tool built-in test.
+
+v2/RFC: https://lkml.kernel.org/r/20210310104139.679618-1-elver@google.com
+* Patch "Support only inheriting events if cloned with CLONE_THREAD"
+  added to series.
+* Patch "Add support for event removal on exec" added to series.
+* Patch "Add kselftest for process-wide sigtrap handling" added to
+  series.
+* Patch "Add kselftest for remove_on_exec" added to series.
+* Implicitly restrict inheriting events if sigtrap, but the child was
+  cloned with CLONE_CLEAR_SIGHAND, because it is not generally safe if
+  the child cleared all signal handlers to continue sending SIGTRAP.
+* Various minor fixes (see details in patches).
+
+v1/RFC: https://lkml.kernel.org/r/20210223143426.2412737-1-elver@google.com
+
+Pre-series: The discussion at [2] led to the changes in this series. The
+approach taken in "Add support for SIGTRAP on perf events" to trigger
+the signal was suggested by Peter Zijlstra in [3].
+
+[2] https://lore.kernel.org/lkml/CACT4Y+YPrXGw+AtESxAgPyZ84TYkNZdP0xpocX2jwVAbZD=-XQ@mail.gmail.com/
+
+[3] https://lore.kernel.org/lkml/YBv3rAT566k+6zjg@hirez.programming.kicks-ass.net/
+
+Marco Elver (9):
+  perf: Apply PERF_EVENT_IOC_MODIFY_ATTRIBUTES to children
+  perf: Support only inheriting events if cloned with CLONE_THREAD
+  perf: Add support for event removal on exec
+  signal: Introduce TRAP_PERF si_code and si_perf to siginfo
+  perf: Add support for SIGTRAP on perf events
+  selftests/perf_events: Add kselftest for process-wide sigtrap handling
+  selftests/perf_events: Add kselftest for remove_on_exec
+  tools headers uapi: Sync tools/include/uapi/linux/perf_event.h
+  perf test: Add basic stress test for sigtrap handling
+
+Peter Zijlstra (1):
+  perf: Rework perf_event_exit_event()
+
+ arch/m68k/kernel/signal.c                     |   3 +
+ arch/x86/kernel/signal_compat.c               |   5 +-
+ fs/signalfd.c                                 |   4 +
+ include/linux/compat.h                        |   2 +
+ include/linux/perf_event.h                    |   9 +-
+ include/linux/signal.h                        |   1 +
+ include/uapi/asm-generic/siginfo.h            |   6 +-
+ include/uapi/linux/perf_event.h               |  12 +-
+ include/uapi/linux/signalfd.h                 |   4 +-
+ kernel/events/core.c                          | 302 +++++++++++++-----
+ kernel/fork.c                                 |   2 +-
+ kernel/signal.c                               |  11 +
+ tools/include/uapi/linux/perf_event.h         |  12 +-
+ tools/perf/tests/Build                        |   1 +
+ tools/perf/tests/builtin-test.c               |   5 +
+ tools/perf/tests/sigtrap.c                    | 150 +++++++++
+ tools/perf/tests/tests.h                      |   1 +
+ .../testing/selftests/perf_events/.gitignore  |   3 +
+ tools/testing/selftests/perf_events/Makefile  |   6 +
+ tools/testing/selftests/perf_events/config    |   1 +
+ .../selftests/perf_events/remove_on_exec.c    | 260 +++++++++++++++
+ tools/testing/selftests/perf_events/settings  |   1 +
+ .../selftests/perf_events/sigtrap_threads.c   | 210 ++++++++++++
+ 23 files changed, 924 insertions(+), 87 deletions(-)
+ create mode 100644 tools/perf/tests/sigtrap.c
+ create mode 100644 tools/testing/selftests/perf_events/.gitignore
+ create mode 100644 tools/testing/selftests/perf_events/Makefile
+ create mode 100644 tools/testing/selftests/perf_events/config
+ create mode 100644 tools/testing/selftests/perf_events/remove_on_exec.c
+ create mode 100644 tools/testing/selftests/perf_events/settings
+ create mode 100644 tools/testing/selftests/perf_events/sigtrap_threads.c
+
+-- 
+2.31.0.208.g409f899ff0-goog
+
