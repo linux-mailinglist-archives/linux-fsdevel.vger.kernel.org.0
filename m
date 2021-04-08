@@ -2,86 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 66175358948
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 18:08:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4FC6358976
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 18:18:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231843AbhDHQI5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 12:08:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45914 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231655AbhDHQI4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 12:08:56 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 103A0C061760;
-        Thu,  8 Apr 2021 09:08:45 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 3F83C6A45; Thu,  8 Apr 2021 12:08:44 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 3F83C6A45
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1617898124;
-        bh=axZmNLbDt/fZw4wakJsGKJ/9lF8NGgPgczwwcmcr32s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xzRf39kkb5hbJHo0vMxninggJzrJFmP9k3bGOI0VrOm838dNeBBQcMVy2e2tkSJL5
-         9N1AP8yMFnPrJltc5g2p7gJftMcmndLP4ULkrxHTWNs8PUqWeIrYF68m7ovuS/N9i5
-         4suGWWxwsAYjwh9nr/c66ZZ5+vNnSzwDYc69tK6U=
-Date:   Thu, 8 Apr 2021 12:08:44 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: open_by_handle_at() in userns
-Message-ID: <20210408160844.GD25439@fieldses.org>
-References: <20210328155624.930558-1-amir73il@gmail.com>
- <20210330073101.5pqvw72fxvyp5kvf@wittgenstein>
- <CAOQ4uxjQFGdT0xH17pm-nSKE_0--z_AapRW70MNrLJLcCB6MAg@mail.gmail.com>
- <CAOQ4uxiizVxVJgtytYk_o7GvG2O2qwyKHgScq8KLhq218CNdnw@mail.gmail.com>
- <20210331100854.sdgtzma6ifj7w5yn@wittgenstein>
- <CAOQ4uxjHsqZqLT-DOPS0Q0FiHZ2Ge=d3tP+3-qd+O2optq9rZg@mail.gmail.com>
- <20210408125530.gnv5hqcmgewklypn@wittgenstein>
- <20210408141504.GB25439@fieldses.org>
- <CAOQ4uxjkr_3d3KUkjMCtdpg===ZOPOwv41bUBkTppLmqRErHZQ@mail.gmail.com>
+        id S232144AbhDHQST (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 12:18:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57558 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231480AbhDHQSS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Apr 2021 12:18:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 33B8A610CF;
+        Thu,  8 Apr 2021 16:18:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617898686;
+        bh=ou2UhD5Os/RRXcPf0NOI1ZbCPwmpM8WgP8WJMnC5BsM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=DCCC9yDux2rr67KPYtodPYv2w+RSJOBDTke7s0QSEt0PxLK9I3+oz90OQzzMHgbE5
+         ixbiEE98++wbGdz6MSS/VqdlgEeXsbT3QKoVrARXUwIu02ZRQwYTkbrYzlji7WjeEn
+         C4f7j5zyat6OnBWTJEWPuA0fhcq+YqA9zQ2erGQ4fM0TbUA6UbcuNIZamHPp6PrkUh
+         OOTNonI6kkGd1e4FEPKfm55ST34R7g74EXD8PfCYFKd7u5457wwbQty0LP7/4lBPnr
+         SVdxtxSKJzrZYg10X4aCbnhVv0dZBOAqf5LCeU6FsjLkEbJsJTnSPt0ej2ceO8RnYo
+         ylWOREfJUHJfw==
+Message-ID: <a4188c2faa0789b0f04c34a184595d6e79353636.camel@kernel.org>
+Subject: Re: [RFC PATCH v5 01/19] vfs: export new_inode_pseudo
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Date:   Thu, 08 Apr 2021 12:18:05 -0400
+In-Reply-To: <YG5XmL9+ofqnOuzg@gmail.com>
+References: <20210326173227.96363-1-jlayton@kernel.org>
+         <20210326173227.96363-2-jlayton@kernel.org> <YG5XmL9+ofqnOuzg@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjkr_3d3KUkjMCtdpg===ZOPOwv41bUBkTppLmqRErHZQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 08, 2021 at 06:54:52PM +0300, Amir Goldstein wrote:
-> They are understood to me :) but I didn't want to get into it, because it is
-> complicated to explain and I wasn't sure if anyone cared...
+On Wed, 2021-04-07 at 18:08 -0700, Eric Biggers wrote:
+> On Fri, Mar 26, 2021 at 01:32:09PM -0400, Jeff Layton wrote:
+> > Ceph needs to be able to allocate inodes ahead of a create that might
+> > involve a fscrypt-encrypted inode. new_inode() almost fits the bill,
+> > but it puts the inode on the sb->s_inodes list and when we go to hash
+> > it, that might be done again.
+> > 
+> > We could work around that by setting I_CREATING on the new inode, but
+> > that causes ilookup5 to return -ESTALE if something tries to find it
+> > before I_NEW is cleared. To work around all of this, just use
+> > new_inode_pseudo which doesn't add it to the list.
+> > 
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > 
-> I started working on open_by_handle_at() in userns for fanotify and fanotify
-> mostly reports directory fhandle, so no issues with cross-directory renames.
-> In any case, fanotify never reports "connectable" non-dir file handles.
+> IIRC, this looked like a bug in ilookup5().  Did you come to the conclusion that
+> it's not actually a bug?
 > 
-> Because my proposed change ALSO makes it possible to start talking about
-> userspace nfs server inside userns (in case anyone cares), I wanted to lay
-> out the path towards a userspace "subtree_check" like solution.
 
-We have to support subdirectory exports and subtree checking because we
-already have, but, FWIW, if I were writing a new NFS server from
-scratch, I don't think I would.  It's poorly understood, and the effort
-would be better spent on more flexible storage management.
+Yes. Al pointed out that it's desirable behavior for most (simpler)
+filesystems.
 
---b.
+Basically, nothing should have presented the filehandle for this inode
+to a client until after I_NEW has been cleared. So, any attempt to look
+it up should give you back ESTALE at this point.
 
-> Another thing I am contemplating is, if and when idmapped mount support
-> is added to overlayfs, we can store an additional "connectable" file handle
-> in the overlayfs index (whose key is the non-connectable fhandle) and
-> fix ovl_acceptable() similar to nfsd_acceptable() and then we will be able
-> to mount an overlayfs inside userns with nfs_export support.
-> 
-> I've included a two liner patch on the fhandle_userns branch to allow
-> overlayfs inside userns with nfs_export support in the case that
-> underlying filesystem was mounted inside userns, but that is not such
-> an interesting use case IMO.
-> 
-> Thanks,
-> Amir.
+I'm not married to this approach however. If there's a better way to do
+this, then I'm happy to consider it.
+-- 
+Jeff Layton <jlayton@kernel.org>
+
