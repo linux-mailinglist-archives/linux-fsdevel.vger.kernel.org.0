@@ -2,91 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A9EA358E98
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 22:40:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99257358EA7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 22:44:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231862AbhDHUj6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 16:39:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49020 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231732AbhDHUj6 (ORCPT
+        id S232332AbhDHUo2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 16:44:28 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:54487 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231676AbhDHUo1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 16:39:58 -0400
-Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEED8C061760
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Apr 2021 13:39:46 -0700 (PDT)
-Received: by mail-ot1-x331.google.com with SMTP id w21-20020a9d63950000b02901ce7b8c45b4so3625842otk.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Apr 2021 13:39:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9j1bK2upZfEGn1Vxn178ZxXGrhfiZMKD/Kfu7iKqLJg=;
-        b=p1u3s/rifboWAYPJ5jK1hXunVmFJCYeEywcJQchfKfNRjKGfT1bGxsT7dyEhxCfXf1
-         IKiW6P4ShyTIr2TVq3DvMVaLzYyg7lUTbuj21HWW6puqK8HhliX+ZPo4NObgcloTV0NU
-         pO/ZJkTAcVD9qUCJCCFLWflbyTexHbB17muyOHpdSEqlD3Lxmk9IrFUHDerlBP0RxH6Y
-         TTX9Nk8texJfrLupXTL+d4pX3IKyjhXtYnEwQFVu1gIfr6Eh3ODf7TfKVXRgayJon7Pn
-         SJR3xbNqPCn2dbAcY+ZFsO5RMrCetzaYyg/qtFrpdRwPSZoaO8qnxQY2XAQ5NF2KawG6
-         vjSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9j1bK2upZfEGn1Vxn178ZxXGrhfiZMKD/Kfu7iKqLJg=;
-        b=dkZgl9QRMZr2Ndea35qovIJcgevFg5DdgSQGarmHQ/YPh6fWbJxJxF2M/nd88PkelW
-         fDkYAOOfD7OeEPOW8iKtRtAil19mim+wr13AtZt3DYtMZQ9/VIizWf8Mt6fQzmS1zO9Z
-         3an6jNFiTRAIL590gbc3eu5f7pLWnBjcT3Pctd367JlZ1YmEDmnjOUEtqeLGQ8xL5yNC
-         d2W74464oS6XkFhxFRI+TSS8u6hJHfb2iwlE2n783cBhmbawyxKBXGp20FWYb7iPYB7F
-         IZzv1WVBJCXijUgSZEm1Z7OgKN20d0fqwQW8/v652WjW3A6ShSXY3rs+VBU0UOMTDI4s
-         2w3Q==
-X-Gm-Message-State: AOAM532Uj1bOAjf+Ua65eYhdmtFUTHbz8QEQVR9b6/XaCU93Hdc3VSV0
-        JdJ2BELew328bwUCHuBrhmhIIzpTf8J0O05XQWBGug==
-X-Google-Smtp-Source: ABdhPJxi2/8yzbdo0JTgde0doRgSN9ybYO7SC9hnMgp/BTzrcDDkW9EAcSmLhabaifinuGw/7rBnLhd7fr7iEKcWbF0=
-X-Received: by 2002:a9d:5d0a:: with SMTP id b10mr9185075oti.180.1617914386326;
- Thu, 08 Apr 2021 13:39:46 -0700 (PDT)
+        Thu, 8 Apr 2021 16:44:27 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id CBA175C00AC;
+        Thu,  8 Apr 2021 16:44:15 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Thu, 08 Apr 2021 16:44:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=qd99tIwkyY/yAuS+FY1nRWCDzMJ
+        lvE3kBmaqzDP5T8I=; b=d5RbFQyskd2jDEewPuVtIYXhbjKJ0C3OJApXeMJmzQ5
+        QGU1zt28aKnfc2TKMx4BeCxELRQ6XFdHyN7aztL9bl+977LdnZ0YjRQep++GFj32
+        vvJl0VC2caDQ/SnpdOfbS1Ua4E3mJAw6nFFsXtuB77ePRBMRsNlMVb+AAVElAD4b
+        dTTyWJNw27ZMuPrOl50w6omLbRepdkP40KdXU9x2/9FQF4KYtCGZHytpm/TM3HCr
+        MrnC4cmftk1rwJMfllap1/FtDCugbbEY8vh9xcPJsDhqJw7XTuzlh7veA33W+uY0
+        DL1mqpUKY6oNp+S2JTw/AUnVeIWgFn9c5W6cfEMg0hw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=qd99tI
+        wkyY/yAuS+FY1nRWCDzMJlvE3kBmaqzDP5T8I=; b=SDh4cvheVbh2qDob+ss9qD
+        +FD9wwn4xZsrkMHujv7PmqPYsEeMTwnDJ+vINSAVHbu4jHq2r39NuiyTiiIBatZs
+        Ndud9QH6jCxsN6qKbrLHaQEfh5p0mUNgcij3+IM2xi7IZt5p9jkKZJk8gIsqYxkI
+        Tae/IIvDRsouOAOzO9/FVfdqvxrPJlNkYkIctwGZPoc3ZoL+fZMV/lvwkwPdqOnb
+        C6UP4UQRILccy4TOuJO3AKjbyoOUIuWZCNPgwKOoBRBe5/WwKFbc8RVa3F7W8wQx
+        hrQ/b+6ccZ84wrkaJQSAa5LcPRCjtVruv8wrqflGoI//D1eiHO7wYi+HT8Nr75bQ
+        ==
+X-ME-Sender: <xms:H2tvYK7hDuVvRYZQa8BpuLFO8hkoPJdan5ew_HwPaYXoW5Sam7pWeg>
+    <xme:H2tvYD3s9T6lffHebe8KOw4uLxn7ka8cq3UToaYK4F1MqX0u1Fv3rQuNNpf4-9DHy
+    hR22zs37r96BIplmg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudejledgudehgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enfghrlhcuvffnffculdejtddmnecujfgurhepfffhvffukfhfgggtuggjsehttdertddt
+    tddvnecuhfhrohhmpeffrghnihgvlhcuighuuceougiguhesugiguhhuuhdrgiihiieqne
+    cuggftrfgrthhtvghrnhepueduvdejfefflefgueevheefgeefteefteeuudduhfduhfeh
+    veelteevudelheejnecukfhppeduieefrdduudegrddufedvrddunecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepugiguhesugiguhhuuhdrgiih
+    ii
+X-ME-Proxy: <xmx:H2tvYGVZVRDHsdcyZ4XwA88XmJMpJm3bbMua5fjnHUVtlP2MM4Iuhg>
+    <xmx:H2tvYO66bmMCSoV44an8XyaPyRcVU3xPpW9djcQuGP6Y9YrQNlAe5g>
+    <xmx:H2tvYNJ0fpje33fosaQ2Tm6G_BD4Si9BtHFUgdzRSJpSAj_Kq4eG3w>
+    <xmx:H2tvYO_E4TXJTWpm6IPWiAkv1uLGnHEvlMpIyZPflRbvItFwhR4o2w>
+Received: from dlxu-fedora-R90QNFJV (unknown [163.114.132.1])
+        by mail.messagingengine.com (Postfix) with ESMTPA id B5B3F1080066;
+        Thu,  8 Apr 2021 16:44:12 -0400 (EDT)
+Date:   Thu, 8 Apr 2021 13:44:10 -0700
+From:   Daniel Xu <dxu@dxuuu.xyz>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, jolsa@kernel.org, hannes@cmpxchg.org,
+        yhs@fb.com, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC bpf-next 1/1] bpf: Introduce iter_pagecache
+Message-ID: <20210408204410.wszz3rjmqbg4ps3q@dlxu-fedora-R90QNFJV>
+References: <cover.1617831474.git.dxu@dxuuu.xyz>
+ <22bededbd502e0df45326a54b3056941de65a101.1617831474.git.dxu@dxuuu.xyz>
+ <20210408081935.b3xollrzl6lejbyf@wittgenstein>
 MIME-Version: 1.0
-References: <20210327035019.GG1719932@casper.infradead.org>
- <CAOg9mSTQ-zNKXQGBK9QEnwJCvwqh=zFLbLJZy-ibGZwLve4o0w@mail.gmail.com>
- <20210201130800.GP308988@casper.infradead.org> <CAOg9mSSd5ccoi1keeiRfkV+esekcQLxer9_1iZ-r9bQDjZLfBg@mail.gmail.com>
- <CAOg9mSSEVE3PGs2E9ya5_B6dQkoH6n2wGAEW_wWSEvw0LurWuQ@mail.gmail.com>
- <2884397.1616584210@warthog.procyon.org.uk> <CAOg9mSQMDzMfg3C0TUvTWU61zQdjnthXSy01mgY=CpgaDjj=Pw@mail.gmail.com>
- <1507388.1616833898@warthog.procyon.org.uk> <20210327135659.GH1719932@casper.infradead.org>
- <CAOg9mSRCdaBfLABFYvikHPe1YH6TkTx2tGU186RDso0S=z-S4A@mail.gmail.com>
- <20210327155630.GJ1719932@casper.infradead.org> <CAOg9mSSxrPEd4XsWseMOnpMGzDAE5Pm0YHcZE7gBdefpsReRzg@mail.gmail.com>
- <CAOg9mSSaDsEEQD7cwbsCi9WA=nSAD78wSJV_5Gu=Kc778z57zA@mail.gmail.com>
- <1720948.1617010659@warthog.procyon.org.uk> <CAOg9mSTEepP-BjV85dOmk6hbhQXYtz2k1y5G1RbN9boN7Mw3wA@mail.gmail.com>
- <3726695.1617284551@warthog.procyon.org.uk>
-In-Reply-To: <3726695.1617284551@warthog.procyon.org.uk>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Thu, 8 Apr 2021 16:39:35 -0400
-Message-ID: <CAOg9mSQTRfS1Wyd_ULbN8cS7FstH9ix-um9ZeKLa2O=xLgF+-Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] implement orangefs_readahead
-To:     David Howells <dhowells@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210408081935.b3xollrzl6lejbyf@wittgenstein>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi David... I've been gone on a motorcycle adventure,
-sorry for the delay... here's my public branch...
+On Thu, Apr 08, 2021 at 10:19:35AM +0200, Christian Brauner wrote:
+> On Wed, Apr 07, 2021 at 02:46:11PM -0700, Daniel Xu wrote:
+> > This commit introduces the bpf page cache iterator. This iterator allows
+> > users to run a bpf prog against each page in the "page cache".
+> > Internally, the "page cache" is extremely tied to VFS superblock + inode
+> > combo. Because of this, iter_pagecache will only examine pages in the
+> > caller's mount namespace.
+> > 
+> > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> > ---
+> >  kernel/bpf/Makefile         |   2 +-
+> >  kernel/bpf/pagecache_iter.c | 293 ++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 294 insertions(+), 1 deletion(-)
+> >  create mode 100644 kernel/bpf/pagecache_iter.c
 
-https://github.com/hubcapsc/linux/tree/readahead_v3
+<...>
 
--Mike
+> > 
+> > +static int init_seq_pagecache(void *priv_data, struct bpf_iter_aux_info *aux)
+> > +{
+> > +	struct bpf_iter_seq_pagecache_info *info = priv_data;
+> > +	struct radix_tree_iter iter;
+> > +	struct super_block *sb;
+> > +	struct mount *mnt;
+> > +	void **slot;
+> > +	int err;
+> > +
+> > +	info->ns = current->nsproxy->mnt_ns;
+> > +	get_mnt_ns(info->ns);
+> > +	INIT_RADIX_TREE(&info->superblocks, GFP_KERNEL);
+> > +
+> > +	spin_lock(&info->ns->ns_lock);
+> > +	list_for_each_entry(mnt, &info->ns->list, mnt_list) {
+> 
+> Not just are there helpers for taking ns_lock
+> static inline void lock_ns_list(struct mnt_namespace *ns)
+> static inline void unlock_ns_list(struct mnt_namespace *ns)
+> they are private to fs/namespace.c because it's the only place that
+> should ever walk this list.
 
-On Thu, Apr 1, 2021 at 9:42 AM David Howells <dhowells@redhat.com> wrote:
->
-> Mike Marshall <hubcap@omnibond.com> wrote:
->
-> > I did    git format-patch a38fd874..ff60d1fc
-> > and added that to my Linux 5.12-rc4 tree to make my orangefs_readahead
-> > patch that uses readahead_expand.
->
-> You're using the readahead_expand patch and the iov_iter_xarray patches?
->
-> Do you have a public branch I can look at?
->
-> David
->
+Thanks for the hints. Would it be acceptable to add some helpers to
+fs/namespace.c to allow walking the list?
+
+IIUC the only way to find a list of mounts is by looking at the mount
+namespace. And walking each mount and looking at each `struct
+super_node`'s inode's `struct address_space` seemed like the cleanest
+way to walkthe page cache.
+
+> This seems buggy: why is it ok here to only take ns_lock and not also
+> namespace_sem like mnt_already_visible() and __is_local_mountpoint()
+> or the relevant proc iterators? I might be missing something.
+
+Thanks for the hints. I'll take a closer look at the locking. Most
+probably I didn't get it right.
+
+I should have also mentioned in the cover letter that I'm fairly sure I
+messed up the locking somewhere.
+
+> 
+> > +		sb = mnt->mnt.mnt_sb;
+> > +
+> > +		/* The same mount may be mounted in multiple places */
+> > +		if (radix_tree_lookup(&info->superblocks, (unsigned long)sb))
+> > +			continue;
+> > +
+> > +		err = radix_tree_insert(&info->superblocks,
+> > +				        (unsigned long)sb, (void *)1);
+> > +		if (err)
+> > +			goto out;
+> > +	}
+> > +
+> > +	radix_tree_for_each_slot(slot, &info->superblocks, &iter, 0) {
+> > +		sb = (struct super_block *)iter.index;
+> > +		atomic_inc(&sb->s_active);
+> 
+> It also isn't nice that you mess with sb->s_active directly.
+> 
+> Imho, this is poking around in a lot of fs/ specific stuff that other
+> parts of the kernel should not care about or have access to.
+
+Re above: do you think it'd be appropriate to add more helpers to fs/ ?
+
+<...>
+
+Thanks,
+Daniel
