@@ -2,121 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9631358905
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 17:57:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA25135894A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 18:08:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231918AbhDHP54 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 11:57:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54267 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231655AbhDHP5z (ORCPT
+        id S232239AbhDHQJJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 12:09:09 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:47135 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231655AbhDHQJH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 11:57:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617897464;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NinlbVPhwGdJcoVcBt2udn4w5X18/v4CvahbnKLeeMI=;
-        b=NEdeqkDHiTCWJJwaZxmkSrX/82crujOncZicm/U1g2O2KiPxUtDQwgSRpHdduYvi8paM+w
-        2KpRuzyOlPja2/pba5L/L3g+U1eLfDts5DYyuRhlmlAnNVVaoBZcFwQl5ymSC1OyyFiyo5
-        xLkxwnSmSzVKWi6CleVnNHQKHylabfY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-413-0tkXerksNmuLEQR_9ITDFg-1; Thu, 08 Apr 2021 11:57:42 -0400
-X-MC-Unique: 0tkXerksNmuLEQR_9ITDFg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D1B2A107ACC7;
-        Thu,  8 Apr 2021 15:57:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-119-35.rdu2.redhat.com [10.10.119.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3DE165C1C4;
-        Thu,  8 Apr 2021 15:57:32 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210408145057.GN2531743@casper.infradead.org>
-References: <20210408145057.GN2531743@casper.infradead.org> <161789062190.6155.12711584466338493050.stgit@warthog.procyon.org.uk> <161789066013.6155.9816857201817288382.stgit@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 02/30] mm: Add set/end/wait functions for PG_private_2
+        Thu, 8 Apr 2021 12:09:07 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id A7F145C00DF;
+        Thu,  8 Apr 2021 12:08:55 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Thu, 08 Apr 2021 12:08:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=mC9lT507J6RIj+U5nS4hMawdjll
+        gWQu3AF4sHZo0txk=; b=ftKoFL1DidJZ8AA4UiXRBaU5Tu/vdy4sOfZHQQmhepU
+        HFTbJRcZk4OJYHb7DXNl1OHOgfJGsD0r8tiXXEeY730VTP+oE0SnZy8Y1GVsNKXw
+        bLI4yQ8/J2guhtUHQIUQYA3dKLYMe+7xf9I4FGT1eVdicvUi05vrxgSzIH4HIMdV
+        +4KJ+4o6qNs4r/AAmuWFKgdyTGY5ltllEXKqhmP/FzQOY2YCIw2GguWbUAkqhS3t
+        mxlWlEa/p/Efv/FKnhlcqtbnEVEKepAyYZL+GXFx7r+pFIH+J+8tlk8pEd8Mm/TL
+        RBiv9VPfKNNj2SrCDhrrbjjz9sHMFJz4Blvr+seB0Vw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=mC9lT5
+        07J6RIj+U5nS4hMawdjllgWQu3AF4sHZo0txk=; b=QuGYtViLn86Ts9x5v5g3bd
+        MVi95Jp1JOot0EuVp4/oK46YOgRBpnkpsxCK05+VilcbR8CjelhsaBupaZBiRqD8
+        36+6xejpOF86GaFL9DZuhdR8GnQQFT5peUrpzpelRPcS+LLYFBtu7oaB699rpKmE
+        7+Uh9cL5tIZfJQNmxEFuTLdprT8MUmC9RKgt9d+vY0LmiaePWIwrPwGzoTS203cl
+        Y1o8ujJmjsrczLBw+KMiHiLNsAS93ogs+fciMCd80KEdPYJXq/NYdo6A8dcnMUKk
+        naDGagrYNcCUX/44wxC3Ri2u59NRTLRQxY58nNlL+6Ka80F/GNZLHrWIRm0/KUvg
+        ==
+X-ME-Sender: <xms:lipvYF7SfN6hNym_9V4OYOWn5Okx7dgtJvSqli_dhA_3bMhvaYuzpQ>
+    <xme:lipvYC4ixJoGnA6Q4ZMtsIzXcY2Mz-WPG0Y-5hO75A8cWwkXfE0aCUr0oCdUT4MOA
+    6RtxjdXZuaZgzdGlQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudejledgleelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    gfrhhlucfvnfffucdljedtmdenucfjughrpeffhffvuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepffgrnhhivghlucgiuhcuoegugihusegugihuuhhurdighiiiqeenuc
+    ggtffrrghtthgvrhhnpeeuuddvjeefffelgfeuveehfeegfeetfeetueduudfhudfhheev
+    leetveduleehjeenucfkphepudeifedruddugedrudefvddrheenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegugihusegugihuuhhurdighiii
+X-ME-Proxy: <xmx:lipvYMc5AHrO0bJ0YYtZHVOA4DkPwEazneQcBEkIV7VVW6bNzgcuBw>
+    <xmx:lipvYOLPWECCm__gGzjEHGj6wLfKS4p75juNqctycEiUFlqiOzHtJg>
+    <xmx:lipvYJJTMQ19BjHxkt47O7443iOtPuOcbWY1ImfKIH5cnKE5lMQlvA>
+    <xmx:lypvYB-LW7W04XNfwu0IrGh4H4juFXqHfL4louBnMaazNjISkn_FOg>
+Received: from dlxu-fedora-R90QNFJV (unknown [163.114.132.5])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9C2731080054;
+        Thu,  8 Apr 2021 12:08:53 -0400 (EDT)
+Date:   Thu, 8 Apr 2021 09:08:37 -0700
+From:   Daniel Xu <dxu@dxuuu.xyz>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, jolsa@kernel.org, hannes@cmpxchg.org,
+        yhs@fb.com
+Subject: Re: [RFC bpf-next 0/1] bpf: Add page cache iterator
+Message-ID: <20210408160837.kbqxe3ls6ogjvayc@dlxu-fedora-R90QNFJV>
+References: <cover.1617831474.git.dxu@dxuuu.xyz>
+ <20210408075117.oqoqspilk3c3xsaa@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <46016.1617897451.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 08 Apr 2021 16:57:31 +0100
-Message-ID: <46017.1617897451@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210408075117.oqoqspilk3c3xsaa@wittgenstein>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Here's a partial change, but we still need to deal with the assumption tha=
-t
-page_has_private() makes that its output can be used to count the number o=
-f
-refs held for PG_private *and* PG_private_2 - which isn't true for my code
-here.
+Hi Christian, thanks for taking a look.
 
-David
----
-commit e7c28d83b84b972c3faa0dd86020548aa50eda75
-Author: David Howells <dhowells@redhat.com>
-Date:   Thu Apr 8 16:33:20 2021 +0100
+On Thu, Apr 08, 2021 at 09:51:17AM +0200, Christian Brauner wrote:
+> On Wed, Apr 07, 2021 at 02:46:10PM -0700, Daniel Xu wrote:
+> > There currently does not exist a way to answer the question: "What is in
+> > the page cache?". There are various heuristics and counters but nothing
+> > that can tell you anything like:
+> > 
+> >   * 3M from /home/dxu/foo.txt
+> >   * 5K from ...
+> >   * etc.
+> > 
+> > The answer to the question is particularly useful in the stacked
+> > container world. Stacked containers implies multiple containers are run
+> > on the same physical host. Memory is precious resource on some (if not
+> 
+> Just to clarify: what are "stacked containers"? Do you mean nested
+> containers, i.e. containers running within containers?
 
-    netfs: Fix PG_private_2 helper functions to consistently use compound_=
-head()
+I mean multiple containers running side by side on the same host.
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index ef511364cc0c..63ca6430aef5 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -699,6 +699,7 @@ void page_endio(struct page *page, bool is_write, int =
-err);
-  */
- static inline void set_page_private_2(struct page *page)
- {
-+	page =3D compound_head(page);
- 	get_page(page);
- 	SetPagePrivate2(page);
- }
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 0ce93c8799ca..46e0321ba87a 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1461,6 +1461,7 @@ EXPORT_SYMBOL(end_page_private_2);
-  */
- void wait_on_page_private_2(struct page *page)
- {
-+	page =3D compound_head(page);
- 	while (PagePrivate2(page))
- 		wait_on_page_bit(page, PG_private_2);
- }
-@@ -1481,6 +1482,7 @@ int wait_on_page_private_2_killable(struct page *pag=
-e)
- {
- 	int ret =3D 0;
- =
-
-+	page =3D compound_head(page);
- 	while (PagePrivate2(page)) {
- 		ret =3D wait_on_page_bit_killable(page, PG_private_2);
- 		if (ret < 0)
-
+Thanks,
+Daniel
