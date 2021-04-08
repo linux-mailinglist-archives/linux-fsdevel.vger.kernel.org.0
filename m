@@ -2,127 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BF7D35826D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 13:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE5D23582AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 14:04:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231526AbhDHLpK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 07:45:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43886 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231341AbhDHLpK (ORCPT
+        id S231308AbhDHMEx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 08:04:53 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:24811 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229964AbhDHMEw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 07:45:10 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2266CC061760;
-        Thu,  8 Apr 2021 04:44:59 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id x17so1894028iog.2;
-        Thu, 08 Apr 2021 04:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pBcMG+dV/7+95vKcKuoiPYoSG5DzpuFNtQO+n2Bns/o=;
-        b=Qi1bT/IWDxI6zA/zoXi9Z9DnSpM4KJghPeUlP1IryoDhXaHlMDtiyw+YsgI0A31evm
-         W7FON9oyIubLuBD3rMLudaIe48zVHfHNMIjZIjLVyLzYEqDGflM49BSZvszsIeaImBON
-         FkWrEpnLEQaMaHrpYQuHs6IZsb/9q57uVu8B3/TWmrdFX7dFJqlDfueexlVP8X+P9xed
-         RgUy7wx+m0QGYld0LuVwVJpORmhca/MeGgJG4deW4uKT17wTQLskSfdxK8lwNEbYGdGt
-         M+AY72v6wm3BawvP6X7vV0VQuctfZmJHoUX1NCn/hrh/imZClCM8ZIHJd1koJY6hswr/
-         +3bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pBcMG+dV/7+95vKcKuoiPYoSG5DzpuFNtQO+n2Bns/o=;
-        b=GScEnzBKShtOJ/evxLGBCTUv0+iFqzc7JzlyLWSqaLGXoeaoZ8C0ICcPl6r0Q2TOns
-         oWYGcre7TT2WQW9FRd2ZYC4dLDfWLhiVUuZxhaR+EGAvKFqtpd/RkhchL63HZe+L3wDP
-         OpFNKBmEZjHyXv2KjCtnOMNc2nAv6d4vn1KyAi1oUkEdI91vnwy0AY9YHFKAVq6Ib/1N
-         bTNVXAsbxfAGav/dsNVE0TVSehMD2Z6xGYD47XRai3RBXGLhWsxYHZatO79MmMbguqp6
-         9NSS2TzFfscosjbd+Jgjr9LQaeUnXYuT2uAOBkx9vPJmEcrq9pZzL4ZUwK2ajuDUaIrL
-         2yew==
-X-Gm-Message-State: AOAM530UZZbolC6ui9Z58A47P9NCGAcPxKyCNBqCHFLPLfJVvNIhwATy
-        r8G15OOSz4gPUI9KuskHhSCpUS+ejdKbiupGBFfDoQQBCwE=
-X-Google-Smtp-Source: ABdhPJziG18OtJtOojNJhUmbh8ECPZy7NwUwithSHK0QoonoPEUgXM8AdPlzvYSsRRGH5vqUkFATXIOMaHxuOuZvjXc=
-X-Received: by 2002:a5e:8d01:: with SMTP id m1mr6322958ioj.72.1617882298600;
- Thu, 08 Apr 2021 04:44:58 -0700 (PDT)
+        Thu, 8 Apr 2021 08:04:52 -0400
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3A4NSyVKlPuH4vkzq6pEU2/XbVTQ3pDfLM3DAb?=
+ =?us-ascii?q?vn1ZSRFFG/GwvcaogfgdyFvImC8cMUtQ/eyoFYuhZTfn9ZBz6ZQMJrvKZmTbkU?=
+ =?us-ascii?q?ahMY0K1+Xf6hLtFyD0/uRekYdMGpIVNPTeFl5/5Pya3CCdM/INhOaK67qpg+C2?=
+ =?us-ascii?q?9QYJcShPZ7t75wl0Tia3e3cGJzVuPpYyGJqC6scvnVPJFkg/VNixBXUOQoH41r?=
+ =?us-ascii?q?/2va/hCCRnOzcXrCGKjR6NrIXxCgWk2H4lOA9n8PMP9nfknmXCipmejw=3D=3D?=
+X-IronPort-AV: E=Sophos;i="5.82,206,1613404800"; 
+   d="scan'208";a="106797245"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 08 Apr 2021 20:04:39 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id BF9744CEA876;
+        Thu,  8 Apr 2021 20:04:35 +0800 (CST)
+Received: from G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Thu, 8 Apr 2021 20:04:36 +0800
+Received: from G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) by
+ G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Thu, 8 Apr 2021 20:04:35 +0800
+Received: from irides.mr.mr.mr (10.167.225.141) by
+ G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.2 via Frontend Transport; Thu, 8 Apr 2021 20:04:34 +0800
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <linux-nvdimm@lists.01.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
+        <willy@infradead.org>, <jack@suse.cz>, <viro@zeniv.linux.org.uk>,
+        <linux-btrfs@vger.kernel.org>, <david@fromorbit.com>, <hch@lst.de>,
+        <rgoldwyn@suse.de>
+Subject: [PATCH v4 0/7] fsdax,xfs: Add reflink&dedupe support for fsdax
+Date:   Thu, 8 Apr 2021 20:04:25 +0800
+Message-ID: <20210408120432.1063608-1-ruansy.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.31.0
 MIME-Version: 1.0
-References: <20210328155624.930558-1-amir73il@gmail.com> <20210330073101.5pqvw72fxvyp5kvf@wittgenstein>
- <CAOQ4uxjQFGdT0xH17pm-nSKE_0--z_AapRW70MNrLJLcCB6MAg@mail.gmail.com>
- <CAOQ4uxiizVxVJgtytYk_o7GvG2O2qwyKHgScq8KLhq218CNdnw@mail.gmail.com> <20210331100854.sdgtzma6ifj7w5yn@wittgenstein>
-In-Reply-To: <20210331100854.sdgtzma6ifj7w5yn@wittgenstein>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 8 Apr 2021 14:44:47 +0300
-Message-ID: <CAOQ4uxjHsqZqLT-DOPS0Q0FiHZ2Ge=d3tP+3-qd+O2optq9rZg@mail.gmail.com>
-Subject: Re: open_by_handle_at() in userns
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: BF9744CEA876.A4371
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> One thing your patch
->
-> commit ea31e84fda83c17b88851de399f76f5d9fc1abf4
-> Author: Amir Goldstein <amir73il@gmail.com>
-> Date:   Sat Mar 20 12:58:12 2021 +0200
->
->     fs: allow open by file handle inside userns
->
->     open_by_handle_at(2) requires CAP_DAC_READ_SEARCH in init userns,
->     where most filesystems are mounted.
->
->     Relax the requirement to allow a user with CAP_DAC_READ_SEARCH
->     inside userns to open by file handle in filesystems that were
->     mounted inside that userns.
->
->     In addition, also allow open by handle in an idmapped mount, which is
->     mapped to the userns while verifying that the returned open file path
->     is under the root of the idmapped mount.
->
->     This is going to be needed for setting an fanotify mark on a filesystem
->     and watching events inside userns.
->
->     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> Requires fs/exportfs/expfs.c to be made idmapped mounts aware.
-> open_by_handle_at() uses exportfs_decode_fh() which e.g. has the
-> following and other callchains:
->
-> exportfs_decode_fh()
-> -> exportfs_decode_fh_raw()
->    -> lookup_one_len()
->       -> inode_permission(mnt_userns, ...)
->
-> That's not a huge problem though I did all these changes for the
-> overlayfs support for idmapped mounts I have in a branch from an earlier
-> version of the idmapped mounts patchset. Basically lookup_one_len(),
-> lookup_one_len_unlocked(), and lookup_positive_unlocked() need to take
-> the mnt_userns into account. I can rebase my change and send it for
-> consideration next cycle. If you can live without the
-> open_by_handle_at() support for now in this patchset (Which I think you
-> said you could.) then it's not a blocker either. Sorry for the
-> inconvenience.
->
+This patchset is attempt to add CoW support for fsdax, and take XFS,
+which has both reflink and fsdax feature, as an example.
 
-Christian,
+Changes from V3:
+ - Take out the first 3 patches as a cleanup patchset[1], which has been
+    sent yesterday.
+ - Fix usage of code in dax_iomap_cow_copy()
+ - Add comments for macro definitions
+ - Fix other code style problems and mistakes
 
-I think making exportfs_decode_fh() idmapped mount aware is not
-enough, because when a dentry alias is found in dcache, none of
-those lookup functions are called.
+Changes from V2:
+ - Fix the mistake in iomap_apply2() and dax_dedupe_file_range_compare()
+ - Add CoW judgement in dax_iomap_zero()
+ - Fix other code style problems and mistakes
 
-I think we will also need something like this:
-https://github.com/amir73il/linux/commits/fhandle_userns
+Changes from V1:
+ - Factor some helper functions to simplify dax fault code
+ - Introduce iomap_apply2() for dax_dedupe_file_range_compare()
+ - Fix mistakes and other problems
+ - Rebased on v5.11
 
-I factored-out a helper from nfsd_apcceptable() which implements
-the "subtree_check" nfsd logic and uses it for open_by_handle_at().
+One of the key mechanism need to be implemented in fsdax is CoW.  Copy
+the data from srcmap before we actually write data to the destance
+iomap.  And we just copy range in which data won't be changed.
 
-I've also added a small patch to name_to_handle_at() with a UAPI
-change that could make these changes usable by userspace nfs
-server inside userns, but I have no demo nor tests for that and frankly,
-I have little incentive to try and promote this UAPI change without
-anybody asking for it...
+Another mechanism is range comparison.  In page cache case, readpage()
+is used to load data on disk to page cache in order to be able to
+compare data.  In fsdax case, readpage() does not work.  So, we need
+another compare data with direct access support.
 
-Thanks,
-Amir.
+With the two mechanism implemented in fsdax, we are able to make reflink
+and fsdax work together in XFS.
+
+Some of the patches are picked up from Goldwyn's patchset.  I made some
+changes to adapt to this patchset.
+
+
+(Rebased on v5.12-rc5 and patchset[1])
+
+[1]: https://lore.kernel.org/linux-xfs/20210407133823.828176-1-ruansy.fnst@fujitsu.com/
+==
+
+Shiyang Ruan (7):
+  fsdax: Introduce dax_iomap_cow_copy()
+  fsdax: Replace mmap entry in case of CoW
+  fsdax: Add dax_iomap_cow_copy() for dax_iomap_zero
+  iomap: Introduce iomap_apply2() for operations on two files
+  fsdax: Dedup file range to use a compare function
+  fs/xfs: Handle CoW for fsdax write() path
+  fs/xfs: Add dedupe support for fsdax
+
+ fs/dax.c               | 202 +++++++++++++++++++++++++++++++++++------
+ fs/iomap/apply.c       |  52 +++++++++++
+ fs/iomap/buffered-io.c |   2 +-
+ fs/remap_range.c       |  45 +++++++--
+ fs/xfs/xfs_bmap_util.c |   3 +-
+ fs/xfs/xfs_file.c      |  29 ++++--
+ fs/xfs/xfs_inode.c     |   8 +-
+ fs/xfs/xfs_inode.h     |   1 +
+ fs/xfs/xfs_iomap.c     |  58 +++++++++++-
+ fs/xfs/xfs_iomap.h     |   4 +
+ fs/xfs/xfs_iops.c      |   7 +-
+ fs/xfs/xfs_reflink.c   |  17 ++--
+ include/linux/dax.h    |   7 +-
+ include/linux/fs.h     |  12 ++-
+ include/linux/iomap.h  |   7 +-
+ 15 files changed, 393 insertions(+), 61 deletions(-)
+
+-- 
+2.31.0
+
+
+
