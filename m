@@ -2,103 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33C7A357E5D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 10:46:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F393357EA3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Apr 2021 11:02:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229689AbhDHIqJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 04:46:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60892 "EHLO
+        id S230211AbhDHJCP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 05:02:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbhDHIqJ (ORCPT
+        with ESMTP id S229588AbhDHJCN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 04:46:09 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5911DC061760;
-        Thu,  8 Apr 2021 01:45:58 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id z1so1800874ybf.6;
-        Thu, 08 Apr 2021 01:45:58 -0700 (PDT)
+        Thu, 8 Apr 2021 05:02:13 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1ED8C061761
+        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Apr 2021 02:02:00 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id u17so1762446ejk.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Apr 2021 02:02:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=99J/CBzF8eeODcwTLJG1kD3GoFOA/YtJT+K2uJ6P1yo=;
-        b=bhM38B4AF1UqtXySCz92Ptq2REVaikD5Y5yxUaKO7BUjux6HIhe0wBLIfObYSFXvuq
-         81azzZAW/btmRfS9dHpCWQJVsbji6UpeXiG95l7EfqecBSizs9RuBnLsNEzGwxw/U+xz
-         KrvcOg0PKpDE/SB0o4oflbv8gxpW1Klpcs6Rq41qn7bLBFZ23mZvbUQfwSWryX1B+No5
-         W3HroZu5wniL9vV5kQb20cpgqXyNUfX6xqR9YtpkLT2rXIe29+d5b/hxHoPLvR0Z5DoI
-         WjHgZ6jsEOBgIGPOTh4FCuwaXJEgOSx+/Q4yBiEv+tdtPrSKeB5AllizDt31Z/TC+lwN
-         yDEQ==
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cXalpWPdovuqi5PtyyBVt6MR8In8wK+QHdjt9pvsaQ4=;
+        b=hXItazSBCUJKTKFr8ty0kuL/11ikHtPiXUThWd8G8PO444TtM/DMLIuh6TLqS0P7W/
+         KA40sKleR67T20vW1C6bSQ6K0Fr0NqoOgi+bGrS48c3RSh5lQG5JlxMiv5Myj/gbL2At
+         t3VNG06cCMARp0qjsyVCb+Z/sBuJ0tEt98J2s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=99J/CBzF8eeODcwTLJG1kD3GoFOA/YtJT+K2uJ6P1yo=;
-        b=QvRTyDmzX3T/ky4EnpyQwsEL9igepwYbPeXFvoFrUj/M5UBW9HFg1ta4UsnR+RxiTU
-         zFn9IY2Bzhqp9cyHofQjPf2dAdUDKpBby0sPMJ7FKzsTl3u8rV2u+ZBbmI5ugQqVVKBz
-         ENttA5ylj/KSIWDuLHgVFet1QXvD1QmUm7CRidhrFIgd+dTqJYXvZ3CfjH92WMNaa3gy
-         kJ5llj8ZRQwXifTLdtzmuwK7ZLIi+12OaW4MENItWf/96bcKprLn3ahqVVCIn7FAYzaK
-         sOXfphQDesHXlwNLGEYLcm4YYTreIBf4LP4hN13lZ8e9v5FMmiEtfq9xqeSviJuF5WU6
-         SAkw==
-X-Gm-Message-State: AOAM533kuNfvpstZ4qa1g4tj+oThc/BdtNqm/9ji+rwi9ZS2PQpHEhc4
-        c6pKyfsav2j3l7T52gM5JT918BP9Y/Md42o0rOA=
-X-Google-Smtp-Source: ABdhPJzQ91IitgARZIRhXoXa3dYqesHpWzFqneoB2jN1/OpeIqtlUH4dc7cb2t9aWQqxJq+BhoJpZQo1w6AbqJ2asK8=
-X-Received: by 2002:a25:a087:: with SMTP id y7mr9873697ybh.167.1617871557515;
- Thu, 08 Apr 2021 01:45:57 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cXalpWPdovuqi5PtyyBVt6MR8In8wK+QHdjt9pvsaQ4=;
+        b=AvZQ4EXgO8g7fHYL7/MxBKKqRL/YZmTRbhcUYWv/9Y0FidkbGjZEC7sI9lZjOhWUO8
+         KByGlGSFj3aJi1EowBN/ARYopvlKgWF/jz0JJR1OnoXgvkcol4Tj6dqiJImbq3EDwW3p
+         ZBFQEKbvUmLRjE8kdTzZTUZA3kWs4MBBmAg70wNQtTMUN72y/fvH9RuizHDUrhS387AN
+         RurhX0qiyMwR5lD5/o3LW6XtfmTPHtVN72GJrTQQBKeQOd28xs6Zp3ahXZDDdjuNqKUR
+         tpWFtLn4TcpmfTRSSYGsL+tAHt8UAbpJKlSRbtdIoxcuIAyXn4hd3lITCgZpkVMqDDHF
+         UlrQ==
+X-Gm-Message-State: AOAM532WkCnfzT1ekcH95cngpP7wZrZmLCsggQ/x46UaE7Tzbbrd6a43
+        tHJxZScbptH67AAryjGxBeMkuQ==
+X-Google-Smtp-Source: ABdhPJzBa4HtKr4hNJ415kDMr8yGygx8z+sS2pW2rkqme7X4wimsY5DsOfWZUwuhrlrMqbDHdk49Vw==
+X-Received: by 2002:a17:906:3713:: with SMTP id d19mr8909450ejc.513.1617872518956;
+        Thu, 08 Apr 2021 02:01:58 -0700 (PDT)
+Received: from [192.168.1.149] ([80.208.71.248])
+        by smtp.gmail.com with ESMTPSA id s6sm10262058ejv.11.2021.04.08.02.01.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Apr 2021 02:01:58 -0700 (PDT)
+Subject: Re: [PATCH v6 01/27] mm: Introduce struct folio
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org
+References: <20210331184728.1188084-1-willy@infradead.org>
+ <20210331184728.1188084-2-willy@infradead.org>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <f89f694f-d472-3287-51aa-86258e107361@rasmusvillemoes.dk>
+Date:   Thu, 8 Apr 2021 11:01:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-References: <20210330055957.3684579-1-dkadashev@gmail.com> <20210330055957.3684579-2-dkadashev@gmail.com>
- <20210330071700.kpjoyp5zlni7uejm@wittgenstein>
-In-Reply-To: <20210330071700.kpjoyp5zlni7uejm@wittgenstein>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Thu, 8 Apr 2021 15:45:46 +0700
-Message-ID: <CAOKbgA6spFzCJO+L_uwm9nhG+5LEo_XjVt7R7D8K=B5BcWSDbA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] fs: make do_mkdirat() take struct filename
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210331184728.1188084-2-willy@infradead.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 30, 2021 at 2:17 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
-> The only thing that is a bit unpleasant here is that this change
-> breaks the consistency between the creation helpers:
->
-> do_mkdirat()
-> do_symlinkat()
-> do_linkat()
-> do_mknodat()
->
-> All but of them currently take
-> const char __user *pathname
-> and call
-> user_path_create()
-> with that do_mkdirat() change that's no longer true. One of the major
-> benefits over the recent years in this code is naming and type consistency.
-> And since it's just matter of time until io_uring will also gain support
-> for do_{symlinkat,linkat,mknodat} I would think switching all of them to
-> take a struct filename
-> and then have all do_* helpers call getname() might just be nicer in the
-> long run.
+On 31/03/2021 20.47, Matthew Wilcox (Oracle) wrote:
 
-So, I've finally got some time to look into this. do_mknodat() and
-do_symlinkat() are easy. But do_linkat() is more complicated, I could use some
-hints as to what's the reasonable way to implement the change.
+> +static inline void folio_build_bug(void)
+> +{
+> +#define FOLIO_MATCH(pg, fl)						\
+> +BUILD_BUG_ON(offsetof(struct page, pg) != offsetof(struct folio, fl));
+> +
+> +	FOLIO_MATCH(flags, flags);
+> +	FOLIO_MATCH(lru, lru);
+> +	FOLIO_MATCH(mapping, mapping);
+> +	FOLIO_MATCH(index, index);
+> +	FOLIO_MATCH(private, private);
+> +	FOLIO_MATCH(_mapcount, _mapcount);
+> +	FOLIO_MATCH(_refcount, _refcount);
+> +#ifdef CONFIG_MEMCG
+> +	FOLIO_MATCH(memcg_data, memcg_data);
+> +#endif
+> +#undef FOLIO_MATCH
+> +	BUILD_BUG_ON(sizeof(struct page) != sizeof(struct folio));
+> +}
+> +
 
-The problem is linkat() requires CAP_DAC_READ_SEARCH capability if AT_EMPTY_PATH
-flag is passed. Right now do_linkat checks the capability before calling
-getname_flags (essentially). If do_linkat is changed to accept struct filename
-then there is no bulletproof way to force CAP_DAC_READ_SEARCH presence (e.g. if
-for whatever reason AT_EMPTY_PATH is not in flags passed to do_linkat). Also, it
-means that the caller is responsible to process AT_EMPTY_PATH in the first
-place, which means logic duplication.
+Perhaps do this next to the definition of struct folio instead of hiding
+it in some arbitrary TU - hint, we have static_assert() that doesn't
+need to be in function context. And consider amending FOLIO_MATCH by a
+static_assert(__same_type(typeof_member(...), typeof_member(...))).
 
-Any ideas what's the best way to approach this?
-
-Thanks.
-
--- 
-Dmitry Kadashev
+Rasmus
