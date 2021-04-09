@@ -2,107 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4559835A059
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 15:51:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C55935A0C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 16:12:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232395AbhDINvu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Apr 2021 09:51:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48410 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231756AbhDINvu (ORCPT
+        id S233851AbhDIOMd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Apr 2021 10:12:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25490 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233619AbhDIOM3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Apr 2021 09:51:50 -0400
-Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8507AC061760
-        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Apr 2021 06:51:37 -0700 (PDT)
-Received: by mail-vs1-xe36.google.com with SMTP id u29so2940066vsi.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Apr 2021 06:51:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=17gAB4/Xt1EcJ6duLXHgiCVFdSPwnzL/vuA8S86w0nY=;
-        b=nMoosH4hAMExjqx73VwI6ccfuBMeqOOlug3s2ahPExh1d7czDmhVMSGWoyRJFWu9yw
-         w/D4H+GN/48/WgLwgaPwAlgprTRjNFcMkcd8bBKhjsaI1iGtkngb6asqgGovqTvTUnp/
-         gqwtCIkQ4jdzVftGhpNvjKHSEKyD8HpnHf89Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=17gAB4/Xt1EcJ6duLXHgiCVFdSPwnzL/vuA8S86w0nY=;
-        b=g6TsCGg8WJYUHb44UAnbYnY/8oBNaFO5znPMTF9CDI4XHeqigq6guHvnaMfs8IGK0x
-         CMcum4wgiK4dFnsw/ifU2hhHEu0BdNQ4o82qw2rAYjaDGimcKXJG9gdT21J3D7qC4NnO
-         xgt03nonoFfiHORGhifwiIZKnIRgqfA4k0xRquadOt2OhwdIuDXTEdqDqtOtUIagw7a5
-         OLYZsZN2bpHbxifpC25BjkIc5shtqRfH8pzjO954v4N/hsH2dXdx3NoJzyMw2A+g9ngR
-         +EB0AaNTWFvIuqeW32g0jTq3+3xFTkApCSpmTlzg/dtGbpOX0/sdP5Cu7LwHgwuC0eal
-         cEGA==
-X-Gm-Message-State: AOAM530XTCzr5Oia/bI36Wtn+C1PnMAqZbE1cPn6oaCADN5ZHb3muw3C
-        BM7nuV5J4FXvFayD1DO1pXNtCzHr6gFzVBH7rj9b6B7DaU81EQ==
-X-Google-Smtp-Source: ABdhPJxhsn0VhTmPepqwZIxdPE/jJRKz40lPlfAjtAlHk6AKV+A1Dipj6Ahx1cPdaWfVBS0oSfKjHovl4UqmJo8jOQ4=
-X-Received: by 2002:a67:e056:: with SMTP id n22mr11332309vsl.0.1617976296786;
- Fri, 09 Apr 2021 06:51:36 -0700 (PDT)
+        Fri, 9 Apr 2021 10:12:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617977536;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9vFh6ZigDHKjuOkeRll+1rlsfe8Hj/YpJqm20S04nUo=;
+        b=BaG3Syv0Pm21OvbJl/C6ppo6VkcHkFMZy+Jg6Mn/K5WN3/5wvrhvuPpXi1LK7NTlRjY/RK
+        g6cQ61YbzVzBq0xgRFkiAw12ieLCJpK/JWQgHOGIAB+FCpjhb1ihkByQXHV6na3/MjrIUL
+        dJKgsPLkwfwPgAucyS9UeiJ2iMoHRNY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-250-VfavZiGqOXmt2K8Cx8CzhQ-1; Fri, 09 Apr 2021 10:12:13 -0400
+X-MC-Unique: VfavZiGqOXmt2K8Cx8CzhQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1AA7B8030BB;
+        Fri,  9 Apr 2021 14:12:13 +0000 (UTC)
+Received: from bfoster.redhat.com (ovpn-112-117.rdu2.redhat.com [10.10.112.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C00FC2C01F;
+        Fri,  9 Apr 2021 14:12:12 +0000 (UTC)
+From:   Brian Foster <bfoster@redhat.com>
+To:     linux-xfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 5/5] iomap: remove unused private field from ioend
+Date:   Fri,  9 Apr 2021 10:12:10 -0400
+Message-Id: <20210409141210.1000155-6-bfoster@redhat.com>
+In-Reply-To: <20210409141210.1000155-1-bfoster@redhat.com>
+References: <20210409141210.1000155-1-bfoster@redhat.com>
 MIME-Version: 1.0
-References: <20201113065555.147276-1-cgxu519@mykernel.net> <20201113065555.147276-10-cgxu519@mykernel.net>
-In-Reply-To: <20201113065555.147276-10-cgxu519@mykernel.net>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 9 Apr 2021 15:51:26 +0200
-Message-ID: <CAJfpegsoDL7maNtU7P=OwFy_XPgcyiBOGFzaKRbGnhfwz-HyYw@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 9/9] ovl: implement containerized syncfs for overlayfs
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 13, 2020 at 7:57 AM Chengguang Xu <cgxu519@mykernel.net> wrote:
->
-> Now overlayfs can only sync dirty inode during syncfs,
-> so remove unnecessary sync_filesystem() on upper file
-> system.
->
-> Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
-> ---
->  fs/overlayfs/super.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 982b3954b47c..58507f1cd583 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -15,6 +15,8 @@
->  #include <linux/seq_file.h>
->  #include <linux/posix_acl_xattr.h>
->  #include <linux/exportfs.h>
-> +#include <linux/blkdev.h>
-> +#include <linux/writeback.h>
->  #include "overlayfs.h"
->
->  MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
-> @@ -270,8 +272,7 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
->          * Not called for sync(2) call or an emergency sync (SB_I_SKIP_SYNC).
->          * All the super blocks will be iterated, including upper_sb.
->          *
-> -        * If this is a syncfs(2) call, then we do need to call
-> -        * sync_filesystem() on upper_sb, but enough if we do it when being
-> +        * if this is a syncfs(2) call, it will be enough we do it when being
->          * called with wait == 1.
->          */
->         if (!wait)
-> @@ -280,7 +281,11 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
->         upper_sb = ovl_upper_mnt(ofs)->mnt_sb;
->
->         down_read(&upper_sb->s_umount);
-> -       ret = sync_filesystem(upper_sb);
-> +       wait_sb_inodes(upper_sb);
-> +       if (upper_sb->s_op->sync_fs)
-> +               ret = upper_sb->s_op->sync_fs(upper_sb, wait);
-> +       if (!ret)
-> +               ret = sync_blockdev(upper_sb->s_bdev);
+The only remaining user of ->io_private is the generic ioend merging
+infrastructure. The only user of that is XFS, which no longer sets
+->io_private or passes an associated merge callback. Remove the
+unused parameter and the ->io_private field.
 
-Should this instead be __sync_blockdev(..., wait)?
+CC: linux-fsdevel@vger.kernel.org
+Signed-off-by: Brian Foster <bfoster@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/iomap/buffered-io.c | 7 +------
+ fs/xfs/xfs_aops.c      | 2 +-
+ include/linux/iomap.h  | 5 +----
+ 3 files changed, 3 insertions(+), 11 deletions(-)
 
-Thanks,
-Miklos
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 414769a6ad11..b7753a7907e2 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1134,9 +1134,7 @@ iomap_ioend_can_merge(struct iomap_ioend *ioend, struct iomap_ioend *next)
+ }
+ 
+ void
+-iomap_ioend_try_merge(struct iomap_ioend *ioend, struct list_head *more_ioends,
+-		void (*merge_private)(struct iomap_ioend *ioend,
+-				struct iomap_ioend *next))
++iomap_ioend_try_merge(struct iomap_ioend *ioend, struct list_head *more_ioends)
+ {
+ 	struct iomap_ioend *next;
+ 
+@@ -1148,8 +1146,6 @@ iomap_ioend_try_merge(struct iomap_ioend *ioend, struct list_head *more_ioends,
+ 			break;
+ 		list_move_tail(&next->io_list, &ioend->io_list);
+ 		ioend->io_size += next->io_size;
+-		if (next->io_private && merge_private)
+-			merge_private(ioend, next);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(iomap_ioend_try_merge);
+@@ -1235,7 +1231,6 @@ iomap_alloc_ioend(struct inode *inode, struct iomap_writepage_ctx *wpc,
+ 	ioend->io_inode = inode;
+ 	ioend->io_size = 0;
+ 	ioend->io_offset = offset;
+-	ioend->io_private = NULL;
+ 	ioend->io_bio = bio;
+ 	return ioend;
+ }
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 8540180bd106..8275ee09733d 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -146,7 +146,7 @@ xfs_end_io(
+ 	while ((ioend = list_first_entry_or_null(&tmp, struct iomap_ioend,
+ 			io_list))) {
+ 		list_del_init(&ioend->io_list);
+-		iomap_ioend_try_merge(ioend, &tmp, NULL);
++		iomap_ioend_try_merge(ioend, &tmp);
+ 		xfs_end_ioend(ioend);
+ 	}
+ }
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index d202fd2d0f91..c87d0cb0de6d 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -198,7 +198,6 @@ struct iomap_ioend {
+ 	struct inode		*io_inode;	/* file being written to */
+ 	size_t			io_size;	/* size of the extent */
+ 	loff_t			io_offset;	/* offset in the file */
+-	void			*io_private;	/* file system private data */
+ 	struct bio		*io_bio;	/* bio being built */
+ 	struct bio		io_inline_bio;	/* MUST BE LAST! */
+ };
+@@ -234,9 +233,7 @@ struct iomap_writepage_ctx {
+ 
+ void iomap_finish_ioends(struct iomap_ioend *ioend, int error);
+ void iomap_ioend_try_merge(struct iomap_ioend *ioend,
+-		struct list_head *more_ioends,
+-		void (*merge_private)(struct iomap_ioend *ioend,
+-				struct iomap_ioend *next));
++		struct list_head *more_ioends);
+ void iomap_sort_ioends(struct list_head *ioend_list);
+ int iomap_writepage(struct page *page, struct writeback_control *wbc,
+ 		struct iomap_writepage_ctx *wpc,
+-- 
+2.26.3
+
