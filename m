@@ -2,130 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F5E43597AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 10:22:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57D643597CD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 10:27:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231895AbhDIIWz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Apr 2021 04:22:55 -0400
-Received: from mga17.intel.com ([192.55.52.151]:58283 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232344AbhDIIWy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Apr 2021 04:22:54 -0400
-IronPort-SDR: AGgAavcBKwusVGnsDUomLoxZJQkOYtG8IpdAD6+pC1t7alZCaPKh6Aux9Fk2lwVeUoBUbr1ZIF
- CuS/gs2U6sYA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9948"; a="173801052"
-X-IronPort-AV: E=Sophos;i="5.82,208,1613462400"; 
-   d="scan'208";a="173801052"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2021 01:22:41 -0700
-IronPort-SDR: LpPwGYvzeGLB4564wHP5jJbcRyN85WbfWAYL9lYRz8cQSDjnd3E+cW0pfFcrKjH/dI51i7LuRn
- 04ILPMrQhS5g==
-X-IronPort-AV: E=Sophos;i="5.82,208,1613462400"; 
-   d="scan'208";a="613646033"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2021 01:22:32 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andy.shevchenko@gmail.com>)
-        id 1lUmPK-002UMq-O4; Fri, 09 Apr 2021 11:22:26 +0300
-Date:   Fri, 9 Apr 2021 11:22:26 +0300
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joerg Roedel <jroedel@suse.de>, Wei Liu <wei.liu@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Corey Minyard <cminyard@mvista.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
-        <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-remoteproc@vger.kernel.org,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        kexec@lists.infradead.org, rcu@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Corey Minyard <minyard@acm.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Subject: Re: [PATCH v1 1/1] kernel.h: Split out panic and oops helpers
-Message-ID: <YHAOwm5JtmH/8Njr@smile.fi.intel.com>
-References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
- <202104061143.E11D2D0@keescook>
- <CAHp75Ve+11u=dtNTO8BCohOJHGWSMJtb1nGCOrNde7bXaD4ehA@mail.gmail.com>
- <20210408232303.453749e0e6fb0adfa8545440@linux-foundation.org>
+        id S231370AbhDII1L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Apr 2021 04:27:11 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:50731 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229696AbhDII1K (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Apr 2021 04:27:10 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 842375807DD;
+        Fri,  9 Apr 2021 04:26:57 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Fri, 09 Apr 2021 04:26:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        xQ22oJrPdr8ttUQBECVG7+D3ZB+31AsiXie3G3/5ob0=; b=rCQ4Ier+zYzGVyZ/
+        RCCR+QoLIzj06GknW577bs88qwdOaDwnaAXuWpOCtfBwdhFmxg2xkpQn6ky+K5Xz
+        rGwmNFnnerWKgjH0qVvT8kOPHXsUu6Lf4Eg2Hwe1L7mHtx3+ACM1yw+nOwcI1DqJ
+        sODQWbLJcyh2KdVudnghfjh5VZ+Ll+7xMMSjJuZ5lPF3HgHMo/n4sfLjuZvTgmrm
+        muN1WpkC7OQeOy2jh7DKRKLMOUPQfiM3IMlGQrKV8pu3hBobTMDBqiw/09X1IRQb
+        qljY83o5nWEBW5geA0u+RGsvJOmmwgYRtbqm2ghi4XNjYglt67RHsEBxZKvrzQX0
+        oWbyaA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=xQ22oJrPdr8ttUQBECVG7+D3ZB+31AsiXie3G3/5o
+        b0=; b=WKQWjw930eIBJ6uU891H9a+WVjwI4Jqipx0QF4ebecw+5zY8IiyikxHXj
+        JU3BbKIZBzdR9DfvNSjftBuW73Wlfy26yQqQ21W2A/rne/l3KvTiBHHE4bN6meMU
+        GyOaM/hLPa9CL/EO0Z4gPY32lKyqaYJBZ6WcQw2TInGKUTvK1NEK0dTqIfpEEsXj
+        zjpsd1sj5ktVOBu2D+c4gCBQn5/h1lk/EOKbLqfUboXEYLCCEFmwybItpwv+oeXh
+        gT7L9uaKgS5JcCqe9GvCKICdJewo2GA7jU6gs0BvfamO1Yx4bsCY/yT+uQ8nbtLU
+        g8Ut+LbDJbQCulnqzfE8xzfRG0Nfg==
+X-ME-Sender: <xms:zw9wYJBWWvf789qfpk8-LXIBI8L9QdSJH9OBeAtMz929rpgdCaLsLg>
+    <xme:zw9wYHhX8m_jXUbstdag5Wd-OQAjHr7s_GVmOHuzC-xXuF96WYasV2_b2MmrGDJm1
+    xc0jRegRPyg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudekuddgtdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    effeettedvgeduvdevfeevfeettdffudduheeuiefhueevgfevheffledugefgjeenucfk
+    phepuddvuddrgeegrddugeegrdduiedunecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:zw9wYElmxQ6T0_gJfU4S3hdBsIVsQ3ZrGm-1J6SHgf0aRXlFVUcSiw>
+    <xmx:zw9wYDyPIYJXnTMGMSAYsqO-TVtZK2-ayPHIuGzqjG8FYWl3XeFvWw>
+    <xmx:zw9wYOSojd4TC15ViXf4CBYpECVJbc7bfsLUwqZMuBEgaSho21IUsg>
+    <xmx:0Q9wYLSvAOaUXFGXcTqOn7-qLtrT3JIYx2jLcAA6EH3EPyUk3ppa2w>
+Received: from mickey.themaw.net (unknown [121.44.144.161])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5B9BB240065;
+        Fri,  9 Apr 2021 04:26:51 -0400 (EDT)
+Message-ID: <e0331787cd2ab96deed8be162223585416ed4a97.camel@themaw.net>
+Subject: Re: [PATCH v3 2/4] kernfs: use VFS negative dentry caching
+From:   Ian Kent <raven@themaw.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Brice Goglin <brice.goglin@gmail.com>,
+        Fox Chen <foxhlchen@gmail.com>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Fri, 09 Apr 2021 16:26:47 +0800
+In-Reply-To: <YG+vSdNLmgwXrwgJ@zeniv-ca.linux.org.uk>
+References: <161793058309.10062.17056551235139961080.stgit@mickey.themaw.net>
+         <161793090597.10062.4954029445418116308.stgit@mickey.themaw.net>
+         <YG+vSdNLmgwXrwgJ@zeniv-ca.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210408232303.453749e0e6fb0adfa8545440@linux-foundation.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 08, 2021 at 11:23:03PM -0700, Andrew Morton wrote:
-> On Wed, 7 Apr 2021 11:46:37 +0300 Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+On Fri, 2021-04-09 at 01:35 +0000, Al Viro wrote:
+> On Fri, Apr 09, 2021 at 09:15:06AM +0800, Ian Kent wrote:
+> > +		parent = kernfs_dentry_node(dentry->d_parent);
+> > +		if (parent) {
+> > +			const void *ns = NULL;
+> > +
+> > +			if (kernfs_ns_enabled(parent))
+> > +				ns = kernfs_info(dentry->d_parent-
+> > >d_sb)->ns;
 > 
-> > On Wed, Apr 7, 2021 at 11:17 AM Kees Cook <keescook@chromium.org> wrote:
-> > >
-> > > On Tue, Apr 06, 2021 at 04:31:58PM +0300, Andy Shevchenko wrote:
-> > > > kernel.h is being used as a dump for all kinds of stuff for a long time.
-> > > > Here is the attempt to start cleaning it up by splitting out panic and
-> > > > oops helpers.
-> > > >
-> > > > At the same time convert users in header and lib folder to use new header.
-> > > > Though for time being include new header back to kernel.h to avoid twisted
-> > > > indirected includes for existing users.
-> > > >
-> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > >
-> > > I like it! Do you have a multi-arch CI to do allmodconfig builds to
-> > > double-check this?
-> > 
-> > Unfortunately no, I rely on plenty of bots that are harvesting mailing lists.
-> > 
-> > But I will appreciate it if somebody can run this through various build tests.
-> > 
+> 	For any dentry d, we have d->d_parent->d_sb == d->d_sb.  All
+> the time.
+> If you ever run into the case where that would not be true, you've
+> found
+> a critical bug.
+
+Right, yes.
+
 > 
-> um, did you try x86_64 allmodconfig?
+> > +			kn = kernfs_find_ns(parent, dentry-
+> > >d_name.name, ns);
+> > +			if (kn)
+> > +				goto out_bad;
+> > +		}
 > 
-> I'm up to
-> kernelh-split-out-panic-and-oops-helpers-fix-fix-fix-fix-fix-fix-fix.patch
-> and counting.
+> Umm...  What's to prevent a race with successful rename(2)?  IOW,
+> what's
+> there to stabilize ->d_parent and ->d_name while we are in that
+> function?
 
+Indeed, glad you looked at this.
 
-I will try on my side and will fix those, thanks!
-
-> and.... drivers/leds/trigger/ledtrig-heartbeat.c as well.
-> 
-> I'll drop it.
-
-No problem, thanks for the report.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Now I'm wondering how kerfs_iop_rename() protects itself from
+concurrent kernfs_rename_ns() ... 
 
