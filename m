@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E80C35A6BA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 21:10:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C858235A6BF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 21:11:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234887AbhDITKD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Apr 2021 15:10:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34062 "EHLO
+        id S234852AbhDITK7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Apr 2021 15:10:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234816AbhDITKC (ORCPT
+        with ESMTP id S234775AbhDITK7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Apr 2021 15:10:02 -0400
+        Fri, 9 Apr 2021 15:10:59 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEA21C061762;
-        Fri,  9 Apr 2021 12:09:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC65C061762;
+        Fri,  9 Apr 2021 12:10:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=jzCo+pBb6RjK6WTBBYJ8+V5wTDdpVkn59I9euqlG9VI=; b=hwrQz1i+Pi2KkqfYXslso+Ig6D
-        dv0PMP/SJGM8vtNGVnhH0kWgCU0jogSjz7SWea66OwG/hOGpax19VCdUcV9mDDn1H8GM12dZWeKOv
-        kc+UOQvfhTVl9bg8a568DpcLRUhuI3r12PeeCa9A7mscZ4CmIrodIbrFrVkkC77/F/mctMcvy8Kql
-        RmdpDi7G1oV1MMu+ZlqUVSWWY2P8Q9V88Y7oA1R2XzOHXqdchyy2wZlw3iB/XSvo1c4SszFBUYX+B
-        MD3Q6MximzRpsaSMgu9m6wNTEtv+gEkGdHfMbj+sK722rHX8AuON5M2y1rv0hh15jmom/2MWjEUeM
-        3SQi0W6Q==;
+        bh=qADZv5Fn67PTJVuwz8lcte2XJjm+FG0Sug8Zh36p4PY=; b=XFScyhoquVjrYWp0tnX/frKFsB
+        BdFVrmcS0kZoqo8R9XIzjH0iq8gsLmG08MnPlnOappSlbeRQM8ITvMI9FpV5QBOPSoYfA25aJp/uD
+        LtrvICixwbhkTRKYQrt9cGZ2OMhUWbcJfnIzhGzNWvSbgeesRMZh8MM3AuV2EGUfLTzwb2tjX2zQW
+        rbNudcfDmXyJmAGwHl0isbsdzu4MbZPuPq/jC3SEp4YB4wnaPVO3jS2kwJWbbmNaztutjQJZqe1Dm
+        XqR8aNw+hlsgTpjK+eVrd3+gAglvRVn0Hr2nCBDsFh00C1R/DupwMWPvqH4oMe00pbWYaxRC73mPp
+        iMDginZw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lUwUb-000oWG-Gc; Fri, 09 Apr 2021 19:08:44 +0000
+        id 1lUwVE-000oXw-Sz; Fri, 09 Apr 2021 19:09:18 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -34,9 +34,9 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
         Christoph Hellwig <hch@lst.de>,
         Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v7 23/28] mm/filemap: Add end_folio_writeback
-Date:   Fri,  9 Apr 2021 19:51:00 +0100
-Message-Id: <20210409185105.188284-24-willy@infradead.org>
+Subject: [PATCH v7 24/28] mm/writeback: Add wait_on_folio_writeback
+Date:   Fri,  9 Apr 2021 19:51:01 +0100
+Message-Id: <20210409185105.188284-25-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210409185105.188284-1-willy@infradead.org>
 References: <20210409185105.188284-1-willy@infradead.org>
@@ -46,125 +46,158 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add an end_page_writeback() wrapper function for users that are not yet
-converted to folios.
+wait_on_page_writeback_killable() only has one caller, so convert it to
+call wait_on_folio_writeback_killable().  For the wait_on_page_writeback()
+callers, add a compatibility wrapper around wait_on_folio_writeback().
 
-end_folio_writeback() is less than half the size of end_page_writeback()
-at just 105 bytes compared to 213 bytes, due to removing all the
-compound_head() calls.  The 30 byte wrapper function makes this a net
-saving of 70 bytes.
+Turning PageWriteback() into FolioWriteback() eliminates a call to
+compound_head() which saves 8 bytes and 15 bytes in the two functions.
+That is more than offset by adding the wait_on_page_writeback
+compatibility wrapper for a net increase in text of 15 bytes.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Acked-by: Jeff Layton <jlayton@kernel.org>
 ---
+ fs/afs/write.c          |  9 ++++----
  include/linux/pagemap.h |  3 ++-
- mm/filemap.c            | 38 +++++++++++++++++++-------------------
  mm/folio-compat.c       |  6 ++++++
- 3 files changed, 27 insertions(+), 20 deletions(-)
+ mm/page-writeback.c     | 48 ++++++++++++++++++++++++++++-------------
+ 4 files changed, 46 insertions(+), 20 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 18c4c2ae8074..9bc01429dc25 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -829,7 +829,8 @@ static inline int wait_on_page_locked_killable(struct page *page)
- int put_and_wait_on_page_locked(struct page *page, int state);
- void wait_on_page_writeback(struct page *page);
- int wait_on_page_writeback_killable(struct page *page);
--extern void end_page_writeback(struct page *page);
-+void end_page_writeback(struct page *page);
-+void end_folio_writeback(struct folio *folio);
- void wait_for_stable_page(struct page *page);
- 
- void page_endio(struct page *page, bool is_write, int err);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d23430ad5bbc..cdb8250af510 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1175,11 +1175,11 @@ static void wake_up_page_bit(struct page *page, int bit_nr)
- 	spin_unlock_irqrestore(&q->lock, flags);
- }
- 
--static void wake_up_page(struct page *page, int bit)
-+static void wake_up_folio(struct folio *folio, int bit)
- {
--	if (!PageWaiters(page))
-+	if (!FolioWaiters(folio))
- 		return;
--	wake_up_page_bit(page, bit);
-+	wake_up_page_bit(&folio->page, bit);
- }
- 
- /*
-@@ -1512,38 +1512,38 @@ int wait_on_page_private_2_killable(struct page *page)
- EXPORT_SYMBOL(wait_on_page_private_2_killable);
- 
- /**
-- * end_page_writeback - end writeback against a page
-- * @page: the page
-+ * end_folio_writeback - End writeback against a folio.
-+ * @folio: The folio.
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index dc66ff15dd16..a1def42e2e45 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -831,7 +831,8 @@ int afs_fsync(struct file *file, loff_t start, loff_t end, int datasync)
   */
--void end_page_writeback(struct page *page)
-+void end_folio_writeback(struct folio *folio)
+ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
  {
- 	/*
- 	 * TestClearPageReclaim could be used here but it is an atomic
- 	 * operation and overkill in this particular case. Failing to
--	 * shuffle a page marked for immediate reclaim is too mild to
-+	 * shuffle a folio marked for immediate reclaim is too mild to
- 	 * justify taking an atomic operation penalty at the end of
--	 * ever page writeback.
-+	 * every folio writeback.
+-	struct page *page = thp_head(vmf->page);
++	struct folio *folio = page_folio(vmf->page);
++	struct page *page = &folio->page;
+ 	struct file *file = vmf->vma->vm_file;
+ 	struct inode *inode = file_inode(file);
+ 	struct afs_vnode *vnode = AFS_FS_I(inode);
+@@ -850,7 +851,7 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
+ 		return VM_FAULT_RETRY;
+ #endif
+ 
+-	if (wait_on_page_writeback_killable(page))
++	if (wait_on_folio_writeback_killable(folio))
+ 		return VM_FAULT_RETRY;
+ 
+ 	if (lock_page_killable(page) < 0)
+@@ -860,8 +861,8 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
+ 	 * details the portion of the page we need to write back and we might
+ 	 * need to redirty the page if there's a problem.
  	 */
--	if (PageReclaim(page)) {
--		ClearPageReclaim(page);
--		rotate_reclaimable_page(page);
-+	if (FolioReclaim(folio)) {
-+		ClearFolioReclaim(folio);
-+		rotate_reclaimable_page(&folio->page);
+-	if (wait_on_page_writeback_killable(page) < 0) {
+-		unlock_page(page);
++	if (wait_on_folio_writeback_killable(folio) < 0) {
++		unlock_folio(folio);
+ 		return VM_FAULT_RETRY;
  	}
  
- 	/*
--	 * Writeback does not hold a page reference of its own, relying
-+	 * Writeback does not hold a folio reference of its own, relying
- 	 * on truncation to wait for the clearing of PG_writeback.
--	 * But here we must make sure that the page is not freed and
--	 * reused before the wake_up_page().
-+	 * But here we must make sure that the folio is not freed and
-+	 * reused before the wake_up_folio().
- 	 */
--	get_page(page);
--	if (!test_clear_page_writeback(page))
-+	get_folio(folio);
-+	if (!test_clear_page_writeback(&folio->page))
- 		BUG();
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 9bc01429dc25..99331c35c89c 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -828,7 +828,8 @@ static inline int wait_on_page_locked_killable(struct page *page)
  
- 	smp_mb__after_atomic();
--	wake_up_page(page, PG_writeback);
--	put_page(page);
-+	wake_up_folio(folio, PG_writeback);
-+	put_folio(folio);
- }
--EXPORT_SYMBOL(end_page_writeback);
-+EXPORT_SYMBOL(end_folio_writeback);
- 
- /*
-  * After completing I/O on a page, call this routine to update the page
+ int put_and_wait_on_page_locked(struct page *page, int state);
+ void wait_on_page_writeback(struct page *page);
+-int wait_on_page_writeback_killable(struct page *page);
++void wait_on_folio_writeback(struct folio *folio);
++int wait_on_folio_writeback_killable(struct folio *folio);
+ void end_page_writeback(struct page *page);
+ void end_folio_writeback(struct folio *folio);
+ void wait_for_stable_page(struct page *page);
 diff --git a/mm/folio-compat.c b/mm/folio-compat.c
-index 02798abf19a1..d1a1dfe52589 100644
+index d1a1dfe52589..6aadecc39fba 100644
 --- a/mm/folio-compat.c
 +++ b/mm/folio-compat.c
-@@ -17,3 +17,9 @@ void unlock_page(struct page *page)
- 	return unlock_folio(page_folio(page));
+@@ -23,3 +23,9 @@ void end_page_writeback(struct page *page)
+ 	return end_folio_writeback(page_folio(page));
  }
- EXPORT_SYMBOL(unlock_page);
+ EXPORT_SYMBOL(end_page_writeback);
 +
-+void end_page_writeback(struct page *page)
++void wait_on_page_writeback(struct page *page)
 +{
-+	return end_folio_writeback(page_folio(page));
++	return wait_on_folio_writeback(page_folio(page));
 +}
-+EXPORT_SYMBOL(end_page_writeback);
++EXPORT_SYMBOL_GPL(wait_on_page_writeback);
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 0062d5c57d41..8271f9b24b69 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2818,33 +2818,51 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
+ }
+ EXPORT_SYMBOL(__test_set_page_writeback);
+ 
+-/*
+- * Wait for a page to complete writeback
++/**
++ * wait_on_folio_writeback - Wait for a folio to finish writeback.
++ * @folio: The folio to wait for.
++ *
++ * If the folio is currently being written back to storage, wait for the
++ * I/O to complete.
++ *
++ * Context: Sleeps.  Must be called in process context and with
++ * no spinlocks held.  Caller should hold a reference on the folio.
++ * If the folio is not locked, writeback may start again after writeback
++ * has finished.
+  */
+-void wait_on_page_writeback(struct page *page)
++void wait_on_folio_writeback(struct folio *folio)
+ {
+-	while (PageWriteback(page)) {
+-		trace_wait_on_page_writeback(page, page_mapping(page));
+-		wait_on_page_bit(page, PG_writeback);
++	while (FolioWriteback(folio)) {
++		trace_wait_on_page_writeback(&folio->page, folio_mapping(folio));
++		wait_on_page_bit(&folio->page, PG_writeback);
+ 	}
+ }
+-EXPORT_SYMBOL_GPL(wait_on_page_writeback);
++EXPORT_SYMBOL_GPL(wait_on_folio_writeback);
+ 
+-/*
+- * Wait for a page to complete writeback.  Returns -EINTR if we get a
+- * fatal signal while waiting.
++/**
++ * wait_on_folio_writeback_killable - Wait for a folio to finish writeback.
++ * @folio: The folio to wait for.
++ *
++ * If the folio is currently being written back to storage, wait for the
++ * I/O to complete or a fatal signal to arrive.
++ *
++ * Context: Sleeps.  Must be called in process context and with
++ * no spinlocks held.  Caller should hold a reference on the folio.
++ * If the folio is not locked, writeback may start again after writeback
++ * has finished.
++ * Return: 0 on success, -EINTR if we get a fatal signal while waiting.
+  */
+-int wait_on_page_writeback_killable(struct page *page)
++int wait_on_folio_writeback_killable(struct folio *folio)
+ {
+-	while (PageWriteback(page)) {
+-		trace_wait_on_page_writeback(page, page_mapping(page));
+-		if (wait_on_page_bit_killable(page, PG_writeback))
++	while (FolioWriteback(folio)) {
++		trace_wait_on_page_writeback(&folio->page, folio_mapping(folio));
++		if (wait_on_page_bit_killable(&folio->page, PG_writeback))
+ 			return -EINTR;
+ 	}
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(wait_on_page_writeback_killable);
++EXPORT_SYMBOL_GPL(wait_on_folio_writeback_killable);
+ 
+ /**
+  * wait_for_stable_page() - wait for writeback to finish, if necessary.
 -- 
 2.30.2
 
