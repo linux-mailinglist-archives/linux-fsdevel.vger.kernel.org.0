@@ -2,516 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07EF2359C7E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 12:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D3E9359CC2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 13:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233747AbhDIK76 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Apr 2021 06:59:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:35444 "EHLO
+        id S233607AbhDILM5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Apr 2021 07:12:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:35795 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233652AbhDIK74 (ORCPT
+        by vger.kernel.org with ESMTP id S232042AbhDILM4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Apr 2021 06:59:56 -0400
+        Fri, 9 Apr 2021 07:12:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617965983;
+        s=mimecast20190719; t=1617966762;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GhqjhFh3zbYdJKcaxOAxVApEnQssvChA4fSUJpBvWag=;
-        b=JVjjwBG8ZGkxDOVMnkIDT8HiaYxiCD7jAZoydA7xDbeP/EjoM+QmgERUWaywJbNTQD09XO
-        wFdO9AZejkHioEafk4sPI2a8sqlJFeOsmsRn5PNpdRLDlj8VCHDx/MexPv3PlXnavgGrn2
-        VSdYMKgV1mNOAwShl08exygWWOI+0lM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-384-bEJugpgvNW63a6Yj1Su7zQ-1; Fri, 09 Apr 2021 06:59:38 -0400
-X-MC-Unique: bEJugpgvNW63a6Yj1Su7zQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AF24A8030A0;
-        Fri,  9 Apr 2021 10:59:36 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-119-35.rdu2.redhat.com [10.10.119.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EA0685C5E0;
-        Fri,  9 Apr 2021 10:59:29 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 3/3] mm: Split page_has_private() in two to better handle
- PG_private_2
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org, willy@infradead.org
-Cc:     Christoph Hellwig <hch@lst.de>, Josef Bacik <josef@toxicpanda.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-cachefs@redhat.com, dhowells@redhat.com, jlayton@kernel.org,
-        hch@lst.de, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 09 Apr 2021 11:59:29 +0100
-Message-ID: <161796596902.350846.10297397888865722494.stgit@warthog.procyon.org.uk>
-In-Reply-To: <CAHk-=wi_XrtTanTwoKs0jwnjhSvwpMYVDJ477VtjvvTXRjm5wQ@mail.gmail.com>
-References: <CAHk-=wi_XrtTanTwoKs0jwnjhSvwpMYVDJ477VtjvvTXRjm5wQ@mail.gmail.com>
-User-Agent: StGit/0.23
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Bic823Qpg0UIbdBp1AlM1MQR7teEWxxmvsucAoEoioY=;
+        b=ij+jnhcgVzUqcemx6uRi1rH8d414upX8KH/bgGU+8EkjrqX23oNTj8A7y8nx62pDMKYpmD
+        tNHOc2snb6c/SbFoxAz5ZwedPOEd1LCg1EhT+jroOpCQMBtI6FBLCWiUN2U3KzbQpeipcR
+        p88MzgxF3JtArvEREi947SYxt7ZGstQ=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-344-Dv8mb3yaPF6T-VP3wFkt5g-1; Fri, 09 Apr 2021 07:12:41 -0400
+X-MC-Unique: Dv8mb3yaPF6T-VP3wFkt5g-1
+Received: by mail-ej1-f69.google.com with SMTP id d25so1593287ejb.14
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Apr 2021 04:12:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Bic823Qpg0UIbdBp1AlM1MQR7teEWxxmvsucAoEoioY=;
+        b=lllGf7uaejBY3D0liNRMlH/4ew+coge3pAxpLH7xX6nZcKXKCKoNNJtdyX4STF6FPA
+         6VE94NRdwzUBnRfVuOeoO+etk0ZpH/K5luVmzO+6ksFoxyaPn62HDi7AMwqFP/Xuf0sp
+         49ze4pxbhFj8TmjU9tyY2ZuzfBxoRFgf10jz/K6kibYDrb/ywNHFKj5LOF6ft3aiEI1E
+         G/0GSZBDFCAC4NC5KTjQWQjBUWVaiPOH4v6WfJjVc3tT0MBuZVqDVjRTbS36V6HiAbBz
+         e8aYpRl/1M3Yr5lTfzU9OXa+c+h1d6ShYHxO4SgrUZ/IFfLAGM4wD7HJl0wHcqh2eV6m
+         YSDQ==
+X-Gm-Message-State: AOAM532jOrRQr5xYf4aFotLrm8KT1tlpkHnd8QRsvOde5AEEu6hLAH+J
+        psCzJSQRuUMvcrWlGOBgeXLzdUdtbxMUNvY5WSDQ3A3r8brdCxcB9yMmIvUQqXFGGdx1cdkbXZ4
+        gOgEbbljduhTYWXGdVNa0FM6WklJz67V5fWbym4WuaR5PBakIj3mihu08QmHVFaiNgtglzWbrY1
+        cx+g==
+X-Received: by 2002:a17:907:c16:: with SMTP id ga22mr15467259ejc.120.1617966758260;
+        Fri, 09 Apr 2021 04:12:38 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzKmCtyYxCgoItu1rjqaew5l87gB4XKn8woRZ6AuvVgLaR11fjN9WbNEEdf+WGTbltsU3xEWA==
+X-Received: by 2002:a17:907:c16:: with SMTP id ga22mr15467237ejc.120.1617966757927;
+        Fri, 09 Apr 2021 04:12:37 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:8308:b105:dd00:277b:6436:24db:9466])
+        by smtp.gmail.com with ESMTPSA id t15sm1304810edw.84.2021.04.09.04.12.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Apr 2021 04:12:37 -0700 (PDT)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: [PATCH] fs_context: drop the unused lsm_flags member
+Date:   Fri,  9 Apr 2021 13:12:34 +0200
+Message-Id: <20210409111234.271707-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Split page_has_private() into two functions:
+This isn't ever used by VFS now, and it couldn't even work. Any FS that
+uses the SECURITY_LSM_NATIVE_LABELS flag needs to also process the
+value returned back from the LSM, so it needs to do its
+security_sb_set_mnt_opts() call on its own anyway.
 
- (1) page_needs_cleanup() to find out if a page needs the ->releasepage(),
-     ->invalidatepage(), etc. address space ops calling upon it.
-
-     This returns true when either PG_private or PG_private_2 are set.
-
- (2) page_private_count() which returns a count of the number of refs
-     contributed to a page for attached private data.
-
-     This returns 1 if PG_private is set and 0 otherwise.
-
-I think suggestion[1] is that PG_private_2 should just have a ref on the
-page, but this isn't accounted in the same way as PG_private's ref.
-
-Notes:
-
- (*) The following:
-
-	btrfs_migratepage()
-	iomap_set_range_uptodate()
-	iomap_migrate_page()
-	to_iomap_page()
-
-     should probably all use PagePrivate() rather than page_has_private()
-     since they're interested in what's attached to page->private when
-     they're doing this, and not PG_private_2.
-
-     It may not matter in these cases since page->private is probably NULL
-     if PG_private is not set.
-
- (*) Do we actually need PG_private, or is it possible just to see if
-     page->private is NULL?
-
- (*) There's a lot of "if (page_has_private()) try_to_release_page()"
-     combos.  Does it make sense to have a pot this into an inline
-     function?
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Christoph Hellwig <hch@lst.de>
-cc: Josef Bacik <josef@toxicpanda.com>
-cc: Alexander Viro <viro@zeniv.linux.org.uk>
-cc: Andrew Morton <akpm@linux-foundation.org>
-cc: linux-mm@kvack.org
-cc: linux-cachefs@redhat.com
-Link: https://lore.kernel.org/linux-fsdevel/CAHk-=whWoJhGeMn85LOh9FX-5d2-Upzmv1m2ZmYxvD31TKpUTA@mail.gmail.com/ [1]
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 ---
+ Documentation/filesystems/mount_api.rst | 1 -
+ fs/nfs/super.c                          | 3 ---
+ include/linux/fs_context.h              | 1 -
+ include/linux/security.h                | 2 +-
+ 4 files changed, 1 insertion(+), 6 deletions(-)
 
- arch/s390/kernel/uv.c          |    2 +-
- fs/btrfs/disk-io.c             |    2 +-
- fs/btrfs/inode.c               |    2 +-
- fs/ext4/move_extent.c          |    8 ++++----
- fs/fuse/dev.c                  |    2 +-
- fs/iomap/buffered-io.c         |    6 +++---
- fs/splice.c                    |    2 +-
- include/linux/page-flags.h     |   21 +++++++++++++++++----
- include/trace/events/pagemap.h |    2 +-
- mm/khugepaged.c                |    4 ++--
- mm/memory-failure.c            |    2 +-
- mm/migrate.c                   |   10 +++++-----
- mm/readahead.c                 |    2 +-
- mm/truncate.c                  |   12 ++++++------
- mm/vmscan.c                    |   12 ++++++------
- 15 files changed, 51 insertions(+), 38 deletions(-)
-
-diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-index b2d2ad153067..09256f40cd89 100644
---- a/arch/s390/kernel/uv.c
-+++ b/arch/s390/kernel/uv.c
-@@ -175,7 +175,7 @@ static int expected_page_refs(struct page *page)
- 		res++;
- 	} else if (page_mapping(page)) {
- 		res++;
--		if (page_has_private(page))
-+		if (page_private_count(page))
- 			res++;
- 	}
- 	return res;
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 41b718cfea40..d95f8d4b3004 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -936,7 +936,7 @@ static int btree_migratepage(struct address_space *mapping,
- 	 * Buffers may be managed in a filesystem specific way.
- 	 * We must have no buffers or drop them.
- 	 */
--	if (page_has_private(page) &&
-+	if (page_needs_cleanup(page) &&
- 	    !try_to_release_page(page, GFP_KERNEL))
- 		return -EAGAIN;
- 	return migrate_page(mapping, newpage, page, mode);
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 7cdf65be3707..94f038d34f16 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -8333,7 +8333,7 @@ static int btrfs_migratepage(struct address_space *mapping,
- 	if (ret != MIGRATEPAGE_SUCCESS)
- 		return ret;
+diff --git a/Documentation/filesystems/mount_api.rst b/Documentation/filesystems/mount_api.rst
+index eb358a00be27..6fb8e22afe36 100644
+--- a/Documentation/filesystems/mount_api.rst
++++ b/Documentation/filesystems/mount_api.rst
+@@ -79,7 +79,6 @@ context.  This is represented by the fs_context structure::
+ 		unsigned int		sb_flags;
+ 		unsigned int		sb_flags_mask;
+ 		unsigned int		s_iflags;
+-		unsigned int		lsm_flags;
+ 		enum fs_context_purpose	purpose:8;
+ 		...
+ 	};
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 4aaa1f5dd381..a64c85234b59 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -1263,9 +1263,6 @@ int nfs_get_tree_common(struct fs_context *fc)
+ 		if (ctx->clone_data.sb->s_flags & SB_SYNCHRONOUS)
+ 			fc->sb_flags |= SB_SYNCHRONOUS;
  
--	if (page_has_private(page))
-+	if (PagePrivate(page))
- 		attach_page_private(newpage, detach_page_private(page));
+-	if (server->caps & NFS_CAP_SECURITY_LABEL)
+-		fc->lsm_flags |= SECURITY_LSM_NATIVE_LABELS;
+-
+ 	/* Get a superblock - note that we may end up sharing one that already exists */
+ 	fc->s_fs_info = server;
+ 	s = sget_fc(fc, compare_super, nfs_set_super);
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index 37e1e8f7f08d..7ca88c7e108f 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -104,7 +104,6 @@ struct fs_context {
+ 	unsigned int		sb_flags;	/* Proposed superblock flags (SB_*) */
+ 	unsigned int		sb_flags_mask;	/* Superblock flags that were changed */
+ 	unsigned int		s_iflags;	/* OR'd with sb->s_iflags */
+-	unsigned int		lsm_flags;	/* Information flags from the fs to the LSM */
+ 	enum fs_context_purpose	purpose:8;
+ 	enum fs_context_phase	phase:8;	/* The phase the context is in */
+ 	bool			need_free:1;	/* Need to call ops->free() */
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 9aeda3f9e838..cda04d052b9c 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -67,7 +67,7 @@ struct watch_notification;
+ /* If capable is being called by a setid function */
+ #define CAP_OPT_INSETID BIT(2)
  
- 	if (PagePrivate2(page)) {
-diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-index 64a579734f93..16d0a7a73191 100644
---- a/fs/ext4/move_extent.c
-+++ b/fs/ext4/move_extent.c
-@@ -329,9 +329,9 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
- 			ext4_double_up_write_data_sem(orig_inode, donor_inode);
- 			goto data_copy;
- 		}
--		if ((page_has_private(pagep[0]) &&
-+		if ((page_needs_cleanup(pagep[0]) &&
- 		     !try_to_release_page(pagep[0], 0)) ||
--		    (page_has_private(pagep[1]) &&
-+		    (page_needs_cleanup(pagep[1]) &&
- 		     !try_to_release_page(pagep[1], 0))) {
- 			*err = -EBUSY;
- 			goto drop_data_sem;
-@@ -351,8 +351,8 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
+-/* LSM Agnostic defines for fs_context::lsm_flags */
++/* LSM Agnostic defines for security_sb_set_mnt_opts() flags */
+ #define SECURITY_LSM_NATIVE_LABELS	1
  
- 	/* At this point all buffers in range are uptodate, old mapping layout
- 	 * is no longer required, try to drop it now. */
--	if ((page_has_private(pagep[0]) && !try_to_release_page(pagep[0], 0)) ||
--	    (page_has_private(pagep[1]) && !try_to_release_page(pagep[1], 0))) {
-+	if ((page_needs_cleanup(pagep[0]) && !try_to_release_page(pagep[0], 0)) ||
-+	    (page_needs_cleanup(pagep[1]) && !try_to_release_page(pagep[1], 0))) {
- 		*err = -EBUSY;
- 		goto unlock_pages;
- 	}
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index c0fee830a34e..76e8ca9e47fa 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -837,7 +837,7 @@ static int fuse_try_move_page(struct fuse_copy_state *cs, struct page **pagep)
- 	 */
- 	if (WARN_ON(page_mapped(oldpage)))
- 		goto out_fallback_unlock;
--	if (WARN_ON(page_has_private(oldpage)))
-+	if (WARN_ON(page_needs_cleanup(oldpage)))
- 		goto out_fallback_unlock;
- 	if (WARN_ON(PageDirty(oldpage) || PageWriteback(oldpage)))
- 		goto out_fallback_unlock;
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 414769a6ad11..9c89db033548 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -41,7 +41,7 @@ static inline struct iomap_page *to_iomap_page(struct page *page)
- 	 */
- 	VM_BUG_ON_PGFLAGS(PageTail(page), page);
- 
--	if (page_has_private(page))
-+	if (page_needs_cleanup(page))
- 		return (struct iomap_page *)page_private(page);
- 	return NULL;
- }
-@@ -163,7 +163,7 @@ iomap_set_range_uptodate(struct page *page, unsigned off, unsigned len)
- 	if (PageError(page))
- 		return;
- 
--	if (page_has_private(page))
-+	if (PagePrivate(page))
- 		iomap_iop_set_range_uptodate(page, off, len);
- 	else
- 		SetPageUptodate(page);
-@@ -502,7 +502,7 @@ iomap_migrate_page(struct address_space *mapping, struct page *newpage,
- 	if (ret != MIGRATEPAGE_SUCCESS)
- 		return ret;
- 
--	if (page_has_private(page))
-+	if (PagePrivate(page))
- 		attach_page_private(newpage, detach_page_private(page));
- 
- 	if (mode != MIGRATE_SYNC_NO_COPY)
-diff --git a/fs/splice.c b/fs/splice.c
-index 5dbce4dcc1a7..bf102bc947bb 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -65,7 +65,7 @@ static bool page_cache_pipe_buf_try_steal(struct pipe_inode_info *pipe,
- 		 */
- 		wait_on_page_writeback(page);
- 
--		if (page_has_private(page) &&
-+		if (page_needs_cleanup(page) &&
- 		    !try_to_release_page(page, GFP_KERNEL))
- 			goto out_unlock;
- 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 4ff7de61b13d..be42a2699014 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -830,18 +830,31 @@ static inline void ClearPageSlabPfmemalloc(struct page *page)
- #define PAGE_FLAGS_CHECK_AT_PREP	\
- 	(((1UL << NR_PAGEFLAGS) - 1) & ~__PG_HWPOISON)
- 
--#define PAGE_FLAGS_PRIVATE				\
-+#define PAGE_FLAGS_CLEANUP				\
- 	(1UL << PG_private | 1UL << PG_private_2)
-+
-+/**
-+ * page_private_count - Find out how many refs a page's private data contribute
-+ * @page: The page to be checked
-+ *
-+ * Return the contribution to the pagecount of the private data attached to a
-+ * page.
-+ */
-+static inline int page_private_count(struct page *page)
-+{
-+	return PagePrivate(page);
-+}
-+
- /**
-- * page_has_private - Determine if page has private stuff
-+ * page_needs_cleanup - Determine if page has private stuff that needs cleaning
-  * @page: The page to be checked
-  *
-  * Determine if a page has private stuff, indicating that release routines
-  * should be invoked upon it.
-  */
--static inline bool page_has_private(struct page *page)
-+static inline bool page_needs_cleanup(struct page *page)
- {
--	return !!(page->flags & PAGE_FLAGS_PRIVATE);
-+	return page->flags & PAGE_FLAGS_CLEANUP;
- }
- 
- #undef PF_ANY
-diff --git a/include/trace/events/pagemap.h b/include/trace/events/pagemap.h
-index e1735fe7c76a..3ff3404cc399 100644
---- a/include/trace/events/pagemap.h
-+++ b/include/trace/events/pagemap.h
-@@ -22,7 +22,7 @@
- 	(PageSwapCache(page)	? PAGEMAP_SWAPCACHE  : 0) | \
- 	(PageSwapBacked(page)	? PAGEMAP_SWAPBACKED : 0) | \
- 	(PageMappedToDisk(page)	? PAGEMAP_MAPPEDDISK : 0) | \
--	(page_has_private(page) ? PAGEMAP_BUFFERS    : 0) \
-+	(page_needs_cleanup(page) ? PAGEMAP_BUFFERS    : 0) \
- 	)
- 
- TRACE_EVENT(mm_lru_insertion,
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index a7d6cb912b05..d3b60a31aae2 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1822,7 +1822,7 @@ static void collapse_file(struct mm_struct *mm,
- 			goto out_unlock;
- 		}
- 
--		if (page_has_private(page) &&
-+		if (page_needs_cleanup(page) &&
- 		    !try_to_release_page(page, GFP_KERNEL)) {
- 			result = SCAN_PAGE_HAS_PRIVATE;
- 			putback_lru_page(page);
-@@ -2019,7 +2019,7 @@ static void khugepaged_scan_file(struct mm_struct *mm,
- 		}
- 
- 		if (page_count(page) !=
--		    1 + page_mapcount(page) + page_has_private(page)) {
-+		    1 + page_mapcount(page) + page_private_count(page)) {
- 			result = SCAN_PAGE_COUNT;
- 			break;
- 		}
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 24210c9bd843..5a23d129c2a3 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -629,7 +629,7 @@ static int truncate_error_page(struct page *p, unsigned long pfn,
- 		if (err != 0) {
- 			pr_info("Memory failure: %#lx: Failed to punch page: %d\n",
- 				pfn, err);
--		} else if (page_has_private(p) &&
-+		} else if (page_needs_cleanup(p) &&
- 			   !try_to_release_page(p, GFP_NOIO)) {
- 			pr_info("Memory failure: %#lx: failed to release buffers\n",
- 				pfn);
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 62b81d5257aa..eafd73bea945 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -382,7 +382,7 @@ static int expected_page_refs(struct address_space *mapping, struct page *page)
- 	 */
- 	expected_count += is_device_private_page(page);
- 	if (mapping)
--		expected_count += thp_nr_pages(page) + page_has_private(page);
-+		expected_count += thp_nr_pages(page) + page_private_count(page);
- 
- 	return expected_count;
- }
-@@ -530,7 +530,7 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
- 	int expected_count;
- 
- 	xas_lock_irq(&xas);
--	expected_count = 2 + page_has_private(page);
-+	expected_count = 2 + page_private_count(page);
- 	if (page_count(page) != expected_count || xas_load(&xas) != page) {
- 		xas_unlock_irq(&xas);
- 		return -EAGAIN;
-@@ -924,7 +924,7 @@ static int fallback_migrate_page(struct address_space *mapping,
- 	 * Buffers may be managed in a filesystem specific way.
- 	 * We must have no buffers or drop them.
- 	 */
--	if (page_has_private(page) &&
-+	if (page_needs_cleanup(page) &&
- 	    !try_to_release_page(page, GFP_KERNEL))
- 		return mode == MIGRATE_SYNC ? -EAGAIN : -EBUSY;
- 
-@@ -1117,7 +1117,7 @@ static int __unmap_and_move(struct page *page, struct page *newpage,
- 	 */
- 	if (!page->mapping) {
- 		VM_BUG_ON_PAGE(PageAnon(page), page);
--		if (page_has_private(page)) {
-+		if (page_needs_cleanup(page)) {
- 			try_to_free_buffers(page);
- 			goto out_unlock_both;
- 		}
-@@ -2618,7 +2618,7 @@ static bool migrate_vma_check_page(struct page *page)
- 
- 	/* For file back page */
- 	if (page_mapping(page))
--		extra += 1 + page_has_private(page);
-+		extra += 1 + page_private_count(page);
- 
- 	if ((page_count(page) - extra) > page_mapcount(page))
- 		return false;
-diff --git a/mm/readahead.c b/mm/readahead.c
-index f02dbebf1cef..661295ec4669 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -48,7 +48,7 @@ EXPORT_SYMBOL_GPL(file_ra_state_init);
- static void read_cache_pages_invalidate_page(struct address_space *mapping,
- 					     struct page *page)
- {
--	if (page_has_private(page)) {
-+	if (page_needs_cleanup(page)) {
- 		if (!trylock_page(page))
- 			BUG();
- 		page->mapping = mapping;
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 455944264663..7cad4c79686b 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -176,7 +176,7 @@ truncate_cleanup_page(struct address_space *mapping, struct page *page)
- 		unmap_mapping_pages(mapping, page->index, nr, false);
- 	}
- 
--	if (page_has_private(page))
-+	if (page_needs_cleanup(page))
- 		do_invalidatepage(page, 0, thp_size(page));
- 
- 	/*
-@@ -204,7 +204,7 @@ invalidate_complete_page(struct address_space *mapping, struct page *page)
- 	if (page->mapping != mapping)
- 		return 0;
- 
--	if (page_has_private(page) && !try_to_release_page(page, 0))
-+	if (page_needs_cleanup(page) && !try_to_release_page(page, 0))
- 		return 0;
- 
- 	ret = remove_mapping(mapping, page);
-@@ -346,7 +346,7 @@ void truncate_inode_pages_range(struct address_space *mapping,
- 			wait_on_page_writeback(page);
- 			zero_user_segment(page, partial_start, top);
- 			cleancache_invalidate_page(mapping, page);
--			if (page_has_private(page))
-+			if (page_needs_cleanup(page))
- 				do_invalidatepage(page, partial_start,
- 						  top - partial_start);
- 			unlock_page(page);
-@@ -359,7 +359,7 @@ void truncate_inode_pages_range(struct address_space *mapping,
- 			wait_on_page_writeback(page);
- 			zero_user_segment(page, 0, partial_end);
- 			cleancache_invalidate_page(mapping, page);
--			if (page_has_private(page))
-+			if (page_needs_cleanup(page))
- 				do_invalidatepage(page, 0,
- 						  partial_end);
- 			unlock_page(page);
-@@ -581,14 +581,14 @@ invalidate_complete_page2(struct address_space *mapping, struct page *page)
- 	if (page->mapping != mapping)
- 		return 0;
- 
--	if (page_has_private(page) && !try_to_release_page(page, GFP_KERNEL))
-+	if (page_needs_cleanup(page) && !try_to_release_page(page, GFP_KERNEL))
- 		return 0;
- 
- 	xa_lock_irqsave(&mapping->i_pages, flags);
- 	if (PageDirty(page))
- 		goto failed;
- 
--	BUG_ON(page_has_private(page));
-+	BUG_ON(page_needs_cleanup(page));
- 	__delete_from_page_cache(page, NULL);
- 	xa_unlock_irqrestore(&mapping->i_pages, flags);
- 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 562e87cbd7a1..4d9928e3446d 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -725,7 +725,7 @@ static inline int is_page_cache_freeable(struct page *page)
- 	 * heads at page->private.
- 	 */
- 	int page_cache_pins = thp_nr_pages(page);
--	return page_count(page) - page_has_private(page) == 1 + page_cache_pins;
-+	return page_count(page) - page_private_count(page) == 1 + page_cache_pins;
- }
- 
- static int may_write_to_inode(struct inode *inode)
-@@ -801,7 +801,7 @@ static pageout_t pageout(struct page *page, struct address_space *mapping)
- 		 * Some data journaling orphaned pages can have
- 		 * page->mapping == NULL while being dirty with clean buffers.
- 		 */
--		if (page_has_private(page)) {
-+		if (page_needs_cleanup(page)) {
- 			if (try_to_free_buffers(page)) {
- 				ClearPageDirty(page);
- 				pr_info("%s: orphaned page\n", __func__);
-@@ -1057,7 +1057,7 @@ static void page_check_dirty_writeback(struct page *page,
- 	*writeback = PageWriteback(page);
- 
- 	/* Verify dirty/writeback state if the filesystem supports it */
--	if (!page_has_private(page))
-+	if (!page_needs_cleanup(page))
- 		return;
- 
- 	mapping = page_mapping(page);
-@@ -1399,7 +1399,7 @@ static unsigned int shrink_page_list(struct list_head *page_list,
- 		 * process address space (page_count == 1) it can be freed.
- 		 * Otherwise, leave the page on the LRU so it is swappable.
- 		 */
--		if (page_has_private(page)) {
-+		if (page_needs_cleanup(page)) {
- 			if (!try_to_release_page(page, sc->gfp_mask))
- 				goto activate_locked;
- 			if (!mapping && page_count(page) == 1) {
-@@ -2050,8 +2050,8 @@ static void shrink_active_list(unsigned long nr_to_scan,
- 		}
- 
- 		if (unlikely(buffer_heads_over_limit)) {
--			if (page_has_private(page) && trylock_page(page)) {
--				if (page_has_private(page))
-+			if (page_needs_cleanup(page) && trylock_page(page)) {
-+				if (page_needs_cleanup(page))
- 					try_to_release_page(page, 0);
- 				unlock_page(page);
- 			}
-
+ struct ctl_table;
+-- 
+2.30.2
 
