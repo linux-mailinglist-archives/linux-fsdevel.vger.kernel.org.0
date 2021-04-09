@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C48D235A666
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 20:57:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70AEB35A66C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 20:58:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234721AbhDIS5v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Apr 2021 14:57:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59552 "EHLO
+        id S234821AbhDIS6R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Apr 2021 14:58:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234679AbhDIS5v (ORCPT
+        with ESMTP id S234705AbhDIS6Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Apr 2021 14:57:51 -0400
+        Fri, 9 Apr 2021 14:58:16 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09E06C061762;
-        Fri,  9 Apr 2021 11:57:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93501C061762;
+        Fri,  9 Apr 2021 11:58:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=yiZtKKoqkRI3gZZhFYuXMkcbvraC4YjINsQdfKzNzag=; b=OYYJQ++Z9BGuizodyzOFqEofq7
-        ADpXyQa8Dq/MVnymVRgf1QYCxfTnoC+6em1KG+bWC6qkCdfhPz3PcpFdzJUEB5pcYesxlUIj3491U
-        5Zow+0ExjUg6QUWAKUDokf+bklhnwgGaRyIuV5xXkZY7P+I6XZFth0pygjhlXX25lfBHQBdlqf6LB
-        lwRinNRMU+fpvj93AlYI8gp/xlGtIUH7NSyLzY+B9t4FxT3haIoSJTWYfMFRBawxfnCxM1vtNqSGt
-        4wVrb2MAqIex8y3JkL8Btjc5r7qNgQO8bYwixeUPknVFKyVNzS29tfjsprONDs9bIP63i3W30HPcT
-        Tee9rakw==;
+        bh=W5g+VwHltNTj8FpdbjCM8nUwZBIK09QAEf3IQR2EfkI=; b=FJcUD5OWaQ1F07avMpHBfY5M8P
+        Dq9vUamNO9uOBi0OqHdFa5M2xUIlujch1gP4Sq18agRZ4fX6IET6hmXf5j6GgyKsQjUR8IKsxMd5t
+        EaDtTeyd6YmXiw3NF9S+LxAwEPWD/AL+08HNy+h6+BxsoT+MnqnTqTeqIQ63KsR+f5ZlDdkdInC/2
+        70NEC6n+CGkiLiUASJbTwLcvZ7IVLlY+YOM+tGQ+6TJ3hNXjPyNeuoIJJKPyn1fRCG/1r3OnTIZ9Y
+        gT1c1jbBo8HsZVPKkJKQg8OtRsTEVFx+Z6NWteWLjNbmuWV60+Sfa2510Gievcvh2M9mWVeOlBt3d
+        ljYiYDFA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lUwIQ-000nQQ-AE; Fri, 09 Apr 2021 18:56:03 +0000
+        id 1lUwJ1-000nZl-VF; Fri, 09 Apr 2021 18:56:52 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -34,9 +34,9 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
         Zi Yan <ziy@nvidia.com>, Christoph Hellwig <hch@lst.de>,
         Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v7 07/28] mm: Add put_folio
-Date:   Fri,  9 Apr 2021 19:50:44 +0100
-Message-Id: <20210409185105.188284-8-willy@infradead.org>
+Subject: [PATCH v7 08/28] mm: Add get_folio
+Date:   Fri,  9 Apr 2021 19:50:45 +0100
+Message-Id: <20210409185105.188284-9-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210409185105.188284-1-willy@infradead.org>
 References: <20210409185105.188284-1-willy@infradead.org>
@@ -46,86 +46,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If we know we have a folio, we can call put_folio() instead of put_page()
-and save the overhead of calling compound_head().  Also skips the
-devmap checks.
-
-This commit looks like it should be a no-op, but actually saves 1312 bytes
-of text with the distro-derived config that I'm testing.  Some functions
-grow a little while others shrink.  I presume the compiler is making
-different inlining decisions.
+If we know we have a folio, we can call get_folio() instead
+of get_page() and save the overhead of calling compound_head().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Zi Yan <ziy@nvidia.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Acked-by: Jeff Layton <jlayton@kernel.org>
 ---
- include/linux/mm.h | 33 ++++++++++++++++++++++++++++-----
- 1 file changed, 28 insertions(+), 5 deletions(-)
+ include/linux/mm.h | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 4c98b52613b7..747c6f47aef6 100644
+index 747c6f47aef6..67d9104c1cc1 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -751,6 +751,11 @@ static inline int put_page_testzero(struct page *page)
- 	return page_ref_dec_and_test(page);
+@@ -1219,18 +1219,26 @@ static inline bool is_pci_p2pdma_page(const struct page *page)
  }
  
-+static inline int put_folio_testzero(struct folio *folio)
-+{
-+	return put_page_testzero(&folio->page);
-+}
+ /* 127: arbitrary random number, small enough to assemble well */
+-#define page_ref_zero_or_close_to_overflow(page) \
+-	((unsigned int) page_ref_count(page) + 127u <= 127u)
++#define folio_ref_zero_or_close_to_overflow(folio) \
++	((unsigned int) folio_ref_count(folio) + 127u <= 127u)
 +
- /*
-  * Try to grab a ref unless the page has a refcount of zero, return false if
-  * that is the case.
-@@ -1242,9 +1247,28 @@ static inline __must_check bool try_get_page(struct page *page)
- 	return true;
- }
- 
 +/**
-+ * put_folio - Decrement the reference count on a folio.
++ * get_folio - Increment the reference count on a folio.
 + * @folio: The folio.
 + *
-+ * If the folio's reference count reaches zero, the memory will be
-+ * released back to the page allocator and may be used by another
-+ * allocation immediately.  Do not access the memory or the struct folio
-+ * after calling put_folio() unless you can be sure that it wasn't the
-+ * last reference.
-+ *
-+ * Context: May be called in process or interrupt context, but not in NMI
-+ * context.  May be called while holding a spinlock.
++ * Context: May be called in any context, as long as you know that
++ * you have a refcount on the folio.  If you do not already have one,
++ * try_grab_page() may be the right interface for you to use.
 + */
-+static inline void put_folio(struct folio *folio)
++static inline void get_folio(struct folio *folio)
 +{
-+	if (put_folio_testzero(folio))
-+		__put_page(&folio->page);
++	VM_BUG_ON_FOLIO(folio_ref_zero_or_close_to_overflow(folio), folio);
++	folio_ref_inc(folio);
 +}
-+
- static inline void put_page(struct page *page)
+ 
+ static inline void get_page(struct page *page)
  {
 -	page = compound_head(page);
-+	struct folio *folio = page_folio(page);
- 
- 	/*
- 	 * For devmap managed pages we need to catch refcount transition from
-@@ -1252,13 +1276,12 @@ static inline void put_page(struct page *page)
- 	 * need to inform the device driver through callback. See
- 	 * include/linux/memremap.h and HMM for details.
- 	 */
--	if (page_is_devmap_managed(page)) {
--		put_devmap_managed_page(page);
-+	if (page_is_devmap_managed(&folio->page)) {
-+		put_devmap_managed_page(&folio->page);
- 		return;
- 	}
- 
--	if (put_page_testzero(page))
--		__put_page(page);
-+	put_folio(folio);
+-	/*
+-	 * Getting a normal page or the head of a compound page
+-	 * requires to already have an elevated page->_refcount.
+-	 */
+-	VM_BUG_ON_PAGE(page_ref_zero_or_close_to_overflow(page), page);
+-	page_ref_inc(page);
++	get_folio(page_folio(page));
  }
  
- /*
+ bool __must_check try_grab_page(struct page *page, unsigned int flags);
 -- 
 2.30.2
 
