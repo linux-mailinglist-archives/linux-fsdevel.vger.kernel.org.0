@@ -2,119 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57D643597CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 10:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73E6A3598D1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 11:09:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231370AbhDII1L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Apr 2021 04:27:11 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:50731 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229696AbhDII1K (ORCPT
+        id S232544AbhDIJJg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Apr 2021 05:09:36 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37305 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232642AbhDIJJc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Apr 2021 04:27:10 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 842375807DD;
-        Fri,  9 Apr 2021 04:26:57 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 09 Apr 2021 04:26:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        xQ22oJrPdr8ttUQBECVG7+D3ZB+31AsiXie3G3/5ob0=; b=rCQ4Ier+zYzGVyZ/
-        RCCR+QoLIzj06GknW577bs88qwdOaDwnaAXuWpOCtfBwdhFmxg2xkpQn6ky+K5Xz
-        rGwmNFnnerWKgjH0qVvT8kOPHXsUu6Lf4Eg2Hwe1L7mHtx3+ACM1yw+nOwcI1DqJ
-        sODQWbLJcyh2KdVudnghfjh5VZ+Ll+7xMMSjJuZ5lPF3HgHMo/n4sfLjuZvTgmrm
-        muN1WpkC7OQeOy2jh7DKRKLMOUPQfiM3IMlGQrKV8pu3hBobTMDBqiw/09X1IRQb
-        qljY83o5nWEBW5geA0u+RGsvJOmmwgYRtbqm2ghi4XNjYglt67RHsEBxZKvrzQX0
-        oWbyaA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=xQ22oJrPdr8ttUQBECVG7+D3ZB+31AsiXie3G3/5o
-        b0=; b=WKQWjw930eIBJ6uU891H9a+WVjwI4Jqipx0QF4ebecw+5zY8IiyikxHXj
-        JU3BbKIZBzdR9DfvNSjftBuW73Wlfy26yQqQ21W2A/rne/l3KvTiBHHE4bN6meMU
-        GyOaM/hLPa9CL/EO0Z4gPY32lKyqaYJBZ6WcQw2TInGKUTvK1NEK0dTqIfpEEsXj
-        zjpsd1sj5ktVOBu2D+c4gCBQn5/h1lk/EOKbLqfUboXEYLCCEFmwybItpwv+oeXh
-        gT7L9uaKgS5JcCqe9GvCKICdJewo2GA7jU6gs0BvfamO1Yx4bsCY/yT+uQ8nbtLU
-        g8Ut+LbDJbQCulnqzfE8xzfRG0Nfg==
-X-ME-Sender: <xms:zw9wYJBWWvf789qfpk8-LXIBI8L9QdSJH9OBeAtMz929rpgdCaLsLg>
-    <xme:zw9wYHhX8m_jXUbstdag5Wd-OQAjHr7s_GVmOHuzC-xXuF96WYasV2_b2MmrGDJm1
-    xc0jRegRPyg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudekuddgtdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    effeettedvgeduvdevfeevfeettdffudduheeuiefhueevgfevheffledugefgjeenucfk
-    phepuddvuddrgeegrddugeegrdduiedunecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:zw9wYElmxQ6T0_gJfU4S3hdBsIVsQ3ZrGm-1J6SHgf0aRXlFVUcSiw>
-    <xmx:zw9wYDyPIYJXnTMGMSAYsqO-TVtZK2-ayPHIuGzqjG8FYWl3XeFvWw>
-    <xmx:zw9wYOSojd4TC15ViXf4CBYpECVJbc7bfsLUwqZMuBEgaSho21IUsg>
-    <xmx:0Q9wYLSvAOaUXFGXcTqOn7-qLtrT3JIYx2jLcAA6EH3EPyUk3ppa2w>
-Received: from mickey.themaw.net (unknown [121.44.144.161])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5B9BB240065;
-        Fri,  9 Apr 2021 04:26:51 -0400 (EDT)
-Message-ID: <e0331787cd2ab96deed8be162223585416ed4a97.camel@themaw.net>
-Subject: Re: [PATCH v3 2/4] kernfs: use VFS negative dentry caching
-From:   Ian Kent <raven@themaw.net>
+        Fri, 9 Apr 2021 05:09:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617959359;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=t4HrPUNe1C2/eoGUl35UTxwdBVeab2D940Ztg0ThcXw=;
+        b=V8OLG4XqlYGFgqXdOeTRNzweFqQIOQCR98Qo0Mz7JY7jmiLayP0h2hrRp9q1HQ8ZjoX0GJ
+        /68JZOvTrOoHz/Ofwh/cfkRTZ3Ry9K6geRm40N/ygnR2CCa2z0T0U1vxd63OGAXcY/T75o
+        7lf0EjAdTfsIheT5GhChj+XrSTwwzyA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-315-DWcyR59bPNm8maj44EYDXw-1; Fri, 09 Apr 2021 05:09:15 -0400
+X-MC-Unique: DWcyR59bPNm8maj44EYDXw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 455B9107ACC7;
+        Fri,  9 Apr 2021 09:09:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-119-35.rdu2.redhat.com [10.10.119.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 529765D9E3;
+        Fri,  9 Apr 2021 09:09:06 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YG+s0iw5o91KQIlW@zeniv-ca.linux.org.uk>
+References: <YG+s0iw5o91KQIlW@zeniv-ca.linux.org.uk> <161789062190.6155.12711584466338493050.stgit@warthog.procyon.org.uk> <161789064740.6155.11932541175173658065.stgit@warthog.procyon.org.uk>
 To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Brice Goglin <brice.goglin@gmail.com>,
-        Fox Chen <foxhlchen@gmail.com>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Fri, 09 Apr 2021 16:26:47 +0800
-In-Reply-To: <YG+vSdNLmgwXrwgJ@zeniv-ca.linux.org.uk>
-References: <161793058309.10062.17056551235139961080.stgit@mickey.themaw.net>
-         <161793090597.10062.4954029445418116308.stgit@mickey.themaw.net>
-         <YG+vSdNLmgwXrwgJ@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 01/30] iov_iter: Add ITER_XARRAY
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <289824.1617959345.1@warthog.procyon.org.uk>
+Date:   Fri, 09 Apr 2021 10:09:05 +0100
+Message-ID: <289825.1617959345@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2021-04-09 at 01:35 +0000, Al Viro wrote:
-> On Fri, Apr 09, 2021 at 09:15:06AM +0800, Ian Kent wrote:
-> > +		parent = kernfs_dentry_node(dentry->d_parent);
-> > +		if (parent) {
-> > +			const void *ns = NULL;
-> > +
-> > +			if (kernfs_ns_enabled(parent))
-> > +				ns = kernfs_info(dentry->d_parent-
-> > >d_sb)->ns;
+Al Viro <viro@zeniv.linux.org.uk> wrote:
+
+> > +#define iterate_all_kinds(i, n, v, I, B, K, X) {		\
 > 
-> 	For any dentry d, we have d->d_parent->d_sb == d->d_sb.  All
-> the time.
-> If you ever run into the case where that would not be true, you've
-> found
-> a critical bug.
-
-Right, yes.
-
+> Do you have any users that would pass different B and X?
 > 
-> > +			kn = kernfs_find_ns(parent, dentry-
-> > >d_name.name, ns);
-> > +			if (kn)
-> > +				goto out_bad;
-> > +		}
+> > @@ -1440,7 +1665,7 @@ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+> >  		return v.bv_len;
+> >  	}),({
+> >  		return -EFAULT;
+> > -	})
+> > +	}), 0
 > 
-> Umm...  What's to prevent a race with successful rename(2)?  IOW,
-> what's
-> there to stabilize ->d_parent and ->d_name while we are in that
-> function?
+> Correction - users that might get that flavour.  This one explicitly checks
+> for xarray and doesn't get to iterate_... in that case.
 
-Indeed, glad you looked at this.
+This is the case for iterate_all_kinds(), but not for iterate_and_advance().
 
-Now I'm wondering how kerfs_iop_rename() protects itself from
-concurrent kernfs_rename_ns() ... 
+See _copy_mc_to_iter() for example: that can return directly out of the middle
+of the loop, so the X variant must drop the rcu_read_lock(), but the B variant
+doesn't need to.  You also can't just use break to get out as the X variant
+has a loop within a loop to handle iteration over the subelements of a THP.
+
+But with iterate_all_kinds(), I could just drop the X parameter and use the B
+parameter for both, I think.
+
+David
 
