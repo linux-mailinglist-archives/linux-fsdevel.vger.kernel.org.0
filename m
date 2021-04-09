@@ -2,83 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3289B35A338
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 18:26:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B409C35A33F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 18:26:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233995AbhDIQ0T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Apr 2021 12:26:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233674AbhDIQ0S (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Apr 2021 12:26:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 34B576103E;
-        Fri,  9 Apr 2021 16:26:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617985565;
-        bh=/Hl5eHU8L4xr6JaOlwwlyG6clIdkW90gmNVCkqKbsJI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pnBOIp04pVcL4je5JxqNo+Q5HD23QWJ0wqjtE9noWMDU3YFNk4yfI87IYaFinoiuO
-         ybiFqXHjtT6VM350vRtJmE7/HXin3vFCa+Tf7d+ZDWzHDOcBJaxc12nj8qQ1KUTgOI
-         Z2RAPV3e4feiaJ81tPsus8CNtAULeP3Ytz5a1ROfTR4OyDnBiMz0ghL9ZG/FzcbBYA
-         W4ihsHmPH1Vu0m1BA/sdfqEVLZlLlGfkl/9PMIIvd5uSKg3jUmlZNVyqhMMFNbI8/9
-         RyKnlSMT6KW1NZ7y/kVYc816UT+iT4EK9HaeKpg5N91S6sO4Zww3DcjUnuekN7yxyP
-         /H4FYI+ZeJ7Qw==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Tyler Hicks <code@tyhicks.com>, ecryptfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 3/3] ecryptfs: extend ro check to private mount
-Date:   Fri,  9 Apr 2021 18:24:22 +0200
-Message-Id: <20210409162422.1326565-4-brauner@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210409162422.1326565-1-brauner@kernel.org>
-References: <20210409162422.1326565-1-brauner@kernel.org>
+        id S234049AbhDIQ1I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Apr 2021 12:27:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54232 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233824AbhDIQ1H (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Apr 2021 12:27:07 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31B88C061760;
+        Fri,  9 Apr 2021 09:26:53 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id y124-20020a1c32820000b029010c93864955so5045461wmy.5;
+        Fri, 09 Apr 2021 09:26:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:references:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Phuwohh2HbCcjFvp4UIIQp3Pa48Fgzncr9mTT74dDuc=;
+        b=OrDC9KNIV2KoycO1UJbjgt3dS7Zq2KuRnckwcv/US0NFH4y5p75lCVm23WaG0rVojv
+         HeCavVxA+Ac3nwNniNDRjJlmFDlnmdgTPgutRu8juSbyZercO77k+ZH4K/xP8mSbGVW1
+         G++R4TWtflixrhcsAfXommXjVB6yQiFu5TxHopFnit0aQNYVGcJrLop+n3PsSErczidr
+         y/BmGlelv/wJ2dwQIZ2BoB9crvw7/JOCylrmSKctjliDydy1Zqwnxq9epeI68cv8qBo7
+         aVl4QC/KAnohy1n6qqYkh6J0d4Hco/WOB13ML9dE/SxBO3Wsvj7W0s+HSYU6g8xU0NgX
+         fkxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:references:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Phuwohh2HbCcjFvp4UIIQp3Pa48Fgzncr9mTT74dDuc=;
+        b=fL1l5XONfIzbAb70Vh+472VsFdLwObfk0tfGwWG4JXtZzxVqrc1JORfM/zGCe375JT
+         i/5YdfiW/S/niWnd8EPH/BY7BeateYeHwWjspqebt60JMiFEoyiFbpbT5jFWOJTN+T4m
+         KxItQo/DZ51NgupBlb9UZOYLw5feItjEKR6xgdVso3+PRZMA0QWLjst9jBZxhulTqP3V
+         9Z1YyixImJtO8z6h30iJQgAxIQjZX246e8mRthzjccjt+Ct/+LUgbwO+xP70Q+O40Fnb
+         ulZFTluPU6uz6c1BFnOMb+sClueWpOoo3qQ4j8QqJZdf7ouNmn6AbBudNTQpHc0s+LGD
+         yr7Q==
+X-Gm-Message-State: AOAM532CuHT204bIpRl8FESUb09gdCo6s1h7AX9k4XCo5MBrMb20DRVk
+        6tYS8p8soOjRvSqGjQQaLu0=
+X-Google-Smtp-Source: ABdhPJwEELsjjLV+hBsfJiej4imi1ND7VZLuZxQpk+R/tkx/cwIMM3GphnH/4bn5zw34pvgfQlwTVg==
+X-Received: by 2002:a1c:9853:: with SMTP id a80mr14414819wme.44.1617985611974;
+        Fri, 09 Apr 2021 09:26:51 -0700 (PDT)
+Received: from ?IPv6:2001:a61:3552:9e01:f394:4bd9:fa87:7527? ([2001:a61:3552:9e01:f394:4bd9:fa87:7527])
+        by smtp.gmail.com with ESMTPSA id a7sm5648045wrn.50.2021.04.09.09.26.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Apr 2021 09:26:51 -0700 (PDT)
+From:   bauen1 <j2468h@googlemail.com>
+X-Google-Original-From: bauen1 <j2468h@gmail.com>
+To:     mic@digikod.net
+Cc:     akpm@linux-foundation.org, arnd@arndb.de, casey@schaufler-ca.com,
+        christian.brauner@ubuntu.com, christian@python.org, corbet@lwn.net,
+        cyphar@cyphar.com, deven.desai@linux.microsoft.com,
+        dvyukov@google.com, ebiggers@kernel.org, ericchiang@google.com,
+        fweimer@redhat.com, geert@linux-m68k.org, jack@suse.cz,
+        jannh@google.com, jmorris@namei.org, keescook@chromium.org,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, luto@kernel.org,
+        madvenka@linux.microsoft.com, mjg59@google.com,
+        mszeredi@redhat.com, mtk.manpages@gmail.com,
+        nramas@linux.microsoft.com, philippe.trebuchet@ssi.gouv.fr,
+        scottsh@microsoft.com, sean.j.christopherson@intel.com,
+        sgrubb@redhat.com, shuah@kernel.org, steve.dower@python.org,
+        thibaut.sautereau@clip-os.org, vincent.strubel@ssi.gouv.fr,
+        viro@zeniv.linux.org.uk, willy@infradead.org, zohar@linux.ibm.com
+References: <20201203173118.379271-1-mic@digikod.net>
+Subject: Re: [PATCH v12 0/3] Add trusted_for(2) (was O_MAYEXEC)
+Message-ID: <d3b0da18-d0f6-3f72-d3ab-6cf19acae6eb@gmail.com>
+Date:   Fri, 9 Apr 2021 18:26:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=TJq3ADscBRuq3vVMRrZQ25nFLYThkfCmWR4OfInmRrw=; m=1ciTf4lEciTeOTFMYE8Ti/zNFh88dj9ns8fWVydD8Es=; p=lH6ypLy7nBSAU1Y8+OlROQnduiSVhzKO3zb3sUcPmzw=; g=0d107768135058226d796803890d0dee0a0e7ec6
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYHB/qwAKCRCRxhvAZXjcoqPRAQDNdrN i3wEqHRmR7SJY4F0Q5iNfmpejbX7iJwoaooOKIQD+ONXL9uXlqTTTfpuw2HNXE7y9BIaV0nX4TY+o Bx2U+ww=
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201203173118.379271-1-mic@digikod.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+Hello,
 
-So far ecryptfs only verified that the superblock wasn't read-only but
-didn't check whether the mount was. This made sense when we did not use
-a private mount because the read-only state could change at any point.
+As a user of SELinux I'm quite interested in the trusted_for / O_MAYEXEC changes in the kernel and userspace.
+However the last activity on this patch seems to be this email from 2020-12-03 with no replies, so what is the status of this patchset or is there something that I'm missing ?
 
-Now that we have a private mount and mount properties can't change
-behind our back extend the read-only check to include the vfsmount.
+https://patchwork.kernel.org/project/linux-security-module/list/?series=395617
 
-The __mnt_is_readonly() helper will check both the mount and the
-superblock.  Note that before we checked root->d_sb and now we check
-mnt->mnt_sb but since we have a matching <vfsmount, dentry> pair here
-this is only syntactical change, not a semantic one.
+https://lore.kernel.org/linux-security-module/20201203173118.379271-1-mic@digikod.net/
 
-Overlayfs and cachefiles have been changed to check this as well.
-
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Tyler Hicks <code@tyhicks.com>
-Cc: ecryptfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/ecryptfs/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ecryptfs/main.c b/fs/ecryptfs/main.c
-index 9dcf9a0dd37b..cdf37d856c62 100644
---- a/fs/ecryptfs/main.c
-+++ b/fs/ecryptfs/main.c
-@@ -569,7 +569,7 @@ static struct dentry *ecryptfs_mount(struct file_system_type *fs_type, int flags
- 	 *   1) The lower mount is ro
- 	 *   2) The ecryptfs_encrypted_view mount option is specified
- 	 */
--	if (sb_rdonly(path.dentry->d_sb) || mount_crypt_stat->flags & ECRYPTFS_ENCRYPTED_VIEW_ENABLED)
-+	if (__mnt_is_readonly(mnt) || mount_crypt_stat->flags & ECRYPTFS_ENCRYPTED_VIEW_ENABLED)
- 		s->s_flags |= SB_RDONLY;
- 
- 	s->s_maxbytes = path.dentry->d_sb->s_maxbytes;
--- 
-2.27.0
 
