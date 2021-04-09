@@ -2,140 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DF2135913F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 03:15:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CED8A359160
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 03:24:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233223AbhDIBPt convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 8 Apr 2021 21:15:49 -0400
-Received: from us-smtp-delivery-44.mimecast.com ([207.211.30.44]:60247 "EHLO
-        us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233215AbhDIBPs (ORCPT
+        id S233165AbhDIBYx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 21:24:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54166 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232426AbhDIBYv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 21:15:48 -0400
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-579-GmeKLG3_MCeGLw1eRwbRXA-1; Thu, 08 Apr 2021 21:15:32 -0400
-X-MC-Unique: GmeKLG3_MCeGLw1eRwbRXA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D1E981005582;
-        Fri,  9 Apr 2021 01:15:30 +0000 (UTC)
-Received: from mickey.themaw.net (ovpn-116-30.sin2.redhat.com [10.67.116.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B9099196E3;
-        Fri,  9 Apr 2021 01:15:27 +0000 (UTC)
-Subject: [PATCH v3 4/4] kernfs: use i_lock to protect concurrent inode updates
-From:   Ian Kent <raven@themaw.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>
-Cc:     Brice Goglin <brice.goglin@gmail.com>,
-        Fox Chen <foxhlchen@gmail.com>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Fri, 09 Apr 2021 09:15:26 +0800
-Message-ID: <161793092633.10062.10058776986521908089.stgit@mickey.themaw.net>
-In-Reply-To: <161793058309.10062.17056551235139961080.stgit@mickey.themaw.net>
-References: <161793058309.10062.17056551235139961080.stgit@mickey.themaw.net>
-User-Agent: StGit/0.21
+        Thu, 8 Apr 2021 21:24:51 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA83C061760;
+        Thu,  8 Apr 2021 18:24:40 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lUfsw-003sCi-JE; Fri, 09 Apr 2021 01:24:34 +0000
+Date:   Fri, 9 Apr 2021 01:24:34 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 01/30] iov_iter: Add ITER_XARRAY
+Message-ID: <YG+s0iw5o91KQIlW@zeniv-ca.linux.org.uk>
+References: <161789062190.6155.12711584466338493050.stgit@warthog.procyon.org.uk>
+ <161789064740.6155.11932541175173658065.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=raven@themaw.net
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: themaw.net
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <161789064740.6155.11932541175173658065.stgit@warthog.procyon.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The inode operations .permission() and .getattr() use the kernfs node
-write lock but all that's needed is to keep the rb tree stable while
-updating the inode attributes as well as protecting the update itself
-against concurrent changes.
+On Thu, Apr 08, 2021 at 03:04:07PM +0100, David Howells wrote:
+> Add an iterator, ITER_XARRAY, that walks through a set of pages attached to
+> an xarray, starting at a given page and offset and walking for the
+> specified amount of bytes.  The iterator supports transparent huge pages.
+> 
+> The iterate_xarray() macro calls the helper function with rcu_access()
+> helped.  I think that this is only a problem for iov_iter_for_each_range()
+> - and that returns an error for ITER_XARRAY (also, this function does not
+> appear to be called).
 
-And .permission() is called frequently during path walks and can cause
-quite a bit of contention between kernfs node operations and path
-walks when the number of concurrent walks is high.
+Unused since lustre had gone away.
 
-To change kernfs_iop_getattr() and kernfs_iop_permission() to take
-the rw sem read lock instead of the write lock an additional lock is
-needed to protect against multiple processes concurrently updating
-the inode attributes and link count in kernfs_refresh_inode().
+> +#define iterate_all_kinds(i, n, v, I, B, K, X) {		\
 
-The inode i_lock seems like the sensible thing to use to protect these
-inode attribute updates so use it in kernfs_refresh_inode().
+Do you have any users that would pass different B and X?
 
-Signed-off-by: Ian Kent <raven@themaw.net>
----
- fs/kernfs/inode.c |   10 ++++++----
- fs/kernfs/mount.c |    4 ++--
- 2 files changed, 8 insertions(+), 6 deletions(-)
+> @@ -1440,7 +1665,7 @@ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+>  		return v.bv_len;
+>  	}),({
+>  		return -EFAULT;
+> -	})
+> +	}), 0
 
-diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-index 3b01e9e61f14e..6728ecd81eb37 100644
---- a/fs/kernfs/inode.c
-+++ b/fs/kernfs/inode.c
-@@ -172,6 +172,7 @@ static void kernfs_refresh_inode(struct kernfs_node *kn, struct inode *inode)
- {
- 	struct kernfs_iattrs *attrs = kn->iattr;
- 
-+	spin_lock(&inode->i_lock);
- 	inode->i_mode = kn->mode;
- 	if (attrs)
- 		/*
-@@ -182,6 +183,7 @@ static void kernfs_refresh_inode(struct kernfs_node *kn, struct inode *inode)
- 
- 	if (kernfs_type(kn) == KERNFS_DIR)
- 		set_nlink(inode, kn->dir.subdirs + 2);
-+	spin_unlock(&inode->i_lock);
- }
- 
- int kernfs_iop_getattr(struct user_namespace *mnt_userns,
-@@ -191,9 +193,9 @@ int kernfs_iop_getattr(struct user_namespace *mnt_userns,
- 	struct inode *inode = d_inode(path->dentry);
- 	struct kernfs_node *kn = inode->i_private;
- 
--	down_write(&kernfs_rwsem);
-+	down_read(&kernfs_rwsem);
- 	kernfs_refresh_inode(kn, inode);
--	up_write(&kernfs_rwsem);
-+	up_read(&kernfs_rwsem);
- 
- 	generic_fillattr(&init_user_ns, inode, stat);
- 	return 0;
-@@ -284,9 +286,9 @@ int kernfs_iop_permission(struct user_namespace *mnt_userns,
- 
- 	kn = inode->i_private;
- 
--	down_write(&kernfs_rwsem);
-+	down_read(&kernfs_rwsem);
- 	kernfs_refresh_inode(kn, inode);
--	up_write(&kernfs_rwsem);
-+	up_read(&kernfs_rwsem);
- 
- 	return generic_permission(&init_user_ns, inode, mask);
- }
-diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
-index baa4155ba2edf..f2f909d09f522 100644
---- a/fs/kernfs/mount.c
-+++ b/fs/kernfs/mount.c
-@@ -255,9 +255,9 @@ static int kernfs_fill_super(struct super_block *sb, struct kernfs_fs_context *k
- 	sb->s_shrink.seeks = 0;
- 
- 	/* get root inode, initialize and unlock it */
--	down_write(&kernfs_rwsem);
-+	down_read(&kernfs_rwsem);
- 	inode = kernfs_get_inode(sb, info->root->kn);
--	up_write(&kernfs_rwsem);
-+	up_read(&kernfs_rwsem);
- 	if (!inode) {
- 		pr_debug("kernfs: could not get root inode\n");
- 		return -ENOMEM;
-
-
+Correction - users that might get that flavour.  This one explicitly checks
+for xarray and doesn't get to iterate_... in that case.
