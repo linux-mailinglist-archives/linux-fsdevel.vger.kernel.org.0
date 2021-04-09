@@ -2,193 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3164635A75B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 21:47:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F394335A840
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 23:18:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234452AbhDITqp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Apr 2021 15:46:45 -0400
-Received: from mout.gmx.net ([212.227.17.20]:39269 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233883AbhDITql (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Apr 2021 15:46:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1617997367;
-        bh=iNspAAUXd0TGc9idWuqJezj9FgSbVIrdnHkC34OI6ys=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=ldsXgBGJ3GSKvmbTxvP1itO26Qt3rKVAXa7HCeRwn7x6vvwIVyKAuuWMT/9Mbs/eq
-         eUjUvdYyHT2oPnald/g3Raad9aGgTRMlgrGQZ1cKX9WKZtuOkezCA/ZBkxeKHYWicC
-         dFguhZZAb4murEW3qrRROxlPjGsI5cEXZ4497eEg=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.20.60] ([92.116.181.63]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1My36N-1lmD5l41nT-00zVNp; Fri, 09
- Apr 2021 21:42:47 +0200
-Subject: Re: [PATCH v2 1/1] kernel.h: Split out panic and oops helpers
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Alexander Lobakin <alobakin@pm.me>,
-        Wei Liu <wei.liu@kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Corey Minyard <cminyard@mvista.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        "Jason J. Herne" <jjherne@linux.ibm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Michael Kelley <mikelley@microsoft.com>,
+        id S233687AbhDIVSq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Apr 2021 17:18:46 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:43654 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234377AbhDIVSp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Apr 2021 17:18:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618003110;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=6LfDPLi5E0po8MV65N/nBXOnSa/U1n1bpGd2B6Y5zrs=;
+        b=NRUYHVmUtz8LtV/t20xv8pZinua3Qj27hbFHYz5ZX7bdHw47gkT2zk4hTd7J9nw7x2bQzU
+        mlA820Wp7u17ys4+f4YU8IcljoU0yIRra8KbxoS5pJ2scFT4O3DSkZX8eBzKeg8H+H7H4j
+        5IxJclONL+pDcpDQ4MxKuMvavfooo0g=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-366-t8BIvbYqMuSzfmFvv8x3vw-1; Fri, 09 Apr 2021 17:18:28 -0400
+X-MC-Unique: t8BIvbYqMuSzfmFvv8x3vw-1
+Received: by mail-qk1-f199.google.com with SMTP id a1so4144735qkn.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Apr 2021 14:18:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6LfDPLi5E0po8MV65N/nBXOnSa/U1n1bpGd2B6Y5zrs=;
+        b=BxOj5Rxb9zN6PMAv4FKZ+k1WaRyUensL7LgpDlWqk6bceWSLvZVs92rj2pfDEa16rX
+         DaIrkiOZERFMgWcxyesjUQYlNBr61NBdD5wkmn3ImL/BOHQYuWw871P0BiANByfwcG5k
+         +48+66rk/N+LD9k9ySqu85yG677jpUQk004AoTBQ/DdpzIUfpH1DpczUw3yY26+ZDxX1
+         89FErps3M+kzUG4Y9eM9I+gQ3i7df2VAN2cFtCoHQQPdz1LiicbifabaZNYgCYAJxnGi
+         MIypDVaqqsgshCedQdOxa0b3KEVUx0/LiC06T2TOsCpNntV/wJTGip2H8tGBOtbVCx2G
+         ygcg==
+X-Gm-Message-State: AOAM532rSeVjVokPgBlnXBWxyGMs8pKghfSeEElrh8XvgGSr9uWnjRMh
+        gPX6+Ou7Z41liGqkU7KJ68MBWKNqQxoyWa9vzYFRcwNUVSGEb5U7e4Ug0XmF/ubPdSQQD9k0g6G
+        fJyOK0SQfYLoqXz6tWTR4PbeOmA==
+X-Received: by 2002:a05:620a:1369:: with SMTP id d9mr16206715qkl.378.1618003107917;
+        Fri, 09 Apr 2021 14:18:27 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxWcW26HNQ/4u/a9UUVswHcCgm4mQgj1l0Ik4tAPemu5I9vnvbu6buq/FCs5OPNi83I6zujbQ==
+X-Received: by 2002:a05:620a:1369:: with SMTP id d9mr16206687qkl.378.1618003107587;
+        Fri, 09 Apr 2021 14:18:27 -0700 (PDT)
+Received: from xz-x1 (bras-base-toroon474qw-grc-82-174-91-135-175.dsl.bell.ca. [174.91.135.175])
+        by smtp.gmail.com with ESMTPSA id d68sm2628359qkf.93.2021.04.09.14.18.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Apr 2021 14:18:26 -0700 (PDT)
+Date:   Fri, 9 Apr 2021 17:18:24 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Axel Rasmussen <axelrasmussen@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Daniel Colascione <dancol@google.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
         Joe Perches <joe@perches.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Mihai Carabas <mihai.carabas@oracle.com>,
-        Wang Wenhu <wenhu.wang@vivo.com>,
-        Marek Czerski <ma.czerski@gmail.com>,
-        Hongbo Yao <yaohongbo@huawei.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Alexander Egorenkov <egorenar@linux.ibm.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-clk@vger.kernel.org, linux-edac@vger.kernel.org,
-        coresight@lists.linaro.org, linux-leds@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-staging@lists.linux.dev, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-arch@vger.kernel.org,
-        kexec@lists.infradead.org, rcu@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Corey Minyard <minyard@acm.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Pavel Machek <pavel@ucw.cz>, Alex Elder <elder@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Jens Frederich <jfrederich@gmail.com>,
-        Daniel Drake <dsd@laptop.org>,
-        Jon Nettleton <jon.nettleton@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-References: <20210409100250.25922-1-andriy.shevchenko@linux.intel.com>
-From:   Helge Deller <deller@gmx.de>
-Message-ID: <cef5d4ba-9d91-7249-3ba4-c7f1c89ab119@gmx.de>
-Date:   Fri, 9 Apr 2021 21:41:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        Brian Geffon <bgeffon@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
+Subject: Re: [PATCH 0/9] userfaultfd: add minor fault handling for shmem
+Message-ID: <20210409211824.GH792100@xz-x1>
+References: <20210408234327.624367-1-axelrasmussen@google.com>
+ <20210408220440.aab59f2f06beb840c22377b3@linux-foundation.org>
+ <CAJHvVcj84fcuh0vXtHdEPoV+DrFDSXjUg1fO+oLFCOaxWBH13w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210409100250.25922-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:A9ZHNG4WxpUBFm/OLrSjy4wmvepyAKfJ/9J0GMwZPVvou+WL0jt
- juhLu46u1kS+URbP+8+Pw+p7oQ3JpIMBAMo3AEr85dJ6auKoY3YWnT5NDC8TMlGFgRljwyK
- +Z8x/lMp3a1Sj6G+ejcETzf/1wuAwQ3HVr+B/sOgfO9g9aKIA+KstHHg98r0RbXaN5gO1f1
- c2FCqtclGkoW83386bLAQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:QTiAIr1d9DU=:ouDY+zoQbxd0AYwIoqdq7+
- aGg5cjuhFxN4dPlhbUVe4gHa8V6O/ob8/GYNsz48eMGoWdTSBWNdigEx/P3CeG5ajt1K/D1wj
- ZsuimGcNU/JIwDEC4hAa9wiKwplSRt9GyqnNpMymPpOincerI2QNIINtkESpmD/MQtIZKWIBd
- LzLZQt5g5JHyD7KSRX3CSO3kxsUbUK397UnmPrlbBzZiG2Ki8L87whx1HhStGiOawVNU3NX1U
- 1qJ/Q2KXhaSRyDrR5JobMbpVJ16dZyIPC+nB+S5uAuxAgE/sFmpim0FlFwngs3hHA1Ua7nKDx
- vaviKH0ZdVtdmwFCmPWXldfwgaGRXmcVHieN8y3Cf4AES1arvvUXfDdU8TlIFPlMWolAfy75b
- aF6Vq+x5W46hFMRh+gkaDVvXSN0IJLemCnzysIaYGHy5hfBua6u7o+npWjwJ1MLna90v6WJqp
- qtsmLRv7qq9JD3rE3mLnbgCeyikpDMiwYezxJc5y085Nda4MocVjIUyHwfrItCcTJy+6nK+32
- QtS5ysQPbZtg/0BLTkwmTgg1C9wyCqJwqSPkJHKs0fedY3Cg4AmlYSUFZ+l1+yWlahYNrwIjD
- 1LvXS6jFdPgrwM0Bw5zEn5iTaVsN3Dpg/BK7RBEnkSXG2EhjbG0P5JyU6ZQFlyoWZsOBl1Dnp
- 9RlHsz3O6/vJl501tNpFzFkE9v1fbjuJiCnsWIZVHwcbxwgsYWs1VvePFQoqRLQUoGWk7YlQ8
- Mycnfd16TOkM/BTklN35/8ZoVz9X6VjMTLQhDSDUL5LeX75GwKdRnpVjwg+mpqmINujIEDZVj
- bRIcfuM8kM4QXmEUEjmqZoVNDqdo0531mNm3kN19X3Wj5I9ywhlJarAEaPUOs1zKkdzPb4HdC
- +5ul9M6a4WBWbT5U1mKmQOeT0D6MCEGVKv+v/aWQ+A07Sxs9cad/sxt/XXniiusfDTtv1wpHL
- 48xz68wHDUi6JHhewqK39v9CUwOqs24U/FOrqR6QogsoMdeib8LB3HQXiJzJhPuxnfQKT5n0E
- 2KocVJOLOCpFD00uImKyPG4urooQInY0CgXuaTbgwb2QXtNz/HWsnU7bcGH95t//ETUS0YST/
- HIEC4Jt3JrZiU2K24JZ5uAUtc1tWcvMl+zNPO7uqbferwivk7BjAs0A1bkS3994pg0p9gu7e6
- IGlScHPk65VIaL0560ZSSQDJOn/n987RThMli+dnKucI6xieqz82byl0Okk5UU49D7L5Y=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJHvVcj84fcuh0vXtHdEPoV+DrFDSXjUg1fO+oLFCOaxWBH13w@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/9/21 12:02 PM, Andy Shevchenko wrote:
-> kernel.h is being used as a dump for all kinds of stuff for a long time.
-> Here is the attempt to start cleaning it up by splitting out panic and
-> oops helpers.
->
-> There are several purposes of doing this:
-> - dropping dependency in bug.h
-> - dropping a loop by moving out panic_notifier.h
-> - unload kernel.h from something which has its own domain
->
-> At the same time convert users tree-wide to use new headers, although
-> for the time being include new header back to kernel.h to avoid twisted
-> indirected includes for existing users.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-> Acked-by: Corey Minyard <cminyard@mvista.com>
-> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Kees Cook <keescook@chromium.org>
-> Acked-by: Wei Liu <wei.liu@kernel.org>
-> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+On Fri, Apr 09, 2021 at 10:03:53AM -0700, Axel Rasmussen wrote:
+> On Thu, Apr 8, 2021 at 10:04 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> > On Thu,  8 Apr 2021 16:43:18 -0700 Axel Rasmussen <axelrasmussen@google.com> wrote:
+> >
+> > > The idea is that it will apply cleanly to akpm's tree, *replacing* the following
+> > > patches (i.e., drop these first, and then apply this series):
+> > >
+> > > userfaultfd-support-minor-fault-handling-for-shmem.patch
+> > > userfaultfd-support-minor-fault-handling-for-shmem-fix.patch
+> > > userfaultfd-support-minor-fault-handling-for-shmem-fix-2.patch
+> > > userfaultfd-support-minor-fault-handling-for-shmem-fix-3.patch
+> > > userfaultfd-support-minor-fault-handling-for-shmem-fix-4.patch
+> > > userfaultfd-selftests-use-memfd_create-for-shmem-test-type.patch
+> > > userfaultfd-selftests-create-alias-mappings-in-the-shmem-test.patch
+> > > userfaultfd-selftests-reinitialize-test-context-in-each-test.patch
+> > > userfaultfd-selftests-exercise-minor-fault-handling-shmem-support.patch
+> >
+> > Well.  the problem is,
+> >
+> > > +     if (area_alias == MAP_FAILED)
+> > > +             err("mmap of memfd alias failed");
+> >
+> > `err' doesn't exist until eleventy patches later, in Peter's
+> > "userfaultfd/selftests: unify error handling".  I got tired of (and
+> > lost confidence in) replacing "err(...)" with "fprintf(stderr, ...);
+> > exit(1)" everywhere then fixing up the fallout when Peter's patch came
+> > along.  Shudder.
+> 
+> Oof - sorry about that!
+> 
+> >
+> > Sorry, all this material pretty clearly isn't going to make 5.12
+> > (potentially nine days hence), so I shall drop all the userfaultfd
+> > patches.  Let's take a fresh run at all of this after -rc1.
+> 
+> That's okay, my understanding was already that it certainly wouldn't
+> be in the 5.12 release, but that we might be ready in time for 5.13.
+> 
+> >
+> >
+> > I have tentatively retained the first series:
+> >
+> > userfaultfd-add-minor-fault-registration-mode.patch
+> > userfaultfd-add-minor-fault-registration-mode-fix.patch
+> > userfaultfd-disable-huge-pmd-sharing-for-minor-registered-vmas.patch
+> > userfaultfd-hugetlbfs-only-compile-uffd-helpers-if-config-enabled.patch
+> > userfaultfd-add-uffdio_continue-ioctl.patch
+> > userfaultfd-update-documentation-to-describe-minor-fault-handling.patch
+> > userfaultfd-selftests-add-test-exercising-minor-fault-handling.patch
+> >
+> > but I don't believe they have had much testing standalone, without the
+> > other userfaultfd patches present.  So I don't think it's smart to
+> > upstream these in this cycle.  Or I could drop them so you and Peter
+> > can have a clean shot at redoing the whole thing.  Please let me know.
+> 
+> From my perspective, both Peter's error handling and the hugetlbfs
+> minor faulting patches are ready to go. (Peter's most importantly; we
+> should establish that as a base, and put all the burden on resolving
+> conflicts with it on us instead of you :).)
+> 
+> My memory was that Peter's patch was applied before my shmem series,
+> but it seems I was mistaken. So, maybe the best thing to do is to have
+> Peter send a version of it based on your tree, without the shmem
+> series? And then I'll resolve any conflicts in my tree?
+> 
+> It's true that we haven't tested the hugetlbfs minor faults patch
+> extensively *with the shmem one also applied*, but it has had more
+> thorough review than the shmem one at this point (e.g. by Mike
+> Kravetz), and they're rather separate code paths (I'd be surprised if
+> one breaks the other).
 
-Acked-by: Helge Deller <deller@gmx.de> # parisc
+Yes I think the hugetlb part should have got more review done.  IMHO it's a
+matter of whether Mike would still like to do a more thorough review, or seems
+okay to keep them.
 
-Helge
+I can repost the selftest series later if needed, as long as I figured which is
+the suitable base commit.  Those selftest patches are definitely not urgent for
+this release, so we can wait for the next release.
+
+Thanks,
+
+-- 
+Peter Xu
+
