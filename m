@@ -2,125 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B3A93590BA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 01:58:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94F8C3590DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Apr 2021 02:24:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232951AbhDHX6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Apr 2021 19:58:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35696 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232426AbhDHX6z (ORCPT
+        id S232967AbhDIAYx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Apr 2021 20:24:53 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:39871 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232488AbhDIAYx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Apr 2021 19:58:55 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E594BC061760
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Apr 2021 16:58:41 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id s17so4327911ljc.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Apr 2021 16:58:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XLF2Hy47tG/NhXLeWFJjwjLlXpGjFs6Bt2Vh546exGI=;
-        b=U1nu8PCKZ2rC+hNkH/1FtHr0pHi1eBFqU8nKatafLTnVUf8YWjf3+Y9lxaTCmPnC6N
-         1maOTah5U5Ugwluf4SbyJDC0T/VIm4gmhPdxCSV5suWLxAoQA6cU1UWIC534ya5fYLAp
-         8IzK2dToo8y36YbKoGVCbAg0EPiSom+ZJL01Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XLF2Hy47tG/NhXLeWFJjwjLlXpGjFs6Bt2Vh546exGI=;
-        b=OsDPU7fd/ScbiFhB8PZ8oKxMzHPSobHP+dazOEyy5CwU8yaa3U5VueqTqbFzNXZ61f
-         8atQVvBnWQMcd2H/ewTED3Jr2Hz7M7gDdZvHliyDSJs1B29yFdnF3VpGhaBSDJsi31Hz
-         P1lJbParOgWWsEsDhWxhGilDqrGivFQCwciZeIGbQJU6oxNRfwmutCbNsQGZ3rGcVEzQ
-         lTPFH19i739cw8jAC5OauKIjABUhGSCqLdAatKOBMfL+iCBbQywqVdnnfQMDy0893huE
-         aH4CtJ8MZuTlIj0RWbo54tjwOAEu+qkFBPTul5V3Wv4o9e9D5hqX9/5ZUMW6MPUG4cqa
-         uEeQ==
-X-Gm-Message-State: AOAM533/Gp6/55sEX/huQKsLDd87YxnR+rjvme6F8rIyFaZZJiWr2BpZ
-        8wxTp0/3zOfX4Gf7RBjePDWdPmQR95+C+g==
-X-Google-Smtp-Source: ABdhPJzZzsNtknjGHJx6G8ujSNqnatH98PCJvnd7gzIs3V7yQHZIkPVnEa8cNpmWJ4pYpA668LKBPg==
-X-Received: by 2002:a2e:964a:: with SMTP id z10mr7733823ljh.454.1617926320290;
-        Thu, 08 Apr 2021 16:58:40 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id u13sm91776lfr.124.2021.04.08.16.58.40
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Apr 2021 16:58:40 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id w28so6843667lfn.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Apr 2021 16:58:40 -0700 (PDT)
-X-Received: by 2002:ac2:5974:: with SMTP id h20mr5012619lfp.40.1617925853980;
- Thu, 08 Apr 2021 16:50:53 -0700 (PDT)
+        Thu, 8 Apr 2021 20:24:53 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id DE5B35C00B1;
+        Thu,  8 Apr 2021 20:24:40 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Thu, 08 Apr 2021 20:24:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=DwizxYbUSZgbLHoS13O2SZRiI4k
+        eD3ogjhL/PTu6gv8=; b=TdyxN4BaM0HA0AYjUbIQlsNrj6enXIVLSfZ3e4k05Fy
+        8T0pQ7UqL9dpUIUwaf5Dh46cGvfg5tjqtZ8P6wPMeb1bTcvlTO2+X12hX/8E9fWR
+        pyI6KBWHr1CSsS9JYGXsjHG35z5KQxXYCekFP8qvi7HeY2BZ1LohR1s0/IFmcZsB
+        dovPxMul0lPSEsyR+NVeEwAlh88X9i0JM2LkK+ms6GPXL4xE5czff363tn+JqsCT
+        36wowZM6joLA2dkkH2958Q/jNh7YE+givMDMNzWJ8FVbq7ol/lBUsW3f7bpQ7l9t
+        CXmczAiry/JXC8exc4RNMdk6SsXTQ7uzKEBZsf0Kk4Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=DwizxY
+        bUSZgbLHoS13O2SZRiI4keD3ogjhL/PTu6gv8=; b=mKLIG4INCz2rV0Ot2SXu02
+        OUT7xlwNKfQhzlG0NgGHBmh5n+WBR51fUg9j/Uxp89FBoZ3IEpAOmnuhd4DT/gZz
+        6d1TovYyLI/SA2akboyiIPY3qMseU5Vbj/2P09fdHgdLisTYillWKLxhCSFfIg7g
+        XYjdmD+qTl5dZRdjTBOEJ/siBWUpl3woUhIzid86oxeyQuQiuhb6cynOqU1ajYyV
+        gt3l+/a6z2zOXzdW26VJiiWgKlNtPKQNVd7bIS69XBbpFjytScJUdzFsuuMpcUth
+        mdi84YweLOFvrIf6UPz0zK8PDgTIKa/EYVRztaID5pSJpFORkqoItTyWFT4Clupg
+        ==
+X-ME-Sender: <xms:x55vYBxSdMN6pa45K4SiKmpQxku9iBatgb-yXc9EyQZQM684jhnieg>
+    <xme:x55vYBQ6EvzV0Xwcth_IuF9ry1BMgYi3_VdUdhsJwGO0Dx4Vyi6IMAFNNrkYOUuvy
+    iD4spKG4tDvQHe1xw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudektddgfedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    gfrhhlucfvnfffucdljedtmdenucfjughrpeffhffvuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepffgrnhhivghlucgiuhcuoegugihusegugihuuhhurdighiiiqeenuc
+    ggtffrrghtthgvrhhnpeeuuddvjeefffelgfeuveehfeegfeetfeetueduudfhudfhheev
+    leetveduleehjeenucfkphepudeifedruddugedrudefvddrudenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegugihusegugihuuhhurdighiii
+X-ME-Proxy: <xmx:x55vYLUKwY0k7axzmVJNoqLNsPieXvJFIy2mEIYf2WIdTdI2l6jnMg>
+    <xmx:x55vYDiZj-Sl8u8CU0eTx4EwgksMSosX98L1OiN0Ce1ffDLIIvisXg>
+    <xmx:x55vYDBRsGDYh9cY_KnaYygi_FZl7mNG1wc6469CFVj2NT1DW4-KwA>
+    <xmx:yJ5vYF12SukpWkjBz328iON8Zi19szwH9HX4t9SC-ALe44Uty5WhNw>
+Received: from dlxu-fedora-R90QNFJV (unknown [163.114.132.1])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 761B724005E;
+        Thu,  8 Apr 2021 20:24:38 -0400 (EDT)
+Date:   Thu, 8 Apr 2021 17:24:36 -0700
+From:   Daniel Xu <dxu@dxuuu.xyz>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, jolsa@kernel.org, hannes@cmpxchg.org,
+        yhs@fb.com
+Subject: Re: [RFC bpf-next 0/1] bpf: Add page cache iterator
+Message-ID: <20210409002436.d4kpn6djrnecv2et@dlxu-fedora-R90QNFJV>
+References: <cover.1617831474.git.dxu@dxuuu.xyz>
+ <20210408231332.GH22094@magnolia>
 MIME-Version: 1.0
-References: <20210408145057.GN2531743@casper.infradead.org>
- <161789062190.6155.12711584466338493050.stgit@warthog.procyon.org.uk>
- <161789066013.6155.9816857201817288382.stgit@warthog.procyon.org.uk>
- <46017.1617897451@warthog.procyon.org.uk> <136646.1617916529@warthog.procyon.org.uk>
-In-Reply-To: <136646.1617916529@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 8 Apr 2021 16:50:38 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi_XrtTanTwoKs0jwnjhSvwpMYVDJ477VtjvvTXRjm5wQ@mail.gmail.com>
-Message-ID: <CAHk-=wi_XrtTanTwoKs0jwnjhSvwpMYVDJ477VtjvvTXRjm5wQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH] mm: Split page_has_private() in two to better handle PG_private_2
-To:     David Howells <dhowells@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210408231332.GH22094@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 8, 2021 at 2:15 PM David Howells <dhowells@redhat.com> wrote:
->
-> mm: Split page_has_private() in two to better handle PG_private_2
+On Thu, Apr 08, 2021 at 04:13:32PM -0700, Darrick J. Wong wrote:
+> On Wed, Apr 07, 2021 at 02:46:10PM -0700, Daniel Xu wrote:
+> > There currently does not exist a way to answer the question: "What is in
+> > the page cache?". There are various heuristics and counters but nothing
+> > that can tell you anything like:
+> > 
+> >   * 3M from /home/dxu/foo.txt
+> >   * 5K from ...
+> 
+> 5K?  That's an extraordinary Weird Machine(tm).
 
-From a look through the patch and some (limited) thinking about it, I
-like the patch. I think it clarifies the two very different cases, and
-makes it clear that one is about that page cleanup, and the other is
-about the magical reference counting. The two are separate issues,
-even if for PG_private both happen to be true.
+Just typing random numbers :)
 
-So this seems sane to me.
+> >   * etc.
+> > 
+> > The answer to the question is particularly useful in the stacked
+> > container world. Stacked containers implies multiple containers are run
+> > on the same physical host. Memory is precious resource on some (if not
+> > most) of these systems. On these systems, it's useful to know how much
+> > duplicated data is in the page cache. Once you know the answer, you can
+> > do something about it. One possible technique would be bind mount common
+> > items from the root host into each container.
+> 
+> Um, are you describing a system that uses BPF to deduplicating the page
+> cache by using bind mounts?  Can the containers scribble on these files
+> and thereby mess up the other containers?  What happens if the container
+> wants to update itself and clobbers the root host's copy instead?  How
+> do you deal with a software update process failing because the root host
+> fights back against the container trying to change its files?
 
-That said, I had a couple of reactions:
+No, the BPF progs are not intended to modify the pages. This is just for
+read only observability.
 
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index 04a34c08e0a6..04cb440ce06e 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -832,14 +832,27 @@ static inline void ClearPageSlabPfmemalloc(struct page *page)
->
->  #define PAGE_FLAGS_PRIVATE                             \
->         (1UL << PG_private | 1UL << PG_private_2)
+> Also, I thought we weren't supposed to share resources across security
+> boundaries anymore?
 
-I think this should be re-named to be PAGE_FLAGS_CLEANUP, because I
-don't think it makes any other sense to "combine" the two PG_private*
-bits any more. No?
+I can't speak to this, but bpf progs can pretty much be attached to
+anywhere so this iterator doesn't expose anything new.
 
-> +static inline int page_private_count(struct page *page)
-> +{
-> +       return test_bit(PG_private, &page->flags) ? 1 : 0;
-> +}
+<...>
 
-Why is this open-coding the bit test, rather than just doing
-
-        return PagePrivate(page) ? 1 : 0;
-
-instead? In fact, since test_bit() _should_ return a 'bool', I think even just
-
-        return PagePrivate(page);
-
-should work and give the same result, but I could imagine that some
-architecture version of "test_bit()" might return some other non-zero
-value (although honestly, I think that should be fixed if so).
-
-                Linus
+Thanks,
+Daniel
