@@ -2,144 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 972CC35B6BF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Apr 2021 21:26:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3219835B6EA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Apr 2021 22:49:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236231AbhDKT1B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Apr 2021 15:27:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60890 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235323AbhDKT1B (ORCPT
+        id S236568AbhDKUtS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Apr 2021 16:49:18 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32244 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236564AbhDKUtR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Apr 2021 15:27:01 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94D37C061574
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Apr 2021 12:26:44 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5-20020a05600c0245b029011a8273f85eso5679408wmj.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Apr 2021 12:26:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=/8TJhA68h/8e3XqwlnCzlH6v3LnaNubb1RVVGCxTa4g=;
-        b=J/l21sH2xEiKQ5zss8PE24t6RX0KijI3aKHY/zYCZ215ztzsJxk3YljLf/9ftP+pPe
-         W2hIc9la/fpqnWUY3TUAuScz4dE1UIQItk2QhltQbkThx0ZFcUtLEyo9eWse4P5qaoGn
-         sVrV13I6RW6IfJqFSoDl8o3kyGU7FpHMH7YI6Vv6I/QtjipsPPfa1VoVXNs55fE86dWB
-         fmA6d8XTjvDkCBtqS8KZ8EzaGTFkfEAVMmtmWT7qIMmUGtH2ziIzg7IpgUebjLAj6Yb9
-         l6g37HwskvyYSfmzdloylJzUbLJUGkrKUGnzOCqluZCe6dn9gEVSQ08hl5AMZ80QmEgB
-         CohA==
+        Sun, 11 Apr 2021 16:49:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618174139;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WgCMOQWQVsoo18S8HwQ+Un6/4nDLRTxeG+tZrHLLzJw=;
+        b=UfC9crSFSuuYbsN1A/qijOun3yFupTwSioxSXx/+sU/DemIpZE63zr/BP7/3asAmWcjy32
+        aAxsCdx0akEThVNI1HeC7OWiuMpNqLxerdgiZGGosw8b1lGTxwsuCAgLbRVICCL79H67Bw
+        uH15+9gf+S3WBo5Vjnia+DtiDGQaUX0=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-41-4kHXBvDHMUKNdaiLdGdxOg-1; Sun, 11 Apr 2021 16:48:58 -0400
+X-MC-Unique: 4kHXBvDHMUKNdaiLdGdxOg-1
+Received: by mail-wr1-f72.google.com with SMTP id j4so5131464wru.20
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Apr 2021 13:48:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=/8TJhA68h/8e3XqwlnCzlH6v3LnaNubb1RVVGCxTa4g=;
-        b=kMy05lOGVitYWSSIGIvlYADA5HObunYmANNSIqaAdigOWeDpwBO5DtVq0F0vYhJ0OS
-         ZwVTNQb8tbShR4qTFf1J2+J4yrYxU46gPZPZBN3EgtpDsjolWXcLhfPBK1Usc5hWVX7x
-         ykpyShRoqKnhgUuTQTG6ATiZ4EKJdWyIg5KhmdFXXDQqGhBz5e2rPu4GK6Cn/YNOdkA9
-         cZrPzy9gI6E45z1gsB+pqECQMiP8gkN2JhlCWE+YO21MANdyKWVgt43WhSRasjgabOxW
-         EsXkF7l6PT29VjPkPf9m/B1KZE3f1py4cNPUKi3idioUVMh04arydgLZwhMvyi4v8F/B
-         wn5g==
-X-Gm-Message-State: AOAM531zfDwfawTZrAlQTh7aPAAIWxQFWz0lWQ7odr6FhzsaJ62bNeYi
-        S3QdcSWMpR1r/oZXHoupdTVMvg==
-X-Google-Smtp-Source: ABdhPJztsA/xwX5L/DoL1oZX+LcVXnIQD+VgkEO9P1o2PIOgshz/wlckdDgYHVifqaAMs+uSrN4kbw==
-X-Received: by 2002:a1c:f20e:: with SMTP id s14mr23533683wmc.100.1618169203190;
-        Sun, 11 Apr 2021 12:26:43 -0700 (PDT)
-Received: from localhost (5.186.124.214.cgn.fibianet.dk. [5.186.124.214])
-        by smtp.gmail.com with ESMTPSA id d5sm16939244wrx.0.2021.04.11.12.26.42
+         :mime-version:content-disposition:in-reply-to;
+        bh=WgCMOQWQVsoo18S8HwQ+Un6/4nDLRTxeG+tZrHLLzJw=;
+        b=hj64T9XW4novBrV3caGRSzrtzGcqLll/VsI5DTB9xJX8AlwYa1I5S1wVQijUgpKIiU
+         cwa9cVZuTEy9Lwlv9a3Z85NKfdXF+sf/VM8V4OkTXJZ8sHcGTcf8Dv6/AU34n/JhyaAh
+         ShCL/2ZtuTuXzf1no7xrCs/mO225Eg9+whQnh1xPnf6SPxuNQl83WVuz9SQN7sx8uOsd
+         Zgm9tWtRjtte91y++L8gnxHzE6qe8N7aQqoiy8CW6sjEvZk07f+eBPC2u53t//2jPReo
+         bgPcTym4v53YHE6ukLhHSlDmJBypgnR5kcvu+Qk3bzW3DMg5at3SENCyfjouFssTdZEI
+         bfHQ==
+X-Gm-Message-State: AOAM530jL0w8nEXvxHij8zT4kqgX6laDOaso5KQLrDxJ2J84C1SegjUV
+        d54eWMzlRKfK0i2Im7JunO1CtyYtqoL5ZCyPZIDKSFFuQxafF7ZFkFqqhSooxhCgCRTyz+3syQN
+        SIAt7o+sOaGMXCjuAVK23/FE3Ww==
+X-Received: by 2002:adf:f64f:: with SMTP id x15mr12219243wrp.266.1618174137327;
+        Sun, 11 Apr 2021 13:48:57 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzZ8f1z7+lBgJ+qTQWMzJhdvfvlDPXwnCbDDkLtc7bGWr9KZU5tbgznyW47X/5g4qaJepDMnQ==
+X-Received: by 2002:adf:f64f:: with SMTP id x15mr12219231wrp.266.1618174137201;
+        Sun, 11 Apr 2021 13:48:57 -0700 (PDT)
+Received: from redhat.com ([2a10:8006:2281:0:1994:c627:9eac:1825])
+        by smtp.gmail.com with ESMTPSA id a8sm15566507wrh.91.2021.04.11.13.48.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Apr 2021 12:26:42 -0700 (PDT)
-Date:   Sun, 11 Apr 2021 21:26:41 +0200
-From:   Javier =?utf-8?B?R29uesOhbGV6?= <javier@javigon.com>
-To:     Max Gurtovoy <mgurtovoy@nvidia.com>
-Cc:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        SelvaKumar S <selvakuma.s1@samsung.com>,
-        linux-nvme@lists.infradead.org, axboe@kernel.dk,
-        Damien Le Moal <damien.lemoal@wdc.com>, kch@kernel.org,
-        sagi@grimberg.me, snitzer@redhat.com, selvajove@gmail.com,
-        linux-kernel@vger.kernel.org, nj.shetty@samsung.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        dm-devel@redhat.com, joshi.k@samsung.com, kbusch@kernel.org,
-        joshiiitr@gmail.com, hch@lst.de
-Subject: Re: [RFC PATCH v5 0/4] add simple copy support
-Message-ID: <20210411192641.ya6ntxannk3gjyl5@mpHalley.localdomain>
-References: <BYAPR04MB49652982D00724001AE758C986729@BYAPR04MB4965.namprd04.prod.outlook.com>
- <5BE5E1D9-675F-4122-A845-B0A29BB74447@javigon.com>
- <c7848f1c-c2c1-6955-bf20-f413a44f9969@nvidia.com>
+        Sun, 11 Apr 2021 13:48:56 -0700 (PDT)
+Date:   Sun, 11 Apr 2021 16:48:52 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mika =?iso-8859-1?Q?Penttil=E4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: Re: [PATCH v6 03/10] vhost-vdpa: protect concurrent access to
+ vhost device iotlb
+Message-ID: <20210411164827-mutt-send-email-mst@kernel.org>
+References: <20210331080519.172-1-xieyongji@bytedance.com>
+ <20210331080519.172-4-xieyongji@bytedance.com>
+ <20210409121512-mutt-send-email-mst@kernel.org>
+ <CACycT3tPWwpGBNEqiL4NPrwGZhmUtAVHUZMOdbSHzjhN-ytg_A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c7848f1c-c2c1-6955-bf20-f413a44f9969@nvidia.com>
+In-Reply-To: <CACycT3tPWwpGBNEqiL4NPrwGZhmUtAVHUZMOdbSHzjhN-ytg_A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11.04.2021 12:10, Max Gurtovoy wrote:
->
->On 4/10/2021 9:32 AM, Javier González wrote:
->>>On 10 Apr 2021, at 02.30, Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com> wrote:
->>>
->>>﻿On 4/9/21 17:22, Max Gurtovoy wrote:
->>>>>On 2/19/2021 2:45 PM, SelvaKumar S wrote:
->>>>>This patchset tries to add support for TP4065a ("Simple Copy Command"),
->>>>>v2020.05.04 ("Ratified")
->>>>>
->>>>>The Specification can be found in following link.
->>>>>https://nvmexpress.org/wp-content/uploads/NVM-Express-1.4-Ratified-TPs-1.zip
->>>>>
->>>>>Simple copy command is a copy offloading operation and is  used to copy
->>>>>multiple contiguous ranges (source_ranges) of LBA's to a single destination
->>>>>LBA within the device reducing traffic between host and device.
->>>>>
->>>>>This implementation doesn't add native copy offload support for stacked
->>>>>devices rather copy offload is done through emulation. Possible use
->>>>>cases are F2FS gc and BTRFS relocation/balance.
->>>>>
->>>>>*blkdev_issue_copy* takes source bdev, no of sources, array of source
->>>>>ranges (in sectors), destination bdev and destination offset(in sectors).
->>>>>If both source and destination block devices are same and copy_offload = 1,
->>>>>then copy is done through native copy offloading. Copy emulation is used
->>>>>in other cases.
->>>>>
->>>>>As SCSI XCOPY can take two different block devices and no of source range is
->>>>>equal to 1, this interface can be extended in future to support SCSI XCOPY.
->>>>Any idea why this TP wasn't designed for copy offload between 2
->>>>different namespaces in the same controller ?
->>>Yes, it was the first attempt so to keep it simple.
->>>
->>>Further work is needed to add incremental TP so that we can also do a copy
->>>between the name-spaces of same controller (if we can't already) and to the
->>>namespaces that belongs to the different controller.
->>>
->>>>And a simple copy will be the case where the src_nsid == dst_nsid ?
->>>>
->>>>Also why there are multiple source ranges and only one dst range ? We
->>>>could add a bit to indicate if this range is src or dst..
->>One of the target use cases was ZNS in order to avoid fabric transfers during host GC. You can see how this plays well with several zone ranges and a single zone destination.
->>
->>If we start getting support in Linux through the different past copy offload efforts, I’m sure we can extend this TP in the future.
->
->But the "copy" command IMO is more general than the ZNS GC case, that 
->can be a private case of copy, isn't it ?
+On Sun, Apr 11, 2021 at 01:36:18PM +0800, Yongji Xie wrote:
+> On Sat, Apr 10, 2021 at 12:16 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > On Wed, Mar 31, 2021 at 04:05:12PM +0800, Xie Yongji wrote:
+> > > Use vhost_dev->mutex to protect vhost device iotlb from
+> > > concurrent access.
+> > >
+> > > Fixes: 4c8cf318("vhost: introduce vDPA-based backend")
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> > > Acked-by: Jason Wang <jasowang@redhat.com>
+> > > Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+> >
+> > I could not figure out whether there's a bug there now.
+> > If yes when is the concurrent access triggered?
+> >
+> 
+> When userspace sends the VHOST_IOTLB_MSG_V2 message concurrently?
+> 
+> vhost_vdpa_chr_write_iter -> vhost_chr_write_iter ->
+> vhost_vdpa_process_iotlb_msg()
+> 
+> Thanks,
+> Yongji
 
-It applies to any namespace type, so yes. I just wanted to give you the
-background for the current "simple" scope through one of the use cases
-that was in mind.
+And then what happens currently?
 
->We can get a big benefit of offloading the data copy from one ns to 
->another in the same controller and even in different controllers in 
->the same subsystem.
+-- 
+MST
 
-Definitely.
-
->
->Do you think the extension should be to "copy" command or to create a 
->new command "x_copy" for copying to different destination ns ?
-
-I believe there is space for extensions to simple copy. But given the
-experience with XCOPY, I can imagine that changes will be incremental,
-based on very specific use cases.
-
-I think getting support upstream and bringing deployed cases is a very
-good start.
