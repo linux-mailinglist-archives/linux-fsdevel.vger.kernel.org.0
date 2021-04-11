@@ -2,142 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A80C735B4AD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Apr 2021 15:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E73635B6B3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Apr 2021 21:12:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235202AbhDKNkN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Apr 2021 09:40:13 -0400
-Received: from condef-09.nifty.com ([202.248.20.74]:43935 "EHLO
-        condef-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229804AbhDKNkL (ORCPT
+        id S235589AbhDKTMl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Apr 2021 15:12:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57828 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235323AbhDKTMk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Apr 2021 09:40:11 -0400
-X-Greylist: delayed 382 seconds by postgrey-1.27 at vger.kernel.org; Sun, 11 Apr 2021 09:40:11 EDT
-Received: from conssluserg-01.nifty.com ([10.126.8.80])by condef-09.nifty.com with ESMTP id 13BDVpsN009523
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Apr 2021 22:31:51 +0900
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id 13BDVVVa024207;
-        Sun, 11 Apr 2021 22:31:32 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com 13BDVVVa024207
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1618147892;
-        bh=6YwTKBbNoleuwW/G8t5rDVU9qUR+RbEgL+hiFtrsKVs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=LkiGA8TvWpNqtWsDSinqFq7t+F9dy46aQ2rxTrd0R47jfQhHUQsMXUBZPZ9Sh6MAh
-         kNiUvQWFb0i31P1WcVgtKh6VVhz+3mTNPlwKNZ4o3GKboBsrbj3ub+wV31oV/xiLTq
-         6qzik8NAwcBO627UcZTRRfT7+H6aMATl0+Ng3V13GoJLdri2db2vXKWZCB/EhsnaFO
-         sQKvU6eYKlj6XsnsPxP7NgEiuCd8GeNWHVhvuf94ST5Xut7czUyl1xeMKSTuFtSOE3
-         LDWe6YOOuhbWeP+Xl8a2v8ATd19ek5fJIMZ+R7ZoAxs2D6kYOBzJtXMFQseeyxIcss
-         dF/hq/eCHKfpg==
-X-Nifty-SrcIP: [209.85.214.172]
-Received: by mail-pl1-f172.google.com with SMTP id y2so4938957plg.5;
-        Sun, 11 Apr 2021 06:31:32 -0700 (PDT)
-X-Gm-Message-State: AOAM533Oye4OhFGf/2vU5vTtXVtY8K/mwU+KLpmjvVAOEbFSP/79CwSN
-        0Y+iejjDT3AKejDxtf91OxHGoOJTqGc0ncPySnk=
-X-Google-Smtp-Source: ABdhPJz/zO015Um0WHBYZpS4w2WRTzh/PGFAlI18DvqL4z8DHDt3CzMo8Fo5G4kLOulICfjgNhq5KCF7teX2JheZRjc=
-X-Received: by 2002:a17:902:d645:b029:e8:ec90:d097 with SMTP id
- y5-20020a170902d645b02900e8ec90d097mr21674078plh.47.1618147891413; Sun, 11
- Apr 2021 06:31:31 -0700 (PDT)
+        Sun, 11 Apr 2021 15:12:40 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6862AC061574;
+        Sun, 11 Apr 2021 12:12:22 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id a4so10700201wrr.2;
+        Sun, 11 Apr 2021 12:12:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=AF6snEhVCyxzYu1PPelm+nQ7qDiQ7Lsm9VpsRbHiZS4=;
+        b=sT7ASHAec+MFmaGuM77Zzbqxo1mSWWoGKV4KvXlCUwHaeshS/hA0agmQHu3Y6CUa/P
+         AcfgHopR/bvEEHVQdcMwW9s+ngb6VDWi1pHn5BkrMWliU/0uyQuOn/ziNHTo0utMnVzw
+         3/DIajFO5f+qo6cU//eShA5Wwx4rxLyqOJtQT+8e02xzdV/4C33ExfdKNou2w7m+aDFU
+         s6SrhciRDEwITGiRw7eKZyw5nHUDByRcf4dJvmJZcqlpphx1rfRO0qBvcipD4Ql0ftQN
+         8xXqN94IpSeIQ8Gnz/mhW/VyVrtH6ptlBtwAa3r13sZrorDJIcdDUyFxoGKOS7OC7yR7
+         OTqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AF6snEhVCyxzYu1PPelm+nQ7qDiQ7Lsm9VpsRbHiZS4=;
+        b=VBn5dOc/7Fh3ZH3yD+95o/3pJvXz2jciqvo1azD/UfCndcwQFiqK9fxBEou51/8rjv
+         xippuLFVcWSJzma/qVi0kZ75i9b8Vw9zVvLOBPN+x5r0lGe3ucifdajJr5dqcyQC/KFz
+         Gaz6jqr2NcyokPW76wkk0Dl/h85WfGyY7UYbCpi8POmcUxH1UQsQ2vRLN7xH8zLDxP+G
+         UEoKe91qdkhGOVbjQQ5Y28RtCynAFtq89Qd3M1MG2cseJWuRm3DeoTvDX+rlFqiLqmw+
+         E9IzOuZ6/ILPBQdWnrLJzUwKiKfqBlyXB+jfBG7txlexbgxGzJgawc2/UslEG11FE6P6
+         eJzg==
+X-Gm-Message-State: AOAM532Yk+QgHIJg9O7wwqIjoJKAQaOp9mwXzB8qShu0jeQOmpeoQ2Cg
+        IA8ymWy2vOctmYXSXkzw7HU=
+X-Google-Smtp-Source: ABdhPJw7JPAV20DFaWBopQIxv4XlQwXWq5XZCEgJpQ6TLlsEJN6R10DQT8f4woYazfKa5CisdSD4Ow==
+X-Received: by 2002:adf:cc8d:: with SMTP id p13mr28456843wrj.50.1618168340406;
+        Sun, 11 Apr 2021 12:12:20 -0700 (PDT)
+Received: from [192.168.1.143] ([170.253.51.130])
+        by smtp.gmail.com with ESMTPSA id x15sm7069863wmi.41.2021.04.11.12.12.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 11 Apr 2021 12:12:19 -0700 (PDT)
+Subject: Re: [PATCH v5] flock.2: add CIFS details
+To:     =?UTF-8?Q?Aur=c3=a9lien_Aptel?= <aaptel@suse.com>,
+        mtk.manpages@gmail.com
+Cc:     Steve French <smfrench@gmail.com>,
+        linux-cifs <linux-cifs@vger.kernel.org>,
+        Tom Talpey <tom@talpey.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-man@vger.kernel.org, Pavel Shilovsky <piastryyy@gmail.com>
+References: <CAKywueQkELXyRjihtD2G=vswVuaeoeyMjrDfqTQeVF_NoRVm6A@mail.gmail.com>
+ <20210322143024.13930-1-aaptel@suse.com> <87wntb3bcj.fsf@suse.com>
+From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
+Message-ID: <8d0cc17a-7757-5438-e59f-2b22906d757d@gmail.com>
+Date:   Sun, 11 Apr 2021 21:12:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-References: <20210104083221.21184-1-masahiroy@kernel.org> <CAK7LNARXy_puE7KZp2vjzn_KcW5uZ_ba3O5zFX46yGULjNhpZg@mail.gmail.com>
- <202103011546.9AA6D832@keescook>
-In-Reply-To: <202103011546.9AA6D832@keescook>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Sun, 11 Apr 2021 22:30:54 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARMdf0ZGaH3VN8S56OH2-K+ZgWzH83FXSJ-=s3qCimYyA@mail.gmail.com>
-Message-ID: <CAK7LNARMdf0ZGaH3VN8S56OH2-K+ZgWzH83FXSJ-=s3qCimYyA@mail.gmail.com>
-Subject: Re: [PATCH] sysctl: use min() helper for namecmp()
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <87wntb3bcj.fsf@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 2, 2021 at 8:47 AM Kees Cook <keescook@chromium.org> wrote:
->
-> On Sun, Feb 28, 2021 at 04:44:22PM +0900, Masahiro Yamada wrote:
-> > (CC: Andrew Morton)
-> >
-> > A friendly reminder.
-> >
-> >
-> > This is just a minor clean-up.
-> >
-> > If nobody picks it up,
-> > I hope perhaps Andrew Morton will do.
-> >
-> > This patch:
-> > https://lore.kernel.org/patchwork/patch/1360092/
-> >
-> >
-> >
-> >
-> >
-> > On Mon, Jan 4, 2021 at 5:33 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
-> > >
-> > > Make it slightly readable by using min().
-> > >
-> > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
->
-> Acked-by: Kees Cook <keescook@chromium.org>
->
-> Feel free to take this via your tree Masahiro. Thanks!
->
-> -Kees
->
-> > > ---
-> > >
-> > >  fs/proc/proc_sysctl.c | 7 +------
-> > >  1 file changed, 1 insertion(+), 6 deletions(-)
-> > >
-> > > diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> > > index 317899222d7f..86341c0f0c40 100644
-> > > --- a/fs/proc/proc_sysctl.c
-> > > +++ b/fs/proc/proc_sysctl.c
-> > > @@ -94,14 +94,9 @@ static void sysctl_print_dir(struct ctl_dir *dir)
-> > >
-> > >  static int namecmp(const char *name1, int len1, const char *name2, int len2)
-> > >  {
-> > > -       int minlen;
-> > >         int cmp;
-> > >
-> > > -       minlen = len1;
-> > > -       if (minlen > len2)
-> > > -               minlen = len2;
-> > > -
-> > > -       cmp = memcmp(name1, name2, minlen);
-> > > +       cmp = memcmp(name1, name2, min(len1, len2));
-> > >         if (cmp == 0)
-> > >                 cmp = len1 - len2;
-> > >         return cmp;
-> > > --
-> > > 2.27.0
-> > >
-> >
-> >
-> > --
-> > Best Regards
-> > Masahiro Yamada
->
-> --
-> Kees Cook
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
->
-> --
-> Kees Cook
+Hello Aurélien,
 
-Applied to linux-kbuild.
+On 4/9/21 2:13 PM, Aurélien Aptel wrote:
+> 
+> Friendly ping to the man page maintainers
+> 
+> Cheers,
+> 
 
+Sorry for the delay and thanks for the ping!
+Patch applied.
 
+Cheers,
+
+Alex
 
 
 -- 
-Best Regards
-Masahiro Yamada
+Alejandro Colomar
+Linux man-pages comaintainer; https://www.kernel.org/doc/man-pages/
+http://www.alejandro-colomar.es/
