@@ -2,121 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5958D35B73F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 00:36:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89B0335B77D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 01:54:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236065AbhDKWgU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Apr 2021 18:36:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44836 "EHLO
+        id S236002AbhDKXzD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Apr 2021 19:55:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235229AbhDKWgU (ORCPT
+        with ESMTP id S235722AbhDKXzC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Apr 2021 18:36:20 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 342B8C061574;
-        Sun, 11 Apr 2021 15:36:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=lvW0/1imLWgxPdvw89GQU7hXjnk5amCWvOf6j0ZGMxs=; b=ciV9TA9sI2hcmMk+5mvn6+GMnQ
-        NVm1V6dO3xEncplJkkDlPA7TgOj6ULsrH2ZS8g/+oRMVmxes2/l/PJUJomi09t748PLbrirAblFzt
-        9+iYMHD4kchH5/T/s2uhJzpGrDIP0bzFwXjxq8K7Inz0QPgN16EnsQlshWENlti99ULd0pPPgC9Vj
-        MRC1FJZvgC1UEgNB5/X3wMh72XySjbvejFh2JgxyYnO2+gc/910Fy1f/DUK/AnFxSRP2HkYKAi5Ay
-        A1nkFFPlVvLZHDJQxw4PZDVM6/IWhLdR10szkk3VpbK2rFhz+VFvaptbayoyArEpMhzHHNLX4tSok
-        49f9Ab7A==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lVig5-003WFx-6L; Sun, 11 Apr 2021 22:35:44 +0000
-Date:   Sun, 11 Apr 2021 23:35:37 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     kernel test robot <lkp@intel.com>, Linux-MM <linux-mm@kvack.org>,
-        kbuild-all@lists.01.org,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: Bogus struct page layout on 32-bit
-Message-ID: <20210411223537.GF2531743@casper.infradead.org>
-References: <20210409185105.188284-3-willy@infradead.org>
- <202104100656.N7EVvkNZ-lkp@intel.com>
- <20210410024313.GX2531743@casper.infradead.org>
- <CAK8P3a3uEGaEN-p06vFP+jwbFt3P=Bx4=aRN+kUyB4PcFPxLRg@mail.gmail.com>
+        Sun, 11 Apr 2021 19:55:02 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9529BC061574;
+        Sun, 11 Apr 2021 16:54:45 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id j5so10085869wrn.4;
+        Sun, 11 Apr 2021 16:54:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:from:mime-version:content-transfer-encoding
+         :content-description:subject:to:date:reply-to;
+        bh=FB9ffVgv9MGEJSSW+p7l1641ZpAhJ8oP7yeu0DFe398=;
+        b=GMKc52Gb7JmW8Lz2m67/lzkmPKpXSizVp/EeuD3c3H4kHCZJMWCOUGnNZmi8qLToqI
+         7BOFmgG1359daEk8iA5F+b8jXvfP5ZJ6LyynVdh69EvHIhYNrDLv9YHjrkCZK3amkgc7
+         eG5kwT4vPjsVrn6VicF0KavSgiddCFrMzZ5dZqpCYgQ+OlIxZsk3fLT99hxElfYejMPO
+         gyR67n9K0p6yNbkt1ALREx9gcjq5kt9SfrYl7PRH0+l+9d8PBp+uYsH67b9mkdcxGQWY
+         fcRlYzFlGIfOSxs/fO0UtzwbFsA0drYj9PFVV77xbMN2MsOuxaYpQ7OVGePihmEx1Lrc
+         VAZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:from:mime-version
+         :content-transfer-encoding:content-description:subject:to:date
+         :reply-to;
+        bh=FB9ffVgv9MGEJSSW+p7l1641ZpAhJ8oP7yeu0DFe398=;
+        b=UCgezQLFvLwRy0gjhM9alATfWzHPhO9p5ovJJs7KKs/+Rj0E9kfp8lBSX4hVupilGl
+         CKvqdnyNg4KDzKSbAQJ8SNS4+cJ6gmg/VSQCkdPnsJf2Me/3y20KKPSr+Bj8Pi1O1ejC
+         fdmmLgK7xVGATFdfI1JObXnAu5st7e1P1il1Fe+4Uw1OKVyGlTgTBSc6jzZgyd4qFluC
+         L9k12D92j9UjtFvmL3wr5AZfT6zxtvSoK1PIwBiW7r/CYj2e1LdwQbduURh3p/hvh1xj
+         6KPNdOQ6qMH6e1Z07+VYKNVN5PNPr2li4CZgNQ8u0W0MYQo0cK2FMPmHmt467/6k3ztZ
+         n5XQ==
+X-Gm-Message-State: AOAM530gGhXs2mi00dXl8pLM8gleO4qUeQw/h0IL4f0+gxCc+/HuQafL
+        7HlOonGCMsv9dqFmidGRGg==
+X-Google-Smtp-Source: ABdhPJzzDcB+y0Rn3q0h9GwG6WDjMAAgmKz6eFt9xAiCRCL65Rzq2WVfnwnTci24gq5z6aNKxqft7Q==
+X-Received: by 2002:a5d:65cd:: with SMTP id e13mr28211672wrw.134.1618185284431;
+        Sun, 11 Apr 2021 16:54:44 -0700 (PDT)
+Received: from [192.168.1.152] ([102.64.162.151])
+        by smtp.gmail.com with ESMTPSA id q186sm13396173wma.21.2021.04.11.16.54.41
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Sun, 11 Apr 2021 16:54:43 -0700 (PDT)
+Message-ID: <60738c43.1c69fb81.c690f.44ad@mx.google.com>
+From:   Vanina Curt <curtisvani0016@gmail.com>
+X-Google-Original-From: Vanina Curt
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3uEGaEN-p06vFP+jwbFt3P=Bx4=aRN+kUyB4PcFPxLRg@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: Sir,,
+To:     Recipients <Vanina@vger.kernel.org>
+Date:   Sun, 11 Apr 2021 23:54:35 +0000
+Reply-To: curtisvani9008@gmail.com
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 10, 2021 at 09:10:47PM +0200, Arnd Bergmann wrote:
-> On Sat, Apr 10, 2021 at 4:44 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > +                       dma_addr_t dma_addr __packed;
-> >                 };
-> >                 struct {        /* slab, slob and slub */
-> >                         union {
-> >
-> > but I don't know if GCC is smart enough to realise that dma_addr is now
-> > on an 8 byte boundary and it can use a normal instruction to access it,
-> > or whether it'll do something daft like use byte loads to access it.
-> >
-> > We could also do:
-> >
-> > +                       dma_addr_t dma_addr __packed __aligned(sizeof(void *));
-> >
-> > and I see pahole, at least sees this correctly:
-> >
-> >                 struct {
-> >                         long unsigned int _page_pool_pad; /*     4     4 */
-> >                         dma_addr_t dma_addr __attribute__((__aligned__(4))); /*     8     8 */
-> >                 } __attribute__((__packed__)) __attribute__((__aligned__(4)));
-> >
-> > This presumably affects any 32-bit architecture with a 64-bit phys_addr_t
-> > / dma_addr_t.  Advice, please?
-> 
-> I've tried out what gcc would make of this:  https://godbolt.org/z/aTEbxxbG3
-> 
-> struct page {
->     short a;
->     struct {
->         short b;
->         long long c __attribute__((packed, aligned(2)));
->     } __attribute__((packed));
-> } __attribute__((aligned(8)));
-> 
-> In this structure, 'c' is clearly aligned to eight bytes, and gcc does
-> realize that
-> it is safe to use the 'ldrd' instruction for 32-bit arm, which is forbidden on
-> struct members with less than 4 byte alignment. However, it also complains
-> that passing a pointer to 'c' into a function that expects a 'long long' is not
-> allowed because alignof(c) is only '2' here.
-> 
-> (I used 'short' here because I having a 64-bit member misaligned by four
-> bytes wouldn't make a difference to the instructions on Arm, or any other
-> 32-bit architecture I can think of, regardless of the ABI requirements).
-
-So ... we could do this:
-
-+++ b/include/linux/types.h
-@@ -140,7 +140,7 @@ typedef u64 blkcnt_t;
-  * so they don't care about the size of the actual bus addresses.
-  */
- #ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
--typedef u64 dma_addr_t;
-+typedef u64 __attribute__((aligned(sizeof(void *)))) dma_addr_t;
- #else
- typedef u32 dma_addr_t;
- #endif
-
-but I'm a little scared that this might have unintended consequences.
-And Jesper points out that a big-endian 64-bit dma_addr_t can impersonate
-a PageTail page, and we should solve that problem while we're at it.
-So I don't think we should do this, but thought I should mention it as
-a possibility.
+How are you? I'm Vanina C. I picked interest in you and I would like to kno=
+w more about you and establish relationship with you. i will wait for your =
+response. thank you.
