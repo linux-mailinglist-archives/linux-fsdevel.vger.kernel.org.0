@@ -2,112 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B9DD35D2B8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 23:51:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B151F35D2C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 23:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343528AbhDLVur (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Apr 2021 17:50:47 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:46457 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245367AbhDLVuq (ORCPT
+        id S1343534AbhDLVzF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Apr 2021 17:55:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40794 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238235AbhDLVzF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Apr 2021 17:50:46 -0400
-Received: from dread.disaster.area (pa49-181-239-12.pa.nsw.optusnet.com.au [49.181.239.12])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 748BA1042451;
-        Tue, 13 Apr 2021 07:50:26 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1lW4Rs-0057Vj-Q3; Tue, 13 Apr 2021 07:50:24 +1000
-Date:   Tue, 13 Apr 2021 07:50:24 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Ted Tso <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Eric Whitney <enwlinux@gmail.com>,
-        linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>
-Subject: Re: [PATCH 2/3] ext4: Fix occasional generic/418 failure
-Message-ID: <20210412215024.GP1990290@dread.disaster.area>
-References: <20210412102333.2676-1-jack@suse.cz>
- <20210412102333.2676-3-jack@suse.cz>
+        Mon, 12 Apr 2021 17:55:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618264486;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rSg/4g7S1VAs0BEe21c6JFZm2CbvqXRaPJMkscjjUzQ=;
+        b=GWm+8HZ4cyIx+R7YkiCmMziBlQDlLZAzCcIfYD3il8keAMGkqJxTFl4GYWEmVu/iZZjapz
+        7N9MtYm+hqJhQ4bG91zh1e/pYwMIHWoohLyR+tpiQ755s3KNihqpg1FzauJyjszqvZo0N+
+        dFBqdUqddWPv/KEVwV2N+QcVCwheX3s=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-529-O5_CEdXYOfW6HwteGFPsSQ-1; Mon, 12 Apr 2021 17:54:42 -0400
+X-MC-Unique: O5_CEdXYOfW6HwteGFPsSQ-1
+Received: by mail-qv1-f69.google.com with SMTP id j10so8835788qvp.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Apr 2021 14:54:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rSg/4g7S1VAs0BEe21c6JFZm2CbvqXRaPJMkscjjUzQ=;
+        b=Dh7Or8f9l2Tnxpy9i95fGIU1Z8nj/V6j0g7d/2Yv3vsQL1EQMklCC/D9ZcaYkgIdqa
+         I8TDalkTUi8ezxyBkmCpVWHOq7TpWsPp7ZEvdB0jPupNVbl+bwoWygQ8SJ+aOsoXwkoG
+         qvkBNOuJ7yvBvW8/sYu0h6kC0eGRxpkOd/vNucqlgdI5o0Vz7YRQ/VlB4AAS/iL58QDr
+         tThkMt5NU+/Mo/b/CnyYu8gcG1KIyS0/oPn5WO1kD6Gtq62xlA8YueSekbvz0Lb7f7de
+         psoQiuRd1uSdpODzsNw2QnPU4xToEtW9guG6kcts87N87trrJu2An7ZVVOucWVTR6+lJ
+         v1wg==
+X-Gm-Message-State: AOAM533p88xFbuGVrdDdRX09HmHCA00RoffHo1YdY8g99dJv/uA5R0o6
+        iVBr4HIVL/rOchrRgW/4Q3VcQJrUhVXVT7g81Dd47QEGxV56T5liu7ekFxyiWCC/A0+9wGfKwXG
+        cYiDmNJEujk/voLCsvNRB+HWjeg==
+X-Received: by 2002:a05:6214:14b4:: with SMTP id bo20mr4943798qvb.20.1618264482036;
+        Mon, 12 Apr 2021 14:54:42 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzbD4DC7OMtAMwjp3Zq2ZGY5AAvdzECr9OQOYMWUawBpI5JNBVDfUwjpTZGyULdEUCkWeV3/g==
+X-Received: by 2002:a05:6214:14b4:: with SMTP id bo20mr4943769qvb.20.1618264481785;
+        Mon, 12 Apr 2021 14:54:41 -0700 (PDT)
+Received: from xz-x1 (bras-base-toroon474qw-grc-88-174-93-75-154.dsl.bell.ca. [174.93.75.154])
+        by smtp.gmail.com with ESMTPSA id z18sm3501170qkg.42.2021.04.12.14.54.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Apr 2021 14:54:40 -0700 (PDT)
+Date:   Mon, 12 Apr 2021 17:54:37 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Axel Rasmussen <axelrasmussen@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wang Qing <wangqing@vivo.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, Brian Geffon <bgeffon@google.com>,
+        Cannon Matthews <cannonmatthews@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
+Subject: Re: [PATCH v4] userfaultfd/shmem: fix MCOPY_ATOMIC_CONTINUE behavior
+Message-ID: <20210412215437.GA1001332@xz-x1>
+References: <20210401183701.1774159-1-axelrasmussen@google.com>
+ <alpine.LSU.2.11.2104062307110.14082@eggly.anvils>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210412102333.2676-3-jack@suse.cz>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_f
-        a=gO82wUwQTSpaJfP49aMSow==:117 a=gO82wUwQTSpaJfP49aMSow==:17
-        a=kj9zAlcOel0A:10 a=3YhXtTcJ-WEA:10 a=7-415B0cAAAA:8
-        a=SzdNWSc4bbHwPlmcQdkA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <alpine.LSU.2.11.2104062307110.14082@eggly.anvils>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 12, 2021 at 12:23:32PM +0200, Jan Kara wrote:
-> Eric has noticed that after pagecache read rework, generic/418 is
-> occasionally failing for ext4 when blocksize < pagesize. In fact, the
-> pagecache rework just made hard to hit race in ext4 more likely. The
-> problem is that since ext4 conversion of direct IO writes to iomap
-> framework (commit 378f32bab371), we update inode size after direct IO
-> write only after invalidating page cache. Thus if buffered read sneaks
-> at unfortunate moment like:
+Hi, Hugh,
+
+On Tue, Apr 06, 2021 at 11:14:30PM -0700, Hugh Dickins wrote:
+> > +static int mcopy_atomic_install_ptes(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+> > +				     struct vm_area_struct *dst_vma,
+> > +				     unsigned long dst_addr, struct page *page,
+> > +				     enum mcopy_atomic_mode mode, bool wp_copy)
+> > +{
+
+[...]
+
+> > +	if (writable) {
+> > +		_dst_pte = pte_mkdirty(_dst_pte);
+> > +		if (wp_copy)
+> > +			_dst_pte = pte_mkuffd_wp(_dst_pte);
+> > +		else
+> > +			_dst_pte = pte_mkwrite(_dst_pte);
+> > +	} else if (vm_shared) {
+> > +		/*
+> > +		 * Since we didn't pte_mkdirty(), mark the page dirty or it
+> > +		 * could be freed from under us. We could do this
+> > +		 * unconditionally, but doing it only if !writable is faster.
+> > +		 */
+> > +		set_page_dirty(page);
 > 
-> CPU1 - write at offset 1k                       CPU2 - read from offset 0
-> iomap_dio_rw(..., IOMAP_DIO_FORCE_WAIT);
->                                                 ext4_readpage();
-> ext4_handle_inode_extension()
-> 
-> the read will zero out tail of the page as it still sees smaller inode
-> size and thus page cache becomes inconsistent with on-disk contents with
-> all the consequences.
-> 
-> Fix the problem by moving inode size update into end_io handler which
-> gets called before the page cache is invalidated.
+> I do not remember why Andrea or I preferred set_page_dirty() here to
+> pte_mkdirty(); but I suppose there might somewhere be a BUG_ON(pte_dirty)
+> which this would avoid.  Risky to change it, though it does look odd.
 
-Confused.
+Is any of the possible BUG_ON(pte_dirty) going to trigger because the pte has
+write bit cleared?  That's one question I was not very sure, e.g., whether one
+pte is allowed to be "dirty" if it's not writable.
 
-This moves all the inode extension stuff into the completion
-handler, when all that really needs to be done is extending
-inode->i_size to tell the world there is data up to where the
-IO completed. Actually removing the inode from the orphan list
-does not need to be done in the IO completion callback, because...
+To me it's okay, it's actually very suitable for UFFDIO_COPY case, where it is
+definitely dirty data (so we must never drop it) even if it's installed as RO,
+however to achieve that we can still set the dirty on the page rather than the
+pte as what we do here.  It's just a bit awkward as you said.
 
->  	if (ilock_shared)
->  		iomap_ops = &ext4_iomap_overwrite_ops;
-> -	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
-> -			   (unaligned_io || extend) ? IOMAP_DIO_FORCE_WAIT : 0);
-> -	if (ret == -ENOTBLK)
-> -		ret = 0;
-> -
->  	if (extend)
-> -		ret = ext4_handle_inode_extension(inode, offset, ret, count);
-> +		dio_ops = &ext4_dio_extending_write_ops;
->  
-> +	ret = iomap_dio_rw(iocb, from, iomap_ops, dio_ops,
-> +			   (extend || unaligned_io) ? IOMAP_DIO_FORCE_WAIT : 0);
-                            ^^^^^^                    ^^^^^^^^^^^^^^^^^^^ 
+Meanwhile today I just noticed this in arm64 code:
 
-.... if we are doing an extending write, we force DIO to complete
-before returning. Hence even AIO will block here on an extending
-write, and hence we can -always- do the correct post-IO completion
-orphan list cleanup here because we know a) the original IO size and
-b) the amount of data that was actually written.
+static inline pte_t pte_wrprotect(pte_t pte)
+{
+	/*
+	 * If hardware-dirty (PTE_WRITE/DBM bit set and PTE_RDONLY
+	 * clear), set the PTE_DIRTY bit.
+	 */
+	if (pte_hw_dirty(pte))
+		pte = pte_mkdirty(pte);
 
-Hence all that remains is closing the buffered read vs invalidation
-race. All this requires is for the dio write completion to behave
-like XFS where it just does the inode->i_size update for extending
-writes. THis means the size is updated before the invalidation, and
-hence any read that occurs after the invalidation but before the
-post-eof blocks have been removed will see the correct size and read
-the tail page(s) correctly. This closes the race window, and the
-caller can still handle the post-eof block cleanup as it does now.
+	pte = clear_pte_bit(pte, __pgprot(PTE_WRITE));
+	pte = set_pte_bit(pte, __pgprot(PTE_RDONLY));
+	return pte;
+}
 
-Hence I don't see any need for changing the iomap infrastructure to
-solve this problem. This seems like the obvious solution to me, so
-what am I missing?
+So arm64 will explicitly set the dirty bit (from the HW dirty bit) when
+wr-protect.  It seems to prove that at least for arm64 it's very valid to have
+!write && dirty pte.
 
-Cheers,
+Thanks,
 
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Peter Xu
+
