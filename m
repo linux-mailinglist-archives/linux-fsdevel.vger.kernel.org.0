@@ -2,152 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3925735C5F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 14:13:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26CAD35C5FD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 14:16:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240361AbhDLMOM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Apr 2021 08:14:12 -0400
-Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17189 "EHLO
-        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240412AbhDLMOL (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Apr 2021 08:14:11 -0400
-X-Greylist: delayed 909 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Apr 2021 08:14:11 EDT
-ARC-Seal: i=1; a=rsa-sha256; t=1618228709; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=NeVO8RE97+uH4SRVa14O9S85j+pAHvnzVmcav28p87L7JLc9RmvRD0Oo2OjBI9EdQyS0tWw2zKZJHNqn7EkhickTIJvczITjlFk84I2EqrDymcDBpNNKv+0eHmMYnYMyt7CYTKt3gGwh9KUlGLKVHJAktQAbipaf8tELj1nREHM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1618228709; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=UieouIKzy+BRhUkKMx5cdz9s+Qay2qvgcb0KUghHOco=; 
-        b=oGSkdcL0RK3s1LekDiIhC+4KlBkRw7NQcfeOvnxx+Rw3MIulKUK1kkinA7hOeXTMMBYUmBfH7VtzwdQFmH0urPDRuE7NZENEs41umaQ5geGufaRm3Mt+Mkyq+cJGiQ2abTYrawz0iE2hsAXM53aQ2D4LGhsDPRs1Qe9WNqOIcDE=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1618228709;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=UieouIKzy+BRhUkKMx5cdz9s+Qay2qvgcb0KUghHOco=;
-        b=WYGm2hWqgwxznzD+C4Ml+jmb0rOSPcRTOhwPGGtFqY/s9P68efuE1/0dZO+jYpKo
-        GICHHATwLrtATws3ljfDSOMctxvbor6elTq9lvubEwyrtlMvPo8/+7EPWAL2/xIYYgJ
-        S/y0tVAFH8nb5p9MYOR6pBvAYnsByArcTcFHMT20=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1618228707804809.3274984503647; Mon, 12 Apr 2021 19:58:27 +0800 (CST)
-Date:   Mon, 12 Apr 2021 19:58:27 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "Miklos Szeredi" <miklos@szeredi.hu>
-Cc:     "Jan Kara" <jack@suse.cz>, "Amir Goldstein" <amir73il@gmail.com>,
-        "overlayfs" <linux-unionfs@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>
-Message-ID: <178c5f281d9.dde5cb9920853.3545294445882801731@mykernel.net>
-In-Reply-To: <CAJfpegtyUXcyiUG=YH1Hi06qwuYdtDL_kArQxN9mJUj7JJWZ0w@mail.gmail.com>
-References: <20201113065555.147276-1-cgxu519@mykernel.net> <20201113065555.147276-5-cgxu519@mykernel.net> <CAJfpegtyUXcyiUG=YH1Hi06qwuYdtDL_kArQxN9mJUj7JJWZ0w@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 4/9] ovl: mark overlayfs' inode dirty on
- modification
+        id S239916AbhDLMQT convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Apr 2021 08:16:19 -0400
+Received: from mgw-02.mpynet.fi ([82.197.21.91]:59198 "EHLO mgw-02.mpynet.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237283AbhDLMQS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Apr 2021 08:16:18 -0400
+X-Greylist: delayed 598 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Apr 2021 08:16:16 EDT
+Received: from pps.filterd (mgw-02.mpynet.fi [127.0.0.1])
+        by mgw-02.mpynet.fi (8.16.0.43/8.16.0.43) with SMTP id 13CBuj4R036297;
+        Mon, 12 Apr 2021 15:05:00 +0300
+Received: from ex13.tuxera.com (ex13.tuxera.com [178.16.184.72])
+        by mgw-02.mpynet.fi with ESMTP id 37vmqsr2ph-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 12 Apr 2021 15:05:00 +0300
+Received: from tuxera-exch.ad.tuxera.com (10.20.48.11) by
+ tuxera-exch.ad.tuxera.com (10.20.48.11) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 12 Apr 2021 15:04:59 +0300
+Received: from tuxera-exch.ad.tuxera.com ([fe80::552a:f9f0:68c3:d789]) by
+ tuxera-exch.ad.tuxera.com ([fe80::552a:f9f0:68c3:d789%12]) with mapi id
+ 15.00.1497.012; Mon, 12 Apr 2021 15:04:59 +0300
+From:   Anton Altaparmakov <anton@tuxera.com>
+To:     "christian.brauner@ubuntu.com" <christian.brauner@ubuntu.com>
+CC:     "James.Bottomley@hansenpartnership.com" 
+        <James.Bottomley@hansenpartnership.com>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "alban@kinvolk.io" <alban@kinvolk.io>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "cyphar@cyphar.com" <cyphar@cyphar.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "geofft@ldpreload.com" <geofft@ldpreload.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "hirofumi@mail.parknet.co.jp" <hirofumi@mail.parknet.co.jp>,
+        "john.johansen@canonical.com" <john.johansen@canonical.com>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "lennart@poettering.net" <lennart@poettering.net>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "mpatel@redhat.com" <mpatel@redhat.com>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "seth.forshee@canonical.com" <seth.forshee@canonical.com>,
+        "smbarber@chromium.org" <smbarber@chromium.org>,
+        "stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>,
+        "tkjos@google.com" <tkjos@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "tycho@tycho.ws" <tycho@tycho.ws>, "tytso@mit.edu" <tytso@mit.edu>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>
+Subject: Re: [PATCH v6 24/40] fs: make helpers idmap mount aware
+Thread-Topic: [PATCH v6 24/40] fs: make helpers idmap mount aware
+Thread-Index: AQHXL5QPJZ+OaKJz8USD3Dodtq0P1w==
+Date:   Mon, 12 Apr 2021 12:04:59 +0000
+Message-ID: <E901E25F-41FA-444D-B3C7-A7A786DDD5D5@tuxera.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [109.145.212.130]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <BA514E4FAABFD8498C8B1419EB26396B@ex13.tuxera.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
+X-Proofpoint-GUID: Vd5127wVnEcv9vrUnKYvowNFSa7J_xlE
+X-Proofpoint-ORIG-GUID: Vd5127wVnEcv9vrUnKYvowNFSa7J_xlE
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-04-12_09:2021-04-12,2021-04-12 signatures=0
+X-Proofpoint-Spam-Details: rule=mpy_notspam policy=mpy score=0 adultscore=0 suspectscore=0
+ mlxlogscore=999 mlxscore=0 malwarescore=0 spamscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104120082
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
----- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=94, 2021-04-09 21:45:28 Miklos Szer=
-edi <miklos@szeredi.hu> =E6=92=B0=E5=86=99 ----
- > On Fri, Nov 13, 2020 at 7:57 AM Chengguang Xu <cgxu519@mykernel.net> wro=
-te:
- > >
- > > Mark overlayfs' inode dirty on modification so that
- > > we can recognize target inodes during syncfs.
- > >
- > > Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
- > > ---
- > >  fs/overlayfs/inode.c     |  1 +
- > >  fs/overlayfs/overlayfs.h |  4 ++++
- > >  fs/overlayfs/util.c      | 14 ++++++++++++++
- > >  3 files changed, 19 insertions(+)
- > >
- > > diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
- > > index 8cfa75e86f56..342693657ab0 100644
- > > --- a/fs/overlayfs/inode.c
- > > +++ b/fs/overlayfs/inode.c
- > > @@ -468,6 +468,7 @@ int ovl_update_time(struct inode *inode, struct ti=
-mespec64 *ts, int flags)
- > >                 if (upperpath.dentry) {
- > >                         touch_atime(&upperpath);
- > >                         inode->i_atime =3D d_inode(upperpath.dentry)->=
-i_atime;
- > > +                       ovl_mark_inode_dirty(inode);
- > >                 }
- > >         }
- > >         return 0;
- > > diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
- > > index f8880aa2ba0e..eaf1d5b05d8e 100644
- > > --- a/fs/overlayfs/overlayfs.h
- > > +++ b/fs/overlayfs/overlayfs.h
- > > @@ -247,6 +247,7 @@ static inline bool ovl_open_flags_need_copy_up(int=
- flags)
- > >  }
- > >
- > >  /* util.c */
- > > +void ovl_mark_inode_dirty(struct inode *inode);
- > >  int ovl_want_write(struct dentry *dentry);
- > >  void ovl_drop_write(struct dentry *dentry);
- > >  struct dentry *ovl_workdir(struct dentry *dentry);
- > > @@ -472,6 +473,9 @@ static inline void ovl_copyattr(struct inode *from=
-, struct inode *to)
- > >         to->i_mtime =3D from->i_mtime;
- > >         to->i_ctime =3D from->i_ctime;
- > >         i_size_write(to, i_size_read(from));
- > > +
- > > +       if (ovl_inode_upper(to) && from->i_state & I_DIRTY_ALL)
- > > +               ovl_mark_inode_dirty(to);
- > >  }
- >=20
- > Okay, ovl_copyattr() certainly seems a good place to copy dirtyness as w=
-ell.
- >=20
- > What I'm fearing is that it does not cover all the places where
- > underlying inode can be dirtied.  This really needs an audit of all
- > filesystem modifying operations.
-=20
-You are right. Let me fix it in next version.
+Hi,
 
-Thanks,
-Chengguang
+I noticed this patch got merged into mainline and looking through the HFS+ changes, I noticed something that struck me as odd.  I am not familiar with this patch set so perhaps it is the intention but I wanted to ask you because it just seems strange thing to do.
 
+So you are adding a new argument of "struct user_namespace *mnt_userns" to lots of functions but then inside the functions when they call another function you often make that use "&init_user_ns" instead of the passed in "mnt_userns" which kind of defeats the point of having the new "mnt_userns" argument altogether, doesn't it?
 
- > >
- > >  static inline void ovl_copyflags(struct inode *from, struct inode *to=
-)
- > > diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
- > > index 23f475627d07..a6f59df744ae 100644
- > > --- a/fs/overlayfs/util.c
- > > +++ b/fs/overlayfs/util.c
- > > @@ -950,3 +950,17 @@ char *ovl_get_redirect_xattr(struct ovl_fs *ofs, =
-struct dentry *dentry,
- > >         kfree(buf);
- > >         return ERR_PTR(res);
- > >  }
- > > +
- > > +/*
- > > + * We intentionally add I_DIRTY_SYNC flag regardless dirty flag
- > > + * of upper inode so that we have chance to invoke ->write_inode
- > > + * to re-dirty overlayfs' inode during writeback process.
- > > + */
- > > +void ovl_mark_inode_dirty(struct inode *inode)
- > > +{
- > > +       struct inode *upper =3D ovl_inode_upper(inode);
- > > +       unsigned long iflag =3D I_DIRTY_SYNC;
- > > +
- > > +       iflag |=3D upper->i_state & I_DIRTY_ALL;
- > > +       __mark_inode_dirty(inode, iflag);
- > > +}
- > > --
- > > 2.26.2
- > >
- > >
- >=20
+Example after this chunk:
+
+diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+index 642e067d8fe8..7a937de9b2ad 100644
+--- a/fs/hfsplus/inode.c
++++ b/fs/hfsplus/inode.c
+@@ -241,7 +241,8 @@ static int hfsplus_file_release(struct inode *inode, struct file *file)
+        return 0;
+ }
+
+-static int hfsplus_setattr(struct dentry *dentry, struct iattr *attr)
++static int hfsplus_setattr(struct user_namespace *mnt_userns,
++                    struct dentry *dentry, struct iattr *attr)
+ {
+        struct inode *inode = d_inode(dentry);
+        int error;
+
+The code now looks like this:
+
+static int hfsplus_setattr(struct user_namespace *mnt_userns,
+                           struct dentry *dentry, struct iattr *attr)
+{
+        struct inode *inode = d_inode(dentry);
+        int error;
+
+        error = setattr_prepare(&init_user_ns, dentry, attr);
+        if (error)
+                return error;
+[...]
+        setattr_copy(&init_user_ns, inode, attr);
+        mark_inode_dirty(inode);
+
+        return 0;
+}
+
+Shouldn't that be using mnt_userns instead of &init_user_ns both for the setattr_prepare() and setattr_copy() calls?
+
+Please note this is just one example - it seems the kernel is now littered with such examples in current mainline and I don't mean just HFS+ - this is now all over the place...
+
+Best regards,
+
+	Anton
+-- 
+Anton Altaparmakov <anton at tuxera.com> (replace at with @)
+Lead in File System Development, Tuxera Inc., http://www.tuxera.com/
+Linux NTFS maintainer
+
