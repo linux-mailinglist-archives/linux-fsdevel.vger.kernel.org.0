@@ -2,147 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A21A335C66D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 14:39:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE29735C777
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 15:23:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241053AbhDLMkJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Apr 2021 08:40:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58888 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240449AbhDLMkI (ORCPT
+        id S239120AbhDLNX6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Apr 2021 09:23:58 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:50583 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237277AbhDLNX6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Apr 2021 08:40:08 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E749FC06138C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Apr 2021 05:39:50 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id z22-20020a17090a0156b029014d4056663fso7047465pje.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Apr 2021 05:39:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=gr77k9QIz5RgOpRuocDvfRh6v9EnFR0pe6j1Y5IYB2c=;
-        b=0lVDWVm2c4P6uDnoiat392Tzm+7LBnyUzpU5Wt2kYXqlKQqRgnzzkcPBZ5bC96fT53
-         WaC89SsJzCZZlw3XjnaoKp9POAJNaMWypeUhMOUXE6UwNf5evSUhXjINsGpDJEsjykpG
-         tK4/+emmLri02KKDgdDuT/vFBXZWYc/QRWd3pdGijKa7waLuYw8wMsXeioTJJ9vf+gKk
-         EU/AOtNsPQVpQ9z+yJFvwQeN7OqAdRPMdVwxGqMSFL0IYWthX8FUVd2Uh+qCj6KDvHDk
-         aOFih1e0kXItsRoYXmJ/gIdqXF8JkybU1sEja7r93RvLioldEwYsJPIr+K0xBciiDb4e
-         53NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gr77k9QIz5RgOpRuocDvfRh6v9EnFR0pe6j1Y5IYB2c=;
-        b=QzpQCwap3eUfD9Z7eQmsEzgVXD65jYzSpmJ+2oQ4PL9rIFpDKVcPbnZf0ThLeX/YbY
-         BtBW9J2R/Y5JrtabPGUx6HQaX4NxlnOuViKGsXaw+7j0AS8PW/Kyuf5MdtniRc93U9fN
-         LpnBHtIZ94SIPeKyJ5f91dlVM0BhY6C91Dn7MMB6uBsPHUZAzJh/d1dNlm+gjnK0eehN
-         tgrqx1yRkBMsct+v1PWPmbPGd+ECYRoLS+ZSDGoEtJcf84wEFqecPFjiwTsBxbli5lHf
-         yCXaCYoszSgfNiyWrTpcyAq6xRy3d0toMv/I67qrz/vuuOx7GgFsSBtlwyWKxpM11+GS
-         qEFQ==
-X-Gm-Message-State: AOAM531x1DtWxYVywFwqV/GpjMc0huGRKKaBifq3BmeYkvpbNo0XyYH5
-        36+Er78WxR9nW5pEl7+slf7rBQ==
-X-Google-Smtp-Source: ABdhPJx6BDqLnXuiU8ZrCCZF5U8r3KW7U8g+JmBycODpTH8WyxV7HHlVa393OvPHk1gCIGIMZGhBAQ==
-X-Received: by 2002:a17:90a:f307:: with SMTP id ca7mr27538838pjb.80.1618231190278;
-        Mon, 12 Apr 2021 05:39:50 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id a3sm10238643pjq.36.2021.04.12.05.39.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Apr 2021 05:39:49 -0700 (PDT)
-Subject: Re: mmotm 2021-04-11-20-47 uploaded (fs/io_uring.c)
-To:     Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
-        broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org
-References: <20210412034813.EK9k9%akpm@linux-foundation.org>
- <34ed89e1-683e-7c12-ceb0-f5b71148a8a7@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9533afdd-208e-c25d-2e11-cc7f2c9d147b@kernel.dk>
-Date:   Mon, 12 Apr 2021 06:39:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 12 Apr 2021 09:23:58 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UVKeteB_1618233816;
+Received: from 30.39.250.122(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0UVKeteB_1618233816)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 12 Apr 2021 21:23:37 +0800
+Subject: Re: [PATCH v2 1/2] fuse: Fix possible deadlock when writing back
+ dirty pages
+To:     miklos@szeredi.hu
+Cc:     tao.peng@linux.alibaba.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <807bb470f90bae5dcd80a29020d38f6b5dd6ef8e.1616826872.git.baolin.wang@linux.alibaba.com>
+From:   Baolin Wang <baolin.wang@linux.alibaba.com>
+Message-ID: <f72f28cd-06b5-fb84-c7ce-ad1a3d14c016@linux.alibaba.com>
+Date:   Mon, 12 Apr 2021 21:23:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-In-Reply-To: <34ed89e1-683e-7c12-ceb0-f5b71148a8a7@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <807bb470f90bae5dcd80a29020d38f6b5dd6ef8e.1616826872.git.baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/12/21 1:21 AM, Randy Dunlap wrote:
-> On 4/11/21 8:48 PM, akpm@linux-foundation.org wrote:
->> The mm-of-the-moment snapshot 2021-04-11-20-47 has been uploaded to
->>
->>    https://www.ozlabs.org/~akpm/mmotm/
->>
->> mmotm-readme.txt says
->>
->> README for mm-of-the-moment:
->>
->> https://www.ozlabs.org/~akpm/mmotm/
->>
->> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->> more than once a week.
->>
->> You will need quilt to apply these patches to the latest Linus release (5.x
->> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
->> https://ozlabs.org/~akpm/mmotm/series
->>
->> The file broken-out.tar.gz contains two datestamp files: .DATE and
->> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
->> followed by the base kernel version against which this patch series is to
->> be applied.
->>
->> This tree is partially included in linux-next.  To see which patches are
->> included in linux-next, consult the `series' file.  Only the patches
->> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
->> linux-next.
+Hi Miklos,
+
+ÔÚ 2021/3/27 14:36, Baolin Wang Ð´µÀ:
+> We can meet below deadlock scenario when writing back dirty pages, and
+> writing files at the same time. The deadlock scenario can be reproduced
+> by:
 > 
-> on i386:
-> # CONFIG_BLOCK is not set
+> - A writeback worker thread A is trying to write a bunch of dirty pages by
+> fuse_writepages(), and the fuse_writepages() will lock one page (named page 1),
+> add it into rb_tree with setting writeback flag, and unlock this page 1,
+> then try to lock next page (named page 2).
 > 
-> ../fs/io_uring.c: In function â€˜kiocb_doneâ€™:
-> ../fs/io_uring.c:2766:7: error: implicit declaration of function â€˜io_resubmit_prepâ€™; did you mean â€˜io_put_reqâ€™? [-Werror=implicit-function-declaration]
->    if (io_resubmit_prep(req)) {
+> - But at the same time a file writing can be triggered by another process B,
+> to write several pages by fuse_perform_write(), the fuse_perform_write()
+> will lock all required pages firstly, then wait for all writeback pages
+> are completed by fuse_wait_on_page_writeback().
+> 
+> - Now the process B can already lock page 1 and page 2, and wait for page 1
+> waritehack is completed (page 1 is under writeback set by process A). But
+> process A can not complete the writeback of page 1, since it is still
+> waiting for locking page 2, which was locked by process B already.
+> 
+> A deadlock is occurred.
+> 
+> To fix this issue, we should make sure each page writeback is completed
+> after lock the page in fuse_fill_write_pages() separately, and then write
+> them together when all pages are stable.
+> 
+> [1450578.772896] INFO: task kworker/u259:6:119885 blocked for more than 120 seconds.
+> [1450578.796179] kworker/u259:6  D    0 119885      2 0x00000028
+> [1450578.796185] Workqueue: writeback wb_workfn (flush-0:78)
+> [1450578.796188] Call trace:
+> [1450578.798804]  __switch_to+0xd8/0x148
+> [1450578.802458]  __schedule+0x280/0x6a0
+> [1450578.806112]  schedule+0x34/0xe8
+> [1450578.809413]  io_schedule+0x20/0x40
+> [1450578.812977]  __lock_page+0x164/0x278
+> [1450578.816718]  write_cache_pages+0x2b0/0x4a8
+> [1450578.820986]  fuse_writepages+0x84/0x100 [fuse]
+> [1450578.825592]  do_writepages+0x58/0x108
+> [1450578.829412]  __writeback_single_inode+0x48/0x448
+> [1450578.834217]  writeback_sb_inodes+0x220/0x520
+> [1450578.838647]  __writeback_inodes_wb+0x50/0xe8
+> [1450578.843080]  wb_writeback+0x294/0x3b8
+> [1450578.846906]  wb_do_writeback+0x2ec/0x388
+> [1450578.850992]  wb_workfn+0x80/0x1e0
+> [1450578.854472]  process_one_work+0x1bc/0x3f0
+> [1450578.858645]  worker_thread+0x164/0x468
+> [1450578.862559]  kthread+0x108/0x138
+> [1450578.865960] INFO: task doio:207752 blocked for more than 120 seconds.
+> [1450578.888321] doio            D    0 207752 207740 0x00000000
+> [1450578.888329] Call trace:
+> [1450578.890945]  __switch_to+0xd8/0x148
+> [1450578.894599]  __schedule+0x280/0x6a0
+> [1450578.898255]  schedule+0x34/0xe8
+> [1450578.901568]  fuse_wait_on_page_writeback+0x8c/0xc8 [fuse]
+> [1450578.907128]  fuse_perform_write+0x240/0x4e0 [fuse]
+> [1450578.912082]  fuse_file_write_iter+0x1dc/0x290 [fuse]
+> [1450578.917207]  do_iter_readv_writev+0x110/0x188
+> [1450578.921724]  do_iter_write+0x90/0x1c8
+> [1450578.925598]  vfs_writev+0x84/0xf8
+> [1450578.929071]  do_writev+0x70/0x110
+> [1450578.932552]  __arm64_sys_writev+0x24/0x30
+> [1450578.936727]  el0_svc_common.constprop.0+0x80/0x1f8
+> [1450578.941694]  el0_svc_handler+0x30/0x80
+> [1450578.945606]  el0_svc+0x10/0x14
+> 
+> Suggested-by: Peng Tao <tao.peng@linux.alibaba.com>
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-I'll apply the below to take care of that.
+Do you have any comments for this patch set? Thanks.
 
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 3a837d2b8331..aa29918944f6 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2464,6 +2464,10 @@ static bool io_rw_should_reissue(struct io_kiocb *req)
- 	return true;
- }
- #else
-+static bool io_resubmit_prep(struct io_kiocb *req)
-+{
-+	return false;
-+}
- static bool io_rw_should_reissue(struct io_kiocb *req)
- {
- 	return false;
-@@ -2504,14 +2508,8 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
- 	if (kiocb->ki_flags & IOCB_WRITE)
- 		kiocb_end_write(req);
- 	if (unlikely(res != req->result)) {
--		bool fail = true;
--
--#ifdef CONFIG_BLOCK
--		if (res == -EAGAIN && io_rw_should_reissue(req) &&
--		    io_resubmit_prep(req))
--			fail = false;
--#endif
--		if (fail) {
-+		if (!(res == -EAGAIN && io_rw_should_reissue(req) &&
-+		    io_resubmit_prep(req))) {
- 			req_set_fail_links(req);
- 			req->flags |= REQ_F_DONT_REISSUE;
- 		}
-
--- 
-Jens Axboe
-
+> ---
+> Changes from v1:
+>   - Use fuse_wait_on_page_writeback() instead to wait for page stable.
+> ---
+>   fs/fuse/file.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 8cccecb..9a30093 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1101,9 +1101,6 @@ static ssize_t fuse_send_write_pages(struct fuse_io_args *ia,
+>   	unsigned int offset, i;
+>   	int err;
+>   
+> -	for (i = 0; i < ap->num_pages; i++)
+> -		fuse_wait_on_page_writeback(inode, ap->pages[i]->index);
+> -
+>   	fuse_write_args_fill(ia, ff, pos, count);
+>   	ia->write.in.flags = fuse_write_flags(iocb);
+>   	if (fm->fc->handle_killpriv_v2 && !capable(CAP_FSETID))
+> @@ -1140,6 +1137,7 @@ static ssize_t fuse_fill_write_pages(struct fuse_args_pages *ap,
+>   				     unsigned int max_pages)
+>   {
+>   	struct fuse_conn *fc = get_fuse_conn(mapping->host);
+> +	struct inode *inode = mapping->host;
+>   	unsigned offset = pos & (PAGE_SIZE - 1);
+>   	size_t count = 0;
+>   	int err;
+> @@ -1166,6 +1164,8 @@ static ssize_t fuse_fill_write_pages(struct fuse_args_pages *ap,
+>   		if (!page)
+>   			break;
+>   
+> +		fuse_wait_on_page_writeback(inode, page->index);
+> +
+>   		if (mapping_writably_mapped(mapping))
+>   			flush_dcache_page(page);
+>   
+> 
