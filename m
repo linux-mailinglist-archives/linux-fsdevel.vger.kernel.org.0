@@ -2,128 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A02F735BF2E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 11:03:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F2A535C119
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 11:23:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239543AbhDLJDH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Apr 2021 05:03:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37399 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239632AbhDLJA7 (ORCPT
+        id S239010AbhDLJVn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Apr 2021 05:21:43 -0400
+Received: from [119.249.100.41] ([119.249.100.41]:28474 "EHLO
+        dbl-sys-mailin02.dbl01.baidu.com" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S240354AbhDLJTh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Apr 2021 05:00:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618218041;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RO2S6yuC/fkuz9B4sqL4SZHXLtN0NgAiJyds25neUik=;
-        b=F65/dqilpIY3dlFhHJlfBUHtCJO1etStPCYwuddmqfDQGG5O+sQpdBkHB5Xh+u4A8e2a/U
-        r2nWNgUeYXc3OxjPm/WekCHtspMVuMidT9jHx0Lc0kCn8DyvXGDiSbSD7JZcGCoK2AovBb
-        meM4Trhdu4hmSh4SZpLKdIUABhoOX3o=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-176-bh_0_OtDM4qH4NJpRsIgnQ-1; Mon, 12 Apr 2021 05:00:39 -0400
-X-MC-Unique: bh_0_OtDM4qH4NJpRsIgnQ-1
-Received: by mail-wr1-f69.google.com with SMTP id n16so307119wrm.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Apr 2021 02:00:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=RO2S6yuC/fkuz9B4sqL4SZHXLtN0NgAiJyds25neUik=;
-        b=BEnH+BcEq6tP/QvSjYjwRzRGvd02qVZv/+gCXP89GHUeRtshkZQKveEpdB48nYEloi
-         oj/m95xPh7Quk0/oK5A9fBQtw/OsxPEH3No9+zqsYdxAwSatqTR5lz6C7PjJu0IjYtrc
-         u1bvekjs9WFHNOque/JWymp1Y70Guh727tdMSBUVlcasPIaq3OgZ5bYUKdzD8JyA6I8o
-         Lrk/jLbsvf/rsS2FmIlQs7MBkSLgM60r6g/LrKt8ix5ColEzYtrIwMIT17H/mXGosDCD
-         vcQ9wZII97hB/wNrNL6dODB+0UktEkTicuWuxO4OtGmrBCi4B2tUUN4g82pWW38JGIYX
-         jPQA==
-X-Gm-Message-State: AOAM533K0xawMl23cejmTgDMi6DrgpLvoxmai0zaLihs9HhU5RdfxZLi
-        jrIq/LOCxry5XeywbxrDym/O3vWh6nbKrFDN9IHwkn2BkrojEMc1LrbdL5NoE8DLtr3PVGfu0jx
-        uFAM98wv0mvBbGLhF7II57K6lPw==
-X-Received: by 2002:a5d:6b82:: with SMTP id n2mr29772916wrx.399.1618218038389;
-        Mon, 12 Apr 2021 02:00:38 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxR/AIXG2BimYzUPAOwQOnyWTMrNFFGz9SnJpjM9QiX4VEr9DYg+h2pMbQsHiZXPHGLQ0yBvg==
-X-Received: by 2002:a5d:6b82:: with SMTP id n2mr29772882wrx.399.1618218038215;
-        Mon, 12 Apr 2021 02:00:38 -0700 (PDT)
-Received: from redhat.com ([2a10:8006:2281:0:1994:c627:9eac:1825])
-        by smtp.gmail.com with ESMTPSA id m5sm15675048wrx.83.2021.04.12.02.00.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Apr 2021 02:00:37 -0700 (PDT)
-Date:   Mon, 12 Apr 2021 05:00:33 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Yongji Xie <xieyongji@bytedance.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mika =?iso-8859-1?Q?Penttil=E4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: Re: Re: [PATCH v6 03/10] vhost-vdpa: protect concurrent access
- to vhost device iotlb
-Message-ID: <20210412045900-mutt-send-email-mst@kernel.org>
-References: <20210331080519.172-1-xieyongji@bytedance.com>
- <20210331080519.172-4-xieyongji@bytedance.com>
- <20210409121512-mutt-send-email-mst@kernel.org>
- <CACycT3tPWwpGBNEqiL4NPrwGZhmUtAVHUZMOdbSHzjhN-ytg_A@mail.gmail.com>
- <20210411164827-mutt-send-email-mst@kernel.org>
- <CACycT3v5Z8s9_pL79m0FY5jxx3fTRHHbtARfg0On3xTnNCOdkg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACycT3v5Z8s9_pL79m0FY5jxx3fTRHHbtARfg0On3xTnNCOdkg@mail.gmail.com>
+        Mon, 12 Apr 2021 05:19:37 -0400
+X-Greylist: delayed 809 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Apr 2021 05:19:36 EDT
+Received: from bjhw-sys-rpm015653cc5.bjhw.baidu.com (bjhw-sys-rpm015653cc5.bjhw.baidu.com [10.227.53.39])
+        by dbl-sys-mailin02.dbl01.baidu.com (Postfix) with ESMTP id 057A72F00C0A;
+        Mon, 12 Apr 2021 17:05:31 +0800 (CST)
+Received: from localhost (localhost [127.0.0.1])
+        by bjhw-sys-rpm015653cc5.bjhw.baidu.com (Postfix) with ESMTP id ECB9693B61;
+        Mon, 12 Apr 2021 17:05:30 +0800 (CST)
+From:   chukaiping <chukaiping@baidu.com>
+To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH] mm/compaction:let proactive compaction order configurable
+Date:   Mon, 12 Apr 2021 17:05:30 +0800
+Message-Id: <1618218330-50591-1-git-send-email-chukaiping@baidu.com>
+X-Mailer: git-send-email 1.7.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 12, 2021 at 10:29:17AM +0800, Yongji Xie wrote:
-> On Mon, Apr 12, 2021 at 4:49 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Sun, Apr 11, 2021 at 01:36:18PM +0800, Yongji Xie wrote:
-> > > On Sat, Apr 10, 2021 at 12:16 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > >
-> > > > On Wed, Mar 31, 2021 at 04:05:12PM +0800, Xie Yongji wrote:
-> > > > > Use vhost_dev->mutex to protect vhost device iotlb from
-> > > > > concurrent access.
-> > > > >
-> > > > > Fixes: 4c8cf318("vhost: introduce vDPA-based backend")
-> > > > > Cc: stable@vger.kernel.org
-> > > > > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> > > > > Acked-by: Jason Wang <jasowang@redhat.com>
-> > > > > Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
-> > > >
-> > > > I could not figure out whether there's a bug there now.
-> > > > If yes when is the concurrent access triggered?
-> > > >
-> > >
-> > > When userspace sends the VHOST_IOTLB_MSG_V2 message concurrently?
-> > >
-> > > vhost_vdpa_chr_write_iter -> vhost_chr_write_iter ->
-> > > vhost_vdpa_process_iotlb_msg()
-> > >
-> > > Thanks,
-> > > Yongji
-> >
-> > And then what happens currently?
-> >
-> 
-> Then we might access vhost_vdpa_map() concurrently and cause
-> corruption of the list and interval tree in struct vhost_iotlb.
-> 
-> Thanks,
-> Yongji
+Currently the proactive compaction order is fixed to
+COMPACTION_HPAGE_ORDER(9), it's OK in most machines with lots of
+normal 4KB memory, but it's too high for the machines with small
+normal memory, for example the machines with most memory configured
+as 1GB hugetlbfs huge pages. In these machines the max order of
+free pages is often below 9, and it's always below 9 even with hard
+compaction. This will lead to proactive compaction be triggered very
+frequently. In these machines we only care about order of 3 or 4.
+This patch export the oder to proc and let it configurable
+by user, and the default value is still COMPACTION_HPAGE_ORDER.
 
-OK. Sounds like it's actually needed in this release if possible.  Pls
-add this info in the commit log and post it as a separate patch. 
+Signed-off-by: chukaiping <chukaiping@baidu.com>
+---
+ include/linux/compaction.h |    1 +
+ kernel/sysctl.c            |   10 ++++++++++
+ mm/compaction.c            |    7 ++++---
+ 3 files changed, 15 insertions(+), 3 deletions(-)
 
+diff --git a/include/linux/compaction.h b/include/linux/compaction.h
+index ed4070e..151ccd1 100644
+--- a/include/linux/compaction.h
++++ b/include/linux/compaction.h
+@@ -83,6 +83,7 @@ static inline unsigned long compact_gap(unsigned int order)
+ #ifdef CONFIG_COMPACTION
+ extern int sysctl_compact_memory;
+ extern unsigned int sysctl_compaction_proactiveness;
++extern unsigned int sysctl_compaction_order;
+ extern int sysctl_compaction_handler(struct ctl_table *table, int write,
+ 			void *buffer, size_t *length, loff_t *ppos);
+ extern int sysctl_extfrag_threshold;
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 62fbd09..277df31 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -114,6 +114,7 @@
+ static int __maybe_unused neg_one = -1;
+ static int __maybe_unused two = 2;
+ static int __maybe_unused four = 4;
++static int __maybe_unused ten = 10;
+ static unsigned long zero_ul;
+ static unsigned long one_ul = 1;
+ static unsigned long long_max = LONG_MAX;
+@@ -2871,6 +2872,15 @@ int proc_do_static_key(struct ctl_table *table, int write,
+ 		.extra2		= &one_hundred,
+ 	},
+ 	{
++		.procname       = "compaction_order",
++		.data           = &sysctl_compaction_order,
++		.maxlen         = sizeof(sysctl_compaction_order),
++		.mode           = 0644,
++		.proc_handler   = proc_dointvec_minmax,
++		.extra1         = SYSCTL_ZERO,
++		.extra2         = &ten,
++	},
++	{
+ 		.procname	= "extfrag_threshold",
+ 		.data		= &sysctl_extfrag_threshold,
+ 		.maxlen		= sizeof(int),
+diff --git a/mm/compaction.c b/mm/compaction.c
+index e04f447..a192996 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -1925,16 +1925,16 @@ static bool kswapd_is_running(pg_data_t *pgdat)
+ 
+ /*
+  * A zone's fragmentation score is the external fragmentation wrt to the
+- * COMPACTION_HPAGE_ORDER. It returns a value in the range [0, 100].
++ * sysctl_compaction_order. It returns a value in the range [0, 100].
+  */
+ static unsigned int fragmentation_score_zone(struct zone *zone)
+ {
+-	return extfrag_for_order(zone, COMPACTION_HPAGE_ORDER);
++	return extfrag_for_order(zone, sysctl_compaction_order);
+ }
+ 
+ /*
+  * A weighted zone's fragmentation score is the external fragmentation
+- * wrt to the COMPACTION_HPAGE_ORDER scaled by the zone's size. It
++ * wrt to the sysctl_compaction_order scaled by the zone's size. It
+  * returns a value in the range [0, 100].
+  *
+  * The scaling factor ensures that proactive compaction focuses on larger
+@@ -2666,6 +2666,7 @@ static void compact_nodes(void)
+  * background. It takes values in the range [0, 100].
+  */
+ unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
++unsigned int __read_mostly sysctl_compaction_order = COMPACTION_HPAGE_ORDER;
+ 
+ /*
+  * This is the entry point for compacting all nodes via
 -- 
-MST
+1.7.1
 
