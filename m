@@ -2,115 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49DCB35BF31
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 11:03:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A02F735BF2E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 11:03:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239582AbhDLJDI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Apr 2021 05:03:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54638 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239689AbhDLJBE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Apr 2021 05:01:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2191E61019;
-        Mon, 12 Apr 2021 08:59:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1618217944;
-        bh=Mpf+gdz9ZuJzZvVs489Nfd3utEa3JCIYGGpAYho6Usc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D3AY+N71VU4W7dVP3MmSLTxn6rb4J7PK9r7D/n4bWYBpZawS4eL+XcsWK0giWrlTf
-         G743KTobz2yNs9W6WFF8MrRGGXVi18ifzYG0yqG1UYmCHZTvJ13Jy0u+4ETc32ltJg
-         PBti3Ewwq/7wsL/hlokFDQPgW4/pJiMBaiJvy6XQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com,
-        Christoph Hellwig <hch@lst.de>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 5.11 005/210] file: fix close_range() for unshare+cloexec
-Date:   Mon, 12 Apr 2021 10:38:30 +0200
-Message-Id: <20210412084016.183518359@linuxfoundation.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210412084016.009884719@linuxfoundation.org>
-References: <20210412084016.009884719@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S239543AbhDLJDH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Apr 2021 05:03:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37399 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239632AbhDLJA7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Apr 2021 05:00:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618218041;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=RO2S6yuC/fkuz9B4sqL4SZHXLtN0NgAiJyds25neUik=;
+        b=F65/dqilpIY3dlFhHJlfBUHtCJO1etStPCYwuddmqfDQGG5O+sQpdBkHB5Xh+u4A8e2a/U
+        r2nWNgUeYXc3OxjPm/WekCHtspMVuMidT9jHx0Lc0kCn8DyvXGDiSbSD7JZcGCoK2AovBb
+        meM4Trhdu4hmSh4SZpLKdIUABhoOX3o=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-176-bh_0_OtDM4qH4NJpRsIgnQ-1; Mon, 12 Apr 2021 05:00:39 -0400
+X-MC-Unique: bh_0_OtDM4qH4NJpRsIgnQ-1
+Received: by mail-wr1-f69.google.com with SMTP id n16so307119wrm.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Apr 2021 02:00:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=RO2S6yuC/fkuz9B4sqL4SZHXLtN0NgAiJyds25neUik=;
+        b=BEnH+BcEq6tP/QvSjYjwRzRGvd02qVZv/+gCXP89GHUeRtshkZQKveEpdB48nYEloi
+         oj/m95xPh7Quk0/oK5A9fBQtw/OsxPEH3No9+zqsYdxAwSatqTR5lz6C7PjJu0IjYtrc
+         u1bvekjs9WFHNOque/JWymp1Y70Guh727tdMSBUVlcasPIaq3OgZ5bYUKdzD8JyA6I8o
+         Lrk/jLbsvf/rsS2FmIlQs7MBkSLgM60r6g/LrKt8ix5ColEzYtrIwMIT17H/mXGosDCD
+         vcQ9wZII97hB/wNrNL6dODB+0UktEkTicuWuxO4OtGmrBCi4B2tUUN4g82pWW38JGIYX
+         jPQA==
+X-Gm-Message-State: AOAM533K0xawMl23cejmTgDMi6DrgpLvoxmai0zaLihs9HhU5RdfxZLi
+        jrIq/LOCxry5XeywbxrDym/O3vWh6nbKrFDN9IHwkn2BkrojEMc1LrbdL5NoE8DLtr3PVGfu0jx
+        uFAM98wv0mvBbGLhF7II57K6lPw==
+X-Received: by 2002:a5d:6b82:: with SMTP id n2mr29772916wrx.399.1618218038389;
+        Mon, 12 Apr 2021 02:00:38 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxR/AIXG2BimYzUPAOwQOnyWTMrNFFGz9SnJpjM9QiX4VEr9DYg+h2pMbQsHiZXPHGLQ0yBvg==
+X-Received: by 2002:a5d:6b82:: with SMTP id n2mr29772882wrx.399.1618218038215;
+        Mon, 12 Apr 2021 02:00:38 -0700 (PDT)
+Received: from redhat.com ([2a10:8006:2281:0:1994:c627:9eac:1825])
+        by smtp.gmail.com with ESMTPSA id m5sm15675048wrx.83.2021.04.12.02.00.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Apr 2021 02:00:37 -0700 (PDT)
+Date:   Mon, 12 Apr 2021 05:00:33 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mika =?iso-8859-1?Q?Penttil=E4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: Re: Re: [PATCH v6 03/10] vhost-vdpa: protect concurrent access
+ to vhost device iotlb
+Message-ID: <20210412045900-mutt-send-email-mst@kernel.org>
+References: <20210331080519.172-1-xieyongji@bytedance.com>
+ <20210331080519.172-4-xieyongji@bytedance.com>
+ <20210409121512-mutt-send-email-mst@kernel.org>
+ <CACycT3tPWwpGBNEqiL4NPrwGZhmUtAVHUZMOdbSHzjhN-ytg_A@mail.gmail.com>
+ <20210411164827-mutt-send-email-mst@kernel.org>
+ <CACycT3v5Z8s9_pL79m0FY5jxx3fTRHHbtARfg0On3xTnNCOdkg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACycT3v5Z8s9_pL79m0FY5jxx3fTRHHbtARfg0On3xTnNCOdkg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+On Mon, Apr 12, 2021 at 10:29:17AM +0800, Yongji Xie wrote:
+> On Mon, Apr 12, 2021 at 4:49 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > On Sun, Apr 11, 2021 at 01:36:18PM +0800, Yongji Xie wrote:
+> > > On Sat, Apr 10, 2021 at 12:16 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > > >
+> > > > On Wed, Mar 31, 2021 at 04:05:12PM +0800, Xie Yongji wrote:
+> > > > > Use vhost_dev->mutex to protect vhost device iotlb from
+> > > > > concurrent access.
+> > > > >
+> > > > > Fixes: 4c8cf318("vhost: introduce vDPA-based backend")
+> > > > > Cc: stable@vger.kernel.org
+> > > > > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> > > > > Acked-by: Jason Wang <jasowang@redhat.com>
+> > > > > Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+> > > >
+> > > > I could not figure out whether there's a bug there now.
+> > > > If yes when is the concurrent access triggered?
+> > > >
+> > >
+> > > When userspace sends the VHOST_IOTLB_MSG_V2 message concurrently?
+> > >
+> > > vhost_vdpa_chr_write_iter -> vhost_chr_write_iter ->
+> > > vhost_vdpa_process_iotlb_msg()
+> > >
+> > > Thanks,
+> > > Yongji
+> >
+> > And then what happens currently?
+> >
+> 
+> Then we might access vhost_vdpa_map() concurrently and cause
+> corruption of the list and interval tree in struct vhost_iotlb.
+> 
+> Thanks,
+> Yongji
 
-commit 9b5b872215fe6d1ca6a1ef411f130bd58e269012 upstream.
+OK. Sounds like it's actually needed in this release if possible.  Pls
+add this info in the commit log and post it as a separate patch. 
 
-syzbot reported a bug when putting the last reference to a tasks file
-descriptor table. Debugging this showed we didn't recalculate the
-current maximum fd number for CLOSE_RANGE_UNSHARE | CLOSE_RANGE_CLOEXEC
-after we unshared the file descriptors table. So max_fd could exceed the
-current fdtable maximum causing us to set excessive bits. As a concrete
-example, let's say the user requested everything from fd 4 to ~0UL to be
-closed and their current fdtable size is 256 with their highest open fd
-being 4. With CLOSE_RANGE_UNSHARE the caller will end up with a new
-fdtable which has room for 64 file descriptors since that is the lowest
-fdtable size we accept. But now max_fd will still point to 255 and needs
-to be adjusted. Fix this by retrieving the correct maximum fd value in
-__range_cloexec().
-
-Reported-by: syzbot+283ce5a46486d6acdbaf@syzkaller.appspotmail.com
-Fixes: 582f1fb6b721 ("fs, close_range: add flag CLOSE_RANGE_CLOEXEC")
-Fixes: fec8a6a69103 ("close_range: unshare all fds for CLOSE_RANGE_UNSHARE | CLOSE_RANGE_CLOEXEC")
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Giuseppe Scrivano <gscrivan@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/file.c |   21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
-
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -629,17 +629,30 @@ int close_fd(unsigned fd)
- }
- EXPORT_SYMBOL(close_fd); /* for ksys_close() */
- 
-+/**
-+ * last_fd - return last valid index into fd table
-+ * @cur_fds: files struct
-+ *
-+ * Context: Either rcu read lock or files_lock must be held.
-+ *
-+ * Returns: Last valid index into fdtable.
-+ */
-+static inline unsigned last_fd(struct fdtable *fdt)
-+{
-+	return fdt->max_fds - 1;
-+}
-+
- static inline void __range_cloexec(struct files_struct *cur_fds,
- 				   unsigned int fd, unsigned int max_fd)
- {
- 	struct fdtable *fdt;
- 
--	if (fd > max_fd)
--		return;
--
-+	/* make sure we're using the correct maximum value */
- 	spin_lock(&cur_fds->file_lock);
- 	fdt = files_fdtable(cur_fds);
--	bitmap_set(fdt->close_on_exec, fd, max_fd - fd + 1);
-+	max_fd = min(last_fd(fdt), max_fd);
-+	if (fd <= max_fd)
-+		bitmap_set(fdt->close_on_exec, fd, max_fd - fd + 1);
- 	spin_unlock(&cur_fds->file_lock);
- }
- 
-
+-- 
+MST
 
