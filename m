@@ -2,149 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26CAD35C5FD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 14:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8ED835C629
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 14:24:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239916AbhDLMQT convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Apr 2021 08:16:19 -0400
-Received: from mgw-02.mpynet.fi ([82.197.21.91]:59198 "EHLO mgw-02.mpynet.fi"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237283AbhDLMQS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Apr 2021 08:16:18 -0400
-X-Greylist: delayed 598 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Apr 2021 08:16:16 EDT
-Received: from pps.filterd (mgw-02.mpynet.fi [127.0.0.1])
-        by mgw-02.mpynet.fi (8.16.0.43/8.16.0.43) with SMTP id 13CBuj4R036297;
-        Mon, 12 Apr 2021 15:05:00 +0300
-Received: from ex13.tuxera.com (ex13.tuxera.com [178.16.184.72])
-        by mgw-02.mpynet.fi with ESMTP id 37vmqsr2ph-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 12 Apr 2021 15:05:00 +0300
-Received: from tuxera-exch.ad.tuxera.com (10.20.48.11) by
- tuxera-exch.ad.tuxera.com (10.20.48.11) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 12 Apr 2021 15:04:59 +0300
-Received: from tuxera-exch.ad.tuxera.com ([fe80::552a:f9f0:68c3:d789]) by
- tuxera-exch.ad.tuxera.com ([fe80::552a:f9f0:68c3:d789%12]) with mapi id
- 15.00.1497.012; Mon, 12 Apr 2021 15:04:59 +0300
-From:   Anton Altaparmakov <anton@tuxera.com>
-To:     "christian.brauner@ubuntu.com" <christian.brauner@ubuntu.com>
-CC:     "James.Bottomley@hansenpartnership.com" 
-        <James.Bottomley@hansenpartnership.com>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "alban@kinvolk.io" <alban@kinvolk.io>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
-        "containers@lists.linux-foundation.org" 
-        <containers@lists.linux-foundation.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "cyphar@cyphar.com" <cyphar@cyphar.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "geofft@ldpreload.com" <geofft@ldpreload.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "hirofumi@mail.parknet.co.jp" <hirofumi@mail.parknet.co.jp>,
-        "john.johansen@canonical.com" <john.johansen@canonical.com>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "lennart@poettering.net" <lennart@poettering.net>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "mpatel@redhat.com" <mpatel@redhat.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "seth.forshee@canonical.com" <seth.forshee@canonical.com>,
-        "smbarber@chromium.org" <smbarber@chromium.org>,
-        "stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>,
-        "tkjos@google.com" <tkjos@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "tycho@tycho.ws" <tycho@tycho.ws>, "tytso@mit.edu" <tytso@mit.edu>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>
-Subject: Re: [PATCH v6 24/40] fs: make helpers idmap mount aware
-Thread-Topic: [PATCH v6 24/40] fs: make helpers idmap mount aware
-Thread-Index: AQHXL5QPJZ+OaKJz8USD3Dodtq0P1w==
-Date:   Mon, 12 Apr 2021 12:04:59 +0000
-Message-ID: <E901E25F-41FA-444D-B3C7-A7A786DDD5D5@tuxera.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [109.145.212.130]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <BA514E4FAABFD8498C8B1419EB26396B@ex13.tuxera.com>
-Content-Transfer-Encoding: 8BIT
+        id S240791AbhDLMYz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Apr 2021 08:24:55 -0400
+Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25325 "EHLO
+        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240245AbhDLMYt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Apr 2021 08:24:49 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1618230246; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=bEvDju2VmmhyxA0MQHI3ieq9imj1Lv/YeBjbYNc2fbD2CZ5NLfO2PQNh/BhxcYktVBwPqxVa14v/T8RJ2nwYCK/rTPDCwv96gmKsdi9uKxkFPjmb+e1BvnDRDLmv7sBkb2eycGSNKH+0u5QgKQy3BGHKEggudgMzl7jRh13XUCQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1618230246; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=jyoRTl11XnFlwSLYSvB+ALJyQNLOu0fvqy3RRrlj+cI=; 
+        b=GuJe24rvJcofVNTiLmibx7cqeoaR1J3R6ItXPvoO3BPSw86arDYuP7ZhxmRC8CWMGdlvKVuGKSklP4r6hqtBFv+deOadlDJhj0V25xlKhNr/QPmemRFBkSTMysScrxxaV/wC7zIJAG4jQ1QCL3EOdWxY3EN+RBejXGyZR043Z7U=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1618230246;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=jyoRTl11XnFlwSLYSvB+ALJyQNLOu0fvqy3RRrlj+cI=;
+        b=Zv5i308hSijNDqMK1TPhqGfuhftm/zlAUQggezo7aFYaeMjFqMIvOH1GtzuD6XNR
+        bVIN1D/UgEs3sUOAWStAmcS4rioBoEUROEkMLtRpPGD3l9/VxIOjKMoXOZOd1Rqa3iB
+        vu+j0zjBJ4Zkr+3dy06/g7Cv1vfnPq18JB9cwwS8=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 161823024420153.377930275199105; Mon, 12 Apr 2021 20:24:04 +0800 (CST)
+Date:   Mon, 12 Apr 2021 20:24:04 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Miklos Szeredi" <miklos@szeredi.hu>
+Cc:     "Jan Kara" <jack@suse.cz>, "Amir Goldstein" <amir73il@gmail.com>,
+        "overlayfs" <linux-unionfs@vger.kernel.org>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>
+Message-ID: <178c609f366.d091ec3b20881.6800515353355931740@mykernel.net>
+In-Reply-To: <CAJfpegsoDL7maNtU7P=OwFy_XPgcyiBOGFzaKRbGnhfwz-HyYw@mail.gmail.com>
+References: <20201113065555.147276-1-cgxu519@mykernel.net> <20201113065555.147276-10-cgxu519@mykernel.net> <CAJfpegsoDL7maNtU7P=OwFy_XPgcyiBOGFzaKRbGnhfwz-HyYw@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 9/9] ovl: implement containerized syncfs for
+ overlayfs
 MIME-Version: 1.0
-X-Proofpoint-GUID: Vd5127wVnEcv9vrUnKYvowNFSa7J_xlE
-X-Proofpoint-ORIG-GUID: Vd5127wVnEcv9vrUnKYvowNFSa7J_xlE
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-12_09:2021-04-12,2021-04-12 signatures=0
-X-Proofpoint-Spam-Details: rule=mpy_notspam policy=mpy score=0 adultscore=0 suspectscore=0
- mlxlogscore=999 mlxscore=0 malwarescore=0 spamscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104120082
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=94, 2021-04-09 21:51:26 Miklos Sze=
+redi <miklos@szeredi.hu> =E6=92=B0=E5=86=99 ----
+ > On Fri, Nov 13, 2020 at 7:57 AM Chengguang Xu <cgxu519@mykernel.net> wro=
+te:
+ > >
+ > > Now overlayfs can only sync dirty inode during syncfs,
+ > > so remove unnecessary sync_filesystem() on upper file
+ > > system.
+ > >
+ > > Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+ > > ---
+ > >  fs/overlayfs/super.c | 11 ++++++++---
+ > >  1 file changed, 8 insertions(+), 3 deletions(-)
+ > >
+ > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+ > > index 982b3954b47c..58507f1cd583 100644
+ > > --- a/fs/overlayfs/super.c
+ > > +++ b/fs/overlayfs/super.c
+ > > @@ -15,6 +15,8 @@
+ > >  #include <linux/seq_file.h>
+ > >  #include <linux/posix_acl_xattr.h>
+ > >  #include <linux/exportfs.h>
+ > > +#include <linux/blkdev.h>
+ > > +#include <linux/writeback.h>
+ > >  #include "overlayfs.h"
+ > >
+ > >  MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
+ > > @@ -270,8 +272,7 @@ static int ovl_sync_fs(struct super_block *sb, int=
+ wait)
+ > >          * Not called for sync(2) call or an emergency sync (SB_I_SKIP=
+_SYNC).
+ > >          * All the super blocks will be iterated, including upper_sb.
+ > >          *
+ > > -        * If this is a syncfs(2) call, then we do need to call
+ > > -        * sync_filesystem() on upper_sb, but enough if we do it when =
+being
+ > > +        * if this is a syncfs(2) call, it will be enough we do it whe=
+n being
+ > >          * called with wait =3D=3D 1.
+ > >          */
+ > >         if (!wait)
+ > > @@ -280,7 +281,11 @@ static int ovl_sync_fs(struct super_block *sb, in=
+t wait)
+ > >         upper_sb =3D ovl_upper_mnt(ofs)->mnt_sb;
+ > >
+ > >         down_read(&upper_sb->s_umount);
+ > > -       ret =3D sync_filesystem(upper_sb);
+ > > +       wait_sb_inodes(upper_sb);
+ > > +       if (upper_sb->s_op->sync_fs)
+ > > +               ret =3D upper_sb->s_op->sync_fs(upper_sb, wait);
+ > > +       if (!ret)
+ > > +               ret =3D sync_blockdev(upper_sb->s_bdev);
+ >=20
+ > Should this instead be __sync_blockdev(..., wait)?
+=20
+I don't remember why we skipped the case of (wait =3D=3D 0) here, just gues=
+s it's not worth
+to export internal function __sync_blockdev() to modules, do you prefer to =
+call __sync_blockdev()
+and handle both nowait and wait cases?
 
-I noticed this patch got merged into mainline and looking through the HFS+ changes, I noticed something that struck me as odd.  I am not familiar with this patch set so perhaps it is the intention but I wanted to ask you because it just seems strange thing to do.
 
-So you are adding a new argument of "struct user_namespace *mnt_userns" to lots of functions but then inside the functions when they call another function you often make that use "&init_user_ns" instead of the passed in "mnt_userns" which kind of defeats the point of having the new "mnt_userns" argument altogether, doesn't it?
+Thanks,
+Chengguang
 
-Example after this chunk:
 
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index 642e067d8fe8..7a937de9b2ad 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -241,7 +241,8 @@ static int hfsplus_file_release(struct inode *inode, struct file *file)
-        return 0;
- }
 
--static int hfsplus_setattr(struct dentry *dentry, struct iattr *attr)
-+static int hfsplus_setattr(struct user_namespace *mnt_userns,
-+                    struct dentry *dentry, struct iattr *attr)
- {
-        struct inode *inode = d_inode(dentry);
-        int error;
 
-The code now looks like this:
-
-static int hfsplus_setattr(struct user_namespace *mnt_userns,
-                           struct dentry *dentry, struct iattr *attr)
-{
-        struct inode *inode = d_inode(dentry);
-        int error;
-
-        error = setattr_prepare(&init_user_ns, dentry, attr);
-        if (error)
-                return error;
-[...]
-        setattr_copy(&init_user_ns, inode, attr);
-        mark_inode_dirty(inode);
-
-        return 0;
-}
-
-Shouldn't that be using mnt_userns instead of &init_user_ns both for the setattr_prepare() and setattr_copy() calls?
-
-Please note this is just one example - it seems the kernel is now littered with such examples in current mainline and I don't mean just HFS+ - this is now all over the place...
-
-Best regards,
-
-	Anton
--- 
-Anton Altaparmakov <anton at tuxera.com> (replace at with @)
-Lead in File System Development, Tuxera Inc., http://www.tuxera.com/
-Linux NTFS maintainer
 
