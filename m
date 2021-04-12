@@ -2,126 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F2A535C119
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 11:23:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F55435C19C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Apr 2021 11:32:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239010AbhDLJVn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Apr 2021 05:21:43 -0400
-Received: from [119.249.100.41] ([119.249.100.41]:28474 "EHLO
-        dbl-sys-mailin02.dbl01.baidu.com" rhost-flags-FAIL-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S240354AbhDLJTh (ORCPT
+        id S238183AbhDLJbo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Apr 2021 05:31:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44734 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242237AbhDLJ2E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Apr 2021 05:19:37 -0400
-X-Greylist: delayed 809 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Apr 2021 05:19:36 EDT
-Received: from bjhw-sys-rpm015653cc5.bjhw.baidu.com (bjhw-sys-rpm015653cc5.bjhw.baidu.com [10.227.53.39])
-        by dbl-sys-mailin02.dbl01.baidu.com (Postfix) with ESMTP id 057A72F00C0A;
-        Mon, 12 Apr 2021 17:05:31 +0800 (CST)
-Received: from localhost (localhost [127.0.0.1])
-        by bjhw-sys-rpm015653cc5.bjhw.baidu.com (Postfix) with ESMTP id ECB9693B61;
-        Mon, 12 Apr 2021 17:05:30 +0800 (CST)
-From:   chukaiping <chukaiping@baidu.com>
-To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH] mm/compaction:let proactive compaction order configurable
-Date:   Mon, 12 Apr 2021 17:05:30 +0800
-Message-Id: <1618218330-50591-1-git-send-email-chukaiping@baidu.com>
-X-Mailer: git-send-email 1.7.1
+        Mon, 12 Apr 2021 05:28:04 -0400
+Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5520C06138E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Apr 2021 02:27:46 -0700 (PDT)
+Received: by mail-vs1-xe32.google.com with SMTP id r4so2135423vsq.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Apr 2021 02:27:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6hKUVtRAYKksa4g4Z/SOXZ+I+SLzgB72dysIQbYZhlk=;
+        b=CitFYvjqQpJous7ooVmqfhnFsbgLlnpEDxsDp/0RahdDGBuwdMycdneGcKTEi88ZzZ
+         icSfVdFS15Oe9zZx8G7npVnJ3yX5/NnRtCizxLwUgVHWsSjMKS/xvGkHJqooZ72EEjTl
+         XCQwB/3XWLH1ObPZxWsIpNdO64fsA4CPgZjc8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6hKUVtRAYKksa4g4Z/SOXZ+I+SLzgB72dysIQbYZhlk=;
+        b=n6h9CbYdoAfzuakVjUxgrBRZxlI6HAIcIbHAreBWJxR/1Ln0U8rTebM3cO6ZGqiHOE
+         W1HZI0HvLtVu9CFxHUqeMvnPKCI+rcHy3vfy2zeVCQQrbLj/kY2Fe0V8JcUsJ15xIl59
+         QOQwJoupq4EtdqK2q7AaB5F/wAtvqna7LKQcKKLxvL3joB5v0wgk/KKWrWZaOM09gPca
+         xAThok8QXygEKk+WJ5B3NV2eEhzjzhhw5edQNIvL5fZRNV1jJl4y3MOhzRopPwwTMj9X
+         EKVLYaKvSEijNfRG96tLN2IBLpmljvTh81sOtCS0lMBYbrb2NIJV332tCJNTtMLwmUhA
+         5Psw==
+X-Gm-Message-State: AOAM532G7UpGi+xma4y5okEn08pB80Id2lKoN3IuxXl2MZowfx5LmT64
+        7kAF+qHJphe/A2OTsjx4DiEjHYAaC/0K7+kyEnZBgw==
+X-Google-Smtp-Source: ABdhPJygb7TprYuqHMJbs7kZzi/RZ6+3XCz0tKtXIbFxyF52PMynCUJXHei8d09eoHLmkJRmeM3KYqSm+zCP8mXN81k=
+X-Received: by 2002:a67:f487:: with SMTP id o7mr19224439vsn.7.1618219664676;
+ Mon, 12 Apr 2021 02:27:44 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210323160629.228597-1-mszeredi@redhat.com>
+In-Reply-To: <20210323160629.228597-1-mszeredi@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 12 Apr 2021 11:27:33 +0200
+Message-ID: <CAJfpegv4ttfCZY0DPm+SSc85eL5m3jqhdOS_avu1+WMZhdg7iA@mail.gmail.com>
+Subject: Re: [PATCH] vfs: allow stacked ->get_acl() in RCU lookup
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        garyhuang <zjh.20052005@163.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently the proactive compaction order is fixed to
-COMPACTION_HPAGE_ORDER(9), it's OK in most machines with lots of
-normal 4KB memory, but it's too high for the machines with small
-normal memory, for example the machines with most memory configured
-as 1GB hugetlbfs huge pages. In these machines the max order of
-free pages is often below 9, and it's always below 9 even with hard
-compaction. This will lead to proactive compaction be triggered very
-frequently. In these machines we only care about order of 3 or 4.
-This patch export the oder to proc and let it configurable
-by user, and the default value is still COMPACTION_HPAGE_ORDER.
+On Tue, Mar 23, 2021 at 5:07 PM Miklos Szeredi <mszeredi@redhat.com> wrote:
+>
+> Overlayfs does not cache ACL's to avoid double caching with all its
+> problems.  Instead it just calls the underlying filesystem's
+> i_op->get_acl(), which will return the cached value, if possible.
+>
+> In rcu path walk, however, get_cached_acl_rcu() is employed to get the
+> value from the cache, which will fail on overlayfs resulting in dropping
+> out of rcu walk mode.  This can result in a big performance hit in certain
+> situations.
+>
+> Add a flags argument to the ->get_acl() callback, and allow
+> get_cached_acl_rcu() to call the ->get_acl() method with LOOKUP_RCU.
+>
+> Don't do this for the generic case of a cache miss, only in case of
+> ACL_DONT_CACHE.
+>
+> Reported-by: garyhuang <zjh.20052005@163.com>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 
-Signed-off-by: chukaiping <chukaiping@baidu.com>
----
- include/linux/compaction.h |    1 +
- kernel/sysctl.c            |   10 ++++++++++
- mm/compaction.c            |    7 ++++---
- 3 files changed, 15 insertions(+), 3 deletions(-)
+Hi Al,
 
-diff --git a/include/linux/compaction.h b/include/linux/compaction.h
-index ed4070e..151ccd1 100644
---- a/include/linux/compaction.h
-+++ b/include/linux/compaction.h
-@@ -83,6 +83,7 @@ static inline unsigned long compact_gap(unsigned int order)
- #ifdef CONFIG_COMPACTION
- extern int sysctl_compact_memory;
- extern unsigned int sysctl_compaction_proactiveness;
-+extern unsigned int sysctl_compaction_order;
- extern int sysctl_compaction_handler(struct ctl_table *table, int write,
- 			void *buffer, size_t *length, loff_t *ppos);
- extern int sysctl_extfrag_threshold;
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 62fbd09..277df31 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -114,6 +114,7 @@
- static int __maybe_unused neg_one = -1;
- static int __maybe_unused two = 2;
- static int __maybe_unused four = 4;
-+static int __maybe_unused ten = 10;
- static unsigned long zero_ul;
- static unsigned long one_ul = 1;
- static unsigned long long_max = LONG_MAX;
-@@ -2871,6 +2872,15 @@ int proc_do_static_key(struct ctl_table *table, int write,
- 		.extra2		= &one_hundred,
- 	},
- 	{
-+		.procname       = "compaction_order",
-+		.data           = &sysctl_compaction_order,
-+		.maxlen         = sizeof(sysctl_compaction_order),
-+		.mode           = 0644,
-+		.proc_handler   = proc_dointvec_minmax,
-+		.extra1         = SYSCTL_ZERO,
-+		.extra2         = &ten,
-+	},
-+	{
- 		.procname	= "extfrag_threshold",
- 		.data		= &sysctl_extfrag_threshold,
- 		.maxlen		= sizeof(int),
-diff --git a/mm/compaction.c b/mm/compaction.c
-index e04f447..a192996 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -1925,16 +1925,16 @@ static bool kswapd_is_running(pg_data_t *pgdat)
- 
- /*
-  * A zone's fragmentation score is the external fragmentation wrt to the
-- * COMPACTION_HPAGE_ORDER. It returns a value in the range [0, 100].
-+ * sysctl_compaction_order. It returns a value in the range [0, 100].
-  */
- static unsigned int fragmentation_score_zone(struct zone *zone)
- {
--	return extfrag_for_order(zone, COMPACTION_HPAGE_ORDER);
-+	return extfrag_for_order(zone, sysctl_compaction_order);
- }
- 
- /*
-  * A weighted zone's fragmentation score is the external fragmentation
-- * wrt to the COMPACTION_HPAGE_ORDER scaled by the zone's size. It
-+ * wrt to the sysctl_compaction_order scaled by the zone's size. It
-  * returns a value in the range [0, 100].
-  *
-  * The scaling factor ensures that proactive compaction focuses on larger
-@@ -2666,6 +2666,7 @@ static void compact_nodes(void)
-  * background. It takes values in the range [0, 100].
-  */
- unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
-+unsigned int __read_mostly sysctl_compaction_order = COMPACTION_HPAGE_ORDER;
- 
- /*
-  * This is the entry point for compacting all nodes via
--- 
-1.7.1
+Could you please apply this patch?
 
+It's fairly trivial, but unfortunately adds a fair bit of API churn.
+
+Thanks,
+Miklos
