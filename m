@@ -2,265 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFD7235D720
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Apr 2021 07:18:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7D3435D790
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Apr 2021 07:56:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344549AbhDMFSH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Apr 2021 01:18:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50836 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344515AbhDMFSB (ORCPT
+        id S1344605AbhDMFzo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Apr 2021 01:55:44 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:56395 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229784AbhDMFzn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Apr 2021 01:18:01 -0400
-Received: from mail-qk1-x74a.google.com (mail-qk1-x74a.google.com [IPv6:2607:f8b0:4864:20::74a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24CF8C06175F
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Apr 2021 22:17:42 -0700 (PDT)
-Received: by mail-qk1-x74a.google.com with SMTP id x11so10393719qki.22
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Apr 2021 22:17:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=Zgnf19a0ZqBaTaEBX8AKF87dozcAw085CXjJ1xc2G4c=;
-        b=rqmxGiY4BnZEcWcCJ+Y4vbbSqxqZkFX6FuLF06wYSiqiRFj2LBTS8LLSDpXxq7lMBQ
-         o1/mdFqL/Uz3+JOkn0Jue9LNkOwwljV5BRnIvnUl9KGbag7eHngfvvGNmTLx+nXlnDTd
-         7VUCIt7IyXYtkNy8DDa9eov2tj+2HYt/8dtNrZeOHwpUwFGGGjXLANcpQIfhtD/pKprM
-         Yfuj+k1QdImYGkVGyfGiN7bGeOflMKLmMbxIO07eeZF8SAq6m076BaCNiz1tjxPpMrGv
-         RZmBTppvtn/efQKL/L55N+t7JEdEjC9eWgKjygFvdeh8P6btLSwC2PQefmW+cw3qQsAr
-         agYw==
+        Tue, 13 Apr 2021 01:55:43 -0400
+Received: by mail-io1-f69.google.com with SMTP id j6so5214034iog.23
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Apr 2021 22:55:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=Zgnf19a0ZqBaTaEBX8AKF87dozcAw085CXjJ1xc2G4c=;
-        b=aH3TNTBGP3pDtBKkhJ9WgKCJw57yNGKQyccPHT1rdSaU+cnw8qM6mnZBpzK/Te6Zr9
-         rAfKm5A0JZYReUn0+LvEuDHllVQa9REOMcn8sxZzfMvvAT1cLY+FbInoPKom9XkW9Akv
-         Phm51LFEJJQnlm5bdJ+gsYbexrIaj+mplJFjFPVXbr0vdDDpYqGuxSmU9X3cT8mO672E
-         g/tnJt5ApHJkekS9YmHiYN0vKfQgsThzRwRVfc36pZZq2lUxJehYzR9Jjmb+OCLBMxjK
-         9N4j2jUwGgge184xP3/gtZnnEJAcglRAdpR3hwHBHaocLOEbWenstqG4jmVCR/KTRiEl
-         9HVw==
-X-Gm-Message-State: AOAM5309xHvGC0FT9MBr9hqo3ZeGNM75oF/sgNbnVjDBb3wwJS+Gb6Tx
-        p9nCEAYQbCHg15mcN5duATiKzfDXKdYCTiIJLDax
-X-Google-Smtp-Source: ABdhPJyql4cAl964Q5k7K3SfAR0oDzEdEWKdoNew6yg0Gt+a+L3rIdX6M21mQJNnFlN9UAkKjIzHIO4lAPEqRgyC0Dyr
-X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:d508:eee5:2d57:3e32])
- (user=axelrasmussen job=sendgmr) by 2002:a0c:ff48:: with SMTP id
- y8mr31802165qvt.8.1618291061296; Mon, 12 Apr 2021 22:17:41 -0700 (PDT)
-Date:   Mon, 12 Apr 2021 22:17:21 -0700
-In-Reply-To: <20210413051721.2896915-1-axelrasmussen@google.com>
-Message-Id: <20210413051721.2896915-10-axelrasmussen@google.com>
-Mime-Version: 1.0
-References: <20210413051721.2896915-1-axelrasmussen@google.com>
-X-Mailer: git-send-email 2.31.1.295.g9ea45b61b8-goog
-Subject: [PATCH v2 9/9] userfaultfd/shmem: modify shmem_mcopy_atomic_pte to
- use install_ptes
-From:   Axel Rasmussen <axelrasmussen@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wang Qing <wangqing@vivo.com>
-Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-mm@kvack.org, Axel Rasmussen <axelrasmussen@google.com>,
-        Brian Geffon <bgeffon@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=3UvEYXwfzE96WskXPc41XH3OXkDOqDJ6GKvKrcqu/Uw=;
+        b=cd1tlER60eSHhLYBeCbQgjg1byfCXZHGfSCZVJnrWj4N3kEYI4z5dTd0lQh39LzMeL
+         KB+tzWwjOU37h8N2+ZWq9drBV5ytLyOhPXV7B/UlboV6iAMes7YnFjR/6qbHakGVK8lE
+         sFnCmlTnJ3wN/Br2njX7QT7AC1eOi9KH4nicDXUXq435+PYVeoeHhsBKqWBPc1WsUsCX
+         4Ge4pZxcKRgNz8H+/Vz8Fm09ptp/4rfhSatouB3QeJcLchLqnsIwea7Uz6uVd23ccSrH
+         h6pat2tar5vuu7vnIaybTGsTIF1/iXKvMUvUXUbYHXEM0UBDCum2NLzZOwzeZMTWjaFY
+         65ow==
+X-Gm-Message-State: AOAM533a6NJtBYUJ8sXU1C9X6qPQdiRAKJxVv9g+Mjxn8jLlgEVaKVgs
+        OwVCDeDXRtrs4eawHjCqA/hrmX+MnKGxrlXnpxfuB/5Q4b8K
+X-Google-Smtp-Source: ABdhPJzkvywe8nghQGlyW4KyrKYQ+oCi7WuYn+97neCZjGlZhKBc5vJmJINRUieCiGsObIsYjsCptSjzWm0fekO8ZFO+5MzzIyRX
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:73c:: with SMTP id g28mr14502869iox.47.1618293322621;
+ Mon, 12 Apr 2021 22:55:22 -0700 (PDT)
+Date:   Mon, 12 Apr 2021 22:55:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a324c305bfd446c0@google.com>
+Subject: [syzbot] BUG: unable to handle kernel NULL pointer dereference in
+ __lookup_slow (2)
+From:   syzbot <syzbot+11c49ce9d4e7896f3406@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In a previous commit, we added the mcopy_atomic_install_ptes() helper.
-This helper does the job of setting up PTEs for an existing page, to map
-it into a given VMA. It deals with both the anon and shmem cases, as
-well as the shared and private cases.
+Hello,
 
-In other words, shmem_mcopy_atomic_pte() duplicates a case it already
-handles. So, expose it, and let shmem_mcopy_atomic_pte() use it
-directly, to reduce code duplication.
+syzbot found the following issue on:
 
-This requires that we refactor shmem_mcopy_atomic-pte() a bit:
+HEAD commit:    d93a0d43 Merge tag 'block-5.12-2021-04-02' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16519431d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=71a75beb62b62a34
+dashboard link: https://syzkaller.appspot.com/bug?extid=11c49ce9d4e7896f3406
+compiler:       Debian clang version 11.0.1-2
 
-Instead of doing accounting (shmem_recalc_inode() et al) part-way
-through the PTE setup, do it beforehand. This frees up
-mcopy_atomic_install_ptes() from having to care about this accounting,
-but it does mean we need to clean it up if we get a failure afterwards
-(shmem_uncharge()).
+Unfortunately, I don't have any reproducer for this issue yet.
 
-We can *almost* use shmem_charge() to do this, reducing code
-duplication. But, it does `inode->i_mapping->nrpages++`, which would
-double-count since shmem_add_to_page_cache() also does this.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+11c49ce9d4e7896f3406@syzkaller.appspotmail.com
 
-Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+REISERFS (device loop4): Using r5 hash to sort names
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+#PF: supervisor instruction fetch in kernel mode
+#PF: error_code(0x0010) - not-present page
+PGD 6bb82067 P4D 6bb82067 PUD 6bb81067 PMD 0 
+Oops: 0010 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 11072 Comm: syz-executor.4 Not tainted 5.12.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:0x0
+Code: Unable to access opcode bytes at RIP 0xffffffffffffffd6.
+RSP: 0018:ffffc90008f8fa20 EFLAGS: 00010246
+RAX: 1ffffffff13872e8 RBX: dffffc0000000000 RCX: 0000000000040000
+RDX: 0000000000000000 RSI: ffff88802e9d9490 RDI: ffff88807f140190
+RBP: ffffffff89c39740 R08: ffffffff81c9d4de R09: fffffbfff200a946
+R10: fffffbfff200a946 R11: 0000000000000000 R12: 0000000000000000
+R13: ffff88807f140190 R14: 1ffff11005d3b292 R15: ffff88802e9d9490
+FS:  00007f894af88700(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 000000006bb83000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ __lookup_slow+0x240/0x370 fs/namei.c:1626
+ lookup_one_len+0x10e/0x200 fs/namei.c:2649
+ reiserfs_lookup_privroot+0x85/0x1e0 fs/reiserfs/xattr.c:980
+ reiserfs_fill_super+0x2a69/0x3160 fs/reiserfs/super.c:2176
+ mount_bdev+0x26c/0x3a0 fs/super.c:1367
+ legacy_get_tree+0xea/0x180 fs/fs_context.c:592
+ vfs_get_tree+0x86/0x270 fs/super.c:1497
+ do_new_mount fs/namespace.c:2903 [inline]
+ path_mount+0x188a/0x29a0 fs/namespace.c:3233
+ do_mount fs/namespace.c:3246 [inline]
+ __do_sys_mount fs/namespace.c:3454 [inline]
+ __se_sys_mount+0x28c/0x320 fs/namespace.c:3431
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x46797a
+Code: 48 c7 c2 bc ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f894af87fa8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 000000000046797a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f894af88000
+RBP: 00007f894af88040 R08: 00007f894af88040 R09: 0000000020000000
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000020000000
+R13: 0000000020000100 R14: 00007f894af88000 R15: 0000000020011500
+Modules linked in:
+CR2: 0000000000000000
+---[ end trace a1b8dbb111baf993 ]---
+RIP: 0010:0x0
+Code: Unable to access opcode bytes at RIP 0xffffffffffffffd6.
+RSP: 0018:ffffc90008f8fa20 EFLAGS: 00010246
+RAX: 1ffffffff13872e8 RBX: dffffc0000000000 RCX: 0000000000040000
+RDX: 0000000000000000 RSI: ffff88802e9d9490 RDI: ffff88807f140190
+RBP: ffffffff89c39740 R08: ffffffff81c9d4de R09: fffffbfff200a946
+R10: fffffbfff200a946 R11: 0000000000000000 R12: 0000000000000000
+R13: ffff88807f140190 R14: 1ffff11005d3b292 R15: ffff88802e9d9490
+FS:  00007f894af88700(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 000000006bb83000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- include/linux/userfaultfd_k.h |  5 ++++
- mm/shmem.c                    | 52 +++++++----------------------------
- mm/userfaultfd.c              | 25 ++++++++---------
- 3 files changed, 27 insertions(+), 55 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-index 794d1538b8ba..3e20bfa9ef80 100644
---- a/include/linux/userfaultfd_k.h
-+++ b/include/linux/userfaultfd_k.h
-@@ -53,6 +53,11 @@ enum mcopy_atomic_mode {
- 	MCOPY_ATOMIC_CONTINUE,
- };
- 
-+extern int mcopy_atomic_install_ptes(struct mm_struct *dst_mm, pmd_t *dst_pmd,
-+				     struct vm_area_struct *dst_vma,
-+				     unsigned long dst_addr, struct page *page,
-+				     bool newly_allocated, bool wp_copy);
-+
- extern ssize_t mcopy_atomic(struct mm_struct *dst_mm, unsigned long dst_start,
- 			    unsigned long src_start, unsigned long len,
- 			    bool *mmap_changing, __u64 mode);
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 3f48cb5e8404..9b12298405a4 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2376,10 +2376,8 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm,
- 	struct address_space *mapping = inode->i_mapping;
- 	gfp_t gfp = mapping_gfp_mask(mapping);
- 	pgoff_t pgoff = linear_page_index(dst_vma, dst_addr);
--	spinlock_t *ptl;
- 	void *page_kaddr;
- 	struct page *page;
--	pte_t _dst_pte, *dst_pte;
- 	int ret;
- 	pgoff_t max_off;
- 
-@@ -2389,8 +2387,10 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm,
- 
- 	if (!*pagep) {
- 		page = shmem_alloc_page(gfp, info, pgoff);
--		if (!page)
--			goto out_unacct_blocks;
-+		if (!page) {
-+			shmem_inode_unacct_blocks(inode, 1);
-+			goto out;
-+		}
- 
- 		if (!zeropage) {	/* COPY */
- 			page_kaddr = kmap_atomic(page);
-@@ -2430,59 +2430,27 @@ int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm,
- 	if (ret)
- 		goto out_release;
- 
--	_dst_pte = mk_pte(page, dst_vma->vm_page_prot);
--	if (dst_vma->vm_flags & VM_WRITE)
--		_dst_pte = pte_mkwrite(pte_mkdirty(_dst_pte));
--	else {
--		/*
--		 * We don't set the pte dirty if the vma has no
--		 * VM_WRITE permission, so mark the page dirty or it
--		 * could be freed from under us. We could do it
--		 * unconditionally before unlock_page(), but doing it
--		 * only if VM_WRITE is not set is faster.
--		 */
--		set_page_dirty(page);
--	}
--
--	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
--
--	ret = -EFAULT;
--	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
--	if (unlikely(pgoff >= max_off))
--		goto out_release_unlock;
--
--	ret = -EEXIST;
--	if (!pte_none(*dst_pte))
--		goto out_release_unlock;
--
--	lru_cache_add(page);
--
- 	spin_lock_irq(&info->lock);
- 	info->alloced++;
- 	inode->i_blocks += BLOCKS_PER_PAGE;
- 	shmem_recalc_inode(inode);
- 	spin_unlock_irq(&info->lock);
- 
--	inc_mm_counter(dst_mm, mm_counter_file(page));
--	page_add_file_rmap(page, false);
--	set_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
-+	ret = mcopy_atomic_install_ptes(dst_mm, dst_pmd, dst_vma, dst_addr,
-+					page, true, false);
-+	if (ret)
-+		goto out_release_uncharge;
- 
--	/* No need to invalidate - it was non-present before */
--	update_mmu_cache(dst_vma, dst_addr, dst_pte);
--	pte_unmap_unlock(dst_pte, ptl);
- 	unlock_page(page);
- 	ret = 0;
- out:
- 	return ret;
--out_release_unlock:
--	pte_unmap_unlock(dst_pte, ptl);
--	ClearPageDirty(page);
-+out_release_uncharge:
- 	delete_from_page_cache(page);
-+	shmem_uncharge(inode, 1);
- out_release:
- 	unlock_page(page);
- 	put_page(page);
--out_unacct_blocks:
--	shmem_inode_unacct_blocks(inode, 1);
- 	goto out;
- }
- #endif /* CONFIG_USERFAULTFD */
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 8df0438f5d6a..3f73ba0b99f0 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -51,18 +51,13 @@ struct vm_area_struct *find_dst_vma(struct mm_struct *dst_mm,
- /*
-  * Install PTEs, to map dst_addr (within dst_vma) to page.
-  *
-- * This function handles MCOPY_ATOMIC_CONTINUE (which is always file-backed),
-- * whether or not dst_vma is VM_SHARED. It also handles the more general
-- * MCOPY_ATOMIC_NORMAL case, when dst_vma is *not* VM_SHARED (it may be file
-- * backed, or not).
-- *
-- * Note that MCOPY_ATOMIC_NORMAL for a VM_SHARED dst_vma is handled by
-- * shmem_mcopy_atomic_pte instead.
-+ * This function handles both MCOPY_ATOMIC_NORMAL and _CONTINUE for both shmem
-+ * and anon, and for both shared and private VMAs.
-  */
--static int mcopy_atomic_install_ptes(struct mm_struct *dst_mm, pmd_t *dst_pmd,
--				     struct vm_area_struct *dst_vma,
--				     unsigned long dst_addr, struct page *page,
--				     bool newly_allocated, bool wp_copy)
-+int mcopy_atomic_install_ptes(struct mm_struct *dst_mm, pmd_t *dst_pmd,
-+			      struct vm_area_struct *dst_vma,
-+			      unsigned long dst_addr, struct page *page,
-+			      bool newly_allocated, bool wp_copy)
- {
- 	int ret;
- 	pte_t _dst_pte, *dst_pte;
-@@ -116,8 +111,12 @@ static int mcopy_atomic_install_ptes(struct mm_struct *dst_mm, pmd_t *dst_pmd,
- 	else
- 		page_add_new_anon_rmap(page, dst_vma, dst_addr, false);
- 
--	if (newly_allocated)
--		lru_cache_add_inactive_or_unevictable(page, dst_vma);
-+	if (newly_allocated) {
-+		if (vma_is_shmem(dst_vma) && vm_shared)
-+			lru_cache_add(page);
-+		else
-+			lru_cache_add_inactive_or_unevictable(page, dst_vma);
-+	}
- 
- 	set_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
- 
--- 
-2.31.1.295.g9ea45b61b8-goog
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
