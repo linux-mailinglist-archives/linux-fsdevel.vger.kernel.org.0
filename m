@@ -2,34 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6290D35E596
+	by mail.lfdr.de (Postfix) with ESMTP id D2DC635E597
 	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Apr 2021 19:52:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347478AbhDMRvl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Apr 2021 13:51:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44992 "EHLO mail.kernel.org"
+        id S1347484AbhDMRvn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Apr 2021 13:51:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1347438AbhDMRv1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Apr 2021 13:51:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 34DE0613B6;
+        id S1347449AbhDMRva (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Apr 2021 13:51:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D805B613B8;
         Tue, 13 Apr 2021 17:51:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618336266;
-        bh=jcDrx7LLRF97mNKTEOYiMBgIjq7/ymJfyMoNF9m9bl0=;
+        s=k20201202; t=1618336267;
+        bh=TviWrPPnC1gTnbi2XdMVlKDC0scJdqGSyrBmZE+Egjw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZJmqbaO5DHihf5MpdRYfSQnbXyibXDnohdbSP1AcH8hOW2scxcaWXQbuBwE5UeiKD
-         BMB+uxiW0MfrODNeZyvhSUaWWXjbvo8zkUvv1x9z4m+k5cSe/WAkwNAtdwFyJfWZzG
-         UsFbeejeoSA0U6X4cBxQ50nW31fQHkBgz9XGFOAC9wDlN5dFQHEhp/o8WJSvv+/YGT
-         n1VK0v6doMTZawkPdHt9dtPw/oJHm1ohElsqsXT5v6F/A1GBRz3GV9u48hFZlu9NzG
-         yJq/ACKeAYOgp4W4Ek2FxsfQE71STmvQUldOq/AqNywNwF7peS78HTsn3MFTkt43ir
-         61P7GErVw2HEg==
+        b=JMpfszAZ+Dlr58Z/wfc48g+cYnIg/ujuzedlJGTD2CUsEcQLGbpZMvQk3kaucOZp9
+         Vo0bl5LMFwZKmN14Cgp03Th+ebCUwKpXgZQ/t0vs8exV/j6v2mDpNZ0Q85gv1JOB04
+         h77xUrdHEkehSWYXm0uSBrFT7Zvbaf3QmLY3HmL+I008MwK4HeRJm1ef+Ztiag4hsk
+         0UllykpZJua/9mnRfect5KV5xYlCL58MxhfsTdNNGbwZ1t1u5SOPRJ6/+QRkPcgiIJ
+         SX989mwRWPAJlHA7Zx9Y2Gh86e37vTwTFjtqkmjPsnty28gnH/ggmpy6dyX8lNxbA9
+         QSzVulWW9Tkeg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
         lhenriques@suse.de
-Subject: [RFC PATCH v6 19/20] ceph: make ceph_get_name decrypt filenames
-Date:   Tue, 13 Apr 2021 13:50:51 -0400
-Message-Id: <20210413175052.163865-20-jlayton@kernel.org>
+Subject: [RFC PATCH v6 20/20] ceph: add fscrypt ioctls
+Date:   Tue, 13 Apr 2021 13:50:52 -0400
+Message-Id: <20210413175052.163865-21-jlayton@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210413175052.163865-1-jlayton@kernel.org>
 References: <20210413175052.163865-1-jlayton@kernel.org>
@@ -39,95 +39,139 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When we do a lookupino to the MDS, we get a filename in the trace.
-ceph_get_name uses that name directly, so we must properly decrypt
-it before copying it to the name buffer.
+We gate most of the ioctls on MDS feature support. The exception is the
+key removal and status functions that we still want to work if the MDS's
+were to (inexplicably) lose the feature.
+
+For the set_policy ioctl, we take Fcx caps to ensure that nothing can
+create files in the directory while the ioctl is running. That should
+be enough to ensure that the "empty_dir" check is reliable.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/export.c | 42 +++++++++++++++++++++++++++++++-----------
- 1 file changed, 31 insertions(+), 11 deletions(-)
+ fs/ceph/ioctl.c | 93 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 93 insertions(+)
 
-diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-index 65540a4429b2..c81af82568fd 100644
---- a/fs/ceph/export.c
-+++ b/fs/ceph/export.c
-@@ -7,6 +7,7 @@
- 
- #include "super.h"
+diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+index 6e061bf62ad4..485be1637fc0 100644
+--- a/fs/ceph/ioctl.c
++++ b/fs/ceph/ioctl.c
+@@ -6,6 +6,7 @@
  #include "mds_client.h"
-+#include "crypto.h"
+ #include "ioctl.h"
+ #include <linux/ceph/striper.h>
++#include <linux/fscrypt.h>
  
  /*
-  * Basic fh
-@@ -524,7 +525,9 @@ static int ceph_get_name(struct dentry *parent, char *name,
- {
- 	struct ceph_mds_client *mdsc;
- 	struct ceph_mds_request *req;
-+	struct inode *dir = d_inode(parent);
- 	struct inode *inode = d_inode(child);
-+	struct ceph_mds_reply_info_parsed *rinfo;
- 	int err;
- 
- 	if (ceph_snap(inode) != CEPH_NOSNAP)
-@@ -536,29 +539,46 @@ static int ceph_get_name(struct dentry *parent, char *name,
- 	if (IS_ERR(req))
- 		return PTR_ERR(req);
- 
--	inode_lock(d_inode(parent));
--
-+	inode_lock(dir);
- 	req->r_inode = inode;
- 	ihold(inode);
- 	req->r_ino2 = ceph_vino(d_inode(parent));
--	req->r_parent = d_inode(parent);
-+	req->r_parent = dir;
- 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
- 	req->r_num_caps = 2;
- 	err = ceph_mdsc_do_request(mdsc, NULL, req);
-+	inode_unlock(dir);
- 
--	inode_unlock(d_inode(parent));
-+	if (err)
-+		goto out;
- 
--	if (!err) {
--		struct ceph_mds_reply_info_parsed *rinfo = &req->r_reply_info;
-+	rinfo = &req->r_reply_info;
-+	if (!IS_ENCRYPTED(dir)) {
- 		memcpy(name, rinfo->dname, rinfo->dname_len);
- 		name[rinfo->dname_len] = 0;
--		dout("get_name %p ino %llx.%llx name %s\n",
--		     child, ceph_vinop(inode), name);
- 	} else {
--		dout("get_name %p ino %llx.%llx err %d\n",
--		     child, ceph_vinop(inode), err);
--	}
-+		struct fscrypt_str oname = FSTR_INIT(NULL, 0);
-+		struct ceph_fname fname = { .dir	= dir,
-+					    .name	= rinfo->dname,
-+					    .ctext	= rinfo->altname,
-+					    .name_len	= rinfo->dname_len,
-+					    .ctext_len	= rinfo->altname_len };
-+
-+		err = ceph_fname_alloc_buffer(dir, &oname);
-+		if (err < 0)
-+			goto out;
- 
-+		err = ceph_fname_to_usr(&fname, NULL, &oname, NULL);
-+		if (!err) {
-+			memcpy(name, oname.name, oname.len);
-+			name[oname.len] = 0;
-+		}
-+		ceph_fname_free_buffer(dir, &oname);
-+	}
-+out:
-+	dout("get_name %p ino %llx.%llx err %d %s%s\n",
-+		     child, ceph_vinop(inode), err,
-+		     err ? "" : "name ", err ? "" : name);
- 	ceph_mdsc_put_request(req);
- 	return err;
+  * ioctls
+@@ -268,8 +269,55 @@ static long ceph_ioctl_syncio(struct file *file)
+ 	return 0;
  }
+ 
++static int vet_mds_for_fscrypt(struct file *file)
++{
++	int i, ret = -EOPNOTSUPP;
++	struct ceph_mds_client	*mdsc = ceph_sb_to_mdsc(file_inode(file)->i_sb);
++
++	mutex_lock(&mdsc->mutex);
++	for (i = 0; i < mdsc->max_sessions; i++) {
++		struct ceph_mds_session *s = mdsc->sessions[i];
++
++		if (!s)
++			continue;
++		if (test_bit(CEPHFS_FEATURE_ALTERNATE_NAME, &s->s_features))
++			ret = 0;
++		break;
++	}
++	mutex_unlock(&mdsc->mutex);
++	return ret;
++}
++
++static long ceph_set_encryption_policy(struct file *file, unsigned long arg)
++{
++	int ret, got = 0;
++	struct inode *inode = file_inode(file);
++	struct ceph_inode_info *ci = ceph_inode(inode);
++
++	ret = vet_mds_for_fscrypt(file);
++	if (ret)
++		return ret;
++
++	/*
++	 * Ensure we hold these caps so that we _know_ that the rstats check
++	 * in the empty_dir check is reliable.
++	 */
++	ret = ceph_get_caps(file, CEPH_CAP_FILE_SHARED, 0, -1, &got);
++	if (ret)
++		return ret;
++
++	ret = fscrypt_ioctl_set_policy(file, (const void __user *)arg);
++	if (got)
++		ceph_put_cap_refs(ci, got);
++
++	return ret;
++}
++
+ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
++	int ret;
++	struct ceph_inode_info *ci = ceph_inode(file_inode(file));
++
+ 	dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
+ 	switch (cmd) {
+ 	case CEPH_IOC_GET_LAYOUT:
+@@ -289,6 +337,51 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 
+ 	case CEPH_IOC_SYNCIO:
+ 		return ceph_ioctl_syncio(file);
++
++	case FS_IOC_SET_ENCRYPTION_POLICY:
++		return ceph_set_encryption_policy(file, arg);
++
++	case FS_IOC_GET_ENCRYPTION_POLICY:
++		ret = vet_mds_for_fscrypt(file);
++		if (ret)
++			return ret;
++		return fscrypt_ioctl_get_policy(file, (void __user *)arg);
++
++	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
++		ret = vet_mds_for_fscrypt(file);
++		if (ret)
++			return ret;
++		return fscrypt_ioctl_get_policy_ex(file, (void __user *)arg);
++
++	case FS_IOC_ADD_ENCRYPTION_KEY:
++		ret = vet_mds_for_fscrypt(file);
++		if (ret)
++			return ret;
++		atomic_inc(&ci->i_shared_gen);
++		ceph_dir_clear_ordered(file_inode(file));
++		ceph_dir_clear_complete(file_inode(file));
++		return fscrypt_ioctl_add_key(file, (void __user *)arg);
++
++	case FS_IOC_REMOVE_ENCRYPTION_KEY:
++		atomic_inc(&ci->i_shared_gen);
++		ceph_dir_clear_ordered(file_inode(file));
++		ceph_dir_clear_complete(file_inode(file));
++		return fscrypt_ioctl_remove_key(file, (void __user *)arg);
++
++	case FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS:
++		atomic_inc(&ci->i_shared_gen);
++		ceph_dir_clear_ordered(file_inode(file));
++		ceph_dir_clear_complete(file_inode(file));
++		return fscrypt_ioctl_remove_key_all_users(file, (void __user *)arg);
++
++	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
++		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
++
++	case FS_IOC_GET_ENCRYPTION_NONCE:
++		ret = vet_mds_for_fscrypt(file);
++		if (ret)
++			return ret;
++		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
+ 	}
+ 
+ 	return -ENOTTY;
 -- 
 2.30.2
 
