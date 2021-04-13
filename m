@@ -2,157 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A619735D675
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Apr 2021 06:30:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2186D35D68B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Apr 2021 06:41:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229761AbhDME2y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Apr 2021 00:28:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40298 "EHLO
+        id S229954AbhDMElU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Apr 2021 00:41:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229753AbhDME2y (ORCPT
+        with ESMTP id S229758AbhDMElT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Apr 2021 00:28:54 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 640E8C061756
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Apr 2021 21:28:34 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id x4so17776641edd.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Apr 2021 21:28:34 -0700 (PDT)
+        Tue, 13 Apr 2021 00:41:19 -0400
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53CC5C06175F
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Apr 2021 21:41:00 -0700 (PDT)
+Received: by mail-io1-xd32.google.com with SMTP id s16so10524090iog.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Apr 2021 21:41:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KgX9vitQLsw/fJL+KP8I/opZHLQIHCxWsZWMUb2jijc=;
-        b=eFRlFPRnxba6eXyWbDP4eUAP/8qETyj5QilhvrMDxqow9MKkPtjWWn5nKiuVjqrpkv
-         BoNi0dhY+1eyDZLRsWmnQz7FsRI0GLPTaSvD5S6Nalm0QjKZ8LzS3XB1m/pI8zmgJ1Pz
-         I2YA00fULsrV5BC6TbbvXbwwvZAcZ2gR+WuRjl4tJKWFuzSK2mUlQZBiqTi6CEbOIkFO
-         sLOJkUheEo2WXa/FBLisAtNwE6JGx44fFsT4NAQRGb0u9MSeVR59huKxKvvrLZ6XhkWl
-         32bc/LrM4GhJ56+2MsnmB1/WkQCVsGpNBxuH6ZFSqodIMwLj28XAKOOyka489ZugEhXC
-         9hng==
+         :cc;
+        bh=Bx8fq9RMVJeYgjbVUnNNsjq4NPDKlddkrDot/R9W3U0=;
+        b=qKzEmUjCHxF9v7Gk82y4AynFWSLYAJC6SJRUorlaJEsI9Xns8UJNnx8nRAVPggQx0s
+         LWJzTdXinMJNElG07Ww6Bnew9ELqWfMsI6yYw3jmvxBi5cXn2u2EMnnr9aZsXkwP6mTZ
+         gaRf9nEztlW+Cn3CNcpGrJ9+gDcMngs9Nng8vE4gCYcpyqqhqI3V7U28TkEo9FmwJFwc
+         jktzgI39xnAJx6LnHhRef1VUg9LKH28vrRXbzDYq1lnlVfxFGHaTaKlFx2Ah0D1uih1n
+         c7zD8YQ/ssMJ61nT9aM1ExgPBPmLRWtwpTGBl1pxSvDXa96TffWdKP483bmZZ7+Bc1sT
+         vXMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KgX9vitQLsw/fJL+KP8I/opZHLQIHCxWsZWMUb2jijc=;
-        b=jx6YAwhRTnn4Zlpcd4jz4oa9mKOTUNoGclXmN+Xg3WPs5dxMe1vg3Un0R0zSW9B48H
-         UGO5pr3KSZ+xbBKCQuFaVhctCWOvppM6FztF9tuo1NeZNGIDxy7nwnNwsvl2zq9wJpk5
-         jBWuZA166JFFftaEYRF9QTKD0udeBDE99Rj+q98NuI4irYqWZSYIkOcPIZ4ZQRDxLQcS
-         pg9H7He3sYGDtdVrroFxk1pb1rGM6LAb6HZ1AqJp60g0oZ+7bHG1+jQcBLqbAslmFxu6
-         /g4EaT0oyDIkgtpkswDapG7OaAZlcpinTFVvrqwwTLHGrSECf3aEK1MHKPl7S7I5lKFJ
-         qGBA==
-X-Gm-Message-State: AOAM533qjPViwYrtlGWTWN8wFgypv1KMlzDbqaOq3rbTtDz0XzQAjXUt
-        FNO0Txs9JT0kwRlX0FCY01kc3WOl0q6D8lNUUWlJ
-X-Google-Smtp-Source: ABdhPJxFsbFTwB0q0pNAp17qZJqIqm6vYW6whW2nB86LPbKviA3Z1PMbmmSz/1gnXoDoaJMm9C847RmTUrmsQNZTmWo=
-X-Received: by 2002:a05:6402:6ca:: with SMTP id n10mr32891030edy.312.1618288112971;
- Mon, 12 Apr 2021 21:28:32 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=Bx8fq9RMVJeYgjbVUnNNsjq4NPDKlddkrDot/R9W3U0=;
+        b=nmcT6L4oN3Oin5WWbrXobbeiX9jUKD3uzskA9vWpMzRpD72F90TVdEg6/CgG8nIFaz
+         wM0obRYFqaqFktksaUcJfbiVbClii46M16aiuXtvPjTgazIH6KvjE2WJGJTrkCoe+JLd
+         /DtvDJLQN97km5/sfGX6oNQ2x2Ln8N6d+o4v8lC2ssVm/7P8xv1C0H5yh75wUtwjdW3i
+         zXyQOPXT6JxDBz9USAN38rARvn3+XPdoDJEyM4fzhAuIyv009rLNq3p640AaD+hZllcE
+         XOJ7pOIo7EsUil9pnRgvjRd6NeRJDaRAdg55T0dJqBRCJx7wV2BK7dWtirlNIpk5g5tN
+         gFFg==
+X-Gm-Message-State: AOAM5312AAeyx6DLfPIKLtONzYUl842ZyKUwAqeR0rHReVWy62q1w2Ar
+        p+s5Y9t6kNrQp4DWWOFq+59SMpS3SXqj2NBObRL32w==
+X-Google-Smtp-Source: ABdhPJwXI/HKUS1nvH+kTJZ0qN/bCT+G1Iz1obFXECV6bQgKoKWtAB2XGAaDRQDS+bHpG6sbHn3DJbPfx/d0Y/AwLxo=
+X-Received: by 2002:a05:6602:2dce:: with SMTP id l14mr6765893iow.23.1618288859391;
+ Mon, 12 Apr 2021 21:40:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210331080519.172-1-xieyongji@bytedance.com> <20210331080519.172-10-xieyongji@bytedance.com>
- <c817178a-2ac8-bf93-1ed3-528579c657a3@redhat.com> <CACycT3v_KFQXoxRbEj8c0Ve6iKn9RbibtBDgBFs=rf0ZOmTBBQ@mail.gmail.com>
- <091dde74-449b-385c-0ec9-11e4847c6c4c@redhat.com> <CACycT3vwATp4+Ao0fjuyeeLQN+xHH=dXF+JUyuitkn4k8hELnA@mail.gmail.com>
- <dc9a90dd-4f86-988c-c1b5-ac606ce5e14b@redhat.com> <CACycT3vxO21Yt6+px2c2Q8DONNUNehdo2Vez_RKQCKe76CM2TA@mail.gmail.com>
- <0f386dfe-45c9-5609-55f7-b8ab2a4abf5e@redhat.com> <CACycT3vbDhUKM0OX-zo02go09gh2+EEdyZ_YQuz8PXzo3EngXw@mail.gmail.com>
- <a85c0a66-ad7f-a344-f8ed-363355f5e283@redhat.com>
-In-Reply-To: <a85c0a66-ad7f-a344-f8ed-363355f5e283@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Tue, 13 Apr 2021 12:28:21 +0800
-Message-ID: <CACycT3tHxtfgQhQgv0VyF_U523qASEv1Ydc4XuX43MFRzGVbfw@mail.gmail.com>
-Subject: Re: Re: [PATCH v6 09/10] vduse: Introduce VDUSE - vDPA Device in Userspace
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20210408234327.624367-1-axelrasmussen@google.com>
+ <20210408234327.624367-5-axelrasmussen@google.com> <20210412231736.GA1002612@xz-x1>
+In-Reply-To: <20210412231736.GA1002612@xz-x1>
+From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Mon, 12 Apr 2021 21:40:22 -0700
+Message-ID: <CAJHvVcirn08ad64pTdxTRDRRXF16QnFwC-3GOT8bXMp2E2UYhg@mail.gmail.com>
+Subject: Re: [PATCH 4/9] userfaultfd/shmem: support UFFDIO_CONTINUE for shmem
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Colascione <dancol@google.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        Brian Geffon <bgeffon@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 13, 2021 at 11:35 AM Jason Wang <jasowang@redhat.com> wrote:
+On Mon, Apr 12, 2021 at 4:17 PM Peter Xu <peterx@redhat.com> wrote:
 >
+> On Thu, Apr 08, 2021 at 04:43:22PM -0700, Axel Rasmussen wrote:
+> > +/*
+> > + * Install PTEs, to map dst_addr (within dst_vma) to page.
+> > + *
+> > + * This function handles MCOPY_ATOMIC_CONTINUE (which is always file-backed),
+> > + * whether or not dst_vma is VM_SHARED. It also handles the more general
+> > + * MCOPY_ATOMIC_NORMAL case, when dst_vma is *not* VM_SHARED (it may be file
+> > + * backed, or not).
+> > + *
+> > + * Note that MCOPY_ATOMIC_NORMAL for a VM_SHARED dst_vma is handled by
+> > + * shmem_mcopy_atomic_pte instead.
+> > + */
+> > +static int mcopy_atomic_install_ptes(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+> > +                                  struct vm_area_struct *dst_vma,
+> > +                                  unsigned long dst_addr, struct page *page,
+> > +                                  bool newly_allocated, bool wp_copy)
+> > +{
+> > +     int ret;
+> > +     pte_t _dst_pte, *dst_pte;
+> > +     int writable;
+> > +     bool vm_shared = dst_vma->vm_flags & VM_SHARED;
+> > +     spinlock_t *ptl;
+> > +     struct inode *inode;
+> > +     pgoff_t offset, max_off;
+> > +
+> > +     _dst_pte = mk_pte(page, dst_vma->vm_page_prot);
+> > +     writable = dst_vma->vm_flags & VM_WRITE;
+> > +     /* For private, non-anon we need CoW (don't write to page cache!) */
+> > +     if (!vma_is_anonymous(dst_vma) && !vm_shared)
+> > +             writable = 0;
+> > +
+> > +     if (writable || vma_is_anonymous(dst_vma))
+> > +             _dst_pte = pte_mkdirty(_dst_pte);
+> > +     if (writable) {
+> > +             if (wp_copy)
+> > +                     _dst_pte = pte_mkuffd_wp(_dst_pte);
+> > +             else
+> > +                     _dst_pte = pte_mkwrite(_dst_pte);
+> > +     } else if (vm_shared) {
+> > +             /*
+> > +              * Since we didn't pte_mkdirty(), mark the page dirty or it
+> > +              * could be freed from under us. We could do this
+> > +              * unconditionally, but doing it only if !writable is faster.
+> > +              */
+> > +             set_page_dirty(page);
+> > +     }
+> > +
+> > +     dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
+> > +
+> > +     if (vma_is_shmem(dst_vma)) {
+> > +             /* The shmem MAP_PRIVATE case requires checking the i_size */
 >
-> =E5=9C=A8 2021/4/12 =E4=B8=8B=E5=8D=885:59, Yongji Xie =E5=86=99=E9=81=93=
-:
-> > On Mon, Apr 12, 2021 at 5:37 PM Jason Wang <jasowang@redhat.com> wrote:
-> >>
-> >> =E5=9C=A8 2021/4/12 =E4=B8=8B=E5=8D=884:02, Yongji Xie =E5=86=99=E9=81=
-=93:
-> >>> On Mon, Apr 12, 2021 at 3:16 PM Jason Wang <jasowang@redhat.com> wrot=
-e:
-> >>>> =E5=9C=A8 2021/4/9 =E4=B8=8B=E5=8D=884:02, Yongji Xie =E5=86=99=E9=
-=81=93:
-> >>>>>>>>> +};
-> >>>>>>>>> +
-> >>>>>>>>> +struct vduse_dev_config_data {
-> >>>>>>>>> +     __u32 offset; /* offset from the beginning of config spac=
-e */
-> >>>>>>>>> +     __u32 len; /* the length to read/write */
-> >>>>>>>>> +     __u8 data[VDUSE_CONFIG_DATA_LEN]; /* data buffer used to =
-read/write */
-> >>>>>>>> Note that since VDUSE_CONFIG_DATA_LEN is part of uAPI it means w=
-e can
-> >>>>>>>> not change it in the future.
-> >>>>>>>>
-> >>>>>>>> So this might suffcient for future features or all type of virti=
-o devices.
-> >>>>>>>>
-> >>>>>>> Do you mean 256 is no enough here=EF=BC=9F
-> >>>>>> Yes.
-> >>>>>>
-> >>>>> But this request will be submitted multiple times if config lengh i=
-s
-> >>>>> larger than 256. So do you think whether we need to extent the size=
- to
-> >>>>> 512 or larger?
-> >>>> So I think you'd better either:
-> >>>>
-> >>>> 1) document the limitation (256) in somewhere, (better both uapi and=
- doc)
-> >>>>
-> >>> But the VDUSE_CONFIG_DATA_LEN doesn't mean the limitation of
-> >>> configuration space. It only means the maximum size of one data
-> >>> transfer for configuration space. Do you mean document this?
-> >>
-> >> Yes, and another thing is that since you're using
-> >> data[VDUSE_CONFIG_DATA_LEN] in the uapi, it implies the length is alwa=
-ys
-> >> 256 which seems not good and not what the code is wrote.
-> >>
-> > How about renaming VDUSE_CONFIG_DATA_LEN to VDUSE_MAX_TRANSFER_LEN?
-> >
-> > Thanks,
-> > Yongji
+> When you start to use this function in the last patch it'll be needed too even
+> if MAP_SHARED?
 >
+> How about directly state the reason of doing this ("serialize against truncate
+> with the PT lock") instead of commenting about "who will need it"?
 >
-> So a question is the reason to have a limitation of this in the uAPI?
-> Note that in vhost-vdpa we don't have such:
+> > +             inode = dst_vma->vm_file->f_inode;
+> > +             offset = linear_page_index(dst_vma, dst_addr);
+> > +             max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+> > +             ret = -EFAULT;
+> > +             if (unlikely(offset >= max_off))
+> > +                     goto out_unlock;
+> > +     }
 >
-> struct vhost_vdpa_config {
->          __u32 off;
->          __u32 len;
->          __u8 buf[0];
-> };
+> [...]
 >
+> > +/* Handles UFFDIO_CONTINUE for all shmem VMAs (shared or private). */
+> > +static int mcontinue_atomic_pte(struct mm_struct *dst_mm,
+> > +                             pmd_t *dst_pmd,
+> > +                             struct vm_area_struct *dst_vma,
+> > +                             unsigned long dst_addr,
+> > +                             bool wp_copy)
+> > +{
+> > +     struct inode *inode = file_inode(dst_vma->vm_file);
+> > +     pgoff_t pgoff = linear_page_index(dst_vma, dst_addr);
+> > +     struct page *page;
+> > +     int ret;
+> > +
+> > +     ret = shmem_getpage(inode, pgoff, &page, SGP_READ);
+>
+> SGP_READ looks right, as we don't want page allocation.  However I noticed
+> there's very slight difference when the page was just fallocated:
+>
+>         /* fallocated page? */
+>         if (page && !PageUptodate(page)) {
+>                 if (sgp != SGP_READ)
+>                         goto clear;
+>                 unlock_page(page);
+>                 put_page(page);
+>                 page = NULL;
+>                 hindex = index;
+>         }
+>
+> I think it won't happen for your case since the page should be uptodate already
+> (the other thread should check and modify the page before CONTINUE), but still
+> raise this up, since if the page was allocated it smells better to still
+> install the fallocated page (do we need to clear the page and SetUptodate)?
 
-If so, we need to call read()/write() multiple times each time
-receiving/sending one request or response in userspace and kernel. For
-example,
+Sorry for the somewhat rambling thought process:
 
-1. read and check request/response type
-2. read and check config length if type is VDUSE_SET_CONFIG or VDUSE_GET_CO=
-NFIG
-3. read the payload
+My first thought is, I don't really know what PageUptodate means for
+shmem pages. If I understand correctly, normally we say PageUptodate()
+if the in memory data is more recent or equivalent to the on-disk
+data. But, shmem pages are entirely in memory - they are file backed
+in name only, in some sense.
 
-Not sure if it's worth it.
+fallocate() does all sorts of things so the comment to me seems a bit
+ambiguous, but it seems the implication is that we're worried
+specifically about the case where the shmem page was recently
+allocated with fallocate(mode=0)? In that case, do we use
+!PageUptodate() to denote that the page has been allocated, but its
+contents are undefined?
 
-Thanks,
-Yongji
+I suppose that would make sense, as the action "goto clear;" generally
+memset()-s the page to zero it, and then calls SetPageUptodate().
+
+Okay so let's say the following sequence of events happens:
+
+1. Userspace calls fallocate(mode=0) to allocate some shmem pages.
+2. Another thread, via a UFFD-registered mapping, manages to trigger a
+minor fault on one such page, while we still have !PageUptodate().
+(I'm not 100% sure this can happen, but let's say it can.)
+3. UFFD handler thread gets the minor fault event, and for whatever
+(buggy?) reason does nothing - it doesn't modify the page, it just
+calls CONTINUE.
+
+I think if we get to this point, zeroing the page, returning it, and
+setting up the PTEs seems somewhat reasonable to me. I suppose
+alternatively we could notice that this happened and return an error
+to the caller? I'm hesitant to mess with the behavior of
+shmem_getpage_gfp() to make such a thing happen though. I do think if
+we're going to set up the PTEs instead of returning an error, we
+definitely do need to clear and SetPageUptodate() the page first.
+
+In conclusion, I think this behavior is correct.
+
+>
+> --
+> Peter Xu
+>
