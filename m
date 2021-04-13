@@ -2,226 +2,485 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D12935DC04
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Apr 2021 11:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA77535DC41
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Apr 2021 12:12:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230132AbhDMJ7D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Apr 2021 05:59:03 -0400
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:37908 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229661AbhDMJ7B (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Apr 2021 05:59:01 -0400
-Received: from dread.disaster.area (pa49-181-239-12.pa.nsw.optusnet.com.au [49.181.239.12])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id A46305ECAE6;
-        Tue, 13 Apr 2021 19:58:38 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1lWFob-005tqP-56; Tue, 13 Apr 2021 19:58:37 +1000
-Date:   Tue, 13 Apr 2021 19:58:37 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, mingo@redhat.com, will@kernel.org,
-        longman@redhat.com, boqun.feng@gmail.com, bigeasy@linutronix.de,
-        hch@infradead.org, npiggin@kernel.dk
-Subject: Re: bl_list and lockdep
-Message-ID: <20210413095837.GD63242@dread.disaster.area>
-References: <20210406123343.1739669-1-david@fromorbit.com>
- <20210406123343.1739669-4-david@fromorbit.com>
- <20210406132834.GP2531743@casper.infradead.org>
- <20210406212253.GC1990290@dread.disaster.area>
- <874kgb1qcq.ffs@nanos.tec.linutronix.de>
- <20210412221536.GQ1990290@dread.disaster.area>
- <87fszvytv8.ffs@nanos.tec.linutronix.de>
+        id S231205AbhDMKMj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Apr 2021 06:12:39 -0400
+Received: from mx2.veeam.com ([64.129.123.6]:51054 "EHLO mx2.veeam.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229753AbhDMKMh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Apr 2021 06:12:37 -0400
+Received: from mail.veeam.com (prgmbx01.amust.local [172.24.0.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx2.veeam.com (Postfix) with ESMTPS id 845C4413F8;
+        Tue, 13 Apr 2021 06:12:13 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com; s=mx2;
+        t=1618308733; bh=KVaunZlEMVWQnrc1yBLkhiLrCr2+c4AzQTndPC6rMPs=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To:From;
+        b=uXeiLc01lBdezX2KrGB/dDxAIYKre/2FhvFu52oL2yPz9EGMAiVbqh8sSkocX86K4
+         OL0HlOYy0TN6aH3z5WnJyGQf1OzXjWQoxQJJNbAdQnVBBVLWqk2CJ+IzaAznJJK1hV
+         moViM837AKvgiajPb0UuoPof6s/S9txs5wvioDdA=
+Received: from veeam.com (172.24.14.5) by prgmbx01.amust.local (172.24.0.171)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.721.2; Tue, 13 Apr 2021
+ 12:12:11 +0200
+Date:   Tue, 13 Apr 2021 13:12:06 +0300
+From:   Sergei Shtepa <sergei.shtepa@veeam.com>
+To:     Mike Snitzer <snitzer@redhat.com>
+CC:     Christoph Hellwig <hch@infradead.org>,
+        Hannes Reinecke <hare@suse.de>,
+        Alasdair Kergon <agk@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Pavel Tide <Pavel.TIde@veeam.com>
+Subject: Re: [PATCH v8 0/4] block device interposer
+Message-ID: <20210413101206.GA17754@veeam.com>
+References: <1617968884-15149-1-git-send-email-sergei.shtepa@veeam.com>
+ <20210409152355.GA15109@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <87fszvytv8.ffs@nanos.tec.linutronix.de>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0 cx=a_idp_f
-        a=gO82wUwQTSpaJfP49aMSow==:117 a=gO82wUwQTSpaJfP49aMSow==:17
-        a=kj9zAlcOel0A:10 a=3YhXtTcJ-WEA:10 a=7-415B0cAAAA:8
-        a=Ta7Pabei9qwIYMADUlkA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20210409152355.GA15109@redhat.com>
+X-Originating-IP: [172.24.14.5]
+X-ClientProxiedBy: prgmbx02.amust.local (172.24.0.172) To prgmbx01.amust.local
+ (172.24.0.171)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A29D2A50B59647461
+X-Veeam-MMEX: True
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 13, 2021 at 01:18:35AM +0200, Thomas Gleixner wrote:
-> Dave,
+The 04/09/2021 18:23, Mike Snitzer wrote:
+> On Fri, Apr 09 2021 at  7:48am -0400,
+> Sergei Shtepa <sergei.shtepa@veeam.com> wrote:
 > 
-> On Tue, Apr 13 2021 at 08:15, Dave Chinner wrote:
-> > On Mon, Apr 12, 2021 at 05:20:53PM +0200, Thomas Gleixner wrote:
-> >> On Wed, Apr 07 2021 at 07:22, Dave Chinner wrote:
-> >> > And, FWIW, I'm also aware of the problems that RT kernels have with
-> >> > the use of bit spinlocks and being unable to turn them into sleeping
-> >> > mutexes by preprocessor magic. I don't care about that either,
-> >> > because dentry cache...
-> >> 
-> >> In the dentry cache it's a non-issue.
-> >
-> > Incorrect.
+> > I think I'm ready to suggest the next version of block device interposer
+> > (blk_interposer). It allows to redirect bio requests to other block
+> > devices.
+> > 
+> > In this series of patches, I reviewed the process of attaching and
+> > detaching device mapper via blk_interposer.
+> > 
+> > Now the dm-target is attached to the interposed block device when the
+> > interposer dm-target is fully ready to accept requests, and the interposed
+> > block device queue is locked, and the file system on it is frozen.
+> > The detaching is also performed when the file system on the interposed
+> > block device is in a frozen state, the queue is locked, and the interposer
+> > dm-target is suspended.
+> > 
+> > To make it possible to lock the receipt of new bio requests without locking
+> > the processing of bio requests that the interposer creates, I had to change
+> > the submit_bio_noacct() function and add a lock. To minimize the impact of
+> > locking, I chose percpu_rw_sem. I tried to do without a new lock, but I'm
+> > afraid it's impossible.
+> > 
+> > Checking the operation of the interposer, I did not limit myself to
+> > a simple dm-linear. When I experimented with dm-era, I noticed that it
+> > accepts two block devices. Since Mike was against changing the logic in
+> > the dm-targets itself to support the interrupter, I decided to add the
+> > [interpose] option to the block device path.
+> > 
+> >  echo "0 ${DEV_SZ} era ${META} [interpose]${DEV} ${BLK_SZ}" | \
+> >  	dmsetup create dm-era --interpose
+> > 
+> > I believe this option can replace the DM_INTERPOSE_FLAG flag. Of course,
+> > we can assume that if the device cannot be opened with the FMODE_EXCL,
+> > then it is considered an interposed device, but it seems to me that
+> > algorithm is unsafe. I hope to get Mike's opinion on this.
+> > 
+> > I have successfully tried taking snapshots. But I ran into a problem
+> > when I removed origin-target:
+> > [   49.031156] ------------[ cut here ]------------
+> > [   49.031180] kernel BUG at block/bio.c:1476!
+> > [   49.031198] invalid opcode: 0000 [#1] SMP NOPTI
+> > [   49.031213] CPU: 9 PID: 636 Comm: dmsetup Tainted: G            E     5.12.0-rc6-ip+ #52
+> > [   49.031235] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+> > [   49.031257] RIP: 0010:bio_split+0x74/0x80
+> > [   49.031273] Code: 89 c7 e8 5f 56 03 00 41 8b 74 24 28 48 89 ef e8 12 ea ff ff f6 45 15 01 74 08 66 41 81 4c 24 14 00 01 4c 89 e0 5b 5d 41 5c c3 <0f> 0b 0f 0b 0f 0b 45 31 e4 eb ed 90 0f 1f 44 00 00 39 77 28 76 05
+> > [   49.031322] RSP: 0018:ffff9a6100993ab0 EFLAGS: 00010246
+> > [   49.031337] RAX: 0000000000000008 RBX: 0000000000000000 RCX: ffff8e26938f96d8
+> > [   49.031357] RDX: 0000000000000c00 RSI: 0000000000000000 RDI: ffff8e26937d1300
+> > [   49.031375] RBP: ffff8e2692ddc000 R08: 0000000000000000 R09: 0000000000000000
+> > [   49.031394] R10: ffff8e2692b1de00 R11: ffff8e2692b1de58 R12: ffff8e26937d1300
+> > [   49.031413] R13: ffff8e2692ddcd18 R14: ffff8e2691d22140 R15: ffff8e26937d1300
+> > [   49.031432] FS:  00007efffa6e7800(0000) GS:ffff8e269bc80000(0000) knlGS:0000000000000000
+> > [   49.031453] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   49.031470] CR2: 00007efffa96cda0 CR3: 0000000114bd0000 CR4: 00000000000506e0
+> > [   49.031490] Call Trace:
+> > [   49.031501]  dm_submit_bio+0x383/0x500 [dm_mod]
+> > [   49.031522]  submit_bio_noacct+0x370/0x770
+> > [   49.031537]  submit_bh_wbc+0x160/0x190
+> > [   49.031550]  __sync_dirty_buffer+0x65/0x130
+> > [   49.031564]  ext4_commit_super+0xbc/0x120 [ext4]
+> > [   49.031602]  ext4_freeze+0x54/0x80 [ext4]
+> > [   49.031631]  freeze_super+0xc8/0x160
+> > [   49.031643]  freeze_bdev+0xb2/0xc0
+> > [   49.031654]  lock_bdev_fs+0x1c/0x30 [dm_mod]
+> > [   49.031671]  __dm_suspend+0x2b9/0x3b0 [dm_mod]
+> > [   49.032095]  dm_suspend+0xed/0x160 [dm_mod]
+> > [   49.032496]  ? __find_device_hash_cell+0x5b/0x2a0 [dm_mod]
+> > [   49.032897]  ? remove_all+0x30/0x30 [dm_mod]
+> > [   49.033299]  dev_remove+0x4c/0x1c0 [dm_mod]
+> > [   49.033679]  ctl_ioctl+0x1a5/0x470 [dm_mod]
+> > [   49.034067]  dm_ctl_ioctl+0xa/0x10 [dm_mod]
+> > [   49.034432]  __x64_sys_ioctl+0x83/0xb0
+> > [   49.034785]  do_syscall_64+0x33/0x80
+> > [   49.035139]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> > When suspend is executed for origin-target before the interposer is
+> > being detached, in the origin_map() function the value of the
+> > o->split_binary variable is zero, since no snapshots were connected to it.
+> > I think that if no snapshots are connected, then it does not make sense
+> > to split the bio request into parts.
 > 
-> I'm impressed about your detailed knowledge of something you do not care
-> about in the first place.
+> The dm-snapshot code requires careful order of operations.  You say you
+> removed the origin target.. please show exactly what you did.  Your 4th
+> patch shouldn't be tied to this patchset. Can be dealt with
+> independently.
 
-There's a difference between "don't care because don't understand"
-and "don't care because I know how complex real-time is and I know I
-can't validate any code I write to be RT safe".
+To create a snapshot, the snapshot-origin from dm-snap must be connected to
+the device. I do it like this:
+ DEV=/dev/nvme0n1p2
+ DEV_SZ=$(blockdev --getsz ${DEV})
+ echo "0 ${DEV_SZ} snapshot-origin [interpose]${DEV}" | \
+ 	dmsetup create dm-origin --interpose
 
-Indeed, just because I work on filesystems now doesn't mean I don't
-know what real-time is - I spent the best part of a decade as an
-industrial control engineer building systems that provided water and
-electricity to populations of millions of people before I started
-working on filesystems....
+Next, I create the snapshot itself and mount it:
+ META=/dev/nvme0n1p1
+ ORIGIN=/dev/mapper/dm-origin
+ echo "0 ${DEV_SZ} snapshot ${ORIGIN} ${META} N 8" | \
+ 	dmsetup create dm-snapshot
+ mount /dev/mapper/dm-snapshot /mnt/snap
 
-> >> RT does not have a problem with bit spinlocks per se, it depends on how
-> >> they are used and what nests inside. Most of them are just kept as bit
-> >> spinlocks because the lock held, and therefore preempt disabled times
-> >> are small and no other on RT conflicting operations happen inside.
-> >> 
-> >> In the case at hand this is going to be a problem because inode->i_lock
-> >> nests inside the bit spinlock and we can't make inode->i_lock a raw
-> >> spinlock because it protects way heavier weight code pathes as well.
-> >
-> > Yes, that's exactly the "problem" I'm refering to. And I don't care,
-> > precisely because, well, dentry cache....
-> >
-> > THat is, the dcache calls wake_up_all() from under the
-> > hlist_bl_lock() in __d_lookup_done(). That ends up in
-> > __wake_up_common_lock() which takes a spin lock embedded inside a
-> > wait_queue_head.  That's not a raw spinlock, either, so we already
-> > have this "spinlock inside bit lock" situation with the dcache usage
-> > of hlist_bl.
+Releasing the snapshot:
+ umount /mnt/snap
+ dmsetup remove dm-snapshot
+
+Remove snapshot-origin:
+ dmsetup remove dm-origin
+
+I think it's hard to make a mistake here, although the documentation describes
+creating a snapshot using lvcreate, not dmsetup.
+
+As for the fourth patch - I agree - this should be the next step, after the
+idea of the interposer is accepted.
+
 > 
-> Sure, but you are missing that RT solves that by substituting the
-> wait_queue with a swait_queue, which does not suffer from that. But that
-> can't be done for the inode::i_lock case for various reasons.
-
-I didn't know about that specific forklift replacement. But, really
-that simply adds weight to my comment below....
-
-> > FYI, this dentry cache behaviour was added to the dentry cache in
-> > 2016 by commit d9171b934526 ("parallel lookups machinery, part 4
-> > (and last)"), so it's not like it's a new thing, either.
+> > Changes summary for this patchset v7:
+> >   * The attaching and detaching to interposed device moved to
+> >     __dm_suspend() and __dm_resume() functions.
 > 
-> Really? I wasn't aware of that. Thanks for the education.
+> Why? Those hooks are inherently more constrained.  And in the case of
+> resume, failure is not an option.
 > 
-> > If you want to make hlist_bl RT safe, then re-implement it behind
-> > the scenes for RT enabled kernels. All it takes is more memory
-> > usage for the hash table + locks, but that's something that non-RT
-> > people should not be burdened with caring about....
+> >   * Redesigned th submit_bio_noacct() function and added a lock for the
+> >     block device interposer.
+> >   * Adds [interpose] option to block device patch in dm table.
+> 
+> I'm struggling to see why you need "[interpose]" (never mind that this
+> idea of device options is a new construct): what are the implications?
+> Are you saying that a table will have N devices with only a subset that
+> are interposed?
 
-... because if RT devs are willing to forklift replace core kernel
-functionality like wait queues to provide RT kernels with a
-completely different locking schema to vanilla kernels, then
-slightly modifying the hlist-bl structure in a RT compatible way is
-child's play....
+I'm analyzing how dmsetup works with strace. I get something like this
+diagram:
+ ioctl(3, DM_VERSION, ...
+ ...
+ read(0, "0 14675935 snapshot-origin [inte"..., 4096) = 53
+ ...
+ ioctl(3, DM_DEV_CREATE, ...
+ ioctl(3, DM_TABLE_LOAD, ...
+ ioctl(3, DM_DEV_SUSPEND, ...
 
-> I'm well aware that anything outside of @fromorbit universe is not
-> interesting to you, but I neverless want to take the opportunity to
-> express my appreciation for your truly caring and collaborative attitude
-> versus interests of others who unfortunately do no share that universe.
+ioctl DM_DEV_SUSPEND without the DM_SUSPEND_FLAG flag, which means that the
+do_resume function is started. It turns out that only after the do_resume
+DM target works, the target becomes ready to work.
 
-I'm being realistic. I dont' have the time or mental bandwidth to
-solve RT kernel problems. I don't have any way to test RT kernels,
-and lockdep is a crock of shit for validating RT locking on vanilla
-kernels because of the forklift upgrade games like the above that
-give the RT kernel a different locking schema.
+Before that, we cannot attach the interposer, as the bio will not be
+successfully processed by the interposer. It turns out that it is at the
+final stage of initialization that we can safely connect the interposer.
+Note that a special DMF_INTERPOSER_ATTACHED flag was provided, this allows
+to connect the interposer only at the first resume.
 
-Because I have sufficient knowledge of the real-time game, I know
-*I'm not an RT expert* these days. I know that I don't know all the
-games it plays, nor do I have the time (or patience) to learn about
-all of them, nor the resources or knowledge to test whether the code
-I write follows all the rules I don't know about, whether I
-introduced interrupt hold-offs longer than 50us, etc.
+When removing a DM target, there is a requirement that the DM target is closed
+and not used by anyone. This ensures that no new bio requests to the DM target
+will be received. But in the case of the interposer, this is not enough.
+We need to lock the queue of the original block device and wait for all
+previously created bio requests to complete. To do this, run dm_suspend() with
+the DM_SUSPEND_DETACH_IP_FLAG flag.
 
-IOWs, I chose not to care about RT because I know I don't know
-enough about it to write solid, well tested RT compatible kernel
-code. I can write untested shit as well as any other programmer, but
-I have much higher professional standards than that.
+If we look at the do_resume() function, it can finish with an error code for
+various malfunctions and their processing is provided.
 
-And I also know there are paid professionals who are RT experts who
-are supposed to take care of this stuff so random kernel devs like
-myself *don't need to care about the details of how RT kernels do
-their magic*.
+> 
+> Just feels very awkward but I'll try to keep an open mind until I can
+> better understand.
 
-So for solving the inode cache scalability issue with RT in mind,
-we're left with these choices:
+Ok. Let's look at a simple example. We need to attach the dm-era using the
+interposer. This target uses two devices ${DEV} and ${META}.
+ echo "0 `blockdev --getsz ${DEV}` era ${META} ${DEV} 128" | \
+ 	dmsetup create dm-era --interpose
 
-a) increase memory consumption and cacheline misses for everyone by
-   adding a spinlock per hash chain so that RT kernels can do their
-   substitution magic and make the memory footprint and scalability
-   for RT kernels worse
+The ${DEV} device needs to be attached using a interposer, while ${META} is
+used to output the result of the module and must be opened in FMODE_EXCL mode.
 
-b) convert the inode hash table to something different (rhashtable,
-   radix tree, Xarray, etc) that is more scalable and more "RT
-   friendly".
+It turns out that only the dm-target itself depends on which of the devices
+can be connected via the interposer, and which can not. The [interpose] option
+allows to explicitly specify this.
 
-c) have RT kernel substitute hlist-bl with hlist_head and a spinlock
-   so that it all works correctly on RT kernels and only RT kernels
-   take the memory footprint and cacheline miss penalties...
+I don't really like the design with the [interpret] option either.
+I think it's best to change the dm_get_device() call and explicitly specify
+which device to open via the interposer. It depends on the DM target itself
+whether it supports connection via the interposer and for which devices.
+This would make the code more visual. But to do this, we will need to change
+one line in each existing dm_target. You have already spoken out against
+a similar decision. But maybe can you look at this solution again?
+It will look something like this:
 
-We rejected a) for the dentry hash table, so it is not an appropriate
-soltion for the inode hash table for the same reasons.
+diff --git a/drivers/md/dm-era-target.c b/drivers/md/dm-era-target.c
+index d9ac7372108c..461fd7656751 100644
+--- a/drivers/md/dm-era-target.c
++++ b/drivers/md/dm-era-target.c
+@@ -1455,14 +1455,16 @@ static int era_ctr(struct dm_target *ti, unsigned argc, char **argv)
 
-There is a lot of downside to b). Firstly there's the time and
-resources needed for experimentation to find an appropriate
-algorithm for both scalability and RT. Then all the insert, removal
-and search facilities will have to be rewritten, along with all the
-subtlies like "fake hashing" to allow fielsysetms to provide their
-own inode caches.  The changes in behaviour and, potentially, API
-semantics will greatly increase the risk of regressions and adverse
-behaviour on both vanilla and RT kernels compared to option a) or
-c).
+ 	era->ti = ti;
 
-It is clear that option c) is of minimal risk to vanilla kernels,
-and low risk to RT kernels. It's pretty straight forward to do for
-both configs, and only the RT kernels take the memory footprint
-penalty.
+-	r = dm_get_device(ti, argv[0], FMODE_READ | FMODE_WRITE, &era->metadata_dev);
++	r = dm_get_device(ti, argv[0], FMODE_READ | FMODE_WRITE, false, &era->metadata_dev);
+ 	if (r) {
+ 		ti->error = "Error opening metadata device";
+ 		era_destroy(era);
+ 		return -EINVAL;
+ 	}
 
-So a technical analysis points to c) being the most reasonable
-resolution of the problem.
+-	r = dm_get_device(ti, argv[1], FMODE_READ | FMODE_WRITE, &era->origin_dev);
++	r = dm_get_device(ti, argv[1], FMODE_READ | FMODE_WRITE, ti->table->md->interpose, &era->origin_dev);
+ 	if (r) {
+ 		ti->error = "Error opening data device";
+ 		era_destroy(era);
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index e5f0f1703c5d..dc08e9b0c2fc 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -327,14 +327,14 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
+  * it is accessed concurrently.
+  */
+ static int upgrade_mode(struct dm_dev_internal *dd, fmode_t new_mode,
+-			struct mapped_device *md)
++			bool interpose, struct mapped_device *md)
+ {
+ 	int r;
+ 	struct dm_dev *old_dev, *new_dev;
 
-Making sure RT kernels work correctly is your job, Thomas, not mine.
-Converting hlist-bl to a rt compatible structure should be pretty
-simple:
+ 	old_dev = dd->dm_dev;
 
+-	r = dm_get_table_device(md, dd->dm_dev->bdev->bd_dev,
++	r = dm_get_table_device(md, dd->dm_dev->bdev->bd_dev, interpose,
+ 				dd->dm_dev->mode | new_mode, &new_dev);
+ 	if (r)
+ 		return r;
+@@ -363,7 +363,7 @@ EXPORT_SYMBOL_GPL(dm_get_dev_t);
+  * it's already present.
+  */
+ int dm_get_device(struct dm_target *ti, const char *path, fmode_t mode,
+-		  struct dm_dev **result)
++		  bool interpose, struct dm_dev **result)
+ {
+ 	int r;
+ 	dev_t dev;
+@@ -391,7 +391,7 @@ int dm_get_device(struct dm_target *ti, const char *path, fmode_t mode,
+ 		if (!dd)
+ 			return -ENOMEM;
 
-struct hlist_bl_head {
-        struct hlist_bl_node *first;
-+#idef CONFIG_RT
-+	spinlock_t lock;
-+#endif
-};
+-		if ((r = dm_get_table_device(t->md, dev, mode, &dd->dm_dev))) {
++		if ((r = dm_get_table_device(t->md, dev, mode, interpose, &dd->dm_dev))) {
+ 			kfree(dd);
+ 			return r;
+ 		}
+@@ -401,7 +401,7 @@ int dm_get_device(struct dm_target *ti, const char *path, fmode_t mode,
+ 		goto out;
 
-.....
-static inline void hlist_bl_lock(struct hlist_bl_head *b)
-{
-+#ifdef CONFIG_RT
-+	spin_lock(&b->lock);
-+#else
-	bit_spin_lock(0, (unsigned long *)b);
-+#endif
-}
+ 	} else if (dd->dm_dev->mode != (mode | dd->dm_dev->mode)) {
+-		r = upgrade_mode(dd, mode, t->md);
++		r = upgrade_mode(dd, mode, interpose, t->md);
+ 		if (r)
+ 			return r;
+ 	}
+> 
+> >   * Fix origin_map() then o->split_binary value is zero.
+> 
+> Overall this effort, while appreciated in general, is getting more and
+> more muddled -- you're having to sprinkle obscure code all over DM. And
+> your patch headers are severely lacking for a v8 patch
+> submission. Terse bullet points don't paint a very comprehensive
+> picture. Please detail how a user is expected to drive this (either in
+> patch headers and/or some Documentation file).
+> 
+> Mike
+> 
 
-static inline void hlist_bl_unlock(struct hlist_bl_head *b)
-{
-+#ifdef CONFIG_RT
-+	spin_unlock(&b->lock);
-+#else
-	bit_spin_lock(0, (unsigned long *)b);
-+#endif
-}
+Mike, thank you for appreciating my efforts. I'm getting deeper and deeper
+into the DM code and trying to add new functionality to it in a harmonious way.
+When discussing the previous patch, you were quite right to say that the
+connection and disconnection of the interposer was not safe, although the code
+looked simpler.
+This time I tried to understand in detail the processes of creating and
+removing DM targets. I tried to write the code as simple as possible and added
+comments to make it as easy as possible to understand.
+I think it would be great if you would indicate which code you found
+"more muddled". I will be happy to rewrite it or give additional comments.
 
-So if you want to run up a patch that converts hlist-bl to be rt
-compatible and test it on your RT test farm and send it to me, then
-I'll happily include it in my patchset....
+How a user is expected to drive this - I'll try to describe it in this email.
+If this text suits you, I will create documentation based on it in the future.
+At the current stage, I would not want to distract the people who are engaged
+in checking the documentation, so as not to throw their work into the trash bin
+as it happened with the documentation for the v4 patch.
 
-Cheers,
+===================
+DM & blk_interposer
+===================
 
-Dave.
+Usually LVM should be used for new devices. The administrator have to create
+logical volumes for the system partition when installing the operating system.
+For a running system with partitioned disk space and mounted file systems,
+it is quite difficult to reconfigure to logical volumes. As a result, all
+the features that Device Mapper provides are not available for non-LVM systems.
+This problem is partially solved by the interposer functionality, which uses
+the kernel's blk_interposer.
+
+Blk_interposer it allows to redirect bio requests from ordinal block devices
+to DM target. It allows to attach interposer to original device "on the fly"
+without stopping the execution of users programs.
+
+Interposer for dm-flakey
+========================
+In a classic dm-flakey application, the /dev/sda1 device must be unmounted.
+We have to create a new block device /dev/mapper/test and mount it. ::
+ echo "0 `blockdev --getsz /dev/sda1` flakey /dev/sda1 0 1 3" | \
+ 	dmsetup create test
+ mount /dev/mapper/test /mnt/test
+
+The relationship diagram will look like this:
+  +-------------+
+  | file system |
+  +-------------+
+        ||
+        \/
+  +------------------+
+  | /dev/mapper/test |
+  +------------------+
+        ||
+        \/
+  +-------------+
+  | /dev/sda1   |
+  +-------------+
+
+blk_interposer allows to connect the DM target to a device that is already
+mounted. Adding the --interpose flag to the command::
+ echo "0 `blockdev --getsz /dev/sda1` flakey /dev/sda1 0 1 3" | \
+     dmsetup create test --interpose
+
+Now the relationship diagram will look like this:
+  +-------------+
+  | file system |
+  +-------------+
+        ||
+        \/
+  +----------------+
+  | blk_interposer |
+  +----------------+
+        ||
+        \/
+  +--------------+
+  | /dev/mapper/ |
+  | test         |
+  +--------------+
+        ||
+        \/
+  +-------------+
+  | /dev/sda1   |
+  +-------------+
+
+At the same time, we do not need to remount the file system. The new DM target
+was added to the stack "on the fly" unnoticed by the user-space environment.
+
+Interposer for dm-snap
+======================
+
+Suppose we have a file system mounted on the block device /dev/sda1::
+  +-------------+
+  | file system |
+  +-------------+
+        ||
+        \/
+  +-------------+
+  | /dev/sda1   |
+  +-------------+
+
+To create a snapshot of a block device, we need to connect the dm-snap to this
+device. To do this, use the --interpose flag when creating snapshot-origin.
+ echo "0 `blockdev --getsz /dev/sda1` snapshot-origin /dev/sda1" | \
+ 	dmsetup create origin --interpose
+
+In this case, thanks to blk_interposer, all bio requests from the file system
+will be redirected to the new device /dev/mapper/origin.
+Diagram ::
+
+  +-------------+
+  | file system |
+  +-------------+
+        ||
+        \/
+ +----------------+
+ | blk_interposer |
+ +----------------+
+        ||
+        \/
+ +--------------+
+ | /dev/mapper/ |
+ | origin       |
+ +--------------+
+        || 
+        \/
+  +-----------+
+  | /dev/sda1 |
+  +-----------+
+
+To create a snapshot, just use the new device /dev/mapper/origin:
+ echo "0 `blockdev --getsz /dev/sda1` snapshot /dev/mapper/origin ${COW_DEVICE} N 8" | \
+ 	dmesetup create snapshot
+
+Diagram::
+  +-------------+       +--------------+
+  | file system |       | backup agent |
+  +-------------+       +--------------+
+        ||                    ||
+        \/                    ||
+  +----------------+          ||
+  | blk_interposer |          ||
+  +----------------+          ||
+        ||                    ||
+        \/                    \/
+  +--------------+     +---------------+
+  | /dev/mapper/ | <=> | /dev/mapper/  |
+  | origin       |     | snapshot      |
+  +--------------+     +---------------+
+        ||                    ||
+        \/                    \/
+  +-----------+        +---------------+
+  | /dev/sda1 |        | ${COW_DEVICE} |
+  +-----------+        +---------------+
+
+The snapshot device on the /dev/mapper/snapshot device is now available for
+mounting or backup.
+
 -- 
-Dave Chinner
-david@fromorbit.com
+Sergei Shtepa
+Veeam Software developer.
+
