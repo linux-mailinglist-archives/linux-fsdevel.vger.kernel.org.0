@@ -2,144 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1308335E92E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 00:45:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DB3C35E933
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 00:45:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348643AbhDMWp3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Apr 2021 18:45:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54420 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239254AbhDMWp2 (ORCPT
+        id S1348641AbhDMWp4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Apr 2021 18:45:56 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:57666 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1348605AbhDMWpz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Apr 2021 18:45:28 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F612C061574;
-        Tue, 13 Apr 2021 15:45:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=RAw2qFQbXd7DiL7NeB24qBmFpk5WEU6Gl+fX1sTMH9Q=; b=goaoSHSeWGsUmwrE7A5ZucTAPe
-        I3m7d4EPs1uSCkvSX3pXTK86WTdllKHtVjvzeWJB6Cj2q4Q2dMPWr4PTbm+MKvVq9indhVry3Uxqk
-        z0dz6iZjc9esbXxMbYdzkl8AXQvs17JCkgToIQ5bsf4PQMEMPDIx9FUj7fXrauQWVihGlM3PmQDjC
-        RVBItRJnOiuVAS4Fkrew5UZKqwv7DSIxORHxHoxM88qWrsGF1NFJSttbsO2WuGRHRJDfCYCKuR6D3
-        puA9vpSK1KhL4pXB+Hs0GmUHQFpszZ1Ea7dWDaqaAx9sIGX4fljKf/4/wvIBfTm13UWiMHt/N5cCn
-        Xz0iBUVg==;
-Received: from [2601:1c0:6280:3f0::e0e1]
-        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lWRln-006LQJ-UH; Tue, 13 Apr 2021 22:44:39 +0000
-Subject: Re: mmotm 2021-04-11-20-47 uploaded (bpf: xsk.c)
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
-        mhocko@suse.cz, Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Tue, 13 Apr 2021 18:45:55 -0400
+Received: from dread.disaster.area (pa49-181-239-12.pa.nsw.optusnet.com.au [49.181.239.12])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id AFDEE82929A;
+        Wed, 14 Apr 2021 08:45:32 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1lWRml-006j4Y-5Z; Wed, 14 Apr 2021 08:45:31 +1000
+Date:   Wed, 14 Apr 2021 08:45:31 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Ted Tso <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Eric Whitney <enwlinux@gmail.com>,
         linux-fsdevel@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        mm-commits@vger.kernel.org, bpf <bpf@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>
-References: <20210412034813.EK9k9%akpm@linux-foundation.org>
- <7208c4e4-8ff1-7e0d-50ad-6b0aae872a6d@infradead.org>
- <CAEf4BzZBHUX=8=FYwq0bp6GFkOTxCbtiJN31SSoWCsMyh7_hMg@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <034959c7-c70f-4d1b-0fe2-dcc00075807f@infradead.org>
-Date:   Tue, 13 Apr 2021 15:44:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        "Darrick J . Wong" <djwong@kernel.org>
+Subject: Re: [PATCH 2/3] ext4: Fix occasional generic/418 failure
+Message-ID: <20210413224531.GE63242@dread.disaster.area>
+References: <20210412102333.2676-1-jack@suse.cz>
+ <20210412102333.2676-3-jack@suse.cz>
+ <20210412215024.GP1990290@dread.disaster.area>
+ <20210413091122.GA15752@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <CAEf4BzZBHUX=8=FYwq0bp6GFkOTxCbtiJN31SSoWCsMyh7_hMg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210413091122.GA15752@quack2.suse.cz>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_f
+        a=gO82wUwQTSpaJfP49aMSow==:117 a=gO82wUwQTSpaJfP49aMSow==:17
+        a=kj9zAlcOel0A:10 a=3YhXtTcJ-WEA:10 a=7-415B0cAAAA:8
+        a=UePYkyNX-BPF6UfQcDwA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/13/21 3:18 PM, Andrii Nakryiko wrote:
-> On Mon, Apr 12, 2021 at 9:38 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->> On 4/11/21 8:48 PM, akpm@linux-foundation.org wrote:
->>> The mm-of-the-moment snapshot 2021-04-11-20-47 has been uploaded to
->>>
->>>    https://www.ozlabs.org/~akpm/mmotm/
->>>
->>> mmotm-readme.txt says
->>>
->>> README for mm-of-the-moment:
->>>
->>> https://www.ozlabs.org/~akpm/mmotm/
->>>
->>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>> more than once a week.
->>>
->>> You will need quilt to apply these patches to the latest Linus release (5.x
->>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
->>> https://ozlabs.org/~akpm/mmotm/series
->>>
->>> The file broken-out.tar.gz contains two datestamp files: .DATE and
->>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
->>> followed by the base kernel version against which this patch series is to
->>> be applied.
->>>
->>> This tree is partially included in linux-next.  To see which patches are
->>> included in linux-next, consult the `series' file.  Only the patches
->>> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
->>> linux-next.
->>>
->>>
->>> A full copy of the full kernel tree with the linux-next and mmotm patches
->>> already applied is available through git within an hour of the mmotm
->>> release.  Individual mmotm releases are tagged.  The master branch always
->>> points to the latest release, so it's constantly rebasing.
->>>
->>>       https://github.com/hnaz/linux-mm
->>>
->>> The directory https://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
->>> contains daily snapshots of the -mm tree.  It is updated more frequently
->>> than mmotm, and is untested.
->>>
->>> A git copy of this tree is also available at
->>>
->>>       https://github.com/hnaz/linux-mm
->>
->> on x86_64:
->>
->> xsk.c: In function ‘xsk_socket__create_shared’:
->> xsk.c:1027:7: error: redeclaration of ‘unmap’ with no linkage
->>   bool unmap = umem->fill_save != fill;
->>        ^~~~~
->> xsk.c:1020:7: note: previous declaration of ‘unmap’ was here
->>   bool unmap, rx_setup_done = false, tx_setup_done = false;
->>        ^~~~~
->> xsk.c:1028:7: error: redefinition of ‘rx_setup_done’
->>   bool rx_setup_done = false, tx_setup_done = false;
->>        ^~~~~~~~~~~~~
->> xsk.c:1020:14: note: previous definition of ‘rx_setup_done’ was here
->>   bool unmap, rx_setup_done = false, tx_setup_done = false;
->>               ^~~~~~~~~~~~~
->> xsk.c:1028:30: error: redefinition of ‘tx_setup_done’
->>   bool rx_setup_done = false, tx_setup_done = false;
->>                               ^~~~~~~~~~~~~
->> xsk.c:1020:37: note: previous definition of ‘tx_setup_done’ was here
->>   bool unmap, rx_setup_done = false, tx_setup_done = false;
->>                                      ^~~~~~~~~~~~~
->>
->>
->> Full randconfig file is attached.
+On Tue, Apr 13, 2021 at 11:11:22AM +0200, Jan Kara wrote:
+> On Tue 13-04-21 07:50:24, Dave Chinner wrote:
+> > On Mon, Apr 12, 2021 at 12:23:32PM +0200, Jan Kara wrote:
+> > > Eric has noticed that after pagecache read rework, generic/418 is
+> > > occasionally failing for ext4 when blocksize < pagesize. In fact, the
+> > > pagecache rework just made hard to hit race in ext4 more likely. The
+> > > problem is that since ext4 conversion of direct IO writes to iomap
+> > > framework (commit 378f32bab371), we update inode size after direct IO
+> > > write only after invalidating page cache. Thus if buffered read sneaks
+> > > at unfortunate moment like:
+> > > 
+> > > CPU1 - write at offset 1k                       CPU2 - read from offset 0
+> > > iomap_dio_rw(..., IOMAP_DIO_FORCE_WAIT);
+> > >                                                 ext4_readpage();
+> > > ext4_handle_inode_extension()
+> > > 
+> > > the read will zero out tail of the page as it still sees smaller inode
+> > > size and thus page cache becomes inconsistent with on-disk contents with
+> > > all the consequences.
+> > > 
+> > > Fix the problem by moving inode size update into end_io handler which
+> > > gets called before the page cache is invalidated.
+> > 
+> > Confused.
+> > 
+> > This moves all the inode extension stuff into the completion
+> > handler, when all that really needs to be done is extending
+> > inode->i_size to tell the world there is data up to where the
+> > IO completed. Actually removing the inode from the orphan list
+> > does not need to be done in the IO completion callback, because...
+> > 
+> > >  	if (ilock_shared)
+> > >  		iomap_ops = &ext4_iomap_overwrite_ops;
+> > > -	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
+> > > -			   (unaligned_io || extend) ? IOMAP_DIO_FORCE_WAIT : 0);
+> > > -	if (ret == -ENOTBLK)
+> > > -		ret = 0;
+> > > -
+> > >  	if (extend)
+> > > -		ret = ext4_handle_inode_extension(inode, offset, ret, count);
+> > > +		dio_ops = &ext4_dio_extending_write_ops;
+> > >  
+> > > +	ret = iomap_dio_rw(iocb, from, iomap_ops, dio_ops,
+> > > +			   (extend || unaligned_io) ? IOMAP_DIO_FORCE_WAIT : 0);
+> >                             ^^^^^^                    ^^^^^^^^^^^^^^^^^^^ 
+> > 
+> > .... if we are doing an extending write, we force DIO to complete
+> > before returning. Hence even AIO will block here on an extending
+> > write, and hence we can -always- do the correct post-IO completion
+> > orphan list cleanup here because we know a) the original IO size and
+> > b) the amount of data that was actually written.
+> > 
+> > Hence all that remains is closing the buffered read vs invalidation
+> > race. All this requires is for the dio write completion to behave
+> > like XFS where it just does the inode->i_size update for extending
+> > writes. THis means the size is updated before the invalidation, and
+> > hence any read that occurs after the invalidation but before the
+> > post-eof blocks have been removed will see the correct size and read
+> > the tail page(s) correctly. This closes the race window, and the
+> > caller can still handle the post-eof block cleanup as it does now.
+> > 
+> > Hence I don't see any need for changing the iomap infrastructure to
+> > solve this problem. This seems like the obvious solution to me, so
+> > what am I missing?
 > 
-> What SHA are you on? I checked that github tree, the source code there
-> doesn't correspond to the errors here (i.e., there is no unmap
-> redefinition on lines 1020 and 1027). Could it be some local merge
-> conflict?
+> All that you write above is correct. The missing piece is: If everything
+> succeeded and all the cleanup we need is removing inode from the orphan
+> list (common case), we want to piggyback that orphan list removal into the
+> same transaction handle as the update of the inode size. This is just a
+> performance thing, you are absolutely right we could also do the orphan
+> cleanup unconditionally in ext4_dio_write_iter() and thus avoid any changes
+> to the iomap framework.
 
-Yes, it seems to have been a merge problem in mmotm 2021-04-11.
-It is fixed/OK in today's mmotm 2021-04013.
+Doesn't ext4, like XFS, keep two copies of the inode size? One for
+the on-disk size and one for the in-memory size?
 
-thanks.
+/me looks...
 
+Yeah, there's ei->i_disksize that reflects the on-disk size.
+
+And I note that the first thing that ext4_handle_inode_extension()
+is already checking that the write is extending past the current
+on-disk inode size before running the extension transaction.
+
+The page cache only cares about the inode->i_size value, not the
+ei->i_disksize value, so you can update them independently and still
+have things work correctly. That's what XFS does in
+xfs_dio_write_end_io - it updates the in-memory inode->i_size, then
+runs a transaction to atomically update the inode on-disk inode
+size. Updating the VFS inode size first protects against buffered
+read races while updating the on-disk size...
+
+So for ext4, the two separate size updates don't need to be done at
+the same time - you have all the state you need in the ext4 dio
+write path to extend the on-disk file size on successful extending
+write, and it is not dependent in any way on the current in-memory
+VFS inode size that you'd update in the ->end_io callback....
+
+> OK, now that I write about this, maybe I was just too hung up on the
+> performance improvement. Probably a better way forward is that I just fix
+> the data corruption bug only inside ext4 (that will be also much easier to
+> backport) and then submit the performance improvement modifying iomap if I
+> can actually get performance data justifying it. Thanks for poking into
+> this :)
+
+Sounds like a good plan :)
+
+Cheers,
+
+Dave.
 -- 
-~Randy
-
+Dave Chinner
+david@fromorbit.com
