@@ -2,78 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D6B635D52A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Apr 2021 04:14:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8D4F35D5FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Apr 2021 05:38:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241002AbhDMCOj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Apr 2021 22:14:39 -0400
-Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25304 "EHLO
-        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239254AbhDMCOj (ORCPT
+        id S242030AbhDMDfk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Apr 2021 23:35:40 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:21663 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237043AbhDMDfj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Apr 2021 22:14:39 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1618280047; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=T4MaCSudNEtndU8u98W1zkmY6SPQiGwHtzV8gpCUO7oEgwrOn41LAAASvnQoorPJjO405H5G2Eezi3cen3+KF5Tb5XsUE5sVVeyWLKmk+4vM+8Ht1OlbyCb/HnbB7ETegB3IYPk+VbkiSPRgkavdrmatfpkZk4HNkUgYZprBnlI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1618280047; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=QfEE3GeQ2y8jkajBXmU9OhellyZGKOuAfHuTC8ZUNd0=; 
-        b=Sjn+x9kM3fJ82C9V+1dA/t2ZOc4q7yP23ApoZbMmjFDMZxdSnBPhhRXRqFYka3RevplTEcselluOmNxx682MvSS8bg9xeWM9R8n1f+GJSlIoUQTmIx+HIPkoTxB10dFA+Cxm0BgCBfyOJ/m/3K5n6kJp7xm4Dtp3xS6fl6JukoA=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1618280047;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=QfEE3GeQ2y8jkajBXmU9OhellyZGKOuAfHuTC8ZUNd0=;
-        b=ZMPIyw3rYvRGao8v9OmNpnTWrgjoWmfDyDcP8j7IfUVodwZKhRK1juAzNaEMLtPN
-        3blKsudY632CfWZQVtsy/mHKP2ZcD0eWzUyq5PhoPmDJTgbEuv9m+Zg/Vn6OzrvvYeI
-        TYKTzZk+tTsNj3aVYsrA78djZV5PoLCI7saeEvnI=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1618280044464418.17248206147053; Tue, 13 Apr 2021 10:14:04 +0800 (CST)
-Date:   Tue, 13 Apr 2021 10:14:04 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "Miklos Szeredi" <miklos@szeredi.hu>
-Cc:     "Jan Kara" <jack@suse.cz>, "Amir Goldstein" <amir73il@gmail.com>,
-        "overlayfs" <linux-unionfs@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>
-Message-ID: <178c901d7ad.fdc7d65c21509.6849935952336944935@mykernel.net>
-In-Reply-To: <CAJfpegtpD5012YQsmFEbkj__x52N4QrV0jSi=7iZtREqVf3tcA@mail.gmail.com>
-References: <20201113065555.147276-1-cgxu519@mykernel.net> <20201113065555.147276-8-cgxu519@mykernel.net> <CAJfpegtpD5012YQsmFEbkj__x52N4QrV0jSi=7iZtREqVf3tcA@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 7/9] ovl: cache dirty overlayfs' inode
+        Mon, 12 Apr 2021 23:35:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618284919;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FrQIYAVK8VmlMqiK14ZxNTeIpIVDPpOHzlb01A1fM1I=;
+        b=M7V+8cEAPeJdnUd3KStz3/TGskkLD3FXnT17TNEO3iyHUctL/IukRVmZ2gYQV9IDo7tBYh
+        h81JYpvr2XDWlyQ9XC4sOh5eJ6Fc9kOsZE3rSy/fQhTuZ8ZzRJxr4Rqm06aMiMHZR3MI93
+        Xquq/L+hcVa50rMLB3ATxpZTbkb/TGs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-599-Y3jfzZ-mOiCDL_3yhayrxg-1; Mon, 12 Apr 2021 23:35:18 -0400
+X-MC-Unique: Y3jfzZ-mOiCDL_3yhayrxg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E156A107ACE6;
+        Tue, 13 Apr 2021 03:35:15 +0000 (UTC)
+Received: from wangxiaodeMacBook-Air.local (ovpn-13-128.pek2.redhat.com [10.72.13.128])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B514F19D61;
+        Tue, 13 Apr 2021 03:35:01 +0000 (UTC)
+Subject: Re: [PATCH v6 09/10] vduse: Introduce VDUSE - vDPA Device in
+ Userspace
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20210331080519.172-1-xieyongji@bytedance.com>
+ <20210331080519.172-10-xieyongji@bytedance.com>
+ <c817178a-2ac8-bf93-1ed3-528579c657a3@redhat.com>
+ <CACycT3v_KFQXoxRbEj8c0Ve6iKn9RbibtBDgBFs=rf0ZOmTBBQ@mail.gmail.com>
+ <091dde74-449b-385c-0ec9-11e4847c6c4c@redhat.com>
+ <CACycT3vwATp4+Ao0fjuyeeLQN+xHH=dXF+JUyuitkn4k8hELnA@mail.gmail.com>
+ <dc9a90dd-4f86-988c-c1b5-ac606ce5e14b@redhat.com>
+ <CACycT3vxO21Yt6+px2c2Q8DONNUNehdo2Vez_RKQCKe76CM2TA@mail.gmail.com>
+ <0f386dfe-45c9-5609-55f7-b8ab2a4abf5e@redhat.com>
+ <CACycT3vbDhUKM0OX-zo02go09gh2+EEdyZ_YQuz8PXzo3EngXw@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <a85c0a66-ad7f-a344-f8ed-363355f5e283@redhat.com>
+Date:   Tue, 13 Apr 2021 11:35:00 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
+In-Reply-To: <CACycT3vbDhUKM0OX-zo02go09gh2+EEdyZ_YQuz8PXzo3EngXw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=94, 2021-04-09 21:50:35 Miklos Sze=
-redi <miklos@szeredi.hu> =E6=92=B0=E5=86=99 ----
- > On Fri, Nov 13, 2020 at 7:57 AM Chengguang Xu <cgxu519@mykernel.net> wro=
-te:
- > >
- > > Now drop overlayfs' inode will sync dirty data,
- > > so we change to only drop clean inode.
- >=20
- > I don't understand what happens here.  Please add more explanation.
 
-In iput_final(), clean overlayfs inode will directly drop as the same as be=
-fore,
-dirty overlayfs inode will keep in the cache to wait writeback to sync dirt=
-y data
-and then add to lru list to wait reclaim.
+在 2021/4/12 下午5:59, Yongji Xie 写道:
+> On Mon, Apr 12, 2021 at 5:37 PM Jason Wang <jasowang@redhat.com> wrote:
+>>
+>> 在 2021/4/12 下午4:02, Yongji Xie 写道:
+>>> On Mon, Apr 12, 2021 at 3:16 PM Jason Wang <jasowang@redhat.com> wrote:
+>>>> 在 2021/4/9 下午4:02, Yongji Xie 写道:
+>>>>>>>>> +};
+>>>>>>>>> +
+>>>>>>>>> +struct vduse_dev_config_data {
+>>>>>>>>> +     __u32 offset; /* offset from the beginning of config space */
+>>>>>>>>> +     __u32 len; /* the length to read/write */
+>>>>>>>>> +     __u8 data[VDUSE_CONFIG_DATA_LEN]; /* data buffer used to read/write */
+>>>>>>>> Note that since VDUSE_CONFIG_DATA_LEN is part of uAPI it means we can
+>>>>>>>> not change it in the future.
+>>>>>>>>
+>>>>>>>> So this might suffcient for future features or all type of virtio devices.
+>>>>>>>>
+>>>>>>> Do you mean 256 is no enough here？
+>>>>>> Yes.
+>>>>>>
+>>>>> But this request will be submitted multiple times if config lengh is
+>>>>> larger than 256. So do you think whether we need to extent the size to
+>>>>> 512 or larger?
+>>>> So I think you'd better either:
+>>>>
+>>>> 1) document the limitation (256) in somewhere, (better both uapi and doc)
+>>>>
+>>> But the VDUSE_CONFIG_DATA_LEN doesn't mean the limitation of
+>>> configuration space. It only means the maximum size of one data
+>>> transfer for configuration space. Do you mean document this?
+>>
+>> Yes, and another thing is that since you're using
+>> data[VDUSE_CONFIG_DATA_LEN] in the uapi, it implies the length is always
+>> 256 which seems not good and not what the code is wrote.
+>>
+> How about renaming VDUSE_CONFIG_DATA_LEN to VDUSE_MAX_TRANSFER_LEN?
+>
+> Thanks,
+> Yongji
 
-The purpose of doing this is to keep compatible behavior with original one,
-because without this series, dropping overlayfs inode will not trigger sync=
-ing
-underlying dirty inode.
+
+So a question is the reason to have a limitation of this in the uAPI? 
+Note that in vhost-vdpa we don't have such:
+
+struct vhost_vdpa_config {
+         __u32 off;
+         __u32 len;
+         __u8 buf[0];
+};
+
+Thanks
 
 
-Thanks,
-Chengguang
+>
+
