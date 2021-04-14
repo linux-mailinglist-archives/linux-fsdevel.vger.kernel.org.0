@@ -2,99 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A0F9435F165
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 12:19:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E35B35F257
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 13:27:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233482AbhDNKSr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 06:18:47 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:54881 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233507AbhDNKSq (ORCPT
+        id S1349072AbhDNL0M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 07:26:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50226 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348974AbhDNLZv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 06:18:46 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UVXj3bU_1618395500;
-Received: from 30.21.164.69(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0UVXj3bU_1618395500)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 14 Apr 2021 18:18:20 +0800
-Subject: Re: [PATCH v2 1/2] fuse: Fix possible deadlock when writing back
- dirty pages
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Peng Tao <tao.peng@linux.alibaba.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <807bb470f90bae5dcd80a29020d38f6b5dd6ef8e.1616826872.git.baolin.wang@linux.alibaba.com>
- <f72f28cd-06b5-fb84-c7ce-ad1a3d14c016@linux.alibaba.com>
- <CAJfpegtJ6100CS34+MSi8Rn_NMRGHw5vxbs+fOHBBj8GZLEexw@mail.gmail.com>
- <d9b71523-153c-12fa-fc60-d89b27e04854@linux.alibaba.com>
- <CAJfpegsurP8JshxFah0vCwBQicc0ijRnGyLeZZ-4tio6BHqEzQ@mail.gmail.com>
- <0fdb09fa-9b0f-1115-2540-6016ce664370@linux.alibaba.com>
- <CAJfpegvTX9rS0D6TXUUz3urrPFHng_1OntSWah+CU-7Fo5F-7g@mail.gmail.com>
-From:   Baolin Wang <baolin.wang@linux.alibaba.com>
-Message-ID: <495c1637-8d63-6620-ca76-e77f61ae11cf@linux.alibaba.com>
-Date:   Wed, 14 Apr 2021 18:18:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        Wed, 14 Apr 2021 07:25:51 -0400
+Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23E98C06175F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Apr 2021 04:25:26 -0700 (PDT)
+Received: by mail-ua1-x92f.google.com with SMTP id s19so5109410uaq.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Apr 2021 04:25:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+IPm+NVwwklgzGdr0p96zVhLm/FyxrNAAUyP4ry1+WM=;
+        b=BFsvtCwmjlnYspd0KU0kqzGIBobdnVtRlgLpZK/MzXz7F/7e3WcFekwmbG+ufA2GMH
+         HKmGGsPG6OkvpR0ir5DdtlGcQmZp6nVtJUnBec33SWTIoh0O+EoO4QZNQeFAZ5/DGlBE
+         qTHvnlpihkx8RLtuoVZhXIuu5uPRaiFXlvSL8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+IPm+NVwwklgzGdr0p96zVhLm/FyxrNAAUyP4ry1+WM=;
+        b=b7uyPfxCl2ZzYd6zrZbrIxFMTQPHBcbHBovu8wsQsXYOu1NrfKOlm4xpsvdZd9HmB3
+         SJ3zjitj48PYDPcYdqVLi09mYBGoNbmgG1yJnlFZYw3dnS2xRbONP8Rp8Vgii7gtgC36
+         Q4kImBQLGHb2LZjXjX7uXqGXwExHQLo4J3Jzw1mpoH9rbtHiCPAO6crvP85a2bwq5eqW
+         52NlNAXwQf/P1nw21M8jhlIPCtweGTSeZkEozUdMkR07M02Fg+xrU6i7iu5HYDRur9Ex
+         QkE3Jy/6Is7uQ0gBJXEJS9Is1c2qlqOq0DUL1bQhc8Wp2WX9bSqKchd60InSgvr7apbO
+         m3kg==
+X-Gm-Message-State: AOAM530+647QojHlh8ND7kgVvxx+tBj0HLyFW7tR2Islw5ry+cv7sYME
+        aBbvFwJmHq9/qfbxTo6x3w2QEi8RnsiUtjDa5Rg48A==
+X-Google-Smtp-Source: ABdhPJyBJfPTktPU43LQ4QlOiRHlrK4gGV4XC90cg747ZjpIzlv0F3ngRdXaXu1NwSxfqT4Jr19yN6uPuEvTfV/ei0E=
+X-Received: by 2002:ab0:356b:: with SMTP id e11mr4519887uaa.11.1618399525528;
+ Wed, 14 Apr 2021 04:25:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJfpegvTX9rS0D6TXUUz3urrPFHng_1OntSWah+CU-7Fo5F-7g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20210406140706.GB934253@redhat.com>
+In-Reply-To: <20210406140706.GB934253@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 14 Apr 2021 13:25:14 +0200
+Message-ID: <CAJfpegvY_xDe0th5L0uSViPauOk7z31eSZzR0+Li9Jh5tBqYRA@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Invalidate attrs when page writeback completes
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtio-fs-list <virtio-fs@redhat.com>, eric.auger@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Apr 6, 2021 at 4:07 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> In fuse when a direct/write-through write happens we invalidate attrs because
+> that might have updated mtime/ctime on server and cached mtime/ctime
+> will be stale.
+>
+> What about page writeback path. Looks like we don't invalidate attrs there.
+> To be consistent, invalidate attrs in writeback path as well. Only exception
+> is when writeback_cache is enabled. In that case we strust local mtime/ctime
+> and there is no need to invalidate attrs.
+>
+> Recently users started experiencing failure of xfstests generic/080,
+> geneirc/215 and generic/614 on virtiofs. This happened only newer
+> "stat" utility and not older one. This patch fixes the issue.
+>
+> So what's the root cause of the issue. Here is detailed explanation.
+>
+> generic/080 test does mmap write to a file, closes the file and then
+> checks if mtime has been updated or not. When file is closed, it
+> leads to flushing of dirty pages (and that should update mtime/ctime
+> on server). But we did not explicitly invalidate attrs after writeback
+> finished. Still generic/080 passed so far and reason being that we
+> invalidated atime in fuse_readpages_end(). This is called in fuse_readahead()
+> path and always seems to trigger before mmaped write.
+>
+> So after mmaped write when lstat() is called, it sees that atleast one
+> of the fields being asked for is invalid (atime) and that results in
+> generating GETATTR to server and mtime/ctime also get updated and test
+> passes.
+>
+> But newer /usr/bin/stat seems to have moved to using statx() syscall now
+> (instead of using lstat()). And statx() allows it to query only ctime
+> or mtime (and not rest of the basic stat fields). That means when
+> querying for mtime, fuse_update_get_attr() sees that mtime is not
+> invalid (only atime is invalid). So it does not generate a new GETATTR
+> and fill stat with cached mtime/ctime. And that means updated mtime
+> is not seen by xfstest and tests start failing.
+>
+> Invalidating attrs after writeback completion should solve this problem
+> in a generic manner.
+>
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 
+Thanks, applied.
 
-在 2021/4/14 17:47, Miklos Szeredi 写道:
-> On Wed, Apr 14, 2021 at 11:22 AM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
->>
->>
->>
->> 在 2021/4/14 17:02, Miklos Szeredi 写道:
->>> On Wed, Apr 14, 2021 at 10:42 AM Baolin Wang
->>> <baolin.wang@linux.alibaba.com> wrote:
->>>
->>>> Sorry I missed this patch before, and I've tested this patch, it seems
->>>> can solve the deadlock issue I met before.
->>>
->>> Great, thanks for testing.
->>>
->>>> But look at this patch in detail, I think this patch only reduced the
->>>> deadlock window, but did not remove the possible deadlock scenario
->>>> completely like I explained in the commit log.
->>>>
->>>> Since the fuse_fill_write_pages() can still lock the partitail page in
->>>> your patch, and will be wait for the partitail page waritehack is
->>>> completed if writeback is set in fuse_send_write_pages().
->>>>
->>>> But at the same time, a writeback worker thread may be waiting for
->>>> trying to lock the partitail page to write a bunch of dirty pages by
->>>> fuse_writepages().
->>>
->>> As you say, fuse_fill_write_pages() will lock a partial page.  This
->>> page cannot become dirty, only after being read completely, which
->>> first requires the page lock.  So dirtying this page can only happen
->>> after the writeback of the fragment was completed.
->>
->> What I mean is the writeback worker had looked up the dirty pages in
->> write_cache_pages() and stored them into a temporary pagevec, then try
->> to lock dirty page one by one and write them.
->>
->> For example, suppose it looked up 2 dirty pages (named page 1 and page
->> 2), and writed down page 1 by fuse_writepages_fill(), unlocked page 1.
->> Then try to lock page 2.
->>
->> At the same time, suppose the fuse_fill_write_pages() will write the
->> same page 1 and partitail page 2, and it will lock partital page 2 and
->> wait for the page 1's writeback is completed. But page 1's writeback can
->> not be completed, since the writeback worker is waiting for locking page
->> 2, which was already locked by fuse_fill_write_pages().
-> 
-> How would page2 become not uptodate, when it was already collected by
-> write_cache_pages()?  I.e. page2 is a dirty page, hence it must be
-> uptodate, and fuse_writepages_fill() will not keep it locked.
-
-Read your patch carefully again, now I realized you are right, and your 
-patch can solve the deadlock issue I met. Please feel free to add my 
-tested-by tag for your patch. Thanks.
-
-Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Miklos
