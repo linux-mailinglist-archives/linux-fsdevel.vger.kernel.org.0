@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C79BA35ED66
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 08:46:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4B0935EDBD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 08:58:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230408AbhDNGoZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 02:44:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44380 "EHLO
+        id S1349409AbhDNGvw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 02:51:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346023AbhDNGoT (ORCPT
+        with ESMTP id S1349404AbhDNGvv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 02:44:19 -0400
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87E63C061756
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Apr 2021 23:43:58 -0700 (PDT)
-Received: by mail-qk1-x736.google.com with SMTP id o5so20500839qkb.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Apr 2021 23:43:58 -0700 (PDT)
+        Wed, 14 Apr 2021 02:51:51 -0400
+Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8719C061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Apr 2021 23:51:30 -0700 (PDT)
+Received: by mail-qv1-xf30.google.com with SMTP id i9so9203979qvo.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Apr 2021 23:51:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:in-reply-to:message-id:references
          :user-agent:mime-version;
-        bh=xAItGVctj4Ym5XgJXrEHjFWuIEiXbFDkgH2LTVJTlqw=;
-        b=boogogHOP6aMxYaO4TKu7w6/UT0zb6tK49kFGEqd/tGljpv/chIVdkvDoZiKgvcWl3
-         uD72xEs3pGMozk801LATYIGOzSooQdo333X4M4rD3PNeWeoZ9/oX6LUPDbjvhVvQyG6/
-         nTt5wmIPnMoq8lxe0TYVtm4DE/rQlDzKDa0fCpcwtw5WUsLaifXWcqsMidIkzaY8/9og
-         +s8FqQNRmO6BXRBVpR03kz2epvzqQrKFmi5Hh/Dr9nzx9eIzWvOC83DKTQkse5T5QfKN
-         OwqGrAsqVhMbFN/3vaxP0hsIwcf4UGB3beOYirKF+LBu4y8XLIbOcMpkmguDaeVt3yZa
-         ZVXQ==
+        bh=KLZzVXsHHgJTPi9/Y2IIbzvR3FePP4MCJ3ecMxx4dqc=;
+        b=JL6hA6+QcQLMoXUbtqIdHUyo2NzJQBbZYzeHvrGRShfPChqWNdglR38HGeljB2fxtP
+         M/EB8Cp4oGJ5EKc4EqKIx/b+me/Kc6zIFiWhY/5nvoWnDAVJyyAvnJbQ/cSo7mLxmdN/
+         HI/+hYSkQsHt+TP8W1gHJr+SoC5GGpvSZLOSR9POOCRR3SR8+oVVKxMymufxPxTpC2nC
+         +sMBHPpf81IfgL4N10W+2rFzsZ2vyOHFMVCeGYwQ+Sz0l0IsXp+v4eutMkcd/rzhXdvy
+         4h2kM4L1NjPbWvhMXaxD87NF550bFO546K5O4RrXtIXNxcXA2+SCnR9IrB2TA7oxqgiJ
+         mg4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
          :references:user-agent:mime-version;
-        bh=xAItGVctj4Ym5XgJXrEHjFWuIEiXbFDkgH2LTVJTlqw=;
-        b=Q5Oil9ac5L0ut79Dl2fBAn68+bazoFhT2xpLKRS/KVkBBwFI427D8vGexWEB4A8HbT
-         1LQsN8t8tyTB38buUbQfXE0LzepSe9cjrDC+zKiIcWA4giBI2vYzPgaVwkHI8vzRSYbe
-         yUD0BcfD9nM58pSwyfS17rVLI+fRSRCEV17vBmpWLZYO7VmLXg4pn3DWkNVzswplk7T8
-         RQcjJ4UmlddvV9z0U7CT+dNgbzc4bNVGPxuNCiuCT8l+bl2GRwJT16FvkISJuNqRHXee
-         drL6Afy+Qw0cTzpzAvwhUAziKPtMq/FKIpoq6P6yJ0DMJl7X055gkhyrjnuHo7u/jhEj
-         kbkQ==
-X-Gm-Message-State: AOAM533i/7YQU1/Uw97VXYaotBaTXVlb4j/duGAAau2N+2oMbl4peTEF
-        UpOqL5doytOb9/cKyxAoRXIKgg==
-X-Google-Smtp-Source: ABdhPJyCbITTz5lmswPHeW0wVM8gnjbv6Zo4xmnNDnf/pa88GLZJNPjvZPoeIsTQcCXPoW3nk85tvw==
-X-Received: by 2002:ae9:e113:: with SMTP id g19mr34615511qkm.480.1618382637457;
-        Tue, 13 Apr 2021 23:43:57 -0700 (PDT)
+        bh=KLZzVXsHHgJTPi9/Y2IIbzvR3FePP4MCJ3ecMxx4dqc=;
+        b=EXagXzTMMgXm0oQ/VT3pMFl1z28LDuPh4bjpX0quZwcFKh6AxRyJFwM2s7w9Hj6H2O
+         CW4rWfWGGOui7hdwqhPL2RtrWBHeZ44Tvulr97eqpocGAK+AQR3Q+y86zSDJCKzubJMl
+         Wfq8XyVaFAsoW4amG+YKgTI5DOofabU0LLqiAYr8I02d5LbdMcDsgnYjrd2P/C0Ky8rE
+         APz6/PgzYA1LK2XuYSrmrGEI5Uj/C53O2efCJygrDLVHRgH3qT7xBC0vYqFRHdLM6Y5y
+         Bci5FhDvtZxouG14f82p63y8jOgKKhkbEiF0NVQ4zXPzbo5IzWSz2xCTkOjWp2uMrClW
+         h5zg==
+X-Gm-Message-State: AOAM5331g1Rssq5tMfxkhz5Sg5YnxqyQYMe7K42NT+ff+iAqN1+dyQGq
+        eDkCpM6IxLLAMgz9Av/2Sg0shg==
+X-Google-Smtp-Source: ABdhPJxmAr7PP6sm3oGIRXGR/ODKnISgo8n9Q9oaRuJpnITPKeqa2LTT9fH+Z1Hu79UBjol+6eJo9A==
+X-Received: by 2002:a05:6214:f6c:: with SMTP id iy12mr24408311qvb.15.1618383089927;
+        Tue, 13 Apr 2021 23:51:29 -0700 (PDT)
 Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id x22sm5174625qtq.93.2021.04.13.23.43.55
+        by smtp.gmail.com with ESMTPSA id x22sm5183213qtq.93.2021.04.13.23.51.27
         (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
-        Tue, 13 Apr 2021 23:43:57 -0700 (PDT)
-Date:   Tue, 13 Apr 2021 23:43:41 -0700 (PDT)
+        Tue, 13 Apr 2021 23:51:29 -0700 (PDT)
+Date:   Tue, 13 Apr 2021 23:51:26 -0700 (PDT)
 From:   Hugh Dickins <hughd@google.com>
 X-X-Sender: hugh@eggly.anvils
 To:     Axel Rasmussen <axelrasmussen@google.com>
@@ -71,11 +71,11 @@ cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
         Mina Almasry <almasrymina@google.com>,
         Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH v2 1/9] userfaultfd/hugetlbfs: avoid including userfaultfd_k.h
- in hugetlb.h
-In-Reply-To: <20210413051721.2896915-2-axelrasmussen@google.com>
-Message-ID: <alpine.LSU.2.11.2104132336001.9086@eggly.anvils>
-References: <20210413051721.2896915-1-axelrasmussen@google.com> <20210413051721.2896915-2-axelrasmussen@google.com>
+Subject: Re: [PATCH v2 2/9] userfaultfd/shmem: combine
+ shmem_{mcopy_atomic,mfill_zeropage}_pte
+In-Reply-To: <20210413051721.2896915-3-axelrasmussen@google.com>
+Message-ID: <alpine.LSU.2.11.2104132344120.9086@eggly.anvils>
+References: <20210413051721.2896915-1-axelrasmussen@google.com> <20210413051721.2896915-3-axelrasmussen@google.com>
 User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
@@ -85,61 +85,202 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Mon, 12 Apr 2021, Axel Rasmussen wrote:
 
-> Minimizing header file inclusion is desirable. In this case, we can do
-> so just by forward declaring the enumeration our signature relies upon.
+> Previously, we did a dance where we had one calling path in
+> userfaultfd.c (mfill_atomic_pte), but then we split it into two in
+> shmem_fs.h (shmem_{mcopy_atomic,mfill_zeropage}_pte), and then rejoined
+> into a single shared function in shmem.c (shmem_mfill_atomic_pte).
+> 
+> This is all a bit overly complex. Just call the single combined shmem
+> function directly, allowing us to clean up various branches,
+> boilerplate, etc.
+> 
+> While we're touching this function, two other small cleanup changes:
+> - offset is equivalent to pgoff, so we can get rid of offset entirely.
+> - Split two VM_BUG_ON cases into two statements. This means the line
+>   number reported when the BUG is hit specifies exactly which condition
+>   was true.
 > 
 > Reviewed-by: Peter Xu <peterx@redhat.com>
 > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+
+Acked-by: Hugh Dickins <hughd@google.com>
+though you've dropped one minor fix I did like, see below...
+
 > ---
->  include/linux/hugetlb.h | 4 +++-
->  mm/hugetlb.c            | 1 +
->  2 files changed, 4 insertions(+), 1 deletion(-)
+>  include/linux/shmem_fs.h | 15 +++++-------
+>  mm/shmem.c               | 52 +++++++++++++---------------------------
+>  mm/userfaultfd.c         | 10 +++-----
+>  3 files changed, 25 insertions(+), 52 deletions(-)
 > 
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index 09f1fd12a6fa..3f47650ab79b 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -11,7 +11,6 @@
->  #include <linux/kref.h>
->  #include <linux/pgtable.h>
->  #include <linux/gfp.h>
-> -#include <linux/userfaultfd_k.h>
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index d82b6f396588..919e36671fe6 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -122,21 +122,18 @@ static inline bool shmem_file(struct file *file)
+>  extern bool shmem_charge(struct inode *inode, long pages);
+>  extern void shmem_uncharge(struct inode *inode, long pages);
 >  
->  struct ctl_table;
->  struct user_struct;
-> @@ -135,6 +134,8 @@ void hugetlb_show_meminfo(void);
->  unsigned long hugetlb_total_pages(void);
->  vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
->  			unsigned long address, unsigned int flags);
-> +
-> +enum mcopy_atomic_mode;
+> +#ifdef CONFIG_USERFAULTFD
+>  #ifdef CONFIG_SHMEM
+>  extern int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+>  				  struct vm_area_struct *dst_vma,
+>  				  unsigned long dst_addr,
+>  				  unsigned long src_addr,
+> +				  bool zeropage,
+>  				  struct page **pagep);
+> -extern int shmem_mfill_zeropage_pte(struct mm_struct *dst_mm,
+> -				    pmd_t *dst_pmd,
+> -				    struct vm_area_struct *dst_vma,
+> -				    unsigned long dst_addr);
+> -#else
+> +#else /* !CONFIG_SHMEM */
+>  #define shmem_mcopy_atomic_pte(dst_mm, dst_pte, dst_vma, dst_addr, \
 
-Wrongly placed: the CONFIG_USERFAULTFD=y CONFIG_HUGETLB_PAGE=n build
-fails. Better place it up above with struct ctl_table etc.
+In a previous version, you quietly corrected that "dst_pte" to "dst_pmd":
+of course it makes no difference to the code generated, but it was a good
+correction, helping to prevent confusion.
 
->  #ifdef CONFIG_USERFAULTFD
->  int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm, pte_t *dst_pte,
->  				struct vm_area_struct *dst_vma,
-> @@ -143,6 +144,7 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm, pte_t *dst_pte,
->  				enum mcopy_atomic_mode mode,
->  				struct page **pagep);
->  #endif /* CONFIG_USERFAULTFD */
-> +
->  bool hugetlb_reserve_pages(struct inode *inode, long from, long to,
->  						struct vm_area_struct *vma,
->  						vm_flags_t vm_flags);
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 54d81d5947ed..b1652e747318 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -40,6 +40,7 @@
->  #include <linux/hugetlb_cgroup.h>
->  #include <linux/node.h>
->  #include <linux/page_owner.h>
-> +#include <linux/userfaultfd_k.h>
->  #include "internal.h"
+> -			       src_addr, pagep)        ({ BUG(); 0; })
+> -#define shmem_mfill_zeropage_pte(dst_mm, dst_pmd, dst_vma, \
+> -				 dst_addr)      ({ BUG(); 0; })
+> -#endif
+> +			       src_addr, zeropage, pagep)       ({ BUG(); 0; })
+> +#endif /* CONFIG_SHMEM */
+> +#endif /* CONFIG_USERFAULTFD */
 >  
->  int hugetlb_max_hstate __read_mostly;
+>  #endif
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 26c76b13ad23..b72c55aa07fc 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2354,13 +2354,14 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
+>  	return inode;
+>  }
+>  
+> -static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+> -				  pmd_t *dst_pmd,
+> -				  struct vm_area_struct *dst_vma,
+> -				  unsigned long dst_addr,
+> -				  unsigned long src_addr,
+> -				  bool zeropage,
+> -				  struct page **pagep)
+> +#ifdef CONFIG_USERFAULTFD
+> +int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm,
+> +			   pmd_t *dst_pmd,
+> +			   struct vm_area_struct *dst_vma,
+> +			   unsigned long dst_addr,
+> +			   unsigned long src_addr,
+> +			   bool zeropage,
+> +			   struct page **pagep)
+>  {
+>  	struct inode *inode = file_inode(dst_vma->vm_file);
+>  	struct shmem_inode_info *info = SHMEM_I(inode);
+> @@ -2372,7 +2373,7 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+>  	struct page *page;
+>  	pte_t _dst_pte, *dst_pte;
+>  	int ret;
+> -	pgoff_t offset, max_off;
+> +	pgoff_t max_off;
+>  
+>  	ret = -ENOMEM;
+>  	if (!shmem_inode_acct_block(inode, 1))
+> @@ -2383,7 +2384,7 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+>  		if (!page)
+>  			goto out_unacct_blocks;
+>  
+> -		if (!zeropage) {	/* mcopy_atomic */
+> +		if (!zeropage) {	/* COPY */
+>  			page_kaddr = kmap_atomic(page);
+>  			ret = copy_from_user(page_kaddr,
+>  					     (const void __user *)src_addr,
+> @@ -2397,7 +2398,7 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+>  				/* don't free the page */
+>  				return -ENOENT;
+>  			}
+> -		} else {		/* mfill_zeropage_atomic */
+> +		} else {		/* ZEROPAGE */
+>  			clear_highpage(page);
+>  		}
+>  	} else {
+> @@ -2405,15 +2406,15 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+>  		*pagep = NULL;
+>  	}
+>  
+> -	VM_BUG_ON(PageLocked(page) || PageSwapBacked(page));
+> +	VM_BUG_ON(PageLocked(page));
+> +	VM_BUG_ON(PageSwapBacked(page));
+>  	__SetPageLocked(page);
+>  	__SetPageSwapBacked(page);
+>  	__SetPageUptodate(page);
+>  
+>  	ret = -EFAULT;
+> -	offset = linear_page_index(dst_vma, dst_addr);
+>  	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+> -	if (unlikely(offset >= max_off))
+> +	if (unlikely(pgoff >= max_off))
+>  		goto out_release;
+>  
+>  	ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL,
+> @@ -2439,7 +2440,7 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+>  
+>  	ret = -EFAULT;
+>  	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+> -	if (unlikely(offset >= max_off))
+> +	if (unlikely(pgoff >= max_off))
+>  		goto out_release_unlock;
+>  
+>  	ret = -EEXIST;
+> @@ -2476,28 +2477,7 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+>  	shmem_inode_unacct_blocks(inode, 1);
+>  	goto out;
+>  }
+> -
+> -int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm,
+> -			   pmd_t *dst_pmd,
+> -			   struct vm_area_struct *dst_vma,
+> -			   unsigned long dst_addr,
+> -			   unsigned long src_addr,
+> -			   struct page **pagep)
+> -{
+> -	return shmem_mfill_atomic_pte(dst_mm, dst_pmd, dst_vma,
+> -				      dst_addr, src_addr, false, pagep);
+> -}
+> -
+> -int shmem_mfill_zeropage_pte(struct mm_struct *dst_mm,
+> -			     pmd_t *dst_pmd,
+> -			     struct vm_area_struct *dst_vma,
+> -			     unsigned long dst_addr)
+> -{
+> -	struct page *page = NULL;
+> -
+> -	return shmem_mfill_atomic_pte(dst_mm, dst_pmd, dst_vma,
+> -				      dst_addr, 0, true, &page);
+> -}
+> +#endif /* CONFIG_USERFAULTFD */
+>  
+>  #ifdef CONFIG_TMPFS
+>  static const struct inode_operations shmem_symlink_inode_operations;
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index e14b3820c6a8..23fa2583bbd1 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -440,13 +440,9 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
+>  						 dst_vma, dst_addr);
+>  	} else {
+>  		VM_WARN_ON_ONCE(wp_copy);
+> -		if (!zeropage)
+> -			err = shmem_mcopy_atomic_pte(dst_mm, dst_pmd,
+> -						     dst_vma, dst_addr,
+> -						     src_addr, page);
+> -		else
+> -			err = shmem_mfill_zeropage_pte(dst_mm, dst_pmd,
+> -						       dst_vma, dst_addr);
+> +		err = shmem_mcopy_atomic_pte(dst_mm, dst_pmd, dst_vma,
+> +					     dst_addr, src_addr, zeropage,
+> +					     page);
+>  	}
+>  
+>  	return err;
 > -- 
 > 2.31.1.295.g9ea45b61b8-goog
 > 
