@@ -2,204 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F0EB35F73B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 17:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 196F335F9AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 19:20:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350217AbhDNPJg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 11:09:36 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:21213 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349964AbhDNPJ3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 11:09:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1618412947; x=1649948947;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=j1mQzr+ZGrDrLyOxw5V0H8xW7Lo9+NLNMHswRDvEeVY=;
-  b=G0HfuLw4bRPodNDoZv76WmI1QWvRWw0+ZuSGJuOhu41GS1o7ySfJ26hg
-   KP/6eaCqKmUnaifv/HD24twN05mcKzxUp4bZI9HP0WHUAuTVH/gPWkAAg
-   jnIFr4oahY7HGPDxgN/xz6vNHOn/hZ0HyRQnr0pDbJ1v9lCZgOZKs0xNq
-   aN27CS8oTtkT07SV56qIblhkZm/tK/eDDIViqEF+PKpE4xu9EDbn4olT6
-   LpF5I0izwXPhhO3Gg6BNGcmIJR+7gKWiXciECtlFvLQL5qGYYLHFAB8c6
-   sWLzgVTaH7gC8w99FxYYPsT06b9EqUmSB+3BW8CnNcBYRMCd176POWEqX
-   Q==;
-IronPort-SDR: eB3+Y1BbVyjxS1nN1jtj3muzh4jfgUj37A792XKtFZ25hq7ENjWj29g3MaUFPNwfhWMZgpZv25
- FYSJigTHnh38aCCKU87lhfa4PTaNVdReHtV9RfxjLbDWr8W54O/XgANyeHqp1UL6wdKvE6aqPM
- f0DxmwcBOOibjBlNtKnOY/QuwWtrdaEr5vzchuavQoNbRvY+3J3cy5VBqe+X2hnJUFvGUKQOEh
- 9EQV0pYXsaybV4qMbdw6xu6I5Bkj+XaLnkXEc5Pm2GaK2bkUCqQvpV5wfqF3iSUjzMI315Pnt1
- fQ4=
-X-IronPort-AV: E=Sophos;i="5.82,222,1613404800"; 
-   d="scan'208";a="164307041"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 14 Apr 2021 23:08:54 +0800
-IronPort-SDR: x9jxu1lww1UBG9+eXeNaqGFVJNQhYXQz7VepursbVBDpViVV8a28iXsdMw+zaJQRg1n3ZqE8tE
- 29a5kbotGl2fOZPFle4Mtrn5naK5z12uRfZF/1OG556wGqWIPMITQohnO/knVJ2BUhmdYiMVt4
- y6KqUWhS5m/sPkI3SR/kHhJn0g2OeN8FVS7tGnjo2YIyj9IRzFoMDCawVVMxBh2NUPFEd3WOQ7
- b3swVT/jrdqBF6tLg1LkP+n6nLSPeyHRxqi5T+89AbQdQes9R+GigepyuSoyWpB9AvnfYwpVma
- 18cZZF0lrionU8Vy+Zp8IK57
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2021 07:48:13 -0700
-IronPort-SDR: nP1i7DQKlUp9l7oAB4yRFE4vWNtIsRCgtxLM4IJOvFwycoJZvXlESDomgGmPl7ig7PJjutRqRt
- FETGOLhILp/cwjSNDDuB2q0ofVHZpjt9xowmdBJwyisYhnsUe5sDmVoaj9WKU4x9zce37qp5e+
- RzxiMeRKOYo5IAxUzwmH5mNxn4O6aoEtf01QuPUvCEcgSgtorzeZn0ypYXqI9NI0htl0SEK65V
- vL7CMQeqomycm/VOY4+yV8GKSmcEWsDQb63LihW7h/X0huj/OiAa0GmbZ6EM6D1UT0VwjW5QmJ
- 26I=
-WDCIronportException: Internal
-Received: from ind006838.ad.shared (HELO naota-xeon) ([10.225.53.197])
-  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2021 08:08:50 -0700
-Date:   Thu, 15 Apr 2021 00:08:48 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     Karel Zak <kzak@redhat.com>
-Cc:     util-linux@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH v2 2/3] blkid: add magic and probing for zoned btrfs
-Message-ID: <20210414150848.3ylrbzth7yjvgxgi@naota-xeon>
-References: <20210414013339.2936229-1-naohiro.aota@wdc.com>
- <20210414013339.2936229-3-naohiro.aota@wdc.com>
- <20210414134708.t475gnqa7bor7bc6@ws.net.home>
+        id S236429AbhDNRS2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 13:18:28 -0400
+Received: from mail-dm6nam12on2123.outbound.protection.outlook.com ([40.107.243.123]:23182
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1349625AbhDNRS1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Apr 2021 13:18:27 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RqNlf3dAnwH+fNFmBeW893RAOwgtVVzVzWyZemh9SXMarLeXuzbQG5HZtzRsGQUap1HWdqqVY9HPYB2/DpVPUmaQV8Azc40fMiQFgodgODd6U1cwRA41gQqEDawdpeOwiSv8JWizprG2CuZctMJufxe2cgLVyg9qeJWQ2mLjnqOL8Vw1w2qmWn68w/gp/vOaLb3R8RdpauQazcPT+IKqAXWDkea12KY0tKXHeKJ0LHQAKSgdGer3wDYGvTa1gF2kFmjcbILX2drNcfZpOV4+iRLOHoIk2z8Ho0WfmtucJBv/PdMMHBF40J4coIx/Ngc1rTf6oGkauYqyNkIHtFSB3w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uUao4kEV7c0l/DD+Uh3tS1Is1ksZm0iKq2zxDDoMu+I=;
+ b=enYSa9I1u0Xq/ZJWESgGs1+ZWfuiXzmpyHQjhvk4wJg03Cp513KdtTTo678VYP4OO/1xloYrJfOMK8Gvh6gxj8Hr0Faap8ARClEJMtsmyNJCeL21Bl29q0iz24FX+EZ9VTsrg1z7myNTUa0zXgThSuhNgQds9TZVHNYHfycoOPCNnOLaXGEVwZHXDixz4XX4dXoDEzk6+1dovwGHGbsL+W5XMclXHVxKNDd5BN5yu5Artcie4XOlvbOA6L5GpDAWma5p70Pu7V3QrN3trYC5naCD9zW1KuJI6KVv+G1oGV5wfgFGuywOiDCIACgONe2N7nZl53tvq5tePIlntM/Lgw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=purdue.edu; dmarc=pass action=none header.from=purdue.edu;
+ dkim=pass header.d=purdue.edu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=purdue0.onmicrosoft.com; s=selector2-purdue0-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uUao4kEV7c0l/DD+Uh3tS1Is1ksZm0iKq2zxDDoMu+I=;
+ b=KJd2ySXJT/6IvgIJOUE9HjB6g8tOFIOFVopFt1jmbz4DOOzEXXx6kI79487+loXAK6KeUGfPpH9yLJ3cCEmbf4Fv1l6x/3S10jHxgbOkvkLmY70sqlwqMPMg3Ng1MIbaOEUV9tfA69ah5nO8nyXR2KEKYf8mkvsjb2X3ttra4Fw=
+Received: from CH2PR22MB2056.namprd22.prod.outlook.com (2603:10b6:610:5d::11)
+ by CH2PR22MB1832.namprd22.prod.outlook.com (2603:10b6:610:83::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4042.16; Wed, 14 Apr
+ 2021 17:18:05 +0000
+Received: from CH2PR22MB2056.namprd22.prod.outlook.com
+ ([fe80::fd2f:cbcc:563b:aa4f]) by CH2PR22MB2056.namprd22.prod.outlook.com
+ ([fe80::fd2f:cbcc:563b:aa4f%5]) with mapi id 15.20.4042.016; Wed, 14 Apr 2021
+ 17:18:05 +0000
+From:   "Gong, Sishuai" <sishuai@purdue.edu>
+To:     "jlbec@evilplan.org" <jlbec@evilplan.org>,
+        "hch@lst.de" <hch@lst.de>
+CC:     "zhangdaiyue1@huawei.com" <zhangdaiyue1@huawei.com>,
+        "qiuge@huawei.com" <qiuge@huawei.com>,
+        "chenyi77@huawei.com" <chenyi77@huawei.com>,
+        "yuchao0@huawei.com" <yuchao0@huawei.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "christian.brauner@ubuntu.com" <christian.brauner@ubuntu.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: A concurrency bug between configfs_dir_lseek() and configfs_lookup()
+Thread-Topic: A concurrency bug between configfs_dir_lseek() and
+ configfs_lookup()
+Thread-Index: AQHXMVIhJa1wQhfpXUeAfFXThKGNPw==
+Date:   Wed, 14 Apr 2021 17:18:04 +0000
+Message-ID: <580AFC85-44F4-490C-A048-D03B92341ABC@purdue.edu>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: evilplan.org; dkim=none (message not signed)
+ header.d=none;evilplan.org; dmarc=none action=none header.from=purdue.edu;
+x-originating-ip: [66.253.158.155]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 680339c6-7076-469e-9361-08d8ff6943fb
+x-ms-traffictypediagnostic: CH2PR22MB1832:
+x-microsoft-antispam-prvs: <CH2PR22MB18320BE7BC41D3AFEC5DEB02DF4E9@CH2PR22MB1832.namprd22.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2512;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 8yauGTVhl6BvkbHea5BPWgACLNXzLmHgns3WuCKPKlrYblIVI+/qWPW0W0j9Ea3DKrEZB3w+wLmITyhdsqNNGPJVfV6HRzW5qGuE1YdDAdDlj2lKg8g/vgl6VuAVGkacZY4rbvlC778AcY5sbuTKjZ3SbU5aaFewIWRefsGE5n7vuLLuBHMvzezMwUQDl5R2ru85kdnGgnQq/7qscRIhh9Mn2P0srD/YGoCQ0iBtkLcHJzrr/9ZLrYRe+fXlhpRHzvZEQYcEMKvm/KxHl8hgLSHprNpvRrvU/KTSx37MZm6b3Pw27gmMPsVer/48snlofvo/B4flyqal3tt8Qh3bwAvvUER32bHlty4sqronRZCVtiFbFFRVWhY7gv2O/zv2+Bfgr6d/XyVodnGDwnMFQqegnFCht19LFLBcjVZYLNCutmq8D+2EbkPubHZ/AK9HlR5ke+Z9RylEyE45o18ux3y2IQdC54xPMYrp2zPSZNpV0GoITvIbacG93kmaBcIlI1bQutAqQzU2/Mr3jXojhhTZCO3BkJ191z5yPfAUn+jkNDY+4AOZaDvs9cZ7y9M5OP3eJJwiwdwOWP+4tN7T5+7erWFVQXKBZuTllBPWas/mprAgoM0P7JOcl2ooNEvKQDV4NtH2evm3iXwEYlBW80pkvzCgkgOmjEpTxglNMHo=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR22MB2056.namprd22.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(346002)(136003)(366004)(39860400002)(376002)(5660300002)(6486002)(26005)(186003)(71200400001)(122000001)(38100700002)(83380400001)(6506007)(75432002)(2906002)(33656002)(6512007)(86362001)(2616005)(478600001)(64756008)(66556008)(66476007)(66446008)(8936002)(66946007)(8676002)(316002)(4326008)(76116006)(36756003)(54906003)(110136005)(786003)(45980500001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?N9GKNzZ/UUEBAeqN6GZLFp+GnLSXEpDNdPd6prh1i/++LJzES0SngiEvGH3J?=
+ =?us-ascii?Q?7WmZ36YOss6IxHlKwjuURyCVtCdD0suun+C3ugZiUVPdUFU+oSI/tpYEU2OC?=
+ =?us-ascii?Q?RrL9lVkqagEGZxyu1QKHdG0kCXp3HjVgRn7mGohsTuHjJFdP16U/w5GEVkRp?=
+ =?us-ascii?Q?Y2LkoN9DrCQgNXaJQrZLqfD95O/z1PNr5ZPq/PliHwImIu2UKd6ECTdShjr5?=
+ =?us-ascii?Q?BfNVi12BRG2fp0vDtD/7R4RGxbT5YRbOBFjpLQQTqtcj9p/QzANCJWjzjFBu?=
+ =?us-ascii?Q?VxZRKN0FRUgXoTWjxV2EsV37Am1eTffO2WKEZkmLSLPCdK9Wc1IHczgEogIt?=
+ =?us-ascii?Q?ZgKTqHG4A+HFJ9Ma581rhAGJfrFqyc1PGB1nsIE7REY2t03I8gulslpk2rhs?=
+ =?us-ascii?Q?S5DQxiDqn/URmz1ilx9F7hd6uwr5VY9XDgHqlwL+8tcv9JSX2oqkT7m9HZV6?=
+ =?us-ascii?Q?xH/ax90kfU+rrfrOb0UZkY86BOaz+f0pIE11f2lcEFZNdzGZwPktRJkLT39u?=
+ =?us-ascii?Q?rbOzK89Yn6igu2wiwAb+Ht8bbN3a8iBderA8CEYqI3Z1untP8omYDBaWV9To?=
+ =?us-ascii?Q?Tkib44DBWDpmelHWn6JibdhdYDms4Gt6TOaGmOZ4m8dBKLZOJyrgTDyf9daZ?=
+ =?us-ascii?Q?J+wz/fvqVSvtRNFnaS6q9AvbJ9DPiDLMg5Npc2GJSPDdrv78X1DOqpfjby3W?=
+ =?us-ascii?Q?+Jcu3DP/kShqggxdoPiZfyvfYJYN6ep+TpgxmzdzwBFn0tewN+VKadh2Igmz?=
+ =?us-ascii?Q?/bcaBJMJTkHHtJXBxoA6ikERf3iT5NPn6MvaGDGWvxqxoJ6nJlc+GE6bCTn1?=
+ =?us-ascii?Q?gJAbfdWgDn4JyLkV0hW7YKhocRKH05aiDWoWr5ta9Xv40RkFuKZLPjE3tpnp?=
+ =?us-ascii?Q?+5A87uGK/lmoMZrtnNrrG22ct1BFwu8EXYuZ033Mb9YcG5a+3KYQ1RXBDvuc?=
+ =?us-ascii?Q?2gohew2lfj9p8jRgIZWXGJAGfni+8eDHgZZu65UwChJxF7sjzrhdM0hLibM3?=
+ =?us-ascii?Q?JuTAS6sdVaKI59cPwzPM4S010JBxM6r0gWEgr7+a6xAdRYEmyormgLeY+Dyb?=
+ =?us-ascii?Q?zr+X7gqrY/H21JFkfE7WXAYnc4kpu8muSmTDZHAdDXDfhj/kgERuDmqh+RMb?=
+ =?us-ascii?Q?yAD1+m7Kon19/J8YSG9kP/yxTzYlIeI+N/fQ1LVqlB8spC4TVaAWyKK/0SPZ?=
+ =?us-ascii?Q?cDRVqP1shqZGYJYC9HtRDjXb/Irga4mTGTSRE1yOhWCuHQWpJ2wQIenoWqXn?=
+ =?us-ascii?Q?Anyd2nTnye5x7AxnB1vdBCgTQvioI91cqoWQSLWsqydnqwcw2T0+Kw4VS8q1?=
+ =?us-ascii?Q?ZY5goRoSfDtClDtR/eulJYf38pgNHNR7XJC6ch9GRS2WnQ=3D=3D?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <518D5E7E82D0804DAF6DB7B649CEE54F@namprd22.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210414134708.t475gnqa7bor7bc6@ws.net.home>
+X-OriginatorOrg: purdue.edu
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR22MB2056.namprd22.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 680339c6-7076-469e-9361-08d8ff6943fb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Apr 2021 17:18:04.6311
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4130bd39-7c53-419c-b1e5-8758d6d63f21
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mD7RsTC0NuqB98mgU/QmhyF689Rmwh8biV6+rLqKcpNDnaX7DkUnV50j6PDA20Q8TtiMQvkQlEW2RFBUfh3KjA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR22MB1832
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 14, 2021 at 03:47:08PM +0200, Karel Zak wrote:
-> On Wed, Apr 14, 2021 at 10:33:38AM +0900, Naohiro Aota wrote:
-> > +#define ASSERT(x) assert(x)
-> 
-> Really? ;-)
-> 
-> > +typedef uint64_t u64;
-> > +typedef uint64_t sector_t;
-> > +typedef uint8_t u8;
-> 
-> I do not see a reason for u64 and u8 here.
+Hi,
 
-Yep, these are here just to make it easy to copy the code from
-kernel. But this code won't change so much, so I can drop these.
+We found a concurrency bug in linux 5.12-rc3 and we are able to reproduce i=
+t under x86. This bug happens when the two configfs functions configfs_dir_=
+lseek() and configfs_lookup() are running in parallel. configfs_dir_lseek()=
+ is deleting an entry while configfs_lookup() is accessing that entry, as s=
+hown in below.=20
 
-> > +
-> > +#ifdef HAVE_LINUX_BLKZONED_H
-> > +static int sb_write_pointer(int fd, struct blk_zone *zones, u64 *wp_ret)
-> > +{
-> > +	bool empty[BTRFS_NR_SB_LOG_ZONES];
-> > +	bool full[BTRFS_NR_SB_LOG_ZONES];
-> > +	sector_t sector;
-> > +
-> > +	ASSERT(zones[0].type != BLK_ZONE_TYPE_CONVENTIONAL &&
-> > +	       zones[1].type != BLK_ZONE_TYPE_CONVENTIONAL);
-> 
-> assert()
+------------------------------------------
+Execution interleaving
 
-I will use it.
+Thread 1								Thread 2
+configfs_dir_lseek()						configfs_lookup()
+								=09
+										if (!configfs_dirent_is_ready(parent_sd))
+										// configfs_dirent_lock is released after configfs_dirent_is_read=
+y()
+										list_for_each_entry(sd, &parent_sd->s_children, s_sibling)
 
->  ...
-> > +		for (i = 0; i < BTRFS_NR_SB_LOG_ZONES; i++) {
-> > +			u64 bytenr;
-> > +
-> > +			bytenr = ((zones[i].start + zones[i].len)
-> > +				   << SECTOR_SHIFT) - BTRFS_SUPER_INFO_SIZE;
-> > +
-> > +			ret = pread64(fd, buf[i], BTRFS_SUPER_INFO_SIZE,
-> > +				      bytenr);
-> 
->  please, use  
-> 
->      ptr = blkid_probe_get_buffer(pr, BTRFS_SUPER_INFO_SIZE, bytenr);
-> 
->  the library will care about the buffer and reuse it. It's also
->  important to keep blkid_do_wipe() usable.
 
-Sure. I'll use it.
+spin_lock(&configfs_dirent_lock);
+list_del(&cursor->s_sibling);
+										list_for_each_entry(sd, &parent_sd->s_children, s_sibling)
+										// error happens
 
-> > +			if (ret != BTRFS_SUPER_INFO_SIZE)
-> > +				return -EIO;
-> > +			super[i] = (struct btrfs_super_block *)&buf[i];
-> 
->   super[i] = (struct btrfs_super_block *) ptr;
-> 
-> > +		}
-> > +
-> > +		if (super[0]->generation > super[1]->generation)
-> > +			sector = zones[1].start;
-> > +		else
-> > +			sector = zones[0].start;
-> > +	} else if (!full[0] && (empty[1] || full[1])) {
-> > +		sector = zones[0].wp;
-> > +	} else if (full[0]) {
-> > +		sector = zones[1].wp;
-> > +	} else {
-> > +		return -EUCLEAN;
-> > +	}
-> > +	*wp_ret = sector << SECTOR_SHIFT;
-> > +	return 0;
-> > +}
-> > +
-> > +static int sb_log_offset(blkid_probe pr, uint64_t *bytenr_ret)
-> > +{
-> > +	uint32_t zone_num = 0;
-> > +	uint32_t zone_size_sector;
-> > +	struct blk_zone_report *rep;
-> > +	struct blk_zone *zones;
-> > +	size_t rep_size;
-> > +	int ret;
-> > +	uint64_t wp;
-> > +
-> > +	zone_size_sector = pr->zone_size >> SECTOR_SHIFT;
-> > +
-> > +	rep_size = sizeof(struct blk_zone_report) + sizeof(struct blk_zone) * 2;
-> > +	rep = malloc(rep_size);
-> > +	if (!rep)
-> > +		return -errno;
-> > +
-> > +	memset(rep, 0, rep_size);
-> > +	rep->sector = zone_num * zone_size_sector;
-> > +	rep->nr_zones = 2;
-> 
-> what about to add to lib/blkdev.c a new function:
-> 
->    struct blk_zone_report *blkdev_get_zonereport(int fd, uint64 sector, int nzones);
-> 
-> and call this function from your sb_log_offset() as well as from blkid_do_wipe()?
-> 
-> Anyway, calloc() is better than malloc()+memset().
+------------------------------------------
+Impact & fix
 
-Indeed. I will do so.
+Eventually, this bug can cause a kernel NULL pointer dereference error, as =
+attached below. We think a potential fix is to use list_for_each_entry_safe=
+() instead of list_for_each_entry() in configfs_lookup().
 
-> > +	if (zones[0].type == BLK_ZONE_TYPE_CONVENTIONAL) {
-> > +		*bytenr_ret = zones[0].start << SECTOR_SHIFT;
-> > +		ret = 0;
-> > +		goto out;
-> > +	} else if (zones[1].type == BLK_ZONE_TYPE_CONVENTIONAL) {
-> > +		*bytenr_ret = zones[1].start << SECTOR_SHIFT;
-> > +		ret = 0;
-> > +		goto out;
-> > +	}
-> 
-> what about:
-> 
->  for (i = 0; i < BTRFS_NR_SB_LOG_ZONES; i++) {
->    if (zones[i].type == BLK_ZONE_TYPE_CONVENTIONAL) {
->       *bytenr_ret = zones[i].start << SECTOR_SHIFT;
->       ret = 0;
->       goto out;
->    }
->  }
+------------------------------------------
+Console output
 
-Yes, this looks cleaner. Thanks.
+[ 809.642609][T10805] BUG: kernel NULL pointer dereference, address: 000001=
+18
+[  810.198062][T10805] #PF: supervisor read access in kernel mode
+[  810.836171][T10805] #PF: error_code(0x0000) - not-present page
+[  811.361680][T10805] *pde =3D 00000000
+[  811.869905][T10805] Oops: 0000 [#1] PREEMPT SMP
+[  812.386532][T10805] CPU: 1 PID: 10805 Comm: executor Not tainted 5.12.0-=
+rc3 #3
+[  813.377094][T10805] Hardware name: Bochs Bochs, BIOS Bochs 01/01/2007
+[  813.896812][T10805] EIP: configfs_lookup+0x44/0x1a0
+[  814.431935][T10805] Code: 01 b8 f8 15 2f c4 8b 5f 20 e8 08 fd bb 01 b9 f=
+e ff ff ff 81 e3 00 04 00 00 85 db 75 2f 8b 47 10 83 c7 10 8d 58 f8 39 c7 7=
+4 10 <f6> 43 20 0c 75 26 8b 43 08 8d 58 f8 39 c7 75 f0 81 7e 18 ff 00 00
+[  815.925387][T10805] EAX: 00000100 EBX: 000000f8 ECX: fffffffe EDX: c10d1=
+cb0
+[  816.450272][T10805] ESI: cd029900 EDI: c3c50930 EBP: cf54ff04 ESP: cf54f=
+ef4
+[  816.986662][T10805] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS:=
+ 00000286
+[  818.033135][T10805] CR0: 80050033 CR2: 00000118 CR3: 0efd3000 CR4: 00000=
+690
+[  818.567560][T10805] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000=
+000
+[  819.109192][T10805] DR6: 00000000 DR7: 00000000
+[  819.666769][T10805] Call Trace:
+[  820.179775][T10805]  __lookup_hash+0x50/0x80
+[  820.702414][T10805]  filename_create+0x70/0x130
+[  821.238903][T10805]  do_symlinkat+0x4e/0x100
+[  821.776290][T10805]  __ia32_sys_symlinkat+0x10/0x20
+[  822.375670][T10805]  __do_fast_syscall_32+0x40/0x70
+[  823.000644][T10805]  do_fast_syscall_32+0x29/0x60
+[  823.494806][T10805]  do_SYSENTER_32+0x15/0x20
 
-> 
-> 
-> 
->  Karel
-> 
-> -- 
->  Karel Zak  <kzak@redhat.com>
->  http://karelzak.blogspot.com
-> 
+
+
+Thanks,
+Sishuai
+
