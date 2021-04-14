@@ -2,119 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F23035F4B1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 15:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 662A535F4DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 15:31:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351264AbhDNNUk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 09:20:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47160 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbhDNNUj (ORCPT
+        id S1351249AbhDNNba (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 09:31:30 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:55729 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232690AbhDNNba (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 09:20:39 -0400
-Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B18E1C061756
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Apr 2021 06:20:16 -0700 (PDT)
-Received: by mail-vk1-xa2b.google.com with SMTP id i2so4367437vka.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Apr 2021 06:20:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IX7qcrEu6HFQSyp3w8KMyWeid0wzPn8mCOmpMPv5Pjs=;
-        b=ntdQ5YG1Gr5915B2/+DC5gbp2HzxCQkyXazZ+/W0Lfn/znpyilVyJvxBJO2wGCOJLD
-         s1hxzdX+wZfmByqC1JppV6mb2abxvk8BFw96p6Gph1yfoBtZCDFnbdJq5UlcIY9IkBc5
-         bNOZwXfKXnisVQ0i5xV4CqTO1g3rgnF0Oet0E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IX7qcrEu6HFQSyp3w8KMyWeid0wzPn8mCOmpMPv5Pjs=;
-        b=ppB4l8dBaq7/VR5EI1iIi6ZVw3ydJRaDHqWw+POjkuq/+YpwUdPTrfCqI5RPmu7AnC
-         MhHFDKIeVYeQUSLYRe7RnIx2DP6bfHoXyEvvbf/lIRN3RqMTk6FB/ECFkKB3PtLyd1Bz
-         IYLhNXgiatWxK9wYNRhVGDY2qFYR4euEbouqhrQJlE2+1UhNllhc/OVlZYb12HElpChO
-         7UGXFbgWd08O4zSPrEh7hPaKlqFoyJLWTXhpyYLs+Vgu1gvQM+RmjdoeluzYW+U534K8
-         UcJHI9eOBqTm3wyRMunVU0VtIfGRoOYNsyT2zwWw8BAjJHsZWplDPT+6J7ih2HrdAyP4
-         GhRA==
-X-Gm-Message-State: AOAM533MP3PvpT3hPYpZEtHIm+aZQngQf/1Uv8xm+Z7u83ydDF32guhX
-        bXGSYanp/lqjQd0L5jLUdzrqbcYqXge64YKdNnJ8og==
-X-Google-Smtp-Source: ABdhPJy90G4eb02i87Z4ecltuTLzpFoMFuaOOkxblpV3zDET8ldycNjqEruoINsaIBmJaCBGEE/YHFjkiFdwojQ+lbk=
-X-Received: by 2002:a1f:99cc:: with SMTP id b195mr5541459vke.19.1618406415804;
- Wed, 14 Apr 2021 06:20:15 -0700 (PDT)
+        Wed, 14 Apr 2021 09:31:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618407068;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eltSsqO9F1rIMDJywSOli16tHNGkO5mxD8btKqOAj+Y=;
+        b=IbOHAAyqm0iWQ3TTMhktS2HlAuC596RQ9oqJJ1/U0dbl34vsUj81kEZSU3tDLEcn9DpSg5
+        9CYkieLWHtVMzmJ9lCkkcyAxAPI6RQrzsJWGk556XtRhDche1bINEtpXJ1P3GjQTZLWfLV
+        nk41TZnMJStCX+agwWg9vru3Y7MqTlY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-388-VmlUsjDkPiOgY1VzHUfqmQ-1; Wed, 14 Apr 2021 09:31:06 -0400
+X-MC-Unique: VmlUsjDkPiOgY1VzHUfqmQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2ABF5188E3C9;
+        Wed, 14 Apr 2021 13:31:05 +0000 (UTC)
+Received: from ws.net.home (ovpn-115-34.ams2.redhat.com [10.36.115.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CEC9C19C78;
+        Wed, 14 Apr 2021 13:31:03 +0000 (UTC)
+Date:   Wed, 14 Apr 2021 15:31:01 +0200
+From:   Karel Zak <kzak@redhat.com>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     util-linux@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v2 1/3] blkid: implement zone-aware probing
+Message-ID: <20210414133101.p5amev6tkfroiyw5@ws.net.home>
+References: <20210414013339.2936229-1-naohiro.aota@wdc.com>
+ <20210414013339.2936229-2-naohiro.aota@wdc.com>
 MIME-Version: 1.0
-References: <807bb470f90bae5dcd80a29020d38f6b5dd6ef8e.1616826872.git.baolin.wang@linux.alibaba.com>
- <f72f28cd-06b5-fb84-c7ce-ad1a3d14c016@linux.alibaba.com> <CAJfpegtJ6100CS34+MSi8Rn_NMRGHw5vxbs+fOHBBj8GZLEexw@mail.gmail.com>
- <CA+a=Yy4Ea6Vn7md2KxGc_Tkxx04Ck-JCBL7qz-JWecJ9W2nT_g@mail.gmail.com>
-In-Reply-To: <CA+a=Yy4Ea6Vn7md2KxGc_Tkxx04Ck-JCBL7qz-JWecJ9W2nT_g@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 14 Apr 2021 15:20:04 +0200
-Message-ID: <CAJfpegtXJ=waad2SNtru90Nn6f4yOkRD5Pot9K-13z249PjFgg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] fuse: Fix possible deadlock when writing back
- dirty pages
-To:     Peng Tao <bergwolf@gmail.com>
-Cc:     Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Peng Tao <tao.peng@linux.alibaba.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210414013339.2936229-2-naohiro.aota@wdc.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 14, 2021 at 2:22 PM Peng Tao <bergwolf@gmail.com> wrote:
->
+On Wed, Apr 14, 2021 at 10:33:37AM +0900, Naohiro Aota wrote:
+> --- a/configure.ac
+> +++ b/configure.ac
+> @@ -302,6 +302,7 @@ AC_CHECK_HEADERS([ \
+>  	lastlog.h \
+>  	libutil.h \
+>  	linux/btrfs.h \
+> +	linux/blkzoned.h \
 
-> > --- a/fs/fuse/file.c
-> > +++ b/fs/fuse/file.c
-> > @@ -1117,17 +1117,12 @@ static ssize_t fuse_send_write_pages(str
-> >       count = ia->write.out.size;
-> >       for (i = 0; i < ap->num_pages; i++) {
-> >               struct page *page = ap->pages[i];
-> > +             bool page_locked = ap->page_locked && (i == ap->num_pages - 1);
-> Any reason for just handling the last locked page in the page array?
-> To be specific, it look like the first page in the array can also be
-> partial dirty and locked?
+unnecessary, there is already AC_CHECK_HEADERS([linux/blkzoned.h]) on
+another place.
 
-In that case the first partial page will be locked, and it'll break
-out of the loop...
+>  	linux/capability.h \
+>  	linux/cdrom.h \
+>  	linux/falloc.h \
+> diff --git a/libblkid/src/blkidP.h b/libblkid/src/blkidP.h
+> index a3fe6748a969..e3a160aa97c0 100644
+> --- a/libblkid/src/blkidP.h
+> +++ b/libblkid/src/blkidP.h
+> @@ -150,6 +150,10 @@ struct blkid_idmag
+>  	const char	*hoff;		/* hint which contains byte offset to kboff */
+>  	long		kboff;		/* kilobyte offset of superblock */
+>  	unsigned int	sboff;		/* byte offset within superblock */
+> +
+> +	int		is_zoned;	/* indicate magic location is calcluated based on zone position  */
+> +	long		zonenum;	/* zone number which has superblock */
+> +	long		kboff_inzone;	/* kilobyte offset of superblock in a zone */
 
-> >
-> > -             if (!err && !offset && count >= PAGE_SIZE)
-> > -                     SetPageUptodate(page);
-> > -
-> > -             if (count > PAGE_SIZE - offset)
-> > -                     count -= PAGE_SIZE - offset;
-> > -             else
-> > -                     count = 0;
-> > -             offset = 0;
-> > -
-> > -             unlock_page(page);
-> > +             if (err)
-> > +                     ClearPageUptodate(page);
-> > +             if (page_locked)
-> > +                     unlock_page(page);
-> >               put_page(page);
-> >       }
-> >
-> > @@ -1191,6 +1186,16 @@ static ssize_t fuse_fill_write_pages(str
-> >               if (offset == PAGE_SIZE)
-> >                       offset = 0;
-> >
-> > +             /* If we copied full page, mark it uptodate */
-> > +             if (tmp == PAGE_SIZE)
-> > +                     SetPageUptodate(page);
-> > +
-> > +             if (PageUptodate(page)) {
-> > +                     unlock_page(page);
-> > +             } else {
-> > +                     ap->page_locked = true;
-> > +                     break;
+It would be better to use 'flags' struct field and
 
-... here, and send it as a separate WRITE request.
+  #define BLKID_FL_ZONED_DEV (1 << 6)
 
-So the multi-page case with a partial & non-uptodate head page will
-always result in the write request being split into two (even if
-there's no partial tail page).
+like we use for another stuff.
 
-Thanks,
-Miklos
+> diff --git a/libblkid/src/probe.c b/libblkid/src/probe.c
+> index a47a8720d4ac..9d180aab5242 100644
+> --- a/libblkid/src/probe.c
+> +++ b/libblkid/src/probe.c
+> @@ -94,6 +94,9 @@
+>  #ifdef HAVE_LINUX_CDROM_H
+>  #include <linux/cdrom.h>
+>  #endif
+> +#ifdef HAVE_LINUX_BLKZONED_H
+> +#include <linux/blkzoned.h>
+> +#endif
+>  #ifdef HAVE_SYS_STAT_H
+>  #include <sys/stat.h>
+>  #endif
+> @@ -897,6 +900,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
+>  	pr->wipe_off = 0;
+>  	pr->wipe_size = 0;
+>  	pr->wipe_chain = NULL;
+> +	pr->zone_size = 0;
+
+you also need to update blkid_clone_probe() function
+
+  Karel
+
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
