@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58A9435EC92
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 07:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4637C35ED04
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 08:14:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347954AbhDNFyh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 01:54:37 -0400
-Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25391 "EHLO
+        id S1349155AbhDNGOo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 02:14:44 -0400
+Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25393 "EHLO
         sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1348684AbhDNFy3 (ORCPT
+        by vger.kernel.org with ESMTP id S1349138AbhDNGOn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 01:54:29 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1618379621; cv=none; 
+        Wed, 14 Apr 2021 02:14:43 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1618380849; cv=none; 
         d=zoho.com.cn; s=zohoarc; 
-        b=JWrYpL54yvUpWcihKq8BSZT+dzoazF5tHwLjCeO3RP3yU9kavkZS5Y+Yhe3DLmYnvJpGuKbYuRUA/M3HT1jVqQ4kKTSzwzRu7vRVFAQwqgcUCU7e0SAomUd6beCHaqJIxkqswfLaW01Bxp4GPZUfb9XAyVoWf6AkgfyBT/qF1Oo=
+        b=JNeQotS4kkgZHnPV0JMvW0VxaH1lbgOkIF6EaT/Rlo2/K8E/pGZ+YwthWzwKtbpHcr5PcqWzacyJJlnWzOwjrZk3mh3Yzxugrbjl6lFufur+QzP2+fYugVTw2XZf23cZxe4WtgdIAdHDii/LJ8Nw3jJ02+z0pw+FXloNl2vKx0s=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1618379621; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=saV5HRRLXGBnIAHfIYmzYyO3Ux95PQZiiVywwB4lRxo=; 
-        b=UHf1/ACnHFvabxsmBzgh1zo1DPLIw54qXmZvC4uHRHKHyzM9T4n2R1n56VhXnMke4rNY7BxY3plUZze0dmikKbwqAWWi/NxLQ9gTpNr//JNjWdwhMGXuOZ4dEqvQBY7vqF/qUXVMLHOJUOiFHnP4jQY6kz16iXzJP2/fZYGqpSs=
+        t=1618380849; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=j0653ywqZAdpT6wQ/eknGI1RW2Keq7fohCtg0SJIZpY=; 
+        b=PwwoYW97RfaxoMv5dnguj+uNlE3aNxcBv37O4JvvrFsYbDrwJCdhxLmDnHCes071K2+ey1Nyftfd34fPIvXiFvXw/RiUfFUc2QIFyfydzB4+kU9k/pCrWC2lDnT/yQ4GzkqNhbsvx5wdOl5oCwKnLjKERlFMNT1Ta2fvYekP7Zg=
 ARC-Authentication-Results: i=1; mx.zoho.com.cn;
         dkim=pass  header.i=mykernel.net;
         spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
         dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1618379621;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1618380849;
         s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
         h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=saV5HRRLXGBnIAHfIYmzYyO3Ux95PQZiiVywwB4lRxo=;
-        b=UPe7t8yWTJLO69rN0nijaDpMKjqS0+vdUx1xhV96yVGCpgHQMKsQfHR2ocE45CKE
-        A81V2gInabT/2oLolkptC0nRUmgBEPNUdfghsy9Yn2WeQOHOtBqfV2/hQB4y/Ue1547
-        pOFlGhF70gk9NMK+h/XjdxwfnjCMMKkmNcq3zEIs=
+        bh=j0653ywqZAdpT6wQ/eknGI1RW2Keq7fohCtg0SJIZpY=;
+        b=f3ttytDS8bq1mTXcwGdHv1NcGHrtCrFappktK1ZFvQY3olTlkV9oUYjEnTHv+4ZC
+        1C7x9juTy1G3yspP9LGly6Y+PDPKS1ryRM6Paiu6EC6RL+qwSYuAG//3efR1lcSjAfg
+        8nxUE43OHiotzgCxDb/NB5ozxhenzS71vhPNE2P4=
 Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1618379619222470.7144857151626; Wed, 14 Apr 2021 13:53:39 +0800 (CST)
-Date:   Wed, 14 Apr 2021 13:53:39 +0800
+        with SMTP id 1618380846192877.8642334081887; Wed, 14 Apr 2021 14:14:06 +0800 (CST)
+Date:   Wed, 14 Apr 2021 14:14:06 +0800
 From:   Chengguang Xu <cgxu519@mykernel.net>
 Reply-To: cgxu519@mykernel.net
 To:     "Miklos Szeredi" <miklos@szeredi.hu>
 Cc:     "Jan Kara" <jack@suse.cz>, "Amir Goldstein" <amir73il@gmail.com>,
         "overlayfs" <linux-unionfs@vger.kernel.org>,
         "linux-fsdevel" <linux-fsdevel@vger.kernel.org>
-Message-ID: <178cef13b93.fb943b9833019.3856869984346239400@mykernel.net>
-In-Reply-To: <CAJfpegvM86YEzvFCdHm4a0h3_yNeqfS94c5hArQj7=fgaBARmA@mail.gmail.com>
-References: <20201113065555.147276-1-cgxu519@mykernel.net> <20201113065555.147276-8-cgxu519@mykernel.net>
- <CAJfpegtpD5012YQsmFEbkj__x52N4QrV0jSi=7iZtREqVf3tcA@mail.gmail.com> <178c901d7ad.fdc7d65c21509.6849935952336944935@mykernel.net> <CAJfpegvM86YEzvFCdHm4a0h3_yNeqfS94c5hArQj7=fgaBARmA@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 7/9] ovl: cache dirty overlayfs' inode
+Message-ID: <178cf03f46d.10b2d86c733121.8697562232310027680@mykernel.net>
+In-Reply-To: <CAJfpegt6BUvEL2NtfMkYJfC_NBuLxKhV3U7-h4azhoM+ttxZAA@mail.gmail.com>
+References: <20201113065555.147276-1-cgxu519@mykernel.net> <20201113065555.147276-7-cgxu519@mykernel.net> <CAJfpegt6BUvEL2NtfMkYJfC_NBuLxKhV3U7-h4azhoM+ttxZAA@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 6/9] ovl: implement overlayfs' ->write_inode
+ operation
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -54,39 +54,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=8C, 2021-04-13 16:43:27 Miklos Sze=
-redi <miklos@szeredi.hu> =E6=92=B0=E5=86=99 ----
- > On Tue, Apr 13, 2021 at 4:14 AM Chengguang Xu <cgxu519@mykernel.net> wro=
+---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=94, 2021-04-09 21:49:07 Miklos Szer=
+edi <miklos@szeredi.hu> =E6=92=B0=E5=86=99 ----
+ > On Fri, Nov 13, 2020 at 7:57 AM Chengguang Xu <cgxu519@mykernel.net> wro=
 te:
  > >
- > >  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=94, 2021-04-09 21:50:35 Miklo=
-s Szeredi <miklos@szeredi.hu> =E6=92=B0=E5=86=99 ----
- > >  > On Fri, Nov 13, 2020 at 7:57 AM Chengguang Xu <cgxu519@mykernel.net=
-> wrote:
- > >  > >
- > >  > > Now drop overlayfs' inode will sync dirty data,
- > >  > > so we change to only drop clean inode.
- > >  >
- > >  > I don't understand what happens here.  Please add more explanation.
+ > > Implement overlayfs' ->write_inode to sync dirty data
+ > > and redirty overlayfs' inode if necessary.
  > >
- > > In iput_final(), clean overlayfs inode will directly drop as the same =
-as before,
- > > dirty overlayfs inode will keep in the cache to wait writeback to sync=
- dirty data
- > > and then add to lru list to wait reclaim.
+ > > Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+ > > ---
+ > >  fs/overlayfs/super.c | 30 ++++++++++++++++++++++++++++++
+ > >  1 file changed, 30 insertions(+)
  > >
- > > The purpose of doing this is to keep compatible behavior with original=
- one,
- > > because without this series, dropping overlayfs inode will not trigger=
- syncing
- > > underlying dirty inode.
+ > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+ > > index 883172ac8a12..82e001b97f38 100644
+ > > --- a/fs/overlayfs/super.c
+ > > +++ b/fs/overlayfs/super.c
+ > > @@ -390,6 +390,35 @@ static int ovl_remount(struct super_block *sb, in=
+t *flags, char *data)
+ > >         return ret;
+ > >  }
+ > >
+ > > +static int ovl_write_inode(struct inode *inode,
+ > > +                          struct writeback_control *wbc)
+ > > +{
+ > > +       struct ovl_fs *ofs =3D inode->i_sb->s_fs_info;
+ > > +       struct inode *upper =3D ovl_inode_upper(inode);
+ > > +       unsigned long iflag =3D 0;
+ > > +       int ret =3D 0;
+ > > +
+ > > +       if (!upper)
+ > > +               return 0;
+ > > +
+ > > +       if (!ovl_should_sync(ofs))
+ > > +               return 0;
+ > > +
+ > > +       if (upper->i_sb->s_op->write_inode)
+ > > +               ret =3D upper->i_sb->s_op->write_inode(inode, wbc);
+ > > +
+ > > +       if (mapping_writably_mapped(upper->i_mapping) ||
+ > > +           mapping_tagged(upper->i_mapping, PAGECACHE_TAG_WRITEBACK))
+ > > +               iflag |=3D I_DIRTY_PAGES;
+ > > +
+ > > +       iflag |=3D upper->i_state & I_DIRTY_ALL;
  >=20
- > I get it now.  Can you please update the patch header with this descript=
-ion?
+ > How is I_DIRTY_SYNC added/removed from the overlay inode?
  >=20
 
-No problem, I'll update commit log in next version.
+generally, I_DIRTY_SYNC is added to overlay inode when the operation dirtie=
+s
+upper inode, I'll check all those places and call ovl_mark_inode_dirty() to=
+ do it.
+After writeback if upper inode becomes clean status, we will remove I_DIRTY=
+_SYNC
+from overlay inode.
+
+One exception is mmaped file, it will always keep I_DIRTY_SYNC until to be =
+evicted.
 
 Thanks,
 Chengguang
+
+
 
