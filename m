@@ -2,82 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2313735F61E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 16:25:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B386235F5B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 16:04:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233757AbhDNOZq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 10:25:46 -0400
-Received: from 3.mo51.mail-out.ovh.net ([188.165.32.156]:46046 "EHLO
-        3.mo51.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233573AbhDNOZp (ORCPT
+        id S233806AbhDNN6O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 09:58:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44801 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233761AbhDNN6L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 10:25:45 -0400
-X-Greylist: delayed 8937 seconds by postgrey-1.27 at vger.kernel.org; Wed, 14 Apr 2021 10:25:44 EDT
-Received: from mxplan5.mail.ovh.net (unknown [10.109.143.25])
-        by mo51.mail-out.ovh.net (Postfix) with ESMTPS id EA05627E9DE;
-        Wed, 14 Apr 2021 13:56:24 +0200 (CEST)
-Received: from kaod.org (37.59.142.95) by DAG8EX1.mxp5.local (172.16.2.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Wed, 14 Apr
- 2021 13:56:23 +0200
-Authentication-Results: garm.ovh; auth=pass (GARM-95G0016c48b003-a9bb-4283-a696-378d1672d9bf,
-                    27A2EAB91443B59947E9A6799839B739A3DEC47D) smtp.auth=groug@kaod.org
-X-OVh-ClientIp: 78.197.208.248
-Date:   Wed, 14 Apr 2021 13:56:22 +0200
-From:   Greg Kurz <groug@kaod.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-CC:     Vivek Goyal <vgoyal@redhat.com>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
-        Robert Krawitz <rkrawitz@redhat.com>
-Subject: Re: Query about fuse ->sync_fs and virtiofs
-Message-ID: <20210414135622.4d677fd7@bahia.lan>
-In-Reply-To: <CAJfpegsaY05jSRNFTcquNFyMr+GMpPBMgoEO0YZcXxfqBi3g2A@mail.gmail.com>
-References: <20210412145919.GE1184147@redhat.com>
-        <CAJfpegsaY05jSRNFTcquNFyMr+GMpPBMgoEO0YZcXxfqBi3g2A@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Wed, 14 Apr 2021 09:58:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618408669;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=B2vLN1g2GPOq64a7vebxlpd+t3XuOJ2b1mmcssIo044=;
+        b=D4wj1GaXe5e0hXlAUPte6FU4HRJaz0DjexfMKLoynI/iemWBA55aY5lxKH7foIC/UjII9z
+        usX2ZTgH+NFQuvgn1iBQtKjC//oLtsEwcDXIEkWBzVJiqvlLHPNCvrdn4/qjA+G90oIDRw
+        BssvNViwelvLIfU0LUCbtI19tUfsliU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-143-ebNZZf_7PMakl5sEuprmVw-1; Wed, 14 Apr 2021 09:57:47 -0400
+X-MC-Unique: ebNZZf_7PMakl5sEuprmVw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4C845107ACF3;
+        Wed, 14 Apr 2021 13:57:46 +0000 (UTC)
+Received: from ws.net.home (ovpn-115-34.ams2.redhat.com [10.36.115.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EB848712A4;
+        Wed, 14 Apr 2021 13:57:44 +0000 (UTC)
+Date:   Wed, 14 Apr 2021 15:57:42 +0200
+From:   Karel Zak <kzak@redhat.com>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     util-linux@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v2 3/3] blkid: support zone reset for wipefs
+Message-ID: <20210414135742.qayizmwjck5dx377@ws.net.home>
+References: <20210414013339.2936229-1-naohiro.aota@wdc.com>
+ <20210414013339.2936229-4-naohiro.aota@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [37.59.142.95]
-X-ClientProxiedBy: DAG4EX1.mxp5.local (172.16.2.31) To DAG8EX1.mxp5.local
- (172.16.2.71)
-X-Ovh-Tracer-GUID: 4820488d-0e12-4f10-b72a-d7c46fce6b16
-X-Ovh-Tracer-Id: 15593713713998633254
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduledrudeluddggeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfgjfhfogggtgfhisehtjeertdertddvnecuhfhrohhmpefirhgvghcumfhurhiiuceoghhrohhugheskhgrohgurdhorhhgqeenucggtffrrghtthgvrhhnpeefuddtieejjeevheekieeltefgleetkeetheettdeifeffvefhffelffdtfeeljeenucfkpheptddrtddrtddrtddpfeejrdehledrudegvddrleehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepmhigphhlrghnhedrmhgrihhlrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehgrhhouhhgsehkrghougdrohhrghdprhgtphhtthhopehrkhhrrgifihhtiiesrhgvughhrghtrdgtohhm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210414013339.2936229-4-naohiro.aota@wdc.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 12 Apr 2021 17:08:26 +0200
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Wed, Apr 14, 2021 at 10:33:39AM +0900, Naohiro Aota wrote:
+> +static int is_conventional(blkid_probe pr, uint64_t offset)
+> +{
+> +	struct blk_zone_report *rep = NULL;
+> +	size_t rep_size;
+> +	int ret;
+> +	uint64_t zone_mask;
+> +
+> +	if (!pr->zone_size)
+> +		return 1;
+> +
+> +	rep_size = sizeof(struct blk_zone_report) + sizeof(struct blk_zone);
+> +	rep = calloc(1, rep_size);
+> +	if (!rep)
+> +		return -1;
+> +
+> +	zone_mask = ~(pr->zone_size - 1);
+> +	rep->sector = (offset & zone_mask) >> 9;
+> +	rep->nr_zones = 1;
+> +	ret = ioctl(blkid_probe_get_fd(pr), BLKREPORTZONE, rep);
+> +	if (ret) {
+> +		free(rep);
+> +		return -1;
+> +	}
 
-> On Mon, Apr 12, 2021 at 4:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > Hi Miklos,
-> >
-> > Robert Krawitz drew attention to the fact that fuse does not seem to
-> > have a ->sync_fs implementation. That probably means that in case of
-> > virtiofs, upon sync()/syncfs(), host cache will not be written back
-> > to disk. And that's not something people expect.
-> >
-> > I read somewhere that fuse did not implement ->sync_fs because file
-> > server might not be trusted and it could block sync().
-> >
-> > In case of virtiofs, file server is trusted entity (w.r.t guest kernel),
-> > so it probably should be ok to implement ->sync_fs atleast for virtiofs?
-> 
-> Yes, that looks like a good idea.
-> 
+  ret = blkdev_get_zonereport()
 
-I've started looking into this. First observation is that implementing
-->sync_fs() is file server agnostic, so if we want this to only be used
-by a trusted file server, we need to introduce such a notion in FUSE.
-Not sure where though... in struct fuse_fs_context maybe ?
+:-)
 
-> Thanks,
-> Miklos
+>  /**
+>   * blkid_do_wipe:
+>   * @pr: prober
+> @@ -1267,6 +1310,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
+>  	const char *off = NULL;
+>  	size_t len = 0;
+>  	uint64_t offset, magoff;
+> +	bool conventional;
+
+BTW, nowhere in libblkid we use "bool". It would be probably better to include
+<stdbool.h> to blkidP.h.
+
+  Karel
+
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
 
