@@ -2,88 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5472335F40F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 14:42:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC0BB35F46A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 15:02:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351027AbhDNMj1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 08:39:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34008 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1347336AbhDNMjV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 08:39:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 05A6961242;
-        Wed, 14 Apr 2021 12:38:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618403939;
-        bh=trjYxEgalZgxYJrHZB3dPQb397DtdefL3Lsm4LvCJWY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j5cA7MvJ8u/PxHz/mTf+LlXfEt3LqMQBsmvb29ek09df6dQDeGtD3iUnc3ADbsBJc
-         ryketa8FV75N3FodGyTBY0KSmGrhMSXM2aYceXyVZ1RvA1lKAhDIUwoWFLozEZDFgq
-         aPGq76CSmzC64HUf/0H64P6YYpk8NlDxA1Hu9dMGu3qH07Y9JhmJbCsU5liuaUQB/8
-         mlFQ44XsnlaaI96OFOESbCp7p7O9VAYkaD7ZncBUzHJ0qxegMUl1BdHsCTiHVhSNX6
-         OPDQ80yn+0jZ0H4ViTZ2MdmDl7dQ7yxLUjWzvDba55xMTT6T4wml5BPDZF1lpxVQDu
-         AdZ5/6ipoOFjg==
-From:   Christian Brauner <brauner@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Christoph Hellwig <hch@lst.de>, Tyler Hicks <code@tyhicks.com>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, ecryptfs@vger.kernel.org,
-        linux-cachefs@redhat.com,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 7/7] ecryptfs: extend ro check to private mount
-Date:   Wed, 14 Apr 2021 14:37:51 +0200
-Message-Id: <20210414123750.2110159-8-brauner@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210414123750.2110159-1-brauner@kernel.org>
-References: <20210414123750.2110159-1-brauner@kernel.org>
+        id S1351031AbhDNM7Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 08:59:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25130 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1351028AbhDNM7X (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Apr 2021 08:59:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618405141;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ghO25gdWYiPi8Hs5tMBOLgC7KmadptV5dHjDSHxwA/o=;
+        b=fKOUo94N4oyf9c1Qx02GNpDvgqdB1W5+M2dAXqCSFg2l1mUWP/8bpeirj7NH8AwulPtC2g
+        o57FefGuUt44n42zKCpDGFYCjzXCSnUrH1E09sKDpNk2EMrIyzozfO4uEohnmoyYKT9Xo0
+        e0U0Gsqynx0rbNyZIw9FEs1H6LGMzJo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-460-InOxrLTmPeK9PlxSFZ1f8g-1; Wed, 14 Apr 2021 08:59:00 -0400
+X-MC-Unique: InOxrLTmPeK9PlxSFZ1f8g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EEAB68030BB;
+        Wed, 14 Apr 2021 12:58:58 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-116-112.rdu2.redhat.com [10.10.116.112])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8A2CD5C1B4;
+        Wed, 14 Apr 2021 12:58:55 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id DE024220BCF; Wed, 14 Apr 2021 08:58:54 -0400 (EDT)
+Date:   Wed, 14 Apr 2021 08:58:54 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Luis Henriques <lhenriques@suse.de>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>
+Subject: Re: [PATCH v2 0/2] fuse: Fix clearing SGID when access ACL is set
+Message-ID: <20210414125854.GL1235549@redhat.com>
+References: <20210325151823.572089-1-vgoyal@redhat.com>
+ <CAJfpegvU9zjT7qV=Rj4ok4kfYz-9BPhjp+xKz9odfSWaFxshyA@mail.gmail.com>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=TJq3ADscBRuq3vVMRrZQ25nFLYThkfCmWR4OfInmRrw=; m=1ciTf4lEciTeOTFMYE8Ti/zNFh88dj9ns8fWVydD8Es=; p=z+y7HlsQCE+Knq6tGOyffFIPiZjVOof3onzoRF6Hb6E=; g=0d107768135058226d796803890d0dee0a0e7ec6
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYHbh4AAKCRCRxhvAZXjcotLBAQDn6l9 aXkwGRy7SXgg32N2NRCvBm3ku22g55ZuZqsqPhwD/TYrdUDq3t7xICbXuJj/8/Y+oSbZh1gRpQ2li RXJyZgI=
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegvU9zjT7qV=Rj4ok4kfYz-9BPhjp+xKz9odfSWaFxshyA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+On Wed, Apr 14, 2021 at 01:57:01PM +0200, Miklos Szeredi wrote:
+> On Thu, Mar 25, 2021 at 4:19 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> >
+> > Hi,
+> >
+> > This is V2 of the patchset. Posted V1 here.
+> >
+> > https://lore.kernel.org/linux-fsdevel/20210319195547.427371-1-vgoyal@redhat.com/
+> >
+> > Changes since V1:
+> >
+> > - Dropped the helper to determine if SGID should be cleared and open
+> >   coded it instead. I will follow up on helper separately in a different
+> >   patch series. There are few places already which open code this, so
+> >   for now fuse can do the same. Atleast I can make progress on this
+> >   and virtiofs can enable ACL support.
+> >
+> > Luis reported that xfstests generic/375 fails with virtiofs. Little
+> > debugging showed that when posix access acl is set that in some
+> > cases SGID needs to be cleared and that does not happen with virtiofs.
+> >
+> > Setting posix access acl can lead to mode change and it can also lead
+> > to clear of SGID. fuse relies on file server taking care of all
+> > the mode changes. But file server does not have enough information to
+> > determine whether SGID should be cleared or not.
+> >
+> > Hence this patch series add support to send a flag in SETXATTR message
+> > to tell server to clear SGID.
+> 
+> Changed it to have a single extended structure for the request, which
+> is how this has always been handled in the fuse API.
+> 
+> The ABI is unchanged, but you'll need to update the userspace part
+> according to the API change.  Otherwise looks good.
 
-So far ecryptfs only verified that the superblock wasn't read-only but
-didn't check whether the mount was. This made sense when we did not use
-a private mount because the read-only state could change at any point.
+Hi Miklos,
 
-Now that we have a private mount and mount properties can't change
-behind our back extend the read-only check to include the vfsmount.
+Thanks. Patches look good. I will update userspace part and repost.
 
-The __mnt_is_readonly() helper will check both the mount and the
-superblock.  Note that before we checked root->d_sb and now we check
-mnt->mnt_sb but since we have a matching <vfsmount, dentry> pair here
-this is only syntactical change, not a semantic one.
+Vivek
 
-Overlayfs and cachefiles have been changed to check this as well.
-
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Tyler Hicks <code@tyhicks.com>
-Cc: ecryptfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/ecryptfs/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ecryptfs/main.c b/fs/ecryptfs/main.c
-index 3ba2c0f349a3..4e5aeec91e95 100644
---- a/fs/ecryptfs/main.c
-+++ b/fs/ecryptfs/main.c
-@@ -571,7 +571,7 @@ static struct dentry *ecryptfs_mount(struct file_system_type *fs_type, int flags
- 	 *   1) The lower mount is ro
- 	 *   2) The ecryptfs_encrypted_view mount option is specified
- 	 */
--	if (sb_rdonly(path.dentry->d_sb) || mount_crypt_stat->flags & ECRYPTFS_ENCRYPTED_VIEW_ENABLED)
-+	if (__mnt_is_readonly(mnt) || mount_crypt_stat->flags & ECRYPTFS_ENCRYPTED_VIEW_ENABLED)
- 		s->s_flags |= SB_RDONLY;
- 
- 	s->s_maxbytes = path.dentry->d_sb->s_maxbytes;
--- 
-2.27.0
+> 
+> Applied and pushed to fuse.git#for-next.
+> 
+> Thanks,
+> Miklos
+> 
 
