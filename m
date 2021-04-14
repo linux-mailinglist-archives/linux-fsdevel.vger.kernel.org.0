@@ -2,93 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EFE6335F30E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 13:59:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64A1335F35A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 14:19:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233692AbhDNL7i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 07:59:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57586 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233625AbhDNL7e (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 07:59:34 -0400
-Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06BB5C061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Apr 2021 04:59:10 -0700 (PDT)
-Received: by mail-vk1-xa30.google.com with SMTP id l1so2853591vkk.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Apr 2021 04:59:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U0MGv1y1F0WYbwqNAIg1w6XGdt99IUf8puJ2a4PrjtQ=;
-        b=eVDJOwASSOF6O4gCTeM7sHeK9zcoZ3LffJdSqKnhm0rK9/hTOw/bNYTGCm/u8jD7sj
-         PbYKwUAKHudkOae5TQvheCGPwHVTSrnQNSzLMq2QW5C/q986g1yCrOlgaR6cibwRp9eu
-         9KGzw74/LwFEoYQokLEHB/SPig0QC/W21DrqI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U0MGv1y1F0WYbwqNAIg1w6XGdt99IUf8puJ2a4PrjtQ=;
-        b=moF3GPlmdfpvQoqqoz0ZF+V5I32K2u4Ce+ppg5i2PukaDsj0Wfbm4PKV4icBFomwoP
-         XpukziLbTyTVhMIWE0Q9E36zZbyYGC3tyfGYUUVZ8CeyQ+GnElJsEJMTrBforsZnVUhj
-         3QthT9uzD+ShGkywC/TAKSXlhE22jAXF167aZK24IL59JPqrkvpenWeZHQa0sIGCD+B8
-         8pHQItKYmKidWmptn/TEn2YH/tuM5wcO5btHw9ow9c9qjispNeQ2R+GpjwRYrhkL2NfU
-         QAaa32BiT+iwma7edyUe0EKDtkXXX4qV0Y+Y56NsWpLxCIrnc+zystasI8fu4N7wTaze
-         KdGQ==
-X-Gm-Message-State: AOAM5332VRjITULwnhTAH5VG3igWiBHPSF8W5/puztpPjb1CiKioF8Nj
-        wSsPF419ri67HnlOK6aVgOpDgEiJZ7CSlOhkDUPQiA==
-X-Google-Smtp-Source: ABdhPJwvyBvVQrGuiNLmmhoc1+YjkZrqv4wqX7YYKlGChrZEB1/29Tc65QTw3zR7GdGCTxDNV7IroErWiKl6EqFO8ac=
-X-Received: by 2002:a1f:99cc:: with SMTP id b195mr5082094vke.19.1618401549235;
- Wed, 14 Apr 2021 04:59:09 -0700 (PDT)
+        id S1350756AbhDNMTJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 08:19:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57414 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231849AbhDNMTI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Apr 2021 08:19:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 30DCD6105A;
+        Wed, 14 Apr 2021 12:18:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618402727;
+        bh=eD0xtv2Qct3Qft0jHNeqH2HMiN+vpGVI4dS5xaCtmJM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=odqJowLsilyCEA39GUZp924v/jE2KuUF0Ekv2Uwc6CudOjn22I+bM42/rpwrurfUF
+         EMdAQC+TeLed/J8HJ3f78KxhgCQzFjUYpxPRQiYVeJM057hTtZXcOZ4jYuNchPavRS
+         6x4Cbe4LTnGexIT8Cl1QF8dZK1r17gSBmWPDm/2sXoE9qwwGnwpyrLi6OMn1xT8pRx
+         np/8b/76Ceoo24wt+pAS98s2U2L7+Hup/kiJu27N/URydsZZOxWqmJHtKckOh1Ldvj
+         71jqQhdhLJ/T80bqhEmmnf551DZRoLk+Ese9aosgA4U6/DWJtYPZByOEbYAqB9HiT4
+         CPE++snminrtQ==
+Date:   Wed, 14 Apr 2021 08:18:46 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.19 6/8] radix tree test suite: Fix compilation
+Message-ID: <YHbdpo3dP1INDp0z@sashalap>
+References: <20210405160515.269020-1-sashal@kernel.org>
+ <20210405160515.269020-6-sashal@kernel.org>
+ <20210405181109.GH2531743@casper.infradead.org>
 MIME-Version: 1.0
-References: <20210412145919.GE1184147@redhat.com> <CAJfpegsaY05jSRNFTcquNFyMr+GMpPBMgoEO0YZcXxfqBi3g2A@mail.gmail.com>
- <20210414135622.4d677fd7@bahia.lan>
-In-Reply-To: <20210414135622.4d677fd7@bahia.lan>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 14 Apr 2021 13:58:58 +0200
-Message-ID: <CAJfpegv60U4EecWhZSE27iC0n13kxOBfT83UZD6ziSRE4h9xVA@mail.gmail.com>
-Subject: Re: Query about fuse ->sync_fs and virtiofs
-To:     Greg Kurz <groug@kaod.org>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
-        Robert Krawitz <rkrawitz@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20210405181109.GH2531743@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 14, 2021 at 1:56 PM Greg Kurz <groug@kaod.org> wrote:
+On Mon, Apr 05, 2021 at 07:11:09PM +0100, Matthew Wilcox wrote:
+>On Mon, Apr 05, 2021 at 12:05:13PM -0400, Sasha Levin wrote:
+>> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+>>
+>> [ Upstream commit dd841a749d1ded8e2e5facc4242ee0b6779fc0cb ]
+>>
+>> Introducing local_lock broke compilation; fix it all up.
 >
-> On Mon, 12 Apr 2021 17:08:26 +0200
-> Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> > On Mon, Apr 12, 2021 at 4:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > >
-> > > Hi Miklos,
-> > >
-> > > Robert Krawitz drew attention to the fact that fuse does not seem to
-> > > have a ->sync_fs implementation. That probably means that in case of
-> > > virtiofs, upon sync()/syncfs(), host cache will not be written back
-> > > to disk. And that's not something people expect.
-> > >
-> > > I read somewhere that fuse did not implement ->sync_fs because file
-> > > server might not be trusted and it could block sync().
-> > >
-> > > In case of virtiofs, file server is trusted entity (w.r.t guest kernel),
-> > > so it probably should be ok to implement ->sync_fs atleast for virtiofs?
-> >
-> > Yes, that looks like a good idea.
-> >
->
-> I've started looking into this. First observation is that implementing
-> ->sync_fs() is file server agnostic, so if we want this to only be used
-> by a trusted file server, we need to introduce such a notion in FUSE.
-> Not sure where though... in struct fuse_fs_context maybe ?
+>I don't think local_lock has been backported to 4.19?
 
-Yep, makes sense.
+Heh, right, I'll drop it from 5.4 and older.
 
+-- 
 Thanks,
-Miklos
+Sasha
