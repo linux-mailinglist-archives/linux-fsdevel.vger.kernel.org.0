@@ -2,145 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4732335F001
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 10:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A22B35F05C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 11:02:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344460AbhDNImo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 04:42:44 -0400
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:42516 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232348AbhDNImn (ORCPT
+        id S244872AbhDNJDF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 05:03:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47022 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232630AbhDNJDD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 04:42:43 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UVX0skD_1618389740;
-Received: from 30.21.164.69(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0UVX0skD_1618389740)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 14 Apr 2021 16:42:20 +0800
+        Wed, 14 Apr 2021 05:03:03 -0400
+Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3113C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Apr 2021 02:02:42 -0700 (PDT)
+Received: by mail-vs1-xe2a.google.com with SMTP id e16so9417900vsu.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Apr 2021 02:02:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ve208t/RK2O5KKA1Tytd/3SnK5wVjxvj8UwjAFmW0A4=;
+        b=PP+vQbwka8RkOrkMB+NhaqUGiWztFql/zPxeSR5HtPBJcqExUKf+kRnJg0jn/jHCWQ
+         yT+BPzbnZlqaszEiNmIifyyMUPkADCZDBxV40m6ViFnyalFPs1AVq/zaig81R2kq/rhP
+         J2qGcnekVuX9VSo6oH3Crg8BzN7Lnc2T28CI8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ve208t/RK2O5KKA1Tytd/3SnK5wVjxvj8UwjAFmW0A4=;
+        b=h/rKUvUOUXKD2HpAyeXbHoN3e1mp1nnc3k3/y9VkA8hTKPrQ+4cdIOIcnBtThqsfaE
+         lSx6DUd/0MvNt/acCPfZ1lrgHIh93tkdkjmBDBZtbuBycKu6U50TI5w1e5Ha4optg3lC
+         sI6QfNpAfOoCA91+NRou/xh5ewx9GO8rwJU8A7eg5bq4hWvBRWIlJEBN0KT3n//G9nA1
+         uPww6X26ckh4dCk5xniEUf+Cxu+305ZS2HgjLwBVmuuhBB4fK7OQnP/hhIeDxyk9eECQ
+         Yuzu/53m5FPz2iLE5ZHCgFD9yysXFprU3sLVS7gU37sgcM49FPPkF3zPiqPOsU9vuvsE
+         +f2w==
+X-Gm-Message-State: AOAM5319ODj5y0vtGJgql1VllR/vN6mrpvP7y8rVxMiTu7DncCzw1+cY
+        FwBSW6hxEJTZ31smNszy6WZtNwKAr0SQ/gNEi8jAC9QghsVr3WBh
+X-Google-Smtp-Source: ABdhPJyDuyMa4F6hAu3fNjHYFx6RQZ5dQfSkW2XG+XWw8KImgVRaUTb+FCtc04tKKlRDbVgsVoaEBuyoyrNUwKdrdsk=
+X-Received: by 2002:a67:1643:: with SMTP id 64mr11142777vsw.0.1618390962045;
+ Wed, 14 Apr 2021 02:02:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <807bb470f90bae5dcd80a29020d38f6b5dd6ef8e.1616826872.git.baolin.wang@linux.alibaba.com>
+ <f72f28cd-06b5-fb84-c7ce-ad1a3d14c016@linux.alibaba.com> <CAJfpegtJ6100CS34+MSi8Rn_NMRGHw5vxbs+fOHBBj8GZLEexw@mail.gmail.com>
+ <d9b71523-153c-12fa-fc60-d89b27e04854@linux.alibaba.com>
+In-Reply-To: <d9b71523-153c-12fa-fc60-d89b27e04854@linux.alibaba.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 14 Apr 2021 11:02:31 +0200
+Message-ID: <CAJfpegsurP8JshxFah0vCwBQicc0ijRnGyLeZZ-4tio6BHqEzQ@mail.gmail.com>
 Subject: Re: [PATCH v2 1/2] fuse: Fix possible deadlock when writing back
  dirty pages
-To:     Miklos Szeredi <miklos@szeredi.hu>
+To:     Baolin Wang <baolin.wang@linux.alibaba.com>
 Cc:     Peng Tao <tao.peng@linux.alibaba.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <807bb470f90bae5dcd80a29020d38f6b5dd6ef8e.1616826872.git.baolin.wang@linux.alibaba.com>
- <f72f28cd-06b5-fb84-c7ce-ad1a3d14c016@linux.alibaba.com>
- <CAJfpegtJ6100CS34+MSi8Rn_NMRGHw5vxbs+fOHBBj8GZLEexw@mail.gmail.com>
-From:   Baolin Wang <baolin.wang@linux.alibaba.com>
-Message-ID: <d9b71523-153c-12fa-fc60-d89b27e04854@linux.alibaba.com>
-Date:   Wed, 14 Apr 2021 16:42:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
-MIME-Version: 1.0
-In-Reply-To: <CAJfpegtJ6100CS34+MSi8Rn_NMRGHw5vxbs+fOHBBj8GZLEexw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Wed, Apr 14, 2021 at 10:42 AM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
 
-在 2021/4/13 16:57, Miklos Szeredi 写道:
-> On Mon, Apr 12, 2021 at 3:23 PM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
->>
->> Hi Miklos,
->>
->> 在 2021/3/27 14:36, Baolin Wang 写道:
->>> We can meet below deadlock scenario when writing back dirty pages, and
->>> writing files at the same time. The deadlock scenario can be reproduced
->>> by:
->>>
->>> - A writeback worker thread A is trying to write a bunch of dirty pages by
->>> fuse_writepages(), and the fuse_writepages() will lock one page (named page 1),
->>> add it into rb_tree with setting writeback flag, and unlock this page 1,
->>> then try to lock next page (named page 2).
->>>
->>> - But at the same time a file writing can be triggered by another process B,
->>> to write several pages by fuse_perform_write(), the fuse_perform_write()
->>> will lock all required pages firstly, then wait for all writeback pages
->>> are completed by fuse_wait_on_page_writeback().
->>>
->>> - Now the process B can already lock page 1 and page 2, and wait for page 1
->>> waritehack is completed (page 1 is under writeback set by process A). But
->>> process A can not complete the writeback of page 1, since it is still
->>> waiting for locking page 2, which was locked by process B already.
->>>
->>> A deadlock is occurred.
->>>
->>> To fix this issue, we should make sure each page writeback is completed
->>> after lock the page in fuse_fill_write_pages() separately, and then write
->>> them together when all pages are stable.
->>>
->>> [1450578.772896] INFO: task kworker/u259:6:119885 blocked for more than 120 seconds.
->>> [1450578.796179] kworker/u259:6  D    0 119885      2 0x00000028
->>> [1450578.796185] Workqueue: writeback wb_workfn (flush-0:78)
->>> [1450578.796188] Call trace:
->>> [1450578.798804]  __switch_to+0xd8/0x148
->>> [1450578.802458]  __schedule+0x280/0x6a0
->>> [1450578.806112]  schedule+0x34/0xe8
->>> [1450578.809413]  io_schedule+0x20/0x40
->>> [1450578.812977]  __lock_page+0x164/0x278
->>> [1450578.816718]  write_cache_pages+0x2b0/0x4a8
->>> [1450578.820986]  fuse_writepages+0x84/0x100 [fuse]
->>> [1450578.825592]  do_writepages+0x58/0x108
->>> [1450578.829412]  __writeback_single_inode+0x48/0x448
->>> [1450578.834217]  writeback_sb_inodes+0x220/0x520
->>> [1450578.838647]  __writeback_inodes_wb+0x50/0xe8
->>> [1450578.843080]  wb_writeback+0x294/0x3b8
->>> [1450578.846906]  wb_do_writeback+0x2ec/0x388
->>> [1450578.850992]  wb_workfn+0x80/0x1e0
->>> [1450578.854472]  process_one_work+0x1bc/0x3f0
->>> [1450578.858645]  worker_thread+0x164/0x468
->>> [1450578.862559]  kthread+0x108/0x138
->>> [1450578.865960] INFO: task doio:207752 blocked for more than 120 seconds.
->>> [1450578.888321] doio            D    0 207752 207740 0x00000000
->>> [1450578.888329] Call trace:
->>> [1450578.890945]  __switch_to+0xd8/0x148
->>> [1450578.894599]  __schedule+0x280/0x6a0
->>> [1450578.898255]  schedule+0x34/0xe8
->>> [1450578.901568]  fuse_wait_on_page_writeback+0x8c/0xc8 [fuse]
->>> [1450578.907128]  fuse_perform_write+0x240/0x4e0 [fuse]
->>> [1450578.912082]  fuse_file_write_iter+0x1dc/0x290 [fuse]
->>> [1450578.917207]  do_iter_readv_writev+0x110/0x188
->>> [1450578.921724]  do_iter_write+0x90/0x1c8
->>> [1450578.925598]  vfs_writev+0x84/0xf8
->>> [1450578.929071]  do_writev+0x70/0x110
->>> [1450578.932552]  __arm64_sys_writev+0x24/0x30
->>> [1450578.936727]  el0_svc_common.constprop.0+0x80/0x1f8
->>> [1450578.941694]  el0_svc_handler+0x30/0x80
->>> [1450578.945606]  el0_svc+0x10/0x14
->>>
->>> Suggested-by: Peng Tao <tao.peng@linux.alibaba.com>
->>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>
->> Do you have any comments for this patch set? Thanks.
-> 
-> Hi,
-> 
-> I guess this is related:
-> 
-> https://lore.kernel.org/linux-fsdevel/20210209100115.GB1208880@miu.piliscsaba.redhat.com/
-> 
-> Can you verify that the patch at the above link fixes your issue?
+> Sorry I missed this patch before, and I've tested this patch, it seems
+> can solve the deadlock issue I met before.
 
-Sorry I missed this patch before, and I've tested this patch, it seems 
-can solve the deadlock issue I met before.
+Great, thanks for testing.
 
-But look at this patch in detail, I think this patch only reduced the 
-deadlock window, but did not remove the possible deadlock scenario 
-completely like I explained in the commit log.
+> But look at this patch in detail, I think this patch only reduced the
+> deadlock window, but did not remove the possible deadlock scenario
+> completely like I explained in the commit log.
+>
+> Since the fuse_fill_write_pages() can still lock the partitail page in
+> your patch, and will be wait for the partitail page waritehack is
+> completed if writeback is set in fuse_send_write_pages().
+>
+> But at the same time, a writeback worker thread may be waiting for
+> trying to lock the partitail page to write a bunch of dirty pages by
+> fuse_writepages().
 
-Since the fuse_fill_write_pages() can still lock the partitail page in 
-your patch, and will be wait for the partitail page waritehack is 
-completed if writeback is set in fuse_send_write_pages().
+As you say, fuse_fill_write_pages() will lock a partial page.  This
+page cannot become dirty, only after being read completely, which
+first requires the page lock.  So dirtying this page can only happen
+after the writeback of the fragment was completed.
 
-But at the same time, a writeback worker thread may be waiting for 
-trying to lock the partitail page to write a bunch of dirty pages by 
-fuse_writepages().
+I don't see how this could lead to a deadlock.
 
-Then the deadlock issue can still be occurred. And I think the deadlock 
-issue I met is not same with the deadlock issue solved by your patch.
-
-
-
-
+Thanks,
+Miklos
