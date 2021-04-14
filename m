@@ -2,179 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0227C35F600
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 16:22:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CDD835F730
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 17:12:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236846AbhDNOP3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 10:15:29 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42043 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232600AbhDNOP2 (ORCPT
+        id S1347984AbhDNPFK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 11:05:10 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:61698 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1347874AbhDNPFI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 10:15:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618409706;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4JOWJDfwxWBSnU6F6WuBZ7JaBtVqAeLmps6k0L0IgMY=;
-        b=GF/QPzK+qMvJyHjnq8FfhNxd74nCV9ODUn7R9z/cg1wkjSFCt0DtgKEYpxrPzHuYPuWmH5
-        Xs1zaBZCVFbbMCtf9NhbHm7Ia3Fb5pUZe34zTKgDVPwXV/Lc0z/cLPBbTGSgbJOP5KdlSq
-        FpjjKAOBI3oX9JqoGqZ25+vEcOhF+Qc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-501-f5b934_WPZSsjss-1GwwtA-1; Wed, 14 Apr 2021 10:15:02 -0400
-X-MC-Unique: f5b934_WPZSsjss-1GwwtA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D2315107ACE4;
-        Wed, 14 Apr 2021 14:14:59 +0000 (UTC)
-Received: from localhost (ovpn-114-209.ams2.redhat.com [10.36.114.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 05A8319C78;
-        Wed, 14 Apr 2021 14:14:58 +0000 (UTC)
-Date:   Wed, 14 Apr 2021 15:14:57 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Xie Yongji <xieyongji@bytedance.com>
-Cc:     mst@redhat.com, jasowang@redhat.com, sgarzare@redhat.com,
-        parav@nvidia.com, hch@infradead.org,
-        christian.brauner@canonical.com, rdunlap@infradead.org,
-        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
-        dan.carpenter@oracle.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 10/10] Documentation: Add documentation for VDUSE
-Message-ID: <YHb44R4HyLEUVSTF@stefanha-x1.localdomain>
-References: <20210331080519.172-1-xieyongji@bytedance.com>
- <20210331080519.172-11-xieyongji@bytedance.com>
+        Wed, 14 Apr 2021 11:05:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1618412705; x=1649948705;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AxHV9CquGv4LpokLwlUcIh8zYRqTqA2vlXv6HiT3TuA=;
+  b=VlZ16tPNyaga1UkUNpLRrfTQa73qO1QWWoHuyzBcp1LHkzEONmbJaREV
+   PlZKRXFZbdfKECBr+Dcrn0VHOkZ/jzoBT7t7/MYeaKXcWD4N3Fjw04SNK
+   7uedNDF0sH3zq80QwA/QX6wkPUUEpLzUIssTCm7/N8+7agBKeCHThW3qC
+   qlc1SaTZ5j+M6vhlvELYns52HZsw4jf1fp4eRO/9slA6y3KzuOTUePQI3
+   hqJ0NXFo7Hv0lI+vVUwf2Z72FypymYMPIeEb7MJVnDWmoBvpt2m9euwTE
+   qLFBasORgVh+c/21efRr0MAWS9kgwa6r3TDRXVUluwUEUQjOfjCdT0mtl
+   A==;
+IronPort-SDR: NgD8113IFAg0jD0J/6uanLuPww8mLryrd4FJEfOQIGOjFmmxoqnZc3BfJEJRwUD+HInUHHdKuS
+ emdfKgyhSLyUCg7fyxJZQcqPoDpe1K4GDf7pPs0BytbWaVwbw7Um3Qo++FnWnef1t/HXzLMAk/
+ R4zbbg76lW50oo+IxPQC1oeY2W8cE4USKQ1yvSJNNLqvBtTPHLkrx0DH1OZDalXshChilD6deG
+ +HTnYj2aOII4EPs+Ld9Reqso+VveaquGYDfy9KC3TbzS9+OA8WK0nVa3LSfUBAXhN9l2yYylom
+ ROE=
+X-IronPort-AV: E=Sophos;i="5.82,222,1613404800"; 
+   d="scan'208";a="268925356"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 14 Apr 2021 23:04:03 +0800
+IronPort-SDR: hy2R08h06yi/lk8DS1LIetG2uSkyVnMk/EpTvHJNCl6SmR8WwOEGHGMPgzqPGyKOfboARJt6iM
+ EGmK540G78rvjUzRyr5U4PuN82s4bMkFEX1F6jWYsqcaA5pp8K9prO/AVGpT+F10G/ddwmGIJ3
+ Hw+hQKS32EZqBNRcFA9cvC5v1iIEKIiM+KW9RfgkB3zdC00hiB+n0lckvVWINn00UpXXzHkQpW
+ nkkhfig7g9fDzcwYvoFx8x3zzomt7y4i/X95RwKzf/ligTbyuW7YCVBhj3zDgybsWfqFJSHmiL
+ bq5b0pp1qnCnSLai6SiOFm8S
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2021 07:43:15 -0700
+IronPort-SDR: 7mz8XM1d3p25L4d789LPzov85JL895gDdDVgWqQkJ4PK4ZemKVKSentdJEN6EAesr9nrv2UgsQ
+ q/oRJfdlRWQ/LVyZBH59eOJyQs+L6e3AiPsu9oGLkUGBDhWn/R3izDoYUsCxj0QkaBF0+Nyaq1
+ wEt3JFedl8EWkxDtf+dq3o2ZuRIVkrsWueIAJlkpNf6Tx3k01hNYctUmCBO30yWchXZFjh8VEu
+ 09PfktfQIGyPdWqyiZ15dpF4aFOhoC8XlVGke65Px7EMMica0mqddcfyKn/1oxJkpfNupYgnHG
+ n7Q=
+WDCIronportException: Internal
+Received: from ind006838.ad.shared (HELO naota-xeon) ([10.225.53.197])
+  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2021 08:03:51 -0700
+Date:   Thu, 15 Apr 2021 00:03:50 +0900
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     Karel Zak <kzak@redhat.com>
+Cc:     util-linux@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v2 1/3] blkid: implement zone-aware probing
+Message-ID: <20210414150350.srqsmzyoscec6phy@naota-xeon>
+References: <20210414013339.2936229-1-naohiro.aota@wdc.com>
+ <20210414013339.2936229-2-naohiro.aota@wdc.com>
+ <20210414133101.p5amev6tkfroiyw5@ws.net.home>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+8CNRb8u7kJfIjoT"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210331080519.172-11-xieyongji@bytedance.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <20210414133101.p5amev6tkfroiyw5@ws.net.home>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Apr 14, 2021 at 03:31:01PM +0200, Karel Zak wrote:
+> On Wed, Apr 14, 2021 at 10:33:37AM +0900, Naohiro Aota wrote:
+> > --- a/configure.ac
+> > +++ b/configure.ac
+> > @@ -302,6 +302,7 @@ AC_CHECK_HEADERS([ \
+> >  	lastlog.h \
+> >  	libutil.h \
+> >  	linux/btrfs.h \
+> > +	linux/blkzoned.h \
+> 
+> unnecessary, there is already AC_CHECK_HEADERS([linux/blkzoned.h]) on
+> another place.
 
---+8CNRb8u7kJfIjoT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ah, I missed that. I will drop it.
 
-On Wed, Mar 31, 2021 at 04:05:19PM +0800, Xie Yongji wrote:
-> VDUSE (vDPA Device in Userspace) is a framework to support
-> implementing software-emulated vDPA devices in userspace. This
-> document is intended to clarify the VDUSE design and usage.
->=20
-> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> ---
->  Documentation/userspace-api/index.rst |   1 +
->  Documentation/userspace-api/vduse.rst | 212 ++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 213 insertions(+)
->  create mode 100644 Documentation/userspace-api/vduse.rst
+> >  	linux/capability.h \
+> >  	linux/cdrom.h \
+> >  	linux/falloc.h \
+> > diff --git a/libblkid/src/blkidP.h b/libblkid/src/blkidP.h
+> > index a3fe6748a969..e3a160aa97c0 100644
+> > --- a/libblkid/src/blkidP.h
+> > +++ b/libblkid/src/blkidP.h
+> > @@ -150,6 +150,10 @@ struct blkid_idmag
+> >  	const char	*hoff;		/* hint which contains byte offset to kboff */
+> >  	long		kboff;		/* kilobyte offset of superblock */
+> >  	unsigned int	sboff;		/* byte offset within superblock */
+> > +
+> > +	int		is_zoned;	/* indicate magic location is calcluated based on zone position  */
+> > +	long		zonenum;	/* zone number which has superblock */
+> > +	long		kboff_inzone;	/* kilobyte offset of superblock in a zone */
+> 
+> It would be better to use 'flags' struct field and
+> 
+>   #define BLKID_FL_ZONED_DEV (1 << 6)
+> 
+> like we use for another stuff.
 
-Just looking over the documentation briefly (I haven't studied the code
-yet)...
+BLKID_FL_* flags looks like to indicate a device's property. Instead,
+this one indicates a magic is placed relative to a zone. I do not see
+blkid_idmag is currently using "flags" filed. Should we really add it
+and follow the flag style? I thought, we can do it later when other
+use case exists.
 
-> +How VDUSE works
-> +------------
-> +Each userspace vDPA device is created by the VDUSE_CREATE_DEV ioctl on
-> +the character device (/dev/vduse/control). Then a device file with the
-> +specified name (/dev/vduse/$NAME) will appear, which can be used to
-> +implement the userspace vDPA device's control path and data path.
+> > diff --git a/libblkid/src/probe.c b/libblkid/src/probe.c
+> > index a47a8720d4ac..9d180aab5242 100644
+> > --- a/libblkid/src/probe.c
+> > +++ b/libblkid/src/probe.c
+> > @@ -94,6 +94,9 @@
+> >  #ifdef HAVE_LINUX_CDROM_H
+> >  #include <linux/cdrom.h>
+> >  #endif
+> > +#ifdef HAVE_LINUX_BLKZONED_H
+> > +#include <linux/blkzoned.h>
+> > +#endif
+> >  #ifdef HAVE_SYS_STAT_H
+> >  #include <sys/stat.h>
+> >  #endif
+> > @@ -897,6 +900,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
+> >  	pr->wipe_off = 0;
+> >  	pr->wipe_size = 0;
+> >  	pr->wipe_chain = NULL;
+> > +	pr->zone_size = 0;
+> 
+> you also need to update blkid_clone_probe() function
 
-These steps are taken after sending the VDPA_CMD_DEV_NEW netlink
-message? (Please consider reordering the documentation to make it clear
-what the sequence of steps are.)
+Will do. I completely missed that. Thanks.
 
-> +	static int netlink_add_vduse(const char *name, int device_id)
-> +	{
-> +		struct nl_sock *nlsock;
-> +		struct nl_msg *msg;
-> +		int famid;
-> +
-> +		nlsock =3D nl_socket_alloc();
-> +		if (!nlsock)
-> +			return -ENOMEM;
-> +
-> +		if (genl_connect(nlsock))
-> +			goto free_sock;
-> +
-> +		famid =3D genl_ctrl_resolve(nlsock, VDPA_GENL_NAME);
-> +		if (famid < 0)
-> +			goto close_sock;
-> +
-> +		msg =3D nlmsg_alloc();
-> +		if (!msg)
-> +			goto close_sock;
-> +
-> +		if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, famid, 0, 0,
-> +		    VDPA_CMD_DEV_NEW, 0))
-> +			goto nla_put_failure;
-> +
-> +		NLA_PUT_STRING(msg, VDPA_ATTR_DEV_NAME, name);
-> +		NLA_PUT_STRING(msg, VDPA_ATTR_MGMTDEV_DEV_NAME, "vduse");
-> +		NLA_PUT_U32(msg, VDPA_ATTR_DEV_ID, device_id);
-
-What are the permission/capability requirements for VDUSE?
-
-How does VDUSE interact with namespaces?
-
-What is the meaning of VDPA_ATTR_DEV_ID? I don't see it in Linux
-v5.12-rc6 drivers/vdpa/vdpa.c:vdpa_nl_cmd_dev_add_set_doit().
-
-> +MMU-based IOMMU Driver
-> +----------------------
-> +VDUSE framework implements an MMU-based on-chip IOMMU driver to support
-> +mapping the kernel DMA buffer into the userspace iova region dynamically.
-> +This is mainly designed for virtio-vdpa case (kernel virtio drivers).
-> +
-> +The basic idea behind this driver is treating MMU (VA->PA) as IOMMU (IOV=
-A->PA).
-> +The driver will set up MMU mapping instead of IOMMU mapping for the DMA =
-transfer
-> +so that the userspace process is able to use its virtual address to acce=
-ss
-> +the DMA buffer in kernel.
-> +
-> +And to avoid security issue, a bounce-buffering mechanism is introduced =
-to
-> +prevent userspace accessing the original buffer directly which may conta=
-in other
-> +kernel data. During the mapping, unmapping, the driver will copy the dat=
-a from
-> +the original buffer to the bounce buffer and back, depending on the dire=
-ction of
-> +the transfer. And the bounce-buffer addresses will be mapped into the us=
-er address
-> +space instead of the original one.
-
-Is mmap(2) the right interface if memory is not actually shared, why not
-just use pread(2)/pwrite(2) to make the copy explicit? That way the copy
-semantics are clear. For example, don't expect to be able to busy wait
-on the memory because changes will not be visible to the other side.
-
-(I guess I'm missing something here and that mmap(2) is the right
-approach, but maybe this documentation section can be clarified.)
-
---+8CNRb8u7kJfIjoT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmB2+OEACgkQnKSrs4Gr
-c8jpugf+NHnGf6o2QvHFiSjjcoe0QPBmiySO4mz+2/oqmyL0YElWKcuyJJ16uxOx
-p1SCMSYhoSE4EVZ1zWXMy18X6Lc3WjfU5s4dyo1dy4qrumXxGDj8Q93Togh8UL1Q
-URNKuVbUBZp8anAt5KUXQt+fW/kw6luipS8XDrpszHN1mGVPrs8o0oORCwcD/8u9
-95gfUL+acvkfocg6F//QpNUi1/BE7F6iTTRJhZ0UG0GHaVeJ/U0D7z0NrnaZLpgP
-VPBvWxdqfOwiX3ABCVHIS18tafCmkLfadpmH0dxwZgVIC/hmE0gs96/7tDhQqZLg
-1RAejoIQX/MqVpzh3XGHjGqnDW8e6w==
-=hqt0
------END PGP SIGNATURE-----
-
---+8CNRb8u7kJfIjoT--
-
+>   Karel
+> 
+> -- 
+>  Karel Zak  <kzak@redhat.com>
+>  http://karelzak.blogspot.com
+> 
