@@ -2,57 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CCC7535EEDC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 10:07:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA65A35EF67
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 10:25:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349218AbhDNHzb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 03:55:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60116 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231918AbhDNHzY (ORCPT
+        id S1349897AbhDNIS4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 04:18:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:29713 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1349790AbhDNISv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 03:55:24 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8751FC061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Apr 2021 00:55:03 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id d21so2413369edv.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Apr 2021 00:55:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fsahu37Y9/zL9oMkhbhBb4dx/NliRzgzOHM8isOmQ2c=;
-        b=z2bybWOetPXB3jsL3na6wHIjbhGwOFP4FlYyvjARRQ1zuln9Lg+pL/kY6otUTEnO/g
-         lmz71dHcX7tKWEiSE99JfBpy0QPoIkirIF0HR4SxhOuk6U5ekM+uU2utMNHwOx3cCbcq
-         bCu1H5WIWPAi2qO/R+8sNYMXhnOVoGZsu+injmNkkTjSwg2SZp+RIgyPkSAgjGaugyob
-         gEGTc8F9Bmf0SfFBYHjbLcueTejwnl3jiJTW2tF1CJ6lHx/ZbegmpfL7n+XHH9NGvEyA
-         QB4Qq51ZR8J5qZqX8ZmsBgnY0lAv6Uis+Ylxce/zXDy/3QHC7GyNvd235IoyuHn9vUiM
-         MXwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fsahu37Y9/zL9oMkhbhBb4dx/NliRzgzOHM8isOmQ2c=;
-        b=kEIHDh2OFqjleWlHh1PpvwD2CUwLg9RIe5rhm0m3xI+tgREJVSBepipj9c8qx/BHPO
-         fsYRmdeL9xTlk1tGXHNqr+oG1HF/st+MK12FL4XDt5Ej/FGOgxBQXEPnU+zzvtLic51i
-         efzS97FZxhids3kmhQNFWNs+GqtyN8gCtoGJJQItt2UuNUN6j9oDpMReoLoYyBvvYh88
-         DS06NhUzINaGlDjUV4lQZUZz7PFccvst5nCZwZtx1/uvAYMV5ekqPlhn4MBIGym2UXnB
-         j62y0sTafK7H+kZLCBbCGxZWM4oizW9Xt/VzA3I/A4ThQxUYgTIobyPPRScgkUzzDSNv
-         /5Hw==
-X-Gm-Message-State: AOAM530cnrL5Z05FknPsX6yJHyyZylCqi4b2enRpQC2zk6g9K+pc5Ebq
-        Zx00HGL+MOm00dBPpiJrfybKdhGGBpo4iNmyGRXf
-X-Google-Smtp-Source: ABdhPJymgoRaZS3OHeEHzYqRFfSPikKe+INgr5Ie+JbVLw+hozOq1xXj6dKOG0EeaiMEyL5Q6pe0Af2kIWIy/wVn3cY=
-X-Received: by 2002:a05:6402:4314:: with SMTP id m20mr38627332edc.5.1618386902328;
- Wed, 14 Apr 2021 00:55:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210331080519.172-1-xieyongji@bytedance.com> <20210414032909-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20210414032909-mutt-send-email-mst@kernel.org>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Wed, 14 Apr 2021 15:54:51 +0800
-Message-ID: <CACycT3tRjTRJr1aQhtHK_K1MJd07ki8bnR9mYPRb8oQ8vVuxDQ@mail.gmail.com>
-Subject: Re: Re: [PATCH v6 00/10] Introduce VDUSE - vDPA Device in Userspace
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
+        Wed, 14 Apr 2021 04:18:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618388309;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=drGuROoG7lj2vDETDU9JDvj19d1vG70cVaZLfEDasfQ=;
+        b=HU4a9PnO3gI8C9EQ2fPCEPmYEHGvsJzLW48bmyOfEuJjK1Intb9XjR5U57wkuvY4jULtGX
+        RlzZOhLWYv3IcSn6GPXfRAWTuHgIxw1sUY64wHkzIcDNreeE2vNqbqNNz+6iR4ZPC/6tpI
+        zPdb+luymR6tnOb82kNY3RBqsy18ADs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-442-BEpTz7kFPZK4thdSD3eoIQ-1; Wed, 14 Apr 2021 04:18:28 -0400
+X-MC-Unique: BEpTz7kFPZK4thdSD3eoIQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 74FE91883527;
+        Wed, 14 Apr 2021 08:18:26 +0000 (UTC)
+Received: from wangxiaodeMacBook-Air.local (ovpn-13-33.pek2.redhat.com [10.72.13.33])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B882B16ED7;
+        Wed, 14 Apr 2021 08:18:13 +0000 (UTC)
+Subject: Re: [PATCH v6 09/10] vduse: Introduce VDUSE - vDPA Device in
+ Userspace
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
         Stefano Garzarella <sgarzare@redhat.com>,
         Parav Pandit <parav@nvidia.com>,
@@ -62,129 +47,108 @@ Cc:     Jason Wang <jasowang@redhat.com>,
         Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
         Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
         Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20210331080519.172-1-xieyongji@bytedance.com>
+ <20210331080519.172-10-xieyongji@bytedance.com>
+ <c817178a-2ac8-bf93-1ed3-528579c657a3@redhat.com>
+ <CACycT3v_KFQXoxRbEj8c0Ve6iKn9RbibtBDgBFs=rf0ZOmTBBQ@mail.gmail.com>
+ <091dde74-449b-385c-0ec9-11e4847c6c4c@redhat.com>
+ <CACycT3vwATp4+Ao0fjuyeeLQN+xHH=dXF+JUyuitkn4k8hELnA@mail.gmail.com>
+ <dc9a90dd-4f86-988c-c1b5-ac606ce5e14b@redhat.com>
+ <CACycT3vxO21Yt6+px2c2Q8DONNUNehdo2Vez_RKQCKe76CM2TA@mail.gmail.com>
+ <0f386dfe-45c9-5609-55f7-b8ab2a4abf5e@redhat.com>
+ <CACycT3vbDhUKM0OX-zo02go09gh2+EEdyZ_YQuz8PXzo3EngXw@mail.gmail.com>
+ <a85c0a66-ad7f-a344-f8ed-363355f5e283@redhat.com>
+ <CACycT3tHxtfgQhQgv0VyF_U523qASEv1Ydc4XuX43MFRzGVbfw@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <51cd2e3a-5b76-a6f5-da59-b118a7e13923@redhat.com>
+Date:   Wed, 14 Apr 2021 16:18:11 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.9.1
+MIME-Version: 1.0
+In-Reply-To: <CACycT3tHxtfgQhQgv0VyF_U523qASEv1Ydc4XuX43MFRzGVbfw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 14, 2021 at 3:35 PM Michael S. Tsirkin <mst@redhat.com> wrote:
->
-> On Wed, Mar 31, 2021 at 04:05:09PM +0800, Xie Yongji wrote:
-> > This series introduces a framework, which can be used to implement
-> > vDPA Devices in a userspace program. The work consist of two parts:
-> > control path forwarding and data path offloading.
-> >
-> > In the control path, the VDUSE driver will make use of message
-> > mechnism to forward the config operation from vdpa bus driver
-> > to userspace. Userspace can use read()/write() to receive/reply
-> > those control messages.
-> >
-> > In the data path, the core is mapping dma buffer into VDUSE
-> > daemon's address space, which can be implemented in different ways
-> > depending on the vdpa bus to which the vDPA device is attached.
-> >
-> > In virtio-vdpa case, we implements a MMU-based on-chip IOMMU driver wit=
-h
-> > bounce-buffering mechanism to achieve that. And in vhost-vdpa case, the=
- dma
-> > buffer is reside in a userspace memory region which can be shared to th=
-e
-> > VDUSE userspace processs via transferring the shmfd.
-> >
-> > The details and our user case is shown below:
-> >
-> > ------------------------    -------------------------   ---------------=
--------------------------------
-> > |            Container |    |              QEMU(VM) |   |              =
-                 VDUSE daemon |
-> > |       ---------      |    |  -------------------  |   | -------------=
------------- ---------------- |
-> > |       |dev/vdx|      |    |  |/dev/vhost-vdpa-x|  |   | | vDPA device=
- emulation | | block driver | |
-> > ------------+-----------     -----------+------------   -------------+-=
----------------------+---------
-> >             |                           |                            | =
-                     |
-> >             |                           |                            | =
-                     |
-> > ------------+---------------------------+----------------------------+-=
----------------------+---------
-> > |    | block device |           |  vhost device |            | vduse dr=
-iver |          | TCP/IP |    |
-> > |    -------+--------           --------+--------            -------+--=
-------          -----+----    |
-> > |           |                           |                           |  =
-                     |        |
-> > | ----------+----------       ----------+-----------         -------+--=
------                |        |
-> > | | virtio-blk driver |       |  vhost-vdpa driver |         | vdpa dev=
-ice |                |        |
-> > | ----------+----------       ----------+-----------         -------+--=
------                |        |
-> > |           |      virtio bus           |                           |  =
-                     |        |
-> > |   --------+----+-----------           |                           |  =
-                     |        |
-> > |                |                      |                           |  =
-                     |        |
-> > |      ----------+----------            |                           |  =
-                     |        |
-> > |      | virtio-blk device |            |                           |  =
-                     |        |
-> > |      ----------+----------            |                           |  =
-                     |        |
-> > |                |                      |                           |  =
-                     |        |
-> > |     -----------+-----------           |                           |  =
-                     |        |
-> > |     |  virtio-vdpa driver |           |                           |  =
-                     |        |
-> > |     -----------+-----------           |                           |  =
-                     |        |
-> > |                |                      |                           |  =
-  vdpa bus           |        |
-> > |     -----------+----------------------+---------------------------+--=
-----------           |        |
-> > |                                                                      =
-                  ---+---     |
-> > -----------------------------------------------------------------------=
-------------------| NIC |------
-> >                                                                        =
-                  ---+---
-> >                                                                        =
-                     |
-> >                                                                        =
-            ---------+---------
-> >                                                                        =
-            | Remote Storages |
-> >                                                                        =
-            -------------------
->
-> This all looks quite similar to vhost-user-block except that one
-> does not need any kernel support at all.
->
-> So I am still scratching my head about its advantages over
-> vhost-user-block.
->
 
-It plays the same role as vhost-user-block in VM user cases.
+在 2021/4/13 下午12:28, Yongji Xie 写道:
+> On Tue, Apr 13, 2021 at 11:35 AM Jason Wang <jasowang@redhat.com> wrote:
+>>
+>> 在 2021/4/12 下午5:59, Yongji Xie 写道:
+>>> On Mon, Apr 12, 2021 at 5:37 PM Jason Wang <jasowang@redhat.com> wrote:
+>>>> 在 2021/4/12 下午4:02, Yongji Xie 写道:
+>>>>> On Mon, Apr 12, 2021 at 3:16 PM Jason Wang <jasowang@redhat.com> wrote:
+>>>>>> 在 2021/4/9 下午4:02, Yongji Xie 写道:
+>>>>>>>>>>> +};
+>>>>>>>>>>> +
+>>>>>>>>>>> +struct vduse_dev_config_data {
+>>>>>>>>>>> +     __u32 offset; /* offset from the beginning of config space */
+>>>>>>>>>>> +     __u32 len; /* the length to read/write */
+>>>>>>>>>>> +     __u8 data[VDUSE_CONFIG_DATA_LEN]; /* data buffer used to read/write */
+>>>>>>>>>> Note that since VDUSE_CONFIG_DATA_LEN is part of uAPI it means we can
+>>>>>>>>>> not change it in the future.
+>>>>>>>>>>
+>>>>>>>>>> So this might suffcient for future features or all type of virtio devices.
+>>>>>>>>>>
+>>>>>>>>> Do you mean 256 is no enough here？
+>>>>>>>> Yes.
+>>>>>>>>
+>>>>>>> But this request will be submitted multiple times if config lengh is
+>>>>>>> larger than 256. So do you think whether we need to extent the size to
+>>>>>>> 512 or larger?
+>>>>>> So I think you'd better either:
+>>>>>>
+>>>>>> 1) document the limitation (256) in somewhere, (better both uapi and doc)
+>>>>>>
+>>>>> But the VDUSE_CONFIG_DATA_LEN doesn't mean the limitation of
+>>>>> configuration space. It only means the maximum size of one data
+>>>>> transfer for configuration space. Do you mean document this?
+>>>> Yes, and another thing is that since you're using
+>>>> data[VDUSE_CONFIG_DATA_LEN] in the uapi, it implies the length is always
+>>>> 256 which seems not good and not what the code is wrote.
+>>>>
+>>> How about renaming VDUSE_CONFIG_DATA_LEN to VDUSE_MAX_TRANSFER_LEN?
+>>>
+>>> Thanks,
+>>> Yongji
+>>
+>> So a question is the reason to have a limitation of this in the uAPI?
+>> Note that in vhost-vdpa we don't have such:
+>>
+>> struct vhost_vdpa_config {
+>>           __u32 off;
+>>           __u32 len;
+>>           __u8 buf[0];
+>> };
+>>
+> If so, we need to call read()/write() multiple times each time
+> receiving/sending one request or response in userspace and kernel. For
+> example,
+>
+> 1. read and check request/response type
+> 2. read and check config length if type is VDUSE_SET_CONFIG or VDUSE_GET_CONFIG
+> 3. read the payload
+>
+> Not sure if it's worth it.
+>
+> Thanks,
+> Yongji
+
+
+Right, I see.
+
+So I'm fine with current approach.
+
+Thanks
+
+
 
 >
-> > We make use of it to implement a block device connecting to
-> > our distributed storage, which can be used both in containers and
-> > VMs. Thus, we can have an unified technology stack in this two cases.
->
-> Maybe the container part is the answer. How does that stack look?
->
 
-Yes, it enables containers to reuse virtio software stack. We can have
-one daemon that provides service to both containers and virtual
-machines.
-
-Thanks=EF=BC=8C
-Yongji
