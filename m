@@ -2,186 +2,244 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C442B35EE12
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 09:27:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7B8435EE7D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 09:42:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348469AbhDNG72 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 02:59:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47720 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349591AbhDNG7N (ORCPT
+        id S1349694AbhDNHfN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 03:35:13 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:33016 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1347875AbhDNHfN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 02:59:13 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76B11C061574;
-        Tue, 13 Apr 2021 23:58:52 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id j26so19636423iog.13;
-        Tue, 13 Apr 2021 23:58:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iPvXMTpUNl3IxdG2GdqWLZcBOjF3pDi559BGFj5cKe8=;
-        b=e5PSEGY9BDrjmpgpr1JDTixtaSfJ7lUkQfQofKGJFTaxWSf77oTAkZfVa/2O+TS5dW
-         eKoMP9B+vnaz4hLpdAQWXWwhO25xpQs7hfZJKyS4+7XL71K5E2369zyC/5JZMUDY2/0G
-         rcsd5BOHW/WDdWXnB60fXErG4m7mKCiymxzKVlqItMnrhqaF2na8AprV+mUZSSfD2XdZ
-         j/XMXdcInl4r0vsmy0rtFemZRTCl8mDtEV0kYcRVD+xDrt45g2qUNZIJr3f4P1dreG8r
-         0bCmU1FuJE2EZQsl5ACajy0rLM7hsKYhA6JgpY896xMy/C+GuqNMkUYjIj3itjHf1RRm
-         DQpg==
+        Wed, 14 Apr 2021 03:35:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618385691;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/EKL5XvCVEpC/xAzaCkVa2iKoqKzecx9m08YdXt8r2U=;
+        b=QbvabRvom8cpIpRdFIYasfQOXCbV08HgIiR7IEqXN+i1bce3Zzh1whFOx7BoX2iTsuwtzt
+        Iib76KEKOgPtXk1FjfedZe30REUGK9MCEJFH1m468cDX5yKdB+Sek8Cb/NWPI02tlb9+Zo
+        ToTVFrxATXMiG2conaWMiMgaahTwRxk=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-534-lFgHGANcMpCBx4nLBnm68w-1; Wed, 14 Apr 2021 03:34:22 -0400
+X-MC-Unique: lFgHGANcMpCBx4nLBnm68w-1
+Received: by mail-wr1-f70.google.com with SMTP id i3-20020adffc030000b02900ffd75bf10aso667867wrr.14
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Apr 2021 00:34:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iPvXMTpUNl3IxdG2GdqWLZcBOjF3pDi559BGFj5cKe8=;
-        b=LKj0mosX6lmQYsSQHd0aUlaX3DjyBFM4ZSF/LzXyLCDQC1GhUFGSVU2ja1pOI0HFRp
-         1T/G1kebf64Oaxk9haGIB4SR6uqIQCWD/D30TMxhY1yUQ8gLPylI1B/TFCgmd3QOFjA3
-         QAOUEXchxg25B5clcs0JXCmSei6bsbAO/Ilbko0hvwt2/MlE5o3FICvrYEIYKsiclZ7x
-         gIJ0MjSULSmCLCXGQ15q/vK/PkPfVq7t0daK6KElSaYACkLk1vOn2jwszKJPVEV0OLUy
-         oWRWG5mG3EcmPVHvlEnf5/ehV2nhy/mN7RceKpQxt646Z8cVZp4gAICOCha5NQDsFGEY
-         A0gg==
-X-Gm-Message-State: AOAM5301NQH0xR4wthgCBtNNRHu/QCYF/YJa6g+2QcpuGfL+kcFMVbP+
-        IHBKg5HbVwg0+DOPKTNWLwe85S+S5Svzq68GeyA=
-X-Google-Smtp-Source: ABdhPJxVn0379a/e+lrGuK9nJvBnaVZRkG+95gHH+6KyBvsrtfKcHhnhaQQ04D+xJ04y9zRQrXsU7onZw/arekICxKA=
-X-Received: by 2002:a6b:f909:: with SMTP id j9mr30365082iog.138.1618383531741;
- Tue, 13 Apr 2021 23:58:51 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/EKL5XvCVEpC/xAzaCkVa2iKoqKzecx9m08YdXt8r2U=;
+        b=KWjAOr/zmkWeqXstgsHnuBzdnc7/tziTEUMx5jRH41MfuOT+65lPl+s8m465xqrkSd
+         y+WNsxQW6Zk7KK7RQIhxLobew1Dx5H77GoYbzm8yYQDvakAKjM89kBF9O5wSi1JuKD5w
+         OJSB2kQiEjFUUXM2tAjLKPtrqSpr+EmLX47QXK/fM6ZkPExD5NSaz37vIzUZiMtFLgeQ
+         n+JAs5xa0suYndNCRb3QvS+aBASWM8dYVId+BP7PRBlqPqQoA3WVH202j9az4O/P3neA
+         yflnZNfbeUzO2+qID8q0PCM/pAXWnUnijp5BnpAkfusKfeSEDyxwJPo+/2DeYQk2Aucg
+         2lrg==
+X-Gm-Message-State: AOAM532cQqYzprVCVJ+eF6abMg+2j5UMPDzlHy7w1DA9Yl9GAvRNsjD/
+        pYPYFEHMzfW5wSouVCxHs/kpWQa7odLQPxLbpaf1xJl219ROTX+I0sXEJGBzgygvlJNnFi4KvTV
+        nI/hnqKqsMLOUG1zJOeuA1R9yhQ==
+X-Received: by 2002:adf:f506:: with SMTP id q6mr15884884wro.65.1618385660748;
+        Wed, 14 Apr 2021 00:34:20 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxfhdUyW/rYKPQEdLrMjzLeK4RYqnv+jhM0pMJO57jzpHnUMxj42Lj91ZhkDYfqygrXVL2Ebw==
+X-Received: by 2002:adf:f506:: with SMTP id q6mr15884871wro.65.1618385660595;
+        Wed, 14 Apr 2021 00:34:20 -0700 (PDT)
+Received: from redhat.com ([2a10:8006:2281:0:1994:c627:9eac:1825])
+        by smtp.gmail.com with ESMTPSA id l5sm4529131wmh.0.2021.04.14.00.34.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Apr 2021 00:34:19 -0700 (PDT)
+Date:   Wed, 14 Apr 2021 03:34:16 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Xie Yongji <xieyongji@bytedance.com>
+Cc:     jasowang@redhat.com, stefanha@redhat.com, sgarzare@redhat.com,
+        parav@nvidia.com, hch@infradead.org,
+        christian.brauner@canonical.com, rdunlap@infradead.org,
+        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
+        dan.carpenter@oracle.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 00/10] Introduce VDUSE - vDPA Device in Userspace
+Message-ID: <20210414032909-mutt-send-email-mst@kernel.org>
+References: <20210331080519.172-1-xieyongji@bytedance.com>
 MIME-Version: 1.0
-References: <20210219124517.79359-1-selvakuma.s1@samsung.com>
- <CGME20210219124603epcas5p33add0f2c1781b2a4d71bf30c9e1ac647@epcas5p3.samsung.com>
- <20210219124517.79359-3-selvakuma.s1@samsung.com> <BL0PR04MB6514EA91680D33A5890ECE16E7839@BL0PR04MB6514.namprd04.prod.outlook.com>
- <CAHqX9vb6GgaU9QdTQaq3=dGuoNCuWorLrGCF8gC5LEdFBESFcA@mail.gmail.com>
- <BL0PR04MB6514B34000467FABFD6BF385E7709@BL0PR04MB6514.namprd04.prod.outlook.com>
- <CAHqX9vYvtOaVL4LG0gAGCMz+a8uha8czH==Dgg3eG+TWA+xeVQ@mail.gmail.com> <BL0PR04MB65146169A9C7527280C15D4AE74F9@BL0PR04MB6514.namprd04.prod.outlook.com>
-In-Reply-To: <BL0PR04MB65146169A9C7527280C15D4AE74F9@BL0PR04MB6514.namprd04.prod.outlook.com>
-From:   Selva Jove <selvajove@gmail.com>
-Date:   Wed, 14 Apr 2021 12:28:39 +0530
-Message-ID: <CAHqX9vYPVwYLT5Bdk_GqKZWxpJNib9fYidEmT0j+bRikwyLgKw@mail.gmail.com>
-Subject: Re: [RFC PATCH v5 2/4] block: add simple copy support
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc:     SelvaKumar S <selvakuma.s1@samsung.com>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "kbusch@kernel.org" <kbusch@kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>, "hch@lst.de" <hch@lst.de>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "snitzer@redhat.com" <snitzer@redhat.com>,
-        "joshiiitr@gmail.com" <joshiiitr@gmail.com>,
-        "nj.shetty@samsung.com" <nj.shetty@samsung.com>,
-        "joshi.k@samsung.com" <joshi.k@samsung.com>,
-        "javier.gonz@samsung.com" <javier.gonz@samsung.com>,
-        "kch@kernel.org" <kch@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210331080519.172-1-xieyongji@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I agree with you. Will remove BLKDEV_COPY_NOEMULATION.
+On Wed, Mar 31, 2021 at 04:05:09PM +0800, Xie Yongji wrote:
+> This series introduces a framework, which can be used to implement
+> vDPA Devices in a userspace program. The work consist of two parts:
+> control path forwarding and data path offloading.
+> 
+> In the control path, the VDUSE driver will make use of message
+> mechnism to forward the config operation from vdpa bus driver
+> to userspace. Userspace can use read()/write() to receive/reply
+> those control messages.
+> 
+> In the data path, the core is mapping dma buffer into VDUSE
+> daemon's address space, which can be implemented in different ways
+> depending on the vdpa bus to which the vDPA device is attached.
+> 
+> In virtio-vdpa case, we implements a MMU-based on-chip IOMMU driver with
+> bounce-buffering mechanism to achieve that. And in vhost-vdpa case, the dma
+> buffer is reside in a userspace memory region which can be shared to the
+> VDUSE userspace processs via transferring the shmfd.
+> 
+> The details and our user case is shown below:
+> 
+> ------------------------    -------------------------   ----------------------------------------------
+> |            Container |    |              QEMU(VM) |   |                               VDUSE daemon |
+> |       ---------      |    |  -------------------  |   | ------------------------- ---------------- |
+> |       |dev/vdx|      |    |  |/dev/vhost-vdpa-x|  |   | | vDPA device emulation | | block driver | |
+> ------------+-----------     -----------+------------   -------------+----------------------+---------
+>             |                           |                            |                      |
+>             |                           |                            |                      |
+> ------------+---------------------------+----------------------------+----------------------+---------
+> |    | block device |           |  vhost device |            | vduse driver |          | TCP/IP |    |
+> |    -------+--------           --------+--------            -------+--------          -----+----    |
+> |           |                           |                           |                       |        |
+> | ----------+----------       ----------+-----------         -------+-------                |        |
+> | | virtio-blk driver |       |  vhost-vdpa driver |         | vdpa device |                |        |
+> | ----------+----------       ----------+-----------         -------+-------                |        |
+> |           |      virtio bus           |                           |                       |        |
+> |   --------+----+-----------           |                           |                       |        |
+> |                |                      |                           |                       |        |
+> |      ----------+----------            |                           |                       |        |
+> |      | virtio-blk device |            |                           |                       |        |
+> |      ----------+----------            |                           |                       |        |
+> |                |                      |                           |                       |        |
+> |     -----------+-----------           |                           |                       |        |
+> |     |  virtio-vdpa driver |           |                           |                       |        |
+> |     -----------+-----------           |                           |                       |        |
+> |                |                      |                           |    vdpa bus           |        |
+> |     -----------+----------------------+---------------------------+------------           |        |
+> |                                                                                        ---+---     |
+> -----------------------------------------------------------------------------------------| NIC |------
+>                                                                                          ---+---
+>                                                                                             |
+>                                                                                    ---------+---------
+>                                                                                    | Remote Storages |
+>                                                                                    -------------------
 
-On Tue, Apr 13, 2021 at 6:03 AM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
->
-> On 2021/04/12 23:35, Selva Jove wrote:
-> > On Mon, Apr 12, 2021 at 5:55 AM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
-> >>
-> >> On 2021/04/07 20:33, Selva Jove wrote:
-> >>> Initially I started moving the dm-kcopyd interface to the block layer
-> >>> as a generic interface.
-> >>> Once I dig deeper in dm-kcopyd code, I figured that dm-kcopyd is
-> >>> tightly coupled with dm_io()
-> >>>
-> >>> To move dm-kcopyd to block layer, it would also require dm_io code to
-> >>> be moved to block layer.
-> >>> It would cause havoc in dm layer, as it is the backbone of the
-> >>> dm-layer and needs complete
-> >>> rewriting of dm-layer. Do you see any other way of doing this without
-> >>> having to move dm_io code
-> >>> or to have redundant code ?
-> >>
-> >> Right. Missed that. So reusing dm-kcopyd and making it a common interface will
-> >> take some more efforts. OK, then. For the first round of commits, let's forget
-> >> about this. But I still think that your emulation could be a lot better than a
-> >> loop doing blocking writes after blocking reads.
-> >>
-> >
-> > Current implementation issues read asynchronously and once all the reads are
-> > completed, then the write is issued as whole to reduce the IO traffic
-> > in the queue.
-> > I agree that things can be better. Will explore another approach of
-> > sending writes
-> > immediately once reads are completed and with  plugging to increase the chances
-> > of merging.
-> >
-> >> [...]
-> >>>>> +int blkdev_issue_copy(struct block_device *src_bdev, int nr_srcs,
-> >>>>> +             struct range_entry *src_rlist, struct block_device *dest_bdev,
-> >>>>> +             sector_t dest, gfp_t gfp_mask, int flags)
-> >>>>> +{
-> >>>>> +     struct request_queue *q = bdev_get_queue(src_bdev);
-> >>>>> +     struct request_queue *dest_q = bdev_get_queue(dest_bdev);
-> >>>>> +     struct blk_copy_payload *payload;
-> >>>>> +     sector_t bs_mask, copy_size;
-> >>>>> +     int ret;
-> >>>>> +
-> >>>>> +     ret = blk_prepare_payload(src_bdev, nr_srcs, src_rlist, gfp_mask,
-> >>>>> +                     &payload, &copy_size);
-> >>>>> +     if (ret)
-> >>>>> +             return ret;
-> >>>>> +
-> >>>>> +     bs_mask = (bdev_logical_block_size(dest_bdev) >> 9) - 1;
-> >>>>> +     if (dest & bs_mask) {
-> >>>>> +             return -EINVAL;
-> >>>>> +             goto out;
-> >>>>> +     }
-> >>>>> +
-> >>>>> +     if (q == dest_q && q->limits.copy_offload) {
-> >>>>> +             ret = blk_copy_offload(src_bdev, payload, dest, gfp_mask);
-> >>>>> +             if (ret)
-> >>>>> +                     goto out;
-> >>>>> +     } else if (flags & BLKDEV_COPY_NOEMULATION) {
-> >>>>
-> >>>> Why ? whoever calls blkdev_issue_copy() wants a copy to be done. Why would that
-> >>>> user say "Fail on me if the device does not support copy" ??? This is a weird
-> >>>> interface in my opinion.
-> >>>>
-> >>>
-> >>> BLKDEV_COPY_NOEMULATION flag was introduced to allow blkdev_issue_copy() callers
-> >>> to use their native copying method instead of the emulated copy that I
-> >>> added. This way we
-> >>> ensure that dm uses the hw-assisted copy and if that is not present,
-> >>> it falls back to existing
-> >>> copy method.
-> >>>
-> >>> The other users who don't have their native emulation can use this
-> >>> emulated-copy implementation.
-> >>
-> >> I do not understand. Emulation or not should be entirely driven by the device
-> >> reporting support for simple copy (or not). It does not matter which component
-> >> is issuing the simple copy call: an FS to a real device, and FS to a DM device
-> >> or a DM target driver. If the underlying device reported support for simple
-> >> copy, use that. Otherwise, emulate with read/write. What am I missing here ?
-> >>
-> >
-> > blkdev_issue_copy() api will generally complete the copy-operation,
-> > either by using
-> > offloaded-copy or by using emulated-copy. The caller of the api is not
-> > required to
-> > figure the type of support. However, it can opt out of emulated-copy
-> > by specifying
-> > the flag BLKDEV_NOEMULATION. This is helpful for the case when the
-> > caller already
-> > has got a sophisticated emulation (e.g. dm-kcopyd users).
->
-> This does not make any sense to me. If the user has already another mean of
-> doing copies, then that user will not call blkdev_issue_copy(). So I really do
-> not understand what the "opting out of emulated copy" would be useful for. That
-> user can check the simple copy support glag in the device request queue and act
-> accordingly: use its own block copy code when simple copy is not supported or
-> use blkdev_issue_copy() when the device has simple copy. Adding that
-> BLKDEV_COPY_NOEMULATION does not serve any purpose at all.
->
->
->
-> --
-> Damien Le Moal
-> Western Digital Research
+This all looks quite similar to vhost-user-block except that one
+does not need any kernel support at all.
+
+So I am still scratching my head about its advantages over
+vhost-user-block.
+
+
+> We make use of it to implement a block device connecting to
+> our distributed storage, which can be used both in containers and
+> VMs. Thus, we can have an unified technology stack in this two cases.
+
+Maybe the container part is the answer. How does that stack look?
+
+> To test it with null-blk:
+> 
+>   $ qemu-storage-daemon \
+>       --chardev socket,id=charmonitor,path=/tmp/qmp.sock,server,nowait \
+>       --monitor chardev=charmonitor \
+>       --blockdev driver=host_device,cache.direct=on,aio=native,filename=/dev/nullb0,node-name=disk0 \
+>       --export type=vduse-blk,id=test,node-name=disk0,writable=on,name=vduse-null,num-queues=16,queue-size=128
+> 
+> The qemu-storage-daemon can be found at https://github.com/bytedance/qemu/tree/vduse
+> 
+> Future work:
+>   - Improve performance
+>   - Userspace library (find a way to reuse device emulation code in qemu/rust-vmm)
+> 
+> V5 to V6:
+> - Export receive_fd() instead of __receive_fd()
+> - Factor out the unmapping logic of pa and va separatedly
+> - Remove the logic of bounce page allocation in page fault handler
+> - Use PAGE_SIZE as IOVA allocation granule
+> - Add EPOLLOUT support
+> - Enable setting API version in userspace
+> - Fix some bugs
+> 
+> V4 to V5:
+> - Remove the patch for irq binding
+> - Use a single IOTLB for all types of mapping
+> - Factor out vhost_vdpa_pa_map()
+> - Add some sample codes in document
+> - Use receice_fd_user() to pass file descriptor
+> - Fix some bugs
+> 
+> V3 to V4:
+> - Rebase to vhost.git
+> - Split some patches
+> - Add some documents
+> - Use ioctl to inject interrupt rather than eventfd
+> - Enable config interrupt support
+> - Support binding irq to the specified cpu
+> - Add two module parameter to limit bounce/iova size
+> - Create char device rather than anon inode per vduse
+> - Reuse vhost IOTLB for iova domain
+> - Rework the message mechnism in control path
+> 
+> V2 to V3:
+> - Rework the MMU-based IOMMU driver
+> - Use the iova domain as iova allocator instead of genpool
+> - Support transferring vma->vm_file in vhost-vdpa
+> - Add SVA support in vhost-vdpa
+> - Remove the patches on bounce pages reclaim
+> 
+> V1 to V2:
+> - Add vhost-vdpa support
+> - Add some documents
+> - Based on the vdpa management tool
+> - Introduce a workqueue for irq injection
+> - Replace interval tree with array map to store the iova_map
+> 
+> Xie Yongji (10):
+>   file: Export receive_fd() to modules
+>   eventfd: Increase the recursion depth of eventfd_signal()
+>   vhost-vdpa: protect concurrent access to vhost device iotlb
+>   vhost-iotlb: Add an opaque pointer for vhost IOTLB
+>   vdpa: Add an opaque pointer for vdpa_config_ops.dma_map()
+>   vdpa: factor out vhost_vdpa_pa_map() and vhost_vdpa_pa_unmap()
+>   vdpa: Support transferring virtual addressing during DMA mapping
+>   vduse: Implement an MMU-based IOMMU driver
+>   vduse: Introduce VDUSE - vDPA Device in Userspace
+>   Documentation: Add documentation for VDUSE
+> 
+>  Documentation/userspace-api/index.rst              |    1 +
+>  Documentation/userspace-api/ioctl/ioctl-number.rst |    1 +
+>  Documentation/userspace-api/vduse.rst              |  212 +++
+>  drivers/vdpa/Kconfig                               |   10 +
+>  drivers/vdpa/Makefile                              |    1 +
+>  drivers/vdpa/ifcvf/ifcvf_main.c                    |    2 +-
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c                  |    2 +-
+>  drivers/vdpa/vdpa.c                                |    9 +-
+>  drivers/vdpa/vdpa_sim/vdpa_sim.c                   |    8 +-
+>  drivers/vdpa/vdpa_user/Makefile                    |    5 +
+>  drivers/vdpa/vdpa_user/iova_domain.c               |  521 ++++++++
+>  drivers/vdpa/vdpa_user/iova_domain.h               |   70 +
+>  drivers/vdpa/vdpa_user/vduse_dev.c                 | 1362 ++++++++++++++++++++
+>  drivers/vdpa/virtio_pci/vp_vdpa.c                  |    2 +-
+>  drivers/vhost/iotlb.c                              |   20 +-
+>  drivers/vhost/vdpa.c                               |  154 ++-
+>  fs/eventfd.c                                       |    2 +-
+>  fs/file.c                                          |    6 +
+>  include/linux/eventfd.h                            |    5 +-
+>  include/linux/file.h                               |    7 +-
+>  include/linux/vdpa.h                               |   21 +-
+>  include/linux/vhost_iotlb.h                        |    3 +
+>  include/uapi/linux/vduse.h                         |  175 +++
+>  23 files changed, 2548 insertions(+), 51 deletions(-)
+>  create mode 100644 Documentation/userspace-api/vduse.rst
+>  create mode 100644 drivers/vdpa/vdpa_user/Makefile
+>  create mode 100644 drivers/vdpa/vdpa_user/iova_domain.c
+>  create mode 100644 drivers/vdpa/vdpa_user/iova_domain.h
+>  create mode 100644 drivers/vdpa/vdpa_user/vduse_dev.c
+>  create mode 100644 include/uapi/linux/vduse.h
+> 
+> -- 
+> 2.11.0
+
