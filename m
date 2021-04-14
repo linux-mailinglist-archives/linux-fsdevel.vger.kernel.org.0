@@ -2,119 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4637C35ED04
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 08:14:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C79BA35ED66
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 08:46:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349155AbhDNGOo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 02:14:44 -0400
-Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25393 "EHLO
-        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1349138AbhDNGOn (ORCPT
+        id S230408AbhDNGoZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 02:44:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44380 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346023AbhDNGoT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 02:14:43 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1618380849; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=JNeQotS4kkgZHnPV0JMvW0VxaH1lbgOkIF6EaT/Rlo2/K8E/pGZ+YwthWzwKtbpHcr5PcqWzacyJJlnWzOwjrZk3mh3Yzxugrbjl6lFufur+QzP2+fYugVTw2XZf23cZxe4WtgdIAdHDii/LJ8Nw3jJ02+z0pw+FXloNl2vKx0s=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1618380849; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=j0653ywqZAdpT6wQ/eknGI1RW2Keq7fohCtg0SJIZpY=; 
-        b=PwwoYW97RfaxoMv5dnguj+uNlE3aNxcBv37O4JvvrFsYbDrwJCdhxLmDnHCes071K2+ey1Nyftfd34fPIvXiFvXw/RiUfFUc2QIFyfydzB4+kU9k/pCrWC2lDnT/yQ4GzkqNhbsvx5wdOl5oCwKnLjKERlFMNT1Ta2fvYekP7Zg=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1618380849;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=j0653ywqZAdpT6wQ/eknGI1RW2Keq7fohCtg0SJIZpY=;
-        b=f3ttytDS8bq1mTXcwGdHv1NcGHrtCrFappktK1ZFvQY3olTlkV9oUYjEnTHv+4ZC
-        1C7x9juTy1G3yspP9LGly6Y+PDPKS1ryRM6Paiu6EC6RL+qwSYuAG//3efR1lcSjAfg
-        8nxUE43OHiotzgCxDb/NB5ozxhenzS71vhPNE2P4=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1618380846192877.8642334081887; Wed, 14 Apr 2021 14:14:06 +0800 (CST)
-Date:   Wed, 14 Apr 2021 14:14:06 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "Miklos Szeredi" <miklos@szeredi.hu>
-Cc:     "Jan Kara" <jack@suse.cz>, "Amir Goldstein" <amir73il@gmail.com>,
-        "overlayfs" <linux-unionfs@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>
-Message-ID: <178cf03f46d.10b2d86c733121.8697562232310027680@mykernel.net>
-In-Reply-To: <CAJfpegt6BUvEL2NtfMkYJfC_NBuLxKhV3U7-h4azhoM+ttxZAA@mail.gmail.com>
-References: <20201113065555.147276-1-cgxu519@mykernel.net> <20201113065555.147276-7-cgxu519@mykernel.net> <CAJfpegt6BUvEL2NtfMkYJfC_NBuLxKhV3U7-h4azhoM+ttxZAA@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 6/9] ovl: implement overlayfs' ->write_inode
- operation
+        Wed, 14 Apr 2021 02:44:19 -0400
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87E63C061756
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Apr 2021 23:43:58 -0700 (PDT)
+Received: by mail-qk1-x736.google.com with SMTP id o5so20500839qkb.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Apr 2021 23:43:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=xAItGVctj4Ym5XgJXrEHjFWuIEiXbFDkgH2LTVJTlqw=;
+        b=boogogHOP6aMxYaO4TKu7w6/UT0zb6tK49kFGEqd/tGljpv/chIVdkvDoZiKgvcWl3
+         uD72xEs3pGMozk801LATYIGOzSooQdo333X4M4rD3PNeWeoZ9/oX6LUPDbjvhVvQyG6/
+         nTt5wmIPnMoq8lxe0TYVtm4DE/rQlDzKDa0fCpcwtw5WUsLaifXWcqsMidIkzaY8/9og
+         +s8FqQNRmO6BXRBVpR03kz2epvzqQrKFmi5Hh/Dr9nzx9eIzWvOC83DKTQkse5T5QfKN
+         OwqGrAsqVhMbFN/3vaxP0hsIwcf4UGB3beOYirKF+LBu4y8XLIbOcMpkmguDaeVt3yZa
+         ZVXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=xAItGVctj4Ym5XgJXrEHjFWuIEiXbFDkgH2LTVJTlqw=;
+        b=Q5Oil9ac5L0ut79Dl2fBAn68+bazoFhT2xpLKRS/KVkBBwFI427D8vGexWEB4A8HbT
+         1LQsN8t8tyTB38buUbQfXE0LzepSe9cjrDC+zKiIcWA4giBI2vYzPgaVwkHI8vzRSYbe
+         yUD0BcfD9nM58pSwyfS17rVLI+fRSRCEV17vBmpWLZYO7VmLXg4pn3DWkNVzswplk7T8
+         RQcjJ4UmlddvV9z0U7CT+dNgbzc4bNVGPxuNCiuCT8l+bl2GRwJT16FvkISJuNqRHXee
+         drL6Afy+Qw0cTzpzAvwhUAziKPtMq/FKIpoq6P6yJ0DMJl7X055gkhyrjnuHo7u/jhEj
+         kbkQ==
+X-Gm-Message-State: AOAM533i/7YQU1/Uw97VXYaotBaTXVlb4j/duGAAau2N+2oMbl4peTEF
+        UpOqL5doytOb9/cKyxAoRXIKgg==
+X-Google-Smtp-Source: ABdhPJyCbITTz5lmswPHeW0wVM8gnjbv6Zo4xmnNDnf/pa88GLZJNPjvZPoeIsTQcCXPoW3nk85tvw==
+X-Received: by 2002:ae9:e113:: with SMTP id g19mr34615511qkm.480.1618382637457;
+        Tue, 13 Apr 2021 23:43:57 -0700 (PDT)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id x22sm5174625qtq.93.2021.04.13.23.43.55
+        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
+        Tue, 13 Apr 2021 23:43:57 -0700 (PDT)
+Date:   Tue, 13 Apr 2021 23:43:41 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Axel Rasmussen <axelrasmussen@google.com>
+cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        Brian Geffon <bgeffon@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
+Subject: Re: [PATCH v2 1/9] userfaultfd/hugetlbfs: avoid including userfaultfd_k.h
+ in hugetlb.h
+In-Reply-To: <20210413051721.2896915-2-axelrasmussen@google.com>
+Message-ID: <alpine.LSU.2.11.2104132336001.9086@eggly.anvils>
+References: <20210413051721.2896915-1-axelrasmussen@google.com> <20210413051721.2896915-2-axelrasmussen@google.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
----- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=94, 2021-04-09 21:49:07 Miklos Szer=
-edi <miklos@szeredi.hu> =E6=92=B0=E5=86=99 ----
- > On Fri, Nov 13, 2020 at 7:57 AM Chengguang Xu <cgxu519@mykernel.net> wro=
-te:
- > >
- > > Implement overlayfs' ->write_inode to sync dirty data
- > > and redirty overlayfs' inode if necessary.
- > >
- > > Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
- > > ---
- > >  fs/overlayfs/super.c | 30 ++++++++++++++++++++++++++++++
- > >  1 file changed, 30 insertions(+)
- > >
- > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
- > > index 883172ac8a12..82e001b97f38 100644
- > > --- a/fs/overlayfs/super.c
- > > +++ b/fs/overlayfs/super.c
- > > @@ -390,6 +390,35 @@ static int ovl_remount(struct super_block *sb, in=
-t *flags, char *data)
- > >         return ret;
- > >  }
- > >
- > > +static int ovl_write_inode(struct inode *inode,
- > > +                          struct writeback_control *wbc)
- > > +{
- > > +       struct ovl_fs *ofs =3D inode->i_sb->s_fs_info;
- > > +       struct inode *upper =3D ovl_inode_upper(inode);
- > > +       unsigned long iflag =3D 0;
- > > +       int ret =3D 0;
- > > +
- > > +       if (!upper)
- > > +               return 0;
- > > +
- > > +       if (!ovl_should_sync(ofs))
- > > +               return 0;
- > > +
- > > +       if (upper->i_sb->s_op->write_inode)
- > > +               ret =3D upper->i_sb->s_op->write_inode(inode, wbc);
- > > +
- > > +       if (mapping_writably_mapped(upper->i_mapping) ||
- > > +           mapping_tagged(upper->i_mapping, PAGECACHE_TAG_WRITEBACK))
- > > +               iflag |=3D I_DIRTY_PAGES;
- > > +
- > > +       iflag |=3D upper->i_state & I_DIRTY_ALL;
- >=20
- > How is I_DIRTY_SYNC added/removed from the overlay inode?
- >=20
+On Mon, 12 Apr 2021, Axel Rasmussen wrote:
 
-generally, I_DIRTY_SYNC is added to overlay inode when the operation dirtie=
-s
-upper inode, I'll check all those places and call ovl_mark_inode_dirty() to=
- do it.
-After writeback if upper inode becomes clean status, we will remove I_DIRTY=
-_SYNC
-from overlay inode.
+> Minimizing header file inclusion is desirable. In this case, we can do
+> so just by forward declaring the enumeration our signature relies upon.
+> 
+> Reviewed-by: Peter Xu <peterx@redhat.com>
+> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+> ---
+>  include/linux/hugetlb.h | 4 +++-
+>  mm/hugetlb.c            | 1 +
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index 09f1fd12a6fa..3f47650ab79b 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -11,7 +11,6 @@
+>  #include <linux/kref.h>
+>  #include <linux/pgtable.h>
+>  #include <linux/gfp.h>
+> -#include <linux/userfaultfd_k.h>
+>  
+>  struct ctl_table;
+>  struct user_struct;
+> @@ -135,6 +134,8 @@ void hugetlb_show_meminfo(void);
+>  unsigned long hugetlb_total_pages(void);
+>  vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+>  			unsigned long address, unsigned int flags);
+> +
+> +enum mcopy_atomic_mode;
 
-One exception is mmaped file, it will always keep I_DIRTY_SYNC until to be =
-evicted.
+Wrongly placed: the CONFIG_USERFAULTFD=y CONFIG_HUGETLB_PAGE=n build
+fails. Better place it up above with struct ctl_table etc.
 
-Thanks,
-Chengguang
-
-
-
+>  #ifdef CONFIG_USERFAULTFD
+>  int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm, pte_t *dst_pte,
+>  				struct vm_area_struct *dst_vma,
+> @@ -143,6 +144,7 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm, pte_t *dst_pte,
+>  				enum mcopy_atomic_mode mode,
+>  				struct page **pagep);
+>  #endif /* CONFIG_USERFAULTFD */
+> +
+>  bool hugetlb_reserve_pages(struct inode *inode, long from, long to,
+>  						struct vm_area_struct *vma,
+>  						vm_flags_t vm_flags);
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 54d81d5947ed..b1652e747318 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -40,6 +40,7 @@
+>  #include <linux/hugetlb_cgroup.h>
+>  #include <linux/node.h>
+>  #include <linux/page_owner.h>
+> +#include <linux/userfaultfd_k.h>
+>  #include "internal.h"
+>  
+>  int hugetlb_max_hstate __read_mostly;
+> -- 
+> 2.31.1.295.g9ea45b61b8-goog
+> 
+> 
