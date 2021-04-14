@@ -2,167 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3088735FB1E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 20:59:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 192F835FD7D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 23:57:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233268AbhDNSwX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 14:52:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:38239 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232976AbhDNSwW (ORCPT
+        id S230163AbhDNV6G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 17:58:06 -0400
+Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:59054 "EHLO
+        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230018AbhDNV6G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 14:52:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618426320;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=olnINB9MiAVWvAGJIPu39IEipm/CRaDs3WWVqPj5ijQ=;
-        b=FpA/to/PAUr1mVvoSnPOrMwB9/8COIbEenfXMlB9MiXZVgfSLRn93wCdy9PQvWK+2ZPseK
-        Lwbmn8d2oIUnIOTYXXjTAhDQZj9Q8FhF/16DWTCuTRpdEZ7xfEBuroz7CoQr911Vvgwju1
-        z4HriQapvlYFtM2ydQEguFAPdw8O71A=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-416-QgegjBwNODaWXAxM2X2n7Q-1; Wed, 14 Apr 2021 14:51:40 -0400
-X-MC-Unique: QgegjBwNODaWXAxM2X2n7Q-1
-Received: by mail-qv1-f70.google.com with SMTP id s16-20020a05621412d0b029019a42aa64f7so225806qvv.20
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Apr 2021 11:51:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=olnINB9MiAVWvAGJIPu39IEipm/CRaDs3WWVqPj5ijQ=;
-        b=B3Y4U3a6K4YaEA6dE55fNYGc8QM+oalEK9C+H0gJIJGf41kdLZVeG4LUuK0J8xNrSN
-         z+VncTv0dszbHPkuxvy35V4GsJaBKzsjATAs4KdBEoeMtIKAKrREBjMerOKXKNppE4H0
-         +YvxFm+oAXBMeWUvgZzeKPQqCel6O4+B5IlxqnjPKBqoId2CjLyPqlxZ5XUcO39q0Iui
-         gVmOUY6ZWzUveAAg1ziqDxjt/33Rt+cCenhkU85f+RQQDS6c0kXqZNI+mtxAcdyB0Emn
-         OGz3jIsvu5HdQtScSAlzjV534UCcoxMZELJZA9Doh0pEtF++J4JhcDL/e3YZuXa0ApHN
-         I4Rw==
-X-Gm-Message-State: AOAM530HCP/XRAVphEQhnF7DSCYIK/SkB1qzpQRaSEYs7jM0j+s4J3XW
-        Ma0pbU8nS/SIsPrrcmzato5Lh9PIFZhyzJ6S9f785ajSOefPXco9c/00PQ1Wh5OVBQXLZX+m/Oo
-        FaRfZ1agT/D9vuacBP38M7lg8vg==
-X-Received: by 2002:a05:6214:849:: with SMTP id dg9mr1265816qvb.30.1618426300103;
-        Wed, 14 Apr 2021 11:51:40 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyg9sbLBXWyxGdJsTjNQr4DDmurtkXEAu8TTVg/ZkwZ2b+eql0sW4xwjZe0FJzN98fdLZhmxg==
-X-Received: by 2002:a05:6214:849:: with SMTP id dg9mr1265778qvb.30.1618426299817;
-        Wed, 14 Apr 2021 11:51:39 -0700 (PDT)
-Received: from xz-x1 (bras-base-toroon474qw-grc-88-174-93-75-154.dsl.bell.ca. [174.93.75.154])
-        by smtp.gmail.com with ESMTPSA id m11sm159011qtg.67.2021.04.14.11.51.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Apr 2021 11:51:38 -0700 (PDT)
-Date:   Wed, 14 Apr 2021 14:51:37 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Axel Rasmussen <axelrasmussen@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        Brian Geffon <bgeffon@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH v2 3/9] userfaultfd/shmem: support minor fault
- registration for shmem
-Message-ID: <20210414185137.GK4440@xz-x1>
-References: <20210413051721.2896915-1-axelrasmussen@google.com>
- <20210413051721.2896915-4-axelrasmussen@google.com>
- <alpine.LSU.2.11.2104132351350.9086@eggly.anvils>
+        Wed, 14 Apr 2021 17:58:06 -0400
+Received: from dread.disaster.area (pa49-181-239-12.pa.nsw.optusnet.com.au [49.181.239.12])
+        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 6F85C1140474;
+        Thu, 15 Apr 2021 07:57:41 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1lWnVz-008Dty-Ua; Thu, 15 Apr 2021 07:57:39 +1000
+Date:   Thu, 15 Apr 2021 07:57:39 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, Ted Tso <tytso@mit.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH 2/7] mm: Protect operations adding pages to page cache
+ with i_mapping_lock
+Message-ID: <20210414215739.GH63242@dread.disaster.area>
+References: <20210413105205.3093-1-jack@suse.cz>
+ <20210413112859.32249-2-jack@suse.cz>
+ <20210414000113.GG63242@dread.disaster.area>
+ <20210414122319.GD31323@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.11.2104132351350.9086@eggly.anvils>
+In-Reply-To: <20210414122319.GD31323@quack2.suse.cz>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Tu+Yewfh c=1 sm=1 tr=0 cx=a_idp_f
+        a=gO82wUwQTSpaJfP49aMSow==:117 a=gO82wUwQTSpaJfP49aMSow==:17
+        a=kj9zAlcOel0A:10 a=3YhXtTcJ-WEA:10 a=7-415B0cAAAA:8
+        a=okFlZK5Gy1F5i8BF3G8A:9 a=FPZG3ZJ8YKhqHbYJ:21 a=YwUA21l3Sj-Qg0rY:21
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 14, 2021 at 12:36:13AM -0700, Hugh Dickins wrote:
-> On Mon, 12 Apr 2021, Axel Rasmussen wrote:
-> 
-> > This patch allows shmem-backed VMAs to be registered for minor faults.
-> > Minor faults are appropriately relayed to userspace in the fault path,
-> > for VMAs with the relevant flag.
+On Wed, Apr 14, 2021 at 02:23:19PM +0200, Jan Kara wrote:
+> On Wed 14-04-21 10:01:13, Dave Chinner wrote:
+> > On Tue, Apr 13, 2021 at 01:28:46PM +0200, Jan Kara wrote:
+> > > index c5b0457415be..ac5bb50b3a4c 100644
+> > > --- a/mm/readahead.c
+> > > +++ b/mm/readahead.c
+> > > @@ -192,6 +192,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+> > >  	 */
+> > >  	unsigned int nofs = memalloc_nofs_save();
+> > >  
+> > > +	down_read(&mapping->host->i_mapping_sem);
+> > >  	/*
+> > >  	 * Preallocate as many pages as we will need.
+> > >  	 */
 > > 
-> > This commit doesn't hook up the UFFDIO_CONTINUE ioctl for shmem-backed
-> > minor faults, though, so userspace doesn't yet have a way to resolve
-> > such faults.
+> > I can't say I'm a great fan of having the mapping reach back up to
+> > the host to lock the host. THis seems the wrong way around to me
+> > given that most of the locking in the IO path is in "host locks
+> > mapping" and "mapping locks internal mapping structures" order...
+> > 
+> > I also come back to the naming confusion here, in that when we look
+> > at this in long hand from the inode perspective, this chain actually
+> > looks like:
+> > 
+> > 	lock(inode->i_mapping->inode->i_mapping_sem)
+> > 
+> > i.e. the mapping is reaching back up outside it's scope to lock
+> > itself against other inode->i_mapping operations. Smells of layering
+> > violations to me.
+> > 
+> > So, next question: should this truncate semanphore actually be part
+> > of the address space, not the inode? This patch is actually moving
+> > the page fault serialisation from the inode into the address space
+> > operations when page faults and page cache operations are done, so
+> > maybe the lock should also make that move? That would help clear up
+> > the naming problem, because now we can name it based around what it
+> > serialises in the address space, not the address space as a whole...
 > 
-> This is a very odd way to divide up the series: an "Intermission"
-> half way through the implementation of MINOR/CONTINUE: this 3/9
-> makes little sense without the 4/9 to mm/userfaultfd.c which follows.
-> 
-> But, having said that, I won't object and Peter did not object, and
-> I don't know of anyone else looking here: it will only give each of
-> us more trouble to insist on repartitioning the series, and it's the
-> end state that's far more important to me and to all of us.
+> I think that moving the lock to address_space makes some sence although the
+> lock actually protects consistency of inode->i_mapping->i_pages with
+> whatever the filesystem has in its file_offset->disk_block mapping
+> structures (which are generally associated with the inode).
 
-Agreed, ideally it should be after patch 4 since this patch enables the
-feature already.
+Well, I look at is as a mechanism that the filesystem uses to ensure
+coherency of the page cache accesses w.r.t. physical layout changes.
+The layout is a property of the inode, but changes to the physical
+layout of the inode are serialised by other inode based mechanisms.
+THe page cache isn't part of the inode - it's part of the address
+space - but coherency with the inode is required. Hence inode
+operations need to be able to ensure coherency of the address space
+content and accesses w.r.t. physical layout changes of the inode,
+but the address space really knows nothing about the physical layout
+of the inode or how it gets changed...
 
-> 
-> And I'll even seize on it, to give myself an intermission after
-> this one, until tomorrow (when I'll look at 4/9 and 9/9 - but
-> shall not look at the selftests ones at all).
-> 
-> Most of this is okay, except the mm/shmem.c part; and I've just now
-> realized that somewhere (whether in this patch or separately) there
-> needs to be an update to Documentation/admin-guide/mm/userfaultfd.rst
-> (admin-guide? how weird, but not this series' business to correct).
+Hence it's valid for the inode operations to lock the address space
+to ensure coherency of the page cache when making physical layout
+changes, but locking the address space, by itself, is not sufficient
+to safely serialise against physical changes to the inode layout.
 
-(maybe some dir "devel" would suite better?  But I do also see soft-dirty.rst,
- idle_page_tracking.rst,..)
+> So it is not
+> only about inode->i_mapping contents but I agree that struct address_space
+> is probably a bit more logical place than struct inode.
 
-[...]
+Yup. Remember that the XFS_MMAPLOCK arose at the inode level because
+that was the only way the filesystem could acheive the necessary
+serialisation of page cache accesses whilst doing physical layout
+changes. So the lock became an "inode property" because of
+implementation constraints, not because it was the best way to
+implement the necessary coherency hooks.
 
-> >  static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
-> > @@ -1820,6 +1820,14 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
-> >  
-> >  	page = pagecache_get_page(mapping, index,
-> >  					FGP_ENTRY | FGP_HEAD | FGP_LOCK, 0);
-> > +
-> > +	if (page && vma && userfaultfd_minor(vma)) {
-> > +		unlock_page(page);
-> > +		put_page(page);
-> > +		*fault_type = handle_userfault(vmf, VM_UFFD_MINOR);
-> > +		return 0;
-> > +	}
-> > +
-> 
-> Okay, Peter persuaded you to move that up here: where indeed it
-> does look better than the earlier "swapped" version.
-> 
-> But will crash on swap as it's currently written: it needs to say
-> 		if (!xa_is_value(page)) {
-> 			unlock_page(page);
-> 			put_page(page);
-> 		}
+> Regarding the name: How about i_pages_rwsem? The lock is protecting
+> invalidation of mapping->i_pages and needs to be held until insertion of
+> pages into i_pages is safe again...
 
-And this is definitely true...  Thanks,
+I don't actually have a good name for this right now. :(
 
-> 
-> I did say before that it's more robust to return from the swap
-> case after doing the shmem_swapin_page(). But I might be slowly
-> realizing that the ioctl to add the pte (in 4/9) will do its
-> shmem_getpage_gfp(), and that will bring in the swap if user
-> did not already do so: so I was wrong to claim more robustness
-> the other way, this placement should be fine. I think.
-> 
-> >  	if (xa_is_value(page)) {
-> >  		error = shmem_swapin_page(inode, index, &page,
-> >  					  sgp, gfp, vma, fault_type);
-> > -- 
-> > 2.31.1.295.g9ea45b61b8-goog
-> 
+The i_pages structure has it's own internal locking, so
+i_pages_rwsem implies things that aren't necessarily true, and
+taking a read lock for insertion for something that is named like a
+structure protection lock creates cognitive dissonance...
 
+I keep wanting to say "lock for invalidation" and "lock to exclude
+invalidation" because those are the two actions that we need for
+coherency of operations. But they are way too verbose for an actual
+API...
+
+So I want to call this an "invalidation lock" of some kind (no need
+to encode the type in the name!), but haven't worked out a good
+shorthand for "address space invalidation coherency mechanism"...
+
+Naming is hard. :/
+
+Cheers,
+
+Dave.
 -- 
-Peter Xu
-
+Dave Chinner
+david@fromorbit.com
