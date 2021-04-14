@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AE9135F401
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 14:42:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A95E35F405
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 14:42:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233263AbhDNMjA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 08:39:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33808 "EHLO mail.kernel.org"
+        id S231415AbhDNMjT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 08:39:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231415AbhDNMi7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 08:38:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E852761158;
-        Wed, 14 Apr 2021 12:38:34 +0000 (UTC)
+        id S232883AbhDNMjC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Apr 2021 08:39:02 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4BA83611B0;
+        Wed, 14 Apr 2021 12:38:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618403917;
-        bh=XhcJ6hhr3dEm4tbK7n/9JaZNYoF4yEz/sBw0pVLhavQ=;
+        s=k20201202; t=1618403921;
+        bh=McPw3CpQkPn0LPU4NbjINIKS3JUko4oWL/Fgux77pnM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ryjltU1t50M1EJiBASTuYuaDqzLTpoOuOQH9TL/og6QAk5bYkiOBKJaeIBJPJRAKx
-         tR3w4nUXmqibLILQMJqFR5BjlpRibSZZkBfGvIHbm1Wr0k9p1IXVLlgOquXhMwcImc
-         Qx/qNAVTs5Blbj6ZwmyalhKacVGOPOe2i5c+Vpg6bzQf3M/RQBK2xYnid6hh0yhopc
-         l+5RLeq9jM7kctH6gML8/WPhD0yQMK6moRD2o0GmZsOv8taBVsUq7ZQ1ZSKFDnsN0a
-         371eaC1TIoWaod6oazNOwdRwdryxhYySB5iB5h/rNAQm7EOoHjk9SCpQ74bplDs8T4
-         7hBOXK41AVIlA==
+        b=eM5p60YdcWgwuMo6Xo5LAPmv31aqq8xnsvIq4obDU/7w3T76Ae7YZo9MrJ/rqImGT
+         pnsB9r4BqCTDWtGprfwoXvc4QY7HvRKf2M6I9zAp2yeUJnE5MTuNXLqHcTV0tpOzyw
+         iUtan51RXRItvYkROTVYHQljEJLxr3I+Vt4Y5fwq5OMUh7vAcOJVMqil/GLM1bvhBS
+         aBLSd0LMINXoTyP3mYR161Z7qOBD6prVhTz1FUhNc1Z5c829b2pTDkd1lWaU/pwkPW
+         TSYU40A6ZsuPwMfkIh90ZML4LNWSRYAQRIJgfZggsamUnNBRgdndNVmLOdTHQebgtq
+         Z5nCSImECMEuQ==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Amir Goldstein <amir73il@gmail.com>,
@@ -32,15 +32,15 @@ Cc:     Amir Goldstein <amir73il@gmail.com>,
         Al Viro <viro@zeniv.linux.org.uk>, ecryptfs@vger.kernel.org,
         linux-cachefs@redhat.com,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 1/7] namespace: fix clone_private_mount() kernel doc
-Date:   Wed, 14 Apr 2021 14:37:45 +0200
-Message-Id: <20210414123750.2110159-2-brauner@kernel.org>
+Subject: [PATCH 2/7] namespace: add kernel doc for mnt_clone_internal()
+Date:   Wed, 14 Apr 2021 14:37:46 +0200
+Message-Id: <20210414123750.2110159-3-brauner@kernel.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20210414123750.2110159-1-brauner@kernel.org>
 References: <20210414123750.2110159-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=Ug070dnCYtvoTTL9sM+KCsYvFzZzgfpQ1rAeZsa4E0c=; m=Nyy5JV6keYRz9DaoVlPSewQmP7/guf8xde0k24FEh8I=; p=Ez0P8VpCpQt2UopiUYXdmn61d6ikUXWbnh4YqIFsC/g=; g=e2958c68e45ab891ebc18d84945f46ea030fd186
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYHbh3wAKCRCRxhvAZXjcoufWAP9xjcj 8M8rEHzBJtuKW2qoVv2jPFVwHN8aJICtFeGnOWQEAlTvTfEAfp8jjIc53K83adZs9p6OiZMZJhrA/ 5TLbaw4=
+X-Patch-Hashes: v=1; h=sha256; i=jBO34yTxB8bcJDNJq5wyTUQeL0/1ZCfYS2ZDxiTmIdE=; m=IiCeUIXZorhQEWHc615NYZk6WrnbxHgrkwHPs6aKB6E=; p=yfLKT3q8PN5tBMAd2IiBeetSQMKvFza+4gNsKpOHu3w=; g=0fda3c9759267fe5b2a619ffc64ace4696480ec8
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYHbh3wAKCRCRxhvAZXjcong/AP9hXfZ 8QGHNXycaEHAq1UnQs/HQfdCYLk9erfJSyRxvrQD/S2GXC1LEKEP2hVXyl55xNJjAtBVkvQ3CMI+N LuYwFAc=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -48,8 +48,7 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Christian Brauner <christian.brauner@ubuntu.com>
 
-Extend the kernel documentation for clone_private_mount(). Add some more
-detailed info about its usage and convert it into proper kernel doc.
+Document mnt_clone_internal().
 
 Cc: Amir Goldstein <amir73il@gmail.com>
 Cc: Christoph Hellwig <hch@lst.de>
@@ -58,39 +57,36 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- fs/namespace.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ fs/namespace.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 56bb5a5fdc0d..02f415061efe 100644
+index 02f415061efe..7ffefa8b3980 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -1939,12 +1939,21 @@ void drop_collected_mounts(struct vfsmount *mnt)
+@@ -1271,6 +1271,22 @@ bool path_is_mountpoint(const struct path *path)
+ }
+ EXPORT_SYMBOL(path_is_mountpoint);
  
- /**
-  * clone_private_mount - create a private clone of a path
++/**
++ * mnt_clone_internal - create a private clone of a path
 + * @path: path from which the mnt to clone will be taken
-  *
-- * This creates a new vfsmount, which will be the clone of @path.  The new will
-- * not be attached anywhere in the namespace and will be private (i.e. changes
-- * to the originating mount won't be propagated into this).
++ *
 + * This creates a new vfsmount, which will be a clone of @path's vfsmount.
-  *
-- * Release with mntput().
-+ * In contrast to mnt_clone_internal() the new mount will not be marked
-+ * MNT_INTERNAL but will have MNT_NS_INTERNAL attached as its mount namespace
-+ * making it suitable for long-term mounts since mntput()ing it will always hit
-+ * the fastpath as long as kern_unmount() hasn't been called.
++ *
++ * In contrast to clone_private_mount() the new mount will be marked
++ * MNT_INTERNAL and will note have any mount namespace attached making it
++ * suitable for short-lived internal mounts since mntput()ing it will always
++ * hit the slowpath taking the mount lock.
 + *
 + * Since the mount is not reachable anwyhere mount properties and propagation
 + * properties remain stable, i.e. cannot change.
 + *
-+ * Useable with mntget()/mntput() but needs to be released with kern_unmount().
-+ *
 + * Return: A clone of @path's vfsmount on success, an error pointer on failure.
-  */
- struct vfsmount *clone_private_mount(const struct path *path)
++ */
+ struct vfsmount *mnt_clone_internal(const struct path *path)
  {
+ 	struct mount *p;
 -- 
 2.27.0
 
