@@ -2,203 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 74FB335EA78
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 03:34:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F49835EAD4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 04:29:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345993AbhDNBeX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Apr 2021 21:34:23 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:18400 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349037AbhDNBeK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Apr 2021 21:34:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1618364030; x=1649900030;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ysMS2Kknxl6RT6GJVQKK3OyY+VYyJdNtAln3ZU9K/js=;
-  b=lUHPbvZj0mZslJ+YzQKFtIMZ361q41QEmGEhU/xL2dbEM1Waz+dyg6y0
-   moefvVvnQmtDLO8OWMy6MhmKSfEfc26SvdxMI9plsoeZaAoh5Uv8tWwEm
-   L3KHUTd7s+tAY61bDObp2BZGSVYAegcUwm4tdmccd5hUlUcTj90R6mgAF
-   I7NXBEFwOW1aZMxN8bhAmD7MekyCT2xg9yE357vlYyrQvefJ4iPEYE2pq
-   fK+slGJyRnEYocqjkpas02IEwiFWYC5pTqnIaEqLGlz0Q3ZBrrCDy5jXV
-   vsErBM2iZCi2RPJSCR2nKemCt8U6oKNTCC8/nB/2m8jz0+tiJbTs2+NpQ
-   w==;
-IronPort-SDR: OZm9K9CleR3Wu/4XUvJD9GkJ8fwqmO2tzcR+SMvewoThEsEyIIphj2pBQArZOQ+Nc7rHhCRlNK
- eHfVIcEdEtdLUaoYI4EuMTmUQqfjgAq2liq0tEZw5irZmf5lsMQxMTJpkaV2wCUsWdVsuLFaDP
- d1tw5ErqmsjcaQRaCphhGYq3I5vpFx7QZjAP46snY/rzjy4tMYpJW0Lx851m8XqwFCu+M2lprL
- pEWb5RWFrPv5Znp5b33CXDMGyZ3gxYwI4D+ByatTewmISJXS51cnFFRMuj34soLPGkutDRoblj
- 7pE=
-X-IronPort-AV: E=Sophos;i="5.82,221,1613404800"; 
-   d="scan'208";a="169210804"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 14 Apr 2021 09:33:47 +0800
-IronPort-SDR: t/TVvgCgSiFx+dCUSDnGTaOmDm5JT7tWP7F8ZCm3J1wTwLhDV8ftSZrfqBlIEL21F8Yr88dddH
- mF9H9/heseL38Q8AvLa1cn+glQqsB1qy37nhPFHPVayXTsnxvLIvVgeNXeFuYtlBOcLue4TsWl
- dKw21hyzgum0urP0+9/UvQDKwnoSsb9q1FQHea3chCiyONKO9Xte24nJP37I7Pc8Zx/Lbk3YYt
- lWLiun+tpLx/nEbpJ1C0WuOTLDawb1AvIJ4IXmJ0XkuCS87l1ssdA5CYdjWB5m4eygO/JdBpzY
- wDJb7rTLJluRbbS83yHvasHz
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2021 18:14:49 -0700
-IronPort-SDR: N/cfITB36rmpPLvy1J8sWpHrK8IcoFamkC7dluKdztovi+qnsZXvzw6TFjE4oddjvqQHqN2UJI
- oJ3PmXIKWbXm4RnLACnmfKJQk4dqa4eTVqCtGFdXNu0ct/9hA+kcvMdWTk20DhIMAmrBetOltw
- D+GnnqGMh1V30jGRlvwbjKLh5fXdBq+qGks9LEjPPzRy/ElTP8K4dStVwgbXBwtIHP0lub6+uR
- nkJOC/XqiA2dgYow4TFGO3V+TkMRmgfjoE08ZwHuuNI32WsvDNHER4SGvFZPapc3Mo5vH65Iu5
- Iw4=
-WDCIronportException: Internal
-Received: from jpf004864.ad.shared (HELO naota-xeon.wdc.com) ([10.225.53.142])
-  by uls-op-cesaip02.wdc.com with ESMTP; 13 Apr 2021 18:33:46 -0700
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     Karel Zak <kzak@redhat.com>
-Cc:     util-linux@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v2 3/3] blkid: support zone reset for wipefs
-Date:   Wed, 14 Apr 2021 10:33:39 +0900
-Message-Id: <20210414013339.2936229-4-naohiro.aota@wdc.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210414013339.2936229-1-naohiro.aota@wdc.com>
-References: <20210414013339.2936229-1-naohiro.aota@wdc.com>
+        id S243801AbhDNC3J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Apr 2021 22:29:09 -0400
+Received: from mx20.baidu.com ([111.202.115.85]:37472 "EHLO baidu.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231379AbhDNC3J (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Apr 2021 22:29:09 -0400
+Received: from BC-Mail-Ex18.internal.baidu.com (unknown [172.31.51.12])
+        by Forcepoint Email with ESMTPS id C0DAA8386E1067EA70E7;
+        Wed, 14 Apr 2021 09:42:06 +0800 (CST)
+Received: from BC-Mail-Ex20.internal.baidu.com (172.31.51.14) by
+ BC-Mail-Ex18.internal.baidu.com (172.31.51.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Wed, 14 Apr 2021 09:42:06 +0800
+Received: from BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) by
+ BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) with mapi id 15.01.2176.009;
+ Wed, 14 Apr 2021 09:42:06 +0800
+From:   "Chu,Kaiping" <chukaiping@baidu.com>
+To:     Oleksandr Natalenko <oleksandr@natalenko.name>
+CC:     "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "yzaikin@google.com" <yzaikin@google.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIXSBtbS9jb21wYWN0aW9uOmxldCBwcm9hY3RpdmUgY29t?=
+ =?gb2312?Q?paction_order_configurable?=
+Thread-Topic: [PATCH] mm/compaction:let proactive compaction order
+ configurable
+Thread-Index: AQHXL7zzcaEIrraHzUCH0C8T1IQ/zaqzPI6w
+Date:   Wed, 14 Apr 2021 01:42:06 +0000
+Message-ID: <9ca9b808cc9a48518a7da271e36395e5@baidu.com>
+References: <1618218330-50591-1-git-send-email-chukaiping@baidu.com>
+ <20210412165741.shqududzlfhge7ff@spock.localdomain>
+In-Reply-To: <20210412165741.shqududzlfhge7ff@spock.localdomain>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.22.194.34]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We cannot overwrite superblock magic in a sequential required zone. So,
-wipefs cannot work as it is. Instead, this commit implements the wiping by
-zone resetting.
-
-Zone resetting must be done only for a sequential write zone. This is
-checked by is_conventional().
-
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
----
- libblkid/src/probe.c | 79 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 73 insertions(+), 6 deletions(-)
-
-diff --git a/libblkid/src/probe.c b/libblkid/src/probe.c
-index 9d180aab5242..23c3621627d4 100644
---- a/libblkid/src/probe.c
-+++ b/libblkid/src/probe.c
-@@ -107,6 +107,7 @@
- #include <stdint.h>
- #include <stdarg.h>
- #include <limits.h>
-+#include <stdbool.h>
- 
- #include "blkidP.h"
- #include "all-io.h"
-@@ -1228,6 +1229,48 @@ int blkid_do_probe(blkid_probe pr)
- 	return rc;
- }
- 
-+#ifdef HAVE_LINUX_BLKZONED_H
-+static int is_conventional(blkid_probe pr, uint64_t offset)
-+{
-+	struct blk_zone_report *rep = NULL;
-+	size_t rep_size;
-+	int ret;
-+	uint64_t zone_mask;
-+
-+	if (!pr->zone_size)
-+		return 1;
-+
-+	rep_size = sizeof(struct blk_zone_report) + sizeof(struct blk_zone);
-+	rep = calloc(1, rep_size);
-+	if (!rep)
-+		return -1;
-+
-+	zone_mask = ~(pr->zone_size - 1);
-+	rep->sector = (offset & zone_mask) >> 9;
-+	rep->nr_zones = 1;
-+	ret = ioctl(blkid_probe_get_fd(pr), BLKREPORTZONE, rep);
-+	if (ret) {
-+		free(rep);
-+		return -1;
-+	}
-+
-+	if (rep->zones[0].type == BLK_ZONE_TYPE_CONVENTIONAL)
-+		ret = 1;
-+	else
-+		ret = 0;
-+
-+	free(rep);
-+
-+	return ret;
-+}
-+#else
-+static inline int is_conventional(blkid_probe pr __attribute__((__unused__)),
-+				  uint64_t offset __attribute__((__unused__)))
-+{
-+	return 1;
-+}
-+#endif
-+
- /**
-  * blkid_do_wipe:
-  * @pr: prober
-@@ -1267,6 +1310,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
- 	const char *off = NULL;
- 	size_t len = 0;
- 	uint64_t offset, magoff;
-+	bool conventional;
- 	char buf[BUFSIZ];
- 	int fd, rc = 0;
- 	struct blkid_chain *chn;
-@@ -1302,6 +1346,11 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
- 	if (len > sizeof(buf))
- 		len = sizeof(buf);
- 
-+	rc = is_conventional(pr, offset);
-+	if (rc < 0)
-+		return rc;
-+	conventional = rc == 1;
-+
- 	DBG(LOWPROBE, ul_debug(
- 	    "do_wipe [offset=0x%"PRIx64" (%"PRIu64"), len=%zu, chain=%s, idx=%d, dryrun=%s]\n",
- 	    offset, offset, len, chn->driver->name, chn->idx, dryrun ? "yes" : "not"));
-@@ -1309,13 +1358,31 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
- 	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
- 		return -1;
- 
--	memset(buf, 0, len);
--
- 	if (!dryrun && len) {
--		/* wipen on device */
--		if (write_all(fd, buf, len))
--			return -1;
--		fsync(fd);
-+		if (conventional) {
-+			memset(buf, 0, len);
-+
-+			/* wipen on device */
-+			if (write_all(fd, buf, len))
-+				return -1;
-+			fsync(fd);
-+		} else {
-+#ifdef HAVE_LINUX_BLKZONED_H
-+			uint64_t zone_mask = ~(pr->zone_size - 1);
-+			struct blk_zone_range range = {
-+				.sector = (offset & zone_mask) >> 9,
-+				.nr_sectors = pr->zone_size >> 9,
-+			};
-+
-+			rc = ioctl(fd, BLKRESETZONE, &range);
-+			if (rc < 0)
-+				return -1;
-+#else
-+			/* Should not reach here */
-+			assert(0);
-+#endif
-+		}
-+
- 		pr->flags &= ~BLKID_FL_MODIF_BUFF;	/* be paranoid */
- 
- 		return blkid_probe_step_back(pr);
--- 
-2.31.1
-
+SGkgT2xla3NhbmRyLA0KUGxlYXNlIHNlZSBteSBhbnN3ZXIgaW5saW5lLg0KDQpCUiwNCkNodSBL
+YWlwaW5nDQoNCi0tLS0t08q8/tStvP4tLS0tLQ0Kt6K8/sjLOiBPbGVrc2FuZHIgTmF0YWxlbmtv
+IDxvbGVrc2FuZHJAbmF0YWxlbmtvLm5hbWU+IA0Kt6LLzcqxvOQ6IDIwMjHE6jTUwjEzyNUgMDo1
+OA0KytW8/sjLOiBDaHUsS2FpcGluZyA8Y2h1a2FpcGluZ0BiYWlkdS5jb20+DQqzrcvNOiBtY2dy
+b2ZAa2VybmVsLm9yZzsga2Vlc2Nvb2tAY2hyb21pdW0ub3JnOyB5emFpa2luQGdvb2dsZS5jb207
+IGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
+IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1tbUBrdmFjay5vcmcNCtb3zOI6
+IFJlOiBbUEFUQ0hdIG1tL2NvbXBhY3Rpb246bGV0IHByb2FjdGl2ZSBjb21wYWN0aW9uIG9yZGVy
+IGNvbmZpZ3VyYWJsZQ0KDQpIZWxsby4NCg0KT24gTW9uLCBBcHIgMTIsIDIwMjEgYXQgMDU6MDU6
+MzBQTSArMDgwMCwgY2h1a2FpcGluZyB3cm90ZToNCj4gQ3VycmVudGx5IHRoZSBwcm9hY3RpdmUg
+Y29tcGFjdGlvbiBvcmRlciBpcyBmaXhlZCB0byANCj4gQ09NUEFDVElPTl9IUEFHRV9PUkRFUig5
+KSwgaXQncyBPSyBpbiBtb3N0IG1hY2hpbmVzIHdpdGggbG90cyBvZiANCj4gbm9ybWFsIDRLQiBt
+ZW1vcnksIGJ1dCBpdCdzIHRvbyBoaWdoIGZvciB0aGUgbWFjaGluZXMgd2l0aCBzbWFsbCANCj4g
+bm9ybWFsIG1lbW9yeSwgZm9yIGV4YW1wbGUgdGhlIG1hY2hpbmVzIHdpdGggbW9zdCBtZW1vcnkg
+Y29uZmlndXJlZCBhcyANCj4gMUdCIGh1Z2V0bGJmcyBodWdlIHBhZ2VzLiBJbiB0aGVzZSBtYWNo
+aW5lcyB0aGUgbWF4IG9yZGVyIG9mIGZyZWUgDQo+IHBhZ2VzIGlzIG9mdGVuIGJlbG93IDksIGFu
+ZCBpdCdzIGFsd2F5cyBiZWxvdyA5IGV2ZW4gd2l0aCBoYXJkIA0KPiBjb21wYWN0aW9uLiBUaGlz
+IHdpbGwgbGVhZCB0byBwcm9hY3RpdmUgY29tcGFjdGlvbiBiZSB0cmlnZ2VyZWQgdmVyeSANCj4g
+ZnJlcXVlbnRseS4gSW4gdGhlc2UgbWFjaGluZXMgd2Ugb25seSBjYXJlIGFib3V0IG9yZGVyIG9m
+IDMgb3IgNC4NCj4gVGhpcyBwYXRjaCBleHBvcnQgdGhlIG9kZXIgdG8gcHJvYyBhbmQgbGV0IGl0
+IGNvbmZpZ3VyYWJsZSBieSB1c2VyLCANCj4gYW5kIHRoZSBkZWZhdWx0IHZhbHVlIGlzIHN0aWxs
+IENPTVBBQ1RJT05fSFBBR0VfT1JERVIuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBjaHVrYWlwaW5n
+IDxjaHVrYWlwaW5nQGJhaWR1LmNvbT4NCj4gLS0tDQo+ICBpbmNsdWRlL2xpbnV4L2NvbXBhY3Rp
+b24uaCB8ICAgIDEgKw0KPiAga2VybmVsL3N5c2N0bC5jICAgICAgICAgICAgfCAgIDEwICsrKysr
+KysrKysNCj4gIG1tL2NvbXBhY3Rpb24uYyAgICAgICAgICAgIHwgICAgNyArKysrLS0tDQo+ICAz
+IGZpbGVzIGNoYW5nZWQsIDE1IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+IA0KPiBk
+aWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9jb21wYWN0aW9uLmggYi9pbmNsdWRlL2xpbnV4L2Nv
+bXBhY3Rpb24uaCANCj4gaW5kZXggZWQ0MDcwZS4uMTUxY2NkMSAxMDA2NDQNCj4gLS0tIGEvaW5j
+bHVkZS9saW51eC9jb21wYWN0aW9uLmgNCj4gKysrIGIvaW5jbHVkZS9saW51eC9jb21wYWN0aW9u
+LmgNCj4gQEAgLTgzLDYgKzgzLDcgQEAgc3RhdGljIGlubGluZSB1bnNpZ25lZCBsb25nIGNvbXBh
+Y3RfZ2FwKHVuc2lnbmVkIGludCANCj4gb3JkZXIpICAjaWZkZWYgQ09ORklHX0NPTVBBQ1RJT04g
+IGV4dGVybiBpbnQgc3lzY3RsX2NvbXBhY3RfbWVtb3J5OyAgDQo+IGV4dGVybiB1bnNpZ25lZCBp
+bnQgc3lzY3RsX2NvbXBhY3Rpb25fcHJvYWN0aXZlbmVzczsNCj4gK2V4dGVybiB1bnNpZ25lZCBp
+bnQgc3lzY3RsX2NvbXBhY3Rpb25fb3JkZXI7DQo+ICBleHRlcm4gaW50IHN5c2N0bF9jb21wYWN0
+aW9uX2hhbmRsZXIoc3RydWN0IGN0bF90YWJsZSAqdGFibGUsIGludCB3cml0ZSwNCj4gIAkJCXZv
+aWQgKmJ1ZmZlciwgc2l6ZV90ICpsZW5ndGgsIGxvZmZfdCAqcHBvcyk7ICBleHRlcm4gaW50IA0K
+PiBzeXNjdGxfZXh0ZnJhZ190aHJlc2hvbGQ7IGRpZmYgLS1naXQgYS9rZXJuZWwvc3lzY3RsLmMg
+DQo+IGIva2VybmVsL3N5c2N0bC5jIGluZGV4IDYyZmJkMDkuLjI3N2RmMzEgMTAwNjQ0DQo+IC0t
+LSBhL2tlcm5lbC9zeXNjdGwuYw0KPiArKysgYi9rZXJuZWwvc3lzY3RsLmMNCj4gQEAgLTExNCw2
+ICsxMTQsNyBAQA0KPiAgc3RhdGljIGludCBfX21heWJlX3VudXNlZCBuZWdfb25lID0gLTE7ICBz
+dGF0aWMgaW50IF9fbWF5YmVfdW51c2VkIA0KPiB0d28gPSAyOyAgc3RhdGljIGludCBfX21heWJl
+X3VudXNlZCBmb3VyID0gNDsNCj4gK3N0YXRpYyBpbnQgX19tYXliZV91bnVzZWQgdGVuID0gMTA7
+DQoNCl5eIGRvZXMgdGhlIHVwcGVyIGxpbWl0IGhhdmUgdG8gYmUgaGFyZC1jb2RlZCBsaWtlIHRo
+aXM/DQotLT4gdGhlIG1heCBvcmRlciBvZiBidWRkeSBpcyBkZWZpbmVkIGJ5IE1BWF9PUkRFUiwg
+SSB3aWxsIGNoYW5nZSBpdCB0byBNQVhfT1JERVIgaXMgbmV4dCBwYXRjaC4NCg0KPiAgc3RhdGlj
+IHVuc2lnbmVkIGxvbmcgemVyb191bDsNCj4gIHN0YXRpYyB1bnNpZ25lZCBsb25nIG9uZV91bCA9
+IDE7DQo+ICBzdGF0aWMgdW5zaWduZWQgbG9uZyBsb25nX21heCA9IExPTkdfTUFYOw0KPiBAQCAt
+Mjg3MSw2ICsyODcyLDE1IEBAIGludCBwcm9jX2RvX3N0YXRpY19rZXkoc3RydWN0IGN0bF90YWJs
+ZSAqdGFibGUsIGludCB3cml0ZSwNCj4gIAkJLmV4dHJhMgkJPSAmb25lX2h1bmRyZWQsDQo+ICAJ
+fSwNCj4gIAl7DQo+ICsJCS5wcm9jbmFtZSAgICAgICA9ICJjb21wYWN0aW9uX29yZGVyIiwNCj4g
+KwkJLmRhdGEgICAgICAgICAgID0gJnN5c2N0bF9jb21wYWN0aW9uX29yZGVyLA0KPiArCQkubWF4
+bGVuICAgICAgICAgPSBzaXplb2Yoc3lzY3RsX2NvbXBhY3Rpb25fb3JkZXIpLA0KPiArCQkubW9k
+ZSAgICAgICAgICAgPSAwNjQ0LA0KPiArCQkucHJvY19oYW5kbGVyICAgPSBwcm9jX2RvaW50dmVj
+X21pbm1heCwNCj4gKwkJLmV4dHJhMSAgICAgICAgID0gU1lTQ1RMX1pFUk8sDQoNCkkgd29uZGVy
+IHdoYXQgaGFwcGVucyBpZiB0aGlzIGtub2IgaXMgc2V0IHRvIDAuIEhhdmUgeW91IHRlc3RlZCBz
+dWNoIGENCmNvcm5lciBjYXNlPw0KLS0+IGluIHRoZW9yeSwgMCBpcyBhbHNvIGEgY29uZmlndXJh
+YmxlIHZhbHVlLCBidXQgdGhlIGZyYWdtZW50IGluZGV4IG9mIG9yZGVyIDAgaXMgYWx3YXlzIDAs
+IHNvIGl0IHdvbid0IGRvIGFueSBwcm9hY3RpdmUgY29tcGFjdGlvbi4gSSBoYXZlIGhhZCBhIHRl
+c3QsIGlmIHNldCBvcmRlciB0byAwLCB0aGVyZSBpcyBubyBhbnkgZXJyb3IsIGJ1dCBwcm9hY3Rp
+dmUgY29tcGFjdGlvbiB3b24ndCBoYXBwZW4uDQoNCj4gKwkJLmV4dHJhMiAgICAgICAgID0gJnRl
+biwNCj4gKwl9LA0KPiArCXsNCj4gIAkJLnByb2NuYW1lCT0gImV4dGZyYWdfdGhyZXNob2xkIiwN
+Cj4gIAkJLmRhdGEJCT0gJnN5c2N0bF9leHRmcmFnX3RocmVzaG9sZCwNCj4gIAkJLm1heGxlbgkJ
+PSBzaXplb2YoaW50KSwNCj4gZGlmZiAtLWdpdCBhL21tL2NvbXBhY3Rpb24uYyBiL21tL2NvbXBh
+Y3Rpb24uYw0KPiBpbmRleCBlMDRmNDQ3Li5hMTkyOTk2IDEwMDY0NA0KPiAtLS0gYS9tbS9jb21w
+YWN0aW9uLmMNCj4gKysrIGIvbW0vY29tcGFjdGlvbi5jDQo+IEBAIC0xOTI1LDE2ICsxOTI1LDE2
+IEBAIHN0YXRpYyBib29sIGtzd2FwZF9pc19ydW5uaW5nKHBnX2RhdGFfdCAqcGdkYXQpDQo+ICAN
+Cj4gIC8qDQo+ICAgKiBBIHpvbmUncyBmcmFnbWVudGF0aW9uIHNjb3JlIGlzIHRoZSBleHRlcm5h
+bCBmcmFnbWVudGF0aW9uIHdydCB0byB0aGUNCj4gLSAqIENPTVBBQ1RJT05fSFBBR0VfT1JERVIu
+IEl0IHJldHVybnMgYSB2YWx1ZSBpbiB0aGUgcmFuZ2UgWzAsIDEwMF0uDQo+ICsgKiBzeXNjdGxf
+Y29tcGFjdGlvbl9vcmRlci4gSXQgcmV0dXJucyBhIHZhbHVlIGluIHRoZSByYW5nZSBbMCwgMTAw
+XS4NCj4gICAqLw0KPiAgc3RhdGljIHVuc2lnbmVkIGludCBmcmFnbWVudGF0aW9uX3Njb3JlX3pv
+bmUoc3RydWN0IHpvbmUgKnpvbmUpDQo+ICB7DQo+IC0JcmV0dXJuIGV4dGZyYWdfZm9yX29yZGVy
+KHpvbmUsIENPTVBBQ1RJT05fSFBBR0VfT1JERVIpOw0KPiArCXJldHVybiBleHRmcmFnX2Zvcl9v
+cmRlcih6b25lLCBzeXNjdGxfY29tcGFjdGlvbl9vcmRlcik7DQo+ICB9DQo+ICANCj4gIC8qDQo+
+ICAgKiBBIHdlaWdodGVkIHpvbmUncyBmcmFnbWVudGF0aW9uIHNjb3JlIGlzIHRoZSBleHRlcm5h
+bCBmcmFnbWVudGF0aW9uDQo+IC0gKiB3cnQgdG8gdGhlIENPTVBBQ1RJT05fSFBBR0VfT1JERVIg
+c2NhbGVkIGJ5IHRoZSB6b25lJ3Mgc2l6ZS4gSXQNCj4gKyAqIHdydCB0byB0aGUgc3lzY3RsX2Nv
+bXBhY3Rpb25fb3JkZXIgc2NhbGVkIGJ5IHRoZSB6b25lJ3Mgc2l6ZS4gSXQNCj4gICAqIHJldHVy
+bnMgYSB2YWx1ZSBpbiB0aGUgcmFuZ2UgWzAsIDEwMF0uDQo+ICAgKg0KPiAgICogVGhlIHNjYWxp
+bmcgZmFjdG9yIGVuc3VyZXMgdGhhdCBwcm9hY3RpdmUgY29tcGFjdGlvbiBmb2N1c2VzIG9uIGxh
+cmdlcg0KPiBAQCAtMjY2Niw2ICsyNjY2LDcgQEAgc3RhdGljIHZvaWQgY29tcGFjdF9ub2Rlcyh2
+b2lkKQ0KPiAgICogYmFja2dyb3VuZC4gSXQgdGFrZXMgdmFsdWVzIGluIHRoZSByYW5nZSBbMCwg
+MTAwXS4NCj4gICAqLw0KPiAgdW5zaWduZWQgaW50IF9fcmVhZF9tb3N0bHkgc3lzY3RsX2NvbXBh
+Y3Rpb25fcHJvYWN0aXZlbmVzcyA9IDIwOw0KPiArdW5zaWduZWQgaW50IF9fcmVhZF9tb3N0bHkg
+c3lzY3RsX2NvbXBhY3Rpb25fb3JkZXIgPSBDT01QQUNUSU9OX0hQQUdFX09SREVSOw0KPiAgDQo+
+ICAvKg0KPiAgICogVGhpcyBpcyB0aGUgZW50cnkgcG9pbnQgZm9yIGNvbXBhY3RpbmcgYWxsIG5v
+ZGVzIHZpYQ0KPiAtLSANCj4gMS43LjENCj4gDQoNCi0tIA0KICBPbGVrc2FuZHIgTmF0YWxlbmtv
+IChwb3N0LWZhY3R1bSkNCg==
