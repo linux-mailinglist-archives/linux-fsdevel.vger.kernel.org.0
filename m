@@ -2,286 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4B0935EDBD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 08:58:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C442B35EE12
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 09:27:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349409AbhDNGvw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 02:51:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46048 "EHLO
+        id S1348469AbhDNG72 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 02:59:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349404AbhDNGvv (ORCPT
+        with ESMTP id S1349591AbhDNG7N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 02:51:51 -0400
-Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8719C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Apr 2021 23:51:30 -0700 (PDT)
-Received: by mail-qv1-xf30.google.com with SMTP id i9so9203979qvo.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Apr 2021 23:51:30 -0700 (PDT)
+        Wed, 14 Apr 2021 02:59:13 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76B11C061574;
+        Tue, 13 Apr 2021 23:58:52 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id j26so19636423iog.13;
+        Tue, 13 Apr 2021 23:58:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=KLZzVXsHHgJTPi9/Y2IIbzvR3FePP4MCJ3ecMxx4dqc=;
-        b=JL6hA6+QcQLMoXUbtqIdHUyo2NzJQBbZYzeHvrGRShfPChqWNdglR38HGeljB2fxtP
-         M/EB8Cp4oGJ5EKc4EqKIx/b+me/Kc6zIFiWhY/5nvoWnDAVJyyAvnJbQ/cSo7mLxmdN/
-         HI/+hYSkQsHt+TP8W1gHJr+SoC5GGpvSZLOSR9POOCRR3SR8+oVVKxMymufxPxTpC2nC
-         +sMBHPpf81IfgL4N10W+2rFzsZ2vyOHFMVCeGYwQ+Sz0l0IsXp+v4eutMkcd/rzhXdvy
-         4h2kM4L1NjPbWvhMXaxD87NF550bFO546K5O4RrXtIXNxcXA2+SCnR9IrB2TA7oxqgiJ
-         mg4Q==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iPvXMTpUNl3IxdG2GdqWLZcBOjF3pDi559BGFj5cKe8=;
+        b=e5PSEGY9BDrjmpgpr1JDTixtaSfJ7lUkQfQofKGJFTaxWSf77oTAkZfVa/2O+TS5dW
+         eKoMP9B+vnaz4hLpdAQWXWwhO25xpQs7hfZJKyS4+7XL71K5E2369zyC/5JZMUDY2/0G
+         rcsd5BOHW/WDdWXnB60fXErG4m7mKCiymxzKVlqItMnrhqaF2na8AprV+mUZSSfD2XdZ
+         j/XMXdcInl4r0vsmy0rtFemZRTCl8mDtEV0kYcRVD+xDrt45g2qUNZIJr3f4P1dreG8r
+         0bCmU1FuJE2EZQsl5ACajy0rLM7hsKYhA6JgpY896xMy/C+GuqNMkUYjIj3itjHf1RRm
+         DQpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=KLZzVXsHHgJTPi9/Y2IIbzvR3FePP4MCJ3ecMxx4dqc=;
-        b=EXagXzTMMgXm0oQ/VT3pMFl1z28LDuPh4bjpX0quZwcFKh6AxRyJFwM2s7w9Hj6H2O
-         CW4rWfWGGOui7hdwqhPL2RtrWBHeZ44Tvulr97eqpocGAK+AQR3Q+y86zSDJCKzubJMl
-         Wfq8XyVaFAsoW4amG+YKgTI5DOofabU0LLqiAYr8I02d5LbdMcDsgnYjrd2P/C0Ky8rE
-         APz6/PgzYA1LK2XuYSrmrGEI5Uj/C53O2efCJygrDLVHRgH3qT7xBC0vYqFRHdLM6Y5y
-         Bci5FhDvtZxouG14f82p63y8jOgKKhkbEiF0NVQ4zXPzbo5IzWSz2xCTkOjWp2uMrClW
-         h5zg==
-X-Gm-Message-State: AOAM5331g1Rssq5tMfxkhz5Sg5YnxqyQYMe7K42NT+ff+iAqN1+dyQGq
-        eDkCpM6IxLLAMgz9Av/2Sg0shg==
-X-Google-Smtp-Source: ABdhPJxmAr7PP6sm3oGIRXGR/ODKnISgo8n9Q9oaRuJpnITPKeqa2LTT9fH+Z1Hu79UBjol+6eJo9A==
-X-Received: by 2002:a05:6214:f6c:: with SMTP id iy12mr24408311qvb.15.1618383089927;
-        Tue, 13 Apr 2021 23:51:29 -0700 (PDT)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id x22sm5183213qtq.93.2021.04.13.23.51.27
-        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
-        Tue, 13 Apr 2021 23:51:29 -0700 (PDT)
-Date:   Tue, 13 Apr 2021 23:51:26 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Axel Rasmussen <axelrasmussen@google.com>
-cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        Brian Geffon <bgeffon@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH v2 2/9] userfaultfd/shmem: combine
- shmem_{mcopy_atomic,mfill_zeropage}_pte
-In-Reply-To: <20210413051721.2896915-3-axelrasmussen@google.com>
-Message-ID: <alpine.LSU.2.11.2104132344120.9086@eggly.anvils>
-References: <20210413051721.2896915-1-axelrasmussen@google.com> <20210413051721.2896915-3-axelrasmussen@google.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iPvXMTpUNl3IxdG2GdqWLZcBOjF3pDi559BGFj5cKe8=;
+        b=LKj0mosX6lmQYsSQHd0aUlaX3DjyBFM4ZSF/LzXyLCDQC1GhUFGSVU2ja1pOI0HFRp
+         1T/G1kebf64Oaxk9haGIB4SR6uqIQCWD/D30TMxhY1yUQ8gLPylI1B/TFCgmd3QOFjA3
+         QAOUEXchxg25B5clcs0JXCmSei6bsbAO/Ilbko0hvwt2/MlE5o3FICvrYEIYKsiclZ7x
+         gIJ0MjSULSmCLCXGQ15q/vK/PkPfVq7t0daK6KElSaYACkLk1vOn2jwszKJPVEV0OLUy
+         oWRWG5mG3EcmPVHvlEnf5/ehV2nhy/mN7RceKpQxt646Z8cVZp4gAICOCha5NQDsFGEY
+         A0gg==
+X-Gm-Message-State: AOAM5301NQH0xR4wthgCBtNNRHu/QCYF/YJa6g+2QcpuGfL+kcFMVbP+
+        IHBKg5HbVwg0+DOPKTNWLwe85S+S5Svzq68GeyA=
+X-Google-Smtp-Source: ABdhPJxVn0379a/e+lrGuK9nJvBnaVZRkG+95gHH+6KyBvsrtfKcHhnhaQQ04D+xJ04y9zRQrXsU7onZw/arekICxKA=
+X-Received: by 2002:a6b:f909:: with SMTP id j9mr30365082iog.138.1618383531741;
+ Tue, 13 Apr 2021 23:58:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+References: <20210219124517.79359-1-selvakuma.s1@samsung.com>
+ <CGME20210219124603epcas5p33add0f2c1781b2a4d71bf30c9e1ac647@epcas5p3.samsung.com>
+ <20210219124517.79359-3-selvakuma.s1@samsung.com> <BL0PR04MB6514EA91680D33A5890ECE16E7839@BL0PR04MB6514.namprd04.prod.outlook.com>
+ <CAHqX9vb6GgaU9QdTQaq3=dGuoNCuWorLrGCF8gC5LEdFBESFcA@mail.gmail.com>
+ <BL0PR04MB6514B34000467FABFD6BF385E7709@BL0PR04MB6514.namprd04.prod.outlook.com>
+ <CAHqX9vYvtOaVL4LG0gAGCMz+a8uha8czH==Dgg3eG+TWA+xeVQ@mail.gmail.com> <BL0PR04MB65146169A9C7527280C15D4AE74F9@BL0PR04MB6514.namprd04.prod.outlook.com>
+In-Reply-To: <BL0PR04MB65146169A9C7527280C15D4AE74F9@BL0PR04MB6514.namprd04.prod.outlook.com>
+From:   Selva Jove <selvajove@gmail.com>
+Date:   Wed, 14 Apr 2021 12:28:39 +0530
+Message-ID: <CAHqX9vYPVwYLT5Bdk_GqKZWxpJNib9fYidEmT0j+bRikwyLgKw@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 2/4] block: add simple copy support
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     SelvaKumar S <selvakuma.s1@samsung.com>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "kbusch@kernel.org" <kbusch@kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>, "hch@lst.de" <hch@lst.de>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "snitzer@redhat.com" <snitzer@redhat.com>,
+        "joshiiitr@gmail.com" <joshiiitr@gmail.com>,
+        "nj.shetty@samsung.com" <nj.shetty@samsung.com>,
+        "joshi.k@samsung.com" <joshi.k@samsung.com>,
+        "javier.gonz@samsung.com" <javier.gonz@samsung.com>,
+        "kch@kernel.org" <kch@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 12 Apr 2021, Axel Rasmussen wrote:
+I agree with you. Will remove BLKDEV_COPY_NOEMULATION.
 
-> Previously, we did a dance where we had one calling path in
-> userfaultfd.c (mfill_atomic_pte), but then we split it into two in
-> shmem_fs.h (shmem_{mcopy_atomic,mfill_zeropage}_pte), and then rejoined
-> into a single shared function in shmem.c (shmem_mfill_atomic_pte).
-> 
-> This is all a bit overly complex. Just call the single combined shmem
-> function directly, allowing us to clean up various branches,
-> boilerplate, etc.
-> 
-> While we're touching this function, two other small cleanup changes:
-> - offset is equivalent to pgoff, so we can get rid of offset entirely.
-> - Split two VM_BUG_ON cases into two statements. This means the line
->   number reported when the BUG is hit specifies exactly which condition
->   was true.
-> 
-> Reviewed-by: Peter Xu <peterx@redhat.com>
-> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-
-Acked-by: Hugh Dickins <hughd@google.com>
-though you've dropped one minor fix I did like, see below...
-
-> ---
->  include/linux/shmem_fs.h | 15 +++++-------
->  mm/shmem.c               | 52 +++++++++++++---------------------------
->  mm/userfaultfd.c         | 10 +++-----
->  3 files changed, 25 insertions(+), 52 deletions(-)
-> 
-> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-> index d82b6f396588..919e36671fe6 100644
-> --- a/include/linux/shmem_fs.h
-> +++ b/include/linux/shmem_fs.h
-> @@ -122,21 +122,18 @@ static inline bool shmem_file(struct file *file)
->  extern bool shmem_charge(struct inode *inode, long pages);
->  extern void shmem_uncharge(struct inode *inode, long pages);
->  
-> +#ifdef CONFIG_USERFAULTFD
->  #ifdef CONFIG_SHMEM
->  extern int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
->  				  struct vm_area_struct *dst_vma,
->  				  unsigned long dst_addr,
->  				  unsigned long src_addr,
-> +				  bool zeropage,
->  				  struct page **pagep);
-> -extern int shmem_mfill_zeropage_pte(struct mm_struct *dst_mm,
-> -				    pmd_t *dst_pmd,
-> -				    struct vm_area_struct *dst_vma,
-> -				    unsigned long dst_addr);
-> -#else
-> +#else /* !CONFIG_SHMEM */
->  #define shmem_mcopy_atomic_pte(dst_mm, dst_pte, dst_vma, dst_addr, \
-
-In a previous version, you quietly corrected that "dst_pte" to "dst_pmd":
-of course it makes no difference to the code generated, but it was a good
-correction, helping to prevent confusion.
-
-> -			       src_addr, pagep)        ({ BUG(); 0; })
-> -#define shmem_mfill_zeropage_pte(dst_mm, dst_pmd, dst_vma, \
-> -				 dst_addr)      ({ BUG(); 0; })
-> -#endif
-> +			       src_addr, zeropage, pagep)       ({ BUG(); 0; })
-> +#endif /* CONFIG_SHMEM */
-> +#endif /* CONFIG_USERFAULTFD */
->  
->  #endif
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 26c76b13ad23..b72c55aa07fc 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2354,13 +2354,14 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
->  	return inode;
->  }
->  
-> -static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
-> -				  pmd_t *dst_pmd,
-> -				  struct vm_area_struct *dst_vma,
-> -				  unsigned long dst_addr,
-> -				  unsigned long src_addr,
-> -				  bool zeropage,
-> -				  struct page **pagep)
-> +#ifdef CONFIG_USERFAULTFD
-> +int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm,
-> +			   pmd_t *dst_pmd,
-> +			   struct vm_area_struct *dst_vma,
-> +			   unsigned long dst_addr,
-> +			   unsigned long src_addr,
-> +			   bool zeropage,
-> +			   struct page **pagep)
->  {
->  	struct inode *inode = file_inode(dst_vma->vm_file);
->  	struct shmem_inode_info *info = SHMEM_I(inode);
-> @@ -2372,7 +2373,7 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
->  	struct page *page;
->  	pte_t _dst_pte, *dst_pte;
->  	int ret;
-> -	pgoff_t offset, max_off;
-> +	pgoff_t max_off;
->  
->  	ret = -ENOMEM;
->  	if (!shmem_inode_acct_block(inode, 1))
-> @@ -2383,7 +2384,7 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
->  		if (!page)
->  			goto out_unacct_blocks;
->  
-> -		if (!zeropage) {	/* mcopy_atomic */
-> +		if (!zeropage) {	/* COPY */
->  			page_kaddr = kmap_atomic(page);
->  			ret = copy_from_user(page_kaddr,
->  					     (const void __user *)src_addr,
-> @@ -2397,7 +2398,7 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
->  				/* don't free the page */
->  				return -ENOENT;
->  			}
-> -		} else {		/* mfill_zeropage_atomic */
-> +		} else {		/* ZEROPAGE */
->  			clear_highpage(page);
->  		}
->  	} else {
-> @@ -2405,15 +2406,15 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
->  		*pagep = NULL;
->  	}
->  
-> -	VM_BUG_ON(PageLocked(page) || PageSwapBacked(page));
-> +	VM_BUG_ON(PageLocked(page));
-> +	VM_BUG_ON(PageSwapBacked(page));
->  	__SetPageLocked(page);
->  	__SetPageSwapBacked(page);
->  	__SetPageUptodate(page);
->  
->  	ret = -EFAULT;
-> -	offset = linear_page_index(dst_vma, dst_addr);
->  	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-> -	if (unlikely(offset >= max_off))
-> +	if (unlikely(pgoff >= max_off))
->  		goto out_release;
->  
->  	ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL,
-> @@ -2439,7 +2440,7 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
->  
->  	ret = -EFAULT;
->  	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-> -	if (unlikely(offset >= max_off))
-> +	if (unlikely(pgoff >= max_off))
->  		goto out_release_unlock;
->  
->  	ret = -EEXIST;
-> @@ -2476,28 +2477,7 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
->  	shmem_inode_unacct_blocks(inode, 1);
->  	goto out;
->  }
-> -
-> -int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm,
-> -			   pmd_t *dst_pmd,
-> -			   struct vm_area_struct *dst_vma,
-> -			   unsigned long dst_addr,
-> -			   unsigned long src_addr,
-> -			   struct page **pagep)
-> -{
-> -	return shmem_mfill_atomic_pte(dst_mm, dst_pmd, dst_vma,
-> -				      dst_addr, src_addr, false, pagep);
-> -}
-> -
-> -int shmem_mfill_zeropage_pte(struct mm_struct *dst_mm,
-> -			     pmd_t *dst_pmd,
-> -			     struct vm_area_struct *dst_vma,
-> -			     unsigned long dst_addr)
-> -{
-> -	struct page *page = NULL;
-> -
-> -	return shmem_mfill_atomic_pte(dst_mm, dst_pmd, dst_vma,
-> -				      dst_addr, 0, true, &page);
-> -}
-> +#endif /* CONFIG_USERFAULTFD */
->  
->  #ifdef CONFIG_TMPFS
->  static const struct inode_operations shmem_symlink_inode_operations;
-> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> index e14b3820c6a8..23fa2583bbd1 100644
-> --- a/mm/userfaultfd.c
-> +++ b/mm/userfaultfd.c
-> @@ -440,13 +440,9 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
->  						 dst_vma, dst_addr);
->  	} else {
->  		VM_WARN_ON_ONCE(wp_copy);
-> -		if (!zeropage)
-> -			err = shmem_mcopy_atomic_pte(dst_mm, dst_pmd,
-> -						     dst_vma, dst_addr,
-> -						     src_addr, page);
-> -		else
-> -			err = shmem_mfill_zeropage_pte(dst_mm, dst_pmd,
-> -						       dst_vma, dst_addr);
-> +		err = shmem_mcopy_atomic_pte(dst_mm, dst_pmd, dst_vma,
-> +					     dst_addr, src_addr, zeropage,
-> +					     page);
->  	}
->  
->  	return err;
-> -- 
-> 2.31.1.295.g9ea45b61b8-goog
-> 
-> 
+On Tue, Apr 13, 2021 at 6:03 AM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
+>
+> On 2021/04/12 23:35, Selva Jove wrote:
+> > On Mon, Apr 12, 2021 at 5:55 AM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
+> >>
+> >> On 2021/04/07 20:33, Selva Jove wrote:
+> >>> Initially I started moving the dm-kcopyd interface to the block layer
+> >>> as a generic interface.
+> >>> Once I dig deeper in dm-kcopyd code, I figured that dm-kcopyd is
+> >>> tightly coupled with dm_io()
+> >>>
+> >>> To move dm-kcopyd to block layer, it would also require dm_io code to
+> >>> be moved to block layer.
+> >>> It would cause havoc in dm layer, as it is the backbone of the
+> >>> dm-layer and needs complete
+> >>> rewriting of dm-layer. Do you see any other way of doing this without
+> >>> having to move dm_io code
+> >>> or to have redundant code ?
+> >>
+> >> Right. Missed that. So reusing dm-kcopyd and making it a common interface will
+> >> take some more efforts. OK, then. For the first round of commits, let's forget
+> >> about this. But I still think that your emulation could be a lot better than a
+> >> loop doing blocking writes after blocking reads.
+> >>
+> >
+> > Current implementation issues read asynchronously and once all the reads are
+> > completed, then the write is issued as whole to reduce the IO traffic
+> > in the queue.
+> > I agree that things can be better. Will explore another approach of
+> > sending writes
+> > immediately once reads are completed and with  plugging to increase the chances
+> > of merging.
+> >
+> >> [...]
+> >>>>> +int blkdev_issue_copy(struct block_device *src_bdev, int nr_srcs,
+> >>>>> +             struct range_entry *src_rlist, struct block_device *dest_bdev,
+> >>>>> +             sector_t dest, gfp_t gfp_mask, int flags)
+> >>>>> +{
+> >>>>> +     struct request_queue *q = bdev_get_queue(src_bdev);
+> >>>>> +     struct request_queue *dest_q = bdev_get_queue(dest_bdev);
+> >>>>> +     struct blk_copy_payload *payload;
+> >>>>> +     sector_t bs_mask, copy_size;
+> >>>>> +     int ret;
+> >>>>> +
+> >>>>> +     ret = blk_prepare_payload(src_bdev, nr_srcs, src_rlist, gfp_mask,
+> >>>>> +                     &payload, &copy_size);
+> >>>>> +     if (ret)
+> >>>>> +             return ret;
+> >>>>> +
+> >>>>> +     bs_mask = (bdev_logical_block_size(dest_bdev) >> 9) - 1;
+> >>>>> +     if (dest & bs_mask) {
+> >>>>> +             return -EINVAL;
+> >>>>> +             goto out;
+> >>>>> +     }
+> >>>>> +
+> >>>>> +     if (q == dest_q && q->limits.copy_offload) {
+> >>>>> +             ret = blk_copy_offload(src_bdev, payload, dest, gfp_mask);
+> >>>>> +             if (ret)
+> >>>>> +                     goto out;
+> >>>>> +     } else if (flags & BLKDEV_COPY_NOEMULATION) {
+> >>>>
+> >>>> Why ? whoever calls blkdev_issue_copy() wants a copy to be done. Why would that
+> >>>> user say "Fail on me if the device does not support copy" ??? This is a weird
+> >>>> interface in my opinion.
+> >>>>
+> >>>
+> >>> BLKDEV_COPY_NOEMULATION flag was introduced to allow blkdev_issue_copy() callers
+> >>> to use their native copying method instead of the emulated copy that I
+> >>> added. This way we
+> >>> ensure that dm uses the hw-assisted copy and if that is not present,
+> >>> it falls back to existing
+> >>> copy method.
+> >>>
+> >>> The other users who don't have their native emulation can use this
+> >>> emulated-copy implementation.
+> >>
+> >> I do not understand. Emulation or not should be entirely driven by the device
+> >> reporting support for simple copy (or not). It does not matter which component
+> >> is issuing the simple copy call: an FS to a real device, and FS to a DM device
+> >> or a DM target driver. If the underlying device reported support for simple
+> >> copy, use that. Otherwise, emulate with read/write. What am I missing here ?
+> >>
+> >
+> > blkdev_issue_copy() api will generally complete the copy-operation,
+> > either by using
+> > offloaded-copy or by using emulated-copy. The caller of the api is not
+> > required to
+> > figure the type of support. However, it can opt out of emulated-copy
+> > by specifying
+> > the flag BLKDEV_NOEMULATION. This is helpful for the case when the
+> > caller already
+> > has got a sophisticated emulation (e.g. dm-kcopyd users).
+>
+> This does not make any sense to me. If the user has already another mean of
+> doing copies, then that user will not call blkdev_issue_copy(). So I really do
+> not understand what the "opting out of emulated copy" would be useful for. That
+> user can check the simple copy support glag in the device request queue and act
+> accordingly: use its own block copy code when simple copy is not supported or
+> use blkdev_issue_copy() when the device has simple copy. Adding that
+> BLKDEV_COPY_NOEMULATION does not serve any purpose at all.
+>
+>
+>
+> --
+> Damien Le Moal
+> Western Digital Research
