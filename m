@@ -2,153 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8F5635EAA2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 04:12:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33A2135EB05
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 04:41:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232758AbhDNCMO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Apr 2021 22:12:14 -0400
-Received: from mx20.baidu.com ([111.202.115.85]:43602 "EHLO baidu.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229769AbhDNCMM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Apr 2021 22:12:12 -0400
-X-Greylist: delayed 912 seconds by postgrey-1.27 at vger.kernel.org; Tue, 13 Apr 2021 22:12:09 EDT
-Received: from BJHW-Mail-Ex10.internal.baidu.com (unknown [10.127.64.33])
-        by Forcepoint Email with ESMTPS id C3A7721787E3E2184197;
-        Wed, 14 Apr 2021 09:56:32 +0800 (CST)
-Received: from BJHW-MAIL-EX17.internal.baidu.com (10.127.64.19) by
- BJHW-Mail-Ex10.internal.baidu.com (10.127.64.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2106.2; Wed, 14 Apr 2021 09:56:32 +0800
-Received: from BC-Mail-Ex20.internal.baidu.com (172.31.51.14) by
- BJHW-MAIL-EX17.internal.baidu.com (10.127.64.19) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2106.2; Wed, 14 Apr 2021 09:56:32 +0800
-Received: from BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) by
- BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) with mapi id 15.01.2176.009;
- Wed, 14 Apr 2021 09:56:32 +0800
-From:   "Chu,Kaiping" <chukaiping@baidu.com>
-To:     David Rientjes <rientjes@google.com>
-CC:     "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "yzaikin@google.com" <yzaikin@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: =?gb2312?B?tPC4tDogW1BBVENIXSBtbS9jb21wYWN0aW9uOmxldCBwcm9hY3RpdmUgY29t?=
- =?gb2312?Q?paction_order_configurable?=
-Thread-Topic: [PATCH] mm/compaction:let proactive compaction order
- configurable
-Thread-Index: AQHXL8lZcaEIrraHzUCH0C8T1IQ/zaqzP1Vw
-Date:   Wed, 14 Apr 2021 01:56:32 +0000
-Message-ID: <af3e414730584a9fadf06483ad020dff@baidu.com>
-References: <1618218330-50591-1-git-send-email-chukaiping@baidu.com>
- <e57c2db3-11f-4d1b-b5cc-8a9e112af34@google.com>
-In-Reply-To: <e57c2db3-11f-4d1b-b5cc-8a9e112af34@google.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.22.194.34]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S1345952AbhDNCkr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Apr 2021 22:40:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48418 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345944AbhDNCkr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Apr 2021 22:40:47 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDE41C061574;
+        Tue, 13 Apr 2021 19:40:26 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lWVS1-005B4L-DP; Wed, 14 Apr 2021 02:40:21 +0000
+Date:   Wed, 14 Apr 2021 02:40:21 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, matthew.wilcox@oracle.com,
+        khlebnikov@yandex-team.ru
+Subject: Re: [PATCH RFC 0/6] fix the negative dentres bloating system memory
+ usage
+Message-ID: <YHZWFQp8seUUxHe9@zeniv-ca.linux.org.uk>
+References: <1611235185-1685-1-git-send-email-gautham.ananthakrishna@oracle.com>
 MIME-Version: 1.0
-X-Baidu-BdMsfe-DateCheck: 1_BJHW-Mail-Ex10_2021-04-14 09:56:32:776
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1611235185-1685-1-git-send-email-gautham.ananthakrishna@oracle.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SGkgUmllbnRqZXMsDQpJbiBvdXIgY2FzZSB3ZSBkb24ndCBjYXJlIGFib3V0IHRoZSBhbGxvY2F0
-aW9uIGRlbGF5IG9mIHRyYW5zcGFyZW50IGh1Z2UgcGFnZXMsIGJ1dCB0aGUgcHJvYWN0aXZlIGNv
-bXBhY3Rpb24gaXMgcmVhbGx5IHVzZWZ1bCB0byB1cy4gSWYgbm8gcHJvYWN0aXZlIGNvbXBhY3Rp
-b24gY3VycmVudGx5IGtlcm5lbCB3aWxsIGRvIG1lbW9yeSBjb21wYWN0aW9uIG9ubHkgd2hlbiB0
-aGUgYWxsb2NhdGlvbiBvZiBoaWdoIG9yZGVyIG1lbW9yeSB3aWxsIGZhaWwsIHdoaWxlIHRoaXMg
-aXMgdG9vIGxhdGUuIFdoZW4gdGhlIG1hY2hpbmUgaXMgaW4gaGVhdnkgbG9hZCwgbWFueSBwcm9j
-ZXNzZXMgbWF5YmUgdHJpZ2dlciBjb21wYWN0aW9uIGF0IHRoZSBzYW1lIHRpbWUsIHRoaXMgd2ls
-bCBsZWFkIHRvIHNlcmlvdXMgbG9jayBjb250ZW50aW9uLCBhbmQgd2lsbCBtYWtlIHRoZSBtYWNo
-aW5lIHZlcnkgc2xvd2x5Lg0KRG8gcHJvYWN0aXZlIGNvbXBhY3Rpb24gZnJvbSB0aW1lIHRvIHRp
-bWUgd2lsbCBrZWVwIHRoZSBmcmFnbWVudCBpbmRleCBhdCBsb3cgbGV2ZWwsIGFuZCByZWR1Y2Ug
-c29mdCBsb2NrdXAgcmF0ZS4NClRoZSBvcmRlciBvZiAzIG9yIDQgaXMgb25seSBhbiBleHBlcmll
-bmNlIHZhbHVlLCB3ZSBtYXkgY2hhbmdlIGl0IGFjY29yZGluZyB0byBtYWNoaW5lIGxvYWQuDQoN
-CkJSLA0KQ2h1IEthaXBpbmcNCg0KLS0tLS3Tyrz+1K28/i0tLS0tDQq3orz+yMs6IERhdmlkIFJp
-ZW50amVzIDxyaWVudGplc0Bnb29nbGUuY29tPiANCreiy83KsbzkOiAyMDIxxOo01MIxM8jVIDI6
-MjYNCsrVvP7IyzogQ2h1LEthaXBpbmcgPGNodWthaXBpbmdAYmFpZHUuY29tPg0Ks63LzTogbWNn
-cm9mQGtlcm5lbC5vcmc7IGtlZXNjb29rQGNocm9taXVtLm9yZzsgeXphaWtpbkBnb29nbGUuY29t
-OyBha3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
-OyBsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtbW1Aa3ZhY2sub3JnDQrW98zi
-OiBSZTogW1BBVENIXSBtbS9jb21wYWN0aW9uOmxldCBwcm9hY3RpdmUgY29tcGFjdGlvbiBvcmRl
-ciBjb25maWd1cmFibGUNCg0KT24gTW9uLCAxMiBBcHIgMjAyMSwgY2h1a2FpcGluZyB3cm90ZToN
-Cg0KPiBDdXJyZW50bHkgdGhlIHByb2FjdGl2ZSBjb21wYWN0aW9uIG9yZGVyIGlzIGZpeGVkIHRv
-IA0KPiBDT01QQUNUSU9OX0hQQUdFX09SREVSKDkpLCBpdCdzIE9LIGluIG1vc3QgbWFjaGluZXMg
-d2l0aCBsb3RzIG9mIA0KPiBub3JtYWwgNEtCIG1lbW9yeSwgYnV0IGl0J3MgdG9vIGhpZ2ggZm9y
-IHRoZSBtYWNoaW5lcyB3aXRoIHNtYWxsIA0KPiBub3JtYWwgbWVtb3J5LCBmb3IgZXhhbXBsZSB0
-aGUgbWFjaGluZXMgd2l0aCBtb3N0IG1lbW9yeSBjb25maWd1cmVkIGFzIA0KPiAxR0IgaHVnZXRs
-YmZzIGh1Z2UgcGFnZXMuIEluIHRoZXNlIG1hY2hpbmVzIHRoZSBtYXggb3JkZXIgb2YgZnJlZSAN
-Cj4gcGFnZXMgaXMgb2Z0ZW4gYmVsb3cgOSwgYW5kIGl0J3MgYWx3YXlzIGJlbG93IDkgZXZlbiB3
-aXRoIGhhcmQgDQo+IGNvbXBhY3Rpb24uIFRoaXMgd2lsbCBsZWFkIHRvIHByb2FjdGl2ZSBjb21w
-YWN0aW9uIGJlIHRyaWdnZXJlZCB2ZXJ5IA0KPiBmcmVxdWVudGx5LiBJbiB0aGVzZSBtYWNoaW5l
-cyB3ZSBvbmx5IGNhcmUgYWJvdXQgb3JkZXIgb2YgMyBvciA0Lg0KPiBUaGlzIHBhdGNoIGV4cG9y
-dCB0aGUgb2RlciB0byBwcm9jIGFuZCBsZXQgaXQgY29uZmlndXJhYmxlIGJ5IHVzZXIsIA0KPiBh
-bmQgdGhlIGRlZmF1bHQgdmFsdWUgaXMgc3RpbGwgQ09NUEFDVElPTl9IUEFHRV9PUkRFUi4NCj4g
-DQoNCkknbSBjdXJpb3VzIHdoeSB5b3UgaGF2ZSBwcm9hY3RpdmUgY29tcGFjdGlvbiBlbmFibGVk
-IGF0IGFsbCBpbiB0aGlzIGNhc2U/DQoNClRoZSBvcmRlci05IHRocmVzaG9sZCBpcyBsaWtlbHkg
-dG8gb3B0aW1pemUgZm9yIGh1Z2VwYWdlIGF2YWlsYWJpbGl0eSwgYnV0IGluIHlvdXIgc2V0dXAg
-aXQgYXBwZWFycyB0aGF0J3Mgbm90IGEgZ29hbC4NCg0KU28gd2hhdCBiZW5lZml0IGRvZXMgcHJv
-YWN0aXZlIGNvbXBhY3Rpb24gcHJvdmlkZSBpZiBvbmx5IGRvbmUgZm9yIG9yZGVyLTMgb3Igb3Jk
-ZXItND8NCg0KPiBTaWduZWQtb2ZmLWJ5OiBjaHVrYWlwaW5nIDxjaHVrYWlwaW5nQGJhaWR1LmNv
-bT4NCj4gLS0tDQo+ICBpbmNsdWRlL2xpbnV4L2NvbXBhY3Rpb24uaCB8ICAgIDEgKw0KPiAga2Vy
-bmVsL3N5c2N0bC5jICAgICAgICAgICAgfCAgIDEwICsrKysrKysrKysNCj4gIG1tL2NvbXBhY3Rp
-b24uYyAgICAgICAgICAgIHwgICAgNyArKysrLS0tDQo+ICAzIGZpbGVzIGNoYW5nZWQsIDE1IGlu
-c2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9s
-aW51eC9jb21wYWN0aW9uLmggYi9pbmNsdWRlL2xpbnV4L2NvbXBhY3Rpb24uaCANCj4gaW5kZXgg
-ZWQ0MDcwZS4uMTUxY2NkMSAxMDA2NDQNCj4gLS0tIGEvaW5jbHVkZS9saW51eC9jb21wYWN0aW9u
-LmgNCj4gKysrIGIvaW5jbHVkZS9saW51eC9jb21wYWN0aW9uLmgNCj4gQEAgLTgzLDYgKzgzLDcg
-QEAgc3RhdGljIGlubGluZSB1bnNpZ25lZCBsb25nIGNvbXBhY3RfZ2FwKHVuc2lnbmVkIGludCAN
-Cj4gb3JkZXIpICAjaWZkZWYgQ09ORklHX0NPTVBBQ1RJT04gIGV4dGVybiBpbnQgc3lzY3RsX2Nv
-bXBhY3RfbWVtb3J5OyAgDQo+IGV4dGVybiB1bnNpZ25lZCBpbnQgc3lzY3RsX2NvbXBhY3Rpb25f
-cHJvYWN0aXZlbmVzczsNCj4gK2V4dGVybiB1bnNpZ25lZCBpbnQgc3lzY3RsX2NvbXBhY3Rpb25f
-b3JkZXI7DQo+ICBleHRlcm4gaW50IHN5c2N0bF9jb21wYWN0aW9uX2hhbmRsZXIoc3RydWN0IGN0
-bF90YWJsZSAqdGFibGUsIGludCB3cml0ZSwNCj4gIAkJCXZvaWQgKmJ1ZmZlciwgc2l6ZV90ICps
-ZW5ndGgsIGxvZmZfdCAqcHBvcyk7ICBleHRlcm4gaW50IA0KPiBzeXNjdGxfZXh0ZnJhZ190aHJl
-c2hvbGQ7IGRpZmYgLS1naXQgYS9rZXJuZWwvc3lzY3RsLmMgDQo+IGIva2VybmVsL3N5c2N0bC5j
-IGluZGV4IDYyZmJkMDkuLjI3N2RmMzEgMTAwNjQ0DQo+IC0tLSBhL2tlcm5lbC9zeXNjdGwuYw0K
-PiArKysgYi9rZXJuZWwvc3lzY3RsLmMNCj4gQEAgLTExNCw2ICsxMTQsNyBAQA0KPiAgc3RhdGlj
-IGludCBfX21heWJlX3VudXNlZCBuZWdfb25lID0gLTE7ICBzdGF0aWMgaW50IF9fbWF5YmVfdW51
-c2VkIA0KPiB0d28gPSAyOyAgc3RhdGljIGludCBfX21heWJlX3VudXNlZCBmb3VyID0gNDsNCj4g
-K3N0YXRpYyBpbnQgX19tYXliZV91bnVzZWQgdGVuID0gMTA7DQo+ICBzdGF0aWMgdW5zaWduZWQg
-bG9uZyB6ZXJvX3VsOw0KPiAgc3RhdGljIHVuc2lnbmVkIGxvbmcgb25lX3VsID0gMTsNCj4gIHN0
-YXRpYyB1bnNpZ25lZCBsb25nIGxvbmdfbWF4ID0gTE9OR19NQVg7IEBAIC0yODcxLDYgKzI4NzIs
-MTUgQEAgaW50IA0KPiBwcm9jX2RvX3N0YXRpY19rZXkoc3RydWN0IGN0bF90YWJsZSAqdGFibGUs
-IGludCB3cml0ZSwNCj4gIAkJLmV4dHJhMgkJPSAmb25lX2h1bmRyZWQsDQo+ICAJfSwNCj4gIAl7
-DQo+ICsJCS5wcm9jbmFtZSAgICAgICA9ICJjb21wYWN0aW9uX29yZGVyIiwNCj4gKwkJLmRhdGEg
-ICAgICAgICAgID0gJnN5c2N0bF9jb21wYWN0aW9uX29yZGVyLA0KPiArCQkubWF4bGVuICAgICAg
-ICAgPSBzaXplb2Yoc3lzY3RsX2NvbXBhY3Rpb25fb3JkZXIpLA0KPiArCQkubW9kZSAgICAgICAg
-ICAgPSAwNjQ0LA0KPiArCQkucHJvY19oYW5kbGVyICAgPSBwcm9jX2RvaW50dmVjX21pbm1heCwN
-Cj4gKwkJLmV4dHJhMSAgICAgICAgID0gU1lTQ1RMX1pFUk8sDQo+ICsJCS5leHRyYTIgICAgICAg
-ICA9ICZ0ZW4sDQo+ICsJfSwNCj4gKwl7DQo+ICAJCS5wcm9jbmFtZQk9ICJleHRmcmFnX3RocmVz
-aG9sZCIsDQo+ICAJCS5kYXRhCQk9ICZzeXNjdGxfZXh0ZnJhZ190aHJlc2hvbGQsDQo+ICAJCS5t
-YXhsZW4JCT0gc2l6ZW9mKGludCksDQo+IGRpZmYgLS1naXQgYS9tbS9jb21wYWN0aW9uLmMgYi9t
-bS9jb21wYWN0aW9uLmMgaW5kZXggZTA0ZjQ0Ny4uYTE5Mjk5NiANCj4gMTAwNjQ0DQo+IC0tLSBh
-L21tL2NvbXBhY3Rpb24uYw0KPiArKysgYi9tbS9jb21wYWN0aW9uLmMNCj4gQEAgLTE5MjUsMTYg
-KzE5MjUsMTYgQEAgc3RhdGljIGJvb2wga3N3YXBkX2lzX3J1bm5pbmcocGdfZGF0YV90IA0KPiAq
-cGdkYXQpDQo+ICANCj4gIC8qDQo+ICAgKiBBIHpvbmUncyBmcmFnbWVudGF0aW9uIHNjb3JlIGlz
-IHRoZSBleHRlcm5hbCBmcmFnbWVudGF0aW9uIHdydCB0byANCj4gdGhlDQo+IC0gKiBDT01QQUNU
-SU9OX0hQQUdFX09SREVSLiBJdCByZXR1cm5zIGEgdmFsdWUgaW4gdGhlIHJhbmdlIFswLCAxMDBd
-Lg0KPiArICogc3lzY3RsX2NvbXBhY3Rpb25fb3JkZXIuIEl0IHJldHVybnMgYSB2YWx1ZSBpbiB0
-aGUgcmFuZ2UgWzAsIDEwMF0uDQo+ICAgKi8NCj4gIHN0YXRpYyB1bnNpZ25lZCBpbnQgZnJhZ21l
-bnRhdGlvbl9zY29yZV96b25lKHN0cnVjdCB6b25lICp6b25lKSAgew0KPiAtCXJldHVybiBleHRm
-cmFnX2Zvcl9vcmRlcih6b25lLCBDT01QQUNUSU9OX0hQQUdFX09SREVSKTsNCj4gKwlyZXR1cm4g
-ZXh0ZnJhZ19mb3Jfb3JkZXIoem9uZSwgc3lzY3RsX2NvbXBhY3Rpb25fb3JkZXIpOw0KPiAgfQ0K
-PiAgDQo+ICAvKg0KPiAgICogQSB3ZWlnaHRlZCB6b25lJ3MgZnJhZ21lbnRhdGlvbiBzY29yZSBp
-cyB0aGUgZXh0ZXJuYWwgDQo+IGZyYWdtZW50YXRpb24NCj4gLSAqIHdydCB0byB0aGUgQ09NUEFD
-VElPTl9IUEFHRV9PUkRFUiBzY2FsZWQgYnkgdGhlIHpvbmUncyBzaXplLiBJdA0KPiArICogd3J0
-IHRvIHRoZSBzeXNjdGxfY29tcGFjdGlvbl9vcmRlciBzY2FsZWQgYnkgdGhlIHpvbmUncyBzaXpl
-LiBJdA0KPiAgICogcmV0dXJucyBhIHZhbHVlIGluIHRoZSByYW5nZSBbMCwgMTAwXS4NCj4gICAq
-DQo+ICAgKiBUaGUgc2NhbGluZyBmYWN0b3IgZW5zdXJlcyB0aGF0IHByb2FjdGl2ZSBjb21wYWN0
-aW9uIGZvY3VzZXMgb24gDQo+IGxhcmdlciBAQCAtMjY2Niw2ICsyNjY2LDcgQEAgc3RhdGljIHZv
-aWQgY29tcGFjdF9ub2Rlcyh2b2lkKQ0KPiAgICogYmFja2dyb3VuZC4gSXQgdGFrZXMgdmFsdWVz
-IGluIHRoZSByYW5nZSBbMCwgMTAwXS4NCj4gICAqLw0KPiAgdW5zaWduZWQgaW50IF9fcmVhZF9t
-b3N0bHkgc3lzY3RsX2NvbXBhY3Rpb25fcHJvYWN0aXZlbmVzcyA9IDIwOw0KPiArdW5zaWduZWQg
-aW50IF9fcmVhZF9tb3N0bHkgc3lzY3RsX2NvbXBhY3Rpb25fb3JkZXIgPSANCj4gK0NPTVBBQ1RJ
-T05fSFBBR0VfT1JERVI7DQo+ICANCj4gIC8qDQo+ICAgKiBUaGlzIGlzIHRoZSBlbnRyeSBwb2lu
-dCBmb3IgY29tcGFjdGluZyBhbGwgbm9kZXMgdmlhDQo+IC0tDQo+IDEuNy4xDQo+IA0KPiANCg==
+On Thu, Jan 21, 2021 at 06:49:39PM +0530, Gautham Ananthakrishna wrote:
+
+> We tested this patch set recently and found it limiting negative dentry to a
+> small part of total memory. The following is the test result we ran on two
+> types of servers, one is 256G memory with 24 CPUS and another is 3T memory
+> with 384 CPUS. The test case is using a lot of processes to generate negative
+> dentry in parallel, the following is the test result after 72 hours, the
+> negative dentry number is stable around that number even after running longer
+> for much longer time. Without the patch set, in less than half an hour 197G was
+> taken by negative dentry on 256G system, in 1 day 2.4T was taken on 3T system.
+> 
+> system memory   neg-dentry-number   neg-dentry-mem-usage
+> 256G            55259084            10.6G
+> 3T              202306756           38.8G
+> 
+> For perf test, we ran the following, and no regression found.
+> 
+> 1. create 1M negative dentry and then touch them to convert them to positive
+>    dentry
+> 
+> 2. create 10K/100K/1M files
+> 
+> 3. remove 10K/100K/1M files
+> 
+> 4. kernel compile
+
+Good for you; how would that work for thinner boxen, though?  I agree that if you
+have 8M hash buckets your "no more than 3 unused negatives per bucket" is generous
+enough for everything, but that's less obvious for something with e.g 4 or 8 gigs.
+And believe it or not, there are real-world boxen like that ;-)
