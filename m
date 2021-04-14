@@ -2,152 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4749235F305
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 13:58:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FAF135F307
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 13:58:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233718AbhDNL4i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 07:56:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44752 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233708AbhDNL4g (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 07:56:36 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 605D1AF5A;
-        Wed, 14 Apr 2021 11:56:14 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 271051F2B5F; Wed, 14 Apr 2021 13:56:14 +0200 (CEST)
-Date:   Wed, 14 Apr 2021 13:56:14 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, Ted Tso <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Eric Whitney <enwlinux@gmail.com>,
-        linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>
-Subject: Re: [PATCH 2/3] ext4: Fix occasional generic/418 failure
-Message-ID: <20210414115614.GB31323@quack2.suse.cz>
-References: <20210412102333.2676-1-jack@suse.cz>
- <20210412102333.2676-3-jack@suse.cz>
- <20210412215024.GP1990290@dread.disaster.area>
- <20210413091122.GA15752@quack2.suse.cz>
- <20210413224531.GE63242@dread.disaster.area>
+        id S233741AbhDNL5I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 07:57:08 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44504 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233437AbhDNL5I (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Apr 2021 07:57:08 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: shreeya)
+        with ESMTPSA id 6212B1F4226E
+Subject: Re: [PATCH v7 4/4] fs: unicode: Add utf8 module and a unicode layer
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        chao@kernel.org, drosen@google.com, yuchao0@huawei.com,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
+        andre.almeida@collabora.com, ebiggers@google.com
+References: <20210407144845.53266-1-shreeya.patel@collabora.com>
+ <20210407144845.53266-5-shreeya.patel@collabora.com>
+ <875z0wvbhj.fsf@collabora.com>
+From:   Shreeya Patel <shreeya.patel@collabora.com>
+Message-ID: <df4cff9b-86b3-0d6c-e757-46659a93910c@collabora.com>
+Date:   Wed, 14 Apr 2021 17:26:38 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210413224531.GE63242@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <875z0wvbhj.fsf@collabora.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 14-04-21 08:45:31, Dave Chinner wrote:
-> On Tue, Apr 13, 2021 at 11:11:22AM +0200, Jan Kara wrote:
-> > On Tue 13-04-21 07:50:24, Dave Chinner wrote:
-> > > On Mon, Apr 12, 2021 at 12:23:32PM +0200, Jan Kara wrote:
-> > > > Eric has noticed that after pagecache read rework, generic/418 is
-> > > > occasionally failing for ext4 when blocksize < pagesize. In fact, the
-> > > > pagecache rework just made hard to hit race in ext4 more likely. The
-> > > > problem is that since ext4 conversion of direct IO writes to iomap
-> > > > framework (commit 378f32bab371), we update inode size after direct IO
-> > > > write only after invalidating page cache. Thus if buffered read sneaks
-> > > > at unfortunate moment like:
-> > > > 
-> > > > CPU1 - write at offset 1k                       CPU2 - read from offset 0
-> > > > iomap_dio_rw(..., IOMAP_DIO_FORCE_WAIT);
-> > > >                                                 ext4_readpage();
-> > > > ext4_handle_inode_extension()
-> > > > 
-> > > > the read will zero out tail of the page as it still sees smaller inode
-> > > > size and thus page cache becomes inconsistent with on-disk contents with
-> > > > all the consequences.
-> > > > 
-> > > > Fix the problem by moving inode size update into end_io handler which
-> > > > gets called before the page cache is invalidated.
-> > > 
-> > > Confused.
-> > > 
-> > > This moves all the inode extension stuff into the completion
-> > > handler, when all that really needs to be done is extending
-> > > inode->i_size to tell the world there is data up to where the
-> > > IO completed. Actually removing the inode from the orphan list
-> > > does not need to be done in the IO completion callback, because...
-> > > 
-> > > >  	if (ilock_shared)
-> > > >  		iomap_ops = &ext4_iomap_overwrite_ops;
-> > > > -	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
-> > > > -			   (unaligned_io || extend) ? IOMAP_DIO_FORCE_WAIT : 0);
-> > > > -	if (ret == -ENOTBLK)
-> > > > -		ret = 0;
-> > > > -
-> > > >  	if (extend)
-> > > > -		ret = ext4_handle_inode_extension(inode, offset, ret, count);
-> > > > +		dio_ops = &ext4_dio_extending_write_ops;
-> > > >  
-> > > > +	ret = iomap_dio_rw(iocb, from, iomap_ops, dio_ops,
-> > > > +			   (extend || unaligned_io) ? IOMAP_DIO_FORCE_WAIT : 0);
-> > >                             ^^^^^^                    ^^^^^^^^^^^^^^^^^^^ 
-> > > 
-> > > .... if we are doing an extending write, we force DIO to complete
-> > > before returning. Hence even AIO will block here on an extending
-> > > write, and hence we can -always- do the correct post-IO completion
-> > > orphan list cleanup here because we know a) the original IO size and
-> > > b) the amount of data that was actually written.
-> > > 
-> > > Hence all that remains is closing the buffered read vs invalidation
-> > > race. All this requires is for the dio write completion to behave
-> > > like XFS where it just does the inode->i_size update for extending
-> > > writes. THis means the size is updated before the invalidation, and
-> > > hence any read that occurs after the invalidation but before the
-> > > post-eof blocks have been removed will see the correct size and read
-> > > the tail page(s) correctly. This closes the race window, and the
-> > > caller can still handle the post-eof block cleanup as it does now.
-> > > 
-> > > Hence I don't see any need for changing the iomap infrastructure to
-> > > solve this problem. This seems like the obvious solution to me, so
-> > > what am I missing?
-> > 
-> > All that you write above is correct. The missing piece is: If everything
-> > succeeded and all the cleanup we need is removing inode from the orphan
-> > list (common case), we want to piggyback that orphan list removal into the
-> > same transaction handle as the update of the inode size. This is just a
-> > performance thing, you are absolutely right we could also do the orphan
-> > cleanup unconditionally in ext4_dio_write_iter() and thus avoid any changes
-> > to the iomap framework.
-> 
-> Doesn't ext4, like XFS, keep two copies of the inode size? One for
-> the on-disk size and one for the in-memory size?
-> 
-> /me looks...
-> 
-> Yeah, there's ei->i_disksize that reflects the on-disk size.
-> 
-> And I note that the first thing that ext4_handle_inode_extension()
-> is already checking that the write is extending past the current
-> on-disk inode size before running the extension transaction.
 
-Yes.
+On 09/04/21 12:40 am, Gabriel Krisman Bertazi wrote:
+> Shreeya Patel <shreeya.patel@collabora.com> writes:
+>
+>> utf8data.h_shipped has a large database table which is an auto-generated
+>> decodification trie for the unicode normalization functions.
+>> It is not necessary to load this large table in the kernel if no
+>> filesystem is using it, hence make UTF-8 encoding loadable by converting
+>> it into a module.
+>>
+>> Modify the file called unicode-core which will act as a layer for
+>> unicode subsystem. It will load the UTF-8 module and access it's functions
+>> whenever any filesystem that needs unicode is mounted.
+>> Currently, only UTF-8 encoding is supported but if any other encodings
+>> are supported in future then the layer file would be responsible for
+>> loading the desired encoding module.
+>>
+>> Also, indirect calls using function pointers are slow, use static calls to
+>> avoid overhead caused in case of repeated indirect calls. Static calls
+>> improves the performance by directly calling the functions as opposed to
+>> indirect calls.
+>>
+>> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+>> ---
+>> Changes in v7
+>>    - Update the help text in Kconfig
+>>    - Handle the unicode_load_static_call function failure by decrementing
+>>      the reference.
+>>    - Correct the code for handling built-in utf8 option as well.
+>>    - Correct the synchronization for accessing utf8mod.
+>>    - Make changes to unicode_unload() for handling the situation where
+>>      utf8mod != NULL and um == NULL.
+>>
+>> Changes in v6
+>>    - Add spinlock to protect utf8mod and avoid NULL pointer
+>>      dereference.
+>>    - Change the static call function names for being consistent with
+>>      kernel coding style.
+>>    - Merge the unicode_load_module function with unicode_load as it is
+>>      not really needed to have a separate function.
+>>    - Use try_then_module_get instead of module_get to avoid loading the
+>>      module even when it is already loaded.
+>>    - Improve the commit message.
+>>
+>> Changes in v5
+>>    - Rename global variables and default static call functions for better
+>>      understanding
+>>    - Make only config UNICODE_UTF8 visible and config UNICODE to be always
+>>      enabled provided UNICODE_UTF8 is enabled.
+>>    - Improve the documentation for Kconfig
+>>    - Improve the commit message.
+>>   
+>> Changes in v4
+>>    - Return error from the static calls instead of doing nothing and
+>>      succeeding even without loading the module.
+>>    - Remove the complete usage of utf8_ops and use static calls at all
+>>      places.
+>>    - Restore the static calls to default values when module is unloaded.
+>>    - Decrement the reference of module after calling the unload function.
+>>    - Remove spinlock as there will be no race conditions after removing
+>>      utf8_ops.
+>>
+>> Changes in v3
+>>    - Add a patch which checks if utf8 is loaded before calling utf8_unload()
+>>      in ext4 and f2fs filesystems
+>>    - Return error if strscpy() returns value < 0
+>>    - Correct the conditions to prevent NULL pointer dereference while
+>>      accessing functions via utf8_ops variable.
+>>    - Add spinlock to avoid race conditions.
+>>    - Use static_call() for preventing speculative execution attacks.
+>>
+>> Changes in v2
+>>    - Remove the duplicate file from the last patch.
+>>    - Make the wrapper functions inline.
+>>    - Remove msleep and use try_module_get() and module_put()
+>>      for ensuring that module is loaded correctly and also
+>>      doesn't get unloaded while in use.
+>>    - Resolve the warning reported by kernel test robot.
+>>    - Resolve all the checkpatch.pl warnings.
+>>
+>>   fs/unicode/Kconfig        |  26 +++-
+>>   fs/unicode/Makefile       |   5 +-
+>>   fs/unicode/unicode-core.c | 297 ++++++++++++++------------------------
+>>   fs/unicode/unicode-utf8.c | 264 +++++++++++++++++++++++++++++++++
+>>   include/linux/unicode.h   |  96 ++++++++++--
+>>   5 files changed, 483 insertions(+), 205 deletions(-)
+>>   create mode 100644 fs/unicode/unicode-utf8.c
+>>
+>> diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
+>> index 2c27b9a5cd6c..0c69800a2a37 100644
+>> --- a/fs/unicode/Kconfig
+>> +++ b/fs/unicode/Kconfig
+>> @@ -2,13 +2,31 @@
+>>   #
+>>   # UTF-8 normalization
+>>   #
+>> +# CONFIG_UNICODE will be automatically enabled if CONFIG_UNICODE_UTF8
+>> +# is enabled. This config option adds the unicode subsystem layer which loads
+>> +# the UTF-8 module whenever any filesystem needs it.
+>>   config UNICODE
+>> -	bool "UTF-8 normalization and casefolding support"
+>> +	bool
+>> +
+>> +config UNICODE_UTF8
+>> +	tristate "UTF-8 module"
+> "UTF-8 module" is the text that will appear in menuconfig and other
+> configuration utilities.  This string not very helpful to describe what
+> this code is about or why it is different from NLS_utf8.  People come to
+> this option looking for the case-insensitive feature in ext4, so I'd
+> prefer to keep the mention to 'casefolding'. or even improve the
+> original a bit to say:
+>
+> tristate: "UTF-8 support for native Case-Insensitive filesystems"
+>
+> Other than these and what Eric mentioned, the code looks good to me.
 
-> The page cache only cares about the inode->i_size value, not the
-> ei->i_disksize value, so you can update them independently and still
-> have things work correctly. That's what XFS does in
-> xfs_dio_write_end_io - it updates the in-memory inode->i_size, then
-> runs a transaction to atomically update the inode on-disk inode
-> size. Updating the VFS inode size first protects against buffered
-> read races while updating the on-disk size...
-> 
-> So for ext4, the two separate size updates don't need to be done at
-> the same time - you have all the state you need in the ext4 dio
-> write path to extend the on-disk file size on successful extending
-> write, and it is not dependent in any way on the current in-memory
-> VFS inode size that you'd update in the ->end_io callback....
 
-Right, that's a nice trick that will allow us to keep the original
-performance (I've verified that indeed splitting inode size and orphan
-updates into separate transactions costs us ~10% of performance when
-appending 512-byte chunks) without touching generic dio code. Thanks for
-the idea!
+Thanks Gabriel and Eric for your reviews.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+>    I
+> gave this series a try and it seems to work fine.
+>
+> It does raise a new warning, though
+>
+> /home/krisman/src/linux/fs/unicode/unicode-core.c: In function ‘unicode_load’:
+> /home/krisman/src/linux/include/linux/kmod.h:28:8: warning: the omitted middle operand in ‘?:’ will always be ‘true’, suggest explicit middle operand [-Wparentheses]
+>     28 |  ((x) ?: (__request_module(true, mod), (x)))
+>        |        ^
+> /home/krisman/src/linux/fs/unicode/unicode-core.c:123:7: note: in expansion of macro ‘try_then_request_module’
+>    123 |  if (!try_then_request_module(utf8mod_get(), "utf8")) {
+>
+> But in this specific case, i think gcc is just being silly. What would
+> be the right way to avoid it?
+
+
+There are two possible things that we can do here to suppress the warning
+
+1. Disable the warning using pragma with something like this :-
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wparentheses"
+     if(!try_then_request_module(utf8mod_get(), "utf8"))
+#pragma GCC diagnostic pop
+
+
+2. Add the following in fs/unicode/Makefile
+
+KBUILD_CFLAGS += $(call cc-disable-warning, parentheses)
+But this would disable the warning for the complete unicode subsystem 
+which doesn't seem to be right.
+It would also disable some other crucial warning generated by Wparantheses.
+
+What do you think about the first option? I am not sure if this is the 
+right way to fix this.
+
+
