@@ -2,77 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8198F35EFD9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 10:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA28635F000
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 10:47:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350167AbhDNIif (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 04:38:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41476 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350157AbhDNIi0 (ORCPT
+        id S1350377AbhDNIlo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 04:41:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22829 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1350387AbhDNIlR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 04:38:26 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49D11C061574;
-        Wed, 14 Apr 2021 01:38:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=HOtc4Cl5BmOPZRqmjAtE1IxvnshDfxYTlqGmfr7o1nE=; b=BwF4H/P2hb8LfuzoAdXv9Wp9Es
-        BNHces+QXuyLvlSJ5+FSQeScHQtEIfqpgbDaVqFy7Ge+lgMWEMFs6Whl9ajZcc+K2LuviMV6+dpPd
-        dtZgw7fnI43BKmv19Ub7B7Jo9Qv03hRa5F6v+sBVyZnbWWoQ3qnkgiHS4L+T7J+WtD91ErdItBcVf
-        bcuHuN0gguJ7qEvj0lUhVLamEsNtiPr5+rI3uocgNqvt116V4I9FjypnB2OGtVUZhfkxKA1LlzO3m
-        Fs+tsvcT3QeclXBiRwzyE4cejhBDdMC2h27by3aAdEAdonNbOnSUhk4zJ30llp6d5bhCjfGNxpVp8
-        4qbJzL+Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lWb1w-00C0Hf-DL; Wed, 14 Apr 2021 08:37:48 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A5236300033;
-        Wed, 14 Apr 2021 10:37:46 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 60B7D203CF7DB; Wed, 14 Apr 2021 10:37:46 +0200 (CEST)
-Date:   Wed, 14 Apr 2021 10:37:46 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Marco Elver <elver@google.com>
-Cc:     alexander.shishkin@linux.intel.com, acme@kernel.org,
-        mingo@redhat.com, jolsa@redhat.com, mark.rutland@arm.com,
-        namhyung@kernel.org, tglx@linutronix.de, glider@google.com,
-        viro@zeniv.linux.org.uk, arnd@arndb.de, christian@brauner.io,
-        dvyukov@google.com, jannh@google.com, axboe@kernel.dk,
-        mascasa@google.com, pcc@google.com, irogers@google.com,
-        oleg@redhat.com, kasan-dev@googlegroups.com,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 00/10] Add support for synchronous signals on perf
- events
-Message-ID: <YHap2v/pQJlFVE3W@hirez.programming.kicks-ass.net>
-References: <20210408103605.1676875-1-elver@google.com>
+        Wed, 14 Apr 2021 04:41:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618389655;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eDVMJkpRK1Zblh+QKUchn0+EWb/JoRAGYZO+L/mZbdU=;
+        b=BlL69nv3bKUEizesfXE4Ss2Oe2KcFO1d5TYvUcmtwBGFZRLTjeGhAseiEECk6APN9KYQDr
+        Obmdb0tZl/WradG/suSzg6b/GLlBU8kzijOpHZXzc0KDw5rh9VqgP+NiYX/nxo0olAIRHT
+        55w1uuj2j3BBSWHofRtTtX8vEP3hQhw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-155-pyeGloAtMc223IRxWQU0_A-1; Wed, 14 Apr 2021 04:40:52 -0400
+X-MC-Unique: pyeGloAtMc223IRxWQU0_A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 683D28030CA;
+        Wed, 14 Apr 2021 08:40:51 +0000 (UTC)
+Received: from localhost (ovpn-114-209.ams2.redhat.com [10.36.114.209])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D46AA6A039;
+        Wed, 14 Apr 2021 08:40:50 +0000 (UTC)
+Date:   Wed, 14 Apr 2021 09:40:49 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc:     vgoyal@redhat.com, miklos@szeredi.hu,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] virtiofs: remove useless function
+Message-ID: <YHaqkV0rUc7iu66f@stefanha-x1.localdomain>
+References: <1618305743-42003-1-git-send-email-jiapeng.chong@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="iAAPjvzcPxYyW4TN"
 Content-Disposition: inline
-In-Reply-To: <20210408103605.1676875-1-elver@google.com>
+In-Reply-To: <1618305743-42003-1-git-send-email-jiapeng.chong@linux.alibaba.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 08, 2021 at 12:35:55PM +0200, Marco Elver wrote:
-> Marco Elver (9):
->   perf: Apply PERF_EVENT_IOC_MODIFY_ATTRIBUTES to children
->   perf: Support only inheriting events if cloned with CLONE_THREAD
->   perf: Add support for event removal on exec
->   signal: Introduce TRAP_PERF si_code and si_perf to siginfo
->   perf: Add support for SIGTRAP on perf events
->   selftests/perf_events: Add kselftest for process-wide sigtrap handling
->   selftests/perf_events: Add kselftest for remove_on_exec
 
-Thanks!, I've picked up the above 8 patches. Arnaldo, do you want to
-carry the last 2 patches or are you fine with me taking them as well?
+--iAAPjvzcPxYyW4TN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->   tools headers uapi: Sync tools/include/uapi/linux/perf_event.h
->   perf test: Add basic stress test for sigtrap handling
+On Tue, Apr 13, 2021 at 05:22:23PM +0800, Jiapeng Chong wrote:
+> Fix the following clang warning:
+>=20
+> fs/fuse/virtio_fs.c:130:35: warning: unused function 'vq_to_fpq'
+> [-Wunused-function].
+>=20
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+>  fs/fuse/virtio_fs.c | 5 -----
+>  1 file changed, 5 deletions(-)
+
+The function was never used...
+
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+--iAAPjvzcPxYyW4TN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmB2qpEACgkQnKSrs4Gr
+c8iE9Af/a/YtHLu0Ely+QkjFL93NVsZwlPbkJERhv9mpU3qzK2gU9aHG0fD4bdPQ
+fpvXmjcncPiB4OX8se/gdVg2YrVaBC9w/t/DPho4JZvnMeZsTLMvpk2oncKyZObb
+s+Tp4GoTg++uWS8e7b4bu7R79mm8q9xGpyc9t9grC7VbHbMN8OMJwmcMJz/hHndg
+fRoojMr9xsZQ9wThmAgmMrQy4W3XwIX8JDv1hAl3wiUWJSIr+izEmNMjLsN2QV61
+vV1PpKhL07W1sTTLxMm5krVi0DNV8HInQTsTCF6gBYGocDoWl/BvAXKm4SpmnlS2
+9g7Fk6BwxZYIiNJawHq3u4F6xLlttg==
+=AMFq
+-----END PGP SIGNATURE-----
+
+--iAAPjvzcPxYyW4TN--
+
