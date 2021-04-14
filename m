@@ -2,92 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA28635F000
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 10:47:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4732335F001
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Apr 2021 10:47:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350377AbhDNIlo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Apr 2021 04:41:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22829 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1350387AbhDNIlR (ORCPT
+        id S1344460AbhDNImo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Apr 2021 04:42:44 -0400
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:42516 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232348AbhDNImn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Apr 2021 04:41:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618389655;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=eDVMJkpRK1Zblh+QKUchn0+EWb/JoRAGYZO+L/mZbdU=;
-        b=BlL69nv3bKUEizesfXE4Ss2Oe2KcFO1d5TYvUcmtwBGFZRLTjeGhAseiEECk6APN9KYQDr
-        Obmdb0tZl/WradG/suSzg6b/GLlBU8kzijOpHZXzc0KDw5rh9VqgP+NiYX/nxo0olAIRHT
-        55w1uuj2j3BBSWHofRtTtX8vEP3hQhw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-155-pyeGloAtMc223IRxWQU0_A-1; Wed, 14 Apr 2021 04:40:52 -0400
-X-MC-Unique: pyeGloAtMc223IRxWQU0_A-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 683D28030CA;
-        Wed, 14 Apr 2021 08:40:51 +0000 (UTC)
-Received: from localhost (ovpn-114-209.ams2.redhat.com [10.36.114.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D46AA6A039;
-        Wed, 14 Apr 2021 08:40:50 +0000 (UTC)
-Date:   Wed, 14 Apr 2021 09:40:49 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc:     vgoyal@redhat.com, miklos@szeredi.hu,
-        virtualization@lists.linux-foundation.org,
+        Wed, 14 Apr 2021 04:42:43 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UVX0skD_1618389740;
+Received: from 30.21.164.69(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0UVX0skD_1618389740)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 14 Apr 2021 16:42:20 +0800
+Subject: Re: [PATCH v2 1/2] fuse: Fix possible deadlock when writing back
+ dirty pages
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Peng Tao <tao.peng@linux.alibaba.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] virtiofs: remove useless function
-Message-ID: <YHaqkV0rUc7iu66f@stefanha-x1.localdomain>
-References: <1618305743-42003-1-git-send-email-jiapeng.chong@linux.alibaba.com>
+References: <807bb470f90bae5dcd80a29020d38f6b5dd6ef8e.1616826872.git.baolin.wang@linux.alibaba.com>
+ <f72f28cd-06b5-fb84-c7ce-ad1a3d14c016@linux.alibaba.com>
+ <CAJfpegtJ6100CS34+MSi8Rn_NMRGHw5vxbs+fOHBBj8GZLEexw@mail.gmail.com>
+From:   Baolin Wang <baolin.wang@linux.alibaba.com>
+Message-ID: <d9b71523-153c-12fa-fc60-d89b27e04854@linux.alibaba.com>
+Date:   Wed, 14 Apr 2021 16:42:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="iAAPjvzcPxYyW4TN"
-Content-Disposition: inline
-In-Reply-To: <1618305743-42003-1-git-send-email-jiapeng.chong@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <CAJfpegtJ6100CS34+MSi8Rn_NMRGHw5vxbs+fOHBBj8GZLEexw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi,
 
---iAAPjvzcPxYyW4TN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+在 2021/4/13 16:57, Miklos Szeredi 写道:
+> On Mon, Apr 12, 2021 at 3:23 PM Baolin Wang
+> <baolin.wang@linux.alibaba.com> wrote:
+>>
+>> Hi Miklos,
+>>
+>> 在 2021/3/27 14:36, Baolin Wang 写道:
+>>> We can meet below deadlock scenario when writing back dirty pages, and
+>>> writing files at the same time. The deadlock scenario can be reproduced
+>>> by:
+>>>
+>>> - A writeback worker thread A is trying to write a bunch of dirty pages by
+>>> fuse_writepages(), and the fuse_writepages() will lock one page (named page 1),
+>>> add it into rb_tree with setting writeback flag, and unlock this page 1,
+>>> then try to lock next page (named page 2).
+>>>
+>>> - But at the same time a file writing can be triggered by another process B,
+>>> to write several pages by fuse_perform_write(), the fuse_perform_write()
+>>> will lock all required pages firstly, then wait for all writeback pages
+>>> are completed by fuse_wait_on_page_writeback().
+>>>
+>>> - Now the process B can already lock page 1 and page 2, and wait for page 1
+>>> waritehack is completed (page 1 is under writeback set by process A). But
+>>> process A can not complete the writeback of page 1, since it is still
+>>> waiting for locking page 2, which was locked by process B already.
+>>>
+>>> A deadlock is occurred.
+>>>
+>>> To fix this issue, we should make sure each page writeback is completed
+>>> after lock the page in fuse_fill_write_pages() separately, and then write
+>>> them together when all pages are stable.
+>>>
+>>> [1450578.772896] INFO: task kworker/u259:6:119885 blocked for more than 120 seconds.
+>>> [1450578.796179] kworker/u259:6  D    0 119885      2 0x00000028
+>>> [1450578.796185] Workqueue: writeback wb_workfn (flush-0:78)
+>>> [1450578.796188] Call trace:
+>>> [1450578.798804]  __switch_to+0xd8/0x148
+>>> [1450578.802458]  __schedule+0x280/0x6a0
+>>> [1450578.806112]  schedule+0x34/0xe8
+>>> [1450578.809413]  io_schedule+0x20/0x40
+>>> [1450578.812977]  __lock_page+0x164/0x278
+>>> [1450578.816718]  write_cache_pages+0x2b0/0x4a8
+>>> [1450578.820986]  fuse_writepages+0x84/0x100 [fuse]
+>>> [1450578.825592]  do_writepages+0x58/0x108
+>>> [1450578.829412]  __writeback_single_inode+0x48/0x448
+>>> [1450578.834217]  writeback_sb_inodes+0x220/0x520
+>>> [1450578.838647]  __writeback_inodes_wb+0x50/0xe8
+>>> [1450578.843080]  wb_writeback+0x294/0x3b8
+>>> [1450578.846906]  wb_do_writeback+0x2ec/0x388
+>>> [1450578.850992]  wb_workfn+0x80/0x1e0
+>>> [1450578.854472]  process_one_work+0x1bc/0x3f0
+>>> [1450578.858645]  worker_thread+0x164/0x468
+>>> [1450578.862559]  kthread+0x108/0x138
+>>> [1450578.865960] INFO: task doio:207752 blocked for more than 120 seconds.
+>>> [1450578.888321] doio            D    0 207752 207740 0x00000000
+>>> [1450578.888329] Call trace:
+>>> [1450578.890945]  __switch_to+0xd8/0x148
+>>> [1450578.894599]  __schedule+0x280/0x6a0
+>>> [1450578.898255]  schedule+0x34/0xe8
+>>> [1450578.901568]  fuse_wait_on_page_writeback+0x8c/0xc8 [fuse]
+>>> [1450578.907128]  fuse_perform_write+0x240/0x4e0 [fuse]
+>>> [1450578.912082]  fuse_file_write_iter+0x1dc/0x290 [fuse]
+>>> [1450578.917207]  do_iter_readv_writev+0x110/0x188
+>>> [1450578.921724]  do_iter_write+0x90/0x1c8
+>>> [1450578.925598]  vfs_writev+0x84/0xf8
+>>> [1450578.929071]  do_writev+0x70/0x110
+>>> [1450578.932552]  __arm64_sys_writev+0x24/0x30
+>>> [1450578.936727]  el0_svc_common.constprop.0+0x80/0x1f8
+>>> [1450578.941694]  el0_svc_handler+0x30/0x80
+>>> [1450578.945606]  el0_svc+0x10/0x14
+>>>
+>>> Suggested-by: Peng Tao <tao.peng@linux.alibaba.com>
+>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>
+>> Do you have any comments for this patch set? Thanks.
+> 
+> Hi,
+> 
+> I guess this is related:
+> 
+> https://lore.kernel.org/linux-fsdevel/20210209100115.GB1208880@miu.piliscsaba.redhat.com/
+> 
+> Can you verify that the patch at the above link fixes your issue?
 
-On Tue, Apr 13, 2021 at 05:22:23PM +0800, Jiapeng Chong wrote:
-> Fix the following clang warning:
->=20
-> fs/fuse/virtio_fs.c:130:35: warning: unused function 'vq_to_fpq'
-> [-Wunused-function].
->=20
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
->  fs/fuse/virtio_fs.c | 5 -----
->  1 file changed, 5 deletions(-)
+Sorry I missed this patch before, and I've tested this patch, it seems 
+can solve the deadlock issue I met before.
 
-The function was never used...
+But look at this patch in detail, I think this patch only reduced the 
+deadlock window, but did not remove the possible deadlock scenario 
+completely like I explained in the commit log.
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Since the fuse_fill_write_pages() can still lock the partitail page in 
+your patch, and will be wait for the partitail page waritehack is 
+completed if writeback is set in fuse_send_write_pages().
 
---iAAPjvzcPxYyW4TN
-Content-Type: application/pgp-signature; name="signature.asc"
+But at the same time, a writeback worker thread may be waiting for 
+trying to lock the partitail page to write a bunch of dirty pages by 
+fuse_writepages().
 
------BEGIN PGP SIGNATURE-----
+Then the deadlock issue can still be occurred. And I think the deadlock 
+issue I met is not same with the deadlock issue solved by your patch.
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmB2qpEACgkQnKSrs4Gr
-c8iE9Af/a/YtHLu0Ely+QkjFL93NVsZwlPbkJERhv9mpU3qzK2gU9aHG0fD4bdPQ
-fpvXmjcncPiB4OX8se/gdVg2YrVaBC9w/t/DPho4JZvnMeZsTLMvpk2oncKyZObb
-s+Tp4GoTg++uWS8e7b4bu7R79mm8q9xGpyc9t9grC7VbHbMN8OMJwmcMJz/hHndg
-fRoojMr9xsZQ9wThmAgmMrQy4W3XwIX8JDv1hAl3wiUWJSIr+izEmNMjLsN2QV61
-vV1PpKhL07W1sTTLxMm5krVi0DNV8HInQTsTCF6gBYGocDoWl/BvAXKm4SpmnlS2
-9g7Fk6BwxZYIiNJawHq3u4F6xLlttg==
-=AMFq
------END PGP SIGNATURE-----
 
---iAAPjvzcPxYyW4TN--
+
 
