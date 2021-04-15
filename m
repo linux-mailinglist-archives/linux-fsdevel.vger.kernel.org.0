@@ -2,96 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A9B07360756
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 12:41:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 434E8360816
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 13:17:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231534AbhDOKlq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 06:41:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44582 "EHLO
+        id S232651AbhDOLRp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 07:17:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbhDOKlm (ORCPT
+        with ESMTP id S232642AbhDOLRo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 06:41:42 -0400
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5165EC061574;
-        Thu, 15 Apr 2021 03:41:19 -0700 (PDT)
-Received: by mail-yb1-xb33.google.com with SMTP id y2so23514135ybq.13;
-        Thu, 15 Apr 2021 03:41:19 -0700 (PDT)
+        Thu, 15 Apr 2021 07:17:44 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97212C061574
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 04:17:20 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id sd23so27617154ejb.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 04:17:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mIWeTeGpopC86lILoKeSqvrfX/KXvaTXsf3RCKzoZxY=;
-        b=Ub+5ERlZN9gClgd44QCMHBwONiTwNkGi2pg34w+dF98I5IHtEyWNmeRj17G/PeHlpE
-         bZOXlEJbgBxQP7DIqLnDpiP2TI45m+78jb9iMClIY0aVnYpObJRlcEKprjGrxipSNtpf
-         /xWADwE09jDGbRBvRw2f8AlW1GDCIp9prnDgEAEQJU6J2xJRT3zlzj6O5wcc5lS3pxvX
-         x2ThHjha6BF7xsHyBj0hbtG1dPwMt2RN/8iVjTuWrjDpxR57yhcGpff1DwY5SQwTuHX3
-         9su1M7/RMp2TTVcBlbksExofPIf4hA4lRR7icL5Ke6YQpDCUQ+24rQa1VNbiCtOh2k18
-         VHJQ==
+         :cc:content-transfer-encoding;
+        bh=F2DnwbhM0K3eDbNV4OV/TxWIHc5j6rhfh7F0juu/TCM=;
+        b=AcT1wLlEsw/hLOv9QVCK3pqYeHDLF0S+eaz51VVr8uYsXgRZeLZ8SX14FP/ssoFxXE
+         R6WOrfa9wrzY/RDAiVI0Y7MTMehK81Ip1mxpyCwCO8ainJ4eo5vhUKUFAJGr/r//8Ucv
+         uXcxtATK1evfslAqNE6cVpB533Rjx8jCplNXy5Fjlr/izCvWUUg9Nn0zB8bLmqdxWsOI
+         yrUrsn1f9MY9c+lSCyv4m7uC3QRbsMlFqIu6BkNreQCZ7g/b7oHkU+qKKAPQlCAvz+5Q
+         5J0MKHcBO86FfvBHtIqdT+lQSrFMUVPWqMO1WIMajZNbE3+mXiPRg5X8/oP0wfek+1uB
+         WlSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mIWeTeGpopC86lILoKeSqvrfX/KXvaTXsf3RCKzoZxY=;
-        b=PI/baJFy2XgqcHOMuj5LSHsZrFowa2RDFdOwEG5B4AyvDaziNX+nou3O01tcoaap7z
-         m9ML1Mf0/WpKJCoopG/zKbOFKhSAAYJkIOv8XD4JOT5KQjVDtvSd4Mqxlrm3UqEcCMAX
-         XaUw1aV/A48/UqsE9Ayil3oJIsJeuW9aiWEV+fxK3ZeBhTLbUkGdB2+mIJpVKt4Uwkm1
-         250+4KolA1ALICS7QWDQ7WNsl/L3x34oeJ0PwHpkMJ7jnmiF9n7zLuK0Nxb4Y6kytEpR
-         qrKXzo5KlJDpdg7SO9CBsOsl2C5Q9zHO4JodVEQADmiTtaJpBqjnRaEXGucMHrYWL4Qy
-         onBQ==
-X-Gm-Message-State: AOAM5323/QIjr0u/ERqhcQDfb37AvszWCreh/DZqUIplOL+zwkIikNw0
-        lB/dSO5Tazw3VyCOQE/KVz8mOSmEHEwW/Gl2PEU=
-X-Google-Smtp-Source: ABdhPJzYRu9lr0PH2qD7KNGp+015oRnjXvF3q8klHyJhHJ6EQMOGBdkTnEanJuFwk0JfQJ1TLFQAr7o2fKp1H8mFILM=
-X-Received: by 2002:a25:1689:: with SMTP id 131mr3429887ybw.375.1618483278652;
- Thu, 15 Apr 2021 03:41:18 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=F2DnwbhM0K3eDbNV4OV/TxWIHc5j6rhfh7F0juu/TCM=;
+        b=gU0ZW1jjxDl4QjGb5/h3aDfufb7CElpaGWSxQiY5/OJsv7dMSze+QhJD0QTFn6U5uQ
+         rV4z0/qRmixafS5RPSFqiuNevWxnsOQfb5VZCF7R0KZT7YTdcCH5p7M6KGdOnHGfDQpc
+         iGuyZANGZL9VhSvFr1EmzdH1cFUFW3jwG0t8XuM1dIMMTUQx8IyTqgwfcvtk5kutC72w
+         EkYDM6J7i7QRy13YTFHU/I8iKARLmAqVNCYcFHSbLWzRvPoV6C8WpJPv4Jt5S+iNOqdS
+         AHEsvltV4yw7MrReqjixwtp9f5dVCzBLYc5DazBCg9LsaF9Y2c6f0lHOw43yyrFhUOXh
+         kkWA==
+X-Gm-Message-State: AOAM532Ssyj/AbICrRWr7aAzwnSEQh+HsEcH/VUrOcGuJ6gqPf85qgFy
+        de2NW98cWXJCfnCl3G2iTirBkiQshiMlfdP3HDDA
+X-Google-Smtp-Source: ABdhPJxIpQXfXBo/LLGFCyadIaJENXp32QQMzwuSrfXBhX4qR+8lwIcRxRI0FBc6gO1lL3MVnpwlBAcZljWAliGUbS8=
+X-Received: by 2002:a17:906:2a16:: with SMTP id j22mr2886917eje.247.1618485439307;
+ Thu, 15 Apr 2021 04:17:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210330055957.3684579-1-dkadashev@gmail.com> <20210330055957.3684579-2-dkadashev@gmail.com>
- <20210330071700.kpjoyp5zlni7uejm@wittgenstein> <CAOKbgA6spFzCJO+L_uwm9nhG+5LEo_XjVt7R7D8K=B5BcWSDbA@mail.gmail.com>
- <CAOKbgA6Qrs5DoHsHgBvrSGbyzHcaiGVpP+UBS5f25CtdBx3SdA@mail.gmail.com>
- <20210415100815.edrn4a7cy26wkowe@wittgenstein> <20210415100928.3ukgiaui4rhspiq6@wittgenstein>
-In-Reply-To: <20210415100928.3ukgiaui4rhspiq6@wittgenstein>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Thu, 15 Apr 2021 17:41:07 +0700
-Message-ID: <CAOKbgA6Tn9uLJCAWOzWfysQDmFWcPBCOT6x47D-q-+_tu9z2Hg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] fs: make do_mkdirat() take struct filename
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
+References: <20210331080519.172-1-xieyongji@bytedance.com> <20210331080519.172-11-xieyongji@bytedance.com>
+ <YHb44R4HyLEUVSTF@stefanha-x1.localdomain> <CACycT3uNR+nZY5gY0UhPkeOyi7Za6XkX4b=hasuDcgqdc7fqfg@mail.gmail.com>
+ <YHfo8pc7dIO9lNc3@stefanha-x1.localdomain> <80b31814-9e41-3153-7efb-c0c2fab44feb@redhat.com>
+ <02c19c22-13ea-ea97-d99b-71edfee0b703@redhat.com>
+In-Reply-To: <02c19c22-13ea-ea97-d99b-71edfee0b703@redhat.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Thu, 15 Apr 2021 19:17:08 +0800
+Message-ID: <CACycT3tL7URz3n-KhMAwYH+Sn1e1TSyfU+RKcc8jpPDJ7WcZ2w@mail.gmail.com>
+Subject: Re: Re: [PATCH v6 10/10] Documentation: Add documentation for VDUSE
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
         Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 15, 2021 at 5:09 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
+On Thu, Apr 15, 2021 at 5:05 PM Jason Wang <jasowang@redhat.com> wrote:
 >
-> On Thu, Apr 15, 2021 at 12:08:20PM +0200, Christian Brauner wrote:
-> > Would something like this help?
+>
+> =E5=9C=A8 2021/4/15 =E4=B8=8B=E5=8D=884:36, Jason Wang =E5=86=99=E9=81=93=
+:
+> >>>
+> >> Please state this explicitly at the start of the document. Existing
+> >> interfaces like FUSE are designed to avoid trusting userspace.
+> >
+> >
+> > There're some subtle difference here. VDUSE present a device to kernel
+> > which means IOMMU is probably the only thing to prevent a malicous
+> > device.
+> >
+> >
+> >> Therefore
+> >> people might think the same is the case here. It's critical that peopl=
+e
+> >> are aware of this before deploying VDUSE with virtio-vdpa.
+> >>
+> >> We should probably pause here and think about whether it's possible to
+> >> avoid trusting userspace. Even if it takes some effort and costs some
+> >> performance it would probably be worthwhile.
+> >
+> >
+> > Since the bounce buffer is used the only attack surface is the
+> > coherent area, if we want to enforce stronger isolation we need to use
+> > shadow virtqueue (which is proposed in earlier version by me) in this
+> > case. But I'm not sure it's worth to do that.
+>
+>
+>
+> So this reminds me the discussion in the end of last year. We need to
+> make sure we don't suffer from the same issues for VDUSE at least
+>
+> https://yhbt.net/lore/all/c3629a27-3590-1d9f-211b-c0b7be152b32@redhat.com=
+/T/#mc6b6e2343cbeffca68ca7a97e0f473aaa871c95b
+>
+> Or we can solve it at virtio level, e.g remember the dma address instead
+> of depending on the addr in the descriptor ring
+>
 
-Thanks for the reply, Christian!
+I might miss something. But VDUSE has recorded the dma address during
+dma mapping, so we would not do bouncing if the addr/length is invalid
+during dma unmapping. Is it enough?
 
-But it's not the AT_EMPTY_PATH / LOOKUP_EMPTY part that is tricky, it's
-the fact that do_linkat() allows AT_EMPTY_PATH only if the process has
-CAP_DAC_READ_SEARCH capability. But AT_EMPTY_PATH is processed during
-getname(), so if do_linkat() accepts struct filename* then there is no
-bullet-proof way to force the capability.
-
-We could do something like this:
-
-do_linkat(oldfd, getname_uflags(oldname, flags), newfd,
-          getname(newname), flags);
-
-I.e. call getname_uflags() without checking the capability and rely on
-the fact that do_linkat() will do the checking. But this is fragile if
-somehow someone passes different flags to getname_uflags and do_linkat.
-And there is no way (that I know of) for do_linkat to actually check
-that AT_EMPTY_PATH was not used if it gets struct filename.
-
-Or am I creating extra problems and the thing above is OK?
-
-
---
-Dmitry Kadashev
+Thanks,
+Yongji
