@@ -2,72 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42C2D360A3E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 15:12:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4893D360B7A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 16:09:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233041AbhDONMY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 09:12:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49510 "EHLO mx2.suse.de"
+        id S233309AbhDOOKD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 10:10:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231482AbhDONMX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 09:12:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 5A1CCB062;
-        Thu, 15 Apr 2021 13:11:59 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 1E24F1F2B65; Thu, 15 Apr 2021 15:11:59 +0200 (CEST)
-Date:   Thu, 15 Apr 2021 15:11:59 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Ted Tso <tytso@mit.edu>, Christoph Hellwig <hch@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH 2/7] mm: Protect operations adding pages to page cache
- with i_mapping_lock
-Message-ID: <20210415131159.GA31418@quack2.suse.cz>
-References: <20210413105205.3093-1-jack@suse.cz>
- <20210413112859.32249-2-jack@suse.cz>
- <20210414000113.GG63242@dread.disaster.area>
- <20210414122319.GD31323@quack2.suse.cz>
- <20210414215739.GH63242@dread.disaster.area>
+        id S230056AbhDOOKD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Apr 2021 10:10:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 190C161153;
+        Thu, 15 Apr 2021 14:09:37 +0000 (UTC)
+Date:   Thu, 15 Apr 2021 16:09:32 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] fs: make do_mkdirat() take struct filename
+Message-ID: <20210415140932.uriiqjx3klzzmluu@wittgenstein>
+References: <20210330055957.3684579-1-dkadashev@gmail.com>
+ <20210330055957.3684579-2-dkadashev@gmail.com>
+ <20210330071700.kpjoyp5zlni7uejm@wittgenstein>
+ <CAOKbgA6spFzCJO+L_uwm9nhG+5LEo_XjVt7R7D8K=B5BcWSDbA@mail.gmail.com>
+ <CAOKbgA6Qrs5DoHsHgBvrSGbyzHcaiGVpP+UBS5f25CtdBx3SdA@mail.gmail.com>
+ <20210415100815.edrn4a7cy26wkowe@wittgenstein>
+ <20210415100928.3ukgiaui4rhspiq6@wittgenstein>
+ <CAOKbgA6Tn9uLJCAWOzWfysQDmFWcPBCOT6x47D-q-+_tu9z2Hg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210414215739.GH63242@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAOKbgA6Tn9uLJCAWOzWfysQDmFWcPBCOT6x47D-q-+_tu9z2Hg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 15-04-21 07:57:39, Dave Chinner wrote:
-> On Wed, Apr 14, 2021 at 02:23:19PM +0200, Jan Kara wrote:
-> > Regarding the name: How about i_pages_rwsem? The lock is protecting
-> > invalidation of mapping->i_pages and needs to be held until insertion of
-> > pages into i_pages is safe again...
+On Thu, Apr 15, 2021 at 05:41:07PM +0700, Dmitry Kadashev wrote:
+> On Thu, Apr 15, 2021 at 5:09 PM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> >
+> > On Thu, Apr 15, 2021 at 12:08:20PM +0200, Christian Brauner wrote:
+> > > Would something like this help?
 > 
-> I don't actually have a good name for this right now. :(
+> Thanks for the reply, Christian!
 > 
-> The i_pages structure has it's own internal locking, so
-> i_pages_rwsem implies things that aren't necessarily true, and
-> taking a read lock for insertion for something that is named like a
-> structure protection lock creates cognitive dissonance...
+> But it's not the AT_EMPTY_PATH / LOOKUP_EMPTY part that is tricky, it's
+> the fact that do_linkat() allows AT_EMPTY_PATH only if the process has
+> CAP_DAC_READ_SEARCH capability. But AT_EMPTY_PATH is processed during
+> getname(), so if do_linkat() accepts struct filename* then there is no
+> bullet-proof way to force the capability.
 > 
-> I keep wanting to say "lock for invalidation" and "lock to exclude
-> invalidation" because those are the two actions that we need for
-> coherency of operations. But they are way too verbose for an actual
-> API...
+> We could do something like this:
 > 
-> So I want to call this an "invalidation lock" of some kind (no need
-> to encode the type in the name!), but haven't worked out a good
-> shorthand for "address space invalidation coherency mechanism"...
+> do_linkat(oldfd, getname_uflags(oldname, flags), newfd,
+>           getname(newname), flags);
+> 
+> I.e. call getname_uflags() without checking the capability and rely on
+> the fact that do_linkat() will do the checking. But this is fragile if
+> somehow someone passes different flags to getname_uflags and do_linkat.
+> And there is no way (that I know of) for do_linkat to actually check
+> that AT_EMPTY_PATH was not used if it gets struct filename.
+> 
+> Or am I creating extra problems and the thing above is OK?
 
-So "invalidate_lock" was just next on my list of things to suggest so I'm
-fine with that name. Or maybe block_invalidate_lock, block_remove_lock,
-map_remove_lock, ... Dunno :).
+Hm, I get your point but if you e.g. look at fs/exec.c we already do
+have that problem today:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+ SYSCALL_DEFINE5(execveat,
+		int, fd, const char __user *, filename,
+		const char __user *const __user *, argv,
+		const char __user *const __user *, envp,
+		int, flags)
+{
+	int lookup_flags = (flags & AT_EMPTY_PATH) ? LOOKUP_EMPTY : 0;
+
+	return do_execveat(fd,
+			   getname_flags(filename, lookup_flags, NULL),
+			   argv, envp, flags);
+}
+
+The new simple flag helper would simplify things because right now it
+pretends that it cares about multiple flags where it actually just cares
+about whether or not empty pathnames are allowed and it forces callers
+to translate between flags too.
+
+(Note, just my opinion this might get shot to hell.)
+
+Christian
