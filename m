@@ -2,58 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F18B7360CE1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 16:55:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5264F361015
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 18:25:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234243AbhDOOzN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 10:55:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43348 "EHLO
+        id S233618AbhDOQZe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 12:25:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234290AbhDOOx7 (ORCPT
+        with ESMTP id S232759AbhDOQZd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 10:53:59 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85925C06134D;
-        Thu, 15 Apr 2021 07:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=C3gAoqVJbNHaFnVpwiCtlJm6hLmAHtP5KFU8HTA8ghw=; b=iGHVKQkMSm0+27XKnHvlajsJCv
-        4kR0v8sl5YK50iM2k3eZUSfbThB7vL3XjfdE6fQ4eMSfSMS52q4eVr5Gr8Sb/kwFT2jJNbHKmECRw
-        CCJEgp5Y0XiWPpIJiPDakzGWLfXO7tckZcBgy256Te8tHLdaoODdKQOHMDxMTJipVsUB+q4FlSmGC
-        a1bVml7oIJ2sGyjHyoC4hC4qAZbwTkNzcn1VgswgXUDWl6zuUZGDhO6o1PI/xe+iEOqx07XkNhTiq
-        MXCcTwnwPXUxSktS25GWcknDlCl2XdinvaMQCoaMN2/jBtZM8LFSAkhVzl5l+TeW4x9UnvGSoSluN
-        m3VoPtng==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lX3MB-008hIz-HL; Thu, 15 Apr 2021 14:52:44 +0000
-Date:   Thu, 15 Apr 2021 15:52:35 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Zhang Yi <yi.zhang@huawei.com>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
-        yukuai3@huawei.com
-Subject: Re: [RFC PATCH v2 7/7] ext4: fix race between blkdev_releasepage()
- and ext4_put_super()
-Message-ID: <20210415145235.GD2069063@infradead.org>
-References: <20210414134737.2366971-1-yi.zhang@huawei.com>
- <20210414134737.2366971-8-yi.zhang@huawei.com>
+        Thu, 15 Apr 2021 12:25:33 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A877C061574;
+        Thu, 15 Apr 2021 09:25:10 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lX4nh-005Xmq-I8; Thu, 15 Apr 2021 16:25:05 +0000
+Date:   Thu, 15 Apr 2021 16:25:05 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, matthew.wilcox@oracle.com,
+        khlebnikov@yandex-team.ru
+Subject: Re: [PATCH RFC 1/6] dcache: sweep cached negative dentries to the
+ end of list of siblings
+Message-ID: <YHho4TKjqYNmMy6W@zeniv-ca.linux.org.uk>
+References: <1611235185-1685-1-git-send-email-gautham.ananthakrishna@oracle.com>
+ <1611235185-1685-2-git-send-email-gautham.ananthakrishna@oracle.com>
+ <YHZkVlhchiNB9o18@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210414134737.2366971-8-yi.zhang@huawei.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <YHZkVlhchiNB9o18@zeniv-ca.linux.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 14, 2021 at 09:47:37PM +0800, Zhang Yi wrote:
-> There still exist a use after free issue when accessing the journal
-> structure and ext4_sb_info structure on freeing bdev buffers in
-> bdev_try_to_free_page(). The problem is bdev_try_to_free_page() could be
-> raced by ext4_put_super(), it dose freeing sb->s_fs_info and
-> sbi->s_journal while release page progress are still accessing them.
-> So it could end up trigger use-after-free or NULL pointer dereference.
+On Wed, Apr 14, 2021 at 03:41:10AM +0000, Al Viro wrote:
 
-I think the right fix is to not even call into ->bdev_try_to_free_page
-unless the superblock is active.
+> > +	if (!d_is_tail_negative(dentry)) {
+> > +		parent = lock_parent(dentry);
+> > +		if (!parent)
+> > +			return;
+> 
+> Wait a minute.  It's not a good environment for calling lock_parent().
+> Who said that dentry won't get freed right under it?
+
+[snip]
+
+FWIW, in that state (dentry->d_lock held) we have
+	* stable ->d_flags
+	* stable ->d_count
+	* stable ->d_inode
+IOW, we can bloody well check ->d_count *before* bothering with lock_parent().
+It does not get rid of the problems with lifetimes, though.  We could
+do something along the lines of
+
+	rcu_read_lock()
+	if retain_dentry()
+		parent = NULL
+		if that dentry might need to be moved in list
+			parent = lock_parent()
+			// if reached __dentry_kill(), d_count() will be -128,
+			// so the check below will exclude those
+			if that dentry does need to be moved
+				move it to the end of list
+		unlock dentry and parent (if any)
+		rcu_read_unlock()
+		return
+here, but your other uses of lock_parent() also need attention.  And
+recursive call of dput() in trim_negative() (#6/6) is really asking
+for trouble.
