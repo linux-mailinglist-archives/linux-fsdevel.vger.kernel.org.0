@@ -2,117 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DCD2A3612C6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 21:13:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57DCB361611
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 01:22:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234775AbhDOTNu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 15:13:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44530 "EHLO
+        id S237281AbhDOXWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 19:22:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234506AbhDOTNs (ORCPT
+        with ESMTP id S236680AbhDOXWa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 15:13:48 -0400
+        Thu, 15 Apr 2021 19:22:30 -0400
 Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 822B0C061756
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 12:13:22 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id a12so16703589pfc.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 12:13:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A3BFC061756
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 16:22:07 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id b26so11965535pfr.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 16:22:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=h1zXu+VNyu5if1x16SnLeJ0I2nD7YTVAGnMrH1iiu4g=;
-        b=Da8kk3Ru2Bm69dVW+U31nSmRoSoP3ddZHFLVGC1YDJXzA6ofjuJO8HL4M61ZWURGcP
-         u9xT4agoQ5aGKF4WWFnXpdd660X0aIuTjHTv4aSddK5+koyVrquhJ1mAWr9QQIS2N8Of
-         mTqj3FyDcojHi3K5uCi3U2LDyX62sfJktuYAAPIBC+sIm9c3Po5WP9/3HuWWzi1MZs6V
-         YCFUStIs8khueo/Wr5EfYoxbJ88JA7sXZhmjS/v5McEbx+x47bMIxxtitFDFGbji7kaZ
-         1GvTtgZsN+Y/KJduLJybLpdTdGu+MfKsAvJH0ED/zdWgaQdB+jDEfgf+hOSGR5JJEU5S
-         StwA==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=TCW1/ONXHa7WGN4lgho3PeX/tDvamKqJMxf6Tjrp4yc=;
+        b=Sm+yE7EEDfprcsH5vV69Bnhnqysr6JAP1Aky66+ghCetkGZvztgXnqbUZNZ5+So54f
+         Y7GKqTj2nk2YxBSrPy6cz59rB2Xukde723+Cxminb+GBaKiq3vi+oOxLcLws5XUVbkgY
+         PqXZPbPDcf8DJDzgB7HJRq8mikQT/uOn0pdO3bXkEl1njs+/SQ86AELyUn0d4LdGL3N4
+         H+gK9qN/JEvzy45cvE2fWMKoUP5/lsB3DJAI96T8w4tTvyIla93sljA5BsksVnBwjsBt
+         6ixOjKieMb2oIxOX4hqtPAwIEZVv+n7d3XBIE+6tsb83gtcN/f/msDJWcyC8SSqIvNJr
+         xDnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=h1zXu+VNyu5if1x16SnLeJ0I2nD7YTVAGnMrH1iiu4g=;
-        b=YLIwgFgv9RyOE5U0azWWcqagMrePmAc4DSyXYWZrvyL5fx46wXX7nv8foySND5U5hI
-         yQ/Aob3SVpJ+tWrZdlfLeAdaIQ2FVKtRMLO7cLC/6T9/uDLCJnMihNdsa0j4ZLD5mI9Y
-         Dsd2/j10/RkfW+eSzbODOftopYNOXZp7Py5cFK1b+MIVJUdcN7Dls9Ga8BJamO8/5vO3
-         BfaZKNue27dY0JMV7eajGcQw/+boQVNoBq9bfr5qoeAMIg52zFkFIn+ydp9SiOQ6sdHV
-         z5kCo8DxJUfY4x+/U0ABcqtKiOCn1apVxI3DiVabBYP2qyvge8m4WCl6bawWjFmpX6wi
-         3m+Q==
-X-Gm-Message-State: AOAM531KRswNRbvRur1OjujosHmqjNyJNNk+0jFrmWPKf8HosSTrqQaZ
-        SRx15U1AfOx9OY9Q2j0yylsebw==
-X-Google-Smtp-Source: ABdhPJznpqpLKwAuprmZh3WbW3wgm0rw1K6uqqbCyeA2MuO/YVkgITmGAXD7h9S1rpEBtQa9h8IViQ==
-X-Received: by 2002:a63:ff0a:: with SMTP id k10mr4884479pgi.303.1618514001644;
-        Thu, 15 Apr 2021 12:13:21 -0700 (PDT)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id j3sm2590490pfc.49.2021.04.15.12.13.20
-        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
-        Thu, 15 Apr 2021 12:13:21 -0700 (PDT)
-Date:   Thu, 15 Apr 2021 12:12:48 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Axel Rasmussen <axelrasmussen@google.com>
-cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        Brian Geffon <bgeffon@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH v3 00/10] userfaultfd: add minor fault handling for
- shmem
-In-Reply-To: <20210415184732.3410521-1-axelrasmussen@google.com>
-Message-ID: <alpine.LSU.2.11.2104151203320.15150@eggly.anvils>
-References: <20210415184732.3410521-1-axelrasmussen@google.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=TCW1/ONXHa7WGN4lgho3PeX/tDvamKqJMxf6Tjrp4yc=;
+        b=U3tNc8ttPGMri530iNGZT3ZaiNi5z98aH0WO1QpP63mhaAbVaunAp6D3u62JblOVV2
+         4gepBbxzagXyg9BHl7Pff9yW2Lpa+YyexQobUUrAzkrsri7P+CCvmz3xQPXT0fewDTlh
+         M323IXrATVShYxXfXe9YUuYlRKozH1+Deju4rY2Sdts3aVdo3vCkiKm6gs18hMTUlfSk
+         jQNdcGxgg9PcTFmtP5ewAIhdlB0raqSwhJ3a8aOVtSpYC8tMb0emtBRE11rcl65GaW6F
+         BHGyn0XtuvC7L49KD76eQ1W8PwlmStlR01c6llhi4Nq7EtIs09o7qMsbrxiNpWqMxSmZ
+         YaBA==
+X-Gm-Message-State: AOAM532eRPS5B8ktCsCKeJvVMY42XwIFx5oufVwjx7/CuTcG1Lz02gss
+        6Ttr7Nk+kIg4TuGSmXwSU7ysOw==
+X-Google-Smtp-Source: ABdhPJwDxhn0/aSL0gpvbJ4vdiINft6HtMduIyvWgc3WW96xMMUikWcZ2eh5d4Zaf0nrbslu9EYKnA==
+X-Received: by 2002:a63:5265:: with SMTP id s37mr4763061pgl.253.1618528926672;
+        Thu, 15 Apr 2021 16:22:06 -0700 (PDT)
+Received: from google.com ([2401:fa00:9:211:3d18:8baf:8ab:7dd5])
+        by smtp.gmail.com with ESMTPSA id x2sm2983246pfu.77.2021.04.15.16.22.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Apr 2021 16:22:06 -0700 (PDT)
+Date:   Fri, 16 Apr 2021 09:21:53 +1000
+From:   Matthew Bobrowski <repnop@google.com>
+To:     jack@suse.cz, amir73il@gmail.com, christian.brauner@ubuntu.com
+Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/2] fanotify: Adding pidfd support to the fanotify API
+Message-ID: <cover.1618527437.git.repnop@google.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 15 Apr 2021, Axel Rasmussen wrote:
+Hey Jan/Amir/Christian,
 
-> Base
-> ====
-> 
-> This series is based on (and therefore should apply cleanly to) the tag
-> "v5.12-rc7-mmots-2021-04-11-20-49", additionally with Peter's selftest cleanup
-> series applied first:
-> 
-> https://lore.kernel.org/patchwork/cover/1412450/
-> 
-> Changelog
-> =========
-> 
-> v2->v3:
-> - Picked up {Reviewed,Acked}-by's.
-> - Reorder commits: introduce CONTINUE before MINOR registration. [Hugh, Peter]
-> - Don't try to {unlock,put}_page an xarray value in shmem_getpage_gfp. [Hugh]
-> - Move enum mcopy_atomic_mode forward declare out of CONFIG_HUGETLB_PAGE. [Hugh]
-> - Keep mistakenly removed UFFD_USER_MODE_ONLY in selftest. [Peter]
-> - Cleanup context management in self test (make clear implicit, remove unneeded
->   return values now that we have err()). [Peter]
-> - Correct dst_pte argument to dst_pmd in shmem_mcopy_atomic_pte macro. [Hugh]
-> - Mention the new shmem support feature in documentation. [Hugh]
+This is the RFC patch series for adding pidfd support to the fanotify
+API.
 
-I shall ignore this v3 completely: "git send-email" is a wonderful
-tool for mailing out patchsets in quick succession, but I have not
-yet mastered "git send-review" to do the thinking for me as quickly.
+tl;dr rather than returning a pid within struct
+fanotify_event_metadata, a pidfd is returned instead when fanotify has
+been explicitly told to do so via the new FAN_REPORT_PIDFD flag.
 
-Still deliberating on 4/9 and 9/9 of v2: they're very close,
-but raise userfaultfd questions I still have to answer myself.
+The main driver behind returning a pidfd within an event instead of a
+pid is that it permits userspace applications to better detect if
+they've possibly lost a TOCTOU race. A common paradigm among userspace
+applications that make use of the fanotify API is to crawl /proc/<pid>
+upon receiving an event. Userspace applications do this in order to
+further ascertain contextual meta-information about the process that
+was responsible for generating the filesystem event. On high pressure
+systems, where pid recycling isn't uncommon, it's no longer considered
+as a reliable approach to directly sift through /proc/<pid> and have
+userspace applications use the information contained within
+/proc/<pid> as it could, and does, lead to program execution
+inaccuracies.
 
-Hugh
+Now when a pidfd is returned in an event, a userspace application can:
+
+    a) Obtain the pid responsible for generating the filesystem event
+       from the pidfds fdinfo.
+
+    b) Detect whether the userspace application lost the procfs access
+       race by sending a 0 signal on the pidfd and checking the return
+       value. A -ESRCH is indicative of the userspace application
+       losing the race, meaning that the pid has been recycled.
+
+Matthew Bobrowski (2):
+  pidfd_create(): remove static qualifier and declare pidfd_create() in
+    linux/pid.h
+  fanotify: Add pidfd support to the fanotify API
+
+ fs/notify/fanotify/fanotify_user.c | 33 +++++++++++++++++++++++++++---
+ include/linux/fanotify.h           |  2 +-
+ include/linux/pid.h                |  1 +
+ include/uapi/linux/fanotify.h      |  2 ++
+ kernel/pid.c                       |  2 +-
+ 5 files changed, 35 insertions(+), 5 deletions(-)
+
+-- 
+2.31.1.368.gbe11c130af-goog
+
+/M
