@@ -2,108 +2,294 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D36F4360330
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 09:21:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6634360450
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 10:33:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231258AbhDOHWH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 03:22:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52004 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231215AbhDOHWF (ORCPT
+        id S231610AbhDOIeD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 04:34:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44338 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231423AbhDOIeC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 03:22:05 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13F741MW035099;
-        Thu, 15 Apr 2021 03:21:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : reply-to : references : mime-version : content-type
- : in-reply-to; s=pp1; bh=Ra8XZsRoPt3RWkSm6Y8Gra/xkXf+XdRa8cOlLiOVnHg=;
- b=dOB/a5DX4rJpVOp6IcsPIpwNPbGYDuEctJ+H9pCkE8f+YWFb47LTG4oy3vafO2eX+RBM
- xezsLhbHgnUXhD+yH6UO4OGi8yxcrZ6TMK2D1vxf5UI0KLfH5oGEKZTRtv1Xj1b8at3q
- tDiDSrViudKqmFlq+J85waGl2+0pYEMXc3JR2W+xHfH519kFTSVRiBj8gIw0krRUUihR
- YBZJcuGGXFUTmTeXG5WY+Cdh7v+Eo8Hp98J0+wFifj55N0pmus/85U14C5zRKlxvfNAr
- Ts5g2xJSBCPX+Fm93e9cN7VH7aRVM7b/LzLmtLyOA1kfZqa3M5sJzRCwBvGa9ntEhD5H qA== 
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 37xbpt6n4g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Apr 2021 03:21:38 -0400
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13F77FlA026328;
-        Thu, 15 Apr 2021 07:21:36 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma06ams.nl.ibm.com with ESMTP id 37u39hkqmn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Apr 2021 07:21:36 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13F7LYIP32178432
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Apr 2021 07:21:34 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EB4C1A405B;
-        Thu, 15 Apr 2021 07:21:33 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 984CCA4054;
-        Thu, 15 Apr 2021 07:21:32 +0000 (GMT)
-Received: from in.ibm.com (unknown [9.77.201.251])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 15 Apr 2021 07:21:32 +0000 (GMT)
-Date:   Thu, 15 Apr 2021 12:51:30 +0530
-From:   Bharata B Rao <bharata@linux.ibm.com>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Dave Chinner <david@fromorbit.com>, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, aneesh.kumar@linux.ibm.com
-Subject: Re: High kmalloc-32 slab cache consumption with 10k containers
-Message-ID: <20210415072130.GA1749436@in.ibm.com>
-Reply-To: bharata@linux.ibm.com
-References: <20210405054848.GA1077931@in.ibm.com>
- <20210406222807.GD1990290@dread.disaster.area>
- <20210415052300.GA1662898@in.ibm.com>
- <YHfjMyJuvXzJsg6T@dhcp22.suse.cz>
+        Thu, 15 Apr 2021 04:34:02 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B35D9C061574
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 01:33:39 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id f8so26993686edd.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 01:33:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lrVKKGmxPY9gv1SmceRB5rOaCQhiNZ+70V5kR49fpLg=;
+        b=o6JpXyCtx0e4kOLl1cemu4UqTSCon8S7VAKJwurY9225wWW2DnrRDeCNNf6yhWBjAf
+         HQOyC6V5qBIC57TY1M++1bKDKymHhRVNuGX+omGKoFIa+PJxBxgtdf2FDdAEqLDl6Zht
+         NzosNfAfYu/2vkjy6Z2zdVyqetQ5eSn8EPKzK6HRTIwATqX+AUq/ZCPMPvurXFV6dBJb
+         8KQMDu/FPZamSyotpU1BsywGsLqybcm/afQ+B7lXXBn8pgOB/SfUJ4gnobzuo3UFFB52
+         p0H0MchsCfpWHLpl6d2nvO4PpcAkqal2SCILKQZHWol5pT3C8b5wK7OadbAUfUF9fKPX
+         Dmpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lrVKKGmxPY9gv1SmceRB5rOaCQhiNZ+70V5kR49fpLg=;
+        b=UmkGhrxoaXia+/uy/kqlU1pQLC6dQZekIPeD2hVUTET42EPjKEFHA7ZZOSLCHIzqHr
+         dSRt4qvaNyPbkv0EDxgT/ghy0HsKpiuuL/gyDwZGLo2iWD7Bq3XIyC7INksREdRdTWUX
+         qvl3mokcF29oLZRgVSSfijeTjU9e7zyAhwjeOnu06D1LgqQnQnj03A9njp9ePdUpuZEd
+         Ojqh7JYo+cFRq6490J27JbJKvXVDV5RdvhE4ES0wIw9WGzS09gBVA23mt1hPeGXikXHw
+         HFJ/D0lHoWcoyx59B5g/2GeObRPmadduAy074eEykn3lUQ5JmbkX7J0CENHAAN7QiNGO
+         NJVQ==
+X-Gm-Message-State: AOAM530FyWll/QhZ2fbwZZUcJItkstcOZ6WX9ee9UlOu7o31/pgUCx7U
+        xyvbKKyh4Ou5tNHIO1dQh7f/v3sSy4pksO0MYKRL
+X-Google-Smtp-Source: ABdhPJxBbO6PW7e7UeMpcpilJ9A8wbOSFH8raoyKzISO/y/WaCsMMyiTPwfhedz60Hal1Yu9EvrAFHqTr/yfRHfew98=
+X-Received: by 2002:a05:6402:278c:: with SMTP id b12mr2757237ede.145.1618475618367;
+ Thu, 15 Apr 2021 01:33:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YHfjMyJuvXzJsg6T@dhcp22.suse.cz>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: VKGRN7T7mh92ZYIqW5F5x5qaTpneG2EP
-X-Proofpoint-GUID: VKGRN7T7mh92ZYIqW5F5x5qaTpneG2EP
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-15_02:2021-04-15,2021-04-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 clxscore=1015 suspectscore=0 adultscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 mlxscore=0 spamscore=0
- phishscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2104060000 definitions=main-2104150045
+References: <20210331080519.172-1-xieyongji@bytedance.com> <20210331080519.172-11-xieyongji@bytedance.com>
+ <YHb44R4HyLEUVSTF@stefanha-x1.localdomain> <CACycT3uNR+nZY5gY0UhPkeOyi7Za6XkX4b=hasuDcgqdc7fqfg@mail.gmail.com>
+ <YHfo8pc7dIO9lNc3@stefanha-x1.localdomain>
+In-Reply-To: <YHfo8pc7dIO9lNc3@stefanha-x1.localdomain>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Thu, 15 Apr 2021 16:33:27 +0800
+Message-ID: <CACycT3tRN1n_PJm1mu3=s1dK941Pac15cpaysqZZKLR6xKaXSg@mail.gmail.com>
+Subject: Re: Re: Re: [PATCH v6 10/10] Documentation: Add documentation for VDUSE
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 15, 2021 at 08:54:43AM +0200, Michal Hocko wrote:
-> On Thu 15-04-21 10:53:00, Bharata B Rao wrote:
-> > On Wed, Apr 07, 2021 at 08:28:07AM +1000, Dave Chinner wrote:
-> > > 
-> > > Another approach may be to identify filesystem types that do not
-> > > need memcg awareness and feed that into alloc_super() to set/clear
-> > > the SHRINKER_MEMCG_AWARE flag. This could be based on fstype - most
-> > > virtual filesystems that expose system information do not really
-> > > need full memcg awareness because they are generally only visible to
-> > > a single memcg instance...
-> > 
-> > Would something like below be appropriate?
-> 
-> No. First of all you are defining yet another way to say
-> SHRINKER_MEMCG_AWARE which is messy.
+On Thu, Apr 15, 2021 at 3:19 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+>
+> On Thu, Apr 15, 2021 at 01:38:37PM +0800, Yongji Xie wrote:
+> > On Wed, Apr 14, 2021 at 10:15 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+> > >
+> > > On Wed, Mar 31, 2021 at 04:05:19PM +0800, Xie Yongji wrote:
+> > > > VDUSE (vDPA Device in Userspace) is a framework to support
+> > > > implementing software-emulated vDPA devices in userspace. This
+> > > > document is intended to clarify the VDUSE design and usage.
+> > > >
+> > > > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> > > > ---
+> > > >  Documentation/userspace-api/index.rst |   1 +
+> > > >  Documentation/userspace-api/vduse.rst | 212 ++++++++++++++++++++++++++++++++++
+> > > >  2 files changed, 213 insertions(+)
+> > > >  create mode 100644 Documentation/userspace-api/vduse.rst
+> > >
+> > > Just looking over the documentation briefly (I haven't studied the code
+> > > yet)...
+> > >
+> >
+> > Thank you!
+> >
+> > > > +How VDUSE works
+> > > > +------------
+> > > > +Each userspace vDPA device is created by the VDUSE_CREATE_DEV ioctl on
+> > > > +the character device (/dev/vduse/control). Then a device file with the
+> > > > +specified name (/dev/vduse/$NAME) will appear, which can be used to
+> > > > +implement the userspace vDPA device's control path and data path.
+> > >
+> > > These steps are taken after sending the VDPA_CMD_DEV_NEW netlink
+> > > message? (Please consider reordering the documentation to make it clear
+> > > what the sequence of steps are.)
+> > >
+> >
+> > No, VDUSE devices should be created before sending the
+> > VDPA_CMD_DEV_NEW netlink messages which might produce I/Os to VDUSE.
+>
+> I see. Please include an overview of the steps before going into detail.
+> Something like:
+>
+>   VDUSE devices are started as follows:
+>
+>   1. Create a new VDUSE instance with ioctl(VDUSE_CREATE_DEV) on
+>      /dev/vduse/control.
+>
+>   2. Begin processing VDUSE messages from /dev/vduse/$NAME. The first
+>      messages will arrive while attaching the VDUSE instance to vDPA.
+>
+>   3. Send the VDPA_CMD_DEV_NEW netlink message to attach the VDUSE
+>      instance to vDPA.
+>
+>   VDUSE devices are stopped as follows:
+>
+>   ...
+>
 
-Ok.
+Sure.
 
-> And secondly why would shmem, proc
-> and ramfs be any special and they would be ok to opt out? There is no
-> single word about that reasoning in your changelog.
+> > > > +     static int netlink_add_vduse(const char *name, int device_id)
+> > > > +     {
+> > > > +             struct nl_sock *nlsock;
+> > > > +             struct nl_msg *msg;
+> > > > +             int famid;
+> > > > +
+> > > > +             nlsock = nl_socket_alloc();
+> > > > +             if (!nlsock)
+> > > > +                     return -ENOMEM;
+> > > > +
+> > > > +             if (genl_connect(nlsock))
+> > > > +                     goto free_sock;
+> > > > +
+> > > > +             famid = genl_ctrl_resolve(nlsock, VDPA_GENL_NAME);
+> > > > +             if (famid < 0)
+> > > > +                     goto close_sock;
+> > > > +
+> > > > +             msg = nlmsg_alloc();
+> > > > +             if (!msg)
+> > > > +                     goto close_sock;
+> > > > +
+> > > > +             if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, famid, 0, 0,
+> > > > +                 VDPA_CMD_DEV_NEW, 0))
+> > > > +                     goto nla_put_failure;
+> > > > +
+> > > > +             NLA_PUT_STRING(msg, VDPA_ATTR_DEV_NAME, name);
+> > > > +             NLA_PUT_STRING(msg, VDPA_ATTR_MGMTDEV_DEV_NAME, "vduse");
+> > > > +             NLA_PUT_U32(msg, VDPA_ATTR_DEV_ID, device_id);
+> > >
+> > > What are the permission/capability requirements for VDUSE?
+> > >
+> >
+> > Now I think we need privileged permission (root user). Because
+> > userspace daemon is able to access avail vring, used vring, descriptor
+> > table in kernel driver directly.
+>
+> Please state this explicitly at the start of the document. Existing
+> interfaces like FUSE are designed to avoid trusting userspace. Therefore
+> people might think the same is the case here. It's critical that people
+> are aware of this before deploying VDUSE with virtio-vdpa.
+>
+> We should probably pause here and think about whether it's possible to
+> avoid trusting userspace. Even if it takes some effort and costs some
+> performance it would probably be worthwhile.
+>
+> Is the security situation different with vhost-vdpa? In that case it
+> seems more likely that the host kernel doesn't need to trust the
+> userspace VDUSE device.
+>
 
-Right, I am only checking if the suggestion given by David (see above)
-is indeed this. There are a few other things to take care of
-which I shall if the overall direction of the patch turns
-out to be acceptable.
+Yes.
 
-Regards,
-Bharata.
+> Regarding privileges in general: userspace VDUSE processes shouldn't
+> need to run as root. The VDUSE device lifecycle will require privileges
+> to attach vhost-vdpa and virtio-vdpa devices, but the actual userspace
+> process that emulates the device should be able to run unprivileged.
+> Emulated devices are an attack surface and even if you are comfortable
+> with running them as root in your specific use case, it will be an issue
+> as soon as other people want to use VDUSE and could give VDUSE a
+> reputation for poor security.
+>
+
+Agreed. Rethink about the virtio-vdpa case. The security risks mainly
+come from the untrusted user being able to rewrite the content of
+avail vring, used vring, descriptor table. But it seems that the worst
+result of doing this is getting a broken virtqueue. Not sure if it's
+acceptable to kernel.
+
+> > > How does VDUSE interact with namespaces?
+> > >
+> >
+> > Not sure I get your point here. Do you mean how the emulated vDPA
+> > device interact with namespaces? This should work like hardware vDPA
+> > devices do. VDUSE daemon can reside outside the namespace of a
+> > container which uses the vDPA device.
+>
+> Can VDUSE devices run inside containers? Are /dev/vduse/$NAME and vDPA
+> device names global?
+>
+
+I think we can run it inside containers. But there might be some
+limitations. As you mentioned, the device name is global. So we need
+to make sure the VDUSE daemons in different containers don't use the
+same name to create vDPA devices.
+
+> > > What is the meaning of VDPA_ATTR_DEV_ID? I don't see it in Linux
+> > > v5.12-rc6 drivers/vdpa/vdpa.c:vdpa_nl_cmd_dev_add_set_doit().
+> > >
+> >
+> > It means the device id (e.g. VIRTIO_ID_BLOCK) of the vDPA device and
+> > can be found in include/uapi/linux/vdpa.h.
+>
+> VDPA_ATTR_DEV_ID is only used by VDPA_CMD_DEV_GET in Linux v5.12-rc6,
+> not by VDPA_CMD_DEV_NEW.
+>
+> The example in this document uses VDPA_ATTR_DEV_ID with
+> VDPA_CMD_DEV_NEW. Is the example outdated?
+>
+
+Oh, you are right. Will update it.
+
+> >
+> > > > +MMU-based IOMMU Driver
+> > > > +----------------------
+> > > > +VDUSE framework implements an MMU-based on-chip IOMMU driver to support
+> > > > +mapping the kernel DMA buffer into the userspace iova region dynamically.
+> > > > +This is mainly designed for virtio-vdpa case (kernel virtio drivers).
+> > > > +
+> > > > +The basic idea behind this driver is treating MMU (VA->PA) as IOMMU (IOVA->PA).
+> > > > +The driver will set up MMU mapping instead of IOMMU mapping for the DMA transfer
+> > > > +so that the userspace process is able to use its virtual address to access
+> > > > +the DMA buffer in kernel.
+> > > > +
+> > > > +And to avoid security issue, a bounce-buffering mechanism is introduced to
+> > > > +prevent userspace accessing the original buffer directly which may contain other
+> > > > +kernel data. During the mapping, unmapping, the driver will copy the data from
+> > > > +the original buffer to the bounce buffer and back, depending on the direction of
+> > > > +the transfer. And the bounce-buffer addresses will be mapped into the user address
+> > > > +space instead of the original one.
+> > >
+> > > Is mmap(2) the right interface if memory is not actually shared, why not
+> > > just use pread(2)/pwrite(2) to make the copy explicit? That way the copy
+> > > semantics are clear. For example, don't expect to be able to busy wait
+> > > on the memory because changes will not be visible to the other side.
+> > >
+> > > (I guess I'm missing something here and that mmap(2) is the right
+> > > approach, but maybe this documentation section can be clarified.)
+> >
+> > It's for performance considerations on the one hand. We might need to
+> > call pread(2)/pwrite(2) multiple times for each request.
+>
+> Userspace can keep page-sized pread() buffers around to avoid additional
+> syscalls during a request.
+>
+
+In the indirect descriptors case , it looks like we can't use one
+pread() to get all buffers?
+
+> mmap() access does reduce the number of syscalls, but it also introduces
+> page faults (effectively doing the page-sized pread() I mentioned
+> above).
+>
+
+Yes, but only on the first access.
+
+> It's not obvious to me that there is a fundamental difference between
+> the two approaches in terms of performance.
+>
+> > On the other
+> > hand, we can handle the virtqueue in a unified way for both vhost-vdpa
+> > case and virtio-vdpa case. Otherwise, userspace daemon needs to know
+> > which iova ranges need to be accessed with pread(2)/pwrite(2). And in
+> > the future, we might be able to avoid bouncing in some cases.
+>
+> Ah, I see. So bounce buffers are not used for vhost-vdpa?
+>
+
+Yes.
+
+Thanks,
+Yongji
