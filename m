@@ -2,144 +2,281 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CF4E3611F0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 20:18:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 596BB3611FE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 20:19:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234259AbhDOSS2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 14:18:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60652 "EHLO
+        id S234684AbhDOSTu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 14:19:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233595AbhDOSS1 (ORCPT
+        with ESMTP id S234654AbhDOSTt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 14:18:27 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B000C061756
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 11:18:02 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id d15so13211074qkc.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 11:18:02 -0700 (PDT)
+        Thu, 15 Apr 2021 14:19:49 -0400
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52F60C061574
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 11:19:25 -0700 (PDT)
+Received: by mail-il1-x12f.google.com with SMTP id e14so9648377ils.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 11:19:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FboUBx+M7wiC2Vc9ohnMu1xFLntMIR1IX9IeLkEPHjI=;
-        b=B03mrf5IAbFUf4B8lNYRNg/BJbtQSZsQEhMlkF6ndvHEbOuxkenRmydetxWF7gzpTT
-         7MzBb6QgYldj531EgGVSDSQd9RbXexAh6ZHvjRDAl1NRm1h5hegzEDhHs0jhhuApYQH7
-         IU+E0i23QU0wmN4wVKSSca4bg5UiAN/V4aiTxZYShFGltfRKGGKhJJg/0ul3dd4kIgxo
-         mlHcMDQ5EbzfpLv3IgD4GIjWXNU/TFZc+xUSiocQPBIs9Sy+f6oMvzUF2moGCU5obTD+
-         qZGpYJV6qGdDRdNM3Hetv6PABFnZCYNhNEOepzKhn7agw+tDxs8lglyebVISVoy2k/1v
-         Q3aA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u11fVQy6kjnMRElja77kseBc1mYwvTCWjt5Bt5mrtok=;
+        b=GHTzamdY005X/OnRXBk0Vw+T+JdjzWzQqcx3zniyw/EQME2lhoY2Y59H+nzDrpdl8h
+         8vzusYbKf278AnyTd8WCOwGkF3VdvVwfYlivQfgCnvYpJqwoTeD20jGd+8MtjBgzSiCZ
+         H4gvvi/BVMPSoqMeCtiU7VZuSewPN21h+izvLjh5zfsllSERI5oScu7ZxizcwX3yqNVu
+         VLpZOF6+VJ1cLT9naswy/21xnpZzuMLGrwYtU2XP9BGXpIT0KlF2Ky8I7ETp/Mm6avU+
+         STZOfVEB8vTpZLv5dolU5CmBzaKxb0AeO7v9zjt6cRyxH91xVb+nFfJts9CvwjkxGKo9
+         Yjyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FboUBx+M7wiC2Vc9ohnMu1xFLntMIR1IX9IeLkEPHjI=;
-        b=Oz6q0MqG287/DGKPz4nCI5sm8hASacJJ72q4lY8bZ6fMqM39BsuanYrQFAxmtktbn/
-         cL/VHeqa5UuqB3iBb4qsRsnL/AXHtFnNIF2FT3/StkmNeTlKxxHSNyAgZERKCt26i3Fv
-         5LR3CIWXYkpnWn9a+Qf8JKgNHRVDRnZOXT+G4gXJ6tyFmdINzNjc3MkRLP8IdR/egB2g
-         Eb80cU7bnXt+4feQqvz+hZT++5ez402MVpZQ2ThkEYkUayskeLAgHXx41bQop5zKbmOL
-         4cCG4EtoU8XQdetAyvdPHTqk4U3bhRmoEV4+nFVcG80xM50J38fNf0D+u0cYaCQZss5r
-         Wi3Q==
-X-Gm-Message-State: AOAM5310UdfuZxa6AyrwgmgCWIRkWQosKGtGYs3cw4rQgBINvBxrNzmd
-        oFlQ0l7r5B1XDwoSJACR3HId9w==
-X-Google-Smtp-Source: ABdhPJzwmJZmG/p+pl3buOTcZzktD3WLTreTOFcX4K4JsmD+TrNZ3sJfvua3mjs+PVPFIecVlojLpA==
-X-Received: by 2002:ae9:d61c:: with SMTP id r28mr4721507qkk.462.1618510681561;
-        Thu, 15 Apr 2021 11:18:01 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c0a8:11c9::1288? ([2620:10d:c091:480::1:2677])
-        by smtp.gmail.com with ESMTPSA id d62sm2569722qkg.55.2021.04.15.11.18.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Apr 2021 11:18:00 -0700 (PDT)
-Subject: Re: [RFC v3 0/2] vfs / btrfs: add support for ustat()
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.cz>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Chris Mason <clm@fb.com>,
-        Josef Bacik <jbacik@fb.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jeff Mahoney <jeffm@suse.com>
-References: <1408071538-14354-1-git-send-email-mcgrof@do-not-panic.com>
- <20140815092950.GZ18016@ZenIV.linux.org.uk>
- <c3b0feac-327c-15db-02c1-4a25639540e4@suse.com>
- <CAB=NE6X2-mbZwVFnKUwjRmTGp3auZFHQXJ1h_YTJ2driUeoR+A@mail.gmail.com>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <e7e867b8-b57a-7eb2-2432-1627bd3a88fb@toxicpanda.com>
-Date:   Thu, 15 Apr 2021 14:17:58 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u11fVQy6kjnMRElja77kseBc1mYwvTCWjt5Bt5mrtok=;
+        b=YeU5CTHItjAR05Laum4YqRlw4t/X5kzIxCqaA/kEKElwi1bdOz7s6jMOmQ9jZ0Zwke
+         PSFAzRT2atR3SDAjBgHS+3T3wo8OMys144LpZit7PlNM5eWl667mCINZQ3IyjY6jhR8Y
+         VKJii+PzKmAYfBR3FeoLd06RipIOB1NM8oz01Sl6RtFNx8wz8O9kBSrofccyqucpR3sZ
+         qafOfDgIj+M4Tfhr9/n0TBbvbtk+Ef4MtnJR9JHbOg2cXiQj0Rery15tj9ACvV/qhj99
+         Xmhj/bTJdBd2r62sSsKX3nqDEsfbPXSpqGZ/T4yniZVR3vTjV5jjGYAmiqkdbgWdRhQN
+         ppfA==
+X-Gm-Message-State: AOAM533RJF4bGxqv4ORFk2se9IkyNK1ZFxZp5ZK6PdIqzJcmZyrxe5vD
+        V7DkgLRuCRllglS4WdyADyQurtMoMigZon6KqCAYhA==
+X-Google-Smtp-Source: ABdhPJwB59HPRXr9BHRidgTeK1xp2kqrjl7Diw7oTDeEwnGmuL5iD1AyI0Au9dxO8g8jlmM6LFfx/OLx/pdcsvy/N6U=
+X-Received: by 2002:a05:6e02:b24:: with SMTP id e4mr3922220ilu.30.1618510764626;
+ Thu, 15 Apr 2021 11:19:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAB=NE6X2-mbZwVFnKUwjRmTGp3auZFHQXJ1h_YTJ2driUeoR+A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210408234327.624367-1-axelrasmussen@google.com>
+ <20210408234327.624367-5-axelrasmussen@google.com> <20210412231736.GA1002612@xz-x1>
+ <CAJHvVcirn08ad64pTdxTRDRRXF16QnFwC-3GOT8bXMp2E2UYhg@mail.gmail.com> <20210413181209.GB4440@xz-x1>
+In-Reply-To: <20210413181209.GB4440@xz-x1>
+From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Thu, 15 Apr 2021 11:18:47 -0700
+Message-ID: <CAJHvVcg0k0ht1kYTPDZp1_GCeXoV31BUAPofXEV-neQefX2_Jw@mail.gmail.com>
+Subject: Re: [PATCH 4/9] userfaultfd/shmem: support UFFDIO_CONTINUE for shmem
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Colascione <dancol@google.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        Brian Geffon <bgeffon@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/15/21 1:53 PM, Luis Chamberlain wrote:
-> On Wed, Aug 23, 2017 at 3:31 PM Jeff Mahoney <jeffm@suse.com> wrote:
->>
->> On 8/15/14 5:29 AM, Al Viro wrote:
->>> On Thu, Aug 14, 2014 at 07:58:56PM -0700, Luis R. Rodriguez wrote:
->>>
->>>> Christoph had noted that this seemed associated to the problem
->>>> that the btrfs uses different assignments for st_dev than s_dev,
->>>> but much as I'd like to see that changed based on discussions so
->>>> far its unclear if this is going to be possible unless strong
->>>> commitment is reached.
->>
->> Resurrecting a dead thread since we've been carrying this patch anyway
->> since then.
->>
->>> Explain, please.  Whose commitment and commitment to what, exactly?
->>> Having different ->st_dev values for different files on the same
->>> fs is a bloody bad idea; why does btrfs do that at all?  If nothing else,
->>> it breaks the usual "are those two files on the same fs?" tests...
->>
->> It's because btrfs snapshots would have inode number collisions.
->> Changing the inode numbers for snapshots would negate a big benefit of
->> btrfs snapshots: the quick creation and lightweight on-disk
->> representation due to metadata sharing.
->>
->> The thing is that ustat() used to work.  Your commit 0ee5dc676a5f8
->> (btrfs: kill magical embedded struct superblock) had a regression:
->> Since it replaced the superblock with a simple dev_t, it rendered the
->> device no longer discoverable by user_get_super.  We need a list_head to
->> attach for searching.
->>
->> There's an argument that this is hacky.  It's valid.  The only other
->> feedback I've heard is to use a real superblock for subvolumes to do
->> this instead.  That doesn't work either, due to things like freeze/thaw
->> and inode writeback.  Ultimately, what we need is a single file system
->> with multiple namespaces.  Years ago we just needed different inode
->> namespaces, but as people have started adopting btrfs for containers, we
->> need more than that.  I've heard requests for per-subvolume security
->> contexts.  I'd imagine user namespaces are on someone's wish list.  A
->> working df can be done with ->d_automount, but the way btrfs handles
->> having a "canonical" subvolume location has always been a way to avoid
->> directory loops.  I'd like to just automount subvolumes everywhere
->> they're referenced.  One solution, for which I have no code yet, is to
->> have something like a superblock-light that we can hang things like a
->> security context, a user namespace, and an anonymous dev.  Most file
->> systems would have just one.  Btrfs would have one per subvolume.
->>
->> That's a big project with a bunch of discussion.
-> 
-> 4 years have gone by and this patch is still being carried around for
-> btrfs. Other than resolving this ustat() issue for btrfs are there new
-> reasons to support this effort done to be done properly? Are there
-> other filesystems that would benefit? I'd like to get an idea of the
-> stakeholder here before considering taking this on or not.
-> 
+On Tue, Apr 13, 2021 at 11:12 AM Peter Xu <peterx@redhat.com> wrote:
+>
+> On Mon, Apr 12, 2021 at 09:40:22PM -0700, Axel Rasmussen wrote:
+> > On Mon, Apr 12, 2021 at 4:17 PM Peter Xu <peterx@redhat.com> wrote:
+> > >
+> > > On Thu, Apr 08, 2021 at 04:43:22PM -0700, Axel Rasmussen wrote:
+> > > > +/*
+> > > > + * Install PTEs, to map dst_addr (within dst_vma) to page.
+> > > > + *
+> > > > + * This function handles MCOPY_ATOMIC_CONTINUE (which is always file-backed),
+> > > > + * whether or not dst_vma is VM_SHARED. It also handles the more general
+> > > > + * MCOPY_ATOMIC_NORMAL case, when dst_vma is *not* VM_SHARED (it may be file
+> > > > + * backed, or not).
+> > > > + *
+> > > > + * Note that MCOPY_ATOMIC_NORMAL for a VM_SHARED dst_vma is handled by
+> > > > + * shmem_mcopy_atomic_pte instead.
+> > > > + */
+> > > > +static int mcopy_atomic_install_ptes(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+> > > > +                                  struct vm_area_struct *dst_vma,
+> > > > +                                  unsigned long dst_addr, struct page *page,
+> > > > +                                  bool newly_allocated, bool wp_copy)
+> > > > +{
+> > > > +     int ret;
+> > > > +     pte_t _dst_pte, *dst_pte;
+> > > > +     int writable;
+> > > > +     bool vm_shared = dst_vma->vm_flags & VM_SHARED;
+> > > > +     spinlock_t *ptl;
+> > > > +     struct inode *inode;
+> > > > +     pgoff_t offset, max_off;
+> > > > +
+> > > > +     _dst_pte = mk_pte(page, dst_vma->vm_page_prot);
+> > > > +     writable = dst_vma->vm_flags & VM_WRITE;
+> > > > +     /* For private, non-anon we need CoW (don't write to page cache!) */
+> > > > +     if (!vma_is_anonymous(dst_vma) && !vm_shared)
+> > > > +             writable = 0;
+> > > > +
+> > > > +     if (writable || vma_is_anonymous(dst_vma))
+> > > > +             _dst_pte = pte_mkdirty(_dst_pte);
+> > > > +     if (writable) {
+> > > > +             if (wp_copy)
+> > > > +                     _dst_pte = pte_mkuffd_wp(_dst_pte);
+> > > > +             else
+> > > > +                     _dst_pte = pte_mkwrite(_dst_pte);
+> > > > +     } else if (vm_shared) {
+> > > > +             /*
+> > > > +              * Since we didn't pte_mkdirty(), mark the page dirty or it
+> > > > +              * could be freed from under us. We could do this
+> > > > +              * unconditionally, but doing it only if !writable is faster.
+> > > > +              */
+> > > > +             set_page_dirty(page);
+> > > > +     }
+> > > > +
+> > > > +     dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
+> > > > +
+> > > > +     if (vma_is_shmem(dst_vma)) {
+> > > > +             /* The shmem MAP_PRIVATE case requires checking the i_size */
+> > >
+> > > When you start to use this function in the last patch it'll be needed too even
+> > > if MAP_SHARED?
+> > >
+> > > How about directly state the reason of doing this ("serialize against truncate
+> > > with the PT lock") instead of commenting about "who will need it"?
+> > >
+> > > > +             inode = dst_vma->vm_file->f_inode;
+> > > > +             offset = linear_page_index(dst_vma, dst_addr);
+> > > > +             max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+> > > > +             ret = -EFAULT;
+> > > > +             if (unlikely(offset >= max_off))
+> > > > +                     goto out_unlock;
+> > > > +     }
+> > >
+> > > [...]
+> > >
+> > > > +/* Handles UFFDIO_CONTINUE for all shmem VMAs (shared or private). */
+> > > > +static int mcontinue_atomic_pte(struct mm_struct *dst_mm,
+> > > > +                             pmd_t *dst_pmd,
+> > > > +                             struct vm_area_struct *dst_vma,
+> > > > +                             unsigned long dst_addr,
+> > > > +                             bool wp_copy)
+> > > > +{
+> > > > +     struct inode *inode = file_inode(dst_vma->vm_file);
+> > > > +     pgoff_t pgoff = linear_page_index(dst_vma, dst_addr);
+> > > > +     struct page *page;
+> > > > +     int ret;
+> > > > +
+> > > > +     ret = shmem_getpage(inode, pgoff, &page, SGP_READ);
+> > >
+> > > SGP_READ looks right, as we don't want page allocation.  However I noticed
+> > > there's very slight difference when the page was just fallocated:
+> > >
+> > >         /* fallocated page? */
+> > >         if (page && !PageUptodate(page)) {
+> > >                 if (sgp != SGP_READ)
+> > >                         goto clear;
+>
+> [1]
+>
+> > >                 unlock_page(page);
+> > >                 put_page(page);
+> > >                 page = NULL;
+> > >                 hindex = index;
+> > >         }
+> > >
+> > > I think it won't happen for your case since the page should be uptodate already
+> > > (the other thread should check and modify the page before CONTINUE), but still
+> > > raise this up, since if the page was allocated it smells better to still
+> > > install the fallocated page (do we need to clear the page and SetUptodate)?
+> >
+> > Sorry for the somewhat rambling thought process:
+> >
+> > My first thought is, I don't really know what PageUptodate means for
+> > shmem pages. If I understand correctly, normally we say PageUptodate()
+> > if the in memory data is more recent or equivalent to the on-disk
+> > data. But, shmem pages are entirely in memory - they are file backed
+> > in name only, in some sense.
+> >
+> > fallocate() does all sorts of things so the comment to me seems a bit
+> > ambiguous, but it seems the implication is that we're worried
+> > specifically about the case where the shmem page was recently
+> > allocated with fallocate(mode=0)? In that case, do we use
+> > !PageUptodate() to denote that the page has been allocated, but its
+> > contents are undefined?
+> >
+> > I suppose that would make sense, as the action "goto clear;" generally
+> > memset()-s the page to zero it, and then calls SetPageUptodate().
+> >
+> > Okay so let's say the following sequence of events happens:
+> >
+> > 1. Userspace calls fallocate(mode=0) to allocate some shmem pages.
+> > 2. Another thread, via a UFFD-registered mapping, manages to trigger a
+> > minor fault on one such page, while we still have !PageUptodate().
+> > (I'm not 100% sure this can happen, but let's say it can.)
+> > 3. UFFD handler thread gets the minor fault event, and for whatever
+> > (buggy?) reason does nothing - it doesn't modify the page, it just
+> > calls CONTINUE.
+>
+> [2]
+>
+> >
+> > I think if we get to this point, zeroing the page, returning it, and
+> > setting up the PTEs seems somewhat reasonable to me. I suppose
+> > alternatively we could notice that this happened and return an error
+> > to the caller? I'm hesitant to mess with the behavior of
+> > shmem_getpage_gfp() to make such a thing happen though. I do think if
+> > we're going to set up the PTEs instead of returning an error, we
+> > definitely do need to clear and SetPageUptodate() the page first.
+> >
+> > In conclusion, I think this behavior is correct.
+>
+> I agree with you (mostly :), but except one thing: you passed in SGP_READ, so
+> IMHO it won't do what you explained (see [1] above: "goto clear" is with "sgp
+> != SGP_READ" only); instead of doing what you said, I think it'll reset page
+> pointer to NULL..  Then quickly in the latter block:
+>
+>         if (page || sgp == SGP_READ)
+>                 goto out;
+>
+> So I think at last shmem_getpage_gfp(SGP_READ) will return NULL.
 
-Not really sure why this needs to be addressed, we have statfs(), and what we 
-have has worked forever now.  There's a lot of larger things that need to be 
-addressed in general to support the volume approach inside file systems that is 
-going to require a lot of work inside of VFS.  If you feel like tackling that 
-work and then wiring up btrfs by all means have at it, but I'm not seeing a 
-urgent need to address this.  Thanks,
+Ah, indeed, I mistakenly read that as "sgp != SGP_READ".
 
-Josef
+>
+> I do think I've got some confusion here regarding SGP_READ, since from the
+> comment in shmem_fs.h it says:
+>
+>         SGP_READ,       /* don't exceed i_size, don't allocate page */
+>
+> It's natural to think it as "return the fallocated page" in this case.  However
+> it seems not the case?  My gut feeling is the comment for SGP_READ needs a
+> touch up, so as to state that for newly fallocated (and not used) pages it'll
+> return NULL even if cache hit.
+>
+> So I think you're right, for all cases this may be a trivial case.  However
+> I've got a lesson somewhere else that we should never overlook zero pages,
+> which is also related to this case - although fallocated page is still
+> !Uptodate so clear page happens even latter, however from userspace pov, the
+> user could assume it's a zero page even if the page is not accessed at all
+> (since any access will cause clear page).  Then the user program could avoid
+> modifying this page if it knows this page keeps to be zero page somehow (e.g.,
+> a zero page bitmap?). Then your example above [2] seems indeed a valid one
+> worth thinking, at least not fully paranoid.
 
+I'm kind of left thinking along the same lines though.
+
+Modifying shmem_getpage_gfp to behave differently in this case seems
+likely to be a can of worms.
+
+With the current behavior, at least it doesn't seem to be too
+problematic - we're not going to hand userspace an unzeroed page or
+anything. At worst, it's a bit of a rough edge userspace might hit.
+The UFFD handler thread will just get an error when it tries to
+CONTINUE, and could recover by e.g. writing to the page or something
+and trying again.
+
+I'm inclined to leave it as is, and maybe look into a way to file down
+the rough edge in a future patch, as well as some of the other
+cleanups we've discussed elsewhere. Objections?
+
+>
+> --
+> Peter Xu
+>
