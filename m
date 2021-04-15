@@ -2,56 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8205636125D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 20:47:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E36A361262
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 20:48:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234774AbhDOSsO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 14:48:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38874 "EHLO
+        id S234822AbhDOSsW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 14:48:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234722AbhDOSsF (ORCPT
+        with ESMTP id S234766AbhDOSsM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 14:48:05 -0400
-Received: from mail-qv1-xf4a.google.com (mail-qv1-xf4a.google.com [IPv6:2607:f8b0:4864:20::f4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F434C061760
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 11:47:42 -0700 (PDT)
-Received: by mail-qv1-xf4a.google.com with SMTP id i2-20020ad44cc20000b029019a3866abf5so2425051qvz.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 11:47:42 -0700 (PDT)
+        Thu, 15 Apr 2021 14:48:12 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8D38C06138C
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 11:47:43 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id w9so3467865ybw.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 11:47:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=fZcyyDcH74fXKPP29CoAHbcMgiIELn5NN7lOGLGxd5Q=;
-        b=clDZWc55GW4TAu+lF8lBMXXT5sper+iAEDcyisMZLP6qSW+OZz4A6ZjdUMdlRiBI3b
-         fNyNrEz7tJMGZnHohL7liDGDXGrRkzloMMMDsvZN5/8fYHAr+M2vx5mAbvQ+N45V6FTv
-         VjH15UeA/DCMieI8BYIhGR9vOy9ccwgDvw/j/8scEfVNhj8hxdype3JXGBX8SLHWwfAc
-         jxvQe2mW4CcLzvp3F4w1HNULNzOdxJf+kqnelI+hjCecskwGDoIKK2g3y6Hj//cqNvom
-         M7dQEnClUhBCwDNFJgvUUvgZL9ys6C9y1JLgva7V27C0u6ClpupKlV7HViaWJdJABDu6
-         zh3w==
+        bh=QUApq8UPhLnVOskfaex0nbVtMhAbaCtXI1eHuCuwzK0=;
+        b=Y24xjdSehME3uPSbOxZhgaGyOVJUE3siM4RXKAlUq2C/sPUhMInXnaOjWmiVtcmR5x
+         StHOYh2kOi4TpmaKKY8Yw4jHJV1+TJU9hXuQ+rm8Oh+UjMGEBd9g/GmJsrgtn1gUNXZ1
+         1PSeZY6yAZdjJfcyrnNq70NfWNiXoLyex02LJqIwBAtbrQPIoGqkNVD4oZWVran5MCGI
+         AqNgFpwe0onN47beUZPM/bVxZ2oMTqwTPdWJ6/8zJIDW7QLX8HnYA/a5xef4Te4jrHfe
+         Gv6RdSc0Abx17Osl29g9KgyIVVwacoFK4LtZNsUEmvDwD9+SCmSq3qTUY/e4ktk9wEli
+         +IsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=fZcyyDcH74fXKPP29CoAHbcMgiIELn5NN7lOGLGxd5Q=;
-        b=fjEVuOdwa2PX2GnHgp4pO0WfO24dY7NOghqfyKF6wT3W1KmvY7S7NqrefXmj4382Aq
-         QZAADYpptMjcBG9DDVbLdku3oIIYWYwyGJXISLvNPrYRfJGHLrAk9LSczUfjPAk7cKkW
-         oe9RmG38AuIseahZKoBJ1SCbTOP65o1DKp0xsPfwtwoiCXBIgrcS18dnWirjesSlCgV/
-         +mb9lOCHscgIHEKvUKS7EmIVufC9RH2iFpHM0XR6GBMIXc2otj7X71H2S3va6xMKVesE
-         KLLEWH+nfZAnTUYJ7DxhgOs4KU/6jMdqW4yXd11o+beusbZMViHXrkGgH+7fnuzAsq4H
-         PMXw==
-X-Gm-Message-State: AOAM532HcV9VsPNFzkMYp9C7CeLN7Emh2iJETeSi/HRQvbZPAIFutvLF
-        yGE7mXDe3IbJ4heaczGIyp3eiwrMEdGB02d84fpm
-X-Google-Smtp-Source: ABdhPJxzcEsAe684qH+HXRE7prSy7uadnQQuKZmd/pz0nHQbxkeL5gSAjChpO+8uRWn7CrzhChQjAHWE8hhSSfsvq+km
+        bh=QUApq8UPhLnVOskfaex0nbVtMhAbaCtXI1eHuCuwzK0=;
+        b=pbK+tngU9gayvHX9xuo3h5dFBnAKhRryUSlH+q8Y+JKrnbeWfBro581rkxF2Hcv5u6
+         TlvpV3iZ24xScbFaMYLClD9baXmeWSK8g778Wtix9KEoxianEttS8pPuBrcaSU4kDQ61
+         dTsalXeliIbWG/hf3KTzPqsqRr3zC5JKYkWmq0gbaW7PAq2oe3FdrvYmj8Lsda5Q//kM
+         JzE9yX/E4OOm27O+/e2UhxKSFQ1ftEE2CkNqrhrGHSLGRFMa5DpD8AC4pv/zgn7SPRdA
+         LC4FwHJs0x3ABFbVyTwftIPobr36kGsqCyIEd8b8QK8OysvIHEnbSUpvdiGF8FDoSTb8
+         ctRw==
+X-Gm-Message-State: AOAM531oDZouRoDUZhi9Obo5jmkhdO214Pi9u9vfC/a49RZhdjlU9Gmg
+        COLnkx+uYolWn2320BaKpA3kzBWGBXsUvFD6quOH
+X-Google-Smtp-Source: ABdhPJx4VajWNU1JxEuPN3PCOQjFHvibPqiEX2huiN0IADIrQFOawAtK995l4DQrP69z6mqZ6J8tB0Iph8yimDbIyExL
 X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:21b1:6e5c:b371:7e3])
- (user=axelrasmussen job=sendgmr) by 2002:a05:6214:a72:: with SMTP id
- ef18mr4590087qvb.5.1618512461331; Thu, 15 Apr 2021 11:47:41 -0700 (PDT)
-Date:   Thu, 15 Apr 2021 11:47:25 -0700
+ (user=axelrasmussen job=sendgmr) by 2002:a25:b098:: with SMTP id
+ f24mr6393018ybj.210.1618512463076; Thu, 15 Apr 2021 11:47:43 -0700 (PDT)
+Date:   Thu, 15 Apr 2021 11:47:26 -0700
 In-Reply-To: <20210415184732.3410521-1-axelrasmussen@google.com>
-Message-Id: <20210415184732.3410521-4-axelrasmussen@google.com>
+Message-Id: <20210415184732.3410521-5-axelrasmussen@google.com>
 Mime-Version: 1.0
 References: <20210415184732.3410521-1-axelrasmussen@google.com>
 X-Mailer: git-send-email 2.31.1.368.gbe11c130af-goog
-Subject: [PATCH v3 03/10] userfaultfd/shmem: support UFFDIO_CONTINUE for shmem
+Subject: [PATCH v3 04/10] userfaultfd/shmem: support minor fault registration
+ for shmem
 From:   Axel Rasmussen <axelrasmussen@google.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrea Arcangeli <aarcange@redhat.com>,
@@ -78,299 +79,128 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With this change, userspace can resolve a minor fault within a
-shmem-backed area with a UFFDIO_CONTINUE ioctl. The semantics for this
-match those for hugetlbfs - we look up the existing page in the page
-cache, and install PTEs for it.
+This patch allows shmem-backed VMAs to be registered for minor faults.
+Minor faults are appropriately relayed to userspace in the fault path,
+for VMAs with the relevant flag.
 
-This commit introduces a new helper: mcopy_atomic_install_ptes.
+This commit doesn't hook up the UFFDIO_CONTINUE ioctl for shmem-backed
+minor faults, though, so userspace doesn't yet have a way to resolve
+such faults.
 
-Why handle UFFDIO_CONTINUE for shmem in mm/userfaultfd.c, instead of in
-shmem.c? The existing userfault implementation only relies on shmem.c
-for VM_SHARED VMAs. However, minor fault handling / CONTINUE work just
-fine for !VM_SHARED VMAs as well. We'd prefer to handle CONTINUE for
-shmem in one place, regardless of shared/private (to reduce code
-duplication).
-
-Why add a new mcopy_atomic_install_ptes helper? A problem we have with
-continue is that shmem_mcopy_atomic_pte() and mcopy_atomic_pte() are
-*close* to what we want, but not exactly. We do want to setup the PTEs
-in a CONTINUE operation, but we don't want to e.g. allocate a new page,
-charge it (e.g. to the shmem inode), manipulate various flags, etc. Also
-we have the problem stated above: shmem_mcopy_atomic_pte() and
-mcopy_atomic_pte() both handle one-half of the problem (shared /
-private) continue cares about. So, introduce mcontinue_atomic_pte(), to
-handle all of the shmem continue cases. Introduce the helper so it
-doesn't duplicate code with mcopy_atomic_pte().
-
-In a future commit, shmem_mcopy_atomic_pte() will also be modified to
-use this new helper. However, since this is a bigger refactor, it seems
-most clear to do it as a separate change.
-
+Acked-by: Peter Xu <peterx@redhat.com>
 Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
 ---
- mm/userfaultfd.c | 176 +++++++++++++++++++++++++++++++++++------------
- 1 file changed, 131 insertions(+), 45 deletions(-)
+ fs/userfaultfd.c                 |  6 +++---
+ include/uapi/linux/userfaultfd.h |  7 ++++++-
+ mm/memory.c                      |  8 +++++---
+ mm/shmem.c                       | 12 +++++++++++-
+ 4 files changed, 25 insertions(+), 8 deletions(-)
 
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 23fa2583bbd1..8df0438f5d6a 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -48,6 +48,87 @@ struct vm_area_struct *find_dst_vma(struct mm_struct *dst_mm,
- 	return dst_vma;
- }
- 
-+/*
-+ * Install PTEs, to map dst_addr (within dst_vma) to page.
-+ *
-+ * This function handles MCOPY_ATOMIC_CONTINUE (which is always file-backed),
-+ * whether or not dst_vma is VM_SHARED. It also handles the more general
-+ * MCOPY_ATOMIC_NORMAL case, when dst_vma is *not* VM_SHARED (it may be file
-+ * backed, or not).
-+ *
-+ * Note that MCOPY_ATOMIC_NORMAL for a VM_SHARED dst_vma is handled by
-+ * shmem_mcopy_atomic_pte instead.
-+ */
-+static int mcopy_atomic_install_ptes(struct mm_struct *dst_mm, pmd_t *dst_pmd,
-+				     struct vm_area_struct *dst_vma,
-+				     unsigned long dst_addr, struct page *page,
-+				     bool newly_allocated, bool wp_copy)
-+{
-+	int ret;
-+	pte_t _dst_pte, *dst_pte;
-+	int writable;
-+	bool vm_shared = dst_vma->vm_flags & VM_SHARED;
-+	spinlock_t *ptl;
-+	struct inode *inode;
-+	pgoff_t offset, max_off;
-+
-+	_dst_pte = mk_pte(page, dst_vma->vm_page_prot);
-+	writable = dst_vma->vm_flags & VM_WRITE;
-+	/* For private, non-anon we need CoW (don't write to page cache!) */
-+	if (!vma_is_anonymous(dst_vma) && !vm_shared)
-+		writable = 0;
-+
-+	if (writable || vma_is_anonymous(dst_vma))
-+		_dst_pte = pte_mkdirty(_dst_pte);
-+	if (writable) {
-+		if (wp_copy)
-+			_dst_pte = pte_mkuffd_wp(_dst_pte);
-+		else
-+			_dst_pte = pte_mkwrite(_dst_pte);
-+	} else if (vm_shared) {
-+		/*
-+		 * Since we didn't pte_mkdirty(), mark the page dirty or it
-+		 * could be freed from under us. We could do this
-+		 * unconditionally, but doing it only if !writable is faster.
-+		 */
-+		set_page_dirty(page);
-+	}
-+
-+	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
-+
-+	if (vma_is_shmem(dst_vma)) {
-+		/* serialize against truncate with the page table lock */
-+		inode = dst_vma->vm_file->f_inode;
-+		offset = linear_page_index(dst_vma, dst_addr);
-+		max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-+		ret = -EFAULT;
-+		if (unlikely(offset >= max_off))
-+			goto out_unlock;
-+	}
-+
-+	ret = -EEXIST;
-+	if (!pte_none(*dst_pte))
-+		goto out_unlock;
-+
-+	inc_mm_counter(dst_mm, mm_counter(page));
-+	if (vma_is_shmem(dst_vma))
-+		page_add_file_rmap(page, false);
-+	else
-+		page_add_new_anon_rmap(page, dst_vma, dst_addr, false);
-+
-+	if (newly_allocated)
-+		lru_cache_add_inactive_or_unevictable(page, dst_vma);
-+
-+	set_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
-+
-+	/* No need to invalidate - it was non-present before */
-+	update_mmu_cache(dst_vma, dst_addr, dst_pte);
-+	ret = 0;
-+out_unlock:
-+	pte_unmap_unlock(dst_pte, ptl);
-+	return ret;
-+}
-+
- static int mcopy_atomic_pte(struct mm_struct *dst_mm,
- 			    pmd_t *dst_pmd,
- 			    struct vm_area_struct *dst_vma,
-@@ -56,13 +137,9 @@ static int mcopy_atomic_pte(struct mm_struct *dst_mm,
- 			    struct page **pagep,
- 			    bool wp_copy)
- {
--	pte_t _dst_pte, *dst_pte;
--	spinlock_t *ptl;
- 	void *page_kaddr;
- 	int ret;
- 	struct page *page;
--	pgoff_t offset, max_off;
--	struct inode *inode;
- 
- 	if (!*pagep) {
- 		ret = -ENOMEM;
-@@ -99,43 +176,12 @@ static int mcopy_atomic_pte(struct mm_struct *dst_mm,
- 	if (mem_cgroup_charge(page, dst_mm, GFP_KERNEL))
- 		goto out_release;
- 
--	_dst_pte = pte_mkdirty(mk_pte(page, dst_vma->vm_page_prot));
--	if (dst_vma->vm_flags & VM_WRITE) {
--		if (wp_copy)
--			_dst_pte = pte_mkuffd_wp(_dst_pte);
--		else
--			_dst_pte = pte_mkwrite(_dst_pte);
--	}
--
--	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
--	if (dst_vma->vm_file) {
--		/* the shmem MAP_PRIVATE case requires checking the i_size */
--		inode = dst_vma->vm_file->f_inode;
--		offset = linear_page_index(dst_vma, dst_addr);
--		max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
--		ret = -EFAULT;
--		if (unlikely(offset >= max_off))
--			goto out_release_uncharge_unlock;
--	}
--	ret = -EEXIST;
--	if (!pte_none(*dst_pte))
--		goto out_release_uncharge_unlock;
--
--	inc_mm_counter(dst_mm, MM_ANONPAGES);
--	page_add_new_anon_rmap(page, dst_vma, dst_addr, false);
--	lru_cache_add_inactive_or_unevictable(page, dst_vma);
--
--	set_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
--
--	/* No need to invalidate - it was non-present before */
--	update_mmu_cache(dst_vma, dst_addr, dst_pte);
--
--	pte_unmap_unlock(dst_pte, ptl);
--	ret = 0;
-+	ret = mcopy_atomic_install_ptes(dst_mm, dst_pmd, dst_vma, dst_addr,
-+					page, true, wp_copy);
-+	if (ret)
-+		goto out_release;
- out:
- 	return ret;
--out_release_uncharge_unlock:
--	pte_unmap_unlock(dst_pte, ptl);
- out_release:
- 	put_page(page);
- 	goto out;
-@@ -176,6 +222,41 @@ static int mfill_zeropage_pte(struct mm_struct *dst_mm,
- 	return ret;
- }
- 
-+/* Handles UFFDIO_CONTINUE for all shmem VMAs (shared or private). */
-+static int mcontinue_atomic_pte(struct mm_struct *dst_mm,
-+				pmd_t *dst_pmd,
-+				struct vm_area_struct *dst_vma,
-+				unsigned long dst_addr,
-+				bool wp_copy)
-+{
-+	struct inode *inode = file_inode(dst_vma->vm_file);
-+	pgoff_t pgoff = linear_page_index(dst_vma, dst_addr);
-+	struct page *page;
-+	int ret;
-+
-+	ret = shmem_getpage(inode, pgoff, &page, SGP_READ);
-+	if (ret)
-+		goto out;
-+	if (!page) {
-+		ret = -EFAULT;
-+		goto out;
-+	}
-+
-+	ret = mcopy_atomic_install_ptes(dst_mm, dst_pmd, dst_vma, dst_addr,
-+					page, false, wp_copy);
-+	if (ret)
-+		goto out_release;
-+
-+	unlock_page(page);
-+	ret = 0;
-+out:
-+	return ret;
-+out_release:
-+	unlock_page(page);
-+	put_page(page);
-+	goto out;
-+}
-+
- static pmd_t *mm_alloc_pmd(struct mm_struct *mm, unsigned long address)
- {
- 	pgd_t *pgd;
-@@ -415,11 +496,16 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
- 						unsigned long dst_addr,
- 						unsigned long src_addr,
- 						struct page **page,
--						bool zeropage,
-+						enum mcopy_atomic_mode mode,
- 						bool wp_copy)
- {
- 	ssize_t err;
- 
-+	if (mode == MCOPY_ATOMIC_CONTINUE) {
-+		return mcontinue_atomic_pte(dst_mm, dst_pmd, dst_vma, dst_addr,
-+					    wp_copy);
-+	}
-+
- 	/*
- 	 * The normal page fault path for a shmem will invoke the
- 	 * fault, fill the hole in the file and COW it right away. The
-@@ -431,7 +517,7 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
- 	 * and not in the radix tree.
- 	 */
- 	if (!(dst_vma->vm_flags & VM_SHARED)) {
--		if (!zeropage)
-+		if (mode == MCOPY_ATOMIC_NORMAL)
- 			err = mcopy_atomic_pte(dst_mm, dst_pmd, dst_vma,
- 					       dst_addr, src_addr, page,
- 					       wp_copy);
-@@ -441,7 +527,8 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
- 	} else {
- 		VM_WARN_ON_ONCE(wp_copy);
- 		err = shmem_mcopy_atomic_pte(dst_mm, dst_pmd, dst_vma,
--					     dst_addr, src_addr, zeropage,
-+					     dst_addr, src_addr,
-+					     mode != MCOPY_ATOMIC_NORMAL,
- 					     page);
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 14f92285d04f..9f3b8684cf3c 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -1267,8 +1267,7 @@ static inline bool vma_can_userfault(struct vm_area_struct *vma,
  	}
  
-@@ -463,7 +550,6 @@ static __always_inline ssize_t __mcopy_atomic(struct mm_struct *dst_mm,
- 	long copied;
- 	struct page *page;
- 	bool wp_copy;
--	bool zeropage = (mcopy_mode == MCOPY_ATOMIC_ZEROPAGE);
+ 	if (vm_flags & VM_UFFD_MINOR) {
+-		/* FIXME: Add minor fault interception for shmem. */
+-		if (!is_vm_hugetlb_page(vma))
++		if (!(is_vm_hugetlb_page(vma) || vma_is_shmem(vma)))
+ 			return false;
+ 	}
  
- 	/*
- 	 * Sanitize the command parameters:
-@@ -526,7 +612,7 @@ static __always_inline ssize_t __mcopy_atomic(struct mm_struct *dst_mm,
+@@ -1941,7 +1940,8 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
+ 	/* report all available features and ioctls to userland */
+ 	uffdio_api.features = UFFD_API_FEATURES;
+ #ifndef CONFIG_HAVE_ARCH_USERFAULTFD_MINOR
+-	uffdio_api.features &= ~UFFD_FEATURE_MINOR_HUGETLBFS;
++	uffdio_api.features &=
++		~(UFFD_FEATURE_MINOR_HUGETLBFS | UFFD_FEATURE_MINOR_SHMEM);
+ #endif
+ 	uffdio_api.ioctls = UFFD_API_IOCTLS;
+ 	ret = -EFAULT;
+diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/userfaultfd.h
+index bafbeb1a2624..159a74e9564f 100644
+--- a/include/uapi/linux/userfaultfd.h
++++ b/include/uapi/linux/userfaultfd.h
+@@ -31,7 +31,8 @@
+ 			   UFFD_FEATURE_MISSING_SHMEM |		\
+ 			   UFFD_FEATURE_SIGBUS |		\
+ 			   UFFD_FEATURE_THREAD_ID |		\
+-			   UFFD_FEATURE_MINOR_HUGETLBFS)
++			   UFFD_FEATURE_MINOR_HUGETLBFS |	\
++			   UFFD_FEATURE_MINOR_SHMEM)
+ #define UFFD_API_IOCTLS				\
+ 	((__u64)1 << _UFFDIO_REGISTER |		\
+ 	 (__u64)1 << _UFFDIO_UNREGISTER |	\
+@@ -185,6 +186,9 @@ struct uffdio_api {
+ 	 * UFFD_FEATURE_MINOR_HUGETLBFS indicates that minor faults
+ 	 * can be intercepted (via REGISTER_MODE_MINOR) for
+ 	 * hugetlbfs-backed pages.
++	 *
++	 * UFFD_FEATURE_MINOR_SHMEM indicates the same support as
++	 * UFFD_FEATURE_MINOR_HUGETLBFS, but for shmem-backed pages instead.
+ 	 */
+ #define UFFD_FEATURE_PAGEFAULT_FLAG_WP		(1<<0)
+ #define UFFD_FEATURE_EVENT_FORK			(1<<1)
+@@ -196,6 +200,7 @@ struct uffdio_api {
+ #define UFFD_FEATURE_SIGBUS			(1<<7)
+ #define UFFD_FEATURE_THREAD_ID			(1<<8)
+ #define UFFD_FEATURE_MINOR_HUGETLBFS		(1<<9)
++#define UFFD_FEATURE_MINOR_SHMEM		(1<<10)
+ 	__u64 features;
  
- 	if (!vma_is_anonymous(dst_vma) && !vma_is_shmem(dst_vma))
- 		goto out_unlock;
--	if (mcopy_mode == MCOPY_ATOMIC_CONTINUE)
-+	if (!vma_is_shmem(dst_vma) && mcopy_mode == MCOPY_ATOMIC_CONTINUE)
- 		goto out_unlock;
+ 	__u64 ioctls;
+diff --git a/mm/memory.c b/mm/memory.c
+index 4e358601c5d6..cc71a445c76c 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3972,9 +3972,11 @@ static vm_fault_t do_read_fault(struct vm_fault *vmf)
+ 	 * something).
+ 	 */
+ 	if (vma->vm_ops->map_pages && fault_around_bytes >> PAGE_SHIFT > 1) {
+-		ret = do_fault_around(vmf);
+-		if (ret)
+-			return ret;
++		if (likely(!userfaultfd_minor(vmf->vma))) {
++			ret = do_fault_around(vmf);
++			if (ret)
++				return ret;
++		}
+ 	}
  
- 	/*
-@@ -574,7 +660,7 @@ static __always_inline ssize_t __mcopy_atomic(struct mm_struct *dst_mm,
- 		BUG_ON(pmd_trans_huge(*dst_pmd));
+ 	ret = __do_fault(vmf);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index b72c55aa07fc..30c0bb501dc9 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1785,7 +1785,7 @@ static int shmem_swapin_page(struct inode *inode, pgoff_t index,
+  * vm. If we swap it in we mark it dirty since we also free the swap
+  * entry since a page cannot live in both the swap and page cache.
+  *
+- * vmf and fault_type are only supplied by shmem_fault:
++ * vma, vmf, and fault_type are only supplied by shmem_fault:
+  * otherwise they are NULL.
+  */
+ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+@@ -1820,6 +1820,16 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
  
- 		err = mfill_atomic_pte(dst_mm, dst_pmd, dst_vma, dst_addr,
--				       src_addr, &page, zeropage, wp_copy);
-+				       src_addr, &page, mcopy_mode, wp_copy);
- 		cond_resched();
- 
- 		if (unlikely(err == -ENOENT)) {
+ 	page = pagecache_get_page(mapping, index,
+ 					FGP_ENTRY | FGP_HEAD | FGP_LOCK, 0);
++
++	if (page && vma && userfaultfd_minor(vma)) {
++		if (!xa_is_value(page)) {
++			unlock_page(page);
++			put_page(page);
++		}
++		*fault_type = handle_userfault(vmf, VM_UFFD_MINOR);
++		return 0;
++	}
++
+ 	if (xa_is_value(page)) {
+ 		error = shmem_swapin_page(inode, index, &page,
+ 					  sgp, gfp, vma, fault_type);
 -- 
 2.31.1.368.gbe11c130af-goog
 
