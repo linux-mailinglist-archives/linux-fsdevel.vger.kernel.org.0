@@ -2,288 +2,466 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CCE9360468
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 10:37:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D5BE360492
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 10:42:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231724AbhDOIhW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 04:37:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:52938 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231326AbhDOIhW (ORCPT
+        id S231766AbhDOImq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 04:42:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46306 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231774AbhDOImp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 04:37:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618475819;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=70OF3r+YX0snrpJtZMvP+JAG2a6FJ5FB6OdIZC55JkQ=;
-        b=C6tcg6IfHoiU+C7dl9qsaFO97SLDMmmAzIwiqzfPzoNSURrCW6Ue/xvMhJZzjyfSs3hat+
-        HgpUAC/ye0vxvAkX7RIAppe/jhAoUkR/3WgOuo7E1brgf327iFPnIr91TTOb7jfZ1w2M3k
-        kPzaXArlRAk4JQeYb0HDXlNwJe+Qqnw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-102-fSNMitBcO_eD9CSPtuxIfA-1; Thu, 15 Apr 2021 04:36:55 -0400
-X-MC-Unique: fSNMitBcO_eD9CSPtuxIfA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6C6A5100A25B;
-        Thu, 15 Apr 2021 08:36:53 +0000 (UTC)
-Received: from wangxiaodeMacBook-Air.local (ovpn-12-61.pek2.redhat.com [10.72.12.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B0A086FEED;
-        Thu, 15 Apr 2021 08:36:37 +0000 (UTC)
-Subject: Re: [PATCH v6 10/10] Documentation: Add documentation for VDUSE
-To:     Stefan Hajnoczi <stefanha@redhat.com>,
-        Yongji Xie <xieyongji@bytedance.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20210331080519.172-1-xieyongji@bytedance.com>
- <20210331080519.172-11-xieyongji@bytedance.com>
- <YHb44R4HyLEUVSTF@stefanha-x1.localdomain>
- <CACycT3uNR+nZY5gY0UhPkeOyi7Za6XkX4b=hasuDcgqdc7fqfg@mail.gmail.com>
- <YHfo8pc7dIO9lNc3@stefanha-x1.localdomain>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <80b31814-9e41-3153-7efb-c0c2fab44feb@redhat.com>
-Date:   Thu, 15 Apr 2021 16:36:35 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.9.1
+        Thu, 15 Apr 2021 04:42:45 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1D43C061756
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 01:42:16 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id o123so15602741pfb.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 01:42:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ztU2Acg0dMiojA7f/XnfsJKLkpkhNQKf4xT+eFnEllA=;
+        b=NZ8qQc3GnlQ5E8gK5iIN3Cf8y2N2tfQqyIOit/7RtYXSQKXGsVmzPba24eDrwmlfFX
+         h2ibyDEE2Lcp5HkFF4lUg/l3pgSo/iypxDQIH5bVsR3SzpH3ES4jIGO05DihtMpsqsxj
+         aIy/aFfP0AfRLl0HpA2kO6lCaPVYBsJTDTvgXBEobiJCZQ86cuZyOKfpzUk72rqq2Asc
+         VvWfNhEjgIdeddNIeBdXWNP3AvNRiUd6VljX9Wyd9Sgj+jw8fa3/C6MPGT3VXfYdKPgT
+         8oRp1vJT8Jp9rRpW2DFRmUhZmTdKds4goPNJHov4tMlGMpKAkRCGWFdA2qz1S+HG9EG8
+         isbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ztU2Acg0dMiojA7f/XnfsJKLkpkhNQKf4xT+eFnEllA=;
+        b=uJfgJFFv6OCOOzzzGEKXgaTm3o9gRopuJu3VyeR792bNBKxIKY6vYGVdB/reWCMxNy
+         17VzNbZPBnvXPs9EdnK2d+al73GUySWI5mQEFhQK1nmN0vObHnvuuXSJJjNbHfm7FZBg
+         7rOahOOXBKgtzNA6SDg3KNKEFK2XaBLGPJIQTlnkRsD2Z6tufoYaPWMTaa7oJZIVPDwl
+         klwMPVvyPMRQJs7QPxhvRR4K0ky2NzDFm+f5JLS8dJXjpYeuT3iLso+HzePv3JpWCYD8
+         2rYVs0cOVeuvIsxGxJftoHwTJTFcst0BMH7fIZ6CSug2DUDXjNarP+Pct7hH5esnqQyq
+         6LzA==
+X-Gm-Message-State: AOAM532rL+9Uz3JZdvvwDMmN9G4dlGUEHIo15bcSes+Qbg5zvdMrQ8+2
+        EQNdeTsDTvanBH6O+puZKn7CLA==
+X-Google-Smtp-Source: ABdhPJyc4rkJPMXDUn7IRSP8a0BOjXPGa1ixI/MWVdO14zODslWGxtghZCrEXkEU4JJ+Pye/xj9DEw==
+X-Received: by 2002:a65:4481:: with SMTP id l1mr2471083pgq.42.1618476136125;
+        Thu, 15 Apr 2021 01:42:16 -0700 (PDT)
+Received: from localhost.localdomain ([139.177.225.234])
+        by smtp.gmail.com with ESMTPSA id e13sm1392365pgt.91.2021.04.15.01.42.05
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Apr 2021 01:42:15 -0700 (PDT)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        rdunlap@infradead.org, oneukum@suse.com, anshuman.khandual@arm.com,
+        jroedel@suse.de, almasrymina@google.com, rientjes@google.com,
+        willy@infradead.org, osalvador@suse.de, mhocko@suse.com,
+        song.bao.hua@hisilicon.com, david@redhat.com,
+        naoya.horiguchi@nec.com, joao.m.martins@oracle.com
+Cc:     duanxiongchun@bytedance.com, fam.zheng@bytedance.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v20 0/9] Free some vmemmap pages of HugeTLB page
+Date:   Thu, 15 Apr 2021 16:39:56 +0800
+Message-Id: <20210415084005.25049-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 MIME-Version: 1.0
-In-Reply-To: <YHfo8pc7dIO9lNc3@stefanha-x1.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi,
 
-在 2021/4/15 下午3:19, Stefan Hajnoczi 写道:
-> On Thu, Apr 15, 2021 at 01:38:37PM +0800, Yongji Xie wrote:
->> On Wed, Apr 14, 2021 at 10:15 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
->>> On Wed, Mar 31, 2021 at 04:05:19PM +0800, Xie Yongji wrote:
->>>> VDUSE (vDPA Device in Userspace) is a framework to support
->>>> implementing software-emulated vDPA devices in userspace. This
->>>> document is intended to clarify the VDUSE design and usage.
->>>>
->>>> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
->>>> ---
->>>>   Documentation/userspace-api/index.rst |   1 +
->>>>   Documentation/userspace-api/vduse.rst | 212 ++++++++++++++++++++++++++++++++++
->>>>   2 files changed, 213 insertions(+)
->>>>   create mode 100644 Documentation/userspace-api/vduse.rst
->>> Just looking over the documentation briefly (I haven't studied the code
->>> yet)...
->>>
->> Thank you!
->>
->>>> +How VDUSE works
->>>> +------------
->>>> +Each userspace vDPA device is created by the VDUSE_CREATE_DEV ioctl on
->>>> +the character device (/dev/vduse/control). Then a device file with the
->>>> +specified name (/dev/vduse/$NAME) will appear, which can be used to
->>>> +implement the userspace vDPA device's control path and data path.
->>> These steps are taken after sending the VDPA_CMD_DEV_NEW netlink
->>> message? (Please consider reordering the documentation to make it clear
->>> what the sequence of steps are.)
->>>
->> No, VDUSE devices should be created before sending the
->> VDPA_CMD_DEV_NEW netlink messages which might produce I/Os to VDUSE.
-> I see. Please include an overview of the steps before going into detail.
-> Something like:
->
->    VDUSE devices are started as follows:
->
->    1. Create a new VDUSE instance with ioctl(VDUSE_CREATE_DEV) on
->       /dev/vduse/control.
->
->    2. Begin processing VDUSE messages from /dev/vduse/$NAME. The first
->       messages will arrive while attaching the VDUSE instance to vDPA.
->
->    3. Send the VDPA_CMD_DEV_NEW netlink message to attach the VDUSE
->       instance to vDPA.
->
->    VDUSE devices are stopped as follows:
->
->    ...
->
->>>> +     static int netlink_add_vduse(const char *name, int device_id)
->>>> +     {
->>>> +             struct nl_sock *nlsock;
->>>> +             struct nl_msg *msg;
->>>> +             int famid;
->>>> +
->>>> +             nlsock = nl_socket_alloc();
->>>> +             if (!nlsock)
->>>> +                     return -ENOMEM;
->>>> +
->>>> +             if (genl_connect(nlsock))
->>>> +                     goto free_sock;
->>>> +
->>>> +             famid = genl_ctrl_resolve(nlsock, VDPA_GENL_NAME);
->>>> +             if (famid < 0)
->>>> +                     goto close_sock;
->>>> +
->>>> +             msg = nlmsg_alloc();
->>>> +             if (!msg)
->>>> +                     goto close_sock;
->>>> +
->>>> +             if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, famid, 0, 0,
->>>> +                 VDPA_CMD_DEV_NEW, 0))
->>>> +                     goto nla_put_failure;
->>>> +
->>>> +             NLA_PUT_STRING(msg, VDPA_ATTR_DEV_NAME, name);
->>>> +             NLA_PUT_STRING(msg, VDPA_ATTR_MGMTDEV_DEV_NAME, "vduse");
->>>> +             NLA_PUT_U32(msg, VDPA_ATTR_DEV_ID, device_id);
->>> What are the permission/capability requirements for VDUSE?
->>>
->> Now I think we need privileged permission (root user). Because
->> userspace daemon is able to access avail vring, used vring, descriptor
->> table in kernel driver directly.
-> Please state this explicitly at the start of the document. Existing
-> interfaces like FUSE are designed to avoid trusting userspace.
+Since Mike's patches (make hugetlb put_page safe for all calling contexts[1])
+applied into the next-20210412. We can move forward on this patch series now.
 
+This patch series will free some vmemmap pages(struct page structures)
+associated with each HugeTLB page when preallocated to save memory.
 
-There're some subtle difference here. VDUSE present a device to kernel 
-which means IOMMU is probably the only thing to prevent a malicous device.
+In order to reduce the difficulty of the first version of code review.
+From this version, we disable PMD/huge page mapping of vmemmap if this
+feature was enabled. This acutely eliminates a bunch of the complex code
+doing page table manipulation. When this patch series is solid, we cam add
+the code of vmemmap page table manipulation in the future.
 
+The struct page structures (page structs) are used to describe a physical
+page frame. By default, there is an one-to-one mapping from a page frame to
+it's corresponding page struct.
 
-> Therefore
-> people might think the same is the case here. It's critical that people
-> are aware of this before deploying VDUSE with virtio-vdpa.
->
-> We should probably pause here and think about whether it's possible to
-> avoid trusting userspace. Even if it takes some effort and costs some
-> performance it would probably be worthwhile.
+The HugeTLB pages consist of multiple base page size pages and is supported
+by many architectures. See hugetlbpage.rst in the Documentation directory
+for more details. On the x86 architecture, HugeTLB pages of size 2MB and 1GB
+are currently supported. Since the base page size on x86 is 4KB, a 2MB
+HugeTLB page consists of 512 base pages and a 1GB HugeTLB page consists of
+4096 base pages. For each base page, there is a corresponding page struct.
 
+Within the HugeTLB subsystem, only the first 4 page structs are used to
+contain unique information about a HugeTLB page. HUGETLB_CGROUP_MIN_ORDER
+provides this upper limit. The only 'useful' information in the remaining
+page structs is the compound_head field, and this field is the same for all
+tail pages.
 
-Since the bounce buffer is used the only attack surface is the coherent 
-area, if we want to enforce stronger isolation we need to use shadow 
-virtqueue (which is proposed in earlier version by me) in this case. But 
-I'm not sure it's worth to do that.
+By removing redundant page structs for HugeTLB pages, memory can returned to
+the buddy allocator for other uses.
 
+When the system boot up, every 2M HugeTLB has 512 struct page structs which
+size is 8 pages(sizeof(struct page) * 512 / PAGE_SIZE).
 
->
-> Is the security situation different with vhost-vdpa? In that case it
-> seems more likely that the host kernel doesn't need to trust the
-> userspace VDUSE device.
->
-> Regarding privileges in general: userspace VDUSE processes shouldn't
-> need to run as root. The VDUSE device lifecycle will require privileges
-> to attach vhost-vdpa and virtio-vdpa devices, but the actual userspace
-> process that emulates the device should be able to run unprivileged.
-> Emulated devices are an attack surface and even if you are comfortable
-> with running them as root in your specific use case, it will be an issue
-> as soon as other people want to use VDUSE and could give VDUSE a
-> reputation for poor security.
+    HugeTLB                  struct pages(8 pages)         page frame(8 pages)
+ +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
+ |           |                     |     0     | -------------> |     0     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     1     | -------------> |     1     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     2     | -------------> |     2     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     3     | -------------> |     3     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     4     | -------------> |     4     |
+ |    2MB    |                     +-----------+                +-----------+
+ |           |                     |     5     | -------------> |     5     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     6     | -------------> |     6     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     7     | -------------> |     7     |
+ |           |                     +-----------+                +-----------+
+ |           |
+ |           |
+ |           |
+ +-----------+
 
+The value of page->compound_head is the same for all tail pages. The first
+page of page structs (page 0) associated with the HugeTLB page contains the 4
+page structs necessary to describe the HugeTLB. The only use of the remaining
+pages of page structs (page 1 to page 7) is to point to page->compound_head.
+Therefore, we can remap pages 2 to 7 to page 1. Only 2 pages of page structs
+will be used for each HugeTLB page. This will allow us to free the remaining
+6 pages to the buddy allocator.
 
-In this case, I think it works as other char device:
+Here is how things look after remapping.
 
-- privilleged process to create and destroy the VDUSE
-- fd is passed via SCM_RIGHTS to unprivilleged process that implements 
-the device
+    HugeTLB                  struct pages(8 pages)         page frame(8 pages)
+ +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
+ |           |                     |     0     | -------------> |     0     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     1     | -------------> |     1     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     2     | ----------------^ ^ ^ ^ ^ ^
+ |           |                     +-----------+                   | | | | |
+ |           |                     |     3     | ------------------+ | | | |
+ |           |                     +-----------+                     | | | |
+ |           |                     |     4     | --------------------+ | | |
+ |    2MB    |                     +-----------+                       | | |
+ |           |                     |     5     | ----------------------+ | |
+ |           |                     +-----------+                         | |
+ |           |                     |     6     | ------------------------+ |
+ |           |                     +-----------+                           |
+ |           |                     |     7     | --------------------------+
+ |           |                     +-----------+
+ |           |
+ |           |
+ |           |
+ +-----------+
 
+When a HugeTLB is freed to the buddy system, we should allocate 6 pages for
+vmemmap pages and restore the previous mapping relationship.
 
->
->>> How does VDUSE interact with namespaces?
->>>
->> Not sure I get your point here. Do you mean how the emulated vDPA
->> device interact with namespaces? This should work like hardware vDPA
->> devices do. VDUSE daemon can reside outside the namespace of a
->> container which uses the vDPA device.
-> Can VDUSE devices run inside containers? Are /dev/vduse/$NAME and vDPA
-> device names global?
+Apart from 2MB HugeTLB page, we also have 1GB HugeTLB page. It is similar
+to the 2MB HugeTLB page. We also can use this approach to free the vmemmap
+pages.
 
+In this case, for the 1GB HugeTLB page, we can save 4094 pages. This is a
+very substantial gain. On our server, run some SPDK/QEMU applications which
+will use 1024GB HugeTLB page. With this feature enabled, we can save ~16GB
+(1G hugepage)/~12GB (2MB hugepage) memory.
 
-I think it's a global one, we can add namespace on top.
+Because there are vmemmap page tables reconstruction on the freeing/allocating
+path, it increases some overhead. Here are some overhead analysis.
 
+1) Allocating 10240 2MB HugeTLB pages.
 
->
->>> What is the meaning of VDPA_ATTR_DEV_ID? I don't see it in Linux
->>> v5.12-rc6 drivers/vdpa/vdpa.c:vdpa_nl_cmd_dev_add_set_doit().
->>>
->> It means the device id (e.g. VIRTIO_ID_BLOCK) of the vDPA device and
->> can be found in include/uapi/linux/vdpa.h.
-> VDPA_ATTR_DEV_ID is only used by VDPA_CMD_DEV_GET in Linux v5.12-rc6,
-> not by VDPA_CMD_DEV_NEW.
->
-> The example in this document uses VDPA_ATTR_DEV_ID with
-> VDPA_CMD_DEV_NEW. Is the example outdated?
->
->>>> +MMU-based IOMMU Driver
->>>> +----------------------
->>>> +VDUSE framework implements an MMU-based on-chip IOMMU driver to support
->>>> +mapping the kernel DMA buffer into the userspace iova region dynamically.
->>>> +This is mainly designed for virtio-vdpa case (kernel virtio drivers).
->>>> +
->>>> +The basic idea behind this driver is treating MMU (VA->PA) as IOMMU (IOVA->PA).
->>>> +The driver will set up MMU mapping instead of IOMMU mapping for the DMA transfer
->>>> +so that the userspace process is able to use its virtual address to access
->>>> +the DMA buffer in kernel.
->>>> +
->>>> +And to avoid security issue, a bounce-buffering mechanism is introduced to
->>>> +prevent userspace accessing the original buffer directly which may contain other
->>>> +kernel data. During the mapping, unmapping, the driver will copy the data from
->>>> +the original buffer to the bounce buffer and back, depending on the direction of
->>>> +the transfer. And the bounce-buffer addresses will be mapped into the user address
->>>> +space instead of the original one.
->>> Is mmap(2) the right interface if memory is not actually shared, why not
->>> just use pread(2)/pwrite(2) to make the copy explicit? That way the copy
->>> semantics are clear. For example, don't expect to be able to busy wait
->>> on the memory because changes will not be visible to the other side.
->>>
->>> (I guess I'm missing something here and that mmap(2) is the right
->>> approach, but maybe this documentation section can be clarified.)
->> It's for performance considerations on the one hand. We might need to
->> call pread(2)/pwrite(2) multiple times for each request.
-> Userspace can keep page-sized pread() buffers around to avoid additional
-> syscalls during a request.
+   a) With this patch series applied:
+   # time echo 10240 > /proc/sys/vm/nr_hugepages
 
+   real     0m0.166s
+   user     0m0.000s
+   sys      0m0.166s
 
-I'm not sure I get here. But the length of the request is not 
-necessarily PAGE_SIZE.
+   # bpftrace -e 'kprobe:alloc_fresh_huge_page { @start[tid] = nsecs; }
+     kretprobe:alloc_fresh_huge_page /@start[tid]/ { @latency = hist(nsecs -
+     @start[tid]); delete(@start[tid]); }'
+   Attaching 2 probes...
 
+   @latency:
+   [8K, 16K)           5476 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+   [16K, 32K)          4760 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@       |
+   [32K, 64K)             4 |                                                    |
 
->
-> mmap() access does reduce the number of syscalls, but it also introduces
-> page faults (effectively doing the page-sized pread() I mentioned
-> above).
+   b) Without this patch series:
+   # time echo 10240 > /proc/sys/vm/nr_hugepages
 
+   real     0m0.067s
+   user     0m0.000s
+   sys      0m0.067s
 
-You can access the data directly if there's already a page fault. So 
-mmap() should be much faster in this case.
+   # bpftrace -e 'kprobe:alloc_fresh_huge_page { @start[tid] = nsecs; }
+     kretprobe:alloc_fresh_huge_page /@start[tid]/ { @latency = hist(nsecs -
+     @start[tid]); delete(@start[tid]); }'
+   Attaching 2 probes...
 
+   @latency:
+   [4K, 8K)           10147 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+   [8K, 16K)             93 |                                                    |
 
->
-> It's not obvious to me that there is a fundamental difference between
-> the two approaches in terms of performance.
->
->> On the other
->> hand, we can handle the virtqueue in a unified way for both vhost-vdpa
->> case and virtio-vdpa case. Otherwise, userspace daemon needs to know
->> which iova ranges need to be accessed with pread(2)/pwrite(2). And in
->> the future, we might be able to avoid bouncing in some cases.
-> Ah, I see. So bounce buffers are not used for vhost-vdpa?
+   Summarize: this feature is about ~2x slower than before.
 
+2) Freeing 10240 2MB HugeTLB pages.
 
-Yes, VDUSE can pass different fds to usersapce for mmap().
+   a) With this patch series applied:
+   # time echo 0 > /proc/sys/vm/nr_hugepages
 
-Thanks
+   real     0m0.213s
+   user     0m0.000s
+   sys      0m0.213s
 
+   # bpftrace -e 'kprobe:free_pool_huge_page { @start[tid] = nsecs; }
+     kretprobe:free_pool_huge_page /@start[tid]/ { @latency = hist(nsecs -
+     @start[tid]); delete(@start[tid]); }'
+   Attaching 2 probes...
 
->
-> Stefan
+   @latency:
+   [8K, 16K)              6 |                                                    |
+   [16K, 32K)         10227 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+   [32K, 64K)             7 |                                                    |
+
+   b) Without this patch series:
+   # time echo 0 > /proc/sys/vm/nr_hugepages
+
+   real     0m0.081s
+   user     0m0.000s
+   sys      0m0.081s
+
+   # bpftrace -e 'kprobe:free_pool_huge_page { @start[tid] = nsecs; }
+     kretprobe:free_pool_huge_page /@start[tid]/ { @latency = hist(nsecs -
+     @start[tid]); delete(@start[tid]); }'
+   Attaching 2 probes...
+
+   @latency:
+   [4K, 8K)            6805 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+   [8K, 16K)           3427 |@@@@@@@@@@@@@@@@@@@@@@@@@@                          |
+   [16K, 32K)             8 |                                                    |
+
+   Summarize: The overhead of __free_hugepage is about ~2-3x slower than before.
+
+Although the overhead has increased, the overhead is not significant. Like Mike
+said, "However, remember that the majority of use cases create HugeTLB pages at
+or shortly after boot time and add them to the pool. So, additional overhead is
+at pool creation time. There is no change to 'normal run time' operations of
+getting a page from or returning a page to the pool (think page fault/unmap)".
+
+Despite the overhead and in addition to the memory gains from this series. The
+following data is obtained by Joao Martins. Very thanks to his effort.
+
+There's an additional benefit which is page (un)pinners will see an improvement
+and Joao presumes because there are fewer memmap pages and thus the tail/head
+pages are staying in cache more often.
+
+Out of the box Joao saw (when comparing linux-next against linux-next + this series)
+with gup_test and pinning a 16G HugeTLB file (with 1G pages):
+
+	get_user_pages(): ~32k -> ~9k
+	unpin_user_pages(): ~75k -> ~70k
+
+Usually any tight loop fetching compound_head(), or reading tail pages data (e.g.
+compound_head) benefit a lot. There's some unpinning inefficiencies Joao was
+fixing[2], but with that in added it shows even more:
+
+	unpin_user_pages(): ~27k -> ~3.8k
+
+[1] https://lore.kernel.org/linux-mm/20210409205254.242291-1-mike.kravetz@oracle.com/
+[2] https://lore.kernel.org/linux-mm/20210204202500.26474-1-joao.m.martins@oracle.com/
+
+Todo:
+  - Free all of the tail vmemmap pages
+    Now for the 2MB HugrTLB page, we only free 6 vmemmap pages. we really can
+    free 7 vmemmap pages. In this case, we can see 8 of the 512 struct page
+    structures has beed set PG_head flag. If we can adjust compound_head()
+    slightly and make compound_head() return the real head struct page when
+    the parameter is the tail struct page but with PG_head flag set.
+
+    In order to make the code evolution route clearer. This feature can can be
+    a separate patch after this patchset is solid.
+
+  - Support for other architectures (e.g. aarch64).
+  - Enable PMD/huge page mapping of vmemmap even if this feature was enabled.
+
+Changelog in v19 -> v20:
+  - Rebase to next-20210412.
+  - Introduce workqueue to defer freeing HugeTLB pages.
+  - Remove all tags (Reviewed-by ot Tested-by) from patch 6.
+  - Disable memmap_on_memory when hugetlb_free_vmemmap enabled (patch 8).
+
+Changelog in v18 -> v19:
+  - Fix compiler error on sparc arch. Thanks Stephen.
+  - Make patch "gather discrete indexes of tail page" prior to "free the vmemmap
+    pages associated with each HugeTLB page".
+  - Remove some BUG_ON from patch #4.
+  - Update patch #6 changelog.
+  - Update Documentation/admin-guide/mm/memory-hotplug.rst.
+  - Drop the patch of "optimize the code with the help of the compiler".
+  - Update Documentation/admin-guide/kernel-parameters.txt in patch #7.
+  - Trim update_and_free_page.
+
+ Thanks to Michal, Oscar and Mike's review and suggestions.
+
+Changelog in v17 -> v18:
+  - Add complete copyright to bootmem_info.c (Suggested by Balbir).
+  - Fix some issues (in patch #4) suggested by Mike.
+
+  Thanks to Balbir and Mike's review. Also thanks to Chen Huang and
+  Bodeddula Balasubramaniam's test.
+
+Changelog in v16 -> v17:
+  - Fix issues suggested by Mike and Oscar.
+  - Update commit log suggested by Michal.
+
+  Thanks to Mike, David H and Michal's suggestions and review.
+
+Changelog in v15 -> v16:
+  - Use GFP_KERNEL to allocate vmemmap pages.
+
+  Thanks to Mike, David H and Michal's suggestions.
+
+Changelog in v14 -> v15:
+  - Fix some issues suggested by Oscar. Thanks to Oscar.
+  - Add numbers which Joao Martins tested to cover letter. Thanks to his effort.
+
+Changelog in v13 -> v14:
+  - Refuse to free the HugeTLB page when the system is under memory pressure.
+  - Use GFP_ATOMIC to allocate vmemmap pages instead of GFP_KERNEL.
+  - Rebase to linux-next 20210202.
+  - Fix and add some comments for vmemmap_remap_free().
+
+  Thanks to Oscar, Mike, David H and David R's suggestions and review.
+
+Changelog in v12 -> v13:
+  - Remove VM_WARN_ON_PAGE macro.
+  - Add more comments in vmemmap_pte_range() and vmemmap_remap_free().
+
+  Thanks to Oscar and Mike's suggestions and review.
+
+Changelog in v11 -> v12:
+  - Move VM_WARN_ON_PAGE to a separate patch.
+  - Call __free_hugepage() with hugetlb_lock (See patch #5.) to serialize
+    with dissolve_free_huge_page(). It is to prepare for patch #9.
+  - Introduce PageHugeInflight. See patch #9.
+
+Changelog in v10 -> v11:
+  - Fix compiler error when !CONFIG_HUGETLB_PAGE_FREE_VMEMMAP.
+  - Rework some comments and commit changes.
+  - Rework vmemmap_remap_free() to 3 parameters.
+
+  Thanks to Oscar and Mike's suggestions and review.
+
+Changelog in v9 -> v10:
+  - Fix a bug in patch #11. Thanks to Oscar for pointing that out.
+  - Rework some commit log or comments. Thanks Mike and Oscar for the suggestions.
+  - Drop VMEMMAP_TAIL_PAGE_REUSE in the patch #3.
+
+  Thank you very much Mike and Oscar for reviewing the code.
+
+Changelog in v8 -> v9:
+  - Rework some code. Very thanks to Oscar.
+  - Put all the non-hugetlb vmemmap functions under sparsemem-vmemmap.c.
+
+Changelog in v7 -> v8:
+  - Adjust the order of patches.
+
+  Very thanks to David and Oscar. Your suggestions are very valuable.
+
+Changelog in v6 -> v7:
+  - Rebase to linux-next 20201130
+  - Do not use basepage mapping for vmemmap when this feature is disabled.
+  - Rework some patchs.
+    [PATCH v6 08/16] mm/hugetlb: Free the vmemmap pages associated with each hugetlb page
+    [PATCH v6 10/16] mm/hugetlb: Allocate the vmemmap pages associated with each hugetlb page
+
+  Thanks to Oscar and Barry.
+
+Changelog in v5 -> v6:
+  - Disable PMD/huge page mapping of vmemmap if this feature was enabled.
+  - Simplify the first version code.
+
+Changelog in v4 -> v5:
+  - Rework somme comments and code in the [PATCH v4 04/21] and [PATCH v4 05/21].
+
+  Thanks to Mike and Oscar's suggestions.
+
+Changelog in v3 -> v4:
+  - Move all the vmemmap functions to hugetlb_vmemmap.c.
+  - Make the CONFIG_HUGETLB_PAGE_FREE_VMEMMAP default to y, if we want to
+    disable this feature, we should disable it by a boot/kernel command line.
+  - Remove vmemmap_pgtable_{init, deposit, withdraw}() helper functions.
+  - Initialize page table lock for vmemmap through core_initcall mechanism.
+
+  Thanks for Mike and Oscar's suggestions.
+
+Changelog in v2 -> v3:
+  - Rename some helps function name. Thanks Mike.
+  - Rework some code. Thanks Mike and Oscar.
+  - Remap the tail vmemmap page with PAGE_KERNEL_RO instead of PAGE_KERNEL.
+    Thanks Matthew.
+  - Add some overhead analysis in the cover letter.
+  - Use vmemap pmd table lock instead of a hugetlb specific global lock.
+
+Changelog in v1 -> v2:
+  - Fix do not call dissolve_compound_page in alloc_huge_page_vmemmap().
+  - Fix some typo and code style problems.
+  - Remove unused handle_vmemmap_fault().
+  - Merge some commits to one commit suggested by Mike.
+
+Muchun Song (9):
+  mm: memory_hotplug: factor out bootmem core functions to
+    bootmem_info.c
+  mm: hugetlb: introduce a new config HUGETLB_PAGE_FREE_VMEMMAP
+  mm: hugetlb: gather discrete indexes of tail page
+  mm: hugetlb: free the vmemmap pages associated with each HugeTLB page
+  mm: hugetlb: defer freeing of HugeTLB pages
+  mm: hugetlb: alloc the vmemmap pages associated with each HugeTLB page
+  mm: hugetlb: add a kernel parameter hugetlb_free_vmemmap
+  mm: memory_hotplug: disable memmap_on_memory when hugetlb_free_vmemmap
+    enabled
+  mm: hugetlb: introduce nr_free_vmemmap_pages in the struct hstate
+
+ Documentation/admin-guide/kernel-parameters.txt |  21 ++
+ Documentation/admin-guide/mm/hugetlbpage.rst    |  11 +
+ Documentation/admin-guide/mm/memory-hotplug.rst |  13 ++
+ arch/sparc/mm/init_64.c                         |   1 +
+ arch/x86/mm/init_64.c                           |  13 +-
+ drivers/acpi/acpi_memhotplug.c                  |   1 +
+ fs/Kconfig                                      |   5 +
+ include/linux/bootmem_info.h                    |  66 ++++++
+ include/linux/hugetlb.h                         |  46 +++-
+ include/linux/hugetlb_cgroup.h                  |  19 +-
+ include/linux/memory_hotplug.h                  |  27 ---
+ include/linux/mm.h                              |   5 +
+ mm/Makefile                                     |   2 +
+ mm/bootmem_info.c                               | 127 ++++++++++
+ mm/hugetlb.c                                    | 157 +++++++++++--
+ mm/hugetlb_vmemmap.c                            | 297 ++++++++++++++++++++++++
+ mm/hugetlb_vmemmap.h                            |  45 ++++
+ mm/memory_hotplug.c                             | 134 ++---------
+ mm/sparse-vmemmap.c                             | 267 +++++++++++++++++++++
+ mm/sparse.c                                     |   1 +
+ 20 files changed, 1078 insertions(+), 180 deletions(-)
+ create mode 100644 include/linux/bootmem_info.h
+ create mode 100644 mm/bootmem_info.c
+ create mode 100644 mm/hugetlb_vmemmap.c
+ create mode 100644 mm/hugetlb_vmemmap.h
+
+-- 
+2.11.0
 
