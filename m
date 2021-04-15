@@ -2,109 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 72301361179
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 19:53:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D78493611A9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 20:03:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234259AbhDORyB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 13:54:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58942 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234221AbhDORyB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 13:54:01 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CE22861139;
-        Thu, 15 Apr 2021 17:53:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618509217;
-        bh=uykpJSftt6neycgE9UZPf5383PYs5+NZsn9IZWyvBls=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=a+DebjSlUjLnchww5EDoaY79Eih/5pj2kts+TQDF8lOdiutpciCSifK84L9QXoGuh
-         RCrGzfgzSNpAZ+NeG3MPAjLysjOVnRJMGXPlybpG7DvUYF4HxZiT+w8dAvEnTGUaPJ
-         Y2z8tdI/HAbu3xJLZYccCvRAUO68z4aLYKUl/YLmkNnH9m7PgY4nC1If0iPVp8YDTE
-         Wpj8JPULx8hDrlo9gKeofoliQud3+SpsRZWTNtHVTutFntOa6vxqcbvKcEm6nbBQlS
-         QdfX23MKqQi9ELJvJTvpkY/vQbqMyywLTBW19pURWr2FehLnGfiruE3FynmCcrGFyQ
-         i1D9GkCI9fkcQ==
-Received: by mail-qk1-f169.google.com with SMTP id f19so8408061qka.8;
-        Thu, 15 Apr 2021 10:53:37 -0700 (PDT)
-X-Gm-Message-State: AOAM533wzFPjdCO4bqrDrc4+1n+BERT99soGLx3wwjII9mbB950Sjbh0
-        /jEfvOZR7HhZMPIUK3A0q0w00gikEhWVmGE+s1I=
-X-Google-Smtp-Source: ABdhPJzCNzm0W0XgockPjRIWCggyQJP/PdeRn4VzfFy2hYp7ghpXaixWJjKfmj+WztuDXoPxjQPb2UXr/6ySmNnlD6w=
-X-Received: by 2002:a37:d202:: with SMTP id f2mr4665987qkj.273.1618509217042;
- Thu, 15 Apr 2021 10:53:37 -0700 (PDT)
+        id S232759AbhDOSEQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 14:04:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57536 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233551AbhDOSEP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Apr 2021 14:04:15 -0400
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BCB6C061574
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 11:03:52 -0700 (PDT)
+Received: by mail-il1-x135.google.com with SMTP id b17so20927923ilh.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 11:03:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jMi3JQh4ceVfV/j7Lf7DWzkm4A/CG7sUwuBKTI9Y7vs=;
+        b=LOWfqGRgHZ2GaLk4r0jnjtm6hmUQDMtLwyD23G/zSp+dciXK8p9hxW5dpWlieJWVov
+         9fZxBC9Gq0vChe5/SI2Xz2rZtf5evjuecN76OfNiPb1n7JvJtsnyuPbcU7lyolclN6h9
+         xm/USSXnuwH42Jp23W8TX1U8yNA3aiVNF0zBR+WhMg086kxGgjnkrWSXlZ2K1t+dKvX5
+         mz6u4JCxYhvmR84+sH+l+BSsbQc2DhNnetCk62Xcxyf/eFiJ8bkw8HN++VM57h/YDUKu
+         p8uMAQs2++W6WuNhOtTfjydZwv7nX0X3/sjt3phwy8sk76atjR1aN3znqw1PgpCPveT8
+         oH7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jMi3JQh4ceVfV/j7Lf7DWzkm4A/CG7sUwuBKTI9Y7vs=;
+        b=bNgdhgBnLSG28tT7yFMqfrJZN5BfP5R/2sp+K0QEBbyzuFizrYkiRVlzKNIoXLbGIp
+         piBdw5LHpEin5xl+ux1PFy5bh3tOBPEfYgDeYaffE1YMbHFE+uabj0kuJFFAMUsLnURC
+         EiwR+yrMrzBC/PRs3z+m5dQPW4VTxQAyKBn1nBOzJMiInnTw5BmPkz3shCfZlvHrbDEQ
+         s0Prv9M61OzKvrP0uymrP6Oii77wD3ocU0LPf5jIaldJMvEtVgmvXnCstzGsuBdKbmlg
+         wUZBSMcnI+rUhyT5aSugUX6p+YOEuOcVsUbz/BFXv2PxTsaBd50DKWMBkty7DUB7BfVe
+         3UtQ==
+X-Gm-Message-State: AOAM532zfeL2omCWUhdaWg33YKPvw4dxu0FoCuPyR3QEl0CWJrJ267dz
+        P5Bhz99g2dlMkB/WAmreq7UlRvugKD6sTnzgvJ3W9A==
+X-Google-Smtp-Source: ABdhPJzLg34mG/2F8echbVGsALC+cjlSLd1cDv+gDbhlWGfCHOBwcNyvJAecuz7DsvJdtaeQICx6VrotmYdZLAXz92k=
+X-Received: by 2002:a05:6e02:1d06:: with SMTP id i6mr1346852ila.165.1618509831881;
+ Thu, 15 Apr 2021 11:03:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <1408071538-14354-1-git-send-email-mcgrof@do-not-panic.com>
- <20140815092950.GZ18016@ZenIV.linux.org.uk> <c3b0feac-327c-15db-02c1-4a25639540e4@suse.com>
-In-Reply-To: <c3b0feac-327c-15db-02c1-4a25639540e4@suse.com>
-From:   Luis Chamberlain <mcgrof@kernel.org>
-Date:   Thu, 15 Apr 2021 10:53:25 -0700
-X-Gmail-Original-Message-ID: <CAB=NE6X2-mbZwVFnKUwjRmTGp3auZFHQXJ1h_YTJ2driUeoR+A@mail.gmail.com>
-Message-ID: <CAB=NE6X2-mbZwVFnKUwjRmTGp3auZFHQXJ1h_YTJ2driUeoR+A@mail.gmail.com>
-Subject: Re: [RFC v3 0/2] vfs / btrfs: add support for ustat()
-To:     Filipe Manana <fdmanana@suse.com>, David Sterba <dsterba@suse.cz>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Chris Mason <clm@fb.com>,
-        Josef Bacik <jbacik@fb.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jeff Mahoney <jeffm@suse.com>,
-        Luis Chamberlain <mcgrof@kernel.org>
+References: <20210413051721.2896915-1-axelrasmussen@google.com>
+ <20210413051721.2896915-8-axelrasmussen@google.com> <20210413201535.GD4440@xz-x1>
+In-Reply-To: <20210413201535.GD4440@xz-x1>
+From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Thu, 15 Apr 2021 11:03:14 -0700
+Message-ID: <CAJHvVcix2CO_+qQ7+gWMLYL9H5zyDNz_06UnThd84etMNr-SWQ@mail.gmail.com>
+Subject: Re: [PATCH v2 7/9] userfaultfd/selftests: reinitialize test context
+ in each test
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        Brian Geffon <bgeffon@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 23, 2017 at 3:31 PM Jeff Mahoney <jeffm@suse.com> wrote:
+On Tue, Apr 13, 2021 at 1:15 PM Peter Xu <peterx@redhat.com> wrote:
 >
-> On 8/15/14 5:29 AM, Al Viro wrote:
-> > On Thu, Aug 14, 2014 at 07:58:56PM -0700, Luis R. Rodriguez wrote:
+> On Mon, Apr 12, 2021 at 10:17:19PM -0700, Axel Rasmussen wrote:
+> > Currently, the context (fds, mmap-ed areas, etc.) are global. Each test
+> > mutates this state in some way, in some cases really "clobbering it"
+> > (e.g., the events test mremap-ing area_dst over the top of area_src, or
+> > the minor faults tests overwriting the count_verify values in the test
+> > areas). We run the tests in a particular order, each test is careful to
+> > make the right assumptions about its starting state, etc.
 > >
-> >> Christoph had noted that this seemed associated to the problem
-> >> that the btrfs uses different assignments for st_dev than s_dev,
-> >> but much as I'd like to see that changed based on discussions so
-> >> far its unclear if this is going to be possible unless strong
-> >> commitment is reached.
+> > But, this is fragile. It's better for a test's success or failure to not
+> > depend on what some other prior test case did to the global state.
+> >
+> > To that end, clear and reinitialize the test context at the start of
+> > each test case, so whatever prior test cases did doesn't affect future
+> > tests.
+> >
+> > This is particularly relevant to this series because the events test's
+> > mremap of area_dst screws up assumptions the minor fault test was
+> > relying on. This wasn't a problem for hugetlb, as we don't mremap in
+> > that case.
+> >
+> > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+> > ---
+> >  tools/testing/selftests/vm/userfaultfd.c | 221 +++++++++++++----------
+> >  1 file changed, 127 insertions(+), 94 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
+> > index 1f65c4ab7994..0ff01f437a39 100644
+> > --- a/tools/testing/selftests/vm/userfaultfd.c
+> > +++ b/tools/testing/selftests/vm/userfaultfd.c
+> > @@ -89,7 +89,8 @@ static int shm_fd;
+> >  static int huge_fd;
+> >  static char *huge_fd_off0;
+> >  static unsigned long long *count_verify;
+> > -static int uffd, uffd_flags, finished, *pipefd;
+> > +static int uffd = -1;
+> > +static int uffd_flags, finished, *pipefd;
+> >  static char *area_src, *area_src_alias, *area_dst, *area_dst_alias;
+> >  static char *zeropage;
+> >  pthread_attr_t attr;
+> > @@ -342,6 +343,121 @@ static struct uffd_test_ops hugetlb_uffd_test_ops = {
+> >
+> >  static struct uffd_test_ops *uffd_test_ops;
+> >
+> > +static int userfaultfd_open(uint64_t *features)
+> > +{
+> > +     struct uffdio_api uffdio_api;
+> > +
+> > +     uffd = syscall(__NR_userfaultfd, O_CLOEXEC | O_NONBLOCK);
 >
-> Resurrecting a dead thread since we've been carrying this patch anyway
-> since then.
+> Keep UFFD_USER_MODE_ONLY?
 >
-> > Explain, please.  Whose commitment and commitment to what, exactly?
-> > Having different ->st_dev values for different files on the same
-> > fs is a bloody bad idea; why does btrfs do that at all?  If nothing else,
-> > it breaks the usual "are those two files on the same fs?" tests...
+> [...]
 >
-> It's because btrfs snapshots would have inode number collisions.
-> Changing the inode numbers for snapshots would negate a big benefit of
-> btrfs snapshots: the quick creation and lightweight on-disk
-> representation due to metadata sharing.
+> > @@ -961,10 +1045,9 @@ static int userfaultfd_zeropage_test(void)
+> >       printf("testing UFFDIO_ZEROPAGE: ");
+> >       fflush(stdout);
+> >
+> > -     uffd_test_ops->release_pages(area_dst);
+> > -
+> > -     if (userfaultfd_open(0))
+> > +     if (uffd_test_ctx_clear() || uffd_test_ctx_init(0))
+> >               return 1;
 >
-> The thing is that ustat() used to work.  Your commit 0ee5dc676a5f8
-> (btrfs: kill magical embedded struct superblock) had a regression:
-> Since it replaced the superblock with a simple dev_t, it rendered the
-> device no longer discoverable by user_get_super.  We need a list_head to
-> attach for searching.
->
-> There's an argument that this is hacky.  It's valid.  The only other
-> feedback I've heard is to use a real superblock for subvolumes to do
-> this instead.  That doesn't work either, due to things like freeze/thaw
-> and inode writeback.  Ultimately, what we need is a single file system
-> with multiple namespaces.  Years ago we just needed different inode
-> namespaces, but as people have started adopting btrfs for containers, we
-> need more than that.  I've heard requests for per-subvolume security
-> contexts.  I'd imagine user namespaces are on someone's wish list.  A
-> working df can be done with ->d_automount, but the way btrfs handles
-> having a "canonical" subvolume location has always been a way to avoid
-> directory loops.  I'd like to just automount subvolumes everywhere
-> they're referenced.  One solution, for which I have no code yet, is to
-> have something like a superblock-light that we can hang things like a
-> security context, a user namespace, and an anonymous dev.  Most file
-> systems would have just one.  Btrfs would have one per subvolume.
->
-> That's a big project with a bunch of discussion.
+> Would it look even nicer to init() at the entry of each test, and clear() after
+> finish one test?
 
-4 years have gone by and this patch is still being carried around for
-btrfs. Other than resolving this ustat() issue for btrfs are there new
-reasons to support this effort done to be done properly? Are there
-other filesystems that would benefit? I'd like to get an idea of the
-stakeholder here before considering taking this on or not.
+I slightly prefer clearing at the beginning, as it means we don't need
+to depend on the previous test being correct for this test to
+function. And, we don't need more complex error handling in the test
+cases to make sure we don't mess things up for the next test.
 
- Luis
+But, two things we can do to clean this up as-is:
+
+The initialization function can just call clear itself, so tests don't
+need to worry about it.
+
+And, with err(), we don't need these functions to return an int any more.
+
+I'll send a version like that, we can see how it looks.
+
+>
+> > +
+> >       uffdio_register.range.start = (unsigned long) area_dst;
+> >       uffdio_register.range.len = nr_pages * page_size;
+> >       uffdio_register.mode = UFFDIO_REGISTER_MODE_MISSING;
+>
+> The rest looks good to me.  Thanks,
+>
+> --
+> Peter Xu
+>
