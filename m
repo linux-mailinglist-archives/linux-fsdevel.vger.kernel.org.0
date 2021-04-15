@@ -2,124 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 434E8360816
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 13:17:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9FE336096D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Apr 2021 14:30:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232651AbhDOLRp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 07:17:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52594 "EHLO
+        id S232767AbhDOMbO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 08:31:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232642AbhDOLRo (ORCPT
+        with ESMTP id S231919AbhDOMbO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 07:17:44 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97212C061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 04:17:20 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id sd23so27617154ejb.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 04:17:20 -0700 (PDT)
+        Thu, 15 Apr 2021 08:31:14 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E40C061574;
+        Thu, 15 Apr 2021 05:30:51 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id w8so12487773pfn.9;
+        Thu, 15 Apr 2021 05:30:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=F2DnwbhM0K3eDbNV4OV/TxWIHc5j6rhfh7F0juu/TCM=;
-        b=AcT1wLlEsw/hLOv9QVCK3pqYeHDLF0S+eaz51VVr8uYsXgRZeLZ8SX14FP/ssoFxXE
-         R6WOrfa9wrzY/RDAiVI0Y7MTMehK81Ip1mxpyCwCO8ainJ4eo5vhUKUFAJGr/r//8Ucv
-         uXcxtATK1evfslAqNE6cVpB533Rjx8jCplNXy5Fjlr/izCvWUUg9Nn0zB8bLmqdxWsOI
-         yrUrsn1f9MY9c+lSCyv4m7uC3QRbsMlFqIu6BkNreQCZ7g/b7oHkU+qKKAPQlCAvz+5Q
-         5J0MKHcBO86FfvBHtIqdT+lQSrFMUVPWqMO1WIMajZNbE3+mXiPRg5X8/oP0wfek+1uB
-         WlSA==
+         :cc;
+        bh=Oc2rPOnWzyrclF7F9nO0fBn/63oDkmp1ea78ZK6nw5g=;
+        b=Ma5rHnfELxLsbqH1af038TLPuGBjDd1FDm/XDEE6R75L8LcUmVbO9rcye6GLssvxEA
+         QDF32oC/D6f6IrYUmqo9Y3UHWGLmGl2LTvi8T4JjXjRthmr8y1RduQucDw9N1TBMY+55
+         vjop4ur7AGbVCu/6iUyvMKmy1u8z6YpR/j9tV6qAGKUlcx57mwdoFX9TDbvczt0sgpDh
+         coTfFQfmM3X/spRr+acqJ6KWIBVCpqljaSGOhtbbZfgTXj9frz04rBlO2Hr6tx6cTTWk
+         xk8FYrx1JUA8aZghQKnQOZyFlE7okttPFC7nqLjCJ+grVZodriJcy4UE4cv+HWXceTdU
+         Z20w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=F2DnwbhM0K3eDbNV4OV/TxWIHc5j6rhfh7F0juu/TCM=;
-        b=gU0ZW1jjxDl4QjGb5/h3aDfufb7CElpaGWSxQiY5/OJsv7dMSze+QhJD0QTFn6U5uQ
-         rV4z0/qRmixafS5RPSFqiuNevWxnsOQfb5VZCF7R0KZT7YTdcCH5p7M6KGdOnHGfDQpc
-         iGuyZANGZL9VhSvFr1EmzdH1cFUFW3jwG0t8XuM1dIMMTUQx8IyTqgwfcvtk5kutC72w
-         EkYDM6J7i7QRy13YTFHU/I8iKARLmAqVNCYcFHSbLWzRvPoV6C8WpJPv4Jt5S+iNOqdS
-         AHEsvltV4yw7MrReqjixwtp9f5dVCzBLYc5DazBCg9LsaF9Y2c6f0lHOw43yyrFhUOXh
-         kkWA==
-X-Gm-Message-State: AOAM532Ssyj/AbICrRWr7aAzwnSEQh+HsEcH/VUrOcGuJ6gqPf85qgFy
-        de2NW98cWXJCfnCl3G2iTirBkiQshiMlfdP3HDDA
-X-Google-Smtp-Source: ABdhPJxIpQXfXBo/LLGFCyadIaJENXp32QQMzwuSrfXBhX4qR+8lwIcRxRI0FBc6gO1lL3MVnpwlBAcZljWAliGUbS8=
-X-Received: by 2002:a17:906:2a16:: with SMTP id j22mr2886917eje.247.1618485439307;
- Thu, 15 Apr 2021 04:17:19 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=Oc2rPOnWzyrclF7F9nO0fBn/63oDkmp1ea78ZK6nw5g=;
+        b=U/CtfycdI7mFXEiRiG/NSy/vrXUX4XmZG1LX8euAIIFixGiWijsEft5yK6UJiGBdvp
+         4ilgfzx8ymx56Wyc6IsxfegARwIMhOAa15+76C7las/aIlioh2zsGlSefHfwFtLWis7T
+         9fk4nAx4ACFpfXYB27naE8Sy6RCU1NGqi5Er6UCji8b7B/wNqSVfv6AgXWXX5x8iuqSU
+         emTy+UVgaGShGYnlTs/CJRT5wZ+MeBfePhDiVvMgGPuYXketVv0hbANu835IXsKjX96Y
+         OMshFuHW74jR82Z2Et7FyWtJB1v7WGLAi0W28HIn8C1LFT91g/Ao7CvMFUdbrZPiLZxY
+         ZhVg==
+X-Gm-Message-State: AOAM532d9rXLjWJafl0wJZAf0k6s/eV+u1MoFlD/SrP315lmINq9pqWp
+        mu2S886kpehoYDDlfAZaZGF0p46gvAw82mKb3+yd6ZP2n/8=
+X-Google-Smtp-Source: ABdhPJz5GeIzW1eATHfdoBVFSQCgTq8fgQSaigNe1rclRFnPH2uLQCCEljnXanBpyq/PGxIwE/mXKugLiEbAnC57fnI=
+X-Received: by 2002:a63:cb42:: with SMTP id m2mr3248502pgi.140.1618489851103;
+ Thu, 15 Apr 2021 05:30:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210331080519.172-1-xieyongji@bytedance.com> <20210331080519.172-11-xieyongji@bytedance.com>
- <YHb44R4HyLEUVSTF@stefanha-x1.localdomain> <CACycT3uNR+nZY5gY0UhPkeOyi7Za6XkX4b=hasuDcgqdc7fqfg@mail.gmail.com>
- <YHfo8pc7dIO9lNc3@stefanha-x1.localdomain> <80b31814-9e41-3153-7efb-c0c2fab44feb@redhat.com>
- <02c19c22-13ea-ea97-d99b-71edfee0b703@redhat.com>
-In-Reply-To: <02c19c22-13ea-ea97-d99b-71edfee0b703@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Thu, 15 Apr 2021 19:17:08 +0800
-Message-ID: <CACycT3tL7URz3n-KhMAwYH+Sn1e1TSyfU+RKcc8jpPDJ7WcZ2w@mail.gmail.com>
-Subject: Re: Re: [PATCH v6 10/10] Documentation: Add documentation for VDUSE
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <807bb470f90bae5dcd80a29020d38f6b5dd6ef8e.1616826872.git.baolin.wang@linux.alibaba.com>
+ <f72f28cd-06b5-fb84-c7ce-ad1a3d14c016@linux.alibaba.com> <CAJfpegtJ6100CS34+MSi8Rn_NMRGHw5vxbs+fOHBBj8GZLEexw@mail.gmail.com>
+ <CA+a=Yy4Ea6Vn7md2KxGc_Tkxx04Ck-JCBL7qz-JWecJ9W2nT_g@mail.gmail.com> <CAJfpegtXJ=waad2SNtru90Nn6f4yOkRD5Pot9K-13z249PjFgg@mail.gmail.com>
+In-Reply-To: <CAJfpegtXJ=waad2SNtru90Nn6f4yOkRD5Pot9K-13z249PjFgg@mail.gmail.com>
+From:   Peng Tao <bergwolf@gmail.com>
+Date:   Thu, 15 Apr 2021 20:30:40 +0800
+Message-ID: <CA+a=Yy57TdKEpEn0SC8zBCm8KmMuAYwSDqS=vtownzyt9qD6bA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] fuse: Fix possible deadlock when writing back
+ dirty pages
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Peng Tao <tao.peng@linux.alibaba.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 15, 2021 at 5:05 PM Jason Wang <jasowang@redhat.com> wrote:
+On Wed, Apr 14, 2021 at 9:20 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
 >
->
-> =E5=9C=A8 2021/4/15 =E4=B8=8B=E5=8D=884:36, Jason Wang =E5=86=99=E9=81=93=
-:
-> >>>
-> >> Please state this explicitly at the start of the document. Existing
-> >> interfaces like FUSE are designed to avoid trusting userspace.
+> On Wed, Apr 14, 2021 at 2:22 PM Peng Tao <bergwolf@gmail.com> wrote:
 > >
-> >
-> > There're some subtle difference here. VDUSE present a device to kernel
-> > which means IOMMU is probably the only thing to prevent a malicous
-> > device.
-> >
-> >
-> >> Therefore
-> >> people might think the same is the case here. It's critical that peopl=
-e
-> >> are aware of this before deploying VDUSE with virtio-vdpa.
-> >>
-> >> We should probably pause here and think about whether it's possible to
-> >> avoid trusting userspace. Even if it takes some effort and costs some
-> >> performance it would probably be worthwhile.
-> >
-> >
-> > Since the bounce buffer is used the only attack surface is the
-> > coherent area, if we want to enforce stronger isolation we need to use
-> > shadow virtqueue (which is proposed in earlier version by me) in this
-> > case. But I'm not sure it's worth to do that.
 >
+> > > --- a/fs/fuse/file.c
+> > > +++ b/fs/fuse/file.c
+> > > @@ -1117,17 +1117,12 @@ static ssize_t fuse_send_write_pages(str
+> > >       count = ia->write.out.size;
+> > >       for (i = 0; i < ap->num_pages; i++) {
+> > >               struct page *page = ap->pages[i];
+> > > +             bool page_locked = ap->page_locked && (i == ap->num_pages - 1);
+> > Any reason for just handling the last locked page in the page array?
+> > To be specific, it look like the first page in the array can also be
+> > partial dirty and locked?
 >
+> In that case the first partial page will be locked, and it'll break
+> out of the loop...
 >
-> So this reminds me the discussion in the end of last year. We need to
-> make sure we don't suffer from the same issues for VDUSE at least
+> > >
+> > > -             if (!err && !offset && count >= PAGE_SIZE)
+> > > -                     SetPageUptodate(page);
+> > > -
+> > > -             if (count > PAGE_SIZE - offset)
+> > > -                     count -= PAGE_SIZE - offset;
+> > > -             else
+> > > -                     count = 0;
+> > > -             offset = 0;
+> > > -
+> > > -             unlock_page(page);
+> > > +             if (err)
+> > > +                     ClearPageUptodate(page);
+> > > +             if (page_locked)
+> > > +                     unlock_page(page);
+> > >               put_page(page);
+> > >       }
+> > >
+> > > @@ -1191,6 +1186,16 @@ static ssize_t fuse_fill_write_pages(str
+> > >               if (offset == PAGE_SIZE)
+> > >                       offset = 0;
+> > >
+> > > +             /* If we copied full page, mark it uptodate */
+> > > +             if (tmp == PAGE_SIZE)
+> > > +                     SetPageUptodate(page);
+> > > +
+> > > +             if (PageUptodate(page)) {
+> > > +                     unlock_page(page);
+> > > +             } else {
+> > > +                     ap->page_locked = true;
+> > > +                     break;
 >
-> https://yhbt.net/lore/all/c3629a27-3590-1d9f-211b-c0b7be152b32@redhat.com=
-/T/#mc6b6e2343cbeffca68ca7a97e0f473aaa871c95b
+> ... here, and send it as a separate WRITE request.
 >
-> Or we can solve it at virtio level, e.g remember the dma address instead
-> of depending on the addr in the descriptor ring
->
+> So the multi-page case with a partial & non-uptodate head page will
+> always result in the write request being split into two (even if
+> there's no partial tail page).
 
-I might miss something. But VDUSE has recorded the dma address during
-dma mapping, so we would not do bouncing if the addr/length is invalid
-during dma unmapping. Is it enough?
+Ah, good point! Thanks for the explanation. I agree that it can fix
+the deadlock issue here.
 
-Thanks,
-Yongji
+One thing I'm still uncertain about is that fuse used to fill the
+page, wait for page writeback, and send it to userspace all with the
+page locked, which is kind of like a stable page mechanism for FUSE.
+With the above change, we no longer lock a PG_uptodate page when
+waiting for its writeback and sending it to userspace. Then the page
+can be modified when being sent to userspace. Is it acceptable?
+
+Cheers,
+Tao
+-- 
+Into Sth. Rich & Strange
