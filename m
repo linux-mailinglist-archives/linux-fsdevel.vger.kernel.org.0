@@ -2,121 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DDDB5361B6B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 10:34:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A81CA361C02
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 11:00:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238954AbhDPII5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Apr 2021 04:08:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43240 "EHLO
+        id S240798AbhDPIoS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Apr 2021 04:44:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235120AbhDPIIy (ORCPT
+        with ESMTP id S240686AbhDPIoM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Apr 2021 04:08:54 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0E8EC061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 01:08:29 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id w8so11220001plg.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 01:08:29 -0700 (PDT)
+        Fri, 16 Apr 2021 04:44:12 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE8B1C06175F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 01:43:47 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id u21so40983410ejo.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 01:43:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ZHtko9A1w5ItkCMsikB/Jidz4iY+US+hA5ckCUbtBv8=;
-        b=QkopcUpaVEsr5CNBtp5KEs31/JVwi0iu5gnJZzDKW+Yhw85I6JvukaMqSqDpR/nOUq
-         M9U0fzCpRlXv418ZWv9ndg9wN7JrgQMonB5aCoR2KIeqNi8dl9F+LjjdM1B1BY6y2/7A
-         R/8BEz4B2ZnCUETdZ5IoVuN3n7BZWy8R4qzi2nWP4Ti5B7nS9F1v0p83OhppjyWKFEPF
-         E5TVyNQqHUWo27tqDF6HzZ8+rwgMA/D4oMSEIRs4M5Tg7scV7VmHLUTeCaenZho8ko9Z
-         cRId+yQfm1HeuovyZF85nu+RUEjDVK/KMefF5Yb2GPcTlITe17vJKnoUFBrm4Dv9f/kN
-         rs8Q==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=nZ1FRFDIzSslp5WYUYeFlBBX17UdTlQXsbemICRU/2o=;
+        b=HGO0MkBeb0UC7k2w60QVBM3EzdZA53hwbNbcWebu6p3EccSPj820VKps1IS4byzXq6
+         xA2MnyEh1zjCw+XTc5F9zWXbYoLk/gjvkDQmr9d5ZP6yFuwKvTydRmlnwEa9Y3hkqPwA
+         NHOiGxh6+st5GLGHOcpv8Au12nhxiuhd2HiyNR6vHUj99pxm4XvoLoJO8aVPPCop+0Rh
+         2UbuWeZSIyrNRsrXPqcYJ5kyBrbPcF6xwi5/A8lvf+LBWXOxVPqWDFIxPApRLCoUYGPl
+         Y6Cz3YCV8KnibnoBYd1x1JrM2swSDGOBXw+w8YmnKtBXAzJ2ug8E77jA8/g9++bJfxtp
+         f5bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZHtko9A1w5ItkCMsikB/Jidz4iY+US+hA5ckCUbtBv8=;
-        b=kqpEKRq/ZZd8pQrYJgYeoRUDSR3ACWd9UQuPmmmzg3UY/fERXKQFCpwOZwEd3as+uD
-         QUDjN3x3sGF/shHOfaP59xgz4RfHF7XIJJlTLhnC8dCCXpsrTewy4+apOm5tQP5n9sfl
-         k30JghsBcU9Qci9N81vfM9xzav+ILfkLETS5/FVQoHSH7oDc/zVp4HhGOjkr+BHYIL++
-         1MChMANUnCtBT7jrSgh8uyIGWx7O33meW1xvOeq8B9r/kzGgX91CTJcvTeD48YRFJ+F1
-         DCOSz0EZ1O0O2PfcOIQ+rwC/m0V/StNXz+BhnE9BvNPcW2PYIgt6tucOBGnZlZDN7PkV
-         Txjg==
-X-Gm-Message-State: AOAM530MdOKZSjzHcg8oKMdCATROZQMXmfj2+/M41QqAVrtvckCc1QTP
-        G11fekN9Cgqu9uMl0dvMf3MwmA==
-X-Google-Smtp-Source: ABdhPJxShQR6wk5ovKanYVIfqAE4NjoGjxsd910y0/ndnhpJLWURNrUgDWjoHbe762JlfmjFRzyM4w==
-X-Received: by 2002:a17:90a:4a8e:: with SMTP id f14mr8639578pjh.20.1618560509122;
-        Fri, 16 Apr 2021 01:08:29 -0700 (PDT)
-Received: from google.com ([2401:fa00:9:211:c78c:fbb:2641:bc93])
-        by smtp.gmail.com with ESMTPSA id q3sm4321423pgb.80.2021.04.16.01.08.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Apr 2021 01:08:28 -0700 (PDT)
-Date:   Fri, 16 Apr 2021 18:08:16 +1000
-From:   Matthew Bobrowski <repnop@google.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] fanotify: Add pidfd support to the fanotify API
-Message-ID: <YHlF8El4lcsHNYtR@google.com>
-References: <cover.1618527437.git.repnop@google.com>
- <e6cd967f45381d20d67c9d5a3e49e3cb9808f65b.1618527437.git.repnop@google.com>
- <CAOQ4uxhWicqpKQxvuN5=WiULwNRozFvxQKgTDMOL-UxKpnk-WQ@mail.gmail.com>
- <YHk3Uko0feh3ud/X@google.com>
- <CAOQ4uxjQi4dV0XoU2WDKG+3R81Xam6giee9hhkvXb13tQB+Tdg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=nZ1FRFDIzSslp5WYUYeFlBBX17UdTlQXsbemICRU/2o=;
+        b=YnlTtqfsLEd8A1vCBkQnh6WyXF5wtTxZgq2uBOLJmE8fe94NgLz90QAPvbDVXriwio
+         nYRAOCstcHiFO2wxi9ljA1GMJNLyCFBSCxQZKIVOkEZeDDxtT74Q+h7oNyhSEKJ/4XIb
+         H/eV60ImNxTBpxDEZhnLaMK3qjKqUR8RlRcpX6KpbWwbbzAEUkiUjb904TTDRr3OGszT
+         LBluhfUNYTljcibRZ2G9g3jpMRaFr/PmWkxGahi8Ab/tem/pBUNaIsR70kvO7rJ4icqh
+         fo3TsW+8KeC19ebUAWYGc5p6e5bxnjVW2qRUdIv82nlU3YDYC43r8Jk0Gybdgxk4lcSp
+         Nr2w==
+X-Gm-Message-State: AOAM530aIpbKwfvLxOCfrmAJ6VGyPyTGZpL71buU8WktxAE45QGtmT46
+        6G89Mxr1KStiYucD6W9iedG09Ef9S116easOgvdR
+X-Google-Smtp-Source: ABdhPJyTB7M62F5DqcvOAaZa4vtrH6KUgmABAXyYOE0j8gboTWamM5DbXwOo84AucNDw/Hl83Q09aRyPqqKg7UNh2Uo=
+X-Received: by 2002:a17:906:3945:: with SMTP id g5mr7159342eje.427.1618562625328;
+ Fri, 16 Apr 2021 01:43:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjQi4dV0XoU2WDKG+3R81Xam6giee9hhkvXb13tQB+Tdg@mail.gmail.com>
+References: <20210331080519.172-1-xieyongji@bytedance.com> <20210331080519.172-10-xieyongji@bytedance.com>
+ <87a54b5e-626d-7e04-93f4-f59eddff9947@redhat.com>
+In-Reply-To: <87a54b5e-626d-7e04-93f4-f59eddff9947@redhat.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Fri, 16 Apr 2021 16:43:33 +0800
+Message-ID: <CACycT3vn6PaYGjjd2Uq5ot_YCbyvMzoeU8V_KgGN+cTFx7pg-Q@mail.gmail.com>
+Subject: Re: Re: [PATCH v6 09/10] vduse: Introduce VDUSE - vDPA Device in Userspace
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 16, 2021 at 10:53:48AM +0300, Amir Goldstein wrote:
-> On Fri, Apr 16, 2021 at 10:06 AM Matthew Bobrowski <repnop@google.com> wrote:
-> > > > +               pidfd = pidfd_create(event->pid, 0);
-> > > > +               if (unlikely(pidfd < 0))
-> > > > +                       metadata.pid = FAN_NOPIDFD;
-> > > > +               else
-> > > > +                       metadata.pid = pidfd;
-> > > > +       } else {
-> > > > +               metadata.pid = pid_vnr(event->pid);
-> > > > +       }
-> > >
-> > > You should rebase your work on:
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
-> > > and resolve conflicts with "unprivileged listener" code.
-> >
-> > ACK.
-> >
-> > > Need to make sure that pidfd is not reported to an unprivileged
-> > > listener even if group was initialized by a privileged process.
-> > > This is a conscious conservative choice that we made for reporting
-> > > pid info to unprivileged listener that can be revisited in the future.
-> >
-> > OK, I see. In that case, I guess I can add the FAN_REPORT_PIDFD check
-> > above the current conditional [0]:
-> >
-> > ...
-> > if (!capable(CAP_SYS_ADMIN) && task_tgid(current) != event->pid)
-> >         metadata.pid = 0;
-> > ...
-> >
-> > That way, AFAIK even if it is an unprivileged listener the pid info
-> > will be overwritten as intended.
-> >
-> 
-> Situation is a bit more subtle than that.
-> If you override event->pid with zero and zero is interpreted as pidfd
-> that would not be consistent with uapi documentation.
+On Fri, Apr 16, 2021 at 11:24 AM Jason Wang <jasowang@redhat.com> wrote:
+>
+>
+> =E5=9C=A8 2021/3/31 =E4=B8=8B=E5=8D=884:05, Xie Yongji =E5=86=99=E9=81=93=
+:
+> > +     }
+> > +     case VDUSE_INJECT_VQ_IRQ:
+> > +             ret =3D -EINVAL;
+> > +             if (arg >=3D dev->vq_num)
+> > +                     break;
+> > +
+> > +             ret =3D 0;
+> > +             queue_work(vduse_irq_wq, &dev->vqs[arg].inject);
+> > +             break;
+>
+>
+> One additional note:
+>
+> Please use array_index_nospec() for all vqs[idx] access where idx is
+> under the control of userspace to avoid potential spectre exploitation.
+>
 
-Ah, yes, of course! I had totally overlooked this. Also, speaking of
-UAPI documentation, I'll have it prepared along with the LTP tests
-once I get the ACK for this particular concept from Jan and Christian.
+OK, I see.
 
-> You need to make sure that event->pid is FAN_NOPIDFD in case
-> (!capable(CAP_SYS_ADMIN) &&
->  FAN_GROUP_FLAG(group, FAN_REPORT_PIDFD))
-> Hopefully, you can do that while keeping the special cases to minimum...
-
-I don't foresee any issues with doing this at all.
-
-/M
+Thanks,
+Yongji
