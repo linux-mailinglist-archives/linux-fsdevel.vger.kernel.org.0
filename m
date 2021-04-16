@@ -2,167 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DB97362A3B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 23:25:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53423362A59
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 23:31:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244776AbhDPVZ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Apr 2021 17:25:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22351 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235589AbhDPVZ2 (ORCPT
+        id S1344418AbhDPVb6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Apr 2021 17:31:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52836 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344410AbhDPVb5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Apr 2021 17:25:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618608302;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=TKRy1IG7OPwL6hb/OAIIdkCcfyxk1VBZfq/Tnz82kWE=;
-        b=UaTHyylkdEnjASiceaE+4LT6C5l5pxXpvVDX4kwCOuYoXO3BRcVkaxATurCUQztxRCnaFx
-        YIwv+6s/G9lJc23Nz5AJcrRMljN61tZ5wLUTyjUYDsSqX/jcaQgk5ODbvRqgU7kxJslF2c
-        IMDjCyPBa2xl9/AF73QmD8Q7BPyF6FM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-16-MziAUdMdON65qhCCP-cy0A-1; Fri, 16 Apr 2021 17:25:00 -0400
-X-MC-Unique: MziAUdMdON65qhCCP-cy0A-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BD4256D582;
-        Fri, 16 Apr 2021 21:24:59 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-116-117.rdu2.redhat.com [10.10.116.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6E359107D5C3;
-        Fri, 16 Apr 2021 21:24:50 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 045FF22054F; Fri, 16 Apr 2021 17:24:49 -0400 (EDT)
-Date:   Fri, 16 Apr 2021 17:24:49 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Sergio Lopez <slp@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux kernel mailing list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dax: Fix missed wakeup in put_unlocked_entry()
-Message-ID: <20210416212449.GB1379987@redhat.com>
-References: <20210416173524.GA1379987@redhat.com>
- <CAPcyv4h77oTMBQ50wg6eHLpkFMQ16oAHg2+D=d5zshT6iWgAfw@mail.gmail.com>
+        Fri, 16 Apr 2021 17:31:57 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7F6AC061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 14:31:30 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id u7so12854305plr.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 14:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :mime-version;
+        bh=hM1UR+Vw0ywEGDkul6oI2E64jJ5D9eQ8MbJoitghleQ=;
+        b=WcD3qHCNcHRS7V5HM/CHnNz8IDEXBPrD/ywe/hZjlGAXenB8tD7MCapy8Vh2G0+hTh
+         W6m/7vjZVYFAFX65Lj0x4RFDKE5vO1hpOeUD97DkwwReCv+gYr5OshGZm0hoYOdW1/Qp
+         3+d565l0EkmFQYQyk6D44fo5fbjJYHMILnHx0BvJ72PfoI8DyzX00LUgvVjpfWDah1dd
+         avx+IOemk2fdRqyMPlhS/ecZs36FA/A+7seWHBmrruuXDyhpqaSu/GXJ45nKrW9O91oS
+         4ICzYyl1A/lbNdRDy9INu/b8F+HzP0oFsLhGF3N6w4xW0mwULz9vrZK8aytGzHrFX9ZQ
+         594A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:mime-version;
+        bh=hM1UR+Vw0ywEGDkul6oI2E64jJ5D9eQ8MbJoitghleQ=;
+        b=pOuTxplCZJUK2YbcpbIOeOE4U8O/1Z91ixILumiHB6uSKmbXaKrk4Z3oIjooIGkEhz
+         cACsqHtD/+0BFuSTxcYo3jqW6vqaXVC63E2NzmvNd/m/Vj+U06LHV5lFCNPL5if4vp3z
+         1SZzTbVRuY/TIWdKp7wqMJhXVB4C1Kmrj9CxJRYwwI0KH/67Q729yB8Q1XTqZYvOLCJH
+         TeYOM3zp2KHMPN/wMYxcG9Etgzj4fBkHFspbYjbFj/eOQaMIb+tUBl/AHhpHE05OZL5e
+         f9Y8xBzht1fD+1O1RcqBoarfRG4YqM5Kmcnj7ngIPi5mQDTAGdKaD+55jqUNByVzsG7m
+         kaqg==
+X-Gm-Message-State: AOAM531N3SJb20eAYuL6Y9O5q72bu2VpKXjrH9xQawuBPx9NHveM2ChS
+        tl2zHlYrMeBWUN+Cj8oP7AvrOg==
+X-Google-Smtp-Source: ABdhPJxO8/F3ez1KDXkuVV4SgjTCxbjSmVz2zc4Lm7qt0toOer9TRTe6i01oIiwQk1mSdoFB0fSg5w==
+X-Received: by 2002:a17:902:b602:b029:e6:cabb:10b9 with SMTP id b2-20020a170902b602b02900e6cabb10b9mr11360077pls.47.1618608689649;
+        Fri, 16 Apr 2021 14:31:29 -0700 (PDT)
+Received: from [2620:15c:17:3:f88f:bc36:c44b:9965] ([2620:15c:17:3:f88f:bc36:c44b:9965])
+        by smtp.gmail.com with ESMTPSA id q3sm6598565pja.37.2021.04.16.14.31.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Apr 2021 14:31:28 -0700 (PDT)
+Date:   Fri, 16 Apr 2021 14:31:28 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+To:     chukaiping <chukaiping@baidu.com>
+cc:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2] mm/compaction:let proactive compaction order
+ configurable
+In-Reply-To: <1618593751-32148-1-git-send-email-chukaiping@baidu.com>
+Message-ID: <7efa316c-d39b-59a5-bc52-62325127a917@google.com>
+References: <1618593751-32148-1-git-send-email-chukaiping@baidu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4h77oTMBQ50wg6eHLpkFMQ16oAHg2+D=d5zshT6iWgAfw@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 16, 2021 at 12:56:05PM -0700, Dan Williams wrote:
-> On Fri, Apr 16, 2021 at 10:35 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > I am seeing missed wakeups which ultimately lead to a deadlock when I am
-> > using virtiofs with DAX enabled and running "make -j". I had to mount
-> > virtiofs as rootfs and also reduce to dax window size to 32M to reproduce
-> > the problem consistently.
-> >
-> > This is not a complete patch. I am just proposing this partial fix to
-> > highlight the issue and trying to figure out how it should be fixed.
-> > Should it be fixed in generic dax code or should filesystem (fuse/virtiofs)
-> > take care of this.
-> >
-> > So here is the problem. put_unlocked_entry() wakes up waiters only
-> > if entry is not null as well as !dax_is_conflict(entry). But if I
-> > call multiple instances of invalidate_inode_pages2() in parallel,
-> > then I can run into a situation where there are waiters on
-> > this index but nobody will wait these.
-> >
-> > invalidate_inode_pages2()
-> >   invalidate_inode_pages2_range()
-> >     invalidate_exceptional_entry2()
-> >       dax_invalidate_mapping_entry_sync()
-> >         __dax_invalidate_entry() {
-> >                 xas_lock_irq(&xas);
-> >                 entry = get_unlocked_entry(&xas, 0);
-> >                 ...
-> >                 ...
-> >                 dax_disassociate_entry(entry, mapping, trunc);
-> >                 xas_store(&xas, NULL);
-> >                 ...
-> >                 ...
-> >                 put_unlocked_entry(&xas, entry);
-> >                 xas_unlock_irq(&xas);
-> >         }
-> >
-> > Say a fault in in progress and it has locked entry at offset say "0x1c".
-> > Now say three instances of invalidate_inode_pages2() are in progress
-> > (A, B, C) and they all try to invalidate entry at offset "0x1c". Given
-> > dax entry is locked, all tree instances A, B, C will wait in wait queue.
-> >
-> > When dax fault finishes, say A is woken up. It will store NULL entry
-> > at index "0x1c" and wake up B. When B comes along it will find "entry=0"
-> > at page offset 0x1c and it will call put_unlocked_entry(&xas, 0). And
-> > this means put_unlocked_entry() will not wake up next waiter, given
-> > the current code. And that means C continues to wait and is not woken
-> > up.
-> >
-> > In my case I am seeing that dax page fault path itself is waiting
-> > on grab_mapping_entry() and also invalidate_inode_page2() is
-> > waiting in get_unlocked_entry() but entry has already been cleaned
-> > up and nobody woke up these processes. Atleast I think that's what
-> > is happening.
-> >
-> > This patch wakes up a process even if entry=0. And deadlock does not
-> > happen. I am running into some OOM issues, that will debug.
-> >
-> > So my question is that is it a dax issue and should it be fixed in
-> > dax layer. Or should it be handled in fuse to make sure that
-> > multiple instances of invalidate_inode_pages2() on same inode
-> > don't make progress in parallel and introduce enough locking
-> > around it.
-> >
-> > Right now fuse_finish_open() calls invalidate_inode_pages2() without
-> > any locking. That allows it to make progress in parallel to dax
-> > fault path as well as allows multiple instances of invalidate_inode_pages2()
-> > to run in parallel.
-> >
-> > Not-yet-signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > ---
-> >  fs/dax.c |    7 ++++---
-> >  1 file changed, 4 insertions(+), 3 deletions(-)
-> >
-> > Index: redhat-linux/fs/dax.c
-> > ===================================================================
-> > --- redhat-linux.orig/fs/dax.c  2021-04-16 12:50:40.141363317 -0400
-> > +++ redhat-linux/fs/dax.c       2021-04-16 12:51:42.385926390 -0400
-> > @@ -266,9 +266,10 @@ static void wait_entry_unlocked(struct x
-> >
-> >  static void put_unlocked_entry(struct xa_state *xas, void *entry)
-> >  {
-> > -       /* If we were the only waiter woken, wake the next one */
-> > -       if (entry && !dax_is_conflict(entry))
-> > -               dax_wake_entry(xas, entry, false);
-> > +       if (dax_is_conflict(entry))
-> > +               return;
-> > +
-> > +       dax_wake_entry(xas, entry, false);
+On Sat, 17 Apr 2021, chukaiping wrote:
+
+> Currently the proactive compaction order is fixed to
+> COMPACTION_HPAGE_ORDER(9), it's OK in most machines with lots of
+> normal 4KB memory, but it's too high for the machines with small
+> normal memory, for example the machines with most memory configured
+> as 1GB hugetlbfs huge pages. In these machines the max order of
+> free pages is often below 9, and it's always below 9 even with hard
+> compaction. This will lead to proactive compaction be triggered very
+> frequently. In these machines we only care about order of 3 or 4.
+> This patch export the oder to proc and let it configurable
+> by user, and the default value is still COMPACTION_HPAGE_ORDER.
 > 
 
-Hi Dan,
+Still not entirely clear on the use case beyond hugepages.  In your 
+response from v1, you indicated you were not concerned with allocation 
+latency of hugepages but rather had a thundering herd problem where once 
+fragmentation got bad, many threads started compacting all at once.
 
-> How does this work if entry is NULL? dax_entry_waitqueue() will not
-> know if it needs to adjust the index.
+I'm not sure that tuning the proactive compaction order is the right 
+solution.  I think the proactive compaction order is more about starting 
+compaction when a known order of interest (like a hugepage) is fully 
+depleted and we want a page of that order so the idea is to start 
+recovering from that situation.
 
-Wake waiters both at current index as well PMD adjusted index. It feels
-little ugly though.
+Is this not a userspace policy decision?  I'm wondering if it would simply 
+be better to manually invoke compaction periodically or when the 
+fragmentation ratio has reached a certain level.  You can manually invoke 
+compaction yourself through sysfs for each node on the system.
 
-> I think the fix might be to
-> specify that put_unlocked_entry() in the invalidate path needs to do a
-> wake_up_all().
-
-Doing a wake_up_all() when we invalidate an entry, sounds good. I will give
-it a try.
-
-Thanks
-Vivek
-
+> Signed-off-by: chukaiping <chukaiping@baidu.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> ---
+> 
+> Changes in v2:
+>     - fix the compile error in ia64 and powerpc
+>     - change the hard coded max order number from 10 to MAX_ORDER - 1
+> 
+>  include/linux/compaction.h |    1 +
+>  kernel/sysctl.c            |   11 +++++++++++
+>  mm/compaction.c            |   14 +++++++++++---
+>  3 files changed, 23 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/compaction.h b/include/linux/compaction.h
+> index ed4070e..151ccd1 100644
+> --- a/include/linux/compaction.h
+> +++ b/include/linux/compaction.h
+> @@ -83,6 +83,7 @@ static inline unsigned long compact_gap(unsigned int order)
+>  #ifdef CONFIG_COMPACTION
+>  extern int sysctl_compact_memory;
+>  extern unsigned int sysctl_compaction_proactiveness;
+> +extern unsigned int sysctl_compaction_order;
+>  extern int sysctl_compaction_handler(struct ctl_table *table, int write,
+>  			void *buffer, size_t *length, loff_t *ppos);
+>  extern int sysctl_extfrag_threshold;
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 62fbd09..a607d4d 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -195,6 +195,8 @@ enum sysctl_writes_mode {
+>  #endif /* CONFIG_SMP */
+>  #endif /* CONFIG_SCHED_DEBUG */
+>  
+> +static int max_buddy_zone = MAX_ORDER - 1;
+> +
+>  #ifdef CONFIG_COMPACTION
+>  static int min_extfrag_threshold;
+>  static int max_extfrag_threshold = 1000;
+> @@ -2871,6 +2873,15 @@ int proc_do_static_key(struct ctl_table *table, int write,
+>  		.extra2		= &one_hundred,
+>  	},
+>  	{
+> +		.procname       = "compaction_order",
+> +		.data           = &sysctl_compaction_order,
+> +		.maxlen         = sizeof(sysctl_compaction_order),
+> +		.mode           = 0644,
+> +		.proc_handler   = proc_dointvec_minmax,
+> +		.extra1         = SYSCTL_ZERO,
+> +		.extra2         = &max_buddy_zone,
+> +	},
+> +	{
+>  		.procname	= "extfrag_threshold",
+>  		.data		= &sysctl_extfrag_threshold,
+>  		.maxlen		= sizeof(int),
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index e04f447..bfd1d5e 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -1925,16 +1925,16 @@ static bool kswapd_is_running(pg_data_t *pgdat)
+>  
+>  /*
+>   * A zone's fragmentation score is the external fragmentation wrt to the
+> - * COMPACTION_HPAGE_ORDER. It returns a value in the range [0, 100].
+> + * sysctl_compaction_order. It returns a value in the range [0, 100].
+>   */
+>  static unsigned int fragmentation_score_zone(struct zone *zone)
+>  {
+> -	return extfrag_for_order(zone, COMPACTION_HPAGE_ORDER);
+> +	return extfrag_for_order(zone, sysctl_compaction_order);
+>  }
+>  
+>  /*
+>   * A weighted zone's fragmentation score is the external fragmentation
+> - * wrt to the COMPACTION_HPAGE_ORDER scaled by the zone's size. It
+> + * wrt to the sysctl_compaction_order scaled by the zone's size. It
+>   * returns a value in the range [0, 100].
+>   *
+>   * The scaling factor ensures that proactive compaction focuses on larger
+> @@ -2666,6 +2666,7 @@ static void compact_nodes(void)
+>   * background. It takes values in the range [0, 100].
+>   */
+>  unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
+> +unsigned int __read_mostly sysctl_compaction_order;
+>  
+>  /*
+>   * This is the entry point for compacting all nodes via
+> @@ -2958,6 +2959,13 @@ static int __init kcompactd_init(void)
+>  	int nid;
+>  	int ret;
+>  
+> +	/*
+> +	 * move the initialization of sysctl_compaction_order to here to
+> +	 * eliminate compile error in ia64 and powerpc architecture because
+> +	 * COMPACTION_HPAGE_ORDER is a variable in this architecture
+> +	 */
+> +	sysctl_compaction_order = COMPACTION_HPAGE_ORDER;
+> +
+>  	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
+>  					"mm/compaction:online",
+>  					kcompactd_cpu_online, NULL);
+> -- 
+> 1.7.1
+> 
+> 
+> 
