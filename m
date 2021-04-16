@@ -2,229 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F3DB63618AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 06:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62EDD3618FA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 06:44:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235061AbhDPEQL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Apr 2021 00:16:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48964 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234757AbhDPEQK (ORCPT
+        id S237782AbhDPEpQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Apr 2021 00:45:16 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45852 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229555AbhDPEpP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Apr 2021 00:16:10 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B49EC061574;
-        Thu, 15 Apr 2021 21:15:46 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lXFtP-005fj1-Hl; Fri, 16 Apr 2021 04:15:43 +0000
-Date:   Fri, 16 Apr 2021 04:15:43 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>
-Subject: Re: [PATCH] fs: split receive_fd_replace from __receive_fd
-Message-ID: <YHkPb7LSzadhpG6H@zeniv-ca.linux.org.uk>
-References: <20210325082209.1067987-1-hch@lst.de>
- <20210325082209.1067987-2-hch@lst.de>
- <202104021157.7B388D1B2@keescook>
+        Fri, 16 Apr 2021 00:45:15 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13G4YPGU048393;
+        Fri, 16 Apr 2021 00:44:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : reply-to : references : mime-version : content-type
+ : in-reply-to; s=pp1; bh=sFqB8Nx1yOnTC2YBXhWD1XQdbyVUMOcgezM1VW/ORvI=;
+ b=jX5FPixHA1ZrJuF15BkI0b/otjV5RWXfSgUWlxv1TB4nx5qJ9MTgGPutg3bcStb4vH/R
+ X7OsBahhzPIs2vZyenu3hynq2BSC9UN6Wfh9Xuaja0ktqHFXHxKYFCIlwwhwWiiQQ/EI
+ UXVp208gzXGNWaWx615WKpVf8hg9zqq25gw3bXNz6s/dSO1u9iM0V0FpPHp4qcXbTjVi
+ UL5QeSEL+8zloSW1B2KlyChvUquSrr51+7CaDpbc8AQalQ2I6yp2W810SG7dBhpGN6zN
+ s1P6HSo4/Th5oYvSa+CsHgK/n3hiHCkC9ATzPr+ePVMrLtQMjXD/xdaAUZ4IID3hWGuv mw== 
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37xsvadgbc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 16 Apr 2021 00:44:48 -0400
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13G4es0T009176;
+        Fri, 16 Apr 2021 04:44:46 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma05fra.de.ibm.com with ESMTP id 37u3n8a9sx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 16 Apr 2021 04:44:45 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13G4iL9B32243986
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 16 Apr 2021 04:44:21 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8C55CAE051;
+        Fri, 16 Apr 2021 04:44:43 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 606F4AE045;
+        Fri, 16 Apr 2021 04:44:42 +0000 (GMT)
+Received: from in.ibm.com (unknown [9.77.199.141])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 16 Apr 2021 04:44:42 +0000 (GMT)
+Date:   Fri, 16 Apr 2021 10:14:39 +0530
+From:   Bharata B Rao <bharata@linux.ibm.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        aneesh.kumar@linux.ibm.com
+Subject: Re: High kmalloc-32 slab cache consumption with 10k containers
+Message-ID: <20210416044439.GB1749436@in.ibm.com>
+Reply-To: bharata@linux.ibm.com
+References: <20210405054848.GA1077931@in.ibm.com>
+ <20210406222807.GD1990290@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202104021157.7B388D1B2@keescook>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20210406222807.GD1990290@dread.disaster.area>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: iZ4sgeYm6gM96f61qbJja4XmxuUaxycO
+X-Proofpoint-GUID: iZ4sgeYm6gM96f61qbJja4XmxuUaxycO
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-04-15_11:2021-04-15,2021-04-15 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ phishscore=0 mlxlogscore=673 priorityscore=1501 spamscore=0 malwarescore=0
+ adultscore=0 lowpriorityscore=0 suspectscore=0 mlxscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2104160033
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 02, 2021 at 12:01:05PM -0700, Kees Cook wrote:
-> On Thu, Mar 25, 2021 at 09:22:09AM +0100, Christoph Hellwig wrote:
-> > receive_fd_replace shares almost no code with the general case, so split
-> > it out.  Also remove the "Bump the sock usage counts" comment from
-> > both copies, as that is now what __receive_sock actually does.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+On Wed, Apr 07, 2021 at 08:28:07AM +1000, Dave Chinner wrote:
+> On Mon, Apr 05, 2021 at 11:18:48AM +0530, Bharata B Rao wrote:
 > 
-> I'm okay with repeating code in fs/file.c. What I wanted to avoid was
-> open coded combinations in various callers.
+> > As an alternative approach, I have this below hack that does lazy
+> > list_lru creation. The memcg-specific list is created and initialized
+> > only when there is a request to add an element to that particular
+> > list. Though I am not sure about the full impact of this change
+> > on the owners of the lists and also the performance impact of this,
+> > the overall savings look good.
+> 
+> Avoiding memory allocation in list_lru_add() was one of the main
+> reasons for up-front static allocation of memcg lists. We cannot do
+> memory allocation while callers are holding multiple spinlocks in
+> core system algorithms (e.g. dentry_kill -> retain_dentry ->
+> d_lru_add -> list_lru_add), let alone while holding an internal
+> spinlock.
+> 
+> Putting a GFP_ATOMIC allocation inside 3-4 nested spinlocks in a
+> path we know might have memory demand in the *hundreds of GB* range
+> gets an NACK from me. It's a great idea, but it's just not a
 
-... and that got you a lovely userland ABI, where you have
+I do understand that GFP_ATOMIC allocations are really not preferrable
+but want to point out that the allocations in the range of hundreds of
+GBs get reduced to tens of MBs when we do lazy list_lru head allocations
+under GFP_ATOMIC.
 
-	(1) newfd >= 0, SECCOMP_ADDFD_FLAG_SETFD is present => replace
-	(2) newfd < 0, SECCOMP_ADDFD_FLAG_SETFD is present => insert
-	(3) newfd == 0, SECCOMP_ADDFD_FLAG_SETFD not present => insert
-	(4) newfd != 0, SECCOMP_ADDFD_FLAG_SETFD not present => -EINVAL
+As shown earlier, this is what I see in my experimental setup with
+10k containers:
 
-IMO (2) is a bug.  Whether we still can fix it or not... no idea, depends
-on whether the actual userland has come to depend upon it.
+Number of kmalloc-32 allocations
+		Before		During		After
+W/o patch	178176		3442409472	388933632
+W/  patch	190464		468992		468992
 
-I suggest turning (2) into an error (-EBADF is what you'd get from
-attempt to set something at such descriptor) and seeing if anything
-breaks.  And having SECCOMP_ADDFD_FLAG_SETFD status passed into kaddfd
-explicitly, with explicit check in seccomp_handle_addfd().  As in
+So 3442409472*32=102GB upfront list_lru creation-time GFP_KERNEL allocations
+get reduced to 468992*32=14MB dynamic list_lru addtion-time GFP_ATOMIC
+allocations.
 
-commit 42eb0d54c08a0331d6d295420f602237968d792b
-Author: Christoph Hellwig <hch@lst.de>
-Date:   Thu Mar 25 09:22:09 2021 +0100
+This does really depend and vary on the type of the container and
+the number of mounts it does, but I suspect we are looking
+at GFP_ATOMIC allocations in the MB range. Also the number of
+GFP_ATOMIC slab allocation requests matter I suppose.
 
-    fs: split receive_fd_replace from __receive_fd
-    
-    receive_fd_replace shares almost no code with the general case, so split
-    it out.  Also remove the "Bump the sock usage counts" comment from
-    both copies, as that is now what __receive_sock actually does.
-    
-    [AV: ... and make the only user of receive_fd_replace() choose between
-    it and receive_fd() according to what userland had passed to it in
-    flags]
-    
-    Signed-off-by: Christoph Hellwig <hch@lst.de>
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+There are other users of list_lru, but I was just looking at
+dentry and inode list_lru usecase. It appears to me that for both
+dentry and inode, we can tolerate the failure from list_lru_add
+due to GFP_ATOMIC allocation failure. The failure to add dentry
+or inode to the lru list means that they won't be retained in
+the lru list, but would be freed immediately. Is this understanding
+correct?
 
-diff --git a/fs/file.c b/fs/file.c
-index f3a4bac2cbe9..d8ccb95a7f41 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -1068,8 +1068,6 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
- 
- /**
-  * __receive_fd() - Install received file into file descriptor table
-- *
-- * @fd: fd to install into (if negative, a new fd will be allocated)
-  * @file: struct file that was received from another process
-  * @ufd: __user pointer to write new fd number to
-  * @o_flags: the O_* flags to apply to the new fd entry
-@@ -1083,7 +1081,7 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
-  *
-  * Returns newly install fd or -ve on error.
-  */
--int __receive_fd(int fd, struct file *file, int __user *ufd, unsigned int o_flags)
-+int __receive_fd(struct file *file, int __user *ufd, unsigned int o_flags)
- {
- 	int new_fd;
- 	int error;
-@@ -1092,32 +1090,33 @@ int __receive_fd(int fd, struct file *file, int __user *ufd, unsigned int o_flag
- 	if (error)
- 		return error;
- 
--	if (fd < 0) {
--		new_fd = get_unused_fd_flags(o_flags);
--		if (new_fd < 0)
--			return new_fd;
--	} else {
--		new_fd = fd;
--	}
-+	new_fd = get_unused_fd_flags(o_flags);
-+	if (new_fd < 0)
-+		return new_fd;
- 
- 	if (ufd) {
- 		error = put_user(new_fd, ufd);
- 		if (error) {
--			if (fd < 0)
--				put_unused_fd(new_fd);
-+			put_unused_fd(new_fd);
- 			return error;
- 		}
- 	}
- 
--	if (fd < 0) {
--		fd_install(new_fd, get_file(file));
--	} else {
--		error = replace_fd(new_fd, file, o_flags);
--		if (error)
--			return error;
--	}
-+	fd_install(new_fd, get_file(file));
-+	__receive_sock(file);
-+	return new_fd;
-+}
- 
--	/* Bump the sock usage counts, if any. */
-+int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
-+{
-+	int error;
-+
-+	error = security_file_receive(file);
-+	if (error)
-+		return error;
-+	error = replace_fd(new_fd, file, o_flags);
-+	if (error)
-+		return error;
- 	__receive_sock(file);
- 	return new_fd;
- }
-diff --git a/include/linux/file.h b/include/linux/file.h
-index 225982792fa2..2de2e4613d7b 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -92,23 +92,20 @@ extern void put_unused_fd(unsigned int fd);
- 
- extern void fd_install(unsigned int fd, struct file *file);
- 
--extern int __receive_fd(int fd, struct file *file, int __user *ufd,
-+extern int __receive_fd(struct file *file, int __user *ufd,
- 			unsigned int o_flags);
- static inline int receive_fd_user(struct file *file, int __user *ufd,
- 				  unsigned int o_flags)
- {
- 	if (ufd == NULL)
- 		return -EFAULT;
--	return __receive_fd(-1, file, ufd, o_flags);
-+	return __receive_fd(file, ufd, o_flags);
- }
- static inline int receive_fd(struct file *file, unsigned int o_flags)
- {
--	return __receive_fd(-1, file, NULL, o_flags);
--}
--static inline int receive_fd_replace(int fd, struct file *file, unsigned int o_flags)
--{
--	return __receive_fd(fd, file, NULL, o_flags);
-+	return __receive_fd(file, NULL, o_flags);
- }
-+int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags);
- 
- extern void flush_delayed_fput(void);
- extern void __fput_sync(struct file *);
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index 1d60fc2c9987..4fe19cecaa94 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -119,8 +119,11 @@ struct seccomp_kaddfd {
- 	int fd;
- 	unsigned int flags;
- 
--	/* To only be set on reply */
--	int ret;
-+	union {
-+		bool setfd;
-+		/* To only be set on reply */
-+		int ret;
-+	};
- 	struct completion completion;
- 	struct list_head list;
- };
-@@ -1069,7 +1072,11 @@ static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd)
- 	 * that it has been handled.
- 	 */
- 	list_del_init(&addfd->list);
--	addfd->ret = receive_fd_replace(addfd->fd, addfd->file, addfd->flags);
-+	if (!addfd->setfd)
-+		addfd->ret = receive_fd(addfd->file, addfd->flags);
-+	else
-+		addfd->ret = receive_fd_replace(addfd->fd, addfd->file,
-+						addfd->flags);
- 	complete(&addfd->completion);
- }
- 
-@@ -1583,8 +1590,8 @@ static long seccomp_notify_addfd(struct seccomp_filter *filter,
- 		return -EBADF;
- 
- 	kaddfd.flags = addfd.newfd_flags;
--	kaddfd.fd = (addfd.flags & SECCOMP_ADDFD_FLAG_SETFD) ?
--		    addfd.newfd : -1;
-+	kaddfd.setfd = addfd.flags & SECCOMP_ADDFD_FLAG_SETFD;
-+	kaddfd.fd = addfd.newfd;
- 	init_completion(&kaddfd.completion);
- 
- 	ret = mutex_lock_interruptible(&filter->notify_lock);
+If so, would that likely impact the subsequent lookups adversely?
+We failed to retain a dentry or inode in the lru list because
+we failed to allocate memory, presumably under memory pressure.
+Even in such a scenario, is failure to add dentry or inode to
+lru list so bad and not tolerable? 
+
+Regards,
+Bharata.
