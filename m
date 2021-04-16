@@ -2,114 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A43D3621D3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 16:10:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B12263621DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 16:14:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241079AbhDPOKo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Apr 2021 10:10:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39102 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234914AbhDPOKo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Apr 2021 10:10:44 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8C31C061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 07:10:19 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lXPA7-005m1v-Sf; Fri, 16 Apr 2021 14:09:35 +0000
-Date:   Fri, 16 Apr 2021 14:09:35 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Xie Yongji <xieyongji@bytedance.com>, hch@infradead.org,
-        arve@android.com, tkjos@android.com, maco@android.com,
-        joel@joelfernandes.org, hridya@google.com, surenb@google.com,
-        sargun@sargun.me, keescook@chromium.org, jasowang@redhat.com,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] binder: Use receive_fd() to receive file from
- another process
-Message-ID: <YHmanzAMdeCtZUjy@zeniv-ca.linux.org.uk>
-References: <20210401090932.121-1-xieyongji@bytedance.com>
- <20210401090932.121-3-xieyongji@bytedance.com>
- <YGWYZYbBzglUCxB2@kroah.com>
- <20210401104034.52qaaoea27htkpbh@wittgenstein>
- <YHkedhnn1wdVFTV3@zeniv-ca.linux.org.uk>
- <YHkmxCyJ8yekgGKl@zeniv-ca.linux.org.uk>
- <20210416134252.v3zfjp36tpk33tqz@wittgenstein>
+        id S235658AbhDPOLI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Apr 2021 10:11:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53592 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235553AbhDPOLH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 16 Apr 2021 10:11:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B3E8E611C2;
+        Fri, 16 Apr 2021 14:10:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618582242;
+        bh=1s9sCrJo44Veolfwl+MwQWl66gowBJVDh4jCcMWmw20=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=bWtljR/0v+ciclhWmYZDIUGhhvFJ3qQ7nO0uU82MghhOsGFdSMyacApx9Rv+nHL6X
+         W5cY5QnPwP6g7dxd13lON+NP7T3wxEgswnDncwfQXbUpDa1noe9/ic1qeaxTeqr1An
+         xJUGxVeiTwbDQol4BcT+uJeJ/K8GtjgPzMatA+QGLBn8/pwaCrhafWYek6SKXGeGJX
+         JrnAkRBsacpGTrsZXVT6wqIi5rnqa1PtXSpagwrGhkYyDEvybabUi7RBZVXZcudA+H
+         4dZgdBI6yZkxxw1SMBUj5RKBCe9Uqk2xt0sX7dm9fywiRJ0wfW8Bx5Y3FStVzaPeVS
+         VyQ7HbK3kn2jA==
+Received: by mail-wm1-f46.google.com with SMTP id n10-20020a05600c4f8ab0290130f0d3cba3so2452761wmq.1;
+        Fri, 16 Apr 2021 07:10:42 -0700 (PDT)
+X-Gm-Message-State: AOAM5311rO2I/o6Ind6RThkqpjvCAbINqe/V2ca2Zxn0e895bpA76IE+
+        pQhj8cZzVF3wdYjF0bFkNNhn6QVSWsiGrmNBMrQ=
+X-Google-Smtp-Source: ABdhPJwer78kcpt2KUTk7pLNWv4YpxxYqG4ncdMLFchwkUndSOMZjtA8z9tZUxzlPor4R9hASXWQZTamma1KWyeXMwk=
+X-Received: by 2002:a7b:c14a:: with SMTP id z10mr8250595wmi.75.1618582241293;
+ Fri, 16 Apr 2021 07:10:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210416134252.v3zfjp36tpk33tqz@wittgenstein>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20210409185105.188284-3-willy@infradead.org> <202104100656.N7EVvkNZ-lkp@intel.com>
+ <20210410024313.GX2531743@casper.infradead.org> <20210410082158.79ad09a6@carbon>
+ <CAC_iWjLXZ6-hhvmvee6r4R_N64u-hrnLqE_CSS1nQk+YaMQQnA@mail.gmail.com> <ab9f1a6c-4099-2b59-457d-fcc45d2396f4@ti.com>
+In-Reply-To: <ab9f1a6c-4099-2b59-457d-fcc45d2396f4@ti.com>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Fri, 16 Apr 2021 16:10:37 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1+Dpu3ef+VYA+owTVGoGqfK6APbYbLSH1_ZKT0aMYQCw@mail.gmail.com>
+Message-ID: <CAK8P3a1+Dpu3ef+VYA+owTVGoGqfK6APbYbLSH1_ZKT0aMYQCw@mail.gmail.com>
+Subject: Re: Bogus struct page layout on 32-bit
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        kernel test robot <lkp@intel.com>,
+        Linux-MM <linux-mm@kvack.org>, kbuild-all@lists.01.org,
+        clang-built-linux@googlegroups.com,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matteo Croce <mcroce@linux.microsoft.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 16, 2021 at 03:42:52PM +0200, Christian Brauner wrote:
-> > > are drivers/dma-buf/sw_sync.c and drivers/dma-buf/sync_file.c, etc.
-> > 
-> > FWIW, pretty much all ioctls that return descriptor as part of a structure
-> > stored to user-supplied address tend to be that way; some don't have any
-> > other output fields (in which case they probably would've been better off
-> > with just passing the descriptor as return value of ioctl(2)).  Those
-> > might be served by that receive_fd_user() helper; anything that has several
-> > outputs won't be.  The same goes for anything that has hard-to-undo
-> > operations as part of what they need to do:
-> > 	reserve fd
-> > 	set file up
-> > 	do hard-to-undo stuff
-> > 	install into descriptor table
-> > is the only feasible order of operations - reservation can fail, so
-> > it must go before the hard-to-undo part and install into descriptor
-> > table can't be undone at all, so it must come last.  Looks like
-> > e.g. drivers/virt/nitro_enclaves/ne_misc_dev.c case might be of
-> > that sort...
-> 
-> If receive_fd() or your receive_fd_user() proposal can replace a chunk
+On Fri, Apr 16, 2021 at 11:27 AM 'Grygorii Strashko' via Clang Built
+Linux <clang-built-linux@googlegroups.com> wrote:
+> On 10/04/2021 11:52, Ilias Apalodimas wrote:
+> > +CC Grygorii for the cpsw part as Ivan's email is not valid anymore
+> The TI platforms am3/4/5 (cpsw) and Keystone 2 (netcp) can do only 32bit DMA even in case of LPAE (dma-ranges are used).
+> Originally, as I remember, CONFIG_ARCH_DMA_ADDR_T_64BIT has not been selected for the LPAE case
+> on TI platforms and the fact that it became set is the result of multi-paltform/allXXXconfig/DMA
+> optimizations and unification.
+> (just checked - not set in 4.14)
+>
+> Probable commit 4965a68780c5 ("arch: define the ARCH_DMA_ADDR_T_64BIT config symbol in lib/Kconfig").
 
-My what proposal?  The thing is currently in linux/file.h, put there
-by Kees half a year ago...
+I completely missed this change in the past, and I don't really agree
+with it either.
 
-> of open-coded places in modules where the split between reserving the
-> file descriptor and installing it is pointless it's probably already
-> worth it.
+Most 32-bit Arm platforms are in fact limited to 32-bit DMA, even when they have
+MMIO or RAM areas above the 4GB boundary that require LPAE.
 
-A helper for use in some of the simplest cases, with big fat warnings
-not to touch if the things are not entirely trivial - sure, why not,
-same as we have anon_inode_getfd().  But that's a convenience helper,
-not a general purpose primitive.
+> The TI drivers have been updated, finally to accept ARCH_DMA_ADDR_T_64BIT=y by using
+> things like (__force u32) for example.
+>
+> Honestly, I've done sanity check of CPSW with LPAE=y (ARCH_DMA_ADDR_T_64BIT=y) very long time ago.
 
-> Random example from io_uring where the file is already opened
-> way before (which yes, isn't a module afaik but another place where we
-> have that pattern):
-> 
-> static int io_uring_install_fd(struct io_ring_ctx *ctx, struct file *file)
-> {
-> 	int ret, fd;
-> 
-> 	fd = get_unused_fd_flags(O_RDWR | O_CLOEXEC);
-> 	if (fd < 0)
-> 		return fd;
-> 
-> 	ret = io_uring_add_task_file(ctx);
+This is of course a good idea, drivers should work with any
+combination of 32-bit
+or 64-bit phys_addr_t and dma_addr_t.
 
-Huh?  It's
-        ret = io_uring_add_task_file(ctx, file);
-in the mainline and I don't see how that sucker could work without having
-file passed to it.
-
-> 	if (ret) {
-> 		put_unused_fd(fd);
-> 		return ret;
-> 	}
-> 	fd_install(fd, file);
-> 	return fd;
-> }
-
-... and that's precisely the situation where we have something that is
-not obvious how to undo; look into io_uring_add_task_file()...
-
-We have three things to do: (1) reserve a descriptor, (2) io_uring_add_task_file(),
-(3) install the file.  (1) and (2) may fail, (1) is trivial to undo, (2) might be
-not, (3) is impossible to undo.  So I'd say that in this particular case
-io_uring is being perfectly reasonable...
+        Arnd
