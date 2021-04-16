@@ -2,124 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1066362695
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 19:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7F0436269B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 19:21:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235824AbhDPRUp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Apr 2021 13:20:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53946 "EHLO
+        id S240882AbhDPRVn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Apr 2021 13:21:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240673AbhDPRUo (ORCPT
+        with ESMTP id S233606AbhDPRVm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Apr 2021 13:20:44 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21930C061574;
-        Fri, 16 Apr 2021 10:20:18 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id p12so19637701pgj.10;
-        Fri, 16 Apr 2021 10:20:18 -0700 (PDT)
+        Fri, 16 Apr 2021 13:21:42 -0400
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 131A4C061574;
+        Fri, 16 Apr 2021 10:21:17 -0700 (PDT)
+Received: by mail-yb1-xb33.google.com with SMTP id o10so30906820ybb.10;
+        Fri, 16 Apr 2021 10:21:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HNdoPRhe9ydcDzsOjKuBgbIIMgX8oUiaq4I6X+MyuLg=;
-        b=c/vt2HVwweliTRqSdVAM0D/2ZFdsaG03KL3iQnQ8A17zQm4+r2KYQCg+edqIEmDQFY
-         7Fym+OV8RAgyTjQWUt1fdTFYz6vdFg4RNFrnCZHXDNfXNZ9k3Uxms1bFAjstw61GW/CX
-         ZpZt5cpSitvmk/+jYnadKjEpg8qUELibXQvEcXYopTyDHRq8ghG7Q6mgHQS1D0J+QjYD
-         ZGv/w44aeF8f4wrmwz157usBme5VCUowoA3cQf5NRR35sKYGzsczCQH2SSiVssC/rFFG
-         tL9WLkAtCrwnsNBNtbwalDO8ZnEo9TNq4bD1ng1hXE6sLocDZtpVpMX6MSJ/Agl0VS/O
-         SpgA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=WF3sSavyL+cfz2JZUH7lkHKm10q746QRg9Iuzin7JZo=;
+        b=h9C5mE6doFD5pdhyg8czFs1I3i/xXvVEtdWZnNXLO5+oR2u2qazaCwDL0LkFAA158F
+         qz5UtCfmYVsKembJ4L5U6zPNnakZwFNyJfN7FAF4Kxot9IQ/WVAxER3TGyTdfVTxzQvC
+         uCsRXzwVckHj8lk/axfGS4h5hIKKdK0p9UnX6PTMzkcWvQL2TIrGcXrKBbMv1Bo1fh7X
+         GqfhR3KAZ11sGWkrJKSou726OQ1JxHLl52ijXyiCWMehgJvpKuP0s71OY4S0yQD0K5Nt
+         BcALCXY/j5G+jWOZz/lpQLBL9ChbZXHHcJQwKSeWq2RjF25nu7x1JzenI1e/T/c0vQPz
+         4kfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HNdoPRhe9ydcDzsOjKuBgbIIMgX8oUiaq4I6X+MyuLg=;
-        b=WN6jdyjWR0Z1JU+12+PiiuOaBeM5T8CE6bQQZYc6rQ8ZKeoudkPhkZSoNjB0NfDA6y
-         HrAbBB2aPGGpXuDbgrfFXX3hu2Xv8iSxK28Y6VXuM16Fyi2Yy9JNf80uQUU+bNlJR49m
-         1QAZPSiq/NLPw9PUGAPccHalOTtsN/epUN3qbp8z/i51sHViUsOuiHbPblegPlWK7Ky3
-         SxCHiGtTS62idQTQq+u5HiXaEckZry217XPJbEdxLczuqfzaX+8OSrF0gJlqBtTYttzr
-         SSJuSKX0bPZYu4OJCeWMpzOYIJU/8i6Bg9P4HGjOvUtzx5sl03o4TR1BOf24HA+DsrbM
-         Sqpg==
-X-Gm-Message-State: AOAM530o5To5AU3PWf71Rz+KhPLgpFg6yF1RHHYea0iXWHsWXIFvndTc
-        IQOjUcrphuP+uSrewy9vAfQIwV5jW/MU+w==
-X-Google-Smtp-Source: ABdhPJz0reBgvQimWpOzDOCBMDyxNNikEwZd815dZP5BsTmzz2ngQ88C+BlAqQw+15z4ykfcS457sA==
-X-Received: by 2002:a63:1a50:: with SMTP id a16mr164697pgm.92.1618593617602;
-        Fri, 16 Apr 2021 10:20:17 -0700 (PDT)
-Received: from localhost.localdomain (220-130-175-235.HINET-IP.hinet.net. [220.130.175.235])
-        by smtp.gmail.com with ESMTPSA id 33sm5536776pgq.21.2021.04.16.10.20.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Apr 2021 10:20:17 -0700 (PDT)
-From:   Chung-Chiang Cheng <shepjeng@gmail.com>
-X-Google-Original-From: Chung-Chiang Cheng <cccheng@synology.com>
-To:     christian.brauner@ubuntu.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     cccheng@synology.com
-Subject: [PATCH] hfsplus: prevent negative dentries when casefolded
-Date:   Sat, 17 Apr 2021 01:20:12 +0800
-Message-Id: <20210416172012.8667-1-cccheng@synology.com>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=WF3sSavyL+cfz2JZUH7lkHKm10q746QRg9Iuzin7JZo=;
+        b=ezxulafjze0JA2ZLYIq5tuPLEdIeCo6Zcw53Xfd9l5LiPVEJPxdCnxpn1as78A9Rz6
+         XmQceU6dX/D9rp/iVhcBr/e7CTETy/duKQP9M8GnMDLrOkHtSnifEMTvGI0Ncy/5bakx
+         9MCFH91Hfz8ARRi4MUlw/HchU1WW2gXvh+77+KInFhLmGd6/ewTaT4LE0cZQEwhiy6A9
+         CAg74Gdy5XcrCCQJ1iArk2Xba9tmUBjgQ3IueMFYW7SON2yuPth5BXnhUWjJn9EOpcwS
+         vX1etm2CXPpMjoMo6o3AHWmgL5+d/77mghzF47u3AnQZoS2Pd2SXsZDk6JY3CN4jsyCG
+         mCpg==
+X-Gm-Message-State: AOAM530GMAkJN3oW6d3M+CFbDsfFSKF+Qhnakv8qmXT0VXe7T9v8BPoi
+        lhSpe1muCtk8WSOonnb0vLkcadEwg8YgFw8FFQ4=
+X-Google-Smtp-Source: ABdhPJyNBPyGIa65lH+SQj/B+50R7Q0d8jA8G6G8FeRhLRC2l5lUrubuk4Bu/vI4ioaKycQ6Y6L35AgxtZi9GH8Iw3c=
+X-Received: by 2002:a25:3c01:: with SMTP id j1mr268320yba.176.1618593676373;
+ Fri, 16 Apr 2021 10:21:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1408071538-14354-1-git-send-email-mcgrof@do-not-panic.com>
+ <20140815092950.GZ18016@ZenIV.linux.org.uk> <c3b0feac-327c-15db-02c1-4a25639540e4@suse.com>
+ <CAB=NE6X2-mbZwVFnKUwjRmTGp3auZFHQXJ1h_YTJ2driUeoR+A@mail.gmail.com>
+ <e7e867b8-b57a-7eb2-2432-1627bd3a88fb@toxicpanda.com> <20210415182909.GK4332@42.do-not-panic.com>
+In-Reply-To: <20210415182909.GK4332@42.do-not-panic.com>
+From:   Neal Gompa <ngompa13@gmail.com>
+Date:   Fri, 16 Apr 2021 13:20:40 -0400
+Message-ID: <CAEg-Je8UCV6kFdXJoyH3B78sraYCXscTmQQiPHjkPvzt5g1Wpw@mail.gmail.com>
+Subject: Re: [RFC v3 0/2] vfs / btrfs: add support for ustat()
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.cz>,
+        Al Viro <viro@zeniv.linux.org.uk>, Chris Mason <clm@fb.com>,
+        Josef Bacik <jbacik@fb.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jeff Mahoney <jeffm@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-hfsplus uses the case-insensitive filenames by default, but VFS negative
-dentries are incompatible with case-insensitive. For example, the
-following instructions will get a cached filename 'aaa' which isn't
-expected. There is no such problem in macOS.
+On Thu, Apr 15, 2021 at 2:29 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Thu, Apr 15, 2021 at 02:17:58PM -0400, Josef Bacik wrote:
+> > There's a lot of larger things that need to
+> > be addressed in general to support the volume approach inside file syst=
+ems
+> > that is going to require a lot of work inside of VFS.  If you feel like
+> > tackling that work and then wiring up btrfs by all means have at it, bu=
+t I'm
+> > not seeing a urgent need to address this.  Thanks,
+>
+> That's precisely what I what I want to hear me about. Things like this.
+> Would btrfs be the ony user of volumes inside filesystem? Jeff had
+> mentioned before this could also allow namespaces per volumes, and this
+> might be a desirable feature.
+>
+> What else?
 
-  touch aaa
-  rm aaa
-  touch AAA
+Wouldn't this be useful for union filesystems like OverlayFS? Or other
+filesystems that support nested filesystems like bcachefs?
 
-This patch just takes the same approach as ext4 and f2fs to prevent
-negative dentries for this issue.
 
-Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
----
- fs/hfsplus/dir.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
 
-diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
-index 03e6c046faf4..fcab8f09b6af 100644
---- a/fs/hfsplus/dir.c
-+++ b/fs/hfsplus/dir.c
-@@ -121,6 +121,9 @@ static struct dentry *hfsplus_lookup(struct inode *dir, struct dentry *dentry,
- 	if (S_ISREG(inode->i_mode))
- 		HFSPLUS_I(inode)->linkid = linkid;
- out:
-+	/* Prevent the negative dentry in the casefolded form from being cached */
-+	if (!inode && test_bit(HFSPLUS_SB_CASEFOLD, &HFSPLUS_SB(sb)->flags))
-+		return NULL;
- 	return d_splice_alias(inode, dentry);
- fail:
- 	hfs_find_exit(&fd);
-@@ -407,6 +410,12 @@ static int hfsplus_unlink(struct inode *dir, struct dentry *dentry)
- 		sbi->file_count--;
- 	inode->i_ctime = current_time(inode);
- 	mark_inode_dirty(inode);
-+
-+	/* VFS negative dentries are incompatible with encoding and
-+	 * case-insensitiveness
-+	 */
-+	if (test_bit(HFSPLUS_SB_CASEFOLD, &sbi->flags))
-+		d_invalidate(dentry);
- out:
- 	mutex_unlock(&sbi->vh_mutex);
- 	return res;
-@@ -429,6 +438,12 @@ static int hfsplus_rmdir(struct inode *dir, struct dentry *dentry)
- 	inode->i_ctime = current_time(inode);
- 	hfsplus_delete_inode(inode);
- 	mark_inode_dirty(inode);
-+
-+	/* VFS negative dentries are incompatible with encoding and
-+	 * case-insensitiveness
-+	 */
-+	if (test_bit(HFSPLUS_SB_CASEFOLD, &sbi->flags))
-+		d_invalidate(dentry);
- out:
- 	mutex_unlock(&sbi->vh_mutex);
- 	return res;
--- 
-2.25.1
-
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
