@@ -2,94 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDBB4361779
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 04:19:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0C2636177F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 04:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238152AbhDPCT5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 22:19:57 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:16129 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236747AbhDPCT5 (ORCPT
+        id S236747AbhDPCVK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 22:21:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:42504 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235017AbhDPCVJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 22:19:57 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FM0Fc6t9VzpXj7;
-        Fri, 16 Apr 2021 10:16:36 +0800 (CST)
-Received: from [10.136.110.154] (10.136.110.154) by smtp.huawei.com
- (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.498.0; Fri, 16 Apr
- 2021 10:19:28 +0800
-Subject: Re: [PATCH] direct-io: use read lock for DIO_LOCKING flag
-To:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-CC:     <jack@suse.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20210415094332.37231-1-yuchao0@huawei.com>
- <20210415102413.GA25217@quack2.suse.cz>
- <YHjds1kY6h2kzIZ+@zeniv-ca.linux.org.uk>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <914e86e7-f53a-ea69-ab9d-d05cd28a9802@huawei.com>
-Date:   Fri, 16 Apr 2021 10:19:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 15 Apr 2021 22:21:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618539645;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=55n7LvBDiipqYGJEcb5TaYPCz2MnXHE0bIABWMH3IxI=;
+        b=DyVw+AOZssoKrsDY/NVupasK2wN6TSl3xCCj3w+57xpZM28HDTN/vk9KJXlvOfsYn2mh1P
+        xPuFy9boDTqBPrv03e+ITdlx3L6euZhahyCdNFzql5/+bywJ6ZGlIF0684HnhIMpllzBcX
+        bDjYxt7Iop+DIPkFX3NqHPqIoBeBTq4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-562-Ig8URrppP2-56H43IdpRdw-1; Thu, 15 Apr 2021 22:20:41 -0400
+X-MC-Unique: Ig8URrppP2-56H43IdpRdw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0D2138030A1;
+        Fri, 16 Apr 2021 02:20:40 +0000 (UTC)
+Received: from wangxiaodeMacBook-Air.local (ovpn-13-140.pek2.redhat.com [10.72.13.140])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 864C16294D;
+        Fri, 16 Apr 2021 02:20:27 +0000 (UTC)
+Subject: Re: [PATCH v6 10/10] Documentation: Add documentation for VDUSE
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20210331080519.172-1-xieyongji@bytedance.com>
+ <20210331080519.172-11-xieyongji@bytedance.com>
+ <YHb44R4HyLEUVSTF@stefanha-x1.localdomain>
+ <CACycT3uNR+nZY5gY0UhPkeOyi7Za6XkX4b=hasuDcgqdc7fqfg@mail.gmail.com>
+ <YHfo8pc7dIO9lNc3@stefanha-x1.localdomain>
+ <80b31814-9e41-3153-7efb-c0c2fab44feb@redhat.com>
+ <02c19c22-13ea-ea97-d99b-71edfee0b703@redhat.com>
+ <CACycT3tL7URz3n-KhMAwYH+Sn1e1TSyfU+RKcc8jpPDJ7WcZ2w@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <5beabeaf-52a6-7ee5-b666-f3616ea82811@redhat.com>
+Date:   Fri, 16 Apr 2021 10:20:25 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.9.1
 MIME-Version: 1.0
-In-Reply-To: <YHjds1kY6h2kzIZ+@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.136.110.154]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CACycT3tL7URz3n-KhMAwYH+Sn1e1TSyfU+RKcc8jpPDJ7WcZ2w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021/4/16 8:43, Al Viro wrote:
-> On Thu, Apr 15, 2021 at 12:24:13PM +0200, Jan Kara wrote:
->> On Thu 15-04-21 17:43:32, Chao Yu wrote:
->>> 9902af79c01a ("parallel lookups: actual switch to rwsem") changes inode
->>> lock from mutex to rwsem, however, we forgot to adjust lock for
->>> DIO_LOCKING flag in do_blockdev_direct_IO(),
-> 
-> The change in question had nothing to do with the use of ->i_mutex for
-> regular files data access.
-> 
->>> so let's change to hold read
->>> lock to mitigate performance regression in the case of read DIO vs read DIO,
->>> meanwhile it still keeps original functionality of avoiding buffered access
->>> vs direct access.
->>>
->>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+
+在 2021/4/15 下午7:17, Yongji Xie 写道:
+> On Thu, Apr 15, 2021 at 5:05 PM Jason Wang <jasowang@redhat.com> wrote:
 >>
->> Thanks for the patch but this is not safe. Originally we had exclusive lock
->> (with i_mutex), switching to rwsem doesn't change that requirement. It may
->> be OK for some filesystems to actually use shared acquisition of rwsem for
->> DIO reads but it is not clear that is fine for all filesystems (and I
->> suspect those filesystems that actually do care already don't use
->> DIO_LOCKING flag or were already converted to iomap_dio_rw()). So unless
->> you do audit of all filesystems using do_blockdev_direct_IO() with
->> DIO_LOCKING flag and make sure they are all fine with inode lock in shared
->> mode, this is a no-go.
-> 
-> Aye.  Frankly, I would expect that anyone bothering with that kind of
-> analysis for given filesystem (and there are fairly unpleasant ones in the
-> list) would just use the fruits of those efforts to convert it over to
-> iomap.
+>> 在 2021/4/15 下午4:36, Jason Wang 写道:
+>>>> Please state this explicitly at the start of the document. Existing
+>>>> interfaces like FUSE are designed to avoid trusting userspace.
+>>>
+>>> There're some subtle difference here. VDUSE present a device to kernel
+>>> which means IOMMU is probably the only thing to prevent a malicous
+>>> device.
+>>>
+>>>
+>>>> Therefore
+>>>> people might think the same is the case here. It's critical that people
+>>>> are aware of this before deploying VDUSE with virtio-vdpa.
+>>>>
+>>>> We should probably pause here and think about whether it's possible to
+>>>> avoid trusting userspace. Even if it takes some effort and costs some
+>>>> performance it would probably be worthwhile.
+>>>
+>>> Since the bounce buffer is used the only attack surface is the
+>>> coherent area, if we want to enforce stronger isolation we need to use
+>>> shadow virtqueue (which is proposed in earlier version by me) in this
+>>> case. But I'm not sure it's worth to do that.
+>>
+>>
+>> So this reminds me the discussion in the end of last year. We need to
+>> make sure we don't suffer from the same issues for VDUSE at least
+>>
+>> https://yhbt.net/lore/all/c3629a27-3590-1d9f-211b-c0b7be152b32@redhat.com/T/#mc6b6e2343cbeffca68ca7a97e0f473aaa871c95b
+>>
+>> Or we can solve it at virtio level, e.g remember the dma address instead
+>> of depending on the addr in the descriptor ring
+>>
+> I might miss something. But VDUSE has recorded the dma address during
+> dma mapping, so we would not do bouncing if the addr/length is invalid
+> during dma unmapping. Is it enough?
 
-Actually, I was misguided by DIO_LOCKING comments more or less, it looks it
-was introduced to avoid race case only in between buffered IO and DIO.
 
-	/* need locking between buffered and direct access */
-	DIO_LOCKING	= 0x01,
+E.g malicous device write a buggy dma address in the descriptor ring, so 
+we had:
 
-I don't think it is easy for me to analyse usage scenario/restriction of all
-DIO_LOCKING users, and get their developers' acks for this change.
+vring_unmap_one_split(desc->addr, desc->len)
+     dma_unmap_single()
+         vduse_dev_unmap_page()
+             vduse_domain_bounce()
 
-Converting fs to use iomap_dio_rw looks a better option for me, thanks, Jan
-and Al. :)
+And in vduse_domain_bounce() we had:
 
-Thanks,
+         while (size) {
+                 map = &domain->bounce_maps[iova >> PAGE_SHIFT];
+                 offset = offset_in_page(iova);
+                 sz = min_t(size_t, PAGE_SIZE - offset, size);
 
-> 
-> "Read DIO" does not mean that accesses to private in-core data structures used
-> by given filesystem can be safely done in parallel.  So blanket patch like
-> that is not safe at all.
-> .
-> 
+This means we trust the iova which is dangerous and exacly the issue 
+mentioned in the above link.
+
+ From VDUSE level need to make sure iova is legal.
+
+ From virtio level, we should not truse desc->addr.
+
+Thanks
+
+
+>
+> Thanks,
+> Yongji
+>
+
