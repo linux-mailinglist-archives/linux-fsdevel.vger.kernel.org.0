@@ -2,202 +2,240 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA914361AAD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 09:40:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 563A4361AE4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 09:55:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239663AbhDPHdP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Apr 2021 03:33:15 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:40308 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239578AbhDPHdO (ORCPT
+        id S235137AbhDPHy0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Apr 2021 03:54:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39932 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233959AbhDPHy0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Apr 2021 03:33:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1618558371; x=1650094371;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=2j5kx44k7zzrm3cFdECiFFkl/VmM0iyiyaG5MGFQrW0=;
-  b=fbyOeNNZxkZJqGUogF9+HiZuQD9au2TM8X1ULbNjn+U7a2+zH/9yuvtT
-   HplmK9eWANj320ivbrGR1t4EsacZ66vk0alr6gWhNQ5AZxLhOFuuZwrY9
-   UDj+vhZdRls7XYWYKRHfePbsepr6005RBn+lp75mj1PrK//bFMUBaGUt2
-   tNGEJuf44ZJ2uo4VKsUNRu+ivzU8Yx6MUMgizSZXOGo6GGlBVnGQq7jQ1
-   dlvIJ8JXtz3ANucBFUT2XqV3DfypyrWh9HuqyBC8GFxMFqi7fpQHqRHFn
-   LwPCyZf8YJEm57U1qTS5wxsYupySGMJXQs0fbaUnSM0MXu+qEfbaKmelM
-   g==;
-IronPort-SDR: FAKrQDSf36ag+RfeQod415beWzFfpxvtEq63gc8V1iKXt4jRdA2mCyNfqEFH94Pc7c1qeC1oOO
- xN5/eObe+iErzWyGFdIxNX4DILqsW65iM8Td4N+ay4LBxLk4Q9WGUZVQql4QgZQfoIl3V8hzgL
- jSZ7Lx2pkxq+gZt4rj+bRTvxDS+tQ3YAHa+R/ee89vKYE6bOO+Vbvwo74KTL7pJc9IWVARnsQq
- XoAVWqMzFXpoSVv3ymxUTJ+t3V35MvK2Jycu0payzjEYExv4OCIqx6w5vbDRTvZZ1NQE+AToqU
- K88=
-X-IronPort-AV: E=Sophos;i="5.82,226,1613404800"; 
-   d="scan'208";a="165620708"
-Received: from mail-mw2nam12lp2043.outbound.protection.outlook.com (HELO NAM12-MW2-obe.outbound.protection.outlook.com) ([104.47.66.43])
-  by ob1.hgst.iphmx.com with ESMTP; 16 Apr 2021 15:30:35 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I/GAZX7rSSMr9aDaAMvd9MID851Uv8NaFAkvCb4SyZd/JltK0Tfo+rhwnzTT2IV5MbrEWqo0fTp1o0i0jvcS2MWF+Hf+mkOXeAX7uNaq+gEuqLmfzHfFfEymXHhApqNjYtvj6nHkOr9+k45ZMgm5pXJ1YXUUPnANUi39MxRuMT0UTLvuA3lHn7RH9PWTOlOuuzepDf2tKhgLgUh2wMLoXJJyps4P6KEBN5CCHte/WYodHyOGR9rtWnDXIVhSh/p+salWkORhv+xL0UQU+0t7BXQX75cwCAZwBSeQeAuh+XuFQ5N75Q1/8lVNBU5a5te+TRN3UoWhFscihYNQKe+sfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aP6sY37UXVp54JB+x2hefY4yK1N+D/HDKTk38sQRNvI=;
- b=Kp67K1P9rbROlkkqOcS1WQ2BYOo1GKYLWb1f4fbO7/fFPvHMIGPGpYlTd4PJMMjY6MXkBx4rHunSxpmRSFTpJVTcMErm58ew80rctdbDLGzGnUybvbhRXE8/3jLfHUs1MnkCPdlehF1Dp3EED1PmgdlqAaoW8xoLZQLRH7BPpajboTLOegUL2FxeRS4Kb/oAW7XrNfq2nYA0i9CPg1KK8y/Iox2XxG+FFJxFtTyweRdH5Baep7tM366WdmjR3bjZG57O8hfvO40mXc0QlwKO2mRqxvvFWURHW6lkqAeUBmN3K6mh+79FbQ2uC2OFaenrSE5GOd+JfOCIlY/afvQtrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Fri, 16 Apr 2021 03:54:26 -0400
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7FACC061574;
+        Fri, 16 Apr 2021 00:54:00 -0700 (PDT)
+Received: by mail-io1-xd2d.google.com with SMTP id e186so26849985iof.7;
+        Fri, 16 Apr 2021 00:54:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aP6sY37UXVp54JB+x2hefY4yK1N+D/HDKTk38sQRNvI=;
- b=lLEsULuqsabq9eSFCxBf7PBwK/MtiuDO9zzrVgP4tlmulWam9j2veseaDrIt15lyfq01aZZuJdvDqvM6yLzr6nWiEtMYYpvPO9McfKnykLBUfSjT90F1tSnxFwiqpkEmJlLDudo37Tz+tyAOQvZLdkpAbI+W2fK4rf0zdGALQmY=
-Received: from BL0PR04MB6514.namprd04.prod.outlook.com (2603:10b6:208:1ca::23)
- by MN2PR04MB6415.namprd04.prod.outlook.com (2603:10b6:208:1a4::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4042.16; Fri, 16 Apr
- 2021 07:30:24 +0000
-Received: from BL0PR04MB6514.namprd04.prod.outlook.com
- ([fe80::8557:ab07:8b6b:da78]) by BL0PR04MB6514.namprd04.prod.outlook.com
- ([fe80::8557:ab07:8b6b:da78%3]) with mapi id 15.20.4042.016; Fri, 16 Apr 2021
- 07:30:24 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>
-CC:     Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>
-Subject: Re: [PATCH 2/4] dm crypt: Fix zoned block device support
-Thread-Topic: [PATCH 2/4] dm crypt: Fix zoned block device support
-Thread-Index: AQHXMm1hiOyme3G/H0G7ONrrey5MQg==
-Date:   Fri, 16 Apr 2021 07:30:24 +0000
-Message-ID: <BL0PR04MB6514908FACBF6A34D8A085C9E74C9@BL0PR04MB6514.namprd04.prod.outlook.com>
-References: <20210416030528.757513-1-damien.lemoal@wdc.com>
- <20210416030528.757513-3-damien.lemoal@wdc.com>
- <PH0PR04MB74165367AACA8F3D9F7B023A9B4C9@PH0PR04MB7416.namprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: wdc.com; dkim=none (message not signed)
- header.d=none;wdc.com; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [2400:2411:43c0:6000:c420:851d:e64f:2199]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 42bbae3b-f10d-4685-2664-08d900a97fcd
-x-ms-traffictypediagnostic: MN2PR04MB6415:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR04MB64151808F3F2350F284D5D0BE74C9@MN2PR04MB6415.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: P18iKaewacv+Wa048lgjHjpiyEoKrS3dPIanCi20jjc4sv9RN2/XgIk535GD+lZdOdmcZBhwyyHvbtw8HFVc5dZP1OnOIYgHWf+bghw5ClrYGUaT0VBuwkis2UkeRZ5F4LN7BXmiq+Vt2bj15OWgYD+/I6ntz+akpF/Ui6cgDoYrT0EX6J9XUeZaL/UKPTTMRWm7fEFo1QAlxHdtxdXFDPec2A50pNthjHOWzidaIq2yAAfHyY8HsDX5sgMc2nCDi66nTbsTzSNard4F4fEioY3TFtTb53v/19VMce7o2feU0580R2CB5TjTLdP3xsgkp5m530lA8etvHjYGutrq4xr7pTRYR3C1yYLMJkvR8Vrzfm9qY4MlooQye3ryMynoZY8lYDmfJVW6M01JYeqnoKSzAKfqDhC0+mAQdHiqgn9cZNYxDYVcFVEy1TFz3Hij+0UaK1AN56WNLl4FKA+c0hBj/L9O0S9bHi9BsrBGJTUkHtSdn6E74PymzR7ujJIOv2qpqIUdwzpa5pAtAHi+EKN+SK/YnCgcZrXXv4X5HRCG0GOMGOPuyvi3L49DkUD4T8U5zGLsg5HGdQ/v+f2OcsBVmHXQHAbCRR079eU+z1PcuIGZ4jQsxmKzQQcm4No5NOT28TFwT6yc2DvwCAP3ew==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR04MB6514.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(366004)(346002)(396003)(136003)(39860400002)(7416002)(8676002)(478600001)(66946007)(55016002)(2906002)(122000001)(921005)(316002)(186003)(9686003)(110136005)(8936002)(54906003)(66556008)(86362001)(38100700002)(76116006)(66446008)(91956017)(33656002)(52536014)(4326008)(6506007)(7696005)(5660300002)(71200400001)(66476007)(64756008)(53546011);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?8L67xb8/47Ji1HC8CpbkiVcAmN9mGBIwwEkWDnVuRyIVf8io+YDRKNJrbpjI?=
- =?us-ascii?Q?ILqC5rNE9glZBV2tUnMDJupaSTdlJ+zywtnQrLhXQr9NwGG6X3B3jqfpV2N7?=
- =?us-ascii?Q?8BIvzT9zF7Td+s9rA1FLstFIUvpFV6kDiJ7wc6gWOBp/c8/g4TZnDGxjl6PZ?=
- =?us-ascii?Q?B9so6HyM0N6DDRDC0nFS3fcCcl2vf1gwbxlCp4SzDudJPh3GbQY1SAMYt1o6?=
- =?us-ascii?Q?dHas6AzSOvcG+AKfgHVX3CHCsjyLaBLQ32vxH6V8H3AlEB8HcXDyqll5OuZg?=
- =?us-ascii?Q?cCUOQuJYjskvkL41/foTEjh8lBC1dM581rsOKGFoKYYIsCu3y5D25xPJc5IS?=
- =?us-ascii?Q?m/holDsu07ZFRlGHHwWxFeNALm7xH+hvE6AfajkCi3Hdp98zUx5n/xYSN/0z?=
- =?us-ascii?Q?Cy+OAAXWXLpahmBoU01cR3eUqigzYqdGZMqEBUeRNfH4aVHdQ2kCybkxNUcG?=
- =?us-ascii?Q?hezu2XADOQKJ/MlslIBAf3uQXXg1j4zNMy/lmhqLuL9McH+ls6Ujnml/jUhw?=
- =?us-ascii?Q?ErOeb9iPiDowMa47inFb1mCFsf2W5lRsE1GHlUG3EjMiJ+ct/AnDtGPLoadS?=
- =?us-ascii?Q?OjXVMgse8q/iOzFCoo7lN5HLhjnmg41Lwx8Y+ArAotyvwpw+d2/YtyCu0wht?=
- =?us-ascii?Q?tWJSECJnb2Cs5TfYDdsPsewvjekwtljbCCqlMthZiFJuVOh6HBF+UVqDq+39?=
- =?us-ascii?Q?OBwBRhStQLHkEhwPl9FtUKNxnripgL4G7yJ20afOycgnMhMzVsK7dMft4CNZ?=
- =?us-ascii?Q?6qjahg7wWjdtCwYNu8H+mAWCY0gl9UUcLuw+dyWoXzCJwKGBCerFU12S52xz?=
- =?us-ascii?Q?slj9RhCR2QngN5ipnqV2pNkoN1tAhkmMAi4LS5v3jGC98cyhVCQF6SwZNjLe?=
- =?us-ascii?Q?kiHEtCDj1ZVp6BA0tq0j3jgOZ2wFLu4B+nX7fgKNM4NEvh2ZJ5OztoSlIHVM?=
- =?us-ascii?Q?0H+Jo+Aj9xpfYrDUeTB10Oli9b+drvfumBAG9e3y6Q2hVWTeK6b2oiIi8/X2?=
- =?us-ascii?Q?0HZqOWV8iZHP1MTVVDCwN/Zl/+kD2kiObILvqYZ7FR8MtY/KptgDyQ/ii6M4?=
- =?us-ascii?Q?Hq7zS1xMqiY0BPX48T4yGlEJL7mVwkW3K+cHCw2DPApUzI9DBSVdi2VtzuSX?=
- =?us-ascii?Q?xhfchVQKilReovZzv/Jy5ppUaw7C4VsjrzYPI+cLbQBT0+LBU2YtdJD8QXFg?=
- =?us-ascii?Q?u0AArXt8ykybRJlLoUr4+GSs3TMcVUG0LWRH+WS6pz6bEfrFfWGb7RXTleT/?=
- =?us-ascii?Q?sSO76qh07m5n6BNKS38+jwOkqBd6nzm+DvKKH1MPnlrEWm5pfrncQoavdUha?=
- =?us-ascii?Q?O0HS7jdsi5L4XRnoXNzDnXQhHd1AULIVbhvllGbJ+55mqaKVFLOG9eGqgBRo?=
- =?us-ascii?Q?HNYcBAU0cNKelmIUwiadFopj2wrw1QphCSSQB5FWNmB8vhSdng=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZgJ4HPYSc2Bm8VdO2ALDr1JFJ3KD0zJrkMrbQQE57b8=;
+        b=OX7yBpXWn2ssAxkb3r7+qQ7aamSOBKZ0EDBPvTJqyR8BG8bYrtoMScCbJjiF4pSGcS
+         l9Ywks4aVDRA+TgBW8EjLpmTfTQbsDu5zFx/GbfJ4kLX1gxMiT5Ex/UTmTyV2WVQuJ6i
+         +2kd5MKn9hFiNzYarWvGMjYw1E4FUZmi+IasTK4vEFnq8elg2pIv9f5fnJZxqVZCYtHo
+         TuKAIHmSboFQV7x68I1pwAy7FHr0LkHBK+fZR8fkxlsAUgQnC1i3/XOr8pO+q+lQAsGJ
+         i/opyqBXccs2Dd6Dm2YjdRga1/yOkcojkgLstEeD4OLZsG/FHvEFSbdiHSkDXrgQ75mv
+         3b4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZgJ4HPYSc2Bm8VdO2ALDr1JFJ3KD0zJrkMrbQQE57b8=;
+        b=lfEoSwtg5vNFWsEsKha77aH9NohNH8n+H/vnY/PxSOwR8NRoOcQZ2hktJp2hInVBWc
+         x6BXoNXWmm9n0kNXp1nbTRquLOXui+uQMVS9AdPf9fNaeJ9qGNj7NIalD6bEg+UUYiM+
+         bDWRqPX9SvAu4F7vxk6e0yh2TQeHeCqRyu+u7R06BLO5CGsjABrH2suqbQoe3T7yXv42
+         xc1ev3gWlxKN0lJ8WNl8vpFXQtv58q6mAQX5fqhezElo0A33mHVOzjB6llkTZdi0jxyB
+         IhdUWyYE36cijuItOA/dO52o6MldhjldYi0SQV94WsxmkQkOBYBmrUDQZ49bGU2Oc5De
+         Rj5g==
+X-Gm-Message-State: AOAM532m0rD+woqQY/r0MVk87pSmXT/ofJX1y64RTWZZ+X9QbEUBCCeW
+        fhSFBIGGqL7kphF0yK/Bjg6h4w2NMHXbkAP/d/gxzHMWEbc=
+X-Google-Smtp-Source: ABdhPJzbnz+doZyA/ZlKhiVLSaMWSyiqc0T96lV6wlWQ572onxtig6GV5Wn4q98ZtK4M5EXfcWX9q7P8y50IYh2e9a8=
+X-Received: by 2002:a6b:d309:: with SMTP id s9mr2513490iob.186.1618559640091;
+ Fri, 16 Apr 2021 00:54:00 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR04MB6514.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42bbae3b-f10d-4685-2664-08d900a97fcd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Apr 2021 07:30:24.2025
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: eTPsBRoy3VXyjOKoQmWqeek45ohboElu8YdvmwxtejOsvB66/jyz2nZWeDcfdGUYJOvUlPCV34A7dWRPNk83Kg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6415
+References: <cover.1618527437.git.repnop@google.com> <e6cd967f45381d20d67c9d5a3e49e3cb9808f65b.1618527437.git.repnop@google.com>
+ <CAOQ4uxhWicqpKQxvuN5=WiULwNRozFvxQKgTDMOL-UxKpnk-WQ@mail.gmail.com> <YHk3Uko0feh3ud/X@google.com>
+In-Reply-To: <YHk3Uko0feh3ud/X@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 16 Apr 2021 10:53:48 +0300
+Message-ID: <CAOQ4uxjQi4dV0XoU2WDKG+3R81Xam6giee9hhkvXb13tQB+Tdg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fanotify: Add pidfd support to the fanotify API
+To:     Matthew Bobrowski <repnop@google.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021/04/16 16:13, Johannes Thumshirn wrote:=0A=
-> On 16/04/2021 05:05, Damien Le Moal wrote:=0A=
-> =0A=
-> [...]=0A=
-> =0A=
->> +	CRYPT_IV_NO_SECTORS,		/* IV calculation does not use sectors */=0A=
-> =0A=
-> [...]=0A=
-> =0A=
->> -	if (ivmode =3D=3D NULL)=0A=
->> +	if (ivmode =3D=3D NULL) {=0A=
->>  		cc->iv_gen_ops =3D NULL;=0A=
->> -	else if (strcmp(ivmode, "plain") =3D=3D 0)=0A=
->> +		set_bit(CRYPT_IV_NO_SECTORS, &cc->cipher_flags);=0A=
->> +	} else if (strcmp(ivmode, "plain") =3D=3D 0)=0A=
-> =0A=
-> [...]=0A=
-> =0A=
->> +		if (!test_bit(CRYPT_IV_NO_SECTORS, &cc->cipher_flags)) {=0A=
->> +			DMWARN("Zone append is not supported with sector-based IV cyphers");=
-=0A=
->> +			ti->zone_append_not_supported =3D true;=0A=
->> +		}=0A=
-> =0A=
-> I think this negation is hard to follow, at least I had a hard time=0A=
-> reviewing it.=0A=
-> =0A=
-> Wouldn't it make more sense to use CRYPT_IV_USE_SECTORS, set the bit=0A=
-> for algorithms that use sectors as IV (like plain64) and then do a =0A=
-> normal=0A=
-=0A=
-There are only 2 IV modes that do not use sectors. null and random. All oth=
-ers=0A=
-do. Hence the "NO_SECTORS" choice. That is the exception rather than the no=
-rm,=0A=
-the flag indicates that.=0A=
-=0A=
-> =0A=
-> 	if (test_bit(CRYPT_IV_USE_SECTORS, &cc->cipher_flags)) {=0A=
-> 		DMWARN("Zone append is not supported with sector-based IV cyphers");=0A=
-> 		ti->zone_append_not_supported =3D true;=0A=
-> 	}=0A=
-> =0A=
-> i.e. without the double negation?=0A=
-=0A=
-Yes. I agree, it is more readable. But adds more lines for the same result.=
- I=0A=
-could add a small boolean helper to make the "!test_bit(CRYPT_IV_NO_SECTORS=
-,=0A=
-&cc->cipher_flags)" easier to understand.=0A=
-=0A=
-=0A=
-> =0A=
-> =0A=
-=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+On Fri, Apr 16, 2021 at 10:06 AM Matthew Bobrowski <repnop@google.com> wrote:
+>
+> On Fri, Apr 16, 2021 at 09:27:03AM +0300, Amir Goldstein wrote:
+> > On Fri, Apr 16, 2021 at 2:22 AM Matthew Bobrowski <repnop@google.com> wrote:
+> > >
+> > > Introduce a new flag FAN_REPORT_PIDFD for fanotify_init(2) which
+> > > allows userspace applications to control whether a pidfd is to be
+> > > returned instead of a pid for `struct fanotify_event_metadata.pid`.
+> > >
+> > > FAN_REPORT_PIDFD is mutually exclusive with FAN_REPORT_TID as the
+> > > pidfd API is currently restricted to only support pidfd generation for
+> > > thread-group leaders. Attempting to set them both when calling
+> > > fanotify_init(2) will result in -EINVAL being returned to the
+> > > caller. As the pidfd API evolves and support is added for tids, this
+> > > is something that could be relaxed in the future.
+> > >
+> > > If pidfd creation fails, the pid in struct fanotify_event_metadata is
+> > > set to FAN_NOPIDFD(-1).
+> >
+> > Hi Matthew,
+> >
+> > All in all looks good, just a few small nits.
+>
+> Thanks for feedback Amir! :)
+>
+> > > Falling back and providing a pid instead of a
+> > > pidfd on pidfd creation failures was considered, although this could
+> > > possibly lead to confusion and unpredictability within userspace
+> > > applications as distinguishing between whether an actual pidfd or pid
+> > > was returned could be difficult, so it's best to be explicit.
+> >
+> > I don't think this should have been even "considered" so I see little
+> > value in this paragraph in commit message.
+>
+> Fair point. I will discard this sentence for all subsequent iterations
+> of this patch series. I guess the idea was that this patch series was
+> meant to be labeled as being "RFC", so some extra thoughts had been
+> noted.
+>
+> > > Signed-off-by: Matthew Bobrowski <repnop@google.com>
+> > > ---
+> > >  fs/notify/fanotify/fanotify_user.c | 33 +++++++++++++++++++++++++++---
+> > >  include/linux/fanotify.h           |  2 +-
+> > >  include/uapi/linux/fanotify.h      |  2 ++
+> > >  3 files changed, 33 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> > > index 9e0c1afac8bd..fd8ae88796a8 100644
+> > > --- a/fs/notify/fanotify/fanotify_user.c
+> > > +++ b/fs/notify/fanotify/fanotify_user.c
+> > > @@ -329,7 +329,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+> > >         struct fanotify_info *info = fanotify_event_info(event);
+> > >         unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+> > >         struct file *f = NULL;
+> > > -       int ret, fd = FAN_NOFD;
+> > > +       int ret, pidfd, fd = FAN_NOFD;
+> > >         int info_type = 0;
+> > >
+> > >         pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+> > > @@ -340,7 +340,25 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+> > >         metadata.vers = FANOTIFY_METADATA_VERSION;
+> > >         metadata.reserved = 0;
+> > >         metadata.mask = event->mask & FANOTIFY_OUTGOING_EVENTS;
+> > > -       metadata.pid = pid_vnr(event->pid);
+> > > +
+> > > +       if (FAN_GROUP_FLAG(group, FAN_REPORT_PIDFD) &&
+> > > +               pid_has_task(event->pid, PIDTYPE_TGID)) {
+> > > +               /*
+> > > +                * Given FAN_REPORT_PIDFD is to be mutually exclusive with
+> > > +                * FAN_REPORT_TID, panic here if the mutual exclusion is ever
+> > > +                * blindly lifted without pidfds for threads actually being
+> > > +                * supported.
+> > > +                */
+> > > +               WARN_ON(FAN_GROUP_FLAG(group, FAN_REPORT_TID));
+> >
+> > Better WARN_ON_ONCE() the outcome of this error is not terrible.
+> > Also in the comment above I would not refer to this warning as "panic".
+>
+> ACK.
+>
+> > > +
+> > > +               pidfd = pidfd_create(event->pid, 0);
+> > > +               if (unlikely(pidfd < 0))
+> > > +                       metadata.pid = FAN_NOPIDFD;
+> > > +               else
+> > > +                       metadata.pid = pidfd;
+> > > +       } else {
+> > > +               metadata.pid = pid_vnr(event->pid);
+> > > +       }
+> >
+> > You should rebase your work on:
+> > git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
+> > and resolve conflicts with "unprivileged listener" code.
+>
+> ACK.
+>
+> > Need to make sure that pidfd is not reported to an unprivileged
+> > listener even if group was initialized by a privileged process.
+> > This is a conscious conservative choice that we made for reporting
+> > pid info to unprivileged listener that can be revisited in the future.
+>
+> OK, I see. In that case, I guess I can add the FAN_REPORT_PIDFD check
+> above the current conditional [0]:
+>
+> ...
+> if (!capable(CAP_SYS_ADMIN) && task_tgid(current) != event->pid)
+>         metadata.pid = 0;
+> ...
+>
+> That way, AFAIK even if it is an unprivileged listener the pid info
+> will be overwritten as intended.
+>
+
+Situation is a bit more subtle than that.
+If you override event->pid with zero and zero is interpreted as pidfd
+that would not be consistent with uapi documentation.
+You need to make sure that event->pid is FAN_NOPIDFD in case
+(!capable(CAP_SYS_ADMIN) &&
+ FAN_GROUP_FLAG(group, FAN_REPORT_PIDFD))
+Hopefully, you can do that while keeping the special cases to minimum...
+
+
+> > >
+> > >         if (path && path->mnt && path->dentry) {
+> > >                 fd = create_fd(group, path, &f);
+> > > @@ -941,6 +959,15 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+> > >  #endif
+> > >                 return -EINVAL;
+> > >
+> > > +       /*
+> > > +        * A pidfd can only be returned for a thread-group leader; thus
+> > > +        * FAN_REPORT_TID and FAN_REPORT_PIDFD need to be mutually
+> > > +        * exclusive. Once the pidfd API supports the creation of pidfds on
+> > > +        * individual threads, then we can look at removing this conditional.
+> > > +        */
+> > > +       if ((flags & FAN_REPORT_PIDFD) && (flags & FAN_REPORT_TID))
+> > > +               return -EINVAL;
+> > > +
+> > >         if (event_f_flags & ~FANOTIFY_INIT_ALL_EVENT_F_BITS)
+> > >                 return -EINVAL;
+> > >
+> > > @@ -1312,7 +1339,7 @@ SYSCALL32_DEFINE6(fanotify_mark,
+> > >   */
+> > >  static int __init fanotify_user_setup(void)
+> > >  {
+> > > -       BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
+> > > +       BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 11);
+> > >         BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
+> > >
+> > >         fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
+> > > diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+> > > index 3e9c56ee651f..894740a6f4e0 100644
+> > > --- a/include/linux/fanotify.h
+> > > +++ b/include/linux/fanotify.h
+> > > @@ -21,7 +21,7 @@
+> > >  #define FANOTIFY_FID_BITS      (FAN_REPORT_FID | FAN_REPORT_DFID_NAME)
+> > >
+> > >  #define FANOTIFY_INIT_FLAGS    (FANOTIFY_CLASS_BITS | FANOTIFY_FID_BITS | \
+> > > -                                FAN_REPORT_TID | \
+> > > +                                FAN_REPORT_TID | FAN_REPORT_PIDFD | \
+> > >                                  FAN_CLOEXEC | FAN_NONBLOCK | \
+> > >                                  FAN_UNLIMITED_QUEUE | FAN_UNLIMITED_MARKS)
+> > >
+> >
+> > FAN_REPORT_PIDFD should be added to FANOTIFY_ADMIN_INIT_FLAGS
+> > from fsnotify branch.
+>
+> ACK.
+>
+> Before sending any other version of this patch series through I will
+> see what Jan and Christian have to say.
+>
+
+That makes sense.
+
+Thanks,
+Amir.
