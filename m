@@ -2,167 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB1F53617F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 05:03:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDABF3617FA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 05:05:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235937AbhDPDDq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 23:03:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:43948 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234764AbhDPDDo (ORCPT
+        id S237254AbhDPDF4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 23:05:56 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:63371 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234751AbhDPDFz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 23:03:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618542200;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ikyH2z8Vt7uMI/VG6XB6eSk4QGEm2QFd/gz535ClrYI=;
-        b=LME/u4BdDS2d6uVI+gvTjLYA0fTc9mkKVcHkc0XLoeFyEUA8Y01lWUtAysPZiocbi0hbyE
-        v373lnXB3REEuJ8KTgnJw5Dan0TwraVoBqNzQ5UJjMQ5eh9C34DDKtjSTLss8k0hlseQoj
-        Txd/sSk5h9svb/OdjYxjKabJmAEYlIg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-68-ByMz4XzrPpGli7s2BmtqTA-1; Thu, 15 Apr 2021 23:03:16 -0400
-X-MC-Unique: ByMz4XzrPpGli7s2BmtqTA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8D9EB81744F;
-        Fri, 16 Apr 2021 03:03:14 +0000 (UTC)
-Received: from wangxiaodeMacBook-Air.local (ovpn-13-140.pek2.redhat.com [10.72.13.140])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F395B60BE5;
-        Fri, 16 Apr 2021 03:02:58 +0000 (UTC)
-Subject: Re: [PATCH v6 10/10] Documentation: Add documentation for VDUSE
-To:     Yongji Xie <xieyongji@bytedance.com>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20210331080519.172-1-xieyongji@bytedance.com>
- <20210331080519.172-11-xieyongji@bytedance.com>
- <YHb44R4HyLEUVSTF@stefanha-x1.localdomain>
- <CACycT3uNR+nZY5gY0UhPkeOyi7Za6XkX4b=hasuDcgqdc7fqfg@mail.gmail.com>
- <YHfo8pc7dIO9lNc3@stefanha-x1.localdomain>
- <80b31814-9e41-3153-7efb-c0c2fab44feb@redhat.com>
- <02c19c22-13ea-ea97-d99b-71edfee0b703@redhat.com>
- <CACycT3tL7URz3n-KhMAwYH+Sn1e1TSyfU+RKcc8jpPDJ7WcZ2w@mail.gmail.com>
- <5beabeaf-52a6-7ee5-b666-f3616ea82811@redhat.com>
- <CACycT3tyksBYxgbQLFJ-mFCKkaWotucM5_ho_K3q4wMpR0P=gw@mail.gmail.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <17e3312e-686b-c5dd-852d-e9ffb7f4c707@redhat.com>
-Date:   Fri, 16 Apr 2021 11:02:57 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.9.1
+        Thu, 15 Apr 2021 23:05:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1618542330; x=1650078330;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vUztHQeoC7q+dlfBS4+pbWv7aImp+UXJRbacb2BFxI8=;
+  b=DqNG00SIyRf5dUHR46SUfQZXuQVOwuY2+kATozprSlGw0ax3NRa8hKjW
+   ZRUdEfTJqQ65qDsNxTZPqyaofawIHXYEfnWmNnTfD6ruXF1x4r9pHmKl6
+   GdZx2EtJDWeuzj1k85SAs6KbzqjKWwINPeqdBVJhAtvNN4+NMozSlSNfK
+   kY86hGSah7Hld25qLt91ra56Wl8X63TKXHcRj8Aa8Pien8eEmXx+4KGa6
+   S+G5gxOuRu8fRi7sRoju2thqd/04+NCb1nGn/fCeJmldlHxJHtssqYb8e
+   kzPACSSOvFZsiUYscIVeILz9YMzGOOypZPlHQjq+M/UirrCj0YkamcVmR
+   g==;
+IronPort-SDR: BlLgXTtMDWfeVwZUUPg2+J3v5fhkcbdHXJ5N017M7Ar9ucFN1ynHUyTFGxF6OhodK5gZCcT204
+ 9UOd37heNlCeFiF67xDuj6dxAMCv2HpL+gRh28thl27Qdry2pcs+bQ3zulBb5t2uBLv5c7pYuz
+ trkhFAd/KGuo6bf2g+99YsF4YnhavvmKOI8VB6yPqK8+69LhLajDr76Wvn3s1qgBrf2kST6yIv
+ iJyHR6jiKtzKGEpwLEqzWQvrnkxt6/QM/Kb3pSUyNB9uvGOqwwCdRSZVCDNwJbom7ls3J9qLwm
+ 9rc=
+X-IronPort-AV: E=Sophos;i="5.82,226,1613404800"; 
+   d="scan'208";a="169567850"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 16 Apr 2021 11:05:29 +0800
+IronPort-SDR: 4hIfWk7dqM1i6o8CppCZiRBg+JyZk0DZ0y9DXTzSl4da20/Doi1EWrYf6F03TfFRyHr/Wc7v9u
+ X1KRPm9Tkk2+2sVUrjQn+vmcgDOFttHK1qCsXjS836YFLnUwO9NKeU7w6N/VN33bbqH2EUJGZG
+ 4bWwQ+6smbMegX2hQQjyehB/t+hyKorOpX5JUO3Szs1aNP3fllqhbF8n/j2UHgbzz/m1Z4B1rM
+ YI/11ukia/3ylImRsA2APdOomTYbuWfc7M2zT8Zpjp9Icld7NYhSsnfXt27O9EvEC5S8WERpN8
+ DauQ5ZxEYMjfkWkoJ8qfY6oH
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2021 19:44:48 -0700
+IronPort-SDR: 5uaHx0ME4yfxIf/TiutCrTMnLjb2kBOpJtRTKSLg4tH5AbhRWHekMEEGKLa3AXqEYy3a31snCo
+ ElUXAQxKJQa6aOhWFDCPzlc/IpBsAx5KR6EDXe2ZmlnAA88cCbpAMSRLACPaVf/fHSYLQd8IgO
+ DxavW3RSuugPmrGUFvYDSFHbIBbCHilMvHw4PQpzJEgqusd0uGMzfwXRxK2a2urB4I+6r1cg8f
+ s/TX9LXikk5YOZaAYTcUE+pTyB5gwDGLNtSP+JbbsKm5Z1xjY+x4TV2Bu/ZpK3jUK5XA0aSsC7
+ IoM=
+WDCIronportException: Internal
+Received: from washi.fujisawa.hgst.com ([10.149.53.254])
+  by uls-op-cesaip02.wdc.com with ESMTP; 15 Apr 2021 20:05:29 -0700
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     dm-devel@redhat.com, Mike Snitzer <snitzer@redhat.com>,
+        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-nvme@lists.infradead.org, Christoph Hellwig <hch@lst.de>,
+        linux-scsi@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>
+Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>
+Subject: [PATCH 0/4] Fix dm-crypt zoned block device support
+Date:   Fri, 16 Apr 2021 12:05:24 +0900
+Message-Id: <20210416030528.757513-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <CACycT3tyksBYxgbQLFJ-mFCKkaWotucM5_ho_K3q4wMpR0P=gw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Mike,
 
-在 2021/4/16 上午10:58, Yongji Xie 写道:
-> On Fri, Apr 16, 2021 at 10:20 AM Jason Wang <jasowang@redhat.com> wrote:
->>
->> 在 2021/4/15 下午7:17, Yongji Xie 写道:
->>> On Thu, Apr 15, 2021 at 5:05 PM Jason Wang <jasowang@redhat.com> wrote:
->>>> 在 2021/4/15 下午4:36, Jason Wang 写道:
->>>>>> Please state this explicitly at the start of the document. Existing
->>>>>> interfaces like FUSE are designed to avoid trusting userspace.
->>>>> There're some subtle difference here. VDUSE present a device to kernel
->>>>> which means IOMMU is probably the only thing to prevent a malicous
->>>>> device.
->>>>>
->>>>>
->>>>>> Therefore
->>>>>> people might think the same is the case here. It's critical that people
->>>>>> are aware of this before deploying VDUSE with virtio-vdpa.
->>>>>>
->>>>>> We should probably pause here and think about whether it's possible to
->>>>>> avoid trusting userspace. Even if it takes some effort and costs some
->>>>>> performance it would probably be worthwhile.
->>>>> Since the bounce buffer is used the only attack surface is the
->>>>> coherent area, if we want to enforce stronger isolation we need to use
->>>>> shadow virtqueue (which is proposed in earlier version by me) in this
->>>>> case. But I'm not sure it's worth to do that.
->>>>
->>>> So this reminds me the discussion in the end of last year. We need to
->>>> make sure we don't suffer from the same issues for VDUSE at least
->>>>
->>>> https://yhbt.net/lore/all/c3629a27-3590-1d9f-211b-c0b7be152b32@redhat.com/T/#mc6b6e2343cbeffca68ca7a97e0f473aaa871c95b
->>>>
->>>> Or we can solve it at virtio level, e.g remember the dma address instead
->>>> of depending on the addr in the descriptor ring
->>>>
->>> I might miss something. But VDUSE has recorded the dma address during
->>> dma mapping, so we would not do bouncing if the addr/length is invalid
->>> during dma unmapping. Is it enough?
->>
->> E.g malicous device write a buggy dma address in the descriptor ring, so
->> we had:
->>
->> vring_unmap_one_split(desc->addr, desc->len)
->>       dma_unmap_single()
->>           vduse_dev_unmap_page()
->>               vduse_domain_bounce()
->>
->> And in vduse_domain_bounce() we had:
->>
->>           while (size) {
->>                   map = &domain->bounce_maps[iova >> PAGE_SHIFT];
->>                   offset = offset_in_page(iova);
->>                   sz = min_t(size_t, PAGE_SIZE - offset, size);
->>
->> This means we trust the iova which is dangerous and exacly the issue
->> mentioned in the above link.
->>
->>   From VDUSE level need to make sure iova is legal.
->>
-> I think we already do that in vduse_domain_bounce():
->
->      while (size) {
->          map = &domain->bounce_maps[iova >> PAGE_SHIFT];
->
->          if (WARN_ON(!map->bounce_page ||
->              map->orig_phys == INVALID_PHYS_ADDR))
->              return;
+Zone append BIOs (REQ_OP_ZONE_APPEND) always specify the start sector
+of the zone to be written instead of the actual location sector to
+write. The write location is determined by the device and returned to
+the host upon completion of the operation.
 
+This interface, while simple and efficient for writing into sequential
+zones of a zoned block device, is incompatible with the use of sector
+values to calculate a cypher block IV. All data written in a zone is
+encrypted using an IV calculated from the first sectors of the zone,
+but read operation will specify any sector within the zone, resulting
+in an IV mismatch between encryption and decryption. Reads fail in that
+case.
 
-So you don't check whether iova is legal before using it, so it's at 
-least a possible out of bound access of the bounce_maps[] isn't it? (e.g 
-what happens if iova is ULLONG_MAX).
+Using a single sector value (e.g. the zone start sector) for all read
+and writes into a zone can solve this problem, but at the cost of
+weakening the cypher chosen by the user. Emulating zone append using
+regular writes would be another potential solution, but it is complex
+and would add a lot of overhead.
 
+Instead, to solve this problem, explicitly disable support for zone
+append operations in dm-crypt if the target was setup using a cypher IV
+mode using sector values. The null and random IV modes can still be used
+with zone append operations. This lack of support for zone append is
+exposed to the user by setting the dm-crypt target queue limit
+max_zone_append_sectors to 0. This change is done in patch 1 and 2.
 
->
->
->>   From virtio level, we should not truse desc->addr.
->>
-> We would not touch desc->addr after vring_unmap_one_split(). So I'm
-> not sure what we need to do at the virtio level.
+Patch 3 addresses btrfs-zoned case. Zone append write are used for all
+file data blocks write. The change introduced fails mounting a zoned
+btrfs volume if the underlying device max_zone_append_sectors limit is
+0.
 
+Patch 4 fixes zonefs to fall back to using regular write when
+max_zone_append_sectors is 0.
 
-I think the point is to record the dma addres/len somewhere instead of 
-reading them from descriptor ring.
+Overall, these changes do not break user space:
+1) There is no interface allowing a user to use zone append write
+without a file system. So applications using directly a raw dm-crypt
+device will continue working using regular write operations.
+2) btrfs zoned support was added in 5.12. Anybody trying btrfs-zoned on
+top of dm-crypt would have faced the read failures already. So there
+are no existing deployments to preserve. Same for zonefs.
 
-Thanks
+For file systems, using zone append with encryption will need to be
+supported within the file system (e.g. fscrypt). In this case, cypher IV
+calculation can rely for instance on file block offsets as these are
+known before a zone append operation write these blocks to disk at
+unknown locations.
 
+Reviews and comments are very much welcome.
 
->
-> Thanks,
-> Yongji
->
+Damien Le Moal (3):
+  dm: Introduce zone append support control
+  dm crypt: Fix zoned block device support
+  zonefs: fix synchronous write to sequential zone files
+
+Johannes Thumshirn (1):
+  btrfs: zoned: fail mount if the device does not support zone append
+
+ drivers/md/dm-crypt.c         | 48 ++++++++++++++++++++++++++++-------
+ drivers/md/dm-table.c         | 41 ++++++++++++++++++++++++++++++
+ fs/btrfs/zoned.c              |  7 +++++
+ fs/zonefs/super.c             | 16 +++++++++---
+ fs/zonefs/zonefs.h            |  2 ++
+ include/linux/device-mapper.h |  6 +++++
+ 6 files changed, 107 insertions(+), 13 deletions(-)
+
+-- 
+2.30.2
 
