@@ -2,82 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8520C361833
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 05:24:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 259E0361841
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 05:38:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237775AbhDPDZE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 23:25:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46635 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234973AbhDPDZE (ORCPT
+        id S237912AbhDPDih (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 23:38:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40784 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234816AbhDPDig (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 23:25:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618543480;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=y2eoMDNZ7KhFTHyXgnjh9cYB2las6pMgIII6CMe3Tt4=;
-        b=OupOO/Z5hbgQJeJe9mLQ2xdWHk5kxtO0u/YLb0xxbl+sgM6Fm/8PH5wQtqCfIzhWmQ5n8H
-        IjakGIbKwE+mfCNDzHpK7RkDK2PpDBTqNL+Co6VFFLvoolWzv/T6fy5oHHdBCmbqqvc1SK
-        qae1rpZk2j9/KTmJIB8Tq52DdWb+O5E=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-497-aChSZ2eYPcWkYTo_ixynCg-1; Thu, 15 Apr 2021 23:24:38 -0400
-X-MC-Unique: aChSZ2eYPcWkYTo_ixynCg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B9916501FB;
-        Fri, 16 Apr 2021 03:24:35 +0000 (UTC)
-Received: from wangxiaodeMacBook-Air.local (ovpn-13-140.pek2.redhat.com [10.72.13.140])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2EA1518B42;
-        Fri, 16 Apr 2021 03:24:20 +0000 (UTC)
-Subject: Re: [PATCH v6 09/10] vduse: Introduce VDUSE - vDPA Device in
- Userspace
-To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
-        stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
-        hch@infradead.org, christian.brauner@canonical.com,
-        rdunlap@infradead.org, willy@infradead.org,
-        viro@zeniv.linux.org.uk, axboe@kernel.dk, bcrl@kvack.org,
-        corbet@lwn.net, mika.penttila@nextfour.com,
-        dan.carpenter@oracle.com
-Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20210331080519.172-1-xieyongji@bytedance.com>
- <20210331080519.172-10-xieyongji@bytedance.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <87a54b5e-626d-7e04-93f4-f59eddff9947@redhat.com>
-Date:   Fri, 16 Apr 2021 11:24:19 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.9.1
+        Thu, 15 Apr 2021 23:38:36 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C8CBC061574;
+        Thu, 15 Apr 2021 20:38:13 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lXFJ3-005fLg-Lp; Fri, 16 Apr 2021 03:38:09 +0000
+Date:   Fri, 16 Apr 2021 03:38:09 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>
+Subject: Re: [PATCH] fs: split receive_fd_replace from __receive_fd
+Message-ID: <YHkGodVOpc/kg3V8@zeniv-ca.linux.org.uk>
+References: <20210325082209.1067987-1-hch@lst.de>
+ <20210325082209.1067987-2-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20210331080519.172-10-xieyongji@bytedance.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210325082209.1067987-2-hch@lst.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Mar 25, 2021 at 09:22:09AM +0100, Christoph Hellwig wrote:
+> receive_fd_replace shares almost no code with the general case, so split
+> it out.  Also remove the "Bump the sock usage counts" comment from
+> both copies, as that is now what __receive_sock actually does.
 
-ÔÚ 2021/3/31 ÏÂÎç4:05, Xie Yongji Ð´µÀ:
-> +	}
-> +	case VDUSE_INJECT_VQ_IRQ:
-> +		ret = -EINVAL;
-> +		if (arg >= dev->vq_num)
-> +			break;
-> +
-> +		ret = 0;
-> +		queue_work(vduse_irq_wq, &dev->vqs[arg].inject);
-> +		break;
+Nice, except that you've misread that, er, lovely API.  This
 
+> -static inline int receive_fd_replace(int fd, struct file *file, unsigned int o_flags)
+> -{
+> -	return __receive_fd(fd, file, NULL, o_flags);
+> +	return __receive_fd(file, NULL, o_flags);
+>  }
 
-One additional note:
-
-Please use array_index_nospec() for all vqs[idx] access where idx is 
-under the control of userspace to avoid potential spectre exploitation.
-
-Thanks
-
+can get called with negative fd (in which case it turns into an alias for
+receive_fd(), of course).  As the result, that ioctl got broken in case
+when SECCOMP_ADDFD_FLAG_SETFD is not set.  Trivially fixed by having the
+only caller check the damn condition and call either receive_fd_replace()
+or receive_fd().
