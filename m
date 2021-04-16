@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDABF3617FA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 05:05:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6836B3617FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 05:05:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237254AbhDPDF4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 23:05:56 -0400
+        id S237718AbhDPDGA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 23:06:00 -0400
 Received: from esa3.hgst.iphmx.com ([216.71.153.141]:63371 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234751AbhDPDFz (ORCPT
+        with ESMTP id S234806AbhDPDF6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 23:05:55 -0400
+        Thu, 15 Apr 2021 23:05:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1618542330; x=1650078330;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=vUztHQeoC7q+dlfBS4+pbWv7aImp+UXJRbacb2BFxI8=;
-  b=DqNG00SIyRf5dUHR46SUfQZXuQVOwuY2+kATozprSlGw0ax3NRa8hKjW
-   ZRUdEfTJqQ65qDsNxTZPqyaofawIHXYEfnWmNnTfD6ruXF1x4r9pHmKl6
-   GdZx2EtJDWeuzj1k85SAs6KbzqjKWwINPeqdBVJhAtvNN4+NMozSlSNfK
-   kY86hGSah7Hld25qLt91ra56Wl8X63TKXHcRj8Aa8Pien8eEmXx+4KGa6
-   S+G5gxOuRu8fRi7sRoju2thqd/04+NCb1nGn/fCeJmldlHxJHtssqYb8e
-   kzPACSSOvFZsiUYscIVeILz9YMzGOOypZPlHQjq+M/UirrCj0YkamcVmR
+  t=1618542333; x=1650078333;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=NwfKGSQILmjdwgHuwjMoyjbZ2rm26aZiGYIjk3FC6bk=;
+  b=ceDB56gK4KXfrgHy7YYq3X4LIc6QxDx3JHFsxrLZ2yGDTrOyRwj+C/Qw
+   vWi7Esq1vlc+clFsDC9V8CWz7+7TKuB/0MBL7lIWwB0Sopi65Oaiu1x5y
+   NJCDzR/w4YvsnLiP+9QTvj1cV4ucyuPpd3/m7wiq1VZif3ELxAtCPvn7i
+   5jKdq1Zp9o4i0Z+P3ZcfuL7yHlWCe+pBBHKVUdwArNzpWJqYlXYG8H0OI
+   4F79V692VboVhIPPjcz5YtUBeKcy3PvtHVOB4IxORlmtsyr/31u4HknC9
+   tIRvOMEPYuxGjOCtVoKfKBbkhv5a1ZYnGDJ4AvOxtOYHVwq/9qoivMJCD
    g==;
-IronPort-SDR: BlLgXTtMDWfeVwZUUPg2+J3v5fhkcbdHXJ5N017M7Ar9ucFN1ynHUyTFGxF6OhodK5gZCcT204
- 9UOd37heNlCeFiF67xDuj6dxAMCv2HpL+gRh28thl27Qdry2pcs+bQ3zulBb5t2uBLv5c7pYuz
- trkhFAd/KGuo6bf2g+99YsF4YnhavvmKOI8VB6yPqK8+69LhLajDr76Wvn3s1qgBrf2kST6yIv
- iJyHR6jiKtzKGEpwLEqzWQvrnkxt6/QM/Kb3pSUyNB9uvGOqwwCdRSZVCDNwJbom7ls3J9qLwm
- 9rc=
+IronPort-SDR: l4EIBOhaJNN1npSAIpEtwxvRKGuHmN0ap7F40LvgLUuun1ShgYqc8Emo4w5uvohNyMmc2MTzWz
+ uRpZEGqxOz1VyX4FlpnHN/hUVC/qhYsqE1+vZWzoMhqx8W9cFuRresZboThK0iIZ7XtKSj6Xk3
+ wybOlOXCgvNJGuyXPmS9KDFyC+P2N8HJ4J4+KxvF83Y1vzL5hEsxZZwi1KixSaN0lR/zLrHHOd
+ VWc8smXWukt5mMTn8THkUeZ+g6Rz0JVzCmSBiQPLMzt9nJweJinlqAmnl118l5Dcwxftxv/72C
+ rmQ=
 X-IronPort-AV: E=Sophos;i="5.82,226,1613404800"; 
-   d="scan'208";a="169567850"
+   d="scan'208";a="169567867"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 16 Apr 2021 11:05:29 +0800
-IronPort-SDR: 4hIfWk7dqM1i6o8CppCZiRBg+JyZk0DZ0y9DXTzSl4da20/Doi1EWrYf6F03TfFRyHr/Wc7v9u
- X1KRPm9Tkk2+2sVUrjQn+vmcgDOFttHK1qCsXjS836YFLnUwO9NKeU7w6N/VN33bbqH2EUJGZG
- 4bWwQ+6smbMegX2hQQjyehB/t+hyKorOpX5JUO3Szs1aNP3fllqhbF8n/j2UHgbzz/m1Z4B1rM
- YI/11ukia/3ylImRsA2APdOomTYbuWfc7M2zT8Zpjp9Icld7NYhSsnfXt27O9EvEC5S8WERpN8
- DauQ5ZxEYMjfkWkoJ8qfY6oH
+  by ob1.hgst.iphmx.com with ESMTP; 16 Apr 2021 11:05:32 +0800
+IronPort-SDR: f8yokaj9wPSgxAzwUxFLWrg7O4NCsV+GmF/0s6mNkVen2QkCfv6b5TRS/CHyyQa+hcRQhS0KeV
+ U2pXKb9eqh8s1E4L/0saGxMVLKz9V4AssBImJnXfkM5TgM0AWMzEHl+xBevsrBF+XgBsVpQqS0
+ 2fFd0eT13dZk32MJHp30omuGKXb7aQf1rzhk6Hk1vdUmw/h096dJvtvobXX3AUD4Yg7eiWO9dB
+ Iq6ZSKdfWBati2bjs4zosLYrGrkh+SKiURGfq7GTYKCqDi/wHLG32CvoJUaeir0W3MZi/A9F5k
+ 0u+OyhpLJp4/iUNSvCpAC9qA
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2021 19:44:48 -0700
-IronPort-SDR: 5uaHx0ME4yfxIf/TiutCrTMnLjb2kBOpJtRTKSLg4tH5AbhRWHekMEEGKLa3AXqEYy3a31snCo
- ElUXAQxKJQa6aOhWFDCPzlc/IpBsAx5KR6EDXe2ZmlnAA88cCbpAMSRLACPaVf/fHSYLQd8IgO
- DxavW3RSuugPmrGUFvYDSFHbIBbCHilMvHw4PQpzJEgqusd0uGMzfwXRxK2a2urB4I+6r1cg8f
- s/TX9LXikk5YOZaAYTcUE+pTyB5gwDGLNtSP+JbbsKm5Z1xjY+x4TV2Bu/ZpK3jUK5XA0aSsC7
- IoM=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2021 19:44:51 -0700
+IronPort-SDR: Uc9KTrW6k6VQOr13ItTIaG8m3FB4YcJF1CzR6j/OxyKZ6But3DAOGBk6j8DkP8U3UokM2KOgF7
+ bp6T/GYt4q1nYRIGoeV5RTgAl77CZr4yaRyzL+yL5c7TyFo7XOWZXM7gQgHLK5gymIHR6nlCfR
+ iHQyTFiLU5CBMsrjLAlzrcCNPhqBRWgObvhXD4wNc83bClCRUuptsE2Ssn/mOwjvp72nn7sUMn
+ 0nPclDz8ZKEhM3vTrOVPZRiOZ5yCYZucvpACEdx8vTk9aaFV6EM0QgE7PsLZTC2lmjJAhNKH16
+ wXc=
 WDCIronportException: Internal
 Received: from washi.fujisawa.hgst.com ([10.149.53.254])
-  by uls-op-cesaip02.wdc.com with ESMTP; 15 Apr 2021 20:05:29 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 15 Apr 2021 20:05:32 -0700
 From:   Damien Le Moal <damien.lemoal@wdc.com>
 To:     dm-devel@redhat.com, Mike Snitzer <snitzer@redhat.com>,
         linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
@@ -61,84 +61,115 @@ To:     dm-devel@redhat.com, Mike Snitzer <snitzer@redhat.com>,
 Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
         Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH 0/4] Fix dm-crypt zoned block device support
-Date:   Fri, 16 Apr 2021 12:05:24 +0900
-Message-Id: <20210416030528.757513-1-damien.lemoal@wdc.com>
+Subject: [PATCH 1/4] dm: Introduce zone append support control
+Date:   Fri, 16 Apr 2021 12:05:25 +0900
+Message-Id: <20210416030528.757513-2-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210416030528.757513-1-damien.lemoal@wdc.com>
+References: <20210416030528.757513-1-damien.lemoal@wdc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Mike,
+Add the boolean field zone_append_not_supported to the dm_target
+structure to allow a target implementing a zoned block device to
+explicitly opt out from zone append (REQ_OP_ZONE_APPEND) operations
+support. When set to true by the target constructor, the target device
+queue limit max_zone_append_sectors is set to 0 in
+dm_table_set_restrictions() so that users of the target (e.g. file
+systems) can detect that the device cannot process zone append
+operations.
 
-Zone append BIOs (REQ_OP_ZONE_APPEND) always specify the start sector
-of the zone to be written instead of the actual location sector to
-write. The write location is determined by the device and returned to
-the host upon completion of the operation.
+Detection for the target support of zone append is done similarly to
+the detection for other device features such as secure erase, using a
+helper function. For zone append, the function
+dm_table_supports_zone_append() is defined if CONFIG_BLK_DEV_ZONED is
+enabled.
 
-This interface, while simple and efficient for writing into sequential
-zones of a zoned block device, is incompatible with the use of sector
-values to calculate a cypher block IV. All data written in a zone is
-encrypted using an IV calculated from the first sectors of the zone,
-but read operation will specify any sector within the zone, resulting
-in an IV mismatch between encryption and decryption. Reads fail in that
-case.
-
-Using a single sector value (e.g. the zone start sector) for all read
-and writes into a zone can solve this problem, but at the cost of
-weakening the cypher chosen by the user. Emulating zone append using
-regular writes would be another potential solution, but it is complex
-and would add a lot of overhead.
-
-Instead, to solve this problem, explicitly disable support for zone
-append operations in dm-crypt if the target was setup using a cypher IV
-mode using sector values. The null and random IV modes can still be used
-with zone append operations. This lack of support for zone append is
-exposed to the user by setting the dm-crypt target queue limit
-max_zone_append_sectors to 0. This change is done in patch 1 and 2.
-
-Patch 3 addresses btrfs-zoned case. Zone append write are used for all
-file data blocks write. The change introduced fails mounting a zoned
-btrfs volume if the underlying device max_zone_append_sectors limit is
-0.
-
-Patch 4 fixes zonefs to fall back to using regular write when
-max_zone_append_sectors is 0.
-
-Overall, these changes do not break user space:
-1) There is no interface allowing a user to use zone append write
-without a file system. So applications using directly a raw dm-crypt
-device will continue working using regular write operations.
-2) btrfs zoned support was added in 5.12. Anybody trying btrfs-zoned on
-top of dm-crypt would have faced the read failures already. So there
-are no existing deployments to preserve. Same for zonefs.
-
-For file systems, using zone append with encryption will need to be
-supported within the file system (e.g. fscrypt). In this case, cypher IV
-calculation can rely for instance on file block offsets as these are
-known before a zone append operation write these blocks to disk at
-unknown locations.
-
-Reviews and comments are very much welcome.
-
-Damien Le Moal (3):
-  dm: Introduce zone append support control
-  dm crypt: Fix zoned block device support
-  zonefs: fix synchronous write to sequential zone files
-
-Johannes Thumshirn (1):
-  btrfs: zoned: fail mount if the device does not support zone append
-
- drivers/md/dm-crypt.c         | 48 ++++++++++++++++++++++++++++-------
- drivers/md/dm-table.c         | 41 ++++++++++++++++++++++++++++++
- fs/btrfs/zoned.c              |  7 +++++
- fs/zonefs/super.c             | 16 +++++++++---
- fs/zonefs/zonefs.h            |  2 ++
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+ drivers/md/dm-table.c         | 41 +++++++++++++++++++++++++++++++++++
  include/linux/device-mapper.h |  6 +++++
- 6 files changed, 107 insertions(+), 13 deletions(-)
+ 2 files changed, 47 insertions(+)
 
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index e5f0f1703c5d..9efd7a0ee27e 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1999,6 +1999,37 @@ static int device_requires_stable_pages(struct dm_target *ti,
+ 	return blk_queue_stable_writes(q);
+ }
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
++static int device_not_zone_append_capable(struct dm_target *ti,
++					  struct dm_dev *dev, sector_t start,
++					  sector_t len, void *data)
++{
++	struct request_queue *q = bdev_get_queue(dev->bdev);
++
++	return !blk_queue_is_zoned(q) ||
++		!q->limits.max_zone_append_sectors;
++}
++
++static bool dm_table_supports_zone_append(struct dm_table *t)
++{
++	struct dm_target *ti;
++	unsigned int i;
++
++	for (i = 0; i < dm_table_get_num_targets(t); i++) {
++		ti = dm_table_get_target(t, i);
++
++		if (ti->zone_append_not_supported)
++			return false;
++
++		if (!ti->type->iterate_devices ||
++		    ti->type->iterate_devices(ti, device_not_zone_append_capable, NULL))
++			return false;
++	}
++
++	return true;
++}
++#endif
++
+ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+ 			       struct queue_limits *limits)
+ {
+@@ -2091,6 +2122,16 @@ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+ 	if (blk_queue_is_zoned(q)) {
+ 		WARN_ON_ONCE(queue_is_mq(q));
+ 		q->nr_zones = blkdev_nr_zones(t->md->disk);
++
++		/*
++		 * All zoned devices support zone append by default. However,
++		 * some zoned targets (e.g. dm-crypt) cannot support this
++		 * operation. Check here if the target indicated the lack of
++		 * support for zone append and set max_zone_append_sectors to 0
++		 * in that case so that users (e.g. an FS) can detect this fact.
++		 */
++		if (!dm_table_supports_zone_append(t))
++			q->limits.max_zone_append_sectors = 0;
+ 	}
+ #endif
+ 
+diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+index 5c641f930caf..4da699add262 100644
+--- a/include/linux/device-mapper.h
++++ b/include/linux/device-mapper.h
+@@ -361,6 +361,12 @@ struct dm_target {
+ 	 * Set if we need to limit the number of in-flight bios when swapping.
+ 	 */
+ 	bool limit_swap_bios:1;
++
++	/*
++	 * Set if this target is a zoned device that cannot accept
++	 * zone append operations.
++	 */
++	bool zone_append_not_supported:1;
+ };
+ 
+ void *dm_per_bio_data(struct bio *bio, size_t data_size);
 -- 
 2.30.2
 
