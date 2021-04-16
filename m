@@ -2,41 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 37916361787
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 04:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D1283617EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 04:58:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236990AbhDPCYl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 22:24:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24593 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236927AbhDPCYk (ORCPT
+        id S236771AbhDPC7F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 22:59:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60486 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234764AbhDPC7E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 22:24:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618539856;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=X7yqDQHPgrQYkb8M62q+x5doApMJRAx5WaKLZfS6Tcg=;
-        b=PrAL6pKTIu0VjhW6sskhqL0iEyS2/vWYIzu9IY95N7eXzmQqH/m74rHEJA31OqK18gkQRd
-        K0vCiBlyy7TQtsXYX0zYRahiyAEknhhN1/wo750z2UJinv4n0ll8O1mhJ/35+kdpckx98J
-        v5N+fAgaCFStwaroyMj1x7tB/PTtAgA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-268-HANyjIGRNDuhtujU26iTeg-1; Thu, 15 Apr 2021 22:24:15 -0400
-X-MC-Unique: HANyjIGRNDuhtujU26iTeg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4A914CC623;
-        Fri, 16 Apr 2021 02:24:13 +0000 (UTC)
-Received: from wangxiaodeMacBook-Air.local (ovpn-13-140.pek2.redhat.com [10.72.13.140])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4520353CC3;
-        Fri, 16 Apr 2021 02:24:00 +0000 (UTC)
-Subject: Re: [PATCH v6 10/10] Documentation: Add documentation for VDUSE
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     Yongji Xie <xieyongji@bytedance.com>,
+        Thu, 15 Apr 2021 22:59:04 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFF43C061574
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 19:58:38 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id r9so39927114ejj.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 19:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=h0yx5dLbv8rJZ5DCE5zdmaVWrPKFcLlOvqXcXEtQJwE=;
+        b=tbJgN+AdMgDnjaLBifhtEFNZxnL7ynwTAMqglnR2mQ2OZupVsnB1ZWli4n80gNSFal
+         CtVnloJrfet3S+QHctq8IXgCgyLFZsSWMxbxkNdBalgXIodKaEQlL6tnTxzUfPs4FE+d
+         uY955LpqXDlJZqT7otwymIeBsRD1PuaxbkyOsurMW1BGnEMCrqemYTyHtor/TnJEuDLm
+         wDQpDhY/3sQQ3sWKPupnEIZV4SYN3ErVLbFSMXKqoA+SSAV9TxY6CMkpIT9suwdsgGAI
+         HOUdKobAWx1RU9WsBTKT6m8sdJH9C3U3qRAKTyBUYvpPQeRseZ+VJLqJbGuAnmDo+9Si
+         DbaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=h0yx5dLbv8rJZ5DCE5zdmaVWrPKFcLlOvqXcXEtQJwE=;
+        b=UQz0CyNGwv3cqxBX2XZu4krFIKhtO7tPFVbLJQee+SujR6EwwHluTpQrsmgivUpxGo
+         CHOZrU5uQHSqNedk+yTnxYf1XpGZ6EDwJ2568C8BOqUZLM85R8YKDSBdaGiF4jhCFCfT
+         fKBozPnOAmut1jRUrgLmonidcKU3QG6y0YjKBtpOQWFbU39L1urM4xajs2ATHhU5tR5+
+         vx1mvmkM0NONLvTlDUS2f/0zyBvkM1j3fYIfzjZA3I32Z0FhVyYDEhC8bc4Yg/XIa4td
+         QhFR9wkGJufHlwvfHXcrGkfhxwKa4bfPzQCksEVdmHswUX2Wqma16J9nyFK02AZvSn+T
+         BXaA==
+X-Gm-Message-State: AOAM530UYdo0s38QWc6Eu1LBG9X6Ms61SKR6CsFwPNn2uZ5N2AmrFLDE
+        FsWsoSgAlPlbE5tFQL/ufUI6bNBD7TI9vFcUnjHp
+X-Google-Smtp-Source: ABdhPJz7eIBRH8VgX2Zmf/UNErq4oU3Co9Ax6yOSZDoZbVBaR5IrNHQzKXw8PfZCO8wGmn+eYyHmnqnwdcPMdQf5ERg=
+X-Received: by 2002:a17:906:1a0d:: with SMTP id i13mr6143661ejf.197.1618541917734;
+ Thu, 15 Apr 2021 19:58:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210331080519.172-1-xieyongji@bytedance.com> <20210331080519.172-11-xieyongji@bytedance.com>
+ <YHb44R4HyLEUVSTF@stefanha-x1.localdomain> <CACycT3uNR+nZY5gY0UhPkeOyi7Za6XkX4b=hasuDcgqdc7fqfg@mail.gmail.com>
+ <YHfo8pc7dIO9lNc3@stefanha-x1.localdomain> <80b31814-9e41-3153-7efb-c0c2fab44feb@redhat.com>
+ <02c19c22-13ea-ea97-d99b-71edfee0b703@redhat.com> <CACycT3tL7URz3n-KhMAwYH+Sn1e1TSyfU+RKcc8jpPDJ7WcZ2w@mail.gmail.com>
+ <5beabeaf-52a6-7ee5-b666-f3616ea82811@redhat.com>
+In-Reply-To: <5beabeaf-52a6-7ee5-b666-f3616ea82811@redhat.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Fri, 16 Apr 2021 10:58:26 +0800
+Message-ID: <CACycT3tyksBYxgbQLFJ-mFCKkaWotucM5_ho_K3q4wMpR0P=gw@mail.gmail.com>
+Subject: Re: Re: [PATCH v6 10/10] Documentation: Add documentation for VDUSE
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
         "Michael S. Tsirkin" <mst@redhat.com>,
         Stefano Garzarella <sgarzare@redhat.com>,
         Parav Pandit <parav@nvidia.com>,
@@ -46,169 +66,103 @@ Cc:     Yongji Xie <xieyongji@bytedance.com>,
         Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
         Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
         Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20210331080519.172-1-xieyongji@bytedance.com>
- <20210331080519.172-11-xieyongji@bytedance.com>
- <YHb44R4HyLEUVSTF@stefanha-x1.localdomain>
- <CACycT3uNR+nZY5gY0UhPkeOyi7Za6XkX4b=hasuDcgqdc7fqfg@mail.gmail.com>
- <YHfo8pc7dIO9lNc3@stefanha-x1.localdomain>
- <80b31814-9e41-3153-7efb-c0c2fab44feb@redhat.com>
- <YHhP4i+yXgA2KkVJ@stefanha-x1.localdomain>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <31aa139a-dd4e-ba8a-c671-a2a1c69c1ffc@redhat.com>
-Date:   Fri, 16 Apr 2021 10:23:58 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.9.1
-MIME-Version: 1.0
-In-Reply-To: <YHhP4i+yXgA2KkVJ@stefanha-x1.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-在 2021/4/15 下午10:38, Stefan Hajnoczi 写道:
-> On Thu, Apr 15, 2021 at 04:36:35PM +0800, Jason Wang wrote:
->> 在 2021/4/15 下午3:19, Stefan Hajnoczi 写道:
->>> On Thu, Apr 15, 2021 at 01:38:37PM +0800, Yongji Xie wrote:
->>>> On Wed, Apr 14, 2021 at 10:15 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
->>>>> On Wed, Mar 31, 2021 at 04:05:19PM +0800, Xie Yongji wrote:
->>>>>> VDUSE (vDPA Device in Userspace) is a framework to support
->>>>>> implementing software-emulated vDPA devices in userspace. This
->>>>>> document is intended to clarify the VDUSE design and usage.
->>>>>>
->>>>>> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
->>>>>> ---
->>>>>>    Documentation/userspace-api/index.rst |   1 +
->>>>>>    Documentation/userspace-api/vduse.rst | 212 ++++++++++++++++++++++++++++++++++
->>>>>>    2 files changed, 213 insertions(+)
->>>>>>    create mode 100644 Documentation/userspace-api/vduse.rst
->>>>> Just looking over the documentation briefly (I haven't studied the code
->>>>> yet)...
->>>>>
->>>> Thank you!
->>>>
->>>>>> +How VDUSE works
->>>>>> +------------
->>>>>> +Each userspace vDPA device is created by the VDUSE_CREATE_DEV ioctl on
->>>>>> +the character device (/dev/vduse/control). Then a device file with the
->>>>>> +specified name (/dev/vduse/$NAME) will appear, which can be used to
->>>>>> +implement the userspace vDPA device's control path and data path.
->>>>> These steps are taken after sending the VDPA_CMD_DEV_NEW netlink
->>>>> message? (Please consider reordering the documentation to make it clear
->>>>> what the sequence of steps are.)
->>>>>
->>>> No, VDUSE devices should be created before sending the
->>>> VDPA_CMD_DEV_NEW netlink messages which might produce I/Os to VDUSE.
->>> I see. Please include an overview of the steps before going into detail.
->>> Something like:
->>>
->>>     VDUSE devices are started as follows:
->>>
->>>     1. Create a new VDUSE instance with ioctl(VDUSE_CREATE_DEV) on
->>>        /dev/vduse/control.
->>>
->>>     2. Begin processing VDUSE messages from /dev/vduse/$NAME. The first
->>>        messages will arrive while attaching the VDUSE instance to vDPA.
->>>
->>>     3. Send the VDPA_CMD_DEV_NEW netlink message to attach the VDUSE
->>>        instance to vDPA.
->>>
->>>     VDUSE devices are stopped as follows:
->>>
->>>     ...
->>>
->>>>>> +     static int netlink_add_vduse(const char *name, int device_id)
->>>>>> +     {
->>>>>> +             struct nl_sock *nlsock;
->>>>>> +             struct nl_msg *msg;
->>>>>> +             int famid;
->>>>>> +
->>>>>> +             nlsock = nl_socket_alloc();
->>>>>> +             if (!nlsock)
->>>>>> +                     return -ENOMEM;
->>>>>> +
->>>>>> +             if (genl_connect(nlsock))
->>>>>> +                     goto free_sock;
->>>>>> +
->>>>>> +             famid = genl_ctrl_resolve(nlsock, VDPA_GENL_NAME);
->>>>>> +             if (famid < 0)
->>>>>> +                     goto close_sock;
->>>>>> +
->>>>>> +             msg = nlmsg_alloc();
->>>>>> +             if (!msg)
->>>>>> +                     goto close_sock;
->>>>>> +
->>>>>> +             if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, famid, 0, 0,
->>>>>> +                 VDPA_CMD_DEV_NEW, 0))
->>>>>> +                     goto nla_put_failure;
->>>>>> +
->>>>>> +             NLA_PUT_STRING(msg, VDPA_ATTR_DEV_NAME, name);
->>>>>> +             NLA_PUT_STRING(msg, VDPA_ATTR_MGMTDEV_DEV_NAME, "vduse");
->>>>>> +             NLA_PUT_U32(msg, VDPA_ATTR_DEV_ID, device_id);
->>>>> What are the permission/capability requirements for VDUSE?
->>>>>
->>>> Now I think we need privileged permission (root user). Because
->>>> userspace daemon is able to access avail vring, used vring, descriptor
->>>> table in kernel driver directly.
->>> Please state this explicitly at the start of the document. Existing
->>> interfaces like FUSE are designed to avoid trusting userspace.
->>
->> There're some subtle difference here. VDUSE present a device to kernel which
->> means IOMMU is probably the only thing to prevent a malicous device.
->>
->>
->>> Therefore
->>> people might think the same is the case here. It's critical that people
->>> are aware of this before deploying VDUSE with virtio-vdpa.
->>>
->>> We should probably pause here and think about whether it's possible to
->>> avoid trusting userspace. Even if it takes some effort and costs some
->>> performance it would probably be worthwhile.
->>
->> Since the bounce buffer is used the only attack surface is the coherent
->> area, if we want to enforce stronger isolation we need to use shadow
->> virtqueue (which is proposed in earlier version by me) in this case. But I'm
->> not sure it's worth to do that.
-> The security situation needs to be clear before merging this feature.
-
-
-+1
-
-
+On Fri, Apr 16, 2021 at 10:20 AM Jason Wang <jasowang@redhat.com> wrote:
 >
-> I think the IOMMU and vring can be made secure. What is more concerning
-> is the kernel code that runs on top: VIRTIO device drivers, network
-> stack, file systems, etc. They trust devices to an extent.
 >
-> Since virtio-vdpa is a big reason for doing VDUSE in the first place I
-> don't think it makes sense to disable virtio-vdpa with VDUSE. A solution
-> is needed.
-
-
-Yes, so the case of VDUSE is something similar to the case of e.g SEV.
-
-Both cases won't trust device and use some kind of software IOTLB.
-
-That means we need to protect at both IOTLB and virtio drivers.
-
-Let me post patches for virtio first.
-
-
+> =E5=9C=A8 2021/4/15 =E4=B8=8B=E5=8D=887:17, Yongji Xie =E5=86=99=E9=81=93=
+:
+> > On Thu, Apr 15, 2021 at 5:05 PM Jason Wang <jasowang@redhat.com> wrote:
+> >>
+> >> =E5=9C=A8 2021/4/15 =E4=B8=8B=E5=8D=884:36, Jason Wang =E5=86=99=E9=81=
+=93:
+> >>>> Please state this explicitly at the start of the document. Existing
+> >>>> interfaces like FUSE are designed to avoid trusting userspace.
+> >>>
+> >>> There're some subtle difference here. VDUSE present a device to kerne=
+l
+> >>> which means IOMMU is probably the only thing to prevent a malicous
+> >>> device.
+> >>>
+> >>>
+> >>>> Therefore
+> >>>> people might think the same is the case here. It's critical that peo=
+ple
+> >>>> are aware of this before deploying VDUSE with virtio-vdpa.
+> >>>>
+> >>>> We should probably pause here and think about whether it's possible =
+to
+> >>>> avoid trusting userspace. Even if it takes some effort and costs som=
+e
+> >>>> performance it would probably be worthwhile.
+> >>>
+> >>> Since the bounce buffer is used the only attack surface is the
+> >>> coherent area, if we want to enforce stronger isolation we need to us=
+e
+> >>> shadow virtqueue (which is proposed in earlier version by me) in this
+> >>> case. But I'm not sure it's worth to do that.
+> >>
+> >>
+> >> So this reminds me the discussion in the end of last year. We need to
+> >> make sure we don't suffer from the same issues for VDUSE at least
+> >>
+> >> https://yhbt.net/lore/all/c3629a27-3590-1d9f-211b-c0b7be152b32@redhat.=
+com/T/#mc6b6e2343cbeffca68ca7a97e0f473aaa871c95b
+> >>
+> >> Or we can solve it at virtio level, e.g remember the dma address inste=
+ad
+> >> of depending on the addr in the descriptor ring
+> >>
+> > I might miss something. But VDUSE has recorded the dma address during
+> > dma mapping, so we would not do bouncing if the addr/length is invalid
+> > during dma unmapping. Is it enough?
 >
-> I'm going to be offline for a week and don't want to be a bottleneck.
-> I'll catch up when I'm back.
-
-
-Thanks a lot for comments and I think we had sufficent time to make 
-VDUSE safe before merging.
-
-
 >
-> Stefan
+> E.g malicous device write a buggy dma address in the descriptor ring, so
+> we had:
+>
+> vring_unmap_one_split(desc->addr, desc->len)
+>      dma_unmap_single()
+>          vduse_dev_unmap_page()
+>              vduse_domain_bounce()
+>
+> And in vduse_domain_bounce() we had:
+>
+>          while (size) {
+>                  map =3D &domain->bounce_maps[iova >> PAGE_SHIFT];
+>                  offset =3D offset_in_page(iova);
+>                  sz =3D min_t(size_t, PAGE_SIZE - offset, size);
+>
+> This means we trust the iova which is dangerous and exacly the issue
+> mentioned in the above link.
+>
+>  From VDUSE level need to make sure iova is legal.
+>
 
+I think we already do that in vduse_domain_bounce():
+
+    while (size) {
+        map =3D &domain->bounce_maps[iova >> PAGE_SHIFT];
+
+        if (WARN_ON(!map->bounce_page ||
+            map->orig_phys =3D=3D INVALID_PHYS_ADDR))
+            return;
+
+
+>  From virtio level, we should not truse desc->addr.
+>
+
+We would not touch desc->addr after vring_unmap_one_split(). So I'm
+not sure what we need to do at the virtio level.
+
+Thanks,
+Yongji
