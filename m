@@ -2,155 +2,228 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C9F736180A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 05:05:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B3FF361819
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 05:13:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237680AbhDPDGJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Apr 2021 23:06:09 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:63371 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237760AbhDPDGF (ORCPT
+        id S235054AbhDPDOS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Apr 2021 23:14:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35570 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237288AbhDPDOR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Apr 2021 23:06:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1618542340; x=1650078340;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=uVfh8D4+sBBq64E108Yvid21+UPvhkglPh0NjleQvb4=;
-  b=cThEWTTds6021zuFqFhubo7E8SPoXUnhO+Padd4+Yh8/KN5/lgy0oDYg
-   pJILsXn9FTc60mJ8DPdzi/QP9DjdOngo1QoPTtX0KFQyXOFwpxIoTTnxr
-   HryykFIewOWozTMb3lVedMnBbrecEGNaMW2rIIudaijf19sgZK3ohUW4x
-   6bN6DJU6rByUtAk3yvOv6sfJBebBaXQsMvEj9Im1jTDnIG7sUuW8Inx2d
-   2qcNvhdFqCfWBYeaIho9NzwBAori/whJXBcpD8U8ydJMbpY7MPzJ18Kqj
-   gNJ7C+y7Q5AuS8B3pehr+YQa4Ekh2UKnk8JJoywNSawnzjzrxz3HCzJag
-   Q==;
-IronPort-SDR: Wjd0C07/CyaIOAtTIRGTCXKKfLlLsF+PtYnIkpg7JP0T1sqP2a6JP1IS+xpCQM2bzZ76HW9ZTb
- my0i22KrIx/fz9yOU9rqXVJKINZQ1riztKi3nTydkiJ/D4nbIbii9hufetEIjaZU46f5AFT6Sy
- xCC3F/QPl1vhzNSYRGkcaXj8PEbSI5BS+7fAj7o+bSZ2bBLHsEnevhC0bUQmS4UCAUe+ZMGs3N
- BSHZFs2bYJYpoP8zXAOXYQTlXtuygXIZl9JbajVdqH8jf6cpYTcQJGRcOV70gWJdJAU65IEIZj
- h4c=
-X-IronPort-AV: E=Sophos;i="5.82,226,1613404800"; 
-   d="scan'208";a="169567899"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 16 Apr 2021 11:05:40 +0800
-IronPort-SDR: N+JLvR0N5aYsv7emEsPhN/tT0NVNgPJXcdSt0E/2pqaQSxIRvosiojEcT4wsXreg7GhNlGIuNn
- maxJ/SaKb8G03efUnWVERc3DJtdFC1Kmcf9YG+SNyuBKLvv9AR7Em3nrF5XZOu0WXz2BdxPKXF
- 6MlOxoZOeju++9BiwlhDA8CJAAfusx0RQCCF0fXUWbt7JYc0dMNLr1j3JyPCUxqiI3nNDdY197
- tE8O9A4oGznyoshkejuYLBYSZeUFvY0NNsQ/ciR5CuTzBfztJFRpCKYXnjnkHTovmG7N4XoSJG
- DId+xOXwdD9L035ADnw0oVgo
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2021 19:44:59 -0700
-IronPort-SDR: u5Gc1810z5GreDYJpvaZDBd+bkB81RNJhYok8IDgPhe6JYgYj4b/4/fYIpyX1cNfJVEHlvUAnA
- MvOAeuVc8FBQZXEYMRwsr7AEl4o9EH4ZWc0IZfF4PcbzBOhhh0kx5kXMSJLHk9aqaOUbscvFQO
- cnR+SMMtVcof5L8EjlIR/eC/8XN0d4vx2Lzk9Lhsnt21cd/URva91ybcVwFbQqbeHdz6R/7aav
- OkHZyDzHZ5SnIdccJAHt+KUB7t7KMxH5k97pMJAwdRTYfFo0Amj59jJpiDg1hrSqHsfS+f5qTA
- 0pc=
-WDCIronportException: Internal
-Received: from washi.fujisawa.hgst.com ([10.149.53.254])
-  by uls-op-cesaip02.wdc.com with ESMTP; 15 Apr 2021 20:05:40 -0700
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     dm-devel@redhat.com, Mike Snitzer <snitzer@redhat.com>,
-        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-nvme@lists.infradead.org, Christoph Hellwig <hch@lst.de>,
-        linux-scsi@vger.kernel.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>
-Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH 4/4] zonefs: fix synchronous write to sequential zone files
-Date:   Fri, 16 Apr 2021 12:05:28 +0900
-Message-Id: <20210416030528.757513-5-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210416030528.757513-1-damien.lemoal@wdc.com>
-References: <20210416030528.757513-1-damien.lemoal@wdc.com>
+        Thu, 15 Apr 2021 23:14:17 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B203C061756
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 20:13:53 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id v6so38668900ejo.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Apr 2021 20:13:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=oPn6nrbtIIi/otRhY/sdadda9UqY0FLEvAtSn1BGbPk=;
+        b=jLoGDYGY3a5INx2p3ZGtEjh5krsUmpMORqpU/X5oAFvhXFQbvFNcR4/xoxTy/3PUZd
+         TUMKdWcs92hQMy6cgZj9u2+DbJ4iWSb/dUaUKR/C+D2nsjjH6cV+nY43CXZQc4JahNPG
+         LdpK1lJO5C63OAMfWYHkyFWegVdayQhceCm+o1fGGF6Sp5dGw7LbHFIR3uFqWliqmdC9
+         +Fzq7Kni01pKs7Axa5cwY4xoQ6+QevG+P/gOPB5Y2ThaseQV+MG7WE7CBoJFAxlABn13
+         Hjls2V/6Bw+kDhDU4492BagFy/ptGpuuybUajRRbm0onh+i/PTVwHJD4x1FBZwNxpEZB
+         ttGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=oPn6nrbtIIi/otRhY/sdadda9UqY0FLEvAtSn1BGbPk=;
+        b=T+1GrcbzchrO4NVeha+laL61O+L3XSygVLcOyNsb8U+KMciLsfKKuNDUAyeoYGbHva
+         OdeRNe1CSCsUZvlOl2HcUsniTauDZOPp6KaLOkKfSycieOzNv5bcpd2ZnwfuI+hmEvUP
+         BU3M6QUI4N1mjIqtkv4BS0SoI6PVsYIc1GU0CG1jI78o3RKOwhzYsuWHZ7mGfD+/rapL
+         4Acb/cd4SIPP1p2KvGZ4A6Fa07v24siPAYTYvLgg2p5VWJRESAtKB0yokIWKVfKkXfvQ
+         6pVfd8cJY/+r+h1IXCH8eAZN9wdU566lCZIIJMWh+Qw+IvQbVGhTGlhmd1MHICZ5OOdu
+         bDJw==
+X-Gm-Message-State: AOAM532aLZgEtgh4OBdiYcc2hIO5Sl/zN9bijmrIlWfb6TMpe8HNZne7
+        7n03TrJmNHD5/20i4D982yLH76yUnFZzAZQI/xy1
+X-Google-Smtp-Source: ABdhPJyUlL90ZzXalWJXx8x39M0xoyCR8uJMNvALHlYLKd5/jJj401j1kaYO/M9OEl4x96SAQPWJT3mAagbavWrSL+Y=
+X-Received: by 2002:a17:906:af5a:: with SMTP id ly26mr6250717ejb.372.1618542831901;
+ Thu, 15 Apr 2021 20:13:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210331080519.172-1-xieyongji@bytedance.com> <20210331080519.172-11-xieyongji@bytedance.com>
+ <YHb44R4HyLEUVSTF@stefanha-x1.localdomain> <CACycT3uNR+nZY5gY0UhPkeOyi7Za6XkX4b=hasuDcgqdc7fqfg@mail.gmail.com>
+ <YHfo8pc7dIO9lNc3@stefanha-x1.localdomain> <80b31814-9e41-3153-7efb-c0c2fab44feb@redhat.com>
+ <YHhP4i+yXgA2KkVJ@stefanha-x1.localdomain>
+In-Reply-To: <YHhP4i+yXgA2KkVJ@stefanha-x1.localdomain>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Fri, 16 Apr 2021 11:13:41 +0800
+Message-ID: <CACycT3uNNbDPdxDk+0ry4vRJ4PU0oKqbpwc9bqKPOJHBcyLnww@mail.gmail.com>
+Subject: Re: Re: [PATCH v6 10/10] Documentation: Add documentation for VDUSE
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Synchronous writes to sequential zone files cannot use zone append
-operations if the underlying zoned device queue limit
-max_zone_append_sectors is 0, indicating that the device does not
-support this operation. In this case, fall back to using regular write
-operations.
+On Thu, Apr 15, 2021 at 10:38 PM Stefan Hajnoczi <stefanha@redhat.com> wrot=
+e:
+>
+> On Thu, Apr 15, 2021 at 04:36:35PM +0800, Jason Wang wrote:
+> >
+> > =E5=9C=A8 2021/4/15 =E4=B8=8B=E5=8D=883:19, Stefan Hajnoczi =E5=86=99=
+=E9=81=93:
+> > > On Thu, Apr 15, 2021 at 01:38:37PM +0800, Yongji Xie wrote:
+> > > > On Wed, Apr 14, 2021 at 10:15 PM Stefan Hajnoczi <stefanha@redhat.c=
+om> wrote:
+> > > > > On Wed, Mar 31, 2021 at 04:05:19PM +0800, Xie Yongji wrote:
+> > > > > > VDUSE (vDPA Device in Userspace) is a framework to support
+> > > > > > implementing software-emulated vDPA devices in userspace. This
+> > > > > > document is intended to clarify the VDUSE design and usage.
+> > > > > >
+> > > > > > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> > > > > > ---
+> > > > > >   Documentation/userspace-api/index.rst |   1 +
+> > > > > >   Documentation/userspace-api/vduse.rst | 212 +++++++++++++++++=
++++++++++++++++++
+> > > > > >   2 files changed, 213 insertions(+)
+> > > > > >   create mode 100644 Documentation/userspace-api/vduse.rst
+> > > > > Just looking over the documentation briefly (I haven't studied th=
+e code
+> > > > > yet)...
+> > > > >
+> > > > Thank you!
+> > > >
+> > > > > > +How VDUSE works
+> > > > > > +------------
+> > > > > > +Each userspace vDPA device is created by the VDUSE_CREATE_DEV =
+ioctl on
+> > > > > > +the character device (/dev/vduse/control). Then a device file =
+with the
+> > > > > > +specified name (/dev/vduse/$NAME) will appear, which can be us=
+ed to
+> > > > > > +implement the userspace vDPA device's control path and data pa=
+th.
+> > > > > These steps are taken after sending the VDPA_CMD_DEV_NEW netlink
+> > > > > message? (Please consider reordering the documentation to make it=
+ clear
+> > > > > what the sequence of steps are.)
+> > > > >
+> > > > No, VDUSE devices should be created before sending the
+> > > > VDPA_CMD_DEV_NEW netlink messages which might produce I/Os to VDUSE=
+.
+> > > I see. Please include an overview of the steps before going into deta=
+il.
+> > > Something like:
+> > >
+> > >    VDUSE devices are started as follows:
+> > >
+> > >    1. Create a new VDUSE instance with ioctl(VDUSE_CREATE_DEV) on
+> > >       /dev/vduse/control.
+> > >
+> > >    2. Begin processing VDUSE messages from /dev/vduse/$NAME. The firs=
+t
+> > >       messages will arrive while attaching the VDUSE instance to vDPA=
+.
+> > >
+> > >    3. Send the VDPA_CMD_DEV_NEW netlink message to attach the VDUSE
+> > >       instance to vDPA.
+> > >
+> > >    VDUSE devices are stopped as follows:
+> > >
+> > >    ...
+> > >
+> > > > > > +     static int netlink_add_vduse(const char *name, int device=
+_id)
+> > > > > > +     {
+> > > > > > +             struct nl_sock *nlsock;
+> > > > > > +             struct nl_msg *msg;
+> > > > > > +             int famid;
+> > > > > > +
+> > > > > > +             nlsock =3D nl_socket_alloc();
+> > > > > > +             if (!nlsock)
+> > > > > > +                     return -ENOMEM;
+> > > > > > +
+> > > > > > +             if (genl_connect(nlsock))
+> > > > > > +                     goto free_sock;
+> > > > > > +
+> > > > > > +             famid =3D genl_ctrl_resolve(nlsock, VDPA_GENL_NAM=
+E);
+> > > > > > +             if (famid < 0)
+> > > > > > +                     goto close_sock;
+> > > > > > +
+> > > > > > +             msg =3D nlmsg_alloc();
+> > > > > > +             if (!msg)
+> > > > > > +                     goto close_sock;
+> > > > > > +
+> > > > > > +             if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, =
+famid, 0, 0,
+> > > > > > +                 VDPA_CMD_DEV_NEW, 0))
+> > > > > > +                     goto nla_put_failure;
+> > > > > > +
+> > > > > > +             NLA_PUT_STRING(msg, VDPA_ATTR_DEV_NAME, name);
+> > > > > > +             NLA_PUT_STRING(msg, VDPA_ATTR_MGMTDEV_DEV_NAME, "=
+vduse");
+> > > > > > +             NLA_PUT_U32(msg, VDPA_ATTR_DEV_ID, device_id);
+> > > > > What are the permission/capability requirements for VDUSE?
+> > > > >
+> > > > Now I think we need privileged permission (root user). Because
+> > > > userspace daemon is able to access avail vring, used vring, descrip=
+tor
+> > > > table in kernel driver directly.
+> > > Please state this explicitly at the start of the document. Existing
+> > > interfaces like FUSE are designed to avoid trusting userspace.
+> >
+> >
+> > There're some subtle difference here. VDUSE present a device to kernel =
+which
+> > means IOMMU is probably the only thing to prevent a malicous device.
+> >
+> >
+> > > Therefore
+> > > people might think the same is the case here. It's critical that peop=
+le
+> > > are aware of this before deploying VDUSE with virtio-vdpa.
+> > >
+> > > We should probably pause here and think about whether it's possible t=
+o
+> > > avoid trusting userspace. Even if it takes some effort and costs some
+> > > performance it would probably be worthwhile.
+> >
+> >
+> > Since the bounce buffer is used the only attack surface is the coherent
+> > area, if we want to enforce stronger isolation we need to use shadow
+> > virtqueue (which is proposed in earlier version by me) in this case. Bu=
+t I'm
+> > not sure it's worth to do that.
+>
+> The security situation needs to be clear before merging this feature.
+>
+> I think the IOMMU and vring can be made secure. What is more concerning
+> is the kernel code that runs on top: VIRTIO device drivers, network
+> stack, file systems, etc. They trust devices to an extent.
+>
 
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- fs/zonefs/super.c  | 16 ++++++++++++----
- fs/zonefs/zonefs.h |  2 ++
- 2 files changed, 14 insertions(+), 4 deletions(-)
+I will dig into it to see if there is any security issue.
 
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index 049e36c69ed7..b97566b9dff7 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -689,14 +689,15 @@ static ssize_t zonefs_file_dio_append(struct kiocb *iocb, struct iov_iter *from)
- {
- 	struct inode *inode = file_inode(iocb->ki_filp);
- 	struct zonefs_inode_info *zi = ZONEFS_I(inode);
--	struct block_device *bdev = inode->i_sb->s_bdev;
--	unsigned int max;
-+	struct super_block *sb = inode->i_sb;
-+	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
-+	struct block_device *bdev = sb->s_bdev;
-+	sector_t max = sbi->s_max_zone_append_sectors;
- 	struct bio *bio;
- 	ssize_t size;
- 	int nr_pages;
- 	ssize_t ret;
- 
--	max = queue_max_zone_append_sectors(bdev_get_queue(bdev));
- 	max = ALIGN_DOWN(max << SECTOR_SHIFT, inode->i_sb->s_blocksize);
- 	iov_iter_truncate(from, max);
- 
-@@ -853,6 +854,8 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
- 
- 	/* Enforce sequential writes (append only) in sequential zones */
- 	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ) {
-+		struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
-+
- 		mutex_lock(&zi->i_truncate_mutex);
- 		if (iocb->ki_pos != zi->i_wpoffset) {
- 			mutex_unlock(&zi->i_truncate_mutex);
-@@ -860,7 +863,7 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
- 			goto inode_unlock;
- 		}
- 		mutex_unlock(&zi->i_truncate_mutex);
--		append = sync;
-+		append = sync && sbi->s_max_zone_append_sectors;
- 	}
- 
- 	if (append)
-@@ -1683,6 +1686,11 @@ static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
- 		sbi->s_mount_opts &= ~ZONEFS_MNTOPT_EXPLICIT_OPEN;
- 	}
- 
-+	sbi->s_max_zone_append_sectors =
-+		queue_max_zone_append_sectors(bdev_get_queue(sb->s_bdev));
-+	if (!sbi->s_max_zone_append_sectors)
-+		zonefs_info(sb, "Zone append is not supported: falling back to using regular writes\n");
-+
- 	ret = zonefs_read_super(sb);
- 	if (ret)
- 		return ret;
-diff --git a/fs/zonefs/zonefs.h b/fs/zonefs/zonefs.h
-index 51141907097c..2b8c3b1a32ea 100644
---- a/fs/zonefs/zonefs.h
-+++ b/fs/zonefs/zonefs.h
-@@ -185,6 +185,8 @@ struct zonefs_sb_info {
- 
- 	unsigned int		s_max_open_zones;
- 	atomic_t		s_open_zones;
-+
-+	sector_t		s_max_zone_append_sectors;
- };
- 
- static inline struct zonefs_sb_info *ZONEFS_SB(struct super_block *sb)
--- 
-2.30.2
+> Since virtio-vdpa is a big reason for doing VDUSE in the first place I
+> don't think it makes sense to disable virtio-vdpa with VDUSE. A solution
+> is needed.
+>
+> I'm going to be offline for a week and don't want to be a bottleneck.
+> I'll catch up when I'm back.
+>
 
+Thanks for your comments!
+
+Thanks,
+Yongji
