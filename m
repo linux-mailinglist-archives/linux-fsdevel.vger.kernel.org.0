@@ -2,108 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BE8E361DA0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 12:09:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 830CD361E71
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 13:09:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242239AbhDPKA3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Apr 2021 06:00:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39898 "EHLO
+        id S237997AbhDPLJt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Apr 2021 07:09:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239093AbhDPKA0 (ORCPT
+        with ESMTP id S235011AbhDPLJs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Apr 2021 06:00:26 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A465C061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 03:00:01 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id v13so6598809ilj.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 03:00:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DViDG4e3ytZRzvQTdptvaQZPSuPxk5hDy5nR7A/4sS4=;
-        b=M0bo3M3QEl0dAkA4HnpHsv6ANZSt38vaTsRShCNjN3ynn8qi8zc3antJ7vqCHU9I49
-         KthR+ORsFF7wER836MByMmcwfpmEov6anHr+lzPRUP3jDKXkTULu3oe4XEnduVfupSTG
-         UFmzCh4ph0y2pZvrVXSjc2fy9K8W1e7xCcANcVle8ECpRBj7HVuDHJdFB7AuPxQE3Myd
-         yZmMFt3IemOmT/p/Vdd3x0NzVa/qH/Lhg7eNxuqVU/5nWOOxe1m0mk76yyOQ+6EKd856
-         Uv8fhXWcEqcCF2SI/Ql7nk4mWF8j8YcRacmwbLQVmuX9L+pn1O81COAPb2oZ5p7H//Z/
-         AwNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DViDG4e3ytZRzvQTdptvaQZPSuPxk5hDy5nR7A/4sS4=;
-        b=PbYRsqzQsX6D2jJ5LbSmGIogWR3lnsBY8Co6u2ewuH906cE6J2p+dMFfxL9oAPR+kc
-         7DfbINzfJsAJD1xkVv6sbU20sh29Lh8M4/YDpY5wJpBj30d/I1zcWufZ7sdxiBT5e5Yh
-         naTHs0tRAEWhavVQ2cxUqXU33J8srKprX47Olfsa9Y3cKKaY29Kemkf4K9ge1/pJeuv+
-         X9huMnPHFaBSIn6JhGUMWozd5gy34GIgX/bElblLqQUJDoFY2gWBBlnHsHN2WtWFazkJ
-         okG1LOwve5WFl3EOLJ5EO6Mf9bpOzCsLdCbsu3mDKPjN/tRgXw5pmJG2RRfEYjvGNJy4
-         f6KQ==
-X-Gm-Message-State: AOAM530Fr+85hybdzJZdz/AtYaVSfwBTRJWmLLZBNOuFIHGAKPNF1AcB
-        4ReGiPf/gj6WxKRUSUuBYDq+pnIHue7rdar9rtw=
-X-Google-Smtp-Source: ABdhPJyEvRq5Ckn6EgVkSJHvZdBF+edeoTwJdgRDMRKn0d5Y/42XyASjMqPZNcGhGRl2wqe4T76EBFTBnqFmFey70rI=
-X-Received: by 2002:a05:6e02:1a21:: with SMTP id g1mr6373763ile.9.1618567201019;
- Fri, 16 Apr 2021 03:00:01 -0700 (PDT)
+        Fri, 16 Apr 2021 07:09:48 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DEC5C061574;
+        Fri, 16 Apr 2021 04:09:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=wricDXbRsfuITNqF2TYSCApfJgf/TrNtRqhvMhFAZJs=; b=Y26Meg6YAb9XQNiI4oEZ9AFQuy
+        wWYeKyW7C8HS2jwil4L54VgZ33G3sI1oaIR7z8ndqNXOo2388OcOr6TTZCjNFkcJ2m+ytYNdxpb7E
+        YwQgab6tdRx2Q02tudGG62J7NUz4fzFm+2Q2OMzUhiGofWME4QtAVudHl3QpPG4jClPZLPzaLSAqE
+        bhVhHnQDYbGu1sqBqxrgJxy4Dr0zOOPeosynVnO0Uj33kcCQ3tyg91sUGnlxgg1z1CudTO/kri5LE
+        h/etKdNOg4QTmPIhRJyi/XN5u7l0YvkwsvkMAp86iH2jLCcYgrldJnXbqQnev78jJOiDvmCBIIh0X
+        zb00LSVw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lXMLY-009rOM-P1; Fri, 16 Apr 2021 11:09:13 +0000
+Date:   Fri, 16 Apr 2021 12:09:12 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Peter Enderborg <peter.enderborg@sony.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Michal Hocko <mhocko@suse.com>, NeilBrown <neilb@suse.de>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Mike Rapoport <rppt@kernel.org>, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH] dma-buf: Add DmaBufTotal counter in meminfo
+Message-ID: <20210416110912.GI2531743@casper.infradead.org>
+References: <20210416093719.6197-1-peter.enderborg@sony.com>
 MIME-Version: 1.0
-References: <20210322173944.449469-1-amir73il@gmail.com> <20210322173944.449469-3-amir73il@gmail.com>
- <20210325150025.GF13673@quack2.suse.cz>
-In-Reply-To: <20210325150025.GF13673@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 16 Apr 2021 12:59:49 +0300
-Message-ID: <CAOQ4uxia0ETkPF7Af3YiYGb2QzD03UNEpvU2jyibf_+tajhe1A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] shmem: allow reporting fanotify events with file
- handles on tmpfs
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210416093719.6197-1-peter.enderborg@sony.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 25, 2021 at 5:00 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 22-03-21 19:39:44, Amir Goldstein wrote:
-> > Since kernel v5.1, fanotify_init(2) supports the flag FAN_REPORT_FID
-> > for identifying objects using file handle and fsid in events.
-> >
-> > fanotify_mark(2) fails with -ENODEV when trying to set a mark on
-> > filesystems that report null f_fsid in stasfs(2).
-> >
-> > Use the digest of uuid as f_fsid for tmpfs to uniquely identify tmpfs
-> > objects as best as possible and allow setting an fanotify mark that
-> > reports events with file handles on tmpfs.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> Hugh, any opinion on this patch?
->
->                                                                 Honza
->
-> > ---
-> >  mm/shmem.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index b2db4ed0fbc7..162d8f8993bb 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -2846,6 +2846,9 @@ static int shmem_statfs(struct dentry *dentry, struct kstatfs *buf)
-> >               buf->f_ffree = sbinfo->free_inodes;
-> >       }
-> >       /* else leave those fields 0 like simple_statfs */
-> > +
-> > +     buf->f_fsid = uuid_to_fsid(dentry->d_sb->s_uuid.b);
-> > +
-> >       return 0;
-> >  }
-> >
+On Fri, Apr 16, 2021 at 11:37:19AM +0200, Peter Enderborg wrote:
+> diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+> index 6fa761c9cc78..3c1a82b51a6f 100644
+> --- a/fs/proc/meminfo.c
+> +++ b/fs/proc/meminfo.c
+> @@ -16,6 +16,7 @@
+>  #ifdef CONFIG_CMA
+>  #include <linux/cma.h>
+>  #endif
+> +#include <linux/dma-buf.h>
+>  #include <asm/page.h>
+>  #include "internal.h"
+>  
+> @@ -145,6 +146,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+>  	show_val_kb(m, "CmaFree:        ",
+>  		    global_zone_page_state(NR_FREE_CMA_PAGES));
+>  #endif
+> +	show_val_kb(m, "DmaBufTotal:    ", dma_buf_get_size());
+>  
+>  	hugetlb_report_meminfo(m);
+>  
 
-
-Ping.
-
-Hugh, are you ok with this change?
-
-Thanks,
-Amir.
+... and if CONFIG_DMA_SHARED_BUFFER is not set ...?
