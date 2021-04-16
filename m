@@ -2,144 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EC593626DA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 19:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB1623626D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Apr 2021 19:31:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242682AbhDPRcs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Apr 2021 13:32:48 -0400
-Received: from mx315.baidu.com ([180.101.52.204]:39257 "EHLO
-        njjs-sys-mailin01.njjs.baidu.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S236140AbhDPRcr (ORCPT
+        id S242569AbhDPRbf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Apr 2021 13:31:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56360 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242556AbhDPRbc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Apr 2021 13:32:47 -0400
-X-Greylist: delayed 589 seconds by postgrey-1.27 at vger.kernel.org; Fri, 16 Apr 2021 13:32:47 EDT
-Received: from unknown.domain.tld (bjhw-sys-rpm015653cc5.bjhw.baidu.com [10.227.53.39])
-        by njjs-sys-mailin01.njjs.baidu.com (Postfix) with ESMTP id 7FF6A7F00049;
-        Sat, 17 Apr 2021 01:22:31 +0800 (CST)
-From:   chukaiping <chukaiping@baidu.com>
-To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH v2] mm/compaction:let proactive compaction order configurable
-Date:   Sat, 17 Apr 2021 01:22:31 +0800
-Message-Id: <1618593751-32148-1-git-send-email-chukaiping@baidu.com>
-X-Mailer: git-send-email 1.7.1
+        Fri, 16 Apr 2021 13:31:32 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB5FDC061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 10:31:07 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lXSIj-005odw-Gp; Fri, 16 Apr 2021 17:30:41 +0000
+Date:   Fri, 16 Apr 2021 17:30:41 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Xie Yongji <xieyongji@bytedance.com>, hch@infradead.org,
+        arve@android.com, tkjos@android.com, maco@android.com,
+        joel@joelfernandes.org, hridya@google.com, surenb@google.com,
+        sargun@sargun.me, keescook@chromium.org, jasowang@redhat.com,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] binder: Use receive_fd() to receive file from
+ another process
+Message-ID: <YHnJwRvUhaK3IM0l@zeniv-ca.linux.org.uk>
+References: <20210401090932.121-3-xieyongji@bytedance.com>
+ <YGWYZYbBzglUCxB2@kroah.com>
+ <20210401104034.52qaaoea27htkpbh@wittgenstein>
+ <YHkedhnn1wdVFTV3@zeniv-ca.linux.org.uk>
+ <YHkmxCyJ8yekgGKl@zeniv-ca.linux.org.uk>
+ <20210416134252.v3zfjp36tpk33tqz@wittgenstein>
+ <YHmanzAMdeCtZUjy@zeniv-ca.linux.org.uk>
+ <20210416151310.nqkxfwocm32lnqfq@wittgenstein>
+ <YHmu3/Cw4bUnTSH9@zeniv-ca.linux.org.uk>
+ <20210416155815.ayjpnx37dv3a4jos@wittgenstein>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210416155815.ayjpnx37dv3a4jos@wittgenstein>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently the proactive compaction order is fixed to
-COMPACTION_HPAGE_ORDER(9), it's OK in most machines with lots of
-normal 4KB memory, but it's too high for the machines with small
-normal memory, for example the machines with most memory configured
-as 1GB hugetlbfs huge pages. In these machines the max order of
-free pages is often below 9, and it's always below 9 even with hard
-compaction. This will lead to proactive compaction be triggered very
-frequently. In these machines we only care about order of 3 or 4.
-This patch export the oder to proc and let it configurable
-by user, and the default value is still COMPACTION_HPAGE_ORDER.
+On Fri, Apr 16, 2021 at 05:58:15PM +0200, Christian Brauner wrote:
 
-Signed-off-by: chukaiping <chukaiping@baidu.com>
-Reported-by: kernel test robot <lkp@intel.com>
----
+> They could probably refactor this but I'm not sure why they'd bother. If
+> they fail processing any of those files they end up aborting the
+> whole transaction.
+> (And the original code didn't check the error code btw.)
 
-Changes in v2:
-    - fix the compile error in ia64 and powerpc
-    - change the hard coded max order number from 10 to MAX_ORDER - 1
+Wait a sec...  What does aborting the transaction do to descriptor table?
+<rereads>
+Oh, lovely...
 
- include/linux/compaction.h |    1 +
- kernel/sysctl.c            |   11 +++++++++++
- mm/compaction.c            |   14 +++++++++++---
- 3 files changed, 23 insertions(+), 3 deletions(-)
+binder_apply_fd_fixups() is deeply misguided.  What it should do is
+	* go through t->fd_fixups, reserving descriptor numbers and
+putting them into t->buffer (and I'd probably duplicate them into
+struct binder_txn_fd_fixup).  Cleanup in case of failure: go through
+the list, releasing the descriptors we'd already reserved, doing
+fput() on fixup->file in all entries and freeing the entries as
+we go.
+	* On success, go through the list, doing fd_install() and
+freeing the entries.
 
-diff --git a/include/linux/compaction.h b/include/linux/compaction.h
-index ed4070e..151ccd1 100644
---- a/include/linux/compaction.h
-+++ b/include/linux/compaction.h
-@@ -83,6 +83,7 @@ static inline unsigned long compact_gap(unsigned int order)
- #ifdef CONFIG_COMPACTION
- extern int sysctl_compact_memory;
- extern unsigned int sysctl_compaction_proactiveness;
-+extern unsigned int sysctl_compaction_order;
- extern int sysctl_compaction_handler(struct ctl_table *table, int write,
- 			void *buffer, size_t *length, loff_t *ppos);
- extern int sysctl_extfrag_threshold;
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 62fbd09..a607d4d 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -195,6 +195,8 @@ enum sysctl_writes_mode {
- #endif /* CONFIG_SMP */
- #endif /* CONFIG_SCHED_DEBUG */
- 
-+static int max_buddy_zone = MAX_ORDER - 1;
-+
- #ifdef CONFIG_COMPACTION
- static int min_extfrag_threshold;
- static int max_extfrag_threshold = 1000;
-@@ -2871,6 +2873,15 @@ int proc_do_static_key(struct ctl_table *table, int write,
- 		.extra2		= &one_hundred,
- 	},
- 	{
-+		.procname       = "compaction_order",
-+		.data           = &sysctl_compaction_order,
-+		.maxlen         = sizeof(sysctl_compaction_order),
-+		.mode           = 0644,
-+		.proc_handler   = proc_dointvec_minmax,
-+		.extra1         = SYSCTL_ZERO,
-+		.extra2         = &max_buddy_zone,
-+	},
-+	{
- 		.procname	= "extfrag_threshold",
- 		.data		= &sysctl_extfrag_threshold,
- 		.maxlen		= sizeof(int),
-diff --git a/mm/compaction.c b/mm/compaction.c
-index e04f447..bfd1d5e 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -1925,16 +1925,16 @@ static bool kswapd_is_running(pg_data_t *pgdat)
- 
- /*
-  * A zone's fragmentation score is the external fragmentation wrt to the
-- * COMPACTION_HPAGE_ORDER. It returns a value in the range [0, 100].
-+ * sysctl_compaction_order. It returns a value in the range [0, 100].
-  */
- static unsigned int fragmentation_score_zone(struct zone *zone)
- {
--	return extfrag_for_order(zone, COMPACTION_HPAGE_ORDER);
-+	return extfrag_for_order(zone, sysctl_compaction_order);
- }
- 
- /*
-  * A weighted zone's fragmentation score is the external fragmentation
-- * wrt to the COMPACTION_HPAGE_ORDER scaled by the zone's size. It
-+ * wrt to the sysctl_compaction_order scaled by the zone's size. It
-  * returns a value in the range [0, 100].
-  *
-  * The scaling factor ensures that proactive compaction focuses on larger
-@@ -2666,6 +2666,7 @@ static void compact_nodes(void)
-  * background. It takes values in the range [0, 100].
-  */
- unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
-+unsigned int __read_mostly sysctl_compaction_order;
- 
- /*
-  * This is the entry point for compacting all nodes via
-@@ -2958,6 +2959,13 @@ static int __init kcompactd_init(void)
- 	int nid;
- 	int ret;
- 
-+	/*
-+	 * move the initialization of sysctl_compaction_order to here to
-+	 * eliminate compile error in ia64 and powerpc architecture because
-+	 * COMPACTION_HPAGE_ORDER is a variable in this architecture
-+	 */
-+	sysctl_compaction_order = COMPACTION_HPAGE_ORDER;
-+
- 	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
- 					"mm/compaction:online",
- 					kcompactd_cpu_online, NULL);
--- 
-1.7.1
+That's it.  No rereading from the buffer, no binder_deferred_fd_close()
+crap, etc.
 
+Again, YOU CAN NOT UNDO fd_install().  Ever.  Kernel can not decide it
+shouldn't have put something in descriptor table and take it back.
+You can't unring that bell.
