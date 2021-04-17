@@ -2,207 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 421C4362CB1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Apr 2021 03:30:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C529362CE1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Apr 2021 04:33:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233061AbhDQBbD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Apr 2021 21:31:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48620 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229719AbhDQBbC (ORCPT
+        id S235372AbhDQCdw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Apr 2021 22:33:52 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:17957 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231997AbhDQCdv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Apr 2021 21:31:02 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F7D9C061756
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 18:30:37 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lXZmw-005uUl-NV; Sat, 17 Apr 2021 01:30:22 +0000
-Date:   Sat, 17 Apr 2021 01:30:22 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Xie Yongji <xieyongji@bytedance.com>, hch@infradead.org,
-        arve@android.com, tkjos@android.com, maco@android.com,
-        joel@joelfernandes.org, hridya@google.com, surenb@google.com,
-        sargun@sargun.me, keescook@chromium.org, jasowang@redhat.com,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] binder: Use receive_fd() to receive file from
- another process
-Message-ID: <YHo6Ln9VI1T7RmLK@zeniv-ca.linux.org.uk>
-References: <YGWYZYbBzglUCxB2@kroah.com>
- <20210401104034.52qaaoea27htkpbh@wittgenstein>
- <YHkedhnn1wdVFTV3@zeniv-ca.linux.org.uk>
- <YHkmxCyJ8yekgGKl@zeniv-ca.linux.org.uk>
- <20210416134252.v3zfjp36tpk33tqz@wittgenstein>
- <YHmanzAMdeCtZUjy@zeniv-ca.linux.org.uk>
- <20210416151310.nqkxfwocm32lnqfq@wittgenstein>
- <YHmu3/Cw4bUnTSH9@zeniv-ca.linux.org.uk>
- <20210416155815.ayjpnx37dv3a4jos@wittgenstein>
- <YHnJwRvUhaK3IM0l@zeniv-ca.linux.org.uk>
+        Fri, 16 Apr 2021 22:33:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1618626806; x=1650162806;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/zdC0mF6U3RynH3N4WrC5BU1TgJS0HECRdezkU53JhM=;
+  b=Bkga4+cZNk0e6Pb34iKyZDbWrJe2zP/BmZ6rgZDOPnTiM6SLZOQ/0RB2
+   392QfJgtWCQ9UuufFLcD14FUfu6iomMMtmQifKaNXH5GBDWA7hf95UAge
+   7oUJXJxoNsMIk9Fu2QR4EFoxOVlxazRmy1zudtKPkFJcXk0lBIrdsVxZ2
+   K/Hh0/jgQzAsWQ2k6MwK9zeC9sgQkC8L5QCW0+sDHVdLSJH3S13d9eMm2
+   /QssNSoV5IUrgG4HVWTbACjseLRjxbVfjplli1R/FPH5q9GjWI4twY1iV
+   U2aHk1OvgjDhTo+4tyy2Qn2swP1H2JBr8EaciMu2kkd71q4Rw1YSZU4gu
+   A==;
+IronPort-SDR: 6H6+YEZeCveZwLyIbUtdxMGOiz1aVvYr+l+xR6Yhx0JdIfFtjHVaZy+Bn1ydyZUT2iSlQX1C6m
+ gvuU5+N0vGuuQh6IvTTDnf1TDP1Z76Pv9oMxxDzjYhUbRpTur43jicOEtSYBGpvtITfT6ncqH4
+ byH/i7Bj6CMwclwd6L17ylzmG2n7AjJJPAuJ7JuqKj0GhOIypl9VBYBrOGLWB4w/bD9+VNMnkN
+ oUS+ly0WKIzqefkq0cpsUzMiFX7UgTQXwmYgdClAq9CPrzdTzIOIcdAVkI/FWEgs1w8AbSLbur
+ 2L0=
+X-IronPort-AV: E=Sophos;i="5.82,228,1613404800"; 
+   d="scan'208";a="165193271"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 17 Apr 2021 10:33:25 +0800
+IronPort-SDR: Es3jIhybGxi6Mq9I3WuFh0H6yH0YUDV6vjnfmn26lhol1Vn1FiR7F26Mjg35FfpRa31nbvMF9b
+ xjS6GnuZNdEYGUxmdbZr4X9rCU3miGn2w2ejwqYeTta5ktQCfTS+8dUhIqGgeK/b5IDuLelQoV
+ xA3zpx0E3HALrc688oq0dPd+dleuBS9q5yT/44jhw0rrrrEQ4iNVq+qJ4BMCDKQf5JzwPbC3Rx
+ tJpa0+NDsUsBTb82oydAmcZttpl3+PhWx+6fq51s9mG1uBf5B7R11KwABX9GYCxWLzellp47wm
+ Iaqh8x+WgdDSfLkz1q5Poka5
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2021 19:12:39 -0700
+IronPort-SDR: 16C8yH8D/rdxr7PuzxuUa8rWesM6KtsM3HDeoMg5sHjMNQvboeWQIps+YwRvcomtoPwI1MlqpW
+ jtUKTWfjkpWaBLNjN5xtPZuKGF4EOTxwjzXBqX1pWi0R8zPmCngifSjkXAeqAvXMy9NAI4LKZT
+ f9KAxP0v20dDFF1Ae8+mSXucvh3MQe66TKjwZTiapM7cpv7MSLw49bM8YbT4PQ5+coB0yQiIBP
+ Nf6yxq7YFcTDZpXsZ740QZx0uXdp4NshbQe/QyHeTBtItwgM4/uiFWqOvW+Hfb4m7ddW6kfsUA
+ efs=
+WDCIronportException: Internal
+Received: from washi.fujisawa.hgst.com ([10.149.53.254])
+  by uls-op-cesaip01.wdc.com with ESMTP; 16 Apr 2021 19:33:24 -0700
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     dm-devel@redhat.com, Mike Snitzer <snitzer@redhat.com>,
+        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-nvme@lists.infradead.org, Christoph Hellwig <hch@lst.de>,
+        linux-scsi@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Subject: [PATCH v2 0/3] Fix dm-crypt zoned block device support
+Date:   Sat, 17 Apr 2021 11:33:20 +0900
+Message-Id: <20210417023323.852530-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YHnJwRvUhaK3IM0l@zeniv-ca.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 16, 2021 at 05:30:41PM +0000, Al Viro wrote:
-> On Fri, Apr 16, 2021 at 05:58:15PM +0200, Christian Brauner wrote:
-> 
-> > They could probably refactor this but I'm not sure why they'd bother. If
-> > they fail processing any of those files they end up aborting the
-> > whole transaction.
-> > (And the original code didn't check the error code btw.)
-> 
-> Wait a sec...  What does aborting the transaction do to descriptor table?
-> <rereads>
-> Oh, lovely...
-> 
-> binder_apply_fd_fixups() is deeply misguided.  What it should do is
-> 	* go through t->fd_fixups, reserving descriptor numbers and
-> putting them into t->buffer (and I'd probably duplicate them into
-> struct binder_txn_fd_fixup).  Cleanup in case of failure: go through
-> the list, releasing the descriptors we'd already reserved, doing
-> fput() on fixup->file in all entries and freeing the entries as
-> we go.
-> 	* On success, go through the list, doing fd_install() and
-> freeing the entries.
+Mike,
 
-Something like this:
+Zone append BIOs (REQ_OP_ZONE_APPEND) always specify the start sector
+of the zone to be written instead of the actual location sector to
+write. The write location is determined by the device and returned to
+the host upon completion of the operation.
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index c119736ca56a..b0c5f7e625f3 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -2195,6 +2195,7 @@ static int binder_translate_fd(u32 fd, binder_size_t fd_offset,
- 	fixup->offset = fd_offset;
- 	trace_binder_transaction_fd_send(t, fd, fixup->offset);
- 	list_add_tail(&fixup->fixup_entry, &t->fd_fixups);
-+	fixup->target_fd = -1;
- 
- 	return ret;
- 
-@@ -3707,25 +3708,10 @@ static int binder_wait_for_work(struct binder_thread *thread,
- 	return ret;
- }
- 
--/**
-- * binder_apply_fd_fixups() - finish fd translation
-- * @proc:         binder_proc associated @t->buffer
-- * @t:	binder transaction with list of fd fixups
-- *
-- * Now that we are in the context of the transaction target
-- * process, we can allocate and install fds. Process the
-- * list of fds to translate and fixup the buffer with the
-- * new fds.
-- *
-- * If we fail to allocate an fd, then free the resources by
-- * fput'ing files that have not been processed and ksys_close'ing
-- * any fds that have already been allocated.
-- */
--static int binder_apply_fd_fixups(struct binder_proc *proc,
-+static int binder_reserve_fds(struct binder_proc *proc,
- 				  struct binder_transaction *t)
- {
--	struct binder_txn_fd_fixup *fixup, *tmp;
--	int ret = 0;
-+	struct binder_txn_fd_fixup *fixup;
- 
- 	list_for_each_entry(fixup, &t->fd_fixups, fixup_entry) {
- 		int fd = get_unused_fd_flags(O_CLOEXEC);
-@@ -3734,42 +3720,55 @@ static int binder_apply_fd_fixups(struct binder_proc *proc,
- 			binder_debug(BINDER_DEBUG_TRANSACTION,
- 				     "failed fd fixup txn %d fd %d\n",
- 				     t->debug_id, fd);
--			ret = -ENOMEM;
--			break;
-+			return -ENOMEM;
- 		}
- 		binder_debug(BINDER_DEBUG_TRANSACTION,
- 			     "fd fixup txn %d fd %d\n",
- 			     t->debug_id, fd);
- 		trace_binder_transaction_fd_recv(t, fd, fixup->offset);
--		fd_install(fd, fixup->file);
--		fixup->file = NULL;
-+		fixup->target_fd = fd;
- 		if (binder_alloc_copy_to_buffer(&proc->alloc, t->buffer,
- 						fixup->offset, &fd,
--						sizeof(u32))) {
--			ret = -EINVAL;
--			break;
--		}
-+						sizeof(u32)))
-+			return -EINVAL;
- 	}
--	list_for_each_entry_safe(fixup, tmp, &t->fd_fixups, fixup_entry) {
--		if (fixup->file) {
--			fput(fixup->file);
--		} else if (ret) {
--			u32 fd;
--			int err;
--
--			err = binder_alloc_copy_from_buffer(&proc->alloc, &fd,
--							    t->buffer,
--							    fixup->offset,
--							    sizeof(fd));
--			WARN_ON(err);
--			if (!err)
--				binder_deferred_fd_close(fd);
-+	return 0;
-+}
-+
-+/**
-+ * binder_apply_fd_fixups() - finish fd translation
-+ * @proc:         binder_proc associated @t->buffer
-+ * @t:	binder transaction with list of fd fixups
-+ *
-+ * Now that we are in the context of the transaction target
-+ * process, we can allocate fds. Process the list of fds to
-+ * translate and fixup the buffer with the new fds.
-+ *
-+ * If we fail to allocate an fd, then free the resources by
-+ * releasing fds we'd allocated.  Otherwise transfer all files
-+ * from fixups to the descriptors we'd allocated for them.
-+ *
-+ * In either case, finish with freeing the fixups.
-+ */
-+static int binder_apply_fd_fixups(struct binder_proc *proc,
-+				  struct binder_transaction *t)
-+{
-+	struct binder_txn_fd_fixup *fixup;
-+	int err = binder_reserve_fds(proc, t);
-+
-+	if (unlikely(err)) {
-+		list_for_each_entry(fixup, &t->fd_fixups, fixup_entry) {
-+			if (fixup->target_fd >= 0)
-+				put_unused_fd(fixup->target_fd);
-+		}
-+	} else {
-+		list_for_each_entry(fixup, &t->fd_fixups, fixup_entry) {
-+			fd_install(fixup->target_fd, fixup->file);
-+			fixup->file = NULL;
- 		}
--		list_del(&fixup->fixup_entry);
--		kfree(fixup);
- 	}
--
--	return ret;
-+	binder_free_txn_fixups(t);
-+	return err;
- }
- 
- static int binder_thread_read(struct binder_proc *proc,
-diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
-index 6cd79011e35d..16ffc5f748ce 100644
---- a/drivers/android/binder_internal.h
-+++ b/drivers/android/binder_internal.h
-@@ -497,6 +497,7 @@ struct binder_txn_fd_fixup {
- 	struct list_head fixup_entry;
- 	struct file *file;
- 	size_t offset;
-+	int target_fd;
- };
- 
- struct binder_transaction {
+This interface, while simple and efficient for writing into sequential
+zones of a zoned block device, is incompatible with the use of sector
+values to calculate a cypher block IV. All data written in a zone is
+encrypted using an IV calculated from the first sectors of the zone,
+but read operation will specify any sector within the zone, resulting
+in an IV mismatch between encryption and decryption. Reads fail in that
+case.
+
+Using a single sector value (e.g. the zone start sector) for all read
+and writes into a zone can solve this problem, but at the cost of
+weakening the cypher chosen by the user. Emulating zone append using
+regular writes would be another potential solution, but it is complex
+and would add a lot of overhead.
+
+Instead, to solve this problem, explicitly disable support for zone
+append operations in dm-crypt if the target was setup using a cypher IV
+mode using sector values. The null and random IV modes can still be used
+with zone append operations. This lack of support for zone append is
+exposed to the user by setting the dm-crypt target queue limit
+max_zone_append_sectors to 0. This change is done in patches 1 and 2.
+
+Patch 3 fixes zonefs to fall back to using regular write when
+max_zone_append_sectors is 0 (Note: I can take this patch through the
+zonefs tree. But since I have nothing else for an eventual rc8 and next
+cycle, you can take it too. No chance of conflict).
+
+Overall, these changes do not break user space:
+1) There is no interface allowing a user to use zone append write
+without a file system. So applications using directly a raw dm-crypt
+device will continue working using regular write operations.
+2) btrfs zoned support was added in 5.12. Anybody trying btrfs-zoned on
+top of dm-crypt would have faced the read failures already. So there
+are no existing deployments to preserve. Same for zonefs.
+
+For file systems, using zone append with encryption will need to be
+supported within the file system (e.g. fscrypt). In this case, cypher IV
+calculation can rely for instance on file block offsets as these are
+known before a zone append operation write these blocks to disk at
+unknown locations.
+
+Reviews and comments are very much welcome.
+
+Changes from v1:
+* Addressed Johannes comments by renaming the CRYPT_IV_NO_SECTORS flag
+  to CRYPT_IV_ZONE_APPEND to avoid a double negation with !test_bit().
+  This also clarifies that the flag is used solely to check zone append
+  support.
+* Removed btrfs patch (former patch 3) as David is taking that patch
+  through the btrfs tree misc-next branch.
+* Added reviewed-by, Fixes and Cc tags.
+
+Damien Le Moal (3):
+  dm: Introduce zone append support control
+  dm crypt: Fix zoned block device support
+  zonefs: fix synchronous write to sequential zone files
+
+ drivers/md/dm-crypt.c         | 49 ++++++++++++++++++++++++++++-------
+ drivers/md/dm-table.c         | 41 +++++++++++++++++++++++++++++
+ fs/zonefs/super.c             | 16 +++++++++---
+ fs/zonefs/zonefs.h            |  2 ++
+ include/linux/device-mapper.h |  6 +++++
+ 5 files changed, 101 insertions(+), 13 deletions(-)
+
+-- 
+2.30.2
+
