@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE74D362C53
+	by mail.lfdr.de (Postfix) with ESMTP id 49B9A362C52
 	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Apr 2021 02:11:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235428AbhDQALE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Apr 2021 20:11:04 -0400
-Received: from mail-pf1-f178.google.com ([209.85.210.178]:45591 "EHLO
-        mail-pf1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235275AbhDQAK7 (ORCPT
+        id S235372AbhDQALC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Apr 2021 20:11:02 -0400
+Received: from mail-pf1-f182.google.com ([209.85.210.182]:47035 "EHLO
+        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235296AbhDQALA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Apr 2021 20:10:59 -0400
-Received: by mail-pf1-f178.google.com with SMTP id i190so19362291pfc.12;
+        Fri, 16 Apr 2021 20:11:00 -0400
+Received: by mail-pf1-f182.google.com with SMTP id d124so19338434pfa.13;
         Fri, 16 Apr 2021 17:10:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZFo30vhGMu/2aqGDdBPYTiJSkFO1t09cx7eUOlk9MRY=;
-        b=fdmZlnDguGxlyIZisD62YUNimO3QupSitm3Gc9hgcj+uXn68ET4mKKBPhUZejnz1BF
-         HAPUKXt1pcFBJdVRapuih1s+KA7XLc27t8d2f54laFlT9a0JtB17iIdTyoXPSfOi25Um
-         u9o8YW8/V/LdjClXSxU5CVJIJ/EuAU8ETmuiHuzawDWa9MpKBAVR8Pf/rCQZVKppAZtQ
-         xBDFuMVn3IWh+dx+PQRkiNVe7YHFSgTOz2gdc7Cm2I083GaNJOZ8xsZ7CtBkULiPGDV2
-         TshDia6gzSLhHWvYBkasR3EsB8Bj13WrSVrC5pWSPdH7XNRnmLUc4T0VO9Y4sj28Soq2
-         EodA==
-X-Gm-Message-State: AOAM530gG+Qw7kibwH4+gSJFppqL7OfzeW8I9atxeE0/wXJlKzmIByo2
-        LWFD06t3Tc8+S8Q9r4ZQeJg=
-X-Google-Smtp-Source: ABdhPJxypEWR5akfePUSyKsD49t7ylietmVfhvJjxDYI3ToTjtmHezXS3fhfClwQwj0PQcqmignVPQ==
-X-Received: by 2002:aa7:904b:0:b029:250:991e:315 with SMTP id n11-20020aa7904b0000b0290250991e0315mr9939013pfo.70.1618618233725;
-        Fri, 16 Apr 2021 17:10:33 -0700 (PDT)
+        bh=ao1TqPYuNX1M0mXjxJ3GFwDA7rWIlPfE84JbdJJr5OA=;
+        b=RPO5LSP1zuZZ4huXHLA8cMRNlXmnSjyMNHaFhLTUwnc/JN9MmH5HijDGKwhB0nYGfD
+         5F32atoRSsDGJJd1CjHkBXrUFDf3X6/YrYS9oeq5UJku7SwNJfhwX9Sv6ekxzTdCjF1j
+         EH5Q1tr0PSPfp/db0XMzL0sMLC5thDFudhuriOkMUrQ7dol4vM2x011k+jzV0wnez04B
+         ZyZhD1+zOtUDGjzabg1M/PydjPh9r980lJaGjTzsFOsfbtfTnD2cAW9sWx2K8h9/wSWE
+         AC2/q7Tb1BOO5W1vpa4kcpUg9Aoz/n+7BweflG1vt3kTOzPWNEG1SsK7PMqN3SIbK08Z
+         eI1g==
+X-Gm-Message-State: AOAM5331tVH75p5h7UCfgv26lu1EZuR12Difw6PNUqqO4k4amuLl2BF5
+        AjSBvp+t2LOAfKWhlKq25Us=
+X-Google-Smtp-Source: ABdhPJwTC+RAeTjahOoDPtRcvq+Jfl0m8X/KKO4KGgtDtLLj/0omvDnshJfd5dmHsNSF9+akcVmhhQ==
+X-Received: by 2002:a63:e30a:: with SMTP id f10mr1312689pgh.167.1618618234447;
+        Fri, 16 Apr 2021 17:10:34 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id y24sm3336965pjp.26.2021.04.16.17.10.27
+        by smtp.gmail.com with ESMTPSA id o134sm5417667pfd.66.2021.04.16.17.10.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Apr 2021 17:10:28 -0700 (PDT)
+        Fri, 16 Apr 2021 17:10:33 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 3D919419C3; Sat, 17 Apr 2021 00:10:27 +0000 (UTC)
+        id 484E441C23; Sat, 17 Apr 2021 00:10:27 +0000 (UTC)
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     rafael@kernel.org, gregkh@linuxfoundation.org,
         viro@zeniv.linux.org.uk, jack@suse.cz, bvanassche@acm.org,
@@ -44,9 +44,9 @@ Cc:     mchehab@kernel.org, keescook@chromium.org,
         linux-fsdevel@vger.kernel.org, kernel@tuxforce.de,
         kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [RFC v2 4/6] fs: distinguish between user initiated freeze and kernel initiated freeze
-Date:   Sat, 17 Apr 2021 00:10:24 +0000
-Message-Id: <20210417001026.23858-5-mcgrof@kernel.org>
+Subject: [RFC v2 5/6] fs: add iterate_supers_excl() and iterate_supers_reverse_excl()
+Date:   Sat, 17 Apr 2021 00:10:25 +0000
+Message-Id: <20210417001026.23858-6-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.23.0.rc1
 In-Reply-To: <20210417001026.23858-1-mcgrof@kernel.org>
 References: <20210417001026.23858-1-mcgrof@kernel.org>
@@ -56,169 +56,139 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Userspace can initiate a freeze call using ioctls. If the kernel decides
-to freeze a filesystem later it must be able to distinguish if userspace
-had initiated the freeze, so that it does not unfreeze it later
-automatically on resume.
+There are use cases where we wish to traverse the superblock list
+but also capture errors, and in which case we want to avoid having
+our callers issue a lock themselves since we can do the locking for
+the callers. Provide a iterate_supers_excl() which calls a function
+with the write lock held. If an error occurs we capture it and
+propagate it.
 
-Likewise if the kernel is initiating a freeze on its own it should *not*
-fail to freeze a filesystem if a user had already frozen it on our behalf.
-This same concept applies to thawing, even if its not possible for
-userspace to beat the kernel in thawing a filesystem. This logic however
-has never applied to userspace freezing and thawing, two consecutive
-userspace freeze calls will results in only the first one succeeding, so
-we must retain the same behaviour in userspace.
+Likewise there are use cases where we wish to traverse the superblock
+list but in reverse order. The new iterate_supers_reverse_excl() helpers
+does this but also also captures any errors encountered.
 
-This doesn't implement yet kernel initiated filesystem freeze calls,
-this will be done in subsequent calls. This change should introduce
-no functional changes, it just extends the definitions a frozen
-filesystem to account for future kernel initiated filesystem freeze.
-
+Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/super.c         | 27 ++++++++++++++++++---------
- include/linux/fs.h | 17 +++++++++++++++--
- 2 files changed, 33 insertions(+), 11 deletions(-)
+ fs/super.c         | 91 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h |  2 +
+ 2 files changed, 93 insertions(+)
 
 diff --git a/fs/super.c b/fs/super.c
-index 744b2399a272..53106d4c7f56 100644
+index 53106d4c7f56..2a6ef4ec2496 100644
 --- a/fs/super.c
 +++ b/fs/super.c
-@@ -40,7 +40,7 @@
- #include <uapi/linux/mount.h>
- #include "internal.h"
- 
--static int thaw_super_locked(struct super_block *sb);
-+static int thaw_super_locked(struct super_block *sb, bool usercall);
- 
- static LIST_HEAD(super_blocks);
- static DEFINE_SPINLOCK(sb_lock);
-@@ -977,7 +977,7 @@ static void do_thaw_all_callback(struct super_block *sb)
- 	down_write(&sb->s_umount);
- 	if (sb->s_root && sb->s_flags & SB_BORN) {
- 		emergency_thaw_bdev(sb);
--		thaw_super_locked(sb);
-+		thaw_super_locked(sb, false);
- 	} else {
- 		up_write(&sb->s_umount);
- 	}
-@@ -1625,10 +1625,13 @@ static void sb_freeze_unlock(struct super_block *sb)
- }
- 
- /* Caller takes lock and handles active count */
--static int freeze_locked_super(struct super_block *sb)
-+static int freeze_locked_super(struct super_block *sb, bool usercall)
- {
- 	int ret;
- 
-+	if (!usercall && sb_is_frozen(sb))
-+		return 0;
-+
- 	if (!sb_is_unfrozen(sb))
- 		return -EBUSY;
- 
-@@ -1673,7 +1676,10 @@ static int freeze_locked_super(struct super_block *sb)
- 	 * For debugging purposes so that fs can warn if it sees write activity
- 	 * when frozen is set to SB_FREEZE_COMPLETE, and for thaw_super().
- 	 */
--	sb->s_writers.frozen = SB_FREEZE_COMPLETE;
-+	if (usercall)
-+		sb->s_writers.frozen = SB_FREEZE_COMPLETE;
-+	else
-+		sb->s_writers.frozen = SB_FREEZE_COMPLETE_AUTO;
- 	return 0;
- }
- 
-@@ -1717,7 +1723,7 @@ int freeze_super(struct super_block *sb)
- 	atomic_inc(&sb->s_active);
- 
- 	down_write(&sb->s_umount);
--	error = freeze_locked_super(sb);
-+	error = freeze_locked_super(sb, true);
- 	if (error) {
- 		deactivate_locked_super(sb);
- 		goto out;
-@@ -1731,10 +1737,13 @@ int freeze_super(struct super_block *sb)
- EXPORT_SYMBOL(freeze_super);
- 
- /* Caller deals with the sb->s_umount */
--static int __thaw_super_locked(struct super_block *sb)
-+static int __thaw_super_locked(struct super_block *sb, bool usercall)
- {
- 	int error;
- 
-+	if (!usercall && sb_is_unfrozen(sb))
-+		return 0;
-+
- 	if (!sb_is_frozen(sb))
- 		return -EINVAL;
- 
-@@ -1763,11 +1772,11 @@ static int __thaw_super_locked(struct super_block *sb)
- }
- 
- /* Handles unlocking of sb->s_umount for you */
--static int thaw_super_locked(struct super_block *sb)
-+static int thaw_super_locked(struct super_block *sb, bool usercall)
- {
- 	int error;
- 
--	error = __thaw_super_locked(sb);
-+	error = __thaw_super_locked(sb, usercall);
- 	if (error) {
- 		up_write(&sb->s_umount);
- 		return error;
-@@ -1787,6 +1796,6 @@ static int thaw_super_locked(struct super_block *sb)
- int thaw_super(struct super_block *sb)
- {
- 	down_write(&sb->s_umount);
--	return thaw_super_locked(sb);
-+	return thaw_super_locked(sb, true);
- }
- EXPORT_SYMBOL(thaw_super);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3dcf2c1968e5..6980e709e94a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1406,9 +1406,10 @@ enum {
- 	SB_FREEZE_FS = 3,		/* For internal FS use (e.g. to stop
- 					 * internal threads if needed) */
- 	SB_FREEZE_COMPLETE = 4,		/* ->freeze_fs finished successfully */
-+	SB_FREEZE_COMPLETE_AUTO = 5,	/* same but initiated automatically */
- };
- 
--#define SB_FREEZE_LEVELS (SB_FREEZE_COMPLETE - 1)
-+#define SB_FREEZE_LEVELS (SB_FREEZE_COMPLETE_AUTO - 2)
- 
- struct sb_writers {
- 	int				frozen;		/* Is sb frozen? */
-@@ -1897,6 +1898,18 @@ static inline bool sb_is_frozen_by_user(struct super_block *sb)
- 	return sb->s_writers.frozen == SB_FREEZE_COMPLETE;
+@@ -705,6 +705,97 @@ void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
+ 	spin_unlock(&sb_lock);
  }
  
 +/**
-+ * sb_is_frozen_by_kernel - is superblock frozen by the kernel automatically
-+ * @sb: the super to check
++ *	iterate_supers_excl - exclusively call func for all active superblocks
++ *	@f: function to call
++ *	@arg: argument to pass to it
 + *
-+ * Returns true if the super freeze was initiated by the kernel, automatically,
-+ * for instance during system sleep or hibernation.
++ *	Scans the superblock list and calls given function, passing it
++ *	locked superblock and given argument. Returns 0 unless an error
++ *	occurred on calling the function on any superblock.
 + */
-+static inline bool sb_is_frozen_by_kernel(struct super_block *sb)
++int iterate_supers_excl(int (*f)(struct super_block *, void *), void *arg)
 +{
-+	return sb->s_writers.frozen == SB_FREEZE_COMPLETE_AUTO;
++	struct super_block *sb, *p = NULL;
++	int error = 0;
++
++	spin_lock(&sb_lock);
++	list_for_each_entry(sb, &super_blocks, s_list) {
++		if (hlist_unhashed(&sb->s_instances))
++			continue;
++		sb->s_count++;
++		spin_unlock(&sb_lock);
++
++		down_write(&sb->s_umount);
++		if (sb->s_root && (sb->s_flags & SB_BORN)) {
++			error = f(sb, arg);
++			if (error) {
++				up_write(&sb->s_umount);
++				spin_lock(&sb_lock);
++				__put_super(sb);
++				break;
++			}
++		}
++		up_write(&sb->s_umount);
++
++		spin_lock(&sb_lock);
++		if (p)
++			__put_super(p);
++		p = sb;
++	}
++	if (p)
++		__put_super(p);
++	spin_unlock(&sb_lock);
++
++	return error;
++}
++
++/**
++ *	iterate_supers_reverse_excl - exclusively calls func in reverse order
++ *	@f: function to call
++ *	@arg: argument to pass to it
++ *
++ *	Scans the superblock list and calls given function, passing it
++ *	locked superblock and given argument, in reverse order, and holding
++ *	the s_umount write lock. Returns if an error occurred.
++ */
++int iterate_supers_reverse_excl(int (*f)(struct super_block *, void *),
++					 void *arg)
++{
++	struct super_block *sb, *p = NULL;
++	int error = 0;
++
++	spin_lock(&sb_lock);
++	list_for_each_entry_reverse(sb, &super_blocks, s_list) {
++		if (hlist_unhashed(&sb->s_instances))
++			continue;
++		sb->s_count++;
++		spin_unlock(&sb_lock);
++
++		down_write(&sb->s_umount);
++		if (sb->s_root && (sb->s_flags & SB_BORN)) {
++			error = f(sb, arg);
++			if (error) {
++				up_write(&sb->s_umount);
++				spin_lock(&sb_lock);
++				__put_super(sb);
++				break;
++			}
++		}
++		up_write(&sb->s_umount);
++
++		spin_lock(&sb_lock);
++		if (p)
++			__put_super(p);
++		p = sb;
++	}
++	if (p)
++		__put_super(p);
++	spin_unlock(&sb_lock);
++
++	return error;
 +}
 +
  /**
-  * sb_is_frozen - is superblock frozen
-  * @sb: the super to check
-@@ -1905,7 +1918,7 @@ static inline bool sb_is_frozen_by_user(struct super_block *sb)
-  */
- static inline bool sb_is_frozen(struct super_block *sb)
- {
--	return sb_is_frozen_by_user(sb);
-+	return sb_is_frozen_by_user(sb) || sb_is_frozen_by_kernel(sb);
- }
+  *	iterate_supers_type - call function for superblocks of given type
+  *	@type: fs type
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 6980e709e94a..0f4d624f0f3f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3442,6 +3442,8 @@ extern struct super_block *get_active_super(struct block_device *bdev);
+ extern void drop_super(struct super_block *sb);
+ extern void drop_super_exclusive(struct super_block *sb);
+ extern void iterate_supers(void (*)(struct super_block *, void *), void *);
++extern int iterate_supers_excl(int (*f)(struct super_block *, void *), void *arg);
++extern int iterate_supers_reverse_excl(int (*)(struct super_block *, void *), void *);
+ extern void iterate_supers_type(struct file_system_type *,
+ 			        void (*)(struct super_block *, void *), void *);
  
- /**
 -- 
 2.29.2
 
