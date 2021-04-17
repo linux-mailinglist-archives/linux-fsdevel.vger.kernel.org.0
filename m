@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 300CF362C4C
+	by mail.lfdr.de (Postfix) with ESMTP id 7D84D362C4D
 	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Apr 2021 02:11:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235214AbhDQAK5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S235235AbhDQAK5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Fri, 16 Apr 2021 20:10:57 -0400
-Received: from mail-pg1-f181.google.com ([209.85.215.181]:35796 "EHLO
-        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235204AbhDQAK4 (ORCPT
+Received: from mail-pl1-f182.google.com ([209.85.214.182]:42718 "EHLO
+        mail-pl1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235168AbhDQAK4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 16 Apr 2021 20:10:56 -0400
-Received: by mail-pg1-f181.google.com with SMTP id q10so20238816pgj.2;
-        Fri, 16 Apr 2021 17:10:29 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id v13so1213136ple.9;
+        Fri, 16 Apr 2021 17:10:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SDRpwdPi3SViEUIM0mIqVQcojr1grrjFmh4YTLnLIhE=;
-        b=Wyv0sVAQK+2zy2nv6iEwh/HmEvOx6Dvd7V7/kDtbLJelDQUNXPfTSlHtJVs1qIxxfj
-         seanYynaWMS9t+5DXp2GTZaE2+AQdkjs4f66JKyrvhXUljIK2vxLHbgKUjfHZWd0Guyg
-         4AXP3W6/w1PA1PiN7sel8e8kjQDmU4Wiz6jzmpFxGXcgzEzdJXJmlF7XDltbchOdNleT
-         0MX57eE26xIdrIUsnnMY/RsZIKg054iYaGDdh618hTHgLt4z5t/FjUAFIHXBVfP3s0hy
-         kzDA+XzpBO/qFuoLumTH4FjE+C0EFY8WkXPgAZ74BZbVVse1iiHIlBZG0a/kXB2cZTxs
-         8oYg==
-X-Gm-Message-State: AOAM531p5KxD1Yk4w1WYE3EP+9Ib13wl6looitfSKt9gbb7HTDGESKjI
-        ogLFzHOgmRVy0WqhKg5L8HNTpO8wqfCvFQ==
-X-Google-Smtp-Source: ABdhPJwPey9RhxkQxLBX2BcxrWPXCPavTWoPaJjHPsui4exAiE5B8jzS0TqWtmCaL1ILgUq/1kWk1Q==
-X-Received: by 2002:a62:8804:0:b029:253:6745:908c with SMTP id l4-20020a6288040000b02902536745908cmr9942836pfd.16.1618618229276;
-        Fri, 16 Apr 2021 17:10:29 -0700 (PDT)
+        bh=PIEk/BxgB3u/66Cxsf+2k7kVr1ksGHvZAdsy59J17tY=;
+        b=Qz+xyVG8myJJZHkBRlTcOykhJjhOqcZ8S4M75ezAO2lQLYzE1gBqszkPVRbMZd9TWF
+         1tQ73/x5qYb8Y0MnmY9DVqI/AvYtnFp+IQhLUKwr6F3PTJMM43nauJuat6e6rGZltXE0
+         RrwMQN/cZlY2K1psw0ssRJ6ne6St5w4p83LPndUnaLuIAsMOxxP+LQsIaJCJSGbyjM5w
+         6yLJ1JlmKW5l4nMqDp692kw7yoOiseWLU2caaB8IuSZNvZjufjXf4iKUb6hn4ICjEjXK
+         dr1AhiWBd3huhKAO0saTj2PDmwSV4LPjQG+/sb5oxQqxk+bGXvY5LqDLb60g0q9cGX4V
+         18iA==
+X-Gm-Message-State: AOAM531EBDSGalmMZe9Yy+ksUeCZg4/gVW9PRba9CAlakZoivwXOOvUk
+        KMKKMbu9TmmVypCJrQOBn30=
+X-Google-Smtp-Source: ABdhPJxpT6IF3UyVziSqC2586PjFx6h7S+OkEmHUo+ps3ENQXBDznS2pYL61JRDuR3SWi6SdyyX/Qw==
+X-Received: by 2002:a17:90a:c982:: with SMTP id w2mr12719784pjt.35.1618618231161;
+        Fri, 16 Apr 2021 17:10:31 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id x19sm5842867pff.14.2021.04.16.17.10.27
+        by smtp.gmail.com with ESMTPSA id e13sm5582996pfi.199.2021.04.16.17.10.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 16 Apr 2021 17:10:27 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 1AF2E4021F; Sat, 17 Apr 2021 00:10:27 +0000 (UTC)
+        id 2D55241505; Sat, 17 Apr 2021 00:10:27 +0000 (UTC)
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     rafael@kernel.org, gregkh@linuxfoundation.org,
         viro@zeniv.linux.org.uk, jack@suse.cz, bvanassche@acm.org,
@@ -43,11 +43,10 @@ To:     rafael@kernel.org, gregkh@linuxfoundation.org,
 Cc:     mchehab@kernel.org, keescook@chromium.org,
         linux-fsdevel@vger.kernel.org, kernel@tuxforce.de,
         kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-Subject: [RFC v2 1/6] fs: provide unlocked helper for freeze_super()
-Date:   Sat, 17 Apr 2021 00:10:21 +0000
-Message-Id: <20210417001026.23858-2-mcgrof@kernel.org>
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: [RFC v2 2/6] fs: add frozen sb state helpers
+Date:   Sat, 17 Apr 2021 00:10:22 +0000
+Message-Id: <20210417001026.23858-3-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.23.0.rc1
 In-Reply-To: <20210417001026.23858-1-mcgrof@kernel.org>
 References: <20210417001026.23858-1-mcgrof@kernel.org>
@@ -57,156 +56,116 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-freeze_super() holds a write lock, however we wish to also enable
-callers which already hold the write lock. To do this provide a helper
-and make freeze_super() use it. This way, all that freeze_super() does
-now is lock handling and active count management.
+The question of whether or not a superblock is frozen needs to be
+augmented in the future to account for differences between a user
+initiated freeze and a kernel initiated freeze done automatically
+on behalf of the kernel.
 
-This change has no functional changes.
+Provide helpers so that these can be used instead so that we don't
+have to expand checks later in these same call sites as we expand
+the definition of a frozen superblock.
 
-Suggested-by: Dave Chinner <david@fromorbit.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/super.c | 100 +++++++++++++++++++++++++++++------------------------
- 1 file changed, 55 insertions(+), 45 deletions(-)
+ fs/ext4/ext4_jbd2.c |  2 +-
+ fs/super.c          |  4 ++--
+ fs/xfs/xfs_trans.c  |  3 +--
+ include/linux/fs.h  | 34 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 38 insertions(+), 5 deletions(-)
 
+diff --git a/fs/ext4/ext4_jbd2.c b/fs/ext4/ext4_jbd2.c
+index be799040a415..efda50563feb 100644
+--- a/fs/ext4/ext4_jbd2.c
++++ b/fs/ext4/ext4_jbd2.c
+@@ -72,7 +72,7 @@ static int ext4_journal_check_start(struct super_block *sb)
+ 
+ 	if (sb_rdonly(sb))
+ 		return -EROFS;
+-	WARN_ON(sb->s_writers.frozen == SB_FREEZE_COMPLETE);
++	WARN_ON(sb_is_frozen(sb));
+ 	journal = EXT4_SB(sb)->s_journal;
+ 	/*
+ 	 * Special case here: if the journal has aborted behind our
 diff --git a/fs/super.c b/fs/super.c
-index 11b7e7213fd1..e24d0849d935 100644
+index e24d0849d935..72b445a69a45 100644
 --- a/fs/super.c
 +++ b/fs/super.c
-@@ -1624,59 +1624,20 @@ static void sb_freeze_unlock(struct super_block *sb)
- 		percpu_up_write(sb->s_writers.rw_sem + level);
- }
- 
--/**
-- * freeze_super - lock the filesystem and force it into a consistent state
-- * @sb: the super to lock
-- *
-- * Syncs the super to make sure the filesystem is consistent and calls the fs's
-- * freeze_fs.  Subsequent calls to this without first thawing the fs will return
-- * -EBUSY.
-- *
-- * During this function, sb->s_writers.frozen goes through these values:
-- *
-- * SB_UNFROZEN: File system is normal, all writes progress as usual.
-- *
-- * SB_FREEZE_WRITE: The file system is in the process of being frozen.  New
-- * writes should be blocked, though page faults are still allowed. We wait for
-- * all writes to complete and then proceed to the next stage.
-- *
-- * SB_FREEZE_PAGEFAULT: Freezing continues. Now also page faults are blocked
-- * but internal fs threads can still modify the filesystem (although they
-- * should not dirty new pages or inodes), writeback can run etc. After waiting
-- * for all running page faults we sync the filesystem which will clean all
-- * dirty pages and inodes (no new dirty pages or inodes can be created when
-- * sync is running).
-- *
-- * SB_FREEZE_FS: The file system is frozen. Now all internal sources of fs
-- * modification are blocked (e.g. XFS preallocation truncation on inode
-- * reclaim). This is usually implemented by blocking new transactions for
-- * filesystems that have them and need this additional guard. After all
-- * internal writers are finished we call ->freeze_fs() to finish filesystem
-- * freezing. Then we transition to SB_FREEZE_COMPLETE state. This state is
-- * mostly auxiliary for filesystems to verify they do not modify frozen fs.
-- *
-- * sb->s_writers.frozen is protected by sb->s_umount.
-- */
--int freeze_super(struct super_block *sb)
-+/* Caller takes lock and handles active count */
-+static int freeze_locked_super(struct super_block *sb)
+@@ -1629,7 +1629,7 @@ static int freeze_locked_super(struct super_block *sb)
  {
  	int ret;
  
--	atomic_inc(&sb->s_active);
--	down_write(&sb->s_umount);
--	if (sb->s_writers.frozen != SB_UNFROZEN) {
--		deactivate_locked_super(sb);
-+	if (sb->s_writers.frozen != SB_UNFROZEN)
+-	if (sb->s_writers.frozen != SB_UNFROZEN)
++	if (!sb_is_unfrozen(sb))
  		return -EBUSY;
--	}
  
--	if (!(sb->s_flags & SB_BORN)) {
--		up_write(&sb->s_umount);
-+	if (!(sb->s_flags & SB_BORN))
- 		return 0;	/* sic - it's "nothing to do" */
--	}
+ 	if (!(sb->s_flags & SB_BORN))
+@@ -1734,7 +1734,7 @@ static int thaw_super_locked(struct super_block *sb)
+ {
+ 	int error;
  
- 	if (sb_rdonly(sb)) {
- 		/* Nothing to do really... */
- 		sb->s_writers.frozen = SB_FREEZE_COMPLETE;
--		up_write(&sb->s_umount);
- 		return 0;
+-	if (sb->s_writers.frozen != SB_FREEZE_COMPLETE) {
++	if (!sb_is_frozen(sb)) {
+ 		up_write(&sb->s_umount);
+ 		return -EINVAL;
  	}
- 
-@@ -1705,7 +1666,6 @@ int freeze_super(struct super_block *sb)
- 			sb->s_writers.frozen = SB_UNFROZEN;
- 			sb_freeze_unlock(sb);
- 			wake_up(&sb->s_writers.wait_unfrozen);
--			deactivate_locked_super(sb);
- 			return ret;
- 		}
- 	}
-@@ -1714,9 +1674,59 @@ int freeze_super(struct super_block *sb)
- 	 * when frozen is set to SB_FREEZE_COMPLETE, and for thaw_super().
+diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
+index bcc978011869..b4669dd65c9e 100644
+--- a/fs/xfs/xfs_trans.c
++++ b/fs/xfs/xfs_trans.c
+@@ -272,8 +272,7 @@ xfs_trans_alloc(
+ 	 * Zero-reservation ("empty") transactions can't modify anything, so
+ 	 * they're allowed to run while we're frozen.
  	 */
- 	sb->s_writers.frozen = SB_FREEZE_COMPLETE;
-+	return 0;
+-	WARN_ON(resp->tr_logres > 0 &&
+-		mp->m_super->s_writers.frozen == SB_FREEZE_COMPLETE);
++	WARN_ON(resp->tr_logres > 0 && sb_is_frozen(mp->m_super));
+ 	ASSERT(!(flags & XFS_TRANS_RES_FDBLKS) ||
+ 	       xfs_sb_version_haslazysbcount(&mp->m_sb));
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c3c88fdb9b2a..3dcf2c1968e5 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1885,6 +1885,40 @@ static inline bool sb_start_intwrite_trylock(struct super_block *sb)
+ 	return __sb_start_write_trylock(sb, SB_FREEZE_FS);
+ }
+ 
++/**
++ * sb_is_frozen_by_user - is superblock frozen by a user call
++ * @sb: the super to check
++ *
++ * Returns true if the super freeze was initiated by userspace, for instance,
++ * an ioctl call.
++ */
++static inline bool sb_is_frozen_by_user(struct super_block *sb)
++{
++	return sb->s_writers.frozen == SB_FREEZE_COMPLETE;
 +}
 +
 +/**
-+ * freeze_super - lock the filesystem and force it into a consistent state
-+ * @sb: the super to lock
++ * sb_is_frozen - is superblock frozen
++ * @sb: the super to check
 + *
-+ * Syncs the super to make sure the filesystem is consistent and calls the fs's
-+ * freeze_fs.  Subsequent calls to this without first thawing the fs will return
-+ * -EBUSY.
-+ *
-+ * During this function, sb->s_writers.frozen goes through these values:
-+ *
-+ * SB_UNFROZEN: File system is normal, all writes progress as usual.
-+ *
-+ * SB_FREEZE_WRITE: The file system is in the process of being frozen.  New
-+ * writes should be blocked, though page faults are still allowed. We wait for
-+ * all writes to complete and then proceed to the next stage.
-+ *
-+ * SB_FREEZE_PAGEFAULT: Freezing continues. Now also page faults are blocked
-+ * but internal fs threads can still modify the filesystem (although they
-+ * should not dirty new pages or inodes), writeback can run etc. After waiting
-+ * for all running page faults we sync the filesystem which will clean all
-+ * dirty pages and inodes (no new dirty pages or inodes can be created when
-+ * sync is running).
-+ *
-+ * SB_FREEZE_FS: The file system is frozen. Now all internal sources of fs
-+ * modification are blocked (e.g. XFS preallocation truncation on inode
-+ * reclaim). This is usually implemented by blocking new transactions for
-+ * filesystems that have them and need this additional guard. After all
-+ * internal writers are finished we call ->freeze_fs() to finish filesystem
-+ * freezing. Then we transition to SB_FREEZE_COMPLETE state. This state is
-+ * mostly auxiliary for filesystems to verify they do not modify frozen fs.
-+ *
-+ * sb->s_writers.frozen is protected by sb->s_umount.
++ * Returns true if the super is frozen.
 + */
-+int freeze_super(struct super_block *sb)
++static inline bool sb_is_frozen(struct super_block *sb)
 +{
-+	int error;
++	return sb_is_frozen_by_user(sb);
++}
 +
-+	atomic_inc(&sb->s_active);
++/**
++ * sb_is_unfrozen - is superblock unfrozen
++ * @sb: the super to check
++ *
++ * Returns true if the super is unfrozen.
++ */
++static inline bool sb_is_unfrozen(struct super_block *sb)
++{
++	return sb->s_writers.frozen == SB_UNFROZEN;
++}
 +
-+	down_write(&sb->s_umount);
-+	error = freeze_locked_super(sb);
-+	if (error) {
-+		deactivate_locked_super(sb);
-+		goto out;
-+	}
- 	lockdep_sb_freeze_release(sb);
- 	up_write(&sb->s_umount);
--	return 0;
-+
-+out:
-+	return error;
- }
- EXPORT_SYMBOL(freeze_super);
+ bool inode_owner_or_capable(struct user_namespace *mnt_userns,
+ 			    const struct inode *inode);
  
 -- 
 2.29.2
