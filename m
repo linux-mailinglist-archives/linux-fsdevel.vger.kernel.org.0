@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E121362C1E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Apr 2021 02:00:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56317362C4A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Apr 2021 02:11:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235117AbhDPX71 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Apr 2021 19:59:27 -0400
-Received: from mail-pj1-f52.google.com ([209.85.216.52]:45040 "EHLO
-        mail-pj1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235010AbhDPX7Y (ORCPT
+        id S235010AbhDQAKy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Apr 2021 20:10:54 -0400
+Received: from mail-pl1-f173.google.com ([209.85.214.173]:34544 "EHLO
+        mail-pl1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231958AbhDQAKy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Apr 2021 19:59:24 -0400
-Received: by mail-pj1-f52.google.com with SMTP id q14-20020a17090a430eb02901503aaee02bso4378103pjg.3;
-        Fri, 16 Apr 2021 16:58:59 -0700 (PDT)
+        Fri, 16 Apr 2021 20:10:54 -0400
+Received: by mail-pl1-f173.google.com with SMTP id t22so14482045ply.1;
+        Fri, 16 Apr 2021 17:10:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2x0uRodafTirCXU5FMfsH3yjU20L03rJMI/NnxoW2Es=;
-        b=DvnjMyEF4V5mgy4d6dUyolO26PKnRWvNMGydO6scZeILvJewoh6y84yEaoucTJ9TIN
-         qISAUywqx6T+ca6S54wNG+fqsc3WQT3DR+Q2XrdGOd0nuRC78+0612hjPY1KMxwJVO88
-         UkPejb2174hHZ/Xmg8pGBudJDeNbs2iujSt1Ww6xQ63LFDlUC046zoSjJSjghQYH3jVD
-         tafc2jFgUGX3c9iPYvhgR9CiRrWQgbG8OXo16LH/Nzx2vmBpkGlDs9EjxRDKymZVHJuU
-         gMqYF13BaOSuFJW/MZopBQjxMZikNWeD4rSfGy7lxCxRlkrHBqArM3Ddsaf1M8G6N/8l
-         fzsA==
-X-Gm-Message-State: AOAM532qLp+hlSfuek5ksDmYxD+amNYP0NKJ20skuoeLrbcWs1fwExtg
-        1DvR4mbnfKEeTwEdEztIGy8=
-X-Google-Smtp-Source: ABdhPJz5VGE8ymtWzHhurc5HK3og7Uo6QgwUurR3Gov4US+K1PgU75zyDGjTueMrFBlt2rZ0CdXmyQ==
-X-Received: by 2002:a17:90a:5d93:: with SMTP id t19mr12332420pji.211.1618617538910;
-        Fri, 16 Apr 2021 16:58:58 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HdgLgf4++L+hPBdBpKCHERQ4SDuSpyDo8YojGbWccSs=;
+        b=Tkn8tIaHPeX66UId9jeCrYLexGUUirWJ7ApmW0hNuHWH+/2olXJWr+0JF+caNozxau
+         0ZntKyGqFv1av7TfPaqAJWGRr6un1/Keh287O/zbIyaxHt3+Tb4fQdoho2h7sFwVzj4N
+         78GHRkG5X/0C8CYAlZsYXGwpgmQVZ4Bp9+Pv8t1IvY2g12GKtGIQCgnHywNhUZeAisKc
+         7YAm6L1SFRpvpVbnsfx4Pv/+aZL7XQOVgWuJdrzYvlxRZ+R/bxvjTZkiMQ84qmUR8JXf
+         h8pA2LXY2fDk8jAdHbyFGWSsotUnws1Lye+OfnYjqVpiYqWR/AQ2gJ4xiRUam85N4klu
+         Dvbg==
+X-Gm-Message-State: AOAM531nsKARq96b4YuU/EyF0RMcL0Jr7OIJFuPAV/VJ/CoG2FkYBfuY
+        bXimVGaqSHb9Jsg6SlIp4r0CxuZPYZEbSQ==
+X-Google-Smtp-Source: ABdhPJyrdUDhh1VEpWEgWuRgLwDGj1MJHhyfDvyurM0Vgp9DKQVEEbax9LoLWPokxRbK2wssHToVYw==
+X-Received: by 2002:a17:90a:c501:: with SMTP id k1mr12119541pjt.101.1618618228656;
+        Fri, 16 Apr 2021 17:10:28 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id s9sm5682937pfc.192.2021.04.16.16.58.55
+        by smtp.gmail.com with ESMTPSA id d5sm6215781pgj.36.2021.04.16.17.10.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Apr 2021 16:58:55 -0700 (PDT)
+        Fri, 16 Apr 2021 17:10:27 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id E850641505; Fri, 16 Apr 2021 23:58:54 +0000 (UTC)
+        id 161F7403DC; Sat, 17 Apr 2021 00:10:27 +0000 (UTC)
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     rafael@kernel.org, gregkh@linuxfoundation.org,
         viro@zeniv.linux.org.uk, jack@suse.cz, bvanassche@acm.org,
@@ -44,209 +44,88 @@ Cc:     mchehab@kernel.org, keescook@chromium.org,
         linux-fsdevel@vger.kernel.org, kernel@tuxforce.de,
         kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 2/2] fs/kernel_read_file: use usermodehelper_read_trylock() as a stop gap
-Date:   Fri, 16 Apr 2021 23:58:50 +0000
-Message-Id: <20210416235850.23690-3-mcgrof@kernel.org>
+Subject: [RFC v2 0/6] vfs: provide automatic kernel freeze / resume
+Date:   Sat, 17 Apr 2021 00:10:20 +0000
+Message-Id: <20210417001026.23858-1-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.23.0.rc1
-In-Reply-To: <20210416235850.23690-1-mcgrof@kernel.org>
-References: <20210416235850.23690-1-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The VFS lacks support to do automatic freeze / thaw of filesystems
-on the suspend / resume cycle. This can cause some issues, namely
-stalls when we have reads/writes during the suspend / resume cycle.
+This picks up where I left off in 2017, I was inclined to respin this
+up again due to a new issue Lukas reported which is easy to reproduce.
+I posted a stop-gap patch for that issue [0] and a test case, however,
+*this* is the work we want upstream to fix these sorts of issues.
 
-Although for module loading / kexec the probability of this happening
-is extremely low, maybe even impossible, its a known real issue with
-the request_firmare() API which it does direct fs read. For this reason
-only be chatty about the issue on the call used by the firmware API.
+As discussed long ago though at LSFMM, we have much work to do. However,
+we can take small strides to get us closer. This is trying to take one
+step. It addresses most of the comments and feedback from the last
+series I posted, however it doesn't address the biggest two issues:
 
-Lukas Middendorf has reported an easy situation to reproduce, which can
-be caused by questionably buggy drivers which call the request_firmware()
-API on resume.
+ o provide clean and clear semantics between userspace ioctls /
+   automatic fs freeze, and freeze bdev. This also involves moving the
+   counter stuff from bdev to the superblock. This is pending work.
+ o The loopback hack which breaks the reverse ordering isn't addressed,
+   perhaps just flagging it suffices for now?
+ o The long term desirable DAG *is* plausable and I have an initial
+   kernel graph implementation which I could use, but that may take
+   longer to merge.
 
-All you have to do is do the suspend / resume cycle using a driver
-which will call request_firmware() on resume on a fresh XFS or
-btrfs filesystem which has random files but the target file present:
+What this series *does* address based on the last series is:
 
-for n in {1..1000}; do
-	dd if=/dev/urandom of=/lib/firmware/file$( printf %03d "$n" ).bin bs=1 count=$((RANDOM + 1024 ))
-done
+  o Rebased onto linux-next tag next-20210415
+  o Fixed RCU complaints. The issue was that I was adding new fs levels, and
+    this increated undesirably also the amount of rw semaphores, but we were
+    just using the new levels to distinguish *who* was triggering the suspend,
+    it was either inside the kernel and automatic, or triggered by userspace.
+  o thaw_super_locked() was added but that unlocks the sb sb->s_umount,
+    our exclusive reverse iterate supers however will want to hold that
+    semaphore, so we provide a helper which lets the caller do the unlocking
+    for you, and make thaw_super_locked() a user of that.
+  o WQ_FREEZABLE is now dealt with
+  o I have folded the fs freezer removal stuff into the patch which adds
+    the automatic fs frezer / thaw work from the kernel as otherwise separting
+    this would create intermediate steps which would produce kernels which
+    can stall on suspend / resume.
 
-You can reproduce this either with a buggy driver or by using the
-test_firmware driver with the new hooks added to test this case.
+[0] https://lkml.kernel.org/r/20210416235850.23690-1-mcgrof@kernel.org
+[1] https://lkml.kernel.org/r/20171129232356.28296-1-mcgrof@kernel.org              
 
-No other request_firmware() calls can be triggered for this hang to work.
-The hang occurs because:
+Luis Chamberlain (6):
+  fs: provide unlocked helper for freeze_super()
+  fs: add frozen sb state helpers
+  fs: add a helper for thaw_super_locked() which does not unlock
+  fs: distinguish between user initiated freeze and kernel initiated
+    freeze
+  fs: add iterate_supers_excl() and iterate_supers_reverse_excl()
+  fs: add automatic kernel fs freeze / thaw and remove kthread freezing
 
-request_firmware() -->
-kernel_read_file_from_path_initns() -->
-file_open_root() -->
-  btrfs_lookup() --> ... -->
-  btrfs_search_slot() --> read_block_for_search() -->
-        --> read_tree_block() --> btree_read_extent_buffer_pages() -->
-        --> submit_one_bio() --> btrfs_submit_metadata_bio() -->
-        --> btrfsic_submit_bio() --> submit_bio()
-                --> this completes and then
-        --> wait_on_page_locked() on the first page
-        --> never returns
+ fs/btrfs/disk-io.c     |   4 +-
+ fs/btrfs/scrub.c       |   2 +-
+ fs/cifs/cifsfs.c       |  10 +-
+ fs/cifs/dfs_cache.c    |   2 +-
+ fs/ext4/ext4_jbd2.c    |   2 +-
+ fs/ext4/super.c        |   2 -
+ fs/f2fs/gc.c           |   7 +-
+ fs/f2fs/segment.c      |   6 +-
+ fs/gfs2/glock.c        |   6 +-
+ fs/gfs2/main.c         |   4 +-
+ fs/jfs/jfs_logmgr.c    |  11 +-
+ fs/jfs/jfs_txnmgr.c    |  31 ++--
+ fs/nilfs2/segment.c    |  48 +++---
+ fs/super.c             | 321 ++++++++++++++++++++++++++++++++++-------
+ fs/xfs/xfs_log.c       |   3 +-
+ fs/xfs/xfs_mru_cache.c |   2 +-
+ fs/xfs/xfs_pwork.c     |   2 +-
+ fs/xfs/xfs_super.c     |  14 +-
+ fs/xfs/xfs_trans.c     |   3 +-
+ fs/xfs/xfs_trans_ail.c |   7 +-
+ include/linux/fs.h     |  64 +++++++-
+ kernel/power/process.c |  15 +-
+ 22 files changed, 405 insertions(+), 161 deletions(-)
 
-The endless wait for the read which the piece of hardware never got
-stalls resume as sync calls are all asynchronous.
-
-The VFS fs freeze work fixes this issue, however it requires a bit
-more work, which may take a while to land upstream, and so for now
-this provides a simple stop-gap solution.
-
-We can remove this stop-gap solution once the kernel gets VFS
-fs freeze / thaw support.
-
-Cc: rafael@kernel.org
-Cc: jack@suse.cz
-Cc: bvanassche@acm.org
-Cc: kernel@tuxforce.de
-Cc: mchehab@kernel.org
-Cc: keescook@chromium.org
-Reported-by: Lukas Middendorf <kernel@tuxforce.de>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- fs/kernel_read_file.c | 37 +++++++++++++++++++++++++++++++++++--
- kernel/kexec_file.c   |  9 ++++++++-
- kernel/module.c       |  8 +++++++-
- 3 files changed, 50 insertions(+), 4 deletions(-)
-
-diff --git a/fs/kernel_read_file.c b/fs/kernel_read_file.c
-index 90d255fbdd9b..f82d8534bf39 100644
---- a/fs/kernel_read_file.c
-+++ b/fs/kernel_read_file.c
-@@ -4,6 +4,7 @@
- #include <linux/kernel_read_file.h>
- #include <linux/security.h>
- #include <linux/vmalloc.h>
-+#include <linux/umh.h>
- 
- /**
-  * kernel_read_file() - read file contents into a kernel buffer
-@@ -134,12 +135,20 @@ int kernel_read_file_from_path(const char *path, loff_t offset, void **buf,
- 	if (!path || !*path)
- 		return -EINVAL;
- 
-+	ret = usermodehelper_read_trylock();
-+	if (ret)
-+		return ret;
-+
- 	file = filp_open(path, O_RDONLY, 0);
--	if (IS_ERR(file))
-+	if (IS_ERR(file)) {
-+		usermodehelper_read_unlock();
- 		return PTR_ERR(file);
-+	}
- 
- 	ret = kernel_read_file(file, offset, buf, buf_size, file_size, id);
- 	fput(file);
-+
-+	usermodehelper_read_unlock();
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(kernel_read_file_from_path);
-@@ -160,13 +169,37 @@ int kernel_read_file_from_path_initns(const char *path, loff_t offset,
- 	get_fs_root(init_task.fs, &root);
- 	task_unlock(&init_task);
- 
-+	/*
-+	 * Note: we may be incorrectly called on a driver's resume callback.
-+	 *
-+	 * The kernel's power management may be busy bringing us to suspend
-+	 * or trying to get us back to resume. If we try to do a direct write
-+	 * during this time a block driver may never get that request, and the
-+	 * filesystem can wait forever. This requires proper VFS work, which
-+	 * is not yet ready.
-+	 *
-+	 * Likewise busy trying here is not possible as well as we'd be holding
-+	 * up the kernel's pm resume, and waiting will not allow use to thaw
-+	 * the filesystem, we'd just wait forever. Best we can do is
-+	 * communuicate the problem so that drivers use the firwmare cache or
-+	 * implement their own prior to resume.
-+	 */
-+	ret = usermodehelper_read_trylock();
-+	if (ret) {
-+		pr_warn_once("Trying direct fs read while not allowed");
-+		return ret;
-+	}
-+
- 	file = file_open_root(root.dentry, root.mnt, path, O_RDONLY, 0);
- 	path_put(&root);
--	if (IS_ERR(file))
-+	if (IS_ERR(file)) {
-+		usermodehelper_read_unlock();
- 		return PTR_ERR(file);
-+	}
- 
- 	ret = kernel_read_file(file, offset, buf, buf_size, file_size, id);
- 	fput(file);
-+	usermodehelper_read_unlock();
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(kernel_read_file_from_path_initns);
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index 33400ff051a8..d19a01836128 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -226,10 +226,16 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 	int ret;
- 	void *ldata;
- 
-+	ret = usermodehelper_read_trylock();
-+	if (ret)
-+		return ret;
-+
- 	ret = kernel_read_file_from_fd(kernel_fd, 0, &image->kernel_buf,
- 				       INT_MAX, NULL, READING_KEXEC_IMAGE);
--	if (ret < 0)
-+	if (ret < 0) {
-+		usermodehelper_read_unlock();
- 		return ret;
-+	}
- 	image->kernel_buf_len = ret;
- 
- 	/* Call arch image probe handlers */
-@@ -291,6 +297,7 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 	/* In case of error, free up all allocated memory in this function */
- 	if (ret)
- 		kimage_file_post_load_cleanup(image);
-+	usermodehelper_read_unlock();
- 	return ret;
- }
- 
-diff --git a/kernel/module.c b/kernel/module.c
-index b5dd92e35b02..9058a104610d 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -4140,13 +4140,19 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
- 		      |MODULE_INIT_IGNORE_VERMAGIC))
- 		return -EINVAL;
- 
-+	err = usermodehelper_read_trylock();
-+	if (err)
-+		return err;
- 	err = kernel_read_file_from_fd(fd, 0, &hdr, INT_MAX, NULL,
- 				       READING_MODULE);
--	if (err < 0)
-+	if (err < 0) {
-+		usermodehelper_read_unlock();
- 		return err;
-+	}
- 	info.hdr = hdr;
- 	info.len = err;
- 
-+	usermodehelper_read_unlock();
- 	return load_module(&info, uargs, flags);
- }
- 
 -- 
 2.29.2
 
