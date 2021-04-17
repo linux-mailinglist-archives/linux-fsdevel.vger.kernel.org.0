@@ -2,176 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DDDC2362D0E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Apr 2021 05:06:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 792BA362D64
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Apr 2021 05:55:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235482AbhDQDGJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Apr 2021 23:06:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40620 "EHLO
+        id S235302AbhDQDzY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Apr 2021 23:55:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234965AbhDQDGI (ORCPT
+        with ESMTP id S233847AbhDQDzY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Apr 2021 23:06:08 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52561C06175F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 20:05:43 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id g35so20376010pgg.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 20:05:43 -0700 (PDT)
+        Fri, 16 Apr 2021 23:55:24 -0400
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 032BCC061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 20:54:58 -0700 (PDT)
+Received: by mail-oi1-x236.google.com with SMTP id k25so29948903oic.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Apr 2021 20:54:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bHCf5UQTYn2bzHAIxxFwJe4NilZMkFnnQjfN/tw6leQ=;
-        b=n61e/1KAdf1RUa9/A0vGa+G1R5yn3UvamgGM5vioyOhvsC7h+wCTixVZg86TS541WU
-         R8TU5pXU9MUbvdyWRtl6C0GfJENOWgnBmUU2hmOHFrJ9h2szYfycj7o+MnjynclzZ44P
-         06lQZSZ3mYaaJ4nkMRlaCm26Sf0szLIkBUKc1J5cy5PMUyz1Z9kwM6jRJoYXa5U5RobQ
-         zblfP1FbMCdsUMHqjPwP3GWYp/dgh0UATncRfnzYtHaZTtSkX1rBJdSZlKfs0edGZ5qz
-         vvtkA1Jqv0BKExSE4L/W/o00frQk83IxteUEyIN0IHmvryYeMNP4yxxYZsLUfrTpNeNi
-         5cRA==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=WWUEp5Vn7+htXe/5/HVzSKfw6VtYTPZAq2BL/y29HHQ=;
+        b=H3iC+58TiKpdqVjuZyV+FyW1l7ycvohcfFNeASkeocTbcrhFmPCTY28RmK9tIeEe70
+         /Ql5dGqg2zkLJsoiU5c89kXsMRuzLg6gHA1PF8yNhgpsOA4GhOaNpSiQtO7NSWAB6RT4
+         xfrmHwC1iFhq2j9lckQQAZhPnPhFh8X33G/gasswgTRESz97Sbq5HjpYvATBBe3XMIH3
+         t+ncvAzg4mZsxmpQEaQ1KiaicbTGwbNYLu/lqmBaw0M6L7RU2Bi4XtoHHp0Y+GKNFxsP
+         4hxG2yI0uUpMTKfacLQaTjE+EoU2S2rYflohMmU6hoCJ1AxjhIwip0ubzwlAM7E+YKTI
+         E3bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bHCf5UQTYn2bzHAIxxFwJe4NilZMkFnnQjfN/tw6leQ=;
-        b=IVzfVbVPzffpKreBa32wGDmPvtn6gOQJFBKRG8XViNQo2ML7EVZrVJCH5dgH2fiLUK
-         HyxkGhRe8Q5acHcSC0Ay16TaA+qZROv/93UN6NeqJPOaCbCW9B/5EdaZCzz2XE2l+3gt
-         dCXtJPq8kTksjZEXg6/XnqstHZSVjJjstyeiGXaDjI3mG0cyIkRepPHhhbnV7e6Xj+y8
-         o277khMjAzOuu5ATjO52UToa4TgWZNKwGGzBVxcvXUNZVfoVkplt6q1Bi+Slwbxh9LRi
-         V2ncRdvEoE4SmPT8oKUM0+HP+InGIZ01j53/HE6FwSgmC41gxj4MI3ruVLUKOdeh+FLa
-         Reig==
-X-Gm-Message-State: AOAM532mx/SFzU3fPYEPF3VyC5vMjdGNHgaqwAsxA3e6CO7PDeK3ZAPZ
-        TgokETdOC3yLY88mhr6CMRDhc24lOF+O4hE6Smg7TA==
-X-Google-Smtp-Source: ABdhPJyK4BBGaD9t3gPFxc+8SqQhlSLgQglphmgvYni9MGpWj4MATlSNlLHKChZw1xf3C/bEh5cLKwFgEjMc0mQw4kc=
-X-Received: by 2002:a63:1665:: with SMTP id 37mr1844976pgw.31.1618628742644;
- Fri, 16 Apr 2021 20:05:42 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=WWUEp5Vn7+htXe/5/HVzSKfw6VtYTPZAq2BL/y29HHQ=;
+        b=OwyB1xICaMsTpMZi2XL+1MHZYWx0TTE7+joV1w028SZDTYxPqbLmbzFwS/BpNmxLO5
+         Yw3Zrum6/cmH6tNyrsyF/FLc/ThjRAeL8GSL5Yv6VbztQkSkvS8Y+Pd2DIM0xRUB5NzZ
+         XZdyVVp7DrLFEU4UbJrMcMiK2zQfTt/4zaZI2eg0yNehcaVho+VG9Uqtijg9L9osN11t
+         852M8msbyYDs4OBK7UjOLqzeNXgmzFfh6xindIozW7XlGkrLmlPKTPs/Ckj0N+8RrgZQ
+         o+sZKTO4BkdHnE/sS1XtZaAez4leAuaj2TslXoaU2KMeoEU5u4Jo3tSjir3u4kJhmLW9
+         rkzQ==
+X-Gm-Message-State: AOAM533wdVk41vQIC7DmdYN+RNIaG6xH4lEvy0PQJDfnlOpXzxZRZX/Y
+        c5oAkdMBAhfG1TCuXhzx7B2fbw==
+X-Google-Smtp-Source: ABdhPJyAn9fdWmCzFR/5jB19JYiuSZOWxqpN0zDrCdBgRtVRaEqGFYsTCi7lkvAqa6uQe1WT9TQR6w==
+X-Received: by 2002:aca:c74a:: with SMTP id x71mr8546370oif.22.1618631698073;
+        Fri, 16 Apr 2021 20:54:58 -0700 (PDT)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id e2sm1823558otk.70.2021.04.16.20.54.57
+        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
+        Fri, 16 Apr 2021 20:54:57 -0700 (PDT)
+Date:   Fri, 16 Apr 2021 20:54:46 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+cc:     Hugh Dickins <hughd@google.com>, Theodore Tso <tytso@mit.edu>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] shmem: allow reporting fanotify events with file
+ handles on tmpfs
+In-Reply-To: <CAOQ4uxia0ETkPF7Af3YiYGb2QzD03UNEpvU2jyibf_+tajhe1A@mail.gmail.com>
+Message-ID: <alpine.LSU.2.11.2104162042130.26690@eggly.anvils>
+References: <20210322173944.449469-1-amir73il@gmail.com> <20210322173944.449469-3-amir73il@gmail.com> <20210325150025.GF13673@quack2.suse.cz> <CAOQ4uxia0ETkPF7Af3YiYGb2QzD03UNEpvU2jyibf_+tajhe1A@mail.gmail.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-References: <20210416160754.2944-1-peter.enderborg@sony.com>
-In-Reply-To: <20210416160754.2944-1-peter.enderborg@sony.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Sat, 17 Apr 2021 11:05:06 +0800
-Message-ID: <CAMZfGtWtUkP69v3NDy8=k1Ze1OriJ3TWeY9868TTdzbQ4LJ5AA@mail.gmail.com>
-Subject: Re: [External] [PATCH v3] dma-buf: Add DmaBufTotal counter in meminfo
-To:     Peter Enderborg <peter.enderborg@sony.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@suse.com>, NeilBrown <neilb@suse.de>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Mike Rapoport <rppt@kernel.org>, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 17, 2021 at 12:08 AM Peter Enderborg
-<peter.enderborg@sony.com> wrote:
->
-> This adds a total used dma-buf memory. Details
-> can be found in debugfs, however it is not for everyone
-> and not always available. dma-buf are indirect allocated by
-> userspace. So with this value we can monitor and detect
-> userspace applications that have problems.
+On Fri, 16 Apr 2021, Amir Goldstein wrote:
+> On Thu, Mar 25, 2021 at 5:00 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Mon 22-03-21 19:39:44, Amir Goldstein wrote:
+> > > Since kernel v5.1, fanotify_init(2) supports the flag FAN_REPORT_FID
+> > > for identifying objects using file handle and fsid in events.
+> > >
+> > > fanotify_mark(2) fails with -ENODEV when trying to set a mark on
+> > > filesystems that report null f_fsid in stasfs(2).
+> > >
+> > > Use the digest of uuid as f_fsid for tmpfs to uniquely identify tmpfs
+> > > objects as best as possible and allow setting an fanotify mark that
+> > > reports events with file handles on tmpfs.
+> > >
+> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> >
+> > Hugh, any opinion on this patch?
+> >
+> >                                                                 Honza
+> >
+> > > ---
+> > >  mm/shmem.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > >
+> > > diff --git a/mm/shmem.c b/mm/shmem.c
+> > > index b2db4ed0fbc7..162d8f8993bb 100644
+> > > --- a/mm/shmem.c
+> > > +++ b/mm/shmem.c
+> > > @@ -2846,6 +2846,9 @@ static int shmem_statfs(struct dentry *dentry, struct kstatfs *buf)
+> > >               buf->f_ffree = sbinfo->free_inodes;
+> > >       }
+> > >       /* else leave those fields 0 like simple_statfs */
+> > > +
+> > > +     buf->f_fsid = uuid_to_fsid(dentry->d_sb->s_uuid.b);
+> > > +
+> > >       return 0;
+> > >  }
+> > >
+> 
+> 
+> Ping.
+> 
+> Hugh, are you ok with this change?
+> 
+> Thanks,
+> Amir.
 
-I want to know more details about the problems.
-Can you share what problems you have encountered?
+Yes, apologies for my delay to you, Amir and Jan:
+sure I'm ok with this change, and thank you for taking care of tmpfs.
 
-Thanks.
+Acked-by: Hugh Dickins <hughd@google.com>
 
->
-> Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
-> ---
->  drivers/dma-buf/dma-buf.c | 12 ++++++++++++
->  fs/proc/meminfo.c         |  5 ++++-
->  include/linux/dma-buf.h   |  1 +
->  3 files changed, 17 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> index f264b70c383e..d40fff2ae1fa 100644
-> --- a/drivers/dma-buf/dma-buf.c
-> +++ b/drivers/dma-buf/dma-buf.c
-> @@ -37,6 +37,7 @@ struct dma_buf_list {
->  };
->
->  static struct dma_buf_list db_list;
-> +static atomic_long_t dma_buf_global_allocated;
->
->  static char *dmabuffs_dname(struct dentry *dentry, char *buffer, int buflen)
->  {
-> @@ -79,6 +80,7 @@ static void dma_buf_release(struct dentry *dentry)
->         if (dmabuf->resv == (struct dma_resv *)&dmabuf[1])
->                 dma_resv_fini(dmabuf->resv);
->
-> +       atomic_long_sub(dmabuf->size, &dma_buf_global_allocated);
->         module_put(dmabuf->owner);
->         kfree(dmabuf->name);
->         kfree(dmabuf);
-> @@ -586,6 +588,7 @@ struct dma_buf *dma_buf_export(const struct dma_buf_export_info *exp_info)
->         mutex_lock(&db_list.lock);
->         list_add(&dmabuf->list_node, &db_list.head);
->         mutex_unlock(&db_list.lock);
-> +       atomic_long_add(dmabuf->size, &dma_buf_global_allocated);
->
->         return dmabuf;
->
-> @@ -1346,6 +1349,15 @@ void dma_buf_vunmap(struct dma_buf *dmabuf, struct dma_buf_map *map)
->  }
->  EXPORT_SYMBOL_GPL(dma_buf_vunmap);
->
-> +/**
-> + * dma_buf_get_size - Return the used nr pages by dma-buf
-> + */
-> +long dma_buf_allocated_pages(void)
-> +{
-> +       return atomic_long_read(&dma_buf_global_allocated) >> PAGE_SHIFT;
-> +}
-> +EXPORT_SYMBOL_GPL(dma_buf_allocated_pages);
+But you have more valuable acks on this little series already,
+so don't bother rebasing some tree to add mine in now.  I don't yet
+see the uuid_to_fsid() 1/2 which this depends on in linux-next, and
+fear that's my fault for holding you back: sorry, please go ahead now.
 
-Why need "EXPORT_SYMBOL_GPL"?
-
-> +
->  #ifdef CONFIG_DEBUG_FS
->  static int dma_buf_debug_show(struct seq_file *s, void *unused)
->  {
-> diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
-> index 6fa761c9cc78..ccc7c40c8db7 100644
-> --- a/fs/proc/meminfo.c
-> +++ b/fs/proc/meminfo.c
-> @@ -16,6 +16,7 @@
->  #ifdef CONFIG_CMA
->  #include <linux/cma.h>
->  #endif
-> +#include <linux/dma-buf.h>
->  #include <asm/page.h>
->  #include "internal.h"
->
-> @@ -145,7 +146,9 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
->         show_val_kb(m, "CmaFree:        ",
->                     global_zone_page_state(NR_FREE_CMA_PAGES));
->  #endif
-> -
-> +#ifdef CONFIG_DMA_SHARED_BUFFER
-> +       show_val_kb(m, "DmaBufTotal:    ", dma_buf_allocated_pages());
-> +#endif
->         hugetlb_report_meminfo(m);
->
->         arch_report_meminfo(m);
-> diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
-> index efdc56b9d95f..5b05816bd2cd 100644
-> --- a/include/linux/dma-buf.h
-> +++ b/include/linux/dma-buf.h
-> @@ -507,4 +507,5 @@ int dma_buf_mmap(struct dma_buf *, struct vm_area_struct *,
->                  unsigned long);
->  int dma_buf_vmap(struct dma_buf *dmabuf, struct dma_buf_map *map);
->  void dma_buf_vunmap(struct dma_buf *dmabuf, struct dma_buf_map *map);
-> +long dma_buf_allocated_pages(void);
->  #endif /* __DMA_BUF_H__ */
-> --
-> 2.17.1
->
+Hugh
