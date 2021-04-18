@@ -2,134 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 37EC2363135
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Apr 2021 18:40:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA49B363339
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Apr 2021 05:10:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236620AbhDQQk7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 17 Apr 2021 12:40:59 -0400
-Received: from jptosegrel01.sonyericsson.com ([124.215.201.71]:11575 "EHLO
-        JPTOSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236836AbhDQQjO (ORCPT
+        id S230456AbhDRDKZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 17 Apr 2021 23:10:25 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:40878 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229870AbhDRDKY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 17 Apr 2021 12:39:14 -0400
-From:   Peter Enderborg <peter.enderborg@sony.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@suse.com>, NeilBrown <neilb@suse.de>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Mike Rapoport <rppt@kernel.org>, <linux-media@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>,
-        Matthew Wilcox <willy@infradead.org>
-CC:     Peter Enderborg <peter.enderborg@sony.com>
-Subject: [PATCH v5] dma-buf: Add DmaBufTotal counter in meminfo
-Date:   Sat, 17 Apr 2021 18:38:35 +0200
-Message-ID: <20210417163835.25064-1-peter.enderborg@sony.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 17 Apr 2021 23:10:24 -0400
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 13I39pSd005538
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 17 Apr 2021 23:09:51 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id D4F8A15C3B0D; Sat, 17 Apr 2021 23:09:50 -0400 (EDT)
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH] fs: fix reporting supported extra file attributes for statx()
+Date:   Sat, 17 Apr 2021 23:09:35 -0400
+Message-Id: <20210418030935.41892-1-tytso@mit.edu>
+X-Mailer: git-send-email 2.31.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-SEG-SpamProfiler-Analysis: v=2.3 cv=crzlbGwi c=1 sm=1 tr=0 a=fZcToFWbXLKijqHhjJ02CA==:117 a=3YhXtTcJ-WEA:10 a=z6gsHLkEAAAA:8 a=USQXLDy_ZNVIum19Oj8A:9 a=d-OLMTCWyvARjPbQ-enb:22 a=pHzHmUro8NiASowvMSCR:22 a=Ew2E2A-JSTLzCXPT_086:22
-X-SEG-SpamProfiler-Score: 0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds a total used dma-buf memory. Details
-can be found in debugfs, however it is not for everyone
-and not always available. dma-buf are indirect allocated by
-userspace. So with this value we can monitor and detect
-userspace applications that have problems.
+statx(2) notes that any attribute that is not indicated as supported
+by stx_attributes_mask has no usable value.  Commits 801e523796004
+("fs: move generic stat response attr handling to vfs_getattr_nosec")
+and 712b2698e4c02 ("fs/stat: Define DAX statx attribute") sets
+STATX_ATTR_AUTOMOUNT and STATX_ATTR_DAX, respectively, without setting
+stx_attributes_mask, which can cause xfstests generic/532 to fail.
 
-Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
+Fix this in the same way as commit 1b9598c8fb99 ("xfs: fix reporting
+supported extra file attributes for statx()")
+
+Fixes: 801e523796004 ("fs: move generic stat response attr handling to vfs_getattr_nosec")
+Fixes: 712b2698e4c02 ("fs/stat: Define DAX statx attribute")
+Cc: stable@kernel.org
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 ---
- drivers/dma-buf/dma-buf.c | 12 ++++++++++++
- fs/proc/meminfo.c         |  5 ++++-
- include/linux/dma-buf.h   |  1 +
- 3 files changed, 17 insertions(+), 1 deletion(-)
+ fs/stat.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index f264b70c383e..4dc37cd4293b 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -37,6 +37,7 @@ struct dma_buf_list {
- };
- 
- static struct dma_buf_list db_list;
-+static atomic_long_t dma_buf_global_allocated;
- 
- static char *dmabuffs_dname(struct dentry *dentry, char *buffer, int buflen)
- {
-@@ -79,6 +80,7 @@ static void dma_buf_release(struct dentry *dentry)
- 	if (dmabuf->resv == (struct dma_resv *)&dmabuf[1])
- 		dma_resv_fini(dmabuf->resv);
- 
-+	atomic_long_sub(dmabuf->size, &dma_buf_global_allocated);
- 	module_put(dmabuf->owner);
- 	kfree(dmabuf->name);
- 	kfree(dmabuf);
-@@ -586,6 +588,7 @@ struct dma_buf *dma_buf_export(const struct dma_buf_export_info *exp_info)
- 	mutex_lock(&db_list.lock);
- 	list_add(&dmabuf->list_node, &db_list.head);
- 	mutex_unlock(&db_list.lock);
-+	atomic_long_add(dmabuf->size, &dma_buf_global_allocated);
- 
- 	return dmabuf;
- 
-@@ -1346,6 +1349,15 @@ void dma_buf_vunmap(struct dma_buf *dmabuf, struct dma_buf_map *map)
- }
- EXPORT_SYMBOL_GPL(dma_buf_vunmap);
- 
-+/**
-+ * dma_buf_allocated_pages - Return the used nr of pages
-+ * allocated for dma-buf
-+ */
-+long dma_buf_allocated_pages(void)
-+{
-+	return atomic_long_read(&dma_buf_global_allocated) >> PAGE_SHIFT;
-+}
+diff --git a/fs/stat.c b/fs/stat.c
+index fbc171d038aa..1fa38bdec1a6 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -86,12 +86,20 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
+ 	/* SB_NOATIME means filesystem supplies dummy atime value */
+ 	if (inode->i_sb->s_flags & SB_NOATIME)
+ 		stat->result_mask &= ~STATX_ATIME;
 +
- #ifdef CONFIG_DEBUG_FS
- static int dma_buf_debug_show(struct seq_file *s, void *unused)
- {
-diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
-index 6fa761c9cc78..ccc7c40c8db7 100644
---- a/fs/proc/meminfo.c
-+++ b/fs/proc/meminfo.c
-@@ -16,6 +16,7 @@
- #ifdef CONFIG_CMA
- #include <linux/cma.h>
- #endif
-+#include <linux/dma-buf.h>
- #include <asm/page.h>
- #include "internal.h"
++	/*
++	 * Note: If you add another clause to set an attribute flag, please
++	 * update attributes_mask below.
++	 */
+ 	if (IS_AUTOMOUNT(inode))
+ 		stat->attributes |= STATX_ATTR_AUTOMOUNT;
  
-@@ -145,7 +146,9 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
- 	show_val_kb(m, "CmaFree:        ",
- 		    global_zone_page_state(NR_FREE_CMA_PAGES));
- #endif
--
-+#ifdef CONFIG_DMA_SHARED_BUFFER
-+	show_val_kb(m, "DmaBufTotal:    ", dma_buf_allocated_pages());
-+#endif
- 	hugetlb_report_meminfo(m);
+ 	if (IS_DAX(inode))
+ 		stat->attributes |= STATX_ATTR_DAX;
  
- 	arch_report_meminfo(m);
-diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
-index efdc56b9d95f..5b05816bd2cd 100644
---- a/include/linux/dma-buf.h
-+++ b/include/linux/dma-buf.h
-@@ -507,4 +507,5 @@ int dma_buf_mmap(struct dma_buf *, struct vm_area_struct *,
- 		 unsigned long);
- int dma_buf_vmap(struct dma_buf *dmabuf, struct dma_buf_map *map);
- void dma_buf_vunmap(struct dma_buf *dmabuf, struct dma_buf_map *map);
-+long dma_buf_allocated_pages(void);
- #endif /* __DMA_BUF_H__ */
++	stat->attributes_mask |= (STATX_ATTR_AUTOMOUNT |
++				  STATX_ATTR_DAX);
++
+ 	mnt_userns = mnt_user_ns(path->mnt);
+ 	if (inode->i_op->getattr)
+ 		return inode->i_op->getattr(mnt_userns, path, stat,
 -- 
-2.17.1
+2.31.0
 
