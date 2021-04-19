@@ -2,146 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D3C33646A5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 17:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E4223646C0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 17:09:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238422AbhDSPDK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Apr 2021 11:03:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43422 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239093AbhDSPDI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Apr 2021 11:03:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 60F6E60FE6;
-        Mon, 19 Apr 2021 15:02:36 +0000 (UTC)
-Date:   Mon, 19 Apr 2021 17:02:33 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <repnop@google.com>, amir73il@gmail.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fanotify: Add pidfd support to the fanotify API
-Message-ID: <20210419150233.rgozm4cdbasskatk@wittgenstein>
-References: <cover.1618527437.git.repnop@google.com>
- <e6cd967f45381d20d67c9d5a3e49e3cb9808f65b.1618527437.git.repnop@google.com>
- <20210419132020.ydyb2ly6e3clhe2j@wittgenstein>
- <20210419135550.GH8706@quack2.suse.cz>
+        id S239735AbhDSPJi convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 11:09:38 -0400
+Received: from us-smtp-delivery-44.mimecast.com ([207.211.30.44]:35606 "EHLO
+        us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232191AbhDSPJh (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Apr 2021 11:09:37 -0400
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-239-fF-zZ_MtN7CFjoIojY9c2A-1; Mon, 19 Apr 2021 11:09:04 -0400
+X-MC-Unique: fF-zZ_MtN7CFjoIojY9c2A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D88311006C8D;
+        Mon, 19 Apr 2021 15:09:02 +0000 (UTC)
+Received: from bahia.redhat.com (ovpn-112-134.ams2.redhat.com [10.36.112.134])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 50BAF614FD;
+        Mon, 19 Apr 2021 15:08:49 +0000 (UTC)
+From:   Greg Kurz <groug@kaod.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        Greg Kurz <groug@kaod.org>, Robert Krawitz <rlk@redhat.com>
+Subject: [PATCH] virtiofs: propagate sync() to file server
+Date:   Mon, 19 Apr 2021 17:08:48 +0200
+Message-Id: <20210419150848.275757-1-groug@kaod.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210419135550.GH8706@quack2.suse.cz>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=groug@kaod.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: kaod.org
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=WINDOWS-1252
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 19, 2021 at 03:55:50PM +0200, Jan Kara wrote:
-> On Mon 19-04-21 15:20:20, Christian Brauner wrote:
-> > On Fri, Apr 16, 2021 at 09:22:25AM +1000, Matthew Bobrowski wrote:
-> > > Introduce a new flag FAN_REPORT_PIDFD for fanotify_init(2) which
-> > > allows userspace applications to control whether a pidfd is to be
-> > > returned instead of a pid for `struct fanotify_event_metadata.pid`.
-> > > 
-> > > FAN_REPORT_PIDFD is mutually exclusive with FAN_REPORT_TID as the
-> > > pidfd API is currently restricted to only support pidfd generation for
-> > > thread-group leaders. Attempting to set them both when calling
-> > > fanotify_init(2) will result in -EINVAL being returned to the
-> > > caller. As the pidfd API evolves and support is added for tids, this
-> > > is something that could be relaxed in the future.
-> > > 
-> > > If pidfd creation fails, the pid in struct fanotify_event_metadata is
-> > > set to FAN_NOPIDFD(-1). Falling back and providing a pid instead of a
-> > > pidfd on pidfd creation failures was considered, although this could
-> > > possibly lead to confusion and unpredictability within userspace
-> > > applications as distinguishing between whether an actual pidfd or pid
-> > > was returned could be difficult, so it's best to be explicit.
-> > > 
-> > > Signed-off-by: Matthew Bobrowski <repnop@google.com>
-> > > ---
-> > >  fs/notify/fanotify/fanotify_user.c | 33 +++++++++++++++++++++++++++---
-> > >  include/linux/fanotify.h           |  2 +-
-> > >  include/uapi/linux/fanotify.h      |  2 ++
-> > >  3 files changed, 33 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> > > index 9e0c1afac8bd..fd8ae88796a8 100644
-> > > --- a/fs/notify/fanotify/fanotify_user.c
-> > > +++ b/fs/notify/fanotify/fanotify_user.c
-> > > @@ -329,7 +329,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
-> > >  	struct fanotify_info *info = fanotify_event_info(event);
-> > >  	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
-> > >  	struct file *f = NULL;
-> > > -	int ret, fd = FAN_NOFD;
-> > > +	int ret, pidfd, fd = FAN_NOFD;
-> > >  	int info_type = 0;
-> > >  
-> > >  	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
-> > > @@ -340,7 +340,25 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
-> > >  	metadata.vers = FANOTIFY_METADATA_VERSION;
-> > >  	metadata.reserved = 0;
-> > >  	metadata.mask = event->mask & FANOTIFY_OUTGOING_EVENTS;
-> > > -	metadata.pid = pid_vnr(event->pid);
-> > > +
-> > > +	if (FAN_GROUP_FLAG(group, FAN_REPORT_PIDFD) &&
-> > > +		pid_has_task(event->pid, PIDTYPE_TGID)) {
-> > > +		/*
-> > > +		 * Given FAN_REPORT_PIDFD is to be mutually exclusive with
-> > > +		 * FAN_REPORT_TID, panic here if the mutual exclusion is ever
-> > > +		 * blindly lifted without pidfds for threads actually being
-> > > +		 * supported.
-> > > +		 */
-> > > +		WARN_ON(FAN_GROUP_FLAG(group, FAN_REPORT_TID));
-> > > +
-> > > +		pidfd = pidfd_create(event->pid, 0);
-> > > +		if (unlikely(pidfd < 0))
-> > > +			metadata.pid = FAN_NOPIDFD;
-> > > +		else
-> > > +			metadata.pid = pidfd;
-> > 
-> > I'm not a fan of overloading fields (Yes, we did this for the _legacy_
-> > clone() syscall for CLONE_PIDFD/CLONE_PARENT_SETTID but in general it's
-> > never a good idea if there are other options, imho.).
-> > Could/should we consider the possibility of adding a new pidfd field to
-> > struct fanotify_event_metadata?
-> 
-> I'm not a huge fan of overloading fields either but in this particular case
-> I'm fine with that because:
-> 
-> a) storage size & type matches
-> b) it describes exactly the same information, just in a different way
-> 
-> It is not possible to store the pidfd elsewhere in fanotify_event_metadata.
-> But it is certainly possible to use extended event info to return pidfd
-> instead - similarly to how we return e.g. handle + fsid for some
-> notification groups. It just means somewhat longer events and more
-> complicated parsing of structured events in userspace. But as I write
-> above, in this case I don't think it is worth it - only if we think that
-> returning both pid and pidfd could ever be useful.
+Even if POSIX doesn't mandate it, linux users legitimately expect
+sync() to flush all data and metadata to physical storage when it
+is located on the same system. This isn't happening with virtiofs
+though : sync() inside the guest returns right away even though
+data still needs to be flushed from the host page cache.
 
-Yeah, I don't hink users need to do that. After all they can parse the
-PID out of the /proc/self/fdinfo/<pidfd> file.
+This is easily demonstrated by doing the following in the guest:
 
-A general question about struct fanotify_event_metadata and its
-extensibility model:
-looking through the code it seems that this struct is read via
-fanotify_rad(). So the user is expected to supply a buffer with at least
+$ dd if=/dev/zero of=/mnt/foo bs=1M count=5K ; strace -T -e sync sync
+5120+0 records in
+5120+0 records out
+5368709120 bytes (5.4 GB, 5.0 GiB) copied, 5.22224 s, 1.0 GB/s
+sync()                                  = 0 <0.024068>
++++ exited with 0 +++
 
-#define FAN_EVENT_METADATA_LEN (sizeof(struct fanotify_event_metadata))
+and start the following in the host when the 'dd' command completes
+in the guest:
 
-bytes. In addition you can return the info to the user about how many
-bytes the kernel has written from fanotify_read().
+$ strace -T -e fsync sync virtiofs/foo
+fsync(3)                                = 0 <10.371640>
++++ exited with 0 +++
 
-So afaict extending fanotify_event_metadata should be _fairly_
-straightforward, right? It would essentially the complement to
-copy_struct_from_user() which Aleksa and I added (1 or 2 years ago)
-which deals with user->kernel and you're dealing with kernel->user:
-- If the user supplied a buffer smaller than the minimum known struct
-  size -> reject.
-- If the user supplied a buffer < smaller than what the current kernel
-  supports -> copy only what userspace knows about, and return the size
-  userspace knows about.
-- If the user supplied a buffer that is larger than what the current
-  kernel knows about -> copy only what the kernel knows about, zero the
-  rest, and return the kernel size.
+There are no good reasons not to honor the expected behavior of
+sync() actually : it gives an unrealistic impression that virtiofs
+is super fast and that data has safely landed on HW, which isn't
+the case obviously.
 
-Extension should then be fairly straightforward (64bit aligned
-increments)?
+Implement a ->sync_fs() superblock operation that sends a new
+FUSE_SYNC request type for this purpose. The FUSE_SYNC request
+conveys the 'wait' argument of ->sync_fs() in case the file
+server has a use for it. Like with FUSE_FSYNC and FUSE_FSYNCDIR,
+lack of support for FUSE_SYNC in the file server is treated as
+permanent success.
 
-Christian
+Note that such an operation allows the file server to DoS sync().
+Since a typical FUSE file server is an untrusted piece of software
+running in userspace, this is disabled by default.  Only enable it
+with virtiofs for now since virtiofsd is supposedly trusted by the
+guest kernel.
+
+Reported-by: Robert Krawitz <rlk@redhat.com>
+Signed-off-by: Greg Kurz <groug@kaod.org>
+---
+
+Can be tested using the following custom QEMU with FUSE_SYNCFS support:
+
+https://gitlab.com/gkurz/qemu/-/tree/fuse-sync
+
+---
+ fs/fuse/fuse_i.h          |  3 +++
+ fs/fuse/inode.c           | 29 +++++++++++++++++++++++++++++
+ fs/fuse/virtio_fs.c       |  1 +
+ include/uapi/linux/fuse.h | 11 ++++++++++-
+ 4 files changed, 43 insertions(+), 1 deletion(-)
+
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 63d97a15ffde..68e9ae96cbd4 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -755,6 +755,9 @@ struct fuse_conn {
+ 	/* Auto-mount submounts announced by the server */
+ 	unsigned int auto_submounts:1;
+ 
++	/* Propagate syncfs() to server */
++	unsigned int sync_fs:1;
++
+ 	/** The number of requests waiting for completion */
+ 	atomic_t num_waiting;
+ 
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index b0e18b470e91..425d567a06c5 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -506,6 +506,34 @@ static int fuse_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	return err;
+ }
+ 
++static int fuse_sync_fs(struct super_block *sb, int wait)
++{
++	struct fuse_mount *fm = get_fuse_mount_super(sb);
++	struct fuse_conn *fc = fm->fc;
++	struct fuse_syncfs_in inarg;
++	FUSE_ARGS(args);
++	int err;
++
++	if (!fc->sync_fs)
++		return 0;
++
++	memset(&inarg, 0, sizeof(inarg));
++	inarg.wait = wait;
++	args.in_numargs = 1;
++	args.in_args[0].size = sizeof(inarg);
++	args.in_args[0].value = &inarg;
++	args.opcode = FUSE_SYNCFS;
++	args.out_numargs = 0;
++
++	err = fuse_simple_request(fm, &args);
++	if (err == -ENOSYS) {
++		fc->sync_fs = 0;
++		err = 0;
++	}
++
++	return err;
++}
++
+ enum {
+ 	OPT_SOURCE,
+ 	OPT_SUBTYPE,
+@@ -909,6 +937,7 @@ static const struct super_operations fuse_super_operations = {
+ 	.put_super	= fuse_put_super,
+ 	.umount_begin	= fuse_umount_begin,
+ 	.statfs		= fuse_statfs,
++	.sync_fs	= fuse_sync_fs,
+ 	.show_options	= fuse_show_options,
+ };
+ 
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index 4ee6f734ba83..a3c025308743 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -1441,6 +1441,7 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
+ 	fc->release = fuse_free_conn;
+ 	fc->delete_stale = true;
+ 	fc->auto_submounts = true;
++	fc->sync_fs = true;
+ 
+ 	fsc->s_fs_info = fm;
+ 	sb = sget_fc(fsc, virtio_fs_test_super, set_anon_super_fc);
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 54442612c48b..6e8c3cf3207c 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -179,6 +179,9 @@
+  *  7.33
+  *  - add FUSE_HANDLE_KILLPRIV_V2, FUSE_WRITE_KILL_SUIDGID, FATTR_KILL_SUIDGID
+  *  - add FUSE_OPEN_KILL_SUIDGID
++ *
++ *  7.34
++ *  - add FUSE_SYNCFS
+  */
+ 
+ #ifndef _LINUX_FUSE_H
+@@ -214,7 +217,7 @@
+ #define FUSE_KERNEL_VERSION 7
+ 
+ /** Minor version number of this interface */
+-#define FUSE_KERNEL_MINOR_VERSION 33
++#define FUSE_KERNEL_MINOR_VERSION 34
+ 
+ /** The node ID of the root inode */
+ #define FUSE_ROOT_ID 1
+@@ -499,6 +502,7 @@ enum fuse_opcode {
+ 	FUSE_COPY_FILE_RANGE	= 47,
+ 	FUSE_SETUPMAPPING	= 48,
+ 	FUSE_REMOVEMAPPING	= 49,
++	FUSE_SYNCFS		= 50,
+ 
+ 	/* CUSE specific operations */
+ 	CUSE_INIT		= 4096,
+@@ -957,4 +961,9 @@ struct fuse_removemapping_one {
+ #define FUSE_REMOVEMAPPING_MAX_ENTRY   \
+ 		(PAGE_SIZE / sizeof(struct fuse_removemapping_one))
+ 
++struct fuse_syncfs_in {
++	/* Whether to wait for outstanding I/Os to complete */
++	uint32_t wait;
++};
++
+ #endif /* _LINUX_FUSE_H */
+-- 
+2.26.3
+
