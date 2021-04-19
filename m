@@ -2,182 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E565E363E5B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 11:15:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FAD6363E7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 11:29:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237407AbhDSJPl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Apr 2021 05:15:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54890 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237652AbhDSJPi (ORCPT
+        id S234501AbhDSJaG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 05:30:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35886 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231653AbhDSJaF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Apr 2021 05:15:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618823708;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JJHH0NX3OsQ2e3bz8MbvbRBxnLsHKmu/POOlzwxl9eU=;
-        b=QX2G3CzJ/NKD5UOg85qHAZTkn4RiYHvYTExtbc+L2jA7dhUw0gVsiT0k5iKqRzYhEVDons
-        pF1+55fvvZBvw9Gn3JVIcieUx0XziS9/K+8s9SJ1s9J0VSkh8kwTvP28dW+dEFJcvlIqU0
-        KMPI/jgfhyYGNVdLCq+Z1xq5xuU5A5w=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-285-oMuxPuHhObieWVPLCCMloQ-1; Mon, 19 Apr 2021 05:15:06 -0400
-X-MC-Unique: oMuxPuHhObieWVPLCCMloQ-1
-Received: by mail-ej1-f69.google.com with SMTP id 16-20020a1709063010b029037417ca2d43so3406600ejz.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Apr 2021 02:15:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:organization:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=JJHH0NX3OsQ2e3bz8MbvbRBxnLsHKmu/POOlzwxl9eU=;
-        b=WgnG6WxAPc7C3En6E22ltyZx352yNQaR8z8+4EmAvPwFX9UWCpvHOvV0o6db8bOfk7
-         ua8KmWubM8QuBHy5ZMcSy+cQ1g0gDCo+84yWTpoKVhDBqsCdpqRB4iVl0vO8iMW9Q8xk
-         4CloRboWuz17BMARPFcWy+ApSBN8hU0cEfT8jYM8NmTVVdqx/TyRSNqFVD+qpUGCdgnR
-         YX5X87+4CsSWsUnLJ8aYmc3Pjo79ldSAAH5roI/jxSPFYV4pOEJVHvij2YtuThAakc8+
-         mDoOa/iIdJdvG1MPPFBMaOYp6Gjx4qoIpJQ1I8xCeIlMBFyL3dP5aDl2UmtbfYIkJT04
-         dPvw==
-X-Gm-Message-State: AOAM5326eDzRn0+xlPupnjpWl+p7lR2QqYRsxYXSduXFcbyFfXz6xGJr
-        NEIoLTbWhxjG8ZR7Pb0t1ATjDTVTDTT+caztf0vp3As2IpagiI0rubv2yjqaOC5lYKqLQUaZIWE
-        vaOnv2XZkmo+wz0Fn87KpAzUjrg==
-X-Received: by 2002:a05:6402:42d1:: with SMTP id i17mr23711253edc.131.1618823705481;
-        Mon, 19 Apr 2021 02:15:05 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxYzYlDX/eTm99p4Oo7Oz5LAmRLoDDSSTEdvjwkyJC6GdKrJUD2OsxJ6l4DnJdCX72CgXH3hg==
-X-Received: by 2002:a05:6402:42d1:: with SMTP id i17mr23711232edc.131.1618823705193;
-        Mon, 19 Apr 2021 02:15:05 -0700 (PDT)
-Received: from [192.168.3.132] (p5b0c69b8.dip0.t-ipconnect.de. [91.12.105.184])
-        by smtp.gmail.com with ESMTPSA id y16sm12144407edc.62.2021.04.19.02.15.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Apr 2021 02:15:04 -0700 (PDT)
-To:     Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, kernel test robot <oliver.sang@intel.com>
-References: <20210419084218.7466-1-rppt@kernel.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH] secretmem: optimize page_is_secretmem()
-Message-ID: <3b30ac54-8a92-5f54-28f0-f110a40700c7@redhat.com>
-Date:   Mon, 19 Apr 2021 11:15:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Mon, 19 Apr 2021 05:30:05 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC47BC06174A;
+        Mon, 19 Apr 2021 02:29:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=2aOsr0PrOwnfD3TDOKZ6BC+krPtm53sXeyFnBIAmB5o=; b=dlxuJSx74ojN6u2Cspw4sbyZBO
+        9m5osR+tXN1F9D2uMZozBeEkZ4MMcNCOPxCKoUyDXwaLoqiAm7VCtGRfluX5kw/ZtBzbxvpjFJBIV
+        /Zof+qyjZPyk3+YUS+VqCwOMpgQNSaWNiBGx69mR7gC73d7qn1DGovpFArIHQp4g+ySK6sHCe/kO2
+        c0kem+FjGoDxzpGghmMe6FzIOZqhSZ/5ws/Gr5solihRG7qkAZF3RMNY/NrOey0EljxSkQUMLfdrT
+        65Nj+vMd0kqZDmygxvpE5HMY3SAXDAKkvrAq30rnObRAEEaMWzepVl2mvkN7IM1/snzMdSTlt1kI3
+        odEbSJGw==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lYQD9-00DWee-NI; Mon, 19 Apr 2021 09:29:02 +0000
+Date:   Mon, 19 Apr 2021 10:28:55 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     dsterba@suse.cz, Damien Le Moal <damien.lemoal@wdc.com>,
+        dm-devel@redhat.com, Mike Snitzer <snitzer@redhat.com>,
+        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-nvme@lists.infradead.org, Christoph Hellwig <hch@lst.de>,
+        linux-scsi@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>
+Subject: Re: [PATCH 3/4] btrfs: zoned: fail mount if the device does not
+ support zone append
+Message-ID: <20210419092855.GA3223318@infradead.org>
+References: <20210416030528.757513-1-damien.lemoal@wdc.com>
+ <20210416030528.757513-4-damien.lemoal@wdc.com>
+ <20210416161720.GA7604@twin.jikos.cz>
 MIME-Version: 1.0
-In-Reply-To: <20210419084218.7466-1-rppt@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210416161720.GA7604@twin.jikos.cz>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 19.04.21 10:42, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
+On Fri, Apr 16, 2021 at 06:17:21PM +0200, David Sterba wrote:
+> On Fri, Apr 16, 2021 at 12:05:27PM +0900, Damien Le Moal wrote:
+> > From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> > 
+> > For zoned btrfs, zone append is mandatory to write to a sequential write
+> > only zone, otherwise parallel writes to the same zone could result in
+> > unaligned write errors.
+> > 
+> > If a zoned block device does not support zone append (e.g. a dm-crypt
+> > zoned device using a non-NULL IV cypher), fail to mount.
+> > 
+> > Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> > Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 > 
-> Kernel test robot reported -4.2% regression of will-it-scale.per_thread_ops
-> due to commit "mm: introduce memfd_secret system call to create "secret"
-> memory areas".
-> 
-> The perf profile of the test indicated that the regression is caused by
-> page_is_secretmem() called from gup_pte_range() (inlined by gup_pgd_range):
-> 
->   27.76  +2.5  30.23       perf-profile.children.cycles-pp.gup_pgd_range
->    0.00  +3.2   3.19 ± 2%  perf-profile.children.cycles-pp.page_mapping
->    0.00  +3.7   3.66 ± 2%  perf-profile.children.cycles-pp.page_is_secretmem
-> 
-> Further analysis showed that the slow down happens because neither
-> page_is_secretmem() nor page_mapping() are not inline and moreover,
-> multiple page flags checks in page_mapping() involve calling
-> compound_head() several times for the same page.
-> 
-> Make page_is_secretmem() inline and replace page_mapping() with page flag
-> checks that do not imply page-to-head conversion.
-> 
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> ---
-> 
-> @Andrew,
-> The patch is vs v5.12-rc7-mmots-2021-04-15-16-28, I'd appreciate if it would
-> be added as a fixup to the memfd_secret series.
-> 
->   include/linux/secretmem.h | 26 +++++++++++++++++++++++++-
->   mm/secretmem.c            | 12 +-----------
->   2 files changed, 26 insertions(+), 12 deletions(-)
-> 
-> diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
-> index 907a6734059c..b842b38cbeb1 100644
-> --- a/include/linux/secretmem.h
-> +++ b/include/linux/secretmem.h
-> @@ -4,8 +4,32 @@
->   
->   #ifdef CONFIG_SECRETMEM
->   
-> +extern const struct address_space_operations secretmem_aops;
-> +
-> +static inline bool page_is_secretmem(struct page *page)
-> +{
-> +	struct address_space *mapping;
-> +
-> +	/*
-> +	 * Using page_mapping() is quite slow because of the actual call
-> +	 * instruction and repeated compound_head(page) inside the
-> +	 * page_mapping() function.
-> +	 * We know that secretmem pages are not compound and LRU so we can
-> +	 * save a couple of cycles here.
-> +	 */
-> +	if (PageCompound(page) || !PageLRU(page))
-> +		return false;
+> Added to misc-next, thanks. I'll queue it for 5.13, it's not an urgent
+> fix for 5.12 release but i'll tag it as stable so it'll apear in 5.12.x
+> later.
 
-I'd assume secretmem pages are rare in basically every setup out there. 
-So maybe throwing in a couple of likely()/unlikely() might make sense.
-
-> +
-> +	mapping = (struct address_space *)
-> +		((unsigned long)page->mapping & ~PAGE_MAPPING_FLAGS);
-> +
-
-Not sure if open-coding page_mapping is really a good idea here -- or 
-even necessary after the fast path above is in place. Anyhow, just my 2 
-cents.
-
-The idea of the patch makes sense to me.
-
--- 
-Thanks,
-
-David / dhildenb
-
+Please don't.  Zone append is a strict requirement for zoned devices,
+no need to add cargo cult code like this everywhere.
