@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05995364B9B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 22:46:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE296364BD9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 22:46:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242727AbhDSUpU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Apr 2021 16:45:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54476 "EHLO mail.kernel.org"
+        id S242963AbhDSUqx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 16:46:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242573AbhDSUot (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Apr 2021 16:44:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 437A061104;
-        Mon, 19 Apr 2021 20:44:18 +0000 (UTC)
+        id S242752AbhDSUp2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Apr 2021 16:45:28 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 794E0613EE;
+        Mon, 19 Apr 2021 20:44:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618865059;
+        s=k20201202; t=1618865093;
         bh=8ebH80wLSzpKsXllnqDHsURT7pA6qJAmK3LBb8kMWVo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GnMn5N/GtNVt3usYOoeWnuhcozXsta7QP1hMnXJxaQPXgDzzM+4NFnnbiE5gnL0nc
-         i9nQNXBQrkDc9J4Imde+J9SHl4cd2z4ouRl1nhSTNOLJWL+xlcwrZxY+y6lRzOO9/A
-         dXcRdjPdMEsr7pCNr+UuG+Eatr16xOeduKO13pZflAnmIfZ0xTmbM6I31oLpCD8gqe
-         3OvTfuUqVLVuoq/C0gsmzDL4Q5Mx9wn5ICm7dUxzHx+rpB/H53jzgXvgmN4ByisVSk
-         /2YcJV7nTfsDPRABh1OWk5dmOvSBKbtqzIPGPUM0Btw6P/426VpLpzc3JXYIlxmO5m
-         VAG0JxlcHldZQ==
+        b=mCs6xrThBDCP+eIB6Ah4hlbVQCTWQK7o31mo6WZxkV/5OaV6TEGbA4Z6k6GxCm/Zn
+         eh+63TaF6ex0Vh9DM5d4XWOFc5s5QU+cGlPoMT+MM1fshsjVmD6GkbVmCf+KVIBj0d
+         naWnQw0T3jhRagC0HxIagryq4UTn5X2ioGz6/FGIR/haVazXpy8X2hwhsgabsXi3Jc
+         30z7i+7zMI732ykiubp3xtiNsi9zjc4CJwI3lCn150/CBTWBJsjq4i2BH8I7H3WwEb
+         UXTAbGn/2oUNsSNSMOfUqRF70O8Jp+vff8S6OynpaeSgb1xvGrdHUGSX7njtN5+umu
+         3ISNp2ijtBBng==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.11 23/23] readdir: make sure to verify directory entry for legacy interfaces too
-Date:   Mon, 19 Apr 2021 16:43:42 -0400
-Message-Id: <20210419204343.6134-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 21/21] readdir: make sure to verify directory entry for legacy interfaces too
+Date:   Mon, 19 Apr 2021 16:44:19 -0400
+Message-Id: <20210419204420.6375-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210419204343.6134-1-sashal@kernel.org>
-References: <20210419204343.6134-1-sashal@kernel.org>
+In-Reply-To: <20210419204420.6375-1-sashal@kernel.org>
+References: <20210419204420.6375-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
