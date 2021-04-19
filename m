@@ -2,123 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ACAAA364D30
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 23:39:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8443364D77
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 00:04:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241511AbhDSVjj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Apr 2021 17:39:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:56546 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240991AbhDSVjf (ORCPT
+        id S231481AbhDSWFN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 18:05:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33884 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229683AbhDSWFN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Apr 2021 17:39:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618868344;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NfbugZ0oNy5jWgMv3Gew8zQ7TeTsb6SXyuBWX0drnmc=;
-        b=Eu+vK4d7EDzs+Z0e/Cl4qdnDOtWx+vruR7fCSi21ERSgVWEGA7JT2bcB9B/c7GTrUQxsn9
-        AfqiJjgj+cCf8wmZBRz2aTOql5OYDBTxSP0RlGirCYT1GEoTnvv3jP2RcINDujj11f8+88
-        Z3nJDsvlnQJDIRMmZ96lJoipEijytk4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-589-_wcYZwJwMMiSZF-iceMeoA-1; Mon, 19 Apr 2021 17:39:01 -0400
-X-MC-Unique: _wcYZwJwMMiSZF-iceMeoA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 992B8107ACC7;
-        Mon, 19 Apr 2021 21:38:59 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-116-35.rdu2.redhat.com [10.10.116.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 08DA860BF1;
-        Mon, 19 Apr 2021 21:38:53 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 9F180225FCD; Mon, 19 Apr 2021 17:38:52 -0400 (EDT)
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
-        jack@suse.cz, willy@infradead.org
-Cc:     virtio-fs@redhat.com, slp@redhat.com, miklos@szeredi.hu,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        vgoyal@redhat.com
-Subject: [PATCH v3 3/3] dax: Wake up all waiters after invalidating dax entry
-Date:   Mon, 19 Apr 2021 17:36:36 -0400
-Message-Id: <20210419213636.1514816-4-vgoyal@redhat.com>
-In-Reply-To: <20210419213636.1514816-1-vgoyal@redhat.com>
-References: <20210419213636.1514816-1-vgoyal@redhat.com>
+        Mon, 19 Apr 2021 18:05:13 -0400
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFF2DC06174A
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Apr 2021 15:04:42 -0700 (PDT)
+Received: by mail-il1-x133.google.com with SMTP id p15so19518454iln.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Apr 2021 15:04:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DZdzOMSBDjT7a79mDiWwTHeWFxZw9xfnkqZBlQGysLQ=;
+        b=EnmVA36DrWaH33Aee/iK3B1wF8zVklS3rJSmB9tE3hrJu57P40yNvGapq+6oApebcI
+         6I8fflor63qeXr/6UkgBSLi2kbXiOocYFb/58usFtu3pODKYe6nzif2VAhc499GMtKlO
+         kYDnOwcAYuZKCBimTsmT3V6BEC+Yghj0tiUP4axoHs/jwlMQMHy4jb7s6Td8zasyRaMY
+         jy2BHZcDba9X9T6Kmb0plGqBhKfR06ff9ger7x7GJK8Rz1QMEcm00JTk+ZetviasuX0Z
+         lf9D7fbzwrOlinJ9hIqVV1TsRi0+oRxIsdPbBP/772KCnVf0c+TazWq/J2m2kJhHMwPD
+         zwgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DZdzOMSBDjT7a79mDiWwTHeWFxZw9xfnkqZBlQGysLQ=;
+        b=m824tPWkVnhGlVC0y0fUr5yyl/149R80Q+WxxGsN0AWEOVCOkAtP0zwpEbFJmtSR4T
+         vbTFpds6BR4VDpT1SK4k7Nu+bTbJeZ7Qr8Czorftlxbldg3ZCZjLh6+vWcTsd8hnXpXJ
+         PQwY4Mx/ID9b+yRJktSpqJ24nvDm3m96mvSuoWzJQDFP2Z7G4dnxGrlRfmiv0+sDMKXh
+         NWWFVuUFEXW0gC1JSoqPfGabbqqS03knbRvFJXMpa/Jei1YZAz4sQFwD8H87gVJ8lKYp
+         3t8fKYuS5eV3GE1pHblHSO0jN28DFfUxEAEDwcD6Lqrxd59sZpFPeMU8kKvjzk9letbU
+         tOLA==
+X-Gm-Message-State: AOAM5335uyd93lFOQUTjnz8gFCZkbMRECOc6k8wKQijr72fdzK/A8TI6
+        PHV6d+lBAtWj9WGe0uUjJMahYe8+sJfp85Dvkdw=
+X-Google-Smtp-Source: ABdhPJxC3dAemHLJ82FyECgaSS2AXxijWNvMBghcY9vwWJDh03AFI0K+r3pHN5I7BwBQY5JL1AtCqoEqdEPk1OpPcQE=
+X-Received: by 2002:a92:c548:: with SMTP id a8mr19049663ilj.137.1618869881243;
+ Mon, 19 Apr 2021 15:04:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <CAOQ4uxirud-+ot0kZ=8qaicvjEM5w1scAeoLP_-HzQx+LwihHw@mail.gmail.com>
+ <20210331125412.GI30749@quack2.suse.cz> <CAOQ4uxjOyuvpJ7Tv3cGmv+ek7+z9BJBF4sK_-OLxwePUrHERUg@mail.gmail.com>
+ <CAOQ4uxhWE9JGOZ_jN9_RT5EkACdNWXOryRsm6Wg_zkaDNDSjsA@mail.gmail.com>
+ <20210401102947.GA29690@quack2.suse.cz> <CAOQ4uxjHFkRVTY5iyTSpb0R5R6j-j=8+Htpu2hgMAz9MTci-HQ@mail.gmail.com>
+ <CAOQ4uxjS56hjaXeTUdce2gJT3tTFb2Zs1_PiUJZzXF9i-SPGkw@mail.gmail.com>
+ <20210408125258.GB3271@quack2.suse.cz> <CAOQ4uxhrvKkK3RZRoGTojpyiyVmQpLWknYiKs8iN=Uq+mhOvsg@mail.gmail.com>
+ <CAOQ4uxi3c2xg9eiL41xv51JoGKn0E2KZuK07na0uSNCxU54OMQ@mail.gmail.com> <YH23mMawq2nZeBhk@zeniv-ca.linux.org.uk>
+In-Reply-To: <YH23mMawq2nZeBhk@zeniv-ca.linux.org.uk>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 20 Apr 2021 01:04:29 +0300
+Message-ID: <CAOQ4uxhXXLwUBr01zuU=Uo9rzEg4JQ2w_zEejdRRU8FSJsJg0w@mail.gmail.com>
+Subject: Re: fsnotify path hooks
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I am seeing missed wakeups which ultimately lead to a deadlock when I am
-using virtiofs with DAX enabled and running "make -j". I had to mount
-virtiofs as rootfs and also reduce to dax window size to 256M to reproduce
-the problem consistently.
+On Mon, Apr 19, 2021 at 8:02 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Mon, Apr 19, 2021 at 07:41:51PM +0300, Amir Goldstein wrote:
+>
+> > Would you be willing to make an exception for notify_change()
+> > and pass mnt arg to the helper? and if so, which of the following
+> > is the lesser evil in your opinion:
+> >
+> > 1. Optional mnt arg
+> > --------------------------
+> > int notify_change(struct vfsmount *mnt,
+> >                  struct user_namespace *mnt_userns,
+> >                  struct dentry *dentry, struct iattr *attr,
+> >                  struct inode **delegated_inode)
+> >
+> > @mnt is non-NULL from syscalls and nfsd and NULL from other callers.
+> >
+> > 2. path instead of dentry
+> > --------------------------------
+> > int notify_change(struct user_namespace *mnt_userns,
+> >                  struct path *path, struct iattr *attr,
+> >                  struct inode **delegated_inode)
+> >
+> > This is symmetric with vfs_getattr().
+> > syscalls and nfsd use the actual path.
+> > overlayfs, ecryptfs, cachefiles compose a path from the private mount
+> > (Christian posted patches to make ecryptfs, cachefiles mount private).
+> >
+> > 3. Mandatory mnt arg
+> > -----------------------------
+> > Like #1, but use some private mount instead of NULL, similar to the
+> > mnt_userns arg.
+> >
+> > Any of the above acceptable?
+> >
+> > Pushed option #1 (along with rest of the work) to:
+> > https://github.com/amir73il/linux/commits/fsnotify_path_hooks
+> >
+> > It's only sanity tested.
+>
+>         Out of that bunch only #2 is more or less tolerable.
 
-So here is the problem. put_unlocked_entry() wakes up waiters only
-if entry is not null as well as !dax_is_conflict(entry). But if I
-call multiple instances of invalidate_inode_pages2() in parallel,
-then I can run into a situation where there are waiters on
-this index but nobody will wait these.
+Tolerable works for me.
 
-invalidate_inode_pages2()
-  invalidate_inode_pages2_range()
-    invalidate_exceptional_entry2()
-      dax_invalidate_mapping_entry_sync()
-        __dax_invalidate_entry() {
-                xas_lock_irq(&xas);
-                entry = get_unlocked_entry(&xas, 0);
-                ...
-                ...
-                dax_disassociate_entry(entry, mapping, trunc);
-                xas_store(&xas, NULL);
-                ...
-                ...
-                put_unlocked_entry(&xas, entry);
-                xas_unlock_irq(&xas);
-        }
+> HOWEVER, if we go that way, mnt_user_ns crap must go, and
 
-Say a fault in in progress and it has locked entry at offset say "0x1c".
-Now say three instances of invalidate_inode_pages2() are in progress
-(A, B, C) and they all try to invalidate entry at offset "0x1c". Given
-dax entry is locked, all tree instances A, B, C will wait in wait queue.
+Christian requested that I refrain from re-acquiring mnt_user_ns
+from mnt after it had already been used for security checks,
+for example:
+ do_open()
+    may_create_in_sticky(mnt_userns,...)
+    may_open(mnt_userns,...)
+    handle_truncate(mnt_userns,...
+        do_truncate(mnt_userns,...
+              notify_change(mnt_userns,...
 
-When dax fault finishes, say A is woken up. It will store NULL entry
-at index "0x1c" and wake up B. When B comes along it will find "entry=0"
-at page offset 0x1c and it will call put_unlocked_entry(&xas, 0). And
-this means put_unlocked_entry() will not wake up next waiter, given
-the current code. And that means C continues to wait and is not woken
-up.
+Although, I am not sure exactly why.
+Isn't mnt_userns supposed to be stable after the mount is
+connected to the namespace?
+What is the concern from re-quiring mnt_userns from path->mnt
+inside notify_change()?
 
-This patch fixes the issue by waking up all waiters when a dax entry
-has been invalidated. This seems to fix the deadlock I am facing
-and I can make forward progress.
+> I really want to see details on all callers - which mount are
+> you going to use in each case.
 
-Reported-by: Sergio Lopez <slp@redhat.com>
-Fixes: ac401cc78242 ("dax: New fault locking")
-Suggested-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/dax.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The callers are:
+cachefiles, ecryptfs, nfsd, devtmpfs,
+do_truncate(), vfs_utimes() and file_remove_privs()
 
-diff --git a/fs/dax.c b/fs/dax.c
-index f19d76a6a493..cc497519be83 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -676,7 +676,7 @@ static int __dax_invalidate_entry(struct address_space *mapping,
- 	mapping->nrexceptional--;
- 	ret = 1;
- out:
--	put_unlocked_entry(&xas, entry, WAKE_NEXT);
-+	put_unlocked_entry(&xas, entry, WAKE_ALL);
- 	xas_unlock_irq(&xas);
- 	return ret;
- }
--- 
-2.25.4
+* cachefiles, ecryptfs, nfsd compose paths from stashed
+mount like this all the time (e.g. for vfs_truncate(), vf_getattr()).
 
+* devtmpfs has the parent path from and also uses it to
+compose child path for vfs_getattr().
+
+* vfs_utimes() and all callers of do_truncate() already have the
+path, just need to pass it through to notify_change()
+
+>
+>         The thing that is not going to be acceptable is
+> a combination of mount from one filesystem and dentry from
+> another.  In particular, file_remove_privs() is going to be
+> interesting.
+>
+>         Note, BTW, that ftruncate() and file_remove_privs()
+> are different in that respect - the latter hits d_real()
+> (by way of file_dentry()), the former does not.  Which one
+> is correct and if both are, why are their needs different?
+
+Nowadays (>= v4.19) I think the only files whose file_inode() and
+f_path do not agree are the overlayfs "real.file" that can find their
+way to f_mapping and to some vfs helpers and from there to
+filesystem ops and to file_modified() or generic_file_write_iter()
+and to file_remove_privs().
+
+Contrary to that, overlayfs does not call any vfs truncate()
+helper, it calls notify_change() directly (with a composed path).
+
+So what should we do about file_remove_privs()?
+Since I don't think we really need to care about generating an
+event on file_remove_privs(), perhaps it could call __notify_change()
+that does not generate an event and the rest of the callers call this wrapper:
+
+int notify_change(struct path *path, struct iattr *attr,
+                            struct inode **delegated_inode)
+{
+        unsigned int ia_valid;
+        int error = __notify_change(mnt_user_ns(path->mnt), path->dentry,
+                                                    attr, &ia_valid,
+delegated_inode);
+
+        if (!error)
+                fsnotify_change(path, ia_valid);
+        return error;
+}
+
+Does this make sense?
+
+Thanks,
+Amir.
