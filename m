@@ -2,114 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1CED3649C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 20:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70939364A07
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 20:45:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240939AbhDSSZX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Apr 2021 14:25:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233908AbhDSSZU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Apr 2021 14:25:20 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5E6B9611EE;
-        Mon, 19 Apr 2021 18:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618856690;
-        bh=YxOWGUrr9Arsoda9fsVSCB7Wv4rVHn47U+RWA4JnEik=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Eqgm4LWDn1T4KMIdCqYE+gjNg+SANj+00vJAZ20BOHkbCOUFadrvAoCiSfOO0vRry
-         cRCtQoRNQsNXz5MFoOsMVaaP5Gd9/+08n7XDGr80HYzIgK9xevo+a/Sm9FXoJXZjTk
-         HaSQiBdLsidEyOo5u5kxW/yk+MUsmi2kU2J8JYlAQ+COKbIhejTh20dmKGVs5wB+PQ
-         r8kxDIacMWEYzyfTRPMIDb6vu58wBn7mPmvUnoXAazvSjaTq6lhypXTWnItI4BvjoA
-         TnqdMG0PIIF9yA1redNzhKMCU4jKQXwnIlYMZ9uunZfCkBYwZUzqLYKrPmPwfNOjpf
-         8Nh3U2mR23q7w==
-Date:   Mon, 19 Apr 2021 21:24:30 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH] secretmem: optimize page_is_secretmem()
-Message-ID: <YH3K3sBFbNFOxTV+@kernel.org>
-References: <20210419084218.7466-1-rppt@kernel.org>
- <20210419112302.GX2531743@casper.infradead.org>
- <YH1v4XVzfXC1dYND@kernel.org>
- <20210419122156.GZ2531743@casper.infradead.org>
+        id S239747AbhDSSqC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 14:46:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:50157 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239366AbhDSSqB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Apr 2021 14:46:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618857930;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=1V9/k461e5yNE9L1Zer97sHvtte82Z94GuhY2/j5UQw=;
+        b=Ix8CLrAo5a4JPxZoYmWiLsBKRD564tBXIwDPhivGkbPId6Jc7CPa+n0XRaB5nJd1MZ7MS5
+        oaC8PdAPajof3tgLuYM5KJC529uW0HwJEl4AaIPNHKDKqKroxe6+gsXdbBv6Hn0y0VdRCS
+        QmyUQqwp+9s414ckAQ3c0mWwOIvXFJg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-494-TSfOH08yP9OyXg1DKMwK9A-1; Mon, 19 Apr 2021 14:45:27 -0400
+X-MC-Unique: TSfOH08yP9OyXg1DKMwK9A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 006688030A0;
+        Mon, 19 Apr 2021 18:45:26 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-116-35.rdu2.redhat.com [10.10.116.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 33BA460C5C;
+        Mon, 19 Apr 2021 18:45:17 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id BBB6922054F; Mon, 19 Apr 2021 14:45:16 -0400 (EDT)
+Date:   Mon, 19 Apr 2021 14:45:16 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>, willy@infradead.org
+Cc:     virtio-fs-list <virtio-fs@redhat.com>,
+        Sergio Lopez <slp@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>, linux-nvdimm@lists.01.org,
+        linux kernel mailing list <linux-kernel@vger.kernel.org>
+Subject: [PATCH][v2] dax: Fix missed wakeup during dax entry invalidation
+Message-ID: <20210419184516.GC1472665@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210419122156.GZ2531743@casper.infradead.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 19, 2021 at 01:21:56PM +0100, Matthew Wilcox wrote:
-> On Mon, Apr 19, 2021 at 02:56:17PM +0300, Mike Rapoport wrote:
-> 
-> > > With that fixed, you'll have a head page that you can use for testing,
-> > > which means you don't need to test PageCompound() (because you know the
-> > > page isn't PageTail), you can just test PageHead().
-> > 
-> > I can't say I follow you here. page_is_secretmem() is intended to be a
-> > generic test, so I don't see how it will get PageHead() if it is called
-> > from other places.
-> 
-> static inline bool head_is_secretmem(struct page *head)
-> {
-> 	if (PageHead(head))
-> 		return false;
-> 	...
-> }
-> 
-> static inline bool page_is_secretmem(struct page *page)
-> {
-> 	if (PageTail(page))
-> 		return false;
-> 	return head_is_secretmem(page);
-> }
-> 
-> (yes, calling it head is a misnomer, because it's not necessarily a head,
-> it might be a base page, but until we have a name for pages which might
-> be a head page or a base page, it'll have to do ...)
+This is V2 of the patch. Posted V1 here.
 
-To me this looks less clean and readable and in the end we have an extra
-check for PG_Head if that won't get optimized away.
+https://lore.kernel.org/linux-fsdevel/20210416173524.GA1379987@redhat.com/
 
-Does not seem to me there would be a measurable difference, but if this is
-important for future conversion to folio I don't mind using
-{head,page}_is_secretmem.
+Based on feedback from Dan and Jan, modified the patch to wake up 
+all waiters when dax entry is invalidated. This solves the issues
+of missed wakeups.
 
--- 
-Sincerely yours,
-Mike.
+I am seeing missed wakeups which ultimately lead to a deadlock when I am
+using virtiofs with DAX enabled and running "make -j". I had to mount
+virtiofs as rootfs and also reduce to dax window size to 256M to reproduce
+the problem consistently.
+
+So here is the problem. put_unlocked_entry() wakes up waiters only
+if entry is not null as well as !dax_is_conflict(entry). But if I
+call multiple instances of invalidate_inode_pages2() in parallel,
+then I can run into a situation where there are waiters on
+this index but nobody will wait these.
+
+invalidate_inode_pages2()
+  invalidate_inode_pages2_range()
+    invalidate_exceptional_entry2()
+      dax_invalidate_mapping_entry_sync()
+        __dax_invalidate_entry() {
+                xas_lock_irq(&xas);
+                entry = get_unlocked_entry(&xas, 0);
+                ...
+                ...
+                dax_disassociate_entry(entry, mapping, trunc);
+                xas_store(&xas, NULL);
+                ...
+                ...
+                put_unlocked_entry(&xas, entry);
+                xas_unlock_irq(&xas);
+        }
+
+Say a fault in in progress and it has locked entry at offset say "0x1c".
+Now say three instances of invalidate_inode_pages2() are in progress
+(A, B, C) and they all try to invalidate entry at offset "0x1c". Given
+dax entry is locked, all tree instances A, B, C will wait in wait queue.
+
+When dax fault finishes, say A is woken up. It will store NULL entry
+at index "0x1c" and wake up B. When B comes along it will find "entry=0"
+at page offset 0x1c and it will call put_unlocked_entry(&xas, 0). And
+this means put_unlocked_entry() will not wake up next waiter, given
+the current code. And that means C continues to wait and is not woken
+up.
+
+This patch fixes the issue by waking up all waiters when a dax entry
+has been invalidated. This seems to fix the deadlock I am facing
+and I can make forward progress.
+
+Reported-by: Sergio Lopez <slp@redhat.com>
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+---
+ fs/dax.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+Index: redhat-linux/fs/dax.c
+===================================================================
+--- redhat-linux.orig/fs/dax.c	2021-04-16 14:16:44.332140543 -0400
++++ redhat-linux/fs/dax.c	2021-04-19 11:24:11.465213474 -0400
+@@ -264,11 +264,11 @@ static void wait_entry_unlocked(struct x
+ 	finish_wait(wq, &ewait.wait);
+ }
+ 
+-static void put_unlocked_entry(struct xa_state *xas, void *entry)
++static void put_unlocked_entry(struct xa_state *xas, void *entry, bool wake_all)
+ {
+ 	/* If we were the only waiter woken, wake the next one */
+ 	if (entry && !dax_is_conflict(entry))
+-		dax_wake_entry(xas, entry, false);
++		dax_wake_entry(xas, entry, wake_all);
+ }
+ 
+ /*
+@@ -622,7 +622,7 @@ struct page *dax_layout_busy_page_range(
+ 			entry = get_unlocked_entry(&xas, 0);
+ 		if (entry)
+ 			page = dax_busy_page(entry);
+-		put_unlocked_entry(&xas, entry);
++		put_unlocked_entry(&xas, entry, false);
+ 		if (page)
+ 			break;
+ 		if (++scanned % XA_CHECK_SCHED)
+@@ -664,7 +664,7 @@ static int __dax_invalidate_entry(struct
+ 	mapping->nrexceptional--;
+ 	ret = 1;
+ out:
+-	put_unlocked_entry(&xas, entry);
++	put_unlocked_entry(&xas, entry, true);
+ 	xas_unlock_irq(&xas);
+ 	return ret;
+ }
+@@ -943,7 +943,7 @@ static int dax_writeback_one(struct xa_s
+ 	return ret;
+ 
+  put_unlocked:
+-	put_unlocked_entry(xas, entry);
++	put_unlocked_entry(xas, entry, false);
+ 	return ret;
+ }
+ 
+@@ -1684,7 +1684,7 @@ dax_insert_pfn_mkwrite(struct vm_fault *
+ 	/* Did we race with someone splitting entry or so? */
+ 	if (!entry || dax_is_conflict(entry) ||
+ 	    (order == 0 && !dax_is_pte_entry(entry))) {
+-		put_unlocked_entry(&xas, entry);
++		put_unlocked_entry(&xas, entry, false);
+ 		xas_unlock_irq(&xas);
+ 		trace_dax_insert_pfn_mkwrite_no_entry(mapping->host, vmf,
+ 						      VM_FAULT_NOPAGE);
+
