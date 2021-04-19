@@ -2,116 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D97CA364C5C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 22:50:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88131364CE0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 23:10:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243320AbhDSUue (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Apr 2021 16:50:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55116 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243119AbhDSUsb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Apr 2021 16:48:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D6B6613C5;
-        Mon, 19 Apr 2021 20:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618865153;
-        bh=5ZcHCJZs08nASXkYcwsWOrqtzik80cVFmrMQvm/bBOI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YVQUubggCXv6ZB6pjVf3Sx8/A3LB2mZY/X0XXbPTFQ7Dq1TKXCqa4UtciYlKJquXm
-         bjBoMtpaSJR29ug7XS4XoRB2LuXtnvF6HN/dO9Y23RVjfbwhTiOYzazj9gaYy11Q52
-         dEk32AdgQSlrYmwGULZWQij7Lwg9VBKJhzcgpm1IDu1gnT2zQD6SVXbVFEq+KqSXVZ
-         PvGeqxAmCjFIQ88Wy47y2huv8F2V5CJZ+5mqVaRlzM97aeNPkngp9D8qoxueeqQrcV
-         gOEr7rtd38psuqGeRoRvnUVLBaYejZl2xuzI9uyZrRDw47wbBZLP2wZhQ8gzxA+4q/
-         E+4tCKk0Qyaog==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 11/11] readdir: make sure to verify directory entry for legacy interfaces too
-Date:   Mon, 19 Apr 2021 16:45:36 -0400
-Message-Id: <20210419204536.6924-11-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210419204536.6924-1-sashal@kernel.org>
-References: <20210419204536.6924-1-sashal@kernel.org>
+        id S229936AbhDSVK5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 17:10:57 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:52851 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229734AbhDSVK4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Apr 2021 17:10:56 -0400
+Received: by mail-io1-f71.google.com with SMTP id w2-20020a5ed6020000b02903ee20b1d066so3817587iom.19
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Apr 2021 14:10:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=GxSpPYxkUsP/ERiVTjpzjF3u68ZCtAv+UgFiC84CCo4=;
+        b=bL6ycB0ErRbKsS8KflavQ1nc2TFkq7V+MmmhRIZYN0yKLQD3egWgcBJQbLOPx6DOIC
+         VblKlLx/b1E/D9Ko+jv3LgQGjo6IAzt5TUBHlqG/78GYTKBqmaZSGgjNLFNzmUk8+e31
+         3R7hVC72j/A6b8ve7a51H12u9NcfOdkWghjVOqJ7yFTpMeWKw95IvdSWG0amvqrryVK3
+         maQWXYfskMm15F/i4PZeINNRC5VejmePbqwbC9EXJJTKCSMicENp1JJm2rp8qR3D38FR
+         OAEJ1uWpNSljo7RnuMws8w/cFjdxq3TvIdQszFhtidE7i9YZil/6WlELQcGHD2g66Kn3
+         82JA==
+X-Gm-Message-State: AOAM531vfOGKwiv3MUJXLynnLhvm9EzwEmmaRmmLgh5vxvQm/v9z1sk4
+        85CFKe7u2KRueU7GLbNKa33rsGw2QA64D1ub7v3xFzl7AhrB
+X-Google-Smtp-Source: ABdhPJyH+56P9BDVL61iQj8tqGBuwYwwY3RHME4kqm6YgYLbwY+ooRl4E5DS2k8OkGzfxtfxjoBbKn/UsdjXNYaCUoHfZz1qYtBo
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a6b:d60e:: with SMTP id w14mr16037432ioa.187.1618866625653;
+ Mon, 19 Apr 2021 14:10:25 -0700 (PDT)
+Date:   Mon, 19 Apr 2021 14:10:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000029326505c059c220@google.com>
+Subject: [syzbot] INFO: task hung in __io_uring_cancel
+From:   syzbot <syzbot+47fc00967b06a3019bd2@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+Hello,
 
-[ Upstream commit 0c93ac69407d63a85be0129aa55ffaec27ffebd3 ]
+syzbot found the following issue on:
 
-This does the directory entry name verification for the legacy
-"fillonedir" (and compat) interface that goes all the way back to the
-dark ages before we had a proper dirent, and the readdir() system call
-returned just a single entry at a time.
+HEAD commit:    1216f02e Add linux-next specific files for 20210415
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=130bbeded00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3491b04113499f81
+dashboard link: https://syzkaller.appspot.com/bug?extid=47fc00967b06a3019bd2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14734dc5d00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16dfaf65d00000
 
-Nobody should use this interface unless you still have binaries from
-1991, but let's do it right.
+The issue was bisected to:
 
-This came up during discussions about unsafe_copy_to_user() and proper
-checking of all the inputs to it, as the networking layer is looking to
-use it in a few new places.  So let's make sure the _old_ users do it
-all right and proper, before we add new ones.
+commit d9d05217cb6990b9a56e13b56e7a1b71e2551f6c
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Fri Jan 8 20:57:25 2021 +0000
 
-See also commit 8a23eb804ca4 ("Make filldir[64]() verify the directory
-entry filename is valid") which did the proper modern interfaces that
-people actually use. It had a note:
+    io_uring: stop SQPOLL submit on creator's death
 
-    Note that I didn't bother adding the checks to any legacy interfaces
-    that nobody uses.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11b86f9ad00000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13b86f9ad00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15b86f9ad00000
 
-which this now corrects.  Note that we really don't care about POSIX and
-the presense of '/' in a directory entry, but verify_dirent_name() also
-ends up doing the proper name length verification which is what the
-input checking discussion was about.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+47fc00967b06a3019bd2@syzkaller.appspotmail.com
+Fixes: d9d05217cb69 ("io_uring: stop SQPOLL submit on creator's death")
 
-[ Another option would be to remove the support for this particular very
-  old interface: any binaries that use it are likely a.out binaries, and
-  they will no longer run anyway since we removed a.out binftm support
-  in commit eac616557050 ("x86: Deprecate a.out support").
+INFO: task iou-sqp-8700:8701 blocked for more than 143 seconds.
+      Not tainted 5.12.0-rc7-next-20210415-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:iou-sqp-8700    state:D stack:28960 pid: 8701 ppid:  8414 flags:0x00004004
+Call Trace:
+ context_switch kernel/sched/core.c:4329 [inline]
+ __schedule+0x917/0x2170 kernel/sched/core.c:5079
+ schedule+0xcf/0x270 kernel/sched/core.c:5158
+ __io_uring_cancel+0x285/0x420 fs/io_uring.c:8977
+ io_uring_files_cancel include/linux/io_uring.h:16 [inline]
+ do_exit+0x299/0x2a70 kernel/exit.c:780
+ io_sq_thread+0x60a/0x1340 fs/io_uring.c:6873
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
 
-  But I'm not sure which came first: getdents() or ELF support, so let's
-  pretend somebody might still have a working binary that uses the
-  legacy readdir() case.. ]
+Showing all locks held in the system:
+1 lock held by khungtaskd/1653:
+ #0: ffffffff8bf76560 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6333
+1 lock held by in:imklog/8133:
+ #0: ffff888013088370 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:990
 
-Link: https://lore.kernel.org/lkml/CAHk-=wjbvzCAhAtvG0d81W5o0-KT5PPTHhfJ5ieDFq+bGtgOYg@mail.gmail.com/
-Acked-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 PID: 1653 Comm: khungtaskd Not tainted 5.12.0-rc7-next-20210415-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack+0x141/0x1d7 lib/dump_stack.c:120
+ nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
+ nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
+ watchdog+0xd3b/0xf50 kernel/hung_task.c:338
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 7 Comm: kworker/0:1 Not tainted 5.12.0-rc7-next-20210415-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events toggle_allocation_gate
+RIP: 0010:__preempt_count_sub arch/x86/include/asm/preempt.h:85 [inline]
+RIP: 0010:preempt_count_sub+0x56/0x150 kernel/sched/core.c:4772
+Code: 85 e4 00 00 00 8b 0d 19 08 e5 0e 85 c9 75 1b 65 8b 05 ae 60 b3 7e 89 c2 81 e2 ff ff ff 7f 39 da 7c 13 81 fb fe 00 00 00 76 63 <f7> db 65 01 1d 91 60 b3 7e 5b c3 e8 4a cd c2 07 85 c0 74 f5 48 c7
+RSP: 0018:ffffc90000cc79f8 EFLAGS: 00000002
+RAX: 0000000080000002 RBX: 0000000000000001 RCX: 0000000000000000
+RDX: 0000000000000002 RSI: ffffffff83e7543f RDI: 0000000000000001
+RBP: ffff8880b9c34a80 R08: 0000000000000002 R09: 000000000000eb19
+R10: ffffffff83e7538c R11: 000000000000003f R12: 0000000000000008
+R13: ffff888140120660 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffa2b511018 CR3: 000000000bc8e000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ flush_tlb_mm_range+0x111/0x230 arch/x86/mm/tlb.c:957
+ __text_poke+0x590/0x8c0 arch/x86/kernel/alternative.c:837
+ text_poke_bp_batch+0x3d7/0x560 arch/x86/kernel/alternative.c:1150
+ text_poke_flush arch/x86/kernel/alternative.c:1240 [inline]
+ text_poke_flush arch/x86/kernel/alternative.c:1237 [inline]
+ text_poke_finish+0x16/0x30 arch/x86/kernel/alternative.c:1247
+ arch_jump_label_transform_apply+0x13/0x20 arch/x86/kernel/jump_label.c:122
+ jump_label_update+0x1da/0x400 kernel/jump_label.c:825
+ static_key_enable_cpuslocked+0x1b1/0x260 kernel/jump_label.c:177
+ static_key_enable+0x16/0x20 kernel/jump_label.c:190
+ toggle_allocation_gate mm/kfence/core.c:610 [inline]
+ toggle_allocation_gate+0xbf/0x2e0 mm/kfence/core.c:602
+ process_one_work+0x98d/0x1600 kernel/workqueue.c:2275
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+
+
 ---
- fs/readdir.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/readdir.c b/fs/readdir.c
-index 0c357663e33a..e6f4c7b8884b 100644
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -133,6 +133,9 @@ static int fillonedir(struct dir_context *ctx, const char *name, int namlen,
- 
- 	if (buf->result)
- 		return -EINVAL;
-+	buf->result = verify_dirent_name(name, namlen);
-+	if (buf->result < 0)
-+		return buf->result;
- 	d_ino = ino;
- 	if (sizeof(d_ino) < sizeof(ino) && d_ino != ino) {
- 		buf->result = -EOVERFLOW;
-@@ -392,6 +395,9 @@ static int compat_fillonedir(struct dir_context *ctx, const char *name,
- 
- 	if (buf->result)
- 		return -EINVAL;
-+	buf->result = verify_dirent_name(name, namlen);
-+	if (buf->result < 0)
-+		return buf->result;
- 	d_ino = ino;
- 	if (sizeof(d_ino) < sizeof(ino) && d_ino != ino) {
- 		buf->result = -EOVERFLOW;
--- 
-2.30.2
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
