@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DE296364BD9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 22:46:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1B7B364C0F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 22:49:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242963AbhDSUqx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Apr 2021 16:46:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54616 "EHLO mail.kernel.org"
+        id S243114AbhDSUsa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 16:48:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242752AbhDSUp2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Apr 2021 16:45:28 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 794E0613EE;
-        Mon, 19 Apr 2021 20:44:52 +0000 (UTC)
+        id S240991AbhDSUq2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Apr 2021 16:46:28 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9296D613E6;
+        Mon, 19 Apr 2021 20:45:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618865093;
-        bh=8ebH80wLSzpKsXllnqDHsURT7pA6qJAmK3LBb8kMWVo=;
+        s=k20201202; t=1618865116;
+        bh=56K4myA+5ARz3MjMb1LaGidGUwu2AMF8u76s8So379w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mCs6xrThBDCP+eIB6Ah4hlbVQCTWQK7o31mo6WZxkV/5OaV6TEGbA4Z6k6GxCm/Zn
-         eh+63TaF6ex0Vh9DM5d4XWOFc5s5QU+cGlPoMT+MM1fshsjVmD6GkbVmCf+KVIBj0d
-         naWnQw0T3jhRagC0HxIagryq4UTn5X2ioGz6/FGIR/haVazXpy8X2hwhsgabsXi3Jc
-         30z7i+7zMI732ykiubp3xtiNsi9zjc4CJwI3lCn150/CBTWBJsjq4i2BH8I7H3WwEb
-         UXTAbGn/2oUNsSNSMOfUqRF70O8Jp+vff8S6OynpaeSgb1xvGrdHUGSX7njtN5+umu
-         3ISNp2ijtBBng==
+        b=lu51eshk1kvOrgbzg6AOjh4YLCkZ0rP5AxwVla+9Uyzm4zlGKtM1iBak+sg0QfNRu
+         mvhXbLa2EdxFht0vGoFF709OGunjkscn4greBYNA/JwPehBUISmxpc9WcPCCpk78jR
+         D0ckaBw1/AjiPAHo0mVr9NcjYvTkdKJd+XYsjkDrNkm6v6hheMiCXpgLWtOX/WNMf9
+         gdUTvOAg95zrUprKFAJNT3/dHUC0xPIimMrnx/d9kh4GkJ5WSak/RLK/Ksg97j25UZ
+         TaE/Q3+wQc2Ja02rF5IWlxzOexJDaS29P9usmy02nV2JaUo484VJGFFzcT5NdgsX+R
+         Ad1khHcKTpZqQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 21/21] readdir: make sure to verify directory entry for legacy interfaces too
-Date:   Mon, 19 Apr 2021 16:44:19 -0400
-Message-Id: <20210419204420.6375-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 14/14] readdir: make sure to verify directory entry for legacy interfaces too
+Date:   Mon, 19 Apr 2021 16:44:54 -0400
+Message-Id: <20210419204454.6601-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210419204420.6375-1-sashal@kernel.org>
-References: <20210419204420.6375-1-sashal@kernel.org>
+In-Reply-To: <20210419204454.6601-1-sashal@kernel.org>
+References: <20210419204454.6601-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -89,7 +89,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 6 insertions(+)
 
 diff --git a/fs/readdir.c b/fs/readdir.c
-index 19434b3c982c..09e8ed7d4161 100644
+index de2eceffdee8..07a3b5baa404 100644
 --- a/fs/readdir.c
 +++ b/fs/readdir.c
 @@ -150,6 +150,9 @@ static int fillonedir(struct dir_context *ctx, const char *name, int namlen,
@@ -102,7 +102,7 @@ index 19434b3c982c..09e8ed7d4161 100644
  	d_ino = ino;
  	if (sizeof(d_ino) < sizeof(ino) && d_ino != ino) {
  		buf->result = -EOVERFLOW;
-@@ -405,6 +408,9 @@ static int compat_fillonedir(struct dir_context *ctx, const char *name,
+@@ -417,6 +420,9 @@ static int compat_fillonedir(struct dir_context *ctx, const char *name,
  
  	if (buf->result)
  		return -EINVAL;
