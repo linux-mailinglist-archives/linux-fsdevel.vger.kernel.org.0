@@ -2,102 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 576DE36456D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 15:56:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA04336457D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 15:57:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240998AbhDSN4K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Apr 2021 09:56:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:43480 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240043AbhDSNz7 (ORCPT
+        id S232431AbhDSN5z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 09:57:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39074 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234081AbhDSN5y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Apr 2021 09:55:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618840529;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WxdqbfoBJXaYxfD6rImyDUvIjZiF5Q3ecjdpEO3HnrU=;
-        b=ALrFn8rBvCOneEIRJpiS+PUwY/EVnEEWr0OIAoD+DCYCCj7hvuuIzWTlpmKaz2m9DIsPD0
-        MYdL7jBbGD74pfE1ZYP+ugvcXh5qqA/sbfiePiZJFhQY/rffc0FtImyhspJNzU0umDAqEH
-        ma6F419qUXU9blHD0uCguRNSfmQsfok=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-302-OjBtjruXOaaknhPs7HO74A-1; Mon, 19 Apr 2021 09:55:26 -0400
-X-MC-Unique: OjBtjruXOaaknhPs7HO74A-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C60D687A83C;
-        Mon, 19 Apr 2021 13:55:24 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2FB8E5D9CA;
-        Mon, 19 Apr 2021 13:55:18 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 13JDtH4F018187;
-        Mon, 19 Apr 2021 09:55:17 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 13JDtHQu018179;
-        Mon, 19 Apr 2021 09:55:17 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 19 Apr 2021 09:55:17 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-cc:     "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Milan Broz <mbroz@redhat.com>
-Subject: Re: [dm-devel] [PATCH v2 0/3] Fix dm-crypt zoned block device
- support
-In-Reply-To: <BL0PR04MB65147D94E7E30C3E1063A282E7499@BL0PR04MB6514.namprd04.prod.outlook.com>
-Message-ID: <alpine.LRH.2.02.2104190951070.17565@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20210417023323.852530-1-damien.lemoal@wdc.com> <alpine.LRH.2.02.2104190840310.9677@file01.intranet.prod.int.rdu2.redhat.com> <BL0PR04MB65147D94E7E30C3E1063A282E7499@BL0PR04MB6514.namprd04.prod.outlook.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Mon, 19 Apr 2021 09:57:54 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB435C061760;
+        Mon, 19 Apr 2021 06:57:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=/tlWzbdi//qKHyK5G0slZklY9aETTkVqjGgc9+iYW1k=; b=bbtd/diWxYwVeUnaIIgSpmK8iy
+        16LuY12oWmKiMbef3weaPI7r/YcBBr4LE27B2jbZhIUFY7fvcUlJw1tEMpYiMQajBZvNPZ9gi3bsq
+        4yTDJRDKxipox9qJH6DY2EAvetdnSJmu9/HoBC9bxse1Bi4EMqBoUN1dMXNTATn4fxOTiw1WX5mf6
+        qufYE9Lu5YJIjlY3mz/nDYRPiCwaxN+ai8iMF/8KxbnA9l+S+l6iuj4W88djq4Qo6KTe2YWGvFH8H
+        h6vbMatkIn3OaTUBNmkXV6AQEKqVQ8yj9Fal1OwcyAsaQZuM6DWkmgxocgcc1NgaA+Fz/WUyOksdC
+        uYwy12QA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lYUN6-00DqIB-2k; Mon, 19 Apr 2021 13:56:15 +0000
+Date:   Mon, 19 Apr 2021 14:55:28 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-afs@lists.infradead.org, Christoph Hellwig <hch@lst.de>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH v7 09/28] mm: Create FolioFlags
+Message-ID: <20210419135528.GC2531743@casper.infradead.org>
+References: <20210409185105.188284-1-willy@infradead.org>
+ <20210409185105.188284-10-willy@infradead.org>
+ <YH2E2jNvhEOwCinT@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YH2E2jNvhEOwCinT@hirez.programming.kicks-ass.net>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On Mon, 19 Apr 2021, Damien Le Moal wrote:
-
-> > I would say that it is incompatible with all dm targets - even the linear 
-> > target is changing the sector number and so it may redirect the write 
-> > outside of the range specified in dm-table and cause corruption.
+On Mon, Apr 19, 2021 at 03:25:46PM +0200, Peter Zijlstra wrote:
+> On Fri, Apr 09, 2021 at 07:50:46PM +0100, Matthew Wilcox (Oracle) wrote:
+> > These new functions are the folio analogues of the PageFlags functions.
+> > If CONFIG_DEBUG_VM_PGFLAGS is enabled, we check the folio is not a tail
+> > page at every invocation.  Note that this will also catch the PagePoisoned
+> > case as a poisoned page has every bit set, which would include PageTail.
+> > 
+> > This saves 1727 bytes of text with the distro-derived config that
+> > I'm testing due to removing a double call to compound_head() in
+> > PageSwapCache().
 > 
-> DM remapping of BIO sectors is zone compatible because target entries must be
-> zone aligned. In the case of zone append, the BIO sector always point to the
-> start sector of the target zone. DM sector remapping will remap that to another
-> zone start as all zones are the same size. No issue here. We extensively use
-> dm-linear for various test environment to reduce the size of the device tested
-> (to speed up tests). I am confident there are no problems there.
-> 
-> > Instead of complicating device mapper with imperfect support, I would just 
-> > disable REQ_OP_ZONE_APPEND on device mapper at all.
-> 
-> That was my initial approach, but for dm-crypt only since other targets that
-> support zoned devices are fine. However, this breaks zoned block device
-> requirement that zone append be supported so that users are presented with a
-> uniform interface for different devices. So while simple to do, disabling zone
-> append is far from ideal.
+> I vote for dropping the Camels if we're going to rework all this.
 
-So, we could enable it for the linear target and disable for all other 
-targets?
+I'm open to that.  It's a bit of rework now, but easier to do it as
+part of this than as a separate series.
 
-I talked with Milan about it and he doesn't want to add more bloat to the 
-crypt target. I agree with him.
+So, concretely:
 
-Mikulas
+PageReferences() becomes folio_referenced()
+SetPageReferenced() becomes folio_set_referenced()
+ClearPageReferenced() becomes folio_clear_referenced()
+__SetFolioReferenced() becomes __folio_set_referenced()
+__ClearFolioReferenced() becomes __folio_clear_referenced()
+TestSetPageReferenced() becomes folio_test_set_referenced()
+TestClearPageReferenced() becomes folio_test_clear_referenced()
+
+We do have some functions already like set_page_writeback(), but I
+think those can become folio_set_writeback() without doing any harm.
+We also have page_is_young(), page_is_pfmemalloc(), page_is_guard(),
+etc.  Should it be folio_referenced()?  or folio_is_referenced()?
 
