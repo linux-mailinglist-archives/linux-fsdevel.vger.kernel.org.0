@@ -2,79 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C8BD3638C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 02:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DA18363910
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 03:24:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232880AbhDSAXT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Apr 2021 20:23:19 -0400
-Received: from mbox.abcom.al ([217.73.143.249]:53054 "EHLO mbox.abcom.al"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231489AbhDSAXS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Apr 2021 20:23:18 -0400
-X-Greylist: delayed 654 seconds by postgrey-1.27 at vger.kernel.org; Sun, 18 Apr 2021 20:23:18 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mbox.abcom.al (Postfix) with ESMTP id E9E10122486DF;
-        Mon, 19 Apr 2021 02:11:19 +0200 (CEST)
-Received: from mbox.abcom.al ([127.0.0.1])
-        by localhost (mbox.abcom.al [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id YkE9Y9vawYBg; Mon, 19 Apr 2021 02:11:19 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by mbox.abcom.al (Postfix) with ESMTP id D44D611BEFDF6;
-        Mon, 19 Apr 2021 02:11:18 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mbox.abcom.al D44D611BEFDF6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=abcom.al;
-        s=0F3BA0EE-D5D4-11E8-9596-F9115129F2F4; t=1618791079;
-        bh=p2Sn/5BeV1TeOpE0g2OnXyVNOPHFXRN2kak+hb1GY3o=;
-        h=MIME-Version:To:From:Date:Message-Id;
-        b=asXsQAkTl74VhAhYz5ypTR8IyfPycVIu7KAkl5b8exgIcUDCB6E7aO9doaTrvC0Ah
-         qnQh9zTmrNZ3Xljja8EVRrPLc9qSltCZaRS9nB8ltAR3aBWK0aaqe3rU0PH+Qtw2Oe
-         9MUfrhkJWY0o9ebtdBJHBtJmNSVppiasMN5c8a2dXmMtZAAssVONz1iCGyKcU1gy3V
-         M40WB1cJuiXbWOTu89VoF/ryH7zpeNwBnUS5KfANr6kM71wNtbKibqoKGyJomrCaee
-         3DMo3BPTxEHcr0IF0K6AYTrRD1TpSjNuuiLb9iuyWhg5vRXHlwCI8VGUy/0Qjlbw+s
-         E7wjwvsah+JQw==
-X-Virus-Scanned: amavisd-new at mbox.abcom.al
-Received: from mbox.abcom.al ([127.0.0.1])
-        by localhost (mbox.abcom.al [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 8uV2HmU0GNCY; Mon, 19 Apr 2021 02:11:18 +0200 (CEST)
-Received: from [192.168.43.60] (unknown [105.4.4.115])
-        by mbox.abcom.al (Postfix) with ESMTPSA id D71B5120ADDD9;
-        Mon, 19 Apr 2021 02:11:11 +0200 (CEST)
-Content-Type: text/plain; charset="utf-8"
+        id S236719AbhDSBYb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Apr 2021 21:24:31 -0400
+Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:56366 "EHLO
+        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233104AbhDSBYb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 18 Apr 2021 21:24:31 -0400
+Received: from dread.disaster.area (pa49-181-239-12.pa.nsw.optusnet.com.au [49.181.239.12])
+        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id CF2691AF1B0;
+        Mon, 19 Apr 2021 11:23:58 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1lYIdo-00EcnL-KJ; Mon, 19 Apr 2021 11:23:56 +1000
+Date:   Mon, 19 Apr 2021 11:23:56 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Bharata B Rao <bharata@linux.ibm.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        aneesh.kumar@linux.ibm.com
+Subject: Re: High kmalloc-32 slab cache consumption with 10k containers
+Message-ID: <20210419012356.GZ1990290@dread.disaster.area>
+References: <20210405054848.GA1077931@in.ibm.com>
+ <20210406222807.GD1990290@dread.disaster.area>
+ <20210416044439.GB1749436@in.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: =?utf-8?q?Hallo=2C_Sie_haben_eine_Spende_von_=E2=82=AC_2=2E000=2E000=2C00?=
-To:     Recipients <abashi@abcom.al>
-From:   <abashi@abcom.al>
-Date:   Mon, 19 Apr 2021 02:10:34 +0200
-Reply-To: billlawrencedonationorg@yahoo.com
-Message-Id: <20210419001111.D71B5120ADDD9@mbox.abcom.al>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210416044439.GB1749436@in.ibm.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Tu+Yewfh c=1 sm=1 tr=0 cx=a_idp_f
+        a=gO82wUwQTSpaJfP49aMSow==:117 a=gO82wUwQTSpaJfP49aMSow==:17
+        a=kj9zAlcOel0A:10 a=3YhXtTcJ-WEA:10 a=7-415B0cAAAA:8
+        a=ScFYv971vT0PkSOGSnAA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sehr geehrter Herr / Frau
-Ich gr=C3=BC=C3=9Fe Sie im Namen des Herrn. Diese Nachricht wird Ihnen als =
-Benachrichtigung gesendet, dass Sie ausgew=C3=A4hlt wurden, um von meinem W=
-ohlt=C3=A4tigkeitsprojekt zu profitieren, das darauf abzielt, Leben zu ber=
-=C3=BChren und denen zu helfen, die ich auf der ganzen Welt kann, wie Gott =
-mich gesegnet hat.
-Ich habe die Powerball-Lotterie in H=C3=B6he von 150 Millionen USD am 16. D=
-ezember 2019 gewonnen und ich habe mich freiwillig entschlossen, Ihnen eine=
-n Betrag von (2.000.000,00 =E2=82=AC) als Wohlt=C3=A4tigkeitsorganisation z=
-u spenden. Ich versuche, zuf=C3=A4llige Menschen aus verschiedenen Quellen =
-und Moden zu erreichen, um das Leben aus verschiedenen Quellen zu ber=C3=BC=
-hren Winkel. Deshalb erhalten Sie hier die Nachricht.
-Sie wurden als einer der gl=C3=BCcklichen Empf=C3=A4nger registriert, die 2=
- Millionen Euro erhalten haben. Diese Spende wird Ihnen gegeben, damit Sie =
-Ihre pers=C3=B6nlichen Probleme versch=C3=A4rfen und uns zum gro=C3=9Fen Te=
-il gro=C3=9Fz=C3=BCgig dabei helfen k=C3=B6nnen, die weniger gl=C3=BCcklich=
-en Waisen und gemeinn=C3=BCtzigen Organisationen in Ihrem Land zu unterst=
-=C3=BCtzen Nachbarschaftslokalit=C3=A4t
-Zur =C3=9Cberpr=C3=BCfung: //www.powerball.com/winner-story/150-million-pow=
-erball-ticket-claimed
+On Fri, Apr 16, 2021 at 10:14:39AM +0530, Bharata B Rao wrote:
+> On Wed, Apr 07, 2021 at 08:28:07AM +1000, Dave Chinner wrote:
+> > On Mon, Apr 05, 2021 at 11:18:48AM +0530, Bharata B Rao wrote:
+> > 
+> > > As an alternative approach, I have this below hack that does lazy
+> > > list_lru creation. The memcg-specific list is created and initialized
+> > > only when there is a request to add an element to that particular
+> > > list. Though I am not sure about the full impact of this change
+> > > on the owners of the lists and also the performance impact of this,
+> > > the overall savings look good.
+> > 
+> > Avoiding memory allocation in list_lru_add() was one of the main
+> > reasons for up-front static allocation of memcg lists. We cannot do
+> > memory allocation while callers are holding multiple spinlocks in
+> > core system algorithms (e.g. dentry_kill -> retain_dentry ->
+> > d_lru_add -> list_lru_add), let alone while holding an internal
+> > spinlock.
+> > 
+> > Putting a GFP_ATOMIC allocation inside 3-4 nested spinlocks in a
+> > path we know might have memory demand in the *hundreds of GB* range
+> > gets an NACK from me. It's a great idea, but it's just not a
+> 
+> I do understand that GFP_ATOMIC allocations are really not preferrable
+> but want to point out that the allocations in the range of hundreds of
+> GBs get reduced to tens of MBs when we do lazy list_lru head allocations
+> under GFP_ATOMIC.
 
-Kontaktieren Sie mich erneut, um Spenden zu erhalten. E-Mail: billlawrenced=
-onationorg@yahoo.com
+That does not make GFP_ATOMIC allocations safe or desirable. In
+general, using GFP_ATOMIC outside of interrupt context indicates
+something is being done incorrectly. Especially if it can be
+triggered from userspace, which is likely in this particular case...
 
-Vielen Dank, Bill Lawrence
+
+
+> As shown earlier, this is what I see in my experimental setup with
+> 10k containers:
+> 
+> Number of kmalloc-32 allocations
+> 		Before		During		After
+> W/o patch	178176		3442409472	388933632
+> W/  patch	190464		468992		468992
+
+SO now we have an additional half million GFP_ATOMIC allocations
+when we currently have none. That's not an improvement, that rings
+loud alarm bells.
+
+> This does really depend and vary on the type of the container and
+> the number of mounts it does, but I suspect we are looking
+> at GFP_ATOMIC allocations in the MB range. Also the number of
+> GFP_ATOMIC slab allocation requests matter I suppose.
+
+They are slab allocations, which mean every single one of them
+could require a new slab backing page (pages!) to be allocated.
+Hence the likely memory demand might be a lot higher than the
+optimal case you are considering here...
+
+> There are other users of list_lru, but I was just looking at
+> dentry and inode list_lru usecase. It appears to me that for both
+> dentry and inode, we can tolerate the failure from list_lru_add
+> due to GFP_ATOMIC allocation failure. The failure to add dentry
+> or inode to the lru list means that they won't be retained in
+> the lru list, but would be freed immediately. Is this understanding
+> correct?
+
+No. Both retain_dentry() and iput_final() would currently leak
+objects that fail insertion into the LRU. They don't check for
+insertion success at all.
+
+But, really, this is irrelevant - GFP_ATOMIC usage is the problem,
+and allowing it to fail doesn't avoid the problems that unbound
+GFP_ATOMIC allocation can have on the stability of the rest of the
+system when low on memory. Being able to handle a GFP_ATOMIC memory
+allocation failure doesn't change the fact that you should not be
+doing GFP_ATOMIC allocation in the first place...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
