@@ -2,124 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DA18363910
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 03:24:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E78A9363963
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 04:29:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236719AbhDSBYb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Apr 2021 21:24:31 -0400
-Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:56366 "EHLO
-        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233104AbhDSBYb (ORCPT
+        id S233179AbhDSC3j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Apr 2021 22:29:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57368 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232038AbhDSC3i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Apr 2021 21:24:31 -0400
-Received: from dread.disaster.area (pa49-181-239-12.pa.nsw.optusnet.com.au [49.181.239.12])
-        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id CF2691AF1B0;
-        Mon, 19 Apr 2021 11:23:58 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1lYIdo-00EcnL-KJ; Mon, 19 Apr 2021 11:23:56 +1000
-Date:   Mon, 19 Apr 2021 11:23:56 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Bharata B Rao <bharata@linux.ibm.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        aneesh.kumar@linux.ibm.com
-Subject: Re: High kmalloc-32 slab cache consumption with 10k containers
-Message-ID: <20210419012356.GZ1990290@dread.disaster.area>
-References: <20210405054848.GA1077931@in.ibm.com>
- <20210406222807.GD1990290@dread.disaster.area>
- <20210416044439.GB1749436@in.ibm.com>
+        Sun, 18 Apr 2021 22:29:38 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6445C06174A;
+        Sun, 18 Apr 2021 19:29:06 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id u15so8351380plf.10;
+        Sun, 18 Apr 2021 19:29:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bZBVykDy+CbPTq5GPknPQk24ko2Dt8qX06614cxzmoI=;
+        b=pmOjuCDaegOlVXpSgl1lzwSoy//PLBynAvQROra5Oj+O22sUO/1R5ycoyKKiF0V3C9
+         3cG7pYApIKJpVSz66o01Dn1nKPSDprDCEp1rjmpistU0lbm7sSEExqWEnHXAXvDr5GQB
+         vpPNBJzOPtBcZM/ga3gOacb4x4P2q0KEDP2Cl0kUPzBLMowa1ezLGXx9ZQGFZeAWbJb5
+         T47V266bPzWsj8bXT91/13X/9XnzhLUosgMO9pwKbyNvRiEFZdwQYKkB2M2BeGoOHLER
+         IbdI2SOE0/MFcN2o5kzd/gkBdNTrATab1XEXYF1JxC1cOk7rkH4ofTKM7RJlCNEui6Tu
+         +v/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bZBVykDy+CbPTq5GPknPQk24ko2Dt8qX06614cxzmoI=;
+        b=ge8tnq5sUSfPY/ZZKDO8HYEogHwIT9+mpmDJoOUuVI0TDukqIrbMQzxiDZls2FuUqq
+         Aekp0L+JaPQPKDrHeEFgb1MoQnu7zK2c8kIe/pEpj1/56GWvB0PmHqHdr8in517X0CeT
+         RciL3bl6I+c8hMpsB/izRaYgn6KlhQoksC0+yp7T5q1rEtzqqxZrEYDCTcZ32ddTwoSS
+         qiWUD30tfrEzO5VCFMu7SemnKDbaoaVcdmhkqtw7eFNZN7KjUUt1z2SUedjoJXxzYtgm
+         0NAojdHE7VP5sNCA42yUKnLQ6o8RBR7yPMBPLNEGzKiCdHNUZ6/0rcZ+JWlPmMcahARz
+         LK0Q==
+X-Gm-Message-State: AOAM530CvkGXFfXEHwp35nUQ0nkrFWFPy4VYmCv77EFGSfkiThFaCzwz
+        +94XrUjM89nnq83JBOtsSNA=
+X-Google-Smtp-Source: ABdhPJxlsKaMBLmPaeHgo0HcfC9O6q6+X+K7YIJbHuEuoB4Sq7ROCH555R+TPqR2Yu736JeDVAtZnw==
+X-Received: by 2002:a17:90a:a389:: with SMTP id x9mr21888444pjp.232.1618799346177;
+        Sun, 18 Apr 2021 19:29:06 -0700 (PDT)
+Received: from localhost.localdomain (220-130-175-235.HINET-IP.hinet.net. [220.130.175.235])
+        by smtp.gmail.com with ESMTPSA id lt11sm12577277pjb.23.2021.04.18.19.29.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Apr 2021 19:29:05 -0700 (PDT)
+From:   Chung-Chiang Cheng <shepjeng@gmail.com>
+X-Google-Original-From: Chung-Chiang Cheng <cccheng@synology.com>
+To:     gustavoars@kernel.org, christian.brauner@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     cccheng@synology.com
+Subject: [PATCH v2] hfsplus: prevent negative dentries when casefolded
+Date:   Mon, 19 Apr 2021 10:29:01 +0800
+Message-Id: <20210419022901.193750-1-cccheng@synology.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210416044439.GB1749436@in.ibm.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Tu+Yewfh c=1 sm=1 tr=0 cx=a_idp_f
-        a=gO82wUwQTSpaJfP49aMSow==:117 a=gO82wUwQTSpaJfP49aMSow==:17
-        a=kj9zAlcOel0A:10 a=3YhXtTcJ-WEA:10 a=7-415B0cAAAA:8
-        a=ScFYv971vT0PkSOGSnAA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 16, 2021 at 10:14:39AM +0530, Bharata B Rao wrote:
-> On Wed, Apr 07, 2021 at 08:28:07AM +1000, Dave Chinner wrote:
-> > On Mon, Apr 05, 2021 at 11:18:48AM +0530, Bharata B Rao wrote:
-> > 
-> > > As an alternative approach, I have this below hack that does lazy
-> > > list_lru creation. The memcg-specific list is created and initialized
-> > > only when there is a request to add an element to that particular
-> > > list. Though I am not sure about the full impact of this change
-> > > on the owners of the lists and also the performance impact of this,
-> > > the overall savings look good.
-> > 
-> > Avoiding memory allocation in list_lru_add() was one of the main
-> > reasons for up-front static allocation of memcg lists. We cannot do
-> > memory allocation while callers are holding multiple spinlocks in
-> > core system algorithms (e.g. dentry_kill -> retain_dentry ->
-> > d_lru_add -> list_lru_add), let alone while holding an internal
-> > spinlock.
-> > 
-> > Putting a GFP_ATOMIC allocation inside 3-4 nested spinlocks in a
-> > path we know might have memory demand in the *hundreds of GB* range
-> > gets an NACK from me. It's a great idea, but it's just not a
-> 
-> I do understand that GFP_ATOMIC allocations are really not preferrable
-> but want to point out that the allocations in the range of hundreds of
-> GBs get reduced to tens of MBs when we do lazy list_lru head allocations
-> under GFP_ATOMIC.
+hfsplus uses the case-insensitive filenames by default, but VFS negative
+dentries are incompatible with case-insensitive. For example, the
+following instructions will get a cached filename 'aaa' which isn't
+expected. There is no such problem in macOS.
 
-That does not make GFP_ATOMIC allocations safe or desirable. In
-general, using GFP_ATOMIC outside of interrupt context indicates
-something is being done incorrectly. Especially if it can be
-triggered from userspace, which is likely in this particular case...
+  touch aaa
+  rm aaa
+  touch AAA
 
+This patch takes the same approach to drop negative dentires as vfat does.
+The dentry is revalidated without blocking and storing to the dentry,
+and should be safe in rcu-walk.
 
+Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
+---
+ fs/hfsplus/hfsplus_fs.h |  1 +
+ fs/hfsplus/inode.c      |  1 +
+ fs/hfsplus/unicode.c    | 32 ++++++++++++++++++++++++++++++++
+ 3 files changed, 34 insertions(+)
 
-> As shown earlier, this is what I see in my experimental setup with
-> 10k containers:
-> 
-> Number of kmalloc-32 allocations
-> 		Before		During		After
-> W/o patch	178176		3442409472	388933632
-> W/  patch	190464		468992		468992
-
-SO now we have an additional half million GFP_ATOMIC allocations
-when we currently have none. That's not an improvement, that rings
-loud alarm bells.
-
-> This does really depend and vary on the type of the container and
-> the number of mounts it does, but I suspect we are looking
-> at GFP_ATOMIC allocations in the MB range. Also the number of
-> GFP_ATOMIC slab allocation requests matter I suppose.
-
-They are slab allocations, which mean every single one of them
-could require a new slab backing page (pages!) to be allocated.
-Hence the likely memory demand might be a lot higher than the
-optimal case you are considering here...
-
-> There are other users of list_lru, but I was just looking at
-> dentry and inode list_lru usecase. It appears to me that for both
-> dentry and inode, we can tolerate the failure from list_lru_add
-> due to GFP_ATOMIC allocation failure. The failure to add dentry
-> or inode to the lru list means that they won't be retained in
-> the lru list, but would be freed immediately. Is this understanding
-> correct?
-
-No. Both retain_dentry() and iput_final() would currently leak
-objects that fail insertion into the LRU. They don't check for
-insertion success at all.
-
-But, really, this is irrelevant - GFP_ATOMIC usage is the problem,
-and allowing it to fail doesn't avoid the problems that unbound
-GFP_ATOMIC allocation can have on the stability of the rest of the
-system when low on memory. Being able to handle a GFP_ATOMIC memory
-allocation failure doesn't change the fact that you should not be
-doing GFP_ATOMIC allocation in the first place...
-
-Cheers,
-
-Dave.
+diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+index 12b20479ed2b..e4f0cdfdac96 100644
+--- a/fs/hfsplus/hfsplus_fs.h
++++ b/fs/hfsplus/hfsplus_fs.h
+@@ -528,6 +528,7 @@ int hfsplus_asc2uni(struct super_block *sb, struct hfsplus_unistr *ustr,
+ int hfsplus_hash_dentry(const struct dentry *dentry, struct qstr *str);
+ int hfsplus_compare_dentry(const struct dentry *dentry, unsigned int len,
+ 			   const char *str, const struct qstr *name);
++int hfsplus_revalidate_dentry(struct dentry *dentry, unsigned int flags);
+ 
+ /* wrapper.c */
+ int hfsplus_submit_bio(struct super_block *sb, sector_t sector, void *buf,
+diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+index 078c5c8a5156..772cad371371 100644
+--- a/fs/hfsplus/inode.c
++++ b/fs/hfsplus/inode.c
+@@ -176,6 +176,7 @@ const struct address_space_operations hfsplus_aops = {
+ const struct dentry_operations hfsplus_dentry_operations = {
+ 	.d_hash       = hfsplus_hash_dentry,
+ 	.d_compare    = hfsplus_compare_dentry,
++	.d_revalidate = hfsplus_revalidate_dentry,
+ };
+ 
+ static void hfsplus_get_perms(struct inode *inode,
+diff --git a/fs/hfsplus/unicode.c b/fs/hfsplus/unicode.c
+index 73342c925a4b..e336631334eb 100644
+--- a/fs/hfsplus/unicode.c
++++ b/fs/hfsplus/unicode.c
+@@ -10,6 +10,7 @@
+  */
+ 
+ #include <linux/types.h>
++#include <linux/namei.h>
+ #include <linux/nls.h>
+ #include "hfsplus_fs.h"
+ #include "hfsplus_raw.h"
+@@ -518,3 +519,34 @@ int hfsplus_compare_dentry(const struct dentry *dentry,
+ 		return 1;
+ 	return 0;
+ }
++
++int hfsplus_revalidate_dentry(struct dentry *dentry, unsigned int flags)
++{
++	/*
++	 * dentries are always valid when disabling casefold.
++	 */
++	if (!test_bit(HFSPLUS_SB_CASEFOLD, &HFSPLUS_SB(dentry->d_sb)->flags))
++		return 1;
++
++	/*
++	 * Positive dentries are valid when enabling casefold.
++	 *
++	 * Note, rename() to existing directory entry will have ->d_inode, and
++	 * will use existing name which isn't specified name by user.
++	 *
++	 * We may be able to drop this positive dentry here. But dropping
++	 * positive dentry isn't good idea. So it's unsupported like
++	 * rename("filename", "FILENAME") for now.
++	 */
++	if (d_really_is_positive(dentry))
++		return 1;
++
++	/*
++	 * Drop the negative dentry, in order to make sure to use the case
++	 * sensitive name which is specified by user if this is for creation.
++	 */
++	if (flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET))
++		return 0;
++
++	return 1;
++}
 -- 
-Dave Chinner
-david@fromorbit.com
+2.25.1
+
