@@ -2,36 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CBB43640D4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 13:47:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D95E364121
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 13:56:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238811AbhDSLsJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Apr 2021 07:48:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38172 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232184AbhDSLsI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Apr 2021 07:48:08 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3B3CC06174A;
-        Mon, 19 Apr 2021 04:47:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=bwPuhmLV9iDdbBtA80aP2NeOoPck37vPl2v0l8S8dJw=; b=ZKgd+wiWxB4OjJM0AIDMQSKXxR
-        mK2R/z3oqKh1PUQkJXhvcIcCeNtKgp8OXUyGgAszjnbvM4jRpHJ8CjWbc7hBN1U6HbdDGK+UorYOc
-        MFcMKMdSOPfBZbD7GWLjHFe+LP+3z+b1cJWnPckDm478VhnIuObWzbqtK9sHaZ8jwmo1+eWrdBGQa
-        v1kBE40Vi4xvSvLhZ0bnDkcLGvuPRT/cK5/47tFYec+ZGcwN2cVCQO61pGGxpuB3lYinJPup2TnB4
-        GZ/ajfYkgk2Tj5Ry8+D2ggrOGM4MLh5XgrDlBR0M9Vx/aMmMy+8h8RgjgqInD8p/8jeX+er7cc13j
-        MOHIVxrw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lYSJB-00Dg11-HM; Mon, 19 Apr 2021 11:43:29 +0000
-Date:   Mon, 19 Apr 2021 12:43:17 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S238973AbhDSL5H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 07:57:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233519AbhDSL5E (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Apr 2021 07:57:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 03A2761221;
+        Mon, 19 Apr 2021 11:56:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618833395;
+        bh=6A/ev0xWFu6QEr1qRdJmTLcg7g1Q5yOrYX9lSKkBwrc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uxO9956IYPxD7CWbXB3fSSCXGQTBGoPbq8d0e6mudSqUOOR9D/a/frTDdxrhpXp3T
+         u3HOTCCCGMxCE/5oFsDEE7CL7oJo0UiFyE8XATL/PtjV1UyIMF3EyMmtXChnpmANf3
+         xvGP/jZELsbTCSFAeN0de19xcjENeBafkHrYYT3aIAMpwGMCplJXdJyijY7bDsnsxV
+         /MOKSwyo2LLpN1+M7yhhDDA1uJNr6IoUGDX83ZilzKhM+0TcMHp8KZpuLjiLSDsEjb
+         4PrIm8F9iUjdT44aR4dOTbKzDBo3Crs7XfVqwdx02xV+XZiDVN4SXOnKlpH/im2nqn
+         6aIPJA3ZtmO0Q==
+Date:   Mon, 19 Apr 2021 14:56:17 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Andy Lutomirski <luto@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
@@ -39,6 +34,7 @@ Cc:     David Hildenbrand <david@redhat.com>,
         Christopher Lameter <cl@linux.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
         Elena Reshetova <elena.reshetova@intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
         James Bottomley <jejb@linux.ibm.com>,
@@ -65,50 +61,54 @@ Cc:     David Hildenbrand <david@redhat.com>,
         linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
         x86@kernel.org, kernel test robot <oliver.sang@intel.com>
 Subject: Re: [PATCH] secretmem: optimize page_is_secretmem()
-Message-ID: <20210419114317.GY2531743@casper.infradead.org>
+Message-ID: <YH1v4XVzfXC1dYND@kernel.org>
 References: <20210419084218.7466-1-rppt@kernel.org>
- <3b30ac54-8a92-5f54-28f0-f110a40700c7@redhat.com>
- <YH1PE4oWeicpJT9g@kernel.org>
+ <20210419112302.GX2531743@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YH1PE4oWeicpJT9g@kernel.org>
+In-Reply-To: <20210419112302.GX2531743@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 19, 2021 at 12:36:19PM +0300, Mike Rapoport wrote:
-> Well, most if the -4.2% of the performance regression kbuild reported were
-> due to repeated compount_head(page) in page_mapping(). So the whole point
-> of this patch is to avoid calling page_mapping().
+On Mon, Apr 19, 2021 at 12:23:02PM +0100, Matthew Wilcox wrote:
+> On Mon, Apr 19, 2021 at 11:42:18AM +0300, Mike Rapoport wrote:
+> > The perf profile of the test indicated that the regression is caused by
+> > page_is_secretmem() called from gup_pte_range() (inlined by gup_pgd_range):
+> 
+> Uhh ... you're calling it in the wrong place!
+> 
+>                 VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
+>                 page = pte_page(pte);
+> 
+>                 if (page_is_secretmem(page))
+>                         goto pte_unmap;
+> 
+>                 head = try_grab_compound_head(page, 1, flags);
+>                 if (!head)
+>                         goto pte_unmap;
+> 
+> So you're calling page_is_secretmem() on a struct page without having
+> a refcount on it.  That is definitely not allowed.  secretmem seems to
+> be full of these kinds of races; I know this isn't the first one I've
+> seen in it.  I don't think this patchset is ready for this merge window.
 
-It's quite ludicrous how many times we call compound_head() in
-page_mapping() today:
+There were races in the older version that did caching of large pages and
+those were fixed then, but this is anyway irrelevant because all that code
+was dropped in the latest respins.
 
- page = compound_head(page);
- if (__builtin_expect(!!(PageSlab(page)), 0))
- if (__builtin_expect(!!(PageSwapCache(page)), 0)) {
+I don't think that the fix of the race in gup_pte_range is that significant
+to wait 3 more months because of it.
+ 
+> With that fixed, you'll have a head page that you can use for testing,
+> which means you don't need to test PageCompound() (because you know the
+> page isn't PageTail), you can just test PageHead().
 
-TESTPAGEFLAG(Slab, slab, PF_NO_TAIL) expands to:
+I can't say I follow you here. page_is_secretmem() is intended to be a
+generic test, so I don't see how it will get PageHead() if it is called
+from other places.
 
-static __always_inline int PageSlab(struct page *page)
-{
-	PF_POISONED_CHECK(compound_head(page));
-	return test_bit(PG_slab, &compound_head(page));
-}
-
-static __always_inline int PageSwapCache(struct page *page)
-{
-        page = compound_head(page);
-        return PageSwapBacked(page) && test_bit(PG_swapcache, &page->flags);
-}
-
-but then!
-
-TESTPAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL) also expands like Slab does.
-
-So that's six calls to compound_head(), depending what Kconfig options
-you have enabled.
-
-And folio_mapping() is one of the functions I add in the first batch of
-patches, so review, etc will be helpful.
+-- 
+Sincerely yours,
+Mike.
