@@ -2,90 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 526BE364829
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 18:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79041364832
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 18:28:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238553AbhDSQZf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Apr 2021 12:25:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42890 "EHLO mx2.suse.de"
+        id S233466AbhDSQ2m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 12:28:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233989AbhDSQZf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Apr 2021 12:25:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 61751AFF8;
-        Mon, 19 Apr 2021 16:25:04 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 274FB1F2B68; Mon, 19 Apr 2021 18:25:04 +0200 (CEST)
-Date:   Mon, 19 Apr 2021 18:25:04 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Ted Tso <tytso@mit.edu>, Christoph Hellwig <hch@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH 0/7 RFC v3] fs: Hole punch vs page cache filling races
-Message-ID: <20210419162504.GI8706@quack2.suse.cz>
-References: <20210413105205.3093-1-jack@suse.cz>
- <20210419152008.GD2531743@casper.infradead.org>
+        id S230063AbhDSQ2l (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Apr 2021 12:28:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 81A5E61246;
+        Mon, 19 Apr 2021 16:28:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618849691;
+        bh=l7jnMZ2QwMcnrgiR5Usy5PUSfFOBX3ZPMB3ZSnHg5kY=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=XHYxpsi16De+ba8xHRM7wQ05UJPbNiBHStZzqYOjtzGutR9pclLQpSjh9YSN8pX3l
+         JZUNP9aGX3iGkDqh4DXEkl8/EPlhdDDL2bdXvboyLOwFELppC4coTbhUOLv6JBRqQu
+         jZVdSQryUkkSGXIxtEfb7atDgXOryoGEFL7uoFxX+9ku7useWkSD+Gz9GNaw84/BGA
+         ZgN/6GgegPVMysXTXnGCNTgik2gCUf1UtB0dvubzOgkumjLdfB/FdzxvEchvcXkdRz
+         szqssoB7mZGk2FeQidEMVNcwCOOND2TN1ZYwWdeHdgroiCkV8DuLOSy6Uk36YiXW+3
+         nWy7SqjjsUjpw==
+Message-ID: <13750c0b72dccd84e75179d62e9a9038d6f57371.camel@kernel.org>
+Subject: Re: [RFC PATCH v6 00/20] ceph+fscrypt: context, filename and
+ symlink support
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org
+Date:   Mon, 19 Apr 2021 12:28:10 -0400
+In-Reply-To: <871rb6mfch.fsf@suse.de>
+References: <20210413175052.163865-1-jlayton@kernel.org>
+         <87h7k2murr.fsf@suse.de>
+         <e411e914cd2d329e4b0e335968c21ba85f6e89c7.camel@kernel.org>
+         <871rb6mfch.fsf@suse.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210419152008.GD2531743@casper.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 19-04-21 16:20:08, Matthew Wilcox wrote:
-> On Tue, Apr 13, 2021 at 01:28:44PM +0200, Jan Kara wrote:
-> > Also when writing the documentation I came across one question: Do we mandate
-> > i_mapping_sem for truncate + hole punch for all filesystems or just for
-> > filesystems that support hole punching (or other complex fallocate operations)?
-> > I wrote the documentation so that we require every filesystem to use
-> > i_mapping_sem. This makes locking rules simpler, we can also add asserts when
-> > all filesystems are converted. The downside is that simple filesystems now pay
-> > the overhead of the locking unnecessary for them. The overhead is small
-> > (uncontended rwsem acquisition for truncate) so I don't think we care and the
-> > simplicity is worth it but I wanted to spell this out.
+On Mon, 2021-04-19 at 17:03 +0100, Luis Henriques wrote:
+> Jeff Layton <jlayton@kernel.org> writes:
 > 
-> What do we actually get in return for supporting these complex fallocate
-> operations?  Someone added them for a reason, but does that reason
-> actually benefit me?  Other than running xfstests, how many times has
-> holepunch been called on your laptop in the last week?  I don't want to
-> incur even one extra instruction per I/O operation to support something
-> that happens twice a week; that's a bad tradeoff.
+> > On Mon, 2021-04-19 at 11:30 +0100, Luis Henriques wrote:
+> ...
+> > Ouch. That looks like a real bug, alright.
+> > 
+> > Basically when building the path, we occasionally need to fetch the
+> > crypto context for parent inodes and such, and that can cause us to
+> > recurse back into __ceph_getxattr and try to issue another RPC to the
+> > MDS.
+> > 
+> > I'll have to look and see what we can do. Maybe it's safe to drop the
+> > mdsc->mutex while we're building the path? Or maybe this is a good time
+> > to re-think a lot of the really onerous locking in this codepath?
+> > 
+> > I'm open to suggestions here...
+> 
+> Yeah, I couldn't see a good fix at a first glace.  Dropping the mutex
+> while building the path was my initial thought too but it's not easy to
+> proof that's a safe thing to do.
+> 
 
-I agree hole punch is relatively rare compared to normal operations but
-when it is used, it is used rather frequently - e.g. by VMs to manage their
-filesystem images. So if we regress holepunch either by not freeing blocks
-or by slowing it down significantly, I'm pretty sure some people will
-complain. That being said I fully understand your reluctance to add lock to
-the read path but note that it is taken only when we need to fill data from
-the storage and it should be taken once per readahead request so I actually
-doubt the extra acquisition will be visible in the profiles. But I can
-profile it to be sure.
+Indeed. It's an extremely coarse-grained mutex and not at all clear what
+it protects here.
 
-> Can we implement holepunch as a NOP?  Or return -ENOTTY?  Those both
-> seem like better solutions than adding an extra rwsem to every inode.
+> The other idea I had was to fetch all the needed fscrypt contexts at the
+> end, after building the path.  But I didn't found a way for doing that
+> because to build the path... we need the contexts.
+> 
+> It looks like this leaves us with the locking rethinking option.
+> 
+> /me tries harder to find another way out
+> 
+> Cheers,
 
-We already have that rwsem there today for most major filesystems. This
-work just lifts it from fs-private inode area into the VFS inode. So in
-terms of memory usage we are not loosing that much.
+The other option I think is to not store the context in an xattr at all,
+and instead make a dedicated field in the inode for it that we can
+ensure is always present for encrypted inodes.  For the most part the
+crypto context is a static thing. The only exception is when we're first
+encrypting an empty dir.
 
-> Failing that, is there a bigger hammer we can use on the holepunch side
-> (eg preventing all concurrent accesses while the holepunch is happening)
-> to reduce the overhead on the read side?
-
-I'm open to other solutions but frankly this was the best I could come up
-with. Holepunch already uses a pretty much big hammer approach - take all
-the locks there are on the inode in exclusive mode, block DIO, unmap
-everything and then do its dirty deeds... I don't think we want hole punch
-to block anything on fs-wide basis (that's a DoS recipe) and besides that
-I don't see how the hammer could be bigger ;).
-
-								Honza
+We already have the fscrypt bool in the inodestat, and we're going to
+need another field to hold the real size for files. It may be worthwhile
+to just reconsider the design at that level. Maybe we just need to carve
+out a chunk of fscrypt space in the inode for the client and let it
+manage that however it sees fit.
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jeff Layton <jlayton@kernel.org>
+
