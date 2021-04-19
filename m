@@ -2,186 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4D1C364B4C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 22:42:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05995364B9B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 22:46:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242213AbhDSUnG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Apr 2021 16:43:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25167 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230063AbhDSUnG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Apr 2021 16:43:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618864955;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JTwL0xdIupMLJisDlqxI46xvoOUpAzGXJ0LyuKQsGlE=;
-        b=f2HpqpNgJYhSCGnGjwKV8CdkqkF3fa6MpZTwoJUq9Vg4h7llKbsx1zxLNF5BMkGBP0lre4
-        r/y0J9fe+b6Xa7jth0vwc8x0KXe+yslysEjMxcQf1aQtkp6KDkm2L/Xx2qJqRdHuOKPOOL
-        VSrxp+J5N4izpx+Hn0dWKTKUyTso4EY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-313-N9AWgsdNPK6Qxz5WQGt3Og-1; Mon, 19 Apr 2021 16:42:33 -0400
-X-MC-Unique: N9AWgsdNPK6Qxz5WQGt3Og-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2129718BA282;
-        Mon, 19 Apr 2021 20:42:32 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-116-35.rdu2.redhat.com [10.10.116.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6B5F1610F3;
-        Mon, 19 Apr 2021 20:42:25 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id F113122054F; Mon, 19 Apr 2021 16:42:24 -0400 (EDT)
-Date:   Mon, 19 Apr 2021 16:42:24 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Sergio Lopez <slp@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux kernel mailing list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][v2] dax: Fix missed wakeup during dax entry invalidation
-Message-ID: <20210419204224.GH1472665@redhat.com>
-References: <20210419184516.GC1472665@redhat.com>
- <CAPcyv4jR5d+-99wVMm9SHxNBOsp0FUi7wzDNsefkZ1oqUZ7joQ@mail.gmail.com>
- <20210419203947.GG1472665@redhat.com>
+        id S242727AbhDSUpU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 16:45:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S242573AbhDSUot (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 19 Apr 2021 16:44:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 437A061104;
+        Mon, 19 Apr 2021 20:44:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618865059;
+        bh=8ebH80wLSzpKsXllnqDHsURT7pA6qJAmK3LBb8kMWVo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GnMn5N/GtNVt3usYOoeWnuhcozXsta7QP1hMnXJxaQPXgDzzM+4NFnnbiE5gnL0nc
+         i9nQNXBQrkDc9J4Imde+J9SHl4cd2z4ouRl1nhSTNOLJWL+xlcwrZxY+y6lRzOO9/A
+         dXcRdjPdMEsr7pCNr+UuG+Eatr16xOeduKO13pZflAnmIfZ0xTmbM6I31oLpCD8gqe
+         3OvTfuUqVLVuoq/C0gsmzDL4Q5Mx9wn5ICm7dUxzHx+rpB/H53jzgXvgmN4ByisVSk
+         /2YcJV7nTfsDPRABh1OWk5dmOvSBKbtqzIPGPUM0Btw6P/426VpLpzc3JXYIlxmO5m
+         VAG0JxlcHldZQ==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.11 23/23] readdir: make sure to verify directory entry for legacy interfaces too
+Date:   Mon, 19 Apr 2021 16:43:42 -0400
+Message-Id: <20210419204343.6134-23-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210419204343.6134-1-sashal@kernel.org>
+References: <20210419204343.6134-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210419203947.GG1472665@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 19, 2021 at 04:39:47PM -0400, Vivek Goyal wrote:
-> On Mon, Apr 19, 2021 at 12:48:58PM -0700, Dan Williams wrote:
-> > On Mon, Apr 19, 2021 at 11:45 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > >
-> > > This is V2 of the patch. Posted V1 here.
-> > >
-> > > https://lore.kernel.org/linux-fsdevel/20210416173524.GA1379987@redhat.com/
-> > >
-> > > Based on feedback from Dan and Jan, modified the patch to wake up
-> > > all waiters when dax entry is invalidated. This solves the issues
-> > > of missed wakeups.
-> > 
-> > Care to send a formal patch with this commentary moved below the --- line?
-> > 
-> > One style fixup below...
-> > 
-> > >
-> > > I am seeing missed wakeups which ultimately lead to a deadlock when I am
-> > > using virtiofs with DAX enabled and running "make -j". I had to mount
-> > > virtiofs as rootfs and also reduce to dax window size to 256M to reproduce
-> > > the problem consistently.
-> > >
-> > > So here is the problem. put_unlocked_entry() wakes up waiters only
-> > > if entry is not null as well as !dax_is_conflict(entry). But if I
-> > > call multiple instances of invalidate_inode_pages2() in parallel,
-> > > then I can run into a situation where there are waiters on
-> > > this index but nobody will wait these.
-> > >
-> > > invalidate_inode_pages2()
-> > >   invalidate_inode_pages2_range()
-> > >     invalidate_exceptional_entry2()
-> > >       dax_invalidate_mapping_entry_sync()
-> > >         __dax_invalidate_entry() {
-> > >                 xas_lock_irq(&xas);
-> > >                 entry = get_unlocked_entry(&xas, 0);
-> > >                 ...
-> > >                 ...
-> > >                 dax_disassociate_entry(entry, mapping, trunc);
-> > >                 xas_store(&xas, NULL);
-> > >                 ...
-> > >                 ...
-> > >                 put_unlocked_entry(&xas, entry);
-> > >                 xas_unlock_irq(&xas);
-> > >         }
-> > >
-> > > Say a fault in in progress and it has locked entry at offset say "0x1c".
-> > > Now say three instances of invalidate_inode_pages2() are in progress
-> > > (A, B, C) and they all try to invalidate entry at offset "0x1c". Given
-> > > dax entry is locked, all tree instances A, B, C will wait in wait queue.
-> > >
-> > > When dax fault finishes, say A is woken up. It will store NULL entry
-> > > at index "0x1c" and wake up B. When B comes along it will find "entry=0"
-> > > at page offset 0x1c and it will call put_unlocked_entry(&xas, 0). And
-> > > this means put_unlocked_entry() will not wake up next waiter, given
-> > > the current code. And that means C continues to wait and is not woken
-> > > up.
-> > >
-> > > This patch fixes the issue by waking up all waiters when a dax entry
-> > > has been invalidated. This seems to fix the deadlock I am facing
-> > > and I can make forward progress.
-> > >
-> > > Reported-by: Sergio Lopez <slp@redhat.com>
-> > > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > > ---
-> > >  fs/dax.c |   12 ++++++------
-> > >  1 file changed, 6 insertions(+), 6 deletions(-)
-> > >
-> > > Index: redhat-linux/fs/dax.c
-> > > ===================================================================
-> > > --- redhat-linux.orig/fs/dax.c  2021-04-16 14:16:44.332140543 -0400
-> > > +++ redhat-linux/fs/dax.c       2021-04-19 11:24:11.465213474 -0400
-> > > @@ -264,11 +264,11 @@ static void wait_entry_unlocked(struct x
-> > >         finish_wait(wq, &ewait.wait);
-> > >  }
-> > >
-> > > -static void put_unlocked_entry(struct xa_state *xas, void *entry)
-> > > +static void put_unlocked_entry(struct xa_state *xas, void *entry, bool wake_all)
-> > >  {
-> > >         /* If we were the only waiter woken, wake the next one */
-> > >         if (entry && !dax_is_conflict(entry))
-> > > -               dax_wake_entry(xas, entry, false);
-> > > +               dax_wake_entry(xas, entry, wake_all);
-> > >  }
-> > >
-> > >  /*
-> > > @@ -622,7 +622,7 @@ struct page *dax_layout_busy_page_range(
-> > >                         entry = get_unlocked_entry(&xas, 0);
-> > >                 if (entry)
-> > >                         page = dax_busy_page(entry);
-> > > -               put_unlocked_entry(&xas, entry);
-> > > +               put_unlocked_entry(&xas, entry, false);
-> > 
-> > I'm not a fan of raw true/false arguments because if you read this
-> > line in isolation you need to go read put_unlocked_entry() to recall
-> > what that argument means. So lets add something like:
-> > 
-> > /**
-> >  * enum dax_entry_wake_mode: waitqueue wakeup toggle
-> >  * @WAKE_NEXT: entry was not mutated
-> >  * @WAKE_ALL: entry was invalidated, or resized
-> >  */
-> > enum dax_entry_wake_mode {
-> >         WAKE_NEXT,
-> >         WAKE_ALL,
-> > }
-> > 
-> > ...and use that as the arg for dax_wake_entry(). So I'd expect this to
-> > be a 3 patch series, introduce dax_entry_wake_mode for
-> > dax_wake_entry(), introduce the argument for put_unlocked_entry()
-> > without changing the logic, and finally this bug fix. Feel free to add
-> > 'Fixes: ac401cc78242 ("dax: New fault locking")' in case you feel this
-> > needs to be backported.
-> 
-> Hi Dan,
-> 
-> I will make changes as you suggested and post another version.
-> 
-> I am wondering what to do with dax_wake_entry(). It also has a boolean
-> parameter wake_all. Should that be converted as well to make use of
-> enum dax_entry_wake_mode?
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-oops, you already mentioned dax_wake_entry(). I read too fast. Sorry for
-the noise
+[ Upstream commit 0c93ac69407d63a85be0129aa55ffaec27ffebd3 ]
 
-Vivek
+This does the directory entry name verification for the legacy
+"fillonedir" (and compat) interface that goes all the way back to the
+dark ages before we had a proper dirent, and the readdir() system call
+returned just a single entry at a time.
+
+Nobody should use this interface unless you still have binaries from
+1991, but let's do it right.
+
+This came up during discussions about unsafe_copy_to_user() and proper
+checking of all the inputs to it, as the networking layer is looking to
+use it in a few new places.  So let's make sure the _old_ users do it
+all right and proper, before we add new ones.
+
+See also commit 8a23eb804ca4 ("Make filldir[64]() verify the directory
+entry filename is valid") which did the proper modern interfaces that
+people actually use. It had a note:
+
+    Note that I didn't bother adding the checks to any legacy interfaces
+    that nobody uses.
+
+which this now corrects.  Note that we really don't care about POSIX and
+the presense of '/' in a directory entry, but verify_dirent_name() also
+ends up doing the proper name length verification which is what the
+input checking discussion was about.
+
+[ Another option would be to remove the support for this particular very
+  old interface: any binaries that use it are likely a.out binaries, and
+  they will no longer run anyway since we removed a.out binftm support
+  in commit eac616557050 ("x86: Deprecate a.out support").
+
+  But I'm not sure which came first: getdents() or ELF support, so let's
+  pretend somebody might still have a working binary that uses the
+  legacy readdir() case.. ]
+
+Link: https://lore.kernel.org/lkml/CAHk-=wjbvzCAhAtvG0d81W5o0-KT5PPTHhfJ5ieDFq+bGtgOYg@mail.gmail.com/
+Acked-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/readdir.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fs/readdir.c b/fs/readdir.c
+index 19434b3c982c..09e8ed7d4161 100644
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -150,6 +150,9 @@ static int fillonedir(struct dir_context *ctx, const char *name, int namlen,
+ 
+ 	if (buf->result)
+ 		return -EINVAL;
++	buf->result = verify_dirent_name(name, namlen);
++	if (buf->result < 0)
++		return buf->result;
+ 	d_ino = ino;
+ 	if (sizeof(d_ino) < sizeof(ino) && d_ino != ino) {
+ 		buf->result = -EOVERFLOW;
+@@ -405,6 +408,9 @@ static int compat_fillonedir(struct dir_context *ctx, const char *name,
+ 
+ 	if (buf->result)
+ 		return -EINVAL;
++	buf->result = verify_dirent_name(name, namlen);
++	if (buf->result < 0)
++		return buf->result;
+ 	d_ino = ino;
+ 	if (sizeof(d_ino) < sizeof(ino) && d_ino != ino) {
+ 		buf->result = -EOVERFLOW;
+-- 
+2.30.2
 
