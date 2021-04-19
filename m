@@ -2,88 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50B3B36458D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 16:01:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6EAE3645F1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 16:23:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239166AbhDSOCW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Apr 2021 10:02:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40162 "EHLO
+        id S239351AbhDSOXb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 10:23:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230021AbhDSOCW (ORCPT
+        with ESMTP id S239341AbhDSOX3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Apr 2021 10:02:22 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BA35C06174A;
-        Mon, 19 Apr 2021 07:01:52 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id g8so56165786lfv.12;
-        Mon, 19 Apr 2021 07:01:52 -0700 (PDT)
+        Mon, 19 Apr 2021 10:23:29 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F686C061761
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Apr 2021 07:23:00 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id n140so35560099oig.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Apr 2021 07:23:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3OHJkleqpyvjmiOFbDvAvEGD009+ja/8LFw1JG/SPO0=;
-        b=TgOIIOC470Eb8w3o0XnUaNSscLa7QU5h7kviUpR1xOQicCKbGE+fkUsrrAEclB9sQR
-         3hfyknkYirE2Up5E+vlV6q9Q6hsVsGyWgrEkkFWHzb5msn2hQW6fx1T16UhlnqRZRzb/
-         rfpmA2s4dxnR+Zc7cH2Tw34cNY7eGh26K8EZNp3NOChwg/DApASZadZzrypdJHe7FXLn
-         amUQxDr/en88BM7lWnEAJeQ98M2FlkN7uws34juYBBNnaI/9lhCTbsrkwJuB/BQ8OfLG
-         MaA1mZYfemfGJ0CxMstqf3k9sPgITBRrgtCyfbS0n41Rnn2ic+v9qXnhhHbAhBvLoMum
-         s+5A==
+        d=tyhicks-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=iyPw3xh+gL8EO50n7ZD6mPQ3zLVc071KZQAVN27alq4=;
+        b=FtmbvtYsxQWKv8/moQcb/7GviYq3dZg+O9iufhpYH2LGqDmMDZ7Us+2F8PZaa04+9x
+         MJ6zYCobk+M2PaLqf8Z3E6LQIITVPBk99v5tk3fU4G3PoHOQpofdDuLAyrvTf7iB2AOO
+         nfDKg9kwOqDee8htmIN1+KYoN6F+v74VCfVbEk+C28HEBuxaRU0c9yWTsD63xNVak5oc
+         jBjevKajjelLcaDhNdk4+vR/zUt/TXEkDrKMEFZKI4J69JWIrMYJ43PUb6lEvs/nnCMo
+         Bau0gIpvTicWrtOUElc1MqzQuNwRHVPhh29uWYOI3a5NqLXkwwQfDxHV5jMsqfMKKO+F
+         xDKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3OHJkleqpyvjmiOFbDvAvEGD009+ja/8LFw1JG/SPO0=;
-        b=jSUSr9xWo4C/SAfvll4iEzfHmkCU1SVnx1MEYOFC388mkranm/xeGAF4KpunzO9G6r
-         gmmJ6LO74hoD0a3eTJRzcVVph6P3bSe40ZPZmmXVVX3Sx2nAO5KoEAMygDFxxMdJhrFj
-         pwd6mLqtkrxpsLDZr8mOiuskm3rx2rLLn2/dTFstNn7oLccDhj5sictSEn7k18rO3i86
-         b7u4RPuaQqT5XO/EPEp3YOhJqYuCE8vh9vtT4yKHeAM8mLq8Ii10cPj7V7Rl68d1tURy
-         y7I0/nofXXpyqSkzd0kO4iEb4lXKFv1OZpZAYb/NDaEw42fLQiG6qYxFo4xSsZFf1xR9
-         HA0w==
-X-Gm-Message-State: AOAM533NtpkG3IEJfz3G7526FuCVFqh1LB3y02UW1bNVe6kwLRxR8KMV
-        aQUzxSzbkUOB/RP21TdNqrs=
-X-Google-Smtp-Source: ABdhPJwETRJ5iomkI7LRrj9Bm5SoC4WDLG8vFZ5DlosZpvnmQnekPbNTlUWCys90B7PC6mDUC6pQDA==
-X-Received: by 2002:a19:ee0f:: with SMTP id g15mr3823063lfb.407.1618840911043;
-        Mon, 19 Apr 2021 07:01:51 -0700 (PDT)
-Received: from localhost.lan (ip-194-187-74-233.konfederacka.maverick.com.pl. [194.187.74.233])
-        by smtp.gmail.com with ESMTPSA id m28sm1195023lfq.180.2021.04.19.07.01.49
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=iyPw3xh+gL8EO50n7ZD6mPQ3zLVc071KZQAVN27alq4=;
+        b=DrK8wsM0qHlNfYhP/NWU0Y+RB8AsYTdMfUn9Gy/KlF4cD62rEZaETPP9zVwtOSQdFK
+         zUAxoJv8CsLHhv57MhkInkS/z48egALph5F4R1dj2Q+6w/F1s2uz/BOJpMIRkDLWK5YH
+         /nDKZjQ5Gii2Vt8x7tzH7IvRTh+VVOpezXtnk/BnBgNj908+b8kE+7n/ZWmMoeLFpajn
+         wxwxzvZK0/2/EGNXv6UajOtydu/fznTkyOnIy90U0wlZGA0c0XTlcNkibByKujJzjSs9
+         gYTVhFmMFRXugicVwRwU5O6ACFB4rRpPPbGqAFlfEtMDYQQvN+qEe9bmZfhvPM1KOD1B
+         oPwA==
+X-Gm-Message-State: AOAM531nBPSIQUrPywnFFUSBDxlcov1FpETb1LS8ezqTGr2QrZuY4gkK
+        yAYtSygAngpn8nGoln6LOk9KO1C2zLRakFSBbE0=
+X-Google-Smtp-Source: ABdhPJyWEH8BBDYfxulF6pV3FbWQ/xWx5YXUB1CPYS8QjkHxSIPNH7IpXYsGakU/vg1FSd0GHdonUg==
+X-Received: by 2002:aca:4d8b:: with SMTP id a133mr2280263oib.170.1618842179592;
+        Mon, 19 Apr 2021 07:22:59 -0700 (PDT)
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net. [162.237.133.238])
+        by smtp.gmail.com with ESMTPSA id 39sm1900626otv.21.2021.04.19.07.22.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Apr 2021 07:01:50 -0700 (PDT)
-From:   =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
-Subject: [PATCH vfs.git] MAINTAINERS: Add git tree for the FILESYSTEMS entry
-Date:   Mon, 19 Apr 2021 16:01:38 +0200
-Message-Id: <20210419140138.22752-1-zajec5@gmail.com>
-X-Mailer: git-send-email 2.26.2
+        Mon, 19 Apr 2021 07:22:59 -0700 (PDT)
+Date:   Mon, 19 Apr 2021 09:22:58 -0500
+From:   Tyler Hicks <code@tyhicks.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christian Brauner <brauner@kernel.org>, ecryptfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: Re: [PATCH 1/3] ecryptfs: remove unused helpers
+Message-ID: <20210419142258.GC4991@sequoia>
+References: <20210409162422.1326565-1-brauner@kernel.org>
+ <20210409162422.1326565-2-brauner@kernel.org>
+ <20210419044850.GF398325@elm>
+ <YH2KVPsPdSFMEhEY@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YH2KVPsPdSFMEhEY@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Rafał Miłecki <rafal@milecki.pl>
+On 2021-04-19 13:49:08, Al Viro wrote:
+> On Sun, Apr 18, 2021 at 11:48:50PM -0500, Tyler Hicks wrote:
+> > On 2021-04-09 18:24:20, Christian Brauner wrote:
+> > > From: Christian Brauner <christian.brauner@ubuntu.com>
+> > > 
+> > > Remove two helpers that are unused.
+> > > 
+> > > Cc: Amir Goldstein <amir73il@gmail.com>
+> > > Cc: Tyler Hicks <code@tyhicks.com>
+> > > Cc: ecryptfs@vger.kernel.org
+> > > Cc: linux-fsdevel@vger.kernel.org
+> > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > 
+> > I'll pick this patch up now as it looks like it didn't make it into your
+> > v2 of the port to private mounts. I'll review those patches separately.
+> 
+> FWIW, there's also a series in vfs.git #work.ecryptfs (posted Mar 20),
+> and that, AFAICS, duplicates 483bc7e82ccfc in there...
 
-This helps finding the latest development code.
+Yeah, I noticed that after I pushed Christian's commit to my next
+branch. I've fallen behind on eCryptfs patch review. :/
 
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+I plan to review vfs.git #work.ecryptfs in the next couple days. If
+everything looks good, do you want me to take it via my tree or were you
+planning on taking those yourself?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d92f85ca831d..67317bfd46e3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6890,6 +6890,7 @@ FILESYSTEMS (VFS and infrastructure)
- M:	Alexander Viro <viro@zeniv.linux.org.uk>
- L:	linux-fsdevel@vger.kernel.org
- S:	Maintained
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git
- F:	fs/*
- F:	include/linux/fs.h
- F:	include/linux/fs_types.h
--- 
-2.26.2
-
+Tyler
