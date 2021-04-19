@@ -2,147 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 90DB936454F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 15:53:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 576DE36456D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 15:56:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230063AbhDSNyP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Apr 2021 09:54:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38170 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbhDSNyP (ORCPT
+        id S240998AbhDSN4K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 09:56:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:43480 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240043AbhDSNz7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Apr 2021 09:54:15 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54D20C06174A;
-        Mon, 19 Apr 2021 06:53:44 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id e186so34933665iof.7;
-        Mon, 19 Apr 2021 06:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OPv6D6qV3tPMcXiH4gaypxFmGbYasaTtXFMZiPqVoz0=;
-        b=hGYbCPF3mcgLHYPsq/L8z2yBpwrgufg6YB5/W7gkdBc0HRUDVIqwcW0IqxgnS4n6za
-         LAp2Ak2Z0sDL2g83auIyVE9Wef83VYnR1QY0DNFZ9GCo3Trhy5CzCPXNjYMNt5LO7EQ+
-         ITxJLskPv0PZtb/eM/+x2S4PlgUK7y1u/D6+kk9NvXURlvMQmQmLb3V8fPjy6PjSrahk
-         H8q2EM5Nva2kF6gmsawzxvQVyIupSWluwdLg1BUBdU5+erQ/IeTf+ZRPOjhxxkA3VSAu
-         nJaxG/GFD228oKkp9Tn6omUeeDmIPX/tddn5xDgNpHL2abCQrup8i9ECpzsmW7gNq2yp
-         6KNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OPv6D6qV3tPMcXiH4gaypxFmGbYasaTtXFMZiPqVoz0=;
-        b=i1H/pNLAfHo+F2nvfzz+YXITYToKNpae6NhcrvEIVdosXLaGwinjeUv35W0Y2yKIcp
-         U3W0uuysZydWa5KF1xcrTHCJzsg/T9A6VImDMJWuistHCalvYZTvagdExmWclb8rISQc
-         tQpUngEhtBxyy5m2J/fUzK+68XeeCZv6oniwPZ+Y0ec1UHhtqeH1Uy3GoxomfzM00HkB
-         j/nFDZs1Ex7aNPjXT361gTrnMSC/vPpzSgukQKXKfGCNeMA3QkOnyXELqP/KthKJE++U
-         Qam9rlD3xgPE9df/8m7OATqcm6c7mvolPyMw5yBWNfn19FsUFcZF0BUMbJ8FCu085Muh
-         xQgw==
-X-Gm-Message-State: AOAM531oV6qPMw7GTkbbVIaiLeQuJ+Yu58wmOvxthuO99SSyt9MRVxpA
-        nbcGs9dJgAQDLl9WzrFL0o3OzXzrZYvyfjHIftF6c44wyfQ=
-X-Google-Smtp-Source: ABdhPJwF8Y7H/Jxkbi0MQA3m2KH+O7fTjxhxOQpdyD1v1HhmDipRiloZ30/OwPcjn02QgBb2TBq5Vvb9eDremcm3KRI=
-X-Received: by 2002:a6b:f115:: with SMTP id e21mr2617155iog.5.1618840423784;
- Mon, 19 Apr 2021 06:53:43 -0700 (PDT)
+        Mon, 19 Apr 2021 09:55:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618840529;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WxdqbfoBJXaYxfD6rImyDUvIjZiF5Q3ecjdpEO3HnrU=;
+        b=ALrFn8rBvCOneEIRJpiS+PUwY/EVnEEWr0OIAoD+DCYCCj7hvuuIzWTlpmKaz2m9DIsPD0
+        MYdL7jBbGD74pfE1ZYP+ugvcXh5qqA/sbfiePiZJFhQY/rffc0FtImyhspJNzU0umDAqEH
+        ma6F419qUXU9blHD0uCguRNSfmQsfok=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-302-OjBtjruXOaaknhPs7HO74A-1; Mon, 19 Apr 2021 09:55:26 -0400
+X-MC-Unique: OjBtjruXOaaknhPs7HO74A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C60D687A83C;
+        Mon, 19 Apr 2021 13:55:24 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2FB8E5D9CA;
+        Mon, 19 Apr 2021 13:55:18 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 13JDtH4F018187;
+        Mon, 19 Apr 2021 09:55:17 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 13JDtHQu018179;
+        Mon, 19 Apr 2021 09:55:17 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Mon, 19 Apr 2021 09:55:17 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+cc:     "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Milan Broz <mbroz@redhat.com>
+Subject: Re: [dm-devel] [PATCH v2 0/3] Fix dm-crypt zoned block device
+ support
+In-Reply-To: <BL0PR04MB65147D94E7E30C3E1063A282E7499@BL0PR04MB6514.namprd04.prod.outlook.com>
+Message-ID: <alpine.LRH.2.02.2104190951070.17565@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20210417023323.852530-1-damien.lemoal@wdc.com> <alpine.LRH.2.02.2104190840310.9677@file01.intranet.prod.int.rdu2.redhat.com> <BL0PR04MB65147D94E7E30C3E1063A282E7499@BL0PR04MB6514.namprd04.prod.outlook.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-References: <cover.1618527437.git.repnop@google.com> <e6cd967f45381d20d67c9d5a3e49e3cb9808f65b.1618527437.git.repnop@google.com>
- <20210419132020.ydyb2ly6e3clhe2j@wittgenstein>
-In-Reply-To: <20210419132020.ydyb2ly6e3clhe2j@wittgenstein>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 19 Apr 2021 16:53:32 +0300
-Message-ID: <CAOQ4uxhCob7uTK_jqvyfyMZrWFZZOvs=NLhkdLFUcLrofR_ZBw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fanotify: Add pidfd support to the fanotify API
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Matthew Bobrowski <repnop@google.com>, Jan Kara <jack@suse.cz>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 19, 2021 at 4:20 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
->
-> On Fri, Apr 16, 2021 at 09:22:25AM +1000, Matthew Bobrowski wrote:
-> > Introduce a new flag FAN_REPORT_PIDFD for fanotify_init(2) which
-> > allows userspace applications to control whether a pidfd is to be
-> > returned instead of a pid for `struct fanotify_event_metadata.pid`.
-> >
-> > FAN_REPORT_PIDFD is mutually exclusive with FAN_REPORT_TID as the
-> > pidfd API is currently restricted to only support pidfd generation for
-> > thread-group leaders. Attempting to set them both when calling
-> > fanotify_init(2) will result in -EINVAL being returned to the
-> > caller. As the pidfd API evolves and support is added for tids, this
-> > is something that could be relaxed in the future.
-> >
-> > If pidfd creation fails, the pid in struct fanotify_event_metadata is
-> > set to FAN_NOPIDFD(-1). Falling back and providing a pid instead of a
-> > pidfd on pidfd creation failures was considered, although this could
-> > possibly lead to confusion and unpredictability within userspace
-> > applications as distinguishing between whether an actual pidfd or pid
-> > was returned could be difficult, so it's best to be explicit.
-> >
-> > Signed-off-by: Matthew Bobrowski <repnop@google.com>
-> > ---
-> >  fs/notify/fanotify/fanotify_user.c | 33 +++++++++++++++++++++++++++---
-> >  include/linux/fanotify.h           |  2 +-
-> >  include/uapi/linux/fanotify.h      |  2 ++
-> >  3 files changed, 33 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> > index 9e0c1afac8bd..fd8ae88796a8 100644
-> > --- a/fs/notify/fanotify/fanotify_user.c
-> > +++ b/fs/notify/fanotify/fanotify_user.c
-> > @@ -329,7 +329,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
-> >       struct fanotify_info *info = fanotify_event_info(event);
-> >       unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
-> >       struct file *f = NULL;
-> > -     int ret, fd = FAN_NOFD;
-> > +     int ret, pidfd, fd = FAN_NOFD;
-> >       int info_type = 0;
-> >
-> >       pr_debug("%s: group=%p event=%p\n", __func__, group, event);
-> > @@ -340,7 +340,25 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
-> >       metadata.vers = FANOTIFY_METADATA_VERSION;
-> >       metadata.reserved = 0;
-> >       metadata.mask = event->mask & FANOTIFY_OUTGOING_EVENTS;
-> > -     metadata.pid = pid_vnr(event->pid);
-> > +
-> > +     if (FAN_GROUP_FLAG(group, FAN_REPORT_PIDFD) &&
-> > +             pid_has_task(event->pid, PIDTYPE_TGID)) {
-> > +             /*
-> > +              * Given FAN_REPORT_PIDFD is to be mutually exclusive with
-> > +              * FAN_REPORT_TID, panic here if the mutual exclusion is ever
-> > +              * blindly lifted without pidfds for threads actually being
-> > +              * supported.
-> > +              */
-> > +             WARN_ON(FAN_GROUP_FLAG(group, FAN_REPORT_TID));
-> > +
-> > +             pidfd = pidfd_create(event->pid, 0);
-> > +             if (unlikely(pidfd < 0))
-> > +                     metadata.pid = FAN_NOPIDFD;
-> > +             else
-> > +                     metadata.pid = pidfd;
->
-> I'm not a fan of overloading fields (Yes, we did this for the _legacy_
-> clone() syscall for CLONE_PIDFD/CLONE_PARENT_SETTID but in general it's
-> never a good idea if there are other options, imho.).
-> Could/should we consider the possibility of adding a new pidfd field to
-> struct fanotify_event_metadata?
 
-struct fanotify_event_metadata is fully booked.
-We could use a variable length record, but IMO that's an overkill for pidfd.
 
-If you are concerned about users wrongly interpreting pidfd as pid and
-getting the the wrong process we could use invalid negative values for
-pidfd, e.g. metadata.pid = ~pidfd.
-This has the quality that 0 can mean both FAN_NOPIDFD and no pid.
-UAPI to this would be abstracted with
-#define FAN_EVENT_PIDFD(event) (~((event)->pid))
+On Mon, 19 Apr 2021, Damien Le Moal wrote:
 
-I am not convinced that this helps more than it hurts users, but abstracting
-the accessor to pidfd could be a good idea anyway.
+> > I would say that it is incompatible with all dm targets - even the linear 
+> > target is changing the sector number and so it may redirect the write 
+> > outside of the range specified in dm-table and cause corruption.
+> 
+> DM remapping of BIO sectors is zone compatible because target entries must be
+> zone aligned. In the case of zone append, the BIO sector always point to the
+> start sector of the target zone. DM sector remapping will remap that to another
+> zone start as all zones are the same size. No issue here. We extensively use
+> dm-linear for various test environment to reduce the size of the device tested
+> (to speed up tests). I am confident there are no problems there.
+> 
+> > Instead of complicating device mapper with imperfect support, I would just 
+> > disable REQ_OP_ZONE_APPEND on device mapper at all.
+> 
+> That was my initial approach, but for dm-crypt only since other targets that
+> support zoned devices are fine. However, this breaks zoned block device
+> requirement that zone append be supported so that users are presented with a
+> uniform interface for different devices. So while simple to do, disabling zone
+> append is far from ideal.
 
-Thanks,
-Amir.
+So, we could enable it for the linear target and disable for all other 
+targets?
+
+I talked with Milan about it and he doesn't want to add more bloat to the 
+crypt target. I agree with him.
+
+Mikulas
+
