@@ -2,158 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E78A9363963
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 04:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2C7C363AA4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Apr 2021 06:49:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233179AbhDSC3j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Apr 2021 22:29:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57368 "EHLO
+        id S230022AbhDSEtz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 00:49:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232038AbhDSC3i (ORCPT
+        with ESMTP id S229473AbhDSEty (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Apr 2021 22:29:38 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6445C06174A;
-        Sun, 18 Apr 2021 19:29:06 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id u15so8351380plf.10;
-        Sun, 18 Apr 2021 19:29:06 -0700 (PDT)
+        Mon, 19 Apr 2021 00:49:54 -0400
+Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B003EC06174A
+        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Apr 2021 21:48:52 -0700 (PDT)
+Received: by mail-ot1-x32d.google.com with SMTP id 65-20020a9d03470000b02902808b4aec6dso26693771otv.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Apr 2021 21:48:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bZBVykDy+CbPTq5GPknPQk24ko2Dt8qX06614cxzmoI=;
-        b=pmOjuCDaegOlVXpSgl1lzwSoy//PLBynAvQROra5Oj+O22sUO/1R5ycoyKKiF0V3C9
-         3cG7pYApIKJpVSz66o01Dn1nKPSDprDCEp1rjmpistU0lbm7sSEExqWEnHXAXvDr5GQB
-         vpPNBJzOPtBcZM/ga3gOacb4x4P2q0KEDP2Cl0kUPzBLMowa1ezLGXx9ZQGFZeAWbJb5
-         T47V266bPzWsj8bXT91/13X/9XnzhLUosgMO9pwKbyNvRiEFZdwQYKkB2M2BeGoOHLER
-         IbdI2SOE0/MFcN2o5kzd/gkBdNTrATab1XEXYF1JxC1cOk7rkH4ofTKM7RJlCNEui6Tu
-         +v/w==
+        d=tyhicks-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=jL7hJvT0imTo74BlTYm8q4MTMOtukYZw45XfWryvQaI=;
+        b=R+jJbKSrFD+iwzFs4bfj+8LPnEV3qlAhl0OO2efaY5kk96+n1kHZqZ2AIMg1QuZ0HQ
+         DzwIwcXkRWjgVxn9eHG0fM3zA67R0gYtOcfisL0r2ZIKcBpe0VvRD1dE4rBbx/zP/Mia
+         GjRuRHcQRFdqZ7YWictj3Kd4yPAfwto3VctNhXfdYLmSxIcbKd0v6TgOaX8faD+7HAB9
+         +6HJ2kJrYkAsMKZ+TiJM9PpER9/hfZjaZiSZRCTz7V9lnJYGjZjpVlEMoCQwB9yVsco+
+         inz0peGREMf1Ui8WOF/X7sWq40yH9Gekn78rNiXqM4zwSQUd+v8AOFUgK0ajC4x0lSVZ
+         RAIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bZBVykDy+CbPTq5GPknPQk24ko2Dt8qX06614cxzmoI=;
-        b=ge8tnq5sUSfPY/ZZKDO8HYEogHwIT9+mpmDJoOUuVI0TDukqIrbMQzxiDZls2FuUqq
-         Aekp0L+JaPQPKDrHeEFgb1MoQnu7zK2c8kIe/pEpj1/56GWvB0PmHqHdr8in517X0CeT
-         RciL3bl6I+c8hMpsB/izRaYgn6KlhQoksC0+yp7T5q1rEtzqqxZrEYDCTcZ32ddTwoSS
-         qiWUD30tfrEzO5VCFMu7SemnKDbaoaVcdmhkqtw7eFNZN7KjUUt1z2SUedjoJXxzYtgm
-         0NAojdHE7VP5sNCA42yUKnLQ6o8RBR7yPMBPLNEGzKiCdHNUZ6/0rcZ+JWlPmMcahARz
-         LK0Q==
-X-Gm-Message-State: AOAM530CvkGXFfXEHwp35nUQ0nkrFWFPy4VYmCv77EFGSfkiThFaCzwz
-        +94XrUjM89nnq83JBOtsSNA=
-X-Google-Smtp-Source: ABdhPJxlsKaMBLmPaeHgo0HcfC9O6q6+X+K7YIJbHuEuoB4Sq7ROCH555R+TPqR2Yu736JeDVAtZnw==
-X-Received: by 2002:a17:90a:a389:: with SMTP id x9mr21888444pjp.232.1618799346177;
-        Sun, 18 Apr 2021 19:29:06 -0700 (PDT)
-Received: from localhost.localdomain (220-130-175-235.HINET-IP.hinet.net. [220.130.175.235])
-        by smtp.gmail.com with ESMTPSA id lt11sm12577277pjb.23.2021.04.18.19.29.04
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jL7hJvT0imTo74BlTYm8q4MTMOtukYZw45XfWryvQaI=;
+        b=LQN9kqFkP+fHJTNvq+ZNoVpJVdWeaZhSNyZuCpyCRaEEGD5h5bIxyJYO9PYISVqx+L
+         wqWpwyKvPsvDwMbdBQYtZXN7DK2vNiCKp+1a1Qwbu6kpHiPY2/a8JmDM7H2J7nNfb+ce
+         2YMSyFre4q4wEmpA/0NnuN0obl6jeDRJET+zk8rwahqEON6UNyQBE3EPZNFSpL6Vf5mr
+         8i20otY2WBk93kshV38YXjv8fDiEQdCALAWHkKgglH8nJ05z1iDZFzKX8ngKSIc5C+m/
+         S3P+yC8B1YyGvVSDIzqSnCA1XicsZ3Fw0CkxQXuw50VBwP18nXCxnkr/pXS1N6TC1waf
+         YMVw==
+X-Gm-Message-State: AOAM531iaefdmJNPCGNxIC4GfEJHHuNppUyTwNhOF6XPlCkX0nXNur+B
+        3qvHzacX8ltGl/jVU1qkofTtmA==
+X-Google-Smtp-Source: ABdhPJzGJD7WgxIzMQKjh6m9uj4cx5zsqGe3mkvIZ82d8zPKT7f7NGGd37eM9aK3h8QZKBe3TkVvwQ==
+X-Received: by 2002:a9d:2033:: with SMTP id n48mr202399ota.84.1618807732025;
+        Sun, 18 Apr 2021 21:48:52 -0700 (PDT)
+Received: from elm (162-237-133-238.lightspeed.rcsntx.sbcglobal.net. [162.237.133.238])
+        by smtp.gmail.com with ESMTPSA id v26sm174198ott.4.2021.04.18.21.48.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Apr 2021 19:29:05 -0700 (PDT)
-From:   Chung-Chiang Cheng <shepjeng@gmail.com>
-X-Google-Original-From: Chung-Chiang Cheng <cccheng@synology.com>
-To:     gustavoars@kernel.org, christian.brauner@ubuntu.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     cccheng@synology.com
-Subject: [PATCH v2] hfsplus: prevent negative dentries when casefolded
-Date:   Mon, 19 Apr 2021 10:29:01 +0800
-Message-Id: <20210419022901.193750-1-cccheng@synology.com>
-X-Mailer: git-send-email 2.25.1
+        Sun, 18 Apr 2021 21:48:51 -0700 (PDT)
+Date:   Sun, 18 Apr 2021 23:48:50 -0500
+From:   Tyler Hicks <code@tyhicks.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     ecryptfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Amir Goldstein <amir73il@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: Re: [PATCH 1/3] ecryptfs: remove unused helpers
+Message-ID: <20210419044850.GF398325@elm>
+References: <20210409162422.1326565-1-brauner@kernel.org>
+ <20210409162422.1326565-2-brauner@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210409162422.1326565-2-brauner@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-hfsplus uses the case-insensitive filenames by default, but VFS negative
-dentries are incompatible with case-insensitive. For example, the
-following instructions will get a cached filename 'aaa' which isn't
-expected. There is no such problem in macOS.
+On 2021-04-09 18:24:20, Christian Brauner wrote:
+> From: Christian Brauner <christian.brauner@ubuntu.com>
+> 
+> Remove two helpers that are unused.
+> 
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: Tyler Hicks <code@tyhicks.com>
+> Cc: ecryptfs@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-  touch aaa
-  rm aaa
-  touch AAA
+I'll pick this patch up now as it looks like it didn't make it into your
+v2 of the port to private mounts. I'll review those patches separately.
 
-This patch takes the same approach to drop negative dentires as vfat does.
-The dentry is revalidated without blocking and storing to the dentry,
-and should be safe in rcu-walk.
+Thanks!
 
-Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
----
- fs/hfsplus/hfsplus_fs.h |  1 +
- fs/hfsplus/inode.c      |  1 +
- fs/hfsplus/unicode.c    | 32 ++++++++++++++++++++++++++++++++
- 3 files changed, 34 insertions(+)
+Tyler
 
-diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
-index 12b20479ed2b..e4f0cdfdac96 100644
---- a/fs/hfsplus/hfsplus_fs.h
-+++ b/fs/hfsplus/hfsplus_fs.h
-@@ -528,6 +528,7 @@ int hfsplus_asc2uni(struct super_block *sb, struct hfsplus_unistr *ustr,
- int hfsplus_hash_dentry(const struct dentry *dentry, struct qstr *str);
- int hfsplus_compare_dentry(const struct dentry *dentry, unsigned int len,
- 			   const char *str, const struct qstr *name);
-+int hfsplus_revalidate_dentry(struct dentry *dentry, unsigned int flags);
- 
- /* wrapper.c */
- int hfsplus_submit_bio(struct super_block *sb, sector_t sector, void *buf,
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index 078c5c8a5156..772cad371371 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -176,6 +176,7 @@ const struct address_space_operations hfsplus_aops = {
- const struct dentry_operations hfsplus_dentry_operations = {
- 	.d_hash       = hfsplus_hash_dentry,
- 	.d_compare    = hfsplus_compare_dentry,
-+	.d_revalidate = hfsplus_revalidate_dentry,
- };
- 
- static void hfsplus_get_perms(struct inode *inode,
-diff --git a/fs/hfsplus/unicode.c b/fs/hfsplus/unicode.c
-index 73342c925a4b..e336631334eb 100644
---- a/fs/hfsplus/unicode.c
-+++ b/fs/hfsplus/unicode.c
-@@ -10,6 +10,7 @@
-  */
- 
- #include <linux/types.h>
-+#include <linux/namei.h>
- #include <linux/nls.h>
- #include "hfsplus_fs.h"
- #include "hfsplus_raw.h"
-@@ -518,3 +519,34 @@ int hfsplus_compare_dentry(const struct dentry *dentry,
- 		return 1;
- 	return 0;
- }
-+
-+int hfsplus_revalidate_dentry(struct dentry *dentry, unsigned int flags)
-+{
-+	/*
-+	 * dentries are always valid when disabling casefold.
-+	 */
-+	if (!test_bit(HFSPLUS_SB_CASEFOLD, &HFSPLUS_SB(dentry->d_sb)->flags))
-+		return 1;
-+
-+	/*
-+	 * Positive dentries are valid when enabling casefold.
-+	 *
-+	 * Note, rename() to existing directory entry will have ->d_inode, and
-+	 * will use existing name which isn't specified name by user.
-+	 *
-+	 * We may be able to drop this positive dentry here. But dropping
-+	 * positive dentry isn't good idea. So it's unsupported like
-+	 * rename("filename", "FILENAME") for now.
-+	 */
-+	if (d_really_is_positive(dentry))
-+		return 1;
-+
-+	/*
-+	 * Drop the negative dentry, in order to make sure to use the case
-+	 * sensitive name which is specified by user if this is for creation.
-+	 */
-+	if (flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET))
-+		return 0;
-+
-+	return 1;
-+}
--- 
-2.25.1
-
+> ---
+>  fs/ecryptfs/ecryptfs_kernel.h | 12 ------------
+>  1 file changed, 12 deletions(-)
+> 
+> diff --git a/fs/ecryptfs/ecryptfs_kernel.h b/fs/ecryptfs/ecryptfs_kernel.h
+> index e6ac78c62ca4..463b2d99b554 100644
+> --- a/fs/ecryptfs/ecryptfs_kernel.h
+> +++ b/fs/ecryptfs/ecryptfs_kernel.h
+> @@ -496,12 +496,6 @@ ecryptfs_set_superblock_lower(struct super_block *sb,
+>  	((struct ecryptfs_sb_info *)sb->s_fs_info)->wsi_sb = lower_sb;
+>  }
+>  
+> -static inline struct ecryptfs_dentry_info *
+> -ecryptfs_dentry_to_private(struct dentry *dentry)
+> -{
+> -	return (struct ecryptfs_dentry_info *)dentry->d_fsdata;
+> -}
+> -
+>  static inline void
+>  ecryptfs_set_dentry_private(struct dentry *dentry,
+>  			    struct ecryptfs_dentry_info *dentry_info)
+> @@ -515,12 +509,6 @@ ecryptfs_dentry_to_lower(struct dentry *dentry)
+>  	return ((struct ecryptfs_dentry_info *)dentry->d_fsdata)->lower_path.dentry;
+>  }
+>  
+> -static inline struct vfsmount *
+> -ecryptfs_dentry_to_lower_mnt(struct dentry *dentry)
+> -{
+> -	return ((struct ecryptfs_dentry_info *)dentry->d_fsdata)->lower_path.mnt;
+> -}
+> -
+>  static inline struct path *
+>  ecryptfs_dentry_to_lower_path(struct dentry *dentry)
+>  {
+> -- 
+> 2.27.0
+> 
