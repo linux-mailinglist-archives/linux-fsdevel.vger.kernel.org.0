@@ -2,125 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC22D36581C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 13:52:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ED37365842
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 13:59:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231766AbhDTLxO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Apr 2021 07:53:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34124 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231196AbhDTLxN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Apr 2021 07:53:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0B4A6613BC;
-        Tue, 20 Apr 2021 11:52:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618919561;
-        bh=lLkO2/PkO+bhgVGsPzjcfwOkNWdX1bKmFUUP9AKrk3g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OipHbKnYeUn8mSFmquef9HjnEZLVmvx3TNs9yqZmXi/SpT1FKUrAdlQDDYigznhJj
-         82nhesndHJF+I20ktltRDKvCXARhYYPIpIYpY31f3h6pweHK0ir4a6oURBE7vMYN9A
-         R9J6cM0KhDGrMM5puM23cu3KM3UhVYwW8eOCEa0OV61xJlnxzLDdouFYS/2nyqZvsv
-         Enx8/783XySF4OuGqyNx3qDEmd8LsGlHdYXwxdmqGXW+6Prnxbwg43XSHLGAM6lgE3
-         SagaZuH8fdcfl9LsMSAa+MNp3kPAp3dhJdKDDwseXH9rzot0FSjdkfukjRQpSKdHnY
-         Tap2Mp7Xn3XFA==
-Date:   Tue, 20 Apr 2021 14:52:26 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Peter.Enderborg@sony.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        sumit.semwal@linaro.org, christian.koenig@amd.com,
-        adobriyan@gmail.com, akpm@linux-foundation.org,
-        songmuchun@bytedance.com, guro@fb.com, shakeelb@google.com,
-        mhocko@suse.com, neilb@suse.de, samitolvanen@google.com,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, willy@infradead.org
-Subject: Re: [PATCH v5] dma-buf: Add DmaBufTotal counter in meminfo
-Message-ID: <YH7AeqqNyNnY0Zi3@kernel.org>
-References: <20210417163835.25064-1-peter.enderborg@sony.com>
- <YH6Xv00ddYfMA3Lg@phenom.ffwll.local>
- <176e7e71-59b7-b288-9483-10e0f42a7a3f@sony.com>
- <YH6h16hviixphaHV@kernel.org>
- <b57a33a3-a5ed-c122-e5b9-c7e7c4dae35f@sony.com>
+        id S231809AbhDTL7g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Apr 2021 07:59:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46276 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230118AbhDTL7f (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Apr 2021 07:59:35 -0400
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB9DC06174A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Apr 2021 04:59:04 -0700 (PDT)
+Received: by mail-il1-x12c.google.com with SMTP id l19so27916359ilk.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Apr 2021 04:59:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BwUV1kKmA2NHVNHsjGntB5ouPN/Ib6TigxJgWukxqUc=;
+        b=tAJtdw+YWqBWIcvKNzKxThlQtM9Jg+S8Ma5Ga3CKoWOTkr/hRcifPe/ZLaqUjiPXlm
+         g3J9PqHj1UOY90wBWoGoF2nXB83k2qQ3c0dEgD3DT1Ve8qMmLsFfspa37QyYtAAWdT5b
+         ahXSVWGH1uNp+f6eOlisssGDsX+MfrFZgomfOvED4LArkN/OjvFCT86FdRvJ1ParW0Nc
+         gjQUkarjBhYW68Pxpm6AFQ5fAZVVglXVyaHf2OzOmec0PUHgLHVHDjYwJ7OuTzRim4o8
+         GF348nah2bRikmSDSbZGf+GLMECmIplTLo6j5E0n4ixiwOKmYMqaa6kKWryV/dW5Fsrg
+         9Eaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BwUV1kKmA2NHVNHsjGntB5ouPN/Ib6TigxJgWukxqUc=;
+        b=kDSmDh/TvGm67Ahgy2Uq+8UAjvX2szWboFX15OUdBr4x8KSRSyAK8Mf5hueNfNqthp
+         KKMgLSesemiOmkLOygPqgeSfQsFYQxGn+OELXvalLm7MJHADt+6FrLVR16mnH4bDm6L+
+         c3s+jXAxtEQr0KbTAkHq7i4BmtlwT8EZIR1jgzxtWXB18Mxdx5SDd6g1fOKCRbUo+Pwr
+         pmlKZb/B5Kz8182GHPSXxtS8YGRTXYQYsXcmgXVW/O3+eFpEV7KPaorFy5gdx47EgBw6
+         Kto84gqyb0zod+uN8OF8eBec8Qx9jp9GJbVQHxGxl6To97RwbvK8P2Nf3BaMj8EXKvoV
+         DX3g==
+X-Gm-Message-State: AOAM532Im2EdE2GGz75VRNSo8YBUQKjAF6UVT06SmcXg+j/kM6S0PU/o
+        JJNPWJdYSgYXb4b2LGBby6P1ja5jfHA565n1aeYsgge9EeM=
+X-Google-Smtp-Source: ABdhPJxFoVBthixgdAPXxeUTxfqAJfCPqZuc5ZRQwWxBQDxR4lZUiL1XuCllC1kePH7HLAKkTYMbA24WlzUBvoscIxY=
+X-Received: by 2002:a92:de41:: with SMTP id e1mr22368386ilr.250.1618919943476;
+ Tue, 20 Apr 2021 04:59:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b57a33a3-a5ed-c122-e5b9-c7e7c4dae35f@sony.com>
+References: <CAOQ4uxjOyuvpJ7Tv3cGmv+ek7+z9BJBF4sK_-OLxwePUrHERUg@mail.gmail.com>
+ <CAOQ4uxhWE9JGOZ_jN9_RT5EkACdNWXOryRsm6Wg_zkaDNDSjsA@mail.gmail.com>
+ <20210401102947.GA29690@quack2.suse.cz> <CAOQ4uxjHFkRVTY5iyTSpb0R5R6j-j=8+Htpu2hgMAz9MTci-HQ@mail.gmail.com>
+ <CAOQ4uxjS56hjaXeTUdce2gJT3tTFb2Zs1_PiUJZzXF9i-SPGkw@mail.gmail.com>
+ <20210408125258.GB3271@quack2.suse.cz> <CAOQ4uxhrvKkK3RZRoGTojpyiyVmQpLWknYiKs8iN=Uq+mhOvsg@mail.gmail.com>
+ <20210409100811.GA20833@quack2.suse.cz> <20210409104546.37i6h2i4ga2xakvp@wittgenstein>
+ <CAOQ4uxi-BG9-XLmQ0uLp0vb_woF=M0EUasLDJG-zHd66PFuKGw@mail.gmail.com> <20210420114154.mwjj7reyntzjkvnw@wittgenstein>
+In-Reply-To: <20210420114154.mwjj7reyntzjkvnw@wittgenstein>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 20 Apr 2021 14:58:52 +0300
+Message-ID: <CAOQ4uxjFvOVpcdEHoeYxnaSbPNA9cmRiLChBPWUkGQKgh5U27A@mail.gmail.com>
+Subject: Re: fsnotify path hooks
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 20, 2021 at 10:45:21AM +0000, Peter.Enderborg@sony.com wrote:
-> On 4/20/21 11:41 AM, Mike Rapoport wrote:
-> > Hello Peter,
+On Tue, Apr 20, 2021 at 2:41 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> On Tue, Apr 20, 2021 at 09:01:09AM +0300, Amir Goldstein wrote:
+> > > One thing, whatever you end up passing to vfs_create() please make sure
+> > > to retrieve mnt_userns once so permission checking and object creation
+> > > line-up:
+> > >
+> > > int vfs_create(struct vfsmount *mnt, struct inode *dir,
+> > >                struct dentry *dentry, umode_t mode, bool want_excl)
+> > > {
+> > >         struct user_namespace *mnt_userns;
+> > >
+> > >         mnt_userns = mnt_user_ns(mnt);
+> > >
+> > >         int error = may_create(mnt_userns, dir, dentry);
+> > >         if (error)
+> > >                 return error;
+> > >
+> > >         if (!dir->i_op->create)
+> > >                 return -EACCES; /* shouldn't it be ENOSYS? */
+> > >         mode &= S_IALLUGO;
+> > >         mode |= S_IFREG;
+> > >         error = security_inode_create(dir, dentry, mode);
+> > >         if (error)
+> > >                 return error;
+> > >         error = dir->i_op->create(mnt_userns, dir, dentry, mode, want_excl);
+> > >         if (!error)
+> > >                 fsnotify_create(mnt, dir, dentry);
+> > >         return error;
+> > > }
+> > >
 > >
-> > On Tue, Apr 20, 2021 at 09:26:00AM +0000, Peter.Enderborg@sony.com wrote:
-> >> On 4/20/21 10:58 AM, Daniel Vetter wrote:
-> >>> On Sat, Apr 17, 2021 at 06:38:35PM +0200, Peter Enderborg wrote:
-> >>>> This adds a total used dma-buf memory. Details
-> >>>> can be found in debugfs, however it is not for everyone
-> >>>> and not always available. dma-buf are indirect allocated by
-> >>>> userspace. So with this value we can monitor and detect
-> >>>> userspace applications that have problems.
-> >>>>
-> >>>> Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
-> >>> So there have been tons of discussions around how to track dma-buf and
-> >>> why, and I really need to understand the use-cass here first I think. proc
-> >>> uapi is as much forever as anything else, and depending what you're doing
-> >>> this doesn't make any sense at all:
-> >>>
-> >>> - on most linux systems dma-buf are only instantiated for shared buffer.
-> >>>   So there this gives you a fairly meaningless number and not anything
-> >>>   reflecting gpu memory usage at all.
-> >>>
-> >>> - on Android all buffers are allocated through dma-buf afaik. But there
-> >>>   we've recently had some discussions about how exactly we should track
-> >>>   all this, and the conclusion was that most of this should be solved by
-> >>>   cgroups long term. So if this is for Android, then I don't think adding
-> >>>   random quick stop-gaps to upstream is a good idea (because it's a pretty
-> >>>   long list of patches that have come up on this).
-> >>>
-> >>> So what is this for?
-> >> For the overview. dma-buf today only have debugfs for info. Debugfs
-> >> is not allowed by google to use in andoid. So this aggregate the information
-> >> so we can get information on what going on on the system. 
-> >  
-> > Can you send an example debugfs output to see what data are we talking
-> > about?
-> 
-> Sure. This is on a idle system. Im not sure why you need it.The problem is partly that debugfs is
-> not accessable on a commercial device.
+> > Christian,
+> >
+> > What is the concern here?
+> > Can mnt_user_ns() change under us?
+> > I am asking because Al doesn't like both mnt_userns AND path to
+> > be passed to do_tuncate() => notify_change()
+> > So I will need to retrieve mnt_userns again inside notify_change()
+> > after it had been used for security checks in do_open().
+> > Would that be acceptable to you?
+>
+> The mnt_userns can't change once a mnt has been idmapped and it can
+> never change if the mount is visible in the filesystem already. The only
+> case we've been worried about and why we did it this way is when you
+> have a caller do fd = open_tree(OPEN_TREE_CLONE) and then share that
+> unattached fd with multiple processes
+> T1: mkdirat(fd, "dir1", 0755);
+> T2: mount_setattr(fd, "",); /* changes idmapping */
+> That case isn't a problem if the mnt_userns is only retrieved once for
+> permission checking and operating on the inode. I think with your
+> changes that still shouldn't be an issue though since the vfs_*()
+> helpers encompass the permission checking anyway and for notify_change,
+> we could simply add a mnt_userns field to struct iattr and pass it down.
 
-I wanted to see what kind of information is there, but I didn't think it's
-that long :)
- 
-> Dma-buf Objects:
-> size        flags       mode        count       exp_name        buf name    ino    
-> 00032768    00000002    00080007    00000002    ion-system-1006-allocator-servi    dmabuf17728    07400825    dmabuf17728
->     Attached Devices:
-> Total 0 devices attached
-> 
-> 11083776    00000002    00080007    00000003    ion-system-1006-allocator-servi    dmabuf17727    07400824    dmabuf17727
->     Attached Devices:
->     ae00000.qcom,mdss_mdp:qcom,smmu_sde_unsec_cb
-> Total 1 devices attached
-> 
-> 00032768    00000002    00080007    00000002    ion-system-1006-allocator-servi    dmabuf17726    07400823    dmabuf17726
->     Attached Devices:
-> Total 0 devices attached
-> 
-> 11083776    00000002    00080007    00000002    ion-system-1006-allocator-servi    dmabuf17725    07400822    dmabuf17725
->     Attached Devices:
->     ae00000.qcom,mdss_mdp:qcom,smmu_sde_unsec_cb
-> Total 1 devices attached
+I suppose that could work for notify_change().
 
-...
-
-> Total 654 objects, 744144896 bytes
- 
-Isn't the size from the first column also available in fdinfo?
-
-Is there anything that prevents monitoring those?
-
--- 
-Sincerely yours,
-Mike.
+Thanks,
+Amir.
