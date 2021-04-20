@@ -2,155 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BEB93659D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 15:20:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CEE83659FD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 15:26:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230408AbhDTNUq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Apr 2021 09:20:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:23601 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232084AbhDTNUo (ORCPT
+        id S232465AbhDTN1F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Apr 2021 09:27:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37480 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232427AbhDTN1C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Apr 2021 09:20:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618924813;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QYX7/AuHi6hgPHf6tRYqK2+HrNaM+fnSnNKD7KzrRzs=;
-        b=OZ0onuVeHycPzs9LHxf4KV7aE8n1VgCkf/KZSsh82ahhr37LLZdd/qEIpm7dUNWbRD0pN5
-        F9WM8P5vFCYsObHhmCuA50CEvX7hfuWCovfW5pwUZFR9qyvBlF2xTPA96DJnCNQvdgY+Iu
-        C0ztYqLdWESINjyxYgN2f7zhYEk2zIs=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-100-ENHxC0EdPV6BcExByX4yKw-1; Tue, 20 Apr 2021 09:20:00 -0400
-X-MC-Unique: ENHxC0EdPV6BcExByX4yKw-1
-Received: by mail-wm1-f69.google.com with SMTP id k26-20020a7bc41a0000b0290125f388fcfbso5684368wmi.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Apr 2021 06:20:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=QYX7/AuHi6hgPHf6tRYqK2+HrNaM+fnSnNKD7KzrRzs=;
-        b=uaEbp67ax5+h/PbnqN7onf0qJLfXTbGwL5Ew7pE2nEPrCcy49g2ArYT8sF/BgaHrqX
-         PCfx8r+bIvKXrpSRz7Ng7XrZY+04vG8+Pce3OOldGWeZfI6HTYwNu45auPH6nCSeL6FD
-         4sDLew0HNYmxa6vzLz4h2D4ogMGCum6dWKUOKpY6Ua1FMZV0RDbJVFXAujeP9H0MBuTf
-         zvNTfTmPBYBYs9Gi7QH0lrvJvgly8i048culTiUvQauWj4COBrleXNt4Nn7wUkUFjFo9
-         2vP5geTkT6y7DqWr50+VrjM7zAckZVLK78eXdoKZr8JTgYBkbXYWv8yIiT1f9zPHf53m
-         oQ6Q==
-X-Gm-Message-State: AOAM531YY1GzF4chFs38gsVXZCmG+i7VCAA1VT2qR+STyXjnL1JV4+6T
-        GxQku0is5Mcy1kLw/hf7TiCbQBfO/GTlaMB00cazjkLgWVUW33P+G6rdtzkK6eKn6X8XBXYGJfg
-        KcyWZelRoWOHvupLdx/4lq8ue8g==
-X-Received: by 2002:a05:6000:128f:: with SMTP id f15mr20916808wrx.19.1618924799176;
-        Tue, 20 Apr 2021 06:19:59 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyfOGjRv02X/zmH7pcY7EIgqs8w+z5KR0gU0RfoaYN+dlGesRC5fI0lFDDiwZRbvB39JmbKYA==
-X-Received: by 2002:a05:6000:128f:: with SMTP id f15mr20916761wrx.19.1618924798995;
-        Tue, 20 Apr 2021 06:19:58 -0700 (PDT)
-Received: from [192.168.3.132] (p4ff2390a.dip0.t-ipconnect.de. [79.242.57.10])
-        by smtp.gmail.com with ESMTPSA id f6sm3291518wmf.28.2021.04.20.06.19.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Apr 2021 06:19:58 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] secretmem/gup: don't check if page is secretmem
- without reference
-To:     Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Tue, 20 Apr 2021 09:27:02 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6F1AC06174A;
+        Tue, 20 Apr 2021 06:26:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=VMqaJi7cREgHvXbfYZgCh1yWGauQvsEM/bV4hsp9kpI=; b=oYIjeBNLDU0bKUDPhFNTmvYkZK
+        g53/qZBWtJ4qmFYmHlqWepJ0FmGFsoXKciINNRiOUsXrKlFjZxMU+5w86z4jSxEqdVbPnmwLQJ0I4
+        QblDiYLB0ZwNnoShTB7pzUIEqXQYgkP6X4VfyjOkT4iwAeZJ9TWj8wO0hT8FfHroUCas+dMT2M2kk
+        BJWxhpuqViQNbWdBRh3SdfIw1+tKOj6jQvkPldSdiuK85EtimYx4m7BGUuQKErPN7+RwkxAlIkcl7
+        X9j4UCHiBwcgWOXAuuLZ9tNy0AZfLZtuNUpnfVfa/yHcmS7mmP/2grQ86rdMiimTFItKK9SLzpvDe
+        sL0DA9ZA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lYqMg-00FCb5-Gr; Tue, 20 Apr 2021 13:25:08 +0000
+Date:   Tue, 20 Apr 2021 14:24:30 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
         Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-References: <20210420131611.8259-1-rppt@kernel.org>
- <20210420131611.8259-2-rppt@kernel.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Message-ID: <95b7fa81-f72e-c63f-0456-4c25dee8a5eb@redhat.com>
-Date:   Tue, 20 Apr 2021 15:19:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Mike Rapoport <rppt@linux.ibm.com>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2] docs: proc.rst: meminfo: briefly describe gaps in
+ memory accounting
+Message-ID: <20210420132430.GB3596236@casper.infradead.org>
+References: <20210420121354.1160437-1-rppt@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20210420131611.8259-2-rppt@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210420121354.1160437-1-rppt@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 20.04.21 15:16, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
-> 
-> The check in gup_pte_range() whether a page belongs to a secretmem mapping
-> is performed before grabbing the page reference.
-> 
-> To avoid potential race move the check after try_grab_compound_head().
-> 
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> ---
->   mm/gup.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index c3a17b189064..4b58c016e949 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -2080,13 +2080,13 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
->   		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
->   		page = pte_page(pte);
->   
-> -		if (page_is_secretmem(page))
-> -			goto pte_unmap;
-> -
->   		head = try_grab_compound_head(page, 1, flags);
->   		if (!head)
->   			goto pte_unmap;
->   
-> +		if (page_is_secretmem(page))
-> +			goto pte_unmap;
-> +
+On Tue, Apr 20, 2021 at 03:13:54PM +0300, Mike Rapoport wrote:
+> Add a paragraph that explains that it may happen that the counters in
+> /proc/meminfo do not add up to the overall memory usage.
 
-Looking at the hunk below, I wonder if you're missing a put_compound_head().
+... that is, the sum may be lower because memory is allocated for other
+purposes that is not reported here, right?
 
-(also, I'd do if unlikely(page_is_secretmem()) but that's a different 
-discussion)
+Is it ever possible for it to be higher?  Maybe due to a race when
+sampling the counters?
 
->   		if (unlikely(pte_val(pte) != pte_val(*ptep))) {
->   			put_compound_head(head, 1, flags);
->   			goto pte_unmap;
-> 
+>  Provides information about distribution and utilization of memory.  This
+> -varies by architecture and compile options.  The following is from a
+> -16GB PIII, which has highmem enabled.  You may not have all of these fields.
+> +varies by architecture and compile options. Please note that it may happen
+> +that the memory accounted here does not add up to the overall memory usage
+> +and the difference for some workloads can be substantial. In many cases there
+> +are other means to find out additional memory using subsystem specific
+> +interfaces, for instance /proc/net/sockstat for TCP memory allocations.
+
+How about just:
+
++varies by architecture and compile options.  The memory reported here
++may not add up to the overall memory usage and the difference for some
++workloads can be substantial. [...]
+
+But I'd like to be a bit more explicit about the reason, hence my question
+above to be sure I understand.
 
 
--- 
-Thanks,
+It's also not entirely clear which of the fields in meminfo can be
+usefully summed.  VmallocTotal is larger than MemTotal, for example.
+But I know that KernelStack is allocated through vmalloc these days,
+and I don't know whether VmallocUsed includes KernelStack or whether I
+can sum them.  Similarly, is Mlocked a subset of Unevictable?
 
-David / dhildenb
-
+There is some attempt at explaining how these numbers fit together, but
+it's outdated, and doesn't include Mlocked, Unevictable or KernelStack
