@@ -2,159 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A92503660AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 22:13:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EEA436612A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 22:52:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233886AbhDTUNb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Apr 2021 16:13:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45092 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233619AbhDTUNb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Apr 2021 16:13:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9FB8761029;
-        Tue, 20 Apr 2021 20:12:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618949579;
-        bh=+BUFCTXBAH0+tkzh9tCwvWGz1Hm44o2xsVlsE4x4Vzc=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=r8SUrLY4IMZG3yYUOGcqFlr8Uumysdb5B0I0dKQOZgxLAgSrPRVrAPeamIsy20cG/
-         3Rq5+ljybjByJHjdIBcMg+gz1Qk3bzBmsX7DmqoF5uO6Sd0NJ+og31XXke93/2P7xJ
-         r3jemLFBH8B3LzWtGIXST0WvvjCAcMiqMqG/bdZM/9v/05ibKjWubg5rndFl6m1FSh
-         7iSFz36qUk+5Nw3zPcZ17U+Y8LTPBS0MsR8+SMPGau6d3tVEfcvAhSAgTk5Vn1xdqE
-         kYMKzQFt0j6qE8xbg3qm7VQOyoNcz/2165Hmk4AQMCDfAqBVjU47hJ33wmyY5HEADD
-         kyju2zKTs6Dqw==
-Message-ID: <3675c1d23577dded6ca97e0be78c153ce3401e10.camel@kernel.org>
-Subject: Re: [PATCH] mm/readahead: Handle ractl nr_pages being modified
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-Date:   Tue, 20 Apr 2021 16:12:57 -0400
-In-Reply-To: <20210420200116.3715790-1-willy@infradead.org>
-References: <20210420200116.3715790-1-willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
+        id S233548AbhDTUwt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Apr 2021 16:52:49 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:53833 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233675AbhDTUwt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Apr 2021 16:52:49 -0400
+Received: by mail-io1-f72.google.com with SMTP id q11-20020a5d87cb0000b02903ef3c4c5374so5312896ios.20
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Apr 2021 13:52:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=SSDFdmPQATpQ8OwALoRdrIkkRpUrIYF3fsT+jgsm1KA=;
+        b=H1dJrkqNfYVuFfs34HECZnLFeo7VPW0WOxVe+1NHqA5MWu1fpMNO0OHKLzpmzVhaFh
+         Jb9rXzxHNDsvzjGNYLkyWameFZ2BHBIrOEOzTv8SavL0eVEqWE3wVU902InuCVFqayUo
+         3lUlkBmPNa9JDawsM8TR4aBnZcMkUtGtjMNkb0Dio2sv6doUl+H0WIibc45y30FZbi5w
+         bv/BVvl2DDgd83lklI7M6GueX0j5HE1m7uffhzo06SYsdMLAn7VcmIo0VC3t1hizGk+l
+         3/fJ1SypIVI5AV5G4VbSolA6Z2JqkONBKBVeZao1Njr1meQ7OiWFxYDCCwIk3nNpdypa
+         ISJA==
+X-Gm-Message-State: AOAM531tm8/2wu1Nal4Q9bhKIYDnMCwlVOKry69Krkgku2kFPLmArKhj
+        wm7ASqmkcVWx1sVrSZwEwYFxgIYZP75vU5B+Jf6kYbPLCkLL
+X-Google-Smtp-Source: ABdhPJyxthuirBJ25x+AXLCnQ7Xx8TsrCo0cc/ijk5RspqtbIdf7dTLhV1mvG0Ht0vT/jYvgAbPlw6T/VsOhDjSFDa1P9jTbiQoV
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a5e:8a47:: with SMTP id o7mr3313017iom.57.1618951937369;
+ Tue, 20 Apr 2021 13:52:17 -0700 (PDT)
+Date:   Tue, 20 Apr 2021 13:52:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000022acbf05c06d9f0d@google.com>
+Subject: [syzbot] WARNING in io_poll_double_wake
+From:   syzbot <syzbot+f2aca089e6f77e5acd46@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2021-04-20 at 21:01 +0100, Matthew Wilcox (Oracle) wrote:
-> The BUG_ON that checks whether the ractl is still in sync with the
-> local variables can trigger under some fairly unusual circumstances.
-> Remove the BUG_ON and resync the loop counter after every call to
-> read_pages().
-> 
-> One way I've seen to trigger it is:
-> 
->  - Start out with a partially populated range in the page cache
->  - Allocate some pages and run into an existing page
->  - Send the read request off to the filesystem
->  - The page we ran into is removed from the page cache
->  - readahead_expand() succeeds in expanding upwards
->  - Return to page_cache_ra_unbounded() and we hit the BUG_ON, as nr_pages
->    has been adjusted upwards.
-> 
-> Reported-by: Jeff Layton <jlayton@kernel.org>
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  mm/readahead.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index f02dbebf1cef..989a8e710100 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -198,8 +198,6 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  	for (i = 0; i < nr_to_read; i++) {
->  		struct page *page = xa_load(&mapping->i_pages, index + i);
->  
-> 
-> 
-> 
-> -		BUG_ON(index + i != ractl->_index + ractl->_nr_pages);
-> -
->  		if (page && !xa_is_value(page)) {
->  			/*
->  			 * Page already present?  Kick off the current batch
-> @@ -210,6 +208,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  			 * not worth getting one just for that.
->  			 */
->  			read_pages(ractl, &page_pool, true);
-> +			i = ractl->_index + ractl->_nr_pages - index;
->  			continue;
->  		}
->  
-> 
-> 
-> 
-> @@ -223,6 +222,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  					gfp_mask) < 0) {
->  			put_page(page);
->  			read_pages(ractl, &page_pool, true);
-> +			i = ractl->_index + ractl->_nr_pages - index;
->  			continue;
->  		}
->  		if (i == nr_to_read - lookahead_size)
+Hello,
 
-Thanks Willy, but I think this may not be quite right. A kernel with
-this patch failed to boot for me:
+syzbot found the following issue on:
 
-[  OK  ] Reached target Basic System.
-[   17.431421] virtio_net virtio1 enp1s0: renamed from eth0
-[   17.453001] page:00000000d076b336 refcount:2 mapcount:0 mapping:00000000fa98b961 index:0x4 pfn:0x100ff8
-[   17.454762] memcg:ffff888115934000
-[   17.455337] aops:def_blk_aops ino:fc00000
-[   17.456163] flags: 0x17ffffc0020014(uptodate|lru|mappedtodisk)
-[   17.457239] raw: 0017ffffc0020014 ffffea0004030048 ffffea0004045f08 ffff8881064d95a0
-[   17.458628] raw: 0000000000000004 0000000000000000 00000002ffffffff ffff888115934000
-[   17.460032] page dumped because: VM_BUG_ON_PAGE(!PageLocked(page))
-[   17.461149] ------------[ cut here ]------------
-[   17.462070] kernel BUG at include/linux/pagemap.h:912!
-[   17.463027] invalid opcode: 0000 [#1] SMP KASAN NOPTI
-[   17.463881] CPU: 15 PID: 491 Comm: systemd-udevd Tainted: G            E   T 5.12.0-rc4+ #96
-[   17.465205] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2.fc34 04/01/2014
-[   17.466549] RIP: 0010:mpage_readahead+0x39e/0x3e0
-[   17.472766] Code: f6 fe ff ff a8 01 48 c7 c6 c0 cf b8 a9 4c 0f 45 e2 4c 89 e7 e8 a3 9f e7 ff 0f 0b 48 c7 c6 00 d1 b8 a9 4c 89 e7 e8 92 9f e7 ff <0f> 0b 48 c7 c6 20 cf b8 a9 4c 89 e7 e8 81 9f e7 ff 0f 0b 48 c7 c6
-[   17.472772] RSP: 0018:ffff8881202c7718 EFLAGS: 00010292
-[   17.472777] RAX: 0000000000000000 RBX: ffff8881202c7b50 RCX: 0000000000000000
-[   17.472781] RDX: 1ffff110840bd851 RSI: 0000000000000008 RDI: ffffed1024058e80
-[   17.472784] RBP: ffffea000403fe08 R08: 0000000000000036 R09: ffff8884205f57a7
-[   17.472787] R10: ffffed10840beaf4 R11: 0000000000000001 R12: ffffea000403fe00
-[   17.472790] R13: ffff8881202c7b70 R14: ffff8881202c7b74 R15: ffffea000403fe00
-[   17.522835] FS:  00007f15cb4c2380(0000) GS:ffff888420400000(0000) knlGS:0000000000000000
-[   17.522841] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   17.522845] CR2: 00007f15cb46e000 CR3: 00000001202e0000 CR4: 00000000003506e0
-[   17.522850] Call Trace:
-[   17.522856]  ? do_mpage_readpage+0xd80/0xd80
-[   17.522873]  ? bdev_disk_changed+0x1d0/0x1d0
-[   17.557948]  ? lock_release+0x1e1/0x6b0
-[   17.557958]  ? lock_downgrade+0x360/0x360
-[   17.557964]  read_pages+0x115/0x3e0
-[   17.557972]  ? readahead_expand+0x3a0/0x3a0
-[   17.557978]  ? __xa_clear_mark+0xc0/0xc0
-[   17.557987]  page_cache_ra_unbounded+0x289/0x420
-[   17.590717]  ? read_pages+0x3e0/0x3e0
-[   17.590737]  force_page_cache_ra+0x1ae/0x230
-[   17.590755]  filemap_get_pages+0x1bf/0xb20
-[   17.606466]  ? copy_user_generic_string+0x2c/0x40
-[   17.606476]  ? __lock_page_async+0x200/0x200
-[   17.606480]  ? copyout+0x7e/0xa0
-[   17.606489]  filemap_read+0x195/0x6d0
-[   17.606497]  ? filemap_get_pages+0xb20/0xb20
-[   17.631844]  ? kvm_sched_clock_read+0x14/0x30
-[   17.631852]  ? sched_clock+0x5/0x10
-[   17.631858]  ? sched_clock_cpu+0x18/0x110
-[   17.631864]  ? __lock_acquire+0x88d/0x2cd0
-[   17.631870]  ? generic_file_read_iter+0x3c/0x220
-[   17.656724]  new_sync_read+0x257/0x360
-[   17.661213]  ? __ia32_sys_llseek+0x1d0/0x1d0
-[   17.665642]  ? __cond_resched+0x15/0x30
-[   17.669896]  ? inode_security+0x6f/0x90
-[   17.674187]  ? avc_policy_seqno+0x28/0x30
-[   17.678458]  vfs_read+0x22b/0x290
-[   17.682522]  ksys_read+0xb1/0x140
+HEAD commit:    1216f02e Add linux-next specific files for 20210415
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a322b1d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3491b04113499f81
+dashboard link: https://syzkaller.appspot.com/bug?extid=f2aca089e6f77e5acd46
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=154654c5d00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=102c0319d00000
+
+The issue was bisected to:
+
+commit b69de288e913030082bed3a324ddc58be6c1e983
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Wed Mar 17 14:37:41 2021 +0000
+
+    io_uring: allow events and user_data update of running poll requests
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12c4b2b6d00000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=11c4b2b6d00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16c4b2b6d00000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f2aca089e6f77e5acd46@syzkaller.appspotmail.com
+Fixes: b69de288e913 ("io_uring: allow events and user_data update of running poll requests")
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 8455 at fs/io_uring.c:1494 req_ref_put fs/io_uring.c:1494 [inline]
+WARNING: CPU: 1 PID: 8455 at fs/io_uring.c:1494 req_ref_put fs/io_uring.c:1492 [inline]
+WARNING: CPU: 1 PID: 8455 at fs/io_uring.c:1494 io_poll_double_wake+0x516/0x770 fs/io_uring.c:4943
+Modules linked in:
+CPU: 1 PID: 8455 Comm: syz-executor676 Not tainted 5.12.0-rc7-next-20210415-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:req_ref_put fs/io_uring.c:1494 [inline]
+RIP: 0010:req_ref_put fs/io_uring.c:1492 [inline]
+RIP: 0010:io_poll_double_wake+0x516/0x770 fs/io_uring.c:4943
+Code: e8 1f 4c dc ff f0 ff 4d 5c 0f 94 c3 31 ff 89 de e8 7f 92 97 ff 84 db b8 01 00 00 00 0f 84 57 fc ff ff 89 04 24 e8 ba 8b 97 ff <0f> 0b 8b 04 24 e9 45 fc ff ff e8 ab 8b 97 ff 49 89 ec e9 83 fb ff
+RSP: 0018:ffffc9000172fad8 EFLAGS: 00010093
+RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
+RDX: ffff88801adbb900 RSI: ffffffff81dcec86 RDI: 0000000000000003
+RBP: ffff8880125ac8c0 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff81dcec71 R11: 0000000000000000 R12: ffff8880125ac91c
+R13: 0000000000000000 R14: ffff8880125ac8f0 R15: ffff888014ed6820
+FS:  00000000015a73c0(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004af100 CR3: 000000001eb33000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ __wake_up_common+0x147/0x650 kernel/sched/wait.c:108
+ __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:138
+ tty_ldisc_lock+0x55/0xb0 drivers/tty/tty_ldisc.c:336
+ tty_ldisc_hangup+0x200/0x680 drivers/tty/tty_ldisc.c:752
+ __tty_hangup.part.0+0x40a/0x870 drivers/tty/tty_io.c:639
+ __tty_hangup drivers/tty/tty_io.c:595 [inline]
+ tty_vhangup drivers/tty/tty_io.c:712 [inline]
+ tty_ioctl+0xf6a/0x1600 drivers/tty/tty_io.c:2746
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:1069 [inline]
+ __se_sys_ioctl fs/ioctl.c:1055 [inline]
+ __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:1055
+ do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x4408a9
+Code: 1b 01 00 85 c0 b8 00 00 00 00 48 0f 44 c3 5b c3 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c4 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffeb1a62488 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004408a9
+RDX: 0000000000000000 RSI: 0000000000005437 RDI: 0000000000000005
+RBP: 00007ffeb1a624b8 R08: 000000000000000e R09: 00007ffeb1a624e0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffeb1a624e0
+R13: 0000000000000000 R14: 00000000004af018 R15: 0000000000400488
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
