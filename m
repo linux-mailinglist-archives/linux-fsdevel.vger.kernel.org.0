@@ -2,127 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AFAF364F5F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 02:17:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5712C364FCB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 03:20:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232598AbhDTASH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Apr 2021 20:18:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34542 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230155AbhDTASE (ORCPT
+        id S231290AbhDTBVO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Apr 2021 21:21:14 -0400
+Received: from mail-1.ca.inter.net ([208.85.220.69]:55250 "EHLO
+        mail-1.ca.inter.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229994AbhDTBVN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Apr 2021 20:18:04 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1406FC061763
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Apr 2021 17:17:34 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id j21-20020a17090ae615b02901505b998b45so6036909pjy.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Apr 2021 17:17:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=w6W75hNlc1Enid3wBzZyoco/VBX0+jV5NyNBjHz84lo=;
-        b=DydYa+3WvntODuL5uMNocBfIJLH6b3z1x6G+86by46uTDqddGSJnmZ9LjF6dhTL7Ci
-         joNddvBFMX7haywbf0tUXWAKr78vAoaO6FkDVWyr424fC3JqtRdvnB6umsX7uK2QULPz
-         ZeKk949oCH3wzaUTD9ogsMnaMHwD64H0hgEzxcIpLKRe5vi9G/1LoSWuR5sPOiVcvG4d
-         ueF9DeViqNpaDeWsPVGgfN8s1rlhJwD1FJXVZ6omYAJtzpwykahBJdLKp1yVSYtGnSLX
-         0C4qxEYj+RJQHfwHNGsH59inI7r2ilZ2jvXM2lSVimVXtahXYwBwMZjYReLrlgIsezrw
-         h/6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=w6W75hNlc1Enid3wBzZyoco/VBX0+jV5NyNBjHz84lo=;
-        b=drf6KowwUKlbqHv8m56In5EquCWpO3deW4oKlHYLcF/EbY2B9AcJZAZr+azSZK9Ih6
-         lw4QG2RrsaWZBU7dVjzT+Nmhlhz05Jpf4hj5EL+ZZ4ZlpS1XQeLy7qThtWqx8n5sOxY4
-         ALXbfJkZJGEK8P+bLCZ+qpvLmsTn2Q2jOcPLFlPc96qx7fBObGdwY+f8s1fCOfoi7ogV
-         hT7Jl4zIr4iZE+y55vFpvRDrFXNw6C8tVlomDU8Ibhp7bE6Gvv1STUmA3igzBL41FflT
-         MQ3gF0hlLlaniDwg7KUFQEpNillAq68m+t+23JbKbf5ZUuLCfhRYjzK3iKrgTlegkkN5
-         YQyA==
-X-Gm-Message-State: AOAM533qwAs6lkUxwwTX/hjhuVVFbFlmpW+FEwMpLewDydGml4nx9473
-        hmghQ3wZCJn8+TCTkrjaGjj6s/tXYtUnDiBN
-X-Google-Smtp-Source: ABdhPJxjU9gZuja4G1yBIYY5Dn47rBI8C/fqYeR/wGkDbDp3AXI2x+uyTpEXyHQp39/QnZGEpJZTaw==
-X-Received: by 2002:a17:90a:7897:: with SMTP id x23mr1811334pjk.133.1618877853303;
-        Mon, 19 Apr 2021 17:17:33 -0700 (PDT)
-Received: from google.com ([2401:fa00:9:211:3810:ca7:eb2a:d336])
-        by smtp.gmail.com with ESMTPSA id n23sm14143418pgl.49.2021.04.19.17.17.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Apr 2021 17:17:32 -0700 (PDT)
-Date:   Tue, 20 Apr 2021 10:17:21 +1000
-From:   Matthew Bobrowski <repnop@google.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     jack@suse.cz, amir73il@gmail.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] pidfd_create(): remove static qualifier and declare
- pidfd_create() in linux/pid.h
-Message-ID: <YH4dkfk7MVJZVxlt@google.com>
-References: <cover.1618527437.git.repnop@google.com>
- <14a09477f0b2d62a424b44e0a1f12f32ae3409bb.1618527437.git.repnop@google.com>
- <20210419125033.udjmsq3npmss26pv@wittgenstein>
+        Mon, 19 Apr 2021 21:21:13 -0400
+Received: from localhost (offload-3.ca.inter.net [208.85.220.70])
+        by mail-1.ca.inter.net (Postfix) with ESMTP id 477922EA15D;
+        Mon, 19 Apr 2021 21:20:42 -0400 (EDT)
+Received: from mail-1.ca.inter.net ([208.85.220.69])
+        by localhost (offload-3.ca.inter.net [208.85.220.70]) (amavisd-new, port 10024)
+        with ESMTP id 1qZYRuf+pZPQ; Mon, 19 Apr 2021 21:01:03 -0400 (EDT)
+Received: from [192.168.48.23] (host-45-58-219-4.dyn.295.ca [45.58.219.4])
+        (using TLSv1 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: dgilbert@interlog.com)
+        by mail-1.ca.inter.net (Postfix) with ESMTPSA id 9818B2EA124;
+        Mon, 19 Apr 2021 21:20:41 -0400 (EDT)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [PATCH v2 3/3] zonefs: fix synchronous write to sequential zone
+ files
+To:     Christoph Hellwig <hch@lst.de>,
+        Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     dm-devel@redhat.com, Mike Snitzer <snitzer@redhat.com>,
+        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-fsdevel@vger.kernel.org,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+References: <20210417023323.852530-1-damien.lemoal@wdc.com>
+ <20210417023323.852530-4-damien.lemoal@wdc.com>
+ <20210419064529.GA19041@lst.de>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <9a4d5090-1a70-129a-72f7-3699db0038a1@interlog.com>
+Date:   Mon, 19 Apr 2021 21:20:41 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210419125033.udjmsq3npmss26pv@wittgenstein>
+In-Reply-To: <20210419064529.GA19041@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 19, 2021 at 02:50:33PM +0200, Christian Brauner wrote:
-> On Fri, Apr 16, 2021 at 09:22:09AM +1000, Matthew Bobrowski wrote:
-> > With the idea to have fanotify(7) return pidfds within a `struct
-> > fanotify_event_metadata`, pidfd_create()'s scope is to increased so
-> > that it can be called from other subsystems within the Linux
-> > kernel. The current `static` qualifier from its definition is to be
-> > removed and a new function declaration for pidfd_create() is to be
-> > added to the linux/pid.h header file.
-> > 
-> > Signed-off-by: Matthew Bobrowski <repnop@google.com>
-> > ---
-> >  include/linux/pid.h | 1 +
-> >  kernel/pid.c        | 2 +-
-> >  2 files changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/pid.h b/include/linux/pid.h
-> > index fa10acb8d6a4..af308e15f174 100644
-> > --- a/include/linux/pid.h
-> > +++ b/include/linux/pid.h
-> > @@ -78,6 +78,7 @@ struct file;
-> >  
-> >  extern struct pid *pidfd_pid(const struct file *file);
-> >  struct pid *pidfd_get_pid(unsigned int fd, unsigned int *flags);
-> > +int pidfd_create(struct pid *pid, unsigned int flags);
-> >  
-> >  static inline struct pid *get_pid(struct pid *pid)
-> >  {
-> > diff --git a/kernel/pid.c b/kernel/pid.c
-> > index ebdf9c60cd0b..91c4b6891c15 100644
-> > --- a/kernel/pid.c
-> > +++ b/kernel/pid.c
-> > @@ -553,7 +553,7 @@ struct pid *pidfd_get_pid(unsigned int fd, unsigned int *flags)
-> >   * Return: On success, a cloexec pidfd is returned.
-> >   *         On error, a negative errno number will be returned.
-> >   */
-> > -static int pidfd_create(struct pid *pid, unsigned int flags)
+On 2021-04-19 2:45 a.m., Christoph Hellwig wrote:
+> On Sat, Apr 17, 2021 at 11:33:23AM +0900, Damien Le Moal wrote:
+>> Synchronous writes to sequential zone files cannot use zone append
+>> operations if the underlying zoned device queue limit
+>> max_zone_append_sectors is 0, indicating that the device does not
+>> support this operation. In this case, fall back to using regular write
+>> operations.
 > 
-> > +int pidfd_create(struct pid *pid, unsigned int flags)
-> 
-> Can you please add a comment to the kernel doc mentioning that this
-> helper is _not_ intended to be exported to modules? I don't want drivers
-> to get the idea that it's ok to start returning pidfds from everywhere
-> just yet.
+> Zone append is a mandatory feature of the zoned device API.
 
-Sure, this makes sense to me. 
- 
-> And I think we should add sm like
-> 
-> 	if (flags & ~(O_NONBLOCK | O_CLOEXEC | O_RDWR))
-> 		return -EINVAL;
-> 
-> in pidfd_open() so future callers don't accidently create pidfds with
-> random flags we don't support.
+So a hack required for ZNS and not needed by ZBC and ZAC becomes
+a "mandatory feature" in a Linux API. Like many hacks, that one might
+come back to bite you :-)
 
-In the context of exporting pidfd_create() to the rest of the kernel,
-presumably we should be adding this flag check to pidfd_create() and
-not pidfd_open(), right? I gather that's what you actually meant.
+Doug Gilbert
 
-/M
