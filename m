@@ -2,89 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58E5636537D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 09:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CAA0365394
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 09:54:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229718AbhDTHsR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Apr 2021 03:48:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36608 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229507AbhDTHsQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Apr 2021 03:48:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1618904864; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jsJz6T5xzjiEAYgDgi3ekTQU/jrutFlTvtKmt7SZ3tY=;
-        b=g/KlVMsFWzGBU2P5DBhoIdinsrP/K9S9LSGnXu7OBhG91Hnl3TFlZYNIUB9mGJMlyr8Iqs
-        PMYKPPniJOQUj9NplFqLgsz6o4iQoOqbF35nGCmbYY1DYQZc0j+HQD2/Ie5Al8UQG1K7yp
-        PybXVfV5m9ApHQlT+lB4JmFxkJGA3LU=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 69CC6B23F;
-        Tue, 20 Apr 2021 07:47:44 +0000 (UTC)
-Date:   Tue, 20 Apr 2021 09:47:43 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Peter.Enderborg@sony.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, sumit.semwal@linaro.org,
-        adobriyan@gmail.com, akpm@linux-foundation.org,
-        songmuchun@bytedance.com, guro@fb.com, shakeelb@google.com,
-        neilb@suse.de, samitolvanen@google.com,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, willy@infradead.org
-Subject: Re: [PATCH v4] dma-buf: Add DmaBufTotal counter in meminfo
-Message-ID: <YH6HHwyEEGFKc+qK@dhcp22.suse.cz>
-References: <20210417104032.5521-1-peter.enderborg@sony.com>
- <YH10s/7MjxBBsjVL@dhcp22.suse.cz>
- <c3f0da9c-d127-5edf-dd21-50fd5298acef@sony.com>
- <YH2a9YfRBlfNnF+u@dhcp22.suse.cz>
- <23aa041b-0e7c-6f82-5655-836899973d66@sony.com>
- <d70efba0-c63d-b55a-c234-eb6d82ae813f@amd.com>
- <YH2ru642wYfqK5ne@dhcp22.suse.cz>
- <07ed1421-89f8-8845-b254-21730207c185@amd.com>
- <YH59E15ztpTTUKqS@dhcp22.suse.cz>
- <YH6Ayy1fWGGWMU+q@kernel.org>
+        id S229696AbhDTHyn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Apr 2021 03:54:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48528 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229552AbhDTHyj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Apr 2021 03:54:39 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1E01C06174A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Apr 2021 00:54:08 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id b10so37563396iot.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Apr 2021 00:54:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TtTy8qt+vxQI8g880AUpBUyHK9BDK2ONR8pJop/yPp0=;
+        b=Wu/YJ/c/pNucLYwHZFL8EI86QQ1/hU+EF6NUSszI8gKgMf41vWuwSVl7cKV0V9AakS
+         NEAUobwGbPvbxloK0INdHw1j/YqW5P/kZPPdUIGuUCfshoBNoJHsYsQaul1CT9c5v2vg
+         XUxS1gVg3WNSNLnWZRHPZHOwPublDLbuEHdDaMV98Io75DZeO714POMULccOi894Sd/m
+         uUuj6aK4AM+On0/zSfu8TJ50+tr79tsEGC3NWJt53EwJ5CTB6WWqzsMHfVKGbFY5jeqS
+         WjW8X/vRjUIcBBQCdn1lC2h6/2VWK/ehyll4BGsQfLFjthjRcIkZaijtU3+beTybdKAJ
+         duxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TtTy8qt+vxQI8g880AUpBUyHK9BDK2ONR8pJop/yPp0=;
+        b=FmliphCIF72fCjhJTz28bu2QKMRaRxgIMHaqKrPZpQdN0nUbYjWijmlKlljJ+7qfRr
+         ZP/xC9SMvt/ogNw1RHNzKU63ItQ8t0KkokwSoXbDm1WlDj+D4+soAit7wOAfhxb1BSas
+         YkdR/POHjUTgeBUzKZAM7EI93bHS50g9QUt3xGryfVdhxsgiID2krYxV2gK/MiEY0AhX
+         3pQHaRZhaNbo0rT4A5UJm1KZcCwcZoRoLCcfOlTnEqIwj24TLCklMKHu0gJdGnwVgZiP
+         QCM1hC/P4mHDUeSgCkvYpXrqW3uFLSJYjhVWO5Jo+9lhpVWcqifSswzFV/UKlAnT2gbt
+         ifoQ==
+X-Gm-Message-State: AOAM530EB3ygQH1fu4ooDcTVN3ljhL3V9ZtrcC7t5amhrr5v1q4eXMJq
+        IVBJf6FeEVyemuIcSk5BRr9cZ1sgKF3n2cLWJFU=
+X-Google-Smtp-Source: ABdhPJy9vK00V3cb4Q0I9QzuwhH9Hyf4gCQfPbXu3Hov2D471fAW4Zcx8l+4TYS35vb7qs+cg7uIqpCk0q63R0cuoZI=
+X-Received: by 2002:a02:331b:: with SMTP id c27mr7856453jae.30.1618905248253;
+ Tue, 20 Apr 2021 00:54:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YH6Ayy1fWGGWMU+q@kernel.org>
+References: <CAOQ4uxirud-+ot0kZ=8qaicvjEM5w1scAeoLP_-HzQx+LwihHw@mail.gmail.com>
+ <20210331125412.GI30749@quack2.suse.cz> <CAOQ4uxjOyuvpJ7Tv3cGmv+ek7+z9BJBF4sK_-OLxwePUrHERUg@mail.gmail.com>
+ <CAOQ4uxhWE9JGOZ_jN9_RT5EkACdNWXOryRsm6Wg_zkaDNDSjsA@mail.gmail.com>
+ <20210401102947.GA29690@quack2.suse.cz> <CAOQ4uxjHFkRVTY5iyTSpb0R5R6j-j=8+Htpu2hgMAz9MTci-HQ@mail.gmail.com>
+ <CAOQ4uxjS56hjaXeTUdce2gJT3tTFb2Zs1_PiUJZzXF9i-SPGkw@mail.gmail.com>
+ <20210408125258.GB3271@quack2.suse.cz> <CAOQ4uxhrvKkK3RZRoGTojpyiyVmQpLWknYiKs8iN=Uq+mhOvsg@mail.gmail.com>
+ <CAOQ4uxi3c2xg9eiL41xv51JoGKn0E2KZuK07na0uSNCxU54OMQ@mail.gmail.com>
+ <YH23mMawq2nZeBhk@zeniv-ca.linux.org.uk> <CAOQ4uxhXXLwUBr01zuU=Uo9rzEg4JQ2w_zEejdRRU8FSJsJg0w@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhXXLwUBr01zuU=Uo9rzEg4JQ2w_zEejdRRU8FSJsJg0w@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 20 Apr 2021 10:53:57 +0300
+Message-ID: <CAOQ4uxiWb5Auyrbrj44hvdMcvMhx1YPRrR90RkicntmyfF+Ugw@mail.gmail.com>
+Subject: Re: fsnotify path hooks
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 20-04-21 10:20:43, Mike Rapoport wrote:
-> On Tue, Apr 20, 2021 at 09:04:51AM +0200, Michal Hocko wrote:
-> > On Mon 19-04-21 18:37:13, Christian König wrote:
-> > > Am 19.04.21 um 18:11 schrieb Michal Hocko:
-> > [...]
-> > > > The question is not whether it is NUMA aware but whether it is useful to
-> > > > know per-numa data for the purpose the counter is supposed to serve.
-> > > 
-> > > No, not at all. The pages of a single DMA-buf could even be from different
-> > > NUMA nodes if the exporting driver decides that this is somehow useful.
-> > 
-> > As the use of the counter hasn't been explained yet I can only
-> > speculate. One thing that I can imagine to be useful is to fill gaps in
-> > our accounting. It is quite often that the memroy accounted in
-> > /proc/meminfo (or oom report) doesn't add up to the overall memory
-> > usage. In some workloads the workload can be huge! In many cases there
-> > are other means to find out additional memory by a subsystem specific
-> > interfaces (e.g. networking buffers). I do assume that dma-buf is just
-> > one of those and the counter can fill the said gap at least partially
-> > for some workloads. That is definitely useful.
-> 
-> A bit off-topic.
-> 
-> Michal, I think it would have been nice to have an explanation like above
-> in Documentation/proc/meminfo, what do you say?
+> > I really want to see details on all callers - which mount are
+> > you going to use in each case.
+>
+> The callers are:
+> cachefiles, ecryptfs, nfsd, devtmpfs,
+> do_truncate(), vfs_utimes() and file_remove_privs()
+>
+> * cachefiles, ecryptfs, nfsd compose paths from stashed
+> mount like this all the time (e.g. for vfs_truncate(), vf_getattr()).
+>
+> * devtmpfs has the parent path from and also uses it to
+> compose child path for vfs_getattr().
+>
+> * vfs_utimes() and all callers of do_truncate() already have the
+> path, just need to pass it through to notify_change()
+>
 
-Not sure which specific parts (likely the unaccounted memory?) but sure
-why not. Our /proc/meminfo is rather underdocumented. More information
-cannot hurt.
--- 
-Michal Hocko
-SUSE Labs
+Not sure how I forgot to mention chmod and chown, but obviously
+there is no problem with path from those callers.
+
+> >
+> >         The thing that is not going to be acceptable is
+> > a combination of mount from one filesystem and dentry from
+> > another.  In particular, file_remove_privs() is going to be
+> > interesting.
+> >
+> >         Note, BTW, that ftruncate() and file_remove_privs()
+> > are different in that respect - the latter hits d_real()
+> > (by way of file_dentry()), the former does not.  Which one
+> > is correct and if both are, why are their needs different?
+>
+> Nowadays (>= v4.19) I think the only files whose file_inode() and
+> f_path do not agree are the overlayfs "real.file" that can find their
+> way to f_mapping and to some vfs helpers and from there to
+> filesystem ops and to file_modified() or generic_file_write_iter()
+> and to file_remove_privs().
+>
+> Contrary to that, overlayfs does not call any vfs truncate()
+> helper, it calls notify_change() directly (with a composed path).
+>
+> So what should we do about file_remove_privs()?
+> Since I don't think we really need to care about generating an
+> event on file_remove_privs(), perhaps it could call __notify_change()
+> that does not generate an event
+
+I found more instances of notify_change() in overlayfs copy_up code
+that IMO should also use __notify_change() and not report fsnotify
+events for restoring attributes on files post copy up.
+
+Like with the case of file_remove_privs(), it is enough IMO that the
+listener is able to get an event on the modification event that caused
+copy up or remove_privs, no need for an event on the subsystem
+internal implementation details.
+
+> and the rest of the callers call this wrapper:
+>
+> int notify_change(struct path *path, struct iattr *attr,
+>                             struct inode **delegated_inode)
+> {
+>         unsigned int ia_valid;
+>         int error = __notify_change(mnt_user_ns(path->mnt), path->dentry,
+>                                                     attr, &ia_valid,
+
+Braino here. There is no need to pass ia_valid to helper.
+I failed to notice that notify_change updates attr->ia_valid.
+
+Which brings me to the fun question - naming.
+
+Would you like me to follow up on Jan's suggestion to rename:
+s/__notify_change/vfs_setattr
+s/notify_change/vfs_setattr_notify
+
+I pushed this version (a.k.a. "tollerabe") to:
+https://github.com/amir73il/linux/commits/fsnotify_path_hooks
+
+It's only sanity tested.
+
+Thanks,
+Amir.
