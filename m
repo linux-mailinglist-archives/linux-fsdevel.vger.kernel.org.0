@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BD8B3659A4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 15:16:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 135903659B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 15:17:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232297AbhDTNRA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Apr 2021 09:17:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32900 "EHLO mail.kernel.org"
+        id S232367AbhDTNRL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Apr 2021 09:17:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231422AbhDTNQ7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Apr 2021 09:16:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DB92561155;
-        Tue, 20 Apr 2021 13:16:16 +0000 (UTC)
+        id S232359AbhDTNRL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Apr 2021 09:17:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8D3E9613CD;
+        Tue, 20 Apr 2021 13:16:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618924588;
-        bh=qhR1fpCqAsT1S7eszhL+8DGn+IohPdIv6ZmfP8rMA54=;
-        h=From:To:Cc:Subject:Date:From;
-        b=KUF557NhH5l1t2K0OYATzazaNCSAUMl7v8OSvEA6BB3++H9JFEiE0m47Qe20TLsyA
-         Mg+bE3SvdjK4KbC0KDgBwkghXH1+SdNl7XPGJXfOGWL6rieURUdgwykpH/YpDMQBPG
-         rKBgMRdJAVDnOl31RwFKVeNmayE39KOv5tA+vfGakvNDvdEpQ+NJsJgelSxLbVraWI
-         bPMda19jc0MXqs60Xcjv5yfm6A6g9IJPG8oGUJGNTfLxnnkT0YtwmG/da8/HHsmN7t
-         JmXlm7VjlV/79DJvWlsaprQDngcrZLv3QMmwPhKSGYJzeKATbw0tpP/7J7LXi7vTV1
-         xuJcRy9ZW0OEg==
+        s=k20201202; t=1618924599;
+        bh=WQBjtjBUVixKPUq09lDhJ2RWgVokupnypM/eycKpBe4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KLusc3hvcK/USIRTI1/AA31CBHshBIRyZKJvd5mzmsf8uSSJ7TpzKDUsknaC7MPq6
+         eN0zAy+9/IAGzPjtf0706PNPT2er4LIkgsjACRHnJ0RD6mEJSD9zoue15HlmXFbsNB
+         WGr5S/g/5n5tBlMAVJCDdPgvHQnj5JM/Bjkejl8nPPCZ8wGk0lluRfswUy871QdR0G
+         NvuSLdYZOYvhOTbadz3yEZRjXbepapK8sotHUAsbDxshP5vjW7LQpXxOenROX7IQQr
+         FdwihTAykTp4q2B0yXS34iR+4uoUJCi072sqeX6ixjq5AcceB0CrHyE/nOjCJknzzP
+         mVOEnaY9ajjYg==
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -60,12 +60,13 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
         linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
         x86@kernel.org
-Subject: [PATCH v2 0/2] secretmem: optimize page_is_secretmem()
-Date:   Tue, 20 Apr 2021 16:16:07 +0300
-Message-Id: <20210420131611.8259-1-rppt@kernel.org>
+Subject: [PATCH v2 1/2] secretmem/gup: don't check if page is secretmem without reference
+Date:   Tue, 20 Apr 2021 16:16:08 +0300
+Message-Id: <20210420131611.8259-2-rppt@kernel.org>
 X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20210420131611.8259-1-rppt@kernel.org>
+References: <20210420131611.8259-1-rppt@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -73,27 +74,37 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mike Rapoport <rppt@linux.ibm.com>
 
-Hi,
+The check in gup_pte_range() whether a page belongs to a secretmem mapping
+is performed before grabbing the page reference.
 
-This is an updated version of page_is_secretmem() changes.
-This is based on v5.12-rc7-mmots-2021-04-15-16-28.
+To avoid potential race move the check after try_grab_compound_head().
 
-@Andrew, please let me know if you'd like me to rebase it differently or
-resend the entire set.
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
+ mm/gup.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-v2:
-* move the check for secretmem page in gup_pte_range after we get a
-  reference to the page, per Matthew.
-
-Mike Rapoport (2):
-  secretmem/gup: don't check if page is secretmem without reference
-  secretmem: optimize page_is_secretmem()
-
- include/linux/secretmem.h | 26 +++++++++++++++++++++++++-
- mm/gup.c                  |  6 +++---
- mm/secretmem.c            | 12 +-----------
- 3 files changed, 29 insertions(+), 15 deletions(-)
-
+diff --git a/mm/gup.c b/mm/gup.c
+index c3a17b189064..4b58c016e949 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2080,13 +2080,13 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
+ 		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
+ 		page = pte_page(pte);
+ 
+-		if (page_is_secretmem(page))
+-			goto pte_unmap;
+-
+ 		head = try_grab_compound_head(page, 1, flags);
+ 		if (!head)
+ 			goto pte_unmap;
+ 
++		if (page_is_secretmem(page))
++			goto pte_unmap;
++
+ 		if (unlikely(pte_val(pte) != pte_val(*ptep))) {
+ 			put_compound_head(head, 1, flags);
+ 			goto pte_unmap;
 -- 
 2.28.0
 
