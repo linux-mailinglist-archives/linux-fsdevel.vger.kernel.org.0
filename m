@@ -2,330 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25643365A54
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 15:39:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FD2A365A7F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 15:48:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232222AbhDTNjh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Apr 2021 09:39:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52388 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231661AbhDTNjh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Apr 2021 09:39:37 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3089761026;
-        Tue, 20 Apr 2021 13:39:02 +0000 (UTC)
-Date:   Tue, 20 Apr 2021 15:38:59 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: fsnotify path hooks
-Message-ID: <20210420133859.kjkxnbtllmfrcm4g@wittgenstein>
-References: <CAOQ4uxhWE9JGOZ_jN9_RT5EkACdNWXOryRsm6Wg_zkaDNDSjsA@mail.gmail.com>
- <20210401102947.GA29690@quack2.suse.cz>
- <CAOQ4uxjHFkRVTY5iyTSpb0R5R6j-j=8+Htpu2hgMAz9MTci-HQ@mail.gmail.com>
- <CAOQ4uxjS56hjaXeTUdce2gJT3tTFb2Zs1_PiUJZzXF9i-SPGkw@mail.gmail.com>
- <20210408125258.GB3271@quack2.suse.cz>
- <CAOQ4uxhrvKkK3RZRoGTojpyiyVmQpLWknYiKs8iN=Uq+mhOvsg@mail.gmail.com>
- <20210409100811.GA20833@quack2.suse.cz>
- <20210409104546.37i6h2i4ga2xakvp@wittgenstein>
- <CAOQ4uxi-BG9-XLmQ0uLp0vb_woF=M0EUasLDJG-zHd66PFuKGw@mail.gmail.com>
- <20210420114154.mwjj7reyntzjkvnw@wittgenstein>
+        id S232691AbhDTNsA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Apr 2021 09:48:00 -0400
+Received: from mx07-001d1705.pphosted.com ([185.132.183.11]:12122 "EHLO
+        mx07-001d1705.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232450AbhDTNr7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Apr 2021 09:47:59 -0400
+Received: from pps.filterd (m0209329.ppops.net [127.0.0.1])
+        by mx08-001d1705.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13KDkaV3019600;
+        Tue, 20 Apr 2021 13:46:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=S1;
+ bh=saUdFj59vLScZDz77SunDlmjFm8Hhw6DFVdZrZY7Rrc=;
+ b=mCaTRR2srEotl51dtQ99uQSyyEovK+3mYmGpZ7RzosufZyBgXpwqnfacNvlHCvmjAi+P
+ NU3T956aOycQhIXk6V4/TMHaBq6RI+n0ZLVAPj7kix12OUPlxXrq/+DWJziHqeP5UnTg
+ I3RJuR6U8NjsCSEmQEcg/7QINPrnXVqL12HODr5oeLA8HI/axznpXQPbNQ2/n+7u1ODB
+ WlAc2F5iclkHFWGdt0H/osmbj1BismkLuu+9XTXsCz+KL0XNP976OcZN6cP4cqsKxfsS
+ R7emeSAspFV7WaVmTf6BzNnkDDuP5K3WVfK4nev1CIO1JeXZMzSptmbmtfROlPC1kjZS aQ== 
+Received: from eur05-db8-obe.outbound.protection.outlook.com (mail-db8eur05lp2111.outbound.protection.outlook.com [104.47.17.111])
+        by mx08-001d1705.pphosted.com with ESMTP id 37ypb0241h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 20 Apr 2021 13:46:36 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HJFEp7ZMF5UazHrLssgrW925wlb0/SMGHv0mGxtrplH/F6sIqSi/I9RtBQwkzUmEUFGgWe/htGiG74KxQqJeLdhNFNfCj7TtGigBmrFlWH1MPRqXx9+O0V4Eft3oQjLb9+bmLY+tY6RuJmmWfrJ8RVc2x6unCxV7r6NOcfZVNSGfBVDQRvMWUdbHcK8WoT5VFO9Vvkcc+j3na+x1Ep1NgT+1RCUJg8KEkRpLVkH4Mtrj1tQ4UZBVgXy67NMmb1srPmSTaluBgFlXt0zPa6QxzLXaaqkJ09KovFJ/5DgK5Y/V3MnMRkj37lJROyrsqMSkCwxjbwuUzreXP044O/r1og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=saUdFj59vLScZDz77SunDlmjFm8Hhw6DFVdZrZY7Rrc=;
+ b=hNMDjLEZ+4ubtKQDBRfYDyTZTj9T6lOMl/SVyYctnOM6Mzq/fXw/UEhoyunvvP8H1rIumRe4MyIn0P4a73yjF76l85BKTwCTOxFU3M4nglBLVxsFKNI/MLw3dxn32j6UWlmcmmk2G78q+hf0rAQnJGTIQjCq6WZ0IHzU7gTn0GOlPbY3jhfjfLANa3bAajKD5Z1W1RuKd/cBFCKo8QS91kYeOboY6gGl3AOLHMjsGd5LkVBKBPKrhWPRt5UJjUXXoHW5+/917AH6UOsLWmTnbCmRH/BJM9xHzsdjxgg1cNByIZ5Ltzq6jKf4LqeEYaCFuLWc/snuraQitZPE92juBg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
+ dkim=pass header.d=sony.com; arc=none
+Received: from AM9P193MB1491.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:306::20)
+ by AM0P193MB0465.EURP193.PROD.OUTLOOK.COM (2603:10a6:208:5a::28) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4042.16; Tue, 20 Apr
+ 2021 13:46:29 +0000
+Received: from AM9P193MB1491.EURP193.PROD.OUTLOOK.COM
+ ([fe80::35b3:3e5e:6533:84e0]) by AM9P193MB1491.EURP193.PROD.OUTLOOK.COM
+ ([fe80::35b3:3e5e:6533:84e0%5]) with mapi id 15.20.4065.020; Tue, 20 Apr 2021
+ 13:46:29 +0000
+From:   <Peter.Enderborg@sony.com>
+To:     <daniel@fooishbar.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <sumit.semwal@linaro.org>, <christian.koenig@amd.com>,
+        <adobriyan@gmail.com>, <akpm@linux-foundation.org>,
+        <songmuchun@bytedance.com>, <guro@fb.com>, <shakeelb@google.com>,
+        <mhocko@suse.com>, <neilb@suse.de>, <samitolvanen@google.com>,
+        <rppt@kernel.org>, <linux-media@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <willy@infradead.org>
+Subject: Re: [PATCH v2] dma-buf: Add DmaBufTotal counter in meminfo
+Thread-Topic: [PATCH v2] dma-buf: Add DmaBufTotal counter in meminfo
+Thread-Index: AQHXMrzS5xsiePyv1kC49iGqOSZm9aq9bm8AgAADNoA=
+Date:   Tue, 20 Apr 2021 13:46:29 +0000
+Message-ID: <9d4b7f7d-1a7d-0899-bf33-49fac1847bbe@sony.com>
+References: <20210416123352.10747-1-peter.enderborg@sony.com>
+ <CAPj87rM9gaPS5SOHo3CKUU=5H0PDaG28r8BXimhVp-wmCbMvWA@mail.gmail.com>
+In-Reply-To: <CAPj87rM9gaPS5SOHo3CKUU=5H0PDaG28r8BXimhVp-wmCbMvWA@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+authentication-results: fooishbar.org; dkim=none (message not signed)
+ header.d=none;fooishbar.org; dmarc=none action=none header.from=sony.com;
+x-originating-ip: [37.139.156.40]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 47e46a0a-d195-41a9-f0de-08d90402b322
+x-ms-traffictypediagnostic: AM0P193MB0465:
+x-microsoft-antispam-prvs: <AM0P193MB046549C92184B784398F83B986489@AM0P193MB0465.EURP193.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: tXcbR9U3Z1xG9bxjVQjoLYeB/f+3jknnI4C6yhGRAQQKdM+ZnkE82KsuNpqwfG7JLq44F4fs8USJNbxuKRLpZ9qxCmJ85cI5ML1uW8erVjmGMg9Fap+G5IknvicJeXjDqEb5oCHchKow0xx0o5JidcTz5oUVo6egUXS8rg0H196YjW9vsq24uUyiaJ4VU85qkee7qUxiJTixwnQ4vI5CBAoIAcqZ11sLCo0Gz8uUpLeS9+piTINfLTYk/vcKrJbCOhqGDft+MRqd6m8lBepLfErZ98gfdoaLzJn4gtm1E+DWnOFjVDzjoEjMXYeeSioOpRwVzCURpxfC+h/vA4nZe962+dp7NN7jXOq6hz5mh3NvRTieEDahRFnz3J5qY+mKFgttGwiFhRxdvGwqjSIeZozJ7Z7/6WABxZQy+J1QhwnkaT6+vukeY/eE7uKjagOp2a/fllqaJB8vYxB27yKKVTOAtOIfYMJx41ybasLUzJDmvTOfW3AfQ4VGVf9zAF8rIpHy6YhtADSpg6WgrqWm5y0k0nc7KPMwlrpXPx5hAOoz3PsJQ5K2bsdyGxJIqaX2CKavtsWgJwZjREYRETvdpGnb6eixUX/UK7oE3cN0I5NbUho5HxLHn79kR0ql7neiWkjbFRkw53M6wpF77vbCFPUjyFmLz0FiWqc0tQYC0krVj5qQfzP57+miLwiQCojT
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9P193MB1491.EURP193.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(4636009)(366004)(39850400004)(346002)(376002)(396003)(136003)(26005)(6486002)(2906002)(71200400001)(186003)(64756008)(86362001)(478600001)(36756003)(66946007)(38100700002)(4326008)(316002)(31686004)(4744005)(5660300002)(31696002)(54906003)(6506007)(8936002)(7416002)(91956017)(2616005)(66556008)(122000001)(76116006)(66476007)(66446008)(83380400001)(8676002)(6916009)(6512007)(53546011)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?utf-8?B?aUNaRno5RlNGTU4xSWxXbHlQc0RZOFNVOHNHTUZYYURXNWZoUXFwaTQyN2Jn?=
+ =?utf-8?B?V2RPWVY1ODFYbHE4ZngwY015U0JVdloxY3NPK2ZjZTZaQzdRRS9TVzVOUjUw?=
+ =?utf-8?B?ZVZmeWJNMWREYk5kL2ZBcnd3Uyt0azVOcEZIMFA5QmRWZVBaa0NRSWZWa1Q2?=
+ =?utf-8?B?aDBkb3RBTlBIMGxTSkxia2pRMmM1d3A0WkdwUkx3VnFMUlpUSEdYNFNLZWh5?=
+ =?utf-8?B?bTNxVEloQXVuOUd5N01NZWJVMHNHbU12ZHp1bnBMdmJ5Wlp6U0Y2Qlg3YitY?=
+ =?utf-8?B?SUJxRUppRXhwdnFwNXlUcGtHeDJ2OWI4NmZGVVhSeUs0TEJrRGRiWXdwTCto?=
+ =?utf-8?B?ZTNnL3Z5MkJtUTluNXBIMTJoM01XdmNnQlhHY3ZyWUtRN29DMm4zMXJ0OVRy?=
+ =?utf-8?B?Y0FLL0VNWXpBalpYc0dtL2FySXl5NU1VbUphS2xKcGJseWJPTi9YajlsMTBp?=
+ =?utf-8?B?djhPajk4NFlwSlBoWjRHQVhFeFRScGZzYm1QUTIxSmdFcElSNk1LcVU5S0k5?=
+ =?utf-8?B?ZStLcXZCbXgwWjlySVMzbnNLRU03Q3VjN1U4Mmg5WnhyRzcyUUtCSVo1Zll3?=
+ =?utf-8?B?OEtmcjFxM2kydGJ6UjU1eU55K09YQXFCNEgwczIySFVJWXgyeStRZkJteXFq?=
+ =?utf-8?B?STRtL3dxY1QrTVpGLzBhbnBpQVhzRnlRQURwQzlFU1lkci9rWHk1MTY3N0tl?=
+ =?utf-8?B?Z1BZQ1ZzcGxlNW1YbmVFdjBFQmsrK3EyZFg5MUVacGQxVFlYV0RvcERyeHF2?=
+ =?utf-8?B?ZVBjMU40OEtyRVJka2VpRUZ6aFp6Q1BKYkxZUXJzazZHbENZdlozVkdMaHZW?=
+ =?utf-8?B?bEZLUW5ZczQxZm9BYlM3WXF0Si9qZVcxOHFmYVdSQjNEdGZPNXdqTk5RM2Jw?=
+ =?utf-8?B?ekg3WklsZmdqMzB3TUt4OFlrei80STNjNUlBSGgxMUVDTXNJK25UeHdvUVNT?=
+ =?utf-8?B?aXAyU0crazQ0VEc5MGl5ZGFRdTF4M3VaWGE5Mlp3RmxFSlVHejNBZ2kvSTV0?=
+ =?utf-8?B?U1RIekhyR1lRMW1NSUVYMmJpVVI2SUlVdkFIOEdRN1JxSHJZbmpNaXRUNlda?=
+ =?utf-8?B?WmFRaGtBUk1ZNU9lbUJEVGZ2UlVCV0RPRFhHaFplUTZ6U2JBd2NreGpyMHB5?=
+ =?utf-8?B?bis0dDI1bnZ0dWxtaDRXa3R1N3JER2hmemV2RXVrVDl0N0tqVlJuTjczSjcw?=
+ =?utf-8?B?NHRlQkd3Z0VoZEVSb0xIQTBmV3Z0THdFZHUwTWQxR3l5amJhOG41SWtCb1Na?=
+ =?utf-8?B?eW8rcFpLU2VYU3ZBNlFLdzF2cU5lN012YkExa3E1RVZxd1hadHdFdFFYbTRK?=
+ =?utf-8?B?TzJDZisrVkJrNFVOMXBRYld6a2hLSi9HTEQrcjYvSmljbHZwbkErYmtvbjlU?=
+ =?utf-8?B?ZFVVZkg2OThYWWNtS1NyUFQ0OVJ4ZjV4RmtGYThIOVdaN01McG5ZOXVVZ3Rl?=
+ =?utf-8?B?Rkg3WlpycTZEUitTS3RueU1NL2ptTEVBU2xkdVkvMllLamZJWnBDb3ZVZ2Yw?=
+ =?utf-8?B?Tk1PYWsyNjJDM1NpS1MzRWZRU0xCbFJMd2o0dFoweXZtbWxlb0JxdFpnTitM?=
+ =?utf-8?B?eVRHWDkrNU9FaGlBcllvb0NQRlZUZHF3RlQvL0RaeTYzNDBzR2dITy9sa25X?=
+ =?utf-8?B?R3p6YXZDQi9RYkp4R05CVCtia2YvRlQ4YnNQOEw4WGo2WWtHVlhzM2ZzbjFY?=
+ =?utf-8?B?MjVzMzlSN09BNFZud1lKZTJhWmlSMnJ0WkgzRC9pc1piTUxjWkVCNFI1aU8y?=
+ =?utf-8?Q?NBDdSEzU47Gd4Twv+jVqpQLFxv1TVkE6jC6Th22?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A46D38193DB95A4EA597B7977E04768F@EURP193.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210420114154.mwjj7reyntzjkvnw@wittgenstein>
+X-OriginatorOrg: sony.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM9P193MB1491.EURP193.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47e46a0a-d195-41a9-f0de-08d90402b322
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2021 13:46:29.0975
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zuDeK1oKMHWWXbT6NofW8BAx+g6YD43aDakPD+CGkjVB4l3RTyeZPvW9+ad++I9cCsDnqxZyKBt0UE8c+RDHOFlOHPLh1ScwXnTc9oYzbnc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0P193MB0465
+X-Proofpoint-GUID: 3alh0NEod9WPBcpYTpsJh29iosjaXj5h
+X-Proofpoint-ORIG-GUID: 3alh0NEod9WPBcpYTpsJh29iosjaXj5h
+X-Sony-Outbound-GUID: 3alh0NEod9WPBcpYTpsJh29iosjaXj5h
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-04-20_06:2021-04-20,2021-04-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 adultscore=0 malwarescore=0 spamscore=0 clxscore=1011
+ mlxscore=0 mlxlogscore=999 suspectscore=0 phishscore=0 lowpriorityscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104200103
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 20, 2021 at 01:41:59PM +0200, Christian Brauner wrote:
-> On Tue, Apr 20, 2021 at 09:01:09AM +0300, Amir Goldstein wrote:
-> > > One thing, whatever you end up passing to vfs_create() please make sure
-> > > to retrieve mnt_userns once so permission checking and object creation
-> > > line-up:
-> > >
-> > > int vfs_create(struct vfsmount *mnt, struct inode *dir,
-> > >                struct dentry *dentry, umode_t mode, bool want_excl)
-> > > {
-> > >         struct user_namespace *mnt_userns;
-> > >
-> > >         mnt_userns = mnt_user_ns(mnt);
-> > >
-> > >         int error = may_create(mnt_userns, dir, dentry);
-> > >         if (error)
-> > >                 return error;
-> > >
-> > >         if (!dir->i_op->create)
-> > >                 return -EACCES; /* shouldn't it be ENOSYS? */
-> > >         mode &= S_IALLUGO;
-> > >         mode |= S_IFREG;
-> > >         error = security_inode_create(dir, dentry, mode);
-> > >         if (error)
-> > >                 return error;
-> > >         error = dir->i_op->create(mnt_userns, dir, dentry, mode, want_excl);
-> > >         if (!error)
-> > >                 fsnotify_create(mnt, dir, dentry);
-> > >         return error;
-> > > }
-> > >
-> > 
-> > Christian,
-> > 
-> > What is the concern here?
-> > Can mnt_user_ns() change under us?
-> > I am asking because Al doesn't like both mnt_userns AND path to
-> > be passed to do_tuncate() => notify_change()
-> > So I will need to retrieve mnt_userns again inside notify_change()
-> > after it had been used for security checks in do_open().
-> > Would that be acceptable to you?
-> 
-> The mnt_userns can't change once a mnt has been idmapped and it can
-> never change if the mount is visible in the filesystem already. The only
-> case we've been worried about and why we did it this way is when you
-> have a caller do fd = open_tree(OPEN_TREE_CLONE) and then share that
-> unattached fd with multiple processes
-> T1: mkdirat(fd, "dir1", 0755);
-> T2: mount_setattr(fd, "",); /* changes idmapping */
-> That case isn't a problem if the mnt_userns is only retrieved once for
-> permission checking and operating on the inode. I think with your
-> changes that still shouldn't be an issue though since the vfs_*()
-> helpers encompass the permission checking anyway and for notify_change,
-> we could simply add a mnt_userns field to struct iattr and pass it down.
-
-So I mean something along those lines. I converted a few callers to
-illustrate this and I hope Al doesn't kill me. Please note that this
-won't compile since I haven't converted all callers. I can give you a
-full patch though if you think that is ok:
-
----
- drivers/base/devtmpfs.c   |  6 ++++--
- fs/attr.c                 | 16 ++++++++--------
- fs/cachefiles/interface.c | 10 ++++++++--
- fs/ecryptfs/inode.c       | 12 ++++++++++--
- fs/inode.c                |  7 ++++---
- include/linux/fs.h        |  3 ++-
- 6 files changed, 36 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
-index 653c8c6ac7a7..323a549c62e3 100644
---- a/drivers/base/devtmpfs.c
-+++ b/drivers/base/devtmpfs.c
-@@ -221,8 +221,9 @@ static int handle_create(const char *nodename, umode_t mode, kuid_t uid,
- 		newattrs.ia_uid = uid;
- 		newattrs.ia_gid = gid;
- 		newattrs.ia_valid = ATTR_MODE|ATTR_UID|ATTR_GID;
-+		newattrs.mnt_userns = &init_user_ns;
- 		inode_lock(d_inode(dentry));
--		notify_change(&init_user_ns, dentry, &newattrs, NULL);
-+		notify_change(path, dentry, &newattrs, NULL);
- 		inode_unlock(d_inode(dentry));
- 
- 		/* mark as kernel-created inode */
-@@ -329,8 +330,9 @@ static int handle_remove(const char *nodename, struct device *dev)
- 			newattrs.ia_mode = stat.mode & ~0777;
- 			newattrs.ia_valid =
- 				ATTR_UID|ATTR_GID|ATTR_MODE;
-+			newattrs.mnt_userns = &init_user_ns;
- 			inode_lock(d_inode(dentry));
--			notify_change(&init_user_ns, dentry, &newattrs, NULL);
-+			notify_change(path, dentry, &newattrs, NULL);
- 			inode_unlock(d_inode(dentry));
- 			err = vfs_unlink(&init_user_ns, d_inode(parent.dentry),
- 					 dentry, NULL);
-diff --git a/fs/attr.c b/fs/attr.c
-index 87ef39db1c34..59a9ed986e49 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -279,7 +279,7 @@ EXPORT_SYMBOL(setattr_copy);
-  * permissions. On non-idmapped mounts or if permission checking is to be
-  * performed on the raw inode simply passs init_user_ns.
-  */
--int notify_change(struct user_namespace *mnt_userns, struct dentry *dentry,
-+int notify_change(struct path *path, struct dentry *dentry,
- 		  struct iattr *attr, struct inode **delegated_inode)
- {
- 	struct inode *inode = dentry->d_inode;
-@@ -303,8 +303,8 @@ int notify_change(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		if (IS_IMMUTABLE(inode))
- 			return -EPERM;
- 
--		if (!inode_owner_or_capable(mnt_userns, inode)) {
--			error = inode_permission(mnt_userns, inode, MAY_WRITE);
-+		if (!inode_owner_or_capable(attr->mnt_userns, inode)) {
-+			error = inode_permission(attr->mnt_userns, inode, MAY_WRITE);
- 			if (error)
- 				return error;
- 		}
-@@ -381,10 +381,10 @@ int notify_change(struct user_namespace *mnt_userns, struct dentry *dentry,
- 	 * gids unless those uids & gids are being made valid.
- 	 */
- 	if (!(ia_valid & ATTR_UID) &&
--	    !uid_valid(i_uid_into_mnt(mnt_userns, inode)))
-+	    !uid_valid(i_uid_into_mnt(attr->mnt_userns, inode)))
- 		return -EOVERFLOW;
- 	if (!(ia_valid & ATTR_GID) &&
--	    !gid_valid(i_gid_into_mnt(mnt_userns, inode)))
-+	    !gid_valid(i_gid_into_mnt(attr->mnt_userns, inode)))
- 		return -EOVERFLOW;
- 
- 	error = security_inode_setattr(dentry, attr);
-@@ -395,13 +395,13 @@ int notify_change(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		return error;
- 
- 	if (inode->i_op->setattr)
--		error = inode->i_op->setattr(mnt_userns, dentry, attr);
-+		error = inode->i_op->setattr(attr->mnt_userns, dentry, attr);
- 	else
--		error = simple_setattr(mnt_userns, dentry, attr);
-+		error = simple_setattr(attr->mnt_userns, dentry, attr);
- 
- 	if (!error) {
- 		fsnotify_change(dentry, ia_valid);
--		ima_inode_post_setattr(mnt_userns, dentry);
-+		ima_inode_post_setattr(attr->mnt_userns, dentry);
- 		evm_inode_post_setattr(dentry, ia_valid);
- 	}
- 
-diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
-index 5efa6a3702c0..cede4b790694 100644
---- a/fs/cachefiles/interface.c
-+++ b/fs/cachefiles/interface.c
-@@ -429,6 +429,7 @@ static int cachefiles_check_consistency(struct fscache_operation *op)
-  */
- static int cachefiles_attr_changed(struct fscache_object *_object)
- {
-+	struct path path;
- 	struct cachefiles_object *object;
- 	struct cachefiles_cache *cache;
- 	const struct cred *saved_cred;
-@@ -460,6 +461,9 @@ static int cachefiles_attr_changed(struct fscache_object *_object)
- 	if (oi_size == ni_size)
- 		return 0;
- 
-+	path.dentry = object->backer;
-+	path.mnt = cache->mnt;
-+
- 	cachefiles_begin_secure(cache, &saved_cred);
- 	inode_lock(d_inode(object->backer));
- 
-@@ -470,14 +474,16 @@ static int cachefiles_attr_changed(struct fscache_object *_object)
- 		_debug("discard tail %llx", oi_size);
- 		newattrs.ia_valid = ATTR_SIZE;
- 		newattrs.ia_size = oi_size & PAGE_MASK;
--		ret = notify_change(&init_user_ns, object->backer, &newattrs, NULL);
-+		newattr.mnt_userns = &init_user_ns;
-+		ret = notify_change(&path, object->backer, &newattrs, NULL);
- 		if (ret < 0)
- 			goto truncate_failed;
- 	}
- 
- 	newattrs.ia_valid = ATTR_SIZE;
- 	newattrs.ia_size = ni_size;
--	ret = notify_change(&init_user_ns, object->backer, &newattrs, NULL);
-+	newattr.mnt_userns = &init_user_ns;
-+	ret = notify_change(&path, object->backer, &newattrs, NULL);
- 
- truncate_failed:
- 	inode_unlock(d_inode(object->backer));
-diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-index 18e9285fbb4c..8347742087e0 100644
---- a/fs/ecryptfs/inode.c
-+++ b/fs/ecryptfs/inode.c
-@@ -867,10 +867,14 @@ int ecryptfs_truncate(struct dentry *dentry, loff_t new_length)
- 
- 	rc = truncate_upper(dentry, &ia, &lower_ia);
- 	if (!rc && lower_ia.ia_valid & ATTR_SIZE) {
-+		struct path *lower_path;
- 		struct dentry *lower_dentry = ecryptfs_dentry_to_lower(dentry);
- 
-+		lower_path = ecryptfs_dentry_to_lower_path(dentry);
-+		lower_ia.mnt_userns = mnt_user_ns(lower_path);
-+
- 		inode_lock(d_inode(lower_dentry));
--		rc = notify_change(&init_user_ns, lower_dentry,
-+		rc = notify_change(lower_path, lower_dentry,
- 				   &lower_ia, NULL);
- 		inode_unlock(d_inode(lower_dentry));
- 	}
-@@ -906,6 +910,7 @@ static int ecryptfs_setattr(struct user_namespace *mnt_userns,
- 	struct inode *inode;
- 	struct inode *lower_inode;
- 	struct ecryptfs_crypt_stat *crypt_stat;
-+	struct path *lower_path;
- 
- 	crypt_stat = &ecryptfs_inode_to_private(d_inode(dentry))->crypt_stat;
- 	if (!(crypt_stat->flags & ECRYPTFS_STRUCT_INITIALIZED)) {
-@@ -977,8 +982,11 @@ static int ecryptfs_setattr(struct user_namespace *mnt_userns,
- 	if (lower_ia.ia_valid & (ATTR_KILL_SUID | ATTR_KILL_SGID))
- 		lower_ia.ia_valid &= ~ATTR_MODE;
- 
-+	lower_path = ecryptfs_dentry_to_lower_path(dentry);
-+	lower_ia.mnt_userns = mnt_user_ns(lower_path);
-+
- 	inode_lock(d_inode(lower_dentry));
--	rc = notify_change(&init_user_ns, lower_dentry, &lower_ia, NULL);
-+	rc = notify_change(lower_path, lower_dentry, &lower_ia, NULL);
- 	inode_unlock(d_inode(lower_dentry));
- out:
- 	fsstack_copy_attr_all(inode, lower_inode);
-diff --git a/fs/inode.c b/fs/inode.c
-index a047ab306f9a..12a1531a6c52 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1906,17 +1906,18 @@ int dentry_needs_remove_privs(struct dentry *dentry)
- 	return mask;
- }
- 
--static int __remove_privs(struct user_namespace *mnt_userns,
-+static int __remove_privs(struct file *file,
- 			  struct dentry *dentry, int kill)
- {
- 	struct iattr newattrs;
- 
- 	newattrs.ia_valid = ATTR_FORCE | kill;
-+	newattrs.mnt_userns = file_mnt_user_ns(file);
- 	/*
- 	 * Note we call this on write, so notify_change will not
- 	 * encounter any conflicting delegations:
- 	 */
--	return notify_change(mnt_userns, dentry, &newattrs, NULL);
-+	return notify_change(file->f_path, dentry, &newattrs, NULL);
- }
- 
- /*
-@@ -1943,7 +1944,7 @@ int file_remove_privs(struct file *file)
- 	if (kill < 0)
- 		return kill;
- 	if (kill)
--		error = __remove_privs(file_mnt_user_ns(file), dentry, kill);
-+		error = __remove_privs(file, dentry, kill);
- 	if (!error)
- 		inode_has_no_xattr(inode);
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ec8f3ddf4a6a..d23bcedf5f92 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -234,6 +234,7 @@ struct iattr {
- 	 * check for (ia_valid & ATTR_FILE), and not for (ia_file != NULL).
- 	 */
- 	struct file	*ia_file;
-+	struct user_namespace *mnt_userns;
- };
- 
- /*
-@@ -2862,7 +2863,7 @@ static inline int bmap(struct inode *inode,  sector_t *block)
- }
- #endif
- 
--int notify_change(struct user_namespace *, struct dentry *,
-+int notify_change(struct path *, struct dentry *,
- 		  struct iattr *, struct inode **);
- int inode_permission(struct user_namespace *, struct inode *, int);
- int generic_permission(struct user_namespace *, struct inode *, int);
--- 
-2.27.0
-
+T24gNC8yMC8yMSAzOjM0IFBNLCBEYW5pZWwgU3RvbmUgd3JvdGU6DQo+IEhpIFBldGVyLA0KPg0K
+PiBPbiBGcmksIDE2IEFwciAyMDIxIGF0IDEzOjM0LCBQZXRlciBFbmRlcmJvcmcgPHBldGVyLmVu
+ZGVyYm9yZ0Bzb255LmNvbSA8bWFpbHRvOnBldGVyLmVuZGVyYm9yZ0Bzb255LmNvbT4+IHdyb3Rl
+Og0KPg0KPiAgICAgVGhpcyBhZGRzIGEgdG90YWwgdXNlZCBkbWEtYnVmIG1lbW9yeS4gRGV0YWls
+cw0KPiAgICAgY2FuIGJlIGZvdW5kIGluIGRlYnVnZnMsIGhvd2V2ZXIgaXQgaXMgbm90IGZvciBl
+dmVyeW9uZQ0KPiAgICAgYW5kIG5vdCBhbHdheXMgYXZhaWxhYmxlLiBkbWEtYnVmIGFyZSBpbmRp
+cmVjdCBhbGxvY2F0ZWQgYnkNCj4gICAgIHVzZXJzcGFjZS4gU28gd2l0aCB0aGlzIHZhbHVlIHdl
+IGNhbiBtb25pdG9yIGFuZCBkZXRlY3QNCj4gICAgIHVzZXJzcGFjZSBhcHBsaWNhdGlvbnMgdGhh
+dCBoYXZlIHByb2JsZW1zLg0KPg0KPg0KPiBGV0lXLCB0aGlzIHdvbid0IHdvcmsgc3VwZXIgd2Vs
+bCBmb3IgQW5kcm9pZCB3aGVyZSBncmFsbG9jIGlzIGltcGxlbWVudGVkIGFzIGEgc3lzdGVtIHNl
+cnZpY2UsIHNvIGFsbCBncmFwaGljcyB1c2FnZSB3aWxsIGluc3RhbnRseSBiZSBhY2NvdW50ZWQg
+dG8gaXQuDQo+DQo+IENoZWVycywNCj4gRGFuaWVswqANCg0KVGhpcyByZXNvdXJjZSBhbGxvY2F0
+aW9uIGlzIGEgYmlnIHBhcnQgb2Ygd2h5IHdlIG5lZWQgaXQuIFdoeSBzaG91bGQgaXQgbm90IHdv
+cms/wqANCg==
