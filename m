@@ -2,92 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EE6136531C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 09:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0088E365355
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 09:35:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230302AbhDTHVY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Apr 2021 03:21:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57402 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229763AbhDTHVX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Apr 2021 03:21:23 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DAC9860C40;
-        Tue, 20 Apr 2021 07:20:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618903252;
-        bh=Ciqp0HqfGZibJ89pF/L2lKK2JBtAZcO03tptwL0YyAs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WZsQW3+Qm5LDVOpORw7z9UfDvMeJX1isMcl3sFgRXUSbDjLVZNniqkwH5+f5dsI1q
-         LYfLhR1QyH6E+SIlzEDS5Q6+l1ccISlQ32/NcssVRZpoiHcFlJonoqWMfXuy2xYeVE
-         v2gMsTtZHxpnK3A4vyIyx2+PKOo/Vx31Y/rALlPrzYVumKOUUb8HmPEJF63f2uB4E1
-         JVuMvvGp/guaaRRvG9vfxDN5C54CmcI8UoaRlUeTDtbQCT7Rpn4AF0aQgcE04pJVEH
-         dWkd09ghtV6zXu5Exf9UBe+fDUks1vRvM3LpuuLUiBec4qWWR0bVMiTgvERaRXSLbu
-         hufBhTUWwNMjw==
-Date:   Tue, 20 Apr 2021 10:20:43 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Peter.Enderborg@sony.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, sumit.semwal@linaro.org,
-        adobriyan@gmail.com, akpm@linux-foundation.org,
-        songmuchun@bytedance.com, guro@fb.com, shakeelb@google.com,
-        neilb@suse.de, samitolvanen@google.com,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, willy@infradead.org
-Subject: Re: [PATCH v4] dma-buf: Add DmaBufTotal counter in meminfo
-Message-ID: <YH6Ayy1fWGGWMU+q@kernel.org>
-References: <20210417104032.5521-1-peter.enderborg@sony.com>
- <YH10s/7MjxBBsjVL@dhcp22.suse.cz>
- <c3f0da9c-d127-5edf-dd21-50fd5298acef@sony.com>
- <YH2a9YfRBlfNnF+u@dhcp22.suse.cz>
- <23aa041b-0e7c-6f82-5655-836899973d66@sony.com>
- <d70efba0-c63d-b55a-c234-eb6d82ae813f@amd.com>
- <YH2ru642wYfqK5ne@dhcp22.suse.cz>
- <07ed1421-89f8-8845-b254-21730207c185@amd.com>
- <YH59E15ztpTTUKqS@dhcp22.suse.cz>
+        id S229507AbhDTHf4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Apr 2021 03:35:56 -0400
+Received: from 2.mo51.mail-out.ovh.net ([178.33.255.19]:40557 "EHLO
+        2.mo51.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229471AbhDTHfz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Apr 2021 03:35:55 -0400
+X-Greylist: delayed 598 seconds by postgrey-1.27 at vger.kernel.org; Tue, 20 Apr 2021 03:35:55 EDT
+Received: from mxplan5.mail.ovh.net (unknown [10.108.1.72])
+        by mo51.mail-out.ovh.net (Postfix) with ESMTPS id DD7D0282FA1;
+        Tue, 20 Apr 2021 09:19:26 +0200 (CEST)
+Received: from kaod.org (37.59.142.106) by DAG8EX1.mxp5.local (172.16.2.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Tue, 20 Apr
+ 2021 09:19:26 +0200
+Authentication-Results: garm.ovh; auth=pass (GARM-106R006e0384a78-5e6d-4b83-a0a2-258cc1ae5f18,
+                    F8484F3EE3345E552A9359E6756AA457A7210C68) smtp.auth=groug@kaod.org
+X-OVh-ClientIp: 78.197.208.248
+Date:   Tue, 20 Apr 2021 09:19:25 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     Vivek Goyal <vgoyal@redhat.com>
+CC:     <linux-fsdevel@vger.kernel.org>, <dan.j.williams@intel.com>,
+        <jack@suse.cz>, <willy@infradead.org>, <linux-nvdimm@lists.01.org>,
+        <miklos@szeredi.hu>, <linux-kernel@vger.kernel.org>,
+        <virtio-fs@redhat.com>
+Subject: Re: [Virtio-fs] [PATCH v3 1/3] dax: Add an enum for specifying dax
+ wakup mode
+Message-ID: <20210420091925.08054e8b@bahia.lan>
+In-Reply-To: <20210419213636.1514816-2-vgoyal@redhat.com>
+References: <20210419213636.1514816-1-vgoyal@redhat.com>
+        <20210419213636.1514816-2-vgoyal@redhat.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YH59E15ztpTTUKqS@dhcp22.suse.cz>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [37.59.142.106]
+X-ClientProxiedBy: DAG9EX2.mxp5.local (172.16.2.82) To DAG8EX1.mxp5.local
+ (172.16.2.71)
+X-Ovh-Tracer-GUID: 4fd4651b-4865-4921-847a-6cdede9f3c7e
+X-Ovh-Tracer-Id: 9258837884391430447
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduledrvddthedguddvtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkjghfofggtgfgihesthejredtredtvdenucfhrhhomhepifhrvghgucfmuhhriicuoehgrhhouhhgsehkrghougdrohhrgheqnecuggftrfgrthhtvghrnhepfedutdeijeejveehkeeileetgfelteekteehtedtieefffevhffflefftdefleejnecukfhppedtrddtrddtrddtpdefjedrheelrddugedvrddutdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepmhigphhlrghnhedrmhgrihhlrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehgrhhouhhgsehkrghougdrohhrghdprhgtphhtthhopehvihhrthhiohdqfhhssehrvgguhhgrthdrtghomh
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 20, 2021 at 09:04:51AM +0200, Michal Hocko wrote:
-> On Mon 19-04-21 18:37:13, Christian König wrote:
-> > Am 19.04.21 um 18:11 schrieb Michal Hocko:
-> [...]
-> > > The question is not whether it is NUMA aware but whether it is useful to
-> > > know per-numa data for the purpose the counter is supposed to serve.
-> > 
-> > No, not at all. The pages of a single DMA-buf could even be from different
-> > NUMA nodes if the exporting driver decides that this is somehow useful.
+On Mon, 19 Apr 2021 17:36:34 -0400
+Vivek Goyal <vgoyal@redhat.com> wrote:
+
+> Dan mentioned that he is not very fond of passing around a boolean true/false
+> to specify if only next waiter should be woken up or all waiters should be
+> woken up. He instead prefers that we introduce an enum and make it very
+> explicity at the callsite itself. Easier to read code.
 > 
-> As the use of the counter hasn't been explained yet I can only
-> speculate. One thing that I can imagine to be useful is to fill gaps in
-> our accounting. It is quite often that the memroy accounted in
-> /proc/meminfo (or oom report) doesn't add up to the overall memory
-> usage. In some workloads the workload can be huge! In many cases there
-> are other means to find out additional memory by a subsystem specific
-> interfaces (e.g. networking buffers). I do assume that dma-buf is just
-> one of those and the counter can fill the said gap at least partially
-> for some workloads. That is definitely useful.
-
-A bit off-topic.
-
-Michal, I think it would have been nice to have an explanation like above
-in Documentation/proc/meminfo, what do you say?
- 
-> What I am trying to bring up with NUMA side is that the same problem can
-> happen on per-node basis. Let's say that some user consumes unexpectedly
-> large amount of dma-buf on a certain node. This can lead to observable
-> performance impact on anybody on allocating from that node and even
-> worse cause an OOM for node bound consumers. How do I find out that it
-> was dma-buf that has caused the problem?
+> This patch should not introduce any change of behavior.
 > 
-> See where I am heading?
+> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
 
--- 
-Sincerely yours,
-Mike.
+Reviewed-by: Greg Kurz <groug@kaod.org>
+
+>  fs/dax.c | 23 +++++++++++++++++------
+>  1 file changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/dax.c b/fs/dax.c
+> index b3d27fdc6775..00978d0838b1 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -144,6 +144,16 @@ struct wait_exceptional_entry_queue {
+>  	struct exceptional_entry_key key;
+>  };
+>  
+> +/**
+> + * enum dax_entry_wake_mode: waitqueue wakeup toggle
+> + * @WAKE_NEXT: entry was not mutated
+> + * @WAKE_ALL: entry was invalidated, or resized
+> + */
+> +enum dax_entry_wake_mode {
+> +	WAKE_NEXT,
+> +	WAKE_ALL,
+> +};
+> +
+>  static wait_queue_head_t *dax_entry_waitqueue(struct xa_state *xas,
+>  		void *entry, struct exceptional_entry_key *key)
+>  {
+> @@ -182,7 +192,8 @@ static int wake_exceptional_entry_func(wait_queue_entry_t *wait,
+>   * The important information it's conveying is whether the entry at
+>   * this index used to be a PMD entry.
+>   */
+> -static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
+> +static void dax_wake_entry(struct xa_state *xas, void *entry,
+> +			   enum dax_entry_wake_mode mode)
+>  {
+>  	struct exceptional_entry_key key;
+>  	wait_queue_head_t *wq;
+> @@ -196,7 +207,7 @@ static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
+>  	 * must be in the waitqueue and the following check will see them.
+>  	 */
+>  	if (waitqueue_active(wq))
+> -		__wake_up(wq, TASK_NORMAL, wake_all ? 0 : 1, &key);
+> +		__wake_up(wq, TASK_NORMAL, mode == WAKE_ALL ? 0 : 1, &key);
+>  }
+>  
+>  /*
+> @@ -268,7 +279,7 @@ static void put_unlocked_entry(struct xa_state *xas, void *entry)
+>  {
+>  	/* If we were the only waiter woken, wake the next one */
+>  	if (entry && !dax_is_conflict(entry))
+> -		dax_wake_entry(xas, entry, false);
+> +		dax_wake_entry(xas, entry, WAKE_NEXT);
+>  }
+>  
+>  /*
+> @@ -286,7 +297,7 @@ static void dax_unlock_entry(struct xa_state *xas, void *entry)
+>  	old = xas_store(xas, entry);
+>  	xas_unlock_irq(xas);
+>  	BUG_ON(!dax_is_locked(old));
+> -	dax_wake_entry(xas, entry, false);
+> +	dax_wake_entry(xas, entry, WAKE_NEXT);
+>  }
+>  
+>  /*
+> @@ -524,7 +535,7 @@ static void *grab_mapping_entry(struct xa_state *xas,
+>  
+>  		dax_disassociate_entry(entry, mapping, false);
+>  		xas_store(xas, NULL);	/* undo the PMD join */
+> -		dax_wake_entry(xas, entry, true);
+> +		dax_wake_entry(xas, entry, WAKE_ALL);
+>  		mapping->nrexceptional--;
+>  		entry = NULL;
+>  		xas_set(xas, index);
+> @@ -937,7 +948,7 @@ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
+>  	xas_lock_irq(xas);
+>  	xas_store(xas, entry);
+>  	xas_clear_mark(xas, PAGECACHE_TAG_DIRTY);
+> -	dax_wake_entry(xas, entry, false);
+> +	dax_wake_entry(xas, entry, WAKE_NEXT);
+>  
+>  	trace_dax_writeback_one(mapping->host, index, count);
+>  	return ret;
+
