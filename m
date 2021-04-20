@@ -2,152 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F00BA365BFF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 17:18:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C38B365CAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 17:52:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232174AbhDTPSl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Apr 2021 11:18:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:49310 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232504AbhDTPSh (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Apr 2021 11:18:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618931884;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=I5ndW6k8mLw6k1PzLhNPYJ9rDrEc5/TU+m57YMg1P3Q=;
-        b=QFO9Tz1K14ojRc0Ur8YaRpu7HffNsZzrA93cd5y7I1UfBEO775ZhgTgnsGIFvCx76KMn3d
-        u3vfMqPdlkh+SlHn+Yiac2yTojPywjqv1QZ4kknEqod/xwcxzXLyFJ7TfKVbhMDXM+PuX3
-        U/3zkkvp7QSBQml6j9K0Icd2ndEQNTI=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-381-5VkOpYGZNwiUt-qCtmXOvA-1; Tue, 20 Apr 2021 11:18:02 -0400
-X-MC-Unique: 5VkOpYGZNwiUt-qCtmXOvA-1
-Received: by mail-ed1-f69.google.com with SMTP id z3-20020a05640240c3b029037fb0c2bd3bso13410035edb.23
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Apr 2021 08:18:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=I5ndW6k8mLw6k1PzLhNPYJ9rDrEc5/TU+m57YMg1P3Q=;
-        b=bL5hC1NWb88h8gA0WCDaCzypcyfM+VMgQZAriW5G0qfqkdzS6r9/I4WqSNzkZE/lsm
-         hufbrUtg8vq19Yn+GMUr90tXeCeDY3nACnWUW/LQqasU1QTYybpPvcj7UZ3fpDzUxbdS
-         RKiVM3amgV6DbscZXDYbLQ+FKRyF4hlDrgWN3r2dSFHMp+5xP1em0CRs8oT/Damw4KFe
-         dflEyD84Dk2q3WmhWzBIvhCFVj//DWMoIVfeDeRjFhs4S8AstoF8uu9FsRAtu84Fy7yd
-         Sq10IZNIQ3P0in6dHM9LOx25vp0KpbvoP++pBBnO7zvuLuFhLC0YDOQAcLUzTDVw59qy
-         o3hA==
-X-Gm-Message-State: AOAM533/gyxw1CARSwJRnvkKl6ysld4iD7ensK7tkZmCozzZvx70ISeQ
-        ffQKoetcUntVtrZWDtThcsM/KPW5ILFBAcFAYcCSdxY1tyu/lLTKa+Hemza2Aa7E0U+tJy4JmKp
-        YRmg5A6q58zt9kNPX01nadHgy0A==
-X-Received: by 2002:aa7:c683:: with SMTP id n3mr32232730edq.214.1618931880950;
-        Tue, 20 Apr 2021 08:18:00 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxKrP/Z3igfJPaQi8yJZtC2FjNZPIjMXhA64NexGRfIVc/CrlZnXvE6wVD3xtThrpBxYqmr/Q==
-X-Received: by 2002:aa7:c683:: with SMTP id n3mr32232708edq.214.1618931880725;
-        Tue, 20 Apr 2021 08:18:00 -0700 (PDT)
-Received: from [192.168.3.132] (p4ff2390a.dip0.t-ipconnect.de. [79.242.57.10])
-        by smtp.gmail.com with ESMTPSA id a17sm13193206ejx.13.2021.04.20.08.17.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Apr 2021 08:18:00 -0700 (PDT)
-Subject: Re: [PATCH v3 1/2] secretmem/gup: don't check if page is secretmem
- without reference
-To:     Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-References: <20210420150049.14031-1-rppt@kernel.org>
- <20210420150049.14031-2-rppt@kernel.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Message-ID: <f906a634-ee25-5a8b-6cdf-3651832dbe99@redhat.com>
-Date:   Tue, 20 Apr 2021 17:17:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S233045AbhDTPwn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Apr 2021 11:52:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232835AbhDTPwl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Apr 2021 11:52:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DEB2D61003;
+        Tue, 20 Apr 2021 15:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618933929;
+        bh=/9RTrlVPmficjxGArbdNAYfmgxMyr7ATcSTXhbbHiIE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=uGmEWDazCC/j77pAB4CUd1BwGvnHSfWNk1cwVbYH1MYKI+5OiWL1t7+CipKyBXILX
+         B4gpGxdwET1IdALTdfGFQfhsdNpnlpfazKSQLx8Fhyj5qgl3Hn3N4xbnCB68xs3nSl
+         UeeiH238vHp1DXH5I+ugWvaJRl2kEsyF6Vwt4N5BqHHm/HH4qLPuon/9vhkvszM4ym
+         c5OPtOKdIhWzd65piG8AHChiXfNp6OlLq3whVmBRjOSoxrGk+l8ovQW1zj9Q12fsFr
+         cuMrmncdrXyOYkKgGg6OFs0V66Y4iM9ZxrE0TUMrC92wCBHr3CjP2NQPFmZe1eu26D
+         raQJOXtSNQalw==
+Message-ID: <53d5bebb28c1e0cd354a336a56bf103d5e3a6344.camel@kernel.org>
+Subject: Re: [RFC PATCH v6 00/20] ceph+fscrypt: context, filename and
+ symlink support
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org
+Date:   Tue, 20 Apr 2021 11:52:07 -0400
+In-Reply-To: <87sg3ll0zm.fsf@suse.de>
+References: <20210413175052.163865-1-jlayton@kernel.org>
+         <87h7k2murr.fsf@suse.de>
+         <e411e914cd2d329e4b0e335968c21ba85f6e89c7.camel@kernel.org>
+         <871rb6mfch.fsf@suse.de>
+         <13750c0b72dccd84e75179d62e9a9038d6f57371.camel@kernel.org>
+         <87sg3ll0zm.fsf@suse.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
 MIME-Version: 1.0
-In-Reply-To: <20210420150049.14031-2-rppt@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 20.04.21 17:00, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
+On Tue, 2021-04-20 at 11:11 +0100, Luis Henriques wrote:
+> Jeff Layton <jlayton@kernel.org> writes:
 > 
-> The check in gup_pte_range() whether a page belongs to a secretmem mapping
-> is performed before grabbing the page reference.
+> > On Mon, 2021-04-19 at 17:03 +0100, Luis Henriques wrote:
+> > > Jeff Layton <jlayton@kernel.org> writes:
+> > > 
+> > > > On Mon, 2021-04-19 at 11:30 +0100, Luis Henriques wrote:
+> > > ...
+> > > > Ouch. That looks like a real bug, alright.
+> > > > 
+> > > > Basically when building the path, we occasionally need to fetch the
+> > > > crypto context for parent inodes and such, and that can cause us to
+> > > > recurse back into __ceph_getxattr and try to issue another RPC to the
+> > > > MDS.
+> > > > 
+> > > > I'll have to look and see what we can do. Maybe it's safe to drop the
+> > > > mdsc->mutex while we're building the path? Or maybe this is a good time
+> > > > to re-think a lot of the really onerous locking in this codepath?
+> > > > 
+> > > > I'm open to suggestions here...
+> > > 
+> > > Yeah, I couldn't see a good fix at a first glace.  Dropping the mutex
+> > > while building the path was my initial thought too but it's not easy to
+> > > proof that's a safe thing to do.
+> > > 
+> > 
+> > Indeed. It's an extremely coarse-grained mutex and not at all clear what
+> > it protects here.
+> > 
+> > > The other idea I had was to fetch all the needed fscrypt contexts at the
+> > > end, after building the path.  But I didn't found a way for doing that
+> > > because to build the path... we need the contexts.
+> > > 
+> > > It looks like this leaves us with the locking rethinking option.
+> > > 
+> > > /me tries harder to find another way out
+> > > 
+> > > Cheers,
+> > 
+> > The other option I think is to not store the context in an xattr at all,
+> > and instead make a dedicated field in the inode for it that we can
+> > ensure is always present for encrypted inodes.  For the most part the
+> > crypto context is a static thing. The only exception is when we're first
+> > encrypting an empty dir.
+> > 
+> > We already have the fscrypt bool in the inodestat, and we're going to
+> > need another field to hold the real size for files. It may be worthwhile
+> > to just reconsider the design at that level. Maybe we just need to carve
+> > out a chunk of fscrypt space in the inode for the client and let it
+> > manage that however it sees fit.
 > 
-> To avoid potential race move the check after try_grab_compound_head().
+> That's another solution.  Since the initial (naïfe) idea of having a
+> client-only implementation with fscrypt-agnostic MDSs is long gone, the
+> design can (still) be fixed to do that.  This will definitely allow to
+> move forward with the fscrypt implementation.  (But we'll probably be
+> bitten again with these recursive RPCs in the future!)
 > 
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> ---
->   mm/gup.c | 8 +++++---
->   1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index c3a17b189064..6515f82b0f32 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -2080,13 +2080,15 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
->   		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
->   		page = pte_page(pte);
->   
-> -		if (page_is_secretmem(page))
-> -			goto pte_unmap;
-> -
->   		head = try_grab_compound_head(page, 1, flags);
->   		if (!head)
->   			goto pte_unmap;
->   
-> +		if (unlikely(page_is_secretmem(page))) {
-> +			put_compound_head(head, 1, flags);
-> +			goto pte_unmap;
-> +		}
-> +
->   		if (unlikely(pte_val(pte) != pte_val(*ptep))) {
->   			put_compound_head(head, 1, flags);
->   			goto pte_unmap;
+> Anyway, this is probably the most interesting solution as it also reduces
+> the need for extra calls to MDS.  And the fscrypt bool in inodestat
+> probably becomes redundant and can be dropped.
 > 
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+We probably can't drop the bool from the protocol, as it's now in a
+released version (Pacific).
 
+What we can do is drop tracking the bool internally in the MDS, and just
+set that to true if the fscrypt blob isn't zero-length.
+
+Cheers,
 -- 
-Thanks,
-
-David / dhildenb
+Jeff Layton <jlayton@kernel.org>
 
