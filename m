@@ -2,65 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6465365992
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 15:12:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BD8B3659A4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 15:16:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232280AbhDTNMw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Apr 2021 09:12:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52398 "EHLO mx2.suse.de"
+        id S232297AbhDTNRA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Apr 2021 09:17:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231526AbhDTNMr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Apr 2021 09:12:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1618924334; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=vykaM9tEUkeV2xKObiXIhcw191WRtCqc+lXXd12ZJPc=;
-        b=QuT3uYFy6+F+ujFCMb8AcOqOw4g+MbeHpFir5leS0ICaMCKOk+Po3wtSNBLPoDv7diIP9W
-        4YLZERO3q3I5xBbXL3ZrezFJLasYEy2hO3lwgwopX6jYHmO4fieBKBtrIbNm2ZFzTfKswE
-        QzNP6R1vlI5MfHRITEySf4d8edS1j/Q=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 7676FAF65;
-        Tue, 20 Apr 2021 13:12:14 +0000 (UTC)
-Date:   Tue, 20 Apr 2021 15:12:13 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2] docs: proc.rst: meminfo: briefly describe gaps in
- memory accounting
-Message-ID: <YH7TLRgKLwp73oWG@dhcp22.suse.cz>
-References: <20210420121354.1160437-1-rppt@kernel.org>
- <YH7HNHJLZyQKqmir@kernel.org>
+        id S231422AbhDTNQ7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Apr 2021 09:16:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DB92561155;
+        Tue, 20 Apr 2021 13:16:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618924588;
+        bh=qhR1fpCqAsT1S7eszhL+8DGn+IohPdIv6ZmfP8rMA54=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KUF557NhH5l1t2K0OYATzazaNCSAUMl7v8OSvEA6BB3++H9JFEiE0m47Qe20TLsyA
+         Mg+bE3SvdjK4KbC0KDgBwkghXH1+SdNl7XPGJXfOGWL6rieURUdgwykpH/YpDMQBPG
+         rKBgMRdJAVDnOl31RwFKVeNmayE39KOv5tA+vfGakvNDvdEpQ+NJsJgelSxLbVraWI
+         bPMda19jc0MXqs60Xcjv5yfm6A6g9IJPG8oGUJGNTfLxnnkT0YtwmG/da8/HHsmN7t
+         JmXlm7VjlV/79DJvWlsaprQDngcrZLv3QMmwPhKSGYJzeKATbw0tpP/7J7LXi7vTV1
+         xuJcRy9ZW0OEg==
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        Yury Norov <yury.norov@gmail.com>, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+Subject: [PATCH v2 0/2] secretmem: optimize page_is_secretmem()
+Date:   Tue, 20 Apr 2021 16:16:07 +0300
+Message-Id: <20210420131611.8259-1-rppt@kernel.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YH7HNHJLZyQKqmir@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 20-04-21 15:21:08, Mike Rapoport wrote:
-> On Tue, Apr 20, 2021 at 03:13:54PM +0300, Mike Rapoport wrote:
-> > From: Mike Rapoport <rppt@linux.ibm.com>
-> > 
-> > Add a paragraph that explains that it may happen that the counters in
-> > /proc/meminfo do not add up to the overall memory usage.
-> > 
-> > Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> 
-> Ooops, forgot to add Michal's Ack, sorry.
+From: Mike Rapoport <rppt@linux.ibm.com>
 
-Let's make it more explicit
-Acked-by: Michal Hocko <mhocko@suse.com>
+Hi,
 
-Thanks!
+This is an updated version of page_is_secretmem() changes.
+This is based on v5.12-rc7-mmots-2021-04-15-16-28.
+
+@Andrew, please let me know if you'd like me to rebase it differently or
+resend the entire set.
+
+v2:
+* move the check for secretmem page in gup_pte_range after we get a
+  reference to the page, per Matthew.
+
+Mike Rapoport (2):
+  secretmem/gup: don't check if page is secretmem without reference
+  secretmem: optimize page_is_secretmem()
+
+ include/linux/secretmem.h | 26 +++++++++++++++++++++++++-
+ mm/gup.c                  |  6 +++---
+ mm/secretmem.c            | 12 +-----------
+ 3 files changed, 29 insertions(+), 15 deletions(-)
+
 -- 
-Michal Hocko
-SUSE Labs
+2.28.0
+
