@@ -2,135 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F9D365363
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 09:40:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1D61365376
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Apr 2021 09:46:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229793AbhDTHlE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Apr 2021 03:41:04 -0400
-Received: from smtpout1.mo3005.mail-out.ovh.net ([79.137.123.220]:37431 "EHLO
-        smtpout1.3005.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229583AbhDTHlD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Apr 2021 03:41:03 -0400
-X-Greylist: delayed 366 seconds by postgrey-1.27 at vger.kernel.org; Tue, 20 Apr 2021 03:41:02 EDT
-Received: from mxplan5.mail.ovh.net (unknown [10.108.4.144])
-        by mo3005.mail-out.ovh.net (Postfix) with ESMTPS id 41356141A27;
-        Tue, 20 Apr 2021 07:34:22 +0000 (UTC)
-Received: from kaod.org (37.59.142.100) by DAG8EX1.mxp5.local (172.16.2.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Tue, 20 Apr
- 2021 09:34:21 +0200
-Authentication-Results: garm.ovh; auth=pass (GARM-100R003ff1e15fc-d96d-46c0-9a30-b0f5e4c29b11,
-                    F8484F3EE3345E552A9359E6756AA457A7210C68) smtp.auth=groug@kaod.org
-X-OVh-ClientIp: 78.197.208.248
-Date:   Tue, 20 Apr 2021 09:34:20 +0200
-From:   Greg Kurz <groug@kaod.org>
-To:     Vivek Goyal <vgoyal@redhat.com>
-CC:     <linux-fsdevel@vger.kernel.org>, <dan.j.williams@intel.com>,
-        <jack@suse.cz>, <willy@infradead.org>, <linux-nvdimm@lists.01.org>,
-        <miklos@szeredi.hu>, <linux-kernel@vger.kernel.org>,
-        <virtio-fs@redhat.com>
-Subject: Re: [Virtio-fs] [PATCH v3 2/3] dax: Add a wakeup mode parameter to
- put_unlocked_entry()
-Message-ID: <20210420093420.2eed3939@bahia.lan>
-In-Reply-To: <20210419213636.1514816-3-vgoyal@redhat.com>
-References: <20210419213636.1514816-1-vgoyal@redhat.com>
-        <20210419213636.1514816-3-vgoyal@redhat.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S229659AbhDTHq6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Apr 2021 03:46:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36024 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229471AbhDTHq5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 20 Apr 2021 03:46:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1618904785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NKKvUHvInZtSl6fOY6WNFgQFeLocZJjqN5OxLOUVXKc=;
+        b=WPBB95xBOuxAjCK++fJ0G3px9LAUkWSK+u2Xx9QDmRJZugf/lc4wkT7fjYqTDqj2iqV9pT
+        DTRvT2GoUrskRPrEe2yFoWssk3ncDMA/M5jjyXji8T8cfiq+XutGshEBhaz08LgT4x3co5
+        kbmYV7vdhrkRBwGeXjVX93SfJ0Y2YnI=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 09C98B2D9;
+        Tue, 20 Apr 2021 07:46:25 +0000 (UTC)
+Date:   Tue, 20 Apr 2021 09:46:17 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc:     Peter.Enderborg@sony.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, sumit.semwal@linaro.org,
+        adobriyan@gmail.com, akpm@linux-foundation.org,
+        songmuchun@bytedance.com, guro@fb.com, shakeelb@google.com,
+        neilb@suse.de, samitolvanen@google.com, rppt@kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, willy@infradead.org
+Subject: Re: [PATCH v4] dma-buf: Add DmaBufTotal counter in meminfo
+Message-ID: <YH6GyThr2mPrM6h5@dhcp22.suse.cz>
+References: <20210417104032.5521-1-peter.enderborg@sony.com>
+ <YH10s/7MjxBBsjVL@dhcp22.suse.cz>
+ <c3f0da9c-d127-5edf-dd21-50fd5298acef@sony.com>
+ <YH2a9YfRBlfNnF+u@dhcp22.suse.cz>
+ <23aa041b-0e7c-6f82-5655-836899973d66@sony.com>
+ <d70efba0-c63d-b55a-c234-eb6d82ae813f@amd.com>
+ <YH2ru642wYfqK5ne@dhcp22.suse.cz>
+ <07ed1421-89f8-8845-b254-21730207c185@amd.com>
+ <YH59E15ztpTTUKqS@dhcp22.suse.cz>
+ <b89c84da-65d2-35df-7249-ea8edc0bee9b@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [37.59.142.100]
-X-ClientProxiedBy: DAG3EX1.mxp5.local (172.16.2.21) To DAG8EX1.mxp5.local
- (172.16.2.71)
-X-Ovh-Tracer-GUID: 895b2bce-2bc7-4d1b-86ac-94b14387f467
-X-Ovh-Tracer-Id: 9511039463505303855
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduledrvddthedguddvfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkjghfofggtgfgihesthejredtredtvdenucfhrhhomhepifhrvghgucfmuhhriicuoehgrhhouhhgsehkrghougdrohhrgheqnecuggftrfgrthhtvghrnhepfedutdeijeejveehkeeileetgfelteekteehtedtieefffevhffflefftdefleejnecukfhppedtrddtrddtrddtpdefjedrheelrddugedvrddutddtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepmhigphhlrghnhedrmhgrihhlrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehgrhhouhhgsehkrghougdrohhrghdprhgtphhtthhopehvihhrthhiohdqfhhssehrvgguhhgrthdrtghomh
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b89c84da-65d2-35df-7249-ea8edc0bee9b@amd.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 19 Apr 2021 17:36:35 -0400
-Vivek Goyal <vgoyal@redhat.com> wrote:
-
-> As of now put_unlocked_entry() always wakes up next waiter. In next
-> patches we want to wake up all waiters at one callsite. Hence, add a
-> parameter to the function.
+On Tue 20-04-21 09:32:14, Christian König wrote:
+> Am 20.04.21 um 09:04 schrieb Michal Hocko:
+> > On Mon 19-04-21 18:37:13, Christian König wrote:
+> > > Am 19.04.21 um 18:11 schrieb Michal Hocko:
+[...]
+> > What I am trying to bring up with NUMA side is that the same problem can
+> > happen on per-node basis. Let's say that some user consumes unexpectedly
+> > large amount of dma-buf on a certain node. This can lead to observable
+> > performance impact on anybody on allocating from that node and even
+> > worse cause an OOM for node bound consumers. How do I find out that it
+> > was dma-buf that has caused the problem?
 > 
-> This patch does not introduce any change of behavior.
+> Yes, that is the direction my thinking goes as well, but also even further.
 > 
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  fs/dax.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
+> See DMA-buf is also used to share device local memory between processes as
+> well. In other words VRAM on graphics hardware.
 > 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 00978d0838b1..f19d76a6a493 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -275,11 +275,12 @@ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
->  	finish_wait(wq, &ewait.wait);
->  }
->  
-> -static void put_unlocked_entry(struct xa_state *xas, void *entry)
-> +static void put_unlocked_entry(struct xa_state *xas, void *entry,
-> +			       enum dax_entry_wake_mode mode)
->  {
->  	/* If we were the only waiter woken, wake the next one */
+> On my test system here I have 32GB of system memory and 16GB of VRAM. I can
+> use DMA-buf to allocate that 16GB of VRAM quite easily which then shows up
+> under /proc/meminfo as used memory.
 
-With this change, the comment is no longer accurate since the
-function can now wake all waiters if passed mode == WAKE_ALL.
-Also, it paraphrases the code which is simple enough, so I'd
-simply drop it.
+This is something that would be really interesting in the changelog. I
+mean the expected and extreme memory consumption of this memory. Ideally
+with some hints on what to do when the number is really high (e.g. mount
+debugfs and have a look here and there to check whether this is just too
+many users or an unexpected pattern to be reported).
 
-This is minor though and it shouldn't prevent this fix to go
-forward.
+> But that isn't really system memory at all, it's just allocated device
+> memory.
 
-Reviewed-by: Greg Kurz <groug@kaod.org>
+OK, that was not really clear to me. So this is not really accounted to
+MemTotal? If that is really the case then reporting it into the oom
+report is completely pointless and I am not even sure /proc/meminfo is
+the right interface either. It would just add more confusion I am
+afraid.
+ 
+> > See where I am heading?
+> 
+> Yeah, totally. Thanks for pointing this out.
+> 
+> Suggestions how to handle that?
 
->  	if (entry && !dax_is_conflict(entry))
-> -		dax_wake_entry(xas, entry, WAKE_NEXT);
-> +		dax_wake_entry(xas, entry, mode);
->  }
->  
->  /*
-> @@ -633,7 +634,7 @@ struct page *dax_layout_busy_page_range(struct address_space *mapping,
->  			entry = get_unlocked_entry(&xas, 0);
->  		if (entry)
->  			page = dax_busy_page(entry);
-> -		put_unlocked_entry(&xas, entry);
-> +		put_unlocked_entry(&xas, entry, WAKE_NEXT);
->  		if (page)
->  			break;
->  		if (++scanned % XA_CHECK_SCHED)
-> @@ -675,7 +676,7 @@ static int __dax_invalidate_entry(struct address_space *mapping,
->  	mapping->nrexceptional--;
->  	ret = 1;
->  out:
-> -	put_unlocked_entry(&xas, entry);
-> +	put_unlocked_entry(&xas, entry, WAKE_NEXT);
->  	xas_unlock_irq(&xas);
->  	return ret;
->  }
-> @@ -954,7 +955,7 @@ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
->  	return ret;
->  
->   put_unlocked:
-> -	put_unlocked_entry(xas, entry);
-> +	put_unlocked_entry(xas, entry, WAKE_NEXT);
->  	return ret;
->  }
->  
-> @@ -1695,7 +1696,7 @@ dax_insert_pfn_mkwrite(struct vm_fault *vmf, pfn_t pfn, unsigned int order)
->  	/* Did we race with someone splitting entry or so? */
->  	if (!entry || dax_is_conflict(entry) ||
->  	    (order == 0 && !dax_is_pte_entry(entry))) {
-> -		put_unlocked_entry(&xas, entry);
-> +		put_unlocked_entry(&xas, entry, WAKE_NEXT);
->  		xas_unlock_irq(&xas);
->  		trace_dax_insert_pfn_mkwrite_no_entry(mapping->host, vmf,
->  						      VM_FAULT_NOPAGE);
-
+As I've pointed out in previous reply we do have an API to account per
+node memory but now that you have brought up that this is not something
+we account as a regular memory then this doesn't really fit into that
+model. But maybe I am just confused.
+-- 
+Michal Hocko
+SUSE Labs
