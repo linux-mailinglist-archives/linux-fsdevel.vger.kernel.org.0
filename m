@@ -2,208 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B5E136727B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 20:24:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AA72367326
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 21:05:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242086AbhDUSYb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Apr 2021 14:24:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53792 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241161AbhDUSY0 (ORCPT
+        id S239445AbhDUTFv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Apr 2021 15:05:51 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:33326 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234222AbhDUTFv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Apr 2021 14:24:26 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACB2CC06174A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 11:23:51 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id q123-20020a1c43810000b029012c7d852459so3066398wma.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 11:23:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tJ7/2ImOqgNsMlFTe/U5S+rQQA/z5wDSOJMIaWnIOgo=;
-        b=LlgaznfbO9/ZSbTPeEQB5h2fYiuEy/UXnZz4dMzIoZw7XZw5B0iSASvQ9RiESglTm8
-         yfop1QiYJ3v3KQAjSMr/S1H4YOSJRxRCK0YGLCQU00R8wAY3qp0536OxpzbV/VJ1LS68
-         FVLQeGTQ+eDY5zFb9jbA5K0XiyOihaFcbt720mp5lMULdPuMEBqblG8DpaSALBTeXrjv
-         scdfotKNRYeTQiULehH5gPQvE7ubOSXCKVIIkZBzIYySCXbGLKjZKCgyeECkL7IJsEul
-         THUCFR1MTDC0Mn3jwcNMLOByaj6M+6pAxmp8fWY6p3kcdYQxP9g3megC3f3YUlPYf2jp
-         P0CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tJ7/2ImOqgNsMlFTe/U5S+rQQA/z5wDSOJMIaWnIOgo=;
-        b=NhUTDt14wWcfwNL1qtyxPk5f6HKLekuW/hDT4f/FsVlPT4FL+SpfhutT4yMMr0Ol6w
-         AS7otmLD9QlxeRiQNsKq6iutH0I/fDEPFTOYB3bTFGYGaDHFLDei8h9u19vYCzS/4Ki0
-         6ABcOGyGCiJxUTta69/r16Nv8MCbA9lgoxe6kijHNrcc8bhX4kUdewE2TgWtKYOAbDNP
-         PQHIotv+a+5hhMIHtNfI3AA/BVzPZvwKUMiHBZeMGQGzWNeHJYRDKPYSYQ5ftwCVTmzt
-         DwYJQNqimc76hpaxs8umJEpDXmeAscxVM0JIFPXkI1JnWNsHGqj3bb9i+DfohKx93ffu
-         dc8A==
-X-Gm-Message-State: AOAM531unbp8KwimfFGz2cGJmCxl7hpWCxqH3NsPNLb0/NhaCsC4el4f
-        NE55z8IullAwYl08xkkJMB+KCw==
-X-Google-Smtp-Source: ABdhPJz4oJRSYRSLilmTZi/+V+8VJ8VJiSw4FBXvscnpE0PMQuvmwXn9sxvIod8vYtqC6Jaz4xsTiA==
-X-Received: by 2002:a05:600c:20d:: with SMTP id 13mr11054836wmi.29.1619029430262;
-        Wed, 21 Apr 2021 11:23:50 -0700 (PDT)
-Received: from elver.google.com ([2a00:79e0:15:13:6273:c89a:6562:e1ba])
-        by smtp.gmail.com with ESMTPSA id m11sm232602wri.44.2021.04.21.11.23.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Apr 2021 11:23:49 -0700 (PDT)
-Date:   Wed, 21 Apr 2021 20:23:43 +0200
-From:   Marco Elver <elver@google.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Wed, 21 Apr 2021 15:05:51 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lZI9x-00D0JN-R2; Wed, 21 Apr 2021 13:05:13 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=fess.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lZI9v-00Arwg-E2; Wed, 21 Apr 2021 13:05:13 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
         Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian@brauner.io>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Matt Morehouse <mascasa@google.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Ian Rogers <irogers@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-tegra@vger.kernel.org, jonathanh@nvidia.com
-Subject: Re: [PATCH v4 05/10] signal: Introduce TRAP_PERF si_code and si_perf
- to siginfo
-Message-ID: <YIBtr2w/8KhOoiUA@elver.google.com>
-References: <CANpmjNM8wEJngK=J8Lt9npkZgrSWoRsqkdajErWEoY_=M1GW5A@mail.gmail.com>
- <43f8a3bf-34c5-0fc9-c335-7f92eaf23022@samsung.com>
- <dccaa337-f3e5-08e4-fe40-a603811bb13e@samsung.com>
- <CANpmjNP6-yKpxHqYFiA8Up-ujBQaeP7xyq1BrsV-NqMjJ-uHAQ@mail.gmail.com>
- <740077ce-efe1-b171-f807-bc5fd95a32ba@samsung.com>
- <f114ff4a-6612-0935-12ac-0e2ac18d896c@samsung.com>
- <CANpmjNM6bQpc49teN-9qQhCXoJXaek5stFGR2kPwDroSFBc0fw@mail.gmail.com>
- <cf6ed5cd-3202-65ce-86bc-6f1eba1b7d17@samsung.com>
- <CANpmjNPr_JtRC762ap8PQVmsFNY5YhHvOk0wNcPHq=ZQt-qxYg@mail.gmail.com>
- <YIBSg7Vi+U383dT7@elver.google.com>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Don Zickus <dzickus@redhat.com>, x86@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20210421093453.6904-1-david@redhat.com>
+Date:   Wed, 21 Apr 2021 14:03:49 -0500
+In-Reply-To: <20210421093453.6904-1-david@redhat.com> (David Hildenbrand's
+        message of "Wed, 21 Apr 2021 11:34:50 +0200")
+Message-ID: <m1eef3qx2i.fsf@fess.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YIBSg7Vi+U383dT7@elver.google.com>
-User-Agent: Mutt/2.0.5 (2021-01-21)
+Content-Type: text/plain
+X-XM-SPF: eid=1lZI9v-00Arwg-E2;;;mid=<m1eef3qx2i.fsf@fess.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/oGtpTLgZT5xyLx7QaJ0kLkcjgE1O5huM=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;David Hildenbrand <david@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1863 ms - load_scoreonly_sql: 0.08 (0.0%),
+        signal_user_changed: 11 (0.6%), b_tie_ro: 9 (0.5%), parse: 0.99 (0.1%),
+         extract_message_metadata: 52 (2.8%), get_uri_detail_list: 3.7 (0.2%),
+        tests_pri_-1000: 37 (2.0%), tests_pri_-950: 1.31 (0.1%),
+        tests_pri_-900: 1.10 (0.1%), tests_pri_-90: 449 (24.1%), check_bayes:
+        386 (20.7%), b_tokenize: 13 (0.7%), b_tok_get_all: 11 (0.6%),
+        b_comp_prob: 3.1 (0.2%), b_tok_touch_all: 356 (19.1%), b_finish: 0.93
+        (0.1%), tests_pri_0: 269 (14.4%), check_dkim_signature: 0.63 (0.0%),
+        check_dkim_adsp: 2.2 (0.1%), poll_dns_idle: 1019 (54.7%),
+        tests_pri_10: 2.0 (0.1%), tests_pri_500: 1036 (55.6%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: [PATCH v1 0/3] perf/binfmt/mm: remove in-tree usage of MAP_EXECUTABLE
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 21, 2021 at 06:27PM +0200, Marco Elver wrote:
-> On Wed, Apr 21, 2021 at 05:11PM +0200, Marco Elver wrote:
-> > +Cc linux-arm-kernel
-> > 
-> [...]
-> > >
-> > > I've managed to reproduce this issue with a public Raspberry Pi OS Lite
-> > > rootfs image, even without deploying kernel modules:
-> > >
-> > > https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-03-25/2021-03-04-raspios-buster-armhf-lite.zip
-> > >
-> > > # qemu-system-arm -M virt -smp 2 -m 512 -kernel zImage -append "earlycon
-> > > console=ttyAMA0 root=/dev/vda2 rw rootwait" -serial stdio -display none
-> > > -monitor null -device virtio-blk-device,drive=virtio-blk -drive
-> > > file=/tmp/2021-03-04-raspios-buster-armhf-lite.img,id=virtio-blk,if=none,format=raw
-> > > -netdev user,id=user -device virtio-net-device,netdev=user
-> > >
-> > > The above one doesn't boot if zImage z compiled from commit fb6cc127e0b6
-> > > and boots if compiled from 2e498d0a74e5. In both cases I've used default
-> > > arm/multi_v7_defconfig and
-> > > gcc-linaro-6.4.1-2017.11-x86_64_arm-linux-gnueabi toolchain.
-> > 
-> > Yup, I've narrowed it down to the addition of "__u64 _perf" to
-> > siginfo_t. My guess is the __u64 causes a different alignment for a
-> > bunch of adjacent fields. It seems that x86 and m68k are the only ones
-> > that have compile-time tests for the offsets. Arm should probably add
-> > those -- I have added a bucket of static_assert() in
-> > arch/arm/kernel/signal.c and see that something's off.
-> > 
-> > I'll hopefully have a fix in a day or so.
-> 
-> Arm and compiler folks: are there some special alignment requirement for
-> __u64 on arm 32-bit? (And if there is for arm64, please shout as well.)
-> 
-> With the static-asserts below, the only thing that I can do to fix it is
-> to completely remove the __u64. Padding it before or after with __u32
-> just does not work. It seems that the use of __u64 shifts everything
-> in __sifields by 4 bytes.
-> 
-> diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
-> index d0bb9125c853..b02a4ac55938 100644
-> --- a/include/uapi/asm-generic/siginfo.h
-> +++ b/include/uapi/asm-generic/siginfo.h
-> @@ -92,7 +92,10 @@ union __sifields {
->  				__u32 _pkey;
->  			} _addr_pkey;
->  			/* used when si_code=TRAP_PERF */
-> -			__u64 _perf;
-> +			struct {
-> +				__u32 _perf1;
-> +				__u32 _perf2;
-> +			} _perf;
->  		};
->  	} _sigfault;
-> 
-> ^^ works, but I'd hate to have to split this into 2 __u32 because it
-> makes the whole design worse.
-> 
-> What alignment trick do we have to do here to fix it for __u64?
+David Hildenbrand <david@redhat.com> writes:
 
-So I think we just have to settle on 'unsigned long' here. On many
-architectures, like 32-bit Arm, the alignment of a structure is that of
-its largest member. This means that there is no portable way to add
-64-bit integers to siginfo_t on 32-bit architectures.
+> Stumbling over the history of MAP_EXECUTABLE, I noticed that we still
+> have some in-tree users that we can get rid of.
+>
+> A good fit for the whole series could be Andrew's tree.
 
-In the case of the si_perf field, word size is sufficient since the data
-it contains is user-defined. On 32-bit architectures, any excess bits of
-perf_event_attr::sig_data will therefore be truncated when copying into
-si_perf.
+In general this looks like a good cleanup.
 
-Feel free to test the below if you have time, but the below lets me boot
-32-bit arm which previously timed out. It also passes all the
-static_asserts() I added (will send those as separate patches).
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-Once I'm convinced this passes all others tests too, I'll send a patch.
+As far as I can see we can go after MAP_DENYWRITE the same way.
+Today deny_write_access in open_exec is what causes -ETXTBSY
+when attempting to write to file that is current executing.
 
-Thanks,
--- Marco
+Do you have any plans to look at that?
 
+Eric
 
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index c8821d966812..f0d2dd35d408 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -237,7 +237,7 @@ typedef struct compat_siginfo {
- 					u32 _pkey;
- 				} _addr_pkey;
- 				/* used when si_code=TRAP_PERF */
--				compat_u64 _perf;
-+				compat_ulong_t _perf;
- 			};
- 		} _sigfault;
- 
-diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
-index d0bb9125c853..03d6f6d2c1fe 100644
---- a/include/uapi/asm-generic/siginfo.h
-+++ b/include/uapi/asm-generic/siginfo.h
-@@ -92,7 +92,7 @@ union __sifields {
- 				__u32 _pkey;
- 			} _addr_pkey;
- 			/* used when si_code=TRAP_PERF */
--			__u64 _perf;
-+			unsigned long _perf;
- 		};
- 	} _sigfault;
- 
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Jiri Olsa <jolsa@redhat.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+> Cc: Greg Ungerer <gerg@linux-m68k.org>
+> Cc: Mike Rapoport <rppt@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Kevin Brodsky <Kevin.Brodsky@arm.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Feng Tang <feng.tang@intel.com>
+> Cc: Don Zickus <dzickus@redhat.com>
+> Cc: x86@kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+>
+> David Hildenbrand (3):
+>   perf: MAP_EXECUTABLE does not indicate VM_MAYEXEC
+>   binfmt: remove in-tree usage of MAP_EXECUTABLE
+>   mm: ignore MAP_EXECUTABLE in ksys_mmap_pgoff()
+>
+>  arch/x86/ia32/ia32_aout.c |  4 ++--
+>  fs/binfmt_aout.c          |  4 ++--
+>  fs/binfmt_elf.c           |  2 +-
+>  fs/binfmt_elf_fdpic.c     | 11 ++---------
+>  fs/binfmt_flat.c          |  2 +-
+>  include/linux/mman.h      |  2 ++
+>  kernel/events/core.c      |  2 --
+>  mm/mmap.c                 |  2 +-
+>  mm/nommu.c                |  2 +-
+>  9 files changed, 12 insertions(+), 19 deletions(-)
