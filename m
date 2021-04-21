@@ -2,123 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7CB1367437
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 22:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07DDD367470
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 22:50:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245636AbhDUUjH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Apr 2021 16:39:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55238 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242965AbhDUUjG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Apr 2021 16:39:06 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 040C0C06138B
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 13:38:32 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id r12so65441565ejr.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 13:38:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=md3o4p7n3hM5uE+5WCGNtClm3RdZoyFagq0E7NLsAic=;
-        b=jluoif0LUeWyHw6yXRzDm293OaeL1Gvzfs7lwWkF0kZ9iIB1xqqXcZBZzzI/nHk04R
-         RJ5g0rXOaZVzvBmrxkjLX1UL2uAcE44TgBlZMGHdPQ6nibpmb/ZZgNzdIwqQWeaE4jwe
-         X7GwFGRmJn4teKMZEas+gWWYQ6GPcmOqBAE1TKE0ELsYa+UL1L3STWfI7955RsmXxtZX
-         iN3VPpRYPPbQVHaaquw/NaB2MZk+e1rO98iDD8P0RBMTASUUMSwY0li2YrNwYWvfizuR
-         kW4otWYEy08FXf46qc1KQr9JcddGNgHgqd88tjlw3lYZDryYu2WR5b576MwjjpTbBKrI
-         +Arw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=md3o4p7n3hM5uE+5WCGNtClm3RdZoyFagq0E7NLsAic=;
-        b=FFpOLtU/70eq2YqBpVu9nHxv5rgI6UVbm0g/HdQNwTlD4/hSa+k5v3uWZefGNYPlGy
-         u/U2PrZ0Sg+jpx+Fvq8zr5BGtywNOSMPwJm/RRi3rUBefyOalexcg42MjM9HStKI6+LO
-         v55tkpQ4Wuuecs+iITxZma+tBtLHuborxQUFh0lOFrbruBmb24hahPWC1K+mzHjmNRqa
-         4/0KhAu8Q1c0l/QUt0mAteqP6e4qxtn4ZILy8E+D5+6bkEgpSu06381NzztqvYST/YIk
-         hdNtGV1xtWgvdESr7OaSiHMOCjZzgw9J7fpsocIOc7aOw31EF4w7YuxStkKo5/+Ael2m
-         OWeA==
-X-Gm-Message-State: AOAM531Bv48umU875JHEkpOkK2OfpJwRQvGPlFtrqDiHMGgB5Ezord3a
-        DRQKtj4RJVrraucEf95UQuQRAXLSf8/FaPJT7k8QLWgLaA==
-X-Google-Smtp-Source: ABdhPJyFe9bNzV6/bc99zAfaqrVO1DebH0rgqEH8+mOVAiJ8K6bc6MFkmZrpd827WzqVo1ofdZuRb3cNGC3u1dwSFpY=
-X-Received: by 2002:a17:906:f1cb:: with SMTP id gx11mr35468706ejb.106.1619037511266;
- Wed, 21 Apr 2021 13:38:31 -0700 (PDT)
+        id S245701AbhDUUu2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Apr 2021 16:50:28 -0400
+Received: from mail.tuxforce.de ([84.38.66.179]:39576 "EHLO mail.tuxforce.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S245698AbhDUUu2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Apr 2021 16:50:28 -0400
+X-Greylist: delayed 435 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Apr 2021 16:50:27 EDT
+Received: from [IPv6:2001:4dd5:b099:0:19b2:6b8c:f4bb:b22d] (2001-4dd5-b099-0-19b2-6b8c-f4bb-b22d.ipv6dyn.netcologne.de [IPv6:2001:4dd5:b099:0:19b2:6b8c:f4bb:b22d])
+        by mail.tuxforce.de (Postfix) with ESMTPSA id 0421052007D;
+        Wed, 21 Apr 2021 22:42:36 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.tuxforce.de 0421052007D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tuxforce.de;
+        s=202009; t=1619037757;
+        bh=eeldZ43v9kOcNhynOalmpLgFTzFOymh3pImWlM/X8Q8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=EnzW78doaicFyEjhlvnSCVRWqYVS7b48MpoJj8P/vRPfVy/kJhF1df1QHkSduUXrZ
+         4TeDUL9RWu/0r2lcOotvd4nPhpptQsRjINLHlanqvQAAxzU4EMiwtqXHq4Thqhd+Gk
+         JOonAxqYML+RdCqM/N1R6BtBnq9gdzSKKcLjawx9xPAWGBQizW85NaW7MWfXkk+FJI
+         4SXcIHDdpZddUWYb0d0CrrH896egRYeCHp8AlFEZS4v/uU4BaPCCku31GsybTmpSq0
+         BFt0SeSPWXMd5diPY7CCk5JvFLGl4ge0dPR3x1918W47NLrYUJJmQvA1PzIDHd9w6w
+         T/cW39CUwwMcQ==
+Subject: Re: [PATCH 2/2] fs/kernel_read_file: use
+ usermodehelper_read_trylock() as a stop gap
+To:     Luis Chamberlain <mcgrof@kernel.org>, rafael@kernel.org,
+        gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+        bvanassche@acm.org, jeyu@kernel.org, ebiederm@xmission.com
+Cc:     mchehab@kernel.org, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Lukas Middendorf <kernel@tuxforce.de>
+References: <20210416235850.23690-1-mcgrof@kernel.org>
+ <20210416235850.23690-3-mcgrof@kernel.org>
+From:   Lukas Middendorf <kernel@tuxforce.de>
+Message-ID: <35ff02c7-8a76-730e-ddb9-f91634f5098b@tuxforce.de>
+Date:   Wed, 21 Apr 2021 22:42:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-References: <20210421171446.785507-1-omosnace@redhat.com>
-In-Reply-To: <20210421171446.785507-1-omosnace@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 21 Apr 2021 16:38:20 -0400
-Message-ID: <CAHC9VhTFPHO7YtTxSZNcEZwoy4R3RXVu-4RrAHRtv8BVEw-zGA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] selinux,anon_inodes: Use a separate SELinux class
- for each type of anon inode
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210416235850.23690-3-mcgrof@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 21, 2021 at 1:14 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> This series aims to correct a design flaw in the original anon_inode
-> SELinux support that would make it hard to write policies for anonymous
-> inodes once more types of them are supported (currently only userfaultfd
-> inodes are). A more detailed rationale is provided in the second patch.
->
-> The first patch extends the anon_inode_getfd_secure() function to accept
-> an additional numeric identifier that represents the type of the
-> anonymous inode being created, which is passed to the LSMs via
-> security_inode_init_security_anon().
->
-> The second patch then introduces a new SELinux policy capability that
-> allow policies to opt-in to have a separate class used for each type of
-> anon inode. That means that the "old way" will still
 
-... will what? :)
+On 17/04/2021 01:58, Luis Chamberlain wrote:
+> The VFS lacks support to do automatic freeze / thaw of filesystems
+> on the suspend / resume cycle. This can cause some issues, namely
+> stalls when we have reads/writes during the suspend / resume cycle.
+> 
+> Although for module loading / kexec the probability of this happening
+> is extremely low, maybe even impossible, its a known real issue with
+> the request_firmare() API which it does direct fs read. For this reason
+> only be chatty about the issue on the call used by the firmware API.
+> 
+> Lukas Middendorf has reported an easy situation to reproduce, which can
+> be caused by questionably buggy drivers which call the request_firmware()
+> API on resume.
+> 
+[snip]
+> 
+> The VFS fs freeze work fixes this issue, however it requires a bit
+> more work, which may take a while to land upstream, and so for now
+> this provides a simple stop-gap solution.
+> 
+> We can remove this stop-gap solution once the kernel gets VFS
+> fs freeze / thaw support.
+> 
+> Reported-by: Lukas Middendorf <kernel@tuxforce.de>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 
-I think it would be a very good idea if you could provide some
-concrete examples of actual policy problems encountered using the
-current approach.  I haven't looked at these patches very seriously
-yet, but my initial reaction is not "oh yes, we definitely need this".
+Tested-by: Lukas Middendorf <kernel@tuxforce.de>
 
-> I wish I had realized the practical consequences earlier, while the
-> patches were still under review, but it only started to sink in after
-> the authors themselves later raised the issue in an off-list
-> conversation. Even then, I still hoped it wouldn't be that bad, but the
-> more I thought about how to apply this in an actual policy, the more I
-> realized how much pain it would be to work with the current design, so
-> I decided to propose these changes.
->
-> I hope this will be an acceptable solution.
->
-> A selinux-testsuite patch that adapts the userfaultfd test to work also
-> with the new policy capability enabled will follow.
->
-> Ondrej Mosnacek (2):
->   LSM,anon_inodes: explicitly distinguish anon inode types
->   selinux: add capability to map anon inode types to separate classes
->
->  fs/anon_inodes.c                           | 42 +++++++++++++---------
->  fs/userfaultfd.c                           |  6 ++--
->  include/linux/anon_inodes.h                |  4 ++-
->  include/linux/lsm_hook_defs.h              |  3 +-
->  include/linux/security.h                   | 19 ++++++++++
->  security/security.c                        |  3 +-
->  security/selinux/hooks.c                   | 28 ++++++++++++++-
->  security/selinux/include/classmap.h        |  2 ++
->  security/selinux/include/policycap.h       |  1 +
->  security/selinux/include/policycap_names.h |  3 +-
->  security/selinux/include/security.h        |  7 ++++
->  11 files changed, 95 insertions(+), 23 deletions(-)
->
-> --
-> 2.30.2
 
--- 
-paul moore
-www.paul-moore.com
+Works as advertised.
+
+This prevents stalls on resume with buggy drivers (e.g. si2168) by 
+totally blocking uncached request_firmware() on resume. Uncached 
+request_firmware() will fail reliably (also in situations where it by 
+accident worked previously without stalling).
+If firmware caching has been set up properly before suspend (either 
+through firmware_request_cache() or through request_firmware() outside 
+of a suspend/resume situation), the call to request_firmware() will 
+still work as expected on resume. This should not break properly 
+behaving drivers.
+
+A failing firmware load is definitely preferable (and easier to debug 
+and fix in the respective drivers) compared to a stall on resume.
+
+Lukas
