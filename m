@@ -2,198 +2,260 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A269D36664D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 09:35:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00700366686
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 09:54:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236763AbhDUHgC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Apr 2021 03:36:02 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:44714 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235560AbhDUHgB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Apr 2021 03:36:01 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210421073526euoutp02418f3feedced1a31d167c684ac44c2e4~3z05hwKsx1717817178euoutp02p
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 07:35:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210421073526euoutp02418f3feedced1a31d167c684ac44c2e4~3z05hwKsx1717817178euoutp02p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1618990526;
-        bh=iNC2JGm8JQHaUP5EaOW6wGw0f6laDFIqRjY1Uqk+010=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=p3g/qabOb6gJjJIe1GTQzPp5yyjDmt5dqBSi6Addz7C4D4Qhymfn5KZjMtuhVPaVM
-         /0k40b40jCl+bcIFR5NERgUCpAyONEyPt6+4hVFqKkH/HUuFh71tyVkWg77/Dz0eLS
-         lwemosuuEYHH62LOF1iIZaAfTp/pT04k1iEqf3go=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210421073525eucas1p20a9f991a5acec3b37967fcdb969dcaa8~3z0423X791121811218eucas1p2N;
-        Wed, 21 Apr 2021 07:35:25 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 30.05.09452.DB5DF706; Wed, 21
-        Apr 2021 08:35:25 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210421073525eucas1p2de039236195308aa06fdee8b77fe01c7~3z04M84bi0689506895eucas1p2Z;
-        Wed, 21 Apr 2021 07:35:25 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210421073525eusmtrp18822b2b5a245e7875a4a08a4bb655afb~3z04LUbIY3012430124eusmtrp1e;
-        Wed, 21 Apr 2021 07:35:25 +0000 (GMT)
-X-AuditID: cbfec7f2-a9fff700000024ec-91-607fd5bd2d9f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id A8.32.08705.CB5DF706; Wed, 21
-        Apr 2021 08:35:24 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210421073523eusmtip246be203a67bd3d460f00b7af00eb9498~3z02pxT2U0194101941eusmtip2x;
-        Wed, 21 Apr 2021 07:35:23 +0000 (GMT)
-Subject: Re: [PATCH v4 05/10] signal: Introduce TRAP_PERF si_code and
- si_perf to siginfo
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     Marco Elver <elver@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian@brauner.io>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Matt Morehouse <mascasa@google.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Ian Rogers <irogers@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <dccaa337-f3e5-08e4-fe40-a603811bb13e@samsung.com>
-Date:   Wed, 21 Apr 2021 09:35:22 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.9.1
+        id S235988AbhDUHzP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Apr 2021 03:55:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54506 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231463AbhDUHzN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Apr 2021 03:55:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 693E161182;
+        Wed, 21 Apr 2021 07:54:36 +0000 (UTC)
+Date:   Wed, 21 Apr 2021 09:54:31 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     David Hildenbrand <david@redhat.com>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-alpha@vger.kernel.org
+Subject: Re: [PATCH v1] binfmt: remove support for em86 (alpha only)
+Message-ID: <20210421075431.blsuv3adard2e4xu@wittgenstein>
+References: <20210420175631.46923-1-david@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <43f8a3bf-34c5-0fc9-c335-7f92eaf23022@samsung.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf1DTZRzHe76/9mW59WViPKGH3TjlsAOCs3q0DrPr8uvZeXrdJe0qWPrl
-        R/LDbS7MREEOGjtAGZY6FFaRcIBuTRgymeIo1o4xYRyhHor8CAUb3FKLqFF++V7Ff6/P53l/
-        ns/7/dxD4zILFUFn5uzn1DnKLDklJmzdf1yPdQweSX3R+Es80t+5RCGd9TSJgoZuEWq6fYxC
-        350yk6hwJgodHy0RoRJPG4kmbzkw9HnAgSNT8SMR8rlj0Q+9QQw1TI5gSGd/TKAOh5tAA/Yz
-        FDo5PEuhb4f6MfTNtU4S+TpNGDp6rpVArVeLATo2PEQhV3knhi5av8DR9aCLRHOWcfL1VWxz
-        TTNg/5w3ADZ4NoCzJquW7ah0U+zFhnXsQK+WtTaWUuyM1ytinV06wNa4d7KzVwYptqKlEbAP
-        rZGsdcKP7XhGIX5tD5eV+Qmnjk9KFWfYH5tF+wLPHqgr9JEFoFWmBzQNmfXQdnmXHoTQMqYB
-        wAffhwr8CMDAiErghwBeufE8z7y8rsVB6IH4Sb8ewBablxSKAIBGmx7jVcsZBezy9uE8U0wC
-        1Pv1FM9hjBz6xytwfgBnBmmoa+/CeBcSJgnWTW/lNQSzBtbqRhZnVzAfwZu+vxdZwoRC9+kJ
-        gucQZhM8b6leZJxZDdv8Z3CBw+GtiVqMvx8yDjG8oG+nBNtvwlmbBxd4OZx2tYgEXgV7qsoI
-        YaAIwFHveZFQlAE4cPQUEFSvwmHvPMU7xZkYaLbHC+3NcNpixIRnlMIb/lDBhBQabCdxoS2B
-        uhKZoF4Lja4L/6291ufDjwO5cUk045I4xiVxjP/vNQGiEYRzWk12OqdJyOHy4jTKbI02Jz1u
-        d262FTz51D0Lrl8vgbPTgTgnwGjgBJDG5WGSkfxDqTLJHuWnBzl1bopam8VpnGAlTcjDJY3V
-        zSkyJl25n9vLcfs49b+nGB0SUYDFlN3TFm/vfvf3WOdYRFpUkssyNTbWbyi+vEnliWub8wdL
-        PRvUivIJhWohrRzr21ihWvP17uqt9o5sc9T7D642sFkKQ9Mbwe3RJulm2+3D7pdD31MHKsNS
-        0yT5PxbFSV/am/ccmL154C4WPBTTmxh/sMBXuEWFP61ySTMTa+/137Unj29smvlqWdGH3oQj
-        huCybXkxnE6x463IDlPrgm7ttrdH71cOVddUbdglVQ6l6NXGjM4TaOVfny3Q0Vni33qche84
-        B2elAVJW/zE5Wbrzqcj8OV1ybnR3Z45pYioEM5/rKR7ZEpZYn3zn5xXt65vJFzxTq39K+eDw
-        /dKM1C9fma+SE5oMZcI6XK1R/gNsDtkAQwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKKsWRmVeSWpSXmKPExsVy+t/xe7p7rtYnGPw+bGPRdW8Hm0XHppms
-        Fn8nHWO3WH23n81i44z1rBaN75QtJjxsY7doO7Od1eLZrb1MFu0f9zJbLGj9wm5x6aSuxdGz
-        f5ksVjy7z2TRsesri8WevSdZLC7vmsNmMf3OezaLpdcvMlksPniA1eLSgQVMFk3LtrJYbN3f
-        ymjRf+c6m8Xx3gNMFps3TWW2OP/3OKvFjw2PWR1kPNbMW8Po8fvXJEaPv3M/Mnss2FTqsWfi
-        STaPzSu0PC6fLfXYtKqTzePduXPsHocOdzB6zDsZ6PF+31U2j74tqxg9Pm+S89j05C1TAH+U
-        nk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsaur+vZ
-        Cz6KVSxpvMTawLhVqIuRk0NCwERiyZa9LCC2kMBSRomXhwIh4jISJ6c1sELYwhJ/rnWxdTFy
-        AdW8Z5R487CRHSQhLBAlcenvO2YQm03AUKLrLUgRJ4eIgJLE28d9zCANzAI3OSSW7HzCBNH9
-        ikli28qPQA4HB6+AncSSV54gDSwCqhLzO+6DDRIVSJK4d3klmM0rIChxcuYTsOs4Bewl1m6Y
-        DWYzC5hJzNv8kBnClpfY/nYOlC0ucevJfKYJjEKzkLTPQtIyC0nLLCQtCxhZVjGKpJYW56bn
-        FhvqFSfmFpfmpesl5+duYgSmp23Hfm7ewTjv1Ue9Q4xMHIyHGCU4mJVEeO/X1iQI8aYkVlal
-        FuXHF5XmpBYfYjQF+mcis5Rocj4wQeaVxBuaGZgamphZGphamhkrifNunbsmXkggPbEkNTs1
-        tSC1CKaPiYNTqoFpR83eJUpa2Zkrth3UFmJvi0o89WLNjLY3149aqCsXrnqX+ohhquiGI0k7
-        2R7GfBdmTi1J1ZFNuiI1pY9D3PJ+xcmnIU0HmNIaWounLbfcNMVO4oaPcvaR/Wwv303z0qg+
-        HVEXatT8oGDho+MOij2Pykz4v8vOfPH+k0dtulO+puoMGeFTUup+Dr6lDpOUL53x2LTOPJ/3
-        UCt32onLnqqpGV5HHhqLZxlq/bnt+ElgepnG/Lvv/7SI260+zCN66vIRhYlvDrgrfNeen33i
-        tU3Ng26eJ4aK77bMPnMjXJvL4cyr5YwGm7ySH99tuWnlxnRpkjjj2/aJ3YV6s/fIlb9+rnBv
-        pbPS1/rr0wr2PwlTYinOSDTUYi4qTgQAWVBtBtgDAAA=
-X-CMS-MailID: 20210421073525eucas1p2de039236195308aa06fdee8b77fe01c7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210420212618eucas1p102b427d1af9c682217dfe093f3eac3e8
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210420212618eucas1p102b427d1af9c682217dfe093f3eac3e8
-References: <20210408103605.1676875-1-elver@google.com>
-        <CGME20210420212618eucas1p102b427d1af9c682217dfe093f3eac3e8@eucas1p1.samsung.com>
-        <20210408103605.1676875-6-elver@google.com>
-        <1fbf3429-42e5-0959-9a5c-91de80f02b6a@samsung.com>
-        <CANpmjNM8wEJngK=J8Lt9npkZgrSWoRsqkdajErWEoY_=M1GW5A@mail.gmail.com>
-        <43f8a3bf-34c5-0fc9-c335-7f92eaf23022@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210420175631.46923-1-david@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 21.04.2021 08:21, Marek Szyprowski wrote:
-> On 21.04.2021 00:42, Marco Elver wrote:
->> On Tue, 20 Apr 2021 at 23:26, Marek Szyprowski 
->> <m.szyprowski@samsung.com> wrote:
->>> On 08.04.2021 12:36, Marco Elver wrote:
->>>> Introduces the TRAP_PERF si_code, and associated siginfo_t field
->>>> si_perf. These will be used by the perf event subsystem to send 
->>>> signals
->>>> (if requested) to the task where an event occurred.
->>>>
->>>> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> # m68k
->>>> Acked-by: Arnd Bergmann <arnd@arndb.de> # asm-generic
->>>> Signed-off-by: Marco Elver <elver@google.com>
->>> This patch landed in linux-next as commit fb6cc127e0b6 ("signal:
->>> Introduce TRAP_PERF si_code and si_perf to siginfo"). It causes
->>> regression on my test systems (arm 32bit and 64bit). Most systems fails
->>> to boot in the given time frame. I've observed that there is a timeout
->>> waiting for udev to populate /dev and then also during the network
->>> interfaces configuration. Reverting this commit, together with
->>> 97ba62b27867 ("perf: Add support for SIGTRAP on perf events") to let it
->>> compile, on top of next-20210420 fixes the issue.
->> Thanks, this is weird for sure and nothing in particular stands out.
->>
->> I have questions:
->> -- Can you please share your config?
->
-> This happens with standard multi_v7_defconfig (arm) or just defconfig 
-> for arm64.
->
->> -- Also, can you share how you run this? Can it be reproduced in qemu?
-> Nothing special. I just boot my test systems and see that they are 
-> waiting lots of time during the udev populating /dev and network 
-> interfaces configuration. I didn't try with qemu yet.
->> -- How did you derive this patch to be at fault? Why not just
->> 97ba62b27867, given you also need to revert it?
-> Well, I've just run my boot tests with automated 'git bisect' and that 
-> was its result. It was a bit late in the evening, so I didn't analyze 
-> it further, I've just posted a report about the issue I've found. It 
-> looks that bisecting pointed to a wrong commit somehow.
->> If you are unsure which patch exactly it is, can you try just
->> reverting 97ba62b27867 and see what happens?
->
-> Indeed, this is a real faulty commit. Initially I've decided to revert 
-> it to let kernel compile (it uses some symbols introduced by this 
-> commit). Reverting only it on top of linux-next 20210420 also fixes 
-> the issue. I'm sorry for the noise in this thread. I hope we will find 
-> what really causes the issue.
+On Tue, Apr 20, 2021 at 07:56:31PM +0200, David Hildenbrand wrote:
+> We have a fairly specific alpha binary loader in Linux: running x86
+> (i386, i486) binaries via the em86 [1] emulator. As noted in the Kconfig
+> option, the same behavior can be achieved via binfmt_misc, for example,
+> more nowadays used for running qemu-user.
+> 
+> An example on how to get binfmt_misc running with em86 can be found in
+> Documentation/admin-guide/binfmt-misc.rst
+> 
+> The defconfig does not have CONFIG_BINFMT_EM86=y set. And doing a
+> 	make defconfig && make olddefconfig
+> results in
+> 	# CONFIG_BINFMT_EM86 is not set
+> 
+> ... as we don't seem to have any supported Linux distirbution for alpha
+> anymore, there isn't really any "default" user of that feature anymore.
+> 
+> Searching for "CONFIG_BINFMT_EM86=y" reveals mostly discussions from
+> around 20 years ago, like [2] describing how to get netscape via em86
+> running via em86, or [3] discussing that running wine or installing
+> Win 3.11 through em86 would be a nice feature.
+> 
+> The latest binaries available for em86 are from 2000, version 2.2.1 [4] --
+> which translates to "unsupported"; further, em86 doesn't even work with
+> glibc-2.x but only with glibc-2.0 [4, 5]. These are clear signs that
+> there might not be too many em86 users out there, especially users
+> relying on modern Linux kernels.
+> 
+> Even though the code footprint is relatively small, let's just get rid
+> of this blast from the past that's effectively unused.
+> 
+> [1] http://ftp.dreamtime.org/pub/linux/Linux-Alpha/em86/v0.4/docs/em86.html
+> [2] https://static.lwn.net/1998/1119/a/alpha-netscape.html
+> [3] https://groups.google.com/g/linux.debian.alpha/c/AkGuQHeCe0Y
+> [4] http://zeniv.linux.org.uk/pub/linux/alpha/em86/v2.2-1/relnotes.2.2.1.html
+> [5] https://forum.teamspeak.com/archive/index.php/t-1477.html
+> 
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Richard Henderson <rth@twiddle.net>
+> Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+> Cc: Matt Turner <mattst88@gmail.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-api@vger.kernel.org
+> Cc: linux-alpha@vger.kernel.org
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
 
-This was a premature conclusion. It looks that during the test I've did 
-while writing that reply, the modules were not deployed properly and a 
-test board (RPi4) booted without modules. In that case the board booted 
-fine and there was no udev timeout. After deploying kernel modules, the 
-udev timeout is back.
+The only Alpha machines in active use I know of are here in Berlin at
+the FU so adding Adrian in case they care but I don't think so and this
+seems like a good cleanup:
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 
+
+>  fs/Kconfig.binfmt |  15 -------
+>  fs/Makefile       |   1 -
+>  fs/binfmt_em86.c  | 110 ----------------------------------------------
+>  3 files changed, 126 deletions(-)
+>  delete mode 100644 fs/binfmt_em86.c
+> 
+> diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
+> index c6f1c8c1934e..8720e0a30005 100644
+> --- a/fs/Kconfig.binfmt
+> +++ b/fs/Kconfig.binfmt
+> @@ -165,21 +165,6 @@ config OSF4_COMPAT
+>  	  with v4 shared libraries freely available from Compaq. If you're
+>  	  going to use shared libraries from Tru64 version 5.0 or later, say N.
+>  
+> -config BINFMT_EM86
+> -	tristate "Kernel support for Linux/Intel ELF binaries"
+> -	depends on ALPHA
+> -	help
+> -	  Say Y here if you want to be able to execute Linux/Intel ELF
+> -	  binaries just like native Alpha binaries on your Alpha machine. For
+> -	  this to work, you need to have the emulator /usr/bin/em86 in place.
+> -
+> -	  You can get the same functionality by saying N here and saying Y to
+> -	  "Kernel support for MISC binaries".
+> -
+> -	  You may answer M to compile the emulation support as a module and
+> -	  later load the module when you want to use a Linux/Intel binary. The
+> -	  module will be called binfmt_em86. If unsure, say Y.
+> -
+>  config BINFMT_MISC
+>  	tristate "Kernel support for MISC binaries"
+>  	help
+> diff --git a/fs/Makefile b/fs/Makefile
+> index 3215fe205256..c92e403c53f8 100644
+> --- a/fs/Makefile
+> +++ b/fs/Makefile
+> @@ -39,7 +39,6 @@ obj-$(CONFIG_FS_ENCRYPTION)	+= crypto/
+>  obj-$(CONFIG_FS_VERITY)		+= verity/
+>  obj-$(CONFIG_FILE_LOCKING)      += locks.o
+>  obj-$(CONFIG_BINFMT_AOUT)	+= binfmt_aout.o
+> -obj-$(CONFIG_BINFMT_EM86)	+= binfmt_em86.o
+>  obj-$(CONFIG_BINFMT_MISC)	+= binfmt_misc.o
+>  obj-$(CONFIG_BINFMT_SCRIPT)	+= binfmt_script.o
+>  obj-$(CONFIG_BINFMT_ELF)	+= binfmt_elf.o
+> diff --git a/fs/binfmt_em86.c b/fs/binfmt_em86.c
+> deleted file mode 100644
+> index 06b9b9fddf70..000000000000
+> --- a/fs/binfmt_em86.c
+> +++ /dev/null
+> @@ -1,110 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0-only
+> -/*
+> - *  linux/fs/binfmt_em86.c
+> - *
+> - *  Based on linux/fs/binfmt_script.c
+> - *  Copyright (C) 1996  Martin von Löwis
+> - *  original #!-checking implemented by tytso.
+> - *
+> - *  em86 changes Copyright (C) 1997  Jim Paradis
+> - */
+> -
+> -#include <linux/module.h>
+> -#include <linux/string.h>
+> -#include <linux/stat.h>
+> -#include <linux/binfmts.h>
+> -#include <linux/elf.h>
+> -#include <linux/init.h>
+> -#include <linux/fs.h>
+> -#include <linux/file.h>
+> -#include <linux/errno.h>
+> -
+> -
+> -#define EM86_INTERP	"/usr/bin/em86"
+> -#define EM86_I_NAME	"em86"
+> -
+> -static int load_em86(struct linux_binprm *bprm)
+> -{
+> -	const char *i_name, *i_arg;
+> -	char *interp;
+> -	struct file * file;
+> -	int retval;
+> -	struct elfhdr	elf_ex;
+> -
+> -	/* Make sure this is a Linux/Intel ELF executable... */
+> -	elf_ex = *((struct elfhdr *)bprm->buf);
+> -
+> -	if (memcmp(elf_ex.e_ident, ELFMAG, SELFMAG) != 0)
+> -		return  -ENOEXEC;
+> -
+> -	/* First of all, some simple consistency checks */
+> -	if ((elf_ex.e_type != ET_EXEC && elf_ex.e_type != ET_DYN) ||
+> -		(!((elf_ex.e_machine == EM_386) || (elf_ex.e_machine == EM_486))) ||
+> -		!bprm->file->f_op->mmap) {
+> -			return -ENOEXEC;
+> -	}
+> -
+> -	/* Need to be able to load the file after exec */
+> -	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
+> -		return -ENOENT;
+> -
+> -	/* Unlike in the script case, we don't have to do any hairy
+> -	 * parsing to find our interpreter... it's hardcoded!
+> -	 */
+> -	interp = EM86_INTERP;
+> -	i_name = EM86_I_NAME;
+> -	i_arg = NULL;		/* We reserve the right to add an arg later */
+> -
+> -	/*
+> -	 * Splice in (1) the interpreter's name for argv[0]
+> -	 *           (2) (optional) argument to interpreter
+> -	 *           (3) filename of emulated file (replace argv[0])
+> -	 *
+> -	 * This is done in reverse order, because of how the
+> -	 * user environment and arguments are stored.
+> -	 */
+> -	remove_arg_zero(bprm);
+> -	retval = copy_string_kernel(bprm->filename, bprm);
+> -	if (retval < 0) return retval; 
+> -	bprm->argc++;
+> -	if (i_arg) {
+> -		retval = copy_string_kernel(i_arg, bprm);
+> -		if (retval < 0) return retval; 
+> -		bprm->argc++;
+> -	}
+> -	retval = copy_string_kernel(i_name, bprm);
+> -	if (retval < 0)	return retval;
+> -	bprm->argc++;
+> -
+> -	/*
+> -	 * OK, now restart the process with the interpreter's inode.
+> -	 * Note that we use open_exec() as the name is now in kernel
+> -	 * space, and we don't need to copy it.
+> -	 */
+> -	file = open_exec(interp);
+> -	if (IS_ERR(file))
+> -		return PTR_ERR(file);
+> -
+> -	bprm->interpreter = file;
+> -	return 0;
+> -}
+> -
+> -static struct linux_binfmt em86_format = {
+> -	.module		= THIS_MODULE,
+> -	.load_binary	= load_em86,
+> -};
+> -
+> -static int __init init_em86_binfmt(void)
+> -{
+> -	register_binfmt(&em86_format);
+> -	return 0;
+> -}
+> -
+> -static void __exit exit_em86_binfmt(void)
+> -{
+> -	unregister_binfmt(&em86_format);
+> -}
+> -
+> -core_initcall(init_em86_binfmt);
+> -module_exit(exit_em86_binfmt);
+> -MODULE_LICENSE("GPL");
+> -- 
+> 2.30.2
+> 
