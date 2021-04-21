@@ -2,211 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F61F36701C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 18:28:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F046636706F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 18:46:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235062AbhDUQ2a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Apr 2021 12:28:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55954 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235040AbhDUQ22 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Apr 2021 12:28:28 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D48C06174A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 09:27:55 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id n127so10740013wmb.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 09:27:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SmfHH6hIJqwyK5X8i5q3Sks3m+nCGH0WqXp+KsNmUL8=;
-        b=DXNQF6+X23W/5T4j3zpPuPMt02MDsg03lPN+3HSFpoY2UlMTCml7AhmoyozG0E2Q39
-         qk4NKcw6Mkbji1CoIrq497pJKaqywM/s/l0rqIZr+LR2Ec3BQIYPhHmgyPt1x9kQtKIg
-         JV/RQ+1kCUHhV5WmXHyA0TQYDDBelvBNectYOsf8uCeauDfYl+EOu+xu6qLuh+dCmx6J
-         xVOMVqOOu0T09Zh/akTZDXfT3iuYRkCZhFRBgHZnvQkd2HyWEnbCX99Pji/MzbFswFFj
-         k63kG+iYhk8Fqo8XMDKsLmlKFxAXe4pOmXzDIUAqRHaa7nIBfRgSGDwzBmtreIbzqn4r
-         y0pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SmfHH6hIJqwyK5X8i5q3Sks3m+nCGH0WqXp+KsNmUL8=;
-        b=I1anqbudRtbPVJTN9Hlc7Mio2dcNldxUsjbh3p9v7TGYlirz29scdNx/exVcbLDjZ+
-         lLdfTuJmmBI2xbtiRdc1FGnUNAqwTmha0U/4BkOXOiqIpBgO/V6tS5z5T8x7/Ys+IBXC
-         LpGb0fgDP0BHZlI/OQbmHSURXd2Fvfb43d/GYDttNt/8+BdzL6ko3wsUKGLdMLGP+mu0
-         6L/V4JdqbaTcNrKSkFrDzllPa5kWw0zldhx0F/qxvcIDT30mKllVhY7oMu3LrGj8OW+t
-         uaGbLZ6dZNYxyAB9sa62R2r0xFodPTFAlMqCL+/MKBnQN4xC/noSAvcIpnnbNYFaGlaQ
-         1zzA==
-X-Gm-Message-State: AOAM533y0dH/gyP42DbmqdbhAcLOpb80gw5XxPIpo47We7bhQDsG4r8i
-        YVm0H2L8zbGhaAsOi9ZIpSmm7Q==
-X-Google-Smtp-Source: ABdhPJws9ys5bphkU3GPm/kXkaoFkOzDHxBDE6IlGGSz8bHo2vzb71zyUPD73s4ZA5mj9uvFsZMMCA==
-X-Received: by 2002:a1c:7f16:: with SMTP id a22mr10182034wmd.17.1619022473891;
-        Wed, 21 Apr 2021 09:27:53 -0700 (PDT)
-Received: from elver.google.com ([2a00:79e0:15:13:c552:ee7c:6a14:80cc])
-        by smtp.gmail.com with ESMTPSA id f23sm2803158wmf.37.2021.04.21.09.27.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Apr 2021 09:27:52 -0700 (PDT)
-Date:   Wed, 21 Apr 2021 18:27:47 +0200
-From:   Marco Elver <elver@google.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian@brauner.io>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Matt Morehouse <mascasa@google.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Ian Rogers <irogers@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-tegra@vger.kernel.org, jonathanh@nvidia.com
-Subject: Re: [PATCH v4 05/10] signal: Introduce TRAP_PERF si_code and si_perf
- to siginfo
-Message-ID: <YIBSg7Vi+U383dT7@elver.google.com>
-References: <1fbf3429-42e5-0959-9a5c-91de80f02b6a@samsung.com>
- <CANpmjNM8wEJngK=J8Lt9npkZgrSWoRsqkdajErWEoY_=M1GW5A@mail.gmail.com>
- <43f8a3bf-34c5-0fc9-c335-7f92eaf23022@samsung.com>
- <dccaa337-f3e5-08e4-fe40-a603811bb13e@samsung.com>
- <CANpmjNP6-yKpxHqYFiA8Up-ujBQaeP7xyq1BrsV-NqMjJ-uHAQ@mail.gmail.com>
- <740077ce-efe1-b171-f807-bc5fd95a32ba@samsung.com>
- <f114ff4a-6612-0935-12ac-0e2ac18d896c@samsung.com>
- <CANpmjNM6bQpc49teN-9qQhCXoJXaek5stFGR2kPwDroSFBc0fw@mail.gmail.com>
- <cf6ed5cd-3202-65ce-86bc-6f1eba1b7d17@samsung.com>
- <CANpmjNPr_JtRC762ap8PQVmsFNY5YhHvOk0wNcPHq=ZQt-qxYg@mail.gmail.com>
+        id S244398AbhDUQqk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Apr 2021 12:46:40 -0400
+Received: from mx2.veeam.com ([64.129.123.6]:41916 "EHLO mx2.veeam.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244347AbhDUQqj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Apr 2021 12:46:39 -0400
+Received: from mail.veeam.com (prgmbx01.amust.local [172.24.0.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx2.veeam.com (Postfix) with ESMTPS id 5EBE742406;
+        Wed, 21 Apr 2021 12:45:55 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com; s=mx2;
+        t=1619023555; bh=h41nYawhFuIkEKobo2LpVytJxoNFHzzj229eHud/Mao=;
+        h=From:To:CC:Subject:Date:From;
+        b=AIixUZHGmo+HZI8/mBT9Jyka2qBirNEsUiFr0ZNXQWEAEpkw0owg9Zthc60rcGMPc
+         t2kC+i5K8uAHmV0ydIiixsQRHdFZ+OnAglYLP/Wb1RBw0p376hlrWcJo1InAMCFLTy
+         tFApGARHJ4c0a8f55gHvN9aoqZZwxMXQjWYiq4K4=
+Received: from prgdevlinuxpatch01.amust.local (172.24.14.5) by
+ prgmbx01.amust.local (172.24.0.171) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.858.5;
+ Wed, 21 Apr 2021 18:45:53 +0200
+From:   Sergei Shtepa <sergei.shtepa@veeam.com>
+To:     Christoph Hellwig <hch@infradead.org>,
+        Hannes Reinecke <hare@suse.de>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, <dm-devel@redhat.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <sergei.shtepa@veeam.com>, <pavel.tide@veeam.com>
+Subject: [PATCH v9 0/4] block device interposer
+Date:   Wed, 21 Apr 2021 19:45:41 +0300
+Message-ID: <1619023545-23431-1-git-send-email-sergei.shtepa@veeam.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNPr_JtRC762ap8PQVmsFNY5YhHvOk0wNcPHq=ZQt-qxYg@mail.gmail.com>
-User-Agent: Mutt/2.0.5 (2021-01-21)
+Content-Type: text/plain
+X-Originating-IP: [172.24.14.5]
+X-ClientProxiedBy: prgmbx02.amust.local (172.24.0.172) To prgmbx01.amust.local
+ (172.24.0.171)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A29D2A50B59677566
+X-Veeam-MMEX: True
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 21, 2021 at 05:11PM +0200, Marco Elver wrote:
-> +Cc linux-arm-kernel
-> 
-[...]
-> >
-> > I've managed to reproduce this issue with a public Raspberry Pi OS Lite
-> > rootfs image, even without deploying kernel modules:
-> >
-> > https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-03-25/2021-03-04-raspios-buster-armhf-lite.zip
-> >
-> > # qemu-system-arm -M virt -smp 2 -m 512 -kernel zImage -append "earlycon
-> > console=ttyAMA0 root=/dev/vda2 rw rootwait" -serial stdio -display none
-> > -monitor null -device virtio-blk-device,drive=virtio-blk -drive
-> > file=/tmp/2021-03-04-raspios-buster-armhf-lite.img,id=virtio-blk,if=none,format=raw
-> > -netdev user,id=user -device virtio-net-device,netdev=user
-> >
-> > The above one doesn't boot if zImage z compiled from commit fb6cc127e0b6
-> > and boots if compiled from 2e498d0a74e5. In both cases I've used default
-> > arm/multi_v7_defconfig and
-> > gcc-linaro-6.4.1-2017.11-x86_64_arm-linux-gnueabi toolchain.
-> 
-> Yup, I've narrowed it down to the addition of "__u64 _perf" to
-> siginfo_t. My guess is the __u64 causes a different alignment for a
-> bunch of adjacent fields. It seems that x86 and m68k are the only ones
-> that have compile-time tests for the offsets. Arm should probably add
-> those -- I have added a bucket of static_assert() in
-> arch/arm/kernel/signal.c and see that something's off.
-> 
-> I'll hopefully have a fix in a day or so.
+A new version of a block device interposer (blk_interposer).
 
-Arm and compiler folks: are there some special alignment requirement for
-__u64 on arm 32-bit? (And if there is for arm64, please shout as well.)
+In this series of patches,  I have tried to take into account the comments
+made by Mike to the previous version.
 
-With the static-asserts below, the only thing that I can do to fix it is
-to completely remove the __u64. Padding it before or after with __u32
-just does not work. It seems that the use of __u64 shifts everything
-in __sifields by 4 bytes.
+First of all, this applies to more detailed explanations of the commits.
+Indeed, the changes in blk-core.c and dm.c may seem complicated, but they
+are no more complicated than the rest of the code in these files.
 
-diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
-index d0bb9125c853..b02a4ac55938 100644
---- a/include/uapi/asm-generic/siginfo.h
-+++ b/include/uapi/asm-generic/siginfo.h
-@@ -92,7 +92,10 @@ union __sifields {
- 				__u32 _pkey;
- 			} _addr_pkey;
- 			/* used when si_code=TRAP_PERF */
--			__u64 _perf;
-+			struct {
-+				__u32 _perf1;
-+				__u32 _perf2;
-+			} _perf;
- 		};
- 	} _sigfault;
+Removed the [interpose] option for block devices opened by the DM target.
+Instead, the dm_get_device_ex() function is added, which allows to
+explicitly specify which devices can be used for the interposer and which
+can not.
 
-^^ works, but I'd hate to have to split this into 2 __u32 because it
-makes the whole design worse.
+Additional testing has revealed a problem with suspending and resuming DM
+targets attached via blk_interposer. This has been fixed.
 
-What alignment trick do we have to do here to fix it for __u64?
+History:
+v8 - https://patchwork.kernel.org/project/linux-block/cover/1617968884-15149-1-git-send-email-sergei.shtepa@veeam.com/
+  * The attaching and detaching to interposed device moved to
+    __dm_suspend() and __dm_resume() functions.
+  * Redesigned the submit_bio_noacct() function and added a lock for the
+    block device interposer.
+  * Adds [interpose] option to block device patch in dm table.
+  * Fix origin_map() then o->split_binary value is zero.
 
+v7 - https://patchwork.kernel.org/project/linux-block/cover/1615563895-28565-1-git-send-email-sergei.shtepa@veeam.com/
+  * the request interception mechanism. Now the interposer is
+    a block device that receives requests instead of the original device;
+  * code design fixes.
 
------- >8 ------
+v6 - https://patchwork.kernel.org/project/linux-block/cover/1614774618-22410-1-git-send-email-sergei.shtepa@veeam.com/
+  * designed for 5.12;
+  * thanks to the new design of the bio structure in v5.12, it is
+    possible to perform interception not for the entire disk, but
+    for each block device;
+  * instead of the new ioctl DM_DEV_REMAP_CMD and the 'noexcl' option,
+    the DM_INTERPOSED_FLAG flag for the ioctl DM_TABLE_LOAD_CMD is
+    applied.
 
-diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
-index a3a38d0a4c85..6c558dc314c3 100644
---- a/arch/arm/kernel/signal.c
-+++ b/arch/arm/kernel/signal.c
-@@ -725,3 +725,41 @@ asmlinkage void do_rseq_syscall(struct pt_regs *regs)
- 	rseq_syscall(regs);
- }
- #endif
-+
-+/*
-+ * Compile-time tests for siginfo_t offsets. Changes to NSIG* likely come with
-+ * new fields; new fields should be added below.
-+ */
-+static_assert(NSIGILL	== 11);
-+static_assert(NSIGFPE	== 15);
-+static_assert(NSIGSEGV	== 9);
-+static_assert(NSIGBUS	== 5);
-+static_assert(NSIGTRAP	== 6);
-+static_assert(NSIGCHLD	== 6);
-+static_assert(NSIGSYS	== 2);
-+static_assert(offsetof(siginfo_t, si_signo)	== 0x00);
-+static_assert(offsetof(siginfo_t, si_errno)	== 0x04);
-+static_assert(offsetof(siginfo_t, si_code)	== 0x08);
-+static_assert(offsetof(siginfo_t, si_pid)	== 0x0c);
-+#if 0
-+static_assert(offsetof(siginfo_t, si_uid)	== 0x10);
-+static_assert(offsetof(siginfo_t, si_tid)	== 0x0c);
-+static_assert(offsetof(siginfo_t, si_overrun)	== 0x10);
-+static_assert(offsetof(siginfo_t, si_status)	== 0x14);
-+static_assert(offsetof(siginfo_t, si_utime)	== 0x18);
-+static_assert(offsetof(siginfo_t, si_stime)	== 0x1c);
-+static_assert(offsetof(siginfo_t, si_value)	== 0x14);
-+static_assert(offsetof(siginfo_t, si_int)	== 0x14);
-+static_assert(offsetof(siginfo_t, si_ptr)	== 0x14);
-+static_assert(offsetof(siginfo_t, si_addr)	== 0x0c);
-+static_assert(offsetof(siginfo_t, si_addr_lsb)	== 0x10);
-+static_assert(offsetof(siginfo_t, si_lower)	== 0x14);
-+static_assert(offsetof(siginfo_t, si_upper)	== 0x18);
-+static_assert(offsetof(siginfo_t, si_pkey)	== 0x14);
-+static_assert(offsetof(siginfo_t, si_perf)	== 0x10);
-+static_assert(offsetof(siginfo_t, si_band)	== 0x0c);
-+static_assert(offsetof(siginfo_t, si_fd)	== 0x10);
-+static_assert(offsetof(siginfo_t, si_call_addr)	== 0x0c);
-+static_assert(offsetof(siginfo_t, si_syscall)	== 0x10);
-+static_assert(offsetof(siginfo_t, si_arch)	== 0x14);
-+#endif
+v5 - https://patchwork.kernel.org/project/linux-block/cover/1612881028-7878-1-git-send-email-sergei.shtepa@veeam.com/
+ * rebase for v5.11-rc7;
+ * patch set organization;
+ * fix defects in documentation;
+ * add some comments;
+ * change mutex names for better code readability;
+ * remove calling bd_unlink_disk_holder() for targets with non-exclusive
+   flag;
+ * change type for struct dm_remap_param from uint8_t to __u8.
+
+v4 - https://patchwork.kernel.org/project/linux-block/cover/1612367638-3794-1-git-send-email-sergei.shtepa@veeam.com/
+Mostly changes were made, due to Damien's comments:
+ * on the design of the code;
+ * by the patch set organization;
+ * bug with passing a wrong parameter to dm_get_device();
+ * description of the 'noexcl' parameter in the linear.rst.
+Also added remap_and_filter.rst.
+
+v3 - https://patchwork.kernel.org/project/linux-block/cover/1611853955-32167-1-git-send-email-sergei.shtepa@veeam.com/
+In this version, I already suggested blk_interposer to apply to dm-linear.
+Problems were solved:
+ * Interception of bio requests from a specific device on the disk, not
+   from the entire disk. To do this, we added the dm_interposed_dev
+   structure and an interval tree to store these structures.
+ * Implemented ioctl DM_DEV_REMAP_CMD. A patch with changes in the lvm2
+   project was sent to the team lvm-devel@redhat.com.
+ * Added the 'noexcl' option for dm-linear, which allows you to open
+   the underlying block-device without FMODE_EXCL mode.
+
+v2 - https://patchwork.kernel.org/project/linux-block/cover/1607518911-30692-1-git-send-email-sergei.shtepa@veeam.com/
+I tried to suggest blk_interposer without using it in device mapper,
+but with the addition of a sample of its use. It was then that I learned
+about the maintainers' attitudes towards the samples directory :).
+
+v1 - https://lwn.net/ml/linux-block/20201119164924.74401-1-hare@suse.de/
+This Hannes's patch can be considered as a starting point, since this is
+where the interception mechanism and the term blk_interposer itself
+appeared. It became clear that blk_interposer can be useful for
+device mapper.
+
+before v1 - https://patchwork.kernel.org/project/linux-block/cover/1603271049-20681-1-git-send-email-sergei.shtepa@veeam.com/
+I tried to offer a rather cumbersome blk-filter and a monster-like
+blk-snap module for creating snapshots.
+
+Sergei Shtepa (4):
+  Adds blk_interposer
+  Applying the blk_interposer in the block device layer
+  Add blk_interposer in DM
+  Using dm_get_device_ex() instead of dm_get_device()
+
+ block/bio.c                   |   2 +
+ block/blk-core.c              | 194 ++++++++++++++-------------
+ block/genhd.c                 |  52 ++++++++
+ drivers/md/dm-cache-target.c  |   5 +-
+ drivers/md/dm-core.h          |   1 +
+ drivers/md/dm-delay.c         |   3 +-
+ drivers/md/dm-dust.c          |   3 +-
+ drivers/md/dm-era-target.c    |   4 +-
+ drivers/md/dm-flakey.c        |   3 +-
+ drivers/md/dm-ioctl.c         |  59 ++++++++-
+ drivers/md/dm-linear.c        |   3 +-
+ drivers/md/dm-log-writes.c    |   3 +-
+ drivers/md/dm-snap.c          |   3 +-
+ drivers/md/dm-table.c         |  21 ++-
+ drivers/md/dm-writecache.c    |   3 +-
+ drivers/md/dm.c               | 242 ++++++++++++++++++++++++++++++----
+ drivers/md/dm.h               |   8 +-
+ fs/block_dev.c                |   3 +
+ include/linux/blk_types.h     |   6 +
+ include/linux/blkdev.h        |  32 +++++
+ include/linux/device-mapper.h |  11 +-
+ include/uapi/linux/dm-ioctl.h |   6 +
+ 22 files changed, 530 insertions(+), 137 deletions(-)
+
+--
+2.20.1
 
