@@ -2,30 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F046636706F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 18:46:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 431EF367072
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 18:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244398AbhDUQqk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Apr 2021 12:46:40 -0400
-Received: from mx2.veeam.com ([64.129.123.6]:41916 "EHLO mx2.veeam.com"
+        id S244403AbhDUQql (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Apr 2021 12:46:41 -0400
+Received: from mx2.veeam.com ([64.129.123.6]:41976 "EHLO mx2.veeam.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244347AbhDUQqj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S244370AbhDUQqj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 21 Apr 2021 12:46:39 -0400
 Received: from mail.veeam.com (prgmbx01.amust.local [172.24.0.171])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx2.veeam.com (Postfix) with ESMTPS id 5EBE742406;
-        Wed, 21 Apr 2021 12:45:55 -0400 (EDT)
+        by mx2.veeam.com (Postfix) with ESMTPS id 0FDFA424B9;
+        Wed, 21 Apr 2021 12:45:59 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com; s=mx2;
-        t=1619023555; bh=h41nYawhFuIkEKobo2LpVytJxoNFHzzj229eHud/Mao=;
-        h=From:To:CC:Subject:Date:From;
-        b=AIixUZHGmo+HZI8/mBT9Jyka2qBirNEsUiFr0ZNXQWEAEpkw0owg9Zthc60rcGMPc
-         t2kC+i5K8uAHmV0ydIiixsQRHdFZ+OnAglYLP/Wb1RBw0p376hlrWcJo1InAMCFLTy
-         tFApGARHJ4c0a8f55gHvN9aoqZZwxMXQjWYiq4K4=
+        t=1619023559; bh=wcm/Vxh/k3YGgzIVuZKWUD3Up5EwpdCaQtTu9lM71ME=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+        b=BeZlOsCg8/F2VPH67Yx74ffQ2+UWv8u0p4wizftzHlhZATcxysfMUNPo7NiOhkX8u
+         u1QXrF+mCBCkkPqtF7JBZrRxW+WNAowTqn1GhS0KLrHentO+rIpQIKMrRnKGbi4IWq
+         o3BTzAidCabs9TnH/Sh40sdEd/ERKYBiGTnDc684=
 Received: from prgdevlinuxpatch01.amust.local (172.24.14.5) by
  prgmbx01.amust.local (172.24.0.171) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.858.5;
- Wed, 21 Apr 2021 18:45:53 +0200
+ Wed, 21 Apr 2021 18:45:56 +0200
 From:   Sergei Shtepa <sergei.shtepa@veeam.com>
 To:     Christoph Hellwig <hch@infradead.org>,
         Hannes Reinecke <hare@suse.de>,
@@ -36,10 +36,12 @@ To:     Christoph Hellwig <hch@infradead.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
 CC:     <sergei.shtepa@veeam.com>, <pavel.tide@veeam.com>
-Subject: [PATCH v9 0/4] block device interposer
-Date:   Wed, 21 Apr 2021 19:45:41 +0300
-Message-ID: <1619023545-23431-1-git-send-email-sergei.shtepa@veeam.com>
+Subject: [PATCH v9 1/4] Adds blk_interposer
+Date:   Wed, 21 Apr 2021 19:45:42 +0300
+Message-ID: <1619023545-23431-2-git-send-email-sergei.shtepa@veeam.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1619023545-23431-1-git-send-email-sergei.shtepa@veeam.com>
+References: <1619023545-23431-1-git-send-email-sergei.shtepa@veeam.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [172.24.14.5]
@@ -52,120 +54,173 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A new version of a block device interposer (blk_interposer).
+Additional fields were added in the block_device structure:
+bd_interposer and bd_interposer_lock. The bd_interposer field contains
+a pointer to an interposer block device. bd_interposer_lock is a lock
+which allows to safely attach and detach the interposer device.
 
-In this series of patches,  I have tried to take into account the comments
-made by Mike to the previous version.
+New functions bdev_interposer_attach() and bdev_interposer_detach()
+allow to attach and detach an interposer device. But first it is
+required to lock the processing of bio requests by the block device
+with bdev_interposer_lock() function.
 
-First of all, this applies to more detailed explanations of the commits.
-Indeed, the changes in blk-core.c and dm.c may seem complicated, but they
-are no more complicated than the rest of the code in these files.
+The BIO_INTERPOSED flag means that the bio request has been already
+interposed. This flag avoids recursive bio request interception.
 
-Removed the [interpose] option for block devices opened by the DM target.
-Instead, the dm_get_device_ex() function is added, which allows to
-explicitly specify which devices can be used for the interposer and which
-can not.
+Signed-off-by: Sergei Shtepa <sergei.shtepa@veeam.com>
+---
+ block/genhd.c             | 52 +++++++++++++++++++++++++++++++++++++++
+ fs/block_dev.c            |  3 +++
+ include/linux/blk_types.h |  6 +++++
+ include/linux/blkdev.h    | 32 ++++++++++++++++++++++++
+ 4 files changed, 93 insertions(+)
 
-Additional testing has revealed a problem with suspending and resuming DM
-targets attached via blk_interposer. This has been fixed.
-
-History:
-v8 - https://patchwork.kernel.org/project/linux-block/cover/1617968884-15149-1-git-send-email-sergei.shtepa@veeam.com/
-  * The attaching and detaching to interposed device moved to
-    __dm_suspend() and __dm_resume() functions.
-  * Redesigned the submit_bio_noacct() function and added a lock for the
-    block device interposer.
-  * Adds [interpose] option to block device patch in dm table.
-  * Fix origin_map() then o->split_binary value is zero.
-
-v7 - https://patchwork.kernel.org/project/linux-block/cover/1615563895-28565-1-git-send-email-sergei.shtepa@veeam.com/
-  * the request interception mechanism. Now the interposer is
-    a block device that receives requests instead of the original device;
-  * code design fixes.
-
-v6 - https://patchwork.kernel.org/project/linux-block/cover/1614774618-22410-1-git-send-email-sergei.shtepa@veeam.com/
-  * designed for 5.12;
-  * thanks to the new design of the bio structure in v5.12, it is
-    possible to perform interception not for the entire disk, but
-    for each block device;
-  * instead of the new ioctl DM_DEV_REMAP_CMD and the 'noexcl' option,
-    the DM_INTERPOSED_FLAG flag for the ioctl DM_TABLE_LOAD_CMD is
-    applied.
-
-v5 - https://patchwork.kernel.org/project/linux-block/cover/1612881028-7878-1-git-send-email-sergei.shtepa@veeam.com/
- * rebase for v5.11-rc7;
- * patch set organization;
- * fix defects in documentation;
- * add some comments;
- * change mutex names for better code readability;
- * remove calling bd_unlink_disk_holder() for targets with non-exclusive
-   flag;
- * change type for struct dm_remap_param from uint8_t to __u8.
-
-v4 - https://patchwork.kernel.org/project/linux-block/cover/1612367638-3794-1-git-send-email-sergei.shtepa@veeam.com/
-Mostly changes were made, due to Damien's comments:
- * on the design of the code;
- * by the patch set organization;
- * bug with passing a wrong parameter to dm_get_device();
- * description of the 'noexcl' parameter in the linear.rst.
-Also added remap_and_filter.rst.
-
-v3 - https://patchwork.kernel.org/project/linux-block/cover/1611853955-32167-1-git-send-email-sergei.shtepa@veeam.com/
-In this version, I already suggested blk_interposer to apply to dm-linear.
-Problems were solved:
- * Interception of bio requests from a specific device on the disk, not
-   from the entire disk. To do this, we added the dm_interposed_dev
-   structure and an interval tree to store these structures.
- * Implemented ioctl DM_DEV_REMAP_CMD. A patch with changes in the lvm2
-   project was sent to the team lvm-devel@redhat.com.
- * Added the 'noexcl' option for dm-linear, which allows you to open
-   the underlying block-device without FMODE_EXCL mode.
-
-v2 - https://patchwork.kernel.org/project/linux-block/cover/1607518911-30692-1-git-send-email-sergei.shtepa@veeam.com/
-I tried to suggest blk_interposer without using it in device mapper,
-but with the addition of a sample of its use. It was then that I learned
-about the maintainers' attitudes towards the samples directory :).
-
-v1 - https://lwn.net/ml/linux-block/20201119164924.74401-1-hare@suse.de/
-This Hannes's patch can be considered as a starting point, since this is
-where the interception mechanism and the term blk_interposer itself
-appeared. It became clear that blk_interposer can be useful for
-device mapper.
-
-before v1 - https://patchwork.kernel.org/project/linux-block/cover/1603271049-20681-1-git-send-email-sergei.shtepa@veeam.com/
-I tried to offer a rather cumbersome blk-filter and a monster-like
-blk-snap module for creating snapshots.
-
-Sergei Shtepa (4):
-  Adds blk_interposer
-  Applying the blk_interposer in the block device layer
-  Add blk_interposer in DM
-  Using dm_get_device_ex() instead of dm_get_device()
-
- block/bio.c                   |   2 +
- block/blk-core.c              | 194 ++++++++++++++-------------
- block/genhd.c                 |  52 ++++++++
- drivers/md/dm-cache-target.c  |   5 +-
- drivers/md/dm-core.h          |   1 +
- drivers/md/dm-delay.c         |   3 +-
- drivers/md/dm-dust.c          |   3 +-
- drivers/md/dm-era-target.c    |   4 +-
- drivers/md/dm-flakey.c        |   3 +-
- drivers/md/dm-ioctl.c         |  59 ++++++++-
- drivers/md/dm-linear.c        |   3 +-
- drivers/md/dm-log-writes.c    |   3 +-
- drivers/md/dm-snap.c          |   3 +-
- drivers/md/dm-table.c         |  21 ++-
- drivers/md/dm-writecache.c    |   3 +-
- drivers/md/dm.c               | 242 ++++++++++++++++++++++++++++++----
- drivers/md/dm.h               |   8 +-
- fs/block_dev.c                |   3 +
- include/linux/blk_types.h     |   6 +
- include/linux/blkdev.h        |  32 +++++
- include/linux/device-mapper.h |  11 +-
- include/uapi/linux/dm-ioctl.h |   6 +
- 22 files changed, 530 insertions(+), 137 deletions(-)
-
---
+diff --git a/block/genhd.c b/block/genhd.c
+index 8c8f543572e6..3ec77947b3ba 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -1938,3 +1938,55 @@ static void disk_release_events(struct gendisk *disk)
+ 	WARN_ON_ONCE(disk->ev && disk->ev->block != 1);
+ 	kfree(disk->ev);
+ }
++
++/**
++ * bdev_interposer_attach - Attach an interposer block device to original
++ * @original: original block device
++ * @interposer: interposer block device
++ *
++ * Before attaching an interposer, it is necessary to lock the processing
++ * of bio requests of the original device by calling bdev_interposer_lock().
++ *
++ * The bdev_interposer_detach() function allows to detach the interposer
++ * from the original block device.
++ */
++int bdev_interposer_attach(struct block_device *original,
++			   struct block_device *interposer)
++{
++	struct block_device *bdev;
++
++	WARN_ON(!original);
++	if (original->bd_interposer)
++		return -EBUSY;
++
++	bdev = bdgrab(interposer);
++	if (!bdev)
++		return -ENODEV;
++
++	original->bd_interposer = bdev;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(bdev_interposer_attach);
++
++/**
++ * bdev_interposer_detach - Detach interposer from block device
++ * @original: original block device
++ *
++ * Before detaching an interposer, it is necessary to lock the processing
++ * of bio requests of the original device by calling bdev_interposer_lock().
++ *
++ * The interposer should be attached using the bdev_interposer_attach()
++ * function.
++ */
++void bdev_interposer_detach(struct block_device *original)
++{
++	if (WARN_ON(!original))
++		return;
++
++	if (!original->bd_interposer)
++		return;
++
++	bdput(original->bd_interposer);
++	original->bd_interposer = NULL;
++}
++EXPORT_SYMBOL_GPL(bdev_interposer_detach);
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 09d6f7229db9..a98a56cc634f 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -809,6 +809,7 @@ static void bdev_free_inode(struct inode *inode)
+ {
+ 	struct block_device *bdev = I_BDEV(inode);
+ 
++	percpu_free_rwsem(&bdev->bd_interposer_lock);
+ 	free_percpu(bdev->bd_stats);
+ 	kfree(bdev->bd_meta_info);
+ 
+@@ -909,6 +910,8 @@ struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
+ 		iput(inode);
+ 		return NULL;
+ 	}
++	bdev->bd_interposer = NULL;
++	percpu_init_rwsem(&bdev->bd_interposer_lock);
+ 	return bdev;
+ }
+ 
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index db026b6ec15a..8e4309eb3b18 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -46,6 +46,11 @@ struct block_device {
+ 	spinlock_t		bd_size_lock; /* for bd_inode->i_size updates */
+ 	struct gendisk *	bd_disk;
+ 	struct backing_dev_info *bd_bdi;
++	/* The interposer allows to redirect bio to another device */
++	struct block_device	*bd_interposer;
++	/* Lock the queue of block device to attach or detach interposer.
++	 * Allows to safely suspend and flush interposer. */
++	struct percpu_rw_semaphore bd_interposer_lock;
+ 
+ 	/* The counter of freeze processes */
+ 	int			bd_fsfreeze_count;
+@@ -304,6 +309,7 @@ enum {
+ 	BIO_CGROUP_ACCT,	/* has been accounted to a cgroup */
+ 	BIO_TRACKED,		/* set if bio goes through the rq_qos path */
+ 	BIO_REMAPPED,
++	BIO_INTERPOSED,		/* bio was reassigned to another block device */
+ 	BIO_FLAG_LAST
+ };
+ 
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 158aefae1030..3e38b0c40b9d 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -2029,4 +2029,36 @@ int fsync_bdev(struct block_device *bdev);
+ int freeze_bdev(struct block_device *bdev);
+ int thaw_bdev(struct block_device *bdev);
+ 
++/**
++ * bdev_interposer_lock - Lock bio processing
++ * @bdev: locking block device
++ *
++ * Lock the bio processing in submit_bio_noacct() for the new requests in the
++ * original block device. Requests from the interposer will not be locked.
++ *
++ * To unlock, use the bdev_interposer_unlock() function.
++ *
++ * This lock should be used to attach/detach the interposer to the device.
++ */
++static inline void bdev_interposer_lock(struct block_device *bdev)
++{
++	percpu_down_write(&bdev->bd_interposer_lock);
++}
++
++/**
++ * bdev_interposer_unlock - Unlock bio processing
++ * @bdev: locked block device
++ *
++ * Unlock the bio processing that was locked by bdev_interposer_lock() function.
++ *
++ * This lock should be used to attach/detach the interposer to the device.
++ */
++static inline void bdev_interposer_unlock(struct block_device *bdev)
++{
++	percpu_up_write(&bdev->bd_interposer_lock);
++}
++
++int bdev_interposer_attach(struct block_device *original,
++			   struct block_device *interposer);
++void bdev_interposer_detach(struct block_device *original);
+ #endif /* _LINUX_BLKDEV_H */
+-- 
 2.20.1
 
