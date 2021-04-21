@@ -2,118 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CD323667F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 11:26:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF855366801
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 11:29:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238079AbhDUJ1U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Apr 2021 05:27:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51114 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230516AbhDUJ1T (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Apr 2021 05:27:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A8E0BAE06;
-        Wed, 21 Apr 2021 09:26:45 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 80B9F1F2B69; Wed, 21 Apr 2021 11:26:45 +0200 (CEST)
-Date:   Wed, 21 Apr 2021 11:26:45 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
-        jack@suse.cz, willy@infradead.org, virtio-fs@redhat.com,
-        slp@redhat.com, miklos@szeredi.hu, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] dax: Wake up all waiters after invalidating dax
- entry
-Message-ID: <20210421092645.GO8706@quack2.suse.cz>
-References: <20210419213636.1514816-1-vgoyal@redhat.com>
- <20210419213636.1514816-4-vgoyal@redhat.com>
+        id S238103AbhDUJaB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Apr 2021 05:30:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47330 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238079AbhDUJaA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Apr 2021 05:30:00 -0400
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17D4AC06174A;
+        Wed, 21 Apr 2021 02:29:26 -0700 (PDT)
+Received: by mail-il1-x133.google.com with SMTP id c4so7843541ilq.9;
+        Wed, 21 Apr 2021 02:29:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kT1m64KD64a6NKz2uCmvGLQfhr0LGo1i+5bBTiha9lE=;
+        b=C4enQM8zm+lrSz+/j+SYU31EqIKyyZJVZZ+n6PFAs9J0f94dW+BrC4l+VgMUv5ITVH
+         pOOj6fgv9I1+wBpBqyqQ0YoRt86aaaqsXAKQ2N4/KBSh9/IY+pE4H304347JJ454ZT3r
+         ymEv1G0nqzOIBZoCrh1KgrrCHWqGXsPUMGNtqIs2FmXKE5V7kwbLI8IgrmEiXLDhLHNa
+         7+8X0vOuy9/E98DXtTlzDaPywLcHWJYMF160Lh0pPEo4NvgTqdCoFOPYtzBhUWl7jqK7
+         K2WtxlcqPsatXDcVn4WK2qcy2w68R94ifaJq9MgcHdKSwunSXi334seRZjulFgMNy0rs
+         qbSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kT1m64KD64a6NKz2uCmvGLQfhr0LGo1i+5bBTiha9lE=;
+        b=hS0EKji/5bkQPxYXethtsMp6qWaEsPrIdC1uMQp9iP5NziCNKOLKTKHsSSqgIJ2lkg
+         QjMlRkv7IUxYKu0xGKF9OiIqUqEQ7xLO0tSwyfibU5cU34uK4LUNVnE8dw8POnPHbVmD
+         JxgBOqIP7MW9fy4rAhjdUZSJvxv8O3C2OxJssDFfqGyNavumdrfjHG470ay/6EmeZJqA
+         bVYvmGyu/YJJs6JpF9lV4q2XWIG/do8GeunMa1JGtAm+zVbZnAdd9Z4fF7W9/Uz2wjss
+         aXqp7kx/atmruwMrbaLaO9ijNNdYGGwZ9prxHMkSzHluyilqAk40DGKnbX11Ghn8eHAO
+         jVjA==
+X-Gm-Message-State: AOAM530oVIKpiVEhnrqhvIZajkgl5fUl0jPJeViumYPJKcej7loZAeUC
+        Y1HluT4iRHNXJEcamHdUk65PLedVD2BxzqofiQjgUyNBqeI=
+X-Google-Smtp-Source: ABdhPJx+zr3YEzzdiSD9znuYjcMsDt29lJahELUAHuXq6xILey9wmkHZbBA/obO5ZQFJnMjhM3mInVgJxIN6SM2y4wg=
+X-Received: by 2002:a92:c548:: with SMTP id a8mr24713313ilj.137.1618997365530;
+ Wed, 21 Apr 2021 02:29:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210419213636.1514816-4-vgoyal@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1618527437.git.repnop@google.com> <e6cd967f45381d20d67c9d5a3e49e3cb9808f65b.1618527437.git.repnop@google.com>
+ <20210419132020.ydyb2ly6e3clhe2j@wittgenstein> <20210419135550.GH8706@quack2.suse.cz>
+ <20210419150233.rgozm4cdbasskatk@wittgenstein> <YH4+Swki++PHIwpY@google.com> <20210421080449.GK8706@quack2.suse.cz>
+In-Reply-To: <20210421080449.GK8706@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 21 Apr 2021 12:29:14 +0300
+Message-ID: <CAOQ4uxhmJgbSbk_w_gsYg+zLb9GJv6_oGrmfPiNEYao_U3z9=Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fanotify: Add pidfd support to the fanotify API
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <repnop@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 19-04-21 17:36:36, Vivek Goyal wrote:
-> I am seeing missed wakeups which ultimately lead to a deadlock when I am
-> using virtiofs with DAX enabled and running "make -j". I had to mount
-> virtiofs as rootfs and also reduce to dax window size to 256M to reproduce
-> the problem consistently.
-> 
-> So here is the problem. put_unlocked_entry() wakes up waiters only
-> if entry is not null as well as !dax_is_conflict(entry). But if I
-> call multiple instances of invalidate_inode_pages2() in parallel,
-> then I can run into a situation where there are waiters on
-> this index but nobody will wait these.
-> 
-> invalidate_inode_pages2()
->   invalidate_inode_pages2_range()
->     invalidate_exceptional_entry2()
->       dax_invalidate_mapping_entry_sync()
->         __dax_invalidate_entry() {
->                 xas_lock_irq(&xas);
->                 entry = get_unlocked_entry(&xas, 0);
->                 ...
->                 ...
->                 dax_disassociate_entry(entry, mapping, trunc);
->                 xas_store(&xas, NULL);
->                 ...
->                 ...
->                 put_unlocked_entry(&xas, entry);
->                 xas_unlock_irq(&xas);
->         }
-> 
-> Say a fault in in progress and it has locked entry at offset say "0x1c".
-> Now say three instances of invalidate_inode_pages2() are in progress
-> (A, B, C) and they all try to invalidate entry at offset "0x1c". Given
-> dax entry is locked, all tree instances A, B, C will wait in wait queue.
-> 
-> When dax fault finishes, say A is woken up. It will store NULL entry
-> at index "0x1c" and wake up B. When B comes along it will find "entry=0"
-> at page offset 0x1c and it will call put_unlocked_entry(&xas, 0). And
-> this means put_unlocked_entry() will not wake up next waiter, given
-> the current code. And that means C continues to wait and is not woken
-> up.
-> 
-> This patch fixes the issue by waking up all waiters when a dax entry
-> has been invalidated. This seems to fix the deadlock I am facing
-> and I can make forward progress.
-> 
-> Reported-by: Sergio Lopez <slp@redhat.com>
-> Fixes: ac401cc78242 ("dax: New fault locking")
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+On Wed, Apr 21, 2021 at 11:04 AM Jan Kara <jack@suse.cz> wrote:
+>
+> On Tue 20-04-21 12:36:59, Matthew Bobrowski wrote:
+> > On Mon, Apr 19, 2021 at 05:02:33PM +0200, Christian Brauner wrote:
+> > > A general question about struct fanotify_event_metadata and its
+> > > extensibility model:
+> > > looking through the code it seems that this struct is read via
+> > > fanotify_rad(). So the user is expected to supply a buffer with at least
+> > >
+> > > #define FAN_EVENT_METADATA_LEN (sizeof(struct fanotify_event_metadata))
+> > >
+> > > bytes. In addition you can return the info to the user about how many
+> > > bytes the kernel has written from fanotify_read().
+> > >
+> > > So afaict extending fanotify_event_metadata should be _fairly_
+> > > straightforward, right? It would essentially the complement to
+> > > copy_struct_from_user() which Aleksa and I added (1 or 2 years ago)
+> > > which deals with user->kernel and you're dealing with kernel->user:
+> > > - If the user supplied a buffer smaller than the minimum known struct
+> > >   size -> reject.
+> > > - If the user supplied a buffer < smaller than what the current kernel
+> > >   supports -> copy only what userspace knows about, and return the size
+> > >   userspace knows about.
+> > > - If the user supplied a buffer that is larger than what the current
+> > >   kernel knows about -> copy only what the kernel knows about, zero the
+> > >   rest, and return the kernel size.
+> > >
+> > > Extension should then be fairly straightforward (64bit aligned
+> > > increments)?
+> >
+> > You'd think that it's fairly straightforward, but I have a feeling
+> > that the whole fanotify_event_metadata extensibility discussion and
+> > the current limitation to do so revolves around whether it can be
+> > achieved in a way which can guarantee that no userspace applications
+> > would break. I think the answer to this is that there's no guarantee
+> > because of <<reasons>>, so the decision to extend fanotify's feature
+> > set was done via other means i.e. introduction of additional
+> > structures.
+>
+> There's no real problem extending fanotify_event_metadata. We already have
+> multiple extended version of that structure in use (see e.g. FAN_REPORT_FID
+> flag and its effect, extended versions of the structure in
+> include/uapi/linux/fanotify.h). The key for backward compatibility is to
+> create extended struct only when explicitely requested by a flag when
+> creating notification group - and that would be the case here -
+> FAN_REPORT_PIDFD or how you called it. It is just that extending the
+> structure means adding 8 bytes to each event and parsing extended structure
+> is more cumbersome than just fetching s32 from a well known location.
+>
+> On the other hand extended structure is self-describing (i.e., you can tell
+> the meaning of all the fields just from the event you receive) while
+> reusing 'pid' field means that you have to know how the notification group
+> was created (whether FAN_REPORT_PIDFD was used or not) to be able to
+> interpret the contents of the event. Actually I think the self-describing
+> feature of fanotify event stream is useful (e.g. when application manages
+> multiple fanotify groups or when fanotify group descriptors are passed
+> among processes) so now I'm more leaning towards using the extended
+> structure instead of reusing 'pid' as Christian suggests. I'm sorry for the
+> confusion.
+>
 
-Looks good to me. Thanks for fixing this! Feel free to add:
+But there is a middle path option.
+The event metadata can be self described without extending it:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+ struct fanotify_event_metadata {
+        __u32 event_len;
+        __u8 vers;
+-       __u8 reserved;
++#define FANOTIFY_METADATA_FLAG_PIDFD   1
++       __u8 flags;
+        __u16 metadata_len;
+        __aligned_u64 mask;
+        __s32 fd;
 
-								Honza
-
-> ---
->  fs/dax.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index f19d76a6a493..cc497519be83 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -676,7 +676,7 @@ static int __dax_invalidate_entry(struct address_space *mapping,
->  	mapping->nrexceptional--;
->  	ret = 1;
->  out:
-> -	put_unlocked_entry(&xas, entry, WAKE_NEXT);
-> +	put_unlocked_entry(&xas, entry, WAKE_ALL);
->  	xas_unlock_irq(&xas);
->  	return ret;
->  }
-> -- 
-> 2.25.4
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Amir.
