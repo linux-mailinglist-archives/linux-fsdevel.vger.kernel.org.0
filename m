@@ -2,150 +2,316 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA373666C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 10:11:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C063D36675D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 10:56:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234464AbhDUIMT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Apr 2021 04:12:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58208 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234438AbhDUIMS (ORCPT
+        id S235191AbhDUI4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Apr 2021 04:56:34 -0400
+Received: from 9.mo52.mail-out.ovh.net ([87.98.180.222]:41262 "EHLO
+        9.mo52.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234632AbhDUI4e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Apr 2021 04:12:18 -0400
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A3F3C06138D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 01:11:46 -0700 (PDT)
-Received: by mail-oi1-x22d.google.com with SMTP id k18so36719208oik.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 01:11:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=msdAKUkaozlyVVqcOzRUhmh/jucXO4phsOtdu8kld0Q=;
-        b=pmcZpnXrP/hJMVCWPTO21s5w2C6jBAae3cwns8jXbIAlH8wJ0ociggMr54Xu8ecPyu
-         Ts3vAfnbXRjGjjaOpdE3khaNxMfkIVFLJs/VPTchrldH57VyWiKm8/PkO/l23yKf4/B3
-         PXP7y7a4IoRg94BZn74bFwwZuTsbMP2+7LlFMn6D4/NCGWLNAD/L1eTKPx8wPv62+K5u
-         Q63UbNpzHT2Bhe2SyiaDu8W01foSt9YJIpvEZ+mbLLePdV1OVgc1nHGpkdTQIyVNOYz5
-         7nu42E7mOjFlfnXKGUZk9PnyUQSPNEG+OC0vaYfSAZ+E4f+Cce2o4a7yASOZ0U6u4TA8
-         eCag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=msdAKUkaozlyVVqcOzRUhmh/jucXO4phsOtdu8kld0Q=;
-        b=Sgl9kmB24sm8/Rjp1HgIMxNAvcjQd4jDYQGhfI8u0o20+eEsnoi1B1k6i8pyfjfyK8
-         p4KTOqKrFWMTn7b/kSm+s8CppwEZIthM/S52NniNST/cBK8S18KBZ5vpKZ9+tb9ku0au
-         vvws2Z/p+bxhEuCnUdrXXHjWhcMJ+aQ1JsN7gRK9Zzt0IHrlM/U1RduZDfAFevlJvxU7
-         XBhNvo6IHtifz9KqO1EAruqhLCuzBMk0mscaEq8n7IK5Smbn4er9EqKRT9I2HDdsNtyB
-         yQXLIPZXycCaHwB8B/GV578yeAneoWQgGdwbM647oejiqNlNpql4WREFBYYaw74Tllcc
-         u1aQ==
-X-Gm-Message-State: AOAM533U6hLexUPSIKZdqxFpO15EwBFTLM1eCZFLyU3cArS29O9vq3gv
-        uZtaJMmxq14TjZmlw0JjyEB1jNyDYjzV4nZEt3HpWQ==
-X-Google-Smtp-Source: ABdhPJy1tfc8MMLbLxb17dL/Fz+emF7KQc0Sq2AZPCRIAITdiREKq62E+vLNNTXjO6JYEXGn4JOR0UYxdckLCtorADI=
-X-Received: by 2002:aca:bb06:: with SMTP id l6mr6066042oif.121.1618992705356;
- Wed, 21 Apr 2021 01:11:45 -0700 (PDT)
+        Wed, 21 Apr 2021 04:56:34 -0400
+X-Greylist: delayed 2402 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Apr 2021 04:56:34 EDT
+Received: from mxplan5.mail.ovh.net (unknown [10.108.16.148])
+        by mo52.mail-out.ovh.net (Postfix) with ESMTPS id D494125D488;
+        Wed, 21 Apr 2021 09:39:07 +0200 (CEST)
+Received: from kaod.org (37.59.142.102) by DAG8EX1.mxp5.local (172.16.2.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Wed, 21 Apr
+ 2021 09:39:07 +0200
+Authentication-Results: garm.ovh; auth=pass (GARM-102R0045a37fe6d-0f6a-4455-830b-97ba067ccd67,
+                    50F065E079F855668D79ED56DF61EE5F1F64E411) smtp.auth=groug@kaod.org
+X-OVh-ClientIp: 78.197.208.248
+Date:   Wed, 21 Apr 2021 09:39:04 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     Vivek Goyal <vgoyal@redhat.com>
+CC:     Miklos Szeredi <miklos@szeredi.hu>, <linux-kernel@vger.kernel.org>,
+        <virtualization@lists.linux-foundation.org>,
+        <virtio-fs@redhat.com>, <linux-fsdevel@vger.kernel.org>,
+        Robert Krawitz <rlk@redhat.com>
+Subject: Re: [Virtio-fs] [PATCH] virtiofs: propagate sync() to file server
+Message-ID: <20210421093904.68653e3e@bahia.lan>
+In-Reply-To: <20210420184226.GC1529659@redhat.com>
+References: <20210419150848.275757-1-groug@kaod.org>
+        <20210420184226.GC1529659@redhat.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <20210408103605.1676875-1-elver@google.com> <CGME20210420212618eucas1p102b427d1af9c682217dfe093f3eac3e8@eucas1p1.samsung.com>
- <20210408103605.1676875-6-elver@google.com> <1fbf3429-42e5-0959-9a5c-91de80f02b6a@samsung.com>
- <CANpmjNM8wEJngK=J8Lt9npkZgrSWoRsqkdajErWEoY_=M1GW5A@mail.gmail.com>
- <43f8a3bf-34c5-0fc9-c335-7f92eaf23022@samsung.com> <dccaa337-f3e5-08e4-fe40-a603811bb13e@samsung.com>
-In-Reply-To: <dccaa337-f3e5-08e4-fe40-a603811bb13e@samsung.com>
-From:   Marco Elver <elver@google.com>
-Date:   Wed, 21 Apr 2021 10:11:33 +0200
-Message-ID: <CANpmjNP6-yKpxHqYFiA8Up-ujBQaeP7xyq1BrsV-NqMjJ-uHAQ@mail.gmail.com>
-Subject: Re: [PATCH v4 05/10] signal: Introduce TRAP_PERF si_code and si_perf
- to siginfo
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian@brauner.io>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Matt Morehouse <mascasa@google.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Ian Rogers <irogers@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [37.59.142.102]
+X-ClientProxiedBy: DAG1EX1.mxp5.local (172.16.2.1) To DAG8EX1.mxp5.local
+ (172.16.2.71)
+X-Ovh-Tracer-GUID: 2aca8e0f-1894-41d3-9307-bb5aac34cad9
+X-Ovh-Tracer-Id: 15463953748017584489
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduledrvddtjedguddvudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkjghfofggtgfgihesthejredtredtvdenucfhrhhomhepifhrvghgucfmuhhriicuoehgrhhouhhgsehkrghougdrohhrgheqnecuggftrfgrthhtvghrnhepiedtudeuvdfgtdeliefgvedutddtjedtfefhlefgteevueduudfhheffhfduvefgnecuffhomhgrihhnpehgihhtlhgrsgdrtghomhdpkhgvrhhnvghlrdhorhhgnecukfhppedtrddtrddtrddtpdefjedrheelrddugedvrddutddvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepmhigphhlrghnhedrmhgrihhlrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehgrhhouhhgsehkrghougdrohhrghdprhgtphhtthhopehrlhhksehrvgguhhgrthdrtghomh
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 21 Apr 2021 at 09:35, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> On 21.04.2021 08:21, Marek Szyprowski wrote:
-> > On 21.04.2021 00:42, Marco Elver wrote:
-> >> On Tue, 20 Apr 2021 at 23:26, Marek Szyprowski
-> >> <m.szyprowski@samsung.com> wrote:
-> >>> On 08.04.2021 12:36, Marco Elver wrote:
-> >>>> Introduces the TRAP_PERF si_code, and associated siginfo_t field
-> >>>> si_perf. These will be used by the perf event subsystem to send
-> >>>> signals
-> >>>> (if requested) to the task where an event occurred.
-> >>>>
-> >>>> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> # m68k
-> >>>> Acked-by: Arnd Bergmann <arnd@arndb.de> # asm-generic
-> >>>> Signed-off-by: Marco Elver <elver@google.com>
-> >>> This patch landed in linux-next as commit fb6cc127e0b6 ("signal:
-> >>> Introduce TRAP_PERF si_code and si_perf to siginfo"). It causes
-> >>> regression on my test systems (arm 32bit and 64bit). Most systems fails
-> >>> to boot in the given time frame. I've observed that there is a timeout
-> >>> waiting for udev to populate /dev and then also during the network
-> >>> interfaces configuration. Reverting this commit, together with
-> >>> 97ba62b27867 ("perf: Add support for SIGTRAP on perf events") to let it
-> >>> compile, on top of next-20210420 fixes the issue.
-> >> Thanks, this is weird for sure and nothing in particular stands out.
-> >>
-> >> I have questions:
-> >> -- Can you please share your config?
-> >
-> > This happens with standard multi_v7_defconfig (arm) or just defconfig
-> > for arm64.
-> >
-> >> -- Also, can you share how you run this? Can it be reproduced in qemu?
-> > Nothing special. I just boot my test systems and see that they are
-> > waiting lots of time during the udev populating /dev and network
-> > interfaces configuration. I didn't try with qemu yet.
-> >> -- How did you derive this patch to be at fault? Why not just
-> >> 97ba62b27867, given you also need to revert it?
-> > Well, I've just run my boot tests with automated 'git bisect' and that
-> > was its result. It was a bit late in the evening, so I didn't analyze
-> > it further, I've just posted a report about the issue I've found. It
-> > looks that bisecting pointed to a wrong commit somehow.
-> >> If you are unsure which patch exactly it is, can you try just
-> >> reverting 97ba62b27867 and see what happens?
-> >
-> > Indeed, this is a real faulty commit. Initially I've decided to revert
-> > it to let kernel compile (it uses some symbols introduced by this
-> > commit). Reverting only it on top of linux-next 20210420 also fixes
-> > the issue. I'm sorry for the noise in this thread. I hope we will find
-> > what really causes the issue.
->
-> This was a premature conclusion. It looks that during the test I've did
-> while writing that reply, the modules were not deployed properly and a
-> test board (RPi4) booted without modules. In that case the board booted
-> fine and there was no udev timeout. After deploying kernel modules, the
-> udev timeout is back.
+On Tue, 20 Apr 2021 14:42:26 -0400
+Vivek Goyal <vgoyal@redhat.com> wrote:
 
-I'm confused now. Can you confirm that the problem is due to your
-kernel modules, or do you think it's still due to 97ba62b27867? Or
-fb6cc127e0b6 (this patch)?
+> On Mon, Apr 19, 2021 at 05:08:48PM +0200, Greg Kurz wrote:
+> > Even if POSIX doesn't mandate it, linux users legitimately expect
+> > sync() to flush all data and metadata to physical storage when it
+> > is located on the same system. This isn't happening with virtiofs
+> > though : sync() inside the guest returns right away even though
+> > data still needs to be flushed from the host page cache.
+> > 
+> > This is easily demonstrated by doing the following in the guest:
+> > 
+> > $ dd if=/dev/zero of=/mnt/foo bs=1M count=5K ; strace -T -e sync sync
+> > 5120+0 records in
+> > 5120+0 records out
+> > 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 5.22224 s, 1.0 GB/s
+> > sync()                                  = 0 <0.024068>
+> > +++ exited with 0 +++
+> > 
+> > and start the following in the host when the 'dd' command completes
+> > in the guest:
+> > 
+> > $ strace -T -e fsync sync virtiofs/foo
+> 		       ^^^^
+> That "sync" is not /usr/bin/sync and its your own binary to call fsync()?
+> 
 
-Thanks,
--- Marco
+This is /usr/bin/sync. I should have put the full path, sorry for that.
+
+This is the expected behavior when a file is specified as stated in the
+sync(1) manual page:
+
+"If one or more files are specified, sync only them, or their containing
+ file systems.
+
+> > fsync(3)                                = 0 <10.371640>
+> > +++ exited with 0 +++
+> > 
+> > There are no good reasons not to honor the expected behavior of
+> > sync() actually : it gives an unrealistic impression that virtiofs
+> > is super fast and that data has safely landed on HW, which isn't
+> > the case obviously.
+> > 
+> > Implement a ->sync_fs() superblock operation that sends a new
+> > FUSE_SYNC request type for this purpose. The FUSE_SYNC request
+> > conveys the 'wait' argument of ->sync_fs() in case the file
+> > server has a use for it. Like with FUSE_FSYNC and FUSE_FSYNCDIR,
+> > lack of support for FUSE_SYNC in the file server is treated as
+> > permanent success.
+> > 
+> > Note that such an operation allows the file server to DoS sync().
+> > Since a typical FUSE file server is an untrusted piece of software
+> > running in userspace, this is disabled by default.  Only enable it
+> > with virtiofs for now since virtiofsd is supposedly trusted by the
+> > guest kernel.
+> > 
+> > Reported-by: Robert Krawitz <rlk@redhat.com>
+> > Signed-off-by: Greg Kurz <groug@kaod.org>
+> > ---
+> > 
+> > Can be tested using the following custom QEMU with FUSE_SYNCFS support:
+> > 
+> > https://gitlab.com/gkurz/qemu/-/tree/fuse-sync
+> > 
+> > ---
+> >  fs/fuse/fuse_i.h          |  3 +++
+> >  fs/fuse/inode.c           | 29 +++++++++++++++++++++++++++++
+> >  fs/fuse/virtio_fs.c       |  1 +
+> >  include/uapi/linux/fuse.h | 11 ++++++++++-
+> >  4 files changed, 43 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index 63d97a15ffde..68e9ae96cbd4 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -755,6 +755,9 @@ struct fuse_conn {
+> >  	/* Auto-mount submounts announced by the server */
+> >  	unsigned int auto_submounts:1;
+> >  
+> > +	/* Propagate syncfs() to server */
+> > +	unsigned int sync_fs:1;
+> > +
+> >  	/** The number of requests waiting for completion */
+> >  	atomic_t num_waiting;
+> >  
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index b0e18b470e91..425d567a06c5 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -506,6 +506,34 @@ static int fuse_statfs(struct dentry *dentry, struct kstatfs *buf)
+> >  	return err;
+> >  }
+> >  
+> > +static int fuse_sync_fs(struct super_block *sb, int wait)
+> > +{
+> > +	struct fuse_mount *fm = get_fuse_mount_super(sb);
+> > +	struct fuse_conn *fc = fm->fc;
+> > +	struct fuse_syncfs_in inarg;
+> > +	FUSE_ARGS(args);
+> > +	int err;
+> > +
+> > +	if (!fc->sync_fs)
+> > +		return 0;
+> > +
+> > +	memset(&inarg, 0, sizeof(inarg));
+> > +	inarg.wait = wait;
+> > +	args.in_numargs = 1;
+> > +	args.in_args[0].size = sizeof(inarg);
+> > +	args.in_args[0].value = &inarg;
+> > +	args.opcode = FUSE_SYNCFS;
+> > +	args.out_numargs = 0;
+> > +
+> > +	err = fuse_simple_request(fm, &args);
+> > +	if (err == -ENOSYS) {
+> > +		fc->sync_fs = 0;
+> > +		err = 0;
+> > +	}
+> 
+> I was wondering what will happen if older file server does not support
+> FUSE_SYNCFS. So we will get -ENOSYS and future syncfs commmands will not
+> be sent.
+> 
+
+Yes and it is consistent with what we already do with FUSE_FSYNC and
+FUSE_FSYNCDIR. Note that -ENOSYS is turned into a permanent success.
+This ensures compatibility with older file servers : the client will
+get the current behavior of sync() not being propagated to the file
+server. I'll mention that explicitely in the changelog.
+
+> > +
+> > +	return err;
+> 
+> Right now we don't propagate this error code all the way to user space.
+> I think I should post my patch to fix it again.
+> 
+> https://lore.kernel.org/linux-fsdevel/20201221195055.35295-2-vgoyal@redhat.com/
+> 
+
+Makes sense even if this seems to be broader issue since it
+requires careful auditing of all ->sync_fs() variants.
+
+> > +}
+> > +
+> >  enum {
+> >  	OPT_SOURCE,
+> >  	OPT_SUBTYPE,
+> > @@ -909,6 +937,7 @@ static const struct super_operations fuse_super_operations = {
+> >  	.put_super	= fuse_put_super,
+> >  	.umount_begin	= fuse_umount_begin,
+> >  	.statfs		= fuse_statfs,
+> > +	.sync_fs	= fuse_sync_fs,
+> >  	.show_options	= fuse_show_options,
+> >  };
+> >  
+> > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> > index 4ee6f734ba83..a3c025308743 100644
+> > --- a/fs/fuse/virtio_fs.c
+> > +++ b/fs/fuse/virtio_fs.c
+> > @@ -1441,6 +1441,7 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
+> >  	fc->release = fuse_free_conn;
+> >  	fc->delete_stale = true;
+> >  	fc->auto_submounts = true;
+> > +	fc->sync_fs = true;
+> >  
+> >  	fsc->s_fs_info = fm;
+> >  	sb = sget_fc(fsc, virtio_fs_test_super, set_anon_super_fc);
+> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > index 54442612c48b..6e8c3cf3207c 100644
+> > --- a/include/uapi/linux/fuse.h
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -179,6 +179,9 @@
+> >   *  7.33
+> >   *  - add FUSE_HANDLE_KILLPRIV_V2, FUSE_WRITE_KILL_SUIDGID, FATTR_KILL_SUIDGID
+> >   *  - add FUSE_OPEN_KILL_SUIDGID
+> > + *
+> > + *  7.34
+> > + *  - add FUSE_SYNCFS
+> >   */
+> >  
+> >  #ifndef _LINUX_FUSE_H
+> > @@ -214,7 +217,7 @@
+> >  #define FUSE_KERNEL_VERSION 7
+> >  
+> >  /** Minor version number of this interface */
+> > -#define FUSE_KERNEL_MINOR_VERSION 33
+> > +#define FUSE_KERNEL_MINOR_VERSION 34
+> 
+> I have always wondered what's the usage of minor version and when should
+> it be bumped up. IIUC, it is there to group features into a minor
+> version. So that file server (and may be client too) can deny to not
+> suppor client/server if a certain minimum version is not supported.
+> 
+> So looks like you want to have capability to say it does not support
+> an older client (<34) beacuse it wants to make sure SYNCFS is supported.
+> Is that the reason to bump up the minor version or something else.
+> 
+
+Ah... file history seemed to indicate that minor version was
+bumped up each time a new request was added but I might be
+wrong.
+
+Hopefully, Miklos can shed some light here ?
+
+> >  
+> >  /** The node ID of the root inode */
+> >  #define FUSE_ROOT_ID 1
+> > @@ -499,6 +502,7 @@ enum fuse_opcode {
+> >  	FUSE_COPY_FILE_RANGE	= 47,
+> >  	FUSE_SETUPMAPPING	= 48,
+> >  	FUSE_REMOVEMAPPING	= 49,
+> > +	FUSE_SYNCFS		= 50,
+> >  
+> >  	/* CUSE specific operations */
+> >  	CUSE_INIT		= 4096,
+> > @@ -957,4 +961,9 @@ struct fuse_removemapping_one {
+> >  #define FUSE_REMOVEMAPPING_MAX_ENTRY   \
+> >  		(PAGE_SIZE / sizeof(struct fuse_removemapping_one))
+> >  
+> > +struct fuse_syncfs_in {
+> > +	/* Whether to wait for outstanding I/Os to complete */
+> > +	uint32_t wait;
+> > +};
+> > +
+> 
+> Will it make sense to add a flag and use only one bit to signal whether
+> wait is required or not. Then rest of the 31bits in future can potentially
+> be used for something else if need be.
+> 
+
+I don't envision much changes in this API but yes, we can certainly
+do that.
+
+> Looks like most of the fuse structures are 64bit aligned (except
+> fuse_removemapping_in and now fuse_syncfs_in). I am wondering does
+> it matter if it is 64bit aligned or not.
+> 
+
+I don't know the required alignment but we already have a 32bit
+aligned fuse structure:
+
+struct fuse_removemapping_in {
+	/* number of fuse_removemapping_one follows */
+	uint32_t        count;
+};
+
+which is sent like this:
+
+static int fuse_send_removemapping(struct inode *inode,
+				   struct fuse_removemapping_in *inargp,
+				   struct fuse_removemapping_one *remove_one)
+{
+...
+	args.in_args[0].size = sizeof(*inargp);
+	args.in_args[0].value = inargp;
+
+Again, maybe Miklos can clarify this ?
+
+> Vivek
+> 
+
+Cheers,
+
+--
+Greg
