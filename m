@@ -2,77 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EF30366AC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 14:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABFD4366AF5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 14:39:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239743AbhDUM2a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Apr 2021 08:28:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58522 "EHLO
+        id S239812AbhDUMjo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Apr 2021 08:39:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232442AbhDUM2a (ORCPT
+        with ESMTP id S235345AbhDUMjn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Apr 2021 08:28:30 -0400
+        Wed, 21 Apr 2021 08:39:43 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 964F2C06174A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 05:27:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61067C06174A;
+        Wed, 21 Apr 2021 05:39:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=ngoZ/1MTJJ4JYSZxMCPmNtmeGntGYOze1kWW8n2/T8c=; b=oM7vwvuYm1u0vWYLsugDfmrNKo
-        kD4forUzBM8ixmqgPNJpUKnJbUkiZ0yLYwHFQZMcpc1afAWI0cTv56jBzkU+mm0dqahTJ2ODv1nr7
-        fr1mX+8kNvEKBzxqJk2m1w3MHS4NorKv1S8RHPo3UeYrIjIGugOAsfLfzm0AMPQyY9v2oC/tDkapY
-        lFzTkL+IEVnn3j80WZ0H7DMhvWjHUREYF/LW3x+feUfvTZuRseAeOAHI9uhx4F0MFgRymbbWPyGSn
-        o+S/1VcMlo/sTArypcNUgN5Ld8KbkAzDsdDnYxlSuL4zsXCoH5Al9SFwXr6cgiBQxDhKQ8CFGvQHA
-        IHjtA0/g==;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Qh8w6W1RTQVTT8r1EuB9WtIiSIZsU2fv/VFDqOMIuwQ=; b=H6UVNAq6KUvcMXWk3iMsO/UZ2Y
+        ILGNp1MmzjG/5qy0rL1OPYCCvX6jgYpA5h+aLunNqmufcnRugmUW+LU861g+4YhrlZa6qb7gRMqWf
+        uLJQfLr7vHSs3cyDv1Z7EdIgQ7Bf7shteCcrTloh7pZVWEPXHZXtzh4XJmg7M6BHsmB+DficsjHqT
+        RVHN3lVrg+vK3ZSNxwXs2iG+yeILTLMaHl5+NVPieScgfqgRSGhGnkScG+pj4ieiSBVU+M0LWgqht
+        HXNVKeewD+cCnmezahUiDJo81PcD0WY7QaJf08dnxlFe1p0K3AHLm4UN3j6Fe06NOw1/DObrTfkoU
+        lCialyCg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lZBwf-00GV6C-I3; Wed, 21 Apr 2021 12:27:21 +0000
-Date:   Wed, 21 Apr 2021 13:27:05 +0100
+        id 1lZC73-00GVhi-L3; Wed, 21 Apr 2021 12:38:03 +0000
+Date:   Wed, 21 Apr 2021 13:37:49 +0100
 From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] mm/readahead: Handle ractl nr_pages being modified
-Message-ID: <20210421122705.GG3596236@casper.infradead.org>
-References: <20210420210328.GD3596236@casper.infradead.org>
- <20210420200116.3715790-1-willy@infradead.org>
- <3675c1d23577dded6ca97e0be78c153ce3401e10.camel@kernel.org>
- <2159218.1619001284@warthog.procyon.org.uk>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v3] docs: proc.rst: meminfo: briefly describe gaps in
+ memory accounting
+Message-ID: <20210421123749.GH3596236@casper.infradead.org>
+References: <20210421061127.1182723-1-rppt@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2159218.1619001284@warthog.procyon.org.uk>
+In-Reply-To: <20210421061127.1182723-1-rppt@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 21, 2021 at 11:34:44AM +0100, David Howells wrote:
-> Matthew Wilcox <willy@infradead.org> wrote:
+On Wed, Apr 21, 2021 at 09:11:27AM +0300, Mike Rapoport wrote:
+> From: Mike Rapoport <rppt@linux.ibm.com>
 > 
-> > On Tue, Apr 20, 2021 at 04:12:57PM -0400, Jeff Layton wrote:
-> > > > @@ -210,6 +208,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
-> > > >  			 * not worth getting one just for that.
-> > > >  			 */
-> > > >  			read_pages(ractl, &page_pool, true);
-> > > > +			i = ractl->_index + ractl->_nr_pages - index;
-> > 
-> > 			i = ractl->_index + ractl->_nr_pages - index - 1;
-> > 
-> > > > @@ -223,6 +222,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
-> > > >  					gfp_mask) < 0) {
-> > > >  			put_page(page);
-> > > >  			read_pages(ractl, &page_pool, true);
-> > > > +			i = ractl->_index + ractl->_nr_pages - index;
-> > 
-> > 			i = ractl->_index + ractl->_nr_pages - index - 1;
-> > 
-> > > Thanks Willy, but I think this may not be quite right. A kernel with
-> > > this patch failed to boot for me:
-> > 
-> > Silly off-by-one errors.  xfstests running against xfs is up to generic/278
-> > with the off-by-one fixed.
+> Add a paragraph that explains that it may happen that the counters in
+> /proc/meminfo do not add up to the overall memory usage.
 > 
-> You can add my Tested-by - or do you want me to add it to my patchset?
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 
-I think you need it as part of your patchset, ordered before
-readahead_expand().  It probably needs a rewritten description ...
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
