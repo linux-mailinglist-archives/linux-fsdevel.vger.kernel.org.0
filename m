@@ -2,211 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49BAF366EDA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 17:12:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10C03366F37
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 17:32:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240417AbhDUPMp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Apr 2021 11:12:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39040 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240356AbhDUPMo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Apr 2021 11:12:44 -0400
-Received: from mail-oo1-xc36.google.com (mail-oo1-xc36.google.com [IPv6:2607:f8b0:4864:20::c36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5E4FC06138C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 08:12:09 -0700 (PDT)
-Received: by mail-oo1-xc36.google.com with SMTP id s1-20020a4ac1010000b02901cfd9170ce2so9270079oop.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 08:12:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FEXEAgUao8/U1XoW751IUwiCrSmDVaqLIc6z62zqqMg=;
-        b=Vo5glLC6k7D+/dE1nb/qouPscezMFfLgYz7H9PDhiS+225DnfgsTkqbIQ3YKQxcbKH
-         N9WNrIISNRSCIXZ0Xa2geQUHPwPnz1H0/r2shySWTDVl9W9/1wWxlwISt92QkyHI1/D5
-         is4kUk+NU/HEU91rjPdqiJG5y3zN7p9qXt+Hmpoxbd5ZzCUXzUI+sZiJlvFysiAqPOzk
-         2JWPjDS8PDVfeR7oLmiyTUp1U5Sj+Recg00TFzL2m2g9M6d82OTR14ZDv16kvT/l4M2D
-         BpDuIcq7ihOTMmVUiwcrQGjhGXbhQPyPPMY7gQ1x2zK9oJETG0hcADBQKWBqljmgmIpW
-         xnPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FEXEAgUao8/U1XoW751IUwiCrSmDVaqLIc6z62zqqMg=;
-        b=EzpbBuwnkn5JRf4o+Znajyuv0l5kyS9z5roSvXv0dxO1zaLzZAQHGms+t+8nNnBrQy
-         7hFrHuIoEhCCx4ofwm1cIFZk0hv0Y7YmJ5niggDbd6MsfMwXPOI5WfqZbK6rnYuxiJhV
-         yZ64mg4J6pncDwhh3/MEet6j5c3qUVbDwLZPDFqeNnB92oVSqRdqxoZTBixK3jUxToU9
-         ihtlRRcKxU9nF6CGv7RsYI5l+bGdQQIUUwNAwIvbPA0HZG2PpjqoeRYQQIxyrs0JZ+Ze
-         gdIRTPmBeZiO+bvaUmjjpiS2+LN2lhTbd47g5630dvrsqvSisoZwM+KqAShVDhEeqhLd
-         vSWw==
-X-Gm-Message-State: AOAM533wsXYK/wN24t41T2BPfGrbJTgDPhd8VhKE1HAX8J4hb6S0SQPW
-        4q5O1VSsAc6iPhXp9Bpq3u91fn0OdJwqTd5h0mgy6Q==
-X-Google-Smtp-Source: ABdhPJyng+pvseRT0sVGDwFEJZ8TI5HsU+LGWY1XrOff8CcFEH9YHvKH2/GavzRvVwXXrQ+JymLm5bTa/K1m4eP+ih4=
-X-Received: by 2002:a4a:d80e:: with SMTP id f14mr18296328oov.54.1619017928732;
- Wed, 21 Apr 2021 08:12:08 -0700 (PDT)
+        id S244032AbhDUPco (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Apr 2021 11:32:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55306 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244024AbhDUPcm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Apr 2021 11:32:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F277861445;
+        Wed, 21 Apr 2021 15:32:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619019129;
+        bh=RC899umZ0BwpHoFBaQEd03wqXFYBjtGaL5NqM7dfCT8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CpNQszCLq4n8vEbp+4q9qxxt6foYHXA6LMbxM0pUASXfc28rRQcnHijjCXk/bU4TR
+         TdDYeNqRAnnuj8/VLcS5qJ+U07HSMDxPsyQDrG7EJzs2PCv4MxVSBtSYtwYW+PNk62
+         KPitZe+vN9l/HeCKZkA695LuhNegPcRtu6FLyojANSpA0XhVRnYVDfv4MxiPKnPyaa
+         s33u6+4RK9KDcho9/4XcQ0uBmY7Nh+0+l0fdoIHE8WzrDzLSrBN5K5PIpOTmbJh780
+         NBpCEJ2w2VdcFapAACBUQ6BQdb5B+z9QC/dLgLEdzQHHEZlz953zvRL+EwG6ghuB8k
+         P/eYtCOFPaOGg==
+Date:   Wed, 21 Apr 2021 18:31:58 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Peter.Enderborg@sony.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        sumit.semwal@linaro.org, christian.koenig@amd.com,
+        adobriyan@gmail.com, akpm@linux-foundation.org,
+        songmuchun@bytedance.com, guro@fb.com, shakeelb@google.com,
+        mhocko@suse.com, neilb@suse.de, samitolvanen@google.com,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, willy@infradead.org
+Subject: Re: [PATCH v5] dma-buf: Add DmaBufTotal counter in meminfo
+Message-ID: <YIBFbh4Dd1XaDbto@kernel.org>
+References: <20210417163835.25064-1-peter.enderborg@sony.com>
+ <YH6Xv00ddYfMA3Lg@phenom.ffwll.local>
+ <176e7e71-59b7-b288-9483-10e0f42a7a3f@sony.com>
+ <YH63iPzbGWzb676T@phenom.ffwll.local>
+ <a60d1eaf-f9f8-e0f3-d214-15ce2c0635c2@sony.com>
+ <YH/tHFBtIawBfGBl@phenom.ffwll.local>
+ <cbde932e-8887-391f-4a1d-515e5c56c01d@sony.com>
 MIME-Version: 1.0
-References: <20210408103605.1676875-1-elver@google.com> <CGME20210420212618eucas1p102b427d1af9c682217dfe093f3eac3e8@eucas1p1.samsung.com>
- <20210408103605.1676875-6-elver@google.com> <1fbf3429-42e5-0959-9a5c-91de80f02b6a@samsung.com>
- <CANpmjNM8wEJngK=J8Lt9npkZgrSWoRsqkdajErWEoY_=M1GW5A@mail.gmail.com>
- <43f8a3bf-34c5-0fc9-c335-7f92eaf23022@samsung.com> <dccaa337-f3e5-08e4-fe40-a603811bb13e@samsung.com>
- <CANpmjNP6-yKpxHqYFiA8Up-ujBQaeP7xyq1BrsV-NqMjJ-uHAQ@mail.gmail.com>
- <740077ce-efe1-b171-f807-bc5fd95a32ba@samsung.com> <f114ff4a-6612-0935-12ac-0e2ac18d896c@samsung.com>
- <CANpmjNM6bQpc49teN-9qQhCXoJXaek5stFGR2kPwDroSFBc0fw@mail.gmail.com> <cf6ed5cd-3202-65ce-86bc-6f1eba1b7d17@samsung.com>
-In-Reply-To: <cf6ed5cd-3202-65ce-86bc-6f1eba1b7d17@samsung.com>
-From:   Marco Elver <elver@google.com>
-Date:   Wed, 21 Apr 2021 17:11:57 +0200
-Message-ID: <CANpmjNPr_JtRC762ap8PQVmsFNY5YhHvOk0wNcPHq=ZQt-qxYg@mail.gmail.com>
-Subject: Re: [PATCH v4 05/10] signal: Introduce TRAP_PERF si_code and si_perf
- to siginfo
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian@brauner.io>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Matt Morehouse <mascasa@google.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Ian Rogers <irogers@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-tegra@vger.kernel.org, jonathanh@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cbde932e-8887-391f-4a1d-515e5c56c01d@sony.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-+Cc linux-arm-kernel
+On Wed, Apr 21, 2021 at 10:37:11AM +0000, Peter.Enderborg@sony.com wrote:
+> On 4/21/21 11:15 AM, Daniel Vetter wrote:
+> >
+> > We need to understand what the "correct" value is. Not in terms of kernel
+> > code, but in terms of semantics. Like if userspace allocates a GL texture,
+> > is this supposed to show up in your metric or not. Stuff like that.
+> That it like that would like to only one pointer type. You need to know what
+> 
+> you pointing at to know what it is. it might be a hardware or a other pointer.
+> 
+> If there is a limitation on your pointers it is a good metric to count them
+> even if you don't  know what they are. Same goes for dma-buf, they
+> are generic, but they consume some resources that are counted in pages.
+> 
+> It would be very good if there a sub division where you could measure
+> all possible types separately.  We have the detailed in debugfs, but nothing
+> for the user. A summary in meminfo seems to be the best place for such
+> metric.
+ 
+Let me try to summarize my understanding of the problem, maybe it'll help
+others as well.
 
-On Wed, 21 Apr 2021 at 15:19, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> Hi Marco,
->
-> On 21.04.2021 13:03, Marco Elver wrote:
-> > On Wed, 21 Apr 2021 at 12:57, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> >> On 21.04.2021 11:35, Marek Szyprowski wrote:
-> >>> On 21.04.2021 10:11, Marco Elver wrote:
-> >>>> On Wed, 21 Apr 2021 at 09:35, Marek Szyprowski
-> >>>> <m.szyprowski@samsung.com> wrote:
-> >>>>> On 21.04.2021 08:21, Marek Szyprowski wrote:
-> >>>>>> On 21.04.2021 00:42, Marco Elver wrote:
-> >>>>>>> On Tue, 20 Apr 2021 at 23:26, Marek Szyprowski
-> >>>>>>> <m.szyprowski@samsung.com> wrote:
-> >>>>>>>> On 08.04.2021 12:36, Marco Elver wrote:
-> >>>>>>>>> Introduces the TRAP_PERF si_code, and associated siginfo_t field
-> >>>>>>>>> si_perf. These will be used by the perf event subsystem to send
-> >>>>>>>>> signals
-> >>>>>>>>> (if requested) to the task where an event occurred.
-> >>>>>>>>>
-> >>>>>>>>> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> # m68k
-> >>>>>>>>> Acked-by: Arnd Bergmann <arnd@arndb.de> # asm-generic
-> >>>>>>>>> Signed-off-by: Marco Elver <elver@google.com>
-> >>>>>>>> This patch landed in linux-next as commit fb6cc127e0b6 ("signal:
-> >>>>>>>> Introduce TRAP_PERF si_code and si_perf to siginfo"). It causes
-> >>>>>>>> regression on my test systems (arm 32bit and 64bit). Most systems
-> >>>>>>>> fails
-> >>>>>>>> to boot in the given time frame. I've observed that there is a
-> >>>>>>>> timeout
-> >>>>>>>> waiting for udev to populate /dev and then also during the network
-> >>>>>>>> interfaces configuration. Reverting this commit, together with
-> >>>>>>>> 97ba62b27867 ("perf: Add support for SIGTRAP on perf events") to
-> >>>>>>>> let it
-> >>>>>>>> compile, on top of next-20210420 fixes the issue.
-> >>>>>>> Thanks, this is weird for sure and nothing in particular stands out.
-> >>>>>>>
-> >>>>>>> I have questions:
-> >>>>>>> -- Can you please share your config?
-> >>>>>> This happens with standard multi_v7_defconfig (arm) or just defconfig
-> >>>>>> for arm64.
-> >>>>>>
-> >>>>>>> -- Also, can you share how you run this? Can it be reproduced in
-> >>>>>>> qemu?
-> >>>>>> Nothing special. I just boot my test systems and see that they are
-> >>>>>> waiting lots of time during the udev populating /dev and network
-> >>>>>> interfaces configuration. I didn't try with qemu yet.
-> >>>>>>> -- How did you derive this patch to be at fault? Why not just
-> >>>>>>> 97ba62b27867, given you also need to revert it?
-> >>>>>> Well, I've just run my boot tests with automated 'git bisect' and that
-> >>>>>> was its result. It was a bit late in the evening, so I didn't analyze
-> >>>>>> it further, I've just posted a report about the issue I've found. It
-> >>>>>> looks that bisecting pointed to a wrong commit somehow.
-> >>>>>>> If you are unsure which patch exactly it is, can you try just
-> >>>>>>> reverting 97ba62b27867 and see what happens?
-> >>>>>> Indeed, this is a real faulty commit. Initially I've decided to revert
-> >>>>>> it to let kernel compile (it uses some symbols introduced by this
-> >>>>>> commit). Reverting only it on top of linux-next 20210420 also fixes
-> >>>>>> the issue. I'm sorry for the noise in this thread. I hope we will find
-> >>>>>> what really causes the issue.
-> >>>>> This was a premature conclusion. It looks that during the test I've did
-> >>>>> while writing that reply, the modules were not deployed properly and a
-> >>>>> test board (RPi4) booted without modules. In that case the board booted
-> >>>>> fine and there was no udev timeout. After deploying kernel modules, the
-> >>>>> udev timeout is back.
-> >>>> I'm confused now. Can you confirm that the problem is due to your
-> >>>> kernel modules, or do you think it's still due to 97ba62b27867? Or
-> >>>> fb6cc127e0b6 (this patch)?
-> >>> I don't use any custom kernel modules. I just deploy all modules that
-> >>> are being built from the given kernel defconfig (arm
-> >>> multi_v7_defconfig or arm64 default) and they are automatically loaded
-> >>> during the boot by udev. I've checked again and bisect was right. The
-> >>> kernel built from fb6cc127e0b6 suffers from the described issue, while
-> >>> the one build from the previous commit (2e498d0a74e5) works fine.
-> >> I've managed to reproduce this issue with qemu. I've compiled the kernel
-> >> for arm 32bit with multi_v7_defconfig and used some older Debian rootfs
-> >> image. The log and qemu parameters are here:
-> >> https://protect2.fireeye.com/v1/url?k=7cfc23a2-23671aa9-7cfda8ed-002590f5b904-dab7e2ec39dae1f9&q=1&e=36a5ed13-6ad5-430c-8f44-e95c4f0af5c3&u=https%3A%2F%2Fpaste.debian.net%2F1194526%2F
-> >>
-> >> Check the timestamp for the 'EXT4-fs (vda): re-mounted' message and
-> >> 'done (timeout)' status for the 'Waiting for /dev to be fully populated'
-> >> message. This happens only when kernel modules build from the
-> >> multi_v7_defconfig are deployed on the rootfs.
-> > Still hard to say what is going on and what is at fault. But being
-> > able to repro this in qemu helps debug quicker -- would you also be
-> > able to share the precise rootfs.img, i.e. upload it somewhere I can
-> > fetch it? And just to be sure, please also share your .config, as it
-> > might have compiler-version dependent configuration that might help
-> > repro (unlikely, but you never know).
->
-> I've managed to reproduce this issue with a public Raspberry Pi OS Lite
-> rootfs image, even without deploying kernel modules:
->
-> https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-03-25/2021-03-04-raspios-buster-armhf-lite.zip
->
-> # qemu-system-arm -M virt -smp 2 -m 512 -kernel zImage -append "earlycon
-> console=ttyAMA0 root=/dev/vda2 rw rootwait" -serial stdio -display none
-> -monitor null -device virtio-blk-device,drive=virtio-blk -drive
-> file=/tmp/2021-03-04-raspios-buster-armhf-lite.img,id=virtio-blk,if=none,format=raw
-> -netdev user,id=user -device virtio-net-device,netdev=user
->
-> The above one doesn't boot if zImage z compiled from commit fb6cc127e0b6
-> and boots if compiled from 2e498d0a74e5. In both cases I've used default
-> arm/multi_v7_defconfig and
-> gcc-linaro-6.4.1-2017.11-x86_64_arm-linux-gnueabi toolchain.
+A device driver allocates memory and exports this memory via dma-buf so
+that this memory will be accessible for userspace via a file descriptor.
 
-Yup, I've narrowed it down to the addition of "__u64 _perf" to
-siginfo_t. My guess is the __u64 causes a different alignment for a
-bunch of adjacent fields. It seems that x86 and m68k are the only ones
-that have compile-time tests for the offsets. Arm should probably add
-those -- I have added a bucket of static_assert() in
-arch/arm/kernel/signal.c and see that something's off.
+The allocated memory can be either allocated with alloc_page() from system
+RAM or by other means from dedicated VRAM (that is not managed by Linux mm)
+or even from on-device memory.
 
-I'll hopefully have a fix in a day or so.
+The dma-buf driver tracks the amount of the memory it was requested to
+export and the size it sees is available at debugfs and fdinfo.
 
-Thanks,
--- Marco
+The debugfs is not available to user and maybe entirely disabled in
+production systems.
+
+There could be quite a few open dma-bufs so there is no overall summary,
+plus fdinfo in production systems your refer to is also unavailable to the
+user because of selinux policy.
+
+And there are a few details that are not clear to me:
+
+* Since DRM device drivers seem to be the major user of dma-buf exports,
+  why cannot we add information about their memory consumption to, say,
+  /sys/class/graphics/drm/cardX/memory-usage?
+
+* How exactly user generates reports that would include the new counters?
+  From my (mostly outdated) experience Android users won't open a terminal
+  and type 'cat /proc/meminfo' there. I'd presume there is a vendor agent
+  that collects the data and sends it for analysis. In this case what is
+  the reason the vendor is unable to adjust selinix policy so that the
+  agent will be able to access fdinfo?
+
+* And, as others already mentioned, it is not clear what are the problems
+  that can be detected by examining DmaBufTotal except saying "oh, there is
+  too much/too little memory exported via dma-buf". What would be user
+  visible effects of these problems? What are the next steps to investigate
+  them? What other data will be probably required to identify root cause?
+
+-- 
+Sincerely yours,
+Mike.
