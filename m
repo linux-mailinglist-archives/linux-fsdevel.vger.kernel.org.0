@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B357C366823
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 11:35:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B4F3366825
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 11:35:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238427AbhDUJgP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Apr 2021 05:36:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:30919 "EHLO
+        id S238438AbhDUJgT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Apr 2021 05:36:19 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:28860 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238398AbhDUJgE (ORCPT
+        by vger.kernel.org with ESMTP id S238421AbhDUJgL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Apr 2021 05:36:04 -0400
+        Wed, 21 Apr 2021 05:36:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618997731;
+        s=mimecast20190719; t=1618997738;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7qvhkAj80F0f8sUzXVK2VmCO6sZ1NBwAvOrU2zYZZ20=;
-        b=Et5WzwNolKCQKj/PxTpgvJ13qfhigHOR3eob+Kl3zXPz6bZj3GUW8ag2GU0txEkXnuT/XK
-        HZrAMLe4EBLVa+Odakb109RWLxgpbWXQxYnC8g52f8PFtSxUTHsW+HxHmJVSu1UogHrHbz
-        zHWfErflDM5+98H2gbJ98EkrS0nsfZ4=
+        bh=MEaFG0OoxVwgDiH4LfMfWJVuyiBJFv+CAFldNJUwFC8=;
+        b=GmfiANOKyzoePWqLqX74CQY+fKS+NSTCGAxhYi8E4E1wiijFRIREmA3Ug64U13qCLkCVJl
+        CHkypp2GNMZQNxHc/KXUfwGZUmTZ/jRIC5PRtoVOJGqNhxo+15zO0GsCUe6CS7aYgttG5Z
+        6Gj/NzL8DVApleGd69NbYpXoeg+j5Ig=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-50-7SA-dhntPrOeJQy9WxNSdw-1; Wed, 21 Apr 2021 05:35:29 -0400
-X-MC-Unique: 7SA-dhntPrOeJQy9WxNSdw-1
+ us-mta-242-Qk0-cpw2OAqYM87gwrtoEw-1; Wed, 21 Apr 2021 05:35:35 -0400
+X-MC-Unique: Qk0-cpw2OAqYM87gwrtoEw-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 97CCA106BC7E;
-        Wed, 21 Apr 2021 09:35:26 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BA88E81A281;
+        Wed, 21 Apr 2021 09:35:32 +0000 (UTC)
 Received: from t480s.redhat.com (ovpn-113-224.ams2.redhat.com [10.36.113.224])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D03E45DAA5;
-        Wed, 21 Apr 2021 09:35:15 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 01E4A5D9F2;
+        Wed, 21 Apr 2021 09:35:26 +0000 (UTC)
 From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     David Hildenbrand <david@redhat.com>,
@@ -58,9 +58,9 @@ Cc:     David Hildenbrand <david@redhat.com>,
         Feng Tang <feng.tang@intel.com>,
         Don Zickus <dzickus@redhat.com>, x86@kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH v1 2/3] binfmt: remove in-tree usage of MAP_EXECUTABLE
-Date:   Wed, 21 Apr 2021 11:34:52 +0200
-Message-Id: <20210421093453.6904-3-david@redhat.com>
+Subject: [PATCH v1 3/3] mm: ignore MAP_EXECUTABLE in ksys_mmap_pgoff()
+Date:   Wed, 21 Apr 2021 11:34:53 +0200
+Message-Id: <20210421093453.6904-4-david@redhat.com>
 In-Reply-To: <20210421093453.6904-1-david@redhat.com>
 References: <20210421093453.6904-1-david@redhat.com>
 MIME-Version: 1.0
@@ -70,127 +70,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ever since commit e9714acf8c43 ("mm: kill vma flag VM_EXECUTABLE and
-mm->num_exe_file_vmas"), VM_EXECUTABLE is gone and MAP_EXECUTABLE is
-essentially completely ignored. Let's remove all usage of
-MAP_EXECUTABLE.
+Let's also remove masking off MAP_EXECUTABLE from ksys_mmap_pgoff():
+the last in-tree occurrence of MAP_EXECUTABLE is now in LEGACY_MAP_MASK,
+which accepts the flag e.g., for MAP_SHARED_VALIDATE; however, the flag
+is ignored throughout the kernel now.
+
+Add a comment to LEGACY_MAP_MASK stating that MAP_EXECUTABLE is ignored.
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- arch/x86/ia32/ia32_aout.c |  4 ++--
- fs/binfmt_aout.c          |  4 ++--
- fs/binfmt_elf.c           |  2 +-
- fs/binfmt_elf_fdpic.c     | 11 ++---------
- fs/binfmt_flat.c          |  2 +-
- 5 files changed, 8 insertions(+), 15 deletions(-)
+ include/linux/mman.h | 2 ++
+ mm/mmap.c            | 2 +-
+ mm/nommu.c           | 2 +-
+ 3 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/ia32/ia32_aout.c b/arch/x86/ia32/ia32_aout.c
-index a09fc37ead9d..5e5b9fc2747f 100644
---- a/arch/x86/ia32/ia32_aout.c
-+++ b/arch/x86/ia32/ia32_aout.c
-@@ -203,7 +203,7 @@ static int load_aout_binary(struct linux_binprm *bprm)
- 		error = vm_mmap(bprm->file, N_TXTADDR(ex), ex.a_text,
- 				PROT_READ | PROT_EXEC,
- 				MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE |
--				MAP_EXECUTABLE | MAP_32BIT,
-+				MAP_32BIT,
- 				fd_offset);
- 
- 		if (error != N_TXTADDR(ex))
-@@ -212,7 +212,7 @@ static int load_aout_binary(struct linux_binprm *bprm)
- 		error = vm_mmap(bprm->file, N_DATADDR(ex), ex.a_data,
- 				PROT_READ | PROT_WRITE | PROT_EXEC,
- 				MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE |
--				MAP_EXECUTABLE | MAP_32BIT,
-+				MAP_32BIT,
- 				fd_offset + ex.a_text);
- 		if (error != N_DATADDR(ex))
- 			return error;
-diff --git a/fs/binfmt_aout.c b/fs/binfmt_aout.c
-index 3e84e9bb9084..12461f3ed04f 100644
---- a/fs/binfmt_aout.c
-+++ b/fs/binfmt_aout.c
-@@ -222,7 +222,7 @@ static int load_aout_binary(struct linux_binprm * bprm)
- 
- 		error = vm_mmap(bprm->file, N_TXTADDR(ex), ex.a_text,
- 			PROT_READ | PROT_EXEC,
--			MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE | MAP_EXECUTABLE,
-+			MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE;
- 			fd_offset);
- 
- 		if (error != N_TXTADDR(ex))
-@@ -230,7 +230,7 @@ static int load_aout_binary(struct linux_binprm * bprm)
- 
- 		error = vm_mmap(bprm->file, N_DATADDR(ex), ex.a_data,
- 				PROT_READ | PROT_WRITE | PROT_EXEC,
--				MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE | MAP_EXECUTABLE,
-+				MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE;
- 				fd_offset + ex.a_text);
- 		if (error != N_DATADDR(ex))
- 			return error;
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index b12ba98ae9f5..e0427b817425 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1070,7 +1070,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 		elf_prot = make_prot(elf_ppnt->p_flags, &arch_state,
- 				     !!interpreter, false);
- 
--		elf_flags = MAP_PRIVATE | MAP_DENYWRITE | MAP_EXECUTABLE;
-+		elf_flags = MAP_PRIVATE | MAP_DENYWRITE;
- 
- 		vaddr = elf_ppnt->p_vaddr;
- 		/*
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index 3cfd6cd46f26..8723b6686b66 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -928,7 +928,7 @@ static int elf_fdpic_map_file_constdisp_on_uclinux(
- {
- 	struct elf32_fdpic_loadseg *seg;
- 	struct elf32_phdr *phdr;
--	unsigned long load_addr, base = ULONG_MAX, top = 0, maddr = 0, mflags;
-+	unsigned long load_addr, base = ULONG_MAX, top = 0, maddr = 0;
- 	int loop, ret;
- 
- 	load_addr = params->load_addr;
-@@ -948,12 +948,8 @@ static int elf_fdpic_map_file_constdisp_on_uclinux(
+diff --git a/include/linux/mman.h b/include/linux/mman.h
+index 629cefc4ecba..ebb09a964272 100644
+--- a/include/linux/mman.h
++++ b/include/linux/mman.h
+@@ -31,6 +31,8 @@
+ /*
+  * The historical set of flags that all mmap implementations implicitly
+  * support when a ->mmap_validate() op is not provided in file_operations.
++ *
++ * MAP_EXECUTABLE is completely ignored throughout the kernel.
+  */
+ #define LEGACY_MAP_MASK (MAP_SHARED \
+ 		| MAP_PRIVATE \
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 3f287599a7a3..882f8ee4af1f 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1627,7 +1627,7 @@ unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
+ 			return PTR_ERR(file);
  	}
  
- 	/* allocate one big anon block for everything */
--	mflags = MAP_PRIVATE;
--	if (params->flags & ELF_FDPIC_FLAG_EXECUTABLE)
--		mflags |= MAP_EXECUTABLE;
--
- 	maddr = vm_mmap(NULL, load_addr, top - base,
--			PROT_READ | PROT_WRITE | PROT_EXEC, mflags, 0);
-+			PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE, 0);
- 	if (IS_ERR_VALUE(maddr))
- 		return (int) maddr;
+-	flags &= ~(MAP_EXECUTABLE | MAP_DENYWRITE);
++	flags &= ~MAP_DENYWRITE;
  
-@@ -1046,9 +1042,6 @@ static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
- 		if (phdr->p_flags & PF_X) prot |= PROT_EXEC;
+ 	retval = vm_mmap_pgoff(file, addr, len, prot, flags, pgoff);
+ out_fput:
+diff --git a/mm/nommu.c b/mm/nommu.c
+index 5c9ab799c0e6..1fafe3e9d3df 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -1306,7 +1306,7 @@ unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
+ 			goto out;
+ 	}
  
- 		flags = MAP_PRIVATE | MAP_DENYWRITE;
--		if (params->flags & ELF_FDPIC_FLAG_EXECUTABLE)
--			flags |= MAP_EXECUTABLE;
--
- 		maddr = 0;
+-	flags &= ~(MAP_EXECUTABLE | MAP_DENYWRITE);
++	flags &= ~MAP_DENYWRITE;
  
- 		switch (params->flags & ELF_FDPIC_FLAG_ARRANGEMENT) {
-diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-index b9c658e0548e..98c2329d23d7 100644
---- a/fs/binfmt_flat.c
-+++ b/fs/binfmt_flat.c
-@@ -567,7 +567,7 @@ static int load_flat_file(struct linux_binprm *bprm,
- 		pr_debug("ROM mapping of file (we hope)\n");
+ 	retval = vm_mmap_pgoff(file, addr, len, prot, flags, pgoff);
  
- 		textpos = vm_mmap(bprm->file, 0, text_len, PROT_READ|PROT_EXEC,
--				  MAP_PRIVATE|MAP_EXECUTABLE, 0);
-+				  MAP_PRIVATE, 0);
- 		if (!textpos || IS_ERR_VALUE(textpos)) {
- 			ret = textpos;
- 			if (!textpos)
 -- 
 2.30.2
 
