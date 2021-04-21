@@ -2,159 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 579B8366740
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 10:47:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7081F36679D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Apr 2021 11:07:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237562AbhDUIra (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Apr 2021 04:47:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37738 "EHLO
+        id S238066AbhDUJHb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Apr 2021 05:07:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230319AbhDUIr3 (ORCPT
+        with ESMTP id S238021AbhDUJHa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Apr 2021 04:47:29 -0400
-Received: from mail-vk1-xa36.google.com (mail-vk1-xa36.google.com [IPv6:2607:f8b0:4864:20::a36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CE91C06174A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 01:46:56 -0700 (PDT)
-Received: by mail-vk1-xa36.google.com with SMTP id q24so1841039vkd.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 01:46:56 -0700 (PDT)
+        Wed, 21 Apr 2021 05:07:30 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8634C06138D
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 02:06:57 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id m11so28145457pfc.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 02:06:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=HenZHDGnT6B4bJ81ExpWzuy+n1GTfUCcohZ0EUgDUwY=;
-        b=J4a0r9Ma/ZSFw7fZciyv6pvs8x14c4hZd2dIMHHK5pP4ugeQzp8ZgUyv+mZRugdM3k
-         jYTfe1RAqP1ikp23TM88lM3zTW2rgiKCikF2UvSzgq/uXLmU9Y0D2EjVE5qrsXm6jFya
-         82cNYIPBppu7jypwkXjd1zGdG8Qr3kL/Vd08c=
+        bh=z+iHXh65iVvo4np4Gau+UG0A6fVjF6OF4qe3iW5dlBQ=;
+        b=cKRTNiweZv1CB+TmPXTHEuk/D3q6KRWbOYv26a5/nnRcbXbBa4sRinHzaZqlDw8IPK
+         V26zl43Ll4ob/dxArZPWyA4qOpnJxPJk8DjZuABCkaNyS8O8ZsjefM98zQ/WDfNoXHjw
+         I9Y4Jb7szrqvY1AsKwIGCc+RpKJHRvfXrbtzOpClqU2kr3qEvAJAWqK7aiwM4w7pEYAc
+         N9/GDBfvk/vlEZcV/aayCTXvn5DmtTALGlTwJ2lRrwaZkNLn5ePUmFlVzUMAmu4Dvv9t
+         LOWZ6CH+NAODFuCCxob1MO+H9YWAbW1/x6xFI+jX3V8c4KE39RF6vvG/gEqKUp5c5WK6
+         f8vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=HenZHDGnT6B4bJ81ExpWzuy+n1GTfUCcohZ0EUgDUwY=;
-        b=iASMLss1BFXtBSYD6kkL1P0INuNg8oYSIt4AcEyorjIW61wEfgSMK1IK45j6pMMpg7
-         WMehwoCy6/Ky0RqKsia7I4K88C0Oxi/xYvzvCXE+/Sc2BYDt2ScwA1tC8CU9l5dUFPfo
-         +5bDu3QIe7OzZ84oLYRMHDlo1h9DEEjkhR1SkXJKjqzV+CSnNeYvvkodSmZ8nF/bQzIi
-         V79tmF/IOgsYxeXxBQz7UzILRY+Ds2Fnh0wJt73CNmAGVkDT/eWKWE0ZZXp6r6QPqnEM
-         4EgW5Gm2xdA/guqwwyhedpbFB7A8J0Hjvx92OcZwUc8VSrJAsyXVw7zEfgWPq8iSj0m5
-         7l6g==
-X-Gm-Message-State: AOAM533uZtkHMrb55rDSVAG5eCFtf/7PG/mXcli4Dmi0eGeCgU4/Mn5y
-        9vQEAMqFKY4It9IeOeMim1Hwnr0gfevYXTsoedO9/HzXOW7eZg==
-X-Google-Smtp-Source: ABdhPJxwbKiqgQh9dT9H9OBSzoLIjrRzntPs1tZPO1lSGAewIbaW/qgghAlp5ZrsOCtoYUn85Izzo6o5QRA2hi/vNUU=
-X-Received: by 2002:a1f:99cc:: with SMTP id b195mr24782953vke.19.1618994815201;
- Wed, 21 Apr 2021 01:46:55 -0700 (PDT)
+        bh=z+iHXh65iVvo4np4Gau+UG0A6fVjF6OF4qe3iW5dlBQ=;
+        b=ADzx0+D6aRPoDWUr8Dfp7pydrDYQAyW8wz5srxNBPCkW0I6k+atJXVo88mvmKxefB1
+         4QEr6dTs0BIDEiHJ070vbNai2GnoJZ4HFolBY6WHtlQirPH9Tt9/yRE5IMLWNs1L5HXf
+         fk1PN1dgtEXB1SzTso2rzhdTUv0SsUEsqHPtrS+tUmcUsjDi6Me3Po4HiYUQsfj8bPud
+         06F/bzYwZvzCVopi1W7mSGNGL0QERl3BRtiXDiwt5zbqiCfc2jte+LtTaJ2MeugWCIhL
+         qSfsQv+R4xgZUMuLhiw6ATVGQocFpbbmNhChps3PzwxxNTPkY3ZrSh+Rucatyv2r5I98
+         tbXw==
+X-Gm-Message-State: AOAM531QMhfPxs2uzoCPCAPv08yP+qdDM2i8YSq9UvNGXciP0HKHGhPn
+        OE1Kko2in5IuN4kBWSLjuwYxgki5v2slhukGf2DwPQ==
+X-Google-Smtp-Source: ABdhPJzKNN7n6cCYVH22d3weYBRKCJ+tLw5cB/f+qRUy/RycEPUVGIGD6d0QfahjlqPmJZLfex7L+sVrp7mhdjHX1iA=
+X-Received: by 2002:a63:1665:: with SMTP id 37mr21367832pgw.31.1618996017511;
+ Wed, 21 Apr 2021 02:06:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210419150848.275757-1-groug@kaod.org> <20210420184226.GC1529659@redhat.com>
- <20210421093904.68653e3e@bahia.lan>
-In-Reply-To: <20210421093904.68653e3e@bahia.lan>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 21 Apr 2021 10:46:44 +0200
-Message-ID: <CAJfpegs+wb=5jm8SBcqLOJgHXt5h__NWppvNUej_Y7HX3fNvvg@mail.gmail.com>
-Subject: Re: [Virtio-fs] [PATCH] virtiofs: propagate sync() to file server
-To:     Greg Kurz <groug@kaod.org>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Robert Krawitz <rlk@redhat.com>
+References: <20210415084005.25049-1-songmuchun@bytedance.com>
+ <20210415084005.25049-9-songmuchun@bytedance.com> <YH6udU5rKmDcx5dY@localhost.localdomain>
+ <CAMZfGtXmDhkCWateAR0q_EgRPDmGh_=D-6UuhMd+Si6=TDvghQ@mail.gmail.com> <20210421073346.GA22456@linux>
+In-Reply-To: <20210421073346.GA22456@linux>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Wed, 21 Apr 2021 17:06:20 +0800
+Message-ID: <CAMZfGtWLkYPbz3F-QSNYLOgfwdcTA7iJxG6uvVLCoFtjaBt6nw@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v20 8/9] mm: memory_hotplug: disable
+ memmap_on_memory when hugetlb_free_vmemmap enabled
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
+        X86 ML <x86@kernel.org>, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        David Hildenbrand <david@redhat.com>,
+        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        fam.zheng@bytedance.com, linux-doc@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 21, 2021 at 9:39 AM Greg Kurz <groug@kaod.org> wrote:
+On Wed, Apr 21, 2021 at 3:33 PM Oscar Salvador <osalvador@suse.de> wrote:
 >
-> On Tue, 20 Apr 2021 14:42:26 -0400
-> Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> > On Mon, Apr 19, 2021 at 05:08:48PM +0200, Greg Kurz wrote:
-
-> > > @@ -179,6 +179,9 @@
-> > >   *  7.33
-> > >   *  - add FUSE_HANDLE_KILLPRIV_V2, FUSE_WRITE_KILL_SUIDGID, FATTR_KILL_SUIDGID
-> > >   *  - add FUSE_OPEN_KILL_SUIDGID
-> > > + *
-> > > + *  7.34
-> > > + *  - add FUSE_SYNCFS
-> > >   */
+> On Wed, Apr 21, 2021 at 11:41:24AM +0800, Muchun Song wrote:
+> > > Documentation/admin-guide/kernel-parameters.txt already provides an
+> > > explanation on memory_hotplug.memmap_on_memory parameter that states
+> > > that the feature cannot be enabled when using hugetlb-vmemmap
+> > > optimization.
 > > >
-> > >  #ifndef _LINUX_FUSE_H
-> > > @@ -214,7 +217,7 @@
-> > >  #define FUSE_KERNEL_VERSION 7
-> > >
-> > >  /** Minor version number of this interface */
-> > > -#define FUSE_KERNEL_MINOR_VERSION 33
-> > > +#define FUSE_KERNEL_MINOR_VERSION 34
-> >
-> > I have always wondered what's the usage of minor version and when should
-> > it be bumped up. IIUC, it is there to group features into a minor
-> > version. So that file server (and may be client too) can deny to not
-> > suppor client/server if a certain minimum version is not supported.
-> >
-> > So looks like you want to have capability to say it does not support
-> > an older client (<34) beacuse it wants to make sure SYNCFS is supported.
-> > Is that the reason to bump up the minor version or something else.
-> >
+> > > Users can always check whether the feature is enabled via
+> > > /sys/modules/memory_hotplug/parameters/memmap_on_memory.
 >
-> Ah... file history seemed to indicate that minor version was
-> bumped up each time a new request was added but I might be
-> wrong.
+> Heh, I realized this is not completely true.
+> Users can check whether the feature is __enabled__ by checking the sys fs,
+> but although it is enabled, it might not be effective.
 
-Yes, that's how it's done historically.   Turned out to be less useful
-in practice than having individual feature bits (through FUSE_INIT
-flags or through -ENOSYS).  But it doesn't hurt and adds s
-
-> > > @@ -957,4 +961,9 @@ struct fuse_removemapping_one {
-> > >  #define FUSE_REMOVEMAPPING_MAX_ENTRY   \
-> > >             (PAGE_SIZE / sizeof(struct fuse_removemapping_one))
-> > >
-> > > +struct fuse_syncfs_in {
-> > > +   /* Whether to wait for outstanding I/Os to complete */
-> > > +   uint32_t wait;
-> > > +};
-> > > +
-> >
-> > Will it make sense to add a flag and use only one bit to signal whether
-> > wait is required or not. Then rest of the 31bits in future can potentially
-> > be used for something else if need be.
-> >
->
-> I don't envision much changes in this API but yes, we can certainly
-> do that.
-
-I'm not even sure we need the "wait" flag at all.  Userspace won't be
-able to handle it, so it's just a gratuitous roundtrip at this point.
-
-I'd suggest just skipping FUSE_SYNCFS for wait == 0.
-
-That said, it might be a good idea to keep the flags argument in the
-protocol regardless...
+Right. I have done the test.
 
 >
-> > Looks like most of the fuse structures are 64bit aligned (except
-> > fuse_removemapping_in and now fuse_syncfs_in). I am wondering does
-> > it matter if it is 64bit aligned or not.
-> >
->
-> I don't know the required alignment but we already have a 32bit
-> aligned fuse structure:
->
-> struct fuse_removemapping_in {
->         /* number of fuse_removemapping_one follows */
->         uint32_t        count;
-> };
->
-> which is sent like this:
->
-> static int fuse_send_removemapping(struct inode *inode,
->                                    struct fuse_removemapping_in *inargp,
->                                    struct fuse_removemapping_one *remove_one)
-> {
-> ...
->         args.in_args[0].size = sizeof(*inargp);
->         args.in_args[0].value = inargp;
->
-> Again, maybe Miklos can clarify this ?
+> This might be due to a different number of reasons, vmemmap does not fully
+> span a PMD, the size we want to add spans more than a single memory block, etc.
 
-I don't think non-alignment would cause bugs.  But it definitely
-doesn't hurt to align to 64bit, so I'd suggest to do that.
+Agree. Thanks for your explanations.
 
-Thanks,
-Miklos
+>
+> That is what
+>
+> "Note that even when enabled, there are a few cases where the feature is not
+>  effective."
+>
+> is supposed to mean.
+>
+> Anyway, I did not change my opionion on this.
+>
+> Thanks
+>
+> --
+> Oscar Salvador
+> SUSE L3
