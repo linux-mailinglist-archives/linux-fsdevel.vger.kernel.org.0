@@ -2,123 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D0B43681BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 15:47:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EBB53681CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 15:48:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236621AbhDVNqN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Apr 2021 09:46:13 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:4826 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S236570AbhDVNqJ (ORCPT
+        id S236357AbhDVNt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Apr 2021 09:49:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55858 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232844AbhDVNt1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Apr 2021 09:46:09 -0400
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3A/fQciaxJuV6fXtLJbYteKrPwzL1zdoIgy1kn?=
- =?us-ascii?q?xilNYDZSddGVkN3roeQD2XbP+VIscVwDufTFAqmPRnvA6YV4iLN9AZ6OVBTr0V?=
- =?us-ascii?q?HHEKhM4YfuyDXrGWnf24dmv5tIXLN5DLTLbGRSqebfzE2GH807wN+BmZrY4Nv2?=
- =?us-ascii?q?63t2VwllZ+VBwm5Ce2WmO3Z7TgVHGpY1faD0jqV6jgC9cncaZNnTPAhmY8H/ob?=
- =?us-ascii?q?Tw9K7OUFovAh4LzE20hyq01biSKXOl9yZbfzRR4bpKywT4rzA=3D?=
-X-IronPort-AV: E=Sophos;i="5.82,242,1613404800"; 
-   d="scan'208";a="107477157"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 22 Apr 2021 21:45:31 +0800
-Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
-        by cn.fujitsu.com (Postfix) with ESMTP id 8FF6D4D0B8AC;
-        Thu, 22 Apr 2021 21:45:25 +0800 (CST)
-Received: from G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) by
- G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Thu, 22 Apr 2021 21:45:26 +0800
-Received: from irides.mr.mr.mr (10.167.225.141) by
- G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.2 via Frontend Transport; Thu, 22 Apr 2021 21:45:25 +0800
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-fsdevel@vger.kernel.org>
-CC:     <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
-        <willy@infradead.org>, <jack@suse.cz>, <viro@zeniv.linux.org.uk>,
-        <linux-btrfs@vger.kernel.org>, <david@fromorbit.com>, <hch@lst.de>,
-        <rgoldwyn@suse.de>, Ritesh Harjani <riteshh@linux.ibm.com>
-Subject: [PATCH v3 3/3] fsdax: Output address in dax_iomap_pfn() and rename it
-Date:   Thu, 22 Apr 2021 21:45:01 +0800
-Message-ID: <20210422134501.1596266-4-ruansy.fnst@fujitsu.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20210422134501.1596266-1-ruansy.fnst@fujitsu.com>
-References: <20210422134501.1596266-1-ruansy.fnst@fujitsu.com>
+        Thu, 22 Apr 2021 09:49:27 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D11CAC06138B
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 06:48:52 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id r9so68892875ejj.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 06:48:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NPXeKwdFlap14vs28Y4vSZZ6ciyFAPkqMaUPkDvcMVI=;
+        b=g2Pegb2i5gH3n3l6hJjATWdi3iSRPPKWPvRDvTEh8fnjREBUy3Z+0lTtD7iRSCwtpO
+         S6dk13ah5C7pNR+BxWjdF6CJEI1hJyjvHx1Excbh3MwvJEZkYb01U+PfxKwolPBMnMsv
+         Uf4wboM3zz38RxIWdXdh/+f4aD7yUPbRZnGPDyct+BqSiufuihPwMrQXYU56rZ/HSMho
+         hjJXDE1oQRmqQ9/P6odaumqtoOOIFhSqdg2yqS/k4Hs4Dl8RzQvdHOaurHCemzRmIpb4
+         AARZ71ZmZjBKfLp2YsS4SNt/r/SQ6xa94MiIPNffXi+ZAa3e5efNCDW1v6g23jdlXSnH
+         eigw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NPXeKwdFlap14vs28Y4vSZZ6ciyFAPkqMaUPkDvcMVI=;
+        b=fzvkVjvNoeTgGCq+NHNV7AfHaHCueWkKJALsoDO/DYYakmltneAD2FdcEk31SyTCp2
+         elskiGhQ7ry1TAjivkE+29pRVUk3AeN5lTjp3dkXGLgogsNOK8wA+7T0m02F+0RNa15b
+         jUw4rPZK8aoIgdyhDVL5yUc92GPhs48qzjJVkODOy6kEjgJG3VeGhGQHCRjYgpb9uBiN
+         ircAi38NIS+RBzyKh9UMrbU+hnGrDECtz3qGBbXuySLxFUcMbhBqzdHTDyXna56juB/A
+         0ELjuXTpgXACTTtlqm1UrOWUdJPRb+Hp63BCFFBOONi7Xx8NY2SEcEbQqPLSDijQiNUl
+         SwtA==
+X-Gm-Message-State: AOAM5311klNusEUmnVZD/AKRA0CFUpDubeQLU1qoB8H7pBkQ5xjF03zR
+        ySWW5Rb/WgvGI2oLc9bne5Fup6vVxyzJYBNVsXTS
+X-Google-Smtp-Source: ABdhPJzNjMPp6FcBf0oyaEMYIveL5pHdZ5Je333l9k3fLxHGpk6Jx7BPpTUP8ch+2YwXiWuNcvvo3mw84daOnYGoymk=
+X-Received: by 2002:a17:907:16a3:: with SMTP id hc35mr3468498ejc.488.1619099331254;
+ Thu, 22 Apr 2021 06:48:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 8FF6D4D0B8AC.A52EF
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
-X-Spam-Status: No
+References: <20210421171446.785507-1-omosnace@redhat.com> <CAHC9VhTFPHO7YtTxSZNcEZwoy4R3RXVu-4RrAHRtv8BVEw-zGA@mail.gmail.com>
+ <CAFqZXNts94w-hMhzCjKW5sHrVw2pw2w7cMQ3+Q2suJ_XUUpUwg@mail.gmail.com>
+In-Reply-To: <CAFqZXNts94w-hMhzCjKW5sHrVw2pw2w7cMQ3+Q2suJ_XUUpUwg@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 22 Apr 2021 09:48:41 -0400
+Message-ID: <CAHC9VhS8F-3X6p2pmjvd0ripnpf=oRAA0G5bmE4yrdi-4sDyDw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] selinux,anon_inodes: Use a separate SELinux class
+ for each type of anon inode
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add address output in dax_iomap_pfn() in order to perform a memcpy() in
-CoW case.  Since this function both output address and pfn, rename it to
-dax_iomap_direct_access().
+On Thu, Apr 22, 2021 at 7:40 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> On Wed, Apr 21, 2021 at 10:38 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Wed, Apr 21, 2021 at 1:14 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > >
+> > > This series aims to correct a design flaw in the original anon_inode
+> > > SELinux support that would make it hard to write policies for anonymous
+> > > inodes once more types of them are supported (currently only userfaultfd
+> > > inodes are). A more detailed rationale is provided in the second patch.
+> > >
+> > > The first patch extends the anon_inode_getfd_secure() function to accept
+> > > an additional numeric identifier that represents the type of the
+> > > anonymous inode being created, which is passed to the LSMs via
+> > > security_inode_init_security_anon().
+> > >
+> > > The second patch then introduces a new SELinux policy capability that
+> > > allow policies to opt-in to have a separate class used for each type of
+> > > anon inode. That means that the "old way" will still
+> >
+> > ... will what? :)
+>
+> Whoops, I thought I had gone over all the text enough times, but
+> apparently not :) It should have said something along the lines of:
+>
+> ...will still work and will be used by default.
 
-Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
----
- fs/dax.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+That's what I figured from my quick glance at the code, but I wanted
+to make sure.
 
-diff --git a/fs/dax.c b/fs/dax.c
-index f99e33de2036..48a97905c0c3 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -998,8 +998,8 @@ static sector_t dax_iomap_sector(struct iomap *iomap, loff_t pos)
- 	return (iomap->addr + (pos & PAGE_MASK) - iomap->offset) >> 9;
- }
- 
--static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
--			 pfn_t *pfnp)
-+static int dax_iomap_direct_access(struct iomap *iomap, loff_t pos, size_t size,
-+		void **kaddr, pfn_t *pfnp)
- {
- 	const sector_t sector = dax_iomap_sector(iomap, pos);
- 	pgoff_t pgoff;
-@@ -1011,11 +1011,13 @@ static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
- 		return rc;
- 	id = dax_read_lock();
- 	length = dax_direct_access(iomap->dax_dev, pgoff, PHYS_PFN(size),
--				   NULL, pfnp);
-+				   kaddr, pfnp);
- 	if (length < 0) {
- 		rc = length;
- 		goto out;
- 	}
-+	if (!pfnp)
-+		goto out_check_addr;
- 	rc = -EINVAL;
- 	if (PFN_PHYS(length) < size)
- 		goto out;
-@@ -1025,6 +1027,12 @@ static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
- 	if (length > 1 && !pfn_t_devmap(*pfnp))
- 		goto out;
- 	rc = 0;
-+
-+out_check_addr:
-+	if (!kaddr)
-+		goto out;
-+	if (!*kaddr)
-+		rc = -EFAULT;
- out:
- 	dax_read_unlock(id);
- 	return rc;
-@@ -1389,7 +1397,7 @@ static vm_fault_t dax_fault_actor(struct vm_fault *vmf, pfn_t *pfnp,
- 		return pmd ? VM_FAULT_FALLBACK : VM_FAULT_SIGBUS;
- 	}
- 
--	err = dax_iomap_pfn(iomap, pos, size, &pfn);
-+	err = dax_iomap_direct_access(iomap, pos, size, NULL, &pfn);
- 	if (err)
- 		return pmd ? VM_FAULT_FALLBACK : dax_fault_return(err);
- 
+> > I think it would be a very good idea if you could provide some
+> > concrete examples of actual policy problems encountered using the
+> > current approach.  I haven't looked at these patches very seriously
+> > yet, but my initial reaction is not "oh yes, we definitely need this".
+>
+> An example is provided in patch 2. It is a generalized problem that we
+> would eventually run into in Fedora policy (at least) with the
+> unconfined_domain_type attribute and so far only hypothetical future
+> types of anon inodes.
+
+Yes, I read the example you provided in patch 2, but it was still a
+little too abstract for my liking.  I have the same concern that
+Stephen mentioned, I was just giving you an opportunity to show that
+in this case the additional object classes were warranted.
+
 -- 
-2.31.1
-
-
-
+paul moore
+www.paul-moore.com
