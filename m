@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F16836764B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 02:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77B6636764D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 02:40:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244255AbhDVAjN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Apr 2021 20:39:13 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:40601 "EHLO
+        id S1343948AbhDVAjP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Apr 2021 20:39:15 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:40629 "EHLO
         mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235110AbhDVAjM (ORCPT
+        with ESMTP id S235217AbhDVAjO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Apr 2021 20:39:12 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210422003837epoutp017f65f81eeb2aece3d74fb461828a2f68~4ByQRS_i21755917559epoutp01s
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 00:38:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210422003837epoutp017f65f81eeb2aece3d74fb461828a2f68~4ByQRS_i21755917559epoutp01s
+        Wed, 21 Apr 2021 20:39:14 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210422003839epoutp0164d6b60376dc2aa354868f63229a11e4~4ByRzhmIY1755917559epoutp01v
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 00:38:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210422003839epoutp0164d6b60376dc2aa354868f63229a11e4~4ByRzhmIY1755917559epoutp01v
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1619051917;
-        bh=QESwoHRTPFqJRs9XUAeL7/T3DFC29aEbLZHyoK/v5Vw=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=FAX9WDGgVxjR089BXyhfz7efVOMwuHKNNnt51R+bKp+cWZbo5afgMb7wBLm5zMWw8
-         IsvT8XHnsj0Ndjlnd6TB0VYybfw2uo4Kq4vMoYuRE6fs3WifRrgMNtUsgLaGaIsCsA
-         PLgXIaY9sJynZ3QTraNRlIRiQCmZ+0PUCcXPTaFs=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210422003836epcas1p195b2b8435238c8bfc94c2d300aafe3ee~4ByPvI7Et0643506435epcas1p1H;
+        s=mail20170921; t=1619051919;
+        bh=8oyUU47YhVZBDr3YrD13x6gtMMa62XXjBdzT/ksA+Pk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PPpMdIf7Ue2t6rpkDrwtjUwu7mXnTi4WOK9yBVQ7iJLXHJTLMQRTwTwlJPUKzmo6h
+         MptzNntmsITXbXYZtnHQq76Mb4Q23TC1O96zOoJ8nQB5Tn+pW+lHmoZhczAplu1KDq
+         PqS3DKvf7/QWhtFfNfzebOdtXbBIoDktPU1wEPlM=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20210422003838epcas1p36f7c05de18b970b3e47359d7ea16d872~4ByRF-0KE0971509715epcas1p3g;
+        Thu, 22 Apr 2021 00:38:38 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.159]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4FQdnn1Xq9z4x9Px; Thu, 22 Apr
+        2021 00:38:37 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        13.91.09701.C85C0806; Thu, 22 Apr 2021 09:38:37 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20210422003836epcas1p391ed30aed1cf7b010b93c32fc1aebe89~4ByPZOKMw1133711337epcas1p3J;
         Thu, 22 Apr 2021 00:38:36 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.161]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4FQdnl6cCmz4x9Pw; Thu, 22 Apr
-        2021 00:38:35 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        1E.42.09578.B85C0806; Thu, 22 Apr 2021 09:38:35 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210422003835epcas1p246c40c6a6bbc0e9f5d4ccf9b69bef0d7~4ByOMscX02421024210epcas1p2N;
-        Thu, 22 Apr 2021 00:38:35 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210422003835epsmtrp2ae5e14653a4575c8be9a186ef2487034~4ByOLT2nf1951619516epsmtrp2P;
-        Thu, 22 Apr 2021 00:38:35 +0000 (GMT)
-X-AuditID: b6c32a35-fb9ff7000000256a-51-6080c58b42a4
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210422003836epsmtrp16c00324903b89339a6e158ddf7403905~4ByPYL1hn2297822978epsmtrp1e;
+        Thu, 22 Apr 2021 00:38:36 +0000 (GMT)
+X-AuditID: b6c32a36-647ff700000025e5-18-6080c58c76f4
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BB.BA.08637.B85C0806; Thu, 22 Apr 2021 09:38:35 +0900 (KST)
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        96.E9.08163.C85C0806; Thu, 22 Apr 2021 09:38:36 +0900 (KST)
 Received: from localhost.localdomain (unknown [10.88.103.87]) by
         epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210422003834epsmtip14654362f65e6f739be77df0492227629~4ByN3c-wv1957719577epsmtip1K;
-        Thu, 22 Apr 2021 00:38:34 +0000 (GMT)
+        20210422003836epsmtip1f9f7c1b5ef7e2723859246e20961b984~4ByPFnduQ1901119011epsmtip1T;
+        Thu, 22 Apr 2021 00:38:36 +0000 (GMT)
 From:   Namjae Jeon <namjae.jeon@samsung.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     smfrench@gmail.com, senozhatsky@chromium.org, hyc.lee@gmail.com,
@@ -56,432 +56,264 @@ Cc:     smfrench@gmail.com, senozhatsky@chromium.org, hyc.lee@gmail.com,
         ronniesahlberg@gmail.com, aurelien.aptel@gmail.com,
         aaptel@suse.com, sandeen@sandeen.net, dan.carpenter@oracle.com,
         colin.king@canonical.com, rdunlap@infradead.org,
-        willy@infradead.org, Namjae Jeon <namjae.jeon@samsung.com>
-Subject: [PATCH v2 00/10] cifsd: introduce new SMB3 kernel server
-Date:   Thu, 22 Apr 2021 09:28:14 +0900
-Message-Id: <20210422002824.12677-1-namjae.jeon@samsung.com>
+        willy@infradead.org, Namjae Jeon <namjae.jeon@samsung.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH v2 01/10] cifsd: add document
+Date:   Thu, 22 Apr 2021 09:28:15 +0900
+Message-Id: <20210422002824.12677-2-namjae.jeon@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmvm730YYEg0sPjS0a355msTj++i+7
+In-Reply-To: <20210422002824.12677-1-namjae.jeon@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBJsWRmVeSWpSXmKPExsWy7bCmgW7v0YYEg4unmCwa355msTj++i+7
         xe/VvWwWr/9NZ7E4PWERk8XK1UeZLK7df89usWfvSRaLy7vmsFn8mF5v8fYOUEVv3ydWi9Yr
-        Wha7Ny5is3jz4jCbxfm/x1ktfv+Yw+Yg6DGroZfNY3bDRRaPnbPusntsXqHlsftmA5vHx6e3
-        WDz6tqxi9Niy+CGTx/otV1k8Pm+S89j05C1TAHdUjk1GamJKapFCal5yfkpmXrqtkndwvHO8
-        qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0E9KCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul
-        1IKUnAJDgwK94sTc4tK8dL3k/FwrQwMDI1OgyoScjLPvOpgLNnUzVjTfX8/cwHgoqYuRk0NC
-        wETi0JENbF2MXBxCAjsYJS5/2cIK4XxilFjQsIMdwvnGKLHixEcWmJZLKw8xQiT2MkrcW3Of
-        Ea5ld8MyoGEcHGwC2hJ/toiCmCIC9hK3F/uAlDALPGOSOPz3D9ggYQFHiUOvJjCD2CwCqhK/
-        dp5gBLF5BWwk7uzqYYZYJi+xesMBZpBmCYGFHBJ/5vRAXeEi8XLSMzYIW1ji1fEt7BC2lMTn
-        d3vBbpAQqJb4uB9qTgejxIvvthC2scTN9RtYQUqYBTQl1u/ShwgrSuz8PRfsBGYBPol3X3tY
-        IabwSnS0CUGUqEr0XTrMBGFLS3S1f4Ba6iFx+8E7sLiQQKzEl5a7bBMYZWchLFjAyLiKUSy1
-        oDg3PbXYsMAQOZI2MYLTqZbpDsaJbz/oHWJk4mA8xCjBwawkwru2uCFBiDclsbIqtSg/vqg0
-        J7X4EKMpMLgmMkuJJucDE3peSbyhqZGxsbGFiZm5mamxkjhvunN1gpBAemJJanZqakFqEUwf
-        EwenVAPTqSkd+RsET0+uNdbecmTvHr6qf8amEXtj+HY537/aMDHj3MT15UYT4lUfnin9sSLj
-        1P34gG1nBJ8s2C/1aCb3pRNRa3983fxd5dAMwVCuLYt/hvTvtTN1iFZ6syt2/tW9KyvCYp58
-        MZPuyWmU2fIve0ZqyL6yLd9vTwhUUdq26H99bMismtKo7K7ml5L9gQ8lLk7d13HXTOlGg5Vv
-        /dwdj1efmNPez266akbV79oDPa/umt6/NvvIg6cTVVetlEh+8PTTjT3KER8lmRqPh96RPxiv
-        YftRf+ORq5MPJN54dqFBNvW/lWWgKmNnYvKsE+1vdi1nYNaR3tF/bP3dK+v965ZkZyctv//W
-        0XeSkPPGYgElluKMREMt5qLiRADx9SDHMAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsWy7bCSnG730YYEg+797BaNb0+zWBx//Zfd
-        4vfqXjaL1/+ms1icnrCIyWLl6qNMFtfuv2e32LP3JIvF5V1z2Cx+TK+3eHsHqKK37xOrResV
-        LYvdGxexWbx5cZjN4vzf46wWv3/MYXMQ9JjV0MvmMbvhIovHzll32T02r9Dy2H2zgc3j49Nb
-        LB59W1YxemxZ/JDJY/2WqywenzfJeWx68pYpgDuKyyYlNSezLLVI3y6BK+Psuw7mgk3djBXN
-        99czNzAeSupi5OSQEDCRuLTyEGMXIxeHkMBuRomDFxoYIRLSEsdOnGHuYuQAsoUlDh8uBgkL
-        CXxglLh+TwMkzCagLfFniyhIWETAUeLE1EVgY5gFfjBJbHt2nwkkIQyUOPRqAjOIzSKgKvFr
-        5wmw8bwCNhJ3dvUwQ6ySl1i94QDzBEaeBYwMqxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS9ZLz
-        czcxgsNbS3MH4/ZVH/QOMTJxMB5ilOBgVhLhXVvckCDEm5JYWZValB9fVJqTWnyIUZqDRUmc
-        90LXyXghgfTEktTs1NSC1CKYLBMHp1QDE7v0Dg9utuPRT06nrQ1fK6V3Y09JbGJkglkZJ0dC
-        V+yxQrGVrP/ajx6T2+6/d5r6Hbk/NcvLIlSvl9ncbP4TrLDnUunSD+/UeO8tWxXNcD4viKv6
-        knj2P+GjvGuySgOWXim7HLNYZuYFnnufNRokW2wuvlr8tnNyFL9nHKdPmgHn2edK1haaHgHR
-        Gf8vcdWV8dZ8uCp0z+TWzw4WZ8FfvvUbruzVu/FEROXsnwUMsr++TC+ecVYy3UfS83KR9vc/
-        zCwndAysk9oiGszE9VkNZomeLZjX/Yzd/fkczxmem8xti0vrmVZaVc5P/JhqVvnOgkkxKOzn
-        +hRZ/8c/J/ZO/pl/J3jh9kln+Oztgi2UWIozEg21mIuKEwEeofQo3gIAAA==
-X-CMS-MailID: 20210422003835epcas1p246c40c6a6bbc0e9f5d4ccf9b69bef0d7
+        Wha7Ny5is1j7+TG7xZsXh9ksbk2cz2Zx/u9xVovfP+awOQh7zGroZfOY3XCRxWPnrLvsHptX
+        aHnsvtnA5tG64y+7x8ent1g8+rasYvTYsvghk8f6LVdZPD5vkvPY9OQtUwBPVI5NRmpiSmqR
+        Qmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtCLSgpliTmlQKGAxOJi
+        JX07m6L80pJUhYz84hJbpdSClJwCQ4MCveLE3OLSvHS95PxcK0MDAyNToMqEnIzOKQ0sBb+c
+        K9o3P2FpYOw27WLk5JAQMJHY/H0LUxcjF4eQwA5GiTfnd7BAOJ8YJb49n8gM4XxmlPjS8p0R
+        pmVtxzlGiMQuRoldK24gtOxaMpWti5GDg01AW+LPFlEQU0TAXuL2Yh+QEmaBQ8wSX6/0gQ0S
+        FtCVOLscZDcnB4uAqsSp/0fZQWxeARuJ9te/oJbJS6zecIAZxOYUsJX4tWEl2GIJgQscEq+u
+        9bJAFLlI3F26kgnCFpZ4dXwLO4QtJfGyv40d5AgJgWqJj/uZIcIdjBIvvttC2MYSN9dvYAUp
+        YRbQlFi/Sx8irCix8/dcsBOYBfgk3n3tYYWYwivR0SYEUaIq0XfpMNRSaYmu9g9QSz0kjj5v
+        ZoeEyARGiQ0T/7FOYJSbhbBhASPjKkax1ILi3PTUYsMCI+QI28QITsJaZjsYJ739oHeIkYmD
+        8RCjBAezkgjv2uKGBCHelMTKqtSi/Pii0pzU4kOMpsCwm8gsJZqcD8wDeSXxhqZGxsbGFiZm
+        5mamxkrivOnO1QlCAumJJanZqakFqUUwfUwcnFINTIusAuMuXjQ9+GpB2fzDbY0zXNmXvvni
+        2Zc/J0Wy5VCB4iuzW6+mntcp4WkyyHVleCPObH0+Xz/Z7njIe9mb0rGqrILcmronk0JCzv/b
+        UD15O59KeULdrB3CIdkTWgNYbI4GB8l8XiX/fkr7lQwerXX977yWVSdIuv+UC7oeznMr9sEd
+        94gq9eOKp+13hp21YJxbsPvPtpLVjtNz66rKd2v+Tfxz049l5R/RvSWW6QEL+r84z+901vzr
+        vfux1rfkaxts/JW0F8tJNU1jD5A/kX9ZxdrIRUn6XPbaL7r+z442J/qtmXH38vHdkwqkzrTd
+        1opU+xP82Va/zMcgftX3Loc/W9sjnd5u6k+z4tdQYinOSDTUYi4qTgQAyXJBQEsEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsWy7bCSnG7P0YYEg1WzJS0a355msTj++i+7
+        xe/VvWwWr/9NZ7E4PWERk8XK1UeZLK7df89usWfvSRaLy7vmsFn8mF5v8fYOUEVv3ydWi9Yr
+        Wha7Ny5is1j7+TG7xZsXh9ksbk2cz2Zx/u9xVovfP+awOQh7zGroZfOY3XCRxWPnrLvsHptX
+        aHnsvtnA5tG64y+7x8ent1g8+rasYvTYsvghk8f6LVdZPD5vkvPY9OQtUwBPFJdNSmpOZllq
+        kb5dAldG55QGloJfzhXtm5+wNDB2m3YxcnJICJhIrO04x9jFyMUhJLCDUWLjsxNsEAlpiWMn
+        zjB3MXIA2cIShw8XQ9R8YJS4dWM6K0icTUBb4s8WUZByEQFHiRNTF4HNYRa4xizxbfsERpCE
+        sICuxNnlW5hAbBYBVYlT/4+yg9i8AjYS7a9/MULskpdYveEAM4jNKWAr8WvDSrC4EFBN0/Sr
+        LBMY+RYwMqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAiOFi2tHYx7Vn3QO8TIxMF4
+        iFGCg1lJhHdtcUOCEG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfjhQTSE0tSs1NTC1KLYLJM
+        HJxSDUy2PZsWlP5Y/9bMjynb4MbEpKdyBs7Mm2eZzv3y40TL+R4t1epQnTvyMk/fccfoO8md
+        U/jop5Nf51/dy/TwtUJdxrkCxotbjuvYWJRp13fJvArPy7QzPVxtfrHatIz9QpRfyL6FvYpv
+        L7wtvCnk/Ggb91Vrabu0ZNueyAtzpdTrZ26X2/GxeeJ+yT5t0ztBk97I/UwTkfZ6yNUSFbHu
+        zaI/y9hrNbW2M5cp2z9S7Xbo4Cj/GHhNl/2L4K6Yc9Wfyqb5BmSL8eqc12RRLTqwlb1nfv49
+        6ZVds44s/1Jx++7MgKv/JRacK5Bd8NuaLZV7iqWpa9Q2tRQnS7vGo5s4OmJ4amX8D6a1ph74
+        +n2hEktxRqKhFnNRcSIANpBzTQUDAAA=
+X-CMS-MailID: 20210422003836epcas1p391ed30aed1cf7b010b93c32fc1aebe89
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210422003835epcas1p246c40c6a6bbc0e9f5d4ccf9b69bef0d7
-References: <CGME20210422003835epcas1p246c40c6a6bbc0e9f5d4ccf9b69bef0d7@epcas1p2.samsung.com>
+X-CMS-RootMailID: 20210422003836epcas1p391ed30aed1cf7b010b93c32fc1aebe89
+References: <20210422002824.12677-1-namjae.jeon@samsung.com>
+        <CGME20210422003836epcas1p391ed30aed1cf7b010b93c32fc1aebe89@epcas1p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is the patch series for cifsd(ksmbd) kernel server.
+This adds a document describing ksmbd design, key features and usage.
 
-What is cifsd(ksmbd) ?
-======================
-
-The SMB family of protocols is the most widely deployed
-network filesystem protocol, the default on Windows and Macs (and even
-on many phones and tablets), with clients and servers on all major
-operating systems, but lacked a kernel server for Linux. For many
-cases the current userspace server choices were suboptimal
-either due to memory footprint, performance or difficulty integrating
-well with advanced Linux features.
-
-ksmbd is a new kernel module which implements the server-side of the SMB3 protocol.
-The target is to provide optimized performance, GPLv2 SMB server, better
-lease handling (distributed caching). The bigger goal is to add new
-features more rapidly (e.g. RDMA aka "smbdirect", and recent encryption
-and signing improvements to the protocol) which are easier to develop
-on a smaller, more tightly optimized kernel server than for example
-in Samba.  The Samba project is much broader in scope (tools, security services,
-LDAP, Active Directory Domain Controller, and a cross platform file server
-for a wider variety of purposes) but the user space file server portion
-of Samba has proved hard to optimize for some Linux workloads, including
-for smaller devices. This is not meant to replace Samba, but rather be
-an extension to allow better optimizing for Linux, and will continue to
-integrate well with Samba user space tools and libraries where appropriate.
-Working with the Samba team we have already made sure that the configuration
-files and xattrs are in a compatible format between the kernel and
-user space server.
-
-
-Architecture
-============
-
-               |--- ...
-       --------|--- ksmbd/3 - Client 3
-       |-------|--- ksmbd/2 - Client 2
-       |       |         ____________________________________________________
-       |       |        |- Client 1                                          |
-<--- Socket ---|--- ksmbd/1   <<= Authentication : NTLM/NTLM2, Kerberos      |
-       |       |      | |     <<= SMB engine : SMB2, SMB2.1, SMB3, SMB3.0.2, |
-       |       |      | |                SMB3.1.1                            |
-       |       |      | |____________________________________________________|
-       |       |      |
-       |       |      |--- VFS --- Local Filesystem
-       |       |
-KERNEL |--- ksmbd/0(forker kthread)
----------------||---------------------------------------------------------------
-USER           ||
-               || communication using NETLINK
-               ||  ______________________________________________
-               || |                                              |
-        ksmbd.mountd <<= DCE/RPC(srvsvc, wkssvc, samr, lsarpc)   |
-               ^  |  <<= configure shares setting, user accounts |
-               |  |______________________________________________|
-               |
-               |------ smb.conf(config file)
-               |
-               |------ ksmbdpwd.db(user account/password file)
-                            ^
-  ksmbd.adduser ---------------|
-
-The subset of performance related operations(open/read/write/close etc.) belong
-in kernelspace(ksmbd) and the other subset which belong to operations(DCE/RPC,
-user account/share database) which are not really related with performance are
-handled in userspace(ksmbd.mountd).
-
-When the ksmbd.mountd is started, It starts up a forker thread at initialization
-time and opens a dedicated port 445 for listening to SMB requests. Whenever new
-clients make request, Forker thread will accept the client connection and fork
-a new thread for dedicated communication channel between the client and
-the server.
-
-
-ksmbd feature status
-====================
-
-============================== =================================================
-Feature name                   Status
-============================== =================================================
-Dialects                       Supported. SMB2.1 SMB3.0, SMB3.1.1 dialects
-                               (intentionally excludes security vulnerable SMB1 dialect).
-Auto Negotiation               Supported.
-Compound Request               Supported.
-Oplock Cache Mechanism         Supported.
-SMB2 leases(v1 lease)          Supported.
-Directory leases(v2 lease)     Planned for future.
-Multi-credits                  Supported.
-NTLM/NTLMv2                    Supported.
-HMAC-SHA256 Signing            Supported.
-Secure negotiate               Supported.
-Signing Update                 Supported.
-Pre-authentication integrity   Supported.
-SMB3 encryption(CCM, GCM)      Supported. (CCM and GCM128 supported, GCM256 in progress)
-SMB direct(RDMA)               Partially Supported. SMB3 Multi-channel is required
-                               to connect to Windows client.
-SMB3 Multi-channel             In Progress.
-SMB3.1.1 POSIX extension       Supported.
-ACLs                           Partially Supported. only DACLs available, SACLs
-                               (auditing) is planned for the future. For
-                               ownership (SIDs) ksmbd generates random subauth
-                               values(then store it to disk) and use uid/gid
-                               get from inode as RID for local domain SID.
-                               The current acl implementation is limited to
-                               standalone server, not a domain member.
-                               Integration with Samba tools is being worked on to
-                               allow future support for running as a domain member.
-Kerberos                       Supported.
-Durable handle v1,v2           Planned for future.
-Persistent handle              Planned for future.
-SMB2 notify                    Planned for future.
-Sparse file support            Supported.
-DCE/RPC support                Partially Supported. a few calls(NetShareEnumAll,
-                               NetServerGetInfo, SAMR, LSARPC) that are needed 
-                               for file server handled via netlink interface from
-                               ksmbd.mountd. Additional integration with Samba
-                               tools and libraries via upcall is being investigated
-                               to allow support for additional DCE/RPC management
-                               calls (and future support for Witness protocol e.g.)
-============================== =================================================
-
-All features required as file server are currently implemented in ksmbd.
-In particular, the implementation of SMB Direct(RDMA) is only currently
-possible with ksmbd (among Linux servers)
-
-
-Stability
-=========
-
-It has been proved to be stable. A significant amount of xfstests pass and
-are run regularly from Linux to Linux:
-
-  http://smb3-test-rhel-75.southcentralus.cloudapp.azure.com/#/builders/8/builds/32
-
-In addition regression tests using the broadest SMB3 functional test suite
-(Samba's "smbtorture") are run on every checkin. 
-It has already been used by many other open source toolkits and commercial companies
-that need NAS functionality. Their issues have been fixed and contributions are
-applied into ksmbd. Ksmbd has been well tested and verified in the field and market.
-
-
-Mailing list and repositories
-=============================
- - linux-cifsd-devel@lists.sourceforge.net
- - https://github.com/smfrench/smb3-kernel/tree/cifsd-for-next
- - https://github.com/cifsd-team/cifsd (out-of-tree)
- - https://github.com/cifsd-team/ksmbd-tools
-
-
-How to run ksmbd 
-================
-
-   a. Download ksmbd-tools and compile them.
-	- https://github.com/cifsd-team/ksmbd-tools
-
-   b. Create user/password for SMB share.
-
-	# mkdir /etc/ksmbd/
-	# ksmbd.adduser -a <Enter USERNAME for SMB share access>
-
-   c. Create /etc/ksmbd/smb.conf file, add SMB share in smb.conf file
-	- Refer smb.conf.example and Documentation/configuration.txt
-	  in ksmbd-tools
-
-   d. Insert ksmbd.ko module
-
-	# insmod ksmbd.ko
-
-   e. Start ksmbd user space daemon
-	# ksmbd.mountd
-
-   f. Access share from Windows or Linux using SMB 
-       e.g. "mount -t cifs //server/share /mnt ..."
-
-
-v2:
- - fix an error code in smb2_read(). (Dan Carpenter)
- - fix error handling in ksmbd_server_init() (Dan Carpenter)
- - remove redundant assignment to variable err. (Colin Ian King)
- - remove unneeded macros.
- - fix wrong use of rw semaphore in __session_create().
- - use kmalloc() for small allocations.
- - add the check to work file lock and rename behaviors like Windows
-   unless POSIX extensions are negotiated.
- - clean-up codes using chechpatch.pl --strict.
- - merge time_wrappers.h into smb_common.h.
- - fix wrong prototype in comment (kernel test robot).
- - fix implicit declaration of function 'groups_alloc' (kernel test robot).
- - fix implicit declaration of function 'locks_alloc_lock' (kernel test robot).
- - remove smack inherit leftovers.
- - remove calling d_path in error paths.
- - handle unhashed dentry in ksmbd_vfs_mkdir.
- - use file_inode() instead of d_inode().
- - remove useless error handling in ksmbd_vfs_read.
- - use xarray instead of linked list for tree connect list.
- - remove stale prototype and variables.
- - fix memory leak when loop ends (coverity-bot, Muhammad Usama Anjum).
- - use kfree to free memory allocated by kmalloc or kzalloc (Muhammad Usama Anjum).
- - fix memdup.cocci warnings (kernel test robot)
- - remove wrappers of kvmalloc/kvfree.
- - change the reference to configuration.txt (Mauro Carvalho Chehab).
- - prevent a integer overflow in wm_alloc().
- - select SG_POOL for SMB_SERVER_SMBDIRECT. (Zhang Xiaoxu).
- - remove unused including <linux/version.h> (Tian Tao).
- - declare ida statically.
- - add the check if parent is stable by unexpected rename.
- - get parent dentry from child in ksmbd_vfs_remove_file().
- - re-implement ksmbd_vfs_kern_path.
- - fix reference count decrement of unclaimed file in __ksmbd_lookup_fd.
- - remove smb2_put_name(). (Marios Makassikis).
- - remove unused smberr.h, nterr.c and netmisc.c.
- - fix potential null-ptr-deref in smb2_open() (Marios Makassikis).
- - use d_inode().
- - remove the dead code of unimplemented durable handle.
- - use the generic one in lib/asn1_decoder.c
-
-v1:
- - fix a handful of spelling mistakes (Colin Ian King)
- - fix a precedence bug in parse_dacl() (Dan Carpenter)
- - fix a IS_ERR() vs NULL bug (Dan Carpenter)
- - fix a use after free on error path  (Dan Carpenter)
- - update cifsd.rst Documentation
- - remove unneeded FIXME comments
- - fix static checker warnings (Dan Carpenter)
- - fix WARNING: unmet direct dependencies detected for CRYPTO_ARC4 (Randy Dunlap)
- - uniquify extract_sharename() (Stephen Rothwell)
- - fix WARNING: document isn't included in any toctree (Stephen Rothwell)
- - fix WARNING: Title overline too short (Stephen Rothwell)
- - fix warning: variable 'total_ace_size' and 'posix_ccontext'set but not used (kernel test rotbot)
- - fix incorrect function comments (kernel test robot)
-
-Namjae Jeon (10):
-  cifsd: add document
-  cifsd: add server handler
-  cifsd: add trasport layers
-  cifsd: add authentication
-  cifsd: add smb3 engine part 1
-  cifsd: add smb3 engine part 2
-  cifsd: add oplock/lease cache mechanism
-  cifsd: add file operations
-  cifsd: add Kconfig and Makefile
-  MAINTAINERS: add cifsd kernel server
-
- Documentation/filesystems/cifs/cifsd.rst |  152 +
- Documentation/filesystems/cifs/index.rst |   10 +
- Documentation/filesystems/index.rst      |    2 +-
- MAINTAINERS                              |   12 +-
- fs/Kconfig                               |    1 +
- fs/Makefile                              |    1 +
- fs/cifsd/Kconfig                         |   67 +
- fs/cifsd/Makefile                        |   17 +
- fs/cifsd/asn1.c                          |  352 +
- fs/cifsd/asn1.h                          |   29 +
- fs/cifsd/auth.c                          | 1323 ++++
- fs/cifsd/auth.h                          |   90 +
- fs/cifsd/buffer_pool.c                   |  264 +
- fs/cifsd/buffer_pool.h                   |   20 +
- fs/cifsd/connection.c                    |  411 ++
- fs/cifsd/connection.h                    |  208 +
- fs/cifsd/crypto_ctx.c                    |  286 +
- fs/cifsd/crypto_ctx.h                    |   77 +
- fs/cifsd/glob.h                          |   64 +
- fs/cifsd/ksmbd_server.h                  |  283 +
- fs/cifsd/ksmbd_work.c                    |   93 +
- fs/cifsd/ksmbd_work.h                    |  110 +
- fs/cifsd/mgmt/ksmbd_ida.c                |   48 +
- fs/cifsd/mgmt/ksmbd_ida.h                |   34 +
- fs/cifsd/mgmt/share_config.c             |  239 +
- fs/cifsd/mgmt/share_config.h             |   81 +
- fs/cifsd/mgmt/tree_connect.c             |  122 +
- fs/cifsd/mgmt/tree_connect.h             |   56 +
- fs/cifsd/mgmt/user_config.c              |   70 +
- fs/cifsd/mgmt/user_config.h              |   66 +
- fs/cifsd/mgmt/user_session.c             |  328 +
- fs/cifsd/mgmt/user_session.h             |  103 +
- fs/cifsd/misc.c                          |  340 +
- fs/cifsd/misc.h                          |   44 +
- fs/cifsd/ndr.c                           |  347 +
- fs/cifsd/ndr.h                           |   21 +
- fs/cifsd/nterr.h                         |  545 ++
- fs/cifsd/ntlmssp.h                       |  169 +
- fs/cifsd/oplock.c                        | 1667 +++++
- fs/cifsd/oplock.h                        |  133 +
- fs/cifsd/server.c                        |  631 ++
- fs/cifsd/server.h                        |   60 +
- fs/cifsd/smb2misc.c                      |  435 ++
- fs/cifsd/smb2ops.c                       |  300 +
- fs/cifsd/smb2pdu.c                       | 8069 ++++++++++++++++++++++
- fs/cifsd/smb2pdu.h                       | 1646 +++++
- fs/cifsd/smb_common.c                    |  652 ++
- fs/cifsd/smb_common.h                    |  544 ++
- fs/cifsd/smbacl.c                        | 1317 ++++
- fs/cifsd/smbacl.h                        |  201 +
- fs/cifsd/smbfsctl.h                      |   90 +
- fs/cifsd/smbstatus.h                     | 1822 +++++
- fs/cifsd/spnego_negtokeninit.asn1        |   43 +
- fs/cifsd/spnego_negtokentarg.asn1        |   19 +
- fs/cifsd/transport_ipc.c                 |  881 +++
- fs/cifsd/transport_ipc.h                 |   54 +
- fs/cifsd/transport_rdma.c                | 2034 ++++++
- fs/cifsd/transport_rdma.h                |   61 +
- fs/cifsd/transport_tcp.c                 |  618 ++
- fs/cifsd/transport_tcp.h                 |   13 +
- fs/cifsd/unicode.c                       |  383 +
- fs/cifsd/unicode.h                       |  356 +
- fs/cifsd/uniupr.h                        |  268 +
- fs/cifsd/vfs.c                           | 1995 ++++++
- fs/cifsd/vfs.h                           |  273 +
- fs/cifsd/vfs_cache.c                     |  683 ++
- fs/cifsd/vfs_cache.h                     |  185 +
- 67 files changed, 31916 insertions(+), 2 deletions(-)
+Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Hyunchul Lee <hyc.lee@gmail.com>
+Acked-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+---
+ Documentation/filesystems/cifs/cifsd.rst | 152 +++++++++++++++++++++++
+ Documentation/filesystems/cifs/index.rst |  10 ++
+ Documentation/filesystems/index.rst      |   2 +-
+ 3 files changed, 163 insertions(+), 1 deletion(-)
  create mode 100644 Documentation/filesystems/cifs/cifsd.rst
  create mode 100644 Documentation/filesystems/cifs/index.rst
- create mode 100644 fs/cifsd/Kconfig
- create mode 100644 fs/cifsd/Makefile
- create mode 100644 fs/cifsd/asn1.c
- create mode 100644 fs/cifsd/asn1.h
- create mode 100644 fs/cifsd/auth.c
- create mode 100644 fs/cifsd/auth.h
- create mode 100644 fs/cifsd/buffer_pool.c
- create mode 100644 fs/cifsd/buffer_pool.h
- create mode 100644 fs/cifsd/connection.c
- create mode 100644 fs/cifsd/connection.h
- create mode 100644 fs/cifsd/crypto_ctx.c
- create mode 100644 fs/cifsd/crypto_ctx.h
- create mode 100644 fs/cifsd/glob.h
- create mode 100644 fs/cifsd/ksmbd_server.h
- create mode 100644 fs/cifsd/ksmbd_work.c
- create mode 100644 fs/cifsd/ksmbd_work.h
- create mode 100644 fs/cifsd/mgmt/ksmbd_ida.c
- create mode 100644 fs/cifsd/mgmt/ksmbd_ida.h
- create mode 100644 fs/cifsd/mgmt/share_config.c
- create mode 100644 fs/cifsd/mgmt/share_config.h
- create mode 100644 fs/cifsd/mgmt/tree_connect.c
- create mode 100644 fs/cifsd/mgmt/tree_connect.h
- create mode 100644 fs/cifsd/mgmt/user_config.c
- create mode 100644 fs/cifsd/mgmt/user_config.h
- create mode 100644 fs/cifsd/mgmt/user_session.c
- create mode 100644 fs/cifsd/mgmt/user_session.h
- create mode 100644 fs/cifsd/misc.c
- create mode 100644 fs/cifsd/misc.h
- create mode 100644 fs/cifsd/ndr.c
- create mode 100644 fs/cifsd/ndr.h
- create mode 100644 fs/cifsd/nterr.h
- create mode 100644 fs/cifsd/ntlmssp.h
- create mode 100644 fs/cifsd/oplock.c
- create mode 100644 fs/cifsd/oplock.h
- create mode 100644 fs/cifsd/server.c
- create mode 100644 fs/cifsd/server.h
- create mode 100644 fs/cifsd/smb2misc.c
- create mode 100644 fs/cifsd/smb2ops.c
- create mode 100644 fs/cifsd/smb2pdu.c
- create mode 100644 fs/cifsd/smb2pdu.h
- create mode 100644 fs/cifsd/smb_common.c
- create mode 100644 fs/cifsd/smb_common.h
- create mode 100644 fs/cifsd/smbacl.c
- create mode 100644 fs/cifsd/smbacl.h
- create mode 100644 fs/cifsd/smbfsctl.h
- create mode 100644 fs/cifsd/smbstatus.h
- create mode 100644 fs/cifsd/spnego_negtokeninit.asn1
- create mode 100644 fs/cifsd/spnego_negtokentarg.asn1
- create mode 100644 fs/cifsd/transport_ipc.c
- create mode 100644 fs/cifsd/transport_ipc.h
- create mode 100644 fs/cifsd/transport_rdma.c
- create mode 100644 fs/cifsd/transport_rdma.h
- create mode 100644 fs/cifsd/transport_tcp.c
- create mode 100644 fs/cifsd/transport_tcp.h
- create mode 100644 fs/cifsd/unicode.c
- create mode 100644 fs/cifsd/unicode.h
- create mode 100644 fs/cifsd/uniupr.h
- create mode 100644 fs/cifsd/vfs.c
- create mode 100644 fs/cifsd/vfs.h
- create mode 100644 fs/cifsd/vfs_cache.c
- create mode 100644 fs/cifsd/vfs_cache.h
 
+diff --git a/Documentation/filesystems/cifs/cifsd.rst b/Documentation/filesystems/cifs/cifsd.rst
+new file mode 100644
+index 000000000000..cb9f87b8529f
+--- /dev/null
++++ b/Documentation/filesystems/cifs/cifsd.rst
+@@ -0,0 +1,152 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++==========================
++CIFSD - SMB3 Kernel Server
++==========================
++
++CIFSD is a linux kernel server which implements SMB3 protocol in kernel space
++for sharing files over network.
++
++CIFSD architecture
++==================
++
++The subset of performance related operations belong in kernelspace and
++the other subset which belong to operations which are not really related with
++performance in userspace. So, DCE/RPC management that has historically resulted
++into number of buffer overflow issues and dangerous security bugs and user
++account management are implemented in user space as ksmbd.mountd.
++File operations that are related with performance (open/read/write/close etc.)
++in kernel space (ksmbd). This also allows for easier integration with VFS
++interface for all file operations.
++
++ksmbd (kernel daemon)
++---------------------
++
++When the server daemon is started, It starts up a forker thread
++(ksmbd/interface name) at initialization time and open a dedicated port 445
++for listening to SMB requests. Whenever new clients make request, Forker
++thread will accept the client connection and fork a new thread for dedicated
++communication channel between the client and the server. It allows for parallel
++processing of SMB requests(commands) from clients as well as allowing for new
++clients to make new connections. Each instance is named ksmbd/1~n(port number)
++to indicate connected clients. Depending on the SMB request types, each new
++thread can decide to pass through the commands to the user space (ksmbd.mountd),
++currently DCE/RPC commands are identified to be handled through the user space.
++To further utilize the linux kernel, it has been chosen to process the commands
++as workitems and to be executed in the handlers of the ksmbd-io kworker threads.
++It allows for multiplexing of the handlers as the kernel take care of initiating
++extra worker threads if the load is increased and vice versa, if the load is
++decreased it destroys the extra worker threads. So, after connection is
++established with client. Dedicated ksmbd/1..n(port number) takes complete
++ownership of receiving/parsing of SMB commands. Each received command is worked
++in parallel i.e., There can be multiple clients commands which are worked in
++parallel. After receiving each command a separated kernel workitem is prepared
++for each command which is further queued to be handled by ksmbd-io kworkers.
++So, each SMB workitem is queued to the kworkers. This allows the benefit of load
++sharing to be managed optimally by the default kernel and optimizing client
++performance by handling client commands in parallel.
++
++ksmbd.mountd (user space daemon)
++--------------------------------
++
++ksmbd.mountd is userspace process to, transfer user account and password that
++are registered using ksmbd.adduser(part of utils for user space). Further it
++allows sharing information parameters that parsed from smb.conf to ksmbd in
++kernel. For the execution part it has a daemon which is continuously running
++and connected to the kernel interface using netlink socket, it waits for the
++requests(dcerpc and share/user info). It handles RPC calls (at a minimum few
++dozen) that are most important for file server from NetShareEnum and
++NetServerGetInfo. Complete DCE/RPC response is prepared from the user space
++and passed over to the associated kernel thread for the client.
++
++
++CIFSD Feature Status
++====================
++
++============================== =================================================
++Feature name                   Status
++============================== =================================================
++Dialects                       Supported. SMB2.1 SMB3.0, SMB3.1.1 dialects
++                               excluding security vulnerable SMB1.
++Auto Negotiation               Supported.
++Compound Request               Supported.
++Oplock Cache Mechanism         Supported.
++SMB2 leases(v1 lease)          Supported.
++Directory leases(v2 lease)     Planned for future.
++Multi-credits                  Supported.
++NTLM/NTLMv2                    Supported.
++HMAC-SHA256 Signing            Supported.
++Secure negotiate               Supported.
++Signing Update                 Supported.
++Pre-authentication integrity   Supported.
++SMB3 encryption(CCM, GCM)      Supported.
++SMB direct(RDMA)               Partial Supported. SMB3 Multi-channel is required
++                               to connect to Windows client.
++SMB3 Multi-channel             In Progress.
++SMB3.1.1 POSIX extension       Supported.
++ACLs                           Partial Supported. only DACLs available, SACLs is
++                               planned for future. ksmbd generate random subauth
++                               values(then store it to disk) and use uid/gid
++                               get from inode as RID for local domain SID.
++                               The current acl implementation is limited to
++                               standalone server, not a domain member.
++Kerberos                       Supported.
++Durable handle v1,v2           Planned for future.
++Persistent handle              Planned for future.
++SMB2 notify                    Planned for future.
++Sparse file support            Supported.
++DCE/RPC support                Partial Supported. a few calls(NetShareEnumAll,
++                               NetServerGetInfo, SAMR, LSARPC) that needed as
++                               file server via netlink interface from
++                               ksmbd.mountd.
++============================== =================================================
++
++
++How to run
++==========
++
++1. Download ksmbd-tools and compile them.
++	- https://github.com/cifsd-team/ksmbd-tools
++
++2. Create user/password for SMB share.
++
++	# mkdir /etc/ksmbd/
++	# ksmbd.adduser -a <Enter USERNAME for SMB share access>
++
++3. Create /etc/ksmbd/smb.conf file, add SMB share in smb.conf file
++	- Refer smb.conf.example and
++          https://github.com/cifsd-team/ksmbd-tools/blob/master/Documentation/configuration.txt
++
++4. Insert ksmbd.ko module
++
++	# insmod ksmbd.ko
++
++5. Start ksmbd user space daemon
++	# ksmbd.mountd
++
++6. Access share from Windows or Linux using CIFS
++
++Shutdown CIFSD
++==============
++
++1. kill user and kernel space daemon
++	# sudo ksmbd.control -s
++
++How to turn debug print on
++==========================
++
++Each layer
++/sys/class/ksmbd-control/debug
++
++1. Enable all component prints
++	# sudo ksmbd.control -d "all"
++
++2. Enable one of components(smb, auth, vfs, oplock, ipc, conn, rdma)
++	# sudo ksmbd.control -d "smb"
++
++3. Show what prints are enable.
++	# cat/sys/class/ksmbd-control/debug
++	  [smb] auth vfs oplock ipc conn [rdma]
++
++4. Disable prints:
++	If you try the selected component once more, It is disabled without brackets.
+diff --git a/Documentation/filesystems/cifs/index.rst b/Documentation/filesystems/cifs/index.rst
+new file mode 100644
+index 000000000000..e762586b5dc7
+--- /dev/null
++++ b/Documentation/filesystems/cifs/index.rst
+@@ -0,0 +1,10 @@
++===============================
++CIFS
++===============================
++
++
++.. toctree::
++   :maxdepth: 1
++
++   cifsd
++   cifsroot
+diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
+index 1f76b1cb3348..085702b5dbba 100644
+--- a/Documentation/filesystems/index.rst
++++ b/Documentation/filesystems/index.rst
+@@ -71,7 +71,7 @@ Documentation for filesystem implementations.
+    befs
+    bfs
+    btrfs
+-   cifs/cifsroot
++   cifs/index
+    ceph
+    coda
+    configfs
 -- 
 2.17.1
 
