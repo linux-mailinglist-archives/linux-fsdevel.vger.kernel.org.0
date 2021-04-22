@@ -2,94 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 567E336819D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 15:42:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A4673681AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 15:45:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236074AbhDVNmh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Apr 2021 09:42:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54322 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230005AbhDVNme (ORCPT
+        id S236344AbhDVNpo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Apr 2021 09:45:44 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:62325 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230005AbhDVNpn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Apr 2021 09:42:34 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A12AAC06174A
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 06:41:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=5GZN6n8RFLGnbXpliy8DLvFaPZN8tEjUfgtjz00oI0k=; b=RYUcFuY5sV0XSyKeetYoyy5Qu3
-        8foVvGMyoLW270fBu2RKAg0u2Q9nO37gvOkWgRtq8cxyyQFsTPy+tUYL3H4qnhuZ5lL1HNZcrUcyS
-        kVT1QcJVZpA+PE7MxNrRcqV/vQS+ZCWj7GjWp/y3b+ZR3BtQK5uGULezOEGgZdVpnFlCvyEuMZ3c7
-        xKw43H3kTyRyyVV5gZ67EVAEk7I4bCPeF1umnyxkT+m3sQD5/HfHXlLmZcIHLR/oJ46v+dVDmgoq4
-        mjQ62NcXPQi/Kzk08RIvq5LN/BlkY83RdEHtTOZsQLmGwAhUUsAsUw2uGTkqwwxFRX+aATYxlt0gq
-        NTYxNKTA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lZZZy-000LuK-K7; Thu, 22 Apr 2021 13:41:28 +0000
-Date:   Thu, 22 Apr 2021 14:41:14 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: (in)consistency of page/folio function naming
-Message-ID: <20210422134114.GN3596236@casper.infradead.org>
-References: <20210422032051.GM3596236@casper.infradead.org>
- <ee5148a4-1552-5cf0-5e56-9303311fb2ef@redhat.com>
- <20210422122117.GE2047089@ziepe.ca>
+        Thu, 22 Apr 2021 09:45:43 -0400
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AjY/5o6GzN7Zw6DVUpLqECMeALOonbusQ8zAX?=
+ =?us-ascii?q?/mp2TgFYddHdqtC2kJ0gpHvJoRsyeFVlo9CPP6GcXWjRnKQZ3aA9NaqvNTOJhE?=
+ =?us-ascii?q?KGII1u5oPpwXnBNkTFnNJ1+rxnd8FFaeHYKXhfoYLE7BKjE9AmqeP3lZyAoevF?=
+ =?us-ascii?q?1X9iQUVLRshbnmREIz2WGEF3WwVKbKBRfPWhz/BarDmtc2l/VLXYOlA5WYH4x+?=
+ =?us-ascii?q?HjpdbPZB4qI1od4hCSsDXA0tXHOind8hAAcz4n+9sfzVQ=3D?=
+X-IronPort-AV: E=Sophos;i="5.82,242,1613404800"; 
+   d="scan'208";a="107477137"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 22 Apr 2021 21:45:06 +0800
+Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
+        by cn.fujitsu.com (Postfix) with ESMTP id A8D934D0B8BB;
+        Thu, 22 Apr 2021 21:45:06 +0800 (CST)
+Received: from G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) by
+ G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Thu, 22 Apr 2021 21:45:07 +0800
+Received: from irides.mr.mr.mr (10.167.225.141) by
+ G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.2 via Frontend Transport; Thu, 22 Apr 2021 21:45:06 +0800
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <linux-nvdimm@lists.01.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
+        <willy@infradead.org>, <jack@suse.cz>, <viro@zeniv.linux.org.uk>,
+        <linux-btrfs@vger.kernel.org>, <david@fromorbit.com>, <hch@lst.de>,
+        <rgoldwyn@suse.de>, Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+Subject: [PATCH v3 0/3] fsdax: Factor helper functions to simplify the code
+Date:   Thu, 22 Apr 2021 21:44:58 +0800
+Message-ID: <20210422134501.1596266-1-ruansy.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.31.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210422122117.GE2047089@ziepe.ca>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: A8D934D0B8BB.A36A0
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 22, 2021 at 09:21:17AM -0300, Jason Gunthorpe wrote:
-> On Thu, Apr 22, 2021 at 11:09:45AM +0200, David Hildenbrand wrote:
-> > On 22.04.21 05:20, Matthew Wilcox wrote:
-> > > 
-> > > I'm going through my patch queue implementing peterz's request to rename
-> > > FolioUptodate() as folio_uptodate().  It's going pretty well, but it
-> > > throws into relief all the places where we're not consistent naming
-> > > existing functions which operate on pages as page_foo().  The folio
-> > > conversion is a great opportunity to sort that out.  Mostly so far, I've
-> > > just done s/page/folio/ on function names, but there's the opportunity to
-> > > regularise a lot of them, eg:
-> > > 
-> > > 	put_page		folio_put
-> > > 	lock_page		folio_lock
-> > > 	lock_page_or_retry	folio_lock_or_retry
-> > > 	rotate_reclaimable_page	folio_rotate_reclaimable
-> > > 	end_page_writeback	folio_end_writeback
-> > > 	clear_page_dirty_for_io	folio_clear_dirty_for_io
-> > > 
-> > > Some of these make a lot of sense -- eg when ClearPageDirty has turned
-> > > into folio_clear_dirty(), having folio_clear_dirty_for_io() looks regular.
-> > > I'm not entirely convinced about folio_lock(), but folio_lock_or_retry()
-> > > makes more sense than lock_page_or_retry().  Ditto _killable() or
-> > > _async().
-> > > 
-> > > Thoughts?
-> > 
-> > I tend to like prefixes: they directly set the topic.
-> > 
-> > The only thing I'm concerned is that we end up with
-> > 
-> > put_page vs. folio_put
-> > 
-> > which is suboptimal.
-> 
-> We have this issue across the kernel already, eg kref_put() vs its
-> wrapper put_device()
-> 
-> Personally I tend to think the regularity of 'thing'_'action' is
-> easier to remember than to try to guess/remember that someone judged
-> 'action'_'thing' to be more englishy.
+From: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
 
-Mostly agree.  object_verb_attribute is usually better, but i'm not
-changing offset_in_folio() to folio_calculate_offset() (unless someone
-comes up with a better name)
+The page fault part of fsdax code is little complex. In order to add CoW
+feature and make it easy to understand, I was suggested to factor some
+helper functions to simplify the current dax code.
 
-There are also a few places where "folio" is subordinate.
-eg filemap_get_folio(), lruvec_stat_mod_folio()
+This is separated from the previous patchset called "V3 fsdax,xfs: Add
+reflink&dedupe support for fsdax", and the previous comments are here[1].
+
+[1]: https://patchwork.kernel.org/project/linux-nvdimm/patch/20210319015237.993880-3-ruansy.fnst@fujitsu.com/
+
+Changes from V2:
+ - fix the type of 'major' in patch 2
+ - Rebased on v5.12-rc8
+
+Changes from V1:
+ - fix Ritesh's email address
+ - simplify return logic in dax_fault_cow_page()
+
+(Rebased on v5.12-rc8)
+==
+
+Shiyang Ruan (3):
+  fsdax: Factor helpers to simplify dax fault code
+  fsdax: Factor helper: dax_fault_actor()
+  fsdax: Output address in dax_iomap_pfn() and rename it
+
+ fs/dax.c | 443 +++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 234 insertions(+), 209 deletions(-)
+
+--
+2.31.1
+
+
+
