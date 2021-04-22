@@ -2,113 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EBB53681CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 15:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B61B03681E3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 15:51:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236357AbhDVNt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Apr 2021 09:49:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55858 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232844AbhDVNt1 (ORCPT
+        id S236888AbhDVNw1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Apr 2021 09:52:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50128 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236414AbhDVNwU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Apr 2021 09:49:27 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D11CAC06138B
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 06:48:52 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id r9so68892875ejj.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 06:48:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NPXeKwdFlap14vs28Y4vSZZ6ciyFAPkqMaUPkDvcMVI=;
-        b=g2Pegb2i5gH3n3l6hJjATWdi3iSRPPKWPvRDvTEh8fnjREBUy3Z+0lTtD7iRSCwtpO
-         S6dk13ah5C7pNR+BxWjdF6CJEI1hJyjvHx1Excbh3MwvJEZkYb01U+PfxKwolPBMnMsv
-         Uf4wboM3zz38RxIWdXdh/+f4aD7yUPbRZnGPDyct+BqSiufuihPwMrQXYU56rZ/HSMho
-         hjJXDE1oQRmqQ9/P6odaumqtoOOIFhSqdg2yqS/k4Hs4Dl8RzQvdHOaurHCemzRmIpb4
-         AARZ71ZmZjBKfLp2YsS4SNt/r/SQ6xa94MiIPNffXi+ZAa3e5efNCDW1v6g23jdlXSnH
-         eigw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NPXeKwdFlap14vs28Y4vSZZ6ciyFAPkqMaUPkDvcMVI=;
-        b=fzvkVjvNoeTgGCq+NHNV7AfHaHCueWkKJALsoDO/DYYakmltneAD2FdcEk31SyTCp2
-         elskiGhQ7ry1TAjivkE+29pRVUk3AeN5lTjp3dkXGLgogsNOK8wA+7T0m02F+0RNa15b
-         jUw4rPZK8aoIgdyhDVL5yUc92GPhs48qzjJVkODOy6kEjgJG3VeGhGQHCRjYgpb9uBiN
-         ircAi38NIS+RBzyKh9UMrbU+hnGrDECtz3qGBbXuySLxFUcMbhBqzdHTDyXna56juB/A
-         0ELjuXTpgXACTTtlqm1UrOWUdJPRb+Hp63BCFFBOONi7Xx8NY2SEcEbQqPLSDijQiNUl
-         SwtA==
-X-Gm-Message-State: AOAM5311klNusEUmnVZD/AKRA0CFUpDubeQLU1qoB8H7pBkQ5xjF03zR
-        ySWW5Rb/WgvGI2oLc9bne5Fup6vVxyzJYBNVsXTS
-X-Google-Smtp-Source: ABdhPJzNjMPp6FcBf0oyaEMYIveL5pHdZ5Je333l9k3fLxHGpk6Jx7BPpTUP8ch+2YwXiWuNcvvo3mw84daOnYGoymk=
-X-Received: by 2002:a17:907:16a3:: with SMTP id hc35mr3468498ejc.488.1619099331254;
- Thu, 22 Apr 2021 06:48:51 -0700 (PDT)
+        Thu, 22 Apr 2021 09:52:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619099505;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JGmS/xLoW189jty2r0t6cwkKx1CTQrOOThGSNPhaRfs=;
+        b=JIalaxZqb7qBarpDnOuqCfMkqjRuo4ecr8Rxy+StDC9sYKvT9rTAULMSbQB2tkNpA8BgI+
+        rZC1SrNqwJqS2iLdPrHM+tPH0GJqi36to9dvE7DHpt/giI+SmT/N9M1uZGtjX3iSPMjmnQ
+        OOKZmqHP1KoEZw8KGxVAz9cmCKEIrP0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-31-D-9gXEBGPL-JfVdk-rKe9g-1; Thu, 22 Apr 2021 09:51:42 -0400
+X-MC-Unique: D-9gXEBGPL-JfVdk-rKe9g-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E7A82107ACF6;
+        Thu, 22 Apr 2021 13:51:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-124.rdu2.redhat.com [10.10.112.124])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0935760938;
+        Thu, 22 Apr 2021 13:51:32 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <27c369a8f42bb8a617672b2dc0126a5c6df5a050.camel@kernel.org>
+References: <27c369a8f42bb8a617672b2dc0126a5c6df5a050.camel@kernel.org> <161789062190.6155.12711584466338493050.stgit@warthog.procyon.org.uk> <161789064740.6155.11932541175173658065.stgit@warthog.procyon.org.uk>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        David Wysochanski <dwysocha@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 01/30] iov_iter: Add ITER_XARRAY
 MIME-Version: 1.0
-References: <20210421171446.785507-1-omosnace@redhat.com> <CAHC9VhTFPHO7YtTxSZNcEZwoy4R3RXVu-4RrAHRtv8BVEw-zGA@mail.gmail.com>
- <CAFqZXNts94w-hMhzCjKW5sHrVw2pw2w7cMQ3+Q2suJ_XUUpUwg@mail.gmail.com>
-In-Reply-To: <CAFqZXNts94w-hMhzCjKW5sHrVw2pw2w7cMQ3+Q2suJ_XUUpUwg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 22 Apr 2021 09:48:41 -0400
-Message-ID: <CAHC9VhS8F-3X6p2pmjvd0ripnpf=oRAA0G5bmE4yrdi-4sDyDw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] selinux,anon_inodes: Use a separate SELinux class
- for each type of anon inode
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     SElinux list <selinux@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2293709.1619099492.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 22 Apr 2021 14:51:32 +0100
+Message-ID: <2293710.1619099492@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 22, 2021 at 7:40 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> On Wed, Apr 21, 2021 at 10:38 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Wed, Apr 21, 2021 at 1:14 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > >
-> > > This series aims to correct a design flaw in the original anon_inode
-> > > SELinux support that would make it hard to write policies for anonymous
-> > > inodes once more types of them are supported (currently only userfaultfd
-> > > inodes are). A more detailed rationale is provided in the second patch.
-> > >
-> > > The first patch extends the anon_inode_getfd_secure() function to accept
-> > > an additional numeric identifier that represents the type of the
-> > > anonymous inode being created, which is passed to the LSMs via
-> > > security_inode_init_security_anon().
-> > >
-> > > The second patch then introduces a new SELinux policy capability that
-> > > allow policies to opt-in to have a separate class used for each type of
-> > > anon inode. That means that the "old way" will still
-> >
-> > ... will what? :)
->
-> Whoops, I thought I had gone over all the text enough times, but
-> apparently not :) It should have said something along the lines of:
->
-> ...will still work and will be used by default.
+Jeff Layton <jlayton@kernel.org> wrote:
 
-That's what I figured from my quick glance at the code, but I wanted
-to make sure.
+> As a general note, iov_iter.c could really do with some (verbose)
+> comments explaining things. A kerneldoc header that explains the
+> arguments to iterate_all_kinds would sure make this easier to review.
 
-> > I think it would be a very good idea if you could provide some
-> > concrete examples of actual policy problems encountered using the
-> > current approach.  I haven't looked at these patches very seriously
-> > yet, but my initial reaction is not "oh yes, we definitely need this".
->
-> An example is provided in patch 2. It is a generalized problem that we
-> would eventually run into in Fedora policy (at least) with the
-> unconfined_domain_type attribute and so far only hypothetical future
-> types of anon inodes.
+Definitely.  But that really requires a separate patch.
 
-Yes, I read the example you provided in patch 2, but it was still a
-little too abstract for my liking.  I have the same concern that
-Stephen mentioned, I was just giving you an opportunity to show that
-in this case the additional object classes were warranted.
+> > @@ -1126,7 +1199,12 @@ void iov_iter_revert(struct iov_iter *i, size_t=
+ unroll)
+> >  		return;
+> >  	}
+> >  	unroll -=3D i->iov_offset;
+> > -	if (iov_iter_is_bvec(i)) {
+> > +	if (iov_iter_is_xarray(i)) {
+> > +		BUG(); /* We should never go beyond the start of the specified
+> > +			* range since we might then be straying into pages that
+> > +			* aren't pinned.
+> > +			*/
+> =
 
--- 
-paul moore
-www.paul-moore.com
+> It's not needed now, but there are a lot of calls to iov_iter_revert in
+> the kernel, and going backward doesn't necessarily mean we'd be straying
+> into an unpinned range. xarray_start never changes; would it not be ok
+> to allow reverting as long as you don't move to a lower offset than that
+> point?
+
+This is handled starting a couple of lines above the start of the hunk:
+
+	if (unroll <=3D i->iov_offset) {
+		i->iov_offset -=3D unroll;
+		return;
+	}
+
+As long as the amount you want to unroll by doesn't exceed the amount you'=
+ve
+consumed of the iterator, it will allow you to do it.  The BUG is there to
+catch someone attempting to over-revert (and there's no way to return an
+error).
+
+> > +static ssize_t iter_xarray_copy_pages(struct page **pages, struct xar=
+ray *xa,
+> > +				       pgoff_t index, unsigned int nr_pages)
+> =
+
+> nit: This could use a different name -- I was expecting to see page
+> _contents_ copied here, but it's just populating the page array with
+> pointers.
+
+Fair point.  Um...  how about iter_xarray_populate_pages() or
+iter_xarray_list_pages()?
+
+> I think you've planned to remove iov_iter_for_each_range as well? I'll
+> assume that this is going away. It might be nice to post the latest
+> version of this patch with that change, just for posterity.
+
+I'll put that in a separate patch.
+
+> In any case, this all looks reasonable to me, modulo a few nits and a
+> general dearth of comments.
+> =
+
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+
+Thanks,
+David
+
