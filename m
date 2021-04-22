@@ -2,252 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5243D367BD3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 10:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 399E7367C44
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 10:17:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235097AbhDVIMc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Apr 2021 04:12:32 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:63336 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229655AbhDVIMc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Apr 2021 04:12:32 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210422081156epoutp02aff2eb65f83dc9e32c29eaf03d02a59a~4H_C4iu6H0162801628epoutp028
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 08:11:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210422081156epoutp02aff2eb65f83dc9e32c29eaf03d02a59a~4H_C4iu6H0162801628epoutp028
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1619079116;
-        bh=hGN/D79ILXUF4z5gRM4/N5jKv/ExjwkKUiG8meJr/Ws=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=ALfdyW8QZqL2vtN0Fq3PZed+8YNXZAB05KURw+ZTN2M4Rz4VEKXTJvYKMKGyBOHAU
-         0av2cXcJgCH2qDDWpH8375MrCpXr8JPGv61jKW+Bjbe8DkUjrRiNvGeOwfn3fbO9NZ
-         oiAAhm/+yF6kuMbZV4XZr/D0abkyz10LaLMHzwII=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210422081155epcas1p12ea271e9d2ff474fe8bc3c081ef39324~4H_CSxzwt2800528005epcas1p1D;
-        Thu, 22 Apr 2021 08:11:55 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4FQqrp3gq9z4x9Pr; Thu, 22 Apr
-        2021 08:11:54 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3B.30.09824.ACF21806; Thu, 22 Apr 2021 17:11:54 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210422081153epcas1p1520019a9ebf7795ecb6aeca1f8a1d1bf~4H_Axu-z12345923459epcas1p1J;
-        Thu, 22 Apr 2021 08:11:53 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210422081153epsmtrp1cc2f48fec256d50f1e233711f111503b~4H_AwhAdn2208222082epsmtrp1c;
-        Thu, 22 Apr 2021 08:11:53 +0000 (GMT)
-X-AuditID: b6c32a37-061ff70000002660-df-60812fca9b0d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C3.82.08163.9CF21806; Thu, 22 Apr 2021 17:11:53 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210422081153epsmtip2f7a480e47fd144d6179c17122caab75d~4H_AfSJ9x1259512595epsmtip2U;
-        Thu, 22 Apr 2021 08:11:53 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Amir Goldstein'" <amir73il@gmail.com>
-Cc:     "'linux-fsdevel'" <linux-fsdevel@vger.kernel.org>,
-        "'Steve French'" <smfrench@gmail.com>, <senozhatsky@chromium.org>,
-        "'Hyunchul Lee'" <hyc.lee@gmail.com>,
-        "'Al Viro'" <viro@zeniv.linux.org.uk>,
-        "'Christoph Hellwig'" <hch@lst.de>,
-        "'Christoph Hellwig'" <hch@infradead.org>,
-        "'ronnie sahlberg'" <ronniesahlberg@gmail.com>,
-        <aurelien.aptel@gmail.com>,
-        =?UTF-8?Q?'Aur=C3=A9lien_Aptel'?= <aaptel@suse.com>,
-        "'Eric Sandeen'" <sandeen@sandeen.net>,
-        "'Dan Carpenter'" <dan.carpenter@oracle.com>,
-        "'Colin King'" <colin.king@canonical.com>,
-        "'Randy Dunlap'" <rdunlap@infradead.org>,
-        "'Matthew Wilcox'" <willy@infradead.org>,
-        "'Sergey Senozhatsky'" <sergey.senozhatsky@gmail.com>,
-        "'Steve French'" <stfrench@microsoft.com>,
-        "'Linux NFS Mailing List'" <linux-nfs@vger.kernel.org>,
-        "'samba-technical'" <samba-technical@lists.samba.org>,
-        "'Jeff Layton'" <jlayton@kernel.org>,
-        "'J. Bruce Fields'" <bfields@fieldses.org>
-In-Reply-To: <CAOQ4uxgCJukhh9c0FjnP_CR0=Jpj+ObK1JPFVjsD4=oxuakcaw@mail.gmail.com>
-Subject: RE: cifsd/nfsd interop
-Date:   Thu, 22 Apr 2021 17:11:53 +0900
-Message-ID: <02f001d7374f$27a667c0$76f33740$@samsung.com>
+        id S235531AbhDVIRb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Apr 2021 04:17:31 -0400
+Received: from mail-dm6nam11on2086.outbound.protection.outlook.com ([40.107.223.86]:37536
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S235526AbhDVIR3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Apr 2021 04:17:29 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PbupAbkt1Y9WuGT9qOJS7lZlDGvSwcHclZd6M3Qsahz7bUbAVBnLNMKzyIucGnZYQ5jXz3VLB3ZaCwf+C0vbCCppTgPmePr4yfqlJQ9nNLi9SjfrQG4w6rOuuEzC/fuCpZwK/VIC+gpk0TABd07VSuDvz1Ga7OCNj/K9cUIOPmHt96i23hwxoAmOQljZ+/MG/yvdfqEbR2g903z9ePcUq3dWtNXOaEe+tbR+L1G7t4zkKHM5maTumj09xmXldxHd1JLJ4WEBYU3u7nTbmwd9xcbLgK8jOm0chq/6akis88YmNxZbe4kx2tcuH6kcPGYm/OriwndVmdkwr1PJGJIdiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oq+qBPcPbTa5KykEfFLD4bbBZ35fuqzptm5NfiJmyi0=;
+ b=WJtHEV2gau9O6MMfO6vZe3xIPTv9EFvOgZD5UOIFU1ijBy4fNpWLo1fpTWrNcBF39jEsogAeH1OyjWAZjNJxGMrvoIrzRACiV0Rw7Ih/uQagG0aDdcCcfm2J3jklqopMnu6cmTThY140FEDW9pOf/BISYP8GhxbXkz1JyU3i/yVCUQHgrMYUE14rvPbnIdmHFDM23mcpu55f/SbmaWWpacm+bcBK/MNvkKXXCm9ZMW1RNGOLlFuJm0ibsy6bEuDJ02KZbvN1q+2JpFTsJ84DF0Q9/S5d4ajQlKeG9V5zKXFDm9oqgWBWE9OFnRROpRhLGJ2bkutigzXVP+Rw0EUOMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oq+qBPcPbTa5KykEfFLD4bbBZ35fuqzptm5NfiJmyi0=;
+ b=eUWZMqLeoIhhDyK4dOR7WhIr8kdWQxt4yEBQFIwyc+v8M8x0TdTOgQvFKKx9qhB6xzfUahZEEdYjR5+jvleJv5l6pCZF/I44heVtj2HFdtGwrBY46NnuTLxfbieItr4rjoU4Jpt3qWISBbWLWBDoBj5GTY6FAjlUPAOxtC/ENV8tSo39Jzm6IY64kCeL6dIPGmiCmn52IR/NdM7yOFTTAI7LGX7Q9NQvBmSLvoilooUPSTkeNqzATwQUvs1KEZy1HVLrThj/e0yFZz/CL3XrWsV9q9LnQ4vCYWtWSMBAoE2qo57Jb0/4JzbOm6MfjBb9V2Yyd7q8N1RUL50N1RB8Xw==
+Received: from MW4PR04CA0260.namprd04.prod.outlook.com (2603:10b6:303:88::25)
+ by MN2PR12MB3758.namprd12.prod.outlook.com (2603:10b6:208:169::28) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4065.21; Thu, 22 Apr
+ 2021 08:16:53 +0000
+Received: from CO1NAM11FT066.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:88:cafe::5b) by MW4PR04CA0260.outlook.office365.com
+ (2603:10b6:303:88::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4065.21 via Frontend
+ Transport; Thu, 22 Apr 2021 08:16:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; google.com; dkim=none (message not signed)
+ header.d=none;google.com; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ CO1NAM11FT066.mail.protection.outlook.com (10.13.175.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4065.21 via Frontend Transport; Thu, 22 Apr 2021 08:16:52 +0000
+Received: from [10.26.49.10] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 22 Apr
+ 2021 08:16:45 +0000
+Subject: Re: [PATCH v4 05/10] signal: Introduce TRAP_PERF si_code and si_perf
+ to siginfo
+To:     Marco Elver <elver@google.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+CC:     Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Potapenko <glider@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian@brauner.io>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Matt Morehouse <mascasa@google.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Ian Rogers <irogers@google.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>
+References: <CANpmjNM8wEJngK=J8Lt9npkZgrSWoRsqkdajErWEoY_=M1GW5A@mail.gmail.com>
+ <43f8a3bf-34c5-0fc9-c335-7f92eaf23022@samsung.com>
+ <dccaa337-f3e5-08e4-fe40-a603811bb13e@samsung.com>
+ <CANpmjNP6-yKpxHqYFiA8Up-ujBQaeP7xyq1BrsV-NqMjJ-uHAQ@mail.gmail.com>
+ <740077ce-efe1-b171-f807-bc5fd95a32ba@samsung.com>
+ <f114ff4a-6612-0935-12ac-0e2ac18d896c@samsung.com>
+ <CANpmjNM6bQpc49teN-9qQhCXoJXaek5stFGR2kPwDroSFBc0fw@mail.gmail.com>
+ <cf6ed5cd-3202-65ce-86bc-6f1eba1b7d17@samsung.com>
+ <CANpmjNPr_JtRC762ap8PQVmsFNY5YhHvOk0wNcPHq=ZQt-qxYg@mail.gmail.com>
+ <YIBSg7Vi+U383dT7@elver.google.com>
+ <CGME20210421182355eucas1p23b419002936ab5f1ffc25652135cc152@eucas1p2.samsung.com>
+ <YIBtr2w/8KhOoiUA@elver.google.com>
+ <dd99b921-3d79-a21f-8942-40fa5bf53190@samsung.com>
+ <CANpmjNPbMOUd_Wh5aHGdH8WLrYpyBFUpwx6g3Kj2D6eevvaU8w@mail.gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <e590c4f6-ad6a-26a4-4f5f-9e6e63bfb15a@nvidia.com>
+Date:   Thu, 22 Apr 2021 09:16:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJTyQqcqdQSNpV/lHa5XB7yLgZgIwNL6ZwbAvs6Z/8CAQA1+KmExgzw
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUxTVxjGcz96b1Eq18LcATLB63Ba+WithYORxSmwu+Ami2HZIBt09Iai
-        pe3a4pzMpJgAygQkoGKBQFC7CWMIEoEyBxZdg2RjbuCiTpmjNRQoCmQTxsfW9rKM/37nnOc5
-        73nek5ePCU+TQfxstYHVqeUqmliDX+/bJo64E5WfIe5yBsJ81wAOf/qmCYG2iSUSjlWmwoWm
-        EgJOLJ/H4cCZBhReabqNwnsjz0g4b24k4bc3+t2G3gEedP3mlpSUzvDg4qUeEhYMiWB3awMB
-        m2dHSTg51kfAB+V1BBxcsvHgwlwNsWcDYzKWEEy18S7OXD17gmC6TI9I5tpXIqat8RTB1FWb
-        UKb7vpFgCjqXSGba8QBn2i8+QZmW9mGcmW3byLTZXWjyulTVbiUrV7C6UFadqVFkq7Pi6KSD
-        6fvSZdFiSYQkFsbQoWp5DhtHx+9PjkjMVrmz06FH5Kpc91ayXK+no17frdPkGthQpUZviKNZ
-        rUKllYi1kXp5jj5XnRWZqcnZJRGLd8jcygyV8kbLZUzbLjp6s7KKZ0RsG4sRPh9QO0FRx/Fi
-        ZA1fSHUioN7aSnKLGQSYhxwYt5hFQPWgkVeM+Hgdc4WtKHdgQcCLK8veAyHlREChEfMwQUWA
-        5cUewsMB1HYwZrntNWDUZRI0LIx6RT7Uu6Dh2hekh/2pEPBovsjLOBUGzJM2xMMCKhYsWRZ5
-        HK8H/RfsuIcxt77DVYNxLwoF8w4zjyuWCL53FCKcJgBUnyr0RgBUnw8oGDbhnCEefD3etcL+
-        YNzWTnIcBJxlhSTXmDww3bNy/0kEjL2I41gK7rdc5XkkGLUNtFiiuO1NoGuhdqXsOjD152ke
-        d4sAnCwUcpIwUPpzH8pxMCguek6eQWjTqmCmVcFMqwKY/i9Wj+CNyAZWq8/JYvUSrXT1X7ch
-        3rEQxXQi51zPI60IykesCOBjdICgWW/MEAoU8s+OsTpNui5XxeqtiMzd6nIs6KVMjXuu1IZ0
-        iWyHVCqFO6NjomVS+mVB1r68DCGVJTewh1lWy+r+86F8nyAjKs8uKblpsceMCelwQaKZ51v7
-        wegfmx/7bn2YUHqilz9XXvp+kR8Z4DdkHfySL7UXVclCth6YCuxBO9i3Rn3DAEiJ2h98ofKX
-        X633qlSq68Ehe88aNBNv56/3Tzt8KfDz7pb3Pn0zMN5RY1K+lpbg73gl079879LaGp8juP1h
-        +PmLyqS0+KS1eABEPywV9Cp+T/8k9aj575ynsa5z+a23VB/Vv3pgV8Pxxb/uluFOYe+WqWdP
-        IhMsj53D1T/G6yccYb2O7fMVWoiNHzuUcrAsNq928uOqbEWxa6bHMN1cn+u3pa4uwVlBj9gq
-        7Mihd0Z+eCrG9szcitn8zxvi70R3+iNTwmlcr5RLRJhOL/8XBBPq9J8EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBIsWRmVeSWpSXmKPExsWy7bCSvO5J/cYEg47HGhaNb0+zWFxYt5rR
-        4vjrv+wWL6ZEWfxe3ctm8frfdBaL0xMWMVmsXH2UyeLa/ffsFj+XrWK32LP3JFDDgdOsFm/v
-        AJX09n1itfizZD+7ResVLYvdGxexWaz9/Jjd4s2Lw2wWtybOZ7M4//c4q8XvH3PYHMQ8ZjX0
-        snnMbrjI4rFhahObx85Zd9k9Nq/Q8ti0qpPNY/7sWUweu282sHm07vjL7vHx6S0Wjy2LHzJ5
-        rN9ylcXj8yY5j01P3jIF8EVx2aSk5mSWpRbp2yVwZexdv5S5YItWxcEpM1gbGI/LdTFyckgI
-        mEj8aNvIBGILCexglNi3KxUiLi1x7MQZ5i5GDiBbWOLw4eIuRi6gkueMEktnHACrZxPQlfj3
-        Zz8biC0ioC3xYtdRJpAiZoGt7BIvpuxlguhoYZJYtnkyI0gVp0CgxKLN3ewgtrCAvMTdn+1g
-        NouAqsSyN8fBangFLCX+7vrDCmELSpyc+YQFxGYG2tD7sJURwpaX2P52DjPEpQoSP58uY4W4
-        wk3i2NM2qBoRidmdbcwTGIVnIRk1C8moWUhGzULSsoCRZRWjZGpBcW56brFhgVFearlecWJu
-        cWleul5yfu4mRnDi0NLawbhn1Qe9Q4xMHIyHGCU4mJVEeNcWNyQI8aYkVlalFuXHF5XmpBYf
-        YpTmYFES573QdTJeSCA9sSQ1OzW1ILUIJsvEwSnVwHQlu1OF94frzlrv6a/lJf6F//rlx1iv
-        aj5xhegpr4mXv1y2CkltWLam4dGlu9ct/QVvrYk97vXy6IqciVouV9k8JB4wpv62Zn14sNty
-        jx0L85zADMvsedIyb3vcDbh2uP/g8X5vMHuGzbqbOwVSQnSfus/5ulw8dgJT99+lB4RONdw7
-        +OSJemM1352MRaWiUx+x/+rza7F+qrj1f0N8X068wM9tXacXfD22+pQwg+rUBDGOqemnbhyf
-        rZT9ly/e1C9h3WaVQ5OuxzXvPZO81+ugrt/yEjuNHz3taf61PAniB9uM5C+fEt3hPSHmbN3S
-        sxWii2QfzjT79ml3Iufq1rwHkV9svWsDKirqA+41FymxFGckGmoxFxUnAgBi5+16iwMAAA==
-X-CMS-MailID: 20210422081153epcas1p1520019a9ebf7795ecb6aeca1f8a1d1bf
-X-Msg-Generator: CA
+In-Reply-To: <CANpmjNPbMOUd_Wh5aHGdH8WLrYpyBFUpwx6g3Kj2D6eevvaU8w@mail.gmail.com>
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210422003836epcas1p391ed30aed1cf7b010b93c32fc1aebe89
-References: <CGME20210422003836epcas1p391ed30aed1cf7b010b93c32fc1aebe89@epcas1p3.samsung.com>
-        <20210422002824.12677-1-namjae.jeon@samsung.com>
-        <20210422002824.12677-2-namjae.jeon@samsung.com>
-        <CAOQ4uxgCJukhh9c0FjnP_CR0=Jpj+ObK1JPFVjsD4=oxuakcaw@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 46b2d5bf-fba0-49a2-bcdb-08d90566fc25
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3758:
+X-Microsoft-Antispam-PRVS: <MN2PR12MB3758BFD9334AFFC08B699A0CD9469@MN2PR12MB3758.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: nm5s+WgV7SQ8bBFfG1OlcKc4uJ8eghCmgsLVl90qOnH7vUoHUilS0KzakTQwzcepwt5ugpt55utCYrfBj/1Y8caAsOpqtF69hgQuFqbtkvXXOoya/gjp0VR9Fo72P5iNhXMqxGRTxi1vMLXtzxHYHkEe1oYToKMVExl8kCZAS/efyxYO4RqumzkN63dp6N6q/3Nnc2eE2VpdOylZJBnrDiJLIfNi6R30GodaE/UWY+yj5X9BT3Cv2slDjMSwsmlHZzcbR5nQ7ho6/Kn80NllfSBWVDBHRoCzj288AvgQ4gYaguKF+ZLmNnCHH9a++5d8vW892rLv6M3lLCcgQW/Vyas7DEUncHc6sn80YYBmOptNvwE3cGVDiz1aOxlW4LIif6T7WAs0gVO0cdawLjcuoHoyRXYyKQi+/BZ8CnCbwnO0P9VTHIP5ho9Wse+2lZWZRHEo38NOS+ImQI2Lzvk8fucnoYyypZbvGDXXEGtyIxkIIxTfqhC6TUveqoAs56j3HJ6m6sX+p1i3i1Rq9eCNKoLnanjUOiI3kZYQnU+sJnaiV790TwJy9J32EWuEi1reqf6a75CIfZjGHyTLx6qG8OeTCPCwpP0c/DCbqckI8BiIg6eueATDXyqg9ZNiL0B9k5qFe4SIhmZVFM27OV2a+JRGqiCqxNZHKYRIldNIXqgwf/kwdmwB7o5iHPYbp82L/VcQRak5K6V9BjLh/WrokNpemkKLx6wZgu/V0DHHTNbRd4UNxygJytVEFq98zeiFd9J+ns7urgpbOaX7dOyhEg==
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(376002)(136003)(396003)(346002)(46966006)(36840700001)(5660300002)(86362001)(31686004)(7406005)(36906005)(7416002)(316002)(82310400003)(7636003)(82740400003)(83380400001)(31696002)(70586007)(70206006)(356005)(186003)(426003)(36756003)(8676002)(4326008)(47076005)(16526019)(966005)(36860700001)(53546011)(110136005)(478600001)(2906002)(54906003)(16576012)(2616005)(8936002)(26005)(336012)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2021 08:16:52.3701
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46b2d5bf-fba0-49a2-bcdb-08d90566fc25
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT066.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3758
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> 
-> On Thu, Apr 22, 2021 at 4:31 AM Namjae Jeon <namjae.jeon@samsung.com> wrote:
-> >
-> > This adds a document describing ksmbd design, key features and usage.
-> >
-> > Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-> > Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> > Signed-off-by: Hyunchul Lee <hyc.lee@gmail.com>
-> > Acked-by: Ronnie Sahlberg <lsahlber@redhat.com>
-> > Signed-off-by: Steve French <stfrench@microsoft.com>
-> > ---
-> >  Documentation/filesystems/cifs/cifsd.rst | 152
-> > +++++++++++++++++++++++  Documentation/filesystems/cifs/index.rst |  10 ++
-> >  Documentation/filesystems/index.rst      |   2 +-
-> >  3 files changed, 163 insertions(+), 1 deletion(-)  create mode 100644
-> > Documentation/filesystems/cifs/cifsd.rst
-> >  create mode 100644 Documentation/filesystems/cifs/index.rst
-> >
-> > diff --git a/Documentation/filesystems/cifs/cifsd.rst
-> > b/Documentation/filesystems/cifs/cifsd.rst
-> > new file mode 100644
-> > index 000000000000..cb9f87b8529f
-> > --- /dev/null
-> > +++ b/Documentation/filesystems/cifs/cifsd.rst
-> > @@ -0,0 +1,152 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> > +
-> > +==========================
-> > +CIFSD - SMB3 Kernel Server
-> > +==========================
-> > +
-> > +CIFSD is a linux kernel server which implements SMB3 protocol in
-> > +kernel space for sharing files over network.
-> > +
-> 
-> Hello cifsd team!
-Hi Amir,
-> 
-> I am very excited to see your work posted and especially excited to learn about the collaboration with
-> the samba team.
-Thanks!
-> 
-> One of the benefits from kernel smbd implementation is improved ability to interoperate with VFS in
-> general and nfsd in particular.
-Agreed. This seems to be an important issue, I was missing this.
-> 
-> For example, I have discussed with several samba team members the option that ksmbd will serve as a
-> kernel lease agent for samba, instead of having to work around the limitations of file lock UAPI.
-> 
-> Could you share your plans (if any) for interoperability improvements with vfs/nfsd?
-> 
-> It would be useful to add an "Interop" column to the Features table below to document the current
-> state and future plans or just include a note about it in the Status column.
-Okay, First, I need to check your previous mails about this. Then I will update it in features table.
-> 
-> Off the top of my head, a list of features that samba supports partial kernel/nfsd interop with are:
-> - Leases (level 1)
-> - Notify
-> - ACLs (NT to POSIX map)
-> - Share modes
-> 
-> In all of those features, ksmbd is in a position to do a better job.
-Right.
-> 
-> I only assume that ksmbd implementation of POSIX extensions is a "native" implementation (i.e. a
-> symlink is implemented as a symlink) so ksmbd and nfsd exporting the same POSIX fs would at least
-> observe the same objects(?), but I would rather see this explicitly documented.
-Okay.
-> 
-> Thanks,
-Thank you!
-> Amir.
-> 
-> [...]
-> 
-> > +
-> > +CIFSD Feature Status
-> > +====================
-> > +
-> > +============================== =================================================
-> > +Feature name                   Status
-> > +============================== =================================================
-> > +Dialects                       Supported. SMB2.1 SMB3.0, SMB3.1.1 dialects
-> > +                               excluding security vulnerable SMB1.
-> > +Auto Negotiation               Supported.
-> > +Compound Request               Supported.
-> > +Oplock Cache Mechanism         Supported.
-> > +SMB2 leases(v1 lease)          Supported.
-> > +Directory leases(v2 lease)     Planned for future.
-> > +Multi-credits                  Supported.
-> > +NTLM/NTLMv2                    Supported.
-> > +HMAC-SHA256 Signing            Supported.
-> > +Secure negotiate               Supported.
-> > +Signing Update                 Supported.
-> > +Pre-authentication integrity   Supported.
-> > +SMB3 encryption(CCM, GCM)      Supported.
-> > +SMB direct(RDMA)               Partial Supported. SMB3 Multi-channel is required
-> > +                               to connect to Windows client.
-> > +SMB3 Multi-channel             In Progress.
-> > +SMB3.1.1 POSIX extension       Supported.
-> > +ACLs                           Partial Supported. only DACLs available, SACLs is
-> > +                               planned for future. ksmbd generate random subauth
-> > +                               values(then store it to disk) and use uid/gid
-> > +                               get from inode as RID for local domain SID.
-> > +                               The current acl implementation is limited to
-> > +                               standalone server, not a domain member.
-> > +Kerberos                       Supported.
-> > +Durable handle v1,v2           Planned for future.
-> > +Persistent handle              Planned for future.
-> > +SMB2 notify                    Planned for future.
-> > +Sparse file support            Supported.
-> > +DCE/RPC support                Partial Supported. a few calls(NetShareEnumAll,
-> > +                               NetServerGetInfo, SAMR, LSARPC) that needed as
-> > +                               file server via netlink interface from
-> > +                               ksmbd.mountd.
-> > +==============================
-> > +=================================================
-> > +
 
+On 22/04/2021 07:47, Marco Elver wrote:
+> On Thu, 22 Apr 2021 at 08:12, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> [...]
+>>> So I think we just have to settle on 'unsigned long' here. On many
+>>> architectures, like 32-bit Arm, the alignment of a structure is that of
+>>> its largest member. This means that there is no portable way to add
+>>> 64-bit integers to siginfo_t on 32-bit architectures.
+>>>
+>>> In the case of the si_perf field, word size is sufficient since the data
+>>> it contains is user-defined. On 32-bit architectures, any excess bits of
+>>> perf_event_attr::sig_data will therefore be truncated when copying into
+>>> si_perf.
+>>>
+>>> Feel free to test the below if you have time, but the below lets me boot
+>>> 32-bit arm which previously timed out. It also passes all the
+>>> static_asserts() I added (will send those as separate patches).
+>>>
+>>> Once I'm convinced this passes all others tests too, I'll send a patch.
+>>
+>> This fixes the issue I've observed on my test systems. Feel free to add:
+>>
+>> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>
+>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
+> Thank you for testing! It's been sent:
+> https://lkml.kernel.org/r/20210422064437.3577327-1-elver@google.com
+
+
+Thanks! This fixes the problem for Tegra as well. I have responded to
+the above patch with my tested-by.
+
+Cheers
+Jon
+
+-- 
+nvpublic
