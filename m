@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7951F36882D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 22:46:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17545368839
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 22:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239273AbhDVUrW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Apr 2021 16:47:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35792 "EHLO
+        id S239509AbhDVUtg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Apr 2021 16:49:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236877AbhDVUrV (ORCPT
+        with ESMTP id S239497AbhDVUtf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Apr 2021 16:47:21 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BC07C061756
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 13:46:46 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id v7so19668676qkj.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 13:46:46 -0700 (PDT)
+        Thu, 22 Apr 2021 16:49:35 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28373C06174A
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 13:49:00 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id lt13so13125151pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 13:49:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:in-reply-to:message-id:references
          :user-agent:mime-version;
-        bh=q4jCK/oxeOAevJ+QQnM3lBiBwG2OGtnOoyI45WiPj/0=;
-        b=bm4tK+1+ztG0fhpXNYfdvm16338ubpObJL9yXAF6z5QbYek+XJkIPN5icxfAhQHZa9
-         5vHU3s4lI+K4LhMXS4o7k/nfFp4h1T2D/2idlxRt2E+KH+8MEGjnqj6WbRW/Occrn1ub
-         GMWABtxA3Qa0pH+5bHwmHxHV0ytVM5PRa+hCytRC60NI1y2hUOh7ieNd8+12D82HvYI5
-         pTvN2mA66wfz1vd/dws+vtpU3kad6SV58lBRADz1VW6ZlvOvb8n4NfQv/NWfbrGmF8zN
-         oD/0RCCjhIsKhandoRbU8KeYRvL+FzxbFIC6PK27w2Mg/ng/a/zrM37IDErgPKI7m1v0
-         /uOg==
+        bh=bR2kbdfapTwBu00MYDhOgJUb5mkcImnnOhrX139DRgA=;
+        b=Kjz3sRR9igPIoYPoWrLfO3ghVY5woWH5jeiWDkZTtktCSeGesdMHB4wwilHwZAiL+g
+         NEOGC1nVRCyNGOEUCMTkkp/KgY6WCTcd8eZa5BhXi28lFE21x2LMBXnbo4TJPTj+QGwD
+         BA2ZaaEeRYglXew+Xo3PKxxSguRsJdnz5vZToN0MOjjW6+sFIop2oNER9IJKDVLoEJQd
+         UrRIEY2D/2/Dpg4tS0nWYFlwJ9466BErCGCOxH6zlUS5V1HT9lNRvbpjIHBdIuNd0gMp
+         uCkgny/HndIt02p9Oz6hXevhVroWCID6XJAbcObLYzd38ber7ogc6L+DkhhJ27I1+OI1
+         4cTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
          :references:user-agent:mime-version;
-        bh=q4jCK/oxeOAevJ+QQnM3lBiBwG2OGtnOoyI45WiPj/0=;
-        b=B+12IrvH6DUEV0jELUcur+t8b4NplooquvoJEJQznd5YTyg74xjKsBA1TS2bgzmwl5
-         e4z3v4zY3x4PyVpwMYvWgpdCZfbL5Xv+NPkdl0+2S+DDDsE1FpQrKrX0CBTMz8ce2MEO
-         oQg9JLaxrmRtIm1Z8+6GFCUaovVHDcA/frSzLL2z9Qw6PrjetYRIjfy610vfndOLiZWX
-         DZ8qpFGamfB3u0wQH58E83U5RQxV+9lcpYogXklvMJxsyPEdKYT9GRy/Sbv2zdWTblxR
-         k+z3AIwI+EAnHdqO5VCnI65Jbagfun3w8PIZc6R/Ei2zbo2sSo66GELVv1BHUpE3FaUN
-         GTpA==
-X-Gm-Message-State: AOAM530w6xDOCurtba1uyeN2Jw9Mafr6Lx2plfBeP3fUE8DbtRzqQmdh
-        2Mi10mb5w1fjJz7e8Ck3ew/ntQ==
-X-Google-Smtp-Source: ABdhPJy6B2uOuY8nlYlMlbZzimxyQS3rpI5s21XxaofwWAhrWMOPI3vCjUBaibuvfPrpBMjoQH4Omg==
-X-Received: by 2002:a37:b103:: with SMTP id a3mr652299qkf.261.1619124405346;
-        Thu, 22 Apr 2021 13:46:45 -0700 (PDT)
+        bh=bR2kbdfapTwBu00MYDhOgJUb5mkcImnnOhrX139DRgA=;
+        b=hQPDaeKdJlJfyQopwU+8l78KDYF5g5wWS+yiSxM5iJxLLyt3sbLW3N8QRdtsCouYyh
+         sAkfMHGLK+3ULGxJzYL4F7ZPUHLdgYiivEC4kyYREDU3P4yhWfx5bJaPL/RZBuEGZF/f
+         z7xyLBndn//6mSTrx6LdQp+/3HLCNWI5m3OUibdq9k+P3C4kXEX83O/JocjXdWOtkQiV
+         b9wa/M+6rsztm3bTOGYgrV/V0cdiGsJsLzPP4bWmcpcWxuHwxRVuULIsS4LhwV9gCzlC
+         wt94gVNT7hp/LhKvM6XZGYMTjY7RNvGwIPXQpxbuzCm8vBD6samm78WgBuIUvSVw3xRp
+         o+1g==
+X-Gm-Message-State: AOAM532zrbI04T+wIC3GD5lmWYBYT7+oIqexnsWsvWODyrOAS+TD6/G4
+        3lhF3aY6A04PwOHfwIrarX71wQ==
+X-Google-Smtp-Source: ABdhPJwi7i9LEeLrIgM50j5BAu+Matuql9UhJCD0KpBS6GPffrqTP8NgOGWa1YRFMCOqTGUlOH1nwQ==
+X-Received: by 2002:a17:90b:1646:: with SMTP id il6mr1971668pjb.27.1619124539456;
+        Thu, 22 Apr 2021 13:48:59 -0700 (PDT)
 Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id m124sm2975451qkc.70.2021.04.22.13.46.43
+        by smtp.gmail.com with ESMTPSA id h18sm2482627pfv.158.2021.04.22.13.48.58
         (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
-        Thu, 22 Apr 2021 13:46:45 -0700 (PDT)
-Date:   Thu, 22 Apr 2021 13:46:34 -0700 (PDT)
+        Thu, 22 Apr 2021 13:48:59 -0700 (PDT)
+Date:   Thu, 22 Apr 2021 13:48:57 -0700 (PDT)
 From:   Hugh Dickins <hughd@google.com>
 X-X-Sender: hugh@eggly.anvils
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     Matthew Wilcox <willy@infradead.org>,
         Hugh Dickins <hughd@google.com>,
         William Kucharski <william.kucharski@oracle.com>,
         Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
@@ -62,11 +62,12 @@ cc:     Andrew Morton <akpm@linux-foundation.org>,
         Yang Shi <yang.shi@linux.alibaba.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 2/2] mm/filemap: fix mapping_seek_hole_data on THP &
+Subject: [PATCH v2 2/2] mm/filemap: fix mapping_seek_hole_data on THP &
  32-bit
-In-Reply-To: <alpine.LSU.2.11.2104212253000.4412@eggly.anvils>
-Message-ID: <alpine.LSU.2.11.2104221338410.1170@eggly.anvils>
+In-Reply-To: <alpine.LSU.2.11.2104221338410.1170@eggly.anvils>
+Message-ID: <alpine.LSU.2.11.2104221347240.1170@eggly.anvils>
 References: <alpine.LSU.2.11.2104211723580.3299@eggly.anvils> <alpine.LSU.2.11.2104211737410.3299@eggly.anvils> <20210422011631.GL3596236@casper.infradead.org> <alpine.LSU.2.11.2104212253000.4412@eggly.anvils>
+ <alpine.LSU.2.11.2104221338410.1170@eggly.anvils>
 User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
@@ -74,42 +75,92 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 21 Apr 2021, Hugh Dickins wrote:
-> On Thu, 22 Apr 2021, Matthew Wilcox wrote:
-> > On Wed, Apr 21, 2021 at 05:39:14PM -0700, Hugh Dickins wrote:
-> > > No problem on 64-bit without huge pages, but xfstests generic/285
-> > > and other SEEK_HOLE/SEEK_DATA tests have regressed on huge tmpfs,
-> > > and on 32-bit architectures, with the new mapping_seek_hole_data().
-> > > Several different bugs turned out to need fixing.
-> > > 
-> > > u64 casts added to stop unfortunate sign-extension when shifting
-> > > (and let's use shifts throughout, rather than mixed with * and /).
-> > 
-> > That confuses me.  loff_t is a signed long long, but it can't be negative
-> > (... right?)  So how does casting it to an u64 before dividing by
-> > PAGE_SIZE help?
-> 
-> That is a good question. Sprinkling u64s was the first thing I tried,
-> and I'd swear that it made a good difference at the time; but perhaps
-> that was all down to just the one on xas.xa_index << PAGE_SHIFT. Or
-> is it possible that one of the other bugs led to a negative loff_t,
-> and the casts got better behaviour out of that? Doubtful.
-> 
-> What I certainly recall from yesterday was leaving out one (which?)
-> of the casts as unnecessary, and wasting quite a bit of time until I
-> put it back in. Did I really choose precisely the only one necessary?
-> 
-> Taking most of them out did give me good quick runs just now: I'll
-> go over them again and try full runs on all machines. You'll think me
-> crazy, but yesterday's experience leaves me reluctant to change without
-> full testing - but agree it's not good to leave ignorant magic in.
+No problem on 64-bit without huge pages, but xfstests generic/285
+and other SEEK_HOLE/SEEK_DATA tests have regressed on huge tmpfs,
+and on 32-bit architectures, with the new mapping_seek_hole_data().
+Several different bugs turned out to need fixing.
 
-And you'll be unsurprised to hear that the test runs went fine,
-with all but one of those u64 casts removed. And I did locate the
-version of filemap.c where I'd left out one "unnecessary" cast:
-I had indeed chosen to remove the only one that's necessary.
+u64 cast to stop losing bits when converting unsigned long to loff_t
+(and let's use shifts throughout, rather than mixed with * and /).
 
-v2 coming up now, thanks,
+Use round_up() when advancing pos, to stop assuming that pos was
+already THP-aligned when advancing it by THP-size.  (This use of
+round_up() assumes that any THP has THP-aligned index: true at present
+and true going forward, but could be recoded to avoid the assumption.)
 
-Hugh
+Use xas_set() when iterating away from a THP, so that xa_index stays
+in synch with start, instead of drifting away to return bogus offset.
 
+Check start against end to avoid wrapping 32-bit xa_index to 0 (and
+to handle these additional cases, seek_data or not, it's easier to
+break the loop than goto: so rearrange exit from the function).
+
+Fixes: 41139aa4c3a3 ("mm/filemap: add mapping_seek_hole_data")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+---
+v2: Removed all but one of v1's u64 casts, as suggested my Matthew.
+    Updated commit message on u64 cast and THP alignment, per Matthew.
+
+Andrew, I'd have just sent a -fix.patch to remove the unnecessary u64s,
+but need to reword the commit message: so please replace yesterday's
+mm-filemap-fix-mapping_seek_hole_data-on-thp-32-bit.patch
+by this one - thanks.
+
+ mm/filemap.c |   21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+--- 5.12-rc8/mm/filemap.c	2021-02-26 19:42:39.812156085 -0800
++++ linux/mm/filemap.c	2021-04-21 22:58:03.699655576 -0700
+@@ -2672,7 +2672,7 @@ loff_t mapping_seek_hole_data(struct add
+ 		loff_t end, int whence)
+ {
+ 	XA_STATE(xas, &mapping->i_pages, start >> PAGE_SHIFT);
+-	pgoff_t max = (end - 1) / PAGE_SIZE;
++	pgoff_t max = (end - 1) >> PAGE_SHIFT;
+ 	bool seek_data = (whence == SEEK_DATA);
+ 	struct page *page;
+ 
+@@ -2681,7 +2681,8 @@ loff_t mapping_seek_hole_data(struct add
+ 
+ 	rcu_read_lock();
+ 	while ((page = find_get_entry(&xas, max, XA_PRESENT))) {
+-		loff_t pos = xas.xa_index * PAGE_SIZE;
++		loff_t pos = (u64)xas.xa_index << PAGE_SHIFT;
++		unsigned int seek_size;
+ 
+ 		if (start < pos) {
+ 			if (!seek_data)
+@@ -2689,25 +2690,25 @@ loff_t mapping_seek_hole_data(struct add
+ 			start = pos;
+ 		}
+ 
+-		pos += seek_page_size(&xas, page);
++		seek_size = seek_page_size(&xas, page);
++		pos = round_up(pos + 1, seek_size);
+ 		start = page_seek_hole_data(&xas, mapping, page, start, pos,
+ 				seek_data);
+ 		if (start < pos)
+ 			goto unlock;
++		if (start >= end)
++			break;
++		if (seek_size > PAGE_SIZE)
++			xas_set(&xas, pos >> PAGE_SHIFT);
+ 		if (!xa_is_value(page))
+ 			put_page(page);
+ 	}
+-	rcu_read_unlock();
+-
+ 	if (seek_data)
+-		return -ENXIO;
+-	goto out;
+-
++		start = -ENXIO;
+ unlock:
+ 	rcu_read_unlock();
+-	if (!xa_is_value(page))
++	if (page && !xa_is_value(page))
+ 		put_page(page);
+-out:
+ 	if (start > end)
+ 		return end;
+ 	return start;
