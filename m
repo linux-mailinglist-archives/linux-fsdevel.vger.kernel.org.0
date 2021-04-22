@@ -2,158 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0EBB36765D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 02:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAAD1367647
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 02:35:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343992AbhDVAj1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Apr 2021 20:39:27 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:50873 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343984AbhDVAjY (ORCPT
+        id S1343924AbhDVAgB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Apr 2021 20:36:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50270 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343930AbhDVAgA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Apr 2021 20:39:24 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210422003849epoutp039b9e62892de32dc322feb5e85c49646b~4BybZz9Ga1371613716epoutp03a
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 00:38:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210422003849epoutp039b9e62892de32dc322feb5e85c49646b~4BybZz9Ga1371613716epoutp03a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1619051929;
-        bh=xsBknzlDxmSfXAIXNzGrnEmNwCb0KAIpNYMKuTCtwZ0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LieUNdm/boVbhwgkuFCuD92QSVq359pEpwjOMkHD1novEDVkBiqzKb14qbZEZqH9P
-         bRuRkGbfRSi9swIIRa3qQHiZr6/43GzAE5fhZBDpZLgBKsQGBBCVLHvjo4Cgmuii2r
-         2aRrQBun84V322dStWg/CgkrFBdIj+1wg8xHsupE=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20210422003848epcas1p4951406627aaf0ba4487b888f8ac2fccc~4Byazi5BC3271432714epcas1p4B;
-        Thu, 22 Apr 2021 00:38:48 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.163]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4FQdny4GKdz4x9Q9; Thu, 22 Apr
-        2021 00:38:46 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E6.A1.09701.695C0806; Thu, 22 Apr 2021 09:38:46 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210422003846epcas1p1c8e4f9e46f77d2974e488785cd16d529~4ByYSD87N1793517935epcas1p1u;
-        Thu, 22 Apr 2021 00:38:46 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210422003846epsmtrp14e7ebd36f3535c5aa43a1c2b6a06d0d9~4ByYQ4Lay2297822978epsmtrp1k;
-        Thu, 22 Apr 2021 00:38:46 +0000 (GMT)
-X-AuditID: b6c32a36-647ff700000025e5-40-6080c5960c55
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E5.CA.08637.595C0806; Thu, 22 Apr 2021 09:38:45 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210422003845epsmtip18b0300aca580ef50d7767066a1f870c7~4ByYBLh9M1951419514epsmtip1F;
-        Thu, 22 Apr 2021 00:38:45 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     smfrench@gmail.com, senozhatsky@chromium.org, hyc.lee@gmail.com,
-        viro@zeniv.linux.org.uk, hch@lst.de, hch@infradead.org,
-        ronniesahlberg@gmail.com, aurelien.aptel@gmail.com,
-        aaptel@suse.com, sandeen@sandeen.net, dan.carpenter@oracle.com,
-        colin.king@canonical.com, rdunlap@infradead.org,
-        willy@infradead.org, Namjae Jeon <namjae.jeon@samsung.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH v2 10/10] MAINTAINERS: add cifsd kernel server
-Date:   Thu, 22 Apr 2021 09:28:24 +0900
-Message-Id: <20210422002824.12677-11-namjae.jeon@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210422002824.12677-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmru60ow0JBmfuylk0vj3NYnH89V92
-        i9+re9ksXv+bzmJxesIiJouVq48yWVy7/57dYs/ekywWl3fNYbP4Mb3e4u0doIrevk+sFq1X
-        tCx2b1zEZrH282N2izcvDrNZ3Jo4n83i/N/jrBa/f8xhcxD2mNXQy+Yxu+Eii8fOWXfZPTav
-        0PLYfbOBzaN1x192j49Pb7F49G1ZxeixZfFDJo/1W66yeHzeJOex6clbpgCeqBybjNTElNQi
-        hdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKAXlRTKEnNKgUIBicXF
-        Svp2NkX5pSWpChn5xSW2SqkFKTkFhgYFesWJucWleel6yfm5VoYGBkamQJUJORn/nq9kLdjA
-        XbF6+gTWBsbHnF2MnBwSAiYSW59uY+1i5OIQEtjBKLG57xYLhPOJUeLVp+NQmW+MEounzGGD
-        afk1/TY7RGIvo8TkFxOZ4Fra9x1g7GLk4GAT0Jb4s0UUxBQRsJe4vdgHpIRZ4BCzxNcrfYwg
-        g4QF7CQu325kAbFZBFQl9n6+ywRi8wrYSmw508oEsUxeYvWGA8wgNidQ/NeGlYwggyQErnBI
-        XNpyjxlkgYSAi8Tb724Q9cISr45vYYewpSRe9rexQ5RUS3zczwwR7mCUePHdFsI2lri5fgMr
-        SAmzgKbE+l36EGFFiZ2/54JdySzAJ/Huaw8rxBReiY42IYgSVYm+S4ehjpSW6Gr/ALXUQ2LK
-        8sXMkACZwCjx8/gr9gmMcrMQNixgZFzFKJZaUJybnlpsWGCEHF+bGMEpWMtsB+Oktx/0DjEy
-        cTAeYpTgYFYS4V1b3JAgxJuSWFmVWpQfX1Sak1p8iNEUGHQTmaVEk/OBWSCvJN7Q1MjY2NjC
-        xMzczNRYSZw33bk6QUggPbEkNTs1tSC1CKaPiYNTqoFp9Z5QdftSnSLDU9IbpgY4722cfU62
-        75eAv3je/fVx3zZuv7e7Ilyy64wwR21Y9GZdJfYuztBdi88JbK9k0n+4NylpqcLsa5GvT/P/
-        bGU6K2mfsm5CpY6qxfw3CjfOPS12PH3SMP9Yl3JRy9vMFGn/4miuCX8Vj3BOFzSu41lhsf1t
-        5oTlvG+4Vfeee2Rwbr3pkmnpF3b42ay7vj9RxubPlie9Eh98zRLddqRYSj80qbTjiYo12zg3
-        t+oiB+8qt82T1qifVWlQ6vRwSlxqYp8cM9fh7c+jmTHmuuHFGTx3/9ZuCN0lue5YR0zcRD//
-        WqvjO99e+VF/2PvcNdnT1mdEjp87tXeqod1ujzhZ+b9KLMUZiYZazEXFiQDYgITqSgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsWy7bCSnO7Uow0JBpf/2Vg0vj3NYnH89V92
-        i9+re9ksXv+bzmJxesIiJouVq48yWVy7/57dYs/ekywWl3fNYbP4Mb3e4u0doIrevk+sFq1X
-        tCx2b1zEZrH282N2izcvDrNZ3Jo4n83i/N/jrBa/f8xhcxD2mNXQy+Yxu+Eii8fOWXfZPTav
-        0PLYfbOBzaN1x192j49Pb7F49G1ZxeixZfFDJo/1W66yeHzeJOex6clbpgCeKC6blNSczLLU
-        In27BK6Mf89XshZs4K5YPX0CawPjY84uRk4OCQETiV/Tb7N3MXJxCAnsZpS4Muk0K0RCWuLY
-        iTPMXYwcQLawxOHDxRA1HxglPt2bwQQSZxPQlvizRRSkXETAUeLE1EWMIDXMAteYJb5tn8AI
-        khAWsJO4fLuRBcRmEVCV2Pv5LhOIzStgK7HlTCsTxC55idUbDjCD2JxA8V8bVoL1CgnYSDRN
-        v8oygZFvASPDKkbJ1ILi3PTcYsMCw7zUcr3ixNzi0rx0veT83E2M4GjR0tzBuH3VB71DjEwc
-        jIcYJTiYlUR41xY3JAjxpiRWVqUW5ccXleakFh9ilOZgURLnvdB1Ml5IID2xJDU7NbUgtQgm
-        y8TBKdXAdLExlE1TcUKKJXPoSfdcufMlj5WbHidtWvoxVGb2v/JrthnOAU/kBI0WifrvfBp/
-        kXeWx6df/HxyZt+fZ3FO124Sc/toIOIYfoun4d29Q+9/fH76wb4y/xP773m3oufdd1G9e9PF
-        Y6Y+z7fAl1LyKewpJ3ZZSX7SfztZ+kdcwvtoBwc10w95Xp8btGQj6lYEn9w96ybPA3/f44+f
-        s/h/UjdfFzLDt8nmdpfHJBer2lfSZ+5vv1P6Pfm8CH/KdrFmx6PHFWSNt+g/E8t//mxWwaPS
-        g/1xd5d4Xp244Om5O0nrdFn3CL1V2O6yfe8svhTbnVHbb+q72vP/i3iaHPSTf7p0vTpjzqHO
-        cN2Cd23hSizFGYmGWsxFxYkAvbhi4AUDAAA=
-X-CMS-MailID: 20210422003846epcas1p1c8e4f9e46f77d2974e488785cd16d529
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210422003846epcas1p1c8e4f9e46f77d2974e488785cd16d529
-References: <20210422002824.12677-1-namjae.jeon@samsung.com>
-        <CGME20210422003846epcas1p1c8e4f9e46f77d2974e488785cd16d529@epcas1p1.samsung.com>
+        Wed, 21 Apr 2021 20:36:00 -0400
+Received: from mail-oo1-xc2f.google.com (mail-oo1-xc2f.google.com [IPv6:2607:f8b0:4864:20::c2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E333AC06174A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 17:35:24 -0700 (PDT)
+Received: by mail-oo1-xc2f.google.com with SMTP id e12-20020a056820060cb02901e94efc049dso4663704oow.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 17:35:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
+        bh=6Bo/151Dx6SDWNJTYqVzspMT+/EPJItqGJiDq5IFPhE=;
+        b=lZQSVZ93U5rlTaerOyCDp4WG8GDFqrv9GVEloGw69RwcLC0p+ynNriAAKh5cZDNNXx
+         CAsk+uxmxIfAIl7Wsg1oFEbCHaU1TWUHOr3cj2p+741eCW2yUgwyWyzG3UoCAxw/EC1U
+         aAj653CNTXmYfHx4RdS2hgqpaDLUe29SnqfUf+798jlihuK4S1MWHUJRv57Osz46TJU3
+         Rm5Gq/Dfqq280Hg20VRpEyq9kshF1QKKyaJo7+nc9AzzVgmvqvOImJYlGcQqQtW597zj
+         8ZZM4vdDmKael5jMXrnDl8FMdarffo0VnJb6CoJQpbA+MRsEwoR8rCa4TQhcbh/hvifp
+         1arA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
+         :mime-version;
+        bh=6Bo/151Dx6SDWNJTYqVzspMT+/EPJItqGJiDq5IFPhE=;
+        b=Mf6nmNJYl94alUwFOw3sVtO7MBStww+l9BfvmXVHcG0K8W7EHedwe36Spu6o9JRJhJ
+         HXtezHmN42CiixRhBh4/nZmMVxjB8MU59tKjxaIw5MLQ2ecaDfRE0o4ojFqzm++tdgTK
+         MQPdGS9Tw/HjjJJQkMfIPcHN7Bi/HQ6yPVp7Bce5R/HdrogPr8gzmbhWIr3s4LCLcJQE
+         tPyj7xGTFl/rkpbjufC5vPSu7km30fRdGb6R5ccbJiPD4TuYBWQ1Jl6kbB87ythGUqam
+         vrEJzGXU6zhJjsYjvWD9Tirbw2ewMZQsBVM+BJqkRnxPs4JcB7fMYRfsuD96zIwVRruM
+         bXJg==
+X-Gm-Message-State: AOAM5325AwZ/8Te8A8zpr6LIYBV7scHD9cxBh5HbOAf4erqpDRlJqiFX
+        AGw3SK4tnl0ZgpHrlTOwlCq4dA==
+X-Google-Smtp-Source: ABdhPJwFzhYjOmf19XP6vFVF5ayvGGwv/sOGwQVx1iv6azXxg6h6OiC9H6bNf01WjKJQRw0sJ9zcrg==
+X-Received: by 2002:a4a:851a:: with SMTP id k26mr395631ooh.27.1619051724106;
+        Wed, 21 Apr 2021 17:35:24 -0700 (PDT)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id h28sm255325oof.47.2021.04.21.17.35.22
+        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
+        Wed, 21 Apr 2021 17:35:23 -0700 (PDT)
+Date:   Wed, 21 Apr 2021 17:35:11 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     Matthew Wilcox <willy@infradead.org>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <dchinner@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH 0/2] mm/filemap: fix 5.12-rc regressions
+Message-ID: <alpine.LSU.2.11.2104211723580.3299@eggly.anvils>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+MIME-Version: 1.0
+Content-Type: MULTIPART/MIXED; BOUNDARY="0-897914698-1619051723=:3299"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add myself, Steve French, Sergey Senozhatsky and Hyunchul Lee
-as cifsd maintainer.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Hyunchul Lee <hyc.lee@gmail.com>
-Acked-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
----
- MAINTAINERS | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+--0-897914698-1619051723=:3299
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index aa84121c5611..30f678f8b4d3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4434,7 +4434,7 @@ F:	include/linux/clk/
- F:	include/linux/of_clk.h
- X:	drivers/clk/clkdev.c
- 
--COMMON INTERNET FILE SYSTEM (CIFS)
-+COMMON INTERNET FILE SYSTEM CLIENT (CIFS)
- M:	Steve French <sfrench@samba.org>
- L:	linux-cifs@vger.kernel.org
- L:	samba-technical@lists.samba.org (moderated for non-subscribers)
-@@ -4444,6 +4444,16 @@ T:	git git://git.samba.org/sfrench/cifs-2.6.git
- F:	Documentation/admin-guide/cifs/
- F:	fs/cifs/
- 
-+COMMON INTERNET FILE SYSTEM SERVER (CIFSD)
-+M:	Namjae Jeon <namjae.jeon@samsung.com>
-+M:	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-+M:	Steve French <sfrench@samba.org>
-+M:	Hyunchul Lee <hyc.lee@gmail.com>
-+L:	linux-cifs@vger.kernel.org
-+L:	linux-cifsd-devel@lists.sourceforge.net
-+S:	Maintained
-+F:	fs/cifsd/
-+
- COMPACTPCI HOTPLUG CORE
- M:	Scott Murray <scott@spiteful.org>
- L:	linux-pci@vger.kernel.org
--- 
-2.17.1
+Andrew, I'm very sorry, this is so late: I thought we had already
+tested 5.12-rc's mm/filemap changes earlier, but running xfstests
+on 32-bit huge tmpfs last weekend revealed a hang (fixed in 1/2);
+then looking closer at test results, found SEEK_HOLE/SEEK_DATA
+discrepancies that I'd previously assumed benign (surprises there
+not surprising when huge pages get used) were in fact indicating
+regressions in the new seek_hole_data implementation (fixed in 2/2).
 
+Complicated by xfstests' seek_sanity_test needing some adjustments
+to work correctly on huge tmpfs; but not yet submitted because I've
+more to do there.  seek_sanity combo patch attached, to allow anyone
+here to verify the fixes on generic 308 285 286 436 445 448 490 539.
+
+Up to you and Matthew whether these are rushed last minute into
+5.12, or held over until the merge window, adding "Cc: stable"s.
+
+1/2 mm/filemap: fix find_lock_entries hang on 32-bit THP
+2/2 mm/filemap: fix mapping_seek_hole_data on THP & 32-bit
+
+ mm/filemap.c |   33 ++++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
+
+Thanks,
+Hugh
+--0-897914698-1619051723=:3299
+Content-Type: TEXT/x-patch; name=seek_sanity.patch
+Content-Transfer-Encoding: BASE64
+Content-ID: <alpine.LSU.2.11.2104211735110.3299@eggly.anvils>
+Content-Description: 
+Content-Disposition: attachment; filename=seek_sanity.patch
+
+eGZzdGVzdHM6IHNlZWtfc2FuaXR5X3Rlc3QgYWRqdXN0bWVudHMNCg0KSHVn
+ZSB0bXBmcyBoYWJpdHVhbGx5IGZhaWxlZCBnZW5lcmljLzI4NSBzZWVrX3Nh
+bml0eV90ZXN0IDExLjA4IGFuZA0KMTIuMDggYmVjYXVzZSB0aGUgbmVhci1F
+T0YgZGF0YSB3YXMgd3JpdHRlbiBhdCBhbiBvZmZzZXQgb2YgMU1pQiBpbnRv
+DQp0aGUgeDg2XzY0IDJNaUIgaHVnZSBwYWdlIGFsbG9jYXRlZCBmb3IgaXQs
+IHNvIFNFRUtfREFUQSB0aGVuIGZvdW5kDQphbiBvZmZzZXQgMU1pQiBsb3dl
+ciB0aGFuIGV4cGVjdGVkLiAgV29yayBhcm91bmQgdGhpcyBieSBleHRlbmRp
+bmcNCnRoYXQgZXh0cmEgMU1pQiBhdCBFT0YgdG8gYWxsb2Nfc2l6ZSBpbiB0
+ZXN0MTEoKSBhbmQgdGVzdDEyKCkuDQoNCkh1Z2UgdG1wZnMgb24gaTM4NiB3
+aXRob3V0IFBBRSBoYWJpdHVhbGx5IGZhaWxlZCBnZW5lcmljLzQ5MA0Kc2Vl
+a19zYW5pdHlfdGVzdCAyMC4wMyBhbmQgMjAuMDQ6IGJlY2F1c2UgaXRzIDRN
+aUIgYWxsb2Nfc2l6ZSwgdXNlZA0KZm9yIGJ1ZnN6LCBoYXBwZW5zIHRvIHNj
+cmFwZSB0aHJvdWdoIHRoZSBpbml0aWFsIGZpbHN6IEVGQklHIGNoZWNrLA0K
+YnV0IGl0cyBvdmVyZmxvd3MgZmFpbCBvbiB0aG9zZSB0d28gdGVzdHMuIHRt
+cGZzIGRvZXMgbm90IHVzZSBleHRbMjNdDQp0cmlwbHkgaW5kaXJlY3QgYmxv
+Y2tzIGFueXdheSwgc28gYWx0aG91Z2ggaXQncyBhbiBpbnRlcmVzdGluZyB0
+ZXN0LA0KanVzdCB0YWtlIHRoZSBlYXN5IHdheSBvdXQ6IGNsYW1waW5nIHRv
+IDJNaUIsIHdoaWNoIHNraXBzIHRlc3QgMjAuDQpTdXJlbHkgc29tZXRoaW5n
+IGNsZXZlcmVyIGNvdWxkIGJlIGRvbmUsIGJ1dCBpdCdzIG5vdCB3b3J0aCB0
+aGUgbWF0aC4NCkFuZCB3aGlsZSB0aGVyZSwgcmVudW1iZXIgc2Vjb25kIGFu
+ZCB0aGlyZCAyMC4wMyB0byAyMC4wNCBhbmQgMjAuMDUuDQoNCkFkanVzdCBz
+ZWVrX3Nhbml0eV90ZXN0IHRvIGNhcnJ5IG9uIGFmdGVyIGl0cyBmaXJzdCBm
+YWlsdXJlLg0KQWRqdXN0IHNlZWtfc2FuaXR5X3Rlc3QgdG8gc2hvdyBmaWxl
+IG9mZnNldHMgaW4gaGV4IG5vdCBkZWNpbWFsLg0KDQpUZW1wb3JhcmlseSBz
+aWduZWQgb2ZmLCBidXQgdG8gYmUgc3BsaXQgaW50byBmb3VyIHdoZW4gcG9z
+dGluZyB0bw0KZnN0ZXN0c0B2Z2VyLmtlcm5lbC5vcmc7IGFuZCBuZWVkcyBh
+IGZpZnRoIHRvIGZpeCBnZW5lcmljLzQzNiB0b28NCih3aGljaCBjdXJyZW50
+bHkgcGFzc2VzIGJlY2F1c2Ugb2YgYW4gb2xkIHN0dXBpZGl0eSBpbiBtbS9z
+aG1lbS5jLA0KYnV0IHdpbGwgcHJvYmFibHkgbmVlZCBhZGp1c3RtZW50IGhl
+cmUgb25jZSB0aGUga2VybmVsIGlzIGZpeGVkKS4NCg0KU2lnbmVkLW9mZi1i
+eTogSHVnaCBEaWNraW5zIDxodWdoZEBnb29nbGUuY29tPg0KLS0tDQoNCiBz
+cmMvc2Vla19zYW5pdHlfdGVzdC5jIHwgICAyNyArKysrKysrKysrKysrKysr
+KysrLS0tLS0tLS0NCiAxIGZpbGUgY2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygr
+KSwgOCBkZWxldGlvbnMoLSkNCg0KLS0tIGEvc3JjL3NlZWtfc2FuaXR5X3Rl
+c3QuYw0KKysrIGIvc3JjL3NlZWtfc2FuaXR5X3Rlc3QuYw0KQEAgLTIwNyw3
+ICsyMDcsNyBAQCBzdGF0aWMgaW50IGRvX2xzZWVrKGludCB0ZXN0bnVtLCBp
+bnQgc3VidGVzdCwgaW50IGZkLCBvZmZfdCBmaWxzeiwgaW50IG9yaWdpbiwN
+CiAJCXJldCA9ICEoZXJybm8gPT0gRU5YSU8pOw0KIAl9IGVsc2Ugew0KIA0K
+LQkJeCA9IGZwcmludGYoc3Rkb3V0LCAiJTAyZC4lMDJkICVzIGV4cGVjdGVk
+ICVsbGQgb3IgJWxsZCwgZ290ICVsbGQuICIsDQorCQl4ID0gZnByaW50Zihz
+dGRvdXQsICIlMDJkLiUwMmQgJXMgZXhwZWN0ZWQgMHglbGx4IG9yIDB4JWxs
+eCwgZ290IDB4JWxseC4gIiwNCiAJCQkgICAgdGVzdG51bSwgc3VidGVzdCwN
+CiAJCQkgICAgKG9yaWdpbiA9PSBTRUVLX0hPTEUpID8gIlNFRUtfSE9MRSIg
+OiAiU0VFS19EQVRBIiwNCiAJCQkgICAgKGxvbmcgbG9uZylleHAsIChsb25n
+IGxvbmcpZXhwMiwgKGxvbmcgbG9uZylwb3MpOw0KQEAgLTMyMiw2ICszMjIs
+OSBAQCBzdGF0aWMgaW50IHRlc3QyMChpbnQgZmQsIGludCB0ZXN0bnVtKQ0K
+IAlsb2ZmX3QgYnVmc3osIGZpbHN6Ow0KIA0KIAlidWZzeiA9IGFsbG9jX3Np
+emU7DQorCS8qIGkzODYgNE1pQiBidWZzeiBwYXNzZXMgZmlsc3ogRUZCSUcg
+Y2hlY2sgYnV0IHRvbyBiaWcgZm9yIDIwLjMgMjAuNCAqLw0KKwlpZiAoYnVm
+c3ogPiAyKjEwMjQqMTAyNCkNCisJCWJ1ZnN6ID0gMioxMDI0KjEwMjQ7DQog
+CWJ1ZiA9IGRvX21hbGxvYyhidWZzeik7DQogCWlmICghYnVmKQ0KIAkJZ290
+byBvdXQ7DQpAQCAtMzQ5LDkgKzM1Miw5IEBAIHN0YXRpYyBpbnQgdGVzdDIw
+KGludCBmZCwgaW50IHRlc3RudW0pDQogCS8qIE9mZnNldHMgaW5zaWRlIGV4
+dFsyM10gdHJpcGx5IGluZGlyZWN0IGJsb2NrICovDQogCXJldCArPSBkb19s
+c2Vlayh0ZXN0bnVtLCAzLCBmZCwgZmlsc3osIFNFRUtfREFUQSwNCiAJCSgx
+MiArIGJ1ZnN6IC8gNCArIGJ1ZnN6IC8gNCAqIGJ1ZnN6IC8gNCArIDMgKiBi
+dWZzeiAvIDQgKyA1KSAqIGJ1ZnN6LCBmaWxzeiAtIGJ1ZnN6KTsNCi0JcmV0
+ICs9IGRvX2xzZWVrKHRlc3RudW0sIDMsIGZkLCBmaWxzeiwgU0VFS19EQVRB
+LA0KKwlyZXQgKz0gZG9fbHNlZWsodGVzdG51bSwgNCwgZmQsIGZpbHN6LCBT
+RUVLX0RBVEEsDQogCQkoMTIgKyBidWZzeiAvIDQgKyA3ICogYnVmc3ogLyA0
+ICogYnVmc3ogLyA0ICsgNSAqIGJ1ZnN6IC8gNCkgKiBidWZzeiwgZmlsc3og
+LSBidWZzeik7DQotCXJldCArPSBkb19sc2Vlayh0ZXN0bnVtLCAzLCBmZCwg
+Zmlsc3osIFNFRUtfREFUQSwNCisJcmV0ICs9IGRvX2xzZWVrKHRlc3RudW0s
+IDUsIGZkLCBmaWxzeiwgU0VFS19EQVRBLA0KIAkJKDEyICsgYnVmc3ogLyA0
+ICsgOCAqIGJ1ZnN6IC8gNCAqIGJ1ZnN6IC8gNCArIGJ1ZnN6IC8gNCArIDEx
+KSAqIGJ1ZnN6LCBmaWxzeiAtIGJ1ZnN6KTsNCiBvdXQ6DQogCWlmIChidWYp
+DQpAQCAtNjY3LDggKzY3MCwxMyBAQCBvdXQ6DQogICovDQogc3RhdGljIGlu
+dCB0ZXN0MTIoaW50IGZkLCBpbnQgdGVzdG51bSkNCiB7DQorCWJsa3NpemVf
+dCBleHRyYSA9IDEgPDwgMjA7DQorDQorCS8qIE9uIGh1Z2UgdG1wZnMgKG90
+aGVycz8pIHRlc3QgbmVlZHMgd3JpdGUgYmVmb3JlIEVPRiB0byBiZSBhbGln
+bmVkICovDQorCWlmIChleHRyYSA8IGFsbG9jX3NpemUpDQorCQlleHRyYSA9
+IGFsbG9jX3NpemU7DQogCXJldHVybiBodWdlX2ZpbGVfdGVzdChmZCwgdGVz
+dG51bSwNCi0JCQkJKChsb25nIGxvbmcpYWxsb2Nfc2l6ZSA8PCAzMikgKyAo
+MSA8PCAyMCkpOw0KKwkJCQkoKGxvbmcgbG9uZylhbGxvY19zaXplIDw8IDMy
+KSArIGV4dHJhKTsNCiB9DQogDQogLyoNCkBAIC02NzcsOCArNjg1LDEzIEBA
+IHN0YXRpYyBpbnQgdGVzdDEyKGludCBmZCwgaW50IHRlc3RudW0pDQogICov
+DQogc3RhdGljIGludCB0ZXN0MTEoaW50IGZkLCBpbnQgdGVzdG51bSkNCiB7
+DQorCWJsa3NpemVfdCBleHRyYSA9IDEgPDwgMjA7DQorDQorCS8qIE9uIGh1
+Z2UgdG1wZnMgKG90aGVycz8pIHRlc3QgbmVlZHMgd3JpdGUgYmVmb3JlIEVP
+RiB0byBiZSBhbGlnbmVkICovDQorCWlmIChleHRyYSA8IGFsbG9jX3NpemUp
+DQorCQlleHRyYSA9IGFsbG9jX3NpemU7DQogCXJldHVybiBodWdlX2ZpbGVf
+dGVzdChmZCwgdGVzdG51bSwNCi0JCQkJKChsb25nIGxvbmcpYWxsb2Nfc2l6
+ZSA8PCAzMSkgKyAoMSA8PCAyMCkpOw0KKwkJCQkoKGxvbmcgbG9uZylhbGxv
+Y19zaXplIDw8IDMxKSArIGV4dHJhKTsNCiB9DQogDQogLyogVGVzdCBhbiA4
+RyBmaWxlIHRvIGNoZWNrIGZvciBvZmZzZXQgb3ZlcmZsb3dzIGF0IDEgPDwg
+MzIgKi8NCkBAIC0xMjg5LDkgKzEzMDIsNyBAQCBpbnQgbWFpbihpbnQgYXJn
+YywgY2hhciAqKmFyZ3YpDQogCWZvciAoaSA9IDA7IGkgPCBudW10ZXN0czsg
+KytpKSB7DQogCQlpZiAoc2Vla190ZXN0c1tpXS50ZXN0X251bSA+PSB0ZXN0
+c3RhcnQgJiYNCiAJCSAgICBzZWVrX3Rlc3RzW2ldLnRlc3RfbnVtIDw9IHRl
+c3RlbmQpIHsNCi0JCQlyZXQgPSBydW5fdGVzdCgmc2Vla190ZXN0c1tpXSk7
+DQotCQkJaWYgKHJldCkNCi0JCQkJYnJlYWs7DQorCQkJcmV0IHw9IHJ1bl90
+ZXN0KCZzZWVrX3Rlc3RzW2ldKTsNCiAJCX0NCiAJfQ0KIA0K
+
+--0-897914698-1619051723=:3299--
