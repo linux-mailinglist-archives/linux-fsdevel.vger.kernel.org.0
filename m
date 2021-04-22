@@ -2,123 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 941B5367A25
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 08:47:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9484C367BB5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 10:06:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234924AbhDVGsC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Apr 2021 02:48:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46830 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234899AbhDVGsB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Apr 2021 02:48:01 -0400
-Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3E6DC06138B
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 23:47:26 -0700 (PDT)
-Received: by mail-oi1-x22e.google.com with SMTP id m13so44836681oiw.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 23:47:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wTjjN5jAG5wIij1DihAnfF2YGoCBK9l6YKfTSDtQuuw=;
-        b=lA/wdfNnxbUzsB2aSrzU1nhguY4+P6Aj7qnVqkf5OhF3sIXJOlTSGd9kiMXUAzxysb
-         W9QxSlfFJL7eB48TdEIbZwylUsW48RfPkIAqFU/rp2hCT5QWBBzk8WEoWFAagDOwQM/e
-         Vrf8OGXAY/yBa15JsD4ffNk5Yq521ogLASDGN+9A73YZBNVlqNihiexcQD9WoaQ67iJR
-         TgLFSLgTG6X7ptC8ZGmhj9i5I1DB7ubEaF0JWBSUgGG1mljq/HcUXyo9XgxL9gMNrINK
-         2XsvC7sxwvCG4Rb/UT4z60h0z7UJ36wu/Uh+Ls0nO6/f21RJ61u0O+KXLP+C5dPrvvs4
-         eLHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wTjjN5jAG5wIij1DihAnfF2YGoCBK9l6YKfTSDtQuuw=;
-        b=cC5SwQhbQPR70mexpuRz3o6nmnESpjUbrdgd0kOCmA5ajsyldHxXYJt6Ua0iBhKtG0
-         siRet19iRros6cZbgeb6v5noYBmGypa+ZigewPLdxgLvhQRq6AujFYbMfnHzvWD8w7O5
-         9OYHWW53ACv8gK7WrCbCjDrXlgyhlLIw1R0mxG2afok5IeB8BSass2HxMhToMkDTHN/S
-         eWOGevhc/52coGr2gtM/6d2ZXAY6SD8SeRJ7wbS1AiXiV46b4U0EShjngyJxK8K+FzDt
-         U7Z8BL9T3dwt8B5Mxlkm8HMc9oXyMa3ko0uBRZnEtwI2C1Q14TQpE0A+KIknACZAJVv2
-         +t2w==
-X-Gm-Message-State: AOAM530Dgwfnuc+RcdDDknNEGM9cEAd5vUyGBfDd8De2o9/+GX/6RW2G
-        ChAIEya3eLgBeJkl3VF5kLLUlv8Fh2HFYfqFnpuRZA==
-X-Google-Smtp-Source: ABdhPJz+a6SHZEXyLt9Z7/nm+V2v7tz51a75rL/rIBsZOOdAAJeD+/znnbrUP8V+l4NnAp+N+L56r3GGMKmOwrilkZY=
-X-Received: by 2002:aca:408a:: with SMTP id n132mr1231205oia.70.1619074045847;
- Wed, 21 Apr 2021 23:47:25 -0700 (PDT)
+        id S234475AbhDVIHL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Apr 2021 04:07:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44118 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229655AbhDVIHL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Apr 2021 04:07:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 21D3061426;
+        Thu, 22 Apr 2021 08:06:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619078796;
+        bh=aXzRqf9+8BQeSlqgcbp1fjSrmCFGS3ZTiEGv60tlPLQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TGHULc1tf19ke+HZi9VgxZG1wrWq+r0eLHLjq7sETOCofwk8z8ChXve+KQPzuStiS
+         32XCPa3TMJELh9ardwkf+vGu//PHYr5siRvphXl2waXtDldVfZZe4crGJ08DVYRCyx
+         SrTWMudtZZmWue4jM+jHRBIowQAreCNbY7/GLifu9GMZScvsELcSFdeVLoc3pt4Oba
+         sKqkHieYK9JaqpJET3fL3Dxpk3ZKSpbruN0giOAVyLtLv7YC9f9m1kqdqAfvboOsxG
+         O/RXo5awd0OqYopCqGuIgf9VFNH9Fv24dUdOK2vo+9VijkZ+LFAhTzUbK8eX8rVPKk
+         MKdiQ/v8zPTpA==
+Date:   Thu, 22 Apr 2021 11:06:26 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Peter.Enderborg@sony.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        sumit.semwal@linaro.org, christian.koenig@amd.com,
+        adobriyan@gmail.com, akpm@linux-foundation.org,
+        songmuchun@bytedance.com, guro@fb.com, shakeelb@google.com,
+        mhocko@suse.com, neilb@suse.de, samitolvanen@google.com,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, willy@infradead.org
+Subject: Re: [PATCH v5] dma-buf: Add DmaBufTotal counter in meminfo
+Message-ID: <YIEugg9RIVSReN97@kernel.org>
+References: <20210417163835.25064-1-peter.enderborg@sony.com>
+ <YH6Xv00ddYfMA3Lg@phenom.ffwll.local>
+ <176e7e71-59b7-b288-9483-10e0f42a7a3f@sony.com>
+ <YH63iPzbGWzb676T@phenom.ffwll.local>
+ <a60d1eaf-f9f8-e0f3-d214-15ce2c0635c2@sony.com>
+ <YH/tHFBtIawBfGBl@phenom.ffwll.local>
+ <cbde932e-8887-391f-4a1d-515e5c56c01d@sony.com>
+ <YIBFbh4Dd1XaDbto@kernel.org>
+ <84e0c6d9-74c6-5fa8-f75a-45c8ec995ac2@sony.com>
 MIME-Version: 1.0
-References: <CANpmjNM8wEJngK=J8Lt9npkZgrSWoRsqkdajErWEoY_=M1GW5A@mail.gmail.com>
- <43f8a3bf-34c5-0fc9-c335-7f92eaf23022@samsung.com> <dccaa337-f3e5-08e4-fe40-a603811bb13e@samsung.com>
- <CANpmjNP6-yKpxHqYFiA8Up-ujBQaeP7xyq1BrsV-NqMjJ-uHAQ@mail.gmail.com>
- <740077ce-efe1-b171-f807-bc5fd95a32ba@samsung.com> <f114ff4a-6612-0935-12ac-0e2ac18d896c@samsung.com>
- <CANpmjNM6bQpc49teN-9qQhCXoJXaek5stFGR2kPwDroSFBc0fw@mail.gmail.com>
- <cf6ed5cd-3202-65ce-86bc-6f1eba1b7d17@samsung.com> <CANpmjNPr_JtRC762ap8PQVmsFNY5YhHvOk0wNcPHq=ZQt-qxYg@mail.gmail.com>
- <YIBSg7Vi+U383dT7@elver.google.com> <CGME20210421182355eucas1p23b419002936ab5f1ffc25652135cc152@eucas1p2.samsung.com>
- <YIBtr2w/8KhOoiUA@elver.google.com> <dd99b921-3d79-a21f-8942-40fa5bf53190@samsung.com>
-In-Reply-To: <dd99b921-3d79-a21f-8942-40fa5bf53190@samsung.com>
-From:   Marco Elver <elver@google.com>
-Date:   Thu, 22 Apr 2021 08:47:13 +0200
-Message-ID: <CANpmjNPbMOUd_Wh5aHGdH8WLrYpyBFUpwx6g3Kj2D6eevvaU8w@mail.gmail.com>
-Subject: Re: [PATCH v4 05/10] signal: Introduce TRAP_PERF si_code and si_perf
- to siginfo
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian@brauner.io>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Matt Morehouse <mascasa@google.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Ian Rogers <irogers@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-tegra@vger.kernel.org, jonathanh@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <84e0c6d9-74c6-5fa8-f75a-45c8ec995ac2@sony.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 22 Apr 2021 at 08:12, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-[...]
-> > So I think we just have to settle on 'unsigned long' here. On many
-> > architectures, like 32-bit Arm, the alignment of a structure is that of
-> > its largest member. This means that there is no portable way to add
-> > 64-bit integers to siginfo_t on 32-bit architectures.
+On Wed, Apr 21, 2021 at 05:35:57PM +0000, Peter.Enderborg@sony.com wrote:
+> On 4/21/21 5:31 PM, Mike Rapoport wrote:
+> > On Wed, Apr 21, 2021 at 10:37:11AM +0000, Peter.Enderborg@sony.com wrote:
+> >> On 4/21/21 11:15 AM, Daniel Vetter wrote:
+> >>> We need to understand what the "correct" value is. Not in terms of kernel
+> >>> code, but in terms of semantics. Like if userspace allocates a GL texture,
+> >>> is this supposed to show up in your metric or not. Stuff like that.
+> >> That it like that would like to only one pointer type. You need to know what
+> >>
+> >> you pointing at to know what it is. it might be a hardware or a other pointer.
+> >>
+> >> If there is a limitation on your pointers it is a good metric to count them
+> >> even if you don't  know what they are. Same goes for dma-buf, they
+> >> are generic, but they consume some resources that are counted in pages.
+> >>
+> >> It would be very good if there a sub division where you could measure
+> >> all possible types separately.  We have the detailed in debugfs, but nothing
+> >> for the user. A summary in meminfo seems to be the best place for such
+> >> metric.
+> >  
+> > Let me try to summarize my understanding of the problem, maybe it'll help
+> > others as well.
+> 
+> Thanks!
+> 
+> 
+> > A device driver allocates memory and exports this memory via dma-buf so
+> > that this memory will be accessible for userspace via a file descriptor.
 > >
-> > In the case of the si_perf field, word size is sufficient since the data
-> > it contains is user-defined. On 32-bit architectures, any excess bits of
-> > perf_event_attr::sig_data will therefore be truncated when copying into
-> > si_perf.
+> > The allocated memory can be either allocated with alloc_page() from system
+> > RAM or by other means from dedicated VRAM (that is not managed by Linux mm)
+> > or even from on-device memory.
 > >
-> > Feel free to test the below if you have time, but the below lets me boot
-> > 32-bit arm which previously timed out. It also passes all the
-> > static_asserts() I added (will send those as separate patches).
+> > The dma-buf driver tracks the amount of the memory it was requested to
+> > export and the size it sees is available at debugfs and fdinfo.
 > >
-> > Once I'm convinced this passes all others tests too, I'll send a patch.
->
-> This fixes the issue I've observed on my test systems. Feel free to add:
->
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > The debugfs is not available to user and maybe entirely disabled in
+> > production systems.
+> >
+> > There could be quite a few open dma-bufs so there is no overall summary,
+> > plus fdinfo in production systems your refer to is also unavailable to the
+> > user because of selinux policy.
+> >
+> > And there are a few details that are not clear to me:
+> >
+> > * Since DRM device drivers seem to be the major user of dma-buf exports,
+> >   why cannot we add information about their memory consumption to, say,
+> >   /sys/class/graphics/drm/cardX/memory-usage?
+> 
+> Android is using it for binder that connect more or less everything
+> internally.
+ 
+Ok, then it rules out /sys/class/graphics indeed.
 
-Thank you for testing! It's been sent:
-https://lkml.kernel.org/r/20210422064437.3577327-1-elver@google.com
+> > * How exactly user generates reports that would include the new counters?
+> >   From my (mostly outdated) experience Android users won't open a terminal
+> >   and type 'cat /proc/meminfo' there. I'd presume there is a vendor agent
+> >   that collects the data and sends it for analysis. In this case what is
+> >   the reason the vendor is unable to adjust selinix policy so that the
+> >   agent will be able to access fdinfo?
+> 
+> When you turn on developer mode on android you can use
+> usb with a program called adb. And there you get a normal shell.
+> 
+> (not root though)
+> 
+> There is applications that non developers can use to get
+> information. It is very limited though and there are API's
+> provide it.
+> 
+> 
+> >
+> > * And, as others already mentioned, it is not clear what are the problems
+> >   that can be detected by examining DmaBufTotal except saying "oh, there is
+> >   too much/too little memory exported via dma-buf". What would be user
+> >   visible effects of these problems? What are the next steps to investigate
+> >   them? What other data will be probably required to identify root cause?
+> >
+> When you debug thousands of devices it is quite nice to have
+> ways to classify what the problem it is not. The normal user does not
+> see anything of this. However they can generate bug-reports that
+> collect information about as much they can. Then the user have
+> to provide this bug-report to the manufacture or mostly the
+> application developer. And when the problem is
+> system related we need to reproduce the issue on a full
+> debug enabled unit.
 
-Thanks,
--- Marco
+So the flow is like this:
+
+* a user has a problem and reports it to an application developer; at best
+  the user runs simple and limited app to collect some data
+* if the application developer considers this issue as a system related
+  they can open adb and collect some more information about the system
+  using non-root shell with selinux policy restrictions and send this
+  information to the device manufacturer.
+* the manufacturer continues to debug the issue and at this point as much
+  information is possible would have been useful.
+
+In this flow I still fail to understand why the manufacturer cannot provide
+userspace tools that will be able to collect the required information.
+These tools not necessarily need to target the end user, they may be only
+intended for the application developers, e.g. policy could allow such tool
+to access some of the system data only when the system is in developer
+mode.
+
+-- 
+Sincerely yours,
+Mike.
