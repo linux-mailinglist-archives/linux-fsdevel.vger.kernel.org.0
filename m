@@ -2,76 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DDD0367676
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 02:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 330CE3676A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 03:07:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235133AbhDVAoz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Apr 2021 20:44:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52240 "EHLO
+        id S235262AbhDVBID (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Apr 2021 21:08:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230338AbhDVAox (ORCPT
+        with ESMTP id S230338AbhDVBH6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Apr 2021 20:44:53 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00CC1C06174A;
-        Wed, 21 Apr 2021 17:44:19 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lZNRw-007B5f-KZ; Thu, 22 Apr 2021 00:44:08 +0000
-Date:   Thu, 22 Apr 2021 00:44:08 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Aditya Pakki <pakki001@umn.edu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fuse: Avoid potential use after free
-Message-ID: <YIDG2MOSITJxJBqd@zeniv-ca.linux.org.uk>
-References: <20210406235332.2206460-1-pakki001@umn.edu>
+        Wed, 21 Apr 2021 21:07:58 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08830C06174A;
+        Wed, 21 Apr 2021 18:07:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=VRNWJ7dwbgZwlJyhYfwGgpaJzbScF/7s6fzKyBnonnk=; b=WtR6qF+FGYDnWHNpr57Amm2uZk
+        ZgQuQYsiGxtuRwxgwalTqgLJID5Xudtgan2AHAeyR9GnxsHku9D0Au88l9Yp1FylXEuang+V9AgNX
+        W3Ut/B+QNa7FXpswe5iQmJQD9vUJjTRdu50fGl/hVEJe0wwvYUD2gfscP4OrpgURDThZCrZcqHGMv
+        kSuC25KwvxN7vHm3opYhbdp+aUt+SXdxC01mzy3FZ4ZtUtw0V2EYvk6lib5d+5gUZU57+zncdBD+M
+        gEZpNUh8Wxziorc+1auBCeqSuHK9fWV/5G6Rc5c2EQxU7fpo67nO6zwkUGXMLMnTI84qzCHt7DsBy
+        99LU24HA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lZNna-00HGPa-Uh; Thu, 22 Apr 2021 01:06:35 +0000
+Date:   Thu, 22 Apr 2021 02:06:30 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <dchinner@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] mm/filemap: fix find_lock_entries hang on 32-bit THP
+Message-ID: <20210422010630.GK3596236@casper.infradead.org>
+References: <alpine.LSU.2.11.2104211723580.3299@eggly.anvils>
+ <alpine.LSU.2.11.2104211735430.3299@eggly.anvils>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210406235332.2206460-1-pakki001@umn.edu>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <alpine.LSU.2.11.2104211735430.3299@eggly.anvils>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 06, 2021 at 06:53:32PM -0500, Aditya Pakki wrote:
-> In virtio_fs_get_tree, after fm is freed, it is again freed in case
-> s_root is NULL and virtio_fs_fill_super() returns an error. To avoid
-> a double free, set fm to NULL.
-> 
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-> ---
->  fs/fuse/virtio_fs.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index 4ee6f734ba83..a7484c1539bf 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -1447,6 +1447,7 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
->  	if (fsc->s_fs_info) {
->  		fuse_conn_put(fc);
->  		kfree(fm);
-> +		fm = NULL;
->  	}
->  	if (IS_ERR(sb))
->  		return PTR_ERR(sb);
+On Wed, Apr 21, 2021 at 05:37:33PM -0700, Hugh Dickins wrote:
+> -		if (!xa_is_value(page) && PageTransHuge(page))
+> -			xas_set(&xas, page->index + thp_nr_pages(page));
+> +		if (!xa_is_value(page) && PageTransHuge(page)) {
+> +			unsigned int nr_pages = thp_nr_pages(page);
+> +
+> +			/* Final THP may cross MAX_LFS_FILESIZE on 32-bit */
+> +			xas_set(&xas, page->index + nr_pages);
+> +			if (xas.xa_index < nr_pages)
+> +				break;
+> +		}
 
-NAK.  The only cases when sget_fc() returns without having ->s_fs_info
-zeroed are when it has successfull grabbed a reference to existing live
-superblock or when it has failed.  In the former case we proceed straight
-to
-        fsc->root = dget(sb->s_root);
-	return 0;
-and in the latter we bugger off on IS_ERR(sb).  No double-free in either
-case.  Said that, the logics in there (especially around the cleanups
-on virtio_fs_fill_super() failures) is bloody convoluted, but sorting
-that out would take a lot more RTFS than I'm willing to start right now.
-
-In any case, this patch does not fix any bugs and does not make the
-thing easier to follow, so...
-
-NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
+Aargh.  We really need to get the multi-index support in; this works
+perfectly when the xas_set() hack isn't needed any more.
