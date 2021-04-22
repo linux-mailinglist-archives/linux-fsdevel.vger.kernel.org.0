@@ -2,225 +2,751 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2496E36815F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 15:21:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DE82368189
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 15:35:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236363AbhDVNVz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Apr 2021 09:21:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49812 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235830AbhDVNVz (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Apr 2021 09:21:55 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AE55C06174A;
-        Thu, 22 Apr 2021 06:21:20 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id y4so31924184lfl.10;
-        Thu, 22 Apr 2021 06:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PHTEUlxqgA8l0F2eLJhm0lUslDtS68hTg+QYS24mt1A=;
-        b=W7OhzBe3tGUvNLBkODmWurcIqydRnEopd0uCZ7QbiU0h8VJODUAOgr/3XEF92VflWL
-         TXceQfgaNdpDg1UZRmbzPTG/0L4PlAQgTVuPAwopTgPlwj5U+BeXZQoSRaUL5ma+2bCC
-         vsH3TBHRwlPoNzyhQfT99Nn97tBv4CiuPKbmQNBy03lBXBKQm8jTqQmuGDxl9wzOuHOu
-         CHODrbcVzlu+LM35gAf1pN09cFuWMk9cdrJwBiAi/STbb+w6F2eLveY8XqqJLod9m8QX
-         LhegfL4CHs7Cqsan2vBBPlw32MMwx6zv5p5LSqjAhg3Ni6jqTuu1XKMo0Mw/2vgyoUtF
-         q6AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PHTEUlxqgA8l0F2eLJhm0lUslDtS68hTg+QYS24mt1A=;
-        b=b5D21r/VO6XvpFHwVDDGnwP++n2sr6T8y4GVR57JINanzuQlTwM3mLW6s9Y/935ePK
-         bhVKgvNMwEbPUkHzMrG45DJSqEd4VU02kDkWB829SWsFzSsJs2afzTffp+8/XPB9Xvv1
-         KSruMrAfk13Rz/XWcheZDgA7rNjOTgwj63LQmlZFnuFfm4yEWVpeDO66Lw6A+JzJpCWb
-         LrF8YZa+cR/vsyFpIMrH+qYBbZFtIP3OQsdkSTrVU16x18QCcPJHCXHkJhfLdYERx5Ma
-         pam1YN5bg3eMRqTGE2blo6EUeZpm0zSlYLIzou78khtQtkzJMHhR03nQKT1HtgmcJSsX
-         T+yA==
-X-Gm-Message-State: AOAM532KFlXa64Trvt/Rz/vzImEFax8NFOsJ3jyVbpsh7TuTrb2k0qX5
-        /1kP6j8G1LxIEE4X3azrACop1AsccWQ2lxBHSRz54KAaOBY=
-X-Google-Smtp-Source: ABdhPJzchxlr8SAqDCJEYfgZJ8QXE6CDSC4eSAy8LD85f/vmqWZ1RAbHO7YYaqobzfkUvRLmAMfCh19ckF2iWAe3l5w=
-X-Received: by 2002:ac2:43c5:: with SMTP id u5mr2441430lfl.40.1619097678746;
- Thu, 22 Apr 2021 06:21:18 -0700 (PDT)
+        id S236583AbhDVNgP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Apr 2021 09:36:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60598 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236557AbhDVNgO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Apr 2021 09:36:14 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AE02C61452;
+        Thu, 22 Apr 2021 13:35:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619098539;
+        bh=bLMA8ZslaXAo1q+UVbXshJb99c7UIWFQ3RYNWWgcfkM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=uV7TKNQZhDLwsRioBSyk4d641xaWo8SWGt0UVn3C7EUH+EM/cTL7r4rxumUoz7kqw
+         HhfmcHrXDGz1zanvj7LQwb1ztgEl2T75Vrns/lDqUNIaTFaL3K5MtNGcbG3Cb0n8iv
+         hWJykong1u+fEDkW+uGERs5+url372xBKbYpKP4ePR7PoUVpjHkYBtBodYCsMpy0tO
+         QpIdHz62kXZaUu/+sqqHGb31VmPFQqj/jixrHb9ezQapl0x4Mgm/TwM59PloOhCdCE
+         KSU11BFIUWBtPm8urTLESv30NmPANJn392WPtyuprDHS1VsAJBKRYEpLleUoBcWoPe
+         xGms2rZRpV54g==
+Message-ID: <27c369a8f42bb8a617672b2dc0126a5c6df5a050.camel@kernel.org>
+Subject: Re: [PATCH v6 01/30] iov_iter: Add ITER_XARRAY
+From:   Jeff Layton <jlayton@kernel.org>
+To:     David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        David Wysochanski <dwysocha@redhat.com>,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 22 Apr 2021 09:35:36 -0400
+In-Reply-To: <161789064740.6155.11932541175173658065.stgit@warthog.procyon.org.uk>
+References: <161789062190.6155.12711584466338493050.stgit@warthog.procyon.org.uk>
+         <161789064740.6155.11932541175173658065.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
 MIME-Version: 1.0
-References: <20210421171446.785507-1-omosnace@redhat.com> <20210421171446.785507-3-omosnace@redhat.com>
-In-Reply-To: <20210421171446.785507-3-omosnace@redhat.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Thu, 22 Apr 2021 09:21:07 -0400
-Message-ID: <CAEjxPJ5ksqrafO8uaf3jR=cjU5JnyQYmn_57skp=WXz7-RcbVQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] selinux: add capability to map anon inode types
- to separate classes
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     SElinux list <selinux@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Lokesh Gidra <lokeshgidra@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 21, 2021 at 1:14 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> Unfortunately, the approach chosen in commit 29cd6591ab6f ("selinux:
-> teach SELinux about anonymous inodes") to use a single class for all
-> anon inodes and let the policy distinguish between them using named
-> transitions turned out to have a rather unfortunate drawback.
->
-> For example, suppose we have two types of anon inodes, "A" and "B", and
-> we want to allow a set of domains (represented by an attribute "attr_x")
-> certain set of permissions on anon inodes of type "A" that were created
-> by the same domain, but at the same time disallow this set to access
-> anon inodes of type "B" entirely. Since all inodes share the same class
-> and we want to distinguish both the inode types and the domains that
-> created them, we have no choice than to create separate types for the
-> cartesian product of (domains that belong to attr_x) x ("A", "B") and
-> add all the necessary allow and transition rules for each domain
-> individually.
->
-> This makes it very impractical to write sane policies for anon inodes in
-> the future, as more anon inode types are added. Therefore, this patch
-> implements an alternative approach that assigns a separate class to each
-> type of anon inode. This allows the example above to be implemented
-> without any transition rules and with just a single allow rule:
->
-> allow attr_x self:A { ... };
->
-> In order to not break possible existing users of the already merged
-> original approach, this patch also adds a new policy capability
-> "extended_anon_inode_class" that needs to be set by the policy to enable
-> the new behavior.
->
-> I decided to keep the named transition mechanism in the new variant,
-> since there might eventually be some extra information in the anon inode
-> name that could be used in transitions.
->
-> One minor annoyance is that the kernel still expects the policy to
-> provide both classes (anon_inode and userfaultfd) regardless of the
-> capability setting and if one of them is not defined in the policy, the
-> kernel will print a warning when loading the policy. However, it doesn't
-> seem worth to work around that in the kernel, as the policy can provide
-> just the definition of the unused class(es) (and permissions) to avoid
-> this warning. Keeping the legacy anon_inode class with some fallback
-> rules may also be desirable to keep the policy compatible with kernels
-> that only support anon_inode.
->
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-
-NAK.  We do not want to introduce a new security class for every user
-of anon inodes - that isn't what security classes are for.
-For things like kvm device inodes, those should ultimately use the
-inherited context from the related inode (the /dev/kvm inode itself).
-That was the original intent of supporting the related inode.
-
+On Thu, 2021-04-08 at 15:04 +0100, David Howells wrote:
+> Add an iterator, ITER_XARRAY, that walks through a set of pages attached to
+> an xarray, starting at a given page and offset and walking for the
+> specified amount of bytes.  The iterator supports transparent huge pages.
+> 
+> The iterate_xarray() macro calls the helper function with rcu_access()
+> helped.  I think that this is only a problem for iov_iter_for_each_range()
+> - and that returns an error for ITER_XARRAY (also, this function does not
+> appear to be called).
+> 
+> The caller must guarantee that the pages are all present and they must be
+> locked using PG_locked, PG_writeback or PG_fscache to prevent them from
+> going away or being migrated whilst they're being accessed.
+> 
+> This is useful for copying data from socket buffers to inodes in network
+> filesystems and for transferring data between those inodes and the cache
+> using direct I/O.
+> 
+> Whilst it is true that ITER_BVEC could be used instead, that would require
+> a bio_vec array to be allocated to refer to all the pages - which should be
+> redundant if inode->i_pages also points to all these pages.
+> 
+> Note that older versions of this patch implemented an ITER_MAPPING instead,
+> which was almost the same.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> cc: Christoph Hellwig <hch@lst.de>
+> cc: linux-mm@kvack.org
+> cc: linux-cachefs@redhat.com
+> cc: linux-afs@lists.infradead.org
+> cc: linux-nfs@vger.kernel.org
+> cc: linux-cifs@vger.kernel.org
+> cc: ceph-devel@vger.kernel.org
+> cc: v9fs-developer@lists.sourceforge.net
+> cc: linux-fsdevel@vger.kernel.org
+> Link: https://lore.kernel.org/r/3577430.1579705075@warthog.procyon.org.uk/ # rfc
+> Link: https://lore.kernel.org/r/158861205740.340223.16592990225607814022.stgit@warthog.procyon.org.uk/ # rfc
+> Link: https://lore.kernel.org/r/159465785214.1376674.6062549291411362531.stgit@warthog.procyon.org.uk/
+> Link: https://lore.kernel.org/r/160588477334.3465195.3608963255682568730.stgit@warthog.procyon.org.uk/ # rfc
+> Link: https://lore.kernel.org/r/161118129703.1232039.17141248432017826976.stgit@warthog.procyon.org.uk/ # rfc
+> Link: https://lore.kernel.org/r/161161026313.2537118.14676007075365418649.stgit@warthog.procyon.org.uk/ # v2
+> Link: https://lore.kernel.org/r/161340386671.1303470.10752208972482479840.stgit@warthog.procyon.org.uk/ # v3
+> Link: https://lore.kernel.org/r/161539527815.286939.14607323792547049341.stgit@warthog.procyon.org.uk/ # v4
+> Link: https://lore.kernel.org/r/161653786033.2770958.14154191921867463240.stgit@warthog.procyon.org.uk/ # v5
 > ---
->  security/selinux/hooks.c                   | 27 +++++++++++++++++++++-
->  security/selinux/include/classmap.h        |  2 ++
->  security/selinux/include/policycap.h       |  1 +
->  security/selinux/include/policycap_names.h |  3 ++-
->  security/selinux/include/security.h        |  7 ++++++
->  5 files changed, 38 insertions(+), 2 deletions(-)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index dc57ba21d8ff..20a8d7d17936 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -3079,7 +3079,32 @@ static int selinux_inode_init_security_anon(struct inode *inode,
->                 isec->sclass = context_isec->sclass;
->                 isec->sid = context_isec->sid;
->         } else {
-> -               isec->sclass = SECCLASS_ANON_INODE;
-> +               /*
-> +                * If the check below fails:
-> +                *  1. Add the corresponding security class to
-> +                *     security/selinux/include/classmap.h
-> +                *  2. Map the new LSM_ANON_INODE_* value to the class in
-> +                *     the switch statement below.
-> +                *  3. Update the RHS of the comparison in the BUILD_BUG_ON().
-> +                *  4. CC selinux@vger.kernel.org and
-> +                *     linux-security-module@vger.kernel.org when submitting
-> +                *     the patch or in case of any questions.
-> +                */
-> +               BUILD_BUG_ON(LSM_ANON_INODE_MAX > LSM_ANON_INODE_USERFAULTFD);
-> +
-> +               if (selinux_policycap_extended_anon_inode()) {
-> +                       switch (type) {
-> +                       case LSM_ANON_INODE_USERFAULTFD:
-> +                               isec->sclass = SECCLASS_USERFAULTFD;
-> +                               break;
-> +                       default:
-> +                               pr_err("SELinux:  got invalid anon inode type: %d",
-> +                                      (int)type);
-> +                               return -EINVAL;
-> +                       }
-> +               } else {
-> +                       isec->sclass = SECCLASS_ANON_INODE;
-> +               }
->                 rc = security_transition_sid(
->                         &selinux_state, tsec->sid, tsec->sid,
->                         isec->sclass, name, &isec->sid);
-> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-> index ba2e01a6955c..e4308cad6407 100644
-> --- a/security/selinux/include/classmap.h
-> +++ b/security/selinux/include/classmap.h
-> @@ -251,6 +251,8 @@ struct security_class_mapping secclass_map[] = {
->           { "integrity", "confidentiality", NULL } },
->         { "anon_inode",
->           { COMMON_FILE_PERMS, NULL } },
-> +       { "userfaultfd",
-> +         { COMMON_FILE_PERMS, NULL } },
->         { NULL }
->    };
->
-> diff --git a/security/selinux/include/policycap.h b/security/selinux/include/policycap.h
-> index 2ec038efbb03..969804bd6dab 100644
-> --- a/security/selinux/include/policycap.h
-> +++ b/security/selinux/include/policycap.h
-> @@ -11,6 +11,7 @@ enum {
->         POLICYDB_CAPABILITY_CGROUPSECLABEL,
->         POLICYDB_CAPABILITY_NNP_NOSUID_TRANSITION,
->         POLICYDB_CAPABILITY_GENFS_SECLABEL_SYMLINKS,
-> +       POLICYDB_CAPABILITY_EXTENDED_ANON_INODE_CLASS,
->         __POLICYDB_CAPABILITY_MAX
+> 
+>  include/linux/uio.h |   11 ++
+>  lib/iov_iter.c      |  313 +++++++++++++++++++++++++++++++++++++++++++++++----
+>  2 files changed, 301 insertions(+), 23 deletions(-)
+> 
+> diff --git a/include/linux/uio.h b/include/linux/uio.h
+> index 27ff8eb786dc..5f5ffc45d4aa 100644
+> --- a/include/linux/uio.h
+> +++ b/include/linux/uio.h
+> @@ -10,6 +10,7 @@
+>  #include <uapi/linux/uio.h>
+>  
+>  struct page;
+> +struct address_space;
+>  struct pipe_inode_info;
+>  
+>  struct kvec {
+> @@ -24,6 +25,7 @@ enum iter_type {
+>  	ITER_BVEC = 16,
+>  	ITER_PIPE = 32,
+>  	ITER_DISCARD = 64,
+> +	ITER_XARRAY = 128,
 >  };
->  #define POLICYDB_CAPABILITY_MAX (__POLICYDB_CAPABILITY_MAX - 1)
-> diff --git a/security/selinux/include/policycap_names.h b/security/selinux/include/policycap_names.h
-> index b89289f092c9..78651990425e 100644
-> --- a/security/selinux/include/policycap_names.h
-> +++ b/security/selinux/include/policycap_names.h
-> @@ -12,7 +12,8 @@ const char *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
->         "always_check_network",
->         "cgroup_seclabel",
->         "nnp_nosuid_transition",
-> -       "genfs_seclabel_symlinks"
-> +       "genfs_seclabel_symlinks",
-> +       "extended_anon_inode_class",
+>  
+>  struct iov_iter {
+> @@ -39,6 +41,7 @@ struct iov_iter {
+>  		const struct iovec *iov;
+>  		const struct kvec *kvec;
+>  		const struct bio_vec *bvec;
+> +		struct xarray *xarray;
+>  		struct pipe_inode_info *pipe;
+>  	};
+>  	union {
+> @@ -47,6 +50,7 @@ struct iov_iter {
+>  			unsigned int head;
+>  			unsigned int start_head;
+>  		};
+> +		loff_t xarray_start;
+>  	};
 >  };
->
->  #endif /* _SELINUX_POLICYCAP_NAMES_H_ */
-> diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
-> index 7130c9648ad1..4fb75101aca4 100644
-> --- a/security/selinux/include/security.h
-> +++ b/security/selinux/include/security.h
-> @@ -219,6 +219,13 @@ static inline bool selinux_policycap_genfs_seclabel_symlinks(void)
->         return READ_ONCE(state->policycap[POLICYDB_CAPABILITY_GENFS_SECLABEL_SYMLINKS]);
+>  
+> @@ -80,6 +84,11 @@ static inline bool iov_iter_is_discard(const struct iov_iter *i)
+>  	return iov_iter_type(i) == ITER_DISCARD;
 >  }
->
-> +static inline bool selinux_policycap_extended_anon_inode(void)
+>  
+> +static inline bool iov_iter_is_xarray(const struct iov_iter *i)
 > +{
-> +       struct selinux_state *state = &selinux_state;
-> +
-> +       return READ_ONCE(state->policycap[POLICYDB_CAPABILITY_EXTENDED_ANON_INODE_CLASS]);
+> +	return iov_iter_type(i) == ITER_XARRAY;
 > +}
 > +
->  int security_mls_enabled(struct selinux_state *state);
->  int security_load_policy(struct selinux_state *state,
->                         void *data, size_t len,
-> --
-> 2.30.2
->
+>  static inline unsigned char iov_iter_rw(const struct iov_iter *i)
+>  {
+>  	return i->type & (READ | WRITE);
+> @@ -221,6 +230,8 @@ void iov_iter_bvec(struct iov_iter *i, unsigned int direction, const struct bio_
+>  void iov_iter_pipe(struct iov_iter *i, unsigned int direction, struct pipe_inode_info *pipe,
+>  			size_t count);
+>  void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t count);
+> +void iov_iter_xarray(struct iov_iter *i, unsigned int direction, struct xarray *xarray,
+> +		     loff_t start, size_t count);
+>  ssize_t iov_iter_get_pages(struct iov_iter *i, struct page **pages,
+>  			size_t maxsize, unsigned maxpages, size_t *start);
+>  ssize_t iov_iter_get_pages_alloc(struct iov_iter *i, struct page ***pages,
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index f66c62aa7154..f808c625c11e 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -76,7 +76,44 @@
+>  	}						\
+>  }
+>  
+
+As a general note, iov_iter.c could really do with some (verbose)
+comments explaining things. A kerneldoc header that explains the
+arguments to iterate_all_kinds would sure make this easier to review.
+
+> -#define iterate_all_kinds(i, n, v, I, B, K) {			\
+> +#define iterate_xarray(i, n, __v, skip, STEP) {		\
+> +	struct page *head = NULL;				\
+> +	size_t wanted = n, seg, offset;				\
+> +	loff_t start = i->xarray_start + skip;			\
+> +	pgoff_t index = start >> PAGE_SHIFT;			\
+> +	int j;							\
+> +								\
+> +	XA_STATE(xas, i->xarray, index);			\
+> +								\
+> +	rcu_read_lock();						\
+> +	xas_for_each(&xas, head, ULONG_MAX) {				\
+> +		if (xas_retry(&xas, head))				\
+> +			continue;					\
+> +		if (WARN_ON(xa_is_value(head)))				\
+> +			break;						\
+> +		if (WARN_ON(PageHuge(head)))				\
+> +			break;						\
+> +		for (j = (head->index < index) ? index - head->index : 0; \
+> +		     j < thp_nr_pages(head); j++) {			\
+> +			__v.bv_page = head + j;				\
+> +			offset = (i->xarray_start + skip) & ~PAGE_MASK;	\
+> +			seg = PAGE_SIZE - offset;			\
+> +			__v.bv_offset = offset;				\
+> +			__v.bv_len = min(n, seg);			\
+> +			(void)(STEP);					\
+> +			n -= __v.bv_len;				\
+> +			skip += __v.bv_len;				\
+> +			if (n == 0)					\
+> +				break;					\
+> +		}							\
+> +		if (n == 0)						\
+> +			break;						\
+> +	}							\
+> +	rcu_read_unlock();					\
+> +	n = wanted - n;						\
+> +}
+> +
+> +#define iterate_all_kinds(i, n, v, I, B, K, X) {		\
+>  	if (likely(n)) {					\
+>  		size_t skip = i->iov_offset;			\
+>  		if (unlikely(i->type & ITER_BVEC)) {		\
+> @@ -88,6 +125,9 @@
+>  			struct kvec v;				\
+>  			iterate_kvec(i, n, v, kvec, skip, (K))	\
+>  		} else if (unlikely(i->type & ITER_DISCARD)) {	\
+> +		} else if (unlikely(i->type & ITER_XARRAY)) {	\
+> +			struct bio_vec v;			\
+> +			iterate_xarray(i, n, v, skip, (X));	\
+>  		} else {					\
+>  			const struct iovec *iov;		\
+>  			struct iovec v;				\
+> @@ -96,7 +136,7 @@
+>  	}							\
+>  }
+>  
+> -#define iterate_and_advance(i, n, v, I, B, K) {			\
+> +#define iterate_and_advance(i, n, v, I, B, K, X) {		\
+>  	if (unlikely(i->count < n))				\
+>  		n = i->count;					\
+>  	if (i->count) {						\
+> @@ -121,6 +161,9 @@
+>  			i->kvec = kvec;				\
+>  		} else if (unlikely(i->type & ITER_DISCARD)) {	\
+>  			skip += n;				\
+> +		} else if (unlikely(i->type & ITER_XARRAY)) {	\
+> +			struct bio_vec v;			\
+> +			iterate_xarray(i, n, v, skip, (X))	\
+>  		} else {					\
+>  			const struct iovec *iov;		\
+>  			struct iovec v;				\
+> @@ -622,7 +665,9 @@ size_t _copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
+>  		copyout(v.iov_base, (from += v.iov_len) - v.iov_len, v.iov_len),
+>  		memcpy_to_page(v.bv_page, v.bv_offset,
+>  			       (from += v.bv_len) - v.bv_len, v.bv_len),
+> -		memcpy(v.iov_base, (from += v.iov_len) - v.iov_len, v.iov_len)
+> +		memcpy(v.iov_base, (from += v.iov_len) - v.iov_len, v.iov_len),
+> +		memcpy_to_page(v.bv_page, v.bv_offset,
+> +			       (from += v.bv_len) - v.bv_len, v.bv_len)
+>  	)
+>  
+>  	return bytes;
+> @@ -738,6 +783,16 @@ size_t _copy_mc_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
+>  			bytes = curr_addr - s_addr - rem;
+>  			return bytes;
+>  		}
+> +		}),
+> +		({
+> +		rem = copy_mc_to_page(v.bv_page, v.bv_offset,
+> +				      (from += v.bv_len) - v.bv_len, v.bv_len);
+> +		if (rem) {
+> +			curr_addr = (unsigned long) from;
+> +			bytes = curr_addr - s_addr - rem;
+> +			rcu_read_unlock();
+> +			return bytes;
+> +		}
+>  		})
+>  	)
+>  
+> @@ -759,7 +814,9 @@ size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
+>  		copyin((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
+>  		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
+>  				 v.bv_offset, v.bv_len),
+> -		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
+> +		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
+> +		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
+> +				 v.bv_offset, v.bv_len)
+>  	)
+>  
+>  	return bytes;
+> @@ -785,7 +842,9 @@ bool _copy_from_iter_full(void *addr, size_t bytes, struct iov_iter *i)
+>  		0;}),
+>  		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
+>  				 v.bv_offset, v.bv_len),
+> -		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
+> +		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
+> +		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
+> +				 v.bv_offset, v.bv_len)
+>  	)
+>  
+>  	iov_iter_advance(i, bytes);
+> @@ -805,7 +864,9 @@ size_t _copy_from_iter_nocache(void *addr, size_t bytes, struct iov_iter *i)
+>  					 v.iov_base, v.iov_len),
+>  		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
+>  				 v.bv_offset, v.bv_len),
+> -		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
+> +		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
+> +		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
+> +				 v.bv_offset, v.bv_len)
+>  	)
+>  
+>  	return bytes;
+> @@ -840,7 +901,9 @@ size_t _copy_from_iter_flushcache(void *addr, size_t bytes, struct iov_iter *i)
+>  		memcpy_page_flushcache((to += v.bv_len) - v.bv_len, v.bv_page,
+>  				 v.bv_offset, v.bv_len),
+>  		memcpy_flushcache((to += v.iov_len) - v.iov_len, v.iov_base,
+> -			v.iov_len)
+> +			v.iov_len),
+> +		memcpy_page_flushcache((to += v.bv_len) - v.bv_len, v.bv_page,
+> +				 v.bv_offset, v.bv_len)
+>  	)
+>  
+>  	return bytes;
+> @@ -864,7 +927,9 @@ bool _copy_from_iter_full_nocache(void *addr, size_t bytes, struct iov_iter *i)
+>  		0;}),
+>  		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
+>  				 v.bv_offset, v.bv_len),
+> -		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
+> +		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
+> +		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
+> +				 v.bv_offset, v.bv_len)
+>  	)
+>  
+>  	iov_iter_advance(i, bytes);
+> @@ -901,7 +966,7 @@ size_t copy_page_to_iter(struct page *page, size_t offset, size_t bytes,
+>  {
+>  	if (unlikely(!page_copy_sane(page, offset, bytes)))
+>  		return 0;
+> -	if (i->type & (ITER_BVEC|ITER_KVEC)) {
+> +	if (i->type & (ITER_BVEC | ITER_KVEC | ITER_XARRAY)) {
+>  		void *kaddr = kmap_atomic(page);
+>  		size_t wanted = copy_to_iter(kaddr + offset, bytes, i);
+>  		kunmap_atomic(kaddr);
+> @@ -924,7 +989,7 @@ size_t copy_page_from_iter(struct page *page, size_t offset, size_t bytes,
+>  		WARN_ON(1);
+>  		return 0;
+>  	}
+> -	if (i->type & (ITER_BVEC|ITER_KVEC)) {
+> +	if (i->type & (ITER_BVEC | ITER_KVEC | ITER_XARRAY)) {
+>  		void *kaddr = kmap_atomic(page);
+>  		size_t wanted = _copy_from_iter(kaddr + offset, bytes, i);
+>  		kunmap_atomic(kaddr);
+> @@ -968,7 +1033,8 @@ size_t iov_iter_zero(size_t bytes, struct iov_iter *i)
+>  	iterate_and_advance(i, bytes, v,
+>  		clear_user(v.iov_base, v.iov_len),
+>  		memzero_page(v.bv_page, v.bv_offset, v.bv_len),
+> -		memset(v.iov_base, 0, v.iov_len)
+> +		memset(v.iov_base, 0, v.iov_len),
+> +		memzero_page(v.bv_page, v.bv_offset, v.bv_len)
+>  	)
+>  
+>  	return bytes;
+> @@ -992,7 +1058,9 @@ size_t iov_iter_copy_from_user_atomic(struct page *page,
+>  		copyin((p += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
+>  		memcpy_from_page((p += v.bv_len) - v.bv_len, v.bv_page,
+>  				 v.bv_offset, v.bv_len),
+> -		memcpy((p += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
+> +		memcpy((p += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
+> +		memcpy_from_page((p += v.bv_len) - v.bv_len, v.bv_page,
+> +				 v.bv_offset, v.bv_len)
+>  	)
+>  	kunmap_atomic(kaddr);
+>  	return bytes;
+> @@ -1078,11 +1146,16 @@ void iov_iter_advance(struct iov_iter *i, size_t size)
+>  		i->count -= size;
+>  		return;
+>  	}
+> +	if (unlikely(iov_iter_is_xarray(i))) {
+> +		i->iov_offset += size;
+> +		i->count -= size;
+> +		return;
+> +	}
+>  	if (iov_iter_is_bvec(i)) {
+>  		iov_iter_bvec_advance(i, size);
+>  		return;
+>  	}
+> -	iterate_and_advance(i, size, v, 0, 0, 0)
+> +	iterate_and_advance(i, size, v, 0, 0, 0, 0)
+>  }
+>  EXPORT_SYMBOL(iov_iter_advance);
+>  
+> @@ -1126,7 +1199,12 @@ void iov_iter_revert(struct iov_iter *i, size_t unroll)
+>  		return;
+>  	}
+>  	unroll -= i->iov_offset;
+> -	if (iov_iter_is_bvec(i)) {
+> +	if (iov_iter_is_xarray(i)) {
+> +		BUG(); /* We should never go beyond the start of the specified
+> +			* range since we might then be straying into pages that
+> +			* aren't pinned.
+> +			*/
+
+It's not needed now, but there are a lot of calls to iov_iter_revert in
+the kernel, and going backward doesn't necessarily mean we'd be straying
+into an unpinned range. xarray_start never changes; would it not be ok
+to allow reverting as long as you don't move to a lower offset than that
+point?
+
+
+> +	} else if (iov_iter_is_bvec(i)) {
+>  		const struct bio_vec *bvec = i->bvec;
+>  		while (1) {
+>  			size_t n = (--bvec)->bv_len;
+> @@ -1163,9 +1241,9 @@ size_t iov_iter_single_seg_count(const struct iov_iter *i)
+>  		return i->count;	// it is a silly place, anyway
+>  	if (i->nr_segs == 1)
+>  		return i->count;
+> -	if (unlikely(iov_iter_is_discard(i)))
+> +	if (unlikely(iov_iter_is_discard(i) || iov_iter_is_xarray(i)))
+>  		return i->count;
+> -	else if (iov_iter_is_bvec(i))
+> +	if (iov_iter_is_bvec(i))
+>  		return min(i->count, i->bvec->bv_len - i->iov_offset);
+>  	else
+>  		return min(i->count, i->iov->iov_len - i->iov_offset);
+> @@ -1213,6 +1291,31 @@ void iov_iter_pipe(struct iov_iter *i, unsigned int direction,
+>  }
+>  EXPORT_SYMBOL(iov_iter_pipe);
+>  
+> +/**
+> + * iov_iter_xarray - Initialise an I/O iterator to use the pages in an xarray
+> + * @i: The iterator to initialise.
+> + * @direction: The direction of the transfer.
+> + * @xarray: The xarray to access.
+> + * @start: The start file position.
+> + * @count: The size of the I/O buffer in bytes.
+> + *
+> + * Set up an I/O iterator to either draw data out of the pages attached to an
+> + * inode or to inject data into those pages.  The pages *must* be prevented
+> + * from evaporation, either by taking a ref on them or locking them by the
+> + * caller.
+> + */
+> +void iov_iter_xarray(struct iov_iter *i, unsigned int direction,
+> +		     struct xarray *xarray, loff_t start, size_t count)
+> +{
+> +	BUG_ON(direction & ~1);
+> +	i->type = ITER_XARRAY | (direction & (READ | WRITE));
+> +	i->xarray = xarray;
+> +	i->xarray_start = start;
+> +	i->count = count;
+> +	i->iov_offset = 0;
+> +}
+> +EXPORT_SYMBOL(iov_iter_xarray);
+> +
+>  /**
+>   * iov_iter_discard - Initialise an I/O iterator that discards data
+>   * @i: The iterator to initialise.
+> @@ -1246,7 +1349,8 @@ unsigned long iov_iter_alignment(const struct iov_iter *i)
+>  	iterate_all_kinds(i, size, v,
+>  		(res |= (unsigned long)v.iov_base | v.iov_len, 0),
+>  		res |= v.bv_offset | v.bv_len,
+> -		res |= (unsigned long)v.iov_base | v.iov_len
+> +		res |= (unsigned long)v.iov_base | v.iov_len,
+> +		res |= v.bv_offset | v.bv_len
+>  	)
+>  	return res;
+>  }
+> @@ -1268,7 +1372,9 @@ unsigned long iov_iter_gap_alignment(const struct iov_iter *i)
+>  		(res |= (!res ? 0 : (unsigned long)v.bv_offset) |
+>  			(size != v.bv_len ? size : 0)),
+>  		(res |= (!res ? 0 : (unsigned long)v.iov_base) |
+> -			(size != v.iov_len ? size : 0))
+> +			(size != v.iov_len ? size : 0)),
+> +		(res |= (!res ? 0 : (unsigned long)v.bv_offset) |
+> +			(size != v.bv_len ? size : 0))
+>  		);
+>  	return res;
+>  }
+> @@ -1318,6 +1424,75 @@ static ssize_t pipe_get_pages(struct iov_iter *i,
+>  	return __pipe_get_pages(i, min(maxsize, capacity), pages, iter_head, start);
+>  }
+>  
+> +static ssize_t iter_xarray_copy_pages(struct page **pages, struct xarray *xa,
+> +				       pgoff_t index, unsigned int nr_pages)
+
+nit: This could use a different name -- I was expecting to see page
+_contents_ copied here, but it's just populating the page array with
+pointers.
+
+> +{
+> +	XA_STATE(xas, xa, index);
+> +	struct page *page;
+> +	unsigned int ret = 0;
+> +
+> +	rcu_read_lock();
+> +	for (page = xas_load(&xas); page; page = xas_next(&xas)) {
+> +		if (xas_retry(&xas, page))
+> +			continue;
+> +
+> +		/* Has the page moved or been split? */
+> +		if (unlikely(page != xas_reload(&xas))) {
+> +			xas_reset(&xas);
+> +			continue;
+> +		}
+> +
+> +		pages[ret] = find_subpage(page, xas.xa_index);
+> +		get_page(pages[ret]);
+> +		if (++ret == nr_pages)
+> +			break;
+> +	}
+> +	rcu_read_unlock();
+> +	return ret;
+> +}
+> +
+> +static ssize_t iter_xarray_get_pages(struct iov_iter *i,
+> +				     struct page **pages, size_t maxsize,
+> +				     unsigned maxpages, size_t *_start_offset)
+> +{
+> +	unsigned nr, offset;
+> +	pgoff_t index, count;
+> +	size_t size = maxsize, actual;
+> +	loff_t pos;
+> +
+> +	if (!size || !maxpages)
+> +		return 0;
+> +
+> +	pos = i->xarray_start + i->iov_offset;
+> +	index = pos >> PAGE_SHIFT;
+> +	offset = pos & ~PAGE_MASK;
+> +	*_start_offset = offset;
+> +
+> +	count = 1;
+> +	if (size > PAGE_SIZE - offset) {
+> +		size -= PAGE_SIZE - offset;
+> +		count += size >> PAGE_SHIFT;
+> +		size &= ~PAGE_MASK;
+> +		if (size)
+> +			count++;
+> +	}
+> +
+> +	if (count > maxpages)
+> +		count = maxpages;
+> +
+> +	nr = iter_xarray_copy_pages(pages, i->xarray, index, count);
+> +	if (nr == 0)
+> +		return 0;
+> +
+> +	actual = PAGE_SIZE * nr;
+> +	actual -= offset;
+> +	if (nr == count && size > 0) {
+> +		unsigned last_offset = (nr > 1) ? 0 : offset;
+> +		actual -= PAGE_SIZE - (last_offset + size);
+> +	}
+> +	return actual;
+> +}
+> +
+>  ssize_t iov_iter_get_pages(struct iov_iter *i,
+>  		   struct page **pages, size_t maxsize, unsigned maxpages,
+>  		   size_t *start)
+> @@ -1327,6 +1502,8 @@ ssize_t iov_iter_get_pages(struct iov_iter *i,
+>  
+>  	if (unlikely(iov_iter_is_pipe(i)))
+>  		return pipe_get_pages(i, pages, maxsize, maxpages, start);
+> +	if (unlikely(iov_iter_is_xarray(i)))
+> +		return iter_xarray_get_pages(i, pages, maxsize, maxpages, start);
+>  	if (unlikely(iov_iter_is_discard(i)))
+>  		return -EFAULT;
+>  
+> @@ -1353,7 +1530,8 @@ ssize_t iov_iter_get_pages(struct iov_iter *i,
+>  		return v.bv_len;
+>  	}),({
+>  		return -EFAULT;
+> -	})
+> +	}),
+> +	0
+>  	)
+>  	return 0;
+>  }
+> @@ -1397,6 +1575,51 @@ static ssize_t pipe_get_pages_alloc(struct iov_iter *i,
+>  	return n;
+>  }
+>  
+> +static ssize_t iter_xarray_get_pages_alloc(struct iov_iter *i,
+> +					   struct page ***pages, size_t maxsize,
+> +					   size_t *_start_offset)
+> +{
+> +	struct page **p;
+> +	unsigned nr, offset;
+> +	pgoff_t index, count;
+> +	size_t size = maxsize, actual;
+> +	loff_t pos;
+> +
+> +	if (!size)
+> +		return 0;
+> +
+> +	pos = i->xarray_start + i->iov_offset;
+> +	index = pos >> PAGE_SHIFT;
+> +	offset = pos & ~PAGE_MASK;
+> +	*_start_offset = offset;
+> +
+> +	count = 1;
+> +	if (size > PAGE_SIZE - offset) {
+> +		size -= PAGE_SIZE - offset;
+> +		count += size >> PAGE_SHIFT;
+> +		size &= ~PAGE_MASK;
+> +		if (size)
+> +			count++;
+> +	}
+> +
+> +	p = get_pages_array(count);
+> +	if (!p)
+> +		return -ENOMEM;
+> +	*pages = p;
+> +
+> +	nr = iter_xarray_copy_pages(p, i->xarray, index, count);
+> +	if (nr == 0)
+> +		return 0;
+> +
+> +	actual = PAGE_SIZE * nr;
+> +	actual -= offset;
+> +	if (nr == count && size > 0) {
+> +		unsigned last_offset = (nr > 1) ? 0 : offset;
+> +		actual -= PAGE_SIZE - (last_offset + size);
+> +	}
+> +	return actual;
+> +}
+> +
+>  ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+>  		   struct page ***pages, size_t maxsize,
+>  		   size_t *start)
+> @@ -1408,6 +1631,8 @@ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+>  
+>  	if (unlikely(iov_iter_is_pipe(i)))
+>  		return pipe_get_pages_alloc(i, pages, maxsize, start);
+> +	if (unlikely(iov_iter_is_xarray(i)))
+> +		return iter_xarray_get_pages_alloc(i, pages, maxsize, start);
+>  	if (unlikely(iov_iter_is_discard(i)))
+>  		return -EFAULT;
+>  
+> @@ -1440,7 +1665,7 @@ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+>  		return v.bv_len;
+>  	}),({
+>  		return -EFAULT;
+> -	})
+> +	}), 0
+>  	)
+>  	return 0;
+>  }
+> @@ -1478,6 +1703,13 @@ size_t csum_and_copy_from_iter(void *addr, size_t bytes, __wsum *csum,
+>  				      v.iov_base, v.iov_len,
+>  				      sum, off);
+>  		off += v.iov_len;
+> +	}), ({
+> +		char *p = kmap_atomic(v.bv_page);
+> +		sum = csum_and_memcpy((to += v.bv_len) - v.bv_len,
+> +				      p + v.bv_offset, v.bv_len,
+> +				      sum, off);
+> +		kunmap_atomic(p);
+> +		off += v.bv_len;
+>  	})
+>  	)
+>  	*csum = sum;
+> @@ -1519,6 +1751,13 @@ bool csum_and_copy_from_iter_full(void *addr, size_t bytes, __wsum *csum,
+>  				      v.iov_base, v.iov_len,
+>  				      sum, off);
+>  		off += v.iov_len;
+> +	}), ({
+> +		char *p = kmap_atomic(v.bv_page);
+> +		sum = csum_and_memcpy((to += v.bv_len) - v.bv_len,
+> +				      p + v.bv_offset, v.bv_len,
+> +				      sum, off);
+> +		kunmap_atomic(p);
+> +		off += v.bv_len;
+>  	})
+>  	)
+>  	*csum = sum;
+> @@ -1565,6 +1804,13 @@ size_t csum_and_copy_to_iter(const void *addr, size_t bytes, void *_csstate,
+>  				     (from += v.iov_len) - v.iov_len,
+>  				     v.iov_len, sum, off);
+>  		off += v.iov_len;
+> +	}), ({
+> +		char *p = kmap_atomic(v.bv_page);
+> +		sum = csum_and_memcpy(p + v.bv_offset,
+> +				      (from += v.bv_len) - v.bv_len,
+> +				      v.bv_len, sum, off);
+> +		kunmap_atomic(p);
+> +		off += v.bv_len;
+>  	})
+>  	)
+>  	csstate->csum = sum;
+> @@ -1615,6 +1861,21 @@ int iov_iter_npages(const struct iov_iter *i, int maxpages)
+>  		npages = pipe_space_for_user(iter_head, pipe->tail, pipe);
+>  		if (npages >= maxpages)
+>  			return maxpages;
+> +	} else if (unlikely(iov_iter_is_xarray(i))) {
+> +		unsigned offset;
+> +
+> +		offset = (i->xarray_start + i->iov_offset) & ~PAGE_MASK;
+> +
+> +		npages = 1;
+> +		if (size > PAGE_SIZE - offset) {
+> +			size -= PAGE_SIZE - offset;
+> +			npages += size >> PAGE_SHIFT;
+> +			size &= ~PAGE_MASK;
+> +			if (size)
+> +				npages++;
+> +		}
+> +		if (npages >= maxpages)
+> +			return maxpages;
+>  	} else iterate_all_kinds(i, size, v, ({
+>  		unsigned long p = (unsigned long)v.iov_base;
+>  		npages += DIV_ROUND_UP(p + v.iov_len, PAGE_SIZE)
+> @@ -1631,7 +1892,8 @@ int iov_iter_npages(const struct iov_iter *i, int maxpages)
+>  			- p / PAGE_SIZE;
+>  		if (npages >= maxpages)
+>  			return maxpages;
+> -	})
+> +	}),
+> +	0
+>  	)
+>  	return npages;
+>  }
+> @@ -1644,7 +1906,7 @@ const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t flags)
+>  		WARN_ON(1);
+>  		return NULL;
+>  	}
+> -	if (unlikely(iov_iter_is_discard(new)))
+> +	if (unlikely(iov_iter_is_discard(new) || iov_iter_is_xarray(new)))
+>  		return NULL;
+>  	if (iov_iter_is_bvec(new))
+>  		return new->bvec = kmemdup(new->bvec,
+> @@ -1849,7 +2111,12 @@ int iov_iter_for_each_range(struct iov_iter *i, size_t bytes,
+>  		kunmap(v.bv_page);
+>  		err;}), ({
+>  		w = v;
+> -		err = f(&w, context);})
+> +		err = f(&w, context);}), ({
+> +		w.iov_base = kmap(v.bv_page) + v.bv_offset;
+> +		w.iov_len = v.bv_len;
+> +		err = f(&w, context);
+> +		kunmap(v.bv_page);
+> +		err;})
+>  	)
+>  	return err;
+>  }
+> 
+> 
+
+I think you've planned to remove iov_iter_for_each_range as well? I'll
+assume that this is going away. It might be nice to post the latest
+version of this patch with that change, just for posterity.
+
+In any case, this all looks reasonable to me, modulo a few nits and a
+general dearth of comments.
+
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+
