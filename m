@@ -2,192 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBA67367834
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 06:06:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 134DF367991
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Apr 2021 07:55:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbhDVEGv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Apr 2021 00:06:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39996 "EHLO
+        id S233847AbhDVF42 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Apr 2021 01:56:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbhDVEGu (ORCPT
+        with ESMTP id S232971AbhDVF41 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Apr 2021 00:06:50 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E18ABC06174A;
-        Wed, 21 Apr 2021 21:06:16 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id s16so38978880iog.9;
-        Wed, 21 Apr 2021 21:06:16 -0700 (PDT)
+        Thu, 22 Apr 2021 01:56:27 -0400
+Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBFD9C06174A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 22:55:51 -0700 (PDT)
+Received: by mail-qk1-x733.google.com with SMTP id e13so35431519qkl.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Apr 2021 22:55:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qcF3dH9D8J2d3hAX5xh3Gkr02GgerEVN2BNTqssnfyo=;
-        b=IIRCyYm5fdZGOh6SCYe4yXpgnngtQK4ovM3afyMHgNCTLieCu3ArQtwoB09zXYpVI2
-         X7uiR8PY3xtuMmpypcH65uN0+exDDHuIyc0d+ksshA9fapaZsSwxyJ7VaE9Bw8cR/M2s
-         ufwbgypE+Wb/hdyGy0fvTArdGLbH/0PaDLYPu/iEbT6eeYpKDY24LarIAzKOosju/gZt
-         HPA56R6cPRwaqguWB4ek0/xu4nNTa0Vqvkx2FrWDGV5heuTOZ2GXTuBg/KDr/kNHtiV+
-         HBBOgF80AKl5CrnWLAzxxMzxefGh6CPUze8LEX/wwmf5BCB0YCQbsteCHv1bb0SWg3t/
-         T8tw==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=Yd2gs0ulaQk3ryBAG/T9ZY2Wi9SgLd9cQYKXihYv8FY=;
+        b=qgLnNEFAyhsCr5cTqAilhCCR88xu+Lo0ZCHkoYuo9qoV9qF5+bl0g2GDlTmSFyksax
+         ac+CqrVtJ4ALOfyvVhbTdPiah0c0VuiBGi8wYRpGPinVYsDjJbXJE5s//i9QIYjdeYdU
+         LM0uyBCx6cLA8P4esZfCYogttHX/0pJrFcX9MeLotQzuNT4H7z7XqntpI2jcW//5pxdq
+         3jWYc4yiEbbY365WjsxyBm81g2fUS35RYgRJRARaOalJlPngmh2neZzzi4sa0NUbmRUj
+         F50jwME1yvUTFGtN9FO4UmbErfRtmFuW77Q9nsSBUeJGvk9mVMXDyipPC9PhhiGmcRu9
+         xEKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qcF3dH9D8J2d3hAX5xh3Gkr02GgerEVN2BNTqssnfyo=;
-        b=jdk8S1VBX+RMTmkgoWEmAJa6HY9FJh4v3psg6vgneQeoDCYgza2LzUM3iVsJG4LY2P
-         ndph4HdW8gHRMxrW+g+bpe/GfDk1hWmNPPazF3UQPBsu2FfXYC63XXsnvcYYnUci/wt/
-         0+fdiiqC5IWoHBWTSboZQ5shhtdg1qY4Yl50IFy7t+1ked89CvOqn0N0NrdWSp/ZQMpG
-         bumfF2Wj3leZRrmm4pt6gndv8gMb3f8uBWw9QQslgl2Waurn7zUSKQDYz7xHOKFx4jaA
-         x+8Mkd+SRdf15YnniLLKm7F80JcrskxmNQ+kWVK8SWq9V1AAPqtvNSVLgaOEHQsLgV11
-         vZpQ==
-X-Gm-Message-State: AOAM532rG2chZMC0YwijQRC8LHbQNGhcYBvFnBu5EwPJwnOdPUtACxhI
-        8c6gpQsOp4B/Q6WleiUNAr9q37obha3u2EEsYog=
-X-Google-Smtp-Source: ABdhPJxvj/aCAtlVTMmyu3zvAKA5NHNGpEsaJNHLj+fC7/2ighn5TF1exvrJXGXv8dGE2+oigBgO09k/L/M22wrinbQ=
-X-Received: by 2002:a6b:f115:: with SMTP id e21mr1107946iog.5.1619064376269;
- Wed, 21 Apr 2021 21:06:16 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=Yd2gs0ulaQk3ryBAG/T9ZY2Wi9SgLd9cQYKXihYv8FY=;
+        b=RHwde9TbvkDaHxIttotcdbOP9BzBHEAQkC7+rTn1JM+8QaD/i9lzHOuw1kDNIiYtkA
+         5d8JrEgu/wDrcSmKxdD7nL4qmqRsVS8JLc6XtUAaXCYhMdr5keLavHd4Qp9xjnN0WGms
+         +PB+kXo5wD+2qe8naZU5lsh858e0LXe+ChJpWKnzLGMU8BKZ3KFtTr6PKwMqSL6cqmTz
+         66Ei9XFU584ag5ABtx9Ogu1/OqpkURuQQb9SqH83KbHnv5Ymv1io3fBrCojmQHkIWjDG
+         9YJtyRMOPMnTDEJcl8DsGtTGSVppKdKMx23rpUz1nXF+FHGM0byIkxC/pxzftbkm6hpE
+         Vy4Q==
+X-Gm-Message-State: AOAM533OLQ8mLUeIPKDObi0NxbooXVe2ccSlgzMRRARe/GAUeJN2uN0H
+        fpN6yFpp5nY3U8frgqbfp5A5ew==
+X-Google-Smtp-Source: ABdhPJwTn+aHqXWQgw/QpAWr54vJAvqSR/wNms5ahjY3dZ7KwzD9PAegW91quU4DGMZ0H997GGZ9kQ==
+X-Received: by 2002:a05:620a:4143:: with SMTP id k3mr1849181qko.497.1619070950786;
+        Wed, 21 Apr 2021 22:55:50 -0700 (PDT)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id i21sm1505944qtr.94.2021.04.21.22.55.49
+        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
+        Wed, 21 Apr 2021 22:55:50 -0700 (PDT)
+Date:   Wed, 21 Apr 2021 22:55:37 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <dchinner@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 2/2] mm/filemap: fix mapping_seek_hole_data on THP &
+ 32-bit
+In-Reply-To: <20210422011631.GL3596236@casper.infradead.org>
+Message-ID: <alpine.LSU.2.11.2104212253000.4412@eggly.anvils>
+References: <alpine.LSU.2.11.2104211723580.3299@eggly.anvils> <alpine.LSU.2.11.2104211737410.3299@eggly.anvils> <20210422011631.GL3596236@casper.infradead.org>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-References: <CGME20210422003836epcas1p391ed30aed1cf7b010b93c32fc1aebe89@epcas1p3.samsung.com>
- <20210422002824.12677-1-namjae.jeon@samsung.com> <20210422002824.12677-2-namjae.jeon@samsung.com>
-In-Reply-To: <20210422002824.12677-2-namjae.jeon@samsung.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 22 Apr 2021 07:06:05 +0300
-Message-ID: <CAOQ4uxgCJukhh9c0FjnP_CR0=Jpj+ObK1JPFVjsD4=oxuakcaw@mail.gmail.com>
-Subject: Re: cifsd/nfsd interop
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Steve French <smfrench@gmail.com>, senozhatsky@chromium.org,
-        Hyunchul Lee <hyc.lee@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        ronnie sahlberg <ronniesahlberg@gmail.com>,
-        aurelien.aptel@gmail.com,
-        =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin King <colin.king@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steve French <stfrench@microsoft.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 22, 2021 at 4:31 AM Namjae Jeon <namjae.jeon@samsung.com> wrote:
->
-> This adds a document describing ksmbd design, key features and usage.
->
-> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> Signed-off-by: Hyunchul Lee <hyc.lee@gmail.com>
-> Acked-by: Ronnie Sahlberg <lsahlber@redhat.com>
-> Signed-off-by: Steve French <stfrench@microsoft.com>
-> ---
->  Documentation/filesystems/cifs/cifsd.rst | 152 +++++++++++++++++++++++
->  Documentation/filesystems/cifs/index.rst |  10 ++
->  Documentation/filesystems/index.rst      |   2 +-
->  3 files changed, 163 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/filesystems/cifs/cifsd.rst
->  create mode 100644 Documentation/filesystems/cifs/index.rst
->
-> diff --git a/Documentation/filesystems/cifs/cifsd.rst b/Documentation/filesystems/cifs/cifsd.rst
-> new file mode 100644
-> index 000000000000..cb9f87b8529f
-> --- /dev/null
-> +++ b/Documentation/filesystems/cifs/cifsd.rst
-> @@ -0,0 +1,152 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +==========================
-> +CIFSD - SMB3 Kernel Server
-> +==========================
-> +
-> +CIFSD is a linux kernel server which implements SMB3 protocol in kernel space
-> +for sharing files over network.
-> +
+On Thu, 22 Apr 2021, Matthew Wilcox wrote:
+> On Wed, Apr 21, 2021 at 05:39:14PM -0700, Hugh Dickins wrote:
+> > No problem on 64-bit without huge pages, but xfstests generic/285
+> > and other SEEK_HOLE/SEEK_DATA tests have regressed on huge tmpfs,
+> > and on 32-bit architectures, with the new mapping_seek_hole_data().
+> > Several different bugs turned out to need fixing.
+> > 
+> > u64 casts added to stop unfortunate sign-extension when shifting
+> > (and let's use shifts throughout, rather than mixed with * and /).
+> 
+> That confuses me.  loff_t is a signed long long, but it can't be negative
+> (... right?)  So how does casting it to an u64 before dividing by
+> PAGE_SIZE help?
 
-Hello cifsd team!
+That is a good question. Sprinkling u64s was the first thing I tried,
+and I'd swear that it made a good difference at the time; but perhaps
+that was all down to just the one on xas.xa_index << PAGE_SHIFT. Or
+is it possible that one of the other bugs led to a negative loff_t,
+and the casts got better behaviour out of that? Doubtful.
 
-I am very excited to see your work posted and especially excited to
-learn about the collaboration with the samba team.
+What I certainly recall from yesterday was leaving out one (which?)
+of the casts as unnecessary, and wasting quite a bit of time until I
+put it back in. Did I really choose precisely the only one necessary?
 
-One of the benefits from kernel smbd implementation is improved ability
-to interoperate with VFS in general and nfsd in particular.
+Taking most of them out did give me good quick runs just now: I'll
+go over them again and try full runs on all machines. You'll think me
+crazy, but yesterday's experience leaves me reluctant to change without
+full testing - but agree it's not good to leave ignorant magic in.
 
-For example, I have discussed with several samba team members
-the option that ksmbd will serve as a kernel lease agent for samba,
-instead of having to work around the limitations of file lock UAPI.
+> 
+> > Use round_up() when advancing pos, to stop assuming that pos was
+> > already THP-aligned when advancing it by THP-size.  (But I believe
+> > this use of round_up() assumes that any THP must be THP-aligned:
+> > true while tmpfs enforces that alignment, and is the only fs with
+> > FS_THP_SUPPORT; but might need to be generalized in the future?
+> > If I try to generalize it right now, I'm sure to get it wrong!)
+> 
+> No generalisation needed in future.  Folios must be naturally aligned
+> within a file.
 
-Could you share your plans (if any) for interoperability improvements
-with vfs/nfsd?
+Thanks for the info: I did search around in your various patch series
+from last October, and failed to find a decider there: I imagined that
+when you started on compound pages for more efficient I/O, there would
+be no necessity to align them (whereas huge pmd mappings of shared
+files make the alignment important). Anyway, assuming natural alignment
+is easiest - but it's remarkable how few places need to rely on it.
 
-It would be useful to add an "Interop" column to the Features table below
-to document the current state and future plans or just include a note about
-it in the Status column.
+> 
+> > @@ -2681,7 +2681,8 @@ loff_t mapping_seek_hole_data(struct add
+> >  
+> >  	rcu_read_lock();
+> >  	while ((page = find_get_entry(&xas, max, XA_PRESENT))) {
+> > -		loff_t pos = xas.xa_index * PAGE_SIZE;
+> > +		loff_t pos = (u64)xas.xa_index << PAGE_SHIFT;
+> > +		unsigned int seek_size;
+> 
+> I've been preferring size_t for 'number of bytes in a page' because
+> I'm sure somebody is going to want a page larger than 2GB in the next
+> ten years.
 
-Off the top of my head, a list of features that samba supports
-partial kernel/nfsd interop with are:
-- Leases (level 1)
-- Notify
-- ACLs (NT to POSIX map)
-- Share modes
-
-In all of those features, ksmbd is in a position to do a better job.
-
-I only assume that ksmbd implementation of POSIX extensions
-is a "native" implementation (i.e. a symlink is implemented as a symlink)
-so ksmbd and nfsd exporting the same POSIX fs would at least observe
-the same objects(?), but I would rather see this explicitly documented.
-
-Thanks,
-Amir.
-
-[...]
-
-> +
-> +CIFSD Feature Status
-> +====================
-> +
-> +============================== =================================================
-> +Feature name                   Status
-> +============================== =================================================
-> +Dialects                       Supported. SMB2.1 SMB3.0, SMB3.1.1 dialects
-> +                               excluding security vulnerable SMB1.
-> +Auto Negotiation               Supported.
-> +Compound Request               Supported.
-> +Oplock Cache Mechanism         Supported.
-> +SMB2 leases(v1 lease)          Supported.
-> +Directory leases(v2 lease)     Planned for future.
-> +Multi-credits                  Supported.
-> +NTLM/NTLMv2                    Supported.
-> +HMAC-SHA256 Signing            Supported.
-> +Secure negotiate               Supported.
-> +Signing Update                 Supported.
-> +Pre-authentication integrity   Supported.
-> +SMB3 encryption(CCM, GCM)      Supported.
-> +SMB direct(RDMA)               Partial Supported. SMB3 Multi-channel is required
-> +                               to connect to Windows client.
-> +SMB3 Multi-channel             In Progress.
-> +SMB3.1.1 POSIX extension       Supported.
-> +ACLs                           Partial Supported. only DACLs available, SACLs is
-> +                               planned for future. ksmbd generate random subauth
-> +                               values(then store it to disk) and use uid/gid
-> +                               get from inode as RID for local domain SID.
-> +                               The current acl implementation is limited to
-> +                               standalone server, not a domain member.
-> +Kerberos                       Supported.
-> +Durable handle v1,v2           Planned for future.
-> +Persistent handle              Planned for future.
-> +SMB2 notify                    Planned for future.
-> +Sparse file support            Supported.
-> +DCE/RPC support                Partial Supported. a few calls(NetShareEnumAll,
-> +                               NetServerGetInfo, SAMR, LSARPC) that needed as
-> +                               file server via netlink interface from
-> +                               ksmbd.mountd.
-> +============================== =================================================
-> +
+Ah, there I was simply following what the author of seek_page_size()
+had chosen, and I think that's the right thing to do in today's tree:
+let's see who that author was... hmm, someone called Matthew Wilcox :)
