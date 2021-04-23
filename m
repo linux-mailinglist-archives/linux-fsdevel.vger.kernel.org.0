@@ -2,94 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A29683694A7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Apr 2021 16:27:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EBFD3694CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Apr 2021 16:33:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242416AbhDWO2Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Apr 2021 10:28:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42362 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240603AbhDWO2Y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Apr 2021 10:28:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2EFA1AF17;
-        Fri, 23 Apr 2021 14:27:46 +0000 (UTC)
-Subject: Re: [PATCH v3] docs: proc.rst: meminfo: briefly describe gaps in
- memory accounting
-To:     Mike Rapoport <rppt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org
-References: <20210421061127.1182723-1-rppt@kernel.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <d047c2fb-d15a-d094-3256-ea6eeff2d7c7@suse.cz>
-Date:   Fri, 23 Apr 2021 16:27:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+        id S242625AbhDWOeG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Apr 2021 10:34:06 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:41457 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241174AbhDWOeE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 23 Apr 2021 10:34:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619188407;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=TjxYyjr3+n/FgdeoX21aU0rXvOBSEI7Z5zCaxLkZK4Q=;
+        b=FPY+RzXPMgUD6g+zYy6K2V76gXPi0ahgYiy/09+H1FZ52r4fvDnZR4n1lYkxPKQj+xSwD8
+        ywEMpevakTRNd7OEaJafjfotZkJGDXT+oCYiJf9QAcgAZRwzymzpaXWDdNdjab2KKTLbsx
+        13iM3AlCHhVDmhGmZd6z5xdFX0vhJtA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-558-AceqMeyuOfiNiPlJDe3uCw-1; Fri, 23 Apr 2021 10:33:24 -0400
+X-MC-Unique: AceqMeyuOfiNiPlJDe3uCw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5F459839A4C;
+        Fri, 23 Apr 2021 14:33:22 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-124.rdu2.redhat.com [10.10.112.124])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E3B2960C25;
+        Fri, 23 Apr 2021 14:33:14 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20210423140625.GC235567@casper.infradead.org>
+References: <20210423140625.GC235567@casper.infradead.org> <161918446704.3145707.14418606303992174310.stgit@warthog.procyon.org.uk> <161918448151.3145707.11541538916600921083.stgit@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 01/31] iov_iter: Add ITER_XARRAY
 MIME-Version: 1.0
-In-Reply-To: <20210421061127.1182723-1-rppt@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3153357.1619188393.1@warthog.procyon.org.uk>
+Date:   Fri, 23 Apr 2021 15:33:14 +0100
+Message-ID: <3153358.1619188394@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/21/21 8:11 AM, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
-> 
-> Add a paragraph that explains that it may happen that the counters in
-> /proc/meminfo do not add up to the overall memory usage.
-> 
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> On Fri, Apr 23, 2021 at 02:28:01PM +0100, David Howells wrote:
+> Now, is this important?  There are no filesystems which do I/O to THPs
+> today.  So it's not possible to pick up the fact that it doesn't work,
+> and I hope to have the page cache fixed soon.  And fixing this now
+> will create more work later as part of fixing the page cache.  But I
+> wouldn't feel right not mentioning this problem ...
 
-Thanks.
+So I can leave the code as-is for the moment and it can be fixed with your
+patches?
 
-> ---
-> v3:
-> * Add sentense about counters overlap
-> * Use wording suggested by Matthew
-> 
-> v2: Link: https://lore.kernel.org/lkml/20210420121354.1160437-1-rppt@kernel.org
-> * Add brief changelog
-> * Fix typo
-> * Update example about network memory usage according to Eric's comment at
-> 
-> https://lore.kernel.org/lkml/CANn89iKprp7WYeZy4RRO5jHykprnSCcVBc7Tk14Ui_MA9OK7Fg@mail.gmail.com
-> 
-> v1: Link: https://lore.kernel.org/lkml/20210420085105.1156640-1-rppt@kernel.org
->  Documentation/filesystems/proc.rst | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 48fbfc336ebf..0a07a5025571 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -929,8 +929,15 @@ meminfo
->  ~~~~~~~
->  
->  Provides information about distribution and utilization of memory.  This
-> -varies by architecture and compile options.  The following is from a
-> -16GB PIII, which has highmem enabled.  You may not have all of these fields.
-> +varies by architecture and compile options.  Some of the counters reported
-> +here overlap.  The memory reported by the non overlapping counters may not
-> +add up to the overall memory usage and the difference for some workloads
-> +can be substantial.  In many cases there are other means to find out
-> +additional memory using subsystem specific interfaces, for instance
-> +/proc/net/sockstat for TCP memory allocations.
-> +
-> +The following is from a 16GB PIII, which has highmem enabled.
-> +You may not have all of these fields.
->  
->  ::
->  
-> 
+David
 
