@@ -2,239 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C8C1369CD9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Apr 2021 00:39:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87BEC369D1E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Apr 2021 01:05:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232402AbhDWWjr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Apr 2021 18:39:47 -0400
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:54769 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231218AbhDWWjq (ORCPT
+        id S232101AbhDWXFf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Apr 2021 19:05:35 -0400
+Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:56364 "EHLO
+        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232992AbhDWXFc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Apr 2021 18:39:46 -0400
+        Fri, 23 Apr 2021 19:05:32 -0400
 Received: from dread.disaster.area (pa49-181-239-12.pa.nsw.optusnet.com.au [49.181.239.12])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 7BC2B80A75C;
-        Sat, 24 Apr 2021 08:39:07 +1000 (AEST)
+        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id A7DB51AF798;
+        Sat, 24 Apr 2021 09:04:50 +1000 (AEST)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1la4S2-004aVt-Ff; Sat, 24 Apr 2021 08:39:06 +1000
-Date:   Sat, 24 Apr 2021 08:39:06 +1000
+        id 1la4qv-004cCW-Fb; Sat, 24 Apr 2021 09:04:49 +1000
+Date:   Sat, 24 Apr 2021 09:04:49 +1000
 From:   Dave Chinner <david@fromorbit.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         Amir Goldstein <amir73il@gmail.com>, Ted Tso <tytso@mit.edu>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH 05/12] xfs: Convert to use invalidate_lock
-Message-ID: <20210423223906.GB1990290@dread.disaster.area>
+        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Thumshirn <jth@kernel.org>,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>
+Subject: Re: [PATCH 02/12] mm: Protect operations adding pages to page cache
+ with invalidate_lock
+Message-ID: <20210423230449.GC1990290@dread.disaster.area>
 References: <20210423171010.12-1-jack@suse.cz>
- <20210423173018.23133-5-jack@suse.cz>
+ <20210423173018.23133-2-jack@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210423173018.23133-5-jack@suse.cz>
+In-Reply-To: <20210423173018.23133-2-jack@suse.cz>
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Tu+Yewfh c=1 sm=1 tr=0 cx=a_idp_f
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_f
         a=gO82wUwQTSpaJfP49aMSow==:117 a=gO82wUwQTSpaJfP49aMSow==:17
-        a=kj9zAlcOel0A:10 a=3YhXtTcJ-WEA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
-        a=7-415B0cAAAA:8 a=nsORYdAwf03t2uNsi-0A:9 a=CjuIK1q_8ugA:10
-        a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
+        a=kj9zAlcOel0A:10 a=3YhXtTcJ-WEA:10 a=7-415B0cAAAA:8
+        a=fwWlK0ynS9Jva5SY9FMA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 23, 2021 at 07:29:34PM +0200, Jan Kara wrote:
-> Use invalidate_lock instead of XFS internal i_mmap_lock. The intended
-> purpose of invalidate_lock is exactly the same. Note that the locking in
-> __xfs_filemap_fault() slightly changes as filemap_fault() already takes
-> invalidate_lock.
+On Fri, Apr 23, 2021 at 07:29:31PM +0200, Jan Kara wrote:
+> Currently, serializing operations such as page fault, read, or readahead
+> against hole punching is rather difficult. The basic race scheme is
+> like:
 > 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> CC: <linux-xfs@vger.kernel.org>
-> CC: "Darrick J. Wong" <darrick.wong@oracle.com>
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->  fs/xfs/xfs_file.c  | 12 ++++++-----
->  fs/xfs/xfs_inode.c | 52 ++++++++++++++++++++++++++--------------------
->  fs/xfs/xfs_inode.h |  1 -
->  fs/xfs/xfs_super.c |  2 --
->  4 files changed, 36 insertions(+), 31 deletions(-)
+> fallocate(FALLOC_FL_PUNCH_HOLE)			read / fault / ..
+>   truncate_inode_pages_range()
+> 						  <create pages in page
+> 						   cache here>
+>   <update fs block mapping and free blocks>
 > 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index a007ca0711d9..2fc04ce0e9f9 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -1282,7 +1282,7 @@ xfs_file_llseek(
->   *
->   * mmap_lock (MM)
->   *   sb_start_pagefault(vfs, freeze)
-> - *     i_mmaplock (XFS - truncate serialisation)
-> + *     invalidate_lock (vfs - truncate serialisation)
->   *       page_lock (MM)
->   *         i_lock (XFS - extent map serialisation)
->   */
+> Now the problem is in this way read / page fault / readahead can
+> instantiate pages in page cache with potentially stale data (if blocks
+> get quickly reused). Avoiding this race is not simple - page locks do
+> not work because we want to make sure there are *no* pages in given
+> range. inode->i_rwsem does not work because page fault happens under
+> mmap_sem which ranks below inode->i_rwsem. Also using it for reads makes
+> the performance for mixed read-write workloads suffer.
+> 
+> So create a new rw_semaphore in the address_space - invalidate_lock -
+> that protects adding of pages to page cache for page faults / reads /
+> readahead.
+.....
+> diff --git a/fs/inode.c b/fs/inode.c
+> index a047ab306f9a..43596dd8b61e 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -191,6 +191,9 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+>  	mapping_set_gfp_mask(mapping, GFP_HIGHUSER_MOVABLE);
+>  	mapping->private_data = NULL;
+>  	mapping->writeback_index = 0;
+> +	init_rwsem(&mapping->invalidate_lock);
+> +	lockdep_set_class(&mapping->invalidate_lock,
+> +			  &sb->s_type->invalidate_lock_key);
+>  	inode->i_private = NULL;
+>  	inode->i_mapping = mapping;
+>  	INIT_HLIST_HEAD(&inode->i_dentry);	/* buggered by rcu freeing */
 
-I think this needs to say "vfs/XFS_MMAPLOCK", because it's not
-obvious from reading the code that these are the same thing...
+Oh, lockdep. That might be a problem here.
 
-> @@ -1303,24 +1303,26 @@ __xfs_filemap_fault(
->  		file_update_time(vmf->vma->vm_file);
->  	}
->  
-> -	xfs_ilock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
->  	if (IS_DAX(inode)) {
->  		pfn_t pfn;
->  
-> +		xfs_ilock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
->  		ret = dax_iomap_fault(vmf, pe_size, &pfn, NULL,
->  				(write_fault && !vmf->cow_page) ?
->  				 &xfs_direct_write_iomap_ops :
->  				 &xfs_read_iomap_ops);
->  		if (ret & VM_FAULT_NEEDDSYNC)
->  			ret = dax_finish_sync_fault(vmf, pe_size, pfn);
-> +		xfs_iunlock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
->  	} else {
-> -		if (write_fault)
-> +		if (write_fault) {
-> +			xfs_ilock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
->  			ret = iomap_page_mkwrite(vmf,
->  					&xfs_buffered_write_iomap_ops);
-> -		else
-> +			xfs_iunlock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
-> +		} else
->  			ret = filemap_fault(vmf);
->  	}
-> -	xfs_iunlock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
+The XFS_MMAPLOCK has non-trivial lockdep annotations so that it is
+tracked as nesting properly against the IOLOCK and the ILOCK. When
+you end up using xfs_ilock(XFS_MMAPLOCK..) to lock this, XFS will
+add subclass annotations to the lock and they are going to be
+different to the locking that the VFS does.
 
-This is kinda messy. If you lift the filemap_fault() path out of
-this, then there rest of the code remains largely unchanged:
+We'll see this from xfs_lock_two_inodes() (e.g. in
+xfs_swap_extents()) and xfs_ilock2_io_mmap() during reflink
+oper.....
 
-	if (!IS_DAX(inode) && !write_fault)
-		return filemap_fault(vmf);
+Oooooh. The page cache copy done when breaking a shared extent needs
+to lock out page faults on both the source and destination, but it
+still needs to be able to populate the page cache of both the source
+and destination file.....
 
-        if (write_fault) {
-		sb_start_pagefault(inode->i_sb);
-		file_update_time(vmf->vma->vm_file);
-	}
+.... and vfs_dedupe_file_range_compare() has to be able to read
+pages from both the source and destination file to determine that
+the contents are identical and that's done while we hold the
+XFS_MMAPLOCK exclusively so the compare is atomic w.r.t. all other
+user data modification operations being run....
 
-	xfs_ilock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
-	if (IS_DAX(inode)) {
-		ret = dax_iomap_fault(vmf, pe_size, &pfn, NULL,
-				(write_fault && !vmf->cow_page) ?
-				 &xfs_direct_write_iomap_ops :
-				 &xfs_read_iomap_ops);
-		if (ret & VM_FAULT_NEEDDSYNC)
-			ret = dax_finish_sync_fault(vmf, pe_size, pfn);
-	} else {
-		ret = iomap_page_mkwrite(vmf, &xfs_buffered_write_iomap_ops);
-	}
-	xfs_iunlock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
+I now have many doubts that this "serialise page faults by locking
+out page cache instantiation" method actually works as a generic
+mechanism. It's not just page cache invalidation that relies on
+being able to lock out page faults: copy-on-write and deduplication
+both require the ability to populate the page cache with source data
+while page faults are locked out so the data can be compared/copied
+atomically with the extent level manipulations and so user data
+modifications cannot occur until the physical extent manipulation
+operation has completed.
 
-	if (write_fault)
-		sb_end_pagefault(inode->i_sb);
-	return ret;
-
->  
->  	if (write_fault)
->  		sb_end_pagefault(inode->i_sb);
-> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> index f93370bd7b1e..ac83409d0bf3 100644
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -134,7 +134,7 @@ xfs_ilock_attr_map_shared(
->  
->  /*
->   * In addition to i_rwsem in the VFS inode, the xfs inode contains 2
-> - * multi-reader locks: i_mmap_lock and the i_lock.  This routine allows
-> + * multi-reader locks: invalidate_lock and the i_lock.  This routine allows
->   * various combinations of the locks to be obtained.
->   *
->   * The 3 locks should always be ordered so that the IO lock is obtained first,
-> @@ -142,23 +142,23 @@ xfs_ilock_attr_map_shared(
->   *
->   * Basic locking order:
->   *
-> - * i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
-> + * i_rwsem -> invalidate_lock -> page_lock -> i_ilock
->   *
->   * mmap_lock locking order:
->   *
->   * i_rwsem -> page lock -> mmap_lock
-> - * mmap_lock -> i_mmap_lock -> page_lock
-> + * mmap_lock -> invalidate_lock -> page_lock
-
-Same here - while XFS_MMAPLOCK still exists, the comments should
-really associate the VFS invalidate lock with the XFS_MMAPLOCK...
-
->   *
->   * The difference in mmap_lock locking order mean that we cannot hold the
-> - * i_mmap_lock over syscall based read(2)/write(2) based IO. These IO paths can
-> - * fault in pages during copy in/out (for buffered IO) or require the mmap_lock
-> - * in get_user_pages() to map the user pages into the kernel address space for
-> - * direct IO. Similarly the i_rwsem cannot be taken inside a page fault because
-> - * page faults already hold the mmap_lock.
-> + * invalidate_lock over syscall based read(2)/write(2) based IO. These IO paths
-> + * can fault in pages during copy in/out (for buffered IO) or require the
-> + * mmap_lock in get_user_pages() to map the user pages into the kernel address
-> + * space for direct IO. Similarly the i_rwsem cannot be taken inside a page
-> + * fault because page faults already hold the mmap_lock.
->   *
->   * Hence to serialise fully against both syscall and mmap based IO, we need to
-> - * take both the i_rwsem and the i_mmap_lock. These locks should *only* be both
-> - * taken in places where we need to invalidate the page cache in a race
-> + * take both the i_rwsem and the invalidate_lock. These locks should *only* be
-> + * both taken in places where we need to invalidate the page cache in a race
->   * free manner (e.g. truncate, hole punch and other extent manipulation
->   * functions).
->   */
-> @@ -190,10 +190,13 @@ xfs_ilock(
->  				 XFS_IOLOCK_DEP(lock_flags));
->  	}
->  
-> -	if (lock_flags & XFS_MMAPLOCK_EXCL)
-> -		mrupdate_nested(&ip->i_mmaplock, XFS_MMAPLOCK_DEP(lock_flags));
-> -	else if (lock_flags & XFS_MMAPLOCK_SHARED)
-> -		mraccess_nested(&ip->i_mmaplock, XFS_MMAPLOCK_DEP(lock_flags));
-> +	if (lock_flags & XFS_MMAPLOCK_EXCL) {
-> +		down_write_nested(&VFS_I(ip)->i_mapping->invalidate_lock,
-> +				  XFS_MMAPLOCK_DEP(lock_flags));
-> +	} else if (lock_flags & XFS_MMAPLOCK_SHARED) {
-> +		down_read_nested(&VFS_I(ip)->i_mapping->invalidate_lock,
-> +				 XFS_MMAPLOCK_DEP(lock_flags));
-> +	}
-
-Well, that neuters all the "xfs_isilocked(ip, XFS_MMAPLOCK_EXCL)"
-checks when lockdep is not enabled. IOWs, CONFIG_XFS_DEBUG=y will no
-longer report incorrect use of read vs write locking.  That was the
-main issue that stopped the last attempt to convert the mrlocks to
-plain rwsems.
-
-> @@ -358,8 +361,11 @@ xfs_isilocked(
->  
->  	if (lock_flags & (XFS_MMAPLOCK_EXCL|XFS_MMAPLOCK_SHARED)) {
->  		if (!(lock_flags & XFS_MMAPLOCK_SHARED))
-> -			return !!ip->i_mmaplock.mr_writer;
-> -		return rwsem_is_locked(&ip->i_mmaplock.mr_lock);
-> +			return !debug_locks ||
-> +				lockdep_is_held_type(
-> +					&VFS_I(ip)->i_mapping->invalidate_lock,
-> +					0);
-> +		return rwsem_is_locked(&VFS_I(ip)->i_mapping->invalidate_lock);
->  	}
-
-Yeah, this is the problem - the use of lockdep_is_held_type() here.
-We need rwsem_is_write_locked() here, not a dependency on lockdep.
-
-I know, you're only copying the IOLOCK stuff, but I really don't
-like the fact that we end up more dependent on lockdep for catching
-basic lock usage mistakes. Lockdep is simply not usable in typical
-developer QA environment because of the performance overhead and
-false positives it introduces. It already takes 3-4 hours to do a
-single fstests run on XFS without lockdep and it at least doubles
-when lockdep is enabled.  Hence requiring lockdep just to check a
-rwsem is held in write mode is not an improvement on the development
-and verification side of things....
+Having only just realised this is a problem, no solution has
+immediately popped into my mind. I'll chew on it over the weekend,
+but I'm not hopeful at this point...
 
 Cheers,
 
