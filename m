@@ -2,142 +2,367 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D26B368938
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Apr 2021 01:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D180368B13
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Apr 2021 04:34:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237126AbhDVXHf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Apr 2021 19:07:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37892 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235977AbhDVXHe (ORCPT
+        id S240214AbhDWCfG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Apr 2021 22:35:06 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:41157 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231261AbhDWCfD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Apr 2021 19:07:34 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EFDBC06174A
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 16:06:58 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id p16so20357865plf.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Apr 2021 16:06:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=EJZl9yLZWw5znDYbZ4TN51rUNcfF2rQMU5tbRXrgfFU=;
-        b=idGHBus1QSHsC88Uz4R8ecx5e7uM4gjZF6dZy9jt64HM26eTY39z7NjJCYXhbepUOX
-         xrPf6Sv+LI0Vrlpar+NI8vZCfc4OLRPfrh+j+A6TcB5XMqlGtOGeG2wT7kE9YjjZnyDY
-         Gi0vPkvmGh4q2m/kOnIkXP2C/SMu0DyYNYNnWNt1VRQuj/FDtfPyBS2Ihq3Efw0i6n6t
-         MQ+XMA/LHRa1Mfo56sykipfNHnZU67N0j8TY7JYKH7YOv7O8O8HQrce1plu3dxq26CON
-         7eiNss9ID3+9mqLBtqfz3iqZ/P7tHk2KiOzRhvbfSajO0/J2h4g/IEeL9e3zsB8IomBA
-         ud7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=EJZl9yLZWw5znDYbZ4TN51rUNcfF2rQMU5tbRXrgfFU=;
-        b=Pjdf37vQYzla/m5tsPOdrEFe7toKn2sqI9dxm9NyHdLm9FgRf4DUY0pKnIpdQ22xR1
-         wo3+gWs3VY+PTWEwuF3gZBloTj8tootMy2k6BveHe4PtYzlMRRFgC5RIVFeN1sWqt5BT
-         hOf5I6CWdLnsP8wt0zF1QnOhgnh3/6BFlo9coiwOQTmWoCh3MFruS1YCgdHlBxrvao6s
-         Cp/od0igHudScXElG5k5H4kOMYfLlUUq5AH2Fg2oEb1lAT1yyvaxOzq4uWRKF+ECsgcx
-         WCiUSTXo1FzPl8CEGlcduC0uGzePutTZukJO9/2LFrHWOVggLZjaoIoKQrS06l+J0zjH
-         v2ow==
-X-Gm-Message-State: AOAM533jkCDc8pQ8xu13bttPrzS9VViIUEEZ2GLv0/jDXRlU5hvpKAKv
-        aGzLhi1OVnud07JhocwNB9DWWg==
-X-Google-Smtp-Source: ABdhPJxKJCXXCNYuBo3+KfWHCM3l8Sy6kPuKUdgpSObjI+Zz3upxo1MKTo9dVENfHHQ8+jYmdh3ldw==
-X-Received: by 2002:a17:90a:eb04:: with SMTP id j4mr1136535pjz.156.1619132817365;
-        Thu, 22 Apr 2021 16:06:57 -0700 (PDT)
-Received: from google.com ([2401:fa00:9:211:686a:2391:ed27:7821])
-        by smtp.gmail.com with ESMTPSA id w25sm3016201pfg.206.2021.04.22.16.06.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Apr 2021 16:06:56 -0700 (PDT)
-Date:   Fri, 23 Apr 2021 09:06:45 +1000
-From:   Matthew Bobrowski <repnop@google.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        amir73il@gmail.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fanotify: Add pidfd support to the fanotify API
-Message-ID: <YIIBheuHHCJeY6wJ@google.com>
-References: <cover.1618527437.git.repnop@google.com>
- <e6cd967f45381d20d67c9d5a3e49e3cb9808f65b.1618527437.git.repnop@google.com>
- <20210419132020.ydyb2ly6e3clhe2j@wittgenstein>
- <20210419135550.GH8706@quack2.suse.cz>
- <20210419150233.rgozm4cdbasskatk@wittgenstein>
- <YH4+Swki++PHIwpY@google.com>
- <20210421080449.GK8706@quack2.suse.cz>
+        Thu, 22 Apr 2021 22:35:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619145266;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZQNY+2dK0F2J25PQHKOH4E0JeQgPhZv8sqXjSjM4ajs=;
+        b=iPxRYj4zeTjavxcBVvkNSs8i8zgfO0e6LVzkhrGvbjGrDB2/RLqnKJhZ8SGpQVtT8nCLs/
+        iRTBBUpNwkXyRRujDvvkNtpv2DH57O+T/Ix9fdrnxPh1TkonyXdRj9rA+HIU+AXyID2mot
+        J/af6zzcqIB3x/W0yvowykyAEPTdKPo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-505-3icZjueBOtWDe9XSTnYHtg-1; Thu, 22 Apr 2021 22:34:23 -0400
+X-MC-Unique: 3icZjueBOtWDe9XSTnYHtg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A7C4E1922036;
+        Fri, 23 Apr 2021 02:34:20 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.10.110.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 26D305C3E6;
+        Fri, 23 Apr 2021 02:34:10 +0000 (UTC)
+Date:   Thu, 22 Apr 2021 22:34:08 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     linux-s390@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-parisc@vger.kernel.org, x86@kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 1/2] audit: add support for the openat2 syscall
+Message-ID: <20210423023408.GB2174828@madcap2.tricolour.ca>
+References: <cover.1616031035.git.rgb@redhat.com>
+ <49510cacfb5fbbaa312a4a389f3a6619675007ab.1616031035.git.rgb@redhat.com>
+ <20210318104843.uiga6tmmhn5wfhbs@wittgenstein>
+ <20210318120801.GK3141668@madcap2.tricolour.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210421080449.GK8706@quack2.suse.cz>
+In-Reply-To: <20210318120801.GK3141668@madcap2.tricolour.ca>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 21, 2021 at 10:04:49AM +0200, Jan Kara wrote:
-> On Tue 20-04-21 12:36:59, Matthew Bobrowski wrote:
-> > On Mon, Apr 19, 2021 at 05:02:33PM +0200, Christian Brauner wrote:
-> > > A general question about struct fanotify_event_metadata and its
-> > > extensibility model:
-> > > looking through the code it seems that this struct is read via
-> > > fanotify_rad(). So the user is expected to supply a buffer with at least
+On 2021-03-18 08:08, Richard Guy Briggs wrote:
+> On 2021-03-18 11:48, Christian Brauner wrote:
+> > [+Cc Aleksa, the author of openat2()]
+> 
+> Ah!  Thanks for pulling in Aleksa.  I thought I caught everyone...
+> 
+> > and a comment below. :)
+> 
+> Same...
+> 
+> > On Wed, Mar 17, 2021 at 09:47:17PM -0400, Richard Guy Briggs wrote:
+> > > The openat2(2) syscall was added in kernel v5.6 with commit fddb5d430ad9
+> > > ("open: introduce openat2(2) syscall")
 > > > 
-> > > #define FAN_EVENT_METADATA_LEN (sizeof(struct fanotify_event_metadata))
+> > > Add the openat2(2) syscall to the audit syscall classifier.
 > > > 
-> > > bytes. In addition you can return the info to the user about how many
-> > > bytes the kernel has written from fanotify_read().
+> > > See the github issue
+> > > https://github.com/linux-audit/audit-kernel/issues/67
 > > > 
-> > > So afaict extending fanotify_event_metadata should be _fairly_
-> > > straightforward, right? It would essentially the complement to
-> > > copy_struct_from_user() which Aleksa and I added (1 or 2 years ago)
-> > > which deals with user->kernel and you're dealing with kernel->user:
-> > > - If the user supplied a buffer smaller than the minimum known struct
-> > >   size -> reject.
-> > > - If the user supplied a buffer < smaller than what the current kernel
-> > >   supports -> copy only what userspace knows about, and return the size
-> > >   userspace knows about.
-> > > - If the user supplied a buffer that is larger than what the current
-> > >   kernel knows about -> copy only what the kernel knows about, zero the
-> > >   rest, and return the kernel size.
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > >  arch/alpha/kernel/audit.c          | 2 ++
+> > >  arch/ia64/kernel/audit.c           | 2 ++
+> > >  arch/parisc/kernel/audit.c         | 2 ++
+> > >  arch/parisc/kernel/compat_audit.c  | 2 ++
+> > >  arch/powerpc/kernel/audit.c        | 2 ++
+> > >  arch/powerpc/kernel/compat_audit.c | 2 ++
+> > >  arch/s390/kernel/audit.c           | 2 ++
+> > >  arch/s390/kernel/compat_audit.c    | 2 ++
+> > >  arch/sparc/kernel/audit.c          | 2 ++
+> > >  arch/sparc/kernel/compat_audit.c   | 2 ++
+> > >  arch/x86/ia32/audit.c              | 2 ++
+> > >  arch/x86/kernel/audit_64.c         | 2 ++
+> > >  kernel/auditsc.c                   | 3 +++
+> > >  lib/audit.c                        | 4 ++++
+> > >  lib/compat_audit.c                 | 4 ++++
+> > >  15 files changed, 35 insertions(+)
 > > > 
-> > > Extension should then be fairly straightforward (64bit aligned
-> > > increments)?
+> > > diff --git a/arch/alpha/kernel/audit.c b/arch/alpha/kernel/audit.c
+> > > index 96a9d18ff4c4..06a911b685d1 100644
+> > > --- a/arch/alpha/kernel/audit.c
+> > > +++ b/arch/alpha/kernel/audit.c
+> > > @@ -42,6 +42,8 @@ int audit_classify_syscall(int abi, unsigned syscall)
+> > >  		return 3;
+> > >  	case __NR_execve:
+> > >  		return 5;
+> > > +	case __NR_openat2:
+> > > +		return 6;
+> > >  	default:
+> > >  		return 0;
+> > >  	}
+> > > diff --git a/arch/ia64/kernel/audit.c b/arch/ia64/kernel/audit.c
+> > > index 5192ca899fe6..5eaa888c8fd3 100644
+> > > --- a/arch/ia64/kernel/audit.c
+> > > +++ b/arch/ia64/kernel/audit.c
+> > > @@ -43,6 +43,8 @@ int audit_classify_syscall(int abi, unsigned syscall)
+> > >  		return 3;
+> > >  	case __NR_execve:
+> > >  		return 5;
+> > > +	case __NR_openat2:
+> > > +		return 6;
+> > >  	default:
+> > >  		return 0;
+> > >  	}
+> > > diff --git a/arch/parisc/kernel/audit.c b/arch/parisc/kernel/audit.c
+> > > index 9eb47b2225d2..fc721a7727ba 100644
+> > > --- a/arch/parisc/kernel/audit.c
+> > > +++ b/arch/parisc/kernel/audit.c
+> > > @@ -52,6 +52,8 @@ int audit_classify_syscall(int abi, unsigned syscall)
+> > >  		return 3;
+> > >  	case __NR_execve:
+> > >  		return 5;
+> > > +	case __NR_openat2:
+> > > +		return 6;
+> > >  	default:
+> > >  		return 0;
+> > >  	}
+> > > diff --git a/arch/parisc/kernel/compat_audit.c b/arch/parisc/kernel/compat_audit.c
+> > > index 20c39c9d86a9..fc6d35918c44 100644
+> > > --- a/arch/parisc/kernel/compat_audit.c
+> > > +++ b/arch/parisc/kernel/compat_audit.c
+> > > @@ -35,6 +35,8 @@ int parisc32_classify_syscall(unsigned syscall)
+> > >  		return 3;
+> > >  	case __NR_execve:
+> > >  		return 5;
+> > > +	case __NR_openat2:
+> > > +		return 6;
+> > >  	default:
+> > >  		return 1;
+> > >  	}
+> > > diff --git a/arch/powerpc/kernel/audit.c b/arch/powerpc/kernel/audit.c
+> > > index a2dddd7f3d09..8f32700b0baa 100644
+> > > --- a/arch/powerpc/kernel/audit.c
+> > > +++ b/arch/powerpc/kernel/audit.c
+> > > @@ -54,6 +54,8 @@ int audit_classify_syscall(int abi, unsigned syscall)
+> > >  		return 4;
+> > >  	case __NR_execve:
+> > >  		return 5;
+> > > +	case __NR_openat2:
+> > > +		return 6;
+> > >  	default:
+> > >  		return 0;
+> > >  	}
+> > > diff --git a/arch/powerpc/kernel/compat_audit.c b/arch/powerpc/kernel/compat_audit.c
+> > > index 55c6ccda0a85..ebe45534b1c9 100644
+> > > --- a/arch/powerpc/kernel/compat_audit.c
+> > > +++ b/arch/powerpc/kernel/compat_audit.c
+> > > @@ -38,6 +38,8 @@ int ppc32_classify_syscall(unsigned syscall)
+> > >  		return 4;
+> > >  	case __NR_execve:
+> > >  		return 5;
+> > > +	case __NR_openat2:
+> > > +		return 6;
+> > >  	default:
+> > >  		return 1;
+> > >  	}
+> > > diff --git a/arch/s390/kernel/audit.c b/arch/s390/kernel/audit.c
+> > > index d395c6c9944c..d964cb94cfaf 100644
+> > > --- a/arch/s390/kernel/audit.c
+> > > +++ b/arch/s390/kernel/audit.c
+> > > @@ -54,6 +54,8 @@ int audit_classify_syscall(int abi, unsigned syscall)
+> > >  		return 4;
+> > >  	case __NR_execve:
+> > >  		return 5;
+> > > +	case __NR_openat2:
+> > > +		return 6;
+> > >  	default:
+> > >  		return 0;
+> > >  	}
+> > > diff --git a/arch/s390/kernel/compat_audit.c b/arch/s390/kernel/compat_audit.c
+> > > index 444fb1f66944..f7b32933ce0e 100644
+> > > --- a/arch/s390/kernel/compat_audit.c
+> > > +++ b/arch/s390/kernel/compat_audit.c
+> > > @@ -39,6 +39,8 @@ int s390_classify_syscall(unsigned syscall)
+> > >  		return 4;
+> > >  	case __NR_execve:
+> > >  		return 5;
+> > > +	case __NR_openat2:
+> > > +		return 6;
+> > >  	default:
+> > >  		return 1;
+> > >  	}
+> > > diff --git a/arch/sparc/kernel/audit.c b/arch/sparc/kernel/audit.c
+> > > index a6e91bf34d48..b6dcca9c6520 100644
+> > > --- a/arch/sparc/kernel/audit.c
+> > > +++ b/arch/sparc/kernel/audit.c
+> > > @@ -55,6 +55,8 @@ int audit_classify_syscall(int abi, unsigned int syscall)
+> > >  		return 4;
+> > >  	case __NR_execve:
+> > >  		return 5;
+> > > +	case __NR_openat2:
+> > > +		return 6;
+> > >  	default:
+> > >  		return 0;
+> > >  	}
+> > > diff --git a/arch/sparc/kernel/compat_audit.c b/arch/sparc/kernel/compat_audit.c
+> > > index 10eeb4f15b20..d2652a1083ad 100644
+> > > --- a/arch/sparc/kernel/compat_audit.c
+> > > +++ b/arch/sparc/kernel/compat_audit.c
+> > > @@ -39,6 +39,8 @@ int sparc32_classify_syscall(unsigned int syscall)
+> > >  		return 4;
+> > >  	case __NR_execve:
+> > >  		return 5;
+> > > +	case __NR_openat2:
+> > > +		return 6;
+> > >  	default:
+> > >  		return 1;
+> > >  	}
+> > > diff --git a/arch/x86/ia32/audit.c b/arch/x86/ia32/audit.c
+> > > index 6efe6cb3768a..57a02ade5503 100644
+> > > --- a/arch/x86/ia32/audit.c
+> > > +++ b/arch/x86/ia32/audit.c
+> > > @@ -39,6 +39,8 @@ int ia32_classify_syscall(unsigned syscall)
+> > >  	case __NR_execve:
+> > >  	case __NR_execveat:
+> > >  		return 5;
+> > > +	case __NR_openat2:
+> > > +		return 6;
+> > >  	default:
+> > >  		return 1;
+> > >  	}
+> > > diff --git a/arch/x86/kernel/audit_64.c b/arch/x86/kernel/audit_64.c
+> > > index 83d9cad4e68b..39de1e021258 100644
+> > > --- a/arch/x86/kernel/audit_64.c
+> > > +++ b/arch/x86/kernel/audit_64.c
+> > > @@ -53,6 +53,8 @@ int audit_classify_syscall(int abi, unsigned syscall)
+> > >  	case __NR_execve:
+> > >  	case __NR_execveat:
+> > >  		return 5;
+> > > +	case __NR_openat2:
+> > > +		return 6;
+> > >  	default:
+> > >  		return 0;
+> > >  	}
+> > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > index 8bb9ac84d2fb..f5616e70d129 100644
+> > > --- a/kernel/auditsc.c
+> > > +++ b/kernel/auditsc.c
+> > > @@ -76,6 +76,7 @@
+> > >  #include <linux/fsnotify_backend.h>
+> > >  #include <uapi/linux/limits.h>
+> > >  #include <uapi/linux/netfilter/nf_tables.h>
+> > > +#include <uapi/linux/openat2.h>
+> > >  
+> > >  #include "audit.h"
+> > >  
+> > > @@ -195,6 +196,8 @@ static int audit_match_perm(struct audit_context *ctx, int mask)
+> > >  		return ((mask & AUDIT_PERM_WRITE) && ctx->argv[0] == SYS_BIND);
+> > >  	case 5: /* execve */
+> > >  		return mask & AUDIT_PERM_EXEC;
+> > > +	case 6: /* openat2 */
+> > > +		return mask & ACC_MODE((u32)((struct open_how *)ctx->argv[2])->flags);
 > > 
-> > You'd think that it's fairly straightforward, but I have a feeling
-> > that the whole fanotify_event_metadata extensibility discussion and
-> > the current limitation to do so revolves around whether it can be
-> > achieved in a way which can guarantee that no userspace applications
-> > would break. I think the answer to this is that there's no guarantee
-> > because of <<reasons>>, so the decision to extend fanotify's feature
-> > set was done via other means i.e. introduction of additional
-> > structures.
+> > That looks a bit dodgy. Maybe sm like the below would be a bit better?
 > 
-> There's no real problem extending fanotify_event_metadata. We already have
-> multiple extended version of that structure in use (see e.g. FAN_REPORT_FID
-> flag and its effect, extended versions of the structure in
-> include/uapi/linux/fanotify.h). The key for backward compatibility is to
-> create extended struct only when explicitely requested by a flag when
-> creating notification group - and that would be the case here -
-> FAN_REPORT_PIDFD or how you called it. It is just that extending the
-> structure means adding 8 bytes to each event and parsing extended structure
-> is more cumbersome than just fetching s32 from a well known location.
+> Ah, ok, fair enough, since original flags use a u32 and this was picked
+> as u64 for alignment.  It was just occurring to me last night that I
+> might have the dubious honour of being the first usage of 0%llo format
+> specifier in the kernel...  ;-)
+
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index 47fb48f42c93..531e882a5096 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -159,6 +159,7 @@ static const struct audit_nfcfgop_tab audit_nfcfgs[] = {
+> > 
+> >  static int audit_match_perm(struct audit_context *ctx, int mask)
+> >  {
+> > +       struct open_how *openat2;
+> >         unsigned n;
+> >         if (unlikely(!ctx))
+> >                 return 0;
+> > @@ -195,6 +196,12 @@ static int audit_match_perm(struct audit_context *ctx, int mask)
+> >                 return ((mask & AUDIT_PERM_WRITE) && ctx->argv[0] == SYS_BIND);
+> >         case 5: /* execve */
+> >                 return mask & AUDIT_PERM_EXEC;
+> > +       case 6: /* openat2 */
+> > +               openat2 = ctx->argv[2];
+> > +               if (upper_32_bits(openat2->flags))
+> > +                       pr_warn("Some sensible warning about unknown flags");
+> > +
+> > +               return mask & ACC_MODE(lower_32_bits(openat2->flags));
+> >         default:
+> >                 return 0;
+> >         }
+> > 
+> > (Ideally we'd probably notice at build-time that we've got flags
+> > exceeding 32bits. Could probably easily been done by exposing an all
+> > flags macro somewhere and then we can place a BUILD_BUG_ON() or sm into
+> > such places.)
+
+open_how arguments are translated to open_flags which is limited to 32 bits.
+
+This code is shared with the other open functions that are limited to 32 bits
+in open_flags.  openat2 was created to avoid the limitations of openat, so at
+some point it isn't unreasonable that flags exceed 32 bits, but open_flags
+would have to be modified at that point to accommodate.
+
+This value is handed in from userspace, and could be handed in without being
+defined in the kernel, so those values need to be properly checked regardless
+of the flags defined in the kernel.
+
+The openat2 syscall claims to check all flags but no check is done on the top
+32 bits.
+
+build_open_flags() assigns how->flags to an int, effectively dropping the top
+32 bits, before being checked against ~VALID_OPEN_FLAGS.  This happens after
+audit mode filtering, but has the same result.
+
+Audit mode filtering using ACC_MODE() already masks out all but the lowest two
+bits with O_ACCMODE, so there is no danger of overflowing a u32.
+
+tomoyo_check_open_permission() assigns ACC_MODE() to u8 without a check.
+
+All FMODE_* flags are clamped at u32.
+
+6 bits remain at top and 4 bits just above O_ACCMODE, so there is no immediate
+danger of overflow and if any additional mode bits are needed they are
+available.
+000377777703 used
+037777777777 available
+10 bits remaining
+
+So, I don't think a check at this point in the code is useful, but do agree
+that there should be some changes and checks added in sys_openat2 and
+build_open_flags().
+
+
+Also noticed: It looks like fddb5d430ad9f left in VALID_UPGRADE_FLAGS for
+how->upgrade_mask that was removed.  This may be used at a later date, but at
+this point is dead code.
+
+> > Christian
 > 
-> On the other hand extended structure is self-describing (i.e., you can tell
-> the meaning of all the fields just from the event you receive) while
-> reusing 'pid' field means that you have to know how the notification group
-> was created (whether FAN_REPORT_PIDFD was used or not) to be able to
-> interpret the contents of the event. Actually I think the self-describing
-> feature of fanotify event stream is useful (e.g. when application manages
-> multiple fanotify groups or when fanotify group descriptors are passed
-> among processes) so now I'm more leaning towards using the extended
-> structure instead of reusing 'pid' as Christian suggests. I'm sorry for the
-> confusion.
+> - RGB
 
-This approach makes sense to me.
+- RGB
 
-Jan/Amir, just to be clear, we've agreed to go ahead with the extended
-struct approach whereby specifying the FAN_REPORT_PIDFD flag will
-result in an event which includes an additional struct
-(i.e. fanotify_event_info_pid) alongside the generic existing
-fanotify_event_metadata (also ensuring that pid has been
-provided). Events will be provided to userspace applications just like
-when specifying FAN_REPORT_FID, correct?
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 
-/M
