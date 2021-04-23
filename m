@@ -2,124 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7568B3692AD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Apr 2021 15:07:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1A723692D4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Apr 2021 15:17:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230413AbhDWNI0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Apr 2021 09:08:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:40029 "EHLO
+        id S231352AbhDWNRq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Apr 2021 09:17:46 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48264 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236860AbhDWNIY (ORCPT
+        by vger.kernel.org with ESMTP id S230521AbhDWNRq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Apr 2021 09:08:24 -0400
+        Fri, 23 Apr 2021 09:17:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619183268;
+        s=mimecast20190719; t=1619183829;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HrEvCjKrNvU8f2Kdeia0iPn8GHvkOfIv042jQr8u048=;
-        b=IgJFoiKOgEGF3HzZkv35ROiYIOXSiXbjoHLEEilZ7SQ+nW0W9uwOPtXp8jMgUBNra2HFad
-        e+SywUIf61lvTTl0HdBFQyLyzU4wxCMiFvgn00BdUi25Gv/2Hq90srdQAlhDfBIVZw1FZG
-        KMzjS2yBHHKoJ1HZFqTc2R9PnQZldkw=
+         content-transfer-encoding:content-transfer-encoding;
+        bh=u7WjucWMKhco5a0xvZlF0gB5mBL6gDa1ouYEA5LycDs=;
+        b=WDUSJSqknDfV1fOKN6jBwbVF3qwsLc6vxMDzCz7HryL8E4ls5j+hqMJxIzG4+f4XmqYwbU
+        a5HhBtINLEgfBG+wzgCY0OMj4Z+Hc5C7bUc3Y2tXbgPmKraI2IlMszH9PxlTdN23rnTuBn
+        387R00so8gQy+SwoAtOu6+w20OJuCCo=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-128-p2aXp0xRN9iTLkrd4oJhkA-1; Fri, 23 Apr 2021 09:07:46 -0400
-X-MC-Unique: p2aXp0xRN9iTLkrd4oJhkA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-163-a3otH4XROmi4zXbJq7JOCA-1; Fri, 23 Apr 2021 09:17:07 -0400
+X-MC-Unique: a3otH4XROmi4zXbJq7JOCA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 269C61006C81;
-        Fri, 23 Apr 2021 13:07:45 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-115-86.rdu2.redhat.com [10.10.115.86])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1C37250DD2;
-        Fri, 23 Apr 2021 13:07:38 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id A8368225FCD; Fri, 23 Apr 2021 09:07:37 -0400 (EDT)
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        dan.j.williams@intel.com
-Cc:     linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
-        vgoyal@redhat.com, miklos@szeredi.hu, jack@suse.cz,
-        willy@infradead.org, slp@redhat.com, groug@kaod.org
-Subject: [PATCH v4 3/3] dax: Wake up all waiters after invalidating dax entry
-Date:   Fri, 23 Apr 2021 09:07:23 -0400
-Message-Id: <20210423130723.1673919-4-vgoyal@redhat.com>
-In-Reply-To: <20210423130723.1673919-1-vgoyal@redhat.com>
-References: <20210423130723.1673919-1-vgoyal@redhat.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B29F480D6A8;
+        Fri, 23 Apr 2021 13:17:00 +0000 (UTC)
+Received: from t480s.redhat.com (ovpn-112-41.ams2.redhat.com [10.36.112.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 76CF360C13;
+        Fri, 23 Apr 2021 13:16:41 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Michel Lespinasse <walken@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Marco Elver <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Collin Fijalkovich <cfijalkovich@google.com>,
+        Michal Hocko <mhocko@suse.com>, linux-api@vger.kernel.org,
+        x86@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH RFC 0/7] Remove in-tree usage of MAP_DENYWRITE
+Date:   Fri, 23 Apr 2021 15:16:33 +0200
+Message-Id: <20210423131640.20080-1-david@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I am seeing missed wakeups which ultimately lead to a deadlock when I am
-using virtiofs with DAX enabled and running "make -j". I had to mount
-virtiofs as rootfs and also reduce to dax window size to 256M to reproduce
-the problem consistently.
+This series is based on [1]
+	[PATCH v1 0/3] perf/binfmt/mm: remove in-tree usage of
+	MAP_EXECUTABLE
+and [2]
+	[PATCH v2] mm, thp: Relax the VM_DENYWRITE constraint on
+	file-backed THPs
 
-So here is the problem. put_unlocked_entry() wakes up waiters only
-if entry is not null as well as !dax_is_conflict(entry). But if I
-call multiple instances of invalidate_inode_pages2() in parallel,
-then I can run into a situation where there are waiters on
-this index but nobody will wake these waiters.
+This series removes all in-tree usage of MAP_DENYWRITE from the kernel
+and removes VM_DENYWRITE. We stopped supporting MAP_DENYWRITE for
+user space applications a while ago because of the chance for DoS.
+The last renaming user is binfmt binary loading during exec and
+legacy library loading via uselib(). 
 
-invalidate_inode_pages2()
-  invalidate_inode_pages2_range()
-    invalidate_exceptional_entry2()
-      dax_invalidate_mapping_entry_sync()
-        __dax_invalidate_entry() {
-                xas_lock_irq(&xas);
-                entry = get_unlocked_entry(&xas, 0);
-                ...
-                ...
-                dax_disassociate_entry(entry, mapping, trunc);
-                xas_store(&xas, NULL);
-                ...
-                ...
-                put_unlocked_entry(&xas, entry);
-                xas_unlock_irq(&xas);
-        }
+With this change, MAP_DENYWRITE is effectively ignored throughout the
+kernel. Although the net change is small, I think the cleanup in mmap()
+is quite nice.
 
-Say a fault in in progress and it has locked entry at offset say "0x1c".
-Now say three instances of invalidate_inode_pages2() are in progress
-(A, B, C) and they all try to invalidate entry at offset "0x1c". Given
-dax entry is locked, all tree instances A, B, C will wait in wait queue.
+There are some (minor) user-visible changes with this series, that's why
+I am flagging this as RFC and cc-ing linux-api:
+1. We no longer deny write access to shared libaries loaded via legacy
+   uselib(); this behavior matches modern user space e.g., via dlopen().
+2. We no longer deny write access to the elf interpreter after exec
+   completed, treating it just like shared libraries (which it often is).
+3. We always deny write access to the file linked via /proc/pid/exe:
+   sys_prctl(PR_SET_MM_EXE_FILE) will fail if write access to the file
+   cannot be denied, and write access to the file will remain denied
+   until the link is effectivel gone (exec, termination,
+   PR_SET_MM_EXE_FILE) -- just as if exec'ing the file.
 
-When dax fault finishes, say A is woken up. It will store NULL entry
-at index "0x1c" and wake up B. When B comes along it will find "entry=0"
-at page offset 0x1c and it will call put_unlocked_entry(&xas, 0). And
-this means put_unlocked_entry() will not wake up next waiter, given
-the current code. And that means C continues to wait and is not woken
-up.
+I was wondering if we really care about permanently disabling write access
+to the executable, or if it would be good enough to just disable write
+access while loading the new executable during exec; but I don't know
+the history of that -- and it somewhat makes sense to deny write access
+at least to the main executable. With modern user space -- dlopen() -- we
+can effectively modify the content of shared libraries while being used.
 
-This patch fixes the issue by waking up all waiters when a dax entry
-has been invalidated. This seems to fix the deadlock I am facing
-and I can make forward progress.
+I'm not 100% sure if the race documented in patch #3 applies (forking
+while another thread is doing a PR_SET_MM_EXE_FILE), but I
+assume this is possible.
 
-Reported-by: Sergio Lopez <slp@redhat.com>
-Fixes: ac401cc78242 ("dax: New fault locking")
-Reviewed-by: Jan Kara <jack@suse.cz>
-Suggested-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/dax.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[1] https://lkml.kernel.org/r/20210421093453.6904-1-david@redhat.com
+[2] https://lkml.kernel.org/r/20210406000930.3455850-1-cfijalkovich@google.com
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 96e896de8f18..83daa57d37d3 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -675,7 +675,7 @@ static int __dax_invalidate_entry(struct address_space *mapping,
- 	mapping->nrexceptional--;
- 	ret = 1;
- out:
--	put_unlocked_entry(&xas, entry, WAKE_NEXT);
-+	put_unlocked_entry(&xas, entry, WAKE_ALL);
- 	xas_unlock_irq(&xas);
- 	return ret;
- }
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Greg Ungerer <gerg@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: Chinwen Chang <chinwen.chang@mediatek.com>
+Cc: Michel Lespinasse <walken@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Feng Tang <feng.tang@intel.com>
+Cc: Kevin Brodsky <Kevin.Brodsky@arm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Shawn Anastasio <shawn@anastas.io>
+Cc: Steven Price <steven.price@arm.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: Marco Elver <elver@google.com>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Nicolas Viennot <Nicolas.Viennot@twosigma.com>
+Cc: Thomas Cedeno <thomascedeno@google.com>
+Cc: Collin Fijalkovich <cfijalkovich@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: linux-api@vger.kernel.org
+Cc: x86@kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
+
+David Hildenbrand (7):
+  binfmt: don't use MAP_DENYWRITE when loading shared libraries via
+    uselib()
+  kernel/fork: factor out atomcially replacing the current MM exe_file
+  kernel/fork: always deny write access to current MM exe_file
+  binfmt: remove in-tree usage of MAP_DENYWRITE
+  mm: remove VM_DENYWRITE
+  mm: ignore MAP_DENYWRITE in ksys_mmap_pgoff()
+  fs: update documentation of get_write_access() and friends
+
+ arch/x86/ia32/ia32_aout.c      |  8 ++--
+ fs/binfmt_aout.c               |  7 ++--
+ fs/binfmt_elf.c                |  6 +--
+ fs/binfmt_elf_fdpic.c          |  2 +-
+ fs/proc/task_mmu.c             |  1 -
+ include/linux/fs.h             | 19 +++++----
+ include/linux/mm.h             |  3 +-
+ include/linux/mman.h           |  4 +-
+ include/trace/events/mmflags.h |  1 -
+ kernel/events/core.c           |  2 -
+ kernel/fork.c                  | 75 ++++++++++++++++++++++++++++++----
+ kernel/sys.c                   | 33 +--------------
+ lib/test_printf.c              |  5 +--
+ mm/mmap.c                      | 29 ++-----------
+ mm/nommu.c                     |  2 -
+ 15 files changed, 98 insertions(+), 99 deletions(-)
+
 -- 
-2.25.4
+2.30.2
 
