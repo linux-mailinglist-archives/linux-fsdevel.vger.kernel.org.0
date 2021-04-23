@@ -2,311 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2B273693C9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Apr 2021 15:36:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A8AC3693E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Apr 2021 15:41:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242949AbhDWNg5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Apr 2021 09:36:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24027 "EHLO
+        id S239273AbhDWNm1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Apr 2021 09:42:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36251 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242946AbhDWNfm (ORCPT
+        by vger.kernel.org with ESMTP id S239091AbhDWNmS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Apr 2021 09:35:42 -0400
+        Fri, 23 Apr 2021 09:42:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619184906;
+        s=mimecast20190719; t=1619185301;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PBmQWKrBnOttTvNtffWuyztSDQ4t8ZgEwDDCGcqHdIE=;
-        b=MOtYQ9l0Y+rhdiMNXjLa0j2F89nlsGcetvHmC5T9Znx9+ihiKikk/dSTUSXeADyW4tqibs
-        8eSl+DIioe5QdNLIbasHV01Gw92EQpFIaIchxETcHyc7pP6ZoaXQZ/c3zlTjYplW5gLn16
-        MbqQw1TzoZrlEoHj/a4spvWzuEkTkrU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-529-M86raN7mNKOZecy7jfDNgw-1; Fri, 23 Apr 2021 09:35:04 -0400
-X-MC-Unique: M86raN7mNKOZecy7jfDNgw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 52A9910054F6;
-        Fri, 23 Apr 2021 13:35:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-124.rdu2.redhat.com [10.10.112.124])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D0BE05C1BB;
-        Fri, 23 Apr 2021 13:34:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v7 31/31] afs: Use the netfs_write_begin() helper
-From:   David Howells <dhowells@redhat.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org, linux-cachefs@redhat.com,
-        dhowells@redhat.com,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Date:   Fri, 23 Apr 2021 14:34:55 +0100
-Message-ID: <161918489504.3145707.5655048601094961805.stgit@warthog.procyon.org.uk>
-In-Reply-To: <161918446704.3145707.14418606303992174310.stgit@warthog.procyon.org.uk>
-References: <161918446704.3145707.14418606303992174310.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        bh=Ze4ahKnbOCWiAxmHjTl9e5R83LN6smcdaohyYDqcddU=;
+        b=WfdEQXYINQ9QbgX74Xz0r+MSykeOA6Nhx7NpJJwQY3l7mX94HEBH4vBeiwK5bLc69xwx7T
+        x4CRZvwnPHgpyEvJ/y+N1u+GvyoAZpPO+jkuF2fuAYTzm0pZR99qLD0MxHogaI4+00t8Tx
+        dyey6c2SQfVsGR9eqLKm65hYkcw4NOA=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-25-ocsZknN5MNCNVeIddm3yrw-1; Fri, 23 Apr 2021 09:41:40 -0400
+X-MC-Unique: ocsZknN5MNCNVeIddm3yrw-1
+Received: by mail-yb1-f199.google.com with SMTP id p9-20020a2574090000b02904e2cb6a90e7so24306007ybc.17
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Apr 2021 06:41:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ze4ahKnbOCWiAxmHjTl9e5R83LN6smcdaohyYDqcddU=;
+        b=tWGq4X6QbIupYuk531LbML2GAxf/p8SP1y0NG1lB0OqA3AXVtbwVyuUE+Zla7n5WMa
+         PpuVEOaUSQCIrRUTWa6ku4n/Fn6B0vYIyME9CykAZPEWnSiFh7y3Ro4vodkGYXcMvLzL
+         FqpGB9nNjrNxeAPkptqKwzorvqN5UfTIVCZkZ8FO879vDZTd3M7AFz08od2yCwPYmTAz
+         IZG6lTdntVzfhoCd5V4h8cBWfx/H66YTyefRWU6XGJzIvdQZRCgnXvNl7BETkdJMQG8o
+         UpOt7NTKEXW1zDOXII9T+5YJkzX8KbVkihS5qmlpEiMO75pTt/G3m4R4EnQD7fCOjNcW
+         B0BA==
+X-Gm-Message-State: AOAM530mlJ8aOemo5FLwrD8Zs57NsUKSSdYYy2t6zkFkCdLcjJ/OO2Ls
+        N2iwd1Qk7d/pRvV3UhFwbbbTZdU+vfOgJ0dAEDu4HgGSHzIFCY8T4W9cr8NgR+Gl1PGFsncI+k7
+        4x1Cu77jaV0bF3zlmVcN/utRQVDh65cUSlVkgYaSXVg==
+X-Received: by 2002:a25:9085:: with SMTP id t5mr4967929ybl.26.1619185298490;
+        Fri, 23 Apr 2021 06:41:38 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzXNaViuyykB129+lJhNJo0S+WHcmw5kglqQvAOEW3Lkacoqm9Vvdzv9iHggDm7UBpnmciENcf5DP8f3KFEXko=
+X-Received: by 2002:a25:9085:: with SMTP id t5mr4967852ybl.26.1619185297789;
+ Fri, 23 Apr 2021 06:41:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <20210421171446.785507-1-omosnace@redhat.com> <20210421171446.785507-3-omosnace@redhat.com>
+ <CAEjxPJ5ksqrafO8uaf3jR=cjU5JnyQYmn_57skp=WXz7-RcbVQ@mail.gmail.com>
+In-Reply-To: <CAEjxPJ5ksqrafO8uaf3jR=cjU5JnyQYmn_57skp=WXz7-RcbVQ@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Fri, 23 Apr 2021 15:41:25 +0200
+Message-ID: <CAFqZXNv4gKFN5FV_Z8U82cOzauBggaqPE0WZZUdnNRxCQ3PVPw@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] selinux: add capability to map anon inode types
+ to separate classes
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     SElinux list <selinux@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Lokesh Gidra <lokeshgidra@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make AFS use the new netfs_write_begin() helper to do the pre-reading
-required before the write.  If successful, the helper returns with the
-required page filled in and locked.  It may read more than just one page,
-expanding the read to meet cache granularity requirements as necessary.
+On Thu, Apr 22, 2021 at 3:21 PM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Wed, Apr 21, 2021 at 1:14 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> >
+> > Unfortunately, the approach chosen in commit 29cd6591ab6f ("selinux:
+> > teach SELinux about anonymous inodes") to use a single class for all
+> > anon inodes and let the policy distinguish between them using named
+> > transitions turned out to have a rather unfortunate drawback.
+> >
+> > For example, suppose we have two types of anon inodes, "A" and "B", and
+> > we want to allow a set of domains (represented by an attribute "attr_x")
+> > certain set of permissions on anon inodes of type "A" that were created
+> > by the same domain, but at the same time disallow this set to access
+> > anon inodes of type "B" entirely. Since all inodes share the same class
+> > and we want to distinguish both the inode types and the domains that
+> > created them, we have no choice than to create separate types for the
+> > cartesian product of (domains that belong to attr_x) x ("A", "B") and
+> > add all the necessary allow and transition rules for each domain
+> > individually.
+> >
+> > This makes it very impractical to write sane policies for anon inodes in
+> > the future, as more anon inode types are added. Therefore, this patch
+> > implements an alternative approach that assigns a separate class to each
+> > type of anon inode. This allows the example above to be implemented
+> > without any transition rules and with just a single allow rule:
+> >
+> > allow attr_x self:A { ... };
+> >
+> > In order to not break possible existing users of the already merged
+> > original approach, this patch also adds a new policy capability
+> > "extended_anon_inode_class" that needs to be set by the policy to enable
+> > the new behavior.
+> >
+> > I decided to keep the named transition mechanism in the new variant,
+> > since there might eventually be some extra information in the anon inode
+> > name that could be used in transitions.
+> >
+> > One minor annoyance is that the kernel still expects the policy to
+> > provide both classes (anon_inode and userfaultfd) regardless of the
+> > capability setting and if one of them is not defined in the policy, the
+> > kernel will print a warning when loading the policy. However, it doesn't
+> > seem worth to work around that in the kernel, as the policy can provide
+> > just the definition of the unused class(es) (and permissions) to avoid
+> > this warning. Keeping the legacy anon_inode class with some fallback
+> > rules may also be desirable to keep the policy compatible with kernels
+> > that only support anon_inode.
+> >
+> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+>
+> NAK.  We do not want to introduce a new security class for every user
+> of anon inodes - that isn't what security classes are for.
+> For things like kvm device inodes, those should ultimately use the
+> inherited context from the related inode (the /dev/kvm inode itself).
+> That was the original intent of supporting the related inode.
 
-Note: A more advanced version of this could be made that does
-generic_perform_write() for a whole cache granule.  This would make it
-easier to avoid doing the download/read for the data to be overwritten.
+Hmm, so are you implying that anon inodes should be thought of the
+same as control /dev nodes? I.e. that even though there may be many
+one-time actual inodes created by different processes, they should be
+thought of as a single "static interface" to the respective kernel
+functionality? That would justify having a common type/label for all
+of them, but I'm not sure if it doesn't open some gap due to the
+possibility to pass the associated file descriptors between processes
+(as AFAIK, these can hold some context)...
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Tested-By: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
-cc: linux-cachefs@redhat.com
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/160588546422.3465195.1546354372589291098.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/161539563244.286939.16537296241609909980.stgit@warthog.procyon.org.uk/ # v4
-Link: https://lore.kernel.org/r/161653819291.2770958.406013201547420544.stgit@warthog.procyon.org.uk/ # v5
-Link: https://lore.kernel.org/r/161789102743.6155.17396591236631761195.stgit@warthog.procyon.org.uk/ # v6
----
+I thought this was supposed to resemble more the way BPF, perf_event,
+etc. support was implemented - the BPF and perf_event fds are also
+anon inodes under the hood, BTW - where each file descriptor is
+considered a separate object that inherits the label of its creator
+and there is some class separation (e.g. bpf vs. perf_event).
 
- fs/afs/file.c     |   19 +++++++++
- fs/afs/internal.h |    1 
- fs/afs/write.c    |  108 ++++++-----------------------------------------------
- 3 files changed, 31 insertions(+), 97 deletions(-)
-
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index 10c6eaaac2cc..db035ae2a134 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -333,6 +333,13 @@ static void afs_init_rreq(struct netfs_read_request *rreq, struct file *file)
- 	rreq->netfs_priv = key_get(afs_file_key(file));
- }
- 
-+static bool afs_is_cache_enabled(struct inode *inode)
-+{
-+	struct fscache_cookie *cookie = afs_vnode_cache(AFS_FS_I(inode));
-+
-+	return fscache_cookie_enabled(cookie) && !hlist_empty(&cookie->backing_objects);
-+}
-+
- static int afs_begin_cache_operation(struct netfs_read_request *rreq)
- {
- 	struct afs_vnode *vnode = AFS_FS_I(rreq->inode);
-@@ -340,14 +347,24 @@ static int afs_begin_cache_operation(struct netfs_read_request *rreq)
- 	return fscache_begin_read_operation(rreq, afs_vnode_cache(vnode));
- }
- 
-+static int afs_check_write_begin(struct file *file, loff_t pos, unsigned len,
-+				 struct page *page, void **_fsdata)
-+{
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
-+
-+	return test_bit(AFS_VNODE_DELETED, &vnode->flags) ? -ESTALE : 0;
-+}
-+
- static void afs_priv_cleanup(struct address_space *mapping, void *netfs_priv)
- {
- 	key_put(netfs_priv);
- }
- 
--static const struct netfs_read_request_ops afs_req_ops = {
-+const struct netfs_read_request_ops afs_req_ops = {
- 	.init_rreq		= afs_init_rreq,
-+	.is_cache_enabled	= afs_is_cache_enabled,
- 	.begin_cache_operation	= afs_begin_cache_operation,
-+	.check_write_begin	= afs_check_write_begin,
- 	.issue_op		= afs_req_issue_op,
- 	.cleanup		= afs_priv_cleanup,
- };
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index f9a692fc08f4..52157a05796a 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -1045,6 +1045,7 @@ extern void afs_dynroot_depopulate(struct super_block *);
- extern const struct address_space_operations afs_fs_aops;
- extern const struct inode_operations afs_file_inode_operations;
- extern const struct file_operations afs_file_operations;
-+extern const struct netfs_read_request_ops afs_req_ops;
- 
- extern int afs_cache_wb_key(struct afs_vnode *, struct afs_file *);
- extern void afs_put_wb_key(struct afs_wb_key *);
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index bc84c771b0fd..dc66ff15dd16 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -11,6 +11,8 @@
- #include <linux/pagemap.h>
- #include <linux/writeback.h>
- #include <linux/pagevec.h>
-+#include <linux/netfs.h>
-+#include <linux/fscache.h>
- #include "internal.h"
- 
- /*
-@@ -22,68 +24,6 @@ int afs_set_page_dirty(struct page *page)
- 	return __set_page_dirty_nobuffers(page);
- }
- 
--/*
-- * Handle completion of a read operation to fill a page.
-- */
--static void afs_fill_hole(struct afs_read *req)
--{
--	if (iov_iter_count(req->iter) > 0)
--		/* The read was short - clear the excess buffer. */
--		iov_iter_zero(iov_iter_count(req->iter), req->iter);
--}
--
--/*
-- * partly or wholly fill a page that's under preparation for writing
-- */
--static int afs_fill_page(struct file *file,
--			 loff_t pos, unsigned int len, struct page *page)
--{
--	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
--	struct afs_read *req;
--	size_t p;
--	void *data;
--	int ret;
--
--	_enter(",,%llu", (unsigned long long)pos);
--
--	if (pos >= vnode->vfs_inode.i_size) {
--		p = pos & ~PAGE_MASK;
--		ASSERTCMP(p + len, <=, PAGE_SIZE);
--		data = kmap(page);
--		memset(data + p, 0, len);
--		kunmap(page);
--		return 0;
--	}
--
--	req = kzalloc(sizeof(struct afs_read), GFP_KERNEL);
--	if (!req)
--		return -ENOMEM;
--
--	refcount_set(&req->usage, 1);
--	req->vnode	= vnode;
--	req->done	= afs_fill_hole;
--	req->key	= key_get(afs_file_key(file));
--	req->pos	= pos;
--	req->len	= len;
--	req->nr_pages	= 1;
--	req->iter	= &req->def_iter;
--	iov_iter_xarray(&req->def_iter, READ, &file->f_mapping->i_pages, pos, len);
--
--	ret = afs_fetch_data(vnode, req);
--	afs_put_read(req);
--	if (ret < 0) {
--		if (ret == -ENOENT) {
--			_debug("got NOENT from server"
--			       " - marking file deleted and stale");
--			set_bit(AFS_VNODE_DELETED, &vnode->flags);
--			ret = -ESTALE;
--		}
--	}
--
--	_leave(" = %d", ret);
--	return ret;
--}
--
- /*
-  * prepare to perform part of a write to a page
-  */
-@@ -102,24 +42,14 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
- 	_enter("{%llx:%llu},%llx,%x",
- 	       vnode->fid.vid, vnode->fid.vnode, pos, len);
- 
--	page = grab_cache_page_write_begin(mapping, pos / PAGE_SIZE, flags);
--	if (!page)
--		return -ENOMEM;
--
--	if (!PageUptodate(page) && len != PAGE_SIZE) {
--		ret = afs_fill_page(file, pos & PAGE_MASK, PAGE_SIZE, page);
--		if (ret < 0) {
--			unlock_page(page);
--			put_page(page);
--			_leave(" = %d [prep]", ret);
--			return ret;
--		}
--		SetPageUptodate(page);
--	}
--
--#ifdef CONFIG_AFS_FSCACHE
--	wait_on_page_fscache(page);
--#endif
-+	/* Prefetch area to be written into the cache if we're caching this
-+	 * file.  We need to do this before we get a lock on the page in case
-+	 * there's more than one writer competing for the same cache block.
-+	 */
-+	ret = netfs_write_begin(file, mapping, pos, len, flags, &page, fsdata,
-+				&afs_req_ops, NULL);
-+	if (ret < 0)
-+		return ret;
- 
- 	index = page->index;
- 	from = pos - index * PAGE_SIZE;
-@@ -184,7 +114,6 @@ int afs_write_end(struct file *file, struct address_space *mapping,
- 	unsigned int f, from = pos & (thp_size(page) - 1);
- 	unsigned int t, to = from + copied;
- 	loff_t i_size, maybe_i_size;
--	int ret = 0;
- 
- 	_enter("{%llx:%llu},{%lx}",
- 	       vnode->fid.vid, vnode->fid.vnode, page->index);
-@@ -203,19 +132,7 @@ int afs_write_end(struct file *file, struct address_space *mapping,
- 		write_sequnlock(&vnode->cb_lock);
- 	}
- 
--	if (!PageUptodate(page)) {
--		if (copied < len) {
--			/* Try and load any missing data from the server.  The
--			 * unmarshalling routine will take care of clearing any
--			 * bits that are beyond the EOF.
--			 */
--			ret = afs_fill_page(file, pos + copied,
--					    len - copied, page);
--			if (ret < 0)
--				goto out;
--		}
--		SetPageUptodate(page);
--	}
-+	ASSERT(PageUptodate(page));
- 
- 	if (PagePrivate(page)) {
- 		priv = page_private(page);
-@@ -236,12 +153,11 @@ int afs_write_end(struct file *file, struct address_space *mapping,
- 
- 	if (set_page_dirty(page))
- 		_debug("dirtied %lx", page->index);
--	ret = copied;
- 
- out:
- 	unlock_page(page);
- 	put_page(page);
--	return ret;
-+	return copied;
- }
- 
- /*
-
+--
+Ondrej Mosnacek
+Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
