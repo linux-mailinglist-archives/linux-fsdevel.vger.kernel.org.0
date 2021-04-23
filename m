@@ -2,167 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4351C36940A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Apr 2021 15:50:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8407E36945A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Apr 2021 16:07:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229794AbhDWNva (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Apr 2021 09:51:30 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:54983 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229549AbhDWNva (ORCPT
+        id S231281AbhDWOHh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Apr 2021 10:07:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37116 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229794AbhDWOHh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Apr 2021 09:51:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619185852;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lFGEqMuKvihT620aUZZA3l97wbM2Xz66qumvv1hW9+Y=;
-        b=di+uYPN4y7yhjuUoUjJ10BGELjHvgFqnw59pGmY4tGI1PcTgyDZiGbzYoR1ox6BJHnKEVY
-        9uAkL/UeMaCjCW3/B/+adsCmwsx6OhRVGlrA6tnP2X0I1jEIla0gt+NSAb/6ncKQKAhoyL
-        iyLP9649172vPnqrq4p8zl6v9r6VBiI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-156-HobBfQnYNN-pJSwISCIfrQ-1; Fri, 23 Apr 2021 09:50:50 -0400
-X-MC-Unique: HobBfQnYNN-pJSwISCIfrQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BDD1210054F6;
-        Fri, 23 Apr 2021 13:50:49 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.10.110.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C6DAA5C1BB;
-        Fri, 23 Apr 2021 13:50:44 +0000 (UTC)
-Date:   Fri, 23 Apr 2021 09:50:42 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH 2/3] open: don't silently ignore unknown O-flags in
- openat2()
-Message-ID: <20210423135042.GM3141668@madcap2.tricolour.ca>
-References: <20210423111037.3590242-1-brauner@kernel.org>
- <20210423111037.3590242-2-brauner@kernel.org>
+        Fri, 23 Apr 2021 10:07:37 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC135C061574;
+        Fri, 23 Apr 2021 07:07:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=S30ovdpPLsZJJVMtk7+hTOIHIzuBQqKDqd/E3ECGbNY=; b=PUO+5rd07iXw0IxIrYHPsCwBLF
+        T5s9+4Gxq1Pd8hfLwuRHgFQnchpJzv4LivhtWC7t7a2k+z7zF0UURKHVsr3zhWI0jwEt2Xb9LhYfh
+        S0bUhYDXHhGLnf56/p+MZuW1m0Q6D9mYBmQzMqKkzaYGoWVCQYSZYT67l/ARCzaj+dc6bFHCsHpzD
+        be96Zbyrbq1SJJbDUhjC/2c9XNN0uvvHL3Ky34MNMADISOaMjW5NjOuuspzxLTtdyFVy9KM4eLOSm
+        r6rKv9II+8C9MFuJooOLgMCL2z+QAeEjwZHDZ6TtW2ivmX6FtTqMIWOcubYB2TqpRwzNkLSTW520a
+        wpnjlzHw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lZwRu-001x7h-0W; Fri, 23 Apr 2021 14:06:30 +0000
+Date:   Fri, 23 Apr 2021 15:06:25 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 01/31] iov_iter: Add ITER_XARRAY
+Message-ID: <20210423140625.GC235567@casper.infradead.org>
+References: <161918446704.3145707.14418606303992174310.stgit@warthog.procyon.org.uk>
+ <161918448151.3145707.11541538916600921083.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210423111037.3590242-2-brauner@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <161918448151.3145707.11541538916600921083.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021-04-23 13:10, Christian Brauner wrote:
-> From: Christian Brauner <christian.brauner@ubuntu.com>
-> 
-> The new openat2() syscall verifies that no unknown O-flag values are
-> set and returns an error to userspace if they are while the older open
-> syscalls like open() and openat2() simply ignore unknown flag values:
-> 
->   #define O_FLAG_CURRENTLY_INVALID (1 << 31)
->   struct open_how how = {
->           .flags = O_RDONLY | O_FLAG_CURRENTLY_INVALID,
->           .resolve = 0,
->   };
-> 
->   /* fails */
->   fd = openat2(-EBADF, "/dev/null", &how, sizeof(how));
-> 
->   /* succeeds */
->   fd = openat(-EBADF, "/dev/null", O_RDONLY | O_FLAG_CURRENTLY_INVALID);
-> 
-> However, openat2() silently truncates the upper 32 bits meaning:
-> 
->   #define O_FLAG_CURRENTLY_INVALID_LOWER32 (1 << 31)
->   #define O_FLAG_CURRENTLY_INVALID_UPPER32 (1 << 40)
-> 
->   struct open_how how_lowe32 = {
->           .flags = O_RDONLY | O_FLAG_CURRENTLY_INVALID_LOWE32,
->           .resolve = 0,
->   };
-> 
->   struct open_how how_upper32 = {
->           .flags = O_RDONLY | O_FLAG_CURRENTLY_INVALID_LOWE32,
->           .resolve = 0,
->   };
-> 
->   /* fails */
->   fd = openat2(-EBADF, "/dev/null", &how_lower32, sizeof(how_lower32));
-> 
->   /* succeeds */
->   fd = openat2(-EBADF, "/dev/null", &how_upper32, sizeof(how_upper32));
-> 
-> That seems like a bug. Fix it by preventing the truncation in
-> build_open_flags().
-> 
-> There's a snafu here though stripping FMODE_* directly from flags would
-> cause the upper 32 bits to be truncated as well due to integer promotion
-> rules since FMODE_* is unsigned int, O_* are signed ints (yuck).
-> 
-> This change shouldn't regress old open syscalls since they silently
-> truncate any unknown values.
-> 
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Aleksa Sarai <cyphar@cyphar.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Reported-by: Richard Guy Briggs <rgb@redhat.com>
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> ---
->  fs/open.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/open.c b/fs/open.c
-> index e53af13b5835..96644aa325eb 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -1002,12 +1002,17 @@ inline struct open_how build_open_how(int flags, umode_t mode)
->  
->  inline int build_open_flags(const struct open_how *how, struct open_flags *op)
->  {
-> -	int flags = how->flags;
-> +	u64 flags = how->flags;
-> +	u64 strip = FMODE_NONOTIFY | O_CLOEXEC;
->  	int lookup_flags = 0;
->  	int acc_mode = ACC_MODE(flags);
->  
-> -	/* Must never be set by userspace */
-> -	flags &= ~(FMODE_NONOTIFY | O_CLOEXEC);
-> +	/*
-> +	 * Strip flags that either shouldn't be set by userspace like
-> +	 * FMODE_NONOTIFY or that aren't relevant in determining struct
-> +	 * open_flags like O_CLOEXEC.
-> +	 */
-> +	flags &= ~strip;
+On Fri, Apr 23, 2021 at 02:28:01PM +0100, David Howells wrote:
+> +#define iterate_xarray(i, n, __v, skip, STEP) {		\
+> +	struct page *head = NULL;				\
+> +	size_t wanted = n, seg, offset;				\
+> +	loff_t start = i->xarray_start + skip;			\
+> +	pgoff_t index = start >> PAGE_SHIFT;			\
+> +	int j;							\
+> +								\
+> +	XA_STATE(xas, i->xarray, index);			\
+> +								\
+> +	rcu_read_lock();						\
+> +	xas_for_each(&xas, head, ULONG_MAX) {				\
+> +		if (xas_retry(&xas, head))				\
+> +			continue;					\
+> +		if (WARN_ON(xa_is_value(head)))				\
+> +			break;						\
+> +		if (WARN_ON(PageHuge(head)))				\
+> +			break;						\
+> +		for (j = (head->index < index) ? index - head->index : 0; \
+> +		     j < thp_nr_pages(head); j++) {			\
 
-Would it not be simpler to only change flags' type (and elaborated
-comment) and leave the original strip or will that run afoul of FMODE_*
-type clamping to u32?
+if head->index > index, something has gone disastrously wrong.
 
-To guard against this assignment of u64 flags to op->open_flags losing
-info in the future further down in this function, it would be necessary
-to add something like the following that you suggested to
-include/linux/fcntl.h following the definition of VALID_OPEN_FLAGS:
+		for (j = index - head->index; j < thp_nr_pages(head); j++) { \
 
-	BUILD_BUG_ON_MSG(upper_32_bits(VALID_OPEN_FLAGS), "will be ignored by open_flags assignment in build_open_flags()");
+would be enough.
 
-A similar check could be added for O_ACCMODE for 32 bits in general, and
-for 8 bits for Tomoyo.
+However ... the tree you were originally testing this against has the
+page cache fixed to use only one entry per THP.  The tree you want to
+apply this to inserts 2^n entries per THP.  They're all the head page,
+but they're distinct entries as far as xas_for_each() is concerned.
+So I think the loop you want looks like this:
 
->  	/*
->  	 * Older syscalls implicitly clear all of the invalid flags or argument
-> -- 
-> 2.27.0
++	rcu_read_lock();						\
++	xas_for_each(&xas, head, ULONG_MAX) {				\
++		if (xas_retry(&xas, head))				\
++			continue;					\
++		if (WARN_ON(xa_is_value(head)))				\
++			break;						\
++		if (WARN_ON(PageHuge(head)))				\
++			break;						\
++		__v.bv_page = head + index - head->index;		\
++		offset = offset_in_page(i->xarray_start + skip);	\
++		seg = PAGE_SIZE - offset;				\
++		__v.bv_offset = offset;					\
++		__v.bv_len = min(n, seg);				\
++		(void)(STEP);						\
++		n -= __v.bv_len;					\
++		skip += __v.bv_len;					\
++		if (n == 0)						\
++			break;						\
++	}								\
++	rcu_read_unlock();						\
 
-- RGB
+Now, is this important?  There are no filesystems which do I/O to THPs
+today.  So it's not possible to pick up the fact that it doesn't work,
+and I hope to have the page cache fixed soon.  And fixing this now
+will create more work later as part of fixing the page cache.  But I
+wouldn't feel right not mentioning this problem ...
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+(also, iov_iter really needs to be fixed to handle bvecs which cross
+page boundaries, but that's a fight for another day)
