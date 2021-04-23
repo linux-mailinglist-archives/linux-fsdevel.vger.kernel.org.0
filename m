@@ -2,30 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88D89369875
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Apr 2021 19:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C540E36986D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Apr 2021 19:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243520AbhDWRbG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Apr 2021 13:31:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43732 "EHLO mx2.suse.de"
+        id S243482AbhDWRbD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Apr 2021 13:31:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43712 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243442AbhDWRa7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Apr 2021 13:30:59 -0400
+        id S243395AbhDWRa6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 23 Apr 2021 13:30:58 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 79DEAB1DC;
+        by mx2.suse.de (Postfix) with ESMTP id 4D347B1D2;
         Fri, 23 Apr 2021 17:30:19 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B254E1F2B78; Fri, 23 Apr 2021 19:30:18 +0200 (CEST)
+        id B776C1F2B83; Fri, 23 Apr 2021 19:30:18 +0200 (CEST)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-fsdevel@vger.kernel.org>
 Cc:     Christoph Hellwig <hch@infradead.org>,
         Amir Goldstein <amir73il@gmail.com>,
         Dave Chinner <david@fromorbit.com>, Ted Tso <tytso@mit.edu>,
-        Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>
-Subject: [PATCH 08/12] fuse: Convert to using invalidate_lock
-Date:   Fri, 23 Apr 2021 19:29:37 +0200
-Message-Id: <20210423173018.23133-8-jack@suse.cz>
+        Jan Kara <jack@suse.cz>, Hugh Dickins <hughd@google.com>,
+        linux-mm@kvack.org
+Subject: [PATCH 09/12] shmem: Convert to using invalidate_lock
+Date:   Fri, 23 Apr 2021 19:29:38 +0200
+Message-Id: <20210423173018.23133-9-jack@suse.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210423171010.12-1-jack@suse.cz>
 References: <20210423171010.12-1-jack@suse.cz>
@@ -35,294 +36,187 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use invalidate_lock instead of fuse's private i_mmap_sem. The intended
-purpose is exactly the same. By this conversion we fix a long standing
-race between hole punching and read(2) / readahead(2) paths that can
-lead to stale page cache contents.
+Shmem uses a home-grown mechanism for serializing hole punch with page
+fault. Use mapping->invalidate_lock for it instead. Admittedly the
+home-grown mechanism locks out only the range being actually punched out
+while invalidate_lock locks the whole mapping so it is serializing more.
+But hole punch doesn't seem to be that critical operation and the
+simplification is noticeable.
 
-CC: Miklos Szeredi <miklos@szeredi.hu>
+CC: Hugh Dickins <hughd@google.com>
+CC: <linux-mm@kvack.org>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/fuse/dax.c    | 50 +++++++++++++++++++++++-------------------------
- fs/fuse/dir.c    | 11 ++++++-----
- fs/fuse/file.c   | 10 +++++-----
- fs/fuse/fuse_i.h |  7 -------
- fs/fuse/inode.c  |  1 -
- 5 files changed, 35 insertions(+), 44 deletions(-)
+ mm/shmem.c | 98 ++++--------------------------------------------------
+ 1 file changed, 7 insertions(+), 91 deletions(-)
 
-diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
-index ff99ab2a3c43..03e5477ee913 100644
---- a/fs/fuse/dax.c
-+++ b/fs/fuse/dax.c
-@@ -443,12 +443,12 @@ static int fuse_setup_new_dax_mapping(struct inode *inode, loff_t pos,
- 	/*
- 	 * Can't do inline reclaim in fault path. We call
- 	 * dax_layout_busy_page() before we free a range. And
--	 * fuse_wait_dax_page() drops fi->i_mmap_sem lock and requires it.
--	 * In fault path we enter with fi->i_mmap_sem held and can't drop
--	 * it. Also in fault path we hold fi->i_mmap_sem shared and not
--	 * exclusive, so that creates further issues with fuse_wait_dax_page().
--	 * Hence return -EAGAIN and fuse_dax_fault() will wait for a memory
--	 * range to become free and retry.
-+	 * fuse_wait_dax_page() drops mapping->invalidate_lock and requires it.
-+	 * In fault path we enter with mapping->invalidate_lock held and can't
-+	 * drop it. Also in fault path we hold mapping->invalidate_lock shared
-+	 * and not exclusive, so that creates further issues with
-+	 * fuse_wait_dax_page().  Hence return -EAGAIN and fuse_dax_fault()
-+	 * will wait for a memory range to become free and retry.
- 	 */
- 	if (flags & IOMAP_FAULT) {
- 		alloc_dmap = alloc_dax_mapping(fcd);
-@@ -512,7 +512,7 @@ static int fuse_upgrade_dax_mapping(struct inode *inode, loff_t pos,
- 	down_write(&fi->dax->sem);
- 	node = interval_tree_iter_first(&fi->dax->tree, idx, idx);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 55b2888db542..f34162ac46de 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -95,12 +95,11 @@ static struct vfsmount *shm_mnt;
+ #define SHORT_SYMLINK_LEN 128
  
--	/* We are holding either inode lock or i_mmap_sem, and that should
-+	/* We are holding either inode lock or invalidate_lock, and that should
- 	 * ensure that dmap can't be truncated. We are holding a reference
- 	 * on dmap and that should make sure it can't be reclaimed. So dmap
- 	 * should still be there in tree despite the fact we dropped and
-@@ -659,14 +659,12 @@ static const struct iomap_ops fuse_iomap_ops = {
- 
- static void fuse_wait_dax_page(struct inode *inode)
- {
--	struct fuse_inode *fi = get_fuse_inode(inode);
--
--	up_write(&fi->i_mmap_sem);
-+	up_write(&inode->i_mapping->invalidate_lock);
- 	schedule();
--	down_write(&fi->i_mmap_sem);
-+	down_write(&inode->i_mapping->invalidate_lock);
- }
- 
--/* Should be called with fi->i_mmap_sem lock held exclusively */
-+/* Should be called with mapping->invalidate_lock held exclusively */
- static int __fuse_dax_break_layouts(struct inode *inode, bool *retry,
- 				    loff_t start, loff_t end)
- {
-@@ -812,18 +810,18 @@ static vm_fault_t __fuse_dax_fault(struct vm_fault *vmf,
- 	 * we do not want any read/write/mmap to make progress and try
- 	 * to populate page cache or access memory we are trying to free.
- 	 */
--	down_read(&get_fuse_inode(inode)->i_mmap_sem);
-+	down_read(&inode->i_mapping->invalidate_lock);
- 	ret = dax_iomap_fault(vmf, pe_size, &pfn, &error, &fuse_iomap_ops);
- 	if ((ret & VM_FAULT_ERROR) && error == -EAGAIN) {
- 		error = 0;
- 		retry = true;
--		up_read(&get_fuse_inode(inode)->i_mmap_sem);
-+		up_read(&inode->i_mapping->invalidate_lock);
- 		goto retry;
- 	}
- 
- 	if (ret & VM_FAULT_NEEDDSYNC)
- 		ret = dax_finish_sync_fault(vmf, pe_size, pfn);
--	up_read(&get_fuse_inode(inode)->i_mmap_sem);
-+	up_read(&inode->i_mapping->invalidate_lock);
- 
- 	if (write)
- 		sb_end_pagefault(sb);
-@@ -959,7 +957,7 @@ inode_inline_reclaim_one_dmap(struct fuse_conn_dax *fcd, struct inode *inode,
- 	int ret;
- 	struct interval_tree_node *node;
- 
--	down_write(&fi->i_mmap_sem);
-+	down_write(&inode->i_mapping->invalidate_lock);
- 
- 	/* Lookup a dmap and corresponding file offset to reclaim. */
- 	down_read(&fi->dax->sem);
-@@ -1020,7 +1018,7 @@ inode_inline_reclaim_one_dmap(struct fuse_conn_dax *fcd, struct inode *inode,
- out_write_dmap_sem:
- 	up_write(&fi->dax->sem);
- out_mmap_sem:
--	up_write(&fi->i_mmap_sem);
-+	up_write(&inode->i_mapping->invalidate_lock);
- 	return dmap;
- }
- 
-@@ -1049,10 +1047,10 @@ alloc_dax_mapping_reclaim(struct fuse_conn_dax *fcd, struct inode *inode)
- 		 * had a reference or some other temporary failure,
- 		 * Try again. We want to give up inline reclaim only
- 		 * if there is no range assigned to this node. Otherwise
--		 * if a deadlock is possible if we sleep with fi->i_mmap_sem
--		 * held and worker to free memory can't make progress due
--		 * to unavailability of fi->i_mmap_sem lock. So sleep
--		 * only if fi->dax->nr=0
-+		 * if a deadlock is possible if we sleep with
-+		 * mapping->invalidate_lock held and worker to free memory
-+		 * can't make progress due to unavailability of
-+		 * mapping->invalidate_lock.  So sleep only if fi->dax->nr=0
- 		 */
- 		if (retry)
- 			continue;
-@@ -1060,8 +1058,8 @@ alloc_dax_mapping_reclaim(struct fuse_conn_dax *fcd, struct inode *inode)
- 		 * There are no mappings which can be reclaimed. Wait for one.
- 		 * We are not holding fi->dax->sem. So it is possible
- 		 * that range gets added now. But as we are not holding
--		 * fi->i_mmap_sem, worker should still be able to free up
--		 * a range and wake us up.
-+		 * mapping->invalidate_lock, worker should still be able to
-+		 * free up a range and wake us up.
- 		 */
- 		if (!fi->dax->nr && !(fcd->nr_free_ranges > 0)) {
- 			if (wait_event_killable_exclusive(fcd->range_waitq,
-@@ -1107,7 +1105,7 @@ static int lookup_and_reclaim_dmap_locked(struct fuse_conn_dax *fcd,
  /*
-  * Free a range of memory.
-  * Locking:
-- * 1. Take fi->i_mmap_sem to block dax faults.
-+ * 1. Take mapping->invalidate_lock to block dax faults.
-  * 2. Take fi->dax->sem to protect interval tree and also to make sure
-  *    read/write can not reuse a dmap which we might be freeing.
+- * shmem_fallocate communicates with shmem_fault or shmem_writepage via
+- * inode->i_private (with i_rwsem making sure that it has only one user at
+- * a time): we would prefer not to enlarge the shmem inode just for that.
++ * shmem_fallocate communicates with shmem_writepage via inode->i_private (with
++ * i_rwsem making sure that it has only one user at a time): we would prefer
++ * not to enlarge the shmem inode just for that.
   */
-@@ -1121,7 +1119,7 @@ static int lookup_and_reclaim_dmap(struct fuse_conn_dax *fcd,
- 	loff_t dmap_start = start_idx << FUSE_DAX_SHIFT;
- 	loff_t dmap_end = (dmap_start + FUSE_DAX_SZ) - 1;
- 
--	down_write(&fi->i_mmap_sem);
-+	down_write(&inode->i_mapping->invalidate_lock);
- 	ret = fuse_dax_break_layouts(inode, dmap_start, dmap_end);
- 	if (ret) {
- 		pr_debug("virtio_fs: fuse_dax_break_layouts() failed. err=%d\n",
-@@ -1133,7 +1131,7 @@ static int lookup_and_reclaim_dmap(struct fuse_conn_dax *fcd,
- 	ret = lookup_and_reclaim_dmap_locked(fcd, inode, start_idx);
- 	up_write(&fi->dax->sem);
- out_mmap_sem:
--	up_write(&fi->i_mmap_sem);
-+	up_write(&inode->i_mapping->invalidate_lock);
- 	return ret;
+ struct shmem_falloc {
+-	wait_queue_head_t *waitq; /* faults into hole wait for punch to end */
+ 	pgoff_t start;		/* start of range currently being fallocated */
+ 	pgoff_t next;		/* the next page offset to be fallocated */
+ 	pgoff_t nr_falloced;	/* how many new pages have been fallocated */
+@@ -1378,7 +1377,6 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
+ 			spin_lock(&inode->i_lock);
+ 			shmem_falloc = inode->i_private;
+ 			if (shmem_falloc &&
+-			    !shmem_falloc->waitq &&
+ 			    index >= shmem_falloc->start &&
+ 			    index < shmem_falloc->next)
+ 				shmem_falloc->nr_unswapped++;
+@@ -2025,18 +2023,6 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 	return error;
  }
  
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 06a18700a845..2f29ac4fa489 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1601,6 +1601,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
- 	struct fuse_mount *fm = get_fuse_mount(inode);
- 	struct fuse_conn *fc = fm->fc;
- 	struct fuse_inode *fi = get_fuse_inode(inode);
-+	struct address_space *mapping = inode->i_mapping;
- 	FUSE_ARGS(args);
- 	struct fuse_setattr_in inarg;
- 	struct fuse_attr_out outarg;
-@@ -1625,11 +1626,11 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
- 	}
- 
- 	if (FUSE_IS_DAX(inode) && is_truncate) {
--		down_write(&fi->i_mmap_sem);
-+		down_write(&mapping->invalidate_lock);
- 		fault_blocked = true;
- 		err = fuse_dax_break_layouts(inode, 0, 0);
- 		if (err) {
--			up_write(&fi->i_mmap_sem);
-+			up_write(&mapping->invalidate_lock);
- 			return err;
- 		}
- 	}
-@@ -1739,13 +1740,13 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
- 	if ((is_truncate || !is_wb) &&
- 	    S_ISREG(inode->i_mode) && oldsize != outarg.attr.size) {
- 		truncate_pagecache(inode, outarg.attr.size);
--		invalidate_inode_pages2(inode->i_mapping);
-+		invalidate_inode_pages2(mapping);
- 	}
- 
- 	clear_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
- out:
- 	if (fault_blocked)
--		up_write(&fi->i_mmap_sem);
-+		up_write(&mapping->invalidate_lock);
- 
- 	return 0;
- 
-@@ -1756,7 +1757,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
- 	clear_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
- 
- 	if (fault_blocked)
--		up_write(&fi->i_mmap_sem);
-+		up_write(&mapping->invalidate_lock);
- 	return err;
- }
- 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 8cccecb55fb8..7cacd8ff27eb 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -245,7 +245,7 @@ int fuse_open_common(struct inode *inode, struct file *file, bool isdir)
- 	}
- 
- 	if (dax_truncate) {
--		down_write(&get_fuse_inode(inode)->i_mmap_sem);
-+		down_write(&inode->i_mapping->invalidate_lock);
- 		err = fuse_dax_break_layouts(inode, 0, 0);
- 		if (err)
- 			goto out;
-@@ -257,7 +257,7 @@ int fuse_open_common(struct inode *inode, struct file *file, bool isdir)
- 
- out:
- 	if (dax_truncate)
--		up_write(&get_fuse_inode(inode)->i_mmap_sem);
-+		up_write(&inode->i_mapping->invalidate_lock);
- 
- 	if (is_wb_truncate | dax_truncate) {
- 		fuse_release_nowrite(inode);
-@@ -3266,7 +3266,7 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
- 	if (lock_inode) {
- 		inode_lock(inode);
- 		if (block_faults) {
--			down_write(&fi->i_mmap_sem);
-+			down_write(&inode->i_mapping->invalidate_lock);
- 			err = fuse_dax_break_layouts(inode, 0, 0);
- 			if (err)
- 				goto out;
-@@ -3322,7 +3322,7 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
- 		clear_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
- 
- 	if (block_faults)
--		up_write(&fi->i_mmap_sem);
-+		up_write(&inode->i_mapping->invalidate_lock);
- 
- 	if (lock_inode)
- 		inode_unlock(inode);
-@@ -3391,7 +3391,7 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
- 	 * modifications.  Yet this does give less guarantees than if the
- 	 * copying was performed with write(2).
- 	 *
--	 * To fix this a i_mmap_sem style lock could be used to prevent new
-+	 * To fix this a mapping->invalidate_lock could be used to prevent new
- 	 * faults while the copy is ongoing.
- 	 */
- 	err = fuse_writeback_range(inode_out, pos_out, pos_out + len - 1);
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 63d97a15ffde..636fca293191 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -149,13 +149,6 @@ struct fuse_inode {
- 	/** Lock to protect write related fields */
- 	spinlock_t lock;
- 
--	/**
--	 * Can't take inode lock in fault path (leads to circular dependency).
--	 * Introduce another semaphore which can be taken in fault path and
--	 * then other filesystem paths can take this to block faults.
--	 */
--	struct rw_semaphore i_mmap_sem;
+-/*
+- * This is like autoremove_wake_function, but it removes the wait queue
+- * entry unconditionally - even if something else had already woken the
+- * target.
+- */
+-static int synchronous_wake_function(wait_queue_entry_t *wait, unsigned mode, int sync, void *key)
+-{
+-	int ret = default_wake_function(wait, mode, sync, key);
+-	list_del_init(&wait->entry);
+-	return ret;
+-}
 -
- #ifdef CONFIG_FUSE_DAX
- 	/*
- 	 * Dax specific inode data
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index b0e18b470e91..bcc91e0565ed 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -85,7 +85,6 @@ static struct inode *fuse_alloc_inode(struct super_block *sb)
- 	fi->orig_ino = 0;
- 	fi->state = 0;
- 	mutex_init(&fi->mutex);
--	init_rwsem(&fi->i_mmap_sem);
- 	spin_lock_init(&fi->lock);
- 	fi->forget = fuse_alloc_forget();
- 	if (!fi->forget)
+ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+@@ -2046,65 +2032,6 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+ 	int err;
+ 	vm_fault_t ret = VM_FAULT_LOCKED;
+ 
+-	/*
+-	 * Trinity finds that probing a hole which tmpfs is punching can
+-	 * prevent the hole-punch from ever completing: which in turn
+-	 * locks writers out with its hold on i_rwsem.  So refrain from
+-	 * faulting pages into the hole while it's being punched.  Although
+-	 * shmem_undo_range() does remove the additions, it may be unable to
+-	 * keep up, as each new page needs its own unmap_mapping_range() call,
+-	 * and the i_mmap tree grows ever slower to scan if new vmas are added.
+-	 *
+-	 * It does not matter if we sometimes reach this check just before the
+-	 * hole-punch begins, so that one fault then races with the punch:
+-	 * we just need to make racing faults a rare case.
+-	 *
+-	 * The implementation below would be much simpler if we just used a
+-	 * standard mutex or completion: but we cannot take i_rwsem in fault,
+-	 * and bloating every shmem inode for this unlikely case would be sad.
+-	 */
+-	if (unlikely(inode->i_private)) {
+-		struct shmem_falloc *shmem_falloc;
+-
+-		spin_lock(&inode->i_lock);
+-		shmem_falloc = inode->i_private;
+-		if (shmem_falloc &&
+-		    shmem_falloc->waitq &&
+-		    vmf->pgoff >= shmem_falloc->start &&
+-		    vmf->pgoff < shmem_falloc->next) {
+-			struct file *fpin;
+-			wait_queue_head_t *shmem_falloc_waitq;
+-			DEFINE_WAIT_FUNC(shmem_fault_wait, synchronous_wake_function);
+-
+-			ret = VM_FAULT_NOPAGE;
+-			fpin = maybe_unlock_mmap_for_io(vmf, NULL);
+-			if (fpin)
+-				ret = VM_FAULT_RETRY;
+-
+-			shmem_falloc_waitq = shmem_falloc->waitq;
+-			prepare_to_wait(shmem_falloc_waitq, &shmem_fault_wait,
+-					TASK_UNINTERRUPTIBLE);
+-			spin_unlock(&inode->i_lock);
+-			schedule();
+-
+-			/*
+-			 * shmem_falloc_waitq points into the shmem_fallocate()
+-			 * stack of the hole-punching task: shmem_falloc_waitq
+-			 * is usually invalid by the time we reach here, but
+-			 * finish_wait() does not dereference it in that case;
+-			 * though i_lock needed lest racing with wake_up_all().
+-			 */
+-			spin_lock(&inode->i_lock);
+-			finish_wait(shmem_falloc_waitq, &shmem_fault_wait);
+-			spin_unlock(&inode->i_lock);
+-
+-			if (fpin)
+-				fput(fpin);
+-			return ret;
+-		}
+-		spin_unlock(&inode->i_lock);
+-	}
+-
+ 	sgp = SGP_CACHE;
+ 
+ 	if ((vma->vm_flags & VM_NOHUGEPAGE) ||
+@@ -2113,8 +2040,10 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+ 	else if (vma->vm_flags & VM_HUGEPAGE)
+ 		sgp = SGP_HUGE;
+ 
++	down_read(&inode->i_mapping->invalidate_lock);
+ 	err = shmem_getpage_gfp(inode, vmf->pgoff, &vmf->page, sgp,
+ 				  gfp, vma, vmf, &ret);
++	up_read(&inode->i_mapping->invalidate_lock);
+ 	if (err)
+ 		return vmf_error(err);
+ 	return ret;
+@@ -2715,7 +2644,6 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+ 		struct address_space *mapping = file->f_mapping;
+ 		loff_t unmap_start = round_up(offset, PAGE_SIZE);
+ 		loff_t unmap_end = round_down(offset + len, PAGE_SIZE) - 1;
+-		DECLARE_WAIT_QUEUE_HEAD_ONSTACK(shmem_falloc_waitq);
+ 
+ 		/* protected by i_rwsem */
+ 		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE)) {
+@@ -2723,24 +2651,13 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+ 			goto out;
+ 		}
+ 
+-		shmem_falloc.waitq = &shmem_falloc_waitq;
+-		shmem_falloc.start = (u64)unmap_start >> PAGE_SHIFT;
+-		shmem_falloc.next = (unmap_end + 1) >> PAGE_SHIFT;
+-		spin_lock(&inode->i_lock);
+-		inode->i_private = &shmem_falloc;
+-		spin_unlock(&inode->i_lock);
+-
++		down_write(&mapping->invalidate_lock);
+ 		if ((u64)unmap_end > (u64)unmap_start)
+ 			unmap_mapping_range(mapping, unmap_start,
+ 					    1 + unmap_end - unmap_start, 0);
+ 		shmem_truncate_range(inode, offset, offset + len - 1);
+ 		/* No need to unmap again: hole-punching leaves COWed pages */
+-
+-		spin_lock(&inode->i_lock);
+-		inode->i_private = NULL;
+-		wake_up_all(&shmem_falloc_waitq);
+-		WARN_ON_ONCE(!list_empty(&shmem_falloc_waitq.head));
+-		spin_unlock(&inode->i_lock);
++		up_write(&mapping->invalidate_lock);
+ 		error = 0;
+ 		goto out;
+ 	}
+@@ -2763,7 +2680,6 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+ 		goto out;
+ 	}
+ 
+-	shmem_falloc.waitq = NULL;
+ 	shmem_falloc.start = start;
+ 	shmem_falloc.next  = start;
+ 	shmem_falloc.nr_falloced = 0;
 -- 
 2.26.2
 
