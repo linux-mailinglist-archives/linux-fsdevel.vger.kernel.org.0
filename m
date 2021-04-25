@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B189D36A560
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Apr 2021 09:14:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A47EC36A563
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Apr 2021 09:14:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbhDYHOZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Apr 2021 03:14:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60986 "EHLO
+        id S230105AbhDYHOj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Apr 2021 03:14:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230043AbhDYHOY (ORCPT
+        with ESMTP id S229577AbhDYHOh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Apr 2021 03:14:24 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D0EFC061760
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Apr 2021 00:13:45 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id f29so931580pgm.8
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Apr 2021 00:13:45 -0700 (PDT)
+        Sun, 25 Apr 2021 03:14:37 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CC13C061574
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Apr 2021 00:13:56 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id z16so38050771pga.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Apr 2021 00:13:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8JtmIUu8YXtS47iFe6zG44KZB01vXFzyHRHrIOUs08s=;
-        b=FEWrRkk2sBgBM6FC8NIrFUH2cB6e4xN7N4J+8g78W2KIun4XLprsU5tFl7i0ZOpzwp
-         g3Yl2ZPa1FeDgwbXRvdqUkUp8ldd8f+pKHWdZEAT/wVQiHRI+KyLA68jaKMZM59TnS4n
-         AOMLOL7l/S7UKURFoF+RKFLyqxIDpvy9MVy7TzaHjssyU1U0YV/Kw+uJnYlpQPlrFr0G
-         EOrCn5NqXDzDSRgIoJ5pWycEWb0ExeTIGGALMVA3Mj2yIFz1N4MpWVI056KGyE4ealNm
-         lMe7vkrRHFrMBbGy3+JITCQWpa5Avt/tSeNeMpwxAEdZn5wxbyrNa48Ve47qCCUp/z+Y
-         Qq5A==
+        bh=eQKO+51YaeTGjOjIgHVVY1mNlIryPRcShiR6PgT5occ=;
+        b=PIJJHmlB4+9tcyow+WTVU+63GVmigA3vkvTlYTtf1DiOQsnpeTgPz5WT5EWTq0svYu
+         Zd2jSpcVqmEQgxs8cOvtY12bsysW5Yw/KlVmNJ1R8/TBl2mCexO8IWTW3/7UANsS4EfG
+         zLVJOTR7vKVRBgLOZm+P+7o7y5wdmZUh924ONNdkdwVD3KmL9MaKTVWpyt+oj8yBR9ye
+         vLY9UxvqpVCVNVEdO5jhw4gAFU2TWxkyoD2u7hltJq6upqj4uWZxaXqpZjwBhIfZlARg
+         6F0QhwYf/nCvEZeLXMdYxYVteqHGV3k2sYiM3svzuleZ22bIznUtvK5lXVTc5DT3QdXw
+         b9OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8JtmIUu8YXtS47iFe6zG44KZB01vXFzyHRHrIOUs08s=;
-        b=OEy6TL+Lr/RGDppcv9X4/Kj/zebn/a4STeWGO4aIwwu2yCG066HVrqMqox8Is4vBS/
-         JdU6eT7PTBX17AOxBRRtrwEKUpAHiMj38s0W6mYgGzv1XV6IgHADdVq3Bk5SyeLaBD+K
-         skwlWNMHXXZBHFIyS4m/IsV9JrmzkMy6U1l6STszu0+dquek47HxbcM7CAAJkmZJiPgb
-         YCVXzHMffENhgkNh9VAXfy46uk4x/J3R7gKRNbddwq3oqyaMy19C5TpAKvVguPSCe1Uk
-         aRmgw+OV6X3xvh+99JTwSJjjXUyGG1Vw2DqZaGWETrceMza4aaOdFEBJZdJ+wv/rhaQU
-         YbaQ==
-X-Gm-Message-State: AOAM533xrKo14ekXh1Zb1Lm9TS+C1ofWnznckLGZJnXZiLsu24Js4Zwx
-        FzwlM1QXbzC3aKZJx5qG4iKHbw==
-X-Google-Smtp-Source: ABdhPJw+kgjbbKW3Ph57udTG0bmmdlEASR/KwZWLPBJgVkwMLnrgTjjgWF0AAk+8F1wwLOAdYhDicw==
-X-Received: by 2002:aa7:9f5d:0:b029:265:e8b5:ecd0 with SMTP id h29-20020aa79f5d0000b0290265e8b5ecd0mr11726727pfr.26.1619334824750;
-        Sun, 25 Apr 2021 00:13:44 -0700 (PDT)
+        bh=eQKO+51YaeTGjOjIgHVVY1mNlIryPRcShiR6PgT5occ=;
+        b=LyIGa14Q54EKIOAS3nOdNx1uzV06XL+ussLlr6b9BQJCOXzrWy5slZa6du5hgRvoNQ
+         TcSwqd95IvNWs6RSvrMrYArnYhgN5+TLvhv4Q6CDY5OU/BHt2W/Uel+tctyfs20RqYlx
+         cTr7aHNQ5qKaC6F4fx0vJKojUWJoePd/cQmGRhZN44/QW1wcu6GboOBMdHos7TLkvPD6
+         oCOEijKtZB1SyM+lp/bl/XX6krz83lQLD99R5HFyT3EqvuJ5B6rMfgkFQBzsKcu3D6fw
+         iL+W5Zy6H3UFcNTW2Uie+6u1gR9U9klY0dOWoJ6VE6W95yi8Bex+F0E/uvlb/D6f5Fyw
+         W6tA==
+X-Gm-Message-State: AOAM532+FxyA+CyZ/j3hjjPBeYXYsLhmp3aRDUM0YVCLFNYHAuNB2seJ
+        bKfy1YAENk6y+/KnjuLosz4YmA==
+X-Google-Smtp-Source: ABdhPJwfJMgLOiEXv18X1QpakLolBIA/Wxibac5tHqzKbPuQabHvNgYk1LnlMj3CTD2x3PXkBdOtnQ==
+X-Received: by 2002:a63:3c5e:: with SMTP id i30mr11324768pgn.331.1619334836095;
+        Sun, 25 Apr 2021 00:13:56 -0700 (PDT)
 Received: from localhost.localdomain ([139.177.225.255])
-        by smtp.gmail.com with ESMTPSA id h8sm8767125pjt.17.2021.04.25.00.13.33
+        by smtp.gmail.com with ESMTPSA id h8sm8767125pjt.17.2021.04.25.00.13.45
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Apr 2021 00:13:44 -0700 (PDT)
+        Sun, 25 Apr 2021 00:13:55 -0700 (PDT)
 From:   Muchun Song <songmuchun@bytedance.com>
 To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
         mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
@@ -64,9 +64,9 @@ Cc:     duanxiongchun@bytedance.com, fam.zheng@bytedance.com,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org,
         Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH v21 5/9] mm: hugetlb: defer freeing of HugeTLB pages
-Date:   Sun, 25 Apr 2021 15:07:48 +0800
-Message-Id: <20210425070752.17783-6-songmuchun@bytedance.com>
+Subject: [PATCH v21 6/9] mm: hugetlb: alloc the vmemmap pages associated with each HugeTLB page
+Date:   Sun, 25 Apr 2021 15:07:49 +0800
+Message-Id: <20210425070752.17783-7-songmuchun@bytedance.com>
 X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 In-Reply-To: <20210425070752.17783-1-songmuchun@bytedance.com>
 References: <20210425070752.17783-1-songmuchun@bytedance.com>
@@ -76,219 +76,459 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In the subsequent patch, we should allocate the vmemmap pages when
-freeing a HugeTLB page. But update_and_free_page() can be called
-under any context, so we cannot use GFP_KERNEL to allocate vmemmap
-pages. However, we can defer the actual freeing in a kworker to
-prevent from using GFP_ATOMIC to allocate the vmemmap pages.
+When we free a HugeTLB page to the buddy allocator, we need to allocate
+the vmemmap pages associated with it. However, we may not be able to
+allocate the vmemmap pages when the system is under memory pressure. In
+this case, we just refuse to free the HugeTLB page. This changes behavior
+in some corner cases as listed below:
 
-The __update_and_free_page() is where the call to allocate vmemmmap
-pages will be inserted.
+ 1) Failing to free a huge page triggered by the user (decrease nr_pages).
+
+    User needs to try again later.
+
+ 2) Failing to free a surplus huge page when freed by the application.
+
+    Try again later when freeing a huge page next time.
+
+ 3) Failing to dissolve a free huge page on ZONE_MOVABLE via
+    offline_pages().
+
+    This can happen when we have plenty of ZONE_MOVABLE memory, but
+    not enough kernel memory to allocate vmemmmap pages.  We may even
+    be able to migrate huge page contents, but will not be able to
+    dissolve the source huge page.  This will prevent an offline
+    operation and is unfortunate as memory offlining is expected to
+    succeed on movable zones.  Users that depend on memory hotplug
+    to succeed for movable zones should carefully consider whether the
+    memory savings gained from this feature are worth the risk of
+    possibly not being able to offline memory in certain situations.
+
+ 4) Failing to dissolve a huge page on CMA/ZONE_MOVABLE via
+    alloc_contig_range() - once we have that handling in place. Mainly
+    affects CMA and virtio-mem.
+
+    Similar to 3). virito-mem will handle migration errors gracefully.
+    CMA might be able to fallback on other free areas within the CMA
+    region.
+
+Vmemmap pages are allocated from the page freeing context. In order for
+those allocations to be not disruptive (e.g. trigger oom killer)
+__GFP_NORETRY is used. hugetlb_lock is dropped for the allocation
+because a non sleeping allocation would be too fragile and it could fail
+too easily under memory pressure. GFP_ATOMIC or other modes to access
+memory reserves is not used because we want to prevent consuming
+reserves under heavy hugetlb freeing.
 
 Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 ---
- mm/hugetlb.c         | 81 ++++++++++++++++++++++++++++++++++++++++++++++++----
- mm/hugetlb_vmemmap.c | 12 --------
- mm/hugetlb_vmemmap.h | 17 +++++++++++
- 3 files changed, 92 insertions(+), 18 deletions(-)
+ Documentation/admin-guide/mm/hugetlbpage.rst    |  8 ++
+ Documentation/admin-guide/mm/memory-hotplug.rst | 13 ++++
+ include/linux/hugetlb.h                         |  3 +
+ include/linux/mm.h                              |  2 +
+ mm/hugetlb.c                                    | 98 +++++++++++++++++++++----
+ mm/hugetlb_vmemmap.c                            | 34 +++++++++
+ mm/hugetlb_vmemmap.h                            |  6 ++
+ mm/sparse-vmemmap.c                             | 75 ++++++++++++++++++-
+ 8 files changed, 223 insertions(+), 16 deletions(-)
 
+diff --git a/Documentation/admin-guide/mm/hugetlbpage.rst b/Documentation/admin-guide/mm/hugetlbpage.rst
+index f7b1c7462991..6988895d09a8 100644
+--- a/Documentation/admin-guide/mm/hugetlbpage.rst
++++ b/Documentation/admin-guide/mm/hugetlbpage.rst
+@@ -60,6 +60,10 @@ HugePages_Surp
+         the pool above the value in ``/proc/sys/vm/nr_hugepages``. The
+         maximum number of surplus huge pages is controlled by
+         ``/proc/sys/vm/nr_overcommit_hugepages``.
++	Note: When the feature of freeing unused vmemmap pages associated
++	with each hugetlb page is enabled, the number of surplus huge pages
++	may be temporarily larger than the maximum number of surplus huge
++	pages when the system is under memory pressure.
+ Hugepagesize
+ 	is the default hugepage size (in Kb).
+ Hugetlb
+@@ -80,6 +84,10 @@ returned to the huge page pool when freed by a task.  A user with root
+ privileges can dynamically allocate more or free some persistent huge pages
+ by increasing or decreasing the value of ``nr_hugepages``.
+ 
++Note: When the feature of freeing unused vmemmap pages associated with each
++hugetlb page is enabled, we can fail to free the huge pages triggered by
++the user when ths system is under memory pressure.  Please try again later.
++
+ Pages that are used as huge pages are reserved inside the kernel and cannot
+ be used for other purposes.  Huge pages cannot be swapped out under
+ memory pressure.
+diff --git a/Documentation/admin-guide/mm/memory-hotplug.rst b/Documentation/admin-guide/mm/memory-hotplug.rst
+index 05d51d2d8beb..c6bae2d77160 100644
+--- a/Documentation/admin-guide/mm/memory-hotplug.rst
++++ b/Documentation/admin-guide/mm/memory-hotplug.rst
+@@ -357,6 +357,19 @@ creates ZONE_MOVABLE as following.
+    Unfortunately, there is no information to show which memory block belongs
+    to ZONE_MOVABLE. This is TBD.
+ 
++   Memory offlining can fail when dissolving a free huge page on ZONE_MOVABLE
++   and the feature of freeing unused vmemmap pages associated with each hugetlb
++   page is enabled.
++
++   This can happen when we have plenty of ZONE_MOVABLE memory, but not enough
++   kernel memory to allocate vmemmmap pages.  We may even be able to migrate
++   huge page contents, but will not be able to dissolve the source huge page.
++   This will prevent an offline operation and is unfortunate as memory offlining
++   is expected to succeed on movable zones.  Users that depend on memory hotplug
++   to succeed for movable zones should carefully consider whether the memory
++   savings gained from this feature are worth the risk of possibly not being
++   able to offline memory in certain situations.
++
+ .. note::
+    Techniques that rely on long-term pinnings of memory (especially, RDMA and
+    vfio) are fundamentally problematic with ZONE_MOVABLE and, therefore, memory
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index d523a345dc86..d3abaaec2a22 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -525,6 +525,7 @@ unsigned long hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
+  *	code knows it has only reference.  All other examinations and
+  *	modifications require hugetlb_lock.
+  * HPG_freed - Set when page is on the free lists.
++ * HPG_vmemmap_optimized - Set when the vmemmap pages of the page are freed.
+  *	Synchronization: hugetlb_lock held for examination and modification.
+  */
+ enum hugetlb_page_flags {
+@@ -532,6 +533,7 @@ enum hugetlb_page_flags {
+ 	HPG_migratable,
+ 	HPG_temporary,
+ 	HPG_freed,
++	HPG_vmemmap_optimized,
+ 	__NR_HPAGEFLAGS,
+ };
+ 
+@@ -577,6 +579,7 @@ HPAGEFLAG(RestoreReserve, restore_reserve)
+ HPAGEFLAG(Migratable, migratable)
+ HPAGEFLAG(Temporary, temporary)
+ HPAGEFLAG(Freed, freed)
++HPAGEFLAG(VmemmapOptimized, vmemmap_optimized)
+ 
+ #ifdef CONFIG_HUGETLB_PAGE
+ 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index a4d160ddb749..d0854828bb9c 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3048,6 +3048,8 @@ static inline void print_vma_addr(char *prefix, unsigned long rip)
+ 
+ void vmemmap_remap_free(unsigned long start, unsigned long end,
+ 			unsigned long reuse);
++int vmemmap_remap_alloc(unsigned long start, unsigned long end,
++			unsigned long reuse, gfp_t gfp_mask);
+ 
+ void *sparse_buffer_alloc(unsigned long size);
+ struct page * __populate_section_memmap(unsigned long pfn,
 diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 61dd653a2c66..72ce4d28441a 100644
+index 72ce4d28441a..1e3e3a8e05e2 100644
 --- a/mm/hugetlb.c
 +++ b/mm/hugetlb.c
-@@ -1376,7 +1376,7 @@ static void remove_hugetlb_page(struct hstate *h, struct page *page,
+@@ -1376,6 +1376,39 @@ static void remove_hugetlb_page(struct hstate *h, struct page *page,
  	h->nr_huge_pages_node[nid]--;
  }
  
--static void update_and_free_page(struct hstate *h, struct page *page)
-+static void __update_and_free_page(struct hstate *h, struct page *page)
++static void add_hugetlb_page(struct hstate *h, struct page *page,
++			     bool adjust_surplus)
++{
++	int zeroed;
++	int nid = page_to_nid(page);
++
++	VM_BUG_ON_PAGE(!HPageVmemmapOptimized(page), page);
++
++	lockdep_assert_held(&hugetlb_lock);
++
++	INIT_LIST_HEAD(&page->lru);
++	h->nr_huge_pages++;
++	h->nr_huge_pages_node[nid]++;
++
++	if (adjust_surplus) {
++		h->surplus_huge_pages++;
++		h->surplus_huge_pages_node[nid]++;
++	}
++
++	set_compound_page_dtor(page, HUGETLB_PAGE_DTOR);
++	set_page_private(page, 0);
++	SetHPageVmemmapOptimized(page);
++
++	/*
++	 * This page is now managed by the hugetlb allocator and has
++	 * no users -- drop the last reference.
++	 */
++	zeroed = put_page_testzero(page);
++	VM_BUG_ON_PAGE(!zeroed, page);
++	arch_clear_hugepage_flags(page);
++	enqueue_huge_page(h, page);
++}
++
+ static void __update_and_free_page(struct hstate *h, struct page *page)
  {
  	int i;
- 	struct page *subpage = page;
-@@ -1399,12 +1399,79 @@ static void update_and_free_page(struct hstate *h, struct page *page)
- 	}
- }
+@@ -1384,6 +1417,18 @@ static void __update_and_free_page(struct hstate *h, struct page *page)
+ 	if (hstate_is_gigantic(h) && !gigantic_page_runtime_supported())
+ 		return;
  
-+/*
-+ * As update_and_free_page() can be called under any context, so we cannot
-+ * use GFP_KERNEL to allocate vmemmap pages. However, we can defer the
-+ * actual freeing in a workqueue to prevent from using GFP_ATOMIC to allocate
-+ * the vmemmap pages.
-+ *
-+ * free_hpage_workfn() locklessly retrieves the linked list of pages to be
-+ * freed and frees them one-by-one. As the page->mapping pointer is going
-+ * to be cleared in free_hpage_workfn() anyway, it is reused as the llist_node
-+ * structure of a lockless linked list of huge pages to be freed.
-+ */
-+static LLIST_HEAD(hpage_freelist);
-+
-+static void free_hpage_workfn(struct work_struct *work)
-+{
-+	struct llist_node *node;
-+
-+	node = llist_del_all(&hpage_freelist);
-+
-+	while (node) {
-+		struct page *page;
-+		struct hstate *h;
-+
-+		page = container_of((struct address_space **)node,
-+				     struct page, mapping);
-+		node = node->next;
-+		page->mapping = NULL;
++	if (alloc_huge_page_vmemmap(h, page)) {
++		spin_lock_irq(&hugetlb_lock);
 +		/*
-+		 * The VM_BUG_ON_PAGE(!PageHuge(page), page) in page_hstate()
-+		 * is going to trigger because a previous call to
-+		 * remove_hugetlb_page() will set_compound_page_dtor(page,
-+		 * NULL_COMPOUND_DTOR), so do not use page_hstate() directly.
++		 * If we cannot allocate vmemmap pages, just refuse to free the
++		 * page and put the page back on the hugetlb free list and treat
++		 * as a surplus page.
 +		 */
-+		h = size_to_hstate(page_size(page));
-+
-+		__update_and_free_page(h, page);
-+
-+		cond_resched();
-+	}
-+}
-+static DECLARE_WORK(free_hpage_work, free_hpage_workfn);
-+
-+static inline void flush_free_hpage_work(struct hstate *h)
-+{
-+	if (free_vmemmap_pages_per_hpage(h))
-+		flush_work(&free_hpage_work);
-+}
-+
-+static void update_and_free_page(struct hstate *h, struct page *page,
-+				 bool atomic)
-+{
-+	if (!free_vmemmap_pages_per_hpage(h) || !atomic) {
-+		__update_and_free_page(h, page);
++		add_hugetlb_page(h, page, true);
++		spin_unlock_irq(&hugetlb_lock);
 +		return;
 +	}
 +
-+	/*
-+	 * Defer freeing to avoid using GFP_ATOMIC to allocate vmemmap pages.
-+	 *
-+	 * Only call schedule_work() if hpage_freelist is previously
-+	 * empty. Otherwise, schedule_work() had been called but the workfn
-+	 * hasn't retrieved the list yet.
-+	 */
-+	if (llist_add((struct llist_node *)&page->mapping, &hpage_freelist))
-+		schedule_work(&free_hpage_work);
-+}
-+
- static void update_and_free_pages_bulk(struct hstate *h, struct list_head *list)
+ 	for (i = 0; i < pages_per_huge_page(h);
+ 	     i++, subpage = mem_map_next(subpage, page, i)) {
+ 		subpage->flags &= ~(1 << PG_locked | 1 << PG_error |
+@@ -1450,7 +1495,7 @@ static inline void flush_free_hpage_work(struct hstate *h)
+ static void update_and_free_page(struct hstate *h, struct page *page,
+ 				 bool atomic)
  {
- 	struct page *page, *t_page;
- 
- 	list_for_each_entry_safe(page, t_page, list, lru) {
--		update_and_free_page(h, page);
-+		update_and_free_page(h, page, false);
- 		cond_resched();
+-	if (!free_vmemmap_pages_per_hpage(h) || !atomic) {
++	if (!HPageVmemmapOptimized(page) || !atomic) {
+ 		__update_and_free_page(h, page);
+ 		return;
  	}
- }
-@@ -1471,12 +1538,12 @@ void free_huge_page(struct page *page)
- 	if (HPageTemporary(page)) {
- 		remove_hugetlb_page(h, page, false);
- 		spin_unlock_irqrestore(&hugetlb_lock, flags);
--		update_and_free_page(h, page);
-+		update_and_free_page(h, page, true);
- 	} else if (h->surplus_huge_pages_node[nid]) {
- 		/* remove the page from active list */
- 		remove_hugetlb_page(h, page, true);
- 		spin_unlock_irqrestore(&hugetlb_lock, flags);
--		update_and_free_page(h, page);
-+		update_and_free_page(h, page, true);
- 	} else {
- 		arch_clear_hugepage_flags(page);
- 		enqueue_huge_page(h, page);
-@@ -1798,7 +1865,7 @@ int dissolve_free_huge_page(struct page *page)
+@@ -1809,10 +1854,14 @@ static struct page *remove_pool_huge_page(struct hstate *h,
+  * nothing for in-use hugepages and non-hugepages.
+  * This function returns values like below:
+  *
+- *  -EBUSY: failed to dissolved free hugepages or the hugepage is in-use
+- *          (allocated or reserved.)
+- *       0: successfully dissolved free hugepages or the page is not a
+- *          hugepage (considered as already dissolved)
++ *  -ENOMEM: failed to allocate vmemmap pages to free the freed hugepages
++ *           when the system is under memory pressure and the feature of
++ *           freeing unused vmemmap pages associated with each hugetlb page
++ *           is enabled.
++ *  -EBUSY:  failed to dissolved free hugepages or the hugepage is in-use
++ *           (allocated or reserved.)
++ *       0:  successfully dissolved free hugepages or the page is not a
++ *           hugepage (considered as already dissolved)
+  */
+ int dissolve_free_huge_page(struct page *page)
+ {
+@@ -1854,19 +1903,38 @@ int dissolve_free_huge_page(struct page *page)
+ 			goto retry;
+ 		}
+ 
+-		/*
+-		 * Move PageHWPoison flag from head page to the raw error page,
+-		 * which makes any subpages rather than the error page reusable.
+-		 */
+-		if (PageHWPoison(head) && page != head) {
+-			SetPageHWPoison(page);
+-			ClearPageHWPoison(head);
+-		}
  		remove_hugetlb_page(h, page, false);
  		h->max_huge_pages--;
  		spin_unlock_irq(&hugetlb_lock);
--		update_and_free_page(h, head);
-+		update_and_free_page(h, head, false);
- 		return 0;
+-		update_and_free_page(h, head, false);
+-		return 0;
++
++		/*
++		 * Normally update_and_free_page will allocate required vmemmmap
++		 * before freeing the page.  update_and_free_page will fail to
++		 * free the page if it can not allocate required vmemmap.  We
++		 * need to adjust max_huge_pages if the page is not freed.
++		 * Attempt to allocate vmemmmap here so that we can take
++		 * appropriate action on failure.
++		 */
++		rc = alloc_huge_page_vmemmap(h, page);
++		if (!rc) {
++			/*
++			 * Move PageHWPoison flag from head page to the raw
++			 * error page, which makes any subpages rather than
++			 * the error page reusable.
++			 */
++			if (PageHWPoison(head) && page != head) {
++				SetPageHWPoison(page);
++				ClearPageHWPoison(head);
++			}
++			update_and_free_page(h, head, false);
++		} else {
++			spin_lock_irq(&hugetlb_lock);
++			add_hugetlb_page(h, page, false);
++			h->max_huge_pages++;
++			spin_unlock_irq(&hugetlb_lock);
++		}
++
++		return rc;
  	}
  out:
-@@ -2347,7 +2414,7 @@ static int alloc_and_dissolve_huge_page(struct hstate *h, struct page *old_page,
- 		 * Pages have been replaced, we can safely free the old one.
- 		 */
- 		spin_unlock_irq(&hugetlb_lock);
--		update_and_free_page(h, old_page);
-+		update_and_free_page(h, old_page, false);
- 	}
- 
- 	return ret;
-@@ -2768,6 +2835,7 @@ static int set_max_huge_pages(struct hstate *h, unsigned long count, int nid,
- 	 * pages in hstate via the proc/sysfs interfaces.
- 	 */
- 	mutex_lock(&h->resize_lock);
-+	flush_free_hpage_work(h);
- 	spin_lock_irq(&hugetlb_lock);
- 
- 	/*
-@@ -2877,6 +2945,7 @@ static int set_max_huge_pages(struct hstate *h, unsigned long count, int nid,
- 	/* free the pages after dropping lock */
  	spin_unlock_irq(&hugetlb_lock);
- 	update_and_free_pages_bulk(h, &page_list);
-+	flush_free_hpage_work(h);
- 	spin_lock_irq(&hugetlb_lock);
- 
- 	while (count < persistent_huge_pages(h)) {
 diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-index e45a138a7f85..cb28c5b6c9ff 100644
+index cb28c5b6c9ff..a897c7778246 100644
 --- a/mm/hugetlb_vmemmap.c
 +++ b/mm/hugetlb_vmemmap.c
-@@ -180,18 +180,6 @@
- #define RESERVE_VMEMMAP_NR		2U
- #define RESERVE_VMEMMAP_SIZE		(RESERVE_VMEMMAP_NR << PAGE_SHIFT)
- 
--/*
-- * How many vmemmap pages associated with a HugeTLB page that can be freed
-- * to the buddy allocator.
-- *
-- * Todo: Returns zero for now, which means the feature is disabled. We will
-- * enable it once all the infrastructure is there.
-- */
--static inline unsigned int free_vmemmap_pages_per_hpage(struct hstate *h)
--{
--	return 0;
--}
--
- static inline unsigned long free_vmemmap_pages_size_per_hpage(struct hstate *h)
- {
+@@ -185,6 +185,38 @@ static inline unsigned long free_vmemmap_pages_size_per_hpage(struct hstate *h)
  	return (unsigned long)free_vmemmap_pages_per_hpage(h) << PAGE_SHIFT;
+ }
+ 
++/*
++ * Previously discarded vmemmap pages will be allocated and remapping
++ * after this function returns zero.
++ */
++int alloc_huge_page_vmemmap(struct hstate *h, struct page *head)
++{
++	int ret;
++	unsigned long vmemmap_addr = (unsigned long)head;
++	unsigned long vmemmap_end, vmemmap_reuse;
++
++	if (!HPageVmemmapOptimized(head))
++		return 0;
++
++	vmemmap_addr += RESERVE_VMEMMAP_SIZE;
++	vmemmap_end = vmemmap_addr + free_vmemmap_pages_size_per_hpage(h);
++	vmemmap_reuse = vmemmap_addr - PAGE_SIZE;
++	/*
++	 * The pages which the vmemmap virtual address range [@vmemmap_addr,
++	 * @vmemmap_end) are mapped to are freed to the buddy allocator, and
++	 * the range is mapped to the page which @vmemmap_reuse is mapped to.
++	 * When a HugeTLB page is freed to the buddy allocator, previously
++	 * discarded vmemmap pages must be allocated and remapping.
++	 */
++	ret = vmemmap_remap_alloc(vmemmap_addr, vmemmap_end, vmemmap_reuse,
++				  GFP_KERNEL | __GFP_NORETRY | __GFP_THISNODE);
++
++	if (!ret)
++		ClearHPageVmemmapOptimized(head);
++
++	return ret;
++}
++
+ void free_huge_page_vmemmap(struct hstate *h, struct page *head)
+ {
+ 	unsigned long vmemmap_addr = (unsigned long)head;
+@@ -203,4 +235,6 @@ void free_huge_page_vmemmap(struct hstate *h, struct page *head)
+ 	 * which the range [@vmemmap_addr, @vmemmap_end] is mapped to.
+ 	 */
+ 	vmemmap_remap_free(vmemmap_addr, vmemmap_end, vmemmap_reuse);
++
++	SetHPageVmemmapOptimized(head);
+ }
 diff --git a/mm/hugetlb_vmemmap.h b/mm/hugetlb_vmemmap.h
-index 6923f03534d5..01f8637adbe0 100644
+index 01f8637adbe0..a37771b0b82a 100644
 --- a/mm/hugetlb_vmemmap.h
 +++ b/mm/hugetlb_vmemmap.h
-@@ -12,9 +12,26 @@
+@@ -11,6 +11,7 @@
+ #include <linux/hugetlb.h>
  
  #ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
++int alloc_huge_page_vmemmap(struct hstate *h, struct page *head);
  void free_huge_page_vmemmap(struct hstate *h, struct page *head);
-+
-+/*
-+ * How many vmemmap pages associated with a HugeTLB page that can be freed
-+ * to the buddy allocator.
-+ *
-+ * Todo: Returns zero for now, which means the feature is disabled. We will
-+ * enable it once all the infrastructure is there.
-+ */
-+static inline unsigned int free_vmemmap_pages_per_hpage(struct hstate *h)
+ 
+ /*
+@@ -25,6 +26,11 @@ static inline unsigned int free_vmemmap_pages_per_hpage(struct hstate *h)
+ 	return 0;
+ }
+ #else
++static inline int alloc_huge_page_vmemmap(struct hstate *h, struct page *head)
 +{
 +	return 0;
 +}
- #else
++
  static inline void free_huge_page_vmemmap(struct hstate *h, struct page *head)
  {
  }
-+
-+static inline unsigned int free_vmemmap_pages_per_hpage(struct hstate *h)
+diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+index 7d40b5bd7046..693de0aec7a8 100644
+--- a/mm/sparse-vmemmap.c
++++ b/mm/sparse-vmemmap.c
+@@ -40,7 +40,8 @@
+  * @remap_pte:		called for each lowest-level entry (PTE).
+  * @reuse_page:		the page which is reused for the tail vmemmap pages.
+  * @reuse_addr:		the virtual address of the @reuse_page page.
+- * @vmemmap_pages:	the list head of the vmemmap pages that can be freed.
++ * @vmemmap_pages:	the list head of the vmemmap pages that can be freed
++ *			or is mapped from.
+  */
+ struct vmemmap_remap_walk {
+ 	void (*remap_pte)(pte_t *pte, unsigned long addr,
+@@ -224,6 +225,78 @@ void vmemmap_remap_free(unsigned long start, unsigned long end,
+ 	free_vmemmap_page_list(&vmemmap_pages);
+ }
+ 
++static void vmemmap_restore_pte(pte_t *pte, unsigned long addr,
++				struct vmemmap_remap_walk *walk)
 +{
++	pgprot_t pgprot = PAGE_KERNEL;
++	struct page *page;
++	void *to;
++
++	BUG_ON(pte_page(*pte) != walk->reuse_page);
++
++	page = list_first_entry(walk->vmemmap_pages, struct page, lru);
++	list_del(&page->lru);
++	to = page_to_virt(page);
++	copy_page(to, (void *)walk->reuse_addr);
++
++	set_pte_at(&init_mm, addr, pte, mk_pte(page, pgprot));
++}
++
++static int alloc_vmemmap_page_list(unsigned long start, unsigned long end,
++				   gfp_t gfp_mask, struct list_head *list)
++{
++	unsigned long nr_pages = (end - start) >> PAGE_SHIFT;
++	int nid = page_to_nid((struct page *)start);
++	struct page *page, *next;
++
++	while (nr_pages--) {
++		page = alloc_pages_node(nid, gfp_mask, 0);
++		if (!page)
++			goto out;
++		list_add_tail(&page->lru, list);
++	}
++
++	return 0;
++out:
++	list_for_each_entry_safe(page, next, list, lru)
++		__free_pages(page, 0);
++	return -ENOMEM;
++}
++
++/**
++ * vmemmap_remap_alloc - remap the vmemmap virtual address range [@start, end)
++ *			 to the page which is from the @vmemmap_pages
++ *			 respectively.
++ * @start:	start address of the vmemmap virtual address range that we want
++ *		to remap.
++ * @end:	end address of the vmemmap virtual address range that we want to
++ *		remap.
++ * @reuse:	reuse address.
++ * @gpf_mask:	GFP flag for allocating vmemmap pages.
++ */
++int vmemmap_remap_alloc(unsigned long start, unsigned long end,
++			unsigned long reuse, gfp_t gfp_mask)
++{
++	LIST_HEAD(vmemmap_pages);
++	struct vmemmap_remap_walk walk = {
++		.remap_pte	= vmemmap_restore_pte,
++		.reuse_addr	= reuse,
++		.vmemmap_pages	= &vmemmap_pages,
++	};
++
++	/* See the comment in the vmemmap_remap_free(). */
++	BUG_ON(start - reuse != PAGE_SIZE);
++
++	might_sleep_if(gfpflags_allow_blocking(gfp_mask));
++
++	if (alloc_vmemmap_page_list(start, end, gfp_mask, &vmemmap_pages))
++		return -ENOMEM;
++
++	vmemmap_remap_range(reuse, end, &walk);
++
 +	return 0;
 +}
- #endif /* CONFIG_HUGETLB_PAGE_FREE_VMEMMAP */
- #endif /* _LINUX_HUGETLB_VMEMMAP_H */
++
+ /*
+  * Allocate a block of memory to be used to back the virtual memory map
+  * or to back the page tables that are used to create the mapping.
 -- 
 2.11.0
 
