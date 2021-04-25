@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35F2636A566
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Apr 2021 09:14:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3037C36A569
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Apr 2021 09:14:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230123AbhDYHOu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Apr 2021 03:14:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32860 "EHLO
+        id S229894AbhDYHPB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Apr 2021 03:15:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229830AbhDYHOt (ORCPT
+        with ESMTP id S230149AbhDYHPA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Apr 2021 03:14:49 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BCF3C061756
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Apr 2021 00:14:09 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id h20so27299702plr.4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Apr 2021 00:14:09 -0700 (PDT)
+        Sun, 25 Apr 2021 03:15:00 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB3A0C06175F
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Apr 2021 00:14:19 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id lt13so16390535pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Apr 2021 00:14:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FkriW7ao2khWcyNGX1kvGCkvPuLV16IlU1QXLJjikp4=;
-        b=SOCRZR7gaTO8ZvnpYpyeDQ8nbotKlp+koEiktjgJNF3qiF6y+No3n7ha6/otVX5blY
-         PrRfB1PXpXRMiwEa1nW/VMkpNjasxYO05bMIwdqrIiQ1WFv7hb1zSiDW73KNct45QHnv
-         JHu2NqQesYjxi1hmVnXP0mI8u67rAlpFGbgG5TQVMvdImcEMK6F6V846RYv1sMysuxCO
-         FaWrLHhVWNfD6/qk5XCdWoPdRs1S5I2ppVbG3eJdhEU/4DNdw59c53EaqpB1xL+HiD4D
-         ST2Z5nXzxXdCb+uyVz/Nfb/dNsIjNToPDP86/a07npBpzRbjHvzhuApL/NrYmcZ7Agi1
-         yBBw==
+        bh=5NQIABLEewgKDhqj4Cu1k3a4cKl/gjUQHTrPXMY+Vi4=;
+        b=GxvFqSmI12PysPlkqX9s9D8TUgHjcgxPY7fSr/k4LNdP1t71GBs3e+PITWKN4a+WA5
+         SeQj8jvWslXnqjm5k3P/0EVHOspU7fFjLovUDgQd+0QfWVYz7jDY9ySwl5Nptp++kTvf
+         BU3lTaUnM5FB4Mye2tFZR53oPO6dalXK2MwBaXzbaEYrtLJNvvL/eTPZwmOnJ2IQZ6sw
+         zaVw5kIDVKfs90RLD8/b8nlVFeEuyxk14m8VH0kchH26tRzwjUEL/Q3BucRlvCv7FTL8
+         75KU5PXve4PFYvcOEX00M2WdEy0G7GN2Aw1d0rhwvIDV57AwbihAm2sF6d5T8rVzjn0v
+         GbfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FkriW7ao2khWcyNGX1kvGCkvPuLV16IlU1QXLJjikp4=;
-        b=dFQtBcrIcaBRVH6AZpgvKYZbtOb8aIP7EySXv/UdiaRoDZEB/XW0gh9e8t7ULnd38p
-         swQpMBmTc1eE4VL4xCvRikyqLjZTZzfCnWCmdjFvK2EQhXaGhvWA1CWSmtxsypAbcX6I
-         f/xaZ1NSK0jjdse/wl43L8WuY34rmrAr4fTZ+qrjGzdgktiNUQyfOJMC0KTW/NUEEBSA
-         nOP7oQa2USgYCY9MI+D1k00LyywuFQ9Tj4RCvoG6jUDPVSuxcOGT9/tzeU54N74liPc6
-         lts/Lt6W3k2Sa0kh9wZ0YaDccDabyWtXG6iKtNYNfRpLeyBCIuEQCwYOMudQF38ra2yW
-         XlTg==
-X-Gm-Message-State: AOAM532R5b8ok3v63wsQle8iARbP1F3bjpbS3oFlmVcY2CS21hmpaI+h
-        Qr549/3o0xpoAcypELeL26lWbQ==
-X-Google-Smtp-Source: ABdhPJwj+FUltnXo3060cqLymm9sbDrRqSb00+cd3TMyHoqMqHkxM/7We9l/0DiNUwLxCD5G7c5F/w==
-X-Received: by 2002:a17:903:2288:b029:eb:6ca4:6493 with SMTP id b8-20020a1709032288b02900eb6ca46493mr12420751plh.85.1619334848595;
-        Sun, 25 Apr 2021 00:14:08 -0700 (PDT)
+        bh=5NQIABLEewgKDhqj4Cu1k3a4cKl/gjUQHTrPXMY+Vi4=;
+        b=ovRbQ1xrMZLPkh34WacBpG9zDkLYjtAj6mgD6AincjiaP+VS8pxC3yEeGgS2C+pYGC
+         TRv61+4PiEhbrGNnsZg/uWrKvagRQsOhSICCCgAGSTyIWc5aZhBr3HU5a9aBtmAwO3Ak
+         TD4yLgMEnjK5KCMxFhgYYAmrbmvbgoMiAA05CEHcdgFOZfIFhZsLKFa2pIG/yjsm8W99
+         xIKMgmGVXkgfng0f8e+wYc19do7DxyzhU2F9C8CpbTV6Rhuszw5M9ScP1vKaPrHlEU5I
+         GS13DtfteyCK8+Pu8+pKfGFN46vqip4Ys+iQX3qYABuUgimC2mm/OwZs+K2fn9SlfrUd
+         Obmg==
+X-Gm-Message-State: AOAM530JhvS6te4cparTh/I0nRFJg6/uPvddadk2wsu8CSRdzY7B1eG4
+        c/9oU34S0U6VKmCRplvAHxqW5g==
+X-Google-Smtp-Source: ABdhPJzwFo7qWfly84EpUuTOi0ATPPuhKicT4TQcuPYtohi9vuDzFYewxsesUCQEzEC8eyHIEbLMOQ==
+X-Received: by 2002:a17:902:cec1:b029:eb:66ee:6da0 with SMTP id d1-20020a170902cec1b02900eb66ee6da0mr12545445plg.84.1619334859473;
+        Sun, 25 Apr 2021 00:14:19 -0700 (PDT)
 Received: from localhost.localdomain ([139.177.225.255])
-        by smtp.gmail.com with ESMTPSA id h8sm8767125pjt.17.2021.04.25.00.13.56
+        by smtp.gmail.com with ESMTPSA id h8sm8767125pjt.17.2021.04.25.00.14.09
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Apr 2021 00:14:08 -0700 (PDT)
+        Sun, 25 Apr 2021 00:14:19 -0700 (PDT)
 From:   Muchun Song <songmuchun@bytedance.com>
 To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
         mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
@@ -63,13 +63,10 @@ Cc:     duanxiongchun@bytedance.com, fam.zheng@bytedance.com,
         zhengqi.arch@bytedance.com, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Chen Huang <chenhuang5@huawei.com>,
-        Bodeddula Balasubramaniam <bodeddub@amazon.com>
-Subject: [PATCH v21 7/9] mm: hugetlb: add a kernel parameter hugetlb_free_vmemmap
-Date:   Sun, 25 Apr 2021 15:07:50 +0800
-Message-Id: <20210425070752.17783-8-songmuchun@bytedance.com>
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v21 8/9] mm: memory_hotplug: disable memmap_on_memory when hugetlb_free_vmemmap enabled
+Date:   Sun, 25 Apr 2021 15:07:51 +0800
+Message-Id: <20210425070752.17783-9-songmuchun@bytedance.com>
 X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 In-Reply-To: <20210425070752.17783-1-songmuchun@bytedance.com>
 References: <20210425070752.17783-1-songmuchun@bytedance.com>
@@ -79,189 +76,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a kernel parameter hugetlb_free_vmemmap to enable the feature of
-freeing unused vmemmap pages associated with each hugetlb page on boot.
-
-We disables PMD mapping of vmemmap pages for x86-64 arch when this
-feature is enabled. Because vmemmap_remap_free() depends on vmemmap
-being base page mapped.
+The parameter of memory_hotplug.memmap_on_memory is not compatible with
+hugetlb_free_vmemmap. So disable it when hugetlb_free_vmemmap is
+enabled.
 
 Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Reviewed-by: Barry Song <song.bao.hua@hisilicon.com>
-Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
-Tested-by: Chen Huang <chenhuang5@huawei.com>
-Tested-by: Bodeddula Balasubramaniam <bodeddub@amazon.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 17 +++++++++++++++++
- Documentation/admin-guide/mm/hugetlbpage.rst    |  3 +++
- arch/x86/mm/init_64.c                           |  8 ++++++--
- include/linux/hugetlb.h                         | 19 +++++++++++++++++++
- mm/hugetlb_vmemmap.c                            | 24 ++++++++++++++++++++++++
- 5 files changed, 69 insertions(+), 2 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt | 8 ++++++++
+ drivers/acpi/acpi_memhotplug.c                  | 1 +
+ mm/memory_hotplug.c                             | 1 +
+ 3 files changed, 10 insertions(+)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1d56ad77189b..3cc19cb78b85 100644
+index 3cc19cb78b85..8181345e996a 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1621,6 +1621,23 @@
- 			Documentation/admin-guide/mm/hugetlbpage.rst.
- 			Format: size[KMG]
+@@ -1638,6 +1638,10 @@
+ 			on:  enable the feature
+ 			off: disable the feature
  
-+	hugetlb_free_vmemmap=
-+			[KNL] Reguires CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
-+			enabled.
-+			Allows heavy hugetlb users to free up some more
-+			memory (6 * PAGE_SIZE for each 2MB hugetlb page).
-+			This feauture is not free though. Large page
-+			tables are not used to back vmemmap pages which
-+			can lead to a performance degradation for some
-+			workloads. Also there will be memory allocation
-+			required when hugetlb pages are freed from the
-+			pool which can lead to corner cases under heavy
-+			memory pressure.
-+			Format: { on | off (default) }
-+
-+			on:  enable the feature
-+			off: disable the feature
++			This is not compatible with memory_hotplug.memmap_on_memory.
++			If both parameters are enabled, hugetlb_free_vmemmap takes
++			precedence over memory_hotplug.memmap_on_memory.
 +
  	hung_task_panic=
  			[KNL] Should the hung task detector generate panics.
  			Format: 0 | 1
-diff --git a/Documentation/admin-guide/mm/hugetlbpage.rst b/Documentation/admin-guide/mm/hugetlbpage.rst
-index 6988895d09a8..8abaeb144e44 100644
---- a/Documentation/admin-guide/mm/hugetlbpage.rst
-+++ b/Documentation/admin-guide/mm/hugetlbpage.rst
-@@ -153,6 +153,9 @@ default_hugepagesz
+@@ -2904,6 +2908,10 @@
+ 			Note that even when enabled, there are a few cases where
+ 			the feature is not effective.
  
- 	will all result in 256 2M huge pages being allocated.  Valid default
- 	huge page size is architecture dependent.
-+hugetlb_free_vmemmap
-+	When CONFIG_HUGETLB_PAGE_FREE_VMEMMAP is set, this enables freeing
-+	unused vmemmap pages associated with each HugeTLB page.
- 
- When multiple huge page sizes are supported, ``/proc/sys/vm/nr_hugepages``
- indicates the current number of pre-allocated huge pages of the default size.
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 65ea58527176..9d9d18d0c2a1 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -34,6 +34,7 @@
- #include <linux/gfp.h>
- #include <linux/kcore.h>
- #include <linux/bootmem_info.h>
++			This is not compatible with hugetlb_free_vmemmap. If
++			both parameters are enabled, hugetlb_free_vmemmap takes
++			precedence over memory_hotplug.memmap_on_memory.
++
+ 	memtest=	[KNL,X86,ARM,PPC,RISCV] Enable memtest
+ 			Format: <integer>
+ 			default : 0 <disable>
+diff --git a/drivers/acpi/acpi_memhotplug.c b/drivers/acpi/acpi_memhotplug.c
+index 8cc195c4c861..0d7f595ee441 100644
+--- a/drivers/acpi/acpi_memhotplug.c
++++ b/drivers/acpi/acpi_memhotplug.c
+@@ -15,6 +15,7 @@
+ #include <linux/acpi.h>
+ #include <linux/memory.h>
+ #include <linux/memory_hotplug.h>
 +#include <linux/hugetlb.h>
  
- #include <asm/processor.h>
- #include <asm/bios_ebda.h>
-@@ -1609,7 +1610,8 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
- 	VM_BUG_ON(!IS_ALIGNED(start, PAGE_SIZE));
- 	VM_BUG_ON(!IS_ALIGNED(end, PAGE_SIZE));
+ #include "internal.h"
  
--	if (end - start < PAGES_PER_SECTION * sizeof(struct page))
-+	if ((is_hugetlb_free_vmemmap_enabled()  && !altmap) ||
-+	    end - start < PAGES_PER_SECTION * sizeof(struct page))
- 		err = vmemmap_populate_basepages(start, end, node, NULL);
- 	else if (boot_cpu_has(X86_FEATURE_PSE))
- 		err = vmemmap_populate_hugepages(start, end, node, altmap);
-@@ -1637,6 +1639,8 @@ void register_page_bootmem_memmap(unsigned long section_nr,
- 	pmd_t *pmd;
- 	unsigned int nr_pmd_pages;
- 	struct page *page;
-+	bool base_mapping = !boot_cpu_has(X86_FEATURE_PSE) ||
-+			    is_hugetlb_free_vmemmap_enabled();
- 
- 	for (; addr < end; addr = next) {
- 		pte_t *pte = NULL;
-@@ -1662,7 +1666,7 @@ void register_page_bootmem_memmap(unsigned long section_nr,
- 		}
- 		get_page_bootmem(section_nr, pud_page(*pud), MIX_SECTION_INFO);
- 
--		if (!boot_cpu_has(X86_FEATURE_PSE)) {
-+		if (base_mapping) {
- 			next = (addr + PAGE_SIZE) & PAGE_MASK;
- 			pmd = pmd_offset(pud, addr);
- 			if (pmd_none(*pmd))
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index d3abaaec2a22..65865d523ef7 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -895,6 +895,20 @@ static inline void huge_ptep_modify_prot_commit(struct vm_area_struct *vma,
- }
- #endif
- 
-+#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
-+extern bool hugetlb_free_vmemmap_enabled;
-+
-+static inline bool is_hugetlb_free_vmemmap_enabled(void)
-+{
-+	return hugetlb_free_vmemmap_enabled;
-+}
-+#else
-+static inline bool is_hugetlb_free_vmemmap_enabled(void)
-+{
-+	return false;
-+}
-+#endif
-+
- #else	/* CONFIG_HUGETLB_PAGE */
- struct hstate {};
- 
-@@ -1054,6 +1068,11 @@ static inline void set_huge_swap_pte_at(struct mm_struct *mm, unsigned long addr
- 					pte_t *ptep, pte_t pte, unsigned long sz)
- {
- }
-+
-+static inline bool is_hugetlb_free_vmemmap_enabled(void)
-+{
-+	return false;
-+}
- #endif	/* CONFIG_HUGETLB_PAGE */
- 
- static inline spinlock_t *huge_pte_lock(struct hstate *h,
-diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-index a897c7778246..3070e1465b1b 100644
---- a/mm/hugetlb_vmemmap.c
-+++ b/mm/hugetlb_vmemmap.c
-@@ -168,6 +168,8 @@
-  * (last) level. So this type of HugeTLB page can be optimized only when its
-  * size of the struct page structs is greater than 2 pages.
-  */
-+#define pr_fmt(fmt)	"HugeTLB: " fmt
-+
- #include "hugetlb_vmemmap.h"
- 
- /*
-@@ -180,6 +182,28 @@
- #define RESERVE_VMEMMAP_NR		2U
- #define RESERVE_VMEMMAP_SIZE		(RESERVE_VMEMMAP_NR << PAGE_SHIFT)
- 
-+bool hugetlb_free_vmemmap_enabled;
-+
-+static int __init early_hugetlb_free_vmemmap_param(char *buf)
-+{
-+	/* We cannot optimize if a "struct page" crosses page boundaries. */
-+	if ((!is_power_of_2(sizeof(struct page)))) {
-+		pr_warn("cannot free vmemmap pages because \"struct page\" crosses page boundaries\n");
-+		return 0;
-+	}
-+
-+	if (!buf)
-+		return -EINVAL;
-+
-+	if (!strcmp(buf, "on"))
-+		hugetlb_free_vmemmap_enabled = true;
-+	else if (strcmp(buf, "off"))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+early_param("hugetlb_free_vmemmap", early_hugetlb_free_vmemmap_param);
-+
- static inline unsigned long free_vmemmap_pages_size_per_hpage(struct hstate *h)
- {
- 	return (unsigned long)free_vmemmap_pages_per_hpage(h) << PAGE_SHIFT;
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 16b3a7a1db8c..6512e6f641bb 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1052,6 +1052,7 @@ bool mhp_supports_memmap_on_memory(unsigned long size)
+ 	 *       populate a single PMD.
+ 	 */
+ 	return memmap_on_memory &&
++	       !is_hugetlb_free_vmemmap_enabled() &&
+ 	       IS_ENABLED(CONFIG_MHP_MEMMAP_ON_MEMORY) &&
+ 	       size == memory_block_size_bytes() &&
+ 	       IS_ALIGNED(vmemmap_size, PMD_SIZE) &&
 -- 
 2.11.0
 
