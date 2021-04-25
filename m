@@ -2,107 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7884F36A58B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Apr 2021 09:34:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E10236A597
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Apr 2021 09:49:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229694AbhDYHeq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Apr 2021 03:34:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34592 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229522AbhDYHeq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Apr 2021 03:34:46 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D18D961245;
-        Sun, 25 Apr 2021 07:34:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619336046;
-        bh=WCsSHB91cvmf5ZeAXu+txZXJ3S/cP/GNMzA77rjuNbE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=q1XswQI3mxMpGcDvpMyZljYfgw5fSLCE1OaoEPKuANpgRNF/l1ND6Se160hAmXY2V
-         WXsK309I7CYtICtk/SZ1nvEJRBpn1+vyAb/P6rKYKnqt7swUW4G1LM16V7f3Ki5hGL
-         6jIWwzqr2Uat6+NgotfFX1qhL914GSyag3QNQK8d6Fq1ux1vwZjFNqhCT53YkaLdTE
-         TS2qfTejBqCr4vVDIHrt8whLwMVintjtCjDUVJJmyRNx/cBFyrNVGMPw+2ZKkhqhxJ
-         c/I7P/Zd+iGUvrgWXjnwivWQGUZ9oTtanEw8H5/Digtge9jnfpQm/dvW+lGWyo3VLQ
-         i6HJsRhSlKs+g==
-Date:   Sun, 25 Apr 2021 10:33:57 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Peter.Enderborg@sony.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        sumit.semwal@linaro.org, christian.koenig@amd.com,
-        adobriyan@gmail.com, akpm@linux-foundation.org,
-        songmuchun@bytedance.com, guro@fb.com, shakeelb@google.com,
-        mhocko@suse.com, neilb@suse.de, samitolvanen@google.com,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, willy@infradead.org
-Subject: Re: [PATCH v5] dma-buf: Add DmaBufTotal counter in meminfo
-Message-ID: <YIUbZWm+jW21vYJ9@kernel.org>
-References: <YH6Xv00ddYfMA3Lg@phenom.ffwll.local>
- <176e7e71-59b7-b288-9483-10e0f42a7a3f@sony.com>
- <YH63iPzbGWzb676T@phenom.ffwll.local>
- <a60d1eaf-f9f8-e0f3-d214-15ce2c0635c2@sony.com>
- <YH/tHFBtIawBfGBl@phenom.ffwll.local>
- <cbde932e-8887-391f-4a1d-515e5c56c01d@sony.com>
- <YIBFbh4Dd1XaDbto@kernel.org>
- <84e0c6d9-74c6-5fa8-f75a-45c8ec995ac2@sony.com>
- <YIEugg9RIVSReN97@kernel.org>
- <ae091d3d-623b-ce18-e0f2-1591be6db83e@sony.com>
+        id S229579AbhDYHug (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Apr 2021 03:50:36 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45197 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229504AbhDYHug (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 25 Apr 2021 03:50:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619336996;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Im4R7SZHjo22hPEh3n8+YlircfIMQ1gHe/V7o9XQRXw=;
+        b=AGILV2W8TLniokq/RYWAP8mm4nlnZbKQhNBPwgpPrBdYUMzreJqiyrSMbNaTXBYjXPkeHJ
+        uSkwQ5m9WIha5d5ayLV/Nu+yrsdRhYmLDzdDwXlEmjDTd5Ili24TIFMy9BqTVFugFFw9Np
+        /y9t+2SpJdM3iYDbMsVQS4GLaKKLAgU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-352-hCefhymWP_6ERB9w6VsZvw-1; Sun, 25 Apr 2021 03:49:54 -0400
+X-MC-Unique: hCefhymWP_6ERB9w6VsZvw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 625F58189C8;
+        Sun, 25 Apr 2021 07:49:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-124.rdu2.redhat.com [10.10.112.124])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9138019C46;
+        Sun, 25 Apr 2021 07:49:52 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAOg9mSTwNKPdRMwr_F87YCeUyxT775pBd5WcewGpcwSZFVz5=w@mail.gmail.com>
+References: <CAOg9mSTwNKPdRMwr_F87YCeUyxT775pBd5WcewGpcwSZFVz5=w@mail.gmail.com> <20210327035019.GG1719932@casper.infradead.org> <CAOg9mSTQ-zNKXQGBK9QEnwJCvwqh=zFLbLJZy-ibGZwLve4o0w@mail.gmail.com> <20210201130800.GP308988@casper.infradead.org> <CAOg9mSSd5ccoi1keeiRfkV+esekcQLxer9_1iZ-r9bQDjZLfBg@mail.gmail.com> <CAOg9mSSEVE3PGs2E9ya5_B6dQkoH6n2wGAEW_wWSEvw0LurWuQ@mail.gmail.com> <2884397.1616584210@warthog.procyon.org.uk> <CAOg9mSQMDzMfg3C0TUvTWU61zQdjnthXSy01mgY=CpgaDjj=Pw@mail.gmail.com> <1507388.1616833898@warthog.procyon.org.uk> <20210327135659.GH1719932@casper.infradead.org> <CAOg9mSRCdaBfLABFYvikHPe1YH6TkTx2tGU186RDso0S=z-S4A@mail.gmail.com> <20210327155630.GJ1719932@casper.infradead.org> <CAOg9mSSxrPEd4XsWseMOnpMGzDAE5Pm0YHcZE7gBdefpsReRzg@mail.gmail.com> <CAOg9mSSaDsEEQD7cwbsCi9WA=nSAD78wSJV_5Gu=Kc778z57zA@mail.gmail.com> <1720948.1617010659@warthog.procyon.org.uk> <CAOg9mSTEepP-BjV85dOmk6hbhQXYtz2k1y5G1RbN9boN7Mw3wA@mail.gmail.com> <1268214.1618326494@warthog.procyon.org.uk
+ > <CAOg9mSSxZUwZ0-OdCfb7gLgETkCJOd-9PCrpqWwzqXffwMSejA@mail.gmail.com> <1612829.1618587694@warthog.procyon.org.uk>
+To:     Mike Marshall <hubcap@omnibond.com>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2] implement orangefs_readahead
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ae091d3d-623b-ce18-e0f2-1591be6db83e@sony.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3365452.1619336991.1@warthog.procyon.org.uk>
+Date:   Sun, 25 Apr 2021 08:49:51 +0100
+Message-ID: <3365453.1619336991@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 22, 2021 at 02:08:51PM +0000, Peter.Enderborg@sony.com wrote:
-> On 4/22/21 10:06 AM, Mike Rapoport wrote:
-> > So the flow is like this:
-> >
-> > * a user has a problem and reports it to an application developer; at best
-> >   the user runs simple and limited app to collect some data
-> > * if the application developer considers this issue as a system related
-> >   they can open adb and collect some more information about the system
-> >   using non-root shell with selinux policy restrictions and send this
-> >   information to the device manufacturer.
-> > * the manufacturer continues to debug the issue and at this point as much
-> >   information is possible would have been useful.
-> >
-> > In this flow I still fail to understand why the manufacturer cannot provide
-> > userspace tools that will be able to collect the required information.
-> > These tools not necessarily need to target the end user, they may be only
-> > intended for the application developers, e.g. policy could allow such tool
-> > to access some of the system data only when the system is in developer
-> > mode.
-> >
-> The manufacture is trying to get the tool to work. This is what the
-> patch is about. Even for a application developer a commercial
-> phone is locked down.
+Mike Marshall <hubcap@omnibond.com> wrote:
 
-Right, but it's still in full control of the manufacturer what's flashed
-there, isn't it?
-So there could be some tools that are only available in the developer mode?
-These tools could have different permissions etc.
-
-> Many vendors allow that you flash some other software like a AOSP.  But
-> that can be very different. Like installing a ubuntu on a PC to debug a
-> Fedora issue.
+> >> I wonder if you should use iov_length(&iter)
 > 
-> And sure we can pickup parts of what using the dma-buf. But
-> we can not get the total and be sure that is the total without a
-> proper counter.
+> iov_length has two arguments. The first one would maybe be iter.iov and
+> the second one would be... ?
 
-If I understand you correctly, a user space tool that scans fdinfo and
-accumulates dma-buf size from there is not accurate enough, that's why an
-atomic counter exposed by kernel is a must.
+Sorry, I meant iov_iter_count(&iter).
 
-But if the changes in consumption of dma-bufs are that frequent, I cannot
-see how a global counter will help to identify an issue.
+I'll look at the other things next week.  Is it easy to set up an orangefs
+client and server?
 
-And if this counter is needed to see if there is a memory leak, summing
-sizes of dma-bufs from fdinfo will identify a leak.
+David
 
-What am I missing?
-
--- 
-Sincerely yours,
-Mike.
