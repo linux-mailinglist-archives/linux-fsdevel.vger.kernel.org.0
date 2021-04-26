@@ -2,186 +2,419 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D7B4336ABEA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 07:51:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE8B536AC0C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 08:13:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229554AbhDZFvw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Apr 2021 01:51:52 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:39184 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231875AbhDZFvs (ORCPT
+        id S231616AbhDZGOf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Apr 2021 02:14:35 -0400
+Received: from mx05.melco.co.jp ([192.218.140.145]:47296 "EHLO
+        mx05.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229510AbhDZGOe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Apr 2021 01:51:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1619416267; x=1650952267;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=VYQfDU+zPAANjwyhI4RM7sIHVe4r8Av/Xgfkn9XRd+s=;
-  b=czLMoVHdj+Ns/N5lZi2tdFFq4odY5LlGfMKHC30U+SFvveuUIZpz+yMS
-   64c3NW3w/XFQNRd5hBzyXdLe/tfXvkSYKPTNeID63oMKBNL92NF6vkAcF
-   y5Hc4lX/oy1wu/ZgGAejT7YWrB5uUEd6ydgVpU1oBh1dTVd3YLo1ECVSm
-   kOR2HIxf61Ccq+hcmgBRoa/sGkP6ei0bCWBl6gBQNTZqd2V2X8UpD9dRE
-   TTbNShkRkexjyJ0RoomdE+uiB7wl4ppMB0PttFIPmFSoKe76Za8kD/MgZ
-   adOrvWSr5LYrpHNSdItuCMSfeZozs+hZxs6NhChREF6d1nAaL7C/PjYei
-   Q==;
-IronPort-SDR: DMaIjvf5qx0H0xobea+piT+sxWYV4Qp1wlWVRlanVodYEEIVbU9WxYJGY8BQd7wHsvOpRqevDK
- C/XyJcB1z2NdzgcUxsP9xMehXLyp8DCMr7BDp7yJ4S4Cn8EJjx40kGOYQ/Pqm6CDxg/NRQjFKM
- xMitD18UVnZCJgk6lp3J1KnSdANJdh46Z+z4dGb2O01Jj5SuPFo/vjZljX3HgeHrmtOQ7fA4HN
- dCn2X94tnW+gAn6DPaOTeE2WhyAon5T+4Zl74hWzc3dlgaoUBAlJLTZ5+rD4JLDh3bE8AH74eG
- b8c=
-X-IronPort-AV: E=Sophos;i="5.82,251,1613404800"; 
-   d="scan'208";a="170785783"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 26 Apr 2021 13:51:07 +0800
-IronPort-SDR: 0E7fmmtZi7fxl3BHTsdKq5taFAfQY0tmQpaWDptfOQviL5VfozDSsvSImOcs8QqV0flX1czrbO
- +oUHcNU4qYI5b93XLyd3P+s2LRRgLRATRuQVJQRx63hoyOjr+xvjc2x4Rbu6NQGSSn19bKUYpE
- 4cwGABx915kRT6LTDTeVZeWj8ak2LNci95Du3QywAtZyh5UNVdb0+HBpJeRrJW5Q8bLAsyf5rW
- 2leQi8mGi+vQSe8AdHLJomOUkShdoci87UV5uYdZaDjvjYsjGdJPOm1chkeSVbbHOM2msDq/fY
- l9johy7HryjUKVH6fbL+970x
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2021 22:30:03 -0700
-IronPort-SDR: HnxbbFM5IfW8t3+R9ZmRgetSw6AILt/dfl1A4ovLZTzVGM0Jw8E/bjbYawv2z24kmDxQpipWbq
- G0BI6VSOjb2QUlcN8/j4TyRaPp5SmWZrKWq+WLvqJsMhykdwr+9bCBA5XT0X+AJoizvJVUe5N7
- ZlCmGUTXHqdZxtYJAR1dVU/DxAUVhVmcMM0EpPZguRLwtGaU7H4xFuEyWv6ig+5W5zxxLKPXht
- nCQmDSyAUgO7kc6fyY/u3YcbLxaVVbpgv6vYqlbZp7Cu2A3dW1UqePlJytgu269cimREUg0Wzz
- IvA=
-WDCIronportException: Internal
-Received: from bgy2573.ad.shared (HELO naota-xeon.wdc.com) ([10.225.48.58])
-  by uls-op-cesaip01.wdc.com with ESMTP; 25 Apr 2021 22:51:07 -0700
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     Karel Zak <kzak@redhat.com>
-Cc:     util-linux@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v3 3/3] blkid: support zone reset for wipefs
-Date:   Mon, 26 Apr 2021 14:50:36 +0900
-Message-Id: <20210426055036.2103620-4-naohiro.aota@wdc.com>
+        Mon, 26 Apr 2021 02:14:34 -0400
+X-Greylist: delayed 810 seconds by postgrey-1.27 at vger.kernel.org; Mon, 26 Apr 2021 02:14:34 EDT
+Received: from mr05.melco.co.jp (mr05 [133.141.98.165])
+        by mx05.melco.co.jp (Postfix) with ESMTP id 4FTDkx1TYLzMwCYp;
+        Mon, 26 Apr 2021 15:00:09 +0900 (JST)
+Received: from mr05.melco.co.jp (unknown [127.0.0.1])
+        by mr05.imss (Postfix) with ESMTP id 4FTDkx12R4zMqtkg;
+        Mon, 26 Apr 2021 15:00:09 +0900 (JST)
+Received: from mf04_second.melco.co.jp (unknown [192.168.20.184])
+        by mr05.melco.co.jp (Postfix) with ESMTP id 4FTDkx0kLNzMqtkS;
+        Mon, 26 Apr 2021 15:00:09 +0900 (JST)
+Received: from mf04.melco.co.jp (unknown [133.141.98.184])
+        by mf04_second.melco.co.jp (Postfix) with ESMTP id 4FTDkx0h4dzMs8jQ;
+        Mon, 26 Apr 2021 15:00:09 +0900 (JST)
+Received: from tux532.tad.melco.co.jp (unknown [133.141.243.226])
+        by mf04.melco.co.jp (Postfix) with ESMTP id 4FTDkx06WrzMs8jL;
+        Mon, 26 Apr 2021 15:00:09 +0900 (JST)
+Received:  from tux532.tad.melco.co.jp
+        by tux532.tad.melco.co.jp (unknown) with ESMTP id 13Q608pd007995;
+        Mon, 26 Apr 2021 15:00:08 +0900
+Received: from tux390.tad.melco.co.jp (tux390.tad.melco.co.jp [127.0.0.1])
+        by postfix.imss70 (Postfix) with ESMTP id BAF2317E07A;
+        Mon, 26 Apr 2021 15:00:08 +0900 (JST)
+Received: from tux554.tad.melco.co.jp (tadpost1.tad.melco.co.jp [10.168.7.223])
+        by tux390.tad.melco.co.jp (Postfix) with ESMTP id A505A17E019;
+        Mon, 26 Apr 2021 15:00:08 +0900 (JST)
+Received: from tux554.tad.melco.co.jp
+        by tux554.tad.melco.co.jp (unknown) with ESMTP id 13Q608e9027561;
+        Mon, 26 Apr 2021 15:00:08 +0900
+From:   Tetsuhiro Kohada <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>
+To:     linux-fsdevel@vger.kernel.org,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        linux-kernel@vger.kernel.org
+Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp
+Subject: [PATCH] fat: Mark dirty just before updating metadata
+Date:   Mon, 26 Apr 2021 21:56:12 +0900
+Message-Id: <20210426125612.62396-1-kohada.tetsuhiro@dc.mitsubishielectric.co.jp>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210426055036.2103620-1-naohiro.aota@wdc.com>
-References: <20210426055036.2103620-1-naohiro.aota@wdc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We cannot overwrite superblock magic in a sequential required zone. So,
-wipefs cannot work as it is. Instead, this commit implements the wiping by
-zone resetting.
+Instead of marking dirty-state on mount, do it just before updating
+the metadata.
+Therefore, if no write operation is performed, the boot sector will
+not be updated.
+This eliminates unnecessary dirty mark / unmark and reduces the risk
+of boot sector corruption.
+Also, keep boot-sec bh in sb to suppress errors when updating dirty.
 
-Zone resetting must be done only for a sequential write zone. This is
-checked by is_conventional().
-
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+Signed-off-by: Tetsuhiro Kohada <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>
 ---
- libblkid/src/probe.c | 69 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 63 insertions(+), 6 deletions(-)
+ fs/fat/dir.c         |   2 +
+ fs/fat/fat.h         |   4 ++
+ fs/fat/fatent.c      |   8 +++-
+ fs/fat/file.c        |   1 +
+ fs/fat/inode.c       | 100 +++++++++++++++++++++++--------------------
+ fs/fat/misc.c        |   1 +
+ fs/fat/namei_msdos.c |   1 +
+ fs/fat/namei_vfat.c  |   1 +
+ 8 files changed, 70 insertions(+), 48 deletions(-)
 
-diff --git a/libblkid/src/probe.c b/libblkid/src/probe.c
-index 219cceea0f94..d4ca47c6dbed 100644
---- a/libblkid/src/probe.c
-+++ b/libblkid/src/probe.c
-@@ -1229,6 +1229,39 @@ int blkid_do_probe(blkid_probe pr)
- 	return rc;
+diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+index c4a274285858..d0236908dfc5 100644
+--- a/fs/fat/dir.c
++++ b/fs/fat/dir.c
+@@ -1033,6 +1033,7 @@ int fat_remove_entries(struct inode *dir, struct fat_slot_info *sinfo)
+ 	struct buffer_head *bh;
+ 	int err = 0, nr_slots;
+ 
++	fat_set_state(sb, true);
+ 	/*
+ 	 * First stage: Remove the shortname. By this, the directory
+ 	 * entry is removed.
+@@ -1327,6 +1328,7 @@ int fat_add_entries(struct inode *dir, void *slots, int nr_slots,
+ 	}
+ 
+ found:
++	fat_set_state(sb, true);
+ 	err = 0;
+ 	pos -= free_slots * sizeof(*de);
+ 	nr_slots -= free_slots;
+diff --git a/fs/fat/fat.h b/fs/fat/fat.h
+index 02d4d4234956..c254f0beea15 100644
+--- a/fs/fat/fat.h
++++ b/fs/fat/fat.h
+@@ -76,6 +76,7 @@ struct msdos_sb_info {
+ 	struct mutex fat_lock;
+ 	struct mutex nfs_build_inode_lock;
+ 	struct mutex s_lock;
++	struct mutex bootsec_lock;
+ 	unsigned int prev_free;      /* previously allocated cluster number */
+ 	unsigned int free_clusters;  /* -1 if undefined */
+ 	unsigned int free_clus_valid; /* is free_clusters valid? */
+@@ -101,6 +102,8 @@ struct msdos_sb_info {
+ 	struct hlist_head dir_hashtable[FAT_HASH_SIZE];
+ 
+ 	unsigned int dirty;           /* fs state before mount */
++	u8 state;			/* current fs state */
++	struct buffer_head *boot_bh;
+ 	struct rcu_head rcu;
+ };
+ 
+@@ -425,6 +428,7 @@ static inline unsigned long fat_dir_hash(int logstart)
+ 	return hash_32(logstart, FAT_HASH_BITS);
+ }
+ extern int fat_add_cluster(struct inode *inode);
++extern void fat_set_state(struct super_block *sb, bool dirty);
+ 
+ /* fat/misc.c */
+ extern __printf(3, 4) __cold
+diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
+index f7e3304b7802..5c4cebfdf337 100644
+--- a/fs/fat/fatent.c
++++ b/fs/fat/fatent.c
+@@ -472,6 +472,7 @@ int fat_alloc_clusters(struct inode *inode, int *cluster, int nr_cluster)
+ 
+ 	BUG_ON(nr_cluster > (MAX_BUF_PER_PAGE / 2));	/* fixed limit */
+ 
++	fat_set_state(sb, true);
+ 	lock_fat(sbi);
+ 	if (sbi->free_clusters != -1 && sbi->free_clus_valid &&
+ 	    sbi->free_clusters < nr_cluster) {
+@@ -559,6 +560,7 @@ int fat_free_clusters(struct inode *inode, int cluster)
+ 	int i, err, nr_bhs;
+ 	int first_cl = cluster, dirty_fsinfo = 0;
+ 
++	fat_set_state(sb, true);
+ 	nr_bhs = 0;
+ 	fatent_init(&fatent);
+ 	lock_fat(sbi);
+@@ -741,9 +743,11 @@ int fat_count_free_clusters(struct super_block *sb)
+ 		} while (fat_ent_next(sbi, &fatent));
+ 		cond_resched();
+ 	}
+-	sbi->free_clusters = free;
+ 	sbi->free_clus_valid = 1;
+-	mark_fsinfo_dirty(sb);
++	if (sbi->free_clusters != free) {
++		sbi->free_clusters = free;
++		mark_fsinfo_dirty(sb);
++	}
+ 	fatent_brelse(&fatent);
+ out:
+ 	unlock_fat(sbi);
+diff --git a/fs/fat/file.c b/fs/fat/file.c
+index 13855ba49cd9..8fbaa48a6b93 100644
+--- a/fs/fat/file.c
++++ b/fs/fat/file.c
+@@ -314,6 +314,7 @@ static int fat_free(struct inode *inode, int skip)
+ 	if (MSDOS_I(inode)->i_start == 0)
+ 		return 0;
+ 
++	fat_set_state(sb, true);
+ 	fat_cache_inval_inode(inode);
+ 
+ 	wait = IS_DIRSYNC(inode);
+diff --git a/fs/fat/inode.c b/fs/fat/inode.c
+index bab9b202b496..cb7b50746b9b 100644
+--- a/fs/fat/inode.c
++++ b/fs/fat/inode.c
+@@ -662,52 +662,45 @@ static void fat_evict_inode(struct inode *inode)
+ 	fat_detach(inode);
  }
  
-+#ifdef HAVE_LINUX_BLKZONED_H
-+static int is_conventional(blkid_probe pr, uint64_t offset)
-+{
-+	struct blk_zone_report *rep = NULL;
-+	int ret;
-+	uint64_t zone_mask;
-+
-+	if (!pr->zone_size)
-+		return 1;
-+
-+	zone_mask = ~(pr->zone_size - 1);
-+	rep = blkdev_get_zonereport(blkid_probe_get_fd(pr),
-+				    (offset & zone_mask) >> 9, 1);
-+	if (!rep)
-+		return -1;
-+
-+	if (rep->zones[0].type == BLK_ZONE_TYPE_CONVENTIONAL)
-+		ret = 1;
-+	else
-+		ret = 0;
-+
-+	free(rep);
-+
-+	return ret;
-+}
-+#else
-+static inline int is_conventional(blkid_probe pr __attribute__((__unused__)),
-+				  uint64_t offset __attribute__((__unused__)))
-+{
-+	return 1;
-+}
-+#endif
-+
- /**
-  * blkid_do_wipe:
-  * @pr: prober
-@@ -1268,6 +1301,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
- 	const char *off = NULL;
- 	size_t len = 0;
- 	uint64_t offset, magoff;
-+	int conventional;
- 	char buf[BUFSIZ];
- 	int fd, rc = 0;
- 	struct blkid_chain *chn;
-@@ -1303,6 +1337,11 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
- 	if (len > sizeof(buf))
- 		len = sizeof(buf);
+-static void fat_set_state(struct super_block *sb,
+-			unsigned int set, unsigned int force)
++void fat_set_state(struct super_block *sb, bool dirty)
+ {
+-	struct buffer_head *bh;
+ 	struct fat_boot_sector *b;
+ 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
++	u8 newstate;
  
-+	rc = is_conventional(pr, offset);
-+	if (rc < 0)
-+		return rc;
-+	conventional = rc == 1;
-+
- 	DBG(LOWPROBE, ul_debug(
- 	    "do_wipe [offset=0x%"PRIx64" (%"PRIu64"), len=%zu, chain=%s, idx=%d, dryrun=%s]\n",
- 	    offset, offset, len, chn->driver->name, chn->idx, dryrun ? "yes" : "not"));
-@@ -1310,13 +1349,31 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
- 	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
- 		return -1;
+ 	/* do not change any thing if mounted read only */
+-	if (sb_rdonly(sb) && !force)
++	if (sb_rdonly(sb))
+ 		return;
  
--	memset(buf, 0, len);
+ 	/* do not change state if fs was dirty */
+-	if (sbi->dirty) {
+-		/* warn only on set (mount). */
+-		if (set)
+-			fat_msg(sb, KERN_WARNING, "Volume was not properly "
+-				"unmounted. Some data may be corrupt. "
+-				"Please run fsck.");
++	if (sbi->dirty)
+ 		return;
+-	}
 -
- 	if (!dryrun && len) {
--		/* wipen on device */
--		if (write_all(fd, buf, len))
--			return -1;
--		fsync(fd);
-+		if (conventional) {
-+			memset(buf, 0, len);
-+
-+			/* wipen on device */
-+			if (write_all(fd, buf, len))
-+				return -1;
-+			fsync(fd);
-+		} else {
-+#ifdef HAVE_LINUX_BLKZONED_H
-+			uint64_t zone_mask = ~(pr->zone_size - 1);
-+			struct blk_zone_range range = {
-+				.sector = (offset & zone_mask) >> 9,
-+				.nr_sectors = pr->zone_size >> 9,
-+			};
-+
-+			rc = ioctl(fd, BLKRESETZONE, &range);
-+			if (rc < 0)
-+				return -1;
-+#else
-+			/* Should not reach here */
-+			assert(0);
-+#endif
-+		}
-+
- 		pr->flags &= ~BLKID_FL_MODIF_BUFF;	/* be paranoid */
+-	bh = sb_bread(sb, 0);
+-	if (bh == NULL) {
+-		fat_msg(sb, KERN_ERR, "unable to read boot sector "
+-			"to mark fs as dirty");
+-		return;
+-	}
  
- 		return blkid_probe_step_back(pr);
+-	b = (struct fat_boot_sector *) bh->b_data;
++	if (dirty)
++		newstate = sbi->state | FAT_STATE_DIRTY;
++	else
++		newstate = sbi->state & ~FAT_STATE_DIRTY;
+ 
+-	if (is_fat32(sbi)) {
+-		if (set)
+-			b->fat32.state |= FAT_STATE_DIRTY;
+-		else
+-			b->fat32.state &= ~FAT_STATE_DIRTY;
+-	} else /* fat 16 and 12 */ {
+-		if (set)
+-			b->fat16.state |= FAT_STATE_DIRTY;
+-		else
+-			b->fat16.state &= ~FAT_STATE_DIRTY;
+-	}
++	/* do nothing if state is same */
++	if (newstate == sbi->state)
++		return;
++	mutex_lock(&sbi->bootsec_lock);
++	if (newstate == READ_ONCE(sbi->state))
++		goto unlock;
+ 
+-	mark_buffer_dirty(bh);
+-	sync_dirty_buffer(bh);
+-	brelse(bh);
++	b = (struct fat_boot_sector *) sbi->boot_bh->b_data;
++	if (is_fat32(sbi))
++		b->fat32.state = newstate;
++	else /* fat 16 and 12 */
++		b->fat16.state = newstate;
++
++	mark_buffer_dirty(sbi->boot_bh);
++	sync_dirty_buffer(sbi->boot_bh);
++	sbi->state = newstate;
++unlock:
++	mutex_unlock(&sbi->bootsec_lock);
+ }
++EXPORT_SYMBOL_GPL(fat_set_state);
+ 
+ static void fat_reset_iocharset(struct fat_mount_options *opts)
+ {
+@@ -731,7 +724,8 @@ static void fat_put_super(struct super_block *sb)
+ {
+ 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
+ 
+-	fat_set_state(sb, 0, 0);
++	fat_set_state(sb, false);
++	brelse(sbi->boot_bh);
+ 
+ 	iput(sbi->fsinfo_inode);
+ 	iput(sbi->fat_inode);
+@@ -799,6 +793,15 @@ static void __exit fat_destroy_inodecache(void)
+ 	kmem_cache_destroy(fat_inode_cachep);
+ }
+ 
++static void fat_warn_volume_dirty(struct super_block *sb)
++{
++	struct msdos_sb_info *sbi = MSDOS_SB(sb);
++
++	if (sbi->dirty)
++		fat_msg(sb, KERN_WARNING,
++			"Volume was not properly unmounted. Some data may be corrupt. Please run fsck.");
++}
++
+ static int fat_remount(struct super_block *sb, int *flags, char *data)
+ {
+ 	bool new_rdonly;
+@@ -811,9 +814,9 @@ static int fat_remount(struct super_block *sb, int *flags, char *data)
+ 	new_rdonly = *flags & SB_RDONLY;
+ 	if (new_rdonly != sb_rdonly(sb)) {
+ 		if (new_rdonly)
+-			fat_set_state(sb, 0, 0);
++			fat_set_state(sb, false);
+ 		else
+-			fat_set_state(sb, 1, 1);
++			fat_warn_volume_dirty(sb);
+ 	}
+ 	return 0;
+ }
+@@ -856,6 +859,7 @@ static int __fat_write_inode(struct inode *inode, int wait)
+ 	if (inode->i_ino == MSDOS_ROOT_INO)
+ 		return 0;
+ 
++	fat_set_state(sb, true);
+ retry:
+ 	i_pos = fat_i_pos_read(sbi, inode);
+ 	if (!i_pos)
+@@ -1604,7 +1608,7 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
+ {
+ 	struct inode *root_inode = NULL, *fat_inode = NULL;
+ 	struct inode *fsinfo_inode = NULL;
+-	struct buffer_head *bh;
++	struct buffer_head *bh = NULL;
+ 	struct fat_bios_param_block bpb;
+ 	struct msdos_sb_info *sbi;
+ 	u16 logical_sector_size;
+@@ -1657,7 +1661,6 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
+ 	if (error == -EINVAL && sbi->options.dos1xfloppy)
+ 		error = fat_read_static_bpb(sb,
+ 			(struct fat_boot_sector *)bh->b_data, silent, &bpb);
+-	brelse(bh);
+ 
+ 	if (error == -EINVAL)
+ 		goto out_invalid;
+@@ -1675,8 +1678,8 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
+ 	}
+ 
+ 	if (logical_sector_size > sb->s_blocksize) {
+-		struct buffer_head *bh_resize;
+-
++		brelse(bh);
++		bh = NULL;
+ 		if (!sb_set_blocksize(sb, logical_sector_size)) {
+ 			fat_msg(sb, KERN_ERR, "unable to set blocksize %u",
+ 			       logical_sector_size);
+@@ -1684,15 +1687,15 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
+ 		}
+ 
+ 		/* Verify that the larger boot sector is fully readable */
+-		bh_resize = sb_bread(sb, 0);
+-		if (bh_resize == NULL) {
++		bh = sb_bread(sb, 0);
++		if (bh == NULL) {
+ 			fat_msg(sb, KERN_ERR, "unable to read boot sector"
+ 			       " (logical sector size = %lu)",
+ 			       sb->s_blocksize);
+ 			goto out_fail;
+ 		}
+-		brelse(bh_resize);
+ 	}
++	sbi->boot_bh = bh;
+ 
+ 	mutex_init(&sbi->s_lock);
+ 	sbi->cluster_size = sb->s_blocksize * sbi->sec_per_clus;
+@@ -1783,9 +1786,11 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
+ 
+ 	/* some OSes set FAT_STATE_DIRTY and clean it on unmount. */
+ 	if (is_fat32(sbi))
+-		sbi->dirty = bpb.fat32_state & FAT_STATE_DIRTY;
++		sbi->state = bpb.fat32_state;
+ 	else /* fat 16 or 12 */
+-		sbi->dirty = bpb.fat16_state & FAT_STATE_DIRTY;
++		sbi->state = bpb.fat16_state;
++	sbi->dirty = sbi->state & FAT_STATE_DIRTY;
++	mutex_init(&sbi->bootsec_lock);
+ 
+ 	/* check that FAT table does not overflow */
+ 	fat_clusters = calc_fat_clusters(sb);
+@@ -1881,7 +1886,9 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
+ 					"the device does not support discard");
+ 	}
+ 
+-	fat_set_state(sb, 1, 0);
++	if (!sb_rdonly(sb))
++		fat_warn_volume_dirty(sb);
++
+ 	return 0;
+ 
+ out_invalid:
+@@ -1897,6 +1904,7 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
+ 	unload_nls(sbi->nls_io);
+ 	unload_nls(sbi->nls_disk);
+ 	fat_reset_iocharset(&sbi->options);
++	brelse(bh);
+ 	sb->s_fs_info = NULL;
+ 	kfree(sbi);
+ 	return error;
+diff --git a/fs/fat/misc.c b/fs/fat/misc.c
+index 18a50a46b57f..497f78484902 100644
+--- a/fs/fat/misc.c
++++ b/fs/fat/misc.c
+@@ -83,6 +83,7 @@ int fat_clusters_flush(struct super_block *sb)
+ 		       le32_to_cpu(fsinfo->signature2),
+ 		       sbi->fsinfo_sector);
+ 	} else {
++		fat_set_state(sb, true);
+ 		if (sbi->free_clusters != -1)
+ 			fsinfo->free_clusters = cpu_to_le32(sbi->free_clusters);
+ 		if (sbi->prev_free != -1)
+diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
+index efba301d68ae..ae84e2114802 100644
+--- a/fs/fat/namei_msdos.c
++++ b/fs/fat/namei_msdos.c
+@@ -509,6 +509,7 @@ static int do_msdos_rename(struct inode *old_dir, unsigned char *old_name,
+ 	}
+ 	inode_inc_iversion(new_dir);
+ 
++	fat_set_state(new_dir->i_sb, true);
+ 	fat_detach(old_inode);
+ 	fat_attach(old_inode, new_i_pos);
+ 	if (is_hid)
+diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
+index 5369d82e0bfb..966f43d48bf5 100644
+--- a/fs/fat/namei_vfat.c
++++ b/fs/fat/namei_vfat.c
+@@ -944,6 +944,7 @@ static int vfat_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
+ 	}
+ 	inode_inc_iversion(new_dir);
+ 
++	fat_set_state(sb, true);
+ 	fat_detach(old_inode);
+ 	fat_attach(old_inode, new_i_pos);
+ 	if (IS_DIRSYNC(new_dir)) {
 -- 
 2.31.1
 
