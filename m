@@ -2,88 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D0C0C36AFCC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 10:37:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB9BC36B1A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 12:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232227AbhDZIhv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Apr 2021 04:37:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26311 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232112AbhDZIhu (ORCPT
+        id S232584AbhDZK1y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Apr 2021 06:27:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49430 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232194AbhDZK1x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Apr 2021 04:37:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619426229;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qbtBcauxw6iV4drutPztIO4FXXpYTboxDuo9XaZQAvw=;
-        b=MovGjUyw3HvI+8G9WXTfJVzDlqO1ZBkgKjxonYevMLrYtt/k2J6knQApYoukDtxUnNYsEv
-        fBSOmx26h6A4D5VqtJqaf6YOdo9CXI47qxmMMKo+qiQkX6C43fj6YFZGri+leiZnAIoQnZ
-        Vp9RapQilk0NcFNgtOZKCWX6sljuSnM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-263-8ox4iTGwPk-t4-JCDAEilA-1; Mon, 26 Apr 2021 04:37:06 -0400
-X-MC-Unique: 8ox4iTGwPk-t4-JCDAEilA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A0358343A8;
-        Mon, 26 Apr 2021 08:37:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-124.rdu2.redhat.com [10.10.112.124])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DA04660BE5;
-        Mon, 26 Apr 2021 08:37:04 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAOg9mSTwNKPdRMwr_F87YCeUyxT775pBd5WcewGpcwSZFVz5=w@mail.gmail.com>
-References: <CAOg9mSTwNKPdRMwr_F87YCeUyxT775pBd5WcewGpcwSZFVz5=w@mail.gmail.com> <20210327035019.GG1719932@casper.infradead.org> <CAOg9mSTQ-zNKXQGBK9QEnwJCvwqh=zFLbLJZy-ibGZwLve4o0w@mail.gmail.com> <20210201130800.GP308988@casper.infradead.org> <CAOg9mSSd5ccoi1keeiRfkV+esekcQLxer9_1iZ-r9bQDjZLfBg@mail.gmail.com> <CAOg9mSSEVE3PGs2E9ya5_B6dQkoH6n2wGAEW_wWSEvw0LurWuQ@mail.gmail.com> <2884397.1616584210@warthog.procyon.org.uk> <CAOg9mSQMDzMfg3C0TUvTWU61zQdjnthXSy01mgY=CpgaDjj=Pw@mail.gmail.com> <1507388.1616833898@warthog.procyon.org.uk> <20210327135659.GH1719932@casper.infradead.org> <CAOg9mSRCdaBfLABFYvikHPe1YH6TkTx2tGU186RDso0S=z-S4A@mail.gmail.com> <20210327155630.GJ1719932@casper.infradead.org> <CAOg9mSSxrPEd4XsWseMOnpMGzDAE5Pm0YHcZE7gBdefpsReRzg@mail.gmail.com> <CAOg9mSSaDsEEQD7cwbsCi9WA=nSAD78wSJV_5Gu=Kc778z57zA@mail.gmail.com> <1720948.1617010659@warthog.procyon.org.uk> <CAOg9mSTEepP-BjV85dOmk6hbhQXYtz2k1y5G1RbN9boN7Mw3wA@mail.gmail.com> <1268214.1618326494@warthog.procyon.org.uk
- > <CAOg9mSSxZUwZ0-OdCfb7gLgETkCJOd-9PCrpqWwzqXffwMSejA@mail.gmail.com> <1612829.1618587694@warthog.procyon.org.uk>
-To:     Mike Marshall <hubcap@omnibond.com>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Mon, 26 Apr 2021 06:27:53 -0400
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89185C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Apr 2021 03:27:12 -0700 (PDT)
+Received: by mail-pg1-x529.google.com with SMTP id s22so18656677pgk.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Apr 2021 03:27:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=fCq7GuwqxWrfP0zG2BPEk4vgQibkYkXRTf/6CONjF7w=;
+        b=DTjN/6J2o556h9+s0z3fLOtkfNzVv9SCgICxXgIPLFX8+AoKgPqACuTq4k1VsONxd3
+         v0O4S1e5BGAGciKXqm+56etmpe5wqBOwGoDadVNYWw0tDJS3uhlsvL0zIl9dxJecAlcl
+         KQx6qZVNw6m1pfJ3XTCiNogW9HWyGDykDW4diOPL5Gf6rikNjmBJoe04ADwnLyEghU+b
+         aoidb7YDzGVE9CVYolLZ5Ky4Keeq5HA8RmUbzL0+Q7+7Z3gjog6SuRbOV9rK8oJQQZO7
+         Op6lzhbYUH5PIT97XQHxWRUHhf3Kb7DAcHL7xqDwlaHBAINiEDWiUXqqgq8PKuspd9XV
+         XCig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fCq7GuwqxWrfP0zG2BPEk4vgQibkYkXRTf/6CONjF7w=;
+        b=SQ3FyrSgo2IztZ+Y0Qeq0U0QrRMARDXD9Rca23DgzfIggaCBtaWYgnIUadid7cKkk/
+         zT1WRcSuqYQGoGBjBzlBPxcmRtBVSI2tyKWSEUI5nKIl44wFbIN7qeqqQT8zqhvPdat7
+         Tpx46ysKf1wOCj1qwQqPnTWnI7T4yO8kN8SGhZzqjQbwiiEeoGb/p4M0eAOaBAgQQ2pN
+         WWtel7ErIE+8SOG1CKgpEp0ToTawkwZjVJ7Gk3dDPXh/Pg3rEO5nDu+ZVgMwgHtY0m19
+         km9bV0Dkwzn+SFdde3FKU/cEMbo3yu0eXqcgmjPgM/H+qWc+ZhRo674zVQjM3zkG4OTC
+         ka7Q==
+X-Gm-Message-State: AOAM531g7iBEkiweihl6XyA8eZj23824veFA7Ygxp9Qz88JBfnZMpT/D
+        uKNBWlUKPIiI6ipS+E95nzqCiQ==
+X-Google-Smtp-Source: ABdhPJyJR0whQZLY4qriE+qC8b4jR9IpHivd9Pv/u7Gb9sW4QiBEtei9pm7ucR/kZZmImf3ROb4hcg==
+X-Received: by 2002:a63:5c19:: with SMTP id q25mr16710460pgb.402.1619432831858;
+        Mon, 26 Apr 2021 03:27:11 -0700 (PDT)
+Received: from google.com ([2401:fa00:9:211:5345:1783:3859:c0bf])
+        by smtp.gmail.com with ESMTPSA id f71sm5219603pfa.91.2021.04.26.03.27.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Apr 2021 03:27:11 -0700 (PDT)
+Date:   Mon, 26 Apr 2021 20:26:53 +1000
+From:   Matthew Bobrowski <repnop@google.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linux API <linux-api@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2] implement orangefs_readahead
+Subject: Re: [PATCH 2/2] fanotify: Add pidfd support to the fanotify API
+Message-ID: <YIaVbWu8up3RY7gf@google.com>
+References: <e6cd967f45381d20d67c9d5a3e49e3cb9808f65b.1618527437.git.repnop@google.com>
+ <20210419132020.ydyb2ly6e3clhe2j@wittgenstein>
+ <20210419135550.GH8706@quack2.suse.cz>
+ <20210419150233.rgozm4cdbasskatk@wittgenstein>
+ <YH4+Swki++PHIwpY@google.com>
+ <20210421080449.GK8706@quack2.suse.cz>
+ <YIIBheuHHCJeY6wJ@google.com>
+ <CAOQ4uxhUcefbu+5pLKfx7b-kOPP2OB+_RRPMPDX1vLk36xkZnQ@mail.gmail.com>
+ <YIJ/JHdaPv2oD+Jd@google.com>
+ <CAOQ4uxhyGKSM3LFKRtgNe+HmkUJRCFwafXdgC_8ysg7Bs43rWg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3591075.1619426224.1@warthog.procyon.org.uk>
-Date:   Mon, 26 Apr 2021 09:37:04 +0100
-Message-ID: <3591076.1619426224@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxhyGKSM3LFKRtgNe+HmkUJRCFwafXdgC_8ysg7Bs43rWg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Mike Marshall <hubcap@omnibond.com> wrote:
-
-> Anywho... I see that you've force pushed a new netfs... I think you
-> have it applied to a linus-tree-of-the-day on top of 5.12-rc4?
-> I have taken these patches from
-> git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git (netfs-lib)
+On Fri, Apr 23, 2021 at 11:14:34AM +0300, Amir Goldstein wrote:
+> On Fri, Apr 23, 2021 at 11:02 AM Matthew Bobrowski <repnop@google.com> wrote:
+> >
+> > On Fri, Apr 23, 2021 at 10:39:46AM +0300, Amir Goldstein wrote:
+> > > On Fri, Apr 23, 2021 at 2:06 AM Matthew Bobrowski <repnop@google.com> wrote:
+> > > >
+> > > > On Wed, Apr 21, 2021 at 10:04:49AM +0200, Jan Kara wrote:
+> > > > > On Tue 20-04-21 12:36:59, Matthew Bobrowski wrote:
+> > > > > > On Mon, Apr 19, 2021 at 05:02:33PM +0200, Christian Brauner wrote:
+> > > > > > > A general question about struct fanotify_event_metadata and its
+> > > > > > > extensibility model:
+> > > > > > > looking through the code it seems that this struct is read via
+> > > > > > > fanotify_rad(). So the user is expected to supply a buffer with at least
+> > > > > > >
+> > > > > > > #define FAN_EVENT_METADATA_LEN (sizeof(struct fanotify_event_metadata))
+> > > > > > >
+> > > > > > > bytes. In addition you can return the info to the user about how many
+> > > > > > > bytes the kernel has written from fanotify_read().
+> > > > > > >
+> > > > > > > So afaict extending fanotify_event_metadata should be _fairly_
+> > > > > > > straightforward, right? It would essentially the complement to
+> > > > > > > copy_struct_from_user() which Aleksa and I added (1 or 2 years ago)
+> > > > > > > which deals with user->kernel and you're dealing with kernel->user:
+> > > > > > > - If the user supplied a buffer smaller than the minimum known struct
+> > > > > > >   size -> reject.
+> > > > > > > - If the user supplied a buffer < smaller than what the current kernel
+> > > > > > >   supports -> copy only what userspace knows about, and return the size
+> > > > > > >   userspace knows about.
+> > > > > > > - If the user supplied a buffer that is larger than what the current
+> > > > > > >   kernel knows about -> copy only what the kernel knows about, zero the
+> > > > > > >   rest, and return the kernel size.
+> > > > > > >
+> > > > > > > Extension should then be fairly straightforward (64bit aligned
+> > > > > > > increments)?
+> > > > > >
+> > > > > > You'd think that it's fairly straightforward, but I have a feeling
+> > > > > > that the whole fanotify_event_metadata extensibility discussion and
+> > > > > > the current limitation to do so revolves around whether it can be
+> > > > > > achieved in a way which can guarantee that no userspace applications
+> > > > > > would break. I think the answer to this is that there's no guarantee
+> > > > > > because of <<reasons>>, so the decision to extend fanotify's feature
+> > > > > > set was done via other means i.e. introduction of additional
+> > > > > > structures.
+> > > > >
+> > > > > There's no real problem extending fanotify_event_metadata. We already have
+> > > > > multiple extended version of that structure in use (see e.g. FAN_REPORT_FID
+> > > > > flag and its effect, extended versions of the structure in
+> > > > > include/uapi/linux/fanotify.h). The key for backward compatibility is to
+> > > > > create extended struct only when explicitely requested by a flag when
+> > > > > creating notification group - and that would be the case here -
+> > > > > FAN_REPORT_PIDFD or how you called it. It is just that extending the
+> > > > > structure means adding 8 bytes to each event and parsing extended structure
+> > > > > is more cumbersome than just fetching s32 from a well known location.
+> > > > >
+> > > > > On the other hand extended structure is self-describing (i.e., you can tell
+> > > > > the meaning of all the fields just from the event you receive) while
+> > > > > reusing 'pid' field means that you have to know how the notification group
+> > > > > was created (whether FAN_REPORT_PIDFD was used or not) to be able to
+> > > > > interpret the contents of the event. Actually I think the self-describing
+> > > > > feature of fanotify event stream is useful (e.g. when application manages
+> > > > > multiple fanotify groups or when fanotify group descriptors are passed
+> > > > > among processes) so now I'm more leaning towards using the extended
+> > > > > structure instead of reusing 'pid' as Christian suggests. I'm sorry for the
+> > > > > confusion.
+> > > >
+> > > > This approach makes sense to me.
+> > > >
+> > > > Jan/Amir, just to be clear, we've agreed to go ahead with the extended
+> > > > struct approach whereby specifying the FAN_REPORT_PIDFD flag will
+> > > > result in an event which includes an additional struct
+> > > > (i.e. fanotify_event_info_pid) alongside the generic existing
+> > >
+> > > struct fanotify_event_info_pidfd?
+> >
+> > Well, yeah? I mean, my line of thought was that we'd also need to
+> > include struct fanotify_event_info_header alongside the event to
+> > provide more meta-information about the additional event you'd expect
+> > to receive when FAN_REPORT_PIDFD is provided, so we'd end up with
+> > something like:
+> >
+> > struct fanotify_event_info_pidfd {
+> >        struct fanotify_event_info_header hdr;
+> >        __s32 pidfd;
+> > }
+> >
+> > Unless this of course is overbaking it and there's no need to do this?
+> >
 > 
-> 0001-iov_iter-Add-ITER_XARRAY.patch
-> 0002-mm-Add-set-end-wait-functions-for-PG_private_2.patch
-> 0003-mm-filemap-Pass-the-file_ra_state-in-the-ractl.patch
-> 0004-fs-Document-file_ra_state.patch
-> 0005-mm-readahead-Handle-ractl-nr_pages-being-modified.patch
-> 0006-mm-Implement-readahead_control-pageset-expansion.patch
-> 0007-netfs-Make-a-netfs-helper-module.patch
-> 0008-netfs-Documentation-for-helper-library.patch
-> 0009-netfs-mm-Move-PG_fscache-helper-funcs-to-linux-netfs.patch
-> 0010-netfs-mm-Add-set-end-wait_on_page_fscache-aliases.patch
-> 0011-netfs-Provide-readahead-and-readpage-netfs-helpers.patch
-> 0012-netfs-Add-tracepoints.patch
-> 0013-netfs-Gather-stats.patch
-> 0014-netfs-Add-write_begin-helper.patch
-> 0015-netfs-Define-an-interface-to-talk-to-a-cache.patch
-> 0016-netfs-Add-a-tracepoint-to-log-failures-that-would-be.patch
-> 0017-fscache-cachefiles-Add-alternate-API-to-use-kiocb-fo.patch
+> We need this. I was just pointing out that you wrote fanotify_event_info_pid
+> must have been a typo.
 
-Can you add this patch also:
+Oh, right, that sure was a typo! :)
 
-https://lore.kernel.org/r/3545034.1619392490@warthog.procyon.org.uk/
-[PATCH] iov_iter: Four fixes for ITER_XARRAY
+Amir, I was just thinking about this a little over the weekend and I
+don't think we discussed how to handle the FAN_REPORT_PIDFD |
+FAN_REPORT_FID and friends case? My immediate thought is to make
+FAN_REPORT_PIDFD mutually exclusive with FAN_REPORT_FID and friends,
+but then again receiving a pidfd along with FID events may be also
+useful for some? What are your thoughts on this? If we don't go ahead
+with mutual exclusion, then this multiple event types alongside struct
+fanotify_event_metadata starts getting a little clunky, don't you
+think?
 
-David
-
+/M
