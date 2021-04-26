@@ -2,133 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE9A736B98F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 21:01:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A95136B997
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 21:02:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239859AbhDZTCS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Apr 2021 15:02:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51732 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239353AbhDZTCQ (ORCPT
+        id S239924AbhDZTDe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Apr 2021 15:03:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51970 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239901AbhDZTDd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Apr 2021 15:02:16 -0400
-Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB945C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Apr 2021 12:01:34 -0700 (PDT)
-Received: by mail-oi1-x229.google.com with SMTP id i26so2099250oii.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Apr 2021 12:01:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y2KbT7PQc2n/dov1wT9gi/ffjoBVZa5sAbsDoX32iVI=;
-        b=HdwapXQD8JIZzQWEQnnFOA6s+24knQad0BSYg8MjUQs+P9VBTSS6igat8tBoMI+FiL
-         WYdGdiS9E5P3BfG7AyRHzqRS6JgumYvrdiSzAAJLCJxK3OiUOl7OTz93wwqflQYbxAN1
-         heWm17MS38rRK1aZ+Rb8iHSZEXrsnXw7z8osNhgXMj7JY2+AiGGdGkYHfqIwemkZXi3C
-         /6M2j2G7GVHdTMLHOvyxinAP3j4AuFry6AsYf4maGpzhmx/Knc/GLtjnGEUtNaIpcF03
-         JfESMsp3w72otzGrCTnYbhgP/Xzr2LDeZAGtH/7VF2ZiGCBP6DO0kKgAhXfx2lMR6w3l
-         9BIA==
+        Mon, 26 Apr 2021 15:03:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619463771;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ouGZBrLLWit6/ZcOCgBmqDAJzjKl2dpVcZkTyeLSBYo=;
+        b=KANKAak/woxpsMagSNye5ofkBdj2nKGC2aIE8VfD7H3deB53hRBG3FUB+WwfNAR71IVD5d
+        7TIp4R0e8zuOy7l5hlKZ8o3xrgH8JCHrSWS2LxnrAvfTozWoCrgPiiQ0kj/9dbhnRYgutT
+        jhzI+TrOdyU8/9U3XG0F5NIePl4i0PM=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-203-IwPttPDlMbWQE0oC9hxHuQ-1; Mon, 26 Apr 2021 15:02:48 -0400
+X-MC-Unique: IwPttPDlMbWQE0oC9hxHuQ-1
+Received: by mail-qt1-f198.google.com with SMTP id h12-20020ac8744c0000b02901ba644d864fso11813974qtr.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Apr 2021 12:02:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y2KbT7PQc2n/dov1wT9gi/ffjoBVZa5sAbsDoX32iVI=;
-        b=RHfTwNJ9owgTHqMkbD6gbt7oPiMGsfFjcRL3e4+Pcut0Lr5MFQXJURvs1FKaMAASmU
-         Z8dfX095UI728nai6syNArQcPzdYFpLM1w9mxgyTWzjgr7R9Qc/+r9FgVbSO6xUq18Ew
-         tmbVpSB97bUWL54ILuALAgMlGJ8o/M9FV7Mrj9RnmNXUcQqVRGvw2/zDQw+MtnoumD+X
-         xBqaps3lxOrh4KWtGYwPWMzKKayczjsH/jPs26gAV10H6jIXWk0F6NfwqUYOsHLow/4U
-         2wrRA4jRDN3MWVQANCfJOUIUp4xObFV5b2V5Wq/E8hzBLGeu4bQTi2NihyBFwvjdgdId
-         N0oA==
-X-Gm-Message-State: AOAM531dcm2udgHv2eYXjGgHHtCZhCYWuehSeik6SjgK9jRXHWLQB2cg
-        EhAVQ66jUcOWYfiUFyrg51IWzxJ1s4orDzxQo6SNmw==
-X-Google-Smtp-Source: ABdhPJyj7SqHPsAIeji8lohEArEDupo5Jd3A9LJSKNP3p08pKaIDp8aSLYv9a1mOcd3iiIMj7HyfKgGk4epqyF7mchw=
-X-Received: by 2002:aca:ea06:: with SMTP id i6mr13179392oih.82.1619463694156;
- Mon, 26 Apr 2021 12:01:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210327035019.GG1719932@casper.infradead.org>
- <CAOg9mSTQ-zNKXQGBK9QEnwJCvwqh=zFLbLJZy-ibGZwLve4o0w@mail.gmail.com>
- <20210201130800.GP308988@casper.infradead.org> <CAOg9mSSd5ccoi1keeiRfkV+esekcQLxer9_1iZ-r9bQDjZLfBg@mail.gmail.com>
- <CAOg9mSSEVE3PGs2E9ya5_B6dQkoH6n2wGAEW_wWSEvw0LurWuQ@mail.gmail.com>
- <2884397.1616584210@warthog.procyon.org.uk> <CAOg9mSQMDzMfg3C0TUvTWU61zQdjnthXSy01mgY=CpgaDjj=Pw@mail.gmail.com>
- <1507388.1616833898@warthog.procyon.org.uk> <20210327135659.GH1719932@casper.infradead.org>
- <CAOg9mSRCdaBfLABFYvikHPe1YH6TkTx2tGU186RDso0S=z-S4A@mail.gmail.com>
- <20210327155630.GJ1719932@casper.infradead.org> <CAOg9mSSxrPEd4XsWseMOnpMGzDAE5Pm0YHcZE7gBdefpsReRzg@mail.gmail.com>
- <CAOg9mSSaDsEEQD7cwbsCi9WA=nSAD78wSJV_5Gu=Kc778z57zA@mail.gmail.com>
- <1720948.1617010659@warthog.procyon.org.uk> <CAOg9mSTEepP-BjV85dOmk6hbhQXYtz2k1y5G1RbN9boN7Mw3wA@mail.gmail.com>
- <CAOg9mSSxZUwZ0-OdCfb7gLgETkCJOd-9PCrpqWwzqXffwMSejA@mail.gmail.com>
- <1612829.1618587694@warthog.procyon.org.uk> <CAOg9mSTwNKPdRMwr_F87YCeUyxT775pBd5WcewGpcwSZFVz5=w@mail.gmail.com>
- <3365453.1619336991@warthog.procyon.org.uk> <CAOg9mSSCFJ2FgQ2TAeaz6CLf010wbsBws6h6ou0NW8SPNBzwSg@mail.gmail.com>
-In-Reply-To: <CAOg9mSSCFJ2FgQ2TAeaz6CLf010wbsBws6h6ou0NW8SPNBzwSg@mail.gmail.com>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Mon, 26 Apr 2021 15:01:23 -0400
-Message-ID: <CAOg9mSTXDHyE5W7-GQt0+u3z=SM7w8=bh=VwR2F8ShO=5kKbuQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] implement orangefs_readahead
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=ouGZBrLLWit6/ZcOCgBmqDAJzjKl2dpVcZkTyeLSBYo=;
+        b=PfUclogvrTdXJZpf9s+Uqoe+ug84kJOKhE6V6XbisyVqPUCnCyprb4dvIgM4grOpwZ
+         3Um2UcrUlxwlpvb1EP0o5Cdhedh1+dHnPOp2c1N6AnKORCDFU90OLofkTDDln2XDwo5j
+         IZuIDxXssakIYLuIL3YT1GOh7wuAqLH/5ZdTuqMebi2fxCfBMvvxCZ/g6Dmafzo+XlKT
+         4zxNsoP4fUy34SE87UF2qXoTUabI7y3h3KpckBkEtHB/wod6JVMe8EQYDqMQRqGEO7R/
+         aUHau66W643c/YHEC3LW/BSy5yaZ74vqKzmIa5MjDtzryX/2KqMAbi8FvQiVxoaxYalN
+         W1NA==
+X-Gm-Message-State: AOAM533DS1k4JhtRyBXjwoAsB9y21UboDU8N8zE226tHTDB3eoJ193fr
+        dPeon0xeprxURe5M+UeRoQtq68siW/Yiir9nRQ6Th3WwoDAJOXFY1XJPv56X4MEC2T75vSNXza0
+        xh7Iw8c1sYHF+nZyCoV0hxg+fAg==
+X-Received: by 2002:a05:6214:12ab:: with SMTP id w11mr2594677qvu.14.1619463768329;
+        Mon, 26 Apr 2021 12:02:48 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwGCsMCqX/N3XGxXqCeA/FOnTSmKwq96TpGbwn+GxMf4WVXk/guJWr0j2oTl477h4kubLqiGw==
+X-Received: by 2002:a05:6214:12ab:: with SMTP id w11mr2594656qvu.14.1619463768135;
+        Mon, 26 Apr 2021 12:02:48 -0700 (PDT)
+Received: from [192.168.1.180] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id c17sm11477744qtd.71.2021.04.26.12.02.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Apr 2021 12:02:47 -0700 (PDT)
+Message-ID: <9e5744b2b647a8ff9cdea6efb58c39adde48f7f0.camel@redhat.com>
+Subject: Re: [PATCH] iov_iter: Four fixes for ITER_XARRAY
+From:   Jeff Layton <jlayton@redhat.com>
 To:     David Howells <dhowells@redhat.com>,
-        Mike Marshall <hubcap@omnibond.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 26 Apr 2021 15:02:46 -0400
+In-Reply-To: <3545034.1619392490@warthog.procyon.org.uk>
+References: <161918448151.3145707.11541538916600921083.stgit@warthog.procyon.org.uk>
+         <161918446704.3145707.14418606303992174310.stgit@warthog.procyon.org.uk>
+         <3545034.1619392490@warthog.procyon.org.uk>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I added the "Four fixes for ITER_XARRAY" patch and got things
-running again.
+On Mon, 2021-04-26 at 00:14 +0100, David Howells wrote:
+> Hi Al,
+> 
+> I think this patch should include all the fixes necessary.  I could merge
+> it in, but I think it might be better to tag it on the end as an additional
+> patch.
+> 
+> David
+> ---
+> iov_iter: Four fixes for ITER_XARRAY
+> 
+> Fix four things[1] in the patch that adds ITER_XARRAY[2]:
+> 
+>  (1) Remove the address_space struct predeclaration.  This is a holdover
+>      from when it was ITER_MAPPING.
+> 
+>  (2) Fix _copy_mc_to_iter() so that the xarray segment updates count and
+>      iov_offset in the iterator before returning.
+> 
+>  (3) Fix iov_iter_alignment() to not loop in the xarray case.  Because the
+>      middle pages are all whole pages, only the end pages need be
+>      considered - and this can be reduced to just looking at the start
+>      position in the xarray and the iteration size.
+> 
+>  (4) Fix iov_iter_advance() to limit the size of the advance to no more
+>      than the remaining iteration size.
+> 
+> Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Link: https://lore.kernel.org/r/YIVrJT8GwLI0Wlgx@zeniv-ca.linux.org.uk [1]
+> Link: https://lore.kernel.org/r/161918448151.3145707.11541538916600921083.stgit@warthog.procyon.org.uk [2]
+> ---
+>  include/linux/uio.h |    1 -
+>  lib/iov_iter.c      |    5 +++++
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/uio.h b/include/linux/uio.h
+> index 5f5ffc45d4aa..d3ec87706d75 100644
+> --- a/include/linux/uio.h
+> +++ b/include/linux/uio.h
+> @@ -10,7 +10,6 @@
+>  #include <uapi/linux/uio.h>
+>  
+> 
+> 
+> 
+>  struct page;
+> -struct address_space;
+>  struct pipe_inode_info;
+>  
+> 
+> 
+> 
+>  struct kvec {
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index 44fa726a8323..61228a6c69f8 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -791,6 +791,8 @@ size_t _copy_mc_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
+>  			curr_addr = (unsigned long) from;
+>  			bytes = curr_addr - s_addr - rem;
+>  			rcu_read_unlock();
+> +			i->iov_offset += bytes;
+> +			i->count -= bytes;
+>  			return bytes;
+>  		}
+>  		})
+> @@ -1147,6 +1149,7 @@ void iov_iter_advance(struct iov_iter *i, size_t size)
+>  		return;
+>  	}
+>  	if (unlikely(iov_iter_is_xarray(i))) {
+> +		size = min(size, i->count);
+>  		i->iov_offset += size;
+>  		i->count -= size;
+>  		return;
+> @@ -1346,6 +1349,8 @@ unsigned long iov_iter_alignment(const struct iov_iter *i)
+>  			return size | i->iov_offset;
+>  		return size;
+>  	}
+> +	if (unlikely(iov_iter_is_xarray(i)))
+> +		return (i->xarray_start + i->iov_offset) | i->count;
+>  	iterate_all_kinds(i, size, v,
+>  		(res |= (unsigned long)v.iov_base | v.iov_len, 0),
+>  		res |= v.bv_offset | v.bv_len,
+> 
 
-I ran the tests I had regressions on by themselves, and I still fail
-generic/075, generic/112, generic/127 and generic/263.
+I did a test run with your v7 pile, this patch, and my ceph fscache
+rework patches and it did fine. You can add:
 
-generic/438 passes now.
+Tested-by: Jeff Layton <jlayton@redhat.com>
 
-I was analyzing what test 075 was doing when it was failing, and I
-found it to be doing this:
-
-/home/hubcap/xfstests-dev/ltp/fsx -d -N 1000 -S 0 -P
-/home/hubcap/xfstests-dev /pvfsmnt/whatever
-
-The above used to fail every time... now it works every time.
-
-Progress :-).
-
-I'm about to launch the whole suite of tests, I'll report back
-on what happens later...
-
--Mike
-
-On Mon, Apr 26, 2021 at 10:53 AM Mike Marshall <hubcap@omnibond.com> wrote:
->
-> >> Is it easy to set up an orangefs client and server?
->
-> I think it is easy to set up a test system on a single VM,
-> but I do it all the time. I souped up the build details in
-> Documentation/filesystems/orangefs.rst not too long
-> ago, I hope it is useful.
->
-> Your VM would need to be a "developer" VM,
-> with all the autotools stuff and such if you build
-> from source. I also worked on the configure stuff
-> so that you would learn about any packages you
-> lack at configure time, I hope that is also still good.
->
-> I read your message about trying again with the
-> "Four fixes for ITER_XARRAY" patch, I'll report
-> on how that goes...
->
-> -Mike
->
-> On Sun, Apr 25, 2021 at 3:49 AM David Howells <dhowells@redhat.com> wrote:
-> >
-> > Mike Marshall <hubcap@omnibond.com> wrote:
-> >
-> > > >> I wonder if you should use iov_length(&iter)
-> > >
-> > > iov_length has two arguments. The first one would maybe be iter.iov and
-> > > the second one would be... ?
-> >
-> > Sorry, I meant iov_iter_count(&iter).
-> >
-> > I'll look at the other things next week.  Is it easy to set up an orangefs
-> > client and server?
-> >
-> > David
-> >
