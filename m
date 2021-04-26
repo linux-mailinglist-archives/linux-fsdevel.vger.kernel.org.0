@@ -2,165 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ADF6D36B6BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 18:24:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2C7E36B734
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 18:48:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234527AbhDZQZO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Apr 2021 12:25:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57172 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234528AbhDZQZN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Apr 2021 12:25:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B6F48ACF6;
-        Mon, 26 Apr 2021 16:24:30 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 08DF71E0CB7; Mon, 26 Apr 2021 18:24:30 +0200 (CEST)
-Date:   Mon, 26 Apr 2021 18:24:29 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dave Chinner <david@fromorbit.com>, Ted Tso <tytso@mit.edu>,
-        Johannes Thumshirn <jth@kernel.org>
-Subject: Re: [PATCH 06/12] zonefs: Convert to using invalidate_lock
-Message-ID: <20210426162429.GC23895@quack2.suse.cz>
-References: <20210423171010.12-1-jack@suse.cz>
- <20210423173018.23133-6-jack@suse.cz>
- <BL0PR04MB651475DE7CA7465849D821D5E7429@BL0PR04MB6514.namprd04.prod.outlook.com>
+        id S234576AbhDZQss (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Apr 2021 12:48:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49918 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234333AbhDZQsr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Apr 2021 12:48:47 -0400
+Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47666C061756
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Apr 2021 09:48:06 -0700 (PDT)
+Received: by mail-il1-x12b.google.com with SMTP id b17so47152675ilh.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Apr 2021 09:48:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=puGzBLwZv++5HHjd7fY19pEjsXMx9goCdL3lunTxYdQ=;
+        b=J3hDuQRym59MuVErqE8iq0UtDP+T7SI07BCrWQ3p4KTcFE2Q29lkGYxa/J88Mu8034
+         YgIZto9R9JjsVvzVbYma7W6GsD5vm7L4lZzmUi94q8y4d5jgVXGVtRr0Uo2itlDt7JrN
+         gWDgQ5bUQwl5tPSCG2L2lY+85ia/nVgHRYK/M5SMoMEPLngjOzRWl4pa09GZk+QDgpBe
+         i8cNUQ/4NVngRynvEnqgGPCaGI0CzNMoF0QTyQT8XJ1sxBEFSFOvuyk/FViLzXEpfH8V
+         NBZpWe9YD+xElbx9cot5VbAuh83JCr3xV9okQpnHN5FLGA0voaSdWnSpqS/gEmBcytIf
+         KstQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=puGzBLwZv++5HHjd7fY19pEjsXMx9goCdL3lunTxYdQ=;
+        b=JlY2sXrhIsa0j4Eil6Vj8k6mlFXZAKNhMct3F8CLaLSl6vNIGRAiICwGvmoEuBVrjk
+         yv1Nf/9oDteQYyMAwkhyzSrlH0KZqZP1Mc6kWpW6OV4WtcwvTYrq33Yymrs6mmEy6KgQ
+         0nlqVRw3i6IseqhHCibVOT10hntYiP0nyPhtCv3k1nAjfk7yKqSNx4uO9e84ystx80M5
+         hz1K3xsWBT9QvCKksw5kugNSm8421GyWeXnLvYeSP8fVFMGHfZyFqEJa5/jku8ob5Nwj
+         V3PQrpUnmKsrhs8+IkWjRk0f8YMM6pXeQ+dQaT20Ld/fofW7kFPWyUA/4wyceWkht5lI
+         A2TA==
+X-Gm-Message-State: AOAM533GHbSLK7mGp8ldiGQKrVrcaTWIbkldM+wtJEH1f8S22rggB0W8
+        jOGkR2T1KYpexHcWvNAPW7Ty6LXlkRYBPg==
+X-Google-Smtp-Source: ABdhPJyz84UTTivuvf7p9WHBWJPdNtTnBqQ9MVSQ0iwDxMl87Xhp7DRqTHJVVCrqyJShe3XjXtWP/Q==
+X-Received: by 2002:a92:d3c4:: with SMTP id c4mr13648591ilh.50.1619455685329;
+        Mon, 26 Apr 2021 09:48:05 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id m8sm182147ilc.13.2021.04.26.09.48.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Apr 2021 09:48:04 -0700 (PDT)
+Subject: Re: switch block layer polling to a bio based model
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20210426134821.2191160-1-hch@lst.de>
+ <2d229167-f56d-583b-569c-166c97ce2e71@kernel.dk>
+ <20210426150638.GA24618@lst.de>
+ <6b7e3ba0-aa09-b86d-8ea1-dc2e78c7529e@kernel.dk>
+ <20210426161503.GA30994@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <3c77394a-c6fc-8f58-302e-8e997adc8620@kernel.dk>
+Date:   Mon, 26 Apr 2021 10:48:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BL0PR04MB651475DE7CA7465849D821D5E7429@BL0PR04MB6514.namprd04.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210426161503.GA30994@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 26-04-21 06:40:27, Damien Le Moal wrote:
-> On 2021/04/24 2:30, Jan Kara wrote:
-> > Use invalidate_lock instead of zonefs' private i_mmap_sem. The intended
-> > purpose is exactly the same. By this conversion we also fix a race
-> > between hole punching and read(2) / readahead(2) paths that can lead to
-> > stale page cache contents.
+On 4/26/21 10:15 AM, Christoph Hellwig wrote:
+> On Mon, Apr 26, 2021 at 09:12:09AM -0600, Jens Axboe wrote:
+>> Here's the series. It's not super clean (yet), but basically allows
+>> users like io_uring to setup a bio cache, and pass that in through
+>> iocb->ki_bi_cache. With that, we can recycle them instead of going
+>> through free+alloc continually. If you look at profiles for high iops,
+>> we're spending more time than desired doing just that.
+>>
+>> https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-bio-cache
 > 
-> zonefs does not support hole punching since the blocks of a file are determined
-> by the device zone configuration and cannot change, ever. So I think you can
-> remove the second sentence above.
+> So where do you spend the cycles?  The do not memset the whole bio
+> optimization is pretty obvious and is someting we should do independent
+> of the allocator.
 
-Sure, thanks for correction. Updated.
+memset is just a small optimization on top. If we look at current
+profiles, the alloc+free looks something ala:
 
-								Honza
++    2.71%  io_uring  [kernel.vmlinux]  [k] bio_alloc_bioset
++    2.03%  io_uring  [kernel.vmlinux]  [k] kmem_cache_alloc
 
-> 
-> > 
-> > CC: Damien Le Moal <damien.lemoal@wdc.com>
-> > CC: Johannes Thumshirn <jth@kernel.org>
-> > CC: <linux-fsdevel@vger.kernel.org>
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> > ---
-> >  fs/zonefs/super.c  | 23 +++++------------------
-> >  fs/zonefs/zonefs.h |  7 +++----
-> >  2 files changed, 8 insertions(+), 22 deletions(-)
-> > 
-> > diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-> > index 049e36c69ed7..60ac5587c880 100644
-> > --- a/fs/zonefs/super.c
-> > +++ b/fs/zonefs/super.c
-> > @@ -462,7 +462,7 @@ static int zonefs_file_truncate(struct inode *inode, loff_t isize)
-> >  	inode_dio_wait(inode);
-> >  
-> >  	/* Serialize against page faults */
-> > -	down_write(&zi->i_mmap_sem);
-> > +	down_write(&inode->i_mapping->invalidate_lock);
-> >  
-> >  	/* Serialize against zonefs_iomap_begin() */
-> >  	mutex_lock(&zi->i_truncate_mutex);
-> > @@ -500,7 +500,7 @@ static int zonefs_file_truncate(struct inode *inode, loff_t isize)
-> >  
-> >  unlock:
-> >  	mutex_unlock(&zi->i_truncate_mutex);
-> > -	up_write(&zi->i_mmap_sem);
-> > +	up_write(&inode->i_mapping->invalidate_lock);
-> >  
-> >  	return ret;
-> >  }
-> > @@ -575,18 +575,6 @@ static int zonefs_file_fsync(struct file *file, loff_t start, loff_t end,
-> >  	return ret;
-> >  }
-> >  
-> > -static vm_fault_t zonefs_filemap_fault(struct vm_fault *vmf)
-> > -{
-> > -	struct zonefs_inode_info *zi = ZONEFS_I(file_inode(vmf->vma->vm_file));
-> > -	vm_fault_t ret;
-> > -
-> > -	down_read(&zi->i_mmap_sem);
-> > -	ret = filemap_fault(vmf);
-> > -	up_read(&zi->i_mmap_sem);
-> > -
-> > -	return ret;
-> > -}
-> > -
-> >  static vm_fault_t zonefs_filemap_page_mkwrite(struct vm_fault *vmf)
-> >  {
-> >  	struct inode *inode = file_inode(vmf->vma->vm_file);
-> > @@ -607,16 +595,16 @@ static vm_fault_t zonefs_filemap_page_mkwrite(struct vm_fault *vmf)
-> >  	file_update_time(vmf->vma->vm_file);
-> >  
-> >  	/* Serialize against truncates */
-> > -	down_read(&zi->i_mmap_sem);
-> > +	down_read(&inode->i_mapping->invalidate_lock);
-> >  	ret = iomap_page_mkwrite(vmf, &zonefs_iomap_ops);
-> > -	up_read(&zi->i_mmap_sem);
-> > +	up_read(&inode->i_mapping->invalidate_lock);
-> >  
-> >  	sb_end_pagefault(inode->i_sb);
-> >  	return ret;
-> >  }
-> >  
-> >  static const struct vm_operations_struct zonefs_file_vm_ops = {
-> > -	.fault		= zonefs_filemap_fault,
-> > +	.fault		= filemap_fault,
-> >  	.map_pages	= filemap_map_pages,
-> >  	.page_mkwrite	= zonefs_filemap_page_mkwrite,
-> >  };
-> > @@ -1158,7 +1146,6 @@ static struct inode *zonefs_alloc_inode(struct super_block *sb)
-> >  
-> >  	inode_init_once(&zi->i_vnode);
-> >  	mutex_init(&zi->i_truncate_mutex);
-> > -	init_rwsem(&zi->i_mmap_sem);
-> >  	zi->i_wr_refcnt = 0;
-> >  
-> >  	return &zi->i_vnode;
-> > diff --git a/fs/zonefs/zonefs.h b/fs/zonefs/zonefs.h
-> > index 51141907097c..7b147907c328 100644
-> > --- a/fs/zonefs/zonefs.h
-> > +++ b/fs/zonefs/zonefs.h
-> > @@ -70,12 +70,11 @@ struct zonefs_inode_info {
-> >  	 * and changes to the inode private data, and in particular changes to
-> >  	 * a sequential file size on completion of direct IO writes.
-> >  	 * Serialization of mmap read IOs with truncate and syscall IO
-> > -	 * operations is done with i_mmap_sem in addition to i_truncate_mutex.
-> > -	 * Only zonefs_seq_file_truncate() takes both lock (i_mmap_sem first,
-> > -	 * i_truncate_mutex second).
-> > +	 * operations is done with invalidate_lock in addition to
-> > +	 * i_truncate_mutex.  Only zonefs_seq_file_truncate() takes both lock
-> > +	 * (invalidate_lock first, i_truncate_mutex second).
-> >  	 */
-> >  	struct mutex		i_truncate_mutex;
-> > -	struct rw_semaphore	i_mmap_sem;
-> >  
-> >  	/* guarded by i_truncate_mutex */
-> >  	unsigned int		i_wr_refcnt;
-> > 
-> 
-> 
-> -- 
-> Damien Le Moal
-> Western Digital Research
+and
+
++    2.82%  io_uring  [kernel.vmlinux]  [k] __slab_free
++    1.73%  io_uring  [kernel.vmlinux]  [k] kmem_cache_free
+     0.36%  io_uring  [kernel.vmlinux]  [k] mempool_free_slab
+     0.27%  io_uring  [kernel.vmlinux]  [k] mempool_free
+
+Which is a substantial amount of cycles that is needed just to
+repeatedly use the same set of bios for doing IO. Using the caching
+patchset, all of the above are completely eliminated, and the only thing
+we dynamically allocate is a request which is a lot cheaper (ends up
+being 1-2% for either kernel).
+
+> The other thing that sucks is the mempool implementation, as it forces
+> each allocation and free to do an indirect call.  I think it might be
+> worth to try to frontend it with a normal slab cache and only fall back
+> to the mempool if that fails.
+
+Also minor I believe, but yes it'll eat cycles too. FWIW, the testing
+above is done without RETPOLINE.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jens Axboe
+
