@@ -2,96 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A44336B220
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 13:11:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CED1436B243
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 13:18:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233112AbhDZLMY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Apr 2021 07:12:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59226 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233170AbhDZLMX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Apr 2021 07:12:23 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72B91C061574;
-        Mon, 26 Apr 2021 04:11:42 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id a11so3163197ioo.0;
-        Mon, 26 Apr 2021 04:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VZ8PC4Mr9yYwubc3N66DSmRD6uN3k59USQz1/JxLvJQ=;
-        b=m34u1+3JOHz135RUMFft6PKY6swpc//9UzoVUnb513jDmNawXNWQF0KaoZSb4eMZZp
-         fQwPbkag1KKupKuPfwfUYKNUK0EuzTfJc/jXOypg/q7draPJqFw0ekjoOmLVaQEqY+JB
-         GZOiypF41j84YWimXBwEj6OzVxNVt+wbJenikrYBm+9/DMefqCOY6QE4ND2Ujy6yp3Fh
-         YUWe7oL6BtryW18JmjAhjy6acDreReMqcmFGVG6V6a+Ku5NnsuzP8eZ/Z8uTCzmPVrfU
-         9/tpURI5yCikXO6aCvyx6jG8XTb8CRJ4hquLuoB6sGEWU/55W9x4SPPQdzQgTm7Hb1S3
-         DapA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VZ8PC4Mr9yYwubc3N66DSmRD6uN3k59USQz1/JxLvJQ=;
-        b=JBXsJRCU2kXNtAJYpBJ+6uHVyhjfVqEO7eYVZu9h5sLwPY4KuzAWc97ZoSGzTm5DEz
-         tqRMRxSkerCf3VgdbEdzRpGsOOirFazJ3WL8rnceWHok8HYZksII5EB7zMn3E4Te5zqf
-         BMPL5MdEbrwQ1j0xOuHYLhfQRaf6pnAh3k8iadK3Z0njTbEnnzHhBtK+yWmD8dOoW7Py
-         cV6DMj2IVNenT/SWuxV/lvwK56pb/FR+9RdXE+cfqyZNXoyUhewlpkklbSh7bV4nRL+l
-         7mRHB+7rgzEqqLpw5BmESYdW3F499LhkS8LdaGQQgxRxtlwliOxAv5qzLCyn7kWZDXye
-         u3Kw==
-X-Gm-Message-State: AOAM533GZzrf509MMrl+SI2+hiaazvXmh2SjUcFJUGFV4KdCBSRt3SjB
-        8naFVQPmV6sAn201RwxBW7EeYud8tKjSBqVRT4vyX3mcpBY=
-X-Google-Smtp-Source: ABdhPJwhhPccCc/bondZD05boWE68T4viBmeLegREpNZh7G/jsMkj0F1uxFzj4/5ypUq5EP2xFjO066/xYAc98XD+e4=
-X-Received: by 2002:a6b:f00f:: with SMTP id w15mr13567372ioc.72.1619435501875;
- Mon, 26 Apr 2021 04:11:41 -0700 (PDT)
+        id S232695AbhDZLTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Apr 2021 07:19:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49424 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232185AbhDZLTb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Apr 2021 07:19:31 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7E33761131;
+        Mon, 26 Apr 2021 11:18:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619435930;
+        bh=qs4Z74BgQgrjtyJP9H3ollB6/E8cZAm8W1oEEykMr98=;
+        h=Subject:From:To:Cc:Date:From;
+        b=WGTD/0MVt+VXgO2Bz0OiqQ5/YzzNOF+/TvbowX9/hwHIYtaJYwfXdx1B3L4w2DuWh
+         9GzSdWOrZZrY8qwdSABGdKQeqDWQK8ujF2i0Vn3peFBKnrbKyB0MvI3P4bj0gO3sJF
+         9YutoArQH5HFNmKV2xT30RmfWuaG8WbKnM17+WZKmRIfuNeNmWDwr0xGJj7cx+w4Pr
+         O1EDRzrjNPgf7NsXRx1OOPyUkY/nvMkkAToQE3Fuf72KQuCFWSxPOUeK940vvzFQ79
+         0nuGHhQ0Q6d3pB0it2ZEwjeTnlM/PXXERA5bDp807p01PqCulV53MuCtO8oeoqx4m1
+         pb5bEpXtG7S1Q==
+Message-ID: <2623d52cefb71fab85fbfbd0315ac48ac89e00ee.camel@kernel.org>
+Subject: [GIT PULL] file locking fixes for v5.13
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Tian Tao <tiantao6@hisilicon.com>,
+        Luo Longjun <luolongjun@huawei.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Bruce Fields <bfields@fieldses.org>
+Date:   Mon, 26 Apr 2021 07:18:48 -0400
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
 MIME-Version: 1.0
-References: <e6cd967f45381d20d67c9d5a3e49e3cb9808f65b.1618527437.git.repnop@google.com>
- <20210419132020.ydyb2ly6e3clhe2j@wittgenstein> <20210419135550.GH8706@quack2.suse.cz>
- <20210419150233.rgozm4cdbasskatk@wittgenstein> <YH4+Swki++PHIwpY@google.com>
- <20210421080449.GK8706@quack2.suse.cz> <YIIBheuHHCJeY6wJ@google.com>
- <CAOQ4uxhUcefbu+5pLKfx7b-kOPP2OB+_RRPMPDX1vLk36xkZnQ@mail.gmail.com>
- <YIJ/JHdaPv2oD+Jd@google.com> <CAOQ4uxhyGKSM3LFKRtgNe+HmkUJRCFwafXdgC_8ysg7Bs43rWg@mail.gmail.com>
- <YIaVbWu8up3RY7gf@google.com>
-In-Reply-To: <YIaVbWu8up3RY7gf@google.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 26 Apr 2021 14:11:30 +0300
-Message-ID: <CAOQ4uxhp3khQ9Ln2g9s5WLEsb-Cv2vdsZTuYUgQx-DW6GR1RmQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fanotify: Add pidfd support to the fanotify API
-To:     Matthew Bobrowski <repnop@google.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Amir, I was just thinking about this a little over the weekend and I
-> don't think we discussed how to handle the FAN_REPORT_PIDFD |
-> FAN_REPORT_FID and friends case? My immediate thought is to make
-> FAN_REPORT_PIDFD mutually exclusive with FAN_REPORT_FID and friends,
-> but then again receiving a pidfd along with FID events may be also
-> useful for some? What are your thoughts on this? If we don't go ahead
-> with mutual exclusion, then this multiple event types alongside struct
-> fanotify_event_metadata starts getting a little clunky, don't you
-> think?
->
+The following changes since commit a38fd8748464831584a19438cbb3082b5a2dab15:
 
-The current format of an fanotify event already supports multiple info records:
+  Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
 
-[fanotify_event_metadata]
-[[fanotify_event_info_header][event record #1]]
-[[fanotify_event_info_header][event record #2]]...
+are available in the Git repository at:
 
-(meta)->event_len is the total event length including all info records.
+  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git tags/locks-v5.13
 
-For example, FAN_REPORT_FID | FAN_REPORT_DFID_MAME produces
-(for some events) two info records, one FAN_EVENT_INFO_TYPE_FID
-record and one FAN_EVENT_INFO_TYPE_DFID_NAME record.
+for you to fetch changes up to cbe6fc4e01421c890d74422cdd04c6b1c8f62dda:
 
-So I see no problem with combination of FAN_REPORT_FID
-and FAN_REPORT_PIDFD.
+  fs/locks: remove useless assignment in fcntl_getlk (2021-04-13 07:26:38 -0400)
 
-Thanks,
-Amir.
+----------------------------------------------------------------
+When we reworked the blocked locks into a tree structure instead of a
+flat list a few releases ago, we lost the ability to see all of the file
+locks in /proc/locks. Luo's patch fixes it to dump out all of the
+blocked locks instead, which restores the full output.
+
+This changes the format of /proc/locks as the blocked locks are shown at
+multiple levels of indentation now, but lslocks (the only common program
+I've ID'ed that scrapes this info) seems to be OK with that.
+
+Tian also contributed a small patch to remove a useless assignment.
+----------------------------------------------------------------
+Luo Longjun (1):
+      fs/locks: print full locks information
+
+Tian Tao (1):
+      fs/locks: remove useless assignment in fcntl_getlk
+
+ fs/locks.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 56 insertions(+), 10 deletions(-)
+
+Thanks!
+-- 
+Jeff Layton <jlayton@kernel.org>
+
