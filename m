@@ -2,110 +2,370 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BFE4136B581
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 17:12:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B135636B5C2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 17:27:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233963AbhDZPMx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Apr 2021 11:12:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56344 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234059AbhDZPMx (ORCPT
+        id S233971AbhDZP2Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Apr 2021 11:28:16 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:58095 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233674AbhDZP2Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Apr 2021 11:12:53 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37A39C061756
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Apr 2021 08:12:11 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id p15so11146329iln.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Apr 2021 08:12:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=swd2ytxCTbLtBkqxY4O+lU4BzwGRhipWxkgb2JYbQEw=;
-        b=Lw76PaXLz7pySCFqUgmvUQmLWlrEJ2bC2MpTbYOs7d24zAXTVdSgZY9/LFZDs8n6yZ
-         3/fgV/nIm8dpjPnqIrnULy7L5fsKDARfk1p1RvvTWhhhz8eP/8VshbORBTNHOOm6CSNW
-         jg8y+R8dfQhbABFiSCz69An7f+G7DO6cQXKJKPowG15E4yQrKmBlxgU4/YdZnST9J1wc
-         TBtbuqgOTF7VojGRcpFRO7c+Saze9FLao0C6lMJ6xrkwUjUADnmm0Xm0OzwjAGxt14Pw
-         3XxBwUc9Ut4srDcn8ESgU0ixETEcHgse30u/Xf1GVviCIFccwVy5Uo4gZmA/cSuf9JCw
-         0Enw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=swd2ytxCTbLtBkqxY4O+lU4BzwGRhipWxkgb2JYbQEw=;
-        b=blDxmhswouxb5WbF34nLynUPHnp8lNudqsAc88A3mn7QrFz/mreE+mXEZFluircfCz
-         +lka9OFsKPec6iEkhmJmYr1wzB7gySoGUIvCjwuEMfzUOkc9NjldLuB5gFcJbKxsvece
-         D4fQvLJuT+Qof7TY0wq0xUDgQ08NZkVq7GZPwtWGa1Ji/ufaC97O8SehdxkaXQYbb195
-         8X1qwBXmsK6LtvYObuae3SqbFzC/V810HTjdfsHZgrqG8y1LjnkiNz+XrWFrfLgvNjTb
-         JTu3xfVxGihQG/WBrxp2E7M2d/xKtZw3YbvrN3jvJvi1j48G357dDgmEf1hq4R5ezwCj
-         JOvQ==
-X-Gm-Message-State: AOAM530vJp4af4fcP8gduMb9PfZ12fekkWSCz/CzF8/s00ruMiP0UXO/
-        FJZyPP3fMXujlCl0cLj3LQTOo/xxGgfOFw==
-X-Google-Smtp-Source: ABdhPJxj7xl/uWhQqF7nbW7Df2KHSJ6/UD7qMkHtZkW298KohHJ7Xyk3rKhIyJ0rbnNvCGJzFknKOQ==
-X-Received: by 2002:a92:d58a:: with SMTP id a10mr13936856iln.170.1619449930352;
-        Mon, 26 Apr 2021 08:12:10 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id h8sm83963ils.35.2021.04.26.08.12.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Apr 2021 08:12:09 -0700 (PDT)
-Subject: Re: switch block layer polling to a bio based model
+        Mon, 26 Apr 2021 11:28:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619450854;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=oYm6s7pNYd6O8onb5kD82cZdiZxfOGydPD7lvHhTzpY=;
+        b=TX8Vdx3Vz4La1b/dVCBxYzyNNMGphE08Fm4bCdkmhbX2HEnioILX1pL8doMaNN0yh3rwLp
+        wLl//suMWLDmczLBeBX6YNrSYPfSL1Hhj+3HhMyJKg7GROneSkosawArG9og2JsqGbTKXO
+        lPz10rZInXGA0Su4ZFZANixcyL2MfIg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-392-ZYv6uZpdNPGR1bAuH4txUQ-1; Mon, 26 Apr 2021 11:27:30 -0400
+X-MC-Unique: ZYv6uZpdNPGR1bAuH4txUQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 744216D4F9;
+        Mon, 26 Apr 2021 15:27:29 +0000 (UTC)
+Received: from T590 (ovpn-12-94.pek2.redhat.com [10.72.12.94])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 42E28687DA;
+        Mon, 26 Apr 2021 15:27:21 +0000 (UTC)
+Date:   Mon, 26 Apr 2021 23:27:28 +0800
+From:   Ming Lei <ming.lei@redhat.com>
 To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Ming Lei <ming.lei@redhat.com>,
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
         Damien Le Moal <Damien.LeMoal@wdc.com>,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 12/12] block: switch polling to be bio based
+Message-ID: <YIbb4BFg/j36HlgD@T590>
 References: <20210426134821.2191160-1-hch@lst.de>
- <2d229167-f56d-583b-569c-166c97ce2e71@kernel.dk>
- <20210426150638.GA24618@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6b7e3ba0-aa09-b86d-8ea1-dc2e78c7529e@kernel.dk>
-Date:   Mon, 26 Apr 2021 09:12:09 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <20210426134821.2191160-13-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20210426150638.GA24618@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210426134821.2191160-13-hch@lst.de>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/26/21 9:06 AM, Christoph Hellwig wrote:
-> On Mon, Apr 26, 2021 at 08:57:31AM -0600, Jens Axboe wrote:
->> I was separately curious about this as I have a (as of yet unposted)
->> patchset that recycles bio allocations, as we spend quite a bit of time
->> doing that for high rate polled IO. It's good for taking the above 2.97M
->> IOPS to 3.2-3.3M IOPS, and it'd obviously be a bit more problematic with
->> required RCU freeing of bio's. Even without the alloc cache, using RCU
->> will ruin any potential cache locality on back-to-back bio free + bio
->> alloc.
+On Mon, Apr 26, 2021 at 03:48:21PM +0200, Christoph Hellwig wrote:
+> Replace the blk_poll interface that requires the caller to keep a queue
+> and cookie from the submissions with polling based on the bio.
 > 
-> That sucks indeed.  How do you recycle the bios?  If we make sure the
+> Polling for the bio itself leads to a few advantages:
+> 
+>  - the cookie construction can made entirely private in blk-mq.c
+>  - the caller does not need to remember the request_queue and cookie
+>    separately and thus sidesteps their lifetime issues
+>  - keeping the device and the cookie inside the bio allows to trivially
+>    support polling BIOs remapping by stacking drivers
+>  - a lot of code to propagate the cookie back up the submission path can
+>    be removed entirely.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/m68k/emu/nfblock.c             |   3 +-
+>  arch/xtensa/platforms/iss/simdisk.c |   3 +-
+>  block/bio.c                         |   1 +
+>  block/blk-core.c                    | 103 +++++++++++++++++++---------
+>  block/blk-mq.c                      |  75 +++++++-------------
+>  block/blk-mq.h                      |   2 +
+>  drivers/block/brd.c                 |  12 ++--
+>  drivers/block/drbd/drbd_int.h       |   2 +-
+>  drivers/block/drbd/drbd_req.c       |   3 +-
+>  drivers/block/n64cart.c             |  12 ++--
+>  drivers/block/null_blk/main.c       |   3 +-
+>  drivers/block/pktcdvd.c             |   7 +-
+>  drivers/block/ps3vram.c             |   6 +-
+>  drivers/block/rsxx/dev.c            |   7 +-
+>  drivers/block/umem.c                |   4 +-
+>  drivers/block/zram/zram_drv.c       |  10 +--
+>  drivers/lightnvm/pblk-init.c        |   6 +-
+>  drivers/md/bcache/request.c         |  13 ++--
+>  drivers/md/bcache/request.h         |   4 +-
+>  drivers/md/dm.c                     |  28 +++-----
+>  drivers/md/md.c                     |  10 ++-
+>  drivers/nvdimm/blk.c                |   5 +-
+>  drivers/nvdimm/btt.c                |   5 +-
+>  drivers/nvdimm/pmem.c               |   3 +-
+>  drivers/nvme/host/core.c            |   2 +-
+>  drivers/nvme/host/multipath.c       |   6 +-
+>  drivers/nvme/host/nvme.h            |   2 +-
+>  drivers/s390/block/dcssblk.c        |   7 +-
+>  drivers/s390/block/xpram.c          |   5 +-
+>  fs/block_dev.c                      |  25 +++----
+>  fs/btrfs/inode.c                    |   8 +--
+>  fs/ext4/file.c                      |   2 +-
+>  fs/gfs2/file.c                      |   4 +-
+>  fs/iomap/direct-io.c                |  39 ++++-------
+>  fs/xfs/xfs_file.c                   |   2 +-
+>  fs/zonefs/super.c                   |   2 +-
+>  include/linux/bio.h                 |   2 +-
+>  include/linux/blk-mq.h              |  15 +---
+>  include/linux/blk_types.h           |  12 ++--
+>  include/linux/blkdev.h              |   8 ++-
+>  include/linux/fs.h                  |   6 +-
+>  include/linux/iomap.h               |   3 +-
+>  mm/page_io.c                        |   8 +--
+>  43 files changed, 208 insertions(+), 277 deletions(-)
+> 
+> diff --git a/arch/m68k/emu/nfblock.c b/arch/m68k/emu/nfblock.c
+> index ba808543161a..dd36808f0d5e 100644
+> --- a/arch/m68k/emu/nfblock.c
+> +++ b/arch/m68k/emu/nfblock.c
+> @@ -59,7 +59,7 @@ struct nfhd_device {
+>  	struct gendisk *disk;
+>  };
+>  
+> -static blk_qc_t nfhd_submit_bio(struct bio *bio)
+> +static void nfhd_submit_bio(struct bio *bio)
+>  {
+>  	struct nfhd_device *dev = bio->bi_bdev->bd_disk->private_data;
+>  	struct bio_vec bvec;
+> @@ -77,7 +77,6 @@ static blk_qc_t nfhd_submit_bio(struct bio *bio)
+>  		sec += len;
+>  	}
+>  	bio_endio(bio);
+> -	return BLK_QC_T_NONE;
+>  }
+>  
+>  static int nfhd_getgeo(struct block_device *bdev, struct hd_geometry *geo)
+> diff --git a/arch/xtensa/platforms/iss/simdisk.c b/arch/xtensa/platforms/iss/simdisk.c
+> index fc09be7b1347..182825d639e2 100644
+> --- a/arch/xtensa/platforms/iss/simdisk.c
+> +++ b/arch/xtensa/platforms/iss/simdisk.c
+> @@ -101,7 +101,7 @@ static void simdisk_transfer(struct simdisk *dev, unsigned long sector,
+>  	spin_unlock(&dev->lock);
+>  }
+>  
+> -static blk_qc_t simdisk_submit_bio(struct bio *bio)
+> +static void simdisk_submit_bio(struct bio *bio)
+>  {
+>  	struct simdisk *dev = bio->bi_bdev->bd_disk->private_data;
+>  	struct bio_vec bvec;
+> @@ -119,7 +119,6 @@ static blk_qc_t simdisk_submit_bio(struct bio *bio)
+>  	}
+>  
+>  	bio_endio(bio);
+> -	return BLK_QC_T_NONE;
+>  }
+>  
+>  static int simdisk_open(struct block_device *bdev, fmode_t mode)
+> diff --git a/block/bio.c b/block/bio.c
+> index 7296abe293de..484b6d786857 100644
+> --- a/block/bio.c
+> +++ b/block/bio.c
+> @@ -259,6 +259,7 @@ void bio_init(struct bio *bio, struct bio_vec *table,
+>  	memset(bio, 0, sizeof(*bio));
+>  	atomic_set(&bio->__bi_remaining, 1);
+>  	atomic_set(&bio->__bi_cnt, 1);
+> +	bio->bi_cookie = BLK_QC_T_NONE;
+>  
+>  	bio->bi_io_vec = table;
+>  	bio->bi_max_vecs = max_vecs;
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index adfab5976be0..77fdb00fcad3 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -910,18 +910,18 @@ static noinline_for_stack bool submit_bio_checks(struct bio *bio)
+>  	return false;
+>  }
+>  
+> -static blk_qc_t __submit_bio(struct bio *bio)
+> +static void __submit_bio(struct bio *bio)
+>  {
+>  	struct gendisk *disk = bio->bi_bdev->bd_disk;
+> -	blk_qc_t ret = BLK_QC_T_NONE;
+>  
+>  	if (blk_crypto_bio_prep(&bio)) {
+> -		if (!disk->fops->submit_bio)
+> -			return blk_mq_submit_bio(bio);
+> -		ret = disk->fops->submit_bio(bio);
+> +		if (!disk->fops->submit_bio) {
+> +			blk_mq_submit_bio(bio);
+> +			return;
+> +		}
+> +		disk->fops->submit_bio(bio);
+>  	}
+>  	blk_queue_exit(disk->queue);
+> -	return ret;
+>  }
+>  
+>  /*
+> @@ -943,10 +943,9 @@ static blk_qc_t __submit_bio(struct bio *bio)
+>   * bio_list_on_stack[1] contains bios that were submitted before the current
+>   *	->submit_bio_bio, but that haven't been processed yet.
+>   */
+> -static blk_qc_t __submit_bio_noacct(struct bio *bio)
+> +static void __submit_bio_noacct(struct bio *bio)
+>  {
+>  	struct bio_list bio_list_on_stack[2];
+> -	blk_qc_t ret = BLK_QC_T_NONE;
+>  
+>  	BUG_ON(bio->bi_next);
+>  
+> @@ -966,7 +965,7 @@ static blk_qc_t __submit_bio_noacct(struct bio *bio)
+>  		bio_list_on_stack[1] = bio_list_on_stack[0];
+>  		bio_list_init(&bio_list_on_stack[0]);
+>  
+> -		ret = __submit_bio(bio);
+> +		__submit_bio(bio);
+>  
+>  		/*
+>  		 * Sort new bios into those for a lower level and those for the
+> @@ -989,13 +988,11 @@ static blk_qc_t __submit_bio_noacct(struct bio *bio)
+>  	} while ((bio = bio_list_pop(&bio_list_on_stack[0])));
+>  
+>  	current->bio_list = NULL;
+> -	return ret;
+>  }
+>  
+> -static blk_qc_t __submit_bio_noacct_mq(struct bio *bio)
+> +static void __submit_bio_noacct_mq(struct bio *bio)
+>  {
+>  	struct bio_list bio_list[2] = { };
+> -	blk_qc_t ret = BLK_QC_T_NONE;
+>  
+>  	current->bio_list = bio_list;
+>  
+> @@ -1007,15 +1004,13 @@ static blk_qc_t __submit_bio_noacct_mq(struct bio *bio)
+>  
+>  		if (!blk_crypto_bio_prep(&bio)) {
+>  			blk_queue_exit(disk->queue);
+> -			ret = BLK_QC_T_NONE;
+>  			continue;
+>  		}
+>  
+> -		ret = blk_mq_submit_bio(bio);
+> +		blk_mq_submit_bio(bio);
+>  	} while ((bio = bio_list_pop(&bio_list[0])));
+>  
+>  	current->bio_list = NULL;
+> -	return ret;
+>  }
+>  
+>  /**
+> @@ -1027,10 +1022,10 @@ static blk_qc_t __submit_bio_noacct_mq(struct bio *bio)
+>   * systems and other upper level users of the block layer should use
+>   * submit_bio() instead.
+>   */
+> -blk_qc_t submit_bio_noacct(struct bio *bio)
+> +void submit_bio_noacct(struct bio *bio)
+>  {
+>  	if (!submit_bio_checks(bio))
+> -		return BLK_QC_T_NONE;
+> +		return;
+>  
+>  	/*
+>  	 * We only want one ->submit_bio to be active at a time, else stack
+> @@ -1038,14 +1033,12 @@ blk_qc_t submit_bio_noacct(struct bio *bio)
+>  	 * to collect a list of requests submited by a ->submit_bio method while
+>  	 * it is active, and then process them after it returned.
+>  	 */
+> -	if (current->bio_list) {
+> +	if (current->bio_list)
+>  		bio_list_add(&current->bio_list[0], bio);
+> -		return BLK_QC_T_NONE;
+> -	}
+> -
+> -	if (!bio->bi_bdev->bd_disk->fops->submit_bio)
+> -		return __submit_bio_noacct_mq(bio);
+> -	return __submit_bio_noacct(bio);
+> +	else if (!bio->bi_bdev->bd_disk->fops->submit_bio)
+> +		__submit_bio_noacct_mq(bio);
+> +	else
+> +		__submit_bio_noacct(bio);
+>  }
+>  EXPORT_SYMBOL(submit_bio_noacct);
+>  
+> @@ -1062,10 +1055,10 @@ EXPORT_SYMBOL(submit_bio_noacct);
+>   * in @bio.  The bio must NOT be touched by thecaller until ->bi_end_io() has
+>   * been called.
+>   */
+> -blk_qc_t submit_bio(struct bio *bio)
+> +void submit_bio(struct bio *bio)
+>  {
+>  	if (blkcg_punt_bio_submit(bio))
+> -		return BLK_QC_T_NONE;
+> +		return;
+>  
+>  	/*
+>  	 * If it's a regular read/write or a barrier with data attached,
+> @@ -1106,19 +1099,67 @@ blk_qc_t submit_bio(struct bio *bio)
+>  	if (unlikely(bio_op(bio) == REQ_OP_READ &&
+>  	    bio_flagged(bio, BIO_WORKINGSET))) {
+>  		unsigned long pflags;
+> -		blk_qc_t ret;
+>  
+>  		psi_memstall_enter(&pflags);
+> -		ret = submit_bio_noacct(bio);
+> +		submit_bio_noacct(bio);
+>  		psi_memstall_leave(&pflags);
+> -
+> -		return ret;
+> +		return;
+>  	}
+>  
+> -	return submit_bio_noacct(bio);
+> +	submit_bio_noacct(bio);
+>  }
+>  EXPORT_SYMBOL(submit_bio);
+>  
+> +/**
+> + * bio_poll - poll for BIO completions
+> + * @bio: bio to poll for
+> + *
+> + * Poll for completions on queue associated with the bio. Returns number of
+> + * completed entries found. If @spin is true, then bio_poll will continue
+> + * looping until at least one completion is found, unless the task is
+> + * otherwise marked running (or we need to reschedule).
+> + *
+> + * Note: the caller must either be the context that submitted @bio, or
+> + * be in a RCU critical section to prevent freeing of @bio.
+> + */
+> +int bio_poll(struct bio *bio, bool spin)
+> +{
+> +	struct request_queue *q = bio->bi_bdev->bd_disk->queue;
+> +	blk_qc_t cookie = READ_ONCE(bio->bi_cookie);
+> +
+> +	if (cookie == BLK_QC_T_NONE ||
+> +	    !test_bit(QUEUE_FLAG_POLL, &q->queue_flags))
+> +		return 0;
+> +
+> +	if (current->plug)
+> +		blk_flush_plug_list(current->plug, false);
+> +
+> +	/* not yet implemented, so this should not happen */
+> +	if (WARN_ON_ONCE(!queue_is_mq(q)))
+> +		return 0;
+> +	return blk_mq_poll(q, cookie, spin);
+> +}
+> +EXPORT_SYMBOL_GPL(bio_poll);
+> +
+> +/*
+> + * Helper to implements file_operations.iopoll.  Requires the bio to be stored
+> + * in iocb->private, and cleared before freeing the bio.
+> + */
+> +int iocb_bio_iopoll(struct kiocb *kiocb, bool spin)
+> +{
+> +	struct bio *bio;
+> +	int ret = 0;
+> +
+> +	rcu_read_lock();
+> +	bio = READ_ONCE(kiocb->private);
+> +	if (bio)
+> +		ret = bio_poll(bio, spin);
+> +	rcu_read_unlock();
 
-Here's the series. It's not super clean (yet), but basically allows
-users like io_uring to setup a bio cache, and pass that in through
-iocb->ki_bi_cache. With that, we can recycle them instead of going
-through free+alloc continually. If you look at profiles for high iops,
-we're spending more time than desired doing just that.
+If bio_poll() sleeps in case of 'spin', rcu_read_lock() can't be used.
+And the POLLED bio may be ended by iocb_bio_iopoll() explicitly via
+one bio flag.
 
-https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-bio-cache
-
-> bio is only ever recycled as a bio and bi_bdev remaings valid long
-> enough we might not need the rcu free.  Even without your recycling
-> we could probably do something nasty using SLAB_TYPESAFE_BY_RCU.
-
-It would not be hard to restrict to same bdev for the cache, just one
-more check to do for recycling.
-
-Note that the caching series _only_ supports polled IO for now, as
-non-polled would require IRQ juggling for free+alloc and that will
-definitely take some of the win away and maybe even render it moot.
-Have yet to test that part out. Not a huge deal with the RCU free, as
-you end up doing that purely for polled IO and hence wouldn't impact the
-IRQ side of things negatively.
-
--- 
-Jens Axboe
+Thanks,
+Ming
 
