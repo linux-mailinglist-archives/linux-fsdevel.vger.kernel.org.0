@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49ED136ABE4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 07:51:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E090A36ABE8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 07:51:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231859AbhDZFvr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Apr 2021 01:51:47 -0400
+        id S231869AbhDZFvs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Apr 2021 01:51:48 -0400
 Received: from esa3.hgst.iphmx.com ([216.71.153.141]:39184 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231575AbhDZFvp (ORCPT
+        with ESMTP id S229554AbhDZFvr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Apr 2021 01:51:45 -0400
+        Mon, 26 Apr 2021 01:51:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1619416264; x=1650952264;
+  t=1619416265; x=1650952265;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=2v6v9dFrHyJXFtURrmhrQwKWuTiMXxzPNztQoJ8Dox4=;
-  b=Wub+XQyKWQPXhYOMIw8HkmO6Co0AxRfqH8At83bzK+wwdAIx00V9y0GC
-   rQNMPGffa+LXOYHnLhX+M1MZvkyc6CFgrQU4MFD0gN3f2QdJmY4ABpp1n
-   1OpiD25D/L2X+S8qQGCH8fqQklzDsOMRxyZDtK17m9ur8F+rzgr3ysd6t
-   BVGqB16+Y+iM8s8Vx6jBpkhE50jCdI2aq5gOh1fc+xrQP/ji8HP1OFDrV
-   j0iK4lTCZFYgaSw0jZN400PGnPsVFxGy36uigpWx6DeMCJn1hjtqEXfUb
-   I1b2lkafGujpcsCBTH6MMlDFbchLqJ3yFqJqC6GMqUR7OkXKv/I5wrDbO
+  bh=OeG+WPcgiLjU9ScmqANGfIulOZyZikpy94bi8LQszSU=;
+  b=bU5Jx19RFMVXkw5aiqkXz+8LoIZ04p2Ba/KI0sR+nIaOuxbRE8S+nNRj
+   0XC13qgaiQF2FaNAkKtvfkyii27vLiB5sKOgCka/pKHzOjB2AlZBDEDe3
+   fuYbWCa2GOYQ6gLUg91f+b0Go29/pTsX9e2wMp6RpEluv5fqWCzI0eZqd
+   YudCMar3X/xwlgWRvPOJkE01LlnwSZuLEK0L5zoYNIkzqSthxcqlRf2eG
+   JPSPcsOHy03uWoybqVXp7tns01wJmoiA/Tus+wHLsz6IQ9QveLNlYngE/
+   G8zWFdSNdC/9Vs47Hv+6B1xLxif/sP5PmC0BSf7+rv7BEKQWxKdHM2Eho
    w==;
-IronPort-SDR: 87kwVkNPLn9ogjv58j/HnFDyj9FnZgxZD75HM7LFlJXbndD1ZlOqeuVEFO42/fCvQlOSrYbsOl
- xonKZrrmgeGGRRhTH26zdTDNY2MRHq3C39wmZp+BaFsn299pBBSt42bY+MszqPRV1wD2CusoHp
- 1Ek0IL1mH/Gbug42W/ebjbWiX4WZqtXJZu5YcklMWviriahOqPPtjHGGDItyoEInwzow997M5Y
- r64t7JuRKe+xkT4e5oOyG70WsFwEsrjLr/oyWxwzgvk23fTulBk3NZ/UDhbw8uun40R01rDq4q
- rec=
+IronPort-SDR: YogGOC4ORyGar6AoEiwzS0W8p7aANwnXWiZ+Iezy5FDEy1VT7NaCyFP8q2JUaZYEuW5OsqCeKz
+ uo6GbDF3JlIBtwpdtMX50bG3+ZQ346Hrwi0eNeTlciCl27W+Yx9i6KypmVPFK/z/lUpmcpknfh
+ gltczc4onncCsmn1+58o5X+9fpk26Fgn2pMiPkt281WOpsygY/8WGUTDyfc5dMqSVGh2b0XxXj
+ dSCPkinHe+VlF6qNjJVT7vpL9q1UQekHetRlQhTP5oPeb1Cf0RUTD9NMRUv7msvY+CyMXRBZ+T
+ 3Ks=
 X-IronPort-AV: E=Sophos;i="5.82,251,1613404800"; 
-   d="scan'208";a="170785779"
+   d="scan'208";a="170785781"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 26 Apr 2021 13:51:04 +0800
-IronPort-SDR: 0bS6P6wQ9PVgbLSIrhGQM8mFb5rxj8duy/FvvriSmh3Eh2qILXGUM67KpjP1tkLl+J1z/xsoye
- SWBzKn/HpY4TwXxoTgrDUgo/8iHWvM3HxoLfI2QhkakG77uObNzrevdDpTJAzJ4RuwM47jiSSx
- 7fjcHD/EHhVDHu4cAkZjxE13w3td9b3U7r7MLFAIaerM8hY1JAiHYf4WADuLzOUDaeezRTn7pA
- oN7zN0j+IyAsEBgF3eLbqewSrVBtz/CqZWPsHGdJggoBX1lU7yLcJd95NatZnIACbwXrmR0k8/
- mK7eUyEWnlsXr4t1WcVLCNbp
+  by ob1.hgst.iphmx.com with ESMTP; 26 Apr 2021 13:51:05 +0800
+IronPort-SDR: LOMmLgRwRmS6bK4FXzGQimmh5KixnWbnRt/L8MFc2S3e1gRrJIwaQs5f+7UfnOPwhjdOnOeI60
+ 4Q/Sj2IhD0GPAHdptdxr8ySAgGERqbHsaasztP/CI8T17kOOlgGMaGr5OYA0ACcth3VnfUOVbh
+ Gib3dwEBofD6//cT3TpZ0MdtC6u+cWO/aKTa4H3aXt+5zrGhh5Tv7cEgnxPbngPg5QNHy4KBxU
+ Rsq+0C7EmXNxFXM3dFbCYQjSsLJQhQzb1gtNbfxEZjI4/XwL5sGRMxeBsHu0/eWxre7cgVpeRJ
+ lEKmiAfy+ctnai43CjTBHccj
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2021 22:30:00 -0700
-IronPort-SDR: Qe9bm+lQ5nVLK7ScSetW1PFqhqkSBo3MRKz4ypkwoIP5y+jWLp+BUicxwo2SbScTUX3kjSyQJA
- T7ljh2fP9SAPboqM4f6SdQpBvlUsTHzKi/72LkODVr7z8CJrdmdBkK02+5hi5EnxlNAeav0tRy
- 3ZPJoLg92hAd4fH4V8VfrhQHzYrVfl3L6aL1LWq2O1oiwVtjnECFECZXrXlQWnlM08G3s4ba3t
- BTfCFjDnk2/lqh5AoJWPXb5a0MNtF4q01DnfyfwGogS5aQ1+Cp/fbHcYv0Nd5SGEp0GsdFzBFT
- Rek=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2021 22:30:02 -0700
+IronPort-SDR: 8NBcfvFNgCtzrVyjWfsWd7N1Dq54Rkxnb+vIuSxXqZlFteR1t/lm3RiG8CNwRJCJDugSJdbisg
+ /RELxye9+g4wZhYtamId9fWU1kRRbz2Z1/Jf7+Cea2xT6zVm1N3bEC0GAOt/6FLhOYfx6ShtFg
+ TjAYx3elZ30zMZUEzpRGN+FaEM73wgqrKgCZobA6iKiDoEQNen60hcOLmJ2r6HH1+QyLM6umh9
+ whWiJOfo66kfhHs0W+174UxhDQnV/WTUEj3dQRBZWCfAQVaQK+CfF/o0GGKLTqCcstdZ7k10mT
+ HP0=
 WDCIronportException: Internal
 Received: from bgy2573.ad.shared (HELO naota-xeon.wdc.com) ([10.225.48.58])
-  by uls-op-cesaip01.wdc.com with ESMTP; 25 Apr 2021 22:51:04 -0700
+  by uls-op-cesaip01.wdc.com with ESMTP; 25 Apr 2021 22:51:06 -0700
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     Karel Zak <kzak@redhat.com>
 Cc:     util-linux@vger.kernel.org, linux-btrfs@vger.kernel.org,
@@ -56,9 +56,9 @@ Cc:     util-linux@vger.kernel.org, linux-btrfs@vger.kernel.org,
         Damien Le Moal <damien.lemoal@wdc.com>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v3 1/3] blkid: implement zone-aware probing
-Date:   Mon, 26 Apr 2021 14:50:34 +0900
-Message-Id: <20210426055036.2103620-2-naohiro.aota@wdc.com>
+Subject: [PATCH v3 2/3] blkid: add magic and probing for zoned btrfs
+Date:   Mon, 26 Apr 2021 14:50:35 +0900
+Message-Id: <20210426055036.2103620-3-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210426055036.2103620-1-naohiro.aota@wdc.com>
 References: <20210426055036.2103620-1-naohiro.aota@wdc.com>
@@ -68,125 +68,305 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch makes libblkid zone-aware. It can probe the magic located at
-some offset from the beginning of some specific zone of a device.
+This commit adds zone-aware magics and probing functions for zoned btrfs.
 
-This patch introduces some new fields to struct blkid_idmag. They indicate
-the magic location is placed related to a zone and the offset in the zone.
+The superblock (and its copies) are the only data structure in btrfs with a
+fixed location on a device. Since we cannot do overwrites in a sequential
+write required zone, we cannot place the superblock in the zone.
 
-Also, this commit introduces `zone_size` to struct blkid_struct_probe. It
-stores the size of zones of a device.
+Thus, zoned btrfs uses superblock log writing to update superblocks on
+sequential write required zones. It uses two zones as a circular buffer to
+write updated superblocks. Once the first zone is filled up, start writing
+into the second buffer. When both zones are filled up, and before starting
+to write to the first zone again, it reset the first zone.
+
+We can determine the position of the latest superblock by reading the write
+pointer information from a device. One corner case is when both zones are
+full. For this situation, we read out the last superblock of each zone and
+compare them to determine which zone is older.
+
+The magics can detect a superblock magic ("_BHRfs_M") at the beginning of
+zone #0 or zone #1 to see if it is zoned btrfs. When both zones are filled
+up, zoned btrfs resets the first zone to write a new superblock. If btrfs
+crashes at the moment, we do not see a superblock at zone #0. Thus, we need
+to check not only zone #0 but also zone #1.
+
+It also supports the temporary magic ("!BHRfS_M") in zone #0. Mkfs.btrfs
+first writes the temporary superblock to the zone during the mkfs process.
+It will survive there until the zones are filled up and reset. So, we also
+need to detect this temporary magic.
+
+Finally, this commit extends probe_btrfs() to load the latest superblock
+determined by the write pointers.
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- libblkid/src/blkidP.h |  5 +++++
- libblkid/src/probe.c  | 30 ++++++++++++++++++++++++++++--
- 2 files changed, 33 insertions(+), 2 deletions(-)
+ include/blkdev.h                 |   9 ++
+ lib/blkdev.c                     |  29 ++++++
+ libblkid/src/superblocks/btrfs.c | 159 ++++++++++++++++++++++++++++++-
+ 3 files changed, 196 insertions(+), 1 deletion(-)
 
-diff --git a/libblkid/src/blkidP.h b/libblkid/src/blkidP.h
-index a3fe6748a969..e3a160aa97c0 100644
---- a/libblkid/src/blkidP.h
-+++ b/libblkid/src/blkidP.h
-@@ -150,6 +150,10 @@ struct blkid_idmag
- 	const char	*hoff;		/* hint which contains byte offset to kboff */
- 	long		kboff;		/* kilobyte offset of superblock */
- 	unsigned int	sboff;		/* byte offset within superblock */
-+
-+	int		is_zoned;	/* indicate magic location is calcluated based on zone position  */
-+	long		zonenum;	/* zone number which has superblock */
-+	long		kboff_inzone;	/* kilobyte offset of superblock in a zone */
- };
+diff --git a/include/blkdev.h b/include/blkdev.h
+index 6cbecbb65f82..43a5f5224857 100644
+--- a/include/blkdev.h
++++ b/include/blkdev.h
+@@ -15,6 +15,7 @@
+ #include <fcntl.h>
+ #include <unistd.h>
+ #include <sys/stat.h>
++#include <stdint.h>
  
- /*
-@@ -206,6 +210,7 @@ struct blkid_struct_probe
- 	dev_t			disk_devno;	/* devno of the whole-disk or 0 */
- 	unsigned int		blkssz;		/* sector size (BLKSSZGET ioctl) */
- 	mode_t			mode;		/* struct stat.sb_mode */
-+	uint64_t		zone_size;	/* zone size (BLKGETZONESZ ioctl) */
+ #ifdef HAVE_SYS_MKDEV_H
+ # include <sys/mkdev.h>		/* major and minor on Solaris */
+@@ -147,5 +148,13 @@ int blkdev_get_geometry(int fd, unsigned int *h, unsigned int *s);
+ const char *blkdev_scsi_type_to_name(int type);
  
- 	int			flags;		/* private library flags */
- 	int			prob_flags;	/* always zeroized by blkid_do_*() */
-diff --git a/libblkid/src/probe.c b/libblkid/src/probe.c
-index a47a8720d4ac..219cceea0f94 100644
---- a/libblkid/src/probe.c
-+++ b/libblkid/src/probe.c
-@@ -94,6 +94,9 @@
- #ifdef HAVE_LINUX_CDROM_H
- #include <linux/cdrom.h>
+ int blkdev_lock(int fd, const char *devname, const char *lockmode);
++#ifdef HAVE_LINUX_BLKZONED_H
++struct blk_zone_report *blkdev_get_zonereport(int fd, uint64_t sector, uint32_t nzones);
++#else
++static inline struct blk_zone_report *blkdev_get_zonereport(int fd, uint64_t sector, uint32_t nzones)
++{
++	return NULL;
++}
++#endif
+ 
+ #endif /* BLKDEV_H */
+diff --git a/lib/blkdev.c b/lib/blkdev.c
+index c22853ddcbb0..9de8512917a9 100644
+--- a/lib/blkdev.c
++++ b/lib/blkdev.c
+@@ -15,6 +15,10 @@
+ #include <linux/fd.h>
  #endif
+ 
 +#ifdef HAVE_LINUX_BLKZONED_H
 +#include <linux/blkzoned.h>
 +#endif
- #ifdef HAVE_SYS_STAT_H
- #include <sys/stat.h>
- #endif
-@@ -177,6 +180,7 @@ blkid_probe blkid_clone_probe(blkid_probe parent)
- 	pr->disk_devno = parent->disk_devno;
- 	pr->blkssz = parent->blkssz;
- 	pr->flags = parent->flags;
-+	pr->zone_size = parent->zone_size;
- 	pr->parent = parent;
- 
- 	pr->flags &= ~BLKID_FL_PRIVATE_FD;
-@@ -897,6 +901,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
- 	pr->wipe_off = 0;
- 	pr->wipe_size = 0;
- 	pr->wipe_chain = NULL;
-+	pr->zone_size = 0;
- 
- 	if (fd < 0)
- 		return 1;
-@@ -996,6 +1001,15 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
- #endif
- 	free(dm_uuid);
- 
-+# ifdef HAVE_LINUX_BLKZONED_H
-+	if (S_ISBLK(sb.st_mode)) {
-+		uint32_t zone_size_sector;
 +
-+		if (!ioctl(pr->fd, BLKGETZONESZ, &zone_size_sector))
-+			pr->zone_size = zone_size_sector << 9;
+ #ifdef HAVE_SYS_DISKLABEL_H
+ #include <sys/disklabel.h>
+ #endif
+@@ -412,6 +416,31 @@ int blkdev_lock(int fd, const char *devname, const char *lockmode)
+ 	return rc;
+ }
+ 
++#ifdef HAVE_LINUX_BLKZONED_H
++struct blk_zone_report *blkdev_get_zonereport(int fd, uint64_t sector, uint32_t nzones)
++{
++	struct blk_zone_report *rep;
++	size_t rep_size;
++	int ret;
++
++	rep_size = sizeof(struct blk_zone_report) + sizeof(struct blk_zone) * 2;
++	rep = calloc(1, rep_size);
++	if (!rep)
++		return NULL;
++
++	rep->sector = sector;
++	rep->nr_zones = nzones;
++
++	ret = ioctl(fd, BLKREPORTZONE, rep);
++	if (ret || rep->nr_zones != nzones) {
++		free(rep);
++		return NULL;
 +	}
-+# endif
 +
- 	DBG(LOWPROBE, ul_debug("ready for low-probing, offset=%"PRIu64", size=%"PRIu64"",
- 				pr->off, pr->size));
- 	DBG(LOWPROBE, ul_debug("whole-disk: %s, regfile: %s",
-@@ -1064,12 +1078,24 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
- 	/* try to detect by magic string */
- 	while(mag && mag->magic) {
- 		unsigned char *buf;
-+		uint64_t kboff;
- 		uint64_t hint_offset;
++	return rep;
++}
++#endif
++
  
- 		if (!mag->hoff || blkid_probe_get_hint(pr, mag->hoff, &hint_offset) < 0)
- 			hint_offset = 0;
+ #ifdef TEST_PROGRAM_BLKDEV
+ #include <stdio.h>
+diff --git a/libblkid/src/superblocks/btrfs.c b/libblkid/src/superblocks/btrfs.c
+index f0fde700d896..03aa7e979298 100644
+--- a/libblkid/src/superblocks/btrfs.c
++++ b/libblkid/src/superblocks/btrfs.c
+@@ -9,6 +9,12 @@
+ #include <unistd.h>
+ #include <string.h>
+ #include <stdint.h>
++#include <stdbool.h>
++#include <assert.h>
++
++#ifdef HAVE_LINUX_BLKZONED_H
++#include <linux/blkzoned.h>
++#endif
  
--		off = hint_offset + ((mag->kboff + (mag->sboff >> 10)) << 10);
-+		/* If the magic is for zoned device, skip non-zoned device */
-+		if (mag->is_zoned && !pr->zone_size) {
-+			mag++;
-+			continue;
+ #include "superblocks.h"
+ 
+@@ -59,11 +65,157 @@ struct btrfs_super_block {
+ 	uint8_t label[256];
+ } __attribute__ ((__packed__));
+ 
++#define BTRFS_SUPER_INFO_SIZE 4096
++
++/* Number of superblock log zones */
++#define BTRFS_NR_SB_LOG_ZONES 2
++
++/* Introduce some macros and types to unify the code with kernel side */
++#define SECTOR_SHIFT 9
++
++typedef uint64_t sector_t;
++
++#ifdef HAVE_LINUX_BLKZONED_H
++static int sb_write_pointer(blkid_probe pr, struct blk_zone *zones, uint64_t *wp_ret)
++{
++	bool empty[BTRFS_NR_SB_LOG_ZONES];
++	bool full[BTRFS_NR_SB_LOG_ZONES];
++	sector_t sector;
++
++	assert(zones[0].type != BLK_ZONE_TYPE_CONVENTIONAL &&
++	       zones[1].type != BLK_ZONE_TYPE_CONVENTIONAL);
++
++	empty[0] = zones[0].cond == BLK_ZONE_COND_EMPTY;
++	empty[1] = zones[1].cond == BLK_ZONE_COND_EMPTY;
++	full[0] = zones[0].cond == BLK_ZONE_COND_FULL;
++	full[1] = zones[1].cond == BLK_ZONE_COND_FULL;
++
++	/*
++	 * Possible states of log buffer zones
++	 *
++	 *           Empty[0]  In use[0]  Full[0]
++	 * Empty[1]         *          x        0
++	 * In use[1]        0          x        0
++	 * Full[1]          1          1        C
++	 *
++	 * Log position:
++	 *   *: Special case, no superblock is written
++	 *   0: Use write pointer of zones[0]
++	 *   1: Use write pointer of zones[1]
++	 *   C: Compare super blcoks from zones[0] and zones[1], use the latest
++	 *      one determined by generation
++	 *   x: Invalid state
++	 */
++
++	if (empty[0] && empty[1]) {
++		/* Special case to distinguish no superblock to read */
++		*wp_ret = zones[0].start << SECTOR_SHIFT;
++		return -ENOENT;
++	} else if (full[0] && full[1]) {
++		/* Compare two super blocks */
++		struct btrfs_super_block *super[BTRFS_NR_SB_LOG_ZONES];
++		int i;
++
++		for (i = 0; i < BTRFS_NR_SB_LOG_ZONES; i++) {
++			uint64_t bytenr;
++
++			bytenr = ((zones[i].start + zones[i].len)
++				   << SECTOR_SHIFT) - BTRFS_SUPER_INFO_SIZE;
++
++			super[i] = (struct btrfs_super_block *)
++				blkid_probe_get_buffer(pr, bytenr, BTRFS_SUPER_INFO_SIZE);
++			if (!super[i])
++				return -EIO;
 +		}
 +
-+		if (!mag->is_zoned)
-+			kboff = mag->kboff;
++		if (super[0]->generation > super[1]->generation)
++			sector = zones[1].start;
 +		else
-+			kboff = ((mag->zonenum * pr->zone_size) >> 10) + mag->kboff_inzone;
++			sector = zones[0].start;
++	} else if (!full[0] && (empty[1] || full[1])) {
++		sector = zones[0].wp;
++	} else if (full[0]) {
++		sector = zones[1].wp;
++	} else {
++		return -EUCLEAN;
++	}
++	*wp_ret = sector << SECTOR_SHIFT;
++	return 0;
++}
 +
-+		off = hint_offset + ((kboff + (mag->sboff >> 10)) << 10);
- 		buf = blkid_probe_get_buffer(pr, off, 1024);
++static int sb_log_offset(blkid_probe pr, uint64_t *bytenr_ret)
++{
++	uint32_t zone_num = 0;
++	uint32_t zone_size_sector;
++	struct blk_zone_report *rep;
++	struct blk_zone *zones;
++	int ret;
++	int i;
++	uint64_t wp;
++
++
++	zone_size_sector = pr->zone_size >> SECTOR_SHIFT;
++	rep = blkdev_get_zonereport(pr->fd, zone_num * zone_size_sector, 2);
++	if (!rep) {
++		ret = -errno;
++		goto out;
++	}
++	zones = (struct blk_zone *)(rep + 1);
++
++	/*
++	 * Use the head of the first conventional zone, if the zones
++	 * contain one.
++	 */
++	for (i = 0; i < BTRFS_NR_SB_LOG_ZONES; i++) {
++		if (zones[i].type == BLK_ZONE_TYPE_CONVENTIONAL) {
++			*bytenr_ret = zones[i].start << SECTOR_SHIFT;
++			ret = 0;
++			goto out;
++		}
++	}
++
++	ret = sb_write_pointer(pr, zones, &wp);
++	if (ret != -ENOENT && ret) {
++		ret = 1;
++		goto out;
++	}
++	if (ret != -ENOENT) {
++		if (wp == zones[0].start << SECTOR_SHIFT)
++			wp = (zones[1].start + zones[1].len) << SECTOR_SHIFT;
++		wp -= BTRFS_SUPER_INFO_SIZE;
++	}
++	*bytenr_ret = wp;
++
++	ret = 0;
++out:
++	free(rep);
++
++	return ret;
++}
++#endif
++
+ static int probe_btrfs(blkid_probe pr, const struct blkid_idmag *mag)
+ {
+ 	struct btrfs_super_block *bfs;
  
- 		if (!buf && errno)
-@@ -1079,7 +1105,7 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
- 				buf + (mag->sboff & 0x3ff), mag->len)) {
+-	bfs = blkid_probe_get_sb(pr, mag, struct btrfs_super_block);
++	if (pr->zone_size) {
++#ifdef HAVE_LINUX_BLKZONED_H
++		uint64_t offset = 0;
++		int ret;
++
++		ret = sb_log_offset(pr, &offset);
++		if (ret)
++			return ret;
++		bfs = (struct btrfs_super_block *)
++			blkid_probe_get_buffer(pr, offset,
++					       sizeof(struct btrfs_super_block));
++#else
++		/* Nothing can be done */
++		return 1;
++#endif
++	} else {
++		bfs = blkid_probe_get_sb(pr, mag, struct btrfs_super_block);
++	}
+ 	if (!bfs)
+ 		return errno ? -errno : 1;
  
- 			DBG(LOWPROBE, ul_debug("\tmagic sboff=%u, kboff=%ld",
--				mag->sboff, mag->kboff));
-+				mag->sboff, kboff));
- 			if (offset)
- 				*offset = off + (mag->sboff & 0x3ff);
- 			if (res)
+@@ -88,6 +240,11 @@ const struct blkid_idinfo btrfs_idinfo =
+ 	.magics		=
+ 	{
+ 	  { .magic = "_BHRfS_M", .len = 8, .sboff = 0x40, .kboff = 64 },
++	  /* For zoned btrfs */
++	  { .magic = "_BHRfS_M", .len = 8, .sboff = 0x40,
++	    .is_zoned = 1, .zonenum = 0, .kboff_inzone = 0 },
++	  { .magic = "_BHRfS_M", .len = 8, .sboff = 0x40,
++	    .is_zoned = 1, .zonenum = 1, .kboff_inzone = 0 },
+ 	  { NULL }
+ 	}
+ };
 -- 
 2.31.1
 
