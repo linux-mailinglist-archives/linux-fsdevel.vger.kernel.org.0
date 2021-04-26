@@ -2,230 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F52436B572
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 17:10:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFE4136B581
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 17:12:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234026AbhDZPLS convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Apr 2021 11:11:18 -0400
-Received: from us-smtp-delivery-44.mimecast.com ([207.211.30.44]:31711 "EHLO
-        us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233971AbhDZPLR (ORCPT
+        id S233963AbhDZPMx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Apr 2021 11:12:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56344 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234059AbhDZPMx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Apr 2021 11:11:17 -0400
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-283-obd3W_4uOXievqI3B6206g-1; Mon, 26 Apr 2021 11:10:30 -0400
-X-MC-Unique: obd3W_4uOXievqI3B6206g-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C37DD6D24E;
-        Mon, 26 Apr 2021 15:10:28 +0000 (UTC)
-Received: from bahia.redhat.com (ovpn-113-148.ams2.redhat.com [10.36.113.148])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D12745D6BA;
-        Mon, 26 Apr 2021 15:10:12 +0000 (UTC)
-From:   Greg Kurz <groug@kaod.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        virtio-fs@redhat.com, Greg Kurz <groug@kaod.org>,
-        Robert Krawitz <rlk@redhat.com>
-Subject: [PATCH v2] virtiofs: propagate sync() to file server
-Date:   Mon, 26 Apr 2021 17:10:11 +0200
-Message-Id: <20210426151011.840459-1-groug@kaod.org>
+        Mon, 26 Apr 2021 11:12:53 -0400
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37A39C061756
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Apr 2021 08:12:11 -0700 (PDT)
+Received: by mail-il1-x12f.google.com with SMTP id p15so11146329iln.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Apr 2021 08:12:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=swd2ytxCTbLtBkqxY4O+lU4BzwGRhipWxkgb2JYbQEw=;
+        b=Lw76PaXLz7pySCFqUgmvUQmLWlrEJ2bC2MpTbYOs7d24zAXTVdSgZY9/LFZDs8n6yZ
+         3/fgV/nIm8dpjPnqIrnULy7L5fsKDARfk1p1RvvTWhhhz8eP/8VshbORBTNHOOm6CSNW
+         jg8y+R8dfQhbABFiSCz69An7f+G7DO6cQXKJKPowG15E4yQrKmBlxgU4/YdZnST9J1wc
+         TBtbuqgOTF7VojGRcpFRO7c+Saze9FLao0C6lMJ6xrkwUjUADnmm0Xm0OzwjAGxt14Pw
+         3XxBwUc9Ut4srDcn8ESgU0ixETEcHgse30u/Xf1GVviCIFccwVy5Uo4gZmA/cSuf9JCw
+         0Enw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=swd2ytxCTbLtBkqxY4O+lU4BzwGRhipWxkgb2JYbQEw=;
+        b=blDxmhswouxb5WbF34nLynUPHnp8lNudqsAc88A3mn7QrFz/mreE+mXEZFluircfCz
+         +lka9OFsKPec6iEkhmJmYr1wzB7gySoGUIvCjwuEMfzUOkc9NjldLuB5gFcJbKxsvece
+         D4fQvLJuT+Qof7TY0wq0xUDgQ08NZkVq7GZPwtWGa1Ji/ufaC97O8SehdxkaXQYbb195
+         8X1qwBXmsK6LtvYObuae3SqbFzC/V810HTjdfsHZgrqG8y1LjnkiNz+XrWFrfLgvNjTb
+         JTu3xfVxGihQG/WBrxp2E7M2d/xKtZw3YbvrN3jvJvi1j48G357dDgmEf1hq4R5ezwCj
+         JOvQ==
+X-Gm-Message-State: AOAM530vJp4af4fcP8gduMb9PfZ12fekkWSCz/CzF8/s00ruMiP0UXO/
+        FJZyPP3fMXujlCl0cLj3LQTOo/xxGgfOFw==
+X-Google-Smtp-Source: ABdhPJxj7xl/uWhQqF7nbW7Df2KHSJ6/UD7qMkHtZkW298KohHJ7Xyk3rKhIyJ0rbnNvCGJzFknKOQ==
+X-Received: by 2002:a92:d58a:: with SMTP id a10mr13936856iln.170.1619449930352;
+        Mon, 26 Apr 2021 08:12:10 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id h8sm83963ils.35.2021.04.26.08.12.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Apr 2021 08:12:09 -0700 (PDT)
+Subject: Re: switch block layer polling to a bio based model
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20210426134821.2191160-1-hch@lst.de>
+ <2d229167-f56d-583b-569c-166c97ce2e71@kernel.dk>
+ <20210426150638.GA24618@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6b7e3ba0-aa09-b86d-8ea1-dc2e78c7529e@kernel.dk>
+Date:   Mon, 26 Apr 2021 09:12:09 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=groug@kaod.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: kaod.org
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset=WINDOWS-1252
+In-Reply-To: <20210426150638.GA24618@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Even if POSIX doesn't mandate it, linux users legitimately expect
-sync() to flush all data and metadata to physical storage when it
-is located on the same system. This isn't happening with virtiofs
-though : sync() inside the guest returns right away even though
-data still needs to be flushed from the host page cache.
+On 4/26/21 9:06 AM, Christoph Hellwig wrote:
+> On Mon, Apr 26, 2021 at 08:57:31AM -0600, Jens Axboe wrote:
+>> I was separately curious about this as I have a (as of yet unposted)
+>> patchset that recycles bio allocations, as we spend quite a bit of time
+>> doing that for high rate polled IO. It's good for taking the above 2.97M
+>> IOPS to 3.2-3.3M IOPS, and it'd obviously be a bit more problematic with
+>> required RCU freeing of bio's. Even without the alloc cache, using RCU
+>> will ruin any potential cache locality on back-to-back bio free + bio
+>> alloc.
+> 
+> That sucks indeed.  How do you recycle the bios?  If we make sure the
 
-This is easily demonstrated by doing the following in the guest:
+Here's the series. It's not super clean (yet), but basically allows
+users like io_uring to setup a bio cache, and pass that in through
+iocb->ki_bi_cache. With that, we can recycle them instead of going
+through free+alloc continually. If you look at profiles for high iops,
+we're spending more time than desired doing just that.
 
-$ dd if=/dev/zero of=/mnt/foo bs=1M count=5K ; strace -T -e sync sync
-5120+0 records in
-5120+0 records out
-5368709120 bytes (5.4 GB, 5.0 GiB) copied, 5.22224 s, 1.0 GB/s
-sync()                                  = 0 <0.024068>
-+++ exited with 0 +++
+https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-bio-cache
 
-and start the following in the host when the 'dd' command completes
-in the guest:
+> bio is only ever recycled as a bio and bi_bdev remaings valid long
+> enough we might not need the rcu free.  Even without your recycling
+> we could probably do something nasty using SLAB_TYPESAFE_BY_RCU.
 
-$ strace -T -e fsync /usr/bin/sync virtiofs/foo
-fsync(3)                                = 0 <10.371640>
-+++ exited with 0 +++
+It would not be hard to restrict to same bdev for the cache, just one
+more check to do for recycling.
 
-There are no good reasons not to honor the expected behavior of
-sync() actually : it gives an unrealistic impression that virtiofs
-is super fast and that data has safely landed on HW, which isn't
-the case obviously.
+Note that the caching series _only_ supports polled IO for now, as
+non-polled would require IRQ juggling for free+alloc and that will
+definitely take some of the win away and maybe even render it moot.
+Have yet to test that part out. Not a huge deal with the RCU free, as
+you end up doing that purely for polled IO and hence wouldn't impact the
+IRQ side of things negatively.
 
-Implement a ->sync_fs() superblock operation that sends a new
-FUSE_SYNC request type for this purpose. Provision a 64-bit
-flags field for possible future extensions. Since the file
-server cannot handle the wait == 0 case, we skip it to avoid a
-gratuitous roundtrip.
-
-Like with FUSE_FSYNC and FUSE_FSYNCDIR, lack of support for
-FUSE_SYNC in the file server is treated as permanent success.
-This ensures compatibility with older file servers : the client
-will get the current behavior of sync() not being propagated to
-the file server.
-
-Note that such an operation allows the file server to DoS sync().
-Since a typical FUSE file server is an untrusted piece of software
-running in userspace, this is disabled by default.  Only enable it
-with virtiofs for now since virtiofsd is supposedly trusted by the
-guest kernel.
-
-Reported-by: Robert Krawitz <rlk@redhat.com>
-Signed-off-by: Greg Kurz <groug@kaod.org>
----
-
-v2: - clarify compatibility with older servers in changelog (Vivek)
-    - ignore the wait == 0 case (Miklos)
-    - 64-bit aligned argument structure (Vivek, Miklos)
-
- fs/fuse/fuse_i.h          |  3 +++
- fs/fuse/inode.c           | 35 +++++++++++++++++++++++++++++++++++
- fs/fuse/virtio_fs.c       |  1 +
- include/uapi/linux/fuse.h | 10 +++++++++-
- 4 files changed, 48 insertions(+), 1 deletion(-)
-
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 63d97a15ffde..68e9ae96cbd4 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -755,6 +755,9 @@ struct fuse_conn {
- 	/* Auto-mount submounts announced by the server */
- 	unsigned int auto_submounts:1;
- 
-+	/* Propagate syncfs() to server */
-+	unsigned int sync_fs:1;
-+
- 	/** The number of requests waiting for completion */
- 	atomic_t num_waiting;
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index b0e18b470e91..ac184069b40f 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -506,6 +506,40 @@ static int fuse_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	return err;
- }
- 
-+static int fuse_sync_fs(struct super_block *sb, int wait)
-+{
-+	struct fuse_mount *fm = get_fuse_mount_super(sb);
-+	struct fuse_conn *fc = fm->fc;
-+	struct fuse_syncfs_in inarg;
-+	FUSE_ARGS(args);
-+	int err;
-+
-+	/*
-+	 * Userspace cannot handle the wait == 0 case. Avoid a
-+	 * gratuitous roundtrip.
-+	 */
-+	if (!wait)
-+		return 0;
-+
-+	if (!fc->sync_fs)
-+		return 0;
-+
-+	memset(&inarg, 0, sizeof(inarg));
-+	args.in_numargs = 1;
-+	args.in_args[0].size = sizeof(inarg);
-+	args.in_args[0].value = &inarg;
-+	args.opcode = FUSE_SYNCFS;
-+	args.out_numargs = 0;
-+
-+	err = fuse_simple_request(fm, &args);
-+	if (err == -ENOSYS) {
-+		fc->sync_fs = 0;
-+		err = 0;
-+	}
-+
-+	return err;
-+}
-+
- enum {
- 	OPT_SOURCE,
- 	OPT_SUBTYPE,
-@@ -909,6 +943,7 @@ static const struct super_operations fuse_super_operations = {
- 	.put_super	= fuse_put_super,
- 	.umount_begin	= fuse_umount_begin,
- 	.statfs		= fuse_statfs,
-+	.sync_fs	= fuse_sync_fs,
- 	.show_options	= fuse_show_options,
- };
- 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 4ee6f734ba83..a3c025308743 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -1441,6 +1441,7 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
- 	fc->release = fuse_free_conn;
- 	fc->delete_stale = true;
- 	fc->auto_submounts = true;
-+	fc->sync_fs = true;
- 
- 	fsc->s_fs_info = fm;
- 	sb = sget_fc(fsc, virtio_fs_test_super, set_anon_super_fc);
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 54442612c48b..1265ca17620c 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -179,6 +179,9 @@
-  *  7.33
-  *  - add FUSE_HANDLE_KILLPRIV_V2, FUSE_WRITE_KILL_SUIDGID, FATTR_KILL_SUIDGID
-  *  - add FUSE_OPEN_KILL_SUIDGID
-+ *
-+ *  7.34
-+ *  - add FUSE_SYNCFS
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -214,7 +217,7 @@
- #define FUSE_KERNEL_VERSION 7
- 
- /** Minor version number of this interface */
--#define FUSE_KERNEL_MINOR_VERSION 33
-+#define FUSE_KERNEL_MINOR_VERSION 34
- 
- /** The node ID of the root inode */
- #define FUSE_ROOT_ID 1
-@@ -499,6 +502,7 @@ enum fuse_opcode {
- 	FUSE_COPY_FILE_RANGE	= 47,
- 	FUSE_SETUPMAPPING	= 48,
- 	FUSE_REMOVEMAPPING	= 49,
-+	FUSE_SYNCFS		= 50,
- 
- 	/* CUSE specific operations */
- 	CUSE_INIT		= 4096,
-@@ -957,4 +961,8 @@ struct fuse_removemapping_one {
- #define FUSE_REMOVEMAPPING_MAX_ENTRY   \
- 		(PAGE_SIZE / sizeof(struct fuse_removemapping_one))
- 
-+struct fuse_syncfs_in {
-+	uint64_t flags;
-+};
-+
- #endif /* _LINUX_FUSE_H */
 -- 
-2.26.3
+Jens Axboe
 
