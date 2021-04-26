@@ -2,114 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D12F036B7D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 19:15:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C09036B7E3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Apr 2021 19:16:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235332AbhDZRPY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Apr 2021 13:15:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56032 "EHLO
+        id S235721AbhDZRRj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Apr 2021 13:17:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235238AbhDZRPW (ORCPT
+        with ESMTP id S235123AbhDZRRj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Apr 2021 13:15:22 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3677C061574;
-        Mon, 26 Apr 2021 10:14:39 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lb4ob-008SGJ-Lx; Mon, 26 Apr 2021 17:14:33 +0000
-Date:   Mon, 26 Apr 2021 17:14:33 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iov_iter: Four fixes for ITER_XARRAY
-Message-ID: <YIb0+b7VJJrrofCB@zeniv-ca.linux.org.uk>
-References: <161918448151.3145707.11541538916600921083.stgit@warthog.procyon.org.uk>
- <161918446704.3145707.14418606303992174310.stgit@warthog.procyon.org.uk>
- <3545034.1619392490@warthog.procyon.org.uk>
+        Mon, 26 Apr 2021 13:17:39 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 659C1C061574;
+        Mon, 26 Apr 2021 10:16:57 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id n21so9382112eji.1;
+        Mon, 26 Apr 2021 10:16:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MEQOXDj6Vgsm7PgstPVKkjDi+uEdC9l5WYAKRjEbAYE=;
+        b=oTH1HkdzYYUPW8cHWfQ0imYh3cFVPYoyw8lxejZccnbarXtTcrhRnYCj8t5f2VxSK9
+         rsIHRhiH8akhspWHUSFDJJDzTOd7SRE4Yd3fWh55n71rahc6ADYdIIoFUWi2J2IwIvYa
+         Kg7p+Sh3cCemAYxFlfwxHzi+5yuB4C+pWp6nUIPe7i4wMASAuLngq+m3Xyo1aBe1ndnk
+         uZ9xvsPoPKVgMH1zGDptrfmqEp4M9bByGw36setvTaqSrz5dbmb13lW4F0Rgo0KI64XA
+         nep71waWSCrLtP1WCmznO2df/AR5gB/0mrMwVQJHVoC7D4A5Ukw98WVza+AVHfFPxPgK
+         xQeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MEQOXDj6Vgsm7PgstPVKkjDi+uEdC9l5WYAKRjEbAYE=;
+        b=ajDz1lOUh20N5ESzAjeSp+KoZuBahR67+39R4UYDDzdVgDXUJiLRA6gfPxDJTwjs8i
+         W4wcVQeKURgkjoYio18rl1/5In1ZDxV4MnKKYABEYBRgBca5+hGz63ZIQR9LJ+/jgUM8
+         hU6LRPKRU3JVsEXC+oERVok1yPagzL6N1HJ7/jTt8CTs1hmo7QY5WGjzEWrHD3E2uPsf
+         SDSAZOWR6Ex6XiJmz238g2XWJmgqKfu8dWMp/GGG7Ftkq9L/hNr4hDeR91YGHJ4rt01e
+         dYNt3PMyTnotW+tR5bw4O8E6rVrkjYqtqJ4DtZd0NVAyY1KR3aLZYnkdElTk59OHwpMC
+         QpmQ==
+X-Gm-Message-State: AOAM533XdE2lGugOo6CL1tJ/WMYedRYH8XaG21aVuhHty/JOlPLzL/o5
+        TbNY1+m2aAgnGoCdhJnJ/BIOjXlp9jr7W2iuWKI=
+X-Google-Smtp-Source: ABdhPJxIdN1PxBwdg2dwtvV5W+8kY/OJgamP7VcdpgA/qUwq+QFGwRzoIgAQfNyzdDXIuTk8mZddXRfmyC77AmmEIBg=
+X-Received: by 2002:a17:906:1c8f:: with SMTP id g15mr19311864ejh.20.1619457416007;
+ Mon, 26 Apr 2021 10:16:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3545034.1619392490@warthog.procyon.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <CAFt=RON+KYYf5yt9vM3TdOSn4zco+3XtFyi3VDRr1vbQUBPZ0g@mail.gmail.com>
+ <YIWd7v1U/dGivmSE@zeniv-ca.linux.org.uk> <CAFt=RONcpvvk5=8GLTvG44=6wKwiYPH7oG4YULfcP+J=x8OW-w@mail.gmail.com>
+ <YIWlOlss7usVnvme@zeniv-ca.linux.org.uk>
+In-Reply-To: <YIWlOlss7usVnvme@zeniv-ca.linux.org.uk>
+From:   haosdent <haosdent@gmail.com>
+Date:   Tue, 27 Apr 2021 01:16:44 +0800
+Message-ID: <CAFt=ROOi+bi_N4NEkDQxagNwnoqM0zYR+sxiag7r2poNVW9u+w@mail.gmail.com>
+Subject: Re: NULL pointer dereference when access /proc/net
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        zhengyu.duan@shopee.com, Haosong Huang <huangh@sea.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 26, 2021 at 12:14:50AM +0100, David Howells wrote:
-> Hi Al,
-> 
-> I think this patch should include all the fixes necessary.  I could merge
-> it in, but I think it might be better to tag it on the end as an additional
-> patch.
+> really should not assume ->d_inode stable
 
-Looks sane, but I wonder if it would've been better to deal with this
+Hi, Alexander, sorry to disturb you again. Today I try to check what
+`dentry->d_inode` and `nd->link_inode` looks like when `dentry` is
+already been killed in `__dentry_kill`.
 
-> @@ -791,6 +791,8 @@ size_t _copy_mc_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
->  			curr_addr = (unsigned long) from;
->  			bytes = curr_addr - s_addr - rem;
->  			rcu_read_unlock();
-> +			i->iov_offset += bytes;
-> +			i->count -= bytes;
->  			return bytes;
->  		}
->  		})
+```
+nd->last.name: net/sockstat, dentry->d_lockref.count: -128,
+dentry->d_inode: (nil), nd->link_inode: 0xffffffffab299966
+nd->last.name: net/sockstat, dentry->d_lockref.count: -128,
+dentry->d_inode: (nil), nd->link_inode: 0xffffffffab299966
+nd->last.name: net/sockstat, dentry->d_lockref.count: -128,
+dentry->d_inode: (nil), nd->link_inode: 0xffffffffab299966
+```
 
-by having your iterator check the return value of X callback and, having
-decremented .bv_len by return value, broke out of the loop.
+It looks like `dentry->d_inode` could be NULL while `nd->link_inode`
+is always has value.
+But this make me confuse, by right `nd->link_inode` is get from
+`dentry->d_inode`, right?
 
-       __label__ __bugger_off;
+For example, in `walk_component`, suppose we go into `lookup_slow`,
 
-       xas_for_each(&xas, head, ULONG_MAX) {                           \
-               if (xas_retry(&xas, head))                              \
-                       continue;                                       \
-               if (WARN_ON(xa_is_value(head)))                         \
-                       break;                                          \
-               if (WARN_ON(PageHuge(head)))                            \
-                       break;                                          \
-               for (j = (head->index < index) ? index - head->index : 0; \
-                    j < thp_nr_pages(head); j++) {                     \
-                       __v.bv_page = head + j;                         \
+```
+static int walk_component(struct nameidata *nd, int flags)
+   if (unlikely(err <= 0)) {
+    ...
+    path.dentry = lookup_slow(&nd->last, nd->path.dentry, nd->flags);
+    ...
+    inode = d_backing_inode(path.dentry);     <=== get `inode` from
+`dentry->d_inode`.
+  }
+  return step_into(nd, &path, flags, inode, seq);  <=== set `inode` to
+`nd->link_inode`.
+}
 
-			size_t left;
+```
 
-                       offset = (i->xarray_start + skip) & ~PAGE_MASK; \
-                       seg = PAGE_SIZE - offset;                       \
-                       __v.bv_offset = offset;                         \
-                       __v.bv_len = min(n, seg);                       \
+then in `step_into` -> `pick_link`
 
-                       left = (STEP);
-		       __v.bv_len -= left;
+```
+static int pick_link(struct nameidata *nd, struct path *link,
+     struct inode *inode, unsigned seq)
+{
+  ...
+  nd->link_inode = inode;  <=== set `inode` to `nd->link_inode`.
+}
+```
 
-                       n -= __v.bv_len;                                \
-                       skip += __v.bv_len;                             \
+So for the mismatch of `nd->link_inode` and `dentry->d_inode` in
+following output. Do it means in Thread 1,  `walk_component`
+get a `dentry` from `d_lookup`, at the same time, in Thread 2,
+`__dentry_kill` is run and set `dentry->d_inode` to NULL.
 
-		       if (!n || left)
-				goto __bugger_off;
+```
+nd->last.name: net/sockstat, dentry->d_lockref.count: -128,
+dentry->d_inode: (nil), nd->link_inode: 0xffffffffab299966
+nd->last.name: net/sockstat, dentry->d_lockref.count: -128,
+dentry->d_inode: (nil), nd->link_inode: 0xffffffffab299966
+nd->last.name: net/sockstat, dentry->d_lockref.count: -128,
+dentry->d_inode: (nil), nd->link_inode: 0xffffffffab299966
+```
 
-               }                                                       \
-               if (n == 0)                                             \
-                       break;                                          \
-       }                                                       \
+If these concurrent operations in `dentry->d_inode` could happen, how
+we ensure `nd->link_inode = inode` and `d_backing_inode` are always
+run before
+`__dentry_kill`? I still could not find the questions for this from
+dcache's code, sorry for the stupid question.
 
-__bugger_off:
+On Mon, Apr 26, 2021 at 1:22 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Mon, Apr 26, 2021 at 01:04:46AM +0800, haosdent wrote:
+> > Hi, Alexander, thanks a lot for your quick reply.
+> >
+> > > Not really - the crucial part is ->d_count == -128, i.e. it's already past
+> > > __dentry_kill().
+> >
+> > Thanks a lot for your information, we would check this.
+> >
+> > > Which tree is that?
+> > > If you have some patches applied on top of that...
+> >
+> > We use Ubuntu Linux Kernel "4.15.0-42.45~16.04.1" from launchpad directly
+> > without any modification,  the mapping Linux Kernel should be
+> > "4.15.18" according
+> > to https://people.canonical.com/~kernel/info/kernel-version-map.html
+>
+> Umm...  OK, I don't have it Ubuntu source at hand, but the thing to look into
+> would be
+>         * nd->flags contains LOOKUP_RCU
+>         * in the mainline from that period (i.e. back when __atime_needs_update()
+> used to exist) we had atime_needs_update_rcu() called in get_link() under those
+> conditions, with
+> static inline bool atime_needs_update_rcu(const struct path *path,
+>                                           struct inode *inode)
+> {
+>         return __atime_needs_update(path, inode, true);
+> }
+> and __atime_needs_update() passing its last argument (rcu:true in this case) to
+> relatime_need_update() in
+>         if (!relatime_need_update(path, inode, now, rcu))
+> relatime_need_update() hitting
+>         update_ovl_inode_times(path->dentry, inode, rcu);
+> and update_ovl_inode_times() starting with
+>         if (rcu || likely(!(dentry->d_flags & DCACHE_OP_REAL)))
+>                 return;
+> with subsequent accesses to ->d_inode.  Those obviously are *NOT* supposed
+> to be reached in rcu mode, due to that check.
+>
+> Your oops looks like something similar to that call chain had been involved and
+> somehow had managed to get through to those ->d_inode uses.
+>
+> Again, in RCU mode we really, really should not assume ->d_inode stable.  That's
+> why atime_needs_update() gets inode as a separate argument and does *NOT* look
+> at path->dentry at all.  In the kernels of 4.8..4.18 period there it used to do
+> so, but only in non-RCU mode (which is the reason for explicit rcu argument passed
+> through that callchain).
 
 
-Then rename iterate_and_advance() to __iterate_and_advance() and have
-#define iterate_and_advance(....., X) __iterate_and_advance(....., ((void)(X),0))
-with iterate_all_kinds() using iterate_xarray(....,((void)(X),0)
 
-Then _copy_mc_to_iter() could use __iterate_and_advance(), getting rid of
-the need of doing anything special in case of short copy.  OTOH, I can do
-that myself in a followup - not a problem.
+-- 
+Best Regards,
+Haosdent Huang
