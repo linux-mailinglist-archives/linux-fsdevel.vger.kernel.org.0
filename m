@@ -2,143 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C094036C565
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 13:39:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34FA836C56A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 13:39:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237886AbhD0Lju (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 07:39:50 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2931 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235982AbhD0Ljs (ORCPT
+        id S238091AbhD0LkR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 07:40:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:60709 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235426AbhD0LkR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 07:39:48 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FTzzM0BFqz77b7N;
-        Tue, 27 Apr 2021 19:28:31 +0800 (CST)
-Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Tue, 27 Apr 2021 13:39:02 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <jmorris@namei.org>, <paul@paul-moore.com>,
-        <casey@schaufler-ca.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <reiserfs-devel@vger.kernel.org>, <selinux@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v3 6/6] evm: Support multiple LSMs providing an xattr
-Date:   Tue, 27 Apr 2021 13:37:32 +0200
-Message-ID: <20210427113732.471066-7-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210427113732.471066-1-roberto.sassu@huawei.com>
-References: <20210427113732.471066-1-roberto.sassu@huawei.com>
+        Tue, 27 Apr 2021 07:40:17 -0400
+Received: from ip5f5bf209.dynamic.kabel-deutschland.de ([95.91.242.9] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1lbM3t-00013F-AD; Tue, 27 Apr 2021 11:39:29 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] fs helper kernel-doc update
+Date:   Tue, 27 Apr 2021 13:38:46 +0200
+Message-Id: <20210427113845.1712549-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.62.217]
-X-ClientProxiedBy: lhreml751-chm.china.huawei.com (10.201.108.201) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently, evm_inode_init_security() processes a single LSM xattr from
-the array passed by security_inode_init_security(), and calculates the
-HMAC on it and other inode metadata.
+Hi Linus,
 
-Given that initxattrs(), called by security_inode_init_security(), expects
-that this array is terminated when the xattr name is set to NULL, this
-patch reuses the same assumption for to scan all xattrs and to calculate
-the HMAC on all of them.
+/* Summary */
+After last cycles changes we missed to update the kernel-docs in some places
+that were changed during the idmapped mount work. Lukas and Randy took the
+chance to not just fixup those places but also fixup and expand kernel-docs for
+some additional helpers.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/evm/evm.h        |  2 ++
- security/integrity/evm/evm_crypto.c |  9 ++++++++-
- security/integrity/evm/evm_main.c   | 15 +++++++++++----
- 3 files changed, 21 insertions(+), 5 deletions(-)
+There are no functional changes in this PR which is why I split it out from the
+following one.
 
-diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
-index ae590f71ce7d..24eac42b9f32 100644
---- a/security/integrity/evm/evm.h
-+++ b/security/integrity/evm/evm.h
-@@ -49,6 +49,8 @@ struct evm_digest {
- 	char digest[IMA_MAX_DIGEST_SIZE];
- } __packed;
- 
-+int evm_protected_xattr(const char *req_xattr_name);
-+
- int evm_init_key(void);
- int __init evm_init_crypto(void);
- int evm_update_evmxattr(struct dentry *dentry,
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index b66264b53d5d..35c5eec0517d 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -358,6 +358,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
- 		  char *hmac_val)
- {
- 	struct shash_desc *desc;
-+	const struct xattr *xattr;
- 
- 	desc = init_desc(EVM_XATTR_HMAC, evm_hash_algo);
- 	if (IS_ERR(desc)) {
-@@ -365,7 +366,13 @@ int evm_init_hmac(struct inode *inode, const struct xattr *lsm_xattr,
- 		return PTR_ERR(desc);
- 	}
- 
--	crypto_shash_update(desc, lsm_xattr->value, lsm_xattr->value_len);
-+	for (xattr = lsm_xattr; xattr->name != NULL; xattr++) {
-+		if (!evm_protected_xattr(xattr->name))
-+			continue;
-+
-+		crypto_shash_update(desc, xattr->value, xattr->value_len);
-+	}
-+
- 	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
- 	kfree(desc);
- 	return 0;
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index d647bfd0adcd..cd2f46770646 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -261,7 +261,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
- 	return evm_status;
- }
- 
--static int evm_protected_xattr(const char *req_xattr_name)
-+int evm_protected_xattr(const char *req_xattr_name)
- {
- 	int namelen;
- 	int found = 0;
-@@ -713,15 +713,22 @@ int evm_inode_init_security(struct inode *inode, struct inode *dir,
- 			    void *fs_data)
- {
- 	struct evm_xattr *xattr_data;
-+	struct xattr *xattr;
- 	struct xattr *evm_xattr = lsm_find_xattr_slot(xattrs, base_slot,
- 						      *base_slot + 1);
--	int rc;
-+	int rc, evm_protected_xattrs = 0;
- 
- 	if (!xattrs || !xattrs->name)
- 		return 0;
- 
--	if (!(evm_initialized & EVM_INIT_HMAC) ||
--	    !evm_protected_xattr(xattrs->name))
-+	if (!(evm_initialized & EVM_INIT_HMAC))
-+		return -EOPNOTSUPP;
-+
-+	for (xattr = xattrs; xattr->name != NULL && xattr < evm_xattr; xattr++)
-+		if (evm_protected_xattr(xattr->name))
-+			evm_protected_xattrs++;
-+
-+	if (!evm_protected_xattrs)
- 		return -EOPNOTSUPP;
- 
- 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
--- 
-2.25.1
+The following changes since commit a38fd8748464831584a19438cbb3082b5a2dab15:
 
+  Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/fs.idmapped.docs.v5.13
+
+for you to fetch changes up to 92cb01c74ef13ca01e1af836236b140634967b82:
+
+  fs: update kernel-doc for vfs_rename() (2021-03-23 11:20:26 +0100)
+
+/* Testing */
+All patches are based on v5.12-rc2 and have been sitting in linux-next. No
+build failures or warnings were observed. All old and new tests are passing.
+
+ubuntu@f2-vm:~/src/git/xfstests$ sudo ./check -g idmapped
+FSTYP         -- xfs (debug)
+PLATFORM      -- Linux/x86_64 f2-vm 5.12.0-rc6-idmapped-cfebad8730dd #387 SMP PREEMPT Tue Apr 27 10:39:29 UTC 2021
+MKFS_OPTIONS  -- -f -bsize=4096 /dev/loop1
+MOUNT_OPTIONS -- /dev/loop1 /mnt/scratch
+
+generic/633 files ...  27s
+xfs/152 files ...  68s
+xfs/153 files ...  36s
+Ran: generic/633 xfs/152 xfs/153
+Passed all 3 tests
+
+/* Conflicts */
+At the time of creating this PR no merge conflicts were reported from
+linux-next and no merge conflicts showed up doing a test-merge with current
+mainline.
+
+(Note, in case you care about this at all I changed my tag naming pattern
+ simply because I ran into limitations with branch naming in git using "/"
+ separators and I like to have a 1:1 correspondence between the branch and the
+ tag name.)
+
+Please consider pulling these changes from the signed fs.idmapped.docs.v5.13 tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+fs.idmapped.docs.v5.13
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      fs: update kernel-doc for vfs_rename()
+
+Lukas Bulwahn (1):
+      fs: turn some comments into kernel-doc
+
+Randy Dunlap (3):
+      libfs: fix kernel-doc for mnt_userns
+      namei: fix kernel-doc for struct renamedata and more
+      xattr: fix kernel-doc for mnt_userns and vfs xattr helpers
+
+ fs/libfs.c         |  1 +
+ fs/namei.c         | 14 +++-----------
+ fs/xattr.c         | 14 ++++++++------
+ include/linux/fs.h | 17 ++++++++++++++---
+ 4 files changed, 26 insertions(+), 20 deletions(-)
