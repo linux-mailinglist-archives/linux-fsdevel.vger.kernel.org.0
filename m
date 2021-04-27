@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 17E2C36BFE7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 09:12:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0FA236C00B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 09:25:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234632AbhD0HNX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 03:13:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42622 "EHLO
+        id S231130AbhD0H0J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 03:26:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229547AbhD0HNW (ORCPT
+        with ESMTP id S229989AbhD0H0I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 03:13:22 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F26F5C061574;
-        Tue, 27 Apr 2021 00:12:38 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id v123so7574985ioe.10;
-        Tue, 27 Apr 2021 00:12:38 -0700 (PDT)
+        Tue, 27 Apr 2021 03:26:08 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7D9EC061574;
+        Tue, 27 Apr 2021 00:25:25 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id i22so6025993ila.11;
+        Tue, 27 Apr 2021 00:25:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=EL3CL+WsvHulIwsBMGDhvO/N9wHQZPJiiqaxaR8bBWg=;
-        b=NkYZS+mnDZc+cHDnczHVs5Ka879/rge3YDVWU+n4CvURhKq7BJAhY+NWHFXnI7N9U5
-         tKLsXbVC9P5hqqiGuzCY2MktwqtM9z8bRwk10mvvZxO0UgAhHaLuP29rXot8ufv1KHXf
-         Ma5B6wcW73LpXXDWf6zZYZJmkHyHTUXXly73HXju27KujfeynDA4MLDBQCgcMkJWIoP4
-         a/El+8GccSSUDt7yLj3lY428KEWoEJj2I2gYQOc346OamNzu/T04AlXaN0pfdMix2D6w
-         7HFnWHA7dRkZU4zgL8/JF12T7R6wHgjqMEre5xYqd+GfpN055CVykmaLfbwtVN1c5vK4
-         KGGA==
+        bh=KypSn7jaMxDXK61CADYpVAu4LrUoQUvUtgwxvJUGc8E=;
+        b=mIcjCJP4y7s1LeBXLcEG7c5ic6PwxjZqF3vgsUtXRBK0hBERDM7m/jzysVmfYuENXB
+         qiilfQKdrDiL/gGxX3wVOsCTj6gZB+o2cezpK6Oe4pjShs+86mK/5+8Q2pYOEEmAAVrs
+         8FCuj6WQvGRTUWqdnVYNNo5F3PjypCUTTeyxvnWZnzA09wm+SLjoSM7TxYtR/GWwiCUv
+         OWTZmh5Tg6UJaWMyUODBfwMZdC9RD2Kcn/ycaaqe02G4/g92Ki8/zandnvRJd7Mprrkv
+         2K0B90uXW/s8c9QRlRd/Skz0RiLvu6AbQxPBjETT91r+EQU54O+9NPOQx195k3ZoKYdj
+         /a6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=EL3CL+WsvHulIwsBMGDhvO/N9wHQZPJiiqaxaR8bBWg=;
-        b=Yg6+G/x39stzeaVL1uDlbGYp5lblSNg6ovybmbdRREYw4oTykaQ9WmHSVvfFUjmNVI
-         4iZTsesY47gfIPFcxNZsoIZd7KADpBKvIO7erFs7hH8rcU+4xsNU4HLxEr72kN4mVlCw
-         AT9Vx4/jheIXUdLD3yGZBh/dSblUm1FYCqONayj2rs9fHFg+RphOFgDu0GOfgVYFvbKQ
-         f/qiItyCIBQ88ZxeeTkSdfgTR9CGEw2FUpFYk6F0brfySdP0jqoOojqrNIgUgvxZDq50
-         XuV8muSYkh0dT1ka0wFG8vZ7cniwkXdXhBERfyoTajOML59qF/WVE4XhtlS7S8yvs13b
-         59Ag==
-X-Gm-Message-State: AOAM5338loMkqHIAC6rUV8n/iPsUFWzVA4DiB4IYF8fslOHLPfazhEdX
-        rsUXE7HERQtipVGbxjrgaR/Hkj44AUq+NP3fybE=
-X-Google-Smtp-Source: ABdhPJyUnJnoXTLE1vNL6xLCyeyagQZIdr6omhe60FvhVpvG1c7adv7+uwRm5IuWwaqhfzrEmrbVPRe6NK4g60mTRME=
-X-Received: by 2002:a02:331b:: with SMTP id c27mr20071591jae.30.1619507558495;
- Tue, 27 Apr 2021 00:12:38 -0700 (PDT)
+        bh=KypSn7jaMxDXK61CADYpVAu4LrUoQUvUtgwxvJUGc8E=;
+        b=BtiUPImJlyo+kciWZXoHEMQMDHAiIHDhXH7QKfjFlWRUk3CyIAhYxll6x5mX8ccmUm
+         chY3iOtkImYImml++MFmlmytvKYXROKlnyofc0mBZtsz7PyY4WR6OrfaSCATtnGZAoUn
+         7wJ7z+kiNFPkoh6iP7P53vDL3C+F7yuiUmlp8JHCfYoQQ1o7ktdJu3YcpCEVW88Hp3Mi
+         MhvdFe/hXDaAd6DHDlZmOWJqrcDWEFYjatNRBNj3pYA6ME9yLE8+FpmNOoNxxu8hFSrX
+         csclJC7/jaU/HHNZmQ11uDnMZVTEKoZyQqJigYXgnGXs42NEnElAF7v67QYH4/2bvxuT
+         H8IQ==
+X-Gm-Message-State: AOAM532Ih/PleF66hAlstId9N3M1REahF3BdRMl+yCGx/8RSTzUjoxLj
+        4k4I9yckS62IUgIVilu8FJNwmbYuSYYkkAVxXm8=
+X-Google-Smtp-Source: ABdhPJwELAdZyyNdQuQuB5kn7Eb80yLU3viH2nIiz0gKrHzo9IqRdvzSHlmGw1pmWH14fVKC7/0/0jRcxcZb+isWRrE=
+X-Received: by 2002:a92:d352:: with SMTP id a18mr5103971ilh.9.1619508325161;
+ Tue, 27 Apr 2021 00:25:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210426184201.4177978-1-krisman@collabora.com> <20210426184201.4177978-12-krisman@collabora.com>
-In-Reply-To: <20210426184201.4177978-12-krisman@collabora.com>
+References: <20210426184201.4177978-1-krisman@collabora.com> <20210426184201.4177978-13-krisman@collabora.com>
+In-Reply-To: <20210426184201.4177978-13-krisman@collabora.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 27 Apr 2021 10:12:27 +0300
-Message-ID: <CAOQ4uxjy4ZVrOY+HKikMspAK5QG3uHBPuZYCc8XCmji0jcG+LQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 11/15] fanotify: Introduce filesystem specific data record
+Date:   Tue, 27 Apr 2021 10:25:14 +0300
+Message-ID: <CAOQ4uxhhyZhEwg6aiNVYc4Nbxg4PBhTtcgYE0Vqm8iONXDqg=Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 12/15] fanotify: Introduce the FAN_ERROR mark
 To:     Gabriel Krisman Bertazi <krisman@collabora.com>
 Cc:     Theodore Tso <tytso@mit.edu>,
         "Darrick J. Wong" <djwong@kernel.org>,
@@ -67,13 +67,40 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Mon, Apr 26, 2021 at 9:43 PM Gabriel Krisman Bertazi
 <krisman@collabora.com> wrote:
 >
-> Allow a FS_ERROR_TYPE notification to send a filesystem provided blob
-> back to userspace.  This is useful for filesystems who want to provide
-> debug information for recovery tools.
+> The FAN_ERROR mark is used by filesystem wide monitoring tools to
+> receive notifications of type FS_ERROR_EVENT, emited by filesystems when
+> a problem is detected.  The error notification includes a generic error
+> descriptor, an optional location record and a filesystem specific blob.
 >
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> ---
+>  fs/notify/fanotify/fanotify.c      | 48 +++++++++++++++++++----
+>  fs/notify/fanotify/fanotify.h      |  8 ++++
+>  fs/notify/fanotify/fanotify_user.c | 63 ++++++++++++++++++++++++++++++
+>  include/linux/fanotify.h           |  9 ++++-
+>  include/uapi/linux/fanotify.h      |  2 +
+>  5 files changed, 120 insertions(+), 10 deletions(-)
+>
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index 98591a8155a7..6bae23d42e5e 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -240,12 +240,14 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+>                  __func__, iter_info->report_mask, event_mask, data, data_type);
+>
+>         if (!fid_mode) {
+> -               /* Do we have path to open a file descriptor? */
+> -               if (!path)
+> -                       return 0;
+> -               /* Path type events are only relevant for files and dirs */
+> -               if (!d_is_reg(path->dentry) && !d_can_lookup(path->dentry))
+> -                       return 0;
+> +               if (!fanotify_is_error_event(event_mask)) {
 
-Same comment as for FAN_EVENT_INFO_TYPE_LOCATION.
-Can we leave this patch out of the discussion for now?
+This open coded nested condition is not nice.
+If we get as far as this, I will explain what needs to be done.
+Need helpers fanotify_is_reporting_fd(), fanotify_is_reporting_fid() and
+fanotify_is_reporting_dir_fid().
 
 Thanks,
 Amir.
