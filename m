@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9909A36CEF5
+	by mail.lfdr.de (Postfix) with ESMTP id 72C6336CEF4
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 00:54:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239075AbhD0Wyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S238879AbhD0Wyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Tue, 27 Apr 2021 18:54:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53776 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239425AbhD0Wxq (ORCPT
+        with ESMTP id S239226AbhD0Wxr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 18:53:46 -0400
-Received: from mail-qt1-x849.google.com (mail-qt1-x849.google.com [IPv6:2607:f8b0:4864:20::849])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DE8EC061345
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Apr 2021 15:53:02 -0700 (PDT)
-Received: by mail-qt1-x849.google.com with SMTP id i7-20020ac84f470000b02901b944d49e13so16438430qtw.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Apr 2021 15:53:02 -0700 (PDT)
+        Tue, 27 Apr 2021 18:53:47 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4FB0C061347
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Apr 2021 15:53:03 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id c8-20020a25a2c80000b02904eda0a22b5dso12516303ybn.17
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Apr 2021 15:53:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=u1gk9aiwDmv6+SRZ0ft4k2Rli22/pgCpQ8yAo+qVnNA=;
-        b=WhttcOh6OlYlGtQYO3hqYvxXeiYuKV+rWQSt5GADJGax/zVklA+4aVWY6Vth1HSH3X
-         jwqi4xlCmJmF2uk4C3mUlO9dXP5GKLMafa/YYpnFpCz7vDawNizmXlGB6yjOLRbWnnjs
-         zUKKD0pPXPMq+GNf9mgcyCiC+JYB1W0gdtCctKXlHEeJk0mX+xU28z2b6gRtk8Yu85nl
-         2JjUUN+ND3iO+ubDxIVQYc87lZwqiydAQ90ZMWi5SimqntNNm/EZWf8oo0PfH30L05ai
-         eXKCJjGA7iP4ZQy64cNZRCZh9nqI8vq5hUhkIc2nfyfHUBlBdiVJlltPIDFueWEmrOik
-         S4mw==
+        bh=0MvC5tupusYzhdgaolaLRpQ8PyV4lZ/ImbJZgGlOabs=;
+        b=UD9B1PD9EF4/Bwq85aduxwK7rowJYh6r/31d4maWYo5P/jjmN0NPvIR56qWNSkcgYZ
+         SRRQiyuZiULPRrCrqdwVtCmh1xFyGGmSSnB9MR2SjbBTaK2X/uP9m7mb+ncyj+F93/Bc
+         hHZhSwvEzOPWN19Ln+Gy+ck0uEww6TkRxo1d5b3oOyf510VtVuMzmFZOgpixt58g5xTs
+         lyYroeYU8goBXIB0bYg6JfXqEhnFgH0Ti+2Ncc97l0dhq3zh5/9s0VjJQqtuTw2GsKjB
+         hz5taWikfbWCuRzvH7pUlPsOj+0L6zLSq0ETsBeJqgXig+Uepra47c9ho4nyjIVOFnu7
+         ulHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=u1gk9aiwDmv6+SRZ0ft4k2Rli22/pgCpQ8yAo+qVnNA=;
-        b=lD7BndSBAXLFqPAR11KWNOJn4kwhhoGbSf9VCMRp1xXDoz9QrvCOPou05YhDAk7KcH
-         /EJXPPA1/2G7kckEeAr3d9iiFBKrkMvhnFSGjVA7APsaOe6rJ4SSGfhFGEikqlOOY63b
-         fk0inGZikMsMnstgkzlYo/82EPI0bHhYCCF8oeZ9UVyL7M3GaL9iC/5oC4c94XvbAZU3
-         HNoG82bXtaiSk9XHqdgx/4XMrsdpy9IcfMghlvJCBkNMWavp3760BafBVchH8VaOOqB7
-         CI2diQ31PZHZsDXj+L5xdko9IK8r3804SnjLmUeZHp45ZRINARoDsQzYC2d109LArk6C
-         f02w==
-X-Gm-Message-State: AOAM532qlUi9DkK8Z3LnCAmENO0OmkHU3zjN1S93ina7LsFMD7FByJJw
-        axdrhsTWr/zBmpBltgckfALx3F25xuv7/U0R+3oD
-X-Google-Smtp-Source: ABdhPJwiDFSleswhpJEUOz8lD3obBc43FvS6xslLfDjp1Gi5RYfDgRHiZ7zkrRDES+WQD/M44l98muWb/GGEwvLSrFN1
+        bh=0MvC5tupusYzhdgaolaLRpQ8PyV4lZ/ImbJZgGlOabs=;
+        b=KhyG41hyJPIRdoPCxTSgArR/5a5o+R3qT90d0/rYOnFDazC0BmW28yMSgfP+8AYewU
+         7Cyr6WMP246Bze98AbxNj8qAmbHiwTCNTz/L7hAPjO6HXacOLjhoD9m+Bar/wrYYfxlb
+         eaQiyOYKY55i240+/8bXNfChPYCqSuZdNUZBGD+CTE38Bnfp/NZIa48e7lcHA3ztEUdX
+         0uHUpOSBCJmRecpCdjiZKhvWZ8LtobYX1HBeIN0n5RangqrZbBhzAxN/gdqghlZSF5Yx
+         9vHnMB0utcc0p5sGxWIbJ2M2pDYcVaqeBwG8u02KzC29YV9lMcc8E62JUQdO6sYbP8fF
+         Mw4g==
+X-Gm-Message-State: AOAM5311hDCQV0QknROu1TK1vOCNX0N7lJKJtpO1FbG9zpsw+APle4w5
+        g7/3cbEiEqr50LuzznKv1KeM5djAs8w2fj34v7BX
+X-Google-Smtp-Source: ABdhPJxyeDxtrZNR0i/uwmYsi2L24RU/UpWGHF0s/k7sOiDf4uxXLk9YYpvxrEGEBVr/QNsO1vTdNjkv+W1/l8z/jJ/3
 X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:c423:570b:b823:c33e])
- (user=axelrasmussen job=sendgmr) by 2002:a0c:fcc8:: with SMTP id
- i8mr14211207qvq.31.1619563981243; Tue, 27 Apr 2021 15:53:01 -0700 (PDT)
-Date:   Tue, 27 Apr 2021 15:52:41 -0700
+ (user=axelrasmussen job=sendgmr) by 2002:a25:870b:: with SMTP id
+ a11mr39561417ybl.498.1619563983153; Tue, 27 Apr 2021 15:53:03 -0700 (PDT)
+Date:   Tue, 27 Apr 2021 15:52:42 -0700
 In-Reply-To: <20210427225244.4326-1-axelrasmussen@google.com>
-Message-Id: <20210427225244.4326-8-axelrasmussen@google.com>
+Message-Id: <20210427225244.4326-9-axelrasmussen@google.com>
 Mime-Version: 1.0
 References: <20210427225244.4326-1-axelrasmussen@google.com>
 X-Mailer: git-send-email 2.31.1.498.g6c1eba8ee3d-goog
-Subject: [PATCH v5 07/10] userfaultfd/selftests: use memfd_create for shmem
- test type
+Subject: [PATCH v5 08/10] userfaultfd/selftests: create alias mappings in the
+ shmem test
 From:   Axel Rasmussen <axelrasmussen@google.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrea Arcangeli <aarcange@redhat.com>,
@@ -79,73 +79,66 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a preparatory commit. In the future, we want to be able to setup
-alias mappings for area_src and area_dst in the shmem test, like we do
-in the hugetlb_shared test. With a VMA obtained via
-mmap(MAP_ANONYMOUS | MAP_SHARED), it isn't clear how to do this.
+Previously, we just allocated two shm areas: area_src and area_dst. With
+this commit, change this so we also allocate area_src_alias, and
+area_dst_alias.
 
-So, mmap() with an fd, so we can create alias mappings. Use memfd_create
-instead of actually passing in a tmpfs path like hugetlb does, since
-it's more convenient / simpler to run, and works just as well.
-
-Future commits will:
-
-1. Setup the alias mappings.
-2. Extend our tests to actually take advantage of this, to test new
-   userfaultfd behavior being introduced in this series.
-
-Also, a small fix in the area we're changing: when the hugetlb setup
-fails in main(), pass in the right argv[] so we actually print out the
-hugetlb file path.
+area_*_alias and area_* (respectively) point to the same underlying
+physical pages, but are different VMAs. In a future commit in this
+series, we'll leverage this setup to exercise minor fault handling
+support for shmem, just like we do in the hugetlb_shared test.
 
 Reviewed-by: Peter Xu <peterx@redhat.com>
 Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
 ---
- tools/testing/selftests/vm/userfaultfd.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ tools/testing/selftests/vm/userfaultfd.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
 diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-index 6339aeaeeff8..fc40831f818f 100644
+index fc40831f818f..1f65c4ab7994 100644
 --- a/tools/testing/selftests/vm/userfaultfd.c
 +++ b/tools/testing/selftests/vm/userfaultfd.c
-@@ -85,6 +85,7 @@ static bool test_uffdio_wp = false;
- static bool test_uffdio_minor = false;
- 
- static bool map_shared;
-+static int shm_fd;
- static int huge_fd;
- static char *huge_fd_off0;
- static unsigned long long *count_verify;
-@@ -277,8 +278,11 @@ static void shmem_release_pages(char *rel_area)
+@@ -278,13 +278,29 @@ static void shmem_release_pages(char *rel_area)
  
  static void shmem_allocate_area(void **alloc_area)
  {
-+	unsigned long offset =
-+		alloc_area == (void **)&area_src ? 0 : nr_pages * page_size;
-+
+-	unsigned long offset =
+-		alloc_area == (void **)&area_src ? 0 : nr_pages * page_size;
++	void *area_alias = NULL;
++	bool is_src = alloc_area == (void **)&area_src;
++	unsigned long offset = is_src ? 0 : nr_pages * page_size;
+ 
  	*alloc_area = mmap(NULL, nr_pages * page_size, PROT_READ | PROT_WRITE,
--			   MAP_ANONYMOUS | MAP_SHARED, -1, 0);
-+			   MAP_SHARED, shm_fd, offset);
+ 			   MAP_SHARED, shm_fd, offset);
  	if (*alloc_area == MAP_FAILED)
  		err("mmap of memfd failed");
++
++	area_alias = mmap(NULL, nr_pages * page_size, PROT_READ | PROT_WRITE,
++			  MAP_SHARED, shm_fd, offset);
++	if (area_alias == MAP_FAILED)
++		err("mmap of memfd alias failed");
++
++	if (is_src)
++		area_src_alias = area_alias;
++	else
++		area_dst_alias = area_alias;
++}
++
++static void shmem_alias_mapping(__u64 *start, size_t len, unsigned long offset)
++{
++	*start = (unsigned long)area_dst_alias + offset;
  }
-@@ -1448,6 +1452,16 @@ int main(int argc, char **argv)
- 			err("Open of %s failed", argv[4]);
- 		if (ftruncate(huge_fd, 0))
- 			err("ftruncate %s to size 0 failed", argv[4]);
-+	} else if (test_type == TEST_SHMEM) {
-+		shm_fd = memfd_create(argv[0], 0);
-+		if (shm_fd < 0)
-+			err("memfd_create");
-+		if (ftruncate(shm_fd, nr_pages * page_size * 2))
-+			err("ftruncate");
-+		if (fallocate(shm_fd,
-+			      FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, 0,
-+			      nr_pages * page_size * 2))
-+			err("fallocate");
- 	}
- 	printf("nr_pages: %lu, nr_pages_per_cpu: %lu\n",
- 	       nr_pages, nr_pages_per_cpu);
+ 
+ struct uffd_test_ops {
+@@ -314,7 +330,7 @@ static struct uffd_test_ops shmem_uffd_test_ops = {
+ 	.expected_ioctls = SHMEM_EXPECTED_IOCTLS,
+ 	.allocate_area	= shmem_allocate_area,
+ 	.release_pages	= shmem_release_pages,
+-	.alias_mapping = noop_alias_mapping,
++	.alias_mapping = shmem_alias_mapping,
+ };
+ 
+ static struct uffd_test_ops hugetlb_uffd_test_ops = {
 -- 
 2.31.1.498.g6c1eba8ee3d-goog
 
