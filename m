@@ -2,154 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5360936C121
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 10:41:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A34A236C1AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 11:25:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235033AbhD0Ij7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 04:39:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33540 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231148AbhD0Ij6 (ORCPT
+        id S235048AbhD0JZ4 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 05:25:56 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2921 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229938AbhD0JZy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 04:39:58 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AC62C061574;
-        Tue, 27 Apr 2021 01:39:14 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id g125so4536546iof.3;
-        Tue, 27 Apr 2021 01:39:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Wl9KaP9Euc+PMibq3F14vkXfHRg6Jg2IyRSH6anShfw=;
-        b=qIRme1Tm5Iq7C+h6pMw1gTDTpnxlvRTl7f53UPYVj1Vsv6tSPr5X7Ji2C32KyhK1V6
-         4qFb3dFM6hjl9yC1tITtvdGewFm2hi5cfLyK46hv1Dc+pL4KnRZt7Jsshg26sBNmyOY6
-         3cQIFTgMMe2wHNwhM9M4nX2AayZXs7YRK1VRLLjDoPQCoaH/2atUzlP9r3CsB/DrRR86
-         OSDbOFILNoqTZuk8XJVWlX3VaRL+reTyI5SYYcrB6Z8DTDStu0Q36dq8jRYIYNGvjzdc
-         kleO1JIqPrg6w8JoKQyylyvaQ4SOlRAClmyynyHrmQegTUAiQQk59BQLbdazggR7WK6G
-         q59A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Wl9KaP9Euc+PMibq3F14vkXfHRg6Jg2IyRSH6anShfw=;
-        b=rFbT12SyxEo7A/yCMoVgVPNerWOS9ZpMMEbiL4ly9aBeTzvvBKWkfQpOmjMUTclQ4m
-         ZnWc0Lo6zXERqCUIDPeELkVcIpzz+ypZnE6+eaZQopbHQfNd0jAHT88Kr9Ngv0zm9OkB
-         r/Wsa10lje2xNn+483y3VbBGsLfLQaOP4bk4283dqyamQxEIKVACZUdBj1UnwPOgZCXC
-         pVaWT0Smo6xJPYQ7JVfs4oQaiYGVq1VIOpxa9JtMgmxWlmDkWzOn70Z/+uESALlOBi53
-         Y83L1qK1ISXFm343fzcJ1koue1uoI7jm58fcrNOU6TMFkIlnlALlCwc09JcwnViUoj6E
-         pqlw==
-X-Gm-Message-State: AOAM533j5PgZxHe4rVTJQqNQ5hJnmqgp7vbu5Afq2lorDFpBKaUDMtBh
-        b+iSyhnLVia0yAwARpbGNpvotkaKIJQ6u8lijfA=
-X-Google-Smtp-Source: ABdhPJyvxUhkcMwFIcsofEldbp9u8JnbLfercFV7BBPTkFw2oarVWSL+lXLjZBJ/ztbnPfp7EbTKj6st1F+OHSCGWQo=
-X-Received: by 2002:a6b:f00f:: with SMTP id w15mr17973273ioc.72.1619512753506;
- Tue, 27 Apr 2021 01:39:13 -0700 (PDT)
+        Tue, 27 Apr 2021 05:25:54 -0400
+Received: from fraeml715-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FTx0s5fX5z77b5Y;
+        Tue, 27 Apr 2021 17:14:37 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml715-chm.china.huawei.com (10.206.15.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Tue, 27 Apr 2021 11:25:09 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
+ Tue, 27 Apr 2021 11:25:09 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "mjg59@google.com" <mjg59@google.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to
+ post hooks
+Thread-Topic: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to
+ post hooks
+Thread-Index: AQHXEdMA2oN9D131skWV9JJ8Z5VEUap1limAgFHPEQCAAOj3gA==
+Date:   Tue, 27 Apr 2021 09:25:09 +0000
+Message-ID: <7a39600c24a740838dca24c20af92c1a@huawei.com>
+References: <20210305151923.29039-1-roberto.sassu@huawei.com>
+         <20210305151923.29039-5-roberto.sassu@huawei.com>
+         <c3bb1069-c732-d3cf-0dde-7a83b3f31871@schaufler-ca.com>
+ <93858a47a29831ca782c8388faaa43c8ffc3f5cd.camel@linux.ibm.com>
+In-Reply-To: <93858a47a29831ca782c8388faaa43c8ffc3f5cd.camel@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.221.98.153]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20210426184201.4177978-1-krisman@collabora.com> <20210426184201.4177978-8-krisman@collabora.com>
-In-Reply-To: <20210426184201.4177978-8-krisman@collabora.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 27 Apr 2021 11:39:02 +0300
-Message-ID: <CAOQ4uxgfjfa+j00rO8S9MnCUMUjPbOQx3OVsXLZw_VSAgB7Ckw@mail.gmail.com>
-Subject: Re: [PATCH RFC 07/15] fsnotify: Support FS_ERROR event type
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     Theodore Tso <tytso@mit.edu>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 26, 2021 at 9:42 PM Gabriel Krisman Bertazi
-<krisman@collabora.com> wrote:
->
-> Expose a new type of fsnotify event for filesystems to report errors for
-> userspace monitoring tools.  fanotify will send this type of
-> notification for FAN_ERROR marks.
->
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> ---
->  fs/notify/fsnotify.c             |  2 +-
->  include/linux/fsnotify_backend.h | 16 ++++++++++++++++
->  2 files changed, 17 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index 30d422b8c0fc..9fff35e67b37 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -558,7 +558,7 @@ static __init int fsnotify_init(void)
->  {
->         int ret;
->
-> -       BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 25);
-> +       BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 26);
->
->         ret = init_srcu_struct(&fsnotify_mark_srcu);
->         if (ret)
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> index a1a4dd69e5ed..f850bfbe30d4 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -48,6 +48,8 @@
->  #define FS_ACCESS_PERM         0x00020000      /* access event in a permissions hook */
->  #define FS_OPEN_EXEC_PERM      0x00040000      /* open/exec event in a permission hook */
->
-> +#define FS_ERROR               0x00100000      /* Used for filesystem error reporting */
-> +
+> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> Sent: Monday, April 26, 2021 9:49 PM
+> On Fri, 2021-03-05 at 09:30 -0800, Casey Schaufler wrote:
+> > On 3/5/2021 7:19 AM, Roberto Sassu wrote:
+> > > ima_inode_setxattr() and ima_inode_removexattr() hooks are called before
+> an
+> > > operation is performed. Thus, ima_reset_appraise_flags() should not be
+> > > called there, as flags might be unnecessarily reset if the operation is
+> > > denied.
+> > >
+> > > This patch introduces the post hooks ima_inode_post_setxattr() and
+> > > ima_inode_post_removexattr(), and adds the call to
+> > > ima_reset_appraise_flags() in the new functions.
+> >
+> > I don't see anything wrong with this patch in light of the way
+> > IMA and EVM have been treated to date.
+> >
+> > However ...
+> >
+> > The special casing of IMA and EVM in security.c is getting out of
+> > hand, and appears to be unnecessary. By my count there are 9 IMA
+> > hooks and 5 EVM hooks that have been hard coded. Adding this IMA
+> > hook makes 10. It would be really easy to register IMA and EVM as
+> > security modules. That would remove the dependency they currently
+> > have on security sub-system approval for changes like this one.
+> > I know there has been resistance to "IMA as an LSM" in the past,
+> > but it's pretty hard to see how it wouldn't be a win.
+> 
+> Somehow I missed the new "lsm=" boot command line option, which
+> dynamically allows enabling/disabling LSMs, being upstreamed.  This
+> would be one of the reasons for not making IMA/EVM full LSMs.
 
-Why skip 0x00080000?
+Hi Mimi
 
-Anyway, event bits are starting to run out so I would prefer that you overload
-an existing bit used only by inotify/dnotify.
+one could argue why IMA/EVM should receive a special
+treatment. I understand that this was a necessity without
+LSM stacking. Now that LSM stacking is available, I don't
+see any valid reason why IMA/EVM should not be managed
+by the LSM infrastructure.
 
-FS_IN_IGNORED is completely internal to inotify and there is no need to
-set it in i_fsnotify_mask at all, so if we remove the bit from the output of
-inotify_arg_to_mask() no functionality will change and we will be able to
-overload the event bit for FS_ERROR (see patch below).
+> Both IMA and EVM file data/metadata is persistent across boots.  If
+> either one or the other is not enabled the file data hash or file
+> metadata HMAC will not properly be updated, potentially preventing the
+> system from booting when re-enabled.  Re-enabling IMA and EVM would
+> require "fixing" the mutable file data hash and HMAC, without any
+> knowledge of what the "fixed" values should be.  Dave Safford referred
+> to this as "blessing" the newly calculated values.
 
-I also kind of like that FS_ERROR is adjacent to FS_UMOUNT and
-FS_Q_OVERFLOW :-)
+IMA/EVM can be easily disabled in other ways, for example
+by moving the IMA policy or the EVM keys elsewhere.
 
-Other FS_IN/FS_DN bits may also be reclaimed but it takes a bit more work
-I have patches for those.
+Also other LSMs rely on a dynamic and persistent state
+(for example for file transitions in SELinux), which cannot be
+trusted anymore if LSMs are even temporarily disabled.
 
-Thanks,
-Amir.
+If IMA/EVM have to be enabled to prevent misconfiguration,
+I think the same can be achieved if they are full LSMs, for
+example by preventing that the list of enabled LSMs changes
+at run-time.
 
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index 98f61b31745a..351517bae716 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -89,10 +89,10 @@ static inline __u32 inotify_arg_to_mask(struct
-inode *inode, u32 arg)
-        __u32 mask;
+Roberto
 
-        /*
--        * Everything should accept their own ignored and should receive events
--        * when the inode is unmounted.  All directories care about children.
-+        * Everything should receive events when the inode is unmounted.
-+        * All directories care about children.
-         */
--       mask = (FS_IN_IGNORED | FS_UNMOUNT);
-+       mask = FS_UNMOUNT;
-        if (S_ISDIR(inode->i_mode))
-                mask |= FS_EVENT_ON_CHILD;
-
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index 1ce66748a2d2..ecbafb3f36d7 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -42,6 +42,11 @@
-
- #define FS_UNMOUNT             0x00002000      /* inode on umount fs */
- #define FS_Q_OVERFLOW          0x00004000      /* Event queued overflowed */
-+#define FS_ERROR               0x00008000      /* Filesystem error report */
-+/*
-+ * FS_IN_IGNORED overloads FS_ERROR.  It is only used internally by inotify
-+ * which does not support FS_ERROR.
-+ */
- #define FS_IN_IGNORED          0x00008000      /* last inotify event here */
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
