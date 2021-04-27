@@ -2,115 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB69536C9BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 18:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FFAE36C9DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 18:58:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238777AbhD0Qta (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 12:49:30 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47454 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S237539AbhD0QtF (ORCPT
+        id S238087AbhD0Q6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 12:58:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59782 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238147AbhD0Q6g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 12:49:05 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13RGXXVQ072052;
-        Tue, 27 Apr 2021 12:48:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=sK/kfEPDNAy/W73TYtW08cQTH0f6vXPcMHahw7XFPGQ=;
- b=q9hf4jtJPWAD4PwYjyX+inldY407WIvN5ME0pnurEhWmSwcj+ytMEF7yXyBr2w6lvSOt
- ep+Owe6YYqXXYOeNbYQ+c/Hb+RLWFUi41JcvEivBwAwHM4JyD+6FBikcIFQBqaZfFCDJ
- TgSmF+zEejm8QRTTs1cekLzdxo1Bj1ZH9H5jSvXlwgtcPMHq7bldgmt0vMVAnzz1/Sjx
- NL6syw7nG4p7SFrZyOtBr9SIm1nENh40sGwGS259Xi2vCMaH4qDpO3wjQbLfoh2z6V7b
- /tBYLIGUK5aOn3Sjfh5AsJZiDzDz3U4LMd/v67E67gFTLzl/e9KORD6IhQtiLTsQp5b9 NA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 386muqubkg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Apr 2021 12:48:09 -0400
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 13RGXe8k072967;
-        Tue, 27 Apr 2021 12:48:09 -0400
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 386muqubk1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Apr 2021 12:48:08 -0400
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13RGidOK023537;
-        Tue, 27 Apr 2021 16:48:07 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma03fra.de.ibm.com with ESMTP id 384ay8rtjc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Apr 2021 16:48:06 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13RGm3Ec30933496
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Apr 2021 16:48:03 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C29EC42045;
-        Tue, 27 Apr 2021 16:48:03 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E86414203F;
-        Tue, 27 Apr 2021 16:48:01 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.36.231])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 27 Apr 2021 16:48:01 +0000 (GMT)
-Message-ID: <2c4baf092a11eadfc589ca2a314bcbf689284b0a.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to
- post hooks
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        "mjg59@google.com" <mjg59@google.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Tue, 27 Apr 2021 12:48:00 -0400
-In-Reply-To: <3354e1a0-bca2-2cb9-6e82-7209b9106008@schaufler-ca.com>
-References: <20210305151923.29039-1-roberto.sassu@huawei.com>
-         <20210305151923.29039-5-roberto.sassu@huawei.com>
-         <c3bb1069-c732-d3cf-0dde-7a83b3f31871@schaufler-ca.com>
-         <93858a47a29831ca782c8388faaa43c8ffc3f5cd.camel@linux.ibm.com>
-         <7a39600c24a740838dca24c20af92c1a@huawei.com>
-         <d047d1347e7104162e0e36eb57ade6bba914ea2d.camel@linux.ibm.com>
-         <d783e2703248463f9af68e155ee65c38@huawei.com>
-         <3354e1a0-bca2-2cb9-6e82-7209b9106008@schaufler-ca.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: UQxgqS5tfaz7u6xEhw6-mov5dXxGuI3Q
-X-Proofpoint-ORIG-GUID: BhALz2mzO1A0UFYjsNFOhf10bxTXbPKE
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-27_10:2021-04-27,2021-04-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 adultscore=0 mlxlogscore=999 bulkscore=0 phishscore=0
- impostorscore=0 mlxscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104270112
+        Tue, 27 Apr 2021 12:58:36 -0400
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 489C8C06175F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Apr 2021 09:57:52 -0700 (PDT)
+Received: by mail-il1-x129.google.com with SMTP id a9so2126061ilh.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Apr 2021 09:57:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AfWvlXdic+4MOs0KOPuGPjE9kmD8XQr/sjmlrkTPLaI=;
+        b=V8ZOgRJcn6Dtqzn/dNTeT1u9mccvCFMWItwlB2UU5IVebFRpf/CJ71oNx7sVg0gTxn
+         D5QqGQXHstJUFYUStJ6czBmZ5CVbVKd68zvdjnQN0+nn6k8spWRQg3ZN7hButLBVmrkd
+         P1MDMudaGLf3+9zuwY8ZNeRQKEyHpqW3V3aCC0uIRCK/1HCaAzUuTyKbou4oHr50bPfa
+         YPzAtJHZwnrp7epFgbmMoOkqVtlH4iiovgBMyUhDoYOdMTUgzCSkjgSkc05mSJZLjATs
+         GXnDvOYHzpyTJUrMKD0nW67S6wLNYpiHRMkDClN/cndD1/qRlKFgvyLf7CYSGi8lGL66
+         jzVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AfWvlXdic+4MOs0KOPuGPjE9kmD8XQr/sjmlrkTPLaI=;
+        b=oF2Lf7vDDxLUcmBXr3sa+rWrfZ3qR95pEa2rGHwzmmgAOINrFIXRGuS4dmdbyWkw8g
+         F+Tg4so4IjluZUdb/LwkEgjXS6qGKZmIiMObpoP34NzXYBu5JP+ItNdpj2ZaP+psCHQo
+         Bj4jg9v+G7XcOpcr6YHmdr4cCVslIjDYzCIHpmoRpRYuzljMQjJIWV6G8Bt7h/kTFoNR
+         yWCtS6FShfdtlKQdBdbu2R4AKnhwpJ9QBFnx5I+jrHp2unwYL343fmnpbrb1UQlSOXDY
+         bZQX4BK6/aCz+17nFqoB4vOcVt8QdKwbHbe2JmOqDXJzVH5lU0BkRFg+Y/Rvb7vGZwQe
+         5D0w==
+X-Gm-Message-State: AOAM5317MISeWqRgQYiHAdt/EM4JSRw1uOh26xYBym7lrQy3DOoHfJGl
+        /FA2ngQyJIaFjEdvFFUUIjaCb7omoz3kDhuNnjMWcw==
+X-Google-Smtp-Source: ABdhPJwGFKRq3YkbLr0YvaOXUWBlmiWFSZOzKAFBSpiZs1nWwxElMS0Tlq3jxLLjVUri2MfWpajIppi1lnvNcSqEz38=
+X-Received: by 2002:a05:6e02:1d06:: with SMTP id i6mr19319768ila.165.1619542671555;
+ Tue, 27 Apr 2021 09:57:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210420220804.486803-1-axelrasmussen@google.com>
+ <20210420220804.486803-4-axelrasmussen@google.com> <alpine.LSU.2.11.2104261906390.2998@eggly.anvils>
+ <20210427155414.GB6820@xz-x1>
+In-Reply-To: <20210427155414.GB6820@xz-x1>
+From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Tue, 27 Apr 2021 09:57:16 -0700
+Message-ID: <CAJHvVciNrE_F0B0nu=Mib6LhcFhL8+qgO-yiKNsJuBjOMkn5+g@mail.gmail.com>
+Subject: Re: [PATCH v4 03/10] userfaultfd/shmem: support UFFDIO_CONTINUE for shmem
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Hugh Dickins <hughd@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        Brian Geffon <bgeffon@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Casey,
+I'd prefer to keep them separate, as they are not tiny patches (they
+are roughly +200/-150 each). And, they really are quite independent -
+at least in the sense that I can reorder them via rebase with no
+conflicts, and the code builds at each commit in either orientation. I
+think this implies they're easier to review separately, rather than
+squashed.
 
-On Tue, 2021-04-27 at 09:39 -0700, Casey Schaufler wrote:
-> >> That ship sailed when "security=" was deprecated in favor of "lsm="
-> >> support, which dynamically enables/disables LSMs at runtime.
-> 
-> security= is still supported and works the same as ever. lsm= is
-> more powerful than security= but also harder to use.
+I don't have a strong feeling about the order. I slightly prefer
+swapping them compared to this v4 series: first introduce minor
+faults, then introduce CONTINUE.
 
-I understand that it still exists, but the documentation says it's been
-deprecated.
-From Documentation/admin-guide/kernel-parameters.txt:
+Since Peter also has no strong opinion, and Hugh it sounds like you
+prefer it the other way around, I'll swap them as we had in some
+previous version of this series: first introduce minor faults, then
+introduce CONTINUE.
 
-        security=  [SECURITY] Choose a legacy "major" security module to
-                        enable at boot. This has been deprecated by the
-                        "lsm=" parameter.
-
-Mimi
-
+On Tue, Apr 27, 2021 at 8:54 AM Peter Xu <peterx@redhat.com> wrote:
+>
+> On Mon, Apr 26, 2021 at 07:19:58PM -0700, Hugh Dickins wrote:
+> > On Tue, 20 Apr 2021, Axel Rasmussen wrote:
+> >
+> > > With this change, userspace can resolve a minor fault within a
+> > > shmem-backed area with a UFFDIO_CONTINUE ioctl. The semantics for this
+> > > match those for hugetlbfs - we look up the existing page in the page
+> > > cache, and install a PTE for it.
+> > >
+> > > This commit introduces a new helper: mcopy_atomic_install_pte.
+> > >
+> > > Why handle UFFDIO_CONTINUE for shmem in mm/userfaultfd.c, instead of in
+> > > shmem.c? The existing userfault implementation only relies on shmem.c
+> > > for VM_SHARED VMAs. However, minor fault handling / CONTINUE work just
+> > > fine for !VM_SHARED VMAs as well. We'd prefer to handle CONTINUE for
+> > > shmem in one place, regardless of shared/private (to reduce code
+> > > duplication).
+> > >
+> > > Why add a new mcopy_atomic_install_pte helper? A problem we have with
+> > > continue is that shmem_mcopy_atomic_pte() and mcopy_atomic_pte() are
+> > > *close* to what we want, but not exactly. We do want to setup the PTEs
+> > > in a CONTINUE operation, but we don't want to e.g. allocate a new page,
+> > > charge it (e.g. to the shmem inode), manipulate various flags, etc. Also
+> > > we have the problem stated above: shmem_mcopy_atomic_pte() and
+> > > mcopy_atomic_pte() both handle one-half of the problem (shared /
+> > > private) continue cares about. So, introduce mcontinue_atomic_pte(), to
+> > > handle all of the shmem continue cases. Introduce the helper so it
+> > > doesn't duplicate code with mcopy_atomic_pte().
+> > >
+> > > In a future commit, shmem_mcopy_atomic_pte() will also be modified to
+> > > use this new helper. However, since this is a bigger refactor, it seems
+> > > most clear to do it as a separate change.
+> > >
+> > > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+> >
+> > If this "03/10" had been numbered 04/10, I would have said
+> > Acked-by: Hugh Dickins <hughd@google.com>
+> >
+> > But I find this new ordering incomprehensible - I'm surprised that it
+> > even builds this way around (if it does): this patch is so much about
+> > what has been enabled in "04/10" (references to UFFDIO_CONTINUE shmem
+> > VMAs etc).
+> >
+> > Does Peter still think this way round is better? If he does, then we
+> > shall have to compromise by asking you just to squash the two together.
+>
+> Hi, Hugh, Axel,
+>
+> I have no strong opinion. To me, UFFDIO_CONTINUE can be introduced earlier like
+> this. As long as we don't enable the feature (which is done in the next patch),
+> no one will be able to call it, then it looks clean.  Merging them also looks
+> good to me.
+>
+> Thanks,
+>
+> --
+> Peter Xu
+>
