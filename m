@@ -2,146 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 72BEA36C849
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 17:06:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41CBA36C8BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 17:35:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236510AbhD0PHY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 11:07:24 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60322 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235466AbhD0PHX (ORCPT
+        id S237893AbhD0Pft (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 11:35:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44522 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229571AbhD0Pfs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 11:07:23 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 8E3091F4262B
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     Shreeya Patel <shreeya.patel@collabora.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        adilger.kernel@dilger.ca, jaegeuk@kernel.org, chao@kernel.org,
-        ebiggers@google.com, drosen@google.com, ebiggers@kernel.org,
-        yuchao0@huawei.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-        andre.almeida@collabora.com
-Subject: Re: [PATCH v8 4/4] fs: unicode: Add utf8 module and a unicode layer
-Organization: Collabora
-References: <20210423205136.1015456-1-shreeya.patel@collabora.com>
-        <20210423205136.1015456-5-shreeya.patel@collabora.com>
-        <20210427062907.GA1564326@infradead.org>
-        <61d85255-d23e-7016-7fb5-7ab0a6b4b39f@collabora.com>
-        <YIgkvjdrJPjeoJH7@mit.edu>
-Date:   Tue, 27 Apr 2021 11:06:33 -0400
-In-Reply-To: <YIgkvjdrJPjeoJH7@mit.edu> (Theodore Ts'o's message of "Tue, 27
-        Apr 2021 10:50:38 -0400")
-Message-ID: <87bl9z937q.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Tue, 27 Apr 2021 11:35:48 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13RFXC14030239;
+        Tue, 27 Apr 2021 11:35:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=w8APLkGIxh0rs/Wpr76LrK507rVPF46QHjwU3RO8BVY=;
+ b=f/98XhTnaN92HmAR3tl1kdnCSg61Jr7DwWt9/0YvQMOwvlfvOZ6rrrfOYySQaNaWPCG8
+ ob7o+NevAU2gVmDOyRLfJ83MkcHmordYU7TPf6L9ZNvaFkcu4SbTt2H/SnKfwvXRyjrB
+ Dv06/6HxWAVSPjXlYIrTjMzgBqaHaWdthay4PO3G41ypdo7ZXRcwPfY34TTz4yMaRKYo
+ NjpSQ8wVAPG7zQbCuvAl9WHkCSG8GZ1o4douKQMMAWab1/x44M9dwNP1GdtTRma9AWMU
+ J61CtiGICHmfzesvPVdIumfINkMOcBUrzJOm3eV2ieOf2AbYeIcNFRt73sTcTZP3slYQ Yw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 386hjch0mw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Apr 2021 11:35:01 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 13RFYSIh039261;
+        Tue, 27 Apr 2021 11:35:00 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 386hjch0ke-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Apr 2021 11:35:00 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13RFHh1I016742;
+        Tue, 27 Apr 2021 15:34:57 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma06ams.nl.ibm.com with ESMTP id 384akh9e3s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Apr 2021 15:34:57 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13RFYUHM27591096
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Apr 2021 15:34:30 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 428EBA4054;
+        Tue, 27 Apr 2021 15:34:54 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 58E91A405C;
+        Tue, 27 Apr 2021 15:34:52 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.36.231])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 27 Apr 2021 15:34:52 +0000 (GMT)
+Message-ID: <d047d1347e7104162e0e36eb57ade6bba914ea2d.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to
+ post hooks
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "mjg59@google.com" <mjg59@google.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Tue, 27 Apr 2021 11:34:51 -0400
+In-Reply-To: <7a39600c24a740838dca24c20af92c1a@huawei.com>
+References: <20210305151923.29039-1-roberto.sassu@huawei.com>
+         <20210305151923.29039-5-roberto.sassu@huawei.com>
+         <c3bb1069-c732-d3cf-0dde-7a83b3f31871@schaufler-ca.com>
+         <93858a47a29831ca782c8388faaa43c8ffc3f5cd.camel@linux.ibm.com>
+         <7a39600c24a740838dca24c20af92c1a@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: r6y4VwTF8AaFgQ4HP7af5phuJF68seLq
+X-Proofpoint-GUID: DF7zkX2QQSjHy6QaOf_0ObKIUqKv21Xb
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-04-27_08:2021-04-27,2021-04-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=898 phishscore=0 bulkscore=0 adultscore=0
+ suspectscore=0 malwarescore=0 priorityscore=1501 spamscore=0 clxscore=1015
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104270108
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"Theodore Ts'o" <tytso@mit.edu> writes:
+On Tue, 2021-04-27 at 09:25 +0000, Roberto Sassu wrote:
+> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> > Sent: Monday, April 26, 2021 9:49 PM
+> > On Fri, 2021-03-05 at 09:30 -0800, Casey Schaufler wrote:
 
-> On Tue, Apr 27, 2021 at 03:39:15PM +0530, Shreeya Patel wrote:
->> > > Hence, make UTF-8 encoding loadable by converting it into a module and
->> > > also add built-in UTF-8 support option for compiling it into the
->> > > kernel whenever required by the filesystem.
->> > The way this is implemement looks rather awkward.
->
-> I think that's a bit awkard is the trying to create an abstraction
-> separation between the unicode and utf8 layers, just in case, at some
-> point, we want fs/unicode to support more than just utf8.
->
-> I think we're better off being opinionated here, and say that the only
-> unicode encoding that will be supported by the kernel is UTF-8.
-> Period.  In which case, we don't need to try to insert this unneeded
-> abstraction layer.
->
-> If you really want to make make fs/unicode support more than one
-> encoding --- say, UTF-16LE, as used by NTFS --- at that point we can
-> think about what the abstractions should look like.  For example, it
-> doesn't _actually_ make sense for the data-trie structures to be part
-> of the utf-8 encoding.  The normalization tables are for Unicode, and
-> it wouldn't make sense for UTF-16 to have its own normalization
-> tables, bloating the kernel even more.
->
-> It *is* true that the normalization tables have been optimized for
-> utf-8, because that's what the whole world actually uses; utf-16le is
-> really a legacy use case.  So presumably, we would probably find a way
-> to code up the utf-16 functions in a way that used the utf-8 data
-> tables, even if it wasn't 100% optimal in terms of speed.
->
-> But it's probably not worth it at this point.
->
->> > Given that the large memory usage is for a data table and not for code,
->> > why not treat is as a firmware blob and load it using request_firmware?
->> 
->> utf8 module not just has the data table but also has some kernel code.
->> The big part that we are trying to keep out of the kernel is a tree
->> structure that gets traversed based on a key that is the file name.
->> This is done when issuing a lookup in the filesystem, which has to be very
->> fast. So maybe it would not be so good to use request_firmware for
->> such a core feature.
->
-> Speed really isn't a great argument here; the request_firmware is
-> something that would only need to be done once, when a file system
-> which requires Unicode normalization and/or case-folding is mounted.
->
-> I think the better argument to make is just one of simplicity;
-> separating the Unicode data table from the kernel adds complexity.  It
-> also reduces flexibility, since for use cases where it's actually
-> _preferable_ to have Unicode functionality permanently built-in the
-> kernel, we now force the use of some kind of initial ramdisk to load a
-> module before the root file system (which might require Unicode
-> support) could even be mounted.
+> > > However ...
+> > >
+> > > The special casing of IMA and EVM in security.c is getting out of
+> > > hand, and appears to be unnecessary. By my count there are 9 IMA
+> > > hooks and 5 EVM hooks that have been hard coded. Adding this IMA
+> > > hook makes 10. It would be really easy to register IMA and EVM as
+> > > security modules. That would remove the dependency they currently
+> > > have on security sub-system approval for changes like this one.
+> > > I know there has been resistance to "IMA as an LSM" in the past,
+> > > but it's pretty hard to see how it wouldn't be a win.
 
-FWIW, embedding FW images to the kernel is also well supported.  Making
-the data trie a firmware doesn't make a ramdisk more of a requirement
-than the module solution, I think.
+It sholdn't be one way.  Are you willing to also make the existing
+IMA/EVM hooks that are not currently security hooks, security hooks
+too?   And accept any new IMA/EVM hooks would result in new security
+hooks?  Are you also willing to add dependency tracking between LSMs?
 
-> The argument *for* making the Unicode table be a loadable firmware is
-> that it might make it possible to upgrade to a newer version of
-> Unicode without needing to do a kernel recompile.  On average, Unicode
-> relases a new to support new character sets every year or so, or when
-> there Japanese Emperor requiring a new reign name :-).  Usually the
-> new character sets are for obscure ancient alphabets, and so it's
-> really not a big deal if the kernel doesn't support, say,
-> Chorasmian[1] or Dives Akuru[2].  Perhaps people would make a much
-> bigger deal about new Emoji characters, or new code points for the
-> Creative Commons symbols.  I'm personally not excited enough to claim
-> that it's worth the extra complexity, but some people might think so.
-> :-)
+> > 
+> > Somehow I missed the new "lsm=" boot command line option, which
+> > dynamically allows enabling/disabling LSMs, being upstreamed.  This
+> > would be one of the reasons for not making IMA/EVM full LSMs.
+> 
+> Hi Mimi
+> 
+> one could argue why IMA/EVM should receive a special
+> treatment. I understand that this was a necessity without
+> LSM stacking. Now that LSM stacking is available, I don't
+> see any valid reason why IMA/EVM should not be managed
+> by the LSM infrastructure.
+> 
+> > Both IMA and EVM file data/metadata is persistent across boots.  If
+> > either one or the other is not enabled the file data hash or file
+> > metadata HMAC will not properly be updated, potentially preventing the
+> > system from booting when re-enabled.  Re-enabling IMA and EVM would
+> > require "fixing" the mutable file data hash and HMAC, without any
+> > knowledge of what the "fixed" values should be.  Dave Safford referred
+> > to this as "blessing" the newly calculated values.
+> 
+> IMA/EVM can be easily disabled in other ways, for example
+> by moving the IMA policy or the EVM keys elsewhere.
 
-We don't really care about emojis since they are not usually
-normalized/folded, and unless you are using strict mode, they will be
-invisible for the user. On a unrelated note, newer scripts are more
-interesting and we should come up with some update policy someday, since
-we are already lagging the unicode spec.  At least we are still in the
-Reiwa Era, which was first supported in 12.1 :)
+Dynamically disabling IMA/EVM is very different than removing keys and
+preventing the system from booting.  Restoring the keys should result
+in being able to re-boot the system.  Re-enabling IMA/EVM, requires re-
+labeling the filesystem in "fix" mode, which "blesses" any changes made
+when IMA/EVM were not enabled.
 
->
-> [1] used in Central Asia across Uzbekistan, Kazakhstan, and
-> Turkmenistan to write an extinct Eastern Iranian language.
->
-> [2] historically used in the Maldives until the 20th century.
->
-> Of course, using those new Emoji symbols in file names would reduce
-> portability of that file system if Strict Normalization was mandated.
-> Fortunately, ext4 and f2fs don't enable strict normalizaation by
-> default, which is also good, because it means if we don't have the
-> latest Unicode update in the kernel, it doesn't really matter that
-> much.... again, not worth the extra complexity/headache IMHO.
+> Also other LSMs rely on a dynamic and persistent state
+> (for example for file transitions in SELinux), which cannot be
+> trusted anymore if LSMs are even temporarily disabled.
 
-ah yes, exactly.
+Your argument is because this is a problem for SELinux, make it also a
+problem for IMA/EVM too?!   ("Two wrongs make a right")
 
->
-> Cheers,
->
-> 					- Ted
+> If IMA/EVM have to be enabled to prevent misconfiguration,
+> I think the same can be achieved if they are full LSMs, for
+> example by preventing that the list of enabled LSMs changes
+> at run-time.
 
--- 
-Gabriel Krisman Bertazi
+That ship sailed when "security=" was deprecated in favor of "lsm="
+support, which dynamically enables/disables LSMs at runtime.
+
+Mimi
+
