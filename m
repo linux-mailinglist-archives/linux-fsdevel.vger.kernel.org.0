@@ -2,94 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7E3736CC44
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 22:29:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AC8A36CC58
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 22:32:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236965AbhD0UaN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 16:30:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49946 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235401AbhD0UaM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 16:30:12 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C891EC061574;
-        Tue, 27 Apr 2021 13:29:28 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id k127so5771334qkc.6;
-        Tue, 27 Apr 2021 13:29:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=4JAGxs8XMH4cgbEY2coprv1buFuT3aNXaxuK/OKjg/I=;
-        b=Dr4IHQ7R5yATBaw/jvIFtTEK4ZDaKFp5maPIhqMD4UYxqyzLvB51veD/xZ4q0ufzzo
-         6OIIi3Bs6GsparVPVIbDbYvCf0YhdM2RijzhU0hgBf9fy1qoRAzQzc+ayOsDGXdAOAIT
-         MYT8tW3Sohym+v1aNecQj2QStzS0gWUn4aBHLvXW3dQ27t94QuOcpfMEjaVetQnP78pV
-         dqbhZFqHZPSFerNbrR/NznDHtikrMDjnMBQqn8K4gp+UcFipMDS9dQR7cnu2yC5/JsF0
-         8AfoUqBTpFAq7ToHn49ckQ5EeUrRBxHjTlFSWGhUkpfmWzV8Co97X/6RTOjizB+aYIXY
-         pTwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=4JAGxs8XMH4cgbEY2coprv1buFuT3aNXaxuK/OKjg/I=;
-        b=aTyXeBgQcjKOMJg6tNGlqT/HW9WmPGfbdK9msjiHWP7RXoy3l18GBZTHtgZz21/7+p
-         58yfDMQW2O4nxOK3PaX1nsy+5yFD5WavWZ+tBeDgUpzuaQW+rQT58SX2qCftbw7hHNTV
-         oZxxZ96L0Irb3Dl29ircrZ4qvzfat0xG4Eu3t1HUcmIHcdK20tHNE4w23UFMHm1U2/cI
-         L6/en4qIaMENPMsjO+fma1ZaWAF6LUAVkA8aBUda6i/dEsU523Ea4BnJY4jA4wJZVfCg
-         SZLJDwFx+6K0wOw/xpirdxLvadGNwiAcy9pjz+LLCWsJT5F0lqbgkK8RXvRfnGwGif7D
-         cz+Q==
-X-Gm-Message-State: AOAM533hsLyF4XlA/yyXEro8mzsUiWoIAnwiwTJRNYS1b1/j3No7Bj46
-        YzsHPgxPxf9YZxn8FlTDPz9Z5k5Vyb5a
-X-Google-Smtp-Source: ABdhPJxaja4PEd3AxTIwUcbEeFLoiPRA87hLno1AEvaYsXemKhUkLpZGAOYY79/Fpm0mo4rEJzVrrQ==
-X-Received: by 2002:a37:8c9:: with SMTP id 192mr4977022qki.130.1619555368109;
-        Tue, 27 Apr 2021 13:29:28 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id d207sm3491087qke.59.2021.04.27.13.29.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Apr 2021 13:29:27 -0700 (PDT)
-Date:   Tue, 27 Apr 2021 16:29:23 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Eryu Guan <eguan@linux.alibaba.com>
-Cc:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH 3/3] Use --yes option to lvcreate
-Message-ID: <YIh0Iy+BiY4zzhB1@moria.home.lan>
-References: <20210427164419.3729180-1-kent.overstreet@gmail.com>
- <20210427164419.3729180-4-kent.overstreet@gmail.com>
- <20210427170339.GA9611@e18g06458.et15sqa>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210427170339.GA9611@e18g06458.et15sqa>
+        id S238884AbhD0UdZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 16:33:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46096 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235416AbhD0UdY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Apr 2021 16:33:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id A496A6112F;
+        Tue, 27 Apr 2021 20:32:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619555560;
+        bh=4gt03mTcqQmbSZtAfLXQq5ZIUn/1FOWKVpj8VYzvF7g=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=mOxujVs+Fgdau8zdzq2K7vxHteNdW5KCJuRzEsR8YYeriMrhVkzvzDNyU5+/IxFA7
+         cdsQbsLF4MDnqVfszzqMfvFb9OYmy/llYn9s9GfwJIhnyJ9Vff+V8Hn0shWQOvJA15
+         LjVBtvcXuezv92O3MEdBRbUwCNKFtSjFNL5ZCz4YKcHKAUttZ2d+xhCafVJPOGzEBe
+         Yvka5WEvVjUNJ6HUlMy5NBj6H0BayaR0FTNgGckNHWK/43xJXuHwtV35tduX99wWxx
+         ZlAnxBys7tfYfUE4hUuOOxg7mqfIqTIGDdN2t4SjVflaCO7l1ycaXYVJdwGE56Bgvv
+         Zb2IE2IWrjvZw==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 98538609B0;
+        Tue, 27 Apr 2021 20:32:40 +0000 (UTC)
+Subject: Re: [GIT PULL] Network fs helper library & fscache kiocb API
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <3779937.1619478404@warthog.procyon.org.uk>
+References: <3779937.1619478404@warthog.procyon.org.uk>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <3779937.1619478404@warthog.procyon.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/netfs-lib-20210426
+X-PR-Tracked-Commit-Id: 53b776c77aca99b663a5512a04abc27670d61058
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 820c4bae40cb56466cfed6409e00d0f5165a990c
+Message-Id: <161955556055.29692.16460754787055823751.pr-tracker-bot@kernel.org>
+Date:   Tue, 27 Apr 2021 20:32:40 +0000
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Steve French <sfrench@samba.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 28, 2021 at 01:03:39AM +0800, Eryu Guan wrote:
-> On Tue, Apr 27, 2021 at 12:44:19PM -0400, Kent Overstreet wrote:
-> > This fixes spurious test failures caused by broken pipe messages.
-> > 
-> > Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
-> > ---
-> >  tests/generic/081 | 2 +-
-> >  tests/generic/108 | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/tests/generic/081 b/tests/generic/081
-> > index 5dff079852..26702007ab 100755
-> > --- a/tests/generic/081
-> > +++ b/tests/generic/081
-> > @@ -70,7 +70,7 @@ _scratch_mkfs_sized $((300 * 1024 * 1024)) >>$seqres.full 2>&1
-> >  $LVM_PROG vgcreate -f $vgname $SCRATCH_DEV >>$seqres.full 2>&1
-> >  # We use yes pipe instead of 'lvcreate --yes' because old version of lvm
-> >  # (like 2.02.95 in RHEL6) don't support --yes option
-> > -yes | $LVM_PROG lvcreate -L 256M -n $lvname $vgname >>$seqres.full 2>&1
-> > +$LVM_PROG lvcreate --yes -L 256M -n $lvname $vgname >>$seqres.full 2>&1
-> 
-> Please see above comments, we use yes pipe intentionally. I don't see
-> how this would result in broken pipe. Would you please provide more
-> details? And let's see if we could fix the broken pipe issue.
+The pull request you sent on Tue, 27 Apr 2021 00:06:44 +0100:
 
-If lvcreate never ask y/n - never reads from standard input, then echo sees a
-broken pipe when it tries to write. That's what I get without this patch.
+> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/netfs-lib-20210426
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/820c4bae40cb56466cfed6409e00d0f5165a990c
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
