@@ -2,56 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 938C636BE8D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 06:44:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9868336BEAB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 06:53:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234517AbhD0EnV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 00:43:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37916 "EHLO
+        id S229833AbhD0EyA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 00:54:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233421AbhD0EnU (ORCPT
+        with ESMTP id S229709AbhD0EyA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 00:43:20 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A745C061574;
-        Mon, 26 Apr 2021 21:42:38 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id t21so7546505iob.2;
-        Mon, 26 Apr 2021 21:42:38 -0700 (PDT)
+        Tue, 27 Apr 2021 00:54:00 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82C88C061574;
+        Mon, 26 Apr 2021 21:53:17 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id f21so22255654ioh.8;
+        Mon, 26 Apr 2021 21:53:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=EzSe38NJjrCvosP/G6D4PJaz045LslJADhZl0Vyj2/E=;
-        b=qWk7oZvNsF5EgbGk6j9nzCrBtUiofXrtCMUQ3l09zo+Mf6GRFAcjwaKCowYR/+ZsO1
-         veKJBI0kwyFCeSUd7I4WYKnNfK+C9cGYnDHk4OL5lo3leGvq1S7RONH7APV/ipC6wf4m
-         cZALgfdXTgdESYUrYU4mhcvHf46sDlGiQjPUOIKlxK6fllS32sGgPneK1968aAH8yE2M
-         Phv1W+hBx5pE/Bh9389gbc7QDN1S17gj2of9EWIje7nPiew9StwbvkQsUGacveX2qhVE
-         62Jf0vXdBXIFiqFITB2FZSZyXvxUgxvmYyNdWnxrcx6CjdHk4y8R7WdvWOKZb8qOzcAZ
-         hPkw==
+        bh=uJ+q1oJfO9X2bfJR2nU6a3jdYBMwCxEIQeRUT5Rprd8=;
+        b=X2ENgEo+kg5ha5U7EVzMZgr4hdZGsk4zM9sj2G7SvS3s+0K83izQrkP2GVvwDEFMaL
+         QIINYTnmHr0+3nX/Og5hA1UfBLNxOE8xVZHQazUM2zDkUPa9SdHMNqSDgmnGYTbHJ6bM
+         1+5SnyIJbnvIPwY4WVeo04UXZdUUnP0UmXE1s7wtq4578RDvCJedslr6jmPx56RivR8f
+         LXa2/TVvkTVA9+ovuBtyjzM1QxVQeUOHQgPEKq1KIOLIemEvtajtMZXIcyR0RLL6fnoR
+         X3JuVqj3kuEAtUX6UyOtYaYYhUnma7vfEY6f8h4OWFur/wdzrxO9hlNgTbkK8r3B5F5M
+         mcrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=EzSe38NJjrCvosP/G6D4PJaz045LslJADhZl0Vyj2/E=;
-        b=LwoN9zJ9tEXOua5QqGwg6FDXq/hnrOTnRYoI6a2aIVVKC3nrnaCt6wEwHBbX0j1oZO
-         M/Yx+vjdsvpPBkhtstf6ZjKLV9jzLMhxWG8mjjQt7r4UW1fJgdpe5fi3okbfMaJWIZfd
-         UH91D2w+O8IrqoWGe70ODwYHswvBmpqo9NjgYhIi6z6JlhTaiN8abt8lQx1D/hecfR+M
-         PzVyJkzjWUVOsm5duFQCfB72Gx2P8hAmNYKjm2bH0vNLu2lU8nyActdmsiZ0VXK9veHD
-         qbnZIwRWRNx6KNjiWFQxOpQfHUwRpJhteYU2vA9OxRCl7Fh9Ca6LuPIt3sasPzKPMzyS
-         HqCA==
-X-Gm-Message-State: AOAM533fAjvifxaxwD7Nk2ietFJ6KwDcDTdo+VxhgvokLnRhkC5Onhb+
-        NomGo41hk+heWsSfCMOtskfXd4sFrpH7RFS80is=
-X-Google-Smtp-Source: ABdhPJyh6lu2y8THwj6O+gzhUftnojOyzxw5viTBcrBGXcc8d1impNAPSnw7ACcCDq8WrbmGyIadDCYSu1GFFM3zFNM=
-X-Received: by 2002:a6b:f115:: with SMTP id e21mr17625161iog.5.1619498558076;
- Mon, 26 Apr 2021 21:42:38 -0700 (PDT)
+        bh=uJ+q1oJfO9X2bfJR2nU6a3jdYBMwCxEIQeRUT5Rprd8=;
+        b=n57sM+MzUnmA7ZoY4Sg1MxOYu7YhvnxGqh2UNeaBWkDHCq7eyx3Xk+kWe2N/VsV50C
+         QlpP0OK5P0UNS21bsJu/W3ZSZkD1GPe/Kx6hhoXAluZ0WQzlfL1oyC9yvTGOG3rl3DH8
+         SnPNBgXi+57XX40Wmfg4iTT1Gc0KWOyToFsQxGBOMOkNa0fY0WdrEKETlfSplLX/NEMt
+         ra6K4r0YjZ2V4x9CaFpAqesY/knDn/hqLs0pAPGaFNgmmWrUod5q+EFTyeNFc6yrjB/Y
+         cXfBkD0UEq3fv8MDNdmheke/PPEav/52dIZpYBIM5qDPuH40sn3zs6YPhHIaZa4+zz1M
+         fjyA==
+X-Gm-Message-State: AOAM530Ou+oq6RwFdigUKazP/bG8mXOmLz/6f71N9j96GFOHBl9694ia
+        y6B/uVShC9IsLyg7MgSrHM+FhQeHx0wV9S4iKM0=
+X-Google-Smtp-Source: ABdhPJweJbLptvp5YqBNzAsC99KdUcv52veJQPQUBa6gUlTQExbpjNazJQhq1OdiQicrFa/R6b5ue0k8JKpdZtPJCF4=
+X-Received: by 2002:a05:6602:58d:: with SMTP id v13mr16968137iox.64.1619499197053;
+ Mon, 26 Apr 2021 21:53:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210426184201.4177978-1-krisman@collabora.com> <20210426184201.4177978-2-krisman@collabora.com>
-In-Reply-To: <20210426184201.4177978-2-krisman@collabora.com>
+References: <20210426184201.4177978-1-krisman@collabora.com> <20210426184201.4177978-3-krisman@collabora.com>
+In-Reply-To: <20210426184201.4177978-3-krisman@collabora.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 27 Apr 2021 07:42:27 +0300
-Message-ID: <CAOQ4uxhAMaWFmHw-s_n+Hdad9jkDR8KD6bOYiQQV6RWMv+_TbA@mail.gmail.com>
-Subject: Re: [PATCH RFC 01/15] fanotify: Fold event size calculation to its
- own function
+Date:   Tue, 27 Apr 2021 07:53:06 +0300
+Message-ID: <CAOQ4uxjkt2RRPm__sGEXefWnyrrPEvEahbWHC=NnF29yrKonWA@mail.gmail.com>
+Subject: Re: [PATCH RFC 02/15] fanotify: Split fsid check from other fid mode checks
 To:     Gabriel Krisman Bertazi <krisman@collabora.com>
 Cc:     Theodore Tso <tytso@mit.edu>,
         "Darrick J. Wong" <djwong@kernel.org>,
@@ -68,111 +67,84 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Mon, Apr 26, 2021 at 9:42 PM Gabriel Krisman Bertazi
 <krisman@collabora.com> wrote:
 >
-> Every time this function is invoked, it is immediately added to
-> FAN_EVENT_METADATA_LEN, since there is no need to just calculate the
-> length of info records. This minor clean up folds the rest of the
-> calculation into the function, which now operates in terms of events,
-> returning the size of the entire event, including metadata.
+> FAN_ERROR will require fsid, but not necessarily require the filesystem
+> to expose a file handle.  Split those checks into different functions, so
+> they can be used separately when creating a mark.
+
+Ok for the split, but...
+
 >
 > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-
-Nice
-
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
 > ---
->  fs/notify/fanotify/fanotify_user.c | 40 +++++++++++++++++-------------
->  1 file changed, 23 insertions(+), 17 deletions(-)
+>  fs/notify/fanotify/fanotify_user.c | 35 +++++++++++++++++++-----------
+>  1 file changed, 22 insertions(+), 13 deletions(-)
 >
 > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index 9e0c1afac8bd..0332c4afeec3 100644
+> index 0332c4afeec3..e0d113e3b65c 100644
 > --- a/fs/notify/fanotify/fanotify_user.c
 > +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -64,17 +64,24 @@ static int fanotify_fid_info_len(int fh_len, int name_len)
->         return roundup(FANOTIFY_INFO_HDR_LEN + info_len, FANOTIFY_EVENT_ALIGN);
+> @@ -1055,7 +1055,23 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
 >  }
 >
-> -static int fanotify_event_info_len(unsigned int fid_mode,
-> -                                  struct fanotify_event *event)
-> +static size_t fanotify_event_len(struct fanotify_event *event,
-> +                                unsigned int fid_mode)
+>  /* Check if filesystem can encode a unique fid */
+> -static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
+> +static int fanotify_test_fid(struct path *path)
+
+This helper can take a dentry.
+
+> +{
+> +       /*
+> +        * We need to make sure that the file system supports at least
+> +        * encoding a file handle so user can use name_to_handle_at() to
+> +        * compare fid returned with event to the file handle of watched
+> +        * objects. However, name_to_handle_at() requires that the
+> +        * filesystem also supports decoding file handles.
+> +        */
+> +       if (!path->dentry->d_sb->s_export_op ||
+> +           !path->dentry->d_sb->s_export_op->fh_to_dentry)
+> +               return -EOPNOTSUPP;
+> +
+> +       return 0;
+> +}
+> +
+> +static int fanotify_check_path_fsid(struct path *path, __kernel_fsid_t *fsid)
+
+And so does this helper.
+I certainly don't see the need for the _path_ in the helper name.
+
 >  {
-> -       struct fanotify_info *info = fanotify_event_info(event);
-> -       int dir_fh_len = fanotify_event_dir_fh_len(event);
-> -       int fh_len = fanotify_event_object_fh_len(event);
-> -       int info_len = 0;
-> +       size_t event_len = FAN_EVENT_METADATA_LEN;
-> +       struct fanotify_info *info;
-> +       int dir_fh_len;
-> +       int fh_len;
->         int dot_len = 0;
+>         __kernel_fsid_t root_fsid;
+>         int err;
+> @@ -1082,17 +1098,6 @@ static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
+>             root_fsid.val[1] != fsid->val[1])
+>                 return -EXDEV;
 >
-> +       if (!fid_mode)
-> +               return event_len;
-> +
-> +       info = fanotify_event_info(event);
-> +       dir_fh_len = fanotify_event_dir_fh_len(event);
-> +       fh_len = fanotify_event_object_fh_len(event);
-> +
->         if (dir_fh_len) {
-> -               info_len += fanotify_fid_info_len(dir_fh_len, info->name_len);
-> +               event_len += fanotify_fid_info_len(dir_fh_len, info->name_len);
->         } else if ((fid_mode & FAN_REPORT_NAME) && (event->mask & FAN_ONDIR)) {
->                 /*
->                  * With group flag FAN_REPORT_NAME, if name was not recorded in
-> @@ -84,9 +91,9 @@ static int fanotify_event_info_len(unsigned int fid_mode,
->         }
->
->         if (fh_len)
-> -               info_len += fanotify_fid_info_len(fh_len, dot_len);
-> +               event_len += fanotify_fid_info_len(fh_len, dot_len);
->
-> -       return info_len;
-> +       return event_len;
+> -       /*
+> -        * We need to make sure that the file system supports at least
+> -        * encoding a file handle so user can use name_to_handle_at() to
+> -        * compare fid returned with event to the file handle of watched
+> -        * objects. However, name_to_handle_at() requires that the
+> -        * filesystem also supports decoding file handles.
+> -        */
+> -       if (!path->dentry->d_sb->s_export_op ||
+> -           !path->dentry->d_sb->s_export_op->fh_to_dentry)
+> -               return -EOPNOTSUPP;
+> -
+>         return 0;
 >  }
 >
->  /*
-> @@ -98,7 +105,8 @@ static int fanotify_event_info_len(unsigned int fid_mode,
->  static struct fanotify_event *get_one_event(struct fsnotify_group *group,
->                                             size_t count)
->  {
-> -       size_t event_size = FAN_EVENT_METADATA_LEN;
-> +       size_t event_size;
-> +       struct fsnotify_event *fse;
->         struct fanotify_event *event = NULL;
->         unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
->
-> @@ -108,16 +116,15 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
->         if (fsnotify_notify_queue_is_empty(group))
->                 goto out;
->
-> -       if (fid_mode) {
-> -               event_size += fanotify_event_info_len(fid_mode,
-> -                       FANOTIFY_E(fsnotify_peek_first_event(group)));
-> -       }
-> +       fse = fsnotify_peek_first_event(group);
-> +       event = FANOTIFY_E(fse);
-> +       event_size = fanotify_event_len(event, fid_mode);
->
->         if (event_size > count) {
->                 event = ERR_PTR(-EINVAL);
->                 goto out;
+> @@ -1230,7 +1235,11 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
 >         }
-> -       event = FANOTIFY_E(fsnotify_remove_first_event(group));
-> +       fsnotify_remove_queued_event(group, fse);
->         if (fanotify_is_perm_event(event->mask))
->                 FANOTIFY_PERM(event)->state = FAN_EVENT_REPORTED;
->  out:
-> @@ -334,8 +341,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
 >
->         pr_debug("%s: group=%p event=%p\n", __func__, group, event);
->
-> -       metadata.event_len = FAN_EVENT_METADATA_LEN +
-> -                               fanotify_event_info_len(fid_mode, event);
-> +       metadata.event_len = fanotify_event_len(event, fid_mode);
->         metadata.metadata_len = FAN_EVENT_METADATA_LEN;
->         metadata.vers = FANOTIFY_METADATA_VERSION;
->         metadata.reserved = 0;
-> --
-> 2.31.0
->
+>         if (fid_mode) {
+> -               ret = fanotify_test_fid(&path, &__fsid);
+> +               ret = fanotify_check_path_fsid(&path, &__fsid);
+> +               if (ret)
+> +                       goto path_put_and_out;
+> +
+> +               ret = fanotify_test_fid(&path);
+
+Whether _test_ or _check_ please stick to one.
+
+Thanks,
+Amir.
