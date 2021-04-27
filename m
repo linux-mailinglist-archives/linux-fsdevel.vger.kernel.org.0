@@ -2,82 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B26036CC7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 22:43:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2EE636CD3A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 22:53:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237060AbhD0Uob (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 16:44:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53096 "EHLO
+        id S239353AbhD0UyV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 16:54:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235416AbhD0Uob (ORCPT
+        with ESMTP id S239274AbhD0UyQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 16:44:31 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6799C061574;
-        Tue, 27 Apr 2021 13:43:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=2m3ePEN/b0N6S7FfXEnTbvQ+rj6eA3/8NDXHz1WfGDc=; b=vLyGFxYEG9pHXrRCGL8NP5D2m3
-        DL6FnWLtyJYrL7lduj8SDBojHQ7RAdrLiKT82ajmh189BAzJcWwqG8fKZa7OsjTpTeMlBqeTNPIVx
-        W6aTEhv0NwUzEjEKHimVsgS+/ZG9sKzaNMiKFE/VqXGK32g0nTFNpZJ+1lwczuGyHsHpq0+ht2Ea/
-        +HnEFrLYMrRkK6nRNlpZpxe2GhXz9P5nyKnRRW34lWcBl8WkBb4YRK0t0oYBHZn9R4xjblXcQdjyq
-        RQlZfBYR3cEzq5+PdWqlILFjgBuzL/eXZLuZx8a+SdQ8wzJLbid93pRwMCGjLJBzwy4SIL2G93d+r
-        q5yhmF3Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lbUYB-007Nog-Uo; Tue, 27 Apr 2021 20:43:21 +0000
-Date:   Tue, 27 Apr 2021 21:43:19 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     Eryu Guan <eguan@linux.alibaba.com>, fstests@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH 3/3] Use --yes option to lvcreate
-Message-ID: <20210427204319.GD235567@casper.infradead.org>
-References: <20210427164419.3729180-1-kent.overstreet@gmail.com>
- <20210427164419.3729180-4-kent.overstreet@gmail.com>
- <20210427170339.GA9611@e18g06458.et15sqa>
- <YIh0Iy+BiY4zzhB1@moria.home.lan>
+        Tue, 27 Apr 2021 16:54:16 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94878C061574;
+        Tue, 27 Apr 2021 13:53:32 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 517BF728D; Tue, 27 Apr 2021 16:53:31 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 517BF728D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1619556811;
+        bh=5ZQPQuFxsL8p1/4VGoLL6WsBT7fTywQ1GIUgUVF5lec=;
+        h=Date:To:Cc:Subject:References:In-Reply-To:From:From;
+        b=z3cr0vjp/pv7UrKkb/9QmeUT/9blZGZODaNPAChaxG+CDObuj+ishlur6hK/qxwbC
+         SqS0MqNzAWgcan9EQmGtzfjtU9ejxGVL+7cHdv5KrqPR/luCQ9NSDqmBGCo7HgCEBp
+         DqCWgdpAe4DrYSJERm9sp/UbCbumPSOtVuxmHwRU=
+Date:   Tue, 27 Apr 2021 16:53:31 -0400
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        smfrench@gmail.com, senozhatsky@chromium.org, hyc.lee@gmail.com,
+        viro@zeniv.linux.org.uk, hch@lst.de, hch@infradead.org,
+        ronniesahlberg@gmail.com, aurelien.aptel@gmail.com,
+        aaptel@suse.com, sandeen@sandeen.net, dan.carpenter@oracle.com,
+        colin.king@canonical.com, rdunlap@infradead.org,
+        willy@infradead.org
+Subject: Re: [PATCH v2 00/10] cifsd: introduce new SMB3 kernel server
+Message-ID: <20210427205331.GA15168@fieldses.org>
+References: <CGME20210422003835epcas1p246c40c6a6bbc0e9f5d4ccf9b69bef0d7@epcas1p2.samsung.com>
+ <20210422002824.12677-1-namjae.jeon@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YIh0Iy+BiY4zzhB1@moria.home.lan>
+In-Reply-To: <20210422002824.12677-1-namjae.jeon@samsung.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+From:   bfields@fieldses.org (J. Bruce Fields)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 27, 2021 at 04:29:23PM -0400, Kent Overstreet wrote:
-> On Wed, Apr 28, 2021 at 01:03:39AM +0800, Eryu Guan wrote:
-> > On Tue, Apr 27, 2021 at 12:44:19PM -0400, Kent Overstreet wrote:
-> > > This fixes spurious test failures caused by broken pipe messages.
-> > > 
-> > > Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
-> > > ---
-> > >  tests/generic/081 | 2 +-
-> > >  tests/generic/108 | 2 +-
-> > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/tests/generic/081 b/tests/generic/081
-> > > index 5dff079852..26702007ab 100755
-> > > --- a/tests/generic/081
-> > > +++ b/tests/generic/081
-> > > @@ -70,7 +70,7 @@ _scratch_mkfs_sized $((300 * 1024 * 1024)) >>$seqres.full 2>&1
-> > >  $LVM_PROG vgcreate -f $vgname $SCRATCH_DEV >>$seqres.full 2>&1
-> > >  # We use yes pipe instead of 'lvcreate --yes' because old version of lvm
-> > >  # (like 2.02.95 in RHEL6) don't support --yes option
-> > > -yes | $LVM_PROG lvcreate -L 256M -n $lvname $vgname >>$seqres.full 2>&1
-> > > +$LVM_PROG lvcreate --yes -L 256M -n $lvname $vgname >>$seqres.full 2>&1
-> > 
-> > Please see above comments, we use yes pipe intentionally. I don't see
-> > how this would result in broken pipe. Would you please provide more
-> > details? And let's see if we could fix the broken pipe issue.
+On Thu, Apr 22, 2021 at 09:28:14AM +0900, Namjae Jeon wrote:
+> This is the patch series for cifsd(ksmbd) kernel server.
 > 
-> If lvcreate never ask y/n - never reads from standard input, then echo sees a
-> broken pipe when it tries to write. That's what I get without this patch.
+> What is cifsd(ksmbd) ?
+> ======================
+> 
+> The SMB family of protocols is the most widely deployed
+> network filesystem protocol, the default on Windows and Macs (and even
+> on many phones and tablets), with clients and servers on all major
+> operating systems, but lacked a kernel server for Linux. For many
+> cases the current userspace server choices were suboptimal
+> either due to memory footprint, performance or difficulty integrating
+> well with advanced Linux features.
+> 
+> ksmbd is a new kernel module which implements the server-side of the SMB3 protocol.
+> The target is to provide optimized performance, GPLv2 SMB server, better
+> lease handling (distributed caching). The bigger goal is to add new
+> features more rapidly (e.g. RDMA aka "smbdirect", and recent encryption
+> and signing improvements to the protocol) which are easier to develop
+> on a smaller, more tightly optimized kernel server than for example
+> in Samba.  The Samba project is much broader in scope (tools, security services,
+> LDAP, Active Directory Domain Controller, and a cross platform file server
+> for a wider variety of purposes) but the user space file server portion
+> of Samba has proved hard to optimize for some Linux workloads, including
+> for smaller devices. This is not meant to replace Samba, but rather be
+> an extension to allow better optimizing for Linux, and will continue to
+> integrate well with Samba user space tools and libraries where appropriate.
+> Working with the Samba team we have already made sure that the configuration
+> files and xattrs are in a compatible format between the kernel and
+> user space server.
+> 
+> 
+> Architecture
+> ============
+> 
+>                |--- ...
+>        --------|--- ksmbd/3 - Client 3
+>        |-------|--- ksmbd/2 - Client 2
+>        |       |         ____________________________________________________
+>        |       |        |- Client 1                                          |
+> <--- Socket ---|--- ksmbd/1   <<= Authentication : NTLM/NTLM2, Kerberos      |
+>        |       |      | |     <<= SMB engine : SMB2, SMB2.1, SMB3, SMB3.0.2, |
+>        |       |      | |                SMB3.1.1                            |
+>        |       |      | |____________________________________________________|
+>        |       |      |
+>        |       |      |--- VFS --- Local Filesystem
+>        |       |
+> KERNEL |--- ksmbd/0(forker kthread)
+> ---------------||---------------------------------------------------------------
+> USER           ||
+>                || communication using NETLINK
+>                ||  ______________________________________________
+>                || |                                              |
+>         ksmbd.mountd <<= DCE/RPC(srvsvc, wkssvc, samr, lsarpc)   |
+>                ^  |  <<= configure shares setting, user accounts |
+>                |  |______________________________________________|
+>                |
+>                |------ smb.conf(config file)
+>                |
+>                |------ ksmbdpwd.db(user account/password file)
+>                             ^
+>   ksmbd.adduser ---------------|
+> 
+> The subset of performance related operations(open/read/write/close etc.) belong
+> in kernelspace(ksmbd) and the other subset which belong to operations(DCE/RPC,
+> user account/share database) which are not really related with performance are
+> handled in userspace(ksmbd.mountd).
+> 
+> When the ksmbd.mountd is started, It starts up a forker thread at initialization
+> time and opens a dedicated port 445 for listening to SMB requests. Whenever new
+> clients make request, Forker thread will accept the client connection and fork
+> a new thread for dedicated communication channel between the client and
+> the server.
 
-I think it's something in how ktest sets up the environment.  I also see
-the SIGPIPEs when using your ktest scripts, but not when ssh'ing into
-the guest and running the test.
+Judging from the diagram above, all those threads are kernel threads, is
+that right?  So a kernel thread gets each call first, then uses netlink
+to get help from ksmbd.mountd if necessary, is that right?
 
-What that thing is, I don't know.  I'm not tall enough to understand
-signal handling.
+--b.
