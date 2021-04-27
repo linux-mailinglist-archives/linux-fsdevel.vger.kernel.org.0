@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E9EF36C547
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 13:38:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF8F936C540
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 13:37:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236116AbhD0Lih (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 07:38:37 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2927 "EHLO
+        id S236083AbhD0Lig (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 07:38:36 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2926 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230365AbhD0Lie (ORCPT
+        with ESMTP id S235426AbhD0Lie (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 27 Apr 2021 07:38:34 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FV0165HZyz68996;
-        Tue, 27 Apr 2021 19:30:02 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FV0173tFYz71fd1;
+        Tue, 27 Apr 2021 19:30:03 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Tue, 27 Apr 2021 13:37:46 +0200
+ 15.1.2176.2; Tue, 27 Apr 2021 13:37:47 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <jmorris@namei.org>, <paul@paul-moore.com>,
         <casey@schaufler-ca.com>
@@ -26,12 +26,10 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <reiserfs-devel@vger.kernel.org>, <selinux@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        <stable@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH v3 1/6] reiserfs: Add missing calls to reiserfs_security_free()
-Date:   Tue, 27 Apr 2021 13:37:27 +0200
-Message-ID: <20210427113732.471066-2-roberto.sassu@huawei.com>
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3 2/6] security: Rewrite security_old_inode_init_security()
+Date:   Tue, 27 Apr 2021 13:37:28 +0200
+Message-ID: <20210427113732.471066-3-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210427113732.471066-1-roberto.sassu@huawei.com>
 References: <20210427113732.471066-1-roberto.sassu@huawei.com>
@@ -46,76 +44,92 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit 57fe60df6241 ("reiserfs: add atomic addition of selinux attributes
-during inode creation") defined reiserfs_security_free() to free the name
-and value of a security xattr allocated by the active LSM through
-security_old_inode_init_security(). However, this function is not called
-in the reiserfs code.
+With upcoming changes, LSMs will be able to write their xattrs in the
+reserved slots. Boundary checking will be performed to ensure that LSMs
+don't write outside the passed xattr array. However, the xattr array is
+created only in security_inode_init_security() and not in
+security_old_inode_init_security().
 
-Thus, this patch adds a call to reiserfs_security_free() whenever
-reiserfs_security_init() is called, and initializes value to NULL, to avoid
-to call kfree() on an uninitialized pointer.
+Instead of duplicating the code for array allocation, this patch calls
+security_inode_init_security() from security_old_inode_init_security() and
+introduces a new callback, called security_initxattrs(), to copy the first
+element of the xattr array allocated by former function into the
+destination pointer provided by the latter function.
 
-Fixes: 57fe60df6241 ("reiserfs: add atomic addition of selinux attributes during inode creation")
-Cc: stable@vger.kernel.org
-Cc: Jeff Mahoney <jeffm@suse.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: Mimi Zohar <zohar@linux.ibm.com>
-Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- fs/reiserfs/namei.c          | 4 ++++
- fs/reiserfs/xattr_security.c | 1 +
- 2 files changed, 5 insertions(+)
+ security/security.c | 41 ++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 38 insertions(+), 3 deletions(-)
 
-diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-index e6eb05e2b2f1..6b5c51a77fae 100644
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -695,6 +695,7 @@ static int reiserfs_create(struct user_namespace *mnt_userns, struct inode *dir,
- 
- out_failed:
- 	reiserfs_write_unlock(dir->i_sb);
-+	reiserfs_security_free(&security);
- 	return retval;
+diff --git a/security/security.c b/security/security.c
+index 7f14e59c4f8e..692a148ce764 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1024,6 +1024,20 @@ int security_dentry_create_files_as(struct dentry *dentry, int mode,
  }
+ EXPORT_SYMBOL(security_dentry_create_files_as);
  
-@@ -778,6 +779,7 @@ static int reiserfs_mknod(struct user_namespace *mnt_userns, struct inode *dir,
- 
- out_failed:
- 	reiserfs_write_unlock(dir->i_sb);
-+	reiserfs_security_free(&security);
- 	return retval;
++static int security_initxattrs(struct inode *inode, const struct xattr *xattrs,
++			       void *fs_info)
++{
++	struct xattr *dest = (struct xattr *)fs_info;
++
++	if (!dest)
++		return 0;
++
++	dest->name = xattrs->name;
++	dest->value = xattrs->value;
++	dest->value_len = xattrs->value_len;
++	return 0;
++}
++
+ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 				 const struct qstr *qstr,
+ 				 const initxattrs initxattrs, void *fs_data)
+@@ -1053,8 +1067,14 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 		goto out;
+ 	ret = initxattrs(inode, new_xattrs, fs_data);
+ out:
+-	for (xattr = new_xattrs; xattr->value != NULL; xattr++)
++	for (xattr = new_xattrs; xattr->value != NULL; xattr++) {
++		if (xattr == new_xattrs && initxattrs == &security_initxattrs &&
++		    !ret && fs_data != NULL)
++			continue;
+ 		kfree(xattr->value);
++	}
++	if (initxattrs == &security_initxattrs)
++		return ret;
+ 	return (ret == -EOPNOTSUPP) ? 0 : ret;
  }
- 
-@@ -877,6 +879,7 @@ static int reiserfs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
- 	retval = journal_end(&th);
- out_failed:
- 	reiserfs_write_unlock(dir->i_sb);
-+	reiserfs_security_free(&security);
- 	return retval;
+ EXPORT_SYMBOL(security_inode_init_security);
+@@ -1071,10 +1091,25 @@ int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+ 				     const struct qstr *qstr, const char **name,
+ 				     void **value, size_t *len)
+ {
++	struct xattr xattr = { .name = NULL, .value = NULL, .value_len = 0 };
++	struct xattr *lsm_xattr = (name && value && len) ? &xattr : NULL;
++	int ret;
++
+ 	if (unlikely(IS_PRIVATE(inode)))
+ 		return -EOPNOTSUPP;
+-	return call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir,
+-			     qstr, name, value, len);
++
++	ret = security_inode_init_security(inode, dir, qstr,
++					   security_initxattrs, lsm_xattr);
++	if (ret)
++		return ret;
++
++	if (lsm_xattr) {
++		*name = lsm_xattr->name;
++		*value = lsm_xattr->value;
++		*len = lsm_xattr->value_len;
++	}
++
++	return 0;
  }
+ EXPORT_SYMBOL(security_old_inode_init_security);
  
-@@ -1193,6 +1196,7 @@ static int reiserfs_symlink(struct user_namespace *mnt_userns,
- 	retval = journal_end(&th);
- out_failed:
- 	reiserfs_write_unlock(parent_dir->i_sb);
-+	reiserfs_security_free(&security);
- 	return retval;
- }
- 
-diff --git a/fs/reiserfs/xattr_security.c b/fs/reiserfs/xattr_security.c
-index bb2a0062e0e5..b1ad93b60475 100644
---- a/fs/reiserfs/xattr_security.c
-+++ b/fs/reiserfs/xattr_security.c
-@@ -50,6 +50,7 @@ int reiserfs_security_init(struct inode *dir, struct inode *inode,
- 	int error;
- 
- 	sec->name = NULL;
-+	sec->value = NULL;
- 
- 	/* Don't add selinux attributes on xattrs - they'll never get used */
- 	if (IS_PRIVATE(dir))
 -- 
 2.25.1
 
