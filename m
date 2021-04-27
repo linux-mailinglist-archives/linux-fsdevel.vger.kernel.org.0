@@ -2,139 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C59F936C4AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 13:13:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9052436C54E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 13:38:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235803AbhD0LNz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 07:13:55 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57850 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230270AbhD0LNz (ORCPT
+        id S237188AbhD0Lil (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 07:38:41 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2929 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235882AbhD0Lig (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 07:13:55 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: shreeya)
-        with ESMTPSA id ADD7E1F42573
-Subject: Re: [PATCH] generic/453: Exclude filenames that are not supported by
- exfat
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        krisman@collabora.com, preichl@redhat.com, kernel@collabora.com
-References: <20210425223105.1855098-1-shreeya.patel@collabora.com>
- <20210426003430.GH235567@casper.infradead.org>
- <a49ecbfb-2011-0c7c-4405-b4548d22389d@collabora.com>
- <20210426123734.GK235567@casper.infradead.org>
-From:   Shreeya Patel <shreeya.patel@collabora.com>
-Message-ID: <bc7a33e8-7e9c-8045-e90e-bb53ec4f2c61@collabora.com>
-Date:   Tue, 27 Apr 2021 16:43:05 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        Tue, 27 Apr 2021 07:38:36 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FV01561M5z71ffd;
+        Tue, 27 Apr 2021 19:30:01 +0800 (CST)
+Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Tue, 27 Apr 2021 13:37:45 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <jmorris@namei.org>, <paul@paul-moore.com>,
+        <casey@schaufler-ca.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <reiserfs-devel@vger.kernel.org>, <selinux@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3 0/6] evm: Prepare for moving to the LSM infrastructure
+Date:   Tue, 27 Apr 2021 13:37:26 +0200
+Message-ID: <20210427113732.471066-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20210426123734.GK235567@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.62.217]
+X-ClientProxiedBy: lhreml751-chm.china.huawei.com (10.201.108.201) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+This patch set depends on:
 
-On 26/04/21 6:07 pm, Matthew Wilcox wrote:
-> On Mon, Apr 26, 2021 at 05:27:51PM +0530, Shreeya Patel wrote:
->> On 26/04/21 6:04 am, Matthew Wilcox wrote:
->>> On Mon, Apr 26, 2021 at 04:01:05AM +0530, Shreeya Patel wrote:
->>>> exFAT filesystem does not support the following character codes
->>>> 0x0000 - 0x001F ( Control Codes ), /, ?, :, ", \, *, <, |, >
->>> ummm ...
->>>
->>>> -# Fake slash?
->>>> -setf "urk\xc0\xafmoo" "FAKESLASH"
->>> That doesn't use any of the explained banned characters.  It uses 0xc0,
->>> 0xaf.
->>>
->>> Now, in utf-8, that's an nonconforming sequence.  "The Unicode and UCS
->>> standards require that producers of UTF-8 shall use the shortest form
->>> possible, for example, producing a two-byte sequence with first byte 0xc0
->>> is nonconforming.  Unicode 3.1 has added the requirement that conforming
->>> programs must not accept non-shortest forms in their input."
->>>
->>> So is it that exfat is rejecting nonconforming sequences?  Or is it
->>> converting the nonconforming sequence from 0xc0 0xaf to the conforming
->>> sequence 0x2f, and then rejecting it (because it's '/')?
->>>
->> No, I don't think exfat is not converting nonconforming sequence from 0xc0
->> 0xaf
->> to the conforming sequence 0x2f.
->> Because I get different outputs when tried with both ways.
->> When I create a file with "urk\xc0\xafmoo", I get output as "Operation not
->> permitted"
->> and when I create it as "urk\x2fmoo", it gives "No such file or directory
->> error" or
->> you can consider this error as "Invalid argument"
->> ( because that's what I get when I try for other characters like |, :, ?,
->> etc )
-> I think we need to understand this before skipping the test.  Does it
-> also fail, eg, on cifs, vfat, jfs or udf?
+https://lore.kernel.org/linux-integrity/20210409114313.4073-1-roberto.sassu@huawei.com/
+https://lore.kernel.org/linux-integrity/20210407105252.30721-1-roberto.sassu@huawei.com/
 
+One of the challenges that must be tackled to move IMA and EVM to the LSM
+infrastructure is to ensure that EVM is capable to correctly handle
+multiple stacked LSMs providing an xattr at file creation. At the moment,
+there are few issues that would prevent a correct integration. This patch
+set aims at solving them.
 
-I tested it for VFAT, UDF and JFS and following are the results.
+From the LSM infrastructure side, the LSM stacking feature added the
+possibility of registering multiple implementations of the security hooks,
+that are called sequentially whenever someone calls the corresponding
+security hook. However, security_inode_init_security() and
+security_old_inode_init_security() are currently limited to support one
+xattr provided by LSM and one by EVM.
 
+In addition, using the call_int_hook() macro causes some issues. According
+to the documentation in include/linux/lsm_hooks.h, it is a legitimate case
+that an LSM returns -EOPNOTSUPP when it does not want to provide an xattr.
+However, the loop defined in the macro would stop calling subsequent LSMs
+if that happens. In the case of security_old_inode_init_security(), using
+the macro would also cause a memory leak due to replacing the *value
+pointer, if multiple LSMs provide an xattr.
 
-1. VFAT ( as per wikipedia 0x00-0x1F 0x7F " * / : < > ? \ | are reserved 
-characters)
+From EVM side, the first operation to be done is to change the definition
+of evm_inode_init_security() to be compatible with the security hook
+definition. Unfortunately, the current definition does not provide enough
+information for EVM, as it must have visibility of all xattrs provided by
+LSMs to correctly calculate the HMAC. This patch set changes the security
+hook definition by replacing the name, value and len triple with the xattr
+array allocated by security_inode_init_security().
 
-For \x2f - /var/mnt/scratch/test-453/urk/moo.txt: No such file or directory
+Secondly, EVM must know how many elements are in the xattr array. EVM can
+rely on the fact that the xattr array must be terminated with an element
+with name field set to NULL, but can also benefit from the enhancements
+that have been included in this version of the patch set.
 
-For \xc0\xaf) - /var/mnt/scratch/test-453/urk��moo.txt: Invalid argument
+Casey suggested to use the reservation mechanism currently implemented for
+other security blobs, for xattrs. In this way,
+security_inode_init_security() can know after LSM initialization how many
+slots for xattrs should be allocated, and LSMs know the offset in the
+array from where they can start writing xattrs.
 
-Also gives error for Box filename
+One of the problem was that LSMs can decide at run-time, although they
+reserved a slot, to not use it (for example because they were not
+initialized). Given that the initxattrs() method implemented by filesystems
+expect that the array is continuous, they would miss the slots after the
+one not being initialized. security_inode_init_security() should have been
+modified to compact the array.
 
-( this is very much similar to exfat, the only difference is that I do 
-not get Operation not permitted when
-using \xc0\xaf, instead it gives invalid argument.)
+Instead, the preferred solution was to introduce the base slot as a
+parameter, in addition to the xattr array, containing the up to date
+information about the slots used by previous LSMs. The correctness of the
+update of the slot is ensured by both the LSMs, if they use the new helper
+lsm_find_xattr_slot(), and by security_inode_init_security() which checks
+the slot each time after an LSM executes the inode_init_security hook.
 
+This patch set has been tested by introducing several instances of a
+TestLSM (some providing an xattr, some not, one with a wrong implementation
+to see how the LSM infrastructure handles it). The patch is not included
+in this set but it is available here:
 
-2. UDF ( as per wikipedia - only NULL cannot be used )
+https://github.com/robertosassu/linux/commit/c7e01af6cb2c6780f0b143070269fff7e30053f9
 
-For \x2f - /var/mnt/scratch/test-453/urk/moo.txt: No such file or directory
+The test, added to ima-evm-utils, is available here:
 
-For \xc0\xaf - creates filename something like this 'urk??moo.txt' and 
-does not throw any error.
-( But this seems to be invalid and should have thrown some error)
+https://github.com/robertosassu/ima-evm-utils/blob/evm-multiple-lsms-v3-devel-v7/tests/evm_multiple_lsms.test
 
-Also gives error for dotdot entry.
+The test takes a UML kernel built by Travis and launches it several times,
+each time with a different combination of LSMs. After boot, it first checks
+that there is an xattr for each LSM providing it, and then calculates the
+HMAC in user space and compares it with the HMAC calculated by EVM in
+kernel space.
 
-I am not sure why UDF was giving error for / and dot dot entry but then
-I read the following for UDF in one of the man pages which justifies the 
-above errors I think
+A test report can be obtained here:
 
-"Invalid characters such as "NULL" and "/" and  invalid  file
-names  such  as "." and ".." will be translated according to
-the following rule:
+https://travis-ci.com/github/robertosassu/ima-evm-utils/jobs/501101861
 
-Replace the invalid character with an "_," then  append  the
-file name with # followed by a 4 digit hex representation of
-the 16-bit CRC of the original FileIdentifier. For  example,
-the file name ".." will become "__#4C05" "
+SELinux Test Suite result (diff 5.11.14-200.fc33.x86_64 5.12.0-rc8+):
+-Files=70, Tests=1099, 82 wallclock secs ( 0.35 usr  0.09 sys +  7.39 cusr 10.14 csys = 17.97 CPU)
++Files=70, Tests=1108, 85 wallclock secs ( 0.34 usr  0.10 sys +  7.25 cusr 11.39 csys = 19.08 CPU)
+ Result: FAIL
+-Failed 2/70 test programs. 5/1099 subtests failed.
++Failed 2/70 test programs. 5/1108 subtests failed.
 
-Source - http://www-it.desy.de/cgi-bin/man-cgi?udfs+7
+Smack Test Suite result:
+smack_set_ambient 1 TPASS: Test "smack_set_ambient" success.
+smack_set_current 1 TPASS: Test "smack_set_current" success.
+smack_set_doi 1 TPASS: Test "smack_set_doi" success.
+smack_set_netlabel 1 TPASS: Test "smack_set_netlabel" success.
+smack_set_socket_labels    1  TPASS  :  Test smack_set_socket_labels success.
+smack_set_cipso 1 TPASS: Test "smack_set_cipso" success.
+smack_set_direct 1 TPASS: Test "smack_set_direct" success.
+smack_set_load 1 TPASS: Test "smack_set_load" success.
+smack_set_onlycap 1 TFAIL: The smack label reported for "/smack/onlycap"
 
+Lastly, running the test on reiserfs to check
+security_old_inode_init_security(), some issues have been discovered: a
+free of xattr->name which is not correct after commit 9548906b2bb7 ('xattr:
+Constify ->name member of "struct xattr"'), missing calls to
+reiserfs_security_free() and a misalignment with
+security_inode_init_security() (the old version expects the full xattr name
+with the security. prefix, the new version just the suffix). The last issue
+has not been fixed yet.
 
-3. JFS ( as per Wikipedia NULL cannot be used )
+Changelog
 
-For \x2f - /var/mnt/scratch/test-453/urk/moo.txt: No such file or directory
+v2:
+- rewrite selinux_old_inode_init_security() to use
+  security_inode_init_security()
+- add lbs_xattr field to lsm_blob_sizes structure, to give the ability to
+  LSMs to reserve slots in the xattr array (suggested by Casey)
+- add new parameter base_slot to inode_init_security hook definition
 
-For \xc0\xaf - Works fine
+v1:
+- add calls to reiserfs_security_free() and initialize sec->value to NULL
+  (suggested by Tetsuo and Mimi)
+- change definition of inode_init_security hook, replace the name, value
+  and len triple with the xattr array (suggested by Casey)
+- introduce lsm_find_xattr_slot() helper for LSMs to find an unused slot in
+  the passed xattr array
 
-Again not sure why / is failing here. Did not find much resource about 
-the restricted filenames for JFS.
+Roberto Sassu (6):
+  reiserfs: Add missing calls to reiserfs_security_free()
+  security: Rewrite security_old_inode_init_security()
+  security: Pass xattrs allocated by LSMs to the inode_init_security
+    hook
+  security: Support multiple LSMs implementing the inode_init_security
+    hook
+  evm: Align evm_inode_init_security() definition with LSM
+    infrastructure
+  evm: Support multiple LSMs providing an xattr
 
+ fs/reiserfs/namei.c                 |   4 +
+ fs/reiserfs/xattr_security.c        |   1 +
+ include/linux/evm.h                 |  19 +++--
+ include/linux/lsm_hook_defs.h       |   4 +-
+ include/linux/lsm_hooks.h           |  22 +++++-
+ security/integrity/evm/evm.h        |   2 +
+ security/integrity/evm/evm_crypto.c |   9 ++-
+ security/integrity/evm/evm_main.c   |  30 +++++--
+ security/security.c                 | 116 +++++++++++++++++++++++-----
+ security/selinux/hooks.c            |  18 +++--
+ security/smack/smack_lsm.c          |  27 ++++---
+ 11 files changed, 194 insertions(+), 58 deletions(-)
 
-So as per above all the results, it seems like using \x2f fails for all 
-but \xc0\xaf does work for JFS.
+-- 
+2.25.1
 
-
->
->> Box filename also fails with "Invalid argument" error.
->>
->>
