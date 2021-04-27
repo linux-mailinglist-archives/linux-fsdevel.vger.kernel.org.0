@@ -2,55 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26F3F36BE84
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 06:34:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 938C636BE8D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 06:44:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229947AbhD0Edx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 00:33:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35884 "EHLO
+        id S234517AbhD0EnV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 00:43:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbhD0Edx (ORCPT
+        with ESMTP id S233421AbhD0EnU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 00:33:53 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69C06C061574;
-        Mon, 26 Apr 2021 21:33:10 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id b9so6334390iod.13;
-        Mon, 26 Apr 2021 21:33:10 -0700 (PDT)
+        Tue, 27 Apr 2021 00:43:20 -0400
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A745C061574;
+        Mon, 26 Apr 2021 21:42:38 -0700 (PDT)
+Received: by mail-io1-xd2d.google.com with SMTP id t21so7546505iob.2;
+        Mon, 26 Apr 2021 21:42:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=75byu4pJI5MvVdXuEkvp2Epx9W4L2Xwgg1jlpxHJMmg=;
-        b=CNyiUBfG1rbjUVeI9CcckQhm7wnVXu49jxkZUS90igZeP3kpiDkkJ1M0SjvBWjitEi
-         M8EoquSnCrU3vkGIJ6j9bnHGzk2qjvETgMQJnQUv5nV7XbJv6nzPqLZ31JuOsAyXiMSd
-         XXQ3O3mQlZc3/lLzZ5LXFrwV3dUK59Tgimv6U/L43phbOoTcTwXd4OkbjPBugVeVoUd2
-         Jw5laEPDuB4j7lBWGsYsmxEqTOEgZuHIIR98iz9DYE0ddBmVBFrMbLKPqoUid0pqGAZf
-         g97IOueTKcgHJ65tlXWY+8egqt2gZ8ZvmglwemWbI5TRFntl+CZwKHe/iMMK3+ICixkI
-         8R9Q==
+        bh=EzSe38NJjrCvosP/G6D4PJaz045LslJADhZl0Vyj2/E=;
+        b=qWk7oZvNsF5EgbGk6j9nzCrBtUiofXrtCMUQ3l09zo+Mf6GRFAcjwaKCowYR/+ZsO1
+         veKJBI0kwyFCeSUd7I4WYKnNfK+C9cGYnDHk4OL5lo3leGvq1S7RONH7APV/ipC6wf4m
+         cZALgfdXTgdESYUrYU4mhcvHf46sDlGiQjPUOIKlxK6fllS32sGgPneK1968aAH8yE2M
+         Phv1W+hBx5pE/Bh9389gbc7QDN1S17gj2of9EWIje7nPiew9StwbvkQsUGacveX2qhVE
+         62Jf0vXdBXIFiqFITB2FZSZyXvxUgxvmYyNdWnxrcx6CjdHk4y8R7WdvWOKZb8qOzcAZ
+         hPkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=75byu4pJI5MvVdXuEkvp2Epx9W4L2Xwgg1jlpxHJMmg=;
-        b=ACes2eW7+IXYWIV9tCFim6zt1WiSB8UIGvTnF3FR7B4bRlswRTZodKw4yNDK6dPm4z
-         H6ItJAktdmgxx8hNoO8a/J01I3T7YxZMqywwfqw42p+jteBMmuEnEkBw11uWWAmQwj+B
-         4gbXxeUTq2NvlNuK3NOW/UXW2BaLbYioBuN6MM9tHnAdhZMNPpIZyqyyvTnfIZeAxaIb
-         B9EH0XBN8Uh1aY+t9rMKjav26xSvgtHso47XxSr3Fjbdv+cDyyPirzJXHsisdBClH9pN
-         QqoFZBVwEFn0usd3E8EFjw2BhtlDaPaND2fC9xuffqOadwWudPpboQ+WFmmgnqt0zXLq
-         OPIw==
-X-Gm-Message-State: AOAM531PpgtPQS5/Xj4NzHAjHFzHc1uMtMQli5MrdTSHFHsLM9h1h1Fi
-        WQCwJ+HiHVtKERhDYID1ZpcnsOjs7kseM0uNoLA=
-X-Google-Smtp-Source: ABdhPJzfZEuPlT08eTaKA0UBV/3zfneBP1WIL9BM8FR33YWU59op1uyfgqIjnTe1N07YluIGeHTHBHTtM5lBZmTBph8=
-X-Received: by 2002:a6b:d213:: with SMTP id q19mr17334976iob.203.1619497989818;
- Mon, 26 Apr 2021 21:33:09 -0700 (PDT)
+        bh=EzSe38NJjrCvosP/G6D4PJaz045LslJADhZl0Vyj2/E=;
+        b=LwoN9zJ9tEXOua5QqGwg6FDXq/hnrOTnRYoI6a2aIVVKC3nrnaCt6wEwHBbX0j1oZO
+         M/Yx+vjdsvpPBkhtstf6ZjKLV9jzLMhxWG8mjjQt7r4UW1fJgdpe5fi3okbfMaJWIZfd
+         UH91D2w+O8IrqoWGe70ODwYHswvBmpqo9NjgYhIi6z6JlhTaiN8abt8lQx1D/hecfR+M
+         PzVyJkzjWUVOsm5duFQCfB72Gx2P8hAmNYKjm2bH0vNLu2lU8nyActdmsiZ0VXK9veHD
+         qbnZIwRWRNx6KNjiWFQxOpQfHUwRpJhteYU2vA9OxRCl7Fh9Ca6LuPIt3sasPzKPMzyS
+         HqCA==
+X-Gm-Message-State: AOAM533fAjvifxaxwD7Nk2ietFJ6KwDcDTdo+VxhgvokLnRhkC5Onhb+
+        NomGo41hk+heWsSfCMOtskfXd4sFrpH7RFS80is=
+X-Google-Smtp-Source: ABdhPJyh6lu2y8THwj6O+gzhUftnojOyzxw5viTBcrBGXcc8d1impNAPSnw7ACcCDq8WrbmGyIadDCYSu1GFFM3zFNM=
+X-Received: by 2002:a6b:f115:: with SMTP id e21mr17625161iog.5.1619498558076;
+ Mon, 26 Apr 2021 21:42:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210426184201.4177978-1-krisman@collabora.com> <20210426184201.4177978-14-krisman@collabora.com>
-In-Reply-To: <20210426184201.4177978-14-krisman@collabora.com>
+References: <20210426184201.4177978-1-krisman@collabora.com> <20210426184201.4177978-2-krisman@collabora.com>
+In-Reply-To: <20210426184201.4177978-2-krisman@collabora.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 27 Apr 2021 07:32:58 +0300
-Message-ID: <CAOQ4uxg8X3UNjYpbLy-gksc=SuR0z4RWc=ZXru-zFQdNt5RyEw@mail.gmail.com>
-Subject: Re: [PATCH RFC 13/15] ext4: Send notifications on error
+Date:   Tue, 27 Apr 2021 07:42:27 +0300
+Message-ID: <CAOQ4uxhAMaWFmHw-s_n+Hdad9jkDR8KD6bOYiQQV6RWMv+_TbA@mail.gmail.com>
+Subject: Re: [PATCH RFC 01/15] fanotify: Fold event size calculation to its
+ own function
 To:     Gabriel Krisman Bertazi <krisman@collabora.com>
 Cc:     Theodore Tso <tytso@mit.edu>,
         "Darrick J. Wong" <djwong@kernel.org>,
@@ -64,99 +65,114 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 26, 2021 at 9:43 PM Gabriel Krisman Bertazi
+On Mon, Apr 26, 2021 at 9:42 PM Gabriel Krisman Bertazi
 <krisman@collabora.com> wrote:
 >
-> Send a FS_ERROR message via fsnotify to a userspace monitoring tool
-> whenever a ext4 error condition is triggered.  This follows the existing
-> error conditions in ext4, so it is hooked to the ext4_error* functions.
->
-> It also follows the current dmesg reporting in the format.  The
-> filesystem message is composed mostly by the string that would be
-> otherwise printed in dmesg.
->
-> A new ext4 specific record format is exposed in the uapi, such that a
-> monitoring tool knows what to expect when listening errors of an ext4
-> filesystem.
+> Every time this function is invoked, it is immediately added to
+> FAN_EVENT_METADATA_LEN, since there is no need to just calculate the
+> length of info records. This minor clean up folds the rest of the
+> calculation into the function, which now operates in terms of events,
+> returning the size of the entire event, including metadata.
 >
 > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+
+Nice
+
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+
 > ---
->  fs/ext4/super.c                  | 60 ++++++++++++++++++++++++--------
->  include/uapi/linux/ext4-notify.h | 17 +++++++++
->  2 files changed, 62 insertions(+), 15 deletions(-)
->  create mode 100644 include/uapi/linux/ext4-notify.h
+>  fs/notify/fanotify/fanotify_user.c | 40 +++++++++++++++++-------------
+>  1 file changed, 23 insertions(+), 17 deletions(-)
 >
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index b9693680463a..032e29e7ff6a 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -46,6 +46,8 @@
->  #include <linux/part_stat.h>
->  #include <linux/kthread.h>
->  #include <linux/freezer.h>
-> +#include <linux/fsnotify.h>
-> +#include <uapi/linux/ext4-notify.h>
->
->  #include "ext4.h"
->  #include "ext4_extents.h"      /* Needed for trace points definition */
-> @@ -727,6 +729,22 @@ static void flush_stashed_error_work(struct work_struct *work)
->         ext4_commit_super(sbi->s_sb);
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 9e0c1afac8bd..0332c4afeec3 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -64,17 +64,24 @@ static int fanotify_fid_info_len(int fh_len, int name_len)
+>         return roundup(FANOTIFY_INFO_HDR_LEN + info_len, FANOTIFY_EVENT_ALIGN);
 >  }
 >
-> +static void ext4_fsnotify_error(int error, struct inode *inode, __u64 block,
-> +                               const char *func, int line,
-> +                               const char *desc, struct va_format *vaf)
-> +{
-> +       struct ext4_error_inode_report report;
-> +
-> +       if (inode->i_sb->s_fsnotify_marks) {
-> +               report.inode = inode ? inode->i_ino : -1L;
-> +               report.block = block ? block : -1L;
-> +
-> +               snprintf(report.desc, EXT4_FSN_DESC_LEN, "%s%pV\n", desc?:"", vaf);
-> +
-> +               fsnotify_error_event(error, inode, func, line, &report, sizeof(report));
-> +       }
-> +}
-> +
->  #define ext4_error_ratelimit(sb)                                       \
->                 ___ratelimit(&(EXT4_SB(sb)->s_err_ratelimit_state),     \
->                              "EXT4-fs error")
-> @@ -742,15 +760,18 @@ void __ext4_error(struct super_block *sb, const char *function,
->                 return;
+> -static int fanotify_event_info_len(unsigned int fid_mode,
+> -                                  struct fanotify_event *event)
+> +static size_t fanotify_event_len(struct fanotify_event *event,
+> +                                unsigned int fid_mode)
+>  {
+> -       struct fanotify_info *info = fanotify_event_info(event);
+> -       int dir_fh_len = fanotify_event_dir_fh_len(event);
+> -       int fh_len = fanotify_event_object_fh_len(event);
+> -       int info_len = 0;
+> +       size_t event_len = FAN_EVENT_METADATA_LEN;
+> +       struct fanotify_info *info;
+> +       int dir_fh_len;
+> +       int fh_len;
+>         int dot_len = 0;
 >
->         trace_ext4_error(sb, function, line);
+> +       if (!fid_mode)
+> +               return event_len;
 > +
-> +       va_start(args, fmt);
-> +       vaf.fmt = fmt;
-> +       vaf.va = &args;
->         if (ext4_error_ratelimit(sb)) {
-> -               va_start(args, fmt);
-> -               vaf.fmt = fmt;
-> -               vaf.va = &args;
->                 printk(KERN_CRIT
->                        "EXT4-fs error (device %s): %s:%d: comm %s: %pV\n",
->                        sb->s_id, function, line, current->comm, &vaf);
-> -               va_end(args);
+> +       info = fanotify_event_info(event);
+> +       dir_fh_len = fanotify_event_dir_fh_len(event);
+> +       fh_len = fanotify_event_object_fh_len(event);
 > +
+>         if (dir_fh_len) {
+> -               info_len += fanotify_fid_info_len(dir_fh_len, info->name_len);
+> +               event_len += fanotify_fid_info_len(dir_fh_len, info->name_len);
+>         } else if ((fid_mode & FAN_REPORT_NAME) && (event->mask & FAN_ONDIR)) {
+>                 /*
+>                  * With group flag FAN_REPORT_NAME, if name was not recorded in
+> @@ -84,9 +91,9 @@ static int fanotify_event_info_len(unsigned int fid_mode,
 >         }
-> +       ext4_fsnotify_error(error, sb->s_root->d_inode, block, function, line, NULL, &vaf);
-> +       va_end(args);
->         ext4_handle_error(sb, force_ro, error, 0, block, function, line);
+>
+>         if (fh_len)
+> -               info_len += fanotify_fid_info_len(fh_len, dot_len);
+> +               event_len += fanotify_fid_info_len(fh_len, dot_len);
+>
+> -       return info_len;
+> +       return event_len;
 >  }
 >
-
-So error reporting to kernel log is ratelimited and error reporting to
-fsnotify is limited by a fixed size ring buffer which may be filled by
-report floods from another filesystem, so user can miss the first
-important error report from this filesystem.
-
-Not optimal.
-
-With my proposal of keeping a single fsnotify_error_info in every
-fsnotify_sb_mark, users will be guaranteed to get the first error
-report from every filesystem and once they read that report they
-will be guaranteed to also get the next report.
-
-Thanks,
-Amir.
+>  /*
+> @@ -98,7 +105,8 @@ static int fanotify_event_info_len(unsigned int fid_mode,
+>  static struct fanotify_event *get_one_event(struct fsnotify_group *group,
+>                                             size_t count)
+>  {
+> -       size_t event_size = FAN_EVENT_METADATA_LEN;
+> +       size_t event_size;
+> +       struct fsnotify_event *fse;
+>         struct fanotify_event *event = NULL;
+>         unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+>
+> @@ -108,16 +116,15 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
+>         if (fsnotify_notify_queue_is_empty(group))
+>                 goto out;
+>
+> -       if (fid_mode) {
+> -               event_size += fanotify_event_info_len(fid_mode,
+> -                       FANOTIFY_E(fsnotify_peek_first_event(group)));
+> -       }
+> +       fse = fsnotify_peek_first_event(group);
+> +       event = FANOTIFY_E(fse);
+> +       event_size = fanotify_event_len(event, fid_mode);
+>
+>         if (event_size > count) {
+>                 event = ERR_PTR(-EINVAL);
+>                 goto out;
+>         }
+> -       event = FANOTIFY_E(fsnotify_remove_first_event(group));
+> +       fsnotify_remove_queued_event(group, fse);
+>         if (fanotify_is_perm_event(event->mask))
+>                 FANOTIFY_PERM(event)->state = FAN_EVENT_REPORTED;
+>  out:
+> @@ -334,8 +341,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+>
+>         pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+>
+> -       metadata.event_len = FAN_EVENT_METADATA_LEN +
+> -                               fanotify_event_info_len(fid_mode, event);
+> +       metadata.event_len = fanotify_event_len(event, fid_mode);
+>         metadata.metadata_len = FAN_EVENT_METADATA_LEN;
+>         metadata.vers = FANOTIFY_METADATA_VERSION;
+>         metadata.reserved = 0;
+> --
+> 2.31.0
+>
