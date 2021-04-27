@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0481E36C938
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 18:21:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CFE536C92C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 18:20:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237904AbhD0QVb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 12:21:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50894 "EHLO
+        id S236606AbhD0QVS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 12:21:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237520AbhD0QTe (ORCPT
+        with ESMTP id S237614AbhD0QTh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 12:19:34 -0400
+        Tue, 27 Apr 2021 12:19:37 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE4FAC061760;
-        Tue, 27 Apr 2021 09:18:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 940CEC061763;
+        Tue, 27 Apr 2021 09:18:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=9SbBr1by35FoFBLhYEbZYkU7Qe9kHfjLM/wxBmc4fMU=; b=0vdWoXRolKpeBBk0GTzNEVXHuH
-        359fOdlNRQX5sEcyT5YY+c+hjUgaiCHwwPEROn29PFnE7LnQ2SpQLSsahYEvirq/uBJDoUyfkkfKu
-        dpgQTRQXXLM0sWMjUrimDLs8qgtPjRB5ZRtnxn3inynNAI0zWg0tBxuVxdwBSQvCH3Se+fWZAZU/x
-        8+vUCyn2kaBct6YJU9QtgYjMu+IJnhuwlncWJwyxqGzcilsR8Wlb9TAgnwy5h4TSD27xsMD5+t04x
-        Vf2JC/kOQTug3VKVZgpEd+D16vaodefMI7v6DpQ8Xvb6juvN/mHKJvx9RD/eZz6t+nf5VkgS5mJCP
-        VG1oefiA==;
+        bh=81Y7GPyUJDJL2Y18/KH5qanw/vvjzQQMQF9aFB2iUbA=; b=BQf7kcRtXbaKcj70o7j/wc2jaP
+        Acm9ojQJV61Z2xpBNzYjPXo+P2kd2GUcVyV3/n+jz/+mehWYYZwAJyAhFV4xMesnGDQABznW5X/8q
+        ULVTkrAcV0iLz8GmWfZTgpYop9jTAoCgRu2qFwKCv1aejft1BNPrONhnwq0CXDt6tjoyS/O7A6CT0
+        1x6GybPwRc30ODjlucnWGhQngTSSF6NoGt7skgDWZEcdEutVE+UtXOHoRIMu1MI0OQDyJwP2MLjnU
+        vjKLv6NvexDIGYKNyac7HLIJA/hQPRz1m6puYri+Z/VZY4FbV33HlLpVR9mP0c/DBUNKFR/sxoRYN
+        2Mi0tq0Q==;
 Received: from [2001:4bb8:18c:28b2:c772:7205:2aa4:840d] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lbQQ7-00Gr4E-5d; Tue, 27 Apr 2021 16:18:43 +0000
+        id 1lbQQA-00Gr4S-7H; Tue, 27 Apr 2021 16:18:46 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Jeffle Xu <jefflexu@linux.alibaba.com>,
@@ -38,9 +38,9 @@ Cc:     Jeffle Xu <jefflexu@linux.alibaba.com>,
         "Wunderlich, Mark" <mark.wunderlich@intel.com>,
         "Vasudevan, Anil" <anil.vasudevan@intel.com>,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 03/15] iomap: don't try to poll multi-bio I/Os in __iomap_dio_rw
-Date:   Tue, 27 Apr 2021 18:16:07 +0200
-Message-Id: <20210427161619.1294399-4-hch@lst.de>
+Subject: [PATCH 04/15] blk-mq: factor out a blk_qc_to_hctx helper
+Date:   Tue, 27 Apr 2021 18:16:08 +0200
+Message-Id: <20210427161619.1294399-5-hch@lst.de>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210427161619.1294399-1-hch@lst.de>
 References: <20210427161619.1294399-1-hch@lst.de>
@@ -51,56 +51,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If an iocb is split into multiple bios we can't poll for both.  So don't
-bother to even try to poll in that case.
+Add a helper to get the hctx from a request_queue and cookie, and fold
+the blk_qc_t_to_queue_num helper into it as no other callers are left.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/iomap/direct-io.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ block/blk-mq.c            | 8 +++++++-
+ include/linux/blk_types.h | 5 -----
+ 2 files changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index bdd0d89bbf0a..357419f39654 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -282,6 +282,13 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 	if (!iov_iter_count(dio->submit.iter))
- 		goto out;
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 927189a55575..06a43fb5e2c5 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -63,6 +63,12 @@ static int blk_mq_poll_stats_bkt(const struct request *rq)
+ 	return bucket;
+ }
  
-+	/*
-+	 * We can only poll for single bio I/Os.
-+	 */
-+	if (need_zeroout ||
-+	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode)))
-+		dio->iocb->ki_flags &= ~IOCB_HIPRI;
++static inline struct blk_mq_hw_ctx *blk_qc_to_hctx(struct request_queue *q,
++		blk_qc_t qc)
++{
++	return q->queue_hw_ctx[(qc & ~BLK_QC_T_INTERNAL) >> BLK_QC_T_SHIFT];
++}
 +
- 	if (need_zeroout) {
- 		/* zero out from the start of the block to the write offset */
- 		pad = pos & (fs_block_size - 1);
-@@ -339,6 +346,11 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ /*
+  * Check if any of the ctx, dispatch list or elevator
+  * have pending work in this hardware queue.
+@@ -3877,7 +3883,7 @@ int blk_poll(struct request_queue *q, blk_qc_t cookie, bool spin)
+ 	if (current->plug)
+ 		blk_flush_plug_list(current->plug, false);
  
- 		nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter,
- 						 BIO_MAX_VECS);
-+		/*
-+		 * We can only poll for single bio I/Os.
-+		 */
-+		if (nr_pages)
-+			dio->iocb->ki_flags &= ~IOCB_HIPRI;
- 		iomap_dio_submit_bio(dio, iomap, bio, pos);
- 		pos += n;
- 	} while (nr_pages);
-@@ -571,6 +583,11 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 			iov_iter_revert(iter, pos - dio->i_size);
- 			break;
- 		}
-+
-+		/*
-+		 * We can only poll for single bio I/Os.
-+		 */
-+		iocb->ki_flags &= ~IOCB_HIPRI;
- 	} while ((count = iov_iter_count(iter)) > 0);
- 	blk_finish_plug(&plug);
+-	hctx = q->queue_hw_ctx[blk_qc_t_to_queue_num(cookie)];
++	hctx = blk_qc_to_hctx(q, cookie);
  
+ 	/*
+ 	 * If we sleep, have the caller restart the poll loop to reset
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index db026b6ec15a..ed71a8d968f2 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -515,11 +515,6 @@ static inline bool blk_qc_t_valid(blk_qc_t cookie)
+ 	return cookie != BLK_QC_T_NONE;
+ }
+ 
+-static inline unsigned int blk_qc_t_to_queue_num(blk_qc_t cookie)
+-{
+-	return (cookie & ~BLK_QC_T_INTERNAL) >> BLK_QC_T_SHIFT;
+-}
+-
+ static inline unsigned int blk_qc_t_to_tag(blk_qc_t cookie)
+ {
+ 	return cookie & ((1u << BLK_QC_T_SHIFT) - 1);
 -- 
 2.30.1
 
