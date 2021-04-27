@@ -2,80 +2,259 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E0D236C9FE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 19:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B02836CA22
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Apr 2021 19:12:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235777AbhD0REf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 13:04:35 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:28454 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235647AbhD0REe (ORCPT
+        id S236392AbhD0RM7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 13:12:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29749 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235593AbhD0RMz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 13:04:34 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=eguan@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UX.IUxB_1619543019;
-Received: from localhost(mailfrom:eguan@linux.alibaba.com fp:SMTPD_---0UX.IUxB_1619543019)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 28 Apr 2021 01:03:39 +0800
-Date:   Wed, 28 Apr 2021 01:03:39 +0800
-From:   Eryu Guan <eguan@linux.alibaba.com>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH 3/3] Use --yes option to lvcreate
-Message-ID: <20210427170339.GA9611@e18g06458.et15sqa>
-References: <20210427164419.3729180-1-kent.overstreet@gmail.com>
- <20210427164419.3729180-4-kent.overstreet@gmail.com>
+        Tue, 27 Apr 2021 13:12:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619543530;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=q5VotXzwzULTsEKcuKaXK6CIlCbj0EuIydSPvYrjm/o=;
+        b=Q6Dtr5CKc4rU+JI9zOidtcOlULsUzxVp9q+58ZL1tR3EVnE7ftrTFsWJ1GnzItDv1L7QQi
+        THRoGWrXIEwKYdrQEQPUby7nv5KI9VOZqlh1mtLMBohSzPIci+VTj7TEdPVrYDNRfbCcjX
+        V4SqM0Qxt1LncOJqbxzn15+vO3rYq08=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-349-POCC_mPhOmakedK8QEL2FA-1; Tue, 27 Apr 2021 13:12:08 -0400
+X-MC-Unique: POCC_mPhOmakedK8QEL2FA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D572F10AAEA3;
+        Tue, 27 Apr 2021 17:12:06 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-117-178.rdu2.redhat.com [10.10.117.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 96C7E60C0F;
+        Tue, 27 Apr 2021 17:12:06 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 22F20220BCF; Tue, 27 Apr 2021 13:12:06 -0400 (EDT)
+Date:   Tue, 27 Apr 2021 13:12:06 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Greg Kurz <groug@kaod.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        virtualization@lists.linux-foundation.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        virtio-fs@redhat.com, Robert Krawitz <rlk@redhat.com>
+Subject: Re: [PATCH v2] virtiofs: propagate sync() to file server
+Message-ID: <20210427171206.GA1805363@redhat.com>
+References: <20210426151011.840459-1-groug@kaod.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210427164419.3729180-4-kent.overstreet@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20210426151011.840459-1-groug@kaod.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 27, 2021 at 12:44:19PM -0400, Kent Overstreet wrote:
-> This fixes spurious test failures caused by broken pipe messages.
+On Mon, Apr 26, 2021 at 05:10:11PM +0200, Greg Kurz wrote:
+> Even if POSIX doesn't mandate it, linux users legitimately expect
+> sync() to flush all data and metadata to physical storage when it
+> is located on the same system. This isn't happening with virtiofs
+> though : sync() inside the guest returns right away even though
+> data still needs to be flushed from the host page cache.
 > 
-> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+> This is easily demonstrated by doing the following in the guest:
+> 
+> $ dd if=/dev/zero of=/mnt/foo bs=1M count=5K ; strace -T -e sync sync
+> 5120+0 records in
+> 5120+0 records out
+> 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 5.22224 s, 1.0 GB/s
+> sync()                                  = 0 <0.024068>
+> +++ exited with 0 +++
+> 
+> and start the following in the host when the 'dd' command completes
+> in the guest:
+> 
+> $ strace -T -e fsync /usr/bin/sync virtiofs/foo
+> fsync(3)                                = 0 <10.371640>
+> +++ exited with 0 +++
+> 
+> There are no good reasons not to honor the expected behavior of
+> sync() actually : it gives an unrealistic impression that virtiofs
+> is super fast and that data has safely landed on HW, which isn't
+> the case obviously.
+> 
+> Implement a ->sync_fs() superblock operation that sends a new
+> FUSE_SYNC request type for this purpose. Provision a 64-bit
+> flags field for possible future extensions. Since the file
+> server cannot handle the wait == 0 case, we skip it to avoid a
+> gratuitous roundtrip.
+> 
+> Like with FUSE_FSYNC and FUSE_FSYNCDIR, lack of support for
+> FUSE_SYNC in the file server is treated as permanent success.
+> This ensures compatibility with older file servers : the client
+> will get the current behavior of sync() not being propagated to
+> the file server.
+> 
+> Note that such an operation allows the file server to DoS sync().
+> Since a typical FUSE file server is an untrusted piece of software
+> running in userspace, this is disabled by default.  Only enable it
+> with virtiofs for now since virtiofsd is supposedly trusted by the
+> guest kernel.
+> 
+> Reported-by: Robert Krawitz <rlk@redhat.com>
+> Signed-off-by: Greg Kurz <groug@kaod.org>
 > ---
->  tests/generic/081 | 2 +-
->  tests/generic/108 | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/tests/generic/081 b/tests/generic/081
-> index 5dff079852..26702007ab 100755
-> --- a/tests/generic/081
-> +++ b/tests/generic/081
-> @@ -70,7 +70,7 @@ _scratch_mkfs_sized $((300 * 1024 * 1024)) >>$seqres.full 2>&1
->  $LVM_PROG vgcreate -f $vgname $SCRATCH_DEV >>$seqres.full 2>&1
->  # We use yes pipe instead of 'lvcreate --yes' because old version of lvm
->  # (like 2.02.95 in RHEL6) don't support --yes option
-> -yes | $LVM_PROG lvcreate -L 256M -n $lvname $vgname >>$seqres.full 2>&1
-> +$LVM_PROG lvcreate --yes -L 256M -n $lvname $vgname >>$seqres.full 2>&1
-
-Please see above comments, we use yes pipe intentionally. I don't see
-how this would result in broken pipe. Would you please provide more
-details? And let's see if we could fix the broken pipe issue.
-
-Thanks,
-Eryu
-
->  # wait for lvcreation to fully complete
->  $UDEV_SETTLE_PROG >>$seqres.full 2>&1
+> v2: - clarify compatibility with older servers in changelog (Vivek)
+>     - ignore the wait == 0 case (Miklos)
+>     - 64-bit aligned argument structure (Vivek, Miklos)
+> 
+>  fs/fuse/fuse_i.h          |  3 +++
+>  fs/fuse/inode.c           | 35 +++++++++++++++++++++++++++++++++++
+>  fs/fuse/virtio_fs.c       |  1 +
+>  include/uapi/linux/fuse.h | 10 +++++++++-
+>  4 files changed, 48 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 63d97a15ffde..68e9ae96cbd4 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -755,6 +755,9 @@ struct fuse_conn {
+>  	/* Auto-mount submounts announced by the server */
+>  	unsigned int auto_submounts:1;
 >  
-> diff --git a/tests/generic/108 b/tests/generic/108
-> index 6fb194f43c..74945fdf3c 100755
-> --- a/tests/generic/108
-> +++ b/tests/generic/108
-> @@ -56,7 +56,7 @@ $LVM_PROG pvcreate -f $SCSI_DEBUG_DEV $SCRATCH_DEV >>$seqres.full 2>&1
->  $LVM_PROG vgcreate -f $vgname $SCSI_DEBUG_DEV $SCRATCH_DEV >>$seqres.full 2>&1
->  # We use yes pipe instead of 'lvcreate --yes' because old version of lvm
->  # (like 2.02.95 in RHEL6) don't support --yes option
-> -yes | $LVM_PROG lvcreate -i 2 -I 4m -L 275m -n $lvname $vgname \
-> +$LVM_PROG lvcreate --yes -i 2 -I 4m -L 275m -n $lvname $vgname \
->  	>>$seqres.full 2>&1
->  # wait for lv creation to fully complete
->  $UDEV_SETTLE_PROG >>$seqres.full 2>&1
+> +	/* Propagate syncfs() to server */
+> +	unsigned int sync_fs:1;
+> +
+>  	/** The number of requests waiting for completion */
+>  	atomic_t num_waiting;
+>  
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index b0e18b470e91..ac184069b40f 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -506,6 +506,40 @@ static int fuse_statfs(struct dentry *dentry, struct kstatfs *buf)
+>  	return err;
+>  }
+>  
+> +static int fuse_sync_fs(struct super_block *sb, int wait)
+> +{
+> +	struct fuse_mount *fm = get_fuse_mount_super(sb);
+> +	struct fuse_conn *fc = fm->fc;
+> +	struct fuse_syncfs_in inarg;
+> +	FUSE_ARGS(args);
+> +	int err;
+> +
+> +	/*
+> +	 * Userspace cannot handle the wait == 0 case. Avoid a
+> +	 * gratuitous roundtrip.
+> +	 */
+> +	if (!wait)
+> +		return 0;
+> +
+> +	if (!fc->sync_fs)
+> +		return 0;
+> +
+> +	memset(&inarg, 0, sizeof(inarg));
+> +	args.in_numargs = 1;
+> +	args.in_args[0].size = sizeof(inarg);
+> +	args.in_args[0].value = &inarg;
+> +	args.opcode = FUSE_SYNCFS;
+> +	args.out_numargs = 0;
+> +
+> +	err = fuse_simple_request(fm, &args);
+> +	if (err == -ENOSYS) {
+> +		fc->sync_fs = 0;
+> +		err = 0;
+> +	}
+> +
+> +	return err;
+> +}
+> +
+>  enum {
+>  	OPT_SOURCE,
+>  	OPT_SUBTYPE,
+> @@ -909,6 +943,7 @@ static const struct super_operations fuse_super_operations = {
+>  	.put_super	= fuse_put_super,
+>  	.umount_begin	= fuse_umount_begin,
+>  	.statfs		= fuse_statfs,
+> +	.sync_fs	= fuse_sync_fs,
+>  	.show_options	= fuse_show_options,
+>  };
+>  
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index 4ee6f734ba83..a3c025308743 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -1441,6 +1441,7 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
+>  	fc->release = fuse_free_conn;
+>  	fc->delete_stale = true;
+>  	fc->auto_submounts = true;
+> +	fc->sync_fs = true;
+>  
+>  	fsc->s_fs_info = fm;
+>  	sb = sget_fc(fsc, virtio_fs_test_super, set_anon_super_fc);
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index 54442612c48b..1265ca17620c 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -179,6 +179,9 @@
+>   *  7.33
+>   *  - add FUSE_HANDLE_KILLPRIV_V2, FUSE_WRITE_KILL_SUIDGID, FATTR_KILL_SUIDGID
+>   *  - add FUSE_OPEN_KILL_SUIDGID
+> + *
+> + *  7.34
+> + *  - add FUSE_SYNCFS
+>   */
+>  
+>  #ifndef _LINUX_FUSE_H
+> @@ -214,7 +217,7 @@
+>  #define FUSE_KERNEL_VERSION 7
+>  
+>  /** Minor version number of this interface */
+> -#define FUSE_KERNEL_MINOR_VERSION 33
+> +#define FUSE_KERNEL_MINOR_VERSION 34
+>  
+>  /** The node ID of the root inode */
+>  #define FUSE_ROOT_ID 1
+> @@ -499,6 +502,7 @@ enum fuse_opcode {
+>  	FUSE_COPY_FILE_RANGE	= 47,
+>  	FUSE_SETUPMAPPING	= 48,
+>  	FUSE_REMOVEMAPPING	= 49,
+> +	FUSE_SYNCFS		= 50,
+>  
+>  	/* CUSE specific operations */
+>  	CUSE_INIT		= 4096,
+> @@ -957,4 +961,8 @@ struct fuse_removemapping_one {
+>  #define FUSE_REMOVEMAPPING_MAX_ENTRY   \
+>  		(PAGE_SIZE / sizeof(struct fuse_removemapping_one))
+>  
+> +struct fuse_syncfs_in {
+> +	uint64_t flags;
+> +};
+> +
+
+Hi Greg,
+
+Will it be better if 32bits are for flags and reset 32 are
+padding and can be used in whatever manner.
+
+struct fuse_syncfs_in {
+	uint32_t flags;
+	uint32_t padding;
+};
+
+This will increase the flexibility if we were to send more information
+in future.
+
+I already see bunch of structures where flags are 32 bit and reset
+are padding bits. fuse_read_in, fuse_write_in, fuse_rename2_in etc.
+
+Thanks
+Vivek
+
+>  #endif /* _LINUX_FUSE_H */
 > -- 
-> 2.31.1
+> 2.26.3
+> 
+
