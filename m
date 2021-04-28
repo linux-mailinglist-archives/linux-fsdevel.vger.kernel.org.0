@@ -2,83 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06C4736D954
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 16:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EE6236DB3E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 17:24:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240164AbhD1OO1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Apr 2021 10:14:27 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:36931 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229807AbhD1OO0 (ORCPT
+        id S236811AbhD1PLI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Apr 2021 11:11:08 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26800 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235751AbhD1PKy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Apr 2021 10:14:26 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 13SECx3x023455
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Apr 2021 10:13:00 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id A932815C3C3D; Wed, 28 Apr 2021 10:12:59 -0400 (EDT)
-Date:   Wed, 28 Apr 2021 10:12:59 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     Shreeya Patel <shreeya.patel@collabora.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        adilger.kernel@dilger.ca, jaegeuk@kernel.org, chao@kernel.org,
-        ebiggers@google.com, drosen@google.com, ebiggers@kernel.org,
-        yuchao0@huawei.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
-        andre.almeida@collabora.com
-Subject: Re: [PATCH v8 4/4] fs: unicode: Add utf8 module and a unicode layer
-Message-ID: <YIlta1Saw7dEBpfs@mit.edu>
-References: <20210423205136.1015456-1-shreeya.patel@collabora.com>
- <20210423205136.1015456-5-shreeya.patel@collabora.com>
- <20210427062907.GA1564326@infradead.org>
- <61d85255-d23e-7016-7fb5-7ab0a6b4b39f@collabora.com>
- <YIgkvjdrJPjeoJH7@mit.edu>
- <87bl9z937q.fsf@collabora.com>
+        Wed, 28 Apr 2021 11:10:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619622609;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kk0GXyWrV+tplXlipzE2jcmQ3JfsCy9V2iMdjdCt+G0=;
+        b=eF+dxnYIs+ZLj9HBWAJwe0vwC2LlBWGcYDuRVttOYjqcHZrouKAjh3lq5kdcN4IdwojG3e
+        Xh4ne1eTDdd97Fqgp7P5E89TeM+uo1dRcvRCjHeCeL2l28aCReW53gS8ev7X4ilEe3rAV2
+        GotZzFwCuvf+3Y6oly+PsmYZ+qRh+C4=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-143-mg4H1eZVObCU7JJLp4VbGw-1; Wed, 28 Apr 2021 11:10:07 -0400
+X-MC-Unique: mg4H1eZVObCU7JJLp4VbGw-1
+Received: by mail-qk1-f199.google.com with SMTP id 81-20020a370c540000b02902e4d7b9e448so3889644qkm.16
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 08:10:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kk0GXyWrV+tplXlipzE2jcmQ3JfsCy9V2iMdjdCt+G0=;
+        b=FHYP4ixUw1/NulEn8ER3BdOmkwe1EPVBllZxOIDPlQO9bycaze3ISjUtDQrXC+S8y3
+         4S1y5Xo4KgQABRmQQeaGDkQd+uQhZ8OtCeg9038uvoDU76mGaI3ISmRygLTd7AZX/jpa
+         WMnOfFSPXjtn/8FSkkJetf2hdK1aCkI6rNaQZFxv5BW783jOgm/7aAchYwn8mS8tvaRp
+         3TnbMVSAv5XaFVhnHEIvMDN3zzqNIOzOZQqMKRNCaoUX3Y6ARJNGZqHgdbHO489EZ2pK
+         Nnb4kj+F+4ZMRNjggIHdXhya3BO7+YRVVVzkC0GW55gWj5WcKfNWBNxSc4xOTc2GgZug
+         qLSw==
+X-Gm-Message-State: AOAM532tGU8H0CUj9h/6mjuszPSd5K+jI3mx2WOQct2H0rOy5ZFkJIra
+        rmHqxj74Bh2uAAR0fYuGX9FG0wSGSNTqzhRD26bZUHSUGISpfuZed1aUj8HkqAziLCaZ/bccsdc
+        +7bgxU1HP1G9DvHJPdLshzHnQwA==
+X-Received: by 2002:a05:622a:58d:: with SMTP id c13mr5772728qtb.44.1619622606820;
+        Wed, 28 Apr 2021 08:10:06 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxDOIhz717CICdyQ7QFBw3/HvW1s7fJ9E22xX4/FLRWsnY9Iqpo03jJIJ0dPF8+ttjVIu4urg==
+X-Received: by 2002:a05:622a:58d:: with SMTP id c13mr5772702qtb.44.1619622606467;
+        Wed, 28 Apr 2021 08:10:06 -0700 (PDT)
+Received: from xz-x1 (bras-base-toroon474qw-grc-77-184-145-104-227.dsl.bell.ca. [184.145.104.227])
+        by smtp.gmail.com with ESMTPSA id f2sm5333165qkh.76.2021.04.28.08.10.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Apr 2021 08:10:05 -0700 (PDT)
+Date:   Wed, 28 Apr 2021 11:10:03 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Axel Rasmussen <axelrasmussen@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        Brian Geffon <bgeffon@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
+Subject: Re: [PATCH v5 04/10] userfaultfd/shmem: support UFFDIO_CONTINUE for
+ shmem
+Message-ID: <20210428151003.GB6584@xz-x1>
+References: <20210427225244.4326-1-axelrasmussen@google.com>
+ <20210427225244.4326-5-axelrasmussen@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87bl9z937q.fsf@collabora.com>
+In-Reply-To: <20210427225244.4326-5-axelrasmussen@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 27, 2021 at 11:06:33AM -0400, Gabriel Krisman Bertazi wrote:
-> > I think the better argument to make is just one of simplicity;
-> > separating the Unicode data table from the kernel adds complexity.  It
-> > also reduces flexibility, since for use cases where it's actually
-> > _preferable_ to have Unicode functionality permanently built-in the
-> > kernel, we now force the use of some kind of initial ramdisk to load a
-> > module before the root file system (which might require Unicode
-> > support) could even be mounted.
+On Tue, Apr 27, 2021 at 03:52:38PM -0700, Axel Rasmussen wrote:
+> With this change, userspace can resolve a minor fault within a
+> shmem-backed area with a UFFDIO_CONTINUE ioctl. The semantics for this
+> match those for hugetlbfs - we look up the existing page in the page
+> cache, and install a PTE for it.
 > 
-> FWIW, embedding FW images to the kernel is also well supported.  Making
-> the data trie a firmware doesn't make a ramdisk more of a requirement
-> than the module solution, I think.
+> This commit introduces a new helper: mcopy_atomic_install_pte.
+> 
+> Why handle UFFDIO_CONTINUE for shmem in mm/userfaultfd.c, instead of in
+> shmem.c? The existing userfault implementation only relies on shmem.c
+> for VM_SHARED VMAs. However, minor fault handling / CONTINUE work just
+> fine for !VM_SHARED VMAs as well. We'd prefer to handle CONTINUE for
+> shmem in one place, regardless of shared/private (to reduce code
+> duplication).
+> 
+> Why add a new mcopy_atomic_install_pte helper? A problem we have with
+> continue is that shmem_mcopy_atomic_pte() and mcopy_atomic_pte() are
+> *close* to what we want, but not exactly. We do want to setup the PTEs
+> in a CONTINUE operation, but we don't want to e.g. allocate a new page,
+> charge it (e.g. to the shmem inode), manipulate various flags, etc. Also
+> we have the problem stated above: shmem_mcopy_atomic_pte() and
+> mcopy_atomic_pte() both handle one-half of the problem (shared /
+> private) continue cares about. So, introduce mcontinue_atomic_pte(), to
+> handle all of the shmem continue cases. Introduce the helper so it
+> doesn't duplicate code with mcopy_atomic_pte().
+> 
+> In a future commit, shmem_mcopy_atomic_pte() will also be modified to
+> use this new helper. However, since this is a bigger refactor, it seems
+> most clear to do it as a separate change.
+> 
+> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
 
-I don't think we support building firmware directly into the kernel
-any more.  We used to, but IIRC, there was the feeling that 99.99% of
-the time, firmware modules were not GPL compliant, and so we ripped
-out that support.
+Acked-by: Peter Xu <peterx@redhat.com>
 
-So my point was with the module support, it's *optional* that it be
-compiled as a module, which is convenient for those use cases, such as
-for example a mobile handset --- where there is no need for modules
-since the hardware doesn't change, and so modules and an initrd is
-just unnecessary complexity --- and firmware, which would make an
-initial ramdisk mandatory if you wanted to use the casefold feature.
+-- 
+Peter Xu
 
-Put another way, the only reason why putting the unicode tables in a
-module is to make life easier for desktop distros.  For mobile
-handsets, modules are an anti-feature, which is why there was no call
-for supporting this initially, given the initial use case for the
-casefold feature.
-
-Cheers,
-
-					- Ted
