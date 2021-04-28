@@ -2,84 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C58EE36DE93
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 19:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88B0036DE9B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 19:47:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242016AbhD1Rqd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Apr 2021 13:46:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49656 "EHLO
+        id S242502AbhD1Rrn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Apr 2021 13:47:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244527AbhD1RqB (ORCPT
+        with ESMTP id S242496AbhD1Rrj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Apr 2021 13:46:01 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BFEFC061573
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 10:45:16 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id c15so5158304ilj.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 10:45:16 -0700 (PDT)
+        Wed, 28 Apr 2021 13:47:39 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE220C061573
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 10:46:53 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id 4so40676096lfp.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 10:46:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=t2PuuUA12ZEnJWsd6YLi9cc3wxXcwVJFuOyD1wnS6OM=;
-        b=QLIYqH0ov6CivAMuc91MLaUJk+E3XsTg1E9+ka62xj+/t1+qmAVHsQTudQdww/a5Je
-         9K6hg5lFQ1u6P1xyXG2fCQkvRBVKBwt8YKwX3HR8Z6u1CKYPdB1uTjI3YMsI1dbGoqkn
-         +inyObGhGuzjHlxXiYwFQSzgHAWBIc5p/tueU46k3zmQK+OJL9SV8afZVvw/2yCCHAM4
-         shfBw6Vz58DjDH+bprbnbvYd7UA7wcEHCaVQcvZT6z6uO6FdcEKZXI36D5oKf888U6C6
-         Lg9+cLRFDtTpym3QkWiVPiRYU66mwxvdP2o30joyaBosZ73ehF6fzrWf4J1zuP8x1Wmg
-         fXkg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hSp3pG8dXFozEXy+cySWLM8gnFTjSS+49BzY5lWcsD4=;
+        b=SoQdTmzP6hzb9+P80G8+F5jiqD/LVHkhkbM5bIUW+QtlVU7Out24D0T1rY5WGKhZAJ
+         9b5DVoXPEPnR/6JOe05sMyEYilISH6KZEqtWuzYqcwwP+vFIgD1AONe0sTGQ6Q8rA8zn
+         piqb8rGU3Lkrf4gu1ZTe/T9NI4xgzS3hRJU/I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=t2PuuUA12ZEnJWsd6YLi9cc3wxXcwVJFuOyD1wnS6OM=;
-        b=MF1G1FF/Ag0vPKODut4nyYc7739xE/eyeWW3nZGpkaTzJhW12sSfyVVQKguF1a2QPi
-         3dhe7kDENcFF6rw5fbzK1UGfVFzZtp89oKHwB5xxVWvEcqKIV9+LmLJkBpHBJv0e3Dt4
-         zl7o7fhcx9MqJquKn9lvitpj9jcZklSTsobv5deGGS3JZiMeymXhWHHdkyqkoWJgYobB
-         SWr7cYDyg94qyvtIHw2lYdwADaDpl0RNYnM+eFu2aj0gRXEjVfu8cY7BqLwisNi9OIpr
-         vxHGRmYKBLdQB9/XWqI8HrWFLMsU3YvdEcpE6zBxTO2KAMJXOlCHGdEWQoO5Cv55ckoy
-         ussA==
-X-Gm-Message-State: AOAM533fxPQEj7u6/ob6yvaMabQEukwt/CmjgGsx9Y6KCxb34TxXLQH+
-        3Kiu8H7WG9do/Fe+72AsrndPiDnK8uu0eKjye2w=
-X-Google-Smtp-Source: ABdhPJxwwtUQyohBweNjsC6PegkbFJPWZak8CRa1UzyvMi3tQR31+ctr0soYN4seaJx1/CC67ks6U/ny7q39lzf6cW4=
-X-Received: by 2002:a05:6e02:1a61:: with SMTP id w1mr26415802ilv.304.1619631916047;
- Wed, 28 Apr 2021 10:45:16 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hSp3pG8dXFozEXy+cySWLM8gnFTjSS+49BzY5lWcsD4=;
+        b=ZuHJaBpA2DGIWON71x+4wFQvkr2P+VGDHAPMt0a2AlqrO1VLf89vaWG38cK29LRTpU
+         pp83Dm2HQS1j1Vgdxh/PVH+Z5d5kYcK/1dZCPdOq7RtpewBBYzuf+cmd0+TOxCkRC/cK
+         wmtiM9e2HyA8DDFaHZngGTGxlIHPHKDRIj7z0gZsLORMjSRVpH01YsdRq0mp3yIQ1aJc
+         E6tleqgJqk6STZtgQL0zfBJ/sZlI0N7f+0WCyI/pGQxKdVKbFHhE77BGKIBQQZFlnE3t
+         k0SS6fpRdsdr809L4ofXFTm5X1C7hb/4iis0UCA2VLkHQHRnbAuBs0lBDqwGdaIaah7K
+         9fXw==
+X-Gm-Message-State: AOAM532IrVt76gHQOlfQQAiZkEdpUqlDwqhjM9SSdzqgydvoM3wuWixH
+        cXO8z31ABirukyT15D5pzKINjrdfUP8Nkmj/
+X-Google-Smtp-Source: ABdhPJxX9LsRsPzpzzYEF1BRHo2E5CPkSskWmitgXA+bXNFa0Jfoo8tV/qECjAW94Eq+M9027TZM6Q==
+X-Received: by 2002:a05:6512:ba7:: with SMTP id b39mr14174156lfv.365.1619632012284;
+        Wed, 28 Apr 2021 10:46:52 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id k16sm119127lfu.214.2021.04.28.10.46.51
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Apr 2021 10:46:51 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 4so40675968lfp.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 10:46:51 -0700 (PDT)
+X-Received: by 2002:a05:6512:1095:: with SMTP id j21mr3081254lfg.40.1619632010958;
+ Wed, 28 Apr 2021 10:46:50 -0700 (PDT)
 MIME-Version: 1.0
-Sender: drwwgosh@gmail.com
-Received: by 2002:a05:6e02:1a25:0:0:0:0 with HTTP; Wed, 28 Apr 2021 10:45:15
- -0700 (PDT)
-From:   "Mr. Dabire Basole" <mrdabirebsole@gmail.com>
-Date:   Wed, 28 Apr 2021 10:45:15 -0700
-X-Google-Sender-Auth: V6ncPqLoe5lgf_y-hwkueNBx8e8
-Message-ID: <CACC9pScsuu9k9v6jAoKZoo0jMmK-6U3L4Lb9mWm+QDTEiGDkgw@mail.gmail.com>
-Subject: PERSONAL TREAT AS URGENT.
-To:     undisclosed-recipients:;
+References: <20210427183414.12499-1-arek_koz@o2.pl> <20210428061259.GA5084@lst.de>
+ <9905352.nUPlyArG6x@swift.dev.arusekk.pl> <20210428130339.GA30329@lst.de>
+In-Reply-To: <20210428130339.GA30329@lst.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 28 Apr 2021 10:46:35 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wibrw+PnBiQbkGy+5p4GpkPwmmodw-beODikL-tiz0dFQ@mail.gmail.com>
+Message-ID: <CAHk-=wibrw+PnBiQbkGy+5p4GpkPwmmodw-beODikL-tiz0dFQ@mail.gmail.com>
+Subject: Re: [PATCH] proc: Use seq_read_iter where possible
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Arusekk <arek_koz@o2.pl>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Friend,
+On Wed, Apr 28, 2021 at 6:03 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Unless Linus changed his mind just patching the file you care about for
+> now seems like the best idea.
 
-Greetings!
+I'm ok with expanding splice() use, but I do want it to be on a
+case-by-case basis and with comments about what actually used splice()
+in the odd circumstances.
 
-How are you with your family today? I hope both of you are in good
-health decently, I know that this message might meet you in utmost
-surprise as we never know each other before. I am Mr. Dabire Basole a
-banker by profession, I need your urgent assist in transferring the
-sum of USD$18.6 ( Eighteen Million Six Hundred Thousand United State Dollars)
-into your account. It is 100% risk free and under this achievement you are
-entitled to receive 50% of the total cash and 50% will be for me.
-More details will be sent to you on confirmation of your interest.
-Please if you are real interest on my proposer, just providing me your
-following information details such as:
+Our splice infrastructure is probably a lot safer than it used to be
+now that set_fs() is gone, but splice() on odd files does remain
+historically a source of not just bugs, but bugs that were security
+issues.
 
-(1)NAME..............
-(2)AGE:................
-(3)SEX:.....................
-(4)PHONE NUMBER:.................
-(5)OCCUPATION:................ .....
-(6)YOUR COUNTRY:.....................
+So it's mainly a "once bitten, twice shy" thing for me, which is why
+I'm more than happy to extend splice(), but want to do so in a very
+careful and controlled - and documented - manner, rather than the old
+situation where "pretty much everything can do splice, whether it
+actually works or not".
 
-Yours sincerely,
-
-Mr.  Dabire Basole.
+                 Linus
