@@ -2,87 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A492536D092
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 04:36:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 172A736D0D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 05:18:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235901AbhD1ChH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 22:37:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37741 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235422AbhD1ChH (ORCPT
+        id S229556AbhD1DTM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 23:19:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235553AbhD1DTJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 22:37:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619577382;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Aeu9vV+AZ5fymINj1ibMxlQo4LnGE6PkzOS++zg/VhE=;
-        b=Nxiq+kIJqgRi2JTt3oMCoYwJJi7iy+kPTEg7EcCf+0aNU6o4H0JF7WSZqq7/FrOJOYfxph
-        dyHePQu6k/NuU+pct/TekIzUZeIRJbW2ttWsL6240rrhGY/WTX5W1olrQzkZyWpyXwRxpa
-        7Fho4FWqsrwKYqhRMYCCvqP9BGnurso=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-398-21NXNnUDPLCgdTfaBsMUwg-1; Tue, 27 Apr 2021 22:36:20 -0400
-X-MC-Unique: 21NXNnUDPLCgdTfaBsMUwg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1E7158049CA;
-        Wed, 28 Apr 2021 02:36:19 +0000 (UTC)
-Received: from T590 (ovpn-12-77.pek2.redhat.com [10.72.12.77])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B89695C8AA;
-        Wed, 28 Apr 2021 02:36:08 +0000 (UTC)
-Date:   Wed, 28 Apr 2021 10:36:16 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "Wunderlich, Mark" <mark.wunderlich@intel.com>,
-        "Vasudevan, Anil" <anil.vasudevan@intel.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 15/15] nvme-multipath: enable polled I/O
-Message-ID: <YIjKIA0a5JR4jofr@T590>
-References: <20210427161619.1294399-1-hch@lst.de>
- <20210427161619.1294399-16-hch@lst.de>
+        Tue, 27 Apr 2021 23:19:09 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 483DAC06175F;
+        Tue, 27 Apr 2021 20:18:25 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lbaiQ-008seI-F9; Wed, 28 Apr 2021 03:18:18 +0000
+Date:   Wed, 28 Apr 2021 03:18:18 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     kernel test robot <oliver.sang@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        lkp@lists.01.org, lkp@intel.com
+Subject: Re: [iov_iter]  2418c34937: Initiating_system_reboot
+Message-ID: <YIjT+lZNn46VgscR@zeniv-ca.linux.org.uk>
+References: <20210428023747.GA13086@xsang-OptiPlex-9020>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210427161619.1294399-16-hch@lst.de>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <20210428023747.GA13086@xsang-OptiPlex-9020>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 27, 2021 at 06:16:19PM +0200, Christoph Hellwig wrote:
-> Set the poll queue flags to enable polling, given that the multipath
-> node just dispatches the bios to a lower queue.
+On Wed, Apr 28, 2021 at 10:37:47AM +0800, kernel test robot wrote:
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/nvme/host/multipath.c | 2 ++
->  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-> index 1d17b2387884..0fa38f648ae7 100644
-> --- a/drivers/nvme/host/multipath.c
-> +++ b/drivers/nvme/host/multipath.c
-> @@ -443,6 +443,8 @@ int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl, struct nvme_ns_head *head)
->  		goto out;
->  	blk_queue_flag_set(QUEUE_FLAG_NONROT, q);
->  	blk_queue_flag_set(QUEUE_FLAG_NOWAIT, q);
-> +	blk_queue_flag_set(QUEUE_FLAG_POLL_CAPABLE, q);
-> +	blk_queue_flag_set(QUEUE_FLAG_POLL, q);
-
-After POLL_CAPABLE is enabled on nvme mpath, POLL can be disabled via
-queue_poll_store(). However, blk_mq_freeze_queue() just blocks and drain bio
-submission, then pending POLL bio can't be polled any more because
-QUEUE_FLAG_POLL is checked in bio_poll().
-
-
-Thanks,
-Ming
-
+> Greeting,
+> 
+> FYI, we noticed the following commit (built with gcc-9):
+> 
+> commit: 2418c34937c42a30ef4bccd923ad664a89e1fbd4 ("iov_iter: optimize iov_iter_advance() for iovec and kvec")
+> https://git.kernel.org/cgit/linux/kernel/git/viro/vfs.git untested.iov_iter
+> 
+> 
+> in testcase: boot
+> 
+> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> 
+> 
+> +--------------------------+------------+------------+
+> |                          | c5f070c68e | 2418c34937 |
+> +--------------------------+------------+------------+
+> | boot_failures            | 0          | 11         |
+> | Initiating_system_reboot | 0          | 11         |
+> +--------------------------+------------+------------+
+> 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+ 
+Could you run it with soft_panic=1 in command line?  Alternatively, some
+information about how to reproduce that without running hell knows what
+as root on host would be very welcome; I can't imagine a single reason
+for needing root to run qemu, to be honest...
