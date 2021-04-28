@@ -2,230 +2,283 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CE9436D744
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 14:27:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9859E36D778
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 14:36:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236337AbhD1M1u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Apr 2021 08:27:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34614 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230406AbhD1M1r (ORCPT
+        id S237798AbhD1Mg7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Apr 2021 08:36:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48084 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237984AbhD1Mgy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Apr 2021 08:27:47 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D27AC06138E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 05:26:58 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id b17so7571800pgh.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 05:26:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=+P2aXNH0eb9nbOwC+3ZSOJGpMrFmuqGvb3tBbYkL2iQ=;
-        b=FRQdO2BRAjmVaxozzsFaMH5w5WmPmW++6UYQNvgpLchYx5YlmtVqSpkOZ0slWc1kZe
-         BUbA3xGOtAbwHzcGVfh4UrBd79skqZNFT7PqLQ+MdhbSv/mWKJiQmVx1KgE9Pj4WK5vF
-         Knxq+XSQ1HXR8xXI5SHvu3VXfVxP8PseOkZctqlDQ9aGbogxDI/r/PrKQleP9iBM649m
-         TjoEr/h5jAC5SGOEOvgTaFj1cY2co6xa9dd80lf6pm8nEG8rKmehNUCqLlId/dY2vHSW
-         Q02H5uyaOsUZUFLqxyYmppPLzmsshujUFl76Th6/sULiTV5KeS8MKwj741ZT7FzldbYE
-         6fbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=+P2aXNH0eb9nbOwC+3ZSOJGpMrFmuqGvb3tBbYkL2iQ=;
-        b=E7X8ToRhNcLyf1rvvAOkhrDXYX6pqs4vzb4InKGSdxYvcHHyQ/5bSrpe+4GVNkeYRH
-         828/gnKOvtcnrZD/asPpV7juFlnZVplIc8E3/w7kXtrXsIYdBbRermbb527KulOslWLp
-         R2VbsMJhtfmyEt8xNhDJ9Mo7Rg3eD27mKkN0JKeCbKperBmgC/mh9CJJcp2WqU2Utl46
-         9/XEpeiv1uRj1ZRrVxTsdm/Spz2abTI+mJRnpWQ4rSHtmejP60ZvWAdWE5oyZy3p8vjt
-         s3acDPGqVcD+kff4sagMw7o7w0wrLsW4YVXLkBJ7B2fv7YUssLHKuBQJ6K9gB6AFjuFv
-         pX4Q==
-X-Gm-Message-State: AOAM533E//9krOFxWUpEKEFav0x9vyaPrgEZ5I3qcJg2UxdZUl4cCAeb
-        d6rSba8LhnetfddmTKe4Yu5uBVkmDqg3RG31bNB8GQ==
-X-Google-Smtp-Source: ABdhPJwhscR8kLfuTEGvTn/4O/MIAvSqb0LqqMK+CTgRMvudUl9u7J3Z3wLQdtDH766kaIw7iNgL+A97OnQLvYmBbBo=
-X-Received: by 2002:aa7:9af7:0:b029:264:b19e:ac9c with SMTP id
- y23-20020aa79af70000b0290264b19eac9cmr27715798pfp.59.1619612818360; Wed, 28
- Apr 2021 05:26:58 -0700 (PDT)
+        Wed, 28 Apr 2021 08:36:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619613369;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=EfaV1qUnQ9f1xKdjfZKXnCyH2xPlaciTQVcIm4m9/xo=;
+        b=dZSbYqCGyUkBc2NSrHNOhfgj27OUWV/f5FRdC0Za26pwYn/HEVjL2wG9++RrQuq2VVUBzk
+        nk0AnIrPPxqUsYuuqGymgNorhTYKyX7hA8tx8SX9k+6+m2OdMT2oeciHNup49F87J2bf7T
+        HyJ2rTq2H/e277HJ14fqFTLiWzAxUnQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-585-x89X53tHMS2DlCc6ds0r-w-1; Wed, 28 Apr 2021 08:36:05 -0400
+X-MC-Unique: x89X53tHMS2DlCc6ds0r-w-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2E6951936B66;
+        Wed, 28 Apr 2021 12:36:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-20.rdu2.redhat.com [10.10.112.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 25CB06A8EA;
+        Wed, 28 Apr 2021 12:36:00 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix speculative status fetches
+From:   David Howells <dhowells@redhat.com>
+To:     marc.dionne@auristor.com
+Cc:     linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 28 Apr 2021 13:35:59 +0100
+Message-ID: <161961335926.39335.2552653972195467566.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <20210425070752.17783-1-songmuchun@bytedance.com> <ee3903ae-7033-7608-c7ed-1f16f0359663@oracle.com>
-In-Reply-To: <ee3903ae-7033-7608-c7ed-1f16f0359663@oracle.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Wed, 28 Apr 2021 20:26:21 +0800
-Message-ID: <CAMZfGtVbB6YwUMg2ECpdmniQ_vt_3AwdVAuu0GdUJfzWZgQpyg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v21 0/9] Free some vmemmap pages of HugeTLB page
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        X86 ML <x86@kernel.org>, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        fam.zheng@bytedance.com, zhengqi.arch@bytedance.com,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 28, 2021 at 7:47 AM Mike Kravetz <mike.kravetz@oracle.com> wrot=
-e:
->
-> Thanks!  I will take a look at the modifications soon.
->
-> I applied the patches to Andrew's mmotm-2021-04-21-23-03, ran some tests =
-and
-> got the following warning.  We may need to special case that call to
-> __prep_new_huge_page/free_huge_page_vmemmap from alloc_and_dissolve_huge_=
-page
-> as it is holding hugetlb lock with IRQs disabled.
+The generic/464 xfstest causes kAFS to emit occasional warnings of the
+form:
 
-Good catch. Thanks Mike. I will fix it in the next version. How about this:
+	kAFS: vnode modified {100055:8a} 30->31 YFS.StoreData64 (c=6015)
 
-@@ -1618,7 +1617,8 @@ static void __prep_new_huge_page(struct hstate
-*h, struct page *page)
+This indicates that the data version received back from the server did not
+match the expected value (the DV should be incremented monotonically for
+each individual modification op committed to a vnode).
 
- static void prep_new_huge_page(struct hstate *h, struct page *page, int ni=
-d)
- {
-+       free_huge_page_vmemmap(h, page);
-        __prep_new_huge_page(page);
-        spin_lock_irq(&hugetlb_lock);
-        __prep_account_new_huge_page(h, nid);
-        spin_unlock_irq(&hugetlb_lock);
-@@ -2429,6 +2429,7 @@ static int alloc_and_dissolve_huge_page(struct
-hstate *h, struct page *old_page,
-        if (!new_page)
-                return -ENOMEM;
+What is happening is that a lookup call is doing a bulk status fetch
+speculatively on a bunch of vnodes in a directory besides getting the
+status of the vnode it's actually interested in.  This is racing with a
+StoreData operation (though it could also occur with, say, a MakeDir op).
 
-+       free_huge_page_vmemmap(h, new_page);
- retry:
-        spin_lock_irq(&hugetlb_lock);
-        if (!PageHuge(old_page)) {
-@@ -2489,7 +2490,7 @@ static int alloc_and_dissolve_huge_page(struct
-hstate *h, struct page *old_page,
+On the client, a modification operation locks the vnode, but the bulk
+status fetch only locks the parent directory, so no ordering is imposed
+there (thereby avoiding an avenue to deadlock).
 
- free_new:
-        spin_unlock_irq(&hugetlb_lock);
--       __free_pages(new_page, huge_page_order(h));
-+       update_and_free_page(h, new_page, false);
+On the server, the StoreData op handler doesn't lock the vnode until it's
+received all the request data, and downgrades the lock after committing the
+data until it has finished sending change notifications to other clients -
+which allows the status fetch to occur before it has finished.
 
-        return ret;
- }
+This means that:
+
+ - a status fetch can access the target vnode either side of the exclusive
+   section of the modification
+
+ - the status fetch could start before the modification, yet finish after,
+   and vice-versa.
+
+ - the status fetch and the modification RPCs can complete in either order.
+
+ - the status fetch can return either the before or the after DV from the
+   modification.
+
+ - the status fetch might regress the locally cached DV.
+
+Some of these are handled by the previous fix[1], but that's not sufficient
+because it checks the DV it received against the DV it cached at the start
+of the op, but the DV might've been updated in the meantime by a locally
+generated modification op.
+
+Fix this by the following means:
+
+ (1) Keep track of when we're performing a modification operation on a
+     vnode.  This is done by marking vnode parameters with a 'modification'
+     note that causes the AFS_VNODE_MODIFYING flag to be set on the vnode
+     for the duration.
+
+ (2) Altering the speculation race detection to ignore speculative status
+     fetches if either the vnode is marked as being modified or the data
+     version number is not what we expected.
+
+Note that whilst the "vnode modified" warning does get recovered from as it
+causes the client to refetch the status at the next opportunity, it will
+also invalidate the pagecache, so changes might get lost.
+
+Fixes: a9e5c87ca744 ("afs: Fix speculative status fetch going out of order wrt to modifications")
+Reported-by: Marc Dionne <marc.dionne@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-afs@lists.infradead.org
+Link: https://lore.kernel.org/r/160605082531.252452.14708077925602709042.stgit@warthog.procyon.org.uk/ [1]
+---
+
+ fs/afs/dir.c          |    7 +++++++
+ fs/afs/dir_silly.c    |    3 +++
+ fs/afs/fs_operation.c |    6 ++++++
+ fs/afs/inode.c        |    6 ++++--
+ fs/afs/internal.h     |    2 ++
+ fs/afs/write.c        |    1 +
+ 6 files changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index 117df15e5367..9fbe5a5ec9bd 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -1419,6 +1419,7 @@ static int afs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+ 
+ 	afs_op_set_vnode(op, 0, dvnode);
+ 	op->file[0].dv_delta = 1;
++	op->file[0].modification = true;
+ 	op->file[0].update_ctime = true;
+ 	op->dentry	= dentry;
+ 	op->create.mode	= S_IFDIR | mode;
+@@ -1500,6 +1501,7 @@ static int afs_rmdir(struct inode *dir, struct dentry *dentry)
+ 
+ 	afs_op_set_vnode(op, 0, dvnode);
+ 	op->file[0].dv_delta = 1;
++	op->file[0].modification = true;
+ 	op->file[0].update_ctime = true;
+ 
+ 	op->dentry	= dentry;
+@@ -1636,6 +1638,7 @@ static int afs_unlink(struct inode *dir, struct dentry *dentry)
+ 
+ 	afs_op_set_vnode(op, 0, dvnode);
+ 	op->file[0].dv_delta = 1;
++	op->file[0].modification = true;
+ 	op->file[0].update_ctime = true;
+ 
+ 	/* Try to make sure we have a callback promise on the victim. */
+@@ -1718,6 +1721,7 @@ static int afs_create(struct user_namespace *mnt_userns, struct inode *dir,
+ 
+ 	afs_op_set_vnode(op, 0, dvnode);
+ 	op->file[0].dv_delta = 1;
++	op->file[0].modification = true;
+ 	op->file[0].update_ctime = true;
+ 
+ 	op->dentry	= dentry;
+@@ -1792,6 +1796,7 @@ static int afs_link(struct dentry *from, struct inode *dir,
+ 	afs_op_set_vnode(op, 0, dvnode);
+ 	afs_op_set_vnode(op, 1, vnode);
+ 	op->file[0].dv_delta = 1;
++	op->file[0].modification = true;
+ 	op->file[0].update_ctime = true;
+ 	op->file[1].update_ctime = true;
+ 
+@@ -1987,6 +1992,8 @@ static int afs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
+ 	afs_op_set_vnode(op, 1, new_dvnode); /* May be same as orig_dvnode */
+ 	op->file[0].dv_delta = 1;
+ 	op->file[1].dv_delta = 1;
++	op->file[0].modification = true;
++	op->file[1].modification = true;
+ 	op->file[0].update_ctime = true;
+ 	op->file[1].update_ctime = true;
+ 
+diff --git a/fs/afs/dir_silly.c b/fs/afs/dir_silly.c
+index 04f75a44f243..dae9a57d7ec0 100644
+--- a/fs/afs/dir_silly.c
++++ b/fs/afs/dir_silly.c
+@@ -73,6 +73,8 @@ static int afs_do_silly_rename(struct afs_vnode *dvnode, struct afs_vnode *vnode
+ 	afs_op_set_vnode(op, 1, dvnode);
+ 	op->file[0].dv_delta = 1;
+ 	op->file[1].dv_delta = 1;
++	op->file[0].modification = true;
++	op->file[1].modification = true;
+ 	op->file[0].update_ctime = true;
+ 	op->file[1].update_ctime = true;
+ 
+@@ -201,6 +203,7 @@ static int afs_do_silly_unlink(struct afs_vnode *dvnode, struct afs_vnode *vnode
+ 	afs_op_set_vnode(op, 0, dvnode);
+ 	afs_op_set_vnode(op, 1, vnode);
+ 	op->file[0].dv_delta = 1;
++	op->file[0].modification = true;
+ 	op->file[0].update_ctime = true;
+ 	op->file[1].op_unlinked = true;
+ 	op->file[1].update_ctime = true;
+diff --git a/fs/afs/fs_operation.c b/fs/afs/fs_operation.c
+index 2cb0951acca6..d222dfbe976b 100644
+--- a/fs/afs/fs_operation.c
++++ b/fs/afs/fs_operation.c
+@@ -118,6 +118,8 @@ static void afs_prepare_vnode(struct afs_operation *op, struct afs_vnode_param *
+ 		vp->cb_break_before	= afs_calc_vnode_cb_break(vnode);
+ 		if (vnode->lock_state != AFS_VNODE_LOCK_NONE)
+ 			op->flags	|= AFS_OPERATION_CUR_ONLY;
++		if (vp->modification)
++			set_bit(AFS_VNODE_MODIFYING, &vnode->flags);
+ 	}
+ 
+ 	if (vp->fid.vnode)
+@@ -225,6 +227,10 @@ int afs_put_operation(struct afs_operation *op)
+ 
+ 	if (op->ops && op->ops->put)
+ 		op->ops->put(op);
++	if (op->file[0].modification)
++		clear_bit(AFS_VNODE_MODIFYING, &op->file[0].vnode->flags);
++	if (op->file[1].modification && op->file[1].vnode != op->file[0].vnode)
++		clear_bit(AFS_VNODE_MODIFYING, &op->file[1].vnode->flags);
+ 	if (op->file[0].put_vnode)
+ 		iput(&op->file[0].vnode->vfs_inode);
+ 	if (op->file[1].put_vnode)
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 3a129b9fd9b8..80b6c8d967d5 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -294,8 +294,9 @@ void afs_vnode_commit_status(struct afs_operation *op, struct afs_vnode_param *v
+ 			op->flags &= ~AFS_OPERATION_DIR_CONFLICT;
+ 		}
+ 	} else if (vp->scb.have_status) {
+-		if (vp->dv_before + vp->dv_delta != vp->scb.status.data_version &&
+-		    vp->speculative)
++		if (vp->speculative &&
++		    (test_bit(AFS_VNODE_MODIFYING, &vnode->flags) ||
++		     vp->dv_before != vnode->status.data_version))
+ 			/* Ignore the result of a speculative bulk status fetch
+ 			 * if it splits around a modification op, thereby
+ 			 * appearing to regress the data version.
+@@ -911,6 +912,7 @@ int afs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 	}
+ 	op->ctime = attr->ia_ctime;
+ 	op->file[0].update_ctime = 1;
++	op->file[0].modification = true;
+ 
+ 	op->ops = &afs_setattr_operation;
+ 	ret = afs_do_sync_operation(op);
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 52157a05796a..5ed416f4ff33 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -645,6 +645,7 @@ struct afs_vnode {
+ #define AFS_VNODE_PSEUDODIR	7 		/* set if Vnode is a pseudo directory */
+ #define AFS_VNODE_NEW_CONTENT	8		/* Set if file has new content (create/trunc-0) */
+ #define AFS_VNODE_SILLY_DELETED	9		/* Set if file has been silly-deleted */
++#define AFS_VNODE_MODIFYING	10		/* Set if we're performing a modification op */
+ 
+ 	struct list_head	wb_keys;	/* List of keys available for writeback */
+ 	struct list_head	pending_locks;	/* locks waiting to be granted */
+@@ -762,6 +763,7 @@ struct afs_vnode_param {
+ 	bool			set_size:1;	/* Must update i_size */
+ 	bool			op_unlinked:1;	/* True if file was unlinked by op */
+ 	bool			speculative:1;	/* T if speculative status fetch (no vnode lock) */
++	bool			modification:1;	/* Set if the content gets modified */
+ };
+ 
+ /*
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index dc66ff15dd16..3edb6204b937 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -377,6 +377,7 @@ static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t
+ 
+ 	afs_op_set_vnode(op, 0, vnode);
+ 	op->file[0].dv_delta = 1;
++	op->file[0].modification = true;
+ 	op->store.write_iter = iter;
+ 	op->store.pos = pos;
+ 	op->store.size = size;
 
 
->
-> Sorry I missed that previously.
-> --
-> Mike Kravetz
->
-> [ 1521.579890] ------------[ cut here ]------------
-> [ 1521.581309] WARNING: CPU: 1 PID: 1046 at kernel/smp.c:884 smp_call_fun=
-ction_many_cond+0x1bb/0x390
-> [ 1521.583895] Modules linked in: ip6t_rpfilter ip6t_REJECT nf_reject_ipv=
-6 xt_conntrack ebtable_nat ip6table_nat ip6table_mangle ip6table_raw ip6tab=
-le_security iptable_nat nf_nat iptable_mangle iptable_raw iptable_security =
-nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 rfkill ebtable_filter ebtables 9=
-p ip6table_filter ip6_tables sunrpc snd_hda_codec_generic snd_hda_intel snd=
-_intel_dspcfg snd_hda_codec snd_hwdep snd_hda_core snd_seq joydev crct10dif=
-_pclmul snd_seq_device crc32_pclmul snd_pcm ghash_clmulni_intel snd_timer 9=
-pnet_virtio snd 9pnet virtio_balloon soundcore i2c_piix4 virtio_net virtio_=
-console net_failover virtio_blk failover 8139too qxl drm_ttm_helper ttm drm=
-_kms_helper drm crc32c_intel serio_raw virtio_pci virtio_pci_modern_dev 813=
-9cp virtio_ring mii ata_generic virtio pata_acpi
-> [ 1521.598644] CPU: 1 PID: 1046 Comm: bash Not tainted 5.12.0-rc8-mm1+ #2
-> [ 1521.599787] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
-S 1.14.0-1.fc33 04/01/2014
-> [ 1521.601259] RIP: 0010:smp_call_function_many_cond+0x1bb/0x390
-> [ 1521.602232] Code: 87 75 71 01 85 d2 0f 84 c8 fe ff ff 65 8b 05 94 3d e=
-9 7e 85 c0 0f 85 b9 fe ff ff 65 8b 05 f9 3a e8 7e 85 c0 0f 85 aa fe ff ff <=
-0f> 0b e9 a3 fe ff ff 65 8b 05 47 33 e8 7e a9 ff ff ff 7f 0f 85 75
-> [ 1521.605167] RSP: 0018:ffffc90001fcb928 EFLAGS: 00010046
-> [ 1521.606049] RAX: 0000000000000000 RBX: ffffffff828a85d0 RCX: 000000000=
-0000001
-> [ 1521.607103] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000000000=
-0000001
-> [ 1521.608127] RBP: 0000000000000000 R08: 0000000000000000 R09: ffffea000=
-8fa6f88
-> [ 1521.609144] R10: 0000000000000001 R11: 0000000000000001 R12: ffff88823=
-7d3bfc0
-> [ 1521.610112] R13: dead000000000122 R14: dead000000000100 R15: ffffea000=
-7bb8000
-> [ 1521.611106] FS:  00007f8a11223740(0000) GS:ffff888237d00000(0000) knlG=
-S:0000000000000000
-> [ 1521.612231] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 1521.612952] CR2: 0000555e1d00a430 CR3: 000000019ef5a005 CR4: 000000000=
-0370ee0
-> [ 1521.614295] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000000000=
-0000000
-> [ 1521.615539] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000000000=
-0000400
-> [ 1521.616814] Call Trace:
-> [ 1521.617241]  ? flush_tlb_one_kernel+0x20/0x20
-> [ 1521.618041]  on_each_cpu_cond_mask+0x25/0x30
-> [ 1521.618797]  flush_tlb_kernel_range+0xa5/0xc0
-> [ 1521.619577]  vmemmap_remap_free+0x7d/0x150
-> [ 1521.620319]  ? sparse_remove_section+0x80/0x80
-> [ 1521.621120]  free_huge_page_vmemmap+0x2f/0x40
-> [ 1521.621898]  __prep_new_huge_page+0xe/0xd0
-> [ 1521.622633]  isolate_or_dissolve_huge_page+0x300/0x360
-> [ 1521.623559]  isolate_migratepages_block+0x4c4/0xe20
-> [ 1521.624430]  ? verify_cpu+0x100/0x100
-> [ 1521.625096]  isolate_migratepages_range+0x6b/0xc0
-> [ 1521.625936]  alloc_contig_range+0x220/0x3d0
-> [ 1521.626729]  cma_alloc+0x1ae/0x5f0
-> [ 1521.627333]  alloc_fresh_huge_page+0x67/0x190
-> [ 1521.628054]  alloc_pool_huge_page+0x72/0xf0
-> [ 1521.628769]  set_max_huge_pages+0x128/0x2c0
-> [ 1521.629540]  __nr_hugepages_store_common+0x3d/0xb0
-> [ 1521.630457]  ? _kstrtoull+0x35/0xd0
-> [ 1521.631182]  nr_hugepages_store+0x73/0x80
-> [ 1521.631903]  kernfs_fop_write_iter+0x127/0x1c0
-> [ 1521.632698]  new_sync_write+0x11f/0x1b0
-> [ 1521.633408]  vfs_write+0x26f/0x380
-> [ 1521.633946]  ksys_write+0x68/0xe0
-> [ 1521.634444]  do_syscall_64+0x40/0x80
-> [ 1521.634914]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> [ 1521.635669] RIP: 0033:0x7f8a11313ff8
-> [ 1521.636251] Code: 89 02 48 c7 c0 ff ff ff ff eb b3 0f 1f 80 00 00 00 0=
-0 f3 0f 1e fa 48 8d 05 25 77 0d 00 8b 00 85 c0 75 17 b8 01 00 00 00 0f 05 <=
-48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 41 54 49 89 d4 55
-> [ 1521.639758] RSP: 002b:00007ffd26f79b18 EFLAGS: 00000246 ORIG_RAX: 0000=
-000000000001
-> [ 1521.641118] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f8a1=
-1313ff8
-> [ 1521.642425] RDX: 0000000000000002 RSI: 0000555e1cf94960 RDI: 000000000=
-0000001
-> [ 1521.643644] RBP: 0000555e1cf94960 R08: 000000000000000a R09: 00007f8a1=
-13a5e80
-> [ 1521.644904] R10: 000000000000000a R11: 0000000000000246 R12: 00007f8a1=
-13e7780
-> [ 1521.646177] R13: 0000000000000002 R14: 00007f8a113e2740 R15: 000000000=
-0000002
-> [ 1521.647450] irq event stamp: 10006640
-> [ 1521.648103] hardirqs last  enabled at (10006639): [<ffffffff812ad02b>]=
- bad_range+0x15b/0x180
-> [ 1521.649577] hardirqs last disabled at (10006640): [<ffffffff81abcea1>]=
- _raw_spin_lock_irq+0x51/0x60
-> [ 1521.651194] softirqs last  enabled at (10006630): [<ffffffff810da5e2>]=
- __irq_exit_rcu+0xd2/0x100
-> [ 1521.652763] softirqs last disabled at (10006625): [<ffffffff810da5e2>]=
- __irq_exit_rcu+0xd2/0x100
-> [ 1521.654251] ---[ end trace 561fa19f90280f2f ]---
