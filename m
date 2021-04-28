@@ -2,169 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EB6E36DCE7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 18:23:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBEE136DD76
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 18:50:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240871AbhD1QYY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Apr 2021 12:24:24 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:43362 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239324AbhD1QYX (ORCPT
+        id S241010AbhD1QvF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Apr 2021 12:51:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37408 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240643AbhD1QvF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Apr 2021 12:24:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619627017;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AH7csi7wwzGg18f+fG+VSfsyVRHxjn8kIlDKQiqjMRA=;
-        b=WBKY4e3f1wf3a9NfWawBaFethRH62KhZcqjNunR8E6D9sevn8lV6tMyttx3yUoP3YJhIMC
-        Jb7pwZW83oag9Eoy+H76du8D0ripDh+yCc8MBefVkdOXhAXhj48DjsKhu5h1GXGt/lS2Xh
-        uDioy039EeAFXXLoA2SzuUy34eYyLtk=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-395-e5gJGgnAOqq9eWLrWpcWbg-1; Wed, 28 Apr 2021 12:23:36 -0400
-X-MC-Unique: e5gJGgnAOqq9eWLrWpcWbg-1
-Received: by mail-qt1-f200.google.com with SMTP id k13-20020ac8140d0000b02901bad0e39d8fso1933412qtj.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 09:23:36 -0700 (PDT)
+        Wed, 28 Apr 2021 12:51:05 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B3F8C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 09:50:20 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id b21so561804ljf.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 09:50:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0uZJAIRFioTiHNk4LTl3GPgwLpvR/tqMtufSg3nWhNk=;
+        b=MkEAqmIhebjBuyB/bFWJkeNmQq6+31Os4ltso3CHWcE/z6HMUwlD9kGKr75X1dcJZN
+         nhAkq4TFetgPc3bclHi1B1uRcqtiTIb2JBFDflUDC+XnR14QbDiaFEnR1UXNn7Agvs3p
+         CZs19Op5jQnv+sJsmNTa3kkHt1Kq8UyRB4q18=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=AH7csi7wwzGg18f+fG+VSfsyVRHxjn8kIlDKQiqjMRA=;
-        b=SfyXQhgGn0Frjw4zr2jg5IA+PWMrzneeflF4VhothBWGA2hNXLK5JlGaRxeCftEnQ7
-         DfQJ/SRizc4qVJdv0bHNNQS1JPzRYmDsrq+NNyaVwvsg4X3Z+J+BNG0R5cF144dF3DSi
-         WO3gcUgop9sSaSvQZXDwkYxlFwCCDd2/HhONi65yCJ09Tqw3q6CYJ115YqkvcgcmzgvC
-         hv0q29bfVbtfSLM3N7zLE1FHT1ZW1jQ+O9NB83kl8dOoD0SxONUmDVOgeLaiP8xlm/8W
-         4S7RfL5HIE0dp802HlAqbMGF39DDiWJ38IQjgKod6iP2eiMD+sqxop4ejtM6pyS6Txgs
-         4MxQ==
-X-Gm-Message-State: AOAM5300k3YqORy0YNjxkdq3VWJeN+S1p3KwBDHfTB9I8Zf8HzscRZ0Q
-        BgeqsoZUC9u7DDVg8H+dxBAtHibDjjvu/feG0RrY4H7M8ncTjTrurcLYkGS62HHb8V4OPkL0TUJ
-        u3jrpwE0s66aL0ZqPDx3Yy8FeGg==
-X-Received: by 2002:a0c:ec0f:: with SMTP id y15mr14227316qvo.9.1619627015685;
-        Wed, 28 Apr 2021 09:23:35 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwxbTtNlW1BwVWHBPqrKcGOZYJKpqLvm889MXyWSVHOhrT+49N36LmGWoLkkG+ECXaA21Ximg==
-X-Received: by 2002:a0c:ec0f:: with SMTP id y15mr14227282qvo.9.1619627015284;
-        Wed, 28 Apr 2021 09:23:35 -0700 (PDT)
-Received: from xz-x1 (bras-base-toroon474qw-grc-77-184-145-104-227.dsl.bell.ca. [184.145.104.227])
-        by smtp.gmail.com with ESMTPSA id h8sm333557qtp.47.2021.04.28.09.23.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Apr 2021 09:23:34 -0700 (PDT)
-Date:   Wed, 28 Apr 2021 12:23:32 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Hugh Dickins <hughd@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        Brian Geffon <bgeffon@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH v5 06/10] userfaultfd/shmem: modify
- shmem_mcopy_atomic_pte to use install_pte()
-Message-ID: <20210428162332.GE6584@xz-x1>
-References: <20210427225244.4326-1-axelrasmussen@google.com>
- <20210427225244.4326-7-axelrasmussen@google.com>
- <alpine.LSU.2.11.2104271704110.7111@eggly.anvils>
- <20210428155638.GD6584@xz-x1>
- <CAJHvVcg6mt-FH0vn3ZApYU1tdtyu_8pgGtnKxrX5m2OjiCeApw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0uZJAIRFioTiHNk4LTl3GPgwLpvR/tqMtufSg3nWhNk=;
+        b=uQg2QLWXI+kPj75ni76zt8BHLt8tK/5+Sdv7EUdS0w1izMZnyMeRh0YrV4NbvSgtum
+         MUG+TCCYvTxojp/q5v4RhPtxX59yHVnUeoBJBoUa2UJxbejOCcp9b0mWVcBsyU403kfw
+         JP/L0D0BIHdi1bN86XGaSLozE4XGiUaRs9Ue3RSfb0+rKfVYh/INbSsdjDEHGyWPG+CO
+         EplXWqSqsin2g2PN2EwpOQ92hVrQXFspPyuRbleOpMk91W/H7UCKdLNAiyx2tU798cwy
+         1H5B6OMiUrQO445C0PxKs5sMpbXzW7hDZUo7X6f2eJ5DVb7JlGPKea/2LDvvKFPJCe6i
+         7cxg==
+X-Gm-Message-State: AOAM532yskLMxqBhT/++xX/47ANUU+5XsiRE5LU0MfN4+O/leF3eYC2e
+        aB/wasQN/Lfg5hzzi47JWQygEmZS2lA3BGBy
+X-Google-Smtp-Source: ABdhPJxRjQvovNuDy9sWHPaT/VhHG2djPpJt+xHSlTFL85h5iEjTzbUOpDwWxZnagoOJUpbYLjxQ4w==
+X-Received: by 2002:a2e:a592:: with SMTP id m18mr21153660ljp.189.1619628618423;
+        Wed, 28 Apr 2021 09:50:18 -0700 (PDT)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id k5sm93678lfu.0.2021.04.28.09.50.17
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Apr 2021 09:50:17 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id h36so46150865lfv.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 09:50:17 -0700 (PDT)
+X-Received: by 2002:ac2:5f92:: with SMTP id r18mr7706166lfe.253.1619628617003;
+ Wed, 28 Apr 2021 09:50:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJHvVcg6mt-FH0vn3ZApYU1tdtyu_8pgGtnKxrX5m2OjiCeApw@mail.gmail.com>
+References: <20210427025805.GD3122264@magnolia> <CAHk-=wj6XUGJCgsr+hx3rz=4KvBP-kspn3dqG5v-cKMzzMktUw@mail.gmail.com>
+ <20210427195727.GA9661@lst.de> <CAHk-=wjrpinf=8gAjxyPoXT0jbK6-U3Urawiykh-zpxeo47Vhg@mail.gmail.com>
+ <20210428061706.GC5084@lst.de> <CAHk-=whWnFu4wztnOtySjFVYXmBR4Mb2wxrp6OayZqnpKeQw0g@mail.gmail.com>
+ <20210428064110.GA5883@lst.de> <CAHk-=wjeUhrznxM95ni4z+ynMqhgKGsJUDU8g0vrDLc+fDtYWg@mail.gmail.com>
+ <1de23de2-12a9-2b13-3b86-9fe4102fdc0c@rasmusvillemoes.dk>
+In-Reply-To: <1de23de2-12a9-2b13-3b86-9fe4102fdc0c@rasmusvillemoes.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 28 Apr 2021 09:50:01 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wimsMqGdzik187YWLb-ru+iktb4MYbMQG1rnZ81dXYFVg@mail.gmail.com>
+Message-ID: <CAHk-=wimsMqGdzik187YWLb-ru+iktb4MYbMQG1rnZ81dXYFVg@mail.gmail.com>
+Subject: Re: [GIT PULL] iomap: new code for 5.13-rc1
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jia He <justin.he@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 28, 2021 at 08:59:53AM -0700, Axel Rasmussen wrote:
-> On Wed, Apr 28, 2021 at 8:56 AM Peter Xu <peterx@redhat.com> wrote:
-> >
-> > On Tue, Apr 27, 2021 at 05:58:16PM -0700, Hugh Dickins wrote:
-> > > On Tue, 27 Apr 2021, Axel Rasmussen wrote:
-> > >
-> > > > In a previous commit, we added the mcopy_atomic_install_pte() helper.
-> > > > This helper does the job of setting up PTEs for an existing page, to map
-> > > > it into a given VMA. It deals with both the anon and shmem cases, as
-> > > > well as the shared and private cases.
-> > > >
-> > > > In other words, shmem_mcopy_atomic_pte() duplicates a case it already
-> > > > handles. So, expose it, and let shmem_mcopy_atomic_pte() use it
-> > > > directly, to reduce code duplication.
-> > > >
-> > > > This requires that we refactor shmem_mcopy_atomic_pte() a bit:
-> > > >
-> > > > Instead of doing accounting (shmem_recalc_inode() et al) part-way
-> > > > through the PTE setup, do it afterward. This frees up
-> > > > mcopy_atomic_install_pte() from having to care about this accounting,
-> > > > and means we don't need to e.g. shmem_uncharge() in the error path.
-> > > >
-> > > > A side effect is this switches shmem_mcopy_atomic_pte() to use
-> > > > lru_cache_add_inactive_or_unevictable() instead of just lru_cache_add().
-> > > > This wrapper does some extra accounting in an exceptional case, if
-> > > > appropriate, so it's actually the more correct thing to use.
-> > > >
-> > > > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-> > >
-> > > Not quite. Two things.
-> > >
-> > > One, in this version, delete_from_page_cache(page) has vanished
-> > > from the particular error path which needs it.
-> >
-> > Agreed.  I also spotted that the set_page_dirty() seems to have been overlooked
-> > when reusing mcopy_atomic_install_pte(), which afaiu should be move into the
-> > helper.
-> 
-> I think this is covered: we explicitly call SetPageDirty() just before
-> returning in shmem_mcopy_atomic_pte(). If I remember correctly from a
-> couple of revisions ago, we consciously put it here instead of in the
-> helper because it resulted in simpler code (error handling in
-> particular, I think?), and not all callers of the new helper need it.
+[ Added Andy, who replied to the separate thread where Jia already
+posted the patch ]
 
-Indeed, yes that looks okay.
+On Wed, Apr 28, 2021 at 12:38 AM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+>
+> So the patch makes sense to me. If somebody says '%pD5', it would get
+> capped at 4 instead of being forced down to 1. But note that while that
+> grep only produces ~36 hits, it also affects %pd, of which there are
+> ~200 without a 2-4 following (including some vsprintf test cases that
+> would break). So I think one would first have to explicitly support '1',
+> switch over some users by adding that 1 in their format string
+> (test_vsprintf in particular), then flip the default for 'no digit
+> following %p[dD]'.
 
-> 
-> >
-> > >
-> > > Two, and I think this predates your changes (so needs a separate
-> > > fix patch first, for backport to stable? a user with bad intentions
-> > > might be able to trigger the BUG), in pondering the new error paths
-> > > and that /* don't free the page */ one in particular, isn't it the
-> > > case that the shmem_inode_acct_block() on entry might succeed the
-> > > first time, but atomic copy fail so -ENOENT, then something else
-> > > fill up the tmpfs before the retry comes in, so that retry then
-> > > fail with -ENOMEM, and hit the BUG_ON(page) in __mcopy_atomic()?
-> > >
-> > > (As I understand it, the shmem_inode_unacct_blocks() has to be
-> > > done before returning, because the caller may be unable to retry.)
-> > >
-> > > What the right fix is rather depends on other uses of __mcopy_atomic():
-> > > if they obviously cannot hit that BUG_ON(page), you may prefer to leave
-> > > it in, and fix it here where shmem_inode_acct_block() fails. Or you may
-> > > prefer instead to delete that "else BUG_ON(page);" - looks as if that
-> > > would end up doing the right thing.  Peter may have a preference.
-> >
-> > To me, the BUG_ON(page) wanted to guarantee mfill_atomic_pte() should have
-> > consumed the page properly when possible.  Removing the BUG_ON() looks good
-> > already, it will just stop covering the case when e.g. ret==0.
-> >
-> > So maybe slightly better to release the page when shmem_inode_acct_block()
-> > fails (so as to still keep some guard on the page)?
-> 
-> This second issue, I will take some more time to investigate. :)
+Yeah, and the "show one name" actually makes sense for "%pd", because
+that's about the *dentry*.
 
-No worry - take your time. :)
+A dentry has a parent, yes, but at the same time, a dentry really does
+inherently have "one name" (and given just the dentry pointers, you
+can't show mount-related parenthood, so in many ways the "show just
+one name" makes sense for "%pd" in ways it doesn't necessarily for
+"%pD"). But while a dentry arguably has that "one primary component",
+a _file_ is certainly not exclusively about that last component.
 
--- 
-Peter Xu
+So you're right - my "how about something like this" patch is too
+simplistic. The default number of components to show should be about
+whether it's %pd or %pD.
 
+That also does explain the arguably odd %pD defaults: %pd came first,
+and then %pD came afterwards.
+
+              Linus
