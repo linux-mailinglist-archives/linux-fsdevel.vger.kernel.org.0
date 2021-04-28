@@ -2,63 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DD2936D7E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 15:03:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF08836D8E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 15:51:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239702AbhD1NE2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Apr 2021 09:04:28 -0400
-Received: from verein.lst.de ([213.95.11.211]:49158 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239201AbhD1NE2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Apr 2021 09:04:28 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 1A80F68C7B; Wed, 28 Apr 2021 15:03:40 +0200 (CEST)
-Date:   Wed, 28 Apr 2021 15:03:39 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Arusekk <arek_koz@o2.pl>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] proc: Use seq_read_iter where possible
-Message-ID: <20210428130339.GA30329@lst.de>
-References: <20210427183414.12499-1-arek_koz@o2.pl> <20210428061259.GA5084@lst.de> <9905352.nUPlyArG6x@swift.dev.arusekk.pl>
+        id S238737AbhD1Nv4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Apr 2021 09:51:56 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:59229 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S239013AbhD1Nvz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Apr 2021 09:51:55 -0400
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 13SDourD012532
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Apr 2021 09:50:56 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 3A78115C3C3D; Wed, 28 Apr 2021 09:50:56 -0400 (EDT)
+Date:   Wed, 28 Apr 2021 09:50:56 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Shreeya Patel <shreeya.patel@collabora.com>,
+        Matthew Wilcox <willy@infradead.org>, fstests@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, krisman@collabora.com,
+        preichl@redhat.com, kernel@collabora.com
+Subject: Re: [PATCH] generic/453: Exclude filenames that are not supported by
+ exfat
+Message-ID: <YIloQDGP+0mRQdbP@mit.edu>
+References: <20210425223105.1855098-1-shreeya.patel@collabora.com>
+ <20210426003430.GH235567@casper.infradead.org>
+ <a49ecbfb-2011-0c7c-4405-b4548d22389d@collabora.com>
+ <20210426123734.GK235567@casper.infradead.org>
+ <bc7a33e8-7e9c-8045-e90e-bb53ec4f2c61@collabora.com>
+ <20210427181116.GH3122235@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9905352.nUPlyArG6x@swift.dev.arusekk.pl>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20210427181116.GH3122235@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 28, 2021 at 03:02:13PM +0200, Arusekk wrote:
-> The instructions at the entry point of the executable being inspected.
-> The flow of the tool:
-> - parse ELF headers of the binary to be inspected,
-> - locate its entry point position in the file,
-> - write short code at the location (this short code has used sendfile so far),
-> - execute the patched binary,
-> - parse the output and extract information about the relevant mappings.
-> This can be seen as equivalent to setting LD_TRACE_LOADED_OBJECTS,
-> but also works for static binaries, and is a bit safer.
+On Tue, Apr 27, 2021 at 11:11:16AM -0700, Darrick J. Wong wrote:
 > 
-> The problem was reported at:
-> https://github.com/Gallopsled/pwntools/issues/1871
+> TBH I think these tests (g/453 and g/454) are probably only useful for
+> filesystems that allow unrestricted byte streams for names.
 
-Oh, this patches just the userspace binarz, ok.
+I'm actually a little puzzled about why these tests should exist:
 
-> > Linus did object to blindly switching over all instances.
-> 
-> I know, I read that, but I thought that pointing a real use case, combined 
-> with the new interface being used all throughout the other code, might be 
-> convincing.
-> I would be happy with only changing the f_ops of /proc/.../maps, even if only 
-> on MMU-enabled systems, but I thought that consistence would be better.
-> This is my first time contributing to Linux, so I am very sorry for any wrong 
-> assumptions, and glad to learn more.
+# Create a directory with multiple filenames that all appear the same
+# (in unicode, anyway) but point to different inodes.  In theory all
+# Linux filesystems should allow this (filenames are a sequence of
+# arbitrary bytes) even if the user implications are horrifying.
 
-Unless Linus changed his mind just patching the file you care about for
-now seems like the best idea.
+Why do we care about testing this?  The assertion "In all theory all
+Linux filesystems should allow this" is clearly not true --- if you
+enable unicode support for ext4 or f2fs, this will no longer be true,
+and this is considered by some a _feature_ not a bug --- precisely
+_because_ the user implications are horrifying.
+
+So why does these tests exist?  Darrick, I see you added them in 2017
+to test whether or not xfs_scrub will warn about confuable names, if
+_check_xfs_scrub_does_unicode is true.  So we already understand that
+it's possible for a file system checker to complain that these file
+names are bad.
+
+It's not at all clear to me that asserting that all Linux file systems
+_must_ treat file names as "bag of bits" and not apply any kind of
+unicode normalization or strict unicode validation is a valid thing to
+test for in 2021.
+
+					- Ted
