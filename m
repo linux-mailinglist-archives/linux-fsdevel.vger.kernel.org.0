@@ -2,220 +2,383 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64C8336D054
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 03:38:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9956136D087
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 04:28:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235589AbhD1Bjh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 21:39:37 -0400
-Received: from mx21.baidu.com ([220.181.3.85]:46758 "EHLO baidu.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230425AbhD1Bjh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 21:39:37 -0400
-Received: from BC-Mail-Ex20.internal.baidu.com (unknown [172.31.51.14])
-        by Forcepoint Email with ESMTPS id 7DB5FDCC1AE290A6DCB4;
-        Wed, 28 Apr 2021 09:38:50 +0800 (CST)
-Received: from BC-Mail-Ex20.internal.baidu.com (172.31.51.14) by
- BC-Mail-Ex20.internal.baidu.com (172.31.51.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2242.4; Wed, 28 Apr 2021 09:38:50 +0800
-Received: from BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) by
- BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) with mapi id 15.01.2242.008;
- Wed, 28 Apr 2021 09:38:50 +0800
-From:   "Chu,Kaiping" <chukaiping@baidu.com>
-To:     David Rientjes <rientjes@google.com>
-CC:     "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "yzaikin@google.com" <yzaikin@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "nigupta@nvidia.com" <nigupta@nvidia.com>,
-        "bhe@redhat.com" <bhe@redhat.com>,
-        "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>,
-        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
-        "mateusznosek0@gmail.com" <mateusznosek0@gmail.com>,
-        "sh_def@163.com" <sh_def@163.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: =?gb2312?B?tPC4tDogtPC4tDogW1BBVENIIHYzXSBtbS9jb21wYWN0aW9uOmxldCBwcm9h?=
- =?gb2312?Q?ctive_compaction_order_configurable?=
-Thread-Topic: =?gb2312?B?tPC4tDogW1BBVENIIHYzXSBtbS9jb21wYWN0aW9uOmxldCBwcm9hY3RpdmUg?=
- =?gb2312?Q?compaction_order_configurable?=
-Thread-Index: AQHXOjmoEYLrBaldBU+yjbigXZxebarGAdYw//+AFACAA6a8cA==
-Date:   Wed, 28 Apr 2021 01:38:49 +0000
-Message-ID: <eca28ae50fb6408db8081dcb9089c181@baidu.com>
-References: <1619313662-30356-1-git-send-email-chukaiping@baidu.com>
- <f941268c-b91-594b-5de3-05fc418fbd0@google.com>
- <14f6897b3dfd4314b85c5865a2f2b5d0@baidu.com>
- <8ba0751b-8310-dcb8-5f74-97b9cb65a199@google.com>
-In-Reply-To: <8ba0751b-8310-dcb8-5f74-97b9cb65a199@google.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.22.194.26]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S236454AbhD1C3C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 22:29:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40134 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235901AbhD1C3B (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Apr 2021 22:29:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619576897;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qHEi7uzXrbPddvYPW1JYp+IKkhJIXCotzItB25z9St8=;
+        b=bOBA9y4+/++flYVjamVVIA4oqoqH3x5+j+ImSVhOo6WQTf1405UYuzWMaKwg9EqsEgE9aJ
+        WNnXCBVTg7FTsgzmJ+CzOsuyi3z1CGWNXSKRj0OcyFVOlvVzPlgFqOsuj+c4bPKegxrSaY
+        EUOgJPHUlmRiB8fEc1h4niI8ZdTtnCY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-29-hOokK6OPNoSEtzDuHd9qsQ-1; Tue, 27 Apr 2021 22:28:14 -0400
+X-MC-Unique: hOokK6OPNoSEtzDuHd9qsQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D30FF801AC3;
+        Wed, 28 Apr 2021 02:28:12 +0000 (UTC)
+Received: from T590 (ovpn-12-77.pek2.redhat.com [10.72.12.77])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C2CA45C73F;
+        Wed, 28 Apr 2021 02:28:03 +0000 (UTC)
+Date:   Wed, 28 Apr 2021 10:28:10 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "Wunderlich, Mark" <mark.wunderlich@intel.com>,
+        "Vasudevan, Anil" <anil.vasudevan@intel.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 12/15] block: switch polling to be bio based
+Message-ID: <YIjIOgYS29GvcoIm@T590>
+References: <20210427161619.1294399-1-hch@lst.de>
+ <20210427161619.1294399-13-hch@lst.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210427161619.1294399-13-hch@lst.de>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-UGxlYXNlIHNlZSBteSBhbnN3ZXIgaW5saW5lLg0KDQotLS0tLdPKvP7Urbz+LS0tLS0NCreivP7I
-yzogRGF2aWQgUmllbnRqZXMgPHJpZW50amVzQGdvb2dsZS5jb20+IA0Kt6LLzcqxvOQ6IDIwMjHE
-6jTUwjI2yNUgOTo0OA0KytW8/sjLOiBDaHUsS2FpcGluZyA8Y2h1a2FpcGluZ0BiYWlkdS5jb20+
-DQqzrcvNOiBtY2dyb2ZAa2VybmVsLm9yZzsga2Vlc2Nvb2tAY2hyb21pdW0ub3JnOyB5emFpa2lu
-QGdvb2dsZS5jb207IGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc7IHZiYWJrYUBzdXNlLmN6OyBu
-aWd1cHRhQG52aWRpYS5jb207IGJoZUByZWRoYXQuY29tOyBraGFsaWQuYXppekBvcmFjbGUuY29t
-OyBpYW1qb29uc29vLmtpbUBsZ2UuY29tOyBtYXRldXN6bm9zZWswQGdtYWlsLmNvbTsgc2hfZGVm
-QDE2My5jb207IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWZzZGV2ZWxAdmdl
-ci5rZXJuZWwub3JnOyBsaW51eC1tbUBrdmFjay5vcmcNCtb3zOI6IFJlOiC08Li0OiBbUEFUQ0gg
-djNdIG1tL2NvbXBhY3Rpb246bGV0IHByb2FjdGl2ZSBjb21wYWN0aW9uIG9yZGVyIGNvbmZpZ3Vy
-YWJsZQ0KDQpPbiBNb24sIDI2IEFwciAyMDIxLCBDaHUsS2FpcGluZyB3cm90ZToNCg0KPiBIaSBS
-aWVudGplcw0KPiBJIGFscmVhZHkgYW5zd2VyZWQgeW91ciBxdWVzdGlvbiBpbiA0LjE5Lg0KPiAi
-IFdlIHR1cm4gb2ZmIHRoZSB0cmFuc3BhcmVudCBodWdlIHBhZ2UgaW4gb3VyIG1hY2hpbmVzLCBz
-byB3ZSBkb24ndCBjYXJlIGFib3V0IHRoZSBvcmRlciA5Lg0KPiBUaGVyZSBhcmUgbWFueSB1c2Vy
-IHNwYWNlIGFwcGxpY2F0aW9ucywgZGlmZmVyZW50IGFwcGxpY2F0aW9uIG1heWJlIGFsbG9jYXRl
-IGRpZmZlcmVudCBvcmRlciBvZiBtZW1vcnksIHdlIGNhbid0IGtub3cgdGhlICJrbm93biBvcmRl
-ciBvZiBpbnRlcmVzdCIgaW4gYWR2YW5jZS4gT3VyIHB1cnBvc2UgaXMgdG8ga2VlcCB0aGUgb3Zl
-cmFsbCBmcmFnbWVudCBpbmRleCBhcyBsb3cgYXMgcG9zc2libGUsIG5vdCBjYXJlIGFib3V0IHRo
-ZSBzcGVjaWZpYyBvcmRlci4gDQoNCk9rLCBzbyB5b3UgZG9uJ3QgY2FyZSBhYm91dCBhIHNwZWNp
-ZmljIG9yZGVyIGJ1dCB5b3UgYXJlIGFkZGluZyBhIHZtLmNvbXBhY3Rpb25fb3JkZXIgc3lzY3Rs
-Pw0KDQpJIHRoaW5rIHdoYXQgeW91J3JlIHRyeWluZyB0byBkbyBpcyBpbnZva2UgZnVsbCBjb21w
-YWN0aW9uIChjYy5vcmRlciA9IC0xKSBhdCBzb21lIHBvaW50IGluIHRpbWUgdGhhdCB3aWxsICgx
-KSBrZWVwIG5vZGUtd2lkZSBmcmFnbWVudGF0aW9uIGxvdyBvdmVyIHRoZSBsb25nIHJ1biBhbmQg
-KDIpIGJlIHJlbGF0aXZlbHkgbGlnaHR3ZWlnaHQgYXQgdGhlIHRpbWUgaXQgaXMgZG9uZS4NCg0K
-SSBjYW4gY2VydGFpbmx5IHVuZGVyc3RhbmQgKDEpIG9uIHlvdXIgY29uZmlndXJhdGlvbiB0aGF0
-IGlzIG1vc3RseSBjb25zdW1lZCBieSAxR0IgZ2lnYW50aWMgcGFnZXMsIHlvdSBhcmUgbGlrZWx5
-IGRlYWxpbmcgd2l0aCBzaWduaWZpY2FudCBtZW1vcnkgcHJlc3N1cmUgdGhhdCBjYXVzZXMgZnJh
-Z21lbnRhdGlvbiB0byBpbmNyZWFzZSBvdmVyIHRpbWUgYW5kIGV2ZW50dWFsbHkgYmVjb21lIHVu
-cmVjb3ZlcmFibGUgZm9yIHRoZSBtb3N0IHBhcnQuDQoNCkFuZCBmb3IgKDIpLCB5ZXMsIHVzaW5n
-IHZtLmNvbXBhY3RfbWVtb3J5IHdpbGwgYmVjb21lIHZlcnkgaGVhdnl3ZWlnaHQgaWYgaXQncyBk
-b25lIHRvbyBsYXRlLg0KDQpTbyBzaW5jZSBwcm9hY3RpdmUgY29tcGFjdGlvbiB1c2VzIGNjLm9y
-ZGVyID0gMSwgc2FtZSBhcyB2bS5jb21wYWN0X21lbW9yeSwgaXQgc2hvdWxkIGJlIHBvc3NpYmxl
-IHRvIG1vbml0b3IgZXh0ZnJhZ19pbmRleCB1bmRlciBkZWJ1Z2ZzIGFuZCBtYW51YWxseSB0cmln
-Z2VyIGNvbXBhY3Rpb24gd2hlbiBuZWNlc3Nhcnkgd2l0aG91dCBpbnRlcnZlbnRpb24gb2YgdGhl
-IGtlcm5lbC4NCi0tPiBBZGRpbmcgdXNlcnNwYWNlIG1vbml0b3Igd2lsbCBicmluZyBleHRyYSBs
-b2FkIHRvIG1hY2hpbmVzLiBXZSBjYW4gdGFrZSB1c2Ugb2YgY3VycmVudCBwcm9hY3RpdmUgY29t
-cGFjdGlvbiBtZWNoYW5pc20gaW4ga2VybmVsLCBvbmx5IG5lZWQgdG8gZG8gc29tZSBzbWFsbCBt
-b2RpZmljYXRpb24uDQoNCkkgdGhpbmsgd2UgY2FuIGJvdGggYWdyZWUgdGhhdCB3ZSB3b3VsZG4n
-dCB3YW50IHRvIGFkZCBvYnNjdXJlIGFuZCB1bmRvY3VtZW50ZWQgc3lzY3RscyB0aGF0IHRoYXQg
-Y2FuIGVhc2lseSBiZSByZXBsYWNlZCBieSBhIHVzZXJzcGFjZSBpbXBsZW1lbnRhdGlvbi4NCg0K
-PiBBbHRob3VnaCBjdXJyZW50IHByb2FjdGl2ZSBjb21wYWN0aW9uIG1lY2hhbmlzbSBvbmx5IGNo
-ZWNrIHRoZSBmcmFnbWVudCBpbmRleCBvZiBzcGVjaWZpYyBvcmRlciwgYnV0IGl0IGNhbiBkbyBt
-ZW1vcnkgY29tcGFjdGlvbiBmb3IgYWxsIG9yZGVyKC5vcmRlciA9IC0xIGluIHByb2FjdGl2ZV9j
-b21wYWN0X25vZGUpLCBzbyBpdCdzIHN0aWxsIHVzZWZ1bCBmb3IgdXMuIA0KPiBXZSBzZXQgdGhl
-IGNvbXBhY3Rpb25fb3JkZXIgYWNjb3JkaW5nIHRvIHRoZSBhdmVyYWdlIGZyYWdtZW50IGluZGV4
-IG9mIGFsbCBvdXIgbWFjaGluZXMsIGl0J3MgYW4gZXhwZXJpZW5jZSB2YWx1ZSwgaXQncyBhIGNv
-bXByb21pc2Ugb2Yga2VlcCBtZW1vcnkgZnJhZ21lbnQgaW5kZXggbG93IGFuZCBub3QgdHJpZ2dl
-ciBiYWNrZ3JvdW5kIGNvbXBhY3Rpb24gdG9vIG11Y2gsIHRoaXMgdmFsdWUgY2FuIGJlIGNoYW5n
-ZWQgaW4gZnV0dXJlLg0KPiBXZSBkaWQgcGVyaW9kaWNhbGx5IG1lbW9yeSBjb21wYWN0aW9uIGJ5
-IGNvbW1hbmQgImVjaG8gMSA+IC9wcm9jL3N5cy92bS9jb21wYWN0X21lbW9yeSAiIHByZXZpb3Vz
-bHksIGJ1dCBpdCdzIG5vdCBnb29kIGVub3VnaCwgaXQncyB3aWxsIGNvbXBhY3QgYWxsIG1lbW9y
-eSBmb3JjaWJseSwgaXQgbWF5IGxlYWQgdG8gbG90cyBvZiBtZW1vcnkgbW92ZSBpbiBzaG9ydCB0
-aW1lLCBhbmQgYWZmZWN0IHRoZSBwZXJmb3JtYW5jZSBvZiBhcHBsaWNhdGlvbi4iDQo+IA0KPiAN
-Cj4gQlIsDQo+IENodSBLYWlwaW5nDQo+IA0KPiAtLS0tLdPKvP7Urbz+LS0tLS0NCj4gt6K8/sjL
-OiBEYXZpZCBSaWVudGplcyA8cmllbnRqZXNAZ29vZ2xlLmNvbT4NCj4gt6LLzcqxvOQ6IDIwMjHE
-6jTUwjI2yNUgOToxNQ0KPiDK1bz+yMs6IENodSxLYWlwaW5nIDxjaHVrYWlwaW5nQGJhaWR1LmNv
-bT4NCj4gs63LzTogbWNncm9mQGtlcm5lbC5vcmc7IGtlZXNjb29rQGNocm9taXVtLm9yZzsgeXph
-aWtpbkBnb29nbGUuY29tOyANCj4gYWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZzsgdmJhYmthQHN1
-c2UuY3o7IG5pZ3VwdGFAbnZpZGlhLmNvbTsgDQo+IGJoZUByZWRoYXQuY29tOyBraGFsaWQuYXpp
-ekBvcmFjbGUuY29tOyBpYW1qb29uc29vLmtpbUBsZ2UuY29tOyANCj4gbWF0ZXVzem5vc2VrMEBn
-bWFpbC5jb207IHNoX2RlZkAxNjMuY29tOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyAN
-Cj4gbGludXgtZnNkZXZlbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LW1tQGt2YWNrLm9yZw0KPiDW
-98ziOiBSZTogW1BBVENIIHYzXSBtbS9jb21wYWN0aW9uOmxldCBwcm9hY3RpdmUgY29tcGFjdGlv
-biBvcmRlciANCj4gY29uZmlndXJhYmxlDQo+IA0KPiBPbiBTdW4sIDI1IEFwciAyMDIxLCBjaHVr
-YWlwaW5nIHdyb3RlOg0KPiANCj4gPiBDdXJyZW50bHkgdGhlIHByb2FjdGl2ZSBjb21wYWN0aW9u
-IG9yZGVyIGlzIGZpeGVkIHRvIA0KPiA+IENPTVBBQ1RJT05fSFBBR0VfT1JERVIoOSksIGl0J3Mg
-T0sgaW4gbW9zdCBtYWNoaW5lcyB3aXRoIGxvdHMgb2YgDQo+ID4gbm9ybWFsIDRLQiBtZW1vcnks
-IGJ1dCBpdCdzIHRvbyBoaWdoIGZvciB0aGUgbWFjaGluZXMgd2l0aCBzbWFsbCANCj4gPiBub3Jt
-YWwgbWVtb3J5LCBmb3IgZXhhbXBsZSB0aGUgbWFjaGluZXMgd2l0aCBtb3N0IG1lbW9yeSBjb25m
-aWd1cmVkIA0KPiA+IGFzIDFHQiBodWdldGxiZnMgaHVnZSBwYWdlcy4gSW4gdGhlc2UgbWFjaGlu
-ZXMgdGhlIG1heCBvcmRlciBvZiBmcmVlIA0KPiA+IHBhZ2VzIGlzIG9mdGVuIGJlbG93IDksIGFu
-ZCBpdCdzIGFsd2F5cyBiZWxvdyA5IGV2ZW4gd2l0aCBoYXJkIA0KPiA+IGNvbXBhY3Rpb24uIFRo
-aXMgd2lsbCBsZWFkIHRvIHByb2FjdGl2ZSBjb21wYWN0aW9uIGJlIHRyaWdnZXJlZCB2ZXJ5IA0K
-PiA+IGZyZXF1ZW50bHkuIEluIHRoZXNlIG1hY2hpbmVzIHdlIG9ubHkgY2FyZSBhYm91dCBvcmRl
-ciBvZiAzIG9yIDQuDQo+ID4gVGhpcyBwYXRjaCBleHBvcnQgdGhlIG9kZXIgdG8gcHJvYyBhbmQg
-bGV0IGl0IGNvbmZpZ3VyYWJsZSBieSB1c2VyLCANCj4gPiBhbmQgdGhlIGRlZmF1bHQgdmFsdWUg
-aXMgc3RpbGwgQ09NUEFDVElPTl9IUEFHRV9PUkRFUi4NCj4gPiANCj4gDQo+IEFzIGFza2VkIGlu
-IHRoZSByZXZpZXcgb2YgdGhlIHYxIG9mIHRoZSBwYXRjaCwgd2h5IGlzIHRoaXMgbm90IGEgdXNl
-cnNwYWNlIHBvbGljeSBkZWNpc2lvbj8gIElmIHlvdSBhcmUgaW50ZXJlc3RlZCBpbiBvcmRlci0z
-IG9yIG9yZGVyLTQgZnJhZ21lbnRhdGlvbiwgZm9yIHdoYXRldmVyIHJlYXNvbiwgeW91IGNvdWxk
-IHBlcmlvZGljYWxseSBjaGVjayAvcHJvYy9idWRkeWluZm8gYW5kIG1hbnVhbGx5IGludm9rZSBj
-b21wYWN0aW9uIG9uIHRoZSBzeXN0ZW0uDQo+IA0KPiBJbiBvdGhlciB3b3Jkcywgd2h5IGRvZXMg
-dGhpcyBuZWVkIHRvIGxpdmUgaW4gdGhlIGtlcm5lbD8NCj4gDQo+ID4gU2lnbmVkLW9mZi1ieTog
-Y2h1a2FpcGluZyA8Y2h1a2FpcGluZ0BiYWlkdS5jb20+DQo+ID4gUmVwb3J0ZWQtYnk6IGtlcm5l
-bCB0ZXN0IHJvYm90IDxsa3BAaW50ZWwuY29tPg0KPiA+IC0tLQ0KPiA+IA0KPiA+IENoYW5nZXMg
-aW4gdjM6DQo+ID4gICAgIC0gY2hhbmdlIHRoZSBtaW4gdmFsdWUgb2YgY29tcGFjdGlvbl9vcmRl
-ciB0byAxIGJlY2F1c2UgdGhlIGZyYWdtZW50YXRpb24NCj4gPiAgICAgICBpbmRleCBvZiBvcmRl
-ciAwIGlzIGFsd2F5cyAwDQo+ID4gICAgIC0gbW92ZSB0aGUgZGVmaW5pdGlvbiBvZiBtYXhfYnVk
-ZHlfem9uZSBpbnRvICNpZmRlZiANCj4gPiBDT05GSUdfQ09NUEFDVElPTg0KPiA+IA0KPiA+IENo
-YW5nZXMgaW4gdjI6DQo+ID4gICAgIC0gZml4IHRoZSBjb21waWxlIGVycm9yIGluIGlhNjQgYW5k
-IHBvd2VycGMsIG1vdmUgdGhlIGluaXRpYWxpemF0aW9uDQo+ID4gICAgICAgb2Ygc3lzY3RsX2Nv
-bXBhY3Rpb25fb3JkZXIgdG8ga2NvbXBhY3RkX2luaXQgYmVjYXVzZSANCj4gPiAgICAgICBDT01Q
-QUNUSU9OX0hQQUdFX09SREVSIGlzIGEgdmFyaWFibGUgaW4gdGhlc2UgYXJjaGl0ZWN0dXJlcw0K
-PiA+ICAgICAtIGNoYW5nZSB0aGUgaGFyZCBjb2RlZCBtYXggb3JkZXIgbnVtYmVyIGZyb20gMTAg
-dG8gTUFYX09SREVSIC0gDQo+ID4gMQ0KPiA+IA0KPiA+ICBpbmNsdWRlL2xpbnV4L2NvbXBhY3Rp
-b24uaCB8ICAgIDEgKw0KPiA+ICBrZXJuZWwvc3lzY3RsLmMgICAgICAgICAgICB8ICAgMTAgKysr
-KysrKysrKw0KPiA+ICBtbS9jb21wYWN0aW9uLmMgICAgICAgICAgICB8ICAgIDkgKysrKysrLS0t
-DQo+ID4gIDMgZmlsZXMgY2hhbmdlZCwgMTcgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkN
-Cj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9jb21wYWN0aW9uLmggYi9pbmNs
-dWRlL2xpbnV4L2NvbXBhY3Rpb24uaCANCj4gPiBpbmRleCBlZDQwNzBlLi4xNTFjY2QxIDEwMDY0
-NA0KPiA+IC0tLSBhL2luY2x1ZGUvbGludXgvY29tcGFjdGlvbi5oDQo+ID4gKysrIGIvaW5jbHVk
-ZS9saW51eC9jb21wYWN0aW9uLmgNCj4gPiBAQCAtODMsNiArODMsNyBAQCBzdGF0aWMgaW5saW5l
-IHVuc2lnbmVkIGxvbmcgY29tcGFjdF9nYXAodW5zaWduZWQgDQo+ID4gaW50DQo+ID4gb3JkZXIp
-ICAjaWZkZWYgQ09ORklHX0NPTVBBQ1RJT04gIGV4dGVybiBpbnQgc3lzY3RsX2NvbXBhY3RfbWVt
-b3J5OyANCj4gPiBleHRlcm4gdW5zaWduZWQgaW50IHN5c2N0bF9jb21wYWN0aW9uX3Byb2FjdGl2
-ZW5lc3M7DQo+ID4gK2V4dGVybiB1bnNpZ25lZCBpbnQgc3lzY3RsX2NvbXBhY3Rpb25fb3JkZXI7
-DQo+ID4gIGV4dGVybiBpbnQgc3lzY3RsX2NvbXBhY3Rpb25faGFuZGxlcihzdHJ1Y3QgY3RsX3Rh
-YmxlICp0YWJsZSwgaW50IHdyaXRlLA0KPiA+ICAJCQl2b2lkICpidWZmZXIsIHNpemVfdCAqbGVu
-Z3RoLCBsb2ZmX3QgKnBwb3MpOyAgZXh0ZXJuIGludCANCj4gPiBzeXNjdGxfZXh0ZnJhZ190aHJl
-c2hvbGQ7IGRpZmYgLS1naXQgYS9rZXJuZWwvc3lzY3RsLmMgDQo+ID4gYi9rZXJuZWwvc3lzY3Rs
-LmMgaW5kZXggNjJmYmQwOS4uZTUwZjdkMiAxMDA2NDQNCj4gPiAtLS0gYS9rZXJuZWwvc3lzY3Rs
-LmMNCj4gPiArKysgYi9rZXJuZWwvc3lzY3RsLmMNCj4gPiBAQCAtMTk2LDYgKzE5Niw3IEBAIGVu
-dW0gc3lzY3RsX3dyaXRlc19tb2RlIHsgICNlbmRpZiAvKiANCj4gPiBDT05GSUdfU0NIRURfREVC
-VUcgKi8NCj4gPiAgDQo+ID4gICNpZmRlZiBDT05GSUdfQ09NUEFDVElPTg0KPiA+ICtzdGF0aWMg
-aW50IG1heF9idWRkeV96b25lID0gTUFYX09SREVSIC0gMTsNCj4gPiAgc3RhdGljIGludCBtaW5f
-ZXh0ZnJhZ190aHJlc2hvbGQ7DQo+ID4gIHN0YXRpYyBpbnQgbWF4X2V4dGZyYWdfdGhyZXNob2xk
-ID0gMTAwMDsgICNlbmRpZiBAQCAtMjg3MSw2IA0KPiA+ICsyODcyLDE1IEBAIGludCBwcm9jX2Rv
-X3N0YXRpY19rZXkoc3RydWN0IGN0bF90YWJsZSAqdGFibGUsIGludCB3cml0ZSwNCj4gPiAgCQku
-ZXh0cmEyCQk9ICZvbmVfaHVuZHJlZCwNCj4gPiAgCX0sDQo+ID4gIAl7DQo+ID4gKwkJLnByb2Nu
-YW1lICAgICAgID0gImNvbXBhY3Rpb25fb3JkZXIiLA0KPiA+ICsJCS5kYXRhICAgICAgICAgICA9
-ICZzeXNjdGxfY29tcGFjdGlvbl9vcmRlciwNCj4gPiArCQkubWF4bGVuICAgICAgICAgPSBzaXpl
-b2Yoc3lzY3RsX2NvbXBhY3Rpb25fb3JkZXIpLA0KPiA+ICsJCS5tb2RlICAgICAgICAgICA9IDA2
-NDQsDQo+ID4gKwkJLnByb2NfaGFuZGxlciAgID0gcHJvY19kb2ludHZlY19taW5tYXgsDQo+ID4g
-KwkJLmV4dHJhMSAgICAgICAgID0gU1lTQ1RMX09ORSwNCj4gPiArCQkuZXh0cmEyICAgICAgICAg
-PSAmbWF4X2J1ZGR5X3pvbmUsDQo+ID4gKwl9LA0KPiA+ICsJew0KPiA+ICAJCS5wcm9jbmFtZQk9
-ICJleHRmcmFnX3RocmVzaG9sZCIsDQo+ID4gIAkJLmRhdGEJCT0gJnN5c2N0bF9leHRmcmFnX3Ro
-cmVzaG9sZCwNCj4gPiAgCQkubWF4bGVuCQk9IHNpemVvZihpbnQpLA0KPiA+IGRpZmYgLS1naXQg
-YS9tbS9jb21wYWN0aW9uLmMgYi9tbS9jb21wYWN0aW9uLmMgaW5kZXggDQo+ID4gZTA0ZjQ0Ny4u
-NzBjMGFjZA0KPiA+IDEwMDY0NA0KPiA+IC0tLSBhL21tL2NvbXBhY3Rpb24uYw0KPiA+ICsrKyBi
-L21tL2NvbXBhY3Rpb24uYw0KPiA+IEBAIC0xOTI1LDE2ICsxOTI1LDE2IEBAIHN0YXRpYyBib29s
-IGtzd2FwZF9pc19ydW5uaW5nKHBnX2RhdGFfdA0KPiA+ICpwZ2RhdCkNCj4gPiAgDQo+ID4gIC8q
-DQo+ID4gICAqIEEgem9uZSdzIGZyYWdtZW50YXRpb24gc2NvcmUgaXMgdGhlIGV4dGVybmFsIGZy
-YWdtZW50YXRpb24gd3J0IA0KPiA+IHRvIHRoZQ0KPiA+IC0gKiBDT01QQUNUSU9OX0hQQUdFX09S
-REVSLiBJdCByZXR1cm5zIGEgdmFsdWUgaW4gdGhlIHJhbmdlIFswLCAxMDBdLg0KPiA+ICsgKiBz
-eXNjdGxfY29tcGFjdGlvbl9vcmRlci4gSXQgcmV0dXJucyBhIHZhbHVlIGluIHRoZSByYW5nZSBb
-MCwgMTAwXS4NCj4gPiAgICovDQo+ID4gIHN0YXRpYyB1bnNpZ25lZCBpbnQgZnJhZ21lbnRhdGlv
-bl9zY29yZV96b25lKHN0cnVjdCB6b25lICp6b25lKSAgew0KPiA+IC0JcmV0dXJuIGV4dGZyYWdf
-Zm9yX29yZGVyKHpvbmUsIENPTVBBQ1RJT05fSFBBR0VfT1JERVIpOw0KPiA+ICsJcmV0dXJuIGV4
-dGZyYWdfZm9yX29yZGVyKHpvbmUsIHN5c2N0bF9jb21wYWN0aW9uX29yZGVyKTsNCj4gPiAgfQ0K
-PiA+ICANCj4gPiAgLyoNCj4gPiAgICogQSB3ZWlnaHRlZCB6b25lJ3MgZnJhZ21lbnRhdGlvbiBz
-Y29yZSBpcyB0aGUgZXh0ZXJuYWwgDQo+ID4gZnJhZ21lbnRhdGlvbg0KPiA+IC0gKiB3cnQgdG8g
-dGhlIENPTVBBQ1RJT05fSFBBR0VfT1JERVIgc2NhbGVkIGJ5IHRoZSB6b25lJ3Mgc2l6ZS4gSXQN
-Cj4gPiArICogd3J0IHRvIHRoZSBzeXNjdGxfY29tcGFjdGlvbl9vcmRlciBzY2FsZWQgYnkgdGhl
-IHpvbmUncyBzaXplLiBJdA0KPiA+ICAgKiByZXR1cm5zIGEgdmFsdWUgaW4gdGhlIHJhbmdlIFsw
-LCAxMDBdLg0KPiA+ICAgKg0KPiA+ICAgKiBUaGUgc2NhbGluZyBmYWN0b3IgZW5zdXJlcyB0aGF0
-IHByb2FjdGl2ZSBjb21wYWN0aW9uIGZvY3VzZXMgb24gDQo+ID4gbGFyZ2VyIEBAIC0yNjY2LDYg
-KzI2NjYsNyBAQCBzdGF0aWMgdm9pZCBjb21wYWN0X25vZGVzKHZvaWQpDQo+ID4gICAqIGJhY2tn
-cm91bmQuIEl0IHRha2VzIHZhbHVlcyBpbiB0aGUgcmFuZ2UgWzAsIDEwMF0uDQo+ID4gICAqLw0K
-PiA+ICB1bnNpZ25lZCBpbnQgX19yZWFkX21vc3RseSBzeXNjdGxfY29tcGFjdGlvbl9wcm9hY3Rp
-dmVuZXNzID0gMjA7DQo+ID4gK3Vuc2lnbmVkIGludCBfX3JlYWRfbW9zdGx5IHN5c2N0bF9jb21w
-YWN0aW9uX29yZGVyOw0KPiA+ICANCj4gPiAgLyoNCj4gPiAgICogVGhpcyBpcyB0aGUgZW50cnkg
-cG9pbnQgZm9yIGNvbXBhY3RpbmcgYWxsIG5vZGVzIHZpYSBAQCAtMjk1OCw2DQo+ID4gKzI5NTks
-OCBAQCBzdGF0aWMgaW50IF9faW5pdCBrY29tcGFjdGRfaW5pdCh2b2lkKQ0KPiA+ICAJaW50IG5p
-ZDsNCj4gPiAgCWludCByZXQ7DQo+ID4gIA0KPiA+ICsJc3lzY3RsX2NvbXBhY3Rpb25fb3JkZXIg
-PSBDT01QQUNUSU9OX0hQQUdFX09SREVSOw0KPiA+ICsNCj4gPiAgCXJldCA9IGNwdWhwX3NldHVw
-X3N0YXRlX25vY2FsbHMoQ1BVSFBfQVBfT05MSU5FX0RZTiwNCj4gPiAgCQkJCQkibW0vY29tcGFj
-dGlvbjpvbmxpbmUiLA0KPiA+ICAJCQkJCWtjb21wYWN0ZF9jcHVfb25saW5lLCBOVUxMKTsNCj4g
-PiAtLQ0KPiA+IDEuNy4xDQo+ID4gDQo+ID4gDQo+IA0K
+On Tue, Apr 27, 2021 at 06:16:16PM +0200, Christoph Hellwig wrote:
+> Replace the blk_poll interface that requires the caller to keep a queue
+> and cookie from the submissions with polling based on the bio.
+> 
+> Polling for the bio itself leads to a few advantages:
+> 
+>  - the cookie construction can made entirely private in blk-mq.c
+>  - the caller does not need to remember the request_queue and cookie
+>    separately and thus sidesteps their lifetime issues
+>  - keeping the device and the cookie inside the bio allows to trivially
+>    support polling BIOs remapping by stacking drivers
+>  - a lot of code to propagate the cookie back up the submission path can
+>    be removed entirely.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/m68k/emu/nfblock.c             |   3 +-
+>  arch/xtensa/platforms/iss/simdisk.c |   3 +-
+>  block/bio.c                         |   1 +
+>  block/blk-core.c                    | 116 ++++++++++++++++++++--------
+>  block/blk-mq.c                      |  73 ++++++-----------
+>  block/blk-mq.h                      |   2 +
+>  drivers/block/brd.c                 |  12 ++-
+>  drivers/block/drbd/drbd_int.h       |   2 +-
+>  drivers/block/drbd/drbd_req.c       |   3 +-
+>  drivers/block/n64cart.c             |  12 ++-
+>  drivers/block/null_blk/main.c       |   3 +-
+>  drivers/block/pktcdvd.c             |   7 +-
+>  drivers/block/ps3vram.c             |   6 +-
+>  drivers/block/rsxx/dev.c            |   7 +-
+>  drivers/block/zram/zram_drv.c       |  10 +--
+>  drivers/lightnvm/pblk-init.c        |   6 +-
+>  drivers/md/bcache/request.c         |  13 ++--
+>  drivers/md/bcache/request.h         |   4 +-
+>  drivers/md/dm.c                     |  28 +++----
+>  drivers/md/md.c                     |  10 +--
+>  drivers/nvdimm/blk.c                |   5 +-
+>  drivers/nvdimm/btt.c                |   5 +-
+>  drivers/nvdimm/pmem.c               |   3 +-
+>  drivers/nvme/host/core.c            |   2 +-
+>  drivers/nvme/host/multipath.c       |   6 +-
+>  drivers/s390/block/dcssblk.c        |   7 +-
+>  drivers/s390/block/xpram.c          |   5 +-
+>  fs/block_dev.c                      |  25 ++----
+>  fs/btrfs/inode.c                    |   8 +-
+>  fs/ext4/file.c                      |   2 +-
+>  fs/gfs2/file.c                      |   4 +-
+>  fs/iomap/direct-io.c                |  39 ++++------
+>  fs/xfs/xfs_file.c                   |   2 +-
+>  fs/zonefs/super.c                   |   2 +-
+>  include/linux/bio.h                 |   2 +-
+>  include/linux/blk-mq.h              |  15 +---
+>  include/linux/blk_types.h           |  12 ++-
+>  include/linux/blkdev.h              |   8 +-
+>  include/linux/fs.h                  |   6 +-
+>  include/linux/iomap.h               |   3 +-
+>  mm/page_io.c                        |   8 +-
+>  41 files changed, 219 insertions(+), 271 deletions(-)
+> 
+> diff --git a/arch/m68k/emu/nfblock.c b/arch/m68k/emu/nfblock.c
+> index ba808543161a..dd36808f0d5e 100644
+> --- a/arch/m68k/emu/nfblock.c
+> +++ b/arch/m68k/emu/nfblock.c
+> @@ -59,7 +59,7 @@ struct nfhd_device {
+>  	struct gendisk *disk;
+>  };
+>  
+> -static blk_qc_t nfhd_submit_bio(struct bio *bio)
+> +static void nfhd_submit_bio(struct bio *bio)
+>  {
+>  	struct nfhd_device *dev = bio->bi_bdev->bd_disk->private_data;
+>  	struct bio_vec bvec;
+> @@ -77,7 +77,6 @@ static blk_qc_t nfhd_submit_bio(struct bio *bio)
+>  		sec += len;
+>  	}
+>  	bio_endio(bio);
+> -	return BLK_QC_T_NONE;
+>  }
+>  
+>  static int nfhd_getgeo(struct block_device *bdev, struct hd_geometry *geo)
+> diff --git a/arch/xtensa/platforms/iss/simdisk.c b/arch/xtensa/platforms/iss/simdisk.c
+> index fc09be7b1347..182825d639e2 100644
+> --- a/arch/xtensa/platforms/iss/simdisk.c
+> +++ b/arch/xtensa/platforms/iss/simdisk.c
+> @@ -101,7 +101,7 @@ static void simdisk_transfer(struct simdisk *dev, unsigned long sector,
+>  	spin_unlock(&dev->lock);
+>  }
+>  
+> -static blk_qc_t simdisk_submit_bio(struct bio *bio)
+> +static void simdisk_submit_bio(struct bio *bio)
+>  {
+>  	struct simdisk *dev = bio->bi_bdev->bd_disk->private_data;
+>  	struct bio_vec bvec;
+> @@ -119,7 +119,6 @@ static blk_qc_t simdisk_submit_bio(struct bio *bio)
+>  	}
+>  
+>  	bio_endio(bio);
+> -	return BLK_QC_T_NONE;
+>  }
+>  
+>  static int simdisk_open(struct block_device *bdev, fmode_t mode)
+> diff --git a/block/bio.c b/block/bio.c
+> index de5505d7018e..986908cc99d4 100644
+> --- a/block/bio.c
+> +++ b/block/bio.c
+> @@ -250,6 +250,7 @@ void bio_init(struct bio *bio, struct bio_vec *table,
+>  	memset(bio, 0, sizeof(*bio));
+>  	atomic_set(&bio->__bi_remaining, 1);
+>  	atomic_set(&bio->__bi_cnt, 1);
+> +	bio->bi_cookie = BLK_QC_T_NONE;
+>  
+>  	bio->bi_io_vec = table;
+>  	bio->bi_max_vecs = max_vecs;
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index adfab5976be0..305fb8722871 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -910,18 +910,18 @@ static noinline_for_stack bool submit_bio_checks(struct bio *bio)
+>  	return false;
+>  }
+>  
+> -static blk_qc_t __submit_bio(struct bio *bio)
+> +static void __submit_bio(struct bio *bio)
+>  {
+>  	struct gendisk *disk = bio->bi_bdev->bd_disk;
+> -	blk_qc_t ret = BLK_QC_T_NONE;
+>  
+>  	if (blk_crypto_bio_prep(&bio)) {
+> -		if (!disk->fops->submit_bio)
+> -			return blk_mq_submit_bio(bio);
+> -		ret = disk->fops->submit_bio(bio);
+> +		if (!disk->fops->submit_bio) {
+> +			blk_mq_submit_bio(bio);
+> +			return;
+> +		}
+> +		disk->fops->submit_bio(bio);
+>  	}
+>  	blk_queue_exit(disk->queue);
+> -	return ret;
+>  }
+>  
+>  /*
+> @@ -943,10 +943,9 @@ static blk_qc_t __submit_bio(struct bio *bio)
+>   * bio_list_on_stack[1] contains bios that were submitted before the current
+>   *	->submit_bio_bio, but that haven't been processed yet.
+>   */
+> -static blk_qc_t __submit_bio_noacct(struct bio *bio)
+> +static void __submit_bio_noacct(struct bio *bio)
+>  {
+>  	struct bio_list bio_list_on_stack[2];
+> -	blk_qc_t ret = BLK_QC_T_NONE;
+>  
+>  	BUG_ON(bio->bi_next);
+>  
+> @@ -966,7 +965,7 @@ static blk_qc_t __submit_bio_noacct(struct bio *bio)
+>  		bio_list_on_stack[1] = bio_list_on_stack[0];
+>  		bio_list_init(&bio_list_on_stack[0]);
+>  
+> -		ret = __submit_bio(bio);
+> +		__submit_bio(bio);
+>  
+>  		/*
+>  		 * Sort new bios into those for a lower level and those for the
+> @@ -989,13 +988,11 @@ static blk_qc_t __submit_bio_noacct(struct bio *bio)
+>  	} while ((bio = bio_list_pop(&bio_list_on_stack[0])));
+>  
+>  	current->bio_list = NULL;
+> -	return ret;
+>  }
+>  
+> -static blk_qc_t __submit_bio_noacct_mq(struct bio *bio)
+> +static void __submit_bio_noacct_mq(struct bio *bio)
+>  {
+>  	struct bio_list bio_list[2] = { };
+> -	blk_qc_t ret = BLK_QC_T_NONE;
+>  
+>  	current->bio_list = bio_list;
+>  
+> @@ -1007,15 +1004,13 @@ static blk_qc_t __submit_bio_noacct_mq(struct bio *bio)
+>  
+>  		if (!blk_crypto_bio_prep(&bio)) {
+>  			blk_queue_exit(disk->queue);
+> -			ret = BLK_QC_T_NONE;
+>  			continue;
+>  		}
+>  
+> -		ret = blk_mq_submit_bio(bio);
+> +		blk_mq_submit_bio(bio);
+>  	} while ((bio = bio_list_pop(&bio_list[0])));
+>  
+>  	current->bio_list = NULL;
+> -	return ret;
+>  }
+>  
+>  /**
+> @@ -1027,10 +1022,10 @@ static blk_qc_t __submit_bio_noacct_mq(struct bio *bio)
+>   * systems and other upper level users of the block layer should use
+>   * submit_bio() instead.
+>   */
+> -blk_qc_t submit_bio_noacct(struct bio *bio)
+> +void submit_bio_noacct(struct bio *bio)
+>  {
+>  	if (!submit_bio_checks(bio))
+> -		return BLK_QC_T_NONE;
+> +		return;
+>  
+>  	/*
+>  	 * We only want one ->submit_bio to be active at a time, else stack
+> @@ -1038,14 +1033,12 @@ blk_qc_t submit_bio_noacct(struct bio *bio)
+>  	 * to collect a list of requests submited by a ->submit_bio method while
+>  	 * it is active, and then process them after it returned.
+>  	 */
+> -	if (current->bio_list) {
+> +	if (current->bio_list)
+>  		bio_list_add(&current->bio_list[0], bio);
+> -		return BLK_QC_T_NONE;
+> -	}
+> -
+> -	if (!bio->bi_bdev->bd_disk->fops->submit_bio)
+> -		return __submit_bio_noacct_mq(bio);
+> -	return __submit_bio_noacct(bio);
+> +	else if (!bio->bi_bdev->bd_disk->fops->submit_bio)
+> +		__submit_bio_noacct_mq(bio);
+> +	else
+> +		__submit_bio_noacct(bio);
+>  }
+>  EXPORT_SYMBOL(submit_bio_noacct);
+>  
+> @@ -1062,10 +1055,10 @@ EXPORT_SYMBOL(submit_bio_noacct);
+>   * in @bio.  The bio must NOT be touched by thecaller until ->bi_end_io() has
+>   * been called.
+>   */
+> -blk_qc_t submit_bio(struct bio *bio)
+> +void submit_bio(struct bio *bio)
+>  {
+>  	if (blkcg_punt_bio_submit(bio))
+> -		return BLK_QC_T_NONE;
+> +		return;
+>  
+>  	/*
+>  	 * If it's a regular read/write or a barrier with data attached,
+> @@ -1106,19 +1099,80 @@ blk_qc_t submit_bio(struct bio *bio)
+>  	if (unlikely(bio_op(bio) == REQ_OP_READ &&
+>  	    bio_flagged(bio, BIO_WORKINGSET))) {
+>  		unsigned long pflags;
+> -		blk_qc_t ret;
+>  
+>  		psi_memstall_enter(&pflags);
+> -		ret = submit_bio_noacct(bio);
+> +		submit_bio_noacct(bio);
+>  		psi_memstall_leave(&pflags);
+> -
+> -		return ret;
+> +		return;
+>  	}
+>  
+> -	return submit_bio_noacct(bio);
+> +	submit_bio_noacct(bio);
+>  }
+>  EXPORT_SYMBOL(submit_bio);
+>  
+> +/**
+> + * bio_poll - poll for BIO completions
+> + * @bio: bio to poll for
+> + * @flags: BLK_POLL_* flags that control the behavior
+> + *
+> + * Poll for completions on queue associated with the bio. Returns number of
+> + * completed entries found.
+> + *
+> + * Note: the caller must either be the context that submitted @bio, or
+> + * be in a RCU critical section to prevent freeing of @bio.
+> + */
+> +int bio_poll(struct bio *bio, unsigned int flags)
+> +{
+> +	struct request_queue *q = bio->bi_bdev->bd_disk->queue;
+> +	blk_qc_t cookie = READ_ONCE(bio->bi_cookie);
+> +
+> +	if (cookie == BLK_QC_T_NONE ||
+> +	    !test_bit(QUEUE_FLAG_POLL, &q->queue_flags))
+> +		return 0;
+> +
+> +	if (current->plug)
+> +		blk_flush_plug_list(current->plug, false);
+> +
+> +	/* not yet implemented, so this should not happen */
+> +	if (WARN_ON_ONCE(!queue_is_mq(q)))
+> +		return 0;
+> +	return blk_mq_poll(q, cookie, flags);
+> +}
+> +EXPORT_SYMBOL_GPL(bio_poll);
+> +
+> +/*
+> + * Helper to implement file_operations.iopoll.  Requires the bio to be stored
+> + * in iocb->private, and cleared before freeing the bio.
+> + */
+> +int iocb_bio_iopoll(struct kiocb *kiocb, unsigned int flags)
+> +{
+> +	struct bio *bio;
+> +	int ret = 0;
+> +
+> +	/*
+> +	 * Note: the bio cache only uses SLAB_TYPESAFE_BY_RCU, so bio can
+> +	 * point to a freshly allocated bio at this point.  If that happens
+> +	 * we have a few cases to consider:
+> +	 *
+> +	 *  1) the bio is beeing initialized and bi_bdev is NULL.  We can just
+> +	 *     simply nothing in this case
+> +	 *  2) the bio points to a not poll enabled device.  bio_poll will catch
+> +	 *     this and return 0
+> +	 *  3) the bio points to a poll capable device, including but not
+> +	 *     limited to the one that the original bio pointed to.  In this
+> +	 *     case we will call into the actual poll method and poll for I/O,
+> +	 *     even if we don't need to, but it won't cause harm either.
+> +	 */
+> +	rcu_read_lock();
+> +	bio = READ_ONCE(kiocb->private);
+> +	if (bio && bio->bi_bdev)
+
+->bi_bdev and associated disk/request_queue/hctx/... refrerred in bio_poll()
+may have being freed now, so there is UAF risk.
+
+
+Thanks,
+Ming
+
