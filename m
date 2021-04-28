@@ -2,97 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0375536DB47
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 17:24:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D6A36DBB6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 17:33:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237798AbhD1PLy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Apr 2021 11:11:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:49250 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237192AbhD1PLx (ORCPT
+        id S231347AbhD1PeK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Apr 2021 11:34:10 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:37875 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229890AbhD1PeJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Apr 2021 11:11:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619622667;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=T807XqCTr78fh+zT3Qv4di+WLGWcFE6R3h9u02iLdq0=;
-        b=OZ2Z7psUTHyhXPnamxMkJa7+0M5XQddubzY18T/sJG3h0Ze+iQAvKUbpuz3qR3pu5pASiM
-        ZxTeNO8OikSVwzo6bJuEkkewuJWyILJPFtcea4WjisMPSHUPn/CtcW5btv7gcpVZ33bE85
-        pGtM6+nntapuujEE3g0X/ghQ5xYLCIw=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-347-rUG9nYK7NYaIlO6z3NwkKw-1; Wed, 28 Apr 2021 11:11:05 -0400
-X-MC-Unique: rUG9nYK7NYaIlO6z3NwkKw-1
-Received: by mail-qk1-f197.google.com with SMTP id y9-20020ae9f4090000b02902e4caf24229so5093348qkl.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 08:11:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=T807XqCTr78fh+zT3Qv4di+WLGWcFE6R3h9u02iLdq0=;
-        b=dqUYFPAgGXeV0uBJf80zIyslhSCd+ewoi3svamKu4Cntq/WJnKUoURpvmQ6Y72s2IT
-         i8Nv/J7MX5sS6lOpicKo3fAbj5f7iVAaWhMN9imFRXc+uefQ31va9SSSKjX2aaDdr5ki
-         uvWRwX/VzUBU8tMg3YhhWuGQGZDX5vcx9d3eSWcf+JnRfq/XA/UVLYp1+tVjA7ZC8g92
-         U0Wn1R9bRFC3d81P0P5IOU2blBpAb7VLLAUgBrpqRgZGAkkUXKckU33XuS3p7gE5VfHK
-         xqTtS5rN167790mEpa5nEPCi/qmx3xPjvv7Wwslr81S3Q2cZ7E93dIJqsCpEHOknOl3h
-         u1Ag==
-X-Gm-Message-State: AOAM533oGF+mlskaA/gtkr8XZRj1Ljj1n318aarQ/l+SjfL5QToY3Tf1
-        Ow7WqZbds/kI6e7W2AhwP7P92L1zs2VnR8JDiJchT1kLXY6QKvTuYhkKtja6fjiPd84Icp5iCXy
-        tYJukWHr3ShAPxSAooBtQft3HBA==
-X-Received: by 2002:ac8:7a6f:: with SMTP id w15mr27072614qtt.153.1619622664723;
-        Wed, 28 Apr 2021 08:11:04 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxmlz6i+k8GL+CodVGGb/U/hb9IU3h8zgSIAJf+VwEX/cqDhpeMEGloDjVttPcXhjj2HOgzLg==
-X-Received: by 2002:ac8:7a6f:: with SMTP id w15mr27072578qtt.153.1619622664510;
-        Wed, 28 Apr 2021 08:11:04 -0700 (PDT)
-Received: from xz-x1 (bras-base-toroon474qw-grc-77-184-145-104-227.dsl.bell.ca. [184.145.104.227])
-        by smtp.gmail.com with ESMTPSA id b17sm194720qto.88.2021.04.28.08.11.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Apr 2021 08:11:04 -0700 (PDT)
-Date:   Wed, 28 Apr 2021 11:11:01 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        Brian Geffon <bgeffon@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH v5 05/10] userfaultfd/shmem: advertise shmem minor fault
- support
-Message-ID: <20210428151101.GC6584@xz-x1>
-References: <20210427225244.4326-1-axelrasmussen@google.com>
- <20210427225244.4326-6-axelrasmussen@google.com>
+        Wed, 28 Apr 2021 11:34:09 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1619624004; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=+uEHZQCoId6Z6PN43bKUgIGsM7RbOOikbjeOmDhDNZw=; b=j/Jd2LPBF5MjFK9LqrzuzPo3ONy1SIqnadK1QSsfTtILeJxkA9/cUf34asnRm7L6K5vmPLDq
+ jUbMAaHth3tkIOGNYdj7pYnO5DiM6x05HfORWT6pZvwRebzqQ+cUWedShdJrxvDOdFRxU7Tt
+ 6WBmA+nGGyjd9CjDdiTw4BN+9k8=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
+ 60898026853c0a2c468b6010 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 28 Apr 2021 15:32:54
+ GMT
+Sender: charante=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id D0F6DC4338A; Wed, 28 Apr 2021 15:32:53 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        NICE_REPLY_A,SPF_FAIL autolearn=no autolearn_force=no version=3.4.0
+Received: from [192.168.29.110] (unknown [49.37.159.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: charante)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0902EC433D3;
+        Wed, 28 Apr 2021 15:32:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0902EC433D3
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=charante@codeaurora.org
+Subject: Re: [PATCH] mm: compaction: improve /proc trigger for full node
+ memory compaction
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     akpm@linux-foundation.org, vbabka@suse.cz, bhe@redhat.com,
+        nigupta@nvidia.com, khalid.aziz@oracle.com,
+        mateusznosek0@gmail.com, sh_def@163.com, iamjoonsoo.kim@lge.com,
+        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
+        mhocko@suse.com, rientjes@google.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        vinmenon@codeaurora.org
+References: <1619098678-8501-1-git-send-email-charante@codeaurora.org>
+ <20210427080921.GG4239@techsingularity.net>
+From:   Charan Teja Kalla <charante@codeaurora.org>
+Message-ID: <9afd1ae1-bee8-a4cc-1cd6-df92090abeb4@codeaurora.org>
+Date:   Wed, 28 Apr 2021 21:02:44 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210427225244.4326-6-axelrasmussen@google.com>
+In-Reply-To: <20210427080921.GG4239@techsingularity.net>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 27, 2021 at 03:52:39PM -0700, Axel Rasmussen wrote:
-> Now that the feature is fully implemented (the faulting path hooks exist
-> so userspace is notified, and the ioctl to resolve such faults is
-> available), advertise this as a supported feature.
-> 
-> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+Thanks Mel for your comments!!
 
-Acked-by: Peter Xu <peterx@redhat.com>
+On 4/27/2021 1:39 PM, Mel Gorman wrote:
+>> The existing /proc/sys/vm/compact_memory interface do the full node
+>> compaction when user writes an arbitrary value to it and is targeted for
+>> the usecases like an app launcher prepares the system before the target
+>> application runs.
+> The intent behind compact_memory was a debugging interface to tell
+> the difference between an application failing to allocate a huge page
+> prematurely and the inability of compaction to find a free page.
+> 
+
+Thanks for clarifying this.
+
+>> This patch adds a new /proc interface,
+>> /proc/sys/vm/proactive_compact_memory, and on write of an arbitrary
+>> value triggers the full node compaction but can be stopped in the middle
+>> if sufficient higher order(COMPACTION_HPAGE_ORDER) pages available in
+>> the system. The availability of pages that a user looking for can be
+>> given as input through /proc/sys/vm/compaction_proactiveness.
+>>
+>> [1]https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=facdaa917c4d5a376d09d25865f5a863f906234a
+>>
+>> Signed-off-by: Charan Teja Reddy <charante@codeaurora.org>
+> Hence, while I do not object to the patch as-such, I'm wary of the trend
+> towards improving explicit out-of-band compaction via proc interfaces. I
+
+I think people relying on this /proc/../compact_memory for reasons of on
+demand compaction effects the performance and the kcompactd returns when
+ even a single page of the order we are looking for is available. Say
+that If an app launching completion is relied on the memory
+fragmentation, meaning that lesser the system fragmented, lesser it
+needs to spend time on allocation as it gets more higher order pages.
+With the current compaction methods we may get just one higher order
+page at a time (as compaction stops run after that) thus can effect its
+launch completion time. The compact_memory node can help in these
+situation where the system administrator can defragment system whenever
+is required by writing to the compact_node. This is just a theoretical
+example.
+
+Although it is intended for debugging interface, it got a lot of other
+applications too.
+
+This patch aims to improve this interface by taking help from tunables
+provided by the proactive compaction.
+
+> would have preferred if the focus was on reducing the cost of compaction
+> so that direct allocation requests succeed quickly or improving background
+> compaction via kcompactd when there has been recent failures.
 
 -- 
-Peter Xu
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
+Forum, a Linux Foundation Collaborative Project
