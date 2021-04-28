@@ -2,58 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 41AE836D5D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 12:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89D4636D69A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 13:36:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239456AbhD1Kan (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Apr 2021 06:30:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230057AbhD1Kam (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Apr 2021 06:30:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A9162613FF;
-        Wed, 28 Apr 2021 10:29:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619605797;
-        bh=8C+OErcF42crulhtmpO3zOoSt0k/g7nGDTskXCzZBv0=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=Da432CDk5RTSR+1+b85H4jxdY4rw0w2r+IVM2U59jpCTLGTuuTqyHcKD+gHDkWs5s
-         tlCQdDuWIM5amEuBPZEbZLEp/8zF4A8Wa6bog/pzz6xY8HWmkIQY3eda4xcWV72zQH
-         0EyDKY6foSXFcEVQPphyRgCCTiBLRlbfyUDJ5rDF5W3Hyh027BmMdsfRge//6oblO9
-         DPxgUcmWFPah1k4/aNdkLDh46k+nRSKasC4vhxisUbFof6Cu4iKEpPNHwUn32INzIy
-         sFCrJiflrUZfOAkZmrYkK8IwQm5hO2H2YfopdfozwyNX3WYNLIhxL2gxM99LWQx49C
-         8CG1MeO321bMQ==
-Date:   Wed, 28 Apr 2021 12:29:52 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Theodore Ts'o <tytso@mit.edu>
-cc:     ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
-In-Reply-To: <YH2hs6EsPTpDAqXc@mit.edu>
-Message-ID: <nycvar.YFH.7.76.2104281228350.18270@cbobk.fhfr.pm>
-References: <YH2hs6EsPTpDAqXc@mit.edu>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S232607AbhD1LhW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Apr 2021 07:37:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:41394 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239032AbhD1LhV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Apr 2021 07:37:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619609796;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=b7aKoQR+eie4eZGaFpJxqc5kuUv3lh07wOx/sg0Ymk8=;
+        b=avjK+PLlMqwdpcy3Nudtry50GtArMyjGJnmPoMgJTtOo9uJ0bOHVmkWmWxdLraxwAcbKIi
+        pCj54WjfFYeAx+XVTSnIWkoAQKDHV4Z3yjCYhGyFKzmrGV2r7m3VVSncu03NAqjhfwJiY7
+        frBeq1FVjD4dBuPnyxA7JkWMM5C/5BM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-96-kil4ggLvPT-19GCcfTYulw-1; Wed, 28 Apr 2021 07:36:31 -0400
+X-MC-Unique: kil4ggLvPT-19GCcfTYulw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8C5691936B83;
+        Wed, 28 Apr 2021 11:36:30 +0000 (UTC)
+Received: from ws.net.home (ovpn-115-34.ams2.redhat.com [10.36.115.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 134005DF26;
+        Wed, 28 Apr 2021 11:36:28 +0000 (UTC)
+Date:   Wed, 28 Apr 2021 13:36:26 +0200
+From:   Karel Zak <kzak@redhat.com>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     util-linux@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v3 0/3] implement zone-aware probing/wiping for zoned
+ btrfs
+Message-ID: <20210428113626.lq3hy5qci5bwnyru@ws.net.home>
+References: <20210426055036.2103620-1-naohiro.aota@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210426055036.2103620-1-naohiro.aota@wdc.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 19 Apr 2021, Theodore Ts'o wrote:
+On Mon, Apr 26, 2021 at 02:50:33PM +0900, Naohiro Aota wrote:
+> Naohiro Aota (3):
+>   blkid: implement zone-aware probing
+>   blkid: add magic and probing for zoned btrfs
+>   blkid: support zone reset for wipefs
+> 
+>  include/blkdev.h                 |   9 ++
+>  lib/blkdev.c                     |  29 ++++++
+>  libblkid/src/blkidP.h            |   5 +
+>  libblkid/src/probe.c             |  99 +++++++++++++++++--
+>  libblkid/src/superblocks/btrfs.c | 159 ++++++++++++++++++++++++++++++-
+>  5 files changed, 292 insertions(+), 9 deletions(-)
 
-> This year, the Maintainers and Kernel Summit is currently planned to
-> be held in Dublin, Ireland, September 27 -- 29th.  
+Merged to the "next" branch (on github) and it will be merged to the
+"master" later after v2.37 release. 
 
-Hi Ted,
+Thanks! (and extra thank for the examples :-)
 
-given the fact that OSS is being relocated from Dublin to Washington [1], 
-is Kernel Summit following that direction?
-
-[1] https://www.linuxfoundation.org/en/press-release/the-linux-foundation-announces-open-source-summit-embedded-linux-conference-2021-will-move-from-dublin-ireland-to-seattle-washington/
+  Karel
 
 -- 
-Jiri Kosina
-SUSE Labs
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
 
