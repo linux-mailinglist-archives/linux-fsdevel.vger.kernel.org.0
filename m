@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 172A736D0D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 05:18:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A41436D163
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 06:33:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229556AbhD1DTM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 23:19:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54672 "EHLO
+        id S229717AbhD1Edd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Apr 2021 00:33:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235553AbhD1DTJ (ORCPT
+        with ESMTP id S229451AbhD1Edd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 23:19:09 -0400
+        Wed, 28 Apr 2021 00:33:33 -0400
 Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 483DAC06175F;
-        Tue, 27 Apr 2021 20:18:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECCD8C061574;
+        Tue, 27 Apr 2021 21:32:48 -0700 (PDT)
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lbaiQ-008seI-F9; Wed, 28 Apr 2021 03:18:18 +0000
-Date:   Wed, 28 Apr 2021 03:18:18 +0000
+        id 1lbbsS-008tr3-K1; Wed, 28 Apr 2021 04:32:44 +0000
+Date:   Wed, 28 Apr 2021 04:32:44 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     kernel test robot <oliver.sang@intel.com>
 Cc:     LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
         lkp@lists.01.org, lkp@intel.com
 Subject: Re: [iov_iter]  2418c34937: Initiating_system_reboot
-Message-ID: <YIjT+lZNn46VgscR@zeniv-ca.linux.org.uk>
+Message-ID: <YIjlbF/F9Y/5YOzt@zeniv-ca.linux.org.uk>
 References: <20210428023747.GA13086@xsang-OptiPlex-9020>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -50,20 +50,6 @@ On Wed, Apr 28, 2021 at 10:37:47AM +0800, kernel test robot wrote:
 > on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
 > 
 > caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> 
-> 
-> +--------------------------+------------+------------+
-> |                          | c5f070c68e | 2418c34937 |
-> +--------------------------+------------+------------+
-> | boot_failures            | 0          | 11         |
-> | Initiating_system_reboot | 0          | 11         |
-> +--------------------------+------------+------------+
-> 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kernel test robot <oliver.sang@intel.com>
- 
-Could you run it with soft_panic=1 in command line?  Alternatively, some
-information about how to reproduce that without running hell knows what
-as root on host would be very welcome; I can't imagine a single reason
-for needing root to run qemu, to be honest...
+
+Could you try https://git.kernel.org/cgit/linux/kernel/git/viro/vfs.git for-lkp
+on the same test and see what (if anything) gets spewed into dmesg?
