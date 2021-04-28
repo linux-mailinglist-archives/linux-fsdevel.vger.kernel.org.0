@@ -2,150 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 13B5A36D01E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 02:58:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18CF836D036
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 03:18:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238866AbhD1A7F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Apr 2021 20:59:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52812 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231605AbhD1A7E (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Apr 2021 20:59:04 -0400
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E692C06175F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Apr 2021 17:58:20 -0700 (PDT)
-Received: by mail-qt1-x836.google.com with SMTP id z5so7496198qts.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Apr 2021 17:58:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=nnLhfKmay2hfrNFLJmZvY1slfDRvS1kILjvcSIZf/mg=;
-        b=Hn5od4nTNCw0oO2WqwOMMft1NWsukPMlQRMrmwYFStQpXM9w0sZauP31fIdtDH/T7P
-         h6jPwZVotyfrbiIrXeMGZ62TkyK6QIwX67ES+gfMl8OiTSmYJuZ52V6nA3KhnyVv4rVw
-         CLhPSfyg0imxrZGzoaYi+sS4g6tNMPJ3cwXA+NwRZiLQFrWWez+EUg+fChxjLjtbljLC
-         SuLpDsBsgIf4kUuDkMscPgXmS7pVdl1eULZREb5iRO8DH7rXP1kkBNdf923GNq8j4Vhg
-         X/HUjp7hcqGBtAi6hqMpCMgABRm2cYcM1xijPrP0MlS4UfszukBRzBa7mfHZOl0IkXsI
-         KAow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=nnLhfKmay2hfrNFLJmZvY1slfDRvS1kILjvcSIZf/mg=;
-        b=P1XgRG6oGDIr6+hW6gyCEJHHaFn+2wpQY4a8vlW1NMs6it0Uak4sgnQQ62ts4I+kjy
-         Qld7ERDBuj71OV4UbuvVG6uh99HjnCY/tZyEBSyIwl3dn45IT0040TXUCbajL08GeQuq
-         RK65eqXtW1u3WF1ZTuo9Irc8CxEhMPecsGlR1fyGLEpM7uGGh7blXA3EhTHufeV8FE1i
-         uYxocrUObuaLUnbIuA2Sgx9I3p99+WPo83l1s8Amne9DAvDmExJvUNdaY+EndRHQY/he
-         pfnCh6l6+L3KAxkmRV/dTyidJNaciw+tkckuq+rSGclFge3/xB3kAxy4o1VbvgRXFIsN
-         7HaQ==
-X-Gm-Message-State: AOAM531lvT6AxAL/XTKFvQlzYn2GMwVGKSaTmBqk7l3Dc59YXO1M1U/O
-        l5dpdBjaB/iyAvhaanZ2etIHuA==
-X-Google-Smtp-Source: ABdhPJxU7KyEA/ZmtPQITj+z73ELbtvuZj0UGvuPkYy8R3FVU9mHK9Cn432IolPH4dFuamCDIcAmLA==
-X-Received: by 2002:ac8:6e89:: with SMTP id c9mr24352036qtv.268.1619571499536;
-        Tue, 27 Apr 2021 17:58:19 -0700 (PDT)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 3sm3869819qko.120.2021.04.27.17.58.17
-        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
-        Tue, 27 Apr 2021 17:58:19 -0700 (PDT)
-Date:   Tue, 27 Apr 2021 17:58:16 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Axel Rasmussen <axelrasmussen@google.com>
-cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        Brian Geffon <bgeffon@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH v5 06/10] userfaultfd/shmem: modify shmem_mcopy_atomic_pte
- to use install_pte()
-In-Reply-To: <20210427225244.4326-7-axelrasmussen@google.com>
-Message-ID: <alpine.LSU.2.11.2104271704110.7111@eggly.anvils>
-References: <20210427225244.4326-1-axelrasmussen@google.com> <20210427225244.4326-7-axelrasmussen@google.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        id S237464AbhD1BSh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Apr 2021 21:18:37 -0400
+Received: from mx21.baidu.com ([220.181.3.85]:51398 "EHLO baidu.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S236769AbhD1BSf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Apr 2021 21:18:35 -0400
+Received: from BJHW-Mail-Ex15.internal.baidu.com (unknown [10.127.64.38])
+        by Forcepoint Email with ESMTPS id 8F6CEEBEEB2B5E7135C2;
+        Wed, 28 Apr 2021 09:17:41 +0800 (CST)
+Received: from BJHW-MAIL-EX19.internal.baidu.com (10.127.64.21) by
+ BJHW-Mail-Ex15.internal.baidu.com (10.127.64.38) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2242.4; Wed, 28 Apr 2021 09:17:41 +0800
+Received: from BC-Mail-Ex20.internal.baidu.com (172.31.51.14) by
+ BJHW-MAIL-EX19.internal.baidu.com (10.127.64.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2242.4; Wed, 28 Apr 2021 09:17:41 +0800
+Received: from BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) by
+ BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) with mapi id 15.01.2242.008;
+ Wed, 28 Apr 2021 09:17:40 +0800
+From:   "Chu,Kaiping" <chukaiping@baidu.com>
+To:     Rafael Aquini <aquini@redhat.com>
+CC:     "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "yzaikin@google.com" <yzaikin@google.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "nigupta@nvidia.com" <nigupta@nvidia.com>,
+        "bhe@redhat.com" <bhe@redhat.com>,
+        "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>,
+        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
+        "mateusznosek0@gmail.com" <mateusznosek0@gmail.com>,
+        "sh_def@163.com" <sh_def@163.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIIHYzXSBtbS9jb21wYWN0aW9uOmxldCBwcm9hY3RpdmUg?=
+ =?gb2312?Q?compaction_order_configurable?=
+Thread-Topic: [PATCH v3] mm/compaction:let proactive compaction order
+ configurable
+Thread-Index: AQHXOjvUEYLrBaldBU+yjbigXZxebarJI3/Q
+Date:   Wed, 28 Apr 2021 01:17:40 +0000
+Message-ID: <f355248969f14e5897ad6dcfe3834297@baidu.com>
+References: <1619313662-30356-1-git-send-email-chukaiping@baidu.com>
+ <YIYX22JLVHN1PhGs@t490s.aquini.net>
+In-Reply-To: <YIYX22JLVHN1PhGs@t490s.aquini.net>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.22.194.26]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Baidu-BdMsfe-DateCheck: 1_BJHW-Mail-Ex15_2021-04-28 09:17:41:543
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 27 Apr 2021, Axel Rasmussen wrote:
-
-> In a previous commit, we added the mcopy_atomic_install_pte() helper.
-> This helper does the job of setting up PTEs for an existing page, to map
-> it into a given VMA. It deals with both the anon and shmem cases, as
-> well as the shared and private cases.
-> 
-> In other words, shmem_mcopy_atomic_pte() duplicates a case it already
-> handles. So, expose it, and let shmem_mcopy_atomic_pte() use it
-> directly, to reduce code duplication.
-> 
-> This requires that we refactor shmem_mcopy_atomic_pte() a bit:
-> 
-> Instead of doing accounting (shmem_recalc_inode() et al) part-way
-> through the PTE setup, do it afterward. This frees up
-> mcopy_atomic_install_pte() from having to care about this accounting,
-> and means we don't need to e.g. shmem_uncharge() in the error path.
-> 
-> A side effect is this switches shmem_mcopy_atomic_pte() to use
-> lru_cache_add_inactive_or_unevictable() instead of just lru_cache_add().
-> This wrapper does some extra accounting in an exceptional case, if
-> appropriate, so it's actually the more correct thing to use.
-> 
-> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-
-Not quite. Two things.
-
-One, in this version, delete_from_page_cache(page) has vanished
-from the particular error path which needs it.
-
-Two, and I think this predates your changes (so needs a separate
-fix patch first, for backport to stable? a user with bad intentions
-might be able to trigger the BUG), in pondering the new error paths
-and that /* don't free the page */ one in particular, isn't it the
-case that the shmem_inode_acct_block() on entry might succeed the
-first time, but atomic copy fail so -ENOENT, then something else
-fill up the tmpfs before the retry comes in, so that retry then
-fail with -ENOMEM, and hit the BUG_ON(page) in __mcopy_atomic()?
-
-(As I understand it, the shmem_inode_unacct_blocks() has to be
-done before returning, because the caller may be unable to retry.)
-
-What the right fix is rather depends on other uses of __mcopy_atomic():
-if they obviously cannot hit that BUG_ON(page), you may prefer to leave
-it in, and fix it here where shmem_inode_acct_block() fails. Or you may
-prefer instead to delete that "else BUG_ON(page);" - looks as if that
-would end up doing the right thing.  Peter may have a preference.
-
-(Or, we could consider doing the shmem_inode_acct_block() only after
-the page has been copied in: its current placing reflects how shmem.c
-does it elsewhere, and there's reason for that, but it doesn't always
-work out right. Don't be surprised if I change the ordering in future,
-but it's probably best not to mess with that ordering now.)
-
-Sorry, if this is a pre-existing issue, then we are taking advantage
-of you, in asking you to fix it: but I hope that while you're in there,
-it will make sense to do so.
-
-Thanks,
-Hugh
-
-> ---
->  include/linux/userfaultfd_k.h |  5 ++++
->  mm/shmem.c                    | 48 +++++------------------------------
->  mm/userfaultfd.c              | 17 +++++--------
->  3 files changed, 18 insertions(+), 52 deletions(-)
+UGxlYXNlIHNlZSBteSBhbnN3ZXIgaW5saW5lLg0KDQotLS0tLdPKvP7Urbz+LS0tLS0NCreivP7I
+yzogUmFmYWVsIEFxdWluaSA8YXF1aW5pQHJlZGhhdC5jb20+IA0Kt6LLzcqxvOQ6IDIwMjHE6jTU
+wjI2yNUgOTozMQ0KytW8/sjLOiBDaHUsS2FpcGluZyA8Y2h1a2FpcGluZ0BiYWlkdS5jb20+DQqz
+rcvNOiBtY2dyb2ZAa2VybmVsLm9yZzsga2Vlc2Nvb2tAY2hyb21pdW0ub3JnOyB5emFpa2luQGdv
+b2dsZS5jb207IGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc7IHZiYWJrYUBzdXNlLmN6OyBuaWd1
+cHRhQG52aWRpYS5jb207IGJoZUByZWRoYXQuY29tOyBraGFsaWQuYXppekBvcmFjbGUuY29tOyBp
+YW1qb29uc29vLmtpbUBsZ2UuY29tOyBtYXRldXN6bm9zZWswQGdtYWlsLmNvbTsgc2hfZGVmQDE2
+My5jb207IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWZzZGV2ZWxAdmdlci5r
+ZXJuZWwub3JnOyBsaW51eC1tbUBrdmFjay5vcmcNCtb3zOI6IFJlOiBbUEFUQ0ggdjNdIG1tL2Nv
+bXBhY3Rpb246bGV0IHByb2FjdGl2ZSBjb21wYWN0aW9uIG9yZGVyIGNvbmZpZ3VyYWJsZQ0KDQpP
+biBTdW4sIEFwciAyNSwgMjAyMSBhdCAwOToyMTowMkFNICswODAwLCBjaHVrYWlwaW5nIHdyb3Rl
+Og0KPiBDdXJyZW50bHkgdGhlIHByb2FjdGl2ZSBjb21wYWN0aW9uIG9yZGVyIGlzIGZpeGVkIHRv
+IA0KPiBDT01QQUNUSU9OX0hQQUdFX09SREVSKDkpLCBpdCdzIE9LIGluIG1vc3QgbWFjaGluZXMg
+d2l0aCBsb3RzIG9mIA0KPiBub3JtYWwgNEtCIG1lbW9yeSwgYnV0IGl0J3MgdG9vIGhpZ2ggZm9y
+IHRoZSBtYWNoaW5lcyB3aXRoIHNtYWxsIA0KPiBub3JtYWwgbWVtb3J5LCBmb3IgZXhhbXBsZSB0
+aGUgbWFjaGluZXMgd2l0aCBtb3N0IG1lbW9yeSBjb25maWd1cmVkIGFzIA0KPiAxR0IgaHVnZXRs
+YmZzIGh1Z2UgcGFnZXMuIEluIHRoZXNlIG1hY2hpbmVzIHRoZSBtYXggb3JkZXIgb2YgZnJlZSAN
+Cj4gcGFnZXMgaXMgb2Z0ZW4gYmVsb3cgOSwgYW5kIGl0J3MgYWx3YXlzIGJlbG93IDkgZXZlbiB3
+aXRoIGhhcmQgDQo+IGNvbXBhY3Rpb24uIFRoaXMgd2lsbCBsZWFkIHRvIHByb2FjdGl2ZSBjb21w
+YWN0aW9uIGJlIHRyaWdnZXJlZCB2ZXJ5IA0KPiBmcmVxdWVudGx5LiBJbiB0aGVzZSBtYWNoaW5l
+cyB3ZSBvbmx5IGNhcmUgYWJvdXQgb3JkZXIgb2YgMyBvciA0Lg0KPiBUaGlzIHBhdGNoIGV4cG9y
+dCB0aGUgb2RlciB0byBwcm9jIGFuZCBsZXQgaXQgY29uZmlndXJhYmxlIGJ5IHVzZXIsIA0KPiBh
+bmQgdGhlIGRlZmF1bHQgdmFsdWUgaXMgc3RpbGwgQ09NUEFDVElPTl9IUEFHRV9PUkRFUi4NCj4g
+DQo+IFNpZ25lZC1vZmYtYnk6IGNodWthaXBpbmcgPGNodWthaXBpbmdAYmFpZHUuY29tPg0KPiBS
+ZXBvcnRlZC1ieToga2VybmVsIHRlc3Qgcm9ib3QgPGxrcEBpbnRlbC5jb20+DQoNClR3byBtaW5v
+ciBuaXRzIG9uIHRoZSBjb21taXQgbG9nIG1lc3NhZ2U6IA0KKiB0aGVyZSBzZWVtcyB0byBiZSBh
+IHdoaXRlc3BhZ2UgbWlzc2luZyBpbiB5b3VyIHNob3J0IGxvZzogDQogICIuLi4gbW0vY29tcGFj
+dGlvbjpsZXQgLi4uIg0KLS0+IEkgd2lsbCBmaXggaXQgaW4gbmV4dCBwYXRjaC4NCg0KKiBoYXMg
+dGhlIHBhdGggcmVhbGx5IGJlZW4gcmVwb3J0ZWQgYnkgYSB0ZXN0IHJvYm90Pw0KLS0+IFllcy4g
+VGhlcmUgaXMgYSBjb21waWxlIGVycm9yIGluIHYxLCBJIGZpeGVkIGl0IGluIHYyLg0KDQpBIG5v
+dGUgb24gdGhlIHN5c2N0bCBuYW1lLCBJJ2Qgc3VnZ2VzdCB0aGF0IGl0IHBlcmhhcHMgc2hvdWxk
+IHJlZmxlY3QgdGhlIGZhY3QgdGhhdCB3ZSdyZSBhZGp1c3RpbmcgdGhlIG9yZGVyIGZvciBwcm9h
+Y3RpdmUgY29tcGF0aW9uLg0KSG93IGFib3V0ICJwcm9hY3RpdmVfY29tcGF0aW9uX29yZGVyIj8N
+Ci0tPiBJIHdpbGwgY2hhbmdlIGl0IGluIG5leHQgcGF0Y2guDQoNCkNoZWVycywNCg0KPiAtLS0N
+Cj4gDQo+IENoYW5nZXMgaW4gdjM6DQo+ICAgICAtIGNoYW5nZSB0aGUgbWluIHZhbHVlIG9mIGNv
+bXBhY3Rpb25fb3JkZXIgdG8gMSBiZWNhdXNlIHRoZSBmcmFnbWVudGF0aW9uDQo+ICAgICAgIGlu
+ZGV4IG9mIG9yZGVyIDAgaXMgYWx3YXlzIDANCj4gICAgIC0gbW92ZSB0aGUgZGVmaW5pdGlvbiBv
+ZiBtYXhfYnVkZHlfem9uZSBpbnRvICNpZmRlZiANCj4gQ09ORklHX0NPTVBBQ1RJT04NCj4gDQo+
+IENoYW5nZXMgaW4gdjI6DQo+ICAgICAtIGZpeCB0aGUgY29tcGlsZSBlcnJvciBpbiBpYTY0IGFu
+ZCBwb3dlcnBjLCBtb3ZlIHRoZSBpbml0aWFsaXphdGlvbg0KPiAgICAgICBvZiBzeXNjdGxfY29t
+cGFjdGlvbl9vcmRlciB0byBrY29tcGFjdGRfaW5pdCBiZWNhdXNlIA0KPiAgICAgICBDT01QQUNU
+SU9OX0hQQUdFX09SREVSIGlzIGEgdmFyaWFibGUgaW4gdGhlc2UgYXJjaGl0ZWN0dXJlcw0KPiAg
+ICAgLSBjaGFuZ2UgdGhlIGhhcmQgY29kZWQgbWF4IG9yZGVyIG51bWJlciBmcm9tIDEwIHRvIE1B
+WF9PUkRFUiAtIDENCj4gDQo+ICBpbmNsdWRlL2xpbnV4L2NvbXBhY3Rpb24uaCB8ICAgIDEgKw0K
+PiAga2VybmVsL3N5c2N0bC5jICAgICAgICAgICAgfCAgIDEwICsrKysrKysrKysNCj4gIG1tL2Nv
+bXBhY3Rpb24uYyAgICAgICAgICAgIHwgICAgOSArKysrKystLS0NCj4gIDMgZmlsZXMgY2hhbmdl
+ZCwgMTcgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9p
+bmNsdWRlL2xpbnV4L2NvbXBhY3Rpb24uaCBiL2luY2x1ZGUvbGludXgvY29tcGFjdGlvbi5oIA0K
+PiBpbmRleCBlZDQwNzBlLi4xNTFjY2QxIDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2Nv
+bXBhY3Rpb24uaA0KPiArKysgYi9pbmNsdWRlL2xpbnV4L2NvbXBhY3Rpb24uaA0KPiBAQCAtODMs
+NiArODMsNyBAQCBzdGF0aWMgaW5saW5lIHVuc2lnbmVkIGxvbmcgY29tcGFjdF9nYXAodW5zaWdu
+ZWQgaW50IA0KPiBvcmRlcikgICNpZmRlZiBDT05GSUdfQ09NUEFDVElPTiAgZXh0ZXJuIGludCBz
+eXNjdGxfY29tcGFjdF9tZW1vcnk7ICANCj4gZXh0ZXJuIHVuc2lnbmVkIGludCBzeXNjdGxfY29t
+cGFjdGlvbl9wcm9hY3RpdmVuZXNzOw0KPiArZXh0ZXJuIHVuc2lnbmVkIGludCBzeXNjdGxfY29t
+cGFjdGlvbl9vcmRlcjsNCj4gIGV4dGVybiBpbnQgc3lzY3RsX2NvbXBhY3Rpb25faGFuZGxlcihz
+dHJ1Y3QgY3RsX3RhYmxlICp0YWJsZSwgaW50IHdyaXRlLA0KPiAgCQkJdm9pZCAqYnVmZmVyLCBz
+aXplX3QgKmxlbmd0aCwgbG9mZl90ICpwcG9zKTsgIGV4dGVybiBpbnQgDQo+IHN5c2N0bF9leHRm
+cmFnX3RocmVzaG9sZDsgZGlmZiAtLWdpdCBhL2tlcm5lbC9zeXNjdGwuYyANCj4gYi9rZXJuZWwv
+c3lzY3RsLmMgaW5kZXggNjJmYmQwOS4uZTUwZjdkMiAxMDA2NDQNCj4gLS0tIGEva2VybmVsL3N5
+c2N0bC5jDQo+ICsrKyBiL2tlcm5lbC9zeXNjdGwuYw0KPiBAQCAtMTk2LDYgKzE5Niw3IEBAIGVu
+dW0gc3lzY3RsX3dyaXRlc19tb2RlIHsgICNlbmRpZiAvKiANCj4gQ09ORklHX1NDSEVEX0RFQlVH
+ICovDQo+ICANCj4gICNpZmRlZiBDT05GSUdfQ09NUEFDVElPTg0KPiArc3RhdGljIGludCBtYXhf
+YnVkZHlfem9uZSA9IE1BWF9PUkRFUiAtIDE7DQo+ICBzdGF0aWMgaW50IG1pbl9leHRmcmFnX3Ro
+cmVzaG9sZDsNCj4gIHN0YXRpYyBpbnQgbWF4X2V4dGZyYWdfdGhyZXNob2xkID0gMTAwMDsgICNl
+bmRpZiBAQCAtMjg3MSw2ICsyODcyLDE1IA0KPiBAQCBpbnQgcHJvY19kb19zdGF0aWNfa2V5KHN0
+cnVjdCBjdGxfdGFibGUgKnRhYmxlLCBpbnQgd3JpdGUsDQo+ICAJCS5leHRyYTIJCT0gJm9uZV9o
+dW5kcmVkLA0KPiAgCX0sDQo+ICAJew0KPiArCQkucHJvY25hbWUgICAgICAgPSAiY29tcGFjdGlv
+bl9vcmRlciIsDQo+ICsJCS5kYXRhICAgICAgICAgICA9ICZzeXNjdGxfY29tcGFjdGlvbl9vcmRl
+ciwNCj4gKwkJLm1heGxlbiAgICAgICAgID0gc2l6ZW9mKHN5c2N0bF9jb21wYWN0aW9uX29yZGVy
+KSwNCj4gKwkJLm1vZGUgICAgICAgICAgID0gMDY0NCwNCj4gKwkJLnByb2NfaGFuZGxlciAgID0g
+cHJvY19kb2ludHZlY19taW5tYXgsDQo+ICsJCS5leHRyYTEgICAgICAgICA9IFNZU0NUTF9PTkUs
+DQo+ICsJCS5leHRyYTIgICAgICAgICA9ICZtYXhfYnVkZHlfem9uZSwNCj4gKwl9LA0KPiArCXsN
+Cj4gIAkJLnByb2NuYW1lCT0gImV4dGZyYWdfdGhyZXNob2xkIiwNCj4gIAkJLmRhdGEJCT0gJnN5
+c2N0bF9leHRmcmFnX3RocmVzaG9sZCwNCj4gIAkJLm1heGxlbgkJPSBzaXplb2YoaW50KSwNCj4g
+ZGlmZiAtLWdpdCBhL21tL2NvbXBhY3Rpb24uYyBiL21tL2NvbXBhY3Rpb24uYyBpbmRleCBlMDRm
+NDQ3Li43MGMwYWNkIA0KPiAxMDA2NDQNCj4gLS0tIGEvbW0vY29tcGFjdGlvbi5jDQo+ICsrKyBi
+L21tL2NvbXBhY3Rpb24uYw0KPiBAQCAtMTkyNSwxNiArMTkyNSwxNiBAQCBzdGF0aWMgYm9vbCBr
+c3dhcGRfaXNfcnVubmluZyhwZ19kYXRhX3QgDQo+ICpwZ2RhdCkNCj4gIA0KPiAgLyoNCj4gICAq
+IEEgem9uZSdzIGZyYWdtZW50YXRpb24gc2NvcmUgaXMgdGhlIGV4dGVybmFsIGZyYWdtZW50YXRp
+b24gd3J0IHRvIA0KPiB0aGUNCj4gLSAqIENPTVBBQ1RJT05fSFBBR0VfT1JERVIuIEl0IHJldHVy
+bnMgYSB2YWx1ZSBpbiB0aGUgcmFuZ2UgWzAsIDEwMF0uDQo+ICsgKiBzeXNjdGxfY29tcGFjdGlv
+bl9vcmRlci4gSXQgcmV0dXJucyBhIHZhbHVlIGluIHRoZSByYW5nZSBbMCwgMTAwXS4NCj4gICAq
+Lw0KPiAgc3RhdGljIHVuc2lnbmVkIGludCBmcmFnbWVudGF0aW9uX3Njb3JlX3pvbmUoc3RydWN0
+IHpvbmUgKnpvbmUpICB7DQo+IC0JcmV0dXJuIGV4dGZyYWdfZm9yX29yZGVyKHpvbmUsIENPTVBB
+Q1RJT05fSFBBR0VfT1JERVIpOw0KPiArCXJldHVybiBleHRmcmFnX2Zvcl9vcmRlcih6b25lLCBz
+eXNjdGxfY29tcGFjdGlvbl9vcmRlcik7DQo+ICB9DQo+ICANCj4gIC8qDQo+ICAgKiBBIHdlaWdo
+dGVkIHpvbmUncyBmcmFnbWVudGF0aW9uIHNjb3JlIGlzIHRoZSBleHRlcm5hbCANCj4gZnJhZ21l
+bnRhdGlvbg0KPiAtICogd3J0IHRvIHRoZSBDT01QQUNUSU9OX0hQQUdFX09SREVSIHNjYWxlZCBi
+eSB0aGUgem9uZSdzIHNpemUuIEl0DQo+ICsgKiB3cnQgdG8gdGhlIHN5c2N0bF9jb21wYWN0aW9u
+X29yZGVyIHNjYWxlZCBieSB0aGUgem9uZSdzIHNpemUuIEl0DQo+ICAgKiByZXR1cm5zIGEgdmFs
+dWUgaW4gdGhlIHJhbmdlIFswLCAxMDBdLg0KPiAgICoNCj4gICAqIFRoZSBzY2FsaW5nIGZhY3Rv
+ciBlbnN1cmVzIHRoYXQgcHJvYWN0aXZlIGNvbXBhY3Rpb24gZm9jdXNlcyBvbiANCj4gbGFyZ2Vy
+IEBAIC0yNjY2LDYgKzI2NjYsNyBAQCBzdGF0aWMgdm9pZCBjb21wYWN0X25vZGVzKHZvaWQpDQo+
+ICAgKiBiYWNrZ3JvdW5kLiBJdCB0YWtlcyB2YWx1ZXMgaW4gdGhlIHJhbmdlIFswLCAxMDBdLg0K
+PiAgICovDQo+ICB1bnNpZ25lZCBpbnQgX19yZWFkX21vc3RseSBzeXNjdGxfY29tcGFjdGlvbl9w
+cm9hY3RpdmVuZXNzID0gMjA7DQo+ICt1bnNpZ25lZCBpbnQgX19yZWFkX21vc3RseSBzeXNjdGxf
+Y29tcGFjdGlvbl9vcmRlcjsNCj4gIA0KPiAgLyoNCj4gICAqIFRoaXMgaXMgdGhlIGVudHJ5IHBv
+aW50IGZvciBjb21wYWN0aW5nIGFsbCBub2RlcyB2aWEgQEAgLTI5NTgsNiANCj4gKzI5NTksOCBA
+QCBzdGF0aWMgaW50IF9faW5pdCBrY29tcGFjdGRfaW5pdCh2b2lkKQ0KPiAgCWludCBuaWQ7DQo+
+ICAJaW50IHJldDsNCj4gIA0KPiArCXN5c2N0bF9jb21wYWN0aW9uX29yZGVyID0gQ09NUEFDVElP
+Tl9IUEFHRV9PUkRFUjsNCj4gKw0KPiAgCXJldCA9IGNwdWhwX3NldHVwX3N0YXRlX25vY2FsbHMo
+Q1BVSFBfQVBfT05MSU5FX0RZTiwNCj4gIAkJCQkJIm1tL2NvbXBhY3Rpb246b25saW5lIiwNCj4g
+IAkJCQkJa2NvbXBhY3RkX2NwdV9vbmxpbmUsIE5VTEwpOw0KPiAtLQ0KPiAxLjcuMQ0KPiANCg0K
