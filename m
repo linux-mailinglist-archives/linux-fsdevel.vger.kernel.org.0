@@ -2,170 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E509536D522
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 11:54:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41AE836D5D2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 12:30:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238675AbhD1Jzg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Apr 2021 05:55:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238683AbhD1Jzf (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Apr 2021 05:55:35 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D510BC06138F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 02:54:48 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id h11so3732888pfn.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 02:54:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hY8MMvczpGg13vjFG0pVN31ztr+LQshtCwbuU4Brm+8=;
-        b=OVbU3euh7GNOL90p5IiOxYxd4FcV1VfX0Y9vH/DEq9PQ+YiGaCtAbF9kfcosIOpdNt
-         +/+lxJEW370B9C2wMjLbygjflseJ/Bjqq3IiZmMZrz+aDvE97hM9gBX/TnJna/XR4twH
-         ghtJswmWGKVLMbNUuVlgg+yv1Ui/e8jn7fEiLnj0my55Xpciv3n8/sSpBrnNSV17kx6g
-         6WqjfZh1HFaIBmkPWTn8wwv6NFUYza8HXULyd3PUKJpw32v5videUL6humajUOB0SVuH
-         W95VSs9KRquN+EZQVRhc35Ml9pUhxcqB966YC+EuQPDvO8LdqrpLONVSsK59dHAyLB4I
-         NXAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hY8MMvczpGg13vjFG0pVN31ztr+LQshtCwbuU4Brm+8=;
-        b=FnriUK+kJYmahB6X7EEhaMyaAFgT/ltcdE+QjyefJucBeKYFlaD/+TO/uqYNngpQzz
-         +QRXh0UezvHXdc8XE/hAn1J6W3RiAhrZ/C7pOagaquPLZaHbK/Mux1CIS5An5CUVpB0u
-         y6z6LWrE5KDUwr7VQVWhiXJAz3vX9XyYxIO4mDRbysT88NV6yQvgA5hiZavECuJEygPl
-         eSmHNxbe19VuP5IpLnE7s4qxxljP4KVhihJxLkIuotYQNZtWiYH/SXBUiG6AtVUMJ30c
-         1xFNrMCbJqAy0KiU0YDWdgfI9+z+VoxfeY6biqXUygXqahR7gsGyviqQKrpvSlRd11Zd
-         EHpw==
-X-Gm-Message-State: AOAM530kzELVCwmRjKUwdm6OoV+K7kWrH3gRrMCmoSoq5BFhQwctbtDN
-        oUPLfx0ZG5MnM/dqAfNbNC8wxQ==
-X-Google-Smtp-Source: ABdhPJyzJQIe5mcRTW0GlTyxzjQmNhmM1GNGv6hhvKBTTupwNZQlaXeqkzuhovHXs5jNeEzNcBllrw==
-X-Received: by 2002:a63:b52:: with SMTP id a18mr26475766pgl.276.1619603688418;
-        Wed, 28 Apr 2021 02:54:48 -0700 (PDT)
-Received: from localhost.localdomain ([139.177.225.233])
-        by smtp.gmail.com with ESMTPSA id x77sm4902365pfc.19.2021.04.28.02.54.43
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Apr 2021 02:54:48 -0700 (PDT)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     willy@infradead.org, akpm@linux-foundation.org, hannes@cmpxchg.org,
-        mhocko@kernel.org, vdavydov.dev@gmail.com, shakeelb@google.com,
-        guro@fb.com, shy828301@gmail.com, alexs@kernel.org,
-        alexander.h.duyck@linux.intel.com, richard.weiyang@gmail.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH 9/9] mm: memcontrol: rename memcg_{get,put}_cache_ids to memcg_list_lru_resize_{lock,unlock}
-Date:   Wed, 28 Apr 2021 17:49:49 +0800
-Message-Id: <20210428094949.43579-10-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122)
-In-Reply-To: <20210428094949.43579-1-songmuchun@bytedance.com>
-References: <20210428094949.43579-1-songmuchun@bytedance.com>
+        id S239456AbhD1Kan (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Apr 2021 06:30:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46632 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230057AbhD1Kam (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Apr 2021 06:30:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A9162613FF;
+        Wed, 28 Apr 2021 10:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619605797;
+        bh=8C+OErcF42crulhtmpO3zOoSt0k/g7nGDTskXCzZBv0=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=Da432CDk5RTSR+1+b85H4jxdY4rw0w2r+IVM2U59jpCTLGTuuTqyHcKD+gHDkWs5s
+         tlCQdDuWIM5amEuBPZEbZLEp/8zF4A8Wa6bog/pzz6xY8HWmkIQY3eda4xcWV72zQH
+         0EyDKY6foSXFcEVQPphyRgCCTiBLRlbfyUDJ5rDF5W3Hyh027BmMdsfRge//6oblO9
+         DPxgUcmWFPah1k4/aNdkLDh46k+nRSKasC4vhxisUbFof6Cu4iKEpPNHwUn32INzIy
+         sFCrJiflrUZfOAkZmrYkK8IwQm5hO2H2YfopdfozwyNX3WYNLIhxL2gxM99LWQx49C
+         8CG1MeO321bMQ==
+Date:   Wed, 28 Apr 2021 12:29:52 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Theodore Ts'o <tytso@mit.edu>
+cc:     ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
+In-Reply-To: <YH2hs6EsPTpDAqXc@mit.edu>
+Message-ID: <nycvar.YFH.7.76.2104281228350.18270@cbobk.fhfr.pm>
+References: <YH2hs6EsPTpDAqXc@mit.edu>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The rwsem is held for writing during list lru arrays relocation and
-memcg_nr_cache_ids updates. Therefore memcg_get_cache_ids implies
-memcg_nr_cache_ids cannot be updated. It acts as a lock primitive.
-So rename it to a more suitable name.
+On Mon, 19 Apr 2021, Theodore Ts'o wrote:
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
----
- include/linux/memcontrol.h | 8 ++++----
- mm/list_lru.c              | 8 ++++----
- mm/memcontrol.c            | 4 ++--
- 3 files changed, 10 insertions(+), 10 deletions(-)
+> This year, the Maintainers and Kernel Summit is currently planned to
+> be held in Dublin, Ireland, September 27 -- 29th.  
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 6350c563c7b8..e8ba6ee1b369 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1635,8 +1635,8 @@ void obj_cgroup_uncharge(struct obj_cgroup *objcg, size_t size);
- extern struct static_key_false memcg_kmem_enabled_key;
- 
- extern int memcg_nr_cache_ids;
--void memcg_get_cache_ids(void);
--void memcg_put_cache_ids(void);
-+void memcg_list_lru_resize_lock(void);
-+void memcg_list_lru_resize_unlock(void);
- 
- /*
-  * Helper macro to loop through all memcg-specific caches. Callers must still
-@@ -1711,11 +1711,11 @@ static inline int memcg_cache_id(struct mem_cgroup *memcg)
- 	return -1;
- }
- 
--static inline void memcg_get_cache_ids(void)
-+static inline void memcg_list_lru_resize_lock(void)
- {
- }
- 
--static inline void memcg_put_cache_ids(void)
-+static inline void memcg_list_lru_resize_unlock(void)
- {
- }
- 
-diff --git a/mm/list_lru.c b/mm/list_lru.c
-index 3ee5239922c9..e0ba0641b4e1 100644
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -640,7 +640,7 @@ int __list_lru_init(struct list_lru *lru, bool memcg_aware,
- 	else
- 		lru->shrinker_id = -1;
- #endif
--	memcg_get_cache_ids();
-+	memcg_list_lru_resize_lock();
- 
- 	lru->node = kcalloc(nr_node_ids, sizeof(*lru->node), GFP_KERNEL);
- 	if (!lru->node)
-@@ -663,7 +663,7 @@ int __list_lru_init(struct list_lru *lru, bool memcg_aware,
- 
- 	list_lru_register(lru);
- out:
--	memcg_put_cache_ids();
-+	memcg_list_lru_resize_unlock();
- 	return err;
- }
- EXPORT_SYMBOL_GPL(__list_lru_init);
-@@ -674,7 +674,7 @@ void list_lru_destroy(struct list_lru *lru)
- 	if (!lru->node)
- 		return;
- 
--	memcg_get_cache_ids();
-+	memcg_list_lru_resize_lock();
- 
- 	list_lru_unregister(lru);
- 
-@@ -685,6 +685,6 @@ void list_lru_destroy(struct list_lru *lru)
- #ifdef CONFIG_MEMCG_KMEM
- 	lru->shrinker_id = -1;
- #endif
--	memcg_put_cache_ids();
-+	memcg_list_lru_resize_unlock();
- }
- EXPORT_SYMBOL_GPL(list_lru_destroy);
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index f8cdd87cf693..437465611845 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -367,12 +367,12 @@ static int kmemcg_max_id;
- /* Protects memcg_nr_cache_ids */
- static DECLARE_RWSEM(memcg_cache_ids_sem);
- 
--void memcg_get_cache_ids(void)
-+void memcg_list_lru_resize_lock(void)
- {
- 	down_read(&memcg_cache_ids_sem);
- }
- 
--void memcg_put_cache_ids(void)
-+void memcg_list_lru_resize_unlock(void)
- {
- 	up_read(&memcg_cache_ids_sem);
- }
+Hi Ted,
+
+given the fact that OSS is being relocated from Dublin to Washington [1], 
+is Kernel Summit following that direction?
+
+[1] https://www.linuxfoundation.org/en/press-release/the-linux-foundation-announces-open-source-summit-embedded-linux-conference-2021-will-move-from-dublin-ireland-to-seattle-washington/
+
 -- 
-2.11.0
+Jiri Kosina
+SUSE Labs
 
