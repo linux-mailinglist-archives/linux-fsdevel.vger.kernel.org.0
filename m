@@ -2,125 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3383E36E1E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 01:02:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3791F36E234
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 01:32:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237268AbhD1Wye (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Apr 2021 18:54:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60908 "EHLO
+        id S231932AbhD1XdO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Apr 2021 19:33:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235864AbhD1Wy3 (ORCPT
+        with ESMTP id S229479AbhD1XdK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Apr 2021 18:54:29 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A9CC06138C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 15:53:44 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id t2-20020a17090a0242b0290155433387beso3898870pje.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 15:53:44 -0700 (PDT)
+        Wed, 28 Apr 2021 19:33:10 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60196C06138B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 16:32:23 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id s9so16314946ljj.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 16:32:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=iZ7QHc2ykOTQ3tVESh83HRmneBd7oEDH+LeHNMcXAHY=;
-        b=cMV5Vtn9qduFGokuJESHEgCSHOAYUgReeSgxCag9K7Nc4Kq2A5h4tyP+iKqa03Jmdj
-         WDkpHheGiMG1xt/XzEnpetDqoojsx/EIxeOw3p469HRqrB85mRqQf9fHIcgBDsAMipiJ
-         CzYooSJUHIbS6hsRNpOWa1e6xsLZjsfVe6KXtR2PxJst6qFBImZRO6OPO/JYZu8wkO2y
-         93cbWbmIhqsFtorUdyDdg3319fk2qzpQ9kte3rLc79jE67HgSTygjcUe6npbPP1pmyhT
-         ri0wYPI5ew2Dkk6s2UFFqzhlQH2w96d2XCvt5WNIo/AHMdIzkmBIYP+mmmQQc++KnVHX
-         6+hA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gKq+LFxXyWBv0dDTFY+xwdbBAeyG/loY9cisPmftCiM=;
+        b=fOK8Gte9Lv/qjiZD5DrB5u9ffD/eOuMtHeRXWH5DTq5IZNXrLrVYdv2yXGI8XKhop0
+         WMqDH3qz7FrWIhw0WlFbPyWcreqCalPk9cNvVu76ktwMyChX/RXU5svLiLmwqUmqNxlo
+         dZk1T0X7yPoRp/7oSqxflxCnz1sdA7jbVt5+Q62Yv4gaVlH+VIZCQaTM/4mPlnVnAcPo
+         B9fWgjRbqwND3uMVNbtG4kM4CAB++EPz1ngJ7h+qcyduKi670SKL8Qijs04wwmRhactc
+         N9q1nintLqo0k6ZYHrWI09cAl77fxkCeI/W4V/aMwmw9huJMaBIHQAQUVjn+CKII9w3D
+         DjuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=iZ7QHc2ykOTQ3tVESh83HRmneBd7oEDH+LeHNMcXAHY=;
-        b=ARp0k06SS0SPF1eVIvh5Dbet1IsdYrNAJyR03efS9jijqd60zCwcKMpYfHfQLG1Tu7
-         vxoGa1H3UWpNu4WuJ7ZFSqlFQG03Jx2eIHHlKn0j95Xt80ewN02OTXXMMS2KhS9cJVL+
-         4mH2cH327F+dUuFg15t12jDjzvNE/4KOoGZ3k7LPR8EQCjCEGrf4fvZTg/d9t9tQpBrN
-         GMyVM3B3m2Pnwq4VGektTUTjFQgwKx7KvC2EaFLc8DcLdud8r8p+6ueJYJDShoTMvROv
-         rKDBGC6mlCtY2+H9YuwcC7d8dba+FfqLAHI3+tHReGv4cQVunaw1LYTMbfQY/NkuyVVX
-         oq+Q==
-X-Gm-Message-State: AOAM531Db2uLwPlEgklrpqb/tY9CFU1HmkKph0SVPK95saJo0wm1qiCw
-        jMJpg+5btHWVGmK/btTE7iAxCw==
-X-Google-Smtp-Source: ABdhPJxSw7sv6m8hQEf/6OcaSoGjSg7zqhzeIXlFaRLMxIzIbWUCMoXviVnCAdUcibOTru8NxAWmKA==
-X-Received: by 2002:a17:90a:f3d1:: with SMTP id ha17mr6500911pjb.123.1619650423529;
-        Wed, 28 Apr 2021 15:53:43 -0700 (PDT)
-Received: from google.com ([2401:fa00:9:211:3ae5:2a7f:7b15:7b41])
-        by smtp.gmail.com with ESMTPSA id 31sm654376pgw.3.2021.04.28.15.53.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Apr 2021 15:53:42 -0700 (PDT)
-Date:   Thu, 29 Apr 2021 08:53:31 +1000
-From:   Matthew Bobrowski <repnop@google.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] fanotify: Add pidfd support to the fanotify API
-Message-ID: <YInna8fT/WfUkV6+@google.com>
-References: <YH4+Swki++PHIwpY@google.com>
- <20210421080449.GK8706@quack2.suse.cz>
- <YIIBheuHHCJeY6wJ@google.com>
- <CAOQ4uxhUcefbu+5pLKfx7b-kOPP2OB+_RRPMPDX1vLk36xkZnQ@mail.gmail.com>
- <YIJ/JHdaPv2oD+Jd@google.com>
- <CAOQ4uxhyGKSM3LFKRtgNe+HmkUJRCFwafXdgC_8ysg7Bs43rWg@mail.gmail.com>
- <YIaVbWu8up3RY7gf@google.com>
- <CAOQ4uxhp3khQ9Ln2g9s5WLEsb-Cv2vdsZTuYUgQx-DW6GR1RmQ@mail.gmail.com>
- <YIeGefkB+cHMsDse@google.com>
- <CAOQ4uxjAqh3xVpigrJe1k01Fy5-rJRxxLGw92BwWtU4zjr=Wjg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gKq+LFxXyWBv0dDTFY+xwdbBAeyG/loY9cisPmftCiM=;
+        b=jOJrp1viuobinHjykJeoYuIZAW2WMHUhO5Im/szMljigWSjfqMye+4OXaoGOpgm48K
+         /XcmTi5T0/FJh6K3pS4SqaTH7619G3/j300XmVB6ybAmwTU87VzPgheAsmXhHeeh9zcr
+         VcpkK37MnUg/qSkbF6W0BEYbDAKqMWYJcllyPJ5NP8NYSTDjVgbb5+on4IZXsU8A/hE+
+         xrs8tmX1veZ7fUfBx4VMdzjBkU6yTZ9FG/alSJ8c9UOsjHg1svfggWwnem1p8zJUdmiA
+         k9CF16VAnglUWD47xv3tyV98WutesnvmiQy7bYNidfin+Zxwd7Q3Q58uQxIquID4Cu/d
+         W+Fg==
+X-Gm-Message-State: AOAM532X7icHLFUVAIj/eFB/IIZXaUEQXIT19ZcjRyP1/Ez8fZOb5tbT
+        5iPLagM4y9vFwN3SturquxW0QjKFASTcmZ1g1kAeug==
+X-Google-Smtp-Source: ABdhPJy3P/E9ZXBwSluvDEgi8bjVYUJz8Z+EqxAxyirc6UV5SK1NI/Z+7EGWfDNucx42FfRiJqMqLlmVEiLBFgn0Ya4=
+X-Received: by 2002:a2e:b17b:: with SMTP id a27mr21518327ljm.160.1619652741705;
+ Wed, 28 Apr 2021 16:32:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjAqh3xVpigrJe1k01Fy5-rJRxxLGw92BwWtU4zjr=Wjg@mail.gmail.com>
+References: <20210428094949.43579-1-songmuchun@bytedance.com>
+In-Reply-To: <20210428094949.43579-1-songmuchun@bytedance.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Wed, 28 Apr 2021 16:32:07 -0700
+Message-ID: <CALvZod6XtOpPAg5BipOe3fWJrDXFhonqgne8eaD6QBr07rDR2w@mail.gmail.com>
+Subject: Re: [PATCH 0/9] Shrink the list lru size on memory cgroup removal
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Roman Gushchin <guro@fb.com>, Yang Shi <shy828301@gmail.com>,
+        alexs@kernel.org,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 27, 2021 at 08:14:05AM +0300, Amir Goldstein wrote:
-> On Tue, Apr 27, 2021 at 6:35 AM Matthew Bobrowski <repnop@google.com> wrote:
-> >
-> > On Mon, Apr 26, 2021 at 02:11:30PM +0300, Amir Goldstein wrote:
-> > > > Amir, I was just thinking about this a little over the weekend and I
-> > > > don't think we discussed how to handle the FAN_REPORT_PIDFD |
-> > > > FAN_REPORT_FID and friends case? My immediate thought is to make
-> > > > FAN_REPORT_PIDFD mutually exclusive with FAN_REPORT_FID and friends,
-> > > > but then again receiving a pidfd along with FID events may be also
-> > > > useful for some? What are your thoughts on this? If we don't go ahead
-> > > > with mutual exclusion, then this multiple event types alongside struct
-> > > > fanotify_event_metadata starts getting a little clunky, don't you
-> > > > think?
-> > > >
-> > >
-> > > The current format of an fanotify event already supports multiple info records:
-> > >
-> > > [fanotify_event_metadata]
-> > > [[fanotify_event_info_header][event record #1]]
-> > > [[fanotify_event_info_header][event record #2]]...
-> > >
-> > > (meta)->event_len is the total event length including all info records.
-> > >
-> > > For example, FAN_REPORT_FID | FAN_REPORT_DFID_MAME produces
-> > > (for some events) two info records, one FAN_EVENT_INFO_TYPE_FID
-> > > record and one FAN_EVENT_INFO_TYPE_DFID_NAME record.
-> >
-> > Ah, that's right! I now remember reviewing some patches associated
-> > with the FID change series which mentioned the possibility of
-> > receiving multiple FID info records. As the implementation currently
-> > stands, AFAIK there's not possibility for fanotify to ever return more
-> > than two info records, right?
-> >
-> > Is there any preference in terms of whether the new FAN_REPORT_PIDFD
-> > info records precede or come after FAN_REPORT_FID/FAN_REPORT_DFID_NAME
-> > info records in FAN_REPORT_FID or FAN_REPORT_FID |
-> > FAN_REPORT_DFID_NAME configurations?
+On Wed, Apr 28, 2021 at 2:54 AM Muchun Song <songmuchun@bytedance.com> wrote:
 >
-> Doesn't matter.
+> In our server, we found a suspected memory leak problem. The kmalloc-32
+> consumes more than 6GB of memory. Other kmem_caches consume less than 2GB
+> memory.
+>
+> After our in-depth analysis, the memory consumption of kmalloc-32 slab
+> cache is the cause of list_lru_one allocation.
+>
+>   crash> p memcg_nr_cache_ids
+>   memcg_nr_cache_ids = $2 = 24574
+>
+> memcg_nr_cache_ids is very large and memory consumption of each list_lru
+> can be calculated with the following formula.
+>
+>   num_numa_node * memcg_nr_cache_ids * 32 (kmalloc-32)
+>
+> There are 4 numa nodes in our system, so each list_lru consumes ~3MB.
+>
+>   crash> list super_blocks | wc -l
+>   952
+>
+> Every mount will register 2 list lrus, one is for inode, another is for
+> dentry. There are 952 super_blocks. So the total memory is 952 * 2 * 3
+> MB (~5.6GB). But the number of memory cgroup is less than 500. So I
+> guess more than 12286 containers have been deployed on this machine (I
+> do not know why there are so many containers, it may be a user's bug or
+> the user really want to do that). But now there are less than 500
+> containers in the system. And memcg_nr_cache_ids has not been reduced
+> to a suitable value. This can waste a lot of memory. If we want to reduce
+> memcg_nr_cache_ids, we have to reboot the server. This is not what we
+> want.
+>
+> So this patchset will dynamically adjust the value of memcg_nr_cache_ids
+> to keep healthy memory consumption. In this case, we may be able to restore
+> a healthy environment even if the users have created tens of thousands of
+> memory cgroups and then destroyed those memory cgroups. This patchset also
+> contains some code simplification.
+>
 
-OK, fair.
+There was a recent discussion [1] on the same issue. Did you get the
+chance to take a look at that. I have not gone through this patch
+series yet but will do in the next couple of weeks.
 
-> Your typical application would first filter by pid/pidfd and only if process
-> matches the filters would it care to examine the event fid info, correct?
-
-Not necessarily, but you're right, the ordering doesn't really matter
-too much.
-
-/M
+[1] https://lore.kernel.org/linux-fsdevel/20210405054848.GA1077931@in.ibm.com/
