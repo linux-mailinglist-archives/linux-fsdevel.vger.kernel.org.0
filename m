@@ -2,158 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1609B36DDC5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 19:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35D0D36DE2A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 19:23:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241235AbhD1RE0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Apr 2021 13:04:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53007 "EHLO
+        id S239609AbhD1RYd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Apr 2021 13:24:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:28637 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229993AbhD1RE0 (ORCPT
+        by vger.kernel.org with ESMTP id S229931AbhD1RYc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Apr 2021 13:04:26 -0400
+        Wed, 28 Apr 2021 13:24:32 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619629421;
+        s=mimecast20190719; t=1619630626;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=CjDGbDf+FlwoYQPnj5RXe7XBw9FtNTs+krtCG4E8T5c=;
-        b=XZSr3HA3tJzfeT/UMwrgaw8cl+I0JPs3rHytS3I//Bqbmi8nT9SeiMrTvNMLzYMvQSKH2g
-        b/H0U3XfxeRCM6yxsknnaVihr0iw11my2bqDA3TEh2WQny3HD+mFs0Fa9prKwnHOvCG8ZV
-        7qNlf0JvgnR0QSbci8sC/Dg9DQhZqkg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-379-seSeOOSvMY6ySr8ScifKYA-1; Wed, 28 Apr 2021 13:03:39 -0400
-X-MC-Unique: seSeOOSvMY6ySr8ScifKYA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 796B2804030;
-        Wed, 28 Apr 2021 17:03:37 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-116-128.rdu2.redhat.com [10.10.116.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A633510190A7;
-        Wed, 28 Apr 2021 17:03:30 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id CB27B220BCF; Wed, 28 Apr 2021 13:03:29 -0400 (EDT)
-Date:   Wed, 28 Apr 2021 13:03:29 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, virtio-fs@redhat.com,
-        dan.j.williams@intel.com
-Cc:     miklos@szeredi.hu, jack@suse.cz, willy@infradead.org,
-        slp@redhat.com, Greg Kurz <groug@kaod.org>
-Subject: Re: [PATCH v5 1/3] dax: Add an enum for specifying dax wakup mode
-Message-ID: <20210428170329.GB1840673@redhat.com>
-References: <20210428165040.1856202-1-vgoyal@redhat.com>
- <20210428165040.1856202-2-vgoyal@redhat.com>
+        bh=6QmxbNDcfkmoT4snx6gLW6zB0uLTOmzBgWbCGZ43h/M=;
+        b=ZzCrrHdOP4mJDOUxSO+4Q35NSCs/UVzEYL0+E6A4nwVXZlJ3jlcbDT7BXrCRtifO+UwYBe
+        oUzyQIbHta8wd7OyV16gwsMtsOREU/xhaIFfPvaCeQHes5mm/mb0i8gCVQ0rHTXmzV/i8l
+        I7VqYah1c3/+dw0KoR+yIYo+LJG8uTU=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-266-pjbfjOB0M8OSKz2dM58deA-1; Wed, 28 Apr 2021 13:23:44 -0400
+X-MC-Unique: pjbfjOB0M8OSKz2dM58deA-1
+Received: by mail-qt1-f197.google.com with SMTP id h4-20020ac858440000b029019d657b9f21so25782388qth.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 10:23:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6QmxbNDcfkmoT4snx6gLW6zB0uLTOmzBgWbCGZ43h/M=;
+        b=C6tggsCm2ykeIVFmbus7G2Na+qLMXBgKgJMmZkiW3R5BTRf9E3IcHBYQzJJa/DoFyV
+         7YjMADGmoRvCf5FWE8/VLout4a+yf0ZVrSUdjnmBk9T3Kwc9M5lO0U7hhGLjo0QxiPT0
+         R0P1arxsEJE6kBfWMM1FGH0JxadtOpmFs7i242yCYZpj1lsJIiCZg/A6vyHDyqn1yZh0
+         vIJsv4rzD6Hgs6Ol33zoMjiRqkh6XJKnIIPWgi8Smo2jkX1G39ks+0sxrwhM6SQ+RaOz
+         y/JKlNvwkO4Wfr2YkVAzp3Bj551P457Hjsnc3K9RWQ8/5SEqTr+Dgp+aNBATV1kXUyhp
+         ig1A==
+X-Gm-Message-State: AOAM533C0GBUtAGMrYEY++jN3L9/yCgZ/1Z55ovYeT5DScbz6ClHlW9B
+        3/ubFqgoDxfx5lfvOqoOB6VCrWtNYIvdkK1/Vq6pP4qN9T0Pzrx81KQGj+Cr78mT13GAP79lwRE
+        B8wAdjc968Sqj374Ry8Wbvc724w==
+X-Received: by 2002:ae9:f310:: with SMTP id p16mr29914960qkg.123.1619630624372;
+        Wed, 28 Apr 2021 10:23:44 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJweTpfhxOs2+FE7b/y38FVRdocxBBDoCy0Saro4x4l/ivnG64cNuM5i6194baTUbY8T8h2pWw==
+X-Received: by 2002:ae9:f310:: with SMTP id p16mr29914911qkg.123.1619630624022;
+        Wed, 28 Apr 2021 10:23:44 -0700 (PDT)
+Received: from xz-x1 (bras-base-toroon474qw-grc-77-184-145-104-227.dsl.bell.ca. [184.145.104.227])
+        by smtp.gmail.com with ESMTPSA id 198sm275365qkf.20.2021.04.28.10.23.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Apr 2021 10:23:43 -0700 (PDT)
+Date:   Wed, 28 Apr 2021 13:23:41 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Axel Rasmussen <axelrasmussen@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        Brian Geffon <bgeffon@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
+Subject: Re: [PATCH v5 09/10] userfaultfd/selftests: reinitialize test
+ context in each test
+Message-ID: <20210428172341.GF6584@xz-x1>
+References: <20210427225244.4326-1-axelrasmussen@google.com>
+ <20210427225244.4326-10-axelrasmussen@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210428165040.1856202-2-vgoyal@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <20210427225244.4326-10-axelrasmussen@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 28, 2021 at 12:50:38PM -0400, Vivek Goyal wrote:
-> Dan mentioned that he is not very fond of passing around a boolean true/false
-> to specify if only next waiter should be woken up or all waiters should be
-> woken up. He instead prefers that we introduce an enum and make it very
-> explicity at the callsite itself. Easier to read code.
+On Tue, Apr 27, 2021 at 03:52:43PM -0700, Axel Rasmussen wrote:
+> Currently, the context (fds, mmap-ed areas, etc.) are global. Each test
+> mutates this state in some way, in some cases really "clobbering it"
+> (e.g., the events test mremap-ing area_dst over the top of area_src, or
+> the minor faults tests overwriting the count_verify values in the test
+> areas). We run the tests in a particular order, each test is careful to
+> make the right assumptions about its starting state, etc.
 > 
-> This patch should not introduce any change of behavior.
+> But, this is fragile. It's better for a test's success or failure to not
+> depend on what some other prior test case did to the global state.
 > 
-> Reviewed-by: Greg Kurz <groug@kaod.org>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  fs/dax.c | 23 +++++++++++++++++------
->  1 file changed, 17 insertions(+), 6 deletions(-)
+> To that end, clear and reinitialize the test context at the start of
+> each test case, so whatever prior test cases did doesn't affect future
+> tests.
 > 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index b3d27fdc6775..c8cd2ae4440b 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -144,6 +144,16 @@ struct wait_exceptional_entry_queue {
->  	struct exceptional_entry_key key;
->  };
->  
-> +/**
-> + * enum dax_wake_mode: waitqueue wakeup behaviour
-> + * @WAKE_NEXT: wake only the first waiter in the waitqueue
-> + * @WAKE_ALL: wake all waiters in the waitqueue
-> + */
+> This is particularly relevant to this series because the events test's
+> mremap of area_dst screws up assumptions the minor fault test was
+> relying on. This wasn't a problem for hugetlb, as we don't mremap in
+> that case.
+> 
+> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
 
-I just noticed that I did not change order in comments. Will post
-another version. Sorry about the noise.
+Reviewed-by: Peter Xu <peterx@redhat.com>
 
-Vivek
-
-> +enum dax_wake_mode {
-> +	WAKE_ALL,
-> +	WAKE_NEXT,
-> +};
-> +
->  static wait_queue_head_t *dax_entry_waitqueue(struct xa_state *xas,
->  		void *entry, struct exceptional_entry_key *key)
->  {
-> @@ -182,7 +192,8 @@ static int wake_exceptional_entry_func(wait_queue_entry_t *wait,
->   * The important information it's conveying is whether the entry at
->   * this index used to be a PMD entry.
->   */
-> -static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
-> +static void dax_wake_entry(struct xa_state *xas, void *entry,
-> +			   enum dax_wake_mode mode)
->  {
->  	struct exceptional_entry_key key;
->  	wait_queue_head_t *wq;
-> @@ -196,7 +207,7 @@ static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
->  	 * must be in the waitqueue and the following check will see them.
->  	 */
->  	if (waitqueue_active(wq))
-> -		__wake_up(wq, TASK_NORMAL, wake_all ? 0 : 1, &key);
-> +		__wake_up(wq, TASK_NORMAL, mode == WAKE_ALL ? 0 : 1, &key);
->  }
->  
->  /*
-> @@ -268,7 +279,7 @@ static void put_unlocked_entry(struct xa_state *xas, void *entry)
->  {
->  	/* If we were the only waiter woken, wake the next one */
->  	if (entry && !dax_is_conflict(entry))
-> -		dax_wake_entry(xas, entry, false);
-> +		dax_wake_entry(xas, entry, WAKE_NEXT);
->  }
->  
->  /*
-> @@ -286,7 +297,7 @@ static void dax_unlock_entry(struct xa_state *xas, void *entry)
->  	old = xas_store(xas, entry);
->  	xas_unlock_irq(xas);
->  	BUG_ON(!dax_is_locked(old));
-> -	dax_wake_entry(xas, entry, false);
-> +	dax_wake_entry(xas, entry, WAKE_NEXT);
->  }
->  
->  /*
-> @@ -524,7 +535,7 @@ static void *grab_mapping_entry(struct xa_state *xas,
->  
->  		dax_disassociate_entry(entry, mapping, false);
->  		xas_store(xas, NULL);	/* undo the PMD join */
-> -		dax_wake_entry(xas, entry, true);
-> +		dax_wake_entry(xas, entry, WAKE_ALL);
->  		mapping->nrexceptional--;
->  		entry = NULL;
->  		xas_set(xas, index);
-> @@ -937,7 +948,7 @@ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
->  	xas_lock_irq(xas);
->  	xas_store(xas, entry);
->  	xas_clear_mark(xas, PAGECACHE_TAG_DIRTY);
-> -	dax_wake_entry(xas, entry, false);
-> +	dax_wake_entry(xas, entry, WAKE_NEXT);
->  
->  	trace_dax_writeback_one(mapping->host, index, count);
->  	return ret;
-> -- 
-> 2.25.4
-> 
+-- 
+Peter Xu
 
