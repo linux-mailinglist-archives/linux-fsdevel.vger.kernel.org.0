@@ -2,123 +2,247 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39D6A36DBB6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 17:33:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D8C36DBC7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Apr 2021 17:35:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231347AbhD1PeK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Apr 2021 11:34:10 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:37875 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229890AbhD1PeJ (ORCPT
+        id S239842AbhD1PgT convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Apr 2021 11:36:19 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2944 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231169AbhD1PgQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Apr 2021 11:34:09 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1619624004; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=+uEHZQCoId6Z6PN43bKUgIGsM7RbOOikbjeOmDhDNZw=; b=j/Jd2LPBF5MjFK9LqrzuzPo3ONy1SIqnadK1QSsfTtILeJxkA9/cUf34asnRm7L6K5vmPLDq
- jUbMAaHth3tkIOGNYdj7pYnO5DiM6x05HfORWT6pZvwRebzqQ+cUWedShdJrxvDOdFRxU7Tt
- 6WBmA+nGGyjd9CjDdiTw4BN+9k8=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
- 60898026853c0a2c468b6010 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 28 Apr 2021 15:32:54
- GMT
-Sender: charante=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id D0F6DC4338A; Wed, 28 Apr 2021 15:32:53 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        NICE_REPLY_A,SPF_FAIL autolearn=no autolearn_force=no version=3.4.0
-Received: from [192.168.29.110] (unknown [49.37.159.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: charante)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0902EC433D3;
-        Wed, 28 Apr 2021 15:32:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0902EC433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=charante@codeaurora.org
-Subject: Re: [PATCH] mm: compaction: improve /proc trigger for full node
- memory compaction
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     akpm@linux-foundation.org, vbabka@suse.cz, bhe@redhat.com,
-        nigupta@nvidia.com, khalid.aziz@oracle.com,
-        mateusznosek0@gmail.com, sh_def@163.com, iamjoonsoo.kim@lge.com,
-        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        mhocko@suse.com, rientjes@google.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        vinmenon@codeaurora.org
-References: <1619098678-8501-1-git-send-email-charante@codeaurora.org>
- <20210427080921.GG4239@techsingularity.net>
-From:   Charan Teja Kalla <charante@codeaurora.org>
-Message-ID: <9afd1ae1-bee8-a4cc-1cd6-df92090abeb4@codeaurora.org>
-Date:   Wed, 28 Apr 2021 21:02:44 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
-MIME-Version: 1.0
-In-Reply-To: <20210427080921.GG4239@techsingularity.net>
-Content-Type: text/plain; charset=iso-8859-15
+        Wed, 28 Apr 2021 11:36:16 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FVjHL5d7mz6wkLW;
+        Wed, 28 Apr 2021 23:29:50 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Wed, 28 Apr 2021 17:35:28 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
+ Wed, 28 Apr 2021 17:35:28 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "mjg59@google.com" <mjg59@google.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: RE: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to
+ post hooks
+Thread-Topic: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to
+ post hooks
+Thread-Index: AQHXEdMA2oN9D131skWV9JJ8Z5VEUarKXeAg
+Date:   Wed, 28 Apr 2021 15:35:28 +0000
+Message-ID: <8e62ae3f8cf94c798fc1b7ffd69cbdc4@huawei.com>
+References: <20210305151923.29039-1-roberto.sassu@huawei.com>
+ <20210305151923.29039-5-roberto.sassu@huawei.com>
+In-Reply-To: <20210305151923.29039-5-roberto.sassu@huawei.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.221.98.153]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks Mel for your comments!!
-
-On 4/27/2021 1:39 PM, Mel Gorman wrote:
->> The existing /proc/sys/vm/compact_memory interface do the full node
->> compaction when user writes an arbitrary value to it and is targeted for
->> the usecases like an app launcher prepares the system before the target
->> application runs.
-> The intent behind compact_memory was a debugging interface to tell
-> the difference between an application failing to allocate a huge page
-> prematurely and the inability of compaction to find a free page.
+> From: Roberto Sassu
+> Sent: Friday, March 5, 2021 4:19 PM
+> ima_inode_setxattr() and ima_inode_removexattr() hooks are called before
+> an
+> operation is performed. Thus, ima_reset_appraise_flags() should not be
+> called there, as flags might be unnecessarily reset if the operation is
+> denied.
 > 
+> This patch introduces the post hooks ima_inode_post_setxattr() and
+> ima_inode_post_removexattr(), and adds the call to
+> ima_reset_appraise_flags() in the new functions.
+> 
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  fs/xattr.c                            |  2 ++
+>  include/linux/ima.h                   | 18 ++++++++++++++++++
+>  security/integrity/ima/ima_appraise.c | 25 ++++++++++++++++++++++---
+>  security/security.c                   |  1 +
+>  4 files changed, 43 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index b3444e06cded..81847f132d26 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/namei.h>
+>  #include <linux/security.h>
+>  #include <linux/evm.h>
+> +#include <linux/ima.h>
+>  #include <linux/syscalls.h>
+>  #include <linux/export.h>
+>  #include <linux/fsnotify.h>
+> @@ -502,6 +503,7 @@ __vfs_removexattr_locked(struct user_namespace
+> *mnt_userns,
+> 
+>  	if (!error) {
+>  		fsnotify_xattr(dentry);
+> +		ima_inode_post_removexattr(dentry, name);
+>  		evm_inode_post_removexattr(dentry, name);
+>  	}
+> 
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index 61d5723ec303..5e059da43857 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -171,7 +171,13 @@ extern void ima_inode_post_setattr(struct
+> user_namespace *mnt_userns,
+>  				   struct dentry *dentry);
+>  extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+>  		       const void *xattr_value, size_t xattr_value_len);
+> +extern void ima_inode_post_setxattr(struct dentry *dentry,
+> +				    const char *xattr_name,
+> +				    const void *xattr_value,
+> +				    size_t xattr_value_len);
+>  extern int ima_inode_removexattr(struct dentry *dentry, const char
+> *xattr_name);
+> +extern void ima_inode_post_removexattr(struct dentry *dentry,
+> +				       const char *xattr_name);
+>  #else
+>  static inline bool is_ima_appraise_enabled(void)
+>  {
+> @@ -192,11 +198,23 @@ static inline int ima_inode_setxattr(struct dentry
+> *dentry,
+>  	return 0;
+>  }
+> 
+> +static inline void ima_inode_post_setxattr(struct dentry *dentry,
+> +					   const char *xattr_name,
+> +					   const void *xattr_value,
+> +					   size_t xattr_value_len)
+> +{
+> +}
+> +
+>  static inline int ima_inode_removexattr(struct dentry *dentry,
+>  					const char *xattr_name)
+>  {
+>  	return 0;
+>  }
+> +
+> +static inline void ima_inode_post_removexattr(struct dentry *dentry,
+> +					      const char *xattr_name)
+> +{
+> +}
+>  #endif /* CONFIG_IMA_APPRAISE */
+> 
+>  #if defined(CONFIG_IMA_APPRAISE) &&
+> defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
+> diff --git a/security/integrity/ima/ima_appraise.c
+> b/security/integrity/ima/ima_appraise.c
+> index 565e33ff19d0..1f029e4c8d7f 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -577,21 +577,40 @@ int ima_inode_setxattr(struct dentry *dentry, const
+> char *xattr_name,
+>  	if (result == 1) {
+>  		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
+>  			return -EINVAL;
+> -		ima_reset_appraise_flags(d_backing_inode(dentry),
+> -			xvalue->type == EVM_IMA_XATTR_DIGSIG);
+>  		result = 0;
+>  	}
+>  	return result;
+>  }
+> 
+> +void ima_inode_post_setxattr(struct dentry *dentry, const char
+> *xattr_name,
+> +			     const void *xattr_value, size_t xattr_value_len)
+> +{
+> +	const struct evm_ima_xattr_data *xvalue = xattr_value;
+> +	int result;
+> +
+> +	result = ima_protect_xattr(dentry, xattr_name, xattr_value,
+> +				   xattr_value_len);
+> +	if (result == 1)
+> +		ima_reset_appraise_flags(d_backing_inode(dentry),
 
-Thanks for clarifying this.
+I found an issue in this patch.
 
->> This patch adds a new /proc interface,
->> /proc/sys/vm/proactive_compact_memory, and on write of an arbitrary
->> value triggers the full node compaction but can be stopped in the middle
->> if sufficient higher order(COMPACTION_HPAGE_ORDER) pages available in
->> the system. The availability of pages that a user looking for can be
->> given as input through /proc/sys/vm/compaction_proactiveness.
->>
->> [1]https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=facdaa917c4d5a376d09d25865f5a863f906234a
->>
->> Signed-off-by: Charan Teja Reddy <charante@codeaurora.org>
-> Hence, while I do not object to the patch as-such, I'm wary of the trend
-> towards improving explicit out-of-band compaction via proc interfaces. I
+Moving ima_reset_appraise_flags() to the post hook causes this
+function to be executed also when __vfs_setxattr_noperm() is
+called.
 
-I think people relying on this /proc/../compact_memory for reasons of on
-demand compaction effects the performance and the kcompactd returns when
- even a single page of the order we are looking for is available. Say
-that If an app launching completion is relied on the memory
-fragmentation, meaning that lesser the system fragmented, lesser it
-needs to spend time on allocation as it gets more higher order pages.
-With the current compaction methods we may get just one higher order
-page at a time (as compaction stops run after that) thus can effect its
-launch completion time. The compact_memory node can help in these
-situation where the system administrator can defragment system whenever
-is required by writing to the compact_node. This is just a theoretical
-example.
+The problem is that at the end of a write IMA calls
+ima_collect_measurement() to recalculate the file digest and
+update security.ima. ima_collect_measurement() sets
+IMA_COLLECTED.
 
-Although it is intended for debugging interface, it got a lot of other
-applications too.
+However, after that __vfs_setxattr_noperm() causes
+IMA_COLLECTED to be reset, and to unnecessarily recalculate
+the file digest. This wouldn't happen if ima_reset_appraise_flags()
+is in the pre hook.
 
-This patch aims to improve this interface by taking help from tunables
-provided by the proactive compaction.
+I solved by replacing:
+	iint->flags &= ~IMA_DONE_MASK;
+with:
+	iint->flags &= ~(IMA_DONE_MASK & ~IMA_COLLECTED);
 
-> would have preferred if the focus was on reducing the cost of compaction
-> so that direct allocation requests succeed quickly or improving background
-> compaction via kcompactd when there has been recent failures.
+just when the IMA_CHANGE_XATTR bit is set. It should
+not be a problem since setting an xattr does not influence
+the file content.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
-Forum, a Linux Foundation Collaborative Project
+Mimi, what do you think?
+
+Thanks
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
+
+> +			xvalue->type == EVM_IMA_XATTR_DIGSIG);
+> +}
+> +
+>  int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name)
+>  {
+>  	int result;
+> 
+>  	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
+>  	if (result == 1) {
+> -		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
+>  		result = 0;
+>  	}
+>  	return result;
+>  }
+> +
+> +void ima_inode_post_removexattr(struct dentry *dentry, const char
+> *xattr_name)
+> +{
+> +	int result;
+> +
+> +	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
+> +	if (result == 1)
+> +		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
+> +}
+> diff --git a/security/security.c b/security/security.c
+> index 5ac96b16f8fa..efb1f874dc41 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1319,6 +1319,7 @@ void security_inode_post_setxattr(struct dentry
+> *dentry, const char *name,
+>  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+>  		return;
+>  	call_void_hook(inode_post_setxattr, dentry, name, value, size, flags);
+> +	ima_inode_post_setxattr(dentry, name, value, size);
+>  	evm_inode_post_setxattr(dentry, name, value, size);
+>  }
+> 
+> --
+> 2.26.2
+
