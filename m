@@ -2,87 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ABC736EC8A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 16:42:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8359336EE40
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 18:36:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234862AbhD2Omy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Apr 2021 10:42:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42895 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233602AbhD2Omx (ORCPT
+        id S236036AbhD2Qhc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Apr 2021 12:37:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40654 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232004AbhD2Qhb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Apr 2021 10:42:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619707327;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5j+rL0qw44y0T4crpkr6NmrX5ib7bkJ4lhhHCiai/js=;
-        b=iMfvgzpNeftDYm8auyrjNWT6w67bykFmjlAt/bSJqzHOOZ0Nm7FM3wORk5Ifta9y20CW7g
-        wr/BY/Kyx/YYqke3UigyQEWUJy8dBD24vkFI/WG4LTlJzGn0EgcC+G8fSZuCvU4949F3hL
-        EXsUcgN4GHv2JUZEtaSq95QR9v5vFz8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-37-MXezInh7OiyCWToQuYkGYw-1; Thu, 29 Apr 2021 10:42:03 -0400
-X-MC-Unique: MXezInh7OiyCWToQuYkGYw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7D21D8CCFEC;
-        Thu, 29 Apr 2021 14:42:01 +0000 (UTC)
-Received: from T590 (ovpn-12-74.pek2.redhat.com [10.72.12.74])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8F0DF679F3;
-        Thu, 29 Apr 2021 14:41:53 +0000 (UTC)
-Date:   Thu, 29 Apr 2021 22:42:03 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "Wunderlich, Mark" <mark.wunderlich@intel.com>,
-        "Vasudevan, Anil" <anil.vasudevan@intel.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 12/15] block: switch polling to be bio based
-Message-ID: <YIrFu4LiZwipcsbg@T590>
-References: <20210427161619.1294399-1-hch@lst.de>
- <20210427161619.1294399-13-hch@lst.de>
- <YIjIOgYS29GvcoIm@T590>
- <20210429072028.GA3682@lst.de>
- <YIph7qLu4wL5QEXK@T590>
- <20210429095036.GA15615@lst.de>
+        Thu, 29 Apr 2021 12:37:31 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13D7FC06138C
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Apr 2021 09:36:45 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id m7so66355014ljp.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Apr 2021 09:36:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1jy1gsfA2QLvOvx7TBvVpUXXLbyGvmt6zTTbfyCza5Q=;
+        b=e4nJJe8AlWJAidgWI6OhihjcNqgwz0DPI5Rl5bu5T1BqIhh4NlFmQJRL449TeVMK5y
+         ChHE9s6lfcj3/LCDVQtcCqr9Wmb1XcpRoGlvPNWK/jjagajCseaN2xGpyJacHDtsZaYY
+         4xMHvg4nD4E30NOL+TVcLYCkKH7UYRgfAT6Sg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1jy1gsfA2QLvOvx7TBvVpUXXLbyGvmt6zTTbfyCza5Q=;
+        b=jtmy3sC0UCYSfMpjfbCDtkLB2m0bBwXlaiJNmW4C6qQT5HnxVSpnZb4W4Uu8aVtYN5
+         tJMJyworcpsFRU//kKiWdSapaZrv/jJuVa8xvaqpmNH3DeNVjQycfZn5NLvjF+g6piTB
+         ZK3EXrgKK7frJOpecxnM3Vm/9AQ2IT4K98iCOofBBdCrBTBkvhbTocz6KoM2FOvVzYbR
+         PfF+dq2sjSjUJ55dDUgboL2Wt40XlQfeJKsFap4c8Rc5h2a7eYeg6Ft26x1CtZlnyL5I
+         vXI8eg5qgKxSDPKxbsSxJ9WOA9rdsTxg+EfnqjcL/FlN8u/ZXWZ1XyY0gnmknrUeO71j
+         3nNw==
+X-Gm-Message-State: AOAM533a3PsXt/HTvQEn5H8g9jSu2gy/hgNdflLHoJubLkMcptiKrGHw
+        XhoeQ8UvUXYyjopa9zIUW0UClaGTR33vllE5
+X-Google-Smtp-Source: ABdhPJxe/OE+08JqxdrQBgteSNDLvEYjUt794aaZcz4KQhtAPHuVp2m1nm0vjwQOLBYIoDirL+NKQA==
+X-Received: by 2002:a05:651c:54e:: with SMTP id q14mr386002ljp.380.1619714203386;
+        Thu, 29 Apr 2021 09:36:43 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id t12sm24153lfl.254.2021.04.29.09.36.39
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Apr 2021 09:36:39 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id j4so66354032lfp.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Apr 2021 09:36:39 -0700 (PDT)
+X-Received: by 2002:a19:7504:: with SMTP id y4mr273122lfe.41.1619714198332;
+ Thu, 29 Apr 2021 09:36:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210429095036.GA15615@lst.de>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <CAHk-=wibrw+PnBiQbkGy+5p4GpkPwmmodw-beODikL-tiz0dFQ@mail.gmail.com>
+ <20210429100508.18502-1-arek_koz@o2.pl>
+In-Reply-To: <20210429100508.18502-1-arek_koz@o2.pl>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 29 Apr 2021 09:36:22 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgYiKOYTtU6DifULbj0tmFLJf2Va5ScZW0dCgWi8=-c1A@mail.gmail.com>
+Message-ID: <CAHk-=wgYiKOYTtU6DifULbj0tmFLJf2Va5ScZW0dCgWi8=-c1A@mail.gmail.com>
+Subject: Re: [PATCH v2] proc: Use seq_read_iter for /proc/*/maps
+To:     "Arkadiusz Kozdra (Arusekk)" <arek_koz@o2.pl>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 29, 2021 at 11:50:36AM +0200, Christoph Hellwig wrote:
-> On Thu, Apr 29, 2021 at 03:36:14PM +0800, Ming Lei wrote:
-> > > > ->bi_bdev and associated disk/request_queue/hctx/... refrerred in bio_poll()
-> > > > may have being freed now, so there is UAF risk.
-> > > 
-> > > the block device is RCU freed, so we are fine there.  There rest OTOH
-> > > is more interesting.  Let me think of a good defense using some kind
-> > > of liveness check.
-> > 
-> > Or hold gendisk reference in bdev lifetime, then everything referred
-> > won't be released until bdev is freed.
-> 
-> The whole device bdev controls the gendisk liftetime, so that one is
-> easy.  But for partitions it is probably a good idea to ensure that
-> the gendisk is kept allocated as long as the block devices are around
-> as well.
+On Thu, Apr 29, 2021 at 3:04 AM Arkadiusz Kozdra (Arusekk)
+<arek_koz@o2.pl> wrote:
+>
+> Since seq_read_iter looks mature enough to be used for /proc/<pid>/maps,
+> re-allow applications to perform zero-copy data forwarding from it.
 
-Looks we needn't to care if the bdev is disk or partition: bdev is always
-associated with gendisk via ->bd_disk, the gendisk instance has to be kept
-alive since bio->bi_bdev->bd_disk is used everywhere almost.
+I'd really like to hear what the programs are, and what the
+performance difference is.
 
+Because I'm surprised that the advantages of splice would really be
+noticeable. I don't _dispute_ it, but I really would like this to be
+actually _documented_, not just "Some executable-inspecting tools".
 
-Thanks,
-Ming
+What tools (so that if it causes issues later, we have that
+knowledge), and what are the performance numbers?
 
+             Linus
