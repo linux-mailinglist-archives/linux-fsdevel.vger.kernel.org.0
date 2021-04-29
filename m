@@ -2,111 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E1CD536EE5F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 18:46:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8286836EEBF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 19:19:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237244AbhD2Qqx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Apr 2021 12:46:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42794 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240901AbhD2Qqt (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Apr 2021 12:46:49 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 635F3C06138D
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Apr 2021 09:46:00 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id b23so23295103lfv.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Apr 2021 09:46:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fv1o4ACMgluHoz1tubBqI30O1OAulg9d7QxnCnSiG9c=;
-        b=KDkNvN4NBhwsvv2Vt/X74vt7KVgzUpJkoRwK5HYd1W+ax7k1/dGgufUKiRP3X8w5Ql
-         H5lHQo0imA8GXWxUOZUx++5LlJIaiJwjb17/VyeO+Shqq/nhIWw9KJuVJxGvXm/uTM1x
-         86MzDL52wXvA28OjsoGhD6CKmP2Q62dV3Gr70=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fv1o4ACMgluHoz1tubBqI30O1OAulg9d7QxnCnSiG9c=;
-        b=I/u/kUY7PDbAmF66cSDuN1hMy5me1i8wIppNA2qbw+5udGAOvQ9D/8cPm5k2tKDMwv
-         uPe8Q4QcYs9+rN7OFoIMMZI44gRwrpskrKcqRC8lLeby4iCnwfkhhoEtr5aF8IO6TOq7
-         6fkPOFAloksMBGmu7dZrgnnOKpk8BlvpYzK+Ll4BkdJvoq9YQf8CByKRbvLpbpyw8/qG
-         2f3x3sj5zGElDnq+9ZWdylzy4ise7PWGnzZYDyHCbj3zExX467cQzrAYZ7HBgtYm0yAW
-         K6BvAJYVkMsaKDzOpZ25L+v9E8u8Y9xHQ7unfowsFTnemF4LyHYNfT5so62m9eZ25fh+
-         dr7g==
-X-Gm-Message-State: AOAM5334q2E7bK6gadt6/Ctthjy8XXI6gsIYR1u/0Eu6NWKNp7NM8PD4
-        CTeLJ+aNQF0KZLcjEBLYAfjLEuhrcto/FIaS
-X-Google-Smtp-Source: ABdhPJxJF/cu8r8gU9icjDEa9p0mu7levmIiQ2WGTp39yIDrS26024eyc4KUDoIFIsacCp/Mtd1nxA==
-X-Received: by 2002:ac2:4c4a:: with SMTP id o10mr322199lfk.480.1619714758709;
-        Thu, 29 Apr 2021 09:45:58 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id m22sm28068lfh.63.2021.04.29.09.45.55
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Apr 2021 09:45:56 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id h36so51695488lfv.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Apr 2021 09:45:55 -0700 (PDT)
-X-Received: by 2002:a05:6512:a90:: with SMTP id m16mr284849lfu.201.1619714755208;
- Thu, 29 Apr 2021 09:45:55 -0700 (PDT)
+        id S233706AbhD2RUO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Apr 2021 13:20:14 -0400
+Received: from mgw-01.mpynet.fi ([82.197.21.90]:58430 "EHLO mgw-01.mpynet.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233329AbhD2RUM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Apr 2021 13:20:12 -0400
+X-Greylist: delayed 1595 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Apr 2021 13:20:11 EDT
+Received: from pps.filterd (mgw-01.mpynet.fi [127.0.0.1])
+        by mgw-01.mpynet.fi (8.16.0.43/8.16.0.43) with SMTP id 13TGpR4P073769;
+        Thu, 29 Apr 2021 19:52:46 +0300
+Received: from ex13.tuxera.com (ex13.tuxera.com [178.16.184.72])
+        by mgw-01.mpynet.fi with ESMTP id 387nwygmk8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 29 Apr 2021 19:52:46 +0300
+Received: from localhost (84.253.226.89) by tuxera-exch.ad.tuxera.com
+ (10.20.48.11) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 29 Apr
+ 2021 19:52:46 +0300
+From:   Jouni Roivas <jouni.roivas@tuxera.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        <stable@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        Anton Altaparmakov <anton@tuxera.com>
+Subject: [PATCH] hfsplus: Prevent corruption in shrinking truncate
+Date:   Thu, 29 Apr 2021 19:51:39 +0300
+Message-ID: <20210429165139.3082828-1-jouni.roivas@tuxera.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210427025805.GD3122264@magnolia> <CAHk-=wj6XUGJCgsr+hx3rz=4KvBP-kspn3dqG5v-cKMzzMktUw@mail.gmail.com>
- <20210427195727.GA9661@lst.de> <CAHk-=wjrpinf=8gAjxyPoXT0jbK6-U3Urawiykh-zpxeo47Vhg@mail.gmail.com>
- <20210428061706.GC5084@lst.de> <CAHk-=whWnFu4wztnOtySjFVYXmBR4Mb2wxrp6OayZqnpKeQw0g@mail.gmail.com>
- <20210428064110.GA5883@lst.de> <CAHk-=wjeUhrznxM95ni4z+ynMqhgKGsJUDU8g0vrDLc+fDtYWg@mail.gmail.com>
- <1de23de2-12a9-2b13-3b86-9fe4102fdc0c@rasmusvillemoes.dk> <CAHk-=wimsMqGdzik187YWLb-ru+iktb4MYbMQG1rnZ81dXYFVg@mail.gmail.com>
- <26d06c27-4778-bf75-e39a-3b02cd22d0e3@rasmusvillemoes.dk>
-In-Reply-To: <26d06c27-4778-bf75-e39a-3b02cd22d0e3@rasmusvillemoes.dk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 29 Apr 2021 09:45:39 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whJmDjTLYLeF=Ax31vTOq4PHXKo6JUqm1mQNGZdy-6=3Q@mail.gmail.com>
-Message-ID: <CAHk-=whJmDjTLYLeF=Ax31vTOq4PHXKo6JUqm1mQNGZdy-6=3Q@mail.gmail.com>
-Subject: Re: [GIT PULL] iomap: new code for 5.13-rc1
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jia He <justin.he@arm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [84.253.226.89]
+X-ClientProxiedBy: tuxera-exch.ad.tuxera.com (10.20.48.11) To
+ tuxera-exch.ad.tuxera.com (10.20.48.11)
+X-Proofpoint-GUID: 3BXjuyDZVuC5qxI6x6dF34kaALyxk-nq
+X-Proofpoint-ORIG-GUID: 3BXjuyDZVuC5qxI6x6dF34kaALyxk-nq
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-04-29_08:2021-04-28,2021-04-29 signatures=0
+X-Proofpoint-Spam-Details: rule=mpy_notspam policy=mpy score=0 bulkscore=0 adultscore=0 spamscore=0
+ mlxlogscore=999 suspectscore=0 malwarescore=0 mlxscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2104290105
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 28, 2021 at 11:40 PM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> > That also does explain the arguably odd %pD defaults: %pd came first,
-> > and then %pD came afterwards.
->
-> Eh? 4b6ccca701ef5977d0ffbc2c932430dea88b38b6 added them both at the same
-> time.
+I believe there are some issues introduced by
+commit 31651c607151 ("hfsplus: avoid deadlock on file truncation")
 
-Ahh, I looked at "git blame", and saw that file_dentry_name() was
-added later. But that turns out to have been an additional fix on top,
-not actually "later support".
+HFS+ has extent records which always contains 8 extents. In case the
+first extent record in catalog file gets full, new ones are allocated
+from extents overflow file.
 
-Looking more at that code, I am starting to think that
-"file_dentry_name()" simply shouldn't use "dentry_name()" at all.
-Despite that shared code origin, and despite that similar letter
-choice (lower-vs-upper case), a dentry and a file really are very very
-different from a name standpoint.
+In case shrinking truncate happens to middle of an extent record which
+locates in extents overflow file, the logic in hfsplus_file_truncate()
+was changed so that call to hfs_brec_remove() is not guarded any more.
 
-And it's not the "a filename is the whale pathname, and a dentry has
-its own private dentry name" issue. It's really that the 'struct file'
-contains a _path_ - which is not just the dentry pointer, but the
-'struct vfsmount' pointer too.
+Right action would be just freeing the extents that exceed the new
+size inside extent record by calling hfsplus_free_extents(), and then
+check if the whole extent record should be removed. However since the
+guard (blk_cnt > start) is now after the call to hfs_brec_remove(),
+this has unfortunate effect that the last matching extent record is
+removed unconditionally.
 
-So '%pD' really *could* get the real path right (because it has all
-the required information) in ways that '%pd' fundamentally cannot.
+To reproduce this issue, create a file which has at least 10 extents,
+and then perform shrinking truncate into middle of the last extent
+record, so that the number of remaining extents is not under or
+divisible by 8. This causes the last extent record (8 extents) to be
+removed totally instead of truncating into middle of it. Thus this
+causes corruption, and lost data.
 
-At the same time, I really don't like printk specifiers to take any
-real locks (ie mount_lock or rename_lock), so I wouldn't want them to
-use the full  d_path() logic.
+Fix for this is simply checking if the new truncated end is below the
+start of this extent record, making it safe to remove the full extent
+record. However call to hfs_brec_remove() can't be moved to it's
+previous place since we're dropping ->tree_lock and it can cause a race
+condition and the cached info being invalidated possibly corrupting the
+node data.
 
-                Linus
+Another issue is related to this one. When entering into the block
+(blk_cnt > start) we are not holding the ->tree_lock. We break out from
+the loop not holding the lock, but hfs_find_exit() does unlock it. Not
+sure if it's possible for someone else to take the lock under our feet,
+but it can cause hard to debug errors and premature unlocking. Even if
+there's no real risk of it, the locking should still always be kept in
+balance. Thus taking the lock now just before the check.
+
+Cc: <stable@vger.kernel.org>
+Cc: <linux-fsdevel@vger.kernel.org>
+Reviewed-by: Anton Altaparmakov <anton@tuxera.com>
+Signed-off-by: Jouni Roivas <jouni.roivas@tuxera.com>
+---
+ fs/hfsplus/extents.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
+index a930ddd15681..7054a542689f 100644
+--- a/fs/hfsplus/extents.c
++++ b/fs/hfsplus/extents.c
+@@ -598,13 +598,15 @@ void hfsplus_file_truncate(struct inode *inode)
+ 		res = __hfsplus_ext_cache_extent(&fd, inode, alloc_cnt);
+ 		if (res)
+ 			break;
+-		hfs_brec_remove(&fd);
+ 
+-		mutex_unlock(&fd.tree->tree_lock);
+ 		start = hip->cached_start;
++		if (blk_cnt <= start)
++			hfs_brec_remove(&fd);
++		mutex_unlock(&fd.tree->tree_lock);
+ 		hfsplus_free_extents(sb, hip->cached_extents,
+ 				     alloc_cnt - start, alloc_cnt - blk_cnt);
+ 		hfsplus_dump_extent(hip->cached_extents);
++		mutex_lock(&fd.tree->tree_lock);
+ 		if (blk_cnt > start) {
+ 			hip->extent_state |= HFSPLUS_EXT_DIRTY;
+ 			break;
+@@ -612,7 +614,6 @@ void hfsplus_file_truncate(struct inode *inode)
+ 		alloc_cnt = start;
+ 		hip->cached_start = hip->cached_blocks = 0;
+ 		hip->extent_state &= ~(HFSPLUS_EXT_DIRTY | HFSPLUS_EXT_NEW);
+-		mutex_lock(&fd.tree->tree_lock);
+ 	}
+ 	hfs_find_exit(&fd);
+ 
+-- 
+2.25.1
+
