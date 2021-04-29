@@ -2,264 +2,224 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A5F336E7C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 11:15:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA25B36E7D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 11:21:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233997AbhD2JPz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Apr 2021 05:15:55 -0400
-Received: from mail.synology.com ([211.23.38.101]:54318 "EHLO synology.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232775AbhD2JPx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Apr 2021 05:15:53 -0400
-Received: from localhost.localdomain (unknown [10.17.32.161])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by synology.com (Postfix) with ESMTPSA id 0344BCE781B4;
-        Thu, 29 Apr 2021 17:15:06 +0800 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synology.com; s=123;
-        t=1619687706; bh=0sSfdqm0yzi0ey/gtrGRKKyyZxAerg/2fvBwbsr4J5M=;
-        h=From:To:Cc:Subject:Date;
-        b=dMfeD9cDptOb3qr9yivFOnIaVde+Jrmq/BPSHe6/fZ6atKXybhGD3RlAhETYdJ/+J
-         +qEEX0MthdmYvjFKN+SLymykpc2Wwv2nf2V9Uhbp05Fq9tPKHymt43qlVlbYbBNIf1
-         RHd1JdTMJ7CMVIBiOnWFd5kziCkfzE9Uf9BdGQV8=
-From:   bingjingc <bingjingc@synology.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        slava@dubeyko.com, christian.brauner@ubuntu.com, leon@kernel.org,
-        kvalo@codeaurora.org, keescook@chromium.org, jgg@ziepe.ca
-Cc:     bingjingc@synology.com, cccheng@synology.com
-Subject: [PATCH] hfsplus: fix attr searching failed of xattr key name with ':'
-Date:   Thu, 29 Apr 2021 17:14:46 +0800
-Message-Id: <1619687686-29580-1-git-send-email-bingjingc@synology.com>
-X-Mailer: git-send-email 2.7.4
-X-Synology-MCP-Status: no
-X-Synology-Spam-Flag: no
-X-Synology-Spam-Status: score=0, required 6, WHITELIST_FROM_ADDRESS 0
-X-Synology-Virus-Status: no
+        id S231883AbhD2JVk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Apr 2021 05:21:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58992 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233997AbhD2JVj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Apr 2021 05:21:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 613F2AE8D;
+        Thu, 29 Apr 2021 09:20:52 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id C27991E37A2; Thu, 29 Apr 2021 11:20:52 +0200 (CEST)
+Date:   Thu, 29 Apr 2021 11:20:52 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dave Chinner <david@fromorbit.com>, Ted Tso <tytso@mit.edu>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 10/12] shmem: Use invalidate_lock to protect fallocate
+Message-ID: <20210429092052.GA11234@quack2.suse.cz>
+References: <20210423171010.12-1-jack@suse.cz>
+ <20210423173018.23133-10-jack@suse.cz>
+ <alpine.LSU.2.11.2104282004410.10848@eggly.anvils>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.11.2104282004410.10848@eggly.anvils>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: BingJing Chang <bingjingc@synology.com>
+On Wed 28-04-21 20:24:59, Hugh Dickins wrote:
+> On Fri, 23 Apr 2021, Jan Kara wrote:
+> 
+> > We have to handle pages added by currently running shmem_fallocate()
+> > specially in shmem_writepage(). For this we use serialization mechanism
+> > using structure attached to inode->i_private field. If we protect
+> > allocation of pages in shmem_fallocate() with invalidate_lock instead,
+> > we are sure added pages cannot be dirtied until shmem_fallocate() is done
+> > (invalidate_lock blocks faults, i_rwsem blocks writes) and thus we
+> > cannot see those pages in shmem_writepage() and there's no need for the
+> > serialization mechanism.
+> 
+> Appealing diffstat, but NAK, this patch is based on a false premise.
+> 
+> All those pages that are added by shmem_fallocate() are marked dirty:
+> see the set_page_dirty(page) and comment above it in shmem_fallocate().
 
-Some OSX extended attributes couldn't be displayed in ubuntu:
-$ mount -t hfsplus /dev/sdb3 /mnt
-$ cd /mnt
-$ getfattr -d -m ".*" picture.png
-Here, /dev/sdb is a usb stick from OSX computer.
+Aha, I missed that set_page_dirty(). Thanks for correcting me.
 
-Output:
-osx.com.apple.FinderInfo=0sAAAAAAAAAAAEHAAAAAAAAAAAAABgf5OhAAAAAAAAAAg=
-osx.com.apple.lastuseddate#PS=0soCWGYAAAAAATBhINAAAAAA==
-osx.com.apple.macl=0sAgCH2+S5OA9OG5WnnVb5d67AAAAAAAAAAAAAAAAAAAAAAAAAAA...
-Voronoi.png: osx.com.apple.metadata:_kMDItemUserTags: No such attribute
-Voronoi.png: osx.com.apple.metadata:kMDItemIsScreenCapture: No suchattr...
-Voronoi.png: osx.com.apple.metadata:kMDItemScreenCaptureGlobalRect: No ...
-Voronoi.png: osx.com.apple.metadata:kMDItemScreenCaptureType: No such a...
-osx.com.apple.quarantine="0082;608625a1;Preview;"
+> It's intentional, that they should percolate through to shmem_writepage()
+> when memory is tight, and give feedback to fallocate that it should stop
+> (instead of getting into that horrid OOM-kill flurry that never even
+> frees any tmpfs anyway).
 
-Here are 8 extended attributes in this file. However, some contents of
-them could not be retrieved.
+I understand the reason, I just feel there should be a better way of
+communicating memory pressure than ->writepage talking to ->fallocate
+through structure attached to inode->i_private. But now I see it isn't as
+simple as I thought ;) Anyway for now I'll just remove this patch. Thanks
+for review!
 
-The problem is caused by the name-mangling scheme of ascii-unicode
-conversions in fs/hfsplus/unicode.c. The character '/' is illegal in
-Linux filenames but valid in OSX filenames. In contrast, the character ':'
-is opposite. So a simple name-mangling scheme can be applied to
-hfsplus filenames by replacing unicode '/' by ascii ':' and ascii ':' by
-unicode '/'. However, there're no such constraints in attribute names.
-Forcely converting ':' to '/' will cause the xattr lookup failures.
+								Honza
 
-To fix this, we introduce a new parameter name_mangling in
-hfsplus_uni2asc() and hfsplus_asc2uni() to indicate whether to perform
-such name-mangling scheme or not. And we give the hints not to perform
-the scheme for attribute keys.
-
-Reviewed-by: Chung-Chiang Cheng <cccheng@synology.com>
-Signed-off-by: BingJing Chang <bingjingc@synology.com>
----
- fs/hfsplus/attributes.c |  7 ++++---
- fs/hfsplus/catalog.c    |  4 ++--
- fs/hfsplus/dir.c        |  3 ++-
- fs/hfsplus/hfsplus_fs.h |  5 +++--
- fs/hfsplus/unicode.c    | 22 ++++++++++++----------
- fs/hfsplus/xattr.c      |  5 +++--
- 6 files changed, 26 insertions(+), 20 deletions(-)
-
-diff --git a/fs/hfsplus/attributes.c b/fs/hfsplus/attributes.c
-index eeebe80..234badf 100644
---- a/fs/hfsplus/attributes.c
-+++ b/fs/hfsplus/attributes.c
-@@ -55,9 +55,10 @@ int hfsplus_attr_build_key(struct super_block *sb, hfsplus_btree_key *key,
- 	memset(key, 0, sizeof(struct hfsplus_attr_key));
- 	key->attr.cnid = cpu_to_be32(cnid);
- 	if (name) {
--		int res = hfsplus_asc2uni(sb,
--				(struct hfsplus_unistr *)&key->attr.key_name,
--				HFSPLUS_ATTR_MAX_STRLEN, name, strlen(name));
-+		int res = hfsplus_asc2uni(sb, (struct hfsplus_unistr *)
-+					  &key->attr.key_name,
-+					  HFSPLUS_ATTR_MAX_STRLEN,
-+					  name, strlen(name), false);
- 		if (res)
- 			return res;
- 		len = be16_to_cpu(key->attr.key_name.length);
-diff --git a/fs/hfsplus/catalog.c b/fs/hfsplus/catalog.c
-index 35472cb..f40fc9e 100644
---- a/fs/hfsplus/catalog.c
-+++ b/fs/hfsplus/catalog.c
-@@ -47,7 +47,7 @@ int hfsplus_cat_build_key(struct super_block *sb,
- 
- 	key->cat.parent = cpu_to_be32(parent);
- 	err = hfsplus_asc2uni(sb, &key->cat.name, HFSPLUS_MAX_STRLEN,
--			str->name, str->len);
-+			      str->name, str->len, true);
- 	if (unlikely(err < 0))
- 		return err;
- 
-@@ -183,7 +183,7 @@ static int hfsplus_fill_cat_thread(struct super_block *sb,
- 	entry->thread.reserved = 0;
- 	entry->thread.parentID = cpu_to_be32(parentid);
- 	err = hfsplus_asc2uni(sb, &entry->thread.nodeName, HFSPLUS_MAX_STRLEN,
--				str->name, str->len);
-+			      str->name, str->len, true);
- 	if (unlikely(err < 0))
- 		return err;
- 
-diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
-index 03e6c04..505b4e6 100644
---- a/fs/hfsplus/dir.c
-+++ b/fs/hfsplus/dir.c
-@@ -204,7 +204,8 @@ static int hfsplus_readdir(struct file *file, struct dir_context *ctx)
- 			fd.entrylength);
- 		type = be16_to_cpu(entry.type);
- 		len = NLS_MAX_CHARSET_SIZE * HFSPLUS_MAX_STRLEN;
--		err = hfsplus_uni2asc(sb, &fd.key->cat.name, strbuf, &len);
-+		err = hfsplus_uni2asc(sb, &fd.key->cat.name, strbuf, &len,
-+				      true);
- 		if (err)
- 			goto out;
- 		if (type == HFSPLUS_FOLDER) {
-diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
-index 12b2047..1481d0a 100644
---- a/fs/hfsplus/hfsplus_fs.h
-+++ b/fs/hfsplus/hfsplus_fs.h
-@@ -522,9 +522,10 @@ int hfsplus_strcasecmp(const struct hfsplus_unistr *s1,
- int hfsplus_strcmp(const struct hfsplus_unistr *s1,
- 		   const struct hfsplus_unistr *s2);
- int hfsplus_uni2asc(struct super_block *sb, const struct hfsplus_unistr *ustr,
--		    char *astr, int *len_p);
-+		    char *astr, int *len_p, bool name_mangling);
- int hfsplus_asc2uni(struct super_block *sb, struct hfsplus_unistr *ustr,
--		    int max_unistr_len, const char *astr, int len);
-+		    int max_unistr_len, const char *astr, int len,
-+		    bool name_mangling);
- int hfsplus_hash_dentry(const struct dentry *dentry, struct qstr *str);
- int hfsplus_compare_dentry(const struct dentry *dentry, unsigned int len,
- 			   const char *str, const struct qstr *name);
-diff --git a/fs/hfsplus/unicode.c b/fs/hfsplus/unicode.c
-index 73342c9..52d9186 100644
---- a/fs/hfsplus/unicode.c
-+++ b/fs/hfsplus/unicode.c
-@@ -121,7 +121,7 @@ static u16 *hfsplus_compose_lookup(u16 *p, u16 cc)
- 
- int hfsplus_uni2asc(struct super_block *sb,
- 		const struct hfsplus_unistr *ustr,
--		char *astr, int *len_p)
-+		char *astr, int *len_p, bool name_mangling)
- {
- 	const hfsplus_unichr *ip;
- 	struct nls_table *nls = HFSPLUS_SB(sb)->nls;
-@@ -187,7 +187,8 @@ int hfsplus_uni2asc(struct super_block *sb,
- 				c0 = 0x2400;
- 				break;
- 			case '/':
--				c0 = ':';
-+				if (name_mangling)
-+					c0 = ':';
- 				break;
- 			}
- 			res = nls->uni2char(c0, op, len);
-@@ -253,8 +254,8 @@ int hfsplus_uni2asc(struct super_block *sb,
-  * Convert one or more ASCII characters into a single unicode character.
-  * Returns the number of ASCII characters corresponding to the unicode char.
-  */
--static inline int asc2unichar(struct super_block *sb, const char *astr, int len,
--			      wchar_t *uc)
-+static inline int asc2unichar(struct super_block *sb, const char *astr,
-+			      int len, wchar_t *uc, bool name_mangling)
- {
- 	int size = HFSPLUS_SB(sb)->nls->char2uni(astr, len, uc);
- 	if (size <= 0) {
-@@ -266,7 +267,8 @@ static inline int asc2unichar(struct super_block *sb, const char *astr, int len,
- 		*uc = 0;
- 		break;
- 	case ':':
--		*uc = '/';
-+		if (name_mangling)
-+			*uc = '/';
- 		break;
- 	}
- 	return size;
-@@ -343,7 +345,7 @@ static u16 *decompose_unichar(wchar_t uc, int *size, u16 *hangul_buffer)
- 
- int hfsplus_asc2uni(struct super_block *sb,
- 		    struct hfsplus_unistr *ustr, int max_unistr_len,
--		    const char *astr, int len)
-+		    const char *astr, int len, bool name_mangling)
- {
- 	int size, dsize, decompose;
- 	u16 *dstr, outlen = 0;
-@@ -352,7 +354,7 @@ int hfsplus_asc2uni(struct super_block *sb,
- 
- 	decompose = !test_bit(HFSPLUS_SB_NODECOMPOSE, &HFSPLUS_SB(sb)->flags);
- 	while (outlen < max_unistr_len && len > 0) {
--		size = asc2unichar(sb, astr, len, &c);
-+		size = asc2unichar(sb, astr, len, &c, name_mangling);
- 
- 		if (decompose)
- 			dstr = decompose_unichar(c, &dsize, dhangul);
-@@ -399,7 +401,7 @@ int hfsplus_hash_dentry(const struct dentry *dentry, struct qstr *str)
- 	len = str->len;
- 	while (len > 0) {
- 		int dsize;
--		size = asc2unichar(sb, astr, len, &c);
-+		size = asc2unichar(sb, astr, len, &c, true);
- 		astr += size;
- 		len -= size;
- 
-@@ -456,7 +458,7 @@ int hfsplus_compare_dentry(const struct dentry *dentry,
- 
- 	while (len1 > 0 && len2 > 0) {
- 		if (!dsize1) {
--			size = asc2unichar(sb, astr1, len1, &c);
-+			size = asc2unichar(sb, astr1, len1, &c, true);
- 			astr1 += size;
- 			len1 -= size;
- 
-@@ -471,7 +473,7 @@ int hfsplus_compare_dentry(const struct dentry *dentry,
- 		}
- 
- 		if (!dsize2) {
--			size = asc2unichar(sb, astr2, len2, &c);
-+			size = asc2unichar(sb, astr2, len2, &c, true);
- 			astr2 += size;
- 			len2 -= size;
- 
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index 4d169c5..de6a1c9 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -735,8 +735,9 @@ ssize_t hfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size)
- 
- 		xattr_name_len = NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN;
- 		if (hfsplus_uni2asc(inode->i_sb,
--			(const struct hfsplus_unistr *)&fd.key->attr.key_name,
--					strbuf, &xattr_name_len)) {
-+				    (const struct hfsplus_unistr *)
-+				    &fd.key->attr.key_name, strbuf,
-+				    &xattr_name_len, false)) {
- 			pr_err("unicode conversion failed\n");
- 			res = -EIO;
- 			goto end_listxattr;
+> > CC: Hugh Dickins <hughd@google.com>
+> > CC: <linux-mm@kvack.org>
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> > ---
+> >  mm/shmem.c | 61 ++++++------------------------------------------------
+> >  1 file changed, 6 insertions(+), 55 deletions(-)
+> > 
+> > diff --git a/mm/shmem.c b/mm/shmem.c
+> > index f34162ac46de..7a2b0744031e 100644
+> > --- a/mm/shmem.c
+> > +++ b/mm/shmem.c
+> > @@ -94,18 +94,6 @@ static struct vfsmount *shm_mnt;
+> >  /* Symlink up to this size is kmalloc'ed instead of using a swappable page */
+> >  #define SHORT_SYMLINK_LEN 128
+> >  
+> > -/*
+> > - * shmem_fallocate communicates with shmem_writepage via inode->i_private (with
+> > - * i_rwsem making sure that it has only one user at a time): we would prefer
+> > - * not to enlarge the shmem inode just for that.
+> > - */
+> > -struct shmem_falloc {
+> > -	pgoff_t start;		/* start of range currently being fallocated */
+> > -	pgoff_t next;		/* the next page offset to be fallocated */
+> > -	pgoff_t nr_falloced;	/* how many new pages have been fallocated */
+> > -	pgoff_t nr_unswapped;	/* how often writepage refused to swap out */
+> > -};
+> > -
+> >  struct shmem_options {
+> >  	unsigned long long blocks;
+> >  	unsigned long long inodes;
+> > @@ -1364,28 +1352,11 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
+> >  	 * This is somewhat ridiculous, but without plumbing a SWAP_MAP_FALLOC
+> >  	 * value into swapfile.c, the only way we can correctly account for a
+> >  	 * fallocated page arriving here is now to initialize it and write it.
+> > -	 *
+> > -	 * That's okay for a page already fallocated earlier, but if we have
+> > -	 * not yet completed the fallocation, then (a) we want to keep track
+> > -	 * of this page in case we have to undo it, and (b) it may not be a
+> > -	 * good idea to continue anyway, once we're pushing into swap.  So
+> > -	 * reactivate the page, and let shmem_fallocate() quit when too many.
+> 
+> (b) there commenting on communicating back to fallocate by nr_unswapped.
+> 
+> > +	 * Since a page added by currently running fallocate call cannot be
+> > +	 * dirtied and thus arrive here we know the fallocate has already
+> > +	 * completed and we are fine writing it out.
+> >  	 */
+> >  	if (!PageUptodate(page)) {
+> > -		if (inode->i_private) {
+> > -			struct shmem_falloc *shmem_falloc;
+> > -			spin_lock(&inode->i_lock);
+> > -			shmem_falloc = inode->i_private;
+> > -			if (shmem_falloc &&
+> > -			    index >= shmem_falloc->start &&
+> > -			    index < shmem_falloc->next)
+> > -				shmem_falloc->nr_unswapped++;
+> > -			else
+> > -				shmem_falloc = NULL;
+> > -			spin_unlock(&inode->i_lock);
+> > -			if (shmem_falloc)
+> > -				goto redirty;
+> > -		}
+> >  		clear_highpage(page);
+> >  		flush_dcache_page(page);
+> >  		SetPageUptodate(page);
+> > @@ -2629,9 +2600,9 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+> >  							 loff_t len)
+> >  {
+> >  	struct inode *inode = file_inode(file);
+> > +	struct address_space *mapping = file->f_mapping;
+> >  	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+> >  	struct shmem_inode_info *info = SHMEM_I(inode);
+> > -	struct shmem_falloc shmem_falloc;
+> >  	pgoff_t start, index, end;
+> >  	int error;
+> >  
+> > @@ -2641,7 +2612,6 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+> >  	inode_lock(inode);
+> >  
+> >  	if (mode & FALLOC_FL_PUNCH_HOLE) {
+> > -		struct address_space *mapping = file->f_mapping;
+> >  		loff_t unmap_start = round_up(offset, PAGE_SIZE);
+> >  		loff_t unmap_end = round_down(offset + len, PAGE_SIZE) - 1;
+> >  
+> > @@ -2680,14 +2650,7 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+> >  		goto out;
+> >  	}
+> >  
+> > -	shmem_falloc.start = start;
+> > -	shmem_falloc.next  = start;
+> > -	shmem_falloc.nr_falloced = 0;
+> > -	shmem_falloc.nr_unswapped = 0;
+> > -	spin_lock(&inode->i_lock);
+> > -	inode->i_private = &shmem_falloc;
+> > -	spin_unlock(&inode->i_lock);
+> > -
+> > +	down_write(&mapping->invalidate_lock);
+> >  	for (index = start; index < end; index++) {
+> >  		struct page *page;
+> >  
+> > @@ -2697,8 +2660,6 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+> >  		 */
+> >  		if (signal_pending(current))
+> >  			error = -EINTR;
+> > -		else if (shmem_falloc.nr_unswapped > shmem_falloc.nr_falloced)
+> > -			error = -ENOMEM;
+> >  		else
+> >  			error = shmem_getpage(inode, index, &page, SGP_FALLOC);
+> >  		if (error) {
+> > @@ -2711,14 +2672,6 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+> >  			goto undone;
+> >  		}
+> >  
+> > -		/*
+> > -		 * Inform shmem_writepage() how far we have reached.
+> > -		 * No need for lock or barrier: we have the page lock.
+> > -		 */
+> > -		shmem_falloc.next++;
+> > -		if (!PageUptodate(page))
+> > -			shmem_falloc.nr_falloced++;
+> > -
+> >  		/*
+> >  		 * If !PageUptodate, leave it that way so that freeable pages
+> >  		 * can be recognized if we need to rollback on error later.
+> 
+> Which goes on to say:
+> 
+> 		 * But set_page_dirty so that memory pressure will swap rather
+> 		 * than free the pages we are allocating (and SGP_CACHE pages
+> 		 * might still be clean: we now need to mark those dirty too).
+> 		 */
+> 		set_page_dirty(page);
+> 		unlock_page(page);
+> 		put_page(page);
+> 		cond_resched();
+> 
+> > @@ -2736,9 +2689,7 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+> >  		i_size_write(inode, offset + len);
+> >  	inode->i_ctime = current_time(inode);
+> >  undone:
+> > -	spin_lock(&inode->i_lock);
+> > -	inode->i_private = NULL;
+> > -	spin_unlock(&inode->i_lock);
+> > +	up_write(&mapping->invalidate_lock);
+> >  out:
+> >  	inode_unlock(inode);
+> >  	return error;
+> > -- 
+> > 2.26.2
 -- 
-2.7.4
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
