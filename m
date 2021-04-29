@@ -2,130 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0D0036E37C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 05:07:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C442936E3A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 05:21:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236667AbhD2DHV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Apr 2021 23:07:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59252 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229805AbhD2DHT (ORCPT
+        id S231874AbhD2DWB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Apr 2021 23:22:01 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:55396 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229805AbhD2DWA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Apr 2021 23:07:19 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63366C06138C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 20:06:31 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id y32so46134707pga.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Apr 2021 20:06:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LzsK0XRJRcKd/jwe345M4zklKfr0vxO+HQX9uMQzJl4=;
-        b=CFpdvqjMM2iO0438xm8jADNK0yBAPYo0Y8B4AXgDvbm6NzHw+ne8F3PKaur9a2Hy1B
-         s29wsFmG9lcJavLzBUgguYTdPhRAvNHdTmYFJ/CIfD4OrU2h+hnbyxf/MKU0LbcwtEtH
-         nQi0KXxiMO0i0CZkS0/L4CgQpXEWPNUbkvWmAd5Y/JycUjy4FcXbyFzECLbh6M4XrT8k
-         IbR0zFiLPepzcpY8z0Q1M2eOJ+seyn7hkFu26WFJeUnm+007p1/95bRBI+NJay0RIvbn
-         6haBsXTRdsPEK7Oz+gt/k6mqMcSQ8BmVn8DzXhuY20PWjEDaPl0YyEGUhmcj0R7HE9x+
-         P0ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LzsK0XRJRcKd/jwe345M4zklKfr0vxO+HQX9uMQzJl4=;
-        b=hRiktE34YuhgJFw568wGGNfr3evi5UwuGQeKtBRZXOCxmrcgNJ6ojLY9i5TymfOGQW
-         /PUjXwZqciH31nMK/nFuAE1xquIEs2AzSsSE95EZP1SNfcLTESylr6XEoVURsfgdnMoD
-         E/YyeJPYaCVAfv4zPLvV1hQWh/+zriv0gD/gcCRQivqKEPKrZB6ytUjB3b7mJLvruJzO
-         ZtZ1Lb55ZmjWC0x+lOK1pZkIjJk18vnrkAcpE3EzWmiqwcRdocM9I9tSfqZN2ZWzVgVk
-         giQ2o7ywUB0E6//BUmQYtzwJvg1xRkIicIujq9HKAWnmYdkSNzbAD/f5RASWgBfClc04
-         o6Tw==
-X-Gm-Message-State: AOAM530ZCFoRKzPEnXu9OpAu1KAVs49nxYVX14lbBplFYTCdJsXx9eAY
-        GILiR1o3W9zZaTl4H43itMRBtZIxZ6yxj1OO54zUWg==
-X-Google-Smtp-Source: ABdhPJxpPyXvdCZEeyYIOqvE+aee4n1bqCETIhvrgSUIn3wIKuGSLDBgNYTRXHjGCjHCYUxwxi2fmdHH694cC62htOU=
-X-Received: by 2002:a05:6a00:8c7:b029:20f:1cf4:d02 with SMTP id
- s7-20020a056a0008c7b029020f1cf40d02mr31717884pfu.49.1619665590935; Wed, 28
- Apr 2021 20:06:30 -0700 (PDT)
+        Wed, 28 Apr 2021 23:22:00 -0400
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 13T3Kvh8028190
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Apr 2021 23:20:59 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 78C8115C39C4; Wed, 28 Apr 2021 23:20:57 -0400 (EDT)
+Date:   Wed, 28 Apr 2021 23:20:57 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, pakki001@umn.edu,
+        gregkh@linuxfoundation.org, arnd@arndb.de
+Subject: Re: [PATCH] ics932s401: fix broken handling of errors when word
+ reading fails
+Message-ID: <YIomGeKBiGr95aJB@mit.edu>
+References: <20210428222534.GJ3122264@magnolia>
+ <20210428224624.GD1847222@casper.infradead.org>
+ <20210429010351.GI1251862@magnolia>
 MIME-Version: 1.0
-References: <20210428094949.43579-1-songmuchun@bytedance.com> <CALvZod6XtOpPAg5BipOe3fWJrDXFhonqgne8eaD6QBr07rDR2w@mail.gmail.com>
-In-Reply-To: <CALvZod6XtOpPAg5BipOe3fWJrDXFhonqgne8eaD6QBr07rDR2w@mail.gmail.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Thu, 29 Apr 2021 11:05:53 +0800
-Message-ID: <CAMZfGtXfauTObW=+PA03WD14b7wzX7cbgXBYqQ0nFs1LVXmzWg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH 0/9] Shrink the list lru size on memory
- cgroup removal
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Roman Gushchin <guro@fb.com>, Yang Shi <shy828301@gmail.com>,
-        alexs@kernel.org,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210429010351.GI1251862@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 29, 2021 at 7:32 AM Shakeel Butt <shakeelb@google.com> wrote:
->
-> On Wed, Apr 28, 2021 at 2:54 AM Muchun Song <songmuchun@bytedance.com> wrote:
-> >
-> > In our server, we found a suspected memory leak problem. The kmalloc-32
-> > consumes more than 6GB of memory. Other kmem_caches consume less than 2GB
-> > memory.
-> >
-> > After our in-depth analysis, the memory consumption of kmalloc-32 slab
-> > cache is the cause of list_lru_one allocation.
-> >
-> >   crash> p memcg_nr_cache_ids
-> >   memcg_nr_cache_ids = $2 = 24574
-> >
-> > memcg_nr_cache_ids is very large and memory consumption of each list_lru
-> > can be calculated with the following formula.
-> >
-> >   num_numa_node * memcg_nr_cache_ids * 32 (kmalloc-32)
-> >
-> > There are 4 numa nodes in our system, so each list_lru consumes ~3MB.
-> >
-> >   crash> list super_blocks | wc -l
-> >   952
-> >
-> > Every mount will register 2 list lrus, one is for inode, another is for
-> > dentry. There are 952 super_blocks. So the total memory is 952 * 2 * 3
-> > MB (~5.6GB). But the number of memory cgroup is less than 500. So I
-> > guess more than 12286 containers have been deployed on this machine (I
-> > do not know why there are so many containers, it may be a user's bug or
-> > the user really want to do that). But now there are less than 500
-> > containers in the system. And memcg_nr_cache_ids has not been reduced
-> > to a suitable value. This can waste a lot of memory. If we want to reduce
-> > memcg_nr_cache_ids, we have to reboot the server. This is not what we
-> > want.
-> >
-> > So this patchset will dynamically adjust the value of memcg_nr_cache_ids
-> > to keep healthy memory consumption. In this case, we may be able to restore
-> > a healthy environment even if the users have created tens of thousands of
-> > memory cgroups and then destroyed those memory cgroups. This patchset also
-> > contains some code simplification.
-> >
->
-> There was a recent discussion [1] on the same issue. Did you get the
-> chance to take a look at that. I have not gone through this patch
-> series yet but will do in the next couple of weeks.
->
-> [1] https://lore.kernel.org/linux-fsdevel/20210405054848.GA1077931@in.ibm.com/
+On Wed, Apr 28, 2021 at 06:03:51PM -0700, Darrick J. Wong wrote:
+> I had half expected them all to get reverted immediately, but since 5.12
+> went out with this still included, I thought it worth pointing out that
+> despite UMN claims that none of their junk patches made it to Linus,
+> this (mostly benign) one did.  Granted, maybe 18 Jan 2019 was earlier
+> than that, but who knows and who cares? :P
 
-Thanks for your reminder.
+The claim was none of their "hypocrite commits" made it to Linus.
+That said nothing about any of their other patches that had been
+developed using some of their other research efforts.
 
-No, I haven't. But now I have looked at this. The issue is very similar
-to mine. But Bharata seems to want to run 10k containers. And
-optimize the memory consumption of list_lru_one in this case.
-This is not what I do. I want to try to shrink the size of the list lrus
-when the number of memcgs is reduced from tens of thousands
-to hundreds.
+Greg isn't planning on sending any of the reverts until the 5.13 merge
+window, after doing a lot of reviews to determine which of the 190
+commits were actually incorrect, and of those, how many may have
+actually introduced security vulnerabilities.  "Good faith hypocrite
+commits", if you will.  (Hey, we're all human; I know I've sent my
+share of buggy commits where I unintentionally introduced a bug.  :-)
 
-Thanks.
+If they can look at the buggy-yet-accepted commits, and map them to
+the research efforts in their previous papers, and then do feature
+analysis on the bad commits, maybe it will be possible for them to
+rework their "hypocrite commit" paper, and perhaps give us some
+insights about how to better find buggy commits in our code reviews
+--- that is, besides "try harder" and changing the Code of Conduct to
+prohibit intentionally introducing bugs (as they had proposed in their
+now-withdrawn paper).
+
+Also of interest is of the 68 UMN commits that did not cleanly revert;
+it may have been because they were incorrect, but were later fixed
+and/or reverted.  In which case, we can probably learn about how long
+it takes for problems introduced by "good faith hypocrite commits" to
+get fixed naturally, without needing to do an emergency code review of
+all UMN patches sent in the past three years or so.
+
+						- Ted
