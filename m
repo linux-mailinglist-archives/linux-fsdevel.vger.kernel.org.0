@@ -2,146 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D5EF36EEAA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 19:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BAC036EF24
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 19:51:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240843AbhD2RPW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Apr 2021 13:15:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:26758 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233329AbhD2RPW (ORCPT
+        id S241056AbhD2Rv7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Apr 2021 13:51:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57130 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241007AbhD2Rv6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Apr 2021 13:15:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619716475;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8RXzvV9OayhG64BmNGxjD390UiscULVbN0Giy/F/zR4=;
-        b=PUiGa7sBzt54uGUKOL14PkXwJWp3XWxGbo7GhGrVFQvxndGpOWq+CLrk8B5vu8fkI1Zu9G
-        3a4E1Iw8K9jtkZf1Xm2xt8jVPigcJVzrLuFyCVFMjt/l2N3hwr/HJ5eF85YaMu9RSMLRco
-        tal44/OQt6DS+BA5tSIqNEEd+abn22E=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-580-qf9AbUHoNeSRlaEwfvTy8g-1; Thu, 29 Apr 2021 13:14:33 -0400
-X-MC-Unique: qf9AbUHoNeSRlaEwfvTy8g-1
-Received: by mail-wm1-f71.google.com with SMTP id d78-20020a1c1d510000b0290132794b7801so54425wmd.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Apr 2021 10:14:32 -0700 (PDT)
+        Thu, 29 Apr 2021 13:51:58 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B424C06138B
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Apr 2021 10:51:11 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id c11so2177542lfi.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Apr 2021 10:51:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6As9QWB6Bh2AmK0gqxTfBNY3/GVKKNOfvjuvOCjRnsY=;
+        b=CMBlR2cONsJRSVTzvsEhjwLrLl8X3/1UbmXgxMCZsoJVtJgmnPSAXsraEDcY8C0qhJ
+         dF+0hqGhEuxcsoVcg63yfRv8tKMj+gxh5WAt8Ebm+NroA4rNJ0HxHMlPloS2ve88C9xH
+         godFDieuF8yt8hRTWJ7DH02vPp+8OcauXV558=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8RXzvV9OayhG64BmNGxjD390UiscULVbN0Giy/F/zR4=;
-        b=ILA23sDtGuJCgrt1WUW13/+zAEdtCRM3rWSsommHyJrK1RpMUSBIyBIhSf3aLdczS6
-         DT9ygAtRZweHbirJVRu1JVXStiyMrwDrirtWqTm7a+5BlguHMr3KRaS3gPs8m00VFv4F
-         x2UeaghkUU1tZoWX8X1pazrJ1ovZLvSeup8X5GvExZ0MpUWgawbBu7/7W6E2gm7WYDdE
-         7qkGO1V5/ttxNYDUrJZD9bmIi6AqicYPjioTRFLKeSwdoOIMdGh7tAflWHn6SoIHDHZ5
-         rOxFRJpwzC6nkTjB8oTcBgdZmh2+OWLRbmzBjcp6y2O7w7TfWhgEWXFYVSmWPT1h65pg
-         Fy6g==
-X-Gm-Message-State: AOAM533Dh3T9sm56KniylnHrlzGY6HIWrR19sGdAsWLtW3slMdViwk4A
-        qk1pSguR4Sbs49m6YQ+m2sAYbE6KuosFrRrv4Hb1obF6MtIhNiXs5blJ+/RzBba6LxHkFbEGD83
-        6TgX1crusZFHPtVWtb8a1iAPJ+bsRGbKki12+lUOPFw==
-X-Received: by 2002:a7b:c5c8:: with SMTP id n8mr1303766wmk.2.1619716471705;
-        Thu, 29 Apr 2021 10:14:31 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzqqJNwW6qO+gOOYbgUVgcP4w2CGtX5ilJ2ey5tGpv23Te/nOWasO76frpbdhzHgMiUs34r0vc0+rJcpHDH1co=
-X-Received: by 2002:a7b:c5c8:: with SMTP id n8mr1303722wmk.2.1619716471400;
- Thu, 29 Apr 2021 10:14:31 -0700 (PDT)
+        bh=6As9QWB6Bh2AmK0gqxTfBNY3/GVKKNOfvjuvOCjRnsY=;
+        b=M92CylvCjT6uWKN1DKWUdrpMnUxn4i+XmY3FISdkhTLK7jr28igLFrtduvRnwZxQsm
+         8Hu+dLtbsxVcwyz+sax4CMDMX2gSdcLfZSKJeKZalLyWh4vv2ZwiUJV1oKo/MIhJoRXk
+         J+RAeJvMre8wrMQo8n5ucN8r0g0CRtlei6+Ydlg6HUo7hmvy0wi9GjFqWu061J+uOkCS
+         fdd/vLjQQz9OTgu4gjs3+t1daSBw99HL9sWlVLdBhK1L10aGtcixaLzG4jeOQqXAQdUx
+         ZybGj3P1YjWlXsvgPghM5Z/N1OYKlUSmVeH+ylHziuh9C+ojuFOTVIMKXzN060D87wXS
+         6h3g==
+X-Gm-Message-State: AOAM531XbnwYR4UBtuZQTmrgBZBLbWgbljwE4dNatm5MUEjFlAzxvb8J
+        XG4z8VPPh0gkJ8FWKiC5shJIe0t0VPy85xBp
+X-Google-Smtp-Source: ABdhPJwORa0WfMOOPtUn2pVUHdInfmq6p82F3Hgdd83DTx2mnSqsOxyUgXue0PTgso2BzVAI6pl1xw==
+X-Received: by 2002:a05:6512:3b9e:: with SMTP id g30mr482663lfv.103.1619718669826;
+        Thu, 29 Apr 2021 10:51:09 -0700 (PDT)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id e29sm595928ljp.94.2021.04.29.10.51.07
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Apr 2021 10:51:08 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id x19so75790893lfa.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Apr 2021 10:51:07 -0700 (PDT)
+X-Received: by 2002:ac2:5f92:: with SMTP id r18mr484354lfe.253.1619718667143;
+ Thu, 29 Apr 2021 10:51:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210426220552.45413-1-junxiao.bi@oracle.com>
-In-Reply-To: <20210426220552.45413-1-junxiao.bi@oracle.com>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Thu, 29 Apr 2021 19:14:20 +0200
-Message-ID: <CAHc6FU62TpZTnAYd3DWFNWWPZP-6z+9JrS82t+YnU-EtFrnU0Q@mail.gmail.com>
-Subject: Re: [Cluster-devel] [PATCH 1/3] fs/buffer.c: add new api to allow eof writeback
-To:     Junxiao Bi <junxiao.bi@oracle.com>
-Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-        ocfs2-devel@oss.oracle.com,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20210429170619.GM3122264@magnolia>
+In-Reply-To: <20210429170619.GM3122264@magnolia>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 29 Apr 2021 10:50:51 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgpn570yfA+EM5yZ0T-m0c5jnLcx3WGSu3xR8E4DGvCFg@mail.gmail.com>
+Message-ID: <CAHk-=wgpn570yfA+EM5yZ0T-m0c5jnLcx3WGSu3xR8E4DGvCFg@mail.gmail.com>
+Subject: Re: [GIT PULL] xfs: new code for 5.13
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Junxiao,
-
-On Tue, Apr 27, 2021 at 4:44 AM Junxiao Bi <junxiao.bi@oracle.com> wrote:
-> When doing truncate/fallocate for some filesytem like ocfs2, it
-> will zero some pages that are out of inode size and then later
-> update the inode size, so it needs this api to writeback eof
-> pages.
-
-is this in reaction to Jan's "[PATCH 0/12 v4] fs: Hole punch vs page
-cache filling races" patch set [*]? It doesn't look like the kind of
-patch Christoph would be happy with.
-
-Thanks,
-Andreas
-
-[*] https://lore.kernel.org/linux-fsdevel/20210423171010.12-1-jack@suse.cz/
-
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-> ---
->  fs/buffer.c                 | 14 +++++++++++---
->  include/linux/buffer_head.h |  3 +++
->  2 files changed, 14 insertions(+), 3 deletions(-)
+On Thu, Apr 29, 2021 at 10:06 AM Darrick J. Wong <djwong@kernel.org> wrote:
 >
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index 0cb7ffd4977c..802f0bacdbde 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -1709,9 +1709,9 @@ static struct buffer_head *create_page_buffers(struct page *page, struct inode *
->   * WB_SYNC_ALL, the writes are posted using REQ_SYNC; this
->   * causes the writes to be flagged as synchronous writes.
->   */
-> -int __block_write_full_page(struct inode *inode, struct page *page,
-> +int __block_write_full_page_eof(struct inode *inode, struct page *page,
->                         get_block_t *get_block, struct writeback_control *wbc,
-> -                       bh_end_io_t *handler)
-> +                       bh_end_io_t *handler, bool eof_write)
->  {
->         int err;
->         sector_t block;
-> @@ -1746,7 +1746,7 @@ int __block_write_full_page(struct inode *inode, struct page *page,
->          * handle any aliases from the underlying blockdev's mapping.
->          */
->         do {
-> -               if (block > last_block) {
-> +               if (block > last_block && !eof_write) {
->                         /*
->                          * mapped buffers outside i_size will occur, because
->                          * this page can be outside i_size when there is a
-> @@ -1871,6 +1871,14 @@ int __block_write_full_page(struct inode *inode, struct page *page,
->         unlock_page(page);
->         goto done;
->  }
-> +EXPORT_SYMBOL(__block_write_full_page_eof);
-> +
-> +int __block_write_full_page(struct inode *inode, struct page *page,
-> +                       get_block_t *get_block, struct writeback_control *wbc,
-> +                       bh_end_io_t *handler)
-> +{
-> +       return __block_write_full_page_eof(inode, page, get_block, wbc, handler, false);
-> +}
->  EXPORT_SYMBOL(__block_write_full_page);
->
->  /*
-> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-> index 6b47f94378c5..5da15a1ba15c 100644
-> --- a/include/linux/buffer_head.h
-> +++ b/include/linux/buffer_head.h
-> @@ -221,6 +221,9 @@ int block_write_full_page(struct page *page, get_block_t *get_block,
->  int __block_write_full_page(struct inode *inode, struct page *page,
->                         get_block_t *get_block, struct writeback_control *wbc,
->                         bh_end_io_t *handler);
-> +int __block_write_full_page_eof(struct inode *inode, struct page *page,
-> +                       get_block_t *get_block, struct writeback_control *wbc,
-> +                       bh_end_io_t *handler, bool eof_write);
->  int block_read_full_page(struct page*, get_block_t*);
->  int block_is_partially_uptodate(struct page *page, unsigned long from,
->                                 unsigned long count);
-> --
-> 2.24.3 (Apple Git-128)
->
+> Unfortunately, some of our refactoring work collided with Miklos'
+> patchset that refactors FS_IOC_[GS]ETFLAGS and FS_IOC_FS[GS]ETXATTR.
 
+Ok, the resolution looked reasonably straightforward to me, and I
+ended up with what looks like the same end result you did.
+
+But I only did a visual inspection of our --cc diffs (you seem to use
+--patience, which made my initial diff look different) and obviously
+verified that it all builds cleanly, I didn't do any actual testing.
+
+So please double-check that everything still looks good,
+
+                 Linus
