@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21D5736E9E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 14:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CB3836E9EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 14:03:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233337AbhD2MBl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Apr 2021 08:01:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35574 "EHLO
+        id S233011AbhD2MEV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Apr 2021 08:04:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231343AbhD2MBj (ORCPT
+        with ESMTP id S231343AbhD2MEV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Apr 2021 08:01:39 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD0EFC06138B;
-        Thu, 29 Apr 2021 05:00:51 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id h15so14395879wre.11;
-        Thu, 29 Apr 2021 05:00:51 -0700 (PDT)
+        Thu, 29 Apr 2021 08:04:21 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3207C06138B;
+        Thu, 29 Apr 2021 05:03:34 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id n2so13486254wrm.0;
+        Thu, 29 Apr 2021 05:03:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=eL7kzrQuQQqjx9marUBLtMFHaHO1ZN6rfrvAhnpX8HE=;
-        b=pL3rSfZfiYa/AAXPA4mQPKPXTA1R8bmrJ9ja4YL/7fclS8/puO8retk+ccDhlr8/R3
-         wlHfDCSBmiQ0MSkZs3EhBLDCpa4qUAy4baFAWVbdrDOXIoyZWO78YUuRKSGr0QPlGF/N
-         1xKnOV+3IYn3OsW7iAprn4tE8EF3PfGMPCYvPrgUq4fWQoLtoVQ870Z36JvVzWhoSlNz
-         OoI8wrQYjggcs6iRBZgeJElBbTDwuoA/COBlKkGo466dRZuzg2uWnHMzW9fo8re8YNR8
-         EjemtUPja6QsFZNpGdLUrecF2mHIretVYaqdQGAcESP5T51nhymqzlPjs9b2fEpXt+k2
-         aboA==
+        bh=+7SJd1dfwP75iJuc22gPuZeM/v2rpuHZDX9VGTB084E=;
+        b=eiEKI+ziJjSte8zKQM64WfXQOn+WsVQgWWmmUzrT81SSbZK9srhkfM8Wgiua/HnvyQ
+         MDd7fPPWvxyc+d9ecAxYFnWQJnc/1LnkWh7Qcj8Bd5GFidjktWsZfgSxqS3v4N5/aYtH
+         PT/vagIlO93V6vTY9kYE6sWt9D/H29SKb1roX9dhdFhdwBTAvYSl1d8b1ccmsDAvdTKJ
+         tP9kKaAG6sKy1iD4N2xfXumJqAKL6Zo42EqNplosHvkXoSS4xqeQ1UTeLMcHvf8UjKJt
+         BQHtFJhRSjL9tOm6bfDCpALsuKKzTQkQLEbRbRSn1Y0PZ47/zR66PYSLEnOh3P2eLKwI
+         TPLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eL7kzrQuQQqjx9marUBLtMFHaHO1ZN6rfrvAhnpX8HE=;
-        b=umDxerFAUX7UlsebHeHxBaHwqrIiQYVi0IRL5lGGXXo50NWFHqSK8vOwaGzhqx6ebW
-         BwBSbBfj0+igCiH7H8xZ0c4ilMWQLYwvFoExcJ6KzAp6qICIB95RVBjGrEBzYT/U2UV0
-         9jJr2NAoKn25j8JNyLIxIgAH5tDdWDo3ySESv8pSoBORYfAozvWVU44CgzXN+cRaWOTs
-         LNCZ8doKlztwq9lNWRIlIWAHK67VWTY7mszGWX5pRZr/gpC4M5t7DAicvqYo4TiVJR4g
-         K220G+9In1DdPIrOavOcdF+/OMqK/DCF6qZCfqx1XK6z6RFcv+aM5glguO1h7iYzXQcZ
-         WtqA==
-X-Gm-Message-State: AOAM532tCGmK8Yz7gK65HBZYUaV2uqshTOrV5vn2OyxodsOE3HV2lNb6
-        Xwnuw6jhIYvtjjnURz3uh9WrWRzh4ZL3FXnYHA8=
-X-Google-Smtp-Source: ABdhPJys5fLcsFOTfbWkCMLTvilRbno5eHK/GA3+o5yiwDbOz6bayC2JBT8z2yunv9DoF6sZF3VFcCbkbX/nfN6Ie6U=
-X-Received: by 2002:a5d:58e1:: with SMTP id f1mr17018329wrd.375.1619697650366;
- Thu, 29 Apr 2021 05:00:50 -0700 (PDT)
+        bh=+7SJd1dfwP75iJuc22gPuZeM/v2rpuHZDX9VGTB084E=;
+        b=UXXZfjUNcTRtjBnQbUT2PyJ13Blwiam7NsZDz1GXEsX2cKKTkKjqy20JSlSn90z1y/
+         hJ3BbJkQXaB+Ryv4acmPV4y97r32ZT1ADVYojpqJvk+AHHpw4GO3OkccO7gPOyNn5fdY
+         d1LDc73IjWodhra0Uf/e6zhHZ7LQlppLdKX3stsqDo/Ae/dtZZGzQckVTgBHzdNUyzZY
+         LtPRmtnM3XRDAT8CTTXtERoj0aAxm75fWKPZTYFck93J3uWXVhmCLD9PTTq1LZNY93f1
+         ZsZqeGQywjNqZbgU5L8tDYbYjzeX+zVdtcvtkdzfVjecYwNZnc0Gx7TKLF0sRgRbR6M1
+         qihA==
+X-Gm-Message-State: AOAM533mytBmYeYhVOEghD/LRxLk2pzbpxJPs9q7zURFZQGMubdZ3RuU
+        9fp+YYOMhvZ8RT5dU5ORPFdoly6+aS/6NbHxE+OmPqtnlcY=
+X-Google-Smtp-Source: ABdhPJw98AmDp3uyzb5MHSLry9VVoImFNnXoUCxrk2GF4FuWhex1qsEuDQosp+vxOsQlSj9d0i+L+o5afCifVQP72Gc=
+X-Received: by 2002:a5d:4c8a:: with SMTP id z10mr15998737wrs.395.1619697813633;
+ Thu, 29 Apr 2021 05:03:33 -0700 (PDT)
 MIME-Version: 1.0
 References: <161961335926.39335.2552653972195467566.stgit@warthog.procyon.org.uk>
 In-Reply-To: <161961335926.39335.2552653972195467566.stgit@warthog.procyon.org.uk>
 From:   Marc Dionne <marc.c.dionne@gmail.com>
-Date:   Thu, 29 Apr 2021 09:00:39 -0300
-Message-ID: <CAB9dFdvMCYNxxdmoiRF2qs9Z9qpd3Rg7qjBfG3Wg8=GzhygHGQ@mail.gmail.com>
+Date:   Thu, 29 Apr 2021 09:03:22 -0300
+Message-ID: <CAB9dFdvaMJW=y=2O3SUC+vmXfhutTsM6kFc6Jy45993WC4V_fg@mail.gmail.com>
 Subject: Re: [PATCH] afs: Fix speculative status fetches
 To:     David Howells <dhowells@redhat.com>
 Cc:     linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
@@ -295,4 +295,9 @@ On Wed, Apr 28, 2021 at 9:36 AM David Howells <dhowells@redhat.com> wrote:
 > linux-afs mailing list
 > http://lists.infradead.org/mailman/listinfo/linux-afs
 
-Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
+Also verified that it gets rid of the warnings while running the
+generic/464, so you can add:
+
+Tested-by: Marc Dionne <marc.dionne@auristor.com>
+
+Marc
