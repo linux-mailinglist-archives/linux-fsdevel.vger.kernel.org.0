@@ -2,78 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 51E3F36EF99
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 20:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C14AA36F066
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 21:25:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241249AbhD2Sl3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Apr 2021 14:41:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39756 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233902AbhD2Sl3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Apr 2021 14:41:29 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A080C06138B;
-        Thu, 29 Apr 2021 11:40:42 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 15E9B1F4366D
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Theodore Tso <tytso@mit.edu>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com
-Subject: Re: [PATCH RFC 10/15] fanotify: Introduce code location record
-Organization: Collabora
-References: <20210426184201.4177978-1-krisman@collabora.com>
-        <20210426184201.4177978-11-krisman@collabora.com>
-        <CAOQ4uxh_AQCj2XJgVzFp862xhr70FAS6n3QjeeQSd_bizw3Ssw@mail.gmail.com>
-Date:   Thu, 29 Apr 2021 14:40:37 -0400
-In-Reply-To: <CAOQ4uxh_AQCj2XJgVzFp862xhr70FAS6n3QjeeQSd_bizw3Ssw@mail.gmail.com>
-        (Amir Goldstein's message of "Tue, 27 Apr 2021 10:11:12 +0300")
-Message-ID: <87lf9153yy.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        id S229861AbhD2TYh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Apr 2021 15:24:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33850 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231631AbhD2TUI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Apr 2021 15:20:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 523A26143A;
+        Thu, 29 Apr 2021 19:19:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619723945;
+        bh=zaHmnMI1qm7aj0odMUw1v/NysGsQ/7dYEMqbptg8O84=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GdDDOlb+e7KfUYg1DV7rjB5mWL8mlH23+G9PXxSwN7bjqvcCIwEtsBOyYTk+OTCOS
+         6Hf3UykjYfoWKnsGTatt2dqLzcecWcnTKVhc0JnV6f9pcLNSHtAzVMkERjecprYZJB
+         wMeoGhSg1TSZ/CqxcDSKkp6q/O6XWe8cei/E8dLv0xElpnkiHbjmB8W8QgQEVkzM+d
+         q1w6L46o9kgkMdKCJctMdY3hYm3+nMhXWGFLPd7tuSaTXPhr3PpTIEMepQzbxpgg7M
+         cd7/QJD6TMIJXvn6whkF3VkWTJ2nfY2x0RsqRl7hkTY5niwJvNnSkRmQSY4j0T+A73
+         FgYgRpuQ0Rg2A==
+Date:   Thu, 29 Apr 2021 12:19:04 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [GIT PULL] xfs: new code for 5.13
+Message-ID: <20210429191904.GN3122264@magnolia>
+References: <20210429170619.GM3122264@magnolia>
+ <CAHk-=wgpn570yfA+EM5yZ0T-m0c5jnLcx3WGSu3xR8E4DGvCFg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgpn570yfA+EM5yZ0T-m0c5jnLcx3WGSu3xR8E4DGvCFg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Amir Goldstein <amir73il@gmail.com> writes:
+On Thu, Apr 29, 2021 at 10:50:51AM -0700, Linus Torvalds wrote:
+> On Thu, Apr 29, 2021 at 10:06 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > Unfortunately, some of our refactoring work collided with Miklos'
+> > patchset that refactors FS_IOC_[GS]ETFLAGS and FS_IOC_FS[GS]ETXATTR.
+> 
+> Ok, the resolution looked reasonably straightforward to me, and I
+> ended up with what looks like the same end result you did.
+> 
+> But I only did a visual inspection of our --cc diffs (you seem to use
+> --patience, which made my initial diff look different) and obviously
+> verified that it all builds cleanly, I didn't do any actual testing.
+> 
+> So please double-check that everything still looks good,
 
-> On Mon, Apr 26, 2021 at 9:43 PM Gabriel Krisman Bertazi
-> <krisman@collabora.com> wrote:
->>
->> This patch introduces an optional info record that describes the
->> source (as in the region of the source-code where an event was
->> initiated).  This record is not produced for other type of existing
->> notification, but it is optionally enabled for FAN_ERROR notifications.
->>
->
-> I find this functionality controversial, because think that the fs provided
-> s_last_error*, s_first_error* is more reliable and more powerful than this
-> functionality.
->
-> Let's leave it for a future extending proposal, should fanotify event reporting
-> proposal pass muster, shall we?
-> Or do you think that without this optional extension fanotify event reporting
-> will not be valuable enough?
+At a first glance it looks good to me, thanks. :)
 
-I think it is valuable enough without this bit, at least on a first
-moment.  I understand it would be useful for ext4 to analyse information
-through this interface, but the main priority is to have a way to push
-out the information that an error occured, as you mentioned.
+(Currently running fstests to double-check...)
 
-Also, this might be more powerful if we stick to the ring buffer instead
-of single stlot, as it would allow more data to be collected than just
-first/last.
->
-> Thanks,
-> Amir.
+--D
 
--- 
-Gabriel Krisman Bertazi
+> 
+>                  Linus
