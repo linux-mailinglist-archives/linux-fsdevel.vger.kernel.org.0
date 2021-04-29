@@ -2,99 +2,234 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B311136E2A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 02:46:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8500136E2C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 02:57:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234355AbhD2AiN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Apr 2021 20:38:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40390 "EHLO mail.kernel.org"
+        id S232095AbhD2A6f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Apr 2021 20:58:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233525AbhD2AiM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Apr 2021 20:38:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B68B461411;
-        Thu, 29 Apr 2021 00:37:26 +0000 (UTC)
+        id S229479AbhD2A6e (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Apr 2021 20:58:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 07B9661423;
+        Thu, 29 Apr 2021 00:57:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619656646;
-        bh=4+vm561KYXZGHp6HwhpVsFi+J9z9ix618BPaJuvAZTY=;
+        s=k20201202; t=1619657869;
+        bh=gnim+zpxDvmUPkterXp3NMO9ZofgKmb2jTya0X5ziN0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=g1T1eApDT8CY963O5SaoubJoDKqPkndsA3c9Oi/v5BmLq7tdmYA1VH6zqR3GPgcJ3
-         epWSV/Ql/R6GJzAB1Ukt8Pwwl+2XSbtd8LYomLcBZ11obfUTNwpSV4I6AH/B3pD4Mz
-         z8pwclyDtJA1kYuf45jk8JJPxAdixsoSbES1caQEbm41AEa0A5sVACuYMyxUxbS/8C
-         y7XjM0lrxYr2b/tS9XgFpEn8G3wWU/A15rJE9KasCW9gFTnyIu9wNLmi5ICeEU14Gs
-         5D8gniFvKxQHKgWaN/EuW8+h+otc/JRPHsYifpJWPfurhq6bDolrzrJLqTW9MZt1Sc
-         xMGmucvbuwJzw==
-Date:   Wed, 28 Apr 2021 17:37:26 -0700
+        b=jBby6sSl0WJQNyesYT6YXQHmd4+0H3ZMt2ZP4YcW/Xs0UBKyKiX93yqleYBw+ziaT
+         D1ep1SpSQa6JpWhYzaAaQ8fj9wAB4RkcJC+D0WpmG/jxquHZecttVdhkZCnXpHvwGi
+         PiNqhuZNnOmh9hFyN6muSRG88qSHhtyFUGTNrh5geqkncc8vL83qjnMcRMePY54AiT
+         zPUW9wlbRPmT0/F88JxuVTlqXE4KFWIkEcACesRO8LpswmyZw2Fy3QGcoZ15b4y7Qs
+         Gqf949pY9bMFY8QZlBxsvEHMUnjK4GwNQJpdA7IceLEnZZ7CU+ksWGCErTSZcWsMn2
+         9LMYoz2zdTc+w==
+Date:   Wed, 28 Apr 2021 17:57:49 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Shreeya Patel <shreeya.patel@collabora.com>,
-        Matthew Wilcox <willy@infradead.org>, fstests@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, krisman@collabora.com,
-        preichl@redhat.com, kernel@collabora.com
-Subject: Re: [PATCH] generic/453: Exclude filenames that are not supported by
- exfat
-Message-ID: <20210429003726.GG1251862@magnolia>
-References: <20210425223105.1855098-1-shreeya.patel@collabora.com>
- <20210426003430.GH235567@casper.infradead.org>
- <a49ecbfb-2011-0c7c-4405-b4548d22389d@collabora.com>
- <20210426123734.GK235567@casper.infradead.org>
- <bc7a33e8-7e9c-8045-e90e-bb53ec4f2c61@collabora.com>
- <20210427181116.GH3122235@magnolia>
- <YIloQDGP+0mRQdbP@mit.edu>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     amir73il@gmail.com, tytso@mit.edu, david@fromorbit.com,
+        jack@suse.com, dhowells@redhat.com, khazhy@google.com,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH RFC 13/15] ext4: Send notifications on error
+Message-ID: <20210429005749.GH1251862@magnolia>
+References: <20210426184201.4177978-1-krisman@collabora.com>
+ <20210426184201.4177978-14-krisman@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YIloQDGP+0mRQdbP@mit.edu>
+In-Reply-To: <20210426184201.4177978-14-krisman@collabora.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 28, 2021 at 09:50:56AM -0400, Theodore Ts'o wrote:
-> On Tue, Apr 27, 2021 at 11:11:16AM -0700, Darrick J. Wong wrote:
-> > 
-> > TBH I think these tests (g/453 and g/454) are probably only useful for
-> > filesystems that allow unrestricted byte streams for names.
+On Mon, Apr 26, 2021 at 02:41:59PM -0400, Gabriel Krisman Bertazi wrote:
+> Send a FS_ERROR message via fsnotify to a userspace monitoring tool
+> whenever a ext4 error condition is triggered.  This follows the existing
+> error conditions in ext4, so it is hooked to the ext4_error* functions.
 > 
-> I'm actually a little puzzled about why these tests should exist:
+> It also follows the current dmesg reporting in the format.  The
+> filesystem message is composed mostly by the string that would be
+> otherwise printed in dmesg.
 > 
-> # Create a directory with multiple filenames that all appear the same
-> # (in unicode, anyway) but point to different inodes.  In theory all
-> # Linux filesystems should allow this (filenames are a sequence of
-> # arbitrary bytes) even if the user implications are horrifying.
+> A new ext4 specific record format is exposed in the uapi, such that a
+> monitoring tool knows what to expect when listening errors of an ext4
+> filesystem.
 > 
-> Why do we care about testing this?  The assertion "In all theory all
-> Linux filesystems should allow this" is clearly not true --- if you
-> enable unicode support for ext4 or f2fs, this will no longer be true,
-> and this is considered by some a _feature_ not a bug --- precisely
-> _because_ the user implications are horrifying.
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> ---
+>  fs/ext4/super.c                  | 60 ++++++++++++++++++++++++--------
+>  include/uapi/linux/ext4-notify.h | 17 +++++++++
+>  2 files changed, 62 insertions(+), 15 deletions(-)
+>  create mode 100644 include/uapi/linux/ext4-notify.h
 > 
-> So why does these tests exist?  Darrick, I see you added them in 2017
-> to test whether or not xfs_scrub will warn about confuable names, if
-> _check_xfs_scrub_does_unicode is true.  So we already understand that
-> it's possible for a file system checker to complain that these file
-> names are bad.
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index b9693680463a..032e29e7ff6a 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -46,6 +46,8 @@
+>  #include <linux/part_stat.h>
+>  #include <linux/kthread.h>
+>  #include <linux/freezer.h>
+> +#include <linux/fsnotify.h>
+> +#include <uapi/linux/ext4-notify.h>
+>  
+>  #include "ext4.h"
+>  #include "ext4_extents.h"	/* Needed for trace points definition */
+> @@ -727,6 +729,22 @@ static void flush_stashed_error_work(struct work_struct *work)
+>  	ext4_commit_super(sbi->s_sb);
+>  }
+>  
+> +static void ext4_fsnotify_error(int error, struct inode *inode, __u64 block,
+> +				const char *func, int line,
+> +				const char *desc, struct va_format *vaf)
+> +{
+> +	struct ext4_error_inode_report report;
+> +
+> +	if (inode->i_sb->s_fsnotify_marks) {
+> +		report.inode = inode ? inode->i_ino : -1L;
+> +		report.block = block ? block : -1L;
+> +
+> +		snprintf(report.desc, EXT4_FSN_DESC_LEN, "%s%pV\n", desc?:"", vaf);
+> +
+> +		fsnotify_error_event(error, inode, func, line, &report, sizeof(report));
+> +	}
+> +}
+> +
+>  #define ext4_error_ratelimit(sb)					\
+>  		___ratelimit(&(EXT4_SB(sb)->s_err_ratelimit_state),	\
+>  			     "EXT4-fs error")
+> @@ -742,15 +760,18 @@ void __ext4_error(struct super_block *sb, const char *function,
+>  		return;
+>  
+>  	trace_ext4_error(sb, function, line);
+> +
+> +	va_start(args, fmt);
+> +	vaf.fmt = fmt;
+> +	vaf.va = &args;
+>  	if (ext4_error_ratelimit(sb)) {
+> -		va_start(args, fmt);
+> -		vaf.fmt = fmt;
+> -		vaf.va = &args;
+>  		printk(KERN_CRIT
+>  		       "EXT4-fs error (device %s): %s:%d: comm %s: %pV\n",
+>  		       sb->s_id, function, line, current->comm, &vaf);
+> -		va_end(args);
+> +
+>  	}
+> +	ext4_fsnotify_error(error, sb->s_root->d_inode, block, function, line, NULL, &vaf);
+> +	va_end(args);
+>  	ext4_handle_error(sb, force_ro, error, 0, block, function, line);
+>  }
+>  
+> @@ -765,10 +786,10 @@ void __ext4_error_inode(struct inode *inode, const char *function,
+>  		return;
+>  
+>  	trace_ext4_error(inode->i_sb, function, line);
+> +	va_start(args, fmt);
+> +	vaf.fmt = fmt;
+> +	vaf.va = &args;
+>  	if (ext4_error_ratelimit(inode->i_sb)) {
+> -		va_start(args, fmt);
+> -		vaf.fmt = fmt;
+> -		vaf.va = &args;
+>  		if (block)
+>  			printk(KERN_CRIT "EXT4-fs error (device %s): %s:%d: "
+>  			       "inode #%lu: block %llu: comm %s: %pV\n",
+> @@ -779,8 +800,11 @@ void __ext4_error_inode(struct inode *inode, const char *function,
+>  			       "inode #%lu: comm %s: %pV\n",
+>  			       inode->i_sb->s_id, function, line, inode->i_ino,
+>  			       current->comm, &vaf);
+> -		va_end(args);
+>  	}
+> +
+> +	ext4_fsnotify_error(error, inode, block, function, line, NULL, &vaf);
+> +	va_end(args);
+> +
+>  	ext4_handle_error(inode->i_sb, false, error, inode->i_ino, block,
+>  			  function, line);
+>  }
+> @@ -798,13 +822,16 @@ void __ext4_error_file(struct file *file, const char *function,
+>  		return;
+>  
+>  	trace_ext4_error(inode->i_sb, function, line);
+> +
+> +	path = file_path(file, pathname, sizeof(pathname));
+> +	if (IS_ERR(path))
+> +		path = "(unknown)";
+> +
+> +	va_start(args, fmt);
+> +	vaf.fmt = fmt;
+> +	vaf.va = &args;
+> +
+>  	if (ext4_error_ratelimit(inode->i_sb)) {
+> -		path = file_path(file, pathname, sizeof(pathname));
+> -		if (IS_ERR(path))
+> -			path = "(unknown)";
+> -		va_start(args, fmt);
+> -		vaf.fmt = fmt;
+> -		vaf.va = &args;
+>  		if (block)
+>  			printk(KERN_CRIT
+>  			       "EXT4-fs error (device %s): %s:%d: inode #%lu: "
+> @@ -817,8 +844,10 @@ void __ext4_error_file(struct file *file, const char *function,
+>  			       "comm %s: path %s: %pV\n",
+>  			       inode->i_sb->s_id, function, line, inode->i_ino,
+>  			       current->comm, path, &vaf);
+> -		va_end(args);
+>  	}
+> +	ext4_fsnotify_error(EFSCORRUPTED, inode, block, function, line, NULL, &vaf);
+> +	va_end(args);
+> +
+>  	ext4_handle_error(inode->i_sb, false, EFSCORRUPTED, inode->i_ino, block,
+>  			  function, line);
+>  }
+> @@ -886,6 +915,7 @@ void __ext4_std_error(struct super_block *sb, const char *function,
+>  		printk(KERN_CRIT "EXT4-fs error (device %s) in %s:%d: %s\n",
+>  		       sb->s_id, function, line, errstr);
+>  	}
+> +	ext4_fsnotify_error(errno, NULL, -1L, function, line, errstr, NULL);
+>  
+>  	ext4_handle_error(sb, false, -errno, 0, 0, function, line);
+>  }
+> diff --git a/include/uapi/linux/ext4-notify.h b/include/uapi/linux/ext4-notify.h
+> new file mode 100644
+> index 000000000000..31a3bbcafd13
+> --- /dev/null
+> +++ b/include/uapi/linux/ext4-notify.h
+> @@ -0,0 +1,17 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+> +/*
+> + * Copyright 2021, Collabora Ltd.
+> + */
+> +
+> +#ifndef EXT4_NOTIFY_H
+> +#define EXT4_NOTIFY_H
+> +
+> +#define EXT4_FSN_DESC_LEN	256
+> +
+> +struct ext4_error_inode_report {
+> +	u64 inode;
 
-Yes, that's exactly why this test (and generic/454) were created -- as a
-functional test for xfs_scrub's unicode checking.
+I don't have much to contribute this time, other than suggesting that
+you might want to encode the inode generation here so that forensics
+tools won't waste their time if the inode has been deleted and recreated
+in between when the error happens and when the fs gets pulled offline
+for analysis.
 
-> It's not at all clear to me that asserting that all Linux file systems
-> _must_ treat file names as "bag of bits" and not apply any kind of
-> unicode normalization or strict unicode validation is a valid thing to
-> test for in 2021.
+(...and maybe add a u32 flags field that can remain zero for now)
 
-Perhaps not.  These two tests do have the interesting side effect of
-catching filesystems that don't hew to the "names are bytestreams"
-philosophy.  In 2017, fstests usage seemed like it pretty narrowly
-included only the big three filesystems, so it amuses me to no end that
-four years went by before this discussion started. :P
+> +	u64 block;
 
-Nowadays with wider testing of other filesystems (thanks, Red Hat!) we
-should hide these behind _require_names_are_bytes or move them to
-tests/xfs/.
-
-Question -- the unicode case folding doesn't apply to xattr names,
-right?
+...and maybe call this "lblk" (assuming this is the logical block offset
+within the file?) since that's already in wide use around e2fsprogs and
+fs/ext4/.
 
 --D
 
+> +	char desc[EXT4_FSN_DESC_LEN];
+> +};
+> +
+> +#endif
+> -- 
+> 2.31.0
 > 
-> 					- Ted
