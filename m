@@ -2,122 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 73B2236EA6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 14:27:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF20336EB2B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 15:09:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234317AbhD2M2R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Apr 2021 08:28:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:57318 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230148AbhD2M2R (ORCPT
+        id S235908AbhD2NK1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Apr 2021 09:10:27 -0400
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:39980 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237315AbhD2NKM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Apr 2021 08:28:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619699250;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8j9mBor07Cs8M7oV014u0wi5MvoFT2r3E+Kj0uohzbw=;
-        b=Q2ueY/bfihQWmJVU0cBapVR4RsBG7nHK9D0GbgdWNkPFnsWVzglmQpyvCIqsg8RPj9pC3B
-        jFmoYxNjRIZG73BktbxPRvks+JVYeWGW0wHZ+tpFSIHo6UuamcCnL92t/6R9rRx5z0o44U
-        YY/bgFDkagGsocpfcnnprkgHWeiar7g=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-412-mextiE51O4S-F0gnYD4sAg-1; Thu, 29 Apr 2021 08:27:26 -0400
-X-MC-Unique: mextiE51O4S-F0gnYD4sAg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 097B8108BD0C;
-        Thu, 29 Apr 2021 12:27:22 +0000 (UTC)
-Received: from t480s.redhat.com (ovpn-114-50.ams2.redhat.com [10.36.114.50])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C62B318811;
-        Thu, 29 Apr 2021 12:26:43 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        Steven Price <steven.price@arm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Aili Yao <yaoaili@kingsoft.com>, Jiri Bohac <jbohac@suse.cz>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        linux-hyperv@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH v1 7/7] fs/proc/kcore: use page_offline_(freeze|unfreeze)
-Date:   Thu, 29 Apr 2021 14:25:19 +0200
-Message-Id: <20210429122519.15183-8-david@redhat.com>
-In-Reply-To: <20210429122519.15183-1-david@redhat.com>
-References: <20210429122519.15183-1-david@redhat.com>
+        Thu, 29 Apr 2021 09:10:12 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UXAmpys_1619701762;
+Received: from B-D1K7ML85-0059.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0UXAmpys_1619701762)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 29 Apr 2021 21:09:23 +0800
+Subject: Re: [Ocfs2-devel] [PATCH 2/3] ocfs2: allow writing back pages out of
+ inode size
+To:     Junxiao Bi <junxiao.bi@oracle.com>, ocfs2-devel@oss.oracle.com,
+        cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
+        akpm <akpm@linux-foundation.org>
+References: <20210426220552.45413-1-junxiao.bi@oracle.com>
+ <20210426220552.45413-2-junxiao.bi@oracle.com>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+Message-ID: <3e75d19c-7c9e-c86f-dddf-ae1062811655@linux.alibaba.com>
+Date:   Thu, 29 Apr 2021 21:09:21 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <20210426220552.45413-2-junxiao.bi@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Let's properly synchronize with drivers that set PageOffline(). Unfreeze
-every now and then, so drivers that want to set PageOffline() can make
-progress.
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- fs/proc/kcore.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
 
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index 92ff1e4436cb..3d7531f47389 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -311,6 +311,7 @@ static void append_kcore_note(char *notes, size_t *i, const char *name,
- static ssize_t
- read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- {
-+	size_t page_offline_frozen = 0;
- 	char *buf = file->private_data;
- 	size_t phdrs_offset, notes_offset, data_offset;
- 	size_t phdrs_len, notes_len;
-@@ -509,6 +510,18 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 			pfn = __pa(start) >> PAGE_SHIFT;
- 			page = pfn_to_online_page(pfn);
- 
-+			/*
-+			 * Don't race against drivers that set PageOffline()
-+			 * and expect no further page access.
-+			 */
-+			if (page_offline_frozen == MAX_ORDER_NR_PAGES) {
-+				page_offline_unfreeze();
-+				page_offline_frozen = 0;
-+				cond_resched();
-+			}
-+			if (!page_offline_frozen++)
-+				page_offline_freeze();
-+
- 			/*
- 			 * Don't read offline sections, logically offline pages
- 			 * (e.g., inflated in a balloon), hwpoisoned pages,
-@@ -565,6 +578,8 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 	}
- 
- out:
-+	if (page_offline_frozen)
-+		page_offline_unfreeze();
- 	up_read(&kclist_lock);
- 	if (ret)
- 		return ret;
--- 
-2.30.2
+On 4/27/21 6:05 AM, Junxiao Bi wrote:
+> When fallocate/truncate extend inode size, if the original isize is in
+> the middle of last cluster, then the part from isize to the end of the
+> cluster needs to be zeroed with buffer write, at that time isize is not
+> yet updated to match the new size, if writeback is kicked in, it will
+> invoke ocfs2_writepage()->block_write_full_page() where the pages out
+> of inode size will be dropped. That will cause file corruption.
+> 
+> Running the following command with qemu-image 4.2.1 can get a corrupted
+> coverted image file easily.
+> 
+>     qemu-img convert -p -t none -T none -f qcow2 $qcow_image \
+>              -O qcow2 -o compat=1.1 $qcow_image.conv
+> 
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
 
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> ---
+>  fs/ocfs2/aops.c | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+> index ad20403b383f..7a3e3d59f6a9 100644
+> --- a/fs/ocfs2/aops.c
+> +++ b/fs/ocfs2/aops.c
+> @@ -402,11 +402,28 @@ static void ocfs2_readahead(struct readahead_control *rac)
+>   */
+>  static int ocfs2_writepage(struct page *page, struct writeback_control *wbc)
+>  {
+> +	struct inode * const inode = page->mapping->host;
+> +	loff_t i_size = i_size_read(inode);
+> +	const pgoff_t end_index = i_size >> PAGE_SHIFT;
+> +	unsigned int offset;
+> +
+>  	trace_ocfs2_writepage(
+>  		(unsigned long long)OCFS2_I(page->mapping->host)->ip_blkno,
+>  		page->index);
+>  
+> -	return block_write_full_page(page, ocfs2_get_block, wbc);
+> +	/*
+> +	 * The page straddles i_size.  It must be zeroed out on each and every
+> +	 * writepage invocation because it may be mmapped.  "A file is mapped
+> +	 * in multiples of the page size.  For a file that is not a multiple of
+> +	 * the  page size, the remaining memory is zeroed when mapped, and
+> +	 * writes to that region are not written out to the file."
+> +	 */
+> +	offset = i_size & (PAGE_SIZE-1);
+> +	if (page->index == end_index && offset)
+> +		zero_user_segment(page, offset, PAGE_SIZE);
+> +
+> +	return __block_write_full_page_eof(inode, page, ocfs2_get_block, wbc,
+> +			end_buffer_async_write, true);
+>  }
+>  
+>  /* Taken from ext3. We don't necessarily need the full blown
+> 
