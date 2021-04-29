@@ -2,77 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7F1036E5A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 09:12:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8FD536E5D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 09:21:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236053AbhD2HNe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Apr 2021 03:13:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33552 "EHLO mail.kernel.org"
+        id S237255AbhD2HWI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Apr 2021 03:22:08 -0400
+Received: from verein.lst.de ([213.95.11.211]:52070 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229814AbhD2HNS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Apr 2021 03:13:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A2B046141E;
-        Thu, 29 Apr 2021 07:12:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1619680351;
-        bh=3fsok0wCSZLbAq41vKAGozZ3ndqQi3pGDMCx05gU6Z4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rRdbBS/sTyijeyENZnMbKpXk03EzmAzpkK1RSADy1NOsrbf8DRs7Rbsp0vuClmFJu
-         JOUOFSPxXxDjX6p5c+A6Hey/dv11q4csuErnG1BlOZqXEobbjovrgNqdjwzbZwKsVU
-         whuo78INCZj3HXHZJKoH13Er40a1gJo7sqBj5kZ0=
-Date:   Thu, 29 Apr 2021 09:12:28 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, pakki001@umn.edu,
-        arnd@arndb.de
-Subject: Re: [PATCH] ics932s401: fix broken handling of errors when word
- reading fails
-Message-ID: <YIpcXKQtn6mLcU+o@kroah.com>
-References: <20210428222534.GJ3122264@magnolia>
+        id S239310AbhD2HWC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Apr 2021 03:22:02 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id E425867373; Thu, 29 Apr 2021 09:20:28 +0200 (CEST)
+Date:   Thu, 29 Apr 2021 09:20:28 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "Wunderlich, Mark" <mark.wunderlich@intel.com>,
+        "Vasudevan, Anil" <anil.vasudevan@intel.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 12/15] block: switch polling to be bio based
+Message-ID: <20210429072028.GA3682@lst.de>
+References: <20210427161619.1294399-1-hch@lst.de> <20210427161619.1294399-13-hch@lst.de> <YIjIOgYS29GvcoIm@T590>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210428222534.GJ3122264@magnolia>
+In-Reply-To: <YIjIOgYS29GvcoIm@T590>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 28, 2021 at 03:25:34PM -0700, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
-> 
-> In commit b05ae01fdb89, someone tried to make the driver handle i2c read
-> errors by simply zeroing out the register contents, but for some reason
-> left unaltered the code that sets the cached register value the function
-> call return value.
-> 
-> The original patch was authored by a member of the Underhanded
-> Mangle-happy Nerds, I'm not terribly surprised.  I don't have the
-> hardware anymore so I can't test this, but it seems like a pretty
-> obvious API usage fix to me...
-> 
-> Fixes: b05ae01fdb89 ("misc/ics932s401: Add a missing check to i2c_smbus_read_word_data")
-> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> ---
->  drivers/misc/ics932s401.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/ics932s401.c b/drivers/misc/ics932s401.c
-> index 2bdf560ee681..0f9ea75b0b18 100644
-> --- a/drivers/misc/ics932s401.c
-> +++ b/drivers/misc/ics932s401.c
-> @@ -134,7 +134,7 @@ static struct ics932s401_data *ics932s401_update_device(struct device *dev)
->  	for (i = 0; i < NUM_MIRRORED_REGS; i++) {
->  		temp = i2c_smbus_read_word_data(client, regs_to_copy[i]);
->  		if (temp < 0)
-> -			data->regs[regs_to_copy[i]] = 0;
-> +			temp = 0;
->  		data->regs[regs_to_copy[i]] = temp >> 8;
->  	}
->  
+On Wed, Apr 28, 2021 at 10:28:10AM +0800, Ming Lei wrote:
 
-Many thanks for looking at this again, I'll add it to my series of
-patches for "reviewing all the crap and fixing it up" that I will be
-working to get merged for 5.13-final.
+> ...
 
-greg k-h
+Can you please avoid the full quote?
+
+> > +	 *  1) the bio is beeing initialized and bi_bdev is NULL.  We can just
+> > +	 *     simply nothing in this case
+> > +	 *  2) the bio points to a not poll enabled device.  bio_poll will catch
+> > +	 *     this and return 0
+> > +	 *  3) the bio points to a poll capable device, including but not
+> > +	 *     limited to the one that the original bio pointed to.  In this
+> > +	 *     case we will call into the actual poll method and poll for I/O,
+> > +	 *     even if we don't need to, but it won't cause harm either.
+> > +	 */
+> > +	rcu_read_lock();
+> > +	bio = READ_ONCE(kiocb->private);
+> > +	if (bio && bio->bi_bdev)
+> 
+> ->bi_bdev and associated disk/request_queue/hctx/... refrerred in bio_poll()
+> may have being freed now, so there is UAF risk.
+
+the block device is RCU freed, so we are fine there.  There rest OTOH
+is more interesting.  Let me think of a good defense using some kind
+of liveness check.
