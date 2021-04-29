@@ -2,68 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C14AA36F066
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 21:25:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83D5736F0AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Apr 2021 22:02:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbhD2TYh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Apr 2021 15:24:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231631AbhD2TUI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Apr 2021 15:20:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 523A26143A;
-        Thu, 29 Apr 2021 19:19:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619723945;
-        bh=zaHmnMI1qm7aj0odMUw1v/NysGsQ/7dYEMqbptg8O84=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GdDDOlb+e7KfUYg1DV7rjB5mWL8mlH23+G9PXxSwN7bjqvcCIwEtsBOyYTk+OTCOS
-         6Hf3UykjYfoWKnsGTatt2dqLzcecWcnTKVhc0JnV6f9pcLNSHtAzVMkERjecprYZJB
-         wMeoGhSg1TSZ/CqxcDSKkp6q/O6XWe8cei/E8dLv0xElpnkiHbjmB8W8QgQEVkzM+d
-         q1w6L46o9kgkMdKCJctMdY3hYm3+nMhXWGFLPd7tuSaTXPhr3PpTIEMepQzbxpgg7M
-         cd7/QJD6TMIJXvn6whkF3VkWTJ2nfY2x0RsqRl7hkTY5niwJvNnSkRmQSY4j0T+A73
-         FgYgRpuQ0Rg2A==
-Date:   Thu, 29 Apr 2021 12:19:04 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [GIT PULL] xfs: new code for 5.13
-Message-ID: <20210429191904.GN3122264@magnolia>
-References: <20210429170619.GM3122264@magnolia>
- <CAHk-=wgpn570yfA+EM5yZ0T-m0c5jnLcx3WGSu3xR8E4DGvCFg@mail.gmail.com>
+        id S233758AbhD2TrO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Apr 2021 15:47:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:26739 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237781AbhD2Tqi (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Apr 2021 15:46:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619725550;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=46vr6MOxvMx7EcNeLrQPCFzx6v2cxfIGSgLQQ+snNgQ=;
+        b=dEvGNPfHCVP1XUi6b0tgVv5pCcMSMGAYn2O78d7MpfX4RzlrvEBayEStQQHtUknsy33Jb/
+        6HDcQIj7wnYWComQFwrimoxfhi1zHILt13FOUt7u/0g0dBfc+Aqe8IWuD3K3dN59WJFkaB
+        hm1//v1AoeYLBatp6cMt2vok7K49Xyg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-366-2E-ZcLmyNSmk8WkXdFT6MA-1; Thu, 29 Apr 2021 15:45:48 -0400
+X-MC-Unique: 2E-ZcLmyNSmk8WkXdFT6MA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 349D5818411;
+        Thu, 29 Apr 2021 19:45:44 +0000 (UTC)
+Received: from optiplex-fbsd (unknown [10.3.128.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7DA6110016FC;
+        Thu, 29 Apr 2021 19:45:40 +0000 (UTC)
+Date:   Thu, 29 Apr 2021 15:45:37 -0400
+From:   Rafael Aquini <aquini@redhat.com>
+To:     "Chu,Kaiping" <chukaiping@baidu.com>
+Cc:     "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "yzaikin@google.com" <yzaikin@google.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "nigupta@nvidia.com" <nigupta@nvidia.com>,
+        "bhe@redhat.com" <bhe@redhat.com>,
+        "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>,
+        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
+        "mateusznosek0@gmail.com" <mateusznosek0@gmail.com>,
+        "sh_def@163.com" <sh_def@163.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: =?utf-8?B?562U5aSNOiBbUEFUQw==?= =?utf-8?Q?H?= v3]
+ mm/compaction:let proactive compaction order configurable
+Message-ID: <YIsM4UtV9UqKhsNB@optiplex-fbsd>
+References: <1619313662-30356-1-git-send-email-chukaiping@baidu.com>
+ <YIYX22JLVHN1PhGs@t490s.aquini.net>
+ <f355248969f14e5897ad6dcfe3834297@baidu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgpn570yfA+EM5yZ0T-m0c5jnLcx3WGSu3xR8E4DGvCFg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f355248969f14e5897ad6dcfe3834297@baidu.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 29, 2021 at 10:50:51AM -0700, Linus Torvalds wrote:
-> On Thu, Apr 29, 2021 at 10:06 AM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > Unfortunately, some of our refactoring work collided with Miklos'
-> > patchset that refactors FS_IOC_[GS]ETFLAGS and FS_IOC_FS[GS]ETXATTR.
+On Wed, Apr 28, 2021 at 01:17:40AM +0000, Chu,Kaiping wrote:
+> Please see my answer inline.
 > 
-> Ok, the resolution looked reasonably straightforward to me, and I
-> ended up with what looks like the same end result you did.
+> -----邮件原件-----
+> 发件人: Rafael Aquini <aquini@redhat.com> 
+> 发送时间: 2021年4月26日 9:31
+> 收件人: Chu,Kaiping <chukaiping@baidu.com>
+> 抄送: mcgrof@kernel.org; keescook@chromium.org; yzaikin@google.com; akpm@linux-foundation.org; vbabka@suse.cz; nigupta@nvidia.com; bhe@redhat.com; khalid.aziz@oracle.com; iamjoonsoo.kim@lge.com; mateusznosek0@gmail.com; sh_def@163.com; linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-mm@kvack.org
+> 主题: Re: [PATCH v3] mm/compaction:let proactive compaction order configurable
 > 
-> But I only did a visual inspection of our --cc diffs (you seem to use
-> --patience, which made my initial diff look different) and obviously
-> verified that it all builds cleanly, I didn't do any actual testing.
+> On Sun, Apr 25, 2021 at 09:21:02AM +0800, chukaiping wrote:
+> > Currently the proactive compaction order is fixed to 
+> > COMPACTION_HPAGE_ORDER(9), it's OK in most machines with lots of 
+> > normal 4KB memory, but it's too high for the machines with small 
+> > normal memory, for example the machines with most memory configured as 
+> > 1GB hugetlbfs huge pages. In these machines the max order of free 
+> > pages is often below 9, and it's always below 9 even with hard 
+> > compaction. This will lead to proactive compaction be triggered very 
+> > frequently. In these machines we only care about order of 3 or 4.
+> > This patch export the oder to proc and let it configurable by user, 
+> > and the default value is still COMPACTION_HPAGE_ORDER.
+> > 
+> > Signed-off-by: chukaiping <chukaiping@baidu.com>
+> > Reported-by: kernel test robot <lkp@intel.com>
 > 
-> So please double-check that everything still looks good,
-
-At a first glance it looks good to me, thanks. :)
-
-(Currently running fstests to double-check...)
-
---D
-
+> Two minor nits on the commit log message: 
+> * there seems to be a whitespage missing in your short log: 
+>   "... mm/compaction:let ..."
+> --> I will fix it in next patch.
 > 
->                  Linus
+> * has the path really been reported by a test robot?
+> --> Yes. There is a compile error in v1, I fixed it in v2.
+>
+
+So, no... the test robot should not be listed as Reported-by. 
+
