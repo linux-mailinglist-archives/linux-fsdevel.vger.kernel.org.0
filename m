@@ -2,136 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDDAA36FF36
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 19:09:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9F5A36FF6D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 19:23:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230514AbhD3RJt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Apr 2021 13:09:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39182 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229750AbhD3RJt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Apr 2021 13:09:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 66FD86145A;
-        Fri, 30 Apr 2021 17:08:59 +0000 (UTC)
-Date:   Fri, 30 Apr 2021 19:08:56 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/3] test: add openat2() test for invalid upper 32 bit
- flag value
-Message-ID: <20210430170856.4wqsr6on664brl4t@wittgenstein>
-References: <20210423111037.3590242-1-brauner@kernel.org>
- <20210423111037.3590242-3-brauner@kernel.org>
- <20210430152400.GY3141668@madcap2.tricolour.ca>
- <20210430160913.mowefxfnrwnoc3vd@wittgenstein>
- <20210430164625.GZ3141668@madcap2.tricolour.ca>
+        id S231158AbhD3RYc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Apr 2021 13:24:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57844 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229750AbhD3RYc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Apr 2021 13:24:32 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC27C06174A
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Apr 2021 10:23:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=Q1YMGvjud2M5Eb61AtcFjJ8xtsJyQtb+6MM2sE/TYXA=; b=S3ad9bo/tF2kmlchh51qssENAC
+        yqXvVbBwHVaso8wIf8XmHiS5XWI/jqAwwjVSJOYkZKhsD0TjQZVXXia4iMgg6yZru0FuYM+PT41qO
+        FaBgGrgtLqXx1dAgLyDE4VAY2mgD3e2fAO2jwUigRkQ21wqQZQZUfHF2zQZl4hCPzqfxukD1+Sn7J
+        F/Rs7U6Iqe7mL/Lj2aLEpEyNRiSPe6J1M+ALOy9tZS99pyjVypFXKsf4r3TrN9Uf1AJbiP3Jch5bZ
+        2ybIoS2kf0wTLiXKw4M/Ij/8H/afb3QF+mRpEvWN/lE5pr+/toyoqIvlmuys245d4ZmYpCi31yVgE
+        i0z1MZkw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lcWqb-00BJBU-98; Fri, 30 Apr 2021 17:22:55 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        akpm@linux-foundation.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH v8 00/27] Memory Folios
+Date:   Fri, 30 Apr 2021 18:22:08 +0100
+Message-Id: <20210430172235.2695303-1-willy@infradead.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210430164625.GZ3141668@madcap2.tricolour.ca>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 30, 2021 at 12:46:25PM -0400, Richard Guy Briggs wrote:
-> On 2021-04-30 18:09, Christian Brauner wrote:
-> > On Fri, Apr 30, 2021 at 11:24:00AM -0400, Richard Guy Briggs wrote:
-> > > On 2021-04-23 13:10, Christian Brauner wrote:
-> > > > From: Christian Brauner <christian.brauner@ubuntu.com>
-> > > > 
-> > > > Test that openat2() rejects unknown flags in the upper 32 bit range.
-> > > > 
-> > > > Cc: Richard Guy Briggs <rgb@redhat.com>
-> > > > Cc: Aleksa Sarai <cyphar@cyphar.com>
-> > > > Cc: linux-fsdevel@vger.kernel.org
-> > > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > > > ---
-> > > >  tools/testing/selftests/openat2/openat2_test.c | 7 ++++++-
-> > > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/tools/testing/selftests/openat2/openat2_test.c b/tools/testing/selftests/openat2/openat2_test.c
-> > > > index 381d874cce99..7379e082a994 100644
-> > > > --- a/tools/testing/selftests/openat2/openat2_test.c
-> > > > +++ b/tools/testing/selftests/openat2/openat2_test.c
-> > > > @@ -155,7 +155,7 @@ struct flag_test {
-> > > >  	int err;
-> > > >  };
-> > > >  
-> > > > -#define NUM_OPENAT2_FLAG_TESTS 24
-> > > > +#define NUM_OPENAT2_FLAG_TESTS 25
-> > > >  
-> > > >  void test_openat2_flags(void)
-> > > >  {
-> > > > @@ -229,6 +229,11 @@ void test_openat2_flags(void)
-> > > >  		{ .name = "invalid how.resolve and O_PATH",
-> > > >  		  .how.flags = O_PATH,
-> > > >  		  .how.resolve = 0x1337, .err = -EINVAL },
-> > > > +
-> > > > +		/* Invalid flags in the upper 32 bits must be rejected. */
-> > > > +		{ .name = "invalid flags (1 << 63)",
-> > > > +		  .how.flags = O_RDONLY | (1ULL << 63),
-> > > > +		  .how.resolve = 0, .err = -EINVAL },
-> > > 
-> > > This doesn't appear to specifically test for flags over 32 bits.  It
-> > > appears to test for flags not included in VALID_OPEN_FLAGS.
-> > > 
-> > > "1ULL << 2" would accomplish the same thing, as would "1ULL << 31" due
-> > > to the unused flags in the bottom 32 bits.
-> > > 
-> > > The test appears to be useful, but misnamed.
-> > 
-> > I mean we can name it test "currently unknown upper bit".
-> > 
-> > > 
-> > > If a new flag was added at 1ULL << 33, this test wouldn't notice and it
-> > 
-> > It isn't supposed to notice because it's a known flag. If we add
-> > #define O_FANCY (1ULL << 63)
-> > this test should fail and either would need to be adapted or more likely
-> > be dropped since all bits are taken apparently.
-> 
-> If that O_FANCY was added to VALID_OPEN_FLAGS, then this test would fail
-> to fail since the check in build_open_flags() would have no problem with
-> it.
+Managing memory in 4KiB pages is a serious overhead.  Many benchmarks
+benefit from a larger "page size".  As an example, an earlier iteration
+of this idea which used compound pages (and wasn't particularly tuned)
+got a 7% performance boost when compiling the kernel.
 
-Right but that's perfectly fine and just means you need to update the
-test. That's why this is 1ULL << 63 which moves this way into the
-future.
+Using compound pages or THPs exposes a serious weakness in our type
+system.  Functions are often unprepared for compound pages to be passed
+to them, and may only act on PAGE_SIZE chunks.  Even functions which are
+aware of compound pages may expect a head page, and do the wrong thing
+if passed a tail page.
 
-> 
-> > > would still get dropped in build_open_flags() when flags gets assigned
-> > > to op->open_flags.
-> > 
-> > I didn't intend to add a test whether flags are silently dropped. I
-> > intended to add a test whether any currently unkown bit in the upper 32
-> > bits is loudly rejected instead of silently ignored.
-> 
-> It appears to be testing for unknown flags regardless of where they are
-> in the 64 bits, since the incoming flags are tested against
-> VALID_OPEN_FLAGS.
+There have been efforts to label function parameters as 'head' instead
+of 'page' to indicate that the function expects a head page, but this
+leaves us with runtime assertions instead of using the compiler to prove
+that nobody has mistakenly passed a tail page.  Calling a struct page
+'head' is also inaccurate as they will work perfectly well on base pages.
 
-I fail to see the fundamental issue (even with the name) but I happily
-rename it to "currently unknown bit in upper 32 bits rejected" to
-indicate that.
+We also waste a lot of instructions ensuring that we're not looking at
+a tail page.  Almost every call to PageFoo() contains one or more hidden
+calls to compound_head().  This also happens for get_page(), put_page()
+and many more functions.  There does not appear to be a way to tell gcc
+that it can cache the result of compound_head(), nor is there a way to
+tell it that compound_head() is idempotent.
 
-> 
-> > I may misunderstand what kind of test you would like to see here.
-> 
-> I think we need two tests:
-> 
-> 1) test for unknown flags
-> 2) test for flags that will get dropped in build_open_flags() by the
-> assignment from (u64) how->flags to (int) op->open_flag.
-> 
-> This second test could be a BUILD_* test.
+This series introduces the 'struct folio' as a replacement for
+head-or-base pages.  This initial set reduces the kernel size by
+approximately 6kB by removing conversions from tail pages to head pages.
+The real purpose of this series is adding infrastructure to enable
+further use of the folio.
 
-Yes, that makes sense. Thank you.
-I think that can be a build test based on VALID_OPEN_FLAGS. I think the
-assumption that any new flag needs to be added to this define is
-perfectly fine?
+The medium-term goal is to convert all filesystems and some device
+drivers to work in terms of folios.  This series contains a lot of
+explicit conversions, but it's important to realise it's removing a lot
+of implicit conversions in some relatively hot paths.  There will be very
+few conversions from folios when this work is completed; filesystems,
+the page cache, the LRU and so on will generally only deal with folios.
 
-Christian
+The text size reduces by between 6kB (a config based on Oracle UEK)
+and 1.2kB (allnoconfig).  Performance seems almost unaffected based
+on kernbench.
+
+Current tree at:
+https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/folio
+
+(contains another ~120 patches on top of this batch, not all of which are
+in good shape for submission)
+
+v8:
+ - Rebase on next-20210430
+ - You need https://lore.kernel.org/linux-mm/20210430145549.2662354-1-willy@infradead.org/ first
+ - Big renaming (thanks to peterz):
+   - PageFoo() becomes folio_foo()
+   - SetFolioFoo() becomes folio_set_foo()
+   - ClearFolioFoo() becomes folio_clear_foo()
+   - __SetFolioFoo() becomes __folio_set_foo()
+   - __ClearFolioFoo() becomes __folio_clear_foo()
+   - TestSetPageFoo() becomes folio_test_set_foo()
+   - TestClearPageFoo() becomes folio_test_clear_foo()
+   - PageHuge() is now folio_hugetlb()
+   - put_folio() becomes folio_put()
+   - get_folio() becomes folio_get()
+   - put_folio_testzero() becomes folio_put_testzero()
+   - set_folio_count() becomes folio_set_count()
+   - attach_folio_private() becomes folio_attach_private()
+   - detach_folio_private() becomes folio_detach_private()
+   - lock_folio() becomes folio_lock()
+   - unlock_folio() becomes folio_unlock()
+   - trylock_folio() becomes folio_trylock()
+   - __lock_folio_or_retry becomes __folio_lock_or_retry()
+   - __lock_folio_async() becomes __folio_lock_async()
+   - wake_up_folio_bit() becomes folio_wake_bit()
+   - wake_up_folio() becomes folio_wake()
+   - wait_on_folio_bit() becomes folio_wait_bit()
+   - wait_for_stable_folio() becomes folio_wait_stable()
+   - wait_on_folio() becomes folio_wait()
+   - wait_on_folio_locked() becomes folio_wait_locked()
+   - wait_on_folio_writeback() becomes folio_wait_writeback()
+   - end_folio_writeback() becomes folio_end_writeback()
+   - add_folio_wait_queue() becomes folio_add_wait_queue()
+ - Add folio_young() and folio_idle() family of functions
+ - Move page_folio() to page-flags.h and use _compound_head()
+ - Make page_folio() const-preserving
+ - Add folio_page() to get the nth page from a folio
+ - Improve struct folio kernel-doc
+ - Convert folio flag tests to return bool instead of int
+ - Eliminate set_folio_private()
+ - folio_get_private() is the equivalent of page_private() (as folio_private()
+   is now a test for whether the private flag is set on the folio)
+ - Move folio_rotate_reclaimable() into this patchset
+ - Add page-flags.h to the kernel-doc
+ - Add netfs.h to the kernel-doc
+ - Add a family of folio_lock_lruvec() wrappers
+ - Add a family of folio_relock_lruvec() wrappers
+
+v7:
+https://lore.kernel.org/linux-mm/20210409185105.188284-1-willy@infradead.org/
+
+Matthew Wilcox (Oracle) (27):
+  mm: Introduce struct folio
+  mm: Add folio_pgdat and folio_zone
+  mm/vmstat: Add functions to account folio statistics
+  mm/debug: Add VM_BUG_ON_FOLIO and VM_WARN_ON_ONCE_FOLIO
+  mm: Add folio reference count functions
+  mm: Add folio_put
+  mm: Add folio_get
+  mm: Add folio flag manipulation functions
+  mm: Add folio_young() and folio_idle()
+  mm: Handle per-folio private data
+  mm/filemap: Add folio_index, folio_file_page and folio_contains
+  mm/filemap: Add folio_next_index
+  mm/filemap: Add folio_offset and folio_file_offset
+  mm/util: Add folio_mapping and folio_file_mapping
+  mm: Add folio_mapcount
+  mm/memcg: Add folio wrappers for various functions
+  mm/filemap: Add folio_unlock
+  mm/filemap: Add folio_lock
+  mm/filemap: Add folio_lock_killable
+  mm/filemap: Add __folio_lock_async
+  mm/filemap: Add __folio_lock_or_retry
+  mm/filemap: Add folio_wait_locked
+  mm/swap: Add folio_rotate_reclaimable
+  mm/filemap: Add folio_end_writeback
+  mm/writeback: Add folio_wait_writeback
+  mm/writeback: Add folio_wait_stable
+  mm/filemap: Add folio_wait_bit
+
+ Documentation/core-api/mm-api.rst |   4 +
+ fs/afs/write.c                    |   9 +-
+ fs/io_uring.c                     |   2 +-
+ include/linux/memcontrol.h        |  58 +++++++
+ include/linux/mm.h                | 173 ++++++++++++++++----
+ include/linux/mm_types.h          |  71 ++++++++
+ include/linux/mmdebug.h           |  20 +++
+ include/linux/page-flags.h        | 222 ++++++++++++++++++-------
+ include/linux/page_idle.h         |  99 ++++++-----
+ include/linux/page_ref.h          |  88 +++++++++-
+ include/linux/pagemap.h           | 262 ++++++++++++++++++++++--------
+ include/linux/swap.h              |   7 +-
+ include/linux/vmstat.h            | 107 ++++++++++++
+ mm/Makefile                       |   2 +-
+ mm/filemap.c                      | 223 ++++++++++++-------------
+ mm/folio-compat.c                 |  37 +++++
+ mm/internal.h                     |   1 +
+ mm/memory.c                       |   8 +-
+ mm/page-writeback.c               |  72 +++++---
+ mm/page_io.c                      |   4 +-
+ mm/swap.c                         |  18 +-
+ mm/swapfile.c                     |   8 +-
+ mm/util.c                         |  30 ++--
+ 23 files changed, 1147 insertions(+), 378 deletions(-)
+ create mode 100644 mm/folio-compat.c
+
+-- 
+2.30.2
