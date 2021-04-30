@@ -2,78 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42C82370334
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 23:49:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFE9D37036B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 May 2021 00:20:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231232AbhD3Vt7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Apr 2021 17:49:59 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:56210 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229915AbhD3Vt7 (ORCPT
+        id S231735AbhD3WUz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Apr 2021 18:20:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38394 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231265AbhD3WUy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Apr 2021 17:49:59 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 13ULmu1e024684
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 30 Apr 2021 17:48:56 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id E6B1F15C39C4; Fri, 30 Apr 2021 17:48:55 -0400 (EDT)
-Date:   Fri, 30 Apr 2021 17:48:55 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
-Message-ID: <YIx7R6tmcRRCl/az@mit.edu>
-References: <YH2hs6EsPTpDAqXc@mit.edu>
- <nycvar.YFH.7.76.2104281228350.18270@cbobk.fhfr.pm>
+        Fri, 30 Apr 2021 18:20:54 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31B3C06138B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Apr 2021 15:20:04 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id z23so33889lji.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Apr 2021 15:20:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LPHXuFLy5stLpGwQaeIuIJPobdMaEnCqfseYzg/gd2Y=;
+        b=CocY4j7++UJ3Tc8jJmqROkOnzc8H9GEFjGGcDlbZNXrn4v38F9dgTWsMHGhZynPK76
+         npc+QlQdePfy2Mzi3UYBTefVTgTCaLxr5YqshopI64WjF2MnPwTs9nH2p8i+0HCbUwBx
+         2bVS4qj4KPhfsKsMVy+FfBkC1jGCVOP2yxCug=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LPHXuFLy5stLpGwQaeIuIJPobdMaEnCqfseYzg/gd2Y=;
+        b=Q0ISGkxjR7VnBJoM/+6WKrGyWOFTA4HH8G7NXkblrcWq8ZE4JNTgixZl+o1oVbPWHp
+         o6nWfryA/6H+hwlZvkVmioJkHzoUPIeMfrGsiwXfOHrXEzyyhDieBY7D5Oiql2gPrA4G
+         Kx4mRncyxlIlImxnb7HiL+Nz1fFDsHPDpN8LlAYwf9Ub2x1rE35tk53Doiy1T9kFZuPk
+         uc7BHiz6D8IDZrw3PD9Py7LU/sU1u2y+NDh68LYomDRdzFVgFNIyjYU4DDA29N4pIZPE
+         9WU/qKeXVexqyqtTmSkaDIkb1RzmPt2DI7tpqgiVitTAKBdlJ8wOYvE32mG6lf3DK+MT
+         /0pA==
+X-Gm-Message-State: AOAM532oMvfz25ySveZr2SVed8bGcQJfDpxQBKpGsbc0EJrP4MJtptCC
+        FgtpPBq+TviVtpF9HAn6NxUd8HqZ+asncCM6
+X-Google-Smtp-Source: ABdhPJxOX5e9sE142K+3Ilz4tYv17xGPSPwUAipjw40PNzapcDzfLjgbiPq4niIvCFcXirrX7D04vw==
+X-Received: by 2002:a2e:8054:: with SMTP id p20mr5107641ljg.439.1619821203345;
+        Fri, 30 Apr 2021 15:20:03 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id z36sm397890lfu.125.2021.04.30.15.20.02
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Apr 2021 15:20:02 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2so19624548lft.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Apr 2021 15:20:02 -0700 (PDT)
+X-Received: by 2002:a19:c30b:: with SMTP id t11mr4728228lff.421.1619821202593;
+ Fri, 30 Apr 2021 15:20:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.2104281228350.18270@cbobk.fhfr.pm>
+References: <YIwYirYCIdcVUjk6@miu.piliscsaba.redhat.com>
+In-Reply-To: <YIwYirYCIdcVUjk6@miu.piliscsaba.redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 30 Apr 2021 15:19:46 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh+RrxDNLJJoANx02QEBYYBfJbHRjRV1FD+di6x+tTiNw@mail.gmail.com>
+Message-ID: <CAHk-=wh+RrxDNLJJoANx02QEBYYBfJbHRjRV1FD+di6x+tTiNw@mail.gmail.com>
+Subject: Re: [GIT PULL] overlayfs update for 5.13
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 28, 2021 at 12:29:52PM +0200, Jiri Kosina wrote:
-> On Mon, 19 Apr 2021, Theodore Ts'o wrote:
-> 
-> > This year, the Maintainers and Kernel Summit is currently planned to
-> > be held in Dublin, Ireland, September 27 -- 29th.  
-> 
-> Given the fact that OSS is being relocated from Dublin to Washington [1], 
-> is Kernel Summit following that direction?
-> 
-> [1] https://www.linuxfoundation.org/en/press-release/the-linux-foundation-announces-open-source-summit-embedded-linux-conference-2021-will-move-from-dublin-ireland-to-seattle-washington/
+On Fri, Apr 30, 2021 at 7:47 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> - Miscallenous improvements and cleanups.
 
-Apologies for the delay in responding; I wasiting for the LPC to post
-its announcement that the LPC will be going 100% virtual:
+Life hack: everybody misspells 'miscellaneous', which is why we have
+the very special kernel rule that we always shorten that word to
+"misc".
 
-   https://www.linuxplumbersconf.org/blog/2021/index.php/2021/04/30/linux-plumbers-goes-fully-virtual/
+Problem avoided ;)
 
-As the LPC planning committee stated,
-
-   "Unfortunately, the safety protocols imposed by event venues in the
-   US require masks and social distancing which make it impossible to
-   hold the interactive part of Plumbers (the Microconferences)."
-
-The Maintainer's Summit is even more interactive and discussion
-focused than most of the Microconferences.  In addition, for the last
-few years, the Kernel Summit is run as a track at the LPC.  As a
-result, both the Maintainer's and Kernel Summit will be held virtually
-this year, using the LPC infrastructure, and will not be colocated
-with OSS to Seattle.  We'll make sure the dates (plus some buffer for
-travel) won't overlap to avoid creating conflicts for those who are
-planning to attend OSS in Seattle.
-
-I know we're all really hungry for some in-person meetups and
-discussions, but at least for LPC, Kernel Summit, and Maintainer's
-Summit, we're going to have to wait for another year,
-
-Cheers,
-
-					- Ted
+              Linus
