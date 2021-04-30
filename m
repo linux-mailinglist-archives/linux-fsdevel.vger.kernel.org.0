@@ -2,208 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 869B937023D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 22:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3387D370285
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 22:58:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235962AbhD3Uhq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Apr 2021 16:37:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:27413 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235936AbhD3Uhm (ORCPT
+        id S236112AbhD3U7H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Apr 2021 16:59:07 -0400
+Received: from mail-il1-f197.google.com ([209.85.166.197]:45758 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236063AbhD3U7F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Apr 2021 16:37:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619815011;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=N6V30Sob6slzfesQyLeYP7vBnXqoSeHwGk+XUPTQPFo=;
-        b=ZkxL4mHCLY0bCgCJibhAEcD798wRiqXmbmrtmoOLfTolGJIIMaKEk4/rA8ShBpcTC52EOs
-        aNqMJxcJ0ocD2k7YwLpL+FINF9UXbzI+JgLPEtAVa6ZDFfZ0kL+66hAiQO2ibzgcOiCtlj
-        sM4K3WnvxBeAe+VIDS9s9z6Illf8PbI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-210-wihMuOlBO9S_Itlyxz2nCA-1; Fri, 30 Apr 2021 16:36:49 -0400
-X-MC-Unique: wihMuOlBO9S_Itlyxz2nCA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BCC00107ACCD;
-        Fri, 30 Apr 2021 20:36:48 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.45])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1C8705C674;
-        Fri, 30 Apr 2021 20:36:36 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Paris <eparis@redhat.com>, linux-fsdevel@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>
-Subject: [PATCH v3 3/3] audit: add OPENAT2 record to list how
-Date:   Fri, 30 Apr 2021 16:35:23 -0400
-Message-Id: <f9c0e777e9cbd0b473a551384306f3654b1ddf42.1619811762.git.rgb@redhat.com>
-In-Reply-To: <cover.1619811762.git.rgb@redhat.com>
-References: <cover.1619811762.git.rgb@redhat.com>
+        Fri, 30 Apr 2021 16:59:05 -0400
+Received: by mail-il1-f197.google.com with SMTP id i27-20020a056e021d1bb02901699edaa0aaso37997587ila.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Apr 2021 13:58:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=6h1ZxgO6iKfJhFGptmgds8TlS+dggD6dzoUv/YrF7Ew=;
+        b=ug3RkdUf1Ed/urXrAvVrOy3JgZKAKnfaJydHrUvso8j8KVMEvpYDNDujN/K8kBIyoF
+         Mj0//nlelXGYgI3j923GebFYzSnIt2xypuDe0YFcvLkBLY6WW07qUikwDW9s8BJ1GEwB
+         fzYEy+08tBdXlmcwp69BDhJ8F0FuPv32hBtMf1WzrvfEfE46if6oQbc/4VZkl0Aqjd8F
+         z/J2pIJv9xDW8nqb70OJy0mZm8X8p8zJK7jyqQSeslf/+rJuKbsX57SCaEHXBz3JIyrY
+         Y1+OOGQUwMjIR1nzqJSUPJrHZMC5/vbRuBV8pZaMHtoMRX5rE4Zecux1EUbwJr57THyD
+         hNIg==
+X-Gm-Message-State: AOAM533dc/tAmL/cI6OCpITQqlDxdYHR1y4xB1Lh4U2Fqu1+SSfqDa+K
+        77nWdVdE8lyxvKhVV7WBKxH6VOZ4/l9fK+KWBg0T8yTgJfeo
+X-Google-Smtp-Source: ABdhPJyLPfj71xJBaPCuJcqtA7dvsH2UfjIVzlbqy5cTGhaxzrgGRRe+1jJiFcmglpHT4mv7ODMm87NJPCV6guLJEhmBYIT7Aeem
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Received: by 2002:a6b:7014:: with SMTP id l20mr5280652ioc.96.1619816295827;
+ Fri, 30 Apr 2021 13:58:15 -0700 (PDT)
+Date:   Fri, 30 Apr 2021 13:58:15 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ea0f5405c136ded4@google.com>
+Subject: [syzbot] WARNING in do_epoll_ctl
+From:   syzbot <syzbot+25880e2b56e3a1f8fbc8@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since the openat2(2) syscall uses a struct open_how pointer to communicate
-its parameters they are not usefully recorded by the audit SYSCALL record's
-four existing arguments.
+Hello,
 
-Add a new audit record type OPENAT2 that reports the parameters in its
-third argument, struct open_how with fields oflag, mode and resolve.
+syzbot found the following issue on:
 
-The new record in the context of an event would look like:
-time->Wed Mar 17 16:28:53 2021
-type=PROCTITLE msg=audit(1616012933.531:184): proctitle=73797363616C6C735F66696C652F6F70656E617432002F746D702F61756469742D7465737473756974652D737641440066696C652D6F70656E617432
-type=PATH msg=audit(1616012933.531:184): item=1 name="file-openat2" inode=29 dev=00:1f mode=0100600 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=CREATE cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
-type=PATH msg=audit(1616012933.531:184): item=0 name="/root/rgb/git/audit-testsuite/tests" inode=25 dev=00:1f mode=040700 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=PARENT cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
-type=CWD msg=audit(1616012933.531:184): cwd="/root/rgb/git/audit-testsuite/tests"
-type=OPENAT2 msg=audit(1616012933.531:184): oflag=0100302 mode=0600 resolve=0xa
-type=SYSCALL msg=audit(1616012933.531:184): arch=c000003e syscall=437 success=yes exit=4 a0=3 a1=7ffe315f1c53 a2=7ffe315f1550 a3=18 items=2 ppid=528 pid=540 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=ttyS0 ses=1 comm="openat2" exe="/root/rgb/git/audit-testsuite/tests/syscalls_file/openat2" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="testsuite-1616012933-bjAUcEPO"
+HEAD commit:    57e22247 net: wwan: core: Return poll error in case of por..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=105f2ee5d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7668018815a66138
+dashboard link: https://syzkaller.appspot.com/bug?extid=25880e2b56e3a1f8fbc8
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+25880e2b56e3a1f8fbc8@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(__owner_task(owner) != current)
+WARNING: CPU: 1 PID: 8398 at kernel/locking/mutex.c:1235 __mutex_unlock_slowpath+0x457/0x610 kernel/locking/mutex.c:1235
+Modules linked in:
+
+CPU: 0 PID: 8398 Comm: systemd-udevd Not tainted 5.12.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__mutex_unlock_slowpath+0x457/0x610 kernel/locking/mutex.c:1235
+Code: 00 00 44 8b 05 0a f8 da 06 45 85 c0 0f 84 e8 fc ff ff e9 ed fc ff ff 48 c7 c6 20 88 6b 89 48 c7 c7 60 88 6b 89 e8 12 59 bd ff <0f> 0b eb c2 e8 e0 5c fe ff 85 c0 0f 84 04 fe ff ff 48 c7 c0 88 46
+RSP: 0018:ffffc9000166fc98 EFLAGS: 00010286
+
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
+RDX: ffff888020711c40 RSI: ffffffff815c5205 RDI: fffff520002cdf85
+RBP: 0000000000000003 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffffff815bdf9e R11: 0000000000000000 R12: fffffbfff1fcc2ec
+R13: ffff888020711c40 R14: 00000c30ffffea00 R15: ffff888012ca0000
+FS:  00007f06b1f238c0(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9bd4c0041c CR3: 0000000017532000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ do_epoll_ctl+0x6c3/0x2d30 fs/eventpoll.c:2147
+ __do_sys_epoll_ctl fs/eventpoll.c:2178 [inline]
+ __se_sys_epoll_ctl fs/eventpoll.c:2169 [inline]
+ __x64_sys_epoll_ctl+0x13f/0x1c0 fs/eventpoll.c:2169
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7f06b0da32aa
+Code: 48 8b 0d f1 fb 2a 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 e9 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d be fb 2a 00 f7 d8 64 89 01 48
+RSP: 002b:00007ffcbd811ce8 EFLAGS: 00000206
+ ORIG_RAX: 00000000000000e9
+RAX: ffffffffffffffda RBX: 00005645e4b0ad90 RCX: 00007f06b0da32aa
+RDX: 0000000000000011 RSI: 0000000000000001 RDI: 0000000000000010
+RBP: 00007ffcbd813800 R08: 00007f06b1f238c0 R09: 0000000000000000
+R10: 00007ffcbd811d70 R11: 0000000000000206 R12: 00007ffcbd811d70
+R13: 000000000aba9500 R14: 000000000000000b R15: 00007ffcbd813800
+
+
 ---
- fs/open.c                  |  2 ++
- include/linux/audit.h      | 10 ++++++++++
- include/uapi/linux/audit.h |  1 +
- kernel/audit.h             |  2 ++
- kernel/auditsc.c           | 18 +++++++++++++++++-
- 5 files changed, 32 insertions(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/open.c b/fs/open.c
-index e53af13b5835..2a15bec0cf6d 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1235,6 +1235,8 @@ SYSCALL_DEFINE4(openat2, int, dfd, const char __user *, filename,
- 	if (err)
- 		return err;
- 
-+	audit_openat2_how(&tmp);
-+
- 	/* O_LARGEFILE is only allowed for non-O_PATH. */
- 	if (!(tmp.flags & O_PATH) && force_o_largefile())
- 		tmp.flags |= O_LARGEFILE;
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 1137df4d4171..32095e1f5bac 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -399,6 +399,7 @@ extern int __audit_log_bprm_fcaps(struct linux_binprm *bprm,
- 				  const struct cred *old);
- extern void __audit_log_capset(const struct cred *new, const struct cred *old);
- extern void __audit_mmap_fd(int fd, int flags);
-+extern void __audit_openat2_how(struct open_how *how);
- extern void __audit_log_kern_module(char *name);
- extern void __audit_fanotify(unsigned int response);
- extern void __audit_tk_injoffset(struct timespec64 offset);
-@@ -495,6 +496,12 @@ static inline void audit_mmap_fd(int fd, int flags)
- 		__audit_mmap_fd(fd, flags);
- }
- 
-+static inline void audit_openat2_how(struct open_how *how)
-+{
-+	if (unlikely(!audit_dummy_context()))
-+		__audit_openat2_how(how);
-+}
-+
- static inline void audit_log_kern_module(char *name)
- {
- 	if (!audit_dummy_context())
-@@ -646,6 +653,9 @@ static inline void audit_log_capset(const struct cred *new,
- static inline void audit_mmap_fd(int fd, int flags)
- { }
- 
-+static inline void audit_openat2_how(struct open_how *how)
-+{ }
-+
- static inline void audit_log_kern_module(char *name)
- {
- }
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index cd2d8279a5e4..67aea2370c6d 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -118,6 +118,7 @@
- #define AUDIT_TIME_ADJNTPVAL	1333	/* NTP value adjustment */
- #define AUDIT_BPF		1334	/* BPF subsystem */
- #define AUDIT_EVENT_LISTENER	1335	/* Task joined multicast read socket */
-+#define AUDIT_OPENAT2		1336	/* Record showing openat2 how args */
- 
- #define AUDIT_AVC		1400	/* SE Linux avc denial or grant */
- #define AUDIT_SELINUX_ERR	1401	/* Internal SE Linux Errors */
-diff --git a/kernel/audit.h b/kernel/audit.h
-index 1522e100fd17..c5af17905976 100644
---- a/kernel/audit.h
-+++ b/kernel/audit.h
-@@ -11,6 +11,7 @@
- #include <linux/skbuff.h>
- #include <uapi/linux/mqueue.h>
- #include <linux/tty.h>
-+#include <uapi/linux/openat2.h> // struct open_how
- 
- /* AUDIT_NAMES is the number of slots we reserve in the audit_context
-  * for saving names from getname().  If we get more names we will allocate
-@@ -185,6 +186,7 @@ struct audit_context {
- 			int			fd;
- 			int			flags;
- 		} mmap;
-+		struct open_how openat2;
- 		struct {
- 			int			argc;
- 		} execve;
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 27c747e0d5ab..2e9a1eea8b12 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -76,7 +76,7 @@
- #include <linux/fsnotify_backend.h>
- #include <uapi/linux/limits.h>
- #include <uapi/linux/netfilter/nf_tables.h>
--#include <uapi/linux/openat2.h>
-+#include <uapi/linux/openat2.h> // struct open_how
- 
- #include "audit.h"
- 
-@@ -1310,6 +1310,12 @@ static void show_special(struct audit_context *context, int *call_panic)
- 		audit_log_format(ab, "fd=%d flags=0x%x", context->mmap.fd,
- 				 context->mmap.flags);
- 		break;
-+	case AUDIT_OPENAT2:
-+		audit_log_format(ab, "oflag=0%llo mode=0%llo resolve=0x%llx",
-+				 context->openat2.flags,
-+				 context->openat2.mode,
-+				 context->openat2.resolve);
-+		break;
- 	case AUDIT_EXECVE:
- 		audit_log_execve_info(context, &ab);
- 		break;
-@@ -2529,6 +2535,16 @@ void __audit_mmap_fd(int fd, int flags)
- 	context->type = AUDIT_MMAP;
- }
- 
-+void __audit_openat2_how(struct open_how *how)
-+{
-+	struct audit_context *context = audit_context();
-+
-+	context->openat2.flags = how->flags;
-+	context->openat2.mode = how->mode;
-+	context->openat2.resolve = how->resolve;
-+	context->type = AUDIT_OPENAT2;
-+}
-+
- void __audit_log_kern_module(char *name)
- {
- 	struct audit_context *context = audit_context();
--- 
-2.27.0
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
