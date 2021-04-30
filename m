@@ -2,231 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FEF13700B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 20:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31AAE3700C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 20:50:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230475AbhD3StC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Apr 2021 14:49:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48290 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229954AbhD3StB (ORCPT
+        id S231214AbhD3Sva (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Apr 2021 14:51:30 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:40710 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229954AbhD3Sva (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Apr 2021 14:49:01 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BDFDC06174A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Apr 2021 11:48:13 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id f11-20020a17090a638bb02901524d3a3d48so2213695pjj.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Apr 2021 11:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=7XBdbNoOYTj3Gr03DOVfcK89IJDLZOevWsJ74EuaGHM=;
-        b=YjRT6B7guhX/7wEFjEUaRJS8IPtHNRS1UrxRvpxD5bySm8E3jAyLgaERsv4SRaHdku
-         Mqz1FLOj6dyOuo0bd7fVTaPQo9dJ7etGPdgZk39jLxKdBv1wDo+Og5Pt2ujQ9D/63Aa9
-         3BAScCxLdnPO94GdvPQA3FgGeDH/hVhW/tD+QuZcBIzNVCMGmGlTxh3ImBjIJ0C+6aGQ
-         Wm/rBSnvSZbmRg5hGalLEBxRAfHZCgmCV3SaIB0JwCr7EUnjm6zYLp4UCUCVhpGxVjVL
-         xS65e4tg1YUS0HZKFactZBT7xQ4ODUTAt8b2Efze5J7FOEL6DhcKaE76pFvhtHDfPEMw
-         ISTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=7XBdbNoOYTj3Gr03DOVfcK89IJDLZOevWsJ74EuaGHM=;
-        b=BrebbkzZYSu96YsXjovR57w78EEImpj0E8v3U+1XaaEau8cmHGNv1speWcKzw+FPlE
-         NvhyaBJmj249AfI7BDRCb5uY4RsvcFMgoxZN9l/B6evvYOVfQIOalvp4pFbGwA0Zpmnh
-         7V+V7YkQlbDNYymEBjWmUavIIWdHIRpaOjYlt2MB9YpF5vPwTcFOu8PB9SHcIfVL8Zk/
-         KswEIZAV37CLBbmCCxV7A7UqGOZGAkIxmDF8S0pm9JtTdCcn5rdLLi2CrLcC7Ld//ZU0
-         mVwtnoa+fI6LTiA64th8ZwOmz/wAkH8ejMzg0I+IdFLXGYMJnEklS2udHXj9lDlN2Lm3
-         7GCw==
-X-Gm-Message-State: AOAM531xiyemMfBeeBEFgFJ7dF6AI+TBVUFa+vI9CSTE3AO69W3wrSHP
-        36oBM4vFvzeET58ZyOpov/jMsdtbB58P6g==
-X-Google-Smtp-Source: ABdhPJxR4atlBvWNNg+ErYQmzVS4erMUB2ikEE4x4YdxdXmliOf6AE4lHC0QpzlcYWLg/riL9p8poQ==
-X-Received: by 2002:a17:90a:6687:: with SMTP id m7mr6903720pjj.75.1619808492601;
-        Fri, 30 Apr 2021 11:48:12 -0700 (PDT)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id mn22sm10490891pjb.24.2021.04.30.11.48.11
-        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
-        Fri, 30 Apr 2021 11:48:12 -0700 (PDT)
-Date:   Fri, 30 Apr 2021 11:47:54 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org
-Subject: Re: [PATCH v8.1 00/31] Memory Folios
-In-Reply-To: <20210430180740.2707166-1-willy@infradead.org>
-Message-ID: <alpine.LSU.2.11.2104301141320.16885@eggly.anvils>
-References: <20210430180740.2707166-1-willy@infradead.org>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Fri, 30 Apr 2021 14:51:30 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lcYDm-003rGS-Ol; Fri, 30 Apr 2021 12:50:38 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=fess.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lcYDl-0005XY-Ur; Fri, 30 Apr 2021 12:50:38 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jia He <justin.he@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20210427025805.GD3122264@magnolia>
+        <CAHk-=wj6XUGJCgsr+hx3rz=4KvBP-kspn3dqG5v-cKMzzMktUw@mail.gmail.com>
+        <20210427195727.GA9661@lst.de>
+        <CAHk-=wjrpinf=8gAjxyPoXT0jbK6-U3Urawiykh-zpxeo47Vhg@mail.gmail.com>
+        <20210428061706.GC5084@lst.de>
+        <CAHk-=whWnFu4wztnOtySjFVYXmBR4Mb2wxrp6OayZqnpKeQw0g@mail.gmail.com>
+        <20210428064110.GA5883@lst.de>
+        <CAHk-=wjeUhrznxM95ni4z+ynMqhgKGsJUDU8g0vrDLc+fDtYWg@mail.gmail.com>
+        <1de23de2-12a9-2b13-3b86-9fe4102fdc0c@rasmusvillemoes.dk>
+        <CAHk-=wimsMqGdzik187YWLb-ru+iktb4MYbMQG1rnZ81dXYFVg@mail.gmail.com>
+        <26d06c27-4778-bf75-e39a-3b02cd22d0e3@rasmusvillemoes.dk>
+        <CAHk-=whJmDjTLYLeF=Ax31vTOq4PHXKo6JUqm1mQNGZdy-6=3Q@mail.gmail.com>
+Date:   Fri, 30 Apr 2021 13:50:34 -0500
+In-Reply-To: <CAHk-=whJmDjTLYLeF=Ax31vTOq4PHXKo6JUqm1mQNGZdy-6=3Q@mail.gmail.com>
+        (Linus Torvalds's message of "Thu, 29 Apr 2021 09:45:39 -0700")
+Message-ID: <m135v7y5c5.fsf@fess.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
+X-XM-SPF: eid=1lcYDl-0005XY-Ur;;;mid=<m135v7y5c5.fsf@fess.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18agHbZHv9HW27hzebg3yTrw+mKNECNwgo=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        XMSubMetaSxObfu_03,XMSubMetaSx_00 autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  1.0 XMSubMetaSx_00 1+ Sexy Words
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Linus Torvalds <torvalds@linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 329 ms - load_scoreonly_sql: 0.07 (0.0%),
+        signal_user_changed: 10 (3.2%), b_tie_ro: 9 (2.8%), parse: 0.83 (0.3%),
+         extract_message_metadata: 12 (3.7%), get_uri_detail_list: 1.17 (0.4%),
+         tests_pri_-1000: 5 (1.6%), tests_pri_-950: 1.01 (0.3%),
+        tests_pri_-900: 0.85 (0.3%), tests_pri_-90: 75 (22.8%), check_bayes:
+        74 (22.4%), b_tokenize: 6 (1.8%), b_tok_get_all: 8 (2.5%),
+        b_comp_prob: 2.2 (0.7%), b_tok_touch_all: 54 (16.3%), b_finish: 0.80
+        (0.2%), tests_pri_0: 212 (64.4%), check_dkim_signature: 0.54 (0.2%),
+        check_dkim_adsp: 1.91 (0.6%), poll_dns_idle: 0.64 (0.2%),
+        tests_pri_10: 1.84 (0.6%), tests_pri_500: 7 (2.2%), rewrite_mail: 0.00
+        (0.0%)
+Subject: Re: [GIT PULL] iomap: new code for 5.13-rc1
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adding Linus to the Cc (of this one only): he surely has an interest.
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
-On Fri, 30 Apr 2021, Matthew Wilcox (Oracle) wrote:
+> On Wed, Apr 28, 2021 at 11:40 PM Rasmus Villemoes
+> <linux@rasmusvillemoes.dk> wrote:
+>>
+>> > That also does explain the arguably odd %pD defaults: %pd came first,
+>> > and then %pD came afterwards.
+>>
+>> Eh? 4b6ccca701ef5977d0ffbc2c932430dea88b38b6 added them both at the same
+>> time.
+>
+> Ahh, I looked at "git blame", and saw that file_dentry_name() was
+> added later. But that turns out to have been an additional fix on top,
+> not actually "later support".
+>
+> Looking more at that code, I am starting to think that
+> "file_dentry_name()" simply shouldn't use "dentry_name()" at all.
+> Despite that shared code origin, and despite that similar letter
+> choice (lower-vs-upper case), a dentry and a file really are very very
+> different from a name standpoint.
+>
+> And it's not the "a filename is the whale pathname, and a dentry has
+> its own private dentry name" issue. It's really that the 'struct file'
+> contains a _path_ - which is not just the dentry pointer, but the
+> 'struct vfsmount' pointer too.
+>
+> So '%pD' really *could* get the real path right (because it has all
+> the required information) in ways that '%pd' fundamentally cannot.
+>
+> At the same time, I really don't like printk specifiers to take any
+> real locks (ie mount_lock or rename_lock), so I wouldn't want them to
+> use the full  d_path() logic.
 
-> Managing memory in 4KiB pages is a serious overhead.  Many benchmarks
-> benefit from a larger "page size".  As an example, an earlier iteration
-> of this idea which used compound pages (and wasn't particularly tuned)
-> got a 7% performance boost when compiling the kernel.
-> 
-> Using compound pages or THPs exposes a serious weakness in our type
-> system.  Functions are often unprepared for compound pages to be passed
-> to them, and may only act on PAGE_SIZE chunks.  Even functions which are
-> aware of compound pages may expect a head page, and do the wrong thing
-> if passed a tail page.
-> 
-> There have been efforts to label function parameters as 'head' instead
-> of 'page' to indicate that the function expects a head page, but this
-> leaves us with runtime assertions instead of using the compiler to prove
-> that nobody has mistakenly passed a tail page.  Calling a struct page
-> 'head' is also inaccurate as they will work perfectly well on base pages.
-> 
-> We also waste a lot of instructions ensuring that we're not looking at
-> a tail page.  Almost every call to PageFoo() contains one or more hidden
-> calls to compound_head().  This also happens for get_page(), put_page()
-> and many more functions.  There does not appear to be a way to tell gcc
-> that it can cache the result of compound_head(), nor is there a way to
-> tell it that compound_head() is idempotent.
-> 
-> This series introduces the 'struct folio' as a replacement for
-> head-or-base pages.  This initial set reduces the kernel size by
-> approximately 6kB by removing conversions from tail pages to head pages.
-> The real purpose of this series is adding infrastructure to enable
-> further use of the folio.
-> 
-> The medium-term goal is to convert all filesystems and some device
-> drivers to work in terms of folios.  This series contains a lot of
-> explicit conversions, but it's important to realise it's removing a lot
-> of implicit conversions in some relatively hot paths.  There will be very
-> few conversions from folios when this work is completed; filesystems,
-> the page cache, the LRU and so on will generally only deal with folios.
-> 
-> The text size reduces by between 6kB (a config based on Oracle UEK)
-> and 1.2kB (allnoconfig).  Performance seems almost unaffected based
-> on kernbench.
-> 
-> Current tree at:
-> https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/folio
-> 
-> (contains another ~120 patches on top of this batch, not all of which are
-> in good shape for submission)
-> 
-> v8.1:
->  - Rebase on next-20210430
->  - You need https://lore.kernel.org/linux-mm/20210430145549.2662354-1-willy@infradead.org/ first
->  - Big renaming (thanks to peterz):
->    - PageFoo() becomes folio_foo()
->    - SetFolioFoo() becomes folio_set_foo()
->    - ClearFolioFoo() becomes folio_clear_foo()
->    - __SetFolioFoo() becomes __folio_set_foo()
->    - __ClearFolioFoo() becomes __folio_clear_foo()
->    - TestSetPageFoo() becomes folio_test_set_foo()
->    - TestClearPageFoo() becomes folio_test_clear_foo()
->    - PageHuge() is now folio_hugetlb()
->    - put_folio() becomes folio_put()
->    - get_folio() becomes folio_get()
->    - put_folio_testzero() becomes folio_put_testzero()
->    - set_folio_count() becomes folio_set_count()
->    - attach_folio_private() becomes folio_attach_private()
->    - detach_folio_private() becomes folio_detach_private()
->    - lock_folio() becomes folio_lock()
->    - unlock_folio() becomes folio_unlock()
->    - trylock_folio() becomes folio_trylock()
->    - __lock_folio_or_retry becomes __folio_lock_or_retry()
->    - __lock_folio_async() becomes __folio_lock_async()
->    - wake_up_folio_bit() becomes folio_wake_bit()
->    - wake_up_folio() becomes folio_wake()
->    - wait_on_folio_bit() becomes folio_wait_bit()
->    - wait_for_stable_folio() becomes folio_wait_stable()
->    - wait_on_folio() becomes folio_wait()
->    - wait_on_folio_locked() becomes folio_wait_locked()
->    - wait_on_folio_writeback() becomes folio_wait_writeback()
->    - end_folio_writeback() becomes folio_end_writeback()
->    - add_folio_wait_queue() becomes folio_add_wait_queue()
->  - Add folio_young() and folio_idle() family of functions
->  - Move page_folio() to page-flags.h and use _compound_head()
->  - Make page_folio() const-preserving
->  - Add folio_page() to get the nth page from a folio
->  - Improve struct folio kernel-doc
->  - Convert folio flag tests to return bool instead of int
->  - Eliminate set_folio_private()
->  - folio_get_private() is the equivalent of page_private() (as folio_private()
->    is now a test for whether the private flag is set on the folio)
->  - Move folio_rotate_reclaimable() into this patchset
->  - Add page-flags.h to the kernel-doc
->  - Add netfs.h to the kernel-doc
->  - Add a family of folio_lock_lruvec() wrappers
->  - Add a family of folio_relock_lruvec() wrappers
-> 
-> v7:
-> https://lore.kernel.org/linux-mm/20210409185105.188284-1-willy@infradead.org/
-> 
-> Matthew Wilcox (Oracle) (31):
->   mm: Introduce struct folio
->   mm: Add folio_pgdat and folio_zone
->   mm/vmstat: Add functions to account folio statistics
->   mm/debug: Add VM_BUG_ON_FOLIO and VM_WARN_ON_ONCE_FOLIO
->   mm: Add folio reference count functions
->   mm: Add folio_put
->   mm: Add folio_get
->   mm: Add folio flag manipulation functions
->   mm: Add folio_young() and folio_idle()
->   mm: Handle per-folio private data
->   mm/filemap: Add folio_index, folio_file_page and folio_contains
->   mm/filemap: Add folio_next_index
->   mm/filemap: Add folio_offset and folio_file_offset
->   mm/util: Add folio_mapping and folio_file_mapping
->   mm: Add folio_mapcount
->   mm/memcg: Add folio wrappers for various functions
->   mm/filemap: Add folio_unlock
->   mm/filemap: Add folio_lock
->   mm/filemap: Add folio_lock_killable
->   mm/filemap: Add __folio_lock_async
->   mm/filemap: Add __folio_lock_or_retry
->   mm/filemap: Add folio_wait_locked
->   mm/swap: Add folio_rotate_reclaimable
->   mm/filemap: Add folio_end_writeback
->   mm/writeback: Add folio_wait_writeback
->   mm/writeback: Add folio_wait_stable
->   mm/filemap: Add folio_wait_bit
->   mm/filemap: Add folio_wake_bit
->   mm/filemap: Convert page wait queues to be folios
->   mm/filemap: Add folio private_2 functions
->   fs/netfs: Add folio fscache functions
-> 
->  Documentation/core-api/mm-api.rst           |   4 +
->  Documentation/filesystems/netfs_library.rst |   2 +
->  fs/afs/write.c                              |   9 +-
->  fs/cachefiles/rdwr.c                        |  16 +-
->  fs/io_uring.c                               |   2 +-
->  include/linux/memcontrol.h                  |  58 ++++
->  include/linux/mm.h                          | 173 ++++++++++--
->  include/linux/mm_types.h                    |  71 +++++
->  include/linux/mmdebug.h                     |  20 ++
->  include/linux/netfs.h                       |  77 +++--
->  include/linux/page-flags.h                  | 222 +++++++++++----
->  include/linux/page_idle.h                   |  99 ++++---
->  include/linux/page_ref.h                    |  88 +++++-
->  include/linux/pagemap.h                     | 276 +++++++++++++-----
->  include/linux/swap.h                        |   7 +-
->  include/linux/vmstat.h                      | 107 +++++++
->  mm/Makefile                                 |   2 +-
->  mm/filemap.c                                | 295 ++++++++++----------
->  mm/folio-compat.c                           |  37 +++
->  mm/internal.h                               |   1 +
->  mm/memory.c                                 |   8 +-
->  mm/page-writeback.c                         |  72 +++--
->  mm/page_io.c                                |   4 +-
->  mm/swap.c                                   |  18 +-
->  mm/swapfile.c                               |   8 +-
->  mm/util.c                                   |  30 +-
->  26 files changed, 1247 insertions(+), 459 deletions(-)
->  create mode 100644 mm/folio-compat.c
-> 
-> -- 
-> 2.30.2
+Well prepend_path the core of d_path, which is essentially the logic
+I think you are suggesting to use does:
+read_seqbegin_or_lock(&mount_lock, ...);
+read_seqbegin_or_lock(&rename_lock, ...);
+
+A printk specific variant could easily be modified to always restart or
+to simply ignore renames and changes to the mount tree.  There are
+always the corner cases when there is no sensible full path to display.
+A rename or a mount namespace operation could be handled like one of
+those.
+
+Eric
+
