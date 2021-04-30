@@ -2,56 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D6E2370238
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 22:37:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 869B937023D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 22:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235961AbhD3Uhg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Apr 2021 16:37:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:45181 "EHLO
+        id S235962AbhD3Uhq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Apr 2021 16:37:46 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:27413 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235557AbhD3Uha (ORCPT
+        by vger.kernel.org with ESMTP id S235936AbhD3Uhm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Apr 2021 16:37:30 -0400
+        Fri, 30 Apr 2021 16:37:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619815001;
+        s=mimecast20190719; t=1619815011;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=88ObglMi23PFhsx5xuK+j7sB27VL+IqmOJ432hGAy4o=;
-        b=Mr/OvA24tk8sa+X02QIEhyVGcEivq78XyFAh2oSAuy8FqISWSCXWgi/9qfrGI11ruL2fKN
-        MZ0y0mb/NgjrnRqb0FsR5qJZLYyn1THdAWEZ4q/FC3a3g/iWXrkjbXzgH9B1XAm1npp2hE
-        sU5PSnpJ/kUYzNcm6jYz60jPNnGpTcQ=
+        bh=N6V30Sob6slzfesQyLeYP7vBnXqoSeHwGk+XUPTQPFo=;
+        b=ZkxL4mHCLY0bCgCJibhAEcD798wRiqXmbmrtmoOLfTolGJIIMaKEk4/rA8ShBpcTC52EOs
+        aNqMJxcJ0ocD2k7YwLpL+FINF9UXbzI+JgLPEtAVa6ZDFfZ0kL+66hAiQO2ibzgcOiCtlj
+        sM4K3WnvxBeAe+VIDS9s9z6Illf8PbI=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-369-LbToS9TlOeqCAV1sGlyDkA-1; Fri, 30 Apr 2021 16:36:38 -0400
-X-MC-Unique: LbToS9TlOeqCAV1sGlyDkA-1
+ us-mta-210-wihMuOlBO9S_Itlyxz2nCA-1; Fri, 30 Apr 2021 16:36:49 -0400
+X-MC-Unique: wihMuOlBO9S_Itlyxz2nCA-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 96090107ACE3;
-        Fri, 30 Apr 2021 20:36:36 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BCC00107ACCD;
+        Fri, 30 Apr 2021 20:36:48 +0000 (UTC)
 Received: from madcap2.tricolour.ca (unknown [10.3.128.45])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DE0F93807;
-        Fri, 30 Apr 2021 20:36:32 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1C8705C674;
+        Fri, 30 Apr 2021 20:36:36 +0000 (UTC)
 From:   Richard Guy Briggs <rgb@redhat.com>
 To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
+        LKML <linux-kernel@vger.kernel.org>
 Cc:     Paul Moore <paul@paul-moore.com>,
         Eric Paris <eparis@parisplace.org>,
         Steve Grubb <sgrubb@redhat.com>,
         Richard Guy Briggs <rgb@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Paris <eparis@redhat.com>, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Arnd Bergmann <arnd@kernel.org>
-Subject: [PATCH v3 2/3] audit: add support for the openat2 syscall
-Date:   Fri, 30 Apr 2021 16:35:22 -0400
-Message-Id: <29e7068e8121aee22bdd9f4c9a6d08a1762b20e9.1619811762.git.rgb@redhat.com>
+        Eric Paris <eparis@redhat.com>, linux-fsdevel@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>
+Subject: [PATCH v3 3/3] audit: add OPENAT2 record to list how
+Date:   Fri, 30 Apr 2021 16:35:23 -0400
+Message-Id: <f9c0e777e9cbd0b473a551384306f3654b1ddf42.1619811762.git.rgb@redhat.com>
 In-Reply-To: <cover.1619811762.git.rgb@redhat.com>
 References: <cover.1619811762.git.rgb@redhat.com>
 MIME-Version: 1.0
@@ -61,253 +56,154 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The openat2(2) syscall was added in kernel v5.6 with commit fddb5d430ad9
-("open: introduce openat2(2) syscall")
+Since the openat2(2) syscall uses a struct open_how pointer to communicate
+its parameters they are not usefully recorded by the audit SYSCALL record's
+four existing arguments.
 
-Add the openat2(2) syscall to the audit syscall classifier.
+Add a new audit record type OPENAT2 that reports the parameters in its
+third argument, struct open_how with fields oflag, mode and resolve.
 
-See the github issue
-https://github.com/linux-audit/audit-kernel/issues/67
+The new record in the context of an event would look like:
+time->Wed Mar 17 16:28:53 2021
+type=PROCTITLE msg=audit(1616012933.531:184): proctitle=73797363616C6C735F66696C652F6F70656E617432002F746D702F61756469742D7465737473756974652D737641440066696C652D6F70656E617432
+type=PATH msg=audit(1616012933.531:184): item=1 name="file-openat2" inode=29 dev=00:1f mode=0100600 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=CREATE cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+type=PATH msg=audit(1616012933.531:184): item=0 name="/root/rgb/git/audit-testsuite/tests" inode=25 dev=00:1f mode=040700 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=PARENT cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+type=CWD msg=audit(1616012933.531:184): cwd="/root/rgb/git/audit-testsuite/tests"
+type=OPENAT2 msg=audit(1616012933.531:184): oflag=0100302 mode=0600 resolve=0xa
+type=SYSCALL msg=audit(1616012933.531:184): arch=c000003e syscall=437 success=yes exit=4 a0=3 a1=7ffe315f1c53 a2=7ffe315f1550 a3=18 items=2 ppid=528 pid=540 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=ttyS0 ses=1 comm="openat2" exe="/root/rgb/git/audit-testsuite/tests/syscalls_file/openat2" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="testsuite-1616012933-bjAUcEPO"
 
 Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- arch/alpha/kernel/audit.c          | 2 ++
- arch/ia64/kernel/audit.c           | 2 ++
- arch/parisc/kernel/audit.c         | 2 ++
- arch/parisc/kernel/compat_audit.c  | 2 ++
- arch/powerpc/kernel/audit.c        | 2 ++
- arch/powerpc/kernel/compat_audit.c | 2 ++
- arch/s390/kernel/audit.c           | 2 ++
- arch/s390/kernel/compat_audit.c    | 2 ++
- arch/sparc/kernel/audit.c          | 2 ++
- arch/sparc/kernel/compat_audit.c   | 2 ++
- arch/x86/ia32/audit.c              | 2 ++
- arch/x86/kernel/audit_64.c         | 2 ++
- include/linux/auditscm.h           | 1 +
- kernel/auditsc.c                   | 3 +++
- lib/audit.c                        | 4 ++++
- lib/compat_audit.c                 | 4 ++++
- 16 files changed, 36 insertions(+)
+ fs/open.c                  |  2 ++
+ include/linux/audit.h      | 10 ++++++++++
+ include/uapi/linux/audit.h |  1 +
+ kernel/audit.h             |  2 ++
+ kernel/auditsc.c           | 18 +++++++++++++++++-
+ 5 files changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/arch/alpha/kernel/audit.c b/arch/alpha/kernel/audit.c
-index 81cbd804e375..3ab04709784a 100644
---- a/arch/alpha/kernel/audit.c
-+++ b/arch/alpha/kernel/audit.c
-@@ -42,6 +42,8 @@ int audit_classify_syscall(int abi, unsigned syscall)
- 		return AUDITSC_OPENAT;
- 	case __NR_execve:
- 		return AUDITSC_EXECVE;
-+	case __NR_openat2:
-+		return AUDITSC_OPENAT2;
- 	default:
- 		return AUDITSC_NATIVE;
- 	}
-diff --git a/arch/ia64/kernel/audit.c b/arch/ia64/kernel/audit.c
-index dba6a74c9ab3..ec61f20ca61f 100644
---- a/arch/ia64/kernel/audit.c
-+++ b/arch/ia64/kernel/audit.c
-@@ -43,6 +43,8 @@ int audit_classify_syscall(int abi, unsigned syscall)
- 		return AUDITSC_OPENAT;
- 	case __NR_execve:
- 		return AUDITSC_EXECVE;
-+	case __NR_openat2:
-+		return AUDITSC_OPENAT2;
- 	default:
- 		return AUDITSC_NATIVE;
- 	}
-diff --git a/arch/parisc/kernel/audit.c b/arch/parisc/kernel/audit.c
-index 14244e83db75..f420b5552140 100644
---- a/arch/parisc/kernel/audit.c
-+++ b/arch/parisc/kernel/audit.c
-@@ -52,6 +52,8 @@ int audit_classify_syscall(int abi, unsigned syscall)
- 		return AUDITSC_OPENAT;
- 	case __NR_execve:
- 		return AUDITSC_EXECVE;
-+	case __NR_openat2:
-+		return AUDITSC_OPENAT2;
- 	default:
- 		return AUDITSC_NATIVE;
- 	}
-diff --git a/arch/parisc/kernel/compat_audit.c b/arch/parisc/kernel/compat_audit.c
-index 0c181bb39f34..02cfd9d1ebeb 100644
---- a/arch/parisc/kernel/compat_audit.c
-+++ b/arch/parisc/kernel/compat_audit.c
-@@ -36,6 +36,8 @@ int parisc32_classify_syscall(unsigned syscall)
- 		return AUDITSC_OPENAT;
- 	case __NR_execve:
- 		return AUDITSC_EXECVE;
-+	case __NR_openat2:
-+		return AUDITSC_OPENAT2;
- 	default:
- 		return AUDITSC_COMPAT;
- 	}
-diff --git a/arch/powerpc/kernel/audit.c b/arch/powerpc/kernel/audit.c
-index 6eb18ef77dff..1bcfca5fdf67 100644
---- a/arch/powerpc/kernel/audit.c
-+++ b/arch/powerpc/kernel/audit.c
-@@ -54,6 +54,8 @@ int audit_classify_syscall(int abi, unsigned syscall)
- 		return AUDITSC_SOCKETCALL;
- 	case __NR_execve:
- 		return AUDITSC_EXECVE;
-+	case __NR_openat2:
-+		return AUDITSC_OPENAT2;
- 	default:
- 		return AUDITSC_NATIVE;
- 	}
-diff --git a/arch/powerpc/kernel/compat_audit.c b/arch/powerpc/kernel/compat_audit.c
-index f250777f6365..1fa0c902be8a 100644
---- a/arch/powerpc/kernel/compat_audit.c
-+++ b/arch/powerpc/kernel/compat_audit.c
-@@ -39,6 +39,8 @@ int ppc32_classify_syscall(unsigned syscall)
- 		return AUDITSC_SOCKETCALL;
- 	case __NR_execve:
- 		return AUDITSC_EXECVE;
-+	case __NR_openat2:
-+		return AUDITSC_OPENAT2;
- 	default:
- 		return AUDITSC_COMPAT;
- 	}
-diff --git a/arch/s390/kernel/audit.c b/arch/s390/kernel/audit.c
-index 7e331e1831d4..02051a596b87 100644
---- a/arch/s390/kernel/audit.c
-+++ b/arch/s390/kernel/audit.c
-@@ -54,6 +54,8 @@ int audit_classify_syscall(int abi, unsigned syscall)
- 		return AUDITSC_SOCKETCALL;
- 	case __NR_execve:
- 		return AUDITSC_EXECVE;
-+	case __NR_openat2:
-+		return AUDITSC_OPENAT2;
- 	default:
- 		return AUDITSC_NATIVE;
- 	}
-diff --git a/arch/s390/kernel/compat_audit.c b/arch/s390/kernel/compat_audit.c
-index b2a2ed5d605a..320b5e7d96f0 100644
---- a/arch/s390/kernel/compat_audit.c
-+++ b/arch/s390/kernel/compat_audit.c
-@@ -40,6 +40,8 @@ int s390_classify_syscall(unsigned syscall)
- 		return AUDITSC_SOCKETCALL;
- 	case __NR_execve:
- 		return AUDITSC_EXECVE;
-+	case __NR_openat2:
-+		return AUDITSC_OPENAT2;
- 	default:
- 		return AUDITSC_COMPAT;
- 	}
-diff --git a/arch/sparc/kernel/audit.c b/arch/sparc/kernel/audit.c
-index 50fab35bdaba..b092274eca79 100644
---- a/arch/sparc/kernel/audit.c
-+++ b/arch/sparc/kernel/audit.c
-@@ -55,6 +55,8 @@ int audit_classify_syscall(int abi, unsigned int syscall)
- 		return AUDITSC_SOCKETCALL;
- 	case __NR_execve:
- 		return AUDITSC_EXECVE;
-+	case __NR_openat2:
-+		return AUDITSC_OPENAT2;
- 	default:
- 		return AUDITSC_NATIVE;
- 	}
-diff --git a/arch/sparc/kernel/compat_audit.c b/arch/sparc/kernel/compat_audit.c
-index fdf0d70b569b..b0a7d0112b96 100644
---- a/arch/sparc/kernel/compat_audit.c
-+++ b/arch/sparc/kernel/compat_audit.c
-@@ -40,6 +40,8 @@ int sparc32_classify_syscall(unsigned int syscall)
- 		return AUDITSC_SOCKETCALL;
- 	case __NR_execve:
- 		return AUDITSC_EXECVE;
-+	case __NR_openat2:
-+		return AUDITSC_OPENAT2;
- 	default:
- 		return AUDITSC_COMPAT;
- 	}
-diff --git a/arch/x86/ia32/audit.c b/arch/x86/ia32/audit.c
-index d3dc8b57df81..8f6bf3a46a3a 100644
---- a/arch/x86/ia32/audit.c
-+++ b/arch/x86/ia32/audit.c
-@@ -40,6 +40,8 @@ int ia32_classify_syscall(unsigned syscall)
- 	case __NR_execve:
- 	case __NR_execveat:
- 		return AUDITSC_EXECVE;
-+	case __NR_openat2:
-+		return AUDITSC_OPENAT2;
- 	default:
- 		return AUDITSC_COMPAT;
- 	}
-diff --git a/arch/x86/kernel/audit_64.c b/arch/x86/kernel/audit_64.c
-index 2a6cc9c9c881..44c3601cfdc4 100644
---- a/arch/x86/kernel/audit_64.c
-+++ b/arch/x86/kernel/audit_64.c
-@@ -53,6 +53,8 @@ int audit_classify_syscall(int abi, unsigned syscall)
- 	case __NR_execve:
- 	case __NR_execveat:
- 		return AUDITSC_EXECVE;
-+	case __NR_openat2:
-+		return AUDITSC_OPENAT2;
- 	default:
- 		return AUDITSC_NATIVE;
- 	}
-diff --git a/include/linux/auditscm.h b/include/linux/auditscm.h
-index 1c4f0ead5931..0893c373e12b 100644
---- a/include/linux/auditscm.h
-+++ b/include/linux/auditscm.h
-@@ -16,6 +16,7 @@ enum auditsc_class_t {
- 	AUDITSC_OPENAT,
- 	AUDITSC_SOCKETCALL,
- 	AUDITSC_EXECVE,
-+	AUDITSC_OPENAT2,
+diff --git a/fs/open.c b/fs/open.c
+index e53af13b5835..2a15bec0cf6d 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1235,6 +1235,8 @@ SYSCALL_DEFINE4(openat2, int, dfd, const char __user *, filename,
+ 	if (err)
+ 		return err;
  
- 	AUDITSC_NVALS /* count */
- };
++	audit_openat2_how(&tmp);
++
+ 	/* O_LARGEFILE is only allowed for non-O_PATH. */
+ 	if (!(tmp.flags & O_PATH) && force_o_largefile())
+ 		tmp.flags |= O_LARGEFILE;
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index 1137df4d4171..32095e1f5bac 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -399,6 +399,7 @@ extern int __audit_log_bprm_fcaps(struct linux_binprm *bprm,
+ 				  const struct cred *old);
+ extern void __audit_log_capset(const struct cred *new, const struct cred *old);
+ extern void __audit_mmap_fd(int fd, int flags);
++extern void __audit_openat2_how(struct open_how *how);
+ extern void __audit_log_kern_module(char *name);
+ extern void __audit_fanotify(unsigned int response);
+ extern void __audit_tk_injoffset(struct timespec64 offset);
+@@ -495,6 +496,12 @@ static inline void audit_mmap_fd(int fd, int flags)
+ 		__audit_mmap_fd(fd, flags);
+ }
+ 
++static inline void audit_openat2_how(struct open_how *how)
++{
++	if (unlikely(!audit_dummy_context()))
++		__audit_openat2_how(how);
++}
++
+ static inline void audit_log_kern_module(char *name)
+ {
+ 	if (!audit_dummy_context())
+@@ -646,6 +653,9 @@ static inline void audit_log_capset(const struct cred *new,
+ static inline void audit_mmap_fd(int fd, int flags)
+ { }
+ 
++static inline void audit_openat2_how(struct open_how *how)
++{ }
++
+ static inline void audit_log_kern_module(char *name)
+ {
+ }
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index cd2d8279a5e4..67aea2370c6d 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -118,6 +118,7 @@
+ #define AUDIT_TIME_ADJNTPVAL	1333	/* NTP value adjustment */
+ #define AUDIT_BPF		1334	/* BPF subsystem */
+ #define AUDIT_EVENT_LISTENER	1335	/* Task joined multicast read socket */
++#define AUDIT_OPENAT2		1336	/* Record showing openat2 how args */
+ 
+ #define AUDIT_AVC		1400	/* SE Linux avc denial or grant */
+ #define AUDIT_SELINUX_ERR	1401	/* Internal SE Linux Errors */
+diff --git a/kernel/audit.h b/kernel/audit.h
+index 1522e100fd17..c5af17905976 100644
+--- a/kernel/audit.h
++++ b/kernel/audit.h
+@@ -11,6 +11,7 @@
+ #include <linux/skbuff.h>
+ #include <uapi/linux/mqueue.h>
+ #include <linux/tty.h>
++#include <uapi/linux/openat2.h> // struct open_how
+ 
+ /* AUDIT_NAMES is the number of slots we reserve in the audit_context
+  * for saving names from getname().  If we get more names we will allocate
+@@ -185,6 +186,7 @@ struct audit_context {
+ 			int			fd;
+ 			int			flags;
+ 		} mmap;
++		struct open_how openat2;
+ 		struct {
+ 			int			argc;
+ 		} execve;
 diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 8807afa6e237..27c747e0d5ab 100644
+index 27c747e0d5ab..2e9a1eea8b12 100644
 --- a/kernel/auditsc.c
 +++ b/kernel/auditsc.c
-@@ -76,6 +76,7 @@
+@@ -76,7 +76,7 @@
  #include <linux/fsnotify_backend.h>
  #include <uapi/linux/limits.h>
  #include <uapi/linux/netfilter/nf_tables.h>
-+#include <uapi/linux/openat2.h>
+-#include <uapi/linux/openat2.h>
++#include <uapi/linux/openat2.h> // struct open_how
  
  #include "audit.h"
  
-@@ -195,6 +196,8 @@ static int audit_match_perm(struct audit_context *ctx, int mask)
- 		return ((mask & AUDIT_PERM_WRITE) && ctx->argv[0] == SYS_BIND);
- 	case AUDITSC_EXECVE:
- 		return mask & AUDIT_PERM_EXEC;
-+	case AUDITSC_OPENAT2:
-+		return mask & ACC_MODE((u32)((struct open_how *)ctx->argv[2])->flags);
- 	default:
- 		return 0;
- 	}
-diff --git a/lib/audit.c b/lib/audit.c
-index 3ec1a94d8d64..738bda22dd39 100644
---- a/lib/audit.c
-+++ b/lib/audit.c
-@@ -60,6 +60,10 @@ int audit_classify_syscall(int abi, unsigned syscall)
- #endif
- 	case __NR_execve:
- 		return AUDITSC_EXECVE;
-+#ifdef __NR_openat2
-+	case __NR_openat2:
-+		return AUDITSC_OPENAT2;
-+#endif
- 	default:
- 		return AUDITSC_NATIVE;
- 	}
-diff --git a/lib/compat_audit.c b/lib/compat_audit.c
-index 63125ad2edc0..7ed9461b52b7 100644
---- a/lib/compat_audit.c
-+++ b/lib/compat_audit.c
-@@ -46,6 +46,10 @@ int audit_classify_compat_syscall(int abi, unsigned syscall)
- #endif
- 	case __NR_execve:
- 		return AUDITSC_EXECVE;
-+#ifdef __NR_openat2
-+	case __NR_openat2:
-+		return AUDITSC_OPENAT2;
-+#endif
- 	default:
- 		return AUDITSC_COMPAT;
- 	}
+@@ -1310,6 +1310,12 @@ static void show_special(struct audit_context *context, int *call_panic)
+ 		audit_log_format(ab, "fd=%d flags=0x%x", context->mmap.fd,
+ 				 context->mmap.flags);
+ 		break;
++	case AUDIT_OPENAT2:
++		audit_log_format(ab, "oflag=0%llo mode=0%llo resolve=0x%llx",
++				 context->openat2.flags,
++				 context->openat2.mode,
++				 context->openat2.resolve);
++		break;
+ 	case AUDIT_EXECVE:
+ 		audit_log_execve_info(context, &ab);
+ 		break;
+@@ -2529,6 +2535,16 @@ void __audit_mmap_fd(int fd, int flags)
+ 	context->type = AUDIT_MMAP;
+ }
+ 
++void __audit_openat2_how(struct open_how *how)
++{
++	struct audit_context *context = audit_context();
++
++	context->openat2.flags = how->flags;
++	context->openat2.mode = how->mode;
++	context->openat2.resolve = how->resolve;
++	context->type = AUDIT_OPENAT2;
++}
++
+ void __audit_log_kern_module(char *name)
+ {
+ 	struct audit_context *context = audit_context();
 -- 
 2.27.0
 
