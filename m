@@ -2,164 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 66D0E36FFC3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 19:39:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EADE36FFA3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 19:35:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230093AbhD3Rka (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Apr 2021 13:40:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33146 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229954AbhD3Rka (ORCPT
+        id S231491AbhD3RgD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Apr 2021 13:36:03 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:52276 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231264AbhD3Rf4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Apr 2021 13:40:30 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06BCDC06174A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Apr 2021 10:39:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=U7qW5qvNaD+0f5JkRmi3lkD2zY05XTYiYtYU1+fotcM=; b=Dhnx2griWcxSl82uPmShbFWoDS
-        aBAYzgTkiIKRC65MTnE+jQpPXBRWSfOni33wW5I+Hob3wlY+VqFw9PAz6p6Pv9t8OlOzUfanGKL0j
-        xqiXdyTQFf1cf2cBuGnlLCGgsrTC9T460gForDQRb1wLSMTE4LL9vjSOveR+K3LOikyk9o2NUw8SW
-        fgpqa/cos18V3mejnB3EJ0p35axGM/twY9EWGYvBzVKhSA85x5SaFxSp1xj9i6JfFIw2CYgqKADtn
-        FhVze7HVav6JR1d248jjoD6GDhFY10meVvWGwhq1ID6EiukrcMsJ3rFZsAE1YVTcSc+kDFcEKYfPC
-        wG8wDu2A==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lcX5M-00BKEB-UB; Fri, 30 Apr 2021 17:38:12 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        akpm@linux-foundation.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v8 19/27] mm/filemap: Add folio_lock_killable
-Date:   Fri, 30 Apr 2021 18:22:27 +0100
-Message-Id: <20210430172235.2695303-20-willy@infradead.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210430172235.2695303-1-willy@infradead.org>
-References: <20210430172235.2695303-1-willy@infradead.org>
+        Fri, 30 Apr 2021 13:35:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619804107;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=rnOgPKZjZy0onTXRBA27q6w7KxyfRvenQEgxZ63aGEE=;
+        b=QwxO8YgiP3jNaXNS8rmLRFCnBxktdRfoM3/sMu/yNbLONjCKapaNz2f6+5eEy6Ts4jrmuR
+        IAzCPxFvJItRPR6ciTkVPp/ezLlIe1F1jFjoYpf3OD6QmA5hc/fzawtImAlPgbNlX2k9j+
+        IyrBte7lRvHu7D/ywhpVzXCcxLuVwKk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-470-6zgAS2f6Nnmac7MOH3zjHQ-1; Fri, 30 Apr 2021 13:35:00 -0400
+X-MC-Unique: 6zgAS2f6Nnmac7MOH3zjHQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1F69F501ED;
+        Fri, 30 Apr 2021 17:34:58 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 79AB136DE;
+        Fri, 30 Apr 2021 17:34:48 +0000 (UTC)
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Paris <eparis@redhat.com>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>
+Subject: [PATCH v2 0/3] audit: add support for openat2
+Date:   Fri, 30 Apr 2021 13:29:34 -0400
+Message-Id: <cover.1619729297.git.rgb@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is like lock_page_killable() but for use by callers who
-know they have a folio.  Convert __lock_page_killable() to be
-__folio_lock_killable().  This saves one call to compound_head() per
-contended call to lock_page_killable().
+The openat2(2) syscall was added in v5.6.  Add support for openat2 to the
+audit syscall classifier and for recording openat2 parameters that cannot
+be captured in the syscall parameters of the SYSCALL record.
 
-__folio_lock_killable() is 20 bytes smaller than __lock_page_killable()
-was.  lock_page_maybe_drop_mmap() shrinks by 68 bytes and
-__lock_page_or_retry() shrinks by 66 bytes.  That's a total of 154 bytes
-of text saved.
+Supporting userspace code can be found in
+https://github.com/rgbriggs/audit-userspace/tree/ghau-openat2
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Jeff Layton <jlayton@kernel.org>
----
- include/linux/pagemap.h | 15 ++++++++++-----
- mm/filemap.c            | 17 +++++++++--------
- 2 files changed, 19 insertions(+), 13 deletions(-)
+Supporting test case can be found in
+https://github.com/linux-audit/audit-testsuite/pull/103
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index ff81be103539..332731ee541a 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -715,7 +715,7 @@ static inline bool wake_page_match(struct wait_page_queue *wait_page,
- }
- 
- void __folio_lock(struct folio *folio);
--extern int __lock_page_killable(struct page *page);
-+int __folio_lock_killable(struct folio *folio);
- extern int __lock_page_async(struct page *page, struct wait_page_queue *wait);
- extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
- 				unsigned int flags);
-@@ -755,6 +755,14 @@ static inline void lock_page(struct page *page)
- 		__folio_lock(folio);
- }
- 
-+static inline int folio_lock_killable(struct folio *folio)
-+{
-+	might_sleep();
-+	if (!folio_trylock(folio))
-+		return __folio_lock_killable(folio);
-+	return 0;
-+}
-+
- /*
-  * lock_page_killable is like lock_page but can be interrupted by fatal
-  * signals.  It returns 0 if it locked the page and -EINTR if it was
-@@ -762,10 +770,7 @@ static inline void lock_page(struct page *page)
-  */
- static inline int lock_page_killable(struct page *page)
- {
--	might_sleep();
--	if (!trylock_page(page))
--		return __lock_page_killable(page);
--	return 0;
-+	return folio_lock_killable(page_folio(page));
- }
- 
- /*
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 6935b068856f..27a86d53dd89 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1587,14 +1587,13 @@ void __folio_lock(struct folio *folio)
- }
- EXPORT_SYMBOL(__folio_lock);
- 
--int __lock_page_killable(struct page *__page)
-+int __folio_lock_killable(struct folio *folio)
- {
--	struct page *page = compound_head(__page);
--	wait_queue_head_t *q = page_waitqueue(page);
--	return wait_on_page_bit_common(q, page, PG_locked, TASK_KILLABLE,
-+	wait_queue_head_t *q = page_waitqueue(&folio->page);
-+	return wait_on_page_bit_common(q, &folio->page, PG_locked, TASK_KILLABLE,
- 					EXCLUSIVE);
- }
--EXPORT_SYMBOL_GPL(__lock_page_killable);
-+EXPORT_SYMBOL_GPL(__folio_lock_killable);
- 
- int __lock_page_async(struct page *page, struct wait_page_queue *wait)
- {
-@@ -1636,6 +1635,8 @@ int __lock_page_async(struct page *page, struct wait_page_queue *wait)
- int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
- 			 unsigned int flags)
- {
-+	struct folio *folio = page_folio(page);
-+
- 	if (fault_flag_allow_retry_first(flags)) {
- 		/*
- 		 * CAUTION! In this case, mmap_lock is not released
-@@ -1654,13 +1655,13 @@ int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
- 	if (flags & FAULT_FLAG_KILLABLE) {
- 		int ret;
- 
--		ret = __lock_page_killable(page);
-+		ret = __folio_lock_killable(folio);
- 		if (ret) {
- 			mmap_read_unlock(mm);
- 			return 0;
- 		}
- 	} else {
--		__folio_lock(page_folio(page));
-+		__folio_lock(folio);
- 	}
- 
- 	return 1;
-@@ -2829,7 +2830,7 @@ static int lock_page_maybe_drop_mmap(struct vm_fault *vmf, struct page *page,
- 
- 	*fpin = maybe_unlock_mmap_for_io(vmf, *fpin);
- 	if (vmf->flags & FAULT_FLAG_KILLABLE) {
--		if (__lock_page_killable(&folio->page)) {
-+		if (__folio_lock_killable(folio)) {
- 			/*
- 			 * We didn't have the right flags to drop the mmap_lock,
- 			 * but all fault_handlers only check for fatal signals
+Richard Guy Briggs (3):
+  audit: replace magic audit syscall class numbers with macros
+  audit: add support for the openat2 syscall
+  audit: add OPENAT2 record to list how
+
+ arch/alpha/kernel/audit.c          | 10 ++++++----
+ arch/ia64/kernel/audit.c           | 10 ++++++----
+ arch/parisc/kernel/audit.c         | 10 ++++++----
+ arch/parisc/kernel/compat_audit.c  | 11 +++++++----
+ arch/powerpc/kernel/audit.c        | 12 +++++++-----
+ arch/powerpc/kernel/compat_audit.c | 13 ++++++++-----
+ arch/s390/kernel/audit.c           | 12 +++++++-----
+ arch/s390/kernel/compat_audit.c    | 13 ++++++++-----
+ arch/sparc/kernel/audit.c          | 12 +++++++-----
+ arch/sparc/kernel/compat_audit.c   | 13 ++++++++-----
+ arch/x86/ia32/audit.c              | 13 ++++++++-----
+ arch/x86/kernel/audit_64.c         | 10 ++++++----
+ fs/open.c                          |  2 ++
+ include/linux/audit.h              | 11 +++++++++++
+ include/linux/auditscm.h           | 24 +++++++++++++++++++++++
+ include/uapi/linux/audit.h         |  1 +
+ kernel/audit.h                     |  2 ++
+ kernel/auditsc.c                   | 31 ++++++++++++++++++++++++------
+ lib/audit.c                        | 14 +++++++++-----
+ lib/compat_audit.c                 | 15 ++++++++++-----
+ 20 files changed, 168 insertions(+), 71 deletions(-)
+ create mode 100644 include/linux/auditscm.h
+
 -- 
-2.30.2
+2.27.0
 
