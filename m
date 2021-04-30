@@ -2,381 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B65453700A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 20:41:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FEF13700B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 20:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231244AbhD3SmI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Apr 2021 14:42:08 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:52608 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229954AbhD3SmF (ORCPT
+        id S230475AbhD3StC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Apr 2021 14:49:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48290 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229954AbhD3StB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Apr 2021 14:42:05 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 7EAB51F43B85
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Andra Paraschiv <andraprs@amazon.com>,
-        Alexandru Ciobotaru <alcioa@amazon.com>,
-        Alexandru Vasile <lexnv@amazon.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Yonghong Song <yhs@fb.com>, bpf@vger.kernel.org,
-        devicetree@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2] .gitignore: prefix local generated files with a slash
-Organization: Collabora
-References: <20210430020308.66792-1-masahiroy@kernel.org>
-Date:   Fri, 30 Apr 2021 14:41:08 -0400
-In-Reply-To: <20210430020308.66792-1-masahiroy@kernel.org> (Masahiro Yamada's
-        message of "Fri, 30 Apr 2021 11:03:08 +0900")
-Message-ID: <87wnsj4nuj.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Fri, 30 Apr 2021 14:49:01 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BDFDC06174A
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Apr 2021 11:48:13 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id f11-20020a17090a638bb02901524d3a3d48so2213695pjj.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Apr 2021 11:48:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=7XBdbNoOYTj3Gr03DOVfcK89IJDLZOevWsJ74EuaGHM=;
+        b=YjRT6B7guhX/7wEFjEUaRJS8IPtHNRS1UrxRvpxD5bySm8E3jAyLgaERsv4SRaHdku
+         Mqz1FLOj6dyOuo0bd7fVTaPQo9dJ7etGPdgZk39jLxKdBv1wDo+Og5Pt2ujQ9D/63Aa9
+         3BAScCxLdnPO94GdvPQA3FgGeDH/hVhW/tD+QuZcBIzNVCMGmGlTxh3ImBjIJ0C+6aGQ
+         Wm/rBSnvSZbmRg5hGalLEBxRAfHZCgmCV3SaIB0JwCr7EUnjm6zYLp4UCUCVhpGxVjVL
+         xS65e4tg1YUS0HZKFactZBT7xQ4ODUTAt8b2Efze5J7FOEL6DhcKaE76pFvhtHDfPEMw
+         ISTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=7XBdbNoOYTj3Gr03DOVfcK89IJDLZOevWsJ74EuaGHM=;
+        b=BrebbkzZYSu96YsXjovR57w78EEImpj0E8v3U+1XaaEau8cmHGNv1speWcKzw+FPlE
+         NvhyaBJmj249AfI7BDRCb5uY4RsvcFMgoxZN9l/B6evvYOVfQIOalvp4pFbGwA0Zpmnh
+         7V+V7YkQlbDNYymEBjWmUavIIWdHIRpaOjYlt2MB9YpF5vPwTcFOu8PB9SHcIfVL8Zk/
+         KswEIZAV37CLBbmCCxV7A7UqGOZGAkIxmDF8S0pm9JtTdCcn5rdLLi2CrLcC7Ld//ZU0
+         mVwtnoa+fI6LTiA64th8ZwOmz/wAkH8ejMzg0I+IdFLXGYMJnEklS2udHXj9lDlN2Lm3
+         7GCw==
+X-Gm-Message-State: AOAM531xiyemMfBeeBEFgFJ7dF6AI+TBVUFa+vI9CSTE3AO69W3wrSHP
+        36oBM4vFvzeET58ZyOpov/jMsdtbB58P6g==
+X-Google-Smtp-Source: ABdhPJxR4atlBvWNNg+ErYQmzVS4erMUB2ikEE4x4YdxdXmliOf6AE4lHC0QpzlcYWLg/riL9p8poQ==
+X-Received: by 2002:a17:90a:6687:: with SMTP id m7mr6903720pjj.75.1619808492601;
+        Fri, 30 Apr 2021 11:48:12 -0700 (PDT)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id mn22sm10490891pjb.24.2021.04.30.11.48.11
+        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
+        Fri, 30 Apr 2021 11:48:12 -0700 (PDT)
+Date:   Fri, 30 Apr 2021 11:47:54 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org
+Subject: Re: [PATCH v8.1 00/31] Memory Folios
+In-Reply-To: <20210430180740.2707166-1-willy@infradead.org>
+Message-ID: <alpine.LSU.2.11.2104301141320.16885@eggly.anvils>
+References: <20210430180740.2707166-1-willy@infradead.org>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Masahiro Yamada <masahiroy@kernel.org> writes:
+Adding Linus to the Cc (of this one only): he surely has an interest.
 
-> The pattern prefixed with '/' matches files in the same directory,
-> but not ones in sub-directories.
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> Acked-by: Miguel Ojeda <ojeda@kernel.org>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Acked-by: Andra Paraschiv <andraprs@amazon.com>
+On Fri, 30 Apr 2021, Matthew Wilcox (Oracle) wrote:
 
-Acked-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-
-> ---
->
-> Changes in v2:
->   - rebase
->
->  Documentation/devicetree/bindings/.gitignore |  4 ++--
->  arch/.gitignore                              |  4 ++--
->  certs/.gitignore                             |  4 ++--
->  drivers/memory/.gitignore                    |  2 +-
->  drivers/tty/vt/.gitignore                    |  6 +++---
->  fs/unicode/.gitignore                        |  4 ++--
->  kernel/.gitignore                            |  2 +-
->  lib/.gitignore                               | 10 +++++-----
->  samples/auxdisplay/.gitignore                |  2 +-
->  samples/binderfs/.gitignore                  |  3 ++-
->  samples/connector/.gitignore                 |  2 +-
->  samples/hidraw/.gitignore                    |  2 +-
->  samples/mei/.gitignore                       |  2 +-
->  samples/nitro_enclaves/.gitignore            |  2 +-
->  samples/pidfd/.gitignore                     |  2 +-
->  samples/seccomp/.gitignore                   |  8 ++++----
->  samples/timers/.gitignore                    |  2 +-
->  samples/vfs/.gitignore                       |  4 ++--
->  samples/watch_queue/.gitignore               |  3 ++-
->  samples/watchdog/.gitignore                  |  2 +-
->  scripts/.gitignore                           | 18 +++++++++---------
->  scripts/basic/.gitignore                     |  2 +-
->  scripts/dtc/.gitignore                       |  4 ++--
->  scripts/gcc-plugins/.gitignore               |  2 +-
->  scripts/genksyms/.gitignore                  |  2 +-
->  scripts/mod/.gitignore                       |  8 ++++----
->  usr/.gitignore                               |  4 ++--
->  27 files changed, 56 insertions(+), 54 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/.gitignore b/Documentation/devicetree/bindings/.gitignore
-> index 3a05b99bfa26..a77719968a7e 100644
-> --- a/Documentation/devicetree/bindings/.gitignore
-> +++ b/Documentation/devicetree/bindings/.gitignore
-> @@ -1,4 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  *.example.dts
-> -processed-schema*.yaml
-> -processed-schema*.json
-> +/processed-schema*.yaml
-> +/processed-schema*.json
-> diff --git a/arch/.gitignore b/arch/.gitignore
-> index 4191da401dbb..756c19c34f99 100644
-> --- a/arch/.gitignore
-> +++ b/arch/.gitignore
-> @@ -1,3 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -i386
-> -x86_64
-> +/i386/
-> +/x86_64/
-> diff --git a/certs/.gitignore b/certs/.gitignore
-> index 6cbd1f1a5837..8c3763f80be3 100644
-> --- a/certs/.gitignore
-> +++ b/certs/.gitignore
-> @@ -1,3 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -x509_certificate_list
-> -x509_revocation_list
-> +/x509_certificate_list
-> +/x509_revocation_list
-> diff --git a/drivers/memory/.gitignore b/drivers/memory/.gitignore
-> index caedc4c7d2db..5e84bee05ef8 100644
-> --- a/drivers/memory/.gitignore
-> +++ b/drivers/memory/.gitignore
-> @@ -1,2 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -ti-emif-asm-offsets.h
-> +/ti-emif-asm-offsets.h
-> diff --git a/drivers/tty/vt/.gitignore b/drivers/tty/vt/.gitignore
-> index 3ecf42234d89..0221709b177d 100644
-> --- a/drivers/tty/vt/.gitignore
-> +++ b/drivers/tty/vt/.gitignore
-> @@ -1,4 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -conmakehash
-> -consolemap_deftbl.c
-> -defkeymap.c
-> +/conmakehash
-> +/consolemap_deftbl.c
-> +/defkeymap.c
-> diff --git a/fs/unicode/.gitignore b/fs/unicode/.gitignore
-> index 9b2467e77b2d..361294571ab0 100644
-> --- a/fs/unicode/.gitignore
-> +++ b/fs/unicode/.gitignore
-> @@ -1,3 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -mkutf8data
-> -utf8data.h
-> +/mkutf8data
-> +/utf8data.h
-> diff --git a/kernel/.gitignore b/kernel/.gitignore
-> index 4abc4e033ed8..4dc1ffe9770b 100644
-> --- a/kernel/.gitignore
-> +++ b/kernel/.gitignore
-> @@ -1,2 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -kheaders.md5
-> +/kheaders.md5
-> diff --git a/lib/.gitignore b/lib/.gitignore
-> index 327cb2c7f2c9..5e7fa54c4536 100644
-> --- a/lib/.gitignore
-> +++ b/lib/.gitignore
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -gen_crc32table
-> -gen_crc64table
-> -crc32table.h
-> -crc64table.h
-> -oid_registry_data.c
-> +/crc32table.h
-> +/crc64table.h
-> +/gen_crc32table
-> +/gen_crc64table
-> +/oid_registry_data.c
-> diff --git a/samples/auxdisplay/.gitignore b/samples/auxdisplay/.gitignore
-> index 2ed744c0e741..d023816849bd 100644
-> --- a/samples/auxdisplay/.gitignore
-> +++ b/samples/auxdisplay/.gitignore
-> @@ -1,2 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -cfag12864b-example
-> +/cfag12864b-example
-> diff --git a/samples/binderfs/.gitignore b/samples/binderfs/.gitignore
-> index eb60241e8087..8fa415a3640b 100644
-> --- a/samples/binderfs/.gitignore
-> +++ b/samples/binderfs/.gitignore
-> @@ -1 +1,2 @@
-> -binderfs_example
-> +# SPDX-License-Identifier: GPL-2.0
-> +/binderfs_example
-> diff --git a/samples/connector/.gitignore b/samples/connector/.gitignore
-> index d86f2ff9c947..0e26039f39b5 100644
-> --- a/samples/connector/.gitignore
-> +++ b/samples/connector/.gitignore
-> @@ -1,2 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -ucon
-> +/ucon
-> diff --git a/samples/hidraw/.gitignore b/samples/hidraw/.gitignore
-> index d7a6074ebcf9..5233ab63262e 100644
-> --- a/samples/hidraw/.gitignore
-> +++ b/samples/hidraw/.gitignore
-> @@ -1,2 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -hid-example
-> +/hid-example
-> diff --git a/samples/mei/.gitignore b/samples/mei/.gitignore
-> index db5e802f041e..fe894bcb6a62 100644
-> --- a/samples/mei/.gitignore
-> +++ b/samples/mei/.gitignore
-> @@ -1,2 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -mei-amt-version
-> +/mei-amt-version
-> diff --git a/samples/nitro_enclaves/.gitignore b/samples/nitro_enclaves/.gitignore
-> index 827934129c90..6a718eec71f4 100644
-> --- a/samples/nitro_enclaves/.gitignore
-> +++ b/samples/nitro_enclaves/.gitignore
-> @@ -1,2 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -ne_ioctl_sample
-> +/ne_ioctl_sample
-> diff --git a/samples/pidfd/.gitignore b/samples/pidfd/.gitignore
-> index eea857fca736..d4cfa3176b1b 100644
-> --- a/samples/pidfd/.gitignore
-> +++ b/samples/pidfd/.gitignore
-> @@ -1,2 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -pidfd-metadata
-> +/pidfd-metadata
-> diff --git a/samples/seccomp/.gitignore b/samples/seccomp/.gitignore
-> index 4a5a5b7db30b..a6df0da77c5d 100644
-> --- a/samples/seccomp/.gitignore
-> +++ b/samples/seccomp/.gitignore
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -bpf-direct
-> -bpf-fancy
-> -dropper
-> -user-trap
-> +/bpf-direct
-> +/bpf-fancy
-> +/dropper
-> +/user-trap
-> diff --git a/samples/timers/.gitignore b/samples/timers/.gitignore
-> index 40510c33cf08..cd9ff7b95383 100644
-> --- a/samples/timers/.gitignore
-> +++ b/samples/timers/.gitignore
-> @@ -1,2 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -hpet_example
-> +/hpet_example
-> diff --git a/samples/vfs/.gitignore b/samples/vfs/.gitignore
-> index 8fdabf7e5373..79212d91285b 100644
-> --- a/samples/vfs/.gitignore
-> +++ b/samples/vfs/.gitignore
-> @@ -1,3 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -test-fsmount
-> -test-statx
-> +/test-fsmount
-> +/test-statx
-> diff --git a/samples/watch_queue/.gitignore b/samples/watch_queue/.gitignore
-> index 2aa3c7e56a1a..823b351d3db9 100644
-> --- a/samples/watch_queue/.gitignore
-> +++ b/samples/watch_queue/.gitignore
-> @@ -1 +1,2 @@
-> -watch_test
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +/watch_test
-> diff --git a/samples/watchdog/.gitignore b/samples/watchdog/.gitignore
-> index 74153b831244..a70a0150ed9f 100644
-> --- a/samples/watchdog/.gitignore
-> +++ b/samples/watchdog/.gitignore
-> @@ -1,2 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -watchdog-simple
-> +/watchdog-simple
-> diff --git a/scripts/.gitignore b/scripts/.gitignore
-> index a6c11316c969..e83c620ef52c 100644
-> --- a/scripts/.gitignore
-> +++ b/scripts/.gitignore
-> @@ -1,11 +1,11 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -bin2c
-> -kallsyms
-> -unifdef
-> -recordmcount
-> -sorttable
-> -asn1_compiler
-> -extract-cert
-> -sign-file
-> -insert-sys-cert
-> +/asn1_compiler
-> +/bin2c
-> +/extract-cert
-> +/insert-sys-cert
-> +/kallsyms
->  /module.lds
-> +/recordmcount
-> +/sign-file
-> +/sorttable
-> +/unifdef
-> diff --git a/scripts/basic/.gitignore b/scripts/basic/.gitignore
-> index 98ae1f509592..961c91c8a884 100644
-> --- a/scripts/basic/.gitignore
-> +++ b/scripts/basic/.gitignore
-> @@ -1,2 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -fixdep
-> +/fixdep
-> diff --git a/scripts/dtc/.gitignore b/scripts/dtc/.gitignore
-> index 8a8b62bf3d3c..e0b5c1d2464a 100644
-> --- a/scripts/dtc/.gitignore
-> +++ b/scripts/dtc/.gitignore
-> @@ -1,3 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -dtc
-> -fdtoverlay
-> +/dtc
-> +/fdtoverlay
-> diff --git a/scripts/gcc-plugins/.gitignore b/scripts/gcc-plugins/.gitignore
-> index b04e0f0f033e..5cc385b9eb97 100644
-> --- a/scripts/gcc-plugins/.gitignore
-> +++ b/scripts/gcc-plugins/.gitignore
-> @@ -1,2 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -randomize_layout_seed.h
-> +/randomize_layout_seed.h
-> diff --git a/scripts/genksyms/.gitignore b/scripts/genksyms/.gitignore
-> index 999af710f83d..0b275abf9405 100644
-> --- a/scripts/genksyms/.gitignore
-> +++ b/scripts/genksyms/.gitignore
-> @@ -1,2 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -genksyms
-> +/genksyms
-> diff --git a/scripts/mod/.gitignore b/scripts/mod/.gitignore
-> index 07e4a39f90a6..ed2e13b708ce 100644
-> --- a/scripts/mod/.gitignore
-> +++ b/scripts/mod/.gitignore
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -elfconfig.h
-> -mk_elfconfig
-> -modpost
-> -devicetable-offsets.h
-> +/elfconfig.h
-> +/mk_elfconfig
-> +/modpost
-> +/devicetable-offsets.h
-> diff --git a/usr/.gitignore b/usr/.gitignore
-> index 935442ed1eb2..8996e7a88902 100644
-> --- a/usr/.gitignore
-> +++ b/usr/.gitignore
-> @@ -1,4 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -gen_init_cpio
-> -initramfs_data.cpio
-> +/gen_init_cpio
-> +/initramfs_data.cpio
->  /initramfs_inc_data
-
--- 
-Gabriel Krisman Bertazi
+> Managing memory in 4KiB pages is a serious overhead.  Many benchmarks
+> benefit from a larger "page size".  As an example, an earlier iteration
+> of this idea which used compound pages (and wasn't particularly tuned)
+> got a 7% performance boost when compiling the kernel.
+> 
+> Using compound pages or THPs exposes a serious weakness in our type
+> system.  Functions are often unprepared for compound pages to be passed
+> to them, and may only act on PAGE_SIZE chunks.  Even functions which are
+> aware of compound pages may expect a head page, and do the wrong thing
+> if passed a tail page.
+> 
+> There have been efforts to label function parameters as 'head' instead
+> of 'page' to indicate that the function expects a head page, but this
+> leaves us with runtime assertions instead of using the compiler to prove
+> that nobody has mistakenly passed a tail page.  Calling a struct page
+> 'head' is also inaccurate as they will work perfectly well on base pages.
+> 
+> We also waste a lot of instructions ensuring that we're not looking at
+> a tail page.  Almost every call to PageFoo() contains one or more hidden
+> calls to compound_head().  This also happens for get_page(), put_page()
+> and many more functions.  There does not appear to be a way to tell gcc
+> that it can cache the result of compound_head(), nor is there a way to
+> tell it that compound_head() is idempotent.
+> 
+> This series introduces the 'struct folio' as a replacement for
+> head-or-base pages.  This initial set reduces the kernel size by
+> approximately 6kB by removing conversions from tail pages to head pages.
+> The real purpose of this series is adding infrastructure to enable
+> further use of the folio.
+> 
+> The medium-term goal is to convert all filesystems and some device
+> drivers to work in terms of folios.  This series contains a lot of
+> explicit conversions, but it's important to realise it's removing a lot
+> of implicit conversions in some relatively hot paths.  There will be very
+> few conversions from folios when this work is completed; filesystems,
+> the page cache, the LRU and so on will generally only deal with folios.
+> 
+> The text size reduces by between 6kB (a config based on Oracle UEK)
+> and 1.2kB (allnoconfig).  Performance seems almost unaffected based
+> on kernbench.
+> 
+> Current tree at:
+> https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/folio
+> 
+> (contains another ~120 patches on top of this batch, not all of which are
+> in good shape for submission)
+> 
+> v8.1:
+>  - Rebase on next-20210430
+>  - You need https://lore.kernel.org/linux-mm/20210430145549.2662354-1-willy@infradead.org/ first
+>  - Big renaming (thanks to peterz):
+>    - PageFoo() becomes folio_foo()
+>    - SetFolioFoo() becomes folio_set_foo()
+>    - ClearFolioFoo() becomes folio_clear_foo()
+>    - __SetFolioFoo() becomes __folio_set_foo()
+>    - __ClearFolioFoo() becomes __folio_clear_foo()
+>    - TestSetPageFoo() becomes folio_test_set_foo()
+>    - TestClearPageFoo() becomes folio_test_clear_foo()
+>    - PageHuge() is now folio_hugetlb()
+>    - put_folio() becomes folio_put()
+>    - get_folio() becomes folio_get()
+>    - put_folio_testzero() becomes folio_put_testzero()
+>    - set_folio_count() becomes folio_set_count()
+>    - attach_folio_private() becomes folio_attach_private()
+>    - detach_folio_private() becomes folio_detach_private()
+>    - lock_folio() becomes folio_lock()
+>    - unlock_folio() becomes folio_unlock()
+>    - trylock_folio() becomes folio_trylock()
+>    - __lock_folio_or_retry becomes __folio_lock_or_retry()
+>    - __lock_folio_async() becomes __folio_lock_async()
+>    - wake_up_folio_bit() becomes folio_wake_bit()
+>    - wake_up_folio() becomes folio_wake()
+>    - wait_on_folio_bit() becomes folio_wait_bit()
+>    - wait_for_stable_folio() becomes folio_wait_stable()
+>    - wait_on_folio() becomes folio_wait()
+>    - wait_on_folio_locked() becomes folio_wait_locked()
+>    - wait_on_folio_writeback() becomes folio_wait_writeback()
+>    - end_folio_writeback() becomes folio_end_writeback()
+>    - add_folio_wait_queue() becomes folio_add_wait_queue()
+>  - Add folio_young() and folio_idle() family of functions
+>  - Move page_folio() to page-flags.h and use _compound_head()
+>  - Make page_folio() const-preserving
+>  - Add folio_page() to get the nth page from a folio
+>  - Improve struct folio kernel-doc
+>  - Convert folio flag tests to return bool instead of int
+>  - Eliminate set_folio_private()
+>  - folio_get_private() is the equivalent of page_private() (as folio_private()
+>    is now a test for whether the private flag is set on the folio)
+>  - Move folio_rotate_reclaimable() into this patchset
+>  - Add page-flags.h to the kernel-doc
+>  - Add netfs.h to the kernel-doc
+>  - Add a family of folio_lock_lruvec() wrappers
+>  - Add a family of folio_relock_lruvec() wrappers
+> 
+> v7:
+> https://lore.kernel.org/linux-mm/20210409185105.188284-1-willy@infradead.org/
+> 
+> Matthew Wilcox (Oracle) (31):
+>   mm: Introduce struct folio
+>   mm: Add folio_pgdat and folio_zone
+>   mm/vmstat: Add functions to account folio statistics
+>   mm/debug: Add VM_BUG_ON_FOLIO and VM_WARN_ON_ONCE_FOLIO
+>   mm: Add folio reference count functions
+>   mm: Add folio_put
+>   mm: Add folio_get
+>   mm: Add folio flag manipulation functions
+>   mm: Add folio_young() and folio_idle()
+>   mm: Handle per-folio private data
+>   mm/filemap: Add folio_index, folio_file_page and folio_contains
+>   mm/filemap: Add folio_next_index
+>   mm/filemap: Add folio_offset and folio_file_offset
+>   mm/util: Add folio_mapping and folio_file_mapping
+>   mm: Add folio_mapcount
+>   mm/memcg: Add folio wrappers for various functions
+>   mm/filemap: Add folio_unlock
+>   mm/filemap: Add folio_lock
+>   mm/filemap: Add folio_lock_killable
+>   mm/filemap: Add __folio_lock_async
+>   mm/filemap: Add __folio_lock_or_retry
+>   mm/filemap: Add folio_wait_locked
+>   mm/swap: Add folio_rotate_reclaimable
+>   mm/filemap: Add folio_end_writeback
+>   mm/writeback: Add folio_wait_writeback
+>   mm/writeback: Add folio_wait_stable
+>   mm/filemap: Add folio_wait_bit
+>   mm/filemap: Add folio_wake_bit
+>   mm/filemap: Convert page wait queues to be folios
+>   mm/filemap: Add folio private_2 functions
+>   fs/netfs: Add folio fscache functions
+> 
+>  Documentation/core-api/mm-api.rst           |   4 +
+>  Documentation/filesystems/netfs_library.rst |   2 +
+>  fs/afs/write.c                              |   9 +-
+>  fs/cachefiles/rdwr.c                        |  16 +-
+>  fs/io_uring.c                               |   2 +-
+>  include/linux/memcontrol.h                  |  58 ++++
+>  include/linux/mm.h                          | 173 ++++++++++--
+>  include/linux/mm_types.h                    |  71 +++++
+>  include/linux/mmdebug.h                     |  20 ++
+>  include/linux/netfs.h                       |  77 +++--
+>  include/linux/page-flags.h                  | 222 +++++++++++----
+>  include/linux/page_idle.h                   |  99 ++++---
+>  include/linux/page_ref.h                    |  88 +++++-
+>  include/linux/pagemap.h                     | 276 +++++++++++++-----
+>  include/linux/swap.h                        |   7 +-
+>  include/linux/vmstat.h                      | 107 +++++++
+>  mm/Makefile                                 |   2 +-
+>  mm/filemap.c                                | 295 ++++++++++----------
+>  mm/folio-compat.c                           |  37 +++
+>  mm/internal.h                               |   1 +
+>  mm/memory.c                                 |   8 +-
+>  mm/page-writeback.c                         |  72 +++--
+>  mm/page_io.c                                |   4 +-
+>  mm/swap.c                                   |  18 +-
+>  mm/swapfile.c                               |   8 +-
+>  mm/util.c                                   |  30 +-
+>  26 files changed, 1247 insertions(+), 459 deletions(-)
+>  create mode 100644 mm/folio-compat.c
+> 
+> -- 
+> 2.30.2
