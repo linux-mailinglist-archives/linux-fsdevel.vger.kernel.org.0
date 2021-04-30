@@ -2,159 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB1D2370208
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 22:28:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5121A370225
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 22:36:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234450AbhD3U3G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Apr 2021 16:29:06 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:5986 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231325AbhD3U3F (ORCPT
+        id S235486AbhD3UhZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Apr 2021 16:37:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51759 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233545AbhD3UhX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Apr 2021 16:29:05 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13UKF2OB109712;
-        Fri, 30 Apr 2021 16:28:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=pxiRmky6ur7sUT82EcQQsIfV75IKw/jYxavOQF/kgck=;
- b=khzwySDheuFHlkaKsRyq2era6MP8PJe0978H0RFvdeclCNL2oI9wPZ3qxKu0Vs1ZT8x9
- cr44Bq7HxeiJwx+2dhgyPCdsPJPi+DwSod4yKo7nUtrT80+hyFJeSTqyzgOvbd9pdoEr
- 7ZY62dBVWzWxd7c8jeOizFY6PXxMca0zrliI7lgefqesgXjjlH4568G09k8DVUYEPwx2
- XUWiKrcvz1WOJsHJl6an2o9U5E1qLwqMNjwNv+ByNWrBlTXnF2X+IcAqflR2YwUN/Rda
- AAaYBCTH20tBK5ODSmZtKaM1a7zofukk2GaanD6KadQP3+MNoRubOxsOvoTfTT7sM3un 9g== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 388rrsg832-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 30 Apr 2021 16:28:12 -0400
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 13UKGXCm117187;
-        Fri, 30 Apr 2021 16:28:12 -0400
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 388rrsg82k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 30 Apr 2021 16:28:12 -0400
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13UKSAwL009267;
-        Fri, 30 Apr 2021 20:28:10 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma05fra.de.ibm.com with ESMTP id 384gjxsurv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 30 Apr 2021 20:28:10 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13UKS7S431785316
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Apr 2021 20:28:07 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C89B3AE04D;
-        Fri, 30 Apr 2021 20:28:07 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7285DAE053;
-        Fri, 30 Apr 2021 20:28:05 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.32.5])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 30 Apr 2021 20:28:05 +0000 (GMT)
-Message-ID: <48beadc5561f1c0d697be322bc347ebeea37503d.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 03/12] evm: Refuse EVM_ALLOW_METADATA_WRITES only if
- an HMAC key is loaded
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com,
-        ericchiang@google.com, bweeks@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Date:   Fri, 30 Apr 2021 16:28:04 -0400
-In-Reply-To: <20210407105252.30721-4-roberto.sassu@huawei.com>
-References: <20210407105252.30721-1-roberto.sassu@huawei.com>
-         <20210407105252.30721-4-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ScSj7frOsZQorSSHi6ZIesLfcqL4iOkE
-X-Proofpoint-ORIG-GUID: gdK7viZ1-c1EWg6UkRcCYx-FYB4eKrPG
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-30_12:2021-04-30,2021-04-30 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 clxscore=1011 mlxscore=0 suspectscore=0 mlxlogscore=999
- phishscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
- adultscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104300139
+        Fri, 30 Apr 2021 16:37:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619814994;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=6dBy9l8QU+7ZgqdM7cr2pe0TQ8wrq76o+ZpCXmDmlQY=;
+        b=ErxdZRdaUS0ZSGl4/ww7oH5MOTwN2+9ZUoZ/SX7JXQM8AWIBsMN2Byn5g8ryVslaajH9Ua
+        RuVWcljNPxy0MkdTlb1KoHzCUchkh3Si8gxlhr2X134f0OfxHKmEFV8fsjIm3gVXjmsMHj
+        5NmfJ4KvJ7fZ/2oTP/xUCrmeesEXF2Q=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-251-T2MzehsUP4mNxEb4snvoHg-1; Fri, 30 Apr 2021 16:36:30 -0400
+X-MC-Unique: T2MzehsUP4mNxEb4snvoHg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4B0C318B613D;
+        Fri, 30 Apr 2021 20:36:28 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4939C614EF;
+        Fri, 30 Apr 2021 20:36:15 +0000 (UTC)
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Paris <eparis@redhat.com>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Arnd Bergmann <arnd@kernel.org>
+Subject: [PATCH v3 0/3] audit: add support for openat2
+Date:   Fri, 30 Apr 2021 16:35:20 -0400
+Message-Id: <cover.1619811762.git.rgb@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Roberto,
+The openat2(2) syscall was added in v5.6.  Add support for openat2 to the
+audit syscall classifier and for recording openat2 parameters that cannot
+be captured in the syscall parameters of the SYSCALL record.
 
-On Wed, 2021-04-07 at 12:52 +0200, Roberto Sassu wrote:
-> EVM_ALLOW_METADATA_WRITES is an EVM initialization flag that can be set to
-> temporarily disable metadata verification until all xattrs/attrs necessary
-> to verify an EVM portable signature are copied to the file. This flag is
-> cleared when EVM is initialized with an HMAC key, to avoid that the HMAC is
-> calculated on unverified xattrs/attrs.
-> 
-> Currently EVM unnecessarily denies setting this flag if EVM is initialized
-> with a public key, which is not a concern as it cannot be used to trust
-> xattrs/attrs updates. This patch removes this limitation.
-> 
-> Cc: stable@vger.kernel.org # 4.16.x
-> Fixes: ae1ba1676b88e ("EVM: Allow userland to permit modification of EVM-protected metadata")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  Documentation/ABI/testing/evm      | 5 +++--
->  security/integrity/evm/evm_secfs.c | 4 ++--
->  2 files changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/evm b/Documentation/ABI/testing/evm
-> index 3c477ba48a31..eb6d70fd6fa2 100644
-> --- a/Documentation/ABI/testing/evm
-> +++ b/Documentation/ABI/testing/evm
-> @@ -49,8 +49,9 @@ Description:
->  		modification of EVM-protected metadata and
->  		disable all further modification of policy
->  
-> -		Note that once a key has been loaded, it will no longer be
-> -		possible to enable metadata modification.
-> +		Note that once an HMAC key has been loaded, it will no longer
-> +		be possible to enable metadata modification and, if it is
-> +		already enabled, it will be disabled.
->  
->  		Until key loading has been signaled EVM can not create
->  		or validate the 'security.evm' xattr, but returns
-> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-> index bbc85637e18b..197a4b83e534 100644
-> --- a/security/integrity/evm/evm_secfs.c
-> +++ b/security/integrity/evm/evm_secfs.c
-> @@ -81,10 +81,10 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
->  		return -EINVAL;
->  
->  	/* Don't allow a request to freshly enable metadata writes if
-> -	 * keys are loaded.
-> +	 * an HMAC key is loaded.
->  	 */
->  	if ((i & EVM_ALLOW_METADATA_WRITES) &&
-> -	    ((evm_initialized & EVM_KEY_MASK) != 0) &&
-> +	    ((evm_initialized & EVM_INIT_HMAC) != 0) &&
->  	    !(evm_initialized & EVM_ALLOW_METADATA_WRITES))
->  		return -EPERM;
->  
+Supporting userspace code can be found in
+https://github.com/rgbriggs/audit-userspace/tree/ghau-openat2
 
-The comment "freshly enable" is confusing.  Perhaps the original intent
-was to enable flags before loading any keys.  So the comment and code
-were kind of in sync.  With this change, enabling metadata writes may
-be triggered after loading an x509 certificate.  Unless someone
-comments, I don't have problems with this change.
+Supporting test case can be found in
+https://github.com/linux-audit/audit-testsuite/pull/103
 
-Once metadata writes are enabled, the only way of disabling them is by
-loading and enabling an HMAC key.  With this change "freshly enable"
-only refers to after an HMAC key is loaded, when the setup completion
-flag is not set.  The code can be simplified by just checking if an
-HMAC key is loaded.
+Changelog:
+v3:
+- re-add commit descriptions that somehow got dropped
+- add new file to MAINTAINERS
 
-thanks,
+v2:
+- add include/linux/auditscm.h for audit syscall class macros due to syscall redefinition warnings:
+        arch/x86/ia32/audit.c:3:
+        ./include/linux/audit.h:12,
+        ./include/linux/sched.h:22,
+        ./include/linux/seccomp.h:21,
+        ./arch/x86/include/asm/seccomp.h:5,
+        ./arch/x86/include/asm/unistd.h:20,
+        ./arch/x86/include/generated/uapi/asm/unistd_64.h:4: warning: "__NR_read" redefined #define __NR_read 0
+	...
+        ./arch/x86/include/generated/uapi/asm/unistd_64.h:338: warning: "__NR_rseq" redefined #define __NR_rseq 334
+    previous:
+        arch/x86/ia32/audit.c:2:
+        ./arch/x86/include/generated/uapi/asm/unistd_32.h:7: note: this is the location of the previous definition #define __NR_read 3                                                                                                      
+	...
+        ./arch/x86/include/generated/uapi/asm/unistd_32.h:386: note: this is the location of the previous definition #define __NR_rseq 386
 
-Mimi
+Richard Guy Briggs (3):
+  audit: replace magic audit syscall class numbers with macros
+  audit: add support for the openat2 syscall
+  audit: add OPENAT2 record to list how
+
+ MAINTAINERS                        |  1 +
+ arch/alpha/kernel/audit.c          | 10 ++++++----
+ arch/ia64/kernel/audit.c           | 10 ++++++----
+ arch/parisc/kernel/audit.c         | 10 ++++++----
+ arch/parisc/kernel/compat_audit.c  | 11 +++++++----
+ arch/powerpc/kernel/audit.c        | 12 +++++++-----
+ arch/powerpc/kernel/compat_audit.c | 13 ++++++++-----
+ arch/s390/kernel/audit.c           | 12 +++++++-----
+ arch/s390/kernel/compat_audit.c    | 13 ++++++++-----
+ arch/sparc/kernel/audit.c          | 12 +++++++-----
+ arch/sparc/kernel/compat_audit.c   | 13 ++++++++-----
+ arch/x86/ia32/audit.c              | 13 ++++++++-----
+ arch/x86/kernel/audit_64.c         | 10 ++++++----
+ fs/open.c                          |  2 ++
+ include/linux/audit.h              | 11 +++++++++++
+ include/linux/auditscm.h           | 24 +++++++++++++++++++++++
+ include/uapi/linux/audit.h         |  1 +
+ kernel/audit.h                     |  2 ++
+ kernel/auditsc.c                   | 31 ++++++++++++++++++++++++------
+ lib/audit.c                        | 14 +++++++++-----
+ lib/compat_audit.c                 | 15 ++++++++++-----
+ 21 files changed, 169 insertions(+), 71 deletions(-)
+ create mode 100644 include/linux/auditscm.h
+
+-- 
+2.27.0
 
