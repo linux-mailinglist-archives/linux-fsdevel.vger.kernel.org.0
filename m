@@ -2,87 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AEE436F871
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 12:27:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 210CC36FA03
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Apr 2021 14:19:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229874AbhD3K2C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Apr 2021 06:28:02 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48284 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229543AbhD3K2C (ORCPT
+        id S232799AbhD3MTm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Apr 2021 08:19:42 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36631 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229875AbhD3MTE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Apr 2021 06:28:02 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: shreeya)
-        with ESMTPSA id 353231F43834
-From:   Shreeya Patel <shreeya.patel@collabora.com>
-To:     fstests@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, krisman@collabora.com,
-        preichl@redhat.com, kernel@collabora.com, willy@infradead.org,
-        djwong@kernel.org
-Subject: [PATCH] generic/631: Add a check for extended attributes
-Date:   Fri, 30 Apr 2021 15:56:56 +0530
-Message-Id: <20210430102656.64254-1-shreeya.patel@collabora.com>
-X-Mailer: git-send-email 2.30.2
+        Fri, 30 Apr 2021 08:19:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619785095;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=QFoo+RFhSNZCaYS4vaZHmUV9XYlNWKNVH9g7dlU2Z6g=;
+        b=fDQDQ9oXVqNIUBePKzhV/Kzvg/b8z5FgUmzlUFoYhKR6ecGx5S0yqnEN7M/2nRofXvIDWD
+        9TnbzNIqOMfT9d9BjK87IbhUkrRbCIxUU/XA4tyW83pWH0KEF/sIR1OrYTyQsrfJ3++Xdk
+        tpgZTtBeYm9s52p6T7CC6VpgrOosC6E=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-441-y_bAABREPW-S6Zzk2Wddsw-1; Fri, 30 Apr 2021 08:18:13 -0400
+X-MC-Unique: y_bAABREPW-S6Zzk2Wddsw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2016610CE781;
+        Fri, 30 Apr 2021 12:18:12 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-26.rdu2.redhat.com [10.10.114.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EFE6719C79;
+        Fri, 30 Apr 2021 12:17:57 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 8004322054F; Fri, 30 Apr 2021 08:17:57 -0400 (EDT)
+Date:   Fri, 30 Apr 2021 08:17:57 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Greg Kurz <groug@kaod.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        virtualization@lists.linux-foundation.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        virtio-fs@redhat.com, Robert Krawitz <rlk@redhat.com>
+Subject: Re: [PATCH v2] virtiofs: propagate sync() to file server
+Message-ID: <20210430121757.GA1936051@redhat.com>
+References: <20210426151011.840459-1-groug@kaod.org>
+ <20210427171206.GA1805363@redhat.com>
+ <20210427210921.7b01c661@bahia.lan>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210427210921.7b01c661@bahia.lan>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Test case 631 fails for filesystems like exfat or vfat or any other
-which does not support extended attributes.
+On Tue, Apr 27, 2021 at 09:09:21PM +0200, Greg Kurz wrote:
+[..]
+> > > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > > index 54442612c48b..1265ca17620c 100644
+> > > --- a/include/uapi/linux/fuse.h
+> > > +++ b/include/uapi/linux/fuse.h
+> > > @@ -179,6 +179,9 @@
+> > >   *  7.33
+> > >   *  - add FUSE_HANDLE_KILLPRIV_V2, FUSE_WRITE_KILL_SUIDGID, FATTR_KILL_SUIDGID
+> > >   *  - add FUSE_OPEN_KILL_SUIDGID
+> > > + *
+> > > + *  7.34
+> > > + *  - add FUSE_SYNCFS
+> > >   */
+> > >  
+> > >  #ifndef _LINUX_FUSE_H
+> > > @@ -214,7 +217,7 @@
+> > >  #define FUSE_KERNEL_VERSION 7
+> > >  
+> > >  /** Minor version number of this interface */
+> > > -#define FUSE_KERNEL_MINOR_VERSION 33
+> > > +#define FUSE_KERNEL_MINOR_VERSION 34
+> > >  
+> > >  /** The node ID of the root inode */
+> > >  #define FUSE_ROOT_ID 1
+> > > @@ -499,6 +502,7 @@ enum fuse_opcode {
+> > >  	FUSE_COPY_FILE_RANGE	= 47,
+> > >  	FUSE_SETUPMAPPING	= 48,
+> > >  	FUSE_REMOVEMAPPING	= 49,
+> > > +	FUSE_SYNCFS		= 50,
+> > >  
+> > >  	/* CUSE specific operations */
+> > >  	CUSE_INIT		= 4096,
+> > > @@ -957,4 +961,8 @@ struct fuse_removemapping_one {
+> > >  #define FUSE_REMOVEMAPPING_MAX_ENTRY   \
+> > >  		(PAGE_SIZE / sizeof(struct fuse_removemapping_one))
+> > >  
+> > > +struct fuse_syncfs_in {
+> > > +	uint64_t flags;
+> > > +};
+> > > +
+> > 
+> > Hi Greg,
+> > 
+> > Will it be better if 32bits are for flags and reset 32 are
+> > padding and can be used in whatever manner.
+> > 
+> > struct fuse_syncfs_in {
+> > 	uint32_t flags;
+> > 	uint32_t padding;
+> > };
+> > 
+> > This will increase the flexibility if we were to send more information
+> > in future.
+> > 
+> > I already see bunch of structures where flags are 32 bit and reset
+> > are padding bits. fuse_read_in, fuse_write_in, fuse_rename2_in etc.
+> > 
+> > Thanks
+> > Vivek
+> > 
+> 
+> Yes, it makes sense. I'll wait a few more days and roll out a v3.
 
-The main reason for failure is not being able to mount overlayfs
-with filesystems that do not support extended attributes.
-mount -t overlay overlay -o "$l,$u,$w,$i" $mergedir
+Thinking more about it. We are not using any of the fields of this
+structure right now. So may be all of it can be padding and no need
+to add "flags".
 
-Above command would return an error as -
-/var/mnt/scratch/merged0: wrong fs type, bad option, bad superblock on overlay,
-missing codepage or helper program, or other error.
+struct fuse_syncfs_in {
+	uint64_t padding;
+};
 
-dmesg log reports the following -
-overlayfs: filesystem on '/var/mnt/scratch/upperdir1' not supported
+Essentially what you have already done  :-). Just rename flags to
+padding/unused to make it clear its unused for now.
 
-As per the overlayfs documentation -
-"A wide range of filesystems supported by Linux can be the lower filesystem,
-but not all filesystems that are mountable by Linux have the features needed
-for OverlayFS to work. The lower filesystem does not need to be writable.
-The lower filesystem can even be another overlayfs.
-The upper filesystem will normally be writable and if it is it must support
-the creation of trusted.* and/or user.* extended attributes, and must provide
-valid d_type in readdir responses, so NFS is not suitable.
-A read-only overlay of two read-only filesystems may use any filesystem type."
-
-As per the above statements from the overlayfs documentation, it is clear that
-filesystems that do not support extended attributes would not work with overlayfs.
-This is why we see the error in dmesg log for upperdir1 which had an exfat filesystem.
-
-Hence, add a check for extended attributes which would avoid running this tests for
-filesystems that are not supported.
-
-Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
----
- tests/generic/631 | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/tests/generic/631 b/tests/generic/631
-index c43f3de3..c7f0190e 100755
---- a/tests/generic/631
-+++ b/tests/generic/631
-@@ -39,10 +39,12 @@ _cleanup()
- 
- # get standard environment, filters and checks
- . ./common/rc
-+. ./common/attr
- 
- # real QA test starts here
- _supported_fs generic
- _require_scratch
-+_require_attrs
- test "$FSTYP" = "overlay" && _notrun "Test does not apply to overlayfs."
- _require_extra_fs overlay
- 
--- 
-2.30.2
+Vivek
 
