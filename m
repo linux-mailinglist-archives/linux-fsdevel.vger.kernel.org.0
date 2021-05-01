@@ -2,148 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1210F3704B0
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 May 2021 03:32:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40366370509
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 May 2021 04:37:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230508AbhEABdP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Apr 2021 21:33:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51692 "EHLO
+        id S231254AbhEACiR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Apr 2021 22:38:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230226AbhEABdP (ORCPT
+        with ESMTP id S230298AbhEACiR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Apr 2021 21:33:15 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F26E4C06174A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Apr 2021 18:32:25 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id y2so3265288plr.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Apr 2021 18:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:references:in-reply-to:mime-version
-         :message-id:content-transfer-encoding;
-        bh=A2A0sc0ibpGRObArrf856v6artvUyLBvrSP/rauEHZM=;
-        b=dTdzE/ywka9nrPdX+QwFz6j9UB51qNNcagD7P92W4OSxbEerkeF+CUzs5nF07mGi9v
-         RfvzodgfrTFRe7e/45aajNmewKM4Aox8rz84W2WO311ZE4+h4dDpTToeGJWG2h7yw5O8
-         KTD+beFgdQkbWlSnx7RLiLrD1X9Gf3+Taqf1HZVUz9Yk0FCHxr7U94P0yuDa41V1scHe
-         Quk1/dAv9rBITiUL/x2C+F0ZvAHMz1mI78zOWL/ffb7csu/k5GlmUllqexjtrPiAKR4Z
-         J2Nh7R8nrNSHDMJlXINfSOZPoPWplFH1x64oEuKPU/xSt4s8iad6dMKibYp9e6kbyrXI
-         Z6gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
-         :mime-version:message-id:content-transfer-encoding;
-        bh=A2A0sc0ibpGRObArrf856v6artvUyLBvrSP/rauEHZM=;
-        b=fjBmfBOJCgsYZhiRNfq90lkzfR0rO58bqvGh9b59Cvqtf0anWVBpnLxmvNs5ln+cxl
-         sYTn8YS6MgLlEYJzQfhPKbp0d2AO0S7ZcErTM71kGOC7nULHkndnyDGAFC5X1+i/p9ck
-         g4Petafq14/7Jfe7KpXGIPJ9rBS6BlBDYu0U41z//Nin35tIxF0nEEYwrTHoH7rG6vQK
-         4KrigPWSfi3HIOPkAlOfLkMF5IaNzcQYx1X0OnTxqccjRG5jhoKiVZPlC9/oLnXClffO
-         dry3Uaws881IVo8YEk6Yx4U8UmdtIzzB1w1gMOMQV0BGxRzaHJ0d+aAbfbwztN8fB0Xy
-         6CLQ==
-X-Gm-Message-State: AOAM530tHwwMrNdLOqBj1WlKuigQOrXtzwROaa6HJol9nUKqGl+xzFqq
-        gtB62HG2sEp04A4vr1KZiWqdCbfIuvSzcQ==
-X-Google-Smtp-Source: ABdhPJz3GeJE6oOuurnasV8V+UQQcA8JLk4FTbqtTR91l8SpVcMKLWi5PaLuQ8u2hIX6JuhWMNYWdQ==
-X-Received: by 2002:a17:90a:de09:: with SMTP id m9mr7830662pjv.41.1619832745434;
-        Fri, 30 Apr 2021 18:32:25 -0700 (PDT)
-Received: from localhost ([61.68.127.20])
-        by smtp.gmail.com with ESMTPSA id w14sm3279317pfn.3.2021.04.30.18.32.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Apr 2021 18:32:25 -0700 (PDT)
-Date:   Sat, 01 May 2021 11:32:20 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
+        Fri, 30 Apr 2021 22:38:17 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE29FC06174A
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Apr 2021 19:37:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=6I9FPHGXTulJKTj12DEmkVmAHPYyqomkRPK519Zr5Ao=; b=PTqNAMZndlMQ01Jkl2BBForNBl
+        po14iGZhCDGLek83XwJc9Sfda0c0+D/tpzztVHF3h91ZruvGeNzKzfuKvCkKPqJ05u97GVuZtSf4k
+        RDZ0TREX5eEkJvieiyuayBRs9dGtn24MX4GsDCXgtPwMw1/AOjeL6rqaT93QSiT7QtQ3QP+5PiNCD
+        ArXICoeUj2pEdxBu25LYmdKD1kU85//17P3y8T3/Y5ilqkCu7XE0Mcw3Msj4NF+dNzPJHPK5temh/
+        hWzguK0bFFLKf5wLi3iXpORcYkdZ2tSw0KufSTJt+Jq6s86eO/QlLc6lwT+HlsvFxC+S56kG+O+Vc
+        bcMhFocw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lcfVH-00BqsZ-37; Sat, 01 May 2021 02:37:14 +0000
+Date:   Sat, 1 May 2021 03:37:11 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     Hugh Dickins <hughd@google.com>, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: [PATCH v8.1 00/31] Memory Folios
-To:     Hugh Dickins <hughd@google.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <20210501023711.GP1847222@casper.infradead.org>
 References: <20210430180740.2707166-1-willy@infradead.org>
-        <alpine.LSU.2.11.2104301141320.16885@eggly.anvils>
-In-Reply-To: <alpine.LSU.2.11.2104301141320.16885@eggly.anvils>
+ <alpine.LSU.2.11.2104301141320.16885@eggly.anvils>
+ <1619832406.8taoh84cay.astroid@bobo.none>
 MIME-Version: 1.0
-Message-Id: <1619832406.8taoh84cay.astroid@bobo.none>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1619832406.8taoh84cay.astroid@bobo.none>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Excerpts from Hugh Dickins's message of May 1, 2021 4:47 am:
-> Adding Linus to the Cc (of this one only): he surely has an interest.
->=20
-> On Fri, 30 Apr 2021, Matthew Wilcox (Oracle) wrote:
->=20
->> Managing memory in 4KiB pages is a serious overhead.  Many benchmarks
->> benefit from a larger "page size".  As an example, an earlier iteration
->> of this idea which used compound pages (and wasn't particularly tuned)
->> got a 7% performance boost when compiling the kernel.
->>=20
->> Using compound pages or THPs exposes a serious weakness in our type
->> system.  Functions are often unprepared for compound pages to be passed
->> to them, and may only act on PAGE_SIZE chunks.  Even functions which are
->> aware of compound pages may expect a head page, and do the wrong thing
->> if passed a tail page.
->>=20
->> There have been efforts to label function parameters as 'head' instead
->> of 'page' to indicate that the function expects a head page, but this
->> leaves us with runtime assertions instead of using the compiler to prove
->> that nobody has mistakenly passed a tail page.  Calling a struct page
->> 'head' is also inaccurate as they will work perfectly well on base pages=
-.
->>=20
->> We also waste a lot of instructions ensuring that we're not looking at
->> a tail page.  Almost every call to PageFoo() contains one or more hidden
->> calls to compound_head().  This also happens for get_page(), put_page()
->> and many more functions.  There does not appear to be a way to tell gcc
->> that it can cache the result of compound_head(), nor is there a way to
->> tell it that compound_head() is idempotent.
->>=20
->> This series introduces the 'struct folio' as a replacement for
->> head-or-base pages.  This initial set reduces the kernel size by
->> approximately 6kB by removing conversions from tail pages to head pages.
->> The real purpose of this series is adding infrastructure to enable
->> further use of the folio.
->>=20
->> The medium-term goal is to convert all filesystems and some device
->> drivers to work in terms of folios.  This series contains a lot of
->> explicit conversions, but it's important to realise it's removing a lot
->> of implicit conversions in some relatively hot paths.  There will be ver=
-y
->> few conversions from folios when this work is completed; filesystems,
->> the page cache, the LRU and so on will generally only deal with folios.
->>=20
->> The text size reduces by between 6kB (a config based on Oracle UEK)
->> and 1.2kB (allnoconfig).  Performance seems almost unaffected based
->> on kernbench.
->>=20
->> Current tree at:
->> https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/=
-folio
->>=20
->> (contains another ~120 patches on top of this batch, not all of which ar=
-e
->> in good shape for submission)
->>=20
->> v8.1:
->>  - Rebase on next-20210430
->>  - You need https://lore.kernel.org/linux-mm/20210430145549.2662354-1-wi=
-lly@infradead.org/ first
->>  - Big renaming (thanks to peterz):
->>    - PageFoo() becomes folio_foo()
->>    - SetFolioFoo() becomes folio_set_foo()
->>    - ClearFolioFoo() becomes folio_clear_foo()
->>    - __SetFolioFoo() becomes __folio_set_foo()
->>    - __ClearFolioFoo() becomes __folio_clear_foo()
->>    - TestSetPageFoo() becomes folio_test_set_foo()
->>    - TestClearPageFoo() becomes folio_test_clear_foo()
->>    - PageHuge() is now folio_hugetlb()
+On Sat, May 01, 2021 at 11:32:20AM +1000, Nicholas Piggin wrote:
+> Excerpts from Hugh Dickins's message of May 1, 2021 4:47 am:
+> > On Fri, 30 Apr 2021, Matthew Wilcox (Oracle) wrote:
+> >>  - Big renaming (thanks to peterz):
+> >>    - PageFoo() becomes folio_foo()
+> >>    - SetFolioFoo() becomes folio_set_foo()
+> >>    - ClearFolioFoo() becomes folio_clear_foo()
+> >>    - __SetFolioFoo() becomes __folio_set_foo()
+> >>    - __ClearFolioFoo() becomes __folio_clear_foo()
+> >>    - TestSetPageFoo() becomes folio_test_set_foo()
+> >>    - TestClearPageFoo() becomes folio_test_clear_foo()
+> >>    - PageHuge() is now folio_hugetlb()
+> 
+> If you rename these things at the same time, can you make it clear 
+> they're flags (folio_flag_set_foo())? The weird camel case accessors at 
+> least make that clear (after you get to know them).
+> 
+> We have a set_page_dirty(), so page_set_dirty() would be annoying.
+> page_flag_set_dirty() keeps the easy distinction that SetPageDirty()
+> provides.
 
-If you rename these things at the same time, can you make it clear=20
-they're flags (folio_flag_set_foo())? The weird camel case accessors at=20
-least make that clear (after you get to know them).
+Maybe I should have sent more of the patches in this batch ...
 
-We have a set_page_dirty(), so page_set_dirty() would be annoying.
-page_flag_set_dirty() keeps the easy distinction that SetPageDirty()
-provides.
+mark_page_accessed() becomes folio_mark_accessed()
+set_page_dirty() becomes folio_mark_dirty()
+set_page_writeback() becomes folio_start_writeback()
+test_clear_page_writeback() becomes __folio_end_writeback()
+cancel_dirty_page() becomes folio_cancel_dirty()
+clear_page_dirty_for_io() becomes folio_clear_dirty_for_io()
+lru_cache_add() becomes folio_add_lru()
+add_to_page_cache_lru() becomes folio_add_to_page_cache()
+write_one_page() becomes folio_write_one()
+account_page_redirty() becomes folio_account_redirty()
+account_page_cleaned() becomes folio_account_cleaned()
 
-Thanks,
-Nick
+So the general pattern is that folio_set_foo() and folio_clear_foo()
+works on the flag directly.  If we do anything fancy to it, it's
+folio_verb_foo() where verb depends on foo.
 
+I'm not entirely comfortable with this.  I'd like to stop modules
+from accessing folio_set_dirty() because it's just going to mess
+up filesystems.  I just haven't thought of a good way to expose
+some flags and not others.
+
+Actually, looking at what filesystems actually use at the moment, it's
+quite a small subset:
+
+ClearPageChecked
+ClearPageDirty
+ClearPageError
+ClearPageFsCache
+__ClearPageLocked
+ClearPageMappedToDisk
+ClearPagePrivate2
+ClearPagePrivate
+ClearPageReferenced
+ClearPageUptodate
+TestClearPageError
+TestClearPageFsCache
+TestClearPagePrivate2
+TestClearPageDirty
+
+SetPageError
+__SetPageLocked
+SetPageMappedToDisk
+SetPagePrivate2
+SetPagePrivate
+SetPageUptodate
+__SetPageUptodate
+TestSetPageDirty
+TestSetPageFsCache
+
+several of those are ... confused ... but the vast majority of page flags
+don't need to be exposed to filesystems.  Does it make you feel better if
+folio_set_dirty() doesn't get exposed outside the VFS?
