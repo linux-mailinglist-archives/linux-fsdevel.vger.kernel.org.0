@@ -2,61 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A84A4370F60
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 May 2021 23:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55172370F86
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 May 2021 00:59:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232455AbhEBViu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 May 2021 17:38:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232405AbhEBVir (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 May 2021 17:38:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 7F72661029;
-        Sun,  2 May 2021 21:37:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619991475;
-        bh=KG6y1nakyAFqM21muse0MKUJvkIrJKjM4WgCaifK4eI=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=MPLbVzs/RaRcNa0s7gucNyGLM2WaYT9F6medd008m2wH8j5ST0qcC6pcfWyDp4ACl
-         sQUCkyGsgCINW18I/rFjj+WhvJc1/dlhkjdyBBkz7LikF6O9+CcOFNd90DvcpmUjQT
-         YEPdCc3/O8SgwaQ8kzZ4GtAzAjddMdluYKqFfIbshLCIvTa+H5CpOyI+rQtAQ+dXtb
-         vB+nstNu4FuimWR2H/VqPlQ03ahPZ+m6RYfoRxu8ck7ZkuOTHg5lvq714qLh2apYzI
-         akQBUjCUiU9EozhUUSzOQ1FMFB7caHFqOXMj1Ayuy0dP2RikPUBEnedmQSgxoHXLsm
-         zAh3UtoB0O56A==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 6CAC8609CF;
-        Sun,  2 May 2021 21:37:55 +0000 (UTC)
-Subject: Re: [GIT PULL] orangefs pull request for 5.13
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAOg9mSQ-p8vJ6LbSeTeNUCfu-PsT2=iS2+Kab-LYCu9h6MUu2A@mail.gmail.com>
-References: <CAOg9mSQ-p8vJ6LbSeTeNUCfu-PsT2=iS2+Kab-LYCu9h6MUu2A@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAOg9mSQ-p8vJ6LbSeTeNUCfu-PsT2=iS2+Kab-LYCu9h6MUu2A@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git tags/for-linus-5.13-ofs-1
-X-PR-Tracked-Commit-Id: 211f9f2e0503efa4023a46920e7ad07377b4ec58
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9ccce092fc64d19504fa54de4fd659e279cc92e7
-Message-Id: <161999147538.30267.2765538701697779439.pr-tracker-bot@kernel.org>
-Date:   Sun, 02 May 2021 21:37:55 +0000
+        id S232166AbhEBXAU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 May 2021 19:00:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44326 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230036AbhEBXAT (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 2 May 2021 19:00:19 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4577AC06174A
+        for <linux-fsdevel@vger.kernel.org>; Sun,  2 May 2021 15:59:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=glxyuYJp1BIGffXRJutfwTpBRZp72WEHpUf+fCAIPeU=; b=Q+T02j36y4Mb/3Z4UELnNVU5Va
+        oIb7WRvxu6kzHCaFiT8ZpS/AcA1uHWA5Pcu9WZrydm8k7tb/xFlBHI2xmTu1KZaLz5ZlCMg95LBrO
+        T571cF8AM8lY6HcI6UNNH9kFOMldQuFu5pfraHQI9IGcMaOpbmw4lj1jQs/FpEsJ/ga7h9USEg59n
+        KmUrTYtAD/gwHNgQlcXgDrZbFgGmUK0n1KclqOsokgT+t5P0gslegNOqkNVE6YHD91dSus+2d3Q78
+        HGD2P215YEH+WRSKL9KL6vS69gMEnNKztohdMCUmuXHCqIHIncyVyMP8MDYijgE0tCZ8OlpFj3JTT
+        iB1ivt7Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1ldL38-00EMSJ-5S; Sun, 02 May 2021 22:59:04 +0000
+Date:   Sun, 2 May 2021 23:58:54 +0100
+From:   Matthew Wilcox <willy@infradead.org>
 To:     Mike Marshall <hubcap@omnibond.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Mike Marshall <hubcap@omnibond.com>,
         Mike Marshall <hubcapsc@gmail.com>
+Subject: Re: [GIT PULL] orangefs pull request for 5.13
+Message-ID: <20210502225854.GA1847222@casper.infradead.org>
+References: <CAOg9mSQ-p8vJ6LbSeTeNUCfu-PsT2=iS2+Kab-LYCu9h6MUu2A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOg9mSQ-p8vJ6LbSeTeNUCfu-PsT2=iS2+Kab-LYCu9h6MUu2A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Sun, 2 May 2021 16:45:19 -0400:
+On Sun, May 02, 2021 at 04:45:19PM -0400, Mike Marshall wrote:
+> orangefs: implement orangefs_readahead
+> 
+> mm/readahead.c/read_pages was quite a bit different back
+> when I put my open-coded readahead logic into orangefs_readpage.
+> It seemed to work as designed then, it is a trainwreck now.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git tags/for-linus-5.13-ofs-1
+Hey Mike,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9ccce092fc64d19504fa54de4fd659e279cc92e7
+I happened to have a chance to look at orangefs_readahead today, and
+I'd like to suggest a minor improvement.
 
-Thank you!
+It's possible for rac->file to be NULL if the caller doesn't have a
+struct file.  I think that only happens when filesystems call their own
+readahead routine internally, but in case it might happen from generic
+code in the future, I recommend you do something like ...
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+-       struct file *file = rac->file;
+-       struct inode *inode = file->f_mapping->host;
++       struct inode *inode = rac->mapping->host;
+...
+-       i_pages = &file->f_mapping->i_pages;
++       i_pages = &rac->mapping->i_pages;
+...
+-                       inode->i_size, NULL, NULL, file)) < 0)
++                       inode->i_size, NULL, NULL, rac->file)) < 0)
+
+(i have this change all tangled up with some other changes in my tree,
+so no easy patch to apply, sorry)
