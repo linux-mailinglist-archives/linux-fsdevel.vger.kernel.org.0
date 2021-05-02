@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A442370A7B
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 May 2021 08:32:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F27DD370A7E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 May 2021 08:32:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230509AbhEBGdS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 May 2021 02:33:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59980 "EHLO mail.kernel.org"
+        id S231529AbhEBGds (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 May 2021 02:33:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229526AbhEBGdR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 May 2021 02:33:17 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1DA726128E;
-        Sun,  2 May 2021 06:32:18 +0000 (UTC)
+        id S229526AbhEBGds (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 2 May 2021 02:33:48 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 584A561466;
+        Sun,  2 May 2021 06:32:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619937146;
-        bh=IiEyzQs5MLcZFCvU0d7y1MV8UlTREQiWGwIM/9pwy/Y=;
+        s=k20201202; t=1619937177;
+        bh=AamYV1zarM8XROObHow2GS9jtvK08e2YVaUvh7HsmvE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dlhipPfmdUEHaMz4+QQjq3Zbf4C91HXPY9jQtLKOtWhXziDi2vDX110O2ODTHZhkY
-         jFmPlvBfLY2BUWZrFMUeguICwHOl7dXe99mF/2nXZtjUwtowpV1soCnNlZ9kkKV204
-         z+s4nzQu24hvfIVUSL4ZPa6Cx4gNz2XQoIZ663xHMGJUxqp7SN0vf+X5xzTPN0yhCv
-         lo9KL8d+NnO9W9LxDL7tT2WCdH97cyrejOoatl5+mj0A4RXiw5o4IBVBWoYYdoQt0E
-         enrlier3FVU1aSesUwDjPdM6JgY1OQ9Bj42qMecSqHnIgEpFhW/TdKtyQlOsdi998M
-         mElZpvzgq2zOw==
-Date:   Sun, 2 May 2021 09:32:14 +0300
+        b=hfsCipSZ7Oat5Tih3ZX2Yr+KpqdTvvfdz3DnLfEWTQ+gdClichLYDIqAOtHuQ2ui/
+         Qm+PFOgyT8fEktmjbMUHa7UsJRxbTIUzMy7lJUA3ncrBKcZXW2P09S2aEMI6JXVt85
+         U7q5MJ5XHq2LtHOIQLvXIHTNPzFrUN+cIRZGdSiWyumhz5ZYq5ubze/C9xO8DIYOaU
+         m9LVPv64fB7BQTYpJAZetDfAwBE5jznlNPm2E/4eCwILYszSpc6Fu7OIXd0hQDttLE
+         3yhzXWA7/Js/s9lT31k/6SVQNDlkRE4KDsF13L9LBfRG6tXxZ0KQUbFVVe/hirZA6t
+         aFCUY99Y42pqA==
+Date:   Sun, 2 May 2021 09:32:46 +0300
 From:   Mike Rapoport <rppt@kernel.org>
 To:     David Hildenbrand <david@redhat.com>
 Cc:     linux-kernel@vger.kernel.org,
@@ -46,108 +46,96 @@ Cc:     linux-kernel@vger.kernel.org,
         linux-hyperv@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v1 3/7] mm: rename and move page_is_poisoned()
-Message-ID: <YI5HbhYPfENdQAre@kernel.org>
+Subject: Re: [PATCH v1 4/7] fs/proc/kcore: don't read offline sections,
+ logically offline pages and hwpoisoned pages
+Message-ID: <YI5HjmpTMjDVM/4h@kernel.org>
 References: <20210429122519.15183-1-david@redhat.com>
- <20210429122519.15183-4-david@redhat.com>
+ <20210429122519.15183-5-david@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210429122519.15183-4-david@redhat.com>
+In-Reply-To: <20210429122519.15183-5-david@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 29, 2021 at 02:25:15PM +0200, David Hildenbrand wrote:
-> Commit d3378e86d182 ("mm/gup: check page posion status for coredump.")
-> introduced page_is_poisoned(), however, v5 [1] of the patch used
-> "page_is_hwpoison()" and something went wrong while upstreaming. Rename the
-> function and move it to page-flags.h, from where it can be used in other
-> -- kcore -- context.
+On Thu, Apr 29, 2021 at 02:25:16PM +0200, David Hildenbrand wrote:
+> Let's avoid reading:
 > 
-> Move the comment to the place where it belongs and simplify.
+> 1) Offline memory sections: the content of offline memory sections is stale
+>    as the memory is effectively unused by the kernel. On s390x with standby
+>    memory, offline memory sections (belonging to offline storage
+>    increments) are not accessible. With virtio-mem and the hyper-v balloon,
+>    we can have unavailable memory chunks that should not be accessed inside
+>    offline memory sections. Last but not least, offline memory sections
+>    might contain hwpoisoned pages which we can no longer identify
+>    because the memmap is stale.
 > 
-> [1] https://lkml.kernel.org/r/20210322193318.377c9ce9@alex-virtual-machine
+> 2) PG_offline pages: logically offline pages that are documented as
+>    "The content of these pages is effectively stale. Such pages should not
+>     be touched (read/write/dump/save) except by their owner.".
+>    Examples include pages inflated in a balloon or unavailble memory
+>    ranges inside hotplugged memory sections with virtio-mem or the hyper-v
+>    balloon.
+> 
+> 3) PG_hwpoison pages: Reading pages marked as hwpoisoned can be fatal.
+>    As documented: "Accessing is not safe since it may cause another machine
+>    check. Don't touch!"
+> 
+> Reading /proc/kcore now performs similar checks as when reading
+> /proc/vmcore for kdump via makedumpfile: problematic pages are exclude.
+> It's also similar to hibernation code, however, we don't skip hwpoisoned
+> pages when processing pages in kernel/power/snapshot.c:saveable_page() yet.
+> 
+> Note 1: we can race against memory offlining code, especially
+> memory going offline and getting unplugged: however, we will properly tear
+> down the identity mapping and handle faults gracefully when accessing
+> this memory from kcore code.
+> 
+> Note 2: we can race against drivers setting PageOffline() and turning
+> memory inaccessible in the hypervisor. We'll handle this in a follow-up
+> patch.
 > 
 > Signed-off-by: David Hildenbrand <david@redhat.com>
 
 Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
 
 > ---
->  include/linux/page-flags.h |  7 +++++++
->  mm/gup.c                   |  6 +++++-
->  mm/internal.h              | 20 --------------------
->  3 files changed, 12 insertions(+), 21 deletions(-)
-
-Nice :)
-
+>  fs/proc/kcore.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index 04a34c08e0a6..b8c56672a588 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -694,6 +694,13 @@ PAGEFLAG_FALSE(DoubleMap)
->  	TESTSCFLAG_FALSE(DoubleMap)
->  #endif
+> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+> index ed6fbb3bd50c..92ff1e4436cb 100644
+> --- a/fs/proc/kcore.c
+> +++ b/fs/proc/kcore.c
+> @@ -465,6 +465,9 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
 >  
-> +static inline bool is_page_hwpoison(struct page *page)
-> +{
-> +	if (PageHWPoison(page))
-> +		return true;
-> +	return PageHuge(page) && PageHWPoison(compound_head(page));
-> +}
+>  	m = NULL;
+>  	while (buflen) {
+> +		struct page *page;
+> +		unsigned long pfn;
 > +
->  /*
->   * For pages that are never mapped to userspace (and aren't PageSlab),
->   * page_type may be used.  Because it is initialised to -1, we invert the
-> diff --git a/mm/gup.c b/mm/gup.c
-> index ef7d2da9f03f..000f3303e7f2 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -1536,7 +1536,11 @@ struct page *get_dump_page(unsigned long addr)
->  	if (locked)
->  		mmap_read_unlock(mm);
->  
-> -	if (ret == 1 && is_page_poisoned(page))
-> +	/*
-> +	 * We might have hwpoisoned pages still mapped into user space. Don't
-> +	 * read these pages when creating a coredump, access could be fatal.
-> +	 */
-> +	if (ret == 1 && is_page_hwpoison(page))
->  		return NULL;
->  
->  	return (ret == 1) ? page : NULL;
-> diff --git a/mm/internal.h b/mm/internal.h
-> index cb3c5e0a7799..1432feec62df 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -97,26 +97,6 @@ static inline void set_page_refcounted(struct page *page)
->  	set_page_count(page, 1);
->  }
->  
-> -/*
-> - * When kernel touch the user page, the user page may be have been marked
-> - * poison but still mapped in user space, if without this page, the kernel
-> - * can guarantee the data integrity and operation success, the kernel is
-> - * better to check the posion status and avoid touching it, be good not to
-> - * panic, coredump for process fatal signal is a sample case matching this
-> - * scenario. Or if kernel can't guarantee the data integrity, it's better
-> - * not to call this function, let kernel touch the poison page and get to
-> - * panic.
-> - */
-> -static inline bool is_page_poisoned(struct page *page)
-> -{
-> -	if (PageHWPoison(page))
-> -		return true;
-> -	else if (PageHuge(page) && PageHWPoison(compound_head(page)))
-> -		return true;
-> -
-> -	return false;
-> -}
-> -
->  extern unsigned long highest_memmap_pfn;
->  
->  /*
+>  		/*
+>  		 * If this is the first iteration or the address is not within
+>  		 * the previous entry, search for a matching entry.
+> @@ -503,7 +506,16 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  			}
+>  			break;
+>  		case KCORE_RAM:
+> -			if (!pfn_is_ram(__pa(start) >> PAGE_SHIFT)) {
+> +			pfn = __pa(start) >> PAGE_SHIFT;
+> +			page = pfn_to_online_page(pfn);
+> +
+> +			/*
+> +			 * Don't read offline sections, logically offline pages
+> +			 * (e.g., inflated in a balloon), hwpoisoned pages,
+> +			 * and explicitly excluded physical ranges.
+> +			 */
+> +			if (!page || PageOffline(page) ||
+> +			    is_page_hwpoison(page) || !pfn_is_ram(pfn)) {
+>  				if (clear_user(buffer, tsz)) {
+>  					ret = -EFAULT;
+>  					goto out;
 > -- 
 > 2.30.2
 > 
