@@ -2,102 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C51F63709AE
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 May 2021 04:31:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1719370A75
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 May 2021 08:31:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231670AbhEBCc3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 May 2021 22:32:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34382 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbhEBCc3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 May 2021 22:32:29 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A82D8C06174A
-        for <linux-fsdevel@vger.kernel.org>; Sat,  1 May 2021 19:31:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=eSBguyItv6cBKaCQivyQjMD2ZSdaXS6oIRq1PugZn5k=; b=LQ4jRVMllwXtOHodDemjkC7ASq
-        yCAo0ECAvhTcl0Ic2X1H6IgXYLXs5WnYcy9peDpH0GivT50apUTip7PXfkRU+6Gh2kfAYxTXwRHAA
-        hXtGnCAJO7Wd76XrRLx5yr24LGblwP+NdchqKX7QQ1GtlM7zID9h/AdjsNpyWMybKpwDj6axSbRAA
-        f6GeyzYDeBZfe+olIRSjKYS+mSCoi3nJPZiaSKb7tkofEVl3xCWu6YzX/iS3IBeqrYV4aS47ego8m
-        wrwXJMcK7c4+rutCCIrXdUTCAlLlh1T0pTjKTBIsYTbS/HZ1ZXmDN6NfAnZCPnyHFnNgqE75leV8F
-        h1BY5xMQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1ld1t3-00DAd8-5w; Sun, 02 May 2021 02:31:19 +0000
-Date:   Sun, 2 May 2021 03:31:13 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        Hugh Dickins <hughd@google.com>, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v8.1 00/31] Memory Folios
-Message-ID: <20210502023113.GX1847222@casper.infradead.org>
-References: <20210430180740.2707166-1-willy@infradead.org>
- <alpine.LSU.2.11.2104301141320.16885@eggly.anvils>
- <1619832406.8taoh84cay.astroid@bobo.none>
- <df291e74-383c-cdaf-c4c4-b5ccde3df153@nvidia.com>
- <20210502001705.GW1847222@casper.infradead.org>
- <f8c968d9-e66a-3588-3811-3efe704650ae@nvidia.com>
+        id S229829AbhEBGcZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 May 2021 02:32:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229526AbhEBGcY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 2 May 2021 02:32:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 622FB6134F;
+        Sun,  2 May 2021 06:31:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619937093;
+        bh=SUTF4qHvvsvOCxRaO7XMs9cQTJeY156G3PPBU4Gks2Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SOUpNoydb/Dr01KO8+naCCL9W/VNTnBaeUOGgAEKVeY9Ki8wwSN/8gQXKYt4Eejj9
+         5ODj0fMX/fFoQnrlDWf0DIuyNGXeU1B5VzF9LMwxHZvEJ1+jVEHYmegGhZQdSqqiQT
+         2ElXY9X/fhAd0ms8gpUWE1EGsl7CF7uNmtg6MVqQFqTTLjG3BmSYNwDRoUlOQRKwsM
+         /iHufKPwlGmiUSK1jvdTa0yM/xMbUgA6M1PZCE9EDYujnE/iBkj6SsVbqbz8pbkeSe
+         +rB0HbrVWvKcCyAEeRj+m4of7Ad3w2qUphuxf/+YhkT5sygsX45ePs3e9C7cDv9Zn3
+         HCmDkz5w5Tw2A==
+Date:   Sun, 2 May 2021 09:31:21 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        Steven Price <steven.price@arm.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Aili Yao <yaoaili@kingsoft.com>, Jiri Bohac <jbohac@suse.cz>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        linux-hyperv@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v1 2/7] fs/proc/kcore: pfn_is_ram check only applies to
+ KCORE_RAM
+Message-ID: <YI5HOad9T+752CBg@kernel.org>
+References: <20210429122519.15183-1-david@redhat.com>
+ <20210429122519.15183-3-david@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f8c968d9-e66a-3588-3811-3efe704650ae@nvidia.com>
+In-Reply-To: <20210429122519.15183-3-david@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 01, 2021 at 05:42:21PM -0700, John Hubbard wrote:
-> On 5/1/21 5:17 PM, Matthew Wilcox wrote:
-> > folio_dirty() -- defined in page-flags.h
-> > would have kernel-doc, would be greppable
-> > 
-> > folio_test_set_dirty_flag()
-> > folio_test_clear_dirty_flag()
-> > __folio_clear_dirty_flag()
-> > __folio_set_dirty_flag()
-> > folio_clear_dirty_flag()
-> > folio_set_dirty_flag() -- generated in filemap.h under #ifndef MODULE
-> > would not have kernel-doc, would not be greppable, would only be used
-> > in core vfs and core mm.
-> > 
-> > folio_mark_dirty() -- declared in mm.h (this is rare; turns out all kinds of
-> > 			crap wants to mark pages as being dirty)
-> > folio_clear_dirty_for_io() -- declared in filemap.h
-> > already have kernel-doc, are greppable, used by filesystems and sometimes
-> > other random code.
+On Thu, Apr 29, 2021 at 02:25:14PM +0200, David Hildenbrand wrote:
+> Let's resturcture the code, using switch-case, and checking pfn_is_ram()
+> only when we are dealing with KCORE_RAM.
 > 
-> Yes, the page dirty stuff is definitely not simple, so it's very good to
-> move away from the auto-generated names there. Looks like you are down to
-> just a couple of generated names now, if I'm reading this correctly.
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Six -- test_set, test_clear, __set, __clear, set, clear.
+Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
 
-> > I hope the above makes you happy -- everything a filesystem author needs
-> > gets kernel-doc.  People working inside the VM/VFS still get exposed
+> ---
+>  fs/proc/kcore.c | 35 +++++++++++++++++++++++++++--------
+>  1 file changed, 27 insertions(+), 8 deletions(-)
 > 
-> If "kernel-doc" is effectively a proxy for "file names are directly visible
-> in the source code, then I'm a lot happier than I was, yes. :)
+> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+> index 09f77d3c6e15..ed6fbb3bd50c 100644
+> --- a/fs/proc/kcore.c
+> +++ b/fs/proc/kcore.c
+> @@ -483,25 +483,36 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  				goto out;
+>  			}
+>  			m = NULL;	/* skip the list anchor */
+> -		} else if (!pfn_is_ram(__pa(start) >> PAGE_SHIFT)) {
+> -			if (clear_user(buffer, tsz)) {
+> -				ret = -EFAULT;
+> -				goto out;
+> -			}
+> -		} else if (m->type == KCORE_VMALLOC) {
+> +			goto skip;
+> +		}
+> +
+> +		switch (m->type) {
+> +		case KCORE_VMALLOC:
+>  			vread(buf, (char *)start, tsz);
+>  			/* we have to zero-fill user buffer even if no read */
+>  			if (copy_to_user(buffer, buf, tsz)) {
+>  				ret = -EFAULT;
+>  				goto out;
+>  			}
+> -		} else if (m->type == KCORE_USER) {
+> +			break;
+> +		case KCORE_USER:
+>  			/* User page is handled prior to normal kernel page: */
+>  			if (copy_to_user(buffer, (char *)start, tsz)) {
+>  				ret = -EFAULT;
+>  				goto out;
+>  			}
+> -		} else {
+> +			break;
+> +		case KCORE_RAM:
+> +			if (!pfn_is_ram(__pa(start) >> PAGE_SHIFT)) {
+> +				if (clear_user(buffer, tsz)) {
+> +					ret = -EFAULT;
+> +					goto out;
+> +				}
+> +				break;
+> +			}
+> +			fallthrough;
+> +		case KCORE_VMEMMAP:
+> +		case KCORE_TEXT:
+>  			if (kern_addr_valid(start)) {
+>  				/*
+>  				 * Using bounce buffer to bypass the
+> @@ -525,7 +536,15 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  					goto out;
+>  				}
+>  			}
+> +			break;
+> +		default:
+> +			pr_warn_once("Unhandled KCORE type: %d\n", m->type);
+> +			if (clear_user(buffer, tsz)) {
+> +				ret = -EFAULT;
+> +				goto out;
+> +			}
+>  		}
+> +skip:
+>  		buflen -= tsz;
+>  		*fpos += tsz;
+>  		buffer += tsz;
+> -- 
+> 2.30.2
+> 
 
-I'm thinking about this kind of thing for each flag (uptodate was the
-easiest one to start with because it's already not autogenerated):
-
-/**
- * folio_uptodate - Is this folio up to date?
- * @folio: The folio.
- *
- * The uptodate flag is set on a folio when every byte in the folio is at
- * least as new as the corresponding bytes on storage.  Anonymous folios
- * are always uptodate.  If the folio is not uptodate, some of the bytes
- * in it may be; see the is_partially_uptodate() address_space operation.
- */
-static inline bool folio_uptodate(struct folio *folio)
-{
-...
-
-(um, this is going to increase the patch series significantly.  i may
-not do this until later.  there's more important things to get in that
-are already done and waiting on this initial patch series.)
+-- 
+Sincerely yours,
+Mike.
