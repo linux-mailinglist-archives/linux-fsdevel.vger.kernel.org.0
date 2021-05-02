@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F27DD370A7E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 May 2021 08:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A6DE370A81
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 May 2021 08:33:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231529AbhEBGds (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 May 2021 02:33:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60206 "EHLO mail.kernel.org"
+        id S231778AbhEBGeO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 May 2021 02:34:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229526AbhEBGds (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 May 2021 02:33:48 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 584A561466;
-        Sun,  2 May 2021 06:32:50 +0000 (UTC)
+        id S229526AbhEBGeO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 2 May 2021 02:34:14 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 25C6A61408;
+        Sun,  2 May 2021 06:33:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619937177;
-        bh=AamYV1zarM8XROObHow2GS9jtvK08e2YVaUvh7HsmvE=;
+        s=k20201202; t=1619937203;
+        bh=xCHXh8bLinDeqYhXWURePtlkQbRyXAxtzpNH6qseAsY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hfsCipSZ7Oat5Tih3ZX2Yr+KpqdTvvfdz3DnLfEWTQ+gdClichLYDIqAOtHuQ2ui/
-         Qm+PFOgyT8fEktmjbMUHa7UsJRxbTIUzMy7lJUA3ncrBKcZXW2P09S2aEMI6JXVt85
-         U7q5MJ5XHq2LtHOIQLvXIHTNPzFrUN+cIRZGdSiWyumhz5ZYq5ubze/C9xO8DIYOaU
-         m9LVPv64fB7BQTYpJAZetDfAwBE5jznlNPm2E/4eCwILYszSpc6Fu7OIXd0hQDttLE
-         3yhzXWA7/Js/s9lT31k/6SVQNDlkRE4KDsF13L9LBfRG6tXxZ0KQUbFVVe/hirZA6t
-         aFCUY99Y42pqA==
-Date:   Sun, 2 May 2021 09:32:46 +0300
+        b=AL85wToj2jGrctsZ0HQQHbsSMt44YWw4Z8REWyA6PNEHF0KvUISqbJC4d3+nPxC9y
+         jbsunE8U4QW5sBdGsAfnnNB6HI2lC5CBXdk6PtPcEEb+G2B8cOK9ukA1ZNKBsqeIjw
+         eEIy5SKRaRFyKkxHLNUykNIPS3XVrQuXbQzlI9tmKyb7Y0XQtB77sog4tikowZqPMF
+         J1J7ZD2hnQNzQgaMVgdc92cya3uwzf/fQmZN0OKRxtylB3n8MXy9wfvAbda08PjxUr
+         7KnYRKaGqcdN9kHIoBfexZXHidgYuGisApHdpqiHk/NRiPqHIInsENYcU9KgBC/a+q
+         xYb+XUXyasQPw==
+Date:   Sun, 2 May 2021 09:33:11 +0300
 From:   Mike Rapoport <rppt@kernel.org>
 To:     David Hildenbrand <david@redhat.com>
 Cc:     linux-kernel@vger.kernel.org,
@@ -46,96 +46,116 @@ Cc:     linux-kernel@vger.kernel.org,
         linux-hyperv@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v1 4/7] fs/proc/kcore: don't read offline sections,
- logically offline pages and hwpoisoned pages
-Message-ID: <YI5HjmpTMjDVM/4h@kernel.org>
+Subject: Re: [PATCH v1 5/7] mm: introduce
+ page_offline_(begin|end|freeze|unfreeze) to synchronize setting
+ PageOffline()
+Message-ID: <YI5Hp49AmWgfTzNy@kernel.org>
 References: <20210429122519.15183-1-david@redhat.com>
- <20210429122519.15183-5-david@redhat.com>
+ <20210429122519.15183-6-david@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210429122519.15183-5-david@redhat.com>
+In-Reply-To: <20210429122519.15183-6-david@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 29, 2021 at 02:25:16PM +0200, David Hildenbrand wrote:
-> Let's avoid reading:
+On Thu, Apr 29, 2021 at 02:25:17PM +0200, David Hildenbrand wrote:
+> A driver might set a page logically offline -- PageOffline() -- and
+> turn the page inaccessible in the hypervisor; after that, access to page
+> content can be fatal. One example is virtio-mem; while unplugged memory
+> -- marked as PageOffline() can currently be read in the hypervisor, this
+> will no longer be the case in the future; for example, when having
+> a virtio-mem device backed by huge pages in the hypervisor.
 > 
-> 1) Offline memory sections: the content of offline memory sections is stale
->    as the memory is effectively unused by the kernel. On s390x with standby
->    memory, offline memory sections (belonging to offline storage
->    increments) are not accessible. With virtio-mem and the hyper-v balloon,
->    we can have unavailable memory chunks that should not be accessed inside
->    offline memory sections. Last but not least, offline memory sections
->    might contain hwpoisoned pages which we can no longer identify
->    because the memmap is stale.
+> Some special PFN walkers -- i.e., /proc/kcore -- read content of random
+> pages after checking PageOffline(); however, these PFN walkers can race
+> with drivers that set PageOffline().
 > 
-> 2) PG_offline pages: logically offline pages that are documented as
->    "The content of these pages is effectively stale. Such pages should not
->     be touched (read/write/dump/save) except by their owner.".
->    Examples include pages inflated in a balloon or unavailble memory
->    ranges inside hotplugged memory sections with virtio-mem or the hyper-v
->    balloon.
+> Let's introduce page_offline_(begin|end|freeze|unfreeze) for
+
+Bikeshed: freeze|thaw?
+
+> synchronizing.
 > 
-> 3) PG_hwpoison pages: Reading pages marked as hwpoisoned can be fatal.
->    As documented: "Accessing is not safe since it may cause another machine
->    check. Don't touch!"
+> page_offline_freeze()/page_offline_unfreeze() allows for a subsystem to
+> synchronize with such drivers, achieving that a page cannot be set
+> PageOffline() while frozen.
 > 
-> Reading /proc/kcore now performs similar checks as when reading
-> /proc/vmcore for kdump via makedumpfile: problematic pages are exclude.
-> It's also similar to hibernation code, however, we don't skip hwpoisoned
-> pages when processing pages in kernel/power/snapshot.c:saveable_page() yet.
+> page_offline_begin()/page_offline_end() is used by drivers that care about
+> such races when setting a page PageOffline().
 > 
-> Note 1: we can race against memory offlining code, especially
-> memory going offline and getting unplugged: however, we will properly tear
-> down the identity mapping and handle faults gracefully when accessing
-> this memory from kcore code.
-> 
-> Note 2: we can race against drivers setting PageOffline() and turning
-> memory inaccessible in the hypervisor. We'll handle this in a follow-up
-> patch.
+> For simplicity, use a rwsem for now; neither drivers nor users are
+> performance sensitive.
 > 
 > Signed-off-by: David Hildenbrand <david@redhat.com>
-
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
-
 > ---
->  fs/proc/kcore.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
+>  include/linux/page-flags.h |  5 +++++
+>  mm/util.c                  | 38 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 43 insertions(+)
 > 
-> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-> index ed6fbb3bd50c..92ff1e4436cb 100644
-> --- a/fs/proc/kcore.c
-> +++ b/fs/proc/kcore.c
-> @@ -465,6 +465,9 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> index b8c56672a588..e3d00c72f459 100644
+> --- a/include/linux/page-flags.h
+> +++ b/include/linux/page-flags.h
+> @@ -767,6 +767,11 @@ PAGE_TYPE_OPS(Buddy, buddy)
+>   */
+>  PAGE_TYPE_OPS(Offline, offline)
 >  
->  	m = NULL;
->  	while (buflen) {
-> +		struct page *page;
-> +		unsigned long pfn;
+> +extern void page_offline_freeze(void);
+> +extern void page_offline_unfreeze(void);
+> +extern void page_offline_begin(void);
+> +extern void page_offline_end(void);
 > +
->  		/*
->  		 * If this is the first iteration or the address is not within
->  		 * the previous entry, search for a matching entry.
-> @@ -503,7 +506,16 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
->  			}
->  			break;
->  		case KCORE_RAM:
-> -			if (!pfn_is_ram(__pa(start) >> PAGE_SHIFT)) {
-> +			pfn = __pa(start) >> PAGE_SHIFT;
-> +			page = pfn_to_online_page(pfn);
+>  /*
+>   * Marks pages in use as page tables.
+>   */
+> diff --git a/mm/util.c b/mm/util.c
+> index 54870226cea6..95395d4e4209 100644
+> --- a/mm/util.c
+> +++ b/mm/util.c
+> @@ -1013,3 +1013,41 @@ void mem_dump_obj(void *object)
+>  	}
+>  	pr_cont(" non-slab/vmalloc memory.\n");
+>  }
 > +
-> +			/*
-> +			 * Don't read offline sections, logically offline pages
-> +			 * (e.g., inflated in a balloon), hwpoisoned pages,
-> +			 * and explicitly excluded physical ranges.
-> +			 */
-> +			if (!page || PageOffline(page) ||
-> +			    is_page_hwpoison(page) || !pfn_is_ram(pfn)) {
->  				if (clear_user(buffer, tsz)) {
->  					ret = -EFAULT;
->  					goto out;
+> +/*
+> + * A driver might set a page logically offline -- PageOffline() -- and
+> + * turn the page inaccessible in the hypervisor; after that, access to page
+> + * content can be fatal.
+> + *
+> + * Some special PFN walkers -- i.e., /proc/kcore -- read content of random
+> + * pages after checking PageOffline(); however, these PFN walkers can race
+> + * with drivers that set PageOffline().
+> + *
+> + * page_offline_freeze()/page_offline_unfreeze() allows for a subsystem to
+> + * synchronize with such drivers, achieving that a page cannot be set
+> + * PageOffline() while frozen.
+> + *
+> + * page_offline_begin()/page_offline_end() is used by drivers that care about
+> + * such races when setting a page PageOffline().
+> + */
+> +static DECLARE_RWSEM(page_offline_rwsem);
+> +
+> +void page_offline_freeze(void)
+> +{
+> +	down_read(&page_offline_rwsem);
+> +}
+> +
+> +void page_offline_unfreeze(void)
+> +{
+> +	up_read(&page_offline_rwsem);
+> +}
+> +
+> +void page_offline_begin(void)
+> +{
+> +	down_write(&page_offline_rwsem);
+> +}
+> +
+> +void page_offline_end(void)
+> +{
+> +	up_write(&page_offline_rwsem);
+> +}
 > -- 
 > 2.30.2
 > 
