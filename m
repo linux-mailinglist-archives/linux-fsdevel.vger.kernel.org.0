@@ -2,236 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50545371D58
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 May 2021 19:01:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB41C371E88
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 May 2021 19:26:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231495AbhECQ6p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 May 2021 12:58:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41760 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234504AbhECQyK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 May 2021 12:54:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 0C8EEB239;
-        Mon,  3 May 2021 16:53:16 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id C3CF01F2B6B; Mon,  3 May 2021 18:53:15 +0200 (CEST)
-Date:   Mon, 3 May 2021 18:53:15 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [RFC][PATCH] fanotify: introduce filesystem view mark
-Message-ID: <20210503165315.GE2994@quack2.suse.cz>
-References: <20201109180016.80059-1-amir73il@gmail.com>
- <20201124134916.GC19336@quack2.suse.cz>
- <CAOQ4uxiJz-j8GA7kMYRTGMmE9SFXCQ-xZxidOU1GzjAN33Txdg@mail.gmail.com>
- <20201125110156.GB16944@quack2.suse.cz>
- <CAOQ4uxgmExbSmcfhp0ir=7QJMVcwu2QNsVUdFTiGONkg3HgjJw@mail.gmail.com>
- <20201126111725.GD422@quack2.suse.cz>
- <CAOQ4uxgt1Cx5jx3L6iaDvbzCWPv=fcMgLaa9ODkiu9h718MkwQ@mail.gmail.com>
+        id S231468AbhECR1m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 May 2021 13:27:42 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:55508 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231337AbhECR1l (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 May 2021 13:27:41 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 143HQ9Ea071104;
+        Mon, 3 May 2021 17:26:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2020-01-29;
+ bh=OZobjDMD2n1151VRjk4uzdZMX9uxdVYy+xJ3z/t4aeg=;
+ b=Rz8qdysqnyAbkA/9fp7JxstZ6xSLkvBEZhr2i1iS9Q3on6E+XOhp9yjKxU9z0riXW9QX
+ xRwCvDLUublr5ySz08nm49a9kWk8gM5pMvfI37jrawlXhIu+q8kk3pezMWZ6WAWhws9g
+ hbOaF4lJ3UaKi3jy3aE5UBNG2p/kUQks9HWBecxS8VSQBajZQ0ywV131GoZ5Fn+OQOJv
+ FHT69QHDPnOw10IbZM6J4nG7p5cCelqyvVDgRan4THTnYkr3KCwlCX4FjZWvIiMHrFCT
+ dH1iMlzBUtRkXAA/kE49HUl80SmRdGj8rwiKoW16IkDhRPKTQO3ydk9KL/lxyIY34yIk Lg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 388xxmvcjt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 May 2021 17:26:38 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 143HKCPS141725;
+        Mon, 3 May 2021 17:26:38 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2101.outbound.protection.outlook.com [104.47.55.101])
+        by aserp3020.oracle.com with ESMTP id 388xt2qda1-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 May 2021 17:26:38 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hNz5BHK+BJAZP9Y658OK+XxtIoEFwx8MO0+qNBLl7DXWqy6Pk8gphtE33lf4mTPeBh69JxpvFw3DxT52PyEKAMe7YUXOdN+HmNFdoXgDnJSRp5muajb4042VwshlwU1Bz6LlppAaMlfZbuT3nKuoKYmD+3kJd5m22+Aj5X7fdl0fz5L1RPhbfeX37aYjBa1YrKlvUbVt3psqO3r29fg3UzYm6td++4LcOZjl7J7DPuK4eFRLx98l7MhzH0udts5qRs4Ol884P3pkUm+YR5Wmtry95qvNjdTYz5nnW5nk1hYYxvB59FLssFPz6+xxutDyygKQcoS2SeYZr1JIc8dyFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OZobjDMD2n1151VRjk4uzdZMX9uxdVYy+xJ3z/t4aeg=;
+ b=TcjdtNhuBkHA08pTtx9aKWUDH9bmQOh3t+ZoOdSIVH4kbwgZvVfPajNC2FlnsqbHDAH+vdVf+xZU8pWr3UT46b5dKy64AnXgUXMUl3DJXArXoKvCu2SvFj8pFsUyVfMX4DrUeQzoe/1QvIjpYKKBmpT9fcYE5eJ00xzyyRQi7mv/vSp3hfK40G8S5lv5f94mLN5m1kgGQcIORaAw+lrc27UUTqaqfFpsp4epJwmljs4jlYTlfGqwOu/wdm8fje0Cw0Ky2O42/lTVTZUk9nxbr/d+7U05smlDhPOfDtOJAtgH4/LX6eiM1LHp6rxMl+1rlxP/VoY4L384xbHw/U7x5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OZobjDMD2n1151VRjk4uzdZMX9uxdVYy+xJ3z/t4aeg=;
+ b=VbyjCV9xnY4jGQHclh5IcMvVX6dLkRgxnWP88uCi+98vTfL/6l8/KgrGSIQIbMWgJU9qFZkkv2LuxdJt1Q/zKgZmWeeyp26FgjYcNMnvfA6AJqOy8T8669lj8umXPTVioQy2NPSlzGk8FOHsugpcCOJ3CYm0l1oMtUTndF589Kc=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=oracle.com;
+Received: from SJ0PR10MB4752.namprd10.prod.outlook.com (2603:10b6:a03:2d7::19)
+ by BYAPR10MB3125.namprd10.prod.outlook.com (2603:10b6:a03:14c::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4087.41; Mon, 3 May
+ 2021 17:26:36 +0000
+Received: from SJ0PR10MB4752.namprd10.prod.outlook.com
+ ([fe80::7865:7d35:9cee:363f]) by SJ0PR10MB4752.namprd10.prod.outlook.com
+ ([fe80::7865:7d35:9cee:363f%5]) with mapi id 15.20.4087.044; Mon, 3 May 2021
+ 17:26:36 +0000
+Subject: Re: [Cluster-devel] [PATCH 1/3] fs/buffer.c: add new api to allow eof
+ writeback
+To:     Jan Kara <jack@suse.cz>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, ocfs2-devel@oss.oracle.com,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20210426220552.45413-1-junxiao.bi@oracle.com>
+ <CAHc6FU62TpZTnAYd3DWFNWWPZP-6z+9JrS82t+YnU-EtFrnU0Q@mail.gmail.com>
+ <3f06d108-1b58-6473-35fa-0d6978e219b8@oracle.com>
+ <20210430124756.GA5315@quack2.suse.cz>
+ <a69fa4bc-ffe7-204b-6a1f-6a166c6971a4@oracle.com>
+ <20210503102904.GC2994@quack2.suse.cz>
+From:   Junxiao Bi <junxiao.bi@oracle.com>
+Message-ID: <72cde802-bd8a-9ce5-84d7-57b34a6a8b03@oracle.com>
+Date:   Mon, 3 May 2021 10:25:31 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.10.0
+In-Reply-To: <20210503102904.GC2994@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [73.231.9.254]
+X-ClientProxiedBy: SN4PR0701CA0003.namprd07.prod.outlook.com
+ (2603:10b6:803:28::13) To SJ0PR10MB4752.namprd10.prod.outlook.com
+ (2603:10b6:a03:2d7::19)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgt1Cx5jx3L6iaDvbzCWPv=fcMgLaa9ODkiu9h718MkwQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from dhcp-10-159-246-23.vpn.oracle.com (73.231.9.254) by SN4PR0701CA0003.namprd07.prod.outlook.com (2603:10b6:803:28::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4087.39 via Frontend Transport; Mon, 3 May 2021 17:26:34 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: aee589d3-0d60-4e6a-d0ac-08d90e589a53
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3125:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <BYAPR10MB3125C336070CDBC3288124C3E85B9@BYAPR10MB3125.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: otju7OZLHVSHnqyu0Mxy4AzdniYOMoJRq0wWEMLcX6nqfdEQA02UH8WG5fupdVnGUArOQ8HgVIahvAg091NdwQkFFHi66KRXb3v5fZ9m/zaXNnP/lv/7f8eEWtBBSQNNX8ctvr1J+TS+8Y3gMtcIOAFdjLcEYpVJ+keVNurh00ObQFE7ySwP1NeODQHXRvjcJDNkjGTfZQpT0bCPKkhNnh9qtpNyEsLuPo2WngHmHP4V3JOQizjYjL0hpC6dEXjesoU7SuBqZzHm19aDcS1PNR7lf4WL2q2nsiNQxrdEQu2NGmISAng7YIhikZ/j7inliNCmunIlQGkXXrhewhdiendms4iO0SGNrpqpJtbkskxMmCxMZHUfQwZ82Juju2/9mE/kNrJO9Y0AIzWUwvTjL6AghakiGS2V/UcmHkNWQsFTrZR+qVZ7zXHMBM+tlgV3n0t+MrDYLG3rM/xLi6J9YN5D4Ex+olCpp4BM5WuxgnnUmrokFkeMuDME92FFXsROCwhT33FHgA39ygOnrylThqtzadaQeZ9Eju0nigWIxRUZfUbVw+MXw4aj7ZPp918BDjNrJuQo0S74nuwvTL9A1D/TpMELU0YM74jj92BPJq0BHIKUBllHWo5/qM2aH+KECNcIN1EK+vjqkzZdKvD6kPw6ROhaTHN92klyAJK8Ngfv0OtN2fi+/G5kSJiEz1QK
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4752.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(136003)(346002)(366004)(39860400002)(396003)(16526019)(6486002)(5660300002)(8676002)(38100700002)(186003)(316002)(44832011)(7696005)(66556008)(2616005)(956004)(86362001)(83380400001)(6916009)(53546011)(26005)(66946007)(6666004)(8936002)(54906003)(478600001)(31686004)(31696002)(36756003)(66476007)(4326008)(2906002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?VE1SZG5vZ3o3eDRPWEpVMklmTWp2QUJLVXNhbmVkR3ZQN25HeXduQW9kcG4y?=
+ =?utf-8?B?ZFExYThZUVhZZE82TW1WK3dRc1JObS9HSTk3b0MzSDVnVDA4cUtaMzQydzQy?=
+ =?utf-8?B?RXZDb0xnWVhDVUJOVnE3YkVPbVFNT3RYbFpEUDlob3hTV25adVhDQy9SYnNm?=
+ =?utf-8?B?QVM5M0E1MTFjM2JFMHo1b084YzgwYktFcndJbUNjSXZ4ZldzRmRyRTFVYjVQ?=
+ =?utf-8?B?WU1CZjVtc211cjNSM2RadjEyUjZ4ejJacHBFeU1YNy9DYy9YSEJ4Z05WZ1Nw?=
+ =?utf-8?B?b0J1SkFKb0E4VGhXNit3Um5ldkUxRFh1NHBsaVpRMkVaMXI3TmhGa2ZrL0NX?=
+ =?utf-8?B?ZmhyMmhNSUVoMGRCZFphc01kUkVIUGM3QmVNN291cGlVaHVQWVlzOXlmcnVD?=
+ =?utf-8?B?ZVZGQjZoZGlPSDZsODFpZUc0dlhhcjJKdkE4OHhGS0lWbVZWVHo2ZGMwUUxr?=
+ =?utf-8?B?NVVZQ1JJRndFR2J5RXBud0s2TDA5aUduT2tQOGpjbDZtMkdiVzkwQzcrWnFI?=
+ =?utf-8?B?aS92SG5wZVJhTjZLb3NGdUdWVThsMEV5b21pWHZadnVtMVJ1TnRrR2hpaC9z?=
+ =?utf-8?B?NVlkMTJFMTgreGdHaDgrNlJ0bXdRVG1sekx2MkNmdkJUYWQxYUVoczRmbmoz?=
+ =?utf-8?B?RzdMRjNleW5wUGhoZ3Z6dzZJdXI2UTFmSzM5TUo1NHVIVHJDbnZjMnVQcXRE?=
+ =?utf-8?B?dXlsZnZkMHFYZWtDSVBuY3JVcm9OdnByQmg0RVczNFhrUGx0MGltcjVvc2NG?=
+ =?utf-8?B?NVZUYkNvc1FjeWM5UDk3YXhMUi9vYkw0T3VYeElzNHJiZzViWHdDeHpYYXZZ?=
+ =?utf-8?B?c0E3bUkyUHhjam1uaGhoUEVUbCt2NklKOGhSRWRybm5yayswVEZhaDh5dTE4?=
+ =?utf-8?B?NG5HYS9yN2tQLy9NOG5jdE1mdnY0Q0pkeUpYTjN6WmZjb3BQNUQzOWpxOW13?=
+ =?utf-8?B?NERFRERvOEpqK0N3SDBWQS8vcmROUmJKSS9tMDYrQklEUm1MR0FVcThhalRX?=
+ =?utf-8?B?SWFNYm84a0NidXUvM1lwRXg1MHNpdk83VWNiMXFTckJrbGJiQ3dKSjljYWtV?=
+ =?utf-8?B?ZmFieGJwelc4VDBkb0plMmN2bXFiVkRNT0ZsWlAyVE5yRVdTVjdPRlZkZzNw?=
+ =?utf-8?B?dlQyeFBJV1BrcXBtQVhmVHpEUFhRVHBiWktFbzY4UFZKb05RcXI5Nzh5R2E0?=
+ =?utf-8?B?ZFZSY2kxWnJ3R3dITU85aFNyVFB3ZHpyc0tHQkdmNHdoUVprakJBdnpjV1cx?=
+ =?utf-8?B?Kzc5VkhqQWxORndrbk9hZTJMS3ZDY01EYksrUGpYYTQvZHRhbUtLZVlEZGRE?=
+ =?utf-8?B?Z1JNelU4UThxdEZ0cFpFSUdtdFI2MjdwSnJiZDJCSW4rYjd4c2xsVTFHaG5h?=
+ =?utf-8?B?QXRaWTR2U1cvei9JU1YzWnVmKzBsY3Q4R0JsTm5WWkRRTWYzUGlibjBKbUV6?=
+ =?utf-8?B?UXNKUFB6VDNteDE4c1pocDF0YW5EREVNa01ORDRLOThzTktSbnVyRHNhYWZr?=
+ =?utf-8?B?QU40aUJ2SnU4SDNGVndiaHEyUjU2R2VvWGcvem5ZaGxDNDdENkJUNWtBdjNL?=
+ =?utf-8?B?THZtWXB6Ynl4ZHVwK2htNFJ5bWFRMGVGNStwTFpBWjJ5OVJhUjk3VWwvTGZQ?=
+ =?utf-8?B?U04wWWxNd2pBZ1h5Y0kwZ2tNNzZNWE5vZ1M4TFJKb1p3dFNsZmE1OGFGY3Yy?=
+ =?utf-8?B?R3VPL0o5d1BFZDdOL0xHTktTZ1ZmZXVyeEczSU9BdHpDem8vWlNQMzUvbWg3?=
+ =?utf-8?Q?KXk8MdGPzzRSetL4nUaDbbWwz+1yS/fbyhzqWHY?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aee589d3-0d60-4e6a-d0ac-08d90e589a53
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4752.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2021 17:26:36.0254
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6IPnmU1lM/mJaPMVH7mEtmpDK8+GKFiOWu8S4lGZuPF505yWK5nndVmB9TD7GvtK2DNenzZB8D4i3TwJQyZsdg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB3125
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9973 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2105030114
+X-Proofpoint-GUID: xkdelSiEKmtGyNZoeNN7LwdRHxGgmfFr
+X-Proofpoint-ORIG-GUID: xkdelSiEKmtGyNZoeNN7LwdRHxGgmfFr
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9973 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0
+ suspectscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 mlxscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2105030114
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 28-04-21 21:28:18, Amir Goldstein wrote:
-> On Thu, Nov 26, 2020 at 1:17 PM Jan Kara <jack@suse.cz> wrote:
-> > On Thu 26-11-20 05:42:01, Amir Goldstein wrote:
-> > > On Wed, Nov 25, 2020 at 1:01 PM Jan Kara <jack@suse.cz> wrote:
-> > > > On Tue 24-11-20 16:47:41, Amir Goldstein wrote:
-> > > > > On Tue, Nov 24, 2020 at 3:49 PM Jan Kara <jack@suse.cz> wrote:
-> > > > > > On Mon 09-11-20 20:00:16, Amir Goldstein wrote:
-> > > > > > > A filesystem view is a subtree of a filesystem accessible from a specific
-> > > > > > > mount point.  When marking an FS view, user expects to get events on all
-> > > > > > > inodes that are accessible from the marked mount, even if the events
-> > > > > > > were generated from another mount.
-> > > > > > >
-> > > > > > > In particular, the events such as FAN_CREATE, FAN_MOVE, FAN_DELETE that
-> > > > > > > are not delivered to a mount mark can be delivered to an FS view mark.
-> > > > > > >
-> > > > > > > One example of a filesystem view is btrfs subvolume, which cannot be
-> > > > > > > marked with a regular filesystem mark.
-> > > > > > >
-> > > > > > > Another example of a filesystem view is a bind mount, not on the root of
-> > > > > > > the filesystem, such as the bind mounts used for containers.
-> > > > > > >
-> > > > > > > A filesystem view mark is composed of a heads sb mark and an sb_view mark.
-> > > > > > > The filesystem view mark is connected to the head sb mark and the head
-> > > > > > > sb mark is connected to the sb object. The mask of the head sb mask is
-> > > > > > > a cumulative mask of all the associated sb_view mark masks.
-> > > > > > >
-> > > > > > > Filesystem view marks cannot co-exist with a regular filesystem mark on
-> > > > > > > the same filesystem.
-> > > > > > >
-> > > > > > > When an event is generated on the head sb mark, fsnotify iterates the
-> > > > > > > list of associated sb_view marks and filter events that happen outside
-> > > > > > > of the sb_view mount's root.
-> > > > > > >
-> > > > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > > >
-> > > > > > I gave this just a high-level look (no detailed review) and here are my
-> > > > > > thoughts:
-> > > > > >
-> > > > > > 1) I like the functionality. IMO this is what a lot of people really want
-> > > > > > when looking for "filesystem wide fs monitoring".
-> > > > > >
-> > > > > > 2) I don't quite like the API you propose though. IMO it exposes details of
-> > > > > > implementation in the API. I'd rather like to have API the same as for
-> > > > > > mount marks but with a dedicated mark type flag in the API - like
-> > > > > > FAN_MARK_FILESYSTEM_SUBTREE (or we can keep VIEW if you like it but I think
-> > > > > > the less terms the better ;).
-> > > > >
-> > > > > Sure, FAN_MARK_FS_VIEW is a dedicated mark type.
-> > > > > The fact that is it a bitwise OR of MOUNT and FILESYSTEM is just a fun fact.
-> > > > > Sorry if that wasn't clear.
-> > > > > FAN_MARK_FILESYSTEM_SUBTREE sounds better for uapi.
-> > > > >
-> > > > > But I suppose you also meant that we should not limit the subtree root
-> > > > > to bind mount points?
-> > > > >
-> > > > > The reason I used a reference to mnt for a sb_view and not dentry
-> > > > > is because we have fsnotify_clear_marks_by_mount() callback to
-> > > > > handle cleanup of the sb_view marks (which I left as TODO).
-> > > > >
-> > > > > Alternatively, we can play cache pinning games with the subtree root dentry
-> > > > > like the case with inode mark, but I didn't want to get into that nor did I know
-> > > > > if we should - if subtree mark requires CAP_SYS_ADMIN anyway, why not
-> > > > > require a bind mount as its target, which is something much more visible to
-> > > > > admins.
-> > > >
-> > > > Yeah, I don't have problems with bind mounts in particular. Just I was
-> > > > thinking that concievably we could make these marks less priviledged (just
-> > > > with CAP_DAC_SEARCH or so) and then mountpoints may be unnecessarily
-> > > > restricting. I don't think pinning of subtree root dentry would be
-> > > > problematic as such - inode marks pin the inode anyway, this is not
-> > > > substantially different - if we can make it work reliably...
-> > > >
-> > > > In fact I was considering for a while that we could even make subtree
-> > > > watches completely unpriviledged - when we walk the dir tree anyway, we
-> > > > could also check permissions along the way. Due to locking this would be
-> > > > difficult to do when generating the event but it might be actually doable
-> > > > if we perform the permission check when reporting the event to userspace.
-> > > > Just a food for thought...
-> > > >
-> > >
-> > > I think unprivileged subtree watches are something nice for the future, but
-> > > for these FS_VIEW (or whatnot) marks, there is a lower hanging opportunity -
-> > > make them require privileges relative to userns.
-> >
-> > Agreed, that's a middle step.
-> >
-> > > We don't need to relax that right from the start and it may requires some
-> > > more work, but it could allow  unprivileged container user to set a
-> > > filesystem-like watch on a filesystem where user is privileged relative
-> > > to s_user_ns and that is a big win already.
-> >
-> > Yep, I'd prefer to separate these two problems. I.e., first handle the
-> > subtree watches on their own (just keeping in mind we might want to make
-> > them less priviledged eventually), when that it working, we can look in all
-> > the implications of making fanotify accessible to less priviledged tasks.
-> >
-> > > It may also be possible in the future to allow setting this mark on a
-> > > "unserns contained" mount - I'm not exactly sure of the details of idmapped
-> > > mounts [1], but if mount has a userns associated with it to map fs uids then
-> > > in theory we can check the view-ability of the event either at event read time
-> > > or at event generation time - it requires that all ancestors have uid/gid that
-> > > are *mapped* to the mount userns and nothing else, because we know
-> > > that the listener process has CAP_DAC_SEARCH (or more) in the target
-> > > userns.
-> >
-> > Event read is *much* simpler for permission checks IMO. First due to
-> > locking necessary for permission checks (i_rwsem, xattr locks etc.), second
-> > so that you don't have to mess with credentials used for checking.
-> >
-> 
-> Jan,
-> 
-> I've lost track of all the "subtree mark" related threads ;-)
 
-Yeah, me as well :)
+On 5/3/21 3:29 AM, Jan Kara wrote:
+> On Fri 30-04-21 14:18:15, Junxiao Bi wrote:
+>> On 4/30/21 5:47 AM, Jan Kara wrote:
+>>
+>>> On Thu 29-04-21 11:07:15, Junxiao Bi wrote:
+>>>> On 4/29/21 10:14 AM, Andreas Gruenbacher wrote:
+>>>>> On Tue, Apr 27, 2021 at 4:44 AM Junxiao Bi <junxiao.bi@oracle.com> wrote:
+>>>>>> When doing truncate/fallocate for some filesytem like ocfs2, it
+>>>>>> will zero some pages that are out of inode size and then later
+>>>>>> update the inode size, so it needs this api to writeback eof
+>>>>>> pages.
+>>>>> is this in reaction to Jan's "[PATCH 0/12 v4] fs: Hole punch vs page
+>>>>> cache filling races" patch set [*]? It doesn't look like the kind of
+>>>>> patch Christoph would be happy with.
+>>>> Thank you for pointing the patch set. I think that is fixing a different
+>>>> issue.
+>>>>
+>>>> The issue here is when extending file size with fallocate/truncate, if the
+>>>> original inode size
+>>>>
+>>>> is in the middle of the last cluster block(1M), eof part will be zeroed with
+>>>> buffer write first,
+>>>>
+>>>> and then new inode size is updated, so there is a window that dirty pages is
+>>>> out of inode size,
+>>>>
+>>>> if writeback is kicked in, block_write_full_page will drop all those eof
+>>>> pages.
+>>> I agree that the buffers describing part of the cluster beyond i_size won't
+>>> be written. But page cache will remain zeroed out so that is fine. So you
+>>> only need to zero out the on disk contents. Since this is actually
+>>> physically contiguous range of blocks why don't you just use
+>>> sb_issue_zeroout() to zero out the tail of the cluster? It will be more
+>>> efficient than going through the page cache and you also won't have to
+>>> tweak block_write_full_page()...
+>> Thanks for the review.
+>>
+>> The physical blocks to be zeroed were continuous only when sparse mode is
+>> enabled, if sparse mode is disabled, unwritten extent was not supported for
+>> ocfs2, then all the blocks to the new size will be zeroed by the buffer
+>> write, since sb_issue_zeroout() will need waiting io done, there will be a
+>> lot of delay when extending file size. Use writeback to flush async seemed
+>> more efficient?
+> It depends. Higher end storage (e.g. NVME or NAS, maybe some better SATA
+> flash disks as well) do support WRITE_ZERO command so you don't actually
+> have to write all those zeros. The storage will just internally mark all
+> those blocks as having zeros. This is rather fast so I'd expect the overall
+> result to be faster that zeroing page cache and then writing all those
+> pages with zeroes on transaction commit. But I agree that for lower end
+> storage this may be slower because of synchronous writing of zeroes. That
+> being said your transaction commit has to write those zeroes anyway so the
+> cost is only mostly shifted but it could still make a difference for some
+> workloads. Not sure if that matters, that is your call I'd say.
 
-> Getting back to this old thread, because the "fs view" concept that
-> it presented is very close to two POCs I tried out recently which leverage
-> the availability of mnt_userns in most of the call sites for fsnotify hooks.
-> 
-> The first POC was replacing the is_subtree() check with in_userns()
-> which is far less expensive:
-> 
-> https://github.com/amir73il/linux/commits/fanotify_in_userns
-> 
-> This approach reduces the cost of check per mark, but there could
-> still be a significant number of sb marks to iterate for every fs op
-> in every container.
-> 
-> The second POC is based off the first POC but takes the reverse
-> approach - instead of marking the sb object and filtering by userns,
-> it places a mark on the userns object and filters by sb:
-> 
-> https://github.com/amir73il/linux/commits/fanotify_idmapped
-> 
-> The common use case is a single host filesystem which is
-> idmapped via individual userns objects to many containers,
-> so normally, fs operations inside containers would have to
-> iterate a single mark.
-> 
-> I am well aware of your comments about trying to implement full
-> blown subtree marks (up this very thread), but the userns-sb
-> join approach is so much more low hanging than full blown
-> subtree marks. And as a by-product, it very naturally provides
-> the correct capability checks so users inside containers are
-> able to "watch their world".
-> 
-> Patches to allow resolving file handles inside userns with the
-> needed permission checks are also available on the POC branch,
-> which makes the solution a lot more useful.
-> 
-> In that last POC, I introduced an explicit uapi flag
-> FAN_MARK_IDMAPPED in combination with
-> FAN_MARK_FILESYSTEM it provides the new capability.
-> This is equivalent to a new mark type, it was just an aesthetic
-> decision.
+Ocfs2 is mostly used with SAN, i don't think it's common for SAN storage 
+to support WRITE_ZERO command.
 
-So in principle, I have no problem with allowing mount marks for ns-capable
-processes. Also FAN_MARK_FILESYSTEM marks filtered by originating namespace
-look OK to me (although if we extended mount marks to support directory
-events as you try elsewhere, would there be still be a compeling usecase for
-this?).
+Anything bad to add a new api to support eof writeback?
 
-My main concern is creating a sane API so that if we expand the
-functionality in the future we won't create a mess out of all
-possibilities.
+Thanks,
 
-So I think there are two, relatively orthogonal decicions to make:
+Junxiao.
 
-1) How the API should look like? For mounts there's no question I guess.
-It's a mount mark as any other and we just relax the permission checks.
-For FAN_MARK_FILESYSTEM marks we have to me more careful - I think
-restricting mark to events generated only from a particular userns has to
-be an explicit flag when adding the mark. Otherwise process that is
-CAP_SYS_ADMIN in init_user_ns has no way of using these ns-filtered marks.
-But this is also the reason why I'd like to think twice before adding this
-event filtering if we can cover similar usecases by expanding mount marks
-capabilities instead (it would certainly better fit overall API design).
-
-2) Whether to internally attach marks to sb or to userns and how to
-efficiently process them when generating events. This is an internal
-decision of fsnotify and so I'm not concerned too much about it. We can
-always tweak it in the future if the usecases show the CPU overhead is
-significant. E.g. we could attach filtered marks to sb but hash it by
-userns (or have rbtree ordered by userns in sb) to lower the CPU overhead
-if there will be many sb marks expected. Attaching to userns as you suggest
-in POC2 is certainly an option as well although I guess I sligthly prefer
-to keep things in the sb so that we don't have to create yet another place
-to attach marks to and all the handling associated with that.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> Also note that you could submit those zeroing bios asynchronously but that
+> would be more coding and you need to make sure they are completed on
+> transaction commit so probably it isn't worth the complexity.
+>
+> 								Honza
