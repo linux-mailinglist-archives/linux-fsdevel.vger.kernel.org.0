@@ -2,101 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F1B2B371837
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 May 2021 17:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3D7B371869
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 May 2021 17:48:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230400AbhECPoY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 May 2021 11:44:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38074 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230346AbhECPoX (ORCPT
+        id S230478AbhECPtP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 May 2021 11:49:15 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32540 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230236AbhECPtO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 May 2021 11:44:23 -0400
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BB32C06174A
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 May 2021 08:43:30 -0700 (PDT)
-Received: by mail-ot1-x333.google.com with SMTP id r26-20020a056830121ab02902a5ff1c9b81so1459235otp.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 May 2021 08:43:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m9qCPLrC2IGZ3Z9AKXqcGRoiM4dO77NNhYrC1rXeFqg=;
-        b=UJiSCSZQXrsU5lQYMFEIrkDJ3t2KYDf9MJd2WNuWHuqmZXMs4Ubl0iTgbqaYmULcDf
-         nEoWRjIILOsh53i+9guatuNHQl28xfeJCU47RX8g7hnxawqmuK5nEm90q4zcb638h9PR
-         QGjkP2W4rinP7N6+Z08Ow2/WcZVDfSO9iWYn9JOepniccfnjzsereL3qrwWLy2aAlIaP
-         dyQz4Wb12g4DOU/hf5zl6kVQ0ikS5q0kD0vr7ygvuNWpjaZQOpNRSwDjNKzmAs9EaRCC
-         G404okxXzJsah7As41DzGV8nEFYvVlLFzE1xAdMgdX3Wkmn5/gmYRBc1eEXs7yEJzFEJ
-         NCFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m9qCPLrC2IGZ3Z9AKXqcGRoiM4dO77NNhYrC1rXeFqg=;
-        b=kJ1+wVrw/PLH48uKp0Cc0huX+K2S0W/jfGMRlPxFNLW680+BPtwhWbzuXrlNIWAktK
-         jXHWESHCroWnLiqKcBOIdJTUoKsKOzO4avwatnFv/w2+nETM9jXxbIu/qVQX1lELuPMP
-         zphvWwH/X+WPcxlmoHg8PrmiFVUw0fqwhU5pb2YB2/tPlLJRB8XPzQeYpEimXE8GrtD8
-         6s7A50liymexpcJn11BtCEjtleJfUK96hUjqen9IoTZjcudI/6sI1dbRtbGqUeFbYRv2
-         4DOqzAGCqElJaImLY7N5O2SubQAVY1uRDHAgYBnCg0K2UDz0gSaIIo5SrzIPyebvo6zX
-         jYHA==
-X-Gm-Message-State: AOAM532DEG47AUgy0Wrf72JVLWddueX+Zu/nrjBCj8OO0QZtLE0ELnOu
-        PXjO/YNrn/HSCx8k/rduoT9I2kc0FM5Fog8C+Q0Z+g==
-X-Google-Smtp-Source: ABdhPJyshgTgbksV/4UpQeaf9g3/hWrcLpswGjtQW1v2RBwB+bT29YdYqxv0ZUVRQ3ef9OqnthvCoXyOylPTnidVOzI=
-X-Received: by 2002:a9d:204:: with SMTP id 4mr15882835otb.352.1620056609768;
- Mon, 03 May 2021 08:43:29 -0700 (PDT)
+        Mon, 3 May 2021 11:49:14 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 143FXFOj083905;
+        Mon, 3 May 2021 11:48:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=QY8Fwva9jUAcObQQsHazOSmDv+lc05cpJZ4JdnaU6Pg=;
+ b=q+nusEJGIyennrSNy+sGRwLw5a8qtR7A1j1sQLfkjk87VK7v1sFs4HuJRnFxcmfcfGAP
+ hATpUZljHbXTUp3s9tHFZcZxXdPSq8zhiRyNjBwjB0C1rXQqCt8udPTO1f+JPhJBXDB9
+ RmVFJlGWZAvH6sE+vMVCyIY/xqT9Yb+K267vMT2aRP8vTb7f/NqLMo0GVAHUwVN0wI/V
+ KPRYfzLo72X1gMyNKAYLVwjlQp7JWpWD1POddMkr/brakcyostxctnd2aFqNXL2CHXEl
+ KbKiyHY4XTrDg1k3Olmh5eQM7DreLvlKLEJHPc0eWydlKBWjMhqRUZG9Blts2MSoZEtH ZA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 38akutgfh9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 May 2021 11:48:15 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 143FXGfi084082;
+        Mon, 3 May 2021 11:48:13 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 38akutgfgb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 May 2021 11:48:12 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 143Fb20N028891;
+        Mon, 3 May 2021 15:48:10 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma04ams.nl.ibm.com with ESMTP id 388xm8rsma-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 May 2021 15:48:10 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 143FlhJK33358216
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 May 2021 15:47:43 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3A14F11C04A;
+        Mon,  3 May 2021 15:48:08 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 14C3C11C04C;
+        Mon,  3 May 2021 15:48:06 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.45.89])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  3 May 2021 15:48:05 +0000 (GMT)
+Message-ID: <d48e3595d0a39cc0ac82519c1c444eeacc8b8c58.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 09/12] evm: Allow setxattr() and setattr() for
+ unmodified metadata
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "mjg59@google.com" <mjg59@google.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Mon, 03 May 2021 11:48:04 -0400
+In-Reply-To: <b0bfaf2352b045dfaf443ae3af73b60e@huawei.com>
+References: <20210407105252.30721-1-roberto.sassu@huawei.com>
+         <20210407105252.30721-10-roberto.sassu@huawei.com>
+         <8493d7e2b0fefa4cd3861bd6b7ee6f2340aa7434.camel@linux.ibm.com>
+         <fcd2932bc2a841c2aa7fcbdaee94e0a5@huawei.com>
+         <cf12878833c82710ad4356e7d023cf51241f3cc8.camel@linux.ibm.com>
+         <b0bfaf2352b045dfaf443ae3af73b60e@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: v-k7iafBdxqr1f3U7Ucp7k5fB8Guv1JS
+X-Proofpoint-ORIG-GUID: DruteI17ux7fFn6dLtJ1yRwr2BsQX5dX
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-References: <CAOg9mSQ-p8vJ6LbSeTeNUCfu-PsT2=iS2+Kab-LYCu9h6MUu2A@mail.gmail.com>
- <20210502225854.GA1847222@casper.infradead.org>
-In-Reply-To: <20210502225854.GA1847222@casper.infradead.org>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Mon, 3 May 2021 11:43:17 -0400
-Message-ID: <CAOg9mSQKR_3yfz=-ikTQKKthJ=zBExZJsCo_QjzJzV4G-YZ8fw@mail.gmail.com>
-Subject: Re: [GIT PULL] orangefs pull request for 5.13
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Mike Marshall <hubcapsc@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-05-03_10:2021-05-03,2021-05-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 mlxscore=0 phishscore=0 spamscore=0 impostorscore=0
+ bulkscore=0 adultscore=0 priorityscore=1501 clxscore=1015 suspectscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2105030105
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks Matthew...
+On Mon, 2021-05-03 at 15:32 +0000, Roberto Sassu wrote:
+> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> > Sent: Monday, May 3, 2021 5:26 PM
+> > On Mon, 2021-05-03 at 15:11 +0000, Roberto Sassu wrote:
+> > > > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> > > > Sent: Monday, May 3, 2021 3:00 PM
+> > > > On Wed, 2021-04-07 at 12:52 +0200, Roberto Sassu wrote:
+> > > >
+> > > > > diff --git a/security/integrity/evm/evm_main.c
+> > > > b/security/integrity/evm/evm_main.c
+> > > > > @@ -389,6 +473,11 @@ static int evm_protect_xattr(struct
+> > > > user_namespace *mnt_userns,
+> > > > >  	if (evm_status == INTEGRITY_FAIL_IMMUTABLE)
+> > > > >  		return 0;
+> > > > >
+> > > > > +	if (evm_status == INTEGRITY_PASS_IMMUTABLE &&
+> > > > > +	    !evm_xattr_change(mnt_userns, dentry, xattr_name, xattr_value,
+> > > > > +			      xattr_value_len))
+> > > > > +		return 0;
+> > > > > +
+> > > >
+> > > > If the purpose of evm_protect_xattr() is to prevent allowing an invalid
+> > > > security.evm xattr from being re-calculated and updated, making it
+> > > > valid, INTEGRITY_PASS_IMMUTABLE shouldn't need to be conditional.
+> > Any
+> > > > time there is an attr or xattr change, including setting it to the
+> > > > existing value, the status flag should be reset.
+> > > >
+> > > > I'm wondering if making INTEGRITY_PASS_IMMUTABLE conditional would
+> > > > prevent the file from being resigned.
+> > > >
+> > > > >  	if (evm_status != INTEGRITY_PASS)
+> > > > >  		integrity_audit_msg(AUDIT_INTEGRITY_METADATA,
+> > > > d_backing_inode(dentry),
+> > > > >  				    dentry->d_name.name,
+> > > > "appraise_metadata",
+> > > >
+> > > > This would then be updated to if not INTEGRITY_PASS or
+> > > > INTEGRITY_PASS_IMMUTABLE.  The subsequent "return" would need to
+> > be
+> > > > updated as well.
+> > >
+> > > I agree on the first suggestion, to reduce the number of log messages.
+> > > For the second, if you meant that we should return 0 if the status is
+> > > INTEGRITY_PASS_IMMUTABLE, I thought we wanted to deny xattr
+> > > changes when there is an EVM portable signature.
+> > 
+> > Why?  I must be missing something.  As long as we're not relying on the
+> > cached status, allowing the file metadata to be updated shouldn't be an
+> > issue.
+> 
+> We may want to prevent accidental changes, for example.
 
-I added in your changes to "the current linus tree" and ran
-the whole thing through xfstests with my fingers crossed.
-It didn't fix any regressions :-) but I'll send it in as a patch.
+Let's keep it simple, getting the basics working properly first.  Then
+we can decide if this is something that we really want/need to defend
+against.
 
--Mike
+thanks,
 
-On Sun, May 2, 2021 at 6:59 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Sun, May 02, 2021 at 04:45:19PM -0400, Mike Marshall wrote:
-> > orangefs: implement orangefs_readahead
-> >
-> > mm/readahead.c/read_pages was quite a bit different back
-> > when I put my open-coded readahead logic into orangefs_readpage.
-> > It seemed to work as designed then, it is a trainwreck now.
->
-> Hey Mike,
->
-> I happened to have a chance to look at orangefs_readahead today, and
-> I'd like to suggest a minor improvement.
->
-> It's possible for rac->file to be NULL if the caller doesn't have a
-> struct file.  I think that only happens when filesystems call their own
-> readahead routine internally, but in case it might happen from generic
-> code in the future, I recommend you do something like ...
->
-> -       struct file *file = rac->file;
-> -       struct inode *inode = file->f_mapping->host;
-> +       struct inode *inode = rac->mapping->host;
-> ...
-> -       i_pages = &file->f_mapping->i_pages;
-> +       i_pages = &rac->mapping->i_pages;
-> ...
-> -                       inode->i_size, NULL, NULL, file)) < 0)
-> +                       inode->i_size, NULL, NULL, rac->file)) < 0)
->
-> (i have this change all tangled up with some other changes in my tree,
-> so no easy patch to apply, sorry)
+Mimi
+
