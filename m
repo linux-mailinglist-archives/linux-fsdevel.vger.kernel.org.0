@@ -2,233 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F769370FEF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 May 2021 01:58:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF57E371008
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 May 2021 02:12:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232624AbhEBX7m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 May 2021 19:59:42 -0400
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:51896 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232619AbhEBX7l (ORCPT
+        id S232777AbhECANr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 May 2021 20:13:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34666 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232628AbhECANq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 May 2021 19:59:41 -0400
-Received: from dread.disaster.area (pa49-179-143-157.pa.nsw.optusnet.com.au [49.179.143.157])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 15E8E80BF85;
-        Mon,  3 May 2021 09:58:45 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ldLz1-000fG8-Ou; Mon, 03 May 2021 09:58:43 +1000
-Date:   Mon, 3 May 2021 09:58:43 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Roman Gushchin <guro@fb.com>, Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Yang Shi <shy828301@gmail.com>, alexs@kernel.org,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [External] Re: [PATCH 0/9] Shrink the list lru size on memory
- cgroup removal
-Message-ID: <20210502235843.GJ1872259@dread.disaster.area>
-References: <20210428094949.43579-1-songmuchun@bytedance.com>
- <20210430004903.GF1872259@dread.disaster.area>
- <YItf3GIUs2skeuyi@carbon.dhcp.thefacebook.com>
- <20210430032739.GG1872259@dread.disaster.area>
- <CAMZfGtXawtMT4JfBtDLZ+hES4iEHFboe2UgJee_s-NhZR5faAw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMZfGtXawtMT4JfBtDLZ+hES4iEHFboe2UgJee_s-NhZR5faAw@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
-        a=I9rzhn+0hBG9LkCzAun3+g==:117 a=I9rzhn+0hBG9LkCzAun3+g==:17
-        a=kj9zAlcOel0A:10 a=5FLXtPjwQuUA:10 a=7-415B0cAAAA:8
-        a=HzlZ7A7n1z-OYlPo8Y0A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+        Sun, 2 May 2021 20:13:46 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 143036nL006348;
+        Sun, 2 May 2021 20:12:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=MlEKYRUqqVUIAqoK6EJhjPI6yszVv6kSy3yggPaZMng=;
+ b=aO8I7seNjCoVD9cQ2LZah8AP4ZE2rj8lBzlg1GPwkpzQuOyvRd1QzbWQqtaSqd14tHtq
+ yUoB8JO89BLr6Bg4aL+bHTsyCOSz9uZeSeJrf2kLhhRhO2r31wtf4PCKpSEcd3OmlUUN
+ zpEWVkV3om4RQo/lxqnZqaI5B/vd4qNmJ2y2X7fVGMRJOQROIffZP0DJrn25+PRhhWzP
+ WoKdhuEzoSxO9t+b+k/Gb11wFlclbsfRmZ3c5ANA3kkmrn3xNpkR7stEQuSoT4MzwOj9
+ 36l+G0LFzipzM3uwXGmy0rjn2Vyv3zvLVZpWJheNo4mlzELugeWhQxwTWJsLiFke0d08 lg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 38a5bkh096-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 02 May 2021 20:12:49 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 14303KXo009929;
+        Sun, 2 May 2021 20:12:49 -0400
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 38a5bkh08n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 02 May 2021 20:12:49 -0400
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 1430CkM1031720;
+        Mon, 3 May 2021 00:12:46 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma05fra.de.ibm.com with ESMTP id 388xm8g8c4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 May 2021 00:12:46 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1430CiAA37356024
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 May 2021 00:12:44 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5E382A405B;
+        Mon,  3 May 2021 00:12:44 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CD629A4054;
+        Mon,  3 May 2021 00:12:42 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.39.226])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  3 May 2021 00:12:42 +0000 (GMT)
+Message-ID: <b8790b57e289980d4fe1133d15203ce016d2319d.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 06/12] evm: Ignore
+ INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS if conditions are safe
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Sun, 02 May 2021 20:12:41 -0400
+In-Reply-To: <20210407105252.30721-7-roberto.sassu@huawei.com>
+References: <20210407105252.30721-1-roberto.sassu@huawei.com>
+         <20210407105252.30721-7-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: SRH9-xLb8PeB-WTYDgJE37X7kGXCIGZM
+X-Proofpoint-GUID: s6WIgB_nV3uYkBTK8drPNP4-J4-cCBKx
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-05-02_15:2021-04-30,2021-05-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 mlxscore=0 suspectscore=0 phishscore=0
+ adultscore=0 mlxlogscore=999 priorityscore=1501 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2105020194
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 30, 2021 at 04:32:39PM +0800, Muchun Song wrote:
-> On Fri, Apr 30, 2021 at 11:27 AM Dave Chinner <david@fromorbit.com> wrote:
-> >
-> > On Thu, Apr 29, 2021 at 06:39:40PM -0700, Roman Gushchin wrote:
-> > > On Fri, Apr 30, 2021 at 10:49:03AM +1000, Dave Chinner wrote:
-> > > > On Wed, Apr 28, 2021 at 05:49:40PM +0800, Muchun Song wrote:
-> > > > > In our server, we found a suspected memory leak problem. The kmalloc-32
-> > > > > consumes more than 6GB of memory. Other kmem_caches consume less than 2GB
-> > > > > memory.
-> > > > >
-> > > > > After our in-depth analysis, the memory consumption of kmalloc-32 slab
-> > > > > cache is the cause of list_lru_one allocation.
-> > > > >
-> > > > >   crash> p memcg_nr_cache_ids
-> > > > >   memcg_nr_cache_ids = $2 = 24574
-> > > > >
-> > > > > memcg_nr_cache_ids is very large and memory consumption of each list_lru
-> > > > > can be calculated with the following formula.
-> > > > >
-> > > > >   num_numa_node * memcg_nr_cache_ids * 32 (kmalloc-32)
-> > > > >
-> > > > > There are 4 numa nodes in our system, so each list_lru consumes ~3MB.
-> > > > >
-> > > > >   crash> list super_blocks | wc -l
-> > > > >   952
-> > > >
-> > > > The more I see people trying to work around this, the more I think
-> > > > that the way memcgs have been grafted into the list_lru is back to
-> > > > front.
-> > > >
-> > > > We currently allocate scope for every memcg to be able to tracked on
-> > > > every not on every superblock instantiated in the system, regardless
-> > > > of whether that superblock is even accessible to that memcg.
-> > > >
-> > > > These huge memcg counts come from container hosts where memcgs are
-> > > > confined to just a small subset of the total number of superblocks
-> > > > that instantiated at any given point in time.
-> > > >
-> > > > IOWs, for these systems with huge container counts, list_lru does
-> > > > not need the capability of tracking every memcg on every superblock.
-> > > >
-> > > > What it comes down to is that the list_lru is only needed for a
-> > > > given memcg if that memcg is instatiating and freeing objects on a
-> > > > given list_lru.
-> > > >
-> > > > Which makes me think we should be moving more towards "add the memcg
-> > > > to the list_lru at the first insert" model rather than "instantiate
-> > > > all at memcg init time just in case". The model we originally came
-> > > > up with for supprting memcgs is really starting to show it's limits,
-> > > > and we should address those limitations rahter than hack more
-> > > > complexity into the system that does nothing to remove the
-> > > > limitations that are causing the problems in the first place.
-> > >
-> > > I totally agree.
-> > >
-> > > It looks like the initial implementation of the whole kernel memory accounting
-> > > and memcg-aware shrinkers was based on the idea that the number of memory
-> > > cgroups is relatively small and stable.
-> >
-> > Yes, that was one of the original assumptions - tens to maybe low
-> > hundreds of memcgs at most. The other was that memcgs weren't NUMA
-> > aware, and so would only need a single LRU list per memcg. Hence the
-> > total overhead even with "lots" of memcgsi and superblocks the
-> > overhead wasn't that great.
-> >
-> > Then came "memcgs need to be NUMA aware" because of the size of the
-> > machines they were being use for resrouce management in, and that
-> > greatly increased the per-memcg, per LRU overhead. Now we're talking
-> > about needing to support a couple of orders of magnitude more memcgs
-> > and superblocks than were originally designed for.
-> >
-> > So, really, we're way beyond the original design scope of this
-> > subsystem now.
+Hi Roberto,
+
+On Wed, 2021-04-07 at 12:52 +0200, Roberto Sassu wrote:
+> When a file is being created, LSMs can set the initial label with the
+> inode_init_security hook. If no HMAC key is loaded, the new file will have
+> LSM xattrs but not the HMAC. It is also possible that the file remains
+> without protected xattrs after creation if no active LSM provided it.
 > 
-> Got it. So it is better to allocate the structure of the list_lru_node
-> dynamically. We should only allocate it when it is really demanded.
-> But allocating memory by using GFP_ATOMIC in list_lru_add() is
-> not a good idea. So we should allocate the memory out of
-> list_lru_add(). I can propose an approach that may work.
+> Unfortunately, EVM will deny any further metadata operation on new files,
+> as evm_protect_xattr() will always return the INTEGRITY_NOLABEL error, or
+> INTEGRITY_NOXATTRS if no protected xattrs exist. This would limit the
+> usability of EVM when only a public key is loaded, as commands such as cp
+> or tar with the option to preserve xattrs won't work.
 > 
-> Before start, we should know about the following rules of list lrus.
+> This patch ignores these errors when they won't be an issue, if no HMAC key
+> is loaded and cannot be loaded in the future (which can be enforced by
+> setting the EVM_SETUP_COMPLETE initialization flag).
 > 
-> - Only objects allocated with __GFP_ACCOUNT need to allocate
->   the struct list_lru_node.
-
-This seems .... misguided. inode and dentry caches are already
-marked as accounted, so individual calls to allocate from these
-slabs do not need this annotation.
-
-> - The caller of allocating memory must know which list_lru the
->   object will insert.
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  security/integrity/evm/evm_main.c | 23 ++++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
 > 
-> So we can allocate struct list_lru_node when allocating the
-> object instead of allocating it when list_lru_add().  It is easy, because
-> we already know the list_lru and memcg which the object belongs
-> to. So we can introduce a new helper to allocate the object and
-> list_lru_node. Like below.
-> 
-> void *list_lru_kmem_cache_alloc(struct list_lru *lru, struct kmem_cache *s,
->                                 gfp_t gfpflags)
-> {
->         void *ret = kmem_cache_alloc(s, gfpflags);
-> 
->         if (ret && (gfpflags & __GFP_ACCOUNT)) {
->                 struct mem_cgroup *memcg = mem_cgroup_from_obj(ret);
-> 
->                 if (mem_cgroup_is_root(memcg))
->                         return ret;
-> 
->                 /* Allocate per-memcg list_lru_node, if it already
-> allocated, do nothing. */
->                 memcg_list_lru_node_alloc(lru, memcg,
-> page_to_nid(virt_to_page(ret)), gfpflags);
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> index 998818283fda..6556e8c22da9 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -90,6 +90,24 @@ static bool evm_key_loaded(void)
+>  	return (bool)(evm_initialized & EVM_KEY_MASK);
+>  }
+>  
+> +/*
+> + * Ignoring INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS is safe if no HMAC key
+> + * is loaded and the EVM_SETUP_COMPLETE initialization flag is set.
+> + */
+> +static bool evm_ignore_error_safe(enum integrity_status evm_status)
+> +{
+> +	if (evm_initialized & EVM_INIT_HMAC)
+> +		return false;
+> +
+> +	if (!(evm_initialized & EVM_SETUP_COMPLETE))
+> +		return false;
+> +
+> +	if (evm_status != INTEGRITY_NOLABEL && evm_status != INTEGRITY_NOXATTRS)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+>  static int evm_find_protected_xattrs(struct dentry *dentry)
+>  {
+>  	struct inode *inode = d_backing_inode(dentry);
+> @@ -354,6 +372,8 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+>  				    -EPERM, 0);
+>  	}
+>  out:
+> +	if (evm_ignore_error_safe(evm_status))
+> +		return 0;
 
-If we are allowing kmem_cache_alloc() to fail, then we can allow
-memcg_list_lru_node_alloc() to fail, too.
+I agree with the concept, but the function name doesn't provide enough
+context.  Perhaps defining a function more along the lines of
+"evm_hmac_disabled()" would be more appropriate and at the same time
+self documenting.
 
-Also, why put this outside kmem_cache_alloc()? Node id and memcg is
-already known internally to kmem_cache_alloc() when allocating from
-a slab, so why not associate the slab allocation with the LRU
-directly when doing the memcg accounting and so avoid doing costly
-duplicate work on every allocation?
+>  	if (evm_status != INTEGRITY_PASS)
+>  		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+>  				    dentry->d_name.name, "appraise_metadata",
+> @@ -515,7 +535,8 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+>  		return 0;
+>  	evm_status = evm_verify_current_integrity(dentry);
+>  	if ((evm_status == INTEGRITY_PASS) ||
+> -	    (evm_status == INTEGRITY_NOXATTRS))
+> +	    (evm_status == INTEGRITY_NOXATTRS) ||
+> +	    (evm_ignore_error_safe(evm_status)))
 
-i.e. the list-lru was moved inside the mm/ dir because "it's a mm
-specific construct only", so why not actually make use of that
-designation to internalise this entire memcg management issue into
-the slab allocation routines? i.e.  an API like
-kmem_cache_alloc_lru(cache, lru, gfpflags) allows this to be
-completely internalised and efficiently implemented with minimal
-change to callers. It also means that memory allocation callers
-don't need to know anything about memcg management, which is always
-a win....
+It would also remove the INTEGRITY_NOXATTRS test duplication here.
 
->         }
-> 
->         return ret;
-> }
-> 
-> If the user wants to insert the allocated object to its lru list in
-> the feature. The
-> user should use list_lru_kmem_cache_alloc() instead of kmem_cache_alloc().
-> I have looked at the code closely. There are 3 different kmem_caches that
-> need to use this new API to allocate memory. They are inode_cachep,
-> dentry_cache and radix_tree_node_cachep. I think that it is easy to migrate.
+thanks,
 
-It might work, but I think you may have overlooked the complexity
-of inode allocation for filesystems. i.e.  alloc_inode() calls out
-to filesystem allocation functions more often than it allocates
-directly from the inode_cachep.  i.e.  Most filesystems provide
-their own ->alloc_inode superblock operation, and they allocate
-inodes out of their own specific slab caches, not the inode_cachep.
+Mimi
 
-And then you have filesystems like XFS, where alloc_inode() will
-never be called, and implement ->alloc_inode as:
+>  		return 0;
+>  	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+>  			    dentry->d_name.name, "appraise_metadata",
 
-/* Catch misguided souls that try to use this interface on XFS */
-STATIC struct inode *
-xfs_fs_alloc_inode(
-        struct super_block      *sb)
-{
-	BUG();
-	return NULL;
-}
-
-Because all the inode caching and allocation is internal to XFS and
-VFS inode management interfaces are not used.
-
-So I suspect that an external wrapper function is not the way to go
-here - either internalising the LRU management into the slab
-allocation or adding the memcg code to alloc_inode() and filesystem
-specific routines would make a lot more sense to me.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
