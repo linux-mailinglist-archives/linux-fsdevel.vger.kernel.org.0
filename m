@@ -2,151 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E349B371465
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 May 2021 13:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A143E37150F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 May 2021 14:09:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233228AbhECLic (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 May 2021 07:38:32 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:26578 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233108AbhECLib (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 May 2021 07:38:31 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1620041858; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: References: To: From:
- Subject: Sender; bh=qRiJgWE8iTipoiVkZWHB29yywQT7wG9h8TB+552EpCw=; b=AhAsSfSsIFndKI2lY+F8aQ53tR287LpRXYr7QI3oJB3XnEao+ofpMHL2RGNAHugOnCItNvTq
- Dh0WfCA3pR3veUjul0X2647kJx3QMZCdUbL5eXK74d69ckTv5DSLTUzp7TJNCA3UX+/pVZ02
- OXZYWYnroz75HkYHd5n4b63MXrU=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
- 608fe07e8166b7eff7dffef4 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 03 May 2021 11:37:34
- GMT
-Sender: charante=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 09D63C43149; Mon,  3 May 2021 11:37:32 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        NICE_REPLY_A,SPF_FAIL,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [192.168.29.110] (unknown [49.37.159.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: charante)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2A1E9C433D3;
-        Mon,  3 May 2021 11:37:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2A1E9C433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=charante@codeaurora.org
-Subject: Re: [PATCH] mm: compaction: improve /proc trigger for full node
- memory compaction
-From:   Charan Teja Kalla <charante@codeaurora.org>
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        akpm@linux-foundation.org, vbabka@suse.cz, bhe@redhat.com,
-        nigupta@nvidia.com, khalid.aziz@oracle.com,
-        mateusznosek0@gmail.com, sh_def@163.com, iamjoonsoo.kim@lge.com,
-        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        mhocko@suse.com, rientjes@google.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        vinmenon@codeaurora.org
-References: <1619098678-8501-1-git-send-email-charante@codeaurora.org>
- <20210427080921.GG4239@techsingularity.net>
- <9afd1ae1-bee8-a4cc-1cd6-df92090abeb4@codeaurora.org>
-Message-ID: <2b448167-7139-dea9-ef49-340dcfff8858@codeaurora.org>
-Date:   Mon, 3 May 2021 17:07:23 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
-MIME-Version: 1.0
-In-Reply-To: <9afd1ae1-bee8-a4cc-1cd6-df92090abeb4@codeaurora.org>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
+        id S233420AbhECMIp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 May 2021 08:08:45 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:63034 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229866AbhECMIo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 May 2021 08:08:44 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 143C4Kko122984;
+        Mon, 3 May 2021 08:07:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=67Bb/a/rk0rGoLvbb54LTekVRlGTstOAnAiKjDvwdK4=;
+ b=caXBLvw/7nAu67ZSKQk8AOv7hdU505FCKvSxtwWozt2Si1HowWtvN/MDEtnl1QaOqmVL
+ I/sTtDqCESxXZQf+xq9r0PjmxGVHF9Bn6Z0PTKodtRNFj2VKDxxRReZa1auuHS+NGkpQ
+ WatncmbKRgcJ3KbFGRUpnrgrXBvJwcTy1glJURygSDJpUE1NRiSkd8QwaUBEnA184Xzf
+ JyTW/1sVBRNzANNRbgqETzXGVTl1Hrt7OSBFoWGv7G+bBHrSq6cPpSEYqSn76fayp/j9
+ jddPh995uf9jG7RJbiqZaUKFFN1ysVxSstx+jciu9DjXQ6LC8qCFyanOZgxCNLU4C3/S Tw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 38agju8hhh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 May 2021 08:07:46 -0400
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 143C4lE4124403;
+        Mon, 3 May 2021 08:07:46 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 38agju8hgj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 May 2021 08:07:46 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 143C46op000613;
+        Mon, 3 May 2021 12:07:44 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03fra.de.ibm.com with ESMTP id 388xm88crt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 May 2021 12:07:44 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 143C7gCR28049756
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 May 2021 12:07:42 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 058EBA460F;
+        Mon,  3 May 2021 12:07:42 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BBE45A4611;
+        Mon,  3 May 2021 12:07:39 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.45.89])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  3 May 2021 12:07:39 +0000 (GMT)
+Message-ID: <3bcb6e633f91d096cd0821a658c01cdb2f745cf6.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 06/12] evm: Ignore
+ INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS if conditions are safe
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "mjg59@google.com" <mjg59@google.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Mon, 03 May 2021 08:07:38 -0400
+In-Reply-To: <c12f18094cc0479faa3f0f152b4964de@huawei.com>
+References: <20210407105252.30721-1-roberto.sassu@huawei.com>
+         <20210407105252.30721-7-roberto.sassu@huawei.com>
+         <b8790b57e289980d4fe1133d15203ce016d2319d.camel@linux.ibm.com>
+         <c12f18094cc0479faa3f0f152b4964de@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: peZrPvDM-tXm3jXr8zp1A0Qnp8E-VIrT
+X-Proofpoint-ORIG-GUID: jF42g-kS2lyBpv4J5skHCnXQL6afTgkN
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-05-03_07:2021-05-03,2021-05-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
+ clxscore=1015 mlxscore=0 priorityscore=1501 lowpriorityscore=0
+ adultscore=0 suspectscore=0 malwarescore=0 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2105030084
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Mon, 2021-05-03 at 07:55 +0000, Roberto Sassu wrote:
+> 
+> > > diff --git a/security/integrity/evm/evm_main.c
+> > b/security/integrity/evm/evm_main.c
 
-A gentle ping to get your review comments. They will be of great help to me.
+> > > @@ -354,6 +372,8 @@ static int evm_protect_xattr(struct dentry *dentry,
+> > const char *xattr_name,
+> > >  				    -EPERM, 0);
+> > >  	}
+> > >  out:
+> > > +	if (evm_ignore_error_safe(evm_status))
+> > > +		return 0;
+> > 
+> > I agree with the concept, but the function name doesn't provide enough
+> > context.  Perhaps defining a function more along the lines of
+> > "evm_hmac_disabled()" would be more appropriate and at the same time
+> > self documenting.
+> 
+> Since the function checks if the passed error can be ignored,
+> would evm_ignore_error_hmac_disabled() also be ok?
 
-Explained below that though the compact_memory node is intended for
-debug purpose, it got other applications too. This patch just aims to
-improve that by taking help of proactive compaction.
+The purpose of evm_protect_xattr() is to prevent allowing an invalid
+security.evm xattr from being re-calculated and updated, making it
+valid.   Refer to the first line of the function description.  That
+hasn't changed.
 
-Also triggering proactive compaction for every 500msec is not always
-required (say that I mostly need higher order pages in the systems only
-at while launching a set of apps, then the work done by the proactive
-compaction for every 500msec is not going to be useful in other times).
-Thus users will disable the proactive
-compaction(sysctl.compaction_proactiveness = 0) and when required can do
-the out-of-band compaction using the provided interface.
+One of the reasons for defining a new function is to avoid code
+duplication, but it should not come at the expense of clear and easily
+understood code.   In this case, the reason for "ignoring" certain
+return codes needs to be highlighted, not hidden.  
+(is_)evm_hmac_disabled() makes this very clear.
 
-If a separate /proc node shouldn't be present just for this, then the
-other solution I am thinking of is:
-1) Trigger the proactive compaction on every write to
-sysctl.compaction_proactiveness, instead of waiting for 500msec wakeup,
-thus users can immediately turn on/off the proactive compaction when
-required.
+Please update the function description to include the reason why making
+an exception is safe.
 
---Thanks
+thanks,
 
-On 4/28/2021 9:02 PM, Charan Teja Kalla wrote:
-> Thanks Mel for your comments!!
-> 
-> On 4/27/2021 1:39 PM, Mel Gorman wrote:
->>> The existing /proc/sys/vm/compact_memory interface do the full node
->>> compaction when user writes an arbitrary value to it and is targeted for
->>> the usecases like an app launcher prepares the system before the target
->>> application runs.
->> The intent behind compact_memory was a debugging interface to tell
->> the difference between an application failing to allocate a huge page
->> prematurely and the inability of compaction to find a free page.
->>
-> 
-> Thanks for clarifying this.
-> 
->>> This patch adds a new /proc interface,
->>> /proc/sys/vm/proactive_compact_memory, and on write of an arbitrary
->>> value triggers the full node compaction but can be stopped in the middle
->>> if sufficient higher order(COMPACTION_HPAGE_ORDER) pages available in
->>> the system. The availability of pages that a user looking for can be
->>> given as input through /proc/sys/vm/compaction_proactiveness.
->>>
->>> [1]https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=facdaa917c4d5a376d09d25865f5a863f906234a
->>>
->>> Signed-off-by: Charan Teja Reddy <charante@codeaurora.org>
->> Hence, while I do not object to the patch as-such, I'm wary of the trend
->> towards improving explicit out-of-band compaction via proc interfaces. I
-> 
-> I think people relying on this /proc/../compact_memory for reasons of on
-> demand compaction effects the performance and the kcompactd returns when
->  even a single page of the order we are looking for is available. Say
-> that If an app launching completion is relied on the memory
-> fragmentation, meaning that lesser the system fragmented, lesser it
-> needs to spend time on allocation as it gets more higher order pages.
-> With the current compaction methods we may get just one higher order
-> page at a time (as compaction stops run after that) thus can effect its
-> launch completion time. The compact_memory node can help in these
-> situation where the system administrator can defragment system whenever
-> is required by writing to the compact_node. This is just a theoretical
-> example.
-> 
-> Although it is intended for debugging interface, it got a lot of other
-> applications too.
-> 
-> This patch aims to improve this interface by taking help from tunables
-> provided by the proactive compaction.
-> 
->> would have preferred if the focus was on reducing the cost of compaction
->> so that direct allocation requests succeed quickly or improving background
->> compaction via kcompactd when there has been recent failures.
-> 
+Mimi
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
-Forum, a Linux Foundation Collaborative Project
+> > >  	if (evm_status != INTEGRITY_PASS)
+> > >  		integrity_audit_msg(AUDIT_INTEGRITY_METADATA,
+> > d_backing_inode(dentry),
+> > >  				    dentry->d_name.name,
+> > "appraise_metadata",
+
