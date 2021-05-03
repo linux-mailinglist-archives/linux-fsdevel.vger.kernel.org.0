@@ -2,181 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C483337167B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 May 2021 16:15:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D3DB3716AC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 May 2021 16:34:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234182AbhECOQV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 3 May 2021 10:16:21 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2986 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230059AbhECOQT (ORCPT
+        id S229753AbhECOff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 May 2021 10:35:35 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58864 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229713AbhECOff (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 May 2021 10:16:19 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FYlGT3HVTz6wm1m;
-        Mon,  3 May 2021 22:09:37 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Mon, 3 May 2021 16:15:22 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
- Mon, 3 May 2021 16:15:22 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
+        Mon, 3 May 2021 10:35:35 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 143EWjNW059364;
+        Mon, 3 May 2021 10:34:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=7mL8FDzBMAjmCV7DfbSNIWf6w40iFdmjkhfdERaeVRA=;
+ b=I4z/vS3tvDbY0LRAuQmLszQ2Y7i1PiaNFqBLWrfhLtGBU6Uag45UXwYFEQrAngjykFjh
+ NBr3YI4xeM/QKz0lRWg+atNjsXQRxbJ0OWs3CyYQsdfmUUHaQCAu9ZradWAY9Xkfrnmb
+ VX+cGJidtHKeG+Qd8ldTIZdtGFDkFHBYPRB/JW2n92qiKURKtmOCqdHuHoZHMbJV/31u
+ ID9Dgvhixyk9ErkExkVxmXt1BWUn9aHZKAWoIoG9RpTQjaFGJcX5qOZJFpeV3x2Vkvfc
+ ApkcIxEGm8rIaMedI3InBhFm1d2XRmFiuzKHnT0zZHAsrD2AM8coX73ye5B4MfFPxYH1 Mw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 38ajye84f6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 May 2021 10:34:38 -0400
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 143EXEoj061102;
+        Mon, 3 May 2021 10:34:38 -0400
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 38ajye84e2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 May 2021 10:34:38 -0400
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 143ESkAV003650;
+        Mon, 3 May 2021 14:34:36 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma04fra.de.ibm.com with ESMTP id 388xm88dv4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 May 2021 14:34:35 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 143EY85F34406786
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 May 2021 14:34:08 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 66C144C046;
+        Mon,  3 May 2021 14:34:33 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 487C64C044;
+        Mon,  3 May 2021 14:34:31 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.45.89])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  3 May 2021 14:34:31 +0000 (GMT)
+Message-ID: <a2ca7317b672c63a40743268b641dd73661c3329.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 06/12] evm: Ignore
+ INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS if conditions are safe
+From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
         "mjg59@google.com" <mjg59@google.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 06/12] evm: Ignore INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS
- if conditions are safe
-Thread-Topic: [PATCH v5 06/12] evm: Ignore
- INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS if conditions are safe
-Thread-Index: AQHXK5xdbQY13c/E0Ea5lrgi3mZG3arQ6VCAgAChtnCAAGkoMA==
-Date:   Mon, 3 May 2021 14:15:22 +0000
-Message-ID: <33cad84d2f894ed5a05a3bd6854f73a0@huawei.com>
+Date:   Mon, 03 May 2021 10:34:30 -0400
+In-Reply-To: <33cad84d2f894ed5a05a3bd6854f73a0@huawei.com>
 References: <20210407105252.30721-1-roberto.sassu@huawei.com>
          <20210407105252.30721-7-roberto.sassu@huawei.com>
- <b8790b57e289980d4fe1133d15203ce016d2319d.camel@linux.ibm.com>
- <c12f18094cc0479faa3f0f152b4964de@huawei.com>
-In-Reply-To: <c12f18094cc0479faa3f0f152b4964de@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.221.98.153]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+         <b8790b57e289980d4fe1133d15203ce016d2319d.camel@linux.ibm.com>
+         <c12f18094cc0479faa3f0f152b4964de@huawei.com>
+         <33cad84d2f894ed5a05a3bd6854f73a0@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 8rfCqxeB6htgEsunVVGBiRIymhHRStfR
+X-Proofpoint-GUID: nivbUT025dw3pmsh5X499IA29R0zvE0Q
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-05-03_10:2021-05-03,2021-05-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ priorityscore=1501 suspectscore=0 lowpriorityscore=0 mlxscore=0
+ clxscore=1015 adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=999
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2105030101
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> From: Roberto Sassu [mailto:roberto.sassu@huawei.com]
-> Sent: Monday, May 3, 2021 9:55 AM
-> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> > Sent: Monday, May 3, 2021 2:13 AM
-> > Hi Roberto,
-> >
-> > On Wed, 2021-04-07 at 12:52 +0200, Roberto Sassu wrote:
-> > > When a file is being created, LSMs can set the initial label with the
-> > > inode_init_security hook. If no HMAC key is loaded, the new file will have
-> > > LSM xattrs but not the HMAC. It is also possible that the file remains
-> > > without protected xattrs after creation if no active LSM provided it.
-> > >
-> > > Unfortunately, EVM will deny any further metadata operation on new
-> files,
-> > > as evm_protect_xattr() will always return the INTEGRITY_NOLABEL error,
-> or
-> > > INTEGRITY_NOXATTRS if no protected xattrs exist. This would limit the
-> > > usability of EVM when only a public key is loaded, as commands such as
-> cp
-> > > or tar with the option to preserve xattrs won't work.
-> > >
-> > > This patch ignores these errors when they won't be an issue, if no HMAC
-> > key
-> > > is loaded and cannot be loaded in the future (which can be enforced by
-> > > setting the EVM_SETUP_COMPLETE initialization flag).
-> > >
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > ---
-> > >  security/integrity/evm/evm_main.c | 23 ++++++++++++++++++++++-
-> > >  1 file changed, 22 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/security/integrity/evm/evm_main.c
-> > b/security/integrity/evm/evm_main.c
-> > > index 998818283fda..6556e8c22da9 100644
-> > > --- a/security/integrity/evm/evm_main.c
-> > > +++ b/security/integrity/evm/evm_main.c
-> > > @@ -90,6 +90,24 @@ static bool evm_key_loaded(void)
-> > >  	return (bool)(evm_initialized & EVM_KEY_MASK);
-> > >  }
-> > >
-> > > +/*
-> > > + * Ignoring INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS is safe if no
-> HMAC
-> > key
-> > > + * is loaded and the EVM_SETUP_COMPLETE initialization flag is set.
-> > > + */
-> > > +static bool evm_ignore_error_safe(enum integrity_status evm_status)
-> > > +{
-> > > +	if (evm_initialized & EVM_INIT_HMAC)
-> > > +		return false;
-> > > +
-> > > +	if (!(evm_initialized & EVM_SETUP_COMPLETE))
-> > > +		return false;
-> > > +
-> > > +	if (evm_status != INTEGRITY_NOLABEL && evm_status !=
-> > INTEGRITY_NOXATTRS)
-> > > +		return false;
-> > > +
-> > > +	return true;
-> > > +}
-> > > +
-> > >  static int evm_find_protected_xattrs(struct dentry *dentry)
-> > >  {
-> > >  	struct inode *inode = d_backing_inode(dentry);
-> > > @@ -354,6 +372,8 @@ static int evm_protect_xattr(struct dentry
-> *dentry,
-> > const char *xattr_name,
-> > >  				    -EPERM, 0);
-> > >  	}
-> > >  out:
-> > > +	if (evm_ignore_error_safe(evm_status))
-> > > +		return 0;
-> >
-> > I agree with the concept, but the function name doesn't provide enough
-> > context.  Perhaps defining a function more along the lines of
-> > "evm_hmac_disabled()" would be more appropriate and at the same time
-> > self documenting.
-> 
-> Since the function checks if the passed error can be ignored,
-> would evm_ignore_error_hmac_disabled() also be ok?
-> 
-> > >  	if (evm_status != INTEGRITY_PASS)
-> > >  		integrity_audit_msg(AUDIT_INTEGRITY_METADATA,
-> > d_backing_inode(dentry),
-> > >  				    dentry->d_name.name,
-> > "appraise_metadata",
-> > > @@ -515,7 +535,8 @@ int evm_inode_setattr(struct dentry *dentry,
-> struct
-> > iattr *attr)
-> > >  		return 0;
-> > >  	evm_status = evm_verify_current_integrity(dentry);
-> > >  	if ((evm_status == INTEGRITY_PASS) ||
-> > > -	    (evm_status == INTEGRITY_NOXATTRS))
-> > > +	    (evm_status == INTEGRITY_NOXATTRS) ||
-> > > +	    (evm_ignore_error_safe(evm_status)))
-> >
-> > It would also remove the INTEGRITY_NOXATTRS test duplication here.
-> 
-> Ok.
+On Mon, 2021-05-03 at 14:15 +0000, Roberto Sassu wrote:
 
-Actually, it does not seem a duplication. Currently, INTEGRITY_NOXATTRS
-is ignored also when the HMAC key is loaded.
-
-Roberto
-
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
-
-> Thanks
+> > > >  	if (evm_status != INTEGRITY_PASS)
+> > > >  		integrity_audit_msg(AUDIT_INTEGRITY_METADATA,
+> > > d_backing_inode(dentry),
+> > > >  				    dentry->d_name.name,
+> > > "appraise_metadata",
+> > > > @@ -515,7 +535,8 @@ int evm_inode_setattr(struct dentry *dentry,
+> > struct
+> > > iattr *attr)
+> > > >  		return 0;
+> > > >  	evm_status = evm_verify_current_integrity(dentry);
+> > > >  	if ((evm_status == INTEGRITY_PASS) ||
+> > > > -	    (evm_status == INTEGRITY_NOXATTRS))
+> > > > +	    (evm_status == INTEGRITY_NOXATTRS) ||
+> > > > +	    (evm_ignore_error_safe(evm_status)))
+> > >
+> > > It would also remove the INTEGRITY_NOXATTRS test duplication here.
+> > 
+> > Ok.
 > 
-> Roberto
-> 
-> HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-> Managing Director: Li Peng, Li Jian, Shi Yanli
-> 
-> > thanks,
-> >
-> > Mimi
-> >
-> > >  		return 0;
-> > >  	integrity_audit_msg(AUDIT_INTEGRITY_METADATA,
-> > d_backing_inode(dentry),
-> > >  			    dentry->d_name.name, "appraise_metadata",
+> Actually, it does not seem a duplication. Currently, INTEGRITY_NOXATTRS
+> is ignored also when the HMAC key is loaded.
+
+The existing INTEGRITY_NOXATTRS exemption is more general and includes
+the new case of when EVM HMAC is disabled.  The additional exemption is
+only needed for INTEGRITY_NOLABEL, when EVM HMAC is disabled.
+
+Mimi
 
