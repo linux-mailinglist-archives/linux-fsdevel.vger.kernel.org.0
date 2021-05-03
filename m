@@ -2,163 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE07F371229
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 May 2021 09:55:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB91B371246
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 May 2021 10:11:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232887AbhECH40 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 3 May 2021 03:56:26 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2984 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229817AbhECH4Z (ORCPT
+        id S232906AbhECIM2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 May 2021 04:12:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:42934 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232895AbhECIM1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 May 2021 03:56:25 -0400
-Received: from fraeml715-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FYZr86b8mz6wlK1;
-        Mon,  3 May 2021 15:49:44 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml715-chm.china.huawei.com (10.206.15.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Mon, 3 May 2021 09:55:30 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
- Mon, 3 May 2021 09:55:30 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "mjg59@google.com" <mjg59@google.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 06/12] evm: Ignore INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS
- if conditions are safe
-Thread-Topic: [PATCH v5 06/12] evm: Ignore
- INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS if conditions are safe
-Thread-Index: AQHXK5xdbQY13c/E0Ea5lrgi3mZG3arQ6VCAgAChtnA=
-Date:   Mon, 3 May 2021 07:55:29 +0000
-Message-ID: <c12f18094cc0479faa3f0f152b4964de@huawei.com>
-References: <20210407105252.30721-1-roberto.sassu@huawei.com>
-         <20210407105252.30721-7-roberto.sassu@huawei.com>
- <b8790b57e289980d4fe1133d15203ce016d2319d.camel@linux.ibm.com>
-In-Reply-To: <b8790b57e289980d4fe1133d15203ce016d2319d.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.221.98.153]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 3 May 2021 04:12:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620029494;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vwlHSyZzbGf/1hjjeGeNUgRrxHpiQEqHNLs9/p1ggRw=;
+        b=SIrus6e16RobVdtfdpixSPT0rb/Vh1dFZejCDC85Ehuk8mKlXzfTjin25enMM8iDunoRzW
+        9+z5Bx0ank8Mjc70PRPv4Nvh8Qy88/cEn8daQOnndug65kG3pM2y/2bLlPWxS8LOSj2ztH
+        jokPt5A50mW2oipVOTKvTZ01xiujB44=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-146-TE6pSlq7N-W9w24X_vuaPQ-1; Mon, 03 May 2021 04:11:32 -0400
+X-MC-Unique: TE6pSlq7N-W9w24X_vuaPQ-1
+Received: by mail-ed1-f71.google.com with SMTP id d6-20020a0564020786b0290387927a37e2so4066007edy.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 May 2021 01:11:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=vwlHSyZzbGf/1hjjeGeNUgRrxHpiQEqHNLs9/p1ggRw=;
+        b=Vn8bQz4W63TwAJEe5ow11JJuYwG/iN41jxGgjsbDzse7kBQiaknyRkOLgdEEgtmZuB
+         3fDy543yR12Dta19ssVOzlhMGzox4Q1mf3abTdAa6lyshpqz8lQXQjlGo/AXEmZE0iBA
+         63Qa0Tw/RVm9wzBxxaQ0kXB6mXe8HFQpXLYAHIuZBwJuxvIH++rZoB5nTzCwTWg+w1eH
+         qA2mtQbSF0yaI9FJ98H4VGJDuY1LCt9wACxPv6YV/vxdzrw/X5sAioBC3rnlZve6+Hk1
+         9/DGXJ7fIJT9LqWKCyYacgFciDTiURDDeyOma64Do8WW9y+05Z6Kfl5iq1D2DkL9satq
+         gCWA==
+X-Gm-Message-State: AOAM5336oVVZEPbBx8LpqKXMUUCZVM6/3gCUErmIhlHA5XdVfoIXeEas
+        3GNNUB6PPJmIy074XjgrAF7u3i7e3qyzrs+j34/55sLDM4l6ySEVF4ZbHUFuDUCo+CXv1vIMZTs
+        ELQUZhzWP0nKkvZIg6i6alxCwCA==
+X-Received: by 2002:a50:eb47:: with SMTP id z7mr16986477edp.68.1620029491001;
+        Mon, 03 May 2021 01:11:31 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxgC+bCNFZ6IjQ+hZxVb6PiUEspf4Kwd7KdWnjG2fBIRF7s94xAa5mK0csiH8ddS3w5cQDqaA==
+X-Received: by 2002:a50:eb47:: with SMTP id z7mr16986454edp.68.1620029490784;
+        Mon, 03 May 2021 01:11:30 -0700 (PDT)
+Received: from [192.168.3.132] (p5b0c649f.dip0.t-ipconnect.de. [91.12.100.159])
+        by smtp.gmail.com with ESMTPSA id d15sm12268494edu.86.2021.05.03.01.11.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 May 2021 01:11:30 -0700 (PDT)
+Subject: Re: [PATCH v1 5/7] mm: introduce
+ page_offline_(begin|end|freeze|unfreeze) to synchronize setting PageOffline()
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        Steven Price <steven.price@arm.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Aili Yao <yaoaili@kingsoft.com>, Jiri Bohac <jbohac@suse.cz>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        linux-hyperv@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20210429122519.15183-1-david@redhat.com>
+ <20210429122519.15183-6-david@redhat.com> <YI5Hp49AmWgfTzNy@kernel.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Message-ID: <4aa55978-c224-7ead-f00d-df1a6c3dfda4@redhat.com>
+Date:   Mon, 3 May 2021 10:11:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <YI5Hp49AmWgfTzNy@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> Sent: Monday, May 3, 2021 2:13 AM
-> Hi Roberto,
+On 02.05.21 08:33, Mike Rapoport wrote:
+> On Thu, Apr 29, 2021 at 02:25:17PM +0200, David Hildenbrand wrote:
+>> A driver might set a page logically offline -- PageOffline() -- and
+>> turn the page inaccessible in the hypervisor; after that, access to page
+>> content can be fatal. One example is virtio-mem; while unplugged memory
+>> -- marked as PageOffline() can currently be read in the hypervisor, this
+>> will no longer be the case in the future; for example, when having
+>> a virtio-mem device backed by huge pages in the hypervisor.
+>>
+>> Some special PFN walkers -- i.e., /proc/kcore -- read content of random
+>> pages after checking PageOffline(); however, these PFN walkers can race
+>> with drivers that set PageOffline().
+>>
+>> Let's introduce page_offline_(begin|end|freeze|unfreeze) for
 > 
-> On Wed, 2021-04-07 at 12:52 +0200, Roberto Sassu wrote:
-> > When a file is being created, LSMs can set the initial label with the
-> > inode_init_security hook. If no HMAC key is loaded, the new file will have
-> > LSM xattrs but not the HMAC. It is also possible that the file remains
-> > without protected xattrs after creation if no active LSM provided it.
-> >
-> > Unfortunately, EVM will deny any further metadata operation on new files,
-> > as evm_protect_xattr() will always return the INTEGRITY_NOLABEL error, or
-> > INTEGRITY_NOXATTRS if no protected xattrs exist. This would limit the
-> > usability of EVM when only a public key is loaded, as commands such as cp
-> > or tar with the option to preserve xattrs won't work.
-> >
-> > This patch ignores these errors when they won't be an issue, if no HMAC
-> key
-> > is loaded and cannot be loaded in the future (which can be enforced by
-> > setting the EVM_SETUP_COMPLETE initialization flag).
-> >
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  security/integrity/evm/evm_main.c | 23 ++++++++++++++++++++++-
-> >  1 file changed, 22 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/security/integrity/evm/evm_main.c
-> b/security/integrity/evm/evm_main.c
-> > index 998818283fda..6556e8c22da9 100644
-> > --- a/security/integrity/evm/evm_main.c
-> > +++ b/security/integrity/evm/evm_main.c
-> > @@ -90,6 +90,24 @@ static bool evm_key_loaded(void)
-> >  	return (bool)(evm_initialized & EVM_KEY_MASK);
-> >  }
-> >
-> > +/*
-> > + * Ignoring INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS is safe if no HMAC
-> key
-> > + * is loaded and the EVM_SETUP_COMPLETE initialization flag is set.
-> > + */
-> > +static bool evm_ignore_error_safe(enum integrity_status evm_status)
-> > +{
-> > +	if (evm_initialized & EVM_INIT_HMAC)
-> > +		return false;
-> > +
-> > +	if (!(evm_initialized & EVM_SETUP_COMPLETE))
-> > +		return false;
-> > +
-> > +	if (evm_status != INTEGRITY_NOLABEL && evm_status !=
-> INTEGRITY_NOXATTRS)
-> > +		return false;
-> > +
-> > +	return true;
-> > +}
-> > +
-> >  static int evm_find_protected_xattrs(struct dentry *dentry)
-> >  {
-> >  	struct inode *inode = d_backing_inode(dentry);
-> > @@ -354,6 +372,8 @@ static int evm_protect_xattr(struct dentry *dentry,
-> const char *xattr_name,
-> >  				    -EPERM, 0);
-> >  	}
-> >  out:
-> > +	if (evm_ignore_error_safe(evm_status))
-> > +		return 0;
-> 
-> I agree with the concept, but the function name doesn't provide enough
-> context.  Perhaps defining a function more along the lines of
-> "evm_hmac_disabled()" would be more appropriate and at the same time
-> self documenting.
+> Bikeshed: freeze|thaw?
+>
 
-Since the function checks if the passed error can be ignored,
-would evm_ignore_error_hmac_disabled() also be ok?
+Sure :)
 
-> >  	if (evm_status != INTEGRITY_PASS)
-> >  		integrity_audit_msg(AUDIT_INTEGRITY_METADATA,
-> d_backing_inode(dentry),
-> >  				    dentry->d_name.name,
-> "appraise_metadata",
-> > @@ -515,7 +535,8 @@ int evm_inode_setattr(struct dentry *dentry, struct
-> iattr *attr)
-> >  		return 0;
-> >  	evm_status = evm_verify_current_integrity(dentry);
-> >  	if ((evm_status == INTEGRITY_PASS) ||
-> > -	    (evm_status == INTEGRITY_NOXATTRS))
-> > +	    (evm_status == INTEGRITY_NOXATTRS) ||
-> > +	    (evm_ignore_error_safe(evm_status)))
-> 
-> It would also remove the INTEGRITY_NOXATTRS test duplication here.
 
-Ok.
+-- 
+Thanks,
 
-Thanks
-
-Roberto
-
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
-
-> thanks,
-> 
-> Mimi
-> 
-> >  		return 0;
-> >  	integrity_audit_msg(AUDIT_INTEGRITY_METADATA,
-> d_backing_inode(dentry),
-> >  			    dentry->d_name.name, "appraise_metadata",
+David / dhildenb
 
