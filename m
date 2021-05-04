@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CA56372F7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 May 2021 20:08:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2DBD372F61
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 May 2021 20:08:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232365AbhEDSJZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 May 2021 14:09:25 -0400
-Received: from mga06.intel.com ([134.134.136.31]:23654 "EHLO mga06.intel.com"
+        id S232242AbhEDSJE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 May 2021 14:09:04 -0400
+Received: from mga02.intel.com ([134.134.136.20]:5431 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232340AbhEDSJP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 May 2021 14:09:15 -0400
-IronPort-SDR: c6fUU7CZB4xOjZDtH/txRIu7j3hvim8iIzMnQvtiAjpYKCMQjU7EocNLA9OrRfg5nAqWY2sMU6
- 7WOpanFb27IA==
-X-IronPort-AV: E=McAfee;i="6200,9189,9974"; a="259327438"
+        id S232228AbhEDSJC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 May 2021 14:09:02 -0400
+IronPort-SDR: i7U+TN+TVNwqoSbaZqvQmFahruY6quvOKyeNpskK0Jrtx/DrBV/tJIOzPCmN1LA5gY1u1R0EyZ
+ 0ZmIeIaCzbBw==
+X-IronPort-AV: E=McAfee;i="6200,9189,9974"; a="185180390"
 X-IronPort-AV: E=Sophos;i="5.82,272,1613462400"; 
-   d="scan'208";a="259327438"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2021 11:08:06 -0700
-IronPort-SDR: 6MbDAXXNIOyXh4YlcR4bicmAxwiyVfOwmJ3NMlnyfgLTG0vHrxvVOoK9RbDAd7dlhd8JpCrNnl
- j2MVD0AWqjnA==
+   d="scan'208";a="185180390"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2021 11:08:06 -0700
+IronPort-SDR: srKaqQ0k4QZ02RjMK5aEZ63MrhokB6K3OcON+NgJH60HYNcC/OMv0bAJXgfcwonRnk43aRP7Sn
+ 3gtBcF0uCgaA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.82,272,1613462400"; 
-   d="scan'208";a="607105009"
+   d="scan'208";a="427867644"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 04 May 2021 11:08:04 -0700
+  by orsmga007.jf.intel.com with ESMTP; 04 May 2021 11:08:04 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id AFA872E4; Tue,  4 May 2021 21:08:23 +0300 (EEST)
+        id BB228348; Tue,  4 May 2021 21:08:23 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     "J. Bruce Fields" <bfields@redhat.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -37,9 +37,9 @@ Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Andy Shevchenko <andy@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v3 03/15] lib/string_helpers: Drop indentation level in string_escape_mem()
-Date:   Tue,  4 May 2021 21:08:07 +0300
-Message-Id: <20210504180819.73127-4-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 04/15] lib/string_helpers: Introduce ESCAPE_NA for escaping non-ASCII
+Date:   Tue,  4 May 2021 21:08:08 +0300
+Message-Id: <20210504180819.73127-5-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210504180819.73127-1-andriy.shevchenko@linux.intel.com>
 References: <20210504180819.73127-1-andriy.shevchenko@linux.intel.com>
@@ -49,66 +49,91 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The only one conditional is left on the upper level, move the rest
-to the same level and drop indentation level. No functional changes.
+Some users may want to have an ASCII based filter, provided by
+isascii() function. Here is the addition of a such.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- lib/string_helpers.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ include/linux/string_helpers.h |  1 +
+ lib/string_helpers.c           | 21 +++++++++++++++++----
+ 2 files changed, 18 insertions(+), 4 deletions(-)
 
+diff --git a/include/linux/string_helpers.h b/include/linux/string_helpers.h
+index bf01e24edd89..d6cf6fe10f74 100644
+--- a/include/linux/string_helpers.h
++++ b/include/linux/string_helpers.h
+@@ -52,6 +52,7 @@ static inline int string_unescape_any_inplace(char *buf)
+ #define ESCAPE_NP		BIT(4)
+ #define ESCAPE_ANY_NP		(ESCAPE_ANY | ESCAPE_NP)
+ #define ESCAPE_HEX		BIT(5)
++#define ESCAPE_NA		BIT(6)
+ 
+ int string_escape_mem(const char *src, size_t isz, char *dst, size_t osz,
+ 		unsigned int flags, const char *only);
 diff --git a/lib/string_helpers.c b/lib/string_helpers.c
-index b10a18b4663b..e3ef9f86cc34 100644
+index e3ef9f86cc34..a963404b8c16 100644
 --- a/lib/string_helpers.c
 +++ b/lib/string_helpers.c
-@@ -515,29 +515,29 @@ int string_escape_mem(const char *src, size_t isz, char *dst, size_t osz,
+@@ -454,8 +454,8 @@ static bool escape_hex(unsigned char c, char **dst, char *end)
+  *
+  *	1. The character is not matched to the one from @only string and thus
+  *	   must go as-is to the output.
+- *	2. The character is matched to the printable class, if asked, and in
+- *	   case of match it passes through to the output.
++ *	2. The character is matched to the printable or ASCII class, if asked,
++ *	   and in case of match it passes through to the output.
+  *	3. The character is checked if it falls into the class given by @flags.
+  *	   %ESCAPE_OCTAL and %ESCAPE_HEX are going last since they cover any
+  *	   character. Note that they actually can't go together, otherwise
+@@ -463,7 +463,7 @@ static bool escape_hex(unsigned char c, char **dst, char *end)
+  *
+  * Caller must provide valid source and destination pointers. Be aware that
+  * destination buffer will not be NULL-terminated, thus caller have to append
+- * it if needs.   The supported flags are::
++ * it if needs. The supported flags are::
+  *
+  *	%ESCAPE_SPACE: (special white space, not space itself)
+  *		'\f' - form feed
+@@ -482,11 +482,18 @@ static bool escape_hex(unsigned char c, char **dst, char *end)
+  *	%ESCAPE_ANY:
+  *		all previous together
+  *	%ESCAPE_NP:
+- *		escape only non-printable characters (checked by isprint)
++ *		escape only non-printable characters, checked by isprint()
+  *	%ESCAPE_ANY_NP:
+  *		all previous together
+  *	%ESCAPE_HEX:
+  *		'\xHH' - byte with hexadecimal value HH (2 digits)
++ *	%ESCAPE_NA:
++ *		escape only non-ascii characters, checked by isascii()
++ *
++ * One notable caveat, the %ESCAPE_NP and %ESCAPE_NA have higher priority
++ * than the rest of the flags (%ESCAPE_NP is higher than %ESCAPE_NA).
++ * It doesn't make much sense to use either of them without %ESCAPE_OCTAL
++ * or %ESCAPE_HEX, because they cover most of the other character classes.
+  *
+  * Return:
+  * The total size of the escaped output that would be generated for
+@@ -510,6 +517,8 @@ int string_escape_mem(const char *src, size_t isz, char *dst, size_t osz,
+ 		 *	  character under question
+ 		 *	- the character is printable, when @flags has
+ 		 *	  %ESCAPE_NP bit set
++		 *	- the character is ASCII, when @flags has
++		 *	  %ESCAPE_NA bit set
+ 		 *	- the character doesn't fall into a class of symbols
+ 		 *	  defined by given @flags
  		 * In these cases we just pass through a character to the
- 		 * output buffer.
- 		 */
--		if (is_dict && !strchr(only, c)) {
--			/* do nothing */
--		} else {
--			if (isprint(c) &&
--			    flags & ESCAPE_NP && escape_passthrough(c, &p, end))
--				continue;
-+		if (is_dict && !strchr(only, c) &&
-+					  escape_passthrough(c, &p, end))
-+			continue;
+@@ -523,6 +532,10 @@ int string_escape_mem(const char *src, size_t isz, char *dst, size_t osz,
+ 		    flags & ESCAPE_NP && escape_passthrough(c, &p, end))
+ 			continue;
  
--			if (flags & ESCAPE_SPACE && escape_space(c, &p, end))
--				continue;
-+		if (isprint(c) &&
-+		    flags & ESCAPE_NP && escape_passthrough(c, &p, end))
-+			continue;
- 
--			if (flags & ESCAPE_SPECIAL && escape_special(c, &p, end))
--				continue;
-+		if (flags & ESCAPE_SPACE && escape_space(c, &p, end))
-+			continue;
- 
--			if (flags & ESCAPE_NULL && escape_null(c, &p, end))
--				continue;
-+		if (flags & ESCAPE_SPECIAL && escape_special(c, &p, end))
-+			continue;
- 
--			/* ESCAPE_OCTAL and ESCAPE_HEX always go last */
--			if (flags & ESCAPE_OCTAL && escape_octal(c, &p, end))
--				continue;
-+		if (flags & ESCAPE_NULL && escape_null(c, &p, end))
-+			continue;
- 
--			if (flags & ESCAPE_HEX && escape_hex(c, &p, end))
--				continue;
--		}
-+		/* ESCAPE_OCTAL and ESCAPE_HEX always go last */
-+		if (flags & ESCAPE_OCTAL && escape_octal(c, &p, end))
++		if (isascii(c) &&
++		    flags & ESCAPE_NA && escape_passthrough(c, &p, end))
 +			continue;
 +
-+		if (flags & ESCAPE_HEX && escape_hex(c, &p, end))
-+			continue;
+ 		if (flags & ESCAPE_SPACE && escape_space(c, &p, end))
+ 			continue;
  
- 		escape_passthrough(c, &p, end);
- 	}
 -- 
 2.30.2
 
