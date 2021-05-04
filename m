@@ -2,70 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95BA0372E02
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 May 2021 18:26:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9431372E17
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 May 2021 18:30:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231803AbhEDQ1Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 May 2021 12:27:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46338 "EHLO mail.kernel.org"
+        id S231829AbhEDQbL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 May 2021 12:31:11 -0400
+Received: from mga17.intel.com ([192.55.52.151]:24729 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231523AbhEDQ1X (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 May 2021 12:27:23 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 881C261073;
-        Tue,  4 May 2021 16:26:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620145588;
-        bh=PVpCUjYTydL+RTJmDVTB5eDtZU1UGHDfwl9/8A5O8xA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=M6JIzKR+b0fDMzJiA01klcK/MZPsHsjxtMs2ERHTkI86KVDmTQGGwzWRyjH+vAGYP
-         aJzsDqsCjHI+AqN2ydxVo4eR3kHOA0OlNRpDMLSm/f2rbVwBZoMS6S3uhapBuMgmys
-         TVq53hFHNePdRYVqNmtUGdVAHWKNfBEXN0/wI97MBcHO8N7pnThGHD0L9/TC9T5kYS
-         VVrWMAvQdk0EHMHaYbvmAWt1m9z/vEO3AKGr9Eurs9ayiEQF9oAcNIbsRPC6PsMBfQ
-         teNH0+AvU8pVyfl4oqkaeyxgf3PZApEvSwfn+AaeCYNLXOdNBx4THhTHHsRcHmGbC2
-         RezLWo0bv0rhg==
-Date:   Tue, 4 May 2021 09:26:27 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Brian Foster <bfoster@redhat.com>
-Subject: [ANNOUNCE] xfs-linux: iomap-for-next updated to 6e552494fb90
-Message-ID: <20210504162627.GA8582@magnolia>
+        id S231781AbhEDQbI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 May 2021 12:31:08 -0400
+IronPort-SDR: GGPRvK42POdnaWTzf6UJfObP2JUqQ2XnAYUAHLdNxbTStLLbT1l85a9kRZ/2XH/M939b9E4sd9
+ X7btombBzlgQ==
+X-IronPort-AV: E=McAfee;i="6200,9189,9974"; a="178233168"
+X-IronPort-AV: E=Sophos;i="5.82,272,1613462400"; 
+   d="scan'208";a="178233168"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2021 09:26:47 -0700
+IronPort-SDR: iMM1w5i1o/pe9dU/14bcL12UD6cXjhMvYK0OU+cZMK18Iq0hbFaE1zdoHh1z90uXql94CFZ+rQ
+ m9Pp4g//h8rw==
+X-IronPort-AV: E=Sophos;i="5.82,272,1613462400"; 
+   d="scan'208";a="607069961"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2021 09:26:45 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1ldxsf-009a36-1U; Tue, 04 May 2021 19:26:41 +0300
+Date:   Tue, 4 May 2021 19:26:41 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     "J. Bruce Fields" <bfields@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Shevchenko <andy@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2 12/14] seq_file: Replace seq_escape() with inliner
+Message-ID: <YJF1wQQk60ssutRV@smile.fi.intel.com>
+References: <20210504102648.88057-1-andriy.shevchenko@linux.intel.com>
+ <20210504102648.88057-13-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20210504102648.88057-13-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+On Tue, May 04, 2021 at 01:26:46PM +0300, Andy Shevchenko wrote:
+> Convert seq_escape() to use seq_escape_mem() rather than using
+> a separate symbol. At the same time move it to header as inliner.
 
-The iomap-for-next branch of the xfs-linux repository at:
+Seems making it an inliner opened a can of worms. So, for now, I will drop that
+part from the series, while keeping fixes in my tree for the issues that have
+been reported by LKP.
 
-	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
-
-has just been updated.
-
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.  This is just removing io_private now that we're into
-the second week of the merge window and nobody suddenly wanted to use
-it.
-
-The new head of the iomap-for-next branch is commit:
-
-6e552494fb90 iomap: remove unused private field from ioend
-
-New Commits:
-
-Brian Foster (1):
-      [6e552494fb90] iomap: remove unused private field from ioend
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Code Diffstat:
-
- fs/iomap/buffered-io.c | 7 +------
- fs/xfs/xfs_aops.c      | 2 +-
- include/linux/iomap.h  | 5 +----
- 3 files changed, 3 insertions(+), 11 deletions(-)
