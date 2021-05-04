@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9485372F76
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 May 2021 20:08:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11EA9372F69
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 May 2021 20:08:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232371AbhEDSJS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 May 2021 14:09:18 -0400
-Received: from mga07.intel.com ([134.134.136.100]:41081 "EHLO mga07.intel.com"
+        id S232321AbhEDSJJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 May 2021 14:09:09 -0400
+Received: from mga01.intel.com ([192.55.52.88]:28420 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232286AbhEDSJG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S232267AbhEDSJG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 4 May 2021 14:09:06 -0400
-IronPort-SDR: xt4R20iKklfn+UN88ubuUX3TkOtz1VjODboRKDSFH55jdh7QPue4W53AzAh9iRv6asPdKifc1A
- WNSj4kua+F/Q==
-X-IronPort-AV: E=McAfee;i="6200,9189,9974"; a="261993802"
+IronPort-SDR: fm3jybSWohfVVDpvhBA+f1akfGYg57wQraqGEWUqYa5HnKsdJYS/ne8cXUWeKymMHLfA9z03ao
+ RCnK/9iegIhQ==
+X-IronPort-AV: E=McAfee;i="6200,9189,9974"; a="218864648"
 X-IronPort-AV: E=Sophos;i="5.82,272,1613462400"; 
-   d="scan'208";a="261993802"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2021 11:08:11 -0700
-IronPort-SDR: DvOmjqsFX3DiL+jZvB6kmSBzISvZE+VtSnslgISxcDhuFmYjqSA3jCEK7r7IufzlrGUk9PEgen
- 4jc36wd6d4ag==
+   d="scan'208";a="218864648"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2021 11:08:09 -0700
+IronPort-SDR: CuN3mk7g592TEkv5mnDdkSFQ7/9Yjm8bcg2KC+zYpzsQMgg2WqvZVKNDEabM8dykdsM5tRBnN8
+ /PilxZRWDtpw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.82,272,1613462400"; 
-   d="scan'208";a="458141116"
+   d="scan'208";a="531265726"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 04 May 2021 11:08:07 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 04 May 2021 11:08:07 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 0E595934; Tue,  4 May 2021 21:08:24 +0300 (EEST)
+        id 1A2F79A1; Tue,  4 May 2021 21:08:24 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     "J. Bruce Fields" <bfields@redhat.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -37,9 +37,9 @@ Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Andy Shevchenko <andy@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v3 10/15] MAINTAINERS: Add myself as designated reviewer for generic string library
-Date:   Tue,  4 May 2021 21:08:14 +0300
-Message-Id: <20210504180819.73127-11-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 11/15] seq_file: Introduce seq_escape_mem()
+Date:   Tue,  4 May 2021 21:08:15 +0300
+Message-Id: <20210504180819.73127-12-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210504180819.73127-1-andriy.shevchenko@linux.intel.com>
 References: <20210504180819.73127-1-andriy.shevchenko@linux.intel.com>
@@ -49,32 +49,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add myself as designated reviewer for generic string library.
+Introduce seq_escape_mem() to allow users to pass additional parameters
+to string_escape_mem().
 
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/seq_file.c            | 25 +++++++++++++++++++++++++
+ include/linux/seq_file.h |  2 ++
+ 2 files changed, 27 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1783372a608a..2c5797fc462c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7650,6 +7650,14 @@ L:	linux-input@vger.kernel.org
- S:	Maintained
- F:	drivers/input/touchscreen/resistive-adc-touch.c
+diff --git a/fs/seq_file.c b/fs/seq_file.c
+index 5059248f2d64..532cac2eae0f 100644
+--- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -355,6 +355,31 @@ int seq_release(struct inode *inode, struct file *file)
+ }
+ EXPORT_SYMBOL(seq_release);
  
-+GENERIC STRING LIBRARY
-+R:	Andy Shevchenko <andy@kernel.org>
-+S:	Maintained
-+F:	lib/string.c
-+F:	lib/string_helpers.c
-+F:	lib/test_string.c
-+F:	lib/test-string_helpers.c
++/**
++ * seq_escape_mem - print data into buffer, escaping some characters
++ * @m: target buffer
++ * @src: source buffer
++ * @len: size of source buffer
++ * @flags: flags to pass to string_escape_mem()
++ * @esc: set of characters that need escaping
++ *
++ * Puts data into buffer, replacing each occurrence of character from
++ * given class (defined by @flags and @esc) with printable escaped sequence.
++ *
++ * Use seq_has_overflowed() to check for errors.
++ */
++void seq_escape_mem(struct seq_file *m, const char *src, size_t len,
++		    unsigned int flags, const char *esc)
++{
++	char *buf;
++	size_t size = seq_get_buf(m, &buf);
++	int ret;
 +
- GENERIC UIO DRIVER FOR PCI DEVICES
- M:	"Michael S. Tsirkin" <mst@redhat.com>
- L:	kvm@vger.kernel.org
++	ret = string_escape_mem(src, len, buf, size, flags, esc);
++	seq_commit(m, ret < size ? ret : -1);
++}
++EXPORT_SYMBOL(seq_escape_mem);
++
+ /**
+  *	seq_escape -	print string into buffer, escaping some characters
+  *	@m:	target buffer
+diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
+index 723b1fa1177e..6de442182784 100644
+--- a/include/linux/seq_file.h
++++ b/include/linux/seq_file.h
+@@ -126,6 +126,8 @@ void seq_put_decimal_ll(struct seq_file *m, const char *delimiter, long long num
+ void seq_put_hex_ll(struct seq_file *m, const char *delimiter,
+ 		    unsigned long long v, unsigned int width);
+ 
++void seq_escape_mem(struct seq_file *m, const char *src, size_t len,
++		    unsigned int flags, const char *esc);
+ void seq_escape(struct seq_file *m, const char *s, const char *esc);
+ void seq_escape_mem_ascii(struct seq_file *m, const char *src, size_t isz);
+ 
 -- 
 2.30.2
 
