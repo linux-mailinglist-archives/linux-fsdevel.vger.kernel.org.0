@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11EA9372F69
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 May 2021 20:08:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E79B7372F8E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 May 2021 20:09:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232321AbhEDSJJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 May 2021 14:09:09 -0400
-Received: from mga01.intel.com ([192.55.52.88]:28420 "EHLO mga01.intel.com"
+        id S232313AbhEDSKr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 May 2021 14:10:47 -0400
+Received: from mga03.intel.com ([134.134.136.65]:4512 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232267AbhEDSJG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S232283AbhEDSJG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 4 May 2021 14:09:06 -0400
-IronPort-SDR: fm3jybSWohfVVDpvhBA+f1akfGYg57wQraqGEWUqYa5HnKsdJYS/ne8cXUWeKymMHLfA9z03ao
- RCnK/9iegIhQ==
-X-IronPort-AV: E=McAfee;i="6200,9189,9974"; a="218864648"
+IronPort-SDR: DLKSIfnjA28kP/9JLP3S4RiEmZgqpFtxbk8kLwtTuJ98gdr2kHddsvU+E7xZYO0ObQQo9jRMEr
+ muNBb8WxJxsw==
+X-IronPort-AV: E=McAfee;i="6200,9189,9974"; a="198102793"
 X-IronPort-AV: E=Sophos;i="5.82,272,1613462400"; 
-   d="scan'208";a="218864648"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2021 11:08:09 -0700
-IronPort-SDR: CuN3mk7g592TEkv5mnDdkSFQ7/9Yjm8bcg2KC+zYpzsQMgg2WqvZVKNDEabM8dykdsM5tRBnN8
- /PilxZRWDtpw==
+   d="scan'208";a="198102793"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2021 11:08:11 -0700
+IronPort-SDR: JNFpGkilIQ16ds4+KDGVzPEhaSbBgzpRaPHchsRrldhf1fNEBRVRKrVtpiZJbi65Rq3pVRJHFK
+ +qrka7NrIlxg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.82,272,1613462400"; 
-   d="scan'208";a="531265726"
+   d="scan'208";a="618574585"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 04 May 2021 11:08:07 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 04 May 2021 11:08:07 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 1A2F79A1; Tue,  4 May 2021 21:08:24 +0300 (EEST)
+        id 259529EB; Tue,  4 May 2021 21:08:24 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     "J. Bruce Fields" <bfields@redhat.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -37,9 +37,9 @@ Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Andy Shevchenko <andy@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v3 11/15] seq_file: Introduce seq_escape_mem()
-Date:   Tue,  4 May 2021 21:08:15 +0300
-Message-Id: <20210504180819.73127-12-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 12/15] seq_file: Add seq_escape_str() as replica of string_escape_str()
+Date:   Tue,  4 May 2021 21:08:16 +0300
+Message-Id: <20210504180819.73127-13-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210504180819.73127-1-andriy.shevchenko@linux.intel.com>
 References: <20210504180819.73127-1-andriy.shevchenko@linux.intel.com>
@@ -49,62 +49,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce seq_escape_mem() to allow users to pass additional parameters
-to string_escape_mem().
+In some cases we want to escape characters from NULL-terminated strings.
+Add seq_escape_str() as replica of string_escape_str() for that.
 
-Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- fs/seq_file.c            | 25 +++++++++++++++++++++++++
- include/linux/seq_file.h |  2 ++
- 2 files changed, 27 insertions(+)
+ include/linux/seq_file.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index 5059248f2d64..532cac2eae0f 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -355,6 +355,31 @@ int seq_release(struct inode *inode, struct file *file)
- }
- EXPORT_SYMBOL(seq_release);
- 
-+/**
-+ * seq_escape_mem - print data into buffer, escaping some characters
-+ * @m: target buffer
-+ * @src: source buffer
-+ * @len: size of source buffer
-+ * @flags: flags to pass to string_escape_mem()
-+ * @esc: set of characters that need escaping
-+ *
-+ * Puts data into buffer, replacing each occurrence of character from
-+ * given class (defined by @flags and @esc) with printable escaped sequence.
-+ *
-+ * Use seq_has_overflowed() to check for errors.
-+ */
-+void seq_escape_mem(struct seq_file *m, const char *src, size_t len,
-+		    unsigned int flags, const char *esc)
-+{
-+	char *buf;
-+	size_t size = seq_get_buf(m, &buf);
-+	int ret;
-+
-+	ret = string_escape_mem(src, len, buf, size, flags, esc);
-+	seq_commit(m, ret < size ? ret : -1);
-+}
-+EXPORT_SYMBOL(seq_escape_mem);
-+
- /**
-  *	seq_escape -	print string into buffer, escaping some characters
-  *	@m:	target buffer
 diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
-index 723b1fa1177e..6de442182784 100644
+index 6de442182784..63f021cb1b12 100644
 --- a/include/linux/seq_file.h
 +++ b/include/linux/seq_file.h
-@@ -126,6 +126,8 @@ void seq_put_decimal_ll(struct seq_file *m, const char *delimiter, long long num
- void seq_put_hex_ll(struct seq_file *m, const char *delimiter,
- 		    unsigned long long v, unsigned int width);
+@@ -128,6 +128,13 @@ void seq_put_hex_ll(struct seq_file *m, const char *delimiter,
  
-+void seq_escape_mem(struct seq_file *m, const char *src, size_t len,
-+		    unsigned int flags, const char *esc);
+ void seq_escape_mem(struct seq_file *m, const char *src, size_t len,
+ 		    unsigned int flags, const char *esc);
++
++static inline void seq_escape_str(struct seq_file *m, const char *src,
++				  unsigned int flags, const char *esc)
++{
++	seq_escape_mem(m, src, strlen(src), flags, esc);
++}
++
  void seq_escape(struct seq_file *m, const char *s, const char *esc);
  void seq_escape_mem_ascii(struct seq_file *m, const char *src, size_t isz);
  
