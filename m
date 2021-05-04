@@ -2,94 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11B30372248
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 May 2021 23:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A27213726EC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 May 2021 10:07:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229497AbhECVPS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 May 2021 17:15:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56254 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229499AbhECVPS (ORCPT
+        id S230076AbhEDIId (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 May 2021 04:08:33 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:24273 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229848AbhEDIIc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 May 2021 17:15:18 -0400
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A399C061573;
-        Mon,  3 May 2021 14:14:23 -0700 (PDT)
-Received: by mail-pg1-x536.google.com with SMTP id q10so4711302pgj.2;
-        Mon, 03 May 2021 14:14:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=It1zjPkEL+hRPlnEYkgjmUV8PVd1QmMXrrkuwW0r37g=;
-        b=lTG86IjcKyoIJ6uC/ScuvVwBHIzejmkRjw1SHeXEQ9C3D2CVfelvUoxXvunTmZ18Ku
-         3D9pk+TO0qajcURGY9ar2nLlIwOLL/24rK7QfgFOMRdlNk/DM3zHj5RjbBjSAQ/yicyV
-         QzMoNUSyxyvSzD/+tFFfYkIU0FBJpntworf6AnlN7zlqVLPXes0fpAlM9/4w40u4Zexh
-         EIIJmPSOwhSKI0xJCK12lRTfiZnYb/C6499kZoPR+Zr5e2CLLPWAAia6nI2BjM9n7psZ
-         qDvKCFn90tXePEDdYB+30QvjojZHH9pdS3kUuoEmvandFfblt7vqz85pOZEfKablNBrX
-         Cemw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=It1zjPkEL+hRPlnEYkgjmUV8PVd1QmMXrrkuwW0r37g=;
-        b=Ez727UL4T7g/d4SlnHDKlXP1r6SwnCR43pzx2t3ENB2sTktxap7TRRd3DmsWw9RJFb
-         wwXXRrbYmh2Lu7AmlG7CUA8WF2qy9tglkiGL72oHPGAj0INt0Plfo5ul2dApzCu9RyZC
-         tZHC/LS5ECYG7RmEPn51E8+JOYZjsdABjHcczDArGMeCG15RLhYG9dvVZdXq+QNjfdRX
-         l8MkWYZ3cDVl2ENTXiO3dQwuYc49/q28ouWc0TBZfe9PdqWeF3Mr2dI7aYSiHlPUSOZt
-         e/EmhJXInGGvZaWRm4RwAAh91DJgTNdLdoKA0yzClGus8uGEkEozhMYAQQeTSin5dawM
-         D+oA==
-X-Gm-Message-State: AOAM531ZkXtJh2bvYfcWZ3NAnaiVYbaWsSFld7QEZWLYH9tYzFQ4sCf2
-        b0KcnIbLZZNB03TmmLWXbjK4OWZspMU7Y4D0dnIndMPSSKw=
-X-Google-Smtp-Source: ABdhPJyRhL/uzKUtzrReo+/l3jvLDaJW1/oBGKS4XaEQaqH8bYH9B92wSyNqP0yfrBeUdXLFBo44AxR9PHFNEdDvvU8=
-X-Received: by 2002:a17:90a:246:: with SMTP id t6mr8414352pje.228.1620076462906;
- Mon, 03 May 2021 14:14:22 -0700 (PDT)
+        Tue, 4 May 2021 04:08:32 -0400
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-33-EEImOuSdNDCrsQWXDN1VGQ-1; Tue, 04 May 2021 09:07:34 +0100
+X-MC-Unique: EEImOuSdNDCrsQWXDN1VGQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
+ Server (TLS) id 15.0.1497.2; Tue, 4 May 2021 09:07:33 +0100
+Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
+ AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
+ 15.00.1497.015; Tue, 4 May 2021 09:07:33 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Jens Axboe' <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>
+CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] eventfd: convert to using ->write_iter()
+Thread-Topic: [PATCH] eventfd: convert to using ->write_iter()
+Thread-Index: AQHXQCy3UEj3Jsg3M0OzOTpWlBb2warR7W1AgAAf+a2AAOi50A==
+Date:   Tue, 4 May 2021 08:07:33 +0000
+Message-ID: <494f31b8e37b44d1a24e28885188f16e@AcuMS.aculab.com>
+References: <7b98e3c2-2d9f-002b-1da1-815d8522b594@kernel.dk>
+ <de316af8f88947fabd1422b04df8a66e@AcuMS.aculab.com>
+ <7caa3703-af14-2ff6-e409-77284da11e1f@kernel.dk>
+ <20210503180207.GD1847222@casper.infradead.org>
+ <7263c088-22f5-d125-cf80-5ebbd9d110e5@kernel.dk>
+In-Reply-To: <7263c088-22f5-d125-cf80-5ebbd9d110e5@kernel.dk>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-References: <20210503204907.34013-1-andriy.shevchenko@linux.intel.com>
- <20210503204907.34013-11-andriy.shevchenko@linux.intel.com>
- <YJBi5NU2WmZPYbBG@zeniv-ca.linux.org.uk> <CAHp75VfZKX_oYzoAA9Mbya1_+hP6+1mDKqyfy9d=hsokEAGQsQ@mail.gmail.com>
- <YJBmkNky4QfFhPD1@zeniv-ca.linux.org.uk> <CAHp75Vet8CN3Cx2Loi_7PiXyf_XX1FWF3uPB-jUS51UC5B8U_w@mail.gmail.com>
-In-Reply-To: <CAHp75Vet8CN3Cx2Loi_7PiXyf_XX1FWF3uPB-jUS51UC5B8U_w@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 4 May 2021 00:14:07 +0300
-Message-ID: <CAHp75VfogqstLpViF_+0YkAqFFTTHn0kt2j2n1Oe4CKVJUfPCQ@mail.gmail.com>
-Subject: Re: [PATCH v1 10/12] nfsd: Avoid non-flexible API in seq_quote_mem()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nfs@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 4, 2021 at 12:11 AM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Tue, May 4, 2021 at 12:09 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > On Mon, May 03, 2021 at 11:56:41PM +0300, Andy Shevchenko wrote:
-> > > On Mon, May 3, 2021 at 11:54 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+RnJvbTogSmVucyBBeGJvZQ0KPiBTZW50OiAwMyBNYXkgMjAyMSAxOTowNQ0KPiANCj4gT24gNS8z
+LzIxIDEyOjAyIFBNLCBNYXR0aGV3IFdpbGNveCB3cm90ZToNCj4gPiBPbiBNb24sIE1heSAwMywg
+MjAyMSBhdCAxMTo1NzowOEFNIC0wNjAwLCBKZW5zIEF4Ym9lIHdyb3RlOg0KPiA+PiBPbiA1LzMv
+MjEgMTA6MTIgQU0sIERhdmlkIExhaWdodCB3cm90ZToNCj4gPj4+IEZyb206IEplbnMgQXhib2UN
+Cj4gPj4+PiBTZW50OiAwMyBNYXkgMjAyMSAxNTo1OA0KPiA+Pj4+DQo+ID4+Pj4gSGFkIGEgcmVw
+b3J0IG9uIHdyaXRpbmcgdG8gZXZlbnRmZCB3aXRoIGlvX3VyaW5nIGlzIHNsb3dlciB0aGFuIGl0
+DQo+ID4+Pj4gc2hvdWxkIGJlLCBhbmQgaXQncyB0aGUgdXN1YWwgY2FzZSBvZiBpZiBhIGZpbGUg
+dHlwZSBkb2Vzbid0IHN1cHBvcnQNCj4gPj4+PiAtPndyaXRlX2l0ZXIoKSwgdGhlbiBpb191cmlu
+ZyBjYW5ub3QgcmVseSBvbiBJT0NCX05PV0FJVCBiZWluZyBob25vcmVkDQo+ID4+Pj4gYWxvbmdz
+aWRlIE9fTk9OQkxPQ0sgZm9yIHdoZXRoZXIgb3Igbm90IHRoaXMgaXMgYSBub24tYmxvY2tpbmcg
+d3JpdGUNCj4gPj4+PiBhdHRlbXB0LiBUaGF0IG1lYW5zIGlvX3VyaW5nIHdpbGwgcHVudCB0aGUg
+b3BlcmF0aW9uIHRvIGFuIGlvIHRocmVhZCwNCj4gPj4+PiB3aGljaCB3aWxsIHNsb3cgdXMgZG93
+biB1bm5lY2Vzc2FyaWx5Lg0KPiA+Pj4+DQo+ID4+Pj4gQ29udmVydCBldmVudGZkIHRvIHVzaW5n
+IGZvcHMtPndyaXRlX2l0ZXIoKSBpbnN0ZWFkIG9mIGZvcHMtPndyaXRlKCkuDQo+ID4+Pg0KPiA+
+Pj4gV29uJ3QgdGhpcyBoYXZlIGEgbWVhc3VyYWJsZSBwZXJmb3JtYW5jZSBkZWdyYWRhdGlvbiBv
+biBub3JtYWwNCj4gPj4+IGNvZGUgdGhhdCBkb2VzIHdyaXRlKGV2ZW50X2ZkLCAmb25lLCA0KTsN
+Cj4gPj4NCj4gPj4gSWYgLT53cml0ZV9pdGVyKCkgb3IgLT5yZWFkX2l0ZXIoKSBpcyBtdWNoIHNs
+b3dlciB0aGFuIHRoZSBub24taW92DQo+ID4+IHZlcnNpb25zLCB0aGVuIEkgdGhpbmsgd2UgaGF2
+ZSBnZW5lcmljIGlzc3VlcyB0aGF0IHNob3VsZCBiZSBzb2x2ZWQuDQo+ID4NCj4gPiBXZSBkbyEN
+Cj4gPg0KPiA+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LWZzZGV2ZWwvMjAyMTAxMDcx
+NTExMjUuR0I1MjcwQGNhc3Blci5pbmZyYWRlYWQub3JnLw0KPiA+IGlzIG9uZSB0aHJlYWQgb24g
+aXQuICBUaGVyZSBoYXZlIGJlZW4gb3RoZXJzLg0KPiANCj4gQnV0IHRoZW4gd2UgcmVhbGx5IG11
+c3QgZ2V0IHRoYXQgZml4ZWQsIGltaG8gLT5yZWFkKCkgYW5kIC0+d3JpdGUoKQ0KPiBzaG91bGQg
+Z28gYXdheSwgYW5kIGlmIHRoZSBpdGVyIHZhcmlhbnRzIGFyZSAxMCUgc2xvd2VyLCB0aGVuIHRo
+YXQgc2hvdWxkDQo+IGdldCBmaXhlZCB1cC4NCg0KSSB0aGluayB0aGVyZSBhcmUgdHdvIHNlcGFy
+YXRlIGlzc3Vlcy4NCihBbHRob3VnaCBJJ3ZlIG5vdCBsb29rZWQgaW4gZGV0YWlsIGludG8gdGhl
+IHJlYWxseSBiYWQgY2FzZXMuKQ0KDQoxKSBJIHN1c3BlY3Qgc29tZSBvZiB0aGUgZnMgY29kZSBp
+cyB1c2luZyBlbnRpcmVseSBkaWZmZXJlbnQgcGF0aHMgZm9yIHRoZQ0KJ3NpbmdsZSBmcmFnbWVu
+dCcgYW5kICdpdGVyJyB2YXJpYW50cy4NCg0KMikgRm9yIHRyaXZpYWwgZHJpdmVycyB0aGUgY29z
+dCBvZiBzZXR0aW5nIHVwIHRoZSBpb3ZfaXRlcltdIGFuZCB0aGVuDQppdGVyYXRpbmcgaXQgYmVj
+b21lcyBzaWduaWZpY2FudCAob3IgYXQgbGVhc3QgbWVhc3VyYWJsZSkuDQoNCkkgaGF2ZW4ndCB0
+cmllZCB0byB1bmRvIHRoZSBtb3Jhc3Mgb2YgI2RlZmluZXMgaW4gdGhlIGl0ZXIgY29kZS4NCkJ1
+dCBJIHN1c3BlY3QgdGhleSBjb3VsZCBiZSBvcHRpbWlzZWQgZm9yIHRoZSBjb21tb24gY2FzZSBv
+Zg0KY29weWluZyBhbiBlbnRpcmUgc2luZ2xlLWZyYWdtZW50IHRvL2Zyb20gdXNlcnNwYWNlIGlu
+IG9uZSBjYWxsLg0KDQpOb3QgcmVsYXRlZCB0byB0aGlzIGNvZGUgcGF0aCwgYnV0IEkndmUgc29t
+ZSBwYXRjaGVzIHRoYXQgZ2l2ZSBhDQpmZXcgJSBzcGVlZHVwIGZvciB3cml0ZXYoKSB0byAvZGV2
+L251bGwuDQpUaGF0IGlzIGFsbCBhYm91dCBjb3B5aW5nIHRoZSBpb3ZbXSBmcm9tIHVzZXIgLSBp
+dCBkb2Vzbid0IGdldCAnaXRlcmF0ZWQnLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRy
+ZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1L
+MSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-...
-
-> > > Any suggestions how to replace that API with a newer one?
-> >
-> > seq_escape_mem(), perhaps?
->
-> I think I have a better idea. What about adding seq_escape_with_flags()
-> and seq_escape() --> seq_escape_with_flags(..., ESCAPE_OCTAL, ...) ?
->
-> Would it work for you?
-
-Ah, it wouldn't work for the user, because it wants to pass the buffer size.
-Okay, I'll take your suggestion, thanks!
-
--- 
-With Best Regards,
-Andy Shevchenko
