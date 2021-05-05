@@ -2,230 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 18D47373AF0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 14:17:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67ABA373B03
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 14:21:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233452AbhEEMSf convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 5 May 2021 08:18:35 -0400
-Received: from us-smtp-delivery-44.mimecast.com ([207.211.30.44]:20869 "EHLO
-        us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232272AbhEEMR6 (ORCPT
+        id S232096AbhEEMWh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 May 2021 08:22:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37462 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232314AbhEEMWf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 08:17:58 -0400
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-59-XDD02pRROKaLdrSLPguiDw-1; Wed, 05 May 2021 08:16:59 -0400
-X-MC-Unique: XDD02pRROKaLdrSLPguiDw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6DEAD107ACF3;
-        Wed,  5 May 2021 12:16:58 +0000 (UTC)
-Received: from bahia.redhat.com (ovpn-113-11.ams2.redhat.com [10.36.113.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 90EDD5C582;
-        Wed,  5 May 2021 12:16:43 +0000 (UTC)
-From:   Greg Kurz <groug@kaod.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>, virtio-fs@redhat.com,
-        Greg Kurz <groug@kaod.org>, Robert Krawitz <rlk@redhat.com>
-Subject: [PATCH v3] virtiofs: propagate sync() to file server
-Date:   Wed,  5 May 2021 14:16:42 +0200
-Message-Id: <20210505121642.289191-1-groug@kaod.org>
+        Wed, 5 May 2021 08:22:35 -0400
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FD80C061574;
+        Wed,  5 May 2021 05:21:38 -0700 (PDT)
+Received: by mail-io1-xd29.google.com with SMTP id b10so1452015iot.4;
+        Wed, 05 May 2021 05:21:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Iz8U5loy8geDk9btldDmJT58vgqPTxOtYivWS5JMHIU=;
+        b=XGbp1TiFw6WDoqCAlbyDWBX6XGgovM6jJ9b/5OYG7noabSVkTxpH+5uoK/EvWUd2GW
+         GAGex5kK5cqQIZygCRXZEzh1vk2ckM2kuwIgaAv18AjB29RJFbxwK6GIt0bvA2Elf1tK
+         cFpVLyQIfsEHKtrMZmNkShk+D49TgQHdI1zD3nZi8M7CVJnmsRdAn3LvYR48QHix4vWX
+         X/nK4k7oE62bpyVkyZNLqhMXbCCvdgag8NwVbB4LtG1WFL2Z7aVHDw9SsEEf2mWvnjuU
+         Pf5Gm08S/jBjkjzyqvtd9P7x0pAsR70eeBg2ews3dN7DsPhuO3Bqyy7wndkFBjAjnp/h
+         RBuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Iz8U5loy8geDk9btldDmJT58vgqPTxOtYivWS5JMHIU=;
+        b=MdYnCeQdnRCVoPkOemVsbXXGrw6Bzu2i4GawR2jg8sQBQSlUaZzdvxiWUSmL0HsQf9
+         qjyLvLww9I91DqUMq8XYZrSQPBRi9CsyGeVnptUfEvb1ozztPAN+9RUcD3oupKHToZdr
+         KB5BhJX8/fhGknIlp60M9fUkgTEBQfpxoxobZETU1HHCRmmgbEOeCn0m/YZJBr5rbvyC
+         ih76GGfBXNpKqtrzmU9nksxGH6+24Ht60blfal2Xbp+NmhIlKt+pps5A5319OeOZXvAN
+         1+1t9zbyI/kzMS1/UIfvtSlUB21WrpXNNQPs6wQPk88/U3R54tISd7da5Jai/McF5TiK
+         +8Cg==
+X-Gm-Message-State: AOAM533ClWTjP/dVwHQWQlSc5Yj/D7eDqRsirhdM2QlTs6EeXZUbBNe/
+        EkyZR0sUh5iDQ2Lz8ZSVa4E3gSEzJSqjjwEfCsU=
+X-Google-Smtp-Source: ABdhPJysFWBq8OLZzVc77x6XMEnpTr0jFcA3oNSZbASonwHgnGdLxu2jUh+fcaBFLw9R8fMa6S4JI/ORteZS8tjJv+w=
+X-Received: by 2002:a02:9109:: with SMTP id a9mr29026252jag.93.1620217297915;
+ Wed, 05 May 2021 05:21:37 -0700 (PDT)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=groug@kaod.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: kaod.org
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset=WINDOWS-1252
+References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-5-balsini@android.com>
+ <CAJfpegvL2kOCkbP9bBL8YD-YMFKiSazD3_wet2-+emFafA6y5A@mail.gmail.com>
+In-Reply-To: <CAJfpegvL2kOCkbP9bBL8YD-YMFKiSazD3_wet2-+emFafA6y5A@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 5 May 2021 15:21:26 +0300
+Message-ID: <CAOQ4uxjOGx8gZ2biTEb4a54gw5c_aDn+FFkUvRpY+cmgEEh=sA@mail.gmail.com>
+Subject: Re: [PATCH RESEND V12 4/8] fuse: Passthrough initialization and release
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        Alessio Balsini <balsini@android.com>
+Cc:     Akilesh Kailash <akailash@google.com>,
+        Antonio SJ Musumeci <trapexit@spawn.link>,
+        David Anderson <dvander@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Peng Tao <bergwolf@gmail.com>,
+        Stefano Duo <duostefano93@gmail.com>,
+        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        kernel-team <kernel-team@android.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Even if POSIX doesn't mandate it, linux users legitimately expect
-sync() to flush all data and metadata to physical storage when it
-is located on the same system. This isn't happening with virtiofs
-though : sync() inside the guest returns right away even though
-data still needs to be flushed from the host page cache.
+On Wed, Feb 17, 2021 at 3:52 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> On Mon, Jan 25, 2021 at 4:31 PM Alessio Balsini <balsini@android.com> wrote:
+> >
+> > Implement the FUSE passthrough ioctl that associates the lower
+> > (passthrough) file system file with the fuse_file.
+> >
+> > The file descriptor passed to the ioctl by the FUSE daemon is used to
+> > access the relative file pointer, that will be copied to the fuse_file
+> > data structure to consolidate the link between the FUSE and lower file
+> > system.
+> >
+> > To enable the passthrough mode, user space triggers the
+> > FUSE_DEV_IOC_PASSTHROUGH_OPEN ioctl and, if the call succeeds, receives
+> > back an identifier that will be used at open/create response time in the
+> > fuse_open_out field to associate the FUSE file to the lower file system
+> > file.
+> > The value returned by the ioctl to user space can be:
+> > - > 0: success, the identifier can be used as part of an open/create
+> > reply.
+> > - <= 0: an error occurred.
+> > The value 0 represents an error to preserve backward compatibility: the
+> > fuse_open_out field that is used to pass the passthrough_fh back to the
+> > kernel uses the same bits that were previously as struct padding, and is
+> > commonly zero-initialized (e.g., in the libfuse implementation).
+> > Removing 0 from the correct values fixes the ambiguity between the case
+> > in which 0 corresponds to a real passthrough_fh, a missing
+> > implementation of FUSE passthrough or a request for a normal FUSE file,
+> > simplifying the user space implementation.
+> >
+> > For the passthrough mode to be successfully activated, the lower file
+> > system file must implement both read_iter and write_iter file
+> > operations. This extra check avoids special pseudo files to be targeted
+> > for this feature.
+> > Passthrough comes with another limitation: no further file system
+> > stacking is allowed for those FUSE file systems using passthrough.
+> >
+> > Signed-off-by: Alessio Balsini <balsini@android.com>
+> > ---
+> >  fs/fuse/inode.c       |  5 +++
+> >  fs/fuse/passthrough.c | 87 ++++++++++++++++++++++++++++++++++++++++++-
+> >  2 files changed, 90 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index a1104d5abb70..7ebc398fbacb 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -1133,6 +1133,11 @@ EXPORT_SYMBOL_GPL(fuse_send_init);
+> >
+> >  static int free_fuse_passthrough(int id, void *p, void *data)
+> >  {
+> > +       struct fuse_passthrough *passthrough = (struct fuse_passthrough *)p;
+> > +
+> > +       fuse_passthrough_release(passthrough);
+> > +       kfree(p);
+> > +
+> >         return 0;
+> >  }
+> >
+> > diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
+> > index 594060c654f8..cf993e83803e 100644
+> > --- a/fs/fuse/passthrough.c
+> > +++ b/fs/fuse/passthrough.c
+> > @@ -3,19 +3,102 @@
+> >  #include "fuse_i.h"
+> >
+> >  #include <linux/fuse.h>
+> > +#include <linux/idr.h>
+> >
+> >  int fuse_passthrough_open(struct fuse_dev *fud,
+> >                           struct fuse_passthrough_out *pto)
+> >  {
+> > -       return -EINVAL;
+> > +       int res;
+> > +       struct file *passthrough_filp;
+> > +       struct fuse_conn *fc = fud->fc;
+> > +       struct inode *passthrough_inode;
+> > +       struct super_block *passthrough_sb;
+> > +       struct fuse_passthrough *passthrough;
+> > +
+> > +       if (!fc->passthrough)
+> > +               return -EPERM;
+> > +
+> > +       /* This field is reserved for future implementation */
+> > +       if (pto->len != 0)
+> > +               return -EINVAL;
+> > +
+> > +       passthrough_filp = fget(pto->fd);
+> > +       if (!passthrough_filp) {
+> > +               pr_err("FUSE: invalid file descriptor for passthrough.\n");
+> > +               return -EBADF;
+> > +       }
+> > +
+> > +       if (!passthrough_filp->f_op->read_iter ||
+> > +           !passthrough_filp->f_op->write_iter) {
+> > +               pr_err("FUSE: passthrough file misses file operations.\n");
+> > +               res = -EBADF;
+> > +               goto err_free_file;
+> > +       }
+> > +
+> > +       passthrough_inode = file_inode(passthrough_filp);
+> > +       passthrough_sb = passthrough_inode->i_sb;
+> > +       if (passthrough_sb->s_stack_depth >= FILESYSTEM_MAX_STACK_DEPTH) {
+> > +               pr_err("FUSE: fs stacking depth exceeded for passthrough\n");
+>
+> No need to print an error to the logs, this can be a perfectly normal
+> occurrence.  However I'd try to find a more unique error value than
+> EINVAL so that the fuse server can interpret this as "not your fault,
+> but can't support passthrough on this file".  E.g. EOPNOTSUPP.
+>
+>
 
-This is easily demonstrated by doing the following in the guest:
+Sorry for the fashionably late response...
+Same comment for !{read,write}_iter case above.
+EBAFD is really not appropriate there.
+May I suggest ELOOP for s_stack_depth and EOPNOTSUPP
+for no rw iter ops.
 
-$ dd if=/dev/zero of=/mnt/foo bs=1M count=5K ; strace -T -e sync sync
-5120+0 records in
-5120+0 records out
-5368709120 bytes (5.4 GB, 5.0 GiB) copied, 5.22224 s, 1.0 GB/s
-sync()                                  = 0 <0.024068>
-+++ exited with 0 +++
+Are you planning to post another version of the patches soon?
 
-and start the following in the host when the 'dd' command completes
-in the guest:
-
-$ strace -T -e fsync /usr/bin/sync virtiofs/foo
-fsync(3)                                = 0 <10.371640>
-+++ exited with 0 +++
-
-There are no good reasons not to honor the expected behavior of
-sync() actually : it gives an unrealistic impression that virtiofs
-is super fast and that data has safely landed on HW, which isn't
-the case obviously.
-
-Implement a ->sync_fs() superblock operation that sends a new
-FUSE_SYNC request type for this purpose. Provision a 64-bit
-placeholder for possible future extensions. Since the file
-server cannot handle the wait == 0 case, we skip it to avoid a
-gratuitous roundtrip.
-
-Like with FUSE_FSYNC and FUSE_FSYNCDIR, lack of support for
-FUSE_SYNC in the file server is treated as permanent success.
-This ensures compatibility with older file servers : the client
-will get the current behavior of sync() not being propagated to
-the file server.
-
-Note that such an operation allows the file server to DoS sync().
-Since a typical FUSE file server is an untrusted piece of software
-running in userspace, this is disabled by default.  Only enable it
-with virtiofs for now since virtiofsd is supposedly trusted by the
-guest kernel.
-
-Reported-by: Robert Krawitz <rlk@redhat.com>
-Signed-off-by: Greg Kurz <groug@kaod.org>
----
-
-v3: - just keep a 64-bit padding field in the arg struct (Vivek)
-
-v2: - clarify compatibility with older servers in changelog (Vivek)
-    - ignore the wait == 0 case (Miklos)
-    - 64-bit aligned argument structure (Vivek, Miklos)
-
- fs/fuse/fuse_i.h          |  3 +++
- fs/fuse/inode.c           | 35 +++++++++++++++++++++++++++++++++++
- fs/fuse/virtio_fs.c       |  1 +
- include/uapi/linux/fuse.h | 10 +++++++++-
- 4 files changed, 48 insertions(+), 1 deletion(-)
-
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 7e463e220053..f48dd7ff32af 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -761,6 +761,9 @@ struct fuse_conn {
- 	/* Auto-mount submounts announced by the server */
- 	unsigned int auto_submounts:1;
- 
-+	/* Propagate syncfs() to server */
-+	unsigned int sync_fs:1;
-+
- 	/** The number of requests waiting for completion */
- 	atomic_t num_waiting;
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 393e36b74dc4..d7900f616397 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -506,6 +506,40 @@ static int fuse_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	return err;
- }
- 
-+static int fuse_sync_fs(struct super_block *sb, int wait)
-+{
-+	struct fuse_mount *fm = get_fuse_mount_super(sb);
-+	struct fuse_conn *fc = fm->fc;
-+	struct fuse_syncfs_in inarg;
-+	FUSE_ARGS(args);
-+	int err;
-+
-+	/*
-+	 * Userspace cannot handle the wait == 0 case. Avoid a
-+	 * gratuitous roundtrip.
-+	 */
-+	if (!wait)
-+		return 0;
-+
-+	if (!fc->sync_fs)
-+		return 0;
-+
-+	memset(&inarg, 0, sizeof(inarg));
-+	args.in_numargs = 1;
-+	args.in_args[0].size = sizeof(inarg);
-+	args.in_args[0].value = &inarg;
-+	args.opcode = FUSE_SYNCFS;
-+	args.out_numargs = 0;
-+
-+	err = fuse_simple_request(fm, &args);
-+	if (err == -ENOSYS) {
-+		fc->sync_fs = 0;
-+		err = 0;
-+	}
-+
-+	return err;
-+}
-+
- enum {
- 	OPT_SOURCE,
- 	OPT_SUBTYPE,
-@@ -909,6 +943,7 @@ static const struct super_operations fuse_super_operations = {
- 	.put_super	= fuse_put_super,
- 	.umount_begin	= fuse_umount_begin,
- 	.statfs		= fuse_statfs,
-+	.sync_fs	= fuse_sync_fs,
- 	.show_options	= fuse_show_options,
- };
- 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index bcb8a02e2d8b..f9809b1b82f0 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -1447,6 +1447,7 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
- 	fc->release = fuse_free_conn;
- 	fc->delete_stale = true;
- 	fc->auto_submounts = true;
-+	fc->sync_fs = true;
- 
- 	/* Tell FUSE to split requests that exceed the virtqueue's size */
- 	fc->max_pages_limit = min_t(unsigned int, fc->max_pages_limit,
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 271ae90a9bb7..3db9e1b729f6 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -181,6 +181,9 @@
-  *  - add FUSE_OPEN_KILL_SUIDGID
-  *  - extend fuse_setxattr_in, add FUSE_SETXATTR_EXT
-  *  - add FUSE_SETXATTR_ACL_KILL_SGID
-+ *
-+ *  7.34
-+ *  - add FUSE_SYNCFS
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -216,7 +219,7 @@
- #define FUSE_KERNEL_VERSION 7
- 
- /** Minor version number of this interface */
--#define FUSE_KERNEL_MINOR_VERSION 33
-+#define FUSE_KERNEL_MINOR_VERSION 34
- 
- /** The node ID of the root inode */
- #define FUSE_ROOT_ID 1
-@@ -509,6 +512,7 @@ enum fuse_opcode {
- 	FUSE_COPY_FILE_RANGE	= 47,
- 	FUSE_SETUPMAPPING	= 48,
- 	FUSE_REMOVEMAPPING	= 49,
-+	FUSE_SYNCFS		= 50,
- 
- 	/* CUSE specific operations */
- 	CUSE_INIT		= 4096,
-@@ -971,4 +975,8 @@ struct fuse_removemapping_one {
- #define FUSE_REMOVEMAPPING_MAX_ENTRY   \
- 		(PAGE_SIZE / sizeof(struct fuse_removemapping_one))
- 
-+struct fuse_syncfs_in {
-+	uint64_t padding;
-+};
-+
- #endif /* _LINUX_FUSE_H */
--- 
-2.26.3
-
+Thanks,
+Amir.
