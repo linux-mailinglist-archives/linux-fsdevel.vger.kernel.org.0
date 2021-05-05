@@ -2,39 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BDE4373E1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 17:08:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6ACF373E1E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 17:09:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232704AbhEEPIz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 May 2021 11:08:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46724 "EHLO
+        id S232312AbhEEPKK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 May 2021 11:10:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232192AbhEEPIy (ORCPT
+        with ESMTP id S232144AbhEEPKI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 11:08:54 -0400
+        Wed, 5 May 2021 11:10:08 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDF5DC061574;
-        Wed,  5 May 2021 08:07:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED878C061574;
+        Wed,  5 May 2021 08:09:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=hBpQR/0D3JnfgszdRdi1IhKjYmrqMJy8CCih3IT3ePo=; b=qIlhenN55SYdUaLUwpXFQa4Lvx
-        AlZiLLKgmBfGYEWkIFBMaOP2k5v1vfs4hmxqE0t6FsWrQ+gLV8EJB2+BIU+v2KfG1lJbV8gD1nwlN
-        pKb/Hd3S27b4Dqxvy4W+ag4ORb/7eDpFBjGUuBv4FKRBH1/Zwjr1UFvHBIyrMpzEWYOFc1GY5cPaf
-        7UFQIg+KdcYaxXFvZquza5EA/IINkXOIQqsI4Rq8qS5XzmeZOry5pM6aEyTxH375R8/AjZcSW55lu
-        OD+U0dSdIgOPxZDBiOazq5WROJ5dZ4EfgtA9u2KzVWa0F3XTq3krZUuNlFhnlMZkOOfuMmHFO+POK
-        P3N3vy/A==;
+        bh=46uKbRZFXcZtWinMwdAPkEZSqlzYBs3FzrcvKBHNtps=; b=WkQ+MIlpLVHqw5FBmOpgrqihqA
+        RWmzd8U+aZqDq8a7A3iYTbfJAva413xu3o41LyXpNR5AkoFvvBINXEprZyPB+I9PsOyfCLDLl4JAz
+        qt06rqbSdt6uqwls3aZJ31Wd0L5zXG8zlxTy8rwRsg1k+BVWa+8m5qi+tP+paqQ5orUciOCiRaxPT
+        vIR/0PrRoYyGT+PypBG3OLncxbSKbSytThVO/K1xR7FgY7++NPvt7Fw51H24VFaaQ3uD7FKv9/REt
+        DCwO4DGXsv95dYst9276Ft6UUza5+eahbWqIIdN/mAinFyhB/XOn3MTFPiEC6LkpR3eDcLhHSKiFh
+        fVmClLfQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1leJ6x-000T5S-7E; Wed, 05 May 2021 15:06:54 +0000
+        id 1leJ7C-000T7S-Gh; Wed, 05 May 2021 15:07:31 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v9 01/96] mm: Optimise nth_page for contiguous memmap
-Date:   Wed,  5 May 2021 16:04:53 +0100
-Message-Id: <20210505150628.111735-2-willy@infradead.org>
+        linux-kernel@vger.kernel.org,
+        William Kucharski <william.kucharski@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: [PATCH v9 02/96] mm: Make __dump_page static
+Date:   Wed,  5 May 2021 16:04:54 +0100
+Message-Id: <20210505150628.111735-3-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210505150628.111735-1-willy@infradead.org>
 References: <20210505150628.111735-1-willy@infradead.org>
@@ -44,59 +46,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If the memmap is virtually contiguous (either because we're using
-a virtually mapped memmap or because we don't support a discontig
-memmap at all), then we can implement nth_page() by simple addition.
-Contrary to popular belief, the compiler is not able to optimise this
-itself for a vmemmap configuration.  This reduces one example user (sg.c)
-by four instructions:
-
-        struct page *page = nth_page(rsv_schp->pages[k], offset >> PAGE_SHIFT);
-
-before:
-   49 8b 45 70             mov    0x70(%r13),%rax
-   48 63 c9                movslq %ecx,%rcx
-   48 c1 eb 0c             shr    $0xc,%rbx
-   48 8b 04 c8             mov    (%rax,%rcx,8),%rax
-   48 2b 05 00 00 00 00    sub    0x0(%rip),%rax
-           R_X86_64_PC32      vmemmap_base-0x4
-   48 c1 f8 06             sar    $0x6,%rax
-   48 01 d8                add    %rbx,%rax
-   48 c1 e0 06             shl    $0x6,%rax
-   48 03 05 00 00 00 00    add    0x0(%rip),%rax
-           R_X86_64_PC32      vmemmap_base-0x4
-
-after:
-   49 8b 45 70             mov    0x70(%r13),%rax
-   48 63 c9                movslq %ecx,%rcx
-   48 c1 eb 0c             shr    $0xc,%rbx
-   48 c1 e3 06             shl    $0x6,%rbx
-   48 03 1c c8             add    (%rax,%rcx,8),%rbx
+The only caller of __dump_page() now opencodes dump_page(), so
+remove it as an externally visible symbol.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Zi Yan <ziy@nvidia.com>
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 ---
- include/linux/mm.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/mmdebug.h | 3 +--
+ mm/debug.c              | 2 +-
+ mm/page_alloc.c         | 3 +--
+ 3 files changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 25b9041f9925..2327f99b121f 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -234,7 +234,11 @@ int overcommit_policy_handler(struct ctl_table *, int, void *, size_t *,
- int __add_to_page_cache_locked(struct page *page, struct address_space *mapping,
- 		pgoff_t index, gfp_t gfp, void **shadowp);
+diff --git a/include/linux/mmdebug.h b/include/linux/mmdebug.h
+index 5d0767cb424a..1935d4c72d10 100644
+--- a/include/linux/mmdebug.h
++++ b/include/linux/mmdebug.h
+@@ -9,8 +9,7 @@ struct page;
+ struct vm_area_struct;
+ struct mm_struct;
  
-+#if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
- #define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
-+#else
-+#define nth_page(page,n) ((page) + (n))
-+#endif
+-extern void dump_page(struct page *page, const char *reason);
+-extern void __dump_page(struct page *page, const char *reason);
++void dump_page(struct page *page, const char *reason);
+ void dump_vma(const struct vm_area_struct *vma);
+ void dump_mm(const struct mm_struct *mm);
  
- /* to align the pointer to the (next) page boundary */
- #define PAGE_ALIGN(addr) ALIGN(addr, PAGE_SIZE)
+diff --git a/mm/debug.c b/mm/debug.c
+index 0bdda8407f71..84cdcd0f7bd3 100644
+--- a/mm/debug.c
++++ b/mm/debug.c
+@@ -42,7 +42,7 @@ const struct trace_print_flags vmaflag_names[] = {
+ 	{0, NULL}
+ };
+ 
+-void __dump_page(struct page *page, const char *reason)
++static void __dump_page(struct page *page, const char *reason)
+ {
+ 	struct page *head = compound_head(page);
+ 	struct address_space *mapping;
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index a2fe714aed93..f23702e7c564 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -658,8 +658,7 @@ static void bad_page(struct page *page, const char *reason)
+ 
+ 	pr_alert("BUG: Bad page state in process %s  pfn:%05lx\n",
+ 		current->comm, page_to_pfn(page));
+-	__dump_page(page, reason);
+-	dump_page_owner(page);
++	dump_page(page, reason);
+ 
+ 	print_modules();
+ 	dump_stack();
 -- 
 2.30.2
 
