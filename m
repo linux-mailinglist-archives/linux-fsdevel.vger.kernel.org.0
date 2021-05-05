@@ -2,153 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 52AFA3736C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 11:07:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26F7437399E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 13:43:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232235AbhEEJIi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 May 2021 05:08:38 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:17131 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232195AbhEEJIi (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 05:08:38 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FZrPP1PYyzpdbs;
-        Wed,  5 May 2021 17:04:25 +0800 (CST)
-Received: from [10.174.177.210] (10.174.177.210) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 5 May 2021 17:07:34 +0800
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Y . Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>
-CC:     <yangerkun@huawei.com>, "zhangyi (F)" <yi.zhang@huawei.com>,
-        Hou Tao <houtao1@huawei.com>, Ye Bin <yebin10@huawei.com>
-From:   yangerkun <yangerkun@huawei.com>
-Subject: [BUG RERPORT] BUG_ON(!list_empty(&inode->i_wb_list))
-Message-ID: <27fd4b04-8b25-1c41-ea4c-0de45138e73d@huawei.com>
-Date:   Wed, 5 May 2021 17:07:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S232882AbhEELoj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 May 2021 07:44:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49958 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232658AbhEELoj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 May 2021 07:44:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id D91B7AD05;
+        Wed,  5 May 2021 11:43:41 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 95F421F2B59; Wed,  5 May 2021 13:43:41 +0200 (CEST)
+Date:   Wed, 5 May 2021 13:43:41 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Junxiao Bi <junxiao.bi@oracle.com>
+Cc:     Jan Kara <jack@suse.cz>, Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, ocfs2-devel@oss.oracle.com,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [Cluster-devel] [PATCH 1/3] fs/buffer.c: add new api to allow
+ eof writeback
+Message-ID: <20210505114341.GB29867@quack2.suse.cz>
+References: <20210426220552.45413-1-junxiao.bi@oracle.com>
+ <CAHc6FU62TpZTnAYd3DWFNWWPZP-6z+9JrS82t+YnU-EtFrnU0Q@mail.gmail.com>
+ <3f06d108-1b58-6473-35fa-0d6978e219b8@oracle.com>
+ <20210430124756.GA5315@quack2.suse.cz>
+ <a69fa4bc-ffe7-204b-6a1f-6a166c6971a4@oracle.com>
+ <20210503102904.GC2994@quack2.suse.cz>
+ <72cde802-bd8a-9ce5-84d7-57b34a6a8b03@oracle.com>
+ <20210504090237.GC1355@quack2.suse.cz>
+ <84794fdb-fb49-acf1-4949-eef856737698@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.177.210]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <84794fdb-fb49-acf1-4949-eef856737698@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Our syzkaller test trigger this BUG_ON in clear_inode:
+On Tue 04-05-21 16:35:53, Junxiao Bi wrote:
+> On 5/4/21 2:02 AM, Jan Kara wrote:
+> > On Mon 03-05-21 10:25:31, Junxiao Bi wrote:
+> > > On 5/3/21 3:29 AM, Jan Kara wrote:
+> > > > On Fri 30-04-21 14:18:15, Junxiao Bi wrote:
+> > > > > On 4/30/21 5:47 AM, Jan Kara wrote:
+> > > > > 
+> > > > > > On Thu 29-04-21 11:07:15, Junxiao Bi wrote:
+> > > > > > > On 4/29/21 10:14 AM, Andreas Gruenbacher wrote:
+> > > > > > > > On Tue, Apr 27, 2021 at 4:44 AM Junxiao Bi <junxiao.bi@oracle.com> wrote:
+> > > > > > > > > When doing truncate/fallocate for some filesytem like ocfs2, it
+> > > > > > > > > will zero some pages that are out of inode size and then later
+> > > > > > > > > update the inode size, so it needs this api to writeback eof
+> > > > > > > > > pages.
+> > > > > > > > is this in reaction to Jan's "[PATCH 0/12 v4] fs: Hole punch vs page
+> > > > > > > > cache filling races" patch set [*]? It doesn't look like the kind of
+> > > > > > > > patch Christoph would be happy with.
+> > > > > > > Thank you for pointing the patch set. I think that is fixing a different
+> > > > > > > issue.
+> > > > > > > 
+> > > > > > > The issue here is when extending file size with fallocate/truncate, if the
+> > > > > > > original inode size
+> > > > > > > 
+> > > > > > > is in the middle of the last cluster block(1M), eof part will be zeroed with
+> > > > > > > buffer write first,
+> > > > > > > 
+> > > > > > > and then new inode size is updated, so there is a window that dirty pages is
+> > > > > > > out of inode size,
+> > > > > > > 
+> > > > > > > if writeback is kicked in, block_write_full_page will drop all those eof
+> > > > > > > pages.
+> > > > > > I agree that the buffers describing part of the cluster beyond i_size won't
+> > > > > > be written. But page cache will remain zeroed out so that is fine. So you
+> > > > > > only need to zero out the on disk contents. Since this is actually
+> > > > > > physically contiguous range of blocks why don't you just use
+> > > > > > sb_issue_zeroout() to zero out the tail of the cluster? It will be more
+> > > > > > efficient than going through the page cache and you also won't have to
+> > > > > > tweak block_write_full_page()...
+> > > > > Thanks for the review.
+> > > > > 
+> > > > > The physical blocks to be zeroed were continuous only when sparse mode is
+> > > > > enabled, if sparse mode is disabled, unwritten extent was not supported for
+> > > > > ocfs2, then all the blocks to the new size will be zeroed by the buffer
+> > > > > write, since sb_issue_zeroout() will need waiting io done, there will be a
+> > > > > lot of delay when extending file size. Use writeback to flush async seemed
+> > > > > more efficient?
+> > > > It depends. Higher end storage (e.g. NVME or NAS, maybe some better SATA
+> > > > flash disks as well) do support WRITE_ZERO command so you don't actually
+> > > > have to write all those zeros. The storage will just internally mark all
+> > > > those blocks as having zeros. This is rather fast so I'd expect the overall
+> > > > result to be faster that zeroing page cache and then writing all those
+> > > > pages with zeroes on transaction commit. But I agree that for lower end
+> > > > storage this may be slower because of synchronous writing of zeroes. That
+> > > > being said your transaction commit has to write those zeroes anyway so the
+> > > > cost is only mostly shifted but it could still make a difference for some
+> > > > workloads. Not sure if that matters, that is your call I'd say.
+> > > Ocfs2 is mostly used with SAN, i don't think it's common for SAN storage to
+> > > support WRITE_ZERO command.
+> > > 
+> > > Anything bad to add a new api to support eof writeback?
+> > OK, now that I reread the whole series you've posted I think I somewhat
+> > misunderstood your original problem and intention. So let's first settle
+> > on that. As far as I understand the problem happens when extending a file
+> > (either through truncate or through write beyond i_size). When that
+> > happens, we need to make sure that blocks (or their parts) that used to be
+> > above i_size and are not going to be after extension are zeroed out.
+> > Usually, for simple filesystems such as ext2, there is only one such block
+> > - the one straddling i_size - where we need to make sure this happens. And
+> > we achieve that by zeroing out tail of this block on writeout (in
+> > ->writepage() handler) and also by zeroing out tail of the block when
+> > reducing i_size (block_truncate_page() takes care of this for ext2). So the
+> > tail of this block is zeroed out on disk at all times and thus we have no
+> > problem when extending i_size.
+> > 
+> > Now what I described doesn't work for OCFS2. As far as I understand the
+> > reason is that when block size is smaller than page size and OCFS2 uses
+> > cluster size larger than block size, the page straddling i_size can have
+> > also some buffers mapped (with underlying blocks allocated) that are fully
+> > outside of i_size. These blocks are never written because of how
+> > __block_write_full_page() currently behaves (never writes buffers fully
+> > beyond i_size) so even if you zero out page cache and dirty the page,
+> > racing writeback can clear dirty bits without writing those blocks and so
+> > they are not zeroed out on disk although we are about to expand i_size.
+> Correct.
+> > 
+> > Did I understand the problem correctly? But what confuses me is that
+> > ocfs2_zero_extend_range() (ocfs2_write_zero_page() in fact) actually does
+> > extend i_size to contain the range it zeroes out while still holding the
+> > page lock so it should be protected against the race with writeback I
+> > outlined above. What am I missing?
+> 
+> Thank you for pointing this. I didn't realize ocfs2_zero_extend() will
+> update inode size,
+> 
+> with it, truncate to extend file will not suffer this issue. The original
+> issue happened with
+> 
+> qemu that used the following fallocate to extend file size. The first
+> fallocate punched
+> 
+> hole beyond the inode size(2276196352) but not update isize, the second one
+> updated
+> 
+> isize, the first one will do some buffer write to zero eof blocks in
+> ocfs2_remove_inode_range
+> 
+> ->ocfs2_zero_partial_clusters->ocfs2_zero_range_for_truncate.
+> 
+>     fallocate(11, FALLOC_FL_KEEP_SIZE|FALLOC_FL_PUNCH_HOLE, 2276196352,
+> 65536) = 0
+>     fallocate(11, 0, 2276196352, 65536) = 0
 
-[   95.235069] Killed process 7637 (syz-executor) total-vm:37044kB, 
-anon-rss:76kB, file-rss:632kB, shmem-rss:0kB
-[   95.238504] Memory cgroup out of memory: Kill process 284 
-(syz-executor) score 187000 or sacrifice child
-[   95.240419] Killed process 284 (syz-executor) total-vm:37044kB, 
-anon-rss:76kB, file-rss:632kB, shmem-rss:0kB
-[   95.263244] Injecting memory failure for pfn 0x3a5876 at process 
-virtual address 0x20ffd000
-[   95.282421] Memory failure: 0x3a5876: recovery action for dirty LRU 
-page: Recovered
-[   95.283992] Injecting memory failure for pfn 0x3a6005 at process 
-virtual address 0x20ffe000
-[   95.379135] Memory failure: 0x3a6005: recovery action for dirty LRU 
-page: Recovered
-[   95.380853] Injecting memory failure for pfn 0x3a7048 at process 
-virtual address 0x20fff000
-[   95.422596] Memory failure: 0x3a7048: recovery action for dirty LRU 
-page: Recovered
-[   95.596571] JBD2: Detected IO errors while flushing file data on vda-8
-[   95.858655] device bridge_slave_0 left promiscuous mode
-[   95.870838] bridge0: port 1(bridge_slave_0) entered disabled state
-[   96.039754] ------------[ cut here ]------------
-[   96.041176] kernel BUG at fs/inode.c:519!
-[   96.042424] Internal error: Oops - BUG: 0 [#1] SMP
-[   96.043892] Dumping ftrace buffer:
-[   96.044956]    (ftrace buffer empty)
-[   96.046068] Modules linked in:
-[   96.047104] Process syz-executor (pid: 7811, stack limit = 
-0x000000009f3892d3)
-[   96.049217] CPU: 1 PID: 7811 Comm: syz-executor Not tainted 4.19.95 #9
-[   96.051144] Hardware name: linux,dummy-virt (DT)
-[   96.052570] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[   96.054065] pc : clear_inode+0x280/0x2a8
-[   96.055317] lr : clear_inode+0x280/0x2a8
-[   96.056548] sp : ffff800352797950
-[   96.057604] x29: ffff800352797950 x28: 0000000000000000
-[   96.059295] x27: ffff800358854c00 x26: ffff800358854b70
-[   96.060982] x25: ffff80036af01100 x24: ffff800369e48aa8
-[   96.062673] x23: ffff80036af02600 x22: 0000000000047f3d
-[   96.064358] x21: 0000000000000000 x20: ffff800358854c98
-[   96.066025] x19: ffff800358854b70 x18: 0000000000000000
-[   96.067703] x17: 0000000000000000 x16: 0000000000000000
-[   96.069370] x15: 0000000000000000 x14: 0000000000000000
-[   96.071049] x13: 0000000000000000 x12: 0000000000000000
-[   96.072738] x11: 1ffff0006cfc1faf x10: 0000000000000ba0
-[   96.074418] x9 : ffff8003527976a0 x8 : ffff800359511c00
-[   96.076102] x7 : 1ffff0006cfc1f50 x6 : dfff200000000000
-[   96.077783] x5 : 00000000f2f2f200 x4 : ffff800358854c98
-[   96.079469] x3 : ffff200008000000 x2 : ffff200009867000
-[   96.081145] x1 : ffff800359511000 x0 : 0000000000000000
-[   96.082835] Call trace:
-[   96.083725]  clear_inode+0x280/0x2a8
-[   96.084886]  ext4_clear_inode+0x38/0xe8
-[   96.086113]  ext4_free_inode+0x130/0xc68
-[   96.087371]  ext4_evict_inode+0xb20/0xcb8
-[   96.088648]  evict+0x1a8/0x3c0
-[   96.089655]  iput+0x344/0x460
-[   96.090639]  do_unlinkat+0x260/0x410
-[   96.091802]  __arm64_sys_unlinkat+0x6c/0xc0
-[   96.093143]  el0_svc_common+0xdc/0x3b0
-[   96.094349]  el0_svc_handler+0xf8/0x160
-[   96.095583]  el0_svc+0x10/0x218
-[   96.096609] Code: 9413f4a9 d503201f f90017b6 97f4d5b1 (d4210000)
-[   96.098542] ---[ end trace 93e81128c9262960 ]---
+OK, I see. And AFAICT it is not about writeback racing with the zeroing in
+ocfs2_zero_range_for_truncate() but rather the filemap_fdatawrite_range()
+there not writing out zeroed pages if they are beyond i_size. And honestly,
+rather than trying to extend block_write_full_page() for this odd corner
+case, I'd use sb_issue_zeroout() or code something similar to
+__blkdev_issue_zero_pages() inside OCFS2. Because making pages in the page
+cache beyond i_size work is always going to be fragile...
 
-The vmcore show that's a ext4 inode with order journal mode. The 
-"Injecting memory failure" will call me_pagecache_dirty and then trigger 
-the "JBD2: Detected IO" since it inject the EIO for this page.
-
-We have a guess show as latter(just guess...). memory_failure will 
-decrease nrpages to 0, then ext4_evict_inode won't use mapping->i_pages, 
-so list_del_init that end_page_writeback has did won't been seen since 
-there is no barrier can ensure that, and then trigger the BUG_ON.
-
-We have add some debug info the check this guess. But since it really 
-hard to trigger this again. So, does there anyone can help to recheck 
-the guess, or can help to give advise for this problem?
-
-
-end_page_writeback
-   test_clear_page_writeback
-     xa_lock_irqsave(&mapping->i_pages, flags)
-	TestClearPageWriteback(page)
-	sb_clear_inode_writeback
-	  list_del_init(&inode->i_wb_list)
-	xa_unlock_irqrestore(&mapping->i_pages, flags)
-
-memory_failure
-   lock_page(p)
-   wait_on_page_writeback(p)
-   identify_page_state
-     page_action
-	  me_pagecache_dirty
-	  mapping_set_error(mapping, -EIO)
-	  me_pagecache_clean(p, pfn)
-	    generic_error_remove_page
-		  truncate_inode_page(mapping, page)
-		    delete_from_page_cache
-			  xa_lock_irqsave(&mapping->i_pages, flags)
-			  __delete_from_page_cache(page, NULL)
-			    page_cache_tree_delete
-				  mapping->nrpages -= nr --> will decrease nrpages to 0
-			  xa_unlock_irqrestore(&mapping->i_pages, flags)
-
-
-ext4_evict_inode
-   truncate_inode_pages_final
-     truncate_inode_pages
-	  truncate_inode_pages_range
-	     if (mapping->nrpages == 0 && mapping->nrexceptional == 0)
-		   goto out; --> won't lock mapping->i_pages, so no barrier can ensure 
-we see list_del_init
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
