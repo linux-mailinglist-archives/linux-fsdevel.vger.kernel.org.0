@@ -2,133 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B70353741B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 18:46:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AB85374158
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 18:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234932AbhEEQkk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 May 2021 12:40:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38900 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234963AbhEEQiS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 12:38:18 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81EFEC06134F;
-        Wed,  5 May 2021 09:33:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=7erbrWi96udzk9FwXiNGJPahIb3q21i3Mxk6+d4+BqU=; b=cHv+FwvwiSiOf/bo48hwA2+V1M
-        U8+IPeQZ3qHLzZOPpDbJyyNc+PXjeWZAKmTpm8bP47pbaTuiVOL3SFjH2wHmsI6Pm9xaNXXxYFnu0
-        PKVsj4lPLZ+I32wbM7MDQI27M96ZCLnKOqJ85nhDgUu5UTK4YKk110DXUo7cBFiM+QaUFJ3dGZHwJ
-        y63LeRjgsl4DlmFHe04jcGtc87nXVeTE1bHD1A4Vzo1XnGGt4WyjPq6vb8Xq7fRHtxkVBIwXe1GDE
-        f9n15Whp2BD8K99cMuZDWkOj1flDON0aVRSoytXL0JcTcsW6tlXL8lAIoGPeBRfEsbBLg3V+XwRJd
-        zTX2HrRg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1leKPr-000aml-Og; Wed, 05 May 2021 16:31:00 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v9 70/96] mm/filemap: Add readahead_folio
-Date:   Wed,  5 May 2021 16:06:02 +0100
-Message-Id: <20210505150628.111735-71-willy@infradead.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210505150628.111735-1-willy@infradead.org>
-References: <20210505150628.111735-1-willy@infradead.org>
+        id S234115AbhEEQhQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 May 2021 12:37:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53358 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234504AbhEEQfM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 May 2021 12:35:12 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 291CF61410;
+        Wed,  5 May 2021 16:32:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620232377;
+        bh=iey4tCQW5JeiD6vUoCwVFoz8LR6aKR+s5t6HbTA3be4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=oiIaMT60j8vPyAxQdM6qK0kxfk/X318j2XtiixRjmLu5APIllvsanoHJH1qlTyEM3
+         nli+VAnkHGRu54an6HKl/PYh7epS4yfXhPZJeA2roImRbcTfSJ0DyY7GFIqK5Jt+cU
+         jcHGG6aLedBYOtYg+jK9ZWklTy2KycgekJDRZGELuHVV34oz9/iKJVnfXCtjZ2rMxx
+         DRIQCBqVmRgehnYkYdV7EgOcdK4ZCHWsDsWjjS8Az5zDgFYwmDGhRvxTe9qDdiNTid
+         wqR8CNvzV1tJjT3KWXAn61I+mh97M5onOra1VmlZL71uBWj4tsnsxfSf9Gn43hcsYk
+         4BPxKfUoshJtA==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.12 066/116] fuse: invalidate attrs when page writeback completes
+Date:   Wed,  5 May 2021 12:30:34 -0400
+Message-Id: <20210505163125.3460440-66-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210505163125.3460440-1-sashal@kernel.org>
+References: <20210505163125.3460440-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pointers stored in the page cache are folios, by definition.
-This change comes with a behaviour change -- callers of readahead_folio()
-are no longer required to put the page reference themselves.  This matches
-how readpage works, rather than matching how readpages used to work.
+From: Vivek Goyal <vgoyal@redhat.com>
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+[ Upstream commit 3466958beb31a8e9d3a1441a34228ed088b84f3e ]
+
+In fuse when a direct/write-through write happens we invalidate attrs
+because that might have updated mtime/ctime on server and cached
+mtime/ctime will be stale.
+
+What about page writeback path.  Looks like we don't invalidate attrs
+there.  To be consistent, invalidate attrs in writeback path as well.  Only
+exception is when writeback_cache is enabled.  In that case we strust local
+mtime/ctime and there is no need to invalidate attrs.
+
+Recently users started experiencing failure of xfstests generic/080,
+geneirc/215 and generic/614 on virtiofs.  This happened only newer "stat"
+utility and not older one.  This patch fixes the issue.
+
+So what's the root cause of the issue.  Here is detailed explanation.
+
+generic/080 test does mmap write to a file, closes the file and then checks
+if mtime has been updated or not.  When file is closed, it leads to
+flushing of dirty pages (and that should update mtime/ctime on server).
+But we did not explicitly invalidate attrs after writeback finished.  Still
+generic/080 passed so far and reason being that we invalidated atime in
+fuse_readpages_end().  This is called in fuse_readahead() path and always
+seems to trigger before mmaped write.
+
+So after mmaped write when lstat() is called, it sees that atleast one of
+the fields being asked for is invalid (atime) and that results in
+generating GETATTR to server and mtime/ctime also get updated and test
+passes.
+
+But newer /usr/bin/stat seems to have moved to using statx() syscall now
+(instead of using lstat()).  And statx() allows it to query only ctime or
+mtime (and not rest of the basic stat fields).  That means when querying
+for mtime, fuse_update_get_attr() sees that mtime is not invalid (only
+atime is invalid).  So it does not generate a new GETATTR and fill stat
+with cached mtime/ctime.  And that means updated mtime is not seen by
+xfstest and tests start failing.
+
+Invalidating attrs after writeback completion should solve this problem in
+a generic manner.
+
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/pagemap.h | 53 +++++++++++++++++++++++++++++------------
- 1 file changed, 38 insertions(+), 15 deletions(-)
+ fs/fuse/file.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 8fd00dc5ebd5..d54772aa7a3a 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -1062,33 +1062,56 @@ void page_cache_async_readahead(struct address_space *mapping,
- 	page_cache_async_ra(&ractl, page, req_count);
- }
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 8cccecb55fb8..654cccc85c6b 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1759,8 +1759,17 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
+ 		container_of(args, typeof(*wpa), ia.ap.args);
+ 	struct inode *inode = wpa->inode;
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
++	struct fuse_conn *fc = get_fuse_conn(inode);
  
-+static inline struct folio *__readahead_folio(struct readahead_control *ractl)
-+{
-+	struct folio *folio;
-+
-+	BUG_ON(ractl->_batch_count > ractl->_nr_pages);
-+	ractl->_nr_pages -= ractl->_batch_count;
-+	ractl->_index += ractl->_batch_count;
-+
-+	if (!ractl->_nr_pages) {
-+		ractl->_batch_count = 0;
-+		return NULL;
-+	}
-+
-+	folio = xa_load(&ractl->mapping->i_pages, ractl->_index);
-+	VM_BUG_ON_FOLIO(!folio_locked(folio), folio);
-+	ractl->_batch_count = folio_nr_pages(folio);
-+
-+	return folio;
-+}
-+
- /**
-  * readahead_page - Get the next page to read.
-- * @rac: The current readahead request.
-+ * @ractl: The current readahead request.
-  *
-  * Context: The page is locked and has an elevated refcount.  The caller
-  * should decreases the refcount once the page has been submitted for I/O
-  * and unlock the page once all I/O to that page has completed.
-  * Return: A pointer to the next page, or %NULL if we are done.
-  */
--static inline struct page *readahead_page(struct readahead_control *rac)
-+static inline struct page *readahead_page(struct readahead_control *ractl)
- {
--	struct page *page;
-+	struct folio *folio = __readahead_folio(ractl);
- 
--	BUG_ON(rac->_batch_count > rac->_nr_pages);
--	rac->_nr_pages -= rac->_batch_count;
--	rac->_index += rac->_batch_count;
--
--	if (!rac->_nr_pages) {
--		rac->_batch_count = 0;
--		return NULL;
--	}
-+	return &folio->page;
-+}
- 
--	page = xa_load(&rac->mapping->i_pages, rac->_index);
--	VM_BUG_ON_PAGE(!PageLocked(page), page);
--	rac->_batch_count = thp_nr_pages(page);
-+/**
-+ * readahead_folio - Get the next folio to read.
-+ * @ractl: The current readahead request.
-+ *
-+ * Context: The folio is locked.  The caller should unlock the folio once
-+ * all I/O to that folio has completed.
-+ * Return: A pointer to the next folio, or %NULL if we are done.
-+ */
-+static inline struct folio *readahead_folio(struct readahead_control *ractl)
-+{
-+	struct folio *folio = __readahead_folio(ractl);
- 
--	return page;
-+	folio_put(folio);
-+	return folio;
- }
- 
- static inline unsigned int __readahead_batch(struct readahead_control *rac,
+ 	mapping_set_error(inode->i_mapping, error);
++	/*
++	 * A writeback finished and this might have updated mtime/ctime on
++	 * server making local mtime/ctime stale.  Hence invalidate attrs.
++	 * Do this only if writeback_cache is not enabled.  If writeback_cache
++	 * is enabled, we trust local ctime/mtime.
++	 */
++	if (!fc->writeback_cache)
++		fuse_invalidate_attr(inode);
+ 	spin_lock(&fi->lock);
+ 	rb_erase(&wpa->writepages_entry, &fi->writepages);
+ 	while (wpa->next) {
 -- 
 2.30.2
 
