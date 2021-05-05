@@ -2,32 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99AF6373C5F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 15:27:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BC91373C7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 15:39:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233572AbhEEN2j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 May 2021 09:28:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52028 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231696AbhEEN2i (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 09:28:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1620221260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        id S233055AbhEENkK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 May 2021 09:40:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34708 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233153AbhEENkJ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 May 2021 09:40:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620221953;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=CGLu3gLLUm9em9SOE5qtfKtO5dEYjOb/g2kUV6nMYNc=;
-        b=n6TZpPwGis+vpxeyirf9mIIe9mAPXZkRzj2QcW0Hz5S8a6aERcTXnW0gWX6OjUmbWSvICg
-        sOuW3IjuIvAXwuh4UEcJzAbeSDX+UINqNTBFrBFvHxCp2FfeWvlW5URegyu8k6matU4gWH
-        gayQpGv9GqxKKNk/QMUP960Ni5k+AJQ=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id BE25DAE86;
-        Wed,  5 May 2021 13:27:40 +0000 (UTC)
-Date:   Wed, 5 May 2021 15:27:39 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     David Hildenbrand <david@redhat.com>
+        bh=IHQUE4RBuZmI4g/5aOXOPIjM70ZyTC143fCzVAJ8P/8=;
+        b=IzfXabDhlFkN2KkOKsWJJIc0gsQUiIVy/r7T9flLxuwbgYWfjdzoPQnQd9J8BgvhA7UV9R
+        FluEaCPMO8eUJRAjK/rcsswg2o1Tsd08GsfcIgbHn9VakY9HV6BJ/+6UEKwuf4vfqdos77
+        3ObNcxeicmYDQxtkIgXIz0axfDyypSs=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-311-i7Gs8hgANn-piSmGj1Huhw-1; Wed, 05 May 2021 09:39:11 -0400
+X-MC-Unique: i7Gs8hgANn-piSmGj1Huhw-1
+Received: by mail-ed1-f71.google.com with SMTP id g19-20020a0564021813b029038811907178so856649edy.14
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 May 2021 06:39:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:organization:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=IHQUE4RBuZmI4g/5aOXOPIjM70ZyTC143fCzVAJ8P/8=;
+        b=PkQxOWam2NO/zlugDYtNcxF/kHlEXj2NBSvgsOetoOZceAEn2VQCthE3n+GrLaULjv
+         E/HD2BtbJVbkpuTqYw+pNpAPp86757H6Uv/KPqD8qTdh87IzPMorbHGc1LaeaC4HC7Rz
+         9NHTOT5sYX9kNtNCLw3e5hj67KmdouGkB0ZtoDHqaFRSJF7JlyQwIpyAE5rRA6+yIa4l
+         I3//ymg6mb4WeMC1aivXC5LqoKAFv43/dLVfukZA0GTZX6ZvyzUeHox04lPuW+Ufi46w
+         vI2RmPets0C0Rb2XX7KO05QRX4aw6QAScMTpsKkIkan+vOHx4WZiKHjOc+yXANvSDi4T
+         N8jQ==
+X-Gm-Message-State: AOAM532lL/R+F1Dk7mwyRNbWlmoMPNqMNMEtCDuofkuvESwUKTJAdDad
+        TJP4vE+f+BJggct72tIUeVQMBwEwlTmwQzzQWEo14XgSIGVnmV3nzJUJUsTrZn7+isOv4dPj39w
+        uNLAJAzOqo73VJyvFSnk/X0UoLQ==
+X-Received: by 2002:a17:906:2406:: with SMTP id z6mr3444001eja.396.1620221950191;
+        Wed, 05 May 2021 06:39:10 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxGWyxHBPyyOetZHpx601TcawWH0Fo+idEg5VdUHFvJAR1tTdcZpi84XXPEA0gN5zGGPMwDGA==
+X-Received: by 2002:a17:906:2406:: with SMTP id z6mr3443980eja.396.1620221950000;
+        Wed, 05 May 2021 06:39:10 -0700 (PDT)
+Received: from [192.168.3.132] (p5b0c63bc.dip0.t-ipconnect.de. [91.12.99.188])
+        by smtp.gmail.com with ESMTPSA id p21sm16699366edw.18.2021.05.05.06.39.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 May 2021 06:39:09 -0700 (PDT)
+To:     Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
         "Michael S. Tsirkin" <mst@redhat.com>,
         Jason Wang <jasowang@redhat.com>,
         Alexey Dobriyan <adobriyan@gmail.com>,
@@ -47,62 +74,54 @@ Cc:     linux-kernel@vger.kernel.org,
         linux-hyperv@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v1 3/7] mm: rename and move page_is_poisoned()
-Message-ID: <YJKdS+Q8CgSlgmFf@dhcp22.suse.cz>
 References: <20210429122519.15183-1-david@redhat.com>
- <20210429122519.15183-4-david@redhat.com>
- <YJKZ5yXdl18m9YSM@dhcp22.suse.cz>
+ <20210429122519.15183-4-david@redhat.com> <YJKZ5yXdl18m9YSM@dhcp22.suse.cz>
  <0710d8d5-2608-aeed-10c7-50a272604d97@redhat.com>
+ <YJKdS+Q8CgSlgmFf@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH v1 3/7] mm: rename and move page_is_poisoned()
+Message-ID: <57ac524c-b49a-99ec-c1e4-ef5027bfb61b@redhat.com>
+Date:   Wed, 5 May 2021 15:39:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0710d8d5-2608-aeed-10c7-50a272604d97@redhat.com>
+In-Reply-To: <YJKdS+Q8CgSlgmFf@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 05-05-21 15:17:53, David Hildenbrand wrote:
-> On 05.05.21 15:13, Michal Hocko wrote:
-> > On Thu 29-04-21 14:25:15, David Hildenbrand wrote:
-> > > Commit d3378e86d182 ("mm/gup: check page posion status for coredump.")
-> > > introduced page_is_poisoned(), however, v5 [1] of the patch used
-> > > "page_is_hwpoison()" and something went wrong while upstreaming. Rename the
-> > > function and move it to page-flags.h, from where it can be used in other
-> > > -- kcore -- context.
-> > > 
-> > > Move the comment to the place where it belongs and simplify.
-> > > 
-> > > [1] https://lkml.kernel.org/r/20210322193318.377c9ce9@alex-virtual-machine
-> > > 
-> > > Signed-off-by: David Hildenbrand <david@redhat.com>
-> > 
-> > I do agree that being explicit about hwpoison is much better. Poisoned
-> > page can be also an unitialized one and I believe this is the reason why
-> > you are bringing that up.
+>> Long story short, this should be good enough for the cases we actually can
+>> handle? What am I missing?
 > 
-> I'm bringing it up because I want to reuse that function as state above :)
-> 
-> > 
-> > But you've made me look at d3378e86d182 and I am wondering whether this
-> > is really a valid patch. First of all it can leak a reference count
-> > AFAICS. Moreover it doesn't really fix anything because the page can be
-> > marked hwpoison right after the check is done. I do not think the race
-> > is feasible to be closed. So shouldn't we rather revert it?
-> 
-> I am not sure if we really care about races here that much here? I mean,
-> essentially we are racing with HW breaking asynchronously. Just because we
-> would be synchronizing with SetPageHWPoison() wouldn't mean we can stop HW
-> from breaking.
+> I am not sure I follow. My point is that I fail to see any added value
+> of the check as it doesn't prevent the race (it fundamentally cannot as
+> the page can be poisoned at any time) but the failure path doesn't
+> put_page which is incorrect even for hwpoison pages.
 
-Right
+Oh, I think you are right. If we have a page and return NULL we would 
+leak a reference.
 
-> Long story short, this should be good enough for the cases we actually can
-> handle? What am I missing?
+Actually, we discussed in that thread handling this entirely 
+differently, which resulted in a v7 [1]; however Andrew moved forward 
+with this (outdated?) patch, maybe that was just a mistake?
 
-I am not sure I follow. My point is that I fail to see any added value
-of the check as it doesn't prevent the race (it fundamentally cannot as
-the page can be poisoned at any time) but the failure path doesn't
-put_page which is incorrect even for hwpoison pages.
+Yes, I agree we should revert that patch for now.
+
+Regarding the race comment: AFAIU e.g., [2], it's not really a problem 
+with a race, but rather some corner case issue that can happen if we 
+fail in memory_failure().
+
+
+[1] https://lkml.kernel.org/r/20210406104123.451ee3c3@alex-virtual-machine
+[2] 
+https://lkml.kernel.org/r/20210331015258.GB22060@hori.linux.bs1.fc.nec.co.jp
+
 -- 
-Michal Hocko
-SUSE Labs
+Thanks,
+
+David / dhildenb
+
