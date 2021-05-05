@@ -2,38 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 87F05373ECA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 17:44:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5310D373ED0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 17:46:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233550AbhEEPpq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 May 2021 11:45:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55102 "EHLO
+        id S233483AbhEEPr3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 May 2021 11:47:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233466AbhEEPpp (ORCPT
+        with ESMTP id S229797AbhEEPr2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 11:45:45 -0400
+        Wed, 5 May 2021 11:47:28 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29F4CC061574;
-        Wed,  5 May 2021 08:44:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7A83C061574;
+        Wed,  5 May 2021 08:46:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=xvhLjapr7S7zjUT1PteiPu3Yf579XP1k52fDWC2aJc4=; b=lzdeyzWw1E7zcacfsWS7xvdoHW
-        X+x5sZLPjHrkSZ+b7+8oy4kRwZHEx126XGQSjMNilFAHE0dw6zHFX0zE/RDGrxW8Az+Gi658YQ6MV
-        KpgRGtEWprEjNFom+DEzWMDCZ4CZF/pf5B4PemrR8yHsPaKKqWxlP4Ud17+xMwJc3nh8YhcPk3Zts
-        0yo+i4v6grTqdJ7bqrQdsayqiGNl+sj2vApdgFz+qmbX1JcHqSt32iiSUbKjvtVRZTyAGXaEWwfyp
-        Lch8fNjdJdzW9KQW58d2nC8jZ2zznuhXB2rUNRUwGhpLe25kfDwgcEr6+oEuKZ8wvkkQsplvomPYV
-        1Y0wtKIw==;
+        bh=9R941ykjVZ43Vuvuc3jcrA3QBd4fmtOhKBtjjulVt9Y=; b=eV8TL4utlbyCo6Yz68otA8cbZT
+        kHglfZNZNXEs9y83Lu2ALDR7y4Gud7hJuuoMuzWXRNhqdbSdvY353oPRohtYtR70hypta822dR/vo
+        u5IOWtP1Ahj4F0t0A2tEoN/TUCaIcLSFaQLE8qMH6bKX8ZfkmsJPTjyERfq11WvBsaR0TX+1U9vlA
+        ApU7EfAHRYV9RnckaIMYI0iXc7pJTmBszW8IvgSW+ehk7R3EKkAR0Khb9CFz10Fzl5+z9/w173t12
+        TfvfCd/ZFS9JxZiAaI1Z+ATiGUg8j903ThRbvwp6spj88ZdcIYjT4x8IQQyS9xLaogZrxJ7FlE5jK
+        JwgbQ+Jw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1leJfY-000WHs-LV; Wed, 05 May 2021 15:43:23 +0000
+        id 1leJgv-000WLB-44; Wed, 05 May 2021 15:44:21 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v9 31/96] mm/swap: Add folio_rotate_reclaimable
-Date:   Wed,  5 May 2021 16:05:23 +0100
-Message-Id: <20210505150628.111735-32-willy@infradead.org>
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v9 32/96] mm/filemap: Add folio_end_writeback
+Date:   Wed,  5 May 2021 16:05:24 +0100
+Message-Id: <20210505150628.111735-33-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210505150628.111735-1-willy@infradead.org>
 References: <20210505150628.111735-1-willy@infradead.org>
@@ -43,117 +44,126 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move the declaration into mm/internal.h and rename
-rotate_reclaimable_page() to folio_rotate_reclaimable().  This eliminates
-all five of the calls to compound_head() in this function, saving 75 bytes
-at the cost of adding 14 bytes to its one caller, end_page_writeback().
-Net 61 bytes savings.
+Add an end_page_writeback() wrapper function for users that are not yet
+converted to folios.
+
+folio_end_writeback() is less than half the size of end_page_writeback()
+at just 105 bytes compared to 213 bytes, due to removing all the
+compound_head() calls.  The 30 byte wrapper function makes this a net
+saving of 70 bytes.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Jeff Layton <jlayton@kernel.org>
 ---
- include/linux/swap.h |  1 -
- mm/filemap.c         |  2 +-
- mm/internal.h        |  1 +
- mm/page_io.c         |  4 ++--
- mm/swap.c            | 18 +++++++++---------
- 5 files changed, 13 insertions(+), 13 deletions(-)
+ include/linux/pagemap.h |  3 ++-
+ mm/filemap.c            | 40 ++++++++++++++++++++--------------------
+ mm/folio-compat.c       |  6 ++++++
+ 3 files changed, 28 insertions(+), 21 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 20766342845b..76b2338ef24d 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -365,7 +365,6 @@ extern void lru_add_drain(void);
- extern void lru_add_drain_cpu(int cpu);
- extern void lru_add_drain_cpu_zone(struct zone *zone);
- extern void lru_add_drain_all(void);
--extern void rotate_reclaimable_page(struct page *page);
- extern void deactivate_file_page(struct page *page);
- extern void deactivate_page(struct page *page);
- extern void mark_page_lazyfree(struct page *page);
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 615f5b3e65c4..f1078272fb26 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -829,7 +829,8 @@ static inline int wait_on_page_locked_killable(struct page *page)
+ int put_and_wait_on_page_locked(struct page *page, int state);
+ void wait_on_page_writeback(struct page *page);
+ int wait_on_page_writeback_killable(struct page *page);
+-extern void end_page_writeback(struct page *page);
++void end_page_writeback(struct page *page);
++void folio_end_writeback(struct folio *folio);
+ void wait_for_stable_page(struct page *page);
+ 
+ void page_endio(struct page *page, bool is_write, int err);
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 73e078c40bd7..06cb717c7c60 100644
+index 06cb717c7c60..9d2cfa5d3a40 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1528,7 +1528,7 @@ void end_page_writeback(struct page *page)
- 	 */
- 	if (PageReclaim(page)) {
- 		ClearPageReclaim(page);
--		rotate_reclaimable_page(page);
-+		folio_rotate_reclaimable(page_folio(page));
- 	}
+@@ -1175,11 +1175,11 @@ static void wake_up_page_bit(struct page *page, int bit_nr)
+ 	spin_unlock_irqrestore(&q->lock, flags);
+ }
  
- 	/*
-diff --git a/mm/internal.h b/mm/internal.h
-index 46eb82eaa195..68d363a3a1f3 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -35,6 +35,7 @@
- void page_writeback_init(void);
- 
- vm_fault_t do_swap_page(struct vm_fault *vmf);
-+void folio_rotate_reclaimable(struct folio *folio);
- 
- void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
- 		unsigned long floor, unsigned long ceiling);
-diff --git a/mm/page_io.c b/mm/page_io.c
-index c493ce9ebcf5..d597bc6e6e45 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -38,7 +38,7 @@ void end_swap_bio_write(struct bio *bio)
- 		 * Also print a dire warning that things will go BAD (tm)
- 		 * very quickly.
- 		 *
--		 * Also clear PG_reclaim to avoid rotate_reclaimable_page()
-+		 * Also clear PG_reclaim to avoid folio_rotate_reclaimable()
- 		 */
- 		set_page_dirty(page);
- 		pr_alert_ratelimited("Write-error on swap-device (%u:%u:%llu)\n",
-@@ -317,7 +317,7 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
- 			 * temporary failure if the system has limited
- 			 * memory for allocating transmit buffers.
- 			 * Mark the page dirty and avoid
--			 * rotate_reclaimable_page but rate-limit the
-+			 * folio_rotate_reclaimable but rate-limit the
- 			 * messages but do not flag PageError like
- 			 * the normal direct-to-bio case as it could
- 			 * be temporary.
-diff --git a/mm/swap.c b/mm/swap.c
-index dfb48cf9c2c9..6caca11cd2ec 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -249,23 +249,23 @@ static bool pagevec_add_and_need_flush(struct pagevec *pvec, struct page *page)
+-static void wake_up_page(struct page *page, int bit)
++static void folio_wake(struct folio *folio, int bit)
+ {
+-	if (!PageWaiters(page))
++	if (!folio_waiters(folio))
+ 		return;
+-	wake_up_page_bit(page, bit);
++	wake_up_page_bit(&folio->page, bit);
  }
  
  /*
-- * Writeback is about to end against a page which has been marked for immediate
-- * reclaim.  If it still appears to be reclaimable, move it to the tail of the
-- * inactive list.
-+ * Writeback is about to end against a folio which has been marked for
-+ * immediate reclaim.  If it still appears to be reclaimable, move it
-+ * to the tail of the inactive list.
-  *
-- * rotate_reclaimable_page() must disable IRQs, to prevent nasty races.
-+ * folio_rotate_reclaimable() must disable IRQs, to prevent nasty races.
-  */
--void rotate_reclaimable_page(struct page *page)
-+void folio_rotate_reclaimable(struct folio *folio)
- {
--	if (!PageLocked(page) && !PageDirty(page) &&
--	    !PageUnevictable(page) && PageLRU(page)) {
-+	if (!folio_locked(folio) && !folio_dirty(folio) &&
-+	    !folio_unevictable(folio) && folio_lru(folio)) {
- 		struct pagevec *pvec;
- 		unsigned long flags;
+@@ -1514,38 +1514,38 @@ int wait_on_page_private_2_killable(struct page *page)
+ EXPORT_SYMBOL(wait_on_page_private_2_killable);
  
--		get_page(page);
-+		folio_get(folio);
- 		local_lock_irqsave(&lru_rotate.lock, flags);
- 		pvec = this_cpu_ptr(&lru_rotate.pvec);
--		if (pagevec_add_and_need_flush(pvec, page))
-+		if (pagevec_add_and_need_flush(pvec, &folio->page))
- 			pagevec_lru_move_fn(pvec, pagevec_move_tail_fn);
- 		local_unlock_irqrestore(&lru_rotate.lock, flags);
+ /**
+- * end_page_writeback - end writeback against a page
+- * @page: the page
++ * folio_end_writeback - End writeback against a folio.
++ * @folio: The folio.
+  */
+-void end_page_writeback(struct page *page)
++void folio_end_writeback(struct folio *folio)
+ {
+ 	/*
+-	 * TestClearPageReclaim could be used here but it is an atomic
++	 * folio_test_clear_reclaim_flag() could be used here but it is an atomic
+ 	 * operation and overkill in this particular case. Failing to
+-	 * shuffle a page marked for immediate reclaim is too mild to
++	 * shuffle a folio marked for immediate reclaim is too mild to
+ 	 * justify taking an atomic operation penalty at the end of
+-	 * ever page writeback.
++	 * every folio writeback.
+ 	 */
+-	if (PageReclaim(page)) {
+-		ClearPageReclaim(page);
+-		folio_rotate_reclaimable(page_folio(page));
++	if (folio_reclaim(folio)) {
++		folio_clear_reclaim_flag(folio);
++		folio_rotate_reclaimable(folio);
  	}
+ 
+ 	/*
+-	 * Writeback does not hold a page reference of its own, relying
++	 * Writeback does not hold a folio reference of its own, relying
+ 	 * on truncation to wait for the clearing of PG_writeback.
+-	 * But here we must make sure that the page is not freed and
+-	 * reused before the wake_up_page().
++	 * But here we must make sure that the folio is not freed and
++	 * reused before the folio_wake().
+ 	 */
+-	get_page(page);
+-	if (!test_clear_page_writeback(page))
++	folio_get(folio);
++	if (!test_clear_page_writeback(&folio->page))
+ 		BUG();
+ 
+ 	smp_mb__after_atomic();
+-	wake_up_page(page, PG_writeback);
+-	put_page(page);
++	folio_wake(folio, PG_writeback);
++	folio_put(folio);
+ }
+-EXPORT_SYMBOL(end_page_writeback);
++EXPORT_SYMBOL(folio_end_writeback);
+ 
+ /*
+  * After completing I/O on a page, call this routine to update the page
+diff --git a/mm/folio-compat.c b/mm/folio-compat.c
+index 91b3d00a92f7..526843d03d58 100644
+--- a/mm/folio-compat.c
++++ b/mm/folio-compat.c
+@@ -17,3 +17,9 @@ void unlock_page(struct page *page)
+ 	return folio_unlock(page_folio(page));
+ }
+ EXPORT_SYMBOL(unlock_page);
++
++void end_page_writeback(struct page *page)
++{
++	return folio_end_writeback(page_folio(page));
++}
++EXPORT_SYMBOL(end_page_writeback);
 -- 
 2.30.2
 
