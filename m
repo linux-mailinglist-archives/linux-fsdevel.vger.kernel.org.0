@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2775F374643
+	by mail.lfdr.de (Postfix) with ESMTP id C09D4374645
 	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 19:52:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238706AbhEERN1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 May 2021 13:13:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60672 "EHLO mail.kernel.org"
+        id S238887AbhEERNi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 May 2021 13:13:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234752AbhEERDS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 13:03:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CC171613F5;
-        Wed,  5 May 2021 16:41:46 +0000 (UTC)
+        id S238234AbhEERFR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 May 2021 13:05:17 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A82CE61C30;
+        Wed,  5 May 2021 16:42:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620232907;
+        s=k20201202; t=1620232939;
         bh=T3kO8RrvNCX8As7P6Z7PFwvA19Yoow54UYuEWBXkQOg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QliHd3S27pOvCJFj6ZNcgSoAOCkgGQ+0CqAxnpOsOV5K1zuw9gfgratFBM68OlhFd
-         SwHNw3Ef2Yj63I2V52EYdxdlIgRy3tIIzU8l7sQzY8cN+VsnkO95jYovdMr0e4tWwc
-         dRnmMi3ozIyTONk6iM/tq0AEEII7Rla/C3cYAnMh9EL5qnLx/ssBE4t5iKg7pa/TUi
-         mr66xm4xrwp3VjhDdSc9UzaTBJejm9xBahA8G/5EOQDXLhFgeVwnwCefTYeFYDv+KT
-         KdZPuvBOJi4wKprzH26VmMgELileBtgTviojtMAxRyY55R4X8VZUotzwtq2XrshTns
-         h2GLjjgI3ElMA==
+        b=TKslAOAJNKyr3g3abKLZ0NBKig+2yCrOdvc0IguF7twzDFWcjzb2Oq8ghcYlitofK
+         WRBHK21rNA244F+gEGSM1p0i+QBC6LqbBg1A1r7XIn3tBAVHZSGf6ldY9zH1RAlFwk
+         X+Spvje/wqyixR6pMYnIZIo09TP8Gbrn4bqIMnjv3MhF2ae5EVsdvBwtn+wOakpmZX
+         2mLODE8ceEt7XUDscyn/ATETkI7vzJsajWx5TQdilPT30RtPm+oTOA6i5V+Z2ZR4xH
+         EXBvMM1scP4712gfBC2+rAOgVlf8K+7Ufvv9FBMyt9Y/j7ilvfHBSxWrBVPpKHUuSl
+         r1Vxx3Myf6i/A==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 12/22] cuse: prevent clone
-Date:   Wed,  5 May 2021 12:41:19 -0400
-Message-Id: <20210505164129.3464277-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 12/19] cuse: prevent clone
+Date:   Wed,  5 May 2021 12:41:55 -0400
+Message-Id: <20210505164203.3464510-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210505164129.3464277-1-sashal@kernel.org>
-References: <20210505164129.3464277-1-sashal@kernel.org>
+In-Reply-To: <20210505164203.3464510-1-sashal@kernel.org>
+References: <20210505164203.3464510-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
