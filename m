@@ -2,40 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9A39373E43
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 17:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3C77373E48
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 17:17:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232312AbhEEPR2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 May 2021 11:17:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48670 "EHLO
+        id S232952AbhEEPSA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 May 2021 11:18:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230249AbhEEPR1 (ORCPT
+        with ESMTP id S231995AbhEEPSA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 11:17:27 -0400
+        Wed, 5 May 2021 11:18:00 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F18E7C061574;
-        Wed,  5 May 2021 08:16:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C618DC061574;
+        Wed,  5 May 2021 08:17:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=IgD6Z/R8KKTP/Q+2YwElx93aowViVL+rNNVE6FqBr6U=; b=oA1hkqh32JwxKPh1pfi/X+8oil
-        Pr37p3BhCYgmBYBz9CXB3HW+CqdBoOtW5Aa1NoAfnWbe6oOkpeQ6SzbjPex57MH3Ctq61fMI+EBE6
-        ZQIxeDyR54TMIwMKcpt8MheffKOiJ4px6SeCsZJO7Tyi+1pBIHu8FwTxjy7mzgrUQkItnJvwYh4bz
-        5vt25J+mxbtjmcP1Kkra4f8ZjbwHTp/hGF6KOTB0+LaCz0H4KeKPk5gAIP7sKPiEPHjubBfKfk1Uq
-        xVkr58gbhAPPycozWGlWuVoBEvEbgfj4O7E/vY0LO6OiBeAtRuwUwm2RjgawrFYoR+KOPXUXLuea9
-        GJCabOsQ==;
+        bh=9xz3lRAKa8MuB4VyUTjFANnsh4rfjJ/WyB9hb6QaB0w=; b=CH+KFzp5ZVuJiSetQaFIBe4rxv
+        F4KKRaZ+Q/gHQxRXrX8ZEOS4xMche9Gfr67xvCcfFOKisCOnq28d6wTrQFt8p59/JSsMiFn9LN5G9
+        f7TqOt+6chtV0Y+6kh1MAzW+SVDfaE3goom2/P+tAfJ8qkhRS1ZybmnXiADD7VoJny/IuvR+cg+7V
+        c3HOAy+q18LTIzs6MPrP4yi/dkeSaa3eVUhSwKsqb5OM7srw9lTLZuOEK+rLtZS2SBJuPO1kbEHNm
+        Mx58ZQKuOx6hxVkYjvhGyyBDJvArUS8as3s9zCowEFCANOxrvBdqcv/UFlLD6PPyBcVFEIxX6Ppru
+        y15RePGA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1leJEk-000Tsk-Fr; Wed, 05 May 2021 15:15:11 +0000
+        id 1leJFU-000U2b-5X; Wed, 05 May 2021 15:15:47 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>
-Subject: [PATCH v9 08/96] mm: Fix struct page layout on 32-bit systems
-Date:   Wed,  5 May 2021 16:05:00 +0100
-Message-Id: <20210505150628.111735-9-willy@infradead.org>
+        linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v9 09/96] mm: Introduce struct folio
+Date:   Wed,  5 May 2021 16:05:01 +0100
+Message-Id: <20210505150628.111735-10-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210505150628.111735-1-willy@infradead.org>
 References: <20210505150628.111735-1-willy@infradead.org>
@@ -45,112 +43,241 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-32-bit architectures which expect 8-byte alignment for 8-byte integers
-and need 64-bit DMA addresses (arm, mips, ppc) had their struct page
-inadvertently expanded in 2019.  When the dma_addr_t was added, it forced
-the alignment of the union to 8 bytes, which inserted a 4 byte gap between
-'flags' and the union.
+A struct folio is a new abstraction to replace the venerable struct page.
+A function which takes a struct folio argument declares that it will
+operate on the entire (possibly compound) page, not just PAGE_SIZE bytes.
+In return, the caller guarantees that the pointer it is passing does
+not point to a tail page.
 
-Fix this by storing the dma_addr_t in one or two adjacent unsigned longs.
-This restores the alignment to that of an unsigned long.  We always
-store the low bits in the first word to prevent the PageTail bit from
-being inadvertently set on a big endian platform.  If that happened,
-get_user_pages_fast() racing against a page which was freed and
-reallocated to the page_pool could dereference a bogus compound_head(),
-which would be hard to trace back to this cause.
-
-Fixes: c25fff7171be ("mm: add dma_addr_t to struct page")
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Acked-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
+Acked-by: Jeff Layton <jlayton@kernel.org>
 ---
- include/linux/mm_types.h |  4 ++--
- include/net/page_pool.h  | 12 +++++++++++-
- net/core/page_pool.c     | 12 +++++++-----
- 3 files changed, 20 insertions(+), 8 deletions(-)
+ Documentation/core-api/mm-api.rst |  1 +
+ include/linux/mm.h                | 74 +++++++++++++++++++++++++++++++
+ include/linux/mm_types.h          | 60 +++++++++++++++++++++++++
+ include/linux/page-flags.h        | 27 +++++++++++
+ 4 files changed, 162 insertions(+)
 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 6613b26a8894..5aacc1c10a45 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -97,10 +97,10 @@ struct page {
- 		};
- 		struct {	/* page_pool used by netstack */
- 			/**
--			 * @dma_addr: might require a 64-bit value even on
-+			 * @dma_addr: might require a 64-bit value on
- 			 * 32-bit architectures.
- 			 */
--			dma_addr_t dma_addr;
-+			unsigned long dma_addr[2];
- 		};
- 		struct {	/* slab, slob and slub */
- 			union {
-diff --git a/include/net/page_pool.h b/include/net/page_pool.h
-index 6d517a37c18b..b4b6de909c93 100644
---- a/include/net/page_pool.h
-+++ b/include/net/page_pool.h
-@@ -198,7 +198,17 @@ static inline void page_pool_recycle_direct(struct page_pool *pool,
+diff --git a/Documentation/core-api/mm-api.rst b/Documentation/core-api/mm-api.rst
+index a42f9baddfbf..2a94e6164f80 100644
+--- a/Documentation/core-api/mm-api.rst
++++ b/Documentation/core-api/mm-api.rst
+@@ -95,6 +95,7 @@ More Memory Management Functions
+ .. kernel-doc:: mm/mempolicy.c
+ .. kernel-doc:: include/linux/mm_types.h
+    :internal:
++.. kernel-doc:: include/linux/page-flags.h
+ .. kernel-doc:: include/linux/mm.h
+    :internal:
+ .. kernel-doc:: include/linux/mmzone.h
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 2327f99b121f..b29c86824e6b 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -950,6 +950,20 @@ static inline unsigned int compound_order(struct page *page)
+ 	return page[1].compound_order;
+ }
  
- static inline dma_addr_t page_pool_get_dma_addr(struct page *page)
- {
--	return page->dma_addr;
-+	dma_addr_t ret = page->dma_addr[0];
-+	if (sizeof(dma_addr_t) > sizeof(unsigned long))
-+		ret |= (dma_addr_t)page->dma_addr[1] << 16 << 16;
-+	return ret;
++/**
++ * folio_order - The allocation order of a folio.
++ * @folio: The folio.
++ *
++ * A folio is composed of 2^order pages.  See get_order() for the definition
++ * of order.
++ *
++ * Return: The order of the folio.
++ */
++static inline unsigned int folio_order(struct folio *folio)
++{
++	return compound_order(&folio->page);
 +}
 +
-+static inline void page_pool_set_dma_addr(struct page *page, dma_addr_t addr)
-+{
-+	page->dma_addr[0] = addr;
-+	if (sizeof(dma_addr_t) > sizeof(unsigned long))
-+		page->dma_addr[1] = upper_32_bits(addr);
- }
- 
- static inline bool is_page_pool_compiled_in(void)
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index 9ec1aa9640ad..3c4c4c7a0402 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -174,8 +174,10 @@ static void page_pool_dma_sync_for_device(struct page_pool *pool,
- 					  struct page *page,
- 					  unsigned int dma_sync_size)
+ static inline bool hpage_pincount_available(struct page *page)
  {
-+	dma_addr_t dma_addr = page_pool_get_dma_addr(page);
-+
- 	dma_sync_size = min(dma_sync_size, pool->p.max_len);
--	dma_sync_single_range_for_device(pool->p.dev, page->dma_addr,
-+	dma_sync_single_range_for_device(pool->p.dev, dma_addr,
- 					 pool->p.offset, dma_sync_size,
- 					 pool->p.dma_dir);
+ 	/*
+@@ -1595,6 +1609,65 @@ static inline void set_page_links(struct page *page, enum zone_type zone,
+ #endif
  }
-@@ -195,7 +197,7 @@ static bool page_pool_dma_map(struct page_pool *pool, struct page *page)
- 	if (dma_mapping_error(pool->p.dev, dma))
- 		return false;
  
--	page->dma_addr = dma;
-+	page_pool_set_dma_addr(page, dma);
++/**
++ * folio_nr_pages - The number of pages in the folio.
++ * @folio: The folio.
++ *
++ * Return: A number which is a power of two.
++ */
++static inline unsigned long folio_nr_pages(struct folio *folio)
++{
++	return compound_nr(&folio->page);
++}
++
++/**
++ * folio_next - Move to the next physical folio.
++ * @folio: The folio we're currently operating on.
++ *
++ * If you have physically contiguous memory which may span more than
++ * one folio (eg a &struct bio_vec), use this function to move from one
++ * folio to the next.  Do not use it if the memory is only virtually
++ * contiguous as the folios are almost certainly not adjacent to each
++ * other.  This is the folio equivalent to writing ``page++``.
++ *
++ * Context: We assume that the folios are refcounted and/or locked at a
++ * higher level and do not adjust the reference counts.
++ * Return: The next struct folio.
++ */
++static inline struct folio *folio_next(struct folio *folio)
++{
++	return (struct folio *)folio_page(folio, folio_nr_pages(folio));
++}
++
++/**
++ * folio_shift - The number of bits covered by this folio.
++ * @folio: The folio.
++ *
++ * A folio contains a number of bytes which is a power-of-two in size.
++ * This function tells you which power-of-two the folio is.
++ *
++ * Context: The caller should have a reference on the folio to prevent
++ * it from being split.  It is not necessary for the folio to be locked.
++ * Return: The base-2 logarithm of the size of this folio.
++ */
++static inline unsigned int folio_shift(struct folio *folio)
++{
++	return PAGE_SHIFT + folio_order(folio);
++}
++
++/**
++ * folio_size - The number of bytes in a folio.
++ * @folio: The folio.
++ *
++ * Context: The caller should have a reference on the folio to prevent
++ * it from being split.  It is not necessary for the folio to be locked.
++ * Return: The number of bytes in this folio.
++ */
++static inline size_t folio_size(struct folio *folio)
++{
++	return PAGE_SIZE << folio_order(folio);
++}
++
+ /*
+  * Some inline functions in vmstat.h depend on page_zone()
+  */
+@@ -1699,6 +1772,7 @@ extern void pagefault_out_of_memory(void);
  
- 	if (pool->p.flags & PP_FLAG_DMA_SYNC_DEV)
- 		page_pool_dma_sync_for_device(pool, page, pool->p.max_len);
-@@ -331,13 +333,13 @@ void page_pool_release_page(struct page_pool *pool, struct page *page)
- 		 */
- 		goto skip_dma_unmap;
+ #define offset_in_page(p)	((unsigned long)(p) & ~PAGE_MASK)
+ #define offset_in_thp(page, p)	((unsigned long)(p) & (thp_size(page) - 1))
++#define offset_in_folio(folio, p) ((unsigned long)(p) & (folio_size(folio) - 1))
  
--	dma = page->dma_addr;
-+	dma = page_pool_get_dma_addr(page);
+ /*
+  * Flags passed to show_mem() and show_free_areas() to suppress output in
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 5aacc1c10a45..276e358c75d3 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -224,6 +224,66 @@ struct page {
+ #endif
+ } _struct_page_alignment;
  
--	/* When page is unmapped, it cannot be returned our pool */
-+	/* When page is unmapped, it cannot be returned to our pool */
- 	dma_unmap_page_attrs(pool->p.dev, dma,
- 			     PAGE_SIZE << pool->p.order, pool->p.dma_dir,
- 			     DMA_ATTR_SKIP_CPU_SYNC);
--	page->dma_addr = 0;
-+	page_pool_set_dma_addr(page, 0);
- skip_dma_unmap:
- 	/* This may be the last page returned, releasing the pool, so
- 	 * it is not safe to reference pool afterwards.
++/**
++ * struct folio - Represents a contiguous set of bytes.
++ * @flags: Identical to the page flags.
++ * @lru: Least Recently Used list; tracks how recently this folio was used.
++ * @mapping: The file this page belongs to, or refers to the anon_vma for
++ *    anonymous pages.
++ * @index: Offset within the file, in units of pages.  For anonymous pages,
++ *    this is the index from the beginning of the mmap.
++ * @private: Filesystem per-folio data (see folio_attach_private()).
++ *    Used for swp_entry_t if folio_swapcache().
++ * @_mapcount: Do not access this member directly.  Use folio_mapcount() to
++ *    find out how many times this folio is mapped by userspace.
++ * @_refcount: Do not access this member directly.  Use folio_ref_count()
++ *    to find how many references there are to this folio.
++ * @memcg_data: Memory Control Group data.
++ *
++ * A folio is a physically, virtually and logically contiguous set
++ * of bytes.  It is a power-of-two in size, and it is aligned to that
++ * same power-of-two.  It is at least as large as %PAGE_SIZE.  If it is
++ * in the page cache, it is at a file offset which is a multiple of that
++ * power-of-two.  It may be mapped into userspace at an address which is
++ * at an arbitrary page offset, but its kernel virtual address is aligned
++ * to its size.
++ */
++struct folio {
++	/* private: don't document the anon union */
++	union {
++		struct {
++	/* public: */
++			unsigned long flags;
++			struct list_head lru;
++			struct address_space *mapping;
++			pgoff_t index;
++			unsigned long private;
++			atomic_t _mapcount;
++			atomic_t _refcount;
++#ifdef CONFIG_MEMCG
++			unsigned long memcg_data;
++#endif
++	/* private: the union with struct page is transitional */
++		};
++		struct page page;
++	};
++};
++
++static_assert(sizeof(struct page) == sizeof(struct folio));
++#define FOLIO_MATCH(pg, fl)						\
++	static_assert(offsetof(struct page, pg) == offsetof(struct folio, fl))
++FOLIO_MATCH(flags, flags);
++FOLIO_MATCH(lru, lru);
++FOLIO_MATCH(compound_head, lru);
++FOLIO_MATCH(index, index);
++FOLIO_MATCH(private, private);
++FOLIO_MATCH(_mapcount, _mapcount);
++FOLIO_MATCH(_refcount, _refcount);
++#ifdef CONFIG_MEMCG
++FOLIO_MATCH(memcg_data, memcg_data);
++#endif
++#undef FOLIO_MATCH
++
+ static inline atomic_t *compound_mapcount_ptr(struct page *page)
+ {
+ 	return &page[1].compound_mapcount;
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index d8e26243db25..e069aa8b11b7 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -188,6 +188,33 @@ static inline unsigned long _compound_head(const struct page *page)
+ 
+ #define compound_head(page)	((typeof(page))_compound_head(page))
+ 
++/**
++ * page_folio - Converts from page to folio.
++ * @p: The page.
++ *
++ * Every page is part of a folio.  This function cannot be called on a
++ * NULL pointer.
++ *
++ * Context: No reference, nor lock is required on @page.  If the caller
++ * does not hold a reference, this call may race with a folio split, so
++ * it should re-check the folio still contains this page after gaining
++ * a reference on the folio.
++ * Return: The folio which contains this page.
++ */
++#define page_folio(p)		(_Generic((p),				\
++	const struct page *:	(const struct folio *)_compound_head(p), \
++	struct page *:		(struct folio *)_compound_head(p)))
++
++/**
++ * folio_page - Return a page from a folio.
++ * @folio: The folio.
++ * @n: The page number to return.
++ *
++ * @n is relative to the start of the folio.  It should be between
++ * 0 and folio_nr_pages(@folio) - 1, but this is not checked for.
++ */
++#define folio_page(folio, n)	nth_page(&(folio)->page, n)
++
+ static __always_inline int PageTail(struct page *page)
+ {
+ 	return READ_ONCE(page->compound_head) & 1;
 -- 
 2.30.2
 
