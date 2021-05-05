@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94FD3373F19
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 18:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2F9C373F1B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 18:00:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233705AbhEEQBJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 May 2021 12:01:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58590 "EHLO
+        id S233651AbhEEQBy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 May 2021 12:01:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233624AbhEEQBE (ORCPT
+        with ESMTP id S233603AbhEEQBy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 12:01:04 -0400
+        Wed, 5 May 2021 12:01:54 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66FC8C061574;
-        Wed,  5 May 2021 09:00:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEBEDC061574;
+        Wed,  5 May 2021 09:00:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=np2s/mYIo9fxMLzkLt3OOB8qso9UmRGUQHMLncxaoj0=; b=ptWb/N1RVFf9eAnhGAMQez4ltm
-        vzNHQ+/hN2tnbmR6+f4L7EsCcaxMH80tc1gvFLM2tFQuefIieAAFUNLaYLemRpLarcYCswXzeGiQZ
-        oP/tD+7fmAvcuHFKRg/SgBYSNau7ktyVF7XZsFUH4jzHdnEgPj/xQNSJ5KtyucbIaR4eSRsjWCYEj
-        FCnHBou23umJPNgkpS7FYKhAi5v0HBbdZUKf0C/7f4EJeMSPf4ITpjxbVydBZ7Y0Q4PGn0NVDGTrk
-        NLYhiYyP+57mOEj5qfCuQsuETrKdUH74AewP5jYbCU2iprbo6U0Byg2euGFWJwWZR4rL6+t82RS1q
-        Wepx7PZw==;
+        bh=oVPeo/1eyCIP/suESTeKyctz41j9g0cex7YKKkrVPKQ=; b=RysEn5fK/Xx8ATWOD25wm6Kh3q
+        GlbTNVSJ5WsPFcOQUgbSh2iA40dfUSGf5iztvJyDsR9UfhX0YJJo4ufQUEcJPhgwdrt3a2pP7AVHD
+        q58hIXLNb3/vbxMfQOa2UMOhWua1mDmcM2Q1T0O2kfe2mTr4sC3LvllggCjTBbEwU6SzxPhFib0We
+        ArE7s1laoXo/XzWPfZRjKkz7XijUeG3ViEGERD/jWWBG12k5o9bh195WJUbI33vk+SgR54N+jwsZC
+        ok6+ZOCFx1UAjBR+oIKs2QhafWMwfuyEKGs60YY4t646WnxLsRwSSnghllkHTS9nc+vW3YDyd+yNo
+        ehC3Ae3g==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1leJuX-000XVr-2H; Wed, 05 May 2021 15:58:37 +0000
+        id 1leJvm-000XZr-Nc; Wed, 05 May 2021 15:59:40 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v9 41/96] mm/workingset: Convert workingset_activation to take a folio
-Date:   Wed,  5 May 2021 16:05:33 +0100
-Message-Id: <20210505150628.111735-42-willy@infradead.org>
+Subject: [PATCH v9 42/96] mm/swap: Add folio_activate
+Date:   Wed,  5 May 2021 16:05:34 +0100
+Message-Id: <20210505150628.111735-43-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210505150628.111735-1-willy@infradead.org>
 References: <20210505150628.111735-1-willy@infradead.org>
@@ -43,74 +43,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This function already assumed it was being passed a head page.  No real
-change here, except that thp_nr_pages() compiles away on kernels with
-THP compiled out while folio_nr_pages() is always present.
+This ends up being inlined into mark_page_accessed(), saving 70 bytes
+of text.  It eliminates a lot of calls to compound_head(), but we still
+have to pass a page to __activate_page() because pagevec_lru_move_fn()
+takes a struct page.  That should be cleaned up eventually.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/swap.h |  2 +-
- mm/swap.c            |  2 +-
- mm/workingset.c      | 10 +++++-----
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ mm/swap.c | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 76b2338ef24d..8e0118b25bdc 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -324,7 +324,7 @@ static inline swp_entry_t folio_swap_entry(struct folio *folio)
- void workingset_age_nonresident(struct lruvec *lruvec, unsigned long nr_pages);
- void *workingset_eviction(struct page *page, struct mem_cgroup *target_memcg);
- void workingset_refault(struct page *page, void *shadow);
--void workingset_activation(struct page *page);
-+void workingset_activation(struct folio *folio);
- 
- /* Only track the nodes of mappings with shadow entries */
- void workingset_update_node(struct xa_node *node);
 diff --git a/mm/swap.c b/mm/swap.c
-index 6caca11cd2ec..828889349b0b 100644
+index 828889349b0b..07244999bcc6 100644
 --- a/mm/swap.c
 +++ b/mm/swap.c
-@@ -445,7 +445,7 @@ void mark_page_accessed(struct page *page)
+@@ -347,16 +347,16 @@ static bool need_activate_page_drain(int cpu)
+ 	return pagevec_count(&per_cpu(lru_pvecs.activate_page, cpu)) != 0;
+ }
+ 
+-static void activate_page(struct page *page)
++static void folio_activate(struct folio *folio)
+ {
+-	page = compound_head(page);
+-	if (PageLRU(page) && !PageActive(page) && !PageUnevictable(page)) {
++	if (folio_lru(folio) && !folio_active(folio) &&
++	    !folio_unevictable(folio)) {
+ 		struct pagevec *pvec;
+ 
+ 		local_lock(&lru_pvecs.lock);
+ 		pvec = this_cpu_ptr(&lru_pvecs.activate_page);
+-		get_page(page);
+-		if (pagevec_add_and_need_flush(pvec, page))
++		folio_get(folio);
++		if (pagevec_add_and_need_flush(pvec, &folio->page))
+ 			pagevec_lru_move_fn(pvec, __activate_page);
+ 		local_unlock(&lru_pvecs.lock);
+ 	}
+@@ -367,16 +367,15 @@ static inline void activate_page_drain(int cpu)
+ {
+ }
+ 
+-static void activate_page(struct page *page)
++static void folio_activate(struct folio *folio)
+ {
+ 	struct lruvec *lruvec;
+ 
+-	page = compound_head(page);
+-	if (TestClearPageLRU(page)) {
+-		lruvec = lock_page_lruvec_irq(page);
+-		__activate_page(page, lruvec);
++	if (folio_test_clear_lru_flag(folio)) {
++		lruvec = folio_lock_lruvec_irq(folio);
++		__activate_page(&folio->page, lruvec);
+ 		unlock_page_lruvec_irq(lruvec);
+-		SetPageLRU(page);
++		folio_set_lru_flag(folio);
+ 	}
+ }
+ #endif
+@@ -441,7 +440,7 @@ void mark_page_accessed(struct page *page)
+ 		 * LRU on the next drain.
+ 		 */
+ 		if (PageLRU(page))
+-			activate_page(page);
++			folio_activate(page_folio(page));
  		else
  			__lru_cache_activate_page(page);
  		ClearPageReferenced(page);
--		workingset_activation(page);
-+		workingset_activation(page_folio(page));
- 	}
- 	if (page_is_idle(page))
- 		clear_page_idle(page);
-diff --git a/mm/workingset.c b/mm/workingset.c
-index b7cdeca5a76d..d969403f2b2a 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -390,9 +390,9 @@ void workingset_refault(struct page *page, void *shadow)
- 
- /**
-  * workingset_activation - note a page activation
-- * @page: page that is being activated
-+ * @folio: Folio that is being activated.
-  */
--void workingset_activation(struct page *page)
-+void workingset_activation(struct folio *folio)
- {
- 	struct mem_cgroup *memcg;
- 	struct lruvec *lruvec;
-@@ -405,11 +405,11 @@ void workingset_activation(struct page *page)
- 	 * XXX: See workingset_refault() - this should return
- 	 * root_mem_cgroup even for !CONFIG_MEMCG.
- 	 */
--	memcg = page_memcg_rcu(page);
-+	memcg = page_memcg_rcu(&folio->page);
- 	if (!mem_cgroup_disabled() && !memcg)
- 		goto out;
--	lruvec = mem_cgroup_page_lruvec(page, page_pgdat(page));
--	workingset_age_nonresident(lruvec, thp_nr_pages(page));
-+	lruvec = mem_cgroup_folio_lruvec(folio, folio_pgdat(folio));
-+	workingset_age_nonresident(lruvec, folio_nr_pages(folio));
- out:
- 	rcu_read_unlock();
- }
 -- 
 2.30.2
 
