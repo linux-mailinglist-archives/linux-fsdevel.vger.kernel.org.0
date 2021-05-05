@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A262373F3F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 18:09:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C237373F44
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 18:10:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233787AbhEEQKY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 May 2021 12:10:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60732 "EHLO
+        id S233744AbhEEQLe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 May 2021 12:11:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229759AbhEEQKX (ORCPT
+        with ESMTP id S233590AbhEEQLd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 12:10:23 -0400
+        Wed, 5 May 2021 12:11:33 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EA62C061761;
-        Wed,  5 May 2021 09:09:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4894BC061574;
+        Wed,  5 May 2021 09:10:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=N3vydzOWjmmFG0R2cR1PHRr8tSeV8Ri5it/enNyGnko=; b=h2Ljs0CdxLLhk81NSb2HlkOV4l
-        +rUWbc5CcPjWh8r+R3mPj7LtVCNJtWgVn6/f9UQLIHWbtzw3Jf/zgHS4W783TjRXjPdG3YJRlF/oV
-        CzQp/HKFAqBjAn611jTAr8HYL+bS34QtgT7PEy3CrxCqDQBy1KyMJlykZyz645IBZlNlmtuPNlnj5
-        hpG3w7XKFY3TJpmYMOxaD3rc7sIW63LiBezaBdR6ifRdGjjtXYvIXnIAUrcq22FJIjqdEboxNFLUK
-        e5OqgPhSXGquxJ9xsJSTGYD8b9oXME+TsraMSMxZ3+VSHB7lcwhqalBfkTZH19cW9JJAtBfBXeHUC
-        nP22DjLg==;
+        bh=w0jGJsqw+Dj9n7t2IRtboGIu3/KBHxXl9/wQ2RoFEh8=; b=s4frGTRm8MaIvJDgcr9bJC6lmw
+        Rtmt00zViXHhn6h9pog7qIMSLVtHcrVyuaOPCAz0MmugC+IDW4I9RfG8nsIGmUz2oc6YKY62MkyZ+
+        GNEgRkDIE8yjVpB7JMBkzVwMyCKWOtAfKXfQIbsOH9RNozpU6rPzOPPSrMRQlUyxMB0YPStUBdXLw
+        jw93iJPhE2EQ/D6rQCsOOlE/iu9C4wx6v+NbtTVp4Ox8y4NDeK8vxka8lMeuMTQsqpXbGnW+rM4N1
+        HoV99og4TD8I0S9qEzDkRa6qBJ+iCRRCDtDFS083AIXOrqsQTjhEBH8rnVr7K0QasHG+bmE30QBvE
+        HJHWyKeg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1leK41-000Z9v-Fr; Wed, 05 May 2021 16:08:32 +0000
+        id 1leK50-000ZDX-9Q; Wed, 05 May 2021 16:09:20 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v9 50/96] mm/memcg: Convert commit_charge to take a folio
-Date:   Wed,  5 May 2021 16:05:42 +0100
-Message-Id: <20210505150628.111735-51-willy@infradead.org>
+Subject: [PATCH v9 51/96] mm/memcg: Add folio_charge_cgroup
+Date:   Wed,  5 May 2021 16:05:43 +0100
+Message-Id: <20210505150628.111735-52-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210505150628.111735-1-willy@infradead.org>
 References: <20210505150628.111735-1-willy@infradead.org>
@@ -43,103 +43,139 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The memcg_data is only set on the head page, so enforce that by
-typing it as a folio.
+mem_cgroup_charge() already assumed it was being passed a non-tail
+page (and looking at the callers, that's true; it's called for freshly
+allocated pages).  The only real change here is that folio_nr_pages()
+doesn't compile away like thp_nr_pages() does as folio support
+is not conditional on transparent hugepage support.  Reimplement
+mem_cgroup_charge() as a wrapper around folio_charge_cgroup().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/memcontrol.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ include/linux/memcontrol.h |  8 ++++++++
+ mm/folio-compat.c          |  7 +++++++
+ mm/memcontrol.c            | 26 +++++++++++++-------------
+ 3 files changed, 28 insertions(+), 13 deletions(-)
 
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index b45b505be0ec..d0798d54f637 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -699,6 +699,8 @@ static inline bool mem_cgroup_below_min(struct mem_cgroup *memcg)
+ 		page_counter_read(&memcg->memory);
+ }
+ 
++int folio_charge_cgroup(struct folio *, struct mm_struct *, gfp_t);
++
+ int mem_cgroup_charge(struct page *page, struct mm_struct *mm, gfp_t gfp_mask);
+ int mem_cgroup_swapin_charge_page(struct page *page, struct mm_struct *mm,
+ 				  gfp_t gfp, swp_entry_t entry);
+@@ -1201,6 +1203,12 @@ static inline bool mem_cgroup_below_min(struct mem_cgroup *memcg)
+ 	return false;
+ }
+ 
++static inline int folio_charge_cgroup(struct folio *folio,
++		struct mm_struct *mm, gfp_t gfp)
++{
++	return 0;
++}
++
+ static inline int mem_cgroup_charge(struct page *page, struct mm_struct *mm,
+ 				    gfp_t gfp_mask)
+ {
+diff --git a/mm/folio-compat.c b/mm/folio-compat.c
+index a374747ae1c6..1d71b8b587f8 100644
+--- a/mm/folio-compat.c
++++ b/mm/folio-compat.c
+@@ -48,3 +48,10 @@ void mark_page_accessed(struct page *page)
+ 	folio_mark_accessed(page_folio(page));
+ }
+ EXPORT_SYMBOL(mark_page_accessed);
++
++#ifdef CONFIG_MEMCG
++int mem_cgroup_charge(struct page *page, struct mm_struct *mm, gfp_t gfp)
++{
++	return folio_charge_cgroup(page_folio(page), mm, gfp);
++}
++#endif
 diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 7423cb11eb88..5493e094e9e9 100644
+index 5493e094e9e9..529b10e72d5a 100644
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@ -2700,9 +2700,9 @@ static void cancel_charge(struct mem_cgroup *memcg, unsigned int nr_pages)
- }
- #endif
- 
--static void commit_charge(struct page *page, struct mem_cgroup *memcg)
-+static void commit_charge(struct folio *folio, struct mem_cgroup *memcg)
- {
--	VM_BUG_ON_PAGE(page_memcg(page), page);
-+	VM_BUG_ON_FOLIO(folio_memcg(folio), folio);
- 	/*
- 	 * Any of the following ensures page's memcg stability:
- 	 *
-@@ -2711,7 +2711,7 @@ static void commit_charge(struct page *page, struct mem_cgroup *memcg)
- 	 * - lock_page_memcg()
- 	 * - exclusive reference
- 	 */
--	page->memcg_data = (unsigned long)memcg;
-+	folio->memcg_data = (unsigned long)memcg;
+@@ -6503,10 +6503,9 @@ void mem_cgroup_calculate_protection(struct mem_cgroup *root,
+ 			atomic_long_read(&parent->memory.children_low_usage)));
  }
  
- static struct mem_cgroup *get_mem_cgroup_from_objcg(struct obj_cgroup *objcg)
-@@ -6506,7 +6506,8 @@ void mem_cgroup_calculate_protection(struct mem_cgroup *root,
- static int __mem_cgroup_charge(struct page *page, struct mem_cgroup *memcg,
+-static int __mem_cgroup_charge(struct page *page, struct mem_cgroup *memcg,
++static int __mem_cgroup_charge(struct folio *folio, struct mem_cgroup *memcg,
  			       gfp_t gfp)
  {
--	unsigned int nr_pages = thp_nr_pages(page);
-+	struct folio *folio = page_folio(page);
-+	unsigned int nr_pages = folio_nr_pages(folio);
+-	struct folio *folio = page_folio(page);
+ 	unsigned int nr_pages = folio_nr_pages(folio);
  	int ret;
  
- 	ret = try_charge(memcg, gfp, nr_pages);
-@@ -6514,7 +6515,7 @@ static int __mem_cgroup_charge(struct page *page, struct mem_cgroup *memcg,
- 		goto out;
- 
- 	css_get(&memcg->css);
--	commit_charge(page, memcg);
-+	commit_charge(folio, memcg);
+@@ -6519,26 +6518,26 @@ static int __mem_cgroup_charge(struct page *page, struct mem_cgroup *memcg,
  
  	local_irq_disable();
  	mem_cgroup_charge_statistics(memcg, nr_pages);
-@@ -6771,21 +6772,22 @@ void mem_cgroup_uncharge_list(struct list_head *page_list)
+-	memcg_check_events(memcg, page);
++	memcg_check_events(memcg, &folio->page);
+ 	local_irq_enable();
+ out:
+ 	return ret;
+ }
+ 
+ /**
+- * mem_cgroup_charge - charge a newly allocated page to a cgroup
+- * @page: page to charge
+- * @mm: mm context of the victim
+- * @gfp_mask: reclaim mode
++ * folio_charge_cgroup - Charge a newly allocated folio to a cgroup.
++ * @folio: Folio to charge.
++ * @mm: mm context of the allocating task.
++ * @gfp: reclaim mode
+  *
+- * Try to charge @page to the memcg that @mm belongs to, reclaiming
+- * pages according to @gfp_mask if necessary.
++ * Try to charge @folio to the memcg that @mm belongs to, reclaiming
++ * pages according to @gfp if necessary.
+  *
+- * Do not use this for pages allocated for swapin.
++ * Do not use this for folios allocated for swapin.
+  *
+  * Returns 0 on success. Otherwise, an error code is returned.
   */
- void mem_cgroup_migrate(struct page *oldpage, struct page *newpage)
+-int mem_cgroup_charge(struct page *page, struct mm_struct *mm, gfp_t gfp_mask)
++int folio_charge_cgroup(struct folio *folio, struct mm_struct *mm, gfp_t gfp)
  {
-+	struct folio *newfolio = page_folio(newpage);
  	struct mem_cgroup *memcg;
--	unsigned int nr_pages;
-+	unsigned int nr_pages = folio_nr_pages(newfolio);
- 	unsigned long flags;
+ 	int ret;
+@@ -6547,7 +6546,7 @@ int mem_cgroup_charge(struct page *page, struct mm_struct *mm, gfp_t gfp_mask)
+ 		return 0;
  
- 	VM_BUG_ON_PAGE(!PageLocked(oldpage), oldpage);
--	VM_BUG_ON_PAGE(!PageLocked(newpage), newpage);
--	VM_BUG_ON_PAGE(PageAnon(oldpage) != PageAnon(newpage), newpage);
--	VM_BUG_ON_PAGE(PageTransHuge(oldpage) != PageTransHuge(newpage),
--		       newpage);
-+	VM_BUG_ON_FOLIO(!folio_locked(newfolio), newfolio);
-+	VM_BUG_ON_FOLIO(PageAnon(oldpage) != folio_anon(newfolio), newfolio);
-+	VM_BUG_ON_FOLIO(compound_nr(oldpage) != folio_nr_pages(newfolio),
-+		       newfolio);
+ 	memcg = get_mem_cgroup_from_mm(mm);
+-	ret = __mem_cgroup_charge(page, memcg, gfp_mask);
++	ret = __mem_cgroup_charge(folio, memcg, gfp);
+ 	css_put(&memcg->css);
  
- 	if (mem_cgroup_disabled())
- 		return;
+ 	return ret;
+@@ -6568,6 +6567,7 @@ int mem_cgroup_charge(struct page *page, struct mm_struct *mm, gfp_t gfp_mask)
+ int mem_cgroup_swapin_charge_page(struct page *page, struct mm_struct *mm,
+ 				  gfp_t gfp, swp_entry_t entry)
+ {
++	struct folio *folio = page_folio(page);
+ 	struct mem_cgroup *memcg;
+ 	unsigned short id;
+ 	int ret;
+@@ -6582,7 +6582,7 @@ int mem_cgroup_swapin_charge_page(struct page *page, struct mm_struct *mm,
+ 		memcg = get_mem_cgroup_from_mm(mm);
+ 	rcu_read_unlock();
  
- 	/* Page cache replacement: new page already charged? */
--	if (page_memcg(newpage))
-+	if (folio_memcg(newfolio))
- 		return;
+-	ret = __mem_cgroup_charge(page, memcg, gfp);
++	ret = __mem_cgroup_charge(folio, memcg, gfp);
  
- 	memcg = page_memcg(oldpage);
-@@ -6794,14 +6796,12 @@ void mem_cgroup_migrate(struct page *oldpage, struct page *newpage)
- 		return;
- 
- 	/* Force-charge the new page. The old one will be freed soon */
--	nr_pages = thp_nr_pages(newpage);
--
- 	page_counter_charge(&memcg->memory, nr_pages);
- 	if (do_memsw_account())
- 		page_counter_charge(&memcg->memsw, nr_pages);
- 
- 	css_get(&memcg->css);
--	commit_charge(newpage, memcg);
-+	commit_charge(newfolio, memcg);
- 
- 	local_irq_save(flags);
- 	mem_cgroup_charge_statistics(memcg, nr_pages);
+ 	css_put(&memcg->css);
+ 	return ret;
 -- 
 2.30.2
 
