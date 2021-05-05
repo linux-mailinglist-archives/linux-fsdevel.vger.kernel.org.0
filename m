@@ -2,130 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 868D737471A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 19:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59A4E3747AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 20:06:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234227AbhEERom (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 May 2021 13:44:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40388 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234985AbhEERm0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 13:42:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BDDE4610E6;
-        Wed,  5 May 2021 17:41:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620236483;
-        bh=sJTYCVtiWBq6R74N8PqzXXzNwxH+DE+4BeekKhgRsus=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IOm7oY6myzQEP6uoSPfIMXx8U+Wh2fO3QQ1/fZd6PhHiWaSKbCaOfErNRQ10RdN0J
-         0ooOeM6wc+4iUsJaoZsDZzULUEYx13oIo+2foz92jd8HKCY1R5mBVWc9IVM0ganfjC
-         kwWALtAPHJUFsqdcHMcNyj+Tewn3d8q6RPBJwM7D0gp9daMwT1MRv/5bbm6l7vMe5G
-         OJsr/DCsjLeT6EO8/HooHud3LhfJNJCf16hgb0+knxK3T3oka9aeAOw52PX8Lj4GFU
-         xTqMBIvGxGJEdt3sSe1bWslJTiy/KQ2RcW0J46MHN6aHIaVBYOLUp8Xo8ukScsNKVh
-         +c3j8Wqrx0m1w==
-Date:   Wed, 5 May 2021 20:41:12 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Roman Gushchin <guro@fb.com>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        Steven Price <steven.price@arm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Aili Yao <yaoaili@kingsoft.com>, Jiri Bohac <jbohac@suse.cz>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        linux-hyperv@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v1 5/7] mm: introduce
- page_offline_(begin|end|freeze|unfreeze) to synchronize setting
- PageOffline()
-Message-ID: <YJLYuL/EceejLC7L@kernel.org>
-References: <20210429122519.15183-1-david@redhat.com>
- <20210429122519.15183-6-david@redhat.com>
- <YJKcg06C3xE8fCfu@dhcp22.suse.cz>
- <8650f764-8652-a82c-c54f-f67401c800e8@redhat.com>
+        id S235485AbhEESB4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 May 2021 14:01:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56746 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235393AbhEESBq (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 May 2021 14:01:46 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67331C0612AF;
+        Wed,  5 May 2021 10:39:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=aCJPdbFikHVw1iejx4/NJ1aZahzV7GtlgafMroiNaUM=; b=RHO9cr6oP/h0BR9MZibn2R924u
+        q8bQNisZQBIAfcTDfoTYYmoGPKE0AmmJQ88PbpV4S1gLPuJO4lb8hRfJgPCBwAcMKzebKA3KgptDN
+        frNsAuMcVhHx3YKmiXmQ9h76R8D3X6fGblRzrrKkxZe6+uDdkDl3dyQUGtodP3jX2AwARSXpGDSk3
+        fgfYm6CvDeEXqrWfz5sQOooOTz1E/6YG9HzOcuTW1CqadHiEOF0Ovp+dyeTBBVMkJsKCmDDEu2MhY
+        dr8nHzodQzMsGY2VPt2vRWtHLn+3cMyhvG7JGDnrXAvyOfF7T3WRIWxrjGNiVQmRB21Nylp6chiKT
+        LjvqWXsQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1leKpR-000cRK-Fm; Wed, 05 May 2021 16:58:04 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v9 77/96] mm/filemap: Add filemap_alloc_folio
+Date:   Wed,  5 May 2021 16:06:09 +0100
+Message-Id: <20210505150628.111735-78-willy@infradead.org>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210505150628.111735-1-willy@infradead.org>
+References: <20210505150628.111735-1-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8650f764-8652-a82c-c54f-f67401c800e8@redhat.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 05, 2021 at 05:10:33PM +0200, David Hildenbrand wrote:
-> On 05.05.21 15:24, Michal Hocko wrote:
-> > On Thu 29-04-21 14:25:17, David Hildenbrand wrote:
-> > > A driver might set a page logically offline -- PageOffline() -- and
-> > > turn the page inaccessible in the hypervisor; after that, access to page
-> > > content can be fatal. One example is virtio-mem; while unplugged memory
-> > > -- marked as PageOffline() can currently be read in the hypervisor, this
-> > > will no longer be the case in the future; for example, when having
-> > > a virtio-mem device backed by huge pages in the hypervisor.
-> > > 
-> > > Some special PFN walkers -- i.e., /proc/kcore -- read content of random
-> > > pages after checking PageOffline(); however, these PFN walkers can race
-> > > with drivers that set PageOffline().
-> > > 
-> > > Let's introduce page_offline_(begin|end|freeze|unfreeze) for
-> > > synchronizing.
-> > > 
-> > > page_offline_freeze()/page_offline_unfreeze() allows for a subsystem to
-> > > synchronize with such drivers, achieving that a page cannot be set
-> > > PageOffline() while frozen.
-> > > 
-> > > page_offline_begin()/page_offline_end() is used by drivers that care about
-> > > such races when setting a page PageOffline().
-> > > 
-> > > For simplicity, use a rwsem for now; neither drivers nor users are
-> > > performance sensitive.
-> > 
-> > Please add a note to the PageOffline documentation as well. While are
-> > adding the api close enough an explicit note there wouldn't hurt.
-> 
-> Will do.
-> 
-> > 
-> > > Signed-off-by: David Hildenbrand <david@redhat.com>
-> > 
-> > As to the patch itself, I am slightly worried that other pfn walkers
-> > might be less tolerant to the locking than the proc ones. On the other
-> > hand most users shouldn't really care as they do not tend to touch the
-> > memory content and PageOffline check without any synchronization should
-> > be sufficient for those. Let's try this out and see where we get...
-> 
-> My thinking. Users that actually read random page content (as discussed in
-> the cover letter) are
-> 
-> 1. Hibernation
-> 2. Dumping (/proc/kcore, /proc/vmcore)
-> 3. Physical memory access bypassing the kernel via /dev/mem
-> 4. Live debug tools (kgdb)
+Reimplement __page_cache_alloc as a wrapper around filemap_alloc_folio
+to allow filesystems to be converted at our leisure.  Increases
+kernel text size by 133 bytes, mostly in cachefiles_read_backing_file().
+pagecache_get_page() shrinks by 32 bytes, though.
 
-I think you can add
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ include/linux/pagemap.h | 11 ++++++++---
+ mm/filemap.c            | 14 +++++++-------
+ 2 files changed, 15 insertions(+), 10 deletions(-)
 
-5. Very old drivers
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index d54772aa7a3a..64370f615aba 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -338,14 +338,19 @@ static inline void *detach_page_private(struct page *page)
+ }
  
-> Other PFN walkers really shouldn't (and don't) access random page content.
-> 
-> Thanks!
-> 
-> -- 
-> Thanks,
-> 
-> David / dhildenb
-> 
-> 
-
+ #ifdef CONFIG_NUMA
+-extern struct page *__page_cache_alloc(gfp_t gfp);
++extern struct folio *filemap_alloc_folio(gfp_t gfp, unsigned int order);
+ #else
+-static inline struct page *__page_cache_alloc(gfp_t gfp)
++static inline struct folio *filemap_alloc_folio(gfp_t gfp, unsigned int order)
+ {
+-	return alloc_pages(gfp, 0);
++	return alloc_folio(gfp, order);
+ }
+ #endif
+ 
++static inline struct page *__page_cache_alloc(gfp_t gfp)
++{
++	return &filemap_alloc_folio(gfp, 0)->page;
++}
++
+ static inline struct page *page_cache_alloc(struct address_space *x)
+ {
+ 	return __page_cache_alloc(mapping_gfp_mask(x));
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 5c130bfcdb1c..a9c16f05b863 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -987,24 +987,24 @@ int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
+ EXPORT_SYMBOL_GPL(add_to_page_cache_lru);
+ 
+ #ifdef CONFIG_NUMA
+-struct page *__page_cache_alloc(gfp_t gfp)
++struct folio *filemap_alloc_folio(gfp_t gfp, unsigned int order)
+ {
+ 	int n;
+-	struct page *page;
++	struct folio *folio;
+ 
+ 	if (cpuset_do_page_mem_spread()) {
+ 		unsigned int cpuset_mems_cookie;
+ 		do {
+ 			cpuset_mems_cookie = read_mems_allowed_begin();
+ 			n = cpuset_mem_spread_node();
+-			page = __alloc_pages_node(n, gfp, 0);
+-		} while (!page && read_mems_allowed_retry(cpuset_mems_cookie));
++			folio = __alloc_folio_node(n, gfp, order);
++		} while (!folio && read_mems_allowed_retry(cpuset_mems_cookie));
+ 
+-		return page;
++		return folio;
+ 	}
+-	return alloc_pages(gfp, 0);
++	return alloc_folio(gfp, order);
+ }
+-EXPORT_SYMBOL(__page_cache_alloc);
++EXPORT_SYMBOL(filemap_alloc_folio);
+ #endif
+ 
+ /*
 -- 
-Sincerely yours,
-Mike.
+2.30.2
+
