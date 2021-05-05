@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBA9A373F2B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 18:05:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 799B6373F34
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 18:06:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233484AbhEEQGQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 May 2021 12:06:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59776 "EHLO
+        id S233778AbhEEQHk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 May 2021 12:07:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233708AbhEEQGP (ORCPT
+        with ESMTP id S233484AbhEEQHk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 12:06:15 -0400
+        Wed, 5 May 2021 12:07:40 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D080C061574;
-        Wed,  5 May 2021 09:05:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0DC4C061574;
+        Wed,  5 May 2021 09:06:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=jPCNwLjCwwQAbTC1RHddm3f3nvTcQdsxJ2NVdh6ouWA=; b=cfoSv8qclcCDE0I17evVlPGiIN
-        TRURmhsUuXKB5zBTHnhXRgQqw9I5t3sUPbOofM0ScQJdWzOdkBmXvc1zr5HQ64krjWOeSTm3AUyvJ
-        PQo4jv+j/eWw30ODJJe4iSrP8gSxcgerfgZEbU/FlbbPEtNKI0cRrLDlZLIr8Az6997CPjeQ6beVy
-        nKSA8nvlnXQp+7XtyB8wTbJjSi3V++o/R7iyOoj06Y14FBEw5ULFRs3osYLsQKSbvt7Boi62YtDzl
-        s9NPFVCQmffcgTYyJKUiKS183SLgFQEApruXysUneGsQw6INs/0Ux3npsbz5JIsrHSWnU3BA4SUYu
-        IpQeRwtQ==;
+        bh=V5YX9ZMAcZXWVYDziUuUHkUQUGYF/zIoLuAsJD8P4xQ=; b=hPK2Kio968bjYkacnz3ZBDz/w1
+        fjyvBe3xngJdARj48yvpC33cAfE1/E3pwEstBPwjcba0ig0Ra0MDvo8c8Bz4LH3mN7AstGk4Xy8H6
+        fp+AhM/XSv/Ago9xxNYGEzNqRNWZAbM8LYGKpuEw4kmPMmM4AlciBuzGyHzegLNdNZnBHM2ZEkWyB
+        RsryE/qQbqyvxWywSBXkM+OCzlPeltBtKLeAeDFM07cS8nDei/Ny0J/j8YFb/ix+aaMNT1J5V0I+g
+        GKLXQ/jseOok0CTX9wsQJxJBMuevCVkHs0NdahzT3uKYdugrwY0Vp2hnp1neL6tS0HjEf+wIRCLRL
+        WFYQXmrw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1leJzx-000YmZ-IR; Wed, 05 May 2021 16:04:14 +0000
+        id 1leK0t-000Yur-7F; Wed, 05 May 2021 16:04:49 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v9 46/96] mm: Add flush_dcache_folio
-Date:   Wed,  5 May 2021 16:05:38 +0100
-Message-Id: <20210505150628.111735-47-willy@infradead.org>
+Subject: [PATCH v9 47/96] mm: Add arch_make_folio_accessible
+Date:   Wed,  5 May 2021 16:05:39 +0100
+Message-Id: <20210505150628.111735-48-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210505150628.111735-1-willy@infradead.org>
 References: <20210505150628.111735-1-willy@infradead.org>
@@ -43,61 +43,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a default implementation which calls flush_dcache_page() on
-each page in the folio.  If architectures can do better, they should
-implement their own version of it.
+As a default implementation, call arch_make_page_accessible n times.
+If an architecture can do better, it can override this.
+
+Also move the default implementation of arch_make_page_accessible()
+from gfp.h to mm.h.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- Documentation/core-api/cachetlb.rst |  6 ++++++
- include/asm-generic/cacheflush.h    | 14 ++++++++++++++
- 2 files changed, 20 insertions(+)
+ include/linux/gfp.h |  6 ------
+ include/linux/mm.h  | 21 +++++++++++++++++++++
+ 2 files changed, 21 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/core-api/cachetlb.rst b/Documentation/core-api/cachetlb.rst
-index fe4290e26729..29682f69a915 100644
---- a/Documentation/core-api/cachetlb.rst
-+++ b/Documentation/core-api/cachetlb.rst
-@@ -325,6 +325,12 @@ maps this page at its virtual address.
- 			dirty.  Again, see sparc64 for examples of how
- 			to deal with this.
- 
-+  ``void flush_dcache_folio(struct folio *folio)``
-+	This function is called under the same circumstances as
-+	flush_dcache_page().  It allows the architecture to
-+	optimise for flushing the entire folio of pages instead
-+	of flushing one page at a time.
-+
-   ``void copy_to_user_page(struct vm_area_struct *vma, struct page *page,
-   unsigned long user_vaddr, void *dst, void *src, int len)``
-   ``void copy_from_user_page(struct vm_area_struct *vma, struct page *page,
-diff --git a/include/asm-generic/cacheflush.h b/include/asm-generic/cacheflush.h
-index 4a674db4e1fa..0155357b840f 100644
---- a/include/asm-generic/cacheflush.h
-+++ b/include/asm-generic/cacheflush.h
-@@ -49,9 +49,23 @@ static inline void flush_cache_page(struct vm_area_struct *vma,
- static inline void flush_dcache_page(struct page *page)
- {
- }
-+
-+static inline void flush_dcache_folio(struct folio *folio) { }
- #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 0
-+#define ARCH_IMPLEMENTS_FLUSH_DCACHE_FOLIO
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index 11da8af06704..a503d928e684 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -508,12 +508,6 @@ static inline void arch_free_page(struct page *page, int order) { }
+ #ifndef HAVE_ARCH_ALLOC_PAGE
+ static inline void arch_alloc_page(struct page *page, int order) { }
  #endif
+-#ifndef HAVE_ARCH_MAKE_PAGE_ACCESSIBLE
+-static inline int arch_make_page_accessible(struct page *page)
+-{
+-	return 0;
+-}
+-#endif
  
-+#ifndef ARCH_IMPLEMENTS_FLUSH_DCACHE_FOLIO
-+static inline void flush_dcache_folio(struct folio *folio)
+ struct page *__alloc_pages(gfp_t gfp, unsigned int order, int preferred_nid,
+ 		nodemask_t *nodemask);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 6bfc43309e4b..75279db82040 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1725,6 +1725,27 @@ static inline size_t folio_size(struct folio *folio)
+ 	return PAGE_SIZE << folio_order(folio);
+ }
+ 
++#ifndef HAVE_ARCH_MAKE_PAGE_ACCESSIBLE
++static inline int arch_make_page_accessible(struct page *page)
 +{
-+	unsigned int n = folio_nr_pages(folio);
-+
-+	do {
-+		n--;
-+		flush_dcache_page(nth_page(&folio->page, n));
-+	} while (n);
++	return 0;
 +}
 +#endif
- 
- #ifndef flush_dcache_mmap_lock
- static inline void flush_dcache_mmap_lock(struct address_space *mapping)
++
++#ifndef HAVE_ARCH_MAKE_FOLIO_ACCESSIBLE
++static inline int arch_make_folio_accessible(struct folio *folio)
++{
++	int ret, i;
++	for (i = 0; i < folio_nr_pages(folio); i++) {
++		ret = arch_make_page_accessible(folio_page(folio, i));
++		if (ret)
++			break;
++	}
++
++	return ret;
++}
++#endif
++
+ /*
+  * Some inline functions in vmstat.h depend on page_zone()
+  */
 -- 
 2.30.2
 
