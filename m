@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FF08373EFF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 17:53:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8DF8373F07
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 May 2021 17:55:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233575AbhEEPyT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 May 2021 11:54:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57066 "EHLO
+        id S233577AbhEEP43 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 May 2021 11:56:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230437AbhEEPyR (ORCPT
+        with ESMTP id S233492AbhEEP40 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 11:54:17 -0400
+        Wed, 5 May 2021 11:56:26 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B4B1C061574;
-        Wed,  5 May 2021 08:53:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AFB9C061574;
+        Wed,  5 May 2021 08:55:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=//OZUZ3SsIacRa4QbrEsdejD5ba7FHxM1Qz1ZvA8ftU=; b=sqnO2i8O9CgWgQrmP1rAE7QlTD
-        Z7ad+85cscftUt57TbwY9uTEhjJiJ9IOYsH05d9TSLdYUwNlFhC8FYxnXeXYQ2zGYckPlfcVM1Ulh
-        Fb+xsc6E6RXP/UDAwmCpz4uCYhCdtFndp6vQFfRhKvgtaDVJgQqfflqDiXhXfZ9S/gesqXerJ+JbI
-        ICJlxpBCFJvxNkjJJ7NPgni87GfymupHiBG8aH4rhF9EFaFIHEplI/qgf0Npd71YmMfAQFDo6R2JW
-        418zE3EGcf63gvrnTzh9kQKgHA+CuNXykVYfA5D4cTZ/fWdsn5ZesYrLOXQKVp+LjNj0MdHHL86bP
-        qepYEYAQ==;
+        bh=7ZujwQK+F+V+eb8PV0mkdTA8YTFwCzly6sKqWGbeLmY=; b=rvORY8LG71mvwivqveM9Ol1ZbW
+        9ZctTXIE4wY+eLX9zDYSi8DusoybAMzTNBXsk6+6YbY2Kk/7hrTPPMKadMIxlGltp/tbJGm1dL6s0
+        Fh7nin6pWTCrl8eP+X3UUvgXYb87U5OeV8gW4HNxme5CXG7f5Si7hfCRtEMI1geVSZGDVAxVtABtR
+        LSBNOGYKWiZW2AkhXXFyP9pk+w1Ihg+UYpJorlzOx87YwOsSNCoTPVAXnsXW8e6YxcFl9FKYRBBVR
+        X/oVFBzcPWvBt40h9Gph8/5Hid2G6QpwVUSiOJiFGdyWCFAjAbMYv/Z7BcUQCZev6QOWsDWzGn1WZ
+        9oE7rQqQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1leJnP-000WzY-Ch; Wed, 05 May 2021 15:51:04 +0000
+        id 1leJp2-000X5q-2K; Wed, 05 May 2021 15:53:03 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
         Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v9 36/96] mm/filemap: Add folio_wake_bit
-Date:   Wed,  5 May 2021 16:05:28 +0100
-Message-Id: <20210505150628.111735-37-willy@infradead.org>
+Subject: [PATCH v9 37/96] mm/filemap: Convert page wait queues to be folios
+Date:   Wed,  5 May 2021 16:05:29 +0100
+Message-Id: <20210505150628.111735-38-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210505150628.111735-1-willy@infradead.org>
 References: <20210505150628.111735-1-willy@infradead.org>
@@ -44,83 +44,232 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert wake_up_page_bit() to folio_wake_bit().  All callers have a folio,
-so use it directly.
+Reinforce that page flags are actually in the head page by changing the
+type from page to folio.  Increases the size of cachefiles by two bytes,
+but the kernel core is unchanged in size.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Acked-by: Jeff Layton <jlayton@kernel.org>
 ---
- mm/filemap.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ fs/cachefiles/rdwr.c    | 16 ++++++++--------
+ include/linux/pagemap.h |  8 ++++----
+ mm/filemap.c            | 38 +++++++++++++++++++-------------------
+ 3 files changed, 31 insertions(+), 31 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index ab66e637eb5a..f5cb6464fe37 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1121,14 +1121,14 @@ static int wake_page_function(wait_queue_entry_t *wait, unsigned mode, int sync,
- 	return (flags & WQ_FLAG_EXCLUSIVE) != 0;
+diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
+index 8ffc40e84a59..e211a3d5ba44 100644
+--- a/fs/cachefiles/rdwr.c
++++ b/fs/cachefiles/rdwr.c
+@@ -25,20 +25,20 @@ static int cachefiles_read_waiter(wait_queue_entry_t *wait, unsigned mode,
+ 	struct cachefiles_object *object;
+ 	struct fscache_retrieval *op = monitor->op;
+ 	struct wait_page_key *key = _key;
+-	struct page *page = wait->private;
++	struct folio *folio = wait->private;
+ 
+ 	ASSERT(key);
+ 
+ 	_enter("{%lu},%u,%d,{%p,%u}",
+ 	       monitor->netfs_page->index, mode, sync,
+-	       key->page, key->bit_nr);
++	       key->folio, key->bit_nr);
+ 
+-	if (key->page != page || key->bit_nr != PG_locked)
++	if (key->folio != folio || key->bit_nr != PG_locked)
+ 		return 0;
+ 
+-	_debug("--- monitor %p %lx ---", page, page->flags);
++	_debug("--- monitor %p %lx ---", folio, folio->flags);
+ 
+-	if (!PageUptodate(page) && !PageError(page)) {
++	if (!folio_uptodate(folio) && !folio_error(folio)) {
+ 		/* unlocked, not uptodate and not erronous? */
+ 		_debug("page probably truncated");
+ 	}
+@@ -107,7 +107,7 @@ static int cachefiles_read_reissue(struct cachefiles_object *object,
+ 	put_page(backpage2);
+ 
+ 	INIT_LIST_HEAD(&monitor->op_link);
+-	add_page_wait_queue(backpage, &monitor->monitor);
++	folio_add_wait_queue(page_folio(backpage), &monitor->monitor);
+ 
+ 	if (trylock_page(backpage)) {
+ 		ret = -EIO;
+@@ -294,7 +294,7 @@ static int cachefiles_read_backing_file_one(struct cachefiles_object *object,
+ 	get_page(backpage);
+ 	monitor->back_page = backpage;
+ 	monitor->monitor.private = backpage;
+-	add_page_wait_queue(backpage, &monitor->monitor);
++	folio_add_wait_queue(page_folio(backpage), &monitor->monitor);
+ 	monitor = NULL;
+ 
+ 	/* but the page may have been read before the monitor was installed, so
+@@ -548,7 +548,7 @@ static int cachefiles_read_backing_file(struct cachefiles_object *object,
+ 		get_page(backpage);
+ 		monitor->back_page = backpage;
+ 		monitor->monitor.private = backpage;
+-		add_page_wait_queue(backpage, &monitor->monitor);
++		folio_add_wait_queue(page_folio(backpage), &monitor->monitor);
+ 		monitor = NULL;
+ 
+ 		/* but the page may have been read before the monitor was
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 6c067ce340b5..7e00cde24de7 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -690,13 +690,13 @@ static inline pgoff_t linear_page_index(struct vm_area_struct *vma,
  }
  
--static void wake_up_page_bit(struct page *page, int bit_nr)
-+static void folio_wake_bit(struct folio *folio, int bit_nr)
+ struct wait_page_key {
+-	struct page *page;
++	struct folio *folio;
+ 	int bit_nr;
+ 	int page_match;
+ };
+ 
+ struct wait_page_queue {
+-	struct page *page;
++	struct folio *folio;
+ 	int bit_nr;
+ 	wait_queue_entry_t wait;
+ };
+@@ -704,7 +704,7 @@ struct wait_page_queue {
+ static inline bool wake_page_match(struct wait_page_queue *wait_page,
+ 				  struct wait_page_key *key)
  {
--	wait_queue_head_t *q = page_waitqueue(page);
-+	wait_queue_head_t *q = page_waitqueue(&folio->page);
+-	if (wait_page->page != key->page)
++	if (wait_page->folio != key->folio)
+ 	       return false;
+ 	key->page_match = 1;
+ 
+@@ -860,7 +860,7 @@ int wait_on_page_private_2_killable(struct page *page);
+ /*
+  * Add an arbitrary waiter to a page's wait queue
+  */
+-extern void add_page_wait_queue(struct page *page, wait_queue_entry_t *waiter);
++void folio_add_wait_queue(struct folio *folio, wait_queue_entry_t *waiter);
+ 
+ /*
+  * Fault everything in given userspace address range in.
+diff --git a/mm/filemap.c b/mm/filemap.c
+index f5cb6464fe37..c4a53cffffb0 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1019,11 +1019,11 @@ EXPORT_SYMBOL(__page_cache_alloc);
+  */
+ #define PAGE_WAIT_TABLE_BITS 8
+ #define PAGE_WAIT_TABLE_SIZE (1 << PAGE_WAIT_TABLE_BITS)
+-static wait_queue_head_t page_wait_table[PAGE_WAIT_TABLE_SIZE] __cacheline_aligned;
++static wait_queue_head_t folio_wait_table[PAGE_WAIT_TABLE_SIZE] __cacheline_aligned;
+ 
+-static wait_queue_head_t *page_waitqueue(struct page *page)
++static wait_queue_head_t *folio_waitqueue(struct folio *folio)
+ {
+-	return &page_wait_table[hash_ptr(page, PAGE_WAIT_TABLE_BITS)];
++	return &folio_wait_table[hash_ptr(folio, PAGE_WAIT_TABLE_BITS)];
+ }
+ 
+ void __init pagecache_init(void)
+@@ -1031,7 +1031,7 @@ void __init pagecache_init(void)
+ 	int i;
+ 
+ 	for (i = 0; i < PAGE_WAIT_TABLE_SIZE; i++)
+-		init_waitqueue_head(&page_wait_table[i]);
++		init_waitqueue_head(&folio_wait_table[i]);
+ 
+ 	page_writeback_init();
+ }
+@@ -1086,10 +1086,10 @@ static int wake_page_function(wait_queue_entry_t *wait, unsigned mode, int sync,
+ 	 */
+ 	flags = wait->flags;
+ 	if (flags & WQ_FLAG_EXCLUSIVE) {
+-		if (test_bit(key->bit_nr, &key->page->flags))
++		if (test_bit(key->bit_nr, &key->folio->flags))
+ 			return -1;
+ 		if (flags & WQ_FLAG_CUSTOM) {
+-			if (test_and_set_bit(key->bit_nr, &key->page->flags))
++			if (test_and_set_bit(key->bit_nr, &key->folio->flags))
+ 				return -1;
+ 			flags |= WQ_FLAG_DONE;
+ 		}
+@@ -1123,12 +1123,12 @@ static int wake_page_function(wait_queue_entry_t *wait, unsigned mode, int sync,
+ 
+ static void folio_wake_bit(struct folio *folio, int bit_nr)
+ {
+-	wait_queue_head_t *q = page_waitqueue(&folio->page);
++	wait_queue_head_t *q = folio_waitqueue(folio);
  	struct wait_page_key key;
  	unsigned long flags;
  	wait_queue_entry_t bookmark;
  
--	key.page = page;
-+	key.page = &folio->page;
+-	key.page = &folio->page;
++	key.folio = folio;
  	key.bit_nr = bit_nr;
  	key.page_match = 0;
  
-@@ -1163,7 +1163,7 @@ static void wake_up_page_bit(struct page *page, int bit_nr)
- 	 * page waiters.
- 	 */
- 	if (!waitqueue_active(q) || !key.page_match) {
--		ClearPageWaiters(page);
-+		folio_clear_waiters_flag(folio);
- 		/*
- 		 * It's possible to miss clearing Waiters here, when we woke
- 		 * our page waiters, but the hashed waitqueue has waiters for
-@@ -1179,7 +1179,7 @@ static void folio_wake(struct folio *folio, int bit)
+@@ -1220,7 +1220,7 @@ int sysctl_page_lock_unfairness = 5;
+ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
+ 		int state, enum behavior behavior)
  {
- 	if (!folio_waiters(folio))
- 		return;
--	wake_up_page_bit(&folio->page, bit);
-+	folio_wake_bit(folio, bit);
+-	wait_queue_head_t *q = page_waitqueue(&folio->page);
++	wait_queue_head_t *q = folio_waitqueue(folio);
+ 	int unfairness = sysctl_page_lock_unfairness;
+ 	struct wait_page_queue wait_page;
+ 	wait_queue_entry_t *wait = &wait_page.wait;
+@@ -1240,7 +1240,7 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
+ 
+ 	init_wait(wait);
+ 	wait->func = wake_page_function;
+-	wait_page.page = &folio->page;
++	wait_page.folio = folio;
+ 	wait_page.bit_nr = bit_nr;
+ 
+ repeat:
+@@ -1389,23 +1389,23 @@ int put_and_wait_on_page_locked(struct page *page, int state)
  }
  
- /*
-@@ -1444,7 +1444,7 @@ void folio_unlock(struct folio *folio)
- 	BUILD_BUG_ON(PG_waiters != 7);
- 	VM_BUG_ON_FOLIO(!folio_locked(folio), folio);
- 	if (clear_bit_unlock_is_negative_byte(PG_locked, folio_flags(folio, 0)))
--		wake_up_page_bit(&folio->page, PG_locked);
-+		folio_wake_bit(folio, PG_locked);
- }
- EXPORT_SYMBOL(folio_unlock);
- 
-@@ -1461,11 +1461,12 @@ EXPORT_SYMBOL(folio_unlock);
+ /**
+- * add_page_wait_queue - Add an arbitrary waiter to a page's wait queue
+- * @page: Page defining the wait queue of interest
++ * folio_add_wait_queue - Add an arbitrary waiter to a folio's wait queue
++ * @folio: Folio defining the wait queue of interest
+  * @waiter: Waiter to add to the queue
+  *
+- * Add an arbitrary @waiter to the wait queue for the nominated @page.
++ * Add an arbitrary @waiter to the wait queue for the nominated @folio.
   */
- void end_page_private_2(struct page *page)
+-void add_page_wait_queue(struct page *page, wait_queue_entry_t *waiter)
++void folio_add_wait_queue(struct folio *folio, wait_queue_entry_t *waiter)
  {
--	page = compound_head(page);
--	VM_BUG_ON_PAGE(!PagePrivate2(page), page);
--	clear_bit_unlock(PG_private_2, &page->flags);
--	wake_up_page_bit(page, PG_private_2);
--	put_page(page);
-+	struct folio *folio = page_folio(page);
-+
-+	VM_BUG_ON_FOLIO(!folio_private_2(folio), folio);
-+	clear_bit_unlock(PG_private_2, folio_flags(folio, 0));
-+	folio_wake_bit(folio, PG_private_2);
-+	folio_put(folio);
- }
- EXPORT_SYMBOL(end_page_private_2);
+-	wait_queue_head_t *q = page_waitqueue(page);
++	wait_queue_head_t *q = folio_waitqueue(folio);
+ 	unsigned long flags;
  
+ 	spin_lock_irqsave(&q->lock, flags);
+ 	__add_wait_queue_entry_tail(q, waiter);
+-	SetPageWaiters(page);
++	folio_set_waiters_flag(folio);
+ 	spin_unlock_irqrestore(&q->lock, flags);
+ }
+-EXPORT_SYMBOL_GPL(add_page_wait_queue);
++EXPORT_SYMBOL_GPL(folio_add_wait_queue);
+ 
+ #ifndef clear_bit_unlock_is_negative_byte
+ 
+@@ -1593,10 +1593,10 @@ EXPORT_SYMBOL_GPL(__folio_lock_killable);
+ 
+ static int __folio_lock_async(struct folio *folio, struct wait_page_queue *wait)
+ {
+-	struct wait_queue_head *q = page_waitqueue(&folio->page);
++	struct wait_queue_head *q = folio_waitqueue(folio);
+ 	int ret = 0;
+ 
+-	wait->page = &folio->page;
++	wait->folio = folio;
+ 	wait->bit_nr = PG_locked;
+ 
+ 	spin_lock_irq(&q->lock);
 -- 
 2.30.2
 
