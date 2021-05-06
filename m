@@ -2,62 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3378D375BD3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 May 2021 21:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE8FD375BF0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 May 2021 21:46:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235405AbhEFTgg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 May 2021 15:36:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59912 "EHLO
+        id S230123AbhEFTrI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 May 2021 15:47:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235390AbhEFTgf (ORCPT
+        with ESMTP id S229710AbhEFTrI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 May 2021 15:36:35 -0400
+        Thu, 6 May 2021 15:47:08 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E387CC061574;
-        Thu,  6 May 2021 12:35:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26392C061574;
+        Thu,  6 May 2021 12:46:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=WwyTS8f7LxDaulW6rkzWRyAKkCW92/fyupXmJhT339M=; b=CzQY/lp8TtUNWtubgal/819krU
-        FA41ge5VfnD1bhDpucKUyGqOx8w8uUHRrRXrFUzqaNtG3xvd7A2vnRauzlgeHz596GOXDAV9sp1aF
-        m960BV4oeTsw2VIvoq+MPU1XLT3kzip8KrH4TOnzCYsgPe4yHF0uhc4I7kUTr7Ty+w1Yez4EsEmEh
-        F9q5dwgKNdz25NeJCKY7+oH6BGR8oTEqLflxQ0SM8mugN0Cj0vbXw27ciSBe/ACP0zgviakBvZ64v
-        Lr9Z4vYyaaLznN8HSqDOasTaRbPk+iJvYYXTY5vtpNWTSxeREpwGbSDKBmnY0pnehlr/xBR6MVGUj
-        wnzgjk/g==;
+        bh=v8nUrKHIOf/xBkkvxKzROgJf3R7JMgZROTDDpidrAP4=; b=UInkFEPxf/4afmSMFO005x2rlZ
+        B38n+XPLFiEmlDIk+s7Tdal8G3W77R4P5YmhyvGASPCPIO0cfH/IpgJ9fphC7CA6LAVeE9kl+uNec
+        lAqYXqgaiG6psFLnZjuBh4nodG19c3I1I3sx7JzxKReUDtgjN3IIafzcsoYj//G/Jn5vVPaKSd1Mh
+        lflOFl6Kt2qB/FZRjZigambfyFQ77FxPfL5DN2BicjFSzMff69+E51lVgHqb6QCBJ1ibHLo5uHyB8
+        69C25817SgK3ttyIalbXpOMwB21231jVtNs/4pibmWzIobw/ZYVBbUJz/xwdWwJPOQH9d56qDnWPG
+        +Q/nZ/kw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lejmH-0029u3-KK; Thu, 06 May 2021 19:35:23 +0000
-Date:   Thu, 6 May 2021 20:35:17 +0100
+        id 1lejwM-002AMf-8x; Thu, 06 May 2021 19:45:46 +0000
+Date:   Thu, 6 May 2021 20:45:42 +0100
 From:   Matthew Wilcox <willy@infradead.org>
-To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        virtio-fs@redhat.com, miklos@szeredi.hu,
-        linux-kernel@vger.kernel.org, dan.carpenter@oracle.com
-Subject: Re: [PATCH 1/2] virtiofs, dax: Fix smatch warning about loss of info
- during shift
-Message-ID: <20210506193517.GF388843@casper.infradead.org>
-References: <20210506184304.321645-1-vgoyal@redhat.com>
- <20210506184304.321645-2-vgoyal@redhat.com>
- <YJQ+ex2DUPYo1GV5@work-vm>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Brian Foster <bfoster@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] xfs: kick extra large ioends to completion
+ workqueue
+Message-ID: <20210506194542.GG388843@casper.infradead.org>
+References: <20201002153357.56409-3-bfoster@redhat.com>
+ <20201005152102.15797-1-bfoster@redhat.com>
+ <20201006035537.GD49524@magnolia>
+ <20201006140720.GQ20115@casper.infradead.org>
+ <20210506193406.GE8582@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YJQ+ex2DUPYo1GV5@work-vm>
+In-Reply-To: <20210506193406.GE8582@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 06, 2021 at 08:07:39PM +0100, Dr. David Alan Gilbert wrote:
-> > @@ -186,7 +186,7 @@ static int fuse_setup_one_mapping(struct inode *inode, unsigned long start_idx,
-> >  	struct fuse_conn_dax *fcd = fm->fc->dax;
-> >  	struct fuse_inode *fi = get_fuse_inode(inode);
-> >  	struct fuse_setupmapping_in inarg;
-> > -	loff_t offset = start_idx << FUSE_DAX_SHIFT;
-> > +	loff_t offset = (loff_t)start_idx << FUSE_DAX_SHIFT;
+On Thu, May 06, 2021 at 12:34:06PM -0700, Darrick J. Wong wrote:
+> On Tue, Oct 06, 2020 at 03:07:20PM +0100, Matthew Wilcox wrote:
+> > On Mon, Oct 05, 2020 at 08:55:37PM -0700, Darrick J. Wong wrote:
+> > > On Mon, Oct 05, 2020 at 11:21:02AM -0400, Brian Foster wrote:
+> > > > We've had reports of soft lockup warnings in the iomap ioend
+> > > > completion path due to very large bios and/or bio chains. Divert any
+> > > > ioends with 256k or more pages to process to the workqueue so
+> > > > completion occurs in non-atomic context and can reschedule to avoid
+> > > > soft lockup warnings.
+> > > 
+> > > Hmmmm... is there any way we can just make end_page_writeback faster?
+> > 
+> > There are ways to make it faster.  I don't know if they're a "just"
+> > solution ...
+> > 
+> > 1. We can use THPs.  That will reduce the number of pages being operated
+> > on.  I hear somebody might have a patch set for that.  Incidentally,
+> > this patch set will clash with the THP patchset, so one of us is going to
+> > have to rebase on the other's work.  Not a complaint, just acknowledging
+> > that some coordination will be needed for the 5.11 merge window.
 > 
-> I've not followed the others back, but isn't it easier to change
-> the start_idx parameter to be a loff_t, since the places it's called
-> from are poth loff_t pos?
+> How far off is this, anyway?  I assume it's in line behind the folio
+> series?
 
-But an index isn't a file offset, and shouldn't be typed as such.
+Right.  The folio series found all kinds of fun places where the
+accounting was wrong (eg accounting for an N-page I/O as a single page),
+so the THP work is all renamed folio now.  The folio patchset I posted
+yesterday [1] is _most_ of what is necessary from an XFS point of view.
+There's probably another three dozen mm patches to actually enable
+multi-page folios after that, and a lot more patches to optimise the
+mm/vfs for multi-page folios, but your side of things is almost all
+published and reviewable.
 
+[1] https://lore.kernel.org/linux-fsdevel/20210505150628.111735-1-willy@infradead.org/
+
+> > 2. We could create end_writeback_pages(struct pagevec *pvec) which
+> > calls a new test_clear_writeback_pages(pvec).  That could amortise
+> > taking the memcg lock and finding the lruvec and taking the mapping
+> > lock -- assuming these pages are sufficiently virtually contiguous.
+> > It can definitely amortise all the statistics updates.
+> 
+> /me kinda wonders if THPs arent the better solution for people who want
+> to run large ios.
+
+Yes, definitely.  It does rather depend on their usage patterns,
+but if they're working on a file-contiguous chunk of memory, this
+can help a lot.
+
+> > 3. We can make wake_up_page(page, PG_writeback); more efficient.  If
+> > you can produce this situation on demand, I had a patch for that which
+> > languished due to lack of interest.
+> 
+> I can (well, someone can) so I'll talk to you internally about their
+> seeekret reproducer.
+
+Fantastic.  If it's something that needs to get backported to a
+stable-ABI kernel ... this isn't going to be a viable solution.
