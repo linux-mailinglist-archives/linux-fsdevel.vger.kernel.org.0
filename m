@@ -2,116 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 75BB8374CB5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 May 2021 03:08:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94DFC374CB7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 May 2021 03:08:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229687AbhEFBJR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 May 2021 21:09:17 -0400
-Received: from mail.kingsoft.com ([114.255.44.146]:3060 "EHLO
-        mail.kingsoft.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229465AbhEFBJP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 21:09:15 -0400
-X-Greylist: delayed 719 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 May 2021 21:09:15 EDT
-X-AuditID: 0a580155-c83ff700000401e3-45-6093417f4c7f
-Received: from mail.kingsoft.com (localhost [10.88.1.79])
-        (using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client did not present a certificate)
-        by mail.kingsoft.com (SMG-2-NODE-85) with SMTP id 85.BA.00483.F7143906; Thu,  6 May 2021 09:08:15 +0800 (HKT)
-Received: from alex-virtual-machine (10.88.1.103) by KSBJMAIL4.kingsoft.cn
- (10.88.1.79) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Thu, 6 May 2021
- 09:08:13 +0800
-Date:   Thu, 6 May 2021 09:08:07 +0800
-From:   Aili Yao <yaoaili@kingsoft.com>
-To:     Michal Hocko <mhocko@suse.com>
-CC:     David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "Alexey Dobriyan" <adobriyan@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Roman Gushchin <guro@fb.com>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        "Steven Price" <steven.price@arm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Jiri Bohac" <jbohac@suse.cz>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        "Haiyang Zhang" <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        <linux-hyperv@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <yaoaili126@gmail.com>
-Subject: Re: [PATCH v1 3/7] mm: rename and move page_is_poisoned()
-Message-ID: <20210506090807.5a7b8691@alex-virtual-machine>
-In-Reply-To: <YJKhi6T33UmiZ/kE@dhcp22.suse.cz>
-References: <20210429122519.15183-1-david@redhat.com>
-        <20210429122519.15183-4-david@redhat.com>
-        <YJKZ5yXdl18m9YSM@dhcp22.suse.cz>
-        <0710d8d5-2608-aeed-10c7-50a272604d97@redhat.com>
-        <YJKdS+Q8CgSlgmFf@dhcp22.suse.cz>
-        <57ac524c-b49a-99ec-c1e4-ef5027bfb61b@redhat.com>
-        <YJKhi6T33UmiZ/kE@dhcp22.suse.cz>
-Organization: kingsoft
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S229872AbhEFBJV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 May 2021 21:09:21 -0400
+Received: from mx21.baidu.com ([220.181.3.85]:40406 "EHLO baidu.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229768AbhEFBJT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 May 2021 21:09:19 -0400
+Received: from BC-Mail-Ex17.internal.baidu.com (unknown [172.31.51.11])
+        by Forcepoint Email with ESMTPS id 702F2C581018852B74DE;
+        Thu,  6 May 2021 09:08:14 +0800 (CST)
+Received: from BC-Mail-Ex20.internal.baidu.com (172.31.51.14) by
+ BC-Mail-Ex17.internal.baidu.com (172.31.51.11) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2242.4; Thu, 6 May 2021 09:08:14 +0800
+Received: from BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) by
+ BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) with mapi id 15.01.2242.008;
+ Thu, 6 May 2021 09:08:13 +0800
+From:   "Chu,Kaiping" <chukaiping@baidu.com>
+To:     Rafael Aquini <aquini@redhat.com>
+CC:     "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "yzaikin@google.com" <yzaikin@google.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "nigupta@nvidia.com" <nigupta@nvidia.com>,
+        "bhe@redhat.com" <bhe@redhat.com>,
+        "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>,
+        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
+        "mateusznosek0@gmail.com" <mateusznosek0@gmail.com>,
+        "sh_def@163.com" <sh_def@163.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRDSCB2M10gbW0vY29tcGFjdGlvbjpsZXQg?=
+ =?utf-8?Q?proactive_compaction_order_configurable?=
+Thread-Topic: =?utf-8?B?562U5aSNOiBbUEFUQ0ggdjNdIG1tL2NvbXBhY3Rpb246bGV0IHByb2FjdGl2?=
+ =?utf-8?Q?e_compaction_order_configurable?=
+Thread-Index: AQHXOjvUEYLrBaldBU+yjbigXZxebarJI3/QgAJCYICACk14IA==
+Date:   Thu, 6 May 2021 01:08:13 +0000
+Message-ID: <3040239c32144c5caf44e0c96afa4c49@baidu.com>
+References: <1619313662-30356-1-git-send-email-chukaiping@baidu.com>
+ <YIYX22JLVHN1PhGs@t490s.aquini.net>
+ <f355248969f14e5897ad6dcfe3834297@baidu.com> <YIsM4UtV9UqKhsNB@optiplex-fbsd>
+In-Reply-To: <YIsM4UtV9UqKhsNB@optiplex-fbsd>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.22.194.18]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.88.1.103]
-X-ClientProxiedBy: KSBJMAIL1.kingsoft.cn (10.88.1.31) To KSBJMAIL4.kingsoft.cn
- (10.88.1.79)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFIsWRmVeSWpSXmKPExsXCFcHor1vvODnBYNcfPYvpjV4Wc9avYbNY
-        d7yL2eLr+l9AYtIFNotr2z0sll36zGRx4+BmNosnq7eyW+zZe5LFYurED2wWl3fNYbO4t+Y/
-        q8X9PgeLj/uDLf7/esVqcbHxAKPFmWlFFkfWb2eyaDzyns3i7eGDzBbLz85jszi86RaTxe8f
-        QI3PWq+yOEh6rJm3htFjYvM7do+ds+6ye2xeoeWxaVUnm8emT5PYPU7M+M3isfOhpcfkG8sZ
-        PVp3/GX3eHF1I4vHx6e3WDze77vK5rF+y1UWjzMLjgB1nq4OEIzisklJzcksSy3St0vgynje
-        m1RwjqPi3hypBsbDbF2MnBwSAiYSbzYeZu5i5OIQEpjOJDF16j92COcZo8THtU+BMhwcLAIq
-        EieWRYA0sAmoSuy6N4sVxBYRUJLo2ryTDaSeWaCdXaLj+wywhLCAk8Tx5zcZQWxeASuJlTf3
-        gcU5BfQkbk55zgSxYCuTxMSGxSwgCX4BMYneK/+ZQJZJCNhLPF6vCNErKHFy5hOwEmYBHYkT
-        q44xQ9jyEtvfzgGzhQQUJQ4v+cUO8Y28xN3f0xkh7FiJpgO32CYwCs9CMmoWklGzkIxawMi8
-        ipGlODfdaBMjJDmE7mCc0fRR7xAjEwfjIUYJDmYlEd6Ctf0JQrwpiZVVqUX58UWlOanFhxil
-        OViUxHnZC7sShATSE0tSs1NTC1KLYLJMHJxSDUzLRXWXLGk6reP3V4nz66O/KW/XMMlExEm2
-        yrRsTS7fWnAqv6sgZ49Lmnj20kfJYQUfNJ4JTHc0l1i5bY6vyAORj8t+SRYKbzz17LiQ0Lop
-        V90t9a+evPtgG3Pynl0m6mcfCBzduzI9/ueUpGm9C9jObfb8vO3a8SeWn/9aVwqtfKQ4x+Ty
-        0Vm3ZRbVy4fKagjscW/h/7urkFniRNllMVmutuNL3zJkH+oMUf/mqn1SWP+aSeztP/IH9f7s
-        elSZerCsYiNvqYEA1+es1iPqKZVWHsfqxDllT7y7bxog1swSIHrvUXbmXF/x8qTtae5unAkW
-        9eo+56ttDXPvPljXstZk55zwx3La6i27+K9J7FBiKc5INNRiLipOBAAQjQW8fQMAAA==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 5 May 2021 15:45:47 +0200
-Michal Hocko <mhocko@suse.com> wrote:
-
-> On Wed 05-05-21 15:39:08, David Hildenbrand wrote:
-> > > > Long story short, this should be good enough for the cases we actually can
-> > > > handle? What am I missing?  
-> > > 
-> > > I am not sure I follow. My point is that I fail to see any added value
-> > > of the check as it doesn't prevent the race (it fundamentally cannot as
-> > > the page can be poisoned at any time) but the failure path doesn't
-> > > put_page which is incorrect even for hwpoison pages.  
-> > 
-> > Oh, I think you are right. If we have a page and return NULL we would leak a
-> > reference.
-> > 
-> > Actually, we discussed in that thread handling this entirely differently,
-> > which resulted in a v7 [1]; however Andrew moved forward with this
-> > (outdated?) patch, maybe that was just a mistake?
-> > 
-> > Yes, I agree we should revert that patch for now.  
-> 
-> OK, Let me send the revert to Andrew.
-> 
-
-Got this!
-Anyway, I will try to post a new patch for this issue based on the previous patch v7.
-
-Thanks!
-Aili Yao
+DQoNCi0tLS0t6YKu5Lu25Y6f5Lu2LS0tLS0NCuWPkeS7tuS6ujogUmFmYWVsIEFxdWluaSA8YXF1
+aW5pQHJlZGhhdC5jb20+IA0K5Y+R6YCB5pe26Ze0OiAyMDIx5bm0NOaciDMw5pelIDM6NDYNCuaU
+tuS7tuS6ujogQ2h1LEthaXBpbmcgPGNodWthaXBpbmdAYmFpZHUuY29tPg0K5oqE6YCBOiBtY2dy
+b2ZAa2VybmVsLm9yZzsga2Vlc2Nvb2tAY2hyb21pdW0ub3JnOyB5emFpa2luQGdvb2dsZS5jb207
+IGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc7IHZiYWJrYUBzdXNlLmN6OyBuaWd1cHRhQG52aWRp
+YS5jb207IGJoZUByZWRoYXQuY29tOyBraGFsaWQuYXppekBvcmFjbGUuY29tOyBpYW1qb29uc29v
+LmtpbUBsZ2UuY29tOyBtYXRldXN6bm9zZWswQGdtYWlsLmNvbTsgc2hfZGVmQDE2My5jb207IGxp
+bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3Jn
+OyBsaW51eC1tbUBrdmFjay5vcmcNCuS4u+mimDogUmU6IOetlOWkjTogW1BBVENIIHYzXSBtbS9j
+b21wYWN0aW9uOmxldCBwcm9hY3RpdmUgY29tcGFjdGlvbiBvcmRlciBjb25maWd1cmFibGUNCg0K
+T24gV2VkLCBBcHIgMjgsIDIwMjEgYXQgMDE6MTc6NDBBTSArMDAwMCwgQ2h1LEthaXBpbmcgd3Jv
+dGU6DQo+IFBsZWFzZSBzZWUgbXkgYW5zd2VyIGlubGluZS4NCj4gDQo+IC0tLS0t6YKu5Lu25Y6f
+5Lu2LS0tLS0NCj4g5Y+R5Lu25Lq6OiBSYWZhZWwgQXF1aW5pIDxhcXVpbmlAcmVkaGF0LmNvbT4N
+Cj4g5Y+R6YCB5pe26Ze0OiAyMDIx5bm0NOaciDI25pelIDk6MzENCj4g5pS25Lu25Lq6OiBDaHUs
+S2FpcGluZyA8Y2h1a2FpcGluZ0BiYWlkdS5jb20+DQo+IOaKhOmAgTogbWNncm9mQGtlcm5lbC5v
+cmc7IGtlZXNjb29rQGNocm9taXVtLm9yZzsgeXphaWtpbkBnb29nbGUuY29tOyANCj4gYWtwbUBs
+aW51eC1mb3VuZGF0aW9uLm9yZzsgdmJhYmthQHN1c2UuY3o7IG5pZ3VwdGFAbnZpZGlhLmNvbTsg
+DQo+IGJoZUByZWRoYXQuY29tOyBraGFsaWQuYXppekBvcmFjbGUuY29tOyBpYW1qb29uc29vLmtp
+bUBsZ2UuY29tOyANCj4gbWF0ZXVzem5vc2VrMEBnbWFpbC5jb207IHNoX2RlZkAxNjMuY29tOyBs
+aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyANCj4gbGludXgtZnNkZXZlbEB2Z2VyLmtlcm5l
+bC5vcmc7IGxpbnV4LW1tQGt2YWNrLm9yZw0KPiDkuLvpopg6IFJlOiBbUEFUQ0ggdjNdIG1tL2Nv
+bXBhY3Rpb246bGV0IHByb2FjdGl2ZSBjb21wYWN0aW9uIG9yZGVyIA0KPiBjb25maWd1cmFibGUN
+Cj4gDQo+IE9uIFN1biwgQXByIDI1LCAyMDIxIGF0IDA5OjIxOjAyQU0gKzA4MDAsIGNodWthaXBp
+bmcgd3JvdGU6DQo+ID4gQ3VycmVudGx5IHRoZSBwcm9hY3RpdmUgY29tcGFjdGlvbiBvcmRlciBp
+cyBmaXhlZCB0byANCj4gPiBDT01QQUNUSU9OX0hQQUdFX09SREVSKDkpLCBpdCdzIE9LIGluIG1v
+c3QgbWFjaGluZXMgd2l0aCBsb3RzIG9mIA0KPiA+IG5vcm1hbCA0S0IgbWVtb3J5LCBidXQgaXQn
+cyB0b28gaGlnaCBmb3IgdGhlIG1hY2hpbmVzIHdpdGggc21hbGwgDQo+ID4gbm9ybWFsIG1lbW9y
+eSwgZm9yIGV4YW1wbGUgdGhlIG1hY2hpbmVzIHdpdGggbW9zdCBtZW1vcnkgY29uZmlndXJlZCAN
+Cj4gPiBhcyAxR0IgaHVnZXRsYmZzIGh1Z2UgcGFnZXMuIEluIHRoZXNlIG1hY2hpbmVzIHRoZSBt
+YXggb3JkZXIgb2YgZnJlZSANCj4gPiBwYWdlcyBpcyBvZnRlbiBiZWxvdyA5LCBhbmQgaXQncyBh
+bHdheXMgYmVsb3cgOSBldmVuIHdpdGggaGFyZCANCj4gPiBjb21wYWN0aW9uLiBUaGlzIHdpbGwg
+bGVhZCB0byBwcm9hY3RpdmUgY29tcGFjdGlvbiBiZSB0cmlnZ2VyZWQgdmVyeSANCj4gPiBmcmVx
+dWVudGx5LiBJbiB0aGVzZSBtYWNoaW5lcyB3ZSBvbmx5IGNhcmUgYWJvdXQgb3JkZXIgb2YgMyBv
+ciA0Lg0KPiA+IFRoaXMgcGF0Y2ggZXhwb3J0IHRoZSBvZGVyIHRvIHByb2MgYW5kIGxldCBpdCBj
+b25maWd1cmFibGUgYnkgdXNlciwgDQo+ID4gYW5kIHRoZSBkZWZhdWx0IHZhbHVlIGlzIHN0aWxs
+IENPTVBBQ1RJT05fSFBBR0VfT1JERVIuDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogY2h1a2Fp
+cGluZyA8Y2h1a2FpcGluZ0BiYWlkdS5jb20+DQo+ID4gUmVwb3J0ZWQtYnk6IGtlcm5lbCB0ZXN0
+IHJvYm90IDxsa3BAaW50ZWwuY29tPg0KPiANCj4gVHdvIG1pbm9yIG5pdHMgb24gdGhlIGNvbW1p
+dCBsb2cgbWVzc2FnZTogDQo+ICogdGhlcmUgc2VlbXMgdG8gYmUgYSB3aGl0ZXNwYWdlIG1pc3Np
+bmcgaW4geW91ciBzaG9ydCBsb2c6IA0KPiAgICIuLi4gbW0vY29tcGFjdGlvbjpsZXQgLi4uIg0K
+PiAtLT4gSSB3aWxsIGZpeCBpdCBpbiBuZXh0IHBhdGNoLg0KPiANCj4gKiBoYXMgdGhlIHBhdGgg
+cmVhbGx5IGJlZW4gcmVwb3J0ZWQgYnkgYSB0ZXN0IHJvYm90Pw0KPiAtLT4gWWVzLiBUaGVyZSBp
+cyBhIGNvbXBpbGUgZXJyb3IgaW4gdjEsIEkgZml4ZWQgaXQgaW4gdjIuDQo+DQoNCj4gU28sIG5v
+Li4uIHRoZSB0ZXN0IHJvYm90IHNob3VsZCBub3QgYmUgbGlzdGVkIGFzIFJlcG9ydGVkLWJ5LiAN
+CkkgZGlkIGl0IGFzIGJlbG93IHN1Z2dlc3Rpb24gaW4gdGhlIGJ1aWxkIGVycm9yIG5vdGlmaWNh
+dGlvbiBlbWFpbCBzZW50IGJ5IGtlcm5lbCB0ZXN0IHJvYm90Lg0KIiBJZiB5b3UgZml4IHRoZSBp
+c3N1ZSwga2luZGx5IGFkZCBmb2xsb3dpbmcgdGFnIGFzIGFwcHJvcHJpYXRlDQpSZXBvcnRlZC1i
+eToga2VybmVsIHRlc3Qgcm9ib3QgPGxrcEBpbnRlbC5jb20+Ig0KDQo=
