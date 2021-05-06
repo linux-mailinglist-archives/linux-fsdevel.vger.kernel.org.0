@@ -2,221 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C693D374DB7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 May 2021 04:53:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62BF7374F3F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 May 2021 08:13:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232380AbhEFCyg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 May 2021 22:54:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34212 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232096AbhEFCyf (ORCPT
+        id S230294AbhEFGOn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 May 2021 02:14:43 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:3855 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229813AbhEFGOm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 May 2021 22:54:35 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82DACC06174A
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 May 2021 19:53:37 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id t2-20020a17090ae502b029015b0fbfbc50so2654223pjy.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 May 2021 19:53:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YewfXLV+s6eseo7hxW6W1xEDd4aCTIQYY6fGFTM6318=;
-        b=1g6apy4Azt+HLbznoibVPTszQApPwt5wzruvbJC5FJnjkaIHYHo+Bkd4lgwAWi7NPW
-         FG2uf5WbZPNeI1sj9AWI79NRQyIGbGgASl8Hvh9TLzdRahLtITbx/vWLQcLAEOMeoqt6
-         o4CoFGCvqeBFGVkxvhGlpgZkReqTi1xh1Dh619tg3WDYfd+rUBX21oe8O4oiiW11A+/S
-         F/Fp3g5j0ChlmaFmRneBoxrv5Jxqs87Wd5p2WI+xAlYMSqilKnXV/Q4HJd34PXoHiOOF
-         CMc54ObYAPTg0Fe3Hd1Ammk7j0VlJY6u2D9DGWx8UTwCwMRl95U0OpcLwdtZAbsQSD57
-         UQ/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YewfXLV+s6eseo7hxW6W1xEDd4aCTIQYY6fGFTM6318=;
-        b=VAZFNS9HYC0nqSxkAdhXNEgcVeSaJbpwj1DPhraGBPTShzsgTcKoTd0I12wd1mbBaj
-         OR9/xgLqoS9dHQvGpAPARmKlsXM0V2HUfONWE/e6qpp7Wf5DRtziQ7e326NOtY7qCZKW
-         ES4+1HDiCCUC2JZ8m/s6q21cq3s4OrmX/oTdnyCvdAw2VXCfCTzGYBxpqUwpqKhc/ukr
-         upgzyUpI/iw8pEnIhi0/DPEhr+/wdU4mB2uwqNOhmED3pIVjWgTc+6BGtFkglM5Q362I
-         uCyVE0jgyujCFFgrji+YtG4mk2HYN+7NdkzFUe2/Afc6uWEiPEmpELZQSfPGyLO9dHs0
-         8wcA==
-X-Gm-Message-State: AOAM531afMoDbUGfQGAUYqJpRyWWd80X68eX3EY6wEVLpNO9W0j/2WP+
-        z9tmTHDp7H/4hR+KW3hb0OonzB+pVx+xYTT/VbZiNRkgbXs=
-X-Google-Smtp-Source: ABdhPJxB5teGJjRreLimTCPrUixDSsqCQ2MyfSkZEup9YXKNFbxR8Ed4DozyMoPQhS+fYL8hHVGbgv6P46OeJcEIY7I=
-X-Received: by 2002:a17:902:e54e:b029:ed:6ed2:d0ab with SMTP id
- n14-20020a170902e54eb02900ed6ed2d0abmr2031887plf.24.1620269616937; Wed, 05
- May 2021 19:53:36 -0700 (PDT)
+        Thu, 6 May 2021 02:14:42 -0400
+Received: from dggeml751-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4FbNV93XW6z5s1K;
+        Thu,  6 May 2021 14:10:25 +0800 (CST)
+Received: from dggema766-chm.china.huawei.com (10.1.198.208) by
+ dggeml751-chm.china.huawei.com (10.1.199.150) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Thu, 6 May 2021 14:13:41 +0800
+Received: from [10.174.177.210] (10.174.177.210) by
+ dggema766-chm.china.huawei.com (10.1.198.208) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Thu, 6 May 2021 14:13:40 +0800
+From:   yangerkun <yangerkun@huawei.com>
+Subject: Re: [BUG RERPORT] BUG_ON(!list_empty(&inode->i_wb_list))
+To:     Jan Kara <jack@suse.cz>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
+        "zhangyi (F)" <yi.zhang@huawei.com>, Hou Tao <houtao1@huawei.com>,
+        Ye Bin <yebin10@huawei.com>
+References: <27fd4b04-8b25-1c41-ea4c-0de45138e73d@huawei.com>
+ <20210505120640.GC29867@quack2.suse.cz>
+Message-ID: <b2a26f33-ad9d-c904-b972-5d7b34b8186c@huawei.com>
+Date:   Thu, 6 May 2021 14:13:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-References: <20210430031352.45379-1-songmuchun@bytedance.com>
- <20210430031352.45379-7-songmuchun@bytedance.com> <c2e8bc43-44dc-825d-9f59-0de300815fa4@oracle.com>
-In-Reply-To: <c2e8bc43-44dc-825d-9f59-0de300815fa4@oracle.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Thu, 6 May 2021 10:52:58 +0800
-Message-ID: <CAMZfGtWaSGCUaubv6kwc1hzRoc9=O2eXJBcU9t8bX3XeQtP9Yw@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v22 6/9] mm: hugetlb: alloc the vmemmap
- pages associated with each HugeTLB page
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        X86 ML <x86@kernel.org>, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        fam.zheng@bytedance.com, zhengqi.arch@bytedance.com,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210505120640.GC29867@quack2.suse.cz>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.177.210]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggema766-chm.china.huawei.com (10.1.198.208)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 6, 2021 at 6:21 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
->
-> On 4/29/21 8:13 PM, Muchun Song wrote:
-> > When we free a HugeTLB page to the buddy allocator, we need to allocate
-> > the vmemmap pages associated with it. However, we may not be able to
-> > allocate the vmemmap pages when the system is under memory pressure. In
-> > this case, we just refuse to free the HugeTLB page. This changes behavior
-> > in some corner cases as listed below:
-> >
-> >  1) Failing to free a huge page triggered by the user (decrease nr_pages).
-> >
-> >     User needs to try again later.
-> >
-> >  2) Failing to free a surplus huge page when freed by the application.
-> >
-> >     Try again later when freeing a huge page next time.
-> >
-> >  3) Failing to dissolve a free huge page on ZONE_MOVABLE via
-> >     offline_pages().
-> >
-> >     This can happen when we have plenty of ZONE_MOVABLE memory, but
-> >     not enough kernel memory to allocate vmemmmap pages.  We may even
-> >     be able to migrate huge page contents, but will not be able to
-> >     dissolve the source huge page.  This will prevent an offline
-> >     operation and is unfortunate as memory offlining is expected to
-> >     succeed on movable zones.  Users that depend on memory hotplug
-> >     to succeed for movable zones should carefully consider whether the
-> >     memory savings gained from this feature are worth the risk of
-> >     possibly not being able to offline memory in certain situations.
-> >
-> >  4) Failing to dissolve a huge page on CMA/ZONE_MOVABLE via
-> >     alloc_contig_range() - once we have that handling in place. Mainly
-> >     affects CMA and virtio-mem.
-> >
-> >     Similar to 3). virito-mem will handle migration errors gracefully.
-> >     CMA might be able to fallback on other free areas within the CMA
-> >     region.
-> >
-> > Vmemmap pages are allocated from the page freeing context. In order for
-> > those allocations to be not disruptive (e.g. trigger oom killer)
-> > __GFP_NORETRY is used. hugetlb_lock is dropped for the allocation
-> > because a non sleeping allocation would be too fragile and it could fail
-> > too easily under memory pressure. GFP_ATOMIC or other modes to access
-> > memory reserves is not used because we want to prevent consuming
-> > reserves under heavy hugetlb freeing.
-> >
-> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > ---
-> >  Documentation/admin-guide/mm/hugetlbpage.rst    |  8 ++
-> >  Documentation/admin-guide/mm/memory-hotplug.rst | 13 ++++
-> >  include/linux/hugetlb.h                         |  3 +
-> >  include/linux/mm.h                              |  2 +
-> >  mm/hugetlb.c                                    | 98 +++++++++++++++++++++----
-> >  mm/hugetlb_vmemmap.c                            | 34 +++++++++
-> >  mm/hugetlb_vmemmap.h                            |  6 ++
-> >  mm/migrate.c                                    |  5 +-
-> >  mm/sparse-vmemmap.c                             | 75 ++++++++++++++++++-
-> >  9 files changed, 227 insertions(+), 17 deletions(-)
-> >
-> > diff --git a/Documentation/admin-guide/mm/hugetlbpage.rst b/Documentation/admin-guide/mm/hugetlbpage.rst
-> > index f7b1c7462991..6988895d09a8 100644
-> > --- a/Documentation/admin-guide/mm/hugetlbpage.rst
-> > +++ b/Documentation/admin-guide/mm/hugetlbpage.rst
-> > @@ -60,6 +60,10 @@ HugePages_Surp
-> >          the pool above the value in ``/proc/sys/vm/nr_hugepages``. The
-> >          maximum number of surplus huge pages is controlled by
-> >          ``/proc/sys/vm/nr_overcommit_hugepages``.
-> > +     Note: When the feature of freeing unused vmemmap pages associated
-> > +     with each hugetlb page is enabled, the number of surplus huge pages
-> > +     may be temporarily larger than the maximum number of surplus huge
-> > +     pages when the system is under memory pressure.
-> >  Hugepagesize
-> >       is the default hugepage size (in Kb).
-> >  Hugetlb
-> > @@ -80,6 +84,10 @@ returned to the huge page pool when freed by a task.  A user with root
-> >  privileges can dynamically allocate more or free some persistent huge pages
-> >  by increasing or decreasing the value of ``nr_hugepages``.
-> >
-> > +Note: When the feature of freeing unused vmemmap pages associated with each
-> > +hugetlb page is enabled, we can fail to free the huge pages triggered by
-> > +the user when ths system is under memory pressure.  Please try again later.
-> > +
-> >  Pages that are used as huge pages are reserved inside the kernel and cannot
-> >  be used for other purposes.  Huge pages cannot be swapped out under
-> >  memory pressure.
-> > diff --git a/Documentation/admin-guide/mm/memory-hotplug.rst b/Documentation/admin-guide/mm/memory-hotplug.rst
-> > index 05d51d2d8beb..c6bae2d77160 100644
-> > --- a/Documentation/admin-guide/mm/memory-hotplug.rst
-> > +++ b/Documentation/admin-guide/mm/memory-hotplug.rst
-> > @@ -357,6 +357,19 @@ creates ZONE_MOVABLE as following.
-> >     Unfortunately, there is no information to show which memory block belongs
-> >     to ZONE_MOVABLE. This is TBD.
-> >
-> > +   Memory offlining can fail when dissolving a free huge page on ZONE_MOVABLE
-> > +   and the feature of freeing unused vmemmap pages associated with each hugetlb
-> > +   page is enabled.
-> > +
-> > +   This can happen when we have plenty of ZONE_MOVABLE memory, but not enough
-> > +   kernel memory to allocate vmemmmap pages.  We may even be able to migrate
-> > +   huge page contents, but will not be able to dissolve the source huge page.
-> > +   This will prevent an offline operation and is unfortunate as memory offlining
-> > +   is expected to succeed on movable zones.  Users that depend on memory hotplug
-> > +   to succeed for movable zones should carefully consider whether the memory
-> > +   savings gained from this feature are worth the risk of possibly not being
-> > +   able to offline memory in certain situations.
-> > +
-> >  .. note::
-> >     Techniques that rely on long-term pinnings of memory (especially, RDMA and
-> >     vfio) are fundamentally problematic with ZONE_MOVABLE and, therefore, memory
-> > diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> > index d523a345dc86..d3abaaec2a22 100644
-> > --- a/include/linux/hugetlb.h
-> > +++ b/include/linux/hugetlb.h
-> > @@ -525,6 +525,7 @@ unsigned long hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
-> >   *   code knows it has only reference.  All other examinations and
-> >   *   modifications require hugetlb_lock.
-> >   * HPG_freed - Set when page is on the free lists.
-> > + * HPG_vmemmap_optimized - Set when the vmemmap pages of the page are freed.
-> >   *   Synchronization: hugetlb_lock held for examination and modification.
->
-> You just moved the Synchronization comment so that it applies to both
-> HPG_freed and HPG_vmemmap_optimized.  However, HPG_vmemmap_optimized is
-> checked/modified both with and without hugetlb_lock.  Nothing wrong with
-> that, just need to update/fix the comment.
->
 
-Thanks, Mike. I will update the comment.
 
-> Everything else looks good to me,
->
-> Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
->
-> --
-> Mike Kravetz
+ÔÚ 2021/5/5 20:06, Jan Kara Ð´µÀ:
+> On Wed 05-05-21 17:07:33, yangerkun wrote:
+>> Our syzkaller test trigger this BUG_ON in clear_inode:
+>>
+>> [   95.235069] Killed process 7637 (syz-executor) total-vm:37044kB,
+>> anon-rss:76kB, file-rss:632kB, shmem-rss:0kB
+>> [   95.238504] Memory cgroup out of memory: Kill process 284 (syz-executor)
+>> score 187000 or sacrifice child
+>> [   95.240419] Killed process 284 (syz-executor) total-vm:37044kB,
+>> anon-rss:76kB, file-rss:632kB, shmem-rss:0kB
+>> [   95.263244] Injecting memory failure for pfn 0x3a5876 at process virtual
+>> address 0x20ffd000
+>> [   95.282421] Memory failure: 0x3a5876: recovery action for dirty LRU page:
+>> Recovered
+>> [   95.283992] Injecting memory failure for pfn 0x3a6005 at process virtual
+>> address 0x20ffe000
+>> [   95.379135] Memory failure: 0x3a6005: recovery action for dirty LRU page:
+>> Recovered
+>> [   95.380853] Injecting memory failure for pfn 0x3a7048 at process virtual
+>> address 0x20fff000
+>> [   95.422596] Memory failure: 0x3a7048: recovery action for dirty LRU page:
+>> Recovered
+>> [   95.596571] JBD2: Detected IO errors while flushing file data on vda-8
+>> [   95.858655] device bridge_slave_0 left promiscuous mode
+>> [   95.870838] bridge0: port 1(bridge_slave_0) entered disabled state
+>> [   96.039754] ------------[ cut here ]------------
+>> [   96.041176] kernel BUG at fs/inode.c:519!
+> 
+> So this is BUG_ON(!list_empty(&inode->i_wb_list)) I assume?
+
+Yes.
+
+> 
+>> [   96.042424] Internal error: Oops - BUG: 0 [#1] SMP
+>> [   96.043892] Dumping ftrace buffer:
+>> [   96.044956]    (ftrace buffer empty)
+>> [   96.046068] Modules linked in:
+>> [   96.047104] Process syz-executor (pid: 7811, stack limit =
+>> 0x000000009f3892d3)
+>> [   96.049217] CPU: 1 PID: 7811 Comm: syz-executor Not tainted 4.19.95 #9
+>> [   96.051144] Hardware name: linux,dummy-virt (DT)
+>> [   96.052570] pstate: 80000005 (Nzcv daif -PAN -UAO)
+>> [   96.054065] pc : clear_inode+0x280/0x2a8
+>> [   96.055317] lr : clear_inode+0x280/0x2a8
+>> [   96.056548] sp : ffff800352797950
+>> [   96.057604] x29: ffff800352797950 x28: 0000000000000000
+>> [   96.059295] x27: ffff800358854c00 x26: ffff800358854b70
+>> [   96.060982] x25: ffff80036af01100 x24: ffff800369e48aa8
+>> [   96.062673] x23: ffff80036af02600 x22: 0000000000047f3d
+>> [   96.064358] x21: 0000000000000000 x20: ffff800358854c98
+>> [   96.066025] x19: ffff800358854b70 x18: 0000000000000000
+>> [   96.067703] x17: 0000000000000000 x16: 0000000000000000
+>> [   96.069370] x15: 0000000000000000 x14: 0000000000000000
+>> [   96.071049] x13: 0000000000000000 x12: 0000000000000000
+>> [   96.072738] x11: 1ffff0006cfc1faf x10: 0000000000000ba0
+>> [   96.074418] x9 : ffff8003527976a0 x8 : ffff800359511c00
+>> [   96.076102] x7 : 1ffff0006cfc1f50 x6 : dfff200000000000
+>> [   96.077783] x5 : 00000000f2f2f200 x4 : ffff800358854c98
+>> [   96.079469] x3 : ffff200008000000 x2 : ffff200009867000
+>> [   96.081145] x1 : ffff800359511000 x0 : 0000000000000000
+>> [   96.082835] Call trace:
+>> [   96.083725]  clear_inode+0x280/0x2a8
+>> [   96.084886]  ext4_clear_inode+0x38/0xe8
+>> [   96.086113]  ext4_free_inode+0x130/0xc68
+>> [   96.087371]  ext4_evict_inode+0xb20/0xcb8
+>> [   96.088648]  evict+0x1a8/0x3c0
+>> [   96.089655]  iput+0x344/0x460
+>> [   96.090639]  do_unlinkat+0x260/0x410
+>> [   96.091802]  __arm64_sys_unlinkat+0x6c/0xc0
+>> [   96.093143]  el0_svc_common+0xdc/0x3b0
+>> [   96.094349]  el0_svc_handler+0xf8/0x160
+>> [   96.095583]  el0_svc+0x10/0x218
+>> [   96.096609] Code: 9413f4a9 d503201f f90017b6 97f4d5b1 (d4210000)
+>> [   96.098542] ---[ end trace 93e81128c9262960 ]---
+>>
+>> The vmcore show that's a ext4 inode with order journal mode. The "Injecting
+>> memory failure" will call me_pagecache_dirty and then trigger the "JBD2:
+>> Detected IO" since it inject the EIO for this page.
+>>
+>> We have a guess show as latter(just guess...). memory_failure will decrease
+>> nrpages to 0, then ext4_evict_inode won't use mapping->i_pages, so
+>> list_del_init that end_page_writeback has did won't been seen since there is
+>> no barrier can ensure that, and then trigger the BUG_ON.
+>>
+>> We have add some debug info the check this guess. But since it really hard
+>> to trigger this again. So, does there anyone can help to recheck the guess,
+>> or can help to give advise for this problem?
+> 
+> Hmm, I don't think what you propose can happen since clear_inode() cycles
+> through i_pages lock and by the time clear_inode() is called,
+
+You are right. Sorry for the mistake. I will try to increase the 
+recurrence probability.
+
+> end_page_writeback() must be holding this lock in order to clear
+> PageWriteback bit. So there must be something else going on but so far I
+> have no idea what it could be.
+> 
+> 								Honz >
+>> end_page_writeback
+>>    test_clear_page_writeback
+>>      xa_lock_irqsave(&mapping->i_pages, flags)
+>> 	TestClearPageWriteback(page)
+>> 	sb_clear_inode_writeback
+>> 	  list_del_init(&inode->i_wb_list)
+>> 	xa_unlock_irqrestore(&mapping->i_pages, flags)
+>>
+>> memory_failure
+>>    lock_page(p)
+>>    wait_on_page_writeback(p)
+>>    identify_page_state
+>>      page_action
+>> 	  me_pagecache_dirty
+>> 	  mapping_set_error(mapping, -EIO)
+>> 	  me_pagecache_clean(p, pfn)
+>> 	    generic_error_remove_page
+>> 		  truncate_inode_page(mapping, page)
+>> 		    delete_from_page_cache
+>> 			  xa_lock_irqsave(&mapping->i_pages, flags)
+>> 			  __delete_from_page_cache(page, NULL)
+>> 			    page_cache_tree_delete
+>> 				  mapping->nrpages -= nr --> will decrease nrpages to 0
+>> 			  xa_unlock_irqrestore(&mapping->i_pages, flags)
+>>
+>>
+>> ext4_evict_inode
+>>    truncate_inode_pages_final
+>>      truncate_inode_pages
+>> 	  truncate_inode_pages_range
+>> 	     if (mapping->nrpages == 0 && mapping->nrexceptional == 0)
+>> 		   goto out; --> won't lock mapping->i_pages, so no barrier can ensure we
+>> see list_del_init
