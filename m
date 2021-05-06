@@ -2,68 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA750375A79
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 May 2021 20:55:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B030F375B68
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 May 2021 21:08:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234345AbhEFS4P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 May 2021 14:56:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50870 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234197AbhEFS4O (ORCPT
+        id S234800AbhEFTIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 May 2021 15:08:51 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31800 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234740AbhEFTIu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 May 2021 14:56:14 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8415C061574;
-        Thu,  6 May 2021 11:55:15 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lej9R-00Bx5D-Ud; Thu, 06 May 2021 18:55:10 +0000
-Date:   Thu, 6 May 2021 18:55:09 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        yangerkun <yangerkun@huawei.com>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH] block: reexpand iov_iter after read/write
-Message-ID: <YJQ7jf7Twxexx31T@zeniv-ca.linux.org.uk>
-References: <20210401071807.3328235-1-yangerkun@huawei.com>
- <a2e97190-936d-ebe0-2adc-748328076f31@gmail.com>
- <7ff7d1b7-8b6d-a684-1740-6a62565f77b6@gmail.com>
- <3368729f-e61d-d4b6-f2ae-e17ebe59280e@gmail.com>
- <3d6904c0-9719-8569-2ae8-dd9694da046b@huawei.com>
- <05803db5-c6de-e115-3db2-476454b20668@gmail.com>
- <YIwVzWEU97BylYK1@zeniv-ca.linux.org.uk>
- <2ee68ca3-e466-24d4-3766-8c627d94d71e@kernel.dk>
+        Thu, 6 May 2021 15:08:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620328071;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/fpuFMdCeajW1Uwy98sPY31ItgEQVigIlX9gJjRQOwU=;
+        b=WSVLz6c6hJzhSLtTQXiM82UQCZ9EnFlva1Xt88yAcV+1QNZdTvCgAX9GKPPc5q7j8JQoEb
+        g5YUuBQiFXE0vhqhpObQqdHdx2iuMJhS5q6LR3PLZcOrQIBLDut1/jmM6i6SjdS3wVUHkn
+        Kk0kfats7Bn28sEPPT1Cdegsbo6PDeo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-383-1ZKBawjKOVu4PAcNeaqJJw-1; Thu, 06 May 2021 15:07:50 -0400
+X-MC-Unique: 1ZKBawjKOVu4PAcNeaqJJw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BAAAB801817;
+        Thu,  6 May 2021 19:07:48 +0000 (UTC)
+Received: from work-vm (ovpn-115-37.ams2.redhat.com [10.36.115.37])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 301145C1C5;
+        Thu,  6 May 2021 19:07:42 +0000 (UTC)
+Date:   Thu, 6 May 2021 20:07:39 +0100
+From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        miklos@szeredi.hu, linux-kernel@vger.kernel.org,
+        dan.carpenter@oracle.com
+Subject: Re: [PATCH 1/2] virtiofs, dax: Fix smatch warning about loss of info
+ during shift
+Message-ID: <YJQ+ex2DUPYo1GV5@work-vm>
+References: <20210506184304.321645-1-vgoyal@redhat.com>
+ <20210506184304.321645-2-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2ee68ca3-e466-24d4-3766-8c627d94d71e@kernel.dk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210506184304.321645-2-vgoyal@redhat.com>
+User-Agent: Mutt/2.0.6 (2021-03-06)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 06, 2021 at 11:19:03AM -0600, Jens Axboe wrote:
+* Vivek Goyal (vgoyal@redhat.com) wrote:
+> Dan reported a smatch warning during potentential loss of info during
+> left shift if this code is compiled on 32bit systems.
+>=20
+> New smatch warnings:
+> fs/fuse/dax.c:113 fuse_setup_one_mapping() warn: should 'start_idx << 21'=
+ be a
+> +64 bit type?
+>=20
+> I ran smatch and found two more instances of similar warning. This patch
+> fixes all such instances.
+>=20
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  fs/fuse/dax.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+> index ff99ab2a3c43..f06fdad3f7b1 100644
+> --- a/fs/fuse/dax.c
+> +++ b/fs/fuse/dax.c
+> @@ -186,7 +186,7 @@ static int fuse_setup_one_mapping(struct inode *inode=
+, unsigned long start_idx,
+>  	struct fuse_conn_dax *fcd =3D fm->fc->dax;
+>  	struct fuse_inode *fi =3D get_fuse_inode(inode);
+>  	struct fuse_setupmapping_in inarg;
+> -	loff_t offset =3D start_idx << FUSE_DAX_SHIFT;
+> +	loff_t offset =3D (loff_t)start_idx << FUSE_DAX_SHIFT;
 
-> Doing a quick profile, on the latter run with ->write_iter() we're
-> spending 8% of the time in _copy_from_iter(), and 4% in
-> new_sync_write(). That's obviously not there at all for the first case.
-> Both have about 4% in eventfd_write(). Non-iter case spends 1% in
-> copy_from_user().
-> 
-> Finally with your branch pulled in as well, iow using ->write_iter() for
-> eventfd and your iov changes:
-> 
-> Executed in  485.26 millis    fish           external
->    usr time  103.09 millis   70.00 micros  103.03 millis
->    sys time  382.18 millis   83.00 micros  382.09 millis
-> 
-> Executed in  485.16 millis    fish           external
->    usr time  104.07 millis   69.00 micros  104.00 millis
->    sys time  381.09 millis   94.00 micros  381.00 millis
-> 
-> and there's no real difference there. We're spending less time in
-> _copy_from_iter() (8% -> 6%) and less time in new_sync_write(), but
-> doesn't seem to manifest itself in reduced runtime.
+I've not followed the others back, but isn't it easier to change
+the start_idx parameter to be a loff_t, since the places it's called
+=66rom are poth loff_t pos?
 
-Interesting... do you have instruction-level profiles for _copy_from_iter()
-and new_sync_write() on the last of those trees?
+Dave
+
+>  	FUSE_ARGS(args);
+>  	ssize_t err;
+> =20
+> @@ -872,7 +872,7 @@ static int dmap_writeback_invalidate(struct inode *in=
+ode,
+>  				     struct fuse_dax_mapping *dmap)
+>  {
+>  	int ret;
+> -	loff_t start_pos =3D dmap->itn.start << FUSE_DAX_SHIFT;
+> +	loff_t start_pos =3D (loff_t)dmap->itn.start << FUSE_DAX_SHIFT;
+>  	loff_t end_pos =3D (start_pos + FUSE_DAX_SZ - 1);
+> =20
+>  	ret =3D filemap_fdatawrite_range(inode->i_mapping, start_pos, end_pos);
+> @@ -966,7 +966,7 @@ inode_inline_reclaim_one_dmap(struct fuse_conn_dax *f=
+cd, struct inode *inode,
+>  	dmap =3D inode_lookup_first_dmap(inode);
+>  	if (dmap) {
+>  		start_idx =3D dmap->itn.start;
+> -		dmap_start =3D start_idx << FUSE_DAX_SHIFT;
+> +		dmap_start =3D (u64)start_idx << FUSE_DAX_SHIFT;
+>  		dmap_end =3D dmap_start + FUSE_DAX_SZ - 1;
+>  	}
+>  	up_read(&fi->dax->sem);
+> @@ -1118,7 +1118,7 @@ static int lookup_and_reclaim_dmap(struct fuse_conn=
+_dax *fcd,
+>  {
+>  	int ret;
+>  	struct fuse_inode *fi =3D get_fuse_inode(inode);
+> -	loff_t dmap_start =3D start_idx << FUSE_DAX_SHIFT;
+> +	loff_t dmap_start =3D (loff_t)start_idx << FUSE_DAX_SHIFT;
+>  	loff_t dmap_end =3D (dmap_start + FUSE_DAX_SZ) - 1;
+> =20
+>  	down_write(&fi->i_mmap_sem);
+> --=20
+> 2.25.4
+>=20
+--=20
+Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+
