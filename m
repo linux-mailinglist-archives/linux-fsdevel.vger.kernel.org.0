@@ -2,104 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CAD63753A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 May 2021 14:17:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D4A03754C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 May 2021 15:32:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230444AbhEFMSD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 May 2021 08:18:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39450 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229777AbhEFMSC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 May 2021 08:18:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id D9432B1BC;
-        Thu,  6 May 2021 12:17:03 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id d11f9587;
-        Thu, 6 May 2021 12:18:34 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
-Subject: Re: 9p: fscache duplicate cookie
-References: <87czu45gcs.fsf@suse.de> <YJPIyLZ9ofnPy3F6@codewreck.org>
-Date:   Thu, 06 May 2021 13:18:34 +0100
-In-Reply-To: <YJPIyLZ9ofnPy3F6@codewreck.org> (Dominique Martinet's message of
-        "Thu, 6 May 2021 19:45:28 +0900")
-Message-ID: <87zgx83vj9.fsf@suse.de>
+        id S234033AbhEFNdM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 May 2021 09:33:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34312 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233461AbhEFNdL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 May 2021 09:33:11 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6606C061574
+        for <linux-fsdevel@vger.kernel.org>; Thu,  6 May 2021 06:32:12 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id s20so2777802ejr.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 May 2021 06:32:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=5lD39euqnLLWALUOK+cga3/qrcq4Set5HCzS7aBLz9o=;
+        b=PIDwS94vBOfgiXUa809vuuz+U7y0adn5xRDm/vzKDuGhMJZY6fHO2MlePlZaXiOgfd
+         xiGAPFN891Rq6hVd5/IJMq/A3fWHpcujlGs8AjRAQO7CoO+xajAT1VcOQMw5NcFhQD//
+         twpSiIHfDfcJOp7NqG54J7SDntJPrqsxw2Ano4CNRDiN6UckzmqGmMOGber47aDYiJ/E
+         oce6XgLwe7wq+FioX5koBRzyOpqBdsIJCm0UmIVwCnygsWK0uP6LZ2lwHFzmgueS8+J0
+         5PzXCEuO9/UtpWWAwp/iCbwJOmpg2531OTOuSP99H+d20rzSjKxA51PNtmhV5oOMfQte
+         jqOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=5lD39euqnLLWALUOK+cga3/qrcq4Set5HCzS7aBLz9o=;
+        b=HYftVuKadUd9j8WKcZ5+IHsZZ6XEwaNfvVZ6qG2LFq8v/Bgtorb+bKDYzBDtPV2lNf
+         Grfe1umDF4yyuaTDK4WI0DzBfKQj7AElr0zE0Mo68Mbsbx+wS0ivWeT8LI/cdiaBbLAd
+         EalrLcXXmziXQXBVDcrj06Y1uYPw+8TxSeaKJHmwuv3qMKBihKeiCoEP06ZU7vTiv3dL
+         8/3YTt2JyMSTyUR6EoAlDL4FudSpmrwk5U1+03cFX5rUox/pJDsVxlxlWTI0pf9GW91D
+         /sFtbQJennP4ufbPIVLhTWOFcv46RY5Bteg7GmMD/QLKIp71evHKeifbRYAGlWHwHl8K
+         FhkA==
+X-Gm-Message-State: AOAM531sNtVgZO8jx3TztHcIa7UQFINr19pVvkvmvyuX9oHc40uB6sdV
+        tl8gx68iaUCyN/o+obpBzcJiEk8SAVUROVla5sY=
+X-Google-Smtp-Source: ABdhPJz2lv7YlGPrCP+qbSw0boSdpLAlnYJpqNgGBLsgSMqKcpEN0MZdtKFN0R6VfnrM7LDcJ1fOGV519DaVFBuGgqU=
+X-Received: by 2002:a17:906:430f:: with SMTP id j15mr4383945ejm.543.1620307929631;
+ Thu, 06 May 2021 06:32:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+Received: by 2002:a05:6402:1053:0:0:0:0 with HTTP; Thu, 6 May 2021 06:32:04
+ -0700 (PDT)
+Reply-To: nascointt@hotmail.com
+From:   Nayef Abu Sakran <chrisdicksonchris@gmail.com>
+Date:   Thu, 6 May 2021 14:32:04 +0100
+Message-ID: <CAKhAfviMarcYf06fxeEjDjYv99Fy+rDwySD=t+rtt9Bhfmz4QQ@mail.gmail.com>
+Subject: HI NICE DAY
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dominique Martinet <asmadeus@codewreck.org> writes:
-
-> Hi,
->
-> Luis Henriques wrote on Thu, May 06, 2021 at 11:03:31AM +0100:
->> I've been seeing fscache complaining about duplicate cookies in 9p:
->> 
->>  FS-Cache: Duplicate cookie detected
->>  FS-Cache: O-cookie c=00000000ba929e80 [p=000000002e706df1 fl=226 nc=0 na=1]
->>  FS-Cache: O-cookie d=0000000000000000 n=0000000000000000
->>  FS-Cache: O-key=[8] '0312710100000000'
->>  FS-Cache: N-cookie c=00000000274050fe [p=000000002e706df1 fl=2 nc=0 na=1]
->>  FS-Cache: N-cookie d=0000000037368b65 n=000000004047ed1f
->>  FS-Cache: N-key=[8] '0312710100000000'
->
->> It's quite easy to reproduce in my environment by running xfstests using
->> the virtme scripts to boot a test kernel.  A quick look seems to indicate
->> the warning comes from the v9fs_vfs_atomic_open_dotl() path:
->> 
->> [...]
->> 
->> Is this a know issue?
->
-> I normally don't use fscache so never really looked into it, I saw it
-> again recently when looking at David's fscache/netfs work and it didn't
-> seem to cause real trouble without a server but I bet it would if there
-> were to be one, I just never had the time to look further.
->
-> From a quick look v9fs uses the 'qid path' of the inode that is
-> supposed to be a unique identifier; in practice there are various
-> heuristics to it depending on the server but qemu takes the st_dev of
-> the underlying filesystem and chops the higher bits of the inode number
-> to make it up -- see qid_path_suffixmap() in hw/9pfs/9p.c in qemu
-> sources.
->
-> (protocol description can be found here:
-> https://github.com/chaos/diod/blob/master/protocol.md
-> )
->
->
-> In this case if there is a cookie collision there are two possibilities
-> I can see: either a previously hashed inode somehow got cleaned up
-> without the associated fscache cleanup or qemu dished out the same qid
-> path for two different files -- old filesystems used to have predictable
-> inode numbers but that is far from true anymore so it's quite possible
-> some files would have the same lower bits for their inode number on the
-> host...
-> If you have the time to investigate further that would be appreciated, I
-> have confirmed the fscache rework David suggested did not fix it so the
-> work will not be lost.
->
->
-> That's going to be very verbose but if you're not scared of digging at
-> logs a possible way to confirm qid identity would be to mount with -o
-> debug=5 (P9_DEBUG_9P + ERROR), all qid paths are logged to dmesg, but
-> that might not be viable if there is a real lot -- it depends on how
-> fast and reliable your quite easy to reproduce is...
-
-Thanks a lot for the quick reply, Dominique.  I'll definitely allocate
-some time to try to find a bit more about this issue (although I may end
-up just hacking the code to print out the qids instead of turning on all
-the debug).  I just wanted to make sure I wasn't hitting some known
-fundamental problem that simply couldn't be fixed without major changes.
-
-Cheers,
--- 
-Luis
+Did you received the mail i send to you?
