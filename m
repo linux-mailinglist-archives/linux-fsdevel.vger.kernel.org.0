@@ -2,96 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B3C97376AB4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 May 2021 21:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C1A376ABA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 May 2021 21:33:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229753AbhEGTbF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 May 2021 15:31:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38254 "EHLO
+        id S229831AbhEGTed (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 May 2021 15:34:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229606AbhEGTbE (ORCPT
+        with ESMTP id S229658AbhEGTeb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 May 2021 15:31:04 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B434C061574
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 May 2021 12:30:03 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id x2so14235385lff.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 May 2021 12:30:03 -0700 (PDT)
+        Fri, 7 May 2021 15:34:31 -0400
+Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BDEEC061574;
+        Fri,  7 May 2021 12:33:30 -0700 (PDT)
+Received: by mail-qk1-x72c.google.com with SMTP id q136so9637448qka.7;
+        Fri, 07 May 2021 12:33:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eqZy1ieThk76BROimCSjnj5uRtrwUcwDo/dQoRLlE6w=;
-        b=Ittasm4CSxNIShC0+m3SoY8O2RM3MH2Koapfd9IVvcrucECd3r5H54KY0Uw64XfVQX
-         nqtNg8qBGKwkYKbhyUWnieWQy6/mRqN+SRP0cOjA/wTE3IS8nYNXtcKk7/ISHv2yQzry
-         7jEn+Wn7KQ3gdg3jF0irgJ0xEyg6I1s54y5UU=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=DQeWsUe4sdL5lwcQgjwlYsUvqoVq4rgrGbWAxTRdzK0=;
+        b=nGfiv21ZL8q5oVm8kipMoDb98KQPA4A9rngwmvXuqZnlY2cy9b/IbHGzKHuZ9/55Wg
+         5rUH8L/Fu3n0B4hrJZ4B93X2HYBnLD/Lgrm+C58moHKKCT11Xw3AzGWg6CLYIhGjw2Lb
+         sxBYCIrVWBFMASbtLYqc786mHo8oNlZnIRDVF7rJuoTPbfyqlnOLZqZwAyqypSouggs0
+         yp2jIiV6O9MndUS/Sv9UxT6tVTL3ZezUAQZha9GS2GhAs+s2h+T3kfrqksj93rZHFqQj
+         XaLXEGcaw6eFzEOZzgOS8jX+XQ3V8bvJnHAMEhXK/akANXg9UkdyK8Suaox+MyCAwzH0
+         cAKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eqZy1ieThk76BROimCSjnj5uRtrwUcwDo/dQoRLlE6w=;
-        b=Hi3c7FSUnu+PaayaWUcrHZud0ublbb0aLBKs8Jf/Q/uuqiFp229+rBC+HSXkK1Ewqo
-         usB12D1x8aDOIYKxKwc4iWez4p60oNN/nSJdeq75yLWMqUt+10hJ9d21yJTs1bAlcBG7
-         fI4POcl01vZeL7Xwbg5C3u9d4M4mbxCkaFE/Cg7Q9nGskGbOYkU8xg/aTtGGkHycdqZO
-         ozX5a5LTWC9SuRBg+e1yRdiaytDwinaP5YNp6pME9ZRmZ1SDR/wbDg8xbFrLaF0JZ7Cv
-         ep0tub6I2qSmSWtvDZTfHIEyxtFhA3sGC3uEFGLClu1/pFsKZN/+ZnKi73DHvj7ogH3r
-         5rXw==
-X-Gm-Message-State: AOAM5336wNZitD22QxU2NmpxrHRmhnzWRJr7cq84ohYJKV1c4DIUrcqq
-        iN8UtAjytI1jBEUb2WYMh4CJCMiAxRwxYem7yTY=
-X-Google-Smtp-Source: ABdhPJz69ThW5xbX4U3Zc6PNa8HQFkbVVUsRGCBshTHOgYXpDazqlM7VWt7GdukQi/97LrhlxLPvkQ==
-X-Received: by 2002:a05:6512:2312:: with SMTP id o18mr7326392lfu.159.1620415801831;
-        Fri, 07 May 2021 12:30:01 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id z23sm1428475lfq.241.2021.05.07.12.30.00
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 May 2021 12:30:00 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id v6so12959617ljj.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 May 2021 12:30:00 -0700 (PDT)
-X-Received: by 2002:a05:651c:3de:: with SMTP id f30mr8836478ljp.251.1620415800148;
- Fri, 07 May 2021 12:30:00 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=DQeWsUe4sdL5lwcQgjwlYsUvqoVq4rgrGbWAxTRdzK0=;
+        b=rtCE5QK/6MJi2tyK62fjz022UfNIoeDMEqGr6VNpJWI9SDMW7D+wzsFwniFw0VBgh6
+         Lu+QbEPaX6wJgfTU5ZPlh5arylfsGerzsPpLz15c/8YO10JsXIZfaWk1gW5SkujDEQMv
+         of0+wILtJU9FMOI50+UBj4jbBj2Raw2clf3k+pmMnTELNBhiq5PE31V7gP/M1evM4pas
+         h9r0vNY+K8cGTAB46LzqUqUXMC3orDlzdNXPpLpSAS7ax6ssdg0AVoDdAw6+AS2Ce9Gu
+         BRoDZOytUZa9AWNbomb8vQcIlYWJNtW9KTvWeUO8AvsePu2BWA5ywNCFBRDJSDCtyklD
+         S1Qg==
+X-Gm-Message-State: AOAM531KZMC9+qncvoENwznre5K7fkDH2IzEp5MLwRNev94gH+L7WRfB
+        fA0lYyucueiER60S9JW8x/w=
+X-Google-Smtp-Source: ABdhPJw2cRhG8UHN8LXnIN2dTKp9oF06g5FI6Zqbk2WI27UC68arv2TLcX2Slci/J4LFn7amAwSThw==
+X-Received: by 2002:a37:4496:: with SMTP id r144mr11246241qka.242.1620416009423;
+        Fri, 07 May 2021 12:33:29 -0700 (PDT)
+Received: from localhost (dhcp-6c-ae-f6-dc-d8-61.cpe.echoes.net. [199.96.183.179])
+        by smtp.gmail.com with ESMTPSA id r9sm5626187qtf.62.2021.05.07.12.33.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 May 2021 12:33:28 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Fri, 7 May 2021 15:33:27 -0400
+From:   Tejun Heo <tj@kernel.org>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Alex Deucher <alexdeucher@gmail.com>, Kenny Ho <y2kenny@gmail.com>,
+        Song Liu <songliubraving@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kenny Ho <Kenny.Ho@amd.com>,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        Brian Welty <brian.welty@intel.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Network Development <netdev@vger.kernel.org>,
+        KP Singh <kpsingh@chromium.org>, Yonghong Song <yhs@fb.com>,
+        bpf <bpf@vger.kernel.org>, Dave Airlie <airlied@gmail.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: Re: [RFC] Add BPF_PROG_TYPE_CGROUP_IOCTL
+Message-ID: <YJWWByISHSPqF+aN@slm.duckdns.org>
+References: <CAKMK7uFEhyJChERFQ_DYFU4UCA2Ox4wTkds3+GeyURH5xNMTCA@mail.gmail.com>
+ <CAOWid-fL0=OM2XiOH+NFgn_e2L4Yx8sXA-+HicUb9bzhP0t8Bw@mail.gmail.com>
+ <YJUBer3wWKSAeXe7@phenom.ffwll.local>
+ <CAOWid-dmRsZUjF3cJ8+mx5FM9ksNQ_P9xY3jqxFiFMvN29SaLw@mail.gmail.com>
+ <YJVnO+TCRW83S6w4@phenom.ffwll.local>
+ <CADnq5_Pvtj1vb0bak_gUkv9J3+vfsMZxVKTKYeUvwQCajAWoVQ@mail.gmail.com>
+ <YJVqL4c6SJc8wdkK@phenom.ffwll.local>
+ <CADnq5_PHjiHy=Su_1VKr5ycdnXN-OuSXw0X_TeNqSj+TJs2MGA@mail.gmail.com>
+ <CADnq5_OjaPw5iF_82bjNPt6v-7OcRmXmXECcN+Gdg1NcucJiHA@mail.gmail.com>
+ <YJVwtS9XJlogZRqv@phenom.ffwll.local>
 MIME-Version: 1.0
-References: <2add1129-d42e-176d-353d-3aca21280ead@canonical.com>
- <202105071116.638258236E@keescook> <CAHk-=whVMtMPRMMX9W_B7JhVTyRzVoH71Xw8TbtYjThaoCzJ=A@mail.gmail.com>
- <YJWSYDk4gAT1hkf6@zeniv-ca.linux.org.uk>
-In-Reply-To: <YJWSYDk4gAT1hkf6@zeniv-ca.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 7 May 2021 12:29:44 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjhWKp=fQREgQy0uGjo-uvcTg-11gJLoDp4Af8WOKa8ig@mail.gmail.com>
-Message-ID: <CAHk-=wjhWKp=fQREgQy0uGjo-uvcTg-11gJLoDp4Af8WOKa8ig@mail.gmail.com>
-Subject: Re: splice() from /dev/zero to a pipe does not work (5.9+)
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YJVwtS9XJlogZRqv@phenom.ffwll.local>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 7, 2021 at 12:17 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Umm...  That would do wonders to anything that used to do
-> copy_to_user()/clear_user()/copy_to_user() and got converted
-> to copy_to_iter()/iov_iter_zero()/copy_to_iter()...
+Hello,
 
-I didn't mean for iov_iter_zero doing this - only splice_read_zero().
+On Fri, May 07, 2021 at 06:54:13PM +0200, Daniel Vetter wrote:
+> All I meant is that for the container/cgroups world starting out with
+> time-sharing feels like the best fit, least because your SRIOV designers
+> also seem to think that's the best first cut for cloud-y computing.
+> Whether it's virtualized or containerized is a distinction that's getting
+> ever more blurry, with virtualization become a lot more dynamic and
+> container runtimes als possibly using hw virtualization underneath.
 
-> Are you sure we can shove zero page into pipe, anyway?
-> IIRC, get_page()/put_page() on that is not allowed,
+FWIW, I'm completely on the same boat. There are two fundamental issues with
+hardware-mask based control - control granularity and work conservation.
+Combined, they make it a significantly more difficult interface to use which
+requires hardware-specific tuning rather than simply being able to say "I
+wanna prioritize this job twice over that one".
 
-That's what the
+My knoweldge of gpus is really limited but my understanding is also that the
+gpu cores and threads aren't as homogeneous as the CPU counterparts across
+the vendors, product generations and possibly even within a single chip,
+which makes the problem even worse.
 
-    buf->ops = &zero_pipe_buf_ops;
+Given that GPUs are time-shareable to begin with, the most universal
+solution seems pretty clear.
 
-is for. The zero_pipe_buf_ops would have empty get and release
-functions, and a 'steal' function that always returns false.
+Thanks.
 
-That's how the pipe pages are supposed to work: there are people who
-put non-page data (ie things like skbuff allocations etc) into a
-splice pipe buffer. It's why we have those "ops" pointers.
-
-              Linus
+-- 
+tejun
