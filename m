@@ -2,134 +2,262 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E208A376AD6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 May 2021 21:49:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE2EF376AE3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 May 2021 21:56:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229911AbhEGTuO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 May 2021 15:50:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42416 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229791AbhEGTuN (ORCPT
+        id S230031AbhEGT5h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 May 2021 15:57:37 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35857 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229997AbhEGT5g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 May 2021 15:50:13 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3E03C061574;
-        Fri,  7 May 2021 12:49:12 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id t18so10388942wry.1;
-        Fri, 07 May 2021 12:49:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=ssdAUcnXtt401L+SImO691JRXwB9qES+510O8xa3Y9Y=;
-        b=f8JvGKdnVyJkd5fBITq63yBSZ0ElthuoEkmgki1uJK8K6iRRo0zPyvDTq2dVg1Fuoo
-         MTxb9xY3BR/S7RvJ3A9bqCWFK/ZwldQ9Vl/kRgngvECdP7TLcomEJlj056Z3GYnLeG3Q
-         6Yq0flPKUZgWCemMH4rWV0EUID7ks7Xi8M8r7Cix4oZlF30759k1MFMa+9Q8PTZpfHLZ
-         GI45lpKlZlct6neOQltNmIHSfIpC3wyRaXJ6WPIAcgKaI/CMpAp3CYFlNlu8Kh64ZV8z
-         2xt/gDcFzkIbQfRxVBznVU4QV3Bl8+DYl+G6U8sehS0F+ZZf7R0k4EzBI+2CJ63/SmGR
-         gZBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ssdAUcnXtt401L+SImO691JRXwB9qES+510O8xa3Y9Y=;
-        b=mr58lxIYwlKJk7kKBe+DTZ8e0YQp6C05oleWRVqCO0Q+AHT49deNwC8WDd7nBWhpH/
-         nHFPmG3D7YsvwKhbLuBDPCqDStzT4fAq/vRUkyGYPdR0y/ZoEsJI9kU+DMKrdqxDkb2c
-         T/Venblrw+7dCAl5Du+bvlL1+3jk0dsYOHq1KsRWO+ZZsoMjSZ4MsUbpxdWPyxiSz8Zh
-         v3VvzWQ7OcoHlwXtxqeRXSeQyGT99lmTWAaUtYcwvYBDSArVAjZZB/X1R0BTBt1Bl5HR
-         QoUgTpboyILE6A1dXAX620ggHrQtCoOT+SuxtT8Cs2gajh5/L0Hq92+a8vTNutc4uvXe
-         JWRQ==
-X-Gm-Message-State: AOAM530tYXJc9CPw15T1D16BW4lT+/ez85SA6lwuFvqX3ySRtA+l8LDd
-        znu52wrNuWUj4j9h/iVb+kc=
-X-Google-Smtp-Source: ABdhPJxBkZCHac2ZWbOeGIri8hXu7pz2CpEh9Ll6KHlV+sOSFb4Xdxi7qTojiJmqfORgeJxQHU6mnQ==
-X-Received: by 2002:a5d:6885:: with SMTP id h5mr14410667wru.229.1620416951597;
-        Fri, 07 May 2021 12:49:11 -0700 (PDT)
-Received: from [192.168.8.197] ([148.252.132.80])
-        by smtp.gmail.com with ESMTPSA id e8sm9369279wrt.30.2021.05.07.12.49.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 May 2021 12:49:11 -0700 (PDT)
-Subject: Re: [syzbot] INFO: task hung in __io_uring_cancel
-To:     syzbot <syzbot+47fc00967b06a3019bd2@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <000000000000aca64205c05dcab3@google.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <c2cab9a3-b821-e4fa-3a8a-c66f15a642c3@gmail.com>
-Date:   Fri, 7 May 2021 20:49:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        Fri, 7 May 2021 15:57:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620417395;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=QfPZgaC8ScrLU/6NDAADdhg5u1G/7lYODHsD2R245uI=;
+        b=XvBMkaZAuyc2VsIjU85ryEk0Rh2CDHT/zvw7V4Tugubfb0uL9oWW7NjvZ692qCX7Mh9K1X
+        uYXLbWAt+6crD5Aa6SSJecbZ1zlg23vc3jgX0ZDzmPqbCaWsrlj1wMHj+oilcBuoi7nm3+
+        fARl1+3O4G2tkkW9iH3qAQkXoW6AyMY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-471-LNU2H9c3OeG_PD3OvjjKbA-1; Fri, 07 May 2021 15:56:29 -0400
+X-MC-Unique: LNU2H9c3OeG_PD3OvjjKbA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B45816D4E0;
+        Fri,  7 May 2021 19:56:27 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 535EA10016FC;
+        Fri,  7 May 2021 19:56:18 +0000 (UTC)
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Linux-Audit Mailing List <linux-audit@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Eric Paris <eparis@parisplace.org>,
+        Paul Moore <paul@paul-moore.com>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>
+Subject: [PATCH V1] audit: log xattr args not covered by syscall record
+Date:   Fri,  7 May 2021 15:55:06 -0400
+Message-Id: <604ceafd516b0785fea120f552d6336054d196af.1620414949.git.rgb@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <000000000000aca64205c05dcab3@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/20/21 2:59 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> KASAN: null-ptr-deref Write in io_uring_cancel_sqpoll
+The *setxattr syscalls take 5 arguments.  The SYSCALL record only lists
+four arguments and only lists pointers of string values.  The xattr name
+string, value string and flags (5th arg) are needed by audit given the
+syscall's main purpose.
 
-#syz test: git://git.kernel.dk/linux-block io_uring-5.13
+Add the auxiliary record AUDIT_XATTR (1336) to record the details not
+available in the SYSCALL record including the name string, value string
+and flags.
 
-> 
-> ==================================================================
-> BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
-> BUG: KASAN: null-ptr-deref in atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
-> BUG: KASAN: null-ptr-deref in io_uring_cancel_sqpoll+0x150/0x310 fs/io_uring.c:8930
-> Write of size 4 at addr 0000000000000114 by task iou-sqp-31588/31596
-> 
-> CPU: 0 PID: 31596 Comm: iou-sqp-31588 Not tainted 5.12.0-rc7-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:79 [inline]
->  dump_stack+0x141/0x1d7 lib/dump_stack.c:120
->  __kasan_report mm/kasan/report.c:403 [inline]
->  kasan_report.cold+0x5f/0xd8 mm/kasan/report.c:416
->  check_region_inline mm/kasan/generic.c:180 [inline]
->  kasan_check_range+0x13d/0x180 mm/kasan/generic.c:186
->  instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
->  atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
->  io_uring_cancel_sqpoll+0x150/0x310 fs/io_uring.c:8930
->  io_sq_thread+0x47e/0x1310 fs/io_uring.c:6873
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-> ==================================================================
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 1 PID: 31596 Comm: iou-sqp-31588 Tainted: G    B             5.12.0-rc7-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:79 [inline]
->  dump_stack+0x141/0x1d7 lib/dump_stack.c:120
->  panic+0x306/0x73d kernel/panic.c:231
->  end_report mm/kasan/report.c:102 [inline]
->  end_report.cold+0x5a/0x5a mm/kasan/report.c:88
->  __kasan_report mm/kasan/report.c:406 [inline]
->  kasan_report.cold+0x6a/0xd8 mm/kasan/report.c:416
->  check_region_inline mm/kasan/generic.c:180 [inline]
->  kasan_check_range+0x13d/0x180 mm/kasan/generic.c:186
->  instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
->  atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
->  io_uring_cancel_sqpoll+0x150/0x310 fs/io_uring.c:8930
->  io_sq_thread+0x47e/0x1310 fs/io_uring.c:6873
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
-> 
-> 
-> Tested on:
-> 
-> commit:         734551df io_uring: fix shared sqpoll cancellation hangs
-> git tree:       git://git.kernel.dk/linux-block for-5.13/io_uring
-> console output: https://syzkaller.appspot.com/x/log.txt?x=175fec6dd00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=601d16d8cd22e315
-> dashboard link: https://syzkaller.appspot.com/bug?extid=47fc00967b06a3019bd2
-> compiler:       
-> 
+Notes about field names:
+- name is too generic, use xattr precedent from ima
+- val is already generic value field name
+- flags used by mmap, xflags new name
 
+Sample event with new record:
+type=PROCTITLE msg=audit(05/07/2021 12:58:42.176:189) : proctitle=filecap /tmp/ls dac_override
+type=PATH msg=audit(05/07/2021 12:58:42.176:189) : item=0 name=(null) inode=25 dev=00:1e mode=file,755 ouid=root ogid=root rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=NORMAL cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 cap_frootid=0
+type=CWD msg=audit(05/07/2021 12:58:42.176:189) : cwd=/root
+type=XATTR msg=audit(05/07/2021 12:58:42.176:189) : xattr="security.capability" val=01 xflags=0x0
+type=SYSCALL msg=audit(05/07/2021 12:58:42.176:189) : arch=x86_64 syscall=fsetxattr success=yes exit=0 a0=0x3 a1=0x7fc2f055905f a2=0x7ffebd58ebb0 a3=0x14 items=1 ppid=526 pid=554 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=filecap exe=/usr/bin/filecap subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=cap-test
+
+Link: https://github.com/linux-audit/audit-kernel/issues/39
+Link: https://lore.kernel.org/r/604ceafd516b0785fea120f552d6336054d196af.1620414949.git.rgb@redhat.com
+Suggested-by: Steve Grubb <sgrubb@redhat.com>
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+ fs/xattr.c                 |  2 ++
+ include/linux/audit.h      | 10 +++++++++
+ include/uapi/linux/audit.h |  1 +
+ kernel/audit.h             |  5 +++++
+ kernel/auditsc.c           | 45 ++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 63 insertions(+)
+
+diff --git a/fs/xattr.c b/fs/xattr.c
+index b3444e06cded..f2b6af1719fd 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -570,6 +570,7 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
+ 			posix_acl_fix_xattr_from_user(mnt_userns, kvalue, size);
+ 	}
+ 
++	audit_xattr(name, value, flags);
+ 	error = vfs_setxattr(mnt_userns, d, kname, kvalue, size, flags);
+ out:
+ 	kvfree(kvalue);
+@@ -816,6 +817,7 @@ removexattr(struct user_namespace *mnt_userns, struct dentry *d,
+ 	if (error < 0)
+ 		return error;
+ 
++	audit_xattr(name, "(null)", 0);
+ 	return vfs_removexattr(mnt_userns, d, kname);
+ }
+ 
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index 82b7c1116a85..784d34888c8a 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -404,6 +404,7 @@ extern void __audit_tk_injoffset(struct timespec64 offset);
+ extern void __audit_ntp_log(const struct audit_ntp_data *ad);
+ extern void __audit_log_nfcfg(const char *name, u8 af, unsigned int nentries,
+ 			      enum audit_nfcfgop op, gfp_t gfp);
++extern void __audit_xattr(const char *name, const char *value, int flags);
+ 
+ static inline void audit_ipc_obj(struct kern_ipc_perm *ipcp)
+ {
+@@ -547,6 +548,12 @@ static inline void audit_log_nfcfg(const char *name, u8 af,
+ 		__audit_log_nfcfg(name, af, nentries, op, gfp);
+ }
+ 
++static inline void audit_xattr(const char *name, const char *value, int flags)
++{
++	if (!audit_dummy_context())
++		__audit_xattr(name, value, flags);
++}
++
+ extern int audit_n_rules;
+ extern int audit_signals;
+ #else /* CONFIG_AUDITSYSCALL */
+@@ -677,6 +684,9 @@ static inline void audit_log_nfcfg(const char *name, u8 af,
+ 				   enum audit_nfcfgop op, gfp_t gfp)
+ { }
+ 
++static inline void audit_xattr(const char *name, const char *value, int flags)
++{ }
++
+ #define audit_n_rules 0
+ #define audit_signals 0
+ #endif /* CONFIG_AUDITSYSCALL */
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index cd2d8279a5e4..4477ff80a24d 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -118,6 +118,7 @@
+ #define AUDIT_TIME_ADJNTPVAL	1333	/* NTP value adjustment */
+ #define AUDIT_BPF		1334	/* BPF subsystem */
+ #define AUDIT_EVENT_LISTENER	1335	/* Task joined multicast read socket */
++#define AUDIT_XATTR		1336	/* xattr arguments */
+ 
+ #define AUDIT_AVC		1400	/* SE Linux avc denial or grant */
+ #define AUDIT_SELINUX_ERR	1401	/* Internal SE Linux Errors */
+diff --git a/kernel/audit.h b/kernel/audit.h
+index 1522e100fd17..9544284fce57 100644
+--- a/kernel/audit.h
++++ b/kernel/audit.h
+@@ -191,6 +191,11 @@ struct audit_context {
+ 		struct {
+ 			char			*name;
+ 		} module;
++		struct {
++			char			*name;
++			char			*value;
++			int			flags;
++		} xattr;
+ 	};
+ 	int fds[2];
+ 	struct audit_proctitle proctitle;
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 8bb9ac84d2fb..7f2b56136fa4 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -884,6 +884,7 @@ static inline void audit_free_module(struct audit_context *context)
+ 		context->module.name = NULL;
+ 	}
+ }
++
+ static inline void audit_free_names(struct audit_context *context)
+ {
+ 	struct audit_names *n, *next;
+@@ -915,6 +916,16 @@ static inline void audit_free_aux(struct audit_context *context)
+ 	}
+ }
+ 
++static inline void audit_free_xattr(struct audit_context *context)
++{
++	if (context->type == AUDIT_XATTR) {
++		kfree(context->xattr.name);
++		context->xattr.name = NULL;
++		kfree(context->xattr.value);
++		context->xattr.value = NULL;
++	}
++}
++
+ static inline struct audit_context *audit_alloc_context(enum audit_state state)
+ {
+ 	struct audit_context *context;
+@@ -969,6 +980,7 @@ int audit_alloc(struct task_struct *tsk)
+ 
+ static inline void audit_free_context(struct audit_context *context)
+ {
++	audit_free_xattr(context);
+ 	audit_free_module(context);
+ 	audit_free_names(context);
+ 	unroll_tree_refs(context, NULL, 0);
+@@ -1317,6 +1329,20 @@ static void show_special(struct audit_context *context, int *call_panic)
+ 		} else
+ 			audit_log_format(ab, "(null)");
+ 
++		break;
++	case AUDIT_XATTR:
++		audit_log_format(ab, "xattr=");
++		if (context->xattr.name)
++			audit_log_untrustedstring(ab, context->xattr.name);
++		else
++			audit_log_format(ab, "(null)");
++		audit_log_format(ab, " val=");
++		if (context->xattr.value)
++			audit_log_untrustedstring(ab, context->xattr.value);
++		else
++			audit_log_format(ab, "(null)");
++		audit_log_format(ab, " xflags=0x%x", context->xattr.flags);
++
+ 		break;
+ 	}
+ 	audit_log_end(ab);
+@@ -1742,6 +1768,7 @@ void __audit_syscall_exit(int success, long return_code)
+ 	context->in_syscall = 0;
+ 	context->prio = context->state == AUDIT_RECORD_CONTEXT ? ~0ULL : 0;
+ 
++	audit_free_xattr(context);
+ 	audit_free_module(context);
+ 	audit_free_names(context);
+ 	unroll_tree_refs(context, NULL, 0);
+@@ -2536,6 +2563,24 @@ void __audit_log_kern_module(char *name)
+ 	context->type = AUDIT_KERN_MODULE;
+ }
+ 
++void __audit_xattr(const char *name, const char *value, int flags)
++{
++	struct audit_context *context = audit_context();
++
++	context->type = AUDIT_XATTR;
++	context->xattr.flags = flags;
++	context->xattr.name = kstrdup(name, GFP_KERNEL);
++	if (!context->xattr.name)
++		goto out;
++	context->xattr.value = kstrdup(value, GFP_KERNEL);
++	if (!context->xattr.value)
++		goto out;
++	return;
++out:
++	kfree(context->xattr.name);
++	audit_log_lost("out of memory in __audit_xattr");
++}
++
+ void __audit_fanotify(unsigned int response)
+ {
+ 	audit_log(audit_context(), GFP_KERNEL,
 -- 
-Pavel Begunkov
+2.27.0
+
