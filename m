@@ -2,83 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 04636376724
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 May 2021 16:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09C9B376763
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 May 2021 16:59:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237688AbhEGOmS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 May 2021 10:42:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59310 "EHLO
+        id S237732AbhEGPAV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 May 2021 11:00:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233545AbhEGOmO (ORCPT
+        with ESMTP id S237735AbhEGPAU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 May 2021 10:42:14 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 851FDC061574;
-        Fri,  7 May 2021 07:41:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=vx06W0nngKfU8tIsu9g8fiUjk7fO4Zx6zOu8s1ypHe8=; b=Onpma/FHwNu6HH6pq1fWEeb7wc
-        m9Yv1Gr8JLQGtU2aQh9HbOFhu1tCtqy41/FqOyXO6JLQ7UenXt0wTYll5oIIUwSCx+z2zv8DFeyxF
-        8KmHkWlFWbBX7QxShZ+n46NX72st/qdSs0hNS/z8CG/E9eH9bicNVIW8SDZhgEAnsFg18oimDI1Mu
-        I/rfkIx+wzOgYI/LR8sTxbbnajnn0gMXIj3AiIKDt0lGepvWV9gk6Fv+7yLoodo6mZitGDjxT1gnE
-        ZHZ70FucyC9yLQHKyYk41lK/ah58mchElTAIQYSFbcQ7qt/n+mkc7TjsOo8h9qcw1fqOPi/XAxht3
-        55adjKYg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lf1eh-003Fy6-3t; Fri, 07 May 2021 14:40:44 +0000
-Date:   Fri, 7 May 2021 15:40:39 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] xfs: kick extra large ioends to completion
- workqueue
-Message-ID: <YJVRZ1Bg1gan2BrW@casper.infradead.org>
-References: <20201002153357.56409-3-bfoster@redhat.com>
- <20201005152102.15797-1-bfoster@redhat.com>
- <20201006035537.GD49524@magnolia>
- <20201006124440.GA50358@bfoster>
- <20210506193158.GD8582@magnolia>
- <YJVJZzld5ucxnlAH@bfoster>
+        Fri, 7 May 2021 11:00:20 -0400
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18624C0613ED
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 May 2021 07:59:21 -0700 (PDT)
+Received: by mail-io1-xd2d.google.com with SMTP id z24so8222270ioi.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 May 2021 07:59:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZI0bcFPJ2tB9w0Gpmkj9hW2yBs41/ZZ7AdB8tXpcJ6E=;
+        b=1sF8kkl0oiBEzdziAi6zItCMjm0zTh9wN2VDqE3XA+oy/ZFRwHwQ1SMnlhm8UYR1BY
+         mUNZPoVTSP42VaTmvh+wrrQwB6gvCxUv85siGvP4/LbRpqZt7/iUq2Cj8Tng2qAJZmVj
+         W2NCtStma6SAZFxxAP8SfxMgRU80Y3UjFtylrgL8C7MLlsnKCe2sreef0d9ovm10ggEj
+         7Lf1FnuAGpxXLidRqqWUxBj8iVGUcrvx5fw4Z/y5r31aSfizch7vQMN2q0bCWP9cnin3
+         Drxq/TZ0D6S+7y638G0hlRoaakWyORwVnCyQ7KSw5XMdWCEOWoymucVwdW9Hiebh3IY4
+         E6ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZI0bcFPJ2tB9w0Gpmkj9hW2yBs41/ZZ7AdB8tXpcJ6E=;
+        b=aUMa9US04eTIOsn05JLfj5VCTBulwUF37/QY8wS179M0a7PPiNhbxDhpdVi0uvdSuK
+         ynHK0j/G0sE2mNm6oSDJT2rJoOjFSKrq2x3ZEb/bJ+EouRgv4be0r7BpPiC5dhYeajvZ
+         Wc1WvUB4sQZ/CKtvALfVOeihbsBRTuyL6M0+LeL5TZz7pac4RBs6ABhcVvTmf5JwgldL
+         KCQP5xFYW6ygsT2nOx2fLxfIYbBXquevkvRT5J9jfx4wt0mNpEE4oTFAcxTz+M5+6gda
+         C8gzoYiu8Mw09Yet0yy8qgXTw3TEUVkviIzDNHH7Zagnvw+ZPQeuSrXYm//J0sIzqsFN
+         7QOA==
+X-Gm-Message-State: AOAM533WPV6HF2ZFesG7Qv/puqxzDyIXTj00xBnjyniQCLAk53xQFyiP
+        bvUF2+4ADoW/3px6JNV6cKivgw==
+X-Google-Smtp-Source: ABdhPJxijx6e3v21+945OHqw2INCZe53gErjSGMh4PgWqDOnfDVdO5PyS6Vqvc1VA2KnWBEbkt753g==
+X-Received: by 2002:a6b:7901:: with SMTP id i1mr7999861iop.41.1620399560342;
+        Fri, 07 May 2021 07:59:20 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id q3sm1595752ils.61.2021.05.07.07.59.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 May 2021 07:59:19 -0700 (PDT)
+Subject: Re: [PATCH] block: reexpand iov_iter after read/write
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        yangerkun <yangerkun@huawei.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org
+References: <20210401071807.3328235-1-yangerkun@huawei.com>
+ <a2e97190-936d-ebe0-2adc-748328076f31@gmail.com>
+ <7ff7d1b7-8b6d-a684-1740-6a62565f77b6@gmail.com>
+ <3368729f-e61d-d4b6-f2ae-e17ebe59280e@gmail.com>
+ <3d6904c0-9719-8569-2ae8-dd9694da046b@huawei.com>
+ <05803db5-c6de-e115-3db2-476454b20668@gmail.com>
+ <YIwVzWEU97BylYK1@zeniv-ca.linux.org.uk>
+ <2ee68ca3-e466-24d4-3766-8c627d94d71e@kernel.dk>
+ <YJQ7jf7Twxexx31T@zeniv-ca.linux.org.uk>
+ <b4fe4a3d-06ab-31e3-e1a2-46c23307b32a@kernel.dk>
+ <YJRa4gQSWl3/eMXV@zeniv-ca.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <9c83335a-dbd4-dde7-ca6a-14ed5d7a6fc1@kernel.dk>
+Date:   Fri, 7 May 2021 08:59:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YJVJZzld5ucxnlAH@bfoster>
+In-Reply-To: <YJRa4gQSWl3/eMXV@zeniv-ca.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 07, 2021 at 10:06:31AM -0400, Brian Foster wrote:
-> > <nod> So I guess I'm saying that my resistance to /this/ part of the
-> > changes is melting away.  For a 2GB+ write IO, I guess the extra overhead
-> > of poking a workqueue can be amortized over the sheer number of pages.
+On 5/6/21 3:08 PM, Al Viro wrote:
+> On Thu, May 06, 2021 at 01:15:01PM -0600, Jens Axboe wrote:
 > 
-> I think the main question is what is a suitable size threshold to kick
-> an ioend over to the workqueue? Looking back, I think this patch just
-> picked 256k randomly to propose the idea. ISTM there could be a
-> potentially large window from the point where I/O latency starts to
-> dominate (over the extra context switch for wq processing) and where the
-> softlockup warning thing will eventually trigger due to having too many
-> pages. I think that means we could probably use a more conservative
-> value, I'm just not sure what value should be (10MB, 100MB, 1GB?). If
-> you have a reproducer it might be interesting to experiment with that.
+>> Attached output of perf annotate <func> for that last run.
+> 
+> Heh...  I wonder if keeping the value of iocb_flags(file) in
+> struct file itself would have a visible effect...
 
-To my mind, there are four main types of I/Os.
+A quick hack to get rid of the init_sync_kiocb() in new_sync_write() and
+just eliminate the ki_flags read in eventfd_write(), as the test case is
+blocking. That brings us closer to the ->write() method, down 7% vs the
+previous 10%:
 
-1. Small, dependent reads -- maybe reading a B-tree block so we can get
-the next pointer.  Those need latency above all.
+Executed in  468.23 millis    fish           external
+   usr time   95.09 millis  114.00 micros   94.98 millis
+   sys time  372.98 millis   76.00 micros  372.90 millis
 
-2. Readahead.  Tend to be large I/Os and latency is not a concern
+Executed in  468.97 millis    fish           external
+   usr time   91.05 millis   89.00 micros   90.96 millis
+   sys time  377.92 millis   69.00 micros  377.85 millis
 
-3. Page writeback which tend to be large and can afford the extra latency.
-
-4. Log writes.  These tend to be small, and I'm not sure what increasing
-their latency would do.  Probably bad.
-
-I like 256kB as a threshold.  I think I could get behind anything from
-128kB to 1MB.  I don't think playing with it is going to be really
-interesting because most IOs are going to be far below or far above
-that threshold.
+-- 
+Jens Axboe
 
