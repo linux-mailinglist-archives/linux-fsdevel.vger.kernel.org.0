@@ -2,262 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE2EF376AE3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 May 2021 21:56:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0D86376ADC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 May 2021 21:55:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230031AbhEGT5h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 May 2021 15:57:37 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35857 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229997AbhEGT5g (ORCPT
+        id S229942AbhEGT4w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 May 2021 15:56:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43834 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229658AbhEGT4v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 May 2021 15:57:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620417395;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=QfPZgaC8ScrLU/6NDAADdhg5u1G/7lYODHsD2R245uI=;
-        b=XvBMkaZAuyc2VsIjU85ryEk0Rh2CDHT/zvw7V4Tugubfb0uL9oWW7NjvZ692qCX7Mh9K1X
-        uYXLbWAt+6crD5Aa6SSJecbZ1zlg23vc3jgX0ZDzmPqbCaWsrlj1wMHj+oilcBuoi7nm3+
-        fARl1+3O4G2tkkW9iH3qAQkXoW6AyMY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-471-LNU2H9c3OeG_PD3OvjjKbA-1; Fri, 07 May 2021 15:56:29 -0400
-X-MC-Unique: LNU2H9c3OeG_PD3OvjjKbA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B45816D4E0;
-        Fri,  7 May 2021 19:56:27 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.45])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 535EA10016FC;
-        Fri,  7 May 2021 19:56:18 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Linux-Audit Mailing List <linux-audit@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
-        Paul Moore <paul@paul-moore.com>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>
-Subject: [PATCH V1] audit: log xattr args not covered by syscall record
-Date:   Fri,  7 May 2021 15:55:06 -0400
-Message-Id: <604ceafd516b0785fea120f552d6336054d196af.1620414949.git.rgb@redhat.com>
+        Fri, 7 May 2021 15:56:51 -0400
+Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98747C061574;
+        Fri,  7 May 2021 12:55:50 -0700 (PDT)
+Received: by mail-ot1-x330.google.com with SMTP id b5-20020a9d5d050000b02902a5883b0f4bso8927126oti.2;
+        Fri, 07 May 2021 12:55:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mQnyWX8UpAFeWLBPcl0wEiusAg79AJ6iCjS7XN+qQUM=;
+        b=O5HPILdivS0YKoqsFW5OAMccSfukgoFEyl8T8sxZ8qj4bfkEpHHl5xDocVhjtlKa/h
+         KsmUB1DuEpCrO/tSrnyXV/6Dglcw9GYIoKGsbHmB1BVHAE7+08kotid/6awVvg2KMcLP
+         OgJN3XzHyoWPbAGypOHIurPHF9JhVWJaE05OCMq28h2SBibVWcUrJTrDOVjDoN2ktJqH
+         hrHWUvUXr4Zl90u3mOepyMvg6WFXF1FhjSSMN/UWyXUzr3YKNx29U1CUHg3p5WnQcjge
+         WbRs0n0b6ywU9WJy4EGJsdc12xiRjZJondmU2lAWvgX717bAFdUw9cm8E2c4kelZO79s
+         ASxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mQnyWX8UpAFeWLBPcl0wEiusAg79AJ6iCjS7XN+qQUM=;
+        b=aV5LanOPeHFErWlHiyfgTiAEdY5lZQZv/lYOYzWoMRdQBc1LYCao/9nf9h9yVIrQ0r
+         5qi6PeFwMFMicTZ7fljCkGScYUmsaf3hmal3fpbA8AbRVEr8jRmeSDarg7MaMmS4ilfZ
+         USyo1FafXUr6+fQsAaLf7DRrTjqCbog083hznaGwIL4gfcKDQ6djlnm6mobCUWekotL+
+         G6b3xcyEPAl9bA8mDTgMEgNHQTqEJjKxfv+8AdEOpbLQkGJaOa8zmzbQVVPTWa8mQ/vL
+         OSq+8LWbqef9elK5f1xj3VmmwKadeAQYdi2LRasvmYhKCo1M5FKsnH+j/s7rie/gboeL
+         FFSw==
+X-Gm-Message-State: AOAM532ytmSeuLllNvRFjRk9Rz7brKAgUTHy8WH1d2uKCCMM4Tnkyt8b
+        gu6ylTyAcS2U/zbPDgmoIoXMsIDLDllQUWcxZtI=
+X-Google-Smtp-Source: ABdhPJxSN3/17xHdFjhSCghcx/8s/LWHl/NuI+//RSo2pAWsPuDQlJpfn0/5Rjl3B/LGJlLffIe5AbmBEavYIDEc+bk=
+X-Received: by 2002:a9d:51c6:: with SMTP id d6mr3297673oth.311.1620417349972;
+ Fri, 07 May 2021 12:55:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <CAKMK7uFEhyJChERFQ_DYFU4UCA2Ox4wTkds3+GeyURH5xNMTCA@mail.gmail.com>
+ <CAOWid-fL0=OM2XiOH+NFgn_e2L4Yx8sXA-+HicUb9bzhP0t8Bw@mail.gmail.com>
+ <YJUBer3wWKSAeXe7@phenom.ffwll.local> <CAOWid-dmRsZUjF3cJ8+mx5FM9ksNQ_P9xY3jqxFiFMvN29SaLw@mail.gmail.com>
+ <YJVnO+TCRW83S6w4@phenom.ffwll.local> <CADnq5_Pvtj1vb0bak_gUkv9J3+vfsMZxVKTKYeUvwQCajAWoVQ@mail.gmail.com>
+ <YJVqL4c6SJc8wdkK@phenom.ffwll.local> <CADnq5_PHjiHy=Su_1VKr5ycdnXN-OuSXw0X_TeNqSj+TJs2MGA@mail.gmail.com>
+ <CADnq5_OjaPw5iF_82bjNPt6v-7OcRmXmXECcN+Gdg1NcucJiHA@mail.gmail.com>
+ <YJVwtS9XJlogZRqv@phenom.ffwll.local> <YJWWByISHSPqF+aN@slm.duckdns.org>
+In-Reply-To: <YJWWByISHSPqF+aN@slm.duckdns.org>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Fri, 7 May 2021 15:55:39 -0400
+Message-ID: <CADnq5_Mwd-xHZQ4pt34=FPk2Gq3ij1FNHWsEz1LdS7_Dyo00iQ@mail.gmail.com>
+Subject: Re: [RFC] Add BPF_PROG_TYPE_CGROUP_IOCTL
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, Kenny Ho <y2kenny@gmail.com>,
+        Song Liu <songliubraving@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kenny Ho <Kenny.Ho@amd.com>,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        Brian Welty <brian.welty@intel.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Network Development <netdev@vger.kernel.org>,
+        KP Singh <kpsingh@chromium.org>, Yonghong Song <yhs@fb.com>,
+        bpf <bpf@vger.kernel.org>, Dave Airlie <airlied@gmail.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The *setxattr syscalls take 5 arguments.  The SYSCALL record only lists
-four arguments and only lists pointers of string values.  The xattr name
-string, value string and flags (5th arg) are needed by audit given the
-syscall's main purpose.
+On Fri, May 7, 2021 at 3:33 PM Tejun Heo <tj@kernel.org> wrote:
+>
+> Hello,
+>
+> On Fri, May 07, 2021 at 06:54:13PM +0200, Daniel Vetter wrote:
+> > All I meant is that for the container/cgroups world starting out with
+> > time-sharing feels like the best fit, least because your SRIOV designers
+> > also seem to think that's the best first cut for cloud-y computing.
+> > Whether it's virtualized or containerized is a distinction that's getting
+> > ever more blurry, with virtualization become a lot more dynamic and
+> > container runtimes als possibly using hw virtualization underneath.
+>
+> FWIW, I'm completely on the same boat. There are two fundamental issues with
+> hardware-mask based control - control granularity and work conservation.
+> Combined, they make it a significantly more difficult interface to use which
+> requires hardware-specific tuning rather than simply being able to say "I
+> wanna prioritize this job twice over that one".
+>
+> My knoweldge of gpus is really limited but my understanding is also that the
+> gpu cores and threads aren't as homogeneous as the CPU counterparts across
+> the vendors, product generations and possibly even within a single chip,
+> which makes the problem even worse.
+>
+> Given that GPUs are time-shareable to begin with, the most universal
+> solution seems pretty clear.
 
-Add the auxiliary record AUDIT_XATTR (1336) to record the details not
-available in the SYSCALL record including the name string, value string
-and flags.
+The problem is temporal partitioning on GPUs is much harder to enforce
+unless you have a special case like SR-IOV.  Spatial partitioning, on
+AMD GPUs at least, is widely available and easily enforced.  What is
+the point of implementing temporal style cgroups if no one can enforce
+it effectively?
 
-Notes about field names:
-- name is too generic, use xattr precedent from ima
-- val is already generic value field name
-- flags used by mmap, xflags new name
+Alex
 
-Sample event with new record:
-type=PROCTITLE msg=audit(05/07/2021 12:58:42.176:189) : proctitle=filecap /tmp/ls dac_override
-type=PATH msg=audit(05/07/2021 12:58:42.176:189) : item=0 name=(null) inode=25 dev=00:1e mode=file,755 ouid=root ogid=root rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=NORMAL cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 cap_frootid=0
-type=CWD msg=audit(05/07/2021 12:58:42.176:189) : cwd=/root
-type=XATTR msg=audit(05/07/2021 12:58:42.176:189) : xattr="security.capability" val=01 xflags=0x0
-type=SYSCALL msg=audit(05/07/2021 12:58:42.176:189) : arch=x86_64 syscall=fsetxattr success=yes exit=0 a0=0x3 a1=0x7fc2f055905f a2=0x7ffebd58ebb0 a3=0x14 items=1 ppid=526 pid=554 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=filecap exe=/usr/bin/filecap subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=cap-test
-
-Link: https://github.com/linux-audit/audit-kernel/issues/39
-Link: https://lore.kernel.org/r/604ceafd516b0785fea120f552d6336054d196af.1620414949.git.rgb@redhat.com
-Suggested-by: Steve Grubb <sgrubb@redhat.com>
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- fs/xattr.c                 |  2 ++
- include/linux/audit.h      | 10 +++++++++
- include/uapi/linux/audit.h |  1 +
- kernel/audit.h             |  5 +++++
- kernel/auditsc.c           | 45 ++++++++++++++++++++++++++++++++++++++
- 5 files changed, 63 insertions(+)
-
-diff --git a/fs/xattr.c b/fs/xattr.c
-index b3444e06cded..f2b6af1719fd 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -570,6 +570,7 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
- 			posix_acl_fix_xattr_from_user(mnt_userns, kvalue, size);
- 	}
- 
-+	audit_xattr(name, value, flags);
- 	error = vfs_setxattr(mnt_userns, d, kname, kvalue, size, flags);
- out:
- 	kvfree(kvalue);
-@@ -816,6 +817,7 @@ removexattr(struct user_namespace *mnt_userns, struct dentry *d,
- 	if (error < 0)
- 		return error;
- 
-+	audit_xattr(name, "(null)", 0);
- 	return vfs_removexattr(mnt_userns, d, kname);
- }
- 
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 82b7c1116a85..784d34888c8a 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -404,6 +404,7 @@ extern void __audit_tk_injoffset(struct timespec64 offset);
- extern void __audit_ntp_log(const struct audit_ntp_data *ad);
- extern void __audit_log_nfcfg(const char *name, u8 af, unsigned int nentries,
- 			      enum audit_nfcfgop op, gfp_t gfp);
-+extern void __audit_xattr(const char *name, const char *value, int flags);
- 
- static inline void audit_ipc_obj(struct kern_ipc_perm *ipcp)
- {
-@@ -547,6 +548,12 @@ static inline void audit_log_nfcfg(const char *name, u8 af,
- 		__audit_log_nfcfg(name, af, nentries, op, gfp);
- }
- 
-+static inline void audit_xattr(const char *name, const char *value, int flags)
-+{
-+	if (!audit_dummy_context())
-+		__audit_xattr(name, value, flags);
-+}
-+
- extern int audit_n_rules;
- extern int audit_signals;
- #else /* CONFIG_AUDITSYSCALL */
-@@ -677,6 +684,9 @@ static inline void audit_log_nfcfg(const char *name, u8 af,
- 				   enum audit_nfcfgop op, gfp_t gfp)
- { }
- 
-+static inline void audit_xattr(const char *name, const char *value, int flags)
-+{ }
-+
- #define audit_n_rules 0
- #define audit_signals 0
- #endif /* CONFIG_AUDITSYSCALL */
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index cd2d8279a5e4..4477ff80a24d 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -118,6 +118,7 @@
- #define AUDIT_TIME_ADJNTPVAL	1333	/* NTP value adjustment */
- #define AUDIT_BPF		1334	/* BPF subsystem */
- #define AUDIT_EVENT_LISTENER	1335	/* Task joined multicast read socket */
-+#define AUDIT_XATTR		1336	/* xattr arguments */
- 
- #define AUDIT_AVC		1400	/* SE Linux avc denial or grant */
- #define AUDIT_SELINUX_ERR	1401	/* Internal SE Linux Errors */
-diff --git a/kernel/audit.h b/kernel/audit.h
-index 1522e100fd17..9544284fce57 100644
---- a/kernel/audit.h
-+++ b/kernel/audit.h
-@@ -191,6 +191,11 @@ struct audit_context {
- 		struct {
- 			char			*name;
- 		} module;
-+		struct {
-+			char			*name;
-+			char			*value;
-+			int			flags;
-+		} xattr;
- 	};
- 	int fds[2];
- 	struct audit_proctitle proctitle;
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 8bb9ac84d2fb..7f2b56136fa4 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -884,6 +884,7 @@ static inline void audit_free_module(struct audit_context *context)
- 		context->module.name = NULL;
- 	}
- }
-+
- static inline void audit_free_names(struct audit_context *context)
- {
- 	struct audit_names *n, *next;
-@@ -915,6 +916,16 @@ static inline void audit_free_aux(struct audit_context *context)
- 	}
- }
- 
-+static inline void audit_free_xattr(struct audit_context *context)
-+{
-+	if (context->type == AUDIT_XATTR) {
-+		kfree(context->xattr.name);
-+		context->xattr.name = NULL;
-+		kfree(context->xattr.value);
-+		context->xattr.value = NULL;
-+	}
-+}
-+
- static inline struct audit_context *audit_alloc_context(enum audit_state state)
- {
- 	struct audit_context *context;
-@@ -969,6 +980,7 @@ int audit_alloc(struct task_struct *tsk)
- 
- static inline void audit_free_context(struct audit_context *context)
- {
-+	audit_free_xattr(context);
- 	audit_free_module(context);
- 	audit_free_names(context);
- 	unroll_tree_refs(context, NULL, 0);
-@@ -1317,6 +1329,20 @@ static void show_special(struct audit_context *context, int *call_panic)
- 		} else
- 			audit_log_format(ab, "(null)");
- 
-+		break;
-+	case AUDIT_XATTR:
-+		audit_log_format(ab, "xattr=");
-+		if (context->xattr.name)
-+			audit_log_untrustedstring(ab, context->xattr.name);
-+		else
-+			audit_log_format(ab, "(null)");
-+		audit_log_format(ab, " val=");
-+		if (context->xattr.value)
-+			audit_log_untrustedstring(ab, context->xattr.value);
-+		else
-+			audit_log_format(ab, "(null)");
-+		audit_log_format(ab, " xflags=0x%x", context->xattr.flags);
-+
- 		break;
- 	}
- 	audit_log_end(ab);
-@@ -1742,6 +1768,7 @@ void __audit_syscall_exit(int success, long return_code)
- 	context->in_syscall = 0;
- 	context->prio = context->state == AUDIT_RECORD_CONTEXT ? ~0ULL : 0;
- 
-+	audit_free_xattr(context);
- 	audit_free_module(context);
- 	audit_free_names(context);
- 	unroll_tree_refs(context, NULL, 0);
-@@ -2536,6 +2563,24 @@ void __audit_log_kern_module(char *name)
- 	context->type = AUDIT_KERN_MODULE;
- }
- 
-+void __audit_xattr(const char *name, const char *value, int flags)
-+{
-+	struct audit_context *context = audit_context();
-+
-+	context->type = AUDIT_XATTR;
-+	context->xattr.flags = flags;
-+	context->xattr.name = kstrdup(name, GFP_KERNEL);
-+	if (!context->xattr.name)
-+		goto out;
-+	context->xattr.value = kstrdup(value, GFP_KERNEL);
-+	if (!context->xattr.value)
-+		goto out;
-+	return;
-+out:
-+	kfree(context->xattr.name);
-+	audit_log_lost("out of memory in __audit_xattr");
-+}
-+
- void __audit_fanotify(unsigned int response)
- {
- 	audit_log(audit_context(), GFP_KERNEL,
--- 
-2.27.0
-
+>
+> Thanks.
+>
+> --
+> tejun
