@@ -2,157 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D4EF376D8D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 May 2021 01:58:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0DC5376DED
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 May 2021 02:47:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230140AbhEGX7A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 May 2021 19:59:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40844 "EHLO
+        id S229524AbhEHAsd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 May 2021 20:48:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230188AbhEGX67 (ORCPT
+        with ESMTP id S229488AbhEHAsc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 May 2021 19:58:59 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2806C061574
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 May 2021 16:57:58 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id md17so6105008pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 May 2021 16:57:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=2iQQvEB0+fCpb/rAB5HWawShZb8qZlIcaFuxaSL0oes=;
-        b=EqhSZy45d2y8OQQwraWGhlD9n54vClwPwSn7UuK9xZviJIBJseEIUX0aF36GebrTNP
-         3Y9esEq2VEVMdpYAd+09juu7yIqSSNYhNNt+rVs1po+n6QlJ3kc6cbxhUV5wUfFprLGx
-         TjvIY1CeOIbcMr4b7WQIEnR9bfI+n///RODlA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2iQQvEB0+fCpb/rAB5HWawShZb8qZlIcaFuxaSL0oes=;
-        b=gDADcfYhWGesOscUCs9h12V6zClRt99AfZiUhsQSpGx8v14X7osK1kw8HOQLcy7R8z
-         uM14eMlsceKUgGe4RadGJ7vectgdN32QYALd4mRO1Tv/6/LOrka8l8Jt60UmHDfcQCEV
-         tj84SCZRORJgusRTTCuZfun5HMfmuHZETW2XTT1nxt7FtTNwz/FUUt6smV6vjfdL1Wph
-         b+VFY96IRgimgOoeDtXLOILz4wQD4bpVMRNzXJLZn3VCnEuq96oUklw4NWHxSadDu9SX
-         qbXxQmOsFT9CM8k69FobCKNUTUGnYbwlsf/Nn78XCctgHYC2attVz1fSyP99Vbq6HYkH
-         s4hg==
-X-Gm-Message-State: AOAM533OEDqWkqRuyMGTarnUjVdJwRt2xkoYMKZiJDArxvpMKeUSeewT
-        43YiWOWZN3QKZbxcHsk+bo4hXQ==
-X-Google-Smtp-Source: ABdhPJwW5et97Z//abVIXmo2gBu5V8/Vzg230KpxBawys34RoMW6n/H4x7d7dTWApKrw1+7V8ZstIg==
-X-Received: by 2002:a17:902:ff09:b029:ed:3b29:ff43 with SMTP id f9-20020a170902ff09b02900ed3b29ff43mr12583115plj.14.1620431878548;
-        Fri, 07 May 2021 16:57:58 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id ha14sm5011198pjb.40.2021.05.07.16.57.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 May 2021 16:57:56 -0700 (PDT)
-Date:   Fri, 7 May 2021 16:57:55 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     James Bottomley <jejb@linux.ibm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v18 0/9] mm: introduce memfd_secret system call to create
- "secret" memory areas
-Message-ID: <202105071620.E834B1FA92@keescook>
-References: <20210303162209.8609-1-rppt@kernel.org>
- <20210505120806.abfd4ee657ccabf2f221a0eb@linux-foundation.org>
- <de27bfae0f4fdcbb0bb4ad17ec5aeffcd774c44b.camel@linux.ibm.com>
- <202105060916.ECDEC21@keescook>
- <9e1953a1412fad06a9f7988a280d2d9a74ab0464.camel@linux.ibm.com>
+        Fri, 7 May 2021 20:48:32 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 287CDC061761
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 May 2021 17:47:32 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 6CE88C01E; Sat,  8 May 2021 02:47:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1620434850; bh=HnjLIramDXgnK51KmV8EqpAtXbk8rOEM4anA/029GCU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iAQNurAW8d6cufW+qRdOf/5sdfWLDp16nV9y7s8gFesjuXlX5QnWkomLxpzhPyerJ
+         v/AsgwryLp6gzjmt6axdTpTlEUdWpYEcllsjKrgw4Udtbk6isSFvsO+atdzMrjejmA
+         8yzhrllDiIQwZ7DeutWudQJv9plzxVARiS96RaFu39Uf0Rucu0SL9thw8plZ2Rg3rP
+         0+7K4uL4UehUHoOxymZix7V+wODMN5Pl3lktWUfGuBT5uR/KTFwOfHio+qd2yBzDOI
+         h4ixC2togfdMyKv61C/E1nME2eQwiDT/XgtJvXfqh6Q9G4Sfkn+EA33EsJjDCWX2So
+         YKjzG8aGN1chA==
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on nautica.notk.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.0 required=5.0 tests=UNPARSEABLE_RELAY
+        autolearn=unavailable version=3.3.2
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 82401C009;
+        Sat,  8 May 2021 02:47:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1620434849; bh=HnjLIramDXgnK51KmV8EqpAtXbk8rOEM4anA/029GCU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GAA8JFqCi17AXVbXoUjb09Kyi7dFEuVGzAVEszRubxIlye3va1y+25Pt6NQ7aQ8AV
+         zt7txKZhCrlDBkpCd5tXnm8VMEKO/VlYw9zp52mWjICVuN9gra6hZ/DSXOwDn1X80k
+         sgl4i99FPx0vCz54R41wF1AHCCkrNSGz4koPK0SsysLKqrZNmn2URgm7lhrE8HWNnI
+         A26asYFH4K2jrHaZwA+vm9jFldF+72wwQNe7TRRsgBodPaEtb4vHCm5NMPI1dRdVMH
+         z1n0nWIgWNDM8gJKpinBmGOnbClEkPI5cXljdyIcNGoaSe2//aO+piEK8MH2QHBlFe
+         HB/NpegftW/RA==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 1e78d7ac;
+        Sat, 8 May 2021 00:47:23 +0000 (UTC)
+Date:   Sat, 8 May 2021 09:47:08 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
+Subject: Re: 9p: fscache duplicate cookie
+Message-ID: <YJXfjDfw9KM50f4y@codewreck.org>
+References: <87czu45gcs.fsf@suse.de>
+ <YJPIyLZ9ofnPy3F6@codewreck.org>
+ <87zgx83vj9.fsf@suse.de>
+ <87r1ii4i2a.fsf@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <9e1953a1412fad06a9f7988a280d2d9a74ab0464.camel@linux.ibm.com>
+In-Reply-To: <87r1ii4i2a.fsf@suse.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 06, 2021 at 11:47:47AM -0700, James Bottomley wrote:
-> On Thu, 2021-05-06 at 10:33 -0700, Kees Cook wrote:
-> > On Thu, May 06, 2021 at 08:26:41AM -0700, James Bottomley wrote:
-> [...]
-> > > > I think that a very complete description of the threats which
-> > > > this feature addresses would be helpful.  
-> > > 
-> > > It's designed to protect against three different threats:
-> > > 
-> > >    1. Detection of user secret memory mismanagement
-> > 
-> > I would say "cross-process secret userspace memory exposures" (via a
-> > number of common interfaces by blocking it at the GUP level).
-> > 
-> > >    2. significant protection against privilege escalation
-> > 
-> > I don't see how this series protects against privilege escalation.
-> > (It protects against exfiltration.) Maybe you mean include this in
-> > the first bullet point (i.e. "cross-process secret userspace memory
-> > exposures, even in the face of privileged processes")?
-> 
-> It doesn't prevent privilege escalation from happening in the first
-> place, but once the escalation has happened it protects against
-> exfiltration by the newly minted root attacker.
+Luis Henriques wrote on Fri, May 07, 2021 at 05:36:29PM +0100:
+> Ok, I spent some more time on this issue today.  I've hacked a bit of code
+> to keep track of new inodes' qids and I'm convinced there are no
+> duplicates when this issue happens.
 
-So, after thinking a bit more about this, I don't think there is
-protection here against privileged execution. This feature kind of helps
-against cross-process read/write attempts, but it doesn't help with
-sufficiently privileged (i.e. ptraced) execution, since we can just ask
-the process itself to do the reading:
+Ok, that's good.
+Just to make sure what did you look at aside of the qid to make sure
+it's unique? i_ino comes straight from qid->path too so we don't have
+any great key available which is why I hadn't suggesting building a
+debug table.
+(... well, actually that means we'll never try to allocate two inodes
+with the same inode number because of how v9fs_qid_iget_dotl() works, so
+if there is a collision in qid paths we wouldn't see it through cookies
+collision in the first place. I'm not sure that's good? But at least
+that clears up that theory, sorry for the bad suggestion)
 
-$ gdb ./memfd_secret
-...
-ready: 0x7ffff7ffb000
-Breakpoint 1, ...
-(gdb) compile code unsigned long addr = 0x7ffff7ffb000UL; printf("%016lx\n", *((unsigned long *)addr));
-55555555555555555
+> OTOH, I've done another quick test: in v9fs_cache_inode_get_cookie(), I do
+> an fscache_acquire_cookie() retry when it fails (due to the dup error),
+> and this retry *does* succeed.  Which means, I guess, there's a race going
+> on.  I didn't managed to look too deep yet, but my current theory is that
+> the inode is being evicted while an open is triggered.  A new inode is
+> allocated but the old inode fscache cookie hasn't yet been relinquished.
+> Does this make any sense?
 
-And since process_vm_readv() requires PTRACE_ATTACH, there's very little
-difference in effort between process_vm_readv() and the above.
+hm, if the retry goes through I guess that'd make sense; if they both
+were used in parallel the second call should fail all the same so that's
+definitely a likely explanation.
 
-So, what other paths through GUP exist that aren't covered by
-PTRACE_ATTACH? And if none, then should this actually just be done by
-setting the process undumpable? (This is already what things like gnupg
-do.)
+It wouldn't hurt to check with v9fs_evict_inode if that's correct...
+There definitely is a window where inode is no longer findable (thus
+leading to allocation of a new one) and the call to the
+fscache_relinquish_cookie() at eviction, but looking at e.g. afs they
+are doing exactly the same as 9p here (iget5_locked, if that gets a new
+inode then call fscache_acquire_cookie // fscache_relinquish_cookie in
+evict op) so I'm not sure what we're missing.
 
-So, the user-space side of this doesn't seem to really help. The kernel
-side protection is interesting for kernel read/write flaws, though, in
-the sense that the process is likely not being attacked from "current",
-so a kernel-side attack would need to either walk the page tables and
-create new ones, or spawn a new userspace process to do the ptracing.
 
-So, while I like the idea of this stuff, and I see how it provides
-certain coverages, I'm curious to learn more about the threat model to
-make sure it's actually providing meaningful hurdles to attacks.
+David, do you have an idea?
 
+> If this theory is correct, I'm not sure what's the best way to close this
+> race because the v9inode->fscache_lock can't really be used.  But I still
+> need to proof this is really what's happening.
+
+Yes, I think we're going to need proof before thinking of a solution, I
+can't think of anything simple either.
+
+
+Thanks again for looking into it,
 -- 
-Kees Cook
+Dominique
