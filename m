@@ -2,92 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B51AA377251
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 May 2021 16:17:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 735CC3772A4
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 May 2021 17:31:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbhEHOSb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 May 2021 10:18:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56966 "EHLO
+        id S229614AbhEHPcN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 May 2021 11:32:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbhEHOS3 (ORCPT
+        with ESMTP id S229500AbhEHPcN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 May 2021 10:18:29 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34CDDC061574;
-        Sat,  8 May 2021 07:17:27 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id z6so12043191wrm.4;
-        Sat, 08 May 2021 07:17:27 -0700 (PDT)
+        Sat, 8 May 2021 11:32:13 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CAEDC061574
+        for <linux-fsdevel@vger.kernel.org>; Sat,  8 May 2021 08:31:11 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id v5so2680210edc.8
+        for <linux-fsdevel@vger.kernel.org>; Sat, 08 May 2021 08:31:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=H3c5ec7McH5Zt4hIpHC+Y3YBw9oxk9RjSdvboac24Mk=;
-        b=cI9frh2jqh7zWEi4uhTuc4yKutnoTEH+9cpqpZbeqkuzr4YHNyxvur0Wm1h+hOlxIB
-         GdjfrTA0xoeOvMyML0J41fabzDhp66p0ckS+RHFDNDdJ6H3ZcV8J+1uoYwrS0L0jRlrC
-         4kzSuSU4egJLjzrIZ+ItBsSWHczvYcoiYbmy3KYEMPOp5e+z4OpAMz/MNkxMn1YH7+Uy
-         sPYu9AudF8DtmK6+Zvgbv1zA0Oh9ZRWe8r1+PtUWm3diPfzfdiXfm3KpMfx7ogI/AsCh
-         8BzgqY4Cx5OrCjWfVvkvkmXEnJQh3cEytOgFJGdOHkKuCSXfG+KHfvAGt3gVGnVG1oxM
-         3fgw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T80RW0N0f2bW+RbqzRU+sONErcUEsqlqhrSCovQJd4U=;
+        b=J06BUQYI0u+DnqsTFDFBW9BAol4dCToP14yYTvqrpw03eRMBn6wqgvdBIcmTmtUa4A
+         5W0K6bMRkpOlnT6CwcVWRYVNjl9UHUiTVQt8AyjTba2fa2urqSpsnng7MZQLkZqrRfpu
+         j85e+lD83jQdKI1jb6V7KdAg91qs6OZW5Fam0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=H3c5ec7McH5Zt4hIpHC+Y3YBw9oxk9RjSdvboac24Mk=;
-        b=IKS+Cut80tnonXJOt7hWj1jE8o3tLJ6jiX5C6qAd0amE+lw3+hHFIAAbxjJzGnQBou
-         F9xk7k1PYjZTXA+4/WE3ILsel9Lk3m3r5K/25Fs7f6X4Yc0pvw/mD16tBEqCmU2nYrO4
-         l/KxMDnx4Hn0PZC8uGX6ojT2GUb6hd/vWj5BVZhVR9TEROQ9sA8yZYtPA8hs4Ozz2YkW
-         hhv0zyeUeDw4M0Uexx0319FVHCqgYRauk1A54iQGLBUvb5z3euixLl88M1aEJ4ES6lib
-         NQJF4XQw6BcEh6y1iudqmZm9rLtd0pEZblexJMpQErewa4W1rDEDGII9ZlWPM3fO0Auj
-         SS0w==
-X-Gm-Message-State: AOAM531e40olD6DOGJHttoGT0sd2mYsLDKN77s15HD+N3Ro5pU+K5zro
-        c8RKi1gZJHKQStIQ4XwLRlk=
-X-Google-Smtp-Source: ABdhPJyLdig4xicDV+GKZswgYqckgYoB7vw2Ow/WK44uKVYYamhRUA9+gdBrs/5G2QKJCc+xwFoRcQ==
-X-Received: by 2002:a5d:660c:: with SMTP id n12mr19405903wru.87.1620483445776;
-        Sat, 08 May 2021 07:17:25 -0700 (PDT)
-Received: from [192.168.8.197] ([148.252.132.80])
-        by smtp.gmail.com with ESMTPSA id f25sm13693750wrd.67.2021.05.08.07.17.24
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T80RW0N0f2bW+RbqzRU+sONErcUEsqlqhrSCovQJd4U=;
+        b=jlHStEN1+GKDvEzRjIpPm1UeXy3GwYZp+M86hpZak1O/9HoRA7ebx8wbk9lDKXdWES
+         y/FctoaJ1srJOyAMmQvxgEd9ZZoE17oulQCVIoH1KzrEsLnAnjKL4/XE4D8r768doZ0k
+         GX1ctnfWzL+pGBdewo3EJAdq4d8XGaMAp5fKr53isvAZ1wTC+CQsVH2ZAs+1coS2ADDy
+         SjmYOVqGqPT434L5gxXKicWoy0Ctm9iPq6zmJWvxqaoiSyofHMo4DA/DsBfQbZOpouYC
+         53tTaUCIoHlEDOxxl+KDv8+5mRTn4vR/G+YTuiv2r0q6QO7n6L0l867bxi2kbCUii4PD
+         SLUA==
+X-Gm-Message-State: AOAM532WNT7dMzkHXL0TAxiUkERIs6qwu+oBrD6931eA9oE9lUKaTAiC
+        gawQwZC0hUnnI9av0IcsYP/l42PTQyE0DDJsUJ0=
+X-Google-Smtp-Source: ABdhPJyOm8hvQ3UQYCkleHzA0HOF0IFGqlpPk9iGwIuMqplaMraqCWYigQPP//BmZzH2ag8QDCTUuw==
+X-Received: by 2002:a05:6402:3101:: with SMTP id dc1mr18936420edb.318.1620487870157;
+        Sat, 08 May 2021 08:31:10 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id dj17sm6679870edb.7.2021.05.08.08.31.10
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 May 2021 07:17:25 -0700 (PDT)
-Subject: Re: [syzbot] INFO: task hung in __io_uring_cancel
-To:     syzbot <syzbot+47fc00967b06a3019bd2@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <00000000000004f05705c1c86547@google.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <c2bba1fe-a091-e08f-2e0e-cfe7759e3f72@gmail.com>
-Date:   Sat, 8 May 2021 15:17:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        Sat, 08 May 2021 08:31:10 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id g14so13744892edy.6
+        for <linux-fsdevel@vger.kernel.org>; Sat, 08 May 2021 08:31:10 -0700 (PDT)
+X-Received: by 2002:a05:651c:1311:: with SMTP id u17mr12053441lja.48.1620487859712;
+ Sat, 08 May 2021 08:30:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <00000000000004f05705c1c86547@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210508122530.1971-1-justin.he@arm.com> <20210508122530.1971-2-justin.he@arm.com>
+In-Reply-To: <20210508122530.1971-2-justin.he@arm.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 8 May 2021 08:30:43 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgSFUUWJKW1DXa67A0DXVzQ+OATwnC3FCwhqfTJZsvj1A@mail.gmail.com>
+Message-ID: <CAHk-=wgSFUUWJKW1DXa67A0DXVzQ+OATwnC3FCwhqfTJZsvj1A@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/3] fs: introduce helper d_path_fast()
+To:     Jia He <justin.he@arm.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Al Viro <viro@ftp.linux.org.uk>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/8/21 3:35 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-> 
-> Reported-and-tested-by: syzbot+47fc00967b06a3019bd2@syzkaller.appspotmail.com
-> 
-> Tested on:
-> 
-> commit:         50b7b6f2 x86/process: setup io_threads more like normal us..
-> git tree:       git://git.kernel.dk/linux-block io_uring-5.13
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5e1cf8ad694ca2e1
-> dashboard link: https://syzkaller.appspot.com/bug?extid=47fc00967b06a3019bd2
-> compiler:       
-> 
-> Note: testing is done by a robot and is best-effort only.
-> 
+On Sat, May 8, 2021 at 5:29 AM Jia He <justin.he@arm.com> wrote:
+>
+> This helper is similar to d_path except for not taking seqlock/spinlock.
 
-#syz fix: io_uring: fix work_exit sqpoll cancellations
+I see why you did it that way, but conditional locking is something we
+really really try to avoid in the kernel.
 
--- 
-Pavel Begunkov
+It basically makes a lot of static tools unable to follow the locking
+rules, and it makes it hard for people to se what's going on too.
+
+So instead of passing a "bool need_lock" thing down, the way to do
+these things is generally to extract the code inside the locked region
+into a helper function of its own, and then you have
+
+  __unlocked_version(...)
+  {
+       .. do the actual work
+  }
+
+  locked_version(..)
+  {
+      take_lock(..)
+      retval = __unlocked_version(..);
+      release_lock(..);
+      return retval;
+  }
+
+this prepend_path() case is a bit more complicated because there's two
+layers of locking, but I think the pattern should still work fine.
+
+In fact, I think it would clean up prepend_path() and make it more
+legible to have the two layers of mount_lock / rename_lock be done in
+callers with the restarting being done as a loop in the caller rather
+than as "goto restart_*".
+
+              Linus
