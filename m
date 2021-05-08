@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 60BC637748A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 May 2021 01:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 194B1377492
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 May 2021 01:19:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229641AbhEHXRn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 May 2021 19:17:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60752 "EHLO
+        id S229620AbhEHXUb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 May 2021 19:20:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbhEHXRm (ORCPT
+        with ESMTP id S229522AbhEHXUb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 May 2021 19:17:42 -0400
+        Sat, 8 May 2021 19:20:31 -0400
 Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96FA6C061573;
-        Sat,  8 May 2021 16:16:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 168A6C061573;
+        Sat,  8 May 2021 16:19:29 -0700 (PDT)
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lfWAS-00Cn4e-8T; Sat, 08 May 2021 23:15:28 +0000
-Date:   Sat, 8 May 2021 23:15:28 +0000
+        id 1lfWDk-00Cn9J-3F; Sat, 08 May 2021 23:18:52 +0000
+Date:   Sat, 8 May 2021 23:18:52 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Jia He <justin.he@arm.com>, Petr Mladek <pmladek@suse.com>,
@@ -42,7 +42,7 @@ Cc:     Jia He <justin.he@arm.com>, Petr Mladek <pmladek@suse.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Christian Brauner <christian.brauner@ubuntu.com>
 Subject: Re: [PATCH RFC 1/3] fs: introduce helper d_path_fast()
-Message-ID: <YJcbkJxrFAheQ5yO@zeniv-ca.linux.org.uk>
+Message-ID: <YJccXBMHbyvXp7+j@zeniv-ca.linux.org.uk>
 References: <20210508122530.1971-1-justin.he@arm.com>
  <20210508122530.1971-2-justin.he@arm.com>
  <CAHk-=wgSFUUWJKW1DXa67A0DXVzQ+OATwnC3FCwhqfTJZsvj1A@mail.gmail.com>
@@ -51,49 +51,18 @@ References: <20210508122530.1971-1-justin.he@arm.com>
  <YJb9KFBO7MwJeDHz@zeniv-ca.linux.org.uk>
  <CAHk-=wjgXvy9EoE1_8KpxE9P3J_a-NF7xRKaUzi9MPSCmYnq+Q@mail.gmail.com>
  <YJcUvwo2pn0JEs27@zeniv-ca.linux.org.uk>
+ <YJcbkJxrFAheQ5yO@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YJcUvwo2pn0JEs27@zeniv-ca.linux.org.uk>
+In-Reply-To: <YJcbkJxrFAheQ5yO@zeniv-ca.linux.org.uk>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 08, 2021 at 10:46:23PM +0000, Al Viro wrote:
-> On Sat, May 08, 2021 at 03:17:44PM -0700, Linus Torvalds wrote:
-> > On Sat, May 8, 2021 at 2:06 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > On Sat, May 08, 2021 at 01:39:45PM -0700, Linus Torvalds wrote:
-> > >
-> > > > +static inline int prepend_entries(struct prepend_buffer *b, const struct path *path, const struct path *root, struct mount *mnt)
-> > >
-> > > If anything, s/path/dentry/, since vfsmnt here will be equal to &mnt->mnt all along.
-> > 
-> > Too subtle for me.
-> > 
-> > And is it? Because mnt is from
-> > 
-> >      mnt = real_mount(path->mnt);
-> > 
-> > earlier, while vfsmount is plain "path->mnt".
-> 
-> static inline struct mount *real_mount(struct vfsmount *mnt)
-> {
->         return container_of(mnt, struct mount, mnt);
-> }
+On Sat, May 08, 2021 at 11:15:28PM +0000, Al Viro wrote:
 
-Basically, struct vfsmount instances are always embedded into struct mount ones.
-All information about the mount tree is in the latter (and is visible only if
-you manage to include fs/mount.h); here we want to walk towards root, so...
+> [Christian Browner Cc'd]
 
-Rationale: a lot places use struct vfsmount pointers, but they've no need to
-access all that stuff.  So struct vfsmount got trimmed down, with most of the
-things that used to be there migrating into the containing structure.
-
-[Christian Browner Cc'd]
-BTW, WTF do we have struct mount.user_ns and struct vfsmount.mnt_userns?
-Can they ever be different?  Christian?
-
-	Sigh...  Namespace flavours always remind me of old joke -
-Highlander II: There Should've Been Only One...
+Brauner, that is.  Sorry ;-/
