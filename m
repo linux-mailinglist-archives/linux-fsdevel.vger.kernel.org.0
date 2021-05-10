@@ -2,115 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5084B378397
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 May 2021 12:45:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBB41378406
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 May 2021 12:47:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232437AbhEJKqo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 May 2021 06:46:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41646 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232884AbhEJKop (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 May 2021 06:44:45 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F2CC061358
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 May 2021 03:34:16 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id v191so13284484pfc.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 May 2021 03:34:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GbEg5B1XI9iNST/E/f70TSfKy/dyLBSsJanb6FiDxic=;
-        b=f59ner0D/1qo5HyqTZPlnjeQGdv7ehb8TdlVTo883tA/MXBcSAIscvH2kflRetliLC
-         2ldbA4AOnMUr/99l1qryK6AOVgMBHunKzEHL/8Dh1NDK9SueoJw/qeG8RdHl2Op/gzox
-         L5wdoQkSdijVZGPr49AJgJ7z3J1DewJWUEkdLff0xSkZZwvITSznBNxdWJFuwOygvU5Y
-         J2dLOxY4NbqekqowGzzndqj7IrRuz4/t+O3heK9u1Xzeb2rJBWbSG9sTkueoQ+GzrKWl
-         dN7rmghZQrBAgGrUeDTAIEJ1MJjXNtmUAmttQKTKQH1rrqCmJdnTbJGYurasAK/zkqwo
-         ykIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GbEg5B1XI9iNST/E/f70TSfKy/dyLBSsJanb6FiDxic=;
-        b=GZ9fJjaVxnMpc6Hd2adnKyIrj1whQ5Yy+DLtXSwDHbRpz5d44d1WUQBb/z5KMHV2iV
-         fuX0eyvkmV4PQgLojyYDqFlMCTvl1I8Bx2DwbzstbFHpk1gTP+hKfiqsUeRzajPS0FND
-         dbvl/1+701AT28s5AGBGtIrlz0N0O9kZQC8QQVFVY4tlDqKpALg9yLyJBedAjtXbt2I0
-         RNjwmm7nwb+hXcaG6c28jD4Tb78JcxOO1ynpmB72qxkG0Ma7p8N5T3ZlBQsA3E+zv6gV
-         36aUnoIpPnXN/G/OuDxMIF/NgLMQqBLT4j4bh/ZbvV+NtvCmjPmpg8ZgNeD8L4xcMVjm
-         YrvA==
-X-Gm-Message-State: AOAM5324S8E75sqa094pzImGEa77veg98TnzeJXWD1jiWUB4WSxWN3+F
-        bh1REy1lSK0L2QgreOzqr5SY3kSeRvHq/zlxSDDNjQ==
-X-Google-Smtp-Source: ABdhPJyHUEien5qCpH7v1ah8orxYfkawudbsyoFQsZ5IuBkIgJ3pV0ZZhlDNcBUrx9QSpxHHGhQ+bS4LMxBGt3jpl1s=
-X-Received: by 2002:a63:b206:: with SMTP id x6mr11623323pge.341.1620642855648;
- Mon, 10 May 2021 03:34:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210510030027.56044-1-songmuchun@bytedance.com>
- <20210510030027.56044-9-songmuchun@bytedance.com> <20210510100809.GA22664@linux>
-In-Reply-To: <20210510100809.GA22664@linux>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Mon, 10 May 2021 18:33:38 +0800
-Message-ID: <CAMZfGtVzwA+35az8ARxzVmTnt=pGObJvG=a23_2_7TVptmzN1g@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v23 8/9] mm: memory_hotplug: disable
- memmap_on_memory when hugetlb_free_vmemmap enabled
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        X86 ML <x86@kernel.org>, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
+        id S231448AbhEJKsn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 May 2021 06:48:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33584 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231783AbhEJKqg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 May 2021 06:46:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id B2313AD21;
+        Mon, 10 May 2021 10:45:30 +0000 (UTC)
+Date:   Mon, 10 May 2021 12:45:24 +0200
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        rdunlap@infradead.org, oneukum@suse.com, anshuman.khandual@arm.com,
+        jroedel@suse.de, almasrymina@google.com, rientjes@google.com,
+        willy@infradead.org, mhocko@suse.com, song.bao.hua@hisilicon.com,
+        david@redhat.com, naoya.horiguchi@nec.com,
+        joao.m.martins@oracle.com, duanxiongchun@bytedance.com,
         fam.zheng@bytedance.com, zhengqi.arch@bytedance.com,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v23 6/9] mm: hugetlb: alloc the vmemmap pages associated
+ with each HugeTLB page
+Message-ID: <20210510104524.GD22664@linux>
+References: <20210510030027.56044-1-songmuchun@bytedance.com>
+ <20210510030027.56044-7-songmuchun@bytedance.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210510030027.56044-7-songmuchun@bytedance.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 10, 2021 at 6:08 PM Oscar Salvador <osalvador@suse.de> wrote:
->
-> On Mon, May 10, 2021 at 11:00:26AM +0800, Muchun Song wrote:
-> > diff --git a/drivers/acpi/acpi_memhotplug.c b/drivers/acpi/acpi_memhotplug.c
-> > index 8cc195c4c861..0d7f595ee441 100644
-> > --- a/drivers/acpi/acpi_memhotplug.c
-> > +++ b/drivers/acpi/acpi_memhotplug.c
-> > @@ -15,6 +15,7 @@
-> >  #include <linux/acpi.h>
-> >  #include <linux/memory.h>
-> >  #include <linux/memory_hotplug.h>
-> > +#include <linux/hugetlb.h>
-> >
-> >  #include "internal.h"
->
-> Uhm, I am confused.
-> Why do we need this here? AFAICS, we do not.
->
-> The function is in memory_hotplug.c, and that alrady has that include.
-> What am I missing?
+On Mon, May 10, 2021 at 11:00:24AM +0800, Muchun Song wrote:
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -1376,6 +1376,39 @@ static void remove_hugetlb_page(struct hstate *h, struct page *page,
+>  	h->nr_huge_pages_node[nid]--;
+>  }
+>  
+> +static void add_hugetlb_page(struct hstate *h, struct page *page,
+> +			     bool adjust_surplus)
+> +{
+> +	int zeroed;
+> +	int nid = page_to_nid(page);
+> +
+> +	VM_BUG_ON_PAGE(!HPageVmemmapOptimized(page), page);
+> +
+> +	lockdep_assert_held(&hugetlb_lock);
+> +
+> +	INIT_LIST_HEAD(&page->lru);
+> +	h->nr_huge_pages++;
+> +	h->nr_huge_pages_node[nid]++;
+> +
+> +	if (adjust_surplus) {
+> +		h->surplus_huge_pages++;
+> +		h->surplus_huge_pages_node[nid]++;
+> +	}
+> +
+> +	set_compound_page_dtor(page, HUGETLB_PAGE_DTOR);
+> +	set_page_private(page, 0);
 
-You are right. That include is redundant. I will remove it
-from acpi_memhotplug.c. Thanks Oscar.
+I think this has already been discused, so sorry about this.
 
->
->
-> --
-> Oscar Salvador
-> SUSE L3
+The only reason to need the set_page_private() is because of the dissolving
+function right? add_hugetlb_page() can only get reached via free_huge_page(),
+or dissolve_free_huge_page, and while the former clears the flags, the latter
+it does not.
+
+I think this function would benefit from some renaming. add_hugetlb_page() gives
+me no hint of what is this about, although I can figure it out reading the code.
+
+With that: Reviewed-by: Oscar Salvador <osalvador@suse.de>
+
+
+
+
+-- 
+Oscar Salvador
+SUSE L3
