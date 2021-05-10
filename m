@@ -2,139 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2F1537B636
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 08:35:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F38D737B681
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 09:02:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230126AbhELGgQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 02:36:16 -0400
-Received: from verein.lst.de ([213.95.11.211]:39900 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230114AbhELGgP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 02:36:15 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id CB5B967373; Wed, 12 May 2021 08:35:05 +0200 (CEST)
-Date:   Wed, 12 May 2021 08:35:05 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Gulam Mohamed <gulam.mohamed@oracle.com>, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hch@lst.de, martin.petersen@oracle.com, junxiao.bi@oracle.com
-Subject: Re: [PATCH V1 1/1] Fix race between iscsi logout and systemd-udevd
-Message-ID: <20210512063505.GA18367@lst.de>
-References: <20210511181558.380764-1-gulam.mohamed@oracle.com> <YJtKT7rLi2CFqDsV@T590>
+        id S230312AbhELHDX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 03:03:23 -0400
+Received: from mail-pj1-f47.google.com ([209.85.216.47]:50991 "EHLO
+        mail-pj1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229776AbhELHDU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 May 2021 03:03:20 -0400
+Received: by mail-pj1-f47.google.com with SMTP id t11so221460pjm.0;
+        Wed, 12 May 2021 00:02:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=gSnUBg5Kc1XHlv+8fvendFUvDmf5kAUkzWLVWnbVLKM=;
+        b=Tjm0C+M+51nMV09BuRkR9bYrXiGsMMRqPi4n7C56YB3wNNr9RJ9uFCfqcNIlE/NFCk
+         AJDbQD7UlDXDn3lmPqsGWxbqqll08p1qVKfroichx+/FflRucn/NPeoMqvr7kcsHFMC2
+         FA4GP3n/5pChQcvV3ukrOZQfRuDJRfPiGPJQfyeIE+GNF5zgP+l4yWUuF3EjYsO8BvIt
+         vPgwmYJ8eIDy0g3dMdMOb0uQXC9HAhqdU4iwyEqmZQCKrsHH/c1FERkaGcKSQegK1ZTp
+         N53MN+KgoxVFBWiV1u6YdEP7TCRzTeSTwsqrMGJV6hEk+1y9gy19yYrGlfrBgK9/rTME
+         DMvQ==
+X-Gm-Message-State: AOAM530mtESmDRZ/gjMIxjTdThsBOSNFS0oVEua7zrOPG9595M1oLRCR
+        IHUcBd2o/B1lSDleqoffawc=
+X-Google-Smtp-Source: ABdhPJz2/s0P8B9U26WFOp0dGlPdk2cSJ9KBcRhVSITPD/VfI865XbGT8rqQV9eQBKW8zgZqZY41Lg==
+X-Received: by 2002:a17:903:2403:b029:ee:eaf1:848d with SMTP id e3-20020a1709032403b02900eeeaf1848dmr33541409plo.63.1620802932222;
+        Wed, 12 May 2021 00:02:12 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id v17sm15176699pfi.188.2021.05.12.00.02.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 May 2021 00:02:04 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 340874240D; Mon, 10 May 2021 18:59:48 +0000 (UTC)
+Date:   Mon, 10 May 2021 18:59:48 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     keescook@chromium.org, yzaikin@google.com, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        kpsingh@kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: Re: [PATCH v2] sysctl: Remove redundant assignment to first
+Message-ID: <20210510185948.GW4332@42.do-not-panic.com>
+References: <1620469990-22182-1-git-send-email-jiapeng.chong@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YJtKT7rLi2CFqDsV@T590>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <1620469990-22182-1-git-send-email-jiapeng.chong@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 12, 2021 at 11:23:59AM +0800, Ming Lei wrote:
+On Sat, May 08, 2021 at 06:33:10PM +0800, Jiapeng Chong wrote:
+> Variable first is set to '0', but this value is never read as it is
+> not used later on, hence it is a redundant assignment and can be
+> removed.
 > 
-> 1) code path BLKRRPART:
-> 	mutex_lock(bdev->bd_mutex)
-> 	down_read(&bdev_lookup_sem);
+> Clean up the following clang-analyzer warning:
 > 
-> 2) del_gendisk():
-> 	down_write(&bdev_lookup_sem);
-> 	mutex_lock(&disk->part0->bd_mutex);
+> kernel/sysctl.c:1562:4: warning: Value stored to 'first' is never read
+> [clang-analyzer-deadcode.DeadStores].
 > 
-> Given GENHD_FL_UP is only checked when opening one bdev, and
-> fsync_bdev() and __invalidate_device() needn't to open bdev, so
-> the following way may work for your issue:
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 
-If we move the clearing of GENHD_FL_UP earlier we can do away with
-bdev_lookup_sem entirely I think.  Something like this untested patch:
+To re-iterate, this does not fix anything, it is just a clean up.
 
-diff --git a/block/genhd.c b/block/genhd.c
-index a5847560719c..ef717084b343 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -29,8 +29,6 @@
- 
- static struct kobject *block_depr;
- 
--DECLARE_RWSEM(bdev_lookup_sem);
--
- /* for extended dynamic devt allocation, currently only one major is used */
- #define NR_EXT_DEVT		(1 << MINORBITS)
- static DEFINE_IDA(ext_devt_ida);
-@@ -609,13 +607,8 @@ void del_gendisk(struct gendisk *disk)
- 	blk_integrity_del(disk);
- 	disk_del_events(disk);
- 
--	/*
--	 * Block lookups of the disk until all bdevs are unhashed and the
--	 * disk is marked as dead (GENHD_FL_UP cleared).
--	 */
--	down_write(&bdev_lookup_sem);
--
- 	mutex_lock(&disk->open_mutex);
-+	disk->flags &= ~GENHD_FL_UP;
- 	blk_drop_partitions(disk);
- 	mutex_unlock(&disk->open_mutex);
- 
-@@ -627,10 +620,7 @@ void del_gendisk(struct gendisk *disk)
- 	 * up any more even if openers still hold references to it.
- 	 */
- 	remove_inode_hash(disk->part0->bd_inode);
--
- 	set_capacity(disk, 0);
--	disk->flags &= ~GENHD_FL_UP;
--	up_write(&bdev_lookup_sem);
- 
- 	if (!(disk->flags & GENHD_FL_HIDDEN)) {
- 		sysfs_remove_link(&disk_to_dev(disk)->kobj, "bdi");
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 8dd8e2fd1401..bde23940190f 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1377,33 +1377,24 @@ struct block_device *blkdev_get_no_open(dev_t dev)
- 	struct block_device *bdev;
- 	struct gendisk *disk;
- 
--	down_read(&bdev_lookup_sem);
- 	bdev = bdget(dev);
- 	if (!bdev) {
--		up_read(&bdev_lookup_sem);
- 		blk_request_module(dev);
--		down_read(&bdev_lookup_sem);
--
- 		bdev = bdget(dev);
- 		if (!bdev)
--			goto unlock;
-+			return NULL;
- 	}
- 
- 	disk = bdev->bd_disk;
- 	if (!kobject_get_unless_zero(&disk_to_dev(disk)->kobj))
- 		goto bdput;
--	if ((disk->flags & (GENHD_FL_UP | GENHD_FL_HIDDEN)) != GENHD_FL_UP)
--		goto put_disk;
- 	if (!try_module_get(bdev->bd_disk->fops->owner))
- 		goto put_disk;
--	up_read(&bdev_lookup_sem);
- 	return bdev;
- put_disk:
- 	put_disk(disk);
- bdput:
- 	bdput(bdev);
--unlock:
--	up_read(&bdev_lookup_sem);
- 	return NULL;
- }
- 
-@@ -1462,7 +1453,10 @@ struct block_device *blkdev_get_by_dev(dev_t dev, fmode_t mode, void *holder)
- 
- 	disk_block_events(disk);
- 
-+	ret = -ENXIO;
- 	mutex_lock(&disk->open_mutex);
-+	if ((disk->flags & (GENHD_FL_UP | GENHD_FL_HIDDEN)) != GENHD_FL_UP)
-+		goto abort_claiming;
- 	if (bdev_is_partition(bdev))
- 		ret = blkdev_get_part(bdev, mode);
- 	else
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+
+  Luis
+
+> ---
+> Changes in v2:
+>   -For the follow advice: https://lore.kernel.org/patchwork/patch/1422497/
+> 
+>  kernel/sysctl.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 14edf84..23de0d9 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -1474,7 +1474,6 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
+>  			 void *buffer, size_t *lenp, loff_t *ppos)
+>  {
+>  	int err = 0;
+> -	bool first = 1;
+>  	size_t left = *lenp;
+>  	unsigned long bitmap_len = table->maxlen;
+>  	unsigned long *bitmap = *(unsigned long **) table->data;
+> @@ -1559,12 +1558,12 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
+>  			}
+>  
+>  			bitmap_set(tmp_bitmap, val_a, val_b - val_a + 1);
+> -			first = 0;
+>  			proc_skip_char(&p, &left, '\n');
+>  		}
+>  		left += skipped;
+>  	} else {
+>  		unsigned long bit_a, bit_b = 0;
+> +		bool first = 1;
+>  
+>  		while (left) {
+>  			bit_a = find_next_bit(bitmap, bitmap_len, bit_b);
+> -- 
+> 1.8.3.1
+> 
