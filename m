@@ -2,57 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 524523796D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 May 2021 20:12:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 089F93796E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 May 2021 20:16:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231271AbhEJSNF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 May 2021 14:13:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57832 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230186AbhEJSNF (ORCPT
+        id S232009AbhEJSRg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 May 2021 14:17:36 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44331 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231540AbhEJSRd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 May 2021 14:13:05 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 245E6C061574;
-        Mon, 10 May 2021 11:12:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=YL/AMILJQ/MhajJ8+fnwzdJVjELrW3Cc7diRHC8qblE=; b=PLqLn0j5PoKbrh6VvmUSIr6l8i
-        m8fa8nPq4gYXhF6Rn4dgILKWMjjl7o8SH9lg5SYTpcsggrmMHPyjsoeUpUNoNTR0oe/2nflr9voHC
-        mgd4g8Z7yyeIJ7q+nicXHEqYw5/hVDnntM06Is+SsQFVrdSv5ie1DvIWiwRc/g8IS2C6z+K+eFfMQ
-        bABMNr7fkPmtzTzDvG1cseklK17UAEAX/5Ap27q9PJnvy8h7UN4RI4MmiAq/tz4thtJ13v84IpOw0
-        XMMw3IEfcIDcHkuznaZj7wqb1rhPMwq94acK9NCfDzZKucYeUpXIsLo+5v5vi9+K2Rn2TY1i4Zidv
-        ROzmVcpA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lgANT-006SNM-UC; Mon, 10 May 2021 18:11:43 +0000
-Date:   Mon, 10 May 2021 19:11:35 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: [LSF/MM/BPF TOPIC] I/O completions in softirq context
-Message-ID: <YJl3V5q/+ovcSzJB@casper.infradead.org>
+        Mon, 10 May 2021 14:17:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620670587;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ao0m3qiHQNSe4HT7iJWrIcrYiJRaXz4VOGXopwkJ7Mw=;
+        b=OiICfiQbDPdVFDY/LI5YdUyRwFP+LW2W5PKT8yNZPQt1dRVfoZb/s+MOvcPex7Xg7iMlsS
+        aAQgdd0WU8srEP/UAaD+AMYrRI4RoRDextSonFmyvtUEVgJv/xJifhb2f51fX2/RgPLZa0
+        A+E+Fd1dVn5K5zfc5XR+Amk3ZxdNd94=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-174-xGrrDIAhOseTpmQPBCkT8g-1; Mon, 10 May 2021 14:16:26 -0400
+X-MC-Unique: xGrrDIAhOseTpmQPBCkT8g-1
+Received: by mail-qk1-f198.google.com with SMTP id g2-20020a37b6020000b02902ea40e87ecbso12292124qkf.14
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 May 2021 11:16:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Ao0m3qiHQNSe4HT7iJWrIcrYiJRaXz4VOGXopwkJ7Mw=;
+        b=bIRciuBRPXhZ4JDa1SAMyb7eyLGyzuJKcf2X5OcAx7PU1A6+OrViBhkU/JYg9/EdgG
+         uXVxwCJUTox/gjRaCPgEotS+jdKxB/+4zVL175BQRazv6oeSjHYvnIVr70U/WFaSKx6O
+         b5KnpVrEWlxK8xV8fNwuXSqbyPED/QGZudE9HA6mVfV1iHCeHj8axGT+Ad3qWpVEC7tM
+         /m+LIqPbR13fDvM4FSHSEqXHqeBLoNu/JLWFW/myVpytObmgkvSBRvhgI8HcRmQshm/b
+         X8omt+KEN52aFwTOk5+XWswrvRycdhcbH+viNHzU1gVfrBmjAfVfZga+9IEolfp/qA5y
+         Lqyw==
+X-Gm-Message-State: AOAM533elJgHUd6E1IX6XaLpj8gI1ePWbRQGv3WA+2viMUMv/aC/EEKR
+        Pjycjdn+EMg04H/AHtQGgtn6WZUFZPUuO5MFM3YQto5va+2N3khS1DWDXMat1mQFqdhu8Xb1o6Z
+        XNEzCEH3m3KqHNdOCCO/wY/9a2A==
+X-Received: by 2002:a05:622a:1d1:: with SMTP id t17mr23869849qtw.267.1620670585800;
+        Mon, 10 May 2021 11:16:25 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzx09Q4QJnreTI0TPGe4ZrkldzJYBzrhDZmCISV5l1LSco4BzbaJnyw4UNwNIeUdGJq/oqD9A==
+X-Received: by 2002:a05:622a:1d1:: with SMTP id t17mr23869831qtw.267.1620670585617;
+        Mon, 10 May 2021 11:16:25 -0700 (PDT)
+Received: from horse (pool-173-76-174-238.bstnma.fios.verizon.net. [173.76.174.238])
+        by smtp.gmail.com with ESMTPSA id j196sm12135152qke.25.2021.05.10.11.16.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 May 2021 11:16:25 -0700 (PDT)
+Date:   Mon, 10 May 2021 14:16:23 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        miklos@szeredi.hu, linux-kernel@vger.kernel.org,
+        dan.carpenter@oracle.com
+Subject: Re: [PATCH 1/2] virtiofs, dax: Fix smatch warning about loss of info
+ during shift
+Message-ID: <20210510181623.GA185367@horse>
+References: <20210506184304.321645-1-vgoyal@redhat.com>
+ <20210506184304.321645-2-vgoyal@redhat.com>
+ <YJQ+ex2DUPYo1GV5@work-vm>
+ <20210506193517.GF388843@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20210506193517.GF388843@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We have some reports of the interrupt hangcheck watchdog firing when
-completing I/Os that are millions of pages long.  While it doesn't
-really make sense to construct single I/Os that are that big, it does
-flag that even, say, a 16MB writeback I/O is going to spend a lot of time
-clearing the writeback bit from pages.  With 4kB pages, that's 4096
-pages.  At 2000 cycles per cache miss (and with just the struct pages
-being 256kB of data, they're not in L1 cache any more and probably not
-in L2 either), that's 8 million cycles with interrupts disabled.
+On Thu, May 06, 2021 at 12:35:17PM -0700, Matthew Wilcox wrote:
+> On Thu, May 06, 2021 at 08:07:39PM +0100, Dr. David Alan Gilbert wrote:
+> > > @@ -186,7 +186,7 @@ static int fuse_setup_one_mapping(struct inode *inode, unsigned long start_idx,
+> > >  	struct fuse_conn_dax *fcd = fm->fc->dax;
+> > >  	struct fuse_inode *fi = get_fuse_inode(inode);
+> > >  	struct fuse_setupmapping_in inarg;
+> > > -	loff_t offset = start_idx << FUSE_DAX_SHIFT;
+> > > +	loff_t offset = (loff_t)start_idx << FUSE_DAX_SHIFT;
+> > 
+> > I've not followed the others back, but isn't it easier to change
+> > the start_idx parameter to be a loff_t, since the places it's called
+> > from are poth loff_t pos?
+> 
+> But an index isn't a file offset, and shouldn't be typed as such.
 
-If we could guarantee that BIOs were always ended in softirq context,
-the page cache could use spin_lock_bh() instead of spin_lock_irq().
-I haven't done any measurements to quantify what kind of improvement
-that would be, but I suspect it could be seen on some workloads.
+Agreed. This is index, so it seems better to not use "loff_t" to
+represent it.
 
-(this is more of an attempt to induce conference driven development
-than necessarily a discussion topic for lsfmm)
+Vivek
+
