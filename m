@@ -2,83 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9BA2379A7F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 01:14:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3F69379AA0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 01:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbhEJXP5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 May 2021 19:15:57 -0400
-Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:57754 "EHLO
-        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229561AbhEJXP4 (ORCPT
+        id S230286AbhEJXTC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 May 2021 19:19:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41820 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229994AbhEJXSx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 May 2021 19:15:56 -0400
-Received: from dread.disaster.area (pa49-179-143-157.pa.nsw.optusnet.com.au [49.179.143.157])
-        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 5E1B766F4E;
-        Tue, 11 May 2021 09:14:48 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1lgF6s-00CyeC-E3; Tue, 11 May 2021 09:14:46 +1000
-Date:   Tue, 11 May 2021 09:14:46 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Eryu Guan <guan@eryu.me>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH 0/3] bcachefs support
-Message-ID: <20210510231446.GO1872259@dread.disaster.area>
-References: <20210427164419.3729180-1-kent.overstreet@gmail.com>
- <YJfvtvBCqA4zU0xf@desktop>
+        Mon, 10 May 2021 19:18:53 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C85A5C06175F;
+        Mon, 10 May 2021 16:17:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=BW26sTae1TuwCrPQcAIuja8vE5ngJppHhl5QwuMgUgw=; b=RBQ1JR4S5T9WsAErivz3mXmyXq
+        61FxgaT5cOHkvLW3xNizmRJGm4V9/KLa0xEdSTh5bY6ek/9bPJQ8zA9tPevkS00PSO7tk7SmyYww7
+        yyY9EpJ/aMkCihtFa+ng+GeP1+4YnEbqSqInLTmG8EhFusn2LegxT3pnHh5Num6Rg3sapJZc2vjC6
+        3mGftV02NZOdzabpzAnBp3diTC2dZNPsY+4mh/GL2+TacmSJOvqYcTTM0beOPrnVHcHliL+fZNvuJ
+        HVoM+9ZcQQAqa0irZBrRs9sKGPw3Q+GFbm2FiVx/nUaAc+cbHlwQkqUpZi4zHUyEZtjyJAohGnO3Z
+        mqq8XEVQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lgF9I-006fzl-UW; Mon, 10 May 2021 23:17:22 +0000
+Date:   Tue, 11 May 2021 00:17:16 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] mm/filemap: Fix readahead return types
+Message-ID: <YJm+/IFdA4xe1oie@casper.infradead.org>
+References: <20210510201201.1558972-1-willy@infradead.org>
+ <20210510222756.GI8582@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YJfvtvBCqA4zU0xf@desktop>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0
-        a=I9rzhn+0hBG9LkCzAun3+g==:117 a=I9rzhn+0hBG9LkCzAun3+g==:17
-        a=kj9zAlcOel0A:10 a=5FLXtPjwQuUA:10 a=7-415B0cAAAA:8
-        a=JOqBJgaB0zyXXk2ek_AA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20210510222756.GI8582@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 09, 2021 at 10:20:38PM +0800, Eryu Guan wrote:
-> On Tue, Apr 27, 2021 at 12:44:16PM -0400, Kent Overstreet wrote:
-> > A small patch adding bcachefs support, and two other patches for consideration:
+On Mon, May 10, 2021 at 03:27:56PM -0700, Darrick J. Wong wrote:
+> On Mon, May 10, 2021 at 09:12:01PM +0100, Matthew Wilcox (Oracle) wrote:
+> > A readahead request will not allocate more memory than can be represented
+> > by a size_t, even on systems that have HIGHMEM available.  Change the
+> > length functions from returning an loff_t to a size_t.
+> > 
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > 
-> As bcachefs is not upstream yet, I think we should re-visit bcachefs
-> support after it's in upstream.
+> Looks reasonable to me; is this a 5.13 bugfix or just something that
+> doesn't look right (i.e. save it for 5.14)?
+> 
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-I disagree completely. I've been waiting for this to land for some
-time so I can actually run fstests against bcachefs easily to
-evaluate it's current state of stability and support.  The plans are
-to get bcachefs merged upstream, and so having support already in
-fstests makes it much easier for reviewers and developers to
-actually run tests and find problems prior to merging.
+Thanks!  Linus was unhappy about it, and I promised to fix it.  I leave
+it up to Andrew whether he wants to see this in 5.13 or 5.14.
 
-As an upstream developer and someone who will be reviewing bcachefs
-when it is next proposed for merge,  I would much prefer to see
-extensive and long term fstests coverage *before* the code is even
-merged upstream. Given that filesystems take years to develop to the
-point where they are stable and ready for merge, saying "can't
-enable the test environment until it is merged upstream" is not very
-helpful.
+https://lore.kernel.org/linux-btrfs/CAHk-=wj1KRvb=hie1VUTGo1D_ckD+Suo0-M2Nh5Kek1Wu=2Ppw@mail.gmail.com/
 
-As a general principle, we want developers of new filesystems to
-start using fstests early in the development process of their
-filesystem. We should be encouraging new filesystems to be added to
-fstests, not saying "we only support upstream filesystems". If the
-filesystem plans to be merged upstream, then fstests support for
-that filesystem should be there long before the filesytsem is even
-proposed for merge.  We need to help people get new filesystems
-upstream, not place arbitrary "not upstream so not supported"
-catch-22s in their way...
-
-Hence I ask that you merge bcachefs support to help the process of
-getting bcachefs suport upstream.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+(I went a little beyond what he was directly unhappy with and reviewed
+all the readahead.*length users for unnecessary loff_t usage)
