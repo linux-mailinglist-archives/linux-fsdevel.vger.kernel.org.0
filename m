@@ -2,222 +2,221 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 72E87378A60
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 May 2021 14:02:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 602CA378A62
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 May 2021 14:02:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234636AbhEJLnB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 May 2021 07:43:01 -0400
-Received: from mail-eopbgr70110.outbound.protection.outlook.com ([40.107.7.110]:27269
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233783AbhEJLN3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 May 2021 07:13:29 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Q5t2qe7tQO0lc7MsEAZ/ixN9cBqJeVig+FrTDUlszgkahsd9HlUE932l0nHnzjTRAl29F5BLM0fuV17a218Li+LaxTMOdMrOzkIv71oDoLY5es95zrih837wg6Dax2acYbH/aeiOGsodUSn+uTL1PYJQixuzW/wZYNWYGvppMG7wp+ACWqDgPTxF0Vys+XvCa2Wu5xckVc70ayWthEBADwzrn3My4vxHMamYYe9P5MMzQPyfDLDOheLihj81xMG1y1SMuf+O/IXMKjUVd3/G3oPc6Kx1zmS3npL1j6zJfyHeHjVKZC54GDtuT4vv30lAy6HrIW/goG4MrlDV6lWFvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4FlSJ98EOaNPxoc651uAGFMd9JZdWn8b/X+SiWfnqVA=;
- b=afNaCyqT6Xa5IRNZNz6xnHPL/iQ2zUlnEYlo1Z6OH5tok94Se3Ga9W8f1U9Q+8pOx5wOBEH/iET9Qo5WupXRaVRU3tnFMUF9qO0LRxn0XD09e1VkX3MxE1YpIvImO4VWoKhEa6gwYxpFCDmCblbha+4CuK2VeKhrS8SXyAlrHu+ha/1LLK9sIXtMDrN+EJXTLXM9ar8+h48jukjCiC/bD5gOS6wQfntyz05XWtxqTGPRKHLuQ+1gKyPWC4EFQRSYs4KVfdD00mfbCQ8S0rKS0pXYiO7AL/qgFbKu46r6CS+5sBWNfGbw/pFVdGbyzXLaXtF/i297ktrKOW4zFlbxTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
- dkim=pass header.d=nokia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4FlSJ98EOaNPxoc651uAGFMd9JZdWn8b/X+SiWfnqVA=;
- b=cIjNpG+2bPxUuINzzOlRc9M6ydwrhW29JiGJcu3R3hP2C79UmyipCRLJmhYXyHiQWHsxl2Wj/6Yxd4IjGjA1i2rWMjvlEEMdK8GrclGaYZ3zJEGVfChCZlyaWOXaGGAadEcNhJbuixiHvTgSxNeYCbBtbS00bldr6wt52NFcA1E=
-Received: from HE1PR07MB3450.eurprd07.prod.outlook.com (2603:10a6:7:2c::17) by
- HE1PR0701MB2348.eurprd07.prod.outlook.com (2603:10a6:3:74::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4129.9; Mon, 10 May 2021 11:12:22 +0000
-Received: from HE1PR07MB3450.eurprd07.prod.outlook.com
- ([fe80::85ed:ce03:c8de:9abf]) by HE1PR07MB3450.eurprd07.prod.outlook.com
- ([fe80::85ed:ce03:c8de:9abf%7]) with mapi id 15.20.4129.024; Mon, 10 May 2021
- 11:12:22 +0000
-From:   "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-To:     "hch@lst.de" <hch@lst.de>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC:     "rdna@fb.com" <rdna@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Subject: cat /proc/sys/kernel/tainted => page allocation failure: order:6
-Thread-Topic: cat /proc/sys/kernel/tainted => page allocation failure: order:6
-Thread-Index: AQHXRY1ZG2ESqLEgZ0SzsF4bQW36rA==
-Date:   Mon, 10 May 2021 11:12:21 +0000
-Message-ID: <04735c17a20f6edd3c97374323ba2dc15e7fd624.camel@nokia.com>
-Accept-Language: en-US, en-150, fi-FI
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.38.4 (3.38.4-1.fc33) 
-authentication-results: lst.de; dkim=none (message not signed)
- header.d=none;lst.de; dmarc=none action=none header.from=nokia.com;
-x-originating-ip: [131.228.2.26]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 454d0c3e-5597-4ca8-b783-08d913a47bc7
-x-ms-traffictypediagnostic: HE1PR0701MB2348:
-x-microsoft-antispam-prvs: <HE1PR0701MB23483A8000006A6E3C4A01ACB4549@HE1PR0701MB2348.eurprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:42;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: mGLE4nmQpqbbf9xsLVaAScVWPQBrLf3b6j+5FN481C4VybK7XCNbQrUbKcfZo4Ahwvoqs2eslwL+TPvJXhXSgjDq7hE3U/9mjDXaBowiKQIdWNXr2zDM86RB27i3L5hroQwpKxjz/WbbxdYBxaYOI7ufZhPtKbWNSWfnCzmF7bWB2MkQlGhbZt+E9yINpIHZX2b/0Z7WJiaGiu9lmSn6Wf/7XgbL40xSxjbxHwFRZU3RkNa1rObaEtDyB/bMpN+iI/mm2eyPeccnACjfMQ+gAl50sDTldvGTp1QMQfztpCUJXa7xMfKLlr/W0yrBUsrLRV5jOOEAgT4bnh5dLjRZfUmoRcl7+8TE981aBE0X+2DxyMICLhx/UJ43Q0z3D1/tGlAAVT16GkG2J8hcWLxEBrBosWQaUqc1iJclvZVsvL3oIBuDqubb7pIQ5u8O6CofOCKwwcFj3T+s+5JT4v+4RWayzDtHwKo80JpP2AMQlgeUWiftIgWVB/fKAkCAv0ipxQl623JmbW2Uu6xplE4rAXZ0UK7jZAb3tkMxq9AxObydxO9z3k8a5SSzFNMLv968cSvfioE8ciNjjXJ3sBS8kNyltVucRnzwtCvegYH7mAM=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HE1PR07MB3450.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(136003)(366004)(346002)(376002)(39860400002)(83380400001)(5660300002)(8936002)(54906003)(110136005)(186003)(6512007)(316002)(4326008)(8676002)(6486002)(26005)(66476007)(66556008)(66946007)(6506007)(478600001)(122000001)(86362001)(36756003)(38100700002)(71200400001)(2906002)(2616005)(64756008)(76116006)(91956017)(66446008);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?utf-8?B?V2NtVEFGT2xvaVZwcTJZcHcwb1VjUks4UlFQeklyQkN0cnpMT2hSbnB2RThQ?=
- =?utf-8?B?TWUrbTVwVmN3NlhpcUJ0ZHpZYlFQNlRtOG5PaXcwbDgvbUowZmdFQkhLeWFT?=
- =?utf-8?B?Q0dEaW9yY0dTcHZtMnp1UmU3NWZCK2Y2d1duT3c0K0xRYWZmV2JhQjduUnFl?=
- =?utf-8?B?dnFuY1JWQVYrQSsyV3JJM1hHUkMxbkxlL0R0TW9LQUtJc21zVVFjZUUrWmd0?=
- =?utf-8?B?VUY1aURqR1lMVmRDbzgvTSsxMFRlWUZzd3p3V2lzMk10V2c2NUVFUlRlVHFO?=
- =?utf-8?B?TTZZWlQ0Ym9naEppQ3ROL3ZMWUFtVUozZkcxQmkzbTFUeFBhcWp0VDR3dUEw?=
- =?utf-8?B?ZS9ZTkRFbklVK0NsL2wyeVFIRVJpbzZES29LYlQyZU5MMUUxdFZVNW5KNExC?=
- =?utf-8?B?TGowdU5PREFncWI4N3Vka204Z2I4SytLb2RScG42eVJHWnZJWkdaTGVtOGlQ?=
- =?utf-8?B?RGMwMkRoRnh6Y3JzSExGWkNnRlhVdEVya25rSWtHTlpJWHIrUXFUdG8zazVv?=
- =?utf-8?B?eUdvbVYzUFdzeVBlSnM3NGpzS3FlcVBkWWZTbjNDRllTOHFDQnlpWTZhMjlD?=
- =?utf-8?B?WFJWQkY5N1NGTk5UNXN0Q0N4Y1doM3IySzNtdit1aXYvZ29kK0FwTjlQV3cz?=
- =?utf-8?B?aHVWd1I0SjJUWW9ncGhWNFI2MTQ1SjBPaXgxVnpzblhsMmJONXF2NW4rcTl6?=
- =?utf-8?B?YzFEMG9rQW5yV2pNZzFqeVBuL3dSQWRZU2RRc1A0SDd0SllNam82K2hvSWRm?=
- =?utf-8?B?NTduaGg0bGtDWEtZOTIrakNJQUhBd1BsemtXR2VOWm84eVZjK0p2MktzeSs2?=
- =?utf-8?B?YVZPbWhEcFRrQWRWNDVQRHFtdEloY3RtbkpDekNrRCt1WEwvNWRwUGN3b1A0?=
- =?utf-8?B?T3dMQ2N3elFBc0YydGdaQjM0RFRPQmIxNnlJRGtVQmVGVnVWekM0MDVSRlhC?=
- =?utf-8?B?VmNIN2Q4TUdGaHB5cTNnVHBQVkhBUy90YWtWOWZqdlRHaXVVaFpSdHIvYWIx?=
- =?utf-8?B?RW5CWElFbDJTYlNubHJjNFR2WEs2eWRxYm1kQ0FIOXdpVy8yc2RVOXpvcEJm?=
- =?utf-8?B?K0UzQStpb1JheHNJTXdTaXpNanBIRDlyZU5Gc0FGc21oQzdTRTJIVUZXVnNy?=
- =?utf-8?B?TzU4bUk3VklMTGhEM1h6eFozd1h5ZDJucVE1Tk5BbjdYNFNac3VwZ2ZVMk1J?=
- =?utf-8?B?NVhObEdITnFUaVk0QmhBMUQ3L2xRUTVMTFlFOWZIamhtQkovMmh0QjBMcEtx?=
- =?utf-8?B?Szl2VjVlSjZvTDA1RngwTUZOOCs5UFpvbTBNdGN0RHVXT0R1b0pjL3pXOE56?=
- =?utf-8?B?elBOZDRFbTlQUjdJdWxvTmovL1o0Y09jclpoZGR2NUVRSlIxdDVTckNvMVpK?=
- =?utf-8?B?YzZtWWp4R09aZ0dQeUkwV2dTS3M0SzEyenh5bzc2UjNWNkpyUzgyb2Q0MkZu?=
- =?utf-8?B?Uy9oUlRPTE1MYWdZQ1hBNmNrSTMwbTBtZ2dpL1lMWHA4dTFSS01XbmVGN2xC?=
- =?utf-8?B?NktsU0ozSE15eHNreVF3YmRLR0FyR2lBRlFiVUxrYnQyQk1wRCtwVmxpOW9h?=
- =?utf-8?B?eVJQMEVkY3BVWnpEczhHR1JCakp5RGV6SVliMkJLWXZ6Tm9lZUdQR0cyTEtz?=
- =?utf-8?B?akhJbFdSbmhMaklrRGowTytXOTVBTm1NdFJQc3pHU01FZytMZjd5Nmx2bUNm?=
- =?utf-8?B?M2NCSWJXaFpxdThBd3BJblpCV2UvY1lmc0pjL1RPakhjd3pTOE5iL3dQVFdl?=
- =?utf-8?Q?y29uzrpRTQXCoO9PYqNRaG7TZKMlcrL9HfuXycV?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <56035BF0473D4E4B9955282E9BF2524F@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S233115AbhEJLnG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 May 2021 07:43:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53728 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234931AbhEJLjR (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 May 2021 07:39:17 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95B3BC061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 May 2021 04:38:11 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id p8so14376889iol.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 May 2021 04:38:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DOo8/UspvxpVG9MoYprLXUYRfhKSyv5qV0Mu0bi2oc8=;
+        b=Yk2RUJk/CDjuItS6EnwQSzQmjmSAV3HRMbDf7ePigbTtfaL9pzlNmj4X9Nh+0v1MCm
+         g6BNWh0B8Aqf3xonRIJthcwbLz4arDY+xkS0VcvedDJ3KX2/g5F2ENldC4UeBbhqsiOK
+         2NhCFzZ2DjSbhN1g5SDtUxbpOEcoty0Ye6fe3pULZuGsUUrZrsdRPYs8SjIhO4JQYy+5
+         GKYpAunl5cXWyhflYFiwSmv7klHIHsa7HR51kxHOAaM+EHUrsj7GizXoyuCID/IZEb3N
+         pVLVC67sRrW0qziCzsAhfv5yWkkeDcbIjjnaS9e2cuQCAraNDpjoEdc+znD7GoMEsqWQ
+         o5Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DOo8/UspvxpVG9MoYprLXUYRfhKSyv5qV0Mu0bi2oc8=;
+        b=nIF0TkFgUzi8mAt/s7+SSNIJoqGuSpIJAKJZrOR3BM3M2CJrr6m3jVMZ8pN21xlfu4
+         ijr+lto6FC3gvQXW3fqAw/WOA+NOYIEkdEwz55A5Qy8DkJYJV8OAougtG4c+UENuGaOi
+         rPsXF/b2A+EZb0W16qrYY+GyUi8oXagHY3Fsj50RFuXF97zZoZOSwOJ/rosdtLQ+qCnD
+         mtNoYf5pFf61EmG/WIhbxorSAcI/jvqKtBBpW61MTsd/Sy+b3les14QxZ/WWPxgEM8MV
+         odIM1qk60nEMT44PZ9NAej7t1Bmizhp/8lbg0ljaKDrRGLvtctuu4d/RsbBD5W5TGa7S
+         rmjw==
+X-Gm-Message-State: AOAM531Hch0UKuNDy1ItHnltvgdNX2EdHgSAoUAsN40qwewcs4EhVNv1
+        rymGxhSumOtd1sZnAGmyWqLYwXjvqH9W7oHr9LU=
+X-Google-Smtp-Source: ABdhPJxoQPxw+OIrnn0BsN5EB6Kia2s1UKAZxnIyiwoQ+zyIJUHLaa9+MHD8geWHAG3M0Kfbd2UehMESvMhkd51sta4=
+X-Received: by 2002:a6b:e80f:: with SMTP id f15mr14843774ioh.64.1620646691000;
+ Mon, 10 May 2021 04:38:11 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: HE1PR07MB3450.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 454d0c3e-5597-4ca8-b783-08d913a47bc7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 May 2021 11:12:22.0177
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZjcbVkHdu662E2/6hBHsS1uKWlxtUSOjG/kSyrWqNSBwmlDbFgbzwR7rBa/DfR+YVOPae5KbUwWu0Eb7lH/F1ctlJJQJr38a5yjAtC1OmOI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0701MB2348
+References: <20201124134916.GC19336@quack2.suse.cz> <CAOQ4uxiJz-j8GA7kMYRTGMmE9SFXCQ-xZxidOU1GzjAN33Txdg@mail.gmail.com>
+ <20201125110156.GB16944@quack2.suse.cz> <CAOQ4uxgmExbSmcfhp0ir=7QJMVcwu2QNsVUdFTiGONkg3HgjJw@mail.gmail.com>
+ <20201126111725.GD422@quack2.suse.cz> <CAOQ4uxgt1Cx5jx3L6iaDvbzCWPv=fcMgLaa9ODkiu9h718MkwQ@mail.gmail.com>
+ <20210503165315.GE2994@quack2.suse.cz> <CAOQ4uxgy0DUEUo810m=bnLuHNbs60FLFPUUw8PLq9jJ8VTFD8g@mail.gmail.com>
+ <20210505122815.GD29867@quack2.suse.cz> <20210505142405.vx2wbtadozlrg25b@wittgenstein>
+ <20210510101305.GC11100@quack2.suse.cz>
+In-Reply-To: <20210510101305.GC11100@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 10 May 2021 14:37:59 +0300
+Message-ID: <CAOQ4uxjqjB2pCoyLzreMziJcE5nYjgdhcAsDWDmu_5-g5AKM3w@mail.gmail.com>
+Subject: Re: [RFC][PATCH] fanotify: introduce filesystem view mark
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SGVsbG8sDQoNCldoeSBpcyBvcmRlciA2IGFsbG9jYXRpb24gcmVxdWlyZWQgZm9yICJjYXQgL3By
-b2Mvc3lzL2tlcm5lbC90YWludGVkIiAuLi4/DQpJJ20gc2VlaW5nIChvY2Nhc2lvbmFsKSBmYWls
-dXJlcyBpbiBvbmUgVk0gKHdpdGggNjVkIHVwdGltZSk6DQoNCls1Njc0OTg5LjYzNDU2MV0gY2F0
-OiBwYWdlIGFsbG9jYXRpb24gZmFpbHVyZTogb3JkZXI6NiwgbW9kZToweDQwZGMwKEdGUF9LRVJO
-RUx8X19HRlBfQ09NUHxfX0dGUF9aRVJPKSwgbm9kZW1hc2s9KG51bGwpLGNwdXNldD11c2VyLnNs
-aWNlLG1lbXNfYWxsb3dlZD0wDQpbNTY3NDk4OS42NDU0MzJdIENQVTogMCBQSUQ6IDI3MTc1MjQg
-Q29tbTogY2F0IE5vdCB0YWludGVkIDUuMTAuMTktMjAwLmZjMzMueDg2XzY0ICMxDQpbNTY3NDk4
-OS42NDg2MjNdIEhhcmR3YXJlIG5hbWU6IFJETyBPcGVuU3RhY2sgQ29tcHV0ZSwgQklPUyAxLjEx
-LjAtMi5lbDcgMDQvMDEvMjAxNA0KWzU2NzQ5ODkuNjUxNjIyXSBDYWxsIFRyYWNlOg0KWzU2NzQ5
-ODkuNjUzMDY4XSAgZHVtcF9zdGFjaysweDZiLzB4ODMNCls1Njc0OTg5LjY1NDc0NF0gIHdhcm5f
-YWxsb2MuY29sZCsweDc1LzB4ZDkNCls1Njc0OTg5LjY1NjU0NV0gID8gX2NvbmRfcmVzY2hlZCsw
-eDE2LzB4NDANCls1Njc0OTg5LjY1ODM2NV0gID8gX19hbGxvY19wYWdlc19kaXJlY3RfY29tcGFj
-dCsweDE0NC8weDE1MA0KWzU2NzQ5ODkuNjYwNjY5XSAgX19hbGxvY19wYWdlc19zbG93cGF0aC5j
-b25zdHByb3AuMCsweGM5MS8weGNkMA0KWzU2NzQ5ODkuNjYzMTI5XSAgX19hbGxvY19wYWdlc19u
-b2RlbWFzaysweDMwYS8weDM0MA0KWzU2NzQ5ODkuNjY1MTg5XSAga21hbGxvY19vcmRlcisweDI4
-LzB4ODANCls1Njc0OTg5LjY2Njk1OV0gIGttYWxsb2Nfb3JkZXJfdHJhY2UrMHgxOS8weDgwDQpb
-NTY3NDk4OS42Njg4OTNdICBwcm9jX3N5c19jYWxsX2hhbmRsZXIrMHhhYi8weDIzMA0KWzU2NzQ5
-ODkuNjcwODk4XSAgPyBoYW5kbGVfbW1fZmF1bHQrMHgxMDM2LzB4MTk3MA0KWzU2NzQ5ODkuNjcy
-ODgxXSAgbmV3X3N5bmNfcmVhZCsweDEwNS8weDE4MA0KWzU2NzQ5ODkuNjc0NjU5XSAgdmZzX3Jl
-YWQrMHgxNGIvMHgxYTANCls1Njc0OTg5LjY3NjI4NF0gIGtzeXNfcmVhZCsweDRmLzB4YzANCls1
-Njc0OTg5LjY3NzkxMV0gIGRvX3N5c2NhbGxfNjQrMHgzMy8weDQwDQpbNTY3NDk4OS42Nzk2MjVd
-ICBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg0NC8weGE5DQpbNTY3NDk4OS42ODE3
-OTldIFJJUDogMDAzMzoweDdmYWU1ODI3MTQ0Mg0KWzU2NzQ5ODkuNjgzNDczXSBDb2RlOiBjMCBl
-OSBiMiBmZSBmZiBmZiA1MCA0OCA4ZCAzZCA1MiAzOSAwYSAwMCBlOCA3NSBmMCAwMSAwMCAwZiAx
-ZiA0NCAwMCAwMCBmMyAwZiAxZSBmYSA2NCA4YiAwNCAyNSAxOCAwMCAwMCAwMCA4NSBjMCA3NSAx
-MCAwZiAwNSA8NDg+IDNkIDAwIGYwIGZmIGZmIDc3IDU2IGMzIDBmIDFmIDQ0IDAwIDAwIDQ4IDgz
-IGVjIDI4IDQ4IDg5IDU0IDI0DQpbNTY3NDk4OS42OTA1NjVdIFJTUDogMDAyYjowMDAwN2ZmZDhm
-OTllMDE4IEVGTEFHUzogMDAwMDAyNDYgT1JJR19SQVg6IDAwMDAwMDAwMDAwMDAwMDANCls1Njc0
-OTg5LjY5MzU0Nl0gUkFYOiBmZmZmZmZmZmZmZmZmZmRhIFJCWDogMDAwMDAwMDAwMDAyMDAwMCBS
-Q1g6IDAwMDA3ZmFlNTgyNzE0NDINCls1Njc0OTg5LjY5NjQzNV0gUkRYOiAwMDAwMDAwMDAwMDIw
-MDAwIFJTSTogMDAwMDdmYWU1ODE1YzAwMCBSREk6IDAwMDAwMDAwMDAwMDAwMDMNCls1Njc0OTg5
-LjY5OTM5M10gUkJQOiAwMDAwN2ZhZTU4MTVjMDAwIFIwODogMDAwMDdmYWU1ODE1YjAxMCBSMDk6
-IDAwMDAwMDAwMDAwMDAwMDANCls1Njc0OTg5LjcwMjIyMF0gUjEwOiAwMDAwMDAwMDAwMDAwMDIy
-IFIxMTogMDAwMDAwMDAwMDAwMDI0NiBSMTI6IDAwMDAwMDAwMDAwMjBmMDANCls1Njc0OTg5Ljcw
-NTA3OV0gUjEzOiAwMDAwMDAwMDAwMDAwMDAzIFIxNDogMDAwMDAwMDAwMDAyMDAwMCBSMTU6IDAw
-MDAwMDAwMDAwMjAwMDANCls1Njc0OTg5LjcwODE0Nl0gTWVtLUluZm86DQpbNTY3NDk4OS43MDk1
-MDFdIGFjdGl2ZV9hbm9uOjM1NTY5IGluYWN0aXZlX2Fub246NzcxNDYgaXNvbGF0ZWRfYW5vbjow
-DQogICAgICAgICAgICAgICAgICBhY3RpdmVfZmlsZToyNDA4NDM4IGluYWN0aXZlX2ZpbGU6MTQw
-MjU1NyBpc29sYXRlZF9maWxlOjANCiAgICAgICAgICAgICAgICAgIHVuZXZpY3RhYmxlOjAgZGly
-dHk6NDA2IHdyaXRlYmFjazowDQogICAgICAgICAgICAgICAgICBzbGFiX3JlY2xhaW1hYmxlOjcx
-Mjc3IHNsYWJfdW5yZWNsYWltYWJsZToyMzkzMg0KICAgICAgICAgICAgICAgICAgbWFwcGVkOjYy
-OTIyIHNobWVtOjM2NTQ1IHBhZ2V0YWJsZXM6MzUwNSBib3VuY2U6MA0KICAgICAgICAgICAgICAg
-ICAgZnJlZTo2MDcxOSBmcmVlX3BjcDowIGZyZWVfY21hOjANCls1Njc0OTg5LjcyMjkyMl0gTm9k
-ZSAwIGFjdGl2ZV9hbm9uOjE0MjI3NmtCIGluYWN0aXZlX2Fub246MzA4NTg0a0IgYWN0aXZlX2Zp
-bGU6OTYzMzc1MmtCIGluYWN0aXZlX2ZpbGU6NTYxMDIyOGtCIHVuZXZpY3RhYmxlOjBrQiBpc29s
-YXRlZChhbm9uKTowa0IgaXNvbGF0ZWQoZmlsZSk6MGtCIG1hcHBlZDoyNTE2ODhrQiBkaXJ0eTox
-ODIwa0Igd3JpdGViYWNrOjBrQiBzaG1lbToxNDYxODBrQiBzaG1lbV90aHA6IDBrQiBzaG1lbV9w
-bWRtYXBwZWQ6IDBrQiBhbm9uX3RocDogMGtCIHdyaXRlYmFja190bXA6MGtCIGtlcm5lbF9zdGFj
-azo0NjA4a0IgYWxsX3VucmVjbGFpbWFibGU/IG5vDQpbNTY3NDk4OS43MzQxODFdIE5vZGUgMCBE
-TUEgZnJlZToxMzg2MGtCIG1pbjo2NGtCIGxvdzo4MGtCIGhpZ2g6OTZrQiByZXNlcnZlZF9oaWdo
-YXRvbWljOjBLQiBhY3RpdmVfYW5vbjowa0IgaW5hY3RpdmVfYW5vbjowa0IgYWN0aXZlX2ZpbGU6
-MGtCIGluYWN0aXZlX2ZpbGU6MGtCIHVuZXZpY3RhYmxlOjBrQiB3cml0ZXBlbmRpbmc6MGtCIHBy
-ZXNlbnQ6MTU5OTJrQiBtYW5hZ2VkOjE1OTA4a0IgbWxvY2tlZDowa0IgcGFnZXRhYmxlczowa0Ig
-Ym91bmNlOjBrQiBmcmVlX3BjcDowa0IgbG9jYWxfcGNwOjBrQiBmcmVlX2NtYTowa0INCls1Njc0
-OTg5Ljc0ODcxOF0gbG93bWVtX3Jlc2VydmVbXTogMCAyOTY2IDE1OTU1IDE1OTU1IDE1OTU1DQpb
-NTY3NDk4OS43NTA5NTZdIE5vZGUgMCBETUEzMiBmcmVlOjE1NTg4OGtCIG1pbjoxMjU1MmtCIGxv
-dzoxNTY4OGtCIGhpZ2g6MTg4MjRrQiByZXNlcnZlZF9oaWdoYXRvbWljOjBLQiBhY3RpdmVfYW5v
-bjozMzZrQiBpbmFjdGl2ZV9hbm9uOjk4MTA4a0IgYWN0aXZlX2ZpbGU6MTc1OTAyOGtCIGluYWN0
-aXZlX2ZpbGU6OTY5Mjgwa0IgdW5ldmljdGFibGU6MGtCIHdyaXRlcGVuZGluZzo1ODBrQiBwcmVz
-ZW50OjMxMjkxOTJrQiBtYW5hZ2VkOjMwNjM2NTZrQiBtbG9ja2VkOjBrQiBwYWdldGFibGVzOjIy
-NGtCIGJvdW5jZTowa0IgZnJlZV9wY3A6MGtCIGxvY2FsX3BjcDowa0IgZnJlZV9jbWE6MGtCDQpb
-NTY3NDk4OS43NjI2NjldIGxvd21lbV9yZXNlcnZlW106IDAgMCAxMjk4OCAxMjk4OCAxMjk4OA0K
-WzU2NzQ5ODkuNzY0ODQ3XSBOb2RlIDAgTm9ybWFsIGZyZWU6NzMxMjhrQiBtaW46NTQ5NjBrQiBs
-b3c6Njg3MDBrQiBoaWdoOjgyNDQwa0IgcmVzZXJ2ZWRfaGlnaGF0b21pYzoyMDQ4S0IgYWN0aXZl
-X2Fub246MTQxOTQwa0IgaW5hY3RpdmVfYW5vbjoyMTAzODBrQiBhY3RpdmVfZmlsZTo3ODc0OTQw
-a0IgaW5hY3RpdmVfZmlsZTo0NjM5NzEya0IgdW5ldmljdGFibGU6MGtCIHdyaXRlcGVuZGluZzox
-MDQ0a0IgcHJlc2VudDoxMzYzMTQ4OGtCIG1hbmFnZWQ6MTMzMDc0MTJrQiBtbG9ja2VkOjBrQiBw
-YWdldGFibGVzOjEzNzk2a0IgYm91bmNlOjBrQiBmcmVlX3BjcDowa0IgbG9jYWxfcGNwOjBrQiBm
-cmVlX2NtYTowa0INCls1Njc0OTg5Ljc3NjYwN10gbG93bWVtX3Jlc2VydmVbXTogMCAwIDAgMCAw
-DQpbNTY3NDk4OS43Nzg1ODZdIE5vZGUgMCBETUE6IDEqNGtCIChVKSAwKjhrQiAwKjE2a0IgMSoz
-MmtCIChVKSAyKjY0a0IgKFUpIDEqMTI4a0IgKFUpIDEqMjU2a0IgKFUpIDAqNTEya0IgMSoxMDI0
-a0IgKFUpIDIqMjA0OGtCIChVTSkgMio0MDk2a0IgKE0pID0gMTM4NjBrQg0KWzU2NzQ5ODkuNzg0
-MTg0XSBOb2RlIDAgRE1BMzI6IDMwMTIqNGtCIChVTUUpIDI0MTAqOGtCIChVTUUpIDY3NDAqMTZr
-QiAoVU1FKSAxNTIqMzJrQiAoVU1FKSAyMDIqNjRrQiAoTSkgMCoxMjhrQiAwKjI1NmtCIDAqNTEy
-a0IgMCoxMDI0a0IgMCoyMDQ4a0IgMCo0MDk2a0IgPSAxNTY5NjBrQg0KWzU2NzQ5ODkuNzkwMDcx
-XSBOb2RlIDAgTm9ybWFsOiAzNDM3KjRrQiAoVU1FSCkgMjk3MSo4a0IgKFVNRUgpIDExMDgqMTZr
-QiAoVU1FSCkgMzIxKjMya0IgKFVFSCkgOTIqNjRrQiAoVUVIKSAxMyoxMjhrQiAoVUVIKSAwKjI1
-NmtCIDAqNTEya0IgMSoxMDI0a0IgKEgpIDAqMjA0OGtCIDAqNDA5NmtCID0gNzQwOTJrQg0KWzU2
-NzQ5ODkuNzk2NTkxXSBOb2RlIDAgaHVnZXBhZ2VzX3RvdGFsPTAgaHVnZXBhZ2VzX2ZyZWU9MCBo
-dWdlcGFnZXNfc3VycD0wIGh1Z2VwYWdlc19zaXplPTEwNDg1NzZrQg0KWzU2NzQ5ODkuODAwMjMw
-XSBOb2RlIDAgaHVnZXBhZ2VzX3RvdGFsPTAgaHVnZXBhZ2VzX2ZyZWU9MCBodWdlcGFnZXNfc3Vy
-cD0wIGh1Z2VwYWdlc19zaXplPTIwNDhrQg0KWzU2NzQ5ODkuODAzODEyXSAzODQ3MzI3IHRvdGFs
-IHBhZ2VjYWNoZSBwYWdlcw0KWzU2NzQ5ODkuODA1Nzk3XSAwIHBhZ2VzIGluIHN3YXAgY2FjaGUN
-Cls1Njc0OTg5LjgwNzU5Nl0gU3dhcCBjYWNoZSBzdGF0czogYWRkIDAsIGRlbGV0ZSAwLCBmaW5k
-IDAvMA0KWzU2NzQ5ODkuODEwMDQ1XSBGcmVlIHN3YXAgID0gMGtCDQpbNTY3NDk4OS44MTE2MDZd
-IFRvdGFsIHN3YXAgPSAwa0INCls1Njc0OTg5LjgxMzI1NF0gNDE5NDE2OCBwYWdlcyBSQU0NCls1
-Njc0OTg5LjgxNDkzMF0gMCBwYWdlcyBIaWdoTWVtL01vdmFibGVPbmx5DQpbNTY3NDk4OS44MTY4
-MjNdIDk3NDI0IHBhZ2VzIHJlc2VydmVkDQpbNTY3NDk4OS44MTg1MDVdIDAgcGFnZXMgY21hIHJl
-c2VydmVkDQpbNTY3NDk4OS44MjAxODVdIDAgcGFnZXMgaHdwb2lzb25lZA0KDQoNCk1lbW9yeSBp
-cyBhdmFpbGFibGU6DQoNCiAgJCBjYXQgL3Byb2MvbWVtaW5mbyANCiAgTWVtVG90YWw6ICAgICAg
-IDE2Mzg2OTc2IGtCDQogIE1lbUZyZWU6ICAgICAgICAgMjkxNzQ3MiBrQg0KICBNZW1BdmFpbGFi
-bGU6ICAgMTUzOTUyNzIga0INCiAgQnVmZmVyczogICAgICAgICAgNTkwMTI4IGtCDQogIENhY2hl
-ZDogICAgICAgICAxMjEwNjQ5MiBrQg0KICBTd2FwQ2FjaGVkOiAgICAgICAgICAgIDAga0INCiAg
-Li4uDQoNCmNhdCB1c2VzIDEyOGtCIGJ1ZmZlcjoNCg0KICAkIHN0cmFjZSAteSAtZSByZWFkIGNh
-dCAvcHJvYy9zeXMva2VybmVsL3RhaW50ZWQgDQogIHJlYWQoMzwvcHJvYy9zeXMva2VybmVsL3Rh
-aW50ZWQ+LCAiMFxuIiwgMTMxMDcyKSA9IDINCiAgMA0KDQpTZWVtcyB0byBiZSBpbnRyb2R1Y2Vk
-IGluIHY1LjgtcmMxOg0KDQogIGNvbW1pdCAzMjkyNzM5M2RjMWNjZDYwZmIyYmRjMDViOWU4ZTg4
-NzUzNzYxNDY5DQogIEF1dGhvcjogQ2hyaXN0b3BoIEhlbGx3aWcgPGhjaEBsc3QuZGU+DQogIERh
-dGU6ICAgRnJpIEFwciAyNCAwODo0MzozOCAyMDIwICswMjAwDQoNCiAgICBzeXNjdGw6IHBhc3Mg
-a2VybmVsIHBvaW50ZXJzIHRvIC0+cHJvY19oYW5kbGVyDQogICAgDQogICAgSW5zdGVhZCBvZiBo
-YXZpbmcgYWxsIHRoZSBzeXNjdGwgaGFuZGxlcnMgZGVhbCB3aXRoIHVzZXIgcG9pbnRlcnMsIHdo
-aWNoDQogICAgaXMgcmF0aGVyIGhhaXJ5IGluIHRlcm1zIG9mIHRoZSBCUEYgaW50ZXJhY3Rpb24s
-IGNvcHkgdGhlIGlucHV0IHRvIGFuZA0KICAgIGZyb20gIHVzZXJzcGFjZSBpbiBjb21tb24gY29k
-ZS4gIFRoaXMgYWxzbyBtZWFucyB0aGF0IHRoZSBzdHJpbmdzIGFyZQ0KICAgIGFsd2F5cyBOVUwt
-dGVybWluYXRlZCBieSB0aGUgY29tbW9uIGNvZGUsIG1ha2luZyB0aGUgQVBJIGEgbGl0dGxlIGJp
-dA0KICAgIHNhZmVyLg0KDQpDb3VsZCB0aGlzIGJlIGltcHJvdmVkIHRvIGFsbG93IGNhdCd0aW5n
-IG9mIGZpbGVzIGluIC9wcm9jL3N5cy8gd2l0aG91dCB0aGUNCmJpZyBrZXJuZWwgbWVtb3J5IGFs
-bG9jYXRpb24/DQoNCi1Ub21taQ0KDQo=
+On Mon, May 10, 2021 at 1:13 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Wed 05-05-21 16:24:05, Christian Brauner wrote:
+> > On Wed, May 05, 2021 at 02:28:15PM +0200, Jan Kara wrote:
+> > > On Mon 03-05-21 21:44:22, Amir Goldstein wrote:
+> > > > > > Getting back to this old thread, because the "fs view" concept that
+> > > > > > it presented is very close to two POCs I tried out recently which leverage
+> > > > > > the availability of mnt_userns in most of the call sites for fsnotify hooks.
+> > > > > >
+> > > > > > The first POC was replacing the is_subtree() check with in_userns()
+> > > > > > which is far less expensive:
+> > > > > >
+> > > > > > https://github.com/amir73il/linux/commits/fanotify_in_userns
+> > > > > >
+> > > > > > This approach reduces the cost of check per mark, but there could
+> > > > > > still be a significant number of sb marks to iterate for every fs op
+> > > > > > in every container.
+> > > > > >
+> > > > > > The second POC is based off the first POC but takes the reverse
+> > > > > > approach - instead of marking the sb object and filtering by userns,
+> > > > > > it places a mark on the userns object and filters by sb:
+> > > > > >
+> > > > > > https://github.com/amir73il/linux/commits/fanotify_idmapped
+> > > > > >
+> > > > > > The common use case is a single host filesystem which is
+> > > > > > idmapped via individual userns objects to many containers,
+> > > > > > so normally, fs operations inside containers would have to
+> > > > > > iterate a single mark.
+> > > > > >
+> > > > > > I am well aware of your comments about trying to implement full
+> > > > > > blown subtree marks (up this very thread), but the userns-sb
+> > > > > > join approach is so much more low hanging than full blown
+> > > > > > subtree marks. And as a by-product, it very naturally provides
+> > > > > > the correct capability checks so users inside containers are
+> > > > > > able to "watch their world".
+> > > > > >
+> > > > > > Patches to allow resolving file handles inside userns with the
+> > > > > > needed permission checks are also available on the POC branch,
+> > > > > > which makes the solution a lot more useful.
+> > > > > >
+> > > > > > In that last POC, I introduced an explicit uapi flag
+> > > > > > FAN_MARK_IDMAPPED in combination with
+> > > > > > FAN_MARK_FILESYSTEM it provides the new capability.
+> > > > > > This is equivalent to a new mark type, it was just an aesthetic
+> > > > > > decision.
+> > > > >
+> > > > > So in principle, I have no problem with allowing mount marks for ns-capable
+> > > > > processes. Also FAN_MARK_FILESYSTEM marks filtered by originating namespace
+> > > > > look OK to me (although if we extended mount marks to support directory
+> > > > > events as you try elsewhere, would there be still be a compeling usecase for
+> > > > > this?).
+> > > >
+> > > > In my opinion it would. This is the reason why I stopped that direction.
+> > > > The difference between FAN_MARK_FILESYSTEM|FAN_MARK_IDMAPPED
+> > > > and FAN_MARK_MOUNT is that the latter can be easily "escaped" by creating
+> > > > a bind mount or cloning a mount ns while the former is "sticky" to all additions
+> > > > to the mount tree that happen below the idmapped mount.
+> > >
+> > > As far as I understood Christian, he was specifically interested in mount
+> > > events for container runtimes because filtering by 'mount' was desirable
+> > > for his usecase. But maybe I misunderstood. Christian? Also if you have
+> >
+> > I discussed this with Amir about two weeks ago. For container runtimes
+> > Amir's idea of generating events based on the userns the fsnotify
+> > instance was created in is actually quite clever because it gives a way
+> > for the container to receive events for all filesystems and idmapped
+> > mounts if its userns is attached to it. The model as we discussed it -
+> > Amir, please tell me if I'm wrong - is that you'd be setting up an
+> > fsnotify watch in a given userns and you'd be seeing events from all
+> > superblocks that have the caller's userns as s_user_ns and all mounts
+> > that have the caller's userns as mnt_userns. I think that's safe.
+>
+> OK, so this feature would effectively allow sb-wide watching of events that
+> are generated from within the container (or its descendants). That sounds
+> useful. Just one question: If there's some part of a filesystem, that is
+> accesible by multiple containers (and thus multiple namespaces), or if
+> there's some change done to the filesystem say by container management SW,
+> then event for this change won't be visible inside the container (despite
+> that the fs change itself will be visible).
+
+That is correct.
+FYI, a privileged user can already mount an overlayfs in order to indirectly
+open and write to a file.
+
+Because overlayfs opens the underlying file FMODE_NONOTIFY this will
+hide OPEN/ACCESS/MODIFY/CLOSE events also for inode/sb marks.
+Since 459c7c565ac3 ("ovl: unprivieged mounts"), so can unprivileged users.
+
+I wonder if that is a problem that we need to fix...
+
+> This is kind of a similar
+> problem to the one we had with mount marks and why sb marks were created.
+> So aren't we just repeating the mistake with mount marks? Because it seems
+> to me that more often than not, applications are interested in getting
+> notification when what they can actually access within the fs has changed
+> (and this is what they actually get with the inode marks) and they don't
+> care that much where the change came from... Do you have some idea how
+> frequent are such cross-ns filesystem changes?
+
+The use case surely exist, the question is whether this use case will be
+handled by a single idmapped userns or multiple userns.
+
+You see, we simplified the discussion to an idmapped mount that uses
+the same userns and the userns the container processes are associated
+with, but in fact, container A can use userns A container B userns B and they
+can both access a shared idmapped mount mapped with userns AB.
+
+I think at this point in time, there are only ideas about how the shared data
+case would be managed, but Christian should know better than me.
+
+> I fully appreciate the
+> simplicity of Amir's proposal but I'm trying to estimate when (or how many)
+> users are going to come back complaining it is not good enough ;).
+>
+
+IMO we should seriously consider the following model:
+1. Implement userns-filtered sb marks, WITHOUT relaxing capability checks -
+    setting userns-filtered sb marks requires the same capability as sb marks
+2. When container users call fanotify_{init,mark}(), container manager can
+    intercept these calls (this is standard practice) and setup userns-filtered
+    sb marks on their behalf
+3. Container manager has all the knowledge about shared data, so when
+    container A asks to watch the shared fs, container manager can do the
+    right thing and set filtered marks for userns A, B, AB or a subset depending
+    on configuration
+4. Is it up to container manager to decide, per configuration, whether container
+    users should be able to get events on changes made on filesystem from the
+    host userns. Per configuration, container manager can decide to convert
+    a request for sb mark to a filtered sb mark, reject it, or allow
+it and filter by
+    subtree in userspace.
+
+IOW, if we only implement the "simple" technical solution of the beast
+called "idmapped filesystem mark", container manager SW can leverage
+that to a lot more.
+
+Having said that, I think we need to wait to see the deployed container
+management solutions that will be built on top of idmapped mounts and
+wait for feature requests for specific use cases.
+
+Then we can see if the plan above makes sense.
+
+I think we need to wait to see the deployed container management solutions
+that build on top of idmapped mounts and wait for feature requests for
+specific use cases.
+
+Christian,
+
+If you feel there is already a concrete use case to discuss, you may
+bring in the relevant users to discuss it.
+Otherwise, I would wait for the dust to settle before we continue this
+effort.
+
+Thanks,
+Amir.
