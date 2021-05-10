@@ -2,107 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E48C377A09
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 May 2021 04:10:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4493D377A36
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 May 2021 04:45:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230166AbhEJCLz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 9 May 2021 22:11:55 -0400
-Received: from mx21.baidu.com ([220.181.3.85]:44568 "EHLO baidu.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230038AbhEJCLy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 9 May 2021 22:11:54 -0400
-Received: from BC-Mail-Ex17.internal.baidu.com (unknown [172.31.51.11])
-        by Forcepoint Email with ESMTPS id 1744F628EFBC60E9B34A;
-        Mon, 10 May 2021 10:10:47 +0800 (CST)
-Received: from BC-Mail-Ex20.internal.baidu.com (172.31.51.14) by
- BC-Mail-Ex17.internal.baidu.com (172.31.51.11) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2242.4; Mon, 10 May 2021 10:10:46 +0800
-Received: from BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) by
- BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) with mapi id 15.01.2242.008;
- Mon, 10 May 2021 10:10:46 +0800
-From:   "Chu,Kaiping" <chukaiping@baidu.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "yzaikin@google.com" <yzaikin@google.com>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "nigupta@nvidia.com" <nigupta@nvidia.com>,
-        "bhe@redhat.com" <bhe@redhat.com>,
-        "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>,
-        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
-        "mateusznosek0@gmail.com" <mateusznosek0@gmail.com>,
-        "sh_def@163.com" <sh_def@163.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        David Rientjes <rientjes@google.com>
-Subject: =?gb2312?B?tPC4tDogW1BBVENIIHY0XSBtbS9jb21wYWN0aW9uOiBsZXQgcHJvYWN0aXZl?=
- =?gb2312?Q?_compaction_order_configurable?=
-Thread-Topic: [PATCH v4] mm/compaction: let proactive compaction order
- configurable
-Thread-Index: AQHXRTHruGTRst2hN0Oxvb824V5mK6rb8xeQ
-Date:   Mon, 10 May 2021 02:10:46 +0000
-Message-ID: <da67b078c3bb4d67852a34794f7b5646@baidu.com>
-References: <1619576901-9531-1-git-send-email-chukaiping@baidu.com>
- <20210509171748.8dbc70ceccc5cc1ae61fe41c@linux-foundation.org>
-In-Reply-To: <20210509171748.8dbc70ceccc5cc1ae61fe41c@linux-foundation.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.22.194.39]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S230130AbhEJCqp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 May 2021 22:46:45 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:45182 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229987AbhEJCqo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 9 May 2021 22:46:44 -0400
+Received: from dread.disaster.area (pa49-179-143-157.pa.nsw.optusnet.com.au [49.179.143.157])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id C83321042E75;
+        Mon, 10 May 2021 12:45:35 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1lfvvK-00Beju-DG; Mon, 10 May 2021 12:45:34 +1000
+Date:   Mon, 10 May 2021 12:45:34 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Brian Foster <bfoster@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] xfs: kick extra large ioends to completion
+ workqueue
+Message-ID: <20210510024534.GO63242@dread.disaster.area>
+References: <20201002153357.56409-3-bfoster@redhat.com>
+ <20201005152102.15797-1-bfoster@redhat.com>
+ <20201006035537.GD49524@magnolia>
+ <20201006124440.GA50358@bfoster>
+ <20210506193158.GD8582@magnolia>
+ <YJVJZzld5ucxnlAH@bfoster>
+ <YJVRZ1Bg1gan2BrW@casper.infradead.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YJVRZ1Bg1gan2BrW@casper.infradead.org>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0
+        a=I9rzhn+0hBG9LkCzAun3+g==:117 a=I9rzhn+0hBG9LkCzAun3+g==:17
+        a=kj9zAlcOel0A:10 a=5FLXtPjwQuUA:10 a=7-415B0cAAAA:8
+        a=gnKQnzLbZubkhuT5HbcA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-DQoNCi0tLS0t08q8/tStvP4tLS0tLQ0Kt6K8/sjLOiBBbmRyZXcgTW9ydG9uIDxha3BtQGxpbnV4
-LWZvdW5kYXRpb24ub3JnPiANCreiy83KsbzkOiAyMDIxxOo11MIxMMjVIDg6MTgNCsrVvP7Iyzog
-Q2h1LEthaXBpbmcgPGNodWthaXBpbmdAYmFpZHUuY29tPg0Ks63LzTogbWNncm9mQGtlcm5lbC5v
-cmc7IGtlZXNjb29rQGNocm9taXVtLm9yZzsgeXphaWtpbkBnb29nbGUuY29tOyB2YmFia2FAc3Vz
-ZS5jejsgbmlndXB0YUBudmlkaWEuY29tOyBiaGVAcmVkaGF0LmNvbTsga2hhbGlkLmF6aXpAb3Jh
-Y2xlLmNvbTsgaWFtam9vbnNvby5raW1AbGdlLmNvbTsgbWF0ZXVzem5vc2VrMEBnbWFpbC5jb207
-IHNoX2RlZkAxNjMuY29tOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1mc2Rl
-dmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtbW1Aa3ZhY2sub3JnOyBNZWwgR29ybWFuIDxtZ29y
-bWFuQHRlY2hzaW5ndWxhcml0eS5uZXQ+OyBEYXZpZCBSaWVudGplcyA8cmllbnRqZXNAZ29vZ2xl
-LmNvbT4NCtb3zOI6IFJlOiBbUEFUQ0ggdjRdIG1tL2NvbXBhY3Rpb246IGxldCBwcm9hY3RpdmUg
-Y29tcGFjdGlvbiBvcmRlciBjb25maWd1cmFibGUNCg0KT24gV2VkLCAyOCBBcHIgMjAyMSAxMDoy
-ODoyMSArMDgwMCBjaHVrYWlwaW5nIDxjaHVrYWlwaW5nQGJhaWR1LmNvbT4gd3JvdGU6DQoNCj4g
-PiBDdXJyZW50bHkgdGhlIHByb2FjdGl2ZSBjb21wYWN0aW9uIG9yZGVyIGlzIGZpeGVkIHRvIA0K
-PiA+IENPTVBBQ1RJT05fSFBBR0VfT1JERVIoOSksIGl0J3MgT0sgaW4gbW9zdCBtYWNoaW5lcyB3
-aXRoIGxvdHMgb2YgDQo+ID4gbm9ybWFsIDRLQiBtZW1vcnksIGJ1dCBpdCdzIHRvbyBoaWdoIGZv
-ciB0aGUgbWFjaGluZXMgd2l0aCBzbWFsbCANCj4gPiBub3JtYWwgbWVtb3J5LCBmb3IgZXhhbXBs
-ZSB0aGUgbWFjaGluZXMgd2l0aCBtb3N0IG1lbW9yeSBjb25maWd1cmVkIGFzIA0KPiA+IDFHQiBo
-dWdldGxiZnMgaHVnZSBwYWdlcy4gSW4gdGhlc2UgbWFjaGluZXMgdGhlIG1heCBvcmRlciBvZiBm
-cmVlIA0KPiA+IHBhZ2VzIGlzIG9mdGVuIGJlbG93IDksIGFuZCBpdCdzIGFsd2F5cyBiZWxvdyA5
-IGV2ZW4gd2l0aCBoYXJkIA0KPiA+IGNvbXBhY3Rpb24uIFRoaXMgd2lsbCBsZWFkIHRvIHByb2Fj
-dGl2ZSBjb21wYWN0aW9uIGJlIHRyaWdnZXJlZCB2ZXJ5IA0KPiA+IGZyZXF1ZW50bHkuIEluIHRo
-ZXNlIG1hY2hpbmVzIHdlIG9ubHkgY2FyZSBhYm91dCBvcmRlciBvZiAzIG9yIDQuDQo+ID4gVGhp
-cyBwYXRjaCBleHBvcnQgdGhlIG9kZXIgdG8gcHJvYyBhbmQgbGV0IGl0IGNvbmZpZ3VyYWJsZSBi
-eSB1c2VyLCANCj4gPiBhbmQgdGhlIGRlZmF1bHQgdmFsdWUgaXMgc3RpbGwgQ09NUEFDVElPTl9I
-UEFHRV9PUkRFUi4NCg0KPiBJdCB3b3VsZCBiZSBncmVhdCB0byBkbyB0aGlzIGF1dG9tYXRpY2Fs
-bHk/ICBJdCdzIHF1aXRlIHNpbXBsZSB0byBzZWUgd2hlbiBtZW1vcnkgaXMgYmVpbmcgaGFuZGVk
-IG91dCB0byBodWdldGxiZnMgLSBzbyBjYW4gd2UgdHVuZSBwcm9hY3RpdmVfY29tcGFjdGlvbl9v
-cmRlciBpbiByZXNwb25zZSB0byB0aGlzPyAgVGhhdCB3b3VsZCBiZSBmYXIgYmV0dGVyIHRoYW4g
-YWRkaW5nIGEgbWFudWFsIHR1bmFibGUuDQoNCj4gQnV0IGZyb20gaGF2aW5nIHJlYWQgS2hhbGlk
-J3MgY29tbWVudHMsIHRoYXQgZG9lcyBzb3VuZCBxdWl0ZSBpbnZvbHZlZC4NCj4gSXMgdGhlcmUg
-c29tZSBwYXJ0aWFsIHNvbHV0aW9uIHRoYXQgd2UgY2FuIGNvbWUgdXAgd2l0aCB0aGF0IHdpbGwg
-Z2V0IG1vc3QgcGVvcGxlIG91dCBvZiB0cm91YmxlPw0KDQo+IFRoYXQgYmVpbmcgc2FpZCwgdGhp
-cyBwYXRjaCBpcyBzdXBlci1zdXBlci1zaW1wbGUgc28gcGVyaGFwcyB3ZSBzaG91bGQganVzdCBt
-ZXJnZSBpdCBqdXN0IHRvIGdldCBvbmUgcGVyc29uIChhbmQgaG9wZWZ1bGx5IGEgZmV3IG1vcmUp
-IG91dCBvZiB0cm91YmxlLiAgQnV0IG9uIHRoZSBvdGhlciBoYW5kLCBvbmNlIHdlIGFkZCBhIC9w
-cm9jIHR1bmFibGUgd2UgbXVzdCBtYWludGFpbiB0aGF0IHR1bmFibGUgZm9yIGV2ZXIgKG9yIGF0
-IGxlYXN0IGEgdmVyeSBsb25nIHRpbWUpIGV2ZW4gaWYgdGhlIGludGVybmFsIGltcGxlbWVudGF0
-aW9ucyBjaGFuZ2UgYSBsb3QuDQoNCkN1cnJlbnRseSB0aGUgZnJhZ21lbnQgaW5kZXggb2YgZWFj
-aCB6b25lIGlzIHBlciBvcmRlciwgdGhlcmUgaXMgbm8gc2luZ2xlIGZyYWdtZW50IGluZGV4IGZv
-ciB0aGUgd2hvbGUgc3lzdGVtLCBzbyB3ZSBjYW4gb25seSB1c2UgYSB1c2VyIGRlZmluZWQgb3Jk
-ZXIgZm9yIHByb2FjdGl2ZSBjb21wYWN0aW9uLiBJIGFtIGtlZXAgdGhpbmtpbmcgb2YgdGhlIHdh
-eSB0byBjYWxjdWxhdGluZyB0aGUgYXZlcmFnZSBmcmFnbWVudCBpbmRleCBvZiB0aGUgc3lzdGVt
-LCBidXQgdGlsbCBub3cgSSBkb2Vzbid0IHRoaW5rIG91dCBpdC4gSSB0aGluayB0aGF0IHdlIGNh
-biBqdXN0IHVzZSB0aGUgcHJvYyBmaWxlIHRvIGNvbmZpZ3VyZSB0aGUgb3JkZXIgbWFudWFsbHks
-IGlmIHdlIHRoaW5rIG91dCBiZXR0ZXIgc29sdXRpb24gaW4gZnV0dXJlLCB3ZSBjYW4ga2VlcCB0
-aGUgcHJvYyBmaWxlIGJ1dCByZW1vdmUgdGhlIGltcGxlbWVudGF0aW9uIGludGVybmFsbHkuDQo=
+On Fri, May 07, 2021 at 03:40:39PM +0100, Matthew Wilcox wrote:
+> On Fri, May 07, 2021 at 10:06:31AM -0400, Brian Foster wrote:
+> > > <nod> So I guess I'm saying that my resistance to /this/ part of the
+> > > changes is melting away.  For a 2GB+ write IO, I guess the extra overhead
+> > > of poking a workqueue can be amortized over the sheer number of pages.
+> > 
+> > I think the main question is what is a suitable size threshold to kick
+> > an ioend over to the workqueue? Looking back, I think this patch just
+> > picked 256k randomly to propose the idea. ISTM there could be a
+> > potentially large window from the point where I/O latency starts to
+> > dominate (over the extra context switch for wq processing) and where the
+> > softlockup warning thing will eventually trigger due to having too many
+> > pages. I think that means we could probably use a more conservative
+> > value, I'm just not sure what value should be (10MB, 100MB, 1GB?). If
+> > you have a reproducer it might be interesting to experiment with that.
+> 
+> To my mind, there are four main types of I/Os.
+> 
+> 1. Small, dependent reads -- maybe reading a B-tree block so we can get
+> the next pointer.  Those need latency above all.
+> 
+> 2. Readahead.  Tend to be large I/Os and latency is not a concern
+> 
+> 3. Page writeback which tend to be large and can afford the extra latency.
+> 
+> 4. Log writes.  These tend to be small, and I'm not sure what increasing
+> their latency would do.  Probably bad.
+> 
+> I like 256kB as a threshold.  I think I could get behind anything from
+> 128kB to 1MB.  I don't think playing with it is going to be really
+> interesting because most IOs are going to be far below or far above
+> that threshold.
+
+256kB is waaaaay too small for writeback IO. Brian actually proposed
+256k *pages*, not bytes. 256kB will take us back to the bad old days
+where we are dependent on bio merging to get decent IO patterns down
+to the hardware, and that's a bad place to be from both an IO and
+CPU efficiency POV.
+
+IOWs, the IO that is built by the filesystem needs to be large
+w.r.t. the underlying hardware so that the block layer can slice and
+dice it efficiently so we don't end up doing lots of small partial
+stripe writes to RAID devices.
+
+ISTR proposing - in response to Brian's patch - a limit of 16MB or
+so - large enough that for most storage stacks we'll keep it's
+queues full with well formed IO, but also small enough that we don't
+end up with long completion latencies due to walking hundreds of
+thousands of pages completing them in a tight loop...
+
+Yup, here's the relevent chunk of that patch:
+
++/*
++ * Maximum ioend IO size is used to prevent ioends from becoming unbound in
++ * size. Bios can read 4GB in size is pages are contiguous, and bio chains are
++ * effectively unbound in length. Hence the only limits on the size of the bio
++ * chain is the contiguity of the extent on disk and the length of the run of
++ * sequential dirty pages in the page cache. This can be tens of GBs of physical
++ * extents and if memory is large enough, tens of millions of dirty pages.
++ * Locking them all under writeback until the final bio in the chain is
++ * submitted and completed locks all those pages for the legnth of time it takes
++ * to write those many, many GBs of data to storage.
++ *
++ * Background writeback caps any single writepages call to half the device
++ * bandwidth to ensure fairness and prevent any one dirty inode causing
++ * writeback starvation.  fsync() and other WB_SYNC_ALL writebacks have no such
++ * cap on wbc->nr_pages, and that's where the above massive bio chain lengths
++ * come from. We want large IOs to reach the storage, but we need to limit
++ * completion latencies, hence we need to control the maximum IO size we
++ * dispatch to the storage stack.
++ *
++ * We don't really have to care about the extra IO completion overhead here -
++ * iomap has contiguous IO completion merging, so if the device can sustain a
++ * very high throughput and large bios, the ioends will be merged on completion
++ * and processed in large, efficient chunks with no additional IO latency. IOWs,
++ * we really don't need the huge bio chains to be built in the first place for
++ * sequential writeback...
++ *
++ * Note that page size has an effect here - 64k pages really needs lower
++ * page count thresholds because they have the same IO capabilities. We can do
++ * larger IOs because of the lower completion overhead, so cap it at 1024
++ * pages. For everything else, use 16MB as the ioend size.
++ */
++#if (PAGE_SIZE == 65536)
++#define IOMAP_MAX_IOEND_PAGES  1024
++#else
++#define IOMAP_MAX_IOEND_PAGES  4096
++#endif
++#define IOMAP_MAX_IOEND_SIZE   (IOMAP_MAX_IOEND_PAGES * PAGE_SIZE)
+
+
+Cheers,
+
+Dave.
+
+-- 
+Dave Chinner
+david@fromorbit.com
