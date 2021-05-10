@@ -2,200 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E094377EF0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 May 2021 11:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ADEA377EFC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 May 2021 11:09:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230137AbhEJJHk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 May 2021 05:07:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35368 "EHLO mx2.suse.de"
+        id S230185AbhEJJKG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 May 2021 05:10:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36912 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230050AbhEJJHk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 May 2021 05:07:40 -0400
+        id S229566AbhEJJKF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 May 2021 05:10:05 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id EC3A2B01F;
-        Mon, 10 May 2021 09:06:34 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 04DFBB02E;
+        Mon, 10 May 2021 09:09:00 +0000 (UTC)
 Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 5a2b3a3e;
-        Mon, 10 May 2021 09:08:08 +0000 (UTC)
+        by brahms (OpenSMTPD) with ESMTPA id abe4f275;
+        Mon, 10 May 2021 09:10:32 +0000 (UTC)
 From:   Luis Henriques <lhenriques@suse.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.de>,
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Nicolas Boichat <drinkcat@chromium.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Olga Kornievskaia <aglo@umich.edu>
-Subject: [PATCH v9] vfs: fix copy_file_range regression in cross-fs copies
-Date:   Mon, 10 May 2021 10:08:06 +0100
-Message-Id: <20210510090806.8988-1-lhenriques@suse.de>
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Olga Kornievskaia <aglo@umich.edu>,
+        Dave Chinner <dchinner@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Steve French <sfrench@samba.org>,
+        Ian Lance Taylor <iant@golang.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>
+Subject: Re: [PATCH v8] vfs: fix copy_file_range regression in cross-fs copies
+References: <20210221195833.23828-1-lhenriques@suse.de>
+        <20210222102456.6692-1-lhenriques@suse.de>
+        <CAN-5tyELMY7b7CKO-+an47ydq8r_4+SOyhuvdH0qE0-JmdZ44Q@mail.gmail.com>
+        <YDYpHccgM7agpdTQ@suse.de>
+        <CANMq1KBgwEXFh8AxpPW2t1SA0NVsyR45m0paLEU4D4w80dc_fA@mail.gmail.com>
+        <CANMq1KDTgnGtNxWj2XxAT3mdsNjc551uUCg6EWnh=Hd0KcVQKQ@mail.gmail.com>
+        <8735vzfugn.fsf@suse.de>
+        <CAOQ4uxjdVZywBi6=D1eRfBhRk+nobTz4N87jcejDtvzBMMMKXQ@mail.gmail.com>
+        <CANMq1KAOwj9dJenwF2NadQ73ytfccuPuahBJE7ak6S7XP6nCjg@mail.gmail.com>
+        <8735v4tcye.fsf@suse.de>
+        <CAOQ4uxh6PegaOtMXQ9WmU=05bhQfYTeweGjFWR7T+XVAbuR09A@mail.gmail.com>
+Date:   Mon, 10 May 2021 10:10:32 +0100
+In-Reply-To: <CAOQ4uxh6PegaOtMXQ9WmU=05bhQfYTeweGjFWR7T+XVAbuR09A@mail.gmail.com>
+        (Amir Goldstein's message of "Mon, 10 May 2021 07:59:09 +0300")
+Message-ID: <87fsyv0x9z.fsf@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A regression has been reported by Nicolas Boichat, found while using the
-copy_file_range syscall to copy a tracefs file.  Before commit
-5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
-kernel would return -EXDEV to userspace when trying to copy a file across
-different filesystems.  After this commit, the syscall doesn't fail anymore
-and instead returns zero (zero bytes copied), as this file's content is
-generated on-the-fly and thus reports a size of zero.
+Amir Goldstein <amir73il@gmail.com> writes:
 
-This patch restores some cross-filesystem copy restrictions that existed
-prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
-devices").  Filesystems are still allowed to fall-back to the VFS
-generic_copy_file_range() implementation, but that has now to be done
-explicitly.
+> On Mon, May 3, 2021 at 11:52 AM Luis Henriques <lhenriques@suse.de> wrote:
+<...>
+> Luis,
+>
+> I suggest that you post v9 with my Reviewed-by and Olga's Tested-by
+> and address your patch to the VFS maintainer and fsdevel list without
+> the entire world and LKML in CC.
 
-nfsd is also modified to fall-back into generic_copy_file_range() in case
-vfs_copy_file_range() fails with -EOPNOTSUPP or -EXDEV.
+Ok, v9 sent out according to your proposal:
 
-Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
-Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
-Link: https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/
-Link: https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid/
-Reported-by: Nicolas Boichat <drinkcat@chromium.org>
-Signed-off-by: Luis Henriques <lhenriques@suse.de>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Tested-by: Olga Kornievskaia <aglo@umich.edu>
----
-Changes since v8
-- Simply added Amir's Reviewed-by and Olga's Tested-by
-Changes since v7
-- set 'ret' to '-EOPNOTSUPP' before the clone 'if' statement so that the
-  error returned is always related to the 'copy' operation
-Changes since v6
-- restored i_sb checks for the clone operation
-Changes since v5
-- check if ->copy_file_range is NULL before calling it
-Changes since v4
-- nfsd falls-back to generic_copy_file_range() only *if* it gets -EOPNOTSUPP
-  or -EXDEV.
-Changes since v3
-- dropped the COPY_FILE_SPLICE flag
-- kept the f_op's checks early in generic_copy_file_checks, implementing
-  Amir's suggestions
-- modified nfsd to use generic_copy_file_range()
-Changes since v2
-- do all the required checks earlier, in generic_copy_file_checks(),
-  adding new checks for ->remap_file_range
-- new COPY_FILE_SPLICE flag
-- don't remove filesystem's fallback to generic_copy_file_range()
-- updated commit changelog (and subject)
-Changes since v1 (after Amir review)
-- restored do_copy_file_range() helper
-- return -EOPNOTSUPP if fs doesn't implement CFR
-- updated commit description
+https://lore.kernel.org/linux-fsdevel/20210510090806.8988-1-lhenriques@suse.de/
 
- fs/nfsd/vfs.c   |  8 +++++++-
- fs/read_write.c | 49 ++++++++++++++++++++++++-------------------------
- 2 files changed, 31 insertions(+), 26 deletions(-)
+Thanks, Amir.
 
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 15adf1f6ab21..f54a88b3b4a2 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -569,6 +569,7 @@ __be32 nfsd4_clone_file_range(struct nfsd_file *nf_src, u64 src_pos,
- ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
- 			     u64 dst_pos, u64 count)
- {
-+	ssize_t ret;
- 
- 	/*
- 	 * Limit copy to 4MB to prevent indefinitely blocking an nfsd
-@@ -579,7 +580,12 @@ ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
- 	 * limit like this and pipeline multiple COPY requests.
- 	 */
- 	count = min_t(u64, count, 1 << 22);
--	return vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
-+	ret = vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
-+
-+	if (ret == -EOPNOTSUPP || ret == -EXDEV)
-+		ret = generic_copy_file_range(src, src_pos, dst, dst_pos,
-+					      count, 0);
-+	return ret;
- }
- 
- __be32 nfsd4_vfs_fallocate(struct svc_rqst *rqstp, struct svc_fh *fhp,
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 9db7adf160d2..2f0dd73b8b91 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1395,28 +1395,6 @@ ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
- }
- EXPORT_SYMBOL(generic_copy_file_range);
- 
--static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
--				  struct file *file_out, loff_t pos_out,
--				  size_t len, unsigned int flags)
--{
--	/*
--	 * Although we now allow filesystems to handle cross sb copy, passing
--	 * a file of the wrong filesystem type to filesystem driver can result
--	 * in an attempt to dereference the wrong type of ->private_data, so
--	 * avoid doing that until we really have a good reason.  NFS defines
--	 * several different file_system_type structures, but they all end up
--	 * using the same ->copy_file_range() function pointer.
--	 */
--	if (file_out->f_op->copy_file_range &&
--	    file_out->f_op->copy_file_range == file_in->f_op->copy_file_range)
--		return file_out->f_op->copy_file_range(file_in, pos_in,
--						       file_out, pos_out,
--						       len, flags);
--
--	return generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
--				       flags);
--}
--
- /*
-  * Performs necessary checks before doing a file copy
-  *
-@@ -1434,6 +1412,25 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
- 	loff_t size_in;
- 	int ret;
- 
-+	/*
-+	 * Although we now allow filesystems to handle cross sb copy, passing
-+	 * a file of the wrong filesystem type to filesystem driver can result
-+	 * in an attempt to dereference the wrong type of ->private_data, so
-+	 * avoid doing that until we really have a good reason.  NFS defines
-+	 * several different file_system_type structures, but they all end up
-+	 * using the same ->copy_file_range() function pointer.
-+	 */
-+	if (file_out->f_op->copy_file_range) {
-+		if (file_in->f_op->copy_file_range !=
-+		    file_out->f_op->copy_file_range)
-+			return -EXDEV;
-+	} else if (file_in->f_op->remap_file_range) {
-+		if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
-+			return -EXDEV;
-+	} else {
-+                return -EOPNOTSUPP;
-+	}
-+
- 	ret = generic_file_rw_checks(file_in, file_out);
- 	if (ret)
- 		return ret;
-@@ -1502,6 +1499,7 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
- 
- 	file_start_write(file_out);
- 
-+	ret = -EOPNOTSUPP;
- 	/*
- 	 * Try cloning first, this is supported by more file systems, and
- 	 * more efficient if both clone and copy are supported (e.g. NFS).
-@@ -1520,9 +1518,10 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
- 		}
- 	}
- 
--	ret = do_copy_file_range(file_in, pos_in, file_out, pos_out, len,
--				flags);
--	WARN_ON_ONCE(ret == -EOPNOTSUPP);
-+	if (file_out->f_op->copy_file_range)
-+		ret = file_out->f_op->copy_file_range(file_in, pos_in,
-+						      file_out, pos_out,
-+						      len, flags);
- done:
- 	if (ret > 0) {
- 		fsnotify_access(file_in);
+Cheers,
+-- 
+Luis
+
+>
+> Al,
+>
+> Would you mind picking this patch?
+>
+> Linus,
+>
+> There have been some voices on the discussion saying maybe this is not
+> a kernel regression that needs to be fixed, but a UAPI that is not being used
+> correctly by userspace.
+>
+> The proposed change reminds me a bit of recent changes to splice() from
+> special files. Since this specific UAPI discussion is a bit subtle and because
+> we got this UAPI wrong at least two times already, it would be great to get
+> your ACK on this proposed UAPI change.
+>
+> Thanks,
+> Amir.
+>
+> Latest v8 tested and reviewed by several developers on CC list:
+> https://lore.kernel.org/linux-fsdevel/20210222102456.6692-1-lhenriques@suse.de/
+>
+> Proposed man page update:
+> https://lore.kernel.org/linux-fsdevel/20210509213930.94120-12-alx.manpages@gmail.com/
