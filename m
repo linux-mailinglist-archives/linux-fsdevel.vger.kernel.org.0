@@ -2,96 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9324E377CF3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 May 2021 09:12:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39FF1377D04
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 May 2021 09:21:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230056AbhEJHNg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 May 2021 03:13:36 -0400
-Received: from smtpout-fallback.aon.at ([195.3.96.119]:37237 "EHLO
-        smtpout-fallback.aon.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230002AbhEJHNe (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 May 2021 03:13:34 -0400
-X-Greylist: delayed 402 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 May 2021 03:13:34 EDT
-Received: (qmail 18896 invoked from network); 10 May 2021 07:05:49 -0000
-Received: from unknown (HELO smtpout.aon.at) ([172.18.1.203])
-          (envelope-sender <klammerj@a1.net>)
-          by fallback43.highway.telekom.at (qmail-ldap-1.03) with SMTP
-          for <linux-fsdevel@vger.kernel.org>; 10 May 2021 07:05:49 -0000
-X-A1Mail-Track-Id: 1620630349:18895:fallback43:172.18.1.203:1
-Received: (qmail 6424 invoked from network); 10 May 2021 07:05:43 -0000
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        WARSBL607.highway.telekom.at
-X-Spam-Level: 
-X-Spam-Relay-Country: 
-Received: from 100-75-90-60.rfc6598.a1.net (HELO [192.168.0.2]) ([100.75.90.60])
-          (envelope-sender <klammerj@a1.net>)
-          by smarthub83.res.a1.net (qmail-ldap-1.03) with SMTP
-          for <linux-fsdevel@vger.kernel.org>; 10 May 2021 07:05:43 -0000
-X-A1Mail-Track-Id: 1620630337:5918:smarthub83:100.75.90.60:1
-Message-ID: <6098DB34.1010007@a1.net>
-Date:   Mon, 10 May 2021 09:05:24 +0200
-From:   Johann Klammer <klammerj@a1.net>
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:24.0) Gecko/20100101 Icedove/24.5.0
+        id S230056AbhEJHWo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 May 2021 03:22:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60550 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230002AbhEJHV4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 May 2021 03:21:56 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E9EE3600CD;
+        Mon, 10 May 2021 07:20:45 +0000 (UTC)
+Date:   Mon, 10 May 2021 09:20:43 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jia He <justin.he@arm.com>, Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@ftp.linux.org.uk>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH RFC 1/3] fs: introduce helper d_path_fast()
+Message-ID: <20210510072043.lde2n3hbk7lgeddv@wittgenstein>
+References: <20210508122530.1971-1-justin.he@arm.com>
+ <20210508122530.1971-2-justin.he@arm.com>
+ <CAHk-=wgSFUUWJKW1DXa67A0DXVzQ+OATwnC3FCwhqfTJZsvj1A@mail.gmail.com>
+ <YJbivrA4Awp4FXo8@zeniv-ca.linux.org.uk>
+ <CAHk-=whZhNXiOGgw8mXG+PTpGvxnRG1v5_GjtjHpoYXd2Fn_Ow@mail.gmail.com>
+ <YJb9KFBO7MwJeDHz@zeniv-ca.linux.org.uk>
+ <CAHk-=wjgXvy9EoE1_8KpxE9P3J_a-NF7xRKaUzi9MPSCmYnq+Q@mail.gmail.com>
+ <YJcUvwo2pn0JEs27@zeniv-ca.linux.org.uk>
+ <YJcbkJxrFAheQ5yO@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-To:     linux-fsdevel@vger.kernel.org
-Subject: iso9660: problems mounting japanese cdrom images
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YJcbkJxrFAheQ5yO@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Good morning,
+On Sat, May 08, 2021 at 11:15:28PM +0000, Al Viro wrote:
+> On Sat, May 08, 2021 at 10:46:23PM +0000, Al Viro wrote:
+> > On Sat, May 08, 2021 at 03:17:44PM -0700, Linus Torvalds wrote:
+> > > On Sat, May 8, 2021 at 2:06 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > > >
+> > > > On Sat, May 08, 2021 at 01:39:45PM -0700, Linus Torvalds wrote:
+> > > >
+> > > > > +static inline int prepend_entries(struct prepend_buffer *b, const struct path *path, const struct path *root, struct mount *mnt)
+> > > >
+> > > > If anything, s/path/dentry/, since vfsmnt here will be equal to &mnt->mnt all along.
+> > > 
+> > > Too subtle for me.
+> > > 
+> > > And is it? Because mnt is from
+> > > 
+> > >      mnt = real_mount(path->mnt);
+> > > 
+> > > earlier, while vfsmount is plain "path->mnt".
+> > 
+> > static inline struct mount *real_mount(struct vfsmount *mnt)
+> > {
+> >         return container_of(mnt, struct mount, mnt);
+> > }
+> 
+> Basically, struct vfsmount instances are always embedded into struct mount ones.
+> All information about the mount tree is in the latter (and is visible only if
+> you manage to include fs/mount.h); here we want to walk towards root, so...
+> 
+> Rationale: a lot places use struct vfsmount pointers, but they've no need to
+> access all that stuff.  So struct vfsmount got trimmed down, with most of the
+> things that used to be there migrating into the containing structure.
+> 
+> [Christian Browner Cc'd]
+> BTW, WTF do we have struct mount.user_ns and struct vfsmount.mnt_userns?
+> Can they ever be different?  Christian?
 
-I had tried to mount the SP2.BIN image found in this archive.
-<https://archive.org/details/SequencePalladium2>
+Yes, they can.
 
-there's also a .CUE file wot has:
-FILE "SP2.BIN" BINARY
-  TRACK 01 MODE1/2352
-    INDEX 01 00:00:00
-  TRACK 02 AUDIO
-    PREGAP 00:02:00
-    INDEX 01 69:29:06
+> 
+> 	Sigh...  Namespace flavours always remind me of old joke -
+> Highlander II: There Should've Been Only One...
 
-I've tried the following:
-
-mount -o loop -t iso9660 /mnt/sda1/images/SP2.BIN ./test
-mount -t iso9660 -o sbsector=2352 -o loop /mnt/sda1/images/SP2.BIN ./test
-mount -t iso9660 -o cruft -o sbsector=2352 -o loop /mnt/sda1/images/SP2.BIN ./test
-mount -t iso9660 -o session=0 -o loop /mnt/sda1/images/SP2.BIN ./test
-mount -t iso9660 -o session=1 -o loop /mnt/sda1/images/SP2.BIN ./test
-mount -t iso9660 -o norock -o loop /mnt/sda1/images/SP2.BIN ./test
-mount -t iso9660 -o session=1 -o norock -o loop /mnt/sda1/images/SP2.BIN ./test
-mount -t iso9660 -o session=0 -o norock -o loop /mnt/sda1/images/SP2.BIN ./test
-mount -t iso9660 -o nojoliet -o loop /mnt/sda1/images/SP2.BIN ./test
-mount -t iso9660 -o nojoliet,norock -o loop /mnt/sda1/images/SP2.BIN ./test
-
-dmesg has:
-[208088.506869] loop: module loaded
-[208088.653563] ISOFS: Unable to identify CD-ROM format.
-[208095.914710] ISOFS: Unable to identify CD-ROM format.
-[208119.748715] ISOFS: Unable to identify CD-ROM format.
-[208347.191915] ISOFS: Unable to identify CD-ROM format.
-[208493.553881] ISOFS: Unable to identify CD-ROM format.
-[209441.613811] ISOFS: Invalid session number or type of track
-[209441.613822] ISOFS: Invalid session number
-[209441.615161] ISOFS: Unable to identify CD-ROM format.
-[209446.118334] ISOFS: Invalid session number or type of track
-[209446.118344] ISOFS: Invalid session number
-[209446.119287] ISOFS: Unable to identify CD-ROM format.
-[212424.794984] ISOFS: Unable to identify CD-ROM format.
-[212435.664533] ISOFS: Invalid session number or type of track
-[212435.664544] ISOFS: Invalid session number
-[212435.665578] ISOFS: Unable to identify CD-ROM format.
-[212439.839751] ISOFS: Invalid session number or type of track
-[212439.839762] ISOFS: Invalid session number
-[212439.841020] ISOFS: Unable to identify CD-ROM format.
-[212478.808366] ISOFS: Unable to identify CD-ROM format.
-[212485.561928] ISOFS: Unable to identify CD-ROM format.
-
-Kernel Version is 3.14.15
-What else to try?
-
-
+(I'd prefer if mount propagation would die first.)
