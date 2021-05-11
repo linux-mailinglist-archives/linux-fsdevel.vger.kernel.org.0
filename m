@@ -2,153 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A098137ACCF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 19:14:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2947137AD1D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 19:29:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231745AbhEKRPW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 13:15:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:45658 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231858AbhEKRPW (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 13:15:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620753255;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8AaaXxsESTBnzMWVw6jgpxF3Zkg6NquN/G3+2kSw2A0=;
-        b=VlBLW0lFXrYFdNMTrnC0C5bhi9/2J3aSA/x9ByiE0vDfzYJnB+YxvjflRO//dnJwEwzAVc
-        UPDn24+derOgetmLy7zetlQvyhxCuOXR12crI938+MxzngfyF1RHiJIy1jcWHerLY39POx
-        alEqai9MUnHcfB1DTllcJAPmSaJpTEE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-519-7k1Z6Js6OtyIa3jJRem1QQ-1; Tue, 11 May 2021 13:14:12 -0400
-X-MC-Unique: 7k1Z6Js6OtyIa3jJRem1QQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S231812AbhEKRaF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 13:30:05 -0400
+Received: from sandeen.net ([63.231.237.45]:59188 "EHLO sandeen.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231439AbhEKRaF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 May 2021 13:30:05 -0400
+Received: from liberator.sandeen.net (liberator.sandeen.net [10.0.0.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0F3AC800D55;
-        Tue, 11 May 2021 17:14:10 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.45])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7244261094;
-        Tue, 11 May 2021 17:13:59 +0000 (UTC)
-Date:   Tue, 11 May 2021 13:13:56 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Paris <eparis@redhat.com>, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Arnd Bergmann <arnd@kernel.org>
-Subject: Re: [PATCH v3 1/3] audit: replace magic audit syscall class numbers
- with macros
-Message-ID: <20210511171356.GN3141668@madcap2.tricolour.ca>
-References: <cover.1619811762.git.rgb@redhat.com>
- <bda073f2a8b11000ef40cf8b965305409ee88f44.1619811762.git.rgb@redhat.com>
- <CAHC9VhShi4u26h5OsahveQDNxO_uZ+KgzGOYEp5W7w6foA-uKg@mail.gmail.com>
+        by sandeen.net (Postfix) with ESMTPSA id 690985286FD;
+        Tue, 11 May 2021 12:28:40 -0500 (CDT)
+To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+From:   Eric Sandeen <sandeen@sandeen.net>
+Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+        Pavel Reichl <preichl@redhat.com>
+Subject: problem with exfat on 4k logical sector devices
+Message-ID: <372ffd94-d1a2-04d6-ac38-a9b61484693d@sandeen.net>
+Date:   Tue, 11 May 2021 12:28:57 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhShi4u26h5OsahveQDNxO_uZ+KgzGOYEp5W7w6foA-uKg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021-05-10 21:23, Paul Moore wrote:
-> On Fri, Apr 30, 2021 at 4:36 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >
-> > Replace audit syscall class magic numbers with macros.
-> >
-> > This required putting the macros into new header file
-> > include/linux/auditscm.h since the syscall macros were included for both 64
-> > bit and 32 bit in any compat code, causing redefinition warnings.
-> 
-> The ifndef/define didn't protect against redeclaration?  Huh.  Maybe
-> I'm not thinking about this correctly, or the arch specific code is
-> doing something wonky ...
-> 
-> Regardless, assuming that it is necessary, I would prefer if we called
-> it auditsc.h instead of auditscm.h; the latter makes me think of
-> sockets and not syscalls.
+Hi Namjae - 
 
-The "m" was for "macros", since there are auditsc bits in audit.h as
-well, but I have no significant objection.
+It seems that exfat is unhappy on 4k logical sector size devices:
 
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  MAINTAINERS                        |  1 +
-> >  arch/alpha/kernel/audit.c          |  8 ++++----
-> >  arch/ia64/kernel/audit.c           |  8 ++++----
-> >  arch/parisc/kernel/audit.c         |  8 ++++----
-> >  arch/parisc/kernel/compat_audit.c  |  9 +++++----
-> >  arch/powerpc/kernel/audit.c        | 10 +++++-----
-> >  arch/powerpc/kernel/compat_audit.c | 11 ++++++-----
-> >  arch/s390/kernel/audit.c           | 10 +++++-----
-> >  arch/s390/kernel/compat_audit.c    | 11 ++++++-----
-> >  arch/sparc/kernel/audit.c          | 10 +++++-----
-> >  arch/sparc/kernel/compat_audit.c   | 11 ++++++-----
-> >  arch/x86/ia32/audit.c              | 11 ++++++-----
-> >  arch/x86/kernel/audit_64.c         |  8 ++++----
-> >  include/linux/audit.h              |  1 +
-> >  include/linux/auditscm.h           | 23 +++++++++++++++++++++++
-> >  kernel/auditsc.c                   | 12 ++++++------
-> >  lib/audit.c                        | 10 +++++-----
-> >  lib/compat_audit.c                 | 11 ++++++-----
-> >  18 files changed, 102 insertions(+), 71 deletions(-)
-> >  create mode 100644 include/linux/auditscm.h
-> 
-> ...
-> 
-> > diff --git a/include/linux/auditscm.h b/include/linux/auditscm.h
-> > new file mode 100644
-> > index 000000000000..1c4f0ead5931
-> > --- /dev/null
-> > +++ b/include/linux/auditscm.h
-> > @@ -0,0 +1,23 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> > +/* auditscm.h -- Auditing support syscall macros
-> > + *
-> > + * Copyright 2021 Red Hat Inc., Durham, North Carolina.
-> > + * All Rights Reserved.
-> > + *
-> > + * Author: Richard Guy Briggs <rgb@redhat.com>
-> > + */
-> > +#ifndef _LINUX_AUDITSCM_H_
-> > +#define _LINUX_AUDITSCM_H_
-> > +
-> > +enum auditsc_class_t {
-> > +       AUDITSC_NATIVE = 0,
-> > +       AUDITSC_COMPAT,
-> > +       AUDITSC_OPEN,
-> > +       AUDITSC_OPENAT,
-> > +       AUDITSC_SOCKETCALL,
-> > +       AUDITSC_EXECVE,
-> > +
-> > +       AUDITSC_NVALS /* count */
-> > +};
-> > +
-> > +#endif
-> 
-> -- 
-> paul moore
-> www.paul-moore.com
-> 
+[root@big18 exfatprogs]# modprobe scsi_debug sector_size=4096 dev_size_mb=256
+[root@big18 exfatprogs]# dmesg | tail -n 1
+[933449.931608] sd 16:0:0:0: [sdh] Attached SCSI disk
+[root@big18 exfatprogs]# mkfs.exfat /dev/sdh
+exfatprogs version : 1.0.4
+Creating exFAT filesystem(/dev/sdh, cluster size=4096)
 
-- RGB
+Writing volume boot record: done
+Writing backup volume boot record: done
+Fat table creation: done
+Allocation bitmap creation: done
+Upcase table creation: done
+Writing root directory entry: done
+Synchronizing...
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+exFAT format complete!
 
+[root@big18 exfatprogs]# fsck.exfat /dev/sdh
+exfatprogs version : 1.0.4
+checksums of boot sector are not correct. 0x44e6c5, but expected 0xda55694. Fix (y/N)? n
+
+[root@big18 exfatprogs]# mount /dev/sdh /mnt/test
+mount: /mnt/test: wrong fs type, bad option, bad superblock on /dev/sdh, missing codepage or helper program, or other error.
+[root@big18 exfatprogs]# dmesg
+<...>
+[933485.685102] exFAT-fs (sdh): Invalid exboot-signature(sector = 1): 0x00000000
+[933485.686134] exFAT-fs (sdh): Invalid exboot-signature(sector = 2): 0x00000000
+[933485.687173] exFAT-fs (sdh): Invalid exboot-signature(sector = 3): 0x00000000
+[933485.688209] exFAT-fs (sdh): Invalid exboot-signature(sector = 4): 0x00000000
+[933485.689247] exFAT-fs (sdh): Invalid exboot-signature(sector = 5): 0x00000000
+[933485.690283] exFAT-fs (sdh): Invalid exboot-signature(sector = 6): 0x00000000
+[933485.691318] exFAT-fs (sdh): Invalid exboot-signature(sector = 7): 0x00000000
+[933485.692352] exFAT-fs (sdh): Invalid exboot-signature(sector = 8): 0x00000000
+[933485.695450] exFAT-fs (sdh): Invalid boot checksum (boot checksum : 0x0044e6c5, checksum : 0x04653cbf)
+[933485.695452] exFAT-fs (sdh): invalid boot region
+[933485.695453] exFAT-fs (sdh): failed to recognize exfat type
+
+I think the primary problem here is that the boot sector disk structures are always 512 bytes, even if the underlying disk sectors are 4k. There is a mismatch between mkfs, fsck, and the kernel in this respect. mkfs calculates checksums using 512 bytes for all but the OEM and reserved sectors, where it uses sector_size instead (which may be 4k)
+
+3 mkfs/mkfs.c    exfat_write_boot_sector            129 boot_calc_checksum((unsigned char *)ppbr, sizeof(struct pbr),
+4 mkfs/mkfs.c    exfat_write_extended_boot_sectors  155 boot_calc_checksum((unsigned char *) &eb, sizeof(struct exbs),
+5 mkfs/mkfs.c    exfat_write_oem_sector             184 boot_calc_checksum((unsigned char *)oem, bd->sector_size, false,
+6 mkfs/mkfs.c    exfat_write_oem_sector             196 boot_calc_checksum((unsigned char *)oem, bd->sector_size, false,
+
+but fsck uses the disk sector size (4k) for everything, so there is a checksum mismatch and failure.
+
+exfat_update_boot_checksum()
+...
+        int sector_size = bd->sector_size;
+...
+                boot_calc_checksum(buf, sector_size, is_boot_sec,
+                        &checksum);
+
+The kernel has similar problems at mount time.
+
+(the kernel also has an issue where exfat_verify_boot_region is looking at 4 bytes from the end of the sector for EXBOOT_SIGNATURE, rather than 4 bytes from the end of the boot_sector.  Also, s_blocksize_bits never gets set...)
+
+Anyway, this can all be fixed, but first there is a question about what is proper:
+
+For these 11 regions (main boot sector, main extended boot sectors, OEM, and reserved, I think?) should the checksums be calculated on the full sector size (possibly 4k) or 512, or is it calculated on 512 (structure size) for all but the OEM sector as mkfs does? It's not clear to me from a quick read of the spec.
+
+(But from the example at https://docs.microsoft.com/en-us/windows/win32/fileio/exfat-specification#figure-1-boot-checksum-computation it almost looks like the checksum calculation should cover the entire 4k for all these regions, even if the disk structure itself is smaller?)
+
+Thanks,
+-Eric
