@@ -2,149 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C10C37AF75
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 21:39:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5180D37AF7E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 21:41:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232053AbhEKTkM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 15:40:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34848 "EHLO
+        id S232149AbhEKTm0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 15:42:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231808AbhEKTkL (ORCPT
+        with ESMTP id S231944AbhEKTmZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 15:40:11 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E60BBC061574;
-        Tue, 11 May 2021 12:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description;
-        bh=eNRIlQQZWCazYaxWhuouwitveyTw50B3VUes/EwHhZ4=; b=LiM+e93c7yw8r/CqMs2gl1vsos
-        FdVU4ovs1ULs8DQN1XWcVtufZq+x54QB1kFCIFh6epSB3XjGfHIfbqmKbeqa1nKFnaAidCg93bW0v
-        6MmN8neM8XMb13hF23AqHPw3PVxiavFLIeMsbOtZK4/gOtztq5H6yqumzFKoWk4hm9eLNw7Py6oom
-        IWTpVXy+Q1DP6C6NmdfdGZp2rNaqBVjzSkZmhCcLNsAUDk8Qw/9dpWBZQInxVY0RULsWYqJ6eK6Ug
-        rtyjiKE6D6Gbz1LhRugEgAHGRTqk1Bg/+87hPtf1mmM1SJ/1NCsIQ0BvvIEfay4nEHjaS6scmwAcf
-        UfBHHgsw==;
-Received: from [2601:1c0:6280:3f0:d7c4:8ab4:31d7:f0ba]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lgYDf-009sZV-4j; Tue, 11 May 2021 19:39:03 +0000
-Subject: Re: mmotm 2021-05-10-21-46 uploaded (mm/*)
-To:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-References: <20210511044719.tWGZA2U3A%akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <e50de603-ab1d-72f7-63f5-c1fc92c5c7be@infradead.org>
-Date:   Tue, 11 May 2021 12:39:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        Tue, 11 May 2021 15:42:25 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88413C061574;
+        Tue, 11 May 2021 12:41:17 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id c15so12092442ljr.7;
+        Tue, 11 May 2021 12:41:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HVr2DKzjDUvg6iI48ECjEOWh6boU9GbSOxTfWJJZK0Y=;
+        b=SrBrA3B6qq8fGEw0A+TQxItFg5gUkOHSzKw9zaf7iHNY4gl0Fynubs80reJ3emOLTp
+         fFG4EMroSHYjdQQ7AgFHumyzTlhdJ+Uy03sjxQ0hVDc1RWp5ZOjiSholOKpC1oG+DG6/
+         zXu0MJfGabpuR44C62D+NMmxx+P1Qwv71cuPWUNs/KPD/ULvAmk3fAT4gqjppSBmNgSS
+         L1DuXFrA2GuF4p6BDNl31AbD4PUubWSAAPLsCqayuVGShb09a4QGrk2XI8xcxe72pYbk
+         x6wqvyYg9T1BGghMIeIGvj+UodGKN5G7FIvZQIWpFH1hmRq/okgC6ynE60130R6JCc7u
+         3gvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HVr2DKzjDUvg6iI48ECjEOWh6boU9GbSOxTfWJJZK0Y=;
+        b=gdfzl/N/KWtAJFPDMFV8opv+d3UIi67/0ep4Io5/FO4IN2W2FTb5EbY8SDBHNJO9kM
+         QIkK1bUVBE0MwnLL6E5BwBMgMh4bjkN7iNE8tQoTUE8GR+ekFiI74/N58YO83Zk2/z1v
+         hecESmaIiCpUTSLHSzM5D2AmY2cliSeiK+M3iyZP+1Xw6JpLWcLAvkWPh7w+24z/OPtP
+         9Zaj9Y2ezRfmsmk8HDWNZb8v8AsHqC0NdQJNx68XwJni1iVIqzAf6a2sCXspPq0b/xQP
+         P4nAfq/zRkU1UGVzA7skgw9v12Tg6vsbqYhLEvpYfWImb/ksp3wXlUdkd5Hn/Gk9GWy2
+         KpLg==
+X-Gm-Message-State: AOAM532OWF0plkF5UCNANtnHqp1vJ0OU0cdltRlkrwZ11i8XsL2AwyzE
+        raj8bQbcTJ5PFxNNgi8uF/0+ByFPm1Q7lz85HIPofkF262R3mw==
+X-Google-Smtp-Source: ABdhPJx5mBeTavK+lpzaSmDRTejD+ebf6MDgj00Xr7oUwPP206a1yW7DFgwrQ0EyVAN3Hu3R2Xzt2aP/V5u8I/APUok=
+X-Received: by 2002:a2e:7819:: with SMTP id t25mr4730550ljc.406.1620762075981;
+ Tue, 11 May 2021 12:41:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210511044719.tWGZA2U3A%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <CAH2r5ms+NL=J2Wa=wY2doV450qL8S97gnJW_4eSCp1aiz1SEZA@mail.gmail.com>
+ <2509400.1620738202@warthog.procyon.org.uk>
+In-Reply-To: <2509400.1620738202@warthog.procyon.org.uk>
+From:   Steve French <smfrench@gmail.com>
+Date:   Tue, 11 May 2021 14:41:05 -0500
+Message-ID: <CAH2r5mvkFBkVv7ur_VietcR7xCaRTFboD7+KdZ=MvkW6QC-KTw@mail.gmail.com>
+Subject: Re: Compile warning with current kernel and netfs
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/10/21 9:47 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2021-05-10-21-46 has been uploaded to
-> 
->    https://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> https://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (5.x
-> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> https://ozlabs.org/~akpm/mmotm/series
-> 
-> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> followed by the base kernel version against which this patch series is to
-> be applied.
-> 
-> This tree is partially included in linux-next.  To see which patches are
-> included in linux-next, consult the `series' file.  Only the patches
-> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-> linux-next.
-> 
-> 
-> A full copy of the full kernel tree with the linux-next and mmotm patches
-> already applied is available through git within an hour of the mmotm
-> release.  Individual mmotm releases are tagged.  The master branch always
-> points to the latest release, so it's constantly rebasing.
-> 
-> 	https://github.com/hnaz/linux-mm
-> 
-> The directory https://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-> contains daily snapshots of the -mm tree.  It is updated more frequently
-> than mmotm, and is untested.
-> 
-> A git copy of this tree is also available at
-> 
-> 	https://github.com/hnaz/linux-mm
+On Tue, May 11, 2021 at 8:03 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Steve French <smfrench@gmail.com> wrote:
+>
+> >   CC [M]  /home/smfrench/cifs-2.6/fs/cifs/fscache.o
+> >   CHECK   /home/smfrench/cifs-2.6/fs/cifs/fscache.c
+> > /home/smfrench/cifs-2.6/fs/cifs/fscache.c: note: in included file
+> > (through include/linux/fscache.h,
+> > /home/smfrench/cifs-2.6/fs/cifs/fscache.h):
+> > ./include/linux/netfs.h:93:15: error: don't know how to apply mode to
+> > unsigned int enum netfs_read_source
+>
+> Yeah - that's a bit the checker doesn't know how to support.  It's meant to
+> make enum netfs_read_source-type struct members take less space.  I think gcc
+> and clang are both fine with it.
 
+Looks like sparse has been recently updated to fix this.  I pulled
+from their git tree and rebuilt sparse to:
 
-Lots of various mm/ build errors:
+$ sparse --version
+v0.6.3-341-g8af24329
 
-Many of:
-In file included from ../arch/x86/kvm/../../../virt/kvm/kvm_main.c:47:0:
-../include/linux/hugetlb.h:340:30: error: parameter 6 (‘mode’) has incomplete type
-       enum mcopy_atomic_mode mode,
-                              ^~~~
-../include/linux/hugetlb.h:335:19: error: function declaration isn’t a prototype [-Werror=strict-prototypes]
- static inline int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
-                   ^~~~~~~~~~~~~~~~~~~~~~~~
+and it works - no warnings  (other than the "Skipping BTF generation
+one - which is unrelated, see https://lkml.org/lkml/2020/11/16/1452)
 
-
-Many of:
-../mm/slab_common.c:754:8: error: array index in initializer exceeds array bounds
-  .name[KMALLOC_RECLAIM] = "kmalloc-rcl-" #__short_size, \
-        ^
-../mm/slab_common.c:766:2: note: in expansion of macro ‘INIT_KMALLOC_INFO’
-  INIT_KMALLOC_INFO(0, 0),
-  ^~~~~~~~~~~~~~~~~
-../mm/slab_common.c:754:8: note: (near initialization for ‘kmalloc_info[0].name’)
-  .name[KMALLOC_RECLAIM] = "kmalloc-rcl-" #__short_size, \
-        ^
-../mm/slab_common.c:766:2: note: in expansion of macro ‘INIT_KMALLOC_INFO’
-  INIT_KMALLOC_INFO(0, 0),
-  ^~~~~~~~~~~~~~~~~
-
-One of:
-In file included from <command-line>:0:0:
-In function ‘__mm_zero_struct_page.isra.96’,
-    inlined from ‘__init_single_page.isra.97’ at ../mm/page_alloc.c:1494:2,
-    inlined from ‘init_unavailable_range.isra.98’ at ../mm/page_alloc.c:6496:3:
-./../include/linux/compiler_types.h:328:38: error: call to ‘__compiletime_assert_253’ declared with attribute error: BUILD_BUG_ON failed: sizeof(struct page) > 80
-  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-                                      ^
-./../include/linux/compiler_types.h:309:4: note: in definition of macro ‘__compiletime_assert’
-    prefix ## suffix();    \
-    ^~~~~~
-./../include/linux/compiler_types.h:328:2: note: in expansion of macro ‘_compiletime_assert’
-  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-  ^~~~~~~~~~~~~~~~~~~
-../include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                     ^~~~~~~~~~~~~~~~~~
-../include/linux/build_bug.h:50:2: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
-  BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-  ^~~~~~~~~~~~~~~~
-../include/linux/mm.h:169:2: note: in expansion of macro ‘BUILD_BUG_ON’
-  BUILD_BUG_ON(sizeof(struct page) > 80);
-  ^~~~~~~~~~~~
-
+make: Entering directory '/usr/src/linux-headers-5.13.0-051300rc1-generic'
+  CC [M]  /home/smfrench/cifs-2.6/fs/cifs/fscache.o
+  CHECK   /home/smfrench/cifs-2.6/fs/cifs/fscache.c
+  CC [M]  /home/smfrench/cifs-2.6/fs/cifs/cache.o
+  CHECK   /home/smfrench/cifs-2.6/fs/cifs/cache.c
+  LD [M]  /home/smfrench/cifs-2.6/fs/cifs/cifs.o
+  MODPOST /home/smfrench/cifs-2.6/fs/cifs/Module.symvers
+  LD [M]  /home/smfrench/cifs-2.6/fs/cifs/cifs.ko
+  BTF [M] /home/smfrench/cifs-2.6/fs/cifs/cifs.ko
 
 -- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Thanks,
 
+Steve
