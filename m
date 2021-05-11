@@ -2,87 +2,249 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C32937A4CD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 12:43:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 058E437A4F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 12:51:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231316AbhEKKoi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 06:44:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36364 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231312AbhEKKoh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 06:44:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 6FB22B02C;
-        Tue, 11 May 2021 10:43:28 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id AFA861F2B6D; Tue, 11 May 2021 12:43:27 +0200 (CEST)
-Date:   Tue, 11 May 2021 12:43:27 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Theodore Tso <tytso@mit.edu>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com
-Subject: Re: [PATCH RFC 00/15] File system wide monitoring
-Message-ID: <20210511104327.GI24154@quack2.suse.cz>
-References: <20210426184201.4177978-1-krisman@collabora.com>
- <CAOQ4uxi3yigb2gUjXHJQOVbPHR3RFDeyKc5i0X-k8CSLwurejg@mail.gmail.com>
+        id S231208AbhEKKwW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 06:52:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55638 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230458AbhEKKwV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 May 2021 06:52:21 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD5DCC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 03:51:15 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id q2so15726589pfh.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 03:51:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8WnvzW/xYy8cgKeY3BJToq570QsNMa+jR4L3j90K1VY=;
+        b=vA8vOqBZtHHMUZ7d3stnW17giisFlwF7Ac7hXjsusCKoM1ueM9wjL5bVAXFwabEUdE
+         q0tJp5xGeii60/lEgv116oUvQaSOlMT/5MD2kqAHCXgfleHweaZDkXcxhoRLqdikFIee
+         g2T6R8IrNZRb2T31fBx+rfzXMgCl6Wzis/gTWtzILzWoQNf+NV17LyltBUGF8X+4E/Yx
+         842kZLYPeTSEgzx5NbFndhCwi5YaZmV/pM9kqHyFrW2D0FbKpMZEA172MlPdLDG+DgwE
+         WxcKYbtJJTz0nHV1amO6u1BeJ8QLWhyFAO0tmd59vrygWluFBgJ/8qS27/GKhzggq4kx
+         ecgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8WnvzW/xYy8cgKeY3BJToq570QsNMa+jR4L3j90K1VY=;
+        b=k/IP62CXoAmtZb+uAs3o0DDSYV8jgz/l6B4DQY6NQ2XMMGSwZAnpfHkUZnWqnhGEr2
+         h1fQRRfasn/qN4MgCMM27/ZerbFIbWcH8ppTZjo/WWtc1kRC3tlcohkq29a2BKyy9lqQ
+         RyrF3Yy4kpzqdNkQU4bNIE+9qFLnh9IgRIAkD67GkyxE5Vaaw1RLJ12TuNl+HZd28YiL
+         T2Ani7Ui94dCpOhw6+ZlJRCn2c9ThfqbaaEgYn7tS+xKIS2Le9ZBQXwiZLq2G7vrpvSZ
+         /2/ggQGQegZrD5qxLruKP96ju8W+dgIe5FEeNtOCtTIJ6zVKKnHvzkPLjabja02X/HQr
+         0SFA==
+X-Gm-Message-State: AOAM530GDYd+xc9OeNguEM02a10xL1av9fxnfHsTzpDBn7V0BGQwyae4
+        okU1pgMBgWQqyMq27LpP986nCw==
+X-Google-Smtp-Source: ABdhPJyv4KHbQ9iBEM+pjtGhSBFOo9k+in+yCCuIlUsxm4052W1LmVWn6wShS1oWNryGdsMNFJ6JAA==
+X-Received: by 2002:a63:4b18:: with SMTP id y24mr29632095pga.438.1620730275411;
+        Tue, 11 May 2021 03:51:15 -0700 (PDT)
+Received: from localhost.localdomain ([139.177.225.240])
+        by smtp.gmail.com with ESMTPSA id n18sm13501952pgj.71.2021.05.11.03.51.08
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 May 2021 03:51:15 -0700 (PDT)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     willy@infradead.org, akpm@linux-foundation.org, hannes@cmpxchg.org,
+        mhocko@kernel.org, vdavydov.dev@gmail.com, shakeelb@google.com,
+        guro@fb.com, shy828301@gmail.com, alexs@kernel.org,
+        richard.weiyang@gmail.com, david@fromorbit.com,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+        zhengqi.arch@bytedance.com, duanxiongchun@bytedance.com,
+        fam.zheng@bytedance.com, Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH 00/17] Optimize list lru memory consumption
+Date:   Tue, 11 May 2021 18:46:30 +0800
+Message-Id: <20210511104647.604-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxi3yigb2gUjXHJQOVbPHR3RFDeyKc5i0X-k8CSLwurejg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 27-04-21 07:11:49, Amir Goldstein wrote:
-> The ring buffer functionality for fsnotify is interesting and it may be
-> useful on its own, but IMO, its too big of a hammer for the problem
-> at hand.
-> 
-> The question that you should be asking yourself is what is the
-> expected behavior in case of a flood of filesystem corruption errors.
-> I think it has already been expressed by filesystem maintainers on
-> one your previous postings, that a flood of filesystem corruption
-> errors is often noise and the only interesting information is the first error.
-> 
-> For this reason, I think that FS_ERROR could be implemented
-> by attaching an fsnotify_error_info object to an fsnotify_sb_mark:
-> 
-> struct fsnotify_sb_mark {
->         struct fsnotify_mark fsn_mark;
->         struct fsnotify_error_info info;
-> }
-> 
-> Similar to fd sampled errseq, there can be only one error report
-> per sb-group pair (i.e. fsnotify_sb_mark) and the memory needed to store
-> the error report can be allocated at the time of setting the filesystem mark.
-> 
-> With this, you will not need the added complexity of the ring buffer
-> and you will not need to limit FAN_ERROR reporting to a group that
-> is only listening for FAN_ERROR, which is an unneeded limitation IMO.
+In our server, we found a suspected memory leak problem. The kmalloc-32
+consumes more than 6GB of memory. Other kmem_caches consume less than 2GB
+memory.
 
-Seeing that this 'single error per mark' idea is gathering some support I'd
-like to add my 2c: Probably we don't want fsnotify_error_info attached to
-every fsnotify_mark, I guess we can have:
+After our in-depth analysis, the memory consumption of kmalloc-32 slab
+cache is the cause of list_lru_one allocation.
 
-struct fanotify_mark {
-	struct fsnotify_mark fsn_mark;
-	struct fanotify_error_event *event;
-};
+  crash> p memcg_nr_cache_ids
+  memcg_nr_cache_ids = $2 = 24574
 
-and 'event' will be normally NULL and if we add FAN_ERROR to mark's mask,
-we will allocate event (also containing error info) to use when generating
-error event. And then the handling will be somewhat similar to how we
-handle overflow events.
+memcg_nr_cache_ids is very large and memory consumption of each list_lru
+can be calculated with the following formula.
 
-								Honza
+  num_numa_node * memcg_nr_cache_ids * 32 (kmalloc-32)
+
+There are 4 numa nodes in our system, so each list_lru consumes ~3MB.
+
+  crash> list super_blocks | wc -l
+  952
+
+Every mount will register 2 list lrus, one is for inode, another is for
+dentry. There are 952 super_blocks. So the total memory is 952 * 2 * 3
+MB (~5.6GB). But now the number of memory cgroups is less than 500. So I
+guess more than 12286 memory cgroups have been created on this machine (I
+do not know why there are so many cgroups, it may be a user's bug or
+the user really want to do that). Because memcg_nr_cache_ids has not been
+reduced to a suitable value. This can waste a lot of memory. If we want
+to reduce memcg_nr_cache_ids, we have to reboot the server. This is not
+what we want.
+
+In order to reduce memcg_nr_cache_ids, I had posted a patchset [1] to do
+this. But this did not fundamentally solve the problem.
+
+We currently allocate scope for every memcg to be able to tracked on every
+not on every superblock instantiated in the system, regardless of whether
+that superblock is even accessible to that memcg.
+
+These huge memcg counts come from container hosts where memcgs are confined
+to just a small subset of the total number of superblocks that instantiated
+at any given point in time.
+
+For these systems with huge container counts, list_lru does not need the
+capability of tracking every memcg on every superblock.
+
+What it comes down to is that the list_lru is only needed for a given memcg
+if that memcg is instatiating and freeing objects on a given list_lru.
+
+As Dave said, "Which makes me think we should be moving more towards 'add the
+memcg to the list_lru at the first insert' model rather than 'instantiate
+all at memcg init time just in case'."
+
+This patchset aims to optimize the list lru memory consumption from different
+aspects.
+
+Patch 1-6 are code simplification.
+Patch 7 converts the array from per-memcg per-node to per-memcg
+Patch 9-15 let list_lru allocation dynamically.
+Patch 17 use xarray to optimize per memcg pointer array size.
+
+I had done a easy test to show the optimization. I create 10k memory cgroups
+and mount 10k filesystems in the systems. We use free command to show how many
+memory does the systems comsumes after this operation.
+
+        +------------------------------------------------+
+        |      condition        |   memory consumption   |
+        +-----------------------+------------------------+
+        | without this patchset |        24464 MB        |
+        +-----------------------+------------------------+
+        |     after patch 7     |        21957 MB        | <--------+
+        +-----------------------+------------------------+          |
+        |     after patch 15    |         6895 MB        |          |
+        +-----------------------+------------------------+          |
+        |     after patch 17    |         4367 MB        |          |
+        +-----------------------+------------------------+          |
+                                                                    |
+        The more the number of nodes, the more obvious the effect---+
+
+BTW, there was a recent discussion [2] on the same issue.
+
+[1] https://lore.kernel.org/linux-fsdevel/20210428094949.43579-1-songmuchun@bytedance.com/
+[2] https://lore.kernel.org/linux-fsdevel/20210405054848.GA1077931@in.ibm.com/
+
+Muchun Song (17):
+  mm: list_lru: fix list_lru_count_one() return value
+  mm: memcontrol: remove kmemcg_id reparenting
+  mm: memcontrol: remove the kmem states
+  mm: memcontrol: move memcg_online_kmem() to mem_cgroup_css_online()
+  mm: list_lru: remove holding lru node lock
+  mm: list_lru: only add the memcg aware lrus to the list
+  mm: list_lru: optimize the array of per memcg lists
+  mm: list_lru: remove memcg_aware from struct list_lru
+  mm: introduce kmem_cache_alloc_lru
+  fs: introduce alloc_inode_sb() to allocate filesystems specific inode
+  mm: dcache: use kmem_cache_alloc_lru() to allocate dentry
+  xarray: replace kmem_cache_alloc with kmem_cache_alloc_lru
+  mm: workingset: allocate list_lru on xa_node allocation
+  nfs42: use a specific kmem_cache to allocate nfs4_xattr_entry
+  mm: list_lru: allocate list_lru_one only when needed
+  mm: list_lru: rename memcg_drain_all_list_lrus to
+    memcg_reparent_list_lrus
+  mm: list_lru: replace linear array with xarray
+
+ drivers/dax/super.c        |   2 +-
+ fs/9p/vfs_inode.c          |   2 +-
+ fs/adfs/super.c            |   2 +-
+ fs/affs/super.c            |   2 +-
+ fs/afs/super.c             |   2 +-
+ fs/befs/linuxvfs.c         |   2 +-
+ fs/bfs/inode.c             |   2 +-
+ fs/block_dev.c             |   2 +-
+ fs/btrfs/inode.c           |   2 +-
+ fs/ceph/inode.c            |   2 +-
+ fs/cifs/cifsfs.c           |   2 +-
+ fs/coda/inode.c            |   2 +-
+ fs/dcache.c                |   3 +-
+ fs/ecryptfs/super.c        |   2 +-
+ fs/efs/super.c             |   2 +-
+ fs/erofs/super.c           |   2 +-
+ fs/exfat/super.c           |   2 +-
+ fs/ext2/super.c            |   2 +-
+ fs/ext4/super.c            |   2 +-
+ fs/f2fs/super.c            |   2 +-
+ fs/fat/inode.c             |   2 +-
+ fs/freevxfs/vxfs_super.c   |   2 +-
+ fs/fuse/inode.c            |   2 +-
+ fs/gfs2/super.c            |   2 +-
+ fs/hfs/super.c             |   2 +-
+ fs/hfsplus/super.c         |   2 +-
+ fs/hostfs/hostfs_kern.c    |   2 +-
+ fs/hpfs/super.c            |   2 +-
+ fs/hugetlbfs/inode.c       |   2 +-
+ fs/inode.c                 |   2 +-
+ fs/isofs/inode.c           |   2 +-
+ fs/jffs2/super.c           |   2 +-
+ fs/jfs/super.c             |   2 +-
+ fs/minix/inode.c           |   2 +-
+ fs/nfs/inode.c             |   2 +-
+ fs/nfs/nfs42xattr.c        |  95 +++++-----
+ fs/nilfs2/super.c          |   2 +-
+ fs/ntfs/inode.c            |   2 +-
+ fs/ocfs2/dlmfs/dlmfs.c     |   2 +-
+ fs/ocfs2/super.c           |   2 +-
+ fs/openpromfs/inode.c      |   2 +-
+ fs/orangefs/super.c        |   2 +-
+ fs/overlayfs/super.c       |   2 +-
+ fs/proc/inode.c            |   2 +-
+ fs/qnx4/inode.c            |   2 +-
+ fs/qnx6/inode.c            |   2 +-
+ fs/reiserfs/super.c        |   2 +-
+ fs/romfs/super.c           |   2 +-
+ fs/squashfs/super.c        |   2 +-
+ fs/sysv/inode.c            |   2 +-
+ fs/ubifs/super.c           |   2 +-
+ fs/udf/super.c             |   2 +-
+ fs/ufs/super.c             |   2 +-
+ fs/vboxsf/super.c          |   2 +-
+ fs/xfs/xfs_icache.c        |   3 +-
+ fs/zonefs/super.c          |   2 +-
+ include/linux/fs.h         |   7 +
+ include/linux/list_lru.h   |  24 +--
+ include/linux/memcontrol.h |  31 ++--
+ include/linux/slab.h       |   4 +
+ include/linux/swap.h       |   5 +-
+ include/linux/xarray.h     |   9 +-
+ ipc/mqueue.c               |   2 +-
+ lib/xarray.c               |  10 +-
+ mm/list_lru.c              | 430 +++++++++++++++++++++------------------------
+ mm/memcontrol.c            | 154 +++-------------
+ mm/shmem.c                 |   2 +-
+ mm/slab.c                  |  39 ++--
+ mm/slab.h                  |  17 +-
+ mm/slub.c                  |  42 +++--
+ mm/workingset.c            |   2 +-
+ net/socket.c               |   2 +-
+ net/sunrpc/rpc_pipe.c      |   2 +-
+ 73 files changed, 460 insertions(+), 529 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.11.0
+
