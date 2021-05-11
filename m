@@ -2,224 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 47FEA37A854
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 16:00:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28C6737A858
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 16:01:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231623AbhEKOBU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 10:01:20 -0400
-Received: from sonic309-26.consmr.mail.ne1.yahoo.com ([66.163.184.152]:36837
-        "EHLO sonic309-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231461AbhEKOBT (ORCPT
+        id S231636AbhEKOC2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 10:02:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:23666 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231501AbhEKOC2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 10:01:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1620741613; bh=0R//I1tvJ1cLHdd+0c9JgdUEI9Yb6smjrXlKEpySuVI=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=Iym+bvEmNbqe9yHArpxKzvHOjg4RILB3vcYpVR9ARHF5oTXk4dsAyAoGsqk9WuaZzz2/F0GrH3qkqKLMZ6+qH8SMrEG9HkurqmqxF8Wt2bTw+iJnEXth2s15eHYWz3jIEYMKKzn2E4GJhGaJOiIgEZXX/RixzbwWRAIFrzak48ZjOAX4ODn74qFBEIEF/m6uPimxYOr+fCvlfreHBGIxotTNs79q/bSy34JlZJKxCmNeN2LjKaeYMn6Ju2181TbcQDGs+YcQvvtkZn5EUaZOrm+kw6aKme+fJiGAh7CN9aRO2nlumnscv+wOUVNquSssloRmmhkryCk+w3jk3Zx3Hg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1620741613; bh=s10v0WOu1hCa/oNyH+P7KsgHl2wLYaPVqSn4h6WlbRP=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=gQHPKkR4YXmuJVd/83KyWg/w8Pr6yaZKWP+jy7WU7FZLbZUUiiSTnDuQ4KVG+IUwo7KI/vV+2+IAHtoyFJtoeE8QmPJrigAd8cS69hrlGFtW5wYnbVDRNMaqKh/6GC+oFGQqSoYd+1B/0k4PpEDcf0jWPA5lKpUFppiRBUnRZR2V+mcZu/gMdY2Kpb28SJ7u3BkZY3eiWcNx68KGHQbfEf6pbpVHOWdkVjgHAxxvfaCKp5asXsM0tVctdc3uDZdAFgVIrLGNqArlAzGL0/bo8ho86M2jmEC6SIdu5N+2YRlUJegaUx8h4VCcP1Umh1jdnSPQRKnepTIzzem4S63/DQ==
-X-YMail-OSG: 02W7dS0VM1nJXyIquqfeO0QTOEYK.bPY8kEWE3Yt7QqHdsq0HUfqjkWduI.vY08
- t3tOjLWYKpttF.TQS6If_0oko4yjxUPY7ZNngxn.7SnowybBW5VQiyTl6WorSBXAgbYpZJnUwY35
- k35VH7cjxgeiBySV2XOiMH.HE3swYkaJUTRpcLee4fuEOAs3S8tG2q52CO2BUS7iG5_9kwjHBmri
- JQ2WDZOxy.zs5.HXedo5qYMI7NZfeBDHkKSv_cjTDTvIeJ30IuCvcAwaLM3chie.3VV5ZvTkyWBc
- zhQdVnH5PNnmXOh3Woi811iX5SEZjAULtHxMQIHKXmd51ysAhdYlB6mA3EEDBxT37YHYyWx4PI7x
- CV.NdsKDfVrZYsW5_n9f.7VHNFdin9z1PU4ZW_PO5mf3uwu6wHMuVxjLzDsbivmVkBDL_D.fEHBJ
- flZAf64mnus1fXFugxdGMNXtkJQWk7..PoFTPsdd4Y3Tgc7EN1GJwRCJOG6pWruPfX3LpGkdoILe
- ro2p6SK2oNp49vLh5NhluwkxyDQA70lxo1FRK3Bx8YIlXCCgpsR7.JXi2FbYhbXoYCbJqKEoJzko
- c8NnZX8SYMbA_DTKhWKtm9s_0uDj668FYnhuT3Xzw9N_ARXa8C_SA9qAZ12_.8ZRH9TsHHxMhJ0a
- 9CLtJPyPYaOYR84mQZgvumcP3KFq5bop0t9rY9ZAQMqdwmKYMFIjSyvkF_n2zglfZbYplHEUxOOM
- WT.S35E_APfcHo9fN47wMNBP4t7JkZCVNoqbxlCMiIZ0ma6zo7BLGpNzRO78SbJ4pdOJ._VwAOmR
- eALOfHC5cjN0Y3qjj7dmiOUMyYU0e5JvOy2yRyXfRCMhcMK0jL3YX_H7Us.oDvMhV3KJdRJ1xj3Y
- l3qnQ_R7paq6geg529Bcllf2iCTZQ9UBfqb1KBZgwqs70Xz7Rp3WggDZ6w7xGTmXr.7AlYAoJfby
- 76zYsEBiD.84genAcMk5.B9dWgRcbMIWupl0lDviP4TI1WlUdO3KuVqQXbFrl9IoYdGA7AHhhgL3
- osAEinhGhRckY.x22FFIf2An9hqj0AdYX4mM.Tql6Y_g7wvrmkLXQF9zbcYmDf6HJUH51BEEZNyv
- 8sxHEntkZvOUWFp4nFt.zSCicWXd658pSJaNE_p_FhDCU2HuBOYhu_XI52FWsVGNjAZk4xeQBh87
- VpkPQI6WYQCnJHQQlQ8Lgp5gOeriFP6_wvj.7t60.1W11Cdt2N1yX1dQ4uT0IBQC9iTulUP6jzTo
- I6ek5q_IMC0NxB5_55TlesCpacwEgERqApn7d9SBtKapgVT_ESpkh7wanDVI3pL._2P7C5q.W_5o
- JeW3pz7SCydKhrNnnsoF89Yz_uZQPLW6sM_GvSW6lNMSDOUc6LqwRplXaV5nXD88rasi1zQfhhBK
- aRQDf0ysmj.7isXoTL6IKc60.CTDcviu6AX6jVotCHi2Qy3EWUy3TO3jd3FqqnafxlWm2lRrOwye
- uR9GhQ_lNYLEoUPMar7QYDaIabHEpIUwgPbzmIVKACYOUo7.rCfaOVxxjviICNxCHU1i22FlAUuh
- 4HqYTCG4QZJJo0qF4D0mrcwmIFEgiUZcOwPvL1OA_6sN9AMVuWRjHBl9Bofd5cePJ_ImlJzRW2TJ
- G_9I0ePC.DfqJ7kCeQDyScRyQVumbEdFQbaqCSB_gNHNaknyKxSauCNDGfzIbg7T9H6.d80P1E.q
- 88_cGN8Mw6XhoFhRoRdU93tWY12cOYs4D9Gw843bwuI6ARjJvVBZ.qn9YBgScTxgnUQ1hbXR45qH
- W3vueCND0cqYIrdvvqX4cqtDqZuu5DxuI71SlpEPN5d_PQG.7sH9OVqj2kxr9VrnDxK3L.Z.1sqS
- qbrF4obFVYdl6BQ9U4M01Bb3RTeTGnt5UEX9vc7q2VD271wPf30eIoMkQd1ZibUvx_KRAaGhOs.F
- 1Coe9xjTNsZmc1MBcpWc39jtuxGSMF1WCyWUAhO6orlhd2DON0I0IHjIlmRRKSEJWksZQKThel8I
- GEzcAi9E1xiVQxjFLyLja.O0xBkPdtPpmPTaeHfOCOO1VqVZRvKUlwHA4AXdSIsqxwqtnBxqOwAF
- BQCT8JgUb1VsX.qV_bNF3nkVdlxmueWqdobbOx2TG2i6NiXM02g.EJ08LZ9qM9M8PoLZNL3wYVdD
- PWt2nqMDDjESJpOTUcIxq2XzWhIVeRqsTK5MD8G8Mjb7xDdmVtkPk6vMsdpV9kYI8Ck94xyLIRv0
- wSgENKHyzHPvm7pq6M3UaDrcBk5mTM38exms7Z1K1l2grIOCB4KI.dy0OkAWpo4pyImoJxzjtELf
- thG4IVrfV7oOMadrtG4P9tb8IgrRMXKg_YwDTqGKhPQO.f8dctf8lgnFuwVmdUYmFp3evGROc_tD
- Gk.Ce71Yi_XMjaMipEuy89jMoOjgDwK6_lz_5IIJjdiYuQnF7xZeictV1mFIA330n.e0wdnNOLVR
- 6gCdOUsYZO0pHx40PGwY0OloprOa6ZIqc6iFWUDLrIchfw2wT0tAHSN4kR4bkMBPiAji2JnRxdio
- Ai1DjdKBgT7NX5a0kIGXJjTvFZV1ZKzFGsAuMzzW_rt6IDqzOJNCHs4vufWHxwtr0fFqoBRkxEGn
- HWKUkvWqJB9ps7_HBC1zEpwAyrf6iLFGX8uMooowXU0d4M0ZB5QFoSjUtLeijji9s.aASQ0lWdNU
- a6jvlJsVScFrk2ByC13AZJkwGCjyMb0NqPqlUJIHkG1glRhUmXgxbQLw58S67ZkV5Zrjv.NabvOs
- hVnbUWcfoEndXSo2u5xQMvg.vfQfN5NtrHERQATfKJP.q8jjcBxPNqKQSlVNqwSzq6r7VRurLHTm
- hFjG45C3vknowJQSeT_mXv3RxQTXz11HX3gNucw4vxiXzFyneCX7aOwGTrKM5eYX7rtt_0x4BeS8
- SGARKeDQ0BwRNk5Hc2CA857P3b.GPJ0KjALFezHFIu4RnjBEwHeoueCONdLjf2SWpFhdC1vnKGkk
- G4bQVxphjxVKM1Rpt9Cnvb.oj6Lgg9qnGDgxDdAx5whICrCpss3B0yb7w9UNs8F_gObehLisiIEF
- zQwH_us8vytj_
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 May 2021 14:00:13 +0000
-Received: by kubenode575.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 764dfada18601506adeb3c506bf324f0;
-          Tue, 11 May 2021 14:00:08 +0000 (UTC)
-Subject: Re: [PATCH V1] audit: log xattr args not covered by syscall record
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Richard Guy Briggs <rgb@redhat.com>, linux-api@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <604ceafd516b0785fea120f552d6336054d196af.1620414949.git.rgb@redhat.com>
- <7ee601c2-4009-b354-1899-3c8f582bf6ae@schaufler-ca.com>
- <20210508015443.GA447005@madcap2.tricolour.ca>
- <242f107a-3b74-c1c2-abd6-b3f369170023@schaufler-ca.com>
- <CAHC9VhQdV93G5N_BKsxuDCtFbm9-xvAkve02t5sGOi9Mam2Wtg@mail.gmail.com>
- <195ac224-00fa-b1be-40c8-97e823796262@schaufler-ca.com>
- <CAHC9VhTPQ-LoqUYJ4HGsFF-sAXR+mYqGga7TxRZOG7BUD-55FQ@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <cf7de129-b801-3f0c-64d6-c58d61fd4c84@schaufler-ca.com>
-Date:   Tue, 11 May 2021 07:00:07 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Tue, 11 May 2021 10:02:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620741681;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=/J2SbDDpf1/xl12w6sV/ZvOSp9oddaI9kZRn1S4ksFA=;
+        b=MBWemO5ULQJSPpJ/5Q9pjQpNyZ4yELbNsT5g5pWa8aS0IidVJbXFTuqT8WgevS7XlcOCx+
+        zQtQDobslKAR1x5ZHFCsBUow1bo7t5o5nXt7Uq8orjPsY8k+tKLBZtmT6O7qtF+q5UAZJi
+        bWCVqpQdwPaSh02iVQDtYsELfw3gbF8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-506-UbNFmkdyNFOv3l7m6nD3FA-1; Tue, 11 May 2021 10:01:19 -0400
+X-MC-Unique: UbNFmkdyNFOv3l7m6nD3FA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 067BA18E5641;
+        Tue, 11 May 2021 14:01:17 +0000 (UTC)
+Received: from max.com (unknown [10.40.195.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8040E5D6D1;
+        Tue, 11 May 2021 14:01:15 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     cluster-devel@redhat.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Subject: [PATCH] [RFC] Trigger retry from fault vm operation
+Date:   Tue, 11 May 2021 16:01:13 +0200
+Message-Id: <20210511140113.1225981-1-agruenba@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhTPQ-LoqUYJ4HGsFF-sAXR+mYqGga7TxRZOG7BUD-55FQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Mailer: WebService/1.1.18295 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/16)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/10/2021 6:28 PM, Paul Moore wrote:
-> On Mon, May 10, 2021 at 8:37 PM Casey Schaufler <casey@schaufler-ca.com=
-> wrote:
->> On 5/10/2021 4:52 PM, Paul Moore wrote:
->>> On Mon, May 10, 2021 at 12:30 PM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
->>>> On 5/7/2021 6:54 PM, Richard Guy Briggs wrote:
->>>>> On 2021-05-07 14:03, Casey Schaufler wrote:
->>>>>> On 5/7/2021 12:55 PM, Richard Guy Briggs wrote:
->>>>>>> The *setxattr syscalls take 5 arguments.  The SYSCALL record only=
- lists
->>>>>>> four arguments and only lists pointers of string values.  The xat=
-tr name
->>>>>>> string, value string and flags (5th arg) are needed by audit give=
-n the
->>>>>>> syscall's main purpose.
->>>>>>>
->>>>>>> Add the auxiliary record AUDIT_XATTR (1336) to record the details=
- not
->>>>>>> available in the SYSCALL record including the name string, value =
-string
->>>>>>> and flags.
->>>>>>>
->>>>>>> Notes about field names:
->>>>>>> - name is too generic, use xattr precedent from ima
->>>>>>> - val is already generic value field name
->>>>>>> - flags used by mmap, xflags new name
->>>>>>>
->>>>>>> Sample event with new record:
->>>>>>> type=3DPROCTITLE msg=3Daudit(05/07/2021 12:58:42.176:189) : proct=
-itle=3Dfilecap /tmp/ls dac_override
->>>>>>> type=3DPATH msg=3Daudit(05/07/2021 12:58:42.176:189) : item=3D0 n=
-ame=3D(null) inode=3D25 dev=3D00:1e mode=3Dfile,755 ouid=3Droot ogid=3Dro=
-ot rdev=3D00:00 obj=3Dunconfined_u:object_r:user_tmp_t:s0 nametype=3DNORM=
-AL cap_fp=3Dnone cap_fi=3Dnone cap_fe=3D0 cap_fver=3D0 cap_frootid=3D0
->>>>>>> type=3DCWD msg=3Daudit(05/07/2021 12:58:42.176:189) : cwd=3D/root=
+Hello,
 
->>>>>>> type=3DXATTR msg=3Daudit(05/07/2021 12:58:42.176:189) : xattr=3D"=
-security.capability" val=3D01 xflags=3D0x0
->>>>>> Would it be sensible to break out the namespace from the attribute=
-?
->>>>>>
->>>>>>      attrspace=3D"security" attrname=3D"capability"
->>>>> Do xattrs always follow this nomenclature?  Or only the ones we car=
-e
->>>>> about?
->>>> Xattrs always have a namespace (man 7 xattr) of "user", "trusted",
->>>> "system" or "security". It's possible that additional namespaces wil=
-l
->>>> be created in the future, although it seems unlikely given that only=
+we have a locking problem in gfs2 that I don't have a proper solution for, so
+I'm looking for suggestions.
 
->>>> "security" is widely used today.
->>> Why should audit care about separating the name into two distinct
->>> fields, e.g. "attrspace" and "attrname", instead of just a single
->>> "xattr" field with a value that follows the "namespace.attribute"
->>> format that is commonly seen by userspace?
->> I asked if it would be sensible. I don't much care myself.
-> I was *asking* a question - why would we want separate fields?  I
-> guess I thought there might be some reason for asking if it was
-> sensible; if not, I think I'd rather see it as a single field.
+What's happening is that a page fault triggers during a read or write
+operation, while we're holding a glock (the cluster-wide gfs2 inode
+lock), and the page fault requires another glock.  We can recognize and
+handle the case when both glocks are the same, but when the page fault requires
+another glock, there is a chance that taking that other glock would deadlock.
 
-I thought that it might make searching records easier, but I'm
-not the expert on that. One might filter on attrspace=3Dsecurity then
-look at the attrname values. But that bikeshed can be either color.
+When we realize that we may not be able to take the other glock in gfs2_fault,
+we need to communicate that to the read or write operation, which will then
+drop and re-acquire the "outer" glock and retry.  However, there doesn't seem
+to be a good way to do that; we can only indicate that a page fault should fail
+by returning VM_FAULT_SIGBUS or similar; that will then be mapped to -EFAULT.
+We'd need something like VM_FAULT_RESTART that can be mapped to -EBUSY so that
+we can tell the retry case apart from genuine -EFAULT errors.
 
->>>>>> Why isn't val=3D quoted?
->>>>> Good question.  I guessed it should have been since it used
->>>>> audit_log_untrustedstring(), but even the raw output is unquoted un=
-less
->>>>> it was converted by auditd to unquoted before being stored to disk =
-due
->>>>> to nothing offensive found in it since audit_log_n_string() does ad=
-d
->>>>> quotes.  (hmmm, bit of a run-on sentence there...)
->>>>>
->>>>>> The attribute value can be a .jpg or worse. I could even see it be=
-ing an eBPF
->>>>>> program (although That Would Be Wrong) so including it in an audit=
- record could
->>>>>> be a bit of a problem.
->>>>> In these cases it would almost certainly get caught by the control
->>>>> character test audit_string_contains_control() in
->>>>> audit_log_n_untrustedstring() called from audit_log_untrustedstring=
-()
->>>>> and deliver it as hex.
->>>> In that case I'm more concerned with the potential size than with
->>>> quoting. One of original use cases proposed for xattrs (back in the
->>>> SGI Irix days) was to attach a bitmap to be used as the icon in file=
+To show what I mean, below is a proof of concept that adds a restart_hack flag
+to struct task_struct as a side channel.  An even uglier alternative would be
+to abuse task->journal_info.
 
->>>> browsers as an xattr. Another was to attach the build instructions
->>>> and source used to create a binary. None of that is information you'=
-d
->>>> want to see in a audit record. On the other hand, if the xattr was a=
-n
->>>> eBPF program used to make access control decisions, you would want a=
-t
->>>> least a reference to it in the audit record.
->>> It would be interesting to see how this code would handle arbitrarily=
+The obvious response to this email would be "fix your locking order".  Well, we
+can do that by pinning the user pages in gfs2_file_{read,write}_iter before
+taking the "outer" glock, but we'd ideally only do that when it's actually
+necessary (i.e., when gfs2_fault has indicated to retry).
 
->>> large xattr values, or at the very least large enough values to blow
->>> up the audit record size.
->>>
->>> As pointed out elsewhere in this thread, and brought up again above
->>> (albeit indirectly), I'm guessing we don't really care about *all*
->>> xattrs, just the "special" xattrs that are security relevant, in whic=
-h
->>> case I think we need to reconsider how we collect this data.
->> Right. And you can't know in advance which xattrs are relevant in the
->> face of "security=3D". We might want something like
->>
->>         bool security_auditable_attribute(struct xattr *xattr)
->>
->> which returns true if the passed xattr is one that an LSM in the stack=
+Thanks for any thoughts.
 
->> considers relevant. Much like security_ismaclabel(). I don't think tha=
-t
->> we can just reuse security_ismaclabel() because there are xattrs that
->> are security relevant but are not MAC labels. SMACK64TRANSMUTE is one.=
+Andreas
+---
+ fs/gfs2/file.c        | 37 +++++++++++++++++++++++++++++++++++--
+ include/linux/sched.h |  1 +
+ 2 files changed, 36 insertions(+), 2 deletions(-)
 
->> File capability sets are another. I also suggest passing the struct xa=
-ttr
->> rather than the name because it seems reasonable that an LSM might
->> consider "user.execbyroot=3Dnever" relevant while "user.execbyroot=3Dp=
-ossible"
->> isn't.
-> Perhaps instead of having the audit code call into the LSM to
-> determine if an xattr is worth recording in the audit event, we leave
-> it to the LSMs themselves to add a record to the event?
-
-That would be even better. The LSM has all the information it needs.
-No reason to add infrastructure.
-=C2=A0
-
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index 658fed79d65a..253e720f2df0 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -543,10 +543,15 @@ static vm_fault_t gfs2_fault(struct vm_fault *vmf)
+ 	vm_fault_t ret;
+ 	int err;
+ 
+-	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
++	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, LM_FLAG_TRY, &gh);
+ 	if (likely(!recursive)) {
+ 		err = gfs2_glock_nq(&gh);
+ 		if (err) {
++			if (err == GLR_TRYFAILED) {
++				current->restart_hack = 1;
++				ret = VM_FAULT_SIGBUS;
++				goto out_uninit;
++			}
+ 			ret = block_page_mkwrite_return(err);
+ 			goto out_uninit;
+ 		}
+@@ -773,12 +778,16 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to,
+ 		return 0; /* skip atime */
+ 
+ 	gfs2_holder_init(ip->i_gl, LM_ST_DEFERRED, 0, gh);
++restart:
+ 	ret = gfs2_glock_nq(gh);
+ 	if (ret)
+ 		goto out_uninit;
+ 
++	current->restart_hack = 0;
+ 	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL, 0);
+ 	gfs2_glock_dq(gh);
++	if (unlikely(ret == -EFAULT) && current->restart_hack)
++		goto restart;
+ out_uninit:
+ 	gfs2_holder_uninit(gh);
+ 	return ret;
+@@ -803,6 +812,8 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
+ 	 * VFS does.
+ 	 */
+ 	gfs2_holder_init(ip->i_gl, LM_ST_DEFERRED, 0, gh);
++
++restart:
+ 	ret = gfs2_glock_nq(gh);
+ 	if (ret)
+ 		goto out_uninit;
+@@ -811,11 +822,14 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
+ 	if (offset + len > i_size_read(&ip->i_inode))
+ 		goto out;
+ 
++	current->restart_hack = 0;
+ 	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL, 0);
+ 	if (ret == -ENOTBLK)
+ 		ret = 0;
+ out:
+ 	gfs2_glock_dq(gh);
++	if (unlikely(ret == -EFAULT) && current->restart_hack)
++		goto restart;
+ out_uninit:
+ 	gfs2_holder_uninit(gh);
+ 	return ret;
+@@ -834,7 +848,9 @@ static ssize_t gfs2_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 			return ret;
+ 		iocb->ki_flags &= ~IOCB_DIRECT;
+ 	}
++restart1:
+ 	iocb->ki_flags |= IOCB_NOIO;
++	current->restart_hack = 0;
+ 	ret = generic_file_read_iter(iocb, to);
+ 	iocb->ki_flags &= ~IOCB_NOIO;
+ 	if (ret >= 0) {
+@@ -842,6 +858,8 @@ static ssize_t gfs2_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 			return ret;
+ 		written = ret;
+ 	} else {
++		if (unlikely(ret == -EFAULT) && current->restart_hack)
++			goto restart1;
+ 		if (ret != -EAGAIN)
+ 			return ret;
+ 		if (iocb->ki_flags & IOCB_NOWAIT)
+@@ -849,13 +867,18 @@ static ssize_t gfs2_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	}
+ 	ip = GFS2_I(iocb->ki_filp->f_mapping->host);
+ 	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
++
++restart2:
+ 	ret = gfs2_glock_nq(&gh);
+ 	if (ret)
+ 		goto out_uninit;
++	current->restart_hack = 0;
+ 	ret = generic_file_read_iter(iocb, to);
+ 	if (ret > 0)
+ 		written += ret;
+ 	gfs2_glock_dq(&gh);
++	if (unlikely(ret == -EFAULT) && current->restart_hack)
++		goto restart2;
+ out_uninit:
+ 	gfs2_holder_uninit(&gh);
+ 	return written ? written : ret;
+@@ -912,13 +935,18 @@ static ssize_t gfs2_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 			goto out_unlock;
+ 
+ 		iocb->ki_flags |= IOCB_DSYNC;
++restart1:
++		current->restart_hack = 0;
+ 		current->backing_dev_info = inode_to_bdi(inode);
+ 		buffered = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
+ 		current->backing_dev_info = NULL;
+ 		if (unlikely(buffered <= 0)) {
++			if (unlikely(buffered == -EFAULT) && current->restart_hack)
++				goto restart1;
+ 			if (!ret)
+ 				ret = buffered;
+ 			goto out_unlock;
++		}
+ 
+ 		/*
+ 		 * We need to ensure that the page cache pages are written to
+@@ -935,10 +963,15 @@ static ssize_t gfs2_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		if (!ret || ret2 > 0)
+ 			ret += ret2;
+ 	} else {
++restart2:
++		current->restart_hack = 0;
+ 		current->backing_dev_info = inode_to_bdi(inode);
+ 		ret = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
+ 		current->backing_dev_info = NULL;
+-		if (likely(ret > 0)) {
++		if (unlikely(ret <= 0)) {
++			if (unlikely(ret == -EFAULT) && current->restart_hack)
++				goto restart2;
++		} else {
+ 			iocb->ki_pos += ret;
+ 			ret = generic_write_sync(iocb, ret);
+ 		}
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index d2c881384517..de053ac8d8d6 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1067,6 +1067,7 @@ struct task_struct {
+ 
+ 	/* Journalling filesystem info: */
+ 	void				*journal_info;
++	unsigned			restart_hack:1;
+ 
+ 	/* Stacked block device info: */
+ 	struct bio_list			*bio_list;
+-- 
+2.26.3
 
