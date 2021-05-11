@@ -2,130 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 52D8B37AB14
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 17:48:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F3D037AB26
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 17:52:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231828AbhEKPt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 11:49:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38608 "EHLO
+        id S231834AbhEKPxz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 11:53:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231561AbhEKPt2 (ORCPT
+        with ESMTP id S231789AbhEKPxy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 11:49:28 -0400
-Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D93BBC061574;
-        Tue, 11 May 2021 08:48:21 -0700 (PDT)
-Received: by mail-oo1-xc29.google.com with SMTP id e7-20020a4ad2470000b02902088d0512ceso1459943oos.8;
-        Tue, 11 May 2021 08:48:21 -0700 (PDT)
+        Tue, 11 May 2021 11:53:54 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8815EC06174A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 08:52:47 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id u21so30436275ejo.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 08:52:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5G3X0SsMYoBRSudd4/RxfVXt3YIGObL1pFXwXeHxFjA=;
-        b=ergBPEMz0eajaLPXgWUA6rjor17KYhfwTmK2sOuzzDbXqsPIWtVRKjfxbIfzY9OkIc
-         q0L2k0bcDQHmQnOLvySuWkGTMFVDa41heYsNZzJu0POZhOZPPGT8MDgenaetDOwBDhCO
-         JZWEsqDG+G1ALmEIReIrhqYUxm/ZrRY7aAZPIYjXQJCm15gyHomQlJ2mOncSfwLSnUUn
-         x2ltw4rw0iutyooHA0z3ND6QaxqyQb28rLR3pop34okjpBS4V5vtmt+PSopxAYHRWt8h
-         +pljNqMcTsAXw3aWT6x7hsB4OHac8L/kKUSbwPj5bGCzHiu9F6Sx1u0g/8NXmUgau1Xk
-         QhAA==
+         :cc:content-transfer-encoding;
+        bh=DdK1IEs3eqo+hBsOtkECll5WP9PsnhV8TlKhxE3dq/I=;
+        b=z4q41CDYBsfG99gUIBz4qoWmhaIzt02/3aja4FahQ/wKfLjDrFDC6KlAYcrXiOhPPc
+         N7laQrcSrnLDR+jl4iNd9aQG0S/HLrBx+SV336S4TclJ/eFPPc+Ky07zmeM1lDVI0O0Q
+         v8ZjHcRTdQ49FYjhLeGFPEGX2RonjkA4z3Wbvrf3ORdfY9rE6RxM8sZbJpPtqIIzsM8U
+         CE+AtsAiFERUXzAR5d8GoMJyHKiD5Fd6K0NqoVCikDoi7D8ZVaj4z19giOLGIAAcCjXV
+         soe8yi1JKQQdwEkeOKgwUaavAvRbmBpNv+KjkQ0+dUmTtV4hN6yJU53ct0HcPGaZlU9Y
+         AAGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5G3X0SsMYoBRSudd4/RxfVXt3YIGObL1pFXwXeHxFjA=;
-        b=acGR549tbPP/qgYb2blIGz706W1bLxZXNWHCEN43aHlhy1ITzDY6/j6E4U+vrB3oLX
-         LDUXDatV7ATfm0Sur33yQZX3hImEtzWizQhdIw/jJEOBRxf3BzbDVypn0To/xlPPQ7Jd
-         j24UBx6FfEWVtf0uBIPk0SYkEqQRBYfHePOTHtq0kuyYalqXsSS/UZ/thMIYmDoXbbKk
-         9b779wQJ5vOEHJFtutlNTIQhWp3BCLSz5pnFbbWge60Tk2CPDbF+tUStPNkTLhZw9neN
-         ZhEKEudry+9sdwmImXtKeJtXbBiTi08eotjo/RI5qy4eF5zaCtJsKiY92aiCwS/GlY+k
-         MMZw==
-X-Gm-Message-State: AOAM532i7K5wkM2I1xZI8uFqiNZBOkZdqB9CJGyy5yFytHBLdpqyrcq2
-        N7iPJ5nwrvhGAKjqceN4R5wBMl/n8lQ1XiehnJscNKZ98Hc=
-X-Google-Smtp-Source: ABdhPJzACYbQ8TvRjv21GKdTUAKZG5wgcKKCL8UftacLyBzooNVzwknDRupMyFB2bQaOxgOZJU1/+G22G6kfIOv1RJs=
-X-Received: by 2002:a4a:d085:: with SMTP id i5mr23978147oor.61.1620748101287;
- Tue, 11 May 2021 08:48:21 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DdK1IEs3eqo+hBsOtkECll5WP9PsnhV8TlKhxE3dq/I=;
+        b=uXtm1320WatDGGoRQIORp9XyEfu/x77WS+rYng500eIZ6nHdun+pQNVivlSbBKihDP
+         oq4vIPUmYeFYsrhcGC+xjhkh3y5ghgj2TvoLCvbRnS0lU6SHYAPZxv+eR9Hlt7g250GH
+         18u/XXd9cDeXs9SNBqmQhISIlaXnf8+sUwRhDDLTj2TodXCMzoOWosU0DwEnUhyD58Qc
+         zlIfmtJUvYpH/2FkNirxIBlQ8FViGrmofoVRBAbFYgwb4K639++2BFqCiEN05K11rICa
+         N896Q0ofosM/9z6kUBEnJvyhM8d9ij6M2WVbskQaEV6w9Fz+VeBjzyXBdA1cCWSeCu24
+         459g==
+X-Gm-Message-State: AOAM5324qT73OI1llDPDWiheg4K93u/SoNfyoDWX1UZTSb1xL1om3FW1
+        Fj9lNqVI/m7KKiU30ulCZwH2qmQVK4hrGWz5xhJN
+X-Google-Smtp-Source: ABdhPJwXdR3PN2nJSGasJfpB5PTCWMNGLNeCcSzPHvc0Lz9sPMStjkc5n2qXBaDNEi5247vUklIg6wzBDktOSIM58ro=
+X-Received: by 2002:a17:907:10d8:: with SMTP id rv24mr32304965ejb.542.1620748366074;
+ Tue, 11 May 2021 08:52:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <YJVnO+TCRW83S6w4@phenom.ffwll.local> <CADnq5_Pvtj1vb0bak_gUkv9J3+vfsMZxVKTKYeUvwQCajAWoVQ@mail.gmail.com>
- <YJVqL4c6SJc8wdkK@phenom.ffwll.local> <CADnq5_PHjiHy=Su_1VKr5ycdnXN-OuSXw0X_TeNqSj+TJs2MGA@mail.gmail.com>
- <CADnq5_OjaPw5iF_82bjNPt6v-7OcRmXmXECcN+Gdg1NcucJiHA@mail.gmail.com>
- <YJVwtS9XJlogZRqv@phenom.ffwll.local> <YJWWByISHSPqF+aN@slm.duckdns.org>
- <CADnq5_Mwd-xHZQ4pt34=FPk2Gq3ij1FNHWsEz1LdS7_Dyo00iQ@mail.gmail.com>
- <YJWqIVnX9giaKMTG@slm.duckdns.org> <CADnq5_PudV4ufQW=DqrDow_vvMQDCJVxjqZeXeTvM=6Xp+a_RQ@mail.gmail.com>
- <YJXRHXIykyEBdnTF@slm.duckdns.org>
-In-Reply-To: <YJXRHXIykyEBdnTF@slm.duckdns.org>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 11 May 2021 11:48:10 -0400
-Message-ID: <CADnq5_MDvhJiA2rd6ELAx87x2RdXJ_Am6N=xZQdtsG_KCubAtw@mail.gmail.com>
-Subject: Re: [RFC] Add BPF_PROG_TYPE_CGROUP_IOCTL
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, Kenny Ho <y2kenny@gmail.com>,
-        Song Liu <songliubraving@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kenny Ho <Kenny.Ho@amd.com>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        Brian Welty <brian.welty@intel.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Network Development <netdev@vger.kernel.org>,
-        KP Singh <kpsingh@chromium.org>, Yonghong Song <yhs@fb.com>,
-        bpf <bpf@vger.kernel.org>, Dave Airlie <airlied@gmail.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>
+References: <604ceafd516b0785fea120f552d6336054d196af.1620414949.git.rgb@redhat.com>
+ <7ee601c2-4009-b354-1899-3c8f582bf6ae@schaufler-ca.com> <20210508015443.GA447005@madcap2.tricolour.ca>
+ <242f107a-3b74-c1c2-abd6-b3f369170023@schaufler-ca.com> <CAHC9VhQdV93G5N_BKsxuDCtFbm9-xvAkve02t5sGOi9Mam2Wtg@mail.gmail.com>
+ <195ac224-00fa-b1be-40c8-97e823796262@schaufler-ca.com> <CAHC9VhTPQ-LoqUYJ4HGsFF-sAXR+mYqGga7TxRZOG7BUD-55FQ@mail.gmail.com>
+ <cf7de129-b801-3f0c-64d6-c58d61fd4c84@schaufler-ca.com>
+In-Reply-To: <cf7de129-b801-3f0c-64d6-c58d61fd4c84@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 11 May 2021 11:52:35 -0400
+Message-ID: <CAHC9VhS0GU-aE1MkR51VxE7=9s=iDWU2j3=TfmKW1Q6C+jJyxQ@mail.gmail.com>
+Subject: Re: [PATCH V1] audit: log xattr args not covered by syscall record
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>, linux-api@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 7, 2021 at 7:45 PM Tejun Heo <tj@kernel.org> wrote:
+On Tue, May 11, 2021 at 10:00 AM Casey Schaufler <casey@schaufler-ca.com> w=
+rote:
+> On 5/10/2021 6:28 PM, Paul Moore wrote:
+> > On Mon, May 10, 2021 at 8:37 PM Casey Schaufler <casey@schaufler-ca.com=
+> wrote:
+> >> On 5/10/2021 4:52 PM, Paul Moore wrote:
+> >>> On Mon, May 10, 2021 at 12:30 PM Casey Schaufler <casey@schaufler-ca.=
+com> wrote:
+> >>>> On 5/7/2021 6:54 PM, Richard Guy Briggs wrote:
+> >>>>> On 2021-05-07 14:03, Casey Schaufler wrote:
+> >>>>>> On 5/7/2021 12:55 PM, Richard Guy Briggs wrote:
+> >>>>>>> The *setxattr syscalls take 5 arguments.  The SYSCALL record only=
+ lists
+> >>>>>>> four arguments and only lists pointers of string values.  The xat=
+tr name
+> >>>>>>> string, value string and flags (5th arg) are needed by audit give=
+n the
+> >>>>>>> syscall's main purpose.
+> >>>>>>>
+> >>>>>>> Add the auxiliary record AUDIT_XATTR (1336) to record the details=
+ not
+> >>>>>>> available in the SYSCALL record including the name string, value =
+string
+> >>>>>>> and flags.
+> >>>>>>>
+> >>>>>>> Notes about field names:
+> >>>>>>> - name is too generic, use xattr precedent from ima
+> >>>>>>> - val is already generic value field name
+> >>>>>>> - flags used by mmap, xflags new name
+> >>>>>>>
+> >>>>>>> Sample event with new record:
+> >>>>>>> type=3DPROCTITLE msg=3Daudit(05/07/2021 12:58:42.176:189) : proct=
+itle=3Dfilecap /tmp/ls dac_override
+> >>>>>>> type=3DPATH msg=3Daudit(05/07/2021 12:58:42.176:189) : item=3D0 n=
+ame=3D(null) inode=3D25 dev=3D00:1e mode=3Dfile,755 ouid=3Droot ogid=3Droot=
+ rdev=3D00:00 obj=3Dunconfined_u:object_r:user_tmp_t:s0 nametype=3DNORMAL c=
+ap_fp=3Dnone cap_fi=3Dnone cap_fe=3D0 cap_fver=3D0 cap_frootid=3D0
+> >>>>>>> type=3DCWD msg=3Daudit(05/07/2021 12:58:42.176:189) : cwd=3D/root
+> >>>>>>> type=3DXATTR msg=3Daudit(05/07/2021 12:58:42.176:189) : xattr=3D"=
+security.capability" val=3D01 xflags=3D0x0
+> >>>>>> Would it be sensible to break out the namespace from the attribute=
+?
+> >>>>>>
+> >>>>>>      attrspace=3D"security" attrname=3D"capability"
+> >>>>> Do xattrs always follow this nomenclature?  Or only the ones we car=
+e
+> >>>>> about?
+> >>>> Xattrs always have a namespace (man 7 xattr) of "user", "trusted",
+> >>>> "system" or "security". It's possible that additional namespaces wil=
+l
+> >>>> be created in the future, although it seems unlikely given that only
+> >>>> "security" is widely used today.
+> >>> Why should audit care about separating the name into two distinct
+> >>> fields, e.g. "attrspace" and "attrname", instead of just a single
+> >>> "xattr" field with a value that follows the "namespace.attribute"
+> >>> format that is commonly seen by userspace?
+> >> I asked if it would be sensible. I don't much care myself.
+> > I was *asking* a question - why would we want separate fields?  I
+> > guess I thought there might be some reason for asking if it was
+> > sensible; if not, I think I'd rather see it as a single field.
 >
-> Hello,
->
-> On Fri, May 07, 2021 at 06:30:56PM -0400, Alex Deucher wrote:
-> > Maybe we are speaking past each other.  I'm not following.  We got
-> > here because a device specific cgroup didn't make sense.  With my
-> > Linux user hat on, that makes sense.  I don't want to write code to a
-> > bunch of device specific interfaces if I can avoid it.  But as for
-> > temporal vs spatial partitioning of the GPU, the argument seems to be
-> > a sort of hand-wavy one that both spatial and temporal partitioning
-> > make sense on CPUs, but only temporal partitioning makes sense on
-> > GPUs.  I'm trying to understand that assertion.  There are some GPUs
->
-> Spatial partitioning as implemented in cpuset isn't a desirable model. It's
-> there partly because it has historically been there. It doesn't really
-> require dynamic hierarchical distribution of anything and is more of a way
-> to batch-update per-task configuration, which is how it's actually
-> implemented. It's broken too in that it interferes with per-task affinity
-> settings. So, not exactly a good example to follow. In addition, this sort
-> of partitioning requires more hardware knowledge and GPUs are worse than
-> CPUs in that hardwares differ more.
->
-> Features like this are trivial to implement from userland side by making
-> per-process settings inheritable and restricting who can update the
-> settings.
->
-> > that can more easily be temporally partitioned and some that can be
-> > more easily spatially partitioned.  It doesn't seem any different than
-> > CPUs.
->
-> Right, it doesn't really matter how the resource is distributed. What
-> matters is how granular and generic the distribution can be. If gpus can
-> implement work-conserving proportional distribution, that's something which
-> is widely useful and inherently requires dynamic scheduling from kernel
-> side. If it's about setting per-vendor affinities, this is way too much
-> cgroup interface for a feature which can be easily implemented outside
-> cgroup. Just do per-process (or whatever handles gpus use) and confine their
-> configurations from cgroup side however way.
->
-> While the specific theme changes a bit, we're basically having the same
-> discussion with the same conclusion over the past however many months.
-> Hopefully, the point is clear by now.
+> I thought that it might make searching records easier, but I'm
+> not the expert on that. One might filter on attrspace=3Dsecurity then
+> look at the attrname values. But that bikeshed can be either color.
 
-Thanks, that helps a lot.
+Yeah, understood.  My concern was that the xattr name (minus the
+namespace) by itself isn't really useful; similar argument with just
+the namespace.  If you are going to do a string match filter it really
+shouldn't matter too much either way.
 
-Alex
+--=20
+paul moore
+www.paul-moore.com
