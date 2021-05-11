@@ -2,76 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24CFF37A3C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 11:34:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DEFE37A47D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 12:23:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231344AbhEKJfT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 05:35:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60054 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231220AbhEKJfS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 05:35:18 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 9D934AFEC;
-        Tue, 11 May 2021 09:34:11 +0000 (UTC)
-Date:   Tue, 11 May 2021 11:34:07 +0200
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Jan Kara <jack@suse.cz>
-Cc:     yangerkun <yangerkun@huawei.com>, naoya.horiguchi@nec.com,
-        akpm@linux-foundation.org, viro@zeniv.linux.org.uk, tytso@mit.edu,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        yi.zhang@huawei.com, yukuai3@huawei.com, houtao1@huawei.com,
-        yebin10@huawei.com
-Subject: Re: [PATCH] mm/memory-failure: make sure wait for page writeback in
- memory_failure
-Message-ID: <YJpPj3dGxk4TFL4b@localhost.localdomain>
-References: <20210511070329.2002597-1-yangerkun@huawei.com>
- <20210511084600.GG24154@quack2.suse.cz>
+        id S231381AbhEKKY3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 06:24:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:28994 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231177AbhEKKY2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 May 2021 06:24:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620728601;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=G0adrujpDKweoPEjP1QQ9qf3v1VudDZ63lGTmNiMcrI=;
+        b=W91FxV6eU8xmzr97TSh8bE2iRF8FJJd286YTW5VxM58BRAYFrTh8YnliMG/efk8WVCAsN6
+        HzwEKnsyvQfofVsC+tpJqVrDqVjzAu79kIpQcdsdfR5fWkJjbJvTB1N4PDWTey1nwgDm0N
+        +GYvQvy8w1izqm93x2CRa+9GSFHsr8w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-360-Rsk5ItyUN_-KF78s2Vmb2g-1; Tue, 11 May 2021 06:23:17 -0400
+X-MC-Unique: Rsk5ItyUN_-KF78s2Vmb2g-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EAB8A1006C84;
+        Tue, 11 May 2021 10:23:16 +0000 (UTC)
+Received: from localhost (ovpn-112-6.ams2.redhat.com [10.36.112.6])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 557D2100164C;
+        Tue, 11 May 2021 10:23:13 +0000 (UTC)
+Date:   Tue, 11 May 2021 11:23:12 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Connor Kuehl <ckuehl@redhat.com>
+Cc:     virtio-fs@redhat.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Vivek Goyal <vgoyal@redhat.com>
+Subject: Re: [PATCH] virtiofs: Enable multiple request queues
+Message-ID: <YJpbEMePhQ88EWWR@stefanha-x1.localdomain>
+References: <20210507221527.699516-1-ckuehl@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="A7V9ozvfxmSnLtjw"
 Content-Disposition: inline
-In-Reply-To: <20210511084600.GG24154@quack2.suse.cz>
+In-Reply-To: <20210507221527.699516-1-ckuehl@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 11, 2021 at 10:46:00AM +0200, Jan Kara wrote:
-> We definitely need to wait for writeback of these pages and the change you
-> suggest makes sense to me. I'm just not sure whether the only problem with
-> these "pages in the process of being munlocked()" cannot confuse the state
-> machinery in memory_failure() also in some other way. Also I'm not sure if
-> are really allowed to call wait_on_page_writeback() on just any page that
-> hits memory_failure() - there can be slab pages, anon pages, completely
-> unknown pages given out by page allocator to device drivers etc. That needs
-> someone more familiar with these MM details than me.
 
-I am not really into mm/writeback stuff, but:
+--A7V9ozvfxmSnLtjw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-shake_page() a few lines before tries to identifiy the page, and
-make those sitting in lruvec real PageLRU, and then we take page's lock.
+On Fri, May 07, 2021 at 05:15:27PM -0500, Connor Kuehl wrote:
+> @@ -1245,7 +1262,8 @@ __releases(fiq->lock)
+>  		 req->in.h.nodeid, req->in.h.len,
+>  		 fuse_len_args(req->args->out_numargs, req->args->out_args));
+> =20
+> -	fsvq =3D &fs->vqs[queue_id];
+> +	fsvq =3D this_cpu_read(this_cpu_fsvq);
 
-I thought that such pages (pages on writeback) are stored in the file
-LRU, and maybe the code was written with that in mind? And given that
-we are under the PageLock, such state could not have changed.
+Please check how CPU hotplug affects this patch. If the current CPU
+doesn't have a vq because it was hotplugged, then it may be necessary to
+pick another vq.
 
-But if such pages are allowed to not be in the LRU (maybe they are taken
-off before initiating the writeback?), I guess the change is correct.
-Checking wait_on_page_writeback(), it seems it first checks for
-Writeback bit, and since that bit is not "shared" and only being set
-in mm/writeback code, it should be fine to call that.
+Stefan
 
-But alternatively, we could also modify the check and go with:
+--A7V9ozvfxmSnLtjw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-if (!PageTransTail(p) && !PageLRU(p) && !PageWriteBack(p))
-		goto identify_page_state;
+-----BEGIN PGP SIGNATURE-----
 
-and stating why a page under writeback might not be in the LRU, as I
-think the code assumes.
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmCaWxAACgkQnKSrs4Gr
+c8gaYQf/ZbGTh/PBCw1PB2OJDsg9sJ/qLNSeJAXsrq1soajsgMZNL5qaCxFxca96
+7Ct1XtEelrvOEivymGbnjYFnL3kDuTeYhPzlyPBwG9heVxBReVxmKaC18hm5GwKk
+Qd481XSuaAF2gVk1B55pgfK4NwX/smvCgHpWvkP8vakZttXFUgMYcXM7Mi7V9XcJ
+4f3EWA0m0iaWAkVJY2R+luPJtvc403igrv4QpUrw0kgn7iYw424W9O819g+Na4dO
+8QdFtUmFHQsgwNVy6hKMnbhc7V0m3Hdwr2JVNXb2cd+yXqwVX+8xP3KeZOvBb5gX
+hUibZHl+yf0GfluxoJUfjT8JXVtBDg==
+=VnK4
+-----END PGP SIGNATURE-----
 
-AFAUI, mm/writeback locks the page before setting the bit, and since we
-hold the lock, we could not race here.
+--A7V9ozvfxmSnLtjw--
 
--- 
-Oscar Salvador
-SUSE L3
