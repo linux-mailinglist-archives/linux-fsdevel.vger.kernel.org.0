@@ -2,100 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5180D37AF7E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 21:41:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B22D37AFF1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 22:07:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232149AbhEKTm0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 15:42:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35362 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231944AbhEKTmZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 15:42:25 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88413C061574;
-        Tue, 11 May 2021 12:41:17 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id c15so12092442ljr.7;
-        Tue, 11 May 2021 12:41:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HVr2DKzjDUvg6iI48ECjEOWh6boU9GbSOxTfWJJZK0Y=;
-        b=SrBrA3B6qq8fGEw0A+TQxItFg5gUkOHSzKw9zaf7iHNY4gl0Fynubs80reJ3emOLTp
-         fFG4EMroSHYjdQQ7AgFHumyzTlhdJ+Uy03sjxQ0hVDc1RWp5ZOjiSholOKpC1oG+DG6/
-         zXu0MJfGabpuR44C62D+NMmxx+P1Qwv71cuPWUNs/KPD/ULvAmk3fAT4gqjppSBmNgSS
-         L1DuXFrA2GuF4p6BDNl31AbD4PUubWSAAPLsCqayuVGShb09a4QGrk2XI8xcxe72pYbk
-         x6wqvyYg9T1BGghMIeIGvj+UodGKN5G7FIvZQIWpFH1hmRq/okgC6ynE60130R6JCc7u
-         3gvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HVr2DKzjDUvg6iI48ECjEOWh6boU9GbSOxTfWJJZK0Y=;
-        b=gdfzl/N/KWtAJFPDMFV8opv+d3UIi67/0ep4Io5/FO4IN2W2FTb5EbY8SDBHNJO9kM
-         QIkK1bUVBE0MwnLL6E5BwBMgMh4bjkN7iNE8tQoTUE8GR+ekFiI74/N58YO83Zk2/z1v
-         hecESmaIiCpUTSLHSzM5D2AmY2cliSeiK+M3iyZP+1Xw6JpLWcLAvkWPh7w+24z/OPtP
-         9Zaj9Y2ezRfmsmk8HDWNZb8v8AsHqC0NdQJNx68XwJni1iVIqzAf6a2sCXspPq0b/xQP
-         P4nAfq/zRkU1UGVzA7skgw9v12Tg6vsbqYhLEvpYfWImb/ksp3wXlUdkd5Hn/Gk9GWy2
-         KpLg==
-X-Gm-Message-State: AOAM532OWF0plkF5UCNANtnHqp1vJ0OU0cdltRlkrwZ11i8XsL2AwyzE
-        raj8bQbcTJ5PFxNNgi8uF/0+ByFPm1Q7lz85HIPofkF262R3mw==
-X-Google-Smtp-Source: ABdhPJx5mBeTavK+lpzaSmDRTejD+ebf6MDgj00Xr7oUwPP206a1yW7DFgwrQ0EyVAN3Hu3R2Xzt2aP/V5u8I/APUok=
-X-Received: by 2002:a2e:7819:: with SMTP id t25mr4730550ljc.406.1620762075981;
- Tue, 11 May 2021 12:41:15 -0700 (PDT)
+        id S229736AbhEKUIF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 16:08:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54916 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229548AbhEKUIF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 May 2021 16:08:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 88B6B611AE;
+        Tue, 11 May 2021 20:06:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620763618;
+        bh=GMDFSjsIjWB+iPagsYJizd5wdqS9xQPEFTxQ1sTHr2w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eJRJmNZ0nAS7bu3eEAfplKA4bL4RYmJaQwxKlS2nUSJhVEgP8pf/jW2Ie9+NBLFIH
+         GX8g43gxpausQ1wRedXdO2/fCEHAYtK8optGkS93yG4N45Sn/GH77d+gAudSx4fz2V
+         MRglEJimTcYzHmnHi/OSoG6KieE30s1kOxPiws0PrUZqvH4LlfQgl5/4Gwe/3fURN4
+         hfrmy4kPG/Q1n7hR3yiFZoxqgz26EmFwQ9JmELQ5Nb8nVcs3EXor+epNAR/3QG4ADC
+         yCTb33X9pM/5HDi3iiKbp4fA0XYK/GtqgMkumTGsfHKCpAbtvsxT+2mobcUoZSmFvt
+         mdo2PKb8CkFVg==
+Date:   Tue, 11 May 2021 13:06:56 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v2] vfs/dedupe: Pass file pointer to read_mapping_page
+Message-ID: <20210511200656.GD8606@magnolia>
+References: <20210511184019.1802090-1-willy@infradead.org>
 MIME-Version: 1.0
-References: <CAH2r5ms+NL=J2Wa=wY2doV450qL8S97gnJW_4eSCp1aiz1SEZA@mail.gmail.com>
- <2509400.1620738202@warthog.procyon.org.uk>
-In-Reply-To: <2509400.1620738202@warthog.procyon.org.uk>
-From:   Steve French <smfrench@gmail.com>
-Date:   Tue, 11 May 2021 14:41:05 -0500
-Message-ID: <CAH2r5mvkFBkVv7ur_VietcR7xCaRTFboD7+KdZ=MvkW6QC-KTw@mail.gmail.com>
-Subject: Re: Compile warning with current kernel and netfs
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210511184019.1802090-1-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 11, 2021 at 8:03 AM David Howells <dhowells@redhat.com> wrote:
->
-> Steve French <smfrench@gmail.com> wrote:
->
-> >   CC [M]  /home/smfrench/cifs-2.6/fs/cifs/fscache.o
-> >   CHECK   /home/smfrench/cifs-2.6/fs/cifs/fscache.c
-> > /home/smfrench/cifs-2.6/fs/cifs/fscache.c: note: in included file
-> > (through include/linux/fscache.h,
-> > /home/smfrench/cifs-2.6/fs/cifs/fscache.h):
-> > ./include/linux/netfs.h:93:15: error: don't know how to apply mode to
-> > unsigned int enum netfs_read_source
->
-> Yeah - that's a bit the checker doesn't know how to support.  It's meant to
-> make enum netfs_read_source-type struct members take less space.  I think gcc
-> and clang are both fine with it.
+On Tue, May 11, 2021 at 07:40:19PM +0100, Matthew Wilcox (Oracle) wrote:
+> Some filesystems (mostly networking) need a valid file pointer for
+> their ->readpage operation to supply credentials.  Since there are no
+> bug reports, I assume none of them currently support deduplication.
+> It's just as easy to pass the struct file around as it is to pass the
+> struct inode around, and it sets a good example for other users as well
+> as being good future-proofing.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Looks like sparse has been recently updated to fix this.  I pulled
-from their git tree and rebuilt sparse to:
+Sorry for getting this wrong from the start, or "Yay fixes!" :)
 
-$ sparse --version
-v0.6.3-341-g8af24329
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-and it works - no warnings  (other than the "Skipping BTF generation
-one - which is unrelated, see https://lkml.org/lkml/2020/11/16/1452)
+--D
 
-make: Entering directory '/usr/src/linux-headers-5.13.0-051300rc1-generic'
-  CC [M]  /home/smfrench/cifs-2.6/fs/cifs/fscache.o
-  CHECK   /home/smfrench/cifs-2.6/fs/cifs/fscache.c
-  CC [M]  /home/smfrench/cifs-2.6/fs/cifs/cache.o
-  CHECK   /home/smfrench/cifs-2.6/fs/cifs/cache.c
-  LD [M]  /home/smfrench/cifs-2.6/fs/cifs/cifs.o
-  MODPOST /home/smfrench/cifs-2.6/fs/cifs/Module.symvers
-  LD [M]  /home/smfrench/cifs-2.6/fs/cifs/cifs.ko
-  BTF [M] /home/smfrench/cifs-2.6/fs/cifs/cifs.ko
-
--- 
-Thanks,
-
-Steve
+> ---
+>  fs/remap_range.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/remap_range.c b/fs/remap_range.c
+> index e4a5fdd7ad7b..56f44a9b4ab6 100644
+> --- a/fs/remap_range.c
+> +++ b/fs/remap_range.c
+> @@ -158,11 +158,11 @@ static int generic_remap_check_len(struct inode *inode_in,
+>  }
+>  
+>  /* Read a page's worth of file data into the page cache. */
+> -static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
+> +static struct page *vfs_dedupe_get_page(struct file *file, loff_t offset)
+>  {
+>  	struct page *page;
+>  
+> -	page = read_mapping_page(inode->i_mapping, offset >> PAGE_SHIFT, NULL);
+> +	page = read_mapping_page(file->f_mapping, offset >> PAGE_SHIFT, file);
+>  	if (IS_ERR(page))
+>  		return page;
+>  	if (!PageUptodate(page)) {
+> @@ -199,8 +199,8 @@ static void vfs_unlock_two_pages(struct page *page1, struct page *page2)
+>   * Compare extents of two files to see if they are the same.
+>   * Caller must have locked both inodes to prevent write races.
+>   */
+> -static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+> -					 struct inode *dest, loff_t destoff,
+> +static int vfs_dedupe_file_range_compare(struct file *src, loff_t srcoff,
+> +					 struct file *dest, loff_t destoff,
+>  					 loff_t len, bool *is_same)
+>  {
+>  	loff_t src_poff;
+> @@ -244,8 +244,8 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+>  		 * someone is invalidating pages on us and we lose.
+>  		 */
+>  		if (!PageUptodate(src_page) || !PageUptodate(dest_page) ||
+> -		    src_page->mapping != src->i_mapping ||
+> -		    dest_page->mapping != dest->i_mapping) {
+> +		    src_page->mapping != src->f_mapping ||
+> +		    dest_page->mapping != dest->f_mapping) {
+>  			same = false;
+>  			goto unlock;
+>  		}
+> @@ -351,8 +351,8 @@ int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+>  	if (remap_flags & REMAP_FILE_DEDUP) {
+>  		bool		is_same = false;
+>  
+> -		ret = vfs_dedupe_file_range_compare(inode_in, pos_in,
+> -				inode_out, pos_out, *len, &is_same);
+> +		ret = vfs_dedupe_file_range_compare(file_in, pos_in,
+> +				file_out, pos_out, *len, &is_same);
+>  		if (ret)
+>  			return ret;
+>  		if (!is_same)
+> -- 
+> 2.30.2
+> 
