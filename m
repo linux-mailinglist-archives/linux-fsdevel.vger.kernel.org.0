@@ -2,117 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC31937A9FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 16:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E7CE37AA10
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 17:00:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231742AbhEKO5n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 10:57:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55094 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231723AbhEKO5k (ORCPT
+        id S231771AbhEKPBX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 11:01:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:39965 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231743AbhEKPBW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 10:57:40 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6A88C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 07:56:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=Bqx4zatTG9LmseQND5BN8vqwgtUaqfUr9GxZe/UaUbY=; b=LLDyv+xqvxzoNWNByG32QOnLa/
-        F/DVxzLToKc4ZrSx4CXShCf2CF8PIBmQT+kODZfFZ/xDGAKxQXOl2spmYlkrhFnbE0GffQEyl44gZ
-        nNWaH1SKFMYJptX1rapJ4IwEPevmczGDeqTetRaZZ535Jmz+7BJlHepY55MZTR3gU0mPZ+g4GD0Fu
-        MCvW9+OS3N056CZ/BNVUhrRG5jf/BP5Orp2J9Hy4V+12VRnY910ezzL985WulFEZNZv0XtzKuOG2z
-        wfmUo0uWxmCIJjhdMSsoG/kgQ0Kx0jheEmgKhmMbAZuvdegTxGH6heADwjA8Z1QaHMF6gy5AudXKd
-        pJCs1yfA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lgTnt-007Nju-Gx; Tue, 11 May 2021 14:56:13 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-afs@lists.infradead.org, dhowells@redhat.com,
-        marc.dionne@auristor.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk
-Subject: [PATCH] vfs/dedupe: Pass file pointer to read_mapping_page
-Date:   Tue, 11 May 2021 15:56:08 +0100
-Message-Id: <20210511145608.1759501-1-willy@infradead.org>
-X-Mailer: git-send-email 2.30.2
+        Tue, 11 May 2021 11:01:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620745215;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KQy9BmsInGHBuMYQbKGo4/mFyEJldO4Fzjjuu4/Gw90=;
+        b=NTqcCIqLeCrdtUZwi0XNYSABNPRv9XlVXxJXvLHzU44w+UcGk0NmmlyBH+zcRp/XPFR8v/
+        7Z8fUR31Xc57+X+cjRj714kF9yYNvZiy/x2hl0p5T4WSIOoCMgyOy477i/uAznclmMDJC4
+        pigq1n9ARYSUJYybfLcoND9D5ycjRfs=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-478-4qn1nk_mPQOU7a223uO9Rw-1; Tue, 11 May 2021 11:00:12 -0400
+X-MC-Unique: 4qn1nk_mPQOU7a223uO9Rw-1
+Received: by mail-wr1-f70.google.com with SMTP id h104-20020adf90710000b029010de8455a3aso8855432wrh.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 08:00:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KQy9BmsInGHBuMYQbKGo4/mFyEJldO4Fzjjuu4/Gw90=;
+        b=J9l/FRfqb7jZDA9f4qDzXuUM5JiMS+k8q5xaPH8WS7F8JuO8kfVLaPFVHptn6qoq7M
+         3IF+aC6+BRKK9a2Q8HEHjllCS/ZfQxmPrI57V7jsN7VmKtn4rKbErhI+PMxAgaf8DNLI
+         9J7rlmeY0t+oGK/VuYM4eFXBZPPPrp6kbWzqKzzCH6vW9kwanrZyWpgyvtH4rzcDyXJV
+         H9mtLLG05ltFob5IX5oapmUsLYFI3jH9T/9V9uLi3nOesmmDTQnz+qFRvTxDWUz2tiMv
+         e0N1N2lc+WJuGMb6BQLmGYIaPxSi6mX23PLkG7knpQVUvYefDuwzdLpgyK8HyqIyTPN2
+         dWFA==
+X-Gm-Message-State: AOAM532agkkZV+iM8Z8UVBlTnkiH/N3NZWLgNXyPFdtGtoSTQV6La8v6
+        MTugS7LOXThbvx1IpNcFcBNfJUXeaP12uBDE1UKDfV9IUa2UVuJsLhUFRgomGzYyWLjyPPt5Y/J
+        CQ1ynS96DrxGzVAmfmltVigeoWB1ZQlduBVNIu/RMXQ==
+X-Received: by 2002:a05:600c:21d5:: with SMTP id x21mr6111948wmj.149.1620745210654;
+        Tue, 11 May 2021 08:00:10 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwgE6ifBgFWpvncB4Yp/ueaUboNmb37R0/BTIg4dy1wyIvx0+2z3v12HkdeJg8oHTVE/aiLRx0h5iTD71Z5u+Q=
+X-Received: by 2002:a05:600c:21d5:: with SMTP id x21mr6111920wmj.149.1620745210398;
+ Tue, 11 May 2021 08:00:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210511140113.1225981-1-agruenba@redhat.com> <YJqQdKmBHz6oEqD1@casper.infradead.org>
+In-Reply-To: <YJqQdKmBHz6oEqD1@casper.infradead.org>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Tue, 11 May 2021 16:59:59 +0200
+Message-ID: <CAHc6FU5LMhLfQO6wj8z0RD1Q3jv0reToP7=LSj5B-e50WYGnkA@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] Trigger retry from fault vm operation
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some filesystems (eg AFS) need a valid file pointer for their ->readpage
-operation.  Presumably none of them currently support deduplication,
-but it's just as easy to pass the struct file around as it is to pass
-the struct inode around, and it sets a good example for other users.
+On Tue, May 11, 2021 at 4:34 PM Matthew Wilcox <willy@infradead.org> wrote:
+> On Tue, May 11, 2021 at 04:01:13PM +0200, Andreas Gruenbacher wrote:
+> > we have a locking problem in gfs2 that I don't have a proper solution for, so
+> > I'm looking for suggestions.
+> >
+> > What's happening is that a page fault triggers during a read or write
+> > operation, while we're holding a glock (the cluster-wide gfs2 inode
+> > lock), and the page fault requires another glock.  We can recognize and
+> > handle the case when both glocks are the same, but when the page fault requires
+> > another glock, there is a chance that taking that other glock would deadlock.
+>
+> So we're looking at something like one file on a gfs2 filesystem being
+> mmaped() and then doing read() or write() to another gfs2 file with the
+> mmaped address being the passed to read()/write()?
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/remap_range.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Yes, those kinds of scenarios. Here's an example that Jan Kara came up with:
 
-diff --git a/fs/remap_range.c b/fs/remap_range.c
-index e4a5fdd7ad7b..982ba89aeeb6 100644
---- a/fs/remap_range.c
-+++ b/fs/remap_range.c
-@@ -158,11 +158,11 @@ static int generic_remap_check_len(struct inode *inode_in,
- }
- 
- /* Read a page's worth of file data into the page cache. */
--static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
-+static struct page *vfs_dedupe_get_page(struct file *file, loff_t offset)
- {
- 	struct page *page;
- 
--	page = read_mapping_page(inode->i_mapping, offset >> PAGE_SHIFT, NULL);
-+	page = read_mapping_page(file->f_mapping, offset >> PAGE_SHIFT, file);
- 	if (IS_ERR(page))
- 		return page;
- 	if (!PageUptodate(page)) {
-@@ -199,8 +199,8 @@ static void vfs_unlock_two_pages(struct page *page1, struct page *page2)
-  * Compare extents of two files to see if they are the same.
-  * Caller must have locked both inodes to prevent write races.
-  */
--static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
--					 struct inode *dest, loff_t destoff,
-+static int vfs_dedupe_file_range_compare(struct file *src, loff_t srcoff,
-+					 struct file *dst, loff_t destoff,
- 					 loff_t len, bool *is_same)
- {
- 	loff_t src_poff;
-@@ -229,7 +229,7 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
- 			error = PTR_ERR(src_page);
- 			goto out_error;
- 		}
--		dest_page = vfs_dedupe_get_page(dest, destoff);
-+		dest_page = vfs_dedupe_get_page(dst, destoff);
- 		if (IS_ERR(dest_page)) {
- 			error = PTR_ERR(dest_page);
- 			put_page(src_page);
-@@ -244,8 +244,8 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
- 		 * someone is invalidating pages on us and we lose.
- 		 */
- 		if (!PageUptodate(src_page) || !PageUptodate(dest_page) ||
--		    src_page->mapping != src->i_mapping ||
--		    dest_page->mapping != dest->i_mapping) {
-+		    src_page->mapping != src->f_mapping ||
-+		    dest_page->mapping != dst->f_mapping) {
- 			same = false;
- 			goto unlock;
- 		}
-@@ -351,8 +351,8 @@ int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
- 	if (remap_flags & REMAP_FILE_DEDUP) {
- 		bool		is_same = false;
- 
--		ret = vfs_dedupe_file_range_compare(inode_in, pos_in,
--				inode_out, pos_out, *len, &is_same);
-+		ret = vfs_dedupe_file_range_compare(file_in, pos_in,
-+				file_out, pos_out, *len, &is_same);
- 		if (ret)
- 			return ret;
- 		if (!is_same)
--- 
-2.30.2
+Two independent processes P1, P2. Two files F1, F2, and two mappings M1, M2
+where M1 is a mapping of F1, M2 is a mapping of F2. Now P1 does DIO to F1
+with M2 as a buffer, P2 does DIO to F2 with M1 as a buffer. They can race
+like:
+
+P1                                      P2
+read()                                  read()
+  gfs2_file_read_iter()                   gfs2_file_read_iter()
+    gfs2_file_direct_read()                 gfs2_file_direct_read()
+      locks glock of F1                       locks glock of F2
+      iomap_dio_rw()                          iomap_dio_rw()
+        bio_iov_iter_get_pages()                bio_iov_iter_get_pages()
+          <fault in M2>                           <fault in M1>
+            gfs2_fault()                            gfs2_fault()
+              tries to grab glock of F2               tries to grab glock of F1
+
+With cluster-wide locks, we can obviously end up with distributed
+deadlock scenarios as well, of course.
+
+> Have you looked at iov_iter_fault_in_readable() as a solution to
+> your locking order?  That way, you bring the mmaped page in first
+> (see generic_perform_write()).
+
+Yes. The problem there is that we need to hold the inode glock from
+->iomap_begin to ->iomap_end; that's what guarantees that the mapping
+returned by ->iomap_begin remains valid.
+
+> > When we realize that we may not be able to take the other glock in gfs2_fault,
+> > we need to communicate that to the read or write operation, which will then
+> > drop and re-acquire the "outer" glock and retry.  However, there doesn't seem
+> > to be a good way to do that; we can only indicate that a page fault should fail
+> > by returning VM_FAULT_SIGBUS or similar; that will then be mapped to -EFAULT.
+> > We'd need something like VM_FAULT_RESTART that can be mapped to -EBUSY so that
+> > we can tell the retry case apart from genuine -EFAULT errors.
+>
+> We do have VM_FAULT_RETRY ... does that retry at the wrong level?
+
+There's also VM_FAULT_NOPAGE, but that only triggers a retry at the VM
+level and doesn't propagate out far enough.
+
+My impression is that VM_FAULT_RETRY is similar to VM_FAULT_NOPAGE
+except that it allows the lock dropping optimization implemented in
+maybe_unlock_mmap_for_io(). That error code can also only be used when
+FAULT_FLAG_ALLOW_RETRY is set it seems. Correct me if I'm getting this
+wrong.
+
+Thanks,
+Andreas
 
