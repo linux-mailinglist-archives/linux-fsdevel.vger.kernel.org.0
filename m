@@ -2,100 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 67C5637AD62
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 19:52:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0CA637AE30
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 20:16:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231887AbhEKRxJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 13:53:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38602 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231437AbhEKRxI (ORCPT
+        id S231941AbhEKSRb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 14:17:31 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:60422 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231793AbhEKSRb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 13:53:08 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E469C06175F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 10:52:01 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id j26so20243918edf.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 10:52:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vvtm8n5cG3jzsceNHvZusZOhtfG69GGyP0C0zXimiGg=;
-        b=H0AsqdZCMhypi9/Qd7/1eUPAVczkGpwzNdPrEzyRmHk3+xGYRUzHdDlO2l4ucRTL8I
-         6IkWY+o747IONKRbHjInbulgo0QHOF+Aog+9sCymBmOTGkGLMG+u9jruv/UZbKRmL6Hs
-         djJGJfy02eav+9cJ/e8taZvmfCdpWKwopL9l1L00vGTndNfe8I1Ba0qFSrrwJA5o7Fa2
-         kypHmxkIMZ4AZTUMiSVLWlzzQG450CuwCzyuG27tqQfsnYHhRA1T87hFThJfEPtkcb4Y
-         ue4D2yBkATCGXbxXcVfdq4bXxs/UCpwDO9F00VAa9ugcnvVl8Xt3EZbMRGFEais4Tdh5
-         EGMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vvtm8n5cG3jzsceNHvZusZOhtfG69GGyP0C0zXimiGg=;
-        b=IdGC+Fv0JXwHqKNvOyYYEGvUfknafRyxjHwiFDeqgvDe1QCTwiekH/f/fX+bN1MSoz
-         Efy7RAM2u9js6JWExjk3k8bBvcBQnAyrzKhQ6VvH5nK8gyCfxsU0uFu9SszFOfnS6dWq
-         WPxNlW5ZbEd9rKZYJklwtD463x8AISqv7otmkzL+u9udQaXDdsgA9FfkrWOQ/LZk3hOE
-         5C4zRWQi1ablkpvPfj3QxuqS+PUekYOI5wsIhqEK3FiIEacVCL6AU4uB/SI4SpkTkwrE
-         2DofadY8AqX7PrRnUEpJ3+IuHdLFuu91hyEXNbStvq5NxdBe4b96dMupcg7og0ce2jQU
-         6mVQ==
-X-Gm-Message-State: AOAM531HLIGlfwyP3lwRWQUZevpcIApbeX865fAM02LmViJtkmHMHZ75
-        wRmn2iK0PWiMyVL791iQncr8OSFUjRR8Q8upFqCSHpw+wXQ5
-X-Google-Smtp-Source: ABdhPJwdWMqdXYacKcJJowhKXF8ZQ0FIAVm666XBBWORfGjqUYLRbHiBohY3kurt7w0lB0ANXSdmCBIBLwgMolCf7vo=
-X-Received: by 2002:a50:ed0c:: with SMTP id j12mr37675663eds.12.1620755519859;
- Tue, 11 May 2021 10:51:59 -0700 (PDT)
+        Tue, 11 May 2021 14:17:31 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14BIEMO7057702;
+        Tue, 11 May 2021 18:16:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2020-01-29; bh=hgctH0oSitkyxZDTbkS3bn45JVyf//Hvn92WkrPimiU=;
+ b=UUgI++rPmxv6cZ480QfwrUN5SzWvs2Fq8Oa8O+oXeHtDQ1WWqYeecrj6Lz6G4XJJCvDu
+ +f/0uLGufR4Jjh/iEqZwggeqvVI0aeF7oAOZvRTSdvtbaCoP/WPB9laQLFPArEypikG+
+ uekjNXrXRklZyfmDnvasg7tD0YNx/o7JamdW7Fgn76UIfcQ9f2LBre29sV7v7uqkIKPt
+ 2E+dtrzumH817c0PZSEyhO6M+yYoGwn3VSZ9E3Y3ySZG0m5MewCSKciGj77uei0wLYC+
+ sVoCfKiGT8sPcII8+yO6adWLrSI0feqHNV095/edWDbBfWT5y4iwQdaA2Uvm5+MNXJUr Bw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 38djkmfnk1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 May 2021 18:16:20 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14BIG17J067879;
+        Tue, 11 May 2021 18:16:19 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3020.oracle.com with ESMTP id 38fh3x4ejw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 May 2021 18:16:19 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14BIGI1W069108;
+        Tue, 11 May 2021 18:16:18 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 38fh3x4eje-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 May 2021 18:16:18 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14BIGE9X020661;
+        Tue, 11 May 2021 18:16:14 GMT
+Received: from gms-ol8-2.osdevelopmeniad.oraclevcn.com (/100.100.234.63)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 11 May 2021 11:16:14 -0700
+From:   Gulam Mohamed <gulam.mohamed@oracle.com>
+To:     viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hch@lst.de,
+        martin.petersen@oracle.com
+Cc:     junxiao.bi@oracle.com, gulam.mohamed@oracle.com
+Subject: [PATCH V1 1/1] Fix race between iscsi logout and systemd-udevd
+Date:   Tue, 11 May 2021 18:15:58 +0000
+Message-Id: <20210511181558.380764-1-gulam.mohamed@oracle.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <cover.1619811762.git.rgb@redhat.com> <bda073f2a8b11000ef40cf8b965305409ee88f44.1619811762.git.rgb@redhat.com>
- <CAHC9VhShi4u26h5OsahveQDNxO_uZ+KgzGOYEp5W7w6foA-uKg@mail.gmail.com> <20210511171356.GN3141668@madcap2.tricolour.ca>
-In-Reply-To: <20210511171356.GN3141668@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 11 May 2021 13:51:48 -0400
-Message-ID: <CAHC9VhQ9DgiMKScTt5xfyK25WM-KPUrFksFS7dH51u0+PemPLA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] audit: replace magic audit syscall class numbers
- with macros
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Paris <eparis@redhat.com>, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Arnd Bergmann <arnd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 70ILg2-xPJRuhusHpsPZNpijzkulSzTZ
+X-Proofpoint-ORIG-GUID: 70ILg2-xPJRuhusHpsPZNpijzkulSzTZ
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9981 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 priorityscore=1501
+ suspectscore=0 clxscore=1011 bulkscore=0 adultscore=0 impostorscore=0
+ spamscore=0 phishscore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2105110123
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 11, 2021 at 1:14 PM Richard Guy Briggs <rgb@redhat.com> wrote:
->
-> On 2021-05-10 21:23, Paul Moore wrote:
-> > On Fri, Apr 30, 2021 at 4:36 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > >
-> > > Replace audit syscall class magic numbers with macros.
-> > >
-> > > This required putting the macros into new header file
-> > > include/linux/auditscm.h since the syscall macros were included for both 64
-> > > bit and 32 bit in any compat code, causing redefinition warnings.
-> >
-> > The ifndef/define didn't protect against redeclaration?  Huh.  Maybe
-> > I'm not thinking about this correctly, or the arch specific code is
-> > doing something wonky ...
-> >
-> > Regardless, assuming that it is necessary, I would prefer if we called
-> > it auditsc.h instead of auditscm.h; the latter makes me think of
-> > sockets and not syscalls.
->
-> The "m" was for "macros", since there are auditsc bits in audit.h as
-> well, but I have no significant objection.
+Problem description:
 
-Yes, I figured as much, but my comment about it looking like a socket
-"thing" still stands.  I'm open to other ideas if you don't like
-auditsc.h, I just don't like auditscm.h.
+During the kernel patching, customer was switching between the iscsi
+disks. To switch between the iscsi disks, it was logging out the
+currently connected iscsi disk and then logging in to the new iscsi
+disk. This was being done using a script. Customer was also using the
+"parted" command in the script to list the partition details just
+before the iscsi logout. This usage of "parted" command was creating
+an issue and we were seeing stale links of the
+disks in /sys/class/block.
 
+Analysis:
+
+As part of iscsi logout, the partitions and the disk will be removed
+in the function del_gendisk() which is done through a kworker. The
+parted command, used to list the partitions, will open the disk in
+RW mode which results in systemd-udevd re-reading the partitions. The
+ioctl used to re-read partitions is BLKRRPART. This will trigger the
+rescanning of partitions which will also delete and re-add the
+partitions. So, both iscsi logout processing (through kworker) and the
+"parted" command (through systemd-udevd) will be involved in
+add/delete of partitions. In our case, the following sequence of
+operations happened (the iscsi device is /dev/sdb with partition sdb1):
+
+1. sdb1 was removed by PARTED
+2. kworker, as part of iscsi logout, couldn't remove sdb1 as it was
+   already removed by PARTED
+3. sdb1 was added by parted
+4. sdb was NOW removed as part of iscsi logout (the last part of the
+   device removal after remoing the partitions)
+
+Since the symlink /sys/class/block/sdb1 points to
+/sys/class/devices/platform/hostx/sessionx/targetx:x/block/sdb/sdb1
+and since sdb is already removed, the symlink /sys/class/block/sdb1
+will be orphan and stale. So, this stale link is a result of the race
+condition in kernel between the systemd-udevd and iscsi-logout
+processing as described above. We were able to reproduce this even
+with latest upstream kernel.
+
+Fix:
+
+While Dropping/Adding partitions as part of BLKRRPART ioctl, take the
+read lock for "bdev_lookup_sem" to sync with del_gendisk().
+
+Signed-off-by: Gulam Mohamed <gulam.mohamed@oracle.com>
+---
+ fs/block_dev.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 09d6f7229db9..e903a7edfd63 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1245,9 +1245,17 @@ int bdev_disk_changed(struct block_device *bdev, bool invalidate)
+ 	lockdep_assert_held(&bdev->bd_mutex);
+ 
+ rescan:
++	down_read(&bdev_lookup_sem);
++	if (!(disk->flags & GENHD_FL_UP)) {
++		up_read(&bdev_lookup_sem);
++		return -ENXIO;
++	}
++
+ 	ret = blk_drop_partitions(bdev);
+-	if (ret)
++	if (ret) {
++		up_read(&bdev_lookup_sem);
+ 		return ret;
++	}
+ 
+ 	clear_bit(GD_NEED_PART_SCAN, &disk->state);
+ 
+@@ -1270,8 +1278,10 @@ int bdev_disk_changed(struct block_device *bdev, bool invalidate)
+ 
+ 	if (get_capacity(disk)) {
+ 		ret = blk_add_partitions(disk, bdev);
+-		if (ret == -EAGAIN)
++		if (ret == -EAGAIN) {
++			up_read(&bdev_lookup_sem);
+ 			goto rescan;
++		}
+ 	} else if (invalidate) {
+ 		/*
+ 		 * Tell userspace that the media / partition table may have
+@@ -1280,6 +1290,7 @@ int bdev_disk_changed(struct block_device *bdev, bool invalidate)
+ 		kobject_uevent(&disk_to_dev(disk)->kobj, KOBJ_CHANGE);
+ 	}
+ 
++	up_read(&bdev_lookup_sem);
+ 	return ret;
+ }
+ /*
 -- 
-paul moore
-www.paul-moore.com
+2.27.0
+
