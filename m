@@ -2,73 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBD0937A899
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 16:11:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA24937A97F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 16:36:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231633AbhEKOMS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 10:12:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44530 "EHLO
+        id S231926AbhEKOhH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 10:37:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231488AbhEKOMR (ORCPT
+        with ESMTP id S231941AbhEKOhG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 10:12:17 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA7A9C061574;
-        Tue, 11 May 2021 07:11:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ns8g+nbJuyOh7gET8cGtylgrkk3eWd9nQ8qX/kCPn/g=; b=OwhXZQ5On+tzASMhUb2984kocS
-        1Frf3mPfcEpNd55eNxRrmNjwPhGF7elCZstOL2y+a1YvHvfNj/1c3cM1PL27yCVgV3zQmpuHYAGrd
-        XAGS1wSxtU8NW+O3rQfhSHkWK5SHoJqfzodt4BuARecYiQWd3pVF1EYXknqsoE/0DXASJ7Oatycb7
-        nJXL1d1eYjPmh/ebfV+LVQZKScTgfbI+IthIciBMJ50mpO4XFxUvuQ54zVrcZpZyTJwZHtKkVOneY
-        mnmE5GZCh3Xw6WC+7iVDwTXiY9UprnqEnfDP0ufc6Bfu0o4UYUst1u1xunaIwpbWuph0RQkXUAjLl
-        xIuqA6Dw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lgT6C-007LRP-4h; Tue, 11 May 2021 14:11:04 +0000
-Date:   Tue, 11 May 2021 15:11:00 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] [RFC] Trigger retry from fault vm operation
-Message-ID: <YJqQdKmBHz6oEqD1@casper.infradead.org>
-References: <20210511140113.1225981-1-agruenba@redhat.com>
+        Tue, 11 May 2021 10:37:06 -0400
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53FBEC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 07:35:58 -0700 (PDT)
+Received: by mail-oi1-x232.google.com with SMTP id w22so5333597oiw.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 07:35:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google;
+        h=subject:to:references:from:cc:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ETXAFKWQdH8/eG9YgJ2MyXQqUI4w0G+a8+7kidOetNw=;
+        b=D+8UcMkB2GUwjj2F27jdDoxAVAL9rdC9MdMoJFlDBNeHzfe67XWP/sw3xSweHhjvu0
+         L7zFyh43n9/fy4cUZSlUsyNvNqDkT2TqDuEFXFN77WQ7UwdcaxgaJydbt2h0Tqt9neqT
+         2ljICDLxSDdscBg19eDiJRfFGl65YBejwUIvU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:cc:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ETXAFKWQdH8/eG9YgJ2MyXQqUI4w0G+a8+7kidOetNw=;
+        b=ItiWE09vss/VcM2Pqs2IcYphaRRsEAdgc+DGninyQM2VFdIaN7ZvO8rMNWWMmbyNph
+         ufTn4SNziWLe5EBqIJ+DNr8dGb/R9HCy3ndp1eNPDj3oLItgpgXyMnBGTVwSGApcvSvT
+         UcC2r8giaFB/eWbBoOi8tf5OwUVWHtup9tpFM7/izjaNEO5DyeuMnSxHPVK4suTOt/ZY
+         w9+mcdakP0Fssss5PKa0mlyOUxmswPL96IK88W64SCXtzkArKTT3TICWuL8MRHuAspyB
+         80XNRd9MGKXAUbAS5nMVFzamSvIlGU5jmsqVYVTx4hnf2UPtnH3u59vymbMizjNmp+pp
+         Jv+g==
+X-Gm-Message-State: AOAM533/FLfjrMcisFRRFZL8vULYLdRcFw8hRIeFXDJxZAN3D2Clc2T0
+        CXyGPO6FS3SDwc43GQfNww8RWg==
+X-Google-Smtp-Source: ABdhPJyvp7T0CdewBKkqMXtDA5ThSmqkKCGgPnZJ05uagz+Vq5z9FBuvh4nrA0ZkdxuooO6UIklVPg==
+X-Received: by 2002:aca:53d8:: with SMTP id h207mr3883260oib.177.1620743757147;
+        Tue, 11 May 2021 07:35:57 -0700 (PDT)
+Received: from [172.22.22.4] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.googlemail.com with ESMTPSA id 2sm3341540ota.67.2021.05.11.07.35.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 May 2021 07:35:56 -0700 (PDT)
+Subject: Re: [PATCH v3 1/1] kernel.h: Split out panic and oops helpers
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <20210511074137.33666-1-andriy.shevchenko@linux.intel.com>
+From:   Alex Elder <elder@ieee.org>
+Cc:     linux-xtensa@linux-xtensa.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-clk@vger.kernel.org, linux-edac@vger.kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        coresight@lists.linaro.org, linux-leds@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-staging@lists.linux.dev, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-arch@vger.kernel.org,
+        kexec@lists.infradead.org, rcu@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, xen-devel@lists.xenproject.org
+Message-ID: <c6fa5d2c-84e2-2046-19f0-66cf5dd72077@ieee.org>
+Date:   Tue, 11 May 2021 09:35:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210511140113.1225981-1-agruenba@redhat.com>
+In-Reply-To: <20210511074137.33666-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 11, 2021 at 04:01:13PM +0200, Andreas Gruenbacher wrote:
-> we have a locking problem in gfs2 that I don't have a proper solution for, so
-> I'm looking for suggestions.
+On 5/11/21 2:41 AM, Andy Shevchenko wrote:
+> kernel.h is being used as a dump for all kinds of stuff for a long time.
+> Here is the attempt to start cleaning it up by splitting out panic and
+> oops helpers.
 > 
-> What's happening is that a page fault triggers during a read or write
-> operation, while we're holding a glock (the cluster-wide gfs2 inode
-> lock), and the page fault requires another glock.  We can recognize and
-> handle the case when both glocks are the same, but when the page fault requires
-> another glock, there is a chance that taking that other glock would deadlock.
+> There are several purposes of doing this:
+> - dropping dependency in bug.h
+> - dropping a loop by moving out panic_notifier.h
+> - unload kernel.h from something which has its own domain
+> 
+> At the same time convert users tree-wide to use new headers, although
+> for the time being include new header back to kernel.h to avoid twisted
+> indirected includes for existing users.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+> Acked-by: Corey Minyard <cminyard@mvista.com>
+> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> Acked-by: Kees Cook <keescook@chromium.org>
+> Acked-by: Wei Liu <wei.liu@kernel.org>
+> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Co-developed-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Acked-by: Sebastian Reichel <sre@kernel.org>
+> Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> Acked-by: Helge Deller <deller@gmx.de> # parisc
+> ---
+> v3: rebased on top of v5.13-rc1, collected a few more tags
+> 
+> Note WRT Andrew's SoB tag above: I have added it since part of the cases
+> I took from him. Andrew, feel free to amend or tell me how you want me
+> to do.
+> 
 
-So we're looking at something like one file on a gfs2 filesystem being
-mmaped() and then doing read() or write() to another gfs2 file with the
-mmaped address being the passed to read()/write()?
+Acked-by: Alex Elder <elder@kernel.org>
 
-Have you looked at iov_iter_fault_in_readable() as a solution to
-your locking order?  That way, you bring the mmaped page in first
-(see generic_perform_write()).
+. . .
 
-> When we realize that we may not be able to take the other glock in gfs2_fault,
-> we need to communicate that to the read or write operation, which will then
-> drop and re-acquire the "outer" glock and retry.  However, there doesn't seem
-> to be a good way to do that; we can only indicate that a page fault should fail
-> by returning VM_FAULT_SIGBUS or similar; that will then be mapped to -EFAULT.
-> We'd need something like VM_FAULT_RESTART that can be mapped to -EBUSY so that
-> we can tell the retry case apart from genuine -EFAULT errors.
+> diff --git a/drivers/net/ipa/ipa_smp2p.c b/drivers/net/ipa/ipa_smp2p.c
+> index a5f7a79a1923..34b68dc43886 100644
+> --- a/drivers/net/ipa/ipa_smp2p.c
+> +++ b/drivers/net/ipa/ipa_smp2p.c
+> @@ -8,6 +8,7 @@
+>   #include <linux/device.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/notifier.h>
+> +#include <linux/panic_notifier.h>
+>   #include <linux/soc/qcom/smem.h>
+>   #include <linux/soc/qcom/smem_state.h>
+>   
 
-We do have VM_FAULT_RETRY ... does that retry at the wrong level?
-
+. . .
