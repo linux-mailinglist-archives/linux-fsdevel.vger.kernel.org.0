@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD8CE37B127
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 23:57:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4C0837B129
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 23:58:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229970AbhEKV62 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 17:58:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37708 "EHLO
+        id S229809AbhEKV7I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 17:59:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbhEKV6Z (ORCPT
+        with ESMTP id S229637AbhEKV7H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 17:58:25 -0400
+        Tue, 11 May 2021 17:59:07 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64F6BC061574;
-        Tue, 11 May 2021 14:57:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C08DAC061574;
+        Tue, 11 May 2021 14:58:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=slr8t+6ZwKifGMrvwqS4rOmeg/A72JJfbwrzhXlZeNg=; b=vSLRx2LIN7aej0REbuNYoUBkW0
-        BvJF87Bv1hch0ix4sTvN+dwW9Bv98SKNoHeaqhNyyBvBiPjqWsmd2V4jCeuCz/ft+7nrJu5uPjLsh
-        rIVf+qy+FLtZDHobhLS/Dh65x2/+beMrbiliuqCTsthee536dQUG4rV/QzMveL1ch8Qdjpt+XjP0N
-        Dhi+DiKQDxwHTw0nNrv2ob1eXKPlwesFKUP0ZRqbtXmzD1Pssi7HTzlKfa/Dfdng2bfxmq8idcwqd
-        0SCl+WgIP0agieW2VeD88SVBAF3VDubW2jV15+rmqcb46gSPTZSh9jDXDQr5aYjXVcRc1nOywJaCS
-        U6JyDjBQ==;
+        bh=5FGnsELJHtqs9xDHzSJXGGaia9ugp/ZlUvDnl9x4F4A=; b=sIEtycBtUDRSCGOZ1gj3UENutd
+        CYuuA9pueF/z/OMtnUwSeXOi1EikLrhTMWfyQhxgnN1XRIdYF+93dI2ba31RkdtRJkCyuOuRqT8x2
+        jp939SIHjAJRiiJo0cT8KQuO4Z0csSCJsF5I+1WbU9gxQXQoJhSP7Mn90jG7cJg90RMdp7ozenDxS
+        DATW7mS8FpTo25E/Nv9h6paQc2qcxhZV2X1qubnU22/jyz7PjMSbGLXBpxQIqyYEoiNPJdFc7//DJ
+        aVu9dez3BDy/Es9RnTQI4FeFr4HbNRE6vkRVanX030kO38GBQ+SLOiEif7UMUbNwWR+76HNGmPw2W
+        Wdel4OqQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lgaMC-007i92-4W; Tue, 11 May 2021 21:56:08 +0000
+        id 1lgaMs-007iAo-SZ; Tue, 11 May 2021 21:56:53 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     akpm@linux-foundation.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
         Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v10 13/33] mm/filemap: Add folio_next_index
-Date:   Tue, 11 May 2021 22:47:15 +0100
-Message-Id: <20210511214735.1836149-14-willy@infradead.org>
+Subject: [PATCH v10 14/33] mm/filemap: Add folio_offset and folio_file_offset
+Date:   Tue, 11 May 2021 22:47:16 +0100
+Message-Id: <20210511214735.1836149-15-willy@infradead.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210511214735.1836149-1-willy@infradead.org>
 References: <20210511214735.1836149-1-willy@infradead.org>
@@ -45,38 +45,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This helper returns the page index of the next folio in the file (ie
-the end of this folio, plus one).
+These are just wrappers around their page counterpart.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Acked-by: Jeff Layton <jlayton@kernel.org>
 ---
- include/linux/pagemap.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ include/linux/pagemap.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 8eaeffccfd38..3b82252d12fc 100644
+index 3b82252d12fc..448a2dfb5ff1 100644
 --- a/include/linux/pagemap.h
 +++ b/include/linux/pagemap.h
-@@ -406,6 +406,17 @@ static inline pgoff_t folio_index(struct folio *folio)
-         return folio->index;
+@@ -558,6 +558,16 @@ static inline loff_t page_file_offset(struct page *page)
+ 	return ((loff_t)page_index(page)) << PAGE_SHIFT;
  }
  
-+/**
-+ * folio_next_index - Get the index of the next folio.
-+ * @folio: The current folio.
-+ *
-+ * Return: The index of the folio which follows this folio in the file.
-+ */
-+static inline pgoff_t folio_next_index(struct folio *folio)
++static inline loff_t folio_offset(struct folio *folio)
 +{
-+	return folio->index + folio_nr_pages(folio);
++	return page_offset(&folio->page);
 +}
 +
- /**
-  * folio_file_page - The page for a particular index.
-  * @folio: The folio which contains this index.
++static inline loff_t folio_file_offset(struct folio *folio)
++{
++	return page_file_offset(&folio->page);
++}
++
+ extern pgoff_t linear_hugepage_index(struct vm_area_struct *vma,
+ 				     unsigned long address);
+ 
 -- 
 2.30.2
 
