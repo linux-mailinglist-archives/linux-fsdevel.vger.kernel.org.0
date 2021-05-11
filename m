@@ -2,72 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D3DE37AE85
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 20:34:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A71AC37AE95
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 20:40:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231551AbhEKSfL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 14:35:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48338 "EHLO
+        id S231502AbhEKSlk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 14:41:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231454AbhEKSfL (ORCPT
+        with ESMTP id S231439AbhEKSlk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 14:35:11 -0400
+        Tue, 11 May 2021 14:41:40 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A520C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 11:34:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAAC9C061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 11:40:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=DWUlSGjVXF6mP4whsK7xlVkZsL4DrFQ4rpcqIlOtSl0=; b=P0WzZ3mTU5Tvqi/P4vKhQj+ux5
-        MnArOdmc9EaW+k8LTNgJzW3uNwqXiTr2tcpuRtv6zv0WjPGBodaM6SIx4MyIGlzkOiOSOJ9YeLFHn
-        cjFDdGfLJoZEJf8mOLStJ3D5rS/3lY2UBg/+yX0SAM9mzcgiXEez2DEONFZ6uLZu5PFKvvYYr1Qnu
-        Vhf9g5/mYBEFKX9J+TTe1024JJdVwOm7vKyS17MwaO9fcMYzaUtepPLGGoGJKhYEAMXJEiIpnXieH
-        v+1chvryTQEmaXx+fUXsbfCINrA+KQ+PpN/IR1bdgUmXTIxgnBfP0dqxiJ61jmaYgFb4/gkuxgrqN
-        ki24/85A==;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=IvW2j4oLNIARCibwuwgc8/hNevaAA1ymJqHmqVsh9EQ=; b=NDNo/FXhyOo4klHFt3S8LEzznG
+        +ePDSYBAS4hg9wOtE1jfwBROa7Bz6dek/J3/JqLQAwWwOXlv5juYSKjNDKZDHJmGexLKWufZNVuLs
+        kZJQzSaB6gF8CLjtwx2hABuZRSSD5reJw2V10PHaW+kVW/khvUOt8vHOqqbvY6pNzrgAxgelB72Vn
+        ArF7BWI/PC81n2fbEfJ44989uZ7py70O21K6LyraJqf+cwWT2hT692t6lwQNLzbQfO5Y+Lkzc1hea
+        d7F1NCLk/0y9F+jSaxKfsQ45Adebz5R1JNzvGIFIv1tkS4MkqSwxXDD3wVjl94rrRTcyWwaEq3C7N
+        C6KRMkPA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lgXCa-007YUa-RD; Tue, 11 May 2021 18:33:54 +0000
-Date:   Tue, 11 May 2021 19:33:52 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        dhowells@redhat.com, marc.dionne@auristor.com,
+        id 1lgXIq-007Yor-8u; Tue, 11 May 2021 18:40:21 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>, djwong@kernel.org,
         viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] vfs/dedupe: Pass file pointer to read_mapping_page
-Message-ID: <YJrOEAnWxOrEgNz+@casper.infradead.org>
-References: <20210511145608.1759501-1-willy@infradead.org>
- <20210511154056.GA8543@magnolia>
+Subject: [PATCH v2] vfs/dedupe: Pass file pointer to read_mapping_page
+Date:   Tue, 11 May 2021 19:40:19 +0100
+Message-Id: <20210511184019.1802090-1-willy@infradead.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210511154056.GA8543@magnolia>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 11, 2021 at 08:40:56AM -0700, Darrick J. Wong wrote:
-> > -static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
-> > -					 struct inode *dest, loff_t destoff,
-> > +static int vfs_dedupe_file_range_compare(struct file *src, loff_t srcoff,
-> > +					 struct file *dst, loff_t destoff,
-> 
-> I kinda wish you'd maintained the name pairing here.  Why does destoff
-> go with dst instead of dst/dstoff or dest/destoff?
-> 
-> FWIW I try to vary the name lengths for similar variables these days,
-> because while my eyes are /fairly/ quick to distingiush 's' and 'd',
-> they're even faster if the width of the entire word is different.
-> 
-> (And yes, I had to break myself of the 'columns-must-line-up' habit.)
-> 
-> Using this method I've caught a few stupid variable name mixups in the
-> exchange-range code by doing a quick scan while ld takes an eternity to
-> link vmlinux together.
+Some filesystems (mostly networking) need a valid file pointer for
+their ->readpage operation to supply credentials.  Since there are no
+bug reports, I assume none of them currently support deduplication.
+It's just as easy to pass the struct file around as it is to pass the
+struct inode around, and it sets a good example for other users as well
+as being good future-proofing.
 
-OK, if that's a preference you have, I'll redo it.  I have a later patch
-as part of the folio work which rename destfoo to dstfoo, but now I know
-that's a preference you have, I'll go back to dest.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/remap_range.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-> That aside, passing file pointers in seems like a good idea to me.
+diff --git a/fs/remap_range.c b/fs/remap_range.c
+index e4a5fdd7ad7b..56f44a9b4ab6 100644
+--- a/fs/remap_range.c
++++ b/fs/remap_range.c
+@@ -158,11 +158,11 @@ static int generic_remap_check_len(struct inode *inode_in,
+ }
+ 
+ /* Read a page's worth of file data into the page cache. */
+-static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
++static struct page *vfs_dedupe_get_page(struct file *file, loff_t offset)
+ {
+ 	struct page *page;
+ 
+-	page = read_mapping_page(inode->i_mapping, offset >> PAGE_SHIFT, NULL);
++	page = read_mapping_page(file->f_mapping, offset >> PAGE_SHIFT, file);
+ 	if (IS_ERR(page))
+ 		return page;
+ 	if (!PageUptodate(page)) {
+@@ -199,8 +199,8 @@ static void vfs_unlock_two_pages(struct page *page1, struct page *page2)
+  * Compare extents of two files to see if they are the same.
+  * Caller must have locked both inodes to prevent write races.
+  */
+-static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+-					 struct inode *dest, loff_t destoff,
++static int vfs_dedupe_file_range_compare(struct file *src, loff_t srcoff,
++					 struct file *dest, loff_t destoff,
+ 					 loff_t len, bool *is_same)
+ {
+ 	loff_t src_poff;
+@@ -244,8 +244,8 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+ 		 * someone is invalidating pages on us and we lose.
+ 		 */
+ 		if (!PageUptodate(src_page) || !PageUptodate(dest_page) ||
+-		    src_page->mapping != src->i_mapping ||
+-		    dest_page->mapping != dest->i_mapping) {
++		    src_page->mapping != src->f_mapping ||
++		    dest_page->mapping != dest->f_mapping) {
+ 			same = false;
+ 			goto unlock;
+ 		}
+@@ -351,8 +351,8 @@ int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+ 	if (remap_flags & REMAP_FILE_DEDUP) {
+ 		bool		is_same = false;
+ 
+-		ret = vfs_dedupe_file_range_compare(inode_in, pos_in,
+-				inode_out, pos_out, *len, &is_same);
++		ret = vfs_dedupe_file_range_compare(file_in, pos_in,
++				file_out, pos_out, *len, &is_same);
+ 		if (ret)
+ 			return ret;
+ 		if (!is_same)
+-- 
+2.30.2
 
-Cheers.  v2 coming up.
