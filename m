@@ -2,162 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4CC4379C0C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 03:29:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC13A379C20
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 03:35:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230238AbhEKBaS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 May 2021 21:30:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42792 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbhEKBaS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 May 2021 21:30:18 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BED4C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 May 2021 18:29:12 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id u21so27230264ejo.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 May 2021 18:29:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=g4ykbhAVmu+lXpVg7ewOOB3sVM/0k4gHK4Q6G0qH+bc=;
-        b=UPsaHnlkav5P0ZHYqlH+T0ewxbzji8mbzKICq6hQ9GdnRYCgG7Uo0NdIdiW8GfM0xq
-         t0Ff6/lBW8zel5SU0MbZSyT8tFGKlV3jNEhk1WcAMncse7VGsDIafgxrVL3wgXcm6XLC
-         CMR5J/jVTSQX3DOrdnJCFyE+tCvTt1Hk42ttAgwNdCHkb1LykDbjYXmVRP2LYvgNtwRD
-         VeUV7PldVfTNESp1yiVu2cAt8mH4+ODyFDDEhCqtmmQCenmCv9Qq4fJmx6lMn+rR3eWZ
-         vxeLC4m98H+5OYZvMP0gg2GLr3rhOETmvLDxsu3If9QSiTNHACYaMSiAPJ4vQscGUemR
-         MgXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g4ykbhAVmu+lXpVg7ewOOB3sVM/0k4gHK4Q6G0qH+bc=;
-        b=dGvL/bh03VAH4wll8Y2UaCo7YtwAKt5FSH6pFmW0JA3t4TBSLEFo2tXzBpUAI6UIHl
-         HpS+uTcSFs4TKirnfwcVP52agYJ2H8py+3ZZiTgsFFvMgJPB/WNby/IrIyEpb8MmidYr
-         ePtqE744KhDEsehiYN2hUoKC8G95bl3GG9x+t6PpX52zmScXlhblh3zj9zyveKE177yN
-         +mrnB1caFzOftq0U276mvMyucG/4bNU51esw14dSnKBmBQnmtx7HuMP/5rXpmPo9n03J
-         SX91jeaQjGmkDPlBzOBUnJRZV8LiQTtaY0CZpdNysEXUZhST8FgG1mjrw3WIwT+yzNL8
-         hZeQ==
-X-Gm-Message-State: AOAM530pYbHNbaVJVHTmDBtaiFJrGoDu+Rlud5MLsLa9UPOeDkB4gZOR
-        d3JOi0zMb0VoZrKPwbCchN6HW+Xn9aF6/3xRPBS6fpBsGg==
-X-Google-Smtp-Source: ABdhPJz3C7SNoneUreqQu3pSZrumUXJNi5gdNEgQTffzpXY31zuDcPbVqpJ7GKH8ZXirUtDVMppuZqKyPoxWdYoc06Y=
-X-Received: by 2002:a17:906:2510:: with SMTP id i16mr28682731ejb.488.1620696550709;
- Mon, 10 May 2021 18:29:10 -0700 (PDT)
+        id S230323AbhEKBgL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 May 2021 21:36:11 -0400
+Received: from mout02.posteo.de ([185.67.36.66]:42033 "EHLO mout02.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230035AbhEKBgK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 May 2021 21:36:10 -0400
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout02.posteo.de (Postfix) with ESMTPS id B90C32400E5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 03:35:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1620696903; bh=4Ve6PpcepWnf/1uVXxVGnf1sizBToTxqwyy5FVzOu+s=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WRKLsztFBL4IdLyV6xPcPzf2PpafXRdeDp27psHYueB/BbmTHCLcfotIjTAIlpfDE
+         I11lyPz4E9plZvBxRUn+kT+aPEQgILlVjgycZY6+KykgcP4Xbu2k8PNOqG82Q9OIIn
+         ghF4akpgRYTST5+VmiCZ5P+gAeFlGLGuGDibmsnDscVK2pjSeTSxUTY7w9qHb2AnB+
+         7RuowuMkVqppliz2x6fHqj8zr62bIOy0kIZ8ZhIqs4cpNM/d9/pU0w1xQaunaPbPAV
+         otcVdYrrExe+7atsUQh68xvlP1a3A9VBQ2VPwu+8dJa+FirQHa7f17a1hmJ1G/3vnm
+         W2+JcLW7mPA7w==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 4FfL872b58z9rxG;
+        Tue, 11 May 2021 03:35:03 +0200 (CEST)
 MIME-Version: 1.0
-References: <604ceafd516b0785fea120f552d6336054d196af.1620414949.git.rgb@redhat.com>
- <7ee601c2-4009-b354-1899-3c8f582bf6ae@schaufler-ca.com> <20210508015443.GA447005@madcap2.tricolour.ca>
- <242f107a-3b74-c1c2-abd6-b3f369170023@schaufler-ca.com> <CAHC9VhQdV93G5N_BKsxuDCtFbm9-xvAkve02t5sGOi9Mam2Wtg@mail.gmail.com>
- <195ac224-00fa-b1be-40c8-97e823796262@schaufler-ca.com>
-In-Reply-To: <195ac224-00fa-b1be-40c8-97e823796262@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 10 May 2021 21:28:59 -0400
-Message-ID: <CAHC9VhTPQ-LoqUYJ4HGsFF-sAXR+mYqGga7TxRZOG7BUD-55FQ@mail.gmail.com>
-Subject: Re: [PATCH V1] audit: log xattr args not covered by syscall record
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Richard Guy Briggs <rgb@redhat.com>, linux-api@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 11 May 2021 01:35:02 +0000
+From:   Marek <mareksvoboda@posteo.de>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     jbacik@fusionio.com
+Subject: Re: Allow btime to set any value or specify btime
+In-Reply-To: <89e65eccbb92bd6418ee33c3d855acdd@posteo.de>
+References: <89e65eccbb92bd6418ee33c3d855acdd@posteo.de>
+Message-ID: <0e4303ed996223ce648913205fd11d5f@posteo.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 10, 2021 at 8:37 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 5/10/2021 4:52 PM, Paul Moore wrote:
-> > On Mon, May 10, 2021 at 12:30 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> On 5/7/2021 6:54 PM, Richard Guy Briggs wrote:
-> >>> On 2021-05-07 14:03, Casey Schaufler wrote:
-> >>>> On 5/7/2021 12:55 PM, Richard Guy Briggs wrote:
-> >>>>> The *setxattr syscalls take 5 arguments.  The SYSCALL record only lists
-> >>>>> four arguments and only lists pointers of string values.  The xattr name
-> >>>>> string, value string and flags (5th arg) are needed by audit given the
-> >>>>> syscall's main purpose.
-> >>>>>
-> >>>>> Add the auxiliary record AUDIT_XATTR (1336) to record the details not
-> >>>>> available in the SYSCALL record including the name string, value string
-> >>>>> and flags.
-> >>>>>
-> >>>>> Notes about field names:
-> >>>>> - name is too generic, use xattr precedent from ima
-> >>>>> - val is already generic value field name
-> >>>>> - flags used by mmap, xflags new name
-> >>>>>
-> >>>>> Sample event with new record:
-> >>>>> type=PROCTITLE msg=audit(05/07/2021 12:58:42.176:189) : proctitle=filecap /tmp/ls dac_override
-> >>>>> type=PATH msg=audit(05/07/2021 12:58:42.176:189) : item=0 name=(null) inode=25 dev=00:1e mode=file,755 ouid=root ogid=root rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=NORMAL cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 cap_frootid=0
-> >>>>> type=CWD msg=audit(05/07/2021 12:58:42.176:189) : cwd=/root
-> >>>>> type=XATTR msg=audit(05/07/2021 12:58:42.176:189) : xattr="security.capability" val=01 xflags=0x0
-> >>>> Would it be sensible to break out the namespace from the attribute?
-> >>>>
-> >>>>      attrspace="security" attrname="capability"
-> >>> Do xattrs always follow this nomenclature?  Or only the ones we care
-> >>> about?
-> >> Xattrs always have a namespace (man 7 xattr) of "user", "trusted",
-> >> "system" or "security". It's possible that additional namespaces will
-> >> be created in the future, although it seems unlikely given that only
-> >> "security" is widely used today.
-> > Why should audit care about separating the name into two distinct
-> > fields, e.g. "attrspace" and "attrname", instead of just a single
-> > "xattr" field with a value that follows the "namespace.attribute"
-> > format that is commonly seen by userspace?
->
-> I asked if it would be sensible. I don't much care myself.
 
-I was *asking* a question - why would we want separate fields?  I
-guess I thought there might be some reason for asking if it was
-sensible; if not, I think I'd rather see it as a single field.
 
-> >>>> Why isn't val= quoted?
-> >>> Good question.  I guessed it should have been since it used
-> >>> audit_log_untrustedstring(), but even the raw output is unquoted unless
-> >>> it was converted by auditd to unquoted before being stored to disk due
-> >>> to nothing offensive found in it since audit_log_n_string() does add
-> >>> quotes.  (hmmm, bit of a run-on sentence there...)
-> >>>
-> >>>> The attribute value can be a .jpg or worse. I could even see it being an eBPF
-> >>>> program (although That Would Be Wrong) so including it in an audit record could
-> >>>> be a bit of a problem.
-> >>> In these cases it would almost certainly get caught by the control
-> >>> character test audit_string_contains_control() in
-> >>> audit_log_n_untrustedstring() called from audit_log_untrustedstring()
-> >>> and deliver it as hex.
-> >> In that case I'm more concerned with the potential size than with
-> >> quoting. One of original use cases proposed for xattrs (back in the
-> >> SGI Irix days) was to attach a bitmap to be used as the icon in file
-> >> browsers as an xattr. Another was to attach the build instructions
-> >> and source used to create a binary. None of that is information you'd
-> >> want to see in a audit record. On the other hand, if the xattr was an
-> >> eBPF program used to make access control decisions, you would want at
-> >> least a reference to it in the audit record.
-> > It would be interesting to see how this code would handle arbitrarily
-> > large xattr values, or at the very least large enough values to blow
-> > up the audit record size.
-> >
-> > As pointed out elsewhere in this thread, and brought up again above
-> > (albeit indirectly), I'm guessing we don't really care about *all*
-> > xattrs, just the "special" xattrs that are security relevant, in which
-> > case I think we need to reconsider how we collect this data.
->
-> Right. And you can't know in advance which xattrs are relevant in the
-> face of "security=". We might want something like
->
->         bool security_auditable_attribute(struct xattr *xattr)
->
-> which returns true if the passed xattr is one that an LSM in the stack
-> considers relevant. Much like security_ismaclabel(). I don't think that
-> we can just reuse security_ismaclabel() because there are xattrs that
-> are security relevant but are not MAC labels. SMACK64TRANSMUTE is one.
-> File capability sets are another. I also suggest passing the struct xattr
-> rather than the name because it seems reasonable that an LSM might
-> consider "user.execbyroot=never" relevant while "user.execbyroot=possible"
-> isn't.
-
-Perhaps instead of having the audit code call into the LSM to
-determine if an xattr is worth recording in the audit event, we leave
-it to the LSMs themselves to add a record to the event?
-
--- 
-paul moore
-www.paul-moore.com
+Am 11.05.2021 02:37 schrieb Marek:
+> Hi,
+> 
+> 
+> since Linux kernel 4.11, btime has been added, but there is no way to
+> change btime to a logical behavior.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a528d35e8bfcc521d7cb70aaf03e1bd296c8493f
+> 
+> This behavior causes users to report errors in user space software.
+> Based on this report.
+> https://bugzilla.redhat.com/show_bug.cgi?id=1919698
+> 
+> Users are using user space software in Fedora 33 or 34 and find it
+> illogical how user space software and processes set btime.
+> 
+> Users expect:
+> - btime to be lower than mtime when the operating system is first 
+> installed
+> - when files are changed, e.g. a .txt file in standard text editor,
+> btime is no longer updated
+> - btime is preserved when copying (file and directory) from source to
+> destination
+> 
+> 
+> Unfortunately, the problem cannot be solved from userspace because
+> only the Linux kernel is allowed to use btime.
+> 
+> 
+> As you can see in my answer there, I generally found out that there is
+> no specification for btime in general.
+> 
+>> https://pubs.opengroup.org/onlinepubs/009696699/basedefs/xbd_chap04.html#tag_04_07
+>> https://pubs.opengroup.org/onlinepubs/007904875/functions/open.html
+> 
+>> Further applies:
+> 
+>> If O_CREAT is set and the file did not previously exist, upon 
+>> successful completion, open() shall mark for update the st_atime, 
+>> st_ctime, and st_mtime fields of the file and the st_ctime and 
+>> st_mtime fields of the parent directory.
+> 
+>> This means that ctime = mtime = atime applies when creating the file.
+> 
+> 
+> If there is no specification then it means that btime can be set from
+> user space to any value. That would have been the expected behavior.
+> Unfortunately the mistake was made to add btime since Linux kernel
+> 4.11 without specifying it.
+> 
+> There are 2 direct solutions.
+> 
+> 1)
+> Add the expected behavior, that means in the next Linux kernel version
+> the kernel can set btime to any value, because btime was not
+> specified. No specification means that there is no reason and this
+> value can be set freely.
+> 
+> 2)
+> btime will be removed from the official Linux kernel release until a
+> specification in general exists. A proposal should be sent to the
+> POSIX (or its successor) people to specify btime together.
+> 
+> 
+> My personal suggestion is as you can also see in my answers
+> https://bugzilla.redhat.com/show_bug.cgi?id=1919698#c5
+> 
+>> - preserve btime when copying files and directories to the destination 
+>> (this works for cabled transmissions and wireless transmissions)
+>> - setting the btime to any value in an existing file and directory 
+>> (very important for rsync to make --crtimes command work)
+>> - if mtime, ctime and atime is set before btime, does not work there 
+>> is an error message
+>> - if btime sets after mtime, ctime and atime, does not work there is 
+>> an error message
+> 
+>> The logic must always be that only the Linux kernel can use btime and 
+>> btime must always be before mtime, ctime and atime.
+> 
+> 
+> 
+> https://bugzilla.redhat.com/show_bug.cgi?id=1919698#c7
+> 
+>> Perhaps an additional solution is also important, the atime and mtime 
+>> must not be changed from the user space more, but it works only with 
+>> the Linux kernel.
+> 
+> The standard behavior should be more in line with the real world. My
+> very old mother, who is already over 100 years old and therefore older
+> than most operating systems. She finds Linux generally not harmonious,
+> because Linux creates illogical timestamps for her documents. I also
+> have very similar reasons and many of my friends see it the same way.
+> This is also why all my family do not use Linux on a daily basis.
