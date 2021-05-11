@@ -2,95 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E8DF37A9BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 16:42:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC31937A9FF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 16:56:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231849AbhEKOnK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 10:43:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28638 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231154AbhEKOnJ (ORCPT
+        id S231742AbhEKO5n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 10:57:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55094 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231723AbhEKO5k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 10:43:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620744123;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=k/z7NrUJTKIBdoAINSyBpZ9NunsNsM6n4BDyTwrTstY=;
-        b=CEU9bA4oAX1zOyq2nwJM3WWSt4ghcxxhh3LYBcPRXEERkcvnaAoblJQu2dkfPWaHk3Ob/n
-        G3P2+txI/yackUUV5tyrQX0Aw72RfoM13RGsKqcitOck+S9zKDEIajAwjoRxYn8HdyKfh9
-        jHmXR0BUwLOVIP14lMyAYej3oV9JxXg=
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
- [209.85.161.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-119-cIrV1_bEPgGdSGFCsjFGCQ-1; Tue, 11 May 2021 10:42:01 -0400
-X-MC-Unique: cIrV1_bEPgGdSGFCsjFGCQ-1
-Received: by mail-oo1-f69.google.com with SMTP id q79-20020a4a33520000b02901faafd3c603so9329446ooq.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 07:42:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=k/z7NrUJTKIBdoAINSyBpZ9NunsNsM6n4BDyTwrTstY=;
-        b=cRwqGnKXrE4RDJOqZ9P2drMqW0OFeGaN4lZLxtf9DjAB+yQs/nAZhqvG75VwKLLKvr
-         KfTkrWy6GJIBS3UBdyILr9h6ZZmkFuXH7Om6swUKSpNxqMT4fvhdnWczGDb19h7SyP64
-         g7R2roTgDIVhl7aPYrlPi4EllCqBQKGEGxmtSQlwZ/2fGf15JhOMjubkyiOYBUftJ2kW
-         apMpapXX4dbgQMULf2cqcJGSKeP0Dl8u8cGulnoLmo5a/QWM3UfkZDgJBcZGIdI65gNq
-         VFwlXHhp0eok2P4n1LT5zkCL+8vgZqeS09yAFPnThJEEsrGstBwjg3iN/wsHuv/I26x7
-         Z4eA==
-X-Gm-Message-State: AOAM532QZEJhU6FQOD3uVFwfxKbOblFLchenFZ6hr7IKZG8Gnyqb2ypy
-        +VpRVl/8ivpLiSiOLolcDs0W+tswV7AnRFS/6j8N6ur/ceGTcAHA2K1vmc71Nc0gR9+/Dz91MYO
-        XCk+yg7uBDGVHtl90J7Wr/b19rA==
-X-Received: by 2002:a4a:ab83:: with SMTP id m3mr10122764oon.2.1620744120815;
-        Tue, 11 May 2021 07:42:00 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyiqcX0afnpWZRWy60CV/jDkD2+4bdEWed+5anrz6ezPzlAoWGMEGtTJiX4q+FFlUrQrMxegg==
-X-Received: by 2002:a4a:ab83:: with SMTP id m3mr10122743oon.2.1620744120577;
-        Tue, 11 May 2021 07:42:00 -0700 (PDT)
-Received: from [192.168.0.173] (ip68-103-222-6.ks.ok.cox.net. [68.103.222.6])
-        by smtp.gmail.com with ESMTPSA id o6sm3917266ote.14.2021.05.11.07.41.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 May 2021 07:42:00 -0700 (PDT)
-Subject: Re: [PATCH] virtiofs: Enable multiple request queues
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     virtio-fs@redhat.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Vivek Goyal <vgoyal@redhat.com>
-References: <20210507221527.699516-1-ckuehl@redhat.com>
- <YJpbEMePhQ88EWWR@stefanha-x1.localdomain>
-From:   Connor Kuehl <ckuehl@redhat.com>
-Message-ID: <290eaac8-45d9-0bfb-94f5-9fb41e5a3e42@redhat.com>
-Date:   Tue, 11 May 2021 09:41:59 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Tue, 11 May 2021 10:57:40 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6A88C061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 07:56:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=Bqx4zatTG9LmseQND5BN8vqwgtUaqfUr9GxZe/UaUbY=; b=LLDyv+xqvxzoNWNByG32QOnLa/
+        F/DVxzLToKc4ZrSx4CXShCf2CF8PIBmQT+kODZfFZ/xDGAKxQXOl2spmYlkrhFnbE0GffQEyl44gZ
+        nNWaH1SKFMYJptX1rapJ4IwEPevmczGDeqTetRaZZ535Jmz+7BJlHepY55MZTR3gU0mPZ+g4GD0Fu
+        MCvW9+OS3N056CZ/BNVUhrRG5jf/BP5Orp2J9Hy4V+12VRnY910ezzL985WulFEZNZv0XtzKuOG2z
+        wfmUo0uWxmCIJjhdMSsoG/kgQ0Kx0jheEmgKhmMbAZuvdegTxGH6heADwjA8Z1QaHMF6gy5AudXKd
+        pJCs1yfA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lgTnt-007Nju-Gx; Tue, 11 May 2021 14:56:13 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-afs@lists.infradead.org, dhowells@redhat.com,
+        marc.dionne@auristor.com, djwong@kernel.org,
+        viro@zeniv.linux.org.uk
+Subject: [PATCH] vfs/dedupe: Pass file pointer to read_mapping_page
+Date:   Tue, 11 May 2021 15:56:08 +0100
+Message-Id: <20210511145608.1759501-1-willy@infradead.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <YJpbEMePhQ88EWWR@stefanha-x1.localdomain>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/11/21 5:23 AM, Stefan Hajnoczi wrote:
-> On Fri, May 07, 2021 at 05:15:27PM -0500, Connor Kuehl wrote:
->> @@ -1245,7 +1262,8 @@ __releases(fiq->lock)
->>  		 req->in.h.nodeid, req->in.h.len,
->>  		 fuse_len_args(req->args->out_numargs, req->args->out_args));
->>  
->> -	fsvq = &fs->vqs[queue_id];
->> +	fsvq = this_cpu_read(this_cpu_fsvq);
-> 
-> Please check how CPU hotplug affects this patch. If the current CPU
-> doesn't have a vq because it was hotplugged, then it may be necessary to
-> pick another vq.
+Some filesystems (eg AFS) need a valid file pointer for their ->readpage
+operation.  Presumably none of them currently support deduplication,
+but it's just as easy to pass the struct file around as it is to pass
+the struct inode around, and it sets a good example for other users.
 
-I'll fix this in the next revision.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/remap_range.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-Thanks,
-
-Connor
+diff --git a/fs/remap_range.c b/fs/remap_range.c
+index e4a5fdd7ad7b..982ba89aeeb6 100644
+--- a/fs/remap_range.c
++++ b/fs/remap_range.c
+@@ -158,11 +158,11 @@ static int generic_remap_check_len(struct inode *inode_in,
+ }
+ 
+ /* Read a page's worth of file data into the page cache. */
+-static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
++static struct page *vfs_dedupe_get_page(struct file *file, loff_t offset)
+ {
+ 	struct page *page;
+ 
+-	page = read_mapping_page(inode->i_mapping, offset >> PAGE_SHIFT, NULL);
++	page = read_mapping_page(file->f_mapping, offset >> PAGE_SHIFT, file);
+ 	if (IS_ERR(page))
+ 		return page;
+ 	if (!PageUptodate(page)) {
+@@ -199,8 +199,8 @@ static void vfs_unlock_two_pages(struct page *page1, struct page *page2)
+  * Compare extents of two files to see if they are the same.
+  * Caller must have locked both inodes to prevent write races.
+  */
+-static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+-					 struct inode *dest, loff_t destoff,
++static int vfs_dedupe_file_range_compare(struct file *src, loff_t srcoff,
++					 struct file *dst, loff_t destoff,
+ 					 loff_t len, bool *is_same)
+ {
+ 	loff_t src_poff;
+@@ -229,7 +229,7 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+ 			error = PTR_ERR(src_page);
+ 			goto out_error;
+ 		}
+-		dest_page = vfs_dedupe_get_page(dest, destoff);
++		dest_page = vfs_dedupe_get_page(dst, destoff);
+ 		if (IS_ERR(dest_page)) {
+ 			error = PTR_ERR(dest_page);
+ 			put_page(src_page);
+@@ -244,8 +244,8 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+ 		 * someone is invalidating pages on us and we lose.
+ 		 */
+ 		if (!PageUptodate(src_page) || !PageUptodate(dest_page) ||
+-		    src_page->mapping != src->i_mapping ||
+-		    dest_page->mapping != dest->i_mapping) {
++		    src_page->mapping != src->f_mapping ||
++		    dest_page->mapping != dst->f_mapping) {
+ 			same = false;
+ 			goto unlock;
+ 		}
+@@ -351,8 +351,8 @@ int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+ 	if (remap_flags & REMAP_FILE_DEDUP) {
+ 		bool		is_same = false;
+ 
+-		ret = vfs_dedupe_file_range_compare(inode_in, pos_in,
+-				inode_out, pos_out, *len, &is_same);
++		ret = vfs_dedupe_file_range_compare(file_in, pos_in,
++				file_out, pos_out, *len, &is_same);
+ 		if (ret)
+ 			return ret;
+ 		if (!is_same)
+-- 
+2.30.2
 
