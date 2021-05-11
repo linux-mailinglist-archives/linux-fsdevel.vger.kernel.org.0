@@ -2,39 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9182637B11E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 23:55:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E747437B120
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 23:55:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229980AbhEKV4P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 17:56:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37200 "EHLO
+        id S230012AbhEKV4t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 17:56:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbhEKV4P (ORCPT
+        with ESMTP id S229637AbhEKV4t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 17:56:15 -0400
+        Tue, 11 May 2021 17:56:49 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFAA9C061574;
-        Tue, 11 May 2021 14:55:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A849AC061574;
+        Tue, 11 May 2021 14:55:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=LDypjUo0hEinvhwjliLN/GbUUQ5ZmA1vooK0fL1QlJc=; b=PQmND0YNCwx50avaV/i3Fz/idd
-        lTlVlscrXPCgIyjKZgUxHA+f9Idi7URWoYCGEaAIb2SH6N0fv7zDudQDsV/cb+t1kz9v8Wr0hkznD
-        FfbVrq0xXIJJfo9RSfwP6kQNcrgWNuQYVqIh33qNh8DY2PxXVYdt5N/vqAZn/0EIvdlCWs0eFwqbV
-        mJcqM4U70VfNa4jzLz+t5i+mjjeo5y3uPA79STMypBX57kFfu0N5fValG+GTzAW+Ll7ldPVgO0bIv
-        tqVKrVQB2e+q0LA6AqJFtt1XRI5w2pufs6d0eVkjXJevtvHLJy+/nc17LiQseV2AYuTs54PdR7T6W
-        /uM3cIDw==;
+        bh=9y6W8LxpyyyHUkI+3LgWs+obMZ+0swIVqHjUjemjxyc=; b=f8IBg6Bpc/rekuO6NYdUfCX0Hw
+        ZYV93AYjqxfoE1gFzKR8Cvl0c0aYSBKKFmpcIFLMZJuHLhMWnloQV6CUjEoK5IpEWi/KMijWVuPIg
+        0S9KnQTNXuLtPPzGQ6aYr2i7S6UoG3kQYjTQueTdg+eiEDEsimCg6jTNvQlr7L0ewLkQj2Vp4tqMr
+        JqIl1XRtAwnXSQjl9SBlye4Yku1oMbuDIldslt76WLAO0QORaQCNH+paHzL0Rx1uHcuOfJg0l/c5h
+        edmG+aMajfj2xs1Al+2xIUdBtlHUdbdNYSLOsX3B6axx5oHeT+86hqDviCc9O7Z7D5LYlMrMPrRom
+        36P9jgqQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lgaK4-007hza-L0; Tue, 11 May 2021 21:54:06 +0000
+        id 1lgaKv-007i3f-2n; Tue, 11 May 2021 21:54:52 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     akpm@linux-foundation.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v10 10/33] mm: Add folio_young and folio_idle
-Date:   Tue, 11 May 2021 22:47:12 +0100
-Message-Id: <20210511214735.1836149-11-willy@infradead.org>
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v10 11/33] mm: Handle per-folio private data
+Date:   Tue, 11 May 2021 22:47:13 +0100
+Message-Id: <20210511214735.1836149-12-willy@infradead.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210511214735.1836149-1-willy@infradead.org>
 References: <20210511214735.1836149-1-willy@infradead.org>
@@ -44,202 +45,136 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Idle page tracking is handled through page_ext on 32-bit architectures.
-Add folio equivalents for 32-bit and move all the page compatibility
-parts to common code.
+Add folio_get_private() which mirrors page_private() -- ie folio private
+data is the same as page private data.  The only difference is that these
+return a void * instead of an unsigned long, which matches the majority
+of users.
+
+Turn attach_page_private() into folio_attach_private() and reimplement
+attach_page_private() as a wrapper.  No filesystem which uses page private
+data currently supports compound pages, so we're free to define the rules.
+attach_page_private() may only be called on a head page; if you want
+to add private data to a tail page, you can call set_page_private()
+directly (and shouldn't increment the page refcount!  That should be
+done when adding private data to the head page / folio).
+
+This saves 597 bytes of text with the distro-derived config that I'm
+testing due to removing the calls to compound_head() in get_page()
+& put_page().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Jeff Layton <jlayton@kernel.org>
 ---
- include/linux/page_idle.h | 99 +++++++++++++++++++--------------------
- 1 file changed, 49 insertions(+), 50 deletions(-)
+ include/linux/mm_types.h | 11 +++++++++
+ include/linux/pagemap.h  | 48 ++++++++++++++++++++++++----------------
+ 2 files changed, 40 insertions(+), 19 deletions(-)
 
-diff --git a/include/linux/page_idle.h b/include/linux/page_idle.h
-index 1e894d34bdce..bd957e818558 100644
---- a/include/linux/page_idle.h
-+++ b/include/linux/page_idle.h
-@@ -8,46 +8,16 @@
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 3118ba8b5a4e..943854268986 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -302,6 +302,12 @@ static inline atomic_t *compound_pincount_ptr(struct page *page)
+ #define PAGE_FRAG_CACHE_MAX_SIZE	__ALIGN_MASK(32768, ~PAGE_MASK)
+ #define PAGE_FRAG_CACHE_MAX_ORDER	get_order(PAGE_FRAG_CACHE_MAX_SIZE)
  
- #ifdef CONFIG_IDLE_PAGE_TRACKING
++/*
++ * page_private can be used on tail pages.  However, PagePrivate is only
++ * checked by the VM on the head page.  So page_private on the tail pages
++ * should be used for data that's ancillary to the head page (eg attaching
++ * buffer heads to tail pages after attaching buffer heads to the head page)
++ */
+ #define page_private(page)		((page)->private)
  
--#ifdef CONFIG_64BIT
--static inline bool page_is_young(struct page *page)
--{
--	return PageYoung(page);
--}
--
--static inline void set_page_young(struct page *page)
--{
--	SetPageYoung(page);
--}
--
--static inline bool test_and_clear_page_young(struct page *page)
--{
--	return TestClearPageYoung(page);
--}
--
--static inline bool page_is_idle(struct page *page)
--{
--	return PageIdle(page);
--}
--
--static inline void set_page_idle(struct page *page)
--{
--	SetPageIdle(page);
--}
--
--static inline void clear_page_idle(struct page *page)
--{
--	ClearPageIdle(page);
--}
--#else /* !CONFIG_64BIT */
-+#ifndef CONFIG_64BIT
- /*
-  * If there is not enough space to store Idle and Young bits in page flags, use
-  * page ext flags instead.
+ static inline void set_page_private(struct page *page, unsigned long private)
+@@ -309,6 +315,11 @@ static inline void set_page_private(struct page *page, unsigned long private)
+ 	page->private = private;
+ }
+ 
++static inline void *folio_get_private(struct folio *folio)
++{
++	return folio->private;
++}
++
+ struct page_frag_cache {
+ 	void * va;
+ #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 4900e64c880d..bc5fa3d7204e 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -184,42 +184,52 @@ static inline bool page_cache_get_speculative(struct page *page)
+ }
+ 
+ /**
+- * attach_page_private - Attach private data to a page.
+- * @page: Page to attach data to.
+- * @data: Data to attach to page.
++ * folio_attach_private - Attach private data to a folio.
++ * @folio: Folio to attach data to.
++ * @data: Data to attach to folio.
+  *
+- * Attaching private data to a page increments the page's reference count.
+- * The data must be detached before the page will be freed.
++ * Attaching private data to a folio increments the page's reference count.
++ * The data must be detached before the folio will be freed.
   */
- extern struct page_ext_operations page_idle_ops;
- 
--static inline bool page_is_young(struct page *page)
-+static inline bool folio_young(struct folio *folio)
+-static inline void attach_page_private(struct page *page, void *data)
++static inline void folio_attach_private(struct folio *folio, void *data)
  {
--	struct page_ext *page_ext = lookup_page_ext(page);
-+	struct page_ext *page_ext = lookup_page_ext(&folio->page);
- 
- 	if (unlikely(!page_ext))
- 		return false;
-@@ -55,9 +25,9 @@ static inline bool page_is_young(struct page *page)
- 	return test_bit(PAGE_EXT_YOUNG, &page_ext->flags);
+-	get_page(page);
+-	set_page_private(page, (unsigned long)data);
+-	SetPagePrivate(page);
++	folio_get(folio);
++	folio->private = data;
++	folio_set_private_flag(folio);
  }
  
--static inline void set_page_young(struct page *page)
-+static inline void folio_set_young_flag(struct folio *folio)
+ /**
+- * detach_page_private - Detach private data from a page.
+- * @page: Page to detach data from.
++ * folio_detach_private - Detach private data from a folio.
++ * @folio: Folio to detach data from.
+  *
+- * Removes the data that was previously attached to the page and decrements
++ * Removes the data that was previously attached to the folio and decrements
+  * the refcount on the page.
+  *
+- * Return: Data that was attached to the page.
++ * Return: Data that was attached to the folio.
+  */
+-static inline void *detach_page_private(struct page *page)
++static inline void *folio_detach_private(struct folio *folio)
  {
--	struct page_ext *page_ext = lookup_page_ext(page);
-+	struct page_ext *page_ext = lookup_page_ext(&folio->page);
+-	void *data = (void *)page_private(page);
++	void *data = folio_get_private(folio);
  
- 	if (unlikely(!page_ext))
- 		return;
-@@ -65,9 +35,9 @@ static inline void set_page_young(struct page *page)
- 	set_bit(PAGE_EXT_YOUNG, &page_ext->flags);
+-	if (!PagePrivate(page))
++	if (!folio_private(folio))
+ 		return NULL;
+-	ClearPagePrivate(page);
+-	set_page_private(page, 0);
+-	put_page(page);
++	folio_clear_private_flag(folio);
++	folio->private = NULL;
++	folio_put(folio);
+ 
+ 	return data;
  }
  
--static inline bool test_and_clear_page_young(struct page *page)
-+static inline bool folio_test_clear_young_flag(struct folio *folio)
- {
--	struct page_ext *page_ext = lookup_page_ext(page);
-+	struct page_ext *page_ext = lookup_page_ext(&folio->page);
- 
- 	if (unlikely(!page_ext))
- 		return false;
-@@ -75,9 +45,9 @@ static inline bool test_and_clear_page_young(struct page *page)
- 	return test_and_clear_bit(PAGE_EXT_YOUNG, &page_ext->flags);
- }
- 
--static inline bool page_is_idle(struct page *page)
-+static inline bool folio_idle(struct folio *folio)
- {
--	struct page_ext *page_ext = lookup_page_ext(page);
-+	struct page_ext *page_ext = lookup_page_ext(&folio->page);
- 
- 	if (unlikely(!page_ext))
- 		return false;
-@@ -85,9 +55,9 @@ static inline bool page_is_idle(struct page *page)
- 	return test_bit(PAGE_EXT_IDLE, &page_ext->flags);
- }
- 
--static inline void set_page_idle(struct page *page)
-+static inline void folio_set_idle_flag(struct folio *folio)
- {
--	struct page_ext *page_ext = lookup_page_ext(page);
-+	struct page_ext *page_ext = lookup_page_ext(&folio->page);
- 
- 	if (unlikely(!page_ext))
- 		return;
-@@ -95,46 +65,75 @@ static inline void set_page_idle(struct page *page)
- 	set_bit(PAGE_EXT_IDLE, &page_ext->flags);
- }
- 
--static inline void clear_page_idle(struct page *page)
-+static inline void folio_clear_idle_flag(struct folio *folio)
- {
--	struct page_ext *page_ext = lookup_page_ext(page);
-+	struct page_ext *page_ext = lookup_page_ext(&folio->page);
- 
- 	if (unlikely(!page_ext))
- 		return;
- 
- 	clear_bit(PAGE_EXT_IDLE, &page_ext->flags);
- }
--#endif /* CONFIG_64BIT */
-+#endif /* !CONFIG_64BIT */
- 
- #else /* !CONFIG_IDLE_PAGE_TRACKING */
- 
--static inline bool page_is_young(struct page *page)
-+static inline bool folio_young(struct folio *folio)
- {
- 	return false;
- }
- 
--static inline void set_page_young(struct page *page)
-+static inline void folio_set_young_flag(struct folio *folio)
- {
- }
- 
--static inline bool test_and_clear_page_young(struct page *page)
-+static inline bool folio_test_clear_young_flag(struct folio *folio)
- {
- 	return false;
- }
- 
--static inline bool page_is_idle(struct page *page)
-+static inline bool folio_idle(struct folio *folio)
- {
- 	return false;
- }
- 
--static inline void set_page_idle(struct page *page)
-+static inline void folio_set_idle_flag(struct folio *folio)
- {
- }
- 
--static inline void clear_page_idle(struct page *page)
-+static inline void folio_clear_idle_flag(struct folio *folio)
- {
- }
- 
- #endif /* CONFIG_IDLE_PAGE_TRACKING */
- 
-+static inline bool page_is_young(struct page *page)
++static inline void attach_page_private(struct page *page, void *data)
 +{
-+	return folio_young(page_folio(page));
++	folio_attach_private(page_folio(page), data);
 +}
 +
-+static inline void set_page_young(struct page *page)
++static inline void *detach_page_private(struct page *page)
 +{
-+	folio_set_young_flag(page_folio(page));
++	return folio_detach_private(page_folio(page));
 +}
 +
-+static inline bool test_and_clear_page_young(struct page *page)
-+{
-+	return folio_test_clear_young_flag(page_folio(page));
-+}
-+
-+static inline bool page_is_idle(struct page *page)
-+{
-+	return folio_idle(page_folio(page));
-+}
-+
-+static inline void set_page_idle(struct page *page)
-+{
-+	folio_set_idle_flag(page_folio(page));
-+}
-+
-+static inline void clear_page_idle(struct page *page)
-+{
-+	folio_clear_idle_flag(page_folio(page));
-+}
- #endif /* _LINUX_MM_PAGE_IDLE_H */
+ #ifdef CONFIG_NUMA
+ extern struct page *__page_cache_alloc(gfp_t gfp);
+ #else
 -- 
 2.30.2
 
