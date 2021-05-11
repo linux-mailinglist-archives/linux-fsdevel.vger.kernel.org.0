@@ -2,118 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4604A379E3F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 06:20:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BF1D379E9B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 May 2021 06:34:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230355AbhEKEVS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 00:21:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52578 "EHLO
+        id S229885AbhEKEfH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 00:35:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229745AbhEKEVP (ORCPT
+        with ESMTP id S229548AbhEKEfG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 00:21:15 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 571A5C06175F
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 May 2021 21:20:10 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id p4so15182070pfo.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 May 2021 21:20:10 -0700 (PDT)
+        Tue, 11 May 2021 00:35:06 -0400
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36E8AC061574;
+        Mon, 10 May 2021 21:34:01 -0700 (PDT)
+Received: by mail-il1-x136.google.com with SMTP id o9so10934734ilh.6;
+        Mon, 10 May 2021 21:34:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :mime-version;
-        bh=NMrDcvVUEo+HujvVPjWV2EcDsSyNyhVfg9VVJSr3No0=;
-        b=jGli3YI5umWvQIidY2apKrgMwCP9TIKRPT3NUKfKFDHsMsWOn88wH6+BghaFg4XkOh
-         1wAzUhOJ7r6MXd8XqtFa57xv4Z9KOXsGk7lO3AKZAYvp/579zilnCAbx/oofVMuJwK0a
-         gbHE65vk8kJl8ntboSexC0ljylEtPPWFGXR8ZZApldp9AboPO4wa8+gUOoFHE1SBdJSk
-         f1DpX9BLmk/qVLANC3Ej1drceXT9rra6vy8yO8kJHLCvS07Tof5F6Hq1XeSvOvj0xzXs
-         nyQa5DUpWbgaI3aJuEECLfrcLQ6pl6np3YElRyb3kmkj9hKYWM1DTDZfoBCQz6S3ZPZy
-         4pmw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CfUwZWIMtFqUWOFRb1yI+FNyvJ/OkAyJSULvaCQz8ss=;
+        b=tDUb6aYMiLIvJgg2v2g0IAJwxtKWdiOE/OtwepOaxnDDG7TknHjePeJ/QtpRxKozSe
+         /n3SmfA4ZxjORGylMc4qPC3Oi7JNgruHCfLXt3bMW1dpWvfxg27KJ0dMXmDdPNuY9ayr
+         gCAhfT35p5NkVndOBmAfEK77JH+mrjKcPsFudXCXF7TX0h0iRsioq20BGEibuefPbj8e
+         T9qjO9Pjhxnns3Dde0hqTonVhnQkO8Op2+4IVdw4nQrELZ0gyE7G0m56iPM4L5iEEIv8
+         ETMqPR9gNgH35Y7uy1Gt3G/H592b/QhdXQUAWwH8Aq6WEISzXmQao86fbp4aWNy8dgZr
+         9KoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:mime-version;
-        bh=NMrDcvVUEo+HujvVPjWV2EcDsSyNyhVfg9VVJSr3No0=;
-        b=NXS7nO5tSNlsraNnx7VzkHWkW8cBiBuTkwJHvVv+FGvIsqE8nl9qOiOE1ekYAg0e2B
-         S8DK8R4c1uTzpcDnd+87HAomuWnvWyY80r5BA8lFx+w/TDlfnWQ6AmZg9esVOt4A0j+8
-         pbH4XXk+pfukHA2fDB6//xfH2gFO9rR3UAaFilKWvL6VzByV6LEqEmH7GHEWPtW/UXKj
-         4LvljogW0QPCPwulsAw0/WxWxCBGirCeB7GrwFG07hKQNvH0eFFAIIHaAB9ktRmi14EQ
-         IHkSce92zA+STj5x7HH0Y83giHyrp0pBk4XJp1TtVgA7HmX/I2dkFbJNECczqzEO0nHF
-         lZiQ==
-X-Gm-Message-State: AOAM532deN77cKFj1yl/5ooo6OedCAoP699/q32qu5WikYAUh5+KGPfl
-        d4Xty4c4ttyCItm5rGSAf3bQ0w==
-X-Google-Smtp-Source: ABdhPJzr2ZvBFl7f7NYeLHZPOcYFlD9ARgxPRHHb8kRKfPBmaiTjRuf/5YfYFGwJ8b/ClPjXG1KZiw==
-X-Received: by 2002:a62:1b97:0:b029:24e:44e9:a8c1 with SMTP id b145-20020a621b970000b029024e44e9a8c1mr29201702pfb.19.1620706809625;
-        Mon, 10 May 2021 21:20:09 -0700 (PDT)
-Received: from [2620:15c:17:3:2a0a:b96a:de1c:f12c] ([2620:15c:17:3:2a0a:b96a:de1c:f12c])
-        by smtp.gmail.com with ESMTPSA id v123sm12302620pfb.80.2021.05.10.21.20.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 May 2021 21:20:08 -0700 (PDT)
-Date:   Mon, 10 May 2021 21:20:08 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-cc:     chukaiping <chukaiping@baidu.com>, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com, vbabka@suse.cz,
-        nigupta@nvidia.com, bhe@redhat.com, khalid.aziz@oracle.com,
-        iamjoonsoo.kim@lge.com, mateusznosek0@gmail.com, sh_def@163.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Mel Gorman <mgorman@techsingularity.net>
-Subject: Re: [PATCH v4] mm/compaction: let proactive compaction order
- configurable
-In-Reply-To: <20210509171748.8dbc70ceccc5cc1ae61fe41c@linux-foundation.org>
-Message-ID: <bedd6e68-bb9b-2f3b-7aaf-a0877e025a7@google.com>
-References: <1619576901-9531-1-git-send-email-chukaiping@baidu.com> <20210509171748.8dbc70ceccc5cc1ae61fe41c@linux-foundation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CfUwZWIMtFqUWOFRb1yI+FNyvJ/OkAyJSULvaCQz8ss=;
+        b=TsOj1bKmGgPYv+s131CHHJiaMikRaH63BZC8ApCF/rqL1+gAX1PVWCsLwpEnuDd6c3
+         Jzrd8y33c7XLfP+jX+bNbhQzNFpvpaG/WBKCElbQRKjkVXJaeWjrP1qsf7iK9oikH8RG
+         w+0K2RmZvZpnzy/O1MaJs6EW5s19/LgNQdnFaiK4hDXKzrXRfgnT7W+5S1QmdZi6gmzM
+         nT14Tw0Oa1ZTdeYP5+MItNOfFlXCAAca5n0S64CbztpscNUSgt5EUAjL63St9HoJI2iz
+         yDO6pvFhes+qJeRvqloEZgTBOjMk4RUiAft6qdynvphFDqEDJG1AEyUXrIakj5F/G+vt
+         lmqg==
+X-Gm-Message-State: AOAM532QEKnx46XPud5dl4Zp6uVxatErv/wrhs8PosFdgDhG/FjoaHKQ
+        JSB1AjK5+z5ZivkHAWRN1CKnTF9mKIRY2qeXzajVuFDqq7A=
+X-Google-Smtp-Source: ABdhPJzHVoo8JtSicLmssQ/DW41zGysAwxl21FPZ+B17KgQfDFtNDYxVKtZyGNvANfSWDacO2WRb3EflTE6PprJ11W8=
+X-Received: by 2002:a92:b74a:: with SMTP id c10mr24010182ilm.72.1620707640614;
+ Mon, 10 May 2021 21:34:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <CAH2r5mt1Fy6hR+Rdig0sHsOS8fVQDsKf9HqZjvjORS3R-7=RFw@mail.gmail.com>
+In-Reply-To: <CAH2r5mt1Fy6hR+Rdig0sHsOS8fVQDsKf9HqZjvjORS3R-7=RFw@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 11 May 2021 07:33:49 +0300
+Message-ID: <CAOQ4uxigOsEUrU5-QndJujVtP9KLdjEQTm3bHjGRCFWjZCAKBw@mail.gmail.com>
+Subject: Re: fanotify and network/cluster fs
+To:     Steve French <smfrench@gmail.com>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 9 May 2021, Andrew Morton wrote:
+On Tue, May 11, 2021 at 2:36 AM Steve French <smfrench@gmail.com> wrote:
+>
+> With the recent changes to fanotify (e.g.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7cea2a3c505e)
 
-> > Currently the proactive compaction order is fixed to
-> > COMPACTION_HPAGE_ORDER(9), it's OK in most machines with lots of
-> > normal 4KB memory, but it's too high for the machines with small
-> > normal memory, for example the machines with most memory configured
-> > as 1GB hugetlbfs huge pages. In these machines the max order of
-> > free pages is often below 9, and it's always below 9 even with hard
-> > compaction. This will lead to proactive compaction be triggered very
-> > frequently. In these machines we only care about order of 3 or 4.
-> > This patch export the oder to proc and let it configurable
-> > by user, and the default value is still COMPACTION_HPAGE_ORDER.
-> 
-> It would be great to do this automatically?  It's quite simple to see
-> when memory is being handed out to hugetlbfs - so can we tune
-> proactive_compaction_order in response to this?  That would be far
-> better than adding a manual tunable.
-> 
-> But from having read Khalid's comments, that does sound quite involved.
-> Is there some partial solution that we can come up with that will get
-> most people out of trouble?
-> 
-> That being said, this patch is super-super-simple so perhaps we should
-> just merge it just to get one person (and hopefully a few more) out of
-> trouble.  But on the other hand, once we add a /proc tunable we must
-> maintain that tunable for ever (or at least a very long time) even if
-> the internal implementations change a lot.
-> 
+Not sure how this is related to remote fs notifications.
 
-As mentioned in v3 of the patch, I'm not sure why this belongs in the 
-kernel at all.
+> has there been any additional discussion of what it would take to
+> allow fanotify to be supported for network/cluster fs (all major
 
-I understand that the system is largely consumed by 1GB gigantic pages and 
-that a small percentage of memory is left for native pages.  Thus, 
-fragmentation readily occurs and can affect large order allocations even 
-at the levels of order-3 or order-4.
+It would take someone to pick up this RFC that was already posted
+2 years ago:
+https://lore.kernel.org/linux-fsdevel/20190507085707.GD30899@veci.piliscsaba.redhat.com/
+https://lore.kernel.org/linux-fsdevel/CAOQ4uxipauh1UXHSFt=WsiaDexqecjm4eDkVfnQXN8eYofdg2A@mail.gmail.com/
 
-So it seems like the ideal solution would be to monitor the fragmentation 
-index at the order you care about (the same order you would use for this 
-new tunable) and root userspace would manually trigger compaction when 
-necessary.  When this was brought up, it was commented that explicitly 
-triggered compaction is too expensive to do all in one iteration.  That's 
-fair enough, but shouldn't that be an improvement on explicitly triggered 
-compaction through sysfs to provide a shorter term (or weaker form) of 
-compaction rather than build additional policy decisions into the kernel?
+> dialects supported by cifs.ko support sending notify requests to the
+> server - but there is no way for cifs.ko to be told which notify
+> requests to send as fanotify/inotify are local only in current Linux -
+> unlike other OS where notify is primarily for network fs and passed
+> down to the fs)
+>
 
-If done this way, there would be a clear separation between mechanism and 
-policy and the kernel would not need to carry these sysctls to tune very 
-niche areas.
+If you wait long enough, I'll get to implementing this for FUSE some day...
+But there is *really* nothing blocking cifs developers from implementing this
+and writing the specialized tests. I can help with guidance.
+
+Thanks,
+Amir.
