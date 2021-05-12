@@ -2,106 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6906537BDCE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 15:14:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9800637BDD3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 15:16:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232033AbhELNPk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 09:15:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44104 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232056AbhELNPj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 09:15:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id C0F86ADA2;
-        Wed, 12 May 2021 13:14:29 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 815211E0A4C; Wed, 12 May 2021 15:14:29 +0200 (CEST)
-Date:   Wed, 12 May 2021 15:14:29 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jan Kara <jack@suse.cz>, Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        kernel@pengutronix.de, Jan Kara <jack@suse.com>,
-        Richard Weinberger <richard@nod.at>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v3 0/2] quota: Add mountpath based quota support
-Message-ID: <20210512131429.GA2734@quack2.suse.cz>
-References: <20210304123541.30749-1-s.hauer@pengutronix.de>
- <20210316112916.GA23532@quack2.suse.cz>
- <20210512110149.GA31495@quack2.suse.cz>
- <20210512125310.m3b4ralhwsdocpyb@wittgenstein>
+        id S231215AbhELNRP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 09:17:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45400 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230452AbhELNRK (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 May 2021 09:17:10 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6314CC06175F;
+        Wed, 12 May 2021 06:16:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=1OCL/hRNShP+g+9KTCWxVijSB16WuFeB9C7Nlxg2oYA=; b=ClHGVYjhtaCjJViCCOY2Q3LX8h
+        ECzIdD0JW4nhG3NFaJWLQl8RghYQp3INYuWDjt2zmtIfhD06CyQIlMGVFjMedyZiTFTbsOyXv0woX
+        pXRzfKE7VBBd1OIOMqv0IrLqy56+Der1Dg4LWkya1ChyJwVi1Rv0fd6BktiqYOaTHuYEhZwgp52kI
+        tWzQubvVoen6aM7SDE/MMmXAyTAiTV/cwOOR9l8BU+40w+L0Ag1EuPwDmuSsP5LRbvh0bViZr3uyc
+        jQUbv05FjA73+JJ6nUZ7Wvxfw8pyf4ZU0Oa6Ip321+vG2bpUcvzMGm/11A6rSbacNP0Jq+XKpwihB
+        0CwR6K+w==;
+Received: from [2001:4bb8:198:fbc8:1036:7ab9:f97a:adbc] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lgoiJ-00AO1O-8l; Wed, 12 May 2021 13:15:47 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "Wunderlich, Mark" <mark.wunderlich@intel.com>,
+        "Vasudevan, Anil" <anil.vasudevan@intel.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Subject: switch block layer polling to a bio based model v3
+Date:   Wed, 12 May 2021 15:15:30 +0200
+Message-Id: <20210512131545.495160-1-hch@lst.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210512125310.m3b4ralhwsdocpyb@wittgenstein>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 12-05-21 14:53:10, Christian Brauner wrote:
-> On Wed, May 12, 2021 at 01:01:49PM +0200, Jan Kara wrote:
-> > Added a few more CCs.
-> > 
-> > On Tue 16-03-21 12:29:16, Jan Kara wrote:
-> > > On Thu 04-03-21 13:35:38, Sascha Hauer wrote:
-> > > > Current quotactl syscall uses a path to a block device to specify the
-> > > > filesystem to work on which makes it unsuitable for filesystems that
-> > > > do not have a block device. This series adds a new syscall quotactl_path()
-> > > > which replaces the path to the block device with a mountpath, but otherwise
-> > > > behaves like original quotactl.
-> > > > 
-> > > > This is done to add quota support to UBIFS. UBIFS quota support has been
-> > > > posted several times with different approaches to put the mountpath into
-> > > > the existing quotactl() syscall until it has been suggested to make it a
-> > > > new syscall instead, so here it is.
-> > > > 
-> > > > I'm not posting the full UBIFS quota series here as it remains unchanged
-> > > > and I'd like to get feedback to the new syscall first. For those interested
-> > > > the most recent series can be found here: https://lwn.net/Articles/810463/
-> > > 
-> > > Thanks. I've merged the two patches into my tree and will push them to
-> > > Linus for the next merge window.
-> > 
-> > So there are some people at LWN whining that quotactl_path() has no dirfd
-> > and flags arguments for specifying the target. Somewhat late in the game
-> > but since there's no major release with the syscall and no userspace using
-> > it, I think we could still change that. What do you think? What they
-> > suggest does make some sense. But then, rather then supporting API for
-> > million-and-one ways in which I may wish to lookup a fs object, won't it be
-> > better to just pass 'fd' in the new syscall (it may well be just O_PATH fd
-> > AFAICT) and be done with that?
-> 
-> I think adding a dirfd argument makes a lot of sense (Unless there are
-> some restrictions around quotas I'm misunderstanding.).
-> 
-> If I may: in general, I think we should aim to not add additional system
-> calls that operate on paths only. Purely path-based apis tend to be the
-> source of security issues especially when scoped lookups are really
-> important which given the ubiquity of sandboxing solutions nowadays is
-> quite often actually.
-> For example, when openat2() landed it gave such a boost in lookup
-> capabilities that I switched some libraries over to only ever do scoped
-> lookups, i.e. I decide on a starting point that gets opened path-based
-> and then explicitly express how I want that lookup to proceed ultimately
-> opening the final path component on which I want to perform operations.
-> Combined with the mount API almost everything can be done purely fd
-> based.
-> 
-> In addition to that dirfd-scopable system calls allow for a much nicer
-> api experience when programming in userspace.
+Hi all,
 
-OK, thanks for your insights. But when we add 'dirfd' I wonder whether we
-still need the 'path' component then. I mean you can always do fd =
-openat2(), quotactl_fd(fd, ...). After all ioctl() works exactly that way
-since the beginning. The only advantage of quotactl_xxx() taking path would
-be saving the open(2) call. That is somewhat convenient for simple cases
-(but also error prone in complex setups as you point out) and can be also
-sligthly faster (but quotactl is hardly a performance sensitive thing)...
+This series clean up the block polling code a bit and changes the interface
+to poll for a specific bio instead of a request_queue and cookie pair.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Polling for the bio itself leads to a few advantages:
+
+  - the cookie construction can made entirely private in blk-mq.c
+  - the caller does not need to remember the request_queue and cookie
+    separately and thus sidesteps their lifetime issues
+  - keeping the device and the cookie inside the bio allows to trivially
+    support polling BIOs remapping by stacking drivers
+  - a lot of code to propagate the cookie back up the submission path can
+    removed entirely
+
+The one major caveat is that this requires RCU freeing polled BIOs to make
+sure the bio that contains the polling information is still alive when
+io_uring tries to poll it through the iocb. For synchronous polling all the
+callers have a bio reference anyway, so this is not an issue.
+
+Git tree:
+
+   git://git.infradead.org/users/hch/block.git bio-poll
+
+Gitweb:
+
+    http://git.infradead.org/users/hch/block.git/shortlog/refs/heads/bio-poll
+
+Chances since v2:
+ - remove support for writing to the poll attribute
+ - better document the block_device life time assumptions in bio_poll
+ - only set QUEUE_FLAG_POLL on nvme-multipath queues where it makes sense
+
+Chances since v1:
+ - use SLAB_TYPESAFE_BY_RCU to only free the pages backing the bio
+   slabs bio RCU
+ - split the spin argument to bio_poll to avoid sleeping under RCU from
+   io_uring
+ - add support for polling nvme multipath devices
+
+Diffstat:
+ arch/m68k/emu/nfblock.c             |    3 
+ arch/xtensa/platforms/iss/simdisk.c |    3 
+ block/bio.c                         |    4 
+ block/blk-core.c                    |  122 ++++++++++++++++++-------
+ block/blk-merge.c                   |    2 
+ block/blk-mq-debugfs.c              |    2 
+ block/blk-mq.c                      |  173 ++++++++++++++----------------------
+ block/blk-mq.h                      |    6 -
+ block/blk-sysfs.c                   |   23 ----
+ drivers/block/brd.c                 |   12 +-
+ drivers/block/drbd/drbd_int.h       |    2 
+ drivers/block/drbd/drbd_req.c       |    3 
+ drivers/block/n64cart.c             |   12 +-
+ drivers/block/null_blk/main.c       |    3 
+ drivers/block/pktcdvd.c             |    7 -
+ drivers/block/ps3vram.c             |    6 -
+ drivers/block/rsxx/dev.c            |    7 -
+ drivers/block/zram/zram_drv.c       |   10 --
+ drivers/lightnvm/pblk-init.c        |    6 -
+ drivers/md/bcache/request.c         |   13 +-
+ drivers/md/bcache/request.h         |    4 
+ drivers/md/dm.c                     |   28 ++---
+ drivers/md/md.c                     |   10 --
+ drivers/nvdimm/blk.c                |    5 -
+ drivers/nvdimm/btt.c                |    5 -
+ drivers/nvdimm/pmem.c               |    3 
+ drivers/nvme/host/core.c            |    4 
+ drivers/nvme/host/multipath.c       |   17 ++-
+ drivers/s390/block/dcssblk.c        |    7 -
+ drivers/s390/block/xpram.c          |    5 -
+ fs/block_dev.c                      |   54 +++--------
+ fs/btrfs/inode.c                    |    8 -
+ fs/direct-io.c                      |   14 --
+ fs/ext4/file.c                      |    2 
+ fs/gfs2/file.c                      |    4 
+ fs/io_uring.c                       |   14 +-
+ fs/iomap/direct-io.c                |   56 ++++++-----
+ fs/xfs/xfs_file.c                   |    2 
+ fs/zonefs/super.c                   |    2 
+ include/linux/bio.h                 |    4 
+ include/linux/blk-mq.h              |   15 ---
+ include/linux/blk_types.h           |   34 +------
+ include/linux/blkdev.h              |   12 +-
+ include/linux/bvec.h                |    2 
+ include/linux/fs.h                  |    8 -
+ include/linux/iomap.h               |    3 
+ mm/page_io.c                        |   10 --
+ 47 files changed, 342 insertions(+), 409 deletions(-)
