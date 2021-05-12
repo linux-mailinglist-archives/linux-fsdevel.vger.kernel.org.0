@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6666A37EBD5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 May 2021 00:23:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF4DD37EBD7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 May 2021 00:23:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244783AbhELTiI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 15:38:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52152 "EHLO mail.kernel.org"
+        id S244841AbhELTiQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 15:38:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1352751AbhELSEJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 14:04:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 239176143D;
-        Wed, 12 May 2021 18:03:00 +0000 (UTC)
+        id S243398AbhELSFm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 May 2021 14:05:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 658C061469;
+        Wed, 12 May 2021 18:04:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620842581;
-        bh=kR4X2Y4LqWXFJzaZR/OSMHuq0a3gRRAtvhiJq2yNFWE=;
+        s=k20201202; t=1620842642;
+        bh=yUWvzWqsU4F6Oj06Y7fNVRyGoo2onls05eXIg9qfd+Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gDa4WIwWELVBQiBoqma0YAcgfp+4oP0niibJTmzIExAfQKoRSrCKBU9EWscqdqFPU
-         zvjiEQ/bFZ5ud+P4HopZkGbEu66jH9gMfbDi1Ih8tPoPb5SsY0p1UXC4IinLeH3Ecd
-         ZWQITC65zferDac1EWDgS42vHWOVQP0dI6PPEPyZPEtjitorAUOCMoaMSMDdq8kYf2
-         LvUnxUMgU1z/jWRTXCb5j60c0k2Aj9jWExh8GFHhNziN8s0h8KbFa69uER2PDdef9y
-         /UEoKy5/t/8PkJWDZK9uQKtrRNk8MhC1C5diocqZNwuBcLF0NHpQ+x51YFhNOYYCbN
-         3xWu1wy0ErcrA==
+        b=IlU7MLPYHf8tO+EciTtt2xz3eQmsBWceyXYWNIfjtDFvghUIMbEdfRotBFACSY71Z
+         xDiCOJGX+FUbU0VBytouxKvXipLM0inHx4lh2JfD5OdT61/imvxu8+amuEFZN8vCdv
+         qrc9TO12I+b9jJXyDF5iBPQUaz1Nqmw99VnjMNw9nbo51Z2TwVyffe0yornFPCi0BV
+         pVPqpSqI1KJBIzarCXzDPk6ioVrc59Ha2bI+TVvVU80fLbW3ZXtIlgo92fTkDFeC9J
+         ajaj/n76VdRdz3b19fPvICursxjDQVtmvJb1L1IwA+lM1VR6UfM36ZPTkLJUzmBIb1
+         lDsV5SXt4b0bA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     yangerkun <yangerkun@huawei.com>,
         Pavel Begunkov <asml.silencec@gmail.com>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.11 33/35] block: reexpand iov_iter after read/write
-Date:   Wed, 12 May 2021 14:02:03 -0400
-Message-Id: <20210512180206.664536-33-sashal@kernel.org>
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 32/34] block: reexpand iov_iter after read/write
+Date:   Wed, 12 May 2021 14:03:03 -0400
+Message-Id: <20210512180306.664925-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210512180206.664536-1-sashal@kernel.org>
-References: <20210512180206.664536-1-sashal@kernel.org>
+In-Reply-To: <20210512180306.664925-1-sashal@kernel.org>
+References: <20210512180306.664925-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -152,10 +152,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 17 insertions(+), 3 deletions(-)
 
 diff --git a/fs/block_dev.c b/fs/block_dev.c
-index b988f78ad4b7..cd9db68960fe 100644
+index 718533f0fb90..cacea6bafc22 100644
 --- a/fs/block_dev.c
 +++ b/fs/block_dev.c
-@@ -1684,6 +1684,7 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+@@ -1903,6 +1903,7 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
  	struct inode *bd_inode = bdev_file_inode(file);
  	loff_t size = i_size_read(bd_inode);
  	struct blk_plug plug;
@@ -163,7 +163,7 @@ index b988f78ad4b7..cd9db68960fe 100644
  	ssize_t ret;
  
  	if (bdev_read_only(I_BDEV(bd_inode)))
-@@ -1701,12 +1702,17 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+@@ -1920,12 +1921,17 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
  	if ((iocb->ki_flags & (IOCB_NOWAIT | IOCB_DIRECT)) == IOCB_NOWAIT)
  		return -EOPNOTSUPP;
  
@@ -182,7 +182,7 @@ index b988f78ad4b7..cd9db68960fe 100644
  	blk_finish_plug(&plug);
  	return ret;
  }
-@@ -1718,13 +1724,21 @@ ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
+@@ -1937,13 +1943,21 @@ ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
  	struct inode *bd_inode = bdev_file_inode(file);
  	loff_t size = i_size_read(bd_inode);
  	loff_t pos = iocb->ki_pos;
