@@ -2,125 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D1BE37C362
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 17:19:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3B2F37C35F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 17:19:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232177AbhELPSb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 11:18:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:57610 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233778AbhELPOy (ORCPT
+        id S233544AbhELPS1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 11:18:27 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:32853 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233767AbhELPOv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 11:14:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620832425;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eOa32iIL0rOcLifOOINIT3ZdxbID0WK1fPWbMu9csHU=;
-        b=B8S1Mbz5CB+lTdpGK7Zxixt2LwhBWGQl+b9hJQ8Bs6q2Ia/ggZsENhQnUk+viRePqLwjwG
-        Pz6Sx4gQ+9kj7P2hCe5BQQEw22iFoFCo9Lj5F90JO2UZ4R5YRh3SyfNxefYwO/s9mWSxoO
-        D5+yPm2UEBljORguMtNs4yta/0dq0lk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-596-TgqsjOPTPu2cS2Hf3jLvnw-1; Wed, 12 May 2021 11:13:43 -0400
-X-MC-Unique: TgqsjOPTPu2cS2Hf3jLvnw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DEE38CC649;
-        Wed, 12 May 2021 15:12:58 +0000 (UTC)
-Received: from pick.home.annexia.org (ovpn-114-114.ams2.redhat.com [10.36.114.114])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E616D108648F;
-        Wed, 12 May 2021 15:12:56 +0000 (UTC)
-From:   "Richard W.M. Jones" <rjones@redhat.com>
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        eblake@redhat.com, libguestfs@redhat.com, synarete@gmail.com
-Subject: [PATCH v3] fuse: Allow fallocate(FALLOC_FL_ZERO_RANGE)
-Date:   Wed, 12 May 2021 16:12:23 +0100
-Message-Id: <20210512151223.3512221-2-rjones@redhat.com>
-In-Reply-To: <20210512151223.3512221-1-rjones@redhat.com>
-References: <20210512151223.3512221-1-rjones@redhat.com>
+        Wed, 12 May 2021 11:14:51 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lgqYO-0007lr-Rg; Wed, 12 May 2021 15:13:40 +0000
+Subject: Re: splice() from /dev/zero to a pipe does not work (5.9+)
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <2add1129-d42e-176d-353d-3aca21280ead@canonical.com>
+ <202105071116.638258236E@keescook>
+From:   Colin Ian King <colin.king@canonical.com>
+Message-ID: <61a548af-840a-1418-4cb6-644db6c9ba26@canonical.com>
+Date:   Wed, 12 May 2021 16:13:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <202105071116.638258236E@keescook>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-libnbd's nbdfuse utility would like to translate fallocate zero
-requests into NBD_CMD_WRITE_ZEROES.  Currently the fuse module filters
-these out, returning -EOPNOTSUPP.  This commit treats these almost the
-same way as FALLOC_FL_PUNCH_HOLE except not calling
-truncate_pagecache_range.
+On 07/05/2021 19:21, Kees Cook wrote:
+> On Fri, May 07, 2021 at 07:05:51PM +0100, Colin Ian King wrote:
+>> Hi,
+>>
+>> While doing some micro benchmarking with stress-ng I discovered that
+>> since linux 5.9 the splicing from /dev/zero to a pipe now fails with
+>> -EINVAL.
+>>
+>> I bisected this down to the following commit:
+>>
+>> 36e2c7421f02a22f71c9283e55fdb672a9eb58e7 is the first bad commit
+>> commit 36e2c7421f02a22f71c9283e55fdb672a9eb58e7
+>> Author: Christoph Hellwig <hch@lst.de>
+>> Date:   Thu Sep 3 16:22:34 2020 +0200
+>>
+>>     fs: don't allow splice read/write without explicit ops
+>>
+>> I'm not sure if this has been reported before, or if it's intentional
+>> behavior or not. As it stands, it's a regression in the stress-ng splice
+>> test case.
+> 
+> The general loss of generic splice read/write is known. Here's some
+> early conversations I was involved in:
+> 
+> https://lore.kernel.org/lkml/20200818200725.GA1081@lst.de/
+> https://lore.kernel.org/lkml/202009181443.C2179FB@keescook/
+> https://lore.kernel.org/lkml/20201005204517.2652730-1-keescook@chromium.org/
+> 
+> And it's been getting re-implemented in individual places:
+> 
+> $ git log --oneline --no-merges --grep 36e2c742
+> 42984af09afc jffs2: Hook up splice_write callback
+> a35d8f016e0b nilfs2: make splice write available again
+> f8ad8187c3b5 fs/pipe: allow sendfile() to pipe again
+> f2d6c2708bd8 kernfs: wire up ->splice_read and ->splice_write
+> 9bb48c82aced tty: implement write_iter
+> dd78b0c483e3 tty: implement read_iter
+> 14e3e989f6a5 proc mountinfo: make splice available again
+> c1048828c3db orangefs: add splice file operations
+> 960f4f8a4e60 fs: 9p: add generic splice_write file operation
+> cf03f316ad20 fs: 9p: add generic splice_read file operations
+> 06a17bbe1d47 afs: Fix copy_file_range()
 
-A way to test this, requiring fuse >= 3, nbdkit >= 1.8 and the latest
-nbdfuse from https://gitlab.com/nbdkit/libnbd/-/tree/master/fuse is to
-create a file containing data and "mirror" it to a fuse file:
+Ah..so this explains why copy_file_range() also returns -EINVAL now on
+some file systems, such a minix since that uses splicing too via
+do_splice_direct().  :-/
 
-  $ dd if=/dev/urandom of=disk.img bs=1M count=1
-  $ nbdkit file disk.img
-  $ touch mirror.img
-  $ nbdfuse mirror.img nbd://localhost &
-
-(mirror.img -> nbdfuse -> NBD over loopback -> nbdkit -> disk.img)
-
-You can then run commands such as:
-
-  $ fallocate -z -o 1024 -l 1024 mirror.img
-
-and check that the content of the original file ("disk.img") stays
-synchronized.  To show NBD commands, export LIBNBD_DEBUG=1 before
-running nbdfuse.  To clean up:
-
-  $ fusermount3 -u mirror.img
-  $ killall nbdkit
-
-Signed-off-by: Richard W.M. Jones <rjones@redhat.com>
----
- fs/fuse/file.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 09ef2a4d25ed..ec20a1801c1b 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2907,11 +2907,13 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
- 	};
- 	int err;
- 	bool lock_inode = !(mode & FALLOC_FL_KEEP_SIZE) ||
--			   (mode & FALLOC_FL_PUNCH_HOLE);
-+			   (mode & (FALLOC_FL_PUNCH_HOLE |
-+				    FALLOC_FL_ZERO_RANGE));
- 
- 	bool block_faults = FUSE_IS_DAX(inode) && lock_inode;
- 
--	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
-+	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
-+		     FALLOC_FL_ZERO_RANGE))
- 		return -EOPNOTSUPP;
- 
- 	if (fm->fc->no_fallocate)
-@@ -2926,7 +2928,7 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
- 				goto out;
- 		}
- 
--		if (mode & FALLOC_FL_PUNCH_HOLE) {
-+		if (mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_ZERO_RANGE)) {
- 			loff_t endbyte = offset + length - 1;
- 
- 			err = fuse_writeback_range(inode, offset, endbyte);
-@@ -2966,7 +2968,7 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
- 			file_update_time(file);
- 	}
- 
--	if (mode & FALLOC_FL_PUNCH_HOLE)
-+	if (mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_ZERO_RANGE))
- 		truncate_pagecache_range(inode, offset, offset + length - 1);
- 
- 	fuse_invalidate_attr(inode);
--- 
-2.31.1
+> 
+> So the question is likely, "do we want this for /dev/zero?"
+> 
 
