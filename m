@@ -2,59 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D4C7537BA0E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 12:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD25F37BACA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 12:37:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230182AbhELKKX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 06:10:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60466 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230037AbhELKKV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 06:10:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 09DDDAF3B;
-        Wed, 12 May 2021 10:09:12 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id aa6435b1;
-        Wed, 12 May 2021 10:10:46 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
-Subject: Re: 9p: fscache duplicate cookie
-References: <871rae24kv.fsf@suse.de> <87czu45gcs.fsf@suse.de>
-        <YJPIyLZ9ofnPy3F6@codewreck.org> <87zgx83vj9.fsf@suse.de>
-        <87r1ii4i2a.fsf@suse.de> <YJXfjDfw9KM50f4y@codewreck.org>
-        <875yzq270z.fsf@suse.de> <2508106.1620737077@warthog.procyon.org.uk>
-Date:   Wed, 12 May 2021 11:10:45 +0100
-In-Reply-To: <2508106.1620737077@warthog.procyon.org.uk> (David Howells's
-        message of "Tue, 11 May 2021 13:44:37 +0100")
-Message-ID: <87pmxwz2hm.fsf@suse.de>
+        id S230210AbhELKiY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 06:38:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:35953 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230129AbhELKiX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 May 2021 06:38:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620815835;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=QCLzW8Yk++bJyAj34mvA1DmCasqmhv52I/3gH8ALD5U=;
+        b=DXOiM0EOcd2nxIgg8pxStF1bdXXC5luOFzGo6Cgtpohn05dDuiHs2TgNPXPwh911wkivP+
+        cfabNWeu2YNPBGzF2732myKjfe0MInhgl2GCJKT+o65nAQuIDG2oigYRgqKSa4sA+evFuO
+        DexujwVXwNm3xrRDyZtZkdUpcJnMvwI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-348-8rz8ZZZWMEWzuAwoekPQuw-1; Wed, 12 May 2021 06:37:13 -0400
+X-MC-Unique: 8rz8ZZZWMEWzuAwoekPQuw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D391B802958;
+        Wed, 12 May 2021 10:37:12 +0000 (UTC)
+Received: from pick.home.annexia.org (ovpn-114-114.ams2.redhat.com [10.36.114.114])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 526C16E51F;
+        Wed, 12 May 2021 10:37:07 +0000 (UTC)
+From:   "Richard W.M. Jones" <rjones@redhat.com>
+To:     miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        eblake@redhat.com, libguestfs@redhat.com
+Subject: [PATCH v2] fuse: Allow fallocate(FALLOC_FL_ZERO_RANGE)
+Date:   Wed, 12 May 2021 11:37:03 +0100
+Message-Id: <20210512103704.3505086-1-rjones@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> writes:
+Version 2 restores the #comments in the script in the git commit
+message.  The patch itself is identical.
 
-> Luis Henriques <lhenriques@suse.de> wrote:
->
->> +		if (data->inode < inode)
->> +			node = node->rb_left;
->> +		else if (data->inode > inode)
->> +			node = node->rb_right;
->
-> If you're just using a plain integer as the key into your debug tree, an
-> xarray, IDA or IDR might be easier to use.
+Rich.
 
-Yep, xarray actually crossed my mind but rbtrees were still fresh in my
-memory.  I'll look into the xarray API next time (which is likely to be
-much simpler, I know).
 
-Cheers,
--- 
-Luis
