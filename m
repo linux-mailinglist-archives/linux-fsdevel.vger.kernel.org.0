@@ -2,143 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A60737B476
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 05:20:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3984637B479
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 05:24:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230096AbhELDV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 23:21:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53886 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230111AbhELDV4 (ORCPT
+        id S230023AbhELDZZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 23:25:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:59542 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229848AbhELDZZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 23:21:56 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 679C0C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 20:20:48 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id m124so17158376pgm.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 20:20:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I0E05OrXdqW9H2ReWLoImyNAZwoWDkKkUkvJVilZtAk=;
-        b=VVRagCeMJog1E+4Kn5glvSDrq5Z9pScXTmoEgqtFvqbpwAp4+ssECkxAhdk/vtqDwj
-         BZnaZgrR1jyX5rdx19eD0hi94IshSlJqglbb1GslPPXUQqb2Syw/GmM9YEmqHMaaXp81
-         2r+T8R8DYzEQ/rQOrSEdkFWINQGvFlkm4RrBWbbVLwk/7ON2mUsH2/Y067k3NY2G8cf9
-         t0jPJMrIJlf+GJ4buPS1vDmV8FYuO1GYcVG3PSCngqUEabK5nX2r5r6XoHVfUb1QKW0b
-         Iipc35TkH1zgpr3J+ToxNIgfRWUUh4qNi/VAYS9P7T6JuZ35/1Oyd+hx7rXkRQBQW9Fa
-         l+/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I0E05OrXdqW9H2ReWLoImyNAZwoWDkKkUkvJVilZtAk=;
-        b=Ki15ytzdCbt02tUvsU/R1774w5fzp08L4VMDOZJ6HwMOpTKjib6p4bbCXjoI6Qdy3k
-         Wp/nL+l3/9ymBJqwN7MckMZe9Xj0I6JOqUANVw0RM6+DpCRiy2BdWtbl4LbhL+R24sFo
-         qNMpiayepsEsLMv+G+91iW5iIhJsrNZAL92EvR/HZLuAtlwfz1gdDW+1IDb7tcD+jvHO
-         fdL3eTkXMcmNdO+SZA50aNqROFAMRnLuXN15iTSe7IMJ8KiOEfq5xxwX3ItiTfP3nx0f
-         YlSz/AYHExDvW2G/dEehe1dWQpvUsSatJacraL4583L7W2zf7RtZsrzqeITsgf28ymYW
-         q5gw==
-X-Gm-Message-State: AOAM531HT2edxffBWHkhiAFS85DzJhiopLJAk7u6d0K0+WOMNb/glmyG
-        OOGomP5VmbPRGfNCB9vZkxdSh5LCwX+gsba8ZGG0MA==
-X-Google-Smtp-Source: ABdhPJyGmBzA6PB1rG2IFhsITR6WU/fAlG0hy4zTLptVYrtYuchEfeOpjh01hqqw+BQwMmZ4kbr6JD15UVyidm9h3CA=
-X-Received: by 2002:a05:6a00:8c7:b029:20f:1cf4:d02 with SMTP id
- s7-20020a056a0008c7b029020f1cf40d02mr34091256pfu.49.1620789647824; Tue, 11
- May 2021 20:20:47 -0700 (PDT)
+        Tue, 11 May 2021 23:25:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620789858;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=83RC2qtc5cEihhWItsXrcoyXmMoP0cw+w8BGnKZsq/4=;
+        b=WDCphuP01ynz1MmB44EN6CcUA2lgJSbzjatgSb6FG4+j65ni/pJDe0Mktwz1/TNK6Za0y5
+        KhFpjOWO5FHOPwZ0AB3h8caC9FP/ugIbgYHRuXj0M4/7BuLtq11d/lUQK9B9MB3KKnfJQz
+        dXaZHWlzvamivzeesalJYmdiRkh939c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-506-L_Rd4dvCOzqELtSY7GHHIA-1; Tue, 11 May 2021 23:24:14 -0400
+X-MC-Unique: L_Rd4dvCOzqELtSY7GHHIA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EDF651883522;
+        Wed, 12 May 2021 03:24:12 +0000 (UTC)
+Received: from T590 (ovpn-12-110.pek2.redhat.com [10.72.12.110])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 648725D9D7;
+        Wed, 12 May 2021 03:24:04 +0000 (UTC)
+Date:   Wed, 12 May 2021 11:23:59 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Gulam Mohamed <gulam.mohamed@oracle.com>
+Cc:     viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hch@lst.de,
+        martin.petersen@oracle.com, junxiao.bi@oracle.com
+Subject: Re: [PATCH V1 1/1] Fix race between iscsi logout and systemd-udevd
+Message-ID: <YJtKT7rLi2CFqDsV@T590>
+References: <20210511181558.380764-1-gulam.mohamed@oracle.com>
 MIME-Version: 1.0
-References: <20210511104647.604-1-songmuchun@bytedance.com>
- <20210511104647.604-11-songmuchun@bytedance.com> <20210511234041.GP1872259@dread.disaster.area>
-In-Reply-To: <20210511234041.GP1872259@dread.disaster.area>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Wed, 12 May 2021 11:20:10 +0800
-Message-ID: <CAMZfGtV3cOY0JwMp_wr+PcHyYZsL4-2v-9YjXnPgpvJXgMvrTw@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH 10/17] fs: introduce alloc_inode_sb() to
- allocate filesystems specific inode
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Roman Gushchin <guro@fb.com>, Yang Shi <shy828301@gmail.com>,
-        alexs@kernel.org, Wei Yang <richard.weiyang@gmail.com>,
-        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-nfs@vger.kernel.org, zhengqi.arch@bytedance.com,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        fam.zheng@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210511181558.380764-1-gulam.mohamed@oracle.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 12, 2021 at 7:40 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Tue, May 11, 2021 at 06:46:40PM +0800, Muchun Song wrote:
-> > The allocated inode cache will be added into its memcg lru list later,
-> > but we do not allocate list_lru in the later patch. So the caller should
-> > call kmem_cache_alloc_lru() to allocate inode and related list_lru.
-> > Introduce alloc_inode_sb() to do that and convert all inodes allocation
-> > to it.
->
-> FWIW, this probably needs a documentation update to mention that
-> inodes should always be allocated through alloc_inode_sb() rather
-> than kmem_cache_alloc(). It's a "** mandatory **" requirement as per
-> Documentation/filesytems/porting.rst.
+On Tue, May 11, 2021 at 06:15:58PM +0000, Gulam Mohamed wrote:
+> Problem description:
+> 
+> During the kernel patching, customer was switching between the iscsi
+> disks. To switch between the iscsi disks, it was logging out the
+> currently connected iscsi disk and then logging in to the new iscsi
+> disk. This was being done using a script. Customer was also using the
+> "parted" command in the script to list the partition details just
+> before the iscsi logout. This usage of "parted" command was creating
+> an issue and we were seeing stale links of the
+> disks in /sys/class/block.
+> 
+> Analysis:
+> 
+> As part of iscsi logout, the partitions and the disk will be removed
+> in the function del_gendisk() which is done through a kworker. The
+> parted command, used to list the partitions, will open the disk in
+> RW mode which results in systemd-udevd re-reading the partitions. The
+> ioctl used to re-read partitions is BLKRRPART. This will trigger the
+> rescanning of partitions which will also delete and re-add the
+> partitions. So, both iscsi logout processing (through kworker) and the
+> "parted" command (through systemd-udevd) will be involved in
+> add/delete of partitions. In our case, the following sequence of
+> operations happened (the iscsi device is /dev/sdb with partition sdb1):
+> 
+> 1. sdb1 was removed by PARTED
+> 2. kworker, as part of iscsi logout, couldn't remove sdb1 as it was
+>    already removed by PARTED
+> 3. sdb1 was added by parted
+> 4. sdb was NOW removed as part of iscsi logout (the last part of the
+>    device removal after remoing the partitions)
+> 
+> Since the symlink /sys/class/block/sdb1 points to
+> /sys/class/devices/platform/hostx/sessionx/targetx:x/block/sdb/sdb1
+> and since sdb is already removed, the symlink /sys/class/block/sdb1
+> will be orphan and stale. So, this stale link is a result of the race
+> condition in kernel between the systemd-udevd and iscsi-logout
+> processing as described above. We were able to reproduce this even
+> with latest upstream kernel.
+> 
+> Fix:
+> 
+> While Dropping/Adding partitions as part of BLKRRPART ioctl, take the
+> read lock for "bdev_lookup_sem" to sync with del_gendisk().
+> 
+> Signed-off-by: Gulam Mohamed <gulam.mohamed@oracle.com>
+> ---
+>  fs/block_dev.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index 09d6f7229db9..e903a7edfd63 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -1245,9 +1245,17 @@ int bdev_disk_changed(struct block_device *bdev, bool invalidate)
+>  	lockdep_assert_held(&bdev->bd_mutex);
+>  
+>  rescan:
+> +	down_read(&bdev_lookup_sem);
+> +	if (!(disk->flags & GENHD_FL_UP)) {
+> +		up_read(&bdev_lookup_sem);
+> +		return -ENXIO;
+> +	}
 
-Make sense to me. I'll fix it in the next version.
+This way might cause deadlock:
 
->
-> Also,
->
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index c3c88fdb9b2a..d8d5d4eb68d6 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -41,6 +41,7 @@
-> >  #include <linux/stddef.h>
-> >  #include <linux/mount.h>
-> >  #include <linux/cred.h>
-> > +#include <linux/slab.h>
-> >
-> >  #include <asm/byteorder.h>
-> >  #include <uapi/linux/fs.h>
-> > @@ -3200,6 +3201,12 @@ extern void free_inode_nonrcu(struct inode *inode);
-> >  extern int should_remove_suid(struct dentry *);
-> >  extern int file_remove_privs(struct file *);
-> >
-> > +static inline void *
-> > +alloc_inode_sb(struct super_block *sb, struct kmem_cache *cache, gfp_t gfp)
-> > +{
-> > +     return kmem_cache_alloc_lru(cache, &sb->s_inode_lru, gfp);
-> > +}
-> > +
->
-> This really needs a kerneldoc comment explaining that it must be
-> used for allocating inodes to set up the inode reclaim context
-> correctly....
+1) code path BLKRRPART:
+	mutex_lock(bdev->bd_mutex)
+	down_read(&bdev_lookup_sem);
 
-Will do.
+2) del_gendisk():
+	down_write(&bdev_lookup_sem);
+	mutex_lock(&disk->part0->bd_mutex);
 
->
-> /me wonders if we should add a BUG_ON() check in inode_init_always()
-> to capture filesystems that don't call through
-> kmem_cache_alloc_lru() for inodes?
+Given GENHD_FL_UP is only checked when opening one bdev, and
+fsync_bdev() and __invalidate_device() needn't to open bdev, so
+the following way may work for your issue:
 
-Good point. IMHO, I think that the BUG_ON check may be useful.
-Actually, it can catch such bugs.
 
-Any suggestions from others?
+diff --git a/block/genhd.c b/block/genhd.c
+index 39ca97b0edc6..5eb27995d4ab 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -617,6 +617,7 @@ void del_gendisk(struct gendisk *disk)
+ 
+ 	mutex_lock(&disk->part0->bd_mutex);
+ 	blk_drop_partitions(disk);
++	disk->flags &= ~GENHD_FL_UP;
+ 	mutex_unlock(&disk->part0->bd_mutex);
+ 
+ 	fsync_bdev(disk->part0);
+@@ -629,7 +630,6 @@ void del_gendisk(struct gendisk *disk)
+ 	remove_inode_hash(disk->part0->bd_inode);
+ 
+ 	set_capacity(disk, 0);
+-	disk->flags &= ~GENHD_FL_UP;
+ 	up_write(&bdev_lookup_sem);
+ 
+ 	if (!(disk->flags & GENHD_FL_HIDDEN)) {
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index b8abccd03e5d..06b70b8e3f67 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1245,6 +1245,8 @@ int bdev_disk_changed(struct block_device *bdev, bool invalidate)
+ 	lockdep_assert_held(&bdev->bd_mutex);
+ 
+ rescan:
++	if(!(disk->flags & GENHD_FL_UP))
++		return -ENXIO;
+ 	if (bdev->bd_part_count)
+ 		return -EBUSY;
+ 	sync_blockdev(bdev);
 
-Thanks.
 
->
-> Cheers,
->
-> Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
+
+Thanks,
+Ming
+
