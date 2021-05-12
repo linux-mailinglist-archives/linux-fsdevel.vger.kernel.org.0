@@ -2,124 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BA6137B2D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 01:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E33F137B30D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 02:38:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229964AbhEKX6b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 19:58:31 -0400
-Received: from sandeen.net ([63.231.237.45]:50760 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229736AbhEKX6a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 19:58:30 -0400
-Received: from liberator.sandeen.net (liberator.sandeen.net [10.0.0.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S229637AbhELAjy convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 20:39:54 -0400
+Received: from us-smtp-delivery-44.mimecast.com ([205.139.111.44]:56415 "EHLO
+        us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229932AbhELAjx (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 May 2021 20:39:53 -0400
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-478-fRxEsnuBNqm26hnjJgzNNQ-1; Tue, 11 May 2021 20:38:43 -0400
+X-MC-Unique: fRxEsnuBNqm26hnjJgzNNQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 437FD479AE8;
-        Tue, 11 May 2021 18:57:05 -0500 (CDT)
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        'Namjae Jeon' <linkinjeon@kernel.org>
-Cc:     'linux-fsdevel' <linux-fsdevel@vger.kernel.org>,
-        'Pavel Reichl' <preichl@redhat.com>,
-        chritophe.vu-brugier@seagate.com,
-        'Hyeoncheol Lee' <hyc.lee@gmail.com>
-References: <372ffd94-d1a2-04d6-ac38-a9b61484693d@sandeen.net>
- <CAKYAXd_5hBRZkCfj6YAgb1D2ONkpZMeN_KjAQ_7c+KxHouLHuw@mail.gmail.com>
- <CGME20210511233346epcas1p3071e13aa2f1364e231f2d6ece4b64ca2@epcas1p3.samsung.com>
- <276da0be-a44b-841e-6984-ecf3dc5da6f0@sandeen.net>
- <001201d746c0$cc8da8e0$65a8faa0$@samsung.com>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Subject: Re: problem with exfat on 4k logical sector devices
-Message-ID: <b3015dc1-07a9-0c14-857a-9562a9007fb6@sandeen.net>
-Date:   Tue, 11 May 2021 18:57:22 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.0
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 211FA8030CF;
+        Wed, 12 May 2021 00:38:41 +0000 (UTC)
+Received: from web.messagingengine.com (ovpn-116-20.sin2.redhat.com [10.67.116.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 103AC9CA0;
+        Wed, 12 May 2021 00:38:36 +0000 (UTC)
+Subject: [PATCH v4 0/5] kernfs: proposed locking and concurrency improvement
+From:   Ian Kent <raven@themaw.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Fox Chen <foxhlchen@gmail.com>,
+        Brice Goglin <brice.goglin@gmail.com>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Wed, 12 May 2021 08:38:35 +0800
+Message-ID: <162077975380.14498.11347675368470436331.stgit@web.messagingengine.com>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-In-Reply-To: <001201d746c0$cc8da8e0$65a8faa0$@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=raven@themaw.net
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: themaw.net
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/11/21 6:53 PM, Namjae Jeon wrote:
+There have been a few instances of contention on the kernfs_mutex during
+path walks, a case on very large IBM systems seen by myself, a report by
+Brice Goglin and followed up by Fox Chen, and I've since seen a couple
+of other reports by CoreOS users.
 
->> One other thing that I ran across is that fsck seems to validate an image against the sector size of
->> the device hosting the image rather than the sector size found in the boot sector, which seems like
->> another issue that will come up:
->>
->> # fsck/fsck.exfat /dev/sdb
->> exfatprogs version : 1.1.1
->> /dev/sdb: clean. directories 1, files 0
->>
->> # dd if=/dev/sdb of=test.img
->> 524288+0 records in
->> 524288+0 records out
->> 268435456 bytes (268 MB) copied, 1.27619 s, 210 MB/s
->>
->> # fsck.exfat test.img
->> exfatprogs version : 1.1.1
->> checksum of boot region is not correct. 0, but expected 0x3ee721 boot region is corrupted. try to
->> restore the region from backup. Fix (y/N)? n
->>
->> Right now the utilities seem to assume that the device they're pointed at is always a block device,
->> and image files are problematic.
-> Okay, Will fix it.
+The common thread is a large number of kernfs path walks leading to
+slowness of path walks due to kernfs_mutex contention.
 
-Right now I have a hack like this.
+The problem being that changes to the VFS over some time have increased
+it's concurrency capabilities to an extent that kernfs's use of a mutex
+is no longer appropriate. There's also an issue of walks for non-existent
+paths causing contention if there are quite a few of them which is a less
+common problem.
 
-1) don't validate the in-image sector size against the host device size
-(maybe should only skip this check if it's not a bdev? Or is it OK to have
-a 4k sector size fs on a 512 device? Probably?)
+This patch series is relatively straight forward.
 
-2) populate the "bd" sector size information from the values read from the image.
+All it does is add the ability to take advantage of VFS negative dentry
+caching to avoid needless dentry alloc/free cycles for lookups of paths
+that don't exit and change the kernfs_mutex to a read/write semaphore.
 
-It feels a bit messy, but it works so far. I guess the messiness stems from
-assuming that we always have a "bd" block device.
+The patch that tried to stay in VFS rcu-walk mode during path walks has
+been dropped for two reasons. First, it doesn't actually give very much
+improvement and, second, if there's a place where mistakes could go
+unnoticed it would be in that path. This makes the patch series simpler
+to review and reduces the likelihood of problems going unnoticed and
+popping up later.
 
--Eric
+The patch to use a revision to identify if a directory has changed has
+also been dropped. If the directory has changed the dentry revision
+needs to be updated to avoid subsequent rb tree searches and after
+changing to use a read/write semaphore the update also requires a lock.
+But the d_lock is the only lock available at this point which might
+itself be contended.
 
-diff --git a/dump/dump.c b/dump/dump.c
-index 85d5101..30ec8cb 100644
---- a/dump/dump.c
-+++ b/dump/dump.c
-@@ -100,6 +100,9 @@ static int exfat_show_ondisk_all_info(struct exfat_blk_dev *bd)
- 		goto free_ppbr;
- 	}
- 
-+	bd->sector_size_bits = pbsx->sect_size_bits;
-+	bd->sector_size = 1 << pbsx->sect_size_bits;
-+
- 	if (pbsx->sect_per_clus_bits > 25 - pbsx->sect_size_bits) {
- 		exfat_err("bogus sectors bits per cluster : %u\n",
- 				pbsx->sect_per_clus_bits);
-@@ -107,13 +110,6 @@ static int exfat_show_ondisk_all_info(struct exfat_blk_dev *bd)
- 		goto free_ppbr;
- 	}
- 
--	if (bd->sector_size != 1 << pbsx->sect_size_bits) {
--		exfat_err("bogus sector size : %u (sector size bits : %u)\n",
--				bd->sector_size, pbsx->sect_size_bits);
--		ret = -EINVAL;
--		goto free_ppbr;
--	}
--
- 	clu_offset = le32_to_cpu(pbsx->clu_offset);
- 	total_clus = le32_to_cpu(pbsx->clu_count);
- 	root_clu = le32_to_cpu(pbsx->root_cluster);
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 747a771..5ea8278 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -682,6 +682,9 @@ static int read_boot_region(struct exfat_blk_dev *bd, struct pbr **pbr,
- 		goto err;
- 	}
- 
-+	bd->sector_size_bits = bs->bsx.sect_size_bits;
-+	bd->sector_size = 1 << bs->bsx.sect_size_bits;
-+
- 	ret = boot_region_checksum(bd, bs_offset);
- 	if (ret < 0)
- 		goto err;
+Changes since v3:
+- remove unneeded indirection when referencing the super block.
+- check if inode attribute update is actually needed.
 
+Changes since v2:
+- actually fix the inode attribute update locking.
+- drop the patch that tried to stay in rcu-walk mode.
+- drop the use a revision to identify if a directory has changed patch.
+
+Changes since v1:
+- fix locking in .permission() and .getattr() by re-factoring the attribute
+  handling code.
+---
+
+Ian Kent (5):
+      kernfs: move revalidate to be near lookup
+      kernfs: use VFS negative dentry caching
+      kernfs: switch kernfs to use an rwsem
+      kernfs: use i_lock to protect concurrent inode updates
+      kernfs: add kernfs_need_inode_refresh()
+
+
+ fs/kernfs/dir.c             | 170 ++++++++++++++++++++----------------
+ fs/kernfs/file.c            |   4 +-
+ fs/kernfs/inode.c           |  45 ++++++++--
+ fs/kernfs/kernfs-internal.h |   5 +-
+ fs/kernfs/mount.c           |  12 +--
+ fs/kernfs/symlink.c         |   4 +-
+ include/linux/kernfs.h      |   2 +-
+ 7 files changed, 147 insertions(+), 95 deletions(-)
+
+--
+Ian
 
