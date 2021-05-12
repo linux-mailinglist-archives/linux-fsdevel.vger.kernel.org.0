@@ -2,123 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B6CC737B5FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 08:21:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2F1537B636
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 08:35:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230182AbhELGWl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 02:22:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46136 "EHLO mail.kernel.org"
+        id S230126AbhELGgQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 02:36:16 -0400
+Received: from verein.lst.de ([213.95.11.211]:39900 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229996AbhELGWl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 02:22:41 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5A7F061421;
-        Wed, 12 May 2021 06:21:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1620800492;
-        bh=7GrAGogiNytLpw09dpjSrM02BltUbgcUqUxsXxMrOgE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hqOXed+ZNVysnq02BAG9rpTbLROUqpbcJsttKvmCQ/1rwrXaE0YACEq6GthHulXWW
-         RVJHrOwG6o7RZAYYiLjnV/2RvmxV41+8xQtVW0V2ecHyr7+eLC0BxqWvgTyV3zR0UZ
-         Q8cGcpUYD+jxZkyum59QfxLVsyUGlCmw9qhcKRg8=
-Date:   Wed, 12 May 2021 08:21:30 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Fox Chen <foxhlchen@gmail.com>,
-        Brice Goglin <brice.goglin@gmail.com>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/5] kernfs: proposed locking and concurrency
- improvement
-Message-ID: <YJtz6mmgPIwEQNgD@kroah.com>
-References: <162077975380.14498.11347675368470436331.stgit@web.messagingengine.com>
+        id S230114AbhELGgP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 May 2021 02:36:15 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id CB5B967373; Wed, 12 May 2021 08:35:05 +0200 (CEST)
+Date:   Wed, 12 May 2021 08:35:05 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Gulam Mohamed <gulam.mohamed@oracle.com>, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hch@lst.de, martin.petersen@oracle.com, junxiao.bi@oracle.com
+Subject: Re: [PATCH V1 1/1] Fix race between iscsi logout and systemd-udevd
+Message-ID: <20210512063505.GA18367@lst.de>
+References: <20210511181558.380764-1-gulam.mohamed@oracle.com> <YJtKT7rLi2CFqDsV@T590>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <162077975380.14498.11347675368470436331.stgit@web.messagingengine.com>
+In-Reply-To: <YJtKT7rLi2CFqDsV@T590>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 12, 2021 at 08:38:35AM +0800, Ian Kent wrote:
-> There have been a few instances of contention on the kernfs_mutex during
-> path walks, a case on very large IBM systems seen by myself, a report by
-> Brice Goglin and followed up by Fox Chen, and I've since seen a couple
-> of other reports by CoreOS users.
+On Wed, May 12, 2021 at 11:23:59AM +0800, Ming Lei wrote:
 > 
-> The common thread is a large number of kernfs path walks leading to
-> slowness of path walks due to kernfs_mutex contention.
+> 1) code path BLKRRPART:
+> 	mutex_lock(bdev->bd_mutex)
+> 	down_read(&bdev_lookup_sem);
 > 
-> The problem being that changes to the VFS over some time have increased
-> it's concurrency capabilities to an extent that kernfs's use of a mutex
-> is no longer appropriate. There's also an issue of walks for non-existent
-> paths causing contention if there are quite a few of them which is a less
-> common problem.
+> 2) del_gendisk():
+> 	down_write(&bdev_lookup_sem);
+> 	mutex_lock(&disk->part0->bd_mutex);
 > 
-> This patch series is relatively straight forward.
-> 
-> All it does is add the ability to take advantage of VFS negative dentry
-> caching to avoid needless dentry alloc/free cycles for lookups of paths
-> that don't exit and change the kernfs_mutex to a read/write semaphore.
-> 
-> The patch that tried to stay in VFS rcu-walk mode during path walks has
-> been dropped for two reasons. First, it doesn't actually give very much
-> improvement and, second, if there's a place where mistakes could go
-> unnoticed it would be in that path. This makes the patch series simpler
-> to review and reduces the likelihood of problems going unnoticed and
-> popping up later.
-> 
-> The patch to use a revision to identify if a directory has changed has
-> also been dropped. If the directory has changed the dentry revision
-> needs to be updated to avoid subsequent rb tree searches and after
-> changing to use a read/write semaphore the update also requires a lock.
-> But the d_lock is the only lock available at this point which might
-> itself be contended.
-> 
-> Changes since v3:
-> - remove unneeded indirection when referencing the super block.
-> - check if inode attribute update is actually needed.
-> 
-> Changes since v2:
-> - actually fix the inode attribute update locking.
-> - drop the patch that tried to stay in rcu-walk mode.
-> - drop the use a revision to identify if a directory has changed patch.
-> 
-> Changes since v1:
-> - fix locking in .permission() and .getattr() by re-factoring the attribute
->   handling code.
-> ---
-> 
-> Ian Kent (5):
->       kernfs: move revalidate to be near lookup
->       kernfs: use VFS negative dentry caching
->       kernfs: switch kernfs to use an rwsem
->       kernfs: use i_lock to protect concurrent inode updates
->       kernfs: add kernfs_need_inode_refresh()
-> 
-> 
->  fs/kernfs/dir.c             | 170 ++++++++++++++++++++----------------
->  fs/kernfs/file.c            |   4 +-
->  fs/kernfs/inode.c           |  45 ++++++++--
->  fs/kernfs/kernfs-internal.h |   5 +-
->  fs/kernfs/mount.c           |  12 +--
->  fs/kernfs/symlink.c         |   4 +-
->  include/linux/kernfs.h      |   2 +-
->  7 files changed, 147 insertions(+), 95 deletions(-)
-> 
-> --
-> Ian
-> 
+> Given GENHD_FL_UP is only checked when opening one bdev, and
+> fsync_bdev() and __invalidate_device() needn't to open bdev, so
+> the following way may work for your issue:
 
-Any benchmark numbers that you ran that are better/worse with this patch
-series?  That woul dbe good to know, otherwise you aren't changing
-functionality here, so why would we take these changes?  :)
+If we move the clearing of GENHD_FL_UP earlier we can do away with
+bdev_lookup_sem entirely I think.  Something like this untested patch:
 
-thanks,
-
-greg k-h
+diff --git a/block/genhd.c b/block/genhd.c
+index a5847560719c..ef717084b343 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -29,8 +29,6 @@
+ 
+ static struct kobject *block_depr;
+ 
+-DECLARE_RWSEM(bdev_lookup_sem);
+-
+ /* for extended dynamic devt allocation, currently only one major is used */
+ #define NR_EXT_DEVT		(1 << MINORBITS)
+ static DEFINE_IDA(ext_devt_ida);
+@@ -609,13 +607,8 @@ void del_gendisk(struct gendisk *disk)
+ 	blk_integrity_del(disk);
+ 	disk_del_events(disk);
+ 
+-	/*
+-	 * Block lookups of the disk until all bdevs are unhashed and the
+-	 * disk is marked as dead (GENHD_FL_UP cleared).
+-	 */
+-	down_write(&bdev_lookup_sem);
+-
+ 	mutex_lock(&disk->open_mutex);
++	disk->flags &= ~GENHD_FL_UP;
+ 	blk_drop_partitions(disk);
+ 	mutex_unlock(&disk->open_mutex);
+ 
+@@ -627,10 +620,7 @@ void del_gendisk(struct gendisk *disk)
+ 	 * up any more even if openers still hold references to it.
+ 	 */
+ 	remove_inode_hash(disk->part0->bd_inode);
+-
+ 	set_capacity(disk, 0);
+-	disk->flags &= ~GENHD_FL_UP;
+-	up_write(&bdev_lookup_sem);
+ 
+ 	if (!(disk->flags & GENHD_FL_HIDDEN)) {
+ 		sysfs_remove_link(&disk_to_dev(disk)->kobj, "bdi");
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 8dd8e2fd1401..bde23940190f 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1377,33 +1377,24 @@ struct block_device *blkdev_get_no_open(dev_t dev)
+ 	struct block_device *bdev;
+ 	struct gendisk *disk;
+ 
+-	down_read(&bdev_lookup_sem);
+ 	bdev = bdget(dev);
+ 	if (!bdev) {
+-		up_read(&bdev_lookup_sem);
+ 		blk_request_module(dev);
+-		down_read(&bdev_lookup_sem);
+-
+ 		bdev = bdget(dev);
+ 		if (!bdev)
+-			goto unlock;
++			return NULL;
+ 	}
+ 
+ 	disk = bdev->bd_disk;
+ 	if (!kobject_get_unless_zero(&disk_to_dev(disk)->kobj))
+ 		goto bdput;
+-	if ((disk->flags & (GENHD_FL_UP | GENHD_FL_HIDDEN)) != GENHD_FL_UP)
+-		goto put_disk;
+ 	if (!try_module_get(bdev->bd_disk->fops->owner))
+ 		goto put_disk;
+-	up_read(&bdev_lookup_sem);
+ 	return bdev;
+ put_disk:
+ 	put_disk(disk);
+ bdput:
+ 	bdput(bdev);
+-unlock:
+-	up_read(&bdev_lookup_sem);
+ 	return NULL;
+ }
+ 
+@@ -1462,7 +1453,10 @@ struct block_device *blkdev_get_by_dev(dev_t dev, fmode_t mode, void *holder)
+ 
+ 	disk_block_events(disk);
+ 
++	ret = -ENXIO;
+ 	mutex_lock(&disk->open_mutex);
++	if ((disk->flags & (GENHD_FL_UP | GENHD_FL_HIDDEN)) != GENHD_FL_UP)
++		goto abort_claiming;
+ 	if (bdev_is_partition(bdev))
+ 		ret = blkdev_get_part(bdev, mode);
+ 	else
