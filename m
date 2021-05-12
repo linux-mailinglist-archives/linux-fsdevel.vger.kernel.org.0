@@ -2,149 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF98E37D04D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 19:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6770D37D04E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 19:40:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235006AbhELRcM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 13:32:12 -0400
-Received: from sandeen.net ([63.231.237.45]:45698 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243253AbhELQpd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 12:45:33 -0400
-Received: from liberator.sandeen.net (liberator.sandeen.net [10.0.0.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 566E6323C00;
-        Wed, 12 May 2021 11:44:03 -0500 (CDT)
-To:     Hyunchul Lee <hyc.lee@gmail.com>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Pavel Reichl <preichl@redhat.com>,
-        chritophe.vu-brugier@seagate.com
-References: <372ffd94-d1a2-04d6-ac38-a9b61484693d@sandeen.net>
- <CAKYAXd_5hBRZkCfj6YAgb1D2ONkpZMeN_KjAQ_7c+KxHouLHuw@mail.gmail.com>
- <CGME20210511233346epcas1p3071e13aa2f1364e231f2d6ece4b64ca2@epcas1p3.samsung.com>
- <276da0be-a44b-841e-6984-ecf3dc5da6f0@sandeen.net>
- <001201d746c0$cc8da8e0$65a8faa0$@samsung.com>
- <b3015dc1-07a9-0c14-857a-9562a9007fb6@sandeen.net>
- <CANFS6bZs3bDQdKH-PYnQqo=3iDUaVy5dH8VQ+JE8WdeVi4o0NQ@mail.gmail.com>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Subject: Re: problem with exfat on 4k logical sector devices
-Message-ID: <35b5967f-dc19-f77f-f7d1-bf1d6e2b73e8@sandeen.net>
-Date:   Wed, 12 May 2021 11:44:21 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.0
+        id S235596AbhELRcO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 13:32:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:47722 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244346AbhELQpp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 May 2021 12:45:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620837874;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1wT9y/+CUxpw2t+GrCY0Qp+nfyUTGHKVjJx14ixlaYw=;
+        b=Ef0LUMNJ+2iDUklUtfj2fdV2HB1I/+d678yNRRsNH0CmZj2p6+sv+xWuwkLgMvaclkBbe9
+        baMOvRkm/NTiCSawZeWMKdHs7NMcV0vHrjipIl5adLaZjYulxItr4wnA8KimvrvJHa7rfU
+        iGSsuBwZJhcEV4PMOmsBy7npFV2cWyA=
+Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
+ [209.85.219.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-166-Q4B5bJiLM-eG20xtau3gMg-1; Wed, 12 May 2021 12:44:33 -0400
+X-MC-Unique: Q4B5bJiLM-eG20xtau3gMg-1
+Received: by mail-yb1-f198.google.com with SMTP id c15-20020a25a28f0000b02904f8c4864c90so14113524ybi.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 May 2021 09:44:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1wT9y/+CUxpw2t+GrCY0Qp+nfyUTGHKVjJx14ixlaYw=;
+        b=tejCjXERfZL18qNgnHmPOUkR8ebsSGwJw5FT86L6CprVMbv2AWGzQUHO+BXw+3ocMv
+         K7imY+7G7TMKmy5IqcY9jOS180wmXGKJ70Y0UKmkvLiiJHrzGkqsrthp2BmMoaII2Bnd
+         BZUdb8uab/+HQvG8DBxi/7FusVKcHo3J7mNKMQk4lAF1yR8UrALZqM7Z+z9MY/I5eqnL
+         yn36sSGSQG7JPvHOee30X3742tL3qZA+m2UdREFPrW8eCjognRNVWj3bcjy+bwl8G7nd
+         bhqdRLt/C5czyYYtAqTUhU3hdE/h4CKUv4V+jnGYqfqsXXwdz+QyREBHS5n4zxr58C7E
+         M4BQ==
+X-Gm-Message-State: AOAM532Nr91bXcYxgHAakgs2+33ov6eLK2Um3hcWDZ1u7djalGILhdup
+        IJ4r7ojQMJJT2z/3+gztVfTS5o5y+P8X9LhhYKRMZisU59APSw+mrVjGci2aD5qo1z4GTZyTAbb
+        PQzCfOB8cncN8yxFNgNwie22zTKNcpO/9ecca3rQv1w==
+X-Received: by 2002:a25:6886:: with SMTP id d128mr49884184ybc.227.1620837872713;
+        Wed, 12 May 2021 09:44:32 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJziai7GI5a1DWeJt0YlXK6570k2N9+Sy1G9tLOxLGUvPGU+rPfrJ8aFA1k+I7x/KZgli19pSgP+PzUsymRQT9M=
+X-Received: by 2002:a25:6886:: with SMTP id d128mr49884143ybc.227.1620837872433;
+ Wed, 12 May 2021 09:44:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CANFS6bZs3bDQdKH-PYnQqo=3iDUaVy5dH8VQ+JE8WdeVi4o0NQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210507114048.138933-1-omosnace@redhat.com> <a8d138a6-1d34-1457-9266-4abeddb6fdba@schaufler-ca.com>
+ <CAFqZXNtr1YjzRg7fTm+j=0oZF+7C5xEu5J0mCZynP-dgEzvyUg@mail.gmail.com> <24a61ff1-e415-adf8-17e8-d212364d4b97@schaufler-ca.com>
+In-Reply-To: <24a61ff1-e415-adf8-17e8-d212364d4b97@schaufler-ca.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Wed, 12 May 2021 18:44:21 +0200
+Message-ID: <CAFqZXNvB-EyPz1Qz3cCRTr1u1+D+xT-dp7cUxFocYM1AOYSuxw@mail.gmail.com>
+Subject: Re: [PATCH] lockdown,selinux: fix bogus SELinux lockdown permission checks
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, network dev <netdev@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/12/21 9:09 AM, Hyunchul Lee wrote:
-> Hello,
-> 
-> 2021년 5월 12일 (수) 오전 8:57, Eric Sandeen <sandeen@sandeen.net>님이 작성:
->>
->> On 5/11/21 6:53 PM, Namjae Jeon wrote:
->>
->>>> One other thing that I ran across is that fsck seems to validate an image against the sector size of
->>>> the device hosting the image rather than the sector size found in the boot sector, which seems like
->>>> another issue that will come up:
->>>>
->>>> # fsck/fsck.exfat /dev/sdb
->>>> exfatprogs version : 1.1.1
->>>> /dev/sdb: clean. directories 1, files 0
->>>>
->>>> # dd if=/dev/sdb of=test.img
->>>> 524288+0 records in
->>>> 524288+0 records out
->>>> 268435456 bytes (268 MB) copied, 1.27619 s, 210 MB/s
->>>>
->>>> # fsck.exfat test.img
->>>> exfatprogs version : 1.1.1
->>>> checksum of boot region is not correct. 0, but expected 0x3ee721 boot region is corrupted. try to
->>>> restore the region from backup. Fix (y/N)? n
->>>>
->>>> Right now the utilities seem to assume that the device they're pointed at is always a block device,
->>>> and image files are problematic.
->>> Okay, Will fix it.
->>
->> Right now I have a hack like this.
->>
->> 1) don't validate the in-image sector size against the host device size
->> (maybe should only skip this check if it's not a bdev? Or is it OK to have
->> a 4k sector size fs on a 512 device? Probably?)
->>
->> 2) populate the "bd" sector size information from the values read from the image.
->>
->> It feels a bit messy, but it works so far. I guess the messiness stems from
->> assuming that we always have a "bd" block device.
->>
-> 
-> I think we need to keep the "bd" sector size to avoid confusion between
-> the device's sector size and the exfat's sector size.
+On Wed, May 12, 2021 at 6:18 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 5/12/2021 6:21 AM, Ondrej Mosnacek wrote:
+> > On Sat, May 8, 2021 at 12:17 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> On 5/7/2021 4:40 AM, Ondrej Mosnacek wrote:
+> >>> Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
+> >>> lockdown") added an implementation of the locked_down LSM hook to
+> >>> SELinux, with the aim to restrict which domains are allowed to perform
+> >>> operations that would breach lockdown.
+> >>>
+> >>> However, in several places the security_locked_down() hook is called in
+> >>> situations where the current task isn't doing any action that would
+> >>> directly breach lockdown, leading to SELinux checks that are basically
+> >>> bogus.
+> >>>
+> >>> Since in most of these situations converting the callers such that
+> >>> security_locked_down() is called in a context where the current task
+> >>> would be meaningful for SELinux is impossible or very non-trivial (and
+> >>> could lead to TOCTOU issues for the classic Lockdown LSM
+> >>> implementation), fix this by adding a separate hook
+> >>> security_locked_down_globally()
+> >> This is a poor solution to the stated problem. Rather than adding
+> >> a new hook you should add the task as a parameter to the existing hook
+> >> and let the security modules do as they will based on its value.
+> >> If the caller does not have an appropriate task it should pass NULL.
+> >> The lockdown LSM can ignore the task value and SELinux can make its
+> >> own decision based on the task value passed.
+> > The problem with that approach is that all callers would then need to
+> > be updated and I intended to keep the patch small as I'd like it to go
+> > to stable kernels as well.
+> >
+> > But it does seem to be a better long-term solution - would it work for
+> > you (and whichever maintainer would be taking the patch(es)) if I just
+> > added another patch that refactors it to use the task parameter?
+>
+> I can't figure out what you're suggesting. Are you saying that you
+> want to add a new hook *and* add the task parameter?
 
-Sure, it's just that for a filesystem in an image file, there is no meaning to
-the "device sector size" because there is no device.
+No, just to keep this patch as-is (and let it go to stable in this
+form) and post another (non-stable) patch on top of it that undoes the
+new hook and re-implements the fix using your suggestion. (Yeah, it'll
+look weird, but I'm not sure how better to handle such situation - I'm
+open to doing it whatever different way the maintainers prefer.)
 
-...
+-- 
+Ondrej Mosnacek
+Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
-> Is it better to add a sector size parameter to read_boot_region
-> function? This function
-> is also called to read the backup boot region to restore the corrupted
-> main boot region.
-> During this restoration, we need to read the backup boot region with
-> various sector sizes,
-> Because we don't have a certain exfat sector size.
-> 
->>         ret = boot_region_checksum(bd, bs_offset);
->>         if (ret < 0)
->>                 goto err;
->>
->>
-> 
-> I sent the pull request to fix these problems. Could you check this request?
-> https://github.com/exfatprogs/exfatprogs/pull/167
-
-I didn't review that in depth, but it looks like for fsck and dump, it gets the
-sector size from the boot sector rather than from the host device or filesystem,
-which makes sense, at least.
-
-(As an aside, I'd suggest that your new "c2o" function could have a more
-descriptive, self-documenting name.)
-
-But there are other problems where bd->sector_* is used and assumed to relate
-to the filesystem, for example:
-
-# fsck/fsck.exfat /root/test.img 
-exfatprogs version : 1.1.1
-/root/test.img: clean. directories 1, files 0
-# tune/tune.exfat -I 0x1234  /root/test.img 
-exfatprogs version : 1.1.1
-New volume serial : 0x1234
-# fsck/fsck.exfat /root/test.img 
-exfatprogs version : 1.1.1
-checksum of boot region is not correct. 0x3eedc5, but expected 0xe59577e3
-boot region is corrupted. try to restore the region from backup. Fix (y/N)? n
-
-I think because exfat_write_checksum_sector() relies on bd->sector_size.
-
-You probably need to audit every use of bd->sector_size and
-bd->sector_size_bits outside of mkfs, because anything assuming that it
-is related to the filesystem itself, as opposed to the filesytem/device
-hosting it, could be problematic.  Is there any time outside of mkfs that
-you actually care about the device sector size? If not, I might suggest
-trying to isolate that usage to mkfs.
-
-I also wonder about:
-
-        bd->num_sectors = blk_dev_size / DEFAULT_SECTOR_SIZE;
-        bd->num_clusters = blk_dev_size / ui->cluster_size;
-
-is it really correct that this should always be in terms of 512-byte sectors?
-
--Eric
