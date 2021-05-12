@@ -2,122 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DCBE637BF77
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 16:12:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7D7237BFCE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 16:21:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230292AbhELON1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 10:13:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:43098 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230197AbhELON0 (ORCPT
+        id S230460AbhELOWs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 10:22:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60518 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230284AbhELOWs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 10:13:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620828737;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KK1RK63cTihxwj29DLvKTN+9ElMIALQrC9nlHIXIqqQ=;
-        b=ZrFQXq6TO3AYxEQmf7m9QtM6MMPiK6ZbCv/GPnsbRJ+DwqXojmuT3OjZmB8sZ3pmSmnAzI
-        Biw2Utp/uaov1ZAhizF9VMwOLZOqTthiUn3GjO7CdL75jR9ZLvUJYtDmJec1oswA654R5z
-        SOdxBBhLnr6/DBCHXYmusa9w2GNr8A0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-365-oRiIFmxSNSeonLQjVFPA6Q-1; Wed, 12 May 2021 10:12:15 -0400
-X-MC-Unique: oRiIFmxSNSeonLQjVFPA6Q-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B1BFC800D55;
-        Wed, 12 May 2021 14:12:13 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5522D6091A;
-        Wed, 12 May 2021 14:12:11 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <YJvb9S8uxV2X45Cu@zeniv-ca.linux.org.uk>
-References: <YJvb9S8uxV2X45Cu@zeniv-ca.linux.org.uk> <YJvJWj/CEyEUWeIu@codewreck.org> <87tun8z2nd.fsf@suse.de> <87czu45gcs.fsf@suse.de> <2507722.1620736734@warthog.procyon.org.uk> <2882181.1620817453@warthog.procyon.org.uk> <87fsysyxh9.fsf@suse.de> <2891612.1620824231@warthog.procyon.org.uk>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     dhowells@redhat.com, Dominique Martinet <asmadeus@codewreck.org>,
-        Luis Henriques <lhenriques@suse.de>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
-Subject: Re: What sort of inode state does ->evict_inode() expect to see? [was Re: 9p: fscache duplicate cookie]
+        Wed, 12 May 2021 10:22:48 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49064C061574;
+        Wed, 12 May 2021 07:21:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=eOaFDmaOsRB5SZmY7GZQyJP9EcneAu4wq/VqoZMJKA0=; b=D/FBYaSYWv6OzEkl4olo0BI6C6
+        6lwhaao1EEhwuC156MsK3O83RGoowreU8YQfQB3NMNjdeqNmm5y7zT1ognf2xw2tI+5pQvseSWoTe
+        jKliduCU0fYTsRdguXHmSopDmUb4S9WFch0Bdz8N0ws+hdznCsYBY4CQulUwmCi/PszXrTlqmY9qd
+        7k/qshhU7B+zlB5i0nHn6R28xKI1JV12MkWNr55RMoRVAK3D/eYP/s31H+VF4jzQ05gupekLTW5Ko
+        cnXx9fDn8iqGiGckS69vPlSDt6KEM8tPqYc7fF4hwIOF84lMoLJ3N+/YU7f15TMU6uaPJ3XyWf6Ip
+        /tBDqokQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lgpjA-008M00-96; Wed, 12 May 2021 14:21:01 +0000
+Date:   Wed, 12 May 2021 15:20:44 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
+        Chao Yu <yuchao0@huawei.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Thumshirn <jth@kernel.org>,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>
+Subject: Re: [PATCH 03/11] mm: Protect operations adding pages to page cache
+ with invalidate_lock
+Message-ID: <YJvkPEAdVhM9JsbN@casper.infradead.org>
+References: <20210512101639.22278-1-jack@suse.cz>
+ <20210512134631.4053-3-jack@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2919957.1620828730.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 12 May 2021 15:12:10 +0100
-Message-ID: <2919958.1620828730@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210512134631.4053-3-jack@suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Wed, May 12, 2021 at 03:46:11PM +0200, Jan Kara wrote:
 
-> > We're seeing cases where fscache is reporting cookie collisions that a=
-ppears
-> > to be due to ->evict_inode() running parallel with a new inode for the=
- same
-> > filesystem object getting set up.
-> =
+> diff --git a/mm/truncate.c b/mm/truncate.c
+> index 57a618c4a0d6..93bde2741e0e 100644
+> --- a/mm/truncate.c
+> +++ b/mm/truncate.c
+> @@ -415,7 +415,7 @@ EXPORT_SYMBOL(truncate_inode_pages_range);
+>   * @mapping: mapping to truncate
+>   * @lstart: offset from which to truncate
+>   *
+> - * Called under (and serialised by) inode->i_rwsem.
+> + * Called under (and serialised by) inode->i_rwsem and inode->i_mapping_rwsem.
 
-> Huh?  Details, please.  What we are guaranteed is that iget{,5}_locked()=
- et.al.
-> on the same object will either prevent the call of ->evict_inode() (if t=
-hey
-> manage to grab the sucker before I_FREEING is set) or will wait until af=
-ter
-> ->evict_inode() returns.
+mapping->invalidate_lock, surely?  And could we ask lockdep to assert
+this for us instead of just a comment?
 
-See the trace from Luis in:
-
-	https://lore.kernel.org/linux-fsdevel/87fsysyxh9.fsf@suse.de/
-
-It appears that process 20591 manages to set up a new inode that has the s=
-ame
-key parameters as the one process 20585 is tearing down.
-
-0000000097476aaa is the cookie pointer used by the old inode.
-0000000011fa06b1 is the cookie pointer used by the new inode.
-000000003080d900 is the cookie pointer for the parent superblock.
-
-The fscache_acquire traceline emission is caused by one of:
-
- (*) v9fs_qid_iget() or v9fs_qid_iget_dotl() calling
-     v9fs_cache_inode_get_cookie().
-
- (*) v9fs_file_open*(O_RDONLY) or v9fs_vfs_atomic_open*(O_RDONLY) calling
-     v9fs_cache_inode_set_cookie().
-
- (*) v9fs_cache_inode_reset_cookie(), which appears unused.
-
-The fscache_relinquish traceline emission is caused by one of:
-
- (*) v9fs_file_open(O_RDWR/O_WRONLY) or v9fs_vfs_atomic_open(O_RDWR/O_WRON=
-LY)
-     calling v9fs_cache_inode_set_cookie().
-
- (*) v9fs_evict_inode() calling v9fs_cache_inode_put_cookie().
-
- (*) v9fs_cache_inode_reset_cookie(), which appears unused.
-
-=46rom the backtrace in:
-
-	https://lore.kernel.org/linux-fsdevel/87czu45gcs.fsf@suse.de/
-
-the acquisition is being triggered in v9fs_vfs_atomic_open_dotl(), so it s=
-eems
-v9fs_qid_iget_dotl() already happened - which *should* have created the
-cookie.
-
-So it seems more complicated than I thought.
-
-David
-
+>   *
+>   * Note: When this function returns, there can be a page in the process of
+>   * deletion (inside __delete_from_page_cache()) in the specified range.  Thus
+> -- 
+> 2.26.2
+> 
+> 
