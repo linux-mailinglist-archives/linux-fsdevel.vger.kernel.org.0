@@ -2,82 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23FA537BC1D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 13:57:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C81B37BC7A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 14:26:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230265AbhELL6e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 07:58:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36262 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230184AbhELL6d (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 07:58:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 270B5AFEB;
-        Wed, 12 May 2021 11:57:25 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 77612906;
-        Wed, 12 May 2021 11:58:59 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
+        id S231852AbhELM1i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 08:27:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34248 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232035AbhELM1f (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 May 2021 08:27:35 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1F62C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 May 2021 05:26:25 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id DF007C01C; Wed, 12 May 2021 14:26:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1620822382; bh=qRiEqFkARgBkMB/Fjc0OdbBaBkXH4b8kFypa6t8BEow=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=scHnOKsdnhVcwu0hQnueE+cYG7l5yJnpN5A5ieyQH87/Gi68f4U9vULVkMMDMFkwj
+         qOOPbzsjPFnIGL5BbnvEKfRQWnijcTjlKK/skd9MDxZFF2g4SkNgfZUdGYUYsZuiHX
+         aVwm9cloG0RjCbV9mHePnt4x5qegFC9xoUfa7ckO0/mYyraiuJAe2rVEjxzGxVTWRS
+         rkX8330C8hEDGgDNosuKUWi1KmsuO1yxwkzI+CTJlCUFQoJv8h8Z620KmMC2V55tfo
+         624BMFW3R4PYwn+yjQvez1q5kTIpUulBaQoEIBZ+FOsIHM/GIeOQWL5GzjGOFgCAek
+         o4O2flcoiPxmg==
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on nautica.notk.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.0 required=5.0 tests=UNPARSEABLE_RELAY
+        autolearn=unavailable version=3.3.2
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 84612C009;
+        Wed, 12 May 2021 14:26:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1620822382; bh=qRiEqFkARgBkMB/Fjc0OdbBaBkXH4b8kFypa6t8BEow=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=scHnOKsdnhVcwu0hQnueE+cYG7l5yJnpN5A5ieyQH87/Gi68f4U9vULVkMMDMFkwj
+         qOOPbzsjPFnIGL5BbnvEKfRQWnijcTjlKK/skd9MDxZFF2g4SkNgfZUdGYUYsZuiHX
+         aVwm9cloG0RjCbV9mHePnt4x5qegFC9xoUfa7ckO0/mYyraiuJAe2rVEjxzGxVTWRS
+         rkX8330C8hEDGgDNosuKUWi1KmsuO1yxwkzI+CTJlCUFQoJv8h8Z620KmMC2V55tfo
+         624BMFW3R4PYwn+yjQvez1q5kTIpUulBaQoEIBZ+FOsIHM/GIeOQWL5GzjGOFgCAek
+         o4O2flcoiPxmg==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id f0ca766e;
+        Wed, 12 May 2021 12:26:17 +0000 (UTC)
+Date:   Wed, 12 May 2021 21:26:02 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     David Howells <dhowells@redhat.com>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
         Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
         linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
 Subject: Re: 9p: fscache duplicate cookie
-References: <87tun8z2nd.fsf@suse.de> <87czu45gcs.fsf@suse.de>
-        <2507722.1620736734@warthog.procyon.org.uk>
-        <2882181.1620817453@warthog.procyon.org.uk>
-Date:   Wed, 12 May 2021 12:58:58 +0100
-In-Reply-To: <2882181.1620817453@warthog.procyon.org.uk> (David Howells's
-        message of "Wed, 12 May 2021 12:04:13 +0100")
-Message-ID: <87fsysyxh9.fsf@suse.de>
+Message-ID: <YJvJWj/CEyEUWeIu@codewreck.org>
+References: <87tun8z2nd.fsf@suse.de>
+ <87czu45gcs.fsf@suse.de>
+ <2507722.1620736734@warthog.procyon.org.uk>
+ <2882181.1620817453@warthog.procyon.org.uk>
+ <87fsysyxh9.fsf@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87fsysyxh9.fsf@suse.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> writes:
-
-> Luis Henriques <lhenriques@suse.de> wrote:
+Luis Henriques wrote on Wed, May 12, 2021 at 12:58:58PM +0100:
+> <...>-20591   [000] ...2    67.538644: fscache_cookie: GET prn c=000000003080d900 u=50 p=0000000042542ee5 Nc=48 Na=1 f=22
+> <...>-20591   [000] ...1    67.538645: fscache_acquire: c=0000000011fa06b1 p=000000003080d900 pu=50 pc=49 pf=22 n=9p.inod
+> <...>-20599   [003] .N.2    67.542180: 9p_fscache_cookie: v9fs_drop_inode cookie: 0000000097476aaa
+> [...]
 >
->> [ I wonder why the timestamps don't match between the traces and the
->>   kernel log... ]
->
-> I've seen that.  I wonder if the timestamping of printk lines is delayed by
-> the serial driver outputting things.
->
->> So, can we infer from this trace that an evict could actually be on-going
->> but the old cookie wasn't relinquished yet and hence the collision?
->
-> It might be illuminating if you can make it print a traceline at the beginning
-> of v9fs_evict_inode() and in v9fs_drop_inode().  Print the cookie pointer in
-> both.
+> So, this is... annoying, I guess.
 
-Ok, here's what I'm getting:
+Oh, this actually looks different from what I had in mind.
 
-...
-<...>-20575   [002] ...1    67.519214: fscache_acquire: c=0000000097476aaa p=000000003080d900 pu=50 pc=49 pf=22 n=9p.inod
-<...>-20585   [003] ...2    67.535091: 9p_fscache_cookie: v9fs_drop_inode cookie: 00000000cd0099b3
-<...>-20585   [003] ...1    67.535093: 9p_fscache_cookie: v9fs_evict_inode cookie: 00000000cd0099b3
-<...>-20585   [003] ...1    67.535115: fscache_relinquish: c=00000000cd0099b3 u=1 p=000000003080d900 Nc=0 Na=1 f=26 r=0
-<...>-20585   [003] ...1    67.535118: fscache_cookie: PUT rlq c=00000000cd0099b3 u=0 p=000000003080d900 Nc=0 Na=0 f=16
-<...>-20585   [003] ...1    67.535120: fscache_cookie: PUT prn c=000000003080d900 u=49 p=0000000042542ee5 Nc=48 Na=1 f=22
-<...>-20591   [000] ...2    67.538644: fscache_cookie: GET prn c=000000003080d900 u=50 p=0000000042542ee5 Nc=48 Na=1 f=22
-<...>-20591   [000] ...1    67.538645: fscache_acquire: c=0000000011fa06b1 p=000000003080d900 pu=50 pc=49 pf=22 n=9p.inod
-<...>-20599   [003] .N.2    67.542180: 9p_fscache_cookie: v9fs_drop_inode cookie: 0000000097476aaa
-<...>-20599   [003] .N.1    67.542181: 9p_fscache_cookie: v9fs_evict_inode cookie: 0000000097476aaa
-<...>-20591   [000] ...2    67.542980: fscache_cookie: *COLLISION* c=0000000097476aaa u=1 p=000000003080d900 Nc=0 Na=1 f=26
-<...>-20599   [003] ...1    67.543098: fscache_relinquish: c=0000000097476aaa u=1 p=000000003080d900 Nc=0 Na=1 f=26 r=0
-<...>-20599   [003] ...1    67.543100: fscache_cookie: PUT rlq c=0000000097476aaa u=0 p=000000003080d900 Nc=0 Na=0 f=16
+So if I'm reading this right, the dup acquire happens before drop on
+another thread, meaning iget5_locked somehow returned an inode with
+I_NEW on same i_ino than that of the inode that is dropped later?...
 
-(Note that I'm only tracing v9fs_{drop,evict}_inode if we have a cookie
-for the inode; there are a bunch of drop/evict calls where the cookie is
-NULL.)
+How much trust can we actually put in trace ordering off different cpus?
+My theory would really have wanted just that drop before the acquire :D
 
-So, this is... annoying, I guess.
 
-Cheers,
+
+Anyway, I think there's no room for doubt that it's possible to get a
+new inode for the same underlying file before the evict finished; which
+leaves room for a few questions:
+ - as David brought up on IRC (#linuxfs@OFTC), what about the flushing
+of dirty data that happens in evict()? wouldn't it be possible for
+operations on the new inode to read stale data while the old inode is
+being flushed? I think that warrants asking someone who understands this
+better than me as it's probably not 9p specific even if 9p makes it
+easier to get a new inode in such a racy way...
+
+ - for 9p in particular, Christian Schoenebeck (helping with 9p in qemu)
+brought up that we evict inodes too fast too often, so I think it'd help
+to have some sort of inode lifetime management and keep inodes alive for
+a bit.
+As a network filesystem with no coherency built in the protocol I don't
+think we can afford to keep inodes cached too long, and I know some
+servers have troubles if we keep too many fids open, but it would be
+nice to have a few knobs to just keep inodes around a bit longer... This
+won't solve the fundamental problem but if the inode isn't evicted at a
+point where it's likely to be used again then this particular problem
+should be much harder to hit (like other filesystems, actually :P)
+
+I'm not sure how that works though, and won't have much time to work on
+it short term anyway, but it's an idea :/
+
 -- 
-Luis
+Dominique
