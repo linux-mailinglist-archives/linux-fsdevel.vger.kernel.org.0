@@ -2,84 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BDE837BDF2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 15:16:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32A9737BDF7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 15:19:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231532AbhELNSG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 09:18:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45414 "EHLO
+        id S230468AbhELNUl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 09:20:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230370AbhELNRo (ORCPT
+        with ESMTP id S230037AbhELNUk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 09:17:44 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25411C06138E;
-        Wed, 12 May 2021 06:16:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=PWp5GWUmwMmy7IuWpaRzqy+L9+Y1AjYA6yCgQ3sSgvc=; b=2jgNoGGjA5FbUMdzUkhiNCq6jb
-        HHfKQim1kGBM9+4BfRWrmSP3h25FiasH6VB90L6NmCxKViScIk5hhE04UYQuZadhutqUp4vVWDW0K
-        Fy0nzzMpKioMcOpcy+POqPRJKZFz4pRsHvI5BpAdNA10B++WUBpjVmXWiuHKmnqvYJgtwgrsBgpNd
-        /MTfVdk9EGC/ZsHo6CrKxCXbflgxVEuOmRg55odvGnENJ5LjsfjTFXPfA1BoS3udzmEeunXxs3xoJ
-        hpfjNGlwnEzPjvxRrjw5GV/alRF4pEOg14uii636yafZGcytQRLmMmIps+K6S00czzfMlgebbcVVL
-        LjEH9p6Q==;
-Received: from [2001:4bb8:198:fbc8:1036:7ab9:f97a:adbc] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lgoiz-00AO62-77; Wed, 12 May 2021 13:16:29 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "Wunderlich, Mark" <mark.wunderlich@intel.com>,
-        "Vasudevan, Anil" <anil.vasudevan@intel.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Subject: [PATCH 15/15] nvme-multipath: enable polled I/O
-Date:   Wed, 12 May 2021 15:15:45 +0200
-Message-Id: <20210512131545.495160-16-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210512131545.495160-1-hch@lst.de>
-References: <20210512131545.495160-1-hch@lst.de>
+        Wed, 12 May 2021 09:20:40 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2095EC061574;
+        Wed, 12 May 2021 06:19:30 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id a4so23612124wrr.2;
+        Wed, 12 May 2021 06:19:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=50s22QAFIe8Pgp5SC5xJu65yAnW54h9Wui8ifLw1Ctk=;
+        b=FG/cft1gz7AGT8Ob/5BaAtTR6JqzvPxU04ZcAbFc+2GIA6JXxOMiUNvlG3ax3x8LfT
+         A6PhHFM3omwjV2mzmpbiRYBuX2CFianIVYx+EffLzokUWDcmdYJf7YfnX7mT/wpKmkQz
+         oE4m8JBeTGtTppPzLrlAbiTHfnhaAaUGsV/hmegZS2FK8Kj1hLqj5+fuMHufp3tZrnr2
+         pf65d44hzFMV0Kfhrm1cmIvE+asgz8wkAzxAA/iLSpn3Z2U4wdxjALHOZo6qJsSYcxOA
+         +OzQ5z+Iw+Q2zytlO/STm0ddPqGqT1Qv9t+BDgx+bZvmJSMK/wliT6NYEF0tUhkDoayi
+         hUEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=50s22QAFIe8Pgp5SC5xJu65yAnW54h9Wui8ifLw1Ctk=;
+        b=reze5+2wXWUOviEUDaqZsc5F7QKKdMwSyO6zz5a52qInytvI+hin37T+neM73U6mZN
+         grUGdqi4u9J6HE5QrpuSod9Tt+HiFNDLipbKV7EzB8pABX81acIKpbpagQGdl/koYfc9
+         UwOQwDogD9Y2mjMYmvz/7LpEGrGYV/6L80k/Cd1k2SXaA2GaaYSk0SP7l+WJlj8NL+jN
+         CzAAosBVQqC990VSLclZ6WYyPJ9ZnlH0db/RLV3ePID8U2/lTF91juYvTwr1q2jA0ivp
+         vWVeM3dZFk0yA0tzY3bPx92py0zwD82l54koz9qeqBSM+Cnz5WbYzwIHaMZx+mEVPzvL
+         ZtVA==
+X-Gm-Message-State: AOAM531+/pVPSXCRAhs60qcKPsSU921PET79LJBk8jhX1NZCEauTmDYe
+        zC6wQthS0PXwYS3JPjYn6Q==
+X-Google-Smtp-Source: ABdhPJxcdyYrKcu9Mgjt4Emzl9xKlLaTbn2JleyHQWz2V4oYOxZ2rTS8LE3uP5EkdkQum6xL+3LEeA==
+X-Received: by 2002:adf:a4c4:: with SMTP id h4mr2897902wrb.330.1620825568910;
+        Wed, 12 May 2021 06:19:28 -0700 (PDT)
+Received: from localhost.localdomain ([46.53.248.42])
+        by smtp.gmail.com with ESMTPSA id m11sm30480029wri.44.2021.05.12.06.19.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 May 2021 06:19:28 -0700 (PDT)
+Date:   Wed, 12 May 2021 16:19:26 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Marcelo Henrique Cerri <marcelo.cerri@canonical.com>
+Cc:     linux-fsdevel@vger.kernel.org, David Disseldorp <ddiss@suse.de>,
+        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Michel Lespinasse <walken@google.com>,
+        Helge Deller <deller@gmx.de>, Oleg Nesterov <oleg@redhat.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] proc: Avoid mixing integer types in mem_rw()
+Message-ID: <YJvV3jsotDj5COKe@localhost.localdomain>
+References: <20210512125215.3348316-1-marcelo.cerri@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210512125215.3348316-1-marcelo.cerri@canonical.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Set the poll queue flag to enable polling, given that the multipath
-node just dispatches the bios to a lower queue.
+On Wed, May 12, 2021 at 09:52:12AM -0300, Marcelo Henrique Cerri wrote:
+> Use size_t when capping the count argument received by mem_rw(). Since
+> count is size_t, using min_t(int, ...) can lead to a negative value
+> that will later be passed to access_remote_vm(), which can cause
+> unexpected behavior.
+> 
+> Since we are capping the value to at maximum PAGE_SIZE, the conversion
+> from size_t to int when passing it to access_remote_vm() as "len"
+> shouldn't be a problem.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/nvme/host/multipath.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -854,7 +854,7 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
+>  	flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
+>  
+>  	while (count > 0) {
+> -		int this_len = min_t(int, count, PAGE_SIZE);
+> +		size_t this_len = min_t(size_t, count, PAGE_SIZE);
 
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 516fe977606d..e95b93655d06 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -446,6 +446,15 @@ int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl, struct nvme_ns_head *head)
- 		goto out;
- 	blk_queue_flag_set(QUEUE_FLAG_NONROT, q);
- 	blk_queue_flag_set(QUEUE_FLAG_NOWAIT, q);
-+	/*
-+	 * This assumes all controllers that refer to a namespace either
-+	 * support poll queues or not.  That is not a strict guarantee,
-+	 * but if the assumption is wrong the effect is only suboptimal
-+	 * performance but not correctness problem.
-+	 */
-+	if (ctrl->tagset->nr_maps > HCTX_TYPE_POLL &&
-+	    ctrl->tagset->map[HCTX_TYPE_POLL].nr_queues)
-+		blk_queue_flag_set(QUEUE_FLAG_POLL, q);
- 
- 	/* set to a default value for 512 until disk is validated */
- 	blk_queue_logical_block_size(q, 512);
--- 
-2.30.2
-
+As much as I don't like signed integers, VFS caps read/write lengths
+at INT_MAX & PAGE_MASK, so casting doesn't change values.
