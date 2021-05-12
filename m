@@ -2,171 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3984637B479
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 05:24:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 177E437B486
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 05:29:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230023AbhELDZZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 23:25:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:59542 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229848AbhELDZZ (ORCPT
+        id S229973AbhELDaT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 23:30:19 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2634 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229848AbhELDaS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 23:25:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620789858;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=83RC2qtc5cEihhWItsXrcoyXmMoP0cw+w8BGnKZsq/4=;
-        b=WDCphuP01ynz1MmB44EN6CcUA2lgJSbzjatgSb6FG4+j65ni/pJDe0Mktwz1/TNK6Za0y5
-        KhFpjOWO5FHOPwZ0AB3h8caC9FP/ugIbgYHRuXj0M4/7BuLtq11d/lUQK9B9MB3KKnfJQz
-        dXaZHWlzvamivzeesalJYmdiRkh939c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-506-L_Rd4dvCOzqELtSY7GHHIA-1; Tue, 11 May 2021 23:24:14 -0400
-X-MC-Unique: L_Rd4dvCOzqELtSY7GHHIA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EDF651883522;
-        Wed, 12 May 2021 03:24:12 +0000 (UTC)
-Received: from T590 (ovpn-12-110.pek2.redhat.com [10.72.12.110])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 648725D9D7;
-        Wed, 12 May 2021 03:24:04 +0000 (UTC)
-Date:   Wed, 12 May 2021 11:23:59 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Gulam Mohamed <gulam.mohamed@oracle.com>
-Cc:     viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hch@lst.de,
-        martin.petersen@oracle.com, junxiao.bi@oracle.com
-Subject: Re: [PATCH V1 1/1] Fix race between iscsi logout and systemd-udevd
-Message-ID: <YJtKT7rLi2CFqDsV@T590>
-References: <20210511181558.380764-1-gulam.mohamed@oracle.com>
+        Tue, 11 May 2021 23:30:18 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Fg0YR1p0YzQkTx;
+        Wed, 12 May 2021 11:25:47 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 12 May 2021 11:29:06 +0800
+Subject: Re: [PATCH 3/8] mm/debug: Factor PagePoisoned out of __dump_page
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
+        <akpm@linux-foundation.org>
+CC:     William Kucharski <william.kucharski@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Anshuman Khandual <anshuman.khandual@arm.com>
+References: <20210430145549.2662354-1-willy@infradead.org>
+ <20210430145549.2662354-4-willy@infradead.org>
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+Message-ID: <2baf684e-f35d-5c42-fa11-1e061a12a81f@huawei.com>
+Date:   Wed, 12 May 2021 11:29:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210511181558.380764-1-gulam.mohamed@oracle.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20210430145549.2662354-4-willy@infradead.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.177.243]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 11, 2021 at 06:15:58PM +0000, Gulam Mohamed wrote:
-> Problem description:
+
+
+On 2021/4/30 22:55, Matthew Wilcox (Oracle) wrote:
+> Move the PagePoisoned test into dump_page().  Skip the hex print
+> for poisoned pages -- we know they're full of ffffffff.  Move the
+> reason printing from __dump_page() to dump_page().
 > 
-> During the kernel patching, customer was switching between the iscsi
-> disks. To switch between the iscsi disks, it was logging out the
-> currently connected iscsi disk and then logging in to the new iscsi
-> disk. This was being done using a script. Customer was also using the
-> "parted" command in the script to list the partition details just
-> before the iscsi logout. This usage of "parted" command was creating
-> an issue and we were seeing stale links of the
-> disks in /sys/class/block.
-> 
-> Analysis:
-> 
-> As part of iscsi logout, the partitions and the disk will be removed
-> in the function del_gendisk() which is done through a kworker. The
-> parted command, used to list the partitions, will open the disk in
-> RW mode which results in systemd-udevd re-reading the partitions. The
-> ioctl used to re-read partitions is BLKRRPART. This will trigger the
-> rescanning of partitions which will also delete and re-add the
-> partitions. So, both iscsi logout processing (through kworker) and the
-> "parted" command (through systemd-udevd) will be involved in
-> add/delete of partitions. In our case, the following sequence of
-> operations happened (the iscsi device is /dev/sdb with partition sdb1):
-> 
-> 1. sdb1 was removed by PARTED
-> 2. kworker, as part of iscsi logout, couldn't remove sdb1 as it was
->    already removed by PARTED
-> 3. sdb1 was added by parted
-> 4. sdb was NOW removed as part of iscsi logout (the last part of the
->    device removal after remoing the partitions)
-> 
-> Since the symlink /sys/class/block/sdb1 points to
-> /sys/class/devices/platform/hostx/sessionx/targetx:x/block/sdb/sdb1
-> and since sdb is already removed, the symlink /sys/class/block/sdb1
-> will be orphan and stale. So, this stale link is a result of the race
-> condition in kernel between the systemd-udevd and iscsi-logout
-> processing as described above. We were able to reproduce this even
-> with latest upstream kernel.
-> 
-> Fix:
-> 
-> While Dropping/Adding partitions as part of BLKRRPART ioctl, take the
-> read lock for "bdev_lookup_sem" to sync with del_gendisk().
-> 
-> Signed-off-by: Gulam Mohamed <gulam.mohamed@oracle.com>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+> Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 > ---
->  fs/block_dev.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
+>   mm/debug.c | 25 +++++++------------------
+>   1 file changed, 7 insertions(+), 18 deletions(-)
 > 
-> diff --git a/fs/block_dev.c b/fs/block_dev.c
-> index 09d6f7229db9..e903a7edfd63 100644
-> --- a/fs/block_dev.c
-> +++ b/fs/block_dev.c
-> @@ -1245,9 +1245,17 @@ int bdev_disk_changed(struct block_device *bdev, bool invalidate)
->  	lockdep_assert_held(&bdev->bd_mutex);
->  
->  rescan:
-> +	down_read(&bdev_lookup_sem);
-> +	if (!(disk->flags & GENHD_FL_UP)) {
-> +		up_read(&bdev_lookup_sem);
-> +		return -ENXIO;
-> +	}
+> diff --git a/mm/debug.c b/mm/debug.c
+> index 84cdcd0f7bd3..e73fe0a8ec3d 100644
+> --- a/mm/debug.c
+> +++ b/mm/debug.c
+> @@ -42,11 +42,10 @@ const struct trace_print_flags vmaflag_names[] = {
+>   	{0, NULL}
+>   };
+>   
+> -static void __dump_page(struct page *page, const char *reason)
+> +static void __dump_page(struct page *page)
+>   {
+>   	struct page *head = compound_head(page);
+>   	struct address_space *mapping;
+> -	bool page_poisoned = PagePoisoned(page);
+>   	bool compound = PageCompound(page);
+>   	/*
+>   	 * Accessing the pageblock without the zone lock. It could change to
+> @@ -58,16 +57,6 @@ static void __dump_page(struct page *page, const char *reason)
+>   	int mapcount;
+>   	char *type = "";
+>   
+> -	/*
+> -	 * If struct page is poisoned don't access Page*() functions as that
+> -	 * leads to recursive loop. Page*() check for poisoned pages, and calls
+> -	 * dump_page() when detected.
+> -	 */
+> -	if (page_poisoned) {
+> -		pr_warn("page:%px is uninitialized and poisoned", page);
+> -		goto hex_only;
+> -	}
+> -
+>   	if (page < head || (page >= head + MAX_ORDER_NR_PAGES)) {
+>   		/*
+>   		 * Corrupt page, so we cannot call page_mapping. Instead, do a
+> @@ -173,8 +162,6 @@ static void __dump_page(struct page *page, const char *reason)
+>   
+>   	pr_warn("%sflags: %#lx(%pGp)%s\n", type, head->flags, &head->flags,
+>   		page_cma ? " CMA" : "");
+> -
+> -hex_only:
+>   	print_hex_dump(KERN_WARNING, "raw: ", DUMP_PREFIX_NONE, 32,
+>   			sizeof(unsigned long), page,
+>   			sizeof(struct page), false);
+> @@ -182,14 +169,16 @@ static void __dump_page(struct page *page, const char *reason)
+>   		print_hex_dump(KERN_WARNING, "head: ", DUMP_PREFIX_NONE, 32,
+>   			sizeof(unsigned long), head,
+>   			sizeof(struct page), false);
+> -
+> -	if (reason)
+> -		pr_warn("page dumped because: %s\n", reason);
+>   }
+>   
+>   void dump_page(struct page *page, const char *reason)
+>   {
+> -	__dump_page(page, reason);
+> +	if (PagePoisoned(page))
+> +		pr_warn("page:%p is uninitialized and poisoned", page);
+> +	else
+> +		__dump_page(page);
 
-This way might cause deadlock:
-
-1) code path BLKRRPART:
-	mutex_lock(bdev->bd_mutex)
-	down_read(&bdev_lookup_sem);
-
-2) del_gendisk():
-	down_write(&bdev_lookup_sem);
-	mutex_lock(&disk->part0->bd_mutex);
-
-Given GENHD_FL_UP is only checked when opening one bdev, and
-fsync_bdev() and __invalidate_device() needn't to open bdev, so
-the following way may work for your issue:
-
-
-diff --git a/block/genhd.c b/block/genhd.c
-index 39ca97b0edc6..5eb27995d4ab 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -617,6 +617,7 @@ void del_gendisk(struct gendisk *disk)
- 
- 	mutex_lock(&disk->part0->bd_mutex);
- 	blk_drop_partitions(disk);
-+	disk->flags &= ~GENHD_FL_UP;
- 	mutex_unlock(&disk->part0->bd_mutex);
- 
- 	fsync_bdev(disk->part0);
-@@ -629,7 +630,6 @@ void del_gendisk(struct gendisk *disk)
- 	remove_inode_hash(disk->part0->bd_inode);
- 
- 	set_capacity(disk, 0);
--	disk->flags &= ~GENHD_FL_UP;
- 	up_write(&bdev_lookup_sem);
- 
- 	if (!(disk->flags & GENHD_FL_HIDDEN)) {
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index b8abccd03e5d..06b70b8e3f67 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1245,6 +1245,8 @@ int bdev_disk_changed(struct block_device *bdev, bool invalidate)
- 	lockdep_assert_held(&bdev->bd_mutex);
- 
- rescan:
-+	if(!(disk->flags & GENHD_FL_UP))
-+		return -ENXIO;
- 	if (bdev->bd_part_count)
- 		return -EBUSY;
- 	sync_blockdev(bdev);
-
+Hi Matthew, dump_page_owenr() should be called when !PagePoisoned, right?
 
 
-Thanks,
-Ming
-
+> +	if (reason)
+> +		pr_warn("page dumped because: %s\n", reason);
+>   	dump_page_owner(page);
+>   }
+>   EXPORT_SYMBOL(dump_page);
+> 
