@@ -2,155 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8DDB37B6B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 09:16:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B167437B6CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 09:23:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230070AbhELHRZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 03:17:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49148 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229850AbhELHRZ (ORCPT
+        id S230114AbhELHYd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 03:24:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23993 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230097AbhELHYc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 03:17:25 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E9C9C061574;
-        Wed, 12 May 2021 00:16:17 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id p20so4340700ljj.8;
-        Wed, 12 May 2021 00:16:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AwjeWzlPG2g5R+sdmU5M5sb7j3swoy8IxQdEsMvbG4Q=;
-        b=uCv4YBESQQQmcSlke+/ZnTw1MWxd4lYlbdQCcK/E3D362iuX8reUFZ3rM6y3a1lx8U
-         j+/deS+1QDnaa3dD/OZVSVG7RNeapw0DW5ielpoKkjTKbbJKW6b5yAMP71i6qJuAuPxe
-         CMusQC6VujXGI7mMyZ2ap+OTFweuLT9OhwMFqu09uFqKBc481SaBwjI6T8OvtHv7D4GJ
-         hmZLoBuhzdeM/KwODW7byoJTugwFd8WMtyi1RPPRrUuPjcBuCa25drVWs6cW7lF4dVlz
-         vTV58mlOLcMb8d5B6xjh4CHHZhjPikH1H5nZ6y3EHnQ0QnxaPR4RDOqg8Y5Quikg5yG9
-         cJyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AwjeWzlPG2g5R+sdmU5M5sb7j3swoy8IxQdEsMvbG4Q=;
-        b=LtOxfwGos9ySkbvDy3Dkbopg8lorvuqqARV9MdVMF1PhFO1VsoB37amYQaWHzmkTe+
-         ND0nb3T29FNWX7o+uWPajCa2aOvtPo/WaX4GBQW7e9XXjXhju2zzwdo2x/yfqWwqiBma
-         2IfvcxKAXUafh1gu6M1Bp66l7IcMxu7MZ5AvFMl/ZbC7BgW7sRZ0uHtZf6G3sxHC03BZ
-         ugfh2fhDkIKCCLKQ4FHKChNNqyNApZeSbgLqZnvefj45/vRtZ4dTuCP0Sq+ADqTb5uga
-         FH34nUTk290nPQkEIkKuvo6wK8F+vRFArNn61E8XcmdxVQwjkzE5O87i+pJnGcFGYHeK
-         QD1Q==
-X-Gm-Message-State: AOAM530aYXBolO6Wh1A9xIH1vzlZnsXyetCelj9GBT/8yFSCpcVQOf7Y
-        qRUdQvp0fppZmYmqdKS4KgSbVemWR5yV/yclphQzix2d3nUV/w==
-X-Google-Smtp-Source: ABdhPJzwbF45068sOKuVbS99RuyNasIiO4Bu8vGIxmyAYguPlecABZY6BfxGYP/E+Hlv3/Y2M2tvvzz5avozG52uMTo=
-X-Received: by 2002:a05:651c:224:: with SMTP id z4mr26981747ljn.457.1620803775316;
- Wed, 12 May 2021 00:16:15 -0700 (PDT)
+        Wed, 12 May 2021 03:24:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620804204;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vg/cll4jMfmP1m7tM5YSccYAw8vElQEoOqiM7v+Lw54=;
+        b=gV1qTN5zBhJItWDz/uKryN2+6nh7Pwul7vRVlsSYzlH7U6Z3cFCoTDrg4bnKidFWHg5xfW
+        ppZgh95wrdoms3JvmWeuGNN58S4bV22dH7MiJpxGL2q2h+srlYtAHB5R7ZK1IsrQpmBDzf
+        3PQpOZuZ+SJ3oMgNdScCmORsZnmPJXE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-593-FrlSMN87OIaCe4JumnKwJw-1; Wed, 12 May 2021 03:23:23 -0400
+X-MC-Unique: FrlSMN87OIaCe4JumnKwJw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A38411854E26;
+        Wed, 12 May 2021 07:23:21 +0000 (UTC)
+Received: from T590 (ovpn-13-214.pek2.redhat.com [10.72.13.214])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1800114103;
+        Wed, 12 May 2021 07:23:14 +0000 (UTC)
+Date:   Wed, 12 May 2021 15:23:10 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Gulam Mohamed <gulam.mohamed@oracle.com>, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        martin.petersen@oracle.com, junxiao.bi@oracle.com
+Subject: Re: [PATCH V1 1/1] Fix race between iscsi logout and systemd-udevd
+Message-ID: <YJuCXh2ykAuDcuTb@T590>
+References: <20210511181558.380764-1-gulam.mohamed@oracle.com>
+ <YJtKT7rLi2CFqDsV@T590>
+ <20210512063505.GA18367@lst.de>
 MIME-Version: 1.0
-References: <162077975380.14498.11347675368470436331.stgit@web.messagingengine.com>
- <YJtz6mmgPIwEQNgD@kroah.com>
-In-Reply-To: <YJtz6mmgPIwEQNgD@kroah.com>
-From:   Fox Chen <foxhlchen@gmail.com>
-Date:   Wed, 12 May 2021 15:16:01 +0800
-Message-ID: <CAC2o3D+28g67vbNOaVxuF0OfE0RjFGHVwAcA_3t1AAS_b_EnPg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] kernfs: proposed locking and concurrency improvement
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Ian Kent <raven@themaw.net>, Tejun Heo <tj@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Brice Goglin <brice.goglin@gmail.com>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210512063505.GA18367@lst.de>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 12, 2021 at 2:21 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, May 12, 2021 at 08:38:35AM +0800, Ian Kent wrote:
-> > There have been a few instances of contention on the kernfs_mutex during
-> > path walks, a case on very large IBM systems seen by myself, a report by
-> > Brice Goglin and followed up by Fox Chen, and I've since seen a couple
-> > of other reports by CoreOS users.
-> >
-> > The common thread is a large number of kernfs path walks leading to
-> > slowness of path walks due to kernfs_mutex contention.
-> >
-> > The problem being that changes to the VFS over some time have increased
-> > it's concurrency capabilities to an extent that kernfs's use of a mutex
-> > is no longer appropriate. There's also an issue of walks for non-existent
-> > paths causing contention if there are quite a few of them which is a less
-> > common problem.
-> >
-> > This patch series is relatively straight forward.
-> >
-> > All it does is add the ability to take advantage of VFS negative dentry
-> > caching to avoid needless dentry alloc/free cycles for lookups of paths
-> > that don't exit and change the kernfs_mutex to a read/write semaphore.
-> >
-> > The patch that tried to stay in VFS rcu-walk mode during path walks has
-> > been dropped for two reasons. First, it doesn't actually give very much
-> > improvement and, second, if there's a place where mistakes could go
-> > unnoticed it would be in that path. This makes the patch series simpler
-> > to review and reduces the likelihood of problems going unnoticed and
-> > popping up later.
-> >
-> > The patch to use a revision to identify if a directory has changed has
-> > also been dropped. If the directory has changed the dentry revision
-> > needs to be updated to avoid subsequent rb tree searches and after
-> > changing to use a read/write semaphore the update also requires a lock.
-> > But the d_lock is the only lock available at this point which might
-> > itself be contended.
-> >
-> > Changes since v3:
-> > - remove unneeded indirection when referencing the super block.
-> > - check if inode attribute update is actually needed.
-> >
-> > Changes since v2:
-> > - actually fix the inode attribute update locking.
-> > - drop the patch that tried to stay in rcu-walk mode.
-> > - drop the use a revision to identify if a directory has changed patch.
-> >
-> > Changes since v1:
-> > - fix locking in .permission() and .getattr() by re-factoring the attribute
-> >   handling code.
-> > ---
-> >
-> > Ian Kent (5):
-> >       kernfs: move revalidate to be near lookup
-> >       kernfs: use VFS negative dentry caching
-> >       kernfs: switch kernfs to use an rwsem
-> >       kernfs: use i_lock to protect concurrent inode updates
-> >       kernfs: add kernfs_need_inode_refresh()
-> >
-> >
-> >  fs/kernfs/dir.c             | 170 ++++++++++++++++++++----------------
-> >  fs/kernfs/file.c            |   4 +-
-> >  fs/kernfs/inode.c           |  45 ++++++++--
-> >  fs/kernfs/kernfs-internal.h |   5 +-
-> >  fs/kernfs/mount.c           |  12 +--
-> >  fs/kernfs/symlink.c         |   4 +-
-> >  include/linux/kernfs.h      |   2 +-
-> >  7 files changed, 147 insertions(+), 95 deletions(-)
-> >
-> > --
-> > Ian
-> >
->
-> Any benchmark numbers that you ran that are better/worse with this patch
-> series?  That woul dbe good to know, otherwise you aren't changing
-> functionality here, so why would we take these changes?  :)
+On Wed, May 12, 2021 at 08:35:05AM +0200, Christoph Hellwig wrote:
+> On Wed, May 12, 2021 at 11:23:59AM +0800, Ming Lei wrote:
+> > 
+> > 1) code path BLKRRPART:
+> > 	mutex_lock(bdev->bd_mutex)
+> > 	down_read(&bdev_lookup_sem);
+> > 
+> > 2) del_gendisk():
+> > 	down_write(&bdev_lookup_sem);
+> > 	mutex_lock(&disk->part0->bd_mutex);
+> > 
+> > Given GENHD_FL_UP is only checked when opening one bdev, and
+> > fsync_bdev() and __invalidate_device() needn't to open bdev, so
+> > the following way may work for your issue:
+> 
+> If we move the clearing of GENHD_FL_UP earlier we can do away with
+> bdev_lookup_sem entirely I think.  Something like this untested patch:
+> 
+> diff --git a/block/genhd.c b/block/genhd.c
+> index a5847560719c..ef717084b343 100644
+> --- a/block/genhd.c
+> +++ b/block/genhd.c
+> @@ -29,8 +29,6 @@
+>  
+>  static struct kobject *block_depr;
+>  
+> -DECLARE_RWSEM(bdev_lookup_sem);
+> -
+>  /* for extended dynamic devt allocation, currently only one major is used */
+>  #define NR_EXT_DEVT		(1 << MINORBITS)
+>  static DEFINE_IDA(ext_devt_ida);
+> @@ -609,13 +607,8 @@ void del_gendisk(struct gendisk *disk)
+>  	blk_integrity_del(disk);
+>  	disk_del_events(disk);
+>  
+> -	/*
+> -	 * Block lookups of the disk until all bdevs are unhashed and the
+> -	 * disk is marked as dead (GENHD_FL_UP cleared).
+> -	 */
+> -	down_write(&bdev_lookup_sem);
+> -
+>  	mutex_lock(&disk->open_mutex);
+> +	disk->flags &= ~GENHD_FL_UP;
+>  	blk_drop_partitions(disk);
+>  	mutex_unlock(&disk->open_mutex);
+>  
+> @@ -627,10 +620,7 @@ void del_gendisk(struct gendisk *disk)
+>  	 * up any more even if openers still hold references to it.
+>  	 */
+>  	remove_inode_hash(disk->part0->bd_inode);
+> -
+>  	set_capacity(disk, 0);
+> -	disk->flags &= ~GENHD_FL_UP;
+> -	up_write(&bdev_lookup_sem);
+>  
+>  	if (!(disk->flags & GENHD_FL_HIDDEN)) {
+>  		sysfs_remove_link(&disk_to_dev(disk)->kobj, "bdi");
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index 8dd8e2fd1401..bde23940190f 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -1377,33 +1377,24 @@ struct block_device *blkdev_get_no_open(dev_t dev)
+>  	struct block_device *bdev;
+>  	struct gendisk *disk;
+>  
+> -	down_read(&bdev_lookup_sem);
+>  	bdev = bdget(dev);
+>  	if (!bdev) {
+> -		up_read(&bdev_lookup_sem);
+>  		blk_request_module(dev);
+> -		down_read(&bdev_lookup_sem);
+> -
+>  		bdev = bdget(dev);
+>  		if (!bdev)
+> -			goto unlock;
+> +			return NULL;
+>  	}
+>  
+>  	disk = bdev->bd_disk;
+>  	if (!kobject_get_unless_zero(&disk_to_dev(disk)->kobj))
+>  		goto bdput;
+> -	if ((disk->flags & (GENHD_FL_UP | GENHD_FL_HIDDEN)) != GENHD_FL_UP)
+> -		goto put_disk;
+>  	if (!try_module_get(bdev->bd_disk->fops->owner))
+>  		goto put_disk;
+> -	up_read(&bdev_lookup_sem);
+>  	return bdev;
+>  put_disk:
+>  	put_disk(disk);
+>  bdput:
+>  	bdput(bdev);
+> -unlock:
+> -	up_read(&bdev_lookup_sem);
+>  	return NULL;
+>  }
+>  
+> @@ -1462,7 +1453,10 @@ struct block_device *blkdev_get_by_dev(dev_t dev, fmode_t mode, void *holder)
+>  
+>  	disk_block_events(disk);
+>  
+> +	ret = -ENXIO;
+>  	mutex_lock(&disk->open_mutex);
+> +	if ((disk->flags & (GENHD_FL_UP | GENHD_FL_HIDDEN)) != GENHD_FL_UP)
+> +		goto abort_claiming;
+>  	if (bdev_is_partition(bdev))
+>  		ret = blkdev_get_part(bdev, mode);
+>  	else
 
-Let me run it on my benchmark and bring back the result to you.
+This patch looks fine, and new openers can be prevented really with help
+of ->open_mutex.
 
-> thanks,
->
-> greg k-h
+Thanks, 
+Ming
 
-
-thanks,
-fox
