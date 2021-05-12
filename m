@@ -2,88 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D741D37BD77
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 14:55:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7798337BD85
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 14:57:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233522AbhELM4Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 08:56:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55166 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233514AbhELMyZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 08:54:25 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BD1AC61177;
-        Wed, 12 May 2021 12:53:13 +0000 (UTC)
-Date:   Wed, 12 May 2021 14:53:10 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        kernel@pengutronix.de, Jan Kara <jack@suse.com>,
-        Richard Weinberger <richard@nod.at>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v3 0/2] quota: Add mountpath based quota support
-Message-ID: <20210512125310.m3b4ralhwsdocpyb@wittgenstein>
-References: <20210304123541.30749-1-s.hauer@pengutronix.de>
- <20210316112916.GA23532@quack2.suse.cz>
- <20210512110149.GA31495@quack2.suse.cz>
+        id S232514AbhELM6n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 08:58:43 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37358 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231311AbhELM61 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 May 2021 08:58:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620824239;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ki09mF0tspJ6KFUpaOlyOAnAB4n3svOnlL/ruLe8uGQ=;
+        b=cC8kmO8gHaN7jD+PgV9qnHVSWOPH8SxZkMv4SdY0lqNNy49EcR3j9affoIdBhy2ELDpbhL
+        tS+q7TsQPC+tQeMp2/Q+XK5wK4RmhouMtzfd5uPrccEcsiNmpdpQXHhH+vT+dluqfwtM2j
+        uHIq5XIaVSBhlFrrN33+Pd9xg+0C8KA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-231-mK13o95yOqqRB0Pm0D2nuA-1; Wed, 12 May 2021 08:57:15 -0400
+X-MC-Unique: mK13o95yOqqRB0Pm0D2nuA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E3863100945F;
+        Wed, 12 May 2021 12:57:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 499605D6A8;
+        Wed, 12 May 2021 12:57:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YJvJWj/CEyEUWeIu@codewreck.org>
+References: <YJvJWj/CEyEUWeIu@codewreck.org> <87tun8z2nd.fsf@suse.de> <87czu45gcs.fsf@suse.de> <2507722.1620736734@warthog.procyon.org.uk> <2882181.1620817453@warthog.procyon.org.uk> <87fsysyxh9.fsf@suse.de>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     dhowells@redhat.com, Dominique Martinet <asmadeus@codewreck.org>,
+        Luis Henriques <lhenriques@suse.de>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
+Subject: What sort of inode state does ->evict_inode() expect to see? [was Re: 9p: fscache duplicate cookie]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210512110149.GA31495@quack2.suse.cz>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2891611.1620824231.1@warthog.procyon.org.uk>
+Date:   Wed, 12 May 2021 13:57:11 +0100
+Message-ID: <2891612.1620824231@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 12, 2021 at 01:01:49PM +0200, Jan Kara wrote:
-> Added a few more CCs.
-> 
-> On Tue 16-03-21 12:29:16, Jan Kara wrote:
-> > On Thu 04-03-21 13:35:38, Sascha Hauer wrote:
-> > > Current quotactl syscall uses a path to a block device to specify the
-> > > filesystem to work on which makes it unsuitable for filesystems that
-> > > do not have a block device. This series adds a new syscall quotactl_path()
-> > > which replaces the path to the block device with a mountpath, but otherwise
-> > > behaves like original quotactl.
-> > > 
-> > > This is done to add quota support to UBIFS. UBIFS quota support has been
-> > > posted several times with different approaches to put the mountpath into
-> > > the existing quotactl() syscall until it has been suggested to make it a
-> > > new syscall instead, so here it is.
-> > > 
-> > > I'm not posting the full UBIFS quota series here as it remains unchanged
-> > > and I'd like to get feedback to the new syscall first. For those interested
-> > > the most recent series can be found here: https://lwn.net/Articles/810463/
-> > 
-> > Thanks. I've merged the two patches into my tree and will push them to
-> > Linus for the next merge window.
-> 
-> So there are some people at LWN whining that quotactl_path() has no dirfd
-> and flags arguments for specifying the target. Somewhat late in the game
-> but since there's no major release with the syscall and no userspace using
-> it, I think we could still change that. What do you think? What they
-> suggest does make some sense. But then, rather then supporting API for
-> million-and-one ways in which I may wish to lookup a fs object, won't it be
-> better to just pass 'fd' in the new syscall (it may well be just O_PATH fd
-> AFAICT) and be done with that?
+Hi Al,
 
-I think adding a dirfd argument makes a lot of sense (Unless there are
-some restrictions around quotas I'm misunderstanding.).
+We're seeing cases where fscache is reporting cookie collisions that appears
+to be due to ->evict_inode() running parallel with a new inode for the same
+filesystem object getting set up.
 
-If I may: in general, I think we should aim to not add additional system
-calls that operate on paths only. Purely path-based apis tend to be the
-source of security issues especially when scoped lookups are really
-important which given the ubiquity of sandboxing solutions nowadays is
-quite often actually.
-For example, when openat2() landed it gave such a boost in lookup
-capabilities that I switched some libraries over to only ever do scoped
-lookups, i.e. I decide on a starting point that gets opened path-based
-and then explicitly express how I want that lookup to proceed ultimately
-opening the final path component on which I want to perform operations.
-Combined with the mount API almost everything can be done purely fd
-based.
+What's happening is that in all of 9p, afs, ceph, cifs and nfs, the fscache
+cookie is being relinquished in ->evict_inode(), but that appears to be too
+late because by that time, a new inode can be being allocated and a new cookie
+get acquired.
 
-In addition to that dirfd-scopable system calls allow for a much nicer
-api experience when programming in userspace.
+evict_inode is a slow process, potentially, because it has to dismantle the
+pagecache and wait for any outstanding DMA to the cache; then seal the cache
+object - which involves a synchronous journalled op (setxattr), which means
+that there's a lot of scope for a race.
 
-Christian
+Is there a better place to this?  drop_inode() maybe?  And is there a good
+place to wait on all the DMAs that might be in progress to/from the cache?
+(This might involve waiting for PG_locked or PG_fscache to be cleared on each
+page).
+
+David
+
