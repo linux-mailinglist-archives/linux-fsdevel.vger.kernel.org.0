@@ -2,100 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF73437B8AD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 10:54:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 337A137B9CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 11:57:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230440AbhELIzc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 04:55:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43048 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230407AbhELIzc (ORCPT
+        id S230300AbhELJ6J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 05:58:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:47554 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230413AbhELJ6G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 04:55:32 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4092C061574;
-        Wed, 12 May 2021 01:54:22 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id x2so32595537lff.10;
-        Wed, 12 May 2021 01:54:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D9JdGULdbtUgDnObe3xdIqfl7fZ3OmRo5qKT1ikKmgg=;
-        b=tju9u6XKbpkjmKetjX6NCf0If+B/JClJNluX2MMjZzAZ72cqFi9Bbssx4pYjN8En9h
-         7MgBIhQNXX71jyUR5ggbR8DxCKLQePlP8Z8N1wE/MjpJUJPDPkbDJm139Yx+tU+3AGkB
-         VkA+6N+4kz2zeF0WOpEAOBMKQeTUECniVfBh6vE+A3NoAqikKGQFD+88rLS4iGOn6/78
-         l00SEVA6lXB8FDsj4JXOhugydgIPwBTeC5u1hINBD3y2re7Fju0BzrAgLdjOqfFjsVJM
-         qlJlnKBPtZvkwPU7gP3YcUbBvpi/Flk5oVMAQw6s6LJiKdZYfDl4WK+T1Hk7IC+G3bVu
-         cZ9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D9JdGULdbtUgDnObe3xdIqfl7fZ3OmRo5qKT1ikKmgg=;
-        b=RYLA6x3kruV2OiB7C76tY1ksO2cmsD9YniShTJGS4j9ABEkSXBTa02n3kmMhWNvIkd
-         jIqYaBdCDyI4n2CpTzFuQX9+HQXmU8UN9Wpsn7qeba1Y5lmBqD2oxFRHAHE4S/1+tBy1
-         k53wVUNN2oG+RJmLQJ9dq1YHUPqsSRcYwwsJ8ZpZMlVgSOX6YB1LKmI2pWXWYiR3UCzk
-         7qsMksLs5HgwMno4K9sGyC4BsfcML+3r2be9jRIu4Ts7YyGn6Y5gjLtP4HRwY1AmIjH1
-         ZoBPqNwCuPeh2qOYMw9mKZw2iMHD1jmxNMCBnjffi3OSNMvNixTOoV/1clha3RSh+sg7
-         UhSA==
-X-Gm-Message-State: AOAM531AfXqfo5Juw67bmDaI1PYjXBS621GKZ3SsXlvSzhINdv3nVp0g
-        mRDZunTxvavwkmcS8JVxX56FK1wbRopQqlf18/A=
-X-Google-Smtp-Source: ABdhPJyhl/L76ssfFM9z3stujaS23tmJvJXgG7KUeVeTjTXXw6HAQx4fUZChmaajLcFG/fPMvv50D182DxsgdnwAsCA=
-X-Received: by 2002:a05:6512:3481:: with SMTP id v1mr9701751lfr.376.1620809661318;
- Wed, 12 May 2021 01:54:21 -0700 (PDT)
+        Wed, 12 May 2021 05:58:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620813419;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=AuuHiyHzWCvDvpb+9mEAJUJncR56QBgtEVHCWSbhuTY=;
+        b=iscHeh7do4PieTOLHpswnUqIKjcU1p+4CDepb1U7roiWkOZYl9ujK+1LVHBrVfhJezyoAP
+        gV61Cx86MI35z2U+xvlzbm4ZyXU4egflptsz0dBaoQhxGfQ1u9NLmLTxpJCTF9YCOZyqIb
+        sk9boQ4qwr2zYcbYo8AZDNijQ9d1Hps=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-118-rEogLUVRNb2YinVL76uP7g-1; Wed, 12 May 2021 05:56:55 -0400
+X-MC-Unique: rEogLUVRNb2YinVL76uP7g-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9128ACC624;
+        Wed, 12 May 2021 09:56:54 +0000 (UTC)
+Received: from pick.home.annexia.org (ovpn-114-114.ams2.redhat.com [10.36.114.114])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1F2DC6E51D;
+        Wed, 12 May 2021 09:56:49 +0000 (UTC)
+From:   "Richard W.M. Jones" <rjones@redhat.com>
+To:     miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        eblake@redhat.com, libguestfs@redhat.com
+Subject: [PATCH] fuse: Allow fallocate(FALLOC_FL_ZERO_RANGE)
+Date:   Wed, 12 May 2021 10:56:47 +0100
+Message-Id: <20210512095647.3503965-1-rjones@redhat.com>
 MIME-Version: 1.0
-References: <162077975380.14498.11347675368470436331.stgit@web.messagingengine.com>
- <YJtz6mmgPIwEQNgD@kroah.com> <CAC2o3D+28g67vbNOaVxuF0OfE0RjFGHVwAcA_3t1AAS_b_EnPg@mail.gmail.com>
- <CAC2o3DJm0ugq60c8mBafjd81nPmhpBKBT5cCKWvc4rYT0dDgGg@mail.gmail.com>
-In-Reply-To: <CAC2o3DJm0ugq60c8mBafjd81nPmhpBKBT5cCKWvc4rYT0dDgGg@mail.gmail.com>
-From:   Fox Chen <foxhlchen@gmail.com>
-Date:   Wed, 12 May 2021 16:54:07 +0800
-Message-ID: <CAC2o3DJdwr0aqT6LwhuRj8kyXt6NAPex2nG5ToadUTJ3Jqr_4w@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] kernfs: proposed locking and concurrency improvement
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ian Kent <raven@themaw.net>
-Cc:     Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Brice Goglin <brice.goglin@gmail.com>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 12, 2021 at 4:47 PM Fox Chen <foxhlchen@gmail.com> wrote:
->
-> Hi,
->
-> I ran it on my benchmark (https://github.com/foxhlchen/sysfs_benchmark).
->
-> machine: aws c5 (Intel Xeon with 96 logical cores)
-> kernel: v5.12
-> benchmark: create 96 threads and bind them to each core then run
-> open+read+close on a sysfs file simultaneously for 1000 times.
-> result:
-> Without the patchset, an open+read+close operation takes 550-570 us,
-> perf shows significant time(>40%) spending on mutex_lock.
-> After applying it, it takes 410-440 us for that operation and perf
-> shows only ~4% time on mutex_lock.
->
-> It's weird, I don't see a huge performance boost compared to v2, even
+libnbd's nbdfuse utility would like to translate fallocate zero
+requests into NBD_CMD_WRITE_ZEROES.  Currently the fuse module filters
+these out, returning -EOPNOTSUPP.  This commit treats these almost the
+same way as FALLOC_FL_PUNCH_HOLE except not calling
+truncate_pagecache_range.
 
-I meant I don't see a huge performance boost here and it's way worse than v2.
-IIRC, for v2 fastest one only takes 40us
+A way to test this is with the following script:
 
+--------------------
+set -e
+set -x
 
-> though there is no mutex problem from the perf report.
-> I've put console outputs and perf reports on the attachment for your reference.
->
->
-> thanks,
-> fox
+export output=$PWD/output
+rm -f test.img $output
 
-fox
+nbdkit sh - <<'EOF'
+case "$1" in
+  get_size) echo 1M ;;
+  can_write|can_trim|can_zero|can_fast_zero) ;;
+  pread) echo "$@" >>$output; dd if=/dev/zero count=$3 iflag=count_bytes ;;
+  pwrite) echo "$@" >>$output; cat >/dev/null ;;
+  trim|zero) echo "$@" >>$output ;;
+  *) exit 2 ;;
+esac
+EOF
+
+touch test.img
+nbdfuse --version
+nbdfuse test.img nbd://localhost & sleep 2
+ls -lh test.img
+
+dd if=test.img of=/dev/null bs=512 skip=1024 count=1
+dd if=/dev/zero of=test.img bs=512 skip=2048 count=1
+fallocate -p -l 512 -o 4096 test.img
+fallocate -z -l 512 -o 8192 test.img
+
+cat $output
+
+fusermount3 -u test.img
+killall nbdkit
+rm test.img $output
+--------------------
+
+which will print:
+
+pread  4096 524288    # number depends on readahea
+pwrite  512 0
+trim  512 4096
+zero  512 8192 may_trim
+
+with the last line indicating that the FALLOC_FL_ZERO_RANGE request
+was successfully passed through by the kernel module to nbdfuse,
+translated to NBD_CMD_WRITE_ZEROES and sent through to the server.
+
+Signed-off-by: Richard W.M. Jones <rjones@redhat.com>
+---
+ fs/fuse/file.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 09ef2a4d25ed..22e8e88c78d4 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -2907,11 +2907,13 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
+ 	};
+ 	int err;
+ 	bool lock_inode = !(mode & FALLOC_FL_KEEP_SIZE) ||
+-			   (mode & FALLOC_FL_PUNCH_HOLE);
++			   (mode & FALLOC_FL_PUNCH_HOLE) ||
++			   (mode & FALLOC_FL_ZERO_RANGE);
+ 
+ 	bool block_faults = FUSE_IS_DAX(inode) && lock_inode;
+ 
+-	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
++	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
++		     FALLOC_FL_ZERO_RANGE))
+ 		return -EOPNOTSUPP;
+ 
+ 	if (fm->fc->no_fallocate)
+@@ -2926,7 +2928,8 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
+ 				goto out;
+ 		}
+ 
+-		if (mode & FALLOC_FL_PUNCH_HOLE) {
++		if ((mode & FALLOC_FL_PUNCH_HOLE) ||
++		    (mode & FALLOC_FL_ZERO_RANGE)) {
+ 			loff_t endbyte = offset + length - 1;
+ 
+ 			err = fuse_writeback_range(inode, offset, endbyte);
+-- 
+2.31.1
+
