@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D891E37BE84
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 15:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26B0037BE80
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 15:46:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230435AbhELNro (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 09:47:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41334 "EHLO mx2.suse.de"
+        id S231182AbhELNrn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 09:47:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41368 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230486AbhELNrm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S230492AbhELNrm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 12 May 2021 09:47:42 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 5897EB1B1;
+        by mx2.suse.de (Postfix) with ESMTP id 58A3CB1B4;
         Wed, 12 May 2021 13:46:32 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id D2B801E0A4C; Wed, 12 May 2021 15:46:31 +0200 (CEST)
+        id D59C61E08FF; Wed, 12 May 2021 15:46:31 +0200 (CEST)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-fsdevel@vger.kernel.org>
 Cc:     Christoph Hellwig <hch@infradead.org>,
@@ -31,96 +31,266 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         linux-f2fs-devel@lists.sourceforge.net, <linux-mm@kvack.org>,
         <linux-xfs@vger.kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
         Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>
-Subject: [PATCH 0/11 v5] fs: Hole punch vs page cache filling races
-Date:   Wed, 12 May 2021 15:46:08 +0200
-Message-Id: <20210512101639.22278-1-jack@suse.cz>
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, Hugh Dickins <hughd@google.com>
+Subject: [PATCH 01/11] mm: Fix comments mentioning i_mutex
+Date:   Wed, 12 May 2021 15:46:09 +0200
+Message-Id: <20210512134631.4053-1-jack@suse.cz>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20210512101639.22278-1-jack@suse.cz>
+References: <20210512101639.22278-1-jack@suse.cz>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+inode->i_mutex has been replaced with inode->i_rwsem long ago. Fix
+comments still mentioning i_mutex.
 
-here is another version of my patches to address races between hole punching
-and page cache filling functions for ext4 and other filesystems. The biggest
-change since the last time is update of the documentation to reflect the fact
-Dave Chinner spotted that some places also use this type of lock to block
-changes to existing page cache pages through memory mappings.
-
-Out of all filesystem supporting hole punching, only GFS2 and OCFS2 remain
-unresolved. GFS2 people are working on their own solution (cluster locking is
-involved), OCFS2 has even bigger issues (maintainers informed, looking into
-it).
-
-As a next step, I'd like to actually make sure all calls to
-truncate_inode_pages() happen under mapping->invalidate_lock, add the assert
-and then we can also get rid of i_size checks in some places (truncate can
-use the same serialization scheme as hole punch). But that step is mostly
-a cleanup so I'd like to get these functional fixes in first.
-
-Note that the first patch of the series is already in mm tree but I'm
-submitting it here so that the series applies to Linus' tree cleanly.
-
-Changes since v4:
-* Rebased onto 5.13-rc1
-* Removed shmfs conversion patches
-* Fixed up zonefs changelog
-* Fixed up XFS comments
-* Added patch fixing up definition of file_operations in Documentation/vfs/
-* Updated documentation and comments to explain invalidate_lock is used also
-  to prevent changes through memory mappings to existing pages for some VFS
-  operations.
-
-Changes since v3:
-* Renamed and moved lock to struct address_space
-* Added conversions of tmpfs, ceph, cifs, fuse, f2fs
-* Fixed error handling path in filemap_read()
-* Removed .page_mkwrite() cleanup from the series for now
-
-Changes since v2:
-* Added documentation and comments regarding lock ordering and how the lock is
-  supposed to be used
-* Added conversions of ext2, xfs, zonefs
-* Added patch removing i_mapping_sem protection from .page_mkwrite handlers
-
-Changes since v1:
-* Moved to using inode->i_mapping_sem instead of aops handler to acquire
-  appropriate lock
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Hugh Dickins <hughd@google.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 ---
-Motivation:
+ mm/filemap.c        | 10 +++++-----
+ mm/madvise.c        |  2 +-
+ mm/memory-failure.c |  2 +-
+ mm/rmap.c           |  6 +++---
+ mm/shmem.c          | 20 ++++++++++----------
+ mm/truncate.c       |  8 ++++----
+ 6 files changed, 24 insertions(+), 24 deletions(-)
 
-Amir has reported [1] a that ext4 has a potential issues when reads can race
-with hole punching possibly exposing stale data from freed blocks or even
-corrupting filesystem when stale mapping data gets used for writeout. The
-problem is that during hole punching, new page cache pages can get instantiated
-and block mapping from the looked up in a punched range after
-truncate_inode_pages() has run but before the filesystem removes blocks from
-the file. In principle any filesystem implementing hole punching thus needs to
-implement a mechanism to block instantiating page cache pages during hole
-punching to avoid this race. This is further complicated by the fact that there
-are multiple places that can instantiate pages in page cache.  We can have
-regular read(2) or page fault doing this but fadvise(2) or madvise(2) can also
-result in reading in page cache pages through force_page_cache_readahead().
-
-There are couple of ways how to fix this. First way (currently implemented by
-XFS) is to protect read(2) and *advise(2) calls with i_rwsem so that they are
-serialized with hole punching. This is easy to do but as a result all reads
-would then be serialized with writes and thus mixed read-write workloads suffer
-heavily on ext4. Thus this series introduces inode->i_mapping_sem and uses it
-when creating new pages in the page cache and looking up their corresponding
-block mapping. We also replace EXT4_I(inode)->i_mmap_sem with this new rwsem
-which provides necessary serialization with hole punching for ext4.
-
-								Honza
-
-[1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxjQNmxqmtA_VbYW0Su9rKRk2zobJmahcyeaEVOFKVQ5dw@mail.gmail.com/
-
-Previous versions:
-Link: https://lore.kernel.org/linux-fsdevel/20210208163918.7871-1-jack@suse.cz/
-Link: http://lore.kernel.org/r/20210413105205.3093-1-jack@suse.cz
-Link: http://lore.kernel.org/r/20210423171010.12-1-jack@suse.cz
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 66f7e9fdfbc4..ba1068a1837f 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -76,7 +76,7 @@
+  *      ->swap_lock		(exclusive_swap_page, others)
+  *        ->i_pages lock
+  *
+- *  ->i_mutex
++ *  ->i_rwsem
+  *    ->i_mmap_rwsem		(truncate->unmap_mapping_range)
+  *
+  *  ->mmap_lock
+@@ -87,7 +87,7 @@
+  *  ->mmap_lock
+  *    ->lock_page		(access_process_vm)
+  *
+- *  ->i_mutex			(generic_perform_write)
++ *  ->i_rwsem			(generic_perform_write)
+  *    ->mmap_lock		(fault_in_pages_readable->do_page_fault)
+  *
+  *  bdi->wb.list_lock
+@@ -3710,12 +3710,12 @@ EXPORT_SYMBOL(generic_perform_write);
+  * modification times and calls proper subroutines depending on whether we
+  * do direct IO or a standard buffered write.
+  *
+- * It expects i_mutex to be grabbed unless we work on a block device or similar
++ * It expects i_rwsem to be grabbed unless we work on a block device or similar
+  * object which does not need locking at all.
+  *
+  * This function does *not* take care of syncing data in case of O_SYNC write.
+  * A caller has to handle it. This is mainly due to the fact that we want to
+- * avoid syncing under i_mutex.
++ * avoid syncing under i_rwsem.
+  *
+  * Return:
+  * * number of bytes written, even for truncated writes
+@@ -3803,7 +3803,7 @@ EXPORT_SYMBOL(__generic_file_write_iter);
+  *
+  * This is a wrapper around __generic_file_write_iter() to be used by most
+  * filesystems. It takes care of syncing the file in case of O_SYNC file
+- * and acquires i_mutex as needed.
++ * and acquires i_rwsem as needed.
+  * Return:
+  * * negative error code if no data has been written at all of
+  *   vfs_fsync_range() failed for a synchronous write
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 63e489e5bfdb..a0137706b92a 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -853,7 +853,7 @@ static long madvise_remove(struct vm_area_struct *vma,
+ 			+ ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
+ 
+ 	/*
+-	 * Filesystem's fallocate may need to take i_mutex.  We need to
++	 * Filesystem's fallocate may need to take i_rwsem.  We need to
+ 	 * explicitly grab a reference because the vma (and hence the
+ 	 * vma's reference to the file) can go away as soon as we drop
+ 	 * mmap_lock.
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 85ad98c00fd9..9dcc9bcea731 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -704,7 +704,7 @@ static int me_pagecache_clean(struct page *p, unsigned long pfn)
+ 	/*
+ 	 * Truncation is a bit tricky. Enable it per file system for now.
+ 	 *
+-	 * Open: to take i_mutex or not for this? Right now we don't.
++	 * Open: to take i_rwsem or not for this? Right now we don't.
+ 	 */
+ 	return truncate_error_page(p, pfn, mapping);
+ }
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 693a610e181d..a35cbbbded0d 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -20,9 +20,9 @@
+ /*
+  * Lock ordering in mm:
+  *
+- * inode->i_mutex	(while writing or truncating, not reading or faulting)
++ * inode->i_rwsem	(while writing or truncating, not reading or faulting)
+  *   mm->mmap_lock
+- *     page->flags PG_locked (lock_page)   * (see huegtlbfs below)
++ *     page->flags PG_locked (lock_page)   * (see hugetlbfs below)
+  *       hugetlbfs_i_mmap_rwsem_key (in huge_pmd_share)
+  *         mapping->i_mmap_rwsem
+  *           hugetlb_fault_mutex (hugetlbfs specific page fault mutex)
+@@ -41,7 +41,7 @@
+  *                             in arch-dependent flush_dcache_mmap_lock,
+  *                             within bdi.wb->list_lock in __sync_single_inode)
+  *
+- * anon_vma->rwsem,mapping->i_mutex      (memory_failure, collect_procs_anon)
++ * anon_vma->rwsem,mapping->i_mmap_rwsem   (memory_failure, collect_procs_anon)
+  *   ->tasklist_lock
+  *     pte map lock
+  *
+diff --git a/mm/shmem.c b/mm/shmem.c
+index a08cedefbfaa..056204b1f76a 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -96,7 +96,7 @@ static struct vfsmount *shm_mnt;
+ 
+ /*
+  * shmem_fallocate communicates with shmem_fault or shmem_writepage via
+- * inode->i_private (with i_mutex making sure that it has only one user at
++ * inode->i_private (with i_rwsem making sure that it has only one user at
+  * a time): we would prefer not to enlarge the shmem inode just for that.
+  */
+ struct shmem_falloc {
+@@ -774,7 +774,7 @@ static int shmem_free_swap(struct address_space *mapping,
+  * Determine (in bytes) how many of the shmem object's pages mapped by the
+  * given offsets are swapped out.
+  *
+- * This is safe to call without i_mutex or the i_pages lock thanks to RCU,
++ * This is safe to call without i_rwsem or the i_pages lock thanks to RCU,
+  * as long as the inode doesn't go away and racy results are not a problem.
+  */
+ unsigned long shmem_partial_swap_usage(struct address_space *mapping,
+@@ -806,7 +806,7 @@ unsigned long shmem_partial_swap_usage(struct address_space *mapping,
+  * Determine (in bytes) how many of the shmem object's pages mapped by the
+  * given vma is swapped out.
+  *
+- * This is safe to call without i_mutex or the i_pages lock thanks to RCU,
++ * This is safe to call without i_rwsem or the i_pages lock thanks to RCU,
+  * as long as the inode doesn't go away and racy results are not a problem.
+  */
+ unsigned long shmem_swap_usage(struct vm_area_struct *vma)
+@@ -1069,7 +1069,7 @@ static int shmem_setattr(struct user_namespace *mnt_userns,
+ 		loff_t oldsize = inode->i_size;
+ 		loff_t newsize = attr->ia_size;
+ 
+-		/* protected by i_mutex */
++		/* protected by i_rwsem */
+ 		if ((newsize < oldsize && (info->seals & F_SEAL_SHRINK)) ||
+ 		    (newsize > oldsize && (info->seals & F_SEAL_GROW)))
+ 			return -EPERM;
+@@ -2049,7 +2049,7 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+ 	/*
+ 	 * Trinity finds that probing a hole which tmpfs is punching can
+ 	 * prevent the hole-punch from ever completing: which in turn
+-	 * locks writers out with its hold on i_mutex.  So refrain from
++	 * locks writers out with its hold on i_rwsem.  So refrain from
+ 	 * faulting pages into the hole while it's being punched.  Although
+ 	 * shmem_undo_range() does remove the additions, it may be unable to
+ 	 * keep up, as each new page needs its own unmap_mapping_range() call,
+@@ -2060,7 +2060,7 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+ 	 * we just need to make racing faults a rare case.
+ 	 *
+ 	 * The implementation below would be much simpler if we just used a
+-	 * standard mutex or completion: but we cannot take i_mutex in fault,
++	 * standard mutex or completion: but we cannot take i_rwsem in fault,
+ 	 * and bloating every shmem inode for this unlikely case would be sad.
+ 	 */
+ 	if (unlikely(inode->i_private)) {
+@@ -2518,7 +2518,7 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+ 	pgoff_t index = pos >> PAGE_SHIFT;
+ 
+-	/* i_mutex is held by caller */
++	/* i_rwsem is held by caller */
+ 	if (unlikely(info->seals & (F_SEAL_GROW |
+ 				   F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))) {
+ 		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))
+@@ -2618,7 +2618,7 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 
+ 		/*
+ 		 * We must evaluate after, since reads (unlike writes)
+-		 * are called without i_mutex protection against truncate
++		 * are called without i_rwsem protection against truncate
+ 		 */
+ 		nr = PAGE_SIZE;
+ 		i_size = i_size_read(inode);
+@@ -2688,7 +2688,7 @@ static loff_t shmem_file_llseek(struct file *file, loff_t offset, int whence)
+ 		return -ENXIO;
+ 
+ 	inode_lock(inode);
+-	/* We're holding i_mutex so we can access i_size directly */
++	/* We're holding i_rwsem so we can access i_size directly */
+ 	offset = mapping_seek_hole_data(mapping, offset, inode->i_size, whence);
+ 	if (offset >= 0)
+ 		offset = vfs_setpos(file, offset, MAX_LFS_FILESIZE);
+@@ -2717,7 +2717,7 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+ 		loff_t unmap_end = round_down(offset + len, PAGE_SIZE) - 1;
+ 		DECLARE_WAIT_QUEUE_HEAD_ONSTACK(shmem_falloc_waitq);
+ 
+-		/* protected by i_mutex */
++		/* protected by i_rwsem */
+ 		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE)) {
+ 			error = -EPERM;
+ 			goto out;
+diff --git a/mm/truncate.c b/mm/truncate.c
+index 95af244b112a..57a618c4a0d6 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -415,7 +415,7 @@ EXPORT_SYMBOL(truncate_inode_pages_range);
+  * @mapping: mapping to truncate
+  * @lstart: offset from which to truncate
+  *
+- * Called under (and serialised by) inode->i_mutex.
++ * Called under (and serialised by) inode->i_rwsem.
+  *
+  * Note: When this function returns, there can be a page in the process of
+  * deletion (inside __delete_from_page_cache()) in the specified range.  Thus
+@@ -432,7 +432,7 @@ EXPORT_SYMBOL(truncate_inode_pages);
+  * truncate_inode_pages_final - truncate *all* pages before inode dies
+  * @mapping: mapping to truncate
+  *
+- * Called under (and serialized by) inode->i_mutex.
++ * Called under (and serialized by) inode->i_rwsem.
+  *
+  * Filesystems have to use this in the .evict_inode path to inform the
+  * VM that this is the final truncate and the inode is going away.
+@@ -753,7 +753,7 @@ EXPORT_SYMBOL(truncate_pagecache);
+  * setattr function when ATTR_SIZE is passed in.
+  *
+  * Must be called with a lock serializing truncates and writes (generally
+- * i_mutex but e.g. xfs uses a different lock) and before all filesystem
++ * i_rwsem but e.g. xfs uses a different lock) and before all filesystem
+  * specific block truncation has been performed.
+  */
+ void truncate_setsize(struct inode *inode, loff_t newsize)
+@@ -782,7 +782,7 @@ EXPORT_SYMBOL(truncate_setsize);
+  *
+  * The function must be called after i_size is updated so that page fault
+  * coming after we unlock the page will already see the new i_size.
+- * The function must be called while we still hold i_mutex - this not only
++ * The function must be called while we still hold i_rwsem - this not only
+  * makes sure i_size is stable but also that userspace cannot observe new
+  * i_size value before we are prepared to store mmap writes at new inode size.
+  */
+-- 
+2.26.2
 
