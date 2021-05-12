@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 369EE37EBD3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 May 2021 00:23:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6666A37EBD5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 May 2021 00:23:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244646AbhELTiH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 15:38:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51020 "EHLO mail.kernel.org"
+        id S244783AbhELTiI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 15:38:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1352368AbhELSDH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 14:03:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 34D6C61412;
-        Wed, 12 May 2021 18:01:58 +0000 (UTC)
+        id S1352751AbhELSEJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 May 2021 14:04:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 239176143D;
+        Wed, 12 May 2021 18:03:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620842519;
-        bh=7JjN/D17G6ME5Mc+DmYKPPS1cVShSzMCm9Pl9HYk81k=;
+        s=k20201202; t=1620842581;
+        bh=kR4X2Y4LqWXFJzaZR/OSMHuq0a3gRRAtvhiJq2yNFWE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gdqnyp2EBrYfzVAtamMSAXO0zNZ9iGMLT10oyg+v32tRhV2GuoRsX35IEj2bTXvYD
-         XK9Jj1bbOvbq3xNF41aOaVkWzzeFGIdTciHJi8YMtvc2I7UFx2eJKWNOYqQ1DkKktT
-         GWsFOAG45uNPX3u69YgxzHKLHD57FjN9uQ7YKMa3GMPqn6qsw3/Cyinx2B0KFI1FTm
-         hQbnjniQ2bWwiBXWlB0lTbXlnyI7uSvBLAGZcEb6ELiiEUVi2UMD5wy5PKbYr7UjQ9
-         leDNLDtb97SDhl/i8AwqjbBBkZkrd9Fz5hnMl0zTlU1a+sovC9Uf86FbBm61mgHCC4
-         oXPlPiNaJJeLQ==
+        b=gDa4WIwWELVBQiBoqma0YAcgfp+4oP0niibJTmzIExAfQKoRSrCKBU9EWscqdqFPU
+         zvjiEQ/bFZ5ud+P4HopZkGbEu66jH9gMfbDi1Ih8tPoPb5SsY0p1UXC4IinLeH3Ecd
+         ZWQITC65zferDac1EWDgS42vHWOVQP0dI6PPEPyZPEtjitorAUOCMoaMSMDdq8kYf2
+         LvUnxUMgU1z/jWRTXCb5j60c0k2Aj9jWExh8GFHhNziN8s0h8KbFa69uER2PDdef9y
+         /UEoKy5/t/8PkJWDZK9uQKtrRNk8MhC1C5diocqZNwuBcLF0NHpQ+x51YFhNOYYCbN
+         3xWu1wy0ErcrA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     yangerkun <yangerkun@huawei.com>,
         Pavel Begunkov <asml.silencec@gmail.com>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.12 35/37] block: reexpand iov_iter after read/write
-Date:   Wed, 12 May 2021 14:01:02 -0400
-Message-Id: <20210512180104.664121-35-sashal@kernel.org>
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.11 33/35] block: reexpand iov_iter after read/write
+Date:   Wed, 12 May 2021 14:02:03 -0400
+Message-Id: <20210512180206.664536-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210512180104.664121-1-sashal@kernel.org>
-References: <20210512180104.664121-1-sashal@kernel.org>
+In-Reply-To: <20210512180206.664536-1-sashal@kernel.org>
+References: <20210512180206.664536-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -152,7 +152,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 17 insertions(+), 3 deletions(-)
 
 diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 09d6f7229db9..a5a6a7930e5e 100644
+index b988f78ad4b7..cd9db68960fe 100644
 --- a/fs/block_dev.c
 +++ b/fs/block_dev.c
 @@ -1684,6 +1684,7 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
