@@ -2,135 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5BE837BDC0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 15:12:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6906537BDCE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 15:14:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231899AbhELNNk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 09:13:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58985 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231695AbhELNNj (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 09:13:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620825151;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xkUtsmXhTln8ZuCPuyfmYtBmjG5e9wQzlcCwa1mE9Fg=;
-        b=bqQgNci4uIOS4q9+76mmY3G7831tfrZS3Y5Rhb/I3tVJ+o5Z+xHQ8FM4pxkyrBi5A6xwCR
-        +sWcMidRpzqqK0C9v77BcubXSQL8PH8EwpoA47Kq8tFKTAw8+gMgq7DduqbdZ4Q3eCmSa2
-        gDqwYVto89rcH3CiJO9czBcrSZboVR0=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-389-JQL6FgEENR6Nusc8kDaIrw-1; Wed, 12 May 2021 09:12:29 -0400
-X-MC-Unique: JQL6FgEENR6Nusc8kDaIrw-1
-Received: by mail-wm1-f71.google.com with SMTP id a19-20020a1c98130000b029016acd801495so808203wme.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 May 2021 06:12:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=xkUtsmXhTln8ZuCPuyfmYtBmjG5e9wQzlcCwa1mE9Fg=;
-        b=MQLHhj0VTP4CqDT9Jwu2Q0WGueXwkv3ZKH8g7aNtoWKxA4e0P3DiBVmi1DNK9ph3M1
-         Cm91+dGpwcFGwPdGNLxUjkgW4asNNH/W5PXdOTGp5OVRr1zyDc65fpqNjuq3HKz1n22G
-         rKxZADZzO+7yh8mHfj+mGHCMSbFUTxtsJWVYf18GX/FIggoBLb3oekvmHF3JpLt3iLdf
-         d026PvJozRnwYsygAQZJ0MFkmVLE/hlWwoTSUN5KNvRwDCigtuXchkjUa/DCAnAPomy0
-         zxfOjpwIk0UjuyW6xvAtNdY5yo8mlIkMGezK+ugP6m7e7dPXcDOzDG3bCsaq9pHUeMgJ
-         NOnw==
-X-Gm-Message-State: AOAM532twomktEKRlGWTjoeIopH5QCUAVMggjYB9d1k53P64Ho5lH+as
-        saPafITxn8Wyd+mk1PFL0qnI5qw+yzCM1rDWKiwRpzU16gKnwlOPogmBXTfs9SU81QvvM6FhSb6
-        TONIL4+qxulEUxTz691pd3Wk9ZA==
-X-Received: by 2002:adf:cc85:: with SMTP id p5mr44985764wrj.75.1620825148634;
-        Wed, 12 May 2021 06:12:28 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyN/bKM7tb3kGzV/c5fUH9I6/yF7gfmWH2UTCxgDB167HFBRdbQPq3VIR//MAPGfKngYzQmzw==
-X-Received: by 2002:adf:cc85:: with SMTP id p5mr44985731wrj.75.1620825148402;
-        Wed, 12 May 2021 06:12:28 -0700 (PDT)
-Received: from [192.168.3.132] (p5b0c65ab.dip0.t-ipconnect.de. [91.12.101.171])
-        by smtp.gmail.com with ESMTPSA id z5sm1439367wrn.69.2021.05.12.06.12.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 May 2021 06:12:27 -0700 (PDT)
-Subject: Re: [PATCH v1 2/3] binfmt: remove in-tree usage of MAP_EXECUTABLE
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Feng Tang <feng.tang@intel.com>,
-        Don Zickus <dzickus@redhat.com>, x86@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20210421093453.6904-1-david@redhat.com>
- <20210421093453.6904-3-david@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Message-ID: <49a8cb62-e26d-a351-937e-6fb62a6f4a2e@redhat.com>
-Date:   Wed, 12 May 2021 15:12:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S232033AbhELNPk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 09:15:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44104 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232056AbhELNPj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 May 2021 09:15:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id C0F86ADA2;
+        Wed, 12 May 2021 13:14:29 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 815211E0A4C; Wed, 12 May 2021 15:14:29 +0200 (CEST)
+Date:   Wed, 12 May 2021 15:14:29 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Jan Kara <jack@suse.cz>, Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        kernel@pengutronix.de, Jan Kara <jack@suse.com>,
+        Richard Weinberger <richard@nod.at>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v3 0/2] quota: Add mountpath based quota support
+Message-ID: <20210512131429.GA2734@quack2.suse.cz>
+References: <20210304123541.30749-1-s.hauer@pengutronix.de>
+ <20210316112916.GA23532@quack2.suse.cz>
+ <20210512110149.GA31495@quack2.suse.cz>
+ <20210512125310.m3b4ralhwsdocpyb@wittgenstein>
 MIME-Version: 1.0
-In-Reply-To: <20210421093453.6904-3-david@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210512125310.m3b4ralhwsdocpyb@wittgenstein>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 21.04.21 11:34, David Hildenbrand wrote:
-> Ever since commit e9714acf8c43 ("mm: kill vma flag VM_EXECUTABLE and
-> mm->num_exe_file_vmas"), VM_EXECUTABLE is gone and MAP_EXECUTABLE is
-> essentially completely ignored. Let's remove all usage of
-> MAP_EXECUTABLE.
+On Wed 12-05-21 14:53:10, Christian Brauner wrote:
+> On Wed, May 12, 2021 at 01:01:49PM +0200, Jan Kara wrote:
+> > Added a few more CCs.
+> > 
+> > On Tue 16-03-21 12:29:16, Jan Kara wrote:
+> > > On Thu 04-03-21 13:35:38, Sascha Hauer wrote:
+> > > > Current quotactl syscall uses a path to a block device to specify the
+> > > > filesystem to work on which makes it unsuitable for filesystems that
+> > > > do not have a block device. This series adds a new syscall quotactl_path()
+> > > > which replaces the path to the block device with a mountpath, but otherwise
+> > > > behaves like original quotactl.
+> > > > 
+> > > > This is done to add quota support to UBIFS. UBIFS quota support has been
+> > > > posted several times with different approaches to put the mountpath into
+> > > > the existing quotactl() syscall until it has been suggested to make it a
+> > > > new syscall instead, so here it is.
+> > > > 
+> > > > I'm not posting the full UBIFS quota series here as it remains unchanged
+> > > > and I'd like to get feedback to the new syscall first. For those interested
+> > > > the most recent series can be found here: https://lwn.net/Articles/810463/
+> > > 
+> > > Thanks. I've merged the two patches into my tree and will push them to
+> > > Linus for the next merge window.
+> > 
+> > So there are some people at LWN whining that quotactl_path() has no dirfd
+> > and flags arguments for specifying the target. Somewhat late in the game
+> > but since there's no major release with the syscall and no userspace using
+> > it, I think we could still change that. What do you think? What they
+> > suggest does make some sense. But then, rather then supporting API for
+> > million-and-one ways in which I may wish to lookup a fs object, won't it be
+> > better to just pass 'fd' in the new syscall (it may well be just O_PATH fd
+> > AFAICT) and be done with that?
 > 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> I think adding a dirfd argument makes a lot of sense (Unless there are
+> some restrictions around quotas I'm misunderstanding.).
+> 
+> If I may: in general, I think we should aim to not add additional system
+> calls that operate on paths only. Purely path-based apis tend to be the
+> source of security issues especially when scoped lookups are really
+> important which given the ubiquity of sandboxing solutions nowadays is
+> quite often actually.
+> For example, when openat2() landed it gave such a boost in lookup
+> capabilities that I switched some libraries over to only ever do scoped
+> lookups, i.e. I decide on a starting point that gets opened path-based
+> and then explicitly express how I want that lookup to proceed ultimately
+> opening the final path component on which I want to perform operations.
+> Combined with the mount API almost everything can be done purely fd
+> based.
+> 
+> In addition to that dirfd-scopable system calls allow for a much nicer
+> api experience when programming in userspace.
 
-[...]
+OK, thanks for your insights. But when we add 'dirfd' I wonder whether we
+still need the 'path' component then. I mean you can always do fd =
+openat2(), quotactl_fd(fd, ...). After all ioctl() works exactly that way
+since the beginning. The only advantage of quotactl_xxx() taking path would
+be saving the open(2) call. That is somewhat convenient for simple cases
+(but also error prone in complex setups as you point out) and can be also
+sligthly faster (but quotactl is hardly a performance sensitive thing)...
 
-> +++ b/fs/binfmt_aout.c
-> @@ -222,7 +222,7 @@ static int load_aout_binary(struct linux_binprm * bprm)
->   
->   		error = vm_mmap(bprm->file, N_TXTADDR(ex), ex.a_text,
->   			PROT_READ | PROT_EXEC,
-> -			MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE | MAP_EXECUTABLE,
-> +			MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE;
-
-As reported by kernel test robot, this line should end with a ","
-
->   			fd_offset);
->   
->   		if (error != N_TXTADDR(ex))
-> @@ -230,7 +230,7 @@ static int load_aout_binary(struct linux_binprm * bprm)
->   
->   		error = vm_mmap(bprm->file, N_DATADDR(ex), ex.a_data,
->   				PROT_READ | PROT_WRITE | PROT_EXEC,
-> -				MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE | MAP_EXECUTABLE,
-> +				MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE;
->   				fd_offset + ex.a_text);
-
-dito
-
-
-@Andrew, I think this resides your tree. Can you fix that up or shall I 
-resend the series, or only this individual patch?
-
+								Honza
 -- 
-Thanks,
-
-David / dhildenb
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
