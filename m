@@ -2,75 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 75B6E37BB68
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 13:01:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5E3B37BB6C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 13:04:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230211AbhELLDB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 07:03:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44188 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230019AbhELLC7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 07:02:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 7B359B15B;
-        Wed, 12 May 2021 11:01:50 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id E3C4E1E0A4C; Wed, 12 May 2021 13:01:49 +0200 (CEST)
-Date:   Wed, 12 May 2021 13:01:49 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        kernel@pengutronix.de, Jan Kara <jack@suse.com>,
-        Richard Weinberger <richard@nod.at>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH v3 0/2] quota: Add mountpath based quota support
-Message-ID: <20210512110149.GA31495@quack2.suse.cz>
-References: <20210304123541.30749-1-s.hauer@pengutronix.de>
- <20210316112916.GA23532@quack2.suse.cz>
+        id S230096AbhELLF3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 07:05:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:43209 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230019AbhELLF2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 May 2021 07:05:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620817459;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5TOZHAEO+pT8rcr0WlOUE07svgCrHh7uPmgeF208tgU=;
+        b=AF+RRRrG1clyVAr+k645F6KhwYRq+X6I5uzOFE46l8EKMIUYeRFi53Jxe/+vDVaX//n88L
+        O077fo/eGhb0Lb++H5kJ8RiC4mWcy4RIv8DzjU8MBEf1UFGimDliM+ZxfgQzJRVDdoZeWj
+        RuxRhfajuJVa27qfRd3yuox3M7vkUjc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-446-pQdoI5l2MTmubJdgiyGqtw-1; Wed, 12 May 2021 07:04:17 -0400
+X-MC-Unique: pQdoI5l2MTmubJdgiyGqtw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 44FBA800D55;
+        Wed, 12 May 2021 11:04:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9E3032B6CC;
+        Wed, 12 May 2021 11:04:14 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <87tun8z2nd.fsf@suse.de>
+References: <87tun8z2nd.fsf@suse.de> <87czu45gcs.fsf@suse.de> <2507722.1620736734@warthog.procyon.org.uk>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     dhowells@redhat.com, Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
+Subject: Re: 9p: fscache duplicate cookie
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210316112916.GA23532@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2882180.1620817453.1@warthog.procyon.org.uk>
+Date:   Wed, 12 May 2021 12:04:13 +0100
+Message-ID: <2882181.1620817453@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Added a few more CCs.
+Luis Henriques <lhenriques@suse.de> wrote:
 
-On Tue 16-03-21 12:29:16, Jan Kara wrote:
-> On Thu 04-03-21 13:35:38, Sascha Hauer wrote:
-> > Current quotactl syscall uses a path to a block device to specify the
-> > filesystem to work on which makes it unsuitable for filesystems that
-> > do not have a block device. This series adds a new syscall quotactl_path()
-> > which replaces the path to the block device with a mountpath, but otherwise
-> > behaves like original quotactl.
-> > 
-> > This is done to add quota support to UBIFS. UBIFS quota support has been
-> > posted several times with different approaches to put the mountpath into
-> > the existing quotactl() syscall until it has been suggested to make it a
-> > new syscall instead, so here it is.
-> > 
-> > I'm not posting the full UBIFS quota series here as it remains unchanged
-> > and I'd like to get feedback to the new syscall first. For those interested
-> > the most recent series can be found here: https://lwn.net/Articles/810463/
-> 
-> Thanks. I've merged the two patches into my tree and will push them to
-> Linus for the next merge window.
+> [ I wonder why the timestamps don't match between the traces and the
+>   kernel log... ]
 
-So there are some people at LWN whining that quotactl_path() has no dirfd
-and flags arguments for specifying the target. Somewhat late in the game
-but since there's no major release with the syscall and no userspace using
-it, I think we could still change that. What do you think? What they
-suggest does make some sense. But then, rather then supporting API for
-million-and-one ways in which I may wish to lookup a fs object, won't it be
-better to just pass 'fd' in the new syscall (it may well be just O_PATH fd
-AFAICT) and be done with that?
+I've seen that.  I wonder if the timestamping of printk lines is delayed by
+the serial driver outputting things.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> So, can we infer from this trace that an evict could actually be on-going
+> but the old cookie wasn't relinquished yet and hence the collision?
+
+It might be illuminating if you can make it print a traceline at the beginning
+of v9fs_evict_inode() and in v9fs_drop_inode().  Print the cookie pointer in
+both.
+
+David
+
