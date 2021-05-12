@@ -2,81 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7798337BD85
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 14:57:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1320B37BDA9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 15:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232514AbhELM6n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 08:58:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37358 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231311AbhELM61 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 08:58:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620824239;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ki09mF0tspJ6KFUpaOlyOAnAB4n3svOnlL/ruLe8uGQ=;
-        b=cC8kmO8gHaN7jD+PgV9qnHVSWOPH8SxZkMv4SdY0lqNNy49EcR3j9affoIdBhy2ELDpbhL
-        tS+q7TsQPC+tQeMp2/Q+XK5wK4RmhouMtzfd5uPrccEcsiNmpdpQXHhH+vT+dluqfwtM2j
-        uHIq5XIaVSBhlFrrN33+Pd9xg+0C8KA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-231-mK13o95yOqqRB0Pm0D2nuA-1; Wed, 12 May 2021 08:57:15 -0400
-X-MC-Unique: mK13o95yOqqRB0Pm0D2nuA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E3863100945F;
-        Wed, 12 May 2021 12:57:13 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 499605D6A8;
-        Wed, 12 May 2021 12:57:12 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <YJvJWj/CEyEUWeIu@codewreck.org>
-References: <YJvJWj/CEyEUWeIu@codewreck.org> <87tun8z2nd.fsf@suse.de> <87czu45gcs.fsf@suse.de> <2507722.1620736734@warthog.procyon.org.uk> <2882181.1620817453@warthog.procyon.org.uk> <87fsysyxh9.fsf@suse.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     dhowells@redhat.com, Dominique Martinet <asmadeus@codewreck.org>,
-        Luis Henriques <lhenriques@suse.de>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
-Subject: What sort of inode state does ->evict_inode() expect to see? [was Re: 9p: fscache duplicate cookie]
+        id S231143AbhELNIV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 09:08:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34848 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230472AbhELNIT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 May 2021 09:08:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 63824611BE;
+        Wed, 12 May 2021 13:07:09 +0000 (UTC)
+Date:   Wed, 12 May 2021 15:07:05 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [RFC][PATCH] fanotify: introduce filesystem view mark
+Message-ID: <20210512130705.cywde7v4z7ywjrag@wittgenstein>
+References: <20201126111725.GD422@quack2.suse.cz>
+ <CAOQ4uxgt1Cx5jx3L6iaDvbzCWPv=fcMgLaa9ODkiu9h718MkwQ@mail.gmail.com>
+ <20210503165315.GE2994@quack2.suse.cz>
+ <CAOQ4uxgy0DUEUo810m=bnLuHNbs60FLFPUUw8PLq9jJ8VTFD8g@mail.gmail.com>
+ <20210505122815.GD29867@quack2.suse.cz>
+ <20210505142405.vx2wbtadozlrg25b@wittgenstein>
+ <20210510101305.GC11100@quack2.suse.cz>
+ <CAOQ4uxjqjB2pCoyLzreMziJcE5nYjgdhcAsDWDmu_5-g5AKM3w@mail.gmail.com>
+ <20210510142107.GA24154@quack2.suse.cz>
+ <CAOQ4uxhKk3oJdWF8YxYRPyomimg9xQaHnMo3ggALOhTuwWxYBw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2891611.1620824231.1@warthog.procyon.org.uk>
-Date:   Wed, 12 May 2021 13:57:11 +0100
-Message-ID: <2891612.1620824231@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxhKk3oJdWF8YxYRPyomimg9xQaHnMo3ggALOhTuwWxYBw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Al,
+On Mon, May 10, 2021 at 06:08:31PM +0300, Amir Goldstein wrote:
+> > > > OK, so this feature would effectively allow sb-wide watching of events that
+> > > > are generated from within the container (or its descendants). That sounds
+> > > > useful. Just one question: If there's some part of a filesystem, that is
+> > > > accesible by multiple containers (and thus multiple namespaces), or if
+> > > > there's some change done to the filesystem say by container management SW,
+> > > > then event for this change won't be visible inside the container (despite
+> > > > that the fs change itself will be visible).
+> > >
+> > > That is correct.
+> > > FYI, a privileged user can already mount an overlayfs in order to indirectly
+> > > open and write to a file.
+> > >
+> > > Because overlayfs opens the underlying file FMODE_NONOTIFY this will
+> > > hide OPEN/ACCESS/MODIFY/CLOSE events also for inode/sb marks.
+> > > Since 459c7c565ac3 ("ovl: unprivieged mounts"), so can unprivileged users.
+> > >
+> > > I wonder if that is a problem that we need to fix...
+> >
+> > I assume you are speaking of the filesystem that is absorbing the changes?
+> > AFAIU usually you are not supposed to access that filesystem alone but
+> > always access it only through overlayfs and in that case you won't see the
+> > problem?
+> >
+> 
+> Yes I am talking about the "backend" store for overlayfs.
+> Normally, that would be a subtree where changes are not expected
+> except through overlayfs and indeed it is documented that:
+> "If the underlying filesystem is changed, the behavior of the overlay
+>  is undefined, though it will not result in a crash or deadlock."
+> Not reporting events falls well under "undefined".
+> 
+> But that is not the problem.
+> The problem is that if user A is watching a directory D for changes, then
+> an adversary user B which has read/write access to D can:
+> - Clone a userns wherein user B id is 0
+> - Mount a private overlayfs instance using D as upperdir
+> - Open file in D indirectly via private overlayfs and edit it
+> 
+> So it does not require any special privileges to circumvent generating
+> events. Unless I am missing something.
 
-We're seeing cases where fscache is reporting cookie collisions that appears
-to be due to ->evict_inode() running parallel with a new inode for the same
-filesystem object getting set up.
-
-What's happening is that in all of 9p, afs, ceph, cifs and nfs, the fscache
-cookie is being relinquished in ->evict_inode(), but that appears to be too
-late because by that time, a new inode can be being allocated and a new cookie
-get acquired.
-
-evict_inode is a slow process, potentially, because it has to dismantle the
-pagecache and wait for any outstanding DMA to the cache; then seal the cache
-object - which involves a synchronous journalled op (setxattr), which means
-that there's a lot of scope for a race.
-
-Is there a better place to this?  drop_inode() maybe?  And is there a good
-place to wait on all the DMAs that might be in progress to/from the cache?
-(This might involve waiting for PG_locked or PG_fscache to be cleared on each
-page).
-
-David
-
+No, I think you're right. That should work. I don't think that's
+necessarily a problem though. It's a bit unexpected and slightly
+unpleasant but it's documented already and it's not a security issue
+afaict.
