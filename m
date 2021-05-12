@@ -2,30 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E33F137B30D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 02:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4779837B30F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 02:38:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229637AbhELAjy convert rfc822-to-8bit (ORCPT
+        id S229994AbhELAkE convert rfc822-to-8bit (ORCPT
         <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 20:39:54 -0400
-Received: from us-smtp-delivery-44.mimecast.com ([205.139.111.44]:56415 "EHLO
+        Tue, 11 May 2021 20:40:04 -0400
+Received: from us-smtp-delivery-44.mimecast.com ([205.139.111.44]:26130 "EHLO
         us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229932AbhELAjx (ORCPT
+        by vger.kernel.org with ESMTP id S229932AbhELAkD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 20:39:53 -0400
+        Tue, 11 May 2021 20:40:03 -0400
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-478-fRxEsnuBNqm26hnjJgzNNQ-1; Tue, 11 May 2021 20:38:43 -0400
-X-MC-Unique: fRxEsnuBNqm26hnjJgzNNQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-46-uks3IF0YPbGm-xEnmo-Z6w-1; Tue, 11 May 2021 20:38:52 -0400
+X-MC-Unique: uks3IF0YPbGm-xEnmo-Z6w-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 211FA8030CF;
-        Wed, 12 May 2021 00:38:41 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 33488FC8D;
+        Wed, 12 May 2021 00:38:51 +0000 (UTC)
 Received: from web.messagingengine.com (ovpn-116-20.sin2.redhat.com [10.67.116.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 103AC9CA0;
-        Wed, 12 May 2021 00:38:36 +0000 (UTC)
-Subject: [PATCH v4 0/5] kernfs: proposed locking and concurrency improvement
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E8ECE6E519;
+        Wed, 12 May 2021 00:38:47 +0000 (UTC)
+Subject: [PATCH v4 1/5] kernfs: move revalidate to be near lookup
 From:   Ian Kent <raven@themaw.net>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Tejun Heo <tj@kernel.org>
@@ -39,11 +39,13 @@ Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
         Marcelo Tosatti <mtosatti@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Wed, 12 May 2021 08:38:35 +0800
-Message-ID: <162077975380.14498.11347675368470436331.stgit@web.messagingengine.com>
+Date:   Wed, 12 May 2021 08:38:46 +0800
+Message-ID: <162077992651.14498.9682663898041297408.stgit@web.messagingengine.com>
+In-Reply-To: <162077975380.14498.11347675368470436331.stgit@web.messagingengine.com>
+References: <162077975380.14498.11347675368470436331.stgit@web.messagingengine.com>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Authentication-Results: relay.mimecast.com;
         auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=raven@themaw.net
 X-Mimecast-Spam-Score: 0
@@ -54,71 +56,125 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There have been a few instances of contention on the kernfs_mutex during
-path walks, a case on very large IBM systems seen by myself, a report by
-Brice Goglin and followed up by Fox Chen, and I've since seen a couple
-of other reports by CoreOS users.
+While the dentry operation kernfs_dop_revalidate() is grouped with
+dentry type functions it also has a strong affinity to the inode
+operation ->lookup().
 
-The common thread is a large number of kernfs path walks leading to
-slowness of path walks due to kernfs_mutex contention.
+In order to take advantage of the VFS negative dentry caching that
+can be used to reduce path lookup overhead on non-existent paths it
+will need to call kernfs_find_ns(). So, to avoid a forward declaration,
+move it to be near kernfs_iop_lookup().
 
-The problem being that changes to the VFS over some time have increased
-it's concurrency capabilities to an extent that kernfs's use of a mutex
-is no longer appropriate. There's also an issue of walks for non-existent
-paths causing contention if there are quite a few of them which is a less
-common problem.
+There's no functional change from this patch.
 
-This patch series is relatively straight forward.
-
-All it does is add the ability to take advantage of VFS negative dentry
-caching to avoid needless dentry alloc/free cycles for lookups of paths
-that don't exit and change the kernfs_mutex to a read/write semaphore.
-
-The patch that tried to stay in VFS rcu-walk mode during path walks has
-been dropped for two reasons. First, it doesn't actually give very much
-improvement and, second, if there's a place where mistakes could go
-unnoticed it would be in that path. This makes the patch series simpler
-to review and reduces the likelihood of problems going unnoticed and
-popping up later.
-
-The patch to use a revision to identify if a directory has changed has
-also been dropped. If the directory has changed the dentry revision
-needs to be updated to avoid subsequent rb tree searches and after
-changing to use a read/write semaphore the update also requires a lock.
-But the d_lock is the only lock available at this point which might
-itself be contended.
-
-Changes since v3:
-- remove unneeded indirection when referencing the super block.
-- check if inode attribute update is actually needed.
-
-Changes since v2:
-- actually fix the inode attribute update locking.
-- drop the patch that tried to stay in rcu-walk mode.
-- drop the use a revision to identify if a directory has changed patch.
-
-Changes since v1:
-- fix locking in .permission() and .getattr() by re-factoring the attribute
-  handling code.
+Signed-off-by: Ian Kent <raven@themaw.net>
 ---
+ fs/kernfs/dir.c |   86 ++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 43 insertions(+), 43 deletions(-)
 
-Ian Kent (5):
-      kernfs: move revalidate to be near lookup
-      kernfs: use VFS negative dentry caching
-      kernfs: switch kernfs to use an rwsem
-      kernfs: use i_lock to protect concurrent inode updates
-      kernfs: add kernfs_need_inode_refresh()
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index 7e0e62deab53c..4c69e2af82dac 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -548,49 +548,6 @@ void kernfs_put(struct kernfs_node *kn)
+ }
+ EXPORT_SYMBOL_GPL(kernfs_put);
+ 
+-static int kernfs_dop_revalidate(struct dentry *dentry, unsigned int flags)
+-{
+-	struct kernfs_node *kn;
+-
+-	if (flags & LOOKUP_RCU)
+-		return -ECHILD;
+-
+-	/* Always perform fresh lookup for negatives */
+-	if (d_really_is_negative(dentry))
+-		goto out_bad_unlocked;
+-
+-	kn = kernfs_dentry_node(dentry);
+-	mutex_lock(&kernfs_mutex);
+-
+-	/* The kernfs node has been deactivated */
+-	if (!kernfs_active(kn))
+-		goto out_bad;
+-
+-	/* The kernfs node has been moved? */
+-	if (kernfs_dentry_node(dentry->d_parent) != kn->parent)
+-		goto out_bad;
+-
+-	/* The kernfs node has been renamed */
+-	if (strcmp(dentry->d_name.name, kn->name) != 0)
+-		goto out_bad;
+-
+-	/* The kernfs node has been moved to a different namespace */
+-	if (kn->parent && kernfs_ns_enabled(kn->parent) &&
+-	    kernfs_info(dentry->d_sb)->ns != kn->ns)
+-		goto out_bad;
+-
+-	mutex_unlock(&kernfs_mutex);
+-	return 1;
+-out_bad:
+-	mutex_unlock(&kernfs_mutex);
+-out_bad_unlocked:
+-	return 0;
+-}
+-
+-const struct dentry_operations kernfs_dops = {
+-	.d_revalidate	= kernfs_dop_revalidate,
+-};
+-
+ /**
+  * kernfs_node_from_dentry - determine kernfs_node associated with a dentry
+  * @dentry: the dentry in question
+@@ -1073,6 +1030,49 @@ struct kernfs_node *kernfs_create_empty_dir(struct kernfs_node *parent,
+ 	return ERR_PTR(rc);
+ }
+ 
++static int kernfs_dop_revalidate(struct dentry *dentry, unsigned int flags)
++{
++	struct kernfs_node *kn;
++
++	if (flags & LOOKUP_RCU)
++		return -ECHILD;
++
++	/* Always perform fresh lookup for negatives */
++	if (d_really_is_negative(dentry))
++		goto out_bad_unlocked;
++
++	kn = kernfs_dentry_node(dentry);
++	mutex_lock(&kernfs_mutex);
++
++	/* The kernfs node has been deactivated */
++	if (!kernfs_active_read(kn))
++		goto out_bad;
++
++	/* The kernfs node has been moved? */
++	if (kernfs_dentry_node(dentry->d_parent) != kn->parent)
++		goto out_bad;
++
++	/* The kernfs node has been renamed */
++	if (strcmp(dentry->d_name.name, kn->name) != 0)
++		goto out_bad;
++
++	/* The kernfs node has been moved to a different namespace */
++	if (kn->parent && kernfs_ns_enabled(kn->parent) &&
++	    kernfs_info(dentry->d_sb)->ns != kn->ns)
++		goto out_bad;
++
++	mutex_unlock(&kernfs_mutex);
++	return 1;
++out_bad:
++	mutex_unlock(&kernfs_mutex);
++out_bad_unlocked:
++	return 0;
++}
++
++const struct dentry_operations kernfs_dops = {
++	.d_revalidate	= kernfs_dop_revalidate,
++};
++
+ static struct dentry *kernfs_iop_lookup(struct inode *dir,
+ 					struct dentry *dentry,
+ 					unsigned int flags)
 
-
- fs/kernfs/dir.c             | 170 ++++++++++++++++++++----------------
- fs/kernfs/file.c            |   4 +-
- fs/kernfs/inode.c           |  45 ++++++++--
- fs/kernfs/kernfs-internal.h |   5 +-
- fs/kernfs/mount.c           |  12 +--
- fs/kernfs/symlink.c         |   4 +-
- include/linux/kernfs.h      |   2 +-
- 7 files changed, 147 insertions(+), 95 deletions(-)
-
---
-Ian
 
