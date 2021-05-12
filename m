@@ -2,214 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C6CE637B42A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 04:27:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A60737B476
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 05:20:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230011AbhELC2c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 May 2021 22:28:32 -0400
-Received: from mail-eopbgr10049.outbound.protection.outlook.com ([40.107.1.49]:55462
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229934AbhELC2b (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 May 2021 22:28:31 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=haUsEzEKpt5mLpqh+D8xkiNMm1LYOL1BVRdM7YOqQv3KrTjn0DOQwsp+c9slJ7VG3kkC25RaHF+wn7xfRDDXQrsL6pI3IQxhCme2jKvHSUA/Bk0EEVGxQejg4QHo20PxCC1wP2t9mXa68JHArVPUGgRalrb3173pGWCLVeBF9+TPprRvJ71O9upaaO8IXRkKw1HvEpJmNLN8wjdDrDhNsVkTjfykCehNC79YMHY70Zso/3I/NikdnyZi0FZUMTprQfs4zHGg6JkxMOAXMjn+/2SCT71GWQyRIqgD9Q1T8/0L6UoLGlRoafbN/ov7ty64tBDaeLYqmvcDv0AHKFGG4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6OzmI8MxDjk/bAHTUFLeoyiJ3yTBuTlJmmUjVNz2PMI=;
- b=AnwIOygJYs/dLwMwso7gDkJEknadzy5jeCcf7Y/wa6doBEZoTkb0zIFCVCMvZSL29V8BMRoRRw0w2lljiH8rjM3Y9Nul6CQA2eKhgnXZF2faOPWS5B/0wR6QdU1uprb7QhWBOXgv53k7YJ/6fhhYh3ZQwrRKBAVHJVKlObl/bm9SIi9TGh0+m82Se/zQaPCukG9f2PdjWvKXXsHdcptTX8S7NijDSV4kQ5BVu7W9p6kzOU5eFm8t2IAUV+V1VnFkWTH/LZc2LfSvcd+S1rxvkpYeFnDKhppDBy3QdM8QXH0pMzStnUwZQPufnOCXjubpm1KEwYEYR7iDfTjNEHxlpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nextfour.com; dmarc=pass action=none header.from=nextfour.com;
- dkim=pass header.d=nextfour.com; arc=none
+        id S230096AbhELDV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 May 2021 23:21:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53886 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230111AbhELDV4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 May 2021 23:21:56 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 679C0C061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 20:20:48 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id m124so17158376pgm.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 May 2021 20:20:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=NextfourGroupOy.onmicrosoft.com;
- s=selector2-NextfourGroupOy-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6OzmI8MxDjk/bAHTUFLeoyiJ3yTBuTlJmmUjVNz2PMI=;
- b=Q1mBDcqDy6JZbDJT9IK0JG1+CQ4eyFM/zEqILyUzPy0YGYPogVOGZaWENG+cbGOn/NFGpxoRYDc0BH6PhMVNqbusrz6tY8pzRYyb0aeRjQg7oXrzUBfxFJfgkb9phzei9h6/qAY6PMpUHSZ68cU5fB0mP9jToEz34+MeV3DyudM=
-Authentication-Results: linux.ibm.com; dkim=none (message not signed)
- header.d=none;linux.ibm.com; dmarc=none action=none header.from=nextfour.com;
-Received: from DBAPR03MB6630.eurprd03.prod.outlook.com (2603:10a6:10:194::6)
- by DB8PR03MB5932.eurprd03.prod.outlook.com (2603:10a6:10:ea::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4108.24; Wed, 12 May
- 2021 02:27:20 +0000
-Received: from DBAPR03MB6630.eurprd03.prod.outlook.com
- ([fe80::593:3329:e104:239]) by DBAPR03MB6630.eurprd03.prod.outlook.com
- ([fe80::593:3329:e104:239%5]) with mapi id 15.20.4108.031; Wed, 12 May 2021
- 02:27:20 +0000
-Subject: Re: [PATCH v5 3/7] fsdax: Add dax_iomap_cow_copy() for dax_iomap_zero
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org
-Cc:     darrick.wong@oracle.com, dan.j.williams@intel.com,
-        willy@infradead.org, viro@zeniv.linux.org.uk, david@fromorbit.com,
-        hch@lst.de, rgoldwyn@suse.de,
-        Ritesh Harjani <riteshh@linux.ibm.com>
-References: <20210511030933.3080921-1-ruansy.fnst@fujitsu.com>
- <20210511030933.3080921-4-ruansy.fnst@fujitsu.com>
-From:   =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>
-Message-ID: <4c944ccc-7708-5dbd-18c3-9ecb5c3a539f@nextfour.com>
-Date:   Wed, 12 May 2021 05:27:16 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-In-Reply-To: <20210511030933.3080921-4-ruansy.fnst@fujitsu.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [91.145.109.188]
-X-ClientProxiedBy: HE1PR0102CA0049.eurprd01.prod.exchangelabs.com
- (2603:10a6:7:7d::26) To DBAPR03MB6630.eurprd03.prod.outlook.com
- (2603:10a6:10:194::6)
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I0E05OrXdqW9H2ReWLoImyNAZwoWDkKkUkvJVilZtAk=;
+        b=VVRagCeMJog1E+4Kn5glvSDrq5Z9pScXTmoEgqtFvqbpwAp4+ssECkxAhdk/vtqDwj
+         BZnaZgrR1jyX5rdx19eD0hi94IshSlJqglbb1GslPPXUQqb2Syw/GmM9YEmqHMaaXp81
+         2r+T8R8DYzEQ/rQOrSEdkFWINQGvFlkm4RrBWbbVLwk/7ON2mUsH2/Y067k3NY2G8cf9
+         t0jPJMrIJlf+GJ4buPS1vDmV8FYuO1GYcVG3PSCngqUEabK5nX2r5r6XoHVfUb1QKW0b
+         Iipc35TkH1zgpr3J+ToxNIgfRWUUh4qNi/VAYS9P7T6JuZ35/1Oyd+hx7rXkRQBQW9Fa
+         l+/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I0E05OrXdqW9H2ReWLoImyNAZwoWDkKkUkvJVilZtAk=;
+        b=Ki15ytzdCbt02tUvsU/R1774w5fzp08L4VMDOZJ6HwMOpTKjib6p4bbCXjoI6Qdy3k
+         Wp/nL+l3/9ymBJqwN7MckMZe9Xj0I6JOqUANVw0RM6+DpCRiy2BdWtbl4LbhL+R24sFo
+         qNMpiayepsEsLMv+G+91iW5iIhJsrNZAL92EvR/HZLuAtlwfz1gdDW+1IDb7tcD+jvHO
+         fdL3eTkXMcmNdO+SZA50aNqROFAMRnLuXN15iTSe7IMJ8KiOEfq5xxwX3ItiTfP3nx0f
+         YlSz/AYHExDvW2G/dEehe1dWQpvUsSatJacraL4583L7W2zf7RtZsrzqeITsgf28ymYW
+         q5gw==
+X-Gm-Message-State: AOAM531HT2edxffBWHkhiAFS85DzJhiopLJAk7u6d0K0+WOMNb/glmyG
+        OOGomP5VmbPRGfNCB9vZkxdSh5LCwX+gsba8ZGG0MA==
+X-Google-Smtp-Source: ABdhPJyGmBzA6PB1rG2IFhsITR6WU/fAlG0hy4zTLptVYrtYuchEfeOpjh01hqqw+BQwMmZ4kbr6JD15UVyidm9h3CA=
+X-Received: by 2002:a05:6a00:8c7:b029:20f:1cf4:d02 with SMTP id
+ s7-20020a056a0008c7b029020f1cf40d02mr34091256pfu.49.1620789647824; Tue, 11
+ May 2021 20:20:47 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.1.121] (91.145.109.188) by HE1PR0102CA0049.eurprd01.prod.exchangelabs.com (2603:10a6:7:7d::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4108.24 via Frontend Transport; Wed, 12 May 2021 02:27:18 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 804c182b-944d-4028-bbf2-08d914ed77a6
-X-MS-TrafficTypeDiagnostic: DB8PR03MB5932:
-X-Microsoft-Antispam-PRVS: <DB8PR03MB59329E13B8FB4EC438CEA46D83529@DB8PR03MB5932.eurprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4502;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: h+iHHkv4srWSfzOvETdgtPC/UrhAIZtWQ09vj50OBTOEXfZp7ZTzeJ7vZ5sFFL/brD8rkNr0G7Bi3+jV/9L2mjoItc1nY5Sno5whnp5heLB3g7kEuABSyEUPP06NRi2jkfJ+YvRmHTS/NmLplDw7JraK3sbkSc81e7Z/wjkSb8wZ7kVL9/OsMccRha2R21yxlKHH+IJul3DZiBxR9mPNZueOxfXlXdOID1GrHlyb7ssnXFrztRl55BslsqgCb8HYWMSv9SExbZEivGWA9y3KhsOjM0LDaAqmOhaiOJemQUgHE2buOllJhDQ8uefBthqmZn06zyn9f+y64ZF/R7Ei2zB5J+oa1faT2sTZox0kB9Mds+ggJ+jj/0Vg3u63bSqtEEvhVjULamWZCdyH9aj9Q1vh0QOnhabSB1KWcgKnMKt3xus4xeqI6H3ErjK9nHJaLkvS8jtDBHK2Q6BODfOoaQisVrH1J02/j9s+FRBfIinGJY1+FZbL2DY89dEhcqvngZfJtZBpQSiNPO0uAWdfia7JTrXiaUbwcXBHf2A+Pkp/B2VOzKw6kNqHJO3DXAwyyOWqAmbQZsfl/vA9EaGBRk3BdD9orutLDdqwsRPOfskGMZFmZC9eLTyHHp00Crh3Kevw2w3oaQItscSWvyaJvZygt3NlOg7kL+nQQ+MHy7tcXGsWx5l5L14U9W+U8X8x
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBAPR03MB6630.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(39830400003)(376002)(366004)(346002)(136003)(396003)(16576012)(316002)(16526019)(186003)(26005)(66946007)(31686004)(2906002)(956004)(66476007)(6486002)(2616005)(31696002)(8936002)(66556008)(86362001)(38350700002)(38100700002)(7416002)(52116002)(83380400001)(5660300002)(8676002)(478600001)(4326008)(36756003)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?dlVzY05oOTQ1eWp1OWtSZkpyNXRGV2xQY1plWkNxN1l3SVJTU1pnUUxHTlpW?=
- =?utf-8?B?UXljK3F1WEZQZFdHNFBYSUdSTzVpRmo0Q0ZLUDdzOGMvZFVnR1J6dTNRaHFN?=
- =?utf-8?B?TThvcHphUEZIUmh1Qm9pcFBqTE4wT1hud21qY3V4R0hXRDhocUJiVlB0R1Aw?=
- =?utf-8?B?WkR6UXBGSndOZGVMWXVpaUlRZUFBNWlmb3UyUjc4Z05nVUYwaHR4NElGYWtm?=
- =?utf-8?B?L0d0dDY1R3pvRHNRTjZiYVp4Y3k5UDRPQTJpMi8yTkpSVVRzYTNQRWtyY2xQ?=
- =?utf-8?B?YXFSby9NNHZ4aWdCSjlURXM4MGdqVFRtajFEUGt0MHpjUE1DbzJOczM3cm1I?=
- =?utf-8?B?b2RjTmh4WC9rTEpJSzhQb0NEVmxEenl2a2NTa3BnRE14eUJnZjRjRzNOeUdH?=
- =?utf-8?B?dlBMMDBNbmJvclQ5WkRHU2RBV0crTnJPeDZVTE15eWdPMXVHSWxncXhpcnhK?=
- =?utf-8?B?MnNHZlNIbUVaRUozMkJiWEhISkJXNWZBUVlpODJzMS9DUXBRZ29KTml2K2hK?=
- =?utf-8?B?b00vd0JWK29KNGhmT3pIZnlsM3BpU2hHQzVJdFFMNk9CMkR1NkVlN0t2L0dW?=
- =?utf-8?B?RGtOY3pibk1pd0pwNStjOXk4NHhpUmtnN003dncxL3QxLy9TQ3JLU291Z3kz?=
- =?utf-8?B?dlVReTE2SlNkSFdQajRXcTFhQzgveWNGN254TG9TaVQ0aWtLT2IwTWw4amxt?=
- =?utf-8?B?bFl3QU9Wd3B3c29GNU1vVW5UcU5oQkZYL3M3UXdxMGE2YmJoMzEyUHV1TW0y?=
- =?utf-8?B?eTRZS0VHaDk0V0dVWmpNTm1RR2NRcWFGcnkvWk50bXo3V21GMklkNGNDUzFN?=
- =?utf-8?B?N3ZMSXhZUkJLMUh1eHlWKzZBM0pjNndPZTIwbUk0cnFpMndRQkdpUHV0bGRM?=
- =?utf-8?B?V2c4NUI5OGJSeDFKL2Z5cVlCVzBKMTZkUjM4ckFKUWxsWTE5dFY5Y0FIZzRH?=
- =?utf-8?B?d3Z6dlNQL1lkd2h0clI2K21SdjcvMUNCR0Q5T2RxMU9jUThuTVJ0NWVBYlE1?=
- =?utf-8?B?UWNVdm5aK3FPc21EWmFQUUptOW5UdkQrMCtYSVU4bzY0NGdEeUZNUW8ybUgz?=
- =?utf-8?B?ZkdEcXNDaUVtU0lzVlNJQ2YxK3VrdVdGc2xpR0U2ZG5pOVdjS0VNRXFiMVhW?=
- =?utf-8?B?b01CRUVGTCt3S3EzaTVib2dVNEd0SzFWZGhIUWE2WXY0MXUxSFNEZXZSRExM?=
- =?utf-8?B?OFM1cFU0SlBzbDR5eWJiQjR3NEJ3VHExbnNFaFZWdFdtcmlib1R1STFNWko3?=
- =?utf-8?B?bzB1NXM3N2VWK2VpWUNyejFKSHgxTWJnWHFJTjMxUWNlM0pJYVByTWRmL216?=
- =?utf-8?B?N3laVTY0TFFOMndzUVc0TzBMb1pySVVrTjlEQkR0ZHhnVWh3MVhUNkJMMnBT?=
- =?utf-8?B?MkFoT3l6Y21MS1Rma0pOZjBWVzh0UGJoZlArRXBRbnpseHhkUW92cTRSc0tP?=
- =?utf-8?B?andMYWlldExpaWphRVQyN0Q2RjEybTF2T1R5Mm1lNnZuNGtjUFNEUGtJWUVI?=
- =?utf-8?B?MXRFb2xXSWxBZEpMOVdQVExxcHcwNFA3YVNQN1FYNlA1WHZOcUtuTElpNlNJ?=
- =?utf-8?B?amdNalhGRkw4d0pTYlpvczhpczV5c1RMcThudi9URU9sYVpkTXJBZFVuVVEx?=
- =?utf-8?B?VnZEbVhwVktmcHhlbGtmZmlWZTVLajc1Y2VGU2NqME44cEdwdXlvb3l0cmt5?=
- =?utf-8?B?YmRURFdSNFFOeVFVTzQrTmFNb1lqSWNaK0Ntc242OTVNYmpwWmVVdFRKbUR4?=
- =?utf-8?Q?zYGkjOAZlLwjBcl9F2g0AKlDi3QAjKoGxtYA87F?=
-X-OriginatorOrg: nextfour.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 804c182b-944d-4028-bbf2-08d914ed77a6
-X-MS-Exchange-CrossTenant-AuthSource: DBAPR03MB6630.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2021 02:27:19.9146
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 972e95c2-9290-4a02-8705-4014700ea294
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z4QZRqRQ19cqMw2ODSVFn/UVILfmte1mwmxDgSHyWnczjH3NjlBiMDRjeCx9nxkdJX6akVAAmkVtg0Rxvpnmw4V9XeGylyyxHky4+eSP8Vs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR03MB5932
+References: <20210511104647.604-1-songmuchun@bytedance.com>
+ <20210511104647.604-11-songmuchun@bytedance.com> <20210511234041.GP1872259@dread.disaster.area>
+In-Reply-To: <20210511234041.GP1872259@dread.disaster.area>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Wed, 12 May 2021 11:20:10 +0800
+Message-ID: <CAMZfGtV3cOY0JwMp_wr+PcHyYZsL4-2v-9YjXnPgpvJXgMvrTw@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH 10/17] fs: introduce alloc_inode_sb() to
+ allocate filesystems specific inode
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Roman Gushchin <guro@fb.com>, Yang Shi <shy828301@gmail.com>,
+        alexs@kernel.org, Wei Yang <richard.weiyang@gmail.com>,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-nfs@vger.kernel.org, zhengqi.arch@bytedance.com,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        fam.zheng@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-
-On 11.5.2021 6.09, Shiyang Ruan wrote:
-> Punch hole on a reflinked file needs dax_copy_edge() too.  Otherwise,
-> data in not aligned area will be not correct.  So, add the srcmap to
-> dax_iomap_zero() and replace memset() as dax_copy_edge().
+On Wed, May 12, 2021 at 7:40 AM Dave Chinner <david@fromorbit.com> wrote:
 >
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> ---
->   fs/dax.c               | 25 +++++++++++++++----------
->   fs/iomap/buffered-io.c |  2 +-
->   include/linux/dax.h    |  3 ++-
->   3 files changed, 18 insertions(+), 12 deletions(-)
+> On Tue, May 11, 2021 at 06:46:40PM +0800, Muchun Song wrote:
+> > The allocated inode cache will be added into its memcg lru list later,
+> > but we do not allocate list_lru in the later patch. So the caller should
+> > call kmem_cache_alloc_lru() to allocate inode and related list_lru.
+> > Introduce alloc_inode_sb() to do that and convert all inodes allocation
+> > to it.
 >
-> diff --git a/fs/dax.c b/fs/dax.c
-> index ef0e564e7904..ee9d28a79bfb 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1186,7 +1186,8 @@ static vm_fault_t dax_pmd_load_hole(struct xa_state *xas, struct vm_fault *vmf,
->   }
->   #endif /* CONFIG_FS_DAX_PMD */
->   
-> -s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
-> +s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap,
-> +		struct iomap *srcmap)
->   {
->   	sector_t sector = iomap_sector(iomap, pos & PAGE_MASK);
->   	pgoff_t pgoff;
-> @@ -1208,19 +1209,23 @@ s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
->   
->   	if (page_aligned)
->   		rc = dax_zero_page_range(iomap->dax_dev, pgoff, 1);
-> -	else
-> +	else {
->   		rc = dax_direct_access(iomap->dax_dev, pgoff, 1, &kaddr, NULL);
-> -	if (rc < 0) {
-> -		dax_read_unlock(id);
-> -		return rc;
-> -	}
-> -
-> -	if (!page_aligned) {
-> -		memset(kaddr + offset, 0, size);
-> +		if (rc < 0)
-> +			goto out;
-> +		if (iomap->addr != srcmap->addr) {
-> +			rc = dax_iomap_cow_copy(offset, size, PAGE_SIZE, srcmap,
-> +						kaddr);
+> FWIW, this probably needs a documentation update to mention that
+> inodes should always be allocated through alloc_inode_sb() rather
+> than kmem_cache_alloc(). It's a "** mandatory **" requirement as per
+> Documentation/filesytems/porting.rst.
 
-offset above is offset in page, think dax_iomap_cow_copy() expects 
-absolute pos
+Make sense to me. I'll fix it in the next version.
 
-> +			if (rc < 0)
-> +				goto out;
-> +		} else
-> +			memset(kaddr + offset, 0, size);
->   		dax_flush(iomap->dax_dev, kaddr + offset, size);
->   	}
-> +
-> +out:
->   	dax_read_unlock(id);
-> -	return size;
-> +	return rc < 0 ? rc : size;
->   }
->   
->   static loff_t
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index f2cd2034a87b..2734955ea67f 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -933,7 +933,7 @@ static loff_t iomap_zero_range_actor(struct inode *inode, loff_t pos,
->   		s64 bytes;
->   
->   		if (IS_DAX(inode))
-> -			bytes = dax_iomap_zero(pos, length, iomap);
-> +			bytes = dax_iomap_zero(pos, length, iomap, srcmap);
->   		else
->   			bytes = iomap_zero(inode, pos, length, iomap, srcmap);
->   		if (bytes < 0)
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index b52f084aa643..3275e01ed33d 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -237,7 +237,8 @@ vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
->   int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index);
->   int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
->   				      pgoff_t index);
-> -s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap);
-> +s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap,
-> +		struct iomap *srcmap);
->   static inline bool dax_mapping(struct address_space *mapping)
->   {
->   	return mapping->host && IS_DAX(mapping->host);
+>
+> Also,
+>
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index c3c88fdb9b2a..d8d5d4eb68d6 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -41,6 +41,7 @@
+> >  #include <linux/stddef.h>
+> >  #include <linux/mount.h>
+> >  #include <linux/cred.h>
+> > +#include <linux/slab.h>
+> >
+> >  #include <asm/byteorder.h>
+> >  #include <uapi/linux/fs.h>
+> > @@ -3200,6 +3201,12 @@ extern void free_inode_nonrcu(struct inode *inode);
+> >  extern int should_remove_suid(struct dentry *);
+> >  extern int file_remove_privs(struct file *);
+> >
+> > +static inline void *
+> > +alloc_inode_sb(struct super_block *sb, struct kmem_cache *cache, gfp_t gfp)
+> > +{
+> > +     return kmem_cache_alloc_lru(cache, &sb->s_inode_lru, gfp);
+> > +}
+> > +
+>
+> This really needs a kerneldoc comment explaining that it must be
+> used for allocating inodes to set up the inode reclaim context
+> correctly....
 
+Will do.
+
+>
+> /me wonders if we should add a BUG_ON() check in inode_init_always()
+> to capture filesystems that don't call through
+> kmem_cache_alloc_lru() for inodes?
+
+Good point. IMHO, I think that the BUG_ON check may be useful.
+Actually, it can catch such bugs.
+
+Any suggestions from others?
+
+Thanks.
+
+>
+> Cheers,
+>
+> Dave.
+> --
+> Dave Chinner
+> david@fromorbit.com
