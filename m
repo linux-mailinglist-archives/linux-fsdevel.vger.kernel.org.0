@@ -2,100 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D9D8737EBE5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 May 2021 00:24:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE98337EE7E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 May 2021 00:58:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378262AbhELTjf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 15:39:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44862 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381358AbhELTd6 (ORCPT
+        id S236071AbhELVvv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 17:51:51 -0400
+Received: from mail-il1-f197.google.com ([209.85.166.197]:37770 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239433AbhELUgO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 15:33:58 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA230C061761;
-        Wed, 12 May 2021 12:28:53 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id b7so31049933ljr.4;
-        Wed, 12 May 2021 12:28:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JWP0l+BA0fGfCW3697UumhoAM6OZCftdKGj+XYdvmfw=;
-        b=jau0A7xhAKhNGGJJ6FHnLqlBanUYsG4/Xgrwbeb7LF93cOfKc6gIGxtrG8L93G9h3f
-         xdF/N+vTKym3eL4xJZqCUekg/qtC81Tq82Zcm246zcaw/353BgLe5X/qAD1uuA3b7IrD
-         IcLGS5RDD44EnpQsLv65nnaiiB1xaG6CQkmXTC6jJ8DQg1bfNnE2GjMLcvjkSUXU7Tkg
-         VlUIFCMH5svj1mEyjnxNd9qWES0Tnnq5+U/U/S+OEysNGMpsy8uJ6NIWTsIkPoqLPtBT
-         qql0mtiN6aCZ2BkloTkbsla9sXJUTaekCXW9MzOQpPjLTQyxx9BNIhPPy7Ohsa/OrMQh
-         GXcw==
+        Wed, 12 May 2021 16:36:14 -0400
+Received: by mail-il1-f197.google.com with SMTP id r13-20020a92cd8d0000b02901a627ef20a2so20569482ilb.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 May 2021 13:35:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JWP0l+BA0fGfCW3697UumhoAM6OZCftdKGj+XYdvmfw=;
-        b=JQJIfBNcMdlF0YsN79upGcfc/jdVqcCXBSfVgqj7yRX4uGE9yv+qHeNIKtnfrdbWPx
-         4wiL15v9t5Zj7BYNEATLzmsbcBUVDabeItMcopFXRO2CnYahtNAbhuhJbEhyGJ3WMNwU
-         eHgV7n0Y7QXfr3mjhPKVnJxM/CQ3LFsutbHvVtynnNVwwjP1BLCPJ6ADGETSr+pdLx49
-         +y+lHXCHdtkJKiSrYHCv9L4fl7dKqRXSyGPtsb/IRLRfds5cpCHopzOXWAzd2EDzD2o5
-         jkPXwnFm0P7Hd+QmY4YmngUdw0zRJ4J0m0ZjCpdMsfGcsI7NkINMDc4vap7a/s3VWIrF
-         uKGA==
-X-Gm-Message-State: AOAM532OOQ2qkPQ72gO3JSxzVf+XWhiQwGn1UhUTQOLNWxPYZAt/tUWd
-        xunkPDWwrYLOeaNRNYcUrF0gqqxUDojRsrtQGV4=
-X-Google-Smtp-Source: ABdhPJybjV1UrN30hcZfWkxdJZJglKnFZJNX4SuGmgPSoe/Xw3yeEITbPhCey3BqWWyluYg0SRnoz0qVGrEzJuI95zI=
-X-Received: by 2002:a2e:7819:: with SMTP id t25mr9229961ljc.406.1620847732192;
- Wed, 12 May 2021 12:28:52 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=p2gWWp2dZEJgHhYny1RpbKA50V7ZgrhW/5wfqVoEc2M=;
+        b=h1iRDy+C5k9ERh+1IF1DFT7HpJUeVJ+hcEvWZ/PrmmSk3jXKT7839uh4AC8nltTR/A
+         sQq81RUDYsmF93s2igLhgQWzpvYS1Xqqbvh9hhXROGqgRg/RiN4L/gzYE2Yg4sk6HVMG
+         sJ9mf25/IgAkMCHd6zi2ysf2LyZuAd4HFz681Ehm0ynBysjYuWBbZWfIVCcvvDneOHma
+         +MQAhnqk6TgTNKT2by3IJTEl/ll1fAesAPMQmp4ERe0KSTurszn3f9f3SFpHo5tjO5Ic
+         SmHWRVbZfSXAy6Wo7WMbfYZww7TbYZmGHC9BFA1VmFRmZlXYDTQz1rZ6stRz3q69dfXV
+         w3xQ==
+X-Gm-Message-State: AOAM532Rvg6V1M01gOlHc5K4U4Z0nCCPWjsYRao4L16Mwt4nP5wnTQA6
+        Fai3avvvdGpYL597lYKOhmgilVPEkqwt+qLZYlecHxjFTzWY
+X-Google-Smtp-Source: ABdhPJwe3e5rvNfTerqpWt3Q7Zz0ibimpSGTUxCie7tvWszx+jULM13/TFQWqlDiFFAqTdvkuXoWVxw6jFXb2zYamAe3k8mxGeVa
 MIME-Version: 1.0
-References: <YJvwVq3Gl35RQrIe@casper.infradead.org>
-In-Reply-To: <YJvwVq3Gl35RQrIe@casper.infradead.org>
-From:   Steve French <smfrench@gmail.com>
-Date:   Wed, 12 May 2021 14:28:41 -0500
-Message-ID: <CAH2r5msOQsdeknBdTsfMXYzrb5=NuKEBPc4WD1CkYp10t19Guw@mail.gmail.com>
-Subject: Re: Removing readpages aop
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-nfs <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+X-Received: by 2002:a92:d3c1:: with SMTP id c1mr32529456ilh.21.1620851305578;
+ Wed, 12 May 2021 13:28:25 -0700 (PDT)
+Date:   Wed, 12 May 2021 13:28:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004d849405c227da64@google.com>
+Subject: [syzbot] WARNING in io_link_timeout_fn
+From:   syzbot <syzbot+5a864149dd970b546223@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I don't have any objections as long as:
-- we see at least mild performance benefit (or at least we are
-confident that no performance loss)
-- it passes regression tests (the usual xfstest bucket)
-- it doesn't complicate the code too much (sounds like it actually
-might simplify it, but needs a little more work)
-- make sure that the usual tuning parms still work (e.g. "rsize" and
-"rasize" mount options) or we can figure out a sane way to autotune
-readhead so those wouldn't be needed for any workload
+Hello,
 
-But currently since we get the most benefit from multichannel (as that
-allows even better parallelization of i/o) ... I have been focused on
-various multichannel issues (low credit situations, reconnect, fall
-back to different channels when weird errors, adjusting channels
-dynamically when server adds or removes adapters on the fly) for the
-short term
+syzbot found the following issue on:
 
-On Wed, May 12, 2021 at 10:31 AM Matthew Wilcox <willy@infradead.org> wrote:
->
-> In Linus' current tree, there are just three filesystems left using the
-> readpages address_space_operation:
->
-> $ git grep '\.readpages'
-> fs/9p/vfs_addr.c:       .readpages = v9fs_vfs_readpages,
-> fs/cifs/file.c: .readpages = cifs_readpages,
-> fs/nfs/file.c:  .readpages = nfs_readpages,
->
-> I'd love to finish getting rid of ->readpages as it would simplify
-> the VFS.  AFS and Ceph were both converted since 5.12 to use
-> netfs_readahead().  Is there any chance we might get the remaining three
-> filesystems converted in the next merge window?
->
+HEAD commit:    88b06399 Merge tag 'for-5.13-rc1-part2-tag' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13c0d265d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=807beec6b4d66bf1
+dashboard link: https://syzkaller.appspot.com/bug?extid=5a864149dd970b546223
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10436223d00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1715208bd00000
+
+The issue was bisected to:
+
+commit 91f245d5d5de0802428a478802ec051f7de2f5d6
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Tue Feb 9 20:48:50 2021 +0000
+
+    io_uring: enable kmemcg account for io_uring requests
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=144fbb23d00000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=164fbb23d00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=124fbb23d00000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5a864149dd970b546223@syzkaller.appspotmail.com
+Fixes: 91f245d5d5de ("io_uring: enable kmemcg account for io_uring requests")
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 8784 at fs/io_uring.c:1499 req_ref_sub_and_test fs/io_uring.c:1499 [inline]
+WARNING: CPU: 1 PID: 8784 at fs/io_uring.c:1499 io_put_req_deferred fs/io_uring.c:2191 [inline]
+WARNING: CPU: 1 PID: 8784 at fs/io_uring.c:1499 io_link_timeout_fn+0x96c/0xb20 fs/io_uring.c:6369
+Modules linked in:
+CPU: 1 PID: 8784 Comm: systemd-cgroups Not tainted 5.13.0-rc1-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:req_ref_sub_and_test fs/io_uring.c:1499 [inline]
+RIP: 0010:io_put_req_deferred fs/io_uring.c:2191 [inline]
+RIP: 0010:io_link_timeout_fn+0x96c/0xb20 fs/io_uring.c:6369
+Code: 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 84 f9 fd ff ff e8 ae ff da ff e9 ef fd ff ff e8 f4 03 96 ff <0f> 0b e9 6a fc ff ff e8 e8 03 96 ff 4c 89 ef e8 10 96 ff ff 48 8d
+RSP: 0018:ffffc90000dc0d70 EFLAGS: 00010046
+RAX: 0000000080010001 RBX: ffff88802c080c80 RCX: 0000000000000000
+RDX: ffff8880373954c0 RSI: ffffffff81dece4c RDI: 0000000000000003
+RBP: ffff88802c080cdc R08: 000000000000007f R09: ffff88802c080cdf
+R10: ffffffff81decab3 R11: 0000000000000000 R12: 000000000000007f
+R13: 0000000000000000 R14: ffff88802c15e000 R15: ffff88802c15e680
+FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6ba37daab4 CR3: 0000000015bdf000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ __run_hrtimer kernel/time/hrtimer.c:1537 [inline]
+ __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1601
+ hrtimer_interrupt+0x330/0xa00 kernel/time/hrtimer.c:1663
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1089 [inline]
+ __sysvec_apic_timer_interrupt+0x146/0x540 arch/x86/kernel/apic/apic.c:1106
+ sysvec_apic_timer_interrupt+0x8e/0xc0 arch/x86/kernel/apic/apic.c:1100
+ </IRQ>
+ asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:647
+RIP: 0010:orc_find arch/x86/kernel/unwind_orc.c:166 [inline]
+RIP: 0010:unwind_next_frame+0x308/0x1ce0 arch/x86/kernel/unwind_orc.c:443
+Code: 48 8d 3c 40 4c 8d 8c 3f cc 27 3d 8e 83 c2 01 49 81 f9 a4 0c dd 8e 0f 83 f3 10 00 00 89 d7 48 8d 3c 7f 48 8d bc 3f cc 27 3d 8e <48> 81 ff a4 0c dd 8e 0f 87 d8 10 00 00 48 8d 3c 85 3c 8f d2 8d 29
+RSP: 0018:ffffc9000918f6a8 EFLAGS: 00000293
+RAX: 000000000002bff1 RBX: 1ffff92001231edd RCX: 000000000002bff1
+RDX: 000000000002bffb RSI: 000000000000b9cd RDI: ffffffff8e4da7ae
+RBP: 0000000000000001 R08: 0000000000000000 R09: ffffffff8e4da772
+R10: fffff52001231efb R11: 0000000000084087 R12: ffffc9000918f7c8
+R13: ffffc9000918f7b5 R14: ffffc9000918f780 R15: ffffffff81b9cd7f
+ arch_stack_walk+0x7d/0xe0 arch/x86/kernel/stacktrace.c:25
+ stack_trace_save+0x8c/0xc0 kernel/stacktrace.c:121
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
+ kasan_set_track+0x1c/0x30 mm/kasan/common.c:46
+ kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:357
+ ____kasan_slab_free mm/kasan/common.c:360 [inline]
+ ____kasan_slab_free mm/kasan/common.c:325 [inline]
+ __kasan_slab_free+0xfb/0x130 mm/kasan/common.c:368
+ kasan_slab_free include/linux/kasan.h:212 [inline]
+ slab_free_hook mm/slub.c:1581 [inline]
+ slab_free_freelist_hook+0xdf/0x240 mm/slub.c:1606
+ slab_free mm/slub.c:3166 [inline]
+ kmem_cache_free+0x8a/0x740 mm/slub.c:3182
+ anon_vma_chain_free mm/rmap.c:141 [inline]
+ unlink_anon_vmas+0x472/0x860 mm/rmap.c:439
+ free_pgtables+0xe2/0x2f0 mm/memory.c:413
+ exit_mmap+0x2b7/0x590 mm/mmap.c:3209
+ __mmput+0x122/0x470 kernel/fork.c:1096
+ mmput+0x58/0x60 kernel/fork.c:1117
+ exit_mm kernel/exit.c:502 [inline]
+ do_exit+0xb0a/0x2a60 kernel/exit.c:813
+ do_group_exit+0x125/0x310 kernel/exit.c:923
+ __do_sys_exit_group kernel/exit.c:934 [inline]
+ __se_sys_exit_group kernel/exit.c:932 [inline]
+ __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:932
+ do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7f6ba4eb3618
+Code: Unable to access opcode bytes at RIP 0x7f6ba4eb35ee.
+RSP: 002b:00007ffd8038caf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f6ba4eb3618
+RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+RBP: 00007f6ba51908e0 R08: 00000000000000e7 R09: fffffffffffffee8
+R10: 00007f6ba336e158 R11: 0000000000000246 R12: 00007f6ba51908e0
+R13: 00007f6ba5195c20 R14: 0000000000000000 R15: 0000000000000000
 
 
--- 
-Thanks,
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Steve
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
