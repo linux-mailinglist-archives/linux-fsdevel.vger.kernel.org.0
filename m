@@ -2,99 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B16B37D050
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 19:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF98E37D04D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 May 2021 19:40:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231301AbhELRcO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 May 2021 13:32:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46736 "EHLO mail.kernel.org"
+        id S235006AbhELRcM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 May 2021 13:32:12 -0400
+Received: from sandeen.net ([63.231.237.45]:45698 "EHLO sandeen.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236646AbhELQsP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 May 2021 12:48:15 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 05BBA61E82;
-        Wed, 12 May 2021 16:15:45 +0000 (UTC)
-Date:   Wed, 12 May 2021 18:15:42 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
+        id S243253AbhELQpd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 May 2021 12:45:33 -0400
+Received: from liberator.sandeen.net (liberator.sandeen.net [10.0.0.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by sandeen.net (Postfix) with ESMTPSA id 566E6323C00;
+        Wed, 12 May 2021 11:44:03 -0500 (CDT)
+To:     Hyunchul Lee <hyc.lee@gmail.com>
+Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [RFC][PATCH] fanotify: introduce filesystem view mark
-Message-ID: <20210512161542.asyjkxflkzfvgp3s@wittgenstein>
-References: <20210503165315.GE2994@quack2.suse.cz>
- <CAOQ4uxgy0DUEUo810m=bnLuHNbs60FLFPUUw8PLq9jJ8VTFD8g@mail.gmail.com>
- <20210505122815.GD29867@quack2.suse.cz>
- <20210505142405.vx2wbtadozlrg25b@wittgenstein>
- <20210510101305.GC11100@quack2.suse.cz>
- <CAOQ4uxjqjB2pCoyLzreMziJcE5nYjgdhcAsDWDmu_5-g5AKM3w@mail.gmail.com>
- <20210510142107.GA24154@quack2.suse.cz>
- <CAOQ4uxhKk3oJdWF8YxYRPyomimg9xQaHnMo3ggALOhTuwWxYBw@mail.gmail.com>
- <20210512130705.cywde7v4z7ywjrag@wittgenstein>
- <20210512133415.GC2734@quack2.suse.cz>
+        Pavel Reichl <preichl@redhat.com>,
+        chritophe.vu-brugier@seagate.com
+References: <372ffd94-d1a2-04d6-ac38-a9b61484693d@sandeen.net>
+ <CAKYAXd_5hBRZkCfj6YAgb1D2ONkpZMeN_KjAQ_7c+KxHouLHuw@mail.gmail.com>
+ <CGME20210511233346epcas1p3071e13aa2f1364e231f2d6ece4b64ca2@epcas1p3.samsung.com>
+ <276da0be-a44b-841e-6984-ecf3dc5da6f0@sandeen.net>
+ <001201d746c0$cc8da8e0$65a8faa0$@samsung.com>
+ <b3015dc1-07a9-0c14-857a-9562a9007fb6@sandeen.net>
+ <CANFS6bZs3bDQdKH-PYnQqo=3iDUaVy5dH8VQ+JE8WdeVi4o0NQ@mail.gmail.com>
+From:   Eric Sandeen <sandeen@sandeen.net>
+Subject: Re: problem with exfat on 4k logical sector devices
+Message-ID: <35b5967f-dc19-f77f-f7d1-bf1d6e2b73e8@sandeen.net>
+Date:   Wed, 12 May 2021 11:44:21 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.10.0
 MIME-Version: 1.0
+In-Reply-To: <CANFS6bZs3bDQdKH-PYnQqo=3iDUaVy5dH8VQ+JE8WdeVi4o0NQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210512133415.GC2734@quack2.suse.cz>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 12, 2021 at 03:34:15PM +0200, Jan Kara wrote:
-> On Wed 12-05-21 15:07:05, Christian Brauner wrote:
-> > On Mon, May 10, 2021 at 06:08:31PM +0300, Amir Goldstein wrote:
-> > > > > > OK, so this feature would effectively allow sb-wide watching of events that
-> > > > > > are generated from within the container (or its descendants). That sounds
-> > > > > > useful. Just one question: If there's some part of a filesystem, that is
-> > > > > > accesible by multiple containers (and thus multiple namespaces), or if
-> > > > > > there's some change done to the filesystem say by container management SW,
-> > > > > > then event for this change won't be visible inside the container (despite
-> > > > > > that the fs change itself will be visible).
-> > > > >
-> > > > > That is correct.
-> > > > > FYI, a privileged user can already mount an overlayfs in order to indirectly
-> > > > > open and write to a file.
-> > > > >
-> > > > > Because overlayfs opens the underlying file FMODE_NONOTIFY this will
-> > > > > hide OPEN/ACCESS/MODIFY/CLOSE events also for inode/sb marks.
-> > > > > Since 459c7c565ac3 ("ovl: unprivieged mounts"), so can unprivileged users.
-> > > > >
-> > > > > I wonder if that is a problem that we need to fix...
-> > > >
-> > > > I assume you are speaking of the filesystem that is absorbing the changes?
-> > > > AFAIU usually you are not supposed to access that filesystem alone but
-> > > > always access it only through overlayfs and in that case you won't see the
-> > > > problem?
-> > > >
-> > > 
-> > > Yes I am talking about the "backend" store for overlayfs.
-> > > Normally, that would be a subtree where changes are not expected
-> > > except through overlayfs and indeed it is documented that:
-> > > "If the underlying filesystem is changed, the behavior of the overlay
-> > >  is undefined, though it will not result in a crash or deadlock."
-> > > Not reporting events falls well under "undefined".
-> > > 
-> > > But that is not the problem.
-> > > The problem is that if user A is watching a directory D for changes, then
-> > > an adversary user B which has read/write access to D can:
-> > > - Clone a userns wherein user B id is 0
-> > > - Mount a private overlayfs instance using D as upperdir
-> > > - Open file in D indirectly via private overlayfs and edit it
-> > > 
-> > > So it does not require any special privileges to circumvent generating
-> > > events. Unless I am missing something.
-> > 
-> > No, I think you're right. That should work. I don't think that's
-> > necessarily a problem though. It's a bit unexpected and slightly
-> > unpleasant but it's documented already and it's not a security issue
-> > afaict.
+On 5/12/21 9:09 AM, Hyunchul Lee wrote:
+> Hello,
 > 
-> fanotify(7) is used in applications (such as virus scanners or anti-malware
-> products) where they expect to see all filesystem changes. There are
-> products which implement access mediation policy based on fanotify
-> permission events. So a way for unpriviledged application to escape
-> notification is a "security" issue (not a kernel one but it defeats
-> protections userspace implements).
+> 2021년 5월 12일 (수) 오전 8:57, Eric Sandeen <sandeen@sandeen.net>님이 작성:
+>>
+>> On 5/11/21 6:53 PM, Namjae Jeon wrote:
+>>
+>>>> One other thing that I ran across is that fsck seems to validate an image against the sector size of
+>>>> the device hosting the image rather than the sector size found in the boot sector, which seems like
+>>>> another issue that will come up:
+>>>>
+>>>> # fsck/fsck.exfat /dev/sdb
+>>>> exfatprogs version : 1.1.1
+>>>> /dev/sdb: clean. directories 1, files 0
+>>>>
+>>>> # dd if=/dev/sdb of=test.img
+>>>> 524288+0 records in
+>>>> 524288+0 records out
+>>>> 268435456 bytes (268 MB) copied, 1.27619 s, 210 MB/s
+>>>>
+>>>> # fsck.exfat test.img
+>>>> exfatprogs version : 1.1.1
+>>>> checksum of boot region is not correct. 0, but expected 0x3ee721 boot region is corrupted. try to
+>>>> restore the region from backup. Fix (y/N)? n
+>>>>
+>>>> Right now the utilities seem to assume that the device they're pointed at is always a block device,
+>>>> and image files are problematic.
+>>> Okay, Will fix it.
+>>
+>> Right now I have a hack like this.
+>>
+>> 1) don't validate the in-image sector size against the host device size
+>> (maybe should only skip this check if it's not a bdev? Or is it OK to have
+>> a 4k sector size fs on a 512 device? Probably?)
+>>
+>> 2) populate the "bd" sector size information from the values read from the image.
+>>
+>> It feels a bit messy, but it works so far. I guess the messiness stems from
+>> assuming that we always have a "bd" block device.
+>>
+> 
+> I think we need to keep the "bd" sector size to avoid confusion between
+> the device's sector size and the exfat's sector size.
 
-Ah, good point. I assumed since this has always been the case although
-restricted to privileged users on the host, i.e. creating an overlayfs
-mount would always have that affect iiuc.
+Sure, it's just that for a filesystem in an image file, there is no meaning to
+the "device sector size" because there is no device.
+
+...
+
+> Is it better to add a sector size parameter to read_boot_region
+> function? This function
+> is also called to read the backup boot region to restore the corrupted
+> main boot region.
+> During this restoration, we need to read the backup boot region with
+> various sector sizes,
+> Because we don't have a certain exfat sector size.
+> 
+>>         ret = boot_region_checksum(bd, bs_offset);
+>>         if (ret < 0)
+>>                 goto err;
+>>
+>>
+> 
+> I sent the pull request to fix these problems. Could you check this request?
+> https://github.com/exfatprogs/exfatprogs/pull/167
+
+I didn't review that in depth, but it looks like for fsck and dump, it gets the
+sector size from the boot sector rather than from the host device or filesystem,
+which makes sense, at least.
+
+(As an aside, I'd suggest that your new "c2o" function could have a more
+descriptive, self-documenting name.)
+
+But there are other problems where bd->sector_* is used and assumed to relate
+to the filesystem, for example:
+
+# fsck/fsck.exfat /root/test.img 
+exfatprogs version : 1.1.1
+/root/test.img: clean. directories 1, files 0
+# tune/tune.exfat -I 0x1234  /root/test.img 
+exfatprogs version : 1.1.1
+New volume serial : 0x1234
+# fsck/fsck.exfat /root/test.img 
+exfatprogs version : 1.1.1
+checksum of boot region is not correct. 0x3eedc5, but expected 0xe59577e3
+boot region is corrupted. try to restore the region from backup. Fix (y/N)? n
+
+I think because exfat_write_checksum_sector() relies on bd->sector_size.
+
+You probably need to audit every use of bd->sector_size and
+bd->sector_size_bits outside of mkfs, because anything assuming that it
+is related to the filesystem itself, as opposed to the filesytem/device
+hosting it, could be problematic.  Is there any time outside of mkfs that
+you actually care about the device sector size? If not, I might suggest
+trying to isolate that usage to mkfs.
+
+I also wonder about:
+
+        bd->num_sectors = blk_dev_size / DEFAULT_SECTOR_SIZE;
+        bd->num_clusters = blk_dev_size / ui->cluster_size;
+
+is it really correct that this should always be in terms of 512-byte sectors?
+
+-Eric
