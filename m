@@ -2,134 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 73F9437FF6E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 May 2021 22:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA8CC37FF93
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 May 2021 23:03:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233139AbhEMUtF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 May 2021 16:49:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56294 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231249AbhEMUtF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 May 2021 16:49:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CC49A61287;
-        Thu, 13 May 2021 20:47:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1620938875;
-        bh=ph/D2ruaZJycXfWKMXtRhWDiuhNBEwRkB87bfJEc7wQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=yT0GSlqeFDTM/njo6gS0zUif6V5qdEVi1ci+b3bvuCtP5u2XB6cWVOaGaVYgDzrNX
-         Ajln01PVePlCbU87w1oeQfjsEhRHGDhSS2F4nBpWt0JTKDv6Y6FFGXSb+TAruaI1FH
-         ty2mA4dnAGWdBz1VpY+k7082g09XhS5b1PxpOpa8=
-Date:   Thu, 13 May 2021 13:47:54 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc:     Randy Dunlap <rdunlap@infradead.org>, broonie@kernel.org,
+        id S233253AbhEMVE6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 May 2021 17:04:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46938 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233247AbhEMVE6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 May 2021 17:04:58 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B93F4C061574;
+        Thu, 13 May 2021 14:03:47 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id x5so28124820wrv.13;
+        Thu, 13 May 2021 14:03:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=9MhDBHQ11hDldH6MDOJoiTUDCTHB+WEqxchIZghbcyg=;
+        b=Ki38mtOICZjMluksRQeBO/wgp4JwGvNkt6B2gZ6orvoHMez0c0Eu5rjMRo69ZxPOlL
+         zlmkHvhXeFbAG1PxwvBkWQabumk/1Ajaqb3u38sOMzLAAPh3SwdgOgf2GQctIhX4Dfmr
+         MGkWNEERR9cFUF8vh2svKBhyBWkFsa5oQwH4jlfaMM4YMd/EOGnOZZZjFJO5iWmV2fHD
+         +1NNGJorb6X6IV2qrheTyKLP+s/iVY4ZJkPbdTJlDPHgeNIY+OA1MRhI2iiVihKVYnMw
+         jhh+ihMWQfjVRI489Rk318ATddOkN3uMHMvEu+6XoeXK9xp1VHsZcXcxKzv9WsbPZgqN
+         PX4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9MhDBHQ11hDldH6MDOJoiTUDCTHB+WEqxchIZghbcyg=;
+        b=mGoT+0OOpf7f76aJM1Iy1y5DFPJ+1744+QOOuGR9hYndNysngPnFq54MChIn0L9DhT
+         +IwqiFZNgdN197DNcvKNzDpMe6VllK2xMsD8RVzDMY72wBKafKWZQ+n0Pc+v4v3GyLdm
+         xpPx0E/FjjTgb0QA69A/P48+tOLEWEaA2+ByhpwMkfdSy0NZVWEkh5DR/HCrRU071Ylj
+         ZTo45K0mXuutGSzd+J5qZG0Almn4s3GAWxjw7L9QHfni+ipwApQQrR1gGhoZM81kKKkB
+         dR5NFmEKhcyt10wuxO/mvFdyZ5iCPTefMAi2okU+pClPhc66+9RVfUJHrOKC4ckbHkFp
+         w8Qg==
+X-Gm-Message-State: AOAM533aCq+1WYo++gXWOa2Q2DSMob13nTxB68wd8QSQQol60AWDE3xd
+        M0OvHoBI9jv7LMcmXAnSrSk=
+X-Google-Smtp-Source: ABdhPJx2bYDE2pgnjHSH85hlgL5f0D15mPVm/ZsY4CBCI016xG7533+cCZzPWq80CS2zwE9q6NeWxA==
+X-Received: by 2002:adf:ea82:: with SMTP id s2mr16753023wrm.397.1620939826504;
+        Thu, 13 May 2021 14:03:46 -0700 (PDT)
+Received: from [192.168.8.197] ([148.252.132.196])
+        by smtp.gmail.com with ESMTPSA id p1sm4147974wrs.50.2021.05.13.14.03.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 May 2021 14:03:46 -0700 (PDT)
+Subject: Re: [syzbot] WARNING in io_link_timeout_fn
+To:     syzbot <syzbot+5a864149dd970b546223@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject: Re: mmotm 2021-05-12-21-46 uploaded (arch/x86/mm/pgtable.c)
-Message-Id: <20210513134754.ab3f1a864b0156ef99248401@linux-foundation.org>
-In-Reply-To: <54055e72-34b8-d43d-2ad3-87e8c8fa547b@csgroup.eu>
-References: <20210513044710.MCXhM_NwC%akpm@linux-foundation.org>
-        <151ddd7f-1d3e-a6f7-daab-e32f785426e1@infradead.org>
-        <54055e72-34b8-d43d-2ad3-87e8c8fa547b@csgroup.eu>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <00000000000011220705c229aa98@google.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <8915be59-5ac9-232d-878e-b09c141059d5@gmail.com>
+Date:   Thu, 13 May 2021 22:03:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
+MIME-Version: 1.0
+In-Reply-To: <00000000000011220705c229aa98@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 13 May 2021 19:09:23 +0200 Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
+On 5/12/21 11:38 PM, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> WARNING in io_req_complete_failed
+
+Let's get more info on it
+
+#syz test: https://github.com/isilence/linux.git syz_test6
 
 > 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 10153 at fs/io_uring.c:1505 req_ref_put_and_test fs/io_uring.c:1505 [inline]
+> WARNING: CPU: 0 PID: 10153 at fs/io_uring.c:1505 io_put_req fs/io_uring.c:2171 [inline]
+> WARNING: CPU: 0 PID: 10153 at fs/io_uring.c:1505 io_req_complete_failed+0x2ee/0x5a0 fs/io_uring.c:1649
+> Modules linked in:
+> CPU: 1 PID: 10153 Comm: syz-executor.3 Not tainted 5.12.0-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:req_ref_put_and_test fs/io_uring.c:1505 [inline]
+> RIP: 0010:io_put_req fs/io_uring.c:2171 [inline]
+> RIP: 0010:io_req_complete_failed+0x2ee/0x5a0 fs/io_uring.c:1649
+> Code: 58 bd da ff be 01 00 00 00 4c 89 f7 e8 5b 78 fe ff e9 09 fe ff ff e8 f1 32 97 ff 4c 89 ef e8 a9 fd 65 ff eb cb e8 e2 32 97 ff <0f> 0b e9 c8 fd ff ff 4c 89 f7 e8 23 0b db ff e9 3c fd ff ff 4c 89
+> RSP: 0018:ffffc9000afbfd10 EFLAGS: 00010293
 > 
-> > on i386:
-> > 
-> > ../arch/x86/mm/pgtable.c:703:5: error: redefinition of ‘pud_set_huge’
-> >   int pud_set_huge(pud_t *pud, phys_addr_t addr, pgprot_t prot)
-> >       ^~~~~~~~~~~~
-> > In file included from ../include/linux/mm.h:33:0,
-> >                   from ../arch/x86/mm/pgtable.c:2:
-> > ../include/linux/pgtable.h:1387:19: note: previous definition of ‘pud_set_huge’ was here
-> >   static inline int pud_set_huge(pud_t *pud, phys_addr_t addr, pgprot_t prot)
-> >                     ^~~~~~~~~~~~
-> > ../arch/x86/mm/pgtable.c:758:5: error: redefinition of ‘pud_clear_huge’
-> >   int pud_clear_huge(pud_t *pud)
-> >       ^~~~~~~~~~~~~~
-> > In file included from ../include/linux/mm.h:33:0,
-> >                   from ../arch/x86/mm/pgtable.c:2:
-> > ../include/linux/pgtable.h:1391:19: note: previous definition of ‘pud_clear_huge’ was here
-> >   static inline int pud_clear_huge(pud_t *pud)
-> >                     ^~~~~~~~~~~~~~
+> RAX: 0000000000000000 RBX: 000000000000007f RCX: 0000000000000000
+> RDX: ffff88801f5e0000 RSI: ffffffff81dd35ae RDI: 0000000000000003
+> RBP: ffff888043314dc0 R08: 000000000000007f R09: ffff888043314e1f
+> R10: ffffffff81dd3374 R11: 000000000000000f R12: ffffffffffffffea
+> R13: ffff888043314e1c R14: ffff888043314e18 R15: 00000000ffffffea
+> FS:  00007fac1b577700(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f04f797dd40 CR3: 0000000012dfb000 CR4: 00000000001506e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  __io_queue_sqe+0x61e/0x10f0 fs/io_uring.c:6440
+>  __io_req_task_submit+0x103/0x120 fs/io_uring.c:2037
+>  __tctx_task_work fs/io_uring.c:1908 [inline]
+>  tctx_task_work+0x24e/0x550 fs/io_uring.c:1922
+>  task_work_run+0xdd/0x1a0 kernel/task_work.c:161
+>  tracehook_notify_signal include/linux/tracehook.h:212 [inline]
+>  handle_signal_work kernel/entry/common.c:145 [inline]
+>  exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
+>  exit_to_user_mode_prepare+0x24a/0x280 kernel/entry/common.c:208
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:290 [inline]
+>  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:301
+>  do_syscall_64+0x47/0xb0 arch/x86/entry/common.c:57
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> RIP: 0033:0x4665f9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
 > 
-> Hum ...
 > 
-> Comes from my patch 
-> https://patchwork.ozlabs.org/project/linuxppc-dev/patch/5ac5976419350e8e048d463a64cae449eb3ba4b0.1620795204.git.christophe.leroy@csgroup.eu/
+> Tested on:
 > 
-> But, that happens only if x86 defines __PAGETABLE_PUD_FOLDED. And if PUD is folded, then I can't 
-> understand my it has pud_set_huge() and pud_clear_huge() functions.
+> commit:         a298232e io_uring: fix link timeout refs
+> git tree:       git://git.kernel.dk/linux-block.git io_uring-5.13
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15f82965d00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ae2e6c63d6410fd3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5a864149dd970b546223
+> compiler:       
+> 
 
-Probably because someone messed something up ;)
-
-Let's try this.
-
---- a/arch/x86/mm/pgtable.c~mm-pgtable-add-stubs-for-pmd-pub_set-clear_huge-fix
-+++ a/arch/x86/mm/pgtable.c
-@@ -682,6 +682,7 @@ int p4d_clear_huge(p4d_t *p4d)
- }
- #endif
- 
-+#ifndef __PAGETABLE_PUD_FOLDED
- /**
-  * pud_set_huge - setup kernel PUD mapping
-  *
-@@ -721,6 +722,22 @@ int pud_set_huge(pud_t *pud, phys_addr_t
- }
- 
- /**
-+ * pud_clear_huge - clear kernel PUD mapping when it is set
-+ *
-+ * Returns 1 on success and 0 on failure (no PUD map is found).
-+ */
-+int pud_clear_huge(pud_t *pud)
-+{
-+	if (pud_large(*pud)) {
-+		pud_clear(pud);
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
-+/**
-  * pmd_set_huge - setup kernel PMD mapping
-  *
-  * See text over pud_set_huge() above.
-@@ -751,21 +768,6 @@ int pmd_set_huge(pmd_t *pmd, phys_addr_t
- }
- 
- /**
-- * pud_clear_huge - clear kernel PUD mapping when it is set
-- *
-- * Returns 1 on success and 0 on failure (no PUD map is found).
-- */
--int pud_clear_huge(pud_t *pud)
--{
--	if (pud_large(*pud)) {
--		pud_clear(pud);
--		return 1;
--	}
--
--	return 0;
--}
--
--/**
-  * pmd_clear_huge - clear kernel PMD mapping when it is set
-  *
-  * Returns 1 on success and 0 on failure (no PMD map is found).
-_
-
+-- 
+Pavel Begunkov
