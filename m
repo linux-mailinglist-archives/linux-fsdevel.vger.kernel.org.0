@@ -2,93 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1207537F5E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 May 2021 12:50:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1721B37F607
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 May 2021 12:55:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232344AbhEMKvL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 May 2021 06:51:11 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45607 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232051AbhEMKvB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 May 2021 06:51:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620902990;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=ZS4a0+Jk376Mr3TJs35RHyvhDzgETMPw7mZbIknYFVM=;
-        b=NJ4Psim979v8axo3qlq8ymBipXbGiXjkFGDuKKcj1omrSTNjCpASvRlotPQaWTiFcQ1UJg
-        074mP3/lWhTYvlyDsqDKqUVRkBu4x6RMlYUTxsZXleKLJeUbtMYjBiXeI3Jbiz4orhxOPa
-        PpQfZex/XPIDearrdBdwujtO43lnhGw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-582-vHRUTM0TNbSjfnRG3vysog-1; Thu, 13 May 2021 06:49:48 -0400
-X-MC-Unique: vHRUTM0TNbSjfnRG3vysog-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 66DD3100945F;
-        Thu, 13 May 2021 10:49:47 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2374B1B058;
-        Thu, 13 May 2021 10:49:41 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] netfs: Make CONFIG_NETFS_SUPPORT auto-selected rather than
- manual
-From:   David Howells <dhowells@redhat.com>
-To:     geert@linux-m68k.org
-Cc:     linux-mm@kvack.org, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com
-Date:   Thu, 13 May 2021 11:49:41 +0100
-Message-ID: <162090298141.3166007.2971118149366779916.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        id S232833AbhEMK44 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 May 2021 06:56:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44288 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230097AbhEMK4l (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 May 2021 06:56:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 97926AC86;
+        Thu, 13 May 2021 10:55:27 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id CA2DE1F2C62; Thu, 13 May 2021 12:55:26 +0200 (CEST)
+Date:   Thu, 13 May 2021 12:55:26 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [RFC][PATCH] fanotify: introduce filesystem view mark
+Message-ID: <20210513105526.GG2734@quack2.suse.cz>
+References: <CAOQ4uxgmExbSmcfhp0ir=7QJMVcwu2QNsVUdFTiGONkg3HgjJw@mail.gmail.com>
+ <20201126111725.GD422@quack2.suse.cz>
+ <CAOQ4uxgt1Cx5jx3L6iaDvbzCWPv=fcMgLaa9ODkiu9h718MkwQ@mail.gmail.com>
+ <20210503165315.GE2994@quack2.suse.cz>
+ <CAOQ4uxgy0DUEUo810m=bnLuHNbs60FLFPUUw8PLq9jJ8VTFD8g@mail.gmail.com>
+ <20210505122815.GD29867@quack2.suse.cz>
+ <20210505142405.vx2wbtadozlrg25b@wittgenstein>
+ <20210510101305.GC11100@quack2.suse.cz>
+ <CAOQ4uxjqjB2pCoyLzreMziJcE5nYjgdhcAsDWDmu_5-g5AKM3w@mail.gmail.com>
+ <20210512152625.i72ct7tbmojhuoyn@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210512152625.i72ct7tbmojhuoyn@wittgenstein>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make the netfs helper library selected automatically by the things that use
-it rather than being manually configured, even though it's required.
+On Wed 12-05-21 17:26:25, Christian Brauner wrote:
+> On Mon, May 10, 2021 at 02:37:59PM +0300, Amir Goldstein wrote:
+> > On Mon, May 10, 2021 at 1:13 PM Jan Kara <jack@suse.cz> wrote:
+> > > OK, so this feature would effectively allow sb-wide watching of events that
+> > > are generated from within the container (or its descendants). That sounds
+> > > useful. Just one question: If there's some part of a filesystem, that is
+> > > accesible by multiple containers (and thus multiple namespaces), or if
+> > > there's some change done to the filesystem say by container management SW,
+> > > then event for this change won't be visible inside the container (despite
+> > > that the fs change itself will be visible).
+> > 
+> > That is correct.
+> > FYI, a privileged user can already mount an overlayfs in order to indirectly
+> > open and write to a file.
+> > 
+> > Because overlayfs opens the underlying file FMODE_NONOTIFY this will
+> > hide OPEN/ACCESS/MODIFY/CLOSE events also for inode/sb marks.
+> > Since 459c7c565ac3 ("ovl: unprivieged mounts"), so can unprivileged users.
+> > 
+> > I wonder if that is a problem that we need to fix...
+> > 
+> > > This is kind of a similar
+> > > problem to the one we had with mount marks and why sb marks were created.
+> > > So aren't we just repeating the mistake with mount marks? Because it seems
+> > > to me that more often than not, applications are interested in getting
+> > > notification when what they can actually access within the fs has changed
+> > > (and this is what they actually get with the inode marks) and they don't
+> > > care that much where the change came from... Do you have some idea how
+> > > frequent are such cross-ns filesystem changes?
+> > 
+> > The use case surely exist, the question is whether this use case will be
+> > handled by a single idmapped userns or multiple userns.
+> > 
+> > You see, we simplified the discussion to an idmapped mount that uses
+> > the same userns and the userns the container processes are associated
+> > with, but in fact, container A can use userns A container B userns B and they
+> > can both access a shared idmapped mount mapped with userns AB.
+> > 
+> > I think at this point in time, there are only ideas about how the shared data
+> > case would be managed, but Christian should know better than me.
+> 
+> I think there are two major immediate container use-cases right now that
+> are already actively used:
+> 1. idmapped rootfs
+> A container manager wants to avoid recursively chowning the rootfs or
+> image for a container. To this end an idmapped mount is created. The
+> idmapped mount can either share the same userns as the container itself
+> or a separate userns can be used. What people use depends on their
+> concept of a container.
+> For example, systemd has merged support for idmapping a containers
+> rootfs in [1]. The systemd approach to containers never puts the
+> container itself in control of most things including most of its mounts.
+> That is very much the approach of having it be a rather tightly managed
+> system. Specifically, this means that systemd currently uses a separate
+> userns to idmap.
+> In contrast other container managers usually treat the container as a
+> mostly separate system and put it in charge of all its mounts. This
+> means the userns used for the idmapped mount will be the same as the
+> container runs in (see [2]).
 
-Fixes: 3a5829fefd3b ("netfs: Make a netfs helper module")
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-mm@kvack.org
-cc: linux-cachefs@redhat.com
-cc: linux-afs@lists.infradead.org
-cc: linux-nfs@vger.kernel.org
-cc: linux-cifs@vger.kernel.org
-cc: ceph-devel@vger.kernel.org
-cc: v9fs-developer@lists.sourceforge.net
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/CAMuHMdXJZ7iNQE964CdBOU=vRKVMFzo=YF_eiwsGgqzuvZ+TuA@mail.gmail.com
----
+OK, thanks for explanation. So to make fanotify idmap-filtered marks work
+for systemd-style containers we would indeed need what Amir proposed -
+i.e., the container manager intercepts fanotify_mark calls and decides
+which namespace to setup the mark in as there's no sufficient priviledge
+within the container to do that AFAIU.
 
- fs/netfs/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 2. data sharing among containers or among the host and containers etc.
+> The most common use-case is to share data from the host with the
+> container such as a download folder or the Linux folder on ChromeOS.
+> Most container managers will simly re-use the container's userns for
+> that too. More complex cases arise where data is shared between
+> containers with different idmappings then often a separate userns will
+> have to be used.
 
-diff --git a/fs/netfs/Kconfig b/fs/netfs/Kconfig
-index 578112713703..b4db21022cb4 100644
---- a/fs/netfs/Kconfig
-+++ b/fs/netfs/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- 
- config NETFS_SUPPORT
--	tristate "Support for network filesystem high-level I/O"
-+	tristate
- 	help
- 	  This option enables support for network filesystems, including
- 	  helpers for high-level buffered I/O, abstracting out read
+OK, but if say on ChromeOS you copy something to the Linux folder by app A
+(say file manager) and containerized app B (say browser) watches that mount
+for changes with idmap-filtered mark, then it won't see notification for
+those changes because A presumably runs in a different namespace than B, am
+I imagining this right? So mark which filters events based on namespace of
+the originating process won't be usable for such usecase AFAICT.
 
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
