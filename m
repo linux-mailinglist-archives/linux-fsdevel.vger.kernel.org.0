@@ -2,328 +2,244 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1346738011B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 02:18:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E28AC380141
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 02:39:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231565AbhENATr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 May 2021 20:19:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36036 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229701AbhENATq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 May 2021 20:19:46 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BFFC2613F6;
-        Fri, 14 May 2021 00:18:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1620951515;
-        bh=BCtAIV+naC/cjsdPiXpYD0ihgDrIbIBEcRLBJ1trrqc=;
-        h=Date:From:To:Subject:From;
-        b=VOqi0BVg1YpWSjUVGkPWUt10RrmIfH3OneR19VI8tfw1UT6xRPsnx8LUryopx3d9+
-         tsaVuXBZigUTngO5cniWzD1Q8tn2TXhPCQ8Z6+b5wLXGUMxYS9XybsZtNgpF51ZuV8
-         SA9840XhH1PfrFkLP/xTQqLAfsaEh0A6NaCoFjBk=
-Date:   Thu, 13 May 2021 17:18:34 -0700
-From:   akpm@linux-foundation.org
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2021-05-13-17-18 uploaded
-Message-ID: <20210514001834.yeO9dhMeg%akpm@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        id S231784AbhENAkx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 May 2021 20:40:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37778 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231159AbhENAkw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 May 2021 20:40:52 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 325B1C061574;
+        Thu, 13 May 2021 17:39:41 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id h4so28457135wrt.12;
+        Thu, 13 May 2021 17:39:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=B+5FBprgczxfialOZcjVHGGiZ7mglRbx8AfWi5K5r3A=;
+        b=R/fQ7SpIRON7gg9D8QMl4F7RnNMoAg0p0Vjsl9yvzGJ1GecYYV1lZzE6cqDlkphZMp
+         OOdh8NGBMeCo7fCslnbD/pOAo57Oi4FOzqD+PdyWvZc3/OgxMK+ZEXrKxnscoqqraVRJ
+         IHCh2ac9SFw4nFyCRagLe+dNwvwLFUmZqDG0k/9xVD0OduF9+8fsS9iBhEAeOgvbPPlK
+         mo9GRBfuGYyX9xJDUX5UTo2rv1EsyyQ/F139fCTdioINS+XGZBidLVct8OR4nU0qXbZT
+         Hs14MKumrm/ic/tbpWFMe0zFJPaSyoOFICiwY50XMGIRO4d4lGm0MYaHRhoL70KjrGNL
+         PQag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=B+5FBprgczxfialOZcjVHGGiZ7mglRbx8AfWi5K5r3A=;
+        b=geGrokDQ3OatY5XrlaLo0JqQgkgE/A1OQTXY8YrmVb3cN/iLGOBCK/UVWE0K+iTN0r
+         IEsCJiRLCfZzOmnGMzsRQCcjssZ1un+StoFWMlvQV4oYgU/Th0VY0HV6OHrX82ksZquq
+         mUY8sNWN7Umm3PTSY7Ax8kO6Ku6+2MpQLuNfwc+zaYDvNKhmK/nzZjvhalzm5yUF3Bn3
+         fA3euA5rUi8xl5Im5TahuXWBLUBFaoMg9V251zgf4ExLcqrV1iwkEFRwpylmR2VSHlzE
+         d395byyQqc5kgpvk+8I6bOvUuF4B+rAhxGO5lpD2MEuB+NbpZDniYexF1aLXQiRKqL1D
+         sAPw==
+X-Gm-Message-State: AOAM532/DKcJLKrB8pDwBTq4fgJvUlDNydUj1M2c1gchmKH+qze/HOYW
+        mt4s6UxCQBWhpbkq1oinIF0=
+X-Google-Smtp-Source: ABdhPJynsWptQVYQ578pabaAHKNRX/dupc5A30s0oN4bjFJd+oSZIuDJpM9O3l83e9jyicunClusJQ==
+X-Received: by 2002:a5d:678c:: with SMTP id v12mr465358wru.246.1620952779976;
+        Thu, 13 May 2021 17:39:39 -0700 (PDT)
+Received: from [192.168.8.197] ([148.252.132.196])
+        by smtp.gmail.com with ESMTPSA id y5sm4673164wrp.5.2021.05.13.17.39.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 May 2021 17:39:39 -0700 (PDT)
+Subject: Re: [syzbot] WARNING in io_link_timeout_fn
+To:     syzbot <syzbot+5a864149dd970b546223@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <000000000000dacff205c23f0955@google.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <314c4ece-d8c1-2d13-804b-3652488d09de@gmail.com>
+Date:   Fri, 14 May 2021 01:39:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
+MIME-Version: 1.0
+In-Reply-To: <000000000000dacff205c23f0955@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2021-05-13-17-18 has been uploaded to
+On 5/14/21 1:08 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> KASAN: use-after-free Read in hrtimer_active
 
-   https://www.ozlabs.org/~akpm/mmotm/
+#syz test: https://github.com/isilence/linux.git syz_test8
 
-mmotm-readme.txt says
+> ==================================================================
+> BUG: KASAN: use-after-free in hrtimer_active+0x1d6/0x1f0 kernel/time/hrtimer.c:1462
+> Read of size 8 at addr ffff8880129a64b8 by task syz-executor.0/9928
+> 
+> CPU: 0 PID: 9928 Comm: syz-executor.0 Not tainted 5.12.0-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:79 [inline]
+>  dump_stack+0x141/0x1d7 lib/dump_stack.c:120
+>  print_address_description.constprop.0.cold+0x5b/0x2f8 mm/kasan/report.c:233
+>  __kasan_report mm/kasan/report.c:419 [inline]
+>  kasan_report.cold+0x7c/0xd8 mm/kasan/report.c:436
+>  hrtimer_active+0x1d6/0x1f0 kernel/time/hrtimer.c:1462
+>  hrtimer_try_to_cancel+0x21/0x1e0 kernel/time/hrtimer.c:1180
+>  io_kill_linked_timeout fs/io_uring.c:1794 [inline]
+>  io_disarm_next+0x196/0xad0 fs/io_uring.c:1827
+>  __io_req_find_next+0xca/0x160 fs/io_uring.c:1852
+>  io_req_find_next fs/io_uring.c:1868 [inline]
+>  io_queue_next fs/io_uring.c:2070 [inline]
+>  io_free_req fs/io_uring.c:2078 [inline]
+>  io_put_req_deferred_cb+0x253/0x4a0 fs/io_uring.c:2180
+>  __tctx_task_work fs/io_uring.c:1909 [inline]
+>  tctx_task_work+0x24e/0x550 fs/io_uring.c:1923
+>  task_work_run+0xdd/0x1a0 kernel/task_work.c:161
+>  tracehook_notify_signal include/linux/tracehook.h:212 [inline]
+>  handle_signal_work kernel/entry/common.c:145 [inline]
+>  exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
+>  exit_to_user_mode_prepare+0x24a/0x280 kernel/entry/common.c:208
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:290 [inline]
+>  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:301
+>  do_syscall_64+0x47/0xb0 arch/x86/entry/common.c:57
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> RIP: 0033:0x4665f9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f9092a97188 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+> RAX: 0000000000000100 RBX: 000000000056bf60 RCX: 00000000004665f9
+> RDX: 0000000000000000 RSI: 000000000000450c RDI: 0000000000000003
+> RBP: 00000000004bfce1 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf60
+> R13: 0000000000a9fb1f R14: 00007f9092a97300 R15: 0000000000022000
+> 
+> Allocated by task 9928:
+>  kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
+>  kasan_set_track mm/kasan/common.c:46 [inline]
+>  set_alloc_info mm/kasan/common.c:427 [inline]
+>  ____kasan_kmalloc mm/kasan/common.c:506 [inline]
+>  ____kasan_kmalloc mm/kasan/common.c:465 [inline]
+>  __kasan_kmalloc+0x99/0xc0 mm/kasan/common.c:515
+>  kmalloc include/linux/slab.h:561 [inline]
+>  io_alloc_async_data fs/io_uring.c:3116 [inline]
+>  io_timeout_prep+0x3d9/0x500 fs/io_uring.c:5637
+>  io_req_prep fs/io_uring.c:5908 [inline]
+>  io_submit_sqe fs/io_uring.c:6576 [inline]
+>  io_submit_sqes+0x4e4c/0x6c50 fs/io_uring.c:6734
+>  __do_sys_io_uring_enter+0xeaf/0x1d50 fs/io_uring.c:9319
+>  do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> 
+> Freed by task 4826:
+>  kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
+>  kasan_set_track+0x1c/0x30 mm/kasan/common.c:46
+>  kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:357
+>  ____kasan_slab_free mm/kasan/common.c:360 [inline]
+>  ____kasan_slab_free mm/kasan/common.c:325 [inline]
+>  __kasan_slab_free+0xf5/0x130 mm/kasan/common.c:367
+>  kasan_slab_free include/linux/kasan.h:199 [inline]
+>  slab_free_hook mm/slub.c:1563 [inline]
+>  slab_free_freelist_hook+0x92/0x210 mm/slub.c:1601
+>  slab_free mm/slub.c:3162 [inline]
+>  kfree+0xe5/0x7f0 mm/slub.c:4216
+>  io_dismantle_req+0x116/0x250 fs/io_uring.c:1743
+>  io_req_complete_post+0x1d7/0x890 fs/io_uring.c:1600
+>  io_link_timeout_fn+0x5f7/0xb10 fs/io_uring.c:6369
+>  __run_hrtimer kernel/time/hrtimer.c:1537 [inline]
+>  __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1601
+>  hrtimer_interrupt+0x330/0xa00 kernel/time/hrtimer.c:1663
+>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1089 [inline]
+>  __sysvec_apic_timer_interrupt+0x146/0x540 arch/x86/kernel/apic/apic.c:1106
+>  sysvec_apic_timer_interrupt+0x8e/0xc0 arch/x86/kernel/apic/apic.c:1100
+>  asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:632
+> 
+> The buggy address belongs to the object at ffff8880129a6480
+>  which belongs to the cache kmalloc-96 of size 96
+> The buggy address is located 56 bytes inside of
+>  96-byte region [ffff8880129a6480, ffff8880129a64e0)
+> The buggy address belongs to the page:
+> page:ffffea00004a6980 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x129a6
+> flags: 0xfff00000000200(slab|node=0|zone=1|lastcpupid=0x7ff)
+> raw: 00fff00000000200 dead000000000100 dead000000000122 ffff888010841780
+> raw: 0000000000000000 0000000000200020 00000001ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY), pid 9928, ts 107924339577
+>  set_page_owner include/linux/page_owner.h:31 [inline]
+>  post_alloc_hook+0x161/0x1c0 mm/page_alloc.c:2302
+>  prep_new_page mm/page_alloc.c:2311 [inline]
+>  get_page_from_freelist+0x1c6f/0x3fb0 mm/page_alloc.c:3951
+>  __alloc_pages_nodemask+0x2d6/0x730 mm/page_alloc.c:5001
+>  alloc_pages_current+0x18c/0x2a0 mm/mempolicy.c:2277
+>  alloc_pages include/linux/gfp.h:561 [inline]
+>  alloc_slab_page mm/slub.c:1639 [inline]
+>  allocate_slab+0x2c5/0x4c0 mm/slub.c:1779
+>  new_slab mm/slub.c:1842 [inline]
+>  new_slab_objects mm/slub.c:2588 [inline]
+>  ___slab_alloc+0x44c/0x7a0 mm/slub.c:2751
+>  __slab_alloc.constprop.0+0xa7/0xf0 mm/slub.c:2791
+>  slab_alloc_node mm/slub.c:2872 [inline]
+>  slab_alloc mm/slub.c:2916 [inline]
+>  __kmalloc+0x2e5/0x300 mm/slub.c:4054
+>  kmalloc include/linux/slab.h:561 [inline]
+>  io_alloc_async_data fs/io_uring.c:3116 [inline]
+>  io_timeout_prep+0x3d9/0x500 fs/io_uring.c:5637
+>  io_req_prep fs/io_uring.c:5908 [inline]
+>  io_submit_sqe fs/io_uring.c:6576 [inline]
+>  io_submit_sqes+0x4e4c/0x6c50 fs/io_uring.c:6734
+>  __do_sys_io_uring_enter+0xeaf/0x1d50 fs/io_uring.c:9319
+>  do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> page last free stack trace:
+>  reset_page_owner include/linux/page_owner.h:24 [inline]
+>  free_pages_prepare mm/page_alloc.c:1271 [inline]
+>  free_pcp_prepare+0x2cb/0x410 mm/page_alloc.c:1310
+>  free_unref_page_prepare mm/page_alloc.c:3205 [inline]
+>  free_unref_page+0x12/0x1d0 mm/page_alloc.c:3253
+>  qlink_free mm/kasan/quarantine.c:146 [inline]
+>  qlist_free_all+0x5a/0xc0 mm/kasan/quarantine.c:165
+>  kasan_quarantine_reduce+0x180/0x200 mm/kasan/quarantine.c:272
+>  __kasan_slab_alloc+0x7f/0x90 mm/kasan/common.c:437
+>  kasan_slab_alloc include/linux/kasan.h:223 [inline]
+>  slab_post_alloc_hook mm/slab.h:516 [inline]
+>  slab_alloc_node mm/slub.c:2908 [inline]
+>  slab_alloc mm/slub.c:2916 [inline]
+>  kmem_cache_alloc+0x153/0x370 mm/slub.c:2921
+>  getname_flags.part.0+0x50/0x4f0 fs/namei.c:138
+>  getname_flags include/linux/audit.h:319 [inline]
+>  getname+0x8e/0xd0 fs/namei.c:209
+>  do_sys_openat2+0xf5/0x420 fs/open.c:1181
+>  do_sys_open fs/open.c:1203 [inline]
+>  __do_sys_open fs/open.c:1211 [inline]
+>  __se_sys_open fs/open.c:1207 [inline]
+>  __x64_sys_open+0x119/0x1c0 fs/open.c:1207
+>  do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> 
+> Memory state around the buggy address:
+>  ffff8880129a6380: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+>  ffff8880129a6400: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
+>> ffff8880129a6480: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+>                                         ^
+>  ffff8880129a6500: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+>  ffff8880129a6580: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+> ==================================================================
+> 
+> 
+> Tested on:
+> 
+> commit:         a519b86e io_uring: syz debug output
+> git tree:       https://github.com/isilence/linux.git syz_test6
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14127779d00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ae2e6c63d6410fd3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5a864149dd970b546223
+> compiler:       
+> 
 
-README for mm-of-the-moment:
-
-https://www.ozlabs.org/~akpm/mmotm/
-
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
-
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-https://ozlabs.org/~akpm/mmotm/series
-
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
-
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-	https://github.com/hnaz/linux-mm
-
-The directory https://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is also available at
-
-	https://github.com/hnaz/linux-mm
-
-
-
-This mmotm tree contains the following patches against 5.13-rc1:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* mm-hugetlb-fix-f_seal_future_write.patch
-* mm-hugetlb-fix-cow-where-page-writtable-in-child.patch
-* mm-slub-move-slub_debug-static-key-enabling-outside-slab_mutex.patch
-* kernel-resource-fix-return-code-check-in-__request_free_mem_region.patch
-* squashfs-fix-divide-error-in-calculate_skip.patch
-* userfaultfd-release-page-in-error-path-to-avoid-bug_on.patch
-* ksm-revert-use-get_ksm_page_nolock-to-get-ksm-page-in-remove_rmap_item_from_tree.patch
-* mm-fix-struct-page-layout-on-32-bit-systems.patch
-* kasan-fix-unit-tests-with-config_ubsan_local_bounds-enabled.patch
-* mm-filemap-fix-readahead-return-types.patch
-* hfsplus-prevent-corruption-in-shrinking-truncate.patch
-* docs-admin-guide-update-description-for-kernelmodprobe-sysctl.patch
-* mm-ioremap-fix-iomap_max_page_shift.patch
-* revert-mm-gup-check-page-posion-status-for-coredump.patch
-* ipc-mqueue-msg-sem-avoid-relying-on-a-stack-reference-past-its-expiry.patch
-* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-* kthread-switch-to-new-kerneldoc-syntax-for-named-variable-macro-argument.patch
-* ia64-headers-drop-duplicated-words.patch
-* streamline_configpl-make-spacing-consistent.patch
-* streamline_configpl-add-softtabstop=4-for-vim-users.patch
-* ocfs2-remove-unnecessary-init_list_head.patch
-* ocfs2-fix-snprintf-checking.patch
-* ocfs2-remove-redundant-assignment-to-pointer-queue.patch
-* ocfs2-remove-repeated-uptodate-check-for-buffer.patch
-* ocfs2-clear-links-count-in-ocfs2_mknod-if-an-error-occurs.patch
-* ocfs2-fix-ocfs2-corrupt-when-iputting-an-inode.patch
-* kernel-watchdog-modify-the-explanation-related-to-watchdog-thread.patch
-* doc-watchdog-modify-the-explanation-related-to-watchdog-thread.patch
-* doc-watchdog-modify-the-doc-related-to-watchdog-%u.patch
-  mm.patch
-* kunit-make-test-lock-irq-safe.patch
-* mm-slub-kunit-add-a-kunit-test-for-slub-debugging-functionality.patch
-* mm-slub-kunit-add-a-kunit-test-for-slub-debugging-functionality-fix.patch
-* mm-slub-kunit-add-a-kunit-test-for-slub-debugging-functionality-fix-2.patch
-* slub-remove-resiliency_test-function.patch
-* mm-slub-change-run-time-assertion-in-kmalloc_index-to-compile-time.patch
-* mm-slub-change-run-time-assertion-in-kmalloc_index-to-compile-time-fix.patch
-* tools-vm-page_owner_sortc-fix-the-potential-stack-overflow-risk.patch
-* mm-page-writeback-kill-get_writeback_state-comments.patch
-* mm-page-writeback-fix-performance-when-bdis-share-of-ratio-is-0.patch
-* mm-page-writeback-update-the-comment-of-dirty-position-control.patch
-* mm-page-writeback-use-__this_cpu_inc-in-account_page_dirtied.patch
-* mm-gup_benchmark-support-threading.patch
-* mm-gup-allow-foll_pin-to-scale-in-smp.patch
-* mm-gup-pack-has_pinned-in-mmf_has_pinned.patch
-* mm-gup-pack-has_pinned-in-mmf_has_pinned-checkpatch-fixes.patch
-* mm-gup-pack-has_pinned-in-mmf_has_pinned-fix.patch
-* mm-swapfile-use-percpu_ref-to-serialize-against-concurrent-swapoff.patch
-* swap-fix-do_swap_page-race-with-swapoff.patch
-* mm-swap-remove-confusing-checking-for-non_swap_entry-in-swap_ra_info.patch
-* mm-shmem-fix-shmem_swapin-race-with-swapoff.patch
-* mm-memcg-move-mod_objcg_state-to-memcontrolc.patch
-* mm-memcg-cache-vmstat-data-in-percpu-memcg_stock_pcp.patch
-* mm-memcg-improve-refill_obj_stock-performance.patch
-* mm-memcg-optimize-user-context-object-stock-access.patch
-* mm-memcg-optimize-user-context-object-stock-access-checkpatch-fixes.patch
-* mm-memcg-slab-properly-set-up-gfp-flags-for-objcg-pointer-array.patch
-* mm-memcg-slab-create-a-new-set-of-kmalloc-cg-n-caches.patch
-* mm-memcg-slab-create-a-new-set-of-kmalloc-cg-n-caches-fix.patch
-* mm-memcg-slab-create-a-new-set-of-kmalloc-cg-n-caches-v5.patch
-* mm-memcg-slab-create-a-new-set-of-kmalloc-cg-n-caches-v5-fix.patch
-* mm-memcg-slab-disable-cache-merging-for-kmalloc_normal-caches.patch
-* mm-memcontrol-fix-root_mem_cgroup-charging.patch
-* mm-memcontrol-fix-page-charging-in-page-replacement.patch
-* mm-memcontrol-bail-out-early-when-mm-in-get_mem_cgroup_from_mm.patch
-* mm-memcontrol-remove-the-pgdata-parameter-of-mem_cgroup_page_lruvec.patch
-* mm-memcontrol-simplify-lruvec_holds_page_lru_lock.patch
-* mm-memcontrol-rename-lruvec_holds_page_lru_lock-to-page_matches_lruvec.patch
-* mm-memcontrol-simplify-the-logic-of-objcg-pinning-memcg.patch
-* mm-memcontrol-move-obj_cgroup_uncharge_pages-out-of-css_set_lock.patch
-* mm-vmscan-remove-noinline_for_stack.patch
-* mm-improve-mprotectrw-efficiency-on-pages-referenced-once.patch
-* mm-improve-mprotectrw-efficiency-on-pages-referenced-once-fix.patch
-* perf-map_executable-does-not-indicate-vm_mayexec.patch
-* binfmt-remove-in-tree-usage-of-map_executable.patch
-* binfmt-remove-in-tree-usage-of-map_executable-fix.patch
-* mm-ignore-map_executable-in-ksys_mmap_pgoff.patch
-* mm-mmapc-logic-of-find_vma_intersection-repeated-in-__do_munmap.patch
-* mm-mmap-introduce-unlock_range-for-code-cleanup.patch
-* mm-mmap-introduce-unlock_range-for-code-cleanup-fix.patch
-* mm-mmap-use-find_vma_intersection-in-do_mmap-for-overlap.patch
-* mm-memoryc-fix-comment-of-finish_mkwrite_fault.patch
-* selftest-mremap_test-update-the-test-to-handle-pagesize-other-than-4k.patch
-* selftest-mremap_test-avoid-crash-with-static-build.patch
-* mm-mremap-use-pmd-pud_poplulate-to-update-page-table-entries.patch
-* powerpc-mm-book3s64-fix-possible-build-error.patch
-* powerpc-mm-book3s64-update-tlb-flush-routines-to-take-a-page-walk-cache-flush-argument.patch
-* mm-mremap-use-range-flush-that-does-tlb-and-page-walk-cache-flush.patch
-* mm-mremap-move-tlb-flush-outside-page-table-lock.patch
-* mm-mremap-allow-arch-runtime-override.patch
-* powerpc-mm-enable-move-pmd-pud.patch
-* printk-introduce-dump_stack_lvl.patch
-* printk-introduce-dump_stack_lvl-fix.patch
-* kasan-use-dump_stack_lvlkern_err-to-print-stacks.patch
-* mm-page_alloc-__alloc_pages_bulk-do-bounds-check-before-accessing-array.patch
-* mm-mmzoneh-simplify-is_highmem_idx.patch
-* mm-make-__dump_page-static.patch
-* mm-debug-factor-pagepoisoned-out-of-__dump_page.patch
-* mm-page_owner-constify-dump_page_owner.patch
-* mm-make-compound_head-const-preserving.patch
-* mm-constify-get_pfnblock_flags_mask-and-get_pfnblock_migratetype.patch
-* mm-constify-page_count-and-page_ref_count.patch
-* mm-optimise-nth_page-for-contiguous-memmap.patch
-* mm-page_alloc-switch-to-pr_debug.patch
-* mm-page_alloc-split-per-cpu-page-lists-and-zone-stats.patch
-* mm-page_alloc-convert-per-cpu-list-protection-to-local_lock.patch
-* mm-vmstat-convert-numa-statistics-to-basic-numa-counters.patch
-* mm-vmstat-inline-numa-event-counter-updates.patch
-* mm-page_alloc-batch-the-accounting-updates-in-the-bulk-allocator.patch
-* mm-page_alloc-reduce-duration-that-irqs-are-disabled-for-vm-counters.patch
-* mm-page_alloc-explicitly-acquire-the-zone-lock-in-__free_pages_ok.patch
-* mm-page_alloc-avoid-conflating-irqs-disabled-with-zone-lock.patch
-* mm-page_alloc-update-pgfree-outside-the-zone-lock-in-__free_pages_ok.patch
-* mm-memory_hotplug-factor-out-bootmem-core-functions-to-bootmem_infoc.patch
-* mm-hugetlb-introduce-a-new-config-hugetlb_page_free_vmemmap.patch
-* mm-hugetlb-gather-discrete-indexes-of-tail-page.patch
-* mm-hugetlb-free-the-vmemmap-pages-associated-with-each-hugetlb-page.patch
-* mm-hugetlb-defer-freeing-of-hugetlb-pages.patch
-* mm-hugetlb-alloc-the-vmemmap-pages-associated-with-each-hugetlb-page.patch
-* mm-hugetlb-add-a-kernel-parameter-hugetlb_free_vmemmap.patch
-* mm-memory_hotplug-disable-memmap_on_memory-when-hugetlb_free_vmemmap-enabled.patch
-* mm-memory_hotplug-disable-memmap_on_memory-when-hugetlb_free_vmemmap-enabled-fix.patch
-* mm-hugetlb-introduce-nr_free_vmemmap_pages-in-the-struct-hstate.patch
-* mm-debug_vm_pgtable-move-pmd-pud_huge_tests-out-of-config_transparent_hugepage.patch
-* mm-debug_vm_pgtable-remove-redundant-pfn_pmd-pte-and-fix-one-comment-mistake.patch
-* mm-huge_memoryc-remove-dedicated-macro-hpage_cache_index_mask.patch
-* mm-huge_memoryc-use-page-deferred_list.patch
-* mm-huge_memoryc-add-missing-read-only-thp-checking-in-transparent_hugepage_enabled.patch
-* mm-huge_memoryc-remove-unnecessary-tlb_remove_page_size-for-huge-zero-pmd.patch
-* mm-huge_memoryc-dont-discard-hugepage-if-other-processes-are-mapping-it.patch
-* mm-hugetlb-change-parameters-of-arch_make_huge_pte.patch
-* mm-pgtable-add-stubs-for-pmd-pub_set-clear_huge.patch
-* mm-pgtable-add-stubs-for-pmd-pub_set-clear_huge-fix-2.patch
-* mm-vmalloc-enable-mapping-of-huge-pages-at-pte-level-in-vmap.patch
-* mm-vmalloc-enable-mapping-of-huge-pages-at-pte-level-in-vmalloc.patch
-* powerpc-8xx-add-support-for-huge-pages-on-vmap-and-vmalloc.patch
-* userfaultfd-selftests-use-user-mode-only.patch
-* userfaultfd-selftests-remove-the-time-check-on-delayed-uffd.patch
-* userfaultfd-selftests-dropping-verify-check-in-locking_thread.patch
-* userfaultfd-selftests-only-dump-counts-if-mode-enabled.patch
-* userfaultfd-selftests-unify-error-handling.patch
-* mm-thp-simplify-copying-of-huge-zero-page-pmd-when-fork.patch
-* mm-userfaultfd-fix-uffd-wp-special-cases-for-fork.patch
-* mm-userfaultfd-fix-a-few-thp-pmd-missing-uffd-wp-bit.patch
-* mm-userfaultfd-fail-uffd-wp-registeration-if-not-supported.patch
-* mm-pagemap-export-uffd-wp-protection-information.patch
-* userfaultfd-selftests-add-pagemap-uffd-wp-test.patch
-* userfaultfd-shmem-combine-shmem_mcopy_atomicmfill_zeropage_pte.patch
-* userfaultfd-shmem-support-minor-fault-registration-for-shmem.patch
-* userfaultfd-shmem-support-uffdio_continue-for-shmem.patch
-* userfaultfd-shmem-advertise-shmem-minor-fault-support.patch
-* userfaultfd-shmem-modify-shmem_mfill_atomic_pte-to-use-install_pte.patch
-* userfaultfd-selftests-use-memfd_create-for-shmem-test-type.patch
-* userfaultfd-selftests-create-alias-mappings-in-the-shmem-test.patch
-* userfaultfd-selftests-reinitialize-test-context-in-each-test.patch
-* userfaultfd-selftests-exercise-minor-fault-handling-shmem-support.patch
-* mm-move-holes_in_zone-into-mm.patch
-* docs-procrst-meminfo-briefly-describe-gaps-in-memory-accounting.patch
-* include-linux-mmzoneh-add-documentation-for-pfn_valid.patch
-* memblock-update-initialization-of-reserved-pages.patch
-* arm64-decouple-check-whether-pfn-is-in-linear-map-from-pfn_valid.patch
-* arm64-drop-pfn_valid_within-and-simplify-pfn_valid.patch
-* arm64-drop-pfn_valid_within-and-simplify-pfn_valid-fix.patch
-* mm-thp-relax-the-vm_denywrite-constraint-on-file-backed-thps.patch
-* mm-thp-check-total_mapcount-instead-of-page_mapcount.patch
-* nommu-remove-__gfp_highmem-in-vmalloc-vzalloc.patch
-* nommu-remove-__gfp_highmem-in-vmalloc-vzalloc-checkpatch-fixes.patch
-* mm-make-variable-names-for-populate_vma_page_range-consistent.patch
-* mm-madvise-introduce-madv_populate_readwrite-to-prefault-page-tables.patch
-* mm-madvise-introduce-madv_populate_readwrite-to-prefault-page-tables-checkpatch-fixes.patch
-* maintainers-add-tools-testing-selftests-vm-to-memory-management.patch
-* selftests-vm-add-protection_keys_32-protection_keys_64-to-gitignore.patch
-* selftests-vm-add-test-for-madv_populate_readwrite.patch
-* mm-memory_hotplug-rate-limit-page-migration-warnings.patch
-* mm-highmem-remove-deprecated-kmap_atomic.patch
-* mm-fix-typos-and-grammar-error-in-comments.patch
-* mm-fix-comments-mentioning-i_mutex.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* proc-avoid-mixing-integer-types-in-mem_rw.patch
-* procfs-allow-reading-fdinfo-with-ptrace_mode_read.patch
-* procfs-dmabuf-add-inode-number-to-proc-fdinfo.patch
-* sysctl-remove-redundant-assignment-to-first.patch
-* proc-sysctl-make-protected_-world-readable.patch
-* kernelh-split-out-panic-and-oops-helpers.patch
-* kernelh-split-out-panic-and-oops-helpers-fix.patch
-* lib-decompress_bunzip2-remove-an-unneeded-semicolon.patch
-* lib-string_helpers-switch-to-use-bit-macro.patch
-* lib-string_helpers-move-escape_np-check-inside-else-branch-in-a-loop.patch
-* lib-string_helpers-drop-indentation-level-in-string_escape_mem.patch
-* lib-string_helpers-introduce-escape_na-for-escaping-non-ascii.patch
-* lib-string_helpers-introduce-escape_nap-to-escape-non-ascii-and-non-printable.patch
-* lib-string_helpers-allow-to-append-additional-characters-to-be-escaped.patch
-* lib-test-string_helpers-print-flags-in-hexadecimal-format.patch
-* lib-test-string_helpers-get-rid-of-trailing-comma-in-terminators.patch
-* lib-test-string_helpers-add-test-cases-for-new-features.patch
-* maintainers-add-myself-as-designated-reviewer-for-generic-string-library.patch
-* seq_file-introduce-seq_escape_mem.patch
-* seq_file-add-seq_escape_str-as-replica-of-string_escape_str.patch
-* seq_file-convert-seq_escape-to-use-seq_escape_str.patch
-* nfsd-avoid-non-flexible-api-in-seq_quote_mem.patch
-* seq_file-drop-unused-_escape_mem_ascii.patch
-* lz4_decompress-declare-lz4_decompress_safe_withprefix64k-static.patch
-* lib-decompress_unlz4c-correctly-handle-zero-padding-around-initrds.patch
-* checkpatch-scripts-spdxcheckpy-now-requires-python3.patch
-* init-print-out-unknown-kernel-parameters.patch
-* hfsplus-fix-out-of-bounds-warnings-in-__hfsplus_setxattr.patch
-* x86-signal-dont-do-sas_ss_reset-until-we-are-certain-that-sigframe-wont-be-abandoned.patch
-* aio-simplify-read_events.patch
-* ipc-sem-use-kvmalloc-for-sem_undo-allocation.patch
-* ipc-use-kmalloc-for-msg_queue-and-shmid_kernel.patch
-  linux-next.patch
-* mm-define-default-value-for-first_user_address.patch
-* mm-slub-use-stackdepot-to-save-stack-trace-in-objects.patch
-* mm-slub-use-stackdepot-to-save-stack-trace-in-objects-fix.patch
-* mmap-make-mlock_future_check-global.patch
-* riscv-kconfig-make-direct-map-manipulation-options-depend-on-mmu.patch
-* set_memory-allow-set_direct_map__noflush-for-multiple-pages.patch
-* set_memory-allow-querying-whether-set_direct_map_-is-actually-enabled.patch
-* mm-introduce-memfd_secret-system-call-to-create-secret-memory-areas.patch
-* pm-hibernate-disable-when-there-are-active-secretmem-users.patch
-* arch-mm-wire-up-memfd_secret-system-call-where-relevant.patch
-* secretmem-test-add-basic-selftest-for-memfd_secret2.patch
-* buildid-only-consider-gnu-notes-for-build-id-parsing.patch
-* buildid-add-api-to-parse-build-id-out-of-buffer.patch
-* buildid-stash-away-kernels-build-id-on-init.patch
-* dump_stack-add-vmlinux-build-id-to-stack-traces.patch
-* module-add-printk-formats-to-add-module-build-id-to-stacktraces.patch
-* module-add-printk-formats-to-add-module-build-id-to-stacktraces-fix.patch
-* module-add-printk-formats-to-add-module-build-id-to-stacktraces-fix-2.patch
-* arm64-stacktrace-use-%psb-for-backtrace-printing.patch
-* x86-dumpstack-use-%psb-%pbb-for-backtrace-printing.patch
-* scripts-decode_stacktracesh-support-debuginfod.patch
-* scripts-decode_stacktracesh-silence-stderr-messages-from-addr2line-nm.patch
-* scripts-decode_stacktracesh-indicate-auto-can-be-used-for-base-path.patch
-* buildid-mark-some-arguments-const.patch
-* buildid-fix-kernel-doc-notation.patch
-* kdump-use-vmlinux_build_id-to-simplify.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
+-- 
+Pavel Begunkov
