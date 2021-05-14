@@ -2,55 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 18BBB380BBB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 16:25:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DFE9380BD8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 16:32:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231222AbhENO04 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 May 2021 10:26:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51754 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230074AbhENO0z (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 May 2021 10:26:55 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68F4EC061574;
-        Fri, 14 May 2021 07:25:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=BbcGrR529XTR3me89zOS66XctwsLFXUqyNVxsijFVkA=; b=FXPIqBrVRdxBveCAtq5gzhNS7K
-        +FET6VNdNKzgbUGdOJ4e/myYq/uROyc1j1AXL0peur5NgF+nRGnku3KSgkNkN0UVNpWSpMnNYAxEu
-        Sp5oEo4L+LowPkd2orBdknBGHQg4AfW5ddsqdeXMFIANC5iRTDt3gelgvnBZFvEeDAGbFt2hWpjZq
-        xk86PMqAKQB+L60Ve2GTJUIdCVR/KdASMa1ZZeDOfuL1fSx4MlXjhycD0hxzavWQmRSj0eOdvNirW
-        O8WDyoJt5ewuHKSyFjJIo9+B+FQdoIIv2vqtEAZcEvUrQTH0ft3WE2U+Ld6NP+tIyrTBWj+odZ94Q
-        zimReI3A==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lhYjq-00ARDU-Nf; Fri, 14 May 2021 14:25:01 +0000
-Date:   Fri, 14 May 2021 15:24:26 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Zi Yan <ziy@nvidia.com>, Christoph Hellwig <hch@lst.de>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH v10 07/33] mm: Add folio_get
-Message-ID: <YJ6IGgToV1wSv1gg@casper.infradead.org>
-References: <20210511214735.1836149-1-willy@infradead.org>
- <20210511214735.1836149-8-willy@infradead.org>
- <88a265ab-9ecd-18b7-c150-517a5c2e5041@suse.cz>
+        id S234000AbhENOdS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 May 2021 10:33:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41976 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230141AbhENOdS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 May 2021 10:33:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 14C0E6141F;
+        Fri, 14 May 2021 14:32:04 +0000 (UTC)
+Date:   Fri, 14 May 2021 16:32:02 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] fs: make do_mkdirat() take struct filename
+Message-ID: <20210514143202.dmzfcgz5hnauy7ze@wittgenstein>
+References: <20210513110612.688851-1-dkadashev@gmail.com>
+ <20210513110612.688851-2-dkadashev@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <88a265ab-9ecd-18b7-c150-517a5c2e5041@suse.cz>
+In-Reply-To: <20210513110612.688851-2-dkadashev@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 14, 2021 at 01:56:46PM +0200, Vlastimil Babka wrote:
-> Nitpick: function names in subject should IMHO also end with (). But not a
-> reason for resend all patches that don't...
+On Thu, May 13, 2021 at 06:06:07PM +0700, Dmitry Kadashev wrote:
+> Pass in the struct filename pointers instead of the user string, and
+> update the three callers to do the same. This is heavily based on
+> commit dbea8d345177 ("fs: make do_renameat2() take struct filename").
+> 
+> This behaves like do_unlinkat() and do_renameat2().
+> 
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
+> ---
 
-Hm, I thought it was preferred to not do that.  I can fix it
-easily enough when I go through and add the R-b.
+Independent of the following patches I think this is ok and with
+do_renameat2() that form of conversion has precedence.
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 
+>  fs/internal.h |  1 +
+>  fs/namei.c    | 22 ++++++++++++++++------
+>  2 files changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 6aeae7ef3380..848e165ef0f1 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -77,6 +77,7 @@ long do_unlinkat(int dfd, struct filename *name);
+>  int may_linkat(struct user_namespace *mnt_userns, struct path *link);
+>  int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
+>  		 struct filename *newname, unsigned int flags);
+> +long do_mkdirat(int dfd, struct filename *name, umode_t mode);
+
+(We should probably have all helpers just return either long or int
+instead of alternating between long and int.)
