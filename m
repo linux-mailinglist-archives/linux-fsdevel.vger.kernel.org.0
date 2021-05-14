@@ -2,159 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B1BE380E02
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 18:17:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AC54380E22
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 18:26:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233550AbhENQSn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 May 2021 12:18:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59168 "EHLO mail.kernel.org"
+        id S231694AbhENQ11 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 May 2021 12:27:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230018AbhENQSm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 May 2021 12:18:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AE7AB61353;
-        Fri, 14 May 2021 16:17:30 +0000 (UTC)
+        id S230009AbhENQ10 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 May 2021 12:27:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 42950613F1;
+        Fri, 14 May 2021 16:26:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621009050;
-        bh=GXTUTxfJmauY3sVW+kCaMHHzIKcRfXTYy0mfZ1awngE=;
+        s=k20201202; t=1621009575;
+        bh=BmQjlO9W718wi8igXBtPXxdqosqGpUfGqz6z39ZK124=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oQ8dmtH4NA+L/+ELxpN7WUZ32+IKoVGAxNNf5Zt7Ofagh6dHPT0TaJ3/dhZ3udTSa
-         Ss/wqVUPPW5cMdEz+C4hQyJma01zgrZ+tDmQID9Jlsk64sp+15NKZU73+6fKkEkcgC
-         XvuSXtxBxWWmdn2PJR00Oj+G52+jT4a3Jwm4qyrvnnPwZZO7YBFRkMz9ZmsrxPdu5J
-         q4F0/QUco4Auws1Zlcox6az1nWwemazilV0J6CiqvqlCi9dMrZ8vCEq6MMIs3fgL5x
-         qVlNE4QqliLqOm7IvgNPw45DD+Jz/B6XeS0w8qkfaKzFc0Gwo3UyBFqq+MTiQmsck/
-         qFCq5EMv5glNw==
-Date:   Fri, 14 May 2021 09:17:30 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 03/11] mm: Protect operations adding pages to page cache
- with invalidate_lock
-Message-ID: <20210514161730.GL9675@magnolia>
-References: <20210512101639.22278-1-jack@suse.cz>
- <20210512134631.4053-3-jack@suse.cz>
- <20210512152345.GE8606@magnolia>
- <20210513174459.GH2734@quack2.suse.cz>
- <20210513185252.GB9675@magnolia>
- <20210513231945.GD2893@dread.disaster.area>
+        b=Y98hyR4cMYKLTCUQNVrSCzmNI9ZVf0gmaoYwlQUp4e6NdRX+Po6JSRHrYoqot739E
+         OIJ3gpo+RadN2lv8ZgEeKdb0vuEMLL7fk0c4ywdYndOCt1mxXfC4N1idPM3dLQNagm
+         J1P6OWZS0F93bpKOShBHiZGEiwufHiEjf57wWg+zVMmxeWuQWqiuy7Fqa+PbTY7ys4
+         fDul0qPlHqtayyLCEEADZZXjaK9EGu54lPnyRDOD5inU76/TXNK3KpAL0RN6njDwwE
+         aSamaf4+CTuKNwhsVMtVmYwhzJGwT2hs7aPSrgIJmeDbuwpWk7w/nYkIUSOugHDoAH
+         +1+YMURMeQ+iA==
+Date:   Fri, 14 May 2021 09:26:12 -0700
+From:   Keith Busch <kbusch@kernel.org>
+To:     Sagi Grimberg <sagi@grimberg.me>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "Wunderlich, Mark" <mark.wunderlich@intel.com>,
+        "Vasudevan, Anil" <anil.vasudevan@intel.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Subject: Re: [PATCH 12/15] block: switch polling to be bio based
+Message-ID: <20210514162612.GA2706199@dhcp-10-100-145-180.wdc.com>
+References: <20210512131545.495160-1-hch@lst.de>
+ <20210512131545.495160-13-hch@lst.de>
+ <45d66945-165c-ae48-69f4-75dc553b0386@grimberg.me>
+ <20210512221237.GA2270434@dhcp-10-100-145-180.wdc.com>
+ <20210514025026.GA2447336@dhcp-10-100-145-180.wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210513231945.GD2893@dread.disaster.area>
+In-Reply-To: <20210514025026.GA2447336@dhcp-10-100-145-180.wdc.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 14, 2021 at 09:19:45AM +1000, Dave Chinner wrote:
-> On Thu, May 13, 2021 at 11:52:52AM -0700, Darrick J. Wong wrote:
-> > On Thu, May 13, 2021 at 07:44:59PM +0200, Jan Kara wrote:
-> > > On Wed 12-05-21 08:23:45, Darrick J. Wong wrote:
-> > > > On Wed, May 12, 2021 at 03:46:11PM +0200, Jan Kara wrote:
-> > > > > +->fallocate implementation must be really careful to maintain page cache
-> > > > > +consistency when punching holes or performing other operations that invalidate
-> > > > > +page cache contents. Usually the filesystem needs to call
-> > > > > +truncate_inode_pages_range() to invalidate relevant range of the page cache.
-> > > > > +However the filesystem usually also needs to update its internal (and on disk)
-> > > > > +view of file offset -> disk block mapping. Until this update is finished, the
-> > > > > +filesystem needs to block page faults and reads from reloading now-stale page
-> > > > > +cache contents from the disk. VFS provides mapping->invalidate_lock for this
-> > > > > +and acquires it in shared mode in paths loading pages from disk
-> > > > > +(filemap_fault(), filemap_read(), readahead paths). The filesystem is
-> > > > > +responsible for taking this lock in its fallocate implementation and generally
-> > > > > +whenever the page cache contents needs to be invalidated because a block is
-> > > > > +moving from under a page.
-> > > > > +
-> > > > > +->copy_file_range and ->remap_file_range implementations need to serialize
-> > > > > +against modifications of file data while the operation is running. For blocking
-> > > > > +changes through write(2) and similar operations inode->i_rwsem can be used. For
-> > > > > +blocking changes through memory mapping, the filesystem can use
-> > > > > +mapping->invalidate_lock provided it also acquires it in its ->page_mkwrite
-> > > > > +implementation.
-> > > > 
-> > > > Question: What is the locking order when acquiring the invalidate_lock
-> > > > of two different files?  Is it the same as i_rwsem (increasing order of
-> > > > the struct inode pointer) or is it the same as the XFS MMAPLOCK that is
-> > > > being hoisted here (increasing order of i_ino)?
-> > > > 
-> > > > The reason I ask is that remap_file_range has to do that, but I don't
-> > > > see any conversions for the xfs_lock_two_inodes(..., MMAPLOCK_EXCL)
-> > > > calls in xfs_ilock2_io_mmap in this series.
+On Thu, May 13, 2021 at 07:50:26PM -0700, Keith Busch wrote:
+> On Wed, May 12, 2021 at 03:12:37PM -0700, Keith Busch wrote:
+> > On Wed, May 12, 2021 at 03:03:40PM -0700, Sagi Grimberg wrote:
+> > > On 5/12/21 6:15 AM, Christoph Hellwig wrote:
+> > > > + *
+> > > > + * Note: the caller must either be the context that submitted @bio, or
+> > > > + * be in a RCU critical section to prevent freeing of @bio.
+> > > > + */
+> > > > +int bio_poll(struct bio *bio, unsigned int flags)
+> > > > +{
+> > > > +	struct request_queue *q = bio->bi_bdev->bd_disk->queue;
+> > > > +	blk_qc_t cookie = READ_ONCE(bio->bi_cookie);
+> > > > +
+> > > > +	if (cookie == BLK_QC_T_NONE ||
+> > > > +	    !test_bit(QUEUE_FLAG_POLL, &q->queue_flags))
+> > > > +		return 0;
+> > > > +
+> > > > +	if (current->plug)
+> > > > +		blk_flush_plug_list(current->plug, false);
+> > > > +
+> > > > +	/* not yet implemented, so this should not happen */
+> > > > +	if (WARN_ON_ONCE(!queue_is_mq(q)))
 > > > 
-> > > Good question. Technically, I don't think there's real need to establish a
-> > > single ordering because locks among different filesystems are never going
-> > > to be acquired together (effectively each lock type is local per sb and we
-> > > are free to define an ordering for each lock type differently). But to
-> > > maintain some sanity I guess having the same locking order for doublelock
-> > > of i_rwsem and invalidate_lock makes sense. Is there a reason why XFS uses
-> > > by-ino ordering? So that we don't have to consider two different orders in
-> > > xfs_lock_two_inodes()...
+> > > What happens if the I/O wasn't (yet) queued to the bottom device
+> > > (i.e. no available path in nvme-mpath)?
+> > > 
+> > > In this case the disk would be the mpath device node (which is
+> > > not mq...)
 > > 
-> > I imagine Dave will chime in on this, but I suspect the reason is
-> > hysterical raisins^Wreasons.
+> > The bi_cookie should remain BLK_QC_T_NONE in that case, so we wouldn't
+> > get to the warning. But if that does happen, it doesn't appear that
+> > anyone is going to wake up thread that needs to poll for this bio's
+> > completion when a path becomes available for dispatch. I think it would
+> > make sense for nvme-mpath to just clear the REQ_POLLED flag if it
+> > doesn't immediately have viable path.
 > 
-> It's the locking rules that XFS has used pretty much forever.
-> Locking by inode number always guarantees the same locking order of
-> two inodes in the same filesystem, regardless of the specific
-> in-memory instances of the two inodes.
-> 
-> e.g. if we lock based on the inode structure address, in one
-> instancex, we could get A -> B, then B gets recycled and
-> reallocated, then we get B -> A as the locking order for the same
-> two inodes.
-> 
-> That, IMNSHO, is utterly crazy because with non-deterministic inode
-> lock ordered like this you can't make consistent locking rules for
-> locking the physical inode cluster buffers underlying the inodes in
-> the situation where they also need to be locked.
+> It looks like there is a way to hit this warning. If you induce a path
+> error to create a failover, the nvme-mpath will reset the bio's bdev to
+> the mpath one, which is not MQ. I can occaisionally hit it with a fault
+> injection test.
 
-<nod> That's protected by the ILOCK, correct?
+Oh, and it gets a bit worse. Using pvsync2 will block forever once this
+warning is hit, or if nvme-mpath had to requeue the IO for lack of a
+path. io_uring doesn't have that hang problem though.
 
-> We've been down this path before more than a decade ago when the
-> powers that be decreed that inode locking order is to be "by
-> structure address" rather than inode number, because "inode number
-> is not unique across multiple superblocks".
-> 
-> I'm not sure that there is anywhere that locks multiple inodes
-> across different superblocks, but here we are again....
+Christoph, I think patch 15 needs something like this:
 
-Hm.  Are there situations where one would want to lock multiple
-/mappings/ across different superblocks?  The remapping code doesn't
-allow cross-super operations, so ... pipes and splice, maybe?  I don't
-remember that code well enough to say for sure.
+---
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index 7febdb57f690..d40a9331daf7 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -419,6 +419,11 @@ static void nvme_requeue_work(struct work_struct *work)
+ 		 * path.
+ 		 */
+ 		bio_set_dev(bio, head->disk->part0);
++
++		if (bio->bi_opf & REQ_POLLED) {
++			bio->bi_opf &= ~REQ_POLLED;
++			bio->bi_cookie = BLK_QC_T_NONE;
++		}
+ 		submit_bio_noacct(bio);
+ 	}
+ }
+--
 
-I've been operating under the assumption that as long as one takes all
-the same class of lock at the same time (e.g. all the IOLOCKs, then all
-the MMAPLOCKs, then all the ILOCKs, like reflink does) that the
-incongruency in locking order rules within a class shouldn't be a
-problem.
-
-> > It might simply be time to convert all
-> > three XFS inode locks to use the same ordering rules.
-> 
-> Careful, there lie dragons along that path because of things like
-> how the inode cluster buffer operations work - they all assume
-> ascending inode number traversal within and across inode cluster
-> buffers and hence we do have locking order constraints based on
-> inode number...
-
-Fair enough, I'll leave the ILOCK alone. :)
-
---D
-
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+This should fix the hang since requeued bio's will use an interrupt
+driven queue, but it doesn't fix the warning. The recent commit
+"nvme-multipath: reset bdev to ns head when failover" looks like it
+makes preventing the polling thread from using the non-MQ head disk
+not possible.
