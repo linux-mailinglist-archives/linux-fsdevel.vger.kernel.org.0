@@ -2,171 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1EC0380185
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 03:43:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30E5D380193
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 03:53:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232098AbhENBfx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 May 2021 21:35:53 -0400
-Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:50859 "EHLO
-        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232048AbhENBfw (ORCPT
+        id S232182AbhENBzA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 May 2021 21:55:00 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:2662 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231154AbhENBy7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 May 2021 21:35:52 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.west.internal (Postfix) with ESMTP id 4E85B1A46;
-        Thu, 13 May 2021 21:34:40 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Thu, 13 May 2021 21:34:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        iJ6t80zLP0jWqMOoc66bwpFFYMy/M+FeT/hsKOcsIP0=; b=UlhAn9ULIpiewiOn
-        sw3r6mCXvWpepQq8FJGftxzra62MxZHTI9MqOwKL6lMVd6CErYsERaxC5NgsiEjS
-        wfeGf04MZyFN2lt/8OXwMTkbVo8F4/RpiKkVcKFq2wvbI1XzYb2c0v1Rgd46YxHr
-        d0PRCBrLnHk2s76pTKqVmp2n40vhghfICXhtr1mmRVjTge48LjUtLM8fM6TPW9OX
-        kUIzt4PDeHUUCclJbmiJ0kplStE6fltv2pbjtg4UaXaLRLggfmtvxFyNGbUuyQ0X
-        Q9CDogd79/e62kL5qWF2QRrgZkERE+85l7IVO/17D9qMew+gFMY8s8qefUkX+tGv
-        0cCiNw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=iJ6t80zLP0jWqMOoc66bwpFFYMy/M+FeT/hsKOcsI
-        P0=; b=lEd8jsbu0hoqgJ0evGdolBB3dcF8AuJUU+t3HTAoetF5BOKOi1p+drA2d
-        f6Kcas2nalOW0xmTe8qeozZTQoy9H8NWiVZr+P4fLgpkt8UTLW8Y1lYEv7Zztrdz
-        cFq9kOBDbvVOzMxohynr3AEzgxS89kBsvVWdXhVw/0/bT9DV5vTT+hRydWjDFSCk
-        y5CvrLHlgNbRwAiVmQoUEC8zWMe3wA/PxGuo/80/KfN9Zcm1dGwbmdjmrvnyI7Mi
-        6J+OfZkS28Nov6Ows2AZIxXZ7wdkZNmycKEN5f2HyzMloLFti4tiB5nG+j5M6X6c
-        nF5MBvAueWDFm7gXwwDb8ZOEJAxAw==
-X-ME-Sender: <xms:r9OdYPUvnNh-0_azgDvOodinXYLI-PZvWjFGPxy3Z9NxsSJTQoZlRA>
-    <xme:r9OdYHmlaIGt0SlQr74Tx9hnoDWw0E5PztKeE6a61KdWD-5sBL6B5tMjJXBJgO7L7
-    Q2_5fufMbE4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdehhedggeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthekredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    elgedtleeltdffteejudetfefgieehheekffehuefhkeegkeeuleehffehieegjeenucff
-    ohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghenucfkphepuddtie
-    drieelrddvfedurdeggeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
-    ihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:r9OdYLaCJY9bryAsSZZ6m1JdsKXyHluPQDpzRnsV11j8H-pUQUGaiw>
-    <xmx:r9OdYKWXEz-uYl0LoAKASuCMfUjMHmq7mcolf4UwfcYAVXccpLsoSg>
-    <xmx:r9OdYJmT9ZPhmc2qjn1QsZoPZOg2hqdcCQk0CD7b_t0HCCQsPwjCnA>
-    <xmx:r9OdYL6EslUBsfRWJ2vzHjJukID7DFwDVnuaoQMqC3oUxb6cQbDla7dTeWI>
-Received: from mickey.long.domain.name.themaw.net (106-69-231-44.dyn.iinet.net.au [106.69.231.44])
-        by mail.messagingengine.com (Postfix) with ESMTPA;
-        Thu, 13 May 2021 21:34:34 -0400 (EDT)
-Message-ID: <bc9650145291b6e568a8f75d02663b9e4f2bcfd7.camel@themaw.net>
-Subject: Re: [PATCH v4 0/5] kernfs: proposed locking and concurrency
- improvement
-From:   Ian Kent <raven@themaw.net>
-To:     Fox Chen <foxhlchen@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Brice Goglin <brice.goglin@gmail.com>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Fri, 14 May 2021 09:34:31 +0800
-In-Reply-To: <CAC2o3DKvq12CrsgWTNmQmu3iDJ+9tytMdCJepdBjUKN1iUJ0RQ@mail.gmail.com>
-References: <162077975380.14498.11347675368470436331.stgit@web.messagingengine.com>
-         <YJtz6mmgPIwEQNgD@kroah.com>
-         <CAC2o3D+28g67vbNOaVxuF0OfE0RjFGHVwAcA_3t1AAS_b_EnPg@mail.gmail.com>
-         <CAC2o3DJm0ugq60c8mBafjd81nPmhpBKBT5cCKWvc4rYT0dDgGg@mail.gmail.com>
-         <CAC2o3DJdwr0aqT6LwhuRj8kyXt6NAPex2nG5ToadUTJ3Jqr_4w@mail.gmail.com>
-         <4eae44395ad321d05f47571b58fe3fe2413b6b36.camel@themaw.net>
-         <CAC2o3DKvq12CrsgWTNmQmu3iDJ+9tytMdCJepdBjUKN1iUJ0RQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        Thu, 13 May 2021 21:54:59 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FhBMp3wV6zmW7n;
+        Fri, 14 May 2021 09:51:34 +0800 (CST)
+Received: from [10.174.176.232] (10.174.176.232) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 14 May 2021 09:53:42 +0800
+Subject: Re: [PATCH v3 3/5] mm/huge_memory.c: add missing read-only THP
+ checking in transparent_hugepage_enabled()
+To:     Yang Shi <shy828301@gmail.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+        <william.kucharski@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Yang Shi" <yang.shi@linux.alibaba.com>,
+        <aneesh.kumar@linux.ibm.com>,
+        "Ralph Campbell" <rcampbell@nvidia.com>,
+        Song Liu <songliubraving@fb.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Rik van Riel <riel@surriel.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Hugh Dickins <hughd@google.com>, <adobriyan@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
+References: <20210511134857.1581273-1-linmiaohe@huawei.com>
+ <20210511134857.1581273-4-linmiaohe@huawei.com>
+ <CAHbLzkric1DfZrspY7grQtjTeFUS7CTTdRAhYVhLKTOHjy+t2A@mail.gmail.com>
+From:   Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <178ec3ad-c6f6-465a-936e-992445b8c358@huawei.com>
+Date:   Fri, 14 May 2021 09:53:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHbLzkric1DfZrspY7grQtjTeFUS7CTTdRAhYVhLKTOHjy+t2A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.176.232]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2021-05-13 at 23:37 +0800, Fox Chen wrote:
-> Hi Ian
+On 2021/5/14 5:30, Yang Shi wrote:
+> On Tue, May 11, 2021 at 6:49 AM Miaohe Lin <linmiaohe@huawei.com> wrote:
+>>
+>> Since commit 99cb0dbd47a1 ("mm,thp: add read-only THP support for
+>> (non-shmem) FS"), read-only THP file mapping is supported. But it
+>> forgot to add checking for it in transparent_hugepage_enabled().
+>> To fix it, we add checking for read-only THP file mapping and also
+>> introduce helper transhuge_vma_enabled() to check whether thp is
+>> enabled for specified vma to reduce duplicated code. We rename
+>> transparent_hugepage_enabled to transparent_hugepage_active to make
+>> the code easier to follow as suggested by David Hildenbrand.
+>>
+>> Fixes: 99cb0dbd47a1 ("mm,thp: add read-only THP support for (non-shmem) FS")
+>> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
 > 
-> On Thu, May 13, 2021 at 10:10 PM Ian Kent <raven@themaw.net> wrote:
-> > 
-> > On Wed, 2021-05-12 at 16:54 +0800, Fox Chen wrote:
-> > > On Wed, May 12, 2021 at 4:47 PM Fox Chen <foxhlchen@gmail.com>
-> > > wrote:
-> > > > 
-> > > > Hi,
-> > > > 
-> > > > I ran it on my benchmark (
-> > > > https://github.com/foxhlchen/sysfs_benchmark).
-> > > > 
-> > > > machine: aws c5 (Intel Xeon with 96 logical cores)
-> > > > kernel: v5.12
-> > > > benchmark: create 96 threads and bind them to each core then
-> > > > run
-> > > > open+read+close on a sysfs file simultaneously for 1000 times.
-> > > > result:
-> > > > Without the patchset, an open+read+close operation takes 550-
-> > > > 570
-> > > > us,
-> > > > perf shows significant time(>40%) spending on mutex_lock.
-> > > > After applying it, it takes 410-440 us for that operation and
-> > > > perf
-> > > > shows only ~4% time on mutex_lock.
-> > > > 
-> > > > It's weird, I don't see a huge performance boost compared to
-> > > > v2,
-> > > > even
-> > > 
-> > > I meant I don't see a huge performance boost here and it's way
-> > > worse
-> > > than v2.
-> > > IIRC, for v2 fastest one only takes 40us
-> > 
-> > Thanks Fox,
-> > 
-> > I'll have a look at those reports but this is puzzling.
-> > 
-> > Perhaps the added overhead of the check if an update is
-> > needed is taking more than expected and more than just
-> > taking the lock and being done with it. Then there's
-> > the v2 series ... I'll see if I can dig out your reports
-> > on those too.
+> Looks correct to me. Reviewed-by: Yang Shi <shy828301@gmail.com>
 > 
-> Apologies, I was mistaken, it's compared to V3, not V2.  The previous
-> benchmark report is here.
-> https://lore.kernel.org/linux-fsdevel/CAC2o3DKNc=sL2n8291Dpiyb0bRHaX=nd33ogvO_LkJqpBj-YmA@mail.gmail.com/
 
-Are all these tests using a single file name in the open/read/close
-loop?
+Many thanks for your Reviewed-by tag.
 
-That being the case the per-object inode lock will behave like a
-mutex and once contention occurs any speed benefits of a spinlock
-over a mutex (or rwsem) will disappear.
+> Just a nit below:
+> 
+>> ---
+>>  fs/proc/task_mmu.c      |  2 +-
+>>  include/linux/huge_mm.h | 27 ++++++++++++++++++++-------
+>>  mm/huge_memory.c        | 11 ++++++++++-
+>>  mm/khugepaged.c         |  4 +---
+>>  mm/shmem.c              |  3 +--
+>>  5 files changed, 33 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>> index fc9784544b24..7389df326edd 100644
+>> --- a/fs/proc/task_mmu.c
+>> +++ b/fs/proc/task_mmu.c
+>> @@ -832,7 +832,7 @@ static int show_smap(struct seq_file *m, void *v)
+>>         __show_smap(m, &mss, false);
+>>
+>>         seq_printf(m, "THPeligible:    %d\n",
+>> -                  transparent_hugepage_enabled(vma));
+>> +                  transparent_hugepage_active(vma));
+>>
+>>         if (arch_pkeys_enabled())
+>>                 seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index 0a526f211fec..a35c13d1f487 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -115,9 +115,19 @@ extern struct kobj_attribute shmem_enabled_attr;
+>>
+>>  extern unsigned long transparent_hugepage_flags;
+>>
+>> +static inline bool transhuge_vma_enabled(struct vm_area_struct *vma,
+> 
+> I'd like to have this function defined next to transhuge_vma_suitable().
+> 
 
-In this case changing from a write lock to a read lock in those
-functions and adding the inode mutex will do nothing but add the
-overhead of taking the read lock. And similarly adding the update
-check function also just adds overhead and, as we see, once
-contention starts it has a cumulative effect that's often not
-linear.
+Sounds reasonable. Will do. Thanks!
 
-The whole idea of a read lock/per-object spin lock was to reduce
-the possibility of contention for paths other than the same path
-while not impacting same path accesses too much for an overall
-gain. Based on this I'm thinking the update check function is
-probably not worth keeping, it just adds unnecessary churn and
-has a negative impact for same file contention access patterns.
-
-I think that using multiple paths, at least one per test process
-(so if you are running 16 processes use at least 16 different
-files, the same in each process), and selecting one at random
-for each loop of the open would better simulate real world
-access patterns.
-
-
-Ian
+>> +                                         unsigned long vm_flags)
+>> +{
+>> +       /* Explicitly disabled through madvise. */
+>> +       if ((vm_flags & VM_NOHUGEPAGE) ||
+>> +           test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
+>> +               return false;
+>> +       return true;
+>> +}
+>> +
+>>  /*
+>>   * to be used on vmas which are known to support THP.
+>> - * Use transparent_hugepage_enabled otherwise
+>> + * Use transparent_hugepage_active otherwise
+>>   */
+>>  static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
+>>  {
+>> @@ -128,15 +138,12 @@ static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
+>>         if (transparent_hugepage_flags & (1 << TRANSPARENT_HUGEPAGE_NEVER_DAX))
+>>                 return false;
+>>
+>> -       if (vma->vm_flags & VM_NOHUGEPAGE)
+>> +       if (!transhuge_vma_enabled(vma, vma->vm_flags))
+>>                 return false;
+>>
+>>         if (vma_is_temporary_stack(vma))
+>>                 return false;
+>>
+>> -       if (test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
+>> -               return false;
+>> -
+>>         if (transparent_hugepage_flags & (1 << TRANSPARENT_HUGEPAGE_FLAG))
+>>                 return true;
+>>
+>> @@ -150,7 +157,7 @@ static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
+>>         return false;
+>>  }
+>>
+>> -bool transparent_hugepage_enabled(struct vm_area_struct *vma);
+>> +bool transparent_hugepage_active(struct vm_area_struct *vma);
+>>
+>>  static inline bool transhuge_vma_suitable(struct vm_area_struct *vma,
+>>                 unsigned long haddr)
+>> @@ -351,7 +358,7 @@ static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
+>>         return false;
+>>  }
+>>
+>> -static inline bool transparent_hugepage_enabled(struct vm_area_struct *vma)
+>> +static inline bool transparent_hugepage_active(struct vm_area_struct *vma)
+>>  {
+>>         return false;
+>>  }
+>> @@ -362,6 +369,12 @@ static inline bool transhuge_vma_suitable(struct vm_area_struct *vma,
+>>         return false;
+>>  }
+>>
+>> +static inline bool transhuge_vma_enabled(struct vm_area_struct *vma,
+>> +                                         unsigned long vm_flags)
+>> +{
+>> +       return false;
+>> +}
+>> +
+>>  static inline void prep_transhuge_page(struct page *page) {}
+>>
+>>  static inline bool is_transparent_hugepage(struct page *page)
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 76ca1eb2a223..4f37867eed12 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -63,7 +63,14 @@ static struct shrinker deferred_split_shrinker;
+>>  static atomic_t huge_zero_refcount;
+>>  struct page *huge_zero_page __read_mostly;
+>>
+>> -bool transparent_hugepage_enabled(struct vm_area_struct *vma)
+>> +static inline bool file_thp_enabled(struct vm_area_struct *vma)
+>> +{
+>> +       return transhuge_vma_enabled(vma, vma->vm_flags) && vma->vm_file &&
+>> +              !inode_is_open_for_write(vma->vm_file->f_inode) &&
+>> +              (vma->vm_flags & VM_EXEC);
+>> +}
+>> +
+>> +bool transparent_hugepage_active(struct vm_area_struct *vma)
+>>  {
+>>         /* The addr is used to check if the vma size fits */
+>>         unsigned long addr = (vma->vm_end & HPAGE_PMD_MASK) - HPAGE_PMD_SIZE;
+>> @@ -74,6 +81,8 @@ bool transparent_hugepage_enabled(struct vm_area_struct *vma)
+>>                 return __transparent_hugepage_enabled(vma);
+>>         if (vma_is_shmem(vma))
+>>                 return shmem_huge_enabled(vma);
+>> +       if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS))
+>> +               return file_thp_enabled(vma);
+>>
+>>         return false;
+>>  }
+>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>> index 6c0185fdd815..d97b20fad6e8 100644
+>> --- a/mm/khugepaged.c
+>> +++ b/mm/khugepaged.c
+>> @@ -442,9 +442,7 @@ static inline int khugepaged_test_exit(struct mm_struct *mm)
+>>  static bool hugepage_vma_check(struct vm_area_struct *vma,
+>>                                unsigned long vm_flags)
+>>  {
+>> -       /* Explicitly disabled through madvise. */
+>> -       if ((vm_flags & VM_NOHUGEPAGE) ||
+>> -           test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
+>> +       if (!transhuge_vma_enabled(vma, vm_flags))
+>>                 return false;
+>>
+>>         /* Enabled via shmem mount options or sysfs settings. */
+>> diff --git a/mm/shmem.c b/mm/shmem.c
+>> index a08cedefbfaa..1dcbec313c70 100644
+>> --- a/mm/shmem.c
+>> +++ b/mm/shmem.c
+>> @@ -4032,8 +4032,7 @@ bool shmem_huge_enabled(struct vm_area_struct *vma)
+>>         loff_t i_size;
+>>         pgoff_t off;
+>>
+>> -       if ((vma->vm_flags & VM_NOHUGEPAGE) ||
+>> -           test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
+>> +       if (!transhuge_vma_enabled(vma, vma->vm_flags))
+>>                 return false;
+>>         if (shmem_huge == SHMEM_HUGE_FORCE)
+>>                 return true;
+>> --
+>> 2.23.0
+>>
+>>
+> .
+> 
 
