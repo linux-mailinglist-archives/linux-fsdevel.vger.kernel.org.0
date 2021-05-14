@@ -2,215 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D06083800E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 01:33:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DE0F380110
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 02:08:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229786AbhEMXee (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 May 2021 19:34:34 -0400
-Received: from mga17.intel.com ([192.55.52.151]:13992 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229460AbhEMXee (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 May 2021 19:34:34 -0400
-IronPort-SDR: mQsb1SiwoyTeeZlYOTX7adOY0GyAE28VNcJ6Zh7T9HocoPBFxrVIiIVljljGFU/Jk7NEgNodIq
- 4hpuOgffREZA==
-X-IronPort-AV: E=McAfee;i="6200,9189,9983"; a="180347368"
-X-IronPort-AV: E=Sophos;i="5.82,296,1613462400"; 
-   d="scan'208";a="180347368"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2021 16:33:20 -0700
-IronPort-SDR: uhAX+wW6jibQmyl0op0hHsOGbMj3ikKQaR+tFhaOoyShEMGbWJj6XUmeLIBfHlwY+HsmIhKT9n
- PpJ5QrCgr7mQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.82,296,1613462400"; 
-   d="scan'208";a="463502491"
-Received: from orsmsx604.amr.corp.intel.com ([10.22.229.17])
-  by FMSMGA003.fm.intel.com with ESMTP; 13 May 2021 16:33:20 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX604.amr.corp.intel.com (10.22.229.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Thu, 13 May 2021 16:33:20 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Thu, 13 May 2021 16:33:19 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4
- via Frontend Transport; Thu, 13 May 2021 16:33:19 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.177)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2106.2; Thu, 13 May 2021 16:33:19 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=js1y+AHrGpKX4K1iaG8XUD5UPF8dsbJT7Z5usmW7rFdFXXFnh8duN+NIlkSRMXVeaxyZQVDYZoMwygzyfQ1JzFd/aCiYIAlZ0dIyrAYJx1jKIHAaMOUSAUxSyN1avwrcQH5ztZITRvowKf9TCrf8dqwMmnJEj04OIHuf5/hR7xbzE73AUb6fbKdzqYZUAqTXkHl1MVH/wL0H3hjQczJic2r3UsuVrGHcFg17yVpt+2Va/qQingLL7SuBvLrdVEmEh5eMEsfJiSEANuPs4bdGXq7nXTL5G4IUOAs3adzmY2QJRXlQRmpJLjX0w70+CfnTRpb5wUg7bG+3iRSULvDRTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wlv5W4VdafM/Mm6ohBzj164yJeAZ8XtkFtFFSsyoCcA=;
- b=h7TgRRBZFJ+NJH4YZv7xUtAdw7WADb+Pbb+524mGX0nlOvjDJYARH4RQqh7j0TaAwPapYg9cr/E5L0F2wxRrkg54lrDFzaWRxt+GfSkX64JiJoYVKN5R0jg87ztkqAx9McS8WW71x7xGkntal8tk5BkfPSx90C6JRDEaKPBwZhjk31ghTvjZZw4w8Hbb/XKwTntAgqDX+0O71vQChRaiQRLigpJ51Hpd/e2+F7IGlInzL4YPHwJbbwmdcD9z4/9ykjb/Br4/7a/pgTTboxChouqg7CT0oPFNdJns8epVKLJNGEyGQlJHNMNTsbN31Lrwr6QdPmiyljTtXy1gKNJq+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
- s=selector2-intel-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wlv5W4VdafM/Mm6ohBzj164yJeAZ8XtkFtFFSsyoCcA=;
- b=USwK0VAnoTWKyJO9EAFm0TVycvrJLAqD66A/BMEWnSLUY8wBC++sn3Yws401OAc3h1aBJy3oFTsMDjeN0VujNCPXWtX6sE2clp/DFXeXygZ3o5GXFVPnNuTewT4F9M89cXXncPMuhARx0Tld7L8rrZ7nKgiFUHnr3FUqszFKz7Y=
-Received: from BYAPR11MB2869.namprd11.prod.outlook.com (2603:10b6:a02:c0::15)
- by BYAPR11MB3576.namprd11.prod.outlook.com (2603:10b6:a03:b4::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4108.31; Thu, 13 May
- 2021 23:33:17 +0000
-Received: from BYAPR11MB2869.namprd11.prod.outlook.com
- ([fe80::a901:868c:c785:c42f]) by BYAPR11MB2869.namprd11.prod.outlook.com
- ([fe80::a901:868c:c785:c42f%4]) with mapi id 15.20.4108.031; Thu, 13 May 2021
- 23:33:17 +0000
-From:   "Wunderlich, Mark" <mark.wunderlich@intel.com>
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-CC:     Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        "Sagi Grimberg" <sagi@grimberg.me>,
-        "Vasudevan, Anil" <anil.vasudevan@intel.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
-Subject: RE: switch block layer polling to a bio based model v3
-Thread-Topic: switch block layer polling to a bio based model v3
-Thread-Index: AQHXRzD50J68sHmFEU+0v6GEtxJJHariBs3A
-Date:   Thu, 13 May 2021 23:33:15 +0000
-Message-ID: <BYAPR11MB2869290376F951F10558AF13E5519@BYAPR11MB2869.namprd11.prod.outlook.com>
-References: <20210512131545.495160-1-hch@lst.de>
-In-Reply-To: <20210512131545.495160-1-hch@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-reaction: no-action
-dlp-version: 11.5.1.3
-dlp-product: dlpe-windows
-authentication-results: lst.de; dkim=none (message not signed)
- header.d=none;lst.de; dmarc=none action=none header.from=intel.com;
-x-originating-ip: [67.171.162.119]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 02ceabbe-4c69-48e5-8e5d-08d916677c8d
-x-ms-traffictypediagnostic: BYAPR11MB3576:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR11MB35765B8214E523EE39B83A50E5519@BYAPR11MB3576.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: /2Ojwf15KcqND45YNZIEamd/+/IZwwJrGH25t7z/6KS33qSa6G/yTdZP8BQULSVOWLpijOglgS4n6yl027/Ba52jCqrF7rnwXWZbBJZR6pAzwZFGAdrHZPRIqNrL9Kph8QUJ+p1yf0INBlo3rBoevell1ejv7RFqu9ESxw5v/N5/dvaLjRsyIMlH9WZHlMqPOYRO7pzwwMboYpn+th28+Ysx9GzwJJhviSF52r6Mge3YCCgnoGNYWfTy668P0X+yN1F7Gq23QmR3XFuJ2F7URPlLniuhsmePL2J8yEx8HGtbp6EHmc1x9PhWNw+3EpXpe0M8N0QfrinO6Elu3il7OYS7ywtIwjH2h11DVLcRxwouYLt6vlPCqwmGCG4nTDFz06PuFZeS41QpknBMsnD6rG5A/iE7LxgcsLz1QVnvm346KwmUh9KLSP1d6/evhbsxVdvsWfc2iUzXeLkmUHjLbSPcZRq+YVG6Pn6Upz+6xvFQwqsJUxlvxsbB5L5If5SworaLMvRT8D5bgwR5spiidXWXh89NG1E00jsfSJfgz3lPFfRynueLm/uRWnr+3FeG2qokjS3Ai0m+DjDyS1jWN1OHqJHR/0dOwqovH0zBvq8=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB2869.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(376002)(346002)(136003)(39860400002)(396003)(83380400001)(8676002)(9686003)(64756008)(71200400001)(66556008)(316002)(110136005)(55016002)(38100700002)(66946007)(66476007)(86362001)(66446008)(7416002)(478600001)(186003)(76116006)(33656002)(54906003)(8936002)(122000001)(4326008)(26005)(5660300002)(2906002)(7696005)(6506007)(52536014);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?r6QTVy2flsSYJBiEekHSI3/VRTt248bZIN+q3BOnMqe1/Yuk2TJ/bVR38rra?=
- =?us-ascii?Q?4+hkKz/Q6eKYcnA1cfQKTaKtH29kneW5bNqOpgBHXybmCdar/HVuZSLmJRTQ?=
- =?us-ascii?Q?E9WXVMJ80iW1yo3UCte0EC7Ku0e66hLKS7D922/rEuZKGwI0DJcgTK4ZfFno?=
- =?us-ascii?Q?KxqXaPq9pg7g/ogjr3dBZ4cT6TGHHho6rhkiKY3XV1ahI/3qQrK9kVau4b59?=
- =?us-ascii?Q?RQhqq3xNlrfAM9pB//GzpoDOaqS1fHukuWmJBNYty6UdLbqzUBt/+AYG2K2g?=
- =?us-ascii?Q?NvqYqGBNQkTDPbaZ2z/5nDqZnrB09pK17XxQc+Vz9n4U1uTUU0dsEdWptOa8?=
- =?us-ascii?Q?j0Eh/OCSL7Qil5lTGnJbYmge0DU6/fpkgsgL2WaHm/e1xZQVrlzrV5JWAOE4?=
- =?us-ascii?Q?39eAbydVLe33XGENKxucSy21Viaahs/K26dE4DNK65d8Usd+XJg0uZr5eCOz?=
- =?us-ascii?Q?iFn62mmBeBWbulz0kEJS6+4ZD7eUZHvOiS9KtWbPyX9TRb7/pHi4UmsBi5SF?=
- =?us-ascii?Q?NhuIjxm76PGGRc4m/VNNlW0M3crtXKGBcatNM850Yhb4OP2X53IQB1hR7kJi?=
- =?us-ascii?Q?8ttcNV6vmZx/i9w1DKLQC2zIPZRYFe+tU/CaN4HQ+vDVlDsCRTWsLczgpU9v?=
- =?us-ascii?Q?gZ7GdNcJU4JjjSFRI8+Jvqenr3qdEUjJbpr4ebkfGW0xcmbCoYirULV6Uiep?=
- =?us-ascii?Q?rGPjAmEz60H79cmlcgxL7sqxMn7wXdObeAyymQ/qbNehunIwHcnfnmDiVR1c?=
- =?us-ascii?Q?dcIb9A6blzdqgFFWTrvHXY636mndTQzCvpLKjLlaAjffb2MO7t31rXw/LkIX?=
- =?us-ascii?Q?ibUYLFbwMhuZwXoxhsUVLr2wjiVt0OjUcuWTjipuEoxuM+HZlQfI7ajniCio?=
- =?us-ascii?Q?72/Rw3NpsjoITsIVrU4L9gcrcQ/cUU0I9hqFnT3iEgqWkUnk1Yn4D6YvWkOP?=
- =?us-ascii?Q?tsPOOc7Lv1kw2rbVWXRVlvNuCdc9P4R9udlMRjIJEFVsoFdWX7wRQuMqcRtT?=
- =?us-ascii?Q?FRIsY1fJSCPAB1StUhZfw+MlYCG1c4K2vzBbCYDGSxPj3YDZc2uuQf6rl4kJ?=
- =?us-ascii?Q?9YykvWt62OVAFWLV7wanCCfeFNQIUiD16ZpxoG8Ben7mQ3Ma6HjdwuRwr58y?=
- =?us-ascii?Q?ylPIdnrtgPHVEbXl4sQoA1Ut47IsNc97eMREOQzctc/1EBEbCy3ErJXkbp38?=
- =?us-ascii?Q?+Vf4IEEDtpHdjmkeZjfXklvGdf0kQOGE4q89EwLG2c1YmljdoF0ukUpylcGM?=
- =?us-ascii?Q?MHkNJeGdTM9c7TyMva+Obn0VD+jTEQmfDvq9w5ysQNdP4RQo8sfRu+xRhwi9?=
- =?us-ascii?Q?b8w=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S231348AbhENAJT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 May 2021 20:09:19 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:54258 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231282AbhENAJS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 May 2021 20:09:18 -0400
+Received: by mail-il1-f200.google.com with SMTP id h8-20020a92c2680000b02901646ecac1e5so23402199ild.20
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 May 2021 17:08:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=cXyNGd9Vrd2aON7CjiL60tt9ApHuhPJmJpF0UyZNllw=;
+        b=rpVaPMO92E4atzqifVUmySUcNUMheNWByYTsoXBNZVXhnGKMQ2L6Zl4lvWMEY+VjH2
+         ErwXFT7DchRmNl0JyJLETOFrW7qlASk6WwNIycIF3efNXXt166Y6LbRyz4Zbch9a58UM
+         lAWub1mcXtsJnNix9a6OOMdf1tohX12IPVlJ4IK9S7Jk64Axp/ybWvimy1Cy8CDKDoBL
+         iSj33kw/Rrzyy0RJmP8HvhXmhsURz2MeEKW297iH3j0+fJqeXEM1iRlUcsQrJstrRNNs
+         +UdrxEvwdSpcPZ30JHFTi2OYFuE8jBvvamGcGlFXPkFaEXHmsfenIeqmVoTbT80IeHQx
+         98Ng==
+X-Gm-Message-State: AOAM530TF+70fY7WHrbKWbQgfnNWYDSrPAukr4843e5k2YLQUgvs32mq
+        N05dYxcD2CvqvN1OQ2LUT/rNn4SnAjFDpaOIE6lG4eQTpmqs
+X-Google-Smtp-Source: ABdhPJwOaEbURDnPKBMzitivcDtxibTJxpVP8paGWM4P05ST1L7tdcG9nXvIXXTcmWfsN+xmlHc9t75I8WycfQHrt6QM4wMZIN8m
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB2869.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02ceabbe-4c69-48e5-8e5d-08d916677c8d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2021 23:33:17.5960
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Bpu+51BTH4lMC11g47PT/ncU0gpf/E6PSbvjuYhV30UWCpclKtJ3q/q664OAFVAG/gM/MZeqPWtkG05yQRc6M1PGIIhlgxsL9kYZgTg974Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB3576
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a6b:c981:: with SMTP id z123mr31798891iof.6.1620950887615;
+ Thu, 13 May 2021 17:08:07 -0700 (PDT)
+Date:   Thu, 13 May 2021 17:08:07 -0700
+In-Reply-To: <8915be59-5ac9-232d-878e-b09c141059d5@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000dacff205c23f0955@google.com>
+Subject: Re: [syzbot] WARNING in io_link_timeout_fn
+From:   syzbot <syzbot+5a864149dd970b546223@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As a data point, tested V2 and this V3 patch series, applied to my test ini=
-tiator
-currently running 5.10 branch of linux-nvme.
+Hello,
 
-All results via FIO using the following options:  --time_based --runtime=3D=
-60 --thread
---rw=3Drandread --refill_buffers --direct=3D1 --ioengine=3Dio_uring --hipri=
- --fixedbufs --bs=3D4k
---iodepth=3D32 --iodepth_batch_complete_min=3D1 --iodepth_batch_complete_ma=
-x=3D32
---iodepth_batch=3D8 --group_reporting --gtod_reduce=3D0 --disable_lat=3D0 ,=
-=20
-with only the queue depth, batch size, and number of job threads varied as =
-indicated.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: use-after-free Read in hrtimer_active
 
-Tests are directed towards one or more remote nvme optane devices.
+==================================================================
+BUG: KASAN: use-after-free in hrtimer_active+0x1d6/0x1f0 kernel/time/hrtimer.c:1462
+Read of size 8 at addr ffff8880129a64b8 by task syz-executor.0/9928
 
-All data reported as:
-IOPS (k), Avg Lat (usec), stdev (usec), 99.99 clat (usec)
+CPU: 0 PID: 9928 Comm: syz-executor.0 Not tainted 5.12.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack+0x141/0x1d7 lib/dump_stack.c:120
+ print_address_description.constprop.0.cold+0x5b/0x2f8 mm/kasan/report.c:233
+ __kasan_report mm/kasan/report.c:419 [inline]
+ kasan_report.cold+0x7c/0xd8 mm/kasan/report.c:436
+ hrtimer_active+0x1d6/0x1f0 kernel/time/hrtimer.c:1462
+ hrtimer_try_to_cancel+0x21/0x1e0 kernel/time/hrtimer.c:1180
+ io_kill_linked_timeout fs/io_uring.c:1794 [inline]
+ io_disarm_next+0x196/0xad0 fs/io_uring.c:1827
+ __io_req_find_next+0xca/0x160 fs/io_uring.c:1852
+ io_req_find_next fs/io_uring.c:1868 [inline]
+ io_queue_next fs/io_uring.c:2070 [inline]
+ io_free_req fs/io_uring.c:2078 [inline]
+ io_put_req_deferred_cb+0x253/0x4a0 fs/io_uring.c:2180
+ __tctx_task_work fs/io_uring.c:1909 [inline]
+ tctx_task_work+0x24e/0x550 fs/io_uring.c:1923
+ task_work_run+0xdd/0x1a0 kernel/task_work.c:161
+ tracehook_notify_signal include/linux/tracehook.h:212 [inline]
+ handle_signal_work kernel/entry/common.c:145 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
+ exit_to_user_mode_prepare+0x24a/0x280 kernel/entry/common.c:208
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:290 [inline]
+ syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:301
+ do_syscall_64+0x47/0xb0 arch/x86/entry/common.c:57
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x4665f9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f9092a97188 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+RAX: 0000000000000100 RBX: 000000000056bf60 RCX: 00000000004665f9
+RDX: 0000000000000000 RSI: 000000000000450c RDI: 0000000000000003
+RBP: 00000000004bfce1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf60
+R13: 0000000000a9fb1f R14: 00007f9092a97300 R15: 0000000000022000
 
-For reference, baseline performance on this branch, running without nvme mu=
-ltipathing enabled, while using 'hipri' polling option:
-[1 thread, QD 1, Batch 1]
-33.1, 29.21, 1.42, 54.52
-[1 thread, QD 32, Batch 8]
-268, 101.17, 14.87, 139
-[16 thread, QD 32, Batch 8]
-1965, 247.25, 28.28, 449
+Allocated by task 9928:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
+ kasan_set_track mm/kasan/common.c:46 [inline]
+ set_alloc_info mm/kasan/common.c:427 [inline]
+ ____kasan_kmalloc mm/kasan/common.c:506 [inline]
+ ____kasan_kmalloc mm/kasan/common.c:465 [inline]
+ __kasan_kmalloc+0x99/0xc0 mm/kasan/common.c:515
+ kmalloc include/linux/slab.h:561 [inline]
+ io_alloc_async_data fs/io_uring.c:3116 [inline]
+ io_timeout_prep+0x3d9/0x500 fs/io_uring.c:5637
+ io_req_prep fs/io_uring.c:5908 [inline]
+ io_submit_sqe fs/io_uring.c:6576 [inline]
+ io_submit_sqes+0x4e4c/0x6c50 fs/io_uring.c:6734
+ __do_sys_io_uring_enter+0xeaf/0x1d50 fs/io_uring.c:9319
+ do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
 
-This branch with nvme multipathing enabled, V2 of the patch series applied:
-[1 thread, QD 1, Batch 1]
-33, 29.22, 1.56, 54.01
-[1 thread, QD 32, Batch 8]
-259, 104.38, 15.04, 141
-[16 thread, QD32, Batch 8]
-1905, 255.52, 30.97, 461
+Freed by task 4826:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
+ kasan_set_track+0x1c/0x30 mm/kasan/common.c:46
+ kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:357
+ ____kasan_slab_free mm/kasan/common.c:360 [inline]
+ ____kasan_slab_free mm/kasan/common.c:325 [inline]
+ __kasan_slab_free+0xf5/0x130 mm/kasan/common.c:367
+ kasan_slab_free include/linux/kasan.h:199 [inline]
+ slab_free_hook mm/slub.c:1563 [inline]
+ slab_free_freelist_hook+0x92/0x210 mm/slub.c:1601
+ slab_free mm/slub.c:3162 [inline]
+ kfree+0xe5/0x7f0 mm/slub.c:4216
+ io_dismantle_req+0x116/0x250 fs/io_uring.c:1743
+ io_req_complete_post+0x1d7/0x890 fs/io_uring.c:1600
+ io_link_timeout_fn+0x5f7/0xb10 fs/io_uring.c:6369
+ __run_hrtimer kernel/time/hrtimer.c:1537 [inline]
+ __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1601
+ hrtimer_interrupt+0x330/0xa00 kernel/time/hrtimer.c:1663
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1089 [inline]
+ __sysvec_apic_timer_interrupt+0x146/0x540 arch/x86/kernel/apic/apic.c:1106
+ sysvec_apic_timer_interrupt+0x8e/0xc0 arch/x86/kernel/apic/apic.c:1100
+ asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:632
 
-The same config as above for V2, but FIO results when not using 'hipri' pol=
-ling option:
-[1 thread, QD 1, Batch 1]
-22.9k, 41.66, 3.78, 78.33
-[1 thread, QD 32, Batch 8]
-224k, 103.88, 28.41, 163
-[16 thread, QD32, Batch 8]
-1910k, 245.23, 66.30, 502
+The buggy address belongs to the object at ffff8880129a6480
+ which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 56 bytes inside of
+ 96-byte region [ffff8880129a6480, ffff8880129a64e0)
+The buggy address belongs to the page:
+page:ffffea00004a6980 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x129a6
+flags: 0xfff00000000200(slab|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000200 dead000000000100 dead000000000122 ffff888010841780
+raw: 0000000000000000 0000000000200020 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY), pid 9928, ts 107924339577
+ set_page_owner include/linux/page_owner.h:31 [inline]
+ post_alloc_hook+0x161/0x1c0 mm/page_alloc.c:2302
+ prep_new_page mm/page_alloc.c:2311 [inline]
+ get_page_from_freelist+0x1c6f/0x3fb0 mm/page_alloc.c:3951
+ __alloc_pages_nodemask+0x2d6/0x730 mm/page_alloc.c:5001
+ alloc_pages_current+0x18c/0x2a0 mm/mempolicy.c:2277
+ alloc_pages include/linux/gfp.h:561 [inline]
+ alloc_slab_page mm/slub.c:1639 [inline]
+ allocate_slab+0x2c5/0x4c0 mm/slub.c:1779
+ new_slab mm/slub.c:1842 [inline]
+ new_slab_objects mm/slub.c:2588 [inline]
+ ___slab_alloc+0x44c/0x7a0 mm/slub.c:2751
+ __slab_alloc.constprop.0+0xa7/0xf0 mm/slub.c:2791
+ slab_alloc_node mm/slub.c:2872 [inline]
+ slab_alloc mm/slub.c:2916 [inline]
+ __kmalloc+0x2e5/0x300 mm/slub.c:4054
+ kmalloc include/linux/slab.h:561 [inline]
+ io_alloc_async_data fs/io_uring.c:3116 [inline]
+ io_timeout_prep+0x3d9/0x500 fs/io_uring.c:5637
+ io_req_prep fs/io_uring.c:5908 [inline]
+ io_submit_sqe fs/io_uring.c:6576 [inline]
+ io_submit_sqes+0x4e4c/0x6c50 fs/io_uring.c:6734
+ __do_sys_io_uring_enter+0xeaf/0x1d50 fs/io_uring.c:9319
+ do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+page last free stack trace:
+ reset_page_owner include/linux/page_owner.h:24 [inline]
+ free_pages_prepare mm/page_alloc.c:1271 [inline]
+ free_pcp_prepare+0x2cb/0x410 mm/page_alloc.c:1310
+ free_unref_page_prepare mm/page_alloc.c:3205 [inline]
+ free_unref_page+0x12/0x1d0 mm/page_alloc.c:3253
+ qlink_free mm/kasan/quarantine.c:146 [inline]
+ qlist_free_all+0x5a/0xc0 mm/kasan/quarantine.c:165
+ kasan_quarantine_reduce+0x180/0x200 mm/kasan/quarantine.c:272
+ __kasan_slab_alloc+0x7f/0x90 mm/kasan/common.c:437
+ kasan_slab_alloc include/linux/kasan.h:223 [inline]
+ slab_post_alloc_hook mm/slab.h:516 [inline]
+ slab_alloc_node mm/slub.c:2908 [inline]
+ slab_alloc mm/slub.c:2916 [inline]
+ kmem_cache_alloc+0x153/0x370 mm/slub.c:2921
+ getname_flags.part.0+0x50/0x4f0 fs/namei.c:138
+ getname_flags include/linux/audit.h:319 [inline]
+ getname+0x8e/0xd0 fs/namei.c:209
+ do_sys_openat2+0xf5/0x420 fs/open.c:1181
+ do_sys_open fs/open.c:1203 [inline]
+ __do_sys_open fs/open.c:1211 [inline]
+ __se_sys_open fs/open.c:1207 [inline]
+ __x64_sys_open+0x119/0x1c0 fs/open.c:1207
+ do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
 
-The same branch but with V3 of the patch series applied.  Again using the '=
-hipri' option:
-[1 thread, QD 1, Batch 1]
-33.2, 29.12, 1.35, 54.53
-[1 thread, QD 32, Batch 8]
-258, 104.55, 15.01, 141
-[16 thread, QD32, Batch 8]
-1914, 254.19, 30.00,  457
+Memory state around the buggy address:
+ ffff8880129a6380: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff8880129a6400: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
+>ffff8880129a6480: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+                                        ^
+ ffff8880129a6500: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff8880129a6580: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+==================================================================
 
-So the data shows that this patch series clearly enables the use of 'hipri'=
- polling when
-kernel configured with nvme multipathing, which was not previously supporte=
-d.
 
-There is not a significant difference in performance measured with and with=
-out
-multipathing enabled, with either patch series for bio based polling.  And =
-V2 and V3
-reporting virtually the same performance as expected.
+Tested on:
 
-So I tip my hat to this patch series - cheers
-
-Tested-by: Mark Wunderlich <mark.wunderlich@intel.com>
+commit:         a519b86e io_uring: syz debug output
+git tree:       https://github.com/isilence/linux.git syz_test6
+console output: https://syzkaller.appspot.com/x/log.txt?x=14127779d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ae2e6c63d6410fd3
+dashboard link: https://syzkaller.appspot.com/bug?extid=5a864149dd970b546223
+compiler:       
 
