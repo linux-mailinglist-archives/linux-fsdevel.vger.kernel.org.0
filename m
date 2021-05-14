@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27FFD38056A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 10:43:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF25E38058C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 10:51:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231910AbhENIor (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 May 2021 04:44:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:42651 "EHLO
+        id S233738AbhENIwN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 May 2021 04:52:13 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31055 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231452AbhENIoq (ORCPT
+        by vger.kernel.org with ESMTP id S231809AbhENIwN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 May 2021 04:44:46 -0400
+        Fri, 14 May 2021 04:52:13 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620981815;
+        s=mimecast20190719; t=1620982261;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=lsAavQGtZZQfxxuNta+2PaMZ+gKpW3kyTUx2+4IIAWk=;
-        b=JiMEd8pQZmZeGJR5SfsEN9Xj7aAWl7ahr3kI/jkZbfoHa3dYKpu7hAilU7K7s0crVTVZdN
-        XYuJfnkNvLuKvADSyxsvA7Yp6w1ApPAP/u1utRDK81rzuNjxAY2k8e+Yf/THJI76ZU9SCZ
-        C3th9TBK6+XQCFETS8n4BF/kEl9hrGU=
+        bh=A6IAZwI0xwEgxZkIPkaUDpjaSLTjanXMP6EohDn10+Y=;
+        b=eDmPlB4ZidLGZMxAQ1alx5ZUBc3d/lvPkq03fZ9lChKsM+1s5P4GvBy3q2UHeX5VhapPA4
+        zGmSKvNigepDz+IBW6AjsuJQFH9l80UwoxkdT3Lqc4qHN95zpL+L/iJKmbRSHQmg832S9T
+        qImZuRwx/AreJMSpUERZpZ3gpd8nF+U=
 Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
  [209.85.218.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-214-g-XDTnPJMfa9QbLbFVKcBQ-1; Fri, 14 May 2021 04:43:32 -0400
-X-MC-Unique: g-XDTnPJMfa9QbLbFVKcBQ-1
-Received: by mail-ej1-f70.google.com with SMTP id j14-20020a17090686ceb02903d381073418so776841ejy.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 May 2021 01:43:32 -0700 (PDT)
+ us-mta-221-VfIoa0LeOc-OJeFZgSO4AA-1; Fri, 14 May 2021 04:50:59 -0400
+X-MC-Unique: VfIoa0LeOc-OJeFZgSO4AA-1
+Received: by mail-ej1-f70.google.com with SMTP id m18-20020a1709062352b02903d2d831f9baso1203934eja.20
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 May 2021 01:50:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:cc:references:from:organization:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=lsAavQGtZZQfxxuNta+2PaMZ+gKpW3kyTUx2+4IIAWk=;
-        b=YtunQWg8zsV7uer4SK7TWvT/SKRQyRaY98tZ+1Qo4mrQUG3YkGkaPqBtuYp+/QrkXJ
-         qt1Q3v2cn/oAFe552NKjnCFxWy/3y5Um99PDSx1ih5SzEByvX6yOrY4pteXvfGT5sPcG
-         SIT1zzMXnDzAcnXF++RW3U1UMNxv2bNL6ZSMu6HsJYlzc+UB4lpW3lghCR1dZdkux2Qy
-         KMHsh0IdDjsIOuPQUSbXFnRXwLw1oYKTvxnsH44gNeCkXL3X3qb9LjkK+ysQCKE31zif
-         jylDxmBq0zvkpcaLpMgQ03Frn98gz5EFPUgbLZ2LdbNOU1cLScYaYhRYWCysX+x1GCmd
-         ZZcg==
-X-Gm-Message-State: AOAM532RpTJrJMicaXJ9Ju5DqdabivcgSWT1VuUi+E4ef2yuo9D+mJoI
-        9npZQVWyx0SIBb+Ui/wUsDD0X9Fg5E9JIkzJryPEjGyYWjasaeOsg4bp/vtZsOnHHtw09MJSeFk
-        EyCCFuaiPjcykBsbA2MmsLjHYBg==
-X-Received: by 2002:a50:ed0c:: with SMTP id j12mr54641142eds.12.1620981811579;
-        Fri, 14 May 2021 01:43:31 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJypI4ge2hxqi/JfrvWJM2sA3w80IXDC+WmQ5wQdEdZZtqA+keJm9IEpbNTASfWRrXFPNSGQBQ==
-X-Received: by 2002:a50:ed0c:: with SMTP id j12mr54641100eds.12.1620981811327;
-        Fri, 14 May 2021 01:43:31 -0700 (PDT)
+        bh=A6IAZwI0xwEgxZkIPkaUDpjaSLTjanXMP6EohDn10+Y=;
+        b=YtPYt2dG5DLWjrzq8KrJwPb/K9t4PYkHnOJRjqgoEg1UI4T8UzDxJWLVI1sJk5RnoQ
+         LdqRhpmHGjCrlonYV4q2xqhqnfqMtXJC+dW3Ln+3Nnc0evMrN6H65nMI5rutOQMVvvlZ
+         QGwlDc6MjBgnxCk9/9L2Aoh0sZ8usWngFDHoi4auciJriVGP1Of9CMMDKwvntUHHCt+T
+         yeQIBv6zkATq/3j9qZD4zHDprwvv1DLJiNskzD7DhGXz4DVStDUCB06QzngoWzBh7+A+
+         Rpqbua2xeHNiqGnpFIejNIsCJ19RtOw9zVa9OSzzStu0WPvNw68PPmS6Yf+957JvPS4j
+         LBmQ==
+X-Gm-Message-State: AOAM5308WbFuaN95rIpIf8jX/faID3CZnH0WDtBUZgO9vaKT9TcPm7TR
+        WbnO4SbO8cvLPYdqghlYAzAKj5WrT5C7zRQXIWyxx/BgoDyhr7kkHjeXDvhBYNawmYsS4w0tqa+
+        NWuxW6UWEisbGSAYw9H7PKgeN5A==
+X-Received: by 2002:aa7:de02:: with SMTP id h2mr54907477edv.61.1620982258497;
+        Fri, 14 May 2021 01:50:58 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwbFV5SCx4C1Oa2Pq/TZ05TRM0enPIT1usIgqsxFBagAMreWK04a8ZIkxs0DNaI7qx1TZ7bmg==
+X-Received: by 2002:aa7:de02:: with SMTP id h2mr54907444edv.61.1620982258235;
+        Fri, 14 May 2021 01:50:58 -0700 (PDT)
 Received: from [192.168.3.132] (p5b0c6501.dip0.t-ipconnect.de. [91.12.101.1])
-        by smtp.gmail.com with ESMTPSA id k12sm3969468edo.50.2021.05.14.01.43.29
+        by smtp.gmail.com with ESMTPSA id yw9sm3241097ejb.91.2021.05.14.01.50.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 May 2021 01:43:31 -0700 (PDT)
+        Fri, 14 May 2021 01:50:57 -0700 (PDT)
 To:     Mike Rapoport <rppt@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -92,17 +92,17 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
         x86@kernel.org
 References: <20210513184734.29317-1-rppt@kernel.org>
- <20210513184734.29317-4-rppt@kernel.org>
+ <20210513184734.29317-6-rppt@kernel.org>
 From:   David Hildenbrand <david@redhat.com>
 Organization: Red Hat
-Subject: Re: [PATCH v19 3/8] set_memory: allow set_direct_map_*_noflush() for
- multiple pages
-Message-ID: <858e5561-bc7d-4ce1-5cb8-3c333199d52a@redhat.com>
-Date:   Fri, 14 May 2021 10:43:29 +0200
+Subject: Re: [PATCH v19 5/8] mm: introduce memfd_secret system call to create
+ "secret" memory areas
+Message-ID: <ea1ddcfa-f52d-9a7d-cb7b-8502b38a90da@redhat.com>
+Date:   Fri, 14 May 2021 10:50:55 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210513184734.29317-4-rppt@kernel.org>
+In-Reply-To: <20210513184734.29317-6-rppt@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -113,107 +113,123 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On 13.05.21 20:47, Mike Rapoport wrote:
 > From: Mike Rapoport <rppt@linux.ibm.com>
 > 
-> The underlying implementations of set_direct_map_invalid_noflush() and
-> set_direct_map_default_noflush() allow updating multiple contiguous pages
-> at once.
+> Introduce "memfd_secret" system call with the ability to create
+> memory areas visible only in the context of the owning process and
+> not mapped not only to other processes but in the kernel page tables
+> as well.
 > 
-> Add numpages parameter to set_direct_map_*_noflush() to expose this
-> ability with these APIs.
+> The secretmem feature is off by default and the user must explicitly
+> enable it at the boot time.
 > 
+> Once secretmem is enabled, the user will be able to create a file 
+> descriptor using the memfd_secret() system call. The memory areas
+> created by mmap() calls from this file descriptor will be unmapped
+> from the kernel direct map and they will be only mapped in the page
+> table of the processes that have access to the file descriptor.
+> 
+> The file descriptor based memory has several advantages over the 
+> "traditional" mm interfaces, such as mlock(), mprotect(), madvise().
+> File descriptor approach allows explict and controlled sharing of the
+> memory
 
-[...]
+s/explict/explicit/
 
-Finally doing some in-depth review, sorry for not having a detailed look 
-earlier.
+> areas, it allows to seal the operations. Besides, file descriptor
+> based memory paves the way for VMMs to remove the secret memory range
+> from the userpace hipervisor process, for instance QEMU. Andy
+> Lutomirski says:
 
+s/userpace hipervisor/userspace hypervisor/
 
->   
-> -int set_direct_map_invalid_noflush(struct page *page)
-> +int set_direct_map_invalid_noflush(struct page *page, int numpages)
->   {
->   	struct page_change_data data = {
->   		.set_mask = __pgprot(0),
->   		.clear_mask = __pgprot(PTE_VALID),
->   	};
-> +	unsigned long size = PAGE_SIZE * numpages;
->   
+> 
+> "Getting fd-backed memory into a guest will take some possibly major
+> work in the kernel, but getting vma-backed memory into a guest
+> without mapping it in the host user address space seems much, much
+> worse."
+> 
+> memfd_secret() is made a dedicated system call rather than an
+> extention to
 
-Nit: I'd have made this const and added an early exit for !numpages. But 
-whatever you prefer.
+s/extention/extension/
 
->   	if (!debug_pagealloc_enabled() && !rodata_full)
->   		return 0;
->   
->   	return apply_to_page_range(&init_mm,
->   				   (unsigned long)page_address(page),
-> -				   PAGE_SIZE, change_page_range, &data);
-> +				   size, change_page_range, &data);
->   }
->   
-> -int set_direct_map_default_noflush(struct page *page)
-> +int set_direct_map_default_noflush(struct page *page, int numpages)
->   {
->   	struct page_change_data data = {
->   		.set_mask = __pgprot(PTE_VALID | PTE_WRITE),
->   		.clear_mask = __pgprot(PTE_RDONLY),
->   	};
-> +	unsigned long size = PAGE_SIZE * numpages;
->   
+> memfd_create() because it's purpose is to allow the user to create
+> more secure memory mappings rather than to simply allow file based
+> access to the memory. Nowadays a new system call cost is negligible
+> while it is way simpler for userspace to deal with a clear-cut system
+> calls than with a multiplexer or an overloaded syscall. Moreover, the
+> initial implementation of memfd_secret() is completely distinct from
+> memfd_create() so there is no much sense in overloading
+> memfd_create() to begin with. If there will be a need for code
+> sharing between these implementation it can be easily achieved
+> without a need to adjust user visible APIs.
+> 
+> The secret memory remains accessible in the process context using
+> uaccess primitives, but it is not exposed to the kernel otherwise;
+> secret memory areas are removed from the direct map and functions in
+> the follow_page()/get_user_page() family will refuse to return a page
+> that belongs to the secret memory area.
+> 
+> Once there will be a use case that will require exposing secretmem to
+> the kernel it will be an opt-in request in the system call flags so
+> that user would have to decide what data can be exposed to the
+> kernel.
 
-Nit: dito
+Maybe spell out an example: like page migration.
 
->   	if (!debug_pagealloc_enabled() && !rodata_full)
->   		return 0;
->   
->   	return apply_to_page_range(&init_mm,
->   				   (unsigned long)page_address(page),
-> -				   PAGE_SIZE, change_page_range, &data);
-> +				   size, change_page_range, &data);
->   }
->   
+> 
+> Removing of the pages from the direct map may cause its fragmentation
+> on architectures that use large pages to map the physical memory
+> which affects the system performance. However, the original Kconfig
+> text for CONFIG_DIRECT_GBPAGES said that gigabyte pages in the direct
+> map "... can improve the kernel's performance a tiny bit ..." (commit
+> 00d1c5e05736 ("x86: add gbpages switches")) and the recent report [1]
+> showed that "... although 1G mappings are a good default choice,
+> there is no compelling evidence that it must be the only choice".
+> Hence, it is sufficient to have secretmem disabled by default with
+> the ability of a system administrator to enable it at boot time.
 
+Maybe add a link to the Intel performance evaluation.
 
-[...]
+> 
+> Pages in the secretmem regions are unevictable and unmovable to
+> avoid accidental exposure of the sensitive data via swap or during
+> page migration.
+> 
+> Since the secretmem mappings are locked in memory they cannot exceed 
+> RLIMIT_MEMLOCK. Since these mappings are already locked independently
+> from mlock(), an attempt to mlock()/munlock() secretmem range would
+> fail and mlockall()/munlockall() will ignore secretmem mappings.
 
->   extern int kernel_set_to_readonly;
-> diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-> index 156cd235659f..15a55d6e9cec 100644
-> --- a/arch/x86/mm/pat/set_memory.c
-> +++ b/arch/x86/mm/pat/set_memory.c
-> @@ -2192,14 +2192,14 @@ static int __set_pages_np(struct page *page, int numpages)
->   	return __change_page_attr_set_clr(&cpa, 0);
->   }
->   
-> -int set_direct_map_invalid_noflush(struct page *page)
-> +int set_direct_map_invalid_noflush(struct page *page, int numpages)
->   {
-> -	return __set_pages_np(page, 1);
-> +	return __set_pages_np(page, numpages);
->   }
->   
-> -int set_direct_map_default_noflush(struct page *page)
-> +int set_direct_map_default_noflush(struct page *page, int numpages)
->   {
-> -	return __set_pages_p(page, 1);
-> +	return __set_pages_p(page, numpages);
->   }
->   
+Maybe add something like "similar to pages pinned by VFIO".
 
-So, what happens if we succeeded setting 
-set_direct_map_invalid_noflush() for some pages but fail when having to 
-split a large mapping?
+> 
+> However, unlike mlock()ed memory, secretmem currently behaves more
+> like long-term GUP: secretmem mappings are unmovable mappings
+> directly consumed by user space. With default limits, there is no
+> excessive use of secretmem and it poses no real problem in
+> combination with ZONE_MOVABLE/CMA, but in the future this should be
+> addressed to allow balanced use of large amounts of secretmem along
+> with ZONE_MOVABLE/CMA.
+> 
+> A page that was a part of the secret memory area is cleared when it
+> is freed to ensure the data is not exposed to the next user of that
+> page.
 
-Did I miss something or would the current code not undo what it 
-partially did? Or do we simply not care?
+You could skip that with init_on_free (and eventually also with 
+init_on_alloc) set to avoid double clearing.
 
-I guess to handle this cleanly we would either have to catch all error 
-cases first (esp. splitting large mappings) before actually performing 
-the set to invalid, or have some recovery code in place if possible.
+> 
+> The following example demonstrates creation of a secret mapping
+> (error handling is omitted):
+> 
+> fd = memfd_secret(0); ftruncate(fd, MAP_SIZE); ptr = mmap(NULL,
+> MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+> 
+> [1]
+> https://lore.kernel.org/linux-mm/213b4567-46ce-f116-9cdf-bbd0c884eb3c@linux.intel.com/
 
-
-AFAIKs, your patch #5 right now only calls it with 1 page, do we need 
-this change at all? Feels like a leftover from older versions to me 
-where we could have had more than a single page.
+[my mail client messed up the remainder of the mail for whatever reason, 
+will comment in a separate mail if there is anything to comment :) ]
 
 -- 
 Thanks,
