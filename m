@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF25E38058C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 10:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E7B938062B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 11:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233738AbhENIwN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 May 2021 04:52:13 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31055 "EHLO
+        id S232373AbhENJ1B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 May 2021 05:27:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:42975 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231809AbhENIwN (ORCPT
+        by vger.kernel.org with ESMTP id S229525AbhENJ1A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 May 2021 04:52:13 -0400
+        Fri, 14 May 2021 05:27:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620982261;
+        s=mimecast20190719; t=1620984349;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=A6IAZwI0xwEgxZkIPkaUDpjaSLTjanXMP6EohDn10+Y=;
-        b=eDmPlB4ZidLGZMxAQ1alx5ZUBc3d/lvPkq03fZ9lChKsM+1s5P4GvBy3q2UHeX5VhapPA4
-        zGmSKvNigepDz+IBW6AjsuJQFH9l80UwoxkdT3Lqc4qHN95zpL+L/iJKmbRSHQmg832S9T
-        qImZuRwx/AreJMSpUERZpZ3gpd8nF+U=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-221-VfIoa0LeOc-OJeFZgSO4AA-1; Fri, 14 May 2021 04:50:59 -0400
-X-MC-Unique: VfIoa0LeOc-OJeFZgSO4AA-1
-Received: by mail-ej1-f70.google.com with SMTP id m18-20020a1709062352b02903d2d831f9baso1203934eja.20
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 May 2021 01:50:59 -0700 (PDT)
+        bh=Fx334L5vVgVDfx7L2kVeRZ1gFR/dFDyujA5YMe7z6io=;
+        b=S5lFNU5TQKD03U47KGRUq0qxXj401VvzZwf8ycDk75sZ8elD6zmYfr8ormTPVmnMFlB//f
+        k7DIspm8Yj8j769M+pu58fgnypnwOYb1A7IAdw2hBPD/n1GZwGdpwstsH11YZVHvVvpX7A
+        tkxkRTd+2YudBVAMGoeBZyeF6WdzMDE=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-436-3vBFMSz7OE6mXwrER_Rbvg-1; Fri, 14 May 2021 05:25:47 -0400
+X-MC-Unique: 3vBFMSz7OE6mXwrER_Rbvg-1
+Received: by mail-ed1-f71.google.com with SMTP id h18-20020a05640250d2b029038cc3938914so4393681edb.17
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 May 2021 02:25:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:to:cc:references:from:organization:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=A6IAZwI0xwEgxZkIPkaUDpjaSLTjanXMP6EohDn10+Y=;
-        b=YtPYt2dG5DLWjrzq8KrJwPb/K9t4PYkHnOJRjqgoEg1UI4T8UzDxJWLVI1sJk5RnoQ
-         LdqRhpmHGjCrlonYV4q2xqhqnfqMtXJC+dW3Ln+3Nnc0evMrN6H65nMI5rutOQMVvvlZ
-         QGwlDc6MjBgnxCk9/9L2Aoh0sZ8usWngFDHoi4auciJriVGP1Of9CMMDKwvntUHHCt+T
-         yeQIBv6zkATq/3j9qZD4zHDprwvv1DLJiNskzD7DhGXz4DVStDUCB06QzngoWzBh7+A+
-         Rpqbua2xeHNiqGnpFIejNIsCJ19RtOw9zVa9OSzzStu0WPvNw68PPmS6Yf+957JvPS4j
-         LBmQ==
-X-Gm-Message-State: AOAM5308WbFuaN95rIpIf8jX/faID3CZnH0WDtBUZgO9vaKT9TcPm7TR
-        WbnO4SbO8cvLPYdqghlYAzAKj5WrT5C7zRQXIWyxx/BgoDyhr7kkHjeXDvhBYNawmYsS4w0tqa+
-        NWuxW6UWEisbGSAYw9H7PKgeN5A==
-X-Received: by 2002:aa7:de02:: with SMTP id h2mr54907477edv.61.1620982258497;
-        Fri, 14 May 2021 01:50:58 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwbFV5SCx4C1Oa2Pq/TZ05TRM0enPIT1usIgqsxFBagAMreWK04a8ZIkxs0DNaI7qx1TZ7bmg==
-X-Received: by 2002:aa7:de02:: with SMTP id h2mr54907444edv.61.1620982258235;
-        Fri, 14 May 2021 01:50:58 -0700 (PDT)
+        bh=Fx334L5vVgVDfx7L2kVeRZ1gFR/dFDyujA5YMe7z6io=;
+        b=XK8D09Ure3CzRUuOWdrC7egw3p+lt8IfRwD3/p+GHBpnexGMdtbTBhs8Dp1M5zuubl
+         DZxTwRjyu2zR8ER4k1l/HbmYMqdayswXwCVgyBT6SDJWZ2/nkEQbXfDUS2/HmMVrRfle
+         2SWC/6dOTqhuH/j/IHA8kJFjlSl9EhDCrp7irZPB0rDkdsQEl4MOMoLQE1QHG/EPl1Zj
+         KhKisyDsj87PWKw/Q1f8j8TY9mtynbub9CEKc7xuzeWurp6vP0hw4M11cnNLM6CrLEOI
+         ZXi0IgsfI2JqSxlty8mGLNr0Fa9+7cSrPZe8ta6XwWsQpcuaNzm5Csm9yq9pSZKj5ySz
+         U+Bw==
+X-Gm-Message-State: AOAM531hKQEQTz2J3I4QmAOvM2w8MfVbfBr/JvYQVdXannA2yhaHwuoB
+        mxABDgvDNDHxV/ThyFO/fj4oayApx+C7KPGk7gQto+z8f9scsO7h8AEYq2ycc+sZOXTKCkT6O0k
+        TzxtO2+7/eqxdkHEQjIk1Bc1qNQ==
+X-Received: by 2002:a50:cd57:: with SMTP id d23mr54117135edj.5.1620984346385;
+        Fri, 14 May 2021 02:25:46 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwffpojWIdDjWYW/MMXX/wRjb+C923CYpz5CDGlKRq9NSx2v+gQE16nA0IMA6MthtTXx38cuQ==
+X-Received: by 2002:a50:cd57:: with SMTP id d23mr54117114edj.5.1620984346105;
+        Fri, 14 May 2021 02:25:46 -0700 (PDT)
 Received: from [192.168.3.132] (p5b0c6501.dip0.t-ipconnect.de. [91.12.101.1])
-        by smtp.gmail.com with ESMTPSA id yw9sm3241097ejb.91.2021.05.14.01.50.56
+        by smtp.gmail.com with ESMTPSA id gt12sm3267244ejb.60.2021.05.14.02.25.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 May 2021 01:50:57 -0700 (PDT)
+        Fri, 14 May 2021 02:25:45 -0700 (PDT)
 To:     Mike Rapoport <rppt@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -97,8 +97,8 @@ From:   David Hildenbrand <david@redhat.com>
 Organization: Red Hat
 Subject: Re: [PATCH v19 5/8] mm: introduce memfd_secret system call to create
  "secret" memory areas
-Message-ID: <ea1ddcfa-f52d-9a7d-cb7b-8502b38a90da@redhat.com>
-Date:   Fri, 14 May 2021 10:50:55 +0200
+Message-ID: <b625c5d7-bfcc-9e95-1f79-fc8b61498049@redhat.com>
+Date:   Fri, 14 May 2021 11:25:43 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
@@ -110,126 +110,164 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 13.05.21 20:47, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
-> 
-> Introduce "memfd_secret" system call with the ability to create
-> memory areas visible only in the context of the owning process and
-> not mapped not only to other processes but in the kernel page tables
-> as well.
-> 
-> The secretmem feature is off by default and the user must explicitly
-> enable it at the boot time.
-> 
-> Once secretmem is enabled, the user will be able to create a file 
-> descriptor using the memfd_secret() system call. The memory areas
-> created by mmap() calls from this file descriptor will be unmapped
-> from the kernel direct map and they will be only mapped in the page
-> table of the processes that have access to the file descriptor.
-> 
-> The file descriptor based memory has several advantages over the 
-> "traditional" mm interfaces, such as mlock(), mprotect(), madvise().
-> File descriptor approach allows explict and controlled sharing of the
-> memory
+>   #ifdef CONFIG_IA64
+>   # include <linux/efi.h>
+> @@ -64,6 +65,9 @@ static inline int valid_mmap_phys_addr_range(unsigned long pfn, size_t size)
+>   #ifdef CONFIG_STRICT_DEVMEM
+>   static inline int page_is_allowed(unsigned long pfn)
+>   {
+> +	if (pfn_valid(pfn) && page_is_secretmem(pfn_to_page(pfn)))
+> +		return 0;
+> +
 
-s/explict/explicit/
+1. The memmap might be garbage. You should use pfn_to_online_page() instead.
 
-> areas, it allows to seal the operations. Besides, file descriptor
-> based memory paves the way for VMMs to remove the secret memory range
-> from the userpace hipervisor process, for instance QEMU. Andy
-> Lutomirski says:
+page = pfn_to_online_page(pfn);
+if (page && page_is_secretmem(page))
+	return 0;
 
-s/userpace hipervisor/userspace hypervisor/
+2. What about !CONFIG_STRICT_DEVMEM?
 
-> 
-> "Getting fd-backed memory into a guest will take some possibly major
-> work in the kernel, but getting vma-backed memory into a guest
-> without mapping it in the host user address space seems much, much
-> worse."
-> 
-> memfd_secret() is made a dedicated system call rather than an
-> extention to
+3. Someone could map physical memory before a secretmem page gets 
+allocated and read the content after it got allocated and gets used. If 
+someone would gain root privileges and would wait for the target 
+application to (re)start, that could be problematic.
 
-s/extention/extension/
 
-> memfd_create() because it's purpose is to allow the user to create
-> more secure memory mappings rather than to simply allow file based
-> access to the memory. Nowadays a new system call cost is negligible
-> while it is way simpler for userspace to deal with a clear-cut system
-> calls than with a multiplexer or an overloaded syscall. Moreover, the
-> initial implementation of memfd_secret() is completely distinct from
-> memfd_create() so there is no much sense in overloading
-> memfd_create() to begin with. If there will be a need for code
-> sharing between these implementation it can be easily achieved
-> without a need to adjust user visible APIs.
-> 
-> The secret memory remains accessible in the process context using
-> uaccess primitives, but it is not exposed to the kernel otherwise;
-> secret memory areas are removed from the direct map and functions in
-> the follow_page()/get_user_page() family will refuse to return a page
-> that belongs to the secret memory area.
-> 
-> Once there will be a use case that will require exposing secretmem to
-> the kernel it will be an opt-in request in the system call flags so
-> that user would have to decide what data can be exposed to the
-> kernel.
+I do wonder if enforcing CONFIG_STRICT_DEVMEM would be cleaner. 
+devmem_is_allowed() should disallow access to any system ram, and 
+thereby, any possible secretmem pages, avoiding this check completely.
 
-Maybe spell out an example: like page migration.
 
-> 
-> Removing of the pages from the direct map may cause its fragmentation
-> on architectures that use large pages to map the physical memory
-> which affects the system performance. However, the original Kconfig
-> text for CONFIG_DIRECT_GBPAGES said that gigabyte pages in the direct
-> map "... can improve the kernel's performance a tiny bit ..." (commit
-> 00d1c5e05736 ("x86: add gbpages switches")) and the recent report [1]
-> showed that "... although 1G mappings are a good default choice,
-> there is no compelling evidence that it must be the only choice".
-> Hence, it is sufficient to have secretmem disabled by default with
-> the ability of a system administrator to enable it at boot time.
+[...]
 
-Maybe add a link to the Intel performance evaluation.
+>   
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> new file mode 100644
+> index 000000000000..1ae50089adf1
+> --- /dev/null
+> +++ b/mm/secretmem.c
+> @@ -0,0 +1,239 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright IBM Corporation, 2021
+> + *
+> + * Author: Mike Rapoport <rppt@linux.ibm.com>
+> + */
+> +
+> +#include <linux/mm.h>
+> +#include <linux/fs.h>
+> +#include <linux/swap.h>
+> +#include <linux/mount.h>
+> +#include <linux/memfd.h>
+> +#include <linux/bitops.h>
+> +#include <linux/printk.h>
+> +#include <linux/pagemap.h>
+> +#include <linux/syscalls.h>
+> +#include <linux/pseudo_fs.h>
+> +#include <linux/secretmem.h>
+> +#include <linux/set_memory.h>
+> +#include <linux/sched/signal.h>
+> +
+> +#include <uapi/linux/magic.h>
+> +
+> +#include <asm/tlbflush.h>
+> +
+> +#include "internal.h"
+> +
+> +#undef pr_fmt
+> +#define pr_fmt(fmt) "secretmem: " fmt
+> +
+> +/*
+> + * Define mode and flag masks to allow validation of the system call
+> + * parameters.
+> + */
+> +#define SECRETMEM_MODE_MASK	(0x0)
+> +#define SECRETMEM_FLAGS_MASK	SECRETMEM_MODE_MASK
+> +
+> +static bool secretmem_enable __ro_after_init;
+> +module_param_named(enable, secretmem_enable, bool, 0400);
+> +MODULE_PARM_DESC(secretmem_enable,
+> +		 "Enable secretmem and memfd_secret(2) system call");
+> +
+> +static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+> +{
+> +	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+> +	struct inode *inode = file_inode(vmf->vma->vm_file);
+> +	pgoff_t offset = vmf->pgoff;
+> +	gfp_t gfp = vmf->gfp_mask;
+> +	unsigned long addr;
+> +	struct page *page;
+> +	int err;
+> +
+> +	if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
+> +		return vmf_error(-EINVAL);
+> +
+> +retry:
+> +	page = find_lock_page(mapping, offset);
+> +	if (!page) {
+> +		page = alloc_page(gfp | __GFP_ZERO);
 
-> 
-> Pages in the secretmem regions are unevictable and unmovable to
-> avoid accidental exposure of the sensitive data via swap or during
-> page migration.
-> 
-> Since the secretmem mappings are locked in memory they cannot exceed 
-> RLIMIT_MEMLOCK. Since these mappings are already locked independently
-> from mlock(), an attempt to mlock()/munlock() secretmem range would
-> fail and mlockall()/munlockall() will ignore secretmem mappings.
+We'll end up here with gfp == GFP_HIGHUSER (via the mapping below), correct?
 
-Maybe add something like "similar to pages pinned by VFIO".
+> +		if (!page)
+> +			return VM_FAULT_OOM;
+> +
+> +		err = set_direct_map_invalid_noflush(page, 1);
+> +		if (err) {
+> +			put_page(page);
+> +			return vmf_error(err);
 
-> 
-> However, unlike mlock()ed memory, secretmem currently behaves more
-> like long-term GUP: secretmem mappings are unmovable mappings
-> directly consumed by user space. With default limits, there is no
-> excessive use of secretmem and it poses no real problem in
-> combination with ZONE_MOVABLE/CMA, but in the future this should be
-> addressed to allow balanced use of large amounts of secretmem along
-> with ZONE_MOVABLE/CMA.
-> 
-> A page that was a part of the secret memory area is cleared when it
-> is freed to ensure the data is not exposed to the next user of that
-> page.
+Would we want to translate that to a proper VM_FAULT_..., which would 
+most probably be VM_FAULT_OOM when we fail to allocate a pagetable?
 
-You could skip that with init_on_free (and eventually also with 
-init_on_alloc) set to avoid double clearing.
+> +		}
+> +
+> +		__SetPageUptodate(page);
+> +		err = add_to_page_cache_lru(page, mapping, offset, gfp);
+> +		if (unlikely(err)) {
+> +			put_page(page);
+> +			/*
+> +			 * If a split of large page was required, it
+> +			 * already happened when we marked the page invalid
+> +			 * which guarantees that this call won't fail
+> +			 */
+> +			set_direct_map_default_noflush(page, 1);
+> +			if (err == -EEXIST)
+> +				goto retry;
+> +
+> +			return vmf_error(err);
+> +		}
+> +
+> +		addr = (unsigned long)page_address(page);
+> +		flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
 
-> 
-> The following example demonstrates creation of a secret mapping
-> (error handling is omitted):
-> 
-> fd = memfd_secret(0); ftruncate(fd, MAP_SIZE); ptr = mmap(NULL,
-> MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-> 
-> [1]
-> https://lore.kernel.org/linux-mm/213b4567-46ce-f116-9cdf-bbd0c884eb3c@linux.intel.com/
+Hmm, to me it feels like something like that belongs into the 
+set_direct_map_invalid_*() calls? Otherwise it's just very easy to mess 
+up ...
 
-[my mail client messed up the remainder of the mail for whatever reason, 
-will comment in a separate mail if there is anything to comment :) ]
+
+I'm certainly not a filesystem guy. Nothing else jumped at me.
+
+
+To me, the overall approach makes sense and I consider it an improved 
+mlock() mechanism for storing secrets, although I'd love to have some 
+more information in the log regarding access via root, namely that there 
+are still fancy ways to read secretmem memory once root via
+
+1. warm reboot attacks especially in VMs (e.g., modifying the cmdline)
+2. kexec-style reboot attacks (e.g., modifying the cmdline)
+3. kdump attacks
+4. kdb most probably
+5. "letting the process read the memory for us" via Kees if that still
+    applies
+6. ... most probably something else
+
+Just to make people aware that there are still some things to be sorted 
+out when we fully want to protect against privilege escalations.
+
+(maybe this information is buried in the cover letter already, where it 
+usually gets lost)
 
 -- 
 Thanks,
