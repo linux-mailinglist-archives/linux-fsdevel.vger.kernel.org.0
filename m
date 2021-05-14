@@ -2,124 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA909380DC6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 18:09:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B1BE380E02
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 18:17:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232458AbhENQKe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 May 2021 12:10:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36870 "EHLO mx2.suse.de"
+        id S233550AbhENQSn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 May 2021 12:18:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229932AbhENQKd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 May 2021 12:10:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2830FB123;
-        Fri, 14 May 2021 16:09:21 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 9cb50cc6;
-        Fri, 14 May 2021 16:10:56 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
-Subject: Re: What sort of inode state does ->evict_inode() expect to see?
- [was Re: 9p: fscache duplicate cookie]
-References: <YJvb9S8uxV2X45Cu@zeniv-ca.linux.org.uk>
-        <YJvJWj/CEyEUWeIu@codewreck.org> <87tun8z2nd.fsf@suse.de>
-        <87czu45gcs.fsf@suse.de> <2507722.1620736734@warthog.procyon.org.uk>
-        <2882181.1620817453@warthog.procyon.org.uk> <87fsysyxh9.fsf@suse.de>
-        <2891612.1620824231@warthog.procyon.org.uk>
-        <2919958.1620828730@warthog.procyon.org.uk>
-Date:   Fri, 14 May 2021 17:10:56 +0100
-In-Reply-To: <2919958.1620828730@warthog.procyon.org.uk> (David Howells's
-        message of "Wed, 12 May 2021 15:12:10 +0100")
-Message-ID: <87bl9dwb1r.fsf@suse.de>
+        id S230018AbhENQSm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 May 2021 12:18:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AE7AB61353;
+        Fri, 14 May 2021 16:17:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621009050;
+        bh=GXTUTxfJmauY3sVW+kCaMHHzIKcRfXTYy0mfZ1awngE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oQ8dmtH4NA+L/+ELxpN7WUZ32+IKoVGAxNNf5Zt7Ofagh6dHPT0TaJ3/dhZ3udTSa
+         Ss/wqVUPPW5cMdEz+C4hQyJma01zgrZ+tDmQID9Jlsk64sp+15NKZU73+6fKkEkcgC
+         XvuSXtxBxWWmdn2PJR00Oj+G52+jT4a3Jwm4qyrvnnPwZZO7YBFRkMz9ZmsrxPdu5J
+         q4F0/QUco4Auws1Zlcox6az1nWwemazilV0J6CiqvqlCi9dMrZ8vCEq6MMIs3fgL5x
+         qVlNE4QqliLqOm7IvgNPw45DD+Jz/B6XeS0w8qkfaKzFc0Gwo3UyBFqq+MTiQmsck/
+         qFCq5EMv5glNw==
+Date:   Fri, 14 May 2021 09:17:30 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Thumshirn <jth@kernel.org>,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 03/11] mm: Protect operations adding pages to page cache
+ with invalidate_lock
+Message-ID: <20210514161730.GL9675@magnolia>
+References: <20210512101639.22278-1-jack@suse.cz>
+ <20210512134631.4053-3-jack@suse.cz>
+ <20210512152345.GE8606@magnolia>
+ <20210513174459.GH2734@quack2.suse.cz>
+ <20210513185252.GB9675@magnolia>
+ <20210513231945.GD2893@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210513231945.GD2893@dread.disaster.area>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> writes:
+On Fri, May 14, 2021 at 09:19:45AM +1000, Dave Chinner wrote:
+> On Thu, May 13, 2021 at 11:52:52AM -0700, Darrick J. Wong wrote:
+> > On Thu, May 13, 2021 at 07:44:59PM +0200, Jan Kara wrote:
+> > > On Wed 12-05-21 08:23:45, Darrick J. Wong wrote:
+> > > > On Wed, May 12, 2021 at 03:46:11PM +0200, Jan Kara wrote:
+> > > > > +->fallocate implementation must be really careful to maintain page cache
+> > > > > +consistency when punching holes or performing other operations that invalidate
+> > > > > +page cache contents. Usually the filesystem needs to call
+> > > > > +truncate_inode_pages_range() to invalidate relevant range of the page cache.
+> > > > > +However the filesystem usually also needs to update its internal (and on disk)
+> > > > > +view of file offset -> disk block mapping. Until this update is finished, the
+> > > > > +filesystem needs to block page faults and reads from reloading now-stale page
+> > > > > +cache contents from the disk. VFS provides mapping->invalidate_lock for this
+> > > > > +and acquires it in shared mode in paths loading pages from disk
+> > > > > +(filemap_fault(), filemap_read(), readahead paths). The filesystem is
+> > > > > +responsible for taking this lock in its fallocate implementation and generally
+> > > > > +whenever the page cache contents needs to be invalidated because a block is
+> > > > > +moving from under a page.
+> > > > > +
+> > > > > +->copy_file_range and ->remap_file_range implementations need to serialize
+> > > > > +against modifications of file data while the operation is running. For blocking
+> > > > > +changes through write(2) and similar operations inode->i_rwsem can be used. For
+> > > > > +blocking changes through memory mapping, the filesystem can use
+> > > > > +mapping->invalidate_lock provided it also acquires it in its ->page_mkwrite
+> > > > > +implementation.
+> > > > 
+> > > > Question: What is the locking order when acquiring the invalidate_lock
+> > > > of two different files?  Is it the same as i_rwsem (increasing order of
+> > > > the struct inode pointer) or is it the same as the XFS MMAPLOCK that is
+> > > > being hoisted here (increasing order of i_ino)?
+> > > > 
+> > > > The reason I ask is that remap_file_range has to do that, but I don't
+> > > > see any conversions for the xfs_lock_two_inodes(..., MMAPLOCK_EXCL)
+> > > > calls in xfs_ilock2_io_mmap in this series.
+> > > 
+> > > Good question. Technically, I don't think there's real need to establish a
+> > > single ordering because locks among different filesystems are never going
+> > > to be acquired together (effectively each lock type is local per sb and we
+> > > are free to define an ordering for each lock type differently). But to
+> > > maintain some sanity I guess having the same locking order for doublelock
+> > > of i_rwsem and invalidate_lock makes sense. Is there a reason why XFS uses
+> > > by-ino ordering? So that we don't have to consider two different orders in
+> > > xfs_lock_two_inodes()...
+> > 
+> > I imagine Dave will chime in on this, but I suspect the reason is
+> > hysterical raisins^Wreasons.
+> 
+> It's the locking rules that XFS has used pretty much forever.
+> Locking by inode number always guarantees the same locking order of
+> two inodes in the same filesystem, regardless of the specific
+> in-memory instances of the two inodes.
+> 
+> e.g. if we lock based on the inode structure address, in one
+> instancex, we could get A -> B, then B gets recycled and
+> reallocated, then we get B -> A as the locking order for the same
+> two inodes.
+> 
+> That, IMNSHO, is utterly crazy because with non-deterministic inode
+> lock ordered like this you can't make consistent locking rules for
+> locking the physical inode cluster buffers underlying the inodes in
+> the situation where they also need to be locked.
 
-> Al Viro <viro@zeniv.linux.org.uk> wrote:
->
->> > We're seeing cases where fscache is reporting cookie collisions that appears
->> > to be due to ->evict_inode() running parallel with a new inode for the same
->> > filesystem object getting set up.
->> 
->> Huh?  Details, please.  What we are guaranteed is that iget{,5}_locked() et.al.
->> on the same object will either prevent the call of ->evict_inode() (if they
->> manage to grab the sucker before I_FREEING is set) or will wait until after
->> ->evict_inode() returns.
->
-> See the trace from Luis in:
->
-> 	https://lore.kernel.org/linux-fsdevel/87fsysyxh9.fsf@suse.de/
->
-> It appears that process 20591 manages to set up a new inode that has the same
-> key parameters as the one process 20585 is tearing down.
->
-> 0000000097476aaa is the cookie pointer used by the old inode.
-> 0000000011fa06b1 is the cookie pointer used by the new inode.
-> 000000003080d900 is the cookie pointer for the parent superblock.
->
-> The fscache_acquire traceline emission is caused by one of:
->
->  (*) v9fs_qid_iget() or v9fs_qid_iget_dotl() calling
->      v9fs_cache_inode_get_cookie().
->
->  (*) v9fs_file_open*(O_RDONLY) or v9fs_vfs_atomic_open*(O_RDONLY) calling
->      v9fs_cache_inode_set_cookie().
->
->  (*) v9fs_cache_inode_reset_cookie(), which appears unused.
->
-> The fscache_relinquish traceline emission is caused by one of:
->
->  (*) v9fs_file_open(O_RDWR/O_WRONLY) or v9fs_vfs_atomic_open(O_RDWR/O_WRONLY)
->      calling v9fs_cache_inode_set_cookie().
->
->  (*) v9fs_evict_inode() calling v9fs_cache_inode_put_cookie().
->
->  (*) v9fs_cache_inode_reset_cookie(), which appears unused.
->
-> From the backtrace in:
->
-> 	https://lore.kernel.org/linux-fsdevel/87czu45gcs.fsf@suse.de/
->
-> the acquisition is being triggered in v9fs_vfs_atomic_open_dotl(), so it seems
-> v9fs_qid_iget_dotl() already happened - which *should* have created the
-> cookie.
+<nod> That's protected by the ILOCK, correct?
 
-So, from our last chat on IRC, we have the following happening:
+> We've been down this path before more than a decade ago when the
+> powers that be decreed that inode locking order is to be "by
+> structure address" rather than inode number, because "inode number
+> is not unique across multiple superblocks".
+> 
+> I'm not sure that there is anywhere that locks multiple inodes
+> across different superblocks, but here we are again....
 
-v9fs_vfs_atomic_open_dotl
-  v9fs_vfs_lookup
-    v9fs_get_new_inode_from_fid
-      v9fs_inode_from_fid_dotl
-        v9fs_qid_iget_dotl
+Hm.  Are there situations where one would want to lock multiple
+/mappings/ across different superblocks?  The remapping code doesn't
+allow cross-super operations, so ... pipes and splice, maybe?  I don't
+remember that code well enough to say for sure.
 
-At this point, iget5_locked() gets called with the test function set to
-v9fs_test_new_inode_dotl(), which *always* returns 0.  It's still not
-clear to me why commit ed80fcfac256 ("fs/9p: Always ask new inode in
-create") has introduced this behavior but even if that's not correct, we
-still have a race regarding cookies handling, right?
+I've been operating under the assumption that as long as one takes all
+the same class of lock at the same time (e.g. all the IOLOCKs, then all
+the MMAPLOCKs, then all the ILOCKs, like reflink does) that the
+incongruency in locking order rules within a class shouldn't be a
+problem.
 
-I'm still seeing:
+> > It might simply be time to convert all
+> > three XFS inode locks to use the same ordering rules.
+> 
+> Careful, there lie dragons along that path because of things like
+> how the inode cluster buffer operations work - they all assume
+> ascending inode number traversal within and across inode cluster
+> buffers and hence we do have locking order constraints based on
+> inode number...
 
-CPU0                     CPU1
-v9fs_drop_inode          ...
-v9fs_evict_inode         /* atomic_open */
-                         v9fs_cache_inode_get_cookie <= COLLISION
-fscache_relinquish
+Fair enough, I'll leave the ILOCK alone. :)
 
-So, the question remains: would it be possible to do the relinquish
-earlier (->drop_inode)?  Or is 9p really shooting itself in the foot by
-forcing iget5_locked() to always create a new inode here?
+--D
 
-Cheers,
--- 
-Luis
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
