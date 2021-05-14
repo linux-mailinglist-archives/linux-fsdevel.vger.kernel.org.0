@@ -2,66 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A0E7A380E2E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 18:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11A70380E99
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 19:07:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231916AbhENQ3s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 May 2021 12:29:48 -0400
-Received: from verein.lst.de ([213.95.11.211]:51108 "EHLO verein.lst.de"
+        id S235064AbhENRIh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 May 2021 13:08:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39774 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230009AbhENQ3s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 May 2021 12:29:48 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id BD8A96736F; Fri, 14 May 2021 18:28:33 +0200 (CEST)
-Date:   Fri, 14 May 2021 18:28:33 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "Wunderlich, Mark" <mark.wunderlich@intel.com>,
-        "Vasudevan, Anil" <anil.vasudevan@intel.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 12/15] block: switch polling to be bio based
-Message-ID: <20210514162833.GA11873@lst.de>
-References: <20210512131545.495160-1-hch@lst.de> <20210512131545.495160-13-hch@lst.de> <45d66945-165c-ae48-69f4-75dc553b0386@grimberg.me> <20210512221237.GA2270434@dhcp-10-100-145-180.wdc.com> <20210514025026.GA2447336@dhcp-10-100-145-180.wdc.com> <20210514162612.GA2706199@dhcp-10-100-145-180.wdc.com>
+        id S235049AbhENRIg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 May 2021 13:08:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 0DA23B061;
+        Fri, 14 May 2021 17:07:24 +0000 (UTC)
+Subject: Re: [PATCH v10 13/33] mm/filemap: Add folio_next_index
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        akpm@linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Jeff Layton <jlayton@kernel.org>
+References: <20210511214735.1836149-1-willy@infradead.org>
+ <20210511214735.1836149-14-willy@infradead.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <92518dfb-5624-62d7-9998-305587fc561c@suse.cz>
+Date:   Fri, 14 May 2021 19:07:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210514162612.GA2706199@dhcp-10-100-145-180.wdc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20210511214735.1836149-14-willy@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 14, 2021 at 09:26:12AM -0700, Keith Busch wrote:
-> diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-> index 7febdb57f690..d40a9331daf7 100644
-> --- a/drivers/nvme/host/multipath.c
-> +++ b/drivers/nvme/host/multipath.c
-> @@ -419,6 +419,11 @@ static void nvme_requeue_work(struct work_struct *work)
->  		 * path.
->  		 */
->  		bio_set_dev(bio, head->disk->part0);
-> +
-> +		if (bio->bi_opf & REQ_POLLED) {
-> +			bio->bi_opf &= ~REQ_POLLED;
-> +			bio->bi_cookie = BLK_QC_T_NONE;
-> +		}
->  		submit_bio_noacct(bio);
->  	}
->  }
-> --
+On 5/11/21 11:47 PM, Matthew Wilcox (Oracle) wrote:
+> This helper returns the page index of the next folio in the file (ie
+> the end of this folio, plus one).
 > 
-> This should fix the hang since requeued bio's will use an interrupt
-> driven queue, but it doesn't fix the warning. The recent commit
-> "nvme-multipath: reset bdev to ns head when failover" looks like it
-> makes preventing the polling thread from using the non-MQ head disk
-> not possible.
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Jeff Layton <jlayton@kernel.org>
 
-Yes.  Althought I'd rather move the code together with the bio stealing
-in nvme_failover_req (and possibly move it into a block layer helper
-as it is too subtle to be open coded in drivers).
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+> ---
+>  include/linux/pagemap.h | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 8eaeffccfd38..3b82252d12fc 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -406,6 +406,17 @@ static inline pgoff_t folio_index(struct folio *folio)
+>          return folio->index;
+>  }
+>  
+> +/**
+> + * folio_next_index - Get the index of the next folio.
+> + * @folio: The current folio.
+> + *
+> + * Return: The index of the folio which follows this folio in the file.
+> + */
+> +static inline pgoff_t folio_next_index(struct folio *folio)
+> +{
+> +	return folio->index + folio_nr_pages(folio);
+> +}
+> +
+>  /**
+>   * folio_file_page - The page for a particular index.
+>   * @folio: The folio which contains this index.
+> 
+
