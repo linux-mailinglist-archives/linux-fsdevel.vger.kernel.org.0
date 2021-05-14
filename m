@@ -2,156 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F004F380866
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 13:23:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B33603808DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 May 2021 13:48:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230516AbhENLYe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 May 2021 07:24:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51298 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229516AbhENLYd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 May 2021 07:24:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 99D82AFF5;
-        Fri, 14 May 2021 11:23:20 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 689631F2B4A; Fri, 14 May 2021 13:23:20 +0200 (CEST)
-Date:   Fri, 14 May 2021 13:23:20 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dennis Zhou <dennis@kernel.org>,
-        Dave Chinner <dchinner@redhat.com>, cgroups@vger.kernel.org
-Subject: Re: [PATCH v4] cgroup, blkcg: prevent dirty inodes to pin dying
- memory cgroups
-Message-ID: <20210514112320.GB27655@quack2.suse.cz>
-References: <20210513004258.1610273-1-guro@fb.com>
- <20210513101239.GE2734@quack2.suse.cz>
- <YJ1sALo2KaP813Dy@carbon.DHCP.thefacebook.com>
+        id S232376AbhENLtQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 May 2021 07:49:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44400 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230525AbhENLtP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 May 2021 07:49:15 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31B6C061574;
+        Fri, 14 May 2021 04:48:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=PMuhz7QmjDyUOOcCUlm1J8zGgwrLL0mcmdhwYH7Afe4=; b=QvCrTZ5Ysk4eK80ekakeQIJB79
+        t30kKv+swkuk0a/ARhDHBg0cHciJXU5odZ7+irtsvrNLcSbXxJ2HpM5PzJPkRMChDEBrp0hsc6g/+
+        N55Blbv9fdSv6W3TUgZtV0xFVqq2dGIAPt27vKf4Nm7C+hJpQw/PajoVUV3ANcadqDEKclSp7PiLg
+        ZRX8vLW97ctsKogImgPm1mlpOgjFQ+3h0YrkabYCArd310ucDrDTdR09UUn++gwG91ms0moHDDAlX
+        rfXMPqh5JhyW92MYGKy9hlmPvkLDYWIkgg4gyBNpHYvQn6xj4qB4rSNl24JcnX1rNp/n1Lue316hx
+        Fydl24rg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lhWHV-00AKdf-Fe; Fri, 14 May 2021 11:47:18 +0000
+Date:   Fri, 14 May 2021 12:47:01 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH v10 01/33] mm: Introduce struct folio
+Message-ID: <YJ5jNR2HwgfXk7Wv@casper.infradead.org>
+References: <20210511214735.1836149-1-willy@infradead.org>
+ <20210511214735.1836149-2-willy@infradead.org>
+ <ad8cd2e7-4111-f523-bc9c-5702b9071a5f@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YJ1sALo2KaP813Dy@carbon.DHCP.thefacebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <ad8cd2e7-4111-f523-bc9c-5702b9071a5f@suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 13-05-21 11:12:16, Roman Gushchin wrote:
-> On Thu, May 13, 2021 at 12:12:39PM +0200, Jan Kara wrote:
-> > On Wed 12-05-21 17:42:58, Roman Gushchin wrote:
-> > > +			WARN_ON_ONCE(inode->i_wb != wb);
-> > > +			inode->i_wb = NULL;
-> > > +			wb_put(wb);
-> > > +			list_del_init(&inode->i_io_list);
-> > 
-> > So I was thinking about this and I'm still a bit nervous that setting i_wb
-> > to NULL is going to cause subtle crashes somewhere. Granted you are very
-> > careful when not to touch the inode but still, even stuff like
-> > inode_to_bdi() is not safe to call with inode->i_wb is NULL. So I'm afraid
-> > that some place in the writeback code will be looking at i_wb without
-> > having any of those bits set and boom. E.g. inode_to_wb() call in
-> > test_clear_page_writeback() - what protects that one?
+On Fri, May 14, 2021 at 12:40:05PM +0200, Vlastimil Babka wrote:
+> On 5/11/21 11:47 PM, Matthew Wilcox (Oracle) wrote:
+> > +/**
+> > + * folio_page - Return a page from a folio.
+> > + * @folio: The folio.
+> > + * @n: The page number to return.
+> > + *
+> > + * @n is relative to the start of the folio.  It should be between
+> > + * 0 and folio_nr_pages(@folio) - 1, but this is not checked for.
+> > + */
+> > +#define folio_page(folio, n)	nth_page(&(folio)->page, n)
 > 
-> I assume that if the page is dirty/under the writeback, the inode must be
-> dirty too, so we can't zero inode->i_wb.
+> BTW, would it make sense to have also a folio_page(folio) wrapper? Or is
+> "&folio->page" used in later patches sufficiently elegant and stable enough for
+> the future?
 
-If page is under writeback, the inode can be already clean. You could check
-  !mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK)
-but see how fragile it is... For every place using inode_to_wb() you have
-to come up with a test excluding it...
+Ah!  If you see &folio->page in a patch, it's "a bad smell" [1].  At
+this stage, it probably indicates "This other thing I need isn't
+converted entirely to folios yet".  I consider it fine in
+implementations of utility functions like this:
 
-> > I forgot what possibilities did we already discuss in the past but cannot
-> > we just switch inode->i_wb to inode_to_bdi(inode)->wb (i.e., root cgroup
-> > writeback structure)? That would be certainly safer...
-> 
-> I am/was nervous too. I had several BUG_ON()'s in all such places and ran
-> the test kernel for about a day on my dev desktop (even updated to Fedora
-> 34 lol), and haven't seen any panics. And certainly I can give it a
-> comprehensive test in a more production environment.
++static inline unsigned int folio_order(struct folio *folio)
++{
++       return compound_order(&folio->page);
++}
 
-I appreciate the testing but it is also about how likely this is to break
-sometime in future because someone unaware of this corner-case will add new
-inode_to_wb() call not excluded by one of your conditions.
+but when we see it here:
 
-> Re switching to the root wb: it's certainly a possibility too, however
-> zeroing has an advantage: the next potential writeback will be accounted
-> to the right cgroup without a need in an additional switch.
-> I'd try to go with zeroing if it's possible, and keep the switching to the
-> root wb as plab B.
++void folio_unlock(struct folio *folio)
+ {
+        BUILD_BUG_ON(PG_waiters != 7);
+-       page = compound_head(page);
+-       VM_BUG_ON_PAGE(!PageLocked(page), page);
+-       if (clear_bit_unlock_is_negative_byte(PG_locked, &page->flags))
+-               wake_up_page_bit(page, PG_locked);
++       VM_BUG_ON_FOLIO(!folio_locked(folio), folio);
++       if (clear_bit_unlock_is_negative_byte(PG_locked, folio_flags(folio, 0)))
++               wake_up_page_bit(&folio->page, PG_locked);
+ }
 
-Yes, there will be the cost of an additional switch. But inodes attached to
-dying cgroups shouldn't be the fast path anyway so does it matter?
+that's an indication that wake_up_page_bit() needs to be converted to
+folio_wake_bit(), which happens in a later patch.  I could probably
+avoid this temporary problem with a different ordering of the patches,
+but it's not clear to me that's a good use of my time.
 
-> > > @@ -633,6 +647,48 @@ static void cgwb_bdi_unregister(struct backing_dev_info *bdi)
-> > >  	mutex_unlock(&bdi->cgwb_release_mutex);
-> > >  }
-> > >  
-> > > +/**
-> > > + * cleanup_offline_cgwbs - try to release dying cgwbs
-> > > + *
-> > > + * Try to release dying cgwbs by switching attached inodes to the wb
-> > > + * belonging to the root memory cgroup. Processed wbs are placed at the
-> > > + * end of the list to guarantee the forward progress.
-> > > + *
-> > > + * Should be called with the acquired cgwb_lock lock, which might
-> > > + * be released and re-acquired in the process.
-> > > + */
-> > > +static void cleanup_offline_cgwbs_workfn(struct work_struct *work)
-> > > +{
-> > > +	struct bdi_writeback *wb;
-> > > +	LIST_HEAD(processed);
-> > > +
-> > > +	spin_lock_irq(&cgwb_lock);
-> > > +
-> > > +	while (!list_empty(&offline_cgwbs)) {
-> > > +		wb = list_first_entry(&offline_cgwbs, struct bdi_writeback,
-> > > +				      offline_node);
-> > > +
-> > > +		list_move(&wb->offline_node, &processed);
-> > > +
-> > > +		if (wb_has_dirty_io(wb))
-> > > +			continue;
-> > > +
-> > > +		if (!percpu_ref_tryget(&wb->refcnt))
-> > > +			continue;
-> > > +
-> > > +		spin_unlock_irq(&cgwb_lock);
-> > > +		cleanup_offline_wb(wb);
-> > > +		spin_lock_irq(&cgwb_lock);
-> > > +
-> > > +		wb_put(wb);
-> > > +	}
-> > > +
-> > > +	if (!list_empty(&processed))
-> > > +		list_splice_tail(&processed, &offline_cgwbs);
-> > > +
-> > > +	spin_unlock_irq(&cgwb_lock);
-> > 
-> > Shouldn't we reschedule this work with some delay if offline_cgwbs is
-> > non-empty? Otherwise we can end up with non-empty &offline_cgwbs and no
-> > cleaning scheduled...
-> 
-> I'm not sure. In general it's not a big problem to have few outstanding
-> wb structures, we just need to make sure we don't pile them.
-> I'm scheduling the cleanup from the memcg offlining path, so if new cgroups
-> are regularly created and destroyed, some pressure will be applied.
-> 
-> To reschedule based on time we need to come up with some heuristic how to
-> calculate the required delay and I don't have any specific ideas. If you do,
-> I'm totally fine to incorporate them.
+The existing folio_page() is a way of distinguishing between "this
+function i need to call doesn't have a folio equivalent yet" and "this
+function i need to call needs to deal specifically with one page in
+this folio".  For the former, use &folio->page; for the latter, use
+folio_page() or folio_file_page().
 
-Well, I'd pick e.g. dirty_expire_interval (30s by default) as a time after
-which we try again. Because after that time writeback has likely already
-happened. But I don't insist here. If you think leaving inodes attached to
-dead cgroups for potentially long time in some cases isn't a problem, then
-we can leave this as is. If we find it's a problem in the future, we can
-always add the time-based retry.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+[1] https://en.wikipedia.org/wiki/Code_smell
