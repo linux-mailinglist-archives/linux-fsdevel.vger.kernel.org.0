@@ -2,175 +2,260 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FB973814CB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 May 2021 02:57:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15CC33817A4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 May 2021 12:27:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234650AbhEOA6a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 May 2021 20:58:30 -0400
-Received: from sonic309-28.consmr.mail.ne1.yahoo.com ([66.163.184.154]:44212
-        "EHLO sonic309-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234625AbhEOA63 (ORCPT
+        id S231146AbhEOK2I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 May 2021 06:28:08 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:41542 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229927AbhEOK2G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 May 2021 20:58:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1621040235; bh=OPLVYA6PTN9lQ2PFoMQqxiAJ97QKtgsHa94krTc9ksU=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=DubuQ+fv/RFAAPQylfA0PvckacLMPtYg19ueNlsCzAWEb+PrsY9bkM0DAJtqW+KX8o1huPjbwQcgh4+QMYLXhItTcb/jGg25lvk2ekt82e9VyLw9hLR5kfytULuQPa0pEEloJYIYHUG2X9v1BicPaJ/cNbhPEcuFD9jZS/BTh84oJOfaVwitzrF53rkC3j2siUtkiJ10hgifZs+7NTsJhECobHPZaj32Jbi6SGOkH8zSxZfKVVUVIIPV8/XvXSEXyah+eGBp6H8E+4p62jYQOD+a/y3ZEHwvenKk+ws0Jbk3iBOMJ78Jd7Y7UA5QmUsvYwCNA2sRRfdMVLz5T4nmEg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1621040235; bh=e0NqqRzAQzSzTEIadnIqVpfv70OT85Dv4nxEGMsJs8Y=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=T89+lWT/6suHY0cJxMvBejkDydxm+aVcdhfTiqcJX7EXr1mQQR/ZHx/1c8lLi1ADR1YmrjPFzVD+1/2VghqQCuH9iepAWGQTcjSbgFqq3bJfnkxp/LngeyITWO2KyLzTYMkMc5VgFAVWMPQpurFYuUfFDmgj5qM3R2wDpekuBdtvP/QoLZcKQ3irSP+hI50MvMV377zt7P6zs7ntAsXNcWz/HGjDoPeuAEZeelOMfkX1j7xWt3/HEGoWGi2CTlNzNW+/5MaUxily9HV5pb33b8xhmH8i+KvnzN4nCc+LkMVQG1o9TeV9Wrw/ZeZSZ2cAJiRVuv+joJl5RQJWpTLMIw==
-X-YMail-OSG: Th9g6XwVM1nnGsiFhnM3K57fZCpswIuTd5UKh0Me.hsWYXlPqIdTlckH1AzpjSa
- Oxgg5R1l0GjHU0VkRDck59C.P.a.v7VDIyr.djD8ZdRX0A8yXLSnbGBrY8jsx0KhHE3f8oTT4KZq
- iGIyDEFJ85xfLP1btt._fujjDZilaU9DV9WLAkLW9gQ_NA5KQAHpLPffgtHIP2ej_zBXn5BRGPJ3
- qoCKcNz0DzNuVWJJ65E8RUvHGaxg5nKbE2j8pYPcuiVD1gmZCF_GYpbuMPlZckgyvuXZvqmhA5.R
- tR_seR.QsCB6NeIC14g7FU.Q5CSrJ7xTT5Qjsxc93EQ2In_80.XXVHdgGeWZ1HOGbaJjvixGB1tJ
- 4jLxP1Hqj.pLkqQGPNxH2KMNL3rzlrWORs3XwbNGz.zryWaaMxyc2ELNlNVRCa1LbINTqskKRqWO
- Dv7tBX_CZ2K.xIDxmTQqd.e_UO8bya5Z6djnp8YT2SOqlKC6hEC8o4ps4CN3W86PcyzdGMsXwog.
- 6Borb4_LU7ysCemG2evG6_mW4t.gv04JnkrNnjECA7mfYeaJ8t_gMyb8M925UbxqUSO5gwSvxgFi
- QEIq38EI5JgazRzW9sEhnExkmohR1Sy3y_iMXMfo2omFJK.pHGPqQgpWXWKIUTypA93sdh189ht_
- A5_JexvHwYJrD2GL5MM9ePkVmOht_56MSI._qvE4AEzwtYq_7KSgoF662SEAV8lBck2Vk5QAk8ME
- 1Ht5Rg7RSKmNoxXHp2bGQKNOC.9W4_xcGiFnjvDMhzlIT4LaUZmtJspQvgE6p9VLe5xG3OEIxKkA
- 9xqca6vRVIvdhxaNLfFjCwNU903Yyn8iBaNLFgpNnkIMzcc0Iilt6LosF3SBfSJPYG93McEw7ZZL
- BNA5Fw5G5smuLfMXq8BU1ocDJDs9weoQOeiwJCxOOj5daSFTN82vs48k4D3Ks1OggOrO8VMmhDTe
- S779WNuKOmlyjzaYYNhfnvOEkVo_vXxhZfnGtMKtjQs51O7qD4cyaRMvwFqcmXsXPN8oZnKitI5g
- wirwSKKsFx3rjk7rMKvcb7Il5stmlheNiooACH6Ptu.WsqufISdnEMDkB9IgRDtoRwpZEsBclpdR
- 5_ri4GN07iaugSV35ZChrLZ7GSrNdYw5pIvMpiOgjMjqxTXDXYUo2RU9saIoS1MYeGhkM3Can1pL
- OXzmBgWYrVYOVNAwr5sADx6ZXcuSrQeuuYN5kWeVYWd_g3vFt3D7TcPESFHbmIJHG8PYaKq43mbb
- PBXcsZlc861h6ihrYRNBGgv81nmmrpCcVXnxg3VR05cA5Nz2BIi.ddko7NM6BSSjJ_1RJGm5IuuW
- PtDaA9MZqn.R.WHI6G15LMGEXdk_8xOohnrfQNPKZSzfoZ5IU7yLeBnKYMVV2FCfnWMbjltOHm_i
- EAottlvAWDNK0WpIUyEHvVa2Tfm7fRuqLQAUlT9bCk7b52gdqnmwdLN_mAfRYBLyPErSA6vT2x7G
- t1dseEfn4IRtlacmlFlJpWkG.jKz8qYvkxyTUdE3_I4QEY53Bg.2u9Hu6pJ9gNQ92_JyxMQm6swf
- Y5wZq3EO75bM_5x1fohIbSUY4wRdoEEe9F_o6ZbWB0gkYiK_H.9AAUKrSLhzfHO50R.DBvvKURrN
- Tu.TyV2bQHlDw3nTje2pVz4QTn_tvDDL3.3porfKTVLA0DSUUagapmDyCpPQYC_uEBat1U5G3zKz
- FOSlfrKtVmMiPq5czyCwQVQMEiBgu2A98SqjTVUEOS5lQ91g6l75prRSzxiYCiysa5RmuMeMeurm
- 1Oy1sEspGtaUfQeqTd30A_My5DxkU1pMBJX8bgRwpJlnfO4DH_Efd_eOAQeaXfOuBQZ2I.bR4xkI
- mCZWZHfyP9gz6h1RqgzBMi_w9aX5GhuVoWMrCgEpDiGjsN58CeA472MgGrfJrxl0Cj2J2FO5u2m2
- lIvGDQr.r44LzH2C45Ax0fWJDYfYKC3wpoU5F1djVUhkZUguKP2M9WWYNuj1qOwwbZmKb9gAgKpQ
- gb4BrgwQbzZ3AfHPvaCzPVFpzsaiSej4wi0BNzePeMds_.ItbQ.s6e3S0dtN5IUbwE0h3IBXGG8n
- gpB8KKhoN5wpAbnEgRbkWCnvFwX4vfSs3SEQofZ9XRL88CEjZvdhs0WSKZSnV6o9GF2ONzNI8rRo
- bIV_Urw1PA1.azwHyTLju2CHi1BaBPvh2rLudAefZgRH1ma6ieWTP6y7sJPFPOxFlTZN45u5sNJ7
- 7.52qmCsxUwGMCCtA6DvlHWHUnbxpVzeZs5voqdmr4P8kzkqG9JRQkxHy0pqv1Om0Qygne5ZtbSB
- 8MkWoDAMKgKg9xgXRJOPsJAihVRmCEaYFVYxPjVzV3QVGzZ2Fpy8jNwrXPdAON9d5wVjgqQ7L2xe
- UQySe0ExWYdrjIwcDiuviwbB1aMHVmzR4ln6e1sc1jKD16OzcEHh3YuD4Jmhe0aqxag5zPco1pNB
- hjl8somiN5w9BtBSVSvMXjpBxtihqsrROlS4xkPoEHfyQt0hFyA8reVSjP74Lvp26o_fdBPFg6Ys
- ZXsy4a_j0vLl8jz1IFqh9HnATOEsMea.lVnjXjODiSCAVznUYceshrLyhqZrpXIool7UJrKjwTyc
- j3yZx8Ra0NXutlTlPz0roAOTgpU5.Q298qSuyteY6.Gc4rLlmJiTw8g8DclFe127W8cQUkWdKT6W
- SN79syNbAsB0gJZRgYJZYtsySnP6chFmw9qGmGGspzp62x4mhrI76Vokoajs5hYN2h8l12Q1MrXw
- 0dkibwlhPMP.acep9TUw488_qzk01ecNU3O0r_bQhBEQTE3m.zWkPapEJXd9mcrCUCigsly7hJHm
- 4y.oZASv3bLR8Wps3g6OupBnA7ltrA..UeSWiL6RcbeWivYTl68tq1epM2rWhOvuDCyL1NQPQxBy
- B6MkPgkFkMI0jB8Yzs8lIzhFwOOcsC0h4UNaJze0DYi5PyJUNFRU4KSYsF09ztp0mED3mWgeCTpH
- 109bnUdvP6wWAqD5BgiOotdnaYj8s1_C11c1gSoFsBaoqG3vIoOFMOdC4fRxQBRJel7sQWe8.5.D
- xd5adgP_bcDAhsf46kydJk3dLnUxMwH0WUDCqrHlM.SJxYRdHHSYoJpnbHEzWZSCnvx9yZyj87Bf
- hKYmcosXTDFb4USfN7BMfVSz24eaahwsoVTMtDlxk5R3ssEGc8S4jegZ9Ko14HL4Mt8USh6JAnp9
- xr1BeM9BMhdOl98HDAJArYq2lVIq04nj7KVom5Cn3Q4xyHoLAeTQBtZjZ581C7s58TBhUx7SFbGc
- E4F4Lj0rIl58.mVY7x2G383pldqzVaLR6uVqXccGOfH1RW2bnTVO9FmANo....pizyPvZhLFBCgR
- yM61aTChKrLpnb3lPXoBjzeF9V41rfuYzDk6yaKSc1Ki2fXL2ZZigQ3lk91m3kR9xr6V_wPcJOTQ
- 96DN5mun.SD9o3nEbYw6JXxGpg0hkmkxwhDBG2BV7HtjWL8bD0sH7IQGpKCB9glMG1v5DlphqbqM
- _CuAr_m3X1UmD5_h3YIEKTYKCz2TUuvZI5QONuMv_WTJeahutPx34q84QVuuXpwQ-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Sat, 15 May 2021 00:57:15 +0000
-Received: by kubenode532.mail-prod1.omega.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 10c01b97f9e192adb0693999166f13aa;
-          Sat, 15 May 2021 00:57:11 +0000 (UTC)
-Subject: Re: [PATCH] lockdown,selinux: fix bogus SELinux lockdown permission
- checks
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, network dev <netdev@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20210507114048.138933-1-omosnace@redhat.com>
- <a8d138a6-1d34-1457-9266-4abeddb6fdba@schaufler-ca.com>
- <CAFqZXNtr1YjzRg7fTm+j=0oZF+7C5xEu5J0mCZynP-dgEzvyUg@mail.gmail.com>
- <24a61ff1-e415-adf8-17e8-d212364d4b97@schaufler-ca.com>
- <CAFqZXNvB-EyPz1Qz3cCRTr1u1+D+xT-dp7cUxFocYM1AOYSuxw@mail.gmail.com>
- <e8d60664-c7ad-61de-bece-8ab3316f77bc@schaufler-ca.com>
- <CAFqZXNu_DW1FgnVvtA+CnBMtdRDrzYo5B3_=SzKV7-o1CaV0RA@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <94486043-322f-74bd-dc33-83e43b531068@schaufler-ca.com>
-Date:   Fri, 14 May 2021 17:57:08 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
-MIME-Version: 1.0
-In-Reply-To: <CAFqZXNu_DW1FgnVvtA+CnBMtdRDrzYo5B3_=SzKV7-o1CaV0RA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        Sat, 15 May 2021 06:28:06 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14FAO2uV087236;
+        Sat, 15 May 2021 10:26:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2020-01-29;
+ bh=QSkrnblB8Zp2R7owUOsaMHflYUVdBhoJupQtiM/X1yk=;
+ b=aB04aaFHJT9gSv6YDDy7EvbZQf6MLtHm+h7rbof1DgcDU2DSw9tgS1FMDyWVaS9loBwG
+ NgYBiFHMUHHTZ1/zQ4OuEQE3Q7407L2X5Z8fXKJd80CseiDwSCuXO1L0h4du+KiJbTlK
+ I280US0IqGb9ti+bw+jW8tUZds3V610y1cTYk1d8tOLzS9zqhn+NGzrRGj1SorbELBw2
+ eq5yauDv7is5OIJ1ywDe5sB5YOZwKX7QUVkk8uwk9gNYrdgWs5oyvJVaw4XQU3GytBsU
+ 662R+RCVofivPtsP9MBoazv7o1/sIQXWEm/XoiH2eMoIM6dn+QRqdMr6GYjgCjBuo12+ cQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2130.oracle.com with ESMTP id 38j3tb8e4b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 15 May 2021 10:26:32 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14FAOtqr022191;
+        Sat, 15 May 2021 10:26:32 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2105.outbound.protection.outlook.com [104.47.55.105])
+        by aserp3020.oracle.com with ESMTP id 38j641gtnd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 15 May 2021 10:26:32 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fiCzH42R89xGXHU2UpoTwPtOxtiVWByd1Llg+Qx8vAEDk/rRiyqnMugdhOJIv+mb0Ro4HIKXojYA5cTBDyO8k3NHkHsATTgZ5et018ftCgz5gxLPe7PNMHmGyECO6yS/Hw37XwGlRvXKF2r4tjMv4InBDRPVPJJPJRTo19YQB9zaaZXwhjcBKfMh9bIiXVtoOUUc7S14xSRRWyli/8BBxUO/Z4sk4/JvIofLu6BZdprKvzvB23J4fHVn0nUcdkKHM/s9Ql7L8DSh4JZdJ3jSt6/PaNh4kj8baIrfLF41jk5L/li50scEmi2J4InfvEGkubhn+gTKrzWRXsFMPDB0yg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QSkrnblB8Zp2R7owUOsaMHflYUVdBhoJupQtiM/X1yk=;
+ b=QOKu0nBScx8bnzLe31fojsHf5kC8oDyZVGz1OFuDUF+HAHcBCdlwjCxYStdse5Q/mrB0a1RbiUs82LV5qlYtnIOrHqtHhv2cZj5LaA3oIEf0MYHf9cD9UhnMfyXeho9Dz5clS3HOLH5Cz038Y+9KGcAdaO0zcrLR44S7uS8ZmeCcwkC7kt3/t+Vk4Do3RxGdR4acA3/4PdL1M/7snivAFs38tTZJu5dNpZd0WO9NzmkqtvqM2hw0ZdqdDZC/BskhC1O5lT8ISP6YYpsXjrXvlcgRsL2F8ojuQ7FJCorKzQ5LxStfx6DhZq8dkbuCWIAl/dkDPbOmlnNW4qNITqFS1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QSkrnblB8Zp2R7owUOsaMHflYUVdBhoJupQtiM/X1yk=;
+ b=d9Pkj+CAHdFBSq4rgA85jcBGoIHLZDjCOq+jtFj+kEOIpTPAcMk2SxVcEOyWS1W//Kdp/Vp/LACZukC8nQ/mHvBbg6kZcjR78xUfi8DVRNzpVY8JSzCL2nU3AS6xYr+DX956rNYaQpJVUeA/FaK83nSkororwtDvLLNaSNUBmko=
+Received: from CY4PR1001MB2357.namprd10.prod.outlook.com
+ (2603:10b6:910:42::14) by CY4PR10MB1975.namprd10.prod.outlook.com
+ (2603:10b6:903:124::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4129.26; Sat, 15 May
+ 2021 10:26:30 +0000
+Received: from CY4PR1001MB2357.namprd10.prod.outlook.com
+ ([fe80::6988:8f21:a040:d581]) by CY4PR1001MB2357.namprd10.prod.outlook.com
+ ([fe80::6988:8f21:a040:d581%7]) with mapi id 15.20.4129.028; Sat, 15 May 2021
+ 10:26:30 +0000
+From:   William Kucharski <william.kucharski@oracle.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10 00/33] Memory folios
+Thread-Topic: [PATCH v10 00/33] Memory folios
+Thread-Index: AQHXRq9jswEPtfPw80CEn1XLLho2uKrkXCmA
+Date:   Sat, 15 May 2021 10:26:29 +0000
+Message-ID: <26A8948B-00BC-49F1-A0B7-CE6310FA7A71@oracle.com>
+References: <20210511214735.1836149-1-willy@infradead.org>
+In-Reply-To: <20210511214735.1836149-1-willy@infradead.org>
+Accept-Language: en-US
 Content-Language: en-US
-X-Mailer: WebService/1.1.18291 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/16)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3654.100.0.2.22)
+authentication-results: infradead.org; dkim=none (message not signed)
+ header.d=none;infradead.org; dmarc=none action=none header.from=oracle.com;
+x-originating-ip: [2601:285:8200:4089:3d23:2196:422a:2535]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c3081ff2-2957-469a-9583-08d9178be76d
+x-ms-traffictypediagnostic: CY4PR10MB1975:
+x-microsoft-antispam-prvs: <CY4PR10MB1975F3E23C34BAA58DDB292F812F9@CY4PR10MB1975.namprd10.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: GRw4YFRb6RKJ9xi0MTcJxIVZZK/GM/xnNTZlJzeXAYJHFvECv4TYXHYcTR4dVMpj4FiwQsgAVMvlAt/LHe9e/ugb9fq1QAQ9WGevIk7+QbJw6jUzR4R8GWxqD1TZT4uFsNQArGL9PC6SywAY5c06ktis4ZW8Hq6BlWS0J09BYwr38JfdCkr7mmkvNtrag9yxpF124gD0FIG3vVCCJ4OkheJLorYXnKquj3kBwMoZiF6tSm+5QjPnkgx7cX4rb3K6DkDQow0iTptpSeWcKmBKM5qWme+sIq0/JSE7Zx1UfUZfvMeJbAIq+3lyybXHHISbldRZ+G3NIS8CCIndezHyKTveRVKDM5aro6Qq3CEGC4zyi4P/GlcVv3/CUu63wDojG3GnIIw0ZmeK/0Onv/zikTTfEwqzIuGsQ3PXyC8j/5SAofoMkZgb2wjhGQN/GMfs4kra7Lustc44jSkNa17HPAFPjuQmrEvYQMIHN33H7OfqvNKHKaknuDUrr71iOaaQofYf+PTXsaABuFtUCIwl2zt+HT/Cn2/VE9l/ky0cmIurxTJjA//mEzr379qXhNFndPgm2zGBJxpVP/8GoeIser722FnQ94N1GqjNSCxIfjfbLOWlhdICow7QCUusZ2OvC8fC7yNRN1DDdK4IYVYjW8uAwBMscdN+5hDvH6TB99Gaul190DQH3ZIkNigUHpY2S9ZMuOGOmWG/zhhv0vpQzTOLu/F5Ug9d4GWAfh3kZ+5GghnBp/ZRsyNevZGQcgRk/P2M2FR7iYWdY1BzXQp4lWkMoch3tdN0xcyxS4VRn1k6Sb/aA9P9eAoFiSIU652e
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR1001MB2357.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(366004)(136003)(376002)(396003)(346002)(8676002)(6512007)(186003)(44832011)(316002)(2616005)(66556008)(122000001)(66446008)(66476007)(64756008)(76116006)(36756003)(66946007)(966005)(6486002)(5660300002)(478600001)(38100700002)(33656002)(71200400001)(86362001)(2906002)(6506007)(53546011)(6916009)(83380400001)(4326008)(8936002)(54906003)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?1pG6ov9hKx7Qc2f+V+ImSIo0nQUnMf0nirQm9EmthmAnQT3ZC2gbCI2wL+ld?=
+ =?us-ascii?Q?z1JNeg/iffh7M0sDNJ6g1f1qxI4+FKx0dis5btGQOaMgpVWa+l04qkQNM6AN?=
+ =?us-ascii?Q?yMm9Bn9U5GkQJPHcEa/K+UeonG5N8DhNFQ5P4d819apcyc8nGT9egMzDoNRh?=
+ =?us-ascii?Q?mhw/3cVns+BI+O4ZWwUH08LNEJDO4tKWwPAhPa28X4EJbAD7wS+e6wk61QAH?=
+ =?us-ascii?Q?34zuSS1uPfiNnHBG5HYEnH5BXfgNmRaceXa4NE7sRJ30O9+dJSlmdh0DTzI5?=
+ =?us-ascii?Q?/bLWwlRRwQcSpKAsth9ysHBsLCSN+PTGL3/TMiO60hoUCKE1JL8+IAOKAPbG?=
+ =?us-ascii?Q?W/4PT6GpZ8ToNahTE57v4YohXt87qC3fn+wGIPFuTqJmI0gN6mw4LuJxU6K3?=
+ =?us-ascii?Q?nt1PJwhrYs0Wc2/abVrMUFmrko/Ix8bZG6ncSDRpQSbVkp9NODkPiQNjeuDJ?=
+ =?us-ascii?Q?QIkXT4kdibXVqjYDTvphEyYMaSzp7puKEQTUc0i1keSwdNZEbRP082orVQZF?=
+ =?us-ascii?Q?rTHgi0HUt0WGlPtXcr1BZD3TML857jvEmAw5lCIB3Gk03e5gf5/vf33+ErTv?=
+ =?us-ascii?Q?6SSNeQ3uNqSQYv8bfZUh40ZFjxM33XXER5v6kO50WQzdJ/RxBbqn8vnyiSbq?=
+ =?us-ascii?Q?uBrN5OcmfBnVy+BEtE23ObOtiH4+AbAakcPjcU41KMgteqlC01Sp1YiPsSdj?=
+ =?us-ascii?Q?vE7SXTInKrWnwoY1TVqINuFHbOmdVxSknApJ4rt4KG5m7iUtV/EZJhtN+tUY?=
+ =?us-ascii?Q?3gtY7Wjm901uTT3w0a7LzDfz64ZNRc3hJ+EOzKR5kIWi1eTng1oynkCJhs8l?=
+ =?us-ascii?Q?Qva9Ody905jxzJF6zoGMuNNSz90mQYqqC0ohni0Vf4C3jEzx1/uX+xIbIFud?=
+ =?us-ascii?Q?jl1JQxMs8BY+PIwBUznFjqDE1eBf2pOCTcTPU8ZUPluVle7kn1r3PTIGJc8l?=
+ =?us-ascii?Q?xDTdqbxcV4zlRD4qEBY7V35/Mg47PSY92hwZ/pJjlO5I0cFKP6B06e9O+xdp?=
+ =?us-ascii?Q?Fov5vctkfZLdh2AmKbD5ZXPpcnonhE5ww/dbmpUigL3VMNYG3qZl8yMGRmN0?=
+ =?us-ascii?Q?DaO8lLqQ5PeNOnJRSScYGzThlvRyO0+lKLTfgDctbOO63QQT+pceIIH2Xv4m?=
+ =?us-ascii?Q?eWhxrHxrBvaF618IrFzp0o5AFqoSFFTIMGUCKISYAvjeyWsCvPWgLSdA6f3W?=
+ =?us-ascii?Q?W+WqX0eC9AnTthFjYtwxfjo7+wGdiNWCVKOZtGDkjgaDu0NtLdL4nmcBILif?=
+ =?us-ascii?Q?aZkVITGfZnYBFVwtD/V2CcJ+EEqnrRDEw/nQPPX/6dN8tFDJFsXJTWq3loA3?=
+ =?us-ascii?Q?qY4+4RAfdDoTW13yy1brAMMU/pAcwrhOs7VHw7ba4kkYgXwRXALgrpPm409+?=
+ =?us-ascii?Q?wx5SKXJcBgDbYEPahKbWfw8yWRt3?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <585260EC2198C641BED1A659B50808E1@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY4PR1001MB2357.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3081ff2-2957-469a-9583-08d9178be76d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2021 10:26:29.8888
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TYq4jbC3OEdciAjUMTTAI3kXatXU7tNaNh2NT6sxzXoFoGsh7FQqKDRNe5NMqWWryA1RaInq+8t+eKbYFAg8Fdc4k+r3TuIbqaZhLKUHxRw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR10MB1975
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9984 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 malwarescore=0
+ bulkscore=0 mlxlogscore=999 phishscore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2105150073
+X-Proofpoint-ORIG-GUID: lANRIqM2-J7w-UVJ5Fb1ksLNYrhcp2zU
+X-Proofpoint-GUID: lANRIqM2-J7w-UVJ5Fb1ksLNYrhcp2zU
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9984 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 malwarescore=0
+ spamscore=0 priorityscore=1501 suspectscore=0 mlxlogscore=999 mlxscore=0
+ impostorscore=0 adultscore=0 clxscore=1011 phishscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2105150073
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/14/2021 8:12 AM, Ondrej Mosnacek wrote:
-> On Wed, May 12, 2021 at 7:12 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 5/12/2021 9:44 AM, Ondrej Mosnacek wrote:
->>> On Wed, May 12, 2021 at 6:18 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>> On 5/12/2021 6:21 AM, Ondrej Mosnacek wrote:
->>>>> On Sat, May 8, 2021 at 12:17 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>>>> On 5/7/2021 4:40 AM, Ondrej Mosnacek wrote:
->>>>>>> Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
->>>>>>> lockdown") added an implementation of the locked_down LSM hook to
->>>>>>> SELinux, with the aim to restrict which domains are allowed to perform
->>>>>>> operations that would breach lockdown.
->>>>>>>
->>>>>>> However, in several places the security_locked_down() hook is called in
->>>>>>> situations where the current task isn't doing any action that would
->>>>>>> directly breach lockdown, leading to SELinux checks that are basically
->>>>>>> bogus.
->>>>>>>
->>>>>>> Since in most of these situations converting the callers such that
->>>>>>> security_locked_down() is called in a context where the current task
->>>>>>> would be meaningful for SELinux is impossible or very non-trivial (and
->>>>>>> could lead to TOCTOU issues for the classic Lockdown LSM
->>>>>>> implementation), fix this by adding a separate hook
->>>>>>> security_locked_down_globally()
->>>>>> This is a poor solution to the stated problem. Rather than adding
->>>>>> a new hook you should add the task as a parameter to the existing hook
->>>>>> and let the security modules do as they will based on its value.
->>>>>> If the caller does not have an appropriate task it should pass NULL.
->>>>>> The lockdown LSM can ignore the task value and SELinux can make its
->>>>>> own decision based on the task value passed.
->>>>> The problem with that approach is that all callers would then need to
->>>>> be updated and I intended to keep the patch small as I'd like it to go
->>>>> to stable kernels as well.
->>>>>
->>>>> But it does seem to be a better long-term solution - would it work for
->>>>> you (and whichever maintainer would be taking the patch(es)) if I just
->>>>> added another patch that refactors it to use the task parameter?
->>>> I can't figure out what you're suggesting. Are you saying that you
->>>> want to add a new hook *and* add the task parameter?
->>> No, just to keep this patch as-is (and let it go to stable in this
->>> form) and post another (non-stable) patch on top of it that undoes the
->>> new hook and re-implements the fix using your suggestion. (Yeah, it'll
->>> look weird, but I'm not sure how better to handle such situation - I'm
->>> open to doing it whatever different way the maintainers prefer.)
->> James gets to make the call on this one. If it was my call I would
->> tell you to make the task parameter change and accept the backport
->> pain. I think that as a security developer community we spend way too
->> much time and effort trying to avoid being noticed in source trees.
-> Hm... actually, what about this attached patch? It switches to a
-> single hook with a cred argument (I figured cred makes more sense than
-> task_struct, since the rest of task_struct should be irrelevant for
-> the LSM, anyway...) right from the start and keeps the original
-> security_locked_down() function only as a simple wrapper around the
-> main hook.
->
-> At that point I think converting the other callers to call
-> security_cred_locked_down() directly isn't really worth it, since the
-> resulting calls would just be more verbose without much benefit. So
-> I'm tempted to just leave the security_locked_down() helper as is, so
-> that the more common pattern can be still achieved with a simpler
-> call.
->
-> What do you think?
+I have a nit on part 01/33, but will respond directly there.
 
-It's still a bit kludgy, but a big improvement over the previous version.
-I wouldn't object to this approach.
+For the series:
 
->
-> --
-> Ondrej Mosnacek
-> Software Engineer, Linux Security - SELinux kernel
-> Red Hat, Inc.
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+
+> On May 11, 2021, at 3:47 PM, Matthew Wilcox (Oracle) <willy@infradead.org=
+> wrote:
+>=20
+> Managing memory in 4KiB pages is a serious overhead.  Many benchmarks
+> benefit from a larger "page size".  As an example, an earlier iteration
+> of this idea which used compound pages (and wasn't particularly tuned)
+> got a 7% performance boost when compiling the kernel.
+>=20
+> Using compound pages or THPs exposes a weakness of our type system.
+> Functions are often unprepared for compound pages to be passed to them,
+> and may only act on PAGE_SIZE chunks.  Even functions which are aware of
+> compound pages may expect a head page, and do the wrong thing if passed
+> a tail page.
+>=20
+> We also waste a lot of instructions ensuring that we're not looking at
+> a tail page.  Almost every call to PageFoo() contains one or more hidden
+> calls to compound_head().  This also happens for get_page(), put_page()
+> and many more functions.  There does not appear to be a way to tell gcc
+> that it can cache the result of compound_head(), nor is there a way to
+> tell it that compound_head() is idempotent.
+>=20
+> This patch series uses a new type, the struct folio, to manage memory.
+> It provides some basic infrastructure that's worthwhile in its own right,
+> shrinking the kernel by about 5kB of text.
+>=20
+> Since v9:
+> - Rebase onto mmotm 2021-05-10-21-46
+> - Add folio_memcg() definition for !MEMCG (intel lkp)
+> - Change folio->private from an unsigned long to a void *
+> - Use folio_page() to implement folio_file_page()
+> - Add folio_try_get() and folio_try_get_rcu()
+> - Trim back down to just the first few patches, which are better-reviewed=
+.
+> v9: https://lore.kernel.org/linux-mm/20210505150628.111735-1-willy@infrad=
+ead.org/
+> v8: https://lore.kernel.org/linux-mm/20210430180740.2707166-1-willy@infra=
+dead.org/
+>=20
+> Matthew Wilcox (Oracle) (33):
+>  mm: Introduce struct folio
+>  mm: Add folio_pgdat and folio_zone
+>  mm/vmstat: Add functions to account folio statistics
+>  mm/debug: Add VM_BUG_ON_FOLIO and VM_WARN_ON_ONCE_FOLIO
+>  mm: Add folio reference count functions
+>  mm: Add folio_put
+>  mm: Add folio_get
+>  mm: Add folio_try_get_rcu
+>  mm: Add folio flag manipulation functions
+>  mm: Add folio_young and folio_idle
+>  mm: Handle per-folio private data
+>  mm/filemap: Add folio_index, folio_file_page and folio_contains
+>  mm/filemap: Add folio_next_index
+>  mm/filemap: Add folio_offset and folio_file_offset
+>  mm/util: Add folio_mapping and folio_file_mapping
+>  mm: Add folio_mapcount
+>  mm/memcg: Add folio wrappers for various functions
+>  mm/filemap: Add folio_unlock
+>  mm/filemap: Add folio_lock
+>  mm/filemap: Add folio_lock_killable
+>  mm/filemap: Add __folio_lock_async
+>  mm/filemap: Add __folio_lock_or_retry
+>  mm/filemap: Add folio_wait_locked
+>  mm/swap: Add folio_rotate_reclaimable
+>  mm/filemap: Add folio_end_writeback
+>  mm/writeback: Add folio_wait_writeback
+>  mm/writeback: Add folio_wait_stable
+>  mm/filemap: Add folio_wait_bit
+>  mm/filemap: Add folio_wake_bit
+>  mm/filemap: Convert page wait queues to be folios
+>  mm/filemap: Add folio private_2 functions
+>  fs/netfs: Add folio fscache functions
+>  mm: Add folio_mapped
+>=20
+> Documentation/core-api/mm-api.rst           |   4 +
+> Documentation/filesystems/netfs_library.rst |   2 +
+> fs/afs/write.c                              |   9 +-
+> fs/cachefiles/rdwr.c                        |  16 +-
+> fs/io_uring.c                               |   2 +-
+> include/linux/memcontrol.h                  |  63 ++++
+> include/linux/mm.h                          | 174 ++++++++--
+> include/linux/mm_types.h                    |  71 ++++
+> include/linux/mmdebug.h                     |  20 ++
+> include/linux/netfs.h                       |  77 +++--
+> include/linux/page-flags.h                  | 230 ++++++++++---
+> include/linux/page_idle.h                   |  99 +++---
+> include/linux/page_ref.h                    | 158 ++++++++-
+> include/linux/pagemap.h                     | 358 ++++++++++++--------
+> include/linux/swap.h                        |   7 +-
+> include/linux/vmstat.h                      | 107 ++++++
+> mm/Makefile                                 |   2 +-
+> mm/filemap.c                                | 315 ++++++++---------
+> mm/folio-compat.c                           |  43 +++
+> mm/internal.h                               |   1 +
+> mm/memory.c                                 |   8 +-
+> mm/page-writeback.c                         |  72 ++--
+> mm/page_io.c                                |   4 +-
+> mm/swap.c                                   |  18 +-
+> mm/swapfile.c                               |   8 +-
+> mm/util.c                                   |  59 ++--
+> 26 files changed, 1374 insertions(+), 553 deletions(-)
+> create mode 100644 mm/folio-compat.c
+>=20
+> --=20
+> 2.30.2
+>=20
+>=20
+
