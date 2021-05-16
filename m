@@ -2,260 +2,420 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B061381D3A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 May 2021 09:29:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35B9A381F16
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 May 2021 15:22:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233627AbhEPHa6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 May 2021 03:30:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35618 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229807AbhEPHa6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 May 2021 03:30:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1E02561186;
-        Sun, 16 May 2021 07:29:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621150183;
-        bh=+OVDWA7/0Ml7ugiOtMv/uSOFjjO2dGH0xRQLpIVrDKo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eBhIrhYCTFIxc+VLsj8yA1Hoe59pJz4TDDp6gfkIUHKRIu0++Cr5KOBRH7zrVG52p
-         jLfgetdQBPFyGyYlCbhHgrA81HExKP2ocYEBnwzrEhSEVffjHtkoz36MNZWcelhnjr
-         noHKLnAroU/P6toelBVnxQ/nCrteyUNSBeOVQywuuFyCuwJ6KjRHTSSw3C+ibOdCJ3
-         nZMC/S7X0atBwkdwhNBuFLlwXmQxpjArOHlAb4RGnRXLMyIjWStS2eO92iGNxGhb4j
-         AFUJ5pyWh3JLWvb+t/p5OaBJRuDbt8Hej/cPyKYdFGX/8WcxIDRg2v902Yv7qfiYZ0
-         ydk4b7ykNjpwQ==
-Date:   Sun, 16 May 2021 10:29:24 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Hagen Paul Pfeifer <hagen@jauu.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Palmer Dabbelt <palmerdabbelt@google.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-Subject: Re: [PATCH v19 5/8] mm: introduce memfd_secret system call to create
- "secret" memory areas
-Message-ID: <YKDJ1L7XpJRQgSch@kernel.org>
-References: <20210513184734.29317-1-rppt@kernel.org>
- <20210513184734.29317-6-rppt@kernel.org>
- <b625c5d7-bfcc-9e95-1f79-fc8b61498049@redhat.com>
+        id S233749AbhEPNXm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 May 2021 09:23:42 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39075 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233720AbhEPNXl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 16 May 2021 09:23:41 -0400
+Received: from mail-ed1-f72.google.com ([209.85.208.72])
+        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <juerg.haefliger@canonical.com>)
+        id 1liGiw-0001G9-2j
+        for linux-fsdevel@vger.kernel.org; Sun, 16 May 2021 13:22:26 +0000
+Received: by mail-ed1-f72.google.com with SMTP id i19-20020a05640242d3b0290388cea34ed3so2308242edc.15
+        for <linux-fsdevel@vger.kernel.org>; Sun, 16 May 2021 06:22:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TUZHq1LlIrTbAZVDobXbN76FSlqGTNui2ct6NU02wJo=;
+        b=tXUtoZhXD0bgDCxJ8035lhEzafvHuGXV8AVB1OSkeAx/DNP4GAP5cMDMvJ1qEtSwz8
+         BPPQUZOvnqmZttU7Sr7Xu8wuv89suX/BFByc9pUui/tsq4FAPGzSJWGBiO3T1ROurBjm
+         NGikkckcL6zzI2ZGaHo48TsaKTl1piNjKJaFqNSOauUad4SqOpZ25auMnxpM4z8X2ngk
+         12vpfpY70lhH1xG9ywwWoh3sZQXzHtNeplqPfoaonD9YNdyrouBsgdqr872yrN0AMqpo
+         Lo9lhddNF9OfX/qRWO3rnRmhk43l7fk4wNaYevujjmWW4Oq/yy++3t7FkA3VKzsMMfnw
+         2laQ==
+X-Gm-Message-State: AOAM530oEtG6LbjlaZ5vq5px8dPGk3onppIYoDuXZQHwLL9nxIqonjJo
+        No5iBRp30BYyIOhXAbGIK8L0D2zBKCZcY/Rt3ZgS5B6xAZzE74GP5FSDfeoolYreGPcpChUBGAI
+        Ovr0a1vTf+pMMC8pvqJH3KqXdbpAjvnfgdTQwbn6Kb2U=
+X-Received: by 2002:a17:906:b2c1:: with SMTP id cf1mr47188623ejb.544.1621171345455;
+        Sun, 16 May 2021 06:22:25 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwemSH08vKN86fYRji/0gf7FGjjmYQFhv1Tge7BtiRE3+6x/Y5AKDM4p5D+miAtvUmM3VDZVQ==
+X-Received: by 2002:a17:906:b2c1:: with SMTP id cf1mr47188589ejb.544.1621171345102;
+        Sun, 16 May 2021 06:22:25 -0700 (PDT)
+Received: from gollum.fritz.box ([194.191.244.86])
+        by smtp.gmail.com with ESMTPSA id n15sm7126596eje.118.2021.05.16.06.22.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 May 2021 06:22:24 -0700 (PDT)
+From:   Juerg Haefliger <juerg.haefliger@canonical.com>
+X-Google-Original-From: Juerg Haefliger <juergh@canonical.com>
+To:     aaro.koskinen@iki.fi, tony@atomide.com, linux@prisktech.co.nz,
+        davem@davemloft.net, kuba@kernel.org, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, gregkh@linuxfoundation.org,
+        lee.jones@linaro.org, daniel.thompson@linaro.org,
+        jingoohan1@gmail.com, mst@redhat.com, jasowang@redhat.com,
+        zbr@ioremap.net, pablo@netfilter.org, kadlec@netfilter.org,
+        fw@strlen.de, horms@verge.net.au, ja@ssi.bg,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-crypto@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, lvs-devel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Juerg Haefliger <juergh@canonical.com>
+Subject: [PATCH] treewide: Remove leading spaces in Kconfig files
+Date:   Sun, 16 May 2021 15:22:09 +0200
+Message-Id: <20210516132209.59229-1-juergh@canonical.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b625c5d7-bfcc-9e95-1f79-fc8b61498049@redhat.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 14, 2021 at 11:25:43AM +0200, David Hildenbrand wrote:
-> >   #ifdef CONFIG_IA64
-> >   # include <linux/efi.h>
-> > @@ -64,6 +65,9 @@ static inline int valid_mmap_phys_addr_range(unsigned long pfn, size_t size)
-> >   #ifdef CONFIG_STRICT_DEVMEM
-> >   static inline int page_is_allowed(unsigned long pfn)
-> >   {
-> > +	if (pfn_valid(pfn) && page_is_secretmem(pfn_to_page(pfn)))
-> > +		return 0;
-> > +
-> 
-> 1. The memmap might be garbage. You should use pfn_to_online_page() instead.
-> 
-> page = pfn_to_online_page(pfn);
-> if (page && page_is_secretmem(page))
-> 	return 0;
-> 
-> 2. What about !CONFIG_STRICT_DEVMEM?
-> 
-> 3. Someone could map physical memory before a secretmem page gets allocated
-> and read the content after it got allocated and gets used. If someone would
-> gain root privileges and would wait for the target application to (re)start,
-> that could be problematic.
-> 
-> 
-> I do wonder if enforcing CONFIG_STRICT_DEVMEM would be cleaner.
-> devmem_is_allowed() should disallow access to any system ram, and thereby,
-> any possible secretmem pages, avoiding this check completely.
+There are a few occurences of leading spaces before tabs in a couple of
+Kconfig files. Remove them by running the following command:
 
-I've been thinking a bit more about the /dev/mem case, it seems I was to
-fast on the trigger with adding that test for page_is_secretmem().
+  $ find . -name 'Kconfig*' | xargs sed -r -i 's/^[ ]+\t/\t/'
 
-When CONFIG_STRICT_DEVMEM=y the access to RAM is anyway forbidden and if
-the user built a kernel with CONFIG_STRICT_DEVMEM=n all the physical memory
-is accessible by root anyway.
+Signed-off-by: Juerg Haefliger <juergh@canonical.com>
+---
+ arch/arm/mach-omap1/Kconfig     | 12 ++++++------
+ arch/arm/mach-vt8500/Kconfig    |  6 +++---
+ arch/arm/mm/Kconfig             | 10 +++++-----
+ drivers/char/hw_random/Kconfig  |  8 ++++----
+ drivers/net/usb/Kconfig         | 10 +++++-----
+ drivers/net/wan/Kconfig         |  4 ++--
+ drivers/scsi/Kconfig            |  2 +-
+ drivers/uio/Kconfig             |  2 +-
+ drivers/video/backlight/Kconfig | 10 +++++-----
+ drivers/virtio/Kconfig          |  2 +-
+ drivers/w1/masters/Kconfig      |  6 +++---
+ fs/proc/Kconfig                 |  4 ++--
+ init/Kconfig                    |  2 +-
+ net/netfilter/Kconfig           |  2 +-
+ net/netfilter/ipvs/Kconfig      |  2 +-
+ 15 files changed, 41 insertions(+), 41 deletions(-)
 
-We might want to default STRICT_DEVMEM to "y" for all architectures and not
-only arm64, ppc and x86, but this is not strictly related to this series.
+diff --git a/arch/arm/mach-omap1/Kconfig b/arch/arm/mach-omap1/Kconfig
+index 9536b8f3c07d..208c700c2455 100644
+--- a/arch/arm/mach-omap1/Kconfig
++++ b/arch/arm/mach-omap1/Kconfig
+@@ -65,14 +65,14 @@ config MACH_OMAP_INNOVATOR
+ config MACH_OMAP_H2
+ 	bool "TI H2 Support"
+ 	depends on ARCH_OMAP16XX
+-    	help
++	help
+ 	  TI OMAP 1610/1611B H2 board support. Say Y here if you have such
+ 	  a board.
  
-> [...]
-> 
-> > diff --git a/mm/secretmem.c b/mm/secretmem.c
-> > new file mode 100644
-> > index 000000000000..1ae50089adf1
-> > --- /dev/null
-> > +++ b/mm/secretmem.c
-> > @@ -0,0 +1,239 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright IBM Corporation, 2021
-> > + *
-> > + * Author: Mike Rapoport <rppt@linux.ibm.com>
-> > + */
-> > +
-> > +#include <linux/mm.h>
-> > +#include <linux/fs.h>
-> > +#include <linux/swap.h>
-> > +#include <linux/mount.h>
-> > +#include <linux/memfd.h>
-> > +#include <linux/bitops.h>
-> > +#include <linux/printk.h>
-> > +#include <linux/pagemap.h>
-> > +#include <linux/syscalls.h>
-> > +#include <linux/pseudo_fs.h>
-> > +#include <linux/secretmem.h>
-> > +#include <linux/set_memory.h>
-> > +#include <linux/sched/signal.h>
-> > +
-> > +#include <uapi/linux/magic.h>
-> > +
-> > +#include <asm/tlbflush.h>
-> > +
-> > +#include "internal.h"
-> > +
-> > +#undef pr_fmt
-> > +#define pr_fmt(fmt) "secretmem: " fmt
-> > +
-> > +/*
-> > + * Define mode and flag masks to allow validation of the system call
-> > + * parameters.
-> > + */
-> > +#define SECRETMEM_MODE_MASK	(0x0)
-> > +#define SECRETMEM_FLAGS_MASK	SECRETMEM_MODE_MASK
-> > +
-> > +static bool secretmem_enable __ro_after_init;
-> > +module_param_named(enable, secretmem_enable, bool, 0400);
-> > +MODULE_PARM_DESC(secretmem_enable,
-> > +		 "Enable secretmem and memfd_secret(2) system call");
-> > +
-> > +static vm_fault_t secretmem_fault(struct vm_fault *vmf)
-> > +{
-> > +	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
-> > +	struct inode *inode = file_inode(vmf->vma->vm_file);
-> > +	pgoff_t offset = vmf->pgoff;
-> > +	gfp_t gfp = vmf->gfp_mask;
-> > +	unsigned long addr;
-> > +	struct page *page;
-> > +	int err;
-> > +
-> > +	if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
-> > +		return vmf_error(-EINVAL);
-> > +
-> > +retry:
-> > +	page = find_lock_page(mapping, offset);
-> > +	if (!page) {
-> > +		page = alloc_page(gfp | __GFP_ZERO);
-> 
-> We'll end up here with gfp == GFP_HIGHUSER (via the mapping below), correct?
-
-Yes
+ config MACH_OMAP_H3
+ 	bool "TI H3 Support"
+ 	depends on ARCH_OMAP16XX
+-    	help
++	help
+ 	  TI OMAP 1710 H3 board support. Say Y here if you have such
+ 	  a board.
  
-> > +		if (!page)
-> > +			return VM_FAULT_OOM;
-> > +
-> > +		err = set_direct_map_invalid_noflush(page, 1);
-> > +		if (err) {
-> > +			put_page(page);
-> > +			return vmf_error(err);
-> 
-> Would we want to translate that to a proper VM_FAULT_..., which would most
-> probably be VM_FAULT_OOM when we fail to allocate a pagetable?
-
-That's what vmf_error does, it translates -ESOMETHING to VM_FAULT_XYZ.
-
-> > +		}
-> > +
-> > +		__SetPageUptodate(page);
-> > +		err = add_to_page_cache_lru(page, mapping, offset, gfp);
-> > +		if (unlikely(err)) {
-> > +			put_page(page);
-> > +			/*
-> > +			 * If a split of large page was required, it
-> > +			 * already happened when we marked the page invalid
-> > +			 * which guarantees that this call won't fail
-> > +			 */
-> > +			set_direct_map_default_noflush(page, 1);
-> > +			if (err == -EEXIST)
-> > +				goto retry;
-> > +
-> > +			return vmf_error(err);
-> > +		}
-> > +
-> > +		addr = (unsigned long)page_address(page);
-> > +		flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
-> 
-> Hmm, to me it feels like something like that belongs into the
-> set_direct_map_invalid_*() calls? Otherwise it's just very easy to mess up
-> ...
-
-AFAIU set_direct_map() deliberately do not flush TLB and leave it to the
-caller to allow gathering multiple updates of the direct map and doing a
-single TLB flush afterwards.
-
-> I'm certainly not a filesystem guy. Nothing else jumped at me.
-> 
-> 
-> To me, the overall approach makes sense and I consider it an improved
-> mlock() mechanism for storing secrets, although I'd love to have some more
-> information in the log regarding access via root, namely that there are
-> still fancy ways to read secretmem memory once root via
-> 
-> 1. warm reboot attacks especially in VMs (e.g., modifying the cmdline)
-> 2. kexec-style reboot attacks (e.g., modifying the cmdline)
-> 3. kdump attacks
-> 4. kdb most probably
-> 5. "letting the process read the memory for us" via Kees if that still
->    applies
-> 6. ... most probably something else
-> 
-> Just to make people aware that there are still some things to be sorted out
-> when we fully want to protect against privilege escalations.
-> 
-> (maybe this information is buried in the cover letter already, where it
-> usually gets lost)
-
-I believe that it belongs more to the man page than to changelog so that
-the *users* are aware of secretmem limitations.
+@@ -85,14 +85,14 @@ config MACH_HERALD
+ config MACH_OMAP_OSK
+ 	bool "TI OSK Support"
+ 	depends on ARCH_OMAP16XX
+-    	help
++	help
+ 	  TI OMAP 5912 OSK (OMAP Starter Kit) board support. Say Y here
+           if you have such a board.
  
+ config OMAP_OSK_MISTRAL
+ 	bool "Mistral QVGA board Support"
+ 	depends on MACH_OMAP_OSK
+-    	help
++	help
+ 	  The OSK supports an optional add-on board with a Quarter-VGA
+ 	  touchscreen, PDA-ish buttons, a resume button, bicolor LED,
+ 	  and camera connector.  Say Y here if you have this board.
+@@ -100,14 +100,14 @@ config OMAP_OSK_MISTRAL
+ config MACH_OMAP_PERSEUS2
+ 	bool "TI Perseus2"
+ 	depends on ARCH_OMAP730
+-    	help
++	help
+ 	  Support for TI OMAP 730 Perseus2 board. Say Y here if you have such
+ 	  a board.
+ 
+ config MACH_OMAP_FSAMPLE
+ 	bool "TI F-Sample"
+ 	depends on ARCH_OMAP730
+-    	help
++	help
+ 	  Support for TI OMAP 850 F-Sample board. Say Y here if you have such
+ 	  a board.
+ 
+diff --git a/arch/arm/mach-vt8500/Kconfig b/arch/arm/mach-vt8500/Kconfig
+index d01cdd9ad9c7..408e405ae568 100644
+--- a/arch/arm/mach-vt8500/Kconfig
++++ b/arch/arm/mach-vt8500/Kconfig
+@@ -9,9 +9,9 @@ config ARCH_VT8500
+ 
+ config ARCH_WM8505
+ 	bool "VIA/Wondermedia 85xx and WM8650"
+- 	depends on ARCH_MULTI_V5
+- 	select ARCH_VT8500
+- 	select CPU_ARM926T
++	depends on ARCH_MULTI_V5
++	select ARCH_VT8500
++	select CPU_ARM926T
+ 
+ config ARCH_WM8750
+ 	bool "WonderMedia WM8750"
+diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
+index 35f43d0aa056..7a4a04bafa92 100644
+--- a/arch/arm/mm/Kconfig
++++ b/arch/arm/mm/Kconfig
+@@ -123,13 +123,13 @@ config CPU_ARM925T
+ 	select CPU_PABRT_LEGACY
+ 	select CPU_THUMB_CAPABLE
+ 	select CPU_TLB_V4WBI if MMU
+- 	help
+- 	  The ARM925T is a mix between the ARM920T and ARM926T, but with
++	help
++	  The ARM925T is a mix between the ARM920T and ARM926T, but with
+ 	  different instruction and data caches. It is used in TI's OMAP
+- 	  device family.
++	  device family.
+ 
+- 	  Say Y if you want support for the ARM925T processor.
+- 	  Otherwise, say N.
++	  Say Y if you want support for the ARM925T processor.
++	  Otherwise, say N.
+ 
+ # ARM926T
+ config CPU_ARM926T
+diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+index 1fe006f3f12f..0e1e97680f08 100644
+--- a/drivers/char/hw_random/Kconfig
++++ b/drivers/char/hw_random/Kconfig
+@@ -168,14 +168,14 @@ config HW_RANDOM_OMAP
+ 	depends on ARCH_OMAP16XX || ARCH_OMAP2PLUS || ARCH_MVEBU
+ 	default HW_RANDOM
+ 	help
+- 	  This driver provides kernel-side support for the Random Number
++	  This driver provides kernel-side support for the Random Number
+ 	  Generator hardware found on OMAP16xx, OMAP2/3/4/5, AM33xx/AM43xx
+ 	  multimedia processors, and Marvell Armada 7k/8k SoCs.
+ 
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called omap-rng.
+ 
+- 	  If unsure, say Y.
++	  If unsure, say Y.
+ 
+ config HW_RANDOM_OMAP3_ROM
+ 	tristate "OMAP3 ROM Random Number Generator support"
+@@ -485,13 +485,13 @@ config HW_RANDOM_NPCM
+ 	depends on ARCH_NPCM || COMPILE_TEST
+ 	default HW_RANDOM
+ 	help
+- 	  This driver provides support for the Random Number
++	  This driver provides support for the Random Number
+ 	  Generator hardware available in Nuvoton NPCM SoCs.
+ 
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called npcm-rng.
+ 
+- 	  If unsure, say Y.
++	  If unsure, say Y.
+ 
+ config HW_RANDOM_KEYSTONE
+ 	depends on ARCH_KEYSTONE || COMPILE_TEST
+diff --git a/drivers/net/usb/Kconfig b/drivers/net/usb/Kconfig
+index fbbe78643631..179308782888 100644
+--- a/drivers/net/usb/Kconfig
++++ b/drivers/net/usb/Kconfig
+@@ -169,7 +169,7 @@ config USB_NET_AX8817X
+ 	  This option adds support for ASIX AX88xxx based USB 2.0
+ 	  10/100 Ethernet adapters.
+ 
+- 	  This driver should work with at least the following devices:
++	  This driver should work with at least the following devices:
+ 	    * Aten UC210T
+ 	    * ASIX AX88172
+ 	    * Billionton Systems, USB2AR
+@@ -220,13 +220,13 @@ config USB_NET_CDCETHER
+ 	  CDC Ethernet is an implementation option for DOCSIS cable modems
+ 	  that support USB connectivity, used for non-Microsoft USB hosts.
+ 	  The Linux-USB CDC Ethernet Gadget driver is an open implementation.
+- 	  This driver should work with at least the following devices:
++	  This driver should work with at least the following devices:
+ 
+ 	    * Dell Wireless 5530 HSPA
+- 	    * Ericsson PipeRider (all variants)
++	    * Ericsson PipeRider (all variants)
+ 	    * Ericsson Mobile Broadband Module (all variants)
+- 	    * Motorola (DM100 and SB4100)
+- 	    * Broadcom Cable Modem (reference design)
++	    * Motorola (DM100 and SB4100)
++	    * Broadcom Cable Modem (reference design)
+ 	    * Toshiba (PCX1100U and F3507g/F3607gw)
+ 	    * ...
+ 
+diff --git a/drivers/net/wan/Kconfig b/drivers/net/wan/Kconfig
+index 83c9481995dd..473df2505c8e 100644
+--- a/drivers/net/wan/Kconfig
++++ b/drivers/net/wan/Kconfig
+@@ -49,7 +49,7 @@ config COSA
+ 	  network device.
+ 
+ 	  You will need user-space utilities COSA or SRP boards for downloading
+- 	  the firmware to the cards and to set them up. Look at the
++	  the firmware to the cards and to set them up. Look at the
+ 	  <http://www.fi.muni.cz/~kas/cosa/> for more information. You can also
+ 	  read the comment at the top of the <file:drivers/net/wan/cosa.c> for
+ 	  details about the cards and the driver itself.
+@@ -108,7 +108,7 @@ config HDLC
+ 	  Generic HDLC driver currently supports raw HDLC, Cisco HDLC, Frame
+ 	  Relay, synchronous Point-to-Point Protocol (PPP) and X.25.
+ 
+- 	  To compile this driver as a module, choose M here: the
++	  To compile this driver as a module, choose M here: the
+ 	  module will be called hdlc.
+ 
+ 	  If unsure, say N.
+diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+index 3d114be5b662..c5612896cdb9 100644
+--- a/drivers/scsi/Kconfig
++++ b/drivers/scsi/Kconfig
+@@ -311,7 +311,7 @@ source "drivers/scsi/cxlflash/Kconfig"
+ config SGIWD93_SCSI
+ 	tristate "SGI WD93C93 SCSI Driver"
+ 	depends on SGI_HAS_WD93 && SCSI
+-  	help
++	help
+ 	  If you have a Western Digital WD93 SCSI controller on
+ 	  an SGI MIPS system, say Y.  Otherwise, say N.
+ 
+diff --git a/drivers/uio/Kconfig b/drivers/uio/Kconfig
+index 5531f3afeb21..2e16c5338e5b 100644
+--- a/drivers/uio/Kconfig
++++ b/drivers/uio/Kconfig
+@@ -18,7 +18,7 @@ config UIO_CIF
+ 	depends on PCI
+ 	help
+ 	  Driver for Hilscher CIF DeviceNet and Profibus cards.  This
+-  	  driver requires a userspace component called cif that handles
++	  driver requires a userspace component called cif that handles
+ 	  all of the heavy lifting and can be found at:
+ 	        <http://www.osadl.org/projects/downloads/UIO/user/>
+ 
+diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+index d83c87b902c1..a967974f6cd6 100644
+--- a/drivers/video/backlight/Kconfig
++++ b/drivers/video/backlight/Kconfig
+@@ -129,11 +129,11 @@ config LCD_HX8357
+ 	  driver.
+ 
+   config LCD_OTM3225A
+-  	tristate "ORISE Technology OTM3225A support"
+-  	depends on SPI
+-  	help
+-  	  If you have a panel based on the OTM3225A controller
+-  	  chip then say y to include a driver for it.
++	tristate "ORISE Technology OTM3225A support"
++	depends on SPI
++	help
++	  If you have a panel based on the OTM3225A controller
++	  chip then say y to include a driver for it.
+ 
+ endif # LCD_CLASS_DEVICE
+ 
+diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
+index ce1b3f6ec325..3b3644d60d11 100644
+--- a/drivers/virtio/Kconfig
++++ b/drivers/virtio/Kconfig
+@@ -128,7 +128,7 @@ config VIRTIO_MMIO
+ 	 This drivers provides support for memory mapped virtio
+ 	 platform device driver.
+ 
+- 	 If unsure, say N.
++	 If unsure, say N.
+ 
+ config VIRTIO_MMIO_CMDLINE_DEVICES
+ 	bool "Memory mapped virtio devices parameter parsing"
+diff --git a/drivers/w1/masters/Kconfig b/drivers/w1/masters/Kconfig
+index 24b9a8e05f64..32e993ea6f96 100644
+--- a/drivers/w1/masters/Kconfig
++++ b/drivers/w1/masters/Kconfig
+@@ -17,12 +17,12 @@ config W1_MASTER_MATROX
+ 
+ config W1_MASTER_DS2490
+ 	tristate "DS2490 USB <-> W1 transport layer for 1-wire"
+-  	depends on USB
+-  	help
++	depends on USB
++	help
+ 	  Say Y here if you want to have a driver for DS2490 based USB <-> W1 bridges,
+ 	  for example DS9490*.
+ 
+-  	  This support is also available as a module.  If so, the module
++	  This support is also available as a module.  If so, the module
+ 	  will be called ds2490.
+ 
+ config W1_MASTER_DS2482
+diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
+index c930001056f9..e8410a99a0ca 100644
+--- a/fs/proc/Kconfig
++++ b/fs/proc/Kconfig
+@@ -81,10 +81,10 @@ config PROC_SYSCTL
+ 	  limited in memory.
+ 
+ config PROC_PAGE_MONITOR
+- 	default y
++	default y
+ 	depends on PROC_FS && MMU
+ 	bool "Enable /proc page monitoring" if EXPERT
+- 	help
++	help
+ 	  Various /proc files exist to monitor process memory utilization:
+ 	  /proc/pid/smaps, /proc/pid/clear_refs, /proc/pid/pagemap,
+ 	  /proc/kpagecount, and /proc/kpageflags. Disabling these
+diff --git a/init/Kconfig b/init/Kconfig
+index 1ea12c64e4c9..9f1cde503739 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -2149,7 +2149,7 @@ config MODULE_SRCVERSION_ALL
+ 	help
+ 	  Modules which contain a MODULE_VERSION get an extra "srcversion"
+ 	  field inserted into their modinfo section, which contains a
+-    	  sum of the source files which made it.  This helps maintainers
++	  sum of the source files which made it.  This helps maintainers
+ 	  see exactly which source was used to build a module (since
+ 	  others sometimes change the module source without updating
+ 	  the version).  With this option, such a "srcversion" field
+diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
+index 56a2531a3402..172d74560632 100644
+--- a/net/netfilter/Kconfig
++++ b/net/netfilter/Kconfig
+@@ -816,7 +816,7 @@ config NETFILTER_XT_TARGET_CLASSIFY
+ 	  the priority of a packet. Some qdiscs can use this value for
+ 	  classification, among these are:
+ 
+-  	  atm, cbq, dsmark, pfifo_fast, htb, prio
++	  atm, cbq, dsmark, pfifo_fast, htb, prio
+ 
+ 	  To compile it as a module, choose M here.  If unsure, say N.
+ 
+diff --git a/net/netfilter/ipvs/Kconfig b/net/netfilter/ipvs/Kconfig
+index d61886874940..271da8447b29 100644
+--- a/net/netfilter/ipvs/Kconfig
++++ b/net/netfilter/ipvs/Kconfig
+@@ -318,7 +318,7 @@ config IP_VS_MH_TAB_INDEX
+ comment 'IPVS application helper'
+ 
+ config	IP_VS_FTP
+-  	tristate "FTP protocol helper"
++	tristate "FTP protocol helper"
+ 	depends on IP_VS_PROTO_TCP && NF_CONNTRACK && NF_NAT && \
+ 		NF_CONNTRACK_FTP
+ 	select IP_VS_NFCT
 -- 
-Sincerely yours,
-Mike.
+2.27.0
+
