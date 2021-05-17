@@ -2,187 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85EC63824C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 08:50:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19FF8382543
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 09:23:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230123AbhEQGwH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 May 2021 02:52:07 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2987 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbhEQGwH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 May 2021 02:52:07 -0400
-Received: from dggems706-chm.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Fk8nh1vd7zQpLV;
-        Mon, 17 May 2021 14:47:20 +0800 (CST)
-Received: from dggema766-chm.china.huawei.com (10.1.198.208) by
- dggems706-chm.china.huawei.com (10.3.19.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2176.2; Mon, 17 May 2021 14:50:45 +0800
-Received: from [10.174.177.210] (10.174.177.210) by
- dggema766-chm.china.huawei.com (10.1.198.208) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Mon, 17 May 2021 14:50:45 +0800
-Subject: Re: [PATCH] mm/memory-failure: make sure wait for page writeback in
- memory_failure
-To:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>
-CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "tytso@mit.edu" <tytso@mit.edu>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
-        "yukuai3@huawei.com" <yukuai3@huawei.com>,
-        "houtao1@huawei.com" <houtao1@huawei.com>,
-        "yebin10@huawei.com" <yebin10@huawei.com>
-References: <20210511070329.2002597-1-yangerkun@huawei.com>
- <20210514052154.GB983377@hori.linux.bs1.fc.nec.co.jp>
-From:   yangerkun <yangerkun@huawei.com>
-Message-ID: <eff9f990-5229-f1cd-5014-0f6e4e81cba2@huawei.com>
-Date:   Mon, 17 May 2021 14:50:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S235239AbhEQHY5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 May 2021 03:24:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54224 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230339AbhEQHYn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 May 2021 03:24:43 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5E2C3611BF;
+        Mon, 17 May 2021 07:23:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621236207;
+        bh=amReGMStusi8xn7FAECc6Whc3fPD7LuG3b6+xADdY7M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tdRnG7f8obysw+K28IshiY9r+18IQ1tTvDIIZzARqpPv8mn+ML38PW74E0CX/ofM1
+         lH6pTkkY5oaht2o74BmWs/L5cRTvCHKxgeuP4jlFuWVFCF97iHrjOxSm63DzM1+DLM
+         1Lt2mIb6RklOXBbNwT8EFBOEFDI0quAKtHVOhSk40zR+fT+bXp9P4dQI/i7dt6KsqW
+         i1EeofYd4+AfTy3Bm/k+ha4JFLM3skrOayJ1PRDU9e6OwKoW/gcpiHeHcQCbsChuuw
+         eqw8dBOD6kfdNYVMzKFpdKGTDDpXVdsVBQ+yiaI5bgEAr6nOfPYGv21bcodQb5kVaQ
+         lUziwbXpWVN1w==
+Date:   Mon, 17 May 2021 10:23:09 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Hagen Paul Pfeifer <hagen@jauu.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Palmer Dabbelt <palmerdabbelt@google.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        Yury Norov <yury.norov@gmail.com>, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+Subject: Re: [PATCH v19 5/8] mm: introduce memfd_secret system call to create
+ "secret" memory areas
+Message-ID: <YKIZ3Zfai00A2O15@kernel.org>
+References: <20210513184734.29317-1-rppt@kernel.org>
+ <20210513184734.29317-6-rppt@kernel.org>
+ <ea1ddcfa-f52d-9a7d-cb7b-8502b38a90da@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20210514052154.GB983377@hori.linux.bs1.fc.nec.co.jp>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.177.210]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggema766-chm.china.huawei.com (10.1.198.208)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea1ddcfa-f52d-9a7d-cb7b-8502b38a90da@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-在 2021/5/14 13:21, HORIGUCHI NAOYA(堀口 直也) 写道:
-> On Tue, May 11, 2021 at 03:03:29PM +0800, yangerkun wrote:
->> Our syzkaller trigger the "BUG_ON(!list_empty(&inode->i_wb_list))" in
->> clear_inode:
->>
->> [  292.016156] ------------[ cut here ]------------
->> [  292.017144] kernel BUG at fs/inode.c:519!
->> [  292.017860] Internal error: Oops - BUG: 0 [#1] SMP
->> [  292.018741] Dumping ftrace buffer:
->> [  292.019577]    (ftrace buffer empty)
->> [  292.020430] Modules linked in:
->> [  292.021748] Process syz-executor.0 (pid: 249, stack limit =
->> 0x00000000a12409d7)
->> [  292.023719] CPU: 1 PID: 249 Comm: syz-executor.0 Not tainted 4.19.95
->> [  292.025206] Hardware name: linux,dummy-virt (DT)
->> [  292.026176] pstate: 80000005 (Nzcv daif -PAN -UAO)
->> [  292.027244] pc : clear_inode+0x280/0x2a8
->> [  292.028045] lr : clear_inode+0x280/0x2a8
->> [  292.028877] sp : ffff8003366c7950
->> [  292.029582] x29: ffff8003366c7950 x28: 0000000000000000
->> [  292.030570] x27: ffff80032b5f4708 x26: ffff80032b5f4678
->> [  292.031863] x25: ffff80036ae6b300 x24: ffff8003689254d0
->> [  292.032902] x23: ffff80036ae69d80 x22: 0000000000033cc8
->> [  292.033928] x21: 0000000000000000 x20: ffff80032b5f47a0
->> [  292.034941] x19: ffff80032b5f4678 x18: 0000000000000000
->> [  292.035958] x17: 0000000000000000 x16: 0000000000000000
->> [  292.037102] x15: 0000000000000000 x14: 0000000000000000
->> [  292.038103] x13: 0000000000000004 x12: 0000000000000000
->> [  292.039137] x11: 1ffff00066cd8f52 x10: 1ffff00066cd8ec8
->> [  292.040216] x9 : dfff200000000000 x8 : ffff10006ac1e86a
->> [  292.041432] x7 : dfff200000000000 x6 : ffff100066cd8f1e
->> [  292.042516] x5 : dfff200000000000 x4 : ffff80032b5f47a0
->> [  292.043525] x3 : ffff200008000000 x2 : ffff200009867000
->> [  292.044560] x1 : ffff8003366bb000 x0 : 0000000000000000
->> [  292.045569] Call trace:
->> [  292.046083]  clear_inode+0x280/0x2a8
->> [  292.046828]  ext4_clear_inode+0x38/0xe8
->> [  292.047593]  ext4_free_inode+0x130/0xc68
->> [  292.048383]  ext4_evict_inode+0xb20/0xcb8
->> [  292.049162]  evict+0x1a8/0x3c0
->> [  292.049761]  iput+0x344/0x460
->> [  292.050350]  do_unlinkat+0x260/0x410
->> [  292.051042]  __arm64_sys_unlinkat+0x6c/0xc0
->> [  292.051846]  el0_svc_common+0xdc/0x3b0
->> [  292.052570]  el0_svc_handler+0xf8/0x160
->> [  292.053303]  el0_svc+0x10/0x218
->> [  292.053908] Code: 9413f4a9 d503201f f90017b6 97f4d5b1 (d4210000)
->> [  292.055471] ---[ end trace 01b339dd07795f8d ]---
->> [  292.056443] Kernel panic - not syncing: Fatal exception
->> [  292.057488] SMP: stopping secondary CPUs
->> [  292.058419] Dumping ftrace buffer:
->> [  292.059078]    (ftrace buffer empty)
->> [  292.059756] Kernel Offset: disabled
->> [  292.060443] CPU features: 0x10,a1006000
->> [  292.061195] Memory Limit: none
->> [  292.061794] Rebooting in 86400 seconds..
->>
->> Crash of this problem show that someone call __munlock_pagevec to clear
->> page LRU.
->>
->>   #0 [ffff80035f02f4c0] __switch_to at ffff20000808d020
->>   #1 [ffff80035f02f4f0] __schedule at ffff20000985102c
->>   #2 [ffff80035f02f5e0] schedule at ffff200009851d1c
->>   #3 [ffff80035f02f600] io_schedule at ffff2000098525c0
->>   #4 [ffff80035f02f620] __lock_page at ffff20000842d2d4
->>   #5 [ffff80035f02f710] __munlock_pagevec at ffff2000084c4600
->>   #6 [ffff80035f02f870] munlock_vma_pages_range at ffff2000084c5928
->>   #7 [ffff80035f02fa60] do_munmap at ffff2000084cbdf4
->>   #8 [ffff80035f02faf0] mmap_region at ffff2000084ce20c
->>   #9 [ffff80035f02fb90] do_mmap at ffff2000084cf018
->>
->> So memory_failure will call identify_page_state without
->> wait_on_page_writeback. And after generic_truncate_error_page clear the
->> mapping of this page. end_page_writeback won't call
->> sb_clear_inode_writeback to clear inode->i_wb_list. That will trigger
->> BUG_ON in clear_inode!
->>
->> Fix it by move the wait_on_page_writeback before check of LRU.
->>
->> Signed-off-by: yangerkun <yangerkun@huawei.com>
+On Fri, May 14, 2021 at 10:50:55AM +0200, David Hildenbrand wrote:
+> On 13.05.21 20:47, Mike Rapoport wrote:
+> > From: Mike Rapoport <rppt@linux.ibm.com>
+> > 
+> > Removing of the pages from the direct map may cause its fragmentation
+> > on architectures that use large pages to map the physical memory
+> > which affects the system performance. However, the original Kconfig
+> > text for CONFIG_DIRECT_GBPAGES said that gigabyte pages in the direct
+> > map "... can improve the kernel's performance a tiny bit ..." (commit
+> > 00d1c5e05736 ("x86: add gbpages switches")) and the recent report [1]
+> > showed that "... although 1G mappings are a good default choice,
+> > there is no compelling evidence that it must be the only choice".
+> > Hence, it is sufficient to have secretmem disabled by default with
+> > the ability of a system administrator to enable it at boot time.
 > 
-> The if-block of "goto identify_page_state" was introduced by commit
-> 0bc1f8b0682c ("hwpoison: fix the handling path of the victimized page frame
-> that belong to non-LRU"), and maybe the issue got visible on commit
-> 6c60d2b5746c ("fs/fs-writeback.c: add a new writeback list for sync"),
-> which added inode->i_wb_list.
-> So you can add Fixes tag for either commit (maybe 0bc1f8b0682c?).
+> Maybe add a link to the Intel performance evaluation.
+ 
+" ... the recent report [1]" and the link below.
+ 
+> > Pages in the secretmem regions are unevictable and unmovable to
+> > avoid accidental exposure of the sensitive data via swap or during
+> > page migration.
+ 
+...
 
-Thanks for your advise, I think we'd better add Fixes tag with 
-0bc1f8b0682c ("hwpoison: fix the handling path of the victimized page 
-frame that belong to non-LRU").
-
-Thanks,
-Kun.
-
+> > A page that was a part of the secret memory area is cleared when it
+> > is freed to ensure the data is not exposed to the next user of that
+> > page.
 > 
-> Thanks,
-> Naoya Horiguchi
+> You could skip that with init_on_free (and eventually also with
+> init_on_alloc) set to avoid double clearing.
+
+Right, but for now I'd prefer to keep this explicit in the secretmem
+implementation. We may add the check for init_on_free/init_on_alloc later
+on.
+
+
+> > [1]
+> > https://lore.kernel.org/linux-mm/213b4567-46ce-f116-9cdf-bbd0c884eb3c@linux.intel.com/
 > 
->> ---
->>   mm/memory-failure.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->> index bd3945446d47..9870a22800d9 100644
->> --- a/mm/memory-failure.c
->> +++ b/mm/memory-failure.c
->> @@ -1527,15 +1527,15 @@ int memory_failure(unsigned long pfn, int flags)
->>   		return 0;
->>   	}
->>   
->> -	if (!PageTransTail(p) && !PageLRU(p))
->> -		goto identify_page_state;
->> -
->>   	/*
->>   	 * It's very difficult to mess with pages currently under IO
->>   	 * and in many cases impossible, so we just avoid it here.
->>   	 */
->>   	wait_on_page_writeback(p);
->>   
->> +	if (!PageTransTail(p) && !PageLRU(p))
->> +		goto identify_page_state;
->> +
->>   	/*
->>   	 * Now take care of user space mappings.
->>   	 * Abort on fail: __delete_from_page_cache() assumes unmapped page.
->> -- 
->> 2.25.4
+
+-- 
+Sincerely yours,
+Mike.
