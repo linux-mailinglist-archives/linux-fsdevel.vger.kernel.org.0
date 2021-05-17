@@ -2,193 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E84D3820A3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 May 2021 21:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B44F38228B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 03:32:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232372AbhEPT2f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 May 2021 15:28:35 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:55328 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231226AbhEPT2e (ORCPT
+        id S232838AbhEQBd2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 May 2021 21:33:28 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:53663 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229479AbhEQBd2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 May 2021 15:28:34 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14GJQ8K1052773;
-        Sun, 16 May 2021 19:26:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2020-01-29;
- bh=KAT6NGycxYOfiaNAX6x5KFUGdtH/F3Fae/yVXYyNwys=;
- b=ruIhK0fXGfCgGyOU3QFYRNmkFdZp9hYBMqPSSWRxIoK1mF5nctK7oy5H86yzg0B3aELf
- RgS1tLnsdja8sU3VJR5T/6AIOYfE+wy9MNJWCE5AwylTP/3D0HX3Z/Yol+IOkiwr7djS
- E8oYoYY7XZ8/++/5sOPPQaHegMhYvGc/TR2FsAUomzfrUxQGFwcbIbgavpJHFhy885vo
- CKYHN1MG24w2KcbasAtSOHArPBGP5jnN/7B3a2zlrlOLlcd7Tpxg6LWYpIgWb2h3d9jb
- +BB5RgKTSB6JoFUSnfN7Cs4LfXkHxZtnUv/KmWm/1XYsqPOIT/XH62fxGCZqXwPm9B+x AQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 38j68m9kfx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 16 May 2021 19:26:56 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14GJKxsN070951;
-        Sun, 16 May 2021 19:26:56 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2177.outbound.protection.outlook.com [104.47.55.177])
-        by aserp3020.oracle.com with ESMTP id 38j643kdj4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 16 May 2021 19:26:56 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VUSiKO6wXrBaz6SUv55d6R0n7DoL46VsQWpWktla7sytyGpAkAdre3cBFPTDus9PAjP+qz+OfRoNN/BE/NgyYXx0Byk8ZwA1ojJnzMLo6Veh+xzQEu/vo1dEWc7rRCbAgDgx7sgMtdeKR1H9SL45wJmlj/ruLZbFPG/pqdQFEHzPUD7cyEP0B/6hjFcYHWec1y6jfvz7bPiZfAy9yUeecqLWqZj+dDyKMzVLm7qh7DgrffuIPv+69k690dpV0++3VsXqJ0sv5EP8ucRhx9TzhoXI/levE72QEe6AvMpcUUytb4TZooXeGj6X5wnMHZWSdHdpPpX/xG1BQEX5PaF+BA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KAT6NGycxYOfiaNAX6x5KFUGdtH/F3Fae/yVXYyNwys=;
- b=giN12Sf49SWDjFr+nI/o7/N2PPAg9Cpwg9UlpVLDaZCYAnFqnOSNgnD4Nu3g0wtKC6L2fuWM4/Pp6hL74vnqiim3D7+gvW6DJdCgTyKpZayKWpEbMJ+Ewfc4ZNwS67DmmKtGzPrfLVu0TkrxtxvcoN32taueXAg+//2h6hJZ7yO4s/OjmSYHlVWypjVdGoHcc5C94rOyCNPTv5xrHxPTUCObi29ZnSkGqhb/vo9/+ISKelfRATX6WR2xKjcvpuAu7jF75Psj82+coV2FU/PDKOq2f5S3IorS6XmLeZ7/94PxUYvFCZAAKQYgVN8FS95rOU6Re2sDBmSXHJ06k+92dg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KAT6NGycxYOfiaNAX6x5KFUGdtH/F3Fae/yVXYyNwys=;
- b=EPIWY7ZYBuF4W67cRCr/uOMIwbpjwpqukxzTMWenYt7oClmrAR+QyZhEApp6m0Cs9/n7uPx2NxEHIZnaXrskPd47ZViQ3b03aWIA1dubDZBt6YXRntOdev5/+7k8l1ou6NQlDBQjv7B36BA4I0e3GAVOU9iMOtbkQzmG/zQbT4U=
-Received: from CY4PR1001MB2357.namprd10.prod.outlook.com
- (2603:10b6:910:42::14) by CY4PR10MB1448.namprd10.prod.outlook.com
- (2603:10b6:903:27::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4129.28; Sun, 16 May
- 2021 19:26:54 +0000
-Received: from CY4PR1001MB2357.namprd10.prod.outlook.com
- ([fe80::6988:8f21:a040:d581]) by CY4PR1001MB2357.namprd10.prod.outlook.com
- ([fe80::6988:8f21:a040:d581%7]) with mapi id 15.20.4129.031; Sun, 16 May 2021
- 19:26:53 +0000
-From:   William Kucharski <william.kucharski@oracle.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH v10 01/33] mm: Introduce struct folio
-Thread-Topic: [PATCH v10 01/33] mm: Introduce struct folio
-Thread-Index: AQHXRq9z5MmwRAsVWkK5UfPtNlIVHarkZDYAgACcKYCAAYUcgA==
-Date:   Sun, 16 May 2021 19:26:53 +0000
-Message-ID: <506810BF-1A80-4BAB-9266-58764E8AFA44@oracle.com>
-References: <20210511214735.1836149-1-willy@infradead.org>
- <20210511214735.1836149-2-willy@infradead.org>
- <0FF7A37F-80A8-4B49-909D-6234ADA8A25C@oracle.com>
- <YKArlVbtkJo3l1Rz@casper.infradead.org>
-In-Reply-To: <YKArlVbtkJo3l1Rz@casper.infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3654.100.0.2.22)
-authentication-results: infradead.org; dkim=none (message not signed)
- header.d=none;infradead.org; dmarc=none action=none header.from=oracle.com;
-x-originating-ip: [2601:285:8200:4089:7db0:44e8:d52e:a5b1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a5077c75-4589-4dd7-1f39-08d918a08ffc
-x-ms-traffictypediagnostic: CY4PR10MB1448:
-x-microsoft-antispam-prvs: <CY4PR10MB14487DD5FDA087EB170CE6DF812E9@CY4PR10MB1448.namprd10.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: mo99PWbgmlg1hOA6knbdIqA1hBRInUkWh+bnCbFHxOJnyj0Us+TGK2/zv7wCiv/X/TpNfCQ34IoUdrhLKsn57kjaePIXeIjMCyqILZwD4EQUwlp9TR9sVf/uLIwmQEKs+bxR81yylHVkQjSxnk1YhLHqVtndjIgJs9W8IQcP94vci3erGTVCp9hf89MO1eXTWQhS6fqbnwABDTThSMA1UHBBS/W63fApM9MwlNA3PTyeVlQEBBvG3x6mV0uE/qcX0dqLFALzmDVThZb1duqH5alh7YmdBbfYUG8jel/s7GNrwu+hiJyFn2L5SFI4S88mkdSJ6rKPEQAFR+PvK9pis7TXWpTlmlzk6/55tinxl3by1TfAFjWW/Z8L3y31O69wYR0sOVGRS2i0x8F6CMn8HOlaO5N9iInrtl7mAqJZeOzwiLBUU4regIQ6eFdi5Wt+PIROrzbtlfBpAD91H4V31JjjBeSXG13lmawTZ3unEEWWMfVe1PMQOst/16Fk/L3ZAd4YOp2RKw9EsC7cfZOZ1kU/L55orZAKI69mxW+hbewatH/FQU/BL8Xc9s9JieaF4S/YqAfRQ8E6JkboJJmfrVJ5P3hW87HDSZX50jcF34KAD0xGYVdyoP26/Ol7gAPx5qeHkvi2Ct5cvAn39sZn4A==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR1001MB2357.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(346002)(136003)(39860400002)(396003)(366004)(86362001)(6512007)(2616005)(122000001)(38100700002)(53546011)(64756008)(186003)(71200400001)(2906002)(6916009)(66476007)(66556008)(66446008)(8676002)(6506007)(66946007)(54906003)(44832011)(76116006)(478600001)(5660300002)(8936002)(4326008)(36756003)(6486002)(33656002)(316002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?YGjYBMepRxSKqHrBC7Sk3kBNpXYnW6NuH7/6MYocLHdRRI2SAwm9bgDdD+WE?=
- =?us-ascii?Q?EvwDfRI2EeF5JCyni+vxAtvIkZA5BG8l0rJDPvUprP25Apt9TFWA06v4Ykck?=
- =?us-ascii?Q?ub+in/1fBQ3j5KQjNvIQBtSD3B8PUmAJ4ATWygtvINjzntKhBfJci/08m6lK?=
- =?us-ascii?Q?smovY9CqdIOgSsTE2GvL3TSa6VK3gyhsAr/Zc2sKdWA9PBBgGiLLx+U88jsx?=
- =?us-ascii?Q?CfzcGQU5lBrnaS1s1wXkCOUEPTBXMNxXxCLz9n9YtkPMjX2wJny668S33P+F?=
- =?us-ascii?Q?ZVpZ197eA7VUkJbSzhfWp65LeIT44Ug6pQ97qrZeP6WrOquY5gsltdSkdwHs?=
- =?us-ascii?Q?MsZ7lUIjHHitGZ6EguxyFDiB3vwzMNWrAGFzuVZR+IdMGLrOMP+rh6axNtAc?=
- =?us-ascii?Q?xl6wUS3xWcQC2C9zrL9qTR26KWVPvT2fFh7GbrdQNIZdpY49ZjujaZ9JkZuL?=
- =?us-ascii?Q?Y+1QzprZ+NiGnPF+V6p89miKe8sCTtCOxrpw2wrbd0RVOEI7c67lD4yHn6/F?=
- =?us-ascii?Q?Fwuwu0J1ld2L7aTHTbQmEaHBY95UYPAUIRKJsjHEr5O6qZUECQzKuLfi7Ecy?=
- =?us-ascii?Q?x98VGsn7xaof8ujk88HPpvcWJ/peLs7NidI4zwETjVCHkGZ2/F0ena5VKSyv?=
- =?us-ascii?Q?ALoSxmmCHrr18qD45OyEo1Py//PoO0Y4F6sNURlkk//7xZA/pDRPMwL3Qw0C?=
- =?us-ascii?Q?1i3uD6kzQH5IOBL3M6rhLjPTeU8i71nWbe28WLWtCj0YEx0d3MrCA4/RYzih?=
- =?us-ascii?Q?abheFuE8krtEBllw9g7UzJy3udM241vx9pnaUSV/kyMzW6bXgO+muJUYDee3?=
- =?us-ascii?Q?lzek5AM48blUPPh+Zbh1SWTKdo79E6yRpe3C6+11CzYQQwaBx9iH6NCWepIg?=
- =?us-ascii?Q?UidZpcJerITY++5RL1oMa+mwosPRM4J5Vcq2NWFZBM7RS196O6+l3vG22MnD?=
- =?us-ascii?Q?/W1F8CfifhmvpIcbkdT3YyAWs1ZSetQuKqrEl9fghVOyvOPdGwyjMzG4cLzD?=
- =?us-ascii?Q?h4bswydmfmhBTJYPFmev5mUQcBKwAU6cm4Qc215af+sa+/wUiMogffjSB2aI?=
- =?us-ascii?Q?DxJjPSv9xOhUKdU2PBdMihKXtLnjOiYEHa/4Llt61gz6yNbFthhlyl5pkksF?=
- =?us-ascii?Q?aAu6siPEMFaRgn/xFGCOAelDER/ctZlJzSVYixWieuv8F4Vq6g9XDw/As7F3?=
- =?us-ascii?Q?8QirWw9mi2/eD9yrZpOhvb1Dtb1XknhPm5b7ElTQxDIfoMswsPGKccwgaiKn?=
- =?us-ascii?Q?+TqnXDUcogjUqHlB0yMfa/aHuv3diTSC9BwScYow0OmGgCc7OmU6CB9mURS7?=
- =?us-ascii?Q?kCv1TIX6VtHdn4n2ukeyXLRKV7ZIzkZobYgOaFHjdoUJP6oGYbq0tKBroEP6?=
- =?us-ascii?Q?bRqSWKP4t4ZFniqHE3NStfLGf3B1?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4C1C511A6F3A50489E1D2E0C4F08ECF1@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Sun, 16 May 2021 21:33:28 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 45F5F5805EE;
+        Sun, 16 May 2021 21:32:12 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Sun, 16 May 2021 21:32:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        cxZjKmHMz/D7TD+kHqFRoA9O3quyMMGlHAotgmFEv54=; b=wMwnNrN5q9I/yaK4
+        gdjJkOIdJPg6y6QKtBnyysyzDn2Qx6UAs7M3TfRQcTJdWfDv8AfEODVg136IcVLM
+        nP+moKJrzwrSwiqlSOGN9yv6YbzJKl8QTZNOZgwvzM9at+wrHxGGIz3DkuTKRTdO
+        608GJUooEH3hdomZHE6w/uOcqH6Kfpqs2fCUsZG/SziYjorpqFDrtwPxZ7jo+tbN
+        Y8l2ZE9gscLlMdPULTYesbX/AJAqYrCgFk8yeobya4CjkHtLT7/I6aU/iTlyCn1e
+        INW19teVcqxzQPmRmbJQLPYisWqwl33pPm2r+vA8LImeyPci73EPk3QRaiY7sBqf
+        MXKZug==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=cxZjKmHMz/D7TD+kHqFRoA9O3quyMMGlHAotgmFEv
+        54=; b=YsMjOMVUhsTARBJ1CYIl/nKSxTr5SuhHh9/fgMEocndRPGWzOrNlvPYEk
+        4VXJVhMLfrLOhmGjdRXlDBgtzI3G2M4Wv28nFywPrVd+MouOAwq0rDTeUrKml8Hf
+        t9JwSbjL3ERww9JI//Q09426NEBCC9IK/ZQYqaHtjJFS4y2dPMLMzYrF45m/O4tr
+        OsjVC2dyZL9eZcaUfhWjSq5g9rKNP02WAEemBPsJDssxbwrt2f8qB8xcuKz29J8C
+        IfvKej7Qmr07UwlwLxsUfNn5Ivbr+OQSv/lzDFcHNeFcF6AqKQ6gHpsK07VVWSui
+        ADk8OKpvC3UsrcGjv3Jmu4rJJfCng==
+X-ME-Sender: <xms:m8ehYPmMHUABJGL2Qkb8LVrBv5tm0yVfNw5aB7Nb-QVEJs2TK7R7Jw>
+    <xme:m8ehYC3YvgTRs6gqn9a5gOHMK3Mt8M1_wd9XuPDJuaKJVlOhnPD2aX0eNNuD-G6fe
+    VrnttpygwhW>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdeigedggeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthekredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    elgedtleeltdffteejudetfefgieehheekffehuefhkeegkeeuleehffehieegjeenucff
+    ohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghenucfkphepuddtie
+    drieelrddvfedurdeggeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
+    ihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:m8ehYFrRVsJo-SF-z-S7QCO5jHsMI62RRzbbM1V04Kctr-142rCL1g>
+    <xmx:m8ehYHlr6Q41itY2ib686tvAUoqDzP-CyEu5Q7sIbt40uyhxH9KbOg>
+    <xmx:m8ehYN08wU2XSF9gvm-AbIyACt1CZJqFvzRj8VJeVwS4CneKAdRezA>
+    <xmx:nMehYGLEJNoq9I2kCXFysjWc0qNk_E8YK2dnGwB0GSI-jTgDwXOWww>
+Received: from mickey.long.domain.name.themaw.net (106-69-231-44.dyn.iinet.net.au [106.69.231.44])
+        by mail.messagingengine.com (Postfix) with ESMTPA;
+        Sun, 16 May 2021 21:32:06 -0400 (EDT)
+Message-ID: <da58dcefb59d2b51d95d1dfc012ba058bc77f23b.camel@themaw.net>
+Subject: Re: [PATCH v4 0/5] kernfs: proposed locking and concurrency
+ improvement
+From:   Ian Kent <raven@themaw.net>
+To:     Fox Chen <foxhlchen@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Brice Goglin <brice.goglin@gmail.com>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Mon, 17 May 2021 09:32:03 +0800
+In-Reply-To: <CAC2o3DL1VwbLgajSYSR_UPL-53cjHDp+X63CerQsZ8tgNgO=-A@mail.gmail.com>
+References: <162077975380.14498.11347675368470436331.stgit@web.messagingengine.com>
+         <YJtz6mmgPIwEQNgD@kroah.com>
+         <CAC2o3D+28g67vbNOaVxuF0OfE0RjFGHVwAcA_3t1AAS_b_EnPg@mail.gmail.com>
+         <CAC2o3DJm0ugq60c8mBafjd81nPmhpBKBT5cCKWvc4rYT0dDgGg@mail.gmail.com>
+         <CAC2o3DJdwr0aqT6LwhuRj8kyXt6NAPex2nG5ToadUTJ3Jqr_4w@mail.gmail.com>
+         <4eae44395ad321d05f47571b58fe3fe2413b6b36.camel@themaw.net>
+         <CAC2o3DKvq12CrsgWTNmQmu3iDJ+9tytMdCJepdBjUKN1iUJ0RQ@mail.gmail.com>
+         <bc9650145291b6e568a8f75d02663b9e4f2bcfd7.camel@themaw.net>
+         <CAC2o3DL1VwbLgajSYSR_UPL-53cjHDp+X63CerQsZ8tgNgO=-A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY4PR1001MB2357.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5077c75-4589-4dd7-1f39-08d918a08ffc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2021 19:26:53.7455
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +u7VYhDrGIWzuV8OOdgJL7uhnGUNxLfnfaoXrjL5pKNnsW6PxL55L1nm3L7K/lScv/yM4vBeQmrhc8E3nixk7VntDXW2rw9nhYZCZtYGZ7I=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR10MB1448
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9986 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 malwarescore=0
- bulkscore=0 mlxlogscore=999 phishscore=0 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2105160148
-X-Proofpoint-ORIG-GUID: L1o5PsHVCgWfi2JAdxf2a_IZhdwelieE
-X-Proofpoint-GUID: L1o5PsHVCgWfi2JAdxf2a_IZhdwelieE
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9986 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 impostorscore=0 suspectscore=0 clxscore=1015
- adultscore=0 bulkscore=0 phishscore=0 spamscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2105160148
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, 2021-05-14 at 10:34 +0800, Fox Chen wrote:
+> On Fri, May 14, 2021 at 9:34 AM Ian Kent <raven@themaw.net> wrote:
+> > 
+> > On Thu, 2021-05-13 at 23:37 +0800, Fox Chen wrote:
+> > > Hi Ian
+> > > 
+> > > On Thu, May 13, 2021 at 10:10 PM Ian Kent <raven@themaw.net>
+> > > wrote:
+> > > > 
+> > > > On Wed, 2021-05-12 at 16:54 +0800, Fox Chen wrote:
+> > > > > On Wed, May 12, 2021 at 4:47 PM Fox Chen
+> > > > > <foxhlchen@gmail.com>
+> > > > > wrote:
+> > > > > > 
+> > > > > > Hi,
+> > > > > > 
+> > > > > > I ran it on my benchmark (
+> > > > > > https://github.com/foxhlchen/sysfs_benchmark).
+> > > > > > 
+> > > > > > machine: aws c5 (Intel Xeon with 96 logical cores)
+> > > > > > kernel: v5.12
+> > > > > > benchmark: create 96 threads and bind them to each core
+> > > > > > then
+> > > > > > run
+> > > > > > open+read+close on a sysfs file simultaneously for 1000
+> > > > > > times.
+> > > > > > result:
+> > > > > > Without the patchset, an open+read+close operation takes
+> > > > > > 550-
+> > > > > > 570
+> > > > > > us,
+> > > > > > perf shows significant time(>40%) spending on mutex_lock.
+> > > > > > After applying it, it takes 410-440 us for that operation
+> > > > > > and
+> > > > > > perf
+> > > > > > shows only ~4% time on mutex_lock.
+> > > > > > 
+> > > > > > It's weird, I don't see a huge performance boost compared
+> > > > > > to
+> > > > > > v2,
+> > > > > > even
+> > > > > 
+> > > > > I meant I don't see a huge performance boost here and it's
+> > > > > way
+> > > > > worse
+> > > > > than v2.
+> > > > > IIRC, for v2 fastest one only takes 40us
+> > > > 
+> > > > Thanks Fox,
+> > > > 
+> > > > I'll have a look at those reports but this is puzzling.
+> > > > 
+> > > > Perhaps the added overhead of the check if an update is
+> > > > needed is taking more than expected and more than just
+> > > > taking the lock and being done with it. Then there's
+> > > > the v2 series ... I'll see if I can dig out your reports
+> > > > on those too.
+> > > 
+> > > Apologies, I was mistaken, it's compared to V3, not V2.  The
+> > > previous
+> > > benchmark report is here.
+> > > https://lore.kernel.org/linux-fsdevel/CAC2o3DKNc=sL2n8291Dpiyb0bRHaX=nd33ogvO_LkJqpBj-YmA@mail.gmail.com/
+> > 
+> > Are all these tests using a single file name in the open/read/close
+> > loop?
+> 
+> Yes,  because It's easy to implement yet enough to trigger the
+> mutex_lock.
+> 
+> And you are right It's not a real-life pattern, but on the bright
+> side, it proves there is no original mutex_lock problem anymore. :)
 
+I've been looking at your reports and they are quite interesting.
 
-> On May 15, 2021, at 2:14 PM, Matthew Wilcox <willy@infradead.org> wrote:
->=20
-> On Sat, May 15, 2021 at 10:55:19AM +0000, William Kucharski wrote:
->>> +/**
->>> + * folio_page - Return a page from a folio.
->>> + * @folio: The folio.
->>> + * @n: The page number to return.
->>> + *
->>> + * @n is relative to the start of the folio.  It should be between
->>> + * 0 and folio_nr_pages(@folio) - 1, but this is not checked for.
->>=20
->> Please add a statement noting WHY @n isn't checked since you state it
->> should be. Something like "...but this is not checked for because this i=
-s
->> a hot path."
->=20
-> Hmm ... how about this:
->=20
-> /**
-> * folio_page - Return a page from a folio.
-> * @folio: The folio.
-> * @n: The page number to return.
-> *
-> * @n is relative to the start of the folio.  This function does not
-> * check that the page number lies within @folio; the caller is presumed
-> * to have a reference to the page.
-> */
-> #define folio_page(folio, n)    nth_page(&(folio)->page, n)
->=20
-> It occurred to me that it is actually useful (under some circumstances)
-> for referring to a page outside the base folio.  For example when
-> dealing with bios that have merged consecutive pages together into a
-> single bvec (ok, bios don't use folios, but it would be reasonable if
-> they did in future).
+> 
+> > That being the case the per-object inode lock will behave like a
+> > mutex and once contention occurs any speed benefits of a spinlock
+> > over a mutex (or rwsem) will disappear.
+> > 
+> > In this case changing from a write lock to a read lock in those
+> > functions and adding the inode mutex will do nothing but add the
+> > overhead of taking the read lock. And similarly adding the update
+> > check function also just adds overhead and, as we see, once
+> > contention starts it has a cumulative effect that's often not
+> > linear.
+> > 
+> > The whole idea of a read lock/per-object spin lock was to reduce
+> > the possibility of contention for paths other than the same path
+> > while not impacting same path accesses too much for an overall
+> > gain. Based on this I'm thinking the update check function is
+> > probably not worth keeping, it just adds unnecessary churn and
+> > has a negative impact for same file contention access patterns.
 
-I like that comment better, or you could just state bounds checking of
-the returned page number is left to the caller; that would cover both the
-normal case and possible future usage for calculations outside the base
-folio.
+The reports indicate (to me anyway) that the slowdown isn't
+due to kernfs. It looks more like kernfs is now putting pressure
+on the VFS, mostly on the file table lock but it looks like
+there's a mild amount of contention on a few other locks as well
+now.
+
+That's a whole different problem and those file table handling
+functions don't appear to have any obvious problems so they are
+doing what they have to do and that can't be avoided.
+
+That's definitely out of scope for these changes.
+
+And, as you'd expect, once any appreciable amount of contention
+happens our measurements go out the window, certainly with
+respect to kernfs.
+
+It also doesn't change my option that checking if an inode
+attribute update is needed in kernfs isn't useful since, IIUC
+that file table lock contention would result even if you were
+using different paths.
+
+So I'll drop that patch from the series.
+
+Ian
+> > 
+> > I think that using multiple paths, at least one per test process
+> > (so if you are running 16 processes use at least 16 different
+> > files, the same in each process), and selecting one at random
+> > for each loop of the open would better simulate real world
+> > access patterns.
+> > 
+> > 
+> > Ian
+> > 
+> 
+> 
+> thanks,
+> fox
+
 
