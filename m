@@ -2,129 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CD37382CD6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 15:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDE46382D4C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 15:21:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237197AbhEQNJT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 May 2021 09:09:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35110 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237203AbhEQNJO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 May 2021 09:09:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A465DB162;
-        Mon, 17 May 2021 13:07:50 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 77E431E0B38; Mon, 17 May 2021 15:07:50 +0200 (CEST)
-Date:   Mon, 17 May 2021 15:07:50 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [RFC][PATCH] fanotify: introduce filesystem view mark
-Message-ID: <20210517130750.GA25760@quack2.suse.cz>
-References: <20210505122815.GD29867@quack2.suse.cz>
- <20210505142405.vx2wbtadozlrg25b@wittgenstein>
- <20210510101305.GC11100@quack2.suse.cz>
- <CAOQ4uxjqjB2pCoyLzreMziJcE5nYjgdhcAsDWDmu_5-g5AKM3w@mail.gmail.com>
- <20210512152625.i72ct7tbmojhuoyn@wittgenstein>
- <20210513105526.GG2734@quack2.suse.cz>
- <20210514135632.d53v3pwrh56pnc4d@wittgenstein>
- <CAOQ4uxgngZjBseOC_qYtxjZ_J4Rc50_Y7G+CSSpJznKBXvSU5A@mail.gmail.com>
- <20210517090928.GA31755@quack2.suse.cz>
- <CAOQ4uxgQ-gS5YBEPy2UEcwbO9Y0ie2vVGQn6Wts3Z8x3LZPfog@mail.gmail.com>
+        id S236054AbhEQNW5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 May 2021 09:22:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53830 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234106AbhEQNW5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 May 2021 09:22:57 -0400
+Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C9F2C061573;
+        Mon, 17 May 2021 06:21:40 -0700 (PDT)
+Received: by mail-il1-x134.google.com with SMTP id c16so6084384ilo.1;
+        Mon, 17 May 2021 06:21:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MQyS3XJe4AKUr1SWVpgv2bs2/GuaT0/cfk3NUPLHQ08=;
+        b=dGZa+sD+S3wBlqHS13HTMc3qEXBZLPBYHl6BzQZzo9YDo6xgCbxZyRBv5dPWN+Aj9L
+         5m+gBW3elWiEH7YYw1YDfUkyxWfDPPqQxiRJnWie+1BAuI1K3qhY/OU/OybuLQZ9AzOs
+         Qi3ZJhM78kbmVyR4L2tHQbyGIJUatgoOlyntKgySbRe3pzGu14J5lHdEwgpUM2v6/Arr
+         3kmGliEVdHpb3sAahauZ8+h5/NtAfir4P/d+gCKT40KgKS/F/UScpMo8v+UTqDep7Fgk
+         0D8hQ64XCZn+yrNKgGyeHA0kCSyXgB798DA42Fbg6wRF4mYNdg67YqYBMM/a7gXm1axW
+         26FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MQyS3XJe4AKUr1SWVpgv2bs2/GuaT0/cfk3NUPLHQ08=;
+        b=ilP/gMZ7ezYjnyFZKAkBbsOKVqAQ13gSrgrznCozOS/+14594nWQYF3IOXpu4FNz4F
+         qxdplFxGmsx4j+x1MUeEURBRrZb+1plASByeGIbUxoG/pZ0/BGhC9yphnWVwJa+H5PCE
+         56WyfB3XQPFzmKa1LIcJNDK0e6eoZ9W/73ghl288oMBRFevTu22WUSkfbjCt6ePyPvlK
+         hgRfIBdnODHOT2JC+/BocY+jsLdSnzT63KGNtm2F82XeaebJuhzm73h6Tom1CpxqKjzu
+         jYJo7uGs/1lN9hFhhV6bVZeb1FYRCF/6lp86kVViRb/ZhxhMC9DRobA7CS+lpLjNAoOr
+         ymlg==
+X-Gm-Message-State: AOAM5313RchiT8AK9e1NtE9nVVRE8N8JvLwlkXoGQgrZOI6ddny20QIi
+        4DZe+a36V54Y1qSVRI2bjpZO8tHYClFQNP8hjVC5290V3bo=
+X-Google-Smtp-Source: ABdhPJxhBSD4WvdOfYB6sx8VDZJJLMKintD92fmsIcCWYpAzSoK9/buptc6zD372ZfU6UGj0nRTAspMZ3WR9b+W/rtc=
+X-Received: by 2002:a92:cc43:: with SMTP id t3mr4301180ilq.250.1621257699449;
+ Mon, 17 May 2021 06:21:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgQ-gS5YBEPy2UEcwbO9Y0ie2vVGQn6Wts3Z8x3LZPfog@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-5-balsini@android.com>
+ <CAJfpegvL2kOCkbP9bBL8YD-YMFKiSazD3_wet2-+emFafA6y5A@mail.gmail.com>
+ <CAOQ4uxjOGx8gZ2biTEb4a54gw5c_aDn+FFkUvRpY+cmgEEh=sA@mail.gmail.com> <YKJVUUUapNSijV38@google.com>
+In-Reply-To: <YKJVUUUapNSijV38@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 17 May 2021 16:21:28 +0300
+Message-ID: <CAOQ4uxjpHTerNq70gp+GQP26RijzWOJR1pB+9GxVBSdJyjN1mQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND V12 4/8] fuse: Passthrough initialization and release
+To:     Alessio Balsini <balsini@android.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Akilesh Kailash <akailash@google.com>,
+        Antonio SJ Musumeci <trapexit@spawn.link>,
+        David Anderson <dvander@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Peng Tao <bergwolf@gmail.com>,
+        Stefano Duo <duostefano93@gmail.com>,
+        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        kernel-team <kernel-team@android.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 17-05-21 15:45:29, Amir Goldstein wrote:
-> On Mon, May 17, 2021 at 12:09 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Sat 15-05-21 17:28:27, Amir Goldstein wrote:
-> > > On Fri, May 14, 2021 at 4:56 PM Christian Brauner
-> > > <christian.brauner@ubuntu.com> wrote:
-> > > > > for changes with idmap-filtered mark, then it won't see notification for
-> > > > > those changes because A presumably runs in a different namespace than B, am
-> > > > > I imagining this right? So mark which filters events based on namespace of
-> > > > > the originating process won't be usable for such usecase AFAICT.
-> > > >
-> > > > Idmap filtered marks won't cover that use-case as envisioned now. Though
-> > > > I'm not sure they really need to as the semantics are related to mount
-> > > > marks.
-> > >
-> > > We really need to refer to those as filesystem marks. They are definitely
-> > > NOT mount marks. We are trying to design a better API that will not share
-> > > as many flaws with mount marks...
-> >
-> > I agree. I was pondering about this usecase exactly because the problem with
-> > changes done through mount A and visible through mount B which didn't get
-> > a notification were source of complaints about fanotify in the past and the
-> > reason why you came up with filesystem marks.
-> >
-> > > > A mount mark would allow you to receive events based on the
-> > > > originating mount. If two mounts A and B are separate but expose the
-> > > > same files you wouldn't see events caused by B if you're watching A.
-> > > > Similarly you would only see events from mounts that have been delegated
-> > > > to you through the idmapped userns. I find this acceptable especially if
-> > > > clearly documented.
-> > > >
-> > >
-> > > The way I see it, we should delegate all the decisions over to userspace,
-> > > but I agree that the current "simple" proposal may not provide a good
-> > > enough answer to the case of a subtree that is shared with the host.
-> > >
-> > > IMO, it should be a container manager decision whether changes done by
-> > > the host are:
-> > > a) Not visible to containerized application
-> > > b) Watched in host via recursive inode watches
-> > > c) Watched in host by filesystem mark filtered in userspace
-> > > d) Watched in host by an "noop" idmapped mount in host, through
-> > >      which all relevant apps in host access the shared folder
-> > >
-> > > We can later provide the option of "subtree filtered filesystem mark"
-> > > which can be choice (e). It will incur performance overhead on the system
-> > > that is higher than option (d) but lower than option (c).
-> >
-> > But won't b) and c) require the container manager to inject events into the
-> > event stream observed by the containerized fanotify user? Because in both
-> > these cases the manager needs to consume generated events and decide what
-> > to do with them.
-> >
-> 
-> With (b) manager does not need to inject events.
-> The manager intercepts fanotify_init() and returns an actual fantify group fd
-> in the requesting process fd table.
-> 
-> Later, when manager intercepts fanotify_mark() with idmapped mark
-> request, manager can take care of setting up the recursive inode watches,
-> but the requesting process will get the events, because it has a clone of
-> the fanotify group fd.
+> I have an ugly patch which uses IDR as Miklos asked, but unfortunately
+> I'm facing some performance issues due to the locking mechanisms to keep
+> guarantee the RCU consistency. I can post the new patch set as an RFC
+> soon for the community to take a look.
+> At a glance what happens is:
+> - the IDR, one for each fuse_conn, contains pointers to "struct
+>   fuse_passthrough" containing:
+>   - fuse_file *: which is using passthrough,
+>   - file *: native file system file target,
+>   - cred of the FUSE server,
+> - ioctl(PASSTHROUGH_OPEN): updates IDR, requires spinlock:
+>   - kmalloc(fuse_passthrough), update file and cred,
+>   - ID = idr_alloc(),
+>   - return ID,
+> - fuse_open reply from FUSE server with passthrough ID: updates IDR,
+>   requires spinlock:
+>   - pt = idr_find(ID),
+>   - update fuse_file with the current fuse_file,
+>   - update fuse_file->passthrough_id = ID,
+>   - idr_replace(),
+> - read/write/mmap: lock-free IDR read:
+>   - idr_find(fuse_file::passthrough_id),
+>   - forward request to lower file system as for the current FUSE
+>     passthrough patches.
+> - ioctl(PASSTHROUGH_CLOSE): updates IDR, requires spinlock:
+>   - idr_remove();
+>   - call_rcu(): tell possible open fuse_file user that the ID is no more
+>     valid and kfree() the allocated struct;
+> - close(fuse_file): updates IDR, requires spinlock:
+>   - ID = fuse_file::passthrough_id
+>   - idr_find(ID),
+>   - fuse_passthrough::fuse_file = NULL,
+>   - idr_replace().
+>
+> This would be fine if passthrough is activated for a few, big files,
+> where the passthrough overhead is dominated by the direct access
+> benefits, but if passthrough is enabled for many small files which just
+> do one or two read/writes (as what I did for my benchmark of total build
+> time for the kernel, where I was passing-through every opened file), the
+> overhead becomes a real issue.
+>
+> If you have any thoughts on how to make this simpler, I'm absolutely
+> open to fix this.
+>
 
-Well, but for recursive inode watches to function, you also have to process
-the stream of events to detect created dirs etc. Also you may have to
-remove (e.g. directory) events the original user didn't ask for...
+This IDR namespace usually serves a single process. Right?
+It sounds a bit more like a file table, more specifically, like io_file_table.
+I may be way off, but this sounds a bit like IORING_REGISTER_FILES.
+Is there anything that can be learned from this UAPI?
+Maybe even reuse of some of the io_uring file register code?
 
-> With (c), I guess the intercepted fanotify_init() can return an open pipe
-> and proxy the stream of events read from the actual fanotify fd filtering
-> out the events.
-
-Yes, that's what I thought about. But it isn't 100% transparent (e.g.
-fdinfo will be different).
-
-> I hope we can provide some form of kernel subtree filtering so
-> userspace will not need to resort to this sort of practice.
-
-I hope as well :)
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Amir.
