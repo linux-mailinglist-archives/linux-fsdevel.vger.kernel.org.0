@@ -2,137 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 608A7383B10
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 19:18:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A7E4383B7A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 19:40:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241007AbhEQRSt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 May 2021 13:18:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53358 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236048AbhEQRSo (ORCPT
+        id S236525AbhEQRlQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 May 2021 13:41:16 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:11954 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236508AbhEQRlO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 May 2021 13:18:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1621271847;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=K3ChrpyqINd5LjVbSV1AZtzCKgi3r6GzKuhNpH//Q24=;
-        b=HocPClYHhMNxOiegtgEbZOg18bMPfbCQxu/9/rfMFyIvjOM2tRdXtF2YN1Sclc/oyodIo2
-        yzbEmmOxl8UYg6wJrkxczolhNgS3r7Eq5mKQ6gcC/ljFBtSmsvI6GH6tYmyetbUUniDwOc
-        +mGkl5lPiweChLwBLiYThHXErQThrlM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-377-2SJ8_9WlNpm9iZfgErNcKA-1; Mon, 17 May 2021 13:17:26 -0400
-X-MC-Unique: 2SJ8_9WlNpm9iZfgErNcKA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 49CCF6D582;
-        Mon, 17 May 2021 17:17:25 +0000 (UTC)
-Received: from bfoster.redhat.com (ovpn-113-80.rdu2.redhat.com [10.10.113.80])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E67735D9F2;
-        Mon, 17 May 2021 17:17:24 +0000 (UTC)
-From:   Brian Foster <bfoster@redhat.com>
-To:     linux-xfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH RFC v3 3/3] iomap: bound ioend size to 4096 pages
-Date:   Mon, 17 May 2021 13:17:22 -0400
-Message-Id: <20210517171722.1266878-4-bfoster@redhat.com>
-In-Reply-To: <20210517171722.1266878-1-bfoster@redhat.com>
-References: <20210517171722.1266878-1-bfoster@redhat.com>
+        Mon, 17 May 2021 13:41:14 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14HHY9HK109359;
+        Mon, 17 May 2021 13:39:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=IH6PheY3FVLfkb4B496KXTcuSLs3nDYFjkhoA1+u0Us=;
+ b=S7+866xZ99W6Nb8X1Eb4nrgjHCtGi0PCZrc2kh8n0xvdE2AmibpOU/02nYhya6F7Lxm3
+ tY6AaDXScZjSPXK+X+kfoFsSZyOdVong+RFtS1bvO8DUywQQGDwdR4/q4Z5fwVyjRlLh
+ IhkH8FYiMcV/QxrVwA7KBtGhfLOpI/g3nvyVTCbABrWl89FPKEIXAFvXTOCWFmKiIaH6
+ U8MvleKY1kdJc69G9zDKWa7BSmDOWPfdqsNDlniSH3DFtUPO+6sysju1z8kkEX9bmEf7
+ aLilwuxbnCO+wRqehYXdaCrOVkZYrYO+h2jgmDotlT4BIMJNMxby4wiedF9LtQzygxJu Ng== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 38kuwn2125-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 May 2021 13:39:46 -0400
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 14HHYKOC110072;
+        Mon, 17 May 2021 13:39:46 -0400
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 38kuwn211j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 May 2021 13:39:46 -0400
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 14HHZSUV020452;
+        Mon, 17 May 2021 17:39:43 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma01fra.de.ibm.com with ESMTP id 38j5x80jeg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 May 2021 17:39:43 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 14HHdfF938928704
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 May 2021 17:39:41 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6F11811C050;
+        Mon, 17 May 2021 17:39:41 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 069D311C04C;
+        Mon, 17 May 2021 17:39:40 +0000 (GMT)
+Received: from [9.199.40.240] (unknown [9.199.40.240])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 17 May 2021 17:39:39 +0000 (GMT)
+Subject: Re: What sort of inode state does ->evict_inode() expect to see? [was
+ Re: 9p: fscache duplicate cookie]
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Luis Henriques <lhenriques@suse.de>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
+References: <YJvb9S8uxV2X45Cu@zeniv-ca.linux.org.uk>
+ <YJvJWj/CEyEUWeIu@codewreck.org> <87tun8z2nd.fsf@suse.de>
+ <87czu45gcs.fsf@suse.de> <2507722.1620736734@warthog.procyon.org.uk>
+ <2882181.1620817453@warthog.procyon.org.uk> <87fsysyxh9.fsf@suse.de>
+ <2891612.1620824231@warthog.procyon.org.uk>
+ <2919958.1620828730@warthog.procyon.org.uk> <87bl9dwb1r.fsf@suse.de>
+ <YJ7oxGY/eosPvCiA@codewreck.org>
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Message-ID: <4a83552c-742d-e327-b810-7da43b913daf@linux.ibm.com>
+Date:   Mon, 17 May 2021 23:09:39 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
+In-Reply-To: <YJ7oxGY/eosPvCiA@codewreck.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: d_x-4vcUZJyzkfdaWd_VWvKhWfGYRIva
+X-Proofpoint-GUID: nPgOaz1VVqqUygAfFeohAPRUHEioqNlO
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-05-17_08:2021-05-17,2021-05-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 bulkscore=0 mlxlogscore=999 priorityscore=1501
+ impostorscore=0 phishscore=0 clxscore=1011 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2105170117
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The iomap writeback infrastructure is currently able to construct
-extremely large bio chains (tens of GBs) associated with a single
-ioend. This consolidation provides no significant value as bio
-chains increase beyond a reasonable minimum size. On the other hand,
-this does hold significant numbers of pages in the writeback
-state across an unnecessarily large number of bios because the ioend
-is not processed for completion until the final bio in the chain
-completes. Cap an individual ioend to a reasonable size of 4096
-pages (16MB with 4k pages) to avoid this condition.
+On 5/15/21 2:46 AM, Dominique Martinet wrote:
+> Hi Aneesh,
+> 
+> I'm going to rely on your memory here... A long, long time ago (2011!),
+> you've authored this commit:
+> -------
+> commit ed80fcfac2565fa866d93ba14f0e75de17a8223e
+> Author: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+> Date:   Wed Jul 6 16:32:31 2011 +0530
+> 
+>      fs/9p: Always ask new inode in create
+>      
+>      This make sure we don't end up reusing the unlinked inode object.
+>      The ideal way is to use inode i_generation. But i_generation is
+>      not available in userspace always.
+>      
+>      Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+>      Signed-off-by: Eric Van Hensbergen <ericvh@gmail.com>
+> -------
+> 
+> Do you happen to remember or know *why* you wanted to make sure we don't
+> reuse the unlinked inode object?
+> 
+>
 
-Signed-off-by: Brian Foster <bfoster@redhat.com>
----
- fs/iomap/buffered-io.c |  6 ++++--
- include/linux/iomap.h  | 26 ++++++++++++++++++++++++++
- 2 files changed, 30 insertions(+), 2 deletions(-)
+Sorry, I don't recall all the details, hence some of these details may 
+not be correct. I did look at the archives to see if we have email 
+discussions around the change. I found the below related email thread.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 642422775e4e..f2890ee434d0 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1269,7 +1269,7 @@ iomap_chain_bio(struct bio *prev)
- 
- static bool
- iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t offset,
--		sector_t sector)
-+		unsigned len, sector_t sector)
- {
- 	if ((wpc->iomap.flags & IOMAP_F_SHARED) !=
- 	    (wpc->ioend->io_flags & IOMAP_F_SHARED))
-@@ -1280,6 +1280,8 @@ iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t offset,
- 		return false;
- 	if (sector != bio_end_sector(wpc->ioend->io_bio))
- 		return false;
-+	if (wpc->ioend->io_size + len > IOEND_MAX_IOSIZE)
-+		return false;
- 	return true;
- }
- 
-@@ -1297,7 +1299,7 @@ iomap_add_to_ioend(struct inode *inode, loff_t offset, struct page *page,
- 	unsigned poff = offset & (PAGE_SIZE - 1);
- 	bool merged, same_page = false;
- 
--	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, offset, sector)) {
-+	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, offset, len, sector)) {
- 		if (wpc->ioend)
- 			list_add(&wpc->ioend->io_list, iolist);
- 		wpc->ioend = iomap_alloc_ioend(inode, wpc, offset, sector, wbc);
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 07f3f4e69084..89b15cc236d5 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -203,6 +203,32 @@ struct iomap_ioend {
- 	struct bio		io_inline_bio;	/* MUST BE LAST! */
- };
- 
-+/*
-+ * Maximum ioend IO size is used to prevent ioends from becoming unbound in
-+ * size. bios can reach 4GB in size if pages are contiguous, and bio chains are
-+ * effectively unbound in length. Hence the only limits on the size of the bio
-+ * chain is the contiguity of the extent on disk and the length of the run of
-+ * sequential dirty pages in the page cache. This can be tens of GBs of physical
-+ * extents and if memory is large enough, tens of millions of dirty pages.
-+ * Locking them all under writeback until the final bio in the chain is
-+ * submitted and completed locks all those pages for the legnth of time it takes
-+ * to write those many, many GBs of data to storage.
-+ *
-+ * Background writeback caps any single writepages call to half the device
-+ * bandwidth to ensure fairness and prevent any one dirty inode causing
-+ * writeback starvation. fsync() and other WB_SYNC_ALL writebacks have no such
-+ * cap on wbc->nr_pages, and that's where the above massive bio chain lengths
-+ * come from. We want large IOs to reach the storage, but we need to limit
-+ * completion latencies, hence we need to control the maximum IO size we
-+ * dispatch to the storage stack.
-+ *
-+ * We don't really have to care about the extra IO completion overhead here
-+ * because iomap has contiguous IO completion merging. If the device can sustain
-+ * high throughput and large bios, the ioends are merged on completion and
-+ * processed in large, efficient chunks with no additional IO latency.
-+ */
-+#define IOEND_MAX_IOSIZE	(4096ULL << PAGE_SHIFT)
-+
- struct iomap_writeback_ops {
- 	/*
- 	 * Required, maps the blocks so that writeback can be performed on
--- 
-2.26.3
+https://lore.kernel.org/lkml/1310402460-5098-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com/
 
+
+IIRC, this was to avoid picking up wrong inode from the hash? So a 
+create is a new object and we want to actually avoid any comparison?
+Hence pass a test function that always return false?
+
+-aneesh
