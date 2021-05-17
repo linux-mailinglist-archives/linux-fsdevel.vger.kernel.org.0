@@ -2,125 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD7AB386BE9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 23:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9DB1386C4C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 23:33:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244669AbhEQVHv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 May 2021 17:07:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45818 "EHLO
+        id S237920AbhEQVeZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 May 2021 17:34:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234755AbhEQVHv (ORCPT
+        with ESMTP id S232924AbhEQVeY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 May 2021 17:07:51 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1CFAC061573;
-        Mon, 17 May 2021 14:06:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:To:From:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description;
-        bh=2TDKkBN6SV0x24tFeAix5kGdHqOO+EnI0tPPH83A3vk=; b=RlEW26hyYy9WpbRMkz5X/lMIs7
-        96zX66J/IxJ4YUCFezHVtNNzcx6I5pi3YHSLwVd7gjp+jLJzO409e5tB+p3KqY+XDGebESSrpaLKy
-        XjD5lgOXnbEfXQ2YKs81czv6HDO82RXRyc9VugChp5Dsqwj3TXwGVmdlDUMQWzqZaPYSRPK7kPJjM
-        HsYZtuFDToO+4U5vxIjLcrDaIO84HhNyNOQZnkzi6Lax4pJirUY+PCFXonwZv+A5SlwbQtdatiitC
-        gzuVc+Jr17soIDM3Tayb0oXSaZpsDTcin/+qtk66rEkxCUIWKAO0mORJst/mI5asBeamwKCjTiwmq
-        YbEosVvw==;
-Received: from [2601:1c0:6280:3f0::7376]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1likRe-00E9SR-8T; Mon, 17 May 2021 21:06:34 +0000
-Subject: Re: Fwd: [EXTERNAL] Re: ioctl.c:undefined reference to
- `__get_user_bad'
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     Steve French <smfrench@gmail.com>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>
-References: <202105110829.MHq04tJz-lkp@intel.com>
- <a022694d-426a-0415-83de-4cc5cd9d1d38@infradead.org>
- <MN2PR21MB15184963469FEC9B13433964E42D9@MN2PR21MB1518.namprd21.prod.outlook.com>
- <CAH2r5mswqB9DT21YnSXMSAiU0YwFUNu0ni6f=cW+aLz4ssA8rw@mail.gmail.com>
- <d3e24342-4f30-6a2f-3617-a917539eac94@infradead.org>
-Message-ID: <5b29fe73-7c95-0b9f-3154-c053fa94cb67@infradead.org>
-Date:   Mon, 17 May 2021 14:06:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        Mon, 17 May 2021 17:34:24 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C06F4C061756
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 May 2021 14:33:06 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id v6so9017240ljj.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 May 2021 14:33:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QiJZ32oScv7m1zG+HAZWQ025LTPY+uZIZxxPrDNtO68=;
+        b=CX90tBycAt/a9ap0XhQ5a2CbhLjIYmXx/RbWktAmmGtyKUdNqMXIDLXg9tktJ93U/1
+         6e41uY2jKeGuZZYpoIZe5zo87ZhLQu9fL9tImW+3DGJmNzxHnwhQj+EXTY7UQ/5JFfG7
+         1VWuVB9RrkhYPVoJyq+rF8H0HM19LRTTPwqkk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QiJZ32oScv7m1zG+HAZWQ025LTPY+uZIZxxPrDNtO68=;
+        b=PLgNcPpXRF112xMGaaefUPR4VaUSxhWvvN+zMbnXZhpS7EoxXrp/moIfy1X2QAGQyK
+         22Jxkl72jBBj5mACf5Hi22EavaiT7/nn0edug/umKi7wFX0LPFF04ye4NecREoav/rC1
+         QRbmL+BXZ5TEKbfgRaUlxHn6fVZqY1Qbuu/lwtORQgkIB9PFK9hRcsWFfQnzevKssCMQ
+         lXJRCTX5HZdTx3MzKH5Ja0hcmC5P3/kVamLCG5TNd8++41EEekZnVQ7BSl/w6iPqssEr
+         7xGpND+QZTUTwL7C5M465Ub1zZgLQbJS/z+D6ZqMOyRAb530qTC0Jzi8bij/IUI2HvBI
+         6uWQ==
+X-Gm-Message-State: AOAM5319M4OPRO5vijDXvJvTW/1mAeJfaysyZyeektmGLkiXZAwAbwXq
+        zFzuSgbj3xWk97IZPZ5SV5YlRs5aQAFfoj09
+X-Google-Smtp-Source: ABdhPJxiLB+LOr2ueFsGgpVDPit4jDx1Ncytj/uz6LKCmBhu1dxWclIYfgnh+EWEqCRH8xBd7IInbA==
+X-Received: by 2002:a2e:a7c8:: with SMTP id x8mr1110208ljp.209.1621287184954;
+        Mon, 17 May 2021 14:33:04 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id f10sm3050002lja.83.2021.05.17.14.33.03
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 May 2021 14:33:03 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id e11so8986645ljn.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 May 2021 14:33:03 -0700 (PDT)
+X-Received: by 2002:a2e:968e:: with SMTP id q14mr1065866lji.507.1621287183341;
+ Mon, 17 May 2021 14:33:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <d3e24342-4f30-6a2f-3617-a917539eac94@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1621276134.git.osandov@fb.com>
+In-Reply-To: <cover.1621276134.git.osandov@fb.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 17 May 2021 14:32:47 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh74eFxL0f_HSLUEsD1OQfFNH9ccYVgCXNoV1098VCV6Q@mail.gmail.com>
+Message-ID: <CAHk-=wh74eFxL0f_HSLUEsD1OQfFNH9ccYVgCXNoV1098VCV6Q@mail.gmail.com>
+Subject: Re: [PATCH RERESEND v9 0/9] fs: interface for directly
+ reading/writing compressed data
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[adding back linux-arm-kernel; what happened to it? ]
+On Mon, May 17, 2021 at 11:35 AM Omar Sandoval <osandov@osandov.com> wrote:
+>
+> Patches 1-3 add the VFS support, UAPI, and documentation. Patches 4-7
+> are Btrfs prep patches. Patch 8 adds Btrfs encoded read support and
+> patch 9 adds Btrfs encoded write support.
 
+I don't love the RWF_ENCODED flag, but if that's the way people think
+this should be done, as a model this looks reasonable to me.
 
-On 5/17/21 2:04 PM, Randy Dunlap wrote:
-> On 5/17/21 10:13 AM, Steve French wrote:
->>> If you fix the issue, kindly add following tag as appropriate
->>> Reported-by: kernel test robot <lkp@intel.com>
->>>
->>> All errors (new ones prefixed by >>):
->>>
->>>    arm-linux-gnueabi-ld: fs/cifs/ioctl.o: in function `cifs_dump_full_key':
->>>>> ioctl.c:(.text+0x44): undefined reference to `__get_user_bad'
->>>
->>
->> <snip>
->>
->>> # CONFIG_MMU is not set
->>>
->>> and arch/arm/include/asm/uaccess.h does not implement get_user(size 8 bytes)
->>> for the non-MMU case:
->>
->> I see another place in fs/cifs/ioctl.c where we already had been doing
->> a get_user() into a u64 - any idea what you are supposed to do
->> instead?  Any example code where people have worked around this.
-> 
-> Hi Steve,
-> 
-> This change in cifs_dump_full_key() makes it build OK:
-> 
-> -       if (get_user(suid, (__u64 __user *)arg))
-> +       if (get_user(suid, (unsigned int __user *)arg))
-> 
-> 
-> That is what the other call uses:
-> 
-> 		case FS_IOC_SETFLAGS:
-> 			cifs_dbg(VFS, "cifs ioctl FS_IOC_SETFLAGS:\n");
-> 			if (pSMBFile == NULL)
-> 				break;
-> 			tcon = tlink_tcon(pSMBFile->tlink);
-> 			caps = le64_to_cpu(tcon->fsUnixInfo.Capability);
-> 
-> 			if (get_user(ExtAttrBits, (int __user *)arg)) {
-> 				rc = -EFAULT;
-> 				break;
-> 			}
-> 
-> However, my reading/understanding is that the one immediately above
-> is incorrect, as is the -/+ patch above it, since get_user() gets its
-> data size (1, 2, 4, 8) from the type of the pointer that is passed to it.
-> For 8 bytes (64 bits), 'int' is not sufficient, so IMO the get_user()
-> call that builds:
-> 			if (get_user(ExtAttrBits, (int __user *)arg)) {
-> is a bug. It should be:
-> 			if (get_user(ExtAttrBits, (__u64 __user *)arg)) {
-> and if I make that latter change in the source file, the build says:
-> 
-> arm-linux-gnueabi-ld: fs/cifs/ioctl.o: in function `cifs_dump_full_key':
-> ioctl.c:(.text+0x14): undefined reference to `__get_user_bad'
-> arm-linux-gnueabi-ld: fs/cifs/ioctl.o: in function `cifs_ioctl':
-> ioctl.c:(.text+0x1f2): undefined reference to `__get_user_bad'
-> 
-> so now both of them fail on the get_user() of 8 bytes.
-> 
-> Hope that clarifies things.  It tells me that arm no-MMU still
-> needs support for get_user() of size 8 bytes.
-> 
+I'm not sure what the deal with the encryption metadata is. I realize
+there is currently only one encryption type ("none") in this series,
+but it's not clear how any other encryption type would actually ever
+be described. It's not like you can pass in the key (well, I guess
+passing in the key would be fine, but passing it back out certainly
+would not be).  A key ID from a keyring?
 
--- 
-~Randy
+So there's presumably some future plan for it, but it would be good to
+verify that that plan makes sense..
 
+                            Linus
