@@ -2,308 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A6A7383507
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 17:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23B3D3835A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 17:25:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242341AbhEQPPi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 May 2021 11:15:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38712 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240508AbhEQPMm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 May 2021 11:12:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A4455AF59;
-        Mon, 17 May 2021 15:11:24 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B61FA1F2C63; Mon, 17 May 2021 17:11:23 +0200 (CEST)
-Date:   Mon, 17 May 2021 17:11:23 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     menglong8.dong@gmail.com
-Cc:     axboe@kernel.dk, hare@suse.de, jack@suse.cz, tj@kernel.org,
-        gregkh@linuxfoundation.org, dong.menglong@zte.com.cn,
-        song@kernel.org, neilb@suse.de, akpm@linux-foundation.org,
-        f.fainelli@gmail.com, linux@rasmusvillemoes.dk,
-        palmerdabbelt@google.com, mcgrof@kernel.org, arnd@arndb.de,
-        wangkefeng.wang@huawei.com, mhiramat@kernel.org,
-        rostedt@goodmis.org, keescook@chromium.org, vbabka@suse.cz,
-        pmladek@suse.com, glider@google.com, chris@chrisdown.name,
-        ebiederm@xmission.com, jojing64@gmail.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] init/initramfs.c: add a new mount as root file system
-Message-ID: <20210517151123.GD25760@quack2.suse.cz>
-References: <20210517142542.187574-1-dong.menglong@zte.com.cn>
+        id S238591AbhEQPXa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 May 2021 11:23:30 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25469 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244252AbhEQPTv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 May 2021 11:19:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1621264714;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JBnQo/J9oz8gnM35x+7tBsgRWTaGkCDWee+DmJ5pKGg=;
+        b=N8Y5eBgPTAIroqeRUsNbC1DBfQjo20AjmjUZMdw9It/E1+icZZo+9BSttLP7/56S1ERCEf
+        1yvuJyQ9p1uBPOuTK7vJL3D8Xza6R1MyQgtlNmgQ2Sb2oCeZxNDewf3VmZHWtVywCln/rn
+        CrpuVldox98ATxXIZOM3wHq6HaGTJv4=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-55-syzyV11BMWKeYzm5P0SC5w-1; Mon, 17 May 2021 11:18:32 -0400
+X-MC-Unique: syzyV11BMWKeYzm5P0SC5w-1
+Received: by mail-wr1-f70.google.com with SMTP id t5-20020adfb7c50000b029010dd0bb24cfso3970952wre.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 May 2021 08:18:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=JBnQo/J9oz8gnM35x+7tBsgRWTaGkCDWee+DmJ5pKGg=;
+        b=Soz5An1J1OC1rjUAAqHS8mI617jssYym+6GNk1HLrHXe5CveET/EgnljePbehXg5Cs
+         K/94jMKMKXqBjyVAVcgsCN/1pj6oxhlEhXQpCul4sjP16TCEAxT0mLBYjx30RynLl+C7
+         UH5L5vVY0KZE6YRkYclT4l6qXxFlWuiAxyI7Nn2gx9lU9O1BJRUT4sRKgGaCB2Clhu8j
+         lbOjspU5cxNokar6xLzQan4gPibgP54wSFlpMm7rhx2Zhi0N1p7q0Lz/ndh4yb59JAXu
+         6ZhawTmkuNggHnr+JvcXGLQkk7DtI9vqi7KGR+zLPXvtjn7M9N/jcfrkof7XDj1iXw3y
+         Ex2Q==
+X-Gm-Message-State: AOAM533pWpjVpjpDpj+SI69mpCD0kgpCMfF1sHlmOrHq1T138G09tGKn
+        F3TT7FLaQeNMgt6t4gS36F9MJgA3Csx4yGKY7vwPWMPwxdl3zNf9G++pyKAdMjwOqTsySpwD9jD
+        vKbVCg0n6rZJbXzd1RVCDR5JkYA==
+X-Received: by 2002:a5d:5306:: with SMTP id e6mr231543wrv.324.1621264711825;
+        Mon, 17 May 2021 08:18:31 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJz9pgHxSB1CvA6bP+5A102Vw3q+wpKkw7H+TASfr6okGY07XFAE7cdx9Tfb7WlCOrjNYsTg6Q==
+X-Received: by 2002:a5d:5306:: with SMTP id e6mr231511wrv.324.1621264711624;
+        Mon, 17 May 2021 08:18:31 -0700 (PDT)
+Received: from [192.168.3.132] (p5b0c6833.dip0.t-ipconnect.de. [91.12.104.51])
+        by smtp.gmail.com with ESMTPSA id g206sm5661736wme.16.2021.05.17.08.18.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 May 2021 08:18:31 -0700 (PDT)
+Subject: Re: [PATCH v2 4/6] mm: introduce page_offline_(begin|end|freeze|thaw)
+ to synchronize setting PageOffline()
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        Steven Price <steven.price@arm.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Aili Yao <yaoaili@kingsoft.com>, Jiri Bohac <jbohac@suse.cz>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        linux-hyperv@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20210514172247.176750-1-david@redhat.com>
+ <20210514172247.176750-5-david@redhat.com> <YKIQfCjq13dSMHOs@kernel.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Message-ID: <016e96c9-82e6-3259-7a99-8627c3be11c6@redhat.com>
+Date:   Mon, 17 May 2021 17:18:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210517142542.187574-1-dong.menglong@zte.com.cn>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <YKIQfCjq13dSMHOs@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks for the patch! Although you've CCed a wide set of people, I don't
-think you've addressed the most relevant ones. For this I'd CC
-linux-fsdevel mailing list and Al Viro as a VFS maintainer - added.
+On 17.05.21 08:43, Mike Rapoport wrote:
+> On Fri, May 14, 2021 at 07:22:45PM +0200, David Hildenbrand wrote:
+>> A driver might set a page logically offline -- PageOffline() -- and
+>> turn the page inaccessible in the hypervisor; after that, access to page
+>> content can be fatal. One example is virtio-mem; while unplugged memory
+>> -- marked as PageOffline() can currently be read in the hypervisor, this
+>> will no longer be the case in the future; for example, when having
+>> a virtio-mem device backed by huge pages in the hypervisor.
+>>
+>> Some special PFN walkers -- i.e., /proc/kcore -- read content of random
+>> pages after checking PageOffline(); however, these PFN walkers can race
+>> with drivers that set PageOffline().
+>>
+>> Let's introduce page_offline_(begin|end|freeze|thaw) for
+>> synchronizing.
+>>
+>> page_offline_freeze()/page_offline_thaw() allows for a subsystem to
+>> synchronize with such drivers, achieving that a page cannot be set
+>> PageOffline() while frozen.
+>>
+>> page_offline_begin()/page_offline_end() is used by drivers that care about
+>> such races when setting a page PageOffline().
+>>
+>> For simplicity, use a rwsem for now; neither drivers nor users are
+>> performance sensitive.
+>>
+>> Acked-by: Michal Hocko <mhocko@suse.com>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+> 
+> One nit below, otherwise
+> 
+> Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+> 
+>> ---
+>>   include/linux/page-flags.h | 10 ++++++++++
+>>   mm/util.c                  | 40 ++++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 50 insertions(+)
+>>
+>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+>> index daed82744f4b..ea2df9a247b3 100644
+>> --- a/include/linux/page-flags.h
+>> +++ b/include/linux/page-flags.h
+>> @@ -769,9 +769,19 @@ PAGE_TYPE_OPS(Buddy, buddy)
+>>    * relies on this feature is aware that re-onlining the memory block will
+>>    * require to re-set the pages PageOffline() and not giving them to the
+>>    * buddy via online_page_callback_t.
+>> + *
+>> + * There are drivers that mark a page PageOffline() and do not expect any
+> 
+> Maybe "and expect there won't be any further access"...
+> 
 
-								Honza
+Thanks, makes sense.
 
-On Mon 17-05-21 07:25:42, menglong8.dong@gmail.com wrote:
-> From: Menglong Dong <dong.menglong@zte.com.cn>
-> 
-> During the kernel initialization, the mount tree, which is used by the
-> kernel, is created, and 'rootfs' is mounted as the root file system.
-> 
-> While using initramfs as the root file system, cpio file is unpacked
-> into the rootfs. Thus, this rootfs is exactly what users see in user
-> space, and some problems arose: this rootfs has no parent mount,
-> which make it can't be umounted or pivot_root.
-> 
-> 'pivot_root' is used to change the rootfs and clean the old mountpoints,
-> and it is essential for some users, such as docker. Docker use
-> 'pivot_root' to change the root fs of a process if the current root
-> fs is a block device of initrd. However, when it comes to initramfs,
-> things is different: docker has to use 'chroot()' to change the root
-> fs, as 'pivot_root()' is not supported in initramfs.
-> 
-> The usage of 'chroot()' to create root fs for a container introduced
-> a lot problems.
-> 
-> First, 'chroot()' can't clean the old mountpoints which inherited
-> from the host. It means that the mountpoints in host will have a
-> duplicate in every container. Let's image that there are 100
-> containers in host, and there will be 100 duplicates of every
-> mountpoints, which makes resource release an issue. User may
-> remove a USB after he (or she) umount it successfully in the
-> host. However, the USB may still be mounted in containers, although
-> it can't be seen by the 'mount' commond in the container. This
-> means the USB is not released yet, and data may not write back.
-> Therefore, data lose arise.
-> 
-> Second, net-namespace leak is another problem. The net-namespace
-> of containers will be mounted in /var/run/docker/netns/ in host
-> by dockerd. It means that the net-namespace of a container will
-> be mounted in containers which are created after it. Things
-> become worse now, as the net-namespace can't be remove after
-> the destroy of that container, as it is still mounted in other
-> containers. If users want to recreate that container, he will
-> fail if a certain mac address is to be binded with the container,
-> as it is not release yet.
-> 
-> Maybe dockerd can umount the unnecessary mountpoints that inherited
-> for the host before do 'chroot()', but that is not a graceful way.
-> I think the best way is to make 'pivot_root()' support initramfs.
-> 
-> After this patch, initramfs is supported by 'pivot_root()' perfectly.
-> I just create a new rootfs and mount it to the mount-tree before
-> unpack cpio. Therefore, the rootfs used by users has a parent mount,
-> and can use 'pivot_root()'.
-> 
-> Signed-off-by: Menglong Dong <dong.menglong@zte.com.cn>
-> ---
->  init/do_mounts.c | 53 +++++++++++++++++++++++++++++++++++++++---------
->  init/do_mounts.h |  1 +
->  init/initramfs.c | 32 +++++++++++++++++++++++++++++
->  init/main.c      | 17 +++++++++++++++-
->  4 files changed, 92 insertions(+), 11 deletions(-)
-> 
-> diff --git a/init/do_mounts.c b/init/do_mounts.c
-> index a78e44ee6adb..a156b0d28b43 100644
-> --- a/init/do_mounts.c
-> +++ b/init/do_mounts.c
-> @@ -459,7 +459,7 @@ void __init mount_block_root(char *name, int flags)
->  out:
->  	put_page(page);
->  }
-> - 
-> +
->  #ifdef CONFIG_ROOT_NFS
->  
->  #define NFSROOT_TIMEOUT_MIN	5
-> @@ -617,24 +617,57 @@ void __init prepare_namespace(void)
->  	init_chroot(".");
->  }
->  
-> -static bool is_tmpfs;
-> -static int rootfs_init_fs_context(struct fs_context *fc)
-> +#ifdef CONFIG_TMPFS
-> +static __init bool is_tmpfs_enabled(void)
-> +{
-> +	return (!root_fs_names || strstr(root_fs_names, "tmpfs")) &&
-> +	       !saved_root_name[0];
-> +}
-> +#endif
-> +
-> +static __init bool is_ramfs_enabled(void)
->  {
-> -	if (IS_ENABLED(CONFIG_TMPFS) && is_tmpfs)
-> -		return shmem_init_fs_context(fc);
-> +	return true;
-> +}
-> +
-> +struct fs_user_root {
-> +	bool (*enabled)(void);
-> +	char *dev_name;
-> +	char *fs_name;
-> +};
->  
-> -	return ramfs_init_fs_context(fc);
-> +static struct fs_user_root user_roots[] __initdata = {
-> +#ifdef CONFIG_TMPFS
-> +	{.fs_name = "tmpfs", .enabled = is_tmpfs_enabled },
-> +#endif
-> +	{.fs_name = "ramfs", .enabled = is_ramfs_enabled }
-> +};
-> +static struct fs_user_root * __initdata user_root;
-> +
-> +int __init mount_user_root(void)
-> +{
-> +	return do_mount_root(user_root->dev_name,
-> +			     user_root->fs_name,
-> +			     root_mountflags,
-> +			     root_mount_data);
->  }
->  
->  struct file_system_type rootfs_fs_type = {
->  	.name		= "rootfs",
-> -	.init_fs_context = rootfs_init_fs_context,
-> +	.init_fs_context = ramfs_init_fs_context,
->  	.kill_sb	= kill_litter_super,
->  };
->  
->  void __init init_rootfs(void)
->  {
-> -	if (IS_ENABLED(CONFIG_TMPFS) && !saved_root_name[0] &&
-> -		(!root_fs_names || strstr(root_fs_names, "tmpfs")))
-> -		is_tmpfs = true;
-> +	struct fs_user_root *root;
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(user_roots); i++) {
-> +		root = &user_roots[i];
-> +		if (root->enabled()) {
-> +			user_root = root;
-> +			break;
-> +		}
-> +	}
->  }
-> diff --git a/init/do_mounts.h b/init/do_mounts.h
-> index 7a29ac3e427b..34978b17454a 100644
-> --- a/init/do_mounts.h
-> +++ b/init/do_mounts.h
-> @@ -13,6 +13,7 @@
->  void  mount_block_root(char *name, int flags);
->  void  mount_root(void);
->  extern int root_mountflags;
-> +int   mount_user_root(void);
->  
->  static inline __init int create_dev(char *name, dev_t dev)
->  {
-> diff --git a/init/initramfs.c b/init/initramfs.c
-> index af27abc59643..c883379673c0 100644
-> --- a/init/initramfs.c
-> +++ b/init/initramfs.c
-> @@ -15,6 +15,11 @@
->  #include <linux/mm.h>
->  #include <linux/namei.h>
->  #include <linux/init_syscalls.h>
-> +#include <uapi/linux/mount.h>
-> +
-> +#include "do_mounts.h"
-> +
-> +extern bool ramdisk_exec_exist(bool abs);
->  
->  static ssize_t __init xwrite(struct file *file, const char *p, size_t count,
->  		loff_t *pos)
-> @@ -667,6 +672,27 @@ static void __init populate_initrd_image(char *err)
->  }
->  #endif /* CONFIG_BLK_DEV_RAM */
->  
-> +/*
-> + * This function is used to chroot to new initramfs root that
-> + * we unpacked.
-> + */
-> +static void __init end_mount_user_root(bool succeed)
-> +{
-> +	if (!succeed)
-> +		goto on_failed;
-> +
-> +	if (!ramdisk_exec_exist(false))
-> +		goto on_failed;
-> +
-> +	init_mount(".", "/", NULL, MS_MOVE, NULL);
-> +	init_chroot(".");
-> +	return;
-> +
-> +on_failed:
-> +	init_chdir("/");
-> +	init_umount("/root", 0);
-> +}
-> +
->  static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
->  {
->  	/* Load the built in initramfs */
-> @@ -682,15 +708,21 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
->  	else
->  		printk(KERN_INFO "Unpacking initramfs...\n");
->  
-> +	if (mount_user_root())
-> +		panic("Failed to create user root");
-> +
->  	err = unpack_to_rootfs((char *)initrd_start, initrd_end - initrd_start);
->  	if (err) {
-> +		end_mount_user_root(false);
->  #ifdef CONFIG_BLK_DEV_RAM
->  		populate_initrd_image(err);
->  #else
->  		printk(KERN_EMERG "Initramfs unpacking failed: %s\n", err);
->  #endif
-> +		goto done;
->  	}
->  
-> +	end_mount_user_root(true);
->  done:
->  	/*
->  	 * If the initrd region is overlapped with crashkernel reserved region,
-> diff --git a/init/main.c b/init/main.c
-> index eb01e121d2f1..431da5f01f11 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -607,6 +607,21 @@ static inline void setup_nr_cpu_ids(void) { }
->  static inline void smp_prepare_cpus(unsigned int maxcpus) { }
->  #endif
->  
-> +bool __init ramdisk_exec_exist(bool abs)
-> +{
-> +	char *tmp_command = ramdisk_execute_command;
-> +
-> +	if (!tmp_command)
-> +		return false;
-> +
-> +	if (!abs) {
-> +		while (*tmp_command == '/' || *tmp_command == '.')
-> +			tmp_command++;
-> +	}
-> +
-> +	return init_eaccess(tmp_command) == 0;
-> +}
-> +
->  /*
->   * We need to store the untouched command line for future reference.
->   * We also need to store the touched command line since the parameter
-> @@ -1568,7 +1583,7 @@ static noinline void __init kernel_init_freeable(void)
->  	 * check if there is an early userspace init.  If yes, let it do all
->  	 * the work
->  	 */
-> -	if (init_eaccess(ramdisk_execute_command) != 0) {
-> +	if (!ramdisk_exec_exist(true)) {
->  		ramdisk_execute_command = NULL;
->  		prepare_namespace();
->  	}
-> -- 
-> 2.25.1
-> 
+I'll wait a bit before I resend.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+
+David / dhildenb
+
