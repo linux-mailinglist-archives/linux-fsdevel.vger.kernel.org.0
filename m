@@ -2,129 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE46382D4C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 15:21:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F41F9382DAA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 15:42:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236054AbhEQNW5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 May 2021 09:22:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53830 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234106AbhEQNW5 (ORCPT
+        id S237440AbhEQNnZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 May 2021 09:43:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:56910 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237445AbhEQNnZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 May 2021 09:22:57 -0400
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C9F2C061573;
-        Mon, 17 May 2021 06:21:40 -0700 (PDT)
-Received: by mail-il1-x134.google.com with SMTP id c16so6084384ilo.1;
-        Mon, 17 May 2021 06:21:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MQyS3XJe4AKUr1SWVpgv2bs2/GuaT0/cfk3NUPLHQ08=;
-        b=dGZa+sD+S3wBlqHS13HTMc3qEXBZLPBYHl6BzQZzo9YDo6xgCbxZyRBv5dPWN+Aj9L
-         5m+gBW3elWiEH7YYw1YDfUkyxWfDPPqQxiRJnWie+1BAuI1K3qhY/OU/OybuLQZ9AzOs
-         Qi3ZJhM78kbmVyR4L2tHQbyGIJUatgoOlyntKgySbRe3pzGu14J5lHdEwgpUM2v6/Arr
-         3kmGliEVdHpb3sAahauZ8+h5/NtAfir4P/d+gCKT40KgKS/F/UScpMo8v+UTqDep7Fgk
-         0D8hQ64XCZn+yrNKgGyeHA0kCSyXgB798DA42Fbg6wRF4mYNdg67YqYBMM/a7gXm1axW
-         26FQ==
+        Mon, 17 May 2021 09:43:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1621258928;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=H6x6dlAzQJeEEcgnxw7b14Lv0Ybic0pb80Lf+1COmZk=;
+        b=NVWLLx9Lg3A/SUDrZKIhi/HHd1y1INi6JNZmBX0Egm7QCNtK2pKAXQSJaJ590a1/k0hRV+
+        xm0cLOq2PgwrjP7JstwEx8eCVooujU8CjQJPoPaq927bSWkDoSJt2RVjh36+8zvhs/xap9
+        eulWkRhuDSnRlI538v/T6Il6rqzEGfM=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-372-tL2b1rkYP1eOBcSg9lZAtw-1; Mon, 17 May 2021 09:42:06 -0400
+X-MC-Unique: tL2b1rkYP1eOBcSg9lZAtw-1
+Received: by mail-ed1-f69.google.com with SMTP id n6-20020a0564020606b029038cdc241890so3915549edv.20
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 May 2021 06:42:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MQyS3XJe4AKUr1SWVpgv2bs2/GuaT0/cfk3NUPLHQ08=;
-        b=ilP/gMZ7ezYjnyFZKAkBbsOKVqAQ13gSrgrznCozOS/+14594nWQYF3IOXpu4FNz4F
-         qxdplFxGmsx4j+x1MUeEURBRrZb+1plASByeGIbUxoG/pZ0/BGhC9yphnWVwJa+H5PCE
-         56WyfB3XQPFzmKa1LIcJNDK0e6eoZ9W/73ghl288oMBRFevTu22WUSkfbjCt6ePyPvlK
-         hgRfIBdnODHOT2JC+/BocY+jsLdSnzT63KGNtm2F82XeaebJuhzm73h6Tom1CpxqKjzu
-         jYJo7uGs/1lN9hFhhV6bVZeb1FYRCF/6lp86kVViRb/ZhxhMC9DRobA7CS+lpLjNAoOr
-         ymlg==
-X-Gm-Message-State: AOAM5313RchiT8AK9e1NtE9nVVRE8N8JvLwlkXoGQgrZOI6ddny20QIi
-        4DZe+a36V54Y1qSVRI2bjpZO8tHYClFQNP8hjVC5290V3bo=
-X-Google-Smtp-Source: ABdhPJxhBSD4WvdOfYB6sx8VDZJJLMKintD92fmsIcCWYpAzSoK9/buptc6zD372ZfU6UGj0nRTAspMZ3WR9b+W/rtc=
-X-Received: by 2002:a92:cc43:: with SMTP id t3mr4301180ilq.250.1621257699449;
- Mon, 17 May 2021 06:21:39 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=H6x6dlAzQJeEEcgnxw7b14Lv0Ybic0pb80Lf+1COmZk=;
+        b=cfDGczD4nERmlXpLsMJgmx9HOfNuRNNGe2k56Cda/6tZS9F2W9SWnpN6pymA1NWsxD
+         LyZIQ4R/glNYEvZ2ocqC+xfRolwluAUPPQcW+DEe3A9/AyrW+Pjx5LOvSvAJO5CMuZSw
+         ob15m/nNd6UUIyBsSvDsnJxcIHrJWZxlUf56+MPoTnKFJJygtVN9Vh2Nr0c3VPtgNM9h
+         waBjAkdaF6UYHeJIfuWfiur0Y23GlsqgS5IRfioGEmp6DEP7v97V4xI0l4B4fI5LFMQ4
+         1GgyUhyv4sMGBJV/0wzlNY1+55V6ZflDK9SczNyEs7yhn1hOiRdFHhgTPDX65k9VKgyY
+         Ko8A==
+X-Gm-Message-State: AOAM532ahfqmj+khcDw9k88tDe06MLYu4RLeBPNwlJIQ/qeiX/cknPEU
+        AOiuuINiyFQjl8coYl252hygpNxPcJdBFlltZ2tYKRgEDjCG34q+4vQ1F2o7AHPFH6H2u/LQIeX
+        vEuXFwvnl2vOfV39MQNrfrW+3Uw==
+X-Received: by 2002:a17:907:1007:: with SMTP id ox7mr4482ejb.82.1621258925019;
+        Mon, 17 May 2021 06:42:05 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxOnrwdmJm9wKgv4E3uyq02kBsINeKG2K+kyigE4PMhwjioTBtobRTknqqvWz3J64hwJZiBMw==
+X-Received: by 2002:a17:907:1007:: with SMTP id ox7mr4465ejb.82.1621258924851;
+        Mon, 17 May 2021 06:42:04 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:8308:b105:dd00:277b:6436:24db:9466])
+        by smtp.gmail.com with ESMTPSA id f7sm11302466edd.5.2021.05.17.06.42.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 May 2021 06:42:04 -0700 (PDT)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        Olga Kornievskaia <aglo@umich.edu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Richard Haines <richard_c_haines@btinternet.com>
+Subject: [PATCH v2 0/2] vfs/security/NFS/btrfs: clean up and fix LSM option handling
+Date:   Mon, 17 May 2021 15:41:59 +0200
+Message-Id: <20210517134201.29271-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-5-balsini@android.com>
- <CAJfpegvL2kOCkbP9bBL8YD-YMFKiSazD3_wet2-+emFafA6y5A@mail.gmail.com>
- <CAOQ4uxjOGx8gZ2biTEb4a54gw5c_aDn+FFkUvRpY+cmgEEh=sA@mail.gmail.com> <YKJVUUUapNSijV38@google.com>
-In-Reply-To: <YKJVUUUapNSijV38@google.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 17 May 2021 16:21:28 +0300
-Message-ID: <CAOQ4uxjpHTerNq70gp+GQP26RijzWOJR1pB+9GxVBSdJyjN1mQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND V12 4/8] fuse: Passthrough initialization and release
-To:     Alessio Balsini <balsini@android.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Akilesh Kailash <akailash@google.com>,
-        Antonio SJ Musumeci <trapexit@spawn.link>,
-        David Anderson <dvander@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Peng Tao <bergwolf@gmail.com>,
-        Stefano Duo <duostefano93@gmail.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        kernel-team <kernel-team@android.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> I have an ugly patch which uses IDR as Miklos asked, but unfortunately
-> I'm facing some performance issues due to the locking mechanisms to keep
-> guarantee the RCU consistency. I can post the new patch set as an RFC
-> soon for the community to take a look.
-> At a glance what happens is:
-> - the IDR, one for each fuse_conn, contains pointers to "struct
->   fuse_passthrough" containing:
->   - fuse_file *: which is using passthrough,
->   - file *: native file system file target,
->   - cred of the FUSE server,
-> - ioctl(PASSTHROUGH_OPEN): updates IDR, requires spinlock:
->   - kmalloc(fuse_passthrough), update file and cred,
->   - ID = idr_alloc(),
->   - return ID,
-> - fuse_open reply from FUSE server with passthrough ID: updates IDR,
->   requires spinlock:
->   - pt = idr_find(ID),
->   - update fuse_file with the current fuse_file,
->   - update fuse_file->passthrough_id = ID,
->   - idr_replace(),
-> - read/write/mmap: lock-free IDR read:
->   - idr_find(fuse_file::passthrough_id),
->   - forward request to lower file system as for the current FUSE
->     passthrough patches.
-> - ioctl(PASSTHROUGH_CLOSE): updates IDR, requires spinlock:
->   - idr_remove();
->   - call_rcu(): tell possible open fuse_file user that the ID is no more
->     valid and kfree() the allocated struct;
-> - close(fuse_file): updates IDR, requires spinlock:
->   - ID = fuse_file::passthrough_id
->   - idr_find(ID),
->   - fuse_passthrough::fuse_file = NULL,
->   - idr_replace().
->
-> This would be fine if passthrough is activated for a few, big files,
-> where the passthrough overhead is dominated by the direct access
-> benefits, but if passthrough is enabled for many small files which just
-> do one or two read/writes (as what I did for my benchmark of total build
-> time for the kernel, where I was passing-through every opened file), the
-> overhead becomes a real issue.
->
-> If you have any thoughts on how to make this simpler, I'm absolutely
-> open to fix this.
->
+This series fixes two bugs:
+1. A bug with BTRFS where LSM options are ignored when BTRFS is mounted
+   via the new fsconfig(2) API. (fixed by patch 1)
+2. A bug with NFS + SELinux where an attempt to do the same mount twice
+   might incidentally turn off LSM labeling, making any fresh inode
+   show up as unlabeled. (fixed by patch 2, with patch 1 as a prereq)
 
-This IDR namespace usually serves a single process. Right?
-It sounds a bit more like a file table, more specifically, like io_file_table.
-I may be way off, but this sounds a bit like IORING_REGISTER_FILES.
-Is there anything that can be learned from this UAPI?
-Maybe even reuse of some of the io_uring file register code?
+For bug (1.) I previously posted a different patch [1], which is no
+longer needed if these patches are applied.
 
-Thanks,
-Amir.
+While these patches do add a new fs_type flag (which seems to be frowned
+upon), they also reduce the semantics of FS_BINARY_MOUNT_DATA flag to
+*only* the mount data being binary, while before it was also (ab)used
+to skip mount option processing in SELinux for NFS and BTRFS. The result
+is perhaps still not perfect, but it seems to be the only non-invasive
+solution for these bugs in the short term. Once BTRFS is finally
+converted to the new mount API, a lot of the ugliness can likely be
+refactored to something nicer (and these patches do not really make that
+any harder to do, IMHO).
+
+I tested the patches by running the NFS part of the SELinux testsuite
+[2] (which is now fully passing). I also ran the proposed BTRFS SELinux
+test coverage for selinux-testsuite [3], which is now passing.
+
+Changes since v1:
+- in BTRFS, move the FS_HANDLES_LSM_OPTS flag to btrfs_root_fs_type, and
+  remove FS_BINARY_MOUNTDATA from both fs_types now
+
+v1: https://lore.kernel.org/selinux/20210409111254.271800-1-omosnace@redhat.com/T/
+
+[1] https://lore.kernel.org/selinux/20210401065403.GA1363493@infradead.org/T/
+[2] https://github.com/SELinuxProject/selinux-testsuite/
+[3] https://lore.kernel.org/selinux/20201103110121.53919-2-richard_c_haines@btinternet.com/
+    ^^ the original patch no longer applies - a rebased version is here:
+    https://github.com/WOnder93/selinux-testsuite/commit/212e76b5bd0775c7507c1996bd172de3bcbff139.patch
+
+Ondrej Mosnacek (2):
+  vfs,LSM: introduce the FS_HANDLES_LSM_OPTS flag
+  selinux: fix SECURITY_LSM_NATIVE_LABELS flag handling on double mount
+
+ fs/btrfs/super.c         | 34 +++++-----------------------------
+ fs/nfs/fs_context.c      |  6 ++++--
+ fs/super.c               | 10 ++++++----
+ include/linux/fs.h       |  3 ++-
+ security/selinux/hooks.c | 32 +++++++++++++++++---------------
+ 5 files changed, 34 insertions(+), 51 deletions(-)
+
+-- 
+2.31.1
+
