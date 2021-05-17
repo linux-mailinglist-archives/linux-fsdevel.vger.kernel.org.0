@@ -2,154 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23B3D3835A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 17:25:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A9BF3838AF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 May 2021 18:00:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238591AbhEQPXa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 May 2021 11:23:30 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25469 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244252AbhEQPTv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 May 2021 11:19:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1621264714;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JBnQo/J9oz8gnM35x+7tBsgRWTaGkCDWee+DmJ5pKGg=;
-        b=N8Y5eBgPTAIroqeRUsNbC1DBfQjo20AjmjUZMdw9It/E1+icZZo+9BSttLP7/56S1ERCEf
-        1yvuJyQ9p1uBPOuTK7vJL3D8Xza6R1MyQgtlNmgQ2Sb2oCeZxNDewf3VmZHWtVywCln/rn
-        CrpuVldox98ATxXIZOM3wHq6HaGTJv4=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-55-syzyV11BMWKeYzm5P0SC5w-1; Mon, 17 May 2021 11:18:32 -0400
-X-MC-Unique: syzyV11BMWKeYzm5P0SC5w-1
-Received: by mail-wr1-f70.google.com with SMTP id t5-20020adfb7c50000b029010dd0bb24cfso3970952wre.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 May 2021 08:18:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=JBnQo/J9oz8gnM35x+7tBsgRWTaGkCDWee+DmJ5pKGg=;
-        b=Soz5An1J1OC1rjUAAqHS8mI617jssYym+6GNk1HLrHXe5CveET/EgnljePbehXg5Cs
-         K/94jMKMKXqBjyVAVcgsCN/1pj6oxhlEhXQpCul4sjP16TCEAxT0mLBYjx30RynLl+C7
-         UH5L5vVY0KZE6YRkYclT4l6qXxFlWuiAxyI7Nn2gx9lU9O1BJRUT4sRKgGaCB2Clhu8j
-         lbOjspU5cxNokar6xLzQan4gPibgP54wSFlpMm7rhx2Zhi0N1p7q0Lz/ndh4yb59JAXu
-         6ZhawTmkuNggHnr+JvcXGLQkk7DtI9vqi7KGR+zLPXvtjn7M9N/jcfrkof7XDj1iXw3y
-         Ex2Q==
-X-Gm-Message-State: AOAM533pWpjVpjpDpj+SI69mpCD0kgpCMfF1sHlmOrHq1T138G09tGKn
-        F3TT7FLaQeNMgt6t4gS36F9MJgA3Csx4yGKY7vwPWMPwxdl3zNf9G++pyKAdMjwOqTsySpwD9jD
-        vKbVCg0n6rZJbXzd1RVCDR5JkYA==
-X-Received: by 2002:a5d:5306:: with SMTP id e6mr231543wrv.324.1621264711825;
-        Mon, 17 May 2021 08:18:31 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz9pgHxSB1CvA6bP+5A102Vw3q+wpKkw7H+TASfr6okGY07XFAE7cdx9Tfb7WlCOrjNYsTg6Q==
-X-Received: by 2002:a5d:5306:: with SMTP id e6mr231511wrv.324.1621264711624;
-        Mon, 17 May 2021 08:18:31 -0700 (PDT)
-Received: from [192.168.3.132] (p5b0c6833.dip0.t-ipconnect.de. [91.12.104.51])
-        by smtp.gmail.com with ESMTPSA id g206sm5661736wme.16.2021.05.17.08.18.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 May 2021 08:18:31 -0700 (PDT)
-Subject: Re: [PATCH v2 4/6] mm: introduce page_offline_(begin|end|freeze|thaw)
- to synchronize setting PageOffline()
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        Steven Price <steven.price@arm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Aili Yao <yaoaili@kingsoft.com>, Jiri Bohac <jbohac@suse.cz>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        linux-hyperv@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20210514172247.176750-1-david@redhat.com>
- <20210514172247.176750-5-david@redhat.com> <YKIQfCjq13dSMHOs@kernel.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Message-ID: <016e96c9-82e6-3259-7a99-8627c3be11c6@redhat.com>
-Date:   Mon, 17 May 2021 17:18:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        id S238636AbhEQP7D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 May 2021 11:59:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52268 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1345953AbhEQP5n (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 May 2021 11:57:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id AFD2AAE93;
+        Mon, 17 May 2021 15:56:25 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 68c11d86;
+        Mon, 17 May 2021 15:56:24 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
+Subject: Re: What sort of inode state does ->evict_inode() expect to see?
+ [was Re: 9p: fscache duplicate cookie]
+References: <YJvb9S8uxV2X45Cu@zeniv-ca.linux.org.uk>
+        <YJvJWj/CEyEUWeIu@codewreck.org> <87tun8z2nd.fsf@suse.de>
+        <87czu45gcs.fsf@suse.de> <2507722.1620736734@warthog.procyon.org.uk>
+        <2882181.1620817453@warthog.procyon.org.uk> <87fsysyxh9.fsf@suse.de>
+        <2891612.1620824231@warthog.procyon.org.uk>
+        <2919958.1620828730@warthog.procyon.org.uk> <87bl9dwb1r.fsf@suse.de>
+        <YJ7oxGY/eosPvCiA@codewreck.org>
+Date:   Mon, 17 May 2021 16:56:24 +0100
+In-Reply-To: <YJ7oxGY/eosPvCiA@codewreck.org> (Dominique Martinet's message of
+        "Sat, 15 May 2021 06:16:52 +0900")
+Message-ID: <87eee5wdzr.fsf@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <YKIQfCjq13dSMHOs@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 17.05.21 08:43, Mike Rapoport wrote:
-> On Fri, May 14, 2021 at 07:22:45PM +0200, David Hildenbrand wrote:
->> A driver might set a page logically offline -- PageOffline() -- and
->> turn the page inaccessible in the hypervisor; after that, access to page
->> content can be fatal. One example is virtio-mem; while unplugged memory
->> -- marked as PageOffline() can currently be read in the hypervisor, this
->> will no longer be the case in the future; for example, when having
->> a virtio-mem device backed by huge pages in the hypervisor.
->>
->> Some special PFN walkers -- i.e., /proc/kcore -- read content of random
->> pages after checking PageOffline(); however, these PFN walkers can race
->> with drivers that set PageOffline().
->>
->> Let's introduce page_offline_(begin|end|freeze|thaw) for
->> synchronizing.
->>
->> page_offline_freeze()/page_offline_thaw() allows for a subsystem to
->> synchronize with such drivers, achieving that a page cannot be set
->> PageOffline() while frozen.
->>
->> page_offline_begin()/page_offline_end() is used by drivers that care about
->> such races when setting a page PageOffline().
->>
->> For simplicity, use a rwsem for now; neither drivers nor users are
->> performance sensitive.
->>
->> Acked-by: Michal Hocko <mhocko@suse.com>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
-> 
-> One nit below, otherwise
-> 
-> Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
-> 
->> ---
->>   include/linux/page-flags.h | 10 ++++++++++
->>   mm/util.c                  | 40 ++++++++++++++++++++++++++++++++++++++
->>   2 files changed, 50 insertions(+)
->>
->> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
->> index daed82744f4b..ea2df9a247b3 100644
->> --- a/include/linux/page-flags.h
->> +++ b/include/linux/page-flags.h
->> @@ -769,9 +769,19 @@ PAGE_TYPE_OPS(Buddy, buddy)
->>    * relies on this feature is aware that re-onlining the memory block will
->>    * require to re-set the pages PageOffline() and not giving them to the
->>    * buddy via online_page_callback_t.
->> + *
->> + * There are drivers that mark a page PageOffline() and do not expect any
-> 
-> Maybe "and expect there won't be any further access"...
-> 
+Dominique Martinet <asmadeus@codewreck.org> writes:
 
-Thanks, makes sense.
+> Hi Aneesh,
+>
+> I'm going to rely on your memory here... A long, long time ago (2011!),
+> you've authored this commit:
+> -------
+> commit ed80fcfac2565fa866d93ba14f0e75de17a8223e
+> Author: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+> Date:   Wed Jul 6 16:32:31 2011 +0530
+>
+>     fs/9p: Always ask new inode in create
+>     
+>     This make sure we don't end up reusing the unlinked inode object.
+>     The ideal way is to use inode i_generation. But i_generation is
+>     not available in userspace always.
+>     
+>     Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+>     Signed-off-by: Eric Van Hensbergen <ericvh@gmail.com>
+> -------
+>
+> Do you happen to remember or know *why* you wanted to make sure we don't
+> reuse the unlinked inode object?
+>
+> I'm asking because that's causing problems with (at least) fscache
+> cookie, iget5_locked() gets us a new inode in v9fs_qid_iget_dotl()
+> and tries to get a new cookie before the evict has happened and
+> relinquished the former inode's.
+> There's also problems with coherency in sight -- evict is also in charge
+> of flushing all dirty pages, so the new inode can in theory issue IO and
+> read from server data which has been written by another process on the
+> same client and while 9p isn't known for coherency with multiple clients
+> it's a different story with a single one! (didn't reproduce that one)
+>
+> Anyway, it'd be great to know why you did that so we can try another
+> workaround.
+> In theory I'd love to have qemu and others export fsid + a fhandle from
+> name_to_handle_at that includes i_generation and full inode number in
+> the qid path, but we're limited by the 64bits of the protocol so it's a
+> tough one... In practice I don't see generation being used all that much
+> by filesystems to reuse inode numbers though, so wondering which is the
+> most problematic?
+>
+>
+>
+> You can find the rest of the thread here if you're not subscribed to
+> v9fs-developer or linux-fsdevel:
+> https://lkml.kernel.org/r/87czu45gcs.fsf@suse.de
+>
+>
+>
+> Luis Henriques wrote on Fri, May 14, 2021 at 05:10:56PM +0100:
+>> So, from our last chat on IRC, we have the following happening:
+>> 
+>> v9fs_vfs_atomic_open_dotl
+>>   v9fs_vfs_lookup
+>>     v9fs_get_new_inode_from_fid
+>>       v9fs_inode_from_fid_dotl
+>>         v9fs_qid_iget_dotl
+>> 
+>> At this point, iget5_locked() gets called with the test function set to
+>> v9fs_test_new_inode_dotl(), which *always* returns 0.  It's still not
+>> clear to me why commit ed80fcfac256 ("fs/9p: Always ask new inode in
+>> create") has introduced this behavior but even if that's not correct, we
+>> still have a race regarding cookies handling, right?
+>> 
+>> I'm still seeing:
+>> 
+>> CPU0                     CPU1
+>> v9fs_drop_inode          ...
+>> v9fs_evict_inode         /* atomic_open */
+>>                          v9fs_cache_inode_get_cookie <= COLLISION
+>> fscache_relinquish
+>
+> Do you mean you still have that problem after ed80fcfac256 has been
+> reverted?
 
-I'll wait a bit before I resend.
+No, I couldn't reproduce the issue after changing v9fs_qid_iget_dotl() to
+never use v9fs_test_new_inode_dotl in the iget5_locked() test.  (So,
+technically I didn't reverted that commit but the effect should be the
+same.)
 
+>> So, the question remains: would it be possible to do the relinquish
+>> earlier (->drop_inode)?  Or is 9p really shooting itself in the foot by
+>> forcing iget5_locked() to always create a new inode here?
+>
+> Ugh that is the kind of things I don't want to experiment with...
+> ->drop_inode() seems to be called with i_lock taken and meant to be just
+> a test, not something that can wait, but from what I'm reading it might
+> be possible to set I_WILL_FREE, drop the lock, do our stuff and reaquire
+> the lock at the end.. perhaps? It looks like inode lookup will just loop
+> around on ilookup5_nowait while I_WILL_FREE is set so new inodes can't
+> be taken at this point, it's a de-facto spin lock with iget5_locked and
+> friends.
+> I have no idea what will break though, I'd really rather leave it to the
+> vfs and have 9p do the right thing with inode recycling.
+
+Right, the fscache code would definitely need to be changed in this case.
+Which makes me wonder if the following would be possible/acceptable:
+
+Add a function fscache_reliquish_cookie_begin() that would set
+FSCACHE_COOKIE_RELINQUISHING (currently unused AFAICS) in the cookie
+flag.  This would allow ->drop_inode() to signal that a cookie is about to
+be relinquished.
+
+Then, fscache_hash_cookie() could do something like:
+
+ 	hlist_bl_lock(h);
+ 	hlist_bl_for_each_entry(cursor, p, h, hash_link) {
+-		if (fscache_compare_cookie(candidate, cursor) == 0)
++		if ((fscache_compare_cookie(candidate, cursor) == 0) &&
++		    (!test_bit(FSCACHE_COOKIE_RELINQUISHING, &cursor->flags)))
+ 			goto collision;
+ 	}
+
+Yeah, I'm sure the logic in fscache_acquire_cookie() would need to be
+reworked and the old cookie would need to be removed from the list so that
+the new one could be inserted.  And probably other places in the fscache
+code would need to take the _RELINQUISHING flag into account.  But I guess
+something like this could fix the race (although I'm not familiar with the
+fscache code and this idea may be utterly wrong).
+
+Cheers,
 -- 
-Thanks,
-
-David / dhildenb
-
+Luis
