@@ -2,32 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A4EC386E10
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 May 2021 02:07:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF85538700F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 May 2021 04:54:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344797AbhERAI1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 May 2021 20:08:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39472 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241878AbhERAI0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 May 2021 20:08:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 567E761185;
-        Tue, 18 May 2021 00:07:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621296429;
-        bh=ScWD93vhmvE7/+az5cdwWZNoMFRvnv5xxJIi25HVOy0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Hdc9f/UOXdv+qfglkWePf0sL5MOVzNA3ZHmgmEyP7w2ctS/o/cFc0cfZQDYOgPKLd
-         wlTYkfn/VyMpUGIWomuP/vw4/Ei4opEB9rpMWlZgvAuxV0imtnNJ54QZWHFuEkQIZW
-         gs1lWxnWA+2a6CxylE0hBoL2pu8P4wwFl4DunojZOU5irUOIe/tPWMzLVSTV3dB9iQ
-         Og9KGU50jWOhITsWIJtcrEbAoeiW9bSiDvkgJrgH03HUZIT9HTcEAd+jTfGmSaM8cN
-         mKNFmHX8NwxUBXl9KGQ1RjXjEtUdTSq3Sz6THLiMf4yjCrD83VaXqX3ufERUMp1mpS
-         ZIV2FDjYZSmHw==
-Date:   Mon, 17 May 2021 17:07:07 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
+        id S1346269AbhERCzQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 May 2021 22:55:16 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:34096 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1345671AbhERCzP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 May 2021 22:55:15 -0400
+Received: from callcc.thunk.org (c-73-8-226-230.hsd1.il.comcast.net [73.8.226.230])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 14I2rHfd027550
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 May 2021 22:53:18 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 29672420119; Mon, 17 May 2021 22:53:16 -0400 (EDT)
+Date:   Mon, 17 May 2021 22:53:16 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
 To:     Omar Sandoval <osandov@osandov.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-btrfs <linux-btrfs@vger.kernel.org>,
@@ -41,7 +38,7 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Kernel Team <kernel-team@fb.com>
 Subject: Re: [PATCH RERESEND v9 0/9] fs: interface for directly
  reading/writing compressed data
-Message-ID: <YKMFK3GtcWaRz4DA@gmail.com>
+Message-ID: <YKMsHMS4IfO8PhN1@mit.edu>
 References: <cover.1621276134.git.osandov@fb.com>
  <CAHk-=wh74eFxL0f_HSLUEsD1OQfFNH9ccYVgCXNoV1098VCV6Q@mail.gmail.com>
  <YKLt5GyznttizBjd@relinquished.localdomain>
@@ -56,30 +53,58 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Mon, May 17, 2021 at 04:25:15PM -0700, Omar Sandoval wrote:
+> > Well, assuming we're talking about regular files only (so file contents
+> > encryption, not filenames encryption),
 > 
-> Okay, I think we're in agreement: RWF_ENCODED for the data and separate
-> ioctls for the encryption context. Since the fscrypt policy struct
-> includes all of the relevant information, RWF_ENCODED can probably just
-> have a single ENCODED_IOV_ENCRYPTION_FSCRYPT encryption type.
-> RWF_ENCODED can express data which is both compressed and encrypted, so
-> that should be fine as well.
-> 
-> The only other missing piece that I see (other than filesystem support)
-> is an FS_IOC_SET_ENCRYPTION_NONCE ioctl. Would such an interface be
-> reasonable?
+> Yes, I was thinking of regular files. File operations using encrypted
+> names sounds... interesting, but I think out of scope for this.
 
-In theory, it will be possible to add FS_IOC_SET_ENCRYPTION_NONCE.  The
-implementation might be tricky.  It would have to take the inode lock, verify
-that the file is empty, replace the encryption xattr, and re-derive and replace
-the file's encryption key.  Replacing the key should be safe because the file is
-empty, but it's hard to be sure -- and what about directories?  Another concern
-is that userspace could misuse this ioctl and somehow end up reusing nonces,
-which would be bad; probably this should be a CAP_SYS_ADMIN thing only.
+So the question I have is why would you want to get the raw encrypted
+data?  One possible reason (and this is what Michael Halwcrow and I
+had tried designing years ago) was so you could backup a device that
+had multiple users' files without having all of the users' keys ---
+and then be able to restore them.  So for example, suppose you had a
+tablet that is shared by multiple family members, and you want to be
+backup all of the data on the shared device so that it could be
+restored in case one of the kids drop the tablet in the swimming pool....
 
-A larger question is whether the goal is to support users backing up and
-restoring encrypted files without their encryption key being available -- in
-which case things would become *much* harder.  First because of the filenames
-encryption, and second because we currently don't allow opening files without
-their encryption key.
+But in order to do that, you need to be able to restore the encrypted
+files in the encrypted directories.  In practice, encrypted files
+generally exist in encrypted directories.  That's because the typical
+way fscrypt gets used is we set a policy on an empty directory, and
+then all of the newly files created files have encrypted file names,
+inherit the directory's encryption policy, and then have encrypted
+file contents.
 
-- Eric
+So do you have the encryption key, or not?  If you do have the
+encryption key, then you can ignore the issue of the file name when
+you open the file, but what's the reason why you would want to extract
+out the raw encrypted data plus the raw encryption metadata?  You're
+not going to be able to restore the encrypted file, in the encrypted
+directory name.  Perhaps it's because you want to keep the data
+encrypted while you're tranferring it --- but the filename needs to be
+encrypted as well, and given modern CPU's, with or without
+inline-crypto engines, the cost of decrypting the file data and then
+re-encrypting it in the backup key isn't really that large.
+
+If you don't have the encryption key, then you need to be able to open
+the file using using the encrypted name (which fscrypt does support)
+and then extract out the encrypted file name using another bundle of
+encryption metadata.  So that's a bit more complicated, but it's
+doable.
+
+The *really* hard part is *restoring* an encrypted directory
+hierarchy.  Michael and I did create a straw design proposal (which is
+too small to fit in the margins of this e-mail :-), but suffice it to
+say that the standard Posix system calls are not sufficient to be able
+to create encrypted files and encrypted directories, and it would have
+been messy as all hell.  Which is why we breathed a sign of relief
+when the original product requirement of being able to do
+backup/restore of shared devices went away.   :-)
+
+The thing is, though, just being able to extract out regular files in
+their raw encrypted on-disk form, along with their filename metadata,
+seems to be a bit of a party trick without a compelling use case that
+I can see.  But perhaps you have something in mind?
+
+						- Ted
