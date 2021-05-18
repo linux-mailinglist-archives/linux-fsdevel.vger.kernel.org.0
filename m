@@ -2,49 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16E8E3878A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 May 2021 14:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53770387A08
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 May 2021 15:32:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349045AbhERM1d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 May 2021 08:27:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39652 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234046AbhERM12 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 May 2021 08:27:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A6705B0B3;
-        Tue, 18 May 2021 12:26:09 +0000 (UTC)
-Subject: Re: [PATCH v10 31/33] mm/filemap: Add folio private_2 functions
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        akpm@linux-foundation.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20210511214735.1836149-1-willy@infradead.org>
- <20210511214735.1836149-32-willy@infradead.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <6b57b706-ebaf-e15d-d121-1ac048a0d3f7@suse.cz>
-Date:   Tue, 18 May 2021 14:26:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        id S1349663AbhERNd6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 May 2021 09:33:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42084 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1349659AbhERNd5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 May 2021 09:33:57 -0400
+Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD7C4C061573
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 May 2021 06:32:38 -0700 (PDT)
+Received: by mail-vs1-xe31.google.com with SMTP id f11so4948988vst.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 May 2021 06:32:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mOHb7KV0iIqybMPHNNCBk4g9/EZlQNNg3Qk99m8NzKQ=;
+        b=jBJVmpaQ6BNJlKP1vswoqz8AUvJo0sBLr+hfCNWHeWqpaH3HBJMwdAZ8XlmI0i9oIW
+         VVagGlGOG2pcFfGScJQNwIneL6jBOy52zZHUNlTSwOfc7U9zKBto9LQCPr9qBWosJw4m
+         fyaVDn4mDpQL7EQ1HSn5wmyd2wgZbqj56TRV4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mOHb7KV0iIqybMPHNNCBk4g9/EZlQNNg3Qk99m8NzKQ=;
+        b=Xcd+a5GJpUwaDus5XbycqlrZc9BmvR+IAeIRQlWNeKeaxlR7eX30w0BzBtM2t7Zi2K
+         7Y6UywG40ByT7NFhAni5WU8oWcFFuv74hdgygpOOTxhuBK+FI/aZgfj2u4Nj4u3bHJJA
+         fBeGRCT+zUcpHqLFtxFZqhgmcVjmxsv5R9oeO2bOAofX2glBopMctmNGmQoBaf/o9oZI
+         wznq9Sdh6zfuXjO5jIY6r5khY7A/Vog+5fizXIqsPajsCJq377/n4qcxonu/AJ9eUvA3
+         81t+BL+pforYsXL+IuLRvDffCQkJIoC0PCJ10qqcpGoWZQqIz3Z8rWZrLXX3p3ybswQ/
+         pTEg==
+X-Gm-Message-State: AOAM533VJiQ+s2EeC1HSiUQRSDWBAXlx2SF15RmKWxhjMBOFYp3ixKab
+        xyLZy/xg9A3hPpxA5oxwDgtWQ3DZ686GbC9JhFZ5ZAmaqPiVPg==
+X-Google-Smtp-Source: ABdhPJzNGPeZqScCYFqkxGn/zGapuZtHgCfq2bKaiCYFh9lRHAQl69QspV9tsx8WEehkUpoKZOGJhq66NCzmKgTZ3ZM=
+X-Received: by 2002:a67:db91:: with SMTP id f17mr6751308vsk.47.1621344757894;
+ Tue, 18 May 2021 06:32:37 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210511214735.1836149-32-willy@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210514061757.1077-1-changfengnan@vivo.com>
+In-Reply-To: <20210514061757.1077-1-changfengnan@vivo.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 18 May 2021 15:32:27 +0200
+Message-ID: <CAJfpegs6kKi31LzM2EGthkHW+ZBLzF2we0c5pFdcXWOhsS7VLw@mail.gmail.com>
+Subject: Re: [PATCH v2] fuse: fix inconsistent status between faccess and mkdir
+To:     Fengnan Chang <changfengnan@vivo.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/11/21 11:47 PM, Matthew Wilcox (Oracle) wrote:
-> end_page_private_2() becomes folio_end_private_2(),
-> wait_on_page_private_2() becomes folio_wait_private_2() and
-> wait_on_page_private_2_killable() becomes folio_wait_private_2_killable().
-> 
-> Adjust the fscache equivalents to call page_folio() before calling these
-> functions to avoid adding wrappers.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+On Fri, 14 May 2021 at 08:18, Fengnan Chang <changfengnan@vivo.com> wrote:
+>
+> since FUSE caches dentries and attributes with separate timeout, It may
+> happen that checking the permission returns -ENOENT, but because the
+> dentries cache has not timed out, creating the file returns -EEXIST.
 
+This should be fixed in v5.11 and later by commit df8629af2934 ("fuse:
+always revalidate if exclusive create").
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Thanks,
+Miklos
