@@ -2,106 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34AF43875E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 May 2021 11:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 107433875F1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 May 2021 12:03:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348233AbhERKA2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 May 2021 06:00:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55290 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1348228AbhERKAZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 May 2021 06:00:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1621331946; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=b8xv7F9R3YDRWAMnBTpPRwnYRLd13u+yXERM3M4MUTs=;
-        b=JS/jDkcP1gH5mTt25RX5I6j86/cz/ZDydaWWHW2hqY8nQAAzE3DLIomRP5iqBIJVDfMfru
-        o/w0GyCy15FdVoUInzSjJEpAT5R+5767DWCkHYFbUgNcLAIQDa3PDa25+ejFAKMWeiZdjA
-        Bt7ymH4NrrKr2c/O8dhrS2VhugnQsAg=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id BEF56AEAC;
-        Tue, 18 May 2021 09:59:05 +0000 (UTC)
-Date:   Tue, 18 May 2021 11:59:03 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Hagen Paul Pfeifer <hagen@jauu.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Palmer Dabbelt <palmerdabbelt@google.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-Subject: Re: [PATCH v19 5/8] mm: introduce memfd_secret system call to create
- "secret" memory areas
-Message-ID: <YKOP5x8PPbqzcsdK@dhcp22.suse.cz>
-References: <20210513184734.29317-1-rppt@kernel.org>
- <20210513184734.29317-6-rppt@kernel.org>
- <b625c5d7-bfcc-9e95-1f79-fc8b61498049@redhat.com>
- <YKDJ1L7XpJRQgSch@kernel.org>
+        id S1348269AbhERKE2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 May 2021 06:04:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50422 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1347680AbhERKE2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 May 2021 06:04:28 -0400
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8112FC061573;
+        Tue, 18 May 2021 03:03:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xbxQ7LflgvywD0uq2+jWyofzThk1Q3xiYg3qZ0VHMnQ=; b=Fd/X1Lue1feIdaCIJ/F9pJM4W
+        aHDrQfIGkftvyaxgcswhtDvYDJvbovHuksw6PRa4zLWFAwG7RcyU5QgI8v6d05hpDe89xGMB2d4aZ
+        IE/Odo6u7q8iUyq6upTArt5DXsrlMjY41xFIOn1zJQy1UucRtYzS51o73HxLkfhEmqJNObj4R/QVL
+        lBnbTVBeOXJQl7Q1Zdy+RGn0dJhwrhav1O2Vs5dOW+a67jxUT3sHAFaEeJ/M1EvbVYPi6C4XHTiyB
+        qTTrFfHgZWbnvLCvcUeZ8w9Uegkm0zbcMbF6k6mnW+HpLf11Z1lvqoFMjIFdI7v7wU48YkT7m1wwG
+        +7waiIxvQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44124)
+        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1liwZA-00041w-6W; Tue, 18 May 2021 11:03:08 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1liwZ8-0007nC-So; Tue, 18 May 2021 11:03:06 +0100
+Date:   Tue, 18 May 2021 11:03:06 +0100
+From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Steve French <smfrench@gmail.com>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Fwd: [EXTERNAL] Re: ioctl.c:undefined reference to
+ `__get_user_bad'
+Message-ID: <20210518100306.GS12395@shell.armlinux.org.uk>
+References: <202105110829.MHq04tJz-lkp@intel.com>
+ <a022694d-426a-0415-83de-4cc5cd9d1d38@infradead.org>
+ <MN2PR21MB15184963469FEC9B13433964E42D9@MN2PR21MB1518.namprd21.prod.outlook.com>
+ <CAH2r5mswqB9DT21YnSXMSAiU0YwFUNu0ni6f=cW+aLz4ssA8rw@mail.gmail.com>
+ <d3e24342-4f30-6a2f-3617-a917539eac94@infradead.org>
+ <5b29fe73-7c95-0b9f-3154-c053fa94cb67@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YKDJ1L7XpJRQgSch@kernel.org>
+In-Reply-To: <5b29fe73-7c95-0b9f-3154-c053fa94cb67@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 16-05-21 10:29:24, Mike Rapoport wrote:
-> On Fri, May 14, 2021 at 11:25:43AM +0200, David Hildenbrand wrote:
-[...]
-> > > +		if (!page)
-> > > +			return VM_FAULT_OOM;
-> > > +
-> > > +		err = set_direct_map_invalid_noflush(page, 1);
-> > > +		if (err) {
-> > > +			put_page(page);
-> > > +			return vmf_error(err);
-> > 
-> > Would we want to translate that to a proper VM_FAULT_..., which would most
-> > probably be VM_FAULT_OOM when we fail to allocate a pagetable?
-> 
-> That's what vmf_error does, it translates -ESOMETHING to VM_FAULT_XYZ.
+On Mon, May 17, 2021 at 02:06:33PM -0700, Randy Dunlap wrote:
+> [adding back linux-arm-kernel; what happened to it? ]
 
-I haven't read through the rest but this has just caught my attention.
-Is it really reasonable to trigger the oom killer when you cannot
-invalidate the direct mapping. From a quick look at the code it is quite
-unlikely to se ENOMEM from that path (it allocates small pages) but this
-can become quite sublte over time. Shouldn't this simply SIGBUS if it
-cannot manipulate the direct mapping regardless of the underlying reason
-for that?
+Nothing. I'm not interested in trying to do major disgusting
+contortions to make get_user() work for 8-byte values. If someone
+else wants to put the effort in and come up with an elegant solution
+that doesn't add warnings over the rest of the kernel, that's fine.
+
+As far as I remember, everything in __get_user_err() relies on
+__gu_val _not_ being 64-bit. If we use the same trick that we do
+in __get_user_check():
+
+	__inttype(x) __gu_val = (x);
+
+then if get_user() is called with a 64-bit integer value and a
+pointer-to-32-bit location to fetch from, we'd end up passing a
+64-bit integer into the __get_user_asm() which could access the
+wrong 32-bit half of the value in BE mode. Similar issue with
+64-bit vs pointer-to-16-bit.
+
 -- 
-Michal Hocko
-SUSE Labs
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
