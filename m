@@ -2,119 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 47C983882BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 00:29:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 446EC3882C9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 00:36:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352744AbhERWat (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 May 2021 18:30:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51038 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232020AbhERWas (ORCPT
+        id S1352771AbhERWiD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 May 2021 18:38:03 -0400
+Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:51453 "EHLO
+        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230251AbhERWiC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 May 2021 18:30:48 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 716EBC061573
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 May 2021 15:29:30 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id n10so11074525ion.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 May 2021 15:29:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sJSTAKCZ+krTWG3lgInmgl4vdo4n0Oih7NdB8EZOroE=;
-        b=jbuHe9+Qf8UciW37lf7ZswZs7ReoWXczX04sFI1v7v+3FEj4I+EoN+d69cBUfvxZL2
-         pppqzzmCpxde7Hh+QW7SdZ1jnX4IX5TcXLfsMzhVJOrTYHglNNe+YSCOyZrx8IZeqH1D
-         IXg0zl7mwhjrFeuEQYeofug0VDMviAXFvR3ZUcYWSeo/1nefLar6o+c5Cb94aEOmOEE9
-         MQy8UMokWYa8Fi1ImWSqAGd0WJbpPO0JSFgRT6Jmr+Nw5hnSuXw/G4l0obG05YIbnKtn
-         XjsnCgoHUZulXA1LHNcZ3wLelpQCj9ucW4gS+3QoYK/5Ibly+MvFuRT9L+37QjSIjH/f
-         tnGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sJSTAKCZ+krTWG3lgInmgl4vdo4n0Oih7NdB8EZOroE=;
-        b=bBMMHOw8/JtsPVA/QFVOEESKuvk2/wU1B/8/XknzYKto3R2kNghElqcrGaV++K3sF7
-         4aiMwSdEIG0AMx/4ycGUu6NvlQ4NzWsaQOeS6SbhaOS5OaQkYdHeA5tZmkwzFL2C8w5f
-         egI0z9lHWE0RDRyeYoTShQ/0GVZt80ExTShhhYYQ3unOEso39S//lLdEqWhcUIOKKpUD
-         9FLvGhiagD1L+AG4fDtFjnq+6K7rRxMCI2nHBLYCSfNRH6aL1J+qDiRIs1oUBdcwlMPr
-         aWrj0bPVVWexHwLNd+Xb+xUnkWVy5+n/4//Zw4tFz1EGdRzRVRHtaGsbEUuLifGBxCBB
-         /qIA==
-X-Gm-Message-State: AOAM533jaNxKUVM0N1919/6KbKawm14No219SYcWJKy5MIZm8Wycc41i
-        7Lrwy83ys5bWs97F+oiLa8BVfr/FzosSwYylOIzcBQ==
-X-Google-Smtp-Source: ABdhPJxg1XeLxXOYntitmR4NlPBu0nqJwFp2PCXTohQRhknrcmZuOxJxUcxf72xJjinay2qMPf2wVkwu5qRUYJyu2as=
-X-Received: by 2002:a05:6602:446:: with SMTP id e6mr6560189iov.20.1621376969710;
- Tue, 18 May 2021 15:29:29 -0700 (PDT)
+        Tue, 18 May 2021 18:38:02 -0400
+Received: from dread.disaster.area (pa49-195-118-180.pa.nsw.optusnet.com.au [49.195.118.180])
+        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id 363BA108858;
+        Wed, 19 May 2021 08:36:38 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1lj8KL-002Ymb-Nc; Wed, 19 May 2021 08:36:37 +1000
+Date:   Wed, 19 May 2021 08:36:37 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Thumshirn <jth@kernel.org>,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 03/11] mm: Protect operations adding pages to page cache
+ with invalidate_lock
+Message-ID: <20210518223637.GJ2893@dread.disaster.area>
+References: <20210512101639.22278-1-jack@suse.cz>
+ <20210512134631.4053-3-jack@suse.cz>
+ <20210512152345.GE8606@magnolia>
+ <20210513174459.GH2734@quack2.suse.cz>
+ <20210513185252.GB9675@magnolia>
+ <20210513231945.GD2893@dread.disaster.area>
+ <20210514161730.GL9675@magnolia>
 MIME-Version: 1.0
-References: <20210427225244.4326-1-axelrasmussen@google.com>
- <20210427225244.4326-10-axelrasmussen@google.com> <YKQqKrl+/cQ1utrb@t490s>
-In-Reply-To: <YKQqKrl+/cQ1utrb@t490s>
-From:   Axel Rasmussen <axelrasmussen@google.com>
-Date:   Tue, 18 May 2021 15:28:52 -0700
-Message-ID: <CAJHvVch3SZ80yt+FnK5M=m4haJ-pFZqvMtGVYHnw9rs1pBkNcw@mail.gmail.com>
-Subject: Re: [PATCH v5 09/10] userfaultfd/selftests: reinitialize test context
- in each test
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Shaohua Li <shli@fb.com>, Shuah Khan <shuah@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wang Qing <wangqing@vivo.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        Brian Geffon <bgeffon@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210514161730.GL9675@magnolia>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
+        a=xcwBwyABtj18PbVNKPPJDQ==:117 a=xcwBwyABtj18PbVNKPPJDQ==:17
+        a=kj9zAlcOel0A:10 a=5FLXtPjwQuUA:10 a=7-415B0cAAAA:8
+        a=cLZU_rh0lbdFaG61GT8A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I suppose it will be squashed anyway, but in case it's useful feel free to add:
+On Fri, May 14, 2021 at 09:17:30AM -0700, Darrick J. Wong wrote:
+> On Fri, May 14, 2021 at 09:19:45AM +1000, Dave Chinner wrote:
+> > On Thu, May 13, 2021 at 11:52:52AM -0700, Darrick J. Wong wrote:
+> > > On Thu, May 13, 2021 at 07:44:59PM +0200, Jan Kara wrote:
+> > > > On Wed 12-05-21 08:23:45, Darrick J. Wong wrote:
+> > > > > On Wed, May 12, 2021 at 03:46:11PM +0200, Jan Kara wrote:
+> > > > > > +->fallocate implementation must be really careful to maintain page cache
+> > > > > > +consistency when punching holes or performing other operations that invalidate
+> > > > > > +page cache contents. Usually the filesystem needs to call
+> > > > > > +truncate_inode_pages_range() to invalidate relevant range of the page cache.
+> > > > > > +However the filesystem usually also needs to update its internal (and on disk)
+> > > > > > +view of file offset -> disk block mapping. Until this update is finished, the
+> > > > > > +filesystem needs to block page faults and reads from reloading now-stale page
+> > > > > > +cache contents from the disk. VFS provides mapping->invalidate_lock for this
+> > > > > > +and acquires it in shared mode in paths loading pages from disk
+> > > > > > +(filemap_fault(), filemap_read(), readahead paths). The filesystem is
+> > > > > > +responsible for taking this lock in its fallocate implementation and generally
+> > > > > > +whenever the page cache contents needs to be invalidated because a block is
+> > > > > > +moving from under a page.
+> > > > > > +
+> > > > > > +->copy_file_range and ->remap_file_range implementations need to serialize
+> > > > > > +against modifications of file data while the operation is running. For blocking
+> > > > > > +changes through write(2) and similar operations inode->i_rwsem can be used. For
+> > > > > > +blocking changes through memory mapping, the filesystem can use
+> > > > > > +mapping->invalidate_lock provided it also acquires it in its ->page_mkwrite
+> > > > > > +implementation.
+> > > > > 
+> > > > > Question: What is the locking order when acquiring the invalidate_lock
+> > > > > of two different files?  Is it the same as i_rwsem (increasing order of
+> > > > > the struct inode pointer) or is it the same as the XFS MMAPLOCK that is
+> > > > > being hoisted here (increasing order of i_ino)?
+> > > > > 
+> > > > > The reason I ask is that remap_file_range has to do that, but I don't
+> > > > > see any conversions for the xfs_lock_two_inodes(..., MMAPLOCK_EXCL)
+> > > > > calls in xfs_ilock2_io_mmap in this series.
+> > > > 
+> > > > Good question. Technically, I don't think there's real need to establish a
+> > > > single ordering because locks among different filesystems are never going
+> > > > to be acquired together (effectively each lock type is local per sb and we
+> > > > are free to define an ordering for each lock type differently). But to
+> > > > maintain some sanity I guess having the same locking order for doublelock
+> > > > of i_rwsem and invalidate_lock makes sense. Is there a reason why XFS uses
+> > > > by-ino ordering? So that we don't have to consider two different orders in
+> > > > xfs_lock_two_inodes()...
+> > > 
+> > > I imagine Dave will chime in on this, but I suspect the reason is
+> > > hysterical raisins^Wreasons.
+> > 
+> > It's the locking rules that XFS has used pretty much forever.
+> > Locking by inode number always guarantees the same locking order of
+> > two inodes in the same filesystem, regardless of the specific
+> > in-memory instances of the two inodes.
+> > 
+> > e.g. if we lock based on the inode structure address, in one
+> > instancex, we could get A -> B, then B gets recycled and
+> > reallocated, then we get B -> A as the locking order for the same
+> > two inodes.
+> > 
+> > That, IMNSHO, is utterly crazy because with non-deterministic inode
+> > lock ordered like this you can't make consistent locking rules for
+> > locking the physical inode cluster buffers underlying the inodes in
+> > the situation where they also need to be locked.
+> 
+> <nod> That's protected by the ILOCK, correct?
+> 
+> > We've been down this path before more than a decade ago when the
+> > powers that be decreed that inode locking order is to be "by
+> > structure address" rather than inode number, because "inode number
+> > is not unique across multiple superblocks".
+> > 
+> > I'm not sure that there is anywhere that locks multiple inodes
+> > across different superblocks, but here we are again....
+> 
+> Hm.  Are there situations where one would want to lock multiple
+> /mappings/ across different superblocks?  The remapping code doesn't
+> allow cross-super operations, so ... pipes and splice, maybe?  I don't
+> remember that code well enough to say for sure.
 
-Reviewed-by: Axel Rasmussen <axelrasmussen@google.com>
+Hmmmm. Doing read IO into a buffer that is mmap()d from another
+file, and we take a page fault on it inside the read IO path? We're
+copying from a page in one mapping and taking a fault in another
+mapping and hence taking the invalidate_lock to populate the page
+cache for the second mapping...
 
-Thanks for catching this, Peter!
+I haven't looked closely enough at where the invalidate_lock is held
+in the read path to determine if this is an issue, but if it is then
+it is also a potential deadlock scenario...
 
-On Tue, May 18, 2021 at 1:57 PM Peter Xu <peterx@redhat.com> wrote:
->
-> On Tue, Apr 27, 2021 at 03:52:43PM -0700, Axel Rasmussen wrote:
-> > Currently, the context (fds, mmap-ed areas, etc.) are global. Each test
-> > mutates this state in some way, in some cases really "clobbering it"
-> > (e.g., the events test mremap-ing area_dst over the top of area_src, or
-> > the minor faults tests overwriting the count_verify values in the test
-> > areas). We run the tests in a particular order, each test is careful to
-> > make the right assumptions about its starting state, etc.
-> >
-> > But, this is fragile. It's better for a test's success or failure to not
-> > depend on what some other prior test case did to the global state.
-> >
-> > To that end, clear and reinitialize the test context at the start of
-> > each test case, so whatever prior test cases did doesn't affect future
-> > tests.
-> >
-> > This is particularly relevant to this series because the events test's
-> > mremap of area_dst screws up assumptions the minor fault test was
-> > relying on. This wasn't a problem for hugetlb, as we don't mremap in
-> > that case.
-> >
-> > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
->
-> Hi, Andrew,
->
-> There's a conflict on the uffd test case with v5.13-rc1-mmots-2021-05-13-17-23
-> between this patch and the uffd pagemap series, so I think we may need to queue
-> another fixup patch (to be squashed into this patch of Axel's) which is
-> attached.
->
-> Thanks,
->
-> --
-> Peter Xu
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
