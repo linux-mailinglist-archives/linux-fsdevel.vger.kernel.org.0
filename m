@@ -2,225 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D12F387663
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 May 2021 12:24:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B2FC387669
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 May 2021 12:26:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348450AbhERKZz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 May 2021 06:25:55 -0400
-Received: from foss.arm.com ([217.140.110.172]:48128 "EHLO foss.arm.com"
+        id S243458AbhERK1Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 May 2021 06:27:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35064 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239674AbhERKZy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 May 2021 06:25:54 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F83E1FB;
-        Tue, 18 May 2021 03:24:36 -0700 (PDT)
-Received: from C02TD0UTHF1T.local (unknown [10.57.6.226])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A1EB3F719;
-        Tue, 18 May 2021 03:24:27 -0700 (PDT)
-Date:   Tue, 18 May 2021 11:24:24 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Hagen Paul Pfeifer <hagen@jauu.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Palmer Dabbelt <palmerdabbelt@google.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-Subject: Re: [PATCH v19 6/8] PM: hibernate: disable when there are active
- secretmem users
-Message-ID: <20210518102424.GD82842@C02TD0UTHF1T.local>
-References: <20210513184734.29317-1-rppt@kernel.org>
- <20210513184734.29317-7-rppt@kernel.org>
+        id S239674AbhERK1X (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 May 2021 06:27:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 33B04AF19;
+        Tue, 18 May 2021 10:26:04 +0000 (UTC)
+Subject: Re: [PATCH v10 19/33] mm/filemap: Add folio_lock
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        akpm@linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Jeff Layton <jlayton@kernel.org>
+References: <20210511214735.1836149-1-willy@infradead.org>
+ <20210511214735.1836149-20-willy@infradead.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <eed3b8f5-42b8-d7d7-7b6d-1512091485e6@suse.cz>
+Date:   Tue, 18 May 2021 12:26:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210513184734.29317-7-rppt@kernel.org>
+In-Reply-To: <20210511214735.1836149-20-willy@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 13, 2021 at 09:47:32PM +0300, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
+On 5/11/21 11:47 PM, Matthew Wilcox (Oracle) wrote:
+> This is like lock_page() but for use by callers who know they have a folio.
+> Convert __lock_page() to be __folio_lock().  This saves one call to
+> compound_head() per contended call to lock_page().
 > 
-> It is unsafe to allow saving of secretmem areas to the hibernation
-> snapshot as they would be visible after the resume and this essentially
-> will defeat the purpose of secret memory mappings.
+> Saves 362 bytes of text; mostly from improved register allocation and
+> inlining decisions.  __folio_lock is 59 bytes while __lock_page was 79.
 > 
-> Prevent hibernation whenever there are active secret memory users.
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Jeff Layton <jlayton@kernel.org>
 
-Have we thought about how this is going to work in practice, e.g. on
-mobile systems? It seems to me that there are a variety of common
-applications which might want to use this which people don't expect to
-inhibit hibernate (e.g. authentication agents, web browsers).
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Are we happy to say that any userspace application can incidentally
-inhibit hibernate?
-
-Thanks,
-Mark.
-
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Christopher Lameter <cl@linux.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Elena Reshetova <elena.reshetova@intel.com>
-> Cc: Hagen Paul Pfeifer <hagen@jauu.net>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: James Bottomley <jejb@linux.ibm.com>
-> Cc: "Kirill A. Shutemov" <kirill@shutemov.name>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Palmer Dabbelt <palmerdabbelt@google.com>
-> Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Cc: Roman Gushchin <guro@fb.com>
-> Cc: Shakeel Butt <shakeelb@google.com>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Tycho Andersen <tycho@tycho.ws>
-> Cc: Will Deacon <will@kernel.org>
 > ---
->  include/linux/secretmem.h |  6 ++++++
->  kernel/power/hibernate.c  |  5 ++++-
->  mm/secretmem.c            | 15 +++++++++++++++
->  3 files changed, 25 insertions(+), 1 deletion(-)
+>  include/linux/pagemap.h | 24 +++++++++++++++++++-----
+>  mm/filemap.c            | 29 +++++++++++++++--------------
+>  2 files changed, 34 insertions(+), 19 deletions(-)
 > 
-> diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
-> index e617b4afcc62..21c3771e6a56 100644
-> --- a/include/linux/secretmem.h
-> +++ b/include/linux/secretmem.h
-> @@ -30,6 +30,7 @@ static inline bool page_is_secretmem(struct page *page)
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 8dbba0074536..9a78397609b8 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -638,7 +638,7 @@ static inline bool wake_page_match(struct wait_page_queue *wait_page,
+>  	return true;
 >  }
 >  
->  bool vma_is_secretmem(struct vm_area_struct *vma);
-> +bool secretmem_active(void);
+> -extern void __lock_page(struct page *page);
+> +void __folio_lock(struct folio *folio);
+>  extern int __lock_page_killable(struct page *page);
+>  extern int __lock_page_async(struct page *page, struct wait_page_queue *wait);
+>  extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
+> @@ -646,13 +646,24 @@ extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
+>  void unlock_page(struct page *page);
+>  void folio_unlock(struct folio *folio);
 >  
->  #else
->  
-> @@ -43,6 +44,11 @@ static inline bool page_is_secretmem(struct page *page)
->  	return false;
->  }
->  
-> +static inline bool secretmem_active(void)
+> +static inline bool folio_trylock(struct folio *folio)
 > +{
-> +	return false;
+> +	return likely(!test_and_set_bit_lock(PG_locked, folio_flags(folio, 0)));
 > +}
 > +
->  #endif /* CONFIG_SECRETMEM */
->  
->  #endif /* _LINUX_SECRETMEM_H */
-> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-> index da0b41914177..559acef3fddb 100644
-> --- a/kernel/power/hibernate.c
-> +++ b/kernel/power/hibernate.c
-> @@ -31,6 +31,7 @@
->  #include <linux/genhd.h>
->  #include <linux/ktime.h>
->  #include <linux/security.h>
-> +#include <linux/secretmem.h>
->  #include <trace/events/power.h>
->  
->  #include "power.h"
-> @@ -81,7 +82,9 @@ void hibernate_release(void)
->  
->  bool hibernation_available(void)
+>  /*
+>   * Return true if the page was successfully locked
+>   */
+>  static inline int trylock_page(struct page *page)
 >  {
-> -	return nohibernate == 0 && !security_locked_down(LOCKDOWN_HIBERNATION);
-> +	return nohibernate == 0 &&
-> +		!security_locked_down(LOCKDOWN_HIBERNATION) &&
-> +		!secretmem_active();
+> -	page = compound_head(page);
+> -	return (likely(!test_and_set_bit_lock(PG_locked, &page->flags)));
+> +	return folio_trylock(page_folio(page));
+> +}
+> +
+> +static inline void folio_lock(struct folio *folio)
+> +{
+> +	might_sleep();
+> +	if (!folio_trylock(folio))
+> +		__folio_lock(folio);
+>  }
+>  
+>  /*
+> @@ -660,9 +671,12 @@ static inline int trylock_page(struct page *page)
+>   */
+>  static inline void lock_page(struct page *page)
+>  {
+> +	struct folio *folio;
+>  	might_sleep();
+> -	if (!trylock_page(page))
+> -		__lock_page(page);
+> +
+> +	folio = page_folio(page);
+> +	if (!folio_trylock(folio))
+> +		__folio_lock(folio);
+>  }
+>  
+>  /*
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index e7a6a58d6cd9..c6e5ba176764 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -1187,7 +1187,7 @@ static void wake_up_page(struct page *page, int bit)
+>   */
+>  enum behavior {
+>  	EXCLUSIVE,	/* Hold ref to page and take the bit when woken, like
+> -			 * __lock_page() waiting on then setting PG_locked.
+> +			 * __folio_lock() waiting on then setting PG_locked.
+>  			 */
+>  	SHARED,		/* Hold ref to page and check the bit when woken, like
+>  			 * wait_on_page_writeback() waiting on PG_writeback.
+> @@ -1576,17 +1576,16 @@ void page_endio(struct page *page, bool is_write, int err)
+>  EXPORT_SYMBOL_GPL(page_endio);
+>  
+>  /**
+> - * __lock_page - get a lock on the page, assuming we need to sleep to get it
+> - * @__page: the page to lock
+> + * __folio_lock - Get a lock on the folio, assuming we need to sleep to get it.
+> + * @folio: The folio to lock
+>   */
+> -void __lock_page(struct page *__page)
+> +void __folio_lock(struct folio *folio)
+>  {
+> -	struct page *page = compound_head(__page);
+> -	wait_queue_head_t *q = page_waitqueue(page);
+> -	wait_on_page_bit_common(q, page, PG_locked, TASK_UNINTERRUPTIBLE,
+> +	wait_queue_head_t *q = page_waitqueue(&folio->page);
+> +	wait_on_page_bit_common(q, &folio->page, PG_locked, TASK_UNINTERRUPTIBLE,
+>  				EXCLUSIVE);
+>  }
+> -EXPORT_SYMBOL(__lock_page);
+> +EXPORT_SYMBOL(__folio_lock);
+>  
+>  int __lock_page_killable(struct page *__page)
+>  {
+> @@ -1661,10 +1660,10 @@ int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
+>  			return 0;
+>  		}
+>  	} else {
+> -		__lock_page(page);
+> +		__folio_lock(page_folio(page));
+>  	}
+> -	return 1;
+>  
+> +	return 1;
 >  }
 >  
 >  /**
-> diff --git a/mm/secretmem.c b/mm/secretmem.c
-> index 1ae50089adf1..7c2499e4de22 100644
-> --- a/mm/secretmem.c
-> +++ b/mm/secretmem.c
-> @@ -40,6 +40,13 @@ module_param_named(enable, secretmem_enable, bool, 0400);
->  MODULE_PARM_DESC(secretmem_enable,
->  		 "Enable secretmem and memfd_secret(2) system call");
->  
-> +static atomic_t secretmem_users;
-> +
-> +bool secretmem_active(void)
-> +{
-> +	return !!atomic_read(&secretmem_users);
-> +}
-> +
->  static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+> @@ -2835,7 +2834,9 @@ loff_t mapping_seek_hole_data(struct address_space *mapping, loff_t start,
+>  static int lock_page_maybe_drop_mmap(struct vm_fault *vmf, struct page *page,
+>  				     struct file **fpin)
 >  {
->  	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
-> @@ -94,6 +101,12 @@ static const struct vm_operations_struct secretmem_vm_ops = {
->  	.fault = secretmem_fault,
->  };
->  
-> +static int secretmem_release(struct inode *inode, struct file *file)
-> +{
-> +	atomic_dec(&secretmem_users);
-> +	return 0;
-> +}
+> -	if (trylock_page(page))
+> +	struct folio *folio = page_folio(page);
 > +
->  static int secretmem_mmap(struct file *file, struct vm_area_struct *vma)
->  {
->  	unsigned long len = vma->vm_end - vma->vm_start;
-> @@ -116,6 +129,7 @@ bool vma_is_secretmem(struct vm_area_struct *vma)
+> +	if (folio_trylock(folio))
+>  		return 1;
+>  
+>  	/*
+> @@ -2848,7 +2849,7 @@ static int lock_page_maybe_drop_mmap(struct vm_fault *vmf, struct page *page,
+>  
+>  	*fpin = maybe_unlock_mmap_for_io(vmf, *fpin);
+>  	if (vmf->flags & FAULT_FLAG_KILLABLE) {
+> -		if (__lock_page_killable(page)) {
+> +		if (__lock_page_killable(&folio->page)) {
+>  			/*
+>  			 * We didn't have the right flags to drop the mmap_lock,
+>  			 * but all fault_handlers only check for fatal signals
+> @@ -2860,11 +2861,11 @@ static int lock_page_maybe_drop_mmap(struct vm_fault *vmf, struct page *page,
+>  			return 0;
+>  		}
+>  	} else
+> -		__lock_page(page);
+> +		__folio_lock(folio);
+> +
+>  	return 1;
 >  }
 >  
->  static const struct file_operations secretmem_fops = {
-> +	.release	= secretmem_release,
->  	.mmap		= secretmem_mmap,
->  };
->  
-> @@ -202,6 +216,7 @@ SYSCALL_DEFINE1(memfd_secret, unsigned int, flags)
->  	file->f_flags |= O_LARGEFILE;
->  
->  	fd_install(fd, file);
-> +	atomic_inc(&secretmem_users);
->  	return fd;
->  
->  err_put_fd:
-> -- 
-> 2.28.0
+> -
+>  /*
+>   * Synchronous readahead happens when we don't even find a page in the page
+>   * cache at all.  We don't want to perform IO under the mmap sem, so if we have
 > 
+
