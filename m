@@ -2,126 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 09F0C387B80
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 May 2021 16:43:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F88D387D0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 May 2021 18:02:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235892AbhEROoi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 May 2021 10:44:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58508 "EHLO
+        id S1350214AbhERQD6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 May 2021 12:03:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235105AbhEROog (ORCPT
+        with ESMTP id S1344303AbhERQD5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 May 2021 10:44:36 -0400
-Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE909C061573
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 May 2021 07:43:18 -0700 (PDT)
-Received: by mail-ua1-x936.google.com with SMTP id 20so3299773uaf.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 May 2021 07:43:18 -0700 (PDT)
+        Tue, 18 May 2021 12:03:57 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA4EDC061573
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 May 2021 09:02:39 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id d11so9928105iod.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 May 2021 09:02:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/NJS4BT8nKKIEzjadjztzmkHWrSH/ly6k2XtFbYYqtY=;
-        b=ot0shic8SKoxbOBysgZfoTlIK7zf5cofWrytZCBs8KNPRXouMieUDdph30n4Mk66Yr
-         f2ihwTpLMMxBk59OgnhUpTXXgiv4R0FdVX7mYDQMvDvxdOjpKiWVY1hxzkNuVoO46RcY
-         7n86YLuOac4Gsp+FnEMpy/QslUc0goo7UpJns=
+        bh=iUFwm2Xz16PCMO37kpdkB0wFOZas6xPlFUJQPIeqSTc=;
+        b=bi764Y3WExCOJj2llYjy4XGKKMJ1alNtq1TN79s+01usvBsdfEDp5ir+CSKWbfeucQ
+         08PcH8O/CVvCSEjaB3MD4obgcRaGb0i/4tH0aOw7itQM8JfU3+VgsQt5A/Zrvp1/AKoC
+         pqNsp5MFJO/1sg0eGtU++SRVsbmDTbun/yY9j+Bqjf5sSjlIQ4aWoao6scRSAJUcbke2
+         Ep5wiCwb6r+qgHtgeu3GBajvuPq9Rm7aM7h+EkoKxapVDq2En3mEX42ZZhNJlvjfPtRi
+         vG/uCKsBFTYbFWVsmcp737NLtHK4Yn88NOPUKNQ8rM+8i8s7uyyP+ulPYdxDl9FS3V8w
+         xVuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/NJS4BT8nKKIEzjadjztzmkHWrSH/ly6k2XtFbYYqtY=;
-        b=BnFW0BbgunYjlTZgfI3td2dexz2KqzFBSvbMpsewZkesPIoYbxXkEGCI7UbSFo0NU3
-         FyzoP+UfQnDg5W7du/tQ7x29e/vJWq/0zQXuaFtwxfA6EYD+Tvogmhf0BJjf9uJlENdw
-         WueJUpcDzS1VW3YpC1CE4ACxxOqy+FtC6Hj5O/m6qoHLEv9VqEjAaa8e0TWtjMDhrskE
-         FIqcFNnm2ntOjxgLf2IbcZ27C3PlbF9GsA2eimq3kIIboA4AkzvfkkpYzhq5IwN3/1Vt
-         bBkBw9pP3c5gLfbozSA/SeJU4As2vl+S+vtJNzJIP2LgyX5YvAJlNu2Pq46NtD0x5rRD
-         EUtg==
-X-Gm-Message-State: AOAM533f3m0jroDKxqkCxfVSsEug/kK3mKX/hI+EWNXToGmdmsJffdnG
-        CD9RJhfCaBpfe39dqSs0RSO0Ihbpou60S/mOz66R0luiQF2zXA==
-X-Google-Smtp-Source: ABdhPJxRpelP85C/V/PHHmqJWlYMcnftRkoxLwLCTQlms4Th/kPTXFGsttYFYFHW+einymu6Ua5sDiR4a+Wy7b1YGbQ=
-X-Received: by 2002:ab0:2690:: with SMTP id t16mr6751886uao.9.1621348998165;
- Tue, 18 May 2021 07:43:18 -0700 (PDT)
+        bh=iUFwm2Xz16PCMO37kpdkB0wFOZas6xPlFUJQPIeqSTc=;
+        b=BBshYmwJjTxbB6hiWcVDFIaa/Jr5chc2kLD6+TBdccfhue7l1YUopsmXzvdDr1g1wK
+         ZhsXVlVW2OQNeljUuPTP/aR0Un5TnCw37GQ/ifSB30c95iTRp21yU/O1/E0DPrCWHIIV
+         g6zH4Xzlszo5vh4Jy4fspM/JWfZyR/zAKD99+PTufWKOEwwzdgF1nxU7LMBgiWsK3Tox
+         tKxy7bVgIgtGDWfbHQdpmU7+e7oYpJf8UHS3lmUQViCboBC2oq/tcwnN1VAafZUqFKps
+         fY+q3UR5omGeplOXeq19Zep9Y/NM/5Rro9ENL61tVk25xH/K44rG66jzpbh3lYzc79bX
+         k1Og==
+X-Gm-Message-State: AOAM532k2sM5FQSWr8oYzO8cTVOidU3DAtirWl6VvXtGXCULQJ++EsWQ
+        1YtFefUKQ7Lv9z9jRCDjn5o75V+3teaGbuyWUIP3j74a
+X-Google-Smtp-Source: ABdhPJyIDXt/cJAqV0mOwkWKbbz2vKvZ7NeBYQPenpYtpJpRd/QfI6bPVAR6II9cKFNdfbX7npL0tfMwNP+I6dFQJ/s=
+X-Received: by 2002:a05:6638:3445:: with SMTP id q5mr6466548jav.120.1621353759171;
+ Tue, 18 May 2021 09:02:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAOQ4uxguanxEis-82vLr7OKbxsLvk86M0Ehz2nN1dAq8brOxtw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxguanxEis-82vLr7OKbxsLvk86M0Ehz2nN1dAq8brOxtw@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 18 May 2021 16:43:06 +0200
-Message-ID: <CAJfpeguCwxXRM4XgQWHyPxUbbvUh-M6ei-tYa5Y0P56MJMW7OA@mail.gmail.com>
-Subject: Re: fsnotify events for overlayfs real file
-To:     Amir Goldstein <amir73il@gmail.com>
+References: <20210503165315.GE2994@quack2.suse.cz> <CAOQ4uxgy0DUEUo810m=bnLuHNbs60FLFPUUw8PLq9jJ8VTFD8g@mail.gmail.com>
+ <20210505122815.GD29867@quack2.suse.cz> <20210505142405.vx2wbtadozlrg25b@wittgenstein>
+ <20210510101305.GC11100@quack2.suse.cz> <CAOQ4uxjqjB2pCoyLzreMziJcE5nYjgdhcAsDWDmu_5-g5AKM3w@mail.gmail.com>
+ <20210512152625.i72ct7tbmojhuoyn@wittgenstein> <20210513105526.GG2734@quack2.suse.cz>
+ <20210514135632.d53v3pwrh56pnc4d@wittgenstein> <CAOQ4uxgngZjBseOC_qYtxjZ_J4Rc50_Y7G+CSSpJznKBXvSU5A@mail.gmail.com>
+ <20210518101135.jrldavggoibfpjhs@wittgenstein>
+In-Reply-To: <20210518101135.jrldavggoibfpjhs@wittgenstein>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 18 May 2021 19:02:28 +0300
+Message-ID: <CAOQ4uxh09LqGOiTE-RgDfEwyXeK=bMn6LXr0W+Chp4rD5LZhRA@mail.gmail.com>
+Subject: Re: [RFC][PATCH] fanotify: introduce filesystem view mark
+To:     Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>
+        Miklos Szeredi <miklos@szeredi.hu>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 10 May 2021 at 18:32, Amir Goldstein <amir73il@gmail.com> wrote:
->
-
-> > I see, right. I agree that is unfortunate especially for stuff like audit
-> > or fanotify permission events so we should fix that.
+> > > > > 2. data sharing among containers or among the host and containers etc.
+> > > > > The most common use-case is to share data from the host with the
+> > > > > container such as a download folder or the Linux folder on ChromeOS.
+> > > > > Most container managers will simly re-use the container's userns for
+> > > > > that too. More complex cases arise where data is shared between
+> > > > > containers with different idmappings then often a separate userns will
+> > > > > have to be used.
+> > > >
+> > > > OK, but if say on ChromeOS you copy something to the Linux folder by app A
+> > > > (say file manager) and containerized app B (say browser) watches that mount
+> > >
+> > > For ChromeOS it is currently somewhat simple since they currently only
+> > > allow a single container by default. So everytime you start an app in
+> > > the container it's the same app so they all write to the Linux Files
+> > > folder through the same container. (I'm glossing over a range of details
+> > > but that's not really relevant to the general spirit of the example.).
+> > >
+> > >
+> > > > for changes with idmap-filtered mark, then it won't see notification for
+> > > > those changes because A presumably runs in a different namespace than B, am
+> > > > I imagining this right? So mark which filters events based on namespace of
+> > > > the originating process won't be usable for such usecase AFAICT.
+> > >
+> > > Idmap filtered marks won't cover that use-case as envisioned now. Though
+> > > I'm not sure they really need to as the semantics are related to mount
+> > > marks.
 > >
+> > We really need to refer to those as filesystem marks. They are definitely
+> > NOT mount marks. We are trying to design a better API that will not share
+> > as many flaws with mount marks...
+> >
+> > > A mount mark would allow you to receive events based on the
+> > > originating mount. If two mounts A and B are separate but expose the
+> > > same files you wouldn't see events caused by B if you're watching A.
+> > > Similarly you would only see events from mounts that have been delegated
+> > > to you through the idmapped userns. I find this acceptable especially if
+> > > clearly documented.
+> > >
+> >
+> > The way I see it, we should delegate all the decisions over to userspace,
+> > but I agree that the current "simple" proposal may not provide a good
+> > enough answer to the case of a subtree that is shared with the host.
 >
-> Miklos,
+> I was focussed on what happens if you set an idmapped filtered mark for
+> a container for a set of files that is exposed to another container via
+> another idmapped mount. And it seemed to me that it was ok if the
+> container A doesn't see events from container B.
 >
-> Do you recall what is the reason for using FMODE_NONOTIFY
-> for realfile?
+> You seem to be looking at this from the host's perspective right now
+> which is interesting as well.
+>
+> >
+> > IMO, it should be a container manager decision whether changes done by
+> > the host are:
+> > a) Not visible to containerized application
+>
+> Yes, that seems ok.
+>
+> > b) Watched in host via recursive inode watches
+> > c) Watched in host by filesystem mark filtered in userspace
+> > d) Watched in host by an "noop" idmapped mount in host, through
+> >      which all relevant apps in host access the shared folder
+>
+> So b)-d) are concerned with the host getting notifcations for changes
+> done from any container that uses a given set of files possibly through
+> different mounts.
+>
 
-Commit d989903058a8 ("ovl: do not generate duplicate fsnotify events
-for "fake" path").
+My perception was that container manager knows about all the idmapped
+mounts that share the same folder, so when container A requests to watch
+the shared folder, container manager sets idmapped marks on *all* the
+idmapped mounts and when a new container is started which also maps
+the shared folder, idmapped marks are added to *all* the fanotify groups
+that the container manager currently maintains, which are interested in the
+shared folder.
 
-> I can see that events won't be generated anyway for watchers of
-> underlying file, because fsnotify_file() looks at the "fake" path
-> (i.e. the overlay file path).
->
-> I recently looked at a similar issue w.r.t file_remove_privs() when
-> I was looking at passing mnt context to notify_change() [1].
->
-> My thinking was that we can change d_real() to provide the real path:
->
-> static inline struct path d_real_path(struct path *path,
->                                     const struct inode *inode)
-> {
->         struct realpath = {};
->         if (!unlikely(dentry->d_flags & DCACHE_OP_REAL))
->                return *path;
->         dentry->d_op->d_real(path->dentry, inode, &realpath);
->         return realpath;
-> }
->
-> static inline struct dentry *d_real(struct dentry *dentry,
->                                     const struct inode *inode)
-> {
->         struct realpath = {};
->         if (!unlikely(dentry->d_flags & DCACHE_OP_REAL))
->                return dentry;
->         dentry->d_op->d_real(path->dentry, inode, &realpath);
->         return realpath.dentry;
-> }
->
->
-> Another option, instead of getting the realpath, just detect the
-> mismatch of file_inode(file) != d_inode(path->dentry) in
-> fanotify_file() and pass FSNOTIFY_EVENT_DENTRY data type
-> with d_real() dentry to backend instead of FSNOTIFY_EVENT_PATH.
->
-> For inotify it should be enough and for fanotify it is enough for
-> FAN_REPORT_FID and legacy fanotify can report FAN_NOFD,
-> so at least permission events listeners can identify the situation and
-> be able to block access to unknown paths.
->
-> Am I overcomplicating this?
->
-> Any magic solution that I am missing?
-
-Agree, dentry events should still happen.
-
-Path events: what happens if you bind mount, then detach (lazy
-umount)?   Isn't that exactly the same as what overlayfs does on the
-underlying mounts?
+With (d) this can still be the model.
+With (c) it still makes sense to save filtering cycles in userspace in case
+events originate inside containers.
+With (b) there doesn't seem to be any need for the idmapped filtered marks
+at all.
 
 Thanks,
-Miklos
+Amir.
