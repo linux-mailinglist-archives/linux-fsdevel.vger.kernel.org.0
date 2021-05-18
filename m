@@ -2,34 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C71638768F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 May 2021 12:31:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F20F387699
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 May 2021 12:34:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348514AbhERKdM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 May 2021 06:33:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42156 "EHLO mx2.suse.de"
+        id S1348387AbhERKfu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 May 2021 06:35:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44980 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1348515AbhERKdJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 May 2021 06:33:09 -0400
+        id S242597AbhERKft (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 May 2021 06:35:49 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 04CC0AFC4;
-        Tue, 18 May 2021 10:31:51 +0000 (UTC)
-Subject: Re: [PATCH v10 20/33] mm/filemap: Add folio_lock_killable
+        by mx2.suse.de (Postfix) with ESMTP id DAE9BAF19;
+        Tue, 18 May 2021 10:34:30 +0000 (UTC)
+Subject: Re: [PATCH v10 21/33] mm/filemap: Add __folio_lock_async
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         akpm@linux-foundation.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
         Jeff Layton <jlayton@kernel.org>
 References: <20210511214735.1836149-1-willy@infradead.org>
- <20210511214735.1836149-21-willy@infradead.org>
+ <20210511214735.1836149-22-willy@infradead.org>
 From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <c30ba5bd-0e7e-46d4-f093-586b912a68ea@suse.cz>
-Date:   Tue, 18 May 2021 12:31:50 +0200
+Message-ID: <7fb7b8a3-b559-88d6-b46e-d822fc689500@suse.cz>
+Date:   Tue, 18 May 2021 12:34:30 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <20210511214735.1836149-21-willy@infradead.org>
+In-Reply-To: <20210511214735.1836149-22-willy@infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -38,15 +38,13 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 5/11/21 11:47 PM, Matthew Wilcox (Oracle) wrote:
-> This is like lock_page_killable() but for use by callers who
-> know they have a folio.  Convert __lock_page_killable() to be
-> __folio_lock_killable().  This saves one call to compound_head() per
-> contended call to lock_page_killable().
+> There aren't any actual callers of lock_page_async(), so remove it.
+> Convert filemap_update_page() to call __folio_lock_async().
 > 
-> __folio_lock_killable() is 20 bytes smaller than __lock_page_killable()
-> was.  lock_page_maybe_drop_mmap() shrinks by 68 bytes and
-> __lock_page_or_retry() shrinks by 66 bytes.  That's a total of 154 bytes
-> of text saved.
+> __folio_lock_async() is 21 bytes smaller than __lock_page_async(),
+> but the real savings come from using a folio in filemap_update_page(),
+> shrinking it from 514 bytes to 403 bytes, saving 111 bytes.  The text
+> shrinks by 132 bytes in total.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > Reviewed-by: Christoph Hellwig <hch@lst.de>
