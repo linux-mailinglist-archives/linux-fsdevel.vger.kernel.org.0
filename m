@@ -2,72 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BEBC38772B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 May 2021 13:11:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24DCD387735
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 May 2021 13:13:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243278AbhERLMW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 May 2021 07:12:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58458 "EHLO mx2.suse.de"
+        id S1348742AbhERLOJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 May 2021 07:14:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60494 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241330AbhERLMW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 May 2021 07:12:22 -0400
+        id S241330AbhERLOI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 May 2021 07:14:08 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 9E575AF19;
-        Tue, 18 May 2021 11:11:03 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 17e25bfa;
-        Tue, 18 May 2021 11:10:57 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Olga Kornievskaia <aglo@umich.edu>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        0day robot <lkp@intel.com>,
-        kernel test robot <oliver.sang@intel.com>,
-        Luis Henriques <lhenriques@suse.de>
-Subject: [PATCH] vfs: fix early copy_file_range return when len is zero
-Date:   Tue, 18 May 2021 12:10:55 +0100
-Message-Id: <20210518111055.16079-1-lhenriques@suse.de>
-In-Reply-To: <877dk1zibo.fsf@suse.de>
-References: <877dk1zibo.fsf@suse.de>
+        by mx2.suse.de (Postfix) with ESMTP id 01033AFE6;
+        Tue, 18 May 2021 11:12:50 +0000 (UTC)
+Subject: Re: [PATCH v10 26/33] mm/writeback: Add folio_wait_writeback
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        akpm@linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Jeff Layton <jlayton@kernel.org>
+References: <20210511214735.1836149-1-willy@infradead.org>
+ <20210511214735.1836149-27-willy@infradead.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <6e998f49-f37e-c7ce-278e-e220a7212f10@suse.cz>
+Date:   Tue, 18 May 2021 13:12:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210511214735.1836149-27-willy@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The early return from copy_file_range when len is zero should check if the
-filesystem really implements this syscall, returning -EOPNOTSUPP if it doesn't,
-and 0 otherwise.
+On 5/11/21 11:47 PM, Matthew Wilcox (Oracle) wrote:
+> wait_on_page_writeback_killable() only has one caller, so convert it to
+> call folio_wait_writeback_killable().  For the wait_on_page_writeback()
+> callers, add a compatibility wrapper around folio_wait_writeback().
+> 
+> Turning PageWriteback() into folio_writeback() eliminates a call to
+> compound_head() which saves 8 bytes and 15 bytes in the two functions.
+> That is more than offset by adding the wait_on_page_writeback
+> compatibility wrapper for a net increase in text of 15 bytes.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Jeff Layton <jlayton@kernel.org>
 
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Signed-off-by: Luis Henriques <lhenriques@suse.de>
----
-Hi!
-
-Since I got not feedback, I'm sending a patch that should fix this issue
-reported by 0day.  Probably this should simply be squashed into v9, I can
-send v10 if you prefer that.
-
-Cheers,
---
-Luis
-
- fs/read_write.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 9db7adf160d2..24b4bf704765 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1498,7 +1498,7 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
- 		return ret;
- 
- 	if (len == 0)
--		return 0;
-+		return file_out->f_op->copy_file_range ? 0 : -EOPNOTSUPP;
- 
- 	file_start_write(file_out);
- 
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
