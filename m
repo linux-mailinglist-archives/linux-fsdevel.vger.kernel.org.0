@@ -2,135 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C64389311
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 17:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE10A389338
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 18:05:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354189AbhESP5k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 May 2021 11:57:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33422 "EHLO
+        id S1347009AbhESQGi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 May 2021 12:06:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239586AbhESP5k (ORCPT
+        with ESMTP id S241402AbhESQGh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 May 2021 11:57:40 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30C59C06175F;
-        Wed, 19 May 2021 08:56:20 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1ljOXW-00GH8f-H0; Wed, 19 May 2021 15:55:18 +0000
-Date:   Wed, 19 May 2021 15:55:18 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jia He <justin.he@arm.com>, Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>,
+        Wed, 19 May 2021 12:06:37 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 328A8C06175F;
+        Wed, 19 May 2021 09:05:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=xrYJbsm8XBvxi2yJ2qA9P43iIK0MPL7ZBIPpUfmicR0=; b=UFiocZpEd3n0qwbyeyoV48fzYM
+        ZFY9/8N316MM8Ud/2P+STmeC0wK7OTD6v6uAhET6jaNjDWMfkYUdgXHsJiiXNE11Pkz5AdmMI+Nnw
+        ZE25efNjaV+QXKBiyY2q40cvtNPTtOub9gCPwbn2OkVCdy64hM4Sce6UNpRGS2e9DCTE7/n6siwLM
+        ASudhgIGnA9gSqB75xsnb4Lpxy0FVcEgnDL3WuVawFbb8MMXWm1NSr5y80xCKM/cY06qmiGvnfDFd
+        qa24+rJkiM6OdbVbxZFz+8X90INBFbsTS7BQHmsAqClSrfLD9sZrv80eq0a1wwTarWWS9dE7rBIWp
+        HEUAwZLg==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1ljOgr-00F6Rg-0g; Wed, 19 May 2021 16:05:02 +0000
+Date:   Wed, 19 May 2021 17:04:57 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc:     io-uring@vger.kernel.org, Pavel Emelyanov <xemul@openvz.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
         Eric Biggers <ebiggers@google.com>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 12/14] d_path: prepend_path(): lift the inner loop into a
- new helper
-Message-ID: <YKU05k0P7YjH/g6E@zeniv-ca.linux.org.uk>
-References: <YKRfI29BBnC255Vp@zeniv-ca.linux.org.uk>
- <20210519004901.3829541-1-viro@zeniv.linux.org.uk>
- <20210519004901.3829541-12-viro@zeniv.linux.org.uk>
- <YKTHKNsX/cvYwbWj@smile.fi.intel.com>
+        Paul Moore <paul@paul-moore.com>,
+        Daniel Colascione <dancol@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH  1/2] fs: anon_inodes: export anon_inode_getfile_secure
+ helper
+Message-ID: <YKU3KWn4ZnRSyyFY@infradead.org>
+References: <20210519113058.1979817-1-memxor@gmail.com>
+ <20210519113058.1979817-2-memxor@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YKTHKNsX/cvYwbWj@smile.fi.intel.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20210519113058.1979817-2-memxor@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 19, 2021 at 11:07:04AM +0300, Andy Shevchenko wrote:
-> On Wed, May 19, 2021 at 12:48:59AM +0000, Al Viro wrote:
-> > ... and leave the rename_lock/mount_lock handling in prepend_path()
-> > itself
-> 
-> ...
-> 
-> > +			if (!IS_ERR_OR_NULL(mnt_ns) && !is_anon_ns(mnt_ns))
-> > +				return 1;	// absolute root
-> > +			else
-> > +				return 2;	// detached or not attached yet
-> 
-> Would it be slightly better to read
-> 
-> 			if (IS_ERR_OR_NULL(mnt_ns) || is_anon_ns(mnt_ns))
-> 				return 2;	// detached or not attached yet
-> 			else
-> 				return 1;	// absolute root
-> 
-> ?
-> 
-> Oh, I have noticed that it's in the original piece of code (perhaps separate
-> change if we ever need it?).
+On Wed, May 19, 2021 at 05:00:56PM +0530, Kumar Kartikeya Dwivedi wrote:
+> This is the non-fd installing analogue of anon_inode_getfd_secure. In
+> addition to allowing LSMs to attach policy to the distinct inode, this
+> is also needed for checkpoint restore of an io_uring instance where a
+> mapped region needs to mapped back to the io_uring fd by CRIU. This is
+> currently not possible as all anon_inodes share a single inode.
 
-The real readability problem here is not the negations.  There are 4 possible
-states for vfsmount encoded via ->mnt_ns:
-	1) not attached to any tree, kept alive by refcount alone.
-->mnt_ns == NULL.
-	2) long-term unattached.  Not a part of any mount tree, but we have
-a known holder for it and until that's gone (making ->mnt_ns NULL), refcount
-is guaranteed to remain positive.  pipe_mnt is an example of such.
-->mnt_ns == MNT_NS_INTERNAL, which is encoded as ERR_PTR(-1), thus the use of
-IS_ERR_OR_NULL here (something I'd normally taken out and shot - use of that
-primitive is a sign of lousy API or of a cargo-culted "defensive programming").
-	3) part of a temporary mount tree; not in anyone's namespace.
-->mnt_ns points the tree in question, ->mnt_ns->seq == 0.
-	4) belongs to someone's namespace.  ->mnt_ns points to that,
-->mnt_ns->seq != 0.  That's what we are looking for here.
+No need to export it, as io_uring can't be built modular.
 
-	It's kludges all the way down ;-/  Note that temporary tree can't become
-a normal one or vice versa - mounts can get transferred to normal namespace,
-but they will see ->mnt_ns reassigned to that.  IOW, ->mnt_ns->seq can't
-get changed without a change to ->mnt_ns.  I suspect that the right way
-to handle that would be to have that state stored as explicit flags.
+> +struct file *anon_inode_getfile_secure(const char *name,
+> +				       const struct file_operations *fops,
+> +				       void *priv, int flags,
+> +				       const struct inode *context_inode)
+> +{
+> +	return __anon_inode_getfile(name, fops, priv, flags, context_inode, true);
+> +}
+> +EXPORT_SYMBOL_GPL(anon_inode_getfile_secure);
 
-	All mounts are created (and destroyed) in state (1); state changes:
-commit_tree() - (1) or (3) to (3) or (4)
-umount_tree() - (3) or (4) to (1)
-clone_private_mount() - (1) to (2)
-open_detached_copy() - (1) to (3)
-copy_mnt_ns() - (1) to (4)
-mount_subtree() - (1) to (3)
-fsmount() - (1) to (3)
-init_mount_tree() - (1) to (4)
-kern_mount() - (1) to (2)
-kern_unmount{,_array}() - (2) to (1)
+Please avoid the overly long line here.
 
-	commit_tree() has a pathological call chain that has it
-attach stuff to temporary tree; that's basically automount by lookup in
-temporary namespace.  It can distinguish it from the usual (adding to
-normal namespace) by looking at the state of mountpoint we are attaching
-to - or simply describe all cases as "(1) or (3) to whatever state the
-mountpoint is".
-
-	One really hot path where we check (1) vs. (2,3,4) is
-mntput_no_expire(), which is the initial reason behind the current
-representation.  However, read from ->mnt_flags is just as cheap as
-that from ->mnt_ns and the same reasons that make READ_ONCE()
-legitimate there would apply to ->mnt_flags as well.
-
-	We can't reuse MNT_INTERNAL for that, more's the pity -
-it's used to mark the mounts (kern_mount()-created, mostly) that
-need to destroyed synchronously on the final mntput(), with no
-task_work_add() allowed (think of module_init() failing halfway through,
-with kern_unmount() done to destroy the internal mounts already created;
-we *really* don't want to delay that filesystem shutdown until insmod(2)
-heads out to userland).  Another headache is in LSM shite, as usual...
-
-	Anyway, sorting that out is definitely a separate story.
