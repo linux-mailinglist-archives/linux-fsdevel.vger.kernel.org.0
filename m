@@ -2,118 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 96C453883E1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 02:44:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F2A23883EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 02:51:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244156AbhESApo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 May 2021 20:45:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60578 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240106AbhESApn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 May 2021 20:45:43 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9D59F6135B;
-        Wed, 19 May 2021 00:44:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1621385064;
-        bh=TaIIw0YYtenqp7/hfp+Brr2pi7x+J7tKiTwiGcf4BXo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OWqlmtzTKs7bvcu6OsrPtdFoycSizT0julGnQ1nL89UDOP47oOx68Qc7/VuYXRLHl
-         PNVwvj+VZTjuZY29zaA8iT4YqSTgqnpaEgh3VOC71g9NKcI8TaUUyHgG2IXdNHcZ/n
-         vJFCM+BcjPVeDtUlkhRioxH5rtQ7jgaUQXdaR9z4=
-Date:   Tue, 18 May 2021 17:44:22 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Hagen Paul Pfeifer <hagen@jauu.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Palmer Dabbelt <palmerdabbelt@google.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-Subject: Re: [PATCH v20 4/7] mm: introduce memfd_secret system call to
- create "secret" memory areas
-Message-Id: <20210518174422.399ad118a051fe4c5b11d7ba@linux-foundation.org>
-In-Reply-To: <20210518072034.31572-5-rppt@kernel.org>
-References: <20210518072034.31572-1-rppt@kernel.org>
-        <20210518072034.31572-5-rppt@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S233137AbhESAwV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 May 2021 20:52:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53910 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1352867AbhESAu5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 May 2021 20:50:57 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DF2C061763;
+        Tue, 18 May 2021 17:49:38 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1ljAOT-00G4FU-CE; Wed, 19 May 2021 00:49:01 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jia He <justin.he@arm.com>, Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH 01/14] d_path: "\0" is {0,0}, not {0}
+Date:   Wed, 19 May 2021 00:48:48 +0000
+Message-Id: <20210519004901.3829541-1-viro@zeniv.linux.org.uk>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <YKRfI29BBnC255Vp@zeniv-ca.linux.org.uk>
+References: <YKRfI29BBnC255Vp@zeniv-ca.linux.org.uk>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 18 May 2021 10:20:31 +0300 Mike Rapoport <rppt@kernel.org> wrote:
+Single-element array consisting of one NUL is spelled ""...
 
-> From: Mike Rapoport <rppt@linux.ibm.com>
-> 
-> Introduce "memfd_secret" system call with the ability to create memory
-> areas visible only in the context of the owning process and not mapped not
-> only to other processes but in the kernel page tables as well.
-> 
-> ...
->
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -901,4 +901,9 @@ config KMAP_LOCAL
->  # struct io_mapping based helper.  Selected by drivers that need them
->  config IO_MAPPING
->  	bool
-> +
-> +config SECRETMEM
-> +	def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
-> +	select STRICT_DEVMEM
-> +
->  endmenu
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ fs/d_path.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-WARNING: unmet direct dependencies detected for STRICT_DEVMEM
-  Depends on [n]: MMU [=y] && DEVMEM [=n] && (ARCH_HAS_DEVMEM_IS_ALLOWED [=y] || GENERIC_LIB_DEVMEM_IS_ALLOWED [=n])
-  Selected by [y]:
-  - SECRETMEM [=y]
-
-so I went back to the v19 version, with
-
---- a/mm/Kconfig~mm-introduce-memfd_secret-system-call-to-create-secret-memory-areas-fix
-+++ a/mm/Kconfig
-@@ -907,6 +907,5 @@ config IO_MAPPING
+diff --git a/fs/d_path.c b/fs/d_path.c
+index 270d62133996..01df5dfa1f88 100644
+--- a/fs/d_path.c
++++ b/fs/d_path.c
+@@ -184,7 +184,7 @@ char *__d_path(const struct path *path,
+ 	char *res = buf + buflen;
+ 	int error;
  
- config SECRETMEM
- 	def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
--	select STRICT_DEVMEM
+-	prepend(&res, &buflen, "\0", 1);
++	prepend(&res, &buflen, "", 1);
+ 	error = prepend_path(path, root, &res, &buflen);
  
- endmenu
-_
+ 	if (error < 0)
+@@ -201,7 +201,7 @@ char *d_absolute_path(const struct path *path,
+ 	char *res = buf + buflen;
+ 	int error;
+ 
+-	prepend(&res, &buflen, "\0", 1);
++	prepend(&res, &buflen, "", 1);
+ 	error = prepend_path(path, &root, &res, &buflen);
+ 
+ 	if (error > 1)
+@@ -218,7 +218,7 @@ static int path_with_deleted(const struct path *path,
+ 			     const struct path *root,
+ 			     char **buf, int *buflen)
+ {
+-	prepend(buf, buflen, "\0", 1);
++	prepend(buf, buflen, "", 1);
+ 	if (d_unlinked(path->dentry)) {
+ 		int error = prepend(buf, buflen, " (deleted)", 10);
+ 		if (error)
+@@ -341,7 +341,7 @@ static char *__dentry_path(const struct dentry *d, char *buf, int buflen)
+ 	dentry = d;
+ 	end = buf + buflen;
+ 	len = buflen;
+-	prepend(&end, &len, "\0", 1);
++	prepend(&end, &len, "", 1);
+ 	/* Get '/' right */
+ 	retval = end-1;
+ 	*retval = '/';
+@@ -444,7 +444,7 @@ SYSCALL_DEFINE2(getcwd, char __user *, buf, unsigned long, size)
+ 		char *cwd = page + PATH_MAX;
+ 		int buflen = PATH_MAX;
+ 
+-		prepend(&cwd, &buflen, "\0", 1);
++		prepend(&cwd, &buflen, "", 1);
+ 		error = prepend_path(&pwd, &root, &cwd, &buflen);
+ 		rcu_read_unlock();
+ 
+-- 
+2.11.0
 
