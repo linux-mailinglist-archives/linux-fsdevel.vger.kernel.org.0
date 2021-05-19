@@ -2,152 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 446EC3882C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 00:36:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 514053883E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 02:44:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352771AbhERWiD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 May 2021 18:38:03 -0400
-Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:51453 "EHLO
-        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230251AbhERWiC (ORCPT
+        id S1350907AbhESAqE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 May 2021 20:46:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52846 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244461AbhESAqC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 May 2021 18:38:02 -0400
-Received: from dread.disaster.area (pa49-195-118-180.pa.nsw.optusnet.com.au [49.195.118.180])
-        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id 363BA108858;
-        Wed, 19 May 2021 08:36:38 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1lj8KL-002Ymb-Nc; Wed, 19 May 2021 08:36:37 +1000
-Date:   Wed, 19 May 2021 08:36:37 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
+        Tue, 18 May 2021 20:46:02 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11B6AC06175F;
+        Tue, 18 May 2021 17:44:44 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1ljAIt-00G48Y-QL; Wed, 19 May 2021 00:43:15 +0000
+Date:   Wed, 19 May 2021 00:43:15 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jia He <justin.he@arm.com>, Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@ftp.linux.org.uk>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 03/11] mm: Protect operations adding pages to page cache
- with invalidate_lock
-Message-ID: <20210518223637.GJ2893@dread.disaster.area>
-References: <20210512101639.22278-1-jack@suse.cz>
- <20210512134631.4053-3-jack@suse.cz>
- <20210512152345.GE8606@magnolia>
- <20210513174459.GH2734@quack2.suse.cz>
- <20210513185252.GB9675@magnolia>
- <20210513231945.GD2893@dread.disaster.area>
- <20210514161730.GL9675@magnolia>
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [PATCHSET] d_path cleanups
+Message-ID: <YKRfI29BBnC255Vp@zeniv-ca.linux.org.uk>
+References: <20210508122530.1971-1-justin.he@arm.com>
+ <20210508122530.1971-2-justin.he@arm.com>
+ <CAHk-=wgSFUUWJKW1DXa67A0DXVzQ+OATwnC3FCwhqfTJZsvj1A@mail.gmail.com>
+ <YJbivrA4Awp4FXo8@zeniv-ca.linux.org.uk>
+ <CAHk-=whZhNXiOGgw8mXG+PTpGvxnRG1v5_GjtjHpoYXd2Fn_Ow@mail.gmail.com>
+ <YJb9KFBO7MwJeDHz@zeniv-ca.linux.org.uk>
+ <CAHk-=wjhrhkWbV_EY0gupi2ea7QHpGW=68x7g09j_Tns5ZnsLA@mail.gmail.com>
+ <CAHk-=wiOPkSm-01yZzamTvX2RPdJ0784+uWa0OMK-at+3XDd0g@mail.gmail.com>
+ <YJdIx6iiU9YwnQYz@zeniv-ca.linux.org.uk>
+ <CAHk-=wih_O+0xG4QbLw-3XJ71Yh43_SFm3gp9swj8knzXoceZQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210514161730.GL9675@magnolia>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
-        a=xcwBwyABtj18PbVNKPPJDQ==:117 a=xcwBwyABtj18PbVNKPPJDQ==:17
-        a=kj9zAlcOel0A:10 a=5FLXtPjwQuUA:10 a=7-415B0cAAAA:8
-        a=cLZU_rh0lbdFaG61GT8A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <CAHk-=wih_O+0xG4QbLw-3XJ71Yh43_SFm3gp9swj8knzXoceZQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 14, 2021 at 09:17:30AM -0700, Darrick J. Wong wrote:
-> On Fri, May 14, 2021 at 09:19:45AM +1000, Dave Chinner wrote:
-> > On Thu, May 13, 2021 at 11:52:52AM -0700, Darrick J. Wong wrote:
-> > > On Thu, May 13, 2021 at 07:44:59PM +0200, Jan Kara wrote:
-> > > > On Wed 12-05-21 08:23:45, Darrick J. Wong wrote:
-> > > > > On Wed, May 12, 2021 at 03:46:11PM +0200, Jan Kara wrote:
-> > > > > > +->fallocate implementation must be really careful to maintain page cache
-> > > > > > +consistency when punching holes or performing other operations that invalidate
-> > > > > > +page cache contents. Usually the filesystem needs to call
-> > > > > > +truncate_inode_pages_range() to invalidate relevant range of the page cache.
-> > > > > > +However the filesystem usually also needs to update its internal (and on disk)
-> > > > > > +view of file offset -> disk block mapping. Until this update is finished, the
-> > > > > > +filesystem needs to block page faults and reads from reloading now-stale page
-> > > > > > +cache contents from the disk. VFS provides mapping->invalidate_lock for this
-> > > > > > +and acquires it in shared mode in paths loading pages from disk
-> > > > > > +(filemap_fault(), filemap_read(), readahead paths). The filesystem is
-> > > > > > +responsible for taking this lock in its fallocate implementation and generally
-> > > > > > +whenever the page cache contents needs to be invalidated because a block is
-> > > > > > +moving from under a page.
-> > > > > > +
-> > > > > > +->copy_file_range and ->remap_file_range implementations need to serialize
-> > > > > > +against modifications of file data while the operation is running. For blocking
-> > > > > > +changes through write(2) and similar operations inode->i_rwsem can be used. For
-> > > > > > +blocking changes through memory mapping, the filesystem can use
-> > > > > > +mapping->invalidate_lock provided it also acquires it in its ->page_mkwrite
-> > > > > > +implementation.
-> > > > > 
-> > > > > Question: What is the locking order when acquiring the invalidate_lock
-> > > > > of two different files?  Is it the same as i_rwsem (increasing order of
-> > > > > the struct inode pointer) or is it the same as the XFS MMAPLOCK that is
-> > > > > being hoisted here (increasing order of i_ino)?
-> > > > > 
-> > > > > The reason I ask is that remap_file_range has to do that, but I don't
-> > > > > see any conversions for the xfs_lock_two_inodes(..., MMAPLOCK_EXCL)
-> > > > > calls in xfs_ilock2_io_mmap in this series.
-> > > > 
-> > > > Good question. Technically, I don't think there's real need to establish a
-> > > > single ordering because locks among different filesystems are never going
-> > > > to be acquired together (effectively each lock type is local per sb and we
-> > > > are free to define an ordering for each lock type differently). But to
-> > > > maintain some sanity I guess having the same locking order for doublelock
-> > > > of i_rwsem and invalidate_lock makes sense. Is there a reason why XFS uses
-> > > > by-ino ordering? So that we don't have to consider two different orders in
-> > > > xfs_lock_two_inodes()...
-> > > 
-> > > I imagine Dave will chime in on this, but I suspect the reason is
-> > > hysterical raisins^Wreasons.
-> > 
-> > It's the locking rules that XFS has used pretty much forever.
-> > Locking by inode number always guarantees the same locking order of
-> > two inodes in the same filesystem, regardless of the specific
-> > in-memory instances of the two inodes.
-> > 
-> > e.g. if we lock based on the inode structure address, in one
-> > instancex, we could get A -> B, then B gets recycled and
-> > reallocated, then we get B -> A as the locking order for the same
-> > two inodes.
-> > 
-> > That, IMNSHO, is utterly crazy because with non-deterministic inode
-> > lock ordered like this you can't make consistent locking rules for
-> > locking the physical inode cluster buffers underlying the inodes in
-> > the situation where they also need to be locked.
-> 
-> <nod> That's protected by the ILOCK, correct?
-> 
-> > We've been down this path before more than a decade ago when the
-> > powers that be decreed that inode locking order is to be "by
-> > structure address" rather than inode number, because "inode number
-> > is not unique across multiple superblocks".
-> > 
-> > I'm not sure that there is anywhere that locks multiple inodes
-> > across different superblocks, but here we are again....
-> 
-> Hm.  Are there situations where one would want to lock multiple
-> /mappings/ across different superblocks?  The remapping code doesn't
-> allow cross-super operations, so ... pipes and splice, maybe?  I don't
-> remember that code well enough to say for sure.
+	First of all, apologies for delays (one of the disks on the main
+devel/testing box has become an ex-parrot, with... interesting recovery).
 
-Hmmmm. Doing read IO into a buffer that is mmap()d from another
-file, and we take a page fault on it inside the read IO path? We're
-copying from a page in one mapping and taking a fault in another
-mapping and hence taking the invalidate_lock to populate the page
-cache for the second mapping...
+	Here's what I've got for carve-up of cleanups.  This stuff lives
+in git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.d_path,
+individual patches in followups.  14 commits, all changes are to fs/d_path.c,
+total being +133/-191.  Moderately tested, seems to work here.  Review
+and testing would be welcome...
 
-I haven't looked closely enough at where the invalidate_lock is held
-in the read path to determine if this is an issue, but if it is then
-it is also a potential deadlock scenario...
+	Part 1: trivial preliminary cleanup
 
-Cheers,
+1/14) d_path: "\0" is {0,0}, not {0}
+	A bunch of places used "\0" as a literal for 1-element array consisting
+of NULs.  That should've been "", obviously...
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+	Part 2: untangling __dentry_path()
+
+2/14) d_path: saner calling conventions for __dentry_path()
+	__dentry_path() used to copy the calling conventions for dentry_path().
+That was fine for use in dentry_path_raw(), but it created a lot of headache
+in dentry_path(), since we might need a suffix (//deleted) in there, without
+NUL between it and the pathname itself.  So we had to
+	1) (possibly) put /deleted into buffer and remember where it went
+	2) let __dentry_path() prepend NUL-terminated pathname
+	3) override NUL with / if we had done (1)
+Life becomes much easier if __dentry_path() does *NOT* put NUL in there.
+Then dentry_path_raw() becomes 'put "" into buffer, then __dentry_path()'
+and dentry_path() - 'put "" or "//deleted" into buffer, then __dentry_path()'.
+
+Additionally, we switch the way buffer information is passed to one similar
+to what we do in prepend()/prepend_name()/etc., i.e. pass the pointer to the
+end of buffer instead of that to beginning.  That's what we'd been using
+in __dentry_path() all along, and now that the callers are doing some prepend()
+before calling __dentry_path(), they that value already on hand.
+
+3/14)  d_path: regularize handling of root dentry in __dentry_path()
+	All path-forming primitives boil down to sequence of prepend_name()
+on dentries encountered along the way toward root.  Each time we prepend
+/ + dentry name to the buffer.  Normally that does exactly what we want,
+but there's a corner case when we don't call prepend_name() at all (in case
+of __dentry_path() that happens if we are given root dentry).  We obviously
+want to end up with "/", rather than "", so this corner case needs to be
+handled.
+	__dentry_path() used to manually put '/' in the end of buffer before
+doing anything else, to be overwritten by the first call of prepend_name()
+if one happens and to be left in place if we don't call prepend_name() at
+all.  That required manually checking that we had space in the buffer
+(prepend_name() and prepend() take care of such checks themselves) and lead
+to clumsy keeping track of return value.
+	A better approach is to check if the main loop has added anything
+into the buffer and prepend "/" if it hasn't.  A side benefit of using prepend()
+is that it does the right thing if we'd already run out of buffer, making
+the overflow-handling logics simpler.
+
+NB: the above might be worth putting into commit message.
+
+	Part 3: overflow handling cleanups
+
+We have an overcomplicated handling of overflows.  Primitives (prepend() and
+prepend_name()) check if we'd run out of space and return -ENAMETOOLONG.
+Then it's propagated all the way out by call chain.  However, the same
+primitives are safe to call in case we'd *already* run out of space and
+that condition is easily checked at any level of callchain.  The next
+5 commits use that to simplify the control flow.
+
+4/14)  d_path: get rid of path_with_deleted()
+	expand into the sole caller, rearrange the suffix handing
+along the lines of dentry_path().
+
+5/14)  getcwd(2): saner logics around prepend_path() call
+	Turn
+		prepend_path()
+		if it says it has run out of space, fail with ENAMETOOLONG
+		if it wants "(unreachable) " prepended
+			do so
+			if that says it has run out of space, fail with ENAMETOOLONG
+	into
+		prepend_path()
+		if it wants "(unreachable) " prepended
+			do so
+		if we see we'd run out of space at some point
+			fail with ENAMETOOLONG
+
+6/14)  d_path: don't bother with return value of prepend()
+	Almost nothing is looking at return value of prepend() and it's
+easy to get rid of the last stragglers...
+
+7/14)  d_path: lift -ENAMETOOLONG handling into callers of prepend_path()
+	It's easier to have prepend_path() return 0 on overflow and
+check for overflow in the callers.  The logics is the same for all callers
+(ran out of space => ERR_PTR(-ENAMETOOLONG)), so we get a bit of boilerplate,
+but even with that the callers become simpler.  Added boilerplate will be
+dealt with a couple of commits down the road.
+
+8/14)  d_path: make prepend_name() boolean
+	Unlike the case of prepend(), callers of prepend_name() really want
+to see whether it has run out of space - the loops it's called in are
+lockless and we could, in principle, end up spinning there for indetermined
+amount of iterations.  Dropping out of loop if we run out of space in the
+buffers serves as a backstop for (very unlikely) cases.
+	However, all we care about is success/failure - we generate
+ENAMETOOLONG in the callers, if not callers of callers, so we can bloody well
+make it return bool.
+
+	Part 4: introduction of prepend_buffer
+
+9/14)  d_path: introduce struct prepend_buffer
+	We've a lot of places where we have pairs of form (pointer to end
+of buffer, amount of space left in front of that).  These sit in pairs of
+variables located next to each other and usually passed by reference.
+Turn those into instances of new type (struct prepend_buffer) and pass
+reference to the pair instead of pairs of references to its fields.
+
+Initialization (of form {buf + len, len}) turned into a macro (DECLARE_BUF),
+to avoid brainos.  Extraction of string (buffer contents if we hadn't run
+out of space, ERR_PTR(-ENAMETOOLONG) otherwise) is done by extract_string();
+that eats the leftover boilerplate from earlier in the series.
+
+	Part 5: extracting the lockless part of prepend_path()
+The thing that started the entire mess had been an attempt to use d_path
+machinery for vsprintf(); that can't grab rename_lock and mount_lock,
+so we needed a variant of prepend_path() that would try to go without
+those locks.  The obvious approach is to lift the internal loop of
+prepend_path() into a new primitive.  However, that needs some massage
+first to separate local variables - otherwise we end up with the
+argument list from hell.
+
+10/14) d_path: prepend_path(): get rid of vfsmnt
+	redundant - we maintain mnt and vfsmnt through the loop,
+with the latter being a pointer to mnt->mnt all along.
+11/14) d_path: prepend_path(): lift resetting b in case when we'd return 3 out of loop
+	the only place in the inner loop where we need p; we use it
+to reset b in case we would return 3.  We can easily check that error is 3
+after the loop and do resetting there.  Note that we only need that after
+the *outer* loop - the body of that starts with assignment to b anyway.
+12/14) d_path: prepend_path(): lift the inner loop into a new helper
+	ta-da
+
+	Part 6: followups
+
+13/14) d_path: prepend_path() is unlikely to return non-zero
+t14/14) getcwd(2): clean up error handling
