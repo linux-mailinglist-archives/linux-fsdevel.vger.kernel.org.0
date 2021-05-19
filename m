@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C98738840F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 02:51:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE6EA388402
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 02:51:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352893AbhESAwd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 May 2021 20:52:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53960 "EHLO
+        id S1352897AbhESAw3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 May 2021 20:52:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233238AbhESAvI (ORCPT
+        with ESMTP id S1352873AbhESAu6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 May 2021 20:51:08 -0400
+        Tue, 18 May 2021 20:50:58 -0400
 Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59FD0C06175F;
-        Tue, 18 May 2021 17:49:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D89EAC061760;
+        Tue, 18 May 2021 17:49:39 -0700 (PDT)
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1ljAOU-00G4Fs-JV; Wed, 19 May 2021 00:49:02 +0000
+        id 1ljAOU-00G4GG-Mm; Wed, 19 May 2021 00:49:02 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Jia He <justin.he@arm.com>, Petr Mladek <pmladek@suse.com>,
@@ -38,9 +38,9 @@ Cc:     Jia He <justin.he@arm.com>, Petr Mladek <pmladek@suse.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-s390 <linux-s390@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH 13/14] d_path: prepend_path() is unlikely to return non-zero
-Date:   Wed, 19 May 2021 00:49:00 +0000
-Message-Id: <20210519004901.3829541-13-viro@zeniv.linux.org.uk>
+Subject: [PATCH 14/14] getcwd(2): clean up error handling
+Date:   Wed, 19 May 2021 00:49:01 +0000
+Message-Id: <20210519004901.3829541-14-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210519004901.3829541-1-viro@zeniv.linux.org.uk>
 References: <YKRfI29BBnC255Vp@zeniv-ca.linux.org.uk>
@@ -54,40 +54,59 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/d_path.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/d_path.c | 29 ++++++++++++-----------------
+ 1 file changed, 12 insertions(+), 17 deletions(-)
 
 diff --git a/fs/d_path.c b/fs/d_path.c
-index ba629879a4bf..8a9cd44f6689 100644
+index 8a9cd44f6689..23a53f7b5c71 100644
 --- a/fs/d_path.c
 +++ b/fs/d_path.c
-@@ -187,7 +187,7 @@ char *__d_path(const struct path *path,
- 	DECLARE_BUFFER(b, buf, buflen);
+@@ -390,9 +390,11 @@ SYSCALL_DEFINE2(getcwd, char __user *, buf, unsigned long, size)
+ 	rcu_read_lock();
+ 	get_fs_root_and_pwd_rcu(current->fs, &root, &pwd);
  
- 	prepend(&b, "", 1);
--	if (prepend_path(path, root, &b) > 0)
-+	if (unlikely(prepend_path(path, root, &b) > 0))
- 		return NULL;
- 	return extract_string(&b);
- }
-@@ -199,7 +199,7 @@ char *d_absolute_path(const struct path *path,
- 	DECLARE_BUFFER(b, buf, buflen);
- 
- 	prepend(&b, "", 1);
--	if (prepend_path(path, &root, &b) > 1)
-+	if (unlikely(prepend_path(path, &root, &b) > 1))
- 		return ERR_PTR(-EINVAL);
- 	return extract_string(&b);
- }
-@@ -396,7 +396,7 @@ SYSCALL_DEFINE2(getcwd, char __user *, buf, unsigned long, size)
+-	error = -ENOENT;
+-	if (!d_unlinked(pwd.dentry)) {
+-		unsigned long len;
++	if (unlikely(d_unlinked(pwd.dentry))) {
++		rcu_read_unlock();
++		error = -ENOENT;
++	} else {
++		unsigned len;
  		DECLARE_BUFFER(b, page, PATH_MAX);
  
  		prepend(&b, "", 1);
--		if (prepend_path(&pwd, &root, &b) > 0)
-+		if (unlikely(prepend_path(&pwd, &root, &b) > 0))
+@@ -400,23 +402,16 @@ SYSCALL_DEFINE2(getcwd, char __user *, buf, unsigned long, size)
  			prepend(&b, "(unreachable)", 13);
  		rcu_read_unlock();
  
+-		if (b.len < 0) {
+-			error = -ENAMETOOLONG;
+-			goto out;
+-		}
+-
+-		error = -ERANGE;
+ 		len = PATH_MAX - b.len;
+-		if (len <= size) {
++		if (unlikely(len > PATH_MAX))
++			error = -ENAMETOOLONG;
++		else if (unlikely(len > size))
++			error = -ERANGE;
++		else if (copy_to_user(buf, b.buf, len))
++			error = -EFAULT;
++		else
+ 			error = len;
+-			if (copy_to_user(buf, b.buf, len))
+-				error = -EFAULT;
+-		}
+-	} else {
+-		rcu_read_unlock();
+ 	}
+-
+-out:
+ 	__putname(page);
+ 	return error;
+ }
 -- 
 2.11.0
 
