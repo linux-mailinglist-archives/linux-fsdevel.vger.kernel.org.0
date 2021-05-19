@@ -2,92 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 946C8388EE5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 15:21:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4F71388F21
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 15:29:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353597AbhESNWq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 May 2021 09:22:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37686 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1353577AbhESNWn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 May 2021 09:22:43 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id ABACE610CC;
-        Wed, 19 May 2021 13:21:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621430483;
-        bh=QuyMOe40CI9MGzlkDgeXFl4uCNLHSfIU/9ysWfLrdSk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LfH+D4OB3x9rKdkYPxTBQB1t9IvRKG3xjdbFfeSnfhSfi5Ke9zzPxk4sRVGvyvvPM
-         M1cLGvav9yrUGvcYwdHUTEpbJgeLNoYnsH2vb4xOvt5CiB6ElxCN2YMUSdIBhQDCkq
-         UhqvY5VDEvNjE9dOgwqpctvSUYsGilzzc5nKumuCoirjNHe+IFjE1ZdRRu1iipcdZP
-         x4+TPJQMdnFRDhebyfVLTm08Y+5p9RDxOBIJuS9G1CQ7YPL6K0DGEJkkdh88O7aazR
-         WJSb7s0wUnws4J+NppgK2CONNrNzV6rP7cEYYzKQQTyE40DhdJIFAygwclOnyRSvyI
-         0WzoR3ilKepFQ==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] fs mount_setattr fix
-Date:   Wed, 19 May 2021 15:20:55 +0200
-Message-Id: <20210519132055.682958-1-brauner@kernel.org>
-X-Mailer: git-send-email 2.27.0
+        id S1353701AbhESNay (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 May 2021 09:30:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55546 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1353711AbhESNax (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 May 2021 09:30:53 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBAFCC06175F;
+        Wed, 19 May 2021 06:29:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=1Bdmi+WfbavVhL8XpGmBLhMXr9IXd3zd7PnmGAw2j+w=; b=BudscKV1jhcknus3ugwZB7dBfl
+        zTQs4xZaV9LRJr69acbS3LorOxjUu+J8qsIfuo971yrc3ramRFqWi/7ckKFgdfDxSzbSwS062CbE5
+        901YvZs4E7WqXXw8JP2xp6igF3F2lMc/3+76FQz2AuV2MCHIoS4S22OOS67jXPi8FbfeYHaKOfpjW
+        buHBHxudzsLgFDoKCKBQBdyydUc7IcMlTGJmvwKm4V51oOgL6sPbbW2tsae/IjFw2phiI/lMEAjQj
+        hzutvYnMUQdi0Cpq+BuImrxBpAqGnbY3DAZ8KbGpF+L0uAuZOxZpP10NbvbrqsZJFOLoD6ZG+OwMD
+        EXwTXLvQ==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1ljMFb-00EyVP-96; Wed, 19 May 2021 13:28:45 +0000
+Date:   Wed, 19 May 2021 14:28:39 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v3 3/3] iomap: bound ioend size to 4096 pages
+Message-ID: <YKUSh4DVMCTzlSOE@infradead.org>
+References: <20210517171722.1266878-1-bfoster@redhat.com>
+ <20210517171722.1266878-4-bfoster@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210517171722.1266878-4-bfoster@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-/* Summary */
-This simple change makes an underlying assumption more explicit. We currently
-don't have any filesystems that support idmapped mounts which are mountable
-inside a user namespace, i.e. where s_user_ns != init_user_ns. That was a
-deliberate decision for now as userns root can just mount the filesystem
-themselves.
-Express this restriction explicitly and enforce it until there's a real
-use-case for this. This way we can notice it and will have a chance to adapt
-and audit our translation helpers and fstests appropriately if we need to
-support such filesystems.
+On Mon, May 17, 2021 at 01:17:22PM -0400, Brian Foster wrote:
+> The iomap writeback infrastructure is currently able to construct
+> extremely large bio chains (tens of GBs) associated with a single
+> ioend. This consolidation provides no significant value as bio
+> chains increase beyond a reasonable minimum size. On the other hand,
+> this does hold significant numbers of pages in the writeback
+> state across an unnecessarily large number of bios because the ioend
+> is not processed for completion until the final bio in the chain
+> completes. Cap an individual ioend to a reasonable size of 4096
+> pages (16MB with 4k pages) to avoid this condition.
 
-On a general note, we're seeing idmapped mounts being adopted rapidly. Since
-5.12 was released systemd has already merged full support for idmapped mounts.
-Discussions have kicked off for Docker/Moby, k8s, runC, and the containerd
-patchset is about to be reworked. Requests for more filesystems are coming in
-including btrfs and overlayfs and we're discussing fanotify making us of
-idmapped mounts to implement filtered filesystems marks which will be a great
-addition as well. We won't be able to please everyone's desire or design of
-course but it feels like we hit the right direction with this patchset.
+Note that once we get huge page/folio support in the page cache this
+sucks as we can trivially handle much larger sizes with very little
+iteration.
 
-The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
-
-  Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/fs.idmapped.mount_setattr.v5.13-rc3
-
-for you to fetch changes up to 2ca4dcc4909d787ee153272f7efc2bff3b498720:
-
-  fs/mount_setattr: tighten permission checks (2021-05-12 14:13:16 +0200)
-
-/* Testing */
-All patches are based on v5.13-rc1 and have been sitting in linux-next. No
-build failures or warnings were observed. All fstests are passing.
-
-/* Conflicts */
-At the time of creating this PR no merge conflicts were reported from
-linux-next and no merge conflicts showed up doing a test-merge with current
-mainline.
-
-Please consider pulling these changes from the signed fs.idmapped.mount_setattr.v5.13-rc3 tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-fs.idmapped.mount_setattr.v5.13-rc3
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      fs/mount_setattr: tighten permission checks
-
- fs/namespace.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+I wonder if both this limit and the previous one should be based on the
+number of pages added instead.  And in fact maybe if we only want the
+limit at add to ioend time and skip the defer to workqueue part entirely.
