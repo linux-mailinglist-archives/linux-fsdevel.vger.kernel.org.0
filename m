@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 964313883F0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 02:51:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60109388409
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 02:51:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352889AbhESAwX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 May 2021 20:52:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53908 "EHLO
+        id S230500AbhESAwb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 May 2021 20:52:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352863AbhESAu5 (ORCPT
+        with ESMTP id S1352872AbhESAu6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 May 2021 20:50:57 -0400
+        Tue, 18 May 2021 20:50:58 -0400
 Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35FC4C061761;
-        Tue, 18 May 2021 17:49:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C78EBC06175F;
+        Tue, 18 May 2021 17:49:39 -0700 (PDT)
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1ljAOT-00G4Fa-Mu; Wed, 19 May 2021 00:49:01 +0000
+        id 1ljAOT-00G4Fc-R9; Wed, 19 May 2021 00:49:01 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Jia He <justin.he@arm.com>, Petr Mladek <pmladek@suse.com>,
@@ -38,9 +38,9 @@ Cc:     Jia He <justin.he@arm.com>, Petr Mladek <pmladek@suse.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-s390 <linux-s390@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH 04/14] d_path: get rid of path_with_deleted()
-Date:   Wed, 19 May 2021 00:48:51 +0000
-Message-Id: <20210519004901.3829541-4-viro@zeniv.linux.org.uk>
+Subject: [PATCH 05/14] getcwd(2): saner logics around prepend_path() call
+Date:   Wed, 19 May 2021 00:48:52 +0000
+Message-Id: <20210519004901.3829541-5-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210519004901.3829541-1-viro@zeniv.linux.org.uk>
 References: <YKRfI29BBnC255Vp@zeniv-ca.linux.org.uk>
@@ -52,56 +52,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-expand in the sole caller; transform the initial prepends similar to
-what we'd done in dentry_path() (prepend_path() will fail the right
-way if we call it with negative buflen, same as __dentry_path() does).
+The only negative value that might get returned by prepend_path() is
+-ENAMETOOLONG, and that happens only on overflow.  The same goes for
+prepend_unreachable().  Overflow is detectable by observing negative
+buflen, so we can simplify the control flow around the prepend_path()
+call.  Expand prepend_unreachable(), while we are at it - that's the
+only caller.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/d_path.c | 23 +++++------------------
- 1 file changed, 5 insertions(+), 18 deletions(-)
+ fs/d_path.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
 diff --git a/fs/d_path.c b/fs/d_path.c
-index b3324ae7cfe2..7f3fac544bbb 100644
+index 7f3fac544bbb..311d43287572 100644
 --- a/fs/d_path.c
 +++ b/fs/d_path.c
-@@ -211,23 +211,6 @@ char *d_absolute_path(const struct path *path,
+@@ -211,11 +211,6 @@ char *d_absolute_path(const struct path *path,
  	return res;
  }
  
--/*
-- * same as __d_path but appends "(deleted)" for unlinked files.
-- */
--static int path_with_deleted(const struct path *path,
--			     const struct path *root,
--			     char **buf, int *buflen)
+-static int prepend_unreachable(char **buffer, int *buflen)
 -{
--	prepend(buf, buflen, "", 1);
--	if (d_unlinked(path->dentry)) {
--		int error = prepend(buf, buflen, " (deleted)", 10);
--		if (error)
--			return error;
--	}
--
--	return prepend_path(path, root, buf, buflen);
+-	return prepend(buffer, buflen, "(unreachable)", 13);
 -}
 -
- static int prepend_unreachable(char **buffer, int *buflen)
+ static void get_fs_root_rcu(struct fs_struct *fs, struct path *root)
  {
- 	return prepend(buffer, buflen, "(unreachable)", 13);
-@@ -282,7 +265,11 @@ char *d_path(const struct path *path, char *buf, int buflen)
+ 	unsigned seq;
+@@ -414,17 +409,13 @@ SYSCALL_DEFINE2(getcwd, char __user *, buf, unsigned long, size)
+ 		int buflen = PATH_MAX;
  
- 	rcu_read_lock();
- 	get_fs_root_rcu(current->fs, &root);
--	error = path_with_deleted(path, &root, &res, &buflen);
-+	if (unlikely(d_unlinked(path->dentry)))
-+		prepend(&res, &buflen, " (deleted)", 11);
-+	else
-+		prepend(&res, &buflen, "", 1);
-+	error = prepend_path(path, &root, &res, &buflen);
- 	rcu_read_unlock();
+ 		prepend(&cwd, &buflen, "", 1);
+-		error = prepend_path(&pwd, &root, &cwd, &buflen);
++		if (prepend_path(&pwd, &root, &cwd, &buflen) > 0)
++			prepend(&cwd, &buflen, "(unreachable)", 13);
+ 		rcu_read_unlock();
  
- 	if (error < 0)
+-		if (error < 0)
++		if (buflen < 0) {
++			error = -ENAMETOOLONG;
+ 			goto out;
+-
+-		/* Unreachable from current root */
+-		if (error > 0) {
+-			error = prepend_unreachable(&cwd, &buflen);
+-			if (error)
+-				goto out;
+ 		}
+ 
+ 		error = -ERANGE;
 -- 
 2.11.0
 
