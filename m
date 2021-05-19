@@ -2,156 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0F23388476
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 03:34:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23422388484
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 03:41:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233045AbhESBf3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 May 2021 21:35:29 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:19802 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231689AbhESBf2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 May 2021 21:35:28 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14J14LBp095740;
-        Tue, 18 May 2021 21:32:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : reply-to : to : cc : date : in-reply-to : references : content-type
- : mime-version : content-transfer-encoding; s=pp1;
- bh=TSIcUKlJKuIIr978ibfL+W5lJZ618kXPKibv8DMD+8w=;
- b=C5kj5m8CJg96NebcO1bm9othMtFMyAinaRQ504k8x6EXkUmEb9ZuvrPGOZqTQNQ0g0Xv
- Mwn2vhUdbL+JkHCIikF/YPjf1uZT134MQZakQfw76N/Z0HZ6QpRptSxKwdG86sVWFTw/
- 3RDtLRiN5QDTGArFs0km0FVBKuxuVztvCuLdDVpEicvxcjGJyXAvTVyUMWP8r87Vq6G7
- EyP+NjO2d3VB3bKNejrXwFxI/D1BQIpE0p3WDQ8roRlLOjydlA13sRNVW+eYVbv2FYGj
- hIsjYjGbtCiZgQ8tJt139+MQ42d5SDmhyG7xo0cGdRGo+gzO2f6qTHbo5VMFSnuzR14M Lg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 38mqycs8de-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 18 May 2021 21:32:43 -0400
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 14J14MOc095896;
-        Tue, 18 May 2021 21:32:42 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 38mqycs8d6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 18 May 2021 21:32:42 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 14J1QwAw010620;
-        Wed, 19 May 2021 01:32:41 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma02dal.us.ibm.com with ESMTP id 38j5x9j6ev-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 May 2021 01:32:41 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 14J1Weni11076004
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 May 2021 01:32:40 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 66A827805E;
-        Wed, 19 May 2021 01:32:40 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8BA5378066;
-        Wed, 19 May 2021 01:32:30 +0000 (GMT)
-Received: from jarvis.int.hansenpartnership.com (unknown [9.80.208.94])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 19 May 2021 01:32:30 +0000 (GMT)
-Message-ID: <d99864e677cec4ed83e52c4417c58bbe5fd728b1.camel@linux.ibm.com>
-Subject: Re: [PATCH v19 6/8] PM: hibernate: disable when there are active
- secretmem users
-From:   James Bottomley <jejb@linux.ibm.com>
-Reply-To: jejb@linux.ibm.com
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Hagen Paul Pfeifer <hagen@jauu.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Palmer Dabbelt <palmerdabbelt@google.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-Date:   Tue, 18 May 2021 18:32:29 -0700
-In-Reply-To: <20210518102424.GD82842@C02TD0UTHF1T.local>
-References: <20210513184734.29317-1-rppt@kernel.org>
-         <20210513184734.29317-7-rppt@kernel.org>
-         <20210518102424.GD82842@C02TD0UTHF1T.local>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        id S233912AbhESBnJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 May 2021 21:43:09 -0400
+Received: from mx21.baidu.com ([220.181.3.85]:39136 "EHLO baidu.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231689AbhESBnI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 May 2021 21:43:08 -0400
+Received: from BC-Mail-Ex20.internal.baidu.com (unknown [172.31.51.14])
+        by Forcepoint Email with ESMTPS id 05DCACB3BDE8AB40D5B9;
+        Wed, 19 May 2021 09:41:38 +0800 (CST)
+Received: from BC-Mail-Ex20.internal.baidu.com (172.31.51.14) by
+ BC-Mail-Ex20.internal.baidu.com (172.31.51.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2242.4; Wed, 19 May 2021 09:41:37 +0800
+Received: from BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) by
+ BC-Mail-Ex20.internal.baidu.com ([172.31.51.14]) with mapi id 15.01.2242.008;
+ Wed, 19 May 2021 09:41:37 +0800
+From:   "Chu,Kaiping" <chukaiping@baidu.com>
+To:     Charan Teja Reddy <charante@codeaurora.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "yzaikin@google.com" <yzaikin@google.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "nigupta@nvidia.com" <nigupta@nvidia.com>,
+        "bhe@redhat.com" <bhe@redhat.com>,
+        "mateusznosek0@gmail.com" <mateusznosek0@gmail.com>,
+        "sh_def@163.com" <sh_def@163.com>,
+        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
+        "vinmenon@codeaurora.org" <vinmenon@codeaurora.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIIFYyXSBtbTogY29tcGFjdGlvbjogc3VwcG9ydCB0cmln?=
+ =?gb2312?Q?gering_of_proactive_compaction_by_user?=
+Thread-Topic: [PATCH V2] mm: compaction: support triggering of proactive
+ compaction by user
+Thread-Index: AQHXS+sjJaVDxZPNeEKAMECfwZAe9qrqB1Yg
+Date:   Wed, 19 May 2021 01:41:37 +0000
+Message-ID: <79279be3573542dea0266f8e9d4d5368@baidu.com>
+References: <1621345058-26676-1-git-send-email-charante@codeaurora.org>
+In-Reply-To: <1621345058-26676-1-git-send-email-charante@codeaurora.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.22.194.39]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: LznGIJm2lBQ6APrvvyeFq2Y4fBjyOunI
-X-Proofpoint-ORIG-GUID: 7e9L0ZhoY0K9faClVgEt7JR6P8qAFxb2
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-05-18_11:2021-05-18,2021-05-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- priorityscore=1501 mlxlogscore=792 adultscore=0 phishscore=0 spamscore=0
- mlxscore=0 impostorscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2105190004
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2021-05-18 at 11:24 +0100, Mark Rutland wrote:
-> On Thu, May 13, 2021 at 09:47:32PM +0300, Mike Rapoport wrote:
-> > From: Mike Rapoport <rppt@linux.ibm.com>
-> > 
-> > It is unsafe to allow saving of secretmem areas to the hibernation
-> > snapshot as they would be visible after the resume and this
-> > essentially will defeat the purpose of secret memory mappings.
-> > 
-> > Prevent hibernation whenever there are active secret memory users.
-> 
-> Have we thought about how this is going to work in practice, e.g. on
-> mobile systems? It seems to me that there are a variety of common
-> applications which might want to use this which people don't expect
-> to inhibit hibernate (e.g. authentication agents, web browsers).
-
-If mobile systems require hibernate, then the choice is to disable this
-functionality or implement a secure hibernation store.   I also thought
-most mobile hibernation was basically equivalent to S3, in which case
-there's no actual writing of ram into storage, in which case there's no
-security barrier and likely the inhibition needs to be made a bit more
-specific to the suspend to disk case?
-
-> Are we happy to say that any userspace application can incidentally
-> inhibit hibernate?
-
-Well, yes, for the laptop use case because we don't want suspend to
-disk to be able to compromise the secret area.  You can disable this
-for mobile if you like, or work out how to implement hibernate securely
-if you're really suspending to disk.
-
-James
-
-
+DQoNCj4gLS0tLS3Tyrz+1K28/i0tLS0tDQo+ILeivP7IyzogY2hhcmFudGU9Y29kZWF1cm9yYS5v
+cmdAbWcuY29kZWF1cm9yYS5vcmcNCj4gPGNoYXJhbnRlPWNvZGVhdXJvcmEub3JnQG1nLmNvZGVh
+dXJvcmEub3JnPiC0+rHtIENoYXJhbiBUZWphIFJlZGR5DQo+ILeiy83KsbzkOiAyMDIxxOo11MIx
+OMjVIDIxOjM4DQo+IMrVvP7IyzogYWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZzsgbWNncm9mQGtl
+cm5lbC5vcmc7DQo+IGtlZXNjb29rQGNocm9taXVtLm9yZzsgeXphaWtpbkBnb29nbGUuY29tOyB2
+YmFia2FAc3VzZS5jejsNCj4gbmlndXB0YUBudmlkaWEuY29tOyBiaGVAcmVkaGF0LmNvbTsgbWF0
+ZXVzem5vc2VrMEBnbWFpbC5jb207DQo+IHNoX2RlZkAxNjMuY29tOyBpYW1qb29uc29vLmtpbUBs
+Z2UuY29tOyB2aW5tZW5vbkBjb2RlYXVyb3JhLm9yZw0KPiCzrcvNOiBsaW51eC1rZXJuZWxAdmdl
+ci5rZXJuZWwub3JnOyBsaW51eC1tbUBrdmFjay5vcmc7DQo+IGxpbnV4LWZzZGV2ZWxAdmdlci5r
+ZXJuZWwub3JnOyBDaGFyYW4gVGVqYSBSZWRkeSA8Y2hhcmFudGVAY29kZWF1cm9yYS5vcmc+DQo+
+INb3zOI6IFtQQVRDSCBWMl0gbW06IGNvbXBhY3Rpb246IHN1cHBvcnQgdHJpZ2dlcmluZyBvZiBw
+cm9hY3RpdmUNCj4gY29tcGFjdGlvbiBieSB1c2VyDQo+IA0KPiBUaGUgcHJvYWN0aXZlIGNvbXBh
+Y3Rpb25bMV0gZ2V0cyB0cmlnZ2VyZWQgZm9yIGV2ZXJ5IDUwMG1zZWMgYW5kIHJ1bg0KPiBjb21w
+YWN0aW9uIG9uIHRoZSBub2RlIGZvciBDT01QQUNUSU9OX0hQQUdFX09SREVSICh1c3VhbGx5IG9y
+ZGVyLTkpDQo+IHBhZ2VzIGJhc2VkIG9uIHRoZSB2YWx1ZSBzZXQgdG8gc3lzY3RsLmNvbXBhY3Rp
+b25fcHJvYWN0aXZlbmVzcy4NCj4gVHJpZ2dlcmluZyB0aGUgY29tcGFjdGlvbiBmb3IgZXZlcnkg
+NTAwbXNlYyBpbiBzZWFyY2ggb2YNCj4gQ09NUEFDVElPTl9IUEFHRV9PUkRFUiBwYWdlcyBpcyBu
+b3QgbmVlZGVkIGZvciBhbGwgYXBwbGljYXRpb25zLA0KPiBlc3BlY2lhbGx5IG9uIHRoZSBlbWJl
+ZGRlZCBzeXN0ZW0gdXNlY2FzZXMgd2hpY2ggbWF5IGhhdmUgZmV3IE1CJ3Mgb2YNCj4gUkFNLiBF
+bmFibGluZyB0aGUgcHJvYWN0aXZlIGNvbXBhY3Rpb24gaW4gaXRzIHN0YXRlIHdpbGwgZW5kdXAg
+aW4gcnVubmluZw0KPiBhbG1vc3QgYWx3YXlzIG9uIHN1Y2ggc3lzdGVtcy4NCj4gDQo+IE90aGVy
+IHNpZGUsIHByb2FjdGl2ZSBjb21wYWN0aW9uIGNhbiBzdGlsbCBiZSB2ZXJ5IG11Y2ggdXNlZnVs
+IGZvciBnZXR0aW5nIGEgc2V0DQo+IG9mIGhpZ2hlciBvcmRlciBwYWdlcyBpbiBzb21lIGNvbnRy
+b2xsYWJsZSBtYW5uZXIoY29udHJvbGxlZCBieSB1c2luZyB0aGUNCj4gc3lzY3RsLmNvbXBhY3Rp
+b25fcHJvYWN0aXZlbmVzcykuIFRodXMgb24gc3lzdGVtcyB3aGVyZSBlbmFibGluZyB0aGUNCj4g
+cHJvYWN0aXZlIGNvbXBhY3Rpb24gYWx3YXlzIG1heSBwcm9vdmUgbm90IHJlcXVpcmVkLCBjYW4g
+dHJpZ2dlciB0aGUgc2FtZQ0KPiBmcm9tIHVzZXIgc3BhY2Ugb24gd3JpdGUgdG8gaXRzIHN5c2N0
+bCBpbnRlcmZhY2UuIEFzIGFuIGV4YW1wbGUsIHNheSBhcHANCj4gbGF1bmNoZXIgZGVjaWRlIHRv
+IGxhdW5jaCB0aGUgbWVtb3J5IGhlYXZ5IGFwcGxpY2F0aW9uIHdoaWNoIGNhbiBiZQ0KPiBsYXVu
+Y2hlZCBmYXN0IGlmIGl0IGdldHMgbW9yZSBoaWdoZXIgb3JkZXIgcGFnZXMgdGh1cyBsYXVuY2hl
+ciBjYW4gcHJlcGFyZSB0aGUNCj4gc3lzdGVtIGluIGFkdmFuY2UgYnkgdHJpZ2dlcmluZyB0aGUg
+cHJvYWN0aXZlIGNvbXBhY3Rpb24gZnJvbSB1c2Vyc3BhY2UuDQo+IA0KPiBUaGlzIHRyaWdnZXJp
+bmcgb2YgcHJvYWN0aXZlIGNvbXBhY3Rpb24gaXMgZG9uZSBvbiBhIHdyaXRlIHRvDQo+IHN5c2N0
+bC5jb21wYWN0aW9uX3Byb2FjdGl2ZW5lc3MgYnkgdXNlci4NCg0KSWYgeW91IHdhbnQgdG8gdHJp
+Z2dlciBjb21wYWN0aW9uIGZyb20gdXNlcnNwYWNlLCB5b3UgY2FuIHVzZSAiIGVjaG8gMSA+IC9w
+cm9jL3N5cy92bS9jb21wYWN0X21lbW9yeSIsIHRoZXJlIGlzIG5vIG5lZWQgdG8gYmUgc28gY29t
+cGxleC4NCg0KPiANCj4gWzFdaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tl
+cm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L2NvbW1pdD9pDQo+IGQ9ZmFjZGFhOTE3YzRkNWEz
+NzZkMDlkMjU4NjVmNWE4NjNmOTA2MjM0YQ0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ2hhcmFuIFRl
+amEgUmVkZHkgPGNoYXJhbnRlQGNvZGVhdXJvcmEub3JnPg0KPiAtLS0NCj4gY2hhbmdlcyBpbiBW
+MjoNCj4gICAgIC0gcmVtb3ZlIC9wcm9jIGludGVyZmFjZSB0cmlnZ2VyIGZvciBwcm9hY3RpdmUg
+Y29tcGFjdGlvbg0KPiAgICAgLSBJbnRlbnRpb24gaXMgc2FtZSB0aGF0IGFkZCBhIHdheSB0byB0
+cmlnZ2VyIHByb2FjdGl2ZSBjb21wYWN0aW9uIGJ5IHVzZXIuDQo+IA0KPiBjaGFuZ2VzIGluIFYx
+Og0KPiAgICAgLQ0KPiBodHRwczovL2xvcmUua2VybmVsLm9yZy9sa21sLzE2MTkwOTg2NzgtODUw
+MS0xLWdpdC1zZW5kLWVtYWlsLWNoYXJhbnRlQGNvDQo+IGRlYXVyb3JhLm9yZy8NCj4gDQo+ICBp
+bmNsdWRlL2xpbnV4L2NvbXBhY3Rpb24uaCB8ICAyICsrDQo+ICBpbmNsdWRlL2xpbnV4L21tem9u
+ZS5oICAgICB8ICAxICsNCj4gIGtlcm5lbC9zeXNjdGwuYyAgICAgICAgICAgIHwgIDIgKy0NCj4g
+IG1tL2NvbXBhY3Rpb24uYyAgICAgICAgICAgIHwgMzUNCj4gKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKystLS0NCj4gIDQgZmlsZXMgY2hhbmdlZCwgMzYgaW5zZXJ0aW9ucygrKSwgNCBk
+ZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2NvbXBhY3Rpb24u
+aCBiL2luY2x1ZGUvbGludXgvY29tcGFjdGlvbi5oIGluZGV4DQo+IDQyMjE4ODguLjA0ZDVkOWYg
+MTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvY29tcGFjdGlvbi5oDQo+ICsrKyBiL2luY2x1
+ZGUvbGludXgvY29tcGFjdGlvbi5oDQo+IEBAIC04NCw2ICs4NCw4IEBAIHN0YXRpYyBpbmxpbmUg
+dW5zaWduZWQgbG9uZyBjb21wYWN0X2dhcCh1bnNpZ25lZCBpbnQNCj4gb3JkZXIpICBleHRlcm4g
+dW5zaWduZWQgaW50IHN5c2N0bF9jb21wYWN0aW9uX3Byb2FjdGl2ZW5lc3M7ICBleHRlcm4gaW50
+DQo+IHN5c2N0bF9jb21wYWN0aW9uX2hhbmRsZXIoc3RydWN0IGN0bF90YWJsZSAqdGFibGUsIGlu
+dCB3cml0ZSwNCj4gIAkJCXZvaWQgKmJ1ZmZlciwgc2l6ZV90ICpsZW5ndGgsIGxvZmZfdCAqcHBv
+cyk7DQo+ICtleHRlcm4gaW50IGNvbXBhY3Rpb25fcHJvYWN0aXZlbmVzc19zeXNjdGxfaGFuZGxl
+cihzdHJ1Y3QgY3RsX3RhYmxlICp0YWJsZSwNCj4gKwkJaW50IHdyaXRlLCB2b2lkICpidWZmZXIs
+IHNpemVfdCAqbGVuZ3RoLCBsb2ZmX3QgKnBwb3MpOw0KPiAgZXh0ZXJuIGludCBzeXNjdGxfZXh0
+ZnJhZ190aHJlc2hvbGQ7DQo+ICBleHRlcm4gaW50IHN5c2N0bF9jb21wYWN0X3VuZXZpY3RhYmxl
+X2FsbG93ZWQ7DQo+IA0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9tbXpvbmUuaCBiL2lu
+Y2x1ZGUvbGludXgvbW16b25lLmggaW5kZXgNCj4gMGQ1M2ViYS4uOTQ1NTgwOSAxMDA2NDQNCj4g
+LS0tIGEvaW5jbHVkZS9saW51eC9tbXpvbmUuaA0KPiArKysgYi9pbmNsdWRlL2xpbnV4L21tem9u
+ZS5oDQo+IEBAIC04MTUsNiArODE1LDcgQEAgdHlwZWRlZiBzdHJ1Y3QgcGdsaXN0X2RhdGEgew0K
+PiAgCWVudW0gem9uZV90eXBlIGtjb21wYWN0ZF9oaWdoZXN0X3pvbmVpZHg7DQo+ICAJd2FpdF9x
+dWV1ZV9oZWFkX3Qga2NvbXBhY3RkX3dhaXQ7DQo+ICAJc3RydWN0IHRhc2tfc3RydWN0ICprY29t
+cGFjdGQ7DQo+ICsJYm9vbCBwcm9hY3RpdmVfY29tcGFjdF90cmlnZ2VyOw0KPiAgI2VuZGlmDQo+
+ICAJLyoNCj4gIAkgKiBUaGlzIGlzIGEgcGVyLW5vZGUgcmVzZXJ2ZSBvZiBwYWdlcyB0aGF0IGFy
+ZSBub3QgYXZhaWxhYmxlIGRpZmYgLS1naXQNCj4gYS9rZXJuZWwvc3lzY3RsLmMgYi9rZXJuZWwv
+c3lzY3RsLmMgaW5kZXggMTRlZGY4NC4uYmVkMmZhZCAxMDA2NDQNCj4gLS0tIGEva2VybmVsL3N5
+c2N0bC5jDQo+ICsrKyBiL2tlcm5lbC9zeXNjdGwuYw0KPiBAQCAtMjg0MCw3ICsyODQwLDcgQEAg
+c3RhdGljIHN0cnVjdCBjdGxfdGFibGUgdm1fdGFibGVbXSA9IHsNCj4gIAkJLmRhdGEJCT0gJnN5
+c2N0bF9jb21wYWN0aW9uX3Byb2FjdGl2ZW5lc3MsDQo+ICAJCS5tYXhsZW4JCT0gc2l6ZW9mKHN5
+c2N0bF9jb21wYWN0aW9uX3Byb2FjdGl2ZW5lc3MpLA0KPiAgCQkubW9kZQkJPSAwNjQ0LA0KPiAt
+CQkucHJvY19oYW5kbGVyCT0gcHJvY19kb2ludHZlY19taW5tYXgsDQo+ICsJCS5wcm9jX2hhbmRs
+ZXIJPSBjb21wYWN0aW9uX3Byb2FjdGl2ZW5lc3Nfc3lzY3RsX2hhbmRsZXIsDQo+ICAJCS5leHRy
+YTEJCT0gU1lTQ1RMX1pFUk8sDQo+ICAJCS5leHRyYTIJCT0gJm9uZV9odW5kcmVkLA0KPiAgCX0s
+DQo+IGRpZmYgLS1naXQgYS9tbS9jb21wYWN0aW9uLmMgYi9tbS9jb21wYWN0aW9uLmMgaW5kZXgg
+ODRmZGUyNy4uOTA1NjY5Mw0KPiAxMDA2NDQNCj4gLS0tIGEvbW0vY29tcGFjdGlvbi5jDQo+ICsr
+KyBiL21tL2NvbXBhY3Rpb24uYw0KPiBAQCAtMjcwOCw2ICsyNzA4LDMwIEBAIHN0YXRpYyB2b2lk
+IGNvbXBhY3Rfbm9kZXModm9pZCkNCj4gICAqLw0KPiAgdW5zaWduZWQgaW50IF9fcmVhZF9tb3N0
+bHkgc3lzY3RsX2NvbXBhY3Rpb25fcHJvYWN0aXZlbmVzcyA9IDIwOw0KPiANCj4gK2ludCBjb21w
+YWN0aW9uX3Byb2FjdGl2ZW5lc3Nfc3lzY3RsX2hhbmRsZXIoc3RydWN0IGN0bF90YWJsZSAqdGFi
+bGUsIGludA0KPiB3cml0ZSwNCj4gKwkJdm9pZCAqYnVmZmVyLCBzaXplX3QgKmxlbmd0aCwgbG9m
+Zl90ICpwcG9zKSB7DQo+ICsJaW50IHJjLCBuaWQ7DQo+ICsNCj4gKwlyYyA9IHByb2NfZG9pbnR2
+ZWNfbWlubWF4KHRhYmxlLCB3cml0ZSwgYnVmZmVyLCBsZW5ndGgsIHBwb3MpOw0KPiArCWlmIChy
+YykNCj4gKwkJcmV0dXJuIHJjOw0KPiArDQo+ICsJaWYgKHdyaXRlICYmIHN5c2N0bF9jb21wYWN0
+aW9uX3Byb2FjdGl2ZW5lc3MpIHsNCj4gKwkJZm9yX2VhY2hfb25saW5lX25vZGUobmlkKSB7DQo+
+ICsJCQlwZ19kYXRhX3QgKnBnZGF0ID0gTk9ERV9EQVRBKG5pZCk7DQo+ICsNCj4gKwkJCWlmIChw
+Z2RhdC0+cHJvYWN0aXZlX2NvbXBhY3RfdHJpZ2dlcikNCj4gKwkJCQljb250aW51ZTsNCj4gKw0K
+PiArCQkJcGdkYXQtPnByb2FjdGl2ZV9jb21wYWN0X3RyaWdnZXIgPSB0cnVlOw0KPiArCQkJd2Fr
+ZV91cF9pbnRlcnJ1cHRpYmxlKCZwZ2RhdC0+a2NvbXBhY3RkX3dhaXQpOw0KPiArCQl9DQo+ICsJ
+fQ0KPiArDQo+ICsJcmV0dXJuIDA7DQo+ICt9DQo+ICsNCj4gIC8qDQo+ICAgKiBUaGlzIGlzIHRo
+ZSBlbnRyeSBwb2ludCBmb3IgY29tcGFjdGluZyBhbGwgbm9kZXMgdmlhDQo+ICAgKiAvcHJvYy9z
+eXMvdm0vY29tcGFjdF9tZW1vcnkNCj4gQEAgLTI3NTIsNyArMjc3Niw4IEBAIHZvaWQgY29tcGFj
+dGlvbl91bnJlZ2lzdGVyX25vZGUoc3RydWN0IG5vZGUNCj4gKm5vZGUpDQo+IA0KPiAgc3RhdGlj
+IGlubGluZSBib29sIGtjb21wYWN0ZF93b3JrX3JlcXVlc3RlZChwZ19kYXRhX3QgKnBnZGF0KSAg
+ew0KPiAtCXJldHVybiBwZ2RhdC0+a2NvbXBhY3RkX21heF9vcmRlciA+IDAgfHwga3RocmVhZF9z
+aG91bGRfc3RvcCgpOw0KPiArCXJldHVybiBwZ2RhdC0+a2NvbXBhY3RkX21heF9vcmRlciA+IDAg
+fHwga3RocmVhZF9zaG91bGRfc3RvcCgpIHx8DQo+ICsJCXBnZGF0LT5wcm9hY3RpdmVfY29tcGFj
+dF90cmlnZ2VyOw0KPiAgfQ0KPiANCj4gIHN0YXRpYyBib29sIGtjb21wYWN0ZF9ub2RlX3N1aXRh
+YmxlKHBnX2RhdGFfdCAqcGdkYXQpIEBAIC0yOTA1LDcNCj4gKzI5MzAsOCBAQCBzdGF0aWMgaW50
+IGtjb21wYWN0ZCh2b2lkICpwKQ0KPiAgCQl0cmFjZV9tbV9jb21wYWN0aW9uX2tjb21wYWN0ZF9z
+bGVlcChwZ2RhdC0+bm9kZV9pZCk7DQo+ICAJCWlmICh3YWl0X2V2ZW50X2ZyZWV6YWJsZV90aW1l
+b3V0KHBnZGF0LT5rY29tcGFjdGRfd2FpdCwNCj4gIAkJCWtjb21wYWN0ZF93b3JrX3JlcXVlc3Rl
+ZChwZ2RhdCksDQo+IC0JCQltc2Vjc190b19qaWZmaWVzKEhQQUdFX0ZSQUdfQ0hFQ0tfSU5URVJW
+QUxfTVNFQykpKSB7DQo+ICsJCQltc2Vjc190b19qaWZmaWVzKEhQQUdFX0ZSQUdfQ0hFQ0tfSU5U
+RVJWQUxfTVNFQykpICYmDQo+ICsJCQkhcGdkYXQtPnByb2FjdGl2ZV9jb21wYWN0X3RyaWdnZXIp
+IHsNCj4gDQo+ICAJCQlwc2lfbWVtc3RhbGxfZW50ZXIoJnBmbGFncyk7DQo+ICAJCQlrY29tcGFj
+dGRfZG9fd29yayhwZ2RhdCk7DQo+IEBAIC0yOTE5LDcgKzI5NDUsNyBAQCBzdGF0aWMgaW50IGtj
+b21wYWN0ZCh2b2lkICpwKQ0KPiANCj4gIAkJCWlmIChwcm9hY3RpdmVfZGVmZXIpIHsNCj4gIAkJ
+CQlwcm9hY3RpdmVfZGVmZXItLTsNCj4gLQkJCQljb250aW51ZTsNCj4gKwkJCQlnb3RvIGxvb3A7
+DQo+ICAJCQl9DQo+ICAJCQlwcmV2X3Njb3JlID0gZnJhZ21lbnRhdGlvbl9zY29yZV9ub2RlKHBn
+ZGF0KTsNCj4gIAkJCXByb2FjdGl2ZV9jb21wYWN0X25vZGUocGdkYXQpOw0KPiBAQCAtMjkzMSw2
+ICsyOTU3LDkgQEAgc3RhdGljIGludCBrY29tcGFjdGQodm9pZCAqcCkNCj4gIAkJCXByb2FjdGl2
+ZV9kZWZlciA9IHNjb3JlIDwgcHJldl9zY29yZSA/DQo+ICAJCQkJCTAgOiAxIDw8IENPTVBBQ1Rf
+TUFYX0RFRkVSX1NISUZUOw0KPiAgCQl9DQo+ICtsb29wOg0KPiArCQlpZiAocGdkYXQtPnByb2Fj
+dGl2ZV9jb21wYWN0X3RyaWdnZXIpDQo+ICsJCQlwZ2RhdC0+cHJvYWN0aXZlX2NvbXBhY3RfdHJp
+Z2dlciA9IGZhbHNlOw0KPiAgCX0NCj4gDQo+ICAJcmV0dXJuIDA7DQo+IC0tDQo+IFFVQUxDT01N
+IElORElBLCBvbiBiZWhhbGYgb2YgUXVhbGNvbW0gSW5ub3ZhdGlvbiBDZW50ZXIsIEluYy4gaXMg
+YQ0KPiBtZW1iZXIgb2YgdGhlIENvZGUgQXVyb3JhIEZvcnVtLCBob3N0ZWQgYnkgVGhlIExpbnV4
+IEZvdW5kYXRpb24NCg0K
