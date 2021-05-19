@@ -2,88 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F114F3885A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 05:49:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81DD33885B2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 05:50:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240428AbhESDu0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 May 2021 23:50:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37164 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235999AbhESDuZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 May 2021 23:50:25 -0400
-Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AC10C06175F;
-        Tue, 18 May 2021 20:49:04 -0700 (PDT)
-Received: by mail-qv1-xf34.google.com with SMTP id v18so6119965qvx.10;
-        Tue, 18 May 2021 20:49:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=VtBZr8UfGMe2NRXG2EkfLojRcmF6PYYjekObnrreHsU=;
-        b=axMoBxLv+eZZMTcswYPFe2DQjcb55bhqevaXwvMUByl443AFQxAf0zJW/Ptd4iEasv
-         nxXM/I98/W365Sb/36K8tGE2e1DTDpsUHsY/RcrzlB/bGIlufLjOSF6Bcue/FTuHPq7K
-         SSfMJgasP9pPKu12RVkxCqQH0X4IRKqp+GL6gRkSTuYko7GczAWk8Jo0NC15KJqxVLGf
-         4fz3xGcgkJokdFmfc7nuqSMUKSLVTGLJgjR8jpijTA4fKGIJhT5KTKay81VavEhYePSl
-         SUr7A/VQ3a+sfcz34M8N02bRVsoT3h6oSbkpr6JuK8H4Olsj6UmhaD4/4ClSOBXjjkD3
-         k7bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VtBZr8UfGMe2NRXG2EkfLojRcmF6PYYjekObnrreHsU=;
-        b=GGYzv5KxE44SG1M0JVqRuYa0j9Padjwp53J2I0htWh+PJ+i+dRXTgeCwcbZqDP9Ayt
-         2L221owTDZw/vdbrTq0+oiboIfnsWtt4cJfEbYywlqNr320mXnCjWt/hqaBY1r1zWYJn
-         5YwlDOCDF6B2WqSmMTqm+ELF9LzG1pm/vL1mgYKZb+WwxkYfKkZaeIURl+kIaaYsrQON
-         uet0nYO+xq5H9MiYNEhh+PMkpNE0gKhzSagUmkpYK7/6gQzVPk4Xy4ODcIyR+2UKKjf2
-         //3zPWdr1jvhgWKCBjp1+ofG2lF46V3+EtadcdzShSjQLIqM+bKXArSSo+IDVFvuRIZP
-         BlvQ==
-X-Gm-Message-State: AOAM531f0220SFYixfPr3juBa3EhRAc5WIhSqC46hep8lI2M4iUAkYf1
-        Hl15OpaUvkODT3sHdcSrb1Q=
-X-Google-Smtp-Source: ABdhPJyFiDNJDKDcXCyymUBk8gf4+xLUJX/gBr29YpuwXrXW6tdAjJRippor0H5ZzGmd2hDBWEpKlA==
-X-Received: by 2002:a0c:c447:: with SMTP id t7mr10246194qvi.60.1621396143393;
-        Tue, 18 May 2021 20:49:03 -0700 (PDT)
-Received: from Belldandy-Slimbook.infra.opensuse.org (ool-18e49371.dyn.optonline.net. [24.228.147.113])
-        by smtp.gmail.com with ESMTPSA id g5sm9869746qtv.56.2021.05.18.20.49.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 May 2021 20:49:02 -0700 (PDT)
-From:   Neal Gompa <ngompa13@gmail.com>
-To:     almaz.alexandrovich@paragon-software.com
-Cc:     aaptel@suse.com, andy.lavr@gmail.com, anton@tuxera.com,
-        dan.carpenter@oracle.com, dsterba@suse.cz, ebiggers@kernel.org,
-        hch@lst.de, joe@perches.com, kari.argillander@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, mark@harmstone.com,
-        nborisov@suse.com, oleksandr@natalenko.name, pali@kernel.org,
-        rdunlap@infradead.org, viro@zeniv.linux.org.uk,
-        willy@infradead.org, Neal Gompa <ngompa13@gmail.com>
-Subject: Re: [PATCH v26 00/10] NTFS read-write driver GPL implementation by Paragon Software
-Date:   Tue, 18 May 2021 23:47:59 -0400
-Message-Id: <20210519034759.259670-1-ngompa13@gmail.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210402155347.64594-1-almaz.alexandrovich@paragon-software.com>
-References: <20210402155347.64594-1-almaz.alexandrovich@paragon-software.com>
+        id S1353115AbhESDwP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 May 2021 23:52:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34562 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238952AbhESDwO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 May 2021 23:52:14 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6A22160698;
+        Wed, 19 May 2021 03:50:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621396255;
+        bh=OHqMi61ZqX4ySIrfnisk/+K7U7qM/mCXhP8jYMj1P84=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YYAE07pQhQM8o7Wp7sXA/L3u7rt0s5M+ViFahOF7b94Od8vLSvNm59LWBWGahD5Td
+         //07qQooCrEAvIEElW9/DslmDL8J4D2K38vvD2y4ZIFnrbiE6mYEZP+qyMTJRbPQm4
+         ng7WKl+CsCMDiF9ZTD5yz79TwuhQ2Bmem6NORzx5sZia3oO9BeRuVTw7r2+9JG4Bn1
+         Y5+OK1WrxaIkzC5MuMQxoLI7XHdiQBfR4r9qxVwgO96jZTvNivIbQyXbGEcZ1Bo5sU
+         2a/tc6+FwBn7EtnfaddaIUUJMDcK0N4p6TdNf2HQST//b3D2Bl+XNTSL1haulJxm4I
+         yH1MAff7bIYkg==
+Date:   Wed, 19 May 2021 06:50:37 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Hagen Paul Pfeifer <hagen@jauu.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Palmer Dabbelt <palmerdabbelt@google.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        Yury Norov <yury.norov@gmail.com>, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+Subject: Re: [PATCH v20 4/7] mm: introduce memfd_secret system call to create
+ "secret" memory areas
+Message-ID: <YKSLDYqwmANLcQJt@kernel.org>
+References: <20210518072034.31572-1-rppt@kernel.org>
+ <20210518072034.31572-5-rppt@kernel.org>
+ <20210518174422.399ad118a051fe4c5b11d7ba@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210518174422.399ad118a051fe4c5b11d7ba@linux-foundation.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hey all,
+On Tue, May 18, 2021 at 05:44:22PM -0700, Andrew Morton wrote:
+> On Tue, 18 May 2021 10:20:31 +0300 Mike Rapoport <rppt@kernel.org> wrote:
+> 
+> > From: Mike Rapoport <rppt@linux.ibm.com>
+> > 
+> > Introduce "memfd_secret" system call with the ability to create memory
+> > areas visible only in the context of the owning process and not mapped not
+> > only to other processes but in the kernel page tables as well.
+> > 
+> > ...
+> >
+> > --- a/mm/Kconfig
+> > +++ b/mm/Kconfig
+> > @@ -901,4 +901,9 @@ config KMAP_LOCAL
+> >  # struct io_mapping based helper.  Selected by drivers that need them
+> >  config IO_MAPPING
+> >  	bool
+> > +
+> > +config SECRETMEM
+> > +	def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
+> > +	select STRICT_DEVMEM
+> > +
+> >  endmenu
+> 
+> WARNING: unmet direct dependencies detected for STRICT_DEVMEM
+>   Depends on [n]: MMU [=y] && DEVMEM [=n] && (ARCH_HAS_DEVMEM_IS_ALLOWED [=y] || GENERIC_LIB_DEVMEM_IS_ALLOWED [=n])
+>   Selected by [y]:
+>   - SECRETMEM [=y]
+> 
+> so I went back to the v19 version, with
 
-I've been playing around with this patch set locally and it seems to work
-quite well. I haven't seen any replies from any bots or humans indicating
-that there might be anything wrong on the list or in Patchwork (which
-does not necessarily mean that there wasn't any feedback, I could equally
-be quite bad at finding responses!).
-
-Could someone please review this to see if it's finally suitable for
-upstream inclusion?
-
-Thanks in advance and best regards,
-Neal
+Ouch, sorry, I forgot to remove that hunk, v19 is the correct version.
+ 
+> --- a/mm/Kconfig~mm-introduce-memfd_secret-system-call-to-create-secret-memory-areas-fix
+> +++ a/mm/Kconfig
+> @@ -907,6 +907,5 @@ config IO_MAPPING
+>  
+>  config SECRETMEM
+>  	def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
+> -	select STRICT_DEVMEM
+>  
+>  endmenu
+> _
+> 
 
 -- 
-真実はいつも一つ！/ Always, there's only one truth!
+Sincerely yours,
+Mike.
