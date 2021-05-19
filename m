@@ -2,74 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE10A389338
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 18:05:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35B60389386
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 18:20:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347009AbhESQGi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 May 2021 12:06:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35488 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241402AbhESQGh (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 May 2021 12:06:37 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 328A8C06175F;
-        Wed, 19 May 2021 09:05:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=xrYJbsm8XBvxi2yJ2qA9P43iIK0MPL7ZBIPpUfmicR0=; b=UFiocZpEd3n0qwbyeyoV48fzYM
-        ZFY9/8N316MM8Ud/2P+STmeC0wK7OTD6v6uAhET6jaNjDWMfkYUdgXHsJiiXNE11Pkz5AdmMI+Nnw
-        ZE25efNjaV+QXKBiyY2q40cvtNPTtOub9gCPwbn2OkVCdy64hM4Sce6UNpRGS2e9DCTE7/n6siwLM
-        ASudhgIGnA9gSqB75xsnb4Lpxy0FVcEgnDL3WuVawFbb8MMXWm1NSr5y80xCKM/cY06qmiGvnfDFd
-        qa24+rJkiM6OdbVbxZFz+8X90INBFbsTS7BQHmsAqClSrfLD9sZrv80eq0a1wwTarWWS9dE7rBIWp
-        HEUAwZLg==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1ljOgr-00F6Rg-0g; Wed, 19 May 2021 16:05:02 +0000
-Date:   Wed, 19 May 2021 17:04:57 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc:     io-uring@vger.kernel.org, Pavel Emelyanov <xemul@openvz.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Daniel Colascione <dancol@google.com>,
+        id S1347489AbhESQVm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 May 2021 12:21:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1347448AbhESQVm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 May 2021 12:21:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 78FC36135A;
+        Wed, 19 May 2021 16:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621441222;
+        bh=G2bfthrxd0h0vGaQZxtYX8r1fNAF04/j6KQbLE42Ovw=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=RkIyVCf6N0uPzP5FAqkwuqrgiW9YYwg1Al0I+Tnwk4+Glg3FP19YAZWd5KB3UAy6i
+         kl10VNd9SySxBxZjEkQ6UAE6NJgYiFQtnD4OO3tq/a255GCQPbUYMPuNPR4gV7R+SS
+         CHhukZ4sfQMdzo2392ew01geKkH2oTrII85GXxCAPaGdws+62KzMcni8tLJJGkWOkz
+         TJidK3A/9R2WAND5oiJKKDZuY3PkXKIohAqMR/ltiGM6yO1zeZugZZD/2L53TRQZLy
+         bT6/z0V5QXo0NKwI5dy56/JSZaINKJ/zhZID2KaMf1HQueZ5AoQCdX/KIMgk2IUQYq
+         JRM2Z48RP59Nw==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 68A6660A47;
+        Wed, 19 May 2021 16:20:22 +0000 (UTC)
+Subject: Re: [GIT PULL] fs mount_setattr fix
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20210519132055.682958-1-brauner@kernel.org>
+References: <20210519132055.682958-1-brauner@kernel.org>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20210519132055.682958-1-brauner@kernel.org>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/fs.idmapped.mount_setattr.v5.13-rc3
+X-PR-Tracked-Commit-Id: 2ca4dcc4909d787ee153272f7efc2bff3b498720
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c3d0e3fd41b7f0f5d5d5b6022ab7e813f04ea727
+Message-Id: <162144122236.10055.12662584507788251773.pr-tracker-bot@kernel.org>
+Date:   Wed, 19 May 2021 16:20:22 +0000
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH  1/2] fs: anon_inodes: export anon_inode_getfile_secure
- helper
-Message-ID: <YKU3KWn4ZnRSyyFY@infradead.org>
-References: <20210519113058.1979817-1-memxor@gmail.com>
- <20210519113058.1979817-2-memxor@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210519113058.1979817-2-memxor@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 19, 2021 at 05:00:56PM +0530, Kumar Kartikeya Dwivedi wrote:
-> This is the non-fd installing analogue of anon_inode_getfd_secure. In
-> addition to allowing LSMs to attach policy to the distinct inode, this
-> is also needed for checkpoint restore of an io_uring instance where a
-> mapped region needs to mapped back to the io_uring fd by CRIU. This is
-> currently not possible as all anon_inodes share a single inode.
+The pull request you sent on Wed, 19 May 2021 15:20:55 +0200:
 
-No need to export it, as io_uring can't be built modular.
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/fs.idmapped.mount_setattr.v5.13-rc3
 
-> +struct file *anon_inode_getfile_secure(const char *name,
-> +				       const struct file_operations *fops,
-> +				       void *priv, int flags,
-> +				       const struct inode *context_inode)
-> +{
-> +	return __anon_inode_getfile(name, fops, priv, flags, context_inode, true);
-> +}
-> +EXPORT_SYMBOL_GPL(anon_inode_getfile_secure);
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c3d0e3fd41b7f0f5d5d5b6022ab7e813f04ea727
 
-Please avoid the overly long line here.
+Thank you!
 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
