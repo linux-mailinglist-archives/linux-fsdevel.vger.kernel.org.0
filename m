@@ -2,155 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B1A4B389012
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 16:13:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 123A23891A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 16:44:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242140AbhESOOu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 May 2021 10:14:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37458 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240722AbhESOOt (ORCPT
+        id S1354590AbhESOpS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 May 2021 10:45:18 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:60396 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1354506AbhESOok (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 May 2021 10:14:49 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74158C061763
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 May 2021 07:13:29 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id s5-20020a7bc0c50000b0290147d0c21c51so3421741wmh.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 May 2021 07:13:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=F1uHj1sY3bif8fDQ1vUSxLLQOsCnGsqmIKuxItWP5SE=;
-        b=SDA0dOzGVO+57kjNrjJvQNP1xKWe1BPMgFM9LOB60TBGNsZruo26eZNVXQqHe09Wyh
-         t3YEDBwQS7nNB1xn9iJx8liHXnOFRK2JiAxiWSDZmd0y2ICBe0XzbJMM27m7C4SUQ3mu
-         vTwkFi8o8/S48uFCjBnplHtzTETQR9EHC8t3XNRux0bH+1PsALWdCxh/yfztwXYCDoKj
-         4vfbQDwTnryp2WQTliveGOceQ94Hg4RgVC2Z5C9umWFF3RgOi+xYwuw2KRaukYTlDn8q
-         5EcLldNa9cFNt2eOyYdEbGWwfhZhm6l/gvIk70K66a+C3/1G3PH9v28xbGCgNBSLKwPX
-         ISNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=F1uHj1sY3bif8fDQ1vUSxLLQOsCnGsqmIKuxItWP5SE=;
-        b=A33kErsf8j4aE68szEE9u7hGqrP1swrH3dP5l461AlDXfeGIr5yOBh58GEVeEfxgh+
-         7n4MHkaRgEUqdCxDlsHouXdmzEYpND8cyxEtj+CZWha7cL3EnAGLpu+eYK72708eT+Dy
-         3v9XnK8JQMUCbalFxsn8J/d2VCvaQ9H7IYFpGc5brzQROQlW++YsXQkEnbj0xixzPiRS
-         vZsZAPOw6F2vqHgMTmsqsovjlR2drRp7SjjuCwO8Q1rweh56QbO/aUUtWfRomlZ0zPQg
-         sE6wvVR/Kd2Bljb/ZUYT1RoeRz4wIj1GFEAgvwt2bgfbNUFiwC4DfS6EBm2jP10G1x6c
-         +Vew==
-X-Gm-Message-State: AOAM530gATLyl4CvUdnLTIVhPca+ZMs+ZsVaLy57q72iDqbSyPXzOBCR
-        Q6OcRP9v3PrS5bYfPwDqLgeLZg==
-X-Google-Smtp-Source: ABdhPJxk+UI+VUW6asY9NMngA528APjLs2XsUer7iCT6Z9lvFyaeGL+Kw3GXszS2nh/Snl9Wx61CBA==
-X-Received: by 2002:a05:600c:19cc:: with SMTP id u12mr7608624wmq.178.1621433607809;
-        Wed, 19 May 2021 07:13:27 -0700 (PDT)
-Received: from avi.scylladb.com (system.cloudius-systems.com. [199.203.229.89])
-        by smtp.gmail.com with ESMTPSA id h9sm20842196wmb.35.2021.05.19.07.13.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 May 2021 07:13:27 -0700 (PDT)
-Subject: Re: How capacious and well-indexed are ext4, xfs and btrfs
- directories?
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     David Howells <dhowells@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <djwong@kernel.org>, Chris Mason <clm@fb.com>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org
-References: <206078.1621264018@warthog.procyon.org.uk>
- <20210517232237.GE2893@dread.disaster.area>
- <ad2e8757-41ce-41e3-a22e-0cf9e356e656@scylladb.com>
- <20210519125743.GP2893@dread.disaster.area>
-From:   Avi Kivity <avi@scylladb.com>
-Organization: ScyllaDB
-Message-ID: <c5d83b86-321e-349b-303c-b6027bcd9ae1@scylladb.com>
-Date:   Wed, 19 May 2021 17:13:25 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Wed, 19 May 2021 10:44:40 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14JEd2KO076034;
+        Wed, 19 May 2021 14:42:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=Lt2hzPnb+NaXsGPtTy/7AUf2I0EdmAttqobMWgtZO9Q=;
+ b=u/a9JuWdYxQLkNIDHI58hoDcvb9f1BrHnAwP+LQbVKVG9TQeMnReuLceUmigqnbBssKn
+ fo9XI/KuRKxFhfQ2Z7tBBxnoJLJI2ShvfWWNCsJknUw9NBhHgfb1jyjUd++1ct0ZERo1
+ 51aES+nCLTAwVyP7BlueT1SayrJqrwDROmowex7349T8YZjIFKdWIVfDdm+QSflVQUKi
+ IN/Ul7VMaaaOZi82UdSfSLzdagrkLWvAaFMm2VV2hZ7pBmxEiUwLE1/3AMB+4O/7HAUt
+ BeB1p9SOPW7RadgJsAx7Wz7eA3EU/+VI5mHvijoLDiMZ0p16N/jjGcC3CY2XxSv5j83R Yg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 38j5qr9tcs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 May 2021 14:42:29 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14JEe8gP099338;
+        Wed, 19 May 2021 14:42:28 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 38mecjdan2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 May 2021 14:42:28 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14JEgROO125671;
+        Wed, 19 May 2021 14:42:27 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 38mecjdajd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 May 2021 14:42:27 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14JEgIBB019066;
+        Wed, 19 May 2021 14:42:18 GMT
+Received: from kadam (/41.212.42.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 19 May 2021 07:42:17 -0700
+Date:   Wed, 19 May 2021 17:42:06 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mika =?iso-8859-1?Q?Penttil=E4?= <mika.penttila@nextfour.com>,
+        joro@8bytes.org,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 04/12] virtio-blk: Add validation for block size in
+ config space
+Message-ID: <20210519144206.GF32682@kadam>
+References: <20210517095513.850-1-xieyongji@bytedance.com>
+ <20210517095513.850-5-xieyongji@bytedance.com>
+ <CACycT3s1rEvNnNkJKQsHGRsyLPADieFdVkb1Sp3GObR0Vox5Fg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210519125743.GP2893@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACycT3s1rEvNnNkJKQsHGRsyLPADieFdVkb1Sp3GObR0Vox5Fg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-GUID: tKs3QWAbwVfnDVYAmbW5IXOFge9uFM4u
+X-Proofpoint-ORIG-GUID: tKs3QWAbwVfnDVYAmbW5IXOFge9uFM4u
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9988 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011 impostorscore=0
+ mlxscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+ suspectscore=0 adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2105190092
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, May 19, 2021 at 09:39:20PM +0800, Yongji Xie wrote:
+> On Mon, May 17, 2021 at 5:56 PM Xie Yongji <xieyongji@bytedance.com> wrote:
+> >
+> > This ensures that we will not use an invalid block size
+> > in config space (might come from an untrusted device).
 
-On 19/05/2021 15.57, Dave Chinner wrote:
-> On Wed, May 19, 2021 at 11:00:03AM +0300, Avi Kivity wrote:
->> On 18/05/2021 02.22, Dave Chinner wrote:
->>>> What I'd like to do is remove the fanout directories, so that for each logical
->>>> "volume"[*] I have a single directory with all the files in it.  But that
->>>> means sticking massive amounts of entries into a single directory and hoping
->>>> it (a) isn't too slow and (b) doesn't hit the capacity limit.
->>> Note that if you use a single directory, you are effectively single
->>> threading modifications to your file index. You still need to use
->>> fanout directories if you want concurrency during modification for
->>> the cachefiles index, but that's a different design criteria
->>> compared to directory capacity and modification/lookup scalability.
->> Something that hit us with single-large-directory and XFS is that
->> XFS will allocate all files in a directory using the same
->> allocation group.  If your entire filesystem is just for that one
->> directory, then that allocation group will be contended.
-> There is more than one concurrency problem that can arise from using
-> single large directories. Allocation policy is just another aspect
-> of the concurrency picture.
->
-> Indeed, you can avoid this specific problem simply by using the
-> inode32 allocator - this policy round-robins files across allocation
-> groups instead of trying to keep files physically local to their
-> parent directory. Hence if you just want one big directory with lots
-> of files that index lots of data, using the inode32 allocator will
-> allow the files in the filesytsem to allocate/free space at maximum
-> concurrency at all times...
+I looked at if I should add this as an untrusted function so that Smatch
+could find these sorts of bugs but this is reading data from the host so
+there has to be some level of trust...
 
+I should add some more untrusted data kvm functions to Smatch.  Right
+now I only have kvm_register_read() and I've added kvm_read_guest_virt()
+just now.
 
-Perhaps a directory attribute can be useful in case the filesystem is 
-created independently of the application (say by the OS installer).
+> >
+> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> > ---
+> >  drivers/block/virtio_blk.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+> > index ebb4d3fe803f..c848aa36d49b 100644
+> > --- a/drivers/block/virtio_blk.c
+> > +++ b/drivers/block/virtio_blk.c
+> > @@ -826,7 +826,7 @@ static int virtblk_probe(struct virtio_device *vdev)
+> >         err = virtio_cread_feature(vdev, VIRTIO_BLK_F_BLK_SIZE,
+> >                                    struct virtio_blk_config, blk_size,
+> >                                    &blk_size);
+> > -       if (!err)
+> > +       if (!err && blk_size > 0 && blk_size <= max_size)
+> 
+> The check here is incorrect. I will use PAGE_SIZE as the maximum
+> boundary in the new version.
 
+What does this bug look like to the user?  A minimum block size of 1
+seems pretty crazy.  Surely the minimum should be higher?
 
->
->> We saw spurious ENOSPC when that happened, though that
->> may have related to bad O_DIRECT management by us.
-> You should not see spurious ENOSPC at all.
->
-> The only time I've recall this sort of thing occurring is when large
-> extent size hints are abused by applying them to every single file
-> and allocation regardless of whether they are needed, whilst
-> simultaneously mixing long term and short term data in the same
-> physical locality.
-
-
-Yes, you remember well.
-
-
->   Over time the repeated removal and reallocation
-> of short term data amongst long term data fragments the crap out of
-> free space until there are no large contiguous free spaces left to
-> allocate contiguous extents from.
->
->> We ended up creating files in a temporary directory and moving them to the
->> main directory, since for us the directory layout was mandated by
->> compatibility concerns.
-> inode32 would have done effectively the same thing but without
-> needing to change the application....
-
-
-It would not have helped the installed base.
-
-
->> We are now happy with XFS large-directory management, but are nowhere close
->> to a million files.
-> I think you are conflating directory scalability with problems
-> arising from file allocation policies not being ideal for your data
-> set organisation, layout and longevity characteristics.
-
-
-Probably, but these problems can happen to others using large 
-directories. The XFS list can be very helpful in resolving them, but 
-better to be warned ahead.
-
+regards,
+dan carpenter
 
