@@ -2,142 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 86F2C388492
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 03:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17DE93884DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 May 2021 04:42:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234085AbhESBvP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 May 2021 21:51:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38950 "EHLO
+        id S237088AbhESCla (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 May 2021 22:41:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234120AbhESBvP (ORCPT
+        with ESMTP id S236417AbhESCl0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 May 2021 21:51:15 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 219F6C061760
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 May 2021 18:49:56 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id b17so13470463ede.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 May 2021 18:49:56 -0700 (PDT)
+        Tue, 18 May 2021 22:41:26 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66973C061760
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 May 2021 19:40:07 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id b12so6537427ljp.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 May 2021 19:40:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=oy9iy31YW42GgULMnDfqqrgoX8PmHZpkik30uv+f1aA=;
-        b=tvQ2E7Kd2+Hf+RN1JCJdnQu6RymaGP0zziznDt8ISnI+jG1I9F5rTtPCJWa6PikhKh
-         XFhKmAAqHeMsUAOgy6hUDl59IPnHpchWu1cnHTyyjxMolBXIohuKR723SkE7OCNxzAbK
-         oygZjSu1ZC0vRf3URWfxhzVNd3YMtTfsohBEjCi0q+/uREUxDQtHtMXYqH6q8d9eUBIB
-         218/C9Rmj+pEf1HRmaUjm/IPbnYkBLCQnR3DkYGpm/9v4+VmsDb6lUfsBZ8rq8wjdtNW
-         PEFTJvZlWna6c3qGn3K9JEbsQ5ZbIkKlwDebT3ZVImG1L8u/VdgWTl83Y5Z5wVd6ZNag
-         17jA==
+        bh=JtmNJLU/dhQ9ELu/k2h5VHa5Rzw2bCS2zmPu0hLax+8=;
+        b=BVvY6dfBpTLG0lCmqHmrDJcT+SrZNvl2aUJRRzUMfSXvRfy+O8EXPnnwQahXMdao6o
+         ADK4xqT8fNsbM2m33sQnw4i2uQ0JMU5+vr1tAi+7ZAg8S9HHsObzS/enEivmT4rgIsLZ
+         ILiKKP3sz7olT1g3KLaQqtWqIyrwYxRu/fSqs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=oy9iy31YW42GgULMnDfqqrgoX8PmHZpkik30uv+f1aA=;
-        b=WEyT0vvlEtTkfFe/ScGomKS0z7TbSngkFqE6V3AuyQB+L4X83l8B0wTvWRaAofGoXm
-         fE2ikCs+XnYWCJ/Xi4hy5Cfi7shugHiQp4Gb3sT7KWKG0YZ5N88+D3662G/gVudjWv51
-         EMW/4Py9gIYO383dl9vwfwAFx6WrpFdFjeiQtfd6x36uKgaITxaNFwViHNjtXroXmx00
-         XpMz0ByYQ6AIEjn0ayr5rp5D4o3/Pfk1Le5MN7oQvW6tB8c1kyIBaxEQc8ymlYnQ0onx
-         UdxtPJYsikSZxkoojU3gNqejHliAoDzHMS8iYWhyKpQMB3BmTF8tfXvyDnDvXt9rvNyw
-         HJfg==
-X-Gm-Message-State: AOAM533ga9HJeEydwEDBJx/XGi25QHeCJNgPGc/+9MrOXuKJ0pjl/ziQ
-        P7+FphXYNidRQqIBAzPMffAGYtXOdcg/FMzuYLdskw==
-X-Google-Smtp-Source: ABdhPJzCebUO43WPo6zd3pAT6bxEi4LXjBLrk7zln8XX7z9KqzudweIVCjqD+YotU9S81wu4CFwPj9RiJ4aku6RH+xo=
-X-Received: by 2002:a50:ff13:: with SMTP id a19mr10495865edu.300.1621388993652;
- Tue, 18 May 2021 18:49:53 -0700 (PDT)
+        bh=JtmNJLU/dhQ9ELu/k2h5VHa5Rzw2bCS2zmPu0hLax+8=;
+        b=L2clrVVYp06Xul5nMX5v+pEZlcCjkcGLAZ0kVexWLZwqy4GM4TGg5UJ6uq2Y+4p31e
+         cxGKL8/OB5vNQRfzSX1AFUvYnmvzCxLsg3Vi2+C0dg8aToJeQKKK4MxpC4KcY9G4RHr2
+         lT+0UswZTEn1bzhD9HBLIRrIJLmWahASa5oUXpChBdipiOvnFOglGogJOqo34pwcCcAs
+         bcRMBZ5v2VzKC9I6J168wT9N+r4Hv9LlpJVOZXV1MzT8Axehz/9Wy5uKw5Orgu8jJlWK
+         5dnMpZI6GBg/YMpPuLOFDS8vRZ6bMFZRMRTpVqmRnRFaEESwiezHfVwjy1X4nU9I7cQz
+         xh/w==
+X-Gm-Message-State: AOAM533Pxj9QjOmXKG9UE5ezkmlFX2Wh99Cg+wvwZkh0aHB/U+N0xZaw
+        YI/KqKUbef307c0rb6uJH7ARHlznqduMQPjprxA=
+X-Google-Smtp-Source: ABdhPJy8/Q8WhLjt9ZN1RSNjQQGiIODVdiV3fFnWV2VLGB8HwkZU5jfuiZtoCH5P9tE9jwrxcfENLQ==
+X-Received: by 2002:a2e:5347:: with SMTP id t7mr6586278ljd.464.1621392005623;
+        Tue, 18 May 2021 19:40:05 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id s2sm3547513ljo.14.2021.05.18.19.40.05
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 May 2021 19:40:05 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id e11so13731640ljn.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 May 2021 19:40:05 -0700 (PDT)
+X-Received: by 2002:a05:651c:8f:: with SMTP id 15mr6863723ljq.220.1621391994583;
+ Tue, 18 May 2021 19:39:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210513184734.29317-1-rppt@kernel.org> <20210513184734.29317-7-rppt@kernel.org>
- <20210518102424.GD82842@C02TD0UTHF1T.local> <d99864e677cec4ed83e52c4417c58bbe5fd728b1.camel@linux.ibm.com>
-In-Reply-To: <d99864e677cec4ed83e52c4417c58bbe5fd728b1.camel@linux.ibm.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 18 May 2021 18:49:42 -0700
-Message-ID: <CAPcyv4hwZ2e-xzsySOjaJXDSXRKctsoGA5zW-enTn2Y9ezWPVw@mail.gmail.com>
-Subject: Re: [PATCH v19 6/8] PM: hibernate: disable when there are active
- secretmem users
-To:     James Bottomley <jejb@linux.ibm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Hagen Paul Pfeifer <hagen@jauu.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Palmer Dabbelt <palmerdabbelt@google.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
+References: <20210508122530.1971-1-justin.he@arm.com> <20210508122530.1971-2-justin.he@arm.com>
+ <CAHk-=wgSFUUWJKW1DXa67A0DXVzQ+OATwnC3FCwhqfTJZsvj1A@mail.gmail.com>
+ <YJbivrA4Awp4FXo8@zeniv-ca.linux.org.uk> <CAHk-=whZhNXiOGgw8mXG+PTpGvxnRG1v5_GjtjHpoYXd2Fn_Ow@mail.gmail.com>
+ <YJb9KFBO7MwJeDHz@zeniv-ca.linux.org.uk> <CAHk-=wjhrhkWbV_EY0gupi2ea7QHpGW=68x7g09j_Tns5ZnsLA@mail.gmail.com>
+ <CAHk-=wiOPkSm-01yZzamTvX2RPdJ0784+uWa0OMK-at+3XDd0g@mail.gmail.com>
+ <YJdIx6iiU9YwnQYz@zeniv-ca.linux.org.uk> <CAHk-=wih_O+0xG4QbLw-3XJ71Yh43_SFm3gp9swj8knzXoceZQ@mail.gmail.com>
+ <YKRfI29BBnC255Vp@zeniv-ca.linux.org.uk>
+In-Reply-To: <YKRfI29BBnC255Vp@zeniv-ca.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 18 May 2021 16:39:38 -1000
+X-Gmail-Original-Message-ID: <CAHk-=whJkHMtf4RYiE3PLTEo8fM_vU6BG43TNJLbHsGYPsSJfQ@mail.gmail.com>
+Message-ID: <CAHk-=whJkHMtf4RYiE3PLTEo8fM_vU6BG43TNJLbHsGYPsSJfQ@mail.gmail.com>
+Subject: Re: [PATCHSET] d_path cleanups
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jia He <justin.he@arm.com>, Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@ftp.linux.org.uk>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-riscv@lists.infradead.org, X86 ML <x86@kernel.org>
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 18, 2021 at 6:33 PM James Bottomley <jejb@linux.ibm.com> wrote:
+On Tue, May 18, 2021 at 2:44 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> On Tue, 2021-05-18 at 11:24 +0100, Mark Rutland wrote:
-> > On Thu, May 13, 2021 at 09:47:32PM +0300, Mike Rapoport wrote:
-> > > From: Mike Rapoport <rppt@linux.ibm.com>
-> > >
-> > > It is unsafe to allow saving of secretmem areas to the hibernation
-> > > snapshot as they would be visible after the resume and this
-> > > essentially will defeat the purpose of secret memory mappings.
-> > >
-> > > Prevent hibernation whenever there are active secret memory users.
-> >
-> > Have we thought about how this is going to work in practice, e.g. on
-> > mobile systems? It seems to me that there are a variety of common
-> > applications which might want to use this which people don't expect
-> > to inhibit hibernate (e.g. authentication agents, web browsers).
->
-> If mobile systems require hibernate, then the choice is to disable this
-> functionality or implement a secure hibernation store.   I also thought
-> most mobile hibernation was basically equivalent to S3, in which case
-> there's no actual writing of ram into storage, in which case there's no
-> security barrier and likely the inhibition needs to be made a bit more
-> specific to the suspend to disk case?
->
-> > Are we happy to say that any userspace application can incidentally
-> > inhibit hibernate?
->
-> Well, yes, for the laptop use case because we don't want suspend to
-> disk to be able to compromise the secret area.  You can disable this
-> for mobile if you like, or work out how to implement hibernate securely
-> if you're really suspending to disk.
+>         Here's what I've got for carve-up of cleanups.
 
-Forgive me if this was already asked and answered. Why not document
-that secretmem is ephemeral in the case of hibernate and push the
-problem to userspace to disable hibernation? In other words
-hibernation causes applications to need to reload their secretmem, it
-will be destroyed on the way down and SIGBUS afterwards. That at least
-gives a system the flexibility to either sacrifice hibernate for
-secretmem (with a userspace controlled policy), or sacrifice secretmem
-using processes for hibernate.
+Thanks, these all look logical to me.
+
+I only read through the individual patches, I didn't test or check the
+end result, but it all looked like good sane cleanups.
+
+              Linus
