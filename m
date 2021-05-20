@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 458D6389D9A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 08:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D228389DE3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 08:28:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229978AbhETGUp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 May 2021 02:20:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58120 "EHLO
+        id S230377AbhETGaL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 May 2021 02:30:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229526AbhETGUo (ORCPT
+        with ESMTP id S229547AbhETGaL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 May 2021 02:20:44 -0400
+        Thu, 20 May 2021 02:30:11 -0400
 Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71335C061574;
-        Wed, 19 May 2021 23:19:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76F92C061574;
+        Wed, 19 May 2021 23:28:50 -0700 (PDT)
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1ljc1B-00GTlF-Uy; Thu, 20 May 2021 06:18:50 +0000
-Date:   Thu, 20 May 2021 06:18:49 +0000
+        id 1ljcAf-00GTu6-EE; Thu, 20 May 2021 06:28:37 +0000
+Date:   Thu, 20 May 2021 06:28:37 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Xie Yongji <xieyongji@bytedance.com>
 Cc:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
@@ -29,38 +29,70 @@ Cc:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
         virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 02/12] file: Export receive_fd() to modules
-Message-ID: <YKX/SUq53GDtq84t@zeniv-ca.linux.org.uk>
+Subject: Re: [PATCH v7 11/12] vduse: Introduce VDUSE - vDPA Device in
+ Userspace
+Message-ID: <YKYBle/F8aOgHO9p@zeniv-ca.linux.org.uk>
 References: <20210517095513.850-1-xieyongji@bytedance.com>
- <20210517095513.850-3-xieyongji@bytedance.com>
+ <20210517095513.850-12-xieyongji@bytedance.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210517095513.850-3-xieyongji@bytedance.com>
+In-Reply-To: <20210517095513.850-12-xieyongji@bytedance.com>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 17, 2021 at 05:55:03PM +0800, Xie Yongji wrote:
-> Export receive_fd() so that some modules can use
-> it to pass file descriptor between processes without
-> missing any security stuffs.
+On Mon, May 17, 2021 at 05:55:12PM +0800, Xie Yongji wrote:
 
-Which tree is that against?  Because in mainline this won't even build, let
-alone work.
+> +	case VDUSE_IOTLB_GET_FD: {
+> +		struct vduse_iotlb_entry entry;
+> +		struct vhost_iotlb_map *map;
+> +		struct vdpa_map_file *map_file;
+> +		struct vduse_iova_domain *domain = dev->domain;
+> +		struct file *f = NULL;
+> +
+> +		ret = -EFAULT;
+> +		if (copy_from_user(&entry, argp, sizeof(entry)))
+> +			break;
 
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -1135,6 +1135,12 @@ int __receive_fd(int fd, struct file *file, int __user *ufd, unsigned int o_flag
->  	return new_fd;
->  }
->  
-> +int receive_fd(struct file *file, unsigned int o_flags)
-> +{
-> +	return __receive_fd(-1, file, NULL, o_flags);
-> +}
-> +EXPORT_SYMBOL_GPL(receive_fd);
+			return -EFAULT;
+surely?
+> +
+> +		ret = -EINVAL;
+> +		if (entry.start > entry.last)
+> +			break;
 
-fs/file.c:1097:int __receive_fd(struct file *file, int __user *ufd, unsigned int o_flags)
+... and similar here, etc.
 
+> +		spin_lock(&domain->iotlb_lock);
+> +		map = vhost_iotlb_itree_first(domain->iotlb,
+> +					      entry.start, entry.last);
+> +		if (map) {
+> +			map_file = (struct vdpa_map_file *)map->opaque;
+> +			f = get_file(map_file->file);
+> +			entry.offset = map_file->offset;
+> +			entry.start = map->start;
+> +			entry.last = map->last;
+> +			entry.perm = map->perm;
+> +		}
+> +		spin_unlock(&domain->iotlb_lock);
+> +		ret = -EINVAL;
+> +		if (!f)
+> +			break;
+> +
+> +		ret = -EFAULT;
+> +		if (copy_to_user(argp, &entry, sizeof(entry))) {
+> +			fput(f);
+> +			break;
+> +		}
+> +		ret = receive_fd(f, perm_to_file_flags(entry.perm));
+> +		fput(f);
+> +		break;
+
+IDGI.  The main difference between receive_fd() and plain old
+get_unused_fd_flags() + fd_install() is __receive_sock() call.
+Which does nothing whatsoever in case of non-sockets.  Can you
+get a socket here?
+
+IOW, why bother with that crap at all, nevermind exporting it?
