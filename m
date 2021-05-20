@@ -2,45 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 078A138AE26
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 14:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3B0138AE27
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 14:27:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232818AbhETM2O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 May 2021 08:28:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31968 "EHLO
+        id S234137AbhETM2S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 May 2021 08:28:18 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53492 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234742AbhETM1I (ORCPT
+        by vger.kernel.org with ESMTP id S231601AbhETM1J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 May 2021 08:27:08 -0400
+        Thu, 20 May 2021 08:27:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1621513546;
+        s=mimecast20190719; t=1621513548;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=bm4G0D5fPgHkFz6Tq2cMmRepmQ5JO/RLPWPnNdJIAWg=;
-        b=YCCegr/MM0DAlA2ABqj1sAUhoxvAZPWRrRLN1PPCATMw0HvdIaexNTp40erHM49dgSPDLn
-        CnIV1tEf4EH8qb/k0lrjfHP+g2xJmvMwl8nByz8wpF6GG3p9iGCqyaUD22HOOl8YFuVWOS
-        W+R2gPV08bMxgXvjybWGsfO4NPELF6M=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nwkYYr9VKakeJ7pnq4AzoFfWPLnb5O3KiOprpBwKwMo=;
+        b=PxCsqZ3H8OA+SJoX4f4CSiwzYptIZh27CpgZD00n50PwBHXLwi1/QRS0HZKgIlJz+1pl4S
+        qDDC619VvSP9YjncZEqmNZqBpSDA3MGI4CEAyYXDRBokUfOIiIyWCrhOLHnjyjsmoFMmfO
+        SPALmYvSHME8N6HWMoXzRaJjNyNKROo=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-587-hCFDT2MfPwCZMqbCLIY1hQ-1; Thu, 20 May 2021 08:25:44 -0400
-X-MC-Unique: hCFDT2MfPwCZMqbCLIY1hQ-1
+ us-mta-335-sj5KzOTbMoi146jFiq3AbA-1; Thu, 20 May 2021 08:25:46 -0400
+X-MC-Unique: sj5KzOTbMoi146jFiq3AbA-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5FD981A8A68;
-        Thu, 20 May 2021 12:25:43 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 865091A8A61;
+        Thu, 20 May 2021 12:25:45 +0000 (UTC)
 Received: from max.com (unknown [10.40.195.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 343FA60C4A;
-        Thu, 20 May 2021 12:25:37 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B8AD160C04;
+        Thu, 20 May 2021 12:25:43 +0000 (UTC)
 From:   Andreas Gruenbacher <agruenba@redhat.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>, cluster-devel@redhat.com
 Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         Jan Kara <jack@suse.cz>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH 0/6] gfs2: Handle page faults during read and write
-Date:   Thu, 20 May 2021 14:25:30 +0200
-Message-Id: <20210520122536.1596602-1-agruenba@redhat.com>
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        stable@vger.kernel.org
+Subject: [PATCH 1/6] gfs2: Fix mmap + page fault deadlocks (part 1)
+Date:   Thu, 20 May 2021 14:25:31 +0200
+Message-Id: <20210520122536.1596602-2-agruenba@redhat.com>
+In-Reply-To: <20210520122536.1596602-1-agruenba@redhat.com>
+References: <20210520122536.1596602-1-agruenba@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
@@ -48,73 +52,108 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+When the buffer passed to a read or write system call is memory mapped to the
+same file, a page fault can occur in gfs2_fault.  In that case, the task will
+already be holding the inode glock, and trying to take it again will result in
+a BUG in add_to_queue().  Fix that by recognizing the self-recursion case and
+either skipping the lock taking (when the glock is held in a compatible way),
+or fail the operation.
 
-this is an update to my previous posting [1] on how to deal with
-potential mmap + page fault deadlocks in gfs2.
+Likewise, a request to un-share a copy-on-write page can *probably* happen in
+similar situations, so treat the locking in gfs2_page_mkwrite in the same way.
 
-What's happening is that a page fault triggers during a read or write
-operation, while we're holding a glock (the cluster-wide gfs2 inode
-lock), and the page fault requires another glock.  We can recognize and
-handle the case when both glocks are the same, but when the page fault
-requires another glock, there is a chance that taking that other glock
-will deadlock.
+A future patch will handle this case more gracefully, along with addressing
+more complex deadlock scenarios.
 
-The solution I've come up with for this is to turn locking requests into
-locking attempts when we're in a potential recursive locking situation,
-and to actively fault in pages and retry at the outer level when a
-locking attempt fails.  Those kinds of conflicts should be relatively
-rare.
+Reported-by: Jan Kara <jack@suse.cz>
+Fixes: 20f829999c38 ("gfs2: Rework read and page fault locking")
+Cc: stable@vger.kernel.org # v5.8+
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+---
+ fs/gfs2/file.c | 40 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 30 insertions(+), 10 deletions(-)
 
-Note that we need to fault in pages writable in ->read_iter, so this
-patch set adds a new iov_iter_fault_in_writeable() helper hat mirrors
-iov_iter_fault_in_readable().
-
-In the initial prototype [1], I've added a restart_hack flag to struct
-task_struct; this has now been moved to the lower two bits of
-current->journal_info.
-
-I've posted a new fstest [2] that triggers the self-recursion case so
-that those kind of bugs will be caught early next time, with no feedback
-in the last two weeks.
-
-Those patches are currently on the gfs2 for-next branch [3].  If there
-are no objections, I'll ask Linus to pull them from there.
-
-Thanks,
-Andreas
-
-[1] [RFC] Trigger retry from fault vm operation,
-https://lore.kernel.org/linux-fsdevel/20210511140113.1225981-1-agruenba@redhat.com/
-
-[2] https://lore.kernel.org/fstests/20210520114218.1595735-1-agruenba@redhat.com/T/#u
-
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git/log/?h=for-next
-
-Andreas Gruenbacher (6):
-  gfs2: Fix mmap + page fault deadlocks (part 1)
-  iov_iter: Add iov_iter_fault_in_writeable()
-  gfs2: Add wrappers for accessing journal_info
-  gfs2: Encode glock holding and retry flags in journal_info
-  gfs2: Add LM_FLAG_OUTER glock holder flag
-  gfs2: Fix mmap + page fault deadlocks (part 2)
-
- fs/gfs2/aops.c      |   6 +--
- fs/gfs2/bmap.c      |  31 +++++++-------
- fs/gfs2/file.c      | 102 +++++++++++++++++++++++++++++++++++++-------
- fs/gfs2/glock.c     |  12 ++++++
- fs/gfs2/glock.h     |  13 ++++--
- fs/gfs2/incore.h    |  41 ++++++++++++++++++
- fs/gfs2/inode.c     |   2 +-
- fs/gfs2/log.c       |   4 +-
- fs/gfs2/lops.c      |   2 +-
- fs/gfs2/meta_io.c   |   6 +--
- fs/gfs2/super.c     |   2 +-
- fs/gfs2/trans.c     |  16 +++----
- include/linux/uio.h |   1 +
- lib/iov_iter.c      |  20 ++++++++-
- 14 files changed, 204 insertions(+), 54 deletions(-)
-
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index 6d77743f11a4..7d88abb4629b 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -423,6 +423,7 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
+ 	struct page *page = vmf->page;
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+ 	struct gfs2_inode *ip = GFS2_I(inode);
++	struct gfs2_holder *outer_gh = gfs2_glock_is_locked_by_me(ip->i_gl);
+ 	struct gfs2_sbd *sdp = GFS2_SB(inode);
+ 	struct gfs2_alloc_parms ap = { .aflags = 0, };
+ 	u64 offset = page_offset(page);
+@@ -436,10 +437,18 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
+ 	sb_start_pagefault(inode->i_sb);
+ 
+ 	gfs2_holder_init(ip->i_gl, LM_ST_EXCLUSIVE, 0, &gh);
+-	err = gfs2_glock_nq(&gh);
+-	if (err) {
+-		ret = block_page_mkwrite_return(err);
+-		goto out_uninit;
++	if (likely(!outer_gh)) {
++		err = gfs2_glock_nq(&gh);
++		if (err) {
++			ret = block_page_mkwrite_return(err);
++			goto out_uninit;
++		}
++	} else {
++		if (!gfs2_holder_is_compatible(outer_gh, LM_ST_EXCLUSIVE)) {
++			/* We could try to upgrade outer_gh here. */
++			ret = VM_FAULT_SIGBUS;
++			goto out_uninit;
++		}
+ 	}
+ 
+ 	/* Check page index against inode size */
+@@ -540,7 +549,8 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
+ out_quota_unlock:
+ 	gfs2_quota_unlock(ip);
+ out_unlock:
+-	gfs2_glock_dq(&gh);
++	if (likely(!outer_gh))
++		gfs2_glock_dq(&gh);
+ out_uninit:
+ 	gfs2_holder_uninit(&gh);
+ 	if (ret == VM_FAULT_LOCKED) {
+@@ -555,6 +565,7 @@ static vm_fault_t gfs2_fault(struct vm_fault *vmf)
+ {
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+ 	struct gfs2_inode *ip = GFS2_I(inode);
++	struct gfs2_holder *outer_gh = gfs2_glock_is_locked_by_me(ip->i_gl);
+ 	struct gfs2_holder gh;
+ 	vm_fault_t ret;
+ 	u16 state;
+@@ -562,13 +573,22 @@ static vm_fault_t gfs2_fault(struct vm_fault *vmf)
+ 
+ 	state = (vmf->flags & FAULT_FLAG_WRITE) ? LM_ST_EXCLUSIVE : LM_ST_SHARED;
+ 	gfs2_holder_init(ip->i_gl, state, 0, &gh);
+-	err = gfs2_glock_nq(&gh);
+-	if (err) {
+-		ret = block_page_mkwrite_return(err);
+-		goto out_uninit;
++	if (likely(!outer_gh)) {
++		err = gfs2_glock_nq(&gh);
++		if (err) {
++			ret = block_page_mkwrite_return(err);
++			goto out_uninit;
++		}
++	} else {
++		if (!gfs2_holder_is_compatible(outer_gh, state)) {
++			/* We could try to upgrade outer_gh here. */
++			ret = VM_FAULT_SIGBUS;
++			goto out_uninit;
++		}
+ 	}
+ 	ret = filemap_fault(vmf);
+-	gfs2_glock_dq(&gh);
++	if (likely(!outer_gh))
++		gfs2_glock_dq(&gh);
+ out_uninit:
+ 	gfs2_holder_uninit(&gh);
+ 	return ret;
 -- 
 2.26.3
 
