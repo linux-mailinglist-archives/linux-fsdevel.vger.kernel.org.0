@@ -2,232 +2,343 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D136438B38B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 17:47:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E18638B413
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 18:13:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239049AbhETPsz convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 May 2021 11:48:55 -0400
-Received: from us-smtp-delivery-44.mimecast.com ([205.139.111.44]:50146 "EHLO
-        us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239128AbhETPss (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 May 2021 11:48:48 -0400
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-270-7Q-FYw8yOc2bvCh4Mw5zbw-1; Thu, 20 May 2021 11:47:20 -0400
-X-MC-Unique: 7Q-FYw8yOc2bvCh4Mw5zbw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 736CD802690;
-        Thu, 20 May 2021 15:47:19 +0000 (UTC)
-Received: from bahia.redhat.com (ovpn-112-99.ams2.redhat.com [10.36.112.99])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0E92E10013C1;
-        Thu, 20 May 2021 15:47:13 +0000 (UTC)
-From:   Greg Kurz <groug@kaod.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        Max Reitz <mreitz@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        Greg Kurz <groug@kaod.org>, Robert Krawitz <rlk@redhat.com>
-Subject: [PATCH v4 5/5] virtiofs: propagate sync() to file server
-Date:   Thu, 20 May 2021 17:46:54 +0200
-Message-Id: <20210520154654.1791183-6-groug@kaod.org>
-In-Reply-To: <20210520154654.1791183-1-groug@kaod.org>
-References: <20210520154654.1791183-1-groug@kaod.org>
+        id S233669AbhETQOs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 May 2021 12:14:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57604 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231927AbhETQOr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 May 2021 12:14:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B18A4611AE;
+        Thu, 20 May 2021 16:13:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621527205;
+        bh=blbDdIW8mhnerkvBEI8pXUbj83vi4wxNZwFLOFv3pVQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hha6kVoXomOi+xBDo0LZe0mMl6zG9tmC3i1mKI4jK7JPaEZaHem17RX9/VAnA01rx
+         joBk999gLLGQF/qrRLMfxUg/+aPjg/x73DFzjYAYUPxx/UhzKaGBtA6uAPXhBwnJnb
+         i5GzuVxqvhlrIggdLROMmqSznDQpckTlaRDPXYcgh7xBahcOlPgN8gPeQ14lyvZEg1
+         /cwRhroduSzLcV9HF4vhCuQaAkVKw/XgvZzXs6fygoV9cYSppSmceudbzsxGwOlA3O
+         TnoSYTY8ANkFkJjSxkRG0fU4v7fLovle56/M/WJ0rIvxj8GbDV+oCLRWtdMkVb6cb6
+         YD/UmS+sY7DKQ==
+Date:   Thu, 20 May 2021 09:13:25 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
+        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
+        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
+        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
+        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
+        andy.lavr@gmail.com, kari.argillander@gmail.com,
+        oleksandr@natalenko.name
+Subject: Re: [PATCH v26 00/10] NTFS read-write driver GPL implementation by
+ Paragon Software
+Message-ID: <20210520161325.GA9625@magnolia>
+References: <20210402155347.64594-1-almaz.alexandrovich@paragon-software.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=groug@kaod.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: kaod.org
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset=WINDOWS-1252
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210402155347.64594-1-almaz.alexandrovich@paragon-software.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Even if POSIX doesn't mandate it, linux users legitimately expect
-sync() to flush all data and metadata to physical storage when it
-is located on the same system. This isn't happening with virtiofs
-though : sync() inside the guest returns right away even though
-data still needs to be flushed from the host page cache.
+On Fri, Apr 02, 2021 at 06:53:37PM +0300, Konstantin Komarov wrote:
+> This patch adds NTFS Read-Write driver to fs/ntfs3.
+> 
+> Having decades of expertise in commercial file systems development and huge
+> test coverage, we at Paragon Software GmbH want to make our contribution to
+> the Open Source Community by providing implementation of NTFS Read-Write
+> driver for the Linux Kernel.
+> 
+> This is fully functional NTFS Read-Write driver. Current version works with
+> NTFS(including v3.1) and normal/compressed/sparse files and supports journal replaying.
+> 
+> We plan to support this version after the codebase once merged, and add new
+> features and fix bugs.
 
-This is easily demonstrated by doing the following in the guest:
+Questions for the ntfs3 maintainer(s):
 
-$ dd if=/dev/zero of=/mnt/foo bs=1M count=5K ; strace -T -e sync sync
-5120+0 records in
-5120+0 records out
-5368709120 bytes (5.4 GB, 5.0 GiB) copied, 5.22224 s, 1.0 GB/s
-sync()                                  = 0 <0.024068>
-+++ exited with 0 +++
+1. What happens when you run ntfs3 through fstests with '-g all'?  I get
+that the pass rate isn't going to be as high with ntfs3 as it is with
+ext4/xfs/btrfs, but fstests can be adapted (see the recent attempts to
+get exfat under test).
 
-and start the following in the host when the 'dd' command completes
-in the guest:
+(And yes, not all the fstests will pass, since some of them are random
+exercisers that we use to keep the bug backlog populated.  We can help
+you figure out which tests are erratic like that).
 
-$ strace -T -e fsync /usr/bin/sync virtiofs/foo
-fsync(3)                                = 0 <10.371640>
-+++ exited with 0 +++
+2. Same question as #1, except for whatever internal QA suite Paragon
+has used to qualify the ntfs3 driver over the years.  (If you haven't
+been using fstests this whole time.)
 
-There are no good reasons not to honor the expected behavior of
-sync() actually : it gives an unrealistic impression that virtiofs
-is super fast and that data has safely landed on HW, which isn't
-the case obviously.
+3. If you (Paragon) do have an internal QA suite, are you willing to
+contribute some of that to fstests to improve its ability to exercise
+whatever features and quirks are unique to NTFS?
 
-Implement a ->sync_fs() superblock operation that sends a new
-FUSE_SYNCFS request type for this purpose. Provision a 64-bit
-placeholder for possible future extensions. Since the file
-server cannot handle the wait == 0 case, we skip it to avoid a
-gratuitous roundtrip. Note that this is per-superblock : a
-FUSE_SYNCFS is send for the root mount and for each submount.
+4. How often do you run QA validation (of any kind) on the ntfs3
+codebase?
 
-Like with FUSE_FSYNC and FUSE_FSYNCDIR, lack of support for
-FUSE_SYNCFS in the file server is treated as permanent success.
-This ensures compatibility with older file servers : the client
-will get the current behavior of sync() not being propagated to
-the file server.
+In case you're wondering why I ask these questions, my motivation is
+in figuring out how easy it will be to extend QA coverage to the
+community supported QA suite (fstests) so that people making treewide
+and vfs level changes can check that their changes don't bitrot your
+driver, and vice-versa.  My primary interest leans towards convincing
+everyone to value QA and practice it regularly (aka sharing the load so
+it's not entirely up to the maintainer to catch all problems) vs.
+finding every coding error as a gate condition for merging.
 
-Note that such an operation allows the file server to DoS sync().
-Since a typical FUSE file server is an untrusted piece of software
-running in userspace, this is disabled by default.  Only enable it
-with virtiofs for now since virtiofsd is supposedly trusted by the
-guest kernel.
+As another fs maintainer, I know that this is key to preventing fs
+drivers from turning into a rotting garbage fire, and probably the best
+I can do for a review of ntfs3 since I don't anticipate having time for
+a super-detailed review and you've been submitting this driver for a
+while now.
 
-Reported-by: Robert Krawitz <rlk@redhat.com>
-Signed-off-by: Greg Kurz <groug@kaod.org>
----
- fs/fuse/fuse_i.h          |  3 +++
- fs/fuse/inode.c           | 40 +++++++++++++++++++++++++++++++++++++++
- fs/fuse/virtio_fs.c       |  1 +
- include/uapi/linux/fuse.h | 10 +++++++++-
- 4 files changed, 53 insertions(+), 1 deletion(-)
+After this gets merged, fixing the code warts and cognitive mismatches
+with the vfs/mm apis becomes your problem. ;)  Oh, that brings me to my
+last question:
 
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index e2f5c8617e0d..01d9283261af 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -761,6 +761,9 @@ struct fuse_conn {
- 	/* Auto-mount submounts announced by the server */
- 	unsigned int auto_submounts:1;
- 
-+	/* Propagate syncfs() to server */
-+	unsigned int sync_fs:1;
-+
- 	/** The number of requests waiting for completion */
- 	atomic_t num_waiting;
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 123b53d1c3c6..96b00253f766 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -506,6 +506,45 @@ static int fuse_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	return err;
- }
- 
-+static int fuse_sync_fs(struct super_block *sb, int wait)
-+{
-+	struct fuse_mount *fm = get_fuse_mount_super(sb);
-+	struct fuse_conn *fc = fm->fc;
-+	struct fuse_syncfs_in inarg;
-+	FUSE_ARGS(args);
-+	int err;
-+
-+	/*
-+	 * Userspace cannot handle the wait == 0 case. Avoid a
-+	 * gratuitous roundtrip.
-+	 */
-+	if (!wait)
-+		return 0;
-+
-+	/* The filesystem is being unmounted. Nothing to do. */
-+	if (!sb->s_root)
-+		return 0;
-+
-+	if (!fc->sync_fs)
-+		return 0;
-+
-+	memset(&inarg, 0, sizeof(inarg));
-+	args.in_numargs = 1;
-+	args.in_args[0].size = sizeof(inarg);
-+	args.in_args[0].value = &inarg;
-+	args.opcode = FUSE_SYNCFS;
-+	args.nodeid = get_node_id(sb->s_root->d_inode);
-+	args.out_numargs = 0;
-+
-+	err = fuse_simple_request(fm, &args);
-+	if (err == -ENOSYS) {
-+		fc->sync_fs = 0;
-+		err = 0;
-+	}
-+
-+	return err;
-+}
-+
- enum {
- 	OPT_SOURCE,
- 	OPT_SUBTYPE,
-@@ -909,6 +948,7 @@ static const struct super_operations fuse_super_operations = {
- 	.put_super	= fuse_put_super,
- 	.umount_begin	= fuse_umount_begin,
- 	.statfs		= fuse_statfs,
-+	.sync_fs	= fuse_sync_fs,
- 	.show_options	= fuse_show_options,
- };
- 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 8962cd033016..f649a47efb68 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -1455,6 +1455,7 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
- 	fc->release = fuse_free_conn;
- 	fc->delete_stale = true;
- 	fc->auto_submounts = true;
-+	fc->sync_fs = true;
- 
- 	/* Tell FUSE to split requests that exceed the virtqueue's size */
- 	fc->max_pages_limit = min_t(unsigned int, fc->max_pages_limit,
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 271ae90a9bb7..36ed092227fa 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -181,6 +181,9 @@
-  *  - add FUSE_OPEN_KILL_SUIDGID
-  *  - extend fuse_setxattr_in, add FUSE_SETXATTR_EXT
-  *  - add FUSE_SETXATTR_ACL_KILL_SGID
-+ *
-+ *  7.34
-+ *  - add FUSE_SYNCFS
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -216,7 +219,7 @@
- #define FUSE_KERNEL_VERSION 7
- 
- /** Minor version number of this interface */
--#define FUSE_KERNEL_MINOR_VERSION 33
-+#define FUSE_KERNEL_MINOR_VERSION 34
- 
- /** The node ID of the root inode */
- #define FUSE_ROOT_ID 1
-@@ -509,6 +512,7 @@ enum fuse_opcode {
- 	FUSE_COPY_FILE_RANGE	= 47,
- 	FUSE_SETUPMAPPING	= 48,
- 	FUSE_REMOVEMAPPING	= 49,
-+	FUSE_SYNCFS		= 50,
- 
- 	/* CUSE specific operations */
- 	CUSE_INIT		= 4096,
-@@ -971,4 +975,8 @@ struct fuse_removemapping_one {
- #define FUSE_REMOVEMAPPING_MAX_ENTRY   \
- 		(PAGE_SIZE / sizeof(struct fuse_removemapping_one))
- 
-+struct fuse_syncfs_in {
-+	uint64_t	padding;
-+};
-+
- #endif /* _LINUX_FUSE_H */
--- 
-2.26.3
+5. Are you retiring the old ntfs driver too?
 
+> For example, full journaling support over JBD will be
+> added in later updates.
+
+I remember jbd2.  Yikes. ;)
+
+Anyway I'll try to do a once-over code scan while I procrastinate on
+higher priority things. :P
+
+--D
+
+> 
+> v2:
+>  - patch splitted to chunks (file-wise)
+>  - build issues fixed
+>  - sparse and checkpatch.pl errors fixed
+>  - NULL pointer dereference on mkfs.ntfs-formatted volume mount fixed
+>  - cosmetics + code cleanup
+> 
+> v3:
+>  - added acl, noatime, no_acs_rules, prealloc mount options
+>  - added fiemap support
+>  - fixed encodings support
+>  - removed typedefs
+>  - adapted Kernel-way logging mechanisms
+>  - fixed typos and corner-case issues
+> 
+> v4:
+>  - atomic_open() refactored
+>  - code style updated
+>  - bugfixes
+> 
+> v5:
+> - nls/nls_alt mount options added
+> - Unicode conversion fixes
+> - Improved very fragmented files operations
+> - logging cosmetics
+> 
+> v6:
+> - Security Descriptors processing changed
+>   added system.ntfs_security xattr to set
+>   SD
+> - atomic_open() optimized
+> - cosmetics
+> 
+> v7:
+> - Security Descriptors validity checks added (by Mark Harmstone)
+> - atomic_open() fixed for the compressed file creation with directio
+>   case
+> - remount support
+> - temporarily removed readahead usage
+> - cosmetics
+> 
+> v8:
+> - Compressed files operations fixed
+> 
+> v9:
+> - Further cosmetics applied as suggested
+> by Joe Perches
+> 
+> v10:
+> - operations with compressed/sparse files on very fragmented volumes improved
+> - reduced memory consumption for above cases
+> 
+> v11:
+> - further compressed files optimizations: reads/writes are now skipping bufferization
+> - journal wipe to the initial state optimized (bufferization is also skipped)
+> - optimized run storage (re-packing cluster metainformation)
+> - fixes based on Matthew Wilcox feedback to the v10
+> - compressed/sparse/normal could be set for empty files with 'system.ntfs_attrib' xattr
+> 
+> v12:
+> - nls_alt mount option removed after discussion with Pali Rohar
+> - fixed ni_repack()
+> - fixed resident files transition to non-resident when size increasing
+> 
+> v13:
+> - nested_lock fix (lockdep)
+> - out-of-bounds read fix (KASAN warning)
+> - resident->nonresident transition fixed for compressed files
+> - load_nls() missed fix applied
+> - some sparse utility warnings fixes
+> 
+> v14:
+> - support for additional compression types (we've adapted WIMLIB's
+>   implementation, authored by Eric Biggers, into ntfs3)
+> 
+> v15:
+> - kernel test robot warnings fixed
+> - lzx/xpress compression license headers updated
+> 
+> v16:
+> - lzx/xpress moved to initial ntfs-3g plugin code
+> - mutexes instead of a global spinlock for compresions
+> - FALLOC_FL_PUNCH_HOLE and FALLOC_FL_COLLAPSE_RANGE implemented
+> - CONFIG_NTFS3_FS_POSIX_ACL added
+> 
+> v17:
+> - FALLOC_FL_COLLAPSE_RANGE fixed
+> - fixes for Mattew Wilcox's and Andy Lavr's concerns
+> 
+> v18:
+> - ntfs_alloc macro splitted into two ntfs_malloc + ntfs_zalloc
+> - attrlist.c: always use ntfs_cmp_names instead of memcmp; compare entry names
+>   only for entry with vcn == 0
+> - dir.c: remove unconditional ni_lock in ntfs_readdir
+> - fslog.c: corrected error case behavior
+> - index.c: refactored due to modification of ntfs_cmp_names; use rw_semaphore
+>   for read/write access to alloc_run and bitmap_run while ntfs_readdir
+> - run.c: separated big/little endian code in functions
+> - upcase.c: improved ntfs_cmp_names, thanks to Kari Argillander for idea
+>   and 'bothcase' implementation
+> 
+> v19:
+> - fixed directory bitmap for 2MB cluster size
+> - fixed rw_semaphore init for directories
+> 
+> v20:
+> - fixed issue with incorrect hidden/system attribute setting on
+>   root subdirectories
+> - use kvmalloc instead of kmalloc for runs array
+> - fixed index behavior on volumes with cluster size more than 4k
+> - current build info is added into module info instead of printing on insmod
+> 
+> v21:
+> - fixes for clang CFI checks
+> - fixed sb->s_maxbytes for 32bit clusters
+> - user.DOSATTRIB is no more intercepted by ntfs3
+> - corrected xattr limits;  is used
+> - corrected CONFIG_NTFS3_64BIT_CLUSTER usage
+> - info about current build is added into module info and printing
+> on insmod (by Andy Lavr's request)
+> note: v21 is applicable for 'linux-next' not older than 2021.01.28
+> 
+> v22:
+> - ntfs_cmp_names() fixed
+> - raise warning if 'nls->uni2char' fails
+> - hot fix free clusters code optimized
+> - use clang-format 11.0 instead of 10.0 to format code
+> 
+> v23:
+> - corrections for Kernel Test Robot warnings
+> - kmem_cache_create() utilized to allocate memory in bitmap.c
+> - cosmetics and comments thru the code
+> 
+> v24:
+> - BIO_MAX_PAGES -> BIO_MAX_VECS (fix for build issue of v23 vs linux-next)
+> - minor optimization for LogFile: do not fill it with -1, if it's already there
+> - index.c: removed 'inline' in definition of hdr_find_split() and hdr_insert_head()
+> 
+> v25:
+> - restore fs/Makefile in patch
+> - refactor ntfs_create_inode() to use error-valued pointer
+> - use mi_get_ref to fill MFT_REF
+> - minimize checkpatch.pl warnings: replace LogFile with \x24LogFile when printing
+> 
+> v26:
+> - fixed coccinelle warnings
+> - fslog.c: fix memory leak and memory overwrite
+> 
+> Konstantin Komarov (10):
+>   fs/ntfs3: Add headers and misc files
+>   fs/ntfs3: Add initialization of super block
+>   fs/ntfs3: Add bitmap
+>   fs/ntfs3: Add file operations and implementation
+>   fs/ntfs3: Add attrib operations
+>   fs/ntfs3: Add compression
+>   fs/ntfs3: Add NTFS journal
+>   fs/ntfs3: Add Kconfig, Makefile and doc
+>   fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
+>   fs/ntfs3: Add MAINTAINERS
+> 
+>  Documentation/filesystems/ntfs3.rst |  107 +
+>  MAINTAINERS                         |    7 +
+>  fs/Kconfig                          |    1 +
+>  fs/Makefile                         |    1 +
+>  fs/ntfs3/Kconfig                    |   46 +
+>  fs/ntfs3/Makefile                   |   34 +
+>  fs/ntfs3/attrib.c                   | 2082 +++++++++++
+>  fs/ntfs3/attrlist.c                 |  456 +++
+>  fs/ntfs3/bitfunc.c                  |  135 +
+>  fs/ntfs3/bitmap.c                   | 1519 ++++++++
+>  fs/ntfs3/debug.h                    |   64 +
+>  fs/ntfs3/dir.c                      |  594 +++
+>  fs/ntfs3/file.c                     | 1130 ++++++
+>  fs/ntfs3/frecord.c                  | 3071 ++++++++++++++++
+>  fs/ntfs3/fslog.c                    | 5181 +++++++++++++++++++++++++++
+>  fs/ntfs3/fsntfs.c                   | 2542 +++++++++++++
+>  fs/ntfs3/index.c                    | 2641 ++++++++++++++
+>  fs/ntfs3/inode.c                    | 2033 +++++++++++
+>  fs/ntfs3/lib/decompress_common.c    |  332 ++
+>  fs/ntfs3/lib/decompress_common.h    |  352 ++
+>  fs/ntfs3/lib/lib.h                  |   26 +
+>  fs/ntfs3/lib/lzx_decompress.c       |  683 ++++
+>  fs/ntfs3/lib/xpress_decompress.c    |  155 +
+>  fs/ntfs3/lznt.c                     |  452 +++
+>  fs/ntfs3/namei.c                    |  578 +++
+>  fs/ntfs3/ntfs.h                     | 1238 +++++++
+>  fs/ntfs3/ntfs_fs.h                  | 1085 ++++++
+>  fs/ntfs3/record.c                   |  609 ++++
+>  fs/ntfs3/run.c                      | 1111 ++++++
+>  fs/ntfs3/super.c                    | 1500 ++++++++
+>  fs/ntfs3/upcase.c                   |  105 +
+>  fs/ntfs3/xattr.c                    | 1046 ++++++
+>  32 files changed, 30916 insertions(+)
+>  create mode 100644 Documentation/filesystems/ntfs3.rst
+>  create mode 100644 fs/ntfs3/Kconfig
+>  create mode 100644 fs/ntfs3/Makefile
+>  create mode 100644 fs/ntfs3/attrib.c
+>  create mode 100644 fs/ntfs3/attrlist.c
+>  create mode 100644 fs/ntfs3/bitfunc.c
+>  create mode 100644 fs/ntfs3/bitmap.c
+>  create mode 100644 fs/ntfs3/debug.h
+>  create mode 100644 fs/ntfs3/dir.c
+>  create mode 100644 fs/ntfs3/file.c
+>  create mode 100644 fs/ntfs3/frecord.c
+>  create mode 100644 fs/ntfs3/fslog.c
+>  create mode 100644 fs/ntfs3/fsntfs.c
+>  create mode 100644 fs/ntfs3/index.c
+>  create mode 100644 fs/ntfs3/inode.c
+>  create mode 100644 fs/ntfs3/lib/decompress_common.c
+>  create mode 100644 fs/ntfs3/lib/decompress_common.h
+>  create mode 100644 fs/ntfs3/lib/lib.h
+>  create mode 100644 fs/ntfs3/lib/lzx_decompress.c
+>  create mode 100644 fs/ntfs3/lib/xpress_decompress.c
+>  create mode 100644 fs/ntfs3/lznt.c
+>  create mode 100644 fs/ntfs3/namei.c
+>  create mode 100644 fs/ntfs3/ntfs.h
+>  create mode 100644 fs/ntfs3/ntfs_fs.h
+>  create mode 100644 fs/ntfs3/record.c
+>  create mode 100644 fs/ntfs3/run.c
+>  create mode 100644 fs/ntfs3/super.c
+>  create mode 100644 fs/ntfs3/upcase.c
+>  create mode 100644 fs/ntfs3/xattr.c
+> 
+> 
+> base-commit: 454c576c3f5e51d60f00a4ac0dde07f4f9d70e9d
+> -- 
+> 2.25.4
+> 
