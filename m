@@ -2,166 +2,392 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AE9C38BA61
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 01:27:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 177FA38BA95
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 01:54:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234016AbhETX3B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 May 2021 19:29:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35150 "EHLO mail.kernel.org"
+        id S234588AbhETXzk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 May 2021 19:55:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233032AbhETX3A (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 May 2021 19:29:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 67C0F61163;
-        Thu, 20 May 2021 23:27:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621553258;
-        bh=F4vVu72MSvpPSIlSfaqmHjBkapvBkekBrT0GhNRbgeA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=D/tDjL7O45apzTKUnV0SVbHRnTwvb+gG6HILOX22TR7WoxcJVUOJ2QPMUln9aZBWc
-         +wFKEYSFcd46LO+Rc44v2XyfdfG2xz38VgYuxDgkW8BhDYlnV3fEvHSyOM7YRH9aL7
-         rNOXzi4+P6IjLsGe3pQxPVeV86CKcgkw9asDALp6/rFBQp3O3GklkJHLZe1q1EezaJ
-         0p+8/3QgCpG17U7WITaubzN7LhrmGGWvAEdtyhh2h25Hp4J4ssYaY3T6035BhzJzHx
-         WhTAQQjH5aiD7eRKVV8Piu/g4pezOd7uU+BR5sYJ9VcuHOAcD4aw8HjlFdbQtwwZ7W
-         yaAExDidJcC8w==
-Date:   Thu, 20 May 2021 16:27:37 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v3 3/3] iomap: bound ioend size to 4096 pages
-Message-ID: <20210520232737.GA9675@magnolia>
-References: <20210517171722.1266878-1-bfoster@redhat.com>
- <20210517171722.1266878-4-bfoster@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210517171722.1266878-4-bfoster@redhat.com>
+        id S233104AbhETXzi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 May 2021 19:55:38 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9E3BA613AC;
+        Thu, 20 May 2021 23:54:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1621554854;
+        bh=V1zhHXPqwwxNFIJHv9hdrQdBjTzjWYq3d3bOYoBywWY=;
+        h=Date:From:To:Subject:From;
+        b=bK4ig5Vhahrk3m852EsL1dfXPBq5SEyMPM//auIqboDXhXwr/c0tU2tRhcwTsKx5H
+         8c4w/qihwlyamToJ3kFLs8g32uEdiIEeQ6L1E8jnEQB6+zoil4NJRCRLTO8gUL9nDm
+         FVzWIIcSmVaYTvSJkn1WxZO/IKxWzedPv0RAv/+I=
+Date:   Thu, 20 May 2021 16:54:13 -0700
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject:  mmotm 2021-05-20-16-53 uploaded
+Message-ID: <20210520235413.uCKj1p7j1%akpm@linux-foundation.org>
+User-Agent: s-nail v14.8.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 17, 2021 at 01:17:22PM -0400, Brian Foster wrote:
-> The iomap writeback infrastructure is currently able to construct
-> extremely large bio chains (tens of GBs) associated with a single
-> ioend. This consolidation provides no significant value as bio
-> chains increase beyond a reasonable minimum size. On the other hand,
-> this does hold significant numbers of pages in the writeback
-> state across an unnecessarily large number of bios because the ioend
-> is not processed for completion until the final bio in the chain
-> completes. Cap an individual ioend to a reasonable size of 4096
-> pages (16MB with 4k pages) to avoid this condition.
-> 
-> Signed-off-by: Brian Foster <bfoster@redhat.com>
-> ---
->  fs/iomap/buffered-io.c |  6 ++++--
->  include/linux/iomap.h  | 26 ++++++++++++++++++++++++++
->  2 files changed, 30 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 642422775e4e..f2890ee434d0 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1269,7 +1269,7 @@ iomap_chain_bio(struct bio *prev)
->  
->  static bool
->  iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t offset,
-> -		sector_t sector)
-> +		unsigned len, sector_t sector)
->  {
->  	if ((wpc->iomap.flags & IOMAP_F_SHARED) !=
->  	    (wpc->ioend->io_flags & IOMAP_F_SHARED))
-> @@ -1280,6 +1280,8 @@ iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t offset,
->  		return false;
->  	if (sector != bio_end_sector(wpc->ioend->io_bio))
->  		return false;
-> +	if (wpc->ioend->io_size + len > IOEND_MAX_IOSIZE)
-> +		return false;
->  	return true;
->  }
->  
-> @@ -1297,7 +1299,7 @@ iomap_add_to_ioend(struct inode *inode, loff_t offset, struct page *page,
->  	unsigned poff = offset & (PAGE_SIZE - 1);
->  	bool merged, same_page = false;
->  
-> -	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, offset, sector)) {
-> +	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, offset, len, sector)) {
->  		if (wpc->ioend)
->  			list_add(&wpc->ioend->io_list, iolist);
->  		wpc->ioend = iomap_alloc_ioend(inode, wpc, offset, sector, wbc);
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 07f3f4e69084..89b15cc236d5 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -203,6 +203,32 @@ struct iomap_ioend {
->  	struct bio		io_inline_bio;	/* MUST BE LAST! */
->  };
->  
-> +/*
-> + * Maximum ioend IO size is used to prevent ioends from becoming unbound in
-> + * size. bios can reach 4GB in size if pages are contiguous, and bio chains are
-> + * effectively unbound in length. Hence the only limits on the size of the bio
-> + * chain is the contiguity of the extent on disk and the length of the run of
-> + * sequential dirty pages in the page cache. This can be tens of GBs of physical
-> + * extents and if memory is large enough, tens of millions of dirty pages.
-> + * Locking them all under writeback until the final bio in the chain is
-> + * submitted and completed locks all those pages for the legnth of time it takes
+The mm-of-the-moment snapshot 2021-05-20-16-53 has been uploaded to
 
-s/legnth/length/
+   https://www.ozlabs.org/~akpm/mmotm/
 
-> + * to write those many, many GBs of data to storage.
-> + *
-> + * Background writeback caps any single writepages call to half the device
-> + * bandwidth to ensure fairness and prevent any one dirty inode causing
-> + * writeback starvation. fsync() and other WB_SYNC_ALL writebacks have no such
-> + * cap on wbc->nr_pages, and that's where the above massive bio chain lengths
-> + * come from. We want large IOs to reach the storage, but we need to limit
-> + * completion latencies, hence we need to control the maximum IO size we
-> + * dispatch to the storage stack.
-> + *
-> + * We don't really have to care about the extra IO completion overhead here
-> + * because iomap has contiguous IO completion merging. If the device can sustain
+mmotm-readme.txt says
 
-Assuming you're referring to iomap_finish_ioends, only XFS employs the
-ioend completion merging, and only for ioends where it decides to
-override the default bi_end_io.  iomap on its own never calls
-iomap_ioend_try_merge.
+README for mm-of-the-moment:
 
-This patch establishes a maximum ioend size of 4096 pages so that we
-don't trip the lockup watchdog while clearing pagewriteback and also so
-that we don't pin a large number of pages while constructing a big chain
-of bios.  On gfs2 and zonefs, each ioend completion will now have to
-clear up to 4096 pages from whatever context bio_endio is called.
+https://www.ozlabs.org/~akpm/mmotm/
 
-For XFS it's a more complicated -- XFS already overrode the bio handler
-for ioends that required further metadata updates (e.g. unwritten
-conversion, eof extension, or cow) so that it could combine ioends when
-possible.  XFS wants to combine ioends to amortize the cost of getting
-the ILOCK and running transactions over a larger number of pages.
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
 
-So I guess I see how the two changes dovetail nicely for XFS -- iomap
-issues smaller write bios, and the xfs ioend worker can recombine
-however many bios complete before the worker runs.  As a bonus, we don't
-have to worry about situations like the device driver completing so many
-bios from a single invocation of a bottom half handler that we run afoul
-of the soft lockup timer.
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+https://ozlabs.org/~akpm/mmotm/series
 
-Is that a correct understanding of how the two changes intersect with
-each other?  TBH I was expecting the two thresholds to be closer in
-value.
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
 
-The other two users of iomap for buffered io (gfs2 and zonefs) don't
-have a means to defer and combine ioends like xfs does.  Do you think
-they should?  I think it's still possible to trip the softlockup there.
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
 
---D
 
-> + * high throughput and large bios, the ioends are merged on completion and
-> + * processed in large, efficient chunks with no additional IO latency.
-> + */
-> +#define IOEND_MAX_IOSIZE	(4096ULL << PAGE_SHIFT)
-> +
->  struct iomap_writeback_ops {
->  	/*
->  	 * Required, maps the blocks so that writeback can be performed on
-> -- 
-> 2.26.3
-> 
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+	https://github.com/hnaz/linux-mm
+
+The directory https://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is also available at
+
+	https://github.com/hnaz/linux-mm
+
+
+
+This mmotm tree contains the following patches against 5.13-rc2:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* mm-shuffle-fix-section-mismatch-warning.patch
+* revert-mm-gup-check-page-posion-status-for-coredump.patch
+* ipc-mqueue-msg-sem-avoid-relying-on-a-stack-reference-past-its-expiry.patch
+* tools-testing-selftests-exec-fix-link-error.patch
+* kasan-slab-always-reset-the-tag-in-get_freepointer_safe.patch
+* watchdog-reliable-handling-of-timestamps.patch
+* linux-bitsh-fix-compilation-error-with-genmask.patch
+* proc-remove-myself-from-maintainers.patch
+* mmhwpoison-fix-race-with-hugetlb-page-allocation.patch
+* lib-kunit-suppress-a-compilation-warning-of-frame-size.patch
+* kthread-fix-kthread_mod_delayed_work-vs-kthread_cancel_delayed_work_sync-race.patch
+* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
+* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
+* kthread-switch-to-new-kerneldoc-syntax-for-named-variable-macro-argument.patch
+* ia64-headers-drop-duplicated-words.patch
+* ia64-mca_drv-fix-incorrect-array-size-calculation.patch
+* streamline_configpl-make-spacing-consistent.patch
+* streamline_configpl-add-softtabstop=4-for-vim-users.patch
+* scripts-spellingtxt-add-more-spellings-to-spellingtxt.patch
+* ocfs2-remove-unnecessary-init_list_head.patch
+* ocfs2-fix-snprintf-checking.patch
+* ocfs2-remove-redundant-assignment-to-pointer-queue.patch
+* ocfs2-remove-repeated-uptodate-check-for-buffer.patch
+* ocfs2-clear-links-count-in-ocfs2_mknod-if-an-error-occurs.patch
+* ocfs2-fix-ocfs2-corrupt-when-iputting-an-inode.patch
+* kernel-watchdog-modify-the-explanation-related-to-watchdog-thread.patch
+* doc-watchdog-modify-the-explanation-related-to-watchdog-thread.patch
+* doc-watchdog-modify-the-doc-related-to-watchdog-%u.patch
+  mm.patch
+* kunit-make-test-lock-irq-safe.patch
+* mm-slub-kunit-add-a-kunit-test-for-slub-debugging-functionality.patch
+* mm-slub-kunit-add-a-kunit-test-for-slub-debugging-functionality-fix.patch
+* mm-slub-kunit-add-a-kunit-test-for-slub-debugging-functionality-fix-2.patch
+* slub-remove-resiliency_test-function.patch
+* mm-slub-change-run-time-assertion-in-kmalloc_index-to-compile-time.patch
+* mm-slub-change-run-time-assertion-in-kmalloc_index-to-compile-time-fix.patch
+* mm-slub-change-run-time-assertion-in-kmalloc_index-to-compile-time-fix-2.patch
+* lib-hexdump-add-a-raw-pointer-printing-format-for-slub-debugging.patch
+* slub-print-raw-pointer-addresses-when-debugging.patch
+* slub-actually-use-message-in-restore_bytes.patch
+* tools-vm-page_owner_sortc-fix-the-potential-stack-overflow-risk.patch
+* mm-debug_vm_pgtable-ensure-thp-availability-via-has_transparent_hugepage.patch
+* mm-page-writeback-kill-get_writeback_state-comments.patch
+* mm-page-writeback-fix-performance-when-bdis-share-of-ratio-is-0.patch
+* mm-page-writeback-update-the-comment-of-dirty-position-control.patch
+* mm-page-writeback-use-__this_cpu_inc-in-account_page_dirtied.patch
+* mm-gup_benchmark-support-threading.patch
+* mm-gup-allow-foll_pin-to-scale-in-smp.patch
+* mm-gup-pack-has_pinned-in-mmf_has_pinned.patch
+* mm-gup-pack-has_pinned-in-mmf_has_pinned-checkpatch-fixes.patch
+* mm-gup-pack-has_pinned-in-mmf_has_pinned-fix.patch
+* mm-swapfile-use-percpu_ref-to-serialize-against-concurrent-swapoff.patch
+* swap-fix-do_swap_page-race-with-swapoff.patch
+* mm-swap-remove-confusing-checking-for-non_swap_entry-in-swap_ra_info.patch
+* mm-shmem-fix-shmem_swapin-race-with-swapoff.patch
+* mm-swapfile-move-get_swap_page_of_type-under-config_hibernation.patch
+* mm-swap-remove-unused-local-variable-nr_shadows.patch
+* mm-swap_slotsc-delete-meaningless-forward-declarations.patch
+* mm-swap-remove-unused-global-variable-nr_swapper_spaces.patch
+* mm-swap-remove-unnecessary-smp_rmb-in-swap_type_to_swap_info.patch
+* mm-memcg-move-mod_objcg_state-to-memcontrolc.patch
+* mm-memcg-cache-vmstat-data-in-percpu-memcg_stock_pcp.patch
+* mm-memcg-improve-refill_obj_stock-performance.patch
+* mm-memcg-optimize-user-context-object-stock-access.patch
+* mm-memcg-optimize-user-context-object-stock-access-checkpatch-fixes.patch
+* mm-memcg-slab-properly-set-up-gfp-flags-for-objcg-pointer-array.patch
+* mm-memcg-slab-create-a-new-set-of-kmalloc-cg-n-caches.patch
+* mm-memcg-slab-create-a-new-set-of-kmalloc-cg-n-caches-fix.patch
+* mm-memcg-slab-create-a-new-set-of-kmalloc-cg-n-caches-v5.patch
+* mm-memcg-slab-create-a-new-set-of-kmalloc-cg-n-caches-v5-fix.patch
+* mm-memcg-slab-disable-cache-merging-for-kmalloc_normal-caches.patch
+* mm-memcontrol-fix-root_mem_cgroup-charging.patch
+* mm-memcontrol-fix-page-charging-in-page-replacement.patch
+* mm-memcontrol-bail-out-early-when-mm-in-get_mem_cgroup_from_mm.patch
+* mm-memcontrol-remove-the-pgdata-parameter-of-mem_cgroup_page_lruvec.patch
+* mm-memcontrol-simplify-lruvec_holds_page_lru_lock.patch
+* mm-memcontrol-rename-lruvec_holds_page_lru_lock-to-page_matches_lruvec.patch
+* mm-memcontrol-simplify-the-logic-of-objcg-pinning-memcg.patch
+* mm-memcontrol-move-obj_cgroup_uncharge_pages-out-of-css_set_lock.patch
+* mm-vmscan-remove-noinline_for_stack.patch
+* memcontrol-use-flexible-array-member.patch
+* mm-improve-mprotectrw-efficiency-on-pages-referenced-once.patch
+* mm-improve-mprotectrw-efficiency-on-pages-referenced-once-fix.patch
+* perf-map_executable-does-not-indicate-vm_mayexec.patch
+* binfmt-remove-in-tree-usage-of-map_executable.patch
+* binfmt-remove-in-tree-usage-of-map_executable-fix.patch
+* mm-ignore-map_executable-in-ksys_mmap_pgoff.patch
+* mm-mmapc-logic-of-find_vma_intersection-repeated-in-__do_munmap.patch
+* mm-mmap-introduce-unlock_range-for-code-cleanup.patch
+* mm-mmap-introduce-unlock_range-for-code-cleanup-fix.patch
+* mm-mmap-use-find_vma_intersection-in-do_mmap-for-overlap.patch
+* mm-memoryc-fix-comment-of-finish_mkwrite_fault.patch
+* selftest-mremap_test-update-the-test-to-handle-pagesize-other-than-4k.patch
+* selftest-mremap_test-avoid-crash-with-static-build.patch
+* mm-mremap-use-pmd-pud_poplulate-to-update-page-table-entries.patch
+* mm-mremap-use-pmd-pud_poplulate-to-update-page-table-entries-fix.patch
+* powerpc-mm-book3s64-fix-possible-build-error.patch
+* powerpc-mm-book3s64-update-tlb-flush-routines-to-take-a-page-walk-cache-flush-argument.patch
+* powerpc-mm-book3s64-update-tlb-flush-routines-to-take-a-page-walk-cache-flush-argument-fix.patch
+* mm-mremap-use-range-flush-that-does-tlb-and-page-walk-cache-flush.patch
+* mm-mremap-use-range-flush-that-does-tlb-and-page-walk-cache-flush-fix.patch
+* mm-mremap-move-tlb-flush-outside-page-table-lock.patch
+* mm-mremap-allow-arch-runtime-override.patch
+* powerpc-mm-enable-move-pmd-pud.patch
+* mm-page_alloc-add-an-alloc_pages_bulk_array_node-helper.patch
+* mm-vmalloc-switch-to-bulk-allocator-in-__vmalloc_area_node.patch
+* mm-vmalloc-print-a-warning-message-first-on-failure.patch
+* printk-introduce-dump_stack_lvl.patch
+* printk-introduce-dump_stack_lvl-fix.patch
+* kasan-use-dump_stack_lvlkern_err-to-print-stacks.patch
+* mm-page_alloc-__alloc_pages_bulk-do-bounds-check-before-accessing-array.patch
+* mm-mmzoneh-simplify-is_highmem_idx.patch
+* mm-make-__dump_page-static.patch
+* mm-page_alloc-bail-out-on-fatal-signal-during-reclaim-compaction-retry-attempt.patch
+* mm-debug-factor-pagepoisoned-out-of-__dump_page.patch
+* mm-page_owner-constify-dump_page_owner.patch
+* mm-make-compound_head-const-preserving.patch
+* mm-constify-get_pfnblock_flags_mask-and-get_pfnblock_migratetype.patch
+* mm-constify-page_count-and-page_ref_count.patch
+* mm-optimise-nth_page-for-contiguous-memmap.patch
+* mm-page_alloc-switch-to-pr_debug.patch
+* mm-page_alloc-split-per-cpu-page-lists-and-zone-stats.patch
+* mm-page_alloc-split-per-cpu-page-lists-and-zone-stats-fix.patch
+* mm-page_alloc-split-per-cpu-page-lists-and-zone-stats-fix-fix.patch
+* mm-page_alloc-convert-per-cpu-list-protection-to-local_lock.patch
+* mm-vmstat-convert-numa-statistics-to-basic-numa-counters.patch
+* mm-vmstat-inline-numa-event-counter-updates.patch
+* mm-page_alloc-batch-the-accounting-updates-in-the-bulk-allocator.patch
+* mm-page_alloc-reduce-duration-that-irqs-are-disabled-for-vm-counters.patch
+* mm-page_alloc-explicitly-acquire-the-zone-lock-in-__free_pages_ok.patch
+* mm-page_alloc-avoid-conflating-irqs-disabled-with-zone-lock.patch
+* mm-page_alloc-update-pgfree-outside-the-zone-lock-in-__free_pages_ok.patch
+* mmhwpoison-make-get_hwpoison_page-call-get_any_page.patch
+* mm-memory_hotplug-factor-out-bootmem-core-functions-to-bootmem_infoc.patch
+* mm-hugetlb-introduce-a-new-config-hugetlb_page_free_vmemmap.patch
+* mm-hugetlb-gather-discrete-indexes-of-tail-page.patch
+* mm-hugetlb-free-the-vmemmap-pages-associated-with-each-hugetlb-page.patch
+* mm-hugetlb-defer-freeing-of-hugetlb-pages.patch
+* mm-hugetlb-alloc-the-vmemmap-pages-associated-with-each-hugetlb-page.patch
+* mm-hugetlb-add-a-kernel-parameter-hugetlb_free_vmemmap.patch
+* mm-memory_hotplug-disable-memmap_on_memory-when-hugetlb_free_vmemmap-enabled.patch
+* mm-memory_hotplug-disable-memmap_on_memory-when-hugetlb_free_vmemmap-enabled-fix.patch
+* mm-hugetlb-introduce-nr_free_vmemmap_pages-in-the-struct-hstate.patch
+* mm-debug_vm_pgtable-move-pmd-pud_huge_tests-out-of-config_transparent_hugepage.patch
+* mm-debug_vm_pgtable-remove-redundant-pfn_pmd-pte-and-fix-one-comment-mistake.patch
+* mm-huge_memoryc-remove-dedicated-macro-hpage_cache_index_mask.patch
+* mm-huge_memoryc-use-page-deferred_list.patch
+* mm-huge_memoryc-add-missing-read-only-thp-checking-in-transparent_hugepage_enabled.patch
+* mm-huge_memoryc-add-missing-read-only-thp-checking-in-transparent_hugepage_enabled-v4.patch
+* mm-huge_memoryc-remove-unnecessary-tlb_remove_page_size-for-huge-zero-pmd.patch
+* mm-huge_memoryc-dont-discard-hugepage-if-other-processes-are-mapping-it.patch
+* mm-hugetlb-change-parameters-of-arch_make_huge_pte.patch
+* mm-pgtable-add-stubs-for-pmd-pub_set-clear_huge.patch
+* mm-pgtable-add-stubs-for-pmd-pub_set-clear_huge-fix-2.patch
+* arm64-define-only-pud-pmd_set-clear_huge-when-usefull.patch
+* mm-vmalloc-enable-mapping-of-huge-pages-at-pte-level-in-vmap.patch
+* mm-vmalloc-enable-mapping-of-huge-pages-at-pte-level-in-vmalloc.patch
+* powerpc-8xx-add-support-for-huge-pages-on-vmap-and-vmalloc.patch
+* userfaultfd-selftests-use-user-mode-only.patch
+* userfaultfd-selftests-remove-the-time-check-on-delayed-uffd.patch
+* userfaultfd-selftests-dropping-verify-check-in-locking_thread.patch
+* userfaultfd-selftests-only-dump-counts-if-mode-enabled.patch
+* userfaultfd-selftests-unify-error-handling.patch
+* mm-thp-simplify-copying-of-huge-zero-page-pmd-when-fork.patch
+* mm-userfaultfd-fix-uffd-wp-special-cases-for-fork.patch
+* mm-userfaultfd-fix-a-few-thp-pmd-missing-uffd-wp-bit.patch
+* mm-userfaultfd-fail-uffd-wp-registeration-if-not-supported.patch
+* mm-pagemap-export-uffd-wp-protection-information.patch
+* userfaultfd-selftests-add-pagemap-uffd-wp-test.patch
+* userfaultfd-shmem-combine-shmem_mcopy_atomicmfill_zeropage_pte.patch
+* userfaultfd-shmem-support-minor-fault-registration-for-shmem.patch
+* userfaultfd-shmem-support-uffdio_continue-for-shmem.patch
+* userfaultfd-shmem-advertise-shmem-minor-fault-support.patch
+* userfaultfd-shmem-modify-shmem_mfill_atomic_pte-to-use-install_pte.patch
+* userfaultfd-selftests-use-memfd_create-for-shmem-test-type.patch
+* userfaultfd-selftests-create-alias-mappings-in-the-shmem-test.patch
+* userfaultfd-selftests-reinitialize-test-context-in-each-test.patch
+* userfaultfd-selftests-reinitialize-test-context-in-each-test-fix.patch
+* userfaultfd-selftests-exercise-minor-fault-handling-shmem-support.patch
+* mm-move-holes_in_zone-into-mm.patch
+* docs-procrst-meminfo-briefly-describe-gaps-in-memory-accounting.patch
+* include-linux-mmzoneh-add-documentation-for-pfn_valid.patch
+* memblock-update-initialization-of-reserved-pages.patch
+* arm64-decouple-check-whether-pfn-is-in-linear-map-from-pfn_valid.patch
+* arm64-drop-pfn_valid_within-and-simplify-pfn_valid.patch
+* arm64-drop-pfn_valid_within-and-simplify-pfn_valid-fix.patch
+* mm-migrate-fix-missing-update-page_private-to-hugetlb_page_subpool.patch
+* mm-thp-relax-the-vm_denywrite-constraint-on-file-backed-thps.patch
+* mm-thp-check-total_mapcount-instead-of-page_mapcount.patch
+* mm-thp-check-total_mapcount-instead-of-page_mapcount-fix.patch
+* mm-thp-check-total_mapcount-instead-of-page_mapcount-fix-fix.patch
+* mm-memory-add-orig_pmd-to-struct-vm_fault.patch
+* mm-memory-make-numa_migrate_prep-non-static.patch
+* mm-thp-refactor-numa-fault-handling.patch
+* mm-migrate-account-thp-numa-migration-counters-correctly.patch
+* mm-migrate-dont-split-thp-for-misplaced-numa-page.patch
+* mm-migrate-check-mapcount-for-thp-instead-of-refcount.patch
+* mm-thp-skip-make-pmd-prot_none-if-thp-migration-is-not-supported.patch
+* mm-thp-update-mm_structs-mm_anonpages-stat-for-huge-zero-pages.patch
+* mm-thp-make-alloc_split_ptlocks-dependent-on-use_split_pte_ptlocks.patch
+* nommu-remove-__gfp_highmem-in-vmalloc-vzalloc.patch
+* nommu-remove-__gfp_highmem-in-vmalloc-vzalloc-checkpatch-fixes.patch
+* mm-make-variable-names-for-populate_vma_page_range-consistent.patch
+* mm-madvise-introduce-madv_populate_readwrite-to-prefault-page-tables.patch
+* mm-madvise-introduce-madv_populate_readwrite-to-prefault-page-tables-checkpatch-fixes.patch
+* maintainers-add-tools-testing-selftests-vm-to-memory-management.patch
+* selftests-vm-add-protection_keys_32-protection_keys_64-to-gitignore.patch
+* selftests-vm-add-test-for-madv_populate_readwrite.patch
+* mm-memory_hotplug-rate-limit-page-migration-warnings.patch
+* mm-highmem-remove-deprecated-kmap_atomic.patch
+* mm-fix-typos-and-grammar-error-in-comments.patch
+* mm-fix-comments-mentioning-i_mutex.patch
+* mm-define-default-value-for-first_user_address.patch
+* mm-clear-spelling-mistakes.patch
+* mm-vmscan-remove-kerneldoc-like-comment-from-isolate_lru_pages.patch
+* mm-vmalloc-include-header-for-prototype-of-set_iounmap_nonlazy.patch
+* mm-page_alloc-make-should_fail_alloc_page-a-static-function-should_fail_alloc_page-static.patch
+* mm-mapping_dirty_helpers-remove-double-note-in-kerneldoc.patch
+* mm-early_ioremap-add-prototype-for-early_memremap_pgprot_adjust.patch
+* mm-memcontrolc-fix-kerneldoc-comment-for-mem_cgroup_calculate_protection.patch
+* mm-memory_hotplug-fix-kerneldoc-comment-for-__try_online_node.patch
+* mm-memory_hotplug-fix-kerneldoc-comment-for-__remove_memory.patch
+* mm-zbud-add-kerneldoc-fields-for-zbud_pool.patch
+* mm-z3fold-add-kerneldoc-fields-for-z3fold_pool.patch
+* mm-swap-make-swap_address_space-an-inline-function.patch
+* mm-mmap_lock-remove-dead-code-for-config_tracing-configurations.patch
+* mm-page_alloc-move-prototype-for-find_suitable_fallback.patch
+* mm-swap-make-node_data-an-inline-function-on-config_flatmem.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* proc-avoid-mixing-integer-types-in-mem_rw.patch
+* fs-proc-kcore-drop-kcore_remap-and-kcore_other.patch
+* fs-proc-kcore-pfn_is_ram-check-only-applies-to-kcore_ram.patch
+* fs-proc-kcore-dont-read-offline-sections-logically-offline-pages-and-hwpoisoned-pages.patch
+* mm-introduce-page_offline_beginendfreezethaw-to-synchronize-setting-pageoffline.patch
+* virtio-mem-use-page_offline_startend-when-setting-pageoffline.patch
+* fs-proc-kcore-use-page_offline_freezethaw.patch
+* procfs-allow-reading-fdinfo-with-ptrace_mode_read.patch
+* procfs-dmabuf-add-inode-number-to-proc-fdinfo.patch
+* sysctl-remove-redundant-assignment-to-first.patch
+* proc-sysctl-make-protected_-world-readable.patch
+* kernelh-split-out-panic-and-oops-helpers.patch
+* kernelh-split-out-panic-and-oops-helpers-fix.patch
+* kernelh-split-out-panic-and-oops-helpers-fix-2.patch
+* lib-decompress_bunzip2-remove-an-unneeded-semicolon.patch
+* lib-string_helpers-switch-to-use-bit-macro.patch
+* lib-string_helpers-move-escape_np-check-inside-else-branch-in-a-loop.patch
+* lib-string_helpers-drop-indentation-level-in-string_escape_mem.patch
+* lib-string_helpers-introduce-escape_na-for-escaping-non-ascii.patch
+* lib-string_helpers-introduce-escape_nap-to-escape-non-ascii-and-non-printable.patch
+* lib-string_helpers-allow-to-append-additional-characters-to-be-escaped.patch
+* lib-test-string_helpers-print-flags-in-hexadecimal-format.patch
+* lib-test-string_helpers-get-rid-of-trailing-comma-in-terminators.patch
+* lib-test-string_helpers-add-test-cases-for-new-features.patch
+* maintainers-add-myself-as-designated-reviewer-for-generic-string-library.patch
+* seq_file-introduce-seq_escape_mem.patch
+* seq_file-add-seq_escape_str-as-replica-of-string_escape_str.patch
+* seq_file-convert-seq_escape-to-use-seq_escape_str.patch
+* nfsd-avoid-non-flexible-api-in-seq_quote_mem.patch
+* seq_file-drop-unused-_escape_mem_ascii.patch
+* lz4_decompress-declare-lz4_decompress_safe_withprefix64k-static.patch
+* lib-decompress_unlz4c-correctly-handle-zero-padding-around-initrds.patch
+* checkpatch-scripts-spdxcheckpy-now-requires-python3.patch
+* init-print-out-unknown-kernel-parameters.patch
+* init-mainc-silence-some-wunused-parameter-warnings.patch
+* hfsplus-fix-out-of-bounds-warnings-in-__hfsplus_setxattr.patch
+* x86-signal-dont-do-sas_ss_reset-until-we-are-certain-that-sigframe-wont-be-abandoned.patch
+* samples-kprobes-fix-typo-in-handler_fault.patch
+* samples-kprobes-fix-typo-in-handler_post.patch
+* lib-decompressors-remove-set-but-not-used-variabled-level.patch
+* lib-decompressors-remove-set-but-not-used-variabled-level-fix.patch
+* ipc-sem-use-kvmalloc-for-sem_undo-allocation.patch
+* ipc-use-kmalloc-for-msg_queue-and-shmid_kernel.patch
+* ipc-semc-use-read_once-write_once-for-use_global_lock.patch
+  linux-next.patch
+  linux-next-git-rejects.patch
+* mm-slub-use-stackdepot-to-save-stack-trace-in-objects.patch
+* mm-slub-use-stackdepot-to-save-stack-trace-in-objects-fix.patch
+* mm-slub-use-stackdepot-to-save-stack-trace-in-objects-fix-2.patch
+* mmap-make-mlock_future_check-global.patch
+* riscv-kconfig-make-direct-map-manipulation-options-depend-on-mmu.patch
+* set_memory-allow-querying-whether-set_direct_map_-is-actually-enabled.patch
+* mm-introduce-memfd_secret-system-call-to-create-secret-memory-areas.patch
+* mm-introduce-memfd_secret-system-call-to-create-secret-memory-areas-fix.patch
+* pm-hibernate-disable-when-there-are-active-secretmem-users.patch
+* arch-mm-wire-up-memfd_secret-system-call-where-relevant.patch
+* secretmem-test-add-basic-selftest-for-memfd_secret2.patch
+* buildid-only-consider-gnu-notes-for-build-id-parsing.patch
+* buildid-add-api-to-parse-build-id-out-of-buffer.patch
+* buildid-stash-away-kernels-build-id-on-init.patch
+* buildid-stash-away-kernels-build-id-on-init-fix.patch
+* dump_stack-add-vmlinux-build-id-to-stack-traces.patch
+* module-add-printk-formats-to-add-module-build-id-to-stacktraces.patch
+* module-add-printk-formats-to-add-module-build-id-to-stacktraces-fix.patch
+* module-add-printk-formats-to-add-module-build-id-to-stacktraces-fix-2.patch
+* arm64-stacktrace-use-%psb-for-backtrace-printing.patch
+* x86-dumpstack-use-%psb-%pbb-for-backtrace-printing.patch
+* scripts-decode_stacktracesh-support-debuginfod.patch
+* scripts-decode_stacktracesh-silence-stderr-messages-from-addr2line-nm.patch
+* scripts-decode_stacktracesh-indicate-auto-can-be-used-for-base-path.patch
+* buildid-mark-some-arguments-const.patch
+* buildid-fix-kernel-doc-notation.patch
+* kdump-use-vmlinux_build_id-to-simplify.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
