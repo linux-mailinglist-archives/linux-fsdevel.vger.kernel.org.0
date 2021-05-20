@@ -2,113 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3198A389B63
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 04:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10CDC389C00
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 05:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbhETCe2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 May 2021 22:34:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36054 "EHLO
+        id S230312AbhETDrW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 May 2021 23:47:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230062AbhETCeY (ORCPT
+        with ESMTP id S230298AbhETDrV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 May 2021 22:34:24 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26327C061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 May 2021 19:29:58 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id b17so17608370ede.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 May 2021 19:29:58 -0700 (PDT)
+        Wed, 19 May 2021 23:47:21 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75DCFC061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 May 2021 20:45:59 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id t21so8240675plo.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 May 2021 20:45:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=HMvb0n4LbT0TuR0D9FQ2CMeCBbUPAKGZCz3Dr44PaW0=;
-        b=Txx4en7He1hssPu2O0K85osEJQZOh7gSdD0fTc0HK9bfCb4tHcSPL5Vzmbo+HxZeG7
-         URkI9280Aidu0068F+2W+uFM9mZJXhAmzADK/uBcrE4inPGAc6xCDE//RUM4fSma2JL2
-         TRZ3uDScXtitVVNjSxFcVatkWzABu9gj6SfwwD2f67V+Dm8GZUa+l5YckeU5nhyJ4LDW
-         rYQftnJ6n7XnGyTKVTt1+fpEwwiijkrkn6b7tJMrxKLyhKQyO3zTkFDHL+S0P2J00drS
-         3mztBgaPdlwObdd5gZ9XoIDvAiDsAhG5whNcEk1SVLmzj+sbrBkIA3ERcR9ut7kG5eBC
-         aNAw==
+        bh=dsx7U7xFEMYwysEjpdGkhCMavbrgfZJA5H4Xahpf5cI=;
+        b=K1wI5foB/OFwa+YxtQyl0ye+iraAQYmdC/sZ87b1fWKNRpvWVu/f99q9N6jwfkD5yl
+         Iy31CmZi4cuch3FS144/63jLe29jilr2SE5Cy2AF9AOZfdQIScIY5ZP9nXWDwWtTMEgN
+         RMqF0Go5He+ZYyWIp9r8jNUgQ8G+JYIYhokz8jyk35r583XRegVPp637VbVUfIJnrlU+
+         zNGq4IW/pZhPe35JHlrpAmKgZibJaqDyj27wEeYRemTsvGzIhAr2i/OD4rxFGAfPfbNk
+         ucGbH9k5n05eqo3ZYZv24VUePrzJ/nE6ETGEJNwJFr1A2NGW+JGSXS6Xlnm7PgA9TtRZ
+         Q85Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=HMvb0n4LbT0TuR0D9FQ2CMeCBbUPAKGZCz3Dr44PaW0=;
-        b=oQUtx3chSvQUvPThPX7N6Ts3Zjt4dthWBS1ylz9qY/mpPdg9olFIPezi+SY2+eVMVa
-         O53tCIt1r79jDQhkHbfW/2XwRyNQ3K0uwJRSxmJjBcWSHDQwHPvK9ImslK2F6vR3CmeT
-         ulNbRkqcvS9AdY8hdmXN1p3Ra6JamVEx1Ria88BKdUHE4pYFN8oKyb6QryetZ8ZM5w2+
-         KseQc8OKhjPCkpdSt4sSL2wKYyF6U3Pf9SwSbNx5RL/cmQDAhAea/zP+DpskAh9IlFiA
-         HQkrBUwxCh7g98dKGsVLrss71YZCrg3qW//ugWwf/MBsR3/x0ZYarjE7gnKESln9a4aX
-         YzWQ==
-X-Gm-Message-State: AOAM5313D15LaOZlyppzTHZLyJ3+Hu5FYJ3SlAYJZG/migvwiYpXTvrQ
-        9MIGDEai3KsYnEQKv3XJfyLkxPg7MEdVwDwArJCH
-X-Google-Smtp-Source: ABdhPJyoLkr8GyC3B4QaWLzLx+0i5610F7svY2rfiE3HwXPDEKHBBbrmg3LGiwaDCUWU9nCiE/UURZPi4UjfuiE0tBE=
-X-Received: by 2002:aa7:de9a:: with SMTP id j26mr2395605edv.269.1621477796545;
- Wed, 19 May 2021 19:29:56 -0700 (PDT)
+        bh=dsx7U7xFEMYwysEjpdGkhCMavbrgfZJA5H4Xahpf5cI=;
+        b=EjGm0cxd6qXsVjwjLsOK2QDP4vPAafkbRtgTsAb1mvHhm6YVaVA0DlqA9wXm6WXgQe
+         uyaVxN1V4ZqH/2+XMPKHvePRO3XfyVS0ZzH4vFtryFqeuTGfG7WIsdcP5mOAF4qfNux8
+         OFS8lXwGKrQHgFUDbFCrwj5xZKifOqe0vwJGViPBavAOmoMaIfHvjHEeHc7H+Yz6pVf9
+         sHpU54J8Akokfl/TzqB7tBDJ2hFsENwCeSMQ14pJN2C2+TILuiXbTlRd9EYJIm5WSy20
+         e7u+UZkyo6IwJb/77vRiLVuEw8Kvt9AGw7GSIaSzD1GwDvpfVoWBT2Rz2XhzDUz5kQnU
+         0ndg==
+X-Gm-Message-State: AOAM532Iixh74BB1XJaDD4T0f1oXvSbEpuhbN8GKCnl3d+LcbVoX8MYZ
+        a3PdTWgJoK8L15cYtdixRRkiHBUr2iiuw1RqbNSk9w==
+X-Google-Smtp-Source: ABdhPJzsTfKJ0VkQK6fxhnPimvNAb8jp7vq5SsLJdXpFeRYgoELgi5Ucv3Tv8vbqJdubvqR7ufMgTbx+6ERjqnj1yjM=
+X-Received: by 2002:a17:90a:6d43:: with SMTP id z61mr2855552pjj.147.1621482359005;
+ Wed, 19 May 2021 20:45:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210519113058.1979817-1-memxor@gmail.com> <20210519113058.1979817-2-memxor@gmail.com>
- <CAHC9VhTBcCJ1TfvB-HbzrByroeqfFE-SF_REik9PDSdqmJbuYA@mail.gmail.com> <20210519230710.k3hzomsr27onevhf@apollo>
-In-Reply-To: <20210519230710.k3hzomsr27onevhf@apollo>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 19 May 2021 22:29:45 -0400
-Message-ID: <CAHC9VhSV8Y=kR2NH8AYzZ550DhpXn2ccepq1NO=z34aLC4DhsA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs: anon_inodes: export anon_inode_getfile_secure helper
-To:     Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc:     io-uring@vger.kernel.org, Pavel Emelyanov <xemul@openvz.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210402091145.80635-1-songmuchun@bytedance.com>
+In-Reply-To: <20210402091145.80635-1-songmuchun@bytedance.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Thu, 20 May 2021 11:45:23 +0800
+Message-ID: <CAMZfGtUZgXsNOiyR==G+zLSN91PREss=XcbcfE0COkB8APcDxA@mail.gmail.com>
+Subject: Re: [PATCH v3] writeback: fix obtain a reference to a freeing memcg css
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Tejun Heo <tj@kernel.org>, axboe@fb.com,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        Michal Hocko <mhocko@suse.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 19, 2021 at 7:07 PM Kumar Kartikeya Dwivedi
-<memxor@gmail.com> wrote:
-> On Wed, May 19, 2021 at 08:52:51PM IST, Paul Moore wrote:
-> > On Wed, May 19, 2021 at 7:37 AM Kumar Kartikeya Dwivedi
-> > <memxor@gmail.com> wrote:
-> > >
-> > > This is the non-fd installing analogue of anon_inode_getfd_secure. In
-> > > addition to allowing LSMs to attach policy to the distinct inode, this
-> > > is also needed for checkpoint restore of an io_uring instance where a
-> > > mapped region needs to mapped back to the io_uring fd by CRIU. This is
-> > > currently not possible as all anon_inodes share a single inode.
-> > >
-> > > Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-> > > ---
-> > >  fs/anon_inodes.c            | 9 +++++++++
-> > >  include/linux/anon_inodes.h | 4 ++++
-> > >  2 files changed, 13 insertions(+)
-> >
-> > [NOTE: dropping dancol@google as that email is bouncy]
-> >
-> > > diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> > > index a280156138ed..37032786b211 100644
-> > > --- a/fs/anon_inodes.c
-> > > +++ b/fs/anon_inodes.c
-> > > @@ -148,6 +148,15 @@ struct file *anon_inode_getfile(const char *name,
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(anon_inode_getfile);
-> >
-> > This function should have a comment block at the top similar to
-> > anon_inode_getfile(); in fact you can likely copy-n-paste the bulk of
-> > it to use as a start.
-> >
-> > If you don't want to bother respinning, I've got this exact patch
-> > (+comments) in my patchset that I'll post later and I'm happy to
-> > give/share credit if that is important to you.
-> >
+Hi,
+
+It seems like this patch has not been added to the linux-next
+tree. Can anyone help with this? Thanks.
+
+On Fri, Apr 2, 2021 at 5:13 PM Muchun Song <songmuchun@bytedance.com> wrote:
 >
-> That'd be great; no credit is fine :). Please CC me when you post it.
-
-Will do.  I dug out my system which had the patches and I'm working on
-forward porting them to v5.13-rc2; if I don't have them cleaned up
-enough for posting by Thursday, I'll make sure they are at least RFC
-ready by Friday.
-
--- 
-paul moore
-www.paul-moore.com
+> The caller of wb_get_create() should pin the memcg, because
+> wb_get_create() relies on this guarantee. The rcu read lock
+> only can guarantee that the memcg css returned by css_from_id()
+> cannot be released, but the reference of the memcg can be zero.
+>
+>   rcu_read_lock()
+>   memcg_css = css_from_id()
+>   wb_get_create(memcg_css)
+>       cgwb_create(memcg_css)
+>           // css_get can change the ref counter from 0 back to 1
+>           css_get(memcg_css)
+>   rcu_read_unlock()
+>
+> Fix it by holding a reference to the css before calling
+> wb_get_create(). This is not a problem I encountered in the
+> real world. Just the result of a code review.
+>
+> Fixes: 682aa8e1a6a1 ("writeback: implement unlocked_inode_to_wb transaction and use it for stat updates")
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> ---
+> Changelog in v3:
+>  1. Do not change GFP_ATOMIC.
+>  2. Update commit log.
+>
+>  Thanks for Michal's review and suggestions.
+>
+> Changelog in v2:
+>  1. Replace GFP_ATOMIC with GFP_NOIO suggested by Matthew.
+>
+>
+>  fs/fs-writeback.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 3ac002561327..dedde99da40d 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -506,9 +506,14 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
+>         /* find and pin the new wb */
+>         rcu_read_lock();
+>         memcg_css = css_from_id(new_wb_id, &memory_cgrp_subsys);
+> -       if (memcg_css)
+> -               isw->new_wb = wb_get_create(bdi, memcg_css, GFP_ATOMIC);
+> +       if (memcg_css && !css_tryget(memcg_css))
+> +               memcg_css = NULL;
+>         rcu_read_unlock();
+> +       if (!memcg_css)
+> +               goto out_free;
+> +
+> +       isw->new_wb = wb_get_create(bdi, memcg_css, GFP_ATOMIC);
+> +       css_put(memcg_css);
+>         if (!isw->new_wb)
+>                 goto out_free;
+>
+> --
+> 2.11.0
+>
