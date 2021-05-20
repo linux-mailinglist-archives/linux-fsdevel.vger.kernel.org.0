@@ -2,141 +2,562 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06367389EAA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 09:08:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CCEC389F21
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 09:51:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230489AbhETHKE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 May 2021 03:10:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41312 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230429AbhETHKD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 May 2021 03:10:03 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDC8FC061761
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 May 2021 00:08:42 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id p24so22332115ejb.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 May 2021 00:08:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KPPDvbdoZYkF98kJEXLJL5DQM+/NDzpAbyD+0wj0y0A=;
-        b=Se9KYEfzncKvZO5zuibSZNbij3GfLYq8vJWZIp5Rt7L9U5AyliRF9b0kqfP6IAmgge
-         7Krig9HpLukT74foF5zhNSAlQwK2yDEcBbVOWe5ziBdJ8l8A4E0m1P87IPiYFuaIY6UE
-         k79Xf3InR5zOQmjg8jMvS37YGVQm94PGO0lIcvXbhWGWr30k+pNFNRDadGZk8bu2lu9+
-         tTLWF0hTnA816jLyuweb3DM1RTEi+87p0Qe9+TImwfmI+OmewWBM/i8IMHK5U7pWkFGC
-         AbjI3ivFGlXwBO+7i1ZCHXmWnoxS9VFDTqlUmnwJ0M5G8JFKs2Hx0HMa19GMvyknHXal
-         Q+sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KPPDvbdoZYkF98kJEXLJL5DQM+/NDzpAbyD+0wj0y0A=;
-        b=fSMhkhn7JyB43loQGK4gk1x8MUtwbbBKIju50vIQDI+8uoXv9C+zWssXV7qP8d3yMX
-         f4YI0AP/dy2cjthzExQJoZBuIjm7THEScmKu7oGCqURvw4XcE8uNWd7h5N+hK0O7y3Ot
-         JmYdAKr/KcwLib41AfRugSZNUTcy2NRqaLp3WA3sCNxKzzTlBNI1BwZ8t7Yxon80Olxl
-         naO9fee2mcTYoa/a7tEKv1zZqd6RBbmU5NNhatJBgfBBewORZ1ja5irbdmfkPIowzW99
-         LDrispxLZr+NqnrX1HNOaqhx3cshkztHcj8Q+MoMZMbYFBtj3R5UJGe9nIhe5h2UZh80
-         KrLw==
-X-Gm-Message-State: AOAM530ONX5plW/8WtQNKPq7N8doXlaPhMjZvQVSR5N4TcOdtIy/E0r7
-        mecL6W6EF7w7G65PnQ9lRtxUDxOrEj5S05WwCDW7
-X-Google-Smtp-Source: ABdhPJw1qaVXgdxcGdVjGAKmjj/w5JqA2hGu9Vaio3k3hOBCyVJZ7/UOZ9K52sSkcUhiotF7loRy9jJ04HYXeZSSc/k=
-X-Received: by 2002:a17:906:456:: with SMTP id e22mr3125837eja.427.1621494521280;
- Thu, 20 May 2021 00:08:41 -0700 (PDT)
+        id S230459AbhETHwT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 May 2021 03:52:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59616 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229534AbhETHwS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 May 2021 03:52:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7EE0B611AE;
+        Thu, 20 May 2021 07:50:53 +0000 (UTC)
+Date:   Thu, 20 May 2021 09:50:50 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Paris <eparis@redhat.com>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Arnd Bergmann <arnd@kernel.org>
+Subject: Re: [PATCH v4 1/3] audit: replace magic audit syscall class numbers
+ with macros
+Message-ID: <20210520075050.2u5rl3tjrn2i6bze@wittgenstein>
+References: <cover.1621363275.git.rgb@redhat.com>
+ <2300b1083a32aade7ae7efb95826e8f3f260b1df.1621363275.git.rgb@redhat.com>
 MIME-Version: 1.0
-References: <20210517095513.850-1-xieyongji@bytedance.com> <20210517095513.850-5-xieyongji@bytedance.com>
- <CACycT3s1rEvNnNkJKQsHGRsyLPADieFdVkb1Sp3GObR0Vox5Fg@mail.gmail.com>
- <20210519144206.GF32682@kadam> <CACycT3veubBFCg9omxLDJJFP7B7QH8++Q+tKmb_M_hmNS45cmw@mail.gmail.com>
- <20210520013921-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20210520013921-mutt-send-email-mst@kernel.org>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Thu, 20 May 2021 15:08:30 +0800
-Message-ID: <CACycT3v=JDH4SE=2GyeTJVZ7iywhpJoKCYhZ0tAvZTxgfSoOWQ@mail.gmail.com>
-Subject: Re: Re: Re: [PATCH v7 04/12] virtio-blk: Add validation for block
- size in config space
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        joro@8bytes.org,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2300b1083a32aade7ae7efb95826e8f3f260b1df.1621363275.git.rgb@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 20, 2021 at 1:43 PM Michael S. Tsirkin <mst@redhat.com> wrote:
->
-> On Thu, May 20, 2021 at 01:25:16PM +0800, Yongji Xie wrote:
-> > On Wed, May 19, 2021 at 10:42 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > >
-> > > On Wed, May 19, 2021 at 09:39:20PM +0800, Yongji Xie wrote:
-> > > > On Mon, May 17, 2021 at 5:56 PM Xie Yongji <xieyongji@bytedance.com> wrote:
-> > > > >
-> > > > > This ensures that we will not use an invalid block size
-> > > > > in config space (might come from an untrusted device).
-> > >
-> > > I looked at if I should add this as an untrusted function so that Smatch
-> > > could find these sorts of bugs but this is reading data from the host so
-> > > there has to be some level of trust...
-> > >
-> >
-> > It would be great if Smatch could detect this case if possible. The
-> > data might be trusted in traditional VM cases. But now the data can be
-> > read from a userspace daemon when VDUSE is enabled.
-> >
-> > > I should add some more untrusted data kvm functions to Smatch.  Right
-> > > now I only have kvm_register_read() and I've added kvm_read_guest_virt()
-> > > just now.
-> > >
-> > > > >
-> > > > > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> > > > > ---
-> > > > >  drivers/block/virtio_blk.c | 2 +-
-> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-> > > > > index ebb4d3fe803f..c848aa36d49b 100644
-> > > > > --- a/drivers/block/virtio_blk.c
-> > > > > +++ b/drivers/block/virtio_blk.c
-> > > > > @@ -826,7 +826,7 @@ static int virtblk_probe(struct virtio_device *vdev)
-> > > > >         err = virtio_cread_feature(vdev, VIRTIO_BLK_F_BLK_SIZE,
-> > > > >                                    struct virtio_blk_config, blk_size,
-> > > > >                                    &blk_size);
-> > > > > -       if (!err)
-> > > > > +       if (!err && blk_size > 0 && blk_size <= max_size)
-> > > >
-> > > > The check here is incorrect. I will use PAGE_SIZE as the maximum
-> > > > boundary in the new version.
-> > >
-> > > What does this bug look like to the user?
-> >
-> > The kernel will panic if the block size is larger than PAGE_SIZE.
->
-> Kernel panic at this point is par for the course IMHO.
+On Wed, May 19, 2021 at 04:00:20PM -0400, Richard Guy Briggs wrote:
+> Replace audit syscall class magic numbers with macros.
+> 
+> This required putting the macros into new header file
+> include/linux/auditsc_classmacros.h since the syscall macros were
+> included for both 64 bit and 32 bit in any compat code, causing
+> redefinition warnings.
+> 
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> Link: https://lore.kernel.org/r/2300b1083a32aade7ae7efb95826e8f3f260b1df.1621363275.git.rgb@redhat.com
 
-But it seems better if we can avoid this kind of panic. Because this
-might also be triggered by a buggy VDUSE daemon.
+Looks good.
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-> Let's focus on eliminating data corruption for starters.
+Fwiw, I would explicitly number all enum values in auditsc_class_t not
+just the first one.
 
-OK, now the incorrect used length might cause data corruption in
-virtio-net and virtio-console drivers as I mentioned in another mail.
-I will send a fix ASAP.
-
-Thanks,
-Yongji
+> ---
+>  MAINTAINERS                         |  1 +
+>  arch/alpha/kernel/audit.c           |  8 ++++----
+>  arch/ia64/kernel/audit.c            |  8 ++++----
+>  arch/parisc/kernel/audit.c          |  8 ++++----
+>  arch/parisc/kernel/compat_audit.c   |  9 +++++----
+>  arch/powerpc/kernel/audit.c         | 10 +++++-----
+>  arch/powerpc/kernel/compat_audit.c  | 11 ++++++-----
+>  arch/s390/kernel/audit.c            | 10 +++++-----
+>  arch/s390/kernel/compat_audit.c     | 11 ++++++-----
+>  arch/sparc/kernel/audit.c           | 10 +++++-----
+>  arch/sparc/kernel/compat_audit.c    | 11 ++++++-----
+>  arch/x86/ia32/audit.c               | 11 ++++++-----
+>  arch/x86/kernel/audit_64.c          |  8 ++++----
+>  include/linux/audit.h               |  1 +
+>  include/linux/auditsc_classmacros.h | 23 +++++++++++++++++++++++
+>  kernel/auditsc.c                    | 12 ++++++------
+>  lib/audit.c                         | 10 +++++-----
+>  lib/compat_audit.c                  | 11 ++++++-----
+>  18 files changed, 102 insertions(+), 71 deletions(-)
+>  create mode 100644 include/linux/auditsc_classmacros.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index bd7aff0c120f..3348d12019f9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3036,6 +3036,7 @@ W:	https://github.com/linux-audit
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
+>  F:	include/asm-generic/audit_*.h
+>  F:	include/linux/audit.h
+> +F:	include/linux/auditsc_classmacros.h
+>  F:	include/uapi/linux/audit.h
+>  F:	kernel/audit*
+>  F:	lib/*audit.c
+> diff --git a/arch/alpha/kernel/audit.c b/arch/alpha/kernel/audit.c
+> index 96a9d18ff4c4..81cbd804e375 100644
+> --- a/arch/alpha/kernel/audit.c
+> +++ b/arch/alpha/kernel/audit.c
+> @@ -37,13 +37,13 @@ int audit_classify_syscall(int abi, unsigned syscall)
+>  {
+>  	switch(syscall) {
+>  	case __NR_open:
+> -		return 2;
+> +		return AUDITSC_OPEN;
+>  	case __NR_openat:
+> -		return 3;
+> +		return AUDITSC_OPENAT;
+>  	case __NR_execve:
+> -		return 5;
+> +		return AUDITSC_EXECVE;
+>  	default:
+> -		return 0;
+> +		return AUDITSC_NATIVE;
+>  	}
+>  }
+>  
+> diff --git a/arch/ia64/kernel/audit.c b/arch/ia64/kernel/audit.c
+> index 5192ca899fe6..dba6a74c9ab3 100644
+> --- a/arch/ia64/kernel/audit.c
+> +++ b/arch/ia64/kernel/audit.c
+> @@ -38,13 +38,13 @@ int audit_classify_syscall(int abi, unsigned syscall)
+>  {
+>  	switch(syscall) {
+>  	case __NR_open:
+> -		return 2;
+> +		return AUDITSC_OPEN;
+>  	case __NR_openat:
+> -		return 3;
+> +		return AUDITSC_OPENAT;
+>  	case __NR_execve:
+> -		return 5;
+> +		return AUDITSC_EXECVE;
+>  	default:
+> -		return 0;
+> +		return AUDITSC_NATIVE;
+>  	}
+>  }
+>  
+> diff --git a/arch/parisc/kernel/audit.c b/arch/parisc/kernel/audit.c
+> index 9eb47b2225d2..14244e83db75 100644
+> --- a/arch/parisc/kernel/audit.c
+> +++ b/arch/parisc/kernel/audit.c
+> @@ -47,13 +47,13 @@ int audit_classify_syscall(int abi, unsigned syscall)
+>  #endif
+>  	switch (syscall) {
+>  	case __NR_open:
+> -		return 2;
+> +		return AUDITSC_OPEN;
+>  	case __NR_openat:
+> -		return 3;
+> +		return AUDITSC_OPENAT;
+>  	case __NR_execve:
+> -		return 5;
+> +		return AUDITSC_EXECVE;
+>  	default:
+> -		return 0;
+> +		return AUDITSC_NATIVE;
+>  	}
+>  }
+>  
+> diff --git a/arch/parisc/kernel/compat_audit.c b/arch/parisc/kernel/compat_audit.c
+> index 20c39c9d86a9..1d6347d37d92 100644
+> --- a/arch/parisc/kernel/compat_audit.c
+> +++ b/arch/parisc/kernel/compat_audit.c
+> @@ -1,4 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0
+> +#include <linux/auditsc_classmacros.h>
+>  #include <asm/unistd.h>
+>  
+>  unsigned int parisc32_dir_class[] = {
+> @@ -30,12 +31,12 @@ int parisc32_classify_syscall(unsigned syscall)
+>  {
+>  	switch (syscall) {
+>  	case __NR_open:
+> -		return 2;
+> +		return AUDITSC_OPEN;
+>  	case __NR_openat:
+> -		return 3;
+> +		return AUDITSC_OPENAT;
+>  	case __NR_execve:
+> -		return 5;
+> +		return AUDITSC_EXECVE;
+>  	default:
+> -		return 1;
+> +		return AUDITSC_COMPAT;
+>  	}
+>  }
+> diff --git a/arch/powerpc/kernel/audit.c b/arch/powerpc/kernel/audit.c
+> index a2dddd7f3d09..6eb18ef77dff 100644
+> --- a/arch/powerpc/kernel/audit.c
+> +++ b/arch/powerpc/kernel/audit.c
+> @@ -47,15 +47,15 @@ int audit_classify_syscall(int abi, unsigned syscall)
+>  #endif
+>  	switch(syscall) {
+>  	case __NR_open:
+> -		return 2;
+> +		return AUDITSC_OPEN;
+>  	case __NR_openat:
+> -		return 3;
+> +		return AUDITSC_OPENAT;
+>  	case __NR_socketcall:
+> -		return 4;
+> +		return AUDITSC_SOCKETCALL;
+>  	case __NR_execve:
+> -		return 5;
+> +		return AUDITSC_EXECVE;
+>  	default:
+> -		return 0;
+> +		return AUDITSC_NATIVE;
+>  	}
+>  }
+>  
+> diff --git a/arch/powerpc/kernel/compat_audit.c b/arch/powerpc/kernel/compat_audit.c
+> index 55c6ccda0a85..b1dc2d1c4bad 100644
+> --- a/arch/powerpc/kernel/compat_audit.c
+> +++ b/arch/powerpc/kernel/compat_audit.c
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #undef __powerpc64__
+> +#include <linux/auditsc_classmacros.h>
+>  #include <asm/unistd.h>
+>  
+>  unsigned ppc32_dir_class[] = {
+> @@ -31,14 +32,14 @@ int ppc32_classify_syscall(unsigned syscall)
+>  {
+>  	switch(syscall) {
+>  	case __NR_open:
+> -		return 2;
+> +		return AUDITSC_OPEN;
+>  	case __NR_openat:
+> -		return 3;
+> +		return AUDITSC_OPENAT;
+>  	case __NR_socketcall:
+> -		return 4;
+> +		return AUDITSC_SOCKETCALL;
+>  	case __NR_execve:
+> -		return 5;
+> +		return AUDITSC_EXECVE;
+>  	default:
+> -		return 1;
+> +		return AUDITSC_COMPAT;
+>  	}
+>  }
+> diff --git a/arch/s390/kernel/audit.c b/arch/s390/kernel/audit.c
+> index d395c6c9944c..7e331e1831d4 100644
+> --- a/arch/s390/kernel/audit.c
+> +++ b/arch/s390/kernel/audit.c
+> @@ -47,15 +47,15 @@ int audit_classify_syscall(int abi, unsigned syscall)
+>  #endif
+>  	switch(syscall) {
+>  	case __NR_open:
+> -		return 2;
+> +		return AUDITSC_OPEN;
+>  	case __NR_openat:
+> -		return 3;
+> +		return AUDITSC_OPENAT;
+>  	case __NR_socketcall:
+> -		return 4;
+> +		return AUDITSC_SOCKETCALL;
+>  	case __NR_execve:
+> -		return 5;
+> +		return AUDITSC_EXECVE;
+>  	default:
+> -		return 0;
+> +		return AUDITSC_NATIVE;
+>  	}
+>  }
+>  
+> diff --git a/arch/s390/kernel/compat_audit.c b/arch/s390/kernel/compat_audit.c
+> index 444fb1f66944..fc3d1c7ad21c 100644
+> --- a/arch/s390/kernel/compat_audit.c
+> +++ b/arch/s390/kernel/compat_audit.c
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #undef __s390x__
+> +#include <linux/auditsc_classmacros.h>
+>  #include <asm/unistd.h>
+>  #include "audit.h"
+>  
+> @@ -32,14 +33,14 @@ int s390_classify_syscall(unsigned syscall)
+>  {
+>  	switch(syscall) {
+>  	case __NR_open:
+> -		return 2;
+> +		return AUDITSC_OPEN;
+>  	case __NR_openat:
+> -		return 3;
+> +		return AUDITSC_OPENAT;
+>  	case __NR_socketcall:
+> -		return 4;
+> +		return AUDITSC_SOCKETCALL;
+>  	case __NR_execve:
+> -		return 5;
+> +		return AUDITSC_EXECVE;
+>  	default:
+> -		return 1;
+> +		return AUDITSC_COMPAT;
+>  	}
+>  }
+> diff --git a/arch/sparc/kernel/audit.c b/arch/sparc/kernel/audit.c
+> index a6e91bf34d48..50fab35bdaba 100644
+> --- a/arch/sparc/kernel/audit.c
+> +++ b/arch/sparc/kernel/audit.c
+> @@ -48,15 +48,15 @@ int audit_classify_syscall(int abi, unsigned int syscall)
+>  #endif
+>  	switch(syscall) {
+>  	case __NR_open:
+> -		return 2;
+> +		return AUDITSC_OPEN;
+>  	case __NR_openat:
+> -		return 3;
+> +		return AUDITSC_OPENAT;
+>  	case __NR_socketcall:
+> -		return 4;
+> +		return AUDITSC_SOCKETCALL;
+>  	case __NR_execve:
+> -		return 5;
+> +		return AUDITSC_EXECVE;
+>  	default:
+> -		return 0;
+> +		return AUDITSC_NATIVE;
+>  	}
+>  }
+>  
+> diff --git a/arch/sparc/kernel/compat_audit.c b/arch/sparc/kernel/compat_audit.c
+> index 10eeb4f15b20..1c1b6d075421 100644
+> --- a/arch/sparc/kernel/compat_audit.c
+> +++ b/arch/sparc/kernel/compat_audit.c
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #define __32bit_syscall_numbers__
+> +#include <linux/auditsc_classmacros.h>
+>  #include <asm/unistd.h>
+>  #include "kernel.h"
+>  
+> @@ -32,14 +33,14 @@ int sparc32_classify_syscall(unsigned int syscall)
+>  {
+>  	switch(syscall) {
+>  	case __NR_open:
+> -		return 2;
+> +		return AUDITSC_OPEN;
+>  	case __NR_openat:
+> -		return 3;
+> +		return AUDITSC_OPENAT;
+>  	case __NR_socketcall:
+> -		return 4;
+> +		return AUDITSC_SOCKETCALL;
+>  	case __NR_execve:
+> -		return 5;
+> +		return AUDITSC_EXECVE;
+>  	default:
+> -		return 1;
+> +		return AUDITSC_COMPAT;
+>  	}
+>  }
+> diff --git a/arch/x86/ia32/audit.c b/arch/x86/ia32/audit.c
+> index 6efe6cb3768a..eedc37a1ee13 100644
+> --- a/arch/x86/ia32/audit.c
+> +++ b/arch/x86/ia32/audit.c
+> @@ -1,4 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0
+> +#include <linux/auditsc_classmacros.h>
+>  #include <asm/unistd_32.h>
+>  #include <asm/audit.h>
+>  
+> @@ -31,15 +32,15 @@ int ia32_classify_syscall(unsigned syscall)
+>  {
+>  	switch (syscall) {
+>  	case __NR_open:
+> -		return 2;
+> +		return AUDITSC_OPEN;
+>  	case __NR_openat:
+> -		return 3;
+> +		return AUDITSC_OPENAT;
+>  	case __NR_socketcall:
+> -		return 4;
+> +		return AUDITSC_SOCKETCALL;
+>  	case __NR_execve:
+>  	case __NR_execveat:
+> -		return 5;
+> +		return AUDITSC_EXECVE;
+>  	default:
+> -		return 1;
+> +		return AUDITSC_COMPAT;
+>  	}
+>  }
+> diff --git a/arch/x86/kernel/audit_64.c b/arch/x86/kernel/audit_64.c
+> index 83d9cad4e68b..2a6cc9c9c881 100644
+> --- a/arch/x86/kernel/audit_64.c
+> +++ b/arch/x86/kernel/audit_64.c
+> @@ -47,14 +47,14 @@ int audit_classify_syscall(int abi, unsigned syscall)
+>  #endif
+>  	switch(syscall) {
+>  	case __NR_open:
+> -		return 2;
+> +		return AUDITSC_OPEN;
+>  	case __NR_openat:
+> -		return 3;
+> +		return AUDITSC_OPENAT;
+>  	case __NR_execve:
+>  	case __NR_execveat:
+> -		return 5;
+> +		return AUDITSC_EXECVE;
+>  	default:
+> -		return 0;
+> +		return AUDITSC_NATIVE;
+>  	}
+>  }
+>  
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index 82b7c1116a85..283bc91a6932 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -11,6 +11,7 @@
+>  
+>  #include <linux/sched.h>
+>  #include <linux/ptrace.h>
+> +#include <linux/auditsc_classmacros.h> /* syscall class macros */
+>  #include <uapi/linux/audit.h>
+>  #include <uapi/linux/netfilter/nf_tables.h>
+>  
+> diff --git a/include/linux/auditsc_classmacros.h b/include/linux/auditsc_classmacros.h
+> new file mode 100644
+> index 000000000000..18757d270961
+> --- /dev/null
+> +++ b/include/linux/auditsc_classmacros.h
+> @@ -0,0 +1,23 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/* auditsc_classmacros.h -- Auditing support syscall macros
+> + *
+> + * Copyright 2021 Red Hat Inc., Durham, North Carolina.
+> + * All Rights Reserved.
+> + *
+> + * Author: Richard Guy Briggs <rgb@redhat.com>
+> + */
+> +#ifndef _LINUX_AUDITSCM_H_
+> +#define _LINUX_AUDITSCM_H_
+> +
+> +enum auditsc_class_t {
+> +	AUDITSC_NATIVE = 0,
+> +	AUDITSC_COMPAT,
+> +	AUDITSC_OPEN,
+> +	AUDITSC_OPENAT,
+> +	AUDITSC_SOCKETCALL,
+> +	AUDITSC_EXECVE,
+> +
+> +	AUDITSC_NVALS /* count */
+> +};
+> +
+> +#endif
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 0a9a1569f1ea..d775ea16505b 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -166,7 +166,7 @@ static int audit_match_perm(struct audit_context *ctx, int mask)
+>  	n = ctx->major;
+>  
+>  	switch (audit_classify_syscall(ctx->arch, n)) {
+> -	case 0:	/* native */
+> +	case AUDITSC_NATIVE:
+>  		if ((mask & AUDIT_PERM_WRITE) &&
+>  		     audit_match_class(AUDIT_CLASS_WRITE, n))
+>  			return 1;
+> @@ -177,7 +177,7 @@ static int audit_match_perm(struct audit_context *ctx, int mask)
+>  		     audit_match_class(AUDIT_CLASS_CHATTR, n))
+>  			return 1;
+>  		return 0;
+> -	case 1: /* 32bit on biarch */
+> +	case AUDITSC_COMPAT: /* 32bit on biarch */
+>  		if ((mask & AUDIT_PERM_WRITE) &&
+>  		     audit_match_class(AUDIT_CLASS_WRITE_32, n))
+>  			return 1;
+> @@ -188,13 +188,13 @@ static int audit_match_perm(struct audit_context *ctx, int mask)
+>  		     audit_match_class(AUDIT_CLASS_CHATTR_32, n))
+>  			return 1;
+>  		return 0;
+> -	case 2: /* open */
+> +	case AUDITSC_OPEN:
+>  		return mask & ACC_MODE(ctx->argv[1]);
+> -	case 3: /* openat */
+> +	case AUDITSC_OPENAT:
+>  		return mask & ACC_MODE(ctx->argv[2]);
+> -	case 4: /* socketcall */
+> +	case AUDITSC_SOCKETCALL:
+>  		return ((mask & AUDIT_PERM_WRITE) && ctx->argv[0] == SYS_BIND);
+> -	case 5: /* execve */
+> +	case AUDITSC_EXECVE:
+>  		return mask & AUDIT_PERM_EXEC;
+>  	default:
+>  		return 0;
+> diff --git a/lib/audit.c b/lib/audit.c
+> index 5004bff928a7..3ec1a94d8d64 100644
+> --- a/lib/audit.c
+> +++ b/lib/audit.c
+> @@ -45,23 +45,23 @@ int audit_classify_syscall(int abi, unsigned syscall)
+>  	switch(syscall) {
+>  #ifdef __NR_open
+>  	case __NR_open:
+> -		return 2;
+> +		return AUDITSC_OPEN;
+>  #endif
+>  #ifdef __NR_openat
+>  	case __NR_openat:
+> -		return 3;
+> +		return AUDITSC_OPENAT;
+>  #endif
+>  #ifdef __NR_socketcall
+>  	case __NR_socketcall:
+> -		return 4;
+> +		return AUDITSC_SOCKETCALL;
+>  #endif
+>  #ifdef __NR_execveat
+>  	case __NR_execveat:
+>  #endif
+>  	case __NR_execve:
+> -		return 5;
+> +		return AUDITSC_EXECVE;
+>  	default:
+> -		return 0;
+> +		return AUDITSC_NATIVE;
+>  	}
+>  }
+>  
+> diff --git a/lib/compat_audit.c b/lib/compat_audit.c
+> index 77eabad69b4a..a38b282d353f 100644
+> --- a/lib/compat_audit.c
+> +++ b/lib/compat_audit.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #include <linux/init.h>
+>  #include <linux/types.h>
+> +#include <linux/auditsc_classmacros.h>
+>  #include <asm/unistd32.h>
+>  
+>  unsigned compat_dir_class[] = {
+> @@ -33,19 +34,19 @@ int audit_classify_compat_syscall(int abi, unsigned syscall)
+>  	switch (syscall) {
+>  #ifdef __NR_open
+>  	case __NR_open:
+> -		return 2;
+> +		return AUDITSC_OPEN;
+>  #endif
+>  #ifdef __NR_openat
+>  	case __NR_openat:
+> -		return 3;
+> +		return AUDITSC_OPENAT;
+>  #endif
+>  #ifdef __NR_socketcall
+>  	case __NR_socketcall:
+> -		return 4;
+> +		return AUDITSC_SOCKETCALL;
+>  #endif
+>  	case __NR_execve:
+> -		return 5;
+> +		return AUDITSC_EXECVE;
+>  	default:
+> -		return 1;
+> +		return AUDITSC_COMPAT;
+>  	}
+>  }
+> -- 
+> 2.27.0
+> 
