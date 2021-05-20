@@ -2,197 +2,289 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B921389F67
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 10:03:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19D93389FAF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 10:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230339AbhETIEt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 May 2021 04:04:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34018 "EHLO mail.kernel.org"
+        id S231176AbhETITV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 May 2021 04:19:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229953AbhETIEp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 May 2021 04:04:45 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7FFEB61001;
-        Thu, 20 May 2021 08:03:21 +0000 (UTC)
-Date:   Thu, 20 May 2021 10:03:18 +0200
+        id S229536AbhETITU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 May 2021 04:19:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 538F760698;
+        Thu, 20 May 2021 08:17:58 +0000 (UTC)
+Date:   Thu, 20 May 2021 10:17:55 +0200
 From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Paris <eparis@redhat.com>, linux-fsdevel@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [PATCH v4 3/3] audit: add OPENAT2 record to list how
-Message-ID: <20210520080318.owvsvvhh5qdhyzhk@wittgenstein>
-References: <cover.1621363275.git.rgb@redhat.com>
- <d23fbb89186754487850367224b060e26f9b7181.1621363275.git.rgb@redhat.com>
+To:     Matthew Bobrowski <repnop@google.com>
+Cc:     jack@suse.cz, amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH 5/5] fanotify: Add pidfd info record support to the
+ fanotify API
+Message-ID: <20210520081755.eqey4ryngngt4yqd@wittgenstein>
+References: <cover.1621473846.git.repnop@google.com>
+ <48d18055deb4617d97c695a08dca77eb573097e9.1621473846.git.repnop@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d23fbb89186754487850367224b060e26f9b7181.1621363275.git.rgb@redhat.com>
+In-Reply-To: <48d18055deb4617d97c695a08dca77eb573097e9.1621473846.git.repnop@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 19, 2021 at 04:00:22PM -0400, Richard Guy Briggs wrote:
-> Since the openat2(2) syscall uses a struct open_how pointer to communicate
-> its parameters they are not usefully recorded by the audit SYSCALL record's
-> four existing arguments.
+On Thu, May 20, 2021 at 12:11:51PM +1000, Matthew Bobrowski wrote:
+> Introduce a new flag FAN_REPORT_PIDFD for fanotify_init(2) which
+> allows userspace applications to control whether a pidfd info record
+> containing a pidfd is to be returned with each event.
 > 
-> Add a new audit record type OPENAT2 that reports the parameters in its
-> third argument, struct open_how with fields oflag, mode and resolve.
+> If FAN_REPORT_PIDFD is enabled for a notification group, an additional
+> struct fanotify_event_info_pidfd object will be supplied alongside the
+> generic struct fanotify_event_metadata within a single event. This
+> functionality is analogous to that of FAN_REPORT_FID in terms of how
+> the event structure is supplied to the userspace application. Usage of
+> FAN_REPORT_PIDFD with FAN_REPORT_FID/FAN_REPORT_DFID_NAME is
+> permitted, and in this case a struct fanotify_event_info_pidfd object
+> will follow any struct fanotify_event_info_fid object.
 > 
-> The new record in the context of an event would look like:
-> time->Wed Mar 17 16:28:53 2021
-> type=PROCTITLE msg=audit(1616012933.531:184): proctitle=73797363616C6C735F66696C652F6F70656E617432002F746D702F61756469742D7465737473756974652D737641440066696C652D6F70656E617432
-> type=PATH msg=audit(1616012933.531:184): item=1 name="file-openat2" inode=29 dev=00:1f mode=0100600 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=CREATE cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
-> type=PATH msg=audit(1616012933.531:184): item=0 name="/root/rgb/git/audit-testsuite/tests" inode=25 dev=00:1f mode=040700 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=PARENT cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
-> type=CWD msg=audit(1616012933.531:184): cwd="/root/rgb/git/audit-testsuite/tests"
-> type=OPENAT2 msg=audit(1616012933.531:184): oflag=0100302 mode=0600 resolve=0xa
-> type=SYSCALL msg=audit(1616012933.531:184): arch=c000003e syscall=437 success=yes exit=4 a0=3 a1=7ffe315f1c53 a2=7ffe315f1550 a3=18 items=2 ppid=528 pid=540 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=ttyS0 ses=1 comm="openat2" exe="/root/rgb/git/audit-testsuite/tests/syscalls_file/openat2" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="testsuite-1616012933-bjAUcEPO"
+> Usage of FAN_REPORT_TID is not permitted with FAN_REPORT_PIDFD as the
+> pidfd API only supports the creation of pidfds for thread-group
+> leaders. Attempting to do so will result with a -EINVAL being returned
+> when calling fanotify_init(2).
 > 
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> Link: https://lore.kernel.org/r/d23fbb89186754487850367224b060e26f9b7181.1621363275.git.rgb@redhat.com
+> If pidfd creation fails via pidfd_create(), the pidfd field within
+> struct fanotify_event_info_pidfd is set to FAN_NOPIDFD.
+> 
+> Signed-off-by: Matthew Bobrowski <repnop@google.com>
 > ---
->  fs/open.c                  |  2 ++
->  include/linux/audit.h      | 10 ++++++++++
->  include/uapi/linux/audit.h |  1 +
->  kernel/audit.h             |  2 ++
->  kernel/auditsc.c           | 18 +++++++++++++++++-
->  5 files changed, 32 insertions(+), 1 deletion(-)
+>  fs/notify/fanotify/fanotify_user.c | 65 +++++++++++++++++++++++++++---
+>  include/linux/fanotify.h           |  3 +-
+>  include/uapi/linux/fanotify.h      | 12 ++++++
+>  3 files changed, 74 insertions(+), 6 deletions(-)
 > 
-> diff --git a/fs/open.c b/fs/open.c
-> index e53af13b5835..2a15bec0cf6d 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -1235,6 +1235,8 @@ SYSCALL_DEFINE4(openat2, int, dfd, const char __user *, filename,
->  	if (err)
->  		return err;
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 1e15f3222eb2..bba61988f4a0 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -106,6 +106,8 @@ struct kmem_cache *fanotify_perm_event_cachep __read_mostly;
+>  #define FANOTIFY_EVENT_ALIGN 4
+>  #define FANOTIFY_FID_INFO_HDR_LEN \
+>  	(sizeof(struct fanotify_event_info_fid) + sizeof(struct file_handle))
+> +#define FANOTIFY_PIDFD_INFO_HDR_LEN \
+> +	sizeof(struct fanotify_event_info_pidfd)
 >  
-> +	audit_openat2_how(&tmp);
+>  static int fanotify_fid_info_len(int fh_len, int name_len)
+>  {
+> @@ -141,6 +143,9 @@ static int fanotify_event_info_len(unsigned int info_mode,
+>  	if (fh_len)
+>  		info_len += fanotify_fid_info_len(fh_len, dot_len);
+>  
+> +	if (info_mode & FAN_REPORT_PIDFD)
+> +		info_len += FANOTIFY_PIDFD_INFO_HDR_LEN;
 > +
->  	/* O_LARGEFILE is only allowed for non-O_PATH. */
->  	if (!(tmp.flags & O_PATH) && force_o_largefile())
->  		tmp.flags |= O_LARGEFILE;
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 283bc91a6932..580a52caf16f 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -399,6 +399,7 @@ extern int __audit_log_bprm_fcaps(struct linux_binprm *bprm,
->  				  const struct cred *old);
->  extern void __audit_log_capset(const struct cred *new, const struct cred *old);
->  extern void __audit_mmap_fd(int fd, int flags);
-> +extern void __audit_openat2_how(struct open_how *how);
->  extern void __audit_log_kern_module(char *name);
->  extern void __audit_fanotify(unsigned int response);
->  extern void __audit_tk_injoffset(struct timespec64 offset);
-> @@ -495,6 +496,12 @@ static inline void audit_mmap_fd(int fd, int flags)
->  		__audit_mmap_fd(fd, flags);
+>  	return info_len;
 >  }
 >  
-> +static inline void audit_openat2_how(struct open_how *how)
+> @@ -401,6 +406,29 @@ static int copy_fid_info_to_user(__kernel_fsid_t *fsid,
+>  	return info_len;
+>  }
+>  
+> +static int copy_pidfd_info_to_user(struct pid *pid,
+> +				   char __user *buf,
+> +				   size_t count)
 > +{
-> +	if (unlikely(!audit_dummy_context()))
-> +		__audit_openat2_how(how);
+> +	struct fanotify_event_info_pidfd info = { };
+> +	size_t info_len = FANOTIFY_PIDFD_INFO_HDR_LEN;
+> +
+> +	if (WARN_ON_ONCE(info_len > count))
+> +		return -EFAULT;
+> +
+> +	info.hdr.info_type = FAN_EVENT_INFO_TYPE_PIDFD;
+> +	info.hdr.len = info_len;
+> +
+> +	info.pidfd = pidfd_create(pid, 0);
+> +	if (info.pidfd < 0)
+> +		info.pidfd = FAN_NOPIDFD;
+> +
+> +	if (copy_to_user(buf, &info, info_len))
+> +		return -EFAULT;
+
+Hm, well this kinda sucks. The caller can end up with a pidfd in their
+fd table and when the copy_to_user() failed they won't know what fd it
+is. I think this might be better served by sm like (see what I did in
+kernel/fork.c): 
+
+	pidfd = get_unused_fd_flags(O_RDWR | O_CLOEXEC);
+	if (pidfd < 0)
+		/* error handling */
+	
+	pidfile = anon_inode_getfile("[pidfd]", &pidfd_fops, pid, O_RDWR | O_CLOEXEC);
+	if (IS_ERR(pidfile)) {
+		put_unused_fd(pidfd);
+		pidfd = PTR_ERR(pidfile);
+		/* error handling */
+	}
+	get_pid(pid);	/* held by pidfile now */
+
+	info.hdr.info_type = FAN_EVENT_INFO_TYPE_PIDFD;
+	info.hdr.len = info_len;
+	info.pidfd = pidfd;
+
+	if (copy_to_user(buf, &info, info_len)) {
+		fput(pidfile);
+		put_unused_fd(pidfd);
+		return -EFAULT;
+	}
+
+	fd_install(pidfd, pidfile);
+	return 0;
+
+> +
+> +	return info_len;
 > +}
 > +
->  static inline void audit_log_kern_module(char *name)
+>  static int copy_info_to_user(struct fanotify_event *event,
+>  			     struct fanotify_info *info,
+>  			     unsigned int info_mode,
+> @@ -408,9 +436,12 @@ static int copy_info_to_user(struct fanotify_event *event,
 >  {
->  	if (!audit_dummy_context())
-> @@ -646,6 +653,9 @@ static inline void audit_log_capset(const struct cred *new,
->  static inline void audit_mmap_fd(int fd, int flags)
->  { }
+>  	int ret, info_type = 0;
+>  	unsigned int fid_mode = info_mode & FANOTIFY_FID_BITS;
+> +	unsigned int pidfd_mode = info_mode & FAN_REPORT_PIDFD;
 >  
-> +static inline void audit_openat2_how(struct open_how *how)
-> +{ }
+>  	/*
+>  	 * Event info records order is as follows: dir fid + name, child fid.
+> +	 * If FAN_REPORT_PIDFD has been specified, then a pidfd info record
+> +	 * will follow the fid info records.
+>  	 */
+>  	if (fanotify_event_dir_fh_len(event)) {
+>  		info_type = info->name_len ? FAN_EVENT_INFO_TYPE_DFID_NAME :
+> @@ -465,10 +496,18 @@ static int copy_info_to_user(struct fanotify_event *event,
+>  		}
+>  
+>  		ret = copy_fid_info_to_user(fanotify_event_fsid(event),
+> -					    fanotify_event_object_fh(event),
+> -					    info_type, dot, dot_len,
+> -					    buf, count);
+> -	}
+> +					    fanotify_event_object_fh(event),
+> +					    info_type, dot, dot_len,
+> +					    buf, count);
+> +		if (ret < 0)
+> +			return ret;
 > +
->  static inline void audit_log_kern_module(char *name)
->  {
+> +		buf += ret;
+> +		count -= ret;
+> +	}
+> +
+> +	if (pidfd_mode)
+> +		return copy_pidfd_info_to_user(event->pid, buf, count);
+>  
+>  	return ret;
 >  }
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index cd2d8279a5e4..67aea2370c6d 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -118,6 +118,7 @@
->  #define AUDIT_TIME_ADJNTPVAL	1333	/* NTP value adjustment */
->  #define AUDIT_BPF		1334	/* BPF subsystem */
->  #define AUDIT_EVENT_LISTENER	1335	/* Task joined multicast read socket */
-> +#define AUDIT_OPENAT2		1336	/* Record showing openat2 how args */
+> @@ -530,6 +569,15 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+>  		fd_install(fd, f);
 >  
->  #define AUDIT_AVC		1400	/* SE Linux avc denial or grant */
->  #define AUDIT_SELINUX_ERR	1401	/* Internal SE Linux Errors */
-> diff --git a/kernel/audit.h b/kernel/audit.h
-> index 1522e100fd17..c5af17905976 100644
-> --- a/kernel/audit.h
-> +++ b/kernel/audit.h
-> @@ -11,6 +11,7 @@
->  #include <linux/skbuff.h>
->  #include <uapi/linux/mqueue.h>
->  #include <linux/tty.h>
-> +#include <uapi/linux/openat2.h> // struct open_how
->  
->  /* AUDIT_NAMES is the number of slots we reserve in the audit_context
->   * for saving names from getname().  If we get more names we will allocate
-> @@ -185,6 +186,7 @@ struct audit_context {
->  			int			fd;
->  			int			flags;
->  		} mmap;
-> +		struct open_how openat2;
->  		struct {
->  			int			argc;
->  		} execve;
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 3f59ab209dfd..faf2485323a9 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -76,7 +76,7 @@
->  #include <linux/fsnotify_backend.h>
->  #include <uapi/linux/limits.h>
->  #include <uapi/linux/netfilter/nf_tables.h>
-> -#include <uapi/linux/openat2.h>
-> +#include <uapi/linux/openat2.h> // struct open_how
->  
->  #include "audit.h"
->  
-> @@ -1319,6 +1319,12 @@ static void show_special(struct audit_context *context, int *call_panic)
->  		audit_log_format(ab, "fd=%d flags=0x%x", context->mmap.fd,
->  				 context->mmap.flags);
->  		break;
-> +	case AUDIT_OPENAT2:
-> +		audit_log_format(ab, "oflag=0%llo mode=0%llo resolve=0x%llx",
-
-Hm, should we maybe follow the struct member names for all entries, i.e.
-replace s/oflag/flags? 
-
-Otherwise
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-
-> +				 context->openat2.flags,
-> +				 context->openat2.mode,
-> +				 context->openat2.resolve);
-> +		break;
->  	case AUDIT_EXECVE:
->  		audit_log_execve_info(context, &ab);
->  		break;
-> @@ -2549,6 +2555,16 @@ void __audit_mmap_fd(int fd, int flags)
->  	context->type = AUDIT_MMAP;
->  }
->  
-> +void __audit_openat2_how(struct open_how *how)
-> +{
-> +	struct audit_context *context = audit_context();
+>  	if (info_mode) {
+> +		/*
+> +		 * Complain if FAN_REPORT_PIDFD and FAN_REPORT_TID mutual
+> +		 * exclusion is ever lifted. At the time of implementing
+> +		 * FAN_REPORT_PIDFD, the pidfd API only supported the creation
+> +		 * of pidfds on thread-group leaders.
+> +		 */
+> +		WARN_ON_ONCE((info_mode & FAN_REPORT_PIDFD) &&
+> +			     FAN_GROUP_FLAG(group, FAN_REPORT_TID));
 > +
-> +	context->openat2.flags = how->flags;
-> +	context->openat2.mode = how->mode;
-> +	context->openat2.resolve = how->resolve;
-> +	context->type = AUDIT_OPENAT2;
-> +}
+>  		ret = copy_info_to_user(event, info, info_mode, buf, count);
+>  		if (ret < 0)
+>  			return ret;
+> @@ -1079,6 +1127,13 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>  #endif
+>  		return -EINVAL;
+>  
+> +	/*
+> +	 * A pidfd can only be returned for a thread-group leader; thus
+> +	 * FAN_REPORT_TID and FAN_REPORT_PIDFD need to be mutually exclusive.
+> +	 */
+> +	if ((flags & FAN_REPORT_PIDFD) && (flags & FAN_REPORT_TID))
+> +		return -EINVAL;
 > +
->  void __audit_log_kern_module(char *name)
->  {
->  	struct audit_context *context = audit_context();
+>  	if (event_f_flags & ~FANOTIFY_INIT_ALL_EVENT_F_BITS)
+>  		return -EINVAL;
+>  
+> @@ -1477,7 +1532,7 @@ static int __init fanotify_user_setup(void)
+>  	max_marks = clamp(max_marks, FANOTIFY_OLD_DEFAULT_MAX_MARKS,
+>  				     FANOTIFY_DEFAULT_MAX_USER_MARKS);
+>  
+> -	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
+> +	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 11);
+>  	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
+>  
+>  	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
+> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+> index f76c7635efc8..bb2898240e5a 100644
+> --- a/include/linux/fanotify.h
+> +++ b/include/linux/fanotify.h
+> @@ -27,7 +27,7 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
+>  
+>  #define FANOTIFY_FID_BITS	(FAN_REPORT_FID | FAN_REPORT_DFID_NAME)
+>  
+> -#define FANOTIFY_INFO_MODES	(FANOTIFY_FID_BITS)
+> +#define FANOTIFY_INFO_MODES	(FANOTIFY_FID_BITS | FAN_REPORT_PIDFD)
+>  
+>  /*
+>   * fanotify_init() flags that require CAP_SYS_ADMIN.
+> @@ -37,6 +37,7 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
+>   */
+>  #define FANOTIFY_ADMIN_INIT_FLAGS	(FANOTIFY_PERM_CLASSES | \
+>  					 FAN_REPORT_TID | \
+> +					 FAN_REPORT_PIDFD | \
+>  					 FAN_UNLIMITED_QUEUE | \
+>  					 FAN_UNLIMITED_MARKS)
+>  
+> diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+> index fbf9c5c7dd59..36c3bddcf690 100644
+> --- a/include/uapi/linux/fanotify.h
+> +++ b/include/uapi/linux/fanotify.h
+> @@ -55,6 +55,7 @@
+>  #define FAN_REPORT_FID		0x00000200	/* Report unique file id */
+>  #define FAN_REPORT_DIR_FID	0x00000400	/* Report unique directory id */
+>  #define FAN_REPORT_NAME		0x00000800	/* Report events with name */
+> +#define FAN_REPORT_PIDFD	0x00001000	/* Report pidfd for event->pid */
+>  
+>  /* Convenience macro - FAN_REPORT_NAME requires FAN_REPORT_DIR_FID */
+>  #define FAN_REPORT_DFID_NAME	(FAN_REPORT_DIR_FID | FAN_REPORT_NAME)
+> @@ -123,6 +124,7 @@ struct fanotify_event_metadata {
+>  #define FAN_EVENT_INFO_TYPE_FID		1
+>  #define FAN_EVENT_INFO_TYPE_DFID_NAME	2
+>  #define FAN_EVENT_INFO_TYPE_DFID	3
+> +#define FAN_EVENT_INFO_TYPE_PIDFD	4
+>  
+>  /* Variable length info record following event metadata */
+>  struct fanotify_event_info_header {
+> @@ -148,6 +150,15 @@ struct fanotify_event_info_fid {
+>  	unsigned char handle[0];
+>  };
+>  
+> +/*
+> + * This structure is used for info records of type FAN_EVENT_INFO_TYPE_PIDFD.
+> + * It holds a pidfd for the pid responsible for generating an event.
+> + */
+> +struct fanotify_event_info_pidfd {
+> +	struct fanotify_event_info_header hdr;
+> +	__s32 pidfd;
+> +};
+> +
+>  struct fanotify_response {
+>  	__s32 fd;
+>  	__u32 response;
+> @@ -160,6 +171,7 @@ struct fanotify_response {
+>  
+>  /* No fd set in event */
+>  #define FAN_NOFD	-1
+> +#define FAN_NOPIDFD	FAN_NOFD
+>  
+>  /* Helper functions to deal with fanotify_event_metadata buffers */
+>  #define FAN_EVENT_METADATA_LEN (sizeof(struct fanotify_event_metadata))
 > -- 
-> 2.27.0
+> 2.31.1.751.gd2f1c929bd-goog
 > 
+> /M
