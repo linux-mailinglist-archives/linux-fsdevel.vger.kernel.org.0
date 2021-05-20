@@ -2,59 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD222389B2D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 04:10:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B166389B2F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 04:11:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230270AbhETCMA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 May 2021 22:12:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59278 "EHLO
+        id S230188AbhETCMq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 May 2021 22:12:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbhETCL7 (ORCPT
+        with ESMTP id S229498AbhETCMq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 May 2021 22:11:59 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69F00C061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 May 2021 19:10:38 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id gb21-20020a17090b0615b029015d1a863a91so4589704pjb.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 May 2021 19:10:38 -0700 (PDT)
+        Wed, 19 May 2021 22:12:46 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB81FC061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 May 2021 19:11:25 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id cu11-20020a17090afa8bb029015d5d5d2175so4577715pjb.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 May 2021 19:11:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=jXRaeMBwWGnMv7E5NAjMbGKZ+XEfdegT6fIJyXCOhXg=;
-        b=OjnHC5PpLCGsPvBwE8rGr5Q9eeGxwXDB+9Q4PRO2FfYowjs4JMHIVls8o2W/o1k2/F
-         okSEmjJnT/JLk3NbIv7sbjQU4/7XfrGn/3kaL2eztGNQn2zOYXIUe86oRYEJQyMLKuMo
-         AoFWqeqks0I4ejxXwcCUqwT2DePvK5qZ6dJ1X1Rvvqpns33VXRX3oNoxRvVd1K0/RUhs
-         c28JHHTTUZvOwryPkEEYDcvq8fPCr5Mr3v7uDNbFUFm/z+zgneqoHimLfSqHr+AdKJ4p
-         bTuTc2jcI/DLIINcczIUdaIX9CG2MShHqvKzKwntWobm6cWLGXhfSAVfGQ/sFvqCcEzN
-         4M9w==
+        bh=FlVixfctKo7DyMwDNrXJB4AwLpO0OTcNLhhCvpWwexM=;
+        b=tWxOzHcS13+ocG8+bbQQIKub3aTA/kxy6gp3r3olSmb8FG5w1uxPINLWn5fVqsZIQ0
+         tLrYRbxk9Tdc31YebK0QlkLnfdPC5xVT2cEv7ODrep9N6AIU4uh0tt8MZuoErvgzHkVd
+         JCwLWWh4urj2fiuWcullTzzV6bi7zJ3asUunSkYaBI93Th63MCFBdefK+vJZ3hfsBvh9
+         RTBliatfDNYj4tnU9pNssL8xMqn2M+kwEmtpOTFGsPU9ZlpzM4F6wO3jnNLovo8fzpMh
+         /vvLPkHPqYHgiFqPIEri8tbFo/rK03uYSdPGCGntCzgkbKYH+b9seBVAhHVI4tNWFBlX
+         +ljg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=jXRaeMBwWGnMv7E5NAjMbGKZ+XEfdegT6fIJyXCOhXg=;
-        b=il+Ur2uKHFXSPAVlT1jAtTCYQ9B6cKc55SJNGTZ53mfji/6aN+qu7vjK+/BFtDwc9C
-         8PsYjiGENmvrbCizO1PAxSf3TNTtA7b62jsoCFi048zM2jGMmxb72Rk1rjCgg/yZJtdj
-         qBWXimB4VrAkLU9OcwQn6t0XoN+kF+yR7erHJ+g3It56zJlb0u6UeIWv+8MNWdSX5VqI
-         bMqhTIP30gtmVHudCj2CIxlXu6uBnhy4wBXIGmsa2yNzO+GiadKRE30lbGbbl7MPMICp
-         KpvV0ZP0dipmDRKdluMZuHVOuTUss+eqIJ49Urpd14NPLySYFnV5vZ+Cg7iK3xjpUvrK
-         j+Ew==
-X-Gm-Message-State: AOAM530N4zzuqyWHh/s++oWqjZfmpRvAf3ApfObp5a8LPVeQeYpTiqMF
-        Ayez+KqBSDh5j0YIN3YgSK/WPA==
-X-Google-Smtp-Source: ABdhPJx5K8ScL845KbY/kaOoskE8q5+SlCKxICbTZKE1Wm3OnfZb6zcN3FgpvdBkXXPJ3fA0DPR4hQ==
-X-Received: by 2002:a17:90a:1b09:: with SMTP id q9mr2553813pjq.108.1621476637780;
-        Wed, 19 May 2021 19:10:37 -0700 (PDT)
+        bh=FlVixfctKo7DyMwDNrXJB4AwLpO0OTcNLhhCvpWwexM=;
+        b=RPjv+97iKVM2ajuxjK07MVJ7HDY0CMupTLri7TeT0/n19SBCCHnxm3gMqBGyLMzpPC
+         9vNPWL7V+mXTt8n0eamlAMuPWBGOOPajhZbQ9cWXywwJoF2SRUlD3IcWFHQJE/LaFp4K
+         fTc4XnOspIqgWK5SI5PnKd7bicOcRJZsMY5u+RlmtCVJSWctbwX/Z7NZSM/WeEtqDM+H
+         gBfhANAa/VejVkkYWfs7VCYSAxUmILz55Q/7iEhchWMqaVCdYzZVRGqPDg6CHo/eumCN
+         M/v62dFwKufcvaTIa01K63hIH6GsIR36jtBHuyniq8qpmtDGhjzFm2xlJ4n02y6XmUeZ
+         /QEg==
+X-Gm-Message-State: AOAM530hKKOTnFwKms69nA0vOYmqPl81Xx2S4kQEw3IPvtzZ24Q/Bs71
+        m5nbRWptiC6jmxHUIChdKP7CqQ==
+X-Google-Smtp-Source: ABdhPJw9SpXuZNgZpEjmzi/KO+YV1R3uH9YVzofXkbt6NixWBRNm/9bkWP8P0BzyL1s/CNAI64mxvA==
+X-Received: by 2002:a17:90a:b796:: with SMTP id m22mr2581096pjr.146.1621476685213;
+        Wed, 19 May 2021 19:11:25 -0700 (PDT)
 Received: from google.com ([2401:fa00:9:211:c035:b02d:975d:1161])
-        by smtp.gmail.com with ESMTPSA id 184sm509636pfv.38.2021.05.19.19.10.35
+        by smtp.gmail.com with ESMTPSA id a129sm541016pfa.36.2021.05.19.19.11.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 May 2021 19:10:37 -0700 (PDT)
-Date:   Thu, 20 May 2021 12:10:26 +1000
+        Wed, 19 May 2021 19:11:24 -0700 (PDT)
+Date:   Thu, 20 May 2021 12:11:13 +1000
 From:   Matthew Bobrowski <repnop@google.com>
 To:     jack@suse.cz, amir73il@gmail.com, christian.brauner@ubuntu.com
 Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH 2/5] kernel/pid.c: implement checks on parameters passed to
- pidfd_create()
-Message-ID: <13082e9b281e16445da413b23e720b99c8c74f2b.1621473846.git.repnop@google.com>
+Subject: [PATCH 3/5] fanotify_user.c: minor cosmetic adjustments to fid labels
+Message-ID: <7072741f107cdaf4328500e1f11b4b99a8b183cf.1621473846.git.repnop@google.com>
 References: <cover.1621473846.git.repnop@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -64,52 +63,108 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-By adding the pidfd_create() declaration to linux/pid.h, it
-effectively exposes this function to the rest of the kernel. As the
-function currently stands, any part of the kernel could call
-pidfd_create() and the pidfd creation would not be subject to the same
-parameter constraints/checks as calling pidfd_open() would force upon
-a caller. This could lead to unintended behavior and/or misuse of the
-pidfd API.
+With the idea to support additional info record types in the future
+i.e. fanotify_event_info_pidfd, it's a good idea to rename some of the
+labels assigned to some of the existing fid related functions,
+parameters, etc which more accurately represent the intent behind
+their usage.
 
-To mitigate this, the pid_has_task() check is rolled up into
-pidfd_create() and flags that are passed as parameter are checked for
-validity.
+For example, copy_info_to_user() was defined with a generic function
+label, which arguably reads as being supportive of different info
+record types, however the parameter list for this function is
+explicitly tailored towards the creation and copying of the
+fanotify_event_info_fid records. This same point applies to the macro
+defined as FANOTIFY_INFO_HDR_LEN.
+
+With fanotify_event_info_len(), we change the parameter label so that
+the function implies that it can be extended to calculate the length
+for additional info record types.
 
 Signed-off-by: Matthew Bobrowski <repnop@google.com>
 ---
- kernel/pid.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ fs/notify/fanotify/fanotify_user.c | 32 +++++++++++++++++-------------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
 
-diff --git a/kernel/pid.c b/kernel/pid.c
-index d3cd95b8b080..1805cb3d74b7 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -559,6 +559,12 @@ int pidfd_create(struct pid *pid, unsigned int flags)
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 71fefb30e015..914ff8cf30df 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -104,7 +104,7 @@ struct kmem_cache *fanotify_path_event_cachep __read_mostly;
+ struct kmem_cache *fanotify_perm_event_cachep __read_mostly;
+ 
+ #define FANOTIFY_EVENT_ALIGN 4
+-#define FANOTIFY_INFO_HDR_LEN \
++#define FANOTIFY_FID_INFO_HDR_LEN \
+ 	(sizeof(struct fanotify_event_info_fid) + sizeof(struct file_handle))
+ 
+ static int fanotify_fid_info_len(int fh_len, int name_len)
+@@ -114,10 +114,11 @@ static int fanotify_fid_info_len(int fh_len, int name_len)
+ 	if (name_len)
+ 		info_len += name_len + 1;
+ 
+-	return roundup(FANOTIFY_INFO_HDR_LEN + info_len, FANOTIFY_EVENT_ALIGN);
++	return roundup(FANOTIFY_FID_INFO_HDR_LEN + info_len,
++		       FANOTIFY_EVENT_ALIGN);
+ }
+ 
+-static int fanotify_event_info_len(unsigned int fid_mode,
++static int fanotify_event_info_len(unsigned int info_mode,
+ 				   struct fanotify_event *event)
  {
- 	int fd;
+ 	struct fanotify_info *info = fanotify_event_info(event);
+@@ -128,7 +129,8 @@ static int fanotify_event_info_len(unsigned int fid_mode,
  
-+	if (!pid || !pid_has_task(pid, PIDTYPE_TGID))
-+		return -EINVAL;
-+
-+	if (flags & ~(O_NONBLOCK | O_CLOEXEC | O_RDWR))
-+		return -EINVAL;
-+
- 	fd = anon_inode_getfd("[pidfd]", &pidfd_fops, get_pid(pid),
- 			      flags | O_RDWR | O_CLOEXEC);
- 	if (fd < 0)
-@@ -598,10 +604,7 @@ SYSCALL_DEFINE2(pidfd_open, pid_t, pid, unsigned int, flags)
- 	if (!p)
- 		return -ESRCH;
+ 	if (dir_fh_len) {
+ 		info_len += fanotify_fid_info_len(dir_fh_len, info->name_len);
+-	} else if ((fid_mode & FAN_REPORT_NAME) && (event->mask & FAN_ONDIR)) {
++	} else if ((info_mode & FAN_REPORT_NAME) &&
++		   (event->mask & FAN_ONDIR)) {
+ 		/*
+ 		 * With group flag FAN_REPORT_NAME, if name was not recorded in
+ 		 * event on a directory, we will report the name ".".
+@@ -303,9 +305,10 @@ static int process_access_response(struct fsnotify_group *group,
+ 	return -ENOENT;
+ }
  
--	if (pid_has_task(p, PIDTYPE_TGID))
--		fd = pidfd_create(p, flags);
--	else
--		fd = -EINVAL;
-+	fd = pidfd_create(p, flags);
+-static int copy_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
+-			     int info_type, const char *name, size_t name_len,
+-			     char __user *buf, size_t count)
++static int copy_fid_info_to_user(__kernel_fsid_t *fsid,
++				 struct fanotify_fh *fh, int info_type,
++				 const char *name, size_t name_len,
++				 char __user *buf, size_t count)
+ {
+ 	struct fanotify_event_info_fid info = { };
+ 	struct file_handle handle = { };
+@@ -459,10 +462,10 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 	if (fanotify_event_dir_fh_len(event)) {
+ 		info_type = info->name_len ? FAN_EVENT_INFO_TYPE_DFID_NAME :
+ 					     FAN_EVENT_INFO_TYPE_DFID;
+-		ret = copy_info_to_user(fanotify_event_fsid(event),
+-					fanotify_info_dir_fh(info),
+-					info_type, fanotify_info_name(info),
+-					info->name_len, buf, count);
++		ret = copy_fid_info_to_user(fanotify_event_fsid(event),
++					    fanotify_info_dir_fh(info),
++					    info_type, fanotify_info_name(info),
++					    info->name_len, buf, count);
+ 		if (ret < 0)
+ 			return ret;
  
- 	put_pid(p);
- 	return fd;
+@@ -508,9 +511,10 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 			info_type = FAN_EVENT_INFO_TYPE_FID;
+ 		}
+ 
+-		ret = copy_info_to_user(fanotify_event_fsid(event),
+-					fanotify_event_object_fh(event),
+-					info_type, dot, dot_len, buf, count);
++		ret = copy_fid_info_to_user(fanotify_event_fsid(event),
++					    fanotify_event_object_fh(event),
++					    info_type, dot, dot_len,
++					    buf, count);
+ 		if (ret < 0)
+ 			return ret;
+ 
 -- 
 2.31.1.751.gd2f1c929bd-goog
 
