@@ -2,188 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33E39389CBF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 06:38:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ACD7389D14
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 May 2021 07:25:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230255AbhETEjZ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 May 2021 00:39:25 -0400
-Received: from p3plsmtp25-01-2.prod.phx3.secureserver.net ([216.69.139.12]:35200
-        "EHLO p3plwbeout25-01.prod.phx3.secureserver.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229676AbhETEjY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 May 2021 00:39:24 -0400
-Received: from outbound-gw.openxchange.ahost.me ([94.136.40.163])
-        by :WBEOUT: with ESMTP
-        id jaK6lMZiOgx69jaK7ljjF7; Wed, 19 May 2021 21:30:15 -0700
-X-CMAE-Analysis: v=2.4 cv=Nf4ja0P4 c=1 sm=1 tr=0 ts=60a5e5d8
- a=ExpeE9u7wY9QIRtJzA+xFA==:117 a=ExpeE9u7wY9QIRtJzA+xFA==:17
- a=ggZhUymU-5wA:10 a=IkcTkHD0fZMA:10 a=5FLXtPjwQuUA:10 a=S_-2Y0Uh84wA:10
- a=pGLkceISAAAA:8 a=FXvPX3liAAAA:8 a=T2fdhVjMfPcJot0J8BkA:9 a=QEXdDO2ut3YA:10
- a=UObqyxdv-6Yh2QiB9mM_:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-X-SID:  jaK6lMZiOgx69
-Received: from localhost ([127.0.0.1] helo=outbound-gw.openxchange.ahost.me)
-        by outbound-gw.openxchange.ahost.me with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
-        (Exim 4.94)
-        (envelope-from <phillip@squashfs.org.uk>)
-        id 1ljaK6-0005lk-DN; Thu, 20 May 2021 05:30:14 +0100
-Date:   Thu, 20 May 2021 05:30:14 +0100 (BST)
-From:   Phillip Lougher <phillip@squashfs.org.uk>
-To:     Pintu Agarwal <pintu.ping@gmail.com>
-Cc:     open list <linux-kernel@vger.kernel.org>, sean@geanix.com,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Message-ID: <486335206.6969995.1621485014357@webmail.123-reg.co.uk>
-In-Reply-To: <CAOuPNLhn90z9i6jt0-Vv4e9hjsxwYUT2Su-7SQrxy+N=HDe_xA@mail.gmail.com>
-References: <CAOuPNLjgpkBh9dnfNTdDcfk5HiL=HjjiB9o_=fjrm+0vP7Re2Q@mail.gmail.com>
- <CAOuPNLh_0Q9w96GKT-ogC0BBcEHgo=Hv3+c=JBcas2VgqDiyaw@mail.gmail.com>
- <CAOuPNLjmJ0YufFktJzjkyvdxwFTOpxVj5AW5gANAGSG=_yT=mQ@mail.gmail.com>
- <1762403920.6716767.1621029029246@webmail.123-reg.co.uk>
- <CAOuPNLhn90z9i6jt0-Vv4e9hjsxwYUT2Su-7SQrxy+N=HDe_xA@mail.gmail.com>
-Subject: Re: [RESEND]: Kernel 4.14: SQUASHFS error: unable to read xattr id
- index table
+        id S230355AbhETF0v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 May 2021 01:26:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45896 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230342AbhETF0u (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 May 2021 01:26:50 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4FFDC06175F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 May 2021 22:25:28 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id l1so23258032ejb.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 May 2021 22:25:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uWBM5AU+ZMmhfuFgx+3Y6a4UcjGbnQI1cx3aK/uVkZc=;
+        b=GL+WlKsfyUHY8seOawsA4s5AlWavihDlxxMiz4lqDQkGQ3TCLutMAu4lMNn1Jxl1jd
+         y6HZQBYQq4ioIg5e1Lo1gqt31jawj5s1SHuxpLit2ITf+CLm+kWietUyVpKk9w4fmD2p
+         H1mq2ZWQ+t44wxCCc60m/5A3JNEqMh/2fd2x9LhB3LxkVed1yMz8Mpz7F/P0y2G397sv
+         VSQF7iSQ5NJLrAtBZr6BqKr6Rz+PbkPQ/INLOdyfBiVRt3/wYV7gh1O0NplzDAANxyj3
+         lbLjDfxqrMTZkAS3Dv9Xk96J7MuslFrqt1MYHRbQds+nk19xlmKW/1bKi0HXgU5HEy19
+         xy7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uWBM5AU+ZMmhfuFgx+3Y6a4UcjGbnQI1cx3aK/uVkZc=;
+        b=NF7Z0dge30At2E1QlGhDBF2XaFoBYSWb5lmCbpYr7gMdgOPF0xNdEdh5y0E363aCqa
+         wMMSa4EpLZI1QQgFg9n/jHTRW5O6ZyN0WYJvQDiwtc4Y1G/5V30/Zpv8xO/nO1w69bLx
+         36LnrT7IbvIl+YyOZyCQrwHbcsrsI5Y9GOENo4MJHT+06L23nOqTn8nylGMKUJrz3q6h
+         4Q9cn2cEALzMA5c9RTAbd5m241VwGfS7XAvWTpk5yOt+hM7rJhUZV8SAd/PJKFkGF5Gc
+         Vsxd1FSoX6pgMRTmHtoCRohGNhFbmzuyAhRT7F2J5m931gAmatxqMIFWnMYewFwGRQlQ
+         xZAg==
+X-Gm-Message-State: AOAM530ikI2bdfcntYSNFGsm6PfavwF3lNtvZNFDp53yH2UJI0cf8DQY
+        LS/ufAkHx/C+ShLc6D77PkWB+lUPB3OgpMQ/cUg8
+X-Google-Smtp-Source: ABdhPJyvwWWA7f5Fzvsx4TdTu7nIvH6pnRUuPJ62OuR0bCAchfYi7vwKGliv4oVBF/L7UoIrnWNYnk0fkzFFBOuZgj8=
+X-Received: by 2002:a17:906:edaf:: with SMTP id sa15mr2877318ejb.174.1621488327265;
+ Wed, 19 May 2021 22:25:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.3-Rev22
-X-Originating-IP: 82.69.79.175
-X-Originating-Client: com.openexchange.ox.gui.dhtml
-X-Authenticated-As: phillip@squashfs.org.uk
-X-122-reg-Authenticated: phillip@squashfs.org.uk
-X-CMAE-Envelope: MS4xfOCmG3lER58/+OsQ8SAo7h16KE9Kv5FT4m1+HPnUFSpVz8b4RcOnAIGzSOnOYmSkzwythcWEqeb0CeoDAessXxeyTk33w1pzTDNw12WUH0JvmIDE/XiB
- LiL0k5d0q33CQ8Oi6RIlyV+C6ND6i6nyqwM96DZe45bm4f2gtHZ2tTpGug0s7bzAHXWU/L09I7CiKMpwPKftnSm23bbpmUVwvHF2+psOufhbwBbrTlohvEBG
- G502ve3bhSwrq/xBzmQds/X6N3Up5XHWOOBNe+77Yn0oovAa+qO87UCFo/F7vNmeSsWeyp2jCfpNb8xJ1hvmk/l/Xr/VDqWMjrsKMHQWi6JYp7QWFOi/RCbH
- 7J4zPdeX3DGPUaVSpXyEIJz4VV5rhQ==
+References: <20210517095513.850-1-xieyongji@bytedance.com> <20210517095513.850-5-xieyongji@bytedance.com>
+ <CACycT3s1rEvNnNkJKQsHGRsyLPADieFdVkb1Sp3GObR0Vox5Fg@mail.gmail.com> <20210519144206.GF32682@kadam>
+In-Reply-To: <20210519144206.GF32682@kadam>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Thu, 20 May 2021 13:25:16 +0800
+Message-ID: <CACycT3veubBFCg9omxLDJJFP7B7QH8++Q+tKmb_M_hmNS45cmw@mail.gmail.com>
+Subject: Re: Re: [PATCH v7 04/12] virtio-blk: Add validation for block size in
+ config space
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        joro@8bytes.org,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, May 19, 2021 at 10:42 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> On Wed, May 19, 2021 at 09:39:20PM +0800, Yongji Xie wrote:
+> > On Mon, May 17, 2021 at 5:56 PM Xie Yongji <xieyongji@bytedance.com> wrote:
+> > >
+> > > This ensures that we will not use an invalid block size
+> > > in config space (might come from an untrusted device).
+>
+> I looked at if I should add this as an untrusted function so that Smatch
+> could find these sorts of bugs but this is reading data from the host so
+> there has to be some level of trust...
+>
 
-> On 17/05/2021 12:34 Pintu Agarwal <pintu.ping@gmail.com> wrote:
-> 
->  
-> On Sat, 15 May 2021 at 03:21, Phillip Lougher <phillip@squashfs.org.uk> wrote:
+It would be great if Smatch could detect this case if possible. The
+data might be trusted in traditional VM cases. But now the data can be
+read from a userspace daemon when VDUSE is enabled.
+
+> I should add some more untrusted data kvm functions to Smatch.  Right
+> now I only have kvm_register_read() and I've added kvm_read_guest_virt()
+> just now.
+>
+> > >
+> > > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> > > ---
+> > >  drivers/block/virtio_blk.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+> > > index ebb4d3fe803f..c848aa36d49b 100644
+> > > --- a/drivers/block/virtio_blk.c
+> > > +++ b/drivers/block/virtio_blk.c
+> > > @@ -826,7 +826,7 @@ static int virtblk_probe(struct virtio_device *vdev)
+> > >         err = virtio_cread_feature(vdev, VIRTIO_BLK_F_BLK_SIZE,
+> > >                                    struct virtio_blk_config, blk_size,
+> > >                                    &blk_size);
+> > > -       if (!err)
+> > > +       if (!err && blk_size > 0 && blk_size <= max_size)
 > >
-> > Your kernel (4.14.170) was released on 5 Feb 2020, and so it won't
-> > contain any of the above commits. The xattr -id code in 4.14.170,
-> > was last updated in May 2011, and so it is much more likely the
-> > problem is elsewhere.
-> >
-> Okay this seems to be UBI volume flashing issue then. I will also try
-> with non-squashfs image (just ubifs).
-> See the result in the end.
-> 
-> > The xattr id index table is written to the end of the Squashfs filesystem,
-> > and it is the first table read on mounting.
-> >
-> Okay this gives me a clue that there are some corruptions while
-> writing the leftover blocks in the end.
-> 
-> > 1. Check the Squashfs filesystem for correctness before writing it to
-> > the flash. You can run Unsquashfs on the image and see if it reports
-> > any errors.
-> >
-> Can you give me some pointers on how to use unsquashfs ? I could not
-> find any unsquashfs command on my device.
-> Do we need to do it on the device or my Ubuntu PC ? Are there some
-> commands/utility available on ubuntu ?
-> 
+> > The check here is incorrect. I will use PAGE_SIZE as the maximum
+> > boundary in the new version.
+>
+> What does this bug look like to the user?
 
-You should run Unsquashfs on the host Ubuntu PC to verify
-the integrity of the Squashfs image before transferring and
-flashing.
+The kernel will panic if the block size is larger than PAGE_SIZE.
 
-Unsquashfs is in the squashfs-tools package on Ubuntu.  To install
-run as root
+> A minimum block size of 1 seems pretty crazy.  Surely the minimum should be > higher?
+>
 
-% apt-get install squashfs-tools
+Yes, 512 is better here.
 
-Then run it on your Squashfs image
-
-% unsquashfs <your image>
-
-If the image is uncorrupted, it will unpack the image into
-"squashfs-root".  If it is corrupted it will give error
-messages.
-
- 
-> > 2. You need to check the filesystem for integrity after writing it to
-> > the flash. Compute a checksum, and compare it with the original
-> > checksum.
-> >
-> Can you also guide me with an example, how to do this as well ?
-
-I have not used the MTD subsystem for more than 13 years, and so
-this is best answered on linux-mtd.  There may be some specfic
-UBI/MTD tools available now to do integrity checking.
-
-But failing that, and presuming you have character device access
-to the flashed partition, you can "dd" the image out of the flash
-into a file, and then run a checksum program against it.
-
-You appear to be running busybox, and this has both support for
-"dd" and the "md5sum" checksum program.
-
-So do this
-
-% dd if=<your character device> of=img bs=1 count=<image size>
-
-Where <image size> is the size of the Squashfs image reported
-by "ls -l" or "stat".  You need to get the exact byte count
-right, otherwise the resultant checksum won't be right.
-
-Then run md5sum on the extracted "img" file.
-
-% md5sum img
-
-This will produce a checksum.
-
-You can then compare that with the result of "md5sum" on your
-original Squashfs image before flashing (produced on the host
-or the target).
-
-If the checksums differ then it is corrupted.
-
-> 
-> BTW, I also tried "rootfs" volume flashing using "ubifs" image (non
-> squashfs). Here are the results.
-> a) With ubifs image also, the device is not booting after flashing the volume.
-> b) But I can see that the "rootfs" volume could be mounted, but later
-> gives some other errors during read_node.
-> 
-> These are the boot up errors logs:
-> {{{
-> [ 4.600001] vreg_conn_pa: dis▒[ 4.712458] UBIFS (ubi0:0): UBIFS:
-> mounted UBI device 0, volume 0, name "rootfs", R/O mode
-> [ 4.712520] UBIFS (ubi0:0): LEB size: 253952 bytes (248 KiB),
-> min./max. I/O unit sizes: 4096 bytes/4096 bytes
-> [ 4.719823] UBIFS (ubi0:0): FS size: 113008640 bytes (107 MiB, 445
-> LEBs), journal size 9404416 bytes (8 MiB, 38 LEBs)
-> [ 4.729867] UBIFS (ubi0:0): reserved for root: 0 bytes (0 KiB)
-> [ 4.740400] UBIFS (ubi0:0): media format: w4/r0 (latest is w5/r0),
-> UUID xxxxxxxxx-xxxxxxxxxx, small LPT model
-> [ 4.748587] VFS: Mounted root (ubifs filesystem) readonly on device 0:16.
-> [ 4.759033] devtmpfs: mounted
-> [ 4.766803] Freeing unused kernel memory: 2048K
-> [ 4.805035] UBIFS error (ubi0:0 pid 1): ubifs_read_node: bad node type
-> (255 but expected 9)
-> [ 4.805097] UBIFS error (ubi0:0 pid 1): ubifs_read_node: bad node at
-> LEB 336:250560, LEB mapping status 1
-> [ 4.812401] Not a node, first 24 bytes:
-> [ 4.812413] 00000000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ........................
-> }}}
-> 
-> Seems like there is some corruption in the first 24 bytes ??
-> 
-
-This implies there is corruption being introduced at the MTD level or
-below.
-
-Phillip
-
-> 
-> Thanks,
-> Pintu
+Thanks,
+Yongji
