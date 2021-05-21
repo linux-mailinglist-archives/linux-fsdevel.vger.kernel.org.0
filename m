@@ -2,574 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC9E038C9A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 17:02:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F409838C9D5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 17:14:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237182AbhEUPDe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 11:03:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48276 "EHLO mail.kernel.org"
+        id S232546AbhEUPPk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 11:15:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46718 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236387AbhEUPDd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 11:03:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3B4B9613AF;
-        Fri, 21 May 2021 15:02:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621609330;
-        bh=s9CnNkRQaK+pz+0ytxIlIgtNtBQTEg+8ZmkXnFElBck=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=X4aQrpnO5Tqac68FN3/Vk24ND/brc7r+L0F7X0vz7sPAhToG3S0/2GJAIpJnM635E
-         uJm5G8C9sgas+zvdVBUFBawQm0Js9dZ6cjwhQNlbP3B8F2OHJNL8BFOKe4Ux5bIe6O
-         2Q8L4V1tee4x4SgSD18t49hJzz/5WJh+3S5HVQgEMfQf5yph3tfCMMtYSzLMwVyYj8
-         gCod5cYcoeeKXf/i9lWWSlG8MuPKCkW/fzHT9nm+315gFNLNBDEOPMta8tz0DdJjvF
-         JKxV2nSWYuSvDjG5y6Nqw/aT4hYBZ3kwAazJf9P0LWd7wbWCHaMDQzjG4ij95ASJaG
-         OvQfY8I0vZnWw==
-Date:   Fri, 21 May 2021 08:02:09 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     amir73il@gmail.com, kernel@collabora.com,
-        Theodore Ts'o <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>, jack@suse.com,
-        dhowells@redhat.com, khazhy@google.com,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 08/11] fanotify: Introduce FAN_ERROR event
-Message-ID: <20210521150209.GB9617@magnolia>
-References: <20210521024134.1032503-1-krisman@collabora.com>
- <20210521024134.1032503-9-krisman@collabora.com>
+        id S230420AbhEUPPj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 May 2021 11:15:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1621610055; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=pnTzO+XIqraHe0ySij0++uTkQEvMkDJ3aNW3pnu8RJQ=;
+        b=vgzRpj9/iTY08xqicyHPPacBIjAktoc3ZMJ+KaoK8zcjK4mHkcW+lQvjL+enrxIGdLtnEm
+        tcb/2UF5RYExW9F4V+Qxtke/JuHnDd7XTwTgBhf7eIus1cLshYrYxPNLQtRqHgOGAzT3Bh
+        aMAY7wL4ODVJqQsHFTw7aEtZrnijZ0k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1621610055;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=pnTzO+XIqraHe0ySij0++uTkQEvMkDJ3aNW3pnu8RJQ=;
+        b=pmV2JeB4GbJAMyatyDU0gzWBa5ceBKBgYxnFfc3ETPhM7E6qM0Wt1tODOwOHAmCPiabOFL
+        +5rgJ2pgxNC72aBA==
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id B53B1AC85;
+        Fri, 21 May 2021 15:14:15 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 530931F2C73; Fri, 21 May 2021 17:14:15 +0200 (CEST)
+Date:   Fri, 21 May 2021 17:14:15 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 5/5] fanotify: Add pidfd info record support to the
+ fanotify API
+Message-ID: <20210521151415.GP18952@quack2.suse.cz>
+References: <cover.1621473846.git.repnop@google.com>
+ <48d18055deb4617d97c695a08dca77eb573097e9.1621473846.git.repnop@google.com>
+ <20210520081755.eqey4ryngngt4yqd@wittgenstein>
+ <CAOQ4uxhvD2w1i3ia=8=4iCNEYDJ3wfps6AOLdUBXVi-H9Xu-OQ@mail.gmail.com>
+ <YKd7tqiVd9ny6+oD@google.com>
+ <CAOQ4uxi6LceN+ETbF6XbbBqfAY3H+K5ZMuky1L-gh_g53TEN1A@mail.gmail.com>
+ <20210521102418.GF18952@quack2.suse.cz>
+ <CAOQ4uxh84uXAQzz2w+TD1OeDtVwBX8uhM3Pumm46YvP-Wkndag@mail.gmail.com>
+ <20210521131917.GM18952@quack2.suse.cz>
+ <CAOQ4uxiA77_P5vtv7e83g0+9d7B5W9ZTE4GfQEYbWmfT1rA=VA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210521024134.1032503-9-krisman@collabora.com>
+In-Reply-To: <CAOQ4uxiA77_P5vtv7e83g0+9d7B5W9ZTE4GfQEYbWmfT1rA=VA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 20, 2021 at 10:41:31PM -0400, Gabriel Krisman Bertazi wrote:
-> The FAN_ERROR event is used by filesystem wide monitoring tools to
-> receive notifications of type FS_ERROR_EVENT, emited by filesystems when
-> a problem is detected.  The error notification includes a generic error
-> descriptor.
+On Fri 21-05-21 16:52:08, Amir Goldstein wrote:
+> On Fri, May 21, 2021 at 4:19 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Fri 21-05-21 14:10:32, Amir Goldstein wrote:
+> > > On Fri, May 21, 2021 at 1:24 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > On Fri 21-05-21 12:41:51, Amir Goldstein wrote:
+> > > > > On Fri, May 21, 2021 at 12:22 PM Matthew Bobrowski <repnop@google.com> wrote:
+> > > > > >
+> > > > > > Hey Amir/Christian,
+> > > > > >
+> > > > > > On Thu, May 20, 2021 at 04:43:48PM +0300, Amir Goldstein wrote:
+> > > > > > > On Thu, May 20, 2021 at 11:17 AM Christian Brauner
+> > > > > > > <christian.brauner@ubuntu.com> wrote:
+> > > > > > > > > +#define FANOTIFY_PIDFD_INFO_HDR_LEN \
+> > > > > > > > > +     sizeof(struct fanotify_event_info_pidfd)
+> > > > > > > > >
+> > > > > > > > >  static int fanotify_fid_info_len(int fh_len, int name_len)
+> > > > > > > > >  {
+> > > > > > > > > @@ -141,6 +143,9 @@ static int fanotify_event_info_len(unsigned int info_mode,
+> > > > > > > > >       if (fh_len)
+> > > > > > > > >               info_len += fanotify_fid_info_len(fh_len, dot_len);
+> > > > > > > > >
+> > > > > > > > > +     if (info_mode & FAN_REPORT_PIDFD)
+> > > > > > > > > +             info_len += FANOTIFY_PIDFD_INFO_HDR_LEN;
+> > > > > > > > > +
+> > > > > > > > >       return info_len;
+> > > > > > > > >  }
+> > > > > > > > >
+> > > > > > > > > @@ -401,6 +406,29 @@ static int copy_fid_info_to_user(__kernel_fsid_t *fsid,
+> > > > > > > > >       return info_len;
+> > > > > > > > >  }
+> > > > > > > > >
+> > > > > > > > > +static int copy_pidfd_info_to_user(struct pid *pid,
+> > > > > > > > > +                                char __user *buf,
+> > > > > > > > > +                                size_t count)
+> > > > > > > > > +{
+> > > > > > > > > +     struct fanotify_event_info_pidfd info = { };
+> > > > > > > > > +     size_t info_len = FANOTIFY_PIDFD_INFO_HDR_LEN;
+> > > > > > > > > +
+> > > > > > > > > +     if (WARN_ON_ONCE(info_len > count))
+> > > > > > > > > +             return -EFAULT;
+> > > > > > > > > +
+> > > > > > > > > +     info.hdr.info_type = FAN_EVENT_INFO_TYPE_PIDFD;
+> > > > > > > > > +     info.hdr.len = info_len;
+> > > > > > > > > +
+> > > > > > > > > +     info.pidfd = pidfd_create(pid, 0);
+> > > > > > > > > +     if (info.pidfd < 0)
+> > > > > > > > > +             info.pidfd = FAN_NOPIDFD;
+> > > > > > > > > +
+> > > > > > > > > +     if (copy_to_user(buf, &info, info_len))
+> > > > > > > > > +             return -EFAULT;
+> > > > > > > >
+> > > > > > > > Hm, well this kinda sucks. The caller can end up with a pidfd in their
+> > > > > > > > fd table and when the copy_to_user() failed they won't know what fd it
+> > > > > > >
+> > > > > > > Good catch!
+> > > > > >
+> > > > > > Super awesome catch Christian, thanks pulling this up!
+> > > > > >
+> > > > > > > But I prefer to solve it differently, because moving fd_install() to the
+> > > > > > > end of this function does not guarantee that copy_event_to_user()
+> > > > > > > won't return an error one day with dangling pidfd in fd table.
+> > > > > >
+> > > > > > I can see the angle you're approaching this from...
+> > > > > >
+> > > > > > > It might be simpler to do pidfd_create() next to create_fd() in
+> > > > > > > copy_event_to_user() and pass pidfd to copy_pidfd_info_to_user().
+> > > > > > > pidfd can be closed on error along with fd on out_close_fd label.
+> > > > > > >
+> > > > > > > You also forgot to add CAP_SYS_ADMIN check before pidfd_create()
+> > > > > > > (even though fanotify_init() does check for that).
+> > > > > >
+> > > > > > I didn't really understand the need for this check here given that the
+> > > > > > administrative bits are already being checked for in fanotify_init()
+> > > > > > i.e. FAN_REPORT_PIDFD can never be set for an unprivileged listener;
+> > > > > > thus never walking any of the pidfd_mode paths. Is this just a defense
+> > > > > > in depth approach here, or is it something else that I'm missing?
+> > > > > >
+> > > > >
+> > > > > We want to be extra careful not to create privilege escalations,
+> > > > > so even if the fanotify fd is leaked or intentionally passed to a less
+> > > > > privileged user, it cannot get an open pidfd.
+> > > > >
+> > > > > IOW, it is *much* easier to be defensive in this case than to prove
+> > > > > that the change cannot introduce any privilege escalations.
+> > > >
+> > > > I have no problems with being more defensive (it's certainly better than
+> > > > being too lax) but does it really make sence here? I mean if CAP_SYS_ADMIN
+> > > > task opens O_RDWR /etc/passwd and then passes this fd to unpriviledged
+> > > > process, that process is also free to update all the passwords.
+> > > > Traditionally permission checks in Unix are performed on open and then who
+> > > > has fd can do whatever that fd allows... I've tried to follow similar
+> > > > philosophy with fanotify as well and e.g. open happening as a result of
+> > > > fanotify path events does not check permissions either.
+> > > >
+> > >
+> > > Agreed.
+> > >
+> > > However, because we had this issue with no explicit FAN_REPORT_PID
+> > > we added the CAP_SYS_ADMIN check for reporting event->pid as next
+> > > best thing. So now that becomes weird if priv process created fanotify fd
+> > > and passes it to unpriv process, then unpriv process gets events with
+> > > pidfd but without event->pid.
+> > >
+> > > We can change the code to:
+> > >
+> > >         if (!capable(CAP_SYS_ADMIN) && !pidfd_mode &&
+> > >             task_tgid(current) != event->pid)
+> > >                 metadata.pid = 0;
+> > >
+> > > So the case I decscribed above ends up reporting both pidfd
+> > > and event->pid to unpriv user, but that is a bit inconsistent...
+> >
+> > Oh, now I see where you are coming from :) Thanks for explanation. And
+> > remind me please, cannot we just have internal FAN_REPORT_PID flag that
+> > gets set on notification group when priviledged process creates it and then
+> > test for that instead of CAP_SYS_ADMIN in copy_event_to_user()? It is
+> > mostly equivalent but I guess more in the spirit of how fanotify
+> > traditionally does things. Also FAN_REPORT_PIDFD could then behave in the
+> > same way...
 > 
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> Yes, we can. In fact, we should call the internal flag FANOTIFY_UNPRIV
+> as it described the situation better than FAN_REPORT_PID.
+> This happens to be how I implemented it in the initial RFC [1].
 > 
-> Changes since v1:
->   - Pass dentry to fanotify_check_fsid (Amir)
->   - FANOTIFY_EVENT_TYPE_ERROR -> FANOTIFY_EVENT_TYPE_FS_ERROR
->   - Merge previous patch into it
->   - Use a single slot
-> ---
->  fs/notify/fanotify/fanotify.c      |  74 ++++++++++++++++-
->  fs/notify/fanotify/fanotify.h      |  28 ++++++-
->  fs/notify/fanotify/fanotify_user.c | 123 ++++++++++++++++++++++++++---
->  include/linux/fanotify.h           |   6 +-
->  include/uapi/linux/fanotify.h      |  10 +++
->  5 files changed, 225 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 34e2ee759b39..197291a8c41d 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -269,7 +269,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
->  	pr_debug("%s: report_mask=%x mask=%x data=%p data_type=%d\n",
->  		 __func__, iter_info->report_mask, event_mask, data, data_type);
->  
-> -	if (!fid_mode) {
-> +	if (!fid_mode && data_type != FSNOTIFY_EVENT_ERROR) {
->  		/* Do we have path to open a file descriptor? */
->  		if (!path)
->  			return 0;
-> @@ -657,6 +657,51 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
->  	return event;
->  }
->  
-> +static void fanotify_init_error_event(struct fanotify_error_event *event,
-> +				      __kernel_fsid_t fsid,
-> +				      const struct fs_error_report *report)
-> +{
-> +	event->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
-> +	event->err_count = 1;
-> +	event->fsid = fsid;
-> +	event->error = report->error;
-> +	event->ino = (report->inode) ? report->inode->i_ino : 0;
-> +}
-> +
-> +static int fanotify_queue_error_event(struct fsnotify_iter_info *iter_info,
-> +				      struct fsnotify_group *group,
-> +				      __kernel_fsid_t fsid,
-> +				      const struct fs_error_report *report)
-> +{
-> +	struct fanotify_mark *mark;
-> +	int type;
-> +	int ret = -ENOMEM;
-> +
-> +	fsnotify_foreach_obj_type(type) {
-> +		if (!fsnotify_iter_should_report_type(iter_info, type))
-> +			continue;
-> +		mark = FANOTIFY_MARK(iter_info->marks[type]);
-> +	}
-> +
-> +	spin_lock(&mark->fsn_mark.lock);
-> +	if (mark->error_event) {
-> +		if (list_empty(&mark->error_event->fae.fse.list)) {
-> +			fsnotify_get_mark(&mark->fsn_mark);
-> +			fanotify_init_error_event(mark->error_event, fsid, report);
-> +			ret = fsnotify_add_event(group, &mark->error_event->fae.fse,
-> +						 NULL, NULL);
-> +			if (ret)
-> +				fsnotify_put_mark(&mark->fsn_mark);
-> +		} else {
-> +			mark->error_event->err_count++;
-> +			ret = 0;
-> +		}
-> +	}
-> +	spin_unlock(&mark->fsn_mark.lock);
-> +
-> +	return ret;
-> +}
-> +
->  /*
->   * Get cached fsid of the filesystem containing the object from any connector.
->   * All connectors are supposed to have the same fsid, but we do not verify that
-> @@ -738,8 +783,9 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
->  	BUILD_BUG_ON(FAN_ONDIR != FS_ISDIR);
->  	BUILD_BUG_ON(FAN_OPEN_EXEC != FS_OPEN_EXEC);
->  	BUILD_BUG_ON(FAN_OPEN_EXEC_PERM != FS_OPEN_EXEC_PERM);
-> +	BUILD_BUG_ON(FAN_ERROR != FS_ERROR);
->  
-> -	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 19);
-> +	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 20);
->  
->  	mask = fanotify_group_event_mask(group, iter_info, mask, data,
->  					 data_type, dir);
-> @@ -757,13 +803,20 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
->  			return 0;
->  	}
->  
-> -	if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS)) {
-> +	if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS) || fanotify_is_error_event(mask)) {
->  		fsid = fanotify_get_fsid(iter_info);
->  		/* Racing with mark destruction or creation? */
->  		if (!fsid.val[0] && !fsid.val[1])
->  			return 0;
->  	}
->  
-> +	if (fanotify_is_error_event(mask)) {
-> +		ret = fanotify_queue_error_event(iter_info, group, fsid, data);
-> +		if (ret)
-> +			fsnotify_queue_overflow(group);
-> +		goto finish;
-> +	}
-> +
->  	event = fanotify_alloc_event(group, mask, data, data_type, dir,
->  				     file_name, &fsid);
->  	ret = -ENOMEM;
-> @@ -833,6 +886,17 @@ static void fanotify_free_name_event(struct fanotify_event *event)
->  	kfree(FANOTIFY_NE(event));
->  }
->  
-> +static void fanotify_free_error_event(struct fanotify_event *event)
-> +{
-> +	/*
-> +	 * Just drop the reference acquired by
-> +	 * fanotify_queue_error_event.
-> +	 *
-> +	 * The actual memory is freed with the mark.
-> +	 */
-> +	fsnotify_put_mark(&(FANOTIFY_EE(event)->mark->fsn_mark));
-> +}
-> +
->  static void fanotify_free_event(struct fsnotify_event *fsn_event)
->  {
->  	struct fanotify_event *event;
-> @@ -855,6 +919,9 @@ static void fanotify_free_event(struct fsnotify_event *fsn_event)
->  	case FANOTIFY_EVENT_TYPE_OVERFLOW:
->  		kfree(event);
->  		break;
-> +	case FANOTIFY_EVENT_TYPE_FS_ERROR:
-> +		fanotify_free_error_event(event);
-> +		break;
->  	default:
->  		WARN_ON_ONCE(1);
->  	}
-> @@ -871,6 +938,7 @@ static void fanotify_free_mark(struct fsnotify_mark *fsn_mark)
->  {
->  	struct fanotify_mark *mark = FANOTIFY_MARK(fsn_mark);
->  
-> +	kfree(mark->error_event);
->  	kmem_cache_free(fanotify_mark_cache, mark);
->  }
->  
-> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-> index a399c5e2615d..ebe9e593dfbf 100644
-> --- a/fs/notify/fanotify/fanotify.h
-> +++ b/fs/notify/fanotify/fanotify.h
-> @@ -151,6 +151,7 @@ enum fanotify_event_type {
->  	FANOTIFY_EVENT_TYPE_PATH,
->  	FANOTIFY_EVENT_TYPE_PATH_PERM,
->  	FANOTIFY_EVENT_TYPE_OVERFLOW, /* struct fanotify_event */
-> +	FANOTIFY_EVENT_TYPE_FS_ERROR, /* struct fanotify_error_event */
->  	__FANOTIFY_EVENT_TYPE_NUM
->  };
->  
-> @@ -206,12 +207,31 @@ FANOTIFY_NE(struct fanotify_event *event)
->  	return container_of(event, struct fanotify_name_event, fae);
->  }
->  
-> +struct fanotify_error_event {
-> +	struct fanotify_event fae;
-> +	__kernel_fsid_t fsid;
-> +	unsigned long ino;
-> +	int error;
-> +	u32 err_count;
-> +
-> +	/* Back reference to the mark this error refers to. */
-> +	struct fanotify_mark *mark;
-> +};
-> +
-> +static inline struct fanotify_error_event *
-> +FANOTIFY_EE(struct fanotify_event *event)
-> +{
-> +	return container_of(event, struct fanotify_error_event, fae);
-> +}
-> +
->  static inline __kernel_fsid_t *fanotify_event_fsid(struct fanotify_event *event)
->  {
->  	if (event->type == FANOTIFY_EVENT_TYPE_FID)
->  		return &FANOTIFY_FE(event)->fsid;
->  	else if (event->type == FANOTIFY_EVENT_TYPE_FID_NAME)
->  		return &FANOTIFY_NE(event)->fsid;
-> +	else if (event->type == FANOTIFY_EVENT_TYPE_FS_ERROR)
-> +		return &FANOTIFY_EE(event)->fsid;
->  	else
->  		return NULL;
->  }
-> @@ -297,6 +317,11 @@ static inline struct fanotify_event *FANOTIFY_E(struct fsnotify_event *fse)
->  	return container_of(fse, struct fanotify_event, fse);
->  }
->  
-> +static inline bool fanotify_is_error_event(u32 mask)
-> +{
-> +	return mask & FANOTIFY_ERROR_EVENTS;
-> +}
-> +
->  static inline bool fanotify_event_has_path(struct fanotify_event *event)
->  {
->  	return event->type == FANOTIFY_EVENT_TYPE_PATH ||
-> @@ -325,7 +350,8 @@ static inline struct path *fanotify_event_path(struct fanotify_event *event)
->   */
->  static inline bool fanotify_is_hashed_event(u32 mask)
->  {
-> -	return !fanotify_is_perm_event(mask) && !(mask & FS_Q_OVERFLOW);
-> +	return (!fanotify_is_perm_event(mask) && !fanotify_is_error_event(mask)
-> +		&& !(mask & FS_Q_OVERFLOW));
->  }
->  
->  static inline unsigned int fanotify_event_hash_bucket(
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index 00210535a78e..ea9b9f8f7c21 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -106,6 +106,8 @@ struct kmem_cache *fanotify_perm_event_cachep __read_mostly;
->  #define FANOTIFY_EVENT_ALIGN 4
->  #define FANOTIFY_INFO_HDR_LEN \
->  	(sizeof(struct fanotify_event_info_fid) + sizeof(struct file_handle))
-> +#define FANOTIFY_INFO_ERROR_LEN \
-> +	(sizeof(struct fanotify_event_info_error))
->  
->  static int fanotify_fid_info_len(int fh_len, int name_len)
->  {
-> @@ -126,6 +128,9 @@ static size_t fanotify_event_len(struct fanotify_event *event,
->  	int fh_len;
->  	int dot_len = 0;
->  
-> +	if (fanotify_is_error_event(event->mask))
-> +		return event_len + FANOTIFY_INFO_ERROR_LEN;
-> +
->  	if (!fid_mode)
->  		return event_len;
->  
-> @@ -149,6 +154,30 @@ static size_t fanotify_event_len(struct fanotify_event *event,
->  	return event_len;
->  }
->  
-> +static struct fanotify_event *fanotify_dequeue_error_event(struct fsnotify_group *group,
-> +							   struct fanotify_event *event,
-> +							   struct fanotify_error_event *error_event)
-> +{
-> +	struct fsnotify_mark *mark = &(FANOTIFY_EE(event)->mark->fsn_mark);
-> +	/*
-> +	 * In order to avoid missing an error count update, the
-> +	 * queued event is de-queued and duplicated to an
-> +	 * in-stack fanotify_error_event while still inside
-> +	 * mark->lock.  Once the event is dequeued, it can be
-> +	 * immediately re-used for a new event.
-> +	 *
-> +	 * The ownership of the mark reference is dropped later
-> +	 * by destroy_event.
-> +	 */
-> +	spin_lock(&mark->lock);
-> +	memcpy(error_event, FANOTIFY_EE(event), sizeof(*error_event));
-> +	fsnotify_init_event(&error_event->fae.fse);
-> +	fsnotify_remove_queued_event(group, &event->fse);
-> +	spin_unlock(&mark->lock);
-> +
-> +	return &error_event->fae;
-> +}
-> +
->  /*
->   * Remove an hashed event from merge hash table.
->   */
-> @@ -173,7 +202,8 @@ static void fanotify_unhash_event(struct fsnotify_group *group,
->   * updated accordingly.
->   */
->  static struct fanotify_event *get_one_event(struct fsnotify_group *group,
-> -					    size_t count)
-> +					    size_t count,
-> +					    struct fanotify_error_event *error_event)
->  {
->  	size_t event_size;
->  	struct fanotify_event *event = NULL;
-> @@ -197,9 +227,14 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
->  
->  	/*
->  	 * Held the notification_lock the whole time, so this is the
-> -	 * same event we peeked above.
-> +	 * same event we peeked above, unless it is copied to
-> +	 * error_event.
->  	 */
-> -	fsnotify_remove_first_event(group);
-> +	if (fanotify_is_error_event(event->mask))
-> +		event = fanotify_dequeue_error_event(group, event, error_event);
-> +	else
-> +		fsnotify_remove_first_event(group);
-> +
->  	if (fanotify_is_perm_event(event->mask))
->  		FANOTIFY_PERM(event)->state = FAN_EVENT_REPORTED;
->  	if (fanotify_is_hashed_event(event->mask))
-> @@ -309,6 +344,30 @@ static int process_access_response(struct fsnotify_group *group,
->  	return -ENOENT;
->  }
->  
-> +static size_t copy_error_info_to_user(struct fanotify_event *event,
-> +				      char __user *buf, int count)
-> +{
-> +	struct fanotify_event_info_error info;
-> +	struct fanotify_error_event *fee = FANOTIFY_EE(event);
-> +
-> +	info.hdr.info_type = FAN_EVENT_INFO_TYPE_ERROR;
-> +	info.hdr.pad = 0;
-> +	info.hdr.len = sizeof(struct fanotify_event_info_error);
-> +
-> +	if (WARN_ON(count < info.hdr.len))
-> +		return -EFAULT;
-> +
-> +	info.fsid = fee->fsid;
-> +	info.error = fee->error;
-> +	info.inode = fee->ino;
-> +	info.error_count = fee->err_count;
-> +
-> +	if (copy_to_user(buf, &info, sizeof(info)))
-> +		return -EFAULT;
-> +
-> +	return info.hdr.len;
-> +}
-> +
->  static int copy_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
->  			     int info_type, const char *name, size_t name_len,
->  			     char __user *buf, size_t count)
-> @@ -523,6 +582,14 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
->  		count -= ret;
->  	}
->  
-> +	if (fanotify_is_error_event(event->mask)) {
-> +		ret = copy_error_info_to_user(event, buf, count);
-> +		if (ret < 0)
-> +			return ret;
-> +		buf += ret;
-> +		count -= ret;
-> +	}
-> +
->  	return metadata.event_len;
->  
->  out_close_fd:
-> @@ -553,6 +620,7 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
->  {
->  	struct fsnotify_group *group;
->  	struct fanotify_event *event;
-> +	struct fanotify_error_event error_event;
->  	char __user *start;
->  	int ret;
->  	DEFINE_WAIT_FUNC(wait, woken_wake_function);
-> @@ -569,7 +637,7 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
->  		 * in case there are lots of available events.
->  		 */
->  		cond_resched();
-> -		event = get_one_event(group, count);
-> +		event = get_one_event(group, count, &error_event);
->  		if (IS_ERR(event)) {
->  			ret = PTR_ERR(event);
->  			break;
-> @@ -888,16 +956,33 @@ static int fanotify_remove_inode_mark(struct fsnotify_group *group,
->  				    flags, umask);
->  }
->  
-> -static __u32 fanotify_mark_add_to_mask(struct fsnotify_mark *fsn_mark,
-> -				       __u32 mask,
-> -				       unsigned int flags)
-> +static int fanotify_mark_add_to_mask(struct fsnotify_mark *fsn_mark,
-> +				       __u32 mask, unsigned int flags,
-> +				     __u32 *modified_mask)
->  {
-> +	struct fanotify_mark *mark = FANOTIFY_MARK(fsn_mark);
-> +	struct fanotify_error_event *error_event = NULL;
-> +	bool addition = !(flags & FAN_MARK_IGNORED_MASK);
->  	__u32 oldmask = -1;
->  
-> +	/* Only pre-alloc error_event if needed. */
-> +	if (addition && (mask & FAN_ERROR) && !mark->error_event) {
-> +		error_event = kzalloc(sizeof(*error_event), GFP_KERNEL);
-> +		if (!error_event)
-> +			return -ENOMEM;
-> +		fanotify_init_event(&error_event->fae, 0, FS_ERROR);
-> +		error_event->mark = mark;
-> +	}
-> +
->  	spin_lock(&fsn_mark->lock);
-> -	if (!(flags & FAN_MARK_IGNORED_MASK)) {
-> +	if (addition) {
->  		oldmask = fsn_mark->mask;
->  		fsn_mark->mask |= mask;
-> +
-> +		if (!mark->error_event) {
-> +			mark->error_event = error_event;
-> +			error_event = NULL;
-> +		}
->  	} else {
->  		fsn_mark->ignored_mask |= mask;
->  		if (flags & FAN_MARK_IGNORED_SURV_MODIFY)
-> @@ -905,7 +990,11 @@ static __u32 fanotify_mark_add_to_mask(struct fsnotify_mark *fsn_mark,
->  	}
->  	spin_unlock(&fsn_mark->lock);
->  
-> -	return mask & ~oldmask;
-> +	kfree(error_event);
-> +
-> +	*modified_mask = mask & ~oldmask;
-> +	return 0;
-> +
->  }
->  
->  static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
-> @@ -955,6 +1044,7 @@ static int fanotify_add_mark(struct fsnotify_group *group,
->  {
->  	struct fsnotify_mark *fsn_mark;
->  	__u32 added;
-> +	int ret = 0;
->  
->  	mutex_lock(&group->mark_mutex);
->  	fsn_mark = fsnotify_find_mark(connp, group);
-> @@ -965,13 +1055,18 @@ static int fanotify_add_mark(struct fsnotify_group *group,
->  			return PTR_ERR(fsn_mark);
->  		}
->  	}
-> -	added = fanotify_mark_add_to_mask(fsn_mark, mask, flags);
-> +	ret = fanotify_mark_add_to_mask(fsn_mark, mask, flags, &added);
-> +	if (ret)
-> +		goto out;
-> +
->  	if (added & ~fsnotify_conn_mask(fsn_mark->connector))
->  		fsnotify_recalc_mask(fsn_mark->connector);
-> +
-> +out:
->  	mutex_unlock(&group->mark_mutex);
->  
->  	fsnotify_put_mark(fsn_mark);
-> -	return 0;
-> +	return ret;
->  }
->  
->  static int fanotify_add_vfsmount_mark(struct fsnotify_group *group,
-> @@ -1377,6 +1472,12 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
->  
->  		fsid = &__fsid;
->  	}
-> +	if (mask & FAN_ERROR) {
-> +		ret = fanotify_test_fsid(path.dentry, &__fsid);
-> +		if (ret)
-> +			goto path_put_and_out;
-> +		fsid = &__fsid;
-> +	}
->  
->  	/* inode held in place by reference to path; group by fget on fd */
->  	if (mark_type == FAN_MARK_INODE)
-> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-> index bad41bcb25df..05c929d588e4 100644
-> --- a/include/linux/fanotify.h
-> +++ b/include/linux/fanotify.h
-> @@ -81,9 +81,12 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
->  #define FANOTIFY_INODE_EVENTS	(FANOTIFY_DIRENT_EVENTS | \
->  				 FAN_ATTRIB | FAN_MOVE_SELF | FAN_DELETE_SELF)
->  
-> +#define FANOTIFY_ERROR_EVENTS	(FAN_ERROR)
-> +
->  /* Events that user can request to be notified on */
->  #define FANOTIFY_EVENTS		(FANOTIFY_PATH_EVENTS | \
-> -				 FANOTIFY_INODE_EVENTS)
-> +				 FANOTIFY_INODE_EVENTS | \
-> +				 FANOTIFY_ERROR_EVENTS)
->  
->  /* Events that require a permission response from user */
->  #define FANOTIFY_PERM_EVENTS	(FAN_OPEN_PERM | FAN_ACCESS_PERM | \
-> @@ -95,6 +98,7 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
->  /* Events that may be reported to user */
->  #define FANOTIFY_OUTGOING_EVENTS	(FANOTIFY_EVENTS | \
->  					 FANOTIFY_PERM_EVENTS | \
-> +					 FANOTIFY_ERROR_EVENTS | \
->  					 FAN_Q_OVERFLOW | FAN_ONDIR)
->  
->  #define ALL_FANOTIFY_EVENT_BITS		(FANOTIFY_OUTGOING_EVENTS | \
-> diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-> index fbf9c5c7dd59..e3920597112f 100644
-> --- a/include/uapi/linux/fanotify.h
-> +++ b/include/uapi/linux/fanotify.h
-> @@ -20,6 +20,7 @@
->  #define FAN_OPEN_EXEC		0x00001000	/* File was opened for exec */
->  
->  #define FAN_Q_OVERFLOW		0x00004000	/* Event queued overflowed */
-> +#define FAN_ERROR		0x00008000	/* Filesystem error */
->  
->  #define FAN_OPEN_PERM		0x00010000	/* File open in perm check */
->  #define FAN_ACCESS_PERM		0x00020000	/* File accessed in perm check */
-> @@ -123,6 +124,7 @@ struct fanotify_event_metadata {
->  #define FAN_EVENT_INFO_TYPE_FID		1
->  #define FAN_EVENT_INFO_TYPE_DFID_NAME	2
->  #define FAN_EVENT_INFO_TYPE_DFID	3
-> +#define FAN_EVENT_INFO_TYPE_ERROR	4
->  
->  /* Variable length info record following event metadata */
->  struct fanotify_event_info_header {
-> @@ -148,6 +150,14 @@ struct fanotify_event_info_fid {
->  	unsigned char handle[0];
->  };
->  
-> +struct fanotify_event_info_error {
-> +	struct fanotify_event_info_header hdr;
-> +	int error;
-> +	__kernel_fsid_t fsid;
-> +	unsigned long inode;
+> It's not easy to follow our entire discussion on this thread, but I think
+> we can resurrect the FANOTIFY_UNPRIV internal flag and use it
+> in this case instead of CAP_SYS_ADMIN.
 
-This ought to be __u64 (i.e. guaranteed 64-bit quantity) since this
-struct is part of the is userspace ABI and you don't want to deal with
-i386-on-x64 translation headaches.  The same goes for
-fanotify_error_event.inode since it feeds this field.
+I think at that time we were discussing how to handle opening of fds and
+we decided to not depend on FANOTIFY_UNPRIV and then I didn't see a value
+of that flag because I forgot about pids... Anyway now I agree to go for
+that flag. :)
 
---D
-
-> +	__u32 error_count;
-> +};
-> +
->  struct fanotify_response {
->  	__s32 fd;
->  	__u32 response;
-> -- 
-> 2.31.0
-> 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
