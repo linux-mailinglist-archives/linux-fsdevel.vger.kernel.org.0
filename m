@@ -2,105 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CE0038C1C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 10:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 893A738C1CD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 10:29:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231558AbhEUI2D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 04:28:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44192 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231553AbhEUI2C (ORCPT
+        id S231826AbhEUIaX convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 04:30:23 -0400
+Received: from us-smtp-delivery-44.mimecast.com ([207.211.30.44]:40404 "EHLO
+        us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230417AbhEUIaX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 04:28:02 -0400
-Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02C48C061763
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 01:26:38 -0700 (PDT)
-Received: by mail-vk1-xa2a.google.com with SMTP id j19so4135930vkj.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 01:26:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dIarhh7kQdoMISCJccKY5DYZHHV1dh+rcFxZJNgKlb4=;
-        b=A9wFJYohjkcV8tugshuuRX02q6IEX2iLWvkXjHmZ+HMZYQ5ZjqsxHKSGZ0NQtW/HO0
-         /aJ1C6CAxtiLU0C/FihkgYxwvey7608acACMtPrx2wuCh5EiBhdfGfMhSni50J/fl/7M
-         +ukT3crol2UW/Q6v9bF4TfORWQmK0DAQ4OAbU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dIarhh7kQdoMISCJccKY5DYZHHV1dh+rcFxZJNgKlb4=;
-        b=stO5xeGg+qgy+2EB53Y48VaZMGkCcTqdecAUvVUmb2jtipnA+EagsHOPXNwzT7bNAK
-         GiOrRdjVPXvCOUIxAQCsvj19Kh48enkeHK8j4tIkH+8olaqIfVLDR5U2hKRgyBow1kX1
-         AQLDoYiNr6d4J0w7vDqphkMegBZcgzW7nadL4uTNl14piAXkS9kSLA9d2FgOYBx6d2bL
-         lA0Q5AP6PwYtykzDjMUYYSjrX2hDtVRA/fLvVm89O6QIkWlYIkkQbtJ/lkaZzOAKwMsy
-         VdM9i5xrm2ngjTIcQP7dpC5WI6rPV7a51QZist8l2Ym+TCOCxdqX5FfgPyGuhwK6EdbL
-         YhxA==
-X-Gm-Message-State: AOAM533oJssj4Maqms/Xk27+ZtlFbCA0p4yik+0Hb/gtcPiB3B6RAEvU
-        Ud2n5KeUpNYRkjaGGBoUU+CblSX76l5cXwiPJ+jH3Q==
-X-Google-Smtp-Source: ABdhPJzPh2FreEu9W/lQvvjgADbqrEMI2cf6ldvFFN45zD3cS7pi8UeqXkjozk3x2P1C388OgWGOLzE9we0HREOJwmM=
-X-Received: by 2002:a1f:a802:: with SMTP id r2mr8911868vke.14.1621585598004;
- Fri, 21 May 2021 01:26:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210520154654.1791183-1-groug@kaod.org> <20210520154654.1791183-5-groug@kaod.org>
-In-Reply-To: <20210520154654.1791183-5-groug@kaod.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 21 May 2021 10:26:27 +0200
-Message-ID: <CAJfpegugQM-ChaGiLyfPkbFr9c=_BiOBQkJTeEz5yN0ujO_O4A@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] virtiofs: Skip submounts in sget_fc()
-To:     Greg Kurz <groug@kaod.org>
+        Fri, 21 May 2021 04:30:23 -0400
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-13-IzwURQWAMn2VOcSgFBBl0Q-1; Fri, 21 May 2021 04:28:45 -0400
+X-MC-Unique: IzwURQWAMn2VOcSgFBBl0Q-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B08B48042A8;
+        Fri, 21 May 2021 08:28:44 +0000 (UTC)
+Received: from bahia.lan (ovpn-112-49.ams2.redhat.com [10.36.112.49])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 610C25D764;
+        Fri, 21 May 2021 08:28:35 +0000 (UTC)
+Date:   Fri, 21 May 2021 10:28:33 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
         Max Reitz <mreitz@redhat.com>, Vivek Goyal <vgoyal@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v4 2/5] fuse: Call vfs_get_tree() for submounts
+Message-ID: <20210521102833.4a7595b7@bahia.lan>
+In-Reply-To: <YKdtJCo/06q594pM@miu.piliscsaba.redhat.com>
+References: <20210520154654.1791183-1-groug@kaod.org>
+        <20210520154654.1791183-3-groug@kaod.org>
+        <YKdtJCo/06q594pM@miu.piliscsaba.redhat.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: kaod.org
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 20 May 2021 at 17:47, Greg Kurz <groug@kaod.org> wrote:
->
-> All submounts share the same virtio-fs device instance as the root
-> mount. If the same virtiofs filesystem is mounted again, sget_fc()
-> is likely to pick up any of these submounts and reuse it instead of
-> the root mount.
->
-> On the server side:
->
-> # mkdir ${some_dir}
-> # mkdir ${some_dir}/mnt1
-> # mount -t tmpfs none ${some_dir}/mnt1
-> # touch ${some_dir}/mnt1/THIS_IS_MNT1
-> # mkdir ${some_dir}/mnt2
-> # mount -t tmpfs none ${some_dir}/mnt2
-> # touch ${some_dir}/mnt2/THIS_IS_MNT2
->
-> On the client side:
->
-> # mkdir /mnt/virtiofs1
-> # mount -t virtiofs myfs /mnt/virtiofs1
-> # ls /mnt/virtiofs1
-> mnt1 mnt2
-> # grep virtiofs /proc/mounts
-> myfs /mnt/virtiofs1 virtiofs rw,seclabel,relatime 0 0
-> none on /mnt/mnt1 type virtiofs (rw,relatime,seclabel)
-> none on /mnt/mnt2 type virtiofs (rw,relatime,seclabel)
->
-> And now remount it again:
->
-> # mount -t virtiofs myfs /mnt/virtiofs2
-> # grep virtiofs /proc/mounts
-> myfs /mnt/virtiofs1 virtiofs rw,seclabel,relatime 0 0
-> none on /mnt/mnt1 type virtiofs (rw,relatime,seclabel)
-> none on /mnt/mnt2 type virtiofs (rw,relatime,seclabel)
-> myfs /mnt/virtiofs2 virtiofs rw,seclabel,relatime 0 0
-> # ls /mnt/virtiofs2
-> THIS_IS_MNT2
->
-> Submount mnt2 was picked-up instead of the root mount.
+On Fri, 21 May 2021 10:19:48 +0200
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-Why is this a problem?
+> On Thu, May 20, 2021 at 05:46:51PM +0200, Greg Kurz wrote:
+> > We don't set the SB_BORN flag on submounts superblocks. This is wrong
+> > as these superblocks are then considered as partially constructed or
+> > dying in the rest of the code and can break some assumptions.
+> > 
+> > One such case is when you have a virtiofs filesystem and you try to
+> > mount it again : virtio_fs_get_tree() tries to obtain a superblock
+> > with sget_fc(). The matching criteria in virtio_fs_test_super() is
+> > the pointer of the underlying virtiofs device, which is shared by
+> > the root mount and its submounts. This means that any submount can
+> > be picked up instead of the root mount. This is itself a bug :
+> > submounts should be ignored in this case. But, most importantly, it
+> > then triggers an infinite loop in sget_fc() because it fails to grab
+> > the superblock (very easy to reproduce).
+> > 
+> > The only viable solution is to set SB_BORN at some point. This
+> > must be done with vfs_get_tree() because setting SB_BORN requires
+> > special care, i.e. a memory barrier for super_cache_count() which
+> > can check SB_BORN without taking any lock.
+> 
+> Looks correct, but...
+> 
+> as an easily backportable and verifiable bugfix I'd still go with the
+> simple two liner:
+> 
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -351,6 +351,9 @@ static struct vfsmount *fuse_dentry_automount(struct path *path)
+>  	list_add_tail(&fm->fc_entry, &fc->mounts);
+>  	up_write(&fc->killsb);
+>  
+> +	smp_wmb();
+> +	sb->s_flags |= SB_BORN;
+> +
 
-Thanks,
-Miklos
+plus the mandatory comment one must put to justify the
+need for a memory barrier.
+
+>  	/* Create the submount */
+>  	mnt = vfs_create_mount(fsc);
+>  	if (IS_ERR(mnt)) {
+> 
+> And have this patch be the cleanup.
+> 
+
+Fair enough.
+
+> Also we need Fixes: and a Cc: stable@... tags on that one.
+> 
+
+Oops, I'll add these in the next round.
+
+> Thanks,
+> Miklos
+
