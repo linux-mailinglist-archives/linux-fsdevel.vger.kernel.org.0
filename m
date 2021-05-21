@@ -2,67 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDB8638C29F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 11:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A4EB38C2A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 11:07:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235430AbhEUJH6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 05:07:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53306 "EHLO
+        id S235524AbhEUJJE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 05:09:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235351AbhEUJH6 (ORCPT
+        with ESMTP id S235439AbhEUJJD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 05:07:58 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A985DC061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 02:06:34 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id x19so28670758lfa.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 02:06:34 -0700 (PDT)
+        Fri, 21 May 2021 05:09:03 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2681CC061574;
+        Fri, 21 May 2021 02:07:41 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id b25so1106980iot.5;
+        Fri, 21 May 2021 02:07:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=KLsl+69Yo9dBbmAa+9VMX+devwVRU50OLtBsdtVCcag=;
-        b=Jj08QbwgTSe6yAckiupLORiOo4vUrpZ94jlSxv7YaFP0SqTvWKf3SphyL/joZl1lQ3
-         GaEeN88CsIj3r6VSoqfFgl/2VElal5DlTdysLec/GLyPWaRFCymR/zP8bmGz304sfEkN
-         XUvHyyXmBdg1l/nAhqNAqFpC9f2O104CHx39t3XbWGwvMs4uEpxyW749wh2LxTfhav39
-         S3MPxEj6FwWJycAu7C8UUQknY3YhK3VgWpdLK1GhHn/JVEDRfInaCrJbE5efDeEOWRIl
-         HzEnYYQmEWG04rcEMtFJtDafMGTaQXwX20hAVSDQSDsoyGOwQtl70hUDDn/AKOElY09+
-         ASYw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F68djwrrrlB+TcldXidy5MN/3R9n2lZHelR2pEFMlHU=;
+        b=S6xbS/yQBhxwHdRnjhwMLqSX1iGJDDuoKPl9IOnk5+aYo3PrzVbSoFiTyJziNTCDD3
+         Hxl3ZkX/PvlYAv6kPyNqlBYLdgvoEmtI9qv4y469KhJ3ATQxnrLRpsjOoTRAhW64fpVU
+         opMM8IquJZHsamIjbO56bBibM5K/jcvrF55l1A6EykFFGoWzrtxBgKp7r+YDU6DmQRTf
+         lYsBCUVT5lqMCF2Y61k6EBITfF3JjrTh1dLGChE+xefeMRoTFDP3IxP4wCcmQ8uwhYIS
+         MEgXSjs6xsJdtmiM1bcxyOKj8t0wHGd1ruUg7hPby/laEXwhC4lFF+wKeavnW1XpK/BC
+         02lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=KLsl+69Yo9dBbmAa+9VMX+devwVRU50OLtBsdtVCcag=;
-        b=E+5hO6Zh8NYd5TgZ1+fj3ziDljV1y1fiJCyxlrWje6/5LzGgWO5o4hlfAdRJKxMTwP
-         1AvXl49N0A4xVZl53BAMBSuCYik55z8bQ2vp4fS3sUK/yH6epC5vyPmPZh0pGdvTa0KZ
-         30Pix1liprheSbS6Iz26B1FUO7J4pu1Iqm+c7Z/NNrbieIvXigCbtXbgyt4Y6Naxb2C9
-         RxBT8DaFd7r7CC0FJSAbQ184FG6TcgZgOQM/m33bbLuZaJGTe56GH9dDHa5QHcbVruWV
-         raJ3azD0bFGi+FJQ4Vl1inTsp96AeTDIEZTv/QpN9hi0Xnuo3lQbQ3yPd1Cs0noPXbQg
-         GI4w==
-X-Gm-Message-State: AOAM533WJM0R7V9nHo+3G+daafOLogVgx2BItq7pw1z02Ioxt5on9NDD
-        lFSRFCye8ujLncM/v5akcnwEBhaDPz/p94jZxjo=
-X-Google-Smtp-Source: ABdhPJw39AS6Qk0iqwJHhqlLeusi++S09oZC5o1tAfBBCmnfAx4GjGQcdoiwUFmzJhx7iQysn/q7mVtSlaHtP9l4gsg=
-X-Received: by 2002:ac2:4246:: with SMTP id m6mr1577676lfl.611.1621587993095;
- Fri, 21 May 2021 02:06:33 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F68djwrrrlB+TcldXidy5MN/3R9n2lZHelR2pEFMlHU=;
+        b=EWjswr1MJJ45vWOXuwUMl9pjILOdMKAeV7PVBzo8HglWRcTQM5laxvyzNf/tM/3/e8
+         C75K9d+N/cOX6F2i/xJ9w3MVLkfQHaPXBBtisqezERvqu2pQx5eCp3PN5FtXwPwu9+3G
+         cY6z5dAdhIl4qS1QPvSGx6btz3u5FXcUdOcL5LsXfhDrIwAWQvp2GNdIMwBlc9H+sLTi
+         vTvYAR+sJapmkn0nT9pw0jyTGSvEF/yv4WQfqxzSeH3Osk5w5ACJ95CP69whwmwmoOYo
+         v/mrGQueuimZxUIRXKc6zWJyd7aH1dO8kID38ZJ+2E2Iw51WqrxYTmV8VbVU5KoHpvFW
+         mUUw==
+X-Gm-Message-State: AOAM532qna3blmPjzKrFhlKEYJesODEo9nT0EseermnhCBpyeNGVoQB3
+        +KfQC2az1uwe9Ryf9Eb4l4urmS+NAF5U1FLI4pUXjP0M6Z0=
+X-Google-Smtp-Source: ABdhPJwN46O66COep21kHFjg/O7u1o0s8ggjlT1za2ZnAGm3M6lvrJDPH6PziiQQSDz167s5uxV3YxFE9kjAJAS2v00=
+X-Received: by 2002:a6b:3119:: with SMTP id j25mr9404514ioa.64.1621588060516;
+ Fri, 21 May 2021 02:07:40 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a05:651c:48e:0:0:0:0 with HTTP; Fri, 21 May 2021 02:06:32
- -0700 (PDT)
-Reply-To: ubagroups03@gmail.com
-From:   Postal service <melikabecky@gmail.com>
-Date:   Fri, 21 May 2021 02:06:32 -0700
-Message-ID: <CANhEW3dNNSm=R=CBooovZAg5GFtBcZoHFoVCm2ofmA6BVY_wEQ@mail.gmail.com>
-Subject: HELLO
-To:     undisclosed-recipients:;
+References: <20210521024134.1032503-1-krisman@collabora.com> <20210521024134.1032503-6-krisman@collabora.com>
+In-Reply-To: <20210521024134.1032503-6-krisman@collabora.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 21 May 2021 12:07:29 +0300
+Message-ID: <CAOQ4uxi2G-RT1aLU337zDjWZxpi7aP-x-OTTL=5vGuf1H9DXjA@mail.gmail.com>
+Subject: Re: [PATCH 05/11] inotify: Don't force FS_IN_IGNORED
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     kernel@collabora.com, "Darrick J . Wong" <djwong@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Do you know that you can be making $4000 or more every single week
-legitimately online while working from home without much stress, if
-you're ready to start making potential sum kindly join the whatsapp
-group link below to know how it works .
+On Fri, May 21, 2021 at 5:42 AM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+> According to Amir:
+>
+> "FS_IN_IGNORED is completely internal to inotify and there is no need
+> to set it in i_fsnotify_mask at all, so if we remove the bit from the
+> output of inotify_arg_to_mask() no functionality will change and we will
+> be able to overload the event bit for FS_ERROR."
+>
+> This is done in preparation to overload FS_ERROR with the notification
+> mechanism in fanotify.
+>
+> Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-https://chat.whatsapp.com/LPzWxSbTFCVGDqI3R3VhGP
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
--- 
-ATLAS COIN
+> ---
+>  fs/notify/inotify/inotify_user.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+> index 98f61b31745a..4d17be6dd58d 100644
+> --- a/fs/notify/inotify/inotify_user.c
+> +++ b/fs/notify/inotify/inotify_user.c
+> @@ -89,10 +89,10 @@ static inline __u32 inotify_arg_to_mask(struct inode *inode, u32 arg)
+>         __u32 mask;
+>
+>         /*
+> -        * Everything should accept their own ignored and should receive events
+> -        * when the inode is unmounted.  All directories care about children.
+> +        * Everything should receive events when the inode is unmounted.
+> +        * All directories care about children.
+>          */
+> -       mask = (FS_IN_IGNORED | FS_UNMOUNT);
+> +       mask = (FS_UNMOUNT);
+
+Nit: can remove ()
+
+Thanks,
+Amir.
