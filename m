@@ -2,115 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2A8A38C518
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 12:41:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6093038C552
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 12:56:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231246AbhEUKmV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 06:42:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36740 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231131AbhEUKmU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 06:42:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A8929AC3E;
-        Fri, 21 May 2021 10:40:56 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 6FF601F2C73; Fri, 21 May 2021 12:40:56 +0200 (CEST)
-Date:   Fri, 21 May 2021 12:40:56 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Bobrowski <repnop@google.com>
-Cc:     Jan Kara <jack@suse.cz>, amir73il@gmail.com,
-        christian.brauner@ubuntu.com, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH 0/5] Add pidfd support to the fanotify API
-Message-ID: <20210521104056.GG18952@quack2.suse.cz>
-References: <cover.1621473846.git.repnop@google.com>
- <20210520135527.GD18952@quack2.suse.cz>
- <YKeIR+LiSXqUHL8Q@google.com>
+        id S233747AbhEUK6R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 06:58:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50012 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233578AbhEUK6P (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 May 2021 06:58:15 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BB36C061574;
+        Fri, 21 May 2021 03:56:51 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id ep16-20020a17090ae650b029015d00f578a8so6964396pjb.2;
+        Fri, 21 May 2021 03:56:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OMj8UtOKZd2HOLgsJ4v7RT7nDBlE06n7wLRp+Jshv9w=;
+        b=BgB4kpW5A/BbrQiQVfXgfJTrpLCeXZJPZF/CzwXU203w6je18yLXBPaT3JGzmagOtN
+         GoS1c/SuqBFc2MXZELZPK06DXRA3cik8qFBehjGCT3OHVbU/VqR9wAYXlDNcTJgYedBg
+         y3y6HmUnp0RuFrnFpQDsbFg8kvbVntYvwtGSqJgHNBRcHMVeVTS5gq6wnyHOMffMGOnx
+         MFew+SheuWR5BPQ/8RCgWs1GkGGTlPWX8i3SuvPxTgGcVyIxF31uGu3btU7KjoAX/0yc
+         UrQVriS3v7rPp2h+5Ta0xBG9hYIUecqQaHRiDltG9by4lfHNttUug4GY7IlWdrmP+vHA
+         hraw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OMj8UtOKZd2HOLgsJ4v7RT7nDBlE06n7wLRp+Jshv9w=;
+        b=PeMzq1nx0B2dee8HddRknAwLBIBpAOmB8DxfKD4bsLYXAgiaWX7qejrOtgop5tbTpM
+         2iJuJvFau+I6smXmw0Wvszv5j4KhktxTmH/P4QH2ux9ori9fmn4bgc+YE6xvW0mMz1j9
+         xcm21xb2Lgvaef/F2x8xS21qOwI/smOTKMUvyPBDkyaHymFkqEVeost4So/LwwgwJbJy
+         muW5+0Xk8N5cxqZlKDfTxaY6NSkiBfl0irVPm1HEPuZvwtyI5D5G1OgkFltj5xRbxxNA
+         /ALDuhxab8dUL1/caMV8SQX8vVRY+ohHAx5WtUC6r2+jZqoy+RSU050cQxCKA/H2p29c
+         M0YA==
+X-Gm-Message-State: AOAM532YRofdABGUKYntLeK5AhX3keW8/vHti84Sstug5SLH28fkvYHk
+        zSEaoAsNjAiUVPdBDdtxTQo=
+X-Google-Smtp-Source: ABdhPJzG5m+mqW5TAplKQGYXrKfzeh+aTFi5d3vDnPDZB6b9NzKBhXTuMBU7MazvagTwaQY5e+Y7GQ==
+X-Received: by 2002:a17:902:ee54:b029:ef:8497:e097 with SMTP id 20-20020a170902ee54b02900ef8497e097mr11468049plo.22.1621594610712;
+        Fri, 21 May 2021 03:56:50 -0700 (PDT)
+Received: from localhost.localdomain ([139.167.194.135])
+        by smtp.gmail.com with ESMTPSA id c195sm4337309pfb.144.2021.05.21.03.56.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 May 2021 03:56:50 -0700 (PDT)
+From:   Aviral Gupta <shiv14112001@gmail.com>
+To:     viro@zeniv.linux.org.uk, shuah@kernal.org
+Cc:     Aviral Gupta <shiv14112001@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH] This commit fixes the error generated due to the wrong indentation which does not follow the codding  style norms set by Linux-kernel  and space- bar is used in place of tab to give space which causes a visual error for  some compilers
+Date:   Fri, 21 May 2021 16:26:54 +0530
+Message-Id: <20210521105654.4046-1-shiv14112001@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YKeIR+LiSXqUHL8Q@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 21-05-21 20:15:35, Matthew Bobrowski wrote:
-> Hey Jan!
-> 
-> On Thu, May 20, 2021 at 03:55:27PM +0200, Jan Kara wrote:
-> > On Thu 20-05-21 12:09:45, Matthew Bobrowski wrote:
-> > > Hey Jan/Amir/Christian,
-> > > 
-> > > This is the updated patch series for adding pidfd support to the
-> > > fanotify API. It incorporates all the suggestions that had come out of
-> > > the initial RFC patch series [0].
-> > > 
-> > > The main difference with this patch series is that FAN_REPORT_PIDFD
-> > > results in an additional info record object supplied alongside the
-> > > generic event metadata object instead of overloading metadata->pid. If
-> > > any of the fid flavoured init flags are specified, then the pidfd info
-> > > record object will follow any fid info record objects.
-> > > 
-> > > [0] https://www.spinics.net/lists/linux-fsdevel/msg193296.html
-> > 
-> > Overall the series looks fine to me - modulo the problems Christian & Amir
-> > found. Do you have any tests for this? Preferably for LTP so that we can
-> > extend the coverage there?
-> 
-> Cool and thanks for glancing over this series.
-> 
-> I've written some simple programs to verify this functionality works in
-> FID and non-FID modes. I definitely plan on writing LTP tests,
-> although it's something I'll do once we've agreed on the approach and
-> I've received an ACK from yourself, Amir and Christian. This series
-> passes all current LTP regressions. Also, I guess I'll need to write
-> some patches for man-pages given this is an ABI change.
+ERROR: switch and case should be at the same indent
++	switch (whence) {
++		case 1:
+[...]
++		case 0:
+[...]
++		default:
+ERROR: code indent should use tabs where possible
++                              void (*callback)(struct dentry *))$
 
-Yes, manpage update will be necessary as well.
+Signed-off-by: Aviral Gupta <shiv14112001@gmail.com>
+---
+ fs/libfs.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-> There's one thing that I'd like to mention, and it's something in
-> regards to the overall approach we've taken that I'm not particularly
-> happy about and I'd like to hear all your thoughts. Basically, with
-> this approach the pidfd creation is done only once an event has been
-> queued and the notification worker wakes up and picks up the event
-> from the queue processes it. There's a subtle latency introduced when
-> taking such an approach which at times leads to pidfd creation
-> failures. As in, by the time pidfd_create() is called the struct pid
-> has already been reaped, which then results in FAN_NOPIDFD being
-> returned in the pidfd info record.
-> 
-> Having said that, I'm wondering what the thoughts are on doing pidfd
-> creation earlier on i.e. in the event allocation stages? This way, the
-> struct pid is pinned earlier on and rather than FAN_NOPIDFD being
-> returned in the pidfd info record because the struct pid has been
-> already reaped, userspace application will atleast receive a valid
-> pidfd which can be used to check whether the process still exists or
-> not. I think it'll just set the expectation better from an API
-> perspective.
-
-Yes, there's this race. OTOH if FAN_NOPIDFD is returned, the listener can
-be sure the original process doesn't exist anymore. So is it useful to
-still receive pidfd of the dead process? Also opening pidfd in the context
-of event generation is problematic for two reasons:
-
-1) Technically, the context under which events are generated can be rather
-constrained (various locks held etc.). Adding relatively complex operations
-such as pidfd creation is going to introduce strange lock dependencies,
-possibly deadlocks.
-
-2) Doing pidfd generation in the context of the process generating event is
-problematic - you don't know in which fd_table the fd will live. Also that
-process is unfairly penalized (performance wise) because someone else is
-listening. We try to keep overhead of event generation as low as possible
-for this reason.
-
-								Honza
-
-> 
-> /M
+diff --git a/fs/libfs.c b/fs/libfs.c
+index e9b29c6ffccb..a7a9deec546c 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -138,15 +138,15 @@ loff_t dcache_dir_lseek(struct file *file, loff_t offset, int whence)
+ {
+ 	struct dentry *dentry = file->f_path.dentry;
+ 	switch (whence) {
+-		case 1:
+-			offset += file->f_pos;
+-			fallthrough;
+-		case 0:
+-			if (offset >= 0)
+-				break;
+-			fallthrough;
+-		default:
+-			return -EINVAL;
++	case 1:
++		offset += file->f_pos;
++		fallthrough;
++	case 0:
++		if (offset >= 0)
++			break;
++		fallthrough;
++	default:
++		return -EINVAL;
+ 	}
+ 	if (offset != file->f_pos) {
+ 		struct dentry *cursor = file->private_data;
+@@ -266,7 +266,7 @@ static struct dentry *find_next_child(struct dentry *parent, struct dentry *prev
+ }
+ 
+ void simple_recursive_removal(struct dentry *dentry,
+-                              void (*callback)(struct dentry *))
++				void (*callback)(struct dentry *))
+ {
+ 	struct dentry *this = dget(dentry);
+ 	while (true) {
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.1
+
