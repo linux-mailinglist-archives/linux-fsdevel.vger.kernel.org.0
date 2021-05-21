@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 424A038BF8E
+	by mail.lfdr.de (Postfix) with ESMTP id 8BEAE38BF8F
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 08:39:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232965AbhEUGi5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 02:38:57 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:54217 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232968AbhEUGhp (ORCPT
+        id S233089AbhEUGi6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 02:38:58 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:63152 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232975AbhEUGiu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 02:37:45 -0400
+        Fri, 21 May 2021 02:38:50 -0400
 Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210521063601epoutp01b5587dfccfc6bf6f200112d36d86d9a8~BAXlshMyI2334323343epoutp01s
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 06:36:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210521063601epoutp01b5587dfccfc6bf6f200112d36d86d9a8~BAXlshMyI2334323343epoutp01s
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210521063602epoutp042d74b8681f2fbc243ca228d9fcf8a56d~BAXmTp4020917809178epoutp04S
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 06:36:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210521063602epoutp042d74b8681f2fbc243ca228d9fcf8a56d~BAXmTp4020917809178epoutp04S
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1621578961;
-        bh=BeIIII2iKK1GrbhWKCXgEFhq3Jpub63YFNsLHhAqs/Q=;
+        s=mail20170921; t=1621578962;
+        bh=NfjgntiD4sGCoAPG4JlvSSWt9gvjIna27xSVO3rg/y8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n9cUnGlViwVRUTRECjWXcTcjqzTknZHSSsVA2ICIkG7+0h6qPVguDOOyDWZItJQo4
-         RAPgOv8NFup91+SdyObcDnzB+5iYVcZiah22If+DllCY+X7Pkmblym08IiGBhotbbc
-         yz/ucvpJTIYWmWpJCBm+2w9BszhEx0uYRugDs0QI=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210521063601epcas1p2f606809a24345f74723cbe108d3b56f2~BAXk8aspz0634806348epcas1p2G;
+        b=dSC6MOqw7/FeFYV82K3XqdzXfGcvliYG/GjyggUwurwJ8kTdRMYopeGbO16e51Rgy
+         Kz3OM6jitGTX4uOVxs4fOFAPL2bb/90/hCSrH6m8q1eYnZs1S3xyxeElqj9eH7hvNR
+         CVmBWIslSY6lm79jMrA+GSHd+sZi7hxsE26eVsAA=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20210521063601epcas1p3d1c383830c2e29997983cd5b3485432c~BAXlsraDs1213512135epcas1p36;
         Fri, 21 May 2021 06:36:01 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.160]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4FmcLm08qdz4x9Pt; Fri, 21 May
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.161]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4FmcLm61tkz4x9Q1; Fri, 21 May
         2021 06:36:00 +0000 (GMT)
 Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        63.49.10258.FC457A06; Fri, 21 May 2021 15:35:59 +0900 (KST)
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        83.14.09736.0D457A06; Fri, 21 May 2021 15:36:00 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210521063559epcas1p2d2b26d889e3cd4945e4a6fea4345c0eb~BAXjkDbZ20634706347epcas1p2H;
-        Fri, 21 May 2021 06:35:59 +0000 (GMT)
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20210521063600epcas1p4d00e632c185ce7e4896a23f5a4590ad0~BAXkYcZkn1898818988epcas1p4G;
+        Fri, 21 May 2021 06:36:00 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210521063559epsmtrp1fa2d78d99d08935ff443ef8613d0a92f~BAXjh8OM53156631566epsmtrp1d;
-        Fri, 21 May 2021 06:35:59 +0000 (GMT)
-X-AuditID: b6c32a38-419ff70000002812-19-60a754cfe417
+        20210521063600epsmtrp199de019712df86a9961cac56b7c261f7~BAXkXcMKD3157231572epsmtrp1Z;
+        Fri, 21 May 2021 06:36:00 +0000 (GMT)
+X-AuditID: b6c32a39-8d9ff70000002608-43-60a754d0994b
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        54.10.08637.FC457A06; Fri, 21 May 2021 15:35:59 +0900 (KST)
+        D5.10.08637.0D457A06; Fri, 21 May 2021 15:36:00 +0900 (KST)
 Received: from localhost.localdomain (unknown [10.89.31.111]) by
         epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210521063559epsmtip16c641101b2f893eaa981e8c144027b9c~BAXjTmL8z1754917549epsmtip1k;
-        Fri, 21 May 2021 06:35:59 +0000 (GMT)
+        20210521063600epsmtip1cce78444cd010b29f512a1a720999ba8~BAXkKY6yI1883518835epsmtip1f;
+        Fri, 21 May 2021 06:36:00 +0000 (GMT)
 From:   Namjae Jeon <namjae.jeon@samsung.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-cifs@vger.kernel.org
@@ -60,61 +60,61 @@ Cc:     linux-cifsd-devel@lists.sourceforge.net, smfrench@gmail.com,
         willy@infradead.org, Namjae Jeon <namjae.jeon@samsung.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Steve French <stfrench@microsoft.com>
-Subject: [PATCH v3 09/10] cifsd: add Kconfig and Makefile
-Date:   Fri, 21 May 2021 15:26:36 +0900
-Message-Id: <20210521062637.31347-10-namjae.jeon@samsung.com>
+Subject: [PATCH v3 10/10] MAINTAINERS: add cifsd kernel server
+Date:   Fri, 21 May 2021 15:26:37 +0900
+Message-Id: <20210521062637.31347-11-namjae.jeon@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210521062637.31347-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUxTVxjGd+5t773F1d0U0EPHAOtXZIKUUjgsoBKMuZn+QZybUWKgo1e+
-        Slt72805lI8EnKzD4gwkCIyA2glsQC2CIEQgGzK2EBAQcc4YBwOR8dE5nAhd74rb/nvOm9/z
-        vHnfcw6FS64TUipVa2QNWpVGRngIrndvCw7qP2hNDBm+EIlyZvoEqGd6mUTTKyUC1GepwtDV
-        2u8wNPJwlkSTzlYc/eVcBOhme68A3WktI9Dzkiz0ReGCEOUNBaK2xioCfeN4TKKnk90EGiv6
-        ikD9yz1CtPS8jNjtyVzMHhAwN0ofkMy1rwOZtkoHxrTdyyaYvJZlkpkfHxMwhfYawNirH2FM
-        vX1YwDhsfozt1xks7vUjmqgUVqVmDQGsNkmnTtUmR8v2vZcQm6AMD5EHySNRhCxAq8pgo2V7
-        9scF7U3VuEaUBXyk0phcpTgVx8l27Iwy6ExGNiBFxxmjZaxerdHLQ/TBnCqDM2mTg5N0Ge/I
-        Q0JClS4yUZNy/3EFqe/ddGLZ7BRkg1a/AiCiIB0GLRXtoAB4UBK6BUCLpZ9wHxYAnBpeJHhK
-        Qv8J4OBd3SvHw7lRzA21A+iwNQv+dTS0jJMFgKII+m340u7NG7zoo3C0ZRrnGZxuxeFPVZOA
-        ZzzpSPjbxEaeEdCb4QN7sZDXYjoanr/YhLmb+cPahls4r0Wu+vhipZDPgfQQBe8tDRB8DqT3
-        QGvNITfvCZ/02Em3lsKpc/mr+mN4u/fFamYmbKjoIN1WBTRPGnmJ09tgfesON7EB3lgqB7zG
-        6bXw92dmoZsWw8/yJW5kMywc7F4NfBMWnJlbbcTAa+NTpHshFgAbB3IJC/Ar/a9DJQA1YB2r
-        5zKSWU6uD/v/ddnAPw84ELWA8pm54C6AUaALQAqXeYnXxFgTJWK16pOTrEGXYDBpWK4LKF2r
-        K8Kl3kk61w/QGhPkylCFQoHCwiPClQrZenFy7KeJEjpZZWTTWVbPGl75MEokzcaEN+dHjU35
-        k/EDh/23ZIVayxupTPXi2eLODmfHBktG8cLp2gOxJq229MWtoPnmpS8rKn/Imd86pBSd8j53
-        4azT1tnOhL/VPngndxfrsC71Xu7pi6lTr1875k/F28pyvo11Bot8D/Zc3v/U67j2vu5KcXz/
-        u284j6Udrav2Tf95ZDZmN5cWYLYu+4ukr3VOGOXv19ufXZUqQnedwH3F6Y8mqn2OaDy24sdy
-        mz7HckaL48nvxbMlWWtMIxM+NfuurPhtv02nmySzZYcORPzRcSoP/vgyauYDn/G7mYF69MuZ
-        sLTmnR9GDpg3nS5KsZRdWrfo2V93Uliy1xzT98Sx5TC1sv24TMClqOSBuIFT/Q1ODDzqSQQA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsWy7bCSnO75kOUJBp+2SVk0vj3NYnH89V92
-        i9f/prNYnJ6wiMli5eqjTBbX7r9nt3jxfxezxc//3xkt9uw9yWJxedccNosf0+stevs+sVq0
-        XtGy2L1xEZvF2s+P2S3evDjMZnFr4nw2i/N/j7Na/P4xh81B2GN2w0UWj52z7rJ7bF6h5bF7
-        wWcmj903G9g8Wnf8Zff4+PQWi0ffllWMHlsWP2TyWL/lKovH501yHpuevGUK4InisklJzcks
-        Sy3St0vgyrj9eB57wUmVir89/1kaGHfJdTFyckgImEjc/3CDqYuRi0NIYDejxMP9ncwQCWmJ
-        YyfOANkcQLawxOHDxRA1HxglPnzvZwKJswloS/zZIgpSLiIQL3Gz4TYLSA2zwBlmiYaWPSwg
-        NcIClhLPnymD1LAIqErc3TKNFcTmFbCVmDR7KxPEKnmJ1RsOgK3lBIo//b4ArEZIwEai5+ZK
-        9gmMfAsYGVYxSqYWFOem5xYbFhjmpZbrFSfmFpfmpesl5+duYgTHipbmDsbtqz7oHWJk4mA8
-        xCjBwawkwsvtuDxBiDclsbIqtSg/vqg0J7X4EKM0B4uSOO+FrpPxQgLpiSWp2ampBalFMFkm
-        Dk6pBibx90EnGVTOsHWbz2ETue/Y8kdE9PiubynBh9pSGW0eLHX7zsO18HXCjRPPWg2z/T6c
-        mKitELfszxy/tzVHuvh0VCttHucxPdkWXLIo6uuNPVwKJYFb+xatu/T8mcPyR5vr7n8zz1mf
-        OOvevfmdjzqOO97bVaYl6LR75kPOV17TTy+Pim133Jdgx7XQQz1QY93Lbk4DBZcQmcmTZXby
-        Pvo8J0XnfCBTyb8DN18sf2oezKEVsHqbP1NdRkrfvw+7ukz2BPTkXdeb+W+30z/5YsYg6fMP
-        DW5tT0vJZl59/IaqtnXJyZjDUqdyOhL3LfoobRWtKvBi96N5MndWrEp6n3BWfUH/7WtPXL/L
-        nmIxEmhSYinOSDTUYi4qTgQAwGyaYQQDAAA=
-X-CMS-MailID: 20210521063559epcas1p2d2b26d889e3cd4945e4a6fea4345c0eb
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBJsWRmVeSWpSXmKPExsWy7bCmnu6FkOUJBk0LDSwa355msTj++i+7
+        xet/01ksTk9YxGSxcvVRJotr99+zW7z4v4vZ4uf/74wWe/aeZLG4vGsOm8WP6fUWvX2fWC1a
+        r2hZ7N64iM1i7efH7BZvXhxms7g1cT6bxfm/x1ktfv+Yw+Yg7DG74SKLx85Zd9k9Nq/Q8ti9
+        4DOTx+6bDWwerTv+snt8fHqLxaNvyypGjy2LHzJ5rN9ylcXj8yY5j01P3jIF8ETl2GSkJqak
+        Fimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAvaikUJaYUwoUCkgs
+        LlbSt7Mpyi8tSVXIyC8usVVKLUjJKTA0KNArTswtLs1L10vOz7UyNDAwMgWqTMjJ2NXRxVaw
+        gbvixJzpbA2Mjzm7GDk5JARMJBral7N3MXJxCAnsYJSYevU8lPOJUWLf2XksEM43Rokf788y
+        wbTM+LWEGSKxl1Hi1O4VTHAtp5s+sHYxcnCwCWhL/NkiCtIgIhArcWPHa7AGZoFdzBJnF71g
+        BEkIC9hJXFz4ngXEZhFQlbj8qY8VxOYVsJU4M+svO8Q2eYnVGw4wg9icQPGn3xewggySELjA
+        ITHz3y2oIheJv08vs0HYwhKvjm+BiktJvOxvg7LLJU6c/AX1Qo3Ehnn72EEOlRAwluh5UQJi
+        MgtoSqzfpQ9RoSix8/dcsDOZBfgk3n3tYYWo5pXoaBOCKFGV6Lt0GGqgtERX+weogR4Sk375
+        QUJkAqPEwitL2Scwys1CWLCAkXEVo1hqQXFuemqxYYEpcoRtYgQnYS3LHYzT337QO8TIxMF4
+        iFGCg1lJhJfbcXmCEG9KYmVValF+fFFpTmrxIUZTYNBNZJYSTc4H5oG8knhDUyNjY2MLEzNz
+        M1NjJXHedOfqBCGB9MSS1OzU1ILUIpg+Jg5OqQampeffba641++nyiq7dz7X+UCu8uizUUpv
+        uTsrmZ/rKkztMXh+aGdy/73AvzLLb0dcevy/Ry7dJCNa6YBSkMiaLyuX2uhPkVeIbeI1fBvb
+        UDvtzMOjno1RwQ9nfuo1uPY1d+KcrWtafzOs0y565WKZ0dzycmPKhH9e9VmqGunKLD3Mk9/E
+        NDzaWsGo+9PzULGmtQDTsYtugdxeNiuOHubn/XcvS9RXO3O/JQfbahWtdbHKIYcnhJsfNN/1
+        kqN+qf6cFSkRhqktK05kva0yk1s9u1zA/2Kc79p+Pp6I0Ntsvq9ztlxtl+K2vP6+svrlio+3
+        ct02y344MiX6YvKzdrGlP9xWL9/00E6/v3j1ZHYlluKMREMt5qLiRAB+xvknSwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsWy7bCSnO6FkOUJBs96RS0a355msTj++i+7
+        xet/01ksTk9YxGSxcvVRJotr99+zW7z4v4vZ4uf/74wWe/aeZLG4vGsOm8WP6fUWvX2fWC1a
+        r2hZ7N64iM1i7efH7BZvXhxms7g1cT6bxfm/x1ktfv+Yw+Yg7DG74SKLx85Zd9k9Nq/Q8ti9
+        4DOTx+6bDWwerTv+snt8fHqLxaNvyypGjy2LHzJ5rN9ylcXj8yY5j01P3jIF8ERx2aSk5mSW
+        pRbp2yVwZezq6GIr2MBdcWLOdLYGxsecXYycHBICJhIzfi1h7mLk4hAS2M0ocfjNNXaIhLTE
+        sRNngBIcQLawxOHDxRA1H4Bq2q+xgsTZBLQl/mwRBSkXEYiXuNlwmwWkhlngDLNEQ8seFpCE
+        sICdxMWF78FsFgFVicuf+lhBbF4BW4kzs/5C7ZKXWL3hADOIzQkUf/p9AViNkICNRM/NlewT
+        GPkWMDKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIjhYtzR2M21d90DvEyMTBeIhR
+        goNZSYSX23F5ghBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeC10n44UE0hNLUrNTUwtSi2CyTByc
+        Ug1MBisnie35uuS7YmpHVX2MYtDSSoZnLxh7+e/u2dYkZqi75IPQlPrAVaHL5nz1TQ4VyXu1
+        9prLhek3RSdLBiTvLHjyaHba2akHz33lFp20tvXeTOWiE913+2Y9vX0/R/VW1GXToNU3g+us
+        Mx8l1l3y1lpz5VrZKfMj0QGff3XJHOrQmxga8VwqsG4i5zfbuwcPlCW85HuU+vnInt1JMzpl
+        WC+UK/3vE3B5nVrPcUlN6HhSy/Vphh7HIi3Wu67b8luBXWXmbbuzTVYHnj+uXOy0QkX9AKNz
+        x8FWgZNq6q2W+e33i682LMj55BA14+nBI9ZZCm13M6Z7s5ywfmeYdjtfsc7wM/uiufqmewW3
+        BxjJKLEUZyQaajEXFScCAED8cqUFAwAA
+X-CMS-MailID: 20210521063600epcas1p4d00e632c185ce7e4896a23f5a4590ad0
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210521063559epcas1p2d2b26d889e3cd4945e4a6fea4345c0eb
+X-CMS-RootMailID: 20210521063600epcas1p4d00e632c185ce7e4896a23f5a4590ad0
 References: <20210521062637.31347-1-namjae.jeon@samsung.com>
-        <CGME20210521063559epcas1p2d2b26d889e3cd4945e4a6fea4345c0eb@epcas1p2.samsung.com>
+        <CGME20210521063600epcas1p4d00e632c185ce7e4896a23f5a4590ad0@epcas1p4.samsung.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds the Kconfig and Makefile for cifsd.
+Add myself, Steve French, Sergey Senozhatsky and Hyunchul Lee
+as cifsd maintainer.
 
 Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
 Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
@@ -122,135 +122,39 @@ Signed-off-by: Hyunchul Lee <hyc.lee@gmail.com>
 Acked-by: Ronnie Sahlberg <lsahlber@redhat.com>
 Signed-off-by: Steve French <stfrench@microsoft.com>
 ---
- fs/Kconfig        |  1 +
- fs/Makefile       |  1 +
- fs/cifsd/Kconfig  | 68 +++++++++++++++++++++++++++++++++++++++++++++++
- fs/cifsd/Makefile | 17 ++++++++++++
- 4 files changed, 87 insertions(+)
- create mode 100644 fs/cifsd/Kconfig
- create mode 100644 fs/cifsd/Makefile
+ MAINTAINERS | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 141a856c50e7..7462761ebd2f 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -344,6 +344,7 @@ config NFS_V4_2_SSC_HELPER
- source "net/sunrpc/Kconfig"
- source "fs/ceph/Kconfig"
- source "fs/cifs/Kconfig"
-+source "fs/cifsd/Kconfig"
- source "fs/coda/Kconfig"
- source "fs/afs/Kconfig"
- source "fs/9p/Kconfig"
-diff --git a/fs/Makefile b/fs/Makefile
-index 9c708e1fbe8f..542a77374d12 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -98,6 +98,7 @@ obj-$(CONFIG_NLS)		+= nls/
- obj-$(CONFIG_UNICODE)		+= unicode/
- obj-$(CONFIG_SYSV_FS)		+= sysv/
- obj-$(CONFIG_CIFS)		+= cifs/
-+obj-$(CONFIG_SMB_SERVER)	+= cifsd/
- obj-$(CONFIG_HPFS_FS)		+= hpfs/
- obj-$(CONFIG_NTFS_FS)		+= ntfs/
- obj-$(CONFIG_UFS_FS)		+= ufs/
-diff --git a/fs/cifsd/Kconfig b/fs/cifsd/Kconfig
-new file mode 100644
-index 000000000000..e6448b04f46e
---- /dev/null
-+++ b/fs/cifsd/Kconfig
-@@ -0,0 +1,68 @@
-+config SMB_SERVER
-+	tristate "SMB server support (EXPERIMENTAL)"
-+	depends on INET
-+	depends on MULTIUSER
-+	depends on FILE_LOCKING
-+	select NLS
-+	select NLS_UTF8
-+	select CRYPTO
-+	select CRYPTO_MD4
-+	select CRYPTO_MD5
-+	select CRYPTO_HMAC
-+	select CRYPTO_ECB
-+	select CRYPTO_LIB_DES
-+	select CRYPTO_SHA256
-+	select CRYPTO_CMAC
-+	select CRYPTO_SHA512
-+	select CRYPTO_AEAD2
-+	select CRYPTO_CCM
-+	select CRYPTO_GCM
-+	select ASN1
-+	select OID_REGISTRY
-+	default n
-+	help
-+	  Choose Y here if you want to allow SMB3 compliant clients
-+	  to access files residing on this system using SMB3 protocol.
-+	  To compile the SMB3 server support as a module,
-+	  choose M here: the module will be called ksmbd.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index bd7aff0c120f..f23bb5cbfd70 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4530,7 +4530,7 @@ F:	include/linux/clk/
+ F:	include/linux/of_clk.h
+ X:	drivers/clk/clkdev.c
+ 
+-COMMON INTERNET FILE SYSTEM (CIFS)
++COMMON INTERNET FILE SYSTEM CLIENT (CIFS)
+ M:	Steve French <sfrench@samba.org>
+ L:	linux-cifs@vger.kernel.org
+ L:	samba-technical@lists.samba.org (moderated for non-subscribers)
+@@ -4540,6 +4540,16 @@ T:	git git://git.samba.org/sfrench/cifs-2.6.git
+ F:	Documentation/admin-guide/cifs/
+ F:	fs/cifs/
+ 
++COMMON INTERNET FILE SYSTEM SERVER (CIFSD)
++M:	Namjae Jeon <namjae.jeon@samsung.com>
++M:	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
++M:	Steve French <sfrench@samba.org>
++M:	Hyunchul Lee <hyc.lee@gmail.com>
++L:	linux-cifs@vger.kernel.org
++L:	linux-cifsd-devel@lists.sourceforge.net
++S:	Maintained
++F:	fs/cifsd/
 +
-+	  You may choose to use a samba server instead, in which
-+	  case you can choose N here.
-+
-+	  You also need to install user space programs which can be found
-+	  in cifsd-tools, available from
-+	  https://github.com/cifsd-team/cifsd-tools.
-+	  More detail about how to run the cifsd kernel server is
-+	  available via README file
-+	  (https://github.com/cifsd-team/cifsd-tools/blob/master/README).
-+
-+	  cifsd kernel server includes support for auto-negotiation,
-+	  Secure negotiate, Pre-authentication integrity, oplock/lease,
-+	  compound requests, multi-credit, packet signing, RDMA(smbdirect),
-+	  smb3 encryption, copy-offload, secure per-user session
-+	  establishment via NTLM or NTLMv2.
-+
-+config SMB_SERVER_SMBDIRECT
-+	bool "Support for SMB Direct protocol"
-+	depends on SMB_SERVER=m && INFINIBAND && INFINIBAND_ADDR_TRANS || SMB_SERVER=y && INFINIBAND=y && INFINIBAND_ADDR_TRANS=y
-+	select SG_POOL
-+	default n
-+
-+	help
-+	  Enables SMB Direct support for SMB 3.0, 3.02 and 3.1.1.
-+
-+	  SMB Direct allows transferring SMB packets over RDMA. If unsure,
-+	  say N.
-+
-+config SMB_SERVER_CHECK_CAP_NET_ADMIN
-+	bool "Enable check network administration capability"
-+	depends on SMB_SERVER
-+	default y
-+
-+	help
-+	  Prevent unprivileged processes to start the cifsd kernel server.
-+
-+config SMB_SERVER_KERBEROS5
-+	bool "Support for Kerberos 5"
-+	depends on SMB_SERVER
-+	default n
-diff --git a/fs/cifsd/Makefile b/fs/cifsd/Makefile
-new file mode 100644
-index 000000000000..ccacb798a932
---- /dev/null
-+++ b/fs/cifsd/Makefile
-@@ -0,0 +1,17 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# Makefile for Linux SMB3 kernel server
-+#
-+obj-$(CONFIG_SMB_SERVER) += ksmbd.o
-+
-+$(obj)/spnego_negtokeninit.asn1.o: $(obj)/spnego_negtokeninit.asn1.c $(obj)/spnego_negtokeninit.asn1.h
-+$(obj)/spnego_negtokentarg.asn1.o: $(obj)/spnego_negtokentarg.asn1.c $(obj)/spnego_negtokentarg.asn1.h
-+
-+ksmbd-y :=	unicode.o auth.o vfs.o vfs_cache.o server.o buffer_pool.o \
-+		misc.o oplock.o connection.o ksmbd_work.o crypto_ctx.o \
-+		mgmt/ksmbd_ida.o mgmt/user_config.o mgmt/share_config.o \
-+		mgmt/tree_connect.o mgmt/user_session.o smb_common.o \
-+		transport_tcp.o transport_ipc.o smbacl.o smb2pdu.o \
-+		smb2ops.o smb2misc.o spnego_negtokeninit.asn1.o \
-+		spnego_negtokentarg.asn1.o asn1.o ndr.o
-+ksmbd-$(CONFIG_SMB_SERVER_SMBDIRECT) += transport_rdma.o
+ COMPACTPCI HOTPLUG CORE
+ M:	Scott Murray <scott@spiteful.org>
+ L:	linux-pci@vger.kernel.org
 -- 
 2.17.1
 
