@@ -2,156 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9174138CA68
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 17:50:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1FE038D016
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 23:49:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233866AbhEUPvs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 11:51:48 -0400
-Received: from mail-pl1-f172.google.com ([209.85.214.172]:46018 "EHLO
-        mail-pl1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233331AbhEUPvr (ORCPT
+        id S229623AbhEUVvI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 17:51:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56822 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229457AbhEUVvI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 11:51:47 -0400
-Received: by mail-pl1-f172.google.com with SMTP id s4so9640101plg.12;
-        Fri, 21 May 2021 08:50:22 -0700 (PDT)
+        Fri, 21 May 2021 17:51:08 -0400
+Received: from mail-qv1-xf36.google.com (mail-qv1-xf36.google.com [IPv6:2607:f8b0:4864:20::f36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CF24C0613CE
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 14:49:44 -0700 (PDT)
+Received: by mail-qv1-xf36.google.com with SMTP id ez19so11219780qvb.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 14:49:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=rnbRWaK3S2pNJ8BuaJG2JWJsS1i7bhrZxXnssJvgZhA=;
+        b=ukbuvTj1LEG7m1bNqbx6Bc8nAyL3W885rRdBvJa1OQN5TKe49Aq0zJpJVdl12MfxTW
+         RJvet95fv+qZv9l6lvTnvvRxQfrwcMQyyM+OdWAUUoMleMfDSBspA3pj3f0BifboGXCI
+         xNE+2iNRS5OOo6B1ZTG74E/Z4qTvc6958Re9zmDZUuH2H73TBLaxC5zDLW5fADHb8Kus
+         V/LlKM02Kcx9W5Udgv06HGj3CjopJ8/Zi0NdtPDHkWcjuVOy11YA59X91c0ZVwZU8QZG
+         6saq4CXSoQRYlL3GBUOhzZfUU+WszendSs/6RD3iuOBKo10ABcqgXgRxEYy5mD0uDps2
+         4AqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=60o19uG3Uo5g6e87CzW4o+uDrYBj0/S1vmD5UQ1AMh8=;
-        b=BcPb2ZYFGHMwI57v8DfG8TnTUu/LFuGBhV9GyBDuL2AcuKhvCrnojSnLO05mVHAAc+
-         93m7atneA2z/j471PZbwnYcmBqf9J60MNVhqus9JrNhtCsjlf1jn2nGB7N1fOPF6Q7aZ
-         Umi/NEVMJ95nBKFe1SxcU8citQZTXWMqiYyDXXRij6xIAK8E9c5Elc/heon/BLNHKQi5
-         pGcgwWuRgFFyIPRZf96kGo6gKi9W1yMdU31XtdGe01JIjaaw6B+ldPT8KudIl1hHNN7T
-         G+1yA08U6ARKRF/l3E2Vcbb00+VKv3a31zoGIwK5cima3ip2iI1Z8v7WFLhp1L4OQ3tW
-         X+ug==
-X-Gm-Message-State: AOAM531xCx3gTZUbqluyI/8ySVrseTAVhv+C1mtyKMxZ3m7X4JtFTl5n
-        F4cPZPZFnQtmLWiQ0hdOAfo=
-X-Google-Smtp-Source: ABdhPJwrzncsvoLgqoiG5aI4Dng/0cs1R2ml4bkxiQ8CBKjM+V91ysl5hL/y33lWJAZbc/JP1o68rg==
-X-Received: by 2002:a17:90a:c284:: with SMTP id f4mr11308629pjt.83.1621612222493;
-        Fri, 21 May 2021 08:50:22 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id a9sm4699642pfl.57.2021.05.21.08.50.21
+        h=x-gm-message-state:subject:from:to:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=rnbRWaK3S2pNJ8BuaJG2JWJsS1i7bhrZxXnssJvgZhA=;
+        b=ssCdLP+Ugsi4BYtNU3/R0UAbPp3di25x9FTtJb6ObkCvluiE8g0YrCqA4WxFfmPnyh
+         CetkqgdhxucjdFz9Bb0JyxL7JzJrvZPHln9dmK3AfVvN7X4lBvSOUsdXgfM+SSskboKd
+         b9/ThVOPlzwosTThTE+X78Bwz2j6okJwDep1yEuunzYLBpBxA1VJxeninThXmVO87VX6
+         FjEEjEM6s9VfEClQfXzggY94nbZ10qX+IqHlmElGbS28O3r5Alc6RNCfYP9W49ETZqj6
+         Q8AT2PWBQnC4tsawoPLT/D71Gel8xqMDjj1m4+B9IBrfJ8xD9CMg0LWWuvREAJlLxk3J
+         AmQg==
+X-Gm-Message-State: AOAM532hYepDaOK6FiXq2q9aGAijm2s3SeXznlsAemYfhqSkeNaWW6LE
+        6c/2amrrcTzptdkqStAoK9XaxkDvMcWG
+X-Google-Smtp-Source: ABdhPJxeykuSzKF4Ef2u3A55uIH3hhoAOxzj8OlMe3fTY2qtbfs+nxISBoK03j9mFD3TGDQhJV4KRg==
+X-Received: by 2002:a05:6214:c6c:: with SMTP id t12mr15192850qvj.34.1621633783282;
+        Fri, 21 May 2021 14:49:43 -0700 (PDT)
+Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
+        by smtp.gmail.com with ESMTPSA id f13sm4912251qkk.107.2021.05.21.14.49.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 May 2021 08:50:21 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id A2173402D7; Fri, 21 May 2021 15:50:20 +0000 (UTC)
-Date:   Fri, 21 May 2021 15:50:20 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Menglong Dong <menglong8.dong@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        hare@suse.de, gregkh@linuxfoundation.org, tj@kernel.org,
-        Menglong Dong <dong.menglong@zte.com.cn>, song@kernel.org,
-        neilb@suse.de, Andrew Morton <akpm@linux-foundation.org>,
-        wangkefeng.wang@huawei.com, f.fainelli@gmail.com, arnd@arndb.de,
-        Barret Rhoden <brho@google.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        mhiramat@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>, vbabka@suse.cz,
-        Alexander Potapenko <glider@google.com>, pmladek@suse.com,
-        Chris Down <chris@chrisdown.name>, ebiederm@xmission.com,
-        jojing64@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-        palmerdabbelt@google.com, linux-fsdevel@vger.kernel.org,
+        Fri, 21 May 2021 14:49:42 -0700 (PDT)
+Subject: [RFC PATCH 0/9] Add LSM access controls and auditing to io_uring
+From:   Paul Moore <paul@paul-moore.com>
+To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH RESEND] init/initramfs.c: make initramfs support
- pivot_root
-Message-ID: <20210521155020.GW4332@42.do-not-panic.com>
-References: <20210520154244.20209-1-dong.menglong@zte.com.cn>
- <20210520214111.GV4332@42.do-not-panic.com>
- <CADxym3axowrQWz3OgimK4iGqP-RbO8U=HPODEhJRrcXUAsWXew@mail.gmail.com>
+Date:   Fri, 21 May 2021 17:49:41 -0400
+Message-ID: <162163367115.8379.8459012634106035341.stgit@sifl>
+User-Agent: StGit/1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADxym3axowrQWz3OgimK4iGqP-RbO8U=HPODEhJRrcXUAsWXew@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 21, 2021 at 08:41:55AM +0800, Menglong Dong wrote:
-> Hello!
-> 
-> Thanks for your reply!
-> 
-> On Fri, May 21, 2021 at 5:41 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > Can't docker instead allow to create containers prior to creating
-> > your local docker network namespace? Not that its a great solution,
-> > but just worth noting.
-> >
-> 
-> That's a solution, but I don't think it is feasible. Users may create many
-> containers, and you can't make docker create all the containers first
-> and create network namespace later, as you don't know if there are any
-> containers to create later.
+Earlier this week Kumar Kartikeya Dwivedi posted a patchset switching
+io_uring over to the anonymous inode variant that allows for LSM
+controls.  While nice, the patchset left the actual LSM controls as
+an exercise for the reader.  The posting can be found using the lore
+link below:
 
-It doesn't seem impossible, but worth noting why inside the commit log
-this was not a preferred option.
+https://lore.kernel.org/io-uring/CAHC9VhS=PDxx=MzZnGGNLwo-o5Og-HGZe84=+BBtBCZgaGSn4A@mail.gmail.com/T/#mde8c5120f3b8e34a5a3b18229b8c563a7855fd20
 
-> > >  struct file_system_type rootfs_fs_type = {
-> > >       .name           = "rootfs",
-> > > -     .init_fs_context = rootfs_init_fs_context,
-> > > +     .init_fs_context = ramfs_init_fs_context,
-> >
-> > Why is this always static now? Why is that its correct
-> > now for init_mount_tree() always to use the ramfs context?
-> 
-> Because the root mount in init_mount_tree() is not used as rootfs any more.
+As fate would have it, I had been working on something very similar,
+in fact the two patches from Kumar mirrored two in my own patchset.
+This patchset, while still a bit crude, does include an attempt at
+adding the LSM and audit support necessary to properly implement LSM
+based access controls for io_uring.  I've provided the SELinux
+implementation, Casey has been nice enough to provide a Smack patch,
+and John is working on an AppArmor patch as I write this.  I've
+mentioned this work to the other LSM maintainers that I believe might
+be affected but I have not heard back from anyone else at this point.
+If any of the other LSMs would like to contribute a patch to this
+patchset I will happily accept it; I only ask that you post it to the
+LSM list and make sure I am on the To/CC line.  I think it would be
+nice to try and wrap this up as soon as possible for the obvious
+reasons.
 
-We still have:
+The individual patches provide an explanation of the changes involved
+so I'm not going to repeat that here, but I will caution you that
+these patches are still rather crude, perhaps more than a RFC patchset
+should be, but it seemed prudent to move this along so I'm posting
+these now.  Any review that you can provide would be helpful.
 
-start_kernel() --> vfs_caches_init() --> mnt_init() --> 
+Also, any pointers to easy-to-run io_uring tests would be helpful.  I
+am particularly interested in tests which make use of the personality
+option, share urings across process boundaries, and make use of the
+sqpoll functionality.
 
-mnt_init()
-{
-	...
-	shmem_init();                                                           
-	init_rootfs();                                                          
-	init_mount_tree(); 
-}
+As a point of reference, this patchset is based on v5.13-rc2 and if
+you want to follow along via git I'll be making updates to the git
+tree/branch below (warning I will be force-pushing on this branch given
+the early/rough nature of these patches).
 
-You've now modified init_rootfs() to essentially just set the new user_root,
-and that's it. But we stil call init_mount_tree() even if we did set the
-rootfs to use tmpfs.
+git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+ (checkout branch "working-io_uring")
 
-> In do_populate_ro
-> tmpfs, and that's the real rootfs for initramfs. And I call this root
-> as 'user_root',
-> because it is created for user space.
-> 
-> int __init mount_user_root(void)
-> {
->        return do_mount_root(user_root->dev_name,
->                             user_root->fs_name,
->                             root_mountflags,
->                             root_mount_data);
->  }
-> 
-> In other words, I moved the realization of 'rootfs_fs_type' here to
-> do_populate_rootfs(), and fixed this 'rootfs_fs_type' with
-> ramfs_init_fs_context, as it is a fake root now.
+Thanks in advance,
+-Paul
 
-do_populate_rootfs() is called from populate_rootfs() and that in turn
-is a:
+---
 
-rootfs_initcall(populate_rootfs);
+Casey Schaufler (1):
+      Smack: Brutalist io_uring support with debug
 
-In fact the latest changes have made this to schedule asynchronously as
-well. And so indeed, init_mount_tree() always kicks off first. So its
-still unclear to me why the first mount now always has a fs context of
-ramfs_init_fs_context, even if we did not care for a ramdisk.
+Paul Moore (8):
+      audit: prepare audit_context for use in calling contexts beyond syscalls
+      audit,io_uring,io-wq: add some basic audit support to io_uring
+      audit: dev/test patch to force io_uring auditing
+      audit: add filtering for io_uring records
+      fs: add anon_inode_getfile_secure() similar to anon_inode_getfd_secure()
+      io_uring: convert io_uring to the secure anon inode interface
+      lsm,io_uring: add LSM hooks to io_uring
+      selinux: add support for the io_uring access controls
 
-Are you suggesting it can be arbitrary now?
 
-> Now, the rootfs that user space used is separated with the init_task,
-> and that's exactly what a block root file system does.
-
-The secondary effort is a bit clearer, its the earlier part that is not
-so clear yet to me at least.
-
-Regardless, to help make the changes easier to review, I wonder if it
-makes sense to split up your work into a few patches. First do what you
-have done for init_rootfs() and the structure you added to replace the
-is_tmpfs bool, and let initialization use it and the context. And then
-as a second patch introduce the second mount effort.
-
-  Luis
+ fs/anon_inodes.c                    |  29 ++
+ fs/io-wq.c                          |   4 +
+ fs/io_uring.c                       |  25 +-
+ include/linux/anon_inodes.h         |   4 +
+ include/linux/audit.h               |  17 +
+ include/linux/lsm_hook_defs.h       |   5 +
+ include/linux/lsm_hooks.h           |  13 +
+ include/linux/security.h            |  16 +
+ include/uapi/linux/audit.h          |   4 +-
+ kernel/audit.h                      |   7 +-
+ kernel/auditfilter.c                |   4 +-
+ kernel/auditsc.c                    | 481 ++++++++++++++++++++++------
+ security/security.c                 |  12 +
+ security/selinux/hooks.c            |  67 ++++
+ security/selinux/include/classmap.h |   2 +
+ security/smack/smack_lsm.c          |  64 ++++
+ 16 files changed, 650 insertions(+), 104 deletions(-)
