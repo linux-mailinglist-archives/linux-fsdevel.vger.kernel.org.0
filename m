@@ -2,71 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A3D5938BB08
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 02:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C676A38BB3D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 03:04:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235578AbhEUAwN convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 May 2021 20:52:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56444 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235556AbhEUAwM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 May 2021 20:52:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A2BE3AB6D;
-        Fri, 21 May 2021 00:50:49 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+        id S235993AbhEUBFq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 May 2021 21:05:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58060 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235984AbhEUBFl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 May 2021 21:05:41 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01C53C0613ED;
+        Thu, 20 May 2021 18:04:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=sni9ETK0HEg7xDqRTRD+07GslmzE5y7OWzA5WJKcjKU=; b=u70b07TD062bdzcBCW7Xa9uMDu
+        Zvi3dzeWq3DXDEzDH3xRDl6oaTR5xq5coFv6GaME2vz1KEbDa3zSXlvSB4J2oR+UjWoxvBfKQyBS7
+        BBTv8m0jL9zS/zbF1qxxGoIDV9mujDnXmmc8ui/vlS3tA8T/Ewp5/aXKrIk0oOYxN1uPnfKtgTC2E
+        OpLrinbzCPhKfYv/UcSNjCiHOFVaAy+K9mbZxx+RxWFwgeLV64yAOLbyjpfzjLLrQhl6jK4/xEMCk
+        D+GPPpxqsYdARBIBjmbe6cSpPIzaZEKIYPcEPTqfKVZy5YMTXt6pMsw78MMxnaYxEM3JbaltbQyIc
+        Xdde8GPQ==;
+Received: from [2601:1c0:6280:3f0::7376]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1ljtaL-00Gjxw-1l; Fri, 21 May 2021 01:04:17 +0000
+Subject: Re: mmotm 2021-05-19-23-58 uploaded
+ (net/netfilter/nft_set_pipapo_avx2.c)
+To:     Stephen Rothwell <sfr@rothwell.id.au>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+References: <20210520065918.KsmugQp47%akpm@linux-foundation.org>
+ <3d718861-28bd-dd51-82d4-96b040aa1ab4@infradead.org>
+ <20210521090751.51afa10f@elm.ozlabs.ibm.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <6eb826b6-4279-8cf8-1c27-01aab0f83843@infradead.org>
+Date:   Thu, 20 May 2021 18:04:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Menglong Dong" <menglong8.dong@gmail.com>
-Cc:     "Jan Kara" <jack@suse.cz>, "Jens Axboe" <axboe@kernel.dk>,
-        hare@suse.de, tj@kernel.org, gregkh@linuxfoundation.org,
-        "Menglong Dong" <dong.menglong@zte.com.cn>, song@kernel.org,
-        "Andrew Morton" <akpm@linux-foundation.org>, f.fainelli@gmail.com,
-        "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
-        palmerdabbelt@google.com, mcgrof@kernel.org, arnd@arndb.de,
-        wangkefeng.wang@huawei.com, mhiramat@kernel.org,
-        "Steven Rostedt" <rostedt@goodmis.org>,
-        "Kees Cook" <keescook@chromium.org>, vbabka@suse.cz,
-        pmladek@suse.com, "Alexander Potapenko" <glider@google.com>,
-        "Chris Down" <chris@chrisdown.name>, ebiederm@xmission.com,
-        jojing64@gmail.com, "LKML" <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, "Al Viro" <viro@zeniv.linux.org.uk>
-Subject: Re: Re: [PATCH] init/initramfs.c: add a new mount as root file system
-In-reply-to: <CADxym3ZEf7azG+ApRqrg+aUBSm66N5tC0Ybj9FXyHq7BV3ePmg@mail.gmail.com>
-References: <20210517142542.187574-1-dong.menglong@zte.com.cn>,
- <20210517151123.GD25760@quack2.suse.cz>,
- <CADxym3ZwUQe0mQfcNxf2_kM1VXdqmtUDK076GptcsfktLWLeog@mail.gmail.com>,
- <20210518085519.GA28667@quack2.suse.cz>,
- <CADxym3ZEf7azG+ApRqrg+aUBSm66N5tC0Ybj9FXyHq7BV3ePmg@mail.gmail.com>
-Date:   Fri, 21 May 2021 10:50:31 +1000
-Message-id: <162155823187.19062.2652820542740740108@noble.neil.brown.name>
+In-Reply-To: <20210521090751.51afa10f@elm.ozlabs.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 21 May 2021, Menglong Dong wrote:
-> Hello!
+On 5/20/21 4:07 PM, Stephen Rothwell wrote:
+> Hi Randy,
 > 
-> On Tue, May 18, 2021 at 4:55 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Tue 18-05-21 16:30:27, Menglong Dong wrote:
-> > > Thanks!
-> > >
-> > > Should I resend this patch? Seems that it does not appear
-> > > on patchwork.
-> >
-> > I don't think you need to resend the patch. Not sure why it is not in the
-> > patchwork but relevant maintainers for this area don't use it anyway AFAIK.
-> >
+> On Thu, 20 May 2021 15:40:54 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>> on x86_64:
+>> (from linux-next, not mmotm)
 > 
-> It has been three days, and no one reviews my patch.
-> Mmm....I think I'd better resend it with linux-fsdevel CCed.
+> Yeah, this is caused by a bad merge resolution by me.
 > 
+>> ../net/netfilter/nft_set_pipapo_avx2.c: In function ‘nft_pipapo_avx2_lookup’:
+>> ../net/netfilter/nft_set_pipapo_avx2.c:1135:10: error: implicit declaration of function ‘nft_pipapo_lookup’; did you mean ‘nft_pipapo_avx2_lookup’? [-Werror=implicit-function-declaration]
+>>    return nft_pipapo_lookup(net, set, key, ext);
+>>           ^~~~~~~~~~~~~~~~~
+> 
+> I have added this to the merge resolution today:
+> 
+> diff --git a/include/net/netfilter/nf_tables_core.h b/include/net/netfilter/nf_tables_core.h
+> index 789e9eadd76d..8652b2514e57 100644
+> --- a/include/net/netfilter/nf_tables_core.h
+> +++ b/include/net/netfilter/nf_tables_core.h
+> @@ -89,6 +89,8 @@ extern const struct nft_set_type nft_set_bitmap_type;
+>  extern const struct nft_set_type nft_set_pipapo_type;
+>  extern const struct nft_set_type nft_set_pipapo_avx2_type;
+>  
+> +bool nft_pipapo_lookup(const struct net *net, const struct nft_set *set,
+> +			    const u32 *key, const struct nft_set_ext **ext);
+>  #ifdef CONFIG_RETPOLINE
+>  bool nft_rhash_lookup(const struct net *net, const struct nft_set *set,
+>  		      const u32 *key, const struct nft_set_ext **ext);
+> @@ -101,8 +103,6 @@ bool nft_hash_lookup_fast(const struct net *net,
+>  			  const u32 *key, const struct nft_set_ext **ext);
+>  bool nft_hash_lookup(const struct net *net, const struct nft_set *set,
+>  		     const u32 *key, const struct nft_set_ext **ext);
+> -bool nft_pipapo_lookup(const struct net *net, const struct nft_set *set,
+> -			    const u32 *key, const struct nft_set_ext **ext);
+>  bool nft_set_do_lookup(const struct net *net, const struct nft_set *set,
+>  		       const u32 *key, const struct nft_set_ext **ext);
+>  #else
+> diff --git a/net/netfilter/nft_set_pipapo.c b/net/netfilter/nft_set_pipapo.c
+> index 9addc0b447f7..dce866d93fee 100644
+> --- a/net/netfilter/nft_set_pipapo.c
+> +++ b/net/netfilter/nft_set_pipapo.c
+> @@ -408,7 +408,6 @@ int pipapo_refill(unsigned long *map, int len, int rules, unsigned long *dst,
+>   *
+>   * Return: true on match, false otherwise.
+>   */
+> -INDIRECT_CALLABLE_SCOPE
+>  bool nft_pipapo_lookup(const struct net *net, const struct nft_set *set,
+>  		       const u32 *key, const struct nft_set_ext **ext)
+>  {
+> 
+> It should apply on top of next-20210520 if you want to test it (I
+> haven't tested it yet, but will later today).
 
-"three days" is not a reasonable expectation.  Give people at least 1
-week before resending or reminding people.
+Yes, that builds. Thanks.
 
-NeilBrown
+-- 
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+https://people.kernel.org/tglx/notes-about-netiquette
