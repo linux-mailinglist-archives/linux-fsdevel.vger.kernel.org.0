@@ -2,165 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FD6638D044
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 23:50:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D12C38D207
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 May 2021 01:32:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229915AbhEUVwD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 17:52:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57120 "EHLO
+        id S230247AbhEUXeT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 19:34:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229655AbhEUVwD (ORCPT
+        with ESMTP id S229989AbhEUXeN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 17:52:03 -0400
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 904E5C061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 14:50:39 -0700 (PDT)
-Received: by mail-qk1-x735.google.com with SMTP id f18so21305085qko.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 14:50:39 -0700 (PDT)
+        Fri, 21 May 2021 19:34:13 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44622C061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 16:32:49 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id m190so15431884pga.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 16:32:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:date:message-id:in-reply-to:references:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=yVODgsBH3pwJySxgTtmB98vfatsbGIZ28oW0IWdkpT0=;
-        b=y0fBY74DDWd7J2Q4LAZ8Tc+S4IeIm0ggxMFDvuLxRMwxE4pBi5YQBOJb0yVHgNCjw/
-         6nXTDhdi237ivx9OpFxTaSt/2w0iOl5KaPuinDGmWlVHyOd7eh+AjdQCE6TfppiXA1qw
-         LiqA51F2Iji/7K4YBZqYJ6Jp3NMKsLAP/zlozfNFomva6gAUX0B3D0Rj7BviOlZga5fz
-         qRdiUDzGr928A7t5cuzs8jxkLCfqqLd8UOFcH0J8HKrsYx4tgSDOcPII0hN8iO4TXTrm
-         Vdoi2lzlO1NwBXvypm8t69RMAW+j40GzHN4PFkD789xwDPx0IIrJSlbaKk8KCBY7Iodj
-         VKKQ==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=purBBHjJnoQ+HpnRHXn+Th4dctTqM8bSVhw3bAuqGs4=;
+        b=aWsjNqpez8oLW0RT/qXktnN35upgDQ7UKoWLrDB8iFJ8esRxu4/34GiIXBntvbp8b4
+         5qLRwOuGiu44/olUYXlGnYc146HRjVrFVzZKWpx6ie8SVS7qBED5f5SHYrMI7JSu9d5o
+         s2gJbc9KAMVekm4GnvpecPkbvSzv6F6D+L5/KS/yAClIRyTsjEGjLTBKRdrqZOxuqVFs
+         XjKWLxku7Dkrr8M17vk01IzlCMZJuxuuGIx/QE73Eo5SOZAZmBevFut9E0SrrYyb0+fE
+         0SWeXQa22iehYljGjp3pePEYFcA3pwYr4M5P6q3F5zNJzTQvYXwZmUJlSpBo1J+rLKwK
+         ZRZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:date:message-id:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=yVODgsBH3pwJySxgTtmB98vfatsbGIZ28oW0IWdkpT0=;
-        b=aws8ahueU5L5PPeUvCGpmmVlZ77V/mwK2UnvP/7X+tHnGUQ/P6jOovDF9Izztf22Ty
-         ZaTHKKaA/XwJZ9XFQ6krN1eS7+GAVoUg7d9yKldO50asuM6DTgWAsmba1Pp3XzSwcUSo
-         1tbGe5CaNs7CF9ehMLxBBCK1DFolGg+WEkH8oKG8DVjWwpMHmsHxvNmSJmVbHDofjgsB
-         reF9BbpRWlmqPMsn03/LmZH0CzS2QK4t2LBgXJb/Yv8DA6C+2HZqvkkAI+pX/e7fk4Wl
-         w4f5hY05DTkc/3TYnzl3TDNvYCHDsssoq5DeIpmmnqkQlXVyEfPgNVne4KP2cDBaTKM8
-         1mkw==
-X-Gm-Message-State: AOAM532d3ZUzKSPeiz5LvGN5L9r2kr07Ay7UzfiKqiNkNEJ8k3JU0Jg6
-        79EhWDzqvn498SS7OkP9GW62
-X-Google-Smtp-Source: ABdhPJy8CbcdNgRZ+79GQ7zlutlj5Jo5vuvLZxS0af1cMkIKs15miDkHS/LPNWRaK6XS5ozPHjj0Fg==
-X-Received: by 2002:a37:ac0d:: with SMTP id e13mr11837998qkm.426.1621633838636;
-        Fri, 21 May 2021 14:50:38 -0700 (PDT)
-Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
-        by smtp.gmail.com with ESMTPSA id h8sm4914383qtp.46.2021.05.21.14.50.38
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=purBBHjJnoQ+HpnRHXn+Th4dctTqM8bSVhw3bAuqGs4=;
+        b=jAdyTFjT3qpfk0js34+FA9EosgBlmXFMlLym8z4m7XgcKKHTUBA/TLVrKbdd8Un5tU
+         zyoL7zkWDVpN5UFgf8Lkqdj1BOTzZmmnIL5M8ISTsdHINcjLM1U2/w2NXhVbHGlavWff
+         BUAaIMZrC3ebG5GWRgzyBh+IXRel4UO+qu72IOt3wMxQubBl7Th2JOc6y74IMkymrFEz
+         +/hZWHawRlp+U8YU/n5fuZsU/XQehFWvlpuaa95wnZf8TovKtNezN77tTDMwuLKScRuf
+         POgSZLdiAWxsW1cHYnGtgL3gFczg+Myiz85EdENdBdqIPXD7hf6A9Wb4e1pLXn9eTyRR
+         b7+w==
+X-Gm-Message-State: AOAM533HwzjYv3c0FA2aW8QdUqhgjbFp+1siZVpWCSTxYr8qsDgktRfw
+        j6ryy7gaaxDMwu9qjOeodZoTyw==
+X-Google-Smtp-Source: ABdhPJydSlJCNoG+KrdyFcXEOpcpP5VHqL8MUvR4KgIkpv8AsTDKsd+OBDpnABzWFRAWVFaMhH0eqg==
+X-Received: by 2002:a63:e4a:: with SMTP id 10mr1214993pgo.67.1621639968566;
+        Fri, 21 May 2021 16:32:48 -0700 (PDT)
+Received: from google.com ([2401:fa00:9:211:42b2:c084:8468:626a])
+        by smtp.gmail.com with ESMTPSA id b124sm5096735pfa.27.2021.05.21.16.32.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 May 2021 14:50:38 -0700 (PDT)
-Subject: [RFC PATCH 9/9] Smack: Brutalist io_uring support with debug
-From:   Paul Moore <paul@paul-moore.com>
-To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Date:   Fri, 21 May 2021 17:50:37 -0400
-Message-ID: <162163383761.8379.7421085717625472402.stgit@sifl>
-In-Reply-To: <162163367115.8379.8459012634106035341.stgit@sifl>
-References: <162163367115.8379.8459012634106035341.stgit@sifl>
-User-Agent: StGit/1.1
+        Fri, 21 May 2021 16:32:47 -0700 (PDT)
+Date:   Sat, 22 May 2021 09:32:36 +1000
+From:   Matthew Bobrowski <repnop@google.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     amir73il@gmail.com, christian.brauner@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH 0/5] Add pidfd support to the fanotify API
+Message-ID: <YKhDFCUWX7iU7AzM@google.com>
+References: <cover.1621473846.git.repnop@google.com>
+ <20210520135527.GD18952@quack2.suse.cz>
+ <YKeIR+LiSXqUHL8Q@google.com>
+ <20210521104056.GG18952@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210521104056.GG18952@quack2.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Casey Schaufler <casey@schaufler-ca.com>
+On Fri, May 21, 2021 at 12:40:56PM +0200, Jan Kara wrote:
+> On Fri 21-05-21 20:15:35, Matthew Bobrowski wrote:
+> > On Thu, May 20, 2021 at 03:55:27PM +0200, Jan Kara wrote:
+> > There's one thing that I'd like to mention, and it's something in
+> > regards to the overall approach we've taken that I'm not particularly
+> > happy about and I'd like to hear all your thoughts. Basically, with
+> > this approach the pidfd creation is done only once an event has been
+> > queued and the notification worker wakes up and picks up the event
+> > from the queue processes it. There's a subtle latency introduced when
+> > taking such an approach which at times leads to pidfd creation
+> > failures. As in, by the time pidfd_create() is called the struct pid
+> > has already been reaped, which then results in FAN_NOPIDFD being
+> > returned in the pidfd info record.
+> > 
+> > Having said that, I'm wondering what the thoughts are on doing pidfd
+> > creation earlier on i.e. in the event allocation stages? This way, the
+> > struct pid is pinned earlier on and rather than FAN_NOPIDFD being
+> > returned in the pidfd info record because the struct pid has been
+> > already reaped, userspace application will atleast receive a valid
+> > pidfd which can be used to check whether the process still exists or
+> > not. I think it'll just set the expectation better from an API
+> > perspective.
+> 
+> Yes, there's this race. OTOH if FAN_NOPIDFD is returned, the listener can
+> be sure the original process doesn't exist anymore. So is it useful to
+> still receive pidfd of the dead process?
 
-Add Smack privilege checks for io_uring. Use CAP_MAC_OVERRIDE
-for the override_creds case and CAP_MAC_ADMIN for creating a
-polling thread. These choices are based on conjecture regarding
-the intent of the surrounding code.
+Well, you're absolutely right. However, FWIW I was approaching this
+from two different angles:
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- security/smack/smack_lsm.c |   64 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+1) I wanted to keep the pattern in which the listener checks for the
+   existence/recycling of the process consistent. As in, the listener
+   would receive the pidfd, then send the pidfd a signal via
+   pidfd_send_signal() and check for -ESRCH which clearly indicates
+   that the target process has terminated.
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 223a6da0e6dc..f6423c0096e9 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4691,6 +4691,66 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
- 	return 0;
- }
- 
-+#ifdef CONFIG_IO_URING
-+/**
-+ * smack_uring_override_creds - Is io_uring cred override allowed?
-+ * @new: the target creds
-+ *
-+ * Check to see if the current task is allowed to override it's credentials
-+ * to service an io_uring operation.
-+ */
-+int smack_uring_override_creds(const struct cred *new)
-+{
-+	struct task_smack *tsp = smack_cred(current_cred());
-+	struct task_smack *nsp = smack_cred(new);
-+
-+#if 1
-+	if (tsp->smk_task == nsp->smk_task)
-+		pr_info("%s: Smack matches %s\n", __func__,
-+			tsp->smk_task->smk_known);
-+	else
-+		pr_info("%s: Smack override check %s to %s\n", __func__,
-+			tsp->smk_task->smk_known, nsp->smk_task->smk_known);
-+#endif
-+	/*
-+	 * Allow the degenerate case where the new Smack value is
-+	 * the same as the current Smack value.
-+	 */
-+	if (tsp->smk_task == nsp->smk_task)
-+		return 0;
-+
-+#if 1
-+	pr_info("%s: Smack sqpoll %s\n", __func__,
-+		smack_privileged_cred(CAP_MAC_OVERRIDE, current_cred()) ?
-+		"ok by Smack" : "disallowed (No CAP_MAC_OVERRIDE)");
-+#endif
-+	if (smack_privileged_cred(CAP_MAC_OVERRIDE, current_cred()))
-+		return 0;
-+
-+	return -EPERM;
-+}
-+
-+/**
-+ * smack_uring_sqpoll - check if a io_uring polling thread can be created
-+ *
-+ * Check to see if the current task is allowed to create a new io_uring
-+ * kernel polling thread.
-+ */
-+int smack_uring_sqpoll(void)
-+{
-+#if 1
-+	pr_info("%s: Smack new ring %s\n", __func__,
-+		smack_privileged_cred(CAP_MAC_ADMIN, current_cred()) ?
-+		"ok by Smack" : "disallowed (No CAP_MAC_ADMIN)");
-+#endif
-+	if (smack_privileged_cred(CAP_MAC_ADMIN, current_cred()))
-+		return 0;
-+
-+	return -EPERM;
-+}
-+
-+#endif /* CONFIG_IO_URING */
-+
- struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
- 	.lbs_cred = sizeof(struct task_smack),
- 	.lbs_file = sizeof(struct smack_known *),
-@@ -4843,6 +4903,10 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_copy_up, smack_inode_copy_up),
- 	LSM_HOOK_INIT(inode_copy_up_xattr, smack_inode_copy_up_xattr),
- 	LSM_HOOK_INIT(dentry_create_files_as, smack_dentry_create_files_as),
-+#ifdef CONFIG_IO_URING
-+	LSM_HOOK_INIT(uring_override_creds, smack_uring_override_creds),
-+	LSM_HOOK_INIT(uring_sqpoll, smack_uring_sqpoll),
-+#endif
- };
- 
- 
+2) I didn't want to mask failed pidfd creation because of early
+   process termination and other possible failures behind a single
+   FAN_NOPIDFD. IOW, if we take the -ESRCH approach above, the
+   listener can take clear corrective branches as what's to be done
+   next if a race is to have been detected, whereas simply returning
+   FAN_NOPIDFD at this stage can mean multiple things.
 
+Now that I've written the above and keeping in mind that we'd like to
+refrain from doing anything in the event allocation stages, perhaps we
+could introduce a different error code for detecting early process
+termination while attempting to construct the info record. WDYT?
+
+> Also opening pidfd in the context of event generation is problematic
+> for two reasons:
+>
+> 1) Technically, the context under which events are generated can be rather
+> constrained (various locks held etc.). Adding relatively complex operations
+> such as pidfd creation is going to introduce strange lock dependencies,
+> possibly deadlocks.
+> 
+> 2) Doing pidfd generation in the context of the process generating event is
+> problematic - you don't know in which fd_table the fd will live. Also that
+> process is unfairly penalized (performance wise) because someone else is
+> listening. We try to keep overhead of event generation as low as possible
+> for this reason.
+
+Fair points, thanks for sharing your view. :)
+
+/M
