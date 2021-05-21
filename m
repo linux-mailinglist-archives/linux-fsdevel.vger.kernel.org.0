@@ -2,147 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ADA438C432
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 11:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEE6538C45D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 12:06:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232974AbhEUJ7l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 05:59:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35816 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237348AbhEUJ55 (ORCPT
+        id S233826AbhEUKIL convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 06:08:11 -0400
+Received: from us-smtp-delivery-44.mimecast.com ([207.211.30.44]:51079 "EHLO
+        us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233670AbhEUKIC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 05:57:57 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3FA4C061374;
-        Fri, 21 May 2021 02:54:17 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id o21so19528367iow.13;
-        Fri, 21 May 2021 02:54:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=69oB8MFLDZscaHQtc1gsfahitoPKORHWiL8/2xC8oEw=;
-        b=HrHXsqO8M2nlu+nncOl7KgmQD2OzEuuhFtPGbTUdzamqJ9kI/xjBODymDPS6H9FgT0
-         AdZOxFuHEXIVykmNjjR/PNvlW7fEM2Eyuv+9AaLkz5QEfp9AC8zDNK+UmvFeKbzfGQ9t
-         Ia/gr8oMm14Miox8O+tEaGlufM+6D2dy9ds/u95ZFDsDd2EB/xyK5WzglkPuEi02Fvd9
-         +1RMDjPpcVMrLm2BNFZgM+/7TaCx+wdB2h6HoeXHd/niENufifJReLUSxzSld10Tc3oA
-         2oBo1LHIVZsgCstuT1DAhOa/krW2FCtJ8QuPutOg/UV1NBMHSYt1+EgyS93KAzQu8jPx
-         jwlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=69oB8MFLDZscaHQtc1gsfahitoPKORHWiL8/2xC8oEw=;
-        b=btIPhHBK+BRVW3TMXFnVWQWDFK7Hborsc8Bt3WrMobe/2YsTleXJNKldaO8RcXP0sX
-         j+4R9GJlxCdr28esbYhlvPJIZzr0CvjZSbfKR856gHSfeP9Gnt89n3z22vQBXGlGOfmS
-         2m5aIymrDGBNbFkdaOdzoI/HXlEZL7yKq4X15HHB347yI/rjaL0P8WwZAEhfKELR0/wY
-         QhKQwqRyDgQJAdj9xU1NV6HkCo2TZJx98K2DEmOcfatkzWpy6k3Q2RRuUbOMeA9O8FFT
-         GHbm93OFPf5yqPAwLosxVCFbZCBoQQEEAgy4wj+w8pfgMmcUip3IbKemqK7QLj4x6ORd
-         wCug==
-X-Gm-Message-State: AOAM533J3OkYlOUFEacETMtTaFe4ytwPOCq3xkzY4aoh5xGXlgsI6zDE
-        1GNqVjA8sGt94qD8EktsA2dCNQ7BZlrqMyxQpx0=
-X-Google-Smtp-Source: ABdhPJxB7eUjXb3Nh0Yoh1cz+0THUZb/RD253dC9XumdU/oScGkHyawPwpkzx2qQkrRxddb44+yLVzh+Ch+Xj1NcACI=
-X-Received: by 2002:a02:3505:: with SMTP id k5mr3277378jaa.123.1621590857099;
- Fri, 21 May 2021 02:54:17 -0700 (PDT)
+        Fri, 21 May 2021 06:08:02 -0400
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-321-nzPTwh8TNoKqhAUNAmkdWg-1; Fri, 21 May 2021 06:06:33 -0400
+X-MC-Unique: nzPTwh8TNoKqhAUNAmkdWg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 703E56D241;
+        Fri, 21 May 2021 10:06:32 +0000 (UTC)
+Received: from bahia.lan (ovpn-112-49.ams2.redhat.com [10.36.112.49])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CFCBB1964B;
+        Fri, 21 May 2021 10:06:17 +0000 (UTC)
+Date:   Fri, 21 May 2021 12:06:16 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Max Reitz <mreitz@redhat.com>, Vivek Goyal <vgoyal@redhat.com>
+Subject: Re: [PATCH v4 4/5] virtiofs: Skip submounts in sget_fc()
+Message-ID: <20210521120616.49d52565@bahia.lan>
+In-Reply-To: <CAJfpegsNBCX+2k4S_yqdTS15TTu=pbiRgw6SbvdVYoUSmGboGA@mail.gmail.com>
+References: <20210520154654.1791183-1-groug@kaod.org>
+        <20210520154654.1791183-5-groug@kaod.org>
+        <CAJfpegugQM-ChaGiLyfPkbFr9c=_BiOBQkJTeEz5yN0ujO_O4A@mail.gmail.com>
+        <20210521103921.153a243d@bahia.lan>
+        <CAJfpegsNBCX+2k4S_yqdTS15TTu=pbiRgw6SbvdVYoUSmGboGA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20210521024134.1032503-1-krisman@collabora.com> <20210521024134.1032503-12-krisman@collabora.com>
-In-Reply-To: <20210521024134.1032503-12-krisman@collabora.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 21 May 2021 12:54:06 +0300
-Message-ID: <CAOQ4uxhNm57vGTZ2vGZjyrnLCg8fCA-zE7hFBi6Mu1mHeJyOpw@mail.gmail.com>
-Subject: Re: [PATCH 11/11] Documentation: Document the FAN_ERROR event
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     kernel@collabora.com, "Darrick J . Wong" <djwong@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: kaod.org
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 21, 2021 at 5:42 AM Gabriel Krisman Bertazi
-<krisman@collabora.com> wrote:
->
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> ---
->  .../admin-guide/filesystem-monitoring.rst     | 52 +++++++++++++++++++
->  Documentation/admin-guide/index.rst           |  1 +
->  2 files changed, 53 insertions(+)
->  create mode 100644 Documentation/admin-guide/filesystem-monitoring.rst
->
-> diff --git a/Documentation/admin-guide/filesystem-monitoring.rst b/Documentation/admin-guide/filesystem-monitoring.rst
-> new file mode 100644
-> index 000000000000..81e632f8e1de
-> --- /dev/null
-> +++ b/Documentation/admin-guide/filesystem-monitoring.rst
-> @@ -0,0 +1,52 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +====================================
-> +File system Monitoring with fanotify
-> +====================================
-> +
-> +fanotify supports the FAN_ERROR mark for file system-wide error
-> +reporting.  It is meant to be used by file system health monitoring
-> +daemons who listen on that interface and take actions (notify sysadmin,
-> +start recovery) when a file system problem is detected by the kernel.
-> +
-> +By design, A FAN_ERROR notification exposes sufficient information for a
-> +monitoring tool to know a problem in the file system has happened.  It
-> +doesn't necessarily provide a user space application with semantics to
-> +verify an IO operation was successfully executed.  That is outside of
-> +scope of this feature. Instead, it is only meant as a framework for
-> +early file system problem detection and reporting recovery tools.
-> +
-> +At the time of this writing, the only file system that emits this
-> +FAN_ERROR notifications is ext4.
-> +
-> +A user space example code is provided at ``samples/fanotify/fs-monitor.c``.
-> +
-> +Usage
-> +=====
-> +
-> +Notification structure
-> +======================
-> +
-> +A FAN_ERROR Notification has the following format::
-> +
-> +  [ Notification Metadata (Mandatory) ]
-> +  [ Generic Error Record  (Mandatory) ]
-> +
-> +With the exception of the notification metadata and the generic
-> +information, all information records are optional.  Each record type is
-> +identified by its unique ``struct fanotify_event_info_header.info_type``.
+On Fri, 21 May 2021 10:50:34 +0200
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-Out-dated. Unless you decide to add support for optional FID record.
+> On Fri, 21 May 2021 at 10:39, Greg Kurz <groug@kaod.org> wrote:
+> >
+> > On Fri, 21 May 2021 10:26:27 +0200
+> > Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > > On Thu, 20 May 2021 at 17:47, Greg Kurz <groug@kaod.org> wrote:
+> > > >
+> > > > All submounts share the same virtio-fs device instance as the root
+> > > > mount. If the same virtiofs filesystem is mounted again, sget_fc()
+> > > > is likely to pick up any of these submounts and reuse it instead of
+> > > > the root mount.
+> > > >
+> > > > On the server side:
+> > > >
+> > > > # mkdir ${some_dir}
+> > > > # mkdir ${some_dir}/mnt1
+> > > > # mount -t tmpfs none ${some_dir}/mnt1
+> > > > # touch ${some_dir}/mnt1/THIS_IS_MNT1
+> > > > # mkdir ${some_dir}/mnt2
+> > > > # mount -t tmpfs none ${some_dir}/mnt2
+> > > > # touch ${some_dir}/mnt2/THIS_IS_MNT2
+> > > >
+> > > > On the client side:
+> > > >
+> > > > # mkdir /mnt/virtiofs1
+> > > > # mount -t virtiofs myfs /mnt/virtiofs1
+> > > > # ls /mnt/virtiofs1
+> > > > mnt1 mnt2
+> > > > # grep virtiofs /proc/mounts
+> > > > myfs /mnt/virtiofs1 virtiofs rw,seclabel,relatime 0 0
+> > > > none on /mnt/mnt1 type virtiofs (rw,relatime,seclabel)
+> > > > none on /mnt/mnt2 type virtiofs (rw,relatime,seclabel)
+> > > >
+> > > > And now remount it again:
+> > > >
+> > > > # mount -t virtiofs myfs /mnt/virtiofs2
+> > > > # grep virtiofs /proc/mounts
+> > > > myfs /mnt/virtiofs1 virtiofs rw,seclabel,relatime 0 0
+> > > > none on /mnt/mnt1 type virtiofs (rw,relatime,seclabel)
+> > > > none on /mnt/mnt2 type virtiofs (rw,relatime,seclabel)
+> > > > myfs /mnt/virtiofs2 virtiofs rw,seclabel,relatime 0 0
+> > > > # ls /mnt/virtiofs2
+> > > > THIS_IS_MNT2
+> > > >
+> > > > Submount mnt2 was picked-up instead of the root mount.
+> > >
+> >
+> > > Why is this a problem?
+> > >
+> >
+> > It seems very weird to mount the same filesystem again
+> > and to end up in one of its submounts. We should have:
+> >
+> > # ls /mnt/virtiofs2
+> > mnt1 mnt2
+> 
+> Okay, sorry, I understand the problem.  The solution is wrong,
+> however: the position of the submount on that list is no indication
+> that it's the right one (it's possible that the root sb will go away
+> and only a sub-sb will remain).
+> 
 
-> +
-> +Generic error Location
+Ah... I had myself convinced this could not happen, i.e. you can't
+unmount a parent sb with a sub-sb still mounted.
 
-'Location' seems irrelevant?
+How can this happen ?
 
-> +----------------------
-> +
-> +The Generic error record provides enough information for a file system
-> +agnostic tool to learn about a problem in the file system, without
-> +requiring any details about the problem.::
-> +
-> +  struct fanotify_event_info_error {
-> +       struct fanotify_event_info_header hdr;
-> +       int error;
-> +       __kernel_fsid_t fsid;
-> +       unsigned long inode;
-> +       __u32 error_count;
-> +  };
+> Even just setting a flag in the root, indicating that it's the root
+> isn't fully going to solve the problem.
+> 
+> Here's issue in full:
+> 
+> case 1:  no connection for "myfs" exists
+>     - need to create fuse_conn, sb
+> 
+> case 2: connection for "myfs" exists but only sb for submount
 
+How would we know this sb isn't a root sb ?
 
-Maybe add some text about the fact the inode info is optional,
-purpose of error_count and the fact that the info is related to
-the first observed error.
+>     - only create sb for root, reuse fuse_conn
+> 
+> case 3: connection for "myfs" as well as root sb exists
+>    - reuse sb
+> 
+> I'll think about how to fix this properly, it's probably going to be
+> rather more involved...
+> 
 
-Thanks,
-Amir.
+Sure. BTW I'm wondering why we never reuse sbs for submounts ?
+
+> Thanks,
+> Miklos
+
