@@ -2,159 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BEAE38BF8F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 08:39:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93C4938BFFD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 08:49:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233089AbhEUGi6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 02:38:58 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:63152 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232975AbhEUGiu (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 02:38:50 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210521063602epoutp042d74b8681f2fbc243ca228d9fcf8a56d~BAXmTp4020917809178epoutp04S
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 06:36:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210521063602epoutp042d74b8681f2fbc243ca228d9fcf8a56d~BAXmTp4020917809178epoutp04S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1621578962;
-        bh=NfjgntiD4sGCoAPG4JlvSSWt9gvjIna27xSVO3rg/y8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dSC6MOqw7/FeFYV82K3XqdzXfGcvliYG/GjyggUwurwJ8kTdRMYopeGbO16e51Rgy
-         Kz3OM6jitGTX4uOVxs4fOFAPL2bb/90/hCSrH6m8q1eYnZs1S3xyxeElqj9eH7hvNR
-         CVmBWIslSY6lm79jMrA+GSHd+sZi7hxsE26eVsAA=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20210521063601epcas1p3d1c383830c2e29997983cd5b3485432c~BAXlsraDs1213512135epcas1p36;
-        Fri, 21 May 2021 06:36:01 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.161]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4FmcLm61tkz4x9Q1; Fri, 21 May
-        2021 06:36:00 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        83.14.09736.0D457A06; Fri, 21 May 2021 15:36:00 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20210521063600epcas1p4d00e632c185ce7e4896a23f5a4590ad0~BAXkYcZkn1898818988epcas1p4G;
-        Fri, 21 May 2021 06:36:00 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210521063600epsmtrp199de019712df86a9961cac56b7c261f7~BAXkXcMKD3157231572epsmtrp1Z;
-        Fri, 21 May 2021 06:36:00 +0000 (GMT)
-X-AuditID: b6c32a39-8d9ff70000002608-43-60a754d0994b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D5.10.08637.0D457A06; Fri, 21 May 2021 15:36:00 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.89.31.111]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210521063600epsmtip1cce78444cd010b29f512a1a720999ba8~BAXkKY6yI1883518835epsmtip1f;
-        Fri, 21 May 2021 06:36:00 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-cifs@vger.kernel.org
-Cc:     linux-cifsd-devel@lists.sourceforge.net, smfrench@gmail.com,
-        senozhatsky@chromium.org, hyc.lee@gmail.com,
-        viro@zeniv.linux.org.uk, hch@lst.de, hch@infradead.org,
-        ronniesahlberg@gmail.com, aurelien.aptel@gmail.com,
-        aaptel@suse.com, sandeen@sandeen.net, dan.carpenter@oracle.com,
-        willy@infradead.org, Namjae Jeon <namjae.jeon@samsung.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH v3 10/10] MAINTAINERS: add cifsd kernel server
-Date:   Fri, 21 May 2021 15:26:37 +0900
-Message-Id: <20210521062637.31347-11-namjae.jeon@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210521062637.31347-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBJsWRmVeSWpSXmKPExsWy7bCmnu6FkOUJBk0LDSwa355msTj++i+7
-        xet/01ksTk9YxGSxcvVRJotr99+zW7z4v4vZ4uf/74wWe/aeZLG4vGsOm8WP6fUWvX2fWC1a
-        r2hZ7N64iM1i7efH7BZvXhxms7g1cT6bxfm/x1ktfv+Yw+Yg7DG74SKLx85Zd9k9Nq/Q8ti9
-        4DOTx+6bDWwerTv+snt8fHqLxaNvyypGjy2LHzJ5rN9ylcXj8yY5j01P3jIF8ETl2GSkJqak
-        Fimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAvaikUJaYUwoUCkgs
-        LlbSt7Mpyi8tSVXIyC8usVVKLUjJKTA0KNArTswtLs1L10vOz7UyNDAwMgWqTMjJ2NXRxVaw
-        gbvixJzpbA2Mjzm7GDk5JARMJBral7N3MXJxCAnsYJSYevU8lPOJUWLf2XksEM43Rokf788y
-        wbTM+LWEGSKxl1Hi1O4VTHAtp5s+sHYxcnCwCWhL/NkiCtIgIhArcWPHa7AGZoFdzBJnF71g
-        BEkIC9hJXFz4ngXEZhFQlbj8qY8VxOYVsJU4M+svO8Q2eYnVGw4wg9icQPGn3xewggySELjA
-        ITHz3y2oIheJv08vs0HYwhKvjm+BiktJvOxvg7LLJU6c/AX1Qo3Ehnn72EEOlRAwluh5UQJi
-        MgtoSqzfpQ9RoSix8/dcsDOZBfgk3n3tYYWo5pXoaBOCKFGV6Lt0GGqgtERX+weogR4Sk375
-        QUJkAqPEwitL2Scwys1CWLCAkXEVo1hqQXFuemqxYYEpcoRtYgQnYS3LHYzT337QO8TIxMF4
-        iFGCg1lJhJfbcXmCEG9KYmVValF+fFFpTmrxIUZTYNBNZJYSTc4H5oG8knhDUyNjY2MLEzNz
-        M1NjJXHedOfqBCGB9MSS1OzU1ILUIpg+Jg5OqQampeffba641++nyiq7dz7X+UCu8uizUUpv
-        uTsrmZ/rKkztMXh+aGdy/73AvzLLb0dcevy/Ry7dJCNa6YBSkMiaLyuX2uhPkVeIbeI1fBvb
-        UDvtzMOjno1RwQ9nfuo1uPY1d+KcrWtafzOs0y565WKZ0dzycmPKhH9e9VmqGunKLD3Mk9/E
-        NDzaWsGo+9PzULGmtQDTsYtugdxeNiuOHubn/XcvS9RXO3O/JQfbahWtdbHKIYcnhJsfNN/1
-        kqN+qf6cFSkRhqktK05kva0yk1s9u1zA/2Kc79p+Pp6I0Ntsvq9ztlxtl+K2vP6+svrlio+3
-        ct02y344MiX6YvKzdrGlP9xWL9/00E6/v3j1ZHYlluKMREMt5qLiRAB+xvknSwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsWy7bCSnO6FkOUJBs96RS0a355msTj++i+7
-        xet/01ksTk9YxGSxcvVRJotr99+zW7z4v4vZ4uf/74wWe/aeZLG4vGsOm8WP6fUWvX2fWC1a
-        r2hZ7N64iM1i7efH7BZvXhxms7g1cT6bxfm/x1ktfv+Yw+Yg7DG74SKLx85Zd9k9Nq/Q8ti9
-        4DOTx+6bDWwerTv+snt8fHqLxaNvyypGjy2LHzJ5rN9ylcXj8yY5j01P3jIF8ERx2aSk5mSW
-        pRbp2yVwZezq6GIr2MBdcWLOdLYGxsecXYycHBICJhIzfi1h7mLk4hAS2M0ocfjNNXaIhLTE
-        sRNngBIcQLawxOHDxRA1H4Bq2q+xgsTZBLQl/mwRBSkXEYiXuNlwmwWkhlngDLNEQ8seFpCE
-        sICdxMWF78FsFgFVicuf+lhBbF4BW4kzs/5C7ZKXWL3hADOIzQkUf/p9AViNkICNRM/NlewT
-        GPkWMDKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIjhYtzR2M21d90DvEyMTBeIhR
-        goNZSYSX23F5ghBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeC10n44UE0hNLUrNTUwtSi2CyTByc
-        Ug1MBisnie35uuS7YmpHVX2MYtDSSoZnLxh7+e/u2dYkZqi75IPQlPrAVaHL5nz1TQ4VyXu1
-        9prLhek3RSdLBiTvLHjyaHba2akHz33lFp20tvXeTOWiE913+2Y9vX0/R/VW1GXToNU3g+us
-        Mx8l1l3y1lpz5VrZKfMj0QGff3XJHOrQmxga8VwqsG4i5zfbuwcPlCW85HuU+vnInt1JMzpl
-        WC+UK/3vE3B5nVrPcUlN6HhSy/Vphh7HIi3Wu67b8luBXWXmbbuzTVYHnj+uXOy0QkX9AKNz
-        x8FWgZNq6q2W+e33i682LMj55BA14+nBI9ZZCm13M6Z7s5ywfmeYdjtfsc7wM/uiufqmewW3
-        BxjJKLEUZyQaajEXFScCAED8cqUFAwAA
-X-CMS-MailID: 20210521063600epcas1p4d00e632c185ce7e4896a23f5a4590ad0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210521063600epcas1p4d00e632c185ce7e4896a23f5a4590ad0
-References: <20210521062637.31347-1-namjae.jeon@samsung.com>
-        <CGME20210521063600epcas1p4d00e632c185ce7e4896a23f5a4590ad0@epcas1p4.samsung.com>
+        id S233084AbhEUGuX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 02:50:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231627AbhEUGuW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 May 2021 02:50:22 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 082B660724;
+        Fri, 21 May 2021 06:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1621579739;
+        bh=wdYmfwdm4nzmPrxFS2YNbnS85Aq+b2coK+5qodudhVE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=I8k5NsQjBtZEB1VUmQrF9eBLUNFT+5AhYaJBK9tXorNi1FFT/CSZDXcaYFCT4SfVW
+         lSs9KoWtwF2oFXL1Nmqq8vy/3B0mOLhGdmj2YuVNEXX87ofG2B/bbroESp82R7yBxa
+         1k0fI7JTRdl7WZjke/bfPQ5axrfBEF/sWKsVD4wQ=
+Date:   Fri, 21 May 2021 08:48:56 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     aviral14112001 <shiv14112001@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, shuah@kernal.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] This commit fixes the following checkpatch.pl errors and
+ warnings : >>ERROR: switch and case should be at the same indent + switch
+ (whence) { +           case 1: [...] +         case 0: [...] + default:
+Message-ID: <YKdX2FEsuyBkmqki@kroah.com>
+References: <20210521054857.7784-1-shiv14112001@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210521054857.7784-1-shiv14112001@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add myself, Steve French, Sergey Senozhatsky and Hyunchul Lee
-as cifsd maintainer.
+On Fri, May 21, 2021 at 11:18:57AM +0530, aviral14112001 wrote:
+> >>ERROR: code indent should use tabs where possible
+> +                              void (*callback)(struct dentry *))$
+> 
+> >>WARNING: Prefer [subsystem eg: netdev]_warn([subsystem]dev, ... then dev_warn(dev, ... then pr_warn(...  to printk(KERN_WARNING ...
+> +			printk(KERN_WARNING "%s: %s passed in a files array"
+> 
+> >>WARNING: break quoted strings at a space character
+> +			printk(KERN_WARNING "%s: %s passed in a files array"
+> +				"with an index of 1!\n", __func__,
+> 
+> >>WARNING: Symbolic permissions 'S_IRUSR | S_IWUSR' are not preferred. Consider using octal permissions '0600'.
+> +	root->i_mode = S_IFDIR | S_IRUSR | S_IWUSR;
+> 
+> >>WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+> +			loff_t pos, unsigned len, unsigned flags,
+> 
+> >>WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+> +			loff_t pos, unsigned len, unsigned flags,
+> 
+> >>WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+> +		unsigned from = pos & (PAGE_SIZE - 1);
+> 
+> >>WARNING: Block comments use a trailing */ on a separate line
+> + * to set the attribute specific access operations. */
+> 
+> >>WARNING: Symbolic permissions 'S_IRUGO | S_IXUGO' are not preferred. Consider using octal permissions '0555'.
+> +	inode->i_mode = S_IFDIR | S_IRUGO | S_IXUGO;
+> 
+> >>Several other warnings (WARNING: Missing a blank line after declarations)
+> 
+> Signed-off-by: aviral14112001 <shiv14112001@gmail.com>
+> ---
+>  fs/libfs.c | 66 ++++++++++++++++++++++++++++++------------------------
+>  1 file changed, 37 insertions(+), 29 deletions(-)
+> 
 
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Hyunchul Lee <hyc.lee@gmail.com>
-Acked-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
----
- MAINTAINERS | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Hi,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bd7aff0c120f..f23bb5cbfd70 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4530,7 +4530,7 @@ F:	include/linux/clk/
- F:	include/linux/of_clk.h
- X:	drivers/clk/clkdev.c
- 
--COMMON INTERNET FILE SYSTEM (CIFS)
-+COMMON INTERNET FILE SYSTEM CLIENT (CIFS)
- M:	Steve French <sfrench@samba.org>
- L:	linux-cifs@vger.kernel.org
- L:	samba-technical@lists.samba.org (moderated for non-subscribers)
-@@ -4540,6 +4540,16 @@ T:	git git://git.samba.org/sfrench/cifs-2.6.git
- F:	Documentation/admin-guide/cifs/
- F:	fs/cifs/
- 
-+COMMON INTERNET FILE SYSTEM SERVER (CIFSD)
-+M:	Namjae Jeon <namjae.jeon@samsung.com>
-+M:	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-+M:	Steve French <sfrench@samba.org>
-+M:	Hyunchul Lee <hyc.lee@gmail.com>
-+L:	linux-cifs@vger.kernel.org
-+L:	linux-cifsd-devel@lists.sourceforge.net
-+S:	Maintained
-+F:	fs/cifsd/
-+
- COMPACTPCI HOTPLUG CORE
- M:	Scott Murray <scott@spiteful.org>
- L:	linux-pci@vger.kernel.org
--- 
-2.17.1
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
+
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what is needed in order to
+  properly describe the change.
+
+- You did not write a descriptive Subject: for the patch, allowing Greg,
+  and everyone else, to know what this patch is all about.  Please read
+  the section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what a proper Subject: line should
+  look like.
+
+- It looks like you did not use your "real" name for the patch on either
+  the Signed-off-by: line, or the From: line (both of which have to
+  match).  Please read the kernel file, Documentation/SubmittingPatches
+  for how to do this correctly.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
