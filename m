@@ -2,160 +2,301 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA3EA38BDD0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 07:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BC9538BDFB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 07:48:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231522AbhEUFO5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 01:14:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57032 "EHLO
+        id S233989AbhEUFto (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 01:49:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230176AbhEUFO4 (ORCPT
+        with ESMTP id S232366AbhEUFtn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 01:14:56 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 497AAC061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 May 2021 22:13:33 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id h20-20020a17090aa894b029015db8f3969eso5911850pjq.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 May 2021 22:13:33 -0700 (PDT)
+        Fri, 21 May 2021 01:49:43 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38F7BC061574;
+        Thu, 20 May 2021 22:48:20 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id f22so5757551pfn.0;
+        Thu, 20 May 2021 22:48:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=bgS4pF9Ne9nJ3937pRt34Uv0EWKH/eisWTbh6rzbM2w=;
-        b=H7YCLMRndDIQtTj6d8jQriGetGwG4I300X506G4hPwBq8a4n2I2NZQzF7tomfz4sfo
-         XcCfuvIU9xiUuJlVfA2W9pGVXtv+5fnlaRrYyxu4HpQ/IpTa+MlPwfbq9J56mg3OYDkm
-         w48ZefoatPt2VudvdYTxqF4DQRC7Z4dNz6vx8T7bdmDis5Th3R7RjwmgU2rQr3Xv2VRT
-         M5SMZnhnsjREFoE8AGFO/IQaRoGavNPIqZGY1OWy9Ocdz/GrLeg8bfJWeXtAmlxvEq4O
-         2Quwnfw1tA9Mj5UARwdueHmvmJ59a2E/YBbtXnhax+e4iuvjw9C1ttc0DE+1UBIy04yD
-         zU6g==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WyzWGEeYzzvpqZN1QCFWv+jHG4VPcbJh+9cEDFW/gA0=;
+        b=WbWWyNeTBBJm/+5k8GgdUmiGsoClJIZYRin0hwdlUL97wYZ/h180ci/TVg/pnsvtxp
+         YNSLRwWGPPKWCQaGoaAirGXWhd9rS/++6VaKEYLMfE20yGWdPp6DBjuf+ETade9qXwLA
+         HU+KKNWZEc8F6Juso5nMSeg5kurIro+wdTfzysLLHJLprpulJSsVs2IfVC+sKzSrxA2r
+         E/4LWrTgYf1I6r5xYcRGGJb9Lv85lix0Ml7K0E3HedexoIP4AYmrXofy3P+HMSUzSO5h
+         eJYpfm7207xXCnVkeOfIwOz0nbtexi9AEtl6RJTb9U4M8SSsQIs9fRYmxRigTzwwevFG
+         mJLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=bgS4pF9Ne9nJ3937pRt34Uv0EWKH/eisWTbh6rzbM2w=;
-        b=Exw0tP/0bLGOUHoCcwVKkmp0YF8vHFAhulzpr5cMaaxAuGJ8BsCZfdRCwLxyzV4GR2
-         B0l7x3Ul5Hn+iiZPsqj0Lcsev3Ose9Gt8NGtE0MzwWISzj33ubVDBRRFRJX8nR8dofop
-         Te5FkV+F7QK658lRKepek7JUjjRbxVRe1cu9yt1RVko82cKNhjTliFq8UJMwwY80PGI9
-         STQC8XI524DcOF4vRrUiVX8A5XGH3tZ1suSQ4RevlynTPkzOOo04+o4oJLGwvfKTOe41
-         uDqf6rH9BuYLVbpQSCKThD2laMn2/LRM1kUGIxE+vu2kiFVAJQP+xPJYaM+20yLhTnZD
-         +nYQ==
-X-Gm-Message-State: AOAM531N3lYF1N4NecsV9xUdMZDiN4W91CbcKfyc3zLrGs4q0GJAlLRz
-        G668oHU/YybLLiZpCgCHj+MH0A==
-X-Google-Smtp-Source: ABdhPJw+V5ShgApxNxW34140eavfSn3skDwRCF9/zx690qZo2q8BklpLFc4augcHT2DreEMSI2l/lw==
-X-Received: by 2002:a17:90a:a106:: with SMTP id s6mr8815490pjp.170.1621574012699;
-        Thu, 20 May 2021 22:13:32 -0700 (PDT)
-Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
-        by smtp.gmail.com with ESMTPSA id cv24sm3519057pjb.7.2021.05.20.22.13.30
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 May 2021 22:13:31 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <6E4DE257-4220-4B5B-B3D0-B67C7BC69BB5@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_9ABD2FFE-ADCA-4E79-B98F-629817F7E7A3";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: How capacious and well-indexed are ext4, xfs and btrfs
- directories?
-Date:   Thu, 20 May 2021 23:13:28 -0600
-In-Reply-To: <206078.1621264018@warthog.procyon.org.uk>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
-        "Darrick J. Wong" <djwong@kernel.org>, Chris Mason <clm@fb.com>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        linux-cachefs@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        NeilBrown <neilb@suse.com>
-To:     David Howells <dhowells@redhat.com>
-References: <206078.1621264018@warthog.procyon.org.uk>
-X-Mailer: Apple Mail (2.3273)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WyzWGEeYzzvpqZN1QCFWv+jHG4VPcbJh+9cEDFW/gA0=;
+        b=cgpJdE3EXn7oTgNkeDkhjALN0dajUhhAaDEC8Vo/y+0SEuqcOfpUPJR9rUMzrErXxg
+         GMlz6YKYWVkhtIXVBmFewzXrfST8jFnuW7U74yFfu6QAlxkHMAG3vyFn4c5KDBfm3B+x
+         XoHwmP5Gy/oLQUh+GrjnBy25syHXZQPBd+6+l2LkX/wqbuLbgM5X1i1HoR6iwMWdzEYb
+         6/rT1CLy/J6arf9tlXvBs6fZC4aZDikuCXwE5Wpb8XbL0WmPEkQ50ckEqROI4bjepjZW
+         Vzns9ta1C2qbThqFjpN6w2sYy8a+4j3cEpbL0U4ET5wpila48s5c/6QdFk9aaAYfVQBZ
+         vSOA==
+X-Gm-Message-State: AOAM531EKCATU5uHAakWJ7DywSKiTldmDipR2wj2HjgyxFNWaVLnfv5Q
+        fdlIG0hjghBBhGh0C4IC/iQ=
+X-Google-Smtp-Source: ABdhPJxPhENPmi/M0XXzNOPEvXgAS7q3LOPaCUQMONMv5rx/nJILGjuJfrzlm7gpXYslq5i4rh46WA==
+X-Received: by 2002:a63:aa48:: with SMTP id x8mr7933150pgo.359.1621576099711;
+        Thu, 20 May 2021 22:48:19 -0700 (PDT)
+Received: from localhost.localdomain ([139.167.194.135])
+        by smtp.gmail.com with ESMTPSA id 5sm7847234pjo.17.2021.05.20.22.48.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 May 2021 22:48:19 -0700 (PDT)
+From:   aviral14112001 <shiv14112001@gmail.com>
+To:     viro@zeniv.linux.org.uk, shuah@kernal.org
+Cc:     aviral14112001 <shiv14112001@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH] This commit fixes the following checkpatch.pl errors and warnings : >>ERROR: switch and case should be at the same indent +    switch (whence) { +             case 1: [...] +         case 0: [...] +  default:
+Date:   Fri, 21 May 2021 11:18:57 +0530
+Message-Id: <20210521054857.7784-1-shiv14112001@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+>>ERROR: code indent should use tabs where possible
++                              void (*callback)(struct dentry *))$
 
---Apple-Mail=_9ABD2FFE-ADCA-4E79-B98F-629817F7E7A3
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+>>WARNING: Prefer [subsystem eg: netdev]_warn([subsystem]dev, ... then dev_warn(dev, ... then pr_warn(...  to printk(KERN_WARNING ...
++			printk(KERN_WARNING "%s: %s passed in a files array"
 
-On May 17, 2021, at 9:06 AM, David Howells <dhowells@redhat.com> wrote:
-> With filesystems like ext4, xfs and btrfs, what are the limits on =
-directory
-> capacity, and how well are they indexed?
->=20
-> The reason I ask is that inside of cachefiles, I insert fanout =
-directories
-> inside index directories to divide up the space for ext2 to cope with =
-the
-> limits on directory sizes and that it did linear searches (IIRC).
->=20
-> For some applications, I need to be able to cache over 1M entries =
-(render
-> farm) and even a kernel tree has over 100k.
->=20
-> What I'd like to do is remove the fanout directories, so that for each =
-logical
-> "volume"[*] I have a single directory with all the files in it.  But =
-that
-> means sticking massive amounts of entries into a single directory and =
-hoping
-> it (a) isn't too slow and (b) doesn't hit the capacity limit.
+>>WARNING: break quoted strings at a space character
++			printk(KERN_WARNING "%s: %s passed in a files array"
++				"with an index of 1!\n", __func__,
 
-Ext4 can comfortably handle ~12M entries in a single directory, if the
-filenames are not too long (e.g. 32 bytes or so).  With the "large_dir"
-feature (since 4.13, but not enabled by default) a single directory can
-hold around 4B entries, basically all the inodes of a filesystem.
+>>WARNING: Symbolic permissions 'S_IRUSR | S_IWUSR' are not preferred. Consider using octal permissions '0600'.
++	root->i_mode = S_IFDIR | S_IRUSR | S_IWUSR;
 
-There are performance knees as the index grows to a new level (~50k, =
-10M,
-depending on filename length)
+>>WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
++			loff_t pos, unsigned len, unsigned flags,
 
-As described elsewhere in the thread, allowing concurrent create and =
-unlink
-in a directory (rename probably not needed) would be invaluable for =
-scaling
-multi-threaded workloads.  Neil Brown posted a prototype patch to add =
-this
-to the VFS for NFS:
+>>WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
++			loff_t pos, unsigned len, unsigned flags,
 
-=
-https://lore.kernel.org/lustre-devel/8736rsbdx1.fsf@notabene.neil.brown.na=
-me/
+>>WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
++		unsigned from = pos & (PAGE_SIZE - 1);
 
-Maybe it's time to restart that discussion?
+>>WARNING: Block comments use a trailing */ on a separate line
++ * to set the attribute specific access operations. */
 
-Cheers, Andreas
+>>WARNING: Symbolic permissions 'S_IRUGO | S_IXUGO' are not preferred. Consider using octal permissions '0555'.
++	inode->i_mode = S_IFDIR | S_IRUGO | S_IXUGO;
 
+>>Several other warnings (WARNING: Missing a blank line after declarations)
 
+Signed-off-by: aviral14112001 <shiv14112001@gmail.com>
+---
+ fs/libfs.c | 66 ++++++++++++++++++++++++++++++------------------------
+ 1 file changed, 37 insertions(+), 29 deletions(-)
 
+diff --git a/fs/libfs.c b/fs/libfs.c
+index e9b29c6ffccb..a3b6bd803b7d 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -32,6 +32,7 @@ int simple_getattr(struct user_namespace *mnt_userns, const struct path *path,
+ 		   unsigned int query_flags)
+ {
+ 	struct inode *inode = d_inode(path->dentry);
++
+ 	generic_fillattr(&init_user_ns, inode, stat);
+ 	stat->blocks = inode->i_mapping->nrpages << (PAGE_SHIFT - 9);
+ 	return 0;
+@@ -137,16 +138,17 @@ static struct dentry *scan_positives(struct dentry *cursor,
+ loff_t dcache_dir_lseek(struct file *file, loff_t offset, int whence)
+ {
+ 	struct dentry *dentry = file->f_path.dentry;
++
+ 	switch (whence) {
+-		case 1:
+-			offset += file->f_pos;
+-			fallthrough;
+-		case 0:
+-			if (offset >= 0)
+-				break;
+-			fallthrough;
+-		default:
+-			return -EINVAL;
++	case 1:
++		offset += file->f_pos;
++		fallthrough;
++	case 0:
++		if (offset >= 0)
++			break;
++		fallthrough;
++	default:
++		return -EINVAL;
+ 	}
+ 	if (offset != file->f_pos) {
+ 		struct dentry *cursor = file->private_data;
+@@ -251,6 +253,7 @@ static struct dentry *find_next_child(struct dentry *parent, struct dentry *prev
+ 	spin_lock(&parent->d_lock);
+ 	while ((p = p->next) != &parent->d_subdirs) {
+ 		struct dentry *d = container_of(p, struct dentry, d_child);
++
+ 		if (simple_positive(d)) {
+ 			spin_lock_nested(&d->d_lock, DENTRY_D_LOCK_NESTED);
+ 			if (simple_positive(d))
+@@ -266,9 +269,10 @@ static struct dentry *find_next_child(struct dentry *parent, struct dentry *prev
+ }
+ 
+ void simple_recursive_removal(struct dentry *dentry,
+-                              void (*callback)(struct dentry *))
++			void (*callback)(struct dentry *))
+ {
+ 	struct dentry *this = dget(dentry);
++
+ 	while (true) {
+ 		struct dentry *victim = NULL, *child;
+ 		struct inode *inode = this->d_inode;
+@@ -338,7 +342,7 @@ static int pseudo_fs_fill_super(struct super_block *s, struct fs_context *fc)
+ 	 * max_reserved of 1 to iunique).
+ 	 */
+ 	root->i_ino = 1;
+-	root->i_mode = S_IFDIR | S_IRUSR | S_IWUSR;
++	root->i_mode = S_IFDIR | 0600;
+ 	root->i_atime = root->i_mtime = root->i_ctime = current_time(root);
+ 	s->s_root = d_make_root(root);
+ 	if (!s->s_root)
+@@ -523,7 +527,7 @@ int simple_readpage(struct file *file, struct page *page)
+ EXPORT_SYMBOL(simple_readpage);
+ 
+ int simple_write_begin(struct file *file, struct address_space *mapping,
+-			loff_t pos, unsigned len, unsigned flags,
++			loff_t pos, unsigned int len, unsigned int flags,
+ 			struct page **pagep, void **fsdata)
+ {
+ 	struct page *page;
+@@ -538,7 +542,7 @@ int simple_write_begin(struct file *file, struct address_space *mapping,
+ 	*pagep = page;
+ 
+ 	if (!PageUptodate(page) && (len != PAGE_SIZE)) {
+-		unsigned from = pos & (PAGE_SIZE - 1);
++		unsigned int from = pos & (PAGE_SIZE - 1);
+ 
+ 		zero_user_segments(page, 0, from, from + len, PAGE_SIZE);
+ 	}
+@@ -549,12 +553,12 @@ EXPORT_SYMBOL(simple_write_begin);
+ /**
+  * simple_write_end - .write_end helper for non-block-device FSes
+  * @file: See .write_end of address_space_operations
+- * @mapping: 		"
+- * @pos: 		"
+- * @len: 		"
+- * @copied: 		"
+- * @page: 		"
+- * @fsdata: 		"
++ * @mapping:		"
++ * @pos:		"
++ * @len:		"
++ * @copied:		"
++ * @page:		"
++ * @fsdata:		"
+  *
+  * simple_write_end does the minimum needed for updating a page after writing is
+  * done. It has the same API signature as the .write_end of
+@@ -569,7 +573,7 @@ EXPORT_SYMBOL(simple_write_begin);
+  * Use *ONLY* with simple_readpage()
+  */
+ int simple_write_end(struct file *file, struct address_space *mapping,
+-			loff_t pos, unsigned len, unsigned copied,
++			loff_t pos, unsigned int len, unsigned int copied,
+ 			struct page *page, void *fsdata)
+ {
+ 	struct inode *inode = page->mapping->host;
+@@ -578,7 +582,7 @@ int simple_write_end(struct file *file, struct address_space *mapping,
+ 	/* zero the stale part of the page if we did a short copy */
+ 	if (!PageUptodate(page)) {
+ 		if (copied < len) {
+-			unsigned from = pos & (PAGE_SIZE - 1);
++			unsigned int from = pos & (PAGE_SIZE - 1);
+ 
+ 			zero_user(page, from + copied, len - copied);
+ 		}
+@@ -640,9 +644,8 @@ int simple_fill_super(struct super_block *s, unsigned long magic,
+ 
+ 		/* warn if it tries to conflict with the root inode */
+ 		if (unlikely(i == 1))
+-			printk(KERN_WARNING "%s: %s passed in a files array"
+-				"with an index of 1!\n", __func__,
+-				s->s_type->name);
++			pr_warn("%s: %s passed in a files array with an index of 1!\n"
++			, __func__, s->s_type->name);
+ 
+ 		dentry = d_alloc_name(root, files->name);
+ 		if (!dentry)
+@@ -673,6 +676,7 @@ static DEFINE_SPINLOCK(pin_fs_lock);
+ int simple_pin_fs(struct file_system_type *type, struct vfsmount **mount, int *count)
+ {
+ 	struct vfsmount *mnt = NULL;
++
+ 	spin_lock(&pin_fs_lock);
+ 	if (unlikely(!*mount)) {
+ 		spin_unlock(&pin_fs_lock);
+@@ -694,6 +698,7 @@ EXPORT_SYMBOL(simple_pin_fs);
+ void simple_release_fs(struct vfsmount **mount, int *count)
+ {
+ 	struct vfsmount *mnt;
++
+ 	spin_lock(&pin_fs_lock);
+ 	mnt = *mount;
+ 	if (!--*count)
+@@ -888,8 +893,10 @@ struct simple_attr {
+ 	struct mutex mutex;	/* protects access to these buffers */
+ };
+ 
+-/* simple_attr_open is called by an actual attribute open file operation
+- * to set the attribute specific access operations. */
++/*
++ * simple_attr_open is called by an actual attribute open file operation
++ * to set the attribute specific access operations.
++ */
+ int simple_attr_open(struct inode *inode, struct file *file,
+ 		     int (*get)(void *, u64 *), int (*set)(void *, u64),
+ 		     const char *fmt)
+@@ -1133,7 +1140,7 @@ EXPORT_SYMBOL(generic_file_fsync);
+  * block size of 2**@blocksize_bits) is addressable by the sector_t
+  * and page cache of the system.  Return 0 if so and -EFBIG otherwise.
+  */
+-int generic_check_addressable(unsigned blocksize_bits, u64 num_blocks)
++int generic_check_addressable(unsigned int blocksize_bits, u64 num_blocks)
+ {
+ 	u64 last_fs_block = num_blocks - 1;
+ 	u64 last_fs_page =
+@@ -1237,7 +1244,7 @@ struct inode *alloc_anon_inode(struct super_block *s)
+ 	 * that it already _is_ on the dirty list.
+ 	 */
+ 	inode->i_state = I_DIRTY;
+-	inode->i_mode = S_IRUSR | S_IWUSR;
++	inode->i_mode = 0600;
+ 	inode->i_uid = current_fsuid();
+ 	inode->i_gid = current_fsgid();
+ 	inode->i_flags |= S_PRIVATE;
+@@ -1303,6 +1310,7 @@ static int empty_dir_getattr(struct user_namespace *mnt_userns,
+ 			     u32 request_mask, unsigned int query_flags)
+ {
+ 	struct inode *inode = d_inode(path->dentry);
++
+ 	generic_fillattr(&init_user_ns, inode, stat);
+ 	return 0;
+ }
+@@ -1349,7 +1357,7 @@ static const struct file_operations empty_dir_operations = {
+ void make_empty_dir_inode(struct inode *inode)
+ {
+ 	set_nlink(inode, 2);
+-	inode->i_mode = S_IFDIR | S_IRUGO | S_IXUGO;
++	inode->i_mode = S_IFDIR | 0555;
+ 	inode->i_uid = GLOBAL_ROOT_UID;
+ 	inode->i_gid = GLOBAL_ROOT_GID;
+ 	inode->i_rdev = 0;
+-- 
+2.25.1
 
-
-
---Apple-Mail=_9ABD2FFE-ADCA-4E79-B98F-629817F7E7A3
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmCnQXgACgkQcqXauRfM
-H+CtAhAArkAICuRAycDLoFhi3+HEtLyGeg8lvr/V0czSXjKcz0kgsjnpRjQKWW3M
-k4bKUagfH8Y0i3oN2BQ6Tdra0KDtyTFzOGCNFj4u6mnFNwK5ONw3xdrVG7AEmrqj
-Xw9a0yQ46vvcUNXnTYVD9yL4Rzb9NSqbJStenwhO7OdG0kYY8WcS9sWo2ycnsHmc
-oxWFFTaM+CRe0SIirT92MbzJtDdbEPBxVHLtdw9tE9+jSfc547+42N0UmEO/kAxL
-cbObKq9zPsNICHraAoBKusp66p6r4TxlTVXt8sS72PBIn2zKjvYRBdhRZy8DcnCi
-7+uj4VQp9JpeSCB7hqDdUQuUCXkJs2emvxiQv+F1mGjyYSXveDhdQwbcF/6zKqjk
-aCFJNDKH4xvVQpUg7diBKnuf0nhdOgn18m+RnGidSFH52xYR1AI3vtzN9BuN76At
-w0vhpElqyfj6CpJuKh+uAnyAWgE+tqebaSOXQbFGBx6rpelp9kKxzpmusjn5Xpj6
-DWIiSqSLGtJnBQo1PyqWQykqR7het6xNCTIn6TWMDqZNSZ2vCZ4smrVWgl+CZthn
-o6gBqI6SsXwRPCUh5qIMVqVPWcFvvdFUoYltKDG6w7sNaON+UhtcMSrLxwiJA9FA
-/7Ezr8zglU/AB4wrGwd/4aTHrQWdLwn6Ww0HpYTqNNqpMAsSMgA=
-=A2zI
------END PGP SIGNATURE-----
-
---Apple-Mail=_9ABD2FFE-ADCA-4E79-B98F-629817F7E7A3--
