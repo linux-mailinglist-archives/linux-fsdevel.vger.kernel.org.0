@@ -2,201 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F409838C9D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 17:14:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 335BC38CA08
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 17:23:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232546AbhEUPPk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 11:15:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46718 "EHLO mx2.suse.de"
+        id S232812AbhEUPZR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 11:25:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57494 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230420AbhEUPPj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 11:15:39 -0400
+        id S232199AbhEUPZQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 May 2021 11:25:16 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1621610055; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1621610632; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=pnTzO+XIqraHe0ySij0++uTkQEvMkDJ3aNW3pnu8RJQ=;
-        b=vgzRpj9/iTY08xqicyHPPacBIjAktoc3ZMJ+KaoK8zcjK4mHkcW+lQvjL+enrxIGdLtnEm
-        tcb/2UF5RYExW9F4V+Qxtke/JuHnDd7XTwTgBhf7eIus1cLshYrYxPNLQtRqHgOGAzT3Bh
-        aMAY7wL4ODVJqQsHFTw7aEtZrnijZ0k=
+        bh=z1wakF+w2kNTrHjVZVWgevRHA7CLbMpekK3gCBZeyP8=;
+        b=RdvO/4MbnOiSEEV9HrU5ZcaQID/bsjD0/A8pdHKLtwjHyzUG4DYF871hL/zmWF4Y+CfUR7
+        GXRjcOgCLbF5EwC9HuzcP7nVvnR6bo/ylYNM+ay0RcMqWbsqdtny82D/Vo31RcdxeW2U4N
+        eO/QMaGOIT4YaMuxr8NxF9RdQTVLwzQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1621610055;
+        s=susede2_ed25519; t=1621610632;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=pnTzO+XIqraHe0ySij0++uTkQEvMkDJ3aNW3pnu8RJQ=;
-        b=pmV2JeB4GbJAMyatyDU0gzWBa5ceBKBgYxnFfc3ETPhM7E6qM0Wt1tODOwOHAmCPiabOFL
-        +5rgJ2pgxNC72aBA==
+        bh=z1wakF+w2kNTrHjVZVWgevRHA7CLbMpekK3gCBZeyP8=;
+        b=J3G2Jv9DUxmMi3lIghEJF+i+OiMDdc28CrsRTIRXboii8JzoMBmcZIWDb3KdJltqPgaUsy
+        0RD5Qr6z4YBVrdCg==
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B53B1AC85;
-        Fri, 21 May 2021 15:14:15 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id B4FAEAD4D;
+        Fri, 21 May 2021 15:23:52 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 530931F2C73; Fri, 21 May 2021 17:14:15 +0200 (CEST)
-Date:   Fri, 21 May 2021 17:14:15 +0200
+        id 56CFC1F2C73; Fri, 21 May 2021 17:23:52 +0200 (CEST)
+Date:   Fri, 21 May 2021 17:23:52 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>, Andy Lutomirski <luto@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        cluster-devel <cluster-devel@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 5/5] fanotify: Add pidfd info record support to the
- fanotify API
-Message-ID: <20210521151415.GP18952@quack2.suse.cz>
-References: <cover.1621473846.git.repnop@google.com>
- <48d18055deb4617d97c695a08dca77eb573097e9.1621473846.git.repnop@google.com>
- <20210520081755.eqey4ryngngt4yqd@wittgenstein>
- <CAOQ4uxhvD2w1i3ia=8=4iCNEYDJ3wfps6AOLdUBXVi-H9Xu-OQ@mail.gmail.com>
- <YKd7tqiVd9ny6+oD@google.com>
- <CAOQ4uxi6LceN+ETbF6XbbBqfAY3H+K5ZMuky1L-gh_g53TEN1A@mail.gmail.com>
- <20210521102418.GF18952@quack2.suse.cz>
- <CAOQ4uxh84uXAQzz2w+TD1OeDtVwBX8uhM3Pumm46YvP-Wkndag@mail.gmail.com>
- <20210521131917.GM18952@quack2.suse.cz>
- <CAOQ4uxiA77_P5vtv7e83g0+9d7B5W9ZTE4GfQEYbWmfT1rA=VA@mail.gmail.com>
+        Linux-MM <linux-mm@kvack.org>
+Subject: Re: [PATCH 6/6] gfs2: Fix mmap + page fault deadlocks (part 2)
+Message-ID: <20210521152352.GQ18952@quack2.suse.cz>
+References: <20210520122536.1596602-1-agruenba@redhat.com>
+ <20210520122536.1596602-7-agruenba@redhat.com>
+ <20210520133015.GC18952@quack2.suse.cz>
+ <CAHc6FU7ESASp+G59d218LekK8+YMBvH9GxbPr-qOVBhzyVmq4Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxiA77_P5vtv7e83g0+9d7B5W9ZTE4GfQEYbWmfT1rA=VA@mail.gmail.com>
+In-Reply-To: <CAHc6FU7ESASp+G59d218LekK8+YMBvH9GxbPr-qOVBhzyVmq4Q@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 21-05-21 16:52:08, Amir Goldstein wrote:
-> On Fri, May 21, 2021 at 4:19 PM Jan Kara <jack@suse.cz> wrote:
+On Thu 20-05-21 16:07:56, Andreas Gruenbacher wrote:
+> On Thu, May 20, 2021 at 3:30 PM Jan Kara <jack@suse.cz> wrote:
+> > On Thu 20-05-21 14:25:36, Andreas Gruenbacher wrote:
+> > > Now that we handle self-recursion on the inode glock in gfs2_fault and
+> > > gfs2_page_mkwrite, we need to take care of more complex deadlock
+> > > scenarios like the following (example by Jan Kara):
+> > >
+> > > Two independent processes P1, P2. Two files F1, F2, and two mappings M1,
+> > > M2 where M1 is a mapping of F1, M2 is a mapping of F2. Now P1 does DIO
+> > > to F1 with M2 as a buffer, P2 does DIO to F2 with M1 as a buffer. They
+> > > can race like:
+> > >
+> > > P1                                      P2
+> > > read()                                  read()
+> > >   gfs2_file_read_iter()                   gfs2_file_read_iter()
+> > >     gfs2_file_direct_read()                 gfs2_file_direct_read()
+> > >       locks glock of F1                       locks glock of F2
+> > >       iomap_dio_rw()                          iomap_dio_rw()
+> > >         bio_iov_iter_get_pages()                bio_iov_iter_get_pages()
+> > >           <fault in M2>                           <fault in M1>
+> > >             gfs2_fault()                            gfs2_fault()
+> > >               tries to grab glock of F2               tries to grab glock of F1
+> > >
+> > > Those kinds of scenarios are much harder to reproduce than
+> > > self-recursion.
+> > >
+> > > We deal with such situations by using the LM_FLAG_OUTER flag to mark
+> > > "outer" glock taking.  Then, when taking an "inner" glock, we use the
+> > > LM_FLAG_TRY flag so that locking attempts that don't immediately succeed
+> > > will be aborted.  In case of a failed locking attempt, we "unroll" to
+> > > where the "outer" glock was taken, drop the "outer" glock, and fault in
+> > > the first offending user page.  This will re-trigger the "inner" locking
+> > > attempt but without the LM_FLAG_TRY flag.  Once that has happened, we
+> > > re-acquire the "outer" glock and retry the original operation.
+> > >
+> > > Reported-by: Jan Kara <jack@suse.cz>
+> > > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 > >
-> > On Fri 21-05-21 14:10:32, Amir Goldstein wrote:
-> > > On Fri, May 21, 2021 at 1:24 PM Jan Kara <jack@suse.cz> wrote:
-> > > >
-> > > > On Fri 21-05-21 12:41:51, Amir Goldstein wrote:
-> > > > > On Fri, May 21, 2021 at 12:22 PM Matthew Bobrowski <repnop@google.com> wrote:
-> > > > > >
-> > > > > > Hey Amir/Christian,
-> > > > > >
-> > > > > > On Thu, May 20, 2021 at 04:43:48PM +0300, Amir Goldstein wrote:
-> > > > > > > On Thu, May 20, 2021 at 11:17 AM Christian Brauner
-> > > > > > > <christian.brauner@ubuntu.com> wrote:
-> > > > > > > > > +#define FANOTIFY_PIDFD_INFO_HDR_LEN \
-> > > > > > > > > +     sizeof(struct fanotify_event_info_pidfd)
-> > > > > > > > >
-> > > > > > > > >  static int fanotify_fid_info_len(int fh_len, int name_len)
-> > > > > > > > >  {
-> > > > > > > > > @@ -141,6 +143,9 @@ static int fanotify_event_info_len(unsigned int info_mode,
-> > > > > > > > >       if (fh_len)
-> > > > > > > > >               info_len += fanotify_fid_info_len(fh_len, dot_len);
-> > > > > > > > >
-> > > > > > > > > +     if (info_mode & FAN_REPORT_PIDFD)
-> > > > > > > > > +             info_len += FANOTIFY_PIDFD_INFO_HDR_LEN;
-> > > > > > > > > +
-> > > > > > > > >       return info_len;
-> > > > > > > > >  }
-> > > > > > > > >
-> > > > > > > > > @@ -401,6 +406,29 @@ static int copy_fid_info_to_user(__kernel_fsid_t *fsid,
-> > > > > > > > >       return info_len;
-> > > > > > > > >  }
-> > > > > > > > >
-> > > > > > > > > +static int copy_pidfd_info_to_user(struct pid *pid,
-> > > > > > > > > +                                char __user *buf,
-> > > > > > > > > +                                size_t count)
-> > > > > > > > > +{
-> > > > > > > > > +     struct fanotify_event_info_pidfd info = { };
-> > > > > > > > > +     size_t info_len = FANOTIFY_PIDFD_INFO_HDR_LEN;
-> > > > > > > > > +
-> > > > > > > > > +     if (WARN_ON_ONCE(info_len > count))
-> > > > > > > > > +             return -EFAULT;
-> > > > > > > > > +
-> > > > > > > > > +     info.hdr.info_type = FAN_EVENT_INFO_TYPE_PIDFD;
-> > > > > > > > > +     info.hdr.len = info_len;
-> > > > > > > > > +
-> > > > > > > > > +     info.pidfd = pidfd_create(pid, 0);
-> > > > > > > > > +     if (info.pidfd < 0)
-> > > > > > > > > +             info.pidfd = FAN_NOPIDFD;
-> > > > > > > > > +
-> > > > > > > > > +     if (copy_to_user(buf, &info, info_len))
-> > > > > > > > > +             return -EFAULT;
-> > > > > > > >
-> > > > > > > > Hm, well this kinda sucks. The caller can end up with a pidfd in their
-> > > > > > > > fd table and when the copy_to_user() failed they won't know what fd it
-> > > > > > >
-> > > > > > > Good catch!
-> > > > > >
-> > > > > > Super awesome catch Christian, thanks pulling this up!
-> > > > > >
-> > > > > > > But I prefer to solve it differently, because moving fd_install() to the
-> > > > > > > end of this function does not guarantee that copy_event_to_user()
-> > > > > > > won't return an error one day with dangling pidfd in fd table.
-> > > > > >
-> > > > > > I can see the angle you're approaching this from...
-> > > > > >
-> > > > > > > It might be simpler to do pidfd_create() next to create_fd() in
-> > > > > > > copy_event_to_user() and pass pidfd to copy_pidfd_info_to_user().
-> > > > > > > pidfd can be closed on error along with fd on out_close_fd label.
-> > > > > > >
-> > > > > > > You also forgot to add CAP_SYS_ADMIN check before pidfd_create()
-> > > > > > > (even though fanotify_init() does check for that).
-> > > > > >
-> > > > > > I didn't really understand the need for this check here given that the
-> > > > > > administrative bits are already being checked for in fanotify_init()
-> > > > > > i.e. FAN_REPORT_PIDFD can never be set for an unprivileged listener;
-> > > > > > thus never walking any of the pidfd_mode paths. Is this just a defense
-> > > > > > in depth approach here, or is it something else that I'm missing?
-> > > > > >
-> > > > >
-> > > > > We want to be extra careful not to create privilege escalations,
-> > > > > so even if the fanotify fd is leaked or intentionally passed to a less
-> > > > > privileged user, it cannot get an open pidfd.
-> > > > >
-> > > > > IOW, it is *much* easier to be defensive in this case than to prove
-> > > > > that the change cannot introduce any privilege escalations.
-> > > >
-> > > > I have no problems with being more defensive (it's certainly better than
-> > > > being too lax) but does it really make sence here? I mean if CAP_SYS_ADMIN
-> > > > task opens O_RDWR /etc/passwd and then passes this fd to unpriviledged
-> > > > process, that process is also free to update all the passwords.
-> > > > Traditionally permission checks in Unix are performed on open and then who
-> > > > has fd can do whatever that fd allows... I've tried to follow similar
-> > > > philosophy with fanotify as well and e.g. open happening as a result of
-> > > > fanotify path events does not check permissions either.
-> > > >
-> > >
-> > > Agreed.
-> > >
-> > > However, because we had this issue with no explicit FAN_REPORT_PID
-> > > we added the CAP_SYS_ADMIN check for reporting event->pid as next
-> > > best thing. So now that becomes weird if priv process created fanotify fd
-> > > and passes it to unpriv process, then unpriv process gets events with
-> > > pidfd but without event->pid.
-> > >
-> > > We can change the code to:
-> > >
-> > >         if (!capable(CAP_SYS_ADMIN) && !pidfd_mode &&
-> > >             task_tgid(current) != event->pid)
-> > >                 metadata.pid = 0;
-> > >
-> > > So the case I decscribed above ends up reporting both pidfd
-> > > and event->pid to unpriv user, but that is a bit inconsistent...
+> > ...
 > >
-> > Oh, now I see where you are coming from :) Thanks for explanation. And
-> > remind me please, cannot we just have internal FAN_REPORT_PID flag that
-> > gets set on notification group when priviledged process creates it and then
-> > test for that instead of CAP_SYS_ADMIN in copy_event_to_user()? It is
-> > mostly equivalent but I guess more in the spirit of how fanotify
-> > traditionally does things. Also FAN_REPORT_PIDFD could then behave in the
-> > same way...
+> > > diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+> > > index 7d88abb4629b..8b26893f8dc6 100644
+> > > --- a/fs/gfs2/file.c
+> > > +++ b/fs/gfs2/file.c
+> > > @@ -431,21 +431,30 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
+> > >       vm_fault_t ret = VM_FAULT_LOCKED;
+> > >       struct gfs2_holder gh;
+> > >       unsigned int length;
+> > > +     u16 flags = 0;
+> > >       loff_t size;
+> > >       int err;
+> > >
+> > >       sb_start_pagefault(inode->i_sb);
+> > >
+> > > -     gfs2_holder_init(ip->i_gl, LM_ST_EXCLUSIVE, 0, &gh);
+> > > +     if (current_holds_glock())
+> > > +             flags |= LM_FLAG_TRY;
+> > > +
+> > > +     gfs2_holder_init(ip->i_gl, LM_ST_EXCLUSIVE, flags, &gh);
+> > >       if (likely(!outer_gh)) {
+> > >               err = gfs2_glock_nq(&gh);
+> > >               if (err) {
+> > >                       ret = block_page_mkwrite_return(err);
+> > > +                     if (err == GLR_TRYFAILED) {
+> > > +                             set_current_needs_retry(true);
+> > > +                             ret = VM_FAULT_SIGBUS;
+> > > +                     }
+> >
+> > I've checked to make sure but do_user_addr_fault() indeed calls do_sigbus()
+> > which raises the SIGBUS signal. So if the application does not ignore
+> > SIGBUS, your retry will be visible to the application and can cause all
+> > sorts of interesting results...
 > 
-> Yes, we can. In fact, we should call the internal flag FANOTIFY_UNPRIV
-> as it described the situation better than FAN_REPORT_PID.
-> This happens to be how I implemented it in the initial RFC [1].
+> I would have noticed that, but no SIGBUS signals were actually
+> delivered. So we probably end up in kernelmode_fixup_or_oops() when in
+> kernel mode, which just does nothing in that case.
+
+Hum, but how would we get there? I don't think fatal_signal_pending() would
+return true yet...
+
+> > So you probably need to add a new VM_FAULT_
+> > return code that will behave like VM_FAULT_SIGBUS except it will not raise
+> > the signal.
 > 
-> It's not easy to follow our entire discussion on this thread, but I think
-> we can resurrect the FANOTIFY_UNPRIV internal flag and use it
-> in this case instead of CAP_SYS_ADMIN.
+> A new VM_FAULT_* flag might make the code easier to read, but I don't
+> know if we can have one.
 
-I think at that time we were discussing how to handle opening of fds and
-we decided to not depend on FANOTIFY_UNPRIV and then I didn't see a value
-of that flag because I forgot about pids... Anyway now I agree to go for
-that flag. :)
-
+Well, this is kernel-internal API and there's still plenty of space in
+vm_fault_reason.
 								Honza
 -- 
 Jan Kara <jack@suse.com>
