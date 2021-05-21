@@ -2,19 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94DBD38BC87
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 04:42:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35BF138BC89
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 04:42:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238645AbhEUCnh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 May 2021 22:43:37 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54896 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231681AbhEUCng (ORCPT
+        id S238658AbhEUCnl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 May 2021 22:43:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51888 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231681AbhEUCnk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 May 2021 22:43:36 -0400
+        Thu, 20 May 2021 22:43:40 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF61FC061574;
+        Thu, 20 May 2021 19:42:17 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: krisman)
-        with ESMTPSA id 413EE1F43D57
+        with ESMTPSA id 984641F43D66
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     amir73il@gmail.com
 Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
@@ -23,9 +26,9 @@ Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
         Dave Chinner <david@fromorbit.com>, jack@suse.com,
         dhowells@redhat.com, khazhy@google.com,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: [PATCH 04/11] fanotify: Expose fanotify_mark
-Date:   Thu, 20 May 2021 22:41:27 -0400
-Message-Id: <20210521024134.1032503-5-krisman@collabora.com>
+Subject: [PATCH 05/11] inotify: Don't force FS_IN_IGNORED
+Date:   Thu, 20 May 2021 22:41:28 -0400
+Message-Id: <20210521024134.1032503-6-krisman@collabora.com>
 X-Mailer: git-send-email 2.31.0
 In-Reply-To: <20210521024134.1032503-1-krisman@collabora.com>
 References: <20210521024134.1032503-1-krisman@collabora.com>
@@ -35,101 +38,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-FAN_ERROR will require an error structure to be stored per mark.
-Therefore, wrap fsnotify_mark in a fanotify specific structure in
-preparation for that.
+According to Amir:
 
+"FS_IN_IGNORED is completely internal to inotify and there is no need
+to set it in i_fsnotify_mask at all, so if we remove the bit from the
+output of inotify_arg_to_mask() no functionality will change and we will
+be able to overload the event bit for FS_ERROR."
+
+This is done in preparation to overload FS_ERROR with the notification
+mechanism in fanotify.
+
+Suggested-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 ---
- fs/notify/fanotify/fanotify.c      |  4 +++-
- fs/notify/fanotify/fanotify.h      | 10 ++++++++++
- fs/notify/fanotify/fanotify_user.c | 14 +++++++-------
- 3 files changed, 20 insertions(+), 8 deletions(-)
+ fs/notify/inotify/inotify_user.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 711b36a9483e..34e2ee759b39 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -869,7 +869,9 @@ static void fanotify_freeing_mark(struct fsnotify_mark *mark,
- 
- static void fanotify_free_mark(struct fsnotify_mark *fsn_mark)
- {
--	kmem_cache_free(fanotify_mark_cache, fsn_mark);
-+	struct fanotify_mark *mark = FANOTIFY_MARK(fsn_mark);
-+
-+	kmem_cache_free(fanotify_mark_cache, mark);
- }
- 
- const struct fsnotify_ops fanotify_fsnotify_ops = {
-diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-index 4a5e555dc3d2..a399c5e2615d 100644
---- a/fs/notify/fanotify/fanotify.h
-+++ b/fs/notify/fanotify/fanotify.h
-@@ -129,6 +129,16 @@ static inline void fanotify_info_copy_name(struct fanotify_info *info,
- 	       name->name);
- }
- 
-+struct fanotify_mark {
-+	struct fsnotify_mark fsn_mark;
-+	struct fanotify_error_event *error_event;
-+};
-+
-+static inline struct fanotify_mark *FANOTIFY_MARK(struct fsnotify_mark *mark)
-+{
-+	return container_of(mark, struct fanotify_mark, fsn_mark);
-+}
-+
- /*
-  * Common structure for fanotify events. Concrete structs are allocated in
-  * fanotify_handle_event() and freed when the information is retrieved by
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 9cc6c8808ed5..00210535a78e 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -914,7 +914,7 @@ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
- 						   __kernel_fsid_t *fsid)
- {
- 	struct ucounts *ucounts = group->fanotify_data.ucounts;
--	struct fsnotify_mark *mark;
-+	struct fanotify_mark *mark;
- 	int ret;
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index 98f61b31745a..4d17be6dd58d 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -89,10 +89,10 @@ static inline __u32 inotify_arg_to_mask(struct inode *inode, u32 arg)
+ 	__u32 mask;
  
  	/*
-@@ -926,20 +926,20 @@ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
- 	    !inc_ucount(ucounts->ns, ucounts->uid, UCOUNT_FANOTIFY_MARKS))
- 		return ERR_PTR(-ENOSPC);
+-	 * Everything should accept their own ignored and should receive events
+-	 * when the inode is unmounted.  All directories care about children.
++	 * Everything should receive events when the inode is unmounted.
++	 * All directories care about children.
+ 	 */
+-	mask = (FS_IN_IGNORED | FS_UNMOUNT);
++	mask = (FS_UNMOUNT);
+ 	if (S_ISDIR(inode->i_mode))
+ 		mask |= FS_EVENT_ON_CHILD;
  
--	mark = kmem_cache_alloc(fanotify_mark_cache, GFP_KERNEL);
-+	mark = kmem_cache_zalloc(fanotify_mark_cache, GFP_KERNEL);
- 	if (!mark) {
- 		ret = -ENOMEM;
- 		goto out_dec_ucounts;
- 	}
- 
--	fsnotify_init_mark(mark, group);
--	ret = fsnotify_add_mark_locked(mark, connp, type, 0, fsid);
-+	fsnotify_init_mark(&mark->fsn_mark, group);
-+	ret = fsnotify_add_mark_locked(&mark->fsn_mark, connp, type, 0, fsid);
- 	if (ret) {
--		fsnotify_put_mark(mark);
-+		fsnotify_put_mark(&mark->fsn_mark);
- 		goto out_dec_ucounts;
- 	}
- 
--	return mark;
-+	return &mark->fsn_mark;
- 
- out_dec_ucounts:
- 	if (!FAN_GROUP_FLAG(group, FAN_UNLIMITED_MARKS))
-@@ -1477,7 +1477,7 @@ static int __init fanotify_user_setup(void)
- 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
- 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
- 
--	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
-+	fanotify_mark_cache = KMEM_CACHE(fanotify_mark,
- 					 SLAB_PANIC|SLAB_ACCOUNT);
- 	fanotify_fid_event_cachep = KMEM_CACHE(fanotify_fid_event,
- 					       SLAB_PANIC);
 -- 
 2.31.0
 
