@@ -2,119 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0590838BC95
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 04:42:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A60B38BCF3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 05:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238721AbhEUCoC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 May 2021 22:44:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51980 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231681AbhEUCoC (ORCPT
+        id S238897AbhEUD3j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 May 2021 23:29:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22932 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238893AbhEUD3i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 May 2021 22:44:02 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EEAEC061574;
-        Thu, 20 May 2021 19:42:40 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id BAB551F43D3C
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     amir73il@gmail.com
-Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel@collabora.com, "Darrick J . Wong" <djwong@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>, jack@suse.com,
-        dhowells@redhat.com, khazhy@google.com,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: [PATCH 11/11] Documentation: Document the FAN_ERROR event
-Date:   Thu, 20 May 2021 22:41:34 -0400
-Message-Id: <20210521024134.1032503-12-krisman@collabora.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20210521024134.1032503-1-krisman@collabora.com>
-References: <20210521024134.1032503-1-krisman@collabora.com>
+        Thu, 20 May 2021 23:29:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1621567696;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=yxYbURZnuPc0zodV6Lb+qv8VGn2mQcxc80yfYxXtL3M=;
+        b=a2d9WJMvlwE1lDBpENB6dlxIPQ/i7CJdNQJA6yNTIBI+COzzATvO6F3yN2hpVUYwSc1rui
+        y/HQU1jZRDkyzKU5TrWWazcZnNDmqbnpDQ9FdocMT4ITZQ/X+NSxrT4RQHmh1ojsjhsXIx
+        SUQrHQtvl5tPn90aBDEE1/rUyFA182A=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-55-YrK4L1j6MOeYOhkca2n2Sw-1; Thu, 20 May 2021 23:28:14 -0400
+X-MC-Unique: YrK4L1j6MOeYOhkca2n2Sw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 099B58015DB;
+        Fri, 21 May 2021 03:28:13 +0000 (UTC)
+Received: from T590 (ovpn-12-75.pek2.redhat.com [10.72.12.75])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1DADF5C5FD;
+        Fri, 21 May 2021 03:27:58 +0000 (UTC)
+Date:   Fri, 21 May 2021 11:27:54 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>, Brian Foster <bfoster@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Chinner <dchinner@redhat.com>
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: iomap: writeback ioend/bio allocation deadlock risk 
+Message-ID: <YKcouuVR/y/L4T58@T590>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
----
- .../admin-guide/filesystem-monitoring.rst     | 52 +++++++++++++++++++
- Documentation/admin-guide/index.rst           |  1 +
- 2 files changed, 53 insertions(+)
- create mode 100644 Documentation/admin-guide/filesystem-monitoring.rst
+Hello Guys,
 
-diff --git a/Documentation/admin-guide/filesystem-monitoring.rst b/Documentation/admin-guide/filesystem-monitoring.rst
-new file mode 100644
-index 000000000000..81e632f8e1de
---- /dev/null
-+++ b/Documentation/admin-guide/filesystem-monitoring.rst
-@@ -0,0 +1,52 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+====================================
-+File system Monitoring with fanotify
-+====================================
-+
-+fanotify supports the FAN_ERROR mark for file system-wide error
-+reporting.  It is meant to be used by file system health monitoring
-+daemons who listen on that interface and take actions (notify sysadmin,
-+start recovery) when a file system problem is detected by the kernel.
-+
-+By design, A FAN_ERROR notification exposes sufficient information for a
-+monitoring tool to know a problem in the file system has happened.  It
-+doesn't necessarily provide a user space application with semantics to
-+verify an IO operation was successfully executed.  That is outside of
-+scope of this feature. Instead, it is only meant as a framework for
-+early file system problem detection and reporting recovery tools.
-+
-+At the time of this writing, the only file system that emits this
-+FAN_ERROR notifications is ext4.
-+
-+A user space example code is provided at ``samples/fanotify/fs-monitor.c``.
-+
-+Usage
-+=====
-+
-+Notification structure
-+======================
-+
-+A FAN_ERROR Notification has the following format::
-+
-+  [ Notification Metadata (Mandatory) ]
-+  [ Generic Error Record  (Mandatory) ]
-+
-+With the exception of the notification metadata and the generic
-+information, all information records are optional.  Each record type is
-+identified by its unique ``struct fanotify_event_info_header.info_type``.
-+
-+Generic error Location
-+----------------------
-+
-+The Generic error record provides enough information for a file system
-+agnostic tool to learn about a problem in the file system, without
-+requiring any details about the problem.::
-+
-+  struct fanotify_event_info_error {
-+	struct fanotify_event_info_header hdr;
-+	int error;
-+	__kernel_fsid_t fsid;
-+	unsigned long inode;
-+	__u32 error_count;
-+  };
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index dc00afcabb95..1bedab498104 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -82,6 +82,7 @@ configure specific aspects of kernel behavior to your liking.
-    edid
-    efi-stub
-    ext4
-+   filesystem-monitoring
-    nfs/index
-    gpio/index
-    highuid
--- 
-2.31.0
+I found there may be two deadlock risk under memory pressure wrt.
+ioend/bio allocation in iomap writeback code wrt. bio_alloc_bioset():
+
+        if %__gfp_direct_reclaim is set then bio_alloc will always be able to
+        allocate a bio.  this is due to the mempool guarantees.  to make this work,
+        callers must never allocate more than 1 bio at a time from the general pool.
+        callers that need to allocate more than 1 bio must always submit the
+        previously allocated bio for io before attempting to allocate a new one.
+        failure to do so can cause deadlocks under memory pressure.
+
+1) more than one ioends can be allocated from 'iomap_ioend_bioset'
+before submitting them all, so mempoll guarantee can't be made, which can
+be observed frequently in writeback over ext4
+
+2) more than one chained bio(allocated from fs_bio_set) via iomap_chain_bio,
+which is easy observed when writing big files on XFS:
+
+- the old bio is submitted _after_ the new allocation
+- submission on old chained bio can't make forward progress because all chained
+bios can only be freed after the whole ioend is completed, see iomap_finish_ioend()
+
+Both looks not hard to fix, just want to make sure they are real issues?
+
+
+Thanks,
+Ming
 
