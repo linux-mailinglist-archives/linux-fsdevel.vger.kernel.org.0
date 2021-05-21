@@ -2,173 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88EC038C83D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 15:36:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02CDC38C8B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 15:52:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235160AbhEUNiE convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 09:38:04 -0400
-Received: from us-smtp-delivery-44.mimecast.com ([207.211.30.44]:27798 "EHLO
-        us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231601AbhEUNiD (ORCPT
+        id S233423AbhEUNxp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 09:53:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33404 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231349AbhEUNxo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 09:38:03 -0400
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-209-AAhjg02-MbOkPEdfh6xR_Q-1; Fri, 21 May 2021 09:36:38 -0400
-X-MC-Unique: AAhjg02-MbOkPEdfh6xR_Q-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3AA011007B14;
-        Fri, 21 May 2021 13:36:37 +0000 (UTC)
-Received: from bahia.lan (ovpn-112-49.ams2.redhat.com [10.36.112.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E40696A03C;
-        Fri, 21 May 2021 13:36:15 +0000 (UTC)
-Date:   Fri, 21 May 2021 15:36:14 +0200
-From:   Greg Kurz <groug@kaod.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Max Reitz <mreitz@redhat.com>, Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH v4 4/5] virtiofs: Skip submounts in sget_fc()
-Message-ID: <20210521153614.061b0005@bahia.lan>
-In-Reply-To: <CAJfpegvBB-zRuZAM0m7fxMFCfw=CzN3uT3CqoQrRgizaTH4sOw@mail.gmail.com>
-References: <20210520154654.1791183-1-groug@kaod.org>
-        <20210520154654.1791183-5-groug@kaod.org>
-        <CAJfpegugQM-ChaGiLyfPkbFr9c=_BiOBQkJTeEz5yN0ujO_O4A@mail.gmail.com>
-        <20210521103921.153a243d@bahia.lan>
-        <CAJfpegsNBCX+2k4S_yqdTS15TTu=pbiRgw6SbvdVYoUSmGboGA@mail.gmail.com>
-        <20210521120616.49d52565@bahia.lan>
-        <CAJfpegvBB-zRuZAM0m7fxMFCfw=CzN3uT3CqoQrRgizaTH4sOw@mail.gmail.com>
+        Fri, 21 May 2021 09:53:44 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E11BC061763;
+        Fri, 21 May 2021 06:52:20 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id t11so20141098iol.9;
+        Fri, 21 May 2021 06:52:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/z49A5xjYjstfAwWBD6lDPYDhb3OM0GCCVdyr2X27lk=;
+        b=uwfoywKocI8W9RyMdxvN3Fyu2abc+f09wVFGFSqdsFho2MBA+jA3RiTz/L/E1KvtGR
+         8T4b7DtDgoH66320z2ekWTUzQWEbKdLSQaS/2sh5kGymWkkxvf3K/VKEjsyTExJISpOL
+         PU8PG+FLfbxzHzwQgila4oGvxDH7DxKMmBodYAYwZSNzNF8wFyFsJUcldpYk2xXhFB/M
+         sTmMsKCYN7wftxO04wsgyUPgPe8x2imFBAVf+h4Y9ntntF0X4Q+Cs7HR/AeN+WTOT5bC
+         kQun7XEPHVR7Jc02L1erks7opluDvO9qmSZk/FcppClHNSVJtJJYR1njb7L6JOM/Bt3J
+         Zm9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/z49A5xjYjstfAwWBD6lDPYDhb3OM0GCCVdyr2X27lk=;
+        b=puLSHjZE0Ygb3DUBucb34toPrpIzxYOaTGTPi1KkTuwXAlbsEJVK59S/x/FofRKIZx
+         gDR2ihXHk1aXdLw4rTz1kVe0iJ0yjBlwfWfZCFs/DXGD5v8JuxjJmO867q1sEbRxIy8Q
+         baqesRf7J5f1EI3vdAWIBv9XmZeH+sGf9G11jonrGWdX4dNhmTIad5XJllOJdrd8uB8v
+         XWIpnY+gTF1PSBRE1zyTLBRFLiT0/eSIu8zjhu8ZJY1133Fcu3MuL7kd6meRbQBjQD+4
+         vmRjd5TXuX5LSpErIVF5R+bwNXYAt+lG2w/IjsLVKpnlpr/aXQLPMkl7mh9VTRsSAN+X
+         VsyA==
+X-Gm-Message-State: AOAM530IRBdTAZFf8k8Ab+O2ctRcW6xRiIk3pvIjMDUexefTB3lbOsuu
+        AWObd0j2N98Y9X5GzTxSVPkuC/uvgYo5zPKp+gzWWpFcd5w=
+X-Google-Smtp-Source: ABdhPJx6/UfGhm7BGjDZbtF0JOc1IR8ovWq6nj8EYz3mPzb/CQBAZFEWz0XndpvCe9bLi3pnvXpvCQl9bJ43xz/FtwQ=
+X-Received: by 2002:a5d:814d:: with SMTP id f13mr11378158ioo.203.1621605139351;
+ Fri, 21 May 2021 06:52:19 -0700 (PDT)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: kaod.org
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+References: <cover.1621473846.git.repnop@google.com> <48d18055deb4617d97c695a08dca77eb573097e9.1621473846.git.repnop@google.com>
+ <20210520081755.eqey4ryngngt4yqd@wittgenstein> <CAOQ4uxhvD2w1i3ia=8=4iCNEYDJ3wfps6AOLdUBXVi-H9Xu-OQ@mail.gmail.com>
+ <YKd7tqiVd9ny6+oD@google.com> <CAOQ4uxi6LceN+ETbF6XbbBqfAY3H+K5ZMuky1L-gh_g53TEN1A@mail.gmail.com>
+ <20210521102418.GF18952@quack2.suse.cz> <CAOQ4uxh84uXAQzz2w+TD1OeDtVwBX8uhM3Pumm46YvP-Wkndag@mail.gmail.com>
+ <20210521131917.GM18952@quack2.suse.cz>
+In-Reply-To: <20210521131917.GM18952@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 21 May 2021 16:52:08 +0300
+Message-ID: <CAOQ4uxiA77_P5vtv7e83g0+9d7B5W9ZTE4GfQEYbWmfT1rA=VA@mail.gmail.com>
+Subject: Re: [PATCH 5/5] fanotify: Add pidfd info record support to the
+ fanotify API
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <repnop@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 21 May 2021 14:37:25 +0200
-Miklos Szeredi <miklos@szeredi.hu> wrote:
-
-> On Fri, 21 May 2021 at 12:06, Greg Kurz <groug@kaod.org> wrote:
-> >
-> > On Fri, 21 May 2021 10:50:34 +0200
-> > Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > > On Fri, 21 May 2021 at 10:39, Greg Kurz <groug@kaod.org> wrote:
-> > > >
-> > > > On Fri, 21 May 2021 10:26:27 +0200
-> > > > Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > > >
-> > > > > On Thu, 20 May 2021 at 17:47, Greg Kurz <groug@kaod.org> wrote:
+On Fri, May 21, 2021 at 4:19 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Fri 21-05-21 14:10:32, Amir Goldstein wrote:
+> > On Fri, May 21, 2021 at 1:24 PM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Fri 21-05-21 12:41:51, Amir Goldstein wrote:
+> > > > On Fri, May 21, 2021 at 12:22 PM Matthew Bobrowski <repnop@google.com> wrote:
+> > > > >
+> > > > > Hey Amir/Christian,
+> > > > >
+> > > > > On Thu, May 20, 2021 at 04:43:48PM +0300, Amir Goldstein wrote:
+> > > > > > On Thu, May 20, 2021 at 11:17 AM Christian Brauner
+> > > > > > <christian.brauner@ubuntu.com> wrote:
+> > > > > > > > +#define FANOTIFY_PIDFD_INFO_HDR_LEN \
+> > > > > > > > +     sizeof(struct fanotify_event_info_pidfd)
+> > > > > > > >
+> > > > > > > >  static int fanotify_fid_info_len(int fh_len, int name_len)
+> > > > > > > >  {
+> > > > > > > > @@ -141,6 +143,9 @@ static int fanotify_event_info_len(unsigned int info_mode,
+> > > > > > > >       if (fh_len)
+> > > > > > > >               info_len += fanotify_fid_info_len(fh_len, dot_len);
+> > > > > > > >
+> > > > > > > > +     if (info_mode & FAN_REPORT_PIDFD)
+> > > > > > > > +             info_len += FANOTIFY_PIDFD_INFO_HDR_LEN;
+> > > > > > > > +
+> > > > > > > >       return info_len;
+> > > > > > > >  }
+> > > > > > > >
+> > > > > > > > @@ -401,6 +406,29 @@ static int copy_fid_info_to_user(__kernel_fsid_t *fsid,
+> > > > > > > >       return info_len;
+> > > > > > > >  }
+> > > > > > > >
+> > > > > > > > +static int copy_pidfd_info_to_user(struct pid *pid,
+> > > > > > > > +                                char __user *buf,
+> > > > > > > > +                                size_t count)
+> > > > > > > > +{
+> > > > > > > > +     struct fanotify_event_info_pidfd info = { };
+> > > > > > > > +     size_t info_len = FANOTIFY_PIDFD_INFO_HDR_LEN;
+> > > > > > > > +
+> > > > > > > > +     if (WARN_ON_ONCE(info_len > count))
+> > > > > > > > +             return -EFAULT;
+> > > > > > > > +
+> > > > > > > > +     info.hdr.info_type = FAN_EVENT_INFO_TYPE_PIDFD;
+> > > > > > > > +     info.hdr.len = info_len;
+> > > > > > > > +
+> > > > > > > > +     info.pidfd = pidfd_create(pid, 0);
+> > > > > > > > +     if (info.pidfd < 0)
+> > > > > > > > +             info.pidfd = FAN_NOPIDFD;
+> > > > > > > > +
+> > > > > > > > +     if (copy_to_user(buf, &info, info_len))
+> > > > > > > > +             return -EFAULT;
+> > > > > > >
+> > > > > > > Hm, well this kinda sucks. The caller can end up with a pidfd in their
+> > > > > > > fd table and when the copy_to_user() failed they won't know what fd it
 > > > > > >
-> > > > > > All submounts share the same virtio-fs device instance as the root
-> > > > > > mount. If the same virtiofs filesystem is mounted again, sget_fc()
-> > > > > > is likely to pick up any of these submounts and reuse it instead of
-> > > > > > the root mount.
+> > > > > > Good catch!
+> > > > >
+> > > > > Super awesome catch Christian, thanks pulling this up!
+> > > > >
+> > > > > > But I prefer to solve it differently, because moving fd_install() to the
+> > > > > > end of this function does not guarantee that copy_event_to_user()
+> > > > > > won't return an error one day with dangling pidfd in fd table.
+> > > > >
+> > > > > I can see the angle you're approaching this from...
+> > > > >
+> > > > > > It might be simpler to do pidfd_create() next to create_fd() in
+> > > > > > copy_event_to_user() and pass pidfd to copy_pidfd_info_to_user().
+> > > > > > pidfd can be closed on error along with fd on out_close_fd label.
 > > > > > >
-> > > > > > On the server side:
-> > > > > >
-> > > > > > # mkdir ${some_dir}
-> > > > > > # mkdir ${some_dir}/mnt1
-> > > > > > # mount -t tmpfs none ${some_dir}/mnt1
-> > > > > > # touch ${some_dir}/mnt1/THIS_IS_MNT1
-> > > > > > # mkdir ${some_dir}/mnt2
-> > > > > > # mount -t tmpfs none ${some_dir}/mnt2
-> > > > > > # touch ${some_dir}/mnt2/THIS_IS_MNT2
-> > > > > >
-> > > > > > On the client side:
-> > > > > >
-> > > > > > # mkdir /mnt/virtiofs1
-> > > > > > # mount -t virtiofs myfs /mnt/virtiofs1
-> > > > > > # ls /mnt/virtiofs1
-> > > > > > mnt1 mnt2
-> > > > > > # grep virtiofs /proc/mounts
-> > > > > > myfs /mnt/virtiofs1 virtiofs rw,seclabel,relatime 0 0
-> > > > > > none on /mnt/mnt1 type virtiofs (rw,relatime,seclabel)
-> > > > > > none on /mnt/mnt2 type virtiofs (rw,relatime,seclabel)
-> > > > > >
-> > > > > > And now remount it again:
-> > > > > >
-> > > > > > # mount -t virtiofs myfs /mnt/virtiofs2
-> > > > > > # grep virtiofs /proc/mounts
-> > > > > > myfs /mnt/virtiofs1 virtiofs rw,seclabel,relatime 0 0
-> > > > > > none on /mnt/mnt1 type virtiofs (rw,relatime,seclabel)
-> > > > > > none on /mnt/mnt2 type virtiofs (rw,relatime,seclabel)
-> > > > > > myfs /mnt/virtiofs2 virtiofs rw,seclabel,relatime 0 0
-> > > > > > # ls /mnt/virtiofs2
-> > > > > > THIS_IS_MNT2
-> > > > > >
-> > > > > > Submount mnt2 was picked-up instead of the root mount.
+> > > > > > You also forgot to add CAP_SYS_ADMIN check before pidfd_create()
+> > > > > > (even though fanotify_init() does check for that).
+> > > > >
+> > > > > I didn't really understand the need for this check here given that the
+> > > > > administrative bits are already being checked for in fanotify_init()
+> > > > > i.e. FAN_REPORT_PIDFD can never be set for an unprivileged listener;
+> > > > > thus never walking any of the pidfd_mode paths. Is this just a defense
+> > > > > in depth approach here, or is it something else that I'm missing?
 > > > > >
 > > > >
-> > > > > Why is this a problem?
-> > > > >
+> > > > We want to be extra careful not to create privilege escalations,
+> > > > so even if the fanotify fd is leaked or intentionally passed to a less
+> > > > privileged user, it cannot get an open pidfd.
 > > > >
-> > > > It seems very weird to mount the same filesystem again
-> > > > and to end up in one of its submounts. We should have:
-> > > >
-> > > > # ls /mnt/virtiofs2
-> > > > mnt1 mnt2
+> > > > IOW, it is *much* easier to be defensive in this case than to prove
+> > > > that the change cannot introduce any privilege escalations.
 > > >
-> > > Okay, sorry, I understand the problem.  The solution is wrong,
-> > > however: the position of the submount on that list is no indication
-> > > that it's the right one (it's possible that the root sb will go away
-> > > and only a sub-sb will remain).
-> > >
-> >
-> > Ah... I had myself convinced this could not happen, i.e. you can't
-> > unmount a parent sb with a sub-sb still mounted.
-> 
-> No, but it's possible for sub-sb to continue existing after it's no
-> longer a submount of original mount.
-> >
-> > How can this happen ?
-> 
-> E.g. move the submount out of the way, then unmount the parent, or
-> detach submount (umount -l) while keeping something open in there and
-> umount the parent.
-> 
-
-Ok, I get it now. Thanks for the clarification.
-
-> > > Even just setting a flag in the root, indicating that it's the root
-> > > isn't fully going to solve the problem.
-> > >
-> > > Here's issue in full:
-> > >
-> > > case 1:  no connection for "myfs" exists
-> > >     - need to create fuse_conn, sb
-> > >
-> > > case 2: connection for "myfs" exists but only sb for submount
-> >
-> > How would we know this sb isn't a root sb ?
-> >
-> > >     - only create sb for root, reuse fuse_conn
-> > >
-> > > case 3: connection for "myfs" as well as root sb exists
-> > >    - reuse sb
-> > >
-> > > I'll think about how to fix this properly, it's probably going to be
-> > > rather more involved...
+> > > I have no problems with being more defensive (it's certainly better than
+> > > being too lax) but does it really make sence here? I mean if CAP_SYS_ADMIN
+> > > task opens O_RDWR /etc/passwd and then passes this fd to unpriviledged
+> > > process, that process is also free to update all the passwords.
+> > > Traditionally permission checks in Unix are performed on open and then who
+> > > has fd can do whatever that fd allows... I've tried to follow similar
+> > > philosophy with fanotify as well and e.g. open happening as a result of
+> > > fanotify path events does not check permissions either.
 > > >
 > >
-> > Sure. BTW I'm wondering why we never reuse sbs for submounts ?
-> 
-> Right, same general issue.
-> 
-> An sb can be identified by its root nodeid, so I guess the proper fix
-> to make the root nodeid be the key for virtio_fs_test_super().
-> 
+> > Agreed.
+> >
+> > However, because we had this issue with no explicit FAN_REPORT_PID
+> > we added the CAP_SYS_ADMIN check for reporting event->pid as next
+> > best thing. So now that becomes weird if priv process created fanotify fd
+> > and passes it to unpriv process, then unpriv process gets events with
+> > pidfd but without event->pid.
+> >
+> > We can change the code to:
+> >
+> >         if (!capable(CAP_SYS_ADMIN) && !pidfd_mode &&
+> >             task_tgid(current) != event->pid)
+> >                 metadata.pid = 0;
+> >
+> > So the case I decscribed above ends up reporting both pidfd
+> > and event->pid to unpriv user, but that is a bit inconsistent...
+>
+> Oh, now I see where you are coming from :) Thanks for explanation. And
+> remind me please, cannot we just have internal FAN_REPORT_PID flag that
+> gets set on notification group when priviledged process creates it and then
+> test for that instead of CAP_SYS_ADMIN in copy_event_to_user()? It is
+> mostly equivalent but I guess more in the spirit of how fanotify
+> traditionally does things. Also FAN_REPORT_PIDFD could then behave in the
+> same way...
 
-Cool, I was thinking about doing this exactly. :)
+Yes, we can. In fact, we should call the internal flag FANOTIFY_UNPRIV
+as it described the situation better than FAN_REPORT_PID.
+This happens to be how I implemented it in the initial RFC [1].
 
-> Thanks,
-> Miklos
+It's not easy to follow our entire discussion on this thread, but I think
+we can resurrect the FANOTIFY_UNPRIV internal flag and use it
+in this case instead of CAP_SYS_ADMIN.
 
+Thanks,
+Amir.
+
+https://lore.kernel.org/linux-fsdevel/20210124184204.899729-3-amir73il@gmail.com/
