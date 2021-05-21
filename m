@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26BEF38C3B2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 11:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD5FE38C3CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 11:48:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231135AbhEUJqF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 05:46:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33844 "EHLO
+        id S234594AbhEUJuO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 05:50:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230154AbhEUJqE (ORCPT
+        with ESMTP id S234447AbhEUJtz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 05:46:04 -0400
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD65BC061574;
-        Fri, 21 May 2021 02:44:40 -0700 (PDT)
-Received: by mail-io1-xd2a.google.com with SMTP id z24so19526453ioi.3;
-        Fri, 21 May 2021 02:44:40 -0700 (PDT)
+        Fri, 21 May 2021 05:49:55 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCF09C06138A;
+        Fri, 21 May 2021 02:48:30 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id d25so7743468ioe.1;
+        Fri, 21 May 2021 02:48:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=buVeB8WnFW23aOCded2ctcfxRFpFitusLk1LSIom5Wc=;
-        b=H4t/wza1JohzT+GyvbVlQW/F8/7ZgpenD/ltDTmZOq/iWk6DWhqlEzDtj/kba/QHES
-         6DMsBv6ajB8dQbMLf1w2qH+RQas6yEFin9tGJivo13lNQPuWy5N5Dq5BZGCBeold+5zY
-         1hYois3SWQGg3uBNrjIWLCiopvyaTjzLtwRPFxt1CBs+ZgFyoNAFzvWrFlhfmeC9fnXH
-         H7fJNnP37orU4o3wkkQGDhEeY0yIzb2Bf7C65NXubCgp69ChiEgRktkt0wTabaMUMwZU
-         UArovEWH5o63Tib6csCsZrtT52DWw1/R3RQs8ChJJLQ0QrdGOVAdwdBdAp5/gwERNXOw
-         D4Tw==
+        bh=u3mHUsZVQJ0deEekncWZ5mQlfQua2MgWLj+CLXrJiGY=;
+        b=YDcJDX8zEE4aSZjfkc36+f56g0Ln9ZZlWJP6hiOqvonPAogaVjNtJgS52ct7wgcynO
+         fUdPu6O51TeuwosUxpS6+BSyRbEnr/z/05p8vq2cl7gb0/3iUVn3GXiEGDBw6rS1QQZi
+         H1rbDmsMvCr5+p1S28dRcnWcONMrcpBCK+qekXaQDIh2x7SVcIuechNJTSbDVaOh25NU
+         IRV11LqeZtfUMXHl7acU7KTYoViRMuL5JvOyzFQaJQV6xhy+hMcspizud7IfClE9aSVl
+         FRtG8R7Pk7MfUF9/FJecY9BTImcfNl5TpMg1ytNXZ5bzNG7RRLA9TrkcCmIBnTwLW7pP
+         JjOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=buVeB8WnFW23aOCded2ctcfxRFpFitusLk1LSIom5Wc=;
-        b=fAd8U4AUo5ZcF1z5ZiEdo9EPxuofis7L+H8EgI7EZJd0P9YTxnjSQ9aK4f0S4ctuv2
-         isaKHrE8wI09WTCq+yWkZdqOhB9+6UE4XJfAaz0aEo5hwYLabDdwJKXRpzOxr7PWapJo
-         A6Dtv82S4HNsSDDj5fQPcDmV473T6WFod2TJJMvtiya4X8noBnElLO47nbg8EuYPxMHv
-         EZv/Oa6u4RvkoPTKpgKVxjRsmENUynwsshJwYGbSykA/65rlWrhetlk9QhkkMostAfej
-         kO+NiVS/60Rl70BPNRFfE9DFCdPxsGKPa2cmMWo3yOrriRXDX1dFYTH0hJ9vvLu37eSN
-         f0/Q==
-X-Gm-Message-State: AOAM53268Q0KunDUvkZ7TaL++adAydpKJHhFMQ+xlG+Z6HoU/8QkzUJ7
-        lgjQ8Hf2/bdXtRI/qeeG0gEns3FgVea6ujCt+i0=
-X-Google-Smtp-Source: ABdhPJwE0nH9O/hZURX0Yy9y6OuQGShSniuB3VZdam0CslV7if6EpOW4NoBW7ivUmNDJ2Fa239bOWV5/ogeGvEVXVvQ=
-X-Received: by 2002:a5d:814d:: with SMTP id f13mr10157873ioo.203.1621590280276;
- Fri, 21 May 2021 02:44:40 -0700 (PDT)
+        bh=u3mHUsZVQJ0deEekncWZ5mQlfQua2MgWLj+CLXrJiGY=;
+        b=gfRfSD7LoGMe14OF2rTVWM6j2zaxqMashDW3Ek0D2HrPgBNXmjIeKwrW/+Rca37Mm0
+         kw3Fn8lsoFC2LF3y6voPIymKIC9MUdmvC4NTY/UWnb082/m2zKgQKDfpI+/hfqUsMn9p
+         0IyLnmMSj0d6Iyf4FKJs1hnLSm9WfQSDBdXhgY5GiJVe6OuUQAZar+kVMO4Z5fGC92c1
+         UPMyH5ELyUSqtGWtW1S7zQGq+TGVMWFqnOyx+k7f6Novfqdx/Sj72BI15eTItGusMsDN
+         Mq7ica77ocwKHF8A9eovXiloWX1D02T+wJ1IWCPB65MS2V5Tx//Jhg+lu81r6aB67pic
+         RScw==
+X-Gm-Message-State: AOAM533DQqke60ejTS+PW9FpkKs4MKp35L1mYPFMcxobUtUTP9TPvNra
+        MGLcg9VC/2cBnPozWD0NNfMuuLIfGqTNigursEO/dDfTHlU=
+X-Google-Smtp-Source: ABdhPJzaD+3Xa3OX0Go+e4ebQo7OCFX+Bya+ybouHelz2SyDP6rWrj1CiorcjPKtv0T4vhSFkRL9glds0MVQRlw4lVM=
+X-Received: by 2002:a02:3505:: with SMTP id k5mr3240474jaa.123.1621590509890;
+ Fri, 21 May 2021 02:48:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210521024134.1032503-1-krisman@collabora.com> <20210521024134.1032503-10-krisman@collabora.com>
-In-Reply-To: <20210521024134.1032503-10-krisman@collabora.com>
+References: <20210521024134.1032503-1-krisman@collabora.com> <20210521024134.1032503-11-krisman@collabora.com>
+In-Reply-To: <20210521024134.1032503-11-krisman@collabora.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 21 May 2021 12:44:29 +0300
-Message-ID: <CAOQ4uxj+J7bA-7MKvv30jPAOGqjX7fpcKxC3RudXmTG2y+vxXw@mail.gmail.com>
-Subject: Re: [PATCH 09/11] ext4: Send notifications on error
+Date:   Fri, 21 May 2021 12:48:18 +0300
+Message-ID: <CAOQ4uxjk9K-yOyn4EAPjP_WK5UaCbcOGX4joH3futSCVTXZ76g@mail.gmail.com>
+Subject: Re: [PATCH 10/11] samples: Add fs error monitoring example
 To:     Gabriel Krisman Bertazi <krisman@collabora.com>
 Cc:     kernel@collabora.com, "Darrick J . Wong" <djwong@kernel.org>,
         "Theodore Ts'o" <tytso@mit.edu>,
@@ -67,75 +67,165 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Fri, May 21, 2021 at 5:42 AM Gabriel Krisman Bertazi
 <krisman@collabora.com> wrote:
 >
-> Send a FS_ERROR message via fsnotify to a userspace monitoring tool
-> whenever a ext4 error condition is triggered.  This follows the existing
-> error conditions in ext4, so it is hooked to the ext4_error* functions.
->
-> It also follows the current dmesg reporting in the format.  The
-> filesystem message is composed mostly by the string that would be
-> otherwise printed in dmesg.
->
-> A new ext4 specific record format is exposed in the uapi, such that a
-> monitoring tool knows what to expect when listening errors of an ext4
-> filesystem.
+> Introduce an example of a FAN_ERROR fanotify user to track filesystem
+> errors.
 >
 > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-
-Looks fine.
-
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
 > ---
->  fs/ext4/super.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  samples/Kconfig               |  8 +++
+>  samples/Makefile              |  1 +
+>  samples/fanotify/Makefile     |  3 ++
+>  samples/fanotify/fs-monitor.c | 91 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 103 insertions(+)
+>  create mode 100644 samples/fanotify/Makefile
+>  create mode 100644 samples/fanotify/fs-monitor.c
 >
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 7dc94f3e18e6..a8c0ac2c3e4c 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -46,6 +46,7 @@
->  #include <linux/part_stat.h>
->  #include <linux/kthread.h>
->  #include <linux/freezer.h>
-> +#include <linux/fsnotify.h>
+> diff --git a/samples/Kconfig b/samples/Kconfig
+> index b5a1a7aa7e23..e421556ec3e5 100644
+> --- a/samples/Kconfig
+> +++ b/samples/Kconfig
+> @@ -120,6 +120,14 @@ config SAMPLE_CONNECTOR
+>           with it.
+>           See also Documentation/driver-api/connector.rst
 >
->  #include "ext4.h"
->  #include "ext4_extents.h"      /* Needed for trace points definition */
-> @@ -752,6 +753,8 @@ void __ext4_error(struct super_block *sb, const char *function,
->                        sb->s_id, function, line, current->comm, &vaf);
->                 va_end(args);
->         }
-> +       fsnotify_error_event(sb, NULL, error);
+> +config SAMPLE_FANOTIFY_ERROR
+> +       bool "Build fanotify error monitoring sample"
+> +       depends on FANOTIFY
+> +       help
+> +         When enabled, this builds an example code that uses the FAN_ERROR
+> +         fanotify mechanism to monitor filesystem errors.
+> +         Documentation/admin-guide/filesystem-monitoring.rst
 > +
->         ext4_handle_error(sb, force_ro, error, 0, block, function, line);
->  }
->
-> @@ -782,6 +785,8 @@ void __ext4_error_inode(struct inode *inode, const char *function,
->                                current->comm, &vaf);
->                 va_end(args);
->         }
-> +       fsnotify_error_event(inode->i_sb, inode, error);
+>  config SAMPLE_HIDRAW
+>         bool "hidraw sample"
+>         depends on CC_CAN_LINK && HEADERS_INSTALL
+> diff --git a/samples/Makefile b/samples/Makefile
+> index 087e0988ccc5..931a81847c48 100644
+> --- a/samples/Makefile
+> +++ b/samples/Makefile
+> @@ -5,6 +5,7 @@ subdir-$(CONFIG_SAMPLE_AUXDISPLAY)      += auxdisplay
+>  subdir-$(CONFIG_SAMPLE_ANDROID_BINDERFS) += binderfs
+>  obj-$(CONFIG_SAMPLE_CONFIGFS)          += configfs/
+>  obj-$(CONFIG_SAMPLE_CONNECTOR)         += connector/
+> +obj-$(CONFIG_SAMPLE_FANOTIFY_ERROR)    += fanotify/
+>  subdir-$(CONFIG_SAMPLE_HIDRAW)         += hidraw
+>  obj-$(CONFIG_SAMPLE_HW_BREAKPOINT)     += hw_breakpoint/
+>  obj-$(CONFIG_SAMPLE_KDB)               += kdb/
+> diff --git a/samples/fanotify/Makefile b/samples/fanotify/Makefile
+> new file mode 100644
+> index 000000000000..b3d5cc826e6f
+> --- /dev/null
+> +++ b/samples/fanotify/Makefile
+> @@ -0,0 +1,3 @@
+> +userprogs-always-y += fs-monitor
 > +
->         ext4_handle_error(inode->i_sb, false, error, inode->i_ino, block,
->                           function, line);
->  }
-> @@ -820,6 +825,8 @@ void __ext4_error_file(struct file *file, const char *function,
->                                current->comm, path, &vaf);
->                 va_end(args);
->         }
-> +       fsnotify_error_event(inode->i_sb, inode, EFSCORRUPTED);
+> +userccflags += -I usr/include
+> diff --git a/samples/fanotify/fs-monitor.c b/samples/fanotify/fs-monitor.c
+> new file mode 100644
+> index 000000000000..49d3e2a872e4
+> --- /dev/null
+> +++ b/samples/fanotify/fs-monitor.c
+> @@ -0,0 +1,91 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2021, Collabora Ltd.
+> + */
 > +
->         ext4_handle_error(inode->i_sb, false, EFSCORRUPTED, inode->i_ino, block,
->                           function, line);
->  }
-> @@ -887,6 +894,7 @@ void __ext4_std_error(struct super_block *sb, const char *function,
->                 printk(KERN_CRIT "EXT4-fs error (device %s) in %s:%d: %s\n",
->                        sb->s_id, function, line, errstr);
->         }
-> +       fsnotify_error_event(sb, sb->s_root->d_inode, errno);
->
->         ext4_handle_error(sb, false, -errno, 0, 0, function, line);
->  }
+> +#define _GNU_SOURCE
+> +#include <errno.h>
+> +#include <err.h>
+> +#include <stdlib.h>
+> +#include <stdio.h>
+> +#include <fcntl.h>
+> +#include <sys/fanotify.h>
+> +#include <sys/types.h>
+> +#include <unistd.h>
+> +#include <sys/stat.h>
+> +#include <sys/types.h>
+> +
+> +#ifndef FAN_ERROR
+> +#define FAN_ERROR              0x00008000
+> +#define FAN_EVENT_INFO_TYPE_ERROR      5
+> +
+> +struct fanotify_event_info_error {
+> +       struct fanotify_event_info_header hdr;
+> +       int error;
+> +       __kernel_fsid_t fsid;
+> +       unsigned long inode;
+> +       __u32 error_count;
+> +};
+> +#endif
+> +
+> +static void handle_notifications(char *buffer, int len)
+> +{
+> +       struct fanotify_event_metadata *metadata;
+> +       struct fanotify_event_info_error *error;
+> +
+> +       for (metadata = (struct fanotify_event_metadata *) buffer;
+> +            FAN_EVENT_OK(metadata, len); metadata = FAN_EVENT_NEXT(metadata, len)) {
+> +               if (!(metadata->mask == FAN_ERROR)) {
+
+Nit: != FAN_ERROR
+
+> +                       printf("unexpected FAN MARK: %llx\n", metadata->mask);
+> +                       continue;
+> +               } else if (metadata->fd != FAN_NOFD) {
+> +                       printf("Unexpected fd (!= FAN_NOFD)\n");
+> +                       continue;
+> +               }
+> +
+> +               printf("FAN_ERROR found len=%d\n", metadata->event_len);
+> +
+> +               error = (struct fanotify_event_info_error *) (metadata+1);
+> +               if (error->hdr.info_type == FAN_EVENT_INFO_TYPE_ERROR) {
+
+You meant != FAN_EVENT_INFO_TYPE_ERROR ?
+
+> +                       printf("unknown record: %d\n", error->hdr.info_type);
+> +                       continue;
+> +               }
+> +
+> +               printf("  Generic Error Record: len=%d\n", error->hdr.len);
+> +               printf("      fsid: %llx\n", error->fsid);
+> +               printf("      error: %d\n", error->error);
+> +               printf("      inode: %lu\n", error->inode);
+> +               printf("      error_count: %d\n", error->error_count);
+> +       }
+> +}
+> +
+> +int main(int argc, char **argv)
+> +{
+> +       int fd;
+> +       char buffer[BUFSIZ];
+
+BUFSIZ not defined?
+
+> +
+> +       if (argc < 2) {
+> +               printf("Missing path argument\n");
+> +               return 1;
+> +       }
+> +
+> +       fd = fanotify_init(FAN_CLASS_NOTIF, O_RDONLY);
+> +       if (fd < 0)
+> +               errx(1, "fanotify_init");
+> +
+> +       if (fanotify_mark(fd, FAN_MARK_ADD|FAN_MARK_FILESYSTEM,
+> +                         FAN_ERROR, AT_FDCWD, argv[1])) {
+> +               errx(1, "fanotify_mark");
+> +       }
+> +
+> +       while (1) {
+> +               int n = read(fd, buffer, BUFSIZ);
+> +
+> +               if (n < 0)
+> +                       errx(1, "read");
+> +
+> +               handle_notifications(buffer, n);
+> +       }
+> +
+> +       return 0;
+> +}
 > --
 > 2.31.0
 >
