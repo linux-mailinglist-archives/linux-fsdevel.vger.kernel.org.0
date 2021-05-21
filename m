@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 706AE38BC7F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 04:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D79B938BC81
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 04:42:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232417AbhEUCnW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 May 2021 22:43:22 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54832 "EHLO
+        id S233543AbhEUCnZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 May 2021 22:43:25 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54836 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231681AbhEUCnV (ORCPT
+        with ESMTP id S231681AbhEUCnZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 May 2021 22:43:21 -0400
+        Thu, 20 May 2021 22:43:25 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: krisman)
-        with ESMTPSA id 608271F43D2B
+        with ESMTPSA id E18551F43D30
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     amir73il@gmail.com
 Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
@@ -23,110 +23,111 @@ Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
         Dave Chinner <david@fromorbit.com>, jack@suse.com,
         dhowells@redhat.com, khazhy@google.com,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: [PATCH 00/11] File system wide monitoring
-Date:   Thu, 20 May 2021 22:41:23 -0400
-Message-Id: <20210521024134.1032503-1-krisman@collabora.com>
+Subject: [PATCH 01/11] fanotify: Fold event size calculation to its own function
+Date:   Thu, 20 May 2021 22:41:24 -0400
+Message-Id: <20210521024134.1032503-2-krisman@collabora.com>
 X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20210521024134.1032503-1-krisman@collabora.com>
+References: <20210521024134.1032503-1-krisman@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Every time this function is invoked, it is immediately added to
+FAN_EVENT_METADATA_LEN, since there is no need to just calculate the
+length of info records. This minor clean up folds the rest of the
+calculation into the function, which now operates in terms of events,
+returning the size of the entire event, including metadata.
 
-This series follow up on my previous proposal [1] to support file system
-wide monitoring.  As suggested by Amir, this proposal drops the ring
-buffer in favor of a single slot associated with each mark.  This
-simplifies a bit the implementation, as you can see in the code.
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-As a reminder, This proposal is limited to an interface for
-administrators to monitor the health of a file system, instead of a
-generic inteface for file errors.  Therefore, this doesn't solve the
-problem of writeback errors or the need to watch a specific subtree.
+---
+Changes since v1:
+  - rebased on top of hashing patches
+---
+ fs/notify/fanotify/fanotify_user.c | 33 +++++++++++++++++-------------
+ 1 file changed, 19 insertions(+), 14 deletions(-)
 
-In comparison to the previous RFC, this implementation also drops the
-per-fs data and location, and leave those as future extensions.
-
-* Implementation
-
-The feature is implemented on top of fanotify, as a new type of fanotify
-mark, FAN_ERROR, which a file system monitoring tool can register to
-receive error notifications.  When an error occurs a new notification is
-generated, in addition followed by this info field:
-
- - FS generic data: A file system agnostic structure that has a generic
- error code and identifies the filesystem.  Basically, it let's
- userspace know something happened on a monitored filesystem.  Since
- only the first error is recorded since the last read, this also
- includes a counter of errors that happened since the last read.
-
-* Testing
-
-This was tested by watching notifications flowing from an intentionally
-corrupted filesystem in different places.  In addition, other events
-were watched in an attempt to detect regressions.
-
-Is there a specific testsuite for fanotify I should be running?
-
-* Patches
-
-This patchset is divided as follows: Patch 1 through 5 are refactoring
-to fsnotify/fanotify in preparation for FS_ERROR/FAN_ERROR; patch 6 and
-7 implement the FS_ERROR API for filesystems to report error; patch 8
-add support for FAN_ERROR in fanotify; Patch 9 is an example
-implementation for ext4; patch 10 and 11 provide a sample userspace code
-and documentation.
-
-I also pushed the full series to:
-
-  https://gitlab.collabora.com/krisman/linux -b fanotify-notifications-single-slot
-
-[1] https://lwn.net/Articles/854545/
-
-Cc: Darrick J. Wong <djwong@kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: jack@suse.com
-To: amir73il@gmail.com
-Cc: dhowells@redhat.com
-Cc: khazhy@google.com
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-ext4@vger.kernel.org
-
-Gabriel Krisman Bertazi (11):
-  fanotify: Fold event size calculation to its own function
-  fanotify: Split fsid check from other fid mode checks
-  fanotify: Simplify directory sanity check in DFID_NAME mode
-  fanotify: Expose fanotify_mark
-  inotify: Don't force FS_IN_IGNORED
-  fsnotify: Support FS_ERROR event type
-  fsnotify: Introduce helpers to send error_events
-  fanotify: Introduce FAN_ERROR event
-  ext4: Send notifications on error
-  samples: Add fs error monitoring example
-  Documentation: Document the FAN_ERROR event
-
- .../admin-guide/filesystem-monitoring.rst     |  52 +++++
- Documentation/admin-guide/index.rst           |   1 +
- fs/ext4/super.c                               |   8 +
- fs/notify/fanotify/fanotify.c                 |  80 ++++++-
- fs/notify/fanotify/fanotify.h                 |  38 +++-
- fs/notify/fanotify/fanotify_user.c            | 213 ++++++++++++++----
- fs/notify/inotify/inotify_user.c              |   6 +-
- include/linux/fanotify.h                      |   6 +-
- include/linux/fsnotify.h                      |  13 ++
- include/linux/fsnotify_backend.h              |  15 +-
- include/uapi/linux/fanotify.h                 |  10 +
- samples/Kconfig                               |   8 +
- samples/Makefile                              |   1 +
- samples/fanotify/Makefile                     |   3 +
- samples/fanotify/fs-monitor.c                 |  91 ++++++++
- 15 files changed, 485 insertions(+), 60 deletions(-)
- create mode 100644 Documentation/admin-guide/filesystem-monitoring.rst
- create mode 100644 samples/fanotify/Makefile
- create mode 100644 samples/fanotify/fs-monitor.c
-
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 71fefb30e015..3ccdee3c9f1e 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -117,17 +117,24 @@ static int fanotify_fid_info_len(int fh_len, int name_len)
+ 	return roundup(FANOTIFY_INFO_HDR_LEN + info_len, FANOTIFY_EVENT_ALIGN);
+ }
+ 
+-static int fanotify_event_info_len(unsigned int fid_mode,
+-				   struct fanotify_event *event)
++static size_t fanotify_event_len(struct fanotify_event *event,
++				 unsigned int fid_mode)
+ {
+-	struct fanotify_info *info = fanotify_event_info(event);
+-	int dir_fh_len = fanotify_event_dir_fh_len(event);
+-	int fh_len = fanotify_event_object_fh_len(event);
+-	int info_len = 0;
++	size_t event_len = FAN_EVENT_METADATA_LEN;
++	struct fanotify_info *info;
++	int dir_fh_len;
++	int fh_len;
+ 	int dot_len = 0;
+ 
++	if (!fid_mode)
++		return event_len;
++
++	info = fanotify_event_info(event);
++	dir_fh_len = fanotify_event_dir_fh_len(event);
++	fh_len = fanotify_event_object_fh_len(event);
++
+ 	if (dir_fh_len) {
+-		info_len += fanotify_fid_info_len(dir_fh_len, info->name_len);
++		event_len += fanotify_fid_info_len(dir_fh_len, info->name_len);
+ 	} else if ((fid_mode & FAN_REPORT_NAME) && (event->mask & FAN_ONDIR)) {
+ 		/*
+ 		 * With group flag FAN_REPORT_NAME, if name was not recorded in
+@@ -137,9 +144,9 @@ static int fanotify_event_info_len(unsigned int fid_mode,
+ 	}
+ 
+ 	if (fh_len)
+-		info_len += fanotify_fid_info_len(fh_len, dot_len);
++		event_len += fanotify_fid_info_len(fh_len, dot_len);
+ 
+-	return info_len;
++	return event_len;
+ }
+ 
+ /*
+@@ -168,7 +175,7 @@ static void fanotify_unhash_event(struct fsnotify_group *group,
+ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
+ 					    size_t count)
+ {
+-	size_t event_size = FAN_EVENT_METADATA_LEN;
++	size_t event_size;
+ 	struct fanotify_event *event = NULL;
+ 	struct fsnotify_event *fsn_event;
+ 	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+@@ -181,8 +188,7 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
+ 		goto out;
+ 
+ 	event = FANOTIFY_E(fsn_event);
+-	if (fid_mode)
+-		event_size += fanotify_event_info_len(fid_mode, event);
++	event_size = fanotify_event_len(event, fid_mode);
+ 
+ 	if (event_size > count) {
+ 		event = ERR_PTR(-EINVAL);
+@@ -412,8 +418,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 
+ 	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+ 
+-	metadata.event_len = FAN_EVENT_METADATA_LEN +
+-				fanotify_event_info_len(fid_mode, event);
++	metadata.event_len = fanotify_event_len(event, fid_mode);
+ 	metadata.metadata_len = FAN_EVENT_METADATA_LEN;
+ 	metadata.vers = FANOTIFY_METADATA_VERSION;
+ 	metadata.reserved = 0;
 -- 
 2.31.0
 
