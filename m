@@ -2,71 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 831E938C728
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 14:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2268938C7B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 15:19:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235214AbhEUMzg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 08:55:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47696 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232629AbhEUMxn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 08:53:43 -0400
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42F2AC06138A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 05:52:08 -0700 (PDT)
-Received: by mail-vs1-xe34.google.com with SMTP id j12so5252337vsq.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 05:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I0bcwMa3PXE6BxBVKmr7yJhO3MpudMurDafu1kpNh8o=;
-        b=egbbFhgbpZilJQP2aMecSiEeWjHfKV1nE/juvi4hnZl1Si+xJsytEUN8Vq0BBuhhQl
-         mPJ9wt6fa38LLItKxFiLWEVBxPGc5+81u3RLfBZ3Tb3/kj6NTcAuaHcgJFk/f+Ha97wR
-         K7P6QP+r2fsm8Jtw76LQ5gTjF+elCuvYTal0Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I0bcwMa3PXE6BxBVKmr7yJhO3MpudMurDafu1kpNh8o=;
-        b=DYGaYuz6dEAI4y+lYS2/MhZM8W2FJ2G+SElvADpeL7lRKNZUpO6Z6R/rIRm4GuhKIq
-         6iBye/bbmvV3pXwVvKPo/EMnDK6uFE+/ByB61/9SbPp/RGazxVpCEVaWeZUcGTChV9LS
-         OGlXGxeNO05bZA0zTohKLCraLjVV25qrfVxWqiC/vQBC8xJVb2mzpKxPKfO/YFXwFZ+9
-         M8ENymD0OthrJoAkitrHLiKtJdsz5RncfoguSMVOBN1AtEo2sjhuaDCcPQEOGHQstVRf
-         zDLTi4FbFcLcg46g7rcDKYiojfUuq9sxHNVX1hQZKPUpkTdr/Lx9ESSUQo+MmNa7uNWN
-         ZaIg==
-X-Gm-Message-State: AOAM532M03Vu1Zo9ag5RvITFLHCcCikpftPct6hPRjO07FtnjQRhOQMq
-        nMZNjAD/QSwEwOJwQoUXjuAn/e90Ht5F9G6H7j347Q==
-X-Google-Smtp-Source: ABdhPJxU0pW7Uhz6WcVvZjuacmVeklxRBiZXZr+5W12DcHtWDJ3NDWg/omTWvlSaYYcMZqIEoCKTvpQnIaZaM7Jg7SA=
-X-Received: by 2002:a67:68c5:: with SMTP id d188mr10309413vsc.0.1621601527453;
- Fri, 21 May 2021 05:52:07 -0700 (PDT)
+        id S233878AbhEUNUu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 09:20:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35354 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234368AbhEUNUl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 May 2021 09:20:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 961E3AC11;
+        Fri, 21 May 2021 13:19:17 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5915E1F2C73; Fri, 21 May 2021 15:19:17 +0200 (CEST)
+Date:   Fri, 21 May 2021 15:19:17 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 5/5] fanotify: Add pidfd info record support to the
+ fanotify API
+Message-ID: <20210521131917.GM18952@quack2.suse.cz>
+References: <cover.1621473846.git.repnop@google.com>
+ <48d18055deb4617d97c695a08dca77eb573097e9.1621473846.git.repnop@google.com>
+ <20210520081755.eqey4ryngngt4yqd@wittgenstein>
+ <CAOQ4uxhvD2w1i3ia=8=4iCNEYDJ3wfps6AOLdUBXVi-H9Xu-OQ@mail.gmail.com>
+ <YKd7tqiVd9ny6+oD@google.com>
+ <CAOQ4uxi6LceN+ETbF6XbbBqfAY3H+K5ZMuky1L-gh_g53TEN1A@mail.gmail.com>
+ <20210521102418.GF18952@quack2.suse.cz>
+ <CAOQ4uxh84uXAQzz2w+TD1OeDtVwBX8uhM3Pumm46YvP-Wkndag@mail.gmail.com>
 MIME-Version: 1.0
-References: <20210520154654.1791183-1-groug@kaod.org> <20210520154654.1791183-6-groug@kaod.org>
- <20210521120840.4658d42c@bahia.lan>
-In-Reply-To: <20210521120840.4658d42c@bahia.lan>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 21 May 2021 14:51:56 +0200
-Message-ID: <CAJfpegtgPMw-MwWEJVt_=jc76032FShFon0xXUNyWb=zJBypbg@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] virtiofs: propagate sync() to file server
-To:     Greg Kurz <groug@kaod.org>
-Cc:     virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Max Reitz <mreitz@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        Robert Krawitz <rlk@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxh84uXAQzz2w+TD1OeDtVwBX8uhM3Pumm46YvP-Wkndag@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 21 May 2021 at 12:09, Greg Kurz <groug@kaod.org> wrote:
+On Fri 21-05-21 14:10:32, Amir Goldstein wrote:
+> On Fri, May 21, 2021 at 1:24 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Fri 21-05-21 12:41:51, Amir Goldstein wrote:
+> > > On Fri, May 21, 2021 at 12:22 PM Matthew Bobrowski <repnop@google.com> wrote:
+> > > >
+> > > > Hey Amir/Christian,
+> > > >
+> > > > On Thu, May 20, 2021 at 04:43:48PM +0300, Amir Goldstein wrote:
+> > > > > On Thu, May 20, 2021 at 11:17 AM Christian Brauner
+> > > > > <christian.brauner@ubuntu.com> wrote:
+> > > > > > > +#define FANOTIFY_PIDFD_INFO_HDR_LEN \
+> > > > > > > +     sizeof(struct fanotify_event_info_pidfd)
+> > > > > > >
+> > > > > > >  static int fanotify_fid_info_len(int fh_len, int name_len)
+> > > > > > >  {
+> > > > > > > @@ -141,6 +143,9 @@ static int fanotify_event_info_len(unsigned int info_mode,
+> > > > > > >       if (fh_len)
+> > > > > > >               info_len += fanotify_fid_info_len(fh_len, dot_len);
+> > > > > > >
+> > > > > > > +     if (info_mode & FAN_REPORT_PIDFD)
+> > > > > > > +             info_len += FANOTIFY_PIDFD_INFO_HDR_LEN;
+> > > > > > > +
+> > > > > > >       return info_len;
+> > > > > > >  }
+> > > > > > >
+> > > > > > > @@ -401,6 +406,29 @@ static int copy_fid_info_to_user(__kernel_fsid_t *fsid,
+> > > > > > >       return info_len;
+> > > > > > >  }
+> > > > > > >
+> > > > > > > +static int copy_pidfd_info_to_user(struct pid *pid,
+> > > > > > > +                                char __user *buf,
+> > > > > > > +                                size_t count)
+> > > > > > > +{
+> > > > > > > +     struct fanotify_event_info_pidfd info = { };
+> > > > > > > +     size_t info_len = FANOTIFY_PIDFD_INFO_HDR_LEN;
+> > > > > > > +
+> > > > > > > +     if (WARN_ON_ONCE(info_len > count))
+> > > > > > > +             return -EFAULT;
+> > > > > > > +
+> > > > > > > +     info.hdr.info_type = FAN_EVENT_INFO_TYPE_PIDFD;
+> > > > > > > +     info.hdr.len = info_len;
+> > > > > > > +
+> > > > > > > +     info.pidfd = pidfd_create(pid, 0);
+> > > > > > > +     if (info.pidfd < 0)
+> > > > > > > +             info.pidfd = FAN_NOPIDFD;
+> > > > > > > +
+> > > > > > > +     if (copy_to_user(buf, &info, info_len))
+> > > > > > > +             return -EFAULT;
+> > > > > >
+> > > > > > Hm, well this kinda sucks. The caller can end up with a pidfd in their
+> > > > > > fd table and when the copy_to_user() failed they won't know what fd it
+> > > > >
+> > > > > Good catch!
+> > > >
+> > > > Super awesome catch Christian, thanks pulling this up!
+> > > >
+> > > > > But I prefer to solve it differently, because moving fd_install() to the
+> > > > > end of this function does not guarantee that copy_event_to_user()
+> > > > > won't return an error one day with dangling pidfd in fd table.
+> > > >
+> > > > I can see the angle you're approaching this from...
+> > > >
+> > > > > It might be simpler to do pidfd_create() next to create_fd() in
+> > > > > copy_event_to_user() and pass pidfd to copy_pidfd_info_to_user().
+> > > > > pidfd can be closed on error along with fd on out_close_fd label.
+> > > > >
+> > > > > You also forgot to add CAP_SYS_ADMIN check before pidfd_create()
+> > > > > (even though fanotify_init() does check for that).
+> > > >
+> > > > I didn't really understand the need for this check here given that the
+> > > > administrative bits are already being checked for in fanotify_init()
+> > > > i.e. FAN_REPORT_PIDFD can never be set for an unprivileged listener;
+> > > > thus never walking any of the pidfd_mode paths. Is this just a defense
+> > > > in depth approach here, or is it something else that I'm missing?
+> > > >
+> > >
+> > > We want to be extra careful not to create privilege escalations,
+> > > so even if the fanotify fd is leaked or intentionally passed to a less
+> > > privileged user, it cannot get an open pidfd.
+> > >
+> > > IOW, it is *much* easier to be defensive in this case than to prove
+> > > that the change cannot introduce any privilege escalations.
+> >
+> > I have no problems with being more defensive (it's certainly better than
+> > being too lax) but does it really make sence here? I mean if CAP_SYS_ADMIN
+> > task opens O_RDWR /etc/passwd and then passes this fd to unpriviledged
+> > process, that process is also free to update all the passwords.
+> > Traditionally permission checks in Unix are performed on open and then who
+> > has fd can do whatever that fd allows... I've tried to follow similar
+> > philosophy with fanotify as well and e.g. open happening as a result of
+> > fanotify path events does not check permissions either.
+> >
+> 
+> Agreed.
+> 
+> However, because we had this issue with no explicit FAN_REPORT_PID
+> we added the CAP_SYS_ADMIN check for reporting event->pid as next
+> best thing. So now that becomes weird if priv process created fanotify fd
+> and passes it to unpriv process, then unpriv process gets events with
+> pidfd but without event->pid.
+> 
+> We can change the code to:
+> 
+>         if (!capable(CAP_SYS_ADMIN) && !pidfd_mode &&
+>             task_tgid(current) != event->pid)
+>                 metadata.pid = 0;
+> 
+> So the case I decscribed above ends up reporting both pidfd
+> and event->pid to unpriv user, but that is a bit inconsistent...
 
-> If it looks good to you, maybe you can just merge it and
-> I'll re-post the fixes separately ?
+Oh, now I see where you are coming from :) Thanks for explanation. And
+remind me please, cannot we just have internal FAN_REPORT_PID flag that
+gets set on notification group when priviledged process creates it and then
+test for that instead of CAP_SYS_ADMIN in copy_event_to_user()? It is
+mostly equivalent but I guess more in the spirit of how fanotify
+traditionally does things. Also FAN_REPORT_PIDFD could then behave in the
+same way...
 
-Looks good, applied.
-
-Thanks,
-Miklos
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
