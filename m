@@ -2,118 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E19F838C476
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 12:16:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3652538C48C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 12:24:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234202AbhEUKRX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 06:17:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40914 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234351AbhEUKRW (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 06:17:22 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD7AEC061763
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 03:15:56 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id 29so2760354pgu.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 03:15:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=NpMofB5UuqutKSnJfM4oYhP+b14qdU1SFR/5N7swfNw=;
-        b=XY/mnqlpgL+odHk9dEQ9B0XPrwjNBSPr2MVTY9elt4rL9+2IOpDujoIFAOs7sCruL+
-         k2I0agrmnvD8b1KnY2RV7ljk+NOZRmG9JfRiqRw9QWsc32XqqXWIC3lA2yF4ssEIgYmt
-         nRzasamocevPWh2krMqRgYArQQCwLD1TBYy2DUkHVRtN62fwFGqbaGGNn6PCvJbiu3rM
-         Y5hlyp9g16qAv751dlAYldhV8oxtiJQOqUdaktmIK8dfzr7Y3x46Z/9ungyXQYiOrWfT
-         Yy3F+HIwjmFFGxVqF2ddSRMhmX/syR0nM6b2I9+CIVezIsFHoLq5sIqQSCAX+IkcWsxr
-         ss+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NpMofB5UuqutKSnJfM4oYhP+b14qdU1SFR/5N7swfNw=;
-        b=mwbkMNuX5r/IwTwPysd6ObXbxnpq1q/Vq9150lQpLZ5JT7DYr+FqCw3XYlKFEQid/k
-         FEIiY8q9ifFc7Oqiifja41kTJEPivRSyhtu2yzpelVkkAR/6BbTobjZVG/mxbQ3B/Wp2
-         i1gJ7A8HCiyAiv2fiboNFKOglonJrVjVglqY3kbzhWIoY/MMEBv3XV4Fo1nmoIvcWniq
-         jULj+ikL6nO6mEdYshXVTDGcN5G/w8LH6VSDIxx3u1YqOl9cKnKxthUdhfdpJivLl0BN
-         5N64YR4WfdmWIWuMvWebTYQuby+SStIl3sbPuoYgvSCKU835c8KRwX+6yEjce+F8zSUi
-         o0ow==
-X-Gm-Message-State: AOAM532hM+kXyt+40mqNUarJ5DK5HqZ1hli2wMbAYhUAtpZg9zx4q1Ub
-        Qz/qv6bZmvWYauXcDG/BpDk8PLeDlxeecw==
-X-Google-Smtp-Source: ABdhPJwowwtSpyETyIMa/SzQnwcYqILcVnA+91Ib9UuE5p8or/tSs16vypznqs+H62WA68cC14Frzw==
-X-Received: by 2002:a63:cc43:: with SMTP id q3mr9175791pgi.50.1621592156031;
-        Fri, 21 May 2021 03:15:56 -0700 (PDT)
-Received: from google.com ([2401:fa00:9:211:42b2:c084:8468:626a])
-        by smtp.gmail.com with ESMTPSA id q23sm3941832pgj.61.2021.05.21.03.15.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 May 2021 03:15:55 -0700 (PDT)
-Date:   Fri, 21 May 2021 20:15:35 +1000
-From:   Matthew Bobrowski <repnop@google.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     amir73il@gmail.com, christian.brauner@ubuntu.com,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH 0/5] Add pidfd support to the fanotify API
-Message-ID: <YKeIR+LiSXqUHL8Q@google.com>
+        id S234416AbhEUKZn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 06:25:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53744 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232470AbhEUKZm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 May 2021 06:25:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 875F4AACA;
+        Fri, 21 May 2021 10:24:18 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 4B9CF1F2C73; Fri, 21 May 2021 12:24:18 +0200 (CEST)
+Date:   Fri, 21 May 2021 12:24:18 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Matthew Bobrowski <repnop@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 5/5] fanotify: Add pidfd info record support to the
+ fanotify API
+Message-ID: <20210521102418.GF18952@quack2.suse.cz>
 References: <cover.1621473846.git.repnop@google.com>
- <20210520135527.GD18952@quack2.suse.cz>
+ <48d18055deb4617d97c695a08dca77eb573097e9.1621473846.git.repnop@google.com>
+ <20210520081755.eqey4ryngngt4yqd@wittgenstein>
+ <CAOQ4uxhvD2w1i3ia=8=4iCNEYDJ3wfps6AOLdUBXVi-H9Xu-OQ@mail.gmail.com>
+ <YKd7tqiVd9ny6+oD@google.com>
+ <CAOQ4uxi6LceN+ETbF6XbbBqfAY3H+K5ZMuky1L-gh_g53TEN1A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210520135527.GD18952@quack2.suse.cz>
+In-Reply-To: <CAOQ4uxi6LceN+ETbF6XbbBqfAY3H+K5ZMuky1L-gh_g53TEN1A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hey Jan!
-
-On Thu, May 20, 2021 at 03:55:27PM +0200, Jan Kara wrote:
-> On Thu 20-05-21 12:09:45, Matthew Bobrowski wrote:
-> > Hey Jan/Amir/Christian,
-> > 
-> > This is the updated patch series for adding pidfd support to the
-> > fanotify API. It incorporates all the suggestions that had come out of
-> > the initial RFC patch series [0].
-> > 
-> > The main difference with this patch series is that FAN_REPORT_PIDFD
-> > results in an additional info record object supplied alongside the
-> > generic event metadata object instead of overloading metadata->pid. If
-> > any of the fid flavoured init flags are specified, then the pidfd info
-> > record object will follow any fid info record objects.
-> > 
-> > [0] https://www.spinics.net/lists/linux-fsdevel/msg193296.html
+On Fri 21-05-21 12:41:51, Amir Goldstein wrote:
+> On Fri, May 21, 2021 at 12:22 PM Matthew Bobrowski <repnop@google.com> wrote:
+> >
+> > Hey Amir/Christian,
+> >
+> > On Thu, May 20, 2021 at 04:43:48PM +0300, Amir Goldstein wrote:
+> > > On Thu, May 20, 2021 at 11:17 AM Christian Brauner
+> > > <christian.brauner@ubuntu.com> wrote:
+> > > > > +#define FANOTIFY_PIDFD_INFO_HDR_LEN \
+> > > > > +     sizeof(struct fanotify_event_info_pidfd)
+> > > > >
+> > > > >  static int fanotify_fid_info_len(int fh_len, int name_len)
+> > > > >  {
+> > > > > @@ -141,6 +143,9 @@ static int fanotify_event_info_len(unsigned int info_mode,
+> > > > >       if (fh_len)
+> > > > >               info_len += fanotify_fid_info_len(fh_len, dot_len);
+> > > > >
+> > > > > +     if (info_mode & FAN_REPORT_PIDFD)
+> > > > > +             info_len += FANOTIFY_PIDFD_INFO_HDR_LEN;
+> > > > > +
+> > > > >       return info_len;
+> > > > >  }
+> > > > >
+> > > > > @@ -401,6 +406,29 @@ static int copy_fid_info_to_user(__kernel_fsid_t *fsid,
+> > > > >       return info_len;
+> > > > >  }
+> > > > >
+> > > > > +static int copy_pidfd_info_to_user(struct pid *pid,
+> > > > > +                                char __user *buf,
+> > > > > +                                size_t count)
+> > > > > +{
+> > > > > +     struct fanotify_event_info_pidfd info = { };
+> > > > > +     size_t info_len = FANOTIFY_PIDFD_INFO_HDR_LEN;
+> > > > > +
+> > > > > +     if (WARN_ON_ONCE(info_len > count))
+> > > > > +             return -EFAULT;
+> > > > > +
+> > > > > +     info.hdr.info_type = FAN_EVENT_INFO_TYPE_PIDFD;
+> > > > > +     info.hdr.len = info_len;
+> > > > > +
+> > > > > +     info.pidfd = pidfd_create(pid, 0);
+> > > > > +     if (info.pidfd < 0)
+> > > > > +             info.pidfd = FAN_NOPIDFD;
+> > > > > +
+> > > > > +     if (copy_to_user(buf, &info, info_len))
+> > > > > +             return -EFAULT;
+> > > >
+> > > > Hm, well this kinda sucks. The caller can end up with a pidfd in their
+> > > > fd table and when the copy_to_user() failed they won't know what fd it
+> > >
+> > > Good catch!
+> >
+> > Super awesome catch Christian, thanks pulling this up!
+> >
+> > > But I prefer to solve it differently, because moving fd_install() to the
+> > > end of this function does not guarantee that copy_event_to_user()
+> > > won't return an error one day with dangling pidfd in fd table.
+> >
+> > I can see the angle you're approaching this from...
+> >
+> > > It might be simpler to do pidfd_create() next to create_fd() in
+> > > copy_event_to_user() and pass pidfd to copy_pidfd_info_to_user().
+> > > pidfd can be closed on error along with fd on out_close_fd label.
+> > >
+> > > You also forgot to add CAP_SYS_ADMIN check before pidfd_create()
+> > > (even though fanotify_init() does check for that).
+> >
+> > I didn't really understand the need for this check here given that the
+> > administrative bits are already being checked for in fanotify_init()
+> > i.e. FAN_REPORT_PIDFD can never be set for an unprivileged listener;
+> > thus never walking any of the pidfd_mode paths. Is this just a defense
+> > in depth approach here, or is it something else that I'm missing?
+> >
 > 
-> Overall the series looks fine to me - modulo the problems Christian & Amir
-> found. Do you have any tests for this? Preferably for LTP so that we can
-> extend the coverage there?
+> We want to be extra careful not to create privilege escalations,
+> so even if the fanotify fd is leaked or intentionally passed to a less
+> privileged user, it cannot get an open pidfd.
+> 
+> IOW, it is *much* easier to be defensive in this case than to prove
+> that the change cannot introduce any privilege escalations.
 
-Cool and thanks for glancing over this series.
+I have no problems with being more defensive (it's certainly better than
+being too lax) but does it really make sence here? I mean if CAP_SYS_ADMIN
+task opens O_RDWR /etc/passwd and then passes this fd to unpriviledged
+process, that process is also free to update all the passwords.
+Traditionally permission checks in Unix are performed on open and then who
+has fd can do whatever that fd allows... I've tried to follow similar
+philosophy with fanotify as well and e.g. open happening as a result of
+fanotify path events does not check permissions either.
 
-I've written some simple programs to verify this functionality works in
-FID and non-FID modes. I definitely plan on writing LTP tests,
-although it's something I'll do once we've agreed on the approach and
-I've received an ACK from yourself, Amir and Christian. This series
-passes all current LTP regressions. Also, I guess I'll need to write
-some patches for man-pages given this is an ABI change.
-
-There's one thing that I'd like to mention, and it's something in
-regards to the overall approach we've taken that I'm not particularly
-happy about and I'd like to hear all your thoughts. Basically, with
-this approach the pidfd creation is done only once an event has been
-queued and the notification worker wakes up and picks up the event
-from the queue processes it. There's a subtle latency introduced when
-taking such an approach which at times leads to pidfd creation
-failures. As in, by the time pidfd_create() is called the struct pid
-has already been reaped, which then results in FAN_NOPIDFD being
-returned in the pidfd info record.
-
-Having said that, I'm wondering what the thoughts are on doing pidfd
-creation earlier on i.e. in the event allocation stages? This way, the
-struct pid is pinned earlier on and rather than FAN_NOPIDFD being
-returned in the pidfd info record because the struct pid has been
-already reaped, userspace application will atleast receive a valid
-pidfd which can be used to check whether the process still exists or
-not. I think it'll just set the expectation better from an API
-perspective.
-
-/M
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
