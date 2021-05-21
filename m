@@ -2,117 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C676A38BB3D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 03:04:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B0F738BC61
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 May 2021 04:23:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235993AbhEUBFq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 May 2021 21:05:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58060 "EHLO
+        id S238536AbhEUCY2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 May 2021 22:24:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235984AbhEUBFl (ORCPT
+        with ESMTP id S229534AbhEUCY1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 May 2021 21:05:41 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01C53C0613ED;
-        Thu, 20 May 2021 18:04:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=sni9ETK0HEg7xDqRTRD+07GslmzE5y7OWzA5WJKcjKU=; b=u70b07TD062bdzcBCW7Xa9uMDu
-        Zvi3dzeWq3DXDEzDH3xRDl6oaTR5xq5coFv6GaME2vz1KEbDa3zSXlvSB4J2oR+UjWoxvBfKQyBS7
-        BBTv8m0jL9zS/zbF1qxxGoIDV9mujDnXmmc8ui/vlS3tA8T/Ewp5/aXKrIk0oOYxN1uPnfKtgTC2E
-        OpLrinbzCPhKfYv/UcSNjCiHOFVaAy+K9mbZxx+RxWFwgeLV64yAOLbyjpfzjLLrQhl6jK4/xEMCk
-        D+GPPpxqsYdARBIBjmbe6cSpPIzaZEKIYPcEPTqfKVZy5YMTXt6pMsw78MMxnaYxEM3JbaltbQyIc
-        Xdde8GPQ==;
-Received: from [2601:1c0:6280:3f0::7376]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1ljtaL-00Gjxw-1l; Fri, 21 May 2021 01:04:17 +0000
-Subject: Re: mmotm 2021-05-19-23-58 uploaded
- (net/netfilter/nft_set_pipapo_avx2.c)
-To:     Stephen Rothwell <sfr@rothwell.id.au>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-References: <20210520065918.KsmugQp47%akpm@linux-foundation.org>
- <3d718861-28bd-dd51-82d4-96b040aa1ab4@infradead.org>
- <20210521090751.51afa10f@elm.ozlabs.ibm.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6eb826b6-4279-8cf8-1c27-01aab0f83843@infradead.org>
-Date:   Thu, 20 May 2021 18:04:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        Thu, 20 May 2021 22:24:27 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7339C061763
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 May 2021 19:23:05 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id q15so13127652pgg.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 May 2021 19:23:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=YemI85O9bLI0m8MkylkyR0IUfS+oZy6kYsON+ubb8mg=;
+        b=gEabH7HEBFV1nPdVQ6FrQc/idUFaL/V5OxiMA1LI2BpttADEiH2k7vALxIDizC3MSG
+         gSgQMRLfRy3FJ0npyYj5LwrxlIvuF3MQ2h2kese9zmgcI9w+x8PEBOBOFIN9cqlmmWWs
+         YWBG2iCbiuzEI6wasXPpTSOLeoZFizR2a0ZXlmZYIKoUvJOSg7zhgh+AuQK2q+EyhL0T
+         bb4dzsW7mUgo878zXUzNcyoh419is9FMpDsZtuf1oO4z3uZlf9rBnv399PqOj2nK6UlG
+         WPj4JZVo6Wsh9P3URTV0gh/fgI++wQETs2AIn3RAOzMk/RopmHAfBYy0i16WlbxpkMWG
+         3UDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=YemI85O9bLI0m8MkylkyR0IUfS+oZy6kYsON+ubb8mg=;
+        b=fyB1ICR9Jb97PnbVHMZkn+GTfEc1+3luTiAfA3ycnprIuVxDnfroZdyCSDJsXMrJuO
+         5ejvrpYnkNVIRnpmhcFP5h869nnN0D2dEM9OaeCr+PcWs8ANaBIdW8rFKmlya6GIuI+r
+         2vgQD/DXpxZJU+x+VuHiYOeHly1WiJVPDR2gpMWFw52PBREIHPGQyBVtTdRjwYjmd8P3
+         duE482JbyZArBjmlJkgslUUnV2x0C7hFHYFPBPf6gsh5i3G6HwXN1qGJK9NcnzzPBh0e
+         5vjmx8E6AXe1cYmgHelbbMdjJFeGCsegtbDIzMy3Bf8FmDKVDofwziCEogD0qYBquJ/0
+         PsOg==
+X-Gm-Message-State: AOAM530GnH6kHILSNn2BQgmThJ5VpXZ2czBNN1u44kEw65F1SWYHKxwT
+        XF458GcJXAGqsg6r1TQQpTei0aizyVTuXGPoGT7uTg==
+X-Google-Smtp-Source: ABdhPJz39htdi++DEibwiL3THTiqt0knG3d1uKGkXu73GOwwzQNM1rZ8VXwFKoMc7Y2smXEQir4jGlEcmlrwzsON4+A=
+X-Received: by 2002:a05:6a00:2493:b029:2c4:b6dd:d389 with SMTP id
+ c19-20020a056a002493b02902c4b6ddd389mr7694639pfv.2.1621563785247; Thu, 20 May
+ 2021 19:23:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210521090751.51afa10f@elm.ozlabs.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210520065918.KsmugQp47%akpm@linux-foundation.org> <8e1de6c2-27af-f612-7467-a7d1f1a31bff@infradead.org>
+In-Reply-To: <8e1de6c2-27af-f612-7467-a7d1f1a31bff@infradead.org>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Fri, 21 May 2021 10:22:28 +0800
+Message-ID: <CAMZfGtW=jgjJPUNk4jxFXWZ91wuYEm4q3x7NUVSjGpu0Xjc7hA@mail.gmail.com>
+Subject: Re: [External] Re: mmotm 2021-05-19-23-58 uploaded (mm/migrate.c)
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        mhocko@suse.cz, mm-commits@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/20/21 4:07 PM, Stephen Rothwell wrote:
-> Hi Randy,
-> 
-> On Thu, 20 May 2021 15:40:54 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->> on x86_64:
->> (from linux-next, not mmotm)
-> 
-> Yeah, this is caused by a bad merge resolution by me.
-> 
->> ../net/netfilter/nft_set_pipapo_avx2.c: In function ‘nft_pipapo_avx2_lookup’:
->> ../net/netfilter/nft_set_pipapo_avx2.c:1135:10: error: implicit declaration of function ‘nft_pipapo_lookup’; did you mean ‘nft_pipapo_avx2_lookup’? [-Werror=implicit-function-declaration]
->>    return nft_pipapo_lookup(net, set, key, ext);
->>           ^~~~~~~~~~~~~~~~~
-> 
-> I have added this to the merge resolution today:
-> 
-> diff --git a/include/net/netfilter/nf_tables_core.h b/include/net/netfilter/nf_tables_core.h
-> index 789e9eadd76d..8652b2514e57 100644
-> --- a/include/net/netfilter/nf_tables_core.h
-> +++ b/include/net/netfilter/nf_tables_core.h
-> @@ -89,6 +89,8 @@ extern const struct nft_set_type nft_set_bitmap_type;
->  extern const struct nft_set_type nft_set_pipapo_type;
->  extern const struct nft_set_type nft_set_pipapo_avx2_type;
->  
-> +bool nft_pipapo_lookup(const struct net *net, const struct nft_set *set,
-> +			    const u32 *key, const struct nft_set_ext **ext);
->  #ifdef CONFIG_RETPOLINE
->  bool nft_rhash_lookup(const struct net *net, const struct nft_set *set,
->  		      const u32 *key, const struct nft_set_ext **ext);
-> @@ -101,8 +103,6 @@ bool nft_hash_lookup_fast(const struct net *net,
->  			  const u32 *key, const struct nft_set_ext **ext);
->  bool nft_hash_lookup(const struct net *net, const struct nft_set *set,
->  		     const u32 *key, const struct nft_set_ext **ext);
-> -bool nft_pipapo_lookup(const struct net *net, const struct nft_set *set,
-> -			    const u32 *key, const struct nft_set_ext **ext);
->  bool nft_set_do_lookup(const struct net *net, const struct nft_set *set,
->  		       const u32 *key, const struct nft_set_ext **ext);
->  #else
-> diff --git a/net/netfilter/nft_set_pipapo.c b/net/netfilter/nft_set_pipapo.c
-> index 9addc0b447f7..dce866d93fee 100644
-> --- a/net/netfilter/nft_set_pipapo.c
-> +++ b/net/netfilter/nft_set_pipapo.c
-> @@ -408,7 +408,6 @@ int pipapo_refill(unsigned long *map, int len, int rules, unsigned long *dst,
->   *
->   * Return: true on match, false otherwise.
->   */
-> -INDIRECT_CALLABLE_SCOPE
->  bool nft_pipapo_lookup(const struct net *net, const struct nft_set *set,
->  		       const u32 *key, const struct nft_set_ext **ext)
->  {
-> 
-> It should apply on top of next-20210520 if you want to test it (I
-> haven't tested it yet, but will later today).
+On Fri, May 21, 2021 at 6:21 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 5/19/21 11:59 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2021-05-19-23-58 has been uploaded to
+> >
+> >    https://www.ozlabs.org/~akpm/mmotm/
+> >
+> > mmotm-readme.txt says
+> >
+> > README for mm-of-the-moment:
+> >
+> > https://www.ozlabs.org/~akpm/mmotm/
+> >
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> >
+> > You will need quilt to apply these patches to the latest Linus release =
+(5.x
+> > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated=
+ in
+> > https://ozlabs.org/~akpm/mmotm/series
+> >
+> > The file broken-out.tar.gz contains two datestamp files: .DATE and
+> > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss=
+,
+> > followed by the base kernel version against which this patch series is =
+to
+> > be applied.
+> >
+> > This tree is partially included in linux-next.  To see which patches ar=
+e
+> > included in linux-next, consult the `series' file.  Only the patches
+> > within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included i=
+n
+> > linux-next.
+>
+> on x86_64:
+>
+> ../mm/migrate.c: In function =E2=80=98unmap_and_move_huge_page=E2=80=99:
+> ../mm/migrate.c:1295:6: error: implicit declaration of function =E2=80=98=
+hugetlb_page_subpool=E2=80=99; did you mean =E2=80=98hugetlb_count_sub=E2=
+=80=99? [-Werror=3Dimplicit-function-declaration]
+>   if (hugetlb_page_subpool(hpage) && !page_mapping(hpage)) {
+>       ^~~~~~~~~~~~~~~~~~~~
+>
+> Full randconfig file is attached.
 
-Yes, that builds. Thanks.
+Thanks. I'll fix it in the next version.
 
--- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-https://people.kernel.org/tglx/notes-about-netiquette
+>
+> --
+> ~Randy
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+>
