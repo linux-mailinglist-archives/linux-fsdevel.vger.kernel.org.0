@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12E8738D5A5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 May 2021 13:32:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DB0C38D5A7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 May 2021 13:32:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230469AbhEVLdi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 May 2021 07:33:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39506 "EHLO
+        id S230358AbhEVLdr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 May 2021 07:33:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230358AbhEVLdi (ORCPT
+        with ESMTP id S230318AbhEVLdq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 May 2021 07:33:38 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27509C061574;
-        Sat, 22 May 2021 04:32:13 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id a7so3610328plh.3;
-        Sat, 22 May 2021 04:32:13 -0700 (PDT)
+        Sat, 22 May 2021 07:33:46 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B8E4C06138A;
+        Sat, 22 May 2021 04:32:20 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id t193so16334491pgb.4;
+        Sat, 22 May 2021 04:32:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1kOHHb+Y1mDpGXTDWCoDuGyBc8YqEz2A5xaJqIhlchQ=;
-        b=gAzPsBMXEQuxRpMyvG3kICmHXTgzm6Ob0J2tx3Yt4keonOI3K1g5XKYsZsmFLo39h3
-         JyUxdKwMfYZ6fCb3TPiN/WtxHPsAp4B5DmmN6ubQpARdvZN/X6DaguYrPsJFxCOnuVAA
-         DoZa1rQei9VDfoUfM6UodhdUWb4VDuwV3z+IoNXUipzIqLUcCpg8mbJ/YAOKHJNcoOJ8
-         b172jM28j77307jsjTqJ1ocGIHjVAcDivKi7yX7y9Idz6MybRvL4SThVK4TiSbSFhTlU
-         zdcaLjqQWq+v8cTDEOH+F2hvsChJuFuEj5b6qPkqw/qLEe4dytXojL3qsEyyloS7BkiB
-         1XKw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=5T431k7g6aKVzK1xUunLmmQKi2pgkqZ8L8xtmvs/QnA=;
+        b=IZXyTd5+cs+5qO8U6EN1jdhr0gtYjocvlXO/go7CdYldnEukWdFqw4ALo+FTzrdEqQ
+         HZkoFtoMVcP2X6U+T84nPphlp68QKN2k9UzMpzR3rnCw1HGUe/JjoSrk42nUJ7iG5k+Q
+         rqL0LpamXTcCvIMautmzhYcokYUaMCxiYZ1rw4q64+YuULAnLkSgz003k3ICXnJIRNuv
+         CNhaiJuK/cl9sWyuimfoSP/IvXJ6NuIbM9JsjGc8HgWgPWIE8neWIkCqNSlvACsbhc69
+         wrfC8llEUshGoSguVwjTT3aNyOmvqfdrywHx+3b6FzKsxxgdBXWyNGJIHMtLojlsILTA
+         WjNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1kOHHb+Y1mDpGXTDWCoDuGyBc8YqEz2A5xaJqIhlchQ=;
-        b=gSvaGmi2sX//T4KsRD04gsogY5OO2w8B/5Jx7I+qOuXlOo1J/bMT/UQWLgx3KVcg8R
-         b5zXfwYdTMjywNkW1WvSuRULWKaveCHmuBI5GQUd8LiSq896mEeBylZ/ceeAFmjZQRzS
-         dWS4ZvbBDC+8uTJGL2k5UsxUrN4ndNlFVPUCbwUwGsaX7uNB5syn3eY0ZsqmisgDVeDc
-         XLTbakkbuXDpp5Ytlri4may6NJF5rvPSvoMMDnVZ0dBYA7CHKdH1LS2ugUs+5buj0JzX
-         T7hc5wgAlhcMq7jl1rQIooPHt8RJcFIiqiJCuHtr/PTpKew1NcA9s1NpsMMBck8ixQlc
-         pOFQ==
-X-Gm-Message-State: AOAM532KiraoOknWHlYLmJA8i/Y97IpTKGb/K1b9sHsMOv/Pes2o+rNP
-        qu4vcrXKEce8fPGUPoGVGKw=
-X-Google-Smtp-Source: ABdhPJyy9kDrw5mMb3hWHBO3hq5vNdGZTAIBlBJyZ7co9ngyDEULlX+CctHNvUTmKzQisYwQbVt0Cw==
-X-Received: by 2002:a17:902:d903:b029:ef:abd0:d8fa with SMTP id c3-20020a170902d903b02900efabd0d8famr16587186plz.49.1621683132609;
-        Sat, 22 May 2021 04:32:12 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=5T431k7g6aKVzK1xUunLmmQKi2pgkqZ8L8xtmvs/QnA=;
+        b=hUek9Mv+6FhVWKjtYGDj9Q7TKk344oWlq4schxVlSI48g2dy8E9DlmB6Vr3s+35+Rj
+         G6RAdRvqaQA6w37QL2+1c9u/kL6i1RCp7KHdZytWN3K8X52of6G3iW5xsXRms8UXpN+S
+         /PyX+aPgJvih9aTeH4EeuqC4vq46yXvbcPzk25m4jWB8RULG/ICneN+lNFFlOHWXv6Gg
+         fOzc/SnrZX9KWEQX5pfN6w9xtvCrPxL/Hcd3s9NPn6WKjUO2HlWrMuYF8A6QVLIW7SjR
+         q+iS/zj9x6/poygnNi/DD64r3fD0nMzlq5UWdiEcq4gAjwhA/gf8BdC4jOMV+ZJjjqMl
+         UO1Q==
+X-Gm-Message-State: AOAM531aT0jTaIt22+9u1nrt0pRW00O15KggskM1dG5u5mVEXqxLat7N
+        GvNsWD31JkJdorwwQSU85zQ=
+X-Google-Smtp-Source: ABdhPJzZKlpUn6eKHq2iT2D3CBaTxC2s5pKPQsBZn6C70PdkfDyf3u+qA0Iqg/5ZpwNydco4Sw2Wng==
+X-Received: by 2002:a65:5684:: with SMTP id v4mr3607064pgs.218.1621683140113;
+        Sat, 22 May 2021 04:32:20 -0700 (PDT)
 Received: from localhost ([178.236.46.205])
-        by smtp.gmail.com with ESMTPSA id e7sm7020330pfl.171.2021.05.22.04.32.11
+        by smtp.gmail.com with ESMTPSA id w123sm6284875pfw.151.2021.05.22.04.32.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 May 2021 04:32:11 -0700 (PDT)
+        Sat, 22 May 2021 04:32:19 -0700 (PDT)
 From:   menglong8.dong@gmail.com
 X-Google-Original-From: dong.menglong@zte.com.cn
 To:     mcgrof@kernel.org
@@ -62,10 +62,12 @@ Cc:     viro@zeniv.linux.org.uk, keescook@chromium.org,
         vbabka@suse.cz, glider@google.com, pmladek@suse.com,
         ebiederm@xmission.com, jojing64@gmail.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] init/initramfs.c: make initramfs support pivot_root
-Date:   Sat, 22 May 2021 19:31:52 +0800
-Message-Id: <20210522113155.244796-1-dong.menglong@zte.com.cn>
+Subject: [PATCH 1/3] init/main.c: introduce function ramdisk_exec_exist()
+Date:   Sat, 22 May 2021 19:31:53 +0800
+Message-Id: <20210522113155.244796-2-dong.menglong@zte.com.cn>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210522113155.244796-1-dong.menglong@zte.com.cn>
+References: <20210522113155.244796-1-dong.menglong@zte.com.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -74,51 +76,53 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Menglong Dong <dong.menglong@zte.com.cn>
 
-As Luis Chamberlain suggested, I split the patch:
-[init/initramfs.c: make initramfs support pivot_root]
-(https://lore.kernel.org/linux-fsdevel/20210520154244.20209-1-dong.menglong@zte.com.cn/)
-into three.
+Introduce the function ramdisk_exec_exist, which is used to check
+the exist of 'ramdisk_execute_command'.
 
-The goal of the series patches is to make pivot_root() support initramfs.
+It can do absolute path and relative path check. For relative path,
+it will ignore '/' and '.' in the start of
+'ramdisk_execute_command'.
 
-In the first patch, I introduce the function ramdisk_exec_exist(), which
-is used to check the exist of 'ramdisk_execute_command' in relative path
-mode.
+Signed-off-by: Menglong Dong <dong.menglong@zte.com.cn>
+---
+ init/main.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-In the second patch, I create a second mount, which is called
-'user root', and make it become the root. Therefore, the root has a
-parent mount, and it can be umounted or pivot_root.
-
-Before change root, I have to check the exist of ramdisk_execute_command,
-because 'user root' should be umounted if ramdisk_execute_command not
-exist. 'user root' is mounted on '/root', and cpio is unpacked to it. So
-I have to use relative path to do this check, as 'user root' is not the
-root yet.
-
-Maybe I can do the check after change root, but it seems complex to
-change root back to '/'. What's weird is that I try to move 'user root'
-from '/root' to '/', but the absolute path lookup seems never follow the
-mount. That's why I introduced ramdisk_exec_exist.
-
-In the third patch, I fix rootfs_fs_type with ramfs, as it is not used
-directly any more, and it make no sense to switch it between ramfs and
-tmpfs, just fix it with ramfs to simplify the code.
-
-
-
-Menglong Dong (3):
-  init/main.c: introduce function ramdisk_exec_exist()
-  init/do_cmounts.c: introduce 'user_root' for initramfs
-  init/do_mounts.c: fix rootfs_fs_type with ramfs
-
- fs/namespace.c       |  2 --
- include/linux/init.h |  1 -
- init/do_mounts.c     | 82 +++++++++++++++++++++++++++++++++++++-------
- init/do_mounts.h     |  7 +++-
- init/initramfs.c     | 10 ++++++
- init/main.c          | 17 ++++++++-
- 6 files changed, 101 insertions(+), 18 deletions(-)
-
+diff --git a/init/main.c b/init/main.c
+index eb01e121d2f1..95cab17046e0 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -1522,6 +1522,21 @@ void __init console_on_rootfs(void)
+ 	fput(file);
+ }
+ 
++bool __init ramdisk_exec_exist(bool absolute)
++{
++	char *tmp_command = ramdisk_execute_command;
++
++	if (!tmp_command)
++		return false;
++
++	if (!absolute) {
++		while (*tmp_command == '/' || *tmp_command == '.')
++			tmp_command++;
++	}
++
++	return init_eaccess(tmp_command) == 0;
++}
++
+ static noinline void __init kernel_init_freeable(void)
+ {
+ 	/*
+@@ -1568,7 +1583,7 @@ static noinline void __init kernel_init_freeable(void)
+ 	 * check if there is an early userspace init.  If yes, let it do all
+ 	 * the work
+ 	 */
+-	if (init_eaccess(ramdisk_execute_command) != 0) {
++	if (!ramdisk_exec_exist(true)) {
+ 		ramdisk_execute_command = NULL;
+ 		prepare_namespace();
+ 	}
 -- 
 2.31.1
 
