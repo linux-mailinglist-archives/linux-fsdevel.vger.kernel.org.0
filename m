@@ -2,84 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD7EF38D358
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 May 2021 06:11:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1990438D43C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 May 2021 09:45:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229771AbhEVEMl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 May 2021 00:12:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34634 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229705AbhEVEMk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 May 2021 00:12:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8B9C96115C;
-        Sat, 22 May 2021 04:11:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621656676;
-        bh=EwurkRanMlH0D1hRURsdewfO3RD1xnl6lFwwsjKwGuY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HkhGPb9uLCNqcTzr83qZvZ8Uu58HghBav4WXrUlodQua52Ylyr1vSAa5DphFC8fsp
-         JH5YNTBWudB/othv+fWwLhFUpgLtQOtLsQtHFNcM+cFS0En9XnFWgotcdrVka1o/FF
-         zbK3h0/HIOZsYEw4B6Nco9t1OzxnSGJ2AM1XcUKH/E14EFEwLYFMF5N00tg55HC8ZR
-         xLhpzhXXkEBMfaiwX8r1SdWqT2siglUdroWAP3Bzt8tb0AiM5KJH+kx2XrBgLfscFQ
-         K9BYKDd0YR98ZB6PfsGmGrcSNsKBjLA25CfbNFGdGqDVzmlBZqW7gQweAo5F7zyNDr
-         xAKTh790tpIlA==
-Date:   Fri, 21 May 2021 21:11:15 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
-Subject: [GIT PULL] xfs: fixes for 5.13-rc3
-Message-ID: <20210522041115.GB15971@magnolia>
+        id S230023AbhEVHqv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 May 2021 03:46:51 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25041 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229990AbhEVHqu (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 22 May 2021 03:46:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1621669525;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=h2vI6qAlLV/+LbtWLIAbep8Td7DB8/nLdLSULmPCA2k=;
+        b=IH7mSIvnZ7+wLApCBOG2H9W7EqeDfPzf9s89rbYMQ+BgAW6N3az+aG03valeCZX9Up269Z
+        vmrT9kqvFm/eo4kBL1VYN3dAtiufCgZzwo6lb6ICdtPoXViEVvFid6HZR5nskq5RlO7DZt
+        mISRi7LR4sB10NFQ0l0ExERZ2t+0PlI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-58-tC9wFz4xPm2K-paW3QMXaw-1; Sat, 22 May 2021 03:45:22 -0400
+X-MC-Unique: tC9wFz4xPm2K-paW3QMXaw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 62E98180FD60;
+        Sat, 22 May 2021 07:45:21 +0000 (UTC)
+Received: from T590 (ovpn-12-34.pek2.redhat.com [10.72.12.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D9D4560D4B;
+        Sat, 22 May 2021 07:45:15 +0000 (UTC)
+Date:   Sat, 22 May 2021 15:45:11 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] iomap: resched ioend completion when in
+ non-atomic context
+Message-ID: <YKi2hwnJMbLYtkmb@T590>
+References: <20210517171722.1266878-1-bfoster@redhat.com>
+ <20210517171722.1266878-2-bfoster@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20210517171722.1266878-2-bfoster@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Mon, May 17, 2021 at 01:17:20PM -0400, Brian Foster wrote:
+> The iomap ioend mechanism has the ability to construct very large,
+> contiguous bios and/or bio chains. This has been reported to lead to
 
-Please pull this short branch containing bug fixes for 5.13-rc3.  It's a
-bunch of fixes for realtime files, crasher bugs, and fixing a minor
-userspace abi regression.
+BTW, it is actually wrong to complete a large bio chains in
+iomap_finish_ioend(), which may risk in bio allocation deadlock, cause
+bio_alloc_bioset() relies on bio submission to make forward progress. But
+it becomes not true when all chained bios are freed just after the whole
+ioend is done since all chained bios(except for the one embedded in ioend)
+are allocated from same bioset(fs_bio_set).
 
-The branch merges cleanly against upstream as of a few minutes ago.
-Please let me know if anything else strange happens during the merge
-process.
 
---D
+Thanks,
+Ming
 
-The following changes since commit d07f6ca923ea0927a1024dfccafc5b53b61cfecc:
-
-  Linux 5.13-rc2 (2021-05-16 15:27:44 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.13-fixes-1
-
-for you to fetch changes up to e3c2b047475b52739bcf178a9e95176c42bbcf8f:
-
-  xfs: restore old ioctl definitions (2021-05-20 08:31:22 -0700)
-
-----------------------------------------------------------------
-Fixes for 5.13-rc3:
-- Fix some math errors in the realtime allocator when extent size hints
-  are applied.
-- Fix unnecessary short writes to realtime files when free space is
-  fragmented.
-- Fix a crash when using scrub tracepoints.
-- Restore ioctl uapi definitions that were accidentally removed in
-  5.13-rc1.
-
-----------------------------------------------------------------
-Darrick J. Wong (4):
-      xfs: adjust rt allocation minlen when extszhint > rtextsize
-      xfs: retry allocations when locality-based search fails
-      xfs: fix deadlock retry tracepoint arguments
-      xfs: restore old ioctl definitions
-
- fs/xfs/libxfs/xfs_fs.h |  4 +++
- fs/xfs/scrub/common.c  |  4 ++-
- fs/xfs/xfs_bmap_util.c | 96 ++++++++++++++++++++++++++++++++++++--------------
- 3 files changed, 77 insertions(+), 27 deletions(-)
