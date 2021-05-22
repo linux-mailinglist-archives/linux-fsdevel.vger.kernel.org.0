@@ -2,139 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0333538D289
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 May 2021 02:23:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C493338D2A0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 May 2021 02:41:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230265AbhEVAZO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 May 2021 20:25:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34160 "EHLO
+        id S230377AbhEVAnE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 May 2021 20:43:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230268AbhEVAZF (ORCPT
+        with ESMTP id S230228AbhEVAnC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 May 2021 20:25:05 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B000C061357;
-        Fri, 21 May 2021 17:22:48 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id a4so22625861wrr.2;
-        Fri, 21 May 2021 17:22:48 -0700 (PDT)
+        Fri, 21 May 2021 20:43:02 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74438C06138C
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 17:41:38 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id a7so3147182plh.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 May 2021 17:41:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:references:from:subject:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=gyzVl8OaygknyiQ92wI9NqUUnUzVTtSj7pAG6enmPyo=;
-        b=h9+5dlZVZNErqj/VlQoU6FFADlMgqz1rcXrf+FRcGqRuWu6/+GSmFfJGzQ6UjZPasQ
-         EI6OuFqiQZQgzqfNxjJJgx9yfPugxzr+7ry7XjEXAbqF6Nyt+oaUmo+pvs6sA7HNk3le
-         v+j+HoV7anBhT0OQjfS1we4WTMQq6BnhMNAI3o6DZCNCS9uiYHUAhLYIkJroa2TsH1U5
-         a1NB/CPiMyK/jA/IW1lsqCHSGOfzD0zibwaictf/lHaPY64rUPpK4kfZTMVIFzXlFra1
-         JKxjgsoecROHhoTykwAdiHkJmmVd62kS24ZeLbepeB/r75wypmXI5iVKgliCKPIz5RWC
-         NCxQ==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Do8tBe8MKGvYLGV0ouciDO6sfr90+7VufJDC8snUPEk=;
+        b=hCTGdwYm3KHmZLXIA1s8Tt3EsWtz80guhJoj3GO2oLO8j5KzTDQq2hlyJrXqAd0zjT
+         aPPflvT3D6YRn3NHGIc5bxuqSfybPikU8aLvzX16G2RBA9nAFBbJulcJrjxb+TXal6YY
+         /lUkFk9Za8oabPvSiNP0xCi4AxZ5OResG4uAG1TRQyTuuyB6CRhs042hR3I934F1jpQb
+         rjiBCHAYSs26BTKg3doorTrc8A6uOd9/YU56ywgcrWWQnP1vN/dIQZj9+ePH9lT0xM9q
+         UvOT+Ole23+i1JwUR4NnfHFv+6SjQb+5Nw1/RHl6ketq7o3FBwMdWrV5UjY+5iwEFjSb
+         TxEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gyzVl8OaygknyiQ92wI9NqUUnUzVTtSj7pAG6enmPyo=;
-        b=ahQJiUHRlDNSEUKiILnJvFip3Q1S2c2GYqVQtJh89eKGIF7f1IeInzwEqRoEP8mhjj
-         iz0Q14V8BmeTvIjFQn7TfwtvWYASq86hIg+IvPnG/+Sl86yjtnxS5T2jwcr4GuHurpqJ
-         3W2QAHFfLtpG9HVsnspIPMrbxRRab6MvOQh9sdFNeTxFPhxcSQ7BxmkhPvwF2jUftkUJ
-         fZCcHmycTgfw0fmk9RYS9VcVOLlql0+Aur/xM16ZJSYM7boxUJk6kDNwwalZ/dy4kTeq
-         yBc2w82DYMG1TsPRqrdyb2AKr0f08X89dCnWxBYCDCdBo1J70Wx/tqUA7lZmVK/YXCxy
-         5FaQ==
-X-Gm-Message-State: AOAM530xMyuQRO0KBo/LFIiKXl4DNght7sWAcUBIHeFULlRgTlx/7/5R
-        26vGJ1kZ7PG9toDPRkXsqHM=
-X-Google-Smtp-Source: ABdhPJxaXbjmt4xOHYAJ+WucB6UB7YwedwnqpF4Vvt+zZvoVOd6AMuq4GF3A5xjCoLHvNNbU9LIObw==
-X-Received: by 2002:adf:a519:: with SMTP id i25mr11858230wrb.312.1621642966773;
-        Fri, 21 May 2021 17:22:46 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.236.182])
-        by smtp.gmail.com with ESMTPSA id s199sm1032010wme.43.2021.05.21.17.22.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 May 2021 17:22:46 -0700 (PDT)
-To:     Paul Moore <paul@paul-moore.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <162163367115.8379.8459012634106035341.stgit@sifl>
- <162163379461.8379.9691291608621179559.stgit@sifl>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
- support to io_uring
-Message-ID: <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
-Date:   Sat, 22 May 2021 01:22:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Do8tBe8MKGvYLGV0ouciDO6sfr90+7VufJDC8snUPEk=;
+        b=QlLNdenv5Qzy6qr4kiLYeggiK3SbteC0lj9a9x/3es8pTAh1J40T4m1UhsELIrWbso
+         l1K9Ye7t+bqMs0zlnowxlffMVmUIE8FRHv6/9jd5ABAGVhZuPsBjh32w62g7V+EqIAp0
+         Jp4h8oJDDXVA2601OxVrvLJYltdXYor7BnS8xG7kclcbiikzLFwBvNZgHkc2dofz9CCG
+         4x6VWAvncTswO7iIE/FRqAbexplAVpOeRXyPwVPEbYE2QYozpGfad25lSy0ZG37gDOb2
+         mrjtXblJ4S4bDZVjB6zEcHyEuK14cW0qettJmSD+KeN47DfYBgDnLPRtb+WJBFc/iTlQ
+         aXCw==
+X-Gm-Message-State: AOAM530vvy2ksGMd8b4V9zp0UNMyrvGviP+/UYmcIcac6Wbi0vfREAPj
+        RltoUXW68d6N+HzWMyNqkwlbjA==
+X-Google-Smtp-Source: ABdhPJwruN4mWdld13VPy8AKXxOMTRznaYTadIQjWS3DfaRCZLXeGt3kBdpujYY7DJ1j4bEwdFfZEg==
+X-Received: by 2002:a17:902:aa4c:b029:ee:ec17:89f with SMTP id c12-20020a170902aa4cb02900eeec17089fmr14665947plr.11.1621644097595;
+        Fri, 21 May 2021 17:41:37 -0700 (PDT)
+Received: from google.com ([2401:fa00:9:211:42b2:c084:8468:626a])
+        by smtp.gmail.com with ESMTPSA id x19sm5259561pgj.66.2021.05.21.17.41.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 May 2021 17:41:36 -0700 (PDT)
+Date:   Sat, 22 May 2021 10:41:24 +1000
+From:   Matthew Bobrowski <repnop@google.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 5/5] fanotify: Add pidfd info record support to the
+ fanotify API
+Message-ID: <YKhTNCyQLlqaz3yC@google.com>
+References: <48d18055deb4617d97c695a08dca77eb573097e9.1621473846.git.repnop@google.com>
+ <20210520081755.eqey4ryngngt4yqd@wittgenstein>
+ <CAOQ4uxhvD2w1i3ia=8=4iCNEYDJ3wfps6AOLdUBXVi-H9Xu-OQ@mail.gmail.com>
+ <YKd7tqiVd9ny6+oD@google.com>
+ <CAOQ4uxi6LceN+ETbF6XbbBqfAY3H+K5ZMuky1L-gh_g53TEN1A@mail.gmail.com>
+ <20210521102418.GF18952@quack2.suse.cz>
+ <CAOQ4uxh84uXAQzz2w+TD1OeDtVwBX8uhM3Pumm46YvP-Wkndag@mail.gmail.com>
+ <20210521131917.GM18952@quack2.suse.cz>
+ <CAOQ4uxiA77_P5vtv7e83g0+9d7B5W9ZTE4GfQEYbWmfT1rA=VA@mail.gmail.com>
+ <20210521151415.GP18952@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <162163379461.8379.9691291608621179559.stgit@sifl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210521151415.GP18952@quack2.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/21/21 10:49 PM, Paul Moore wrote:
-> WARNING - This is a work in progress and should not be merged
-> anywhere important.  It is almost surely not complete, and while it
-> probably compiles it likely hasn't been booted and will do terrible
-> things.  You have been warned.
+On Fri, May 21, 2021 at 05:14:15PM +0200, Jan Kara wrote:
+> On Fri 21-05-21 16:52:08, Amir Goldstein wrote:
+> > On Fri, May 21, 2021 at 4:19 PM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Fri 21-05-21 14:10:32, Amir Goldstein wrote:
+> > > > On Fri, May 21, 2021 at 1:24 PM Jan Kara <jack@suse.cz> wrote:
+> > > > >
+> > > > > On Fri 21-05-21 12:41:51, Amir Goldstein wrote:
+> > > > > > On Fri, May 21, 2021 at 12:22 PM Matthew Bobrowski <repnop@google.com> wrote:
+> > > > > > >
+> > > > > > > Hey Amir/Christian,
+> > > > > > >
+> > > > > > > On Thu, May 20, 2021 at 04:43:48PM +0300, Amir Goldstein wrote:
+> > > > > > > > On Thu, May 20, 2021 at 11:17 AM Christian Brauner
+> > > > > > > > <christian.brauner@ubuntu.com> wrote:
+> > > > > > > > > > +#define FANOTIFY_PIDFD_INFO_HDR_LEN \
+> > > > > > > > > > +     sizeof(struct fanotify_event_info_pidfd)
+> > > > > > > > > >
+> > > > > > > > > >  static int fanotify_fid_info_len(int fh_len, int name_len)
+> > > > > > > > > >  {
+> > > > > > > > > > @@ -141,6 +143,9 @@ static int fanotify_event_info_len(unsigned int info_mode,
+> > > > > > > > > >       if (fh_len)
+> > > > > > > > > >               info_len += fanotify_fid_info_len(fh_len, dot_len);
+> > > > > > > > > >
+> > > > > > > > > > +     if (info_mode & FAN_REPORT_PIDFD)
+> > > > > > > > > > +             info_len += FANOTIFY_PIDFD_INFO_HDR_LEN;
+> > > > > > > > > > +
+> > > > > > > > > >       return info_len;
+> > > > > > > > > >  }
+> > > > > > > > > >
+> > > > > > > > > > @@ -401,6 +406,29 @@ static int copy_fid_info_to_user(__kernel_fsid_t *fsid,
+> > > > > > > > > >       return info_len;
+> > > > > > > > > >  }
+> > > > > > > > > >
+> > > > > > > > > > +static int copy_pidfd_info_to_user(struct pid *pid,
+> > > > > > > > > > +                                char __user *buf,
+> > > > > > > > > > +                                size_t count)
+> > > > > > > > > > +{
+> > > > > > > > > > +     struct fanotify_event_info_pidfd info = { };
+> > > > > > > > > > +     size_t info_len = FANOTIFY_PIDFD_INFO_HDR_LEN;
+> > > > > > > > > > +
+> > > > > > > > > > +     if (WARN_ON_ONCE(info_len > count))
+> > > > > > > > > > +             return -EFAULT;
+> > > > > > > > > > +
+> > > > > > > > > > +     info.hdr.info_type = FAN_EVENT_INFO_TYPE_PIDFD;
+> > > > > > > > > > +     info.hdr.len = info_len;
+> > > > > > > > > > +
+> > > > > > > > > > +     info.pidfd = pidfd_create(pid, 0);
+> > > > > > > > > > +     if (info.pidfd < 0)
+> > > > > > > > > > +             info.pidfd = FAN_NOPIDFD;
+> > > > > > > > > > +
+> > > > > > > > > > +     if (copy_to_user(buf, &info, info_len))
+> > > > > > > > > > +             return -EFAULT;
+> > > > > > > > >
+> > > > > > > > > Hm, well this kinda sucks. The caller can end up with a pidfd in their
+> > > > > > > > > fd table and when the copy_to_user() failed they won't know what fd it
+> > > > > > > >
+> > > > > > > > Good catch!
+> > > > > > >
+> > > > > > > Super awesome catch Christian, thanks pulling this up!
+> > > > > > >
+> > > > > > > > But I prefer to solve it differently, because moving fd_install() to the
+> > > > > > > > end of this function does not guarantee that copy_event_to_user()
+> > > > > > > > won't return an error one day with dangling pidfd in fd table.
+> > > > > > >
+> > > > > > > I can see the angle you're approaching this from...
+> > > > > > >
+> > > > > > > > It might be simpler to do pidfd_create() next to create_fd() in
+> > > > > > > > copy_event_to_user() and pass pidfd to copy_pidfd_info_to_user().
+> > > > > > > > pidfd can be closed on error along with fd on out_close_fd label.
+> > > > > > > >
+> > > > > > > > You also forgot to add CAP_SYS_ADMIN check before pidfd_create()
+> > > > > > > > (even though fanotify_init() does check for that).
+> > > > > > >
+> > > > > > > I didn't really understand the need for this check here given that the
+> > > > > > > administrative bits are already being checked for in fanotify_init()
+> > > > > > > i.e. FAN_REPORT_PIDFD can never be set for an unprivileged listener;
+> > > > > > > thus never walking any of the pidfd_mode paths. Is this just a defense
+> > > > > > > in depth approach here, or is it something else that I'm missing?
+> > > > > > >
+> > > > > >
+> > > > > > We want to be extra careful not to create privilege escalations,
+> > > > > > so even if the fanotify fd is leaked or intentionally passed to a less
+> > > > > > privileged user, it cannot get an open pidfd.
+> > > > > >
+> > > > > > IOW, it is *much* easier to be defensive in this case than to prove
+> > > > > > that the change cannot introduce any privilege escalations.
+> > > > >
+> > > > > I have no problems with being more defensive (it's certainly better than
+> > > > > being too lax) but does it really make sence here? I mean if CAP_SYS_ADMIN
+> > > > > task opens O_RDWR /etc/passwd and then passes this fd to unpriviledged
+> > > > > process, that process is also free to update all the passwords.
+> > > > > Traditionally permission checks in Unix are performed on open and then who
+> > > > > has fd can do whatever that fd allows... I've tried to follow similar
+> > > > > philosophy with fanotify as well and e.g. open happening as a result of
+> > > > > fanotify path events does not check permissions either.
+> > > > >
+> > > >
+> > > > Agreed.
+> > > >
+> > > > However, because we had this issue with no explicit FAN_REPORT_PID
+> > > > we added the CAP_SYS_ADMIN check for reporting event->pid as next
+> > > > best thing. So now that becomes weird if priv process created fanotify fd
+> > > > and passes it to unpriv process, then unpriv process gets events with
+> > > > pidfd but without event->pid.
+> > > >
+> > > > We can change the code to:
+> > > >
+> > > >         if (!capable(CAP_SYS_ADMIN) && !pidfd_mode &&
+> > > >             task_tgid(current) != event->pid)
+> > > >                 metadata.pid = 0;
+> > > >
+> > > > So the case I decscribed above ends up reporting both pidfd
+> > > > and event->pid to unpriv user, but that is a bit inconsistent...
+> > >
+> > > Oh, now I see where you are coming from :) Thanks for explanation. And
+> > > remind me please, cannot we just have internal FAN_REPORT_PID flag that
+> > > gets set on notification group when priviledged process creates it and then
+> > > test for that instead of CAP_SYS_ADMIN in copy_event_to_user()? It is
+> > > mostly equivalent but I guess more in the spirit of how fanotify
+> > > traditionally does things. Also FAN_REPORT_PIDFD could then behave in the
+> > > same way...
+> > 
+> > Yes, we can. In fact, we should call the internal flag FANOTIFY_UNPRIV
+> > as it described the situation better than FAN_REPORT_PID.
+> > This happens to be how I implemented it in the initial RFC [1].
+> > 
+> > It's not easy to follow our entire discussion on this thread, but I think
+> > we can resurrect the FANOTIFY_UNPRIV internal flag and use it
+> > in this case instead of CAP_SYS_ADMIN.
 > 
-> This patch adds basic auditing to io_uring operations, regardless of
-> their context.  This is accomplished by allocating audit_context
-> structures for the io-wq worker and io_uring SQPOLL kernel threads
-> as well as explicitly auditing the io_uring operations in
-> io_issue_sqe().  The io_uring operations are audited using a new
-> AUDIT_URINGOP record, an example is shown below:
-> 
->   % <TODO - insert AUDIT_URINGOP record example>
-> 
-> Thanks to Richard Guy Briggs for review and feedback.
-> 
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
-[...]
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index e481ac8a757a..e9941d1ad8fd 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -78,6 +78,7 @@
->  #include <linux/task_work.h>
->  #include <linux/pagemap.h>
->  #include <linux/io_uring.h>
-> +#include <linux/audit.h>
->  
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/io_uring.h>
-> @@ -6105,6 +6106,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
->  	if (req->work.creds && req->work.creds != current_cred())
->  		creds = override_creds(req->work.creds);
->  
-> +	if (req->opcode < IORING_OP_LAST)
+> I think at that time we were discussing how to handle opening of fds and
+> we decided to not depend on FANOTIFY_UNPRIV and then I didn't see a value
+> of that flag because I forgot about pids... Anyway now I agree to go for
+> that flag. :)
 
-always true at this point
+Resurrection of this flag SGTM! However, it also sounds like we need
+to land that series before this PIDFD series or simply incorporate the
+UNPRIV flag into this one.
 
-> +		audit_uring_entry(req->opcode);
+Will chat with Amir to get this done.
 
-So, it adds two if's with memory loads (i.e. current->audit_context)
-per request in one of the hottest functions here... No way, nack
-
-Maybe, if it's dynamically compiled into like kprobes if it's
-_really_ used.
-
-> +
->  	switch (req->opcode) {
->  	case IORING_OP_NOP:
->  		ret = io_nop(req, issue_flags);
-> @@ -6211,6 +6215,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
->  		break;
->  	}
->  
-> +	if (req->opcode < IORING_OP_LAST)
-> +		audit_uring_exit(!ret, ret);
-> +
->  	if (creds)
->  		revert_creds(creds);
-
--- 
-Pavel Begunkov
+/M
