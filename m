@@ -2,173 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB0EB38DD9D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 00:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E18A38DE12
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 01:38:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231982AbhEWWxU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 May 2021 18:53:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49318 "EHLO
+        id S232033AbhEWXjo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 May 2021 19:39:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231967AbhEWWxT (ORCPT
+        with ESMTP id S231989AbhEWXjn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 May 2021 18:53:19 -0400
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9BBEC061574;
-        Sun, 23 May 2021 15:51:52 -0700 (PDT)
-Received: by mail-qt1-x82f.google.com with SMTP id 1so19471273qtb.0;
-        Sun, 23 May 2021 15:51:52 -0700 (PDT)
+        Sun, 23 May 2021 19:39:43 -0400
+Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 878FFC061574;
+        Sun, 23 May 2021 16:38:14 -0700 (PDT)
+Received: by mail-qv1-xf35.google.com with SMTP id h7so12691333qvs.12;
+        Sun, 23 May 2021 16:38:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=lzhmHTdCNR5VvClEM+iz/7Eogm7OVbdZpRr+qZMhppo=;
-        b=Oj/MaWWY/cgYCwAvZ5EliqEu2GTgveqHVVaaVsBe93hwe3eOAU3khByJtblvwO1Rnu
-         BN+62GrdqG41Ab9NldK7sPyKLO3o8pemH+x6f3LfSAAe9q5Vs8SidQ+RoEshyKfeIJFx
-         +MwVbJaie2OrAhns/5tHVcsTyyUDCF/aapvRrKE88D4UCJ06roeGF+VSPYk8yqMVJTN/
-         NNFMBMuekUzh3lcMfMTbIv4Dzye40A0pzAOxyUCi8sOcL0ewcTakCoTuKXE4U1OoSmYY
-         hKyXIjSWwJPJ+paBYQzsAXDP/yv7r8xcXiDNBZi0wpu+ir9E4HnVL1F2zSfZSoNaW0i1
-         /Acg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d9a11YZ/p1awTBwVbz3YzCFeSTuy6nImBmPUHPega8M=;
+        b=r85CJuPqVWFgpZkmHMAGgS7JKzkBq8vOXdMu/+bBT24P0TolJl9K+nLUQJcZoOOA2O
+         8mS0pUZUXpRk+t2Qsqn3YmZb1LLLa7tMb2+yCTBq38u3jso6RUNXDiC8hcBGSWrftmiT
+         /PZHUS3ty1xk/oT6kXoQuXBYRROag75W1hStmFYpSkFP0H7wtIz5ZO75KOEZlJKtxcJh
+         vX26X1/8HMRZp90BDEanjCPrTVABFZ8od2SMEOrdiehlG3qQr+GLavDPMp2x9euFnfEO
+         0agdtUg4R/maJgZ7OG12d6ESM4FAQhLcaS+08o4YEFOcwl/xRJvi1jEXkTmyF2oN0jI2
+         C2wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lzhmHTdCNR5VvClEM+iz/7Eogm7OVbdZpRr+qZMhppo=;
-        b=poZvTFDroc9MslbDsWwBufC50nxAzMxIkPHZwR78EjF+5zHxHqLwqotwwfYVRc3h83
-         PxpbteJUzZcNufZJEOTEAx/vXBHxgkGYEBiZSKud9plQrVyfb9uu95EpJXaRpTPLb9FY
-         GIrTVMaztbaPIdYVUOMYDDB437s0sbX18WDASQZFufBRjF2hXIZO4gznDbPb//PoICIX
-         owguV7XrwwtMjyiFu1kxAvIOVFgtI7aCmJsdU9dwwGRJgZGtBQizOISY41P76Tee4h41
-         CmI+EZZ4ZCMSyJ4zHA9BYTjuH7Yct7m8O16VvcWnf7fWR0N2hO8sSFbfyz4hMDxVu64M
-         VCmw==
-X-Gm-Message-State: AOAM530wYI3sabMvsfxNVd/ptjHf2opsUSIReMUuepOPIgVKWY/CAFz2
-        anEADTxE80Xkanq0/dfPE0gPxx9zZTRa
-X-Google-Smtp-Source: ABdhPJxv2kVSZxyrvWycz0qyYJVoNfXCEuzJF7N0bld/7vpttbP0tnutxV/x6Yf4x5jMqiO+KRBFmw==
-X-Received: by 2002:a05:622a:446:: with SMTP id o6mr24551615qtx.246.1621810311689;
-        Sun, 23 May 2021 15:51:51 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d9a11YZ/p1awTBwVbz3YzCFeSTuy6nImBmPUHPega8M=;
+        b=NIIyAx8ttN/4gS1VjKEUijlEahWhUmLAWmn60XycCK+OoKnKTnNmu/buVMFUvhT97e
+         1/7IwbhpGRNeUy2TK9a7CB+VI+8beUcO9JNtJ+Vmq+wQtr3EBx6DNQhstrzVgSMxRNBw
+         aduPF6he/P2lnc9dqbo8PQNfqAFcWIQVWuMQ1TWuKOQQ13oLtCidr1a2gcwahaoqco0m
+         p84yMxq02//tJH4PpB7Fq22+VG9teutAuNIuo8c/7c1jEw1rP4JIi9sTLbAbgicCAupI
+         Sqx2sFvT5IeIpu7cXrTJIIZYUaZmRHl8MQImJ1Eb3FQ3OaIpWOTs0QHDV0r7bV5p1XSL
+         P+0A==
+X-Gm-Message-State: AOAM532bFOOM8ntnA3RYuy4om31xQoUeCyfr8qLlAlKgtKFYbMUjBZZE
+        4UThqtm9Rrr2ymrahTkKQHncJYP6S9Om
+X-Google-Smtp-Source: ABdhPJzjaO7Dbgpin7JsPB5l9mj0FhNLxpaJwy3SsIzwn92704IyOHsy5FVqiA4wuLKdJBWbk6IVyQ==
+X-Received: by 2002:a05:6214:a6b:: with SMTP id ef11mr16159185qvb.19.1621813092639;
+        Sun, 23 May 2021 16:38:12 -0700 (PDT)
 Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id t6sm9962202qkh.117.2021.05.23.15.51.50
+        by smtp.gmail.com with ESMTPSA id 7sm10234014qtu.38.2021.05.23.16.38.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 May 2021 15:51:51 -0700 (PDT)
-Date:   Sun, 23 May 2021 18:51:49 -0400
+        Sun, 23 May 2021 16:38:12 -0700 (PDT)
 From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Eryu Guan <guan@eryu.me>
-Cc:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>
-Subject: Re: [PATCH 1/3] Initial bcachefs support
-Message-ID: <YKrchSzj8Zo4CnDs@moria.home.lan>
-References: <20210427164419.3729180-1-kent.overstreet@gmail.com>
- <20210427164419.3729180-2-kent.overstreet@gmail.com>
- <YJfzVSGu2BbE4oMY@desktop>
+To:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>
+Subject: [PATCH 1/1] generic/{455,457,482}: make dmlogwrites tests work on bcachefs
+Date:   Sun, 23 May 2021 19:38:07 -0400
+Message-Id: <20210523233807.3800568-1-kent.overstreet@gmail.com>
+X-Mailer: git-send-email 2.32.0.rc0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YJfzVSGu2BbE4oMY@desktop>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 09, 2021 at 10:36:05PM +0800, Eryu Guan wrote:
-> On Tue, Apr 27, 2021 at 12:44:17PM -0400, Kent Overstreet wrote:
-> > From: Kent Overstreet <kmo@daterainc.com>
-> 
-> Better to add commit logs at least to give an example about how to setup
-> fstests to test bcachefs.
-> 
-> You could always set MKFS_OPTIONS to "--errors=panic" explicitly when
-> needed.
+bcachefs has log structured btree nodes, in addition to a regular
+journal, which means that unless we replay to markers in the log in the
+same order that they happened and are careful to avoid writing in
+between replaying to different events - we need to wipe and start fresh
+each time.
 
-Forgot that was an option - doing that now.
-> 
-> > +		;;
-> >  	*)
-> >  		;;
-> >  	esac
-> > diff --git a/common/dmlogwrites b/common/dmlogwrites
-> > index 573f4b8a56..668d49e995 100644
-> > --- a/common/dmlogwrites
-> > +++ b/common/dmlogwrites
-> > @@ -111,6 +111,13 @@ _log_writes_replay_log()
-> >  	[ -z "$_blkdev" ] && _fail \
-> >  	"block dev must be specified for _log_writes_replay_log"
-> >  
-> > +	if [ "$FSTYP" = "bcachefs" ]; then
-> > +		# bcachefs gets confused if we're replaying the history out of
-> > +		# order, and we see writes on the device from a newer point in
-> > +		# time than what the superblock points to:
-> > +		dd if=/dev/zero of=$SCRATCH_DEV bs=1M oflag=direct >& /dev/null
-> 
-> I don't know bcachefs internals, I'm not sure I understand this,
-> clearing the first 1M of SCRATCH_DEV seems to clear superblock, but I'm
-> still not sure why it's needed. Does wipefs work?
+Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+---
+ tests/generic/455 | 14 ++++++++++++++
+ tests/generic/457 | 14 ++++++++++++++
+ tests/generic/482 | 27 ++++++++++++++++++++-------
+ 3 files changed, 48 insertions(+), 7 deletions(-)
 
-It's not just the superblock we need to clear, it's really all metadata - the
-journal, and btree nodes are also log structured in bcachefs. So 1M actually
-isn't sufficient - the better solution would be to either
+diff --git a/tests/generic/455 b/tests/generic/455
+index 5b4b242e74..6dc46c3c72 100755
+--- a/tests/generic/455
++++ b/tests/generic/455
+@@ -35,6 +35,17 @@ _require_dm_target thin-pool
+ 
+ rm -f $seqres.full
+ 
++_reset_dmthin()
++{
++    # With bcachefs, we need to wipe and start fresh every time we replay to a
++    # different point in time - if we see metadata from a future point in time,
++    # or an unrelated mount, bcachefs will get confused:
++    if [ "$FSTYP" = "bcachefs" ]; then
++	_dmthin_cleanup
++	_dmthin_init $devsize $devsize $csize $lowspace
++    fi
++}
++
+ check_files()
+ {
+ 	local name=$1
+@@ -44,6 +55,7 @@ check_files()
+ 		local filename=$(basename $i)
+ 		local mark="${filename##*.}"
+ 		echo "checking $filename" >> $seqres.full
++		_reset_dmthin
+ 		_log_writes_replay_log $filename $DMTHIN_VOL_DEV
+ 		_dmthin_mount
+ 		local expected_md5=$(_md5_checksum $i)
+@@ -101,6 +113,7 @@ _dmthin_check_fs
+ 
+ # check pre umount
+ echo "checking pre umount" >> $seqres.full
++_reset_dmthin
+ _log_writes_replay_log last $DMTHIN_VOL_DEV
+ _dmthin_mount
+ _dmthin_check_fs
+@@ -111,6 +124,7 @@ done
+ 
+ # Check the end
+ echo "checking post umount" >> $seqres.full
++_reset_dmthin
+ _log_writes_replay_log end $DMTHIN_VOL_DEV
+ _dmthin_mount
+ for j in `seq 0 $((NUM_FILES-1))`; do
+diff --git a/tests/generic/457 b/tests/generic/457
+index ddbd90cf0c..f17d4e4430 100755
+--- a/tests/generic/457
++++ b/tests/generic/457
+@@ -37,6 +37,17 @@ _require_dm_target thin-pool
+ 
+ rm -f $seqres.full
+ 
++_reset_dmthin()
++{
++    # With bcachefs, we need to wipe and start fresh every time we replay to a
++    # different point in time - if we see metadata from a future point in time,
++    # or an unrelated mount, bcachefs will get confused:
++    if [ "$FSTYP" = "bcachefs" ]; then
++	_dmthin_cleanup
++	_dmthin_init $devsize $devsize $csize $lowspace
++    fi
++}
++
+ check_files()
+ {
+ 	local name=$1
+@@ -46,6 +57,7 @@ check_files()
+ 		local filename=$(basename $i)
+ 		local mark="${filename##*.}"
+ 		echo "checking $filename" >> $seqres.full
++		_reset_dmthin
+ 		_log_writes_replay_log $filename $DMTHIN_VOL_DEV
+ 		_dmthin_mount
+ 		local expected_md5=$(_md5_checksum $i)
+@@ -105,6 +117,7 @@ _dmthin_check_fs
+ 
+ # check pre umount
+ echo "checking pre umount" >> $seqres.full
++_reset_dmthin
+ _log_writes_replay_log last $DMTHIN_VOL_DEV
+ _dmthin_mount
+ _dmthin_check_fs
+@@ -115,6 +128,7 @@ done
+ 
+ # Check the end
+ echo "checking post umount" >> $seqres.full
++_reset_dmthin
+ _log_writes_replay_log end $DMTHIN_VOL_DEV
+ _dmthin_mount
+ for j in `seq 0 $((NUM_FILES-1))`; do
+diff --git a/tests/generic/482 b/tests/generic/482
+index 86941e8468..3cbe187f2e 100755
+--- a/tests/generic/482
++++ b/tests/generic/482
+@@ -77,16 +77,29 @@ prev=$(_log_writes_mark_to_entry_number mkfs)
+ cur=$(_log_writes_find_next_fua $prev)
+ [ -z "$cur" ] && _fail "failed to locate next FUA write"
+ 
++if [ "$FSTYP" = "bcachefs" ]; then
++    _dmthin_cleanup
++    _dmthin_init $devsize $devsize $csize $lowspace
++fi
++
+ while [ ! -z "$cur" ]; do
+ 	_log_writes_replay_log_range $cur $DMTHIN_VOL_DEV >> $seqres.full
+ 
+-	# Here we need extra mount to replay the log, mainly for journal based
+-	# fs, as their fsck will report dirty log as error.
+-	# We don't care to preserve any data on the replay dev, as we can replay
+-	# back to the point we need, and in fact sometimes creating/deleting
+-	# snapshots repeatedly can be slower than replaying the log.
+-	_dmthin_mount
+-	_dmthin_check_fs
++	if [ "$FSTYP" = "bcachefs" ]; then
++	    # bcachefs will get confused if fsck does writes to replay the log,
++	    # but then we replay writes from an earlier point in time on the
++	    # same fs - but  fsck in -n mode won't do any writes:
++	    _check_scratch_fs -n $DMTHIN_VOL_DEV
++	else
++	    # Here we need extra mount to replay the log, mainly for journal based
++	    # fs, as their fsck will report dirty log as error.
++	    # We don't care to preserve any data on the replay dev, as we can replay
++	    # back to the point we need, and in fact sometimes creating/deleting
++	    # snapshots repeatedly can be slower than replaying the log.
++
++	    _dmthin_mount
++	    _dmthin_check_fs
++	fi
+ 
+ 	prev=$cur
+ 	cur=$(_log_writes_find_next_fua $(($cur + 1)))
+-- 
+2.32.0.rc0
 
- - change the tests to check the markers in the log in the correct order, so
-   we never see metadata from a future point in time, also making sure we don't
-   do any writes to the filesystem when we're checking the different markers, or
- - just replay to a new dm-thin device
-
-This is basically what I did for generic/482, the 1M zerout is really just a
-hack for 455 and 457 and should probably be moved there, unless you've got
-another suggestion.
-
-> > diff --git a/common/rc b/common/rc
-> > index 2cf550ec68..0e03846aeb 100644
-> > --- a/common/rc
-> > +++ b/common/rc
-> > @@ -334,6 +334,7 @@ _try_scratch_mount()
-> >  		return $?
-> >  	fi
-> >  	_mount -t $FSTYP `_scratch_mount_options $*`
-> > +	return
-> 
-> Seems not necessary.
-
-Not sure how that got in, dropped it.
-
-> > +    bcachefs)
-> > +	$MKFS_PROG -t $FSTYP -- $MKFS_OPTIONS $* $TEST_DEV
-> > +	;;
-> 
-> I think we could just use the default mkfs command below. The only
-> difference is dropping the "yes | " part, but that does nothing if mkfs
-> doesn't read "yes" or "no" from stdin.
-
-That dates from when my test environment had SIGPIPE set up wrong (systemd!),
-it's fixed now so I've dropped these.
-> >      *)
-> >  	_notrun "Filesystem $FSTYP not supported in _scratch_mkfs_blocksized"
-> >  	;;
-> > @@ -1179,6 +1197,19 @@ _repair_scratch_fs()
-> >  	fi
-> >  	return $res
-> >          ;;
-> > +    bcachefs)
-> > +	fsck -t $FSTYP -n $SCRATCH_DEV 2>&1
-> 
-> _repair_scratch_fs() is supposed to actually fix the errors, does
-> "fsck -n" fix errors for bcachefs?
-
-No - but with bcachefs fsck finding errors _always_ indicates a bug, so for the
-purposes of these tests I think this is the right thing to do - I don't want the
-tests to pass if fsck is finding and fixing errors.
-
-> > diff --git a/tests/generic/042 b/tests/generic/042
-> > index 35727bcbc6..42919e2313 100755
-> > --- a/tests/generic/042
-> > +++ b/tests/generic/042
-> > @@ -63,7 +63,8 @@ _crashtest()
-> >  
-> >  	# We should /never/ see 0xCD in the file, because we wrote that pattern
-> >  	# to the filesystem image to expose stale data.
-> > -	if hexdump -v -e '/1 "%02X "' $file | grep -q "CD"; then
-> > +	# The file is not required to exist since we didn't sync before going down:
-> > +	if [[ -f $file ]] && hexdump -v -e '/1 "%02X "' $file | grep -q "CD"; then
-> >  		echo "Saw stale data!!!"
-> >  		hexdump $file
-> >  	fi
-> 
-> Updates for individual test should be in a separate patch.
-
-Ok, I'll split those out.
