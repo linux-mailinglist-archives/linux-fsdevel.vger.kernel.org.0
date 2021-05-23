@@ -2,168 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16BF338DC8F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 May 2021 21:15:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A650138DCD5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 May 2021 22:26:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231896AbhEWTRT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 May 2021 15:17:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58622 "EHLO
+        id S231956AbhEWU17 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 May 2021 16:27:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231887AbhEWTRT (ORCPT
+        with ESMTP id S231933AbhEWU16 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 May 2021 15:17:19 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E51FC061574
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 May 2021 12:15:52 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id lz27so38308247ejb.11
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 May 2021 12:15:52 -0700 (PDT)
+        Sun, 23 May 2021 16:27:58 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9558CC061574;
+        Sun, 23 May 2021 13:26:31 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id n17-20020a7bc5d10000b0290169edfadac9so430293wmk.1;
+        Sun, 23 May 2021 13:26:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=VHYzmc+otfrR+KT6Q92j+o3OnwObzHpD+WPcnWEL15A=;
-        b=mo9wwejpsrQZs6KDKfQBouK6goYhImXV/Sd+6L/Iy4Mbek8Fgd/iGwh96ILqGjfHgi
-         WpZbOSOZioQHoON+bHzfw5LlNmYItkO4pfGcMG10TSSaFCR922aiIWgKyg5zvRMh72Xp
-         VBE8vQjuSyUfwKqSrDMmtHknwBxJTATxwmFuZ3LjT8+yYcJ+5xpuWwR4+EJ4UVHQ7zPg
-         CG91NzKfYqnKpoGl9SbO3/skIqdX/jSd288u1um41145VM+Jc3PoJz1TvjdQlOozBnej
-         rZoTymfuZH17ZCLy76ZJN78SsYRpvyKkI0P35+XPmrijP2E3b/DPmCb9NbDVA3ReM1wE
-         49cg==
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PygufLx+GftT6TS2etBhgc6+uuLN9BWMi/zqgHpQvsY=;
+        b=esrTniYlKVIz1qwncB0fA1f6EoaGdXdv9Byf2wrzoXpJoI8ojdqkT7UMYtQ9tQdySr
+         dSSenwaL0uFN0kSScz4CSe6aF58av5EQOYX0crNgBe7TucIZqRPeRPClZzCZd7yi8vWW
+         O8nk+31pXBR9ihIKwxvRsCSxf62JDvRBeSK/GiTZ2dw/RpQpabwMEsy6xgjhQ8CbfoP5
+         QLmJcJBTT4BYTPrUanoQCVObQvlzPbKoVnKLRz+H90+AnrvDsodYtO/tWjJExz5Adju5
+         /lQx48WoVzuaUsfWYwEcjGsVXZwjY1oR64OEuEmYacUMdOdrwAbXifj7z1hl61xv6RDW
+         +kLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=VHYzmc+otfrR+KT6Q92j+o3OnwObzHpD+WPcnWEL15A=;
-        b=TbJCIUgds9Kzn//EDklVTqj0QRNvpIZMZLqwd+6/e3MAPNZ/5aertzq4BJrnIO1XlE
-         WrP3M4aI5ACTQ+2X50xJxQO/K+iX9gRGcTGg4vawKbbp9WwNYTm4mHjcMvHIzZm72txL
-         Te2Bsn9Rx8wtcHJglzq+Wg5gTXrt1U2ec6k0MEqPUWHt6YHVeweVNiZcRg+L1UBFQ+Nj
-         7AHeD5w/kA7ZwSy4XALAadNRXWSypG0NHxzzkL/XmK8xJiQS1/4iS1T0u2YW+IOsPJ/b
-         pJRPbhCseTi/oTFzojcaLKGxkVk2+PioPrJKjng9ErkEyUklw3yNlb16JE96qWNlRisN
-         5KrQ==
-X-Gm-Message-State: AOAM531ALBHTsG4WrD+Y9K69C186EBRHpKlBEzOBpuEtDIo406VWMFnz
-        4de/yJBjiDwt3Vz8ws3oCqo=
-X-Google-Smtp-Source: ABdhPJwQUyfdhZ8+T05HWSR3iiaR/kMEWw35QvIZTG5HwegO1akAXt0mLF0aTBHLXKrFY1EPkccRBA==
-X-Received: by 2002:a17:906:b2c1:: with SMTP id cf1mr19203871ejb.544.1621797350761;
-        Sun, 23 May 2021 12:15:50 -0700 (PDT)
-Received: from eldamar (80-218-24-251.dclient.hispeed.ch. [80.218.24.251])
-        by smtp.gmail.com with ESMTPSA id hb14sm4301938ejb.118.2021.05.23.12.15.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 May 2021 12:15:50 -0700 (PDT)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Date:   Sun, 23 May 2021 21:15:49 +0200
-From:   Salvatore Bonaccorso <carnil@debian.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Cc:     Enrico Zini <enrico@debian.org>
-Subject: Re: Calling sendfile(2) on sparse files on tmpfs allocates space for
- them
-Message-ID: <YKqp5XaV1OlUKXxf@eldamar.lan>
-References: <20180520150940.4qtsc43vcnp5t34z@enricozini.org>
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PygufLx+GftT6TS2etBhgc6+uuLN9BWMi/zqgHpQvsY=;
+        b=gLXj6Ac2l8Z0G8Ix7wJnc9AgD1h16l/ooQAG8LPDBLhJRKDmTde+2jT9rWquNdmVn3
+         Md7APd2kH4SdX6St8WqxD7yMXx9Iten6ufr0VHC0WGQkIyW5Ak8f8C/uoMhZzmaR2tiB
+         6JItb7srFisF6oH6TE6C7ItzXHlE/OdaVqhaw3IEYSOHnGDQu757ijliAYkJ2JSsU2xn
+         uzHPjXOKYNo0Ze9KarabMK5jOFoIqx0ksVb8ZB3eby68thNsFxg8Ca0W+8cEWMduPzWi
+         /4EBFZBbJnzbXuwgOftwH1hB7GwDjzgecb4o8aXEi+yc+eu1LziUfp1TvNfE/Dpeviem
+         txuA==
+X-Gm-Message-State: AOAM530hZhyBzj4zpbyxDDarbQ2COhHDISIQ/FtVtmVQ8RfG+EpucDLj
+        GXs5F+cF11eqJSCVw6prF00F51Z0/rE0jefX
+X-Google-Smtp-Source: ABdhPJwHSQNM+a1cD2dybYGpeqrMJbBTrEBwBzdhWHyWUNWiVsmNBtsEauiH5obSA1GKRpi7NeXYOw==
+X-Received: by 2002:a1c:4b13:: with SMTP id y19mr17332089wma.102.1621801590115;
+        Sun, 23 May 2021 13:26:30 -0700 (PDT)
+Received: from [192.168.8.197] ([185.69.145.65])
+        by smtp.gmail.com with ESMTPSA id 11sm5855772wmo.24.2021.05.23.13.26.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 May 2021 13:26:29 -0700 (PDT)
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl>
+ <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+Message-ID: <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+Date:   Sun, 23 May 2021 21:26:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180520150940.4qtsc43vcnp5t34z@enricozini.org>
+In-Reply-To: <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Al,
+On 5/22/21 3:36 AM, Paul Moore wrote:
+> On Fri, May 21, 2021 at 8:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>> On 5/21/21 10:49 PM, Paul Moore wrote:
+[...]
+>>>
+>>> +     if (req->opcode < IORING_OP_LAST)
+>>
+>> always true at this point
+> 
+> I placed the opcode check before the audit call because the switch
+> statement below which handles the operation dispatching has a 'ret =
+> -EINVAL' for the default case, implying that there are some paths
+> where an invalid opcode could be passed into the function.  Obviously
+> if that is not the case and you can guarantee that req->opcode will
+> always be valid we can easily drop the check prior to the audit call.
 
-On Sun, May 20, 2018 at 05:09:40PM +0200, Enrico Zini wrote:
-> Hello,
-> 
-> thank you for your work on Linux. I'm trying to report what looks to me like a
-> kernel issue: the code below, if run on a normal file system prints:
-> 
-> After creation: 0/1048576
-> After read: 0/1048576
-> 
-> but if run on a tmpfs it prints:
-> 
-> After creation: 0/1048576
-> After read: 1048576/1048576
-> 
-> This unexpected allocation happens only when using sendfile(2), not
-> while reading the file with read(2).
-> 
-> I observed this behaviour on a range of kernels, from Centos7's 3.10.0
-> to 4.16 currently running in my machine.
-> 
-> This is the code to reproduce it:
-> 
-> #include <sys/fcntl.h>
-> #include <sys/types.h>
-> #include <sys/stat.h>
-> #include <sys/sendfile.h>
-> #include <unistd.h>
-> #include <stdio.h>
-> 
-> int main()
-> {
->     int fd = open("test", O_WRONLY | O_CREAT, 0644);
->     if (fd == -1)
->     {
->         perror("cannot open for writing");
->         return 1;
->     }
-> 
->     if (ftruncate(fd, 1024*1024) == -1)
->     {
->         perror("cannot ftruncate");
->         return 1;
->     }
-> 
->     close(fd);
-> 
->     struct stat st;
->     if (stat("test", &st) == -1)
->     {
->         perror("cannot stat after creation");
->         return 1;
->     }
->     fprintf(stdout, "After creation: %d/%d\n", st.st_blocks * 512, st.st_size);
-> 
->     fd = open("test", O_RDONLY);
->     if (fd == -1)
->     {
->         perror("cannot open for reading");
->         return 1;
->     }
-> 
->     int out = open("/dev/null", O_WRONLY);
->     if (out == -1)
->     {
->         perror("cannot open /dev/null");
->         return 1;
->     }
-> 
->     off_t offset = 0;
->     ssize_t res = sendfile(out, fd, &offset, st.st_size);
->     if (res == -1)
->     {
->         perror("cannot sendfile");
->         return 1;
->     }
->     if (res != st.st_size)
->         fprintf(stderr, "warning: partial sendfile\n");
-> 
->     if (stat("test", &st) == -1)
->     {
->         perror("cannot stat after read");
->         return 1;
->     }
->     fprintf(stdout, "After read: %d/%d\n", st.st_blocks * 512, st.st_size);
-> 
->     close(out);
->     close(fd);
->     unlink("test");
->     return 0;
-> }
+It is always true at this point, would be completely broken
+otherwise
 
-This still seems reproducible in same way as well with 5.10.38. Is
-this intentional behaviour in some way?
+>>> +             audit_uring_entry(req->opcode);
+>>
+>> So, it adds two if's with memory loads (i.e. current->audit_context)
+>> per request in one of the hottest functions here... No way, nack
+>>
+>> Maybe, if it's dynamically compiled into like kprobes if it's
+>> _really_ used.
+> 
+> I'm open to suggestions on how to tweak the io_uring/audit
+> integration, if you don't like what I've proposed in this patchset,
+> lets try to come up with a solution that is more palatable.  If you
+> were going to add audit support for these io_uring operations, how
+> would you propose we do it?  Not being able to properly audit io_uring
+> operations is going to be a significant issue for a chunk of users, if
+> it isn't already, we need to work to find a solution to this problem.
 
-Note, this was originally reported downstream in Debian as
-https://bugs.debian.org/899027 .
+Who knows. First of all, seems CONFIG_AUDIT is enabled by default
+for many popular distributions, so I assume that is not compiled out.
 
-Regards,
-Salvatore
+What are use cases for audit? Always running I guess? Putting aside
+compatibility problems, it sounds that with the amount of overhead
+it adds there is no much profit in using io_uring in the first place.
+Is that so?
+
+__audit_uring_exit()
+-> audit_filter_syscall()
+  -> for (audit_list) if (...) audit_filter_rules()
+    -> ...
+-> audit_filter_inodes()
+  -> ...
+
+> Unfortunately I don't think dynamically inserting audit calls is
+> something that would meet the needs of the audit community (I fear it
+> would run afoul of the various security certifications), and it
+> definitely isn't something that we support at present.
+
+I see
+
+-- 
+Pavel Begunkov
