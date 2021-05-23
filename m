@@ -2,136 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A650138DCD5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 May 2021 22:26:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB0EB38DD9D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 00:51:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231956AbhEWU17 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 May 2021 16:27:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45702 "EHLO
+        id S231982AbhEWWxU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 May 2021 18:53:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231933AbhEWU16 (ORCPT
+        with ESMTP id S231967AbhEWWxT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 May 2021 16:27:58 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9558CC061574;
-        Sun, 23 May 2021 13:26:31 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id n17-20020a7bc5d10000b0290169edfadac9so430293wmk.1;
-        Sun, 23 May 2021 13:26:31 -0700 (PDT)
+        Sun, 23 May 2021 18:53:19 -0400
+Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9BBEC061574;
+        Sun, 23 May 2021 15:51:52 -0700 (PDT)
+Received: by mail-qt1-x82f.google.com with SMTP id 1so19471273qtb.0;
+        Sun, 23 May 2021 15:51:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PygufLx+GftT6TS2etBhgc6+uuLN9BWMi/zqgHpQvsY=;
-        b=esrTniYlKVIz1qwncB0fA1f6EoaGdXdv9Byf2wrzoXpJoI8ojdqkT7UMYtQ9tQdySr
-         dSSenwaL0uFN0kSScz4CSe6aF58av5EQOYX0crNgBe7TucIZqRPeRPClZzCZd7yi8vWW
-         O8nk+31pXBR9ihIKwxvRsCSxf62JDvRBeSK/GiTZ2dw/RpQpabwMEsy6xgjhQ8CbfoP5
-         QLmJcJBTT4BYTPrUanoQCVObQvlzPbKoVnKLRz+H90+AnrvDsodYtO/tWjJExz5Adju5
-         /lQx48WoVzuaUsfWYwEcjGsVXZwjY1oR64OEuEmYacUMdOdrwAbXifj7z1hl61xv6RDW
-         +kLw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=lzhmHTdCNR5VvClEM+iz/7Eogm7OVbdZpRr+qZMhppo=;
+        b=Oj/MaWWY/cgYCwAvZ5EliqEu2GTgveqHVVaaVsBe93hwe3eOAU3khByJtblvwO1Rnu
+         BN+62GrdqG41Ab9NldK7sPyKLO3o8pemH+x6f3LfSAAe9q5Vs8SidQ+RoEshyKfeIJFx
+         +MwVbJaie2OrAhns/5tHVcsTyyUDCF/aapvRrKE88D4UCJ06roeGF+VSPYk8yqMVJTN/
+         NNFMBMuekUzh3lcMfMTbIv4Dzye40A0pzAOxyUCi8sOcL0ewcTakCoTuKXE4U1OoSmYY
+         hKyXIjSWwJPJ+paBYQzsAXDP/yv7r8xcXiDNBZi0wpu+ir9E4HnVL1F2zSfZSoNaW0i1
+         /Acg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PygufLx+GftT6TS2etBhgc6+uuLN9BWMi/zqgHpQvsY=;
-        b=gLXj6Ac2l8Z0G8Ix7wJnc9AgD1h16l/ooQAG8LPDBLhJRKDmTde+2jT9rWquNdmVn3
-         Md7APd2kH4SdX6St8WqxD7yMXx9Iten6ufr0VHC0WGQkIyW5Ak8f8C/uoMhZzmaR2tiB
-         6JItb7srFisF6oH6TE6C7ItzXHlE/OdaVqhaw3IEYSOHnGDQu757ijliAYkJ2JSsU2xn
-         uzHPjXOKYNo0Ze9KarabMK5jOFoIqx0ksVb8ZB3eby68thNsFxg8Ca0W+8cEWMduPzWi
-         /4EBFZBbJnzbXuwgOftwH1hB7GwDjzgecb4o8aXEi+yc+eu1LziUfp1TvNfE/Dpeviem
-         txuA==
-X-Gm-Message-State: AOAM530hZhyBzj4zpbyxDDarbQ2COhHDISIQ/FtVtmVQ8RfG+EpucDLj
-        GXs5F+cF11eqJSCVw6prF00F51Z0/rE0jefX
-X-Google-Smtp-Source: ABdhPJwHSQNM+a1cD2dybYGpeqrMJbBTrEBwBzdhWHyWUNWiVsmNBtsEauiH5obSA1GKRpi7NeXYOw==
-X-Received: by 2002:a1c:4b13:: with SMTP id y19mr17332089wma.102.1621801590115;
-        Sun, 23 May 2021 13:26:30 -0700 (PDT)
-Received: from [192.168.8.197] ([185.69.145.65])
-        by smtp.gmail.com with ESMTPSA id 11sm5855772wmo.24.2021.05.23.13.26.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 May 2021 13:26:29 -0700 (PDT)
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <162163367115.8379.8459012634106035341.stgit@sifl>
- <162163379461.8379.9691291608621179559.stgit@sifl>
- <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
- <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
- support to io_uring
-Message-ID: <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
-Date:   Sun, 23 May 2021 21:26:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=lzhmHTdCNR5VvClEM+iz/7Eogm7OVbdZpRr+qZMhppo=;
+        b=poZvTFDroc9MslbDsWwBufC50nxAzMxIkPHZwR78EjF+5zHxHqLwqotwwfYVRc3h83
+         PxpbteJUzZcNufZJEOTEAx/vXBHxgkGYEBiZSKud9plQrVyfb9uu95EpJXaRpTPLb9FY
+         GIrTVMaztbaPIdYVUOMYDDB437s0sbX18WDASQZFufBRjF2hXIZO4gznDbPb//PoICIX
+         owguV7XrwwtMjyiFu1kxAvIOVFgtI7aCmJsdU9dwwGRJgZGtBQizOISY41P76Tee4h41
+         CmI+EZZ4ZCMSyJ4zHA9BYTjuH7Yct7m8O16VvcWnf7fWR0N2hO8sSFbfyz4hMDxVu64M
+         VCmw==
+X-Gm-Message-State: AOAM530wYI3sabMvsfxNVd/ptjHf2opsUSIReMUuepOPIgVKWY/CAFz2
+        anEADTxE80Xkanq0/dfPE0gPxx9zZTRa
+X-Google-Smtp-Source: ABdhPJxv2kVSZxyrvWycz0qyYJVoNfXCEuzJF7N0bld/7vpttbP0tnutxV/x6Yf4x5jMqiO+KRBFmw==
+X-Received: by 2002:a05:622a:446:: with SMTP id o6mr24551615qtx.246.1621810311689;
+        Sun, 23 May 2021 15:51:51 -0700 (PDT)
+Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id t6sm9962202qkh.117.2021.05.23.15.51.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 May 2021 15:51:51 -0700 (PDT)
+Date:   Sun, 23 May 2021 18:51:49 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     Eryu Guan <guan@eryu.me>
+Cc:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>
+Subject: Re: [PATCH 1/3] Initial bcachefs support
+Message-ID: <YKrchSzj8Zo4CnDs@moria.home.lan>
+References: <20210427164419.3729180-1-kent.overstreet@gmail.com>
+ <20210427164419.3729180-2-kent.overstreet@gmail.com>
+ <YJfzVSGu2BbE4oMY@desktop>
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YJfzVSGu2BbE4oMY@desktop>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/22/21 3:36 AM, Paul Moore wrote:
-> On Fri, May 21, 2021 at 8:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->> On 5/21/21 10:49 PM, Paul Moore wrote:
-[...]
->>>
->>> +     if (req->opcode < IORING_OP_LAST)
->>
->> always true at this point
+On Sun, May 09, 2021 at 10:36:05PM +0800, Eryu Guan wrote:
+> On Tue, Apr 27, 2021 at 12:44:17PM -0400, Kent Overstreet wrote:
+> > From: Kent Overstreet <kmo@daterainc.com>
 > 
-> I placed the opcode check before the audit call because the switch
-> statement below which handles the operation dispatching has a 'ret =
-> -EINVAL' for the default case, implying that there are some paths
-> where an invalid opcode could be passed into the function.  Obviously
-> if that is not the case and you can guarantee that req->opcode will
-> always be valid we can easily drop the check prior to the audit call.
-
-It is always true at this point, would be completely broken
-otherwise
-
->>> +             audit_uring_entry(req->opcode);
->>
->> So, it adds two if's with memory loads (i.e. current->audit_context)
->> per request in one of the hottest functions here... No way, nack
->>
->> Maybe, if it's dynamically compiled into like kprobes if it's
->> _really_ used.
+> Better to add commit logs at least to give an example about how to setup
+> fstests to test bcachefs.
 > 
-> I'm open to suggestions on how to tweak the io_uring/audit
-> integration, if you don't like what I've proposed in this patchset,
-> lets try to come up with a solution that is more palatable.  If you
-> were going to add audit support for these io_uring operations, how
-> would you propose we do it?  Not being able to properly audit io_uring
-> operations is going to be a significant issue for a chunk of users, if
-> it isn't already, we need to work to find a solution to this problem.
+> You could always set MKFS_OPTIONS to "--errors=panic" explicitly when
+> needed.
 
-Who knows. First of all, seems CONFIG_AUDIT is enabled by default
-for many popular distributions, so I assume that is not compiled out.
+Forgot that was an option - doing that now.
+> 
+> > +		;;
+> >  	*)
+> >  		;;
+> >  	esac
+> > diff --git a/common/dmlogwrites b/common/dmlogwrites
+> > index 573f4b8a56..668d49e995 100644
+> > --- a/common/dmlogwrites
+> > +++ b/common/dmlogwrites
+> > @@ -111,6 +111,13 @@ _log_writes_replay_log()
+> >  	[ -z "$_blkdev" ] && _fail \
+> >  	"block dev must be specified for _log_writes_replay_log"
+> >  
+> > +	if [ "$FSTYP" = "bcachefs" ]; then
+> > +		# bcachefs gets confused if we're replaying the history out of
+> > +		# order, and we see writes on the device from a newer point in
+> > +		# time than what the superblock points to:
+> > +		dd if=/dev/zero of=$SCRATCH_DEV bs=1M oflag=direct >& /dev/null
+> 
+> I don't know bcachefs internals, I'm not sure I understand this,
+> clearing the first 1M of SCRATCH_DEV seems to clear superblock, but I'm
+> still not sure why it's needed. Does wipefs work?
 
-What are use cases for audit? Always running I guess? Putting aside
-compatibility problems, it sounds that with the amount of overhead
-it adds there is no much profit in using io_uring in the first place.
-Is that so?
+It's not just the superblock we need to clear, it's really all metadata - the
+journal, and btree nodes are also log structured in bcachefs. So 1M actually
+isn't sufficient - the better solution would be to either
 
-__audit_uring_exit()
--> audit_filter_syscall()
-  -> for (audit_list) if (...) audit_filter_rules()
-    -> ...
--> audit_filter_inodes()
-  -> ...
+ - change the tests to check the markers in the log in the correct order, so
+   we never see metadata from a future point in time, also making sure we don't
+   do any writes to the filesystem when we're checking the different markers, or
+ - just replay to a new dm-thin device
 
-> Unfortunately I don't think dynamically inserting audit calls is
-> something that would meet the needs of the audit community (I fear it
-> would run afoul of the various security certifications), and it
-> definitely isn't something that we support at present.
+This is basically what I did for generic/482, the 1M zerout is really just a
+hack for 455 and 457 and should probably be moved there, unless you've got
+another suggestion.
 
-I see
+> > diff --git a/common/rc b/common/rc
+> > index 2cf550ec68..0e03846aeb 100644
+> > --- a/common/rc
+> > +++ b/common/rc
+> > @@ -334,6 +334,7 @@ _try_scratch_mount()
+> >  		return $?
+> >  	fi
+> >  	_mount -t $FSTYP `_scratch_mount_options $*`
+> > +	return
+> 
+> Seems not necessary.
 
--- 
-Pavel Begunkov
+Not sure how that got in, dropped it.
+
+> > +    bcachefs)
+> > +	$MKFS_PROG -t $FSTYP -- $MKFS_OPTIONS $* $TEST_DEV
+> > +	;;
+> 
+> I think we could just use the default mkfs command below. The only
+> difference is dropping the "yes | " part, but that does nothing if mkfs
+> doesn't read "yes" or "no" from stdin.
+
+That dates from when my test environment had SIGPIPE set up wrong (systemd!),
+it's fixed now so I've dropped these.
+> >      *)
+> >  	_notrun "Filesystem $FSTYP not supported in _scratch_mkfs_blocksized"
+> >  	;;
+> > @@ -1179,6 +1197,19 @@ _repair_scratch_fs()
+> >  	fi
+> >  	return $res
+> >          ;;
+> > +    bcachefs)
+> > +	fsck -t $FSTYP -n $SCRATCH_DEV 2>&1
+> 
+> _repair_scratch_fs() is supposed to actually fix the errors, does
+> "fsck -n" fix errors for bcachefs?
+
+No - but with bcachefs fsck finding errors _always_ indicates a bug, so for the
+purposes of these tests I think this is the right thing to do - I don't want the
+tests to pass if fsck is finding and fixing errors.
+
+> > diff --git a/tests/generic/042 b/tests/generic/042
+> > index 35727bcbc6..42919e2313 100755
+> > --- a/tests/generic/042
+> > +++ b/tests/generic/042
+> > @@ -63,7 +63,8 @@ _crashtest()
+> >  
+> >  	# We should /never/ see 0xCD in the file, because we wrote that pattern
+> >  	# to the filesystem image to expose stale data.
+> > -	if hexdump -v -e '/1 "%02X "' $file | grep -q "CD"; then
+> > +	# The file is not required to exist since we didn't sync before going down:
+> > +	if [[ -f $file ]] && hexdump -v -e '/1 "%02X "' $file | grep -q "CD"; then
+> >  		echo "Saw stale data!!!"
+> >  		hexdump $file
+> >  	fi
+> 
+> Updates for individual test should be in a separate patch.
+
+Ok, I'll split those out.
