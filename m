@@ -2,146 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 334DA38F66F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 01:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF05C38F68E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 01:55:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230087AbhEXXpL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 May 2021 19:45:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44802 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230423AbhEXXou (ORCPT
+        id S229953AbhEXX5P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 May 2021 19:57:15 -0400
+Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:40035 "EHLO
+        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229503AbhEXX5M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 May 2021 19:44:50 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6DB8C061362
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 May 2021 16:42:42 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id ep16-20020a17090ae650b029015d00f578a8so12095197pjb.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 May 2021 16:42:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=kG8l3p6+P6rjx7Jvu48S/gpIV1ulPkX7htpDNR4shWY=;
-        b=H9ngW7m8uvUo5qLVjNuC4k7O6ZpIEp57rNdE7C5JZJGuWi0AH7SrRg+eh8WdN4binM
-         7h/hwOFnrj1iUNG2jxBjTmmwCHTE9yprc1A7jWlEsDUKhkRMTW7QlJkUCzbjvU1UJegt
-         Op+h7cf+U/9QxO4AHRx530wJLlx/a7WCFyXQHSCD2vC3WKeqFFd406geRsYX9apaq4CP
-         32Ojk/LKBtSIzfAmmmkuz6K8y8Og82BEWxICkYN+3wyEQBM3EPh9PzuzSICSpq+BTFHM
-         DOCu8E801U0WY5rnp2shaTu07/4yxVTy2N3LiTB51NflcM+i7N2oGdis6zyhSOpQPC4s
-         j+pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=kG8l3p6+P6rjx7Jvu48S/gpIV1ulPkX7htpDNR4shWY=;
-        b=MW/eE6hap3cdmRx16M2/nEpL1D7VUM/pLNxc7MvxbKJKhR5407iOlGf+09phdT9JFS
-         oAQEp3e/+azSPdFTxcCWKRZpD3yEG4/xllyKE2QntdZNhAnvjxqIfg7I3LUS5E2aHi4r
-         41vlYvLiuFT1aPSYid2jr7CoLxBpNLXnnyZIKG/Syka8/JSC2ZKHGss/6RA6gcKWAIJU
-         Z9AT0vRnlrxy7KSLRU43ZDOukxjU1Vbvpb1lm10n4bVrliZ2BbILVGd3uxnkfPRCpojs
-         a4/jzUVrsNvdfzErkaMblLkJVS18RkuhtGrRspAex+l9iy+9yf/qfiAixEymC723STFT
-         0ZTg==
-X-Gm-Message-State: AOAM531fQHo7DRTlUdYnHCLGU0Xf7Ezo4dvs0jQ4cg2hV8Zkf8SONx5M
-        hHbbhcxT7nruo+PeByDhk4S6/w==
-X-Google-Smtp-Source: ABdhPJxIITBSg0KGYxMkDBkPrkJtn2u8MlifbBF6+lhdCoJJELuvArsxlmFif1Y2TblwdxHm5JLW6A==
-X-Received: by 2002:a17:902:26c:b029:ef:96e9:1471 with SMTP id 99-20020a170902026cb02900ef96e91471mr27342168plc.63.1621899762002;
-        Mon, 24 May 2021 16:42:42 -0700 (PDT)
-Received: from google.com ([2401:fa00:9:211:fd86:de3d:256d:6afc])
-        by smtp.gmail.com with ESMTPSA id g72sm11835226pfb.33.2021.05.24.16.42.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 May 2021 16:42:41 -0700 (PDT)
-Date:   Tue, 25 May 2021 09:42:30 +1000
-From:   Matthew Bobrowski <repnop@google.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fanotify: fix permission model of unprivileged group
-Message-ID: <YKw55s1EsYjQxPYf@google.com>
-References: <20210522091916.196741-1-amir73il@gmail.com>
- <YKtmwOM9WqUTK/u4@google.com>
- <20210524100004.GI32705@quack2.suse.cz>
+        Mon, 24 May 2021 19:57:12 -0400
+Received: from dread.disaster.area (pa49-180-237-17.pa.nsw.optusnet.com.au [49.180.237.17])
+        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 4DCF66B337;
+        Tue, 25 May 2021 09:55:40 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1llKQ6-004r2D-NQ; Tue, 25 May 2021 09:55:38 +1000
+Date:   Tue, 25 May 2021 09:55:38 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Brian Foster <bfoster@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: iomap: writeback ioend/bio allocation deadlock risk
+Message-ID: <20210524235538.GI2817@dread.disaster.area>
+References: <YKcouuVR/y/L4T58@T590>
+ <20210521071727.GA11473@lst.de>
+ <YKdhuUZBtKMxDpsr@T590>
+ <20210521073547.GA11955@lst.de>
+ <YKdwtzp+WWQ3krhI@T590>
+ <20210521083635.GA15311@lst.de>
+ <YKd1VS5gkzQRn+7x@T590>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210524100004.GI32705@quack2.suse.cz>
+In-Reply-To: <YKd1VS5gkzQRn+7x@T590>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0
+        a=oWiKotyBKwPJNwc9RtRBNA==:117 a=oWiKotyBKwPJNwc9RtRBNA==:17
+        a=kj9zAlcOel0A:10 a=5FLXtPjwQuUA:10 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8
+        a=--ljmbci5Jw-3h57E20A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 24, 2021 at 12:00:04PM +0200, Jan Kara wrote:
-> On Mon 24-05-21 18:41:36, Matthew Bobrowski wrote:
-> > On Sat, May 22, 2021 at 12:19:16PM +0300, Amir Goldstein wrote:
-> > > Reporting event->pid should depend on the privileges of the user that
-> > > initialized the group, not the privileges of the user reading the
-> > > events.
-> > > 
-> > > Use an internal group flag FANOTIFY_UNPRIV to record the fact the the
-> > > group was initialized by an unprivileged user.
-> > > 
-> > > To be on the safe side, the premissions to setup filesystem and mount
-> > > marks now require that both the user that initialized the group and
-> > > the user setting up the mark have CAP_SYS_ADMIN.
-> > > 
-> > > Fixes: 7cea2a3c505e ("fanotify: support limited functionality for unprivileged users")
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+On Fri, May 21, 2021 at 04:54:45PM +0800, Ming Lei wrote:
+> On Fri, May 21, 2021 at 10:36:35AM +0200, Christoph Hellwig wrote:
+> > On Fri, May 21, 2021 at 04:35:03PM +0800, Ming Lei wrote:
+> > > Just wondering why the ioend isn't submitted out after it becomes full?
 > > 
-> > Thanks for sending through this patch Amir!
-> > 
-> > In general, the patch looks good to me, however there's just a few
-> > nits below.
-> > 
-> > > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> > > index 71fefb30e015..7df6cba4a06d 100644
-> > > --- a/fs/notify/fanotify/fanotify_user.c
-> > > +++ b/fs/notify/fanotify/fanotify_user.c
-> > > @@ -424,11 +424,18 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
-> > >  	 * events generated by the listener process itself, without disclosing
-> > >  	 * the pids of other processes.
-> > >  	 */
-> > > -	if (!capable(CAP_SYS_ADMIN) &&
-> > > +	if (FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
-> > >  	    task_tgid(current) != event->pid)
-> > >  		metadata.pid = 0;
-> > >  
-> > > -	if (path && path->mnt && path->dentry) {
-> > > +	/*
-> > > +	 * For now, we require fid mode for unprivileged listener, which does
-> > > +	 * record path events, but keep this check for safety in case we want
-> > > +	 * to allow unprivileged listener to get events with no fd and no fid
-> > > +	 * in the future.
-> > > +	 */
-> > 
-> > I think it's best if we keep clear of using first person in our
-> > comments throughout our code base. Maybe we could change this to:
-> > 
-> > * For now, fid mode is required for an unprivileged listener, which
-> >   does record path events. However, this check must be kept...
+> > block layer plugging?  Although failing bio allocations will kick that,
+> > so that is not a deadlock risk.
 > 
-> Actually, I have no problem with the first person in comments. It is a
-> standard "anonymous" language and IMO easy to understand as well. Also
-> frequently used in the kernel AFAICT. What problem do you see with the
-> first person? I'm well aware that unlike us you are a native speaker ;)
+> These ioends are just added to one list stored on local stack variable(submit_list),
+> how can block layer plugging observe & submit them out?
 
-That's fair, perhaps it's just personal preference more than
-anything. I do believe that it does lead to more succinct comments
-that doesn't necessarily lead to thinking about who the reader is
-intended to be in this partcular context.
+We ignore that, as the commit histoy says:
 
-> > > +/* Internal flags */
-> > > +#define FANOTIFY_UNPRIV		0x80000000
-> > > +#define FANOTIFY_INTERNAL_FLAGS	(FANOTIFY_UNPRIV)
-> > 
-> > Should we be more distinct here i.e. FANOTIFY_INTERNAL_INIT_FLAGS?
-> > Just thinking about a possible case where there's some other internal
-> > fanotify flags that are used for something else?
-> 
-> Well, do we need to distinguish different uses of internal flags? I don't
-> think so...
+commit e10de3723c53378e7cf441529f563c316fdc0dd3
+Author: Dave Chinner <dchinner@redhat.com>
+Date:   Mon Feb 15 17:23:12 2016 +1100
 
-Maybe not. I was just thinking about the possibility of other internal
-flags being possibly introduced further on down the line that wouldn't
-properly align with the use of FANOTIFY_INTERNAL_FLAGS, therefore me
-providing the suggestion for renaming it. Anyway, if such a situation
-ever arises then there's absolutely no reason why we can't shuffle
-things around later.
+    xfs: don't chain ioends during writepage submission
 
-/M
+    Currently we can build a long ioend chain during ->writepages that
+    gets attached to the writepage context. IO submission only then
+    occurs when we finish all the writepage processing. This means we
+    can have many ioends allocated and pending, and this violates the
+    mempool guarantees that we need to give about forwards progress.
+    i.e. we really should only have one ioend being built at a time,
+    otherwise we may drain the mempool trying to allocate a new ioend
+    and that blocks submission, completion and freeing of ioends that
+    are already in progress.
+
+    To prevent this situation from happening, we need to submit ioends
+    for IO as soon as they are ready for dispatch rather than queuing
+    them for later submission. This means the ioends have bios built
+    immediately and they get queued on any plug that is current active.
+    Hence if we schedule away from writeback, the ioends that have been
+    built will make forwards progress due to the plug flushing on
+    context switch. This will also prevent context switches from
+    creating unnecessary IO submission latency.
+
+    We can't completely avoid having nested IO allocation - when we have
+    a block size smaller than a page size, we still need to hold the
+    ioend submission until after we have marked the current page dirty.
+    Hence we may need multiple ioends to be held while the current page
+    is completely mapped and made ready for IO dispatch. We cannot avoid
+    this problem - the current code already has this ioend chaining
+    within a page so we can mostly ignore that it occurs.
+
+    Signed-off-by: Dave Chinner <dchinner@redhat.com>
+    Reviewed-by: Christoph Hellwig <hch@lst.de>
+    Signed-off-by: Dave Chinner <david@fromorbit.com>
+
+IOWs, this nesting for block size < page size has been out there
+for many years now and we've yet to have anyone report that
+writeback deadlocks have occurred.
+
+There's a mistake in that commit message - we can't submit the
+ioends on a page until we've marked the page as under writeback, not
+dirty. That's because we cannot have ioends completing on a a page
+that isn't under writeback because calling end_page_writeback() on
+it when it isn't under writeback will BUG(). Hence we have to build
+all the submission state before we mark the page as under writeback
+and perform the submission(s) to avoid completion racing with
+submission.
+
+Hence we can't actually avoid nesting ioend allocation here within a
+single page - the constraints of page cache writeback require it.
+Hence the construction of the iomap_ioend_bioset uses a pool size of:
+
+	4 * (PAGE_SIZE / SECTOR_SIZE)
+
+So that we always have enough ioends cached in the mempool to
+guarantee forwards progress of writeback of any single page under
+writeback.
+
+But that is a completely separate problem to this:
+
+> Chained bios have been submitted already, but all can't be completed/freed
+> until the whole ioend is done, that submission won't make forward progress.
+
+This is a problem caused by having unbound contiguous ioend sizes,
+not a problem caused by chaining bios. We can throw 256 pages into
+a bio, so when we are doing huge contiguous IOs, we can map a
+lot of sequential dirty pages into a contiguous extent into a very
+long bio chain. But if we cap the max ioend size to, say, 4096
+pages, then we've effectively capped the number of bios that can be
+nested by such a writeback chain.
+
+I was about to point you at the patchset that fixes this, but you've
+already found it and are claiming that this nesting is an unfixable
+problem. Capping the size of the ioend also bounds the depth of the
+allocation nesting that will occur, and that fixes the whole nseting
+deadlock problem: If the mempool reserves are deeper than than the
+maximum chain nesting that can occur, then there is no deadlock.
+
+However, this points out what the real problem here is: that bio
+allocation is designed to deadlock when nesting bio allocation rather
+than fail. Hence at the iomap level we've go no way of knowing that
+we should terminate and submit the current bio chain and start a new
+ioend+bio chain because we will hang before there's any indication
+that a deadlock could occur.
+
+And then the elephant in the room: reality.
+
+We've been nesting bio allocations via this chaining in production
+systems under heavy memory pressure for 5 years now and we don't
+have a single bug report indicating that this code deadlocks. So
+while there's a theoretical problem, evidence points to it not being
+an issue in practice.
+
+Hence I don't think there is any need to urgently turn this code
+upside down. I'd much prefer that bio allocation would fail rather
+than deadlock, because then we can set a flag in the writepage
+context that says "do single bio ioend submission only" for the
+duration of that writeback context. And with that, the forwards
+progress problem is solved whilst still allowing us to chain as
+deeply as we want when there is no memory pressure....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
