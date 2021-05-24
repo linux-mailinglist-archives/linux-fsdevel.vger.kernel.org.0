@@ -2,188 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 846CC38E2D1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 10:55:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A2ED38E39D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 12:00:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232505AbhEXI4o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 May 2021 04:56:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38604 "EHLO mx2.suse.de"
+        id S232476AbhEXKCU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 May 2021 06:02:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41218 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232473AbhEXI4j (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 May 2021 04:56:39 -0400
+        id S232517AbhEXKCT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 May 2021 06:02:19 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1621846509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1621850405; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=qXP1ICVRdALrxUXsf/z6mZaU8pNPyJpmymmllsZRIGs=;
-        b=F3w7GM4icZiUnACFVnJ6d5rP3y7S9oEiydR8fM6SAt9OuhtiyO580UT8kXwp5pFmgbrvmc
-        uhLvLPSMJ9G4BKyk6IrCiKgPlpTqrA/gsxvAMtOetVmczCARYEZh1xx8/dxvGjX6zmxS4W
-        Iaf3vkwMvYym5kqRENLydAdVrqWuXyA=
+        bh=qSPLeftBkaRi2IbEx9BDvKcI70DSUwvnUcKk00xfE2I=;
+        b=szyq3OjWKtKfzthHNCHPRB2aQqPw222IA1FLBAH1oPHwANdtnpoiBhMMPn4e+MxFQYGskN
+        bJg03JvwfYVn2DJIHLxOKuDxY8DZoPQIQdKAwX54EqESXbLFl3ADcNN0wNZKhXfAAbEQdF
+        t/5bESTflEEe3tEiLIcfoJGOZfx07vw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1621846509;
+        s=susede2_ed25519; t=1621850405;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=qXP1ICVRdALrxUXsf/z6mZaU8pNPyJpmymmllsZRIGs=;
-        b=41IrL3T+qLsrW7C0vlIImptvtNtXIX+Ww/4G+QKYvcC24FpHPTF9byML9CaxU2KOBdulbT
-        h6+RDhQ0shRw29DQ==
+        bh=qSPLeftBkaRi2IbEx9BDvKcI70DSUwvnUcKk00xfE2I=;
+        b=RVVSTIjqW4GrtmtdSqdBls/3B8SQJfWxFpHDD0NjWw6DKvYgMyTK65UCYnVvWlxEZ779E6
+        9vun1opmG3SxXuAg==
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 85570ABC1;
-        Mon, 24 May 2021 08:55:09 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 1CB66ABB1;
+        Mon, 24 May 2021 10:00:05 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id EA9DD1F2CA2; Mon, 24 May 2021 10:55:08 +0200 (CEST)
-Date:   Mon, 24 May 2021 10:55:08 +0200
+        id 75D5E1F2CA2; Mon, 24 May 2021 12:00:04 +0200 (CEST)
+Date:   Mon, 24 May 2021 12:00:04 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Junxiao Bi <junxiao.bi@oracle.com>
-Cc:     ocfs2-devel@oss.oracle.com, jack@suse.cz,
-        joseph.qi@linux.alibaba.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] ocfs2: fix data corruption by fallocate
-Message-ID: <20210524085508.GD32705@quack2.suse.cz>
-References: <20210521233612.75185-1-junxiao.bi@oracle.com>
+To:     Matthew Bobrowski <repnop@google.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fanotify: fix permission model of unprivileged group
+Message-ID: <20210524100004.GI32705@quack2.suse.cz>
+References: <20210522091916.196741-1-amir73il@gmail.com>
+ <YKtmwOM9WqUTK/u4@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210521233612.75185-1-junxiao.bi@oracle.com>
+In-Reply-To: <YKtmwOM9WqUTK/u4@google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 21-05-21 16:36:12, Junxiao Bi wrote:
-> When fallocate punches holes out of inode size, if original isize is in
-> the middle of last cluster, then the part from isize to the end of the
-> cluster will be zeroed with buffer write, at that time isize is not
-> yet updated to match the new size, if writeback is kicked in, it will
-> invoke ocfs2_writepage()->block_write_full_page() where the pages out
-> of inode size will be dropped. That will cause file corruption. Fix
-> this by zero out eof blocks when extending the inode size.
+On Mon 24-05-21 18:41:36, Matthew Bobrowski wrote:
+> On Sat, May 22, 2021 at 12:19:16PM +0300, Amir Goldstein wrote:
+> > Reporting event->pid should depend on the privileges of the user that
+> > initialized the group, not the privileges of the user reading the
+> > events.
+> > 
+> > Use an internal group flag FANOTIFY_UNPRIV to record the fact the the
+> > group was initialized by an unprivileged user.
+> > 
+> > To be on the safe side, the premissions to setup filesystem and mount
+> > marks now require that both the user that initialized the group and
+> > the user setting up the mark have CAP_SYS_ADMIN.
+> > 
+> > Fixes: 7cea2a3c505e ("fanotify: support limited functionality for unprivileged users")
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > 
-> Running the following command with qemu-image 4.2.1 can get a corrupted
-> coverted image file easily.
+> Thanks for sending through this patch Amir!
 > 
->     qemu-img convert -p -t none -T none -f qcow2 $qcow_image \
->              -O qcow2 -o compat=1.1 $qcow_image.conv
+> In general, the patch looks good to me, however there's just a few
+> nits below.
 > 
-> The usage of fallocate in qemu is like this, it first punches holes out of
-> inode size, then extend the inode size.
+> > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> > index 71fefb30e015..7df6cba4a06d 100644
+> > --- a/fs/notify/fanotify/fanotify_user.c
+> > +++ b/fs/notify/fanotify/fanotify_user.c
+> > @@ -424,11 +424,18 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+> >  	 * events generated by the listener process itself, without disclosing
+> >  	 * the pids of other processes.
+> >  	 */
+> > -	if (!capable(CAP_SYS_ADMIN) &&
+> > +	if (FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
+> >  	    task_tgid(current) != event->pid)
+> >  		metadata.pid = 0;
+> >  
+> > -	if (path && path->mnt && path->dentry) {
+> > +	/*
+> > +	 * For now, we require fid mode for unprivileged listener, which does
+> > +	 * record path events, but keep this check for safety in case we want
+> > +	 * to allow unprivileged listener to get events with no fd and no fid
+> > +	 * in the future.
+> > +	 */
 > 
->     fallocate(11, FALLOC_FL_KEEP_SIZE|FALLOC_FL_PUNCH_HOLE, 2276196352, 65536) = 0
->     fallocate(11, 0, 2276196352, 65536) = 0
+> I think it's best if we keep clear of using first person in our
+> comments throughout our code base. Maybe we could change this to:
 > 
-> v1: https://www.spinics.net/lists/linux-fsdevel/msg193999.html
-> 
-> Cc: <stable@vger.kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-> ---
-> 
-> Changes in v2:
-> - suggested by Jan Kara, using sb_issue_zeroout to zero eof blocks in disk directly.
-> 
->  fs/ocfs2/file.c | 49 +++++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 47 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
-> index f17c3d33fb18..17469fc7b20e 100644
-> --- a/fs/ocfs2/file.c
-> +++ b/fs/ocfs2/file.c
-> @@ -1855,6 +1855,45 @@ int ocfs2_remove_inode_range(struct inode *inode,
->  	return ret;
->  }
->  
-> +/*
-> + * zero out partial blocks of one cluster.
-> + *
-> + * start: file offset where zero starts, will be made upper block aligned.
-> + * len: it will be trimmed to the end of current cluster if "start + len"
-> + *      is bigger than it.
+> * For now, fid mode is required for an unprivileged listener, which
+>   does record path events. However, this check must be kept...
 
-You write this here but ...
+Actually, I have no problem with the first person in comments. It is a
+standard "anonymous" language and IMO easy to understand as well. Also
+frequently used in the kernel AFAICT. What problem do you see with the
+first person? I'm well aware that unlike us you are a native speaker ;)
 
-> + */
-> +static int ocfs2_zeroout_partial_cluster(struct inode *inode,
-> +					u64 start, u64 len)
-> +{
-> +	int ret;
-> +	u64 start_block, end_block, nr_blocks;
-> +	u64 p_block, offset;
-> +	u32 cluster, p_cluster, nr_clusters;
-> +	struct super_block *sb = inode->i_sb;
-> +	u64 end = ocfs2_align_bytes_to_clusters(sb, start);
-> +
-> +	if (start + len < end)
-> +		end = start + len;
+> > @@ -1305,11 +1320,13 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+> >  	group = f.file->private_data;
+> >  
+> >  	/*
+> > -	 * An unprivileged user is not allowed to watch a mount point nor
+> > -	 * a filesystem.
+> > +	 * An unprivileged user is not allowed to setup mount point nor
+>   	      		   	       	       	  	      	   ^
+> 								   s
+> > +	 * filesystem marks. It is not allowed to setup those marks for
+> > +	 * a group that was initialized by an unprivileged user.
+> 
+> I think the second sentence would better read as:
+> 
+>        * This also includes setting up such marks by a group that was
+>          intialized by an unprivileged user.
 
-... here you check actually something else and I don't see where else would
-the trimming happen.
+Yes, this is probably better.
+
+> >  	show_fdinfo(m, f, fanotify_fdinfo);
+> > diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+> > index bad41bcb25df..f277d1c4e6b8 100644
+> > --- a/include/linux/fanotify.h
+> > +++ b/include/linux/fanotify.h
+> > @@ -51,6 +51,10 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
+> >  #define FANOTIFY_INIT_FLAGS	(FANOTIFY_ADMIN_INIT_FLAGS | \
+> >  				 FANOTIFY_USER_INIT_FLAGS)
+> >  
+> > +/* Internal flags */
+> > +#define FANOTIFY_UNPRIV		0x80000000
+> > +#define FANOTIFY_INTERNAL_FLAGS	(FANOTIFY_UNPRIV)
+> 
+> Should we be more distinct here i.e. FANOTIFY_INTERNAL_INIT_FLAGS?
+> Just thinking about a possible case where there's some other internal
+> fanotify flags that are used for something else?
+
+Well, do we need to distinguish different uses of internal flags? I don't
+think so...
 
 								Honza
 
-> +
-> +	start_block = ocfs2_blocks_for_bytes(sb, start);
-> +	end_block = ocfs2_blocks_for_bytes(sb, end);
-> +	nr_blocks = end_block - start_block;
-> +	if (!nr_blocks)
-> +		return 0;
-> +
-> +	cluster = ocfs2_bytes_to_clusters(sb, start);
-> +	ret = ocfs2_get_clusters(inode, cluster, &p_cluster,
-> +				&nr_clusters, NULL);
-> +	if (ret)
-> +		return ret;
-> +	if (!p_cluster)
-> +		return 0;
-> +
-> +	offset = start_block - ocfs2_clusters_to_blocks(sb, cluster);
-> +	p_block = ocfs2_clusters_to_blocks(sb, p_cluster) + offset;
-> +	return sb_issue_zeroout(sb, p_block, nr_blocks, GFP_NOFS);
-> +}
-> +
->  /*
->   * Parts of this function taken from xfs_change_file_space()
->   */
-> @@ -1865,7 +1904,7 @@ static int __ocfs2_change_file_space(struct file *file, struct inode *inode,
->  {
->  	int ret;
->  	s64 llen;
-> -	loff_t size;
-> +	loff_t size, orig_isize;
->  	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
->  	struct buffer_head *di_bh = NULL;
->  	handle_t *handle;
-> @@ -1896,6 +1935,7 @@ static int __ocfs2_change_file_space(struct file *file, struct inode *inode,
->  		goto out_inode_unlock;
->  	}
->  
-> +	orig_isize = i_size_read(inode);
->  	switch (sr->l_whence) {
->  	case 0: /*SEEK_SET*/
->  		break;
-> @@ -1903,7 +1943,7 @@ static int __ocfs2_change_file_space(struct file *file, struct inode *inode,
->  		sr->l_start += f_pos;
->  		break;
->  	case 2: /*SEEK_END*/
-> -		sr->l_start += i_size_read(inode);
-> +		sr->l_start += orig_isize;
->  		break;
->  	default:
->  		ret = -EINVAL;
-> @@ -1957,6 +1997,11 @@ static int __ocfs2_change_file_space(struct file *file, struct inode *inode,
->  	default:
->  		ret = -EINVAL;
->  	}
-> +
-> +	/* zeroout eof blocks in the cluster. */
-> +	if (!ret && change_size && orig_isize < size)
-> +		ret = ocfs2_zeroout_partial_cluster(inode, orig_isize,
-> +					size - orig_isize);
->  	up_write(&OCFS2_I(inode)->ip_alloc_sem);
->  	if (ret) {
->  		mlog_errno(ret);
-> -- 
-> 2.24.3 (Apple Git-128)
-> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
