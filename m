@@ -2,191 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2748638F5F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 00:58:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A50F438F60C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 01:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229693AbhEXW77 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 May 2021 18:59:59 -0400
-Received: from mail-pg1-f170.google.com ([209.85.215.170]:41956 "EHLO
-        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbhEXW77 (ORCPT
+        id S229668AbhEXXFu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 May 2021 19:05:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36270 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229581AbhEXXFt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 May 2021 18:59:59 -0400
-Received: by mail-pg1-f170.google.com with SMTP id r1so6353126pgk.8;
-        Mon, 24 May 2021 15:58:29 -0700 (PDT)
+        Mon, 24 May 2021 19:05:49 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BF1AC06138E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 May 2021 16:04:20 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id lz27so44241062ejb.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 May 2021 16:04:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uHnwU/8zVxK9/bfw4gLk9ClQH8SbH6WwTZFdoRwbAtE=;
+        b=QQB024vhpmn4hq25e6Gkh0zhdrnh3KHdtxH6hg6RDKH7CnpR3mYJd6drz35kPPn+vq
+         h6264Me+UgyGvlpwu30FVPeTMz+AEc12Q0M+XUT2JohzSMatCOapVMLXEXEiejzFf7ti
+         ktfb2nZNhIlo275VOb2O2BOnbc3ySbclEou9yYwi6+PYR4gUlNFMkKIpexQj+R7biYK9
+         xXDP+mzIofYbIEFKZVe3ZXLMSxK2QP8MWFHo5cfoJS3ZJay5Rqyq5UdBp1+zLKULS08J
+         lwUq6hGqLZp80Ar+2xFbnq6NvtyQI7K0uQTTZPi/naCAAye6mC44N7eH6EQPj41saYzr
+         cNUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=x+Vw1vTu0QmIaUSfKZb4qqGrLso9ZIGt1u68HUOBSRM=;
-        b=hNjxnk1OnFaWZVhVH7Bkf5g2e8oaLEYanux0eV81X/DZw2VSU/1F9u3R56mW/EQfpu
-         rn93H/8Viedyh340nCtoDhgmjMtSi8kVrxGLe7l+p4t4eMPXfBWAn3H6PlVELpp8SEb2
-         ciwH73ZKCbe3cCAKVLzQf/+tk9dh7stLhBol1vuU6krspF/unGaX4BilQcBzbLqG7iJs
-         VL8Ez1J+PiVudzuYxA2l3ZYav4BS64BQjDBxclhGn+XtwV2mhPc/40gPRb6LSLeKeaWp
-         XvzMC+igmODms58IQUt+DsuUT+r+9RHfuf+NknU0xQ7KaqYn7jsOZqd0XMnJBFN7dGoF
-         7x8Q==
-X-Gm-Message-State: AOAM533UHe5arjAbL29m2yGjIeS0Djca6GgPVp9w2jOkeoob7wWnYGa8
-        6KChBGwIIf+rlqIQ/wbkl/o=
-X-Google-Smtp-Source: ABdhPJwpw5NG3yxJWXj1a0idruoNsJtWN1fiESIpnB9mYWXAknw5yuI6w4SaM8m78mE2kIFHTVWrkw==
-X-Received: by 2002:a63:8449:: with SMTP id k70mr15947936pgd.392.1621897109144;
-        Mon, 24 May 2021 15:58:29 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id r10sm7075716pga.48.2021.05.24.15.58.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 May 2021 15:58:28 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 30AEC401AD; Mon, 24 May 2021 22:58:27 +0000 (UTC)
-Date:   Mon, 24 May 2021 22:58:27 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Menglong Dong <menglong8.dong@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        hare@suse.de, gregkh@linuxfoundation.org, tj@kernel.org,
-        Menglong Dong <dong.menglong@zte.com.cn>, song@kernel.org,
-        NeilBrown <neilb@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        wangkefeng.wang@huawei.com, f.fainelli@gmail.com, arnd@arndb.de,
-        Barret Rhoden <brho@google.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        mhiramat@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>, vbabka@suse.cz,
-        Alexander Potapenko <glider@google.com>, pmladek@suse.com,
-        Chris Down <chris@chrisdown.name>, ebiederm@xmission.com,
-        jojing64@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-        palmerdabbelt@google.com, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH RESEND] init/initramfs.c: make initramfs support
- pivot_root
-Message-ID: <20210524225827.GA4332@42.do-not-panic.com>
-References: <20210520154244.20209-1-dong.menglong@zte.com.cn>
- <20210520214111.GV4332@42.do-not-panic.com>
- <CADxym3axowrQWz3OgimK4iGqP-RbO8U=HPODEhJRrcXUAsWXew@mail.gmail.com>
- <20210521155020.GW4332@42.do-not-panic.com>
- <CADxym3Z7bdEJECEejPqg-15ycghgX3ZEmOGWYwxZ1_HPWLU1NA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uHnwU/8zVxK9/bfw4gLk9ClQH8SbH6WwTZFdoRwbAtE=;
+        b=nDxLG5QD+g14wHcNISxGgjF33gJSPooFQ1zHJgBOZzfPW86meAEdZEnhTXqiTrUBF2
+         LHuw8K9rAo5nECM3/g45FHfz8P72CjgO482Iy21qSVSGVrqe1Sm7+67EwRzpBVXTVnf6
+         RFOubVi936xk59rBlQ+FzR4u1xd+e8/1ve6kGj2vgubXAdmZo9zkaV1KGkJL+xUjestq
+         tq8sEN7Fk08Pr/tVlQMCSB5Uv7L+PP9ufP7Ko1A0FRDCZgfa1eyRj75Lhs2nCnC91Cva
+         itaN7p+WHJNtqb59j1sPUeeBo0tRidOwq7SnOlpKA4VPwm+TQEKY9WJZwy0zd4nV+TCL
+         A1HA==
+X-Gm-Message-State: AOAM5322AA3oOO6sao/08rjrb/SiBWmjFxs+7u1Qp0KarAoCOC52J2ML
+        Yooc/yCeZRuG+JltpN8tLplZi3PO9rpBYn5lHO2zatopIA==
+X-Google-Smtp-Source: ABdhPJzHdwSaxqdMgKRFDcoSWE+vBddUp/NzMoTBPda3nQNAVt0QAUQEdTUit8AXk9QB29Wy0DPtdDjKh5nmDnbZhoc=
+X-Received: by 2002:a17:907:10d8:: with SMTP id rv24mr25356059ejb.542.1621897458726;
+ Mon, 24 May 2021 16:04:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADxym3Z7bdEJECEejPqg-15ycghgX3ZEmOGWYwxZ1_HPWLU1NA@mail.gmail.com>
+References: <cover.1621363275.git.rgb@redhat.com> <f5f1a4d8699613f8c02ce762807228c841c2e26f.1621363275.git.rgb@redhat.com>
+ <20210520075842.vnbwbw6yffkybk6z@wittgenstein>
+In-Reply-To: <20210520075842.vnbwbw6yffkybk6z@wittgenstein>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 24 May 2021 19:04:07 -0400
+Message-ID: <CAHC9VhTyAFou=_Xu7ZSZSY+19Yii=hQ1NW1LPisk49Ot9wg7rg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] audit: add support for the openat2 syscall
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Paris <eparis@redhat.com>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Arnd Bergmann <arnd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 22, 2021 at 12:09:30PM +0800, Menglong Dong wrote:
-> On Fri, May 21, 2021 at 11:50 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+On Thu, May 20, 2021 at 3:58 AM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+> On Wed, May 19, 2021 at 04:00:21PM -0400, Richard Guy Briggs wrote:
+> > The openat2(2) syscall was added in kernel v5.6 with commit fddb5d430ad9
+> > ("open: introduce openat2(2) syscall")
 > >
-> > > That's a solution, but I don't think it is feasible. Users may create many
-> > > containers, and you can't make docker create all the containers first
-> > > and create network namespace later, as you don't know if there are any
-> > > containers to create later.
+> > Add the openat2(2) syscall to the audit syscall classifier.
 > >
-> > It doesn't seem impossible, but worth noting why inside the commit log
-> > this was not a preferred option.
+> > Link: https://github.com/linux-audit/audit-kernel/issues/67
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > Link: https://lore.kernel.org/r/f5f1a4d8699613f8c02ce762807228c841c2e26f.1621363275.git.rgb@redhat.com
+> > ---
+> >  arch/alpha/kernel/audit.c           | 2 ++
+> >  arch/ia64/kernel/audit.c            | 2 ++
+> >  arch/parisc/kernel/audit.c          | 2 ++
+> >  arch/parisc/kernel/compat_audit.c   | 2 ++
+> >  arch/powerpc/kernel/audit.c         | 2 ++
+> >  arch/powerpc/kernel/compat_audit.c  | 2 ++
+> >  arch/s390/kernel/audit.c            | 2 ++
+> >  arch/s390/kernel/compat_audit.c     | 2 ++
+> >  arch/sparc/kernel/audit.c           | 2 ++
+> >  arch/sparc/kernel/compat_audit.c    | 2 ++
+> >  arch/x86/ia32/audit.c               | 2 ++
+> >  arch/x86/kernel/audit_64.c          | 2 ++
+> >  include/linux/auditsc_classmacros.h | 1 +
+> >  kernel/auditsc.c                    | 3 +++
+> >  lib/audit.c                         | 4 ++++
+> >  lib/compat_audit.c                  | 4 ++++
+> >  16 files changed, 36 insertions(+)
+
+...
+
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index d775ea16505b..3f59ab209dfd 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -76,6 +76,7 @@
+> >  #include <linux/fsnotify_backend.h>
+> >  #include <uapi/linux/limits.h>
+> >  #include <uapi/linux/netfilter/nf_tables.h>
+> > +#include <uapi/linux/openat2.h>
 > >
-> 
-> In fact, the network namespace is just a case for the problem that the
-> 'mount leak' caused. And this kind modification is not friendly to
-> current docker users, it makes great changes to the usage of docker.
-
-You mean an upgrade of docker? If so... that does not seem like a
-definitive reason to do something new in the kernel *always*.
-
-However, if you introduce it as a kconfig option so that users
-who want to use this new feature can enable it, and then use it,
-the its sold as a new feature.
-
-Should this always be enabled, or done this way? Should we never have
-the option to revert back to the old behaviour? If not, why not?
-
-> > We still have:
+> >  #include "audit.h"
 > >
-> > start_kernel() --> vfs_caches_init() --> mnt_init() -->
-> >
-> > mnt_init()
-> > {
-> >         ...
-> >         shmem_init();
-> >         init_rootfs();
-> >         init_mount_tree();
-> > }
-> >
-> > You've now modified init_rootfs() to essentially just set the new user_root,
-> > and that's it. But we stil call init_mount_tree() even if we did set the
-> > rootfs to use tmpfs.
-> 
-> The variate of 'is_tmpfs' is only used in 'rootfs_init_fs_context'. I used
-> ramfs_init_fs_context directly for rootfs,
-
-I don't see you using any context directly, where are you specifying the
-context directly?
-
-> so it is not needed any more
-> and I just removed it in init_rootfs().
+> > @@ -196,6 +197,8 @@ static int audit_match_perm(struct audit_context *ctx, int mask)
+> >               return ((mask & AUDIT_PERM_WRITE) && ctx->argv[0] == SYS_BIND);
+> >       case AUDITSC_EXECVE:
+> >               return mask & AUDIT_PERM_EXEC;
+> > +     case AUDITSC_OPENAT2:
+> > +             return mask & ACC_MODE((u32)((struct open_how *)ctx->argv[2])->flags);
 >
-> The initialization of 'user_root' in init_rootfs() is used in:
-> do_populate_rootfs -> mount_user_root, which set the file system(
-> ramfs or tmpfs) of the second mount.
-> 
-> Seems it's not suitable to place it in init_rootfs()......
+> That's a lot of dereferncing, casting and masking all at once. Maybe a
+> small static inline helper would be good for the sake of legibility? Sm
+> like:
+>
+> static inline u32 audit_openat2_acc(struct open_how *how, int mask)
+> {
+>         u32 flags = how->flags;
+>         return mask & ACC_MODE(flags);
+> }
+>
+> but not sure. Just seems more legible to me.
+> Otherwise.
 
-OK I think I just need to understand how you added the context of the
-first mount explicitly now and where, as I don't see it.
+I'm on the fence about this.  I understand Christian's concern, but I
+have a bit of hatred towards single caller functions like this.  Since
+this function isn't really high-touch, and I don't expect that to
+change in the near future, let's leave the casting mess as-is.
 
-> > > In do_populate_ro
-> > > tmpfs, and that's the real rootfs for initramfs. And I call this root
-> > > as 'user_root',
-> > > because it is created for user space.
-> > >
-> > > int __init mount_user_root(void)
-> > > {
-> > >        return do_mount_root(user_root->dev_name,
-> > >                             user_root->fs_name,
-> > >                             root_mountflags,
-> > >                             root_mount_data);
-> > >  }
-> > >
-> > > In other words, I moved the realization of 'rootfs_fs_type' here to
-> > > do_populate_rootfs(), and fixed this 'rootfs_fs_type' with
-> > > ramfs_init_fs_context, as it is a fake root now.
-> >
-> > do_populate_rootfs() is called from populate_rootfs() and that in turn
-> > is a:
-> >
-> > rootfs_initcall(populate_rootfs);
-> >
-> > In fact the latest changes have made this to schedule asynchronously as
-> > well. And so indeed, init_mount_tree() always kicks off first. So its
-> > still unclear to me why the first mount now always has a fs context of
-> > ramfs_init_fs_context, even if we did not care for a ramdisk.
-> >
-> > Are you suggesting it can be arbitrary now?
-> 
-> With the existence of the new user_root, the first mount is not directly used
-> any more, so the filesystem type of it doesn't  matter.
-
-What do you mean? init_mount_tree() is always called, and it has
-statically:
-
-static void __init init_mount_tree(void)                                        
-{                                                                               
-	struct vfsmount *mnt;
-	...
-	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", NULL);
-	...
-}
-
-And as I noted, this is *always* called earlier than
-do_populate_rootfs(). Your changes did not remove the init_mount_tree()
-or modify it, and so why would the context of the above call always
-be OK to be used now with a ramfs context now?
-
-> So it makes no sense to make the file system of the first mount selectable.
-
-Why? I don't see why, nor is it explained, we're always caling
-vfs_kern_mount(&rootfs_fs_type, ...) and you have not changed that
-either.
-
-> To simplify the code here, I make it ramfs_init_fs_context directly. In fact,
-> it's fine to make it shmen_init_fs_context here too.
-
-So indeed you're suggesting its arbitrary now.... I don't see why.
-
-  Luis
+-- 
+paul moore
+www.paul-moore.com
