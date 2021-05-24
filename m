@@ -2,111 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA84B38E44A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 12:44:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D61F38E5F0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 13:57:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232614AbhEXKpe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 May 2021 06:45:34 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:39445 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232422AbhEXKpd (ORCPT
+        id S232547AbhEXL7E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 May 2021 07:59:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:49128 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232476AbhEXL7E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 May 2021 06:45:33 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 293055C00E0;
-        Mon, 24 May 2021 06:44:05 -0400 (EDT)
-Received: from imap38 ([10.202.2.88])
-  by compute3.internal (MEProxy); Mon, 24 May 2021 06:44:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        williammanley.net; h=mime-version:message-id:date:from:reply-to
-        :to:cc:subject:content-type; s=fm3; bh=/W3r2ZsBs1R/xUKNF3ES+WT4X
-        MT4SUaIH3uCSOJxyO8=; b=A35FqJjbbXAhngZap2uN4+eSwAj9VHNLEfAYKyqEH
-        +dI+m3EwgwYq7fqJNrVwu56+dYfDtjbjfxsmPdR0Js1iArDGK1AlUKuP9Fn0WeuM
-        MbKhdQJboJWLsnzJIZ47GFPRqj2mQcUR9JotCmtTSbhBHflF8SUnTTFBqGI7WZ6d
-        5+2NusztXe9ZB/phbCL3sf+zpLZS1Q0Y41AF+7wSof26jHXTwRur1W98aS5VIa7V
-        Y2MA6xR0lz/JHlSvkh0qxhRAbNzvGzOytuR3ntbsp5WnUObXYzpnD4AA79w2UYMz
-        xokPIw1ckA8kgaWD0BV/Z9lvFnkqkr4MyG2C4XITzSEVQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:message-id
-        :mime-version:reply-to:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=/W3r2ZsBs1R/xUKNF
-        3ES+WT4XMT4SUaIH3uCSOJxyO8=; b=Xt6gHh5wb1vikgm+nArxd4B9TY3nGxnyd
-        LhuxTk4CdgVlzEtPBiI91NijF7/llEe0U/k2E3Ev50thhlNcbY4D1a1gthS+Sf0z
-        WIeN6a/15WR44x5HCS30O6TQhmDB0MA9+xk/C4NJVbLbxQ9fR+bnMkUr0XdhKw5+
-        pfIx2N6YsOY+mH/EELY2GJNpxecovdzTGdb8n7FbOhXi43Vte6mQUrNHNoTgfOwy
-        BuC/a5f86sZq7ngFd9pMm7WAwFjqxOky3A8TuAHLOGRl77GZonBc+jKPER1Awpc6
-        Fg6U+NmTZ/FOndbBtoeoy4mh6/+13frRosXb2enh0JiW2QMh9H+8w==
-X-ME-Sender: <xms:dIOrYOG5ERlqBK7qsND-bsoYhpX6ybhAOT1Zl2T-JoSNSKpTKdz6sw>
-    <xme:dIOrYPVm7lpM7qmqgP27Bw2tOi6WgKA6DHNcHJ4J7akwPI2FHe5W1S0RMjoBuQ6SW
-    LElbYK2jmfuv5lP>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdejledgfeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkfffhrhfvufgtsehttdertderredtnecuhfhrohhmpedfhghilhhl
-    ucforghnlhgvhidfuceofihilhhlseifihhllhhirghmmhgrnhhlvgihrdhnvghtqeenuc
-    ggtffrrghtthgvrhhnpefffefgkeffteekhfelueeuteffleeitdfgkeeiieeljeffueej
-    keeftedvveeuhfenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfihilhhlseifihhllhhirghm
-    mhgrnhhlvgihrdhnvght
-X-ME-Proxy: <xmx:dIOrYIJMPj-9_QryQir3k0G-qfNrlwRrD3GQybNONIE6sRWluEhvOA>
-    <xmx:dIOrYIHL_m6JLa6XEYQI1Q_bWcKsz9_GtEri1xJxrdbWWm_yccNuuA>
-    <xmx:dIOrYEVQguLSLRlkKjXeVwoTaE7BmvOfyIqCDh8EbJhLOnAcaIWzuA>
-    <xmx:dYOrYOc07fl-4RWA8Gb0KetrfKGnccMu9rjtRgD4qRUPmG-97AZmoA>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 8CF7ACA005E; Mon, 24 May 2021 06:44:04 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.5.0-alpha0-448-gae190416c7-fm-20210505.004-gae190416
-Mime-Version: 1.0
-Message-Id: <fea8b16d-5a69-40f9-b123-e84dcd6e8f2e@www.fastmail.com>
-Date:   Mon, 24 May 2021 11:42:52 +0100
-From:   "Will Manley" <will@williammanley.net>
-Reply-To: will@williammanley.net
-To:     linux-fsdevel@vger.kernel.org
-Cc:     "Dave Chinner" <david@fromorbit.com>,
-        "Kent Overstreet" <kent.overstreet@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "Jens Axboe" <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        "Alice Ryhl" <alice@ryhl.io>, br0adcast <br0adcast.007@gmail.com>
-Subject: BUG: preadv2(.., RWF_NOWAIT) returns spurious EOF
-Content-Type: text/plain
+        Mon, 24 May 2021 07:59:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1621857455;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jsnicPGeNuNdO7KsYBksZz7HZLP3nHbQXyRo73rNtFI=;
+        b=hjn76jq7Mo431cIMRNdXx4FR5bQLA6QXeA+hQQ+qNlhAQBh7fwqK68uduaHsoTPZqnmYVP
+        RXfkMAnnxuya1tR/ebb0I+yzOGlDtYwGMXRCADNSy+KFnN1N3Ixp6cxh/wFIF+h02qT8pm
+        T3iGgQhyOCejJq3ZJQ5PCE39E3MVcus=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-249-EdL82pxyNBGA8wyuoi1Vaw-1; Mon, 24 May 2021 07:57:34 -0400
+X-MC-Unique: EdL82pxyNBGA8wyuoi1Vaw-1
+Received: by mail-qv1-f69.google.com with SMTP id n12-20020a0cdc8c0000b02901efdf8d3bc7so24559415qvk.23
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 May 2021 04:57:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jsnicPGeNuNdO7KsYBksZz7HZLP3nHbQXyRo73rNtFI=;
+        b=qiU4jzOlfJoElUtbwhNZVt1YuZ8EZGvPOGBGqIu68zZ6Ckyf5v2uZVAHDrsjtXPEh5
+         BCdd5kpmrT203Hu4opBxBziLlMEtM9uIDbcAq9iIry4UjfkJHjA3Y5fkyWQTV8xg848+
+         Yo7O7vvH1uKNppdXRoVIG2+Nje0jSGTeyFTl/JJ5nAEo8HdQuTjTcNb7QKK4ub9Vo5Lj
+         76NSdyam7OI0a1ctuyTZIXmKPLqplstmFe92rxTP2IgKxb+qV5Gbp1i21TmoBE2erWvA
+         Gx3I52WCuLTCFOxE/T1k/AkglW7kRihAhNLmw36lu2LcCFtmh1nozD0AD3uBvGHxVLhY
+         3l5Q==
+X-Gm-Message-State: AOAM5323j52LMRfciiuVprSiNsjisgQevXFU+7Uv0mX7SZjkOjTotM7B
+        18ganguCA2ZxqhmiojLcYI0Se2IzswKdJoO5qfXcI7g3MZpvYr5/9tDDebd4pq25BK92BzD3C/+
+        gBkTBN9wkguT01VHc8QACqwiLVg==
+X-Received: by 2002:ac8:5ac7:: with SMTP id d7mr25849910qtd.173.1621857453557;
+        Mon, 24 May 2021 04:57:33 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzXr+5GBB4XKevka1pAvPxe7iPZPXqfmFr24ZdwXUSaZTCHCo2sAtz8uckkTVlEYm19AvMKTw==
+X-Received: by 2002:ac8:5ac7:: with SMTP id d7mr25849894qtd.173.1621857453364;
+        Mon, 24 May 2021 04:57:33 -0700 (PDT)
+Received: from bfoster ([98.216.211.229])
+        by smtp.gmail.com with ESMTPSA id t2sm1369670qkt.135.2021.05.24.04.57.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 May 2021 04:57:33 -0700 (PDT)
+Date:   Mon, 24 May 2021 07:57:31 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] iomap: resched ioend completion when in
+ non-atomic context
+Message-ID: <YKuUqzEmt5/yZMt1@bfoster>
+References: <20210517171722.1266878-1-bfoster@redhat.com>
+ <20210517171722.1266878-2-bfoster@redhat.com>
+ <YKKt2isZwu0qJK/C@casper.infradead.org>
+ <YKOnGSJ9NR+cSRRc@bfoster>
+ <20210520215858.GZ9675@magnolia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210520215858.GZ9675@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi All
+On Thu, May 20, 2021 at 02:58:58PM -0700, Darrick J. Wong wrote:
+> On Tue, May 18, 2021 at 07:38:01AM -0400, Brian Foster wrote:
+> > On Mon, May 17, 2021 at 06:54:34PM +0100, Matthew Wilcox wrote:
+> > > On Mon, May 17, 2021 at 01:17:20PM -0400, Brian Foster wrote:
+> > > > @@ -1084,9 +1084,12 @@ iomap_finish_ioend(struct iomap_ioend *ioend, int error)
+> > > >  			next = bio->bi_private;
+> > > >  
+> > > >  		/* walk each page on bio, ending page IO on them */
+> > > > -		bio_for_each_segment_all(bv, bio, iter_all)
+> > > > +		bio_for_each_segment_all(bv, bio, iter_all) {
+> > > >  			iomap_finish_page_writeback(inode, bv->bv_page, error,
+> > > >  					bv->bv_len);
+> > > > +			if (!atomic)
+> > > > +				cond_resched();
+> > > > +		}
+> > > 
+> > > I don't know that it makes sense to check after _every_ page.  I might
+> > > go for every segment.  Some users check after every thousand pages.
+> > > 
+> > 
+> > The handful of examples I come across on a brief scan (including the
+> > other iomap usage) have a similar pattern as used here. I don't doubt
+> > there are others, but I think I'd prefer to have more reasoning behind
+> > adding more code than might be necessary (i.e. do we expect additional
+> > overhead to be measurable here?). As it is, the intent isn't so much to
+> > check on every page as much as this just happens to be the common point
+> > of the function to cover both long bio chains and single vector bios
+> > with large numbers of pages.
+> 
+> It's been a while since I waded through the macro hell to find out what
+> cond_resched actually does, but iirc it can do some fairly heavyweight
+> things (disable preemption, call the scheduler, rcu stuff) which is why
+> we're supposed to be a little judicious about amortizing each call over
+> a few thousand pages.
+> 
 
-We've seen preadv2(..., -1, RWF_NOWAIT) return 0 when at offset 4096 in a file much larger than 4096B.  This breaks code that reads an entire file because the 0 return makes it believe that it's already read the whole file. We came across this when investigating a bug reported against the Rust async I/O library tokio. The latest release now takes advantage of RWF_NOWAIT for file I/O, but it's caused problems for users.
+It looks to me it just checks some state bit and only does any work if
+actually necessary. I suppose not doing that less often is cheaper than
+doing it more, but it's not clear to me it's enough that it really
+matters and/or warrants more code to filter out calls..
 
-https://github.com/tokio-rs/tokio/issues/3803
+What exactly did you have in mind for logic? I suppose we could always
+stuff a 'if (!(count++ % 1024)) cond_resched();' or some such in the
+inner loop, but that might have less of an effect on larger chains
+constructed of bios with fewer pages (depending on whether that might
+still be possible).
 
-The issue is readily reproducible. We've tested on armv7, i686 and x86_64 with the ext4 filesystem.  Here's the strace output:
+Brian
 
-preadv2(9, [{iov_base=..., iov_len=32}], 1, -1, RWF_NOWAIT) = 32
-preadv2(9, [{iov_base=..., iov_len=32}], 1, -1, RWF_NOWAIT) = 32
-preadv2(9, [{iov_base=..., iov_len=64}], 1, -1, RWF_NOWAIT) = 64
-preadv2(9, [{iov_base=..., iov_len=128}], 1, -1, RWF_NOWAIT) = 128
-preadv2(9, [{iov_base=..., iov_len=256}], 1, -1, RWF_NOWAIT) = 256
-preadv2(9, [{iov_base=..., iov_len=512}], 1, -1, RWF_NOWAIT) = 512
-preadv2(9, [{iov_base=..., iov_len=1024}], 1, -1, RWF_NOWAIT) = 1024
-preadv2(9, [{iov_base=..., iov_len=2048}], 1, -1, RWF_NOWAIT) = 2048
-preadv2(9, [{iov_base="", iov_len=4096}], 1, -1, RWF_NOWAIT) = 0
+> --D
+> 
+> > Brian
+> > 
+> 
 
-I'm not certain that it's caused by the offset being 4096.  Maybe it's that the data will be written into an uncommitted page causes the bug? I'm not certain.
-
-The bug is present in Linux 5.9 and 5.10, but was fixed in Linux 5.11.  I've run a bisect and it was introduced in 
-
-    efa8480a831 fs: RWF_NOWAIT should imply IOCB_NOIO
-
-and fixed in
-
-    06c0444290 mm/filemap.c: generic_file_buffered_read() now uses find_get_pages_contig
-
-This is already fixed but I thought it would be important to report it as the fix seems to be incidental.  The fix commit message doesn't mention anything about bugs so I wonder if the underlying issue still exists.
-
-Our current plan is to add a uname check and to disable using the RWF_NOWAIT optimisation on 5.9 and 5.10.  Given that we don't understand the bug I thought it would be best to check with you. Maybe there's a better way of detecting the presence of this bug?
-
-There's more information at https://github.com/tokio-rs/tokio/issues/3803
-
-Thanks
-
-Will
