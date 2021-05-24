@@ -2,109 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB0E938F1CF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 18:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AC7538F3F9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 21:59:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232107AbhEXQyf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 May 2021 12:54:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42366 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233244AbhEXQye (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 May 2021 12:54:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 21E9B61405;
-        Mon, 24 May 2021 16:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621875186;
-        bh=eatiY2VwYI6jMYMQPjWcFVSnWA1ru41S8Ad5ObeDT+k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hIN8bW+P2zkyyLXx7bxzWELDzPupPeVmdVLq+f3dCwuE8QZQqXtrAvQRg1KUzNXP5
-         Q1/5uER24+vhIpVNboCToHB0aVHAnUs3n/8/k4GZq/XKrajlFzLhx+IGUcrELQQCLl
-         QTBjJxpZmDKbGMoIZOYgBioj+svfd4EjHRGepxpR74EKoztAYFBbnTH830ngHjqzVv
-         StijQ+QAzyhcv6G1ty69qpf59gVuSOLAOGSU76MzGSdu/6e0tEXVQk3Isc5cYqUtSO
-         lw5ULSnErQf/w7k6Fqj+cPDghppnblPE/z9caO8uIj83/odQ/tCR5vtlGXJHgj/s1a
-         6PFQVK6+bSNjw==
-Date:   Mon, 24 May 2021 09:53:05 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] iomap: resched ioend completion when in
- non-atomic context
-Message-ID: <20210524165305.GA202078@locust>
-References: <20210517171722.1266878-1-bfoster@redhat.com>
- <20210517171722.1266878-2-bfoster@redhat.com>
- <YKKt2isZwu0qJK/C@casper.infradead.org>
- <YKOnGSJ9NR+cSRRc@bfoster>
- <20210520215858.GZ9675@magnolia>
- <YKuUqzEmt5/yZMt1@bfoster>
+        id S233045AbhEXUA4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 May 2021 16:00:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51020 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232929AbhEXUAv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 May 2021 16:00:51 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 380A0C06138A
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 May 2021 12:59:23 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id lz27so43618609ejb.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 May 2021 12:59:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=09wkFCImo62hLXHkPnzCDHAYLxWzFwtrCMOPgJlSi80=;
+        b=YPDA+Xc5XRpHuRWNw83rgJb7PAeoUrr32wd0YoytgmXhNe7upISv9x7+VbYgvBRRRZ
+         b1/35UAnT2GeCOcUlkm8zabNyAF+k8Cn+e5O0hJ1x2gxBn3cdJTTvuVHYhCehubyE1rf
+         7LkrfO5dlawwPih4pzrlgP54+8tXpJIwTAqYJ9AYeKWy9J78rgvQjAbFvg0SbnFTQyGO
+         UfL80Or+LC+uiw/fI8E7yVHljeCMy/Ee9NriTZfdTBWr3mnMMB96bBZxa1ESHq439TEO
+         lI31NQJyIX76xNxgH/iQJLXmJEUWuRh5GidWMSCPd8K2FtLgR6A19p/trTaYQBXDfyvd
+         XKGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=09wkFCImo62hLXHkPnzCDHAYLxWzFwtrCMOPgJlSi80=;
+        b=FnYGOQGbnbxZcpSvaqEoKZ+XIGI1UjLJG4FYOhV4SAlwwt0K8dzT9XqVk7oVQjLVgm
+         PXRWHYep0bK4JaJMvEqJNR20ZAMJ7mdB2j5oYile4evQHSO57SLDyxRAhTy4PHaDgqRe
+         8dx0rXU9/h4WMwb3jlOtUbfs3Te4q1rNtds3crLNBOzvJ2B3St8rPw46DyVzlglbC2o6
+         taPTlDw0MB4RBQBQ5rhmiS5m6S7++1JaLfkGxPhICBfnnDbv2pcxA5a+tjsWBQ0smy+T
+         8sup9ut/NkGbtM4vsC5l9J8uiz0TxVctWUMmTD9dhwtoqrcWuLMLd1q5HFVvxWE4M4gA
+         Uveg==
+X-Gm-Message-State: AOAM530NWuuGo7DTwXq+fqkOLtvuqDRh30aQc+ZDwAab7mee6MFSbO3g
+        lY46uG4/3shwZCDLuT3rvgnTzauynq3o2M/CNebA
+X-Google-Smtp-Source: ABdhPJyJnn8cTuWE0D6WCTdnxc3zkrXdZltcoobyaH7I8DthDbUf1aZItUpXKY/gO3bnHsam4ng+oV2h/jNU1sQt9pA=
+X-Received: by 2002:a17:907:10d8:: with SMTP id rv24mr24731654ejb.542.1621886361736;
+ Mon, 24 May 2021 12:59:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YKuUqzEmt5/yZMt1@bfoster>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl> <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com> <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+In-Reply-To: <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 24 May 2021 15:59:10 -0400
+Message-ID: <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 24, 2021 at 07:57:31AM -0400, Brian Foster wrote:
-> On Thu, May 20, 2021 at 02:58:58PM -0700, Darrick J. Wong wrote:
-> > On Tue, May 18, 2021 at 07:38:01AM -0400, Brian Foster wrote:
-> > > On Mon, May 17, 2021 at 06:54:34PM +0100, Matthew Wilcox wrote:
-> > > > On Mon, May 17, 2021 at 01:17:20PM -0400, Brian Foster wrote:
-> > > > > @@ -1084,9 +1084,12 @@ iomap_finish_ioend(struct iomap_ioend *ioend, int error)
-> > > > >  			next = bio->bi_private;
-> > > > >  
-> > > > >  		/* walk each page on bio, ending page IO on them */
-> > > > > -		bio_for_each_segment_all(bv, bio, iter_all)
-> > > > > +		bio_for_each_segment_all(bv, bio, iter_all) {
-> > > > >  			iomap_finish_page_writeback(inode, bv->bv_page, error,
-> > > > >  					bv->bv_len);
-> > > > > +			if (!atomic)
-> > > > > +				cond_resched();
-> > > > > +		}
-> > > > 
-> > > > I don't know that it makes sense to check after _every_ page.  I might
-> > > > go for every segment.  Some users check after every thousand pages.
-> > > > 
-> > > 
-> > > The handful of examples I come across on a brief scan (including the
-> > > other iomap usage) have a similar pattern as used here. I don't doubt
-> > > there are others, but I think I'd prefer to have more reasoning behind
-> > > adding more code than might be necessary (i.e. do we expect additional
-> > > overhead to be measurable here?). As it is, the intent isn't so much to
-> > > check on every page as much as this just happens to be the common point
-> > > of the function to cover both long bio chains and single vector bios
-> > > with large numbers of pages.
-> > 
-> > It's been a while since I waded through the macro hell to find out what
-> > cond_resched actually does, but iirc it can do some fairly heavyweight
-> > things (disable preemption, call the scheduler, rcu stuff) which is why
-> > we're supposed to be a little judicious about amortizing each call over
-> > a few thousand pages.
-> > 
-> 
-> It looks to me it just checks some state bit and only does any work if
-> actually necessary. I suppose not doing that less often is cheaper than
-> doing it more, but it's not clear to me it's enough that it really
-> matters and/or warrants more code to filter out calls..
-> 
-> What exactly did you have in mind for logic? I suppose we could always
-> stuff a 'if (!(count++ % 1024)) cond_resched();' or some such in the
-> inner loop, but that might have less of an effect on larger chains
-> constructed of bios with fewer pages (depending on whether that might
-> still be possible).
+On Sun, May 23, 2021 at 4:26 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> On 5/22/21 3:36 AM, Paul Moore wrote:
+> > On Fri, May 21, 2021 at 8:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> >> On 5/21/21 10:49 PM, Paul Moore wrote:
+> [...]
+> >>>
+> >>> +     if (req->opcode < IORING_OP_LAST)
+> >>
+> >> always true at this point
+> >
+> > I placed the opcode check before the audit call because the switch
+> > statement below which handles the operation dispatching has a 'ret =
+> > -EINVAL' for the default case, implying that there are some paths
+> > where an invalid opcode could be passed into the function.  Obviously
+> > if that is not the case and you can guarantee that req->opcode will
+> > always be valid we can easily drop the check prior to the audit call.
+>
+> It is always true at this point, would be completely broken
+> otherwise
 
-I /was/ thinking about a function level page counter until I noticed
-that iomap_{write,unshare}_actor call cond_resched for every page it
-touches.  I withdraw the comment. :)
+Understood, I was just pointing out an oddity in the code.  I just
+dropped the checks from my local tree, you'll see it in the next draft
+of the patchset.
 
---D
+> >> So, it adds two if's with memory loads (i.e. current->audit_context)
+> >> per request in one of the hottest functions here... No way, nack
+> >>
+> >> Maybe, if it's dynamically compiled into like kprobes if it's
+> >> _really_ used.
+> >
+> > I'm open to suggestions on how to tweak the io_uring/audit
+> > integration, if you don't like what I've proposed in this patchset,
+> > lets try to come up with a solution that is more palatable.  If you
+> > were going to add audit support for these io_uring operations, how
+> > would you propose we do it?  Not being able to properly audit io_uring
+> > operations is going to be a significant issue for a chunk of users, if
+> > it isn't already, we need to work to find a solution to this problem.
+>
+> Who knows. First of all, seems CONFIG_AUDIT is enabled by default
+> for many popular distributions, so I assume that is not compiled out.
+>
+> What are use cases for audit? Always running I guess?
 
-> 
-> Brian
-> 
-> > --D
-> > 
-> > > Brian
-> > > 
-> > 
-> 
+Audit has been around for quite some time now, and it's goal is to
+provide a mechanism for logging "security relevant" information in
+such a way that it meets the needs of various security certification
+efforts.  Traditional Linux event logging, e.g. syslog and the like,
+does not meet these requirements and changing them would likely affect
+the usability for those who are not required to be compliant with
+these security certifications.  The Linux audit subsystem allows Linux
+to be used in places it couldn't be used otherwise (or rather makes it
+a *lot* easier).
+
+That said, audit is not for everyone, and we have build time and
+runtime options to help make life easier.  Beyond simply disabling
+audit at compile time a number of Linux distributions effectively
+shortcut audit at runtime by adding a "never" rule to the audit
+filter, for example:
+
+ % auditctl -a task,never
+
+> Putting aside compatibility problems, it sounds that with the amount of overhead
+> it adds there is no much profit in using io_uring in the first place.
+> Is that so?
+
+Well, if audit alone erased all of the io_uring advantages we should
+just rip io_uring out of the kernel and people can just disable audit
+instead ;)
+
+I believe there are people who would like to use io_uring and are also
+required to use a kernel with audit, either due to the need to run a
+distribution kernel or the need to capture security information in the
+audit stream.  I'm hoping that we can find a solution for these users;
+if we don't we are asking this group to choose either io_uring or
+audit, and that is something I would like to avoid.
+
+-- 
+paul moore
+www.paul-moore.com
