@@ -2,84 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC2D038EFA7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 17:57:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBC7638ED46
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 17:34:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235590AbhEXP6t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 May 2021 11:58:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40492 "EHLO mail.kernel.org"
+        id S233754AbhEXPfm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 May 2021 11:35:42 -0400
+Received: from verein.lst.de ([213.95.11.211]:55288 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233923AbhEXP5z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 May 2021 11:57:55 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E4229613C8;
-        Mon, 24 May 2021 15:43:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1621871031;
-        bh=KN9/wTIwtYFC3VY1RYKg//I4UbsHp7lVb6coPb4Sxuo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dnHuDhA0TVn+5/TKZOpeT/XN4i4ldR+mDsUUXZ1gALUvaWcAp52JbYKMWBUpVd4K+
-         S13ATLUQx0ZdCgeN4suH2mQpq8zXWslJ6pRrLIB5TRKEjXlNo/EtkV8G2i6uwYkrpN
-         +qK/N8TMqxzjhEWf7n4Od7hG8DwCau21Y3m2DcyY=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 5.12 040/127] fs/mount_setattr: tighten permission checks
-Date:   Mon, 24 May 2021 17:25:57 +0200
-Message-Id: <20210524152336.206780930@linuxfoundation.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210524152334.857620285@linuxfoundation.org>
-References: <20210524152334.857620285@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S233654AbhEXPeR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 May 2021 11:34:17 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 57D6667373; Mon, 24 May 2021 17:32:47 +0200 (CEST)
+Date:   Mon, 24 May 2021 17:32:47 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Brian Foster <bfoster@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: iomap: writeback ioend/bio allocation deadlock risk
+Message-ID: <20210524153247.GA6041@lst.de>
+References: <YKcouuVR/y/L4T58@T590> <20210521071727.GA11473@lst.de> <YKdhuUZBtKMxDpsr@T590> <20210521073547.GA11955@lst.de> <YKdwtzp+WWQ3krhI@T590> <20210521083635.GA15311@lst.de> <YKd1VS5gkzQRn+7x@T590>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YKd1VS5gkzQRn+7x@T590>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+On Fri, May 21, 2021 at 04:54:45PM +0800, Ming Lei wrote:
+> On Fri, May 21, 2021 at 10:36:35AM +0200, Christoph Hellwig wrote:
+> > On Fri, May 21, 2021 at 04:35:03PM +0800, Ming Lei wrote:
+> > > Just wondering why the ioend isn't submitted out after it becomes full?
+> > 
+> > block layer plugging?  Although failing bio allocations will kick that,
+> > so that is not a deadlock risk.
+> 
+> These ioends are just added to one list stored on local stack variable(submit_list),
 
-commit 2ca4dcc4909d787ee153272f7efc2bff3b498720 upstream.
+Yes.  But only until the code finished iterating over a page.  The
+worst case number of bios for a page is PAGE_SIZE / SECTOR_SIZE, and
+the bio_set is side to handle that comfortably.
 
-We currently don't have any filesystems that support idmapped mounts
-which are mountable inside a user namespace. That was a deliberate
-decision for now as a userns root can just mount the filesystem
-themselves. So enforce this restriction explicitly until there's a real
-use-case for this. This way we can notice it and will have a chance to
-adapt and audit our translation helpers and fstests appropriately if we
-need to support such filesystems.
+> how can block layer plugging observe & submit them out?
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: stable@vger.kernel.org
-CC: linux-fsdevel@vger.kernel.org
-Suggested-by: Seth Forshee <seth.forshee@canonical.com>
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/namespace.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+It can't.  I was talking about the high-level plug that is held
+over multiple pages.  At that point the bios are submitted to the
+block layer already, but they might be held in a plug.  And looking at
+the bio_alloc_bioset code we don't actually flush a plug at the moment
+in that case.  Something like the patch below would do that:
 
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3853,8 +3853,12 @@ static int can_idmap_mount(const struct
- 	if (!(m->mnt_sb->s_type->fs_flags & FS_ALLOW_IDMAP))
- 		return -EINVAL;
+diff --git a/block/bio.c b/block/bio.c
+index 44205dfb6b60..5b9d2f4d7c08 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -432,6 +432,7 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned short nr_iovecs,
  
-+	/* Don't yet support filesystem mountable in user namespaces. */
-+	if (m->mnt_sb->s_user_ns != &init_user_ns)
-+		return -EINVAL;
-+
- 	/* We're not controlling the superblock. */
--	if (!ns_capable(m->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
-+	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
- 	/* Mount has already been visible in the filesystem hierarchy. */
-
-
+ 	p = mempool_alloc(&bs->bio_pool, gfp_mask);
+ 	if (!p && gfp_mask != saved_gfp) {
++		blk_schedule_flush_plug(current);
+ 		punt_bios_to_rescuer(bs);
+ 		gfp_mask = saved_gfp;
+ 		p = mempool_alloc(&bs->bio_pool, gfp_mask);
