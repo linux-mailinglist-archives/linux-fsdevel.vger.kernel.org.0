@@ -2,62 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3371B38F0EA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 18:08:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC2D038EFA7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 17:57:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236571AbhEXQGw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 May 2021 12:06:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53166 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237235AbhEXQFO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 May 2021 12:05:14 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E266BC0612A3;
-        Mon, 24 May 2021 08:19:59 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id B7C131F41D90
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     amir73il@gmail.com, kernel@collabora.com,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Dave Chinner <david@fromorbit.com>, jack@suse.com,
-        dhowells@redhat.com, khazhy@google.com,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 00/11] File system wide monitoring
-Organization: Collabora
-References: <20210521024134.1032503-1-krisman@collabora.com>
-        <YKmS0KyZ6RoCw4We@mit.edu>
-Date:   Mon, 24 May 2021 11:19:50 -0400
-In-Reply-To: <YKmS0KyZ6RoCw4We@mit.edu> (Theodore Y. Ts'o's message of "Sat,
-        22 May 2021 19:25:05 -0400")
-Message-ID: <87h7isp3ah.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        id S235590AbhEXP6t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 May 2021 11:58:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40492 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233923AbhEXP5z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 May 2021 11:57:55 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E4229613C8;
+        Mon, 24 May 2021 15:43:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1621871031;
+        bh=KN9/wTIwtYFC3VY1RYKg//I4UbsHp7lVb6coPb4Sxuo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dnHuDhA0TVn+5/TKZOpeT/XN4i4ldR+mDsUUXZ1gALUvaWcAp52JbYKMWBUpVd4K+
+         S13ATLUQx0ZdCgeN4suH2mQpq8zXWslJ6pRrLIB5TRKEjXlNo/EtkV8G2i6uwYkrpN
+         +qK/N8TMqxzjhEWf7n4Od7hG8DwCau21Y3m2DcyY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 5.12 040/127] fs/mount_setattr: tighten permission checks
+Date:   Mon, 24 May 2021 17:25:57 +0200
+Message-Id: <20210524152336.206780930@linuxfoundation.org>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210524152334.857620285@linuxfoundation.org>
+References: <20210524152334.857620285@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"Theodore Y. Ts'o" <tytso@mit.edu> writes:
+From: Christian Brauner <christian.brauner@ubuntu.com>
 
-> Hi Gabriel,
->
-> Quick question; what userspace program are you using to test this
-> feature?  Do you have a custom testing program you are using?  If so,
-> could share it?
+commit 2ca4dcc4909d787ee153272f7efc2bff3b498720 upstream.
 
-Hello Ted,
+We currently don't have any filesystems that support idmapped mounts
+which are mountable inside a user namespace. That was a deliberate
+decision for now as a userns root can just mount the filesystem
+themselves. So enforce this restriction explicitly until there's a real
+use-case for this. This way we can notice it and will have a chance to
+adapt and audit our translation helpers and fstests appropriately if we
+need to support such filesystems.
 
-I'm using the program in patch 10, to watch and print notifications ,
-along with corrupt filesystems. I trigger operations via command line
-and watch the reports flow. I have slightly modified the sample code to
-test marks disappearing at inopportune times, but that's trivial to
-recreate with the samples code.
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: stable@vger.kernel.org
+CC: linux-fsdevel@vger.kernel.org
+Suggested-by: Seth Forshee <seth.forshee@canonical.com>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/namespace.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-I plan to write more automated tests for LTP, once we settle on this
-design.
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3853,8 +3853,12 @@ static int can_idmap_mount(const struct
+ 	if (!(m->mnt_sb->s_type->fs_flags & FS_ALLOW_IDMAP))
+ 		return -EINVAL;
+ 
++	/* Don't yet support filesystem mountable in user namespaces. */
++	if (m->mnt_sb->s_user_ns != &init_user_ns)
++		return -EINVAL;
++
+ 	/* We're not controlling the superblock. */
+-	if (!ns_capable(m->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
++	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+ 	/* Mount has already been visible in the filesystem hierarchy. */
 
--- 
-Gabriel Krisman Bertazi
+
