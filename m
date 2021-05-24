@@ -2,234 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED5F938E43E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 12:40:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA84B38E44A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 12:44:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232426AbhEXKmM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 May 2021 06:42:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36702 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232397AbhEXKmL (ORCPT
+        id S232614AbhEXKpe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 May 2021 06:45:34 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:39445 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232422AbhEXKpd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 May 2021 06:42:11 -0400
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12A08C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 May 2021 03:40:44 -0700 (PDT)
-Received: by mail-il1-x12c.google.com with SMTP id b5so4545903ilc.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 May 2021 03:40:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AuQIcnkVHrN682iEuYdqHBXzewuxe5VZEYVakEa/4RE=;
-        b=AP9boNfD+xaLk3WU0gy2Sxh4182g/9Ou6Dx2F57A7+n5/s9GjqHK/tPp8A+ACOHxF/
-         EfR0xAiQllISiOKiDq2S1Zeir5b2r+Dpr7nKqd1rJfGWX323zRK2OAAELTm7YIMnDJJR
-         xD/JPryvb1T0gZOnXu9xrNr8LwEBP7FfMwmg1fEWtGbxH4RNvn9M9Jwh6gDyRaJfzT83
-         w3u/Z3m5q1B8nHLOY5SHtXIIG6Nq7RGAEn54y/tOcehY8q5CRtf9p5m55B2DYwrKDgl/
-         5BsLuyOF+BW4RN5qH6KnwwO17yp2eDTjOhc8MygacQdwI3RnCDn1Cq9wYtV3yLwSZCk9
-         2bdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AuQIcnkVHrN682iEuYdqHBXzewuxe5VZEYVakEa/4RE=;
-        b=jJufl6v6P1Yy+JP5HOOnHh70e+dRaa5rSMfA5dvEuJ6wF53cWj0ERnvvYs6V4QrH6I
-         JR+pWg5I80hPSYno9/hrqwUWta7z2jx5XJMzpCVQiFuSerVk4B1giLOlpkB0rVczylW8
-         ciXV8PZtAgdCzovnuS025z00hS880M/zQS79zfe7g6aObGG5QvDRkC+ZgUK15HSdKn17
-         rjPyi3AiGwPPHxdP5aHe0PEecNEbBS52l9BCCrV9zH4xlk9kval1Z6fea4n4tqkyidM5
-         kmMkzpTyHntdCrt4YDUbGGmb6ktWmjYBvQg8kxIMtu84L/FkfAs+BCfyZTj/MUUUlpk8
-         PO+A==
-X-Gm-Message-State: AOAM532YKRMx6pe1tHoGjhJQgv33GaegesJRrFZfQVh9JvHP3Z1o+klF
-        rYaccE19a94cj+2LKn/Gd/Er2F4/K7HaCtdkUdQ=
-X-Google-Smtp-Source: ABdhPJxO2xglmvXCEK5N47q40O3ExBgG6o7OaanZc5zcEhNiqKJg/WkqL7skmorGXMLlqWyQ3W9TQCKDKDxCouYZ4tk=
-X-Received: by 2002:a92:4446:: with SMTP id a6mr17452180ilm.9.1621852843172;
- Mon, 24 May 2021 03:40:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210522091916.196741-1-amir73il@gmail.com> <YKtmwOM9WqUTK/u4@google.com>
-In-Reply-To: <YKtmwOM9WqUTK/u4@google.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 24 May 2021 13:40:32 +0300
-Message-ID: <CAOQ4uxjxT10cpnbT9SRCeh1zF4H_VWfkaj1VBi19jRnoACb8Ag@mail.gmail.com>
-Subject: Re: [PATCH] fanotify: fix permission model of unprivileged group
-To:     Matthew Bobrowski <repnop@google.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 24 May 2021 06:45:33 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 293055C00E0;
+        Mon, 24 May 2021 06:44:05 -0400 (EDT)
+Received: from imap38 ([10.202.2.88])
+  by compute3.internal (MEProxy); Mon, 24 May 2021 06:44:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        williammanley.net; h=mime-version:message-id:date:from:reply-to
+        :to:cc:subject:content-type; s=fm3; bh=/W3r2ZsBs1R/xUKNF3ES+WT4X
+        MT4SUaIH3uCSOJxyO8=; b=A35FqJjbbXAhngZap2uN4+eSwAj9VHNLEfAYKyqEH
+        +dI+m3EwgwYq7fqJNrVwu56+dYfDtjbjfxsmPdR0Js1iArDGK1AlUKuP9Fn0WeuM
+        MbKhdQJboJWLsnzJIZ47GFPRqj2mQcUR9JotCmtTSbhBHflF8SUnTTFBqGI7WZ6d
+        5+2NusztXe9ZB/phbCL3sf+zpLZS1Q0Y41AF+7wSof26jHXTwRur1W98aS5VIa7V
+        Y2MA6xR0lz/JHlSvkh0qxhRAbNzvGzOytuR3ntbsp5WnUObXYzpnD4AA79w2UYMz
+        xokPIw1ckA8kgaWD0BV/Z9lvFnkqkr4MyG2C4XITzSEVQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:message-id
+        :mime-version:reply-to:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=/W3r2ZsBs1R/xUKNF
+        3ES+WT4XMT4SUaIH3uCSOJxyO8=; b=Xt6gHh5wb1vikgm+nArxd4B9TY3nGxnyd
+        LhuxTk4CdgVlzEtPBiI91NijF7/llEe0U/k2E3Ev50thhlNcbY4D1a1gthS+Sf0z
+        WIeN6a/15WR44x5HCS30O6TQhmDB0MA9+xk/C4NJVbLbxQ9fR+bnMkUr0XdhKw5+
+        pfIx2N6YsOY+mH/EELY2GJNpxecovdzTGdb8n7FbOhXi43Vte6mQUrNHNoTgfOwy
+        BuC/a5f86sZq7ngFd9pMm7WAwFjqxOky3A8TuAHLOGRl77GZonBc+jKPER1Awpc6
+        Fg6U+NmTZ/FOndbBtoeoy4mh6/+13frRosXb2enh0JiW2QMh9H+8w==
+X-ME-Sender: <xms:dIOrYOG5ERlqBK7qsND-bsoYhpX6ybhAOT1Zl2T-JoSNSKpTKdz6sw>
+    <xme:dIOrYPVm7lpM7qmqgP27Bw2tOi6WgKA6DHNcHJ4J7akwPI2FHe5W1S0RMjoBuQ6SW
+    LElbYK2jmfuv5lP>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdejledgfeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkfffhrhfvufgtsehttdertderredtnecuhfhrohhmpedfhghilhhl
+    ucforghnlhgvhidfuceofihilhhlseifihhllhhirghmmhgrnhhlvgihrdhnvghtqeenuc
+    ggtffrrghtthgvrhhnpefffefgkeffteekhfelueeuteffleeitdfgkeeiieeljeffueej
+    keeftedvveeuhfenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfihilhhlseifihhllhhirghm
+    mhgrnhhlvgihrdhnvght
+X-ME-Proxy: <xmx:dIOrYIJMPj-9_QryQir3k0G-qfNrlwRrD3GQybNONIE6sRWluEhvOA>
+    <xmx:dIOrYIHL_m6JLa6XEYQI1Q_bWcKsz9_GtEri1xJxrdbWWm_yccNuuA>
+    <xmx:dIOrYEVQguLSLRlkKjXeVwoTaE7BmvOfyIqCDh8EbJhLOnAcaIWzuA>
+    <xmx:dYOrYOc07fl-4RWA8Gb0KetrfKGnccMu9rjtRgD4qRUPmG-97AZmoA>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 8CF7ACA005E; Mon, 24 May 2021 06:44:04 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.5.0-alpha0-448-gae190416c7-fm-20210505.004-gae190416
+Mime-Version: 1.0
+Message-Id: <fea8b16d-5a69-40f9-b123-e84dcd6e8f2e@www.fastmail.com>
+Date:   Mon, 24 May 2021 11:42:52 +0100
+From:   "Will Manley" <will@williammanley.net>
+Reply-To: will@williammanley.net
+To:     linux-fsdevel@vger.kernel.org
+Cc:     "Dave Chinner" <david@fromorbit.com>,
+        "Kent Overstreet" <kent.overstreet@gmail.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Jens Axboe" <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        "Alice Ryhl" <alice@ryhl.io>, br0adcast <br0adcast.007@gmail.com>
+Subject: BUG: preadv2(.., RWF_NOWAIT) returns spurious EOF
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 24, 2021 at 11:41 AM Matthew Bobrowski <repnop@google.com> wrote:
->
-> On Sat, May 22, 2021 at 12:19:16PM +0300, Amir Goldstein wrote:
-> > Reporting event->pid should depend on the privileges of the user that
-> > initialized the group, not the privileges of the user reading the
-> > events.
-> >
-> > Use an internal group flag FANOTIFY_UNPRIV to record the fact the the
-> > group was initialized by an unprivileged user.
-> >
-> > To be on the safe side, the premissions to setup filesystem and mount
-> > marks now require that both the user that initialized the group and
-> > the user setting up the mark have CAP_SYS_ADMIN.
-> >
-> > Fixes: 7cea2a3c505e ("fanotify: support limited functionality for unprivileged users")
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> Thanks for sending through this patch Amir!
->
-> In general, the patch looks good to me, however there's just a few
-> nits below.
->
-> > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> > index 71fefb30e015..7df6cba4a06d 100644
-> > --- a/fs/notify/fanotify/fanotify_user.c
-> > +++ b/fs/notify/fanotify/fanotify_user.c
-> > @@ -424,11 +424,18 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
-> >        * events generated by the listener process itself, without disclosing
-> >        * the pids of other processes.
-> >        */
-> > -     if (!capable(CAP_SYS_ADMIN) &&
-> > +     if (FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
-> >           task_tgid(current) != event->pid)
-> >               metadata.pid = 0;
-> >
-> > -     if (path && path->mnt && path->dentry) {
-> > +     /*
-> > +      * For now, we require fid mode for unprivileged listener, which does
-> > +      * record path events, but keep this check for safety in case we want
-> > +      * to allow unprivileged listener to get events with no fd and no fid
-> > +      * in the future.
-> > +      */
->
-> I think it's best if we keep clear of using first person in our
-> comments throughout our code base. Maybe we could change this to:
->
-> * For now, fid mode is required for an unprivileged listener, which
->   does record path events. However, this check must be kept...
->
-> > +     if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
-> > +         path && path->mnt && path->dentry) {
-> >               fd = create_fd(group, path, &f);
-> >               if (fd < 0)
-> >                       return fd;
-> > @@ -1040,6 +1047,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
-> >       int f_flags, fd;
-> >       unsigned int fid_mode = flags & FANOTIFY_FID_BITS;
-> >       unsigned int class = flags & FANOTIFY_CLASS_BITS;
-> > +     unsigned int internal_flags = 0;
-> >
-> >       pr_debug("%s: flags=%x event_f_flags=%x\n",
-> >                __func__, flags, event_f_flags);
-> > @@ -1053,6 +1061,13 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
-> >                */
-> >               if ((flags & FANOTIFY_ADMIN_INIT_FLAGS) || !fid_mode)
-> >                       return -EPERM;
-> > +
-> > +             /*
-> > +              * We set the internal flag FANOTIFY_UNPRIV on the group, so we
-> > +              * know that we need to limit setting mount/filesystem marks on
-> > +              * this group and avoid providing pid and open fd in the event.
-> > +              */
->
-> Same comment as above applies here. This could be changed to:
->
-> * Set the internal FANOTIFY_UNPRIV flag for this notification group so
->   that certain restrictions can be enforced upon it. This includes
->   things like not permitting an unprivileged user from setting up
->   mount/filesystem scoped marks and not returning an open file
->   descriptor or pid meta-information within an event.
->
-> You can make it shorter if you like, but you get the drift.
->
-> > +             internal_flags |= FANOTIFY_UNPRIV;
-> >       }
-> >
-> >  #ifdef CONFIG_AUDITSYSCALL
-> > @@ -1105,7 +1120,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
-> >               goto out_destroy_group;
-> >       }
-> >
-> > -     group->fanotify_data.flags = flags;
-> > +     group->fanotify_data.flags = flags | internal_flags;
-> >       group->memcg = get_mem_cgroup_from_mm(current->mm);
-> >
-> >       group->fanotify_data.merge_hash = fanotify_alloc_merge_hash();
-> > @@ -1305,11 +1320,13 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
-> >       group = f.file->private_data;
-> >
-> >       /*
-> > -      * An unprivileged user is not allowed to watch a mount point nor
-> > -      * a filesystem.
-> > +      * An unprivileged user is not allowed to setup mount point nor
->                                                                    ^
->                                                                    s
-> > +      * filesystem marks. It is not allowed to setup those marks for
-> > +      * a group that was initialized by an unprivileged user.
->
-> I think the second sentence would better read as:
->
->        * This also includes setting up such marks by a group that was
->          intialized by an unprivileged user.
->
-> >       ret = -EPERM;
-> > -     if (!capable(CAP_SYS_ADMIN) &&
-> > +     if ((!capable(CAP_SYS_ADMIN) ||
-> > +          FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV)) &&
->
-> ...
->
-> > diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
-> > index a712b2aaa9ac..57f0d5d9f934 100644
-> > --- a/fs/notify/fdinfo.c
-> > +++ b/fs/notify/fdinfo.c
-> > @@ -144,7 +144,7 @@ void fanotify_show_fdinfo(struct seq_file *m, struct file *f)
-> >       struct fsnotify_group *group = f->private_data;
-> >
-> >       seq_printf(m, "fanotify flags:%x event-flags:%x\n",
-> > -                group->fanotify_data.flags,
-> > +                group->fanotify_data.flags & FANOTIFY_INIT_FLAGS,
-> >                  group->fanotify_data.f_flags);
->
-> I feel like the internal initialization flags have been dropped off
-> here as FANOTIFY_INIT_FLAGS technically wouldn't cover all flags
-> present in group->fanotify_data.flags with FANOTIFY_UNPRIV, right?
->
+Hi All
 
-Right. CRIU reads those values and tries to restore the same
-fanotify group on a new running instance, so we must not export flags
-not allowed by fanotify_init().
+We've seen preadv2(..., -1, RWF_NOWAIT) return 0 when at offset 4096 in a file much larger than 4096B.  This breaks code that reads an entire file because the 0 return makes it believe that it's already read the whole file. We came across this when investigating a bug reported against the Rust async I/O library tokio. The latest release now takes advantage of RWF_NOWAIT for file I/O, but it's caused problems for users.
 
+https://github.com/tokio-rs/tokio/issues/3803
 
-> >       show_fdinfo(m, f, fanotify_fdinfo);
-> > diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-> > index bad41bcb25df..f277d1c4e6b8 100644
-> > --- a/include/linux/fanotify.h
-> > +++ b/include/linux/fanotify.h
-> > @@ -51,6 +51,10 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
-> >  #define FANOTIFY_INIT_FLAGS  (FANOTIFY_ADMIN_INIT_FLAGS | \
-> >                                FANOTIFY_USER_INIT_FLAGS)
-> >
-> > +/* Internal flags */
-> > +#define FANOTIFY_UNPRIV              0x80000000
-> > +#define FANOTIFY_INTERNAL_FLAGS      (FANOTIFY_UNPRIV)
->
-> Should we be more distinct here i.e. FANOTIFY_INTERNAL_INIT_FLAGS?
+The issue is readily reproducible. We've tested on armv7, i686 and x86_64 with the ext4 filesystem.  Here's the strace output:
 
-If anything, it would be FANOTIFY_INTERNAL_GROUP_FLAGS
-FANOTIFY_INIT_FLAGS can only be set by fanotify_init(), but internal
-flags could potential be set at any time.
+preadv2(9, [{iov_base=..., iov_len=32}], 1, -1, RWF_NOWAIT) = 32
+preadv2(9, [{iov_base=..., iov_len=32}], 1, -1, RWF_NOWAIT) = 32
+preadv2(9, [{iov_base=..., iov_len=64}], 1, -1, RWF_NOWAIT) = 64
+preadv2(9, [{iov_base=..., iov_len=128}], 1, -1, RWF_NOWAIT) = 128
+preadv2(9, [{iov_base=..., iov_len=256}], 1, -1, RWF_NOWAIT) = 256
+preadv2(9, [{iov_base=..., iov_len=512}], 1, -1, RWF_NOWAIT) = 512
+preadv2(9, [{iov_base=..., iov_len=1024}], 1, -1, RWF_NOWAIT) = 1024
+preadv2(9, [{iov_base=..., iov_len=2048}], 1, -1, RWF_NOWAIT) = 2048
+preadv2(9, [{iov_base="", iov_len=4096}], 1, -1, RWF_NOWAIT) = 0
 
-> Just thinking about a possible case where there's some other internal
-> fanotify flags that are used for something else?
->
+I'm not certain that it's caused by the offset being 4096.  Maybe it's that the data will be written into an uncommitted page causes the bug? I'm not certain.
 
-I prefer the brevity. It's an internal name so we can always change it later
-should it become ambiguous.
+The bug is present in Linux 5.9 and 5.10, but was fixed in Linux 5.11.  I've run a bisect and it was introduced in 
 
-Thanks for the review.
-I'll send v2 shortly.
+    efa8480a831 fs: RWF_NOWAIT should imply IOCB_NOIO
 
-Thanks,
-Amir.
+and fixed in
+
+    06c0444290 mm/filemap.c: generic_file_buffered_read() now uses find_get_pages_contig
+
+This is already fixed but I thought it would be important to report it as the fix seems to be incidental.  The fix commit message doesn't mention anything about bugs so I wonder if the underlying issue still exists.
+
+Our current plan is to add a uname check and to disable using the RWF_NOWAIT optimisation on 5.9 and 5.10.  Given that we don't understand the bug I thought it would be best to check with you. Maybe there's a better way of detecting the presence of this bug?
+
+There's more information at https://github.com/tokio-rs/tokio/issues/3803
+
+Thanks
+
+Will
