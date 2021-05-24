@@ -2,219 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 525C538E61C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 14:02:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D485938E819
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 May 2021 15:53:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232746AbhEXMDv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 May 2021 08:03:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49148 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232476AbhEXMDv (ORCPT
+        id S232543AbhEXNy5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 May 2021 09:54:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52848 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232456AbhEXNyz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 May 2021 08:03:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1621857743;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mbvaV+DM5yQpwPh803YCQ/Bi/4BeS4L0C8m8goZzVO4=;
-        b=OHAlzZI3jiXJh0CTS7OZTXNdIFjzueL68wdgjvy6cXKZSZq7UbFFaYe4Z/+jca+7Pfp/QL
-        kqnd13eXYL+3oNvd9opSOjw2G8w6gTAz2VhIzkTbWamOl9OpsHIK/UVz2+MffmsOWvUQ1i
-        p0R4Iz2geMu0B7O4L0nrg0HGXJsF08c=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-58-oin5NdEpP3uUGjnxcNiz9g-1; Mon, 24 May 2021 08:02:21 -0400
-X-MC-Unique: oin5NdEpP3uUGjnxcNiz9g-1
-Received: by mail-qk1-f200.google.com with SMTP id a24-20020a05620a1038b02902fa6ba180ffso26614427qkk.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 May 2021 05:02:21 -0700 (PDT)
+        Mon, 24 May 2021 09:54:55 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46469C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 May 2021 06:53:27 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id q5so28620861wrs.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 May 2021 06:53:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tF+Oz6NE7CQnoJvm87rkk3FG6j74rBfoJmjO2qhKjp8=;
+        b=kmLn9IgiA1+aTHBUomV5fWJkcBZgmECGkWq/QGOWwTOBEr0o19dC6w1mIAWBwixYXB
+         w+ZyyulPm0NemzTfjShAx0RFTnpQ4kJG02p7dpLgDRE5mtAk1LwctKM8j19rbNCAOFnI
+         Rgaj15q9KB5w+y5bvckbta7Jif0AfK0sB4T42EXsX04I/k5lJWUOUFO626Nv7+XYUbpe
+         y9PUskHTSG0/roLgc/ffu5av8QzovFDis4X4MHNzPZoxurYjGpC24DK+xwgaif0pkPzF
+         YWiSsrP3yiw8/QFp+bxKJ/TYlN057YPJleKlmFXRfOA3w4BwgWGop8bFEWuFHwGowW2e
+         9BQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mbvaV+DM5yQpwPh803YCQ/Bi/4BeS4L0C8m8goZzVO4=;
-        b=XeQ2PyAP1uSSm5kK9xWxlhdRNW13mT9pjvmXU/ghwzFcDzeKwD58YsazuSrwTfYAXv
-         vycPKYQQFmR445fGdQSGgTo8/rMya03hnA0XJMP5fPW5AaDAVL4h4v0DMI3iIhZVAwkN
-         5JusKxu6fwTRhjdInxwdKCIdlh9Rwr5jZeE8/GZ8yfEjpRk26n1CUz9QO1+6fcaOhFzO
-         pyRIJ+mzHUzFQGq3xbIkT14zlTkQ1xbC98N8f1PB16fN4VModJFY6EY19mWFgbNm2qua
-         QdMqbbakPWlNy1AMo9Sr2cqKC0dapXMl7QVyk8Bt74p1YH3AL8KpSpi6p1svo6LP2uUK
-         FHhA==
-X-Gm-Message-State: AOAM533Xk3ilvu/z12/XHwcXlw7Rqdl8iEDG5AVWkFxoVzRIJZunWynX
-        oq8A8sx/LwTylrOlN3aUnxfpuVPRixUVRCd0XS/0dMUM/yVrCRuHja8nv9U+9PyP6uATeqOfQ85
-        Am7JYpPqqsOcFGLBEfU31v9/qGw==
-X-Received: by 2002:ac8:5e51:: with SMTP id i17mr27141944qtx.263.1621857740761;
-        Mon, 24 May 2021 05:02:20 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxAVxDX/X8pDEq02HtwBhR40JScjEwwWGB6Il50ytduOzRd/Dh/uOmJ0KdmX6D3AeW9In2V1w==
-X-Received: by 2002:ac8:5e51:: with SMTP id i17mr27141922qtx.263.1621857740510;
-        Mon, 24 May 2021 05:02:20 -0700 (PDT)
-Received: from bfoster ([98.216.211.229])
-        by smtp.gmail.com with ESMTPSA id r23sm1353881qtc.32.2021.05.24.05.02.19
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tF+Oz6NE7CQnoJvm87rkk3FG6j74rBfoJmjO2qhKjp8=;
+        b=HYM9+0L08M2Rmuyre2sSpanUnFE/GEyah5et2mpr+xbQAEG8+BxfiYaNcmpvLzTNyY
+         fhgucxnMRNg2BQNrXP76SHEUzteF3MRx7LUFZr/87eVFGXE9tJ7xDaS3OzmYWhCZnJOe
+         vOKdsZXIoN3Z2tFAA/qXrBNeeJztYA7lH3kBEfF64rkf6SfYcz+WzjdPz71S4OavjtE7
+         pXdupfwslNzs+SOOxwu7GLNsHVFnPEZNvo+2bWmtXlYTgn2n5nFC5r+WawJa0x7H9E1N
+         9xxc7vbymqa8/nT7gKS+bFBsGM6TZritLG6t1ozR2ZDAD/cQc5xfOd7zHe7qVd9ml7mg
+         EYug==
+X-Gm-Message-State: AOAM531/n1w4t7ieCzccNDBuQj3bo2TLDbfyp70eFJkCpB8K/OC2+MWO
+        98Q/42e70XN0pz7BY8Qvp/Wij40yet4=
+X-Google-Smtp-Source: ABdhPJzl1Ie35/sjZvFycxCA9J2NUGPF4nltGWYLPCRi0f8/2xXCPYP70JvTR4wV04eIvxZPIUCpLw==
+X-Received: by 2002:a5d:62d0:: with SMTP id o16mr22983122wrv.164.1621864405826;
+        Mon, 24 May 2021 06:53:25 -0700 (PDT)
+Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
+        by smtp.gmail.com with ESMTPSA id v15sm8093767wmj.39.2021.05.24.06.53.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 May 2021 05:02:20 -0700 (PDT)
-Date:   Mon, 24 May 2021 08:02:18 -0400
-From:   Brian Foster <bfoster@redhat.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v3 3/3] iomap: bound ioend size to 4096 pages
-Message-ID: <YKuVymtSYhrDCytP@bfoster>
-References: <20210517171722.1266878-1-bfoster@redhat.com>
- <20210517171722.1266878-4-bfoster@redhat.com>
- <20210520232737.GA9675@magnolia>
+        Mon, 24 May 2021 06:53:25 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH][v2] fanotify: fix permission model of unprivileged group
+Date:   Mon, 24 May 2021 16:53:21 +0300
+Message-Id: <20210524135321.2190062-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210520232737.GA9675@magnolia>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 20, 2021 at 04:27:37PM -0700, Darrick J. Wong wrote:
-> On Mon, May 17, 2021 at 01:17:22PM -0400, Brian Foster wrote:
-> > The iomap writeback infrastructure is currently able to construct
-> > extremely large bio chains (tens of GBs) associated with a single
-> > ioend. This consolidation provides no significant value as bio
-> > chains increase beyond a reasonable minimum size. On the other hand,
-> > this does hold significant numbers of pages in the writeback
-> > state across an unnecessarily large number of bios because the ioend
-> > is not processed for completion until the final bio in the chain
-> > completes. Cap an individual ioend to a reasonable size of 4096
-> > pages (16MB with 4k pages) to avoid this condition.
-> > 
-> > Signed-off-by: Brian Foster <bfoster@redhat.com>
-> > ---
-> >  fs/iomap/buffered-io.c |  6 ++++--
-> >  include/linux/iomap.h  | 26 ++++++++++++++++++++++++++
-> >  2 files changed, 30 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index 642422775e4e..f2890ee434d0 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -1269,7 +1269,7 @@ iomap_chain_bio(struct bio *prev)
-> >  
-> >  static bool
-> >  iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t offset,
-> > -		sector_t sector)
-> > +		unsigned len, sector_t sector)
-> >  {
-> >  	if ((wpc->iomap.flags & IOMAP_F_SHARED) !=
-> >  	    (wpc->ioend->io_flags & IOMAP_F_SHARED))
-> > @@ -1280,6 +1280,8 @@ iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t offset,
-> >  		return false;
-> >  	if (sector != bio_end_sector(wpc->ioend->io_bio))
-> >  		return false;
-> > +	if (wpc->ioend->io_size + len > IOEND_MAX_IOSIZE)
-> > +		return false;
-> >  	return true;
-> >  }
-> >  
-> > @@ -1297,7 +1299,7 @@ iomap_add_to_ioend(struct inode *inode, loff_t offset, struct page *page,
-> >  	unsigned poff = offset & (PAGE_SIZE - 1);
-> >  	bool merged, same_page = false;
-> >  
-> > -	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, offset, sector)) {
-> > +	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, offset, len, sector)) {
-> >  		if (wpc->ioend)
-> >  			list_add(&wpc->ioend->io_list, iolist);
-> >  		wpc->ioend = iomap_alloc_ioend(inode, wpc, offset, sector, wbc);
-> > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> > index 07f3f4e69084..89b15cc236d5 100644
-> > --- a/include/linux/iomap.h
-> > +++ b/include/linux/iomap.h
-> > @@ -203,6 +203,32 @@ struct iomap_ioend {
-> >  	struct bio		io_inline_bio;	/* MUST BE LAST! */
-> >  };
-> >  
-> > +/*
-> > + * Maximum ioend IO size is used to prevent ioends from becoming unbound in
-> > + * size. bios can reach 4GB in size if pages are contiguous, and bio chains are
-> > + * effectively unbound in length. Hence the only limits on the size of the bio
-> > + * chain is the contiguity of the extent on disk and the length of the run of
-> > + * sequential dirty pages in the page cache. This can be tens of GBs of physical
-> > + * extents and if memory is large enough, tens of millions of dirty pages.
-> > + * Locking them all under writeback until the final bio in the chain is
-> > + * submitted and completed locks all those pages for the legnth of time it takes
-> 
-> s/legnth/length/
->
+Reporting event->pid should depend on the privileges of the user that
+initialized the group, not the privileges of the user reading the
+events.
 
-Fixed.
+Use an internal group flag FANOTIFY_UNPRIV to record the fact that the
+group was initialized by an unprivileged user.
+
+To be on the safe side, the premissions to setup filesystem and mount
+marks now require that both the user that initialized the group and
+the user setting up the mark have CAP_SYS_ADMIN.
+
+Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxiA77_P5vtv7e83g0+9d7B5W9ZTE4GfQEYbWmfT1rA=VA@mail.gmail.com/
+Fixes: 7cea2a3c505e ("fanotify: support limited functionality for unprivileged users")
+Cc: <Stable@vger.kernel.org> # v5.12+
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+
+Changes since v1:
+- Address Matthew's editorial review comments
+- Rename macro FANOTIFY_INTERNAL_GROUP_FLAGS
+
+ fs/notify/fanotify/fanotify_user.c | 30 ++++++++++++++++++++++++------
+ fs/notify/fdinfo.c                 |  2 +-
+ include/linux/fanotify.h           |  4 ++++
+ 3 files changed, 29 insertions(+), 7 deletions(-)
+
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 71fefb30e015..be5b6d2c01e7 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -424,11 +424,18 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 	 * events generated by the listener process itself, without disclosing
+ 	 * the pids of other processes.
+ 	 */
+-	if (!capable(CAP_SYS_ADMIN) &&
++	if (FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
+ 	    task_tgid(current) != event->pid)
+ 		metadata.pid = 0;
  
-> > + * to write those many, many GBs of data to storage.
-> > + *
-> > + * Background writeback caps any single writepages call to half the device
-> > + * bandwidth to ensure fairness and prevent any one dirty inode causing
-> > + * writeback starvation. fsync() and other WB_SYNC_ALL writebacks have no such
-> > + * cap on wbc->nr_pages, and that's where the above massive bio chain lengths
-> > + * come from. We want large IOs to reach the storage, but we need to limit
-> > + * completion latencies, hence we need to control the maximum IO size we
-> > + * dispatch to the storage stack.
-> > + *
-> > + * We don't really have to care about the extra IO completion overhead here
-> > + * because iomap has contiguous IO completion merging. If the device can sustain
-> 
-> Assuming you're referring to iomap_finish_ioends, only XFS employs the
-> ioend completion merging, and only for ioends where it decides to
-> override the default bi_end_io.  iomap on its own never calls
-> iomap_ioend_try_merge.
-> 
-> This patch establishes a maximum ioend size of 4096 pages so that we
-> don't trip the lockup watchdog while clearing pagewriteback and also so
-> that we don't pin a large number of pages while constructing a big chain
-> of bios.  On gfs2 and zonefs, each ioend completion will now have to
-> clear up to 4096 pages from whatever context bio_endio is called.
-> 
-> For XFS it's a more complicated -- XFS already overrode the bio handler
-> for ioends that required further metadata updates (e.g. unwritten
-> conversion, eof extension, or cow) so that it could combine ioends when
-> possible.  XFS wants to combine ioends to amortize the cost of getting
-> the ILOCK and running transactions over a larger number of pages.
-> 
-> So I guess I see how the two changes dovetail nicely for XFS -- iomap
-> issues smaller write bios, and the xfs ioend worker can recombine
-> however many bios complete before the worker runs.  As a bonus, we don't
-> have to worry about situations like the device driver completing so many
-> bios from a single invocation of a bottom half handler that we run afoul
-> of the soft lockup timer.
-> 
-> Is that a correct understanding of how the two changes intersect with
-> each other?  TBH I was expecting the two thresholds to be closer in
-> value.
-> 
-
-I think so. That's interesting because my inclination was to make them
-farther apart (or more specifically, increase the threshold in this
-patch and leave the previous). The primary goal of this series was to
-address the soft lockup warning problem, hence the thresholds on earlier
-versions started at rather conservative values. I think both values have
-been reasonably justified in being reduced, though this patch has a more
-broad impact than the previous in that it changes behavior for all iomap
-based fs'. Of course that's something that could also be addressed with
-a more dynamic tunable..
-
-> The other two users of iomap for buffered io (gfs2 and zonefs) don't
-> have a means to defer and combine ioends like xfs does.  Do you think
-> they should?  I think it's still possible to trip the softlockup there.
-> 
-
-I'm not sure. We'd probably want some feedback from developers of
-filesystems other than XFS before incorporating a change like this. The
-first patch in the series more just provides some infrastructure for
-other filesystems to avoid the problem as they see fit.
-
-Brian
-
-> --D
-> 
-> > + * high throughput and large bios, the ioends are merged on completion and
-> > + * processed in large, efficient chunks with no additional IO latency.
-> > + */
-> > +#define IOEND_MAX_IOSIZE	(4096ULL << PAGE_SHIFT)
-> > +
-> >  struct iomap_writeback_ops {
-> >  	/*
-> >  	 * Required, maps the blocks so that writeback can be performed on
-> > -- 
-> > 2.26.3
-> > 
-> 
+-	if (path && path->mnt && path->dentry) {
++	/*
++	 * For now, fid mode is required for an unprivileged listener and
++	 * fid mode does not report fd in events.  Keep this check anyway
++	 * for safety in case fid mode requirement is relaxed in the future
++	 * to allow unprivileged listener to get events with no fd and no fid.
++	 */
++	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
++	    path && path->mnt && path->dentry) {
+ 		fd = create_fd(group, path, &f);
+ 		if (fd < 0)
+ 			return fd;
+@@ -1040,6 +1047,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 	int f_flags, fd;
+ 	unsigned int fid_mode = flags & FANOTIFY_FID_BITS;
+ 	unsigned int class = flags & FANOTIFY_CLASS_BITS;
++	unsigned int internal_flags = 0;
+ 
+ 	pr_debug("%s: flags=%x event_f_flags=%x\n",
+ 		 __func__, flags, event_f_flags);
+@@ -1053,6 +1061,13 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 		 */
+ 		if ((flags & FANOTIFY_ADMIN_INIT_FLAGS) || !fid_mode)
+ 			return -EPERM;
++
++		/*
++		 * Setting the internal flag FANOTIFY_UNPRIV on the group
++		 * prevents setting mount/filesystem marks on this group and
++		 * prevents reporting pid and open fd in events.
++		 */
++		internal_flags |= FANOTIFY_UNPRIV;
+ 	}
+ 
+ #ifdef CONFIG_AUDITSYSCALL
+@@ -1105,7 +1120,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 		goto out_destroy_group;
+ 	}
+ 
+-	group->fanotify_data.flags = flags;
++	group->fanotify_data.flags = flags | internal_flags;
+ 	group->memcg = get_mem_cgroup_from_mm(current->mm);
+ 
+ 	group->fanotify_data.merge_hash = fanotify_alloc_merge_hash();
+@@ -1305,11 +1320,13 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	group = f.file->private_data;
+ 
+ 	/*
+-	 * An unprivileged user is not allowed to watch a mount point nor
+-	 * a filesystem.
++	 * An unprivileged user is not allowed to setup mount nor filesystem
++	 * marks.  This also includes setting up such marks by a group that
++	 * was initialized by an unprivileged user.
+ 	 */
+ 	ret = -EPERM;
+-	if (!capable(CAP_SYS_ADMIN) &&
++	if ((!capable(CAP_SYS_ADMIN) ||
++	     FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV)) &&
+ 	    mark_type != FAN_MARK_INODE)
+ 		goto fput_and_out;
+ 
+@@ -1460,6 +1477,7 @@ static int __init fanotify_user_setup(void)
+ 	max_marks = clamp(max_marks, FANOTIFY_OLD_DEFAULT_MAX_MARKS,
+ 				     FANOTIFY_DEFAULT_MAX_USER_MARKS);
+ 
++	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
+ 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
+ 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
+ 
+diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+index a712b2aaa9ac..57f0d5d9f934 100644
+--- a/fs/notify/fdinfo.c
++++ b/fs/notify/fdinfo.c
+@@ -144,7 +144,7 @@ void fanotify_show_fdinfo(struct seq_file *m, struct file *f)
+ 	struct fsnotify_group *group = f->private_data;
+ 
+ 	seq_printf(m, "fanotify flags:%x event-flags:%x\n",
+-		   group->fanotify_data.flags,
++		   group->fanotify_data.flags & FANOTIFY_INIT_FLAGS,
+ 		   group->fanotify_data.f_flags);
+ 
+ 	show_fdinfo(m, f, fanotify_fdinfo);
+diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+index bad41bcb25df..a16dbeced152 100644
+--- a/include/linux/fanotify.h
++++ b/include/linux/fanotify.h
+@@ -51,6 +51,10 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
+ #define FANOTIFY_INIT_FLAGS	(FANOTIFY_ADMIN_INIT_FLAGS | \
+ 				 FANOTIFY_USER_INIT_FLAGS)
+ 
++/* Internal group flags */
++#define FANOTIFY_UNPRIV		0x80000000
++#define FANOTIFY_INTERNAL_GROUP_FLAGS	(FANOTIFY_UNPRIV)
++
+ #define FANOTIFY_MARK_TYPE_BITS	(FAN_MARK_INODE | FAN_MARK_MOUNT | \
+ 				 FAN_MARK_FILESYSTEM)
+ 
+-- 
+2.25.1
 
