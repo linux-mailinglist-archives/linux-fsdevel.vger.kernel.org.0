@@ -2,170 +2,256 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF05C38F68E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 01:55:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 704BB38F70F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 02:44:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229953AbhEXX5P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 May 2021 19:57:15 -0400
-Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:40035 "EHLO
-        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229503AbhEXX5M (ORCPT
+        id S229550AbhEYApz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 May 2021 20:45:55 -0400
+Received: from mail-pj1-f46.google.com ([209.85.216.46]:46078 "EHLO
+        mail-pj1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229539AbhEYApz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 May 2021 19:57:12 -0400
-Received: from dread.disaster.area (pa49-180-237-17.pa.nsw.optusnet.com.au [49.180.237.17])
-        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 4DCF66B337;
-        Tue, 25 May 2021 09:55:40 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1llKQ6-004r2D-NQ; Tue, 25 May 2021 09:55:38 +1000
-Date:   Tue, 25 May 2021 09:55:38 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Brian Foster <bfoster@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: iomap: writeback ioend/bio allocation deadlock risk
-Message-ID: <20210524235538.GI2817@dread.disaster.area>
-References: <YKcouuVR/y/L4T58@T590>
- <20210521071727.GA11473@lst.de>
- <YKdhuUZBtKMxDpsr@T590>
- <20210521073547.GA11955@lst.de>
- <YKdwtzp+WWQ3krhI@T590>
- <20210521083635.GA15311@lst.de>
- <YKd1VS5gkzQRn+7x@T590>
+        Mon, 24 May 2021 20:45:55 -0400
+Received: by mail-pj1-f46.google.com with SMTP id ne24-20020a17090b3758b029015f2dafecb0so10984130pjb.4;
+        Mon, 24 May 2021 17:44:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6UpttTrEDW//beA5f8aGYwgPBwdFr5w0s1WSkdYBoYE=;
+        b=LxOEmZQjFVCpuMQEBwWre3LWFWTPYjVcgNUdqhYe7ln8U6WMxKcarxBUTIxrZjc1Yt
+         nwR6BTwFB6jziBK0lwAc9FxUl+b8OIpCdEt/PG2orvWGmFg3iPJfHCeYlFzWgQQTqhEL
+         oZAq/erWX/y93+AadNOn4r59tlyHi92ngHP6yHzr42N/+XyYrcV64SEyYvTg9aGO3K4d
+         r/l+dY3a6+1fPCGp+0tWOdGwQGdB4Nwe1NkfxdMNh8bOhxhTIH+Hv5e/XkY3GOMUILgq
+         d+s8Lny1y9DVpHYrHol6FdbS7AMNbBkPqmWRAqEPeqza0sR0jL+irSCCbexKsNm6kMk9
+         1YYg==
+X-Gm-Message-State: AOAM531stfHFS3StdFvEZIcNYjZoxaLQa6HNefvWBi6BlNvzI48DG6N5
+        tNUy+lO6C+MHUkzc1ezHlkU=
+X-Google-Smtp-Source: ABdhPJyQ1C8ZJbK+nxXRDB7eADNt7MKeNqY08J+MYJsc1ruAwnIuzivaLbUbjWyBnkHHjL/Mrn9ibA==
+X-Received: by 2002:a17:90b:8c5:: with SMTP id ds5mr28440147pjb.127.1621903465074;
+        Mon, 24 May 2021 17:44:25 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id u12sm10871089pfm.2.2021.05.24.17.44.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 May 2021 17:44:23 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id B25B44025E; Tue, 25 May 2021 00:44:22 +0000 (UTC)
+Date:   Tue, 25 May 2021 00:44:22 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     menglong8.dong@gmail.com
+Cc:     viro@zeniv.linux.org.uk, keescook@chromium.org,
+        samitolvanen@google.com, johan@kernel.org, ojeda@kernel.org,
+        jeyu@kernel.org, joe@perches.com, dong.menglong@zte.com.cn,
+        masahiroy@kernel.org, jack@suse.cz, axboe@kernel.dk, hare@suse.de,
+        gregkh@linuxfoundation.org, tj@kernel.org, song@kernel.org,
+        neilb@suse.de, akpm@linux-foundation.org, brho@google.com,
+        f.fainelli@gmail.com, wangkefeng.wang@huawei.com, arnd@arndb.de,
+        linux@rasmusvillemoes.dk, mhiramat@kernel.org, rostedt@goodmis.org,
+        vbabka@suse.cz, glider@google.com, pmladek@suse.com,
+        ebiederm@xmission.com, jojing64@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>
+Subject: Re: [PATCH 2/3] init/do_cmounts.c: introduce 'user_root' for
+ initramfs
+Message-ID: <20210525004422.GB4332@42.do-not-panic.com>
+References: <20210522113155.244796-1-dong.menglong@zte.com.cn>
+ <20210522113155.244796-3-dong.menglong@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YKd1VS5gkzQRn+7x@T590>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0
-        a=oWiKotyBKwPJNwc9RtRBNA==:117 a=oWiKotyBKwPJNwc9RtRBNA==:17
-        a=kj9zAlcOel0A:10 a=5FLXtPjwQuUA:10 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8
-        a=--ljmbci5Jw-3h57E20A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20210522113155.244796-3-dong.menglong@zte.com.cn>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 21, 2021 at 04:54:45PM +0800, Ming Lei wrote:
-> On Fri, May 21, 2021 at 10:36:35AM +0200, Christoph Hellwig wrote:
-> > On Fri, May 21, 2021 at 04:35:03PM +0800, Ming Lei wrote:
-> > > Just wondering why the ioend isn't submitted out after it becomes full?
-> > 
-> > block layer plugging?  Although failing bio allocations will kick that,
-> > so that is not a deadlock risk.
+Cc'ing Josh as I think he might be interested in this.
+
+On Sat, May 22, 2021 at 07:31:54PM +0800, menglong8.dong@gmail.com wrote:
+> From: Menglong Dong <dong.menglong@zte.com.cn>
 > 
-> These ioends are just added to one list stored on local stack variable(submit_list),
-> how can block layer plugging observe & submit them out?
+> During the kernel initialization, the root of the mount tree is
+> created with file system type of ramfs or tmpfs.
 
-We ignore that, as the commit histoy says:
+ramfs (initrd) 
 
-commit e10de3723c53378e7cf441529f563c316fdc0dd3
-Author: Dave Chinner <dchinner@redhat.com>
-Date:   Mon Feb 15 17:23:12 2016 +1100
+> While using initramfs as the root file system, cpio file is unpacked
+> into the rootfs. Thus, this rootfs is exactly what users see in user
+> space, and some problems arose: this rootfs has no parent mount,
+> which make it can't be umounted or pivot_root.
+> 'pivot_root' is used to change the rootfs and clean the old mounts,
+> and it is essential for some users, such as docker. Docker use
+> 'pivot_root' to change the root fs of a process if the current root
+> fs is a block device of initrd. However, when it comes to initramfs,
+> things is different: docker has to use 'chroot()' to change the root
+> fs, as 'pivot_root()' is not supported in initramfs.
+> 
+> The usage of 'chroot()' to create root fs for a container introduced
+> a lot problems.
+> 
+> First, 'chroot()' can't clean the old mountpoints which inherited
+> from the host. It means that the mountpoints in host will have a
+> duplicate in every container. Users may remove a USB after it
+> is umounted successfully in the host. However, the USB may still
+> be mounted in containers, although it can't be seen by the 'mount'
+> commond. This means the USB is not released yet, and data may not
+> write back. Therefore, data lose arise.
+>
+> Second, net-namespace leak is another problem. The net-namespace
+> of containers will be mounted in /var/run/docker/netns/ in host
+> by dockerd. It means that the net-namespace of a container will
+> be mounted in containers which are created after it. Things
+> become worse now, as the net-namespace can't be remove after
+> the destroy of that container, as it is still mounted in other
+> containers. If users want to recreate that container, he will
+> fail if a certain mac address is to be binded with the container,
+> as it is not release yet.
 
-    xfs: don't chain ioends during writepage submission
+I think you can clarify this a bit more with:
 
-    Currently we can build a long ioend chain during ->writepages that
-    gets attached to the writepage context. IO submission only then
-    occurs when we finish all the writepage processing. This means we
-    can have many ioends allocated and pending, and this violates the
-    mempool guarantees that we need to give about forwards progress.
-    i.e. we really should only have one ioend being built at a time,
-    otherwise we may drain the mempool trying to allocate a new ioend
-    and that blocks submission, completion and freeing of ioends that
-    are already in progress.
+  If using container platforms such as Docker, upon initialization it
+  wants to use pivot_root() so that currently mounted devices do not
+  propagate to containers. An example of value in this is that
+  a USB device connected prior to the creation of a containers on the
+  host gets disconnected after a container is created; if the
+  USB device was mounted on containers, but already removed and
+  umounted on the host, the mount point will not go away untill all
+  containers unmount the USB device.
 
-    To prevent this situation from happening, we need to submit ioends
-    for IO as soon as they are ready for dispatch rather than queuing
-    them for later submission. This means the ioends have bios built
-    immediately and they get queued on any plug that is current active.
-    Hence if we schedule away from writeback, the ioends that have been
-    built will make forwards progress due to the plug flushing on
-    context switch. This will also prevent context switches from
-    creating unnecessary IO submission latency.
+  Another reason for container platforms such as Docker to use pivot_root
+  is that upon initialization the net-namspace is mounted under
+  /var/run/docker/netns/ on the host by dockerd. Without pivot_root
+  Docker must either wait to create the network namespace prior to
+  the creation of containers or simply deal with leaking this to each
+  container.
 
-    We can't completely avoid having nested IO allocation - when we have
-    a block size smaller than a page size, we still need to hold the
-    ioend submission until after we have marked the current page dirty.
-    Hence we may need multiple ioends to be held while the current page
-    is completely mapped and made ready for IO dispatch. We cannot avoid
-    this problem - the current code already has this ioend chaining
-    within a page so we can mostly ignore that it occurs.
+  pivot_root is supported if the rootfs is a ramfs (initrd), but its
+  not supported if the rootfs uses an initramfs (tmpfs). This means
+  container platforms today must resort to using ramfs (initrd) if
+  they want to pivot_root from the rootfs. A workaround to use chroot()
+  is not a clean viable option given every container will have a
+  duplicate of every mount point on the host.
 
-    Signed-off-by: Dave Chinner <dchinner@redhat.com>
-    Reviewed-by: Christoph Hellwig <hch@lst.de>
-    Signed-off-by: Dave Chinner <david@fromorbit.com>
+  In order to support using container platforms such as Docker on
+  all the supported rootfs types we must extend Linux to support
+  pivot_root on initramfs as well. This patch does the work to do
+  just that.
 
-IOWs, this nesting for block size < page size has been out there
-for many years now and we've yet to have anyone report that
-writeback deadlocks have occurred.
+So remind me.. so it would seem that if the rootfs uses a ramfs (initrd)
+that pivot_root works just fine. Why is that? Did someone add support
+for that? Has that always been the case that it works? If not, was it a
+consequence of how ramfs (initrd) works?
 
-There's a mistake in that commit message - we can't submit the
-ioends on a page until we've marked the page as under writeback, not
-dirty. That's because we cannot have ioends completing on a a page
-that isn't under writeback because calling end_page_writeback() on
-it when it isn't under writeback will BUG(). Hence we have to build
-all the submission state before we mark the page as under writeback
-and perform the submission(s) to avoid completion racing with
-submission.
+And finally, why can't we share the same mechanism used for ramfs
+(initrd) for initramfs (tmpfs)?
 
-Hence we can't actually avoid nesting ioend allocation here within a
-single page - the constraints of page cache writeback require it.
-Hence the construction of the iomap_ioend_bioset uses a pool size of:
+> In this patch, a second mount, which is called 'user root', is
+> created before 'cpio' unpacking. The file system of 'user root'
+> is exactly the same as rootfs, and both ramfs and tmpfs are
+> supported. Then, the 'cpio' is unpacked into the 'user root'.
+> Now, the rootfs has a parent mount, and pivot_root() will be
+> supported for initramfs.
 
-	4 * (PAGE_SIZE / SECTOR_SIZE)
+How about something like:
 
-So that we always have enough ioends cached in the mempool to
-guarantee forwards progress of writeback of any single page under
-writeback.
+  In order to support pivot_root on initramfs we introduce a second
+  "user_root" mount  which is created before we do the cpio unpacking.
+  The filesystem of the "user_root" mount is the same the rootfs.
 
-But that is a completely separate problem to this:
+It begs the question, why add this infrastructure to suppor this for
+ramfs (initrd) if we only need this hack for initramfs (tmpfs)?
 
-> Chained bios have been submitted already, but all can't be completed/freed
-> until the whole ioend is done, that submission won't make forward progress.
+> What's more, after this patch, 'rootflags' in boot cmd is supported
+> by initramfs. Therefore, users can set the size of tmpfs with
+> 'rootflags=size=1024M'.
 
-This is a problem caused by having unbound contiguous ioend sizes,
-not a problem caused by chaining bios. We can throw 256 pages into
-a bio, so when we are doing huge contiguous IOs, we can map a
-lot of sequential dirty pages into a contiguous extent into a very
-long bio chain. But if we cap the max ioend size to, say, 4096
-pages, then we've effectively capped the number of bios that can be
-nested by such a writeback chain.
+Why is that exactly?
 
-I was about to point you at the patchset that fixes this, but you've
-already found it and are claiming that this nesting is an unfixable
-problem. Capping the size of the ioend also bounds the depth of the
-allocation nesting that will occur, and that fixes the whole nseting
-deadlock problem: If the mempool reserves are deeper than than the
-maximum chain nesting that can occur, then there is no deadlock.
+> Signed-off-by: Menglong Dong <dong.menglong@zte.com.cn>
+> ---
+>  init/do_mounts.c | 72 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  init/do_mounts.h |  7 ++++-
+>  init/initramfs.c | 10 +++++++
+>  3 files changed, 88 insertions(+), 1 deletion(-)
+> 
+> diff --git a/init/do_mounts.c b/init/do_mounts.c
+> index a78e44ee6adb..943cb58846fb 100644
+> --- a/init/do_mounts.c
+> +++ b/init/do_mounts.c
+> @@ -617,6 +617,78 @@ void __init prepare_namespace(void)
+>  	init_chroot(".");
+>  }
+>  
+> +#ifdef CONFIG_TMPFS
+> +static __init bool is_tmpfs_enabled(void)
+> +{
+> +	return (!root_fs_names || strstr(root_fs_names, "tmpfs")) &&
+> +	       !saved_root_name[0];
+> +}
+> +#endif
+> +
+> +static __init bool is_ramfs_enabled(void)
+> +{
+> +	return true;
+> +}
+> +
+> +struct fs_user_root {
+> +	bool (*enabled)(void);
+> +	char *dev_name;
 
-However, this points out what the real problem here is: that bio
-allocation is designed to deadlock when nesting bio allocation rather
-than fail. Hence at the iomap level we've go no way of knowing that
-we should terminate and submit the current bio chain and start a new
-ioend+bio chain because we will hang before there's any indication
-that a deadlock could occur.
+What's the point of dev_name if its never set?
 
-And then the elephant in the room: reality.
+> +	char *fs_name;
+> +};
+> +
+> +static struct fs_user_root user_roots[] __initdata = {
+> +#ifdef CONFIG_TMPFS
+> +	{.fs_name = "tmpfs", .enabled = is_tmpfs_enabled },
+> +#endif
+> +	{.fs_name = "ramfs", .enabled = is_ramfs_enabled }
+> +};
+> +static struct fs_user_root * __initdata user_root;
+> +
+> +/* Mount the user_root on '/'. */
+> +int __init mount_user_root(void)
+> +{
+> +	return do_mount_root(user_root->dev_name,
 
-We've been nesting bio allocations via this chaining in production
-systems under heavy memory pressure for 5 years now and we don't
-have a single bug report indicating that this code deadlocks. So
-while there's a theoretical problem, evidence points to it not being
-an issue in practice.
+See, isn't dev_name here always NULL?
 
-Hence I don't think there is any need to urgently turn this code
-upside down. I'd much prefer that bio allocation would fail rather
-than deadlock, because then we can set a flag in the writepage
-context that says "do single bio ioend submission only" for the
-duration of that writeback context. And with that, the forwards
-progress problem is solved whilst still allowing us to chain as
-deeply as we want when there is no memory pressure....
+> +			     user_root->fs_name,
+> +			     root_mountflags & ~MS_RDONLY,
+> +			     root_mount_data);
+> +}
+> +
+> +/*
+> + * This function is used to chroot to new initramfs root that
+> + * we unpacked on success.
 
-Cheers,
+Might be a good place to document that we do this so folks can
+pivot_root on rootfs, and why that is desirable (mentioned above on the
+commit log edits I suggested). Otherwise I don't think its easy for a
+reader of the code to understand why we are doing all this work.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> It will chdir to '/' and umount
+> + * the secound mount on failure.
+> + */
+> +void __init end_mount_user_root(bool succeed)
+> +{
+> +	if (!succeed)
+> +		goto on_failed;
+> +
+> +	if (!ramdisk_exec_exist(false))
+> +		goto on_failed;
+> +
+> +	init_mount(".", "/", NULL, MS_MOVE, NULL);
+> +	init_chroot(".");
+> +	return;
+> +
+> +on_failed:
+> +	init_chdir("/");
+> +	init_umount("/..", 0);
+> +}
+
+Is anything extra needed on shutdown / reboot?
+
+  Luis
