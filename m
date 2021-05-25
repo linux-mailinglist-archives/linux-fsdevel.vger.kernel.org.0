@@ -2,218 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42F2D390458
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 16:53:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4AF3390472
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 17:01:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234196AbhEYOzK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 10:55:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53040 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234090AbhEYOzJ (ORCPT
+        id S234209AbhEYPCi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 11:02:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:28333 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234207AbhEYPCg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 10:55:09 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75CF5C061756
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 May 2021 07:53:38 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id z12so46341153ejw.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 May 2021 07:53:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Nu/GHBpjSZqFLQJdrv2WofUEakGX52odyE7jVmGTpWQ=;
-        b=c9QvKR2OT26IxxSxa+atw/d+xpWLPFbnoeKFXH3K8Mvfcxt8tUMbT+2tqs8VSSKs7F
-         TSSS7PHKhLLCrHf99UhSXPd9mlJvVBoOz41qNw86HnB+nMjXTB6gRyYXVLA8I9Ycs5a7
-         ynoYKi/4jkHvqrGSY9M5+xwm9F+P7f2XMOomNXrBQ+F4j3Uz58OKkfEDB+6Yl4nZbd7q
-         RNsaWvawcuTrVPiIN/N7KdKK7GnkySLs/LpDurc67rCdJQDjs2RlVJQEy/QIrMYlM3OB
-         Gx7QXYRlryExwLR3xXf/5rsLQvDO6CkT/FlSE1YDGXPKcS3VmEcNc1wGgrzntFqzwH70
-         ZoAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Nu/GHBpjSZqFLQJdrv2WofUEakGX52odyE7jVmGTpWQ=;
-        b=FFdZnjA1xI+25ffw/5wgRp9CrG2CwswtOHsV3oEFUNq8WvP0x5CVTVhoyLNIdx06QS
-         +nSSzDgp2auVZCj5A8VDDs4WtqfgHokx4adsRtfauqZpBPGdj/qNxCR338rDVa91qWNe
-         Gs3LOF3bUz3k9tcP+cAQ/hRxuCKtypn4JJYOKgOSdfQQdjD1WmTfAJI6NPMm7a55l0oC
-         S/JxWzR3KufWTtgYSMbRO1SXrjXObv1S3p+b3Kk6ob2PiIL8wkVKC/Qp+tnpEZ5fP2qS
-         0j9S9hUzFJf1rJP7Uc/uRWqcu/dUEqFDDu2aC3mw8BHplQ3Ci6WlTJBpyb+HlU0FIfbv
-         EP4Q==
-X-Gm-Message-State: AOAM531SeaW6uaxvHSDbLaAEiw2n+/3N88zKJ/cUoH+Qf2+zyGWhKkOc
-        CXVVJ7Rj5j/6K7dMA1shvgvcziR/o5H8i4qGEfrO
-X-Google-Smtp-Source: ABdhPJwkXErdYWtLRoRdThvmdvfiliPdTp4bhmfacT9ChcVlEWEvajLzbaqcInOamF9r7J4ax4pk/cUClWjqd9xalWw=
-X-Received: by 2002:a17:907:10d8:: with SMTP id rv24mr28861448ejb.542.1621954416913;
- Tue, 25 May 2021 07:53:36 -0700 (PDT)
+        Tue, 25 May 2021 11:02:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1621954866;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qc1y1QTC1cV947c5otyGJ64D+/LIRnXVey8bVzJq2lY=;
+        b=OQf0pFZV6KKtHlqnYg/nXanPw4j7cigK80IeMny1Cb9Z9yohyZYSFlDqAm42p+2SFrct+H
+        MNgGp4HHsNzpjuEBHe24hkEan3Uk0PcTIn51JuHGKeMRr+yl1TqhIfBp0rt1uYlxqlOTGn
+        fPmhQOMnST5To7cNqVGGKiLDsTSDp3c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-384-KveZ0Jg6Pfqxjnx6-SlhZQ-1; Tue, 25 May 2021 11:00:55 -0400
+X-MC-Unique: KveZ0Jg6Pfqxjnx6-SlhZQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 163B0C7440;
+        Tue, 25 May 2021 15:00:54 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5CB2E60CEB;
+        Tue, 25 May 2021 15:00:41 +0000 (UTC)
+Date:   Tue, 25 May 2021 11:00:38 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Paris <eparis@redhat.com>, linux-fsdevel@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: [PATCH v4 3/3] audit: add OPENAT2 record to list how
+Message-ID: <20210525150038.GF2268484@madcap2.tricolour.ca>
+References: <cover.1621363275.git.rgb@redhat.com>
+ <d23fbb89186754487850367224b060e26f9b7181.1621363275.git.rgb@redhat.com>
+ <20210520080318.owvsvvhh5qdhyzhk@wittgenstein>
+ <CAHC9VhRmhtheudAjGyumunC5zfHMVjuuBvjXNZzYEByTJQRt9g@mail.gmail.com>
 MIME-Version: 1.0
-References: <162163367115.8379.8459012634106035341.stgit@sifl>
- <162163379461.8379.9691291608621179559.stgit@sifl> <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
- <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
- <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com> <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
- <e701511f-520d-4a94-9931-d218b14a80fe@gmail.com>
-In-Reply-To: <e701511f-520d-4a94-9931-d218b14a80fe@gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 25 May 2021 10:53:25 -0400
-Message-ID: <CAHC9VhTS_Yt0PzG_WjsgUA04inHa=N8+OjWju9waefP==Di39A@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
- support to io_uring
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRmhtheudAjGyumunC5zfHMVjuuBvjXNZzYEByTJQRt9g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 25, 2021 at 4:27 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> On 5/24/21 8:59 PM, Paul Moore wrote:
-> > On Sun, May 23, 2021 at 4:26 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> >> On 5/22/21 3:36 AM, Paul Moore wrote:
-> >>> On Fri, May 21, 2021 at 8:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> >>>> On 5/21/21 10:49 PM, Paul Moore wrote:
-> >> [...]
-> >>>>>
-> >>>>> +     if (req->opcode < IORING_OP_LAST)
-> >>>>
-> >>>> always true at this point
-> >>>
-> >>> I placed the opcode check before the audit call because the switch
-> >>> statement below which handles the operation dispatching has a 'ret =
-> >>> -EINVAL' for the default case, implying that there are some paths
-> >>> where an invalid opcode could be passed into the function.  Obviously
-> >>> if that is not the case and you can guarantee that req->opcode will
-> >>> always be valid we can easily drop the check prior to the audit call.
-> >>
-> >> It is always true at this point, would be completely broken
-> >> otherwise
+On 2021-05-24 19:08, Paul Moore wrote:
+> On Thu, May 20, 2021 at 4:03 AM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> > On Wed, May 19, 2021 at 04:00:22PM -0400, Richard Guy Briggs wrote:
+> > > Since the openat2(2) syscall uses a struct open_how pointer to communicate
+> > > its parameters they are not usefully recorded by the audit SYSCALL record's
+> > > four existing arguments.
+> > >
+> > > Add a new audit record type OPENAT2 that reports the parameters in its
+> > > third argument, struct open_how with fields oflag, mode and resolve.
+> > >
+> > > The new record in the context of an event would look like:
+> > > time->Wed Mar 17 16:28:53 2021
+> > > type=PROCTITLE msg=audit(1616012933.531:184): proctitle=73797363616C6C735F66696C652F6F70656E617432002F746D702F61756469742D7465737473756974652D737641440066696C652D6F70656E617432
+> > > type=PATH msg=audit(1616012933.531:184): item=1 name="file-openat2" inode=29 dev=00:1f mode=0100600 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=CREATE cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+> > > type=PATH msg=audit(1616012933.531:184): item=0 name="/root/rgb/git/audit-testsuite/tests" inode=25 dev=00:1f mode=040700 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=PARENT cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+> > > type=CWD msg=audit(1616012933.531:184): cwd="/root/rgb/git/audit-testsuite/tests"
+> > > type=OPENAT2 msg=audit(1616012933.531:184): oflag=0100302 mode=0600 resolve=0xa
+> > > type=SYSCALL msg=audit(1616012933.531:184): arch=c000003e syscall=437 success=yes exit=4 a0=3 a1=7ffe315f1c53 a2=7ffe315f1550 a3=18 items=2 ppid=528 pid=540 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=ttyS0 ses=1 comm="openat2" exe="/root/rgb/git/audit-testsuite/tests/syscalls_file/openat2" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="testsuite-1616012933-bjAUcEPO"
+> > >
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > Link: https://lore.kernel.org/r/d23fbb89186754487850367224b060e26f9b7181.1621363275.git.rgb@redhat.com
+> > > ---
+> > >  fs/open.c                  |  2 ++
+> > >  include/linux/audit.h      | 10 ++++++++++
+> > >  include/uapi/linux/audit.h |  1 +
+> > >  kernel/audit.h             |  2 ++
+> > >  kernel/auditsc.c           | 18 +++++++++++++++++-
+> > >  5 files changed, 32 insertions(+), 1 deletion(-)
+> 
+> ...
+> 
+> > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > index 3f59ab209dfd..faf2485323a9 100644
+> > > --- a/kernel/auditsc.c
+> > > +++ b/kernel/auditsc.c
+> > > @@ -76,7 +76,7 @@
+> > >  #include <linux/fsnotify_backend.h>
+> > >  #include <uapi/linux/limits.h>
+> > >  #include <uapi/linux/netfilter/nf_tables.h>
+> > > -#include <uapi/linux/openat2.h>
+> > > +#include <uapi/linux/openat2.h> // struct open_how
+> > >
+> > >  #include "audit.h"
+> > >
+> > > @@ -1319,6 +1319,12 @@ static void show_special(struct audit_context *context, int *call_panic)
+> > >               audit_log_format(ab, "fd=%d flags=0x%x", context->mmap.fd,
+> > >                                context->mmap.flags);
+> > >               break;
+> > > +     case AUDIT_OPENAT2:
+> > > +             audit_log_format(ab, "oflag=0%llo mode=0%llo resolve=0x%llx",
 > >
-> > Understood, I was just pointing out an oddity in the code.  I just
-> > dropped the checks from my local tree, you'll see it in the next draft
-> > of the patchset.
-> >
-> >>>> So, it adds two if's with memory loads (i.e. current->audit_context)
-> >>>> per request in one of the hottest functions here... No way, nack
-> >>>>
-> >>>> Maybe, if it's dynamically compiled into like kprobes if it's
-> >>>> _really_ used.
-> >>>
-> >>> I'm open to suggestions on how to tweak the io_uring/audit
-> >>> integration, if you don't like what I've proposed in this patchset,
-> >>> lets try to come up with a solution that is more palatable.  If you
-> >>> were going to add audit support for these io_uring operations, how
-> >>> would you propose we do it?  Not being able to properly audit io_uring
-> >>> operations is going to be a significant issue for a chunk of users, if
-> >>> it isn't already, we need to work to find a solution to this problem.
-> >>
-> >> Who knows. First of all, seems CONFIG_AUDIT is enabled by default
-> >> for many popular distributions, so I assume that is not compiled out.
-> >>
-> >> What are use cases for audit? Always running I guess?
-> >
-> > Audit has been around for quite some time now, and it's goal is to
-> > provide a mechanism for logging "security relevant" information in
-> > such a way that it meets the needs of various security certification
-> > efforts.  Traditional Linux event logging, e.g. syslog and the like,
-> > does not meet these requirements and changing them would likely affect
-> > the usability for those who are not required to be compliant with
-> > these security certifications.  The Linux audit subsystem allows Linux
-> > to be used in places it couldn't be used otherwise (or rather makes it
-> > a *lot* easier).
-> >
-> > That said, audit is not for everyone, and we have build time and
-> > runtime options to help make life easier.  Beyond simply disabling
-> > audit at compile time a number of Linux distributions effectively
-> > shortcut audit at runtime by adding a "never" rule to the audit
-> > filter, for example:
-> >
-> >  % auditctl -a task,never
-> >
-> >> Putting aside compatibility problems, it sounds that with the amount of overhead
-> >> it adds there is no much profit in using io_uring in the first place.
-> >> Is that so?
-> >
-> > Well, if audit alone erased all of the io_uring advantages we should
-> > just rip io_uring out of the kernel and people can just disable audit
-> > instead ;)
->
-> Hah, if we add a simple idle "feature" like
->
-> for (i=0;i<1000000;i+) {;}
->
-> and it would destroy all the performance, let's throw useless
-> Linux kernel then!
->
-> If seriously, it's more of an open question to me, how much overhead
-> it adds if enabled (with typical filters/options/etc).
+> > Hm, should we maybe follow the struct member names for all entries, i.e.
+> > replace s/oflag/flags?
+> 
+> There is some precedence for using "oflags" to refer to "open" flags,
+> my guess is Richard is trying to be consistent here.  I agree it's a
+> little odd, but it looks like the right thing to me from an audit
+> perspective; the audit perspective is a little odd after all :)
 
-I am very hesitant to define a "typical" audit configuration as it
-really is dependent on the user's security requirements as well as the
-particular solution/environment.  Any configuration I pick will be
-"wrong" for a lot of audit users :)
+Thanks Paul.
 
-As I see it, users will likely find themselves in one of three
-performance buckets:
+I could have sworn I had a conversation with someone about this but I
+can't find any of that evidence otherwise I'd paste it here.
 
-* io_uring enabled, CONFIG_AUDIT=n
+With the help of our audit field dictionary we have some guidance of
+what these new field names should be:
+	https://github.com/linux-audit/audit-documentation/blob/main/specs/fields/field-dictionary.csv
 
-For those who are already trying to get that last 1% of performance
-from their kernel and are willing to give up most everything else to
-get it this is the obvious choice.  Needless to say there should not
-be any audit related impact in this case (especially since we've
-removed that req->opcode checks prior to the audit calls).
+The "flags" field is used for the mmap record (coincidentally in the
+context diff), so should not be used here because it will cause issues
+in the userspace parser.  The open syscall flags are listed with
+"oflag".  Other flag fields are named after their domain.
 
-* io_uring enabled, CONFIG_AUDIT=y, audit "task,never" runtime config
+The value field has a precedence of "val" that is not associated with
+any particular domain and is alphanumeric.  Other value fields take the
+name of their domain, so that was a possibility.
 
-[side note: I made some tweaks to audit_uring_entry() to move the
-audit_enabled check there so we no longer need to call into
-__audit_uring_entry() in this fastpath case.  Similarly
-audit_uring_exit() now does an audit_dummy_context() check instead of
-simply checking audit_context(), this should avoid calling into
-__audit_uring_exit() when the io_uring op is not being audited.]
+"resolve" would be a new field for which I have a note to add it to this
+document if the patch is accepted.
 
-I'm guessing that most distro users will fall into this bucket.  Here
-the task's audit_context should always be NULL, both in the syscall
-context and sqpoll context, so io_uring would call into the inline
-audit_uring_entry() function and return without calling into
-__audit_uring_entry() (see the "side note" above).  The
-audit_uring_exit() call would behave in a similar manner.
+> paul moore
 
-* io_uring enabled, CONFIG_AUDIT=y, some sort of runtime audit config
+- RGB
 
-For obvious reasons this case has the most performance impact and as
-mentioned above it can vary quite a bit.  In my opinion this is the
-least important bucket from a performance perspective as the user
-clearly has a need for the security information that audit provides
-and enabling that functionality in io_uring is critical to allowing
-the user to take advantage of io_uring.  The performance of io_uring
-is impacted, but it should still be more performant than synchronous
-I/O and it allows the user to run their existing io_uring
-applications/code-paths.
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 
-> Btw, do you really need two hooks -- before and right after
-> execution?
-
-Yes, the entry/before hook does the setup for the io_uring op (very
-similar to a syscall entry point) and the exit/after hook is what does
-the audit record generation based on what took place during the
-io_uring operation.
-
-> > I believe there are people who would like to use io_uring and are also
-> > required to use a kernel with audit, either due to the need to run a
-> > distribution kernel or the need to capture security information in the
-> > audit stream.  I'm hoping that we can find a solution for these users;
-> > if we don't we are asking this group to choose either io_uring or
-> > audit, and that is something I would like to avoid.
-
-I'm leaving this old paragraph here because I really think this is
-important to the discussion.  If we can't find a solution here we
-would need to make io_uring and audit mutually exclusive and I don't
-think that is in the best interests of the users, and would surely
-create a headache for the distros.
-
--- 
-paul moore
-www.paul-moore.com
