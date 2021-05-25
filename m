@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 52D1638FC7E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 10:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7224738FC8F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 10:20:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232181AbhEYISD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 04:18:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56944 "EHLO mx2.suse.de"
+        id S232233AbhEYIWO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 04:22:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34300 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230370AbhEYISB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 04:18:01 -0400
+        id S230370AbhEYIWN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 May 2021 04:22:13 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1621930591; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1621930843; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=cBTpb8oJt9glxSCHDQUwIyXY+s7ZBCa51c0d2hwY7nc=;
-        b=EczqhsS4/Xi3ikRA8F8oPMZV5MYYAX6lPTn7KdzPl6WKUo7l+wWnC/B0mSH22rgXmtA055
-        kbLbdsKFvk65GV0LQe4n+vLdoQpePZu/j3Z4wWLqjiznCeXoRbgJ2pokf81wy9ezABhoY8
-        FBdCmL9X+POMWP7GrVxBuomgcWzVcoQ=
+        bh=33WehLefsaCs8mzrnxUBokX91qQhEQO8tRtqWO8+uRo=;
+        b=t/lQVQ3lCBCGFEeJZbepLGbJ7ZtWPvnIv58iYyPJmu9nlp0PQwgaWqpsE4WhmFubLs4I3k
+        w1acVXlUcqMJisu+YxE55jtPcsc9ACG+rotjvUss84r8XzoE6zupOLa8QbzV7V/Ec3ne+k
+        /WOhD6VLnZUKRFQYyWRLIJNYsZUAANw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1621930591;
+        s=susede2_ed25519; t=1621930843;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=cBTpb8oJt9glxSCHDQUwIyXY+s7ZBCa51c0d2hwY7nc=;
-        b=5LG/R/yAUM5v9t0s1VF4gwLYCBRdG0N9ggk+VBmXNocCPcVfvBwWckPOqjt4TIl5jBI+pv
-        nAJF0QhPxrXz9NCQ==
+        bh=33WehLefsaCs8mzrnxUBokX91qQhEQO8tRtqWO8+uRo=;
+        b=aq8jZKe/CGd0TlTEQ6IRtlA6LXEukQZ/9rkTezLfByteZUnmh7UuVzfA87csX5o/tc48Iy
+        FbM4nWnzmGk6v4Cg==
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 1C9ACAE1F;
-        Tue, 25 May 2021 08:16:31 +0000 (UTC)
-Date:   Tue, 25 May 2021 10:16:26 +0200
+        by mx2.suse.de (Postfix) with ESMTP id 3203BAE92;
+        Tue, 25 May 2021 08:20:42 +0000 (UTC)
+Date:   Tue, 25 May 2021 10:20:36 +0200
 From:   Oscar Salvador <osalvador@suse.de>
 To:     David Hildenbrand <david@redhat.com>
 Cc:     linux-kernel@vger.kernel.org,
@@ -54,49 +54,42 @@ Cc:     linux-kernel@vger.kernel.org,
         linux-hyperv@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 4/6] mm: introduce
- page_offline_(begin|end|freeze|thaw) to synchronize setting PageOffline()
-Message-ID: <20210525081626.GB3300@linux>
+Subject: Re: [PATCH v2 5/6] virtio-mem: use page_offline_(start|end) when
+ setting PageOffline()
+Message-ID: <20210525082036.GC3300@linux>
 References: <20210514172247.176750-1-david@redhat.com>
- <20210514172247.176750-5-david@redhat.com>
+ <20210514172247.176750-6-david@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210514172247.176750-5-david@redhat.com>
+In-Reply-To: <20210514172247.176750-6-david@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 14, 2021 at 07:22:45PM +0200, David Hildenbrand wrote:
-> A driver might set a page logically offline -- PageOffline() -- and
-> turn the page inaccessible in the hypervisor; after that, access to page
-> content can be fatal. One example is virtio-mem; while unplugged memory
-> -- marked as PageOffline() can currently be read in the hypervisor, this
-> will no longer be the case in the future; for example, when having
-> a virtio-mem device backed by huge pages in the hypervisor.
+On Fri, May 14, 2021 at 07:22:46PM +0200, David Hildenbrand wrote:
+> Let's properly use page_offline_(start|end) to synchronize setting
+> PageOffline(), so we won't have valid page access to unplugged memory
+> regions from /proc/kcore.
 > 
-> Some special PFN walkers -- i.e., /proc/kcore -- read content of random
-> pages after checking PageOffline(); however, these PFN walkers can race
-> with drivers that set PageOffline().
+> Existing balloon implementations usually allow reading inflated memory;
+> doing so might result in unnecessary overhead in the hypervisor, which
+> is currently the case with virtio-mem.
 > 
-> Let's introduce page_offline_(begin|end|freeze|thaw) for
-> synchronizing.
+> For future virtio-mem use cases, it will be different when using shmem,
+> huge pages, !anonymous private mappings, ... as backing storage for a VM.
+> virtio-mem unplugged memory must no longer be accessed and access might
+> result in undefined behavior. There will be a virtio spec extension to
+> document this change, including a new feature flag indicating the
+> changed behavior. We really don't want to race against PFN walkers
+> reading random page content.
 > 
-> page_offline_freeze()/page_offline_thaw() allows for a subsystem to
-> synchronize with such drivers, achieving that a page cannot be set
-> PageOffline() while frozen.
-> 
-> page_offline_begin()/page_offline_end() is used by drivers that care about
-> such races when setting a page PageOffline().
-> 
-> For simplicity, use a rwsem for now; neither drivers nor users are
-> performance sensitive.
-> 
-> Acked-by: Michal Hocko <mhocko@suse.com>
+> Acked-by: Michael S. Tsirkin <mst@redhat.com>
 > Signed-off-by: David Hildenbrand <david@redhat.com>
 
 Reviewed-by: Oscar Salvador <osalvador@suse.de>
+
 
 -- 
 Oscar Salvador
