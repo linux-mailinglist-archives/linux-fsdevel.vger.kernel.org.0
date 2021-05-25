@@ -2,34 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AB92390B99
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 23:37:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75CAC390BAF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 23:40:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233459AbhEYVjC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 17:39:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48944 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233461AbhEYVi7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 17:38:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7D426613D8;
-        Tue, 25 May 2021 21:37:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621978649;
-        bh=nv08Dxq3HSmkoQ5pPmoU67FnZ+w+dkNHctp4s/QZUS0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ANhw69bWiEO4qKM9OmxmGcvl8tuonWhREShrEOy2nut+psi/R4u9okxCFKEWg8Puz
-         JALodU7uPQRiQ0VF+EPvOBw0CLy5GTXBCeUu/4aMUkWuu85LWJWsVtfLaCPA2Yw3E9
-         blJ66YPExqXLe3mJQorJCBkTk94NwsIFYZvnTBCL4ISKLX8GW5902EqfuTTIJZIpgz
-         xig20XNu6k2NBZXcmZVbzOMIj5gkcRLDbjIwYfJgaS6bfFtw7wMpDQAQNFtvxBJ1Tf
-         bqxtl7Kgub7H8zntfSjedjvUvUAshI8jPwTYR4CzPzPPCYcx0eYrRWn2aG/OE4GDbT
-         mUkEOQkkJL3Kg==
-Date:   Tue, 25 May 2021 14:37:29 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
+        id S232259AbhEYVmV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 17:42:21 -0400
+Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:56346 "EHLO
+        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231801AbhEYVmU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 May 2021 17:42:20 -0400
+Received: from dread.disaster.area (pa49-180-230-185.pa.nsw.optusnet.com.au [49.180.230.185])
+        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id F04E9671F3;
+        Wed, 26 May 2021 07:40:43 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1llen3-005CSi-MJ; Wed, 26 May 2021 07:40:41 +1000
+Date:   Wed, 26 May 2021 07:40:41 +1000
+From:   Dave Chinner <david@fromorbit.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>,
+        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
         Damien Le Moal <damien.lemoal@wdc.com>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
@@ -42,13 +36,19 @@ Cc:     linux-fsdevel@vger.kernel.org,
         Matthew Wilcox <willy@infradead.org>,
         Christoph Hellwig <hch@lst.de>
 Subject: Re: [PATCH 07/13] xfs: Convert to use invalidate_lock
-Message-ID: <20210525213729.GC202144@locust>
+Message-ID: <20210525214041.GJ664593@dread.disaster.area>
 References: <20210525125652.20457-1-jack@suse.cz>
  <20210525135100.11221-7-jack@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20210525135100.11221-7-jack@suse.cz>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Tu+Yewfh c=1 sm=1 tr=0
+        a=dUIOjvib2kB+GiIc1vUx8g==:117 a=dUIOjvib2kB+GiIc1vUx8g==:17
+        a=kj9zAlcOel0A:10 a=5FLXtPjwQuUA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
+        a=7-415B0cAAAA:8 a=YRNIVghP3Sa-aXUPf-oA:9 a=CjuIK1q_8ugA:10
+        a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -62,9 +62,6 @@ On Tue, May 25, 2021 at 03:50:44PM +0200, Jan Kara wrote:
 > Reviewed-by: Christoph Hellwig <hch@lst.de>
 > CC: <linux-xfs@vger.kernel.org>
 > CC: "Darrick J. Wong" <darrick.wong@oracle.com>
-
-It's djwong@kernel.org now.
-
 > Signed-off-by: Jan Kara <jack@suse.cz>
 > ---
 >  fs/xfs/xfs_file.c  | 12 ++++++-----
@@ -114,119 +111,28 @@ It's djwong@kernel.org now.
 >  			ret = filemap_fault(vmf);
 >  	}
 > -	xfs_iunlock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
->  
->  	if (write_fault)
->  		sb_end_pagefault(inode->i_sb);
-> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> index 0369eb22c1bb..53bb5fc33621 100644
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -131,7 +131,7 @@ xfs_ilock_attr_map_shared(
->  
->  /*
->   * In addition to i_rwsem in the VFS inode, the xfs inode contains 2
-> - * multi-reader locks: i_mmap_lock and the i_lock.  This routine allows
-> + * multi-reader locks: invalidate_lock and the i_lock.  This routine allows
->   * various combinations of the locks to be obtained.
->   *
->   * The 3 locks should always be ordered so that the IO lock is obtained first,
-> @@ -139,23 +139,23 @@ xfs_ilock_attr_map_shared(
->   *
->   * Basic locking order:
->   *
-> - * i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
-> + * i_rwsem -> invalidate_lock -> page_lock -> i_ilock
->   *
->   * mmap_lock locking order:
->   *
->   * i_rwsem -> page lock -> mmap_lock
-> - * mmap_lock -> i_mmap_lock -> page_lock
-> + * mmap_lock -> invalidate_lock -> page_lock
->   *
->   * The difference in mmap_lock locking order mean that we cannot hold the
-> - * i_mmap_lock over syscall based read(2)/write(2) based IO. These IO paths can
-> - * fault in pages during copy in/out (for buffered IO) or require the mmap_lock
-> - * in get_user_pages() to map the user pages into the kernel address space for
-> - * direct IO. Similarly the i_rwsem cannot be taken inside a page fault because
-> - * page faults already hold the mmap_lock.
-> + * invalidate_lock over syscall based read(2)/write(2) based IO. These IO paths
-> + * can fault in pages during copy in/out (for buffered IO) or require the
-> + * mmap_lock in get_user_pages() to map the user pages into the kernel address
-> + * space for direct IO. Similarly the i_rwsem cannot be taken inside a page
-> + * fault because page faults already hold the mmap_lock.
->   *
->   * Hence to serialise fully against both syscall and mmap based IO, we need to
-> - * take both the i_rwsem and the i_mmap_lock. These locks should *only* be both
-> - * taken in places where we need to invalidate the page cache in a race
-> + * take both the i_rwsem and the invalidate_lock. These locks should *only* be
-> + * both taken in places where we need to invalidate the page cache in a race
->   * free manner (e.g. truncate, hole punch and other extent manipulation
->   * functions).
->   */
-> @@ -187,10 +187,13 @@ xfs_ilock(
->  				 XFS_IOLOCK_DEP(lock_flags));
->  	}
->  
-> -	if (lock_flags & XFS_MMAPLOCK_EXCL)
-> -		mrupdate_nested(&ip->i_mmaplock, XFS_MMAPLOCK_DEP(lock_flags));
-> -	else if (lock_flags & XFS_MMAPLOCK_SHARED)
-> -		mraccess_nested(&ip->i_mmaplock, XFS_MMAPLOCK_DEP(lock_flags));
-> +	if (lock_flags & XFS_MMAPLOCK_EXCL) {
-> +		down_write_nested(&VFS_I(ip)->i_mapping->invalidate_lock,
-> +				  XFS_MMAPLOCK_DEP(lock_flags));
-> +	} else if (lock_flags & XFS_MMAPLOCK_SHARED) {
-> +		down_read_nested(&VFS_I(ip)->i_mapping->invalidate_lock,
-> +				 XFS_MMAPLOCK_DEP(lock_flags));
-> +	}
->  
->  	if (lock_flags & XFS_ILOCK_EXCL)
->  		mrupdate_nested(&ip->i_lock, XFS_ILOCK_DEP(lock_flags));
-> @@ -239,10 +242,10 @@ xfs_ilock_nowait(
->  	}
->  
->  	if (lock_flags & XFS_MMAPLOCK_EXCL) {
-> -		if (!mrtryupdate(&ip->i_mmaplock))
-> +		if (!down_write_trylock(&VFS_I(ip)->i_mapping->invalidate_lock))
->  			goto out_undo_iolock;
->  	} else if (lock_flags & XFS_MMAPLOCK_SHARED) {
-> -		if (!mrtryaccess(&ip->i_mmaplock))
-> +		if (!down_read_trylock(&VFS_I(ip)->i_mapping->invalidate_lock))
->  			goto out_undo_iolock;
->  	}
->  
-> @@ -257,9 +260,9 @@ xfs_ilock_nowait(
->  
->  out_undo_mmaplock:
->  	if (lock_flags & XFS_MMAPLOCK_EXCL)
-> -		mrunlock_excl(&ip->i_mmaplock);
-> +		up_write(&VFS_I(ip)->i_mapping->invalidate_lock);
->  	else if (lock_flags & XFS_MMAPLOCK_SHARED)
-> -		mrunlock_shared(&ip->i_mmaplock);
-> +		up_read(&VFS_I(ip)->i_mapping->invalidate_lock);
->  out_undo_iolock:
->  	if (lock_flags & XFS_IOLOCK_EXCL)
->  		up_write(&VFS_I(ip)->i_rwsem);
-> @@ -306,9 +309,9 @@ xfs_iunlock(
->  		up_read(&VFS_I(ip)->i_rwsem);
->  
->  	if (lock_flags & XFS_MMAPLOCK_EXCL)
-> -		mrunlock_excl(&ip->i_mmaplock);
-> +		up_write(&VFS_I(ip)->i_mapping->invalidate_lock);
->  	else if (lock_flags & XFS_MMAPLOCK_SHARED)
-> -		mrunlock_shared(&ip->i_mmaplock);
-> +		up_read(&VFS_I(ip)->i_mapping->invalidate_lock);
->  
->  	if (lock_flags & XFS_ILOCK_EXCL)
->  		mrunlock_excl(&ip->i_lock);
-> @@ -334,7 +337,7 @@ xfs_ilock_demote(
->  	if (lock_flags & XFS_ILOCK_EXCL)
->  		mrdemote(&ip->i_lock);
->  	if (lock_flags & XFS_MMAPLOCK_EXCL)
-> -		mrdemote(&ip->i_mmaplock);
-> +		downgrade_write(&VFS_I(ip)->i_mapping->invalidate_lock);
->  	if (lock_flags & XFS_IOLOCK_EXCL)
->  		downgrade_write(&VFS_I(ip)->i_rwsem);
->  
+
+This seems kinda messy. filemap_fault() basically takes the
+invalidate lock around the entire operation, it runs, so maybe it
+would be cleaner to implement it as:
+
+filemap_fault_locked(vmf)
+{
+	/* does the filemap fault work */
+}
+
+filemap_fault(vmf)
+{
+	filemap_invalidate_down_read(...)
+	ret = filemap_fault_locked(vmf)
+	filemap_invalidate_up_read(...)
+	return ret;
+}
+
+And that means XFS could just call filemap_fault_locked() and not 
+have to do all this messy locking just to avoid holding the lock
+that filemap_fault has now internalised.
+
 > @@ -355,8 +358,11 @@ xfs_isilocked(
 >  
 >  	if (lock_flags & (XFS_MMAPLOCK_EXCL|XFS_MMAPLOCK_SHARED)) {
@@ -238,49 +144,20 @@ It's djwong@kernel.org now.
 > +					&VFS_I(ip)->i_mapping->invalidate_lock,
 > +					0);
 > +		return rwsem_is_locked(&VFS_I(ip)->i_mapping->invalidate_lock);
-
-This doesn't look right...
-
-If lockdep is disabled, we always return true for
-xfs_isilocked(ip, XFS_MMAPLOCK_EXCL) even if nobody holds the lock?
-
-Granted, you probably just copy-pasted from the IOLOCK_SHARED clause
-beneath it.  Er... oh right, preichl was messing with all that...
-
-https://lore.kernel.org/linux-xfs/20201016021005.548850-2-preichl@redhat.com/
-
-I guess I'll go have a look at that again.
-
---D
-
 >  	}
->  
->  	if (lock_flags & (XFS_IOLOCK_EXCL|XFS_IOLOCK_SHARED)) {
-> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> index ca826cfba91c..a0e4153efbbe 100644
-> --- a/fs/xfs/xfs_inode.h
-> +++ b/fs/xfs/xfs_inode.h
-> @@ -40,7 +40,6 @@ typedef struct xfs_inode {
->  	/* Transaction and locking information. */
->  	struct xfs_inode_log_item *i_itemp;	/* logging information */
->  	mrlock_t		i_lock;		/* inode lock */
-> -	mrlock_t		i_mmaplock;	/* inode mmap IO lock */
->  	atomic_t		i_pincount;	/* inode pin count */
->  
->  	/*
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index a2dab05332ac..eeaf44910b5f 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -715,8 +715,6 @@ xfs_fs_inode_init_once(
->  	atomic_set(&ip->i_pincount, 0);
->  	spin_lock_init(&ip->i_flags_lock);
->  
-> -	mrlock_init(&ip->i_mmaplock, MRLOCK_ALLOW_EQUAL_PRI|MRLOCK_BARRIER,
-> -		     "xfsino", ip->i_ino);
->  	mrlock_init(&ip->i_lock, MRLOCK_ALLOW_EQUAL_PRI|MRLOCK_BARRIER,
->  		     "xfsino", ip->i_ino);
->  }
-> -- 
-> 2.26.2
-> 
+
+<sigh>
+
+And so here we are again, losing more of our read vs write debug
+checks on debug kernels when lockdep is not enabled....
+
+Can we please add rwsem_is_locked_read() and rwsem_is_locked_write()
+wrappers that just look at the rwsem counter value to determine how
+the lock is held? Then the mrlock_t can go away entirely....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
