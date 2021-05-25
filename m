@@ -2,121 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 29842390CD3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 01:12:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41FB9390CE9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 01:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230478AbhEYXOZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 19:14:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35964 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229610AbhEYXOZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 19:14:25 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 028576128B;
-        Tue, 25 May 2021 23:12:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621984375;
-        bh=p5zs9AFpKvm2gJ3wOHz8HK6dqERf9W6OPzdt/UtnSZE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eFkhYnypq9J5CIvc9qM9+goufTIQs8wZOya5HVGKzlep5Hh88uulPCiLVs1XuEy//
-         f2ZcODbhONRp3FMmL5uSLpMRRTXX9E0ESxLzvS9IIMCOcYBKBugD8Qtq/bJlBeoa6n
-         xyiWaN8nzv2rkllsMJhZZ0KQ5qBvRdjrobtH/HifDm17H4Y9VK8SaHCjxQeImSOuG/
-         EQ5z7v22TgggLa27t2AuQR9eaIT5jS7DrqDuq4k+U2tw47e6spQGwS6p1k1h4H2W0d
-         /k53pWsda612hxG8K2zf4GOfKjsn6EexHSe+G53YIqAT6lnViDYbdI7ROviRzT4YNj
-         TXyfJqDOJ9nAg==
-Date:   Tue, 25 May 2021 16:12:54 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
-        darrick.wong@oracle.com, dan.j.williams@intel.com,
-        willy@infradead.org, jack@suse.cz, viro@zeniv.linux.org.uk,
-        linux-btrfs@vger.kernel.org, david@fromorbit.com, hch@lst.de,
-        rgoldwyn@suse.de, Ritesh Harjani <riteshh@linux.ibm.com>
-Subject: Re: [PATCH v3 3/3] fsdax: Output address in dax_iomap_pfn() and
- rename it
-Message-ID: <20210525231254.GD202078@locust>
-References: <20210422134501.1596266-1-ruansy.fnst@fujitsu.com>
- <20210422134501.1596266-4-ruansy.fnst@fujitsu.com>
+        id S231174AbhEYXWk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 19:22:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54720 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229790AbhEYXWj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 May 2021 19:22:39 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8675DC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 May 2021 16:21:08 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id q15so23983097pgg.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 May 2021 16:21:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=N9pRtcpwEgIj6sC0tHqwYGJBlDf6VjtQs2mfFfUfl6g=;
+        b=eM5f6HsI/GmdQGh0ezMqwI/wS6K88p5V+4+nkKfgg7z9bCJVxfabyrOhNmdw00kB33
+         tCk9CY+4PJEK82DpKSgc/nd/RIW7ux57thwYKIx29lVMv+6qOXK8DT3ufc79lKKWA8vR
+         9Mc/u7M7h1ZmFQzmKYjHQSTnxQpIOZBC0Mp3Fu0/LDUIlheg42ubaR+aV9VlDKemejyv
+         iAcpZ8Zxl7NKRsUvQe/IjPsINfN2wzvmp4JAezHdvy9SeN802OHAWjHZLIpxTANGwLeL
+         /uucrr9tIwGKayjHp7CRnA0eWe9b1P36Fsgip83lycGpNuwzqEPLqPa9i/AHF2txImAS
+         uZwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=N9pRtcpwEgIj6sC0tHqwYGJBlDf6VjtQs2mfFfUfl6g=;
+        b=Xq8F2ArVvKM9HZTzSeKda0Q+nV1qhJkjQJ+zZZyxHQFhfeqkjt0+ssjHFNe8G4MYu+
+         5CWj8q7or7CY2zvrAmo27weB75SMakCkh5u3jfDrA4aanJqbHpuSq+fsKalO4HxgjT0Y
+         a5X28kDpD5XgM+0O38lqgLILcPSKxtBqIXLBpemFvF1iv6Q6dzo3ioqjzPvFZbMbl2mK
+         RayIdUYEZXyKDQiB1mU4/KPoB6fHEKgt1C/Yb9JlkZpQfJtXfr1/3bk/5RG3/Obg1Mv7
+         ODTHYwzPSh4drX9uq/3dU+JhvRgbSV0c3LHtGWjRvIDb0Y21vgDSVR3+LQ7XsfLL1uEe
+         nH5w==
+X-Gm-Message-State: AOAM531bh7wATiZsnD1a9P7ijk6UDm2J3GCtQRommxt3uPD/++Dkf5N0
+        sVaZiXY8F3UPoK0Y1WjQe98EgQ==
+X-Google-Smtp-Source: ABdhPJzTaM1dRCFm8Mp7aPTQuQDnu9Zc4/Lrm8xw3bO2GrfQex+U+F4LYKC8FIWuLHWi9Xykyn29xQ==
+X-Received: by 2002:a65:48c2:: with SMTP id o2mr21347245pgs.376.1621984867810;
+        Tue, 25 May 2021 16:21:07 -0700 (PDT)
+Received: from google.com ([2401:fa00:9:211:a122:6bc0:d8f6:9eea])
+        by smtp.gmail.com with ESMTPSA id k20sm119872pgl.72.2021.05.25.16.21.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 May 2021 16:21:06 -0700 (PDT)
+Date:   Wed, 26 May 2021 09:20:55 +1000
+From:   Matthew Bobrowski <repnop@google.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Jan Kara <jack@suse.cz>, amir73il@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH 0/5] Add pidfd support to the fanotify API
+Message-ID: <YK2GV7hLamMpcO8i@google.com>
+References: <cover.1621473846.git.repnop@google.com>
+ <20210520135527.GD18952@quack2.suse.cz>
+ <YKeIR+LiSXqUHL8Q@google.com>
+ <20210521104056.GG18952@quack2.suse.cz>
+ <YKhDFCUWX7iU7AzM@google.com>
+ <20210524084746.GB32705@quack2.suse.cz>
+ <20210525103133.uctijrnffehlvjr3@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210422134501.1596266-4-ruansy.fnst@fujitsu.com>
+In-Reply-To: <20210525103133.uctijrnffehlvjr3@wittgenstein>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 22, 2021 at 09:45:01PM +0800, Shiyang Ruan wrote:
-> Add address output in dax_iomap_pfn() in order to perform a memcpy() in
-> CoW case.  Since this function both output address and pfn, rename it to
-> dax_iomap_direct_access().
+On Tue, May 25, 2021 at 12:31:33PM +0200, Christian Brauner wrote:
+> On Mon, May 24, 2021 at 10:47:46AM +0200, Jan Kara wrote:
+> > On Sat 22-05-21 09:32:36, Matthew Bobrowski wrote:
+> > > On Fri, May 21, 2021 at 12:40:56PM +0200, Jan Kara wrote:
+> > > > On Fri 21-05-21 20:15:35, Matthew Bobrowski wrote:
+> > > > > On Thu, May 20, 2021 at 03:55:27PM +0200, Jan Kara wrote:
+> > > > > There's one thing that I'd like to mention, and it's something in
+> > > > > regards to the overall approach we've taken that I'm not particularly
+> > > > > happy about and I'd like to hear all your thoughts. Basically, with
+> > > > > this approach the pidfd creation is done only once an event has been
+> > > > > queued and the notification worker wakes up and picks up the event
+> > > > > from the queue processes it. There's a subtle latency introduced when
+> > > > > taking such an approach which at times leads to pidfd creation
+> > > > > failures. As in, by the time pidfd_create() is called the struct pid
+> > > > > has already been reaped, which then results in FAN_NOPIDFD being
+> > > > > returned in the pidfd info record.
+> > > > > 
+> > > > > Having said that, I'm wondering what the thoughts are on doing pidfd
+> > > > > creation earlier on i.e. in the event allocation stages? This way, the
+> > > > > struct pid is pinned earlier on and rather than FAN_NOPIDFD being
+> > > > > returned in the pidfd info record because the struct pid has been
+> > > > > already reaped, userspace application will atleast receive a valid
+> > > > > pidfd which can be used to check whether the process still exists or
+> > > > > not. I think it'll just set the expectation better from an API
+> > > > > perspective.
+> > > > 
+> > > > Yes, there's this race. OTOH if FAN_NOPIDFD is returned, the listener can
+> > > > be sure the original process doesn't exist anymore. So is it useful to
+> > > > still receive pidfd of the dead process?
+> > > 
+> > > Well, you're absolutely right. However, FWIW I was approaching this
+> > > from two different angles:
+> > > 
+> > > 1) I wanted to keep the pattern in which the listener checks for the
+> > >    existence/recycling of the process consistent. As in, the listener
+> > >    would receive the pidfd, then send the pidfd a signal via
+> > >    pidfd_send_signal() and check for -ESRCH which clearly indicates
+> > >    that the target process has terminated.
+> > > 
+> > > 2) I didn't want to mask failed pidfd creation because of early
+> > >    process termination and other possible failures behind a single
+> > >    FAN_NOPIDFD. IOW, if we take the -ESRCH approach above, the
+> > >    listener can take clear corrective branches as what's to be done
+> > >    next if a race is to have been detected, whereas simply returning
+> > >    FAN_NOPIDFD at this stage can mean multiple things.
+> > > 
+> > > Now that I've written the above and keeping in mind that we'd like to
+> > > refrain from doing anything in the event allocation stages, perhaps we
+> > > could introduce a different error code for detecting early process
+> > > termination while attempting to construct the info record. WDYT?
+> > 
+> > Sure, I wouldn't like to overengineer it but having one special fd value for
+> > "process doesn't exist anymore" and another for general "creating pidfd
+> > failed" looks OK to me.
 > 
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
+> FAN_EPIDFD -> "creation failed"
+> FAN_NOPIDFD -> "no such process"
 
-Looks pretty simple to me,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Yes, I was thinking something along the lines of this...
 
---D
+With the approach that I've proposed in this series, the pidfd
+creation failure trips up in pidfd_create() at the following
+condition:
 
-> ---
->  fs/dax.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index f99e33de2036..48a97905c0c3 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -998,8 +998,8 @@ static sector_t dax_iomap_sector(struct iomap *iomap, loff_t pos)
->  	return (iomap->addr + (pos & PAGE_MASK) - iomap->offset) >> 9;
->  }
->  
-> -static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
-> -			 pfn_t *pfnp)
-> +static int dax_iomap_direct_access(struct iomap *iomap, loff_t pos, size_t size,
-> +		void **kaddr, pfn_t *pfnp)
->  {
->  	const sector_t sector = dax_iomap_sector(iomap, pos);
->  	pgoff_t pgoff;
-> @@ -1011,11 +1011,13 @@ static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
->  		return rc;
->  	id = dax_read_lock();
->  	length = dax_direct_access(iomap->dax_dev, pgoff, PHYS_PFN(size),
-> -				   NULL, pfnp);
-> +				   kaddr, pfnp);
->  	if (length < 0) {
->  		rc = length;
->  		goto out;
->  	}
-> +	if (!pfnp)
-> +		goto out_check_addr;
->  	rc = -EINVAL;
->  	if (PFN_PHYS(length) < size)
->  		goto out;
-> @@ -1025,6 +1027,12 @@ static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
->  	if (length > 1 && !pfn_t_devmap(*pfnp))
->  		goto out;
->  	rc = 0;
-> +
-> +out_check_addr:
-> +	if (!kaddr)
-> +		goto out;
-> +	if (!*kaddr)
-> +		rc = -EFAULT;
->  out:
->  	dax_read_unlock(id);
->  	return rc;
-> @@ -1389,7 +1397,7 @@ static vm_fault_t dax_fault_actor(struct vm_fault *vmf, pfn_t *pfnp,
->  		return pmd ? VM_FAULT_FALLBACK : VM_FAULT_SIGBUS;
->  	}
->  
-> -	err = dax_iomap_pfn(iomap, pos, size, &pfn);
-> +	err = dax_iomap_direct_access(iomap, pos, size, NULL, &pfn);
->  	if (err)
->  		return pmd ? VM_FAULT_FALLBACK : dax_fault_return(err);
->  
-> -- 
-> 2.31.1
-> 
-> 
-> 
+	if (!pid || !pid_has_task(pid, PIDTYPE_TGID))
+	   	 return -EINVAL;
+
+Specifically, the following check:
+	!pid_has_task(pid, PIDTYPE_TGID)
+
+In order to properly report either FAN_NOPIDFD/FAN_EPIDFD to
+userspace, AFAIK I'll have to do one of either two things to better
+distinguish between why the pidfd creation had failed:
+
+1) Implement an additional check in pidfd_create() that effectively
+   checks whether provided pid still holds reference to a struct pid
+   that isn't in the process of being cleaned up. If it is being
+   cleaned up, then return something like -ESRCH instead of -EINVAL so
+   that the caller, in this case fanotify, can check and set
+   FAN_NOPIDFD if -ESRCH is returned from pidfd_create(). I definitely
+   don't feel as though returning -ESRCH from the !pid_has_task(pid,
+   PIDTYPE_TGID) would be appropriate. In saying that, I'm not aware
+   of a helper by which would allow us to perform such an in-flight
+   check? Perhaps something needs to be introduced here, IDK...
+
+2) Refrain from performing any further changes to pidfd_create()
+   i.e. as proposed in option 1), and manually perform the pidfd
+   creation from some kind of new fanotify helper, as suggested by you
+   here [0]. However, I'm not convinved that I like this approach as
+   we may end up slowly drifting away from pidfd creation semantics
+   over time.
+
+[0] https://www.spinics.net/lists/linux-fsdevel/msg195556.html 
+
+/M
