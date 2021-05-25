@@ -2,189 +2,245 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C23B38FAE7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 08:29:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DB7D38FB0F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 08:41:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231187AbhEYGal (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 02:30:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23720 "EHLO
+        id S231265AbhEYGmj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 02:42:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:50121 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230509AbhEYGaj (ORCPT
+        by vger.kernel.org with ESMTP id S230465AbhEYGmj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 02:30:39 -0400
+        Tue, 25 May 2021 02:42:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1621924150;
+        s=mimecast20190719; t=1621924869;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Xmg+jKMuyj8kCoSvApnyzVNUBfF8MHu5WWzJfFH3+RY=;
-        b=SLvGcKT4tlb2IyR6P+36mZ4Iz6aoZnCBuuLqfi/7OVKUHkMpzuxgJaJ4OGmonCTD1PWP4B
-        jhEkGqAoE3PXQCVziBUGJxcR1FShaXz8KC3h9P5hySvWn0RtihweQ+eckT7ENAQOFg7R+p
-        jvwrZc04QKK6kxE7MoZ2zLdh8xMcYkE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-491-yOExd4ABPSafQwy7v9rgDw-1; Tue, 25 May 2021 02:29:08 -0400
-X-MC-Unique: yOExd4ABPSafQwy7v9rgDw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3DAC21007477;
-        Tue, 25 May 2021 06:29:07 +0000 (UTC)
-Received: from T590 (ovpn-13-203.pek2.redhat.com [10.72.13.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D26DE60855;
-        Tue, 25 May 2021 06:28:59 +0000 (UTC)
-Date:   Tue, 25 May 2021 14:28:54 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Brian Foster <bfoster@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: iomap: writeback ioend/bio allocation deadlock risk
-Message-ID: <YKyZJiY7GySlIsZ7@T590>
-References: <YKcouuVR/y/L4T58@T590>
- <20210521071727.GA11473@lst.de>
- <YKdhuUZBtKMxDpsr@T590>
- <20210521073547.GA11955@lst.de>
- <YKdwtzp+WWQ3krhI@T590>
- <20210521083635.GA15311@lst.de>
- <YKd1VS5gkzQRn+7x@T590>
- <20210524235538.GI2817@dread.disaster.area>
- <YKyDCw430gD6pTBC@T590>
+        bh=kLSwktyFZs8E7VOwk5zUKYu4aQ38NyP9gI4c+eI8elE=;
+        b=i6KUj+9ar9KMfCYYqptcBACJd9xX/vw/uavIsHcIErfeOhZHLaBGl6FNKuY/0Iytob0hQ8
+        6gSWK/o7NpEQZNvCJ7Vm453JnpIN9aLsLXyfIVm5H7/GUY3dtdefJm+od/yYC8ctg0+kmt
+        WZxv6ZXO+VRuNswigDGsYGbn5qSId4M=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-4-EpR9p4rvMlCDULWmH6vD0A-1; Tue, 25 May 2021 02:41:08 -0400
+X-MC-Unique: EpR9p4rvMlCDULWmH6vD0A-1
+Received: by mail-pj1-f70.google.com with SMTP id v2-20020a17090a9602b029015b0bb8b2b9so15601987pjo.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 May 2021 23:41:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=kLSwktyFZs8E7VOwk5zUKYu4aQ38NyP9gI4c+eI8elE=;
+        b=ED9po+R+1YBL809a9Umz7iMm5/a1f53DHZHffB5oN/cp6tPf6QJmQW7TG8y6bnqo4E
+         khf1ZyYVUaByPMCLuhikTeBz/SBn0NISbdhUdwJLxnhloFmjDQ2Koj6brqoPsNt5+4Ke
+         Jkdx6AwsT7MQLSO0O1yXk3q70nk++VZ7Af/lcJwZvpySaxmu21EYRyI/ovffmgHFgPIk
+         TgMYKh2VH1utDIHF2G69yeGOPztXdvIO1wtF4nj7g9Ej2KUbrToP/bOp6EERmsUTgnQa
+         Ex2JHGFF5G/M8rs3sgrFEzMhIJ3kRym4LnYM8XOoEtJXbmORNsRe+ch8OYkN5oqNegE9
+         GVEA==
+X-Gm-Message-State: AOAM531hUczxOb0CaKgQhpfelLYfUH5yfj0H6l93mxA3VNsXePXv9Ycn
+        nQ46s0zndjfI1zFUG8d10E0T5hxcOpblwz54OtarMsioK+pIPRLLtwg0b4FwVjFSrdSdMiYhrAd
+        FtHbBgPFgrWKWe0Yk8DmuJmB6Xg==
+X-Received: by 2002:a62:1a0d:0:b029:2da:21a6:6838 with SMTP id a13-20020a621a0d0000b02902da21a66838mr28058942pfa.76.1621924866773;
+        Mon, 24 May 2021 23:41:06 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxVyOOkl2rdMpz8JwUhVMKIvPn854Rr2/gwU3WBwB4yeNP+uBLNOYgawAwFCiB5p2EW6WnAew==
+X-Received: by 2002:a62:1a0d:0:b029:2da:21a6:6838 with SMTP id a13-20020a621a0d0000b02902da21a66838mr28058912pfa.76.1621924866445;
+        Mon, 24 May 2021 23:41:06 -0700 (PDT)
+Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id x29sm13141650pgl.49.2021.05.24.23.40.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 May 2021 23:41:06 -0700 (PDT)
+Subject: Re: [PATCH v7 00/12] Introduce VDUSE - vDPA Device in Userspace
+To:     Yongji Xie <xieyongji@bytedance.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20210517095513.850-1-xieyongji@bytedance.com>
+ <20210520014349-mutt-send-email-mst@kernel.org>
+ <CACycT3tKY2V=dmOJjeiZxkqA3cH8_KF93NNbRnNU04e5Job2cw@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <2a79fa0f-352d-b8e9-f60a-181960d054ec@redhat.com>
+Date:   Tue, 25 May 2021 14:40:57 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.10.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YKyDCw430gD6pTBC@T590>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <CACycT3tKY2V=dmOJjeiZxkqA3cH8_KF93NNbRnNU04e5Job2cw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 25, 2021 at 12:54:35PM +0800, Ming Lei wrote:
-> On Tue, May 25, 2021 at 09:55:38AM +1000, Dave Chinner wrote:
-> > On Fri, May 21, 2021 at 04:54:45PM +0800, Ming Lei wrote:
-> > > On Fri, May 21, 2021 at 10:36:35AM +0200, Christoph Hellwig wrote:
-> > > > On Fri, May 21, 2021 at 04:35:03PM +0800, Ming Lei wrote:
-> > > > > Just wondering why the ioend isn't submitted out after it becomes full?
-> > > > 
-> > > > block layer plugging?  Although failing bio allocations will kick that,
-> > > > so that is not a deadlock risk.
-> > > 
-> > > These ioends are just added to one list stored on local stack variable(submit_list),
-> > > how can block layer plugging observe & submit them out?
-> > 
-> > We ignore that, as the commit histoy says:
-> > 
-> > commit e10de3723c53378e7cf441529f563c316fdc0dd3
-> > Author: Dave Chinner <dchinner@redhat.com>
-> > Date:   Mon Feb 15 17:23:12 2016 +1100
-> > 
-> >     xfs: don't chain ioends during writepage submission
-> > 
-> >     Currently we can build a long ioend chain during ->writepages that
-> >     gets attached to the writepage context. IO submission only then
-> >     occurs when we finish all the writepage processing. This means we
-> >     can have many ioends allocated and pending, and this violates the
-> >     mempool guarantees that we need to give about forwards progress.
-> >     i.e. we really should only have one ioend being built at a time,
-> >     otherwise we may drain the mempool trying to allocate a new ioend
-> >     and that blocks submission, completion and freeing of ioends that
-> >     are already in progress.
-> > 
-> >     To prevent this situation from happening, we need to submit ioends
-> >     for IO as soon as they are ready for dispatch rather than queuing
-> >     them for later submission. This means the ioends have bios built
-> >     immediately and they get queued on any plug that is current active.
-> >     Hence if we schedule away from writeback, the ioends that have been
-> >     built will make forwards progress due to the plug flushing on
-> >     context switch. This will also prevent context switches from
-> >     creating unnecessary IO submission latency.
-> > 
-> >     We can't completely avoid having nested IO allocation - when we have
-> >     a block size smaller than a page size, we still need to hold the
-> >     ioend submission until after we have marked the current page dirty.
-> >     Hence we may need multiple ioends to be held while the current page
-> >     is completely mapped and made ready for IO dispatch. We cannot avoid
-> >     this problem - the current code already has this ioend chaining
-> >     within a page so we can mostly ignore that it occurs.
-> > 
-> >     Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> >     Reviewed-by: Christoph Hellwig <hch@lst.de>
-> >     Signed-off-by: Dave Chinner <david@fromorbit.com>
-> > 
-> > IOWs, this nesting for block size < page size has been out there
-> > for many years now and we've yet to have anyone report that
-> > writeback deadlocks have occurred.
-> > 
-> > There's a mistake in that commit message - we can't submit the
-> > ioends on a page until we've marked the page as under writeback, not
-> > dirty. That's because we cannot have ioends completing on a a page
-> > that isn't under writeback because calling end_page_writeback() on
-> > it when it isn't under writeback will BUG(). Hence we have to build
-> > all the submission state before we mark the page as under writeback
-> > and perform the submission(s) to avoid completion racing with
-> > submission.
-> > 
-> > Hence we can't actually avoid nesting ioend allocation here within a
-> > single page - the constraints of page cache writeback require it.
-> > Hence the construction of the iomap_ioend_bioset uses a pool size of:
-> > 
-> > 	4 * (PAGE_SIZE / SECTOR_SIZE)
-> > 
-> > So that we always have enough ioends cached in the mempool to
-> > guarantee forwards progress of writeback of any single page under
-> > writeback.
-> 
-> OK, looks it is just for subpage IO, so there isn't such issue
-> in case of multiple ioends.
 
-Thinking of further, this way is still fragile, suppose there are 8
-contexts in which writeback is working on at the same time, and each
-needs to allocate 6 ioends, so all contexts may not move on when
-allocating its 6th ioend.
+在 2021/5/20 下午5:06, Yongji Xie 写道:
+> On Thu, May 20, 2021 at 2:06 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+>> On Mon, May 17, 2021 at 05:55:01PM +0800, Xie Yongji wrote:
+>>> This series introduces a framework, which can be used to implement
+>>> vDPA Devices in a userspace program. The work consist of two parts:
+>>> control path forwarding and data path offloading.
+>>>
+>>> In the control path, the VDUSE driver will make use of message
+>>> mechnism to forward the config operation from vdpa bus driver
+>>> to userspace. Userspace can use read()/write() to receive/reply
+>>> those control messages.
+>>>
+>>> In the data path, the core is mapping dma buffer into VDUSE
+>>> daemon's address space, which can be implemented in different ways
+>>> depending on the vdpa bus to which the vDPA device is attached.
+>>>
+>>> In virtio-vdpa case, we implements a MMU-based on-chip IOMMU driver with
+>>> bounce-buffering mechanism to achieve that. And in vhost-vdpa case, the dma
+>>> buffer is reside in a userspace memory region which can be shared to the
+>>> VDUSE userspace processs via transferring the shmfd.
+>>>
+>>> The details and our user case is shown below:
+>>>
+>>> ------------------------    -------------------------   ----------------------------------------------
+>>> |            Container |    |              QEMU(VM) |   |                               VDUSE daemon |
+>>> |       ---------      |    |  -------------------  |   | ------------------------- ---------------- |
+>>> |       |dev/vdx|      |    |  |/dev/vhost-vdpa-x|  |   | | vDPA device emulation | | block driver | |
+>>> ------------+-----------     -----------+------------   -------------+----------------------+---------
+>>>              |                           |                            |                      |
+>>>              |                           |                            |                      |
+>>> ------------+---------------------------+----------------------------+----------------------+---------
+>>> |    | block device |           |  vhost device |            | vduse driver |          | TCP/IP |    |
+>>> |    -------+--------           --------+--------            -------+--------          -----+----    |
+>>> |           |                           |                           |                       |        |
+>>> | ----------+----------       ----------+-----------         -------+-------                |        |
+>>> | | virtio-blk driver |       |  vhost-vdpa driver |         | vdpa device |                |        |
+>>> | ----------+----------       ----------+-----------         -------+-------                |        |
+>>> |           |      virtio bus           |                           |                       |        |
+>>> |   --------+----+-----------           |                           |                       |        |
+>>> |                |                      |                           |                       |        |
+>>> |      ----------+----------            |                           |                       |        |
+>>> |      | virtio-blk device |            |                           |                       |        |
+>>> |      ----------+----------            |                           |                       |        |
+>>> |                |                      |                           |                       |        |
+>>> |     -----------+-----------           |                           |                       |        |
+>>> |     |  virtio-vdpa driver |           |                           |                       |        |
+>>> |     -----------+-----------           |                           |                       |        |
+>>> |                |                      |                           |    vdpa bus           |        |
+>>> |     -----------+----------------------+---------------------------+------------           |        |
+>>> |                                                                                        ---+---     |
+>>> -----------------------------------------------------------------------------------------| NIC |------
+>>>                                                                                           ---+---
+>>>                                                                                              |
+>>>                                                                                     ---------+---------
+>>>                                                                                     | Remote Storages |
+>>>                                                                                     -------------------
+>>>
+>>> We make use of it to implement a block device connecting to
+>>> our distributed storage, which can be used both in containers and
+>>> VMs. Thus, we can have an unified technology stack in this two cases.
+>>>
+>>> To test it with null-blk:
+>>>
+>>>    $ qemu-storage-daemon \
+>>>        --chardev socket,id=charmonitor,path=/tmp/qmp.sock,server,nowait \
+>>>        --monitor chardev=charmonitor \
+>>>        --blockdev driver=host_device,cache.direct=on,aio=native,filename=/dev/nullb0,node-name=disk0 \
+>>>        --export type=vduse-blk,id=test,node-name=disk0,writable=on,name=vduse-null,num-queues=16,queue-size=128
+>>>
+>>> The qemu-storage-daemon can be found at https://github.com/bytedance/qemu/tree/vduse
+>>>
+>>> To make the userspace VDUSE processes such as qemu-storage-daemon able to
+>>> run unprivileged. We did some works on virtio driver to avoid trusting
+>>> device, including:
+>>>
+>>>    - validating the device status:
+>>>
+>>>      * https://lore.kernel.org/lkml/20210517093428.670-1-xieyongji@bytedance.com/
+>>>
+>>>    - validating the used length:
+>>>
+>>>      * https://lore.kernel.org/lkml/20210517090836.533-1-xieyongji@bytedance.com/
+>>>
+>>>    - validating the device config:
+>>>
+>>>      * patch 4 ("virtio-blk: Add validation for block size in config space")
+>>>
+>>>    - validating the device response:
+>>>
+>>>      * patch 5 ("virtio_scsi: Add validation for residual bytes from response")
+>>>
+>>> Since I'm not sure if I missing something during auditing, especially on some
+>>> virtio device drivers that I'm not familiar with, now we only support emualting
+>>> a few vDPA devices by default, including: virtio-net device, virtio-blk device,
+>>> virtio-scsi device and virtio-fs device. This limitation can help to reduce
+>>> security risks.
+>> I suspect there are a lot of assumptions even with these 4.
+>> Just what are the security assumptions and guarantees here?
 
-> 
-> > 
-> > But that is a completely separate problem to this:
-> > 
-> > > Chained bios have been submitted already, but all can't be completed/freed
-> > > until the whole ioend is done, that submission won't make forward progress.
-> > 
-> > This is a problem caused by having unbound contiguous ioend sizes,
-> > not a problem caused by chaining bios. We can throw 256 pages into
-> > a bio, so when we are doing huge contiguous IOs, we can map a
-> > lot of sequential dirty pages into a contiguous extent into a very
-> > long bio chain. But if we cap the max ioend size to, say, 4096
-> > pages, then we've effectively capped the number of bios that can be
-> > nested by such a writeback chain.
-> 
-> If the 4096 pages are not continuous, there may be 4096/256=16 bios
-> allocated for single ioend, and one is allocated from iomap_ioend_bioset,
-> another 15 is allocated by bio_alloc() from fs_bio_set which just
-> reserves 2 bios.
-> 
-> > 
-> > I was about to point you at the patchset that fixes this, but you've
-> > already found it and are claiming that this nesting is an unfixable
-> > problem. Capping the size of the ioend also bounds the depth of the
-> > allocation nesting that will occur, and that fixes the whole nseting
-> > deadlock problem: If the mempool reserves are deeper than than the
-> > maximum chain nesting that can occur, then there is no deadlock.
-> > 
-> > However, this points out what the real problem here is: that bio
-> > allocation is designed to deadlock when nesting bio allocation rather
-> > than fail. Hence at the iomap level we've go no way of knowing that
-> > we should terminate and submit the current bio chain and start a new
-> > ioend+bio chain because we will hang before there's any indication
-> > that a deadlock could occur.
-> 
-> Most of reservation is small, such as fs_bio_set, so bio_alloc_bioset()
-> documents that 'never allocate more than 1 bio at a time'. Actually
-> iomap_chain_bio() does allocate a new one, then submits the old one.
-> 'fs_bio_set' reserves two bios, so the order(alloc before submit) is fine,
 
-It may not be fine when more than one context is involved in writeback.
+Note that VDUSE is not the only device that may suffer from this, 
+here're two others:
 
-Thanks,
-Ming
+1) Encrypted VM
+2) Smart NICs
+
+
+> The attack surface from a virtio device is limited with IOMMU enabled.
+> It should be able to avoid security risk if we can validate all data
+> such as config space and used length from device in device driver.
+>
+>> E.g. it seems pretty clear that exposing a malformed FS
+>> to a random kernel config can cause untold mischief.
+>>
+>> Things like virtnet_send_command are also an easy way for
+>> the device to DOS the kernel.
+
+
+I think the virtnet_send_command() needs to use interrupt instead of 
+polling.
+
+Thanks
+
+
+>> And before you try to add
+>> an arbitrary timeout there - please don't,
+>> the fix is moving things that must be guaranteed into kernel
+>> and making things that are not guaranteed asynchronous.
+>> Right now there are some things that happen with locks taken,
+>> where if we don't wait for device we lose the ability to report failures
+>> to userspace. E.g. all kind of netlink things are like this.
+>> One can think of a bunch of ways to address this, this
+>> needs to be discussed with the relevant subsystem maintainers.
+>>
+>>
+>> If I were you I would start with one type of device, and as simple one
+>> as possible.
+>>
+> Make sense to me. The virtio-blk device might be a good start. We
+> already have some existing interface like NBD to do similar things.
+>
+>>
+>>> When a sysadmin trusts the userspace process enough, it can relax
+>>> the limitation with a 'allow_unsafe_device_emulation' module parameter.
+>> That's not a great security interface. It's a global module specific knob
+>> that just allows any userspace to emulate anything at all.
+>> Coming up with a reasonable interface isn't going to be easy.
+>> For now maybe just have people patch their kernels if they want to
+>> move fast and break things.
+>>
+> OK. A reasonable interface can be added if we need it in the future.
+>
+> Thanks,
+> Yongji
 
