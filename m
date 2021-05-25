@@ -2,191 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF3F538FDB0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 11:22:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F8A738FDE0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 11:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232487AbhEYJXx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 05:23:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33672 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232541AbhEYJXx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 05:23:53 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 475F3C061574;
-        Tue, 25 May 2021 02:22:19 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id r11so35242358edt.13;
-        Tue, 25 May 2021 02:22:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i4WpDFzjrpXp5hP9+v4938PGOuID77BZ1+yoSzNr4bw=;
-        b=aZgrutsc1m9tSr4hBJxEgoXTPkpi+M04jPX97JYoXk0DECbfii3wJvYf/10Qf2eBuK
-         k1wIdc84jsy0PLkiG1QLRUm7WRkFkJNUOJ7kxOcpcWplwI6clR/o52Jnzt2Hnv7CI+iL
-         YApQWP86Q2iCfglmBKUZBEbLewHv3AAGVa+n/bp+Pqyn3BH+WA31yoIyV4/vtwP6K0i5
-         foZx3ib56Gh6Y61t5cGVd3eei85F68GsG+jdSKqqinNG1KZerpnlOTFEjtCm+DBfBel9
-         ke/0+B5oGRNdxlXy+M47uvRh7X/hBT1TobVh7NSwTZF+8y/P6kFDrCX7KTd9kIxL5o7A
-         SGew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i4WpDFzjrpXp5hP9+v4938PGOuID77BZ1+yoSzNr4bw=;
-        b=N211E6foPuhhfY3C2eN3VoCOjWx0iVrK08swMVIz5bN3BuZaqMDA23bfueXnv1rbdU
-         XpiMlQROeqxtgtn3eqoHnO4+1pjCjyERSi7XMbbcEOXzNGuq6ZMeJTlzT/j0aMUJvytI
-         pXNvPvyPFh0BAl7mmo0a0OxlEWx6DncDlEK0zKhDH1z4p4vCCXCsDM5Ao94eCFKWCN5v
-         eT3+Rnf3UoqsmnKzUBgKKNvbWRRg3Jk6zI4ldQLWwr6gmekSreJjnSeAgVdzqMCVAkPg
-         8gapWlRNEiDyFymLIXyN272PZpZ6Z0Itw/NSnMtrJqgvF9FAZH1sjM5e1DF38yTiGP6Z
-         Z+Mw==
-X-Gm-Message-State: AOAM533CQQnsa3KLX1H7nefXnTFCP2GREVdTc1q5UbMM6BTzfaJpaIUS
-        mXwsZG6IteOWdwy0dnVHKWb7E2yFZoahw1DSqiI=
-X-Google-Smtp-Source: ABdhPJxSspRrEdzmSkEjEkJp7+mPyCDdSHTlgwh1A+zFibAdE7o8FKoR4TgcbystH6uJzQMBL8BnZShsXhII1ig9tY8=
-X-Received: by 2002:a50:ccdc:: with SMTP id b28mr30538106edj.92.1621934537751;
- Tue, 25 May 2021 02:22:17 -0700 (PDT)
+        id S232578AbhEYJcF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 05:32:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57316 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231567AbhEYJcE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 May 2021 05:32:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1621935034; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=H0CdEZyXokWEWrMrTbuIjD3UsGMWpkePMFwkVTcnpOc=;
+        b=tsF3jStH+uP7PBxkE+CNdkHM65GKSFwbKw2lMMMi/Z0xtBMaIVYAkXKlLDlaMG/CVm+C2u
+        lrtiTCkbHkzflAS9UP7hEMbp+0tbyn51EM0dn3Dj+9ChRI7UQeKonQ827VEdkERV3mIVX+
+        PMpuOLaKRJeMhi+xzkzNOb8Hpw8cRIo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1621935034;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=H0CdEZyXokWEWrMrTbuIjD3UsGMWpkePMFwkVTcnpOc=;
+        b=8REuD+9jpJlx0/O/Ads7yUxELxouZLc3AQ2dposoYYFFVDqhUGw7kjYuV6srN+6+x2CRJV
+        F8ymMDCG3u8102BA==
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 818A2AECE;
+        Tue, 25 May 2021 09:30:34 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 330A91F2C98; Tue, 25 May 2021 11:30:34 +0200 (CEST)
+Date:   Tue, 25 May 2021 11:30:34 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Junxiao Bi <junxiao.bi@oracle.com>
+Cc:     Jan Kara <jack@suse.cz>, ocfs2-devel@oss.oracle.com,
+        joseph.qi@linux.alibaba.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] ocfs2: fix data corruption by fallocate
+Message-ID: <20210525093034.GB4112@quack2.suse.cz>
+References: <20210521233612.75185-1-junxiao.bi@oracle.com>
+ <20210524085508.GD32705@quack2.suse.cz>
+ <479301ea-042b-855d-fc52-0d7bbdc55bdc@oracle.com>
 MIME-Version: 1.0
-References: <CAOuPNLjgpkBh9dnfNTdDcfk5HiL=HjjiB9o_=fjrm+0vP7Re2Q@mail.gmail.com>
- <CAOuPNLh_0Q9w96GKT-ogC0BBcEHgo=Hv3+c=JBcas2VgqDiyaw@mail.gmail.com>
- <CAOuPNLjmJ0YufFktJzjkyvdxwFTOpxVj5AW5gANAGSG=_yT=mQ@mail.gmail.com>
- <1762403920.6716767.1621029029246@webmail.123-reg.co.uk> <CAOuPNLhn90z9i6jt0-Vv4e9hjsxwYUT2Su-7SQrxy+N=HDe_xA@mail.gmail.com>
- <486335206.6969995.1621485014357@webmail.123-reg.co.uk> <CAOuPNLjBsm9YLtcb4SnqLYYaHPnscYq4captvCmsR7DthiWGsQ@mail.gmail.com>
- <1339b24a-b5a5-5c73-7de0-9541455b66af@geanix.com> <CAOuPNLiMnHJJNFBbOrMOLmnxU86ROMBaLaeFxviPENCkuKfUVg@mail.gmail.com>
- <877196209.4648525.1621840046695@webmail.123-reg.co.uk>
-In-Reply-To: <877196209.4648525.1621840046695@webmail.123-reg.co.uk>
-From:   Pintu Agarwal <pintu.ping@gmail.com>
-Date:   Tue, 25 May 2021 14:52:06 +0530
-Message-ID: <CAOuPNLgrwnqv_=Ux5SeY3XTDG2b0=ntRbciWVshhaVwJYFEZ3g@mail.gmail.com>
-Subject: Re: [RESEND]: Kernel 4.14: UBIFS+SQUASHFS: Device fails to boot after
- flashing rootfs volume
-To:     Phillip Lougher <phillip@squashfs.org.uk>
-Cc:     Sean Nyekjaer <sean@geanix.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <479301ea-042b-855d-fc52-0d7bbdc55bdc@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 24 May 2021 at 12:37, Phillip Lougher <phillip@squashfs.org.uk> wrote:
->
-> > No, this is still experimental.
-> > Currently we are only able to write to ubi volumes but after that
-> > device is not booting (with rootfs volume update).
-> > However, with "userdata" it is working fine.
-> >
-> > I have few more questions to clarify.
-> >
-> > a) Is there a way in kernel to do the ubi volume update while the
-> > device is running ?
-> >     I tried "ubiupdatevol" but it does not seem to work.
-> >     I guess it is only to update the empty volume ?
-> >     Or, maybe I don't know how to use it to update the live "rootfs" volume
-> >
-> > b) How to verify the volume checksum as soon as we finish writing the
-> > content, since the device is not booting ?
-> >      Is there a way to verify the rootfs checksum at the bootloader or
-> > kernel level before mounting ?
-> >
-> > c) We are configuring the ubi volumes in this way. Is it fine ?
-> > [rootfs_volume]
-> > mode=ubi
-> > image=.<path>/system.squash
-> > vol_id=0
-> > vol_type=dynamic
-> > vol_name=rootfs
-> > vol_size=62980096  ==> 60.0625 MiB
-> >
-> > Few more info:
-> > ----------------------
-> > Our actual squashfs image size:
-> > $ ls -l ./system.squash
-> > rw-rr- 1 pintu users 49639424 ../system.squash
-> >
-> > after earse_volume: page-size: 4096, block-size-bytes: 262144,
-> > vtbl-count: 2, used-blk: 38, leb-size: 253952, leb-blk-size: 62
-> > Thus:
-> > 49639424 / 253952 = 195.46 blocks
-> >
-> > This then round-off to 196 blocks which does not match exactly.
-> > Is there any issue with this ?
-> >
-> > If you have any suggestions to debug further please help us...
-> >
-> >
-> > Thanks,
-> > Pintu
->
-> Three perhaps obvious questions here:
->
-> 1. As an experimental system, are you using a vanilla (unmodified)
->    Linux kernel, or have you made modifications.  If so, how is it
->    modified?
->
-> 2. What is the difference between "rootfs" and "userdata"?
->    Have you written exactly the same Squashfs image to "rootfs"
->    and "userdata", and has it worked with "userdata" and not
->    worked with "rootfs".
->
->    So far it is unclear whether "userdata" has worked because
->    you've written different images/data to it.
->
->    In other words tell us exactly what you're writing to "userdata"
->    and what you're writing to "rootfs".  The difference or non-difference
->    may be significant.
->
-> 3. The rounding up to a whole 196 blocks should not be a problem.
->    The problem is, obviously, if it is rounding down to 195 blocks,
->    where the tail end of the Squashfs image will be lost.
->
->    Remember this is exactly what the Squashfs error is saying, the image
->    has been truncated.
->
->    You could try adding a lot of padding to the end of the Squashfs image
->    (Squashfs won't care), so it is more than the effective block size,
->    and then writing that, to prevent any rounding down or truncation.
->
+On Mon 24-05-21 09:14:16, Junxiao Bi wrote:
+> On 5/24/21 1:55 AM, Jan Kara wrote:
+> 
+> > On Fri 21-05-21 16:36:12, Junxiao Bi wrote:
+> > > When fallocate punches holes out of inode size, if original isize is in
+> > > the middle of last cluster, then the part from isize to the end of the
+> > > cluster will be zeroed with buffer write, at that time isize is not
+> > > yet updated to match the new size, if writeback is kicked in, it will
+> > > invoke ocfs2_writepage()->block_write_full_page() where the pages out
+> > > of inode size will be dropped. That will cause file corruption. Fix
+> > > this by zero out eof blocks when extending the inode size.
+> > > 
+> > > Running the following command with qemu-image 4.2.1 can get a corrupted
+> > > coverted image file easily.
+> > > 
+> > >      qemu-img convert -p -t none -T none -f qcow2 $qcow_image \
+> > >               -O qcow2 -o compat=1.1 $qcow_image.conv
+> > > 
+> > > The usage of fallocate in qemu is like this, it first punches holes out of
+> > > inode size, then extend the inode size.
+> > > 
+> > >      fallocate(11, FALLOC_FL_KEEP_SIZE|FALLOC_FL_PUNCH_HOLE, 2276196352, 65536) = 0
+> > >      fallocate(11, 0, 2276196352, 65536) = 0
+> > > 
+> > > v1: https://www.spinics.net/lists/linux-fsdevel/msg193999.html
+> > > 
+> > > Cc: <stable@vger.kernel.org>
+> > > Cc: Jan Kara <jack@suse.cz>
+> > > Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
+> > > ---
+> > > 
+> > > Changes in v2:
+> > > - suggested by Jan Kara, using sb_issue_zeroout to zero eof blocks in disk directly.
+> > > 
+> > >   fs/ocfs2/file.c | 49 +++++++++++++++++++++++++++++++++++++++++++++++--
+> > >   1 file changed, 47 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
+> > > index f17c3d33fb18..17469fc7b20e 100644
+> > > --- a/fs/ocfs2/file.c
+> > > +++ b/fs/ocfs2/file.c
+> > > @@ -1855,6 +1855,45 @@ int ocfs2_remove_inode_range(struct inode *inode,
+> > >   	return ret;
+> > >   }
+> > > +/*
+> > > + * zero out partial blocks of one cluster.
+> > > + *
+> > > + * start: file offset where zero starts, will be made upper block aligned.
+> > > + * len: it will be trimmed to the end of current cluster if "start + len"
+> > > + *      is bigger than it.
+> > You write this here but ...
+> > 
+> > > + */
+> > > +static int ocfs2_zeroout_partial_cluster(struct inode *inode,
+> > > +					u64 start, u64 len)
+> > > +{
+> > > +	int ret;
+> > > +	u64 start_block, end_block, nr_blocks;
+> > > +	u64 p_block, offset;
+> > > +	u32 cluster, p_cluster, nr_clusters;
+> > > +	struct super_block *sb = inode->i_sb;
+> > > +	u64 end = ocfs2_align_bytes_to_clusters(sb, start);
+> > > +
+> > > +	if (start + len < end)
+> > > +		end = start + len;
+> > ... here you check actually something else and I don't see where else would
+> > the trimming happen.
+> 
+> Before the "if", end = ocfs2_align_bytes_to_clusters(sb, start), that is
+> the end of the cluster where "start" located.
 
-Just wanted to share the Good news that the ubi volume flashing is
-working now :)
-First I have created a small read-only volume (instead of rootfs) and
-tried to write to it and then compared the checksum.
-Initially when I checked, the checksum was not matching and when I
-compared the 2 images I found there were around 8192 blocks containing
-FF data at the end of each erase block.
-After the fix, this time the checksum matches exactly.
+Ah sorry, I got confused. The code is correct.
 
-/data/pintu # md5sum test-vol-orig.img
-6a8a185ec65fcb212b6b5f72f0b0d206  test-vol-orig.img
+								Honza
 
-/data/pintu # md5sum test-vol-after.img
-6a8a185ec65fcb212b6b5f72f0b0d206  test-vol-after.img
-
-Once this is working, I tried with rootfs volume, and this time the
-device is booting fine :)
-
-The fix is related to the data-len and data-offset calculation in our
-volume write code.
-[...]
-size += data_offset;
-[...]
-ubi_block_write(....)
-buf_size -= (size - data_offset);
-offset += (size - data_offset);
-[...]
-In the previous case, we were not adding and subtracting the data_offset.
-
-The Kernel command line we are using is this:
-[    0.000000] Kernel command line: ro rootwait
-console=ttyMSM0,115200,n8 [..skip..] rootfstype=squashfs
-root=/dev/mtdblock34 ubi.mtd=30,0,30 [...skip..]
-
-Hope, this parameters are fine (no change here).
-
-Thank you Phillip and Sean for your help.
-Phillip I think this checksum trick really helped me in figuring out
-the root cause :)
-
-Glad to work with you...
-
-Thanks,
-Pintu
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
