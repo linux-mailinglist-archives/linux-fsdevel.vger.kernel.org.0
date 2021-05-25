@@ -2,108 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DB943902FC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 15:51:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D9E03903A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 16:15:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233626AbhEYNwz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 09:52:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42784 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233438AbhEYNwj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 09:52:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1621950662; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jZlfk4vwF2p32yW05HQcA1IZqYim5+F109uIplXVw+8=;
-        b=DRHNjtVyi2P6ez+bSS1jJfysTJfmXmuAc7XaBIitSzh1v+NvVKFi/bS6NgZ9EQnzxGxZLQ
-        RQYD2oowFxeZBnkgdxqt5tTtXVYuiKBPC0w8egFh1kAA8P1jUsRdS9alqol2+nMZqEXqey
-        Kl+tANswz9b7fD0NioVdMnX5SE2EAf4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1621950662;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jZlfk4vwF2p32yW05HQcA1IZqYim5+F109uIplXVw+8=;
-        b=9rURY4pla4pmyo+OPI1H2/hqtWG7wnDmBHyn2VRduoODR8GrNGuKuKRNMWAy3XEbVdDMtd
-        l2WgpuM9iITZKtAA==
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 47E04AF27;
-        Tue, 25 May 2021 13:51:02 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 45E1F1F2CBE; Tue, 25 May 2021 15:51:00 +0200 (CEST)
-From:   Jan Kara <jack@suse.cz>
-To:     <linux-fsdevel@vger.kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, <linux-ext4@vger.kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net, <linux-mm@kvack.org>,
-        <linux-xfs@vger.kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>
-Subject: [PATCH 13/13] cifs: Fix race between hole punch and page fault
-Date:   Tue, 25 May 2021 15:50:50 +0200
-Message-Id: <20210525135100.11221-13-jack@suse.cz>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210525125652.20457-1-jack@suse.cz>
-References: <20210525125652.20457-1-jack@suse.cz>
+        id S233555AbhEYORJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 10:17:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44316 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233406AbhEYORH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 May 2021 10:17:07 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18825C061574;
+        Tue, 25 May 2021 07:15:38 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id gb21-20020a17090b0615b029015d1a863a91so13332066pjb.2;
+        Tue, 25 May 2021 07:15:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jkrPM/NRzA6OLUovY7PwHEBUVl4w30B98SQNLF5Vt4A=;
+        b=sJyiqTVSXQe4MClO/qmJb1twLFSWoRFzr8d6RSsxbqPEyE9lgDrtgStylxNBnBiH4i
+         rp9t+pvMFgeQksIDl6KQnoXLyZ9cNVH1NqRvw0gZXMyBmyrH+doO+hCg5HILI4YUpguG
+         60oMoKxHbBUhQlUXIKUEVMd6/cgaB28EBGVcVdy/kkeDki5VJyGg3W09hvPmPPzsH00L
+         CDYzarx4/KVBpZBY/bSMjAPHXbxl6vJ5GHZWJsT81iGVD+KJnBUgOZkG06iTTFgAOdlC
+         M29+r74g0HXdTpaNZ4ttLxMlpmJKKzZfg0HG7r500yNqSaUgQiQtDb4CDZARRTTXOded
+         7WVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jkrPM/NRzA6OLUovY7PwHEBUVl4w30B98SQNLF5Vt4A=;
+        b=qkCKAmY1EoP4Gu9kHKk638Y9gIh6A7SFJhG5fg0Shj5hGF1+6pep/O52syzDTSbJrK
+         q9nsgA8fNS+buSuTWSBPTv0b0y9TrrClwbRvJSEU2OXIXEUl3P4sh4LpY/e/1x9ClL/5
+         mxUJzJJmEY1znWCjhFUpbX5biipvWAX+/xxedpZTVNt0yG65LoZkTBsDrQQ4JcDVnAtQ
+         Jx4aQIGcicRlmT0nbVq34DRTYeUUKLEmDcCGejc38H+gJUDkE9qYBdSfcLosT6mkM/hE
+         OwAEV+d9QWIZb6ayoDtAX1JOI5QX9WG2RtfzsRmFYIEKX5ZwfMqf+G2ybDTnXdNPBpxK
+         IfBA==
+X-Gm-Message-State: AOAM530ZECiyANbrm+mdqYuYALfJRxg3txCetR7vtxHaEC3Pi/JcMuSs
+        5YsNokF+ugyIsfOEnJATPtE=
+X-Google-Smtp-Source: ABdhPJwPd1Sg0Q72B84W0/jhk4LwlrDUUHHT5A84wehRr6TTTi5c2aAxJtH30eScZ/ecomC65qZAXA==
+X-Received: by 2002:a17:90b:14c3:: with SMTP id jz3mr4907353pjb.152.1621952137471;
+        Tue, 25 May 2021 07:15:37 -0700 (PDT)
+Received: from localhost ([178.236.46.205])
+        by smtp.gmail.com with ESMTPSA id u7sm2261526pjc.16.2021.05.25.07.15.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 May 2021 07:15:36 -0700 (PDT)
+From:   menglong8.dong@gmail.com
+X-Google-Original-From: dong.menglong@zte.com.cn
+To:     mcgrof@kernel.org, josh@joshtriplett.org
+Cc:     viro@zeniv.linux.org.uk, keescook@chromium.org,
+        samitolvanen@google.com, ojeda@kernel.org, johan@kernel.org,
+        bhelgaas@google.com, masahiroy@kernel.org,
+        dong.menglong@zte.com.cn, joe@perches.com, axboe@kernel.dk,
+        hare@suse.de, jack@suse.cz, tj@kernel.org,
+        gregkh@linuxfoundation.org, song@kernel.org, neilb@suse.de,
+        akpm@linux-foundation.org, f.fainelli@gmail.com, arnd@arndb.de,
+        linux@rasmusvillemoes.dk, wangkefeng.wang@huawei.com,
+        brho@google.com, mhiramat@kernel.org, rostedt@goodmis.org,
+        vbabka@suse.cz, glider@google.com, pmladek@suse.com,
+        chris@chrisdown.name, ebiederm@xmission.com, jojing64@gmail.com,
+        terrelln@fb.com, geert@linux-m68k.org, mingo@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jeyu@kernel.org
+Subject: [PATCH v2 0/3] init/initramfs.c: make initramfs support pivot_root
+Date:   Tue, 25 May 2021 22:15:21 +0800
+Message-Id: <20210525141524.3995-1-dong.menglong@zte.com.cn>
+X-Mailer: git-send-email 2.32.0.rc0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Cifs has a following race between hole punching and page fault:
+From: Menglong Dong <dong.menglong@zte.com.cn>
 
-CPU1                                            CPU2
-smb3_fallocate()
-  smb3_punch_hole()
-    truncate_pagecache_range()
-                                                filemap_fault()
-                                                  - loads old data into the
-                                                    page cache
-    SMB2_ioctl(..., FSCTL_SET_ZERO_DATA, ...)
+As Luis Chamberlain suggested, I split the patch:
+[init/initramfs.c: make initramfs support pivot_root]
+(https://lore.kernel.org/linux-fsdevel/20210520154244.20209-1-dong.menglong@zte.com.cn/)
+into three.
 
-And now we have stale data in the page cache. Fix the problem by locking
-out faults (as well as reads) using mapping->invalidate_lock while hole
-punch is running.
+The goal of the series patches is to make pivot_root() support initramfs.
 
-CC: Steve French <sfrench@samba.org>
-CC: linux-cifs@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/cifs/smb2ops.c | 2 ++
- 1 file changed, 2 insertions(+)
+In the first patch, I introduce the function ramdisk_exec_exist(), which
+is used to check the exist of 'ramdisk_execute_command' in LOOKUP_DOWN
+lookup mode.
 
-diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-index dd0eb665b680..b0a0f8b34add 100644
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -3579,6 +3579,7 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
- 		return rc;
- 	}
- 
-+	down_write(&inode->i_mapping->invalidate_lock);
- 	/*
- 	 * We implement the punch hole through ioctl, so we need remove the page
- 	 * caches first, otherwise the data may be inconsistent with the server.
-@@ -3596,6 +3597,7 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
- 			sizeof(struct file_zero_data_information),
- 			CIFSMaxBufSize, NULL, NULL);
- 	free_xid(xid);
-+	up_write(&inode->i_mapping->invalidate_lock);
- 	return rc;
- }
- 
+In the second patch, I create a second mount, which is called
+'user root', and make it become the root. Therefore, the root has a
+parent mount, and it can be umounted or pivot_root.
+
+In the third patch, I fix rootfs_fs_type with ramfs, as it is not used
+directly any more, and it make no sense to switch it between ramfs and
+tmpfs, just fix it with ramfs to simplify the code.
+
+Changes since V1:
+
+In the first patch, I add the flag LOOKUP_DOWN to init_eaccess(), to make
+it support the check of filesystem mounted on '/'.
+
+In the second patch, I control 'user root' with kconfig option
+'CONFIG_INITRAMFS_USER_ROOT', and add some comments, as Luis Chamberlain
+suggested.
+
+In the third patch, I make 'rootfs_fs_type' in control of
+'CONFIG_INITRAMFS_USER_ROOT'.
+
+
+
+Menglong Dong (3):
+  init/main.c: introduce function ramdisk_exec_exist()
+  init/do_cmounts.c: introduce 'user_root' for initramfs
+  init/do_mounts.c: fix rootfs_fs_type with ramfs
+
+ fs/init.c            |   2 +-
+ include/linux/init.h |   5 ++
+ init/do_mounts.c     | 109 +++++++++++++++++++++++++++++++++++++++++++
+ init/do_mounts.h     |  18 ++++++-
+ init/initramfs.c     |  10 ++++
+ init/main.c          |   7 ++-
+ usr/Kconfig          |  10 ++++
+ 7 files changed, 158 insertions(+), 3 deletions(-)
+
 -- 
-2.26.2
+2.32.0.rc0
 
