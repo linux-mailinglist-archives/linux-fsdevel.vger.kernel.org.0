@@ -2,194 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2D39390BB6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 23:41:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A49EF390BFE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 00:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233480AbhEYVnD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 17:43:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49442 "EHLO mail.kernel.org"
+        id S232240AbhEYWPW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 18:15:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233467AbhEYVnB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 17:43:01 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2E649613D5;
-        Tue, 25 May 2021 21:41:31 +0000 (UTC)
+        id S232129AbhEYWPW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 May 2021 18:15:22 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F38A761019;
+        Tue, 25 May 2021 22:13:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621978891;
-        bh=Ff90q5Kz0o+BMBRcQ7Rxn+PAVevoQMBbngm/RLK1s+8=;
+        s=k20201202; t=1621980832;
+        bh=gN3m3jr0zpW3uBjIUscZ0OUKn0VJlnlUIIIpzIpW9HU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S7WwcUxQKZjNrqh4HMAxGnxr7VCwquen6SJALt7e7iV5i4bX++9K8LxIOp1kIRs5O
-         9fLtSBpQdakVBftuhgpL4oFWpbo2sKjHVDMeZOcc+U/LPb3YEm1cZdPkvOb0fKwTph
-         M7CkrFhzVExeTD7ns32hjrV6zpJlDrxFTt9gbb60Izc+41it5zfmeLQz6mn6Gmtyky
-         Z7dqmDRkehTVa27itdEh+TeMb8S9UMmgOs0+FuntutheBG+gJkAyxxmHiwhTkWY0Cc
-         EBpA5J63DL/mPwj7geODr3bz9PnyoVwd/6rImPFri9U0i1awZLAnS97c2mKicyRopd
-         oJevdxgpT8cog==
-Date:   Tue, 25 May 2021 14:41:30 -0700
+        b=tc+axs4ghK1XxAO0iEP9qy0VgFfgmcrUquI8G5+rvnWHWniLsNzsZKdZNJ1ldG+VT
+         6nrbHlOXDl5dh7l572t1pa0WroS62LBWyJjJFQyMH+8O73rpELaUqMyOfi5YFX9W+V
+         Uh7S8dftq/Ehs3csuqmGD0aojn2ypxTjId5lMt/A7GzOKLjcF766zxXK0GQLjvz/f2
+         EWiNQiAbBToLu81W+13a2le/460p3vVNPI1B0rRjaBKa8NlmuPgeUSCWApyuFafccp
+         xTFUoWoW1QZRKLzwE9VyvQRMyxzFhSFLbzHeA1U+g2lPdxKu/UC0L1UHbZz7QlNdtj
+         /R0EFElgdoNUQ==
+Date:   Tue, 25 May 2021 15:13:51 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 08/13] xfs: Convert double locking of MMAPLOCK to use VFS
- helpers
-Message-ID: <20210525214130.GP202121@locust>
-References: <20210525125652.20457-1-jack@suse.cz>
- <20210525135100.11221-8-jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andreas Dilger <adilger@dilger.ca>,
+        Josh Triplett <josh@joshtriplett.org>,
+        David Howells <dhowells@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        linux-cachefs@redhat.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        NeilBrown <neilb@suse.com>
+Subject: Re: How capacious and well-indexed are ext4, xfs and btrfs
+ directories?
+Message-ID: <20210525221351.GB202068@locust>
+References: <206078.1621264018@warthog.procyon.org.uk>
+ <6E4DE257-4220-4B5B-B3D0-B67C7BC69BB5@dilger.ca>
+ <YKntRtEUoxTEFBOM@localhost>
+ <B70B57ED-6F11-45CC-B99F-86BBDE36ACA4@dilger.ca>
+ <YK1rebI5vZKCeLlp@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210525135100.11221-8-jack@suse.cz>
+In-Reply-To: <YK1rebI5vZKCeLlp@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 25, 2021 at 03:50:45PM +0200, Jan Kara wrote:
-> Convert places in XFS that take MMAPLOCK for two inodes to use helper
-> VFS provides for it (filemap_invalidate_down_write_two()). Note that
-> this changes lock ordering for MMAPLOCK from inode number based ordering
-> to pointer based ordering VFS generally uses.
+On Tue, May 25, 2021 at 10:26:17PM +0100, Matthew Wilcox wrote:
+> On Tue, May 25, 2021 at 03:13:52PM -0600, Andreas Dilger wrote:
+> > Definitely "-o discard" is known to have a measurable performance impact,
+> > simply because it ends up sending a lot more requests to the block device,
+> > and those requests can be slow/block the queue, depending on underlying
+> > storage behavior.
+> > 
+> > There was a patch pushed recently that targets "-o discard" performance:
+> > https://patchwork.ozlabs.org/project/linux-ext4/list/?series=244091
+> > that needs a bit more work, but may be worthwhile to test if it improves
+> > your workload, and help put some weight behind landing it?
 > 
-> Signed-off-by: Jan Kara <jack@suse.cz>
+> This all seems very complicated.  I have chosen with my current laptop
+> to "short stroke" the drive.  That is, I discarded the entire bdev,
+> then partitioned it roughly in half.  The second half has never seen
+> any writes.  This effectively achieves the purpose of TRIM/discard;
+> there are a lot of unused LBAs, so the underlying flash translation layer
+> always has plenty of spare space when it needs to empty an erase block.
+> 
+> Since the steady state of hard drives is full, I have to type 'make clean'
+> in my build trees more often than otherwise and remember to delete iso
+> images after i've had them lying around for a year, but I'd rather clean
+> up a little more often than get these weird performance glitches.
+> 
+> And if I really do need half a terabyte of space temporarily, I can
+> always choose to use the fallow range for a while, then discard it again.
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+I just let xfs_scrub run FITRIM on Sundays at 4:30am. ;)
 
 --D
-
-> ---
->  fs/xfs/xfs_bmap_util.c | 15 ++++++++-------
->  fs/xfs/xfs_inode.c     | 37 +++++++++++--------------------------
->  2 files changed, 19 insertions(+), 33 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
-> index a5e9d7d34023..8a5cede59f3f 100644
-> --- a/fs/xfs/xfs_bmap_util.c
-> +++ b/fs/xfs/xfs_bmap_util.c
-> @@ -1582,7 +1582,6 @@ xfs_swap_extents(
->  	struct xfs_bstat	*sbp = &sxp->sx_stat;
->  	int			src_log_flags, target_log_flags;
->  	int			error = 0;
-> -	int			lock_flags;
->  	uint64_t		f;
->  	int			resblks = 0;
->  	unsigned int		flags = 0;
-> @@ -1594,8 +1593,8 @@ xfs_swap_extents(
->  	 * do the rest of the checks.
->  	 */
->  	lock_two_nondirectories(VFS_I(ip), VFS_I(tip));
-> -	lock_flags = XFS_MMAPLOCK_EXCL;
-> -	xfs_lock_two_inodes(ip, XFS_MMAPLOCK_EXCL, tip, XFS_MMAPLOCK_EXCL);
-> +	filemap_invalidate_down_write_two(VFS_I(ip)->i_mapping,
-> +					  VFS_I(tip)->i_mapping);
->  
->  	/* Verify that both files have the same format */
->  	if ((VFS_I(ip)->i_mode & S_IFMT) != (VFS_I(tip)->i_mode & S_IFMT)) {
-> @@ -1667,7 +1666,6 @@ xfs_swap_extents(
->  	 * or cancel will unlock the inodes from this point onwards.
->  	 */
->  	xfs_lock_two_inodes(ip, XFS_ILOCK_EXCL, tip, XFS_ILOCK_EXCL);
-> -	lock_flags |= XFS_ILOCK_EXCL;
->  	xfs_trans_ijoin(tp, ip, 0);
->  	xfs_trans_ijoin(tp, tip, 0);
->  
-> @@ -1786,13 +1784,16 @@ xfs_swap_extents(
->  	trace_xfs_swap_extent_after(ip, 0);
->  	trace_xfs_swap_extent_after(tip, 1);
->  
-> +out_unlock_ilock:
-> +	xfs_iunlock(ip, XFS_ILOCK_EXCL);
-> +	xfs_iunlock(tip, XFS_ILOCK_EXCL);
->  out_unlock:
-> -	xfs_iunlock(ip, lock_flags);
-> -	xfs_iunlock(tip, lock_flags);
-> +	filemap_invalidate_up_write_two(VFS_I(ip)->i_mapping,
-> +					VFS_I(tip)->i_mapping);
->  	unlock_two_nondirectories(VFS_I(ip), VFS_I(tip));
->  	return error;
->  
->  out_trans_cancel:
->  	xfs_trans_cancel(tp);
-> -	goto out_unlock;
-> +	goto out_unlock_ilock;
->  }
-> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> index 53bb5fc33621..11616c9b37f8 100644
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -537,12 +537,10 @@ xfs_lock_inodes(
->  }
->  
->  /*
-> - * xfs_lock_two_inodes() can only be used to lock one type of lock at a time -
-> - * the mmaplock or the ilock, but not more than one type at a time. If we lock
-> - * more than one at a time, lockdep will report false positives saying we have
-> - * violated locking orders.  The iolock must be double-locked separately since
-> - * we use i_rwsem for that.  We now support taking one lock EXCL and the other
-> - * SHARED.
-> + * xfs_lock_two_inodes() can only be used to lock ilock. The iolock and
-> + * mmaplock must be double-locked separately since we use i_rwsem and
-> + * invalidate_lock for that. We now support taking one lock EXCL and the
-> + * other SHARED.
->   */
->  void
->  xfs_lock_two_inodes(
-> @@ -560,15 +558,8 @@ xfs_lock_two_inodes(
->  	ASSERT(hweight32(ip1_mode) == 1);
->  	ASSERT(!(ip0_mode & (XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL)));
->  	ASSERT(!(ip1_mode & (XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL)));
-> -	ASSERT(!(ip0_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
-> -	       !(ip0_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
-> -	ASSERT(!(ip1_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
-> -	       !(ip1_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
-> -	ASSERT(!(ip1_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
-> -	       !(ip0_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
-> -	ASSERT(!(ip0_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
-> -	       !(ip1_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
-> -
-> +	ASSERT(!(ip0_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)));
-> +	ASSERT(!(ip1_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)));
->  	ASSERT(ip0->i_ino != ip1->i_ino);
->  
->  	if (ip0->i_ino > ip1->i_ino) {
-> @@ -3731,11 +3722,8 @@ xfs_ilock2_io_mmap(
->  	ret = xfs_iolock_two_inodes_and_break_layout(VFS_I(ip1), VFS_I(ip2));
->  	if (ret)
->  		return ret;
-> -	if (ip1 == ip2)
-> -		xfs_ilock(ip1, XFS_MMAPLOCK_EXCL);
-> -	else
-> -		xfs_lock_two_inodes(ip1, XFS_MMAPLOCK_EXCL,
-> -				    ip2, XFS_MMAPLOCK_EXCL);
-> +	filemap_invalidate_down_write_two(VFS_I(ip1)->i_mapping,
-> +					  VFS_I(ip2)->i_mapping);
->  	return 0;
->  }
->  
-> @@ -3745,12 +3733,9 @@ xfs_iunlock2_io_mmap(
->  	struct xfs_inode	*ip1,
->  	struct xfs_inode	*ip2)
->  {
-> -	bool			same_inode = (ip1 == ip2);
-> -
-> -	xfs_iunlock(ip2, XFS_MMAPLOCK_EXCL);
-> -	if (!same_inode)
-> -		xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
-> +	filemap_invalidate_up_write_two(VFS_I(ip1)->i_mapping,
-> +					VFS_I(ip2)->i_mapping);
->  	inode_unlock(VFS_I(ip2));
-> -	if (!same_inode)
-> +	if (ip1 != ip2)
->  		inode_unlock(VFS_I(ip1));
->  }
-> -- 
-> 2.26.2
-> 
