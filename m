@@ -2,222 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CFB138FCA1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 10:23:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33DE538FCC5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 10:27:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232324AbhEYIYd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 04:24:33 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:46085 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232315AbhEYIYS (ORCPT
+        id S232414AbhEYI3H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 04:29:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49446 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232408AbhEYI3H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 04:24:18 -0400
-Received: from dread.disaster.area (pa49-180-230-185.pa.nsw.optusnet.com.au [49.180.230.185])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 5C3AB1043D65;
-        Tue, 25 May 2021 18:21:54 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1llSK1-004zCd-E1; Tue, 25 May 2021 18:21:53 +1000
-Date:   Tue, 25 May 2021 18:21:53 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Brian Foster <bfoster@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: iomap: writeback ioend/bio allocation deadlock risk
-Message-ID: <20210525082153.GJ2817@dread.disaster.area>
-References: <YKcouuVR/y/L4T58@T590>
- <20210521071727.GA11473@lst.de>
- <YKdhuUZBtKMxDpsr@T590>
- <20210521073547.GA11955@lst.de>
- <YKdwtzp+WWQ3krhI@T590>
- <20210521083635.GA15311@lst.de>
- <YKd1VS5gkzQRn+7x@T590>
- <20210524235538.GI2817@dread.disaster.area>
- <YKyDCw430gD6pTBC@T590>
- <YKyZJiY7GySlIsZ7@T590>
+        Tue, 25 May 2021 04:29:07 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A63E0C061574;
+        Tue, 25 May 2021 01:27:37 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id u133so16219730wmg.1;
+        Tue, 25 May 2021 01:27:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=n4TDHhXKLGm98ATQkggFq7kJQjHR1O3/yQrmrh9XEmM=;
+        b=pK9ET0U9olyRf8R1kkL0Qdjahc0TmQjdtLFfBNUridyDlDI2/RkHPc0nMcmtnkf7al
+         h/0TcQGMo3BFInklL2kxmQ+lGck9cFsbvtDC6mUe5yqjlm3/HuzD3aB6sT9Vtjkdkyr9
+         5QZCKrra2aj3XnhuYexK/dEmIRyEWH5dNHxAzMMxsUiL9VC2pjiH0W4IWom+Z+6u1fTC
+         YFyZ2XJa+dnXt8yFcKIf/3vbNJrcUbkTGTOCQFyHdf5RgY+Fu7KiYVzsX+8fFIDDkyaf
+         ETscBkIxr0n3lMeRWgSmMUZo6q1xwhugAv0By00rvHPEJaElDbu6T9sjDJ4wikEARz7v
+         aBLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=n4TDHhXKLGm98ATQkggFq7kJQjHR1O3/yQrmrh9XEmM=;
+        b=f0zYv2qBlYzb/6h2qvetjKvE0Thy/kx/tU63ftS9+EDzXvPQ7cPwGZY46k0HT8+tbH
+         yyQYSTYqe63CicjHWxQaQfru/59PkENzu0tmMQhYbjmcIjVmbkyhkyhjPrbqrzF8nv7F
+         6w+Wvpy9egYt+cawF0nwcn8hBIKFaWeIK6eJNWQNT378jaDygBujAft9Ax5/vzgkStux
+         +6MVyUsw3cVS2wKhZOxWvHKgEgmygeizMkQ2xXgUECUi2i0bMAN6X48MGDrRnAsXmcos
+         rMpM7USkIiqbY/YAk4oziHS8c0VgsyfmUlH9KIE7iv3dJsyNvJErP9oLiYWEohkGFPEp
+         AajQ==
+X-Gm-Message-State: AOAM533HXsGTi3nZ0oTDtM0UiB0vUJj6ZW6ySt0MHBsqcPd9uSiJu0jK
+        aFDD1r50Z+bnSnt4fPX24BWhc1gTSLs44hcg
+X-Google-Smtp-Source: ABdhPJx6n8mtHGkZxffOVh2kvcbXmcFQRIXtEZT9Vyku2YqMpaAPEa+ctBkjyF0jo8Oa6XkZaMNF1A==
+X-Received: by 2002:a1c:c208:: with SMTP id s8mr15566928wmf.144.1621931256332;
+        Tue, 25 May 2021 01:27:36 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.235.116])
+        by smtp.gmail.com with ESMTPSA id w25sm10366706wmk.25.2021.05.25.01.27.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 May 2021 01:27:35 -0700 (PDT)
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl>
+ <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+ <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+ <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+Message-ID: <e701511f-520d-4a94-9931-d218b14a80fe@gmail.com>
+Date:   Tue, 25 May 2021 09:27:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YKyZJiY7GySlIsZ7@T590>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0
-        a=dUIOjvib2kB+GiIc1vUx8g==:117 a=dUIOjvib2kB+GiIc1vUx8g==:17
-        a=kj9zAlcOel0A:10 a=5FLXtPjwQuUA:10 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8
-        a=8DuwvNAz0v95KENdmnYA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 25, 2021 at 02:28:54PM +0800, Ming Lei wrote:
-> On Tue, May 25, 2021 at 12:54:35PM +0800, Ming Lei wrote:
-> > On Tue, May 25, 2021 at 09:55:38AM +1000, Dave Chinner wrote:
-> > > On Fri, May 21, 2021 at 04:54:45PM +0800, Ming Lei wrote:
-> > > > On Fri, May 21, 2021 at 10:36:35AM +0200, Christoph Hellwig wrote:
-> > > > > On Fri, May 21, 2021 at 04:35:03PM +0800, Ming Lei wrote:
-> > > > > > Just wondering why the ioend isn't submitted out after it becomes full?
-> > > > > 
-> > > > > block layer plugging?  Although failing bio allocations will kick that,
-> > > > > so that is not a deadlock risk.
-> > > > 
-> > > > These ioends are just added to one list stored on local stack variable(submit_list),
-> > > > how can block layer plugging observe & submit them out?
-> > > 
-> > > We ignore that, as the commit histoy says:
-> > > 
-> > > commit e10de3723c53378e7cf441529f563c316fdc0dd3
-> > > Author: Dave Chinner <dchinner@redhat.com>
-> > > Date:   Mon Feb 15 17:23:12 2016 +1100
-> > > 
-> > >     xfs: don't chain ioends during writepage submission
-> > > 
-> > >     Currently we can build a long ioend chain during ->writepages that
-> > >     gets attached to the writepage context. IO submission only then
-> > >     occurs when we finish all the writepage processing. This means we
-> > >     can have many ioends allocated and pending, and this violates the
-> > >     mempool guarantees that we need to give about forwards progress.
-> > >     i.e. we really should only have one ioend being built at a time,
-> > >     otherwise we may drain the mempool trying to allocate a new ioend
-> > >     and that blocks submission, completion and freeing of ioends that
-> > >     are already in progress.
-> > > 
-> > >     To prevent this situation from happening, we need to submit ioends
-> > >     for IO as soon as they are ready for dispatch rather than queuing
-> > >     them for later submission. This means the ioends have bios built
-> > >     immediately and they get queued on any plug that is current active.
-> > >     Hence if we schedule away from writeback, the ioends that have been
-> > >     built will make forwards progress due to the plug flushing on
-> > >     context switch. This will also prevent context switches from
-> > >     creating unnecessary IO submission latency.
-> > > 
-> > >     We can't completely avoid having nested IO allocation - when we have
-> > >     a block size smaller than a page size, we still need to hold the
-> > >     ioend submission until after we have marked the current page dirty.
-> > >     Hence we may need multiple ioends to be held while the current page
-> > >     is completely mapped and made ready for IO dispatch. We cannot avoid
-> > >     this problem - the current code already has this ioend chaining
-> > >     within a page so we can mostly ignore that it occurs.
-> > > 
-> > >     Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > >     Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > >     Signed-off-by: Dave Chinner <david@fromorbit.com>
-> > > 
-> > > IOWs, this nesting for block size < page size has been out there
-> > > for many years now and we've yet to have anyone report that
-> > > writeback deadlocks have occurred.
-> > > 
-> > > There's a mistake in that commit message - we can't submit the
-> > > ioends on a page until we've marked the page as under writeback, not
-> > > dirty. That's because we cannot have ioends completing on a a page
-> > > that isn't under writeback because calling end_page_writeback() on
-> > > it when it isn't under writeback will BUG(). Hence we have to build
-> > > all the submission state before we mark the page as under writeback
-> > > and perform the submission(s) to avoid completion racing with
-> > > submission.
-> > > 
-> > > Hence we can't actually avoid nesting ioend allocation here within a
-> > > single page - the constraints of page cache writeback require it.
-> > > Hence the construction of the iomap_ioend_bioset uses a pool size of:
-> > > 
-> > > 	4 * (PAGE_SIZE / SECTOR_SIZE)
-> > > 
-> > > So that we always have enough ioends cached in the mempool to
-> > > guarantee forwards progress of writeback of any single page under
-> > > writeback.
-> > 
-> > OK, looks it is just for subpage IO, so there isn't such issue
-> > in case of multiple ioends.
+On 5/24/21 8:59 PM, Paul Moore wrote:
+> On Sun, May 23, 2021 at 4:26 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>> On 5/22/21 3:36 AM, Paul Moore wrote:
+>>> On Fri, May 21, 2021 at 8:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>> On 5/21/21 10:49 PM, Paul Moore wrote:
+>> [...]
+>>>>>
+>>>>> +     if (req->opcode < IORING_OP_LAST)
+>>>>
+>>>> always true at this point
+>>>
+>>> I placed the opcode check before the audit call because the switch
+>>> statement below which handles the operation dispatching has a 'ret =
+>>> -EINVAL' for the default case, implying that there are some paths
+>>> where an invalid opcode could be passed into the function.  Obviously
+>>> if that is not the case and you can guarantee that req->opcode will
+>>> always be valid we can easily drop the check prior to the audit call.
+>>
+>> It is always true at this point, would be completely broken
+>> otherwise
 > 
-> Thinking of further, this way is still fragile, suppose there are 8
-> contexts in which writeback is working on at the same time, and each
-> needs to allocate 6 ioends, so all contexts may not move on when
-> allocating its 6th ioend.
-
-Again - the reality is that nobody is reporting deadlocks in
-production workloads, and some workloads (like file servers) can be
-running hundreds of concurrent IO writeback contexts at the same
-time to the same filesystem whilst under heavy memory pressure.
-
-Yes, in theory it can deadlock. In practice? Nobody is reporting
-deadlocks, so either the deadlock is so extremely rare we just don't
-care about it or the theory is wrong.
-
-Either way, I'll take "works in practice" over "theoretically
-perfect" every day of the week. As Linus likes to say: "perfect is
-the enemy of good".
-
-> > > But that is a completely separate problem to this:
-> > > 
-> > > > Chained bios have been submitted already, but all can't be completed/freed
-> > > > until the whole ioend is done, that submission won't make forward progress.
-> > > 
-> > > This is a problem caused by having unbound contiguous ioend sizes,
-> > > not a problem caused by chaining bios. We can throw 256 pages into
-> > > a bio, so when we are doing huge contiguous IOs, we can map a
-> > > lot of sequential dirty pages into a contiguous extent into a very
-> > > long bio chain. But if we cap the max ioend size to, say, 4096
-> > > pages, then we've effectively capped the number of bios that can be
-> > > nested by such a writeback chain.
-> > 
-> > If the 4096 pages are not continuous, there may be 4096/256=16 bios
-> > allocated for single ioend, and one is allocated from iomap_ioend_bioset,
-> > another 15 is allocated by bio_alloc() from fs_bio_set which just
-> > reserves 2 bios.
-
-Which completely misses the point that bounding the chain length
-means we could guarantee forwards progress, simply by increasing the
-reservation on the bioset or using a custom bioset with a large
-enough reservation.
-
-> > > I was about to point you at the patchset that fixes this, but you've
-> > > already found it and are claiming that this nesting is an unfixable
-> > > problem. Capping the size of the ioend also bounds the depth of the
-> > > allocation nesting that will occur, and that fixes the whole nseting
-> > > deadlock problem: If the mempool reserves are deeper than than the
-> > > maximum chain nesting that can occur, then there is no deadlock.
-> > > 
-> > > However, this points out what the real problem here is: that bio
-> > > allocation is designed to deadlock when nesting bio allocation rather
-> > > than fail. Hence at the iomap level we've go no way of knowing that
-> > > we should terminate and submit the current bio chain and start a new
-> > > ioend+bio chain because we will hang before there's any indication
-> > > that a deadlock could occur.
-> > 
-> > Most of reservation is small, such as fs_bio_set, so bio_alloc_bioset()
-> > documents that 'never allocate more than 1 bio at a time'. Actually
-> > iomap_chain_bio() does allocate a new one, then submits the old one.
-> > 'fs_bio_set' reserves two bios, so the order(alloc before submit) is fine,
+> Understood, I was just pointing out an oddity in the code.  I just
+> dropped the checks from my local tree, you'll see it in the next draft
+> of the patchset.
 > 
-> It may not be fine when more than one context is involved in writeback.
+>>>> So, it adds two if's with memory loads (i.e. current->audit_context)
+>>>> per request in one of the hottest functions here... No way, nack
+>>>>
+>>>> Maybe, if it's dynamically compiled into like kprobes if it's
+>>>> _really_ used.
+>>>
+>>> I'm open to suggestions on how to tweak the io_uring/audit
+>>> integration, if you don't like what I've proposed in this patchset,
+>>> lets try to come up with a solution that is more palatable.  If you
+>>> were going to add audit support for these io_uring operations, how
+>>> would you propose we do it?  Not being able to properly audit io_uring
+>>> operations is going to be a significant issue for a chunk of users, if
+>>> it isn't already, we need to work to find a solution to this problem.
+>>
+>> Who knows. First of all, seems CONFIG_AUDIT is enabled by default
+>> for many popular distributions, so I assume that is not compiled out.
+>>
+>> What are use cases for audit? Always running I guess?
+> 
+> Audit has been around for quite some time now, and it's goal is to
+> provide a mechanism for logging "security relevant" information in
+> such a way that it meets the needs of various security certification
+> efforts.  Traditional Linux event logging, e.g. syslog and the like,
+> does not meet these requirements and changing them would likely affect
+> the usability for those who are not required to be compliant with
+> these security certifications.  The Linux audit subsystem allows Linux
+> to be used in places it couldn't be used otherwise (or rather makes it
+> a *lot* easier).
+> 
+> That said, audit is not for everyone, and we have build time and
+> runtime options to help make life easier.  Beyond simply disabling
+> audit at compile time a number of Linux distributions effectively
+> shortcut audit at runtime by adding a "never" rule to the audit
+> filter, for example:
+> 
+>  % auditctl -a task,never
+> 
+>> Putting aside compatibility problems, it sounds that with the amount of overhead
+>> it adds there is no much profit in using io_uring in the first place.
+>> Is that so?
+> 
+> Well, if audit alone erased all of the io_uring advantages we should
+> just rip io_uring out of the kernel and people can just disable audit
+> instead ;)
 
-Which brings me back to "theory vs reality". In theory, the
-fs_bio_set is shared by all filesytsems and all of them can have
-multiple writeback contexts active at the same time all chaining
-bios. So even the fs_bio_set doesn't have the reservation space
-available to guarantee forwards progress in even slighlty complex
-multiple context writeback.
 
-The big assumption in the forwards progress guarantee that mempools
-provide is that the no dependencies between bio allocations from the
-same bioset. bio chaining is an obvious dependency, but stuff like
-concurrent submission, needing to do metadata IO whilst building
-bios (i.e delayed allocation), stacked filesystems (e.g. loop
-devices) create deep, disconnected nested dependencies between
-filesystems, bios and biosets.
+Hah, if we add a simple idle "feature" like
 
-Nesting happens. Deep nesting happens. But the evidence is that
-systems aren't deadlocking during bio allocation despite what the
-theory says.
+for (i=0;i<1000000;i+) {;}
 
-So rather than telling us "this can't work", how about trying to
-find out why it has been working so well for the past 5 years or so?
-Maybe we'll all learn something we didn't know about the code in the
-process...
+and it would destroy all the performance, let's throw useless
+Linux kernel then!
 
-Cheers,
+If seriously, it's more of an open question to me, how much overhead
+it adds if enabled (with typical filters/options/etc).
 
-Dave.
+Btw, do you really need two hooks -- before and right after
+execution?
+
+> I believe there are people who would like to use io_uring and are also
+> required to use a kernel with audit, either due to the need to run a
+> distribution kernel or the need to capture security information in the
+> audit stream.  I'm hoping that we can find a solution for these users;
+> if we don't we are asking this group to choose either io_uring or
+> audit, and that is something I would like to avoid. 
+
 -- 
-Dave Chinner
-david@fromorbit.com
+Pavel Begunkov
