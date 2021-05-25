@@ -2,180 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 53A9F38FEC2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 12:15:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE47F38FF4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 12:33:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230465AbhEYKQm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 06:16:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54398 "EHLO mail.kernel.org"
+        id S231576AbhEYKeg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 06:34:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230491AbhEYKQj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 06:16:39 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 941C86140E;
-        Tue, 25 May 2021 10:15:08 +0000 (UTC)
-Date:   Tue, 25 May 2021 12:15:05 +0200
+        id S232222AbhEYKdJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 May 2021 06:33:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8A82661181;
+        Tue, 25 May 2021 10:31:36 +0000 (UTC)
+Date:   Tue, 25 May 2021 12:31:33 +0200
 From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH][v2] fanotify: fix permission model of unprivileged group
-Message-ID: <20210525101505.rspv2c6kajzswvwn@wittgenstein>
-References: <20210524135321.2190062-1-amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <repnop@google.com>, amir73il@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH 0/5] Add pidfd support to the fanotify API
+Message-ID: <20210525103133.uctijrnffehlvjr3@wittgenstein>
+References: <cover.1621473846.git.repnop@google.com>
+ <20210520135527.GD18952@quack2.suse.cz>
+ <YKeIR+LiSXqUHL8Q@google.com>
+ <20210521104056.GG18952@quack2.suse.cz>
+ <YKhDFCUWX7iU7AzM@google.com>
+ <20210524084746.GB32705@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210524135321.2190062-1-amir73il@gmail.com>
+In-Reply-To: <20210524084746.GB32705@quack2.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 24, 2021 at 04:53:21PM +0300, Amir Goldstein wrote:
-> Reporting event->pid should depend on the privileges of the user that
-> initialized the group, not the privileges of the user reading the
-> events.
+On Mon, May 24, 2021 at 10:47:46AM +0200, Jan Kara wrote:
+> On Sat 22-05-21 09:32:36, Matthew Bobrowski wrote:
+> > On Fri, May 21, 2021 at 12:40:56PM +0200, Jan Kara wrote:
+> > > On Fri 21-05-21 20:15:35, Matthew Bobrowski wrote:
+> > > > On Thu, May 20, 2021 at 03:55:27PM +0200, Jan Kara wrote:
+> > > > There's one thing that I'd like to mention, and it's something in
+> > > > regards to the overall approach we've taken that I'm not particularly
+> > > > happy about and I'd like to hear all your thoughts. Basically, with
+> > > > this approach the pidfd creation is done only once an event has been
+> > > > queued and the notification worker wakes up and picks up the event
+> > > > from the queue processes it. There's a subtle latency introduced when
+> > > > taking such an approach which at times leads to pidfd creation
+> > > > failures. As in, by the time pidfd_create() is called the struct pid
+> > > > has already been reaped, which then results in FAN_NOPIDFD being
+> > > > returned in the pidfd info record.
+> > > > 
+> > > > Having said that, I'm wondering what the thoughts are on doing pidfd
+> > > > creation earlier on i.e. in the event allocation stages? This way, the
+> > > > struct pid is pinned earlier on and rather than FAN_NOPIDFD being
+> > > > returned in the pidfd info record because the struct pid has been
+> > > > already reaped, userspace application will atleast receive a valid
+> > > > pidfd which can be used to check whether the process still exists or
+> > > > not. I think it'll just set the expectation better from an API
+> > > > perspective.
+> > > 
+> > > Yes, there's this race. OTOH if FAN_NOPIDFD is returned, the listener can
+> > > be sure the original process doesn't exist anymore. So is it useful to
+> > > still receive pidfd of the dead process?
+> > 
+> > Well, you're absolutely right. However, FWIW I was approaching this
+> > from two different angles:
+> > 
+> > 1) I wanted to keep the pattern in which the listener checks for the
+> >    existence/recycling of the process consistent. As in, the listener
+> >    would receive the pidfd, then send the pidfd a signal via
+> >    pidfd_send_signal() and check for -ESRCH which clearly indicates
+> >    that the target process has terminated.
+> > 
+> > 2) I didn't want to mask failed pidfd creation because of early
+> >    process termination and other possible failures behind a single
+> >    FAN_NOPIDFD. IOW, if we take the -ESRCH approach above, the
+> >    listener can take clear corrective branches as what's to be done
+> >    next if a race is to have been detected, whereas simply returning
+> >    FAN_NOPIDFD at this stage can mean multiple things.
+> > 
+> > Now that I've written the above and keeping in mind that we'd like to
+> > refrain from doing anything in the event allocation stages, perhaps we
+> > could introduce a different error code for detecting early process
+> > termination while attempting to construct the info record. WDYT?
+> 
+> Sure, I wouldn't like to overengineer it but having one special fd value for
+> "process doesn't exist anymore" and another for general "creating pidfd
+> failed" looks OK to me.
 
-I think it's in general a good permission model to not have the result
-depend as little on the reader as possible post-open/init. So this makes
-a lot of sense to me and I'm a bit surprised it wasn't like that right
-away. :)
+FAN_EPIDFD -> "creation failed"
+FAN_NOPIDFD -> "no such process"
 
-> 
-> Use an internal group flag FANOTIFY_UNPRIV to record the fact that the
-> group was initialized by an unprivileged user.
-> 
-> To be on the safe side, the premissions to setup filesystem and mount
-> marks now require that both the user that initialized the group and
-> the user setting up the mark have CAP_SYS_ADMIN.
-> 
-> Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxiA77_P5vtv7e83g0+9d7B5W9ZTE4GfQEYbWmfT1rA=VA@mail.gmail.com/
-> Fixes: 7cea2a3c505e ("fanotify: support limited functionality for unprivileged users")
-> Cc: <Stable@vger.kernel.org> # v5.12+
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
+?
 
-Looks good,
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-
-> 
-> Changes since v1:
-> - Address Matthew's editorial review comments
-> - Rename macro FANOTIFY_INTERNAL_GROUP_FLAGS
-> 
->  fs/notify/fanotify/fanotify_user.c | 30 ++++++++++++++++++++++++------
->  fs/notify/fdinfo.c                 |  2 +-
->  include/linux/fanotify.h           |  4 ++++
->  3 files changed, 29 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index 71fefb30e015..be5b6d2c01e7 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -424,11 +424,18 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
->  	 * events generated by the listener process itself, without disclosing
->  	 * the pids of other processes.
->  	 */
-> -	if (!capable(CAP_SYS_ADMIN) &&
-> +	if (FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
->  	    task_tgid(current) != event->pid)
->  		metadata.pid = 0;
->  
-> -	if (path && path->mnt && path->dentry) {
-> +	/*
-> +	 * For now, fid mode is required for an unprivileged listener and
-> +	 * fid mode does not report fd in events.  Keep this check anyway
-> +	 * for safety in case fid mode requirement is relaxed in the future
-> +	 * to allow unprivileged listener to get events with no fd and no fid.
-> +	 */
-> +	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
-> +	    path && path->mnt && path->dentry) {
->  		fd = create_fd(group, path, &f);
->  		if (fd < 0)
->  			return fd;
-> @@ -1040,6 +1047,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
->  	int f_flags, fd;
->  	unsigned int fid_mode = flags & FANOTIFY_FID_BITS;
->  	unsigned int class = flags & FANOTIFY_CLASS_BITS;
-> +	unsigned int internal_flags = 0;
->  
->  	pr_debug("%s: flags=%x event_f_flags=%x\n",
->  		 __func__, flags, event_f_flags);
-> @@ -1053,6 +1061,13 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
->  		 */
->  		if ((flags & FANOTIFY_ADMIN_INIT_FLAGS) || !fid_mode)
->  			return -EPERM;
-> +
-> +		/*
-> +		 * Setting the internal flag FANOTIFY_UNPRIV on the group
-> +		 * prevents setting mount/filesystem marks on this group and
-> +		 * prevents reporting pid and open fd in events.
-> +		 */
-> +		internal_flags |= FANOTIFY_UNPRIV;
->  	}
->  
->  #ifdef CONFIG_AUDITSYSCALL
-> @@ -1105,7 +1120,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
->  		goto out_destroy_group;
->  	}
->  
-> -	group->fanotify_data.flags = flags;
-> +	group->fanotify_data.flags = flags | internal_flags;
->  	group->memcg = get_mem_cgroup_from_mm(current->mm);
->  
->  	group->fanotify_data.merge_hash = fanotify_alloc_merge_hash();
-> @@ -1305,11 +1320,13 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
->  	group = f.file->private_data;
->  
->  	/*
-> -	 * An unprivileged user is not allowed to watch a mount point nor
-> -	 * a filesystem.
-> +	 * An unprivileged user is not allowed to setup mount nor filesystem
-> +	 * marks.  This also includes setting up such marks by a group that
-> +	 * was initialized by an unprivileged user.
->  	 */
->  	ret = -EPERM;
-> -	if (!capable(CAP_SYS_ADMIN) &&
-> +	if ((!capable(CAP_SYS_ADMIN) ||
-> +	     FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV)) &&
->  	    mark_type != FAN_MARK_INODE)
->  		goto fput_and_out;
->  
-> @@ -1460,6 +1477,7 @@ static int __init fanotify_user_setup(void)
->  	max_marks = clamp(max_marks, FANOTIFY_OLD_DEFAULT_MAX_MARKS,
->  				     FANOTIFY_DEFAULT_MAX_USER_MARKS);
->  
-> +	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
->  	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
->  	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
->  
-> diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
-> index a712b2aaa9ac..57f0d5d9f934 100644
-> --- a/fs/notify/fdinfo.c
-> +++ b/fs/notify/fdinfo.c
-> @@ -144,7 +144,7 @@ void fanotify_show_fdinfo(struct seq_file *m, struct file *f)
->  	struct fsnotify_group *group = f->private_data;
->  
->  	seq_printf(m, "fanotify flags:%x event-flags:%x\n",
-> -		   group->fanotify_data.flags,
-> +		   group->fanotify_data.flags & FANOTIFY_INIT_FLAGS,
->  		   group->fanotify_data.f_flags);
->  
->  	show_fdinfo(m, f, fanotify_fdinfo);
-> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-> index bad41bcb25df..a16dbeced152 100644
-> --- a/include/linux/fanotify.h
-> +++ b/include/linux/fanotify.h
-> @@ -51,6 +51,10 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
->  #define FANOTIFY_INIT_FLAGS	(FANOTIFY_ADMIN_INIT_FLAGS | \
->  				 FANOTIFY_USER_INIT_FLAGS)
->  
-> +/* Internal group flags */
-> +#define FANOTIFY_UNPRIV		0x80000000
-> +#define FANOTIFY_INTERNAL_GROUP_FLAGS	(FANOTIFY_UNPRIV)
-> +
->  #define FANOTIFY_MARK_TYPE_BITS	(FAN_MARK_INODE | FAN_MARK_MOUNT | \
->  				 FAN_MARK_FILESYSTEM)
->  
-> -- 
-> 2.25.1
-> 
+Christian
