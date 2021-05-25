@@ -2,131 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F8A738FDE0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 11:30:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F121038FEAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 12:14:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232578AbhEYJcF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 05:32:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57316 "EHLO mx2.suse.de"
+        id S230312AbhEYKPp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 06:15:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40254 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231567AbhEYJcE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 05:32:04 -0400
+        id S230353AbhEYKPl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 May 2021 06:15:41 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1621935034; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1621937650; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=H0CdEZyXokWEWrMrTbuIjD3UsGMWpkePMFwkVTcnpOc=;
-        b=tsF3jStH+uP7PBxkE+CNdkHM65GKSFwbKw2lMMMi/Z0xtBMaIVYAkXKlLDlaMG/CVm+C2u
-        lrtiTCkbHkzflAS9UP7hEMbp+0tbyn51EM0dn3Dj+9ChRI7UQeKonQ827VEdkERV3mIVX+
-        PMpuOLaKRJeMhi+xzkzNOb8Hpw8cRIo=
+        bh=1mJ2ZSkeDX0JzpEakS+272aDyvp8m1ipZ2m6mMqB8lc=;
+        b=BT4xDoE5VjLKUgL4JgOyIa1VZGQPXcQSkbVIJXf/ip+niNRgMmvSASkoGxM9c1Ifun25SE
+        O4qUOKe9j5xzs7fGoBD7ONShKOwJ+X3R2ULCcnNe07tpdz3vPVPSSlJC6SC7RNGlW9emHY
+        FvLPvCM5CzbBNkIU7sMpTW1aXhFr+/0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1621935034;
+        s=susede2_ed25519; t=1621937650;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=H0CdEZyXokWEWrMrTbuIjD3UsGMWpkePMFwkVTcnpOc=;
-        b=8REuD+9jpJlx0/O/Ads7yUxELxouZLc3AQ2dposoYYFFVDqhUGw7kjYuV6srN+6+x2CRJV
-        F8ymMDCG3u8102BA==
+        bh=1mJ2ZSkeDX0JzpEakS+272aDyvp8m1ipZ2m6mMqB8lc=;
+        b=Od4LjChpQFYjOm1NsativRY7/pK5K0n6416Vv0OBpqjq/OisbRm2Qr7/5BmKPRXmNVTc3E
+        1BeMtfN2u6UVx8BA==
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 818A2AECE;
-        Tue, 25 May 2021 09:30:34 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id A61D0AEC6;
+        Tue, 25 May 2021 10:14:10 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 330A91F2C98; Tue, 25 May 2021 11:30:34 +0200 (CEST)
-Date:   Tue, 25 May 2021 11:30:34 +0200
+        id 018B71F2C98; Tue, 25 May 2021 12:14:09 +0200 (CEST)
+Date:   Tue, 25 May 2021 12:14:09 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Junxiao Bi <junxiao.bi@oracle.com>
-Cc:     Jan Kara <jack@suse.cz>, ocfs2-devel@oss.oracle.com,
-        joseph.qi@linux.alibaba.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] ocfs2: fix data corruption by fallocate
-Message-ID: <20210525093034.GB4112@quack2.suse.cz>
-References: <20210521233612.75185-1-junxiao.bi@oracle.com>
- <20210524085508.GD32705@quack2.suse.cz>
- <479301ea-042b-855d-fc52-0d7bbdc55bdc@oracle.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH][v2] fanotify: fix permission model of unprivileged group
+Message-ID: <20210525101409.GC4112@quack2.suse.cz>
+References: <20210524135321.2190062-1-amir73il@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <479301ea-042b-855d-fc52-0d7bbdc55bdc@oracle.com>
+In-Reply-To: <20210524135321.2190062-1-amir73il@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 24-05-21 09:14:16, Junxiao Bi wrote:
-> On 5/24/21 1:55 AM, Jan Kara wrote:
+On Mon 24-05-21 16:53:21, Amir Goldstein wrote:
+> Reporting event->pid should depend on the privileges of the user that
+> initialized the group, not the privileges of the user reading the
+> events.
 > 
-> > On Fri 21-05-21 16:36:12, Junxiao Bi wrote:
-> > > When fallocate punches holes out of inode size, if original isize is in
-> > > the middle of last cluster, then the part from isize to the end of the
-> > > cluster will be zeroed with buffer write, at that time isize is not
-> > > yet updated to match the new size, if writeback is kicked in, it will
-> > > invoke ocfs2_writepage()->block_write_full_page() where the pages out
-> > > of inode size will be dropped. That will cause file corruption. Fix
-> > > this by zero out eof blocks when extending the inode size.
-> > > 
-> > > Running the following command with qemu-image 4.2.1 can get a corrupted
-> > > coverted image file easily.
-> > > 
-> > >      qemu-img convert -p -t none -T none -f qcow2 $qcow_image \
-> > >               -O qcow2 -o compat=1.1 $qcow_image.conv
-> > > 
-> > > The usage of fallocate in qemu is like this, it first punches holes out of
-> > > inode size, then extend the inode size.
-> > > 
-> > >      fallocate(11, FALLOC_FL_KEEP_SIZE|FALLOC_FL_PUNCH_HOLE, 2276196352, 65536) = 0
-> > >      fallocate(11, 0, 2276196352, 65536) = 0
-> > > 
-> > > v1: https://www.spinics.net/lists/linux-fsdevel/msg193999.html
-> > > 
-> > > Cc: <stable@vger.kernel.org>
-> > > Cc: Jan Kara <jack@suse.cz>
-> > > Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-> > > ---
-> > > 
-> > > Changes in v2:
-> > > - suggested by Jan Kara, using sb_issue_zeroout to zero eof blocks in disk directly.
-> > > 
-> > >   fs/ocfs2/file.c | 49 +++++++++++++++++++++++++++++++++++++++++++++++--
-> > >   1 file changed, 47 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
-> > > index f17c3d33fb18..17469fc7b20e 100644
-> > > --- a/fs/ocfs2/file.c
-> > > +++ b/fs/ocfs2/file.c
-> > > @@ -1855,6 +1855,45 @@ int ocfs2_remove_inode_range(struct inode *inode,
-> > >   	return ret;
-> > >   }
-> > > +/*
-> > > + * zero out partial blocks of one cluster.
-> > > + *
-> > > + * start: file offset where zero starts, will be made upper block aligned.
-> > > + * len: it will be trimmed to the end of current cluster if "start + len"
-> > > + *      is bigger than it.
-> > You write this here but ...
-> > 
-> > > + */
-> > > +static int ocfs2_zeroout_partial_cluster(struct inode *inode,
-> > > +					u64 start, u64 len)
-> > > +{
-> > > +	int ret;
-> > > +	u64 start_block, end_block, nr_blocks;
-> > > +	u64 p_block, offset;
-> > > +	u32 cluster, p_cluster, nr_clusters;
-> > > +	struct super_block *sb = inode->i_sb;
-> > > +	u64 end = ocfs2_align_bytes_to_clusters(sb, start);
-> > > +
-> > > +	if (start + len < end)
-> > > +		end = start + len;
-> > ... here you check actually something else and I don't see where else would
-> > the trimming happen.
+> Use an internal group flag FANOTIFY_UNPRIV to record the fact that the
+> group was initialized by an unprivileged user.
 > 
-> Before the "if", end = ocfs2_align_bytes_to_clusters(sb, start), that is
-> the end of the cluster where "start" located.
+> To be on the safe side, the premissions to setup filesystem and mount
+> marks now require that both the user that initialized the group and
+> the user setting up the mark have CAP_SYS_ADMIN.
+> 
+> Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxiA77_P5vtv7e83g0+9d7B5W9ZTE4GfQEYbWmfT1rA=VA@mail.gmail.com/
+> Fixes: 7cea2a3c505e ("fanotify: support limited functionality for unprivileged users")
+> Cc: <Stable@vger.kernel.org> # v5.12+
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-Ah sorry, I got confused. The code is correct.
+Thanks, I've merged the patch to my tree. I plan to sent it to Linus at the
+end of the week.
 
 								Honza
 
+> ---
+> 
+> Changes since v1:
+> - Address Matthew's editorial review comments
+> - Rename macro FANOTIFY_INTERNAL_GROUP_FLAGS
+> 
+>  fs/notify/fanotify/fanotify_user.c | 30 ++++++++++++++++++++++++------
+>  fs/notify/fdinfo.c                 |  2 +-
+>  include/linux/fanotify.h           |  4 ++++
+>  3 files changed, 29 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 71fefb30e015..be5b6d2c01e7 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -424,11 +424,18 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+>  	 * events generated by the listener process itself, without disclosing
+>  	 * the pids of other processes.
+>  	 */
+> -	if (!capable(CAP_SYS_ADMIN) &&
+> +	if (FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
+>  	    task_tgid(current) != event->pid)
+>  		metadata.pid = 0;
+>  
+> -	if (path && path->mnt && path->dentry) {
+> +	/*
+> +	 * For now, fid mode is required for an unprivileged listener and
+> +	 * fid mode does not report fd in events.  Keep this check anyway
+> +	 * for safety in case fid mode requirement is relaxed in the future
+> +	 * to allow unprivileged listener to get events with no fd and no fid.
+> +	 */
+> +	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
+> +	    path && path->mnt && path->dentry) {
+>  		fd = create_fd(group, path, &f);
+>  		if (fd < 0)
+>  			return fd;
+> @@ -1040,6 +1047,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>  	int f_flags, fd;
+>  	unsigned int fid_mode = flags & FANOTIFY_FID_BITS;
+>  	unsigned int class = flags & FANOTIFY_CLASS_BITS;
+> +	unsigned int internal_flags = 0;
+>  
+>  	pr_debug("%s: flags=%x event_f_flags=%x\n",
+>  		 __func__, flags, event_f_flags);
+> @@ -1053,6 +1061,13 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>  		 */
+>  		if ((flags & FANOTIFY_ADMIN_INIT_FLAGS) || !fid_mode)
+>  			return -EPERM;
+> +
+> +		/*
+> +		 * Setting the internal flag FANOTIFY_UNPRIV on the group
+> +		 * prevents setting mount/filesystem marks on this group and
+> +		 * prevents reporting pid and open fd in events.
+> +		 */
+> +		internal_flags |= FANOTIFY_UNPRIV;
+>  	}
+>  
+>  #ifdef CONFIG_AUDITSYSCALL
+> @@ -1105,7 +1120,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>  		goto out_destroy_group;
+>  	}
+>  
+> -	group->fanotify_data.flags = flags;
+> +	group->fanotify_data.flags = flags | internal_flags;
+>  	group->memcg = get_mem_cgroup_from_mm(current->mm);
+>  
+>  	group->fanotify_data.merge_hash = fanotify_alloc_merge_hash();
+> @@ -1305,11 +1320,13 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  	group = f.file->private_data;
+>  
+>  	/*
+> -	 * An unprivileged user is not allowed to watch a mount point nor
+> -	 * a filesystem.
+> +	 * An unprivileged user is not allowed to setup mount nor filesystem
+> +	 * marks.  This also includes setting up such marks by a group that
+> +	 * was initialized by an unprivileged user.
+>  	 */
+>  	ret = -EPERM;
+> -	if (!capable(CAP_SYS_ADMIN) &&
+> +	if ((!capable(CAP_SYS_ADMIN) ||
+> +	     FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV)) &&
+>  	    mark_type != FAN_MARK_INODE)
+>  		goto fput_and_out;
+>  
+> @@ -1460,6 +1477,7 @@ static int __init fanotify_user_setup(void)
+>  	max_marks = clamp(max_marks, FANOTIFY_OLD_DEFAULT_MAX_MARKS,
+>  				     FANOTIFY_DEFAULT_MAX_USER_MARKS);
+>  
+> +	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
+>  	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
+>  	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
+>  
+> diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+> index a712b2aaa9ac..57f0d5d9f934 100644
+> --- a/fs/notify/fdinfo.c
+> +++ b/fs/notify/fdinfo.c
+> @@ -144,7 +144,7 @@ void fanotify_show_fdinfo(struct seq_file *m, struct file *f)
+>  	struct fsnotify_group *group = f->private_data;
+>  
+>  	seq_printf(m, "fanotify flags:%x event-flags:%x\n",
+> -		   group->fanotify_data.flags,
+> +		   group->fanotify_data.flags & FANOTIFY_INIT_FLAGS,
+>  		   group->fanotify_data.f_flags);
+>  
+>  	show_fdinfo(m, f, fanotify_fdinfo);
+> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+> index bad41bcb25df..a16dbeced152 100644
+> --- a/include/linux/fanotify.h
+> +++ b/include/linux/fanotify.h
+> @@ -51,6 +51,10 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
+>  #define FANOTIFY_INIT_FLAGS	(FANOTIFY_ADMIN_INIT_FLAGS | \
+>  				 FANOTIFY_USER_INIT_FLAGS)
+>  
+> +/* Internal group flags */
+> +#define FANOTIFY_UNPRIV		0x80000000
+> +#define FANOTIFY_INTERNAL_GROUP_FLAGS	(FANOTIFY_UNPRIV)
+> +
+>  #define FANOTIFY_MARK_TYPE_BITS	(FAN_MARK_INODE | FAN_MARK_MOUNT | \
+>  				 FAN_MARK_FILESYSTEM)
+>  
+> -- 
+> 2.25.1
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
