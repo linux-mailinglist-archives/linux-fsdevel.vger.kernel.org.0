@@ -2,166 +2,306 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 41FB9390CE9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 01:21:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F6AF390CF3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 May 2021 01:29:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231174AbhEYXWk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 19:22:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54720 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229790AbhEYXWj (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 19:22:39 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8675DC061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 May 2021 16:21:08 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id q15so23983097pgg.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 May 2021 16:21:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=N9pRtcpwEgIj6sC0tHqwYGJBlDf6VjtQs2mfFfUfl6g=;
-        b=eM5f6HsI/GmdQGh0ezMqwI/wS6K88p5V+4+nkKfgg7z9bCJVxfabyrOhNmdw00kB33
-         tCk9CY+4PJEK82DpKSgc/nd/RIW7ux57thwYKIx29lVMv+6qOXK8DT3ufc79lKKWA8vR
-         9Mc/u7M7h1ZmFQzmKYjHQSTnxQpIOZBC0Mp3Fu0/LDUIlheg42ubaR+aV9VlDKemejyv
-         iAcpZ8Zxl7NKRsUvQe/IjPsINfN2wzvmp4JAezHdvy9SeN802OHAWjHZLIpxTANGwLeL
-         /uucrr9tIwGKayjHp7CRnA0eWe9b1P36Fsgip83lycGpNuwzqEPLqPa9i/AHF2txImAS
-         uZwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=N9pRtcpwEgIj6sC0tHqwYGJBlDf6VjtQs2mfFfUfl6g=;
-        b=Xq8F2ArVvKM9HZTzSeKda0Q+nV1qhJkjQJ+zZZyxHQFhfeqkjt0+ssjHFNe8G4MYu+
-         5CWj8q7or7CY2zvrAmo27weB75SMakCkh5u3jfDrA4aanJqbHpuSq+fsKalO4HxgjT0Y
-         a5X28kDpD5XgM+0O38lqgLILcPSKxtBqIXLBpemFvF1iv6Q6dzo3ioqjzPvFZbMbl2mK
-         RayIdUYEZXyKDQiB1mU4/KPoB6fHEKgt1C/Yb9JlkZpQfJtXfr1/3bk/5RG3/Obg1Mv7
-         ODTHYwzPSh4drX9uq/3dU+JhvRgbSV0c3LHtGWjRvIDb0Y21vgDSVR3+LQ7XsfLL1uEe
-         nH5w==
-X-Gm-Message-State: AOAM531bh7wATiZsnD1a9P7ijk6UDm2J3GCtQRommxt3uPD/++Dkf5N0
-        sVaZiXY8F3UPoK0Y1WjQe98EgQ==
-X-Google-Smtp-Source: ABdhPJzTaM1dRCFm8Mp7aPTQuQDnu9Zc4/Lrm8xw3bO2GrfQex+U+F4LYKC8FIWuLHWi9Xykyn29xQ==
-X-Received: by 2002:a65:48c2:: with SMTP id o2mr21347245pgs.376.1621984867810;
-        Tue, 25 May 2021 16:21:07 -0700 (PDT)
-Received: from google.com ([2401:fa00:9:211:a122:6bc0:d8f6:9eea])
-        by smtp.gmail.com with ESMTPSA id k20sm119872pgl.72.2021.05.25.16.21.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 May 2021 16:21:06 -0700 (PDT)
-Date:   Wed, 26 May 2021 09:20:55 +1000
-From:   Matthew Bobrowski <repnop@google.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Jan Kara <jack@suse.cz>, amir73il@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH 0/5] Add pidfd support to the fanotify API
-Message-ID: <YK2GV7hLamMpcO8i@google.com>
-References: <cover.1621473846.git.repnop@google.com>
- <20210520135527.GD18952@quack2.suse.cz>
- <YKeIR+LiSXqUHL8Q@google.com>
- <20210521104056.GG18952@quack2.suse.cz>
- <YKhDFCUWX7iU7AzM@google.com>
- <20210524084746.GB32705@quack2.suse.cz>
- <20210525103133.uctijrnffehlvjr3@wittgenstein>
+        id S231182AbhEYXbT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 19:31:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40488 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229610AbhEYXbS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 May 2021 19:31:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3DF9D613C5;
+        Tue, 25 May 2021 23:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621985388;
+        bh=AJ+FqQjD2tfizRfYl3YcUjYoTFd7vYQranc9ATQtPko=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=E3sxlTwGEaNgLugGNfFB4yLMkaP0igoa+rQCQhR/cwj6nhyR2AsfPVGHNafOibgPZ
+         +/fa93Px8rOvbB4GxCa4vr9Bq48aLfie9SVnYOofWyWlMr5hCooIA2GNPKWmBzmNkM
+         LQh34wNxbSKbLKpXhNBa4L9lc2ocCUljoODxRUX816i48FVYpf4tCnj4991lAvUWWN
+         IZ8BYTBNBBbGKu+ic0Gxr7IV3HEUkHWZvEeDPURyGc9gTPI/XAxWH/zoRcgApXNdgK
+         J+U55mGvivTg3EhS+U7ojz1X5esgMB6AsFkYWOCuPr5NE+FqwaqprV2hpsRHrIlQ6c
+         svvYgo/or1FNw==
+Date:   Tue, 25 May 2021 16:29:47 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
+        darrick.wong@oracle.com, dan.j.williams@intel.com,
+        willy@infradead.org, viro@zeniv.linux.org.uk, david@fromorbit.com,
+        hch@lst.de, rgoldwyn@suse.de, Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH v6 5/7] fsdax: Dedup file range to use a compare function
+Message-ID: <20210525232947.GE202144@locust>
+References: <20210519060045.1051226-1-ruansy.fnst@fujitsu.com>
+ <20210519060045.1051226-6-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210525103133.uctijrnffehlvjr3@wittgenstein>
+In-Reply-To: <20210519060045.1051226-6-ruansy.fnst@fujitsu.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 25, 2021 at 12:31:33PM +0200, Christian Brauner wrote:
-> On Mon, May 24, 2021 at 10:47:46AM +0200, Jan Kara wrote:
-> > On Sat 22-05-21 09:32:36, Matthew Bobrowski wrote:
-> > > On Fri, May 21, 2021 at 12:40:56PM +0200, Jan Kara wrote:
-> > > > On Fri 21-05-21 20:15:35, Matthew Bobrowski wrote:
-> > > > > On Thu, May 20, 2021 at 03:55:27PM +0200, Jan Kara wrote:
-> > > > > There's one thing that I'd like to mention, and it's something in
-> > > > > regards to the overall approach we've taken that I'm not particularly
-> > > > > happy about and I'd like to hear all your thoughts. Basically, with
-> > > > > this approach the pidfd creation is done only once an event has been
-> > > > > queued and the notification worker wakes up and picks up the event
-> > > > > from the queue processes it. There's a subtle latency introduced when
-> > > > > taking such an approach which at times leads to pidfd creation
-> > > > > failures. As in, by the time pidfd_create() is called the struct pid
-> > > > > has already been reaped, which then results in FAN_NOPIDFD being
-> > > > > returned in the pidfd info record.
-> > > > > 
-> > > > > Having said that, I'm wondering what the thoughts are on doing pidfd
-> > > > > creation earlier on i.e. in the event allocation stages? This way, the
-> > > > > struct pid is pinned earlier on and rather than FAN_NOPIDFD being
-> > > > > returned in the pidfd info record because the struct pid has been
-> > > > > already reaped, userspace application will atleast receive a valid
-> > > > > pidfd which can be used to check whether the process still exists or
-> > > > > not. I think it'll just set the expectation better from an API
-> > > > > perspective.
-> > > > 
-> > > > Yes, there's this race. OTOH if FAN_NOPIDFD is returned, the listener can
-> > > > be sure the original process doesn't exist anymore. So is it useful to
-> > > > still receive pidfd of the dead process?
-> > > 
-> > > Well, you're absolutely right. However, FWIW I was approaching this
-> > > from two different angles:
-> > > 
-> > > 1) I wanted to keep the pattern in which the listener checks for the
-> > >    existence/recycling of the process consistent. As in, the listener
-> > >    would receive the pidfd, then send the pidfd a signal via
-> > >    pidfd_send_signal() and check for -ESRCH which clearly indicates
-> > >    that the target process has terminated.
-> > > 
-> > > 2) I didn't want to mask failed pidfd creation because of early
-> > >    process termination and other possible failures behind a single
-> > >    FAN_NOPIDFD. IOW, if we take the -ESRCH approach above, the
-> > >    listener can take clear corrective branches as what's to be done
-> > >    next if a race is to have been detected, whereas simply returning
-> > >    FAN_NOPIDFD at this stage can mean multiple things.
-> > > 
-> > > Now that I've written the above and keeping in mind that we'd like to
-> > > refrain from doing anything in the event allocation stages, perhaps we
-> > > could introduce a different error code for detecting early process
-> > > termination while attempting to construct the info record. WDYT?
-> > 
-> > Sure, I wouldn't like to overengineer it but having one special fd value for
-> > "process doesn't exist anymore" and another for general "creating pidfd
-> > failed" looks OK to me.
+On Wed, May 19, 2021 at 02:00:43PM +0800, Shiyang Ruan wrote:
+> With dax we cannot deal with readpage() etc. So, we create a dax
+> comparison funciton which is similar with
+
+s/funciton/function/
+
+> vfs_dedupe_file_range_compare().
+> And introduce dax_remap_file_range_prep() for filesystem use.
 > 
-> FAN_EPIDFD -> "creation failed"
-> FAN_NOPIDFD -> "no such process"
+> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> ---
+>  fs/dax.c             | 66 ++++++++++++++++++++++++++++++++++++++++++++
+>  fs/remap_range.c     | 36 ++++++++++++++++++------
+>  fs/xfs/xfs_reflink.c |  8 ++++--
+>  include/linux/dax.h  |  8 ++++++
+>  include/linux/fs.h   | 12 +++++---
+>  5 files changed, 116 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/dax.c b/fs/dax.c
+> index baee584cb8ae..93f16210847b 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -1864,3 +1864,69 @@ vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
+>  	return dax_insert_pfn_mkwrite(vmf, pfn, order);
+>  }
+>  EXPORT_SYMBOL_GPL(dax_finish_sync_fault);
+> +
+> +static loff_t dax_range_compare_actor(struct inode *ino1, loff_t pos1,
+> +		struct inode *ino2, loff_t pos2, loff_t len, void *data,
+> +		struct iomap *smap, struct iomap *dmap)
+> +{
+> +	void *saddr, *daddr;
+> +	bool *same = data;
+> +	int ret;
+> +
+> +	if (smap->type == IOMAP_HOLE && dmap->type == IOMAP_HOLE) {
+> +		*same = true;
+> +		return len;
+> +	}
+> +
+> +	if (smap->type == IOMAP_HOLE || dmap->type == IOMAP_HOLE) {
+> +		*same = false;
+> +		return 0;
+> +	}
+> +
+> +	ret = dax_iomap_direct_access(smap, pos1, ALIGN(pos1 + len, PAGE_SIZE),
+> +				      &saddr, NULL);
+> +	if (ret < 0)
+> +		return -EIO;
+> +
+> +	ret = dax_iomap_direct_access(dmap, pos2, ALIGN(pos2 + len, PAGE_SIZE),
+> +				      &daddr, NULL);
+> +	if (ret < 0)
+> +		return -EIO;
+> +
+> +	*same = !memcmp(saddr, daddr, len);
+> +	return len;
+> +}
+> +
+> +int dax_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+> +		struct inode *dest, loff_t destoff, loff_t len, bool *is_same,
+> +		const struct iomap_ops *ops)
+> +{
+> +	int id, ret = 0;
+> +
+> +	id = dax_read_lock();
+> +	while (len) {
+> +		ret = iomap_apply2(src, srcoff, dest, destoff, len, 0, ops,
+> +				   is_same, dax_range_compare_actor);
+> +		if (ret < 0 || !*is_same)
+> +			goto out;
+> +
+> +		len -= ret;
+> +		srcoff += ret;
+> +		destoff += ret;
+> +	}
+> +	ret = 0;
+> +out:
+> +	dax_read_unlock(id);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(dax_dedupe_file_range_compare);
+> +
+> +int dax_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+> +			      struct file *file_out, loff_t pos_out,
+> +			      loff_t *len, unsigned int remap_flags,
+> +			      const struct iomap_ops *ops)
+> +{
+> +	return __generic_remap_file_range_prep(file_in, pos_in, file_out,
+> +					       pos_out, len, remap_flags, ops);
+> +}
+> +EXPORT_SYMBOL(dax_remap_file_range_prep);
+> diff --git a/fs/remap_range.c b/fs/remap_range.c
+> index e4a5fdd7ad7b..4cfc1553f3bf 100644
+> --- a/fs/remap_range.c
+> +++ b/fs/remap_range.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/compat.h>
+>  #include <linux/mount.h>
+>  #include <linux/fs.h>
+> +#include <linux/dax.h>
+>  #include "internal.h"
+>  
+>  #include <linux/uaccess.h>
+> @@ -199,9 +200,9 @@ static void vfs_unlock_two_pages(struct page *page1, struct page *page2)
+>   * Compare extents of two files to see if they are the same.
+>   * Caller must have locked both inodes to prevent write races.
+>   */
+> -static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+> -					 struct inode *dest, loff_t destoff,
+> -					 loff_t len, bool *is_same)
+> +int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+> +				  struct inode *dest, loff_t destoff,
+> +				  loff_t len, bool *is_same)
+>  {
+>  	loff_t src_poff;
+>  	loff_t dest_poff;
+> @@ -280,6 +281,7 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+>  out_error:
+>  	return error;
+>  }
+> +EXPORT_SYMBOL(vfs_dedupe_file_range_compare);
+>  
+>  /*
+>   * Check that the two inodes are eligible for cloning, the ranges make
+> @@ -289,9 +291,11 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+>   * If there's an error, then the usual negative error code is returned.
+>   * Otherwise returns 0 with *len set to the request length.
+>   */
+> -int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+> -				  struct file *file_out, loff_t pos_out,
+> -				  loff_t *len, unsigned int remap_flags)
+> +int
+> +__generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+> +				struct file *file_out, loff_t pos_out,
+> +				loff_t *len, unsigned int remap_flags,
+> +				const struct iomap_ops *dax_read_ops)
+>  {
+>  	struct inode *inode_in = file_inode(file_in);
+>  	struct inode *inode_out = file_inode(file_out);
+> @@ -351,8 +355,15 @@ int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+>  	if (remap_flags & REMAP_FILE_DEDUP) {
+>  		bool		is_same = false;
+>  
+> -		ret = vfs_dedupe_file_range_compare(inode_in, pos_in,
+> -				inode_out, pos_out, *len, &is_same);
+> +		if (!IS_DAX(inode_in))
+> +			ret = vfs_dedupe_file_range_compare(inode_in, pos_in,
+> +					inode_out, pos_out, *len, &is_same);
+> +		else if (dax_read_ops)
+> +			ret = dax_dedupe_file_range_compare(inode_in, pos_in,
+> +					inode_out, pos_out, *len, &is_same,
+> +					dax_read_ops);
+> +		else
+> +			return -EINVAL;
+>  		if (ret)
+>  			return ret;
+>  		if (!is_same)
+> @@ -370,6 +381,15 @@ int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+>  
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL(__generic_remap_file_range_prep);
+> +
+> +int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+> +				  struct file *file_out, loff_t pos_out,
+> +				  loff_t *len, unsigned int remap_flags)
+> +{
+> +	return __generic_remap_file_range_prep(file_in, pos_in, file_out,
+> +					       pos_out, len, remap_flags, NULL);
+> +}
+>  EXPORT_SYMBOL(generic_remap_file_range_prep);
+>  
+>  loff_t do_clone_file_range(struct file *file_in, loff_t pos_in,
+> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+> index 060695d6d56a..d25434f93235 100644
+> --- a/fs/xfs/xfs_reflink.c
+> +++ b/fs/xfs/xfs_reflink.c
+> @@ -1329,8 +1329,12 @@ xfs_reflink_remap_prep(
+>  	if (IS_DAX(inode_in) || IS_DAX(inode_out))
+>  		goto out_unlock;
+>  
+> -	ret = generic_remap_file_range_prep(file_in, pos_in, file_out, pos_out,
+> -			len, remap_flags);
+> +	if (!IS_DAX(inode_in))
+> +		ret = generic_remap_file_range_prep(file_in, pos_in, file_out,
+> +				pos_out, len, remap_flags);
+> +	else
+> +		ret = dax_remap_file_range_prep(file_in, pos_in, file_out,
+> +				pos_out, len, remap_flags, &xfs_read_iomap_ops);
+>  	if (ret || *len == 0)
+>  		goto out_unlock;
+>  
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index 3275e01ed33d..106d1f033a78 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -239,6 +239,14 @@ int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
+>  				      pgoff_t index);
+>  s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap,
+>  		struct iomap *srcmap);
+> +int dax_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+> +				  struct inode *dest, loff_t destoff,
+> +				  loff_t len, bool *is_same,
+> +				  const struct iomap_ops *ops);
+> +int dax_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+> +			      struct file *file_out, loff_t pos_out,
+> +			      loff_t *len, unsigned int remap_flags,
+> +			      const struct iomap_ops *ops);
 
-Yes, I was thinking something along the lines of this...
+I totally thought that not having explicit static inline stubs of these
+functions would break the build when CONFIG_FS_DAX=n, but then I
+realized that when fsdax is disabled, S_DAX is zero, so this works
+because dead code elimination in the compiler means that the object
+files never receive deferred references to the dax functions, which
+means that linking actually succeeds.
 
-With the approach that I've proposed in this series, the pidfd
-creation failure trips up in pidfd_create() at the following
-condition:
+So:
 
-	if (!pid || !pid_has_task(pid, PIDTYPE_TGID))
-	   	 return -EINVAL;
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Specifically, the following check:
-	!pid_has_task(pid, PIDTYPE_TGID)
+--D
 
-In order to properly report either FAN_NOPIDFD/FAN_EPIDFD to
-userspace, AFAIK I'll have to do one of either two things to better
-distinguish between why the pidfd creation had failed:
-
-1) Implement an additional check in pidfd_create() that effectively
-   checks whether provided pid still holds reference to a struct pid
-   that isn't in the process of being cleaned up. If it is being
-   cleaned up, then return something like -ESRCH instead of -EINVAL so
-   that the caller, in this case fanotify, can check and set
-   FAN_NOPIDFD if -ESRCH is returned from pidfd_create(). I definitely
-   don't feel as though returning -ESRCH from the !pid_has_task(pid,
-   PIDTYPE_TGID) would be appropriate. In saying that, I'm not aware
-   of a helper by which would allow us to perform such an in-flight
-   check? Perhaps something needs to be introduced here, IDK...
-
-2) Refrain from performing any further changes to pidfd_create()
-   i.e. as proposed in option 1), and manually perform the pidfd
-   creation from some kind of new fanotify helper, as suggested by you
-   here [0]. However, I'm not convinved that I like this approach as
-   we may end up slowly drifting away from pidfd creation semantics
-   over time.
-
-[0] https://www.spinics.net/lists/linux-fsdevel/msg195556.html 
-
-/M
+>  static inline bool dax_mapping(struct address_space *mapping)
+>  {
+>  	return mapping->host && IS_DAX(mapping->host);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index c3c88fdb9b2a..deed4371f34f 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -71,6 +71,7 @@ struct fsverity_operations;
+>  struct fs_context;
+>  struct fs_parameter_spec;
+>  struct fileattr;
+> +struct iomap_ops;
+>  
+>  extern void __init inode_init(void);
+>  extern void __init inode_init_early(void);
+> @@ -2126,10 +2127,13 @@ extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
+>  extern ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
+>  				       struct file *file_out, loff_t pos_out,
+>  				       size_t len, unsigned int flags);
+> -extern int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+> -					 struct file *file_out, loff_t pos_out,
+> -					 loff_t *count,
+> -					 unsigned int remap_flags);
+> +int __generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+> +				    struct file *file_out, loff_t pos_out,
+> +				    loff_t *len, unsigned int remap_flags,
+> +				    const struct iomap_ops *dax_read_ops);
+> +int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+> +				  struct file *file_out, loff_t pos_out,
+> +				  loff_t *count, unsigned int remap_flags);
+>  extern loff_t do_clone_file_range(struct file *file_in, loff_t pos_in,
+>  				  struct file *file_out, loff_t pos_out,
+>  				  loff_t len, unsigned int remap_flags);
+> -- 
+> 2.31.1
+> 
+> 
+> 
