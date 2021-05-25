@@ -2,139 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11ACF3903AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 16:16:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D805B3903CE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 May 2021 16:21:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233850AbhEYORf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 May 2021 10:17:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44412 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233794AbhEYORa (ORCPT
+        id S233910AbhEYOWh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 May 2021 10:22:37 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:26209 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233889AbhEYOWg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 May 2021 10:17:30 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEC9DC061574;
-        Tue, 25 May 2021 07:15:59 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id i5so22884066pgm.0;
-        Tue, 25 May 2021 07:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SuUtFT7bIVivZR5ps0dFd9PsqAyY9zXdI0c6lNEWZ/Q=;
-        b=cWgSLD1R917gAZOpogiffvofkdeLhXfBzx+5hzb+UqnvK7FtUp4PnY+3Ll3EgmVBNT
-         sVyiBBk/tFdg7+oOeWWm42sQDhKwAWwp11ecTxDKK61GrpJBZL6v5GA+GNoZQoYxVEmA
-         4aPwqX1QwrCNkdhCtvZjQcCfb6YKfczcBNK56MAsrzM4McCCoXZhYrdZSSNo+MlriYjQ
-         dch7QPTdNQ5Uqi0//WL6k1LXb3mUw0GWYNDkUxDDaOueheQLJbUVhpHhjhNWZx8g6p8a
-         mg5COU6q9GRUWk9F9g2EQtNTf3tmEa5KQ050O2C2SKpNCWAiHRwwB9+EF5ccXgbDOZL5
-         z61g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SuUtFT7bIVivZR5ps0dFd9PsqAyY9zXdI0c6lNEWZ/Q=;
-        b=nMSVuwuXXrMGhCT0lqfX+Vh6y5gfolUPuzRZCZmmH5M9uAb0AtrXCZJZUUu0LfIHoQ
-         J8uiLh3f3i7W2UrXbip9lFkikHVPre1OsrqKcIkGJX+JEUtRbqJlXKEzYqIvtDQqYgHf
-         EUaOQiC4JEPTXO606EQ/MqltrlSDrxSYuMZCHSOXIAh60+kaeJNXEQ/STbUHYCivS+AH
-         OHWnxWera/XdWGj/rIXWIHlewAvw7+dtNrrkUJhRgzvuUydKYLl9niWx6wOochZUhAil
-         arAGIskJNatYtRjoeNL9f+RVFPfXR32Uotp2I6azIgz7CPmwluTVYKDw7Ix9YCzgX517
-         OWIA==
-X-Gm-Message-State: AOAM530jH4VrCsDZyHjeGi+rvtb8GqSgHy2qeCh9sodlltTV5lbT6t3C
-        YKGJW/i9sStrMjNDkKKOpHU=
-X-Google-Smtp-Source: ABdhPJwlXHT/ygDAwnSyyXOqbP4rCUtJ42z7h7gzukjpVvVpJc37jxPThlv3OpxUWgYHQaEQKk/+7A==
-X-Received: by 2002:a62:5c1:0:b029:2a9:7589:dd30 with SMTP id 184-20020a6205c10000b02902a97589dd30mr30144626pff.66.1621952159421;
-        Tue, 25 May 2021 07:15:59 -0700 (PDT)
-Received: from localhost ([178.236.46.205])
-        by smtp.gmail.com with ESMTPSA id gt23sm12687791pjb.13.2021.05.25.07.15.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 May 2021 07:15:59 -0700 (PDT)
-From:   menglong8.dong@gmail.com
-X-Google-Original-From: dong.menglong@zte.com.cn
-To:     mcgrof@kernel.org, josh@joshtriplett.org
-Cc:     viro@zeniv.linux.org.uk, keescook@chromium.org,
-        samitolvanen@google.com, ojeda@kernel.org, johan@kernel.org,
-        bhelgaas@google.com, masahiroy@kernel.org,
-        dong.menglong@zte.com.cn, joe@perches.com, axboe@kernel.dk,
-        hare@suse.de, jack@suse.cz, tj@kernel.org,
-        gregkh@linuxfoundation.org, song@kernel.org, neilb@suse.de,
-        akpm@linux-foundation.org, f.fainelli@gmail.com, arnd@arndb.de,
-        linux@rasmusvillemoes.dk, wangkefeng.wang@huawei.com,
-        brho@google.com, mhiramat@kernel.org, rostedt@goodmis.org,
-        vbabka@suse.cz, glider@google.com, pmladek@suse.com,
-        chris@chrisdown.name, ebiederm@xmission.com, jojing64@gmail.com,
-        terrelln@fb.com, geert@linux-m68k.org, mingo@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jeyu@kernel.org
-Subject: [PATCH v2 3/3] init/do_mounts.c: fix rootfs_fs_type with ramfs
-Date:   Tue, 25 May 2021 22:15:24 +0800
-Message-Id: <20210525141524.3995-4-dong.menglong@zte.com.cn>
-X-Mailer: git-send-email 2.32.0.rc0
-In-Reply-To: <20210525141524.3995-1-dong.menglong@zte.com.cn>
-References: <20210525141524.3995-1-dong.menglong@zte.com.cn>
+        Tue, 25 May 2021 10:22:36 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1621952466; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=k3b3VGhhUtXR1YL5/iZcThNS3+h1FIIFPBCi88ZXGJY=; b=vtPqesZSiSAchGi5NmRGzy21aK5zFdqolDtyklckbr1kYsRL/JtglbNe4kXz05dm0ZzG0pZP
+ +yRTbwBrlqZ1OivfPIyOe0+y5LX8Rd0V0LrK/aoCpi8RG5oX3/4M5o47fjiqe64/GExRa2Kx
+ 6tZB/c1gwG+cSlE0Po9Qjxi7/vY=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
+ 60ad07cc2bff04e53b970a76 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 25 May 2021 14:21:00
+ GMT
+Sender: charante=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 95412C43217; Tue, 25 May 2021 14:21:00 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        NICE_REPLY_A,SPF_FAIL,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [192.168.29.110] (unknown [49.37.158.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: charante)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 654BBC433F1;
+        Tue, 25 May 2021 14:20:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 654BBC433F1
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=charante@codeaurora.org
+Subject: Re: [PATCH V2] mm: compaction: support triggering of proactive
+ compaction by user
+To:     akpm@linux-foundation.org, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com, vbabka@suse.cz,
+        nigupta@nvidia.com, bhe@redhat.com, mateusznosek0@gmail.com,
+        sh_def@163.com, iamjoonsoo.kim@lge.com, vinmenon@codeaurora.org
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+References: <1621345058-26676-1-git-send-email-charante@codeaurora.org>
+From:   Charan Teja Kalla <charante@codeaurora.org>
+Message-ID: <fd9dd82c-0728-46db-1647-7e03d43e245d@codeaurora.org>
+Date:   Tue, 25 May 2021 19:50:51 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1621345058-26676-1-git-send-email-charante@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Menglong Dong <dong.menglong@zte.com.cn>
+Gentle ping.
 
-As for the existence of 'user root' which is introduced in previous
-patch, 'rootfs_fs_type', which is used as the root of mount tree,
-is not used directly any more. So it make no sense to make it tmpfs
-while 'INITRAMFS_USER_ROOT' is enabled.
+Thanks,
+Charan
 
-Make 'rootfs_fs_type' ramfs when 'INITRAMFS_USER_ROOT' enabled.
+On 5/18/2021 7:07 PM, Charan Teja Reddy wrote:
+> The proactive compaction[1] gets triggered for every 500msec and run
+> compaction on the node for COMPACTION_HPAGE_ORDER (usually order-9)
+> pages based on the value set to sysctl.compaction_proactiveness.
+> Triggering the compaction for every 500msec in search of
+> COMPACTION_HPAGE_ORDER pages is not needed for all applications,
+> especially on the embedded system usecases which may have few MB's of
+> RAM. Enabling the proactive compaction in its state will endup in
+> running almost always on such systems.
+> 
+> Other side, proactive compaction can still be very much useful for
+> getting a set of higher order pages in some controllable
+> manner(controlled by using the sysctl.compaction_proactiveness). Thus on
+> systems where enabling the proactive compaction always may proove not
+> required, can trigger the same from user space on write to its sysctl
+> interface. As an example, say app launcher decide to launch the memory
+> heavy application which can be launched fast if it gets more higher
+> order pages thus launcher can prepare the system in advance by
+> triggering the proactive compaction from userspace.
+> 
+> This triggering of proactive compaction is done on a write to
+> sysctl.compaction_proactiveness by user.
+> 
+> [1]https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=facdaa917c4d5a376d09d25865f5a863f906234a
+> 
+> Signed-off-by: Charan Teja Reddy <charante@codeaurora.org>
+> ---
+> changes in V2: 
+>     - remove /proc interface trigger for proactive compaction
+>     - Intention is same that add a way to trigger proactive compaction by user.
+> 
+> changes in V1:
+>     -  https://lore.kernel.org/lkml/1619098678-8501-1-git-send-email-charante@codeaurora.org/
+> 
+>  include/linux/compaction.h |  2 ++
+>  include/linux/mmzone.h     |  1 +
+>  kernel/sysctl.c            |  2 +-
+>  mm/compaction.c            | 35 ++++++++++++++++++++++++++++++++---
+>  4 files changed, 36 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/compaction.h b/include/linux/compaction.h
+> index 4221888..04d5d9f 100644
+> --- a/include/linux/compaction.h
+> +++ b/include/linux/compaction.h
+> @@ -84,6 +84,8 @@ static inline unsigned long compact_gap(unsigned int order)
+>  extern unsigned int sysctl_compaction_proactiveness;
+>  extern int sysctl_compaction_handler(struct ctl_table *table, int write,
+>  			void *buffer, size_t *length, loff_t *ppos);
+> +extern int compaction_proactiveness_sysctl_handler(struct ctl_table *table,
+> +		int write, void *buffer, size_t *length, loff_t *ppos);
+>  extern int sysctl_extfrag_threshold;
+>  extern int sysctl_compact_unevictable_allowed;
+>  
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index 0d53eba..9455809 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -815,6 +815,7 @@ typedef struct pglist_data {
+>  	enum zone_type kcompactd_highest_zoneidx;
+>  	wait_queue_head_t kcompactd_wait;
+>  	struct task_struct *kcompactd;
+> +	bool proactive_compact_trigger;
+>  #endif
+>  	/*
+>  	 * This is a per-node reserve of pages that are not available
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 14edf84..bed2fad 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -2840,7 +2840,7 @@ static struct ctl_table vm_table[] = {
+>  		.data		= &sysctl_compaction_proactiveness,
+>  		.maxlen		= sizeof(sysctl_compaction_proactiveness),
+>  		.mode		= 0644,
+> -		.proc_handler	= proc_dointvec_minmax,
+> +		.proc_handler	= compaction_proactiveness_sysctl_handler,
+>  		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= &one_hundred,
+>  	},
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index 84fde27..9056693 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -2708,6 +2708,30 @@ static void compact_nodes(void)
+>   */
+>  unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
+>  
+> +int compaction_proactiveness_sysctl_handler(struct ctl_table *table, int write,
+> +		void *buffer, size_t *length, loff_t *ppos)
+> +{
+> +	int rc, nid;
+> +
+> +	rc = proc_dointvec_minmax(table, write, buffer, length, ppos);
+> +	if (rc)
+> +		return rc;
+> +
+> +	if (write && sysctl_compaction_proactiveness) {
+> +		for_each_online_node(nid) {
+> +			pg_data_t *pgdat = NODE_DATA(nid);
+> +
+> +			if (pgdat->proactive_compact_trigger)
+> +				continue;
+> +
+> +			pgdat->proactive_compact_trigger = true;
+> +			wake_up_interruptible(&pgdat->kcompactd_wait);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  /*
+>   * This is the entry point for compacting all nodes via
+>   * /proc/sys/vm/compact_memory
+> @@ -2752,7 +2776,8 @@ void compaction_unregister_node(struct node *node)
+>  
+>  static inline bool kcompactd_work_requested(pg_data_t *pgdat)
+>  {
+> -	return pgdat->kcompactd_max_order > 0 || kthread_should_stop();
+> +	return pgdat->kcompactd_max_order > 0 || kthread_should_stop() ||
+> +		pgdat->proactive_compact_trigger;
+>  }
+>  
+>  static bool kcompactd_node_suitable(pg_data_t *pgdat)
+> @@ -2905,7 +2930,8 @@ static int kcompactd(void *p)
+>  		trace_mm_compaction_kcompactd_sleep(pgdat->node_id);
+>  		if (wait_event_freezable_timeout(pgdat->kcompactd_wait,
+>  			kcompactd_work_requested(pgdat),
+> -			msecs_to_jiffies(HPAGE_FRAG_CHECK_INTERVAL_MSEC))) {
+> +			msecs_to_jiffies(HPAGE_FRAG_CHECK_INTERVAL_MSEC)) &&
+> +			!pgdat->proactive_compact_trigger) {
+>  
+>  			psi_memstall_enter(&pflags);
+>  			kcompactd_do_work(pgdat);
+> @@ -2919,7 +2945,7 @@ static int kcompactd(void *p)
+>  
+>  			if (proactive_defer) {
+>  				proactive_defer--;
+> -				continue;
+> +				goto loop;
+>  			}
+>  			prev_score = fragmentation_score_node(pgdat);
+>  			proactive_compact_node(pgdat);
+> @@ -2931,6 +2957,9 @@ static int kcompactd(void *p)
+>  			proactive_defer = score < prev_score ?
+>  					0 : 1 << COMPACT_MAX_DEFER_SHIFT;
+>  		}
+> +loop:
+> +		if (pgdat->proactive_compact_trigger)
+> +			pgdat->proactive_compact_trigger = false;
+>  	}
+>  
+>  	return 0;
+> 
 
-Signed-off-by: Menglong Dong <dong.menglong@zte.com.cn>
----
- include/linux/init.h |  5 +++++
- init/do_mounts.c     | 10 +++++++++-
- 2 files changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/init.h b/include/linux/init.h
-index 045ad1650ed1..d65b12fe438c 100644
---- a/include/linux/init.h
-+++ b/include/linux/init.h
-@@ -148,7 +148,12 @@ extern unsigned int reset_devices;
- /* used by init/main.c */
- void setup_arch(char **);
- void prepare_namespace(void);
-+#ifndef CONFIG_INITRAMFS_USER_ROOT
- void __init init_rootfs(void);
-+#else
-+static inline void __init init_rootfs(void) { }
-+#endif
-+
- extern struct file_system_type rootfs_fs_type;
- 
- #if defined(CONFIG_STRICT_KERNEL_RWX) || defined(CONFIG_STRICT_MODULE_RWX)
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 2fd168cca480..74f5b0fc8bdf 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -716,7 +716,14 @@ void __init init_user_rootfs(void)
- 		}
- 	}
- }
--#endif
-+
-+struct file_system_type rootfs_fs_type = {
-+	.name		= "rootfs",
-+	.init_fs_context = ramfs_init_fs_context,
-+	.kill_sb	= kill_litter_super,
-+};
-+
-+#else
- 
- static bool is_tmpfs;
- static int rootfs_init_fs_context(struct fs_context *fc)
-@@ -739,3 +746,4 @@ void __init init_rootfs(void)
- 		(!root_fs_names || strstr(root_fs_names, "tmpfs")))
- 		is_tmpfs = true;
- }
-+#endif
 -- 
-2.32.0.rc0
-
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
+Forum, a Linux Foundation Collaborative Project
